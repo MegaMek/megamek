@@ -158,6 +158,7 @@ import megamek.common.loaders.MapSettings;
 import megamek.common.loaders.MapSetup;
 import megamek.common.loaders.MekSummary;
 import megamek.common.loaders.MekSummaryCache;
+import megamek.common.options.IBasicOption;
 import megamek.common.options.IOption;
 import megamek.common.options.OptionsConstants;
 import megamek.common.options.PilotOptions;
@@ -245,6 +246,9 @@ public class ChatLounge extends AbstractPhaseDisplay
     private final JButton butRemoveBot = new JButton(Messages.getString("ChatLounge.butRemoveBot"));
     private final JButton butConfigPlayer = new JButton(Messages.getString("ChatLounge.butConfigPlayer"));
     private final JButton butBotSettings = new JButton(Messages.getString("ChatLounge.butBotSettings"));
+    private final JButton butVictory = new JButton(Messages.getString("ChatLounge.butVictory"));
+    private FixedYPanel panBotInfo;
+    private VictoryConditionsDialog victoryConditionsDialog;
     PlayerSettingsDialog psd;
 
     private final transient MekTableMouseAdapter mekTableMouseAdapter = new MekTableMouseAdapter();
@@ -444,6 +448,7 @@ public class ChatLounge extends AbstractPhaseDisplay
         butShowUnitID.addActionListener(lobbyListener);
         butSkills.addActionListener(lobbyListener);
         butSpaceSize.addActionListener(lobbyListener);
+        butVictory.addActionListener(lobbyListener);
         butCamo.addActionListener(camoListener);
         butAddX.addActionListener(lobbyListener);
         butAddY.addActionListener(lobbyListener);
@@ -672,14 +677,20 @@ public class ChatLounge extends AbstractPhaseDisplay
         panPlayerInfo = new FixedYPanel(new GridLayout(1, 2, 2, 2));
         panPlayerInfo.setBorder(BorderFactory.createTitledBorder(Messages.getString("ChatLounge.name.playerSetup")));
 
-        JPanel panPlayerInfoBts = new JPanel(new GridLayout(4, 1, 2, 2));
+        // three rows on the left; the camo button fills the right column and thus shrinks to align
+        // with the bottom (Victory Conditions) button
+        JPanel panPlayerInfoBts = new JPanel(new GridLayout(3, 1, 2, 2));
         panPlayerInfoBts.add(comboTeam);
         panPlayerInfoBts.add(butConfigPlayer);
-        panPlayerInfoBts.add(butAddBot);
-        panPlayerInfoBts.add(butRemoveBot);
+        panPlayerInfoBts.add(butVictory);
 
         panPlayerInfo.add(panPlayerInfoBts);
         panPlayerInfo.add(butCamo);
+
+        panBotInfo = new FixedYPanel(new GridLayout(1, 2, 2, 2));
+        panBotInfo.setBorder(BorderFactory.createTitledBorder(Messages.getString("ChatLounge.name.botSetup")));
+        panBotInfo.add(butAddBot);
+        panBotInfo.add(butRemoveBot);
 
         refreshPlayerTable();
     }
@@ -762,6 +773,8 @@ public class ChatLounge extends AbstractPhaseDisplay
         leftSide.add(panUnitInfo);
         leftSide.add(Box.createVerticalStrut(scaleForGUI(5)));
         leftSide.add(panPlayerInfo);
+        leftSide.add(Box.createVerticalStrut(scaleForGUI(5)));
+        leftSide.add(panBotInfo);
         leftSide.add(Box.createVerticalStrut(scaleForGUI(5)));
         leftSide.add(panAutoResolveInfo);
         leftSide.add(Box.createVerticalStrut(scaleForGUI(5)));
@@ -1973,6 +1986,9 @@ public class ChatLounge extends AbstractPhaseDisplay
                     clientgui.getClient().sendPlanetaryConditions(pcd.getConditions());
                 }
 
+            } else if (ev.getSource() == butVictory) {
+                showVictoryConditionsDialog();
+
             } else if (ev.getSource() == butRandomMap) {
                 RandomMapDialog rmd = new RandomMapDialog(clientgui.getFrame(),
                       ChatLounge.this,
@@ -2306,6 +2322,25 @@ public class ChatLounge extends AbstractPhaseDisplay
                   Messages.getString("Error"),
                   JOptionPane.ERROR_MESSAGE);
             LOGGER.error(ex, "");
+        }
+    }
+
+    /**
+     * Shows the victory condition builder. The dialog instance is kept so the built conditions remain editable when
+     * it is reopened; on OK, the compiled conditions are sent to the server, replacing previously lobby-set ones.
+     */
+    private void showVictoryConditionsDialog() {
+        if (victoryConditionsDialog == null) {
+            victoryConditionsDialog = new VictoryConditionsDialog(clientgui);
+        }
+        victoryConditionsDialog.refreshLobbyState();
+        if (victoryConditionsDialog.showDialog() == DialogResult.CONFIRMED) {
+            Vector<IBasicOption> changedOptions = victoryConditionsDialog.getChangedVictoryOptions();
+            if (!changedOptions.isEmpty()) {
+                clientgui.getClient().sendGameOptions(victoryConditionsDialog.getPassword(), changedOptions);
+            }
+            clientgui.getClient().sendVictoryConditions(victoryConditionsDialog.getPassword(),
+                  victoryConditionsDialog.getVictoryConditionsYaml());
         }
     }
 

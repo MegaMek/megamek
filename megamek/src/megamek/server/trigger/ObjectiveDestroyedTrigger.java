@@ -35,6 +35,7 @@ package megamek.server.trigger;
 
 import megamek.common.equipment.ObjectiveMarker;
 import megamek.common.game.IGame;
+import megamek.logging.MMLogger;
 
 /**
  * This Trigger reacts once the named objective marker has been destroyed (with its building, by a Fragile
@@ -46,10 +47,19 @@ import megamek.common.game.IGame;
  */
 public record ObjectiveDestroyedTrigger(String objectiveName) implements Trigger {
 
+    private static final MMLogger LOGGER = MMLogger.create(ObjectiveDestroyedTrigger.class);
+
     @Override
     public boolean isTriggered(IGame game, TriggerSituation event) {
         ObjectiveMarker marker = ObjectiveTriggerHelper.findMarker(game, objectiveName);
-        return (marker != null) && marker.isDestroyed();
+        boolean triggered = (marker != null) && marker.isDestroyed();
+        if (triggered) {
+            LOGGER.debug("[VictoryTrigger] {}: TRIGGERED", this);
+        } else {
+            LOGGER.trace("[VictoryTrigger] {}: not triggered ({})", this,
+                  (marker == null) ? "no objective of that name exists" : "the objective is intact");
+        }
+        return triggered;
     }
 
     @Override

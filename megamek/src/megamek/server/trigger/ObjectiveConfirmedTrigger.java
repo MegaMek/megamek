@@ -35,6 +35,7 @@ package megamek.server.trigger;
 
 import megamek.common.equipment.ObjectiveMarker;
 import megamek.common.game.IGame;
+import megamek.logging.MMLogger;
 
 /**
  * This Trigger reacts once the named Potential Objective candidate has been confirmed as a real objective by a
@@ -45,10 +46,19 @@ import megamek.common.game.IGame;
  */
 public record ObjectiveConfirmedTrigger(String objectiveName) implements Trigger {
 
+    private static final MMLogger LOGGER = MMLogger.create(ObjectiveConfirmedTrigger.class);
+
     @Override
     public boolean isTriggered(IGame game, TriggerSituation event) {
         ObjectiveMarker marker = ObjectiveTriggerHelper.findMarker(game, objectiveName);
-        return (marker != null) && marker.isConfirmed();
+        boolean triggered = (marker != null) && marker.isConfirmed();
+        if (triggered) {
+            LOGGER.debug("[VictoryTrigger] {}: TRIGGERED", this);
+        } else {
+            LOGGER.trace("[VictoryTrigger] {}: not triggered ({})", this,
+                  (marker == null) ? "no objective of that name exists" : "the candidate is unconfirmed");
+        }
+        return triggered;
     }
 
     @Override

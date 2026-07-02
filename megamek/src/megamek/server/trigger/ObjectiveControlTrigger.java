@@ -38,6 +38,7 @@ import java.util.Objects;
 import megamek.common.annotations.Nullable;
 import megamek.common.equipment.ObjectiveMarker;
 import megamek.common.game.IGame;
+import megamek.logging.MMLogger;
 
 /**
  * This Trigger reacts while the named objective marker is controlled - by the given player's side, or by any side
@@ -55,13 +56,28 @@ public record ObjectiveControlTrigger(String objectiveName, String playerName) i
         this.playerName = Objects.requireNonNullElse(playerName, "");
     }
 
+    private static final MMLogger LOGGER = MMLogger.create(ObjectiveControlTrigger.class);
+
     @Override
     public boolean isTriggered(IGame game, TriggerSituation event) {
         ObjectiveMarker marker = ObjectiveTriggerHelper.findMarker(game, objectiveName);
-        if ((marker == null) || marker.isDestroyed()) {
+        if (marker == null) {
+            LOGGER.trace("[VictoryTrigger] {}: not triggered - no objective of that name exists", this);
             return false;
         }
-        return ObjectiveTriggerHelper.controllerMatches(game, playerName, marker);
+        if (marker.isDestroyed()) {
+            LOGGER.trace("[VictoryTrigger] {}: not triggered - the objective is destroyed", this);
+            return false;
+        }
+        boolean triggered = ObjectiveTriggerHelper.controllerMatches(game, playerName, marker);
+        if (triggered) {
+            LOGGER.debug("[VictoryTrigger] {}: TRIGGERED (controlling team {}, player ID {})",
+                  this, marker.getControllingTeam(), marker.getControllingPlayerId());
+        } else {
+            LOGGER.trace("[VictoryTrigger] {}: not triggered (controlling team {}, player ID {})",
+                  this, marker.getControllingTeam(), marker.getControllingPlayerId());
+        }
+        return triggered;
     }
 
     @Override

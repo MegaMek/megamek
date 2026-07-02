@@ -42,6 +42,7 @@ import megamek.common.game.IGame;
 import megamek.common.game.InGameObject;
 import megamek.common.interfaces.IEntityRemovalConditions;
 import megamek.common.units.Entity;
+import megamek.logging.MMLogger;
 
 /**
  * This Trigger reacts once the named Mobile Objective has been captured: carried off the battlefield by a unit that
@@ -60,6 +61,8 @@ public record ObjectiveCapturedTrigger(String objectiveName, String playerName) 
         this.playerName = Objects.requireNonNullElse(playerName, "");
     }
 
+    private static final MMLogger LOGGER = MMLogger.create(ObjectiveCapturedTrigger.class);
+
     @Override
     public boolean isTriggered(IGame game, TriggerSituation event) {
         for (InGameObject inGameObject : game.getGraveyard()) {
@@ -75,10 +78,13 @@ public record ObjectiveCapturedTrigger(String objectiveName, String playerName) 
                 if ((carriedObject instanceof ObjectiveMarker marker)
                       && objectiveName.equals(marker.generalName())
                       && !marker.isDestroyed()) {
+                    LOGGER.debug("[VictoryTrigger] {}: TRIGGERED (carried off the battlefield by {})",
+                          this, fledEntity.getShortName());
                     return true;
                 }
             }
         }
+        LOGGER.trace("[VictoryTrigger] {}: not triggered - no fled unit carried the objective off", this);
         return false;
     }
 

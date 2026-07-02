@@ -39,6 +39,7 @@ import megamek.common.Player;
 import megamek.common.annotations.Nullable;
 import megamek.common.game.Game;
 import megamek.common.game.IGame;
+import megamek.logging.MMLogger;
 import megamek.server.victory.VictoryPointTracker;
 
 /**
@@ -58,6 +59,8 @@ public record VictoryPointsTrigger(String playerName, int minimumPoints) impleme
         this.minimumPoints = minimumPoints;
     }
 
+    private static final MMLogger LOGGER = MMLogger.create(VictoryPointsTrigger.class);
+
     @Override
     public boolean isTriggered(IGame game, TriggerSituation event) {
         if (!(game instanceof Game twGame)) {
@@ -65,19 +68,34 @@ public record VictoryPointsTrigger(String playerName, int minimumPoints) impleme
         }
         VictoryPointTracker tracker = VictoryPointTracker.findTracker(twGame.getVictoryContext());
         if (tracker == null) {
+            LOGGER.trace("[VictoryTrigger] {}: not triggered - no victory points have been scored yet", this);
             return false;
         }
         if (playerName.isBlank()) {
-            return anySideHasMinimumPoints(tracker);
+            boolean triggered = anySideHasMinimumPoints(tracker);
+            logResult(triggered, -1);
+            return triggered;
         }
         Player player = ObjectiveTriggerHelper.findPlayerByName(game, playerName);
         if (player == null) {
+            LOGGER.trace("[VictoryTrigger] {}: not triggered - no player of that name exists", this);
             return false;
         }
         int sidePoints = (player.getTeam() != Player.TEAM_NONE)
               ? tracker.getTeamVictoryPoints(player.getTeam())
               : tracker.getPlayerVictoryPoints(player.getId());
-        return sidePoints >= minimumPoints;
+        boolean triggered = sidePoints >= minimumPoints;
+        logResult(triggered, sidePoints);
+        return triggered;
+    }
+
+    private void logResult(boolean triggered, int sidePoints) {
+        String pointsText = (sidePoints < 0) ? "any side" : sidePoints + " VP";
+        if (triggered) {
+            LOGGER.debug("[VictoryTrigger] {}: TRIGGERED ({})", this, pointsText);
+        } else {
+            LOGGER.trace("[VictoryTrigger] {}: not triggered ({})", this, pointsText);
+        }
     }
 
     private boolean anySideHasMinimumPoints(VictoryPointTracker tracker) {

@@ -98,11 +98,15 @@ public class VictoryHelper implements Serializable {
         }
 
         if (gameEndsByScriptedEvent(game)) {
+            LOGGER.info("[VP] The game ends now through a scripted/lobby game-end condition - checking victory "
+                  + "conditions");
             // The game does end now; therefore, test all victory events. If none are met, resolve any victory
             // points scored during the game; without those, the game is a draw
             for (TriggeredEvent event : game.scriptedEvents()) {
                 if (event instanceof VictoryTriggeredEvent victoryEvent) {
                     VictoryResult victoryResult = victoryEvent.checkVictory(game, context);
+                    LOGGER.debug("[VP] Victory condition [{}]: {}", victoryEvent,
+                          victoryResult.isVictory() ? "MET" : "not met");
                     if (victoryResult.isVictory()) {
                         return victoryResult;
                     }

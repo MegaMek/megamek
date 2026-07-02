@@ -382,6 +382,7 @@ public class Client extends AbstractClient {
      * @param victoryConditionsYaml The YAML text holding a list of victory definitions
      */
     public void sendVictoryConditions(String password, String victoryConditionsYaml) {
+        LOGGER.debug("[VP] Sending victory conditions to the server:\n{}", victoryConditionsYaml);
         send(new Packet(PacketCommand.SENDING_VICTORY_CONDITIONS, password, victoryConditionsYaml));
     }
 

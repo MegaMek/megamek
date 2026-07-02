@@ -27078,6 +27078,7 @@ public class TWGameManager extends AbstractGameManager {
         }
 
         String victoryConditionsYaml = packet.getStringValue(1);
+        LOGGER.debug("[VP] Received victory conditions from {}:\n{}", player, victoryConditionsYaml);
         List<TriggeredEvent> newConditions;
         try {
             newConditions = (victoryConditionsYaml == null) || victoryConditionsYaml.isBlank()

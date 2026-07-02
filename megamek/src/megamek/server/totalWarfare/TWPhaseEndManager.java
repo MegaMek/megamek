@@ -46,6 +46,8 @@ record TWPhaseEndManager(TWGameManager gameManager) {
         switch (gameManager.getGame().getPhase()) {
             case LOUNGE:
                 gameManager.getGame().addReports(gameManager.getMainPhaseReport());
+                // RULES initialize the rules as per the current game options
+                gameManager.getGame().initializeRulesManager();
                 gameManager.changePhase(GamePhase.EXCHANGE);
                 break;
             case EXCHANGE:

@@ -142,6 +142,13 @@ public enum PacketCommand {
     /** A packet having an options to share with other Clients (C -> S) or implement on the receiving Client (S -> C). */
     SENDING_GAME_SETTINGS,
 
+    /**
+     * A packet carrying lobby-authored victory conditions as YAML text in the scenario {@code victory:} schema
+     * (C -> S). The server parses it with the victory/trigger deserializers and installs the conditions as scripted
+     * events, replacing any previously lobby-set conditions.
+     */
+    SENDING_VICTORY_CONDITIONS,
+
     SENDING_MAP_DIMENSIONS,
     SENDING_MAP_SETTINGS,
     END_OF_GAME,

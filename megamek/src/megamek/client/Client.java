@@ -375,6 +375,17 @@ public class Client extends AbstractClient {
     }
 
     /**
+     * Sends lobby-authored victory conditions to the server as YAML text in the scenario {@code victory:} schema.
+     * The server replaces any previously lobby-set victory conditions with this set.
+     *
+     * @param password              The server password
+     * @param victoryConditionsYaml The YAML text holding a list of victory definitions
+     */
+    public void sendVictoryConditions(String password, String victoryConditionsYaml) {
+        send(new Packet(PacketCommand.SENDING_VICTORY_CONDITIONS, password, victoryConditionsYaml));
+    }
+
+    /**
      * Send the new map selection to the server
      */
     public void sendMapSettings(MapSettings settings) {

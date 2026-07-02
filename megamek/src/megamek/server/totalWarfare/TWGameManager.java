@@ -135,9 +135,11 @@ import megamek.common.weapons.handlers.artillery.ArtilleryWeaponIndirectHomingHa
 import megamek.common.weapons.handlers.capitalMissile.CapitalMissileBearingsOnlyHandler;
 import megamek.common.weapons.infantry.InfantryWeapon;
 import megamek.logging.MMLogger;
+import megamek.common.jacksonAdapters.VictoryDeserializer;
 import megamek.server.*;
 import megamek.server.commands.*;
 import megamek.server.props.OrbitalBombardment;
+import megamek.server.scriptedEvents.TriggeredEvent;
 import megamek.server.victory.VictoryResult;
 
 /**
@@ -216,6 +218,8 @@ public class TWGameManager extends AbstractGameManager {
 
     private final TWPhaseEndManager phaseEndManager = new TWPhaseEndManager(this);
     private final TWPhasePreparationManager phasePreparationManager = new TWPhasePreparationManager(this);
+    /** The victory conditions set from the lobby, so a re-send can replace them without touching scenario events. */
+    private final List<TriggeredEvent> lobbyVictoryConditions = new ArrayList<>();
     private final InfantryActionTracker infantryActionTracker = new InfantryActionTracker();
     private final BuildingCollapseHandler buildingCollapseHandler = new BuildingCollapseHandler(this);
     private final DeploymentProcessor deploymentProcessor = new DeploymentProcessor(this);
@@ -894,6 +898,9 @@ public class TWGameManager extends AbstractGameManager {
                         send(packetHelper.createGameSettingsPacket());
                         receiveGameOptionsAux(packet, connId);
                     }
+                    break;
+                case SENDING_VICTORY_CONDITIONS:
+                    receiveVictoryConditions(packet, connId);
                     break;
                 case SENDING_MAP_SETTINGS:
                     if (game.getPhase().isBefore(GamePhase.DEPLOYMENT)) {
@@ -27048,6 +27055,48 @@ public class TWGameManager extends AbstractGameManager {
         }
 
         checkReady();
+    }
+
+    /**
+     * Installs lobby-authored victory conditions, replacing any previously lobby-set ones. The packet carries the
+     * server password and the conditions as YAML text in the scenario {@code victory:} schema, parsed by
+     * {@link VictoryDeserializer#parseList(String)}. Scenario-provided victory events are not affected.
+     */
+    private void receiveVictoryConditions(Packet packet, int connId) throws InvalidPacketDataException {
+        Player player = game.getPlayer(connId);
+        if (null == player) {
+            LOGGER.error("Server does not recognize player at connection {}", connId);
+            return;
+        }
+        if (!Server.getServerInstance().passwordMatches(packet.getObject(0))) {
+            sendServerChat(connId, "The password you specified to change victory conditions is incorrect.");
+            return;
+        }
+        if (game.getPhase().isDuringOrAfter(GamePhase.DEPLOYMENT)) {
+            LOGGER.debug("[VP] Ignoring victory conditions from {} - the game has already started", player);
+            return;
+        }
+
+        String victoryConditionsYaml = packet.getStringValue(1);
+        List<TriggeredEvent> newConditions;
+        try {
+            newConditions = (victoryConditionsYaml == null) || victoryConditionsYaml.isBlank()
+                  ? new ArrayList<>()
+                  : VictoryDeserializer.parseList(victoryConditionsYaml);
+        } catch (Exception exception) {
+            LOGGER.error(exception, "[VP] Could not parse the victory conditions sent by {}", player);
+            sendServerChat(connId, "The victory conditions could not be parsed and were not applied.");
+            return;
+        }
+
+        lobbyVictoryConditions.forEach(game::removeScriptedEvent);
+        lobbyVictoryConditions.clear();
+        for (TriggeredEvent event : newConditions) {
+            game.addScriptedEvent(event);
+            lobbyVictoryConditions.add(event);
+        }
+        LOGGER.info("[VP] {} set {} lobby victory condition(s)", player, newConditions.size());
+        sendServerChat("Player " + player + " set " + newConditions.size() + " victory condition(s).");
     }
 
     /**

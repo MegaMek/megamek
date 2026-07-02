@@ -423,6 +423,16 @@ public abstract class AbstractGame implements IGame {
         scriptedEvents.add(event);
     }
 
+    /**
+     * Removes the given scripted event from this game, e.g. when lobby-authored victory conditions are replaced by a
+     * new set. Does nothing when the event is not present.
+     *
+     * @param event The event to remove
+     */
+    public final void removeScriptedEvent(TriggeredEvent event) {
+        scriptedEvents.remove(event);
+    }
+
     public final void clearScriptedEvents() {
         scriptedEvents.clear();
     }

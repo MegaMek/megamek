@@ -33,9 +33,13 @@
 
 package megamek.common.jacksonAdapters;
 
+import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
 
 import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.dataformat.yaml.YAMLFactory;
 import megamek.server.scriptedEvents.DrawTriggeredEvent;
 import megamek.server.scriptedEvents.TriggeredEvent;
 import megamek.server.scriptedEvents.VictoryTriggeredEvent;
@@ -96,6 +100,39 @@ public final class VictoryDeserializer {
             return !modifiers.contains(ONLY_AT_END);
         }
         return true;
+    }
+
+    /**
+     * Parses a YAML list of victory/draw definitions in the scenario {@code victory:} schema, as sent by the lobby
+     * victory condition builder. Example:
+     * <PRE>
+     * - player: Player A
+     *   trigger:
+     *     type: victorypoints
+     *     points: 5
+     * - trigger:
+     *     type: roundend
+     *     round: 12
+     * </PRE>
+     *
+     * @param victoryConditionsYaml The YAML text holding a list of victory definitions
+     *
+     * @return The parsed events, in order
+     *
+     * @throws IOException              When the text is not valid YAML
+     * @throws IllegalArgumentException When a definition is not a valid victory condition
+     */
+    public static List<TriggeredEvent> parseList(String victoryConditionsYaml) throws IOException {
+        ObjectMapper yamlMapper = new ObjectMapper(new YAMLFactory());
+        JsonNode listNode = yamlMapper.readTree(victoryConditionsYaml);
+        if ((listNode == null) || !listNode.isArray()) {
+            throw new IllegalArgumentException("Victory conditions must be a YAML list of victory definitions");
+        }
+        List<TriggeredEvent> events = new ArrayList<>();
+        for (JsonNode victoryNode : listNode) {
+            events.add(parse(victoryNode));
+        }
+        return events;
     }
 
     private VictoryDeserializer() {}

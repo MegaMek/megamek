@@ -155,7 +155,6 @@ public class MoveStep implements Serializable {
     private boolean hasEverUnloaded;
     private boolean prevStepOnPavement; // prev
     private boolean hasJustStood;
-    private boolean standAttempted;
     private boolean thisStepBackwards;
     private boolean onlyPavementOrRoad; // additive
     private boolean isPavementStep;
@@ -949,7 +948,6 @@ public class MoveStep implements Serializable {
             return;
         }
         hasJustStood = prev.hasJustStood;
-        standAttempted = prev.standAttempted;
         facing = prev.getFacing();
         position = prev.getPosition();
 
@@ -1169,10 +1167,6 @@ public class MoveStep implements Serializable {
 
     public boolean isHasJustStood() {
         return hasJustStood;
-    }
-
-    public boolean isStandAttempted() {
-        return standAttempted;
     }
 
     public boolean isPavementStep() {
@@ -1502,10 +1496,6 @@ public class MoveStep implements Serializable {
 
     protected void setHasJustStood(boolean b) {
         hasJustStood = b;
-    }
-
-    protected void setStandAttempted(boolean b) {
-        standAttempted = b;
     }
 
     protected void setPavementStep(boolean b) {

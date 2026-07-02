@@ -2160,7 +2160,8 @@ public class MoveStep implements Serializable {
         }
 
         // check to see if it's trying to flee and can legally do so.
-        if ((type == MoveStepType.FLEE) && entity.canFlee(curPos)) {
+
+        if (type == MoveStepType.FLEE && entity.canFleeFrom(curPos)) {
             movementType = EntityMovementType.MOVE_LEGAL;
         }
 

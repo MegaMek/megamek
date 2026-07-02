@@ -1,6 +1,6 @@
 /*
  * Copyright (C) 2000-2004 Ben Mazur (bmazur@sev.org)
- * Copyright (C) 2014-2025 The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2014-2026 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -329,6 +329,7 @@ public class OptionsConstants {
     public static final String VICTORY_USE_KILL_COUNT = "use_kill_count";
     public static final String VICTORY_GAME_KILL_COUNT = "game_kill_count";
     public static final String VICTORY_COMMANDER_KILLED = "commander_killed";
+    public static final String VICTORY_USE_OBJECTIVES = "use_objectives";
 
     public static final String ALLOWED_CANON_ONLY = "canon_only";
     public static final String ALLOWED_YEAR = "year";

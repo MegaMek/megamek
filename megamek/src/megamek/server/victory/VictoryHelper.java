@@ -1,6 +1,6 @@
 /*
  * Copyright (c) 2007-2008 Ben Mazur (bmazur@sev.org)
- * Copyright (C) 2024-2025 The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2024-2026 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -41,6 +41,7 @@ import java.util.Map;
 
 import megamek.common.game.Game;
 import megamek.common.options.OptionsConstants;
+import megamek.logging.MMLogger;
 import megamek.server.scriptedEvents.TriggeredEvent;
 import megamek.server.scriptedEvents.VictoryTriggeredEvent;
 import megamek.server.trigger.TriggerSituation;
@@ -52,10 +53,13 @@ import megamek.server.trigger.TriggerSituation;
  */
 public class VictoryHelper implements Serializable {
 
+    private static final MMLogger LOGGER = MMLogger.create(VictoryHelper.class);
+
     private final boolean checkForVictory;
     private int neededVictoryConditionCount;
     private final VictoryCondition playerAgreedVC = new PlayerAgreedVictory();
     private final VictoryCondition battlefieldControlVC = new BattlefieldControlVictory();
+    private final VictoryPointVictory victoryPointVictory = new VictoryPointVictory();
     private final List<VictoryCondition> victoryConditions = new ArrayList<>();
 
     /**
@@ -70,15 +74,16 @@ public class VictoryHelper implements Serializable {
         if (checkForVictory) {
             buildVCList(game);
         }
+        warnIfVictoryPointsCannotResolve(game);
     }
 
     /**
      * Checks the various victory conditions if any lead to a game-ending result. Player-agreed /victory is always
      * checked, other victory conditions only if victory checking is at all enabled. Scripted victory and game-ending
-     * events are also always tested.
+     * events are also always tested, as are victory points when the game ends and any have been scored.
      *
      * @param game    The Game
-     * @param context The victory context - to my knowledge, this is currently not used at all
+     * @param context The victory context; holds the {@link VictoryPointTracker} when victory points are in use
      *
      * @return A combined victory result giving the current victory status
      *
@@ -93,7 +98,8 @@ public class VictoryHelper implements Serializable {
         }
 
         if (gameEndsByScriptedEvent(game)) {
-            // The game does end now; therefore, test all victory events. If none are met, the game is a draw
+            // The game does end now; therefore, test all victory events. If none are met, resolve any victory
+            // points scored during the game; without those, the game is a draw
             for (TriggeredEvent event : game.scriptedEvents()) {
                 if (event instanceof VictoryTriggeredEvent victoryEvent) {
                     VictoryResult victoryResult = victoryEvent.checkVictory(game, context);
@@ -102,7 +108,18 @@ public class VictoryHelper implements Serializable {
                     }
                 }
             }
+            VictoryResult scriptedEndVictoryPointResult = victoryPointVictory.checkAtGameEnd(game, context);
+            if (scriptedEndVictoryPointResult.isVictory()) {
+                return scriptedEndVictoryPointResult;
+            }
             return VictoryResult.drawResult();
+        }
+
+        // Victory points resolve when the game duration (turn limit) expires. This must be checked before the
+        // optional victory conditions because those end an expired game in a draw.
+        VictoryResult victoryPointResult = victoryPointVictory.checkVictory(game, context);
+        if (victoryPointResult.isVictory()) {
+            return victoryPointResult;
         }
 
         if (checkForVictory) {
@@ -120,6 +137,25 @@ public class VictoryHelper implements Serializable {
         }
 
         return VictoryResult.noResult();
+    }
+
+    /**
+     * Logs a warning when objective victory point scoring is enabled but the game has no way to end by duration -
+     * without a game turn limit or a game-ending scripted event, victory points would never be resolved.
+     *
+     * @param game The game to check, using its final (post-lobby) options and scripted events
+     */
+    private void warnIfVictoryPointsCannotResolve(Game game) {
+        if (!game.getOptions().booleanOption(OptionsConstants.VICTORY_USE_OBJECTIVES)) {
+            return;
+        }
+        boolean hasTurnLimit = game.getOptions().booleanOption(OptionsConstants.VICTORY_USE_GAME_TURN_LIMIT);
+        boolean hasGameEndEvent = game.scriptedEvents().stream().anyMatch(TriggeredEvent::isGameEnding);
+        if (!hasTurnLimit && !hasGameEndEvent) {
+            LOGGER.warn("[VP] Objective victory points are enabled, but neither the game turn limit victory option "
+                  + "nor a game-ending scripted event is set - victory points will never be resolved. Enable "
+                  + "\"Force game end at turn limit\" or add a game end event to the scenario.");
+        }
     }
 
     /**

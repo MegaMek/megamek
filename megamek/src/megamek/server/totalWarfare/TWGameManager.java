@@ -15731,6 +15731,15 @@ public class TWGameManager extends AbstractGameManager {
     }
 
     /**
+     * End-phase resolution for objective markers (Standard Missions, Objectives): objective control and victory point
+     * scoring. Delegates to {@link ObjectiveResolutionHandler} so the objectives rules do not add to this already
+     * very large class.
+     */
+    void resolveObjectives() {
+        new ObjectiveResolutionHandler(this).resolveObjectives();
+    }
+
+    /**
      * End-phase resolution for vehicles clearing rubble with a bulldozer, TacOps. Delegates to
      * {@link RubbleClearingHandler} so the bulldozer rules do not add to this already very large class.
      */

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2024-2025 The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2024-2026 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -74,6 +74,8 @@ import megamek.common.jacksonAdapters.GeneralEventDeserializer;
 import megamek.common.jacksonAdapters.HexAreaDeserializer;
 import megamek.common.jacksonAdapters.MMUReader;
 import megamek.common.jacksonAdapters.MessageDeserializer;
+import megamek.common.jacksonAdapters.ObjectiveDeserializer;
+import megamek.common.jacksonAdapters.ObjectiveDeserializer.ObjectiveInfo;
 import megamek.common.jacksonAdapters.TriggerDeserializer;
 import megamek.common.jacksonAdapters.VictoryDeserializer;
 import megamek.common.jacksonAdapters.dtos.GroundObjectInfo;
@@ -102,6 +104,7 @@ public class ScenarioV2 implements Scenario {
     private static final String UNITS = "units";
     private static final String OPTIONS = "options";
     private static final String OBJECTS = "objects";
+    private static final String OBJECTIVES = "objectives";
     private static final String MESSAGES = "messages";
     private static final String END = "end";
     private static final String TRIGGER = "trigger";
@@ -444,6 +447,15 @@ public class ScenarioV2 implements Scenario {
                         ((AbstractGame) game).placeGroundObject(groundObjectInfo.position(),
                               groundObjectInfo.groundObject());
                     }
+                }
+            }
+
+            // Objective markers; the player they are listed under owns them (friendly side)
+            if (playerNode.has(OBJECTIVES) && (game instanceof AbstractGame abstractGame)) {
+                for (JsonNode objectiveNode : playerNode.get(OBJECTIVES)) {
+                    ObjectiveInfo objectiveInfo = ObjectiveDeserializer.parse(objectiveNode);
+                    objectiveInfo.marker().setOwnerId(player.getId());
+                    abstractGame.placeGroundObject(objectiveInfo.position(), objectiveInfo.marker());
                 }
             }
 

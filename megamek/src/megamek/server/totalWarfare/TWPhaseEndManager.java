@@ -293,6 +293,10 @@ record TWPhaseEndManager(TWGameManager gameManager) {
                 // Sync remaining ECM fields to clients
                 gameManager.sendSyncTemporaryECMFields();
 
+                // Resolve objective control and score victory points before the victory check so the
+                // check sees this round's tally
+                gameManager.resolveObjectives();
+
                 boolean victory = gameManager.victory(); // note this may add reports
                 // check phase report
                 // HACK: hardcoded message ID check

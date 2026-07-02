@@ -3130,6 +3130,13 @@ public class FireControl {
                         return preferredAmmo;
                     }
                 }
+                // TODO: switch to a Magnetic Pulse / Improved Magnetic Pulse round (Munitions.
+                //  M_MAGNETIC_PULSE / M_IATM_IMP) against high-value or hard-to-hit targets to debuff
+                //  them (+1 to-hit, heat, and for IMP movement + hostile ECM). Add a getMagneticPulseAmmo
+                //  helper mirroring getHeatAmmo, and gate it on the target being worth debuffing (e.g.
+                //  accurate, high-firepower, a C3 spotter, or a fast flanker). This pairs with the
+                //  scoring TODO in WeaponFireInfo.computeExpectedDamage - both are needed for Princess
+                //  to actually field and fire these munitions.
                 // Everything else.
                 msg.append("\n\tTarget is a hard target... ");
                 preferredAmmo = getHardTargetAmmo(validAmmo, weaponType, range);

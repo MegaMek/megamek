@@ -290,6 +290,14 @@ public class GeneralInfoMapSet implements DisplayMapSet {
             statusBuilder.append(", ").append(Messages.getString("GeneralInfoMapSet.empInterference",
                   en.getEMPInterferenceRounds()));
         }
+        if (en.getMagneticPulseRounds() > 0) {
+            statusBuilder.append(", ").append(Messages.getString("GeneralInfoMapSet.magneticPulse",
+                  en.getMagneticPulseRounds()));
+        }
+        if (en.getImpToHitModifier() > 0) {
+            statusBuilder.append(", ").append(Messages.getString("GeneralInfoMapSet.improvedMagneticPulse",
+                  en.getImpToHitModifier()));
+        }
         statusR.setString(statusBuilder.toString());
         if (en.getOwner() != null) {
             playerR.setString(en.getOwner().getName());

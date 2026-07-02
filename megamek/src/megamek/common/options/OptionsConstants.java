@@ -52,8 +52,10 @@ public class OptionsConstants {
     public static final String QUIRK_POS_COMMAND_MEK = "command_mech";
     public static final String QUIRK_POS_COMPACT = "compact_mech";
     public static final String QUIRK_POS_COWL = "cowl";
-    // TODO - Code directional torso mount for play
+    // Directional Torso Mount chassis quirks (BMM p.83). The value is the set of torso locations that
+    // form mounts (e.g. "H LT RT"); the 360 variant is the quad-only full-turret version.
     public static final String QUIRK_POS_DIRECTIONAL_TORSO_MOUNT = "directional_torso_mount";
+    public static final String QUIRK_POS_DIRECTIONAL_TORSO_MOUNT_360 = "directional_torso_mount_360";
     public static final String QUIRK_POS_DISTRACTING = "distracting";
     public static final String QUIRK_POS_DOCKING_ARMS = "docking_arms";
     public static final String QUIRK_POS_EASY_MAINTAIN = "easy_maintain";
@@ -102,6 +104,7 @@ public class OptionsConstants {
     public static final String QUIRK_WEAPON_POS_JETTISON_CAPABLE = "jettison_capable";
     public static final String QUIRK_WEAPON_POS_STABLE_WEAPON = "stable_weapon";
     public static final String QUIRK_WEAPON_POS_DIRECT_TORSO_MOUNT = "direct_torso_mount";
+    public static final String QUIRK_WEAPON_POS_DIRECT_TORSO_MOUNT_QUAD = "direct_torso_mount_quad";
     //These have been made specific to weapons.
     public static final String QUIRK_WEAPON_POS_MOD_WEAPONS = "mod_weapons";
     public static final String QUIRK_WEAPON_POS_FAST_RELOAD = "fast_reload";

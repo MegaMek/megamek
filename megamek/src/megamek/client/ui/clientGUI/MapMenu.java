@@ -40,8 +40,10 @@ import java.awt.event.MouseEvent;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Objects;
+import java.util.Set;
 import java.util.StringTokenizer;
 import java.util.Vector;
 import javax.swing.JComponent;
@@ -185,6 +187,15 @@ public class MapMenu extends JPopupMenu {
 
                 } else if ((currentPanel instanceof PhysicalDisplay)) {
                     addIfNotEmptyWithSeparator(createPhysicalMenu(false));
+
+                } else if (currentPanel instanceof TargetingPhaseDisplay) {
+                    if (getComponentCount() > 0) {
+                        addSeparator();
+                    }
+                    // Turrets and Directional Torso Mounts can also be aimed during the targeting (TAG) phase
+                    // (issue #6518); the facing change is sent immediately, so it applies in this phase too.
+                    addIfNotEmpty(createRotateTurretMenu());
+                    removeSeparatorIfLast();
                 }
             }
         }
@@ -1841,16 +1852,36 @@ public class MapMenu extends JPopupMenu {
     private JMenu createRotateTurretMenu() {
         JMenu menu = new JMenu();
         menu.setText("Turret Rotation");
-        if (myEntity instanceof Mek) {
+        if (myEntity instanceof Mek mek) {
             for (Mounted<?> mount : myEntity.getMisc()) {
                 if (mount.getType().hasFlag(MiscType.F_SHOULDER_TURRET) ||
                       mount.getType().hasFlag(MiscType.F_HEAD_TURRET) ||
                       mount.getType().hasFlag(MiscType.F_QUAD_TURRET)) {
-                    menu.add(createRotateTurretJMenuItem((Mek) myEntity, mount));
+                    menu.add(createRotateTurretJMenuItem(mek, mount));
+                }
+            }
+            // Only the 3-point 360 quad turret uses the rotate dialog; the 2-point front/rear mount is flipped
+            // with the Flip Mount button instead, so it is not offered here. A mount is a whole location, so offer
+            // one entry per location - every directional weapon there shares the mount's facing and rotates together.
+            Set<Integer> directionalLocations = new HashSet<>();
+            for (WeaponMounted weapon : mek.getWeaponList()) {
+                if (weapon.hasDirectional360TorsoMount() && directionalLocations.add(weapon.getLocation())) {
+                    menu.add(createRotateDirectionalMountJMenuItem(mek, weapon));
                 }
             }
         }
         return menu;
+    }
+
+    private JMenuItem createRotateDirectionalMountJMenuItem(final Mek mek, final WeaponMounted weapon) {
+        String label = "Rotate Directional Mount (" + mek.getLocationAbbr(weapon.getLocation()) + ")";
+        JMenuItem item = new JMenuItem(label);
+        item.setEnabled(!weapon.isDirectionalMountLocked());
+        item.addActionListener(evt -> {
+            TurretFacingDialog dialog = new TurretFacingDialog(gui.frame, mek, weapon, gui, true);
+            dialog.setVisible(true);
+        });
+        return item;
     }
 
     private void selectTarget() {

@@ -49,6 +49,7 @@ import megamek.common.units.Aero;
 import megamek.common.units.Entity;
 import megamek.common.units.Jumpship;
 import megamek.common.units.ProtoMek;
+import megamek.common.units.QuadMek;
 import megamek.common.units.Tank;
 import megamek.common.weapons.AmmoWeapon;
 import megamek.common.weapons.lasers.EnergyWeapon;
@@ -84,6 +85,7 @@ public class WeaponQuirks extends AbstractOptions {
         addOption(wpnQuirk, OptionsConstants.QUIRK_WEAPON_NEG_EM_INTERFERENCE, false);
         addOption(wpnQuirk, OptionsConstants.QUIRK_WEAPON_POS_FAST_RELOAD, false);
         addOption(wpnQuirk, OptionsConstants.QUIRK_WEAPON_POS_DIRECT_TORSO_MOUNT, false);
+        addOption(wpnQuirk, OptionsConstants.QUIRK_WEAPON_POS_DIRECT_TORSO_MOUNT_QUAD, false);
         addOption(wpnQuirk, OptionsConstants.QUIRK_WEAPON_POS_MOD_WEAPONS, false);
         addOption(wpnQuirk, OptionsConstants.QUIRK_WEAPON_POS_JETTISON_CAPABLE, false);
         addOption(wpnQuirk, OptionsConstants.QUIRK_WEAPON_NEG_NON_FUNCTIONAL, false);
@@ -190,10 +192,25 @@ public class WeaponQuirks extends AbstractOptions {
             }
         }
 
-        if (qName.equals(OptionsConstants.QUIRK_WEAPON_POS_DIRECT_TORSO_MOUNT)) {
-            if ((en instanceof Aero) || (en instanceof BattleArmor) || (en instanceof Tank)) {
+        boolean isDirectionalTorsoMountQuirk =
+              qName.equals(OptionsConstants.QUIRK_WEAPON_POS_DIRECT_TORSO_MOUNT)
+                    || qName.equals(OptionsConstants.QUIRK_WEAPON_POS_DIRECT_TORSO_MOUNT_QUAD);
+        if (isDirectionalTorsoMountQuirk) {
+            // A Directional Torso Mount is a Mek-only feature (BMM p.83).
+            if ((en instanceof Aero) || (en instanceof BattleArmor) || (en instanceof Tank)
+                  || (en instanceof ProtoMek)) {
                 return true;
             }
+            // No weapon with location placement restrictions (such as a Heavy Gauss rifle) may be
+            // placed in a Directional Torso Mount.
+            if (hasLocationPlacementRestriction(weaponType)) {
+                return true;
+            }
+        }
+        // The 3-point full-360 turret version is available only to quad Meks (BMM p.83).
+        if (qName.equals(OptionsConstants.QUIRK_WEAPON_POS_DIRECT_TORSO_MOUNT_QUAD)
+              && !(en instanceof QuadMek)) {
+            return true;
         }
 
         if (qName.equals(OptionsConstants.QUIRK_WEAPON_POS_STABLE_WEAPON)) {
@@ -213,6 +230,20 @@ public class WeaponQuirks extends AbstractOptions {
         }
 
         return false;
+    }
+
+    /**
+     * Determines whether a weapon has location placement restrictions that forbid it from being placed in a Directional
+     * Torso Mount (BMM p.83). A weapon that can be split across two locations (its critical slots span more than one
+     * location, e.g. the Heavy Gauss and Improved Heavy Gauss rifles) cannot occupy a single-location Directional Torso
+     * Mount.
+     *
+     * @param weaponType the weapon being checked
+     *
+     * @return {@code true} if the weapon may not be placed in a Directional Torso Mount
+     */
+    public static boolean hasLocationPlacementRestriction(WeaponType weaponType) {
+        return weaponType.isSplittableOverCriticalSlots();
     }
 
     private static class WeaponQuirksInfo extends AbstractOptionsInfo {

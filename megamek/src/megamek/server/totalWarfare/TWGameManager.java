@@ -649,14 +649,18 @@ public class TWGameManager extends AbstractGameManager {
     }
 
     /**
-     * @return true if the unit is currently under any iATM Improved Magnetic Pulse effect - the to-hit / movement / ECM
-     *       effect on Meks, vehicles, fighters and ProtoMeks, or disabled troopers on battle armor.
+     * @return {@code true} if the unit is currently under any iATM Improved Magnetic Pulse effect - the
+     *       to-hit / movement / ECM effect on Meks, vehicles, fighters and ProtoMeks, disabled troopers
+     *       on battle armor, or disabled energy weapons on conventional infantry.
      */
     private static boolean isAffectedByImprovedMagneticPulse(Entity entity) {
         if (entity.getImpToHitModifier() > 0) {
             return true;
         }
-        return (entity instanceof BattleArmor battleArmor) && (battleArmor.getImpDisabledTroopers() > 0);
+        if ((entity instanceof BattleArmor battleArmor) && (battleArmor.getImpDisabledTroopers() > 0)) {
+            return true;
+        }
+        return (entity instanceof ConvInfantry convInfantry) && convInfantry.isEnergyWeaponsDisabled();
     }
 
     /**

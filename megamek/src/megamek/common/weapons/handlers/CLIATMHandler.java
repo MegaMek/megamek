@@ -904,14 +904,19 @@ public class CLIATMHandler extends ATMHandler {
                     gameManager.sendMagneticPulseToast(battleArmor, true, true);
                 }
             } else if (entityTarget instanceof ConvInfantry convInfantry) {
-                // Energy weapons are rendered inoperative; the damage doubling for cybernetic
-                // platoons is applied in calcDamagePerHit.
-                convInfantry.applyImpEnergyWeaponDisable();
-                if (convInfantry.isUsingEnergyWeapons()) {
+                // Energy weapons are rendered inoperative (only meaningful for energy-armed platoons);
+                // the damage doubling for cybernetic platoons is applied in calcDamagePerHit. Skip when
+                // no warheads actually reached the target (e.g. fully absorbed by a building).
+                if ((impWarheads > 0) && convInfantry.isUsingEnergyWeapons()) {
+                    boolean wasDisabled = convInfantry.isEnergyWeaponsDisabled();
+                    convInfantry.applyImpEnergyWeaponDisable();
                     Report disableReport = new Report(3347);
                     disableReport.subject = subjectId;
                     disableReport.indent(2);
                     vPhaseReport.addElement(disableReport);
+                    if (!wasDisabled) {
+                        gameManager.sendMagneticPulseToast(convInfantry, true, true);
+                    }
                 }
             } else if ((entityTarget != null) && !entityTarget.isLargeCraft()
                   && ((entityTarget instanceof Mek)

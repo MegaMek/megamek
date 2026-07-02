@@ -917,8 +917,8 @@ public class BattleArmor extends Infantry {
     /**
      * Records Improved Magnetic Pulse (iATM IMP) missile hits on this battle armor unit (IO IMP rules). Each warhead
      * that hits disables one trooper through the End Phase of the following turn, capped at the number of troopers
-     * still alive. Additional hits have no effect beyond the missiles' normal damage, so the disabled count is set (not
-     * accumulated) and its duration is refreshed.
+     * still alive. Additional hits have no effect beyond the missiles' normal damage, so a later hit never lowers the
+     * disabled count (it takes the higher of the existing and new count).
      *
      * @param missiles number of IMP warheads that hit this unit
      *
@@ -928,7 +928,8 @@ public class BattleArmor extends Infantry {
         if (missiles <= 0) {
             return 0;
         }
-        impDisabledTroopers = Math.min(missiles, troopersShooting);
+        // Take the higher count so a smaller follow-up salvo cannot let disabled troopers recover early.
+        impDisabledTroopers = Math.max(impDisabledTroopers, Math.min(missiles, troopersShooting));
         // 2 rounds so the effect lasts through the End Phase of the turn after the attack.
         impDisabledRounds = 2;
         return impDisabledTroopers;

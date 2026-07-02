@@ -34,13 +34,19 @@
 package megamek.server.victory;
 
 import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 
 import megamek.common.Player;
 import megamek.common.Report;
 import megamek.common.annotations.Nullable;
+import megamek.common.compute.Compute;
+import megamek.common.equipment.ICarryable;
+import megamek.common.equipment.ObjectiveMarker;
 import megamek.common.game.Game;
 import megamek.common.options.OptionsConstants;
+import megamek.common.units.Entity;
 import megamek.logging.MMLogger;
 
 /**
@@ -65,6 +71,8 @@ public class VictoryPointVictory implements VictoryCondition, Serializable {
 
     private static final int REPORT_VICTORY_POINT_TOTAL = 7115;
     private static final int REPORT_VICTORY_POINTS_TIED = 7116;
+    private static final int REPORT_RAID_OBJECTIVE_SCORED = 7131;
+    private static final int REPORT_FALSE_OBJECTIVE = 7132;
 
     @Override
     public VictoryResult checkVictory(Game game, Map<String, Object> context) {
@@ -87,23 +95,124 @@ public class VictoryPointVictory implements VictoryCondition, Serializable {
      *       {@link VictoryResult#noResult()} when VP play no role in this game
      */
     public VictoryResult checkAtGameEnd(Game game, @Nullable Map<String, Object> context) {
-        VictoryPointTracker tracker = VictoryPointTracker.findTracker(context);
         boolean victoryPointScoringEnabled = game.getOptions()
               .booleanOption(OptionsConstants.VICTORY_USE_OBJECTIVES);
+        boolean objectiveRaid = game.getOptions().booleanOption(OptionsConstants.VICTORY_OBJECTIVE_RAID);
+
+        VictoryPointTracker tracker = VictoryPointTracker.findTracker(context);
+        List<Report> endScoringReports = new ArrayList<>();
+        if (objectiveRaid) {
+            tracker = VictoryPointTracker.getTracker(game);
+            endScoringReports = awardObjectiveRaidPoints(game, tracker);
+        }
 
         if ((tracker == null) || !tracker.hasAnyScore()) {
-            if (victoryPointScoringEnabled) {
+            if (victoryPointScoringEnabled || objectiveRaid) {
                 LOGGER.info("[VP] Game ends with no victory points scored by any side; the game is a draw");
-                return VictoryResult.drawResult();
+                VictoryResult drawResult = VictoryResult.drawResult();
+                endScoringReports.forEach(drawResult::addReport);
+                return drawResult;
             }
             LOGGER.debug("[VP] No victory points were scored and VP scoring is not enabled; not applicable");
             return VictoryResult.noResult();
         }
-        return buildResult(game, tracker);
+        return buildResult(game, tracker, endScoringReports);
     }
 
-    private VictoryResult buildResult(Game game, VictoryPointTracker tracker) {
+    /**
+     * Objective Raid mission end-scoring: once, when the game ends, every controlled objective awards its victory
+     * point value to its controlling side (per the last End Phase control resolution). Unconfirmed Potential
+     * Objective candidates and destroyed objectives score nothing. With more than two objectives in play, a
+     * controlled False Objective counts nothing on a 1D6 roll of 1 (RAW: the variant is not used with two or fewer
+     * objectives).
+     *
+     * @return The reports of the end-scoring, to be shown with the victory result
+     */
+    private List<Report> awardObjectiveRaidPoints(Game game, VictoryPointTracker tracker) {
+        List<Report> endScoringReports = new ArrayList<>();
+        if (tracker.isEndScoringDone()) {
+            return endScoringReports;
+        }
+        tracker.setEndScoringDone(true);
+
+        List<ObjectiveMarker> scorableMarkers = findScorableMarkers(game);
+        boolean falseRollsApply = scorableMarkers.size() > 2;
+        LOGGER.info("[VP] Objective Raid end-scoring: {} scorable objective(s), False Objective rolls {}",
+              scorableMarkers.size(), falseRollsApply ? "apply" : "do not apply (two or fewer objectives)");
+
+        for (ObjectiveMarker marker : scorableMarkers) {
+            boolean isControlled = (marker.getControllingTeam() != ObjectiveMarker.NO_CONTROLLER)
+                  || (marker.getControllingPlayerId() != ObjectiveMarker.NO_CONTROLLER);
+            if (!isControlled) {
+                LOGGER.debug("[VP] Objective Raid: {} is uncontrolled at mission end - no points",
+                      marker.generalName());
+                continue;
+            }
+            if (falseRollsApply && marker.isFalseObjective()) {
+                int falseRoll = rollFalseObjectiveCheck();
+                LOGGER.info("[VP] Objective Raid: {} is a False Objective - rolled {} ({})",
+                      marker.generalName(), falseRoll, (falseRoll == 1) ? "counts nothing" : "counts normally");
+                if (falseRoll == 1) {
+                    Report report = new Report(REPORT_FALSE_OBJECTIVE, Report.PUBLIC);
+                    report.add(marker.generalName());
+                    endScoringReports.add(report);
+                    continue;
+                }
+            }
+            int points = marker.getVictoryPointValue();
+            String sideName;
+            if (marker.getControllingTeam() != ObjectiveMarker.NO_CONTROLLER) {
+                tracker.awardToTeam(marker.getControllingTeam(), points, game.getCurrentRound(),
+                      "Objective Raid: controls " + marker.generalName());
+                sideName = "Team " + marker.getControllingTeam();
+            } else {
+                tracker.awardToPlayer(marker.getControllingPlayerId(), points, game.getCurrentRound(),
+                      "Objective Raid: controls " + marker.generalName());
+                sideName = playerDisplayName(game, marker.getControllingPlayerId());
+            }
+            Report report = new Report(REPORT_RAID_OBJECTIVE_SCORED, Report.PUBLIC);
+            report.add(sideName);
+            report.add(marker.generalName());
+            report.add(points);
+            endScoringReports.add(report);
+        }
+        return endScoringReports;
+    }
+
+    /**
+     * @return All objective markers that can score in the Objective Raid end-scoring: on the ground or carried, not
+     *       destroyed, and not unconfirmed Potential Objective candidates
+     */
+    private List<ObjectiveMarker> findScorableMarkers(Game game) {
+        List<ObjectiveMarker> scorableMarkers = new ArrayList<>();
+        for (List<ICarryable> groundObjects : game.getGroundObjects().values()) {
+            for (ICarryable groundObject : groundObjects) {
+                addIfScorable(scorableMarkers, groundObject);
+            }
+        }
+        for (Entity entity : game.getEntitiesVector()) {
+            for (ICarryable carriedObject : entity.getDistinctCarriedObjects()) {
+                addIfScorable(scorableMarkers, carriedObject);
+            }
+        }
+        return scorableMarkers;
+    }
+
+    private void addIfScorable(List<ObjectiveMarker> scorableMarkers, ICarryable carryable) {
+        if ((carryable instanceof ObjectiveMarker marker) && !marker.isDestroyed()
+              && !(marker.isPotential() && !marker.isConfirmed())) {
+            scorableMarkers.add(marker);
+        }
+    }
+
+    /** Seam for tests: the 1D6 False Objective end roll (a 1 means the objective counts nothing). */
+    int rollFalseObjectiveCheck() {
+        return Compute.d6();
+    }
+
+    private VictoryResult buildResult(Game game, VictoryPointTracker tracker, List<Report> endScoringReports) {
         VictoryResult result = new VictoryResult(true);
+        endScoringReports.forEach(result::addReport);
         for (int playerId : tracker.getScoringPlayers()) {
             int points = tracker.getPlayerVictoryPoints(playerId);
             result.setPlayerScore(playerId, points);

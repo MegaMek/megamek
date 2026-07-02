@@ -70,8 +70,13 @@ public class TriggerDeserializer extends StdDeserializer<Trigger> {
     private static final String TYPE_OBJECTIVE_CONFIRMED = "objectiveconfirmed";
     private static final String TYPE_OBJECTIVE_CAPTURED = "objectivecaptured";
     private static final String TYPE_VICTORY_POINTS = "victorypoints";
+    private static final String TYPE_BV_DESTROYED = "bvdestroyed";
+    private static final String TYPE_BV_RATIO = "bvratio";
+    private static final String TYPE_KILL_COUNT = "killcount";
+    private static final String TYPE_COMMANDER_KILLED = "commanderkilled";
     private static final String OBJECTIVE = "objective";
     private static final String POINTS = "points";
+    private static final String PERCENT = "percent";
     private static final String PLAYER = "player";
     private static final String COUNT = "count";
     private static final String AT_MOST = "atmost";
@@ -122,6 +127,10 @@ public class TriggerDeserializer extends StdDeserializer<Trigger> {
             case TYPE_OBJECTIVE_CONFIRMED -> parseObjectiveConfirmedTrigger(node);
             case TYPE_OBJECTIVE_CAPTURED -> parseObjectiveCapturedTrigger(node);
             case TYPE_VICTORY_POINTS -> parseVictoryPointsTrigger(node);
+            case TYPE_BV_DESTROYED -> parseBVDestroyedTrigger(node);
+            case TYPE_BV_RATIO -> parseBVRatioTrigger(node);
+            case TYPE_KILL_COUNT -> parseKillCountTrigger(node);
+            case TYPE_COMMANDER_KILLED -> new CommanderKilledTrigger(optionalPlayerName(node));
             case TYPE_UNIT_POSITION -> parseUnitPositionTrigger(node);
             case TYPE_UNITS_POSITION -> parseUnitsPositionTrigger(node);
             case NOT -> parseNotTrigger(node);
@@ -171,6 +180,21 @@ public class TriggerDeserializer extends StdDeserializer<Trigger> {
     private static Trigger parseVictoryPointsTrigger(JsonNode triggerNode) {
         requireFields("VictoryPointsTrigger", triggerNode, POINTS);
         return new VictoryPointsTrigger(optionalPlayerName(triggerNode), triggerNode.get(POINTS).asInt());
+    }
+
+    private static Trigger parseBVDestroyedTrigger(JsonNode triggerNode) {
+        requireFields("BVDestroyedTrigger", triggerNode, PERCENT);
+        return new BVDestroyedTrigger(optionalPlayerName(triggerNode), triggerNode.get(PERCENT).asInt());
+    }
+
+    private static Trigger parseBVRatioTrigger(JsonNode triggerNode) {
+        requireFields("BVRatioTrigger", triggerNode, PERCENT);
+        return new BVRatioTrigger(optionalPlayerName(triggerNode), triggerNode.get(PERCENT).asInt());
+    }
+
+    private static Trigger parseKillCountTrigger(JsonNode triggerNode) {
+        requireFields("KillCountTrigger", triggerNode, COUNT);
+        return new KillCountTrigger(optionalPlayerName(triggerNode), triggerNode.get(COUNT).asInt());
     }
 
     private static String optionalPlayerName(JsonNode triggerNode) {

@@ -169,6 +169,28 @@ class VictoryConditionsBuilderTest {
     }
 
     @Test
+    void testClassicVictoryOptionFormula() throws Exception {
+        // the motivating example: (destroy 50% enemy BV or 300% BV ratio) and objective held
+        List<Token> formula = List.of(
+              OperatorToken.LEFT_PAREN,
+              VictoryConditionsBuilder.enemyBvDestroyed("Alice", 50),
+              OperatorToken.OR,
+              VictoryConditionsBuilder.bvRatioReached("Alice", 300),
+              OperatorToken.RIGHT_PAREN,
+              OperatorToken.AND,
+              VictoryConditionsBuilder.objectiveControlled("Relay Station", "Alice"));
+        String yaml = VictoryConditionsBuilder.toYaml(
+              List.of(VictoryConditionsBuilder.compileCondition(formula, "Alice", false)));
+
+        List<TriggeredEvent> events = VictoryDeserializer.parseList(yaml);
+        VictoryTriggeredEvent victoryEvent = (VictoryTriggeredEvent) events.getFirst();
+        assertInstanceOf(AndTrigger.class, victoryEvent.trigger());
+        AndTrigger andTrigger = (AndTrigger) victoryEvent.trigger();
+        assertInstanceOf(OrTrigger.class, andTrigger.triggers().get(0));
+        assertInstanceOf(ObjectiveControlTrigger.class, andTrigger.triggers().get(1));
+    }
+
+    @Test
     void testAllLeafFactoriesParse() throws Exception {
         List<ObjectNode> victoryEntries = new ArrayList<>();
         List<ConditionToken> allLeaves = List.of(
@@ -180,7 +202,11 @@ class VictoryConditionsBuilderTest {
               VictoryConditionsBuilder.roundEndReached(10),
               VictoryConditionsBuilder.unitsKilled("Bob", 4),
               VictoryConditionsBuilder.unitsFled(null, 2),
-              VictoryConditionsBuilder.battlefieldControl());
+              VictoryConditionsBuilder.battlefieldControl(),
+              VictoryConditionsBuilder.enemyBvDestroyed(null, 50),
+              VictoryConditionsBuilder.bvRatioReached("Alice", 300),
+              VictoryConditionsBuilder.killCountReached("Bob", 4),
+              VictoryConditionsBuilder.enemyCommandersKilled(null));
         for (ConditionToken leaf : allLeaves) {
             victoryEntries.add(VictoryConditionsBuilder.compileCondition(List.of(leaf), "Alice", false));
         }

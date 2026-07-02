@@ -33,7 +33,10 @@
 
 package megamek.server.trigger;
 
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
+import java.util.function.Predicate;
 
 import megamek.common.Player;
 import megamek.common.annotations.Nullable;
@@ -128,6 +131,36 @@ final class ObjectiveTriggerHelper {
             }
         }
         return null;
+    }
+
+    /**
+     * Evaluates a per-side condition: for the named player's side when a player name is given, otherwise for every
+     * non-observer side in the game (each team considered once) until one satisfies it.
+     *
+     * @param game          The game
+     * @param playerName    The player whose side to test, or blank for any side
+     * @param sideCondition The condition, tested with a representative player of each side
+     *
+     * @return {@code true} when the tested side (or any side) satisfies the condition
+     */
+    static boolean anySideMatches(IGame game, String playerName, Predicate<Player> sideCondition) {
+        if (!playerName.isBlank()) {
+            Player player = findPlayerByName(game, playerName);
+            return (player != null) && sideCondition.test(player);
+        }
+        Set<Integer> testedTeams = new HashSet<>();
+        for (Player player : game.getPlayersList()) {
+            if (player.isObserver()) {
+                continue;
+            }
+            if ((player.getTeam() != Player.TEAM_NONE) && !testedTeams.add(player.getTeam())) {
+                continue;
+            }
+            if (sideCondition.test(player)) {
+                return true;
+            }
+        }
+        return false;
     }
 
     private ObjectiveTriggerHelper() {}

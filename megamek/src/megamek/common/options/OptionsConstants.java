@@ -331,6 +331,7 @@ public class OptionsConstants {
     public static final String VICTORY_COMMANDER_KILLED = "commander_killed";
     public static final String VICTORY_USE_OBJECTIVES = "use_objectives";
     public static final String VICTORY_USE_SENSOR_CHECK = "use_sensor_check";
+    public static final String VICTORY_OBJECTIVE_RAID = "use_objective_raid";
 
     public static final String ALLOWED_CANON_ONLY = "canon_only";
     public static final String ALLOWED_YEAR = "year";

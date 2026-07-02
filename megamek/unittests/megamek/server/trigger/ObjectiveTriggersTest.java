@@ -187,6 +187,66 @@ class ObjectiveTriggersTest {
         assertFalse(trigger.isTriggered(game, TriggerSituation.ROUND_END));
     }
 
+    /** Player.getBV() is computed from game units, so BV-based trigger tests use mocked players. */
+    private Player mockSidePlayer(String name, int team, int currentBV, int initialBV) {
+        Player player = mock(Player.class);
+        when(player.getName()).thenReturn(name);
+        when(player.getTeam()).thenReturn(team);
+        when(player.getBV()).thenReturn(currentBV);
+        when(player.getInitialBV()).thenReturn(initialBV);
+        when(player.isNotObserver()).thenReturn(true);
+        return player;
+    }
+
+    private Game mockTwoSidedGame(Player alice, Player bob) {
+        when(alice.isEnemyOf(bob)).thenReturn(true);
+        when(bob.isEnemyOf(alice)).thenReturn(true);
+        Game mockedGame = mock(Game.class);
+        when(mockedGame.getPlayersList()).thenReturn(List.of(alice, bob));
+        return mockedGame;
+    }
+
+    @Test
+    void testBVDestroyedTrigger() {
+        // Alice has lost 60% of her starting BV, so Bob has destroyed 60%; Alice has destroyed only 10%
+        Player alice = mockSidePlayer("Alice", 1, 400, 1000);
+        Player bob = mockSidePlayer("Bob", 2, 900, 1000);
+        Game bvGame = mockTwoSidedGame(alice, bob);
+
+        assertTrue(new BVDestroyedTrigger("Bob", 50).isTriggered(bvGame, TriggerSituation.ROUND_END));
+        assertFalse(new BVDestroyedTrigger("Alice", 50).isTriggered(bvGame, TriggerSituation.ROUND_END));
+        assertTrue(new BVDestroyedTrigger(null, 50).isTriggered(bvGame, TriggerSituation.ROUND_END));
+    }
+
+    @Test
+    void testBVRatioTrigger() {
+        // Alice has three times Bob's surviving BV
+        Player alice = mockSidePlayer("Alice", 1, 900, 1000);
+        Player bob = mockSidePlayer("Bob", 2, 300, 1000);
+        Game bvGame = mockTwoSidedGame(alice, bob);
+
+        assertTrue(new BVRatioTrigger("Alice", 300).isTriggered(bvGame, TriggerSituation.ROUND_END));
+        assertFalse(new BVRatioTrigger("Bob", 300).isTriggered(bvGame, TriggerSituation.ROUND_END));
+        assertTrue(new BVRatioTrigger(null, 300).isTriggered(bvGame, TriggerSituation.ROUND_END));
+        assertFalse(new BVRatioTrigger("Alice", 400).isTriggered(bvGame, TriggerSituation.ROUND_END));
+    }
+
+    @Test
+    void testCommanderKilledTrigger() {
+        Game gameWithCommanders = mock(Game.class);
+        Player alice = teamOnePlayer;
+        Player bob = new Player(1, "Bob");
+        bob.setTeam(2);
+        when(gameWithCommanders.getPlayersList()).thenReturn(List.of(alice, bob));
+        // Bob (Alice's enemy) has no live commanders left; Alice still has one
+        when(gameWithCommanders.getLiveCommandersOwnedBy(bob)).thenReturn(0);
+        when(gameWithCommanders.getLiveCommandersOwnedBy(alice)).thenReturn(1);
+
+        assertTrue(new CommanderKilledTrigger("Alice").isTriggered(gameWithCommanders, TriggerSituation.ROUND_END));
+        assertFalse(new CommanderKilledTrigger("Bob").isTriggered(gameWithCommanders, TriggerSituation.ROUND_END));
+        assertTrue(new CommanderKilledTrigger(null).isTriggered(gameWithCommanders, TriggerSituation.ROUND_END));
+    }
+
     @Test
     void testTriggerDeserializerParsesObjectiveTriggers() throws Exception {
         ObjectMapper yamlMapper = new ObjectMapper(new YAMLFactory());
@@ -219,5 +279,22 @@ class ObjectiveTriggersTest {
               """));
         assertInstanceOf(VictoryPointsTrigger.class, victoryPointsTrigger);
         assertEquals(5, ((VictoryPointsTrigger) victoryPointsTrigger).minimumPoints());
+
+        assertInstanceOf(BVDestroyedTrigger.class, TriggerDeserializer.parseNode(yamlMapper.readTree("""
+              type: bvdestroyed
+              percent: 50
+              """)));
+        assertInstanceOf(BVRatioTrigger.class, TriggerDeserializer.parseNode(yamlMapper.readTree("""
+              type: bvratio
+              percent: 300
+              player: Alice
+              """)));
+        assertInstanceOf(KillCountTrigger.class, TriggerDeserializer.parseNode(yamlMapper.readTree("""
+              type: killcount
+              count: 4
+              """)));
+        assertInstanceOf(CommanderKilledTrigger.class, TriggerDeserializer.parseNode(yamlMapper.readTree("""
+              type: commanderkilled
+              """)));
     }
 }

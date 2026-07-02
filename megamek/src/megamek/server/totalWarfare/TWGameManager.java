@@ -1975,6 +1975,7 @@ public class TWGameManager extends AbstractGameManager {
                 game.setupDeployment();
                 game.setVictoryContext(new HashMap<>());
                 game.createVictoryConditions();
+                placeLobbyObjectives();
                 // some entities may need to be checked and updated
                 checkEntityExchange();
                 datasetLogger.append(game.getBoard(), true);
@@ -15750,6 +15751,14 @@ public class TWGameManager extends AbstractGameManager {
      */
     void resolveObjectives() {
         new ObjectiveResolutionHandler(this).resolveObjectives();
+    }
+
+    /**
+     * Places the objective markers configured with a position in the lobby when the game starts. Delegates to
+     * {@link ObjectiveResolutionHandler} so the objectives rules do not add to this already very large class.
+     */
+    void placeLobbyObjectives() {
+        new ObjectiveResolutionHandler(this).placeLobbyObjectives();
     }
 
     /**

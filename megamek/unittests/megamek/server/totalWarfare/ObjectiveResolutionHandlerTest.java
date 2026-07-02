@@ -1414,6 +1414,78 @@ class ObjectiveResolutionHandlerTest {
     }
 
     @Test
+    void testObjectiveRaidSuppressesPerTurnControlPoints() {
+        gameOptions.getOption(OptionsConstants.VICTORY_OBJECTIVE_RAID).setValue(true);
+        Coords position = new Coords(2, 2);
+        PlacedObjective enemyObjective = objectiveAt(position, 1, teamTwoPlayer);
+        Map<Coords, List<ICarryable>> groundObjects = new HashMap<>();
+        groundObjects.put(position, new ArrayList<>(List.of(enemyObjective.marker())));
+        List<Entity> entities = List.of(groundUnit(teamOnePlayer, position));
+        when(game.getGroundObjects()).thenReturn(groundObjects);
+        when(game.getEntitiesVector()).thenReturn(entities);
+
+        handler.resolveObjectives();
+
+        // control is still resolved and stored for the end-scoring, but no per-turn VP are awarded
+        assertEquals(1, enemyObjective.marker().getControllingTeam());
+        assertNull(VictoryPointTracker.findTracker(game.getVictoryContext()));
+    }
+
+    // --- Lobby objective placement (Phase 2b-2) ---
+
+    @Test
+    void testLobbyObjectivesPlacedAtGameStart() {
+        Map<Coords, List<ICarryable>> groundMap = installRealGroundObjectMap();
+        boardContainingEverything();
+        ObjectiveMarker marker = mobileMarker(teamOnePlayer);
+        Coords lobbyPosition = new Coords(4, 4);
+        marker.setLobbyPosition(lobbyPosition);
+        teamOnePlayer.getGroundObjectsToPlace().add(marker);
+        when(game.getPlayersList()).thenReturn(List.of(teamOnePlayer, teamTwoPlayer));
+
+        handler.placeLobbyObjectives();
+
+        assertTrue(groundMap.get(lobbyPosition).contains(marker));
+        assertTrue(teamOnePlayer.getGroundObjectsToPlace().isEmpty());
+        assertNull(marker.getLobbyPosition());
+    }
+
+    @Test
+    void testOffBoardLobbyObjectiveStaysUnplaced() {
+        installRealGroundObjectMap();
+        Board board = mock(Board.class);
+        when(board.contains(any(Coords.class))).thenReturn(false);
+        when(game.getBoard()).thenReturn(board);
+        ObjectiveMarker marker = mobileMarker(teamOnePlayer);
+        marker.setLobbyPosition(new Coords(500, 500));
+        teamOnePlayer.getGroundObjectsToPlace().add(marker);
+        when(game.getPlayersList()).thenReturn(List.of(teamOnePlayer));
+
+        handler.placeLobbyObjectives();
+
+        // stays in the to-place list, placeable in the Deploy Minefields phase instead
+        assertEquals(1, teamOnePlayer.getGroundObjectsToPlace().size());
+    }
+
+    @Test
+    void testStackedLobbyObjectiveStaysUnplaced() {
+        Map<Coords, List<ICarryable>> groundMap = installRealGroundObjectMap();
+        boardContainingEverything();
+        Coords position = new Coords(4, 4);
+        ObjectiveMarker existingMarker = mobileMarker(teamTwoPlayer);
+        groundMap.put(position, new ArrayList<>(List.of(existingMarker)));
+        ObjectiveMarker marker = mobileMarker(teamOnePlayer);
+        marker.setLobbyPosition(position);
+        teamOnePlayer.getGroundObjectsToPlace().add(marker);
+        when(game.getPlayersList()).thenReturn(List.of(teamOnePlayer));
+
+        handler.placeLobbyObjectives();
+
+        assertEquals(1, teamOnePlayer.getGroundObjectsToPlace().size());
+        assertFalse(groundMap.get(position).contains(marker));
+    }
+
+    @Test
     void testCapturedUnitDoesNotExfiltrate() {
         enableSensorCheckMission();
         ScanTally tally = ScanTally.getTally(game);

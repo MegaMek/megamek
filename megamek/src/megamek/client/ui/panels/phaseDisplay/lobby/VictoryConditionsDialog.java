@@ -55,6 +55,7 @@ import javax.swing.ListSelectionModel;
 import javax.swing.SpinnerNumberModel;
 
 import java.util.Enumeration;
+import java.util.Set;
 import java.util.Vector;
 
 import com.fasterxml.jackson.databind.node.ObjectNode;
@@ -66,6 +67,9 @@ import megamek.client.ui.panels.DialogOptionComponentYPanel;
 import megamek.client.ui.util.UIUtil.FixedYPanel;
 import megamek.common.Player;
 import megamek.common.annotations.Nullable;
+import megamek.common.board.Coords;
+import megamek.common.equipment.ICarryable;
+import megamek.common.equipment.ObjectiveMarker;
 import megamek.common.jacksonAdapters.VictoryConditionsBuilder;
 import megamek.common.jacksonAdapters.VictoryConditionsBuilder.ConditionToken;
 import megamek.common.jacksonAdapters.VictoryConditionsBuilder.OperatorToken;
@@ -73,6 +77,7 @@ import megamek.common.jacksonAdapters.VictoryConditionsBuilder.Token;
 import megamek.common.options.IBasicOption;
 import megamek.common.options.IOption;
 import megamek.common.options.IOptionGroup;
+import megamek.common.options.OptionsConstants;
 
 /**
  * The unified lobby victory conditions dialog. It holds the classic victory game options (formerly the Victory tab
@@ -85,8 +90,27 @@ import megamek.common.options.IOptionGroup;
  */
 public class VictoryConditionsDialog extends AbstractButtonDialog implements DialogOptionListener {
 
-    /** The key of the victory game options group (see {@link megamek.common.options.GameOptions}). */
-    public static final String VICTORY_OPTIONS_GROUP_KEY = "victory";
+    /**
+     * The name of the victory game options group (see {@link megamek.common.options.GameOptions}). Note that option
+     * groups added with the single-argument {@code addGroup} have this as their name; their key is empty.
+     */
+    public static final String VICTORY_OPTIONS_GROUP_NAME = "victory";
+
+    /**
+     * The victory options NOT shown in this dialog: these condition-style options are superseded by the condition
+     * formula builder (their trigger equivalents can be freely combined with and/or/not), leaving only true settings
+     * in the options section. The options themselves remain functional for the legacy achieve-N-conditions path.
+     */
+    private static final Set<String> OPTIONS_SUPERSEDED_BY_FORMULAS = Set.of(
+          OptionsConstants.VICTORY_CHECK_VICTORY,
+          OptionsConstants.VICTORY_ACHIEVE_CONDITIONS,
+          OptionsConstants.VICTORY_USE_BV_DESTROYED,
+          OptionsConstants.VICTORY_BV_DESTROYED_PERCENT,
+          OptionsConstants.VICTORY_USE_BV_RATIO,
+          OptionsConstants.VICTORY_BV_RATIO_PERCENT,
+          OptionsConstants.VICTORY_USE_KILL_COUNT,
+          OptionsConstants.VICTORY_GAME_KILL_COUNT,
+          OptionsConstants.VICTORY_COMMANDER_KILLED);
 
     /** The formula leaf types offered by the builder. */
     private enum ConditionType {
@@ -95,6 +119,10 @@ public class VictoryConditionsDialog extends AbstractButtonDialog implements Dia
         OBJECTIVE_CONFIRMED("objectiveConfirmed", true, false, false),
         OBJECTIVE_CAPTURED("objectiveCaptured", true, true, false),
         VICTORY_POINTS("victoryPoints", false, true, true),
+        BV_DESTROYED("bvDestroyed", false, true, true),
+        BV_RATIO("bvRatio", false, true, true),
+        KILL_COUNT("killCount", false, true, true),
+        COMMANDERS_KILLED("commandersKilled", false, true, false),
         ROUND_END("roundEnd", false, false, true),
         UNITS_KILLED("unitsKilled", false, true, true),
         UNITS_FLED("unitsFled", false, true, true),
@@ -124,6 +152,10 @@ public class VictoryConditionsDialog extends AbstractButtonDialog implements Dia
                 case OBJECTIVE_CONFIRMED -> VictoryConditionsBuilder.objectiveConfirmed(objectiveName);
                 case OBJECTIVE_CAPTURED -> VictoryConditionsBuilder.objectiveCaptured(objectiveName, playerName);
                 case VICTORY_POINTS -> VictoryConditionsBuilder.victoryPointsReached(playerName, number);
+                case BV_DESTROYED -> VictoryConditionsBuilder.enemyBvDestroyed(playerName, number);
+                case BV_RATIO -> VictoryConditionsBuilder.bvRatioReached(playerName, number);
+                case KILL_COUNT -> VictoryConditionsBuilder.killCountReached(playerName, number);
+                case COMMANDERS_KILLED -> VictoryConditionsBuilder.enemyCommandersKilled(playerName);
                 case ROUND_END -> VictoryConditionsBuilder.roundEndReached(number);
                 case UNITS_KILLED -> VictoryConditionsBuilder.unitsKilled(playerName, number);
                 case UNITS_FLED -> VictoryConditionsBuilder.unitsFled(playerName, number);
@@ -172,6 +204,30 @@ public class VictoryConditionsDialog extends AbstractButtonDialog implements Dia
     private final JPanel victoryOptionsPanel = new JPanel();
     private final List<DialogOptionComponentYPanel> victoryOptionComps = new ArrayList<>();
 
+    private final List<ObjectiveMarker> objectiveMarkersInList = new ArrayList<>();
+    private final DefaultListModel<String> objectivesListModel = new DefaultListModel<>();
+    private final JList<String> objectivesList = new JList<>(objectivesListModel);
+    private final JTextField fieldNewObjectiveName = new JTextField(10);
+    private final JComboBox<String> comboObjectiveOwner = new JComboBox<>();
+    private final JSpinner spinnerObjectiveX = new JSpinner(new SpinnerNumberModel(1, 0, 999, 1));
+    private final JSpinner spinnerObjectiveY = new JSpinner(new SpinnerNumberModel(1, 0, 999, 1));
+    private final JSpinner spinnerObjectiveRadius =
+          new JSpinner(new SpinnerNumberModel(0, 0, ObjectiveMarker.MAX_CONTROL_RADIUS, 1));
+    private final JSpinner spinnerObjectiveVP = new JSpinner(new SpinnerNumberModel(1, 1, 99, 1));
+    private final JCheckBox checkObjectivePotential =
+          new JCheckBox(Messages.getString("VictoryConditionsDialog.variantPotential"));
+    private final JCheckBox checkObjectiveFalse =
+          new JCheckBox(Messages.getString("VictoryConditionsDialog.variantFalse"));
+    private final JCheckBox checkObjectiveFragile =
+          new JCheckBox(Messages.getString("VictoryConditionsDialog.variantFragile"));
+    private final JCheckBox checkObjectiveMobile =
+          new JCheckBox(Messages.getString("VictoryConditionsDialog.variantMobile"));
+    private final JCheckBox checkObjectiveDestructible =
+          new JCheckBox(Messages.getString("VictoryConditionsDialog.destructible"), true);
+    private final JButton butAddObjective = new JButton(Messages.getString("VictoryConditionsDialog.addObjective"));
+    private final JButton butRemoveObjective =
+          new JButton(Messages.getString("VictoryConditionsDialog.removeObjective"));
+
     public VictoryConditionsDialog(ClientGUI clientGui) {
         super(clientGui.getFrame(), "VictoryConditionsDialog", "VictoryConditionsDialog.title");
         this.clientGui = clientGui;
@@ -188,11 +244,55 @@ public class VictoryConditionsDialog extends AbstractButtonDialog implements Dia
         comboLeafPlayer.addItem(anySide);
         comboWinner.removeAllItems();
         comboWinner.addItem(draw);
+        comboObjectiveOwner.removeAllItems();
         for (Player player : clientGui.getClient().getGame().getPlayersList()) {
             comboLeafPlayer.addItem(player.getName());
             comboWinner.addItem(player.getName());
+            comboObjectiveOwner.addItem(player.getName());
         }
         refreshVictoryOptions();
+        refreshObjectivesList();
+    }
+
+    /** Rebuilds the objectives list from the local player's not-yet-placed objective markers. */
+    private void refreshObjectivesList() {
+        objectiveMarkersInList.clear();
+        objectivesListModel.clear();
+        for (ICarryable groundObject : clientGui.getClient().getLocalPlayer().getGroundObjectsToPlace()) {
+            if (groundObject instanceof ObjectiveMarker marker) {
+                objectiveMarkersInList.add(marker);
+                objectivesListModel.addElement(describeMarker(marker));
+            }
+        }
+    }
+
+    private String describeMarker(ObjectiveMarker marker) {
+        StringBuilder description = new StringBuilder(marker.generalName());
+        Player owner = clientGui.getClient().getGame().getPlayer(marker.getOwnerId());
+        if (owner != null) {
+            description.append(" (").append(owner.getName()).append(")");
+        }
+        if (marker.getLobbyPosition() != null) {
+            description.append(" at ").append(marker.getLobbyPosition().toFriendlyString());
+        }
+        description.append(", radius ").append(marker.getControlRadius());
+        description.append(", ").append(marker.getVictoryPointValue()).append(" VP");
+        if (marker.isPotential()) {
+            description.append(", potential");
+        }
+        if (marker.isFalseObjective()) {
+            description.append(", false");
+        }
+        if (marker.isFragile()) {
+            description.append(", fragile");
+        }
+        if (marker.isMobile()) {
+            description.append(", mobile");
+        }
+        if (marker.isInvulnerable()) {
+            description.append(", indestructible");
+        }
+        return description.toString();
     }
 
     /** Rebuilds the victory game option rows (the former Victory tab contents) from the current game options. */
@@ -202,12 +302,15 @@ public class VictoryConditionsDialog extends AbstractButtonDialog implements Dia
         for (Enumeration<IOptionGroup> groups = clientGui.getClient().getGame().getOptions().getGroups();
               groups.hasMoreElements(); ) {
             IOptionGroup group = groups.nextElement();
-            if (!VICTORY_OPTIONS_GROUP_KEY.equals(group.getKey())) {
+            if (!VICTORY_OPTIONS_GROUP_NAME.equals(group.getName())) {
                 continue;
             }
             for (Enumeration<IOption> optionsEnumeration = group.getOptions();
                   optionsEnumeration.hasMoreElements(); ) {
                 IOption option = optionsEnumeration.nextElement();
+                if (OPTIONS_SUPERSEDED_BY_FORMULAS.contains(option.getName())) {
+                    continue;
+                }
                 DialogOptionComponentYPanel optionComponent = new DialogOptionComponentYPanel(this, option, true);
                 victoryOptionComps.add(optionComponent);
                 victoryOptionsPanel.add(optionComponent);
@@ -226,6 +329,37 @@ public class VictoryConditionsDialog extends AbstractButtonDialog implements Dia
         JScrollPane victoryOptionsScroll = new JScrollPane(victoryOptionsPanel);
         victoryOptionsScroll.setBorder(BorderFactory.createTitledBorder(
               Messages.getString("VictoryConditionsDialog.victoryOptions")));
+
+        objectivesList.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+        objectivesList.setVisibleRowCount(4);
+        JPanel objectivesPanel = new JPanel();
+        objectivesPanel.setLayout(new BoxLayout(objectivesPanel, BoxLayout.PAGE_AXIS));
+        objectivesPanel.setBorder(BorderFactory.createTitledBorder(
+              Messages.getString("VictoryConditionsDialog.objectives")));
+        objectivesPanel.add(new JScrollPane(objectivesList));
+        JPanel objectiveEditorPanel = new FixedYPanel();
+        objectiveEditorPanel.add(new JLabel(Messages.getString("VictoryConditionsDialog.objective")));
+        objectiveEditorPanel.add(fieldNewObjectiveName);
+        objectiveEditorPanel.add(new JLabel(Messages.getString("VictoryConditionsDialog.owner")));
+        objectiveEditorPanel.add(comboObjectiveOwner);
+        objectiveEditorPanel.add(new JLabel("X:"));
+        objectiveEditorPanel.add(spinnerObjectiveX);
+        objectiveEditorPanel.add(new JLabel("Y:"));
+        objectiveEditorPanel.add(spinnerObjectiveY);
+        objectiveEditorPanel.add(new JLabel(Messages.getString("VictoryConditionsDialog.radius")));
+        objectiveEditorPanel.add(spinnerObjectiveRadius);
+        objectiveEditorPanel.add(new JLabel(Messages.getString("VictoryConditionsDialog.vp")));
+        objectiveEditorPanel.add(spinnerObjectiveVP);
+        JPanel objectiveVariantsPanel = new FixedYPanel();
+        objectiveVariantsPanel.add(checkObjectivePotential);
+        objectiveVariantsPanel.add(checkObjectiveFalse);
+        objectiveVariantsPanel.add(checkObjectiveFragile);
+        objectiveVariantsPanel.add(checkObjectiveMobile);
+        objectiveVariantsPanel.add(checkObjectiveDestructible);
+        objectiveVariantsPanel.add(butAddObjective);
+        objectiveVariantsPanel.add(butRemoveObjective);
+        objectivesPanel.add(objectiveEditorPanel);
+        objectivesPanel.add(objectiveVariantsPanel);
 
         conditionsList.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
         conditionsList.setVisibleRowCount(5);
@@ -283,6 +417,8 @@ public class VictoryConditionsDialog extends AbstractButtonDialog implements Dia
 
         result.add(victoryOptionsScroll);
         result.add(Box.createVerticalStrut(5));
+        result.add(objectivesPanel);
+        result.add(Box.createVerticalStrut(5));
         result.add(conditionsPanel);
         result.add(Box.createVerticalStrut(5));
         result.add(builderPanel);
@@ -305,7 +441,57 @@ public class VictoryConditionsDialog extends AbstractButtonDialog implements Dia
         butClearFormula.addActionListener(event -> clearFormula());
         butAddToList.addActionListener(event -> addConditionToList());
         butRemoveSelected.addActionListener(event -> removeSelectedCondition());
+        butAddObjective.addActionListener(event -> addObjectiveMarker());
+        butRemoveObjective.addActionListener(event -> removeSelectedObjectiveMarker());
         refreshLeafFields();
+    }
+
+    /** Creates an objective marker from the editor fields and adds it to the local player's markers to place. */
+    private void addObjectiveMarker() {
+        String objectiveName = fieldNewObjectiveName.getText().trim();
+        if (objectiveName.isBlank()) {
+            return;
+        }
+        ObjectiveMarker marker = new ObjectiveMarker();
+        marker.setName(objectiveName);
+        Player owner = (comboObjectiveOwner.getSelectedItem() == null)
+              ? clientGui.getClient().getLocalPlayer()
+              : findPlayerByName((String) comboObjectiveOwner.getSelectedItem());
+        marker.setOwnerId(owner.getId());
+        marker.setLobbyPosition(new Coords((Integer) spinnerObjectiveX.getValue(),
+              (Integer) spinnerObjectiveY.getValue()));
+        marker.setControlRadius((Integer) spinnerObjectiveRadius.getValue());
+        marker.setVictoryPointValue((Integer) spinnerObjectiveVP.getValue());
+        marker.setPotential(checkObjectivePotential.isSelected());
+        marker.setFalseObjective(checkObjectiveFalse.isSelected());
+        marker.setFragile(checkObjectiveFragile.isSelected());
+        marker.setMobile(checkObjectiveMobile.isSelected());
+        marker.setInvulnerable(!checkObjectiveDestructible.isSelected());
+        if (marker.isPotential() && marker.isFalseObjective()) {
+            // RAW: Potential Objectives cannot be used in conjunction with False Objectives
+            marker.setFalseObjective(false);
+        }
+        clientGui.getClient().getLocalPlayer().getGroundObjectsToPlace().add(marker);
+        refreshObjectivesList();
+        fieldNewObjectiveName.setText("");
+    }
+
+    private void removeSelectedObjectiveMarker() {
+        int selectedIndex = objectivesList.getSelectedIndex();
+        if ((selectedIndex >= 0) && (selectedIndex < objectiveMarkersInList.size())) {
+            clientGui.getClient().getLocalPlayer().getGroundObjectsToPlace()
+                  .remove(objectiveMarkersInList.get(selectedIndex));
+            refreshObjectivesList();
+        }
+    }
+
+    private Player findPlayerByName(String playerName) {
+        for (Player player : clientGui.getClient().getGame().getPlayersList()) {
+            if (playerName.equals(player.getName())) {
+                return player;
+            }
+        }
+        return clientGui.getClient().getLocalPlayer();
     }
 
     private ConditionToken buildLeafToken() {

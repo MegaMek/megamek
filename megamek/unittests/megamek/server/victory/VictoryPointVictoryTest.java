@@ -40,6 +40,8 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 import java.util.HashMap;
 
 import megamek.common.Player;
+import megamek.common.board.Coords;
+import megamek.common.equipment.ObjectiveMarker;
 import megamek.common.game.Game;
 import megamek.common.options.OptionsConstants;
 import megamek.server.scriptedEvents.GameEndTriggeredEvent;
@@ -56,8 +58,18 @@ class VictoryPointVictoryTest {
 
     private static final int GAME_DURATION_ROUNDS = 6;
 
+    /** Victory condition with the False Objective die roll replaced by a settable value. */
+    private static class TestableVictoryPointVictory extends VictoryPointVictory {
+        private int falseObjectiveRoll = 6;
+
+        @Override
+        int rollFalseObjectiveCheck() {
+            return falseObjectiveRoll;
+        }
+    }
+
     private Game game;
-    private VictoryPointVictory victoryPointVictory;
+    private TestableVictoryPointVictory victoryPointVictory;
 
     @BeforeEach
     void setUp() {
@@ -68,7 +80,7 @@ class VictoryPointVictoryTest {
         // Disable the optional victory conditions: in an empty test game, battlefield control would
         // otherwise immediately end the game and mask the victory point behavior under test
         game.getOptions().getOption(OptionsConstants.VICTORY_CHECK_VICTORY).setValue(false);
-        victoryPointVictory = new VictoryPointVictory();
+        victoryPointVictory = new TestableVictoryPointVictory();
     }
 
     private void enableObjectiveScoring() {
@@ -163,6 +175,130 @@ class VictoryPointVictoryTest {
 
         assertTrue(result.isVictory());
         assertEquals(1, result.getWinningPlayer());
+    }
+
+    // --- Objective Raid end-scoring (Phase 2b-3) ---
+
+    private void enableObjectiveRaid() {
+        game.getOptions().getOption(OptionsConstants.VICTORY_OBJECTIVE_RAID).setValue(true);
+    }
+
+    private ObjectiveMarker controlledMarker(String name, int controllingTeam, int victoryPointValue) {
+        ObjectiveMarker marker = new ObjectiveMarker();
+        marker.setName(name);
+        marker.setVictoryPointValue(victoryPointValue);
+        marker.setController(controllingTeam, ObjectiveMarker.NO_CONTROLLER);
+        return marker;
+    }
+
+    @Test
+    void testObjectiveRaidEndScoring() {
+        enableObjectiveRaid();
+        game.placeGroundObject(new Coords(1, 1), controlledMarker("Alpha", 1, 1));
+        game.placeGroundObject(new Coords(2, 2), controlledMarker("Bravo", 1, 2));
+        game.placeGroundObject(new Coords(3, 3), controlledMarker("Charlie", 2, 1));
+        ObjectiveMarker uncontrolledMarker = new ObjectiveMarker();
+        uncontrolledMarker.setName("Delta");
+        game.placeGroundObject(new Coords(4, 4), uncontrolledMarker);
+        game.setCurrentRound(GAME_DURATION_ROUNDS);
+
+        VictoryResult result = victoryPointVictory.checkVictory(game, game.getVictoryContext());
+
+        assertTrue(result.isVictory());
+        assertEquals(1, result.getWinningTeam());
+        VictoryPointTracker tracker = VictoryPointTracker.findTracker(game.getVictoryContext());
+        assertEquals(3, tracker.getTeamVictoryPoints(1));
+        assertEquals(1, tracker.getTeamVictoryPoints(2));
+
+        // the game-end check runs repeatedly (END and END_REPORT) - end-scoring must only award once
+        victoryPointVictory.checkVictory(game, game.getVictoryContext());
+        assertEquals(3, tracker.getTeamVictoryPoints(1));
+        assertEquals(1, tracker.getTeamVictoryPoints(2));
+    }
+
+    @Test
+    void testObjectiveRaidSuppressesNothingWhenUncontrolled() {
+        enableObjectiveRaid();
+        ObjectiveMarker uncontrolledMarker = new ObjectiveMarker();
+        uncontrolledMarker.setName("Alpha");
+        game.placeGroundObject(new Coords(1, 1), uncontrolledMarker);
+        game.setCurrentRound(GAME_DURATION_ROUNDS);
+
+        VictoryResult result = victoryPointVictory.checkVictory(game, game.getVictoryContext());
+
+        // no objective is controlled: the mission ends in a draw
+        assertTrue(result.isVictory());
+        assertTrue(result.isDraw());
+    }
+
+    @Test
+    void testUnconfirmedCandidateScoresNothingInObjectiveRaid() {
+        enableObjectiveRaid();
+        ObjectiveMarker candidate = controlledMarker("Maybe", 1, 5);
+        candidate.setPotential(true);
+        game.placeGroundObject(new Coords(1, 1), candidate);
+        game.placeGroundObject(new Coords(2, 2), controlledMarker("Bravo", 2, 1));
+        game.setCurrentRound(GAME_DURATION_ROUNDS);
+
+        VictoryResult result = victoryPointVictory.checkVictory(game, game.getVictoryContext());
+
+        assertEquals(2, result.getWinningTeam());
+        VictoryPointTracker tracker = VictoryPointTracker.findTracker(game.getVictoryContext());
+        assertEquals(0, tracker.getTeamVictoryPoints(1));
+    }
+
+    @Test
+    void testFalseObjectiveCountsNothingOnARollOfOne() {
+        enableObjectiveRaid();
+        ObjectiveMarker falseMarker = controlledMarker("Decoy", 1, 5);
+        falseMarker.setFalseObjective(true);
+        game.placeGroundObject(new Coords(1, 1), falseMarker);
+        game.placeGroundObject(new Coords(2, 2), controlledMarker("Bravo", 2, 1));
+        game.placeGroundObject(new Coords(3, 3), controlledMarker("Charlie", 2, 1));
+        game.setCurrentRound(GAME_DURATION_ROUNDS);
+        victoryPointVictory.falseObjectiveRoll = 1;
+
+        VictoryResult result = victoryPointVictory.checkVictory(game, game.getVictoryContext());
+
+        assertEquals(2, result.getWinningTeam());
+        VictoryPointTracker tracker = VictoryPointTracker.findTracker(game.getVictoryContext());
+        assertEquals(0, tracker.getTeamVictoryPoints(1));
+        assertEquals(2, tracker.getTeamVictoryPoints(2));
+    }
+
+    @Test
+    void testFalseObjectiveCountsNormallyOnHigherRolls() {
+        enableObjectiveRaid();
+        ObjectiveMarker falseMarker = controlledMarker("Decoy", 1, 5);
+        falseMarker.setFalseObjective(true);
+        game.placeGroundObject(new Coords(1, 1), falseMarker);
+        game.placeGroundObject(new Coords(2, 2), controlledMarker("Bravo", 2, 1));
+        game.placeGroundObject(new Coords(3, 3), controlledMarker("Charlie", 2, 1));
+        game.setCurrentRound(GAME_DURATION_ROUNDS);
+        victoryPointVictory.falseObjectiveRoll = 2;
+
+        VictoryResult result = victoryPointVictory.checkVictory(game, game.getVictoryContext());
+
+        assertEquals(1, result.getWinningTeam());
+        VictoryPointTracker tracker = VictoryPointTracker.findTracker(game.getVictoryContext());
+        assertEquals(5, tracker.getTeamVictoryPoints(1));
+    }
+
+    @Test
+    void testFalseRollDoesNotApplyWithTwoOrFewerObjectives() {
+        // RAW: the False Objectives variant is not used where there are two or fewer objectives
+        enableObjectiveRaid();
+        ObjectiveMarker falseMarker = controlledMarker("Decoy", 1, 5);
+        falseMarker.setFalseObjective(true);
+        game.placeGroundObject(new Coords(1, 1), falseMarker);
+        game.placeGroundObject(new Coords(2, 2), controlledMarker("Bravo", 2, 1));
+        game.setCurrentRound(GAME_DURATION_ROUNDS);
+        victoryPointVictory.falseObjectiveRoll = 1;
+
+        victoryPointVictory.checkVictory(game, game.getVictoryContext());
+
+        VictoryPointTracker tracker = VictoryPointTracker.findTracker(game.getVictoryContext());
+        assertEquals(5, tracker.getTeamVictoryPoints(1));
     }
 
     @Test

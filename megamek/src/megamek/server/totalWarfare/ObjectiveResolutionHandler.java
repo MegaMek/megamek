@@ -175,6 +175,46 @@ class ObjectiveResolutionHandler extends AbstractTWRuleHandler {
     }
 
     /**
+     * Places the objective markers that players configured with a position in the lobby: markers ride each player's
+     * ground-objects-to-place list to the server, and at game start those with a lobby position are placed on the
+     * board. A marker with an off-board position or in a hex that already has an objective stays in the player's
+     * list (placeable by board click in the Deploy Minefields phase instead). Called once when the game starts.
+     */
+    void placeLobbyObjectives() {
+        Board board = getGame().getBoard();
+        boolean anyPlaced = false;
+        for (Player player : getGame().getPlayersList()) {
+            List<ICarryable> groundObjectsToPlace = player.getGroundObjectsToPlace();
+            for (ICarryable groundObject : List.copyOf(groundObjectsToPlace)) {
+                if (!(groundObject instanceof ObjectiveMarker marker) || (marker.getLobbyPosition() == null)) {
+                    continue;
+                }
+                Coords position = marker.getLobbyPosition();
+                if ((board == null) || !board.contains(position)) {
+                    LOGGER.warn("[Objective] {} of {} has the off-board lobby position {} - not placed, it can "
+                          + "be placed during the Deploy Minefields phase", marker.generalName(), player, position);
+                    continue;
+                }
+                if (findOtherObjectiveAt(position, marker) != null) {
+                    LOGGER.warn("[Objective] {} of {} cannot be placed at {} - only one objective can be in a "
+                          + "single hex; it can be placed during the Deploy Minefields phase",
+                          marker.generalName(), player, position);
+                    continue;
+                }
+                groundObjectsToPlace.remove(marker);
+                marker.setLobbyPosition(null);
+                getGame().placeGroundObject(position, marker);
+                anyPlaced = true;
+                LOGGER.info("[Objective] Placed lobby objective {} (owner ID {}, radius {}) at {}",
+                      marker.generalName(), marker.getOwnerId(), marker.getControlRadius(), position);
+            }
+        }
+        if (anyPlaced) {
+            gameManager.sendGroundObjectUpdate();
+        }
+    }
+
+    /**
      * Resolves objectives for the current End Phase: resolves the Sensor Check scan mission (when enabled), syncs
      * objective destruction (an objective inside a destroyed building is destroyed with it), then determines the
      * controller of every surviving objective marker, reports the results and awards Victory Points per the standard
@@ -209,7 +249,13 @@ class ObjectiveResolutionHandler extends AbstractTWRuleHandler {
             storeControllerOnMarker(objective.marker(), controller);
             reportObjectiveControl(objective, controller);
         }
-        awardStandardControlVictoryPoints(resolvedObjectives, VictoryPointTracker.getTracker(getGame()));
+        if (getGame().getOptions().booleanOption(OptionsConstants.VICTORY_OBJECTIVE_RAID)) {
+            // Objective Raid mission: objectives score once at mission end instead of every turn; control is
+            // still resolved and stored above for the end-scoring and the objective victory triggers
+            LOGGER.debug("[Objective] Objective Raid mission - no per-turn control VP awarded");
+        } else {
+            awardStandardControlVictoryPoints(resolvedObjectives, VictoryPointTracker.getTracker(getGame()));
+        }
     }
 
     /**

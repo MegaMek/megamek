@@ -246,7 +246,7 @@ public class GameOptionsDialog extends AbstractButtonDialog implements ActionLis
         for (Enumeration<IOptionGroup> i = options.getGroups(); i.hasMoreElements(); ) {
             IOptionGroup group = i.nextElement();
             // the victory options are edited in the lobby's unified Victory Conditions dialog instead
-            if (VictoryConditionsDialog.VICTORY_OPTIONS_GROUP_KEY.equals(group.getKey())) {
+            if (VictoryConditionsDialog.VICTORY_OPTIONS_GROUP_NAME.equals(group.getName())) {
                 continue;
             }
             JPanel groupPanel = addGroup(group);

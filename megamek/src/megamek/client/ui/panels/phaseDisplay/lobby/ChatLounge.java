@@ -2341,6 +2341,8 @@ public class ChatLounge extends AbstractPhaseDisplay
             }
             clientgui.getClient().sendVictoryConditions(victoryConditionsDialog.getPassword(),
                   victoryConditionsDialog.getVictoryConditionsYaml());
+            // objective markers ride the player's ground objects to place
+            clientgui.getClient().sendPlayerInfo();
         }
     }
 

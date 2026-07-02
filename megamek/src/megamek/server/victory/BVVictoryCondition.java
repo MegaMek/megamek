@@ -46,18 +46,36 @@ import megamek.common.game.IGame;
  */
 public interface BVVictoryCondition extends VictoryCondition, Serializable {
 
-    default int getFriendlyBV(Game game, Player player) {
+    /** @return The summed current BV of the player's side (all non-observer players not their enemy) */
+    static int friendlyBV(IGame game, Player player) {
         return game.getPlayersList().stream()
               .filter(Player::isNotObserver)
-              .filter(p -> !p.isEnemyOf(player))
+              .filter(otherPlayer -> !otherPlayer.isEnemyOf(player))
               .mapToInt(Player::getBV).sum();
     }
 
-    default int getEnemyBV(Game game, Player player) {
+    /** @return The summed current BV of all non-observer enemies of the player */
+    static int enemyBV(IGame game, Player player) {
         return game.getPlayersList().stream()
               .filter(Player::isNotObserver)
-              .filter(p -> p.isEnemyOf(player))
+              .filter(otherPlayer -> otherPlayer.isEnemyOf(player))
               .mapToInt(Player::getBV).sum();
+    }
+
+    /** @return The summed initial BV of all non-observer enemies of the player */
+    static int enemyInitialBV(IGame game, Player player) {
+        return game.getPlayersList().stream()
+              .filter(Player::isNotObserver)
+              .filter(otherPlayer -> otherPlayer.isEnemyOf(player))
+              .mapToInt(Player::getInitialBV).sum();
+    }
+
+    default int getFriendlyBV(Game game, Player player) {
+        return friendlyBV(game, player);
+    }
+
+    default int getEnemyBV(Game game, Player player) {
+        return enemyBV(game, player);
     }
 
     @Deprecated(since = "0.51.0", forRemoval = true)
@@ -69,9 +87,6 @@ public interface BVVictoryCondition extends VictoryCondition, Serializable {
     }
 
     default int getEnemyInitialBV(IGame game, Player player) {
-        return game.getPlayersList().stream()
-              .filter(Player::isNotObserver)
-              .filter(p -> p.isEnemyOf(player))
-              .mapToInt(Player::getInitialBV).sum();
+        return enemyInitialBV(game, player);
     }
 }

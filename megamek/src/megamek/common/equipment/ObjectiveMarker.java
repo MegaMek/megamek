@@ -35,6 +35,8 @@ package megamek.common.equipment;
 
 import java.io.Serial;
 
+import megamek.common.annotations.Nullable;
+import megamek.common.board.Coords;
 import megamek.common.moves.MoveStep;
 import megamek.common.units.Entity;
 import megamek.common.units.EntityMovementType;
@@ -82,6 +84,8 @@ public class ObjectiveMarker extends GroundObject {
     private boolean destructionProcessed = false;
     private int controllingTeam = NO_CONTROLLER;
     private int controllingPlayerId = NO_CONTROLLER;
+    // the pre-set lobby placement position; null when the marker has no pre-set position
+    private Coords lobbyPosition = null;
 
     /** Value of {@link #getControllingTeam()} / {@link #getControllingPlayerId()} when no side controls this objective. */
     public static final int NO_CONTROLLER = -1;
@@ -250,6 +254,21 @@ public class ObjectiveMarker extends GroundObject {
     public void setController(int controllingTeam, int controllingPlayerId) {
         this.controllingTeam = controllingTeam;
         this.controllingPlayerId = controllingPlayerId;
+    }
+
+    /**
+     * @return The board position this marker should be placed at when the game starts, as configured in the lobby,
+     *       or {@code null} when the marker has no pre-set position (it is then placed by its owner during the
+     *       Deploy Minefields phase like other carryable objects). The lobby position is only meaningful while the
+     *       marker rides a player's ground-objects-to-place list; once placed, the ground object map holds the
+     *       position.
+     */
+    public @Nullable Coords getLobbyPosition() {
+        return lobbyPosition;
+    }
+
+    public void setLobbyPosition(@Nullable Coords lobbyPosition) {
+        this.lobbyPosition = lobbyPosition;
     }
 
     /**

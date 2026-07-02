@@ -87,6 +87,19 @@ public class VictoryPointTracker implements Serializable {
     private final Map<Integer, Integer> playerVictoryPoints = new HashMap<>();
     private final Map<Integer, Integer> teamVictoryPoints = new HashMap<>();
     private final List<VictoryPointAward> awardLog = new ArrayList<>();
+    private boolean endScoringDone = false;
+
+    /**
+     * @return {@code true} once the one-time end-of-mission scoring (Objective Raid) has been performed, so the
+     *       repeated victory checks at game end do not award it twice
+     */
+    public boolean isEndScoringDone() {
+        return endScoringDone;
+    }
+
+    public void setEndScoringDone(boolean endScoringDone) {
+        this.endScoringDone = endScoringDone;
+    }
 
     /**
      * Awards victory points to a player, adding to their running total.

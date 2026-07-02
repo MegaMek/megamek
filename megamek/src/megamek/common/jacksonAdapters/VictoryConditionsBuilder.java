@@ -289,6 +289,33 @@ public final class VictoryConditionsBuilder {
         return new ConditionToken("battlefield control", leafNode("battlefieldcontrol", null));
     }
 
+    /** @return A leaf: the given player's side (or any side) has destroyed the given percent of enemy starting BV */
+    public static ConditionToken enemyBvDestroyed(@Nullable String playerName, int destroyedPercent) {
+        ObjectNode triggerNode = leafNode("bvdestroyed", playerName);
+        triggerNode.put("percent", destroyedPercent);
+        return new ConditionToken(destroyedPercent + "%+ enemy BV destroyed" + bySuffix(playerName), triggerNode);
+    }
+
+    /** @return A leaf: the given player's side (or any side) has at least the given friendly/enemy BV ratio */
+    public static ConditionToken bvRatioReached(@Nullable String playerName, int ratioPercent) {
+        ObjectNode triggerNode = leafNode("bvratio", playerName);
+        triggerNode.put("percent", ratioPercent);
+        return new ConditionToken(ratioPercent + "%+ BV ratio" + forSuffix(playerName), triggerNode);
+    }
+
+    /** @return A leaf: the given player's side (or any side) has destroyed at least the given number of enemies */
+    public static ConditionToken killCountReached(@Nullable String playerName, int killCount) {
+        ObjectNode triggerNode = leafNode("killcount", playerName);
+        triggerNode.put("count", killCount);
+        return new ConditionToken(killCount + "+ kills" + bySuffix(playerName), triggerNode);
+    }
+
+    /** @return A leaf: all commanders of the given player's enemies (or of any side's enemies) are destroyed */
+    public static ConditionToken enemyCommandersKilled(@Nullable String playerName) {
+        return new ConditionToken("enemy commanders destroyed" + ofSuffix(playerName),
+              leafNode("commanderkilled", playerName));
+    }
+
     private static ObjectNode leafNode(String triggerType, @Nullable String playerName) {
         ObjectNode triggerNode = NODE_FACTORY.objectNode();
         triggerNode.put("type", triggerType);
@@ -300,6 +327,10 @@ public final class VictoryConditionsBuilder {
 
     private static String bySuffix(@Nullable String playerName) {
         return ((playerName == null) || playerName.isBlank()) ? "" : " by " + playerName;
+    }
+
+    private static String forSuffix(@Nullable String playerName) {
+        return ((playerName == null) || playerName.isBlank()) ? "" : " for " + playerName;
     }
 
     private static String ofSuffix(@Nullable String playerName) {

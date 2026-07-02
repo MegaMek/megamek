@@ -38,6 +38,8 @@ import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.never;
+import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 import java.util.ArrayList;
@@ -60,10 +62,13 @@ import megamek.common.game.Game;
 import megamek.common.interfaces.IEntityRemovalConditions;
 import megamek.common.options.GameOptions;
 import megamek.common.options.OptionsConstants;
+import megamek.common.Hex;
 import megamek.common.units.Crew;
 import megamek.common.units.Entity;
+import megamek.common.units.EntityMovementMode;
 import megamek.common.units.IBuilding;
 import megamek.common.units.Mek;
+import megamek.common.units.Terrains;
 import megamek.server.totalWarfare.ObjectiveResolutionHandler.PlacedObjective;
 import megamek.server.totalWarfare.ObjectiveResolutionHandler.ResolvedObjective;
 import megamek.server.totalWarfare.ObjectiveResolutionHandler.Side;
@@ -82,11 +87,13 @@ class ObjectiveResolutionHandlerTest {
     private static final Side TEAM_2 = new Side(true, 2);
 
     /**
-     * Handler with the non-deterministic seams (line of sight, 2d6 scan roll) replaced by settable values.
+     * Handler with the non-deterministic seams (line of sight, dice rolls) replaced by settable values.
      */
     private static class TestableObjectiveResolutionHandler extends ObjectiveResolutionHandler {
         private boolean lineOfSight = true;
         private int scanRoll = 12;
+        private int confirmationRoll = 6;
+        private int fragileRoll = 6;
 
         TestableObjectiveResolutionHandler(TWGameManager gameManager) {
             super(gameManager);
@@ -98,8 +105,23 @@ class ObjectiveResolutionHandlerTest {
         }
 
         @Override
+        boolean hasLineOfSightToHex(Entity scanner, Coords position) {
+            return lineOfSight;
+        }
+
+        @Override
         int rollScanCheck() {
             return scanRoll;
+        }
+
+        @Override
+        int rollObjectiveConfirmation() {
+            return confirmationRoll;
+        }
+
+        @Override
+        int rollFragileCheck() {
+            return fragileRoll;
         }
     }
 
@@ -144,6 +166,7 @@ class ObjectiveResolutionHandlerTest {
         when(entity.getPosition()).thenReturn(position);
         when(entity.isDeployed()).thenReturn(true);
         when(entity.getTransportId()).thenReturn(Entity.NONE);
+        when(entity.getMovementMode()).thenReturn(EntityMovementMode.BIPED);
         // isOffBoard, isDestroyed, isCrippled, isProne, isImmobile, isAirborne and isAirborneVTOLorWIGE
         // default to false on the mock, matching an ordinary active ground unit
         return entity;
@@ -427,7 +450,6 @@ class ObjectiveResolutionHandlerTest {
         Coords position = new Coords(4, 4);
         IBuilding[] buildingHolder = { buildingWithCF(position, 40) };
         PlacedObjective objective = objectiveInBuilding(position, buildingHolder);
-        objective.marker().setInvulnerable(false);
 
         handler.resolveObjectives();
         assertTrue(objective.marker().isBuildingLinkInitialized());
@@ -448,7 +470,6 @@ class ObjectiveResolutionHandlerTest {
         when(building.getCurrentCF(position)).thenReturn(40, 0);
         IBuilding[] buildingHolder = { building };
         PlacedObjective objective = objectiveInBuilding(position, buildingHolder);
-        objective.marker().setInvulnerable(false);
 
         handler.resolveObjectives();
         assertFalse(objective.marker().isDestroyed());
@@ -460,10 +481,11 @@ class ObjectiveResolutionHandlerTest {
 
     @Test
     void testIndestructibleObjectiveSurvivesBuildingDestruction() {
-        // RAW: objectives cannot be destroyed unless the mission says otherwise (markers default invulnerable)
+        // RAW: destroyed with the building "unless the mission states that objectives cannot be destroyed"
         Coords position = new Coords(4, 4);
         IBuilding[] buildingHolder = { buildingWithCF(position, 40) };
         PlacedObjective objective = objectiveInBuilding(position, buildingHolder);
+        objective.marker().setInvulnerable(true);
 
         handler.resolveObjectives();
         buildingHolder[0] = null;
@@ -477,7 +499,6 @@ class ObjectiveResolutionHandlerTest {
         Coords position = new Coords(4, 4);
         IBuilding[] buildingHolder = { null };
         PlacedObjective objective = objectiveInBuilding(position, buildingHolder);
-        objective.marker().setInvulnerable(false);
 
         handler.resolveObjectives();
 
@@ -493,7 +514,6 @@ class ObjectiveResolutionHandlerTest {
         Coords friendlyPosition = new Coords(2, 2);
         Coords enemyPosition = new Coords(12, 2);
         PlacedObjective friendlyObjective = objectiveAt(friendlyPosition, 1, teamOnePlayer);
-        friendlyObjective.marker().setInvulnerable(false);
         friendlyObjective.marker().setDestroyed(true);
         PlacedObjective enemyObjective = objectiveAt(enemyPosition, 1, teamTwoPlayer);
         Map<Coords, List<ICarryable>> groundObjects = new HashMap<>();
@@ -530,8 +550,8 @@ class ObjectiveResolutionHandlerTest {
     // --- Sensor Check mission (scanning) ---
 
     private void enableSensorCheckMission() {
+        // deliberately without any TacOps sensor option: a scan is a Piloting-based sensor check (RAW)
         gameOptions.getOption(OptionsConstants.VICTORY_USE_SENSOR_CHECK).setValue(true);
-        gameOptions.getOption(OptionsConstants.ADVANCED_TAC_OPS_SENSORS).setValue(true);
         when(game.getGroundObjects()).thenReturn(new HashMap<>());
         when(game.getRetreatedEntities()).thenAnswer(invocation -> Collections.enumeration(List.<Entity>of()));
     }
@@ -787,16 +807,6 @@ class ObjectiveResolutionHandlerTest {
     }
 
     @Test
-    void testScanInertWithoutTacOpsSensorRules() {
-        gameOptions.getOption(OptionsConstants.VICTORY_USE_SENSOR_CHECK).setValue(true);
-        when(game.getGroundObjects()).thenReturn(new HashMap<>());
-
-        handler.resolveObjectives();
-
-        assertNull(ScanTally.findTally(game.getVictoryContext()));
-    }
-
-    @Test
     void testScanSkippedWhenMissionOff() {
         when(game.getGroundObjects()).thenReturn(new HashMap<>());
 
@@ -872,6 +882,203 @@ class ObjectiveResolutionHandlerTest {
         handler.resolveObjectives();
         VictoryPointTracker trackerAfter = VictoryPointTracker.findTracker(game.getVictoryContext());
         assertTrue((trackerAfter == null) || (trackerAfter.getTeamVictoryPoints(1) == 0));
+    }
+
+    // --- Objective variants (Potential, False, Fragile) ---
+
+    @Test
+    void testLandedVTOLCannotControl() {
+        // RAW (Control Radius - Assets): VTOL vehicle Assets can never control objectives, even landed
+        PlacedObjective objective = objectiveAt(new Coords(5, 5), 1, teamOnePlayer);
+        Entity landedVTOL = groundUnit(teamOnePlayer, new Coords(5, 5));
+        when(landedVTOL.getMovementMode()).thenReturn(EntityMovementMode.VTOL);
+
+        assertNull(handler.determineControllingSide(objective, List.of(landedVTOL)));
+    }
+
+    /** Places one objective marker as the game's only ground object and stubs an empty entity list. */
+    private PlacedObjective placeSingleObjective(PlacedObjective objective) {
+        Map<Coords, List<ICarryable>> groundObjects = new HashMap<>();
+        groundObjects.put(objective.position(), new ArrayList<>(List.of(objective.marker())));
+        when(game.getGroundObjects()).thenReturn(groundObjects);
+        when(game.getEntitiesVector()).thenReturn(List.of());
+        return objective;
+    }
+
+    @Test
+    void testCandidateConfirmedByScan() {
+        PlacedObjective candidate = objectiveAt(new Coords(5, 5), 1, teamTwoPlayer);
+        candidate.marker().setPotential(true);
+        placeSingleObjective(candidate);
+        Entity scanner = scannerUnit(teamOnePlayer, new Coords(5, 6));
+        List<Entity> entities = List.of(scanner);
+        when(game.getEntitiesVector()).thenReturn(entities);
+        handler.scanRoll = 12;
+        handler.confirmationRoll = ObjectiveResolutionHandler.CONFIRMATION_MINIMUM_ROLL;
+
+        handler.resolveObjectives();
+
+        assertTrue(candidate.marker().isConfirmed());
+        verify(game, never()).removeGroundObject(candidate.position(), candidate.marker());
+    }
+
+    @Test
+    void testUselessCandidateRemovedFromBattlefield() {
+        PlacedObjective candidate = objectiveAt(new Coords(5, 5), 1, teamTwoPlayer);
+        candidate.marker().setPotential(true);
+        placeSingleObjective(candidate);
+        Entity scanner = scannerUnit(teamOnePlayer, new Coords(5, 6));
+        List<Entity> entities = List.of(scanner);
+        when(game.getEntitiesVector()).thenReturn(entities);
+        handler.scanRoll = 12;
+        handler.confirmationRoll = ObjectiveResolutionHandler.CONFIRMATION_MINIMUM_ROLL - 1;
+
+        handler.resolveObjectives();
+
+        assertFalse(candidate.marker().isConfirmed());
+        verify(game).removeGroundObject(candidate.position(), candidate.marker());
+    }
+
+    @Test
+    void testFailedConfirmationScanKeepsCandidate() {
+        PlacedObjective candidate = objectiveAt(new Coords(5, 5), 1, teamTwoPlayer);
+        candidate.marker().setPotential(true);
+        placeSingleObjective(candidate);
+        Entity scanner = scannerUnit(teamOnePlayer, new Coords(5, 6));
+        List<Entity> entities = List.of(scanner);
+        when(game.getEntitiesVector()).thenReturn(entities);
+        handler.scanRoll = 2;
+
+        handler.resolveObjectives();
+
+        assertFalse(candidate.marker().isConfirmed());
+        verify(game, never()).removeGroundObject(candidate.position(), candidate.marker());
+    }
+
+    @Test
+    void testConfirmationScanTakesPriorityOverUnitScan() {
+        enableSensorCheckMission();
+        PlacedObjective candidate = objectiveAt(new Coords(5, 5), 1, teamTwoPlayer);
+        candidate.marker().setPotential(true);
+        Map<Coords, List<ICarryable>> groundObjects = new HashMap<>();
+        groundObjects.put(candidate.position(), new ArrayList<>(List.of(candidate.marker())));
+        when(game.getGroundObjects()).thenReturn(groundObjects);
+        Entity scanner = scannerUnit(teamOnePlayer, new Coords(5, 6));
+        Entity enemyUnit = groundUnit(teamTwoPlayer, new Coords(5, 7));
+        List<Entity> entities = List.of(scanner, enemyUnit);
+        when(game.getEntitiesVector()).thenReturn(entities);
+
+        handler.resolveObjectives();
+
+        assertTrue(candidate.marker().isConfirmed());
+        ScanTally tally = ScanTally.findTally(game.getVictoryContext());
+        assertEquals(0, tally.getScanCount(scanner.getId()));
+    }
+
+    @Test
+    void testUnconfirmedCandidateDoesNotScore() {
+        // Team 1 controls its own objective and an unconfirmed enemy candidate: without the candidate
+        // counting as an enemy objective, standard control scoring awards nothing
+        Coords friendlyPosition = new Coords(2, 2);
+        Coords candidatePosition = new Coords(4, 2);
+        PlacedObjective friendlyObjective = objectiveAt(friendlyPosition, 1, teamOnePlayer);
+        PlacedObjective enemyCandidate = objectiveAt(candidatePosition, 1, teamTwoPlayer);
+        enemyCandidate.marker().setPotential(true);
+        Map<Coords, List<ICarryable>> groundObjects = new HashMap<>();
+        groundObjects.put(friendlyPosition, new ArrayList<>(List.of(friendlyObjective.marker())));
+        groundObjects.put(candidatePosition, new ArrayList<>(List.of(enemyCandidate.marker())));
+        List<Entity> entities = List.of(
+              groundUnit(teamOnePlayer, friendlyPosition),
+              groundUnit(teamOnePlayer, candidatePosition));
+        when(game.getGroundObjects()).thenReturn(groundObjects);
+        when(game.getEntitiesVector()).thenReturn(entities);
+
+        handler.resolveObjectives();
+
+        VictoryPointTracker tracker = VictoryPointTracker.findTracker(game.getVictoryContext());
+        assertEquals(0, tracker.getTeamVictoryPoints(1));
+    }
+
+    @Test
+    void testConfirmedCandidateScoresNormally() {
+        // Same situation, but the candidate is confirmed - it counts as an enemy objective, so holding
+        // 1 friendly + 1 enemy of the 3 scorable objectives awards 1 VP
+        Coords friendlyPosition = new Coords(2, 2);
+        Coords candidatePosition = new Coords(4, 2);
+        Coords uncontrolledPosition = new Coords(12, 12);
+        PlacedObjective friendlyObjective = objectiveAt(friendlyPosition, 1, teamOnePlayer);
+        PlacedObjective enemyCandidate = objectiveAt(candidatePosition, 1, teamTwoPlayer);
+        enemyCandidate.marker().setPotential(true);
+        enemyCandidate.marker().setConfirmed(true);
+        PlacedObjective uncontrolledEnemyObjective = objectiveAt(uncontrolledPosition, 1, teamTwoPlayer);
+        Map<Coords, List<ICarryable>> groundObjects = new HashMap<>();
+        groundObjects.put(friendlyPosition, new ArrayList<>(List.of(friendlyObjective.marker())));
+        groundObjects.put(candidatePosition, new ArrayList<>(List.of(enemyCandidate.marker())));
+        groundObjects.put(uncontrolledPosition, new ArrayList<>(List.of(uncontrolledEnemyObjective.marker())));
+        List<Entity> entities = List.of(
+              groundUnit(teamOnePlayer, friendlyPosition),
+              groundUnit(teamOnePlayer, candidatePosition));
+        when(game.getGroundObjects()).thenReturn(groundObjects);
+        when(game.getEntitiesVector()).thenReturn(entities);
+
+        handler.resolveObjectives();
+
+        VictoryPointTracker tracker = VictoryPointTracker.findTracker(game.getVictoryContext());
+        assertEquals(1, tracker.getTeamVictoryPoints(1));
+    }
+
+    @Test
+    void testFragileObjectiveDestroyedByFire() {
+        Coords position = new Coords(4, 4);
+        PlacedObjective fragileObjective = objectiveAt(position, 1, teamOnePlayer);
+        fragileObjective.marker().setFragile(true);
+        placeSingleObjective(fragileObjective);
+        Board board = mock(Board.class);
+        Hex burningHex = mock(Hex.class);
+        when(burningHex.containsTerrain(Terrains.FIRE)).thenReturn(true);
+        when(board.getHex(position)).thenReturn(burningHex);
+        when(game.getBoard()).thenReturn(board);
+        handler.fragileRoll = ObjectiveResolutionHandler.FRAGILE_DESTRUCTION_MAXIMUM_ROLL;
+
+        handler.resolveObjectives();
+
+        assertTrue(fragileObjective.marker().isDestroyed());
+        assertTrue(fragileObjective.marker().isDestructionProcessed());
+    }
+
+    @Test
+    void testFragileObjectiveSurvivesFireRoll() {
+        Coords position = new Coords(4, 4);
+        PlacedObjective fragileObjective = objectiveAt(position, 1, teamOnePlayer);
+        fragileObjective.marker().setFragile(true);
+        placeSingleObjective(fragileObjective);
+        Board board = mock(Board.class);
+        Hex burningHex = mock(Hex.class);
+        when(burningHex.containsTerrain(Terrains.FIRE)).thenReturn(true);
+        when(board.getHex(position)).thenReturn(burningHex);
+        when(game.getBoard()).thenReturn(board);
+        handler.fragileRoll = ObjectiveResolutionHandler.FRAGILE_DESTRUCTION_MAXIMUM_ROLL + 1;
+
+        handler.resolveObjectives();
+
+        assertFalse(fragileObjective.marker().isDestroyed());
+    }
+
+    @Test
+    void testNonFragileObjectiveIgnoresFire() {
+        Coords position = new Coords(4, 4);
+        PlacedObjective objective = objectiveAt(position, 1, teamOnePlayer);
+        placeSingleObjective(objective);
+        Board board = mock(Board.class);
+        Hex burningHex = mock(Hex.class);
+        when(burningHex.containsTerrain(Terrains.FIRE)).thenReturn(true);
+        when(board.getHex(position)).thenReturn(burningHex);
+        when(game.getBoard()).thenReturn(board);
+        handler.fragileRoll = ObjectiveResolutionHandler.FRAGILE_DESTRUCTION_MAXIMUM_ROLL;
+
+        handler.resolveObjectives();
+
+        assertFalse(objective.marker().isDestroyed());
     }
 
     @Test

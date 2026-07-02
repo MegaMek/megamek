@@ -53,7 +53,8 @@ class ObjectiveMarkerTest {
 
         assertEquals(0, marker.getControlRadius());
         assertEquals(1, marker.getVictoryPointValue());
-        assertTrue(marker.isInvulnerable());
+        // RAW: objectives are destroyed with their building unless the mission states otherwise
+        assertFalse(marker.isInvulnerable());
         assertFalse(marker.canBePickedUp(true));
         assertFalse(marker.canBePickedUp(false));
         assertFalse(marker.isDestroyed());
@@ -96,6 +97,7 @@ class ObjectiveMarkerTest {
         marker.setInsideBuilding(true);
         marker.setBuildingLinkInitialized(true);
         marker.setDestructionProcessed(true);
+        marker.setInvulnerable(true);
 
         ByteArrayOutputStream byteStream = new ByteArrayOutputStream();
         try (ObjectOutputStream objectOutputStream = new ObjectOutputStream(byteStream)) {

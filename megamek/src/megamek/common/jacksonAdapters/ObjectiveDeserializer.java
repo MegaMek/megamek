@@ -58,10 +58,10 @@ import megamek.common.equipment.ObjectiveMarker;
  * </PRE>
  *
  * Keys: {@code name} and a position ({@code at} or {@code x}/{@code y}) are required. {@code controlRadius} (0-2,
- * default 0), {@code vp} (victory point value, default 1), {@code destructible} ({@code true} when the mission
- * allows this objective to be destroyed; objectives are indestructible by default) and {@code variants} (any of
- * {@code potential}, {@code false}, {@code fragile}, {@code mobile}) are optional. Variant rules resolve in later
- * implementation phases; the flags are parsed and stored.
+ * default 0), {@code vp} (victory point value, default 1), {@code destructible} (objectives are destructible by
+ * default per the Objectives rules; set {@code false} when the mission states that objectives cannot be destroyed)
+ * and {@code variants} (any of {@code potential}, {@code false}, {@code fragile}, {@code mobile}) are optional.
+ * Potential and False Objectives cannot be combined (RAW).
  */
 public final class ObjectiveDeserializer {
 
@@ -110,6 +110,10 @@ public final class ObjectiveDeserializer {
             marker.setInvulnerable(!node.get(DESTRUCTIBLE).asBoolean());
         }
         parseVariants(marker, node);
+        if (marker.isPotential() && marker.isFalseObjective()) {
+            throw new IllegalArgumentException("Objective " + marker.generalName()
+                  + ": Potential Objectives cannot be used in conjunction with False Objectives");
+        }
 
         return new ObjectiveInfo(marker, readPosition(marker, node));
     }

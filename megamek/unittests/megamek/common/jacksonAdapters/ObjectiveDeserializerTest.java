@@ -95,11 +95,24 @@ class ObjectiveDeserializerTest {
     }
 
     @Test
-    void testDestructibleKey() throws Exception {
+    void testDestructibleFalseMakesObjectiveIndestructible() throws Exception {
         JsonNode node = parseYaml("""
-              name: Raid Target
+              name: Protected Counter
               at: [ 3, 4 ]
-              destructible: true
+              destructible: false
+              """);
+
+        ObjectiveInfo objectiveInfo = ObjectiveDeserializer.parse(node);
+
+        assertTrue(objectiveInfo.marker().isInvulnerable());
+    }
+
+    @Test
+    void testObjectivesAreDestructibleByDefault() throws Exception {
+        // RAW: objectives are destroyed with their building unless the mission states otherwise
+        JsonNode node = parseYaml("""
+              name: Standard Counter
+              at: [ 3, 4 ]
               """);
 
         ObjectiveInfo objectiveInfo = ObjectiveDeserializer.parse(node);
@@ -108,15 +121,14 @@ class ObjectiveDeserializerTest {
     }
 
     @Test
-    void testObjectivesAreIndestructibleByDefault() throws Exception {
+    void testPotentialAndFalseCombinationThrows() throws Exception {
         JsonNode node = parseYaml("""
-              name: Standard Counter
+              name: Contradiction
               at: [ 3, 4 ]
+              variants: [ potential, "false" ]
               """);
 
-        ObjectiveInfo objectiveInfo = ObjectiveDeserializer.parse(node);
-
-        assertTrue(objectiveInfo.marker().isInvulnerable());
+        assertThrows(IllegalArgumentException.class, () -> ObjectiveDeserializer.parse(node));
     }
 
     @Test

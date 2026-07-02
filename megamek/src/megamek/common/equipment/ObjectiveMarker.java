@@ -45,9 +45,10 @@ import java.io.Serial;
  * relative to the scoring side. As a ground object, the marker's position is where it is placed in the game's ground
  * object map.</P>
  *
- * <P>The objective variant flags (Potential, False, Fragile, Mobile) are stored here but their rules resolve in
- * later implementation phases; in particular, markers cannot be picked up yet (Mobile Objective carry rules) and are
- * created invulnerable unless a mission enables objective destruction.</P>
+ * <P>Objectives are destructible by default (destroyed with their building; a mission opts out with
+ * {@code destructible: false}). The Potential, False and Fragile variant flags are stored here with their rules
+ * resolving in the End Phase objective resolution; the Mobile Objective carry rules are a later implementation
+ * phase - markers cannot be picked up yet.</P>
  */
 public class ObjectiveMarker extends GroundObject {
 
@@ -70,9 +71,9 @@ public class ObjectiveMarker extends GroundObject {
     private boolean destructionProcessed = false;
 
     public ObjectiveMarker() {
-        // Objectives cannot be destroyed unless the mission says otherwise; scenario files clear this
-        // with "destructible: true"
-        setInvulnerable(true);
+        // RAW (Objectives - Buildings): objectives are destroyed with their building unless the mission
+        // states that objectives cannot be destroyed - scenario files opt out with "destructible: false"
+        setInvulnerable(false);
     }
 
     /** @return The control radius of this objective in hexes (0 = only the objective's own hex) */

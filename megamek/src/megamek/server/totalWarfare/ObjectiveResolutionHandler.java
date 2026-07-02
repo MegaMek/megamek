@@ -42,6 +42,8 @@ import java.util.Map;
 import java.util.Set;
 
 import megamek.common.CriticalSlot;
+import megamek.common.Hex;
+import megamek.common.HexTarget;
 import megamek.common.LosEffects;
 import megamek.common.Player;
 import megamek.common.Report;
@@ -60,6 +62,8 @@ import megamek.common.units.IAero;
 import megamek.common.units.IBuilding;
 import megamek.common.units.Mek;
 import megamek.common.units.Tank;
+import megamek.common.units.Targetable;
+import megamek.common.units.Terrains;
 import megamek.logging.MMLogger;
 import megamek.server.victory.ScanTally;
 import megamek.server.victory.VictoryPointTracker;
@@ -82,12 +86,15 @@ import megamek.server.victory.VictoryPointTracker;
  * a destructible objective is destroyed with it. Objectives cannot be destroyed unless the mission allows it
  * (scenario key {@code destructible: true}); destroyed objectives no longer score.</P>
  *
- * <P>Scanning (Sensor Check mission, enabled by the {@link OptionsConstants#VICTORY_USE_SENSOR_CHECK} game option,
- * requires the TacOps sensor rules): each End Phase, every unit with a working sensor may scan one enemy unit within
- * scanning range (2 hexes, or the range of a working active probe not negated by ECM) and line of sight, rolling 2d6
- * against the scan target number. Successful scans are banked in the game's {@link ScanTally} (each enemy unit once
- * per scanner) and convert to 1 VP each when the scanner exfiltrates - flees the board - from round
- * {@value #EXFILTRATION_EARLIEST_ROUND} on; fleeing earlier forfeits the banked scans.</P>
+ * <P>Scanning: each End Phase, every unit may scan one target within scanning range (2 hexes, or the range of a
+ * working active probe not negated by ECM) and line of sight - a sensor check (a Piloting Skill Roll ignoring
+ * ordinary PSR modifiers) with a +3 TN modifier. Confirming an unconfirmed Potential Objective candidate takes
+ * priority: on a successful scan, a 1D6 of {@value #CONFIRMATION_MINIMUM_ROLL}+ confirms it as a real objective,
+ * otherwise it is useless and removed from the battlefield. With the
+ * {@link OptionsConstants#VICTORY_USE_SENSOR_CHECK} game option (Sensor Check mission), units otherwise scan enemy
+ * units; successful scans are banked in the game's {@link ScanTally} (each enemy unit once per scanner) and convert
+ * to 1 VP each when the scanner exfiltrates - flees the board - from round {@value #EXFILTRATION_EARLIEST_ROUND} on;
+ * fleeing earlier forfeits the banked scans.</P>
  *
  * <P>Sides are teams; a player without a team forms its own side.</P>
  */
@@ -116,6 +123,14 @@ class ObjectiveResolutionHandler extends AbstractTWRuleHandler {
     static final int PROBE_LEVEL_BLOODHOUND = 3;
     static final int DEFAULT_SCANNING_RANGE = 2;
     static final int EXFILTRATION_EARLIEST_ROUND = 5;
+    // Potential Objectives: after a successful scan, 1D6 of 4+ confirms the candidate; otherwise it is
+    // useless and removed from the battlefield
+    static final int CONFIRMATION_MINIMUM_ROLL = 4;
+    // Fragile Objectives: on a qualifying event, 1D6 of 1-4 destroys the objective
+    static final int FRAGILE_DESTRUCTION_MAXIMUM_ROLL = 4;
+
+    private static final int REPORT_OBJECTIVE_CONFIRMED = 7124;
+    private static final int REPORT_OBJECTIVE_USELESS = 7125;
 
     /**
      * A scoring side. Normally this is a team; a player that is not on any team forms its own side.
@@ -164,10 +179,11 @@ class ObjectiveResolutionHandler extends AbstractTWRuleHandler {
         syncObjectiveDestruction(allObjectives);
 
         List<PlacedObjective> activeObjectives = allObjectives.stream()
-              .filter(objective -> !objective.marker().isDestroyed())
+              .filter(this::isScorableObjective)
               .toList();
         if (activeObjectives.isEmpty()) {
-            LOGGER.debug("[Objective] All objectives are destroyed - no control resolution");
+            LOGGER.debug("[Objective] No scorable objectives (destroyed or unconfirmed candidates) - no control "
+                  + "resolution");
             return;
         }
 
@@ -180,6 +196,29 @@ class ObjectiveResolutionHandler extends AbstractTWRuleHandler {
             reportObjectiveControl(objective, controller);
         }
         awardStandardControlVictoryPoints(resolvedObjectives, VictoryPointTracker.getTracker(getGame()));
+    }
+
+    /**
+     * Checks whether an objective participates in control resolution and scoring: destroyed objectives and
+     * unconfirmed Potential Objective candidates do not (RAW: only confirmed objectives are worth Victory Points).
+     * A False Objective flag has no effect with a running VP score (RAW: the variant is not used in such missions).
+     */
+    private boolean isScorableObjective(PlacedObjective objective) {
+        ObjectiveMarker marker = objective.marker();
+        if (marker.isDestroyed()) {
+            return false;
+        }
+        if (marker.isPotential() && !marker.isConfirmed()) {
+            LOGGER.debug("[Objective] {} at {} is an unconfirmed objective candidate - it cannot score until "
+                  + "confirmed by a scan", marker.generalName(), objective.position());
+            return false;
+        }
+        if (marker.isFalseObjective()) {
+            LOGGER.debug("[Objective] {} at {} is flagged as a False Objective, but the variant is not used with "
+                        + "a running VP score - the flag has no effect",
+                  marker.generalName(), objective.position());
+        }
+        return true;
     }
 
     /**
@@ -210,8 +249,34 @@ class ObjectiveResolutionHandler extends AbstractTWRuleHandler {
         for (PlacedObjective objective : objectives) {
             if (board != null) {
                 checkBuildingDestruction(board, objective);
+                checkFragileFireDestruction(board, objective);
             }
             reportDestructionOnce(objective);
+        }
+    }
+
+    /**
+     * Fragile Objectives: an objective in a burning hex risks destruction, checked in the End Phase - roll 1D6, on
+     * 1-{@value #FRAGILE_DESTRUCTION_MAXIMUM_ROLL} the objective is destroyed. This runs before control resolution,
+     * so an objective destroyed this way is destroyed before it provides the VP it would have granted this turn
+     * (RAW). The other Fragile triggers (forced drops, falling or destroyed carriers, heat-causing weapon hits,
+     * area-effect damage, forced level changes) resolve with the Mobile Objective carry rules in a later phase.
+     */
+    private void checkFragileFireDestruction(Board board, PlacedObjective objective) {
+        ObjectiveMarker marker = objective.marker();
+        if (!marker.isFragile() || marker.isDestroyed() || marker.isInvulnerable()) {
+            return;
+        }
+        Hex hex = board.getHex(objective.position());
+        if ((hex == null) || !hex.containsTerrain(Terrains.FIRE)) {
+            return;
+        }
+        int roll = rollFragileCheck();
+        boolean destroyed = roll <= FRAGILE_DESTRUCTION_MAXIMUM_ROLL;
+        LOGGER.info("[Objective] Fragile objective {} at {} is in a burning hex: rolled {} - {}",
+              marker.generalName(), objective.position(), roll, destroyed ? "destroyed" : "survives");
+        if (destroyed) {
+            marker.setDestroyed(true);
         }
     }
 
@@ -365,6 +430,13 @@ class ObjectiveResolutionHandler extends AbstractTWRuleHandler {
                   entity.getShortName(), objective.marker().generalName());
             return false;
         }
+        if (entity.getMovementMode().isVTOL()) {
+            // RAW (Control Radius - Assets): air and VTOL vehicle Assets can never control objectives,
+            // even when landed
+            LOGGER.trace("[Objective] {} does not count for {}: VTOL units cannot control objectives",
+                  entity.getShortName(), objective.marker().generalName());
+            return false;
+        }
         return true;
     }
 
@@ -446,36 +518,125 @@ class ObjectiveResolutionHandler extends AbstractTWRuleHandler {
     // --- Sensor Check mission (scanning) ---
 
     /**
-     * Resolves the Sensor Check scan mission for the current End Phase: every eligible unit attempts one scan, and
-     * scanners that exfiltrated convert their banked scans to Victory Points. Does nothing unless the
-     * {@link OptionsConstants#VICTORY_USE_SENSOR_CHECK} game option is on; scanning is inert without the TacOps
-     * sensor rules.
+     * Resolves scanning for the current End Phase: every eligible unit may attempt one scan (a sensor check needs no
+     * optional rules - it is a Piloting Skill Roll). Confirming an unconfirmed Potential Objective candidate takes
+     * priority; with the {@link OptionsConstants#VICTORY_USE_SENSOR_CHECK} game option on, units otherwise scan
+     * enemy units and scanners that exfiltrated convert their banked scans to Victory Points. Does nothing when
+     * neither applies.
      */
     private void resolveScanMission() {
-        if (!getGame().getOptions().booleanOption(OptionsConstants.VICTORY_USE_SENSOR_CHECK)) {
+        boolean sensorCheckMission = getGame().getOptions().booleanOption(OptionsConstants.VICTORY_USE_SENSOR_CHECK);
+        List<PlacedObjective> objectiveCandidates = findUnconfirmedCandidates();
+        if (!sensorCheckMission && objectiveCandidates.isEmpty()) {
             return;
         }
-        if (!getGame().getOptions().booleanOption(OptionsConstants.ADVANCED_TAC_OPS_SENSORS)) {
-            LOGGER.debug("[Scan] The Sensor Check mission is enabled, but the TacOps sensor rules game option "
-                  + "is off - scanning is inert. Enable \"Sensor Rules\" (tacops_sensors) to play the mission.");
-            return;
+        performScans(sensorCheckMission, objectiveCandidates);
+        if (sensorCheckMission) {
+            awardExfiltrationVictoryPoints(ScanTally.getTally(getGame()));
         }
-        ScanTally tally = ScanTally.getTally(getGame());
-        performScans(tally);
-        awardExfiltrationVictoryPoints(tally);
     }
 
-    private void performScans(ScanTally tally) {
+    /** @return All unconfirmed Potential Objective candidates on the board (RAW: scanned to confirm them) */
+    private List<PlacedObjective> findUnconfirmedCandidates() {
+        List<PlacedObjective> candidates = new ArrayList<>();
+        for (PlacedObjective objective : findAllObjectives()) {
+            ObjectiveMarker marker = objective.marker();
+            if (marker.isPotential() && !marker.isConfirmed() && !marker.isDestroyed()) {
+                candidates.add(objective);
+            }
+        }
+        return candidates;
+    }
+
+    private void performScans(boolean sensorCheckMission, List<PlacedObjective> objectiveCandidates) {
         List<Entity> entities = getGame().getEntitiesVector();
-        boolean designatedTargetsOnly = hasDesignatedScanTargets(entities);
+        boolean designatedTargetsOnly = sensorCheckMission && hasDesignatedScanTargets(entities);
+        ScanTally tally = sensorCheckMission ? ScanTally.getTally(getGame()) : null;
         for (Entity scanner : entities) {
             if (!isEligibleScanner(scanner)) {
+                continue;
+            }
+            // Confirming an objective candidate takes priority and uses up the one scan per unit per turn
+            PlacedObjective candidate = findCandidateInRange(scanner, objectiveCandidates);
+            if (candidate != null) {
+                attemptConfirmationScan(scanner, candidate);
+                continue;
+            }
+            if (tally == null) {
                 continue;
             }
             Entity target = findScanTarget(scanner, entities, tally, designatedTargetsOnly);
             if (target != null) {
                 attemptScan(scanner, target, tally);
             }
+        }
+    }
+
+    /**
+     * @return The closest unconfirmed Potential Objective candidate within the scanner's scanning range and line of
+     *       sight, or {@code null} when there is none (candidates resolved earlier this phase are skipped)
+     */
+    @Nullable
+    private PlacedObjective findCandidateInRange(Entity scanner, List<PlacedObjective> objectiveCandidates) {
+        int scanningRange = scanningRange(scanner);
+        PlacedObjective closestCandidate = null;
+        int closestDistance = Integer.MAX_VALUE;
+        for (PlacedObjective candidate : objectiveCandidates) {
+            ObjectiveMarker marker = candidate.marker();
+            if (marker.isConfirmed() || marker.isDestroyed()) {
+                continue;
+            }
+            int distance = scanner.getPosition().distance(candidate.position());
+            if ((distance > scanningRange) || !hasLineOfSightToHex(scanner, candidate.position())) {
+                continue;
+            }
+            if (distance < closestDistance) {
+                closestDistance = distance;
+                closestCandidate = candidate;
+            }
+        }
+        return closestCandidate;
+    }
+
+    /**
+     * Scans an unconfirmed Potential Objective candidate. On a successful sensor check, roll 1D6: on
+     * {@value #CONFIRMATION_MINIMUM_ROLL}+ the candidate is a confirmed objective (known to all players); otherwise
+     * it is useless and immediately removed from the battlefield.
+     */
+    private void attemptConfirmationScan(Entity scanner, PlacedObjective candidate) {
+        ObjectiveMarker marker = candidate.marker();
+        int targetNumber = baseScanTargetNumber(scanner);
+        int roll = rollScanCheck();
+        boolean scanSucceeded = roll >= targetNumber;
+        LOGGER.debug("[Scan] {} scans objective candidate {} at {}: TN {} (piloting {} + scan {}, sensor hits {}, "
+                    + "probe level {}), rolled {} - {}",
+              scanner.getShortName(), marker.generalName(), candidate.position(), targetNumber,
+              scanner.getCrew().getPiloting(), SCAN_MODIFIER, sensorCriticalHits(scanner),
+              activeProbeLevel(scanner), roll, scanSucceeded ? "success" : "failure");
+        if (!scanSucceeded) {
+            return;
+        }
+
+        int confirmationRoll = rollObjectiveConfirmation();
+        if (confirmationRoll >= CONFIRMATION_MINIMUM_ROLL) {
+            marker.setConfirmed(true);
+            LOGGER.info("[Objective] {} at {} is confirmed as a real objective (confirmation roll {})",
+                  marker.generalName(), candidate.position(), confirmationRoll);
+            Report report = new Report(REPORT_OBJECTIVE_CONFIRMED, Report.PUBLIC);
+            report.add(scanner.getDisplayName());
+            report.add(marker.generalName());
+            report.add(candidate.position().toFriendlyString());
+            addReport(report);
+        } else {
+            getGame().removeGroundObject(candidate.position(), marker);
+            gameManager.sendGroundObjectUpdate();
+            LOGGER.info("[Objective] {} at {} is useless and removed from the battlefield (confirmation roll {})",
+                  marker.generalName(), candidate.position(), confirmationRoll);
+            Report report = new Report(REPORT_OBJECTIVE_USELESS, Report.PUBLIC);
+            report.add(scanner.getDisplayName());
+            report.add(marker.generalName());
+            report.add(candidate.position().toFriendlyString());
+            addReport(report);
         }
     }
 
@@ -597,15 +758,24 @@ class ObjectiveResolutionHandler extends AbstractTWRuleHandler {
      * @return The 2d6 target number for the scan
      */
     int computeScanTargetNumber(Entity scanner, Entity target) {
-        int targetNumber = scanner.getCrew().getPiloting() + SCAN_MODIFIER;
-        if (sensorCriticalHits(scanner) > 0) {
-            targetNumber += SCAN_SENSOR_CRITICAL_MODIFIER;
-        }
-        targetNumber -= activeProbeLevel(scanner);
+        int targetNumber = baseScanTargetNumber(scanner);
         if (target.isStealthActive()) {
             targetNumber += SCAN_STEALTH_MODIFIER;
         }
         return targetNumber;
+    }
+
+    /**
+     * @return The scan target number without target-dependent modifiers, as used for scanning objective markers:
+     *       Piloting + {@value #SCAN_MODIFIER}, + {@value #SCAN_SENSOR_CRITICAL_MODIFIER} with a sensor critical
+     *       hit, - the active probe level
+     */
+    int baseScanTargetNumber(Entity scanner) {
+        int targetNumber = scanner.getCrew().getPiloting() + SCAN_MODIFIER;
+        if (sensorCriticalHits(scanner) > 0) {
+            targetNumber += SCAN_SENSOR_CRITICAL_MODIFIER;
+        }
+        return targetNumber - activeProbeLevel(scanner);
     }
 
     /**
@@ -727,9 +897,25 @@ class ObjectiveResolutionHandler extends AbstractTWRuleHandler {
         return LosEffects.calculateLOS(getGame(), scanner, target).canSee();
     }
 
+    /** Seam for tests: line of sight from the scanner to a board hex (for scanning objective markers). */
+    boolean hasLineOfSightToHex(Entity scanner, Coords position) {
+        HexTarget hexTarget = new HexTarget(position, Targetable.TYPE_HEX_CLEAR);
+        return LosEffects.calculateLOS(getGame(), scanner, hexTarget).canSee();
+    }
+
     /** Seam for tests: the 2d6 scan check roll. */
     int rollScanCheck() {
         return Compute.d6(2);
+    }
+
+    /** Seam for tests: the 1D6 Potential Objective confirmation roll ({@value #CONFIRMATION_MINIMUM_ROLL}+ confirms). */
+    int rollObjectiveConfirmation() {
+        return Compute.d6();
+    }
+
+    /** Seam for tests: the 1D6 Fragile Objective destruction roll (1-{@value #FRAGILE_DESTRUCTION_MAXIMUM_ROLL} destroys). */
+    int rollFragileCheck() {
+        return Compute.d6();
     }
 
     private void reportObjectiveControl(PlacedObjective objective, @Nullable Side controller) {

@@ -105,6 +105,7 @@ public class ScenarioV2 implements Scenario {
     private static final String OPTIONS = "options";
     private static final String OBJECTS = "objects";
     private static final String OBJECTIVES = "objectives";
+    private static final String SCAN_TARGETS = "scanTargets";
     private static final String MESSAGES = "messages";
     private static final String END = "end";
     private static final String TRIGGER = "trigger";
@@ -178,6 +179,7 @@ public class ScenarioV2 implements Scenario {
         game.setPhase(GamePhase.STARTING_SCENARIO);
         parseOptions(game);
         parsePlayers(game);
+        parseScanTargets(game);
         parseMessages(game);
         parseGameEndEvents(game);
         parseGeneralEvents(game);
@@ -315,6 +317,27 @@ public class ScenarioV2 implements Scenario {
         List<Player> players = readPlayers(game);
         for (Player player : players) {
             game.addPlayer(player.getId(), player);
+        }
+    }
+
+    /**
+     * Parses the game-level {@code scanTargets:} list of unit IDs and designates those units as the mission's scan
+     * targets (Standard Missions, Objectives - Scanning). When any unit is designated, only designated units can be
+     * scanned. Must be called after the players and their units have been parsed.
+     */
+    private void parseScanTargets(IGame game) {
+        if (!node.has(SCAN_TARGETS)) {
+            return;
+        }
+        for (JsonNode scanTargetIdNode : node.get(SCAN_TARGETS)) {
+            int unitId = scanTargetIdNode.asInt();
+            InGameObject unit = game.getInGameObject(unitId).orElse(null);
+            if (unit instanceof Entity entity) {
+                entity.setDesignatedScanTarget(true);
+            } else {
+                throw new IllegalArgumentException("scanTargets entry " + unitId
+                      + " does not match the ID of any unit in the scenario");
+            }
         }
     }
 

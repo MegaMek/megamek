@@ -892,6 +892,8 @@ public abstract class Entity extends TurnOrdered
     private Sensor nextSensor;
     // roll for sensor check
     private int sensorCheck;
+    // designated as a scan target by an objective mission (Standard Missions, Objectives - Scanning)
+    private boolean designatedScanTarget = false;
 
     // the roll for ghost targets (Legacy mode)
     private Roll ghostTargetRoll;
@@ -13771,6 +13773,19 @@ public abstract class Entity extends TurnOrdered
 
     public int getSensorCheck() {
         return sensorCheck;
+    }
+
+    /**
+     * @return {@code true} if an objective mission designates this unit as a scan target (Standard Missions,
+     *       Objectives - Scanning). When any unit in a game is designated, only designated units can be scanned;
+     *       without designations, every enemy unit is a valid scan target.
+     */
+    public boolean isDesignatedScanTarget() {
+        return designatedScanTarget;
+    }
+
+    public void setDesignatedScanTarget(boolean designatedScanTarget) {
+        this.designatedScanTarget = designatedScanTarget;
     }
 
     /**

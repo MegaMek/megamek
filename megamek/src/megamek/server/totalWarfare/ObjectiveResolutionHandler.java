@@ -34,22 +34,34 @@
 package megamek.server.totalWarfare;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import megamek.common.CriticalSlot;
+import megamek.common.LosEffects;
 import megamek.common.Player;
 import megamek.common.Report;
 import megamek.common.annotations.Nullable;
 import megamek.common.board.Board;
 import megamek.common.board.Coords;
+import megamek.common.compute.Compute;
 import megamek.common.equipment.ICarryable;
+import megamek.common.equipment.MiscMounted;
+import megamek.common.equipment.MiscType;
 import megamek.common.equipment.ObjectiveMarker;
+import megamek.common.interfaces.IEntityRemovalConditions;
+import megamek.common.options.OptionsConstants;
 import megamek.common.units.Entity;
+import megamek.common.units.IAero;
 import megamek.common.units.IBuilding;
+import megamek.common.units.Mek;
+import megamek.common.units.Tank;
 import megamek.logging.MMLogger;
+import megamek.server.victory.ScanTally;
 import megamek.server.victory.VictoryPointTracker;
 
 /**
@@ -70,6 +82,13 @@ import megamek.server.victory.VictoryPointTracker;
  * a destructible objective is destroyed with it. Objectives cannot be destroyed unless the mission allows it
  * (scenario key {@code destructible: true}); destroyed objectives no longer score.</P>
  *
+ * <P>Scanning (Sensor Check mission, enabled by the {@link OptionsConstants#VICTORY_USE_SENSOR_CHECK} game option,
+ * requires the TacOps sensor rules): each End Phase, every unit with a working sensor may scan one enemy unit within
+ * scanning range (2 hexes, or the range of a working active probe not negated by ECM) and line of sight, rolling 2d6
+ * against the scan target number. Successful scans are banked in the game's {@link ScanTally} (each enemy unit once
+ * per scanner) and convert to 1 VP each when the scanner exfiltrates - flees the board - from round
+ * {@value #EXFILTRATION_EARLIEST_ROUND} on; fleeing earlier forfeits the banked scans.</P>
+ *
  * <P>Sides are teams; a player without a team forms its own side.</P>
  */
 class ObjectiveResolutionHandler extends AbstractTWRuleHandler {
@@ -80,6 +99,23 @@ class ObjectiveResolutionHandler extends AbstractTWRuleHandler {
     private static final int REPORT_OBJECTIVE_UNCONTROLLED = 7118;
     private static final int REPORT_OBJECTIVE_POINTS_AWARDED = 7119;
     private static final int REPORT_OBJECTIVE_DESTROYED = 7120;
+    private static final int REPORT_SCAN_SUCCESS = 7121;
+    private static final int REPORT_SCAN_POINTS_AWARDED = 7122;
+    private static final int REPORT_SCANS_LOST = 7123;
+
+    // Scan check numbers per Standard Missions, Objectives - Scanning: a scan is a sensor check (a Piloting
+    // Skill Roll ignoring ordinary PSR modifiers, p.113) with a +3 TN modifier; +2 for one sensor critical
+    // hit (two prevent sensor checks entirely); -1 per active probe level (Light 1, Beagle-class 2,
+    // Bloodhound 3) when not negated by hostile ECM; +2 against a target with an active stealth system.
+    static final int SCAN_MODIFIER = 3;
+    static final int SCAN_SENSOR_CRITICAL_MODIFIER = 2;
+    static final int SCAN_BLOCKING_SENSOR_CRITICAL_HITS = 2;
+    static final int SCAN_STEALTH_MODIFIER = 2;
+    static final int PROBE_LEVEL_LIGHT = 1;
+    static final int PROBE_LEVEL_STANDARD = 2;
+    static final int PROBE_LEVEL_BLOODHOUND = 3;
+    static final int DEFAULT_SCANNING_RANGE = 2;
+    static final int EXFILTRATION_EARLIEST_ROUND = 5;
 
     /**
      * A scoring side. Normally this is a team; a player that is not on any team forms its own side.
@@ -112,12 +148,14 @@ class ObjectiveResolutionHandler extends AbstractTWRuleHandler {
     }
 
     /**
-     * Resolves objectives for the current End Phase: syncs objective destruction (an objective inside a destroyed
-     * building is destroyed with it), then determines the controller of every surviving objective marker, reports the
-     * results and awards Victory Points per the standard control scoring. Does nothing when the game has no objective
-     * markers.
+     * Resolves objectives for the current End Phase: resolves the Sensor Check scan mission (when enabled), syncs
+     * objective destruction (an objective inside a destroyed building is destroyed with it), then determines the
+     * controller of every surviving objective marker, reports the results and awards Victory Points per the standard
+     * control scoring. Does nothing when the game has neither the scan mission nor objective markers.
      */
     void resolveObjectives() {
+        resolveScanMission();
+
         List<PlacedObjective> allObjectives = findAllObjectives();
         if (allObjectives.isEmpty()) {
             return;
@@ -388,16 +426,310 @@ class ObjectiveResolutionHandler extends AbstractTWRuleHandler {
     }
 
     private void awardVictoryPoints(Side side, int points, String reason, VictoryPointTracker tracker) {
+        creditVictoryPoints(side, points, reason, tracker);
+        Report report = new Report(REPORT_OBJECTIVE_POINTS_AWARDED, Report.PUBLIC);
+        report.add(displayName(side));
+        report.add(points);
+        addReport(report);
+    }
+
+    /** Credits victory points to the side's running tally without reporting; callers add their own report. */
+    private void creditVictoryPoints(Side side, int points, String reason, VictoryPointTracker tracker) {
         int gameRound = getGame().getCurrentRound();
         if (side.isTeam()) {
             tracker.awardToTeam(side.id(), points, gameRound, reason);
         } else {
             tracker.awardToPlayer(side.id(), points, gameRound, reason);
         }
-        Report report = new Report(REPORT_OBJECTIVE_POINTS_AWARDED, Report.PUBLIC);
-        report.add(displayName(side));
-        report.add(points);
+    }
+
+    // --- Sensor Check mission (scanning) ---
+
+    /**
+     * Resolves the Sensor Check scan mission for the current End Phase: every eligible unit attempts one scan, and
+     * scanners that exfiltrated convert their banked scans to Victory Points. Does nothing unless the
+     * {@link OptionsConstants#VICTORY_USE_SENSOR_CHECK} game option is on; scanning is inert without the TacOps
+     * sensor rules.
+     */
+    private void resolveScanMission() {
+        if (!getGame().getOptions().booleanOption(OptionsConstants.VICTORY_USE_SENSOR_CHECK)) {
+            return;
+        }
+        if (!getGame().getOptions().booleanOption(OptionsConstants.ADVANCED_TAC_OPS_SENSORS)) {
+            LOGGER.debug("[Scan] The Sensor Check mission is enabled, but the TacOps sensor rules game option "
+                  + "is off - scanning is inert. Enable \"Sensor Rules\" (tacops_sensors) to play the mission.");
+            return;
+        }
+        ScanTally tally = ScanTally.getTally(getGame());
+        performScans(tally);
+        awardExfiltrationVictoryPoints(tally);
+    }
+
+    private void performScans(ScanTally tally) {
+        List<Entity> entities = getGame().getEntitiesVector();
+        boolean designatedTargetsOnly = hasDesignatedScanTargets(entities);
+        for (Entity scanner : entities) {
+            if (!isEligibleScanner(scanner)) {
+                continue;
+            }
+            Entity target = findScanTarget(scanner, entities, tally, designatedTargetsOnly);
+            if (target != null) {
+                attemptScan(scanner, target, tally);
+            }
+        }
+    }
+
+    /**
+     * @return {@code true} when the mission designates specific units as scan targets - then only those units can
+     *       be scanned; without designations, every enemy unit is a valid scan target
+     */
+    private boolean hasDesignatedScanTargets(List<Entity> entities) {
+        boolean designatedTargetsOnly = false;
+        for (Entity entity : entities) {
+            if (entity.isDesignatedScanTarget()) {
+                designatedTargetsOnly = true;
+                break;
+            }
+        }
+        if (designatedTargetsOnly) {
+            LOGGER.debug("[Scan] The mission designates specific scan targets - only designated units can be "
+                  + "scanned");
+        }
+        return designatedTargetsOnly;
+    }
+
+    /**
+     * Checks whether a unit can attempt scans: it must be deployed on the board, not transported, have a crew and a
+     * working sensor ({@link Entity#getActiveSensor()} not {@code null} - covers destroyed sensors), and have fewer
+     * than {@value #SCAN_BLOCKING_SENSOR_CRITICAL_HITS} sensor critical hits (two sensor hits prevent sensor
+     * checks). An immobile unit can still scan - sensor checks are not movement.
+     */
+    private boolean isEligibleScanner(Entity scanner) {
+        boolean isOnBoard = (scanner.getPosition() != null) && scanner.isDeployed() && !scanner.isOffBoard()
+              && !scanner.isDestroyed() && (scanner.getTransportId() == Entity.NONE);
+        if (!isOnBoard) {
+            return false;
+        }
+        // TRACE below because this runs in a loop over all entities each End Phase
+        if ((scanner.getActiveSensor() == null) || (scanner.getCrew() == null)) {
+            LOGGER.trace("[Scan] {} cannot scan: no working sensor or no crew", scanner.getShortName());
+            return false;
+        }
+        if (sensorCriticalHits(scanner) >= SCAN_BLOCKING_SENSOR_CRITICAL_HITS) {
+            LOGGER.trace("[Scan] {} cannot scan: {} or more sensor critical hits prevent sensor checks",
+                  scanner.getShortName(), SCAN_BLOCKING_SENSOR_CRITICAL_HITS);
+            return false;
+        }
+        return true;
+    }
+
+    /**
+     * Picks the scan target for this scanner: the closest enemy unit within scanning range and line of sight that
+     * the scanner has not already banked. One scan per unit per turn. When the mission designates scan targets,
+     * only designated units qualify.
+     *
+     * @return The chosen target, or {@code null} when there is no valid scan target
+     */
+    @Nullable
+    private Entity findScanTarget(Entity scanner, List<Entity> entities, ScanTally tally,
+          boolean designatedTargetsOnly) {
+        int scanningRange = scanningRange(scanner);
+        Entity closestTarget = null;
+        int closestDistance = Integer.MAX_VALUE;
+        for (Entity target : entities) {
+            if (!isValidScanTarget(scanner, target, scanningRange, tally, designatedTargetsOnly)) {
+                continue;
+            }
+            int distance = scanner.getPosition().distance(target.getPosition());
+            if (distance < closestDistance) {
+                closestDistance = distance;
+                closestTarget = target;
+            }
+        }
+        return closestTarget;
+    }
+
+    private boolean isValidScanTarget(Entity scanner, Entity target, int scanningRange, ScanTally tally,
+          boolean designatedTargetsOnly) {
+        boolean isOnBoard = (target.getPosition() != null) && target.isDeployed() && !target.isOffBoard()
+              && !target.isDestroyed();
+        boolean isEnemy = (scanner.getOwner() != null) && (target.getOwner() != null)
+              && target.getOwner().isEnemyOf(scanner.getOwner());
+        if (!isOnBoard || !isEnemy) {
+            return false;
+        }
+        if (designatedTargetsOnly && !target.isDesignatedScanTarget()) {
+            LOGGER.trace("[Scan] {} is not a designated scan target - skipped", target.getShortName());
+            return false;
+        }
+        if (tally.hasScanned(scanner.getId(), target.getId())) {
+            return false;
+        }
+        if (scanner.getPosition().distance(target.getPosition()) > scanningRange) {
+            return false;
+        }
+        return hasLineOfSight(scanner, target);
+    }
+
+    /**
+     * @return The scanning range of the unit: {@value #DEFAULT_SCANNING_RANGE} hexes, or the range of its active
+     *       probe when it has a working probe that is not negated by hostile ECM
+     */
+    int scanningRange(Entity scanner) {
+        if (scanner.hasBAP(true)) {
+            int probeRange = scanner.getBAPRange();
+            if (probeRange > DEFAULT_SCANNING_RANGE) {
+                return probeRange;
+            }
+        }
+        return DEFAULT_SCANNING_RANGE;
+    }
+
+    /**
+     * Computes the target number for the scan sensor check: the pilot's Piloting Skill (a sensor check is a Piloting
+     * Skill Roll that ignores ordinary PSR modifiers) + {@value #SCAN_MODIFIER} scan modifier,
+     * + {@value #SCAN_SENSOR_CRITICAL_MODIFIER} with a sensor critical hit, - the active probe level with a working
+     * non-negated probe, + {@value #SCAN_STEALTH_MODIFIER} against a target with an active stealth system.
+     *
+     * @param scanner The scanning unit; must have a crew
+     * @param target  The unit being scanned
+     *
+     * @return The 2d6 target number for the scan
+     */
+    int computeScanTargetNumber(Entity scanner, Entity target) {
+        int targetNumber = scanner.getCrew().getPiloting() + SCAN_MODIFIER;
+        if (sensorCriticalHits(scanner) > 0) {
+            targetNumber += SCAN_SENSOR_CRITICAL_MODIFIER;
+        }
+        targetNumber -= activeProbeLevel(scanner);
+        if (target.isStealthActive()) {
+            targetNumber += SCAN_STEALTH_MODIFIER;
+        }
+        return targetNumber;
+    }
+
+    /**
+     * @return The number of sensor critical hits on the unit: head (and center torso for torso-mounted cockpits)
+     *       sensor slots for Meks, the sensor hit counters for vehicles and aerospace units, 0 for other types
+     */
+    int sensorCriticalHits(Entity scanner) {
+        if (scanner instanceof Mek mek) {
+            int sensorHits = mek.getBadCriticalSlots(CriticalSlot.TYPE_SYSTEM, Mek.SYSTEM_SENSORS, Mek.LOC_HEAD);
+            if (mek.getCockpitType() == Mek.COCKPIT_TORSO_MOUNTED) {
+                sensorHits += mek.getBadCriticalSlots(CriticalSlot.TYPE_SYSTEM, Mek.SYSTEM_SENSORS,
+                      Mek.LOC_CENTER_TORSO);
+            }
+            return sensorHits;
+        }
+        if (scanner instanceof Tank tank) {
+            return tank.getSensorHits();
+        }
+        if (scanner instanceof IAero aero) {
+            return aero.getSensorHits();
+        }
+        return 0;
+    }
+
+    /**
+     * Determines the unit's active probe level for the scan TN bonus: Light Active Probe = 1, Beagle-class probes
+     * (Beagle, Clan Active Probe, Watchdog, Nova) = 2, Bloodhound = 3. Probe capability without probe equipment
+     * (implants, quirks) counts as a light probe. A probe negated by hostile ECM gives no level (and no range).
+     *
+     * @param scanner The scanning unit
+     *
+     * @return The probe level, or 0 without a working non-negated probe
+     */
+    int activeProbeLevel(Entity scanner) {
+        if (!scanner.hasBAP(true)) {
+            return 0;
+        }
+        int probeLevel = 0;
+        for (MiscMounted miscEquipment : scanner.getMisc()) {
+            if (!miscEquipment.getType().hasFlag(MiscType.F_BAP) || miscEquipment.isInoperable()) {
+                continue;
+            }
+            String probeName = miscEquipment.getType().getInternalName().toLowerCase();
+            if (probeName.contains("bloodhound")) {
+                probeLevel = Math.max(probeLevel, PROBE_LEVEL_BLOODHOUND);
+            } else if (probeName.contains("light")) {
+                probeLevel = Math.max(probeLevel, PROBE_LEVEL_LIGHT);
+            } else {
+                probeLevel = Math.max(probeLevel, PROBE_LEVEL_STANDARD);
+            }
+        }
+        return (probeLevel == 0) ? PROBE_LEVEL_LIGHT : probeLevel;
+    }
+
+    private void attemptScan(Entity scanner, Entity target, ScanTally tally) {
+        int targetNumber = computeScanTargetNumber(scanner, target);
+        int roll = rollScanCheck();
+        boolean success = roll >= targetNumber;
+        LOGGER.debug("[Scan] {} scans {}: TN {} (piloting {} + scan {}, sensor hits {}, probe level {}, "
+                    + "target stealth {}), rolled {} - {}",
+              scanner.getShortName(), target.getShortName(), targetNumber, scanner.getCrew().getPiloting(),
+              SCAN_MODIFIER, sensorCriticalHits(scanner), activeProbeLevel(scanner), target.isStealthActive(),
+              roll, success ? "success" : "failure");
+        if (!success) {
+            return;
+        }
+        tally.recordScan(scanner.getId(), target.getId());
+        Report report = new Report(REPORT_SCAN_SUCCESS);
+        report.subject = scanner.getId();
+        report.add(scanner.getDisplayName());
+        report.add(target.getDisplayName());
         addReport(report);
+    }
+
+    /**
+     * Converts banked scans to Victory Points for scanners that exfiltrated (fled the board): 1 VP per banked scan
+     * when the game round is at least {@value #EXFILTRATION_EARLIEST_ROUND}; fleeing earlier forfeits the scans.
+     * Each scanner's exfiltration is processed exactly once.
+     */
+    private void awardExfiltrationVictoryPoints(ScanTally tally) {
+        for (Entity retreatedEntity : Collections.list(getGame().getRetreatedEntities())) {
+            boolean isFled = retreatedEntity.getRemovalCondition() == IEntityRemovalConditions.REMOVE_IN_RETREAT;
+            int scanCount = tally.getScanCount(retreatedEntity.getId());
+            if (!isFled || (scanCount == 0) || tally.isExfiltrationProcessed(retreatedEntity.getId())) {
+                continue;
+            }
+            tally.markExfiltrationProcessed(retreatedEntity.getId());
+
+            if (getGame().getCurrentRound() < EXFILTRATION_EARLIEST_ROUND) {
+                LOGGER.info("[Scan] {} fled before round {} - its {} banked scan(s) are lost",
+                      retreatedEntity.getShortName(), EXFILTRATION_EARLIEST_ROUND, scanCount);
+                Report report = new Report(REPORT_SCANS_LOST, Report.PUBLIC);
+                report.add(retreatedEntity.getDisplayName());
+                report.add(EXFILTRATION_EARLIEST_ROUND);
+                addReport(report);
+                continue;
+            }
+
+            Side side = sideOfPlayer(retreatedEntity.getOwner());
+            if (side == null) {
+                LOGGER.warn("[Scan] Exfiltrated scanner {} has no owner - cannot award scan victory points",
+                      retreatedEntity.getShortName());
+                continue;
+            }
+            creditVictoryPoints(side, scanCount,
+                  "exfiltrated with " + scanCount + " scan(s)", VictoryPointTracker.getTracker(getGame()));
+            LOGGER.info("[Scan] {} exfiltrated with {} banked scan(s) - {} receives {} VP",
+                  retreatedEntity.getShortName(), scanCount, displayName(side), scanCount);
+            Report report = new Report(REPORT_SCAN_POINTS_AWARDED, Report.PUBLIC);
+            report.add(displayName(side));
+            report.add(scanCount);
+            report.add(retreatedEntity.getDisplayName());
+            addReport(report);
+        }
+    }
+
+    /** Seam for tests: line of sight between scanner and target. */
+    boolean hasLineOfSight(Entity scanner, Entity target) {
+        return LosEffects.calculateLOS(getGame(), scanner, target).canSee();
+    }
+
+    /** Seam for tests: the 2d6 scan check roll. */
+    int rollScanCheck() {
+        return Compute.d6(2);
     }
 
     private void reportObjectiveControl(PlacedObjective objective, @Nullable Side controller) {

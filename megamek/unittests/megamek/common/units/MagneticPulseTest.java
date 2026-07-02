@@ -231,4 +231,31 @@ class MagneticPulseTest {
             assertEquals(0, Compute.missilesHit(0, 0, false), "0 missiles -> 0 hits (legacy overload)");
         }
     }
+
+    @Nested
+    @DisplayName("MagneticPulseState window and heat-remainder lifecycle")
+    class StateLifecycleTests {
+
+        @Test
+        @DisplayName("A standard MP re-hit while already active does not extend the window")
+        void reHitDoesNotExtendWindow() {
+            MagneticPulseState state = new MagneticPulseState();
+            state.applyStandardPulse(); // window starts at 2
+            state.newRound();           // 2 -> 1
+            state.applyStandardPulse(); // re-hit while active must NOT restart the window
+
+            assertEquals(1, state.getStandardRounds(), "re-hit while active does not extend the window");
+        }
+
+        @Test
+        @DisplayName("Heat remainders do not carry across turns")
+        void heatRemainderClearsEachTurn() {
+            MagneticPulseState state = new MagneticPulseState();
+            state.computeStandardHeat(2, MagneticPulseState.SRM_HEAT_DIVISOR); // remainder 2, no heat yet
+            state.newRound();                                                   // remainder must clear
+
+            int heat = state.computeStandardHeat(2, MagneticPulseState.SRM_HEAT_DIVISOR);
+            assertEquals(0, heat, "next turn's 2 warheads alone (2/3) give no heat; last turn's remainder is gone");
+        }
+    }
 }

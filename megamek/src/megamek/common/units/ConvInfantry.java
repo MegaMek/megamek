@@ -1433,6 +1433,14 @@ public class ConvInfantry extends Infantry {
     }
 
     /**
+     * @return {@code true} while this platoon's energy weapons are rendered inoperative by an Improved Magnetic Pulse
+     *       missile hit (IO IMP rules).
+     */
+    public boolean isEnergyWeaponsDisabled() {
+        return impEnergyWeaponsDisabledRounds > 0;
+    }
+
+    /**
      * @return true if this platoon is equipped with cybernetic enhancements of any kind (IO p.84 prosthetic
      *       enhancements). Improved Magnetic Pulse missiles deal double damage to such units.
      */

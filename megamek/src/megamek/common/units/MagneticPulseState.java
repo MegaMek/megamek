@@ -70,9 +70,15 @@ public class MagneticPulseState implements Serializable {
 
     // --- Standard Magnetic Pulse ---
 
-    /** Records a standard MP hit: the +1 to-hit lasts through the End Phase of the following turn. */
+    /**
+     * Records a standard MP hit: the +1 to-hit lasts through the End Phase of the following turn. Additional hits while
+     * the effect is already active do not extend or restart the window (TO:AUE p.182), so the counter is only started
+     * when the unit is not already affected.
+     */
     public void applyStandardPulse() {
-        standardRounds = 2;
+        if (standardRounds == 0) {
+            standardRounds = 2;
+        }
     }
 
     public int getStandardRounds() {
@@ -179,5 +185,10 @@ public class MagneticPulseState implements Serializable {
         }
         impLastTurn = impThisTurn;
         impThisTurn = 0;
+        // Heat remainders accumulate only within a turn, so clear them; otherwise a sub-threshold
+        // remainder would carry into the next turn and add heat that turn's hits did not earn.
+        lrmHeatRemainder = 0;
+        srmHeatRemainder = 0;
+        impHeatRemainder = 0;
     }
 }

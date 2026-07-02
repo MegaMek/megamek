@@ -402,6 +402,14 @@ public class UnitTable {
                 roll -= te.weight;
             }
         }
+        // No unit could be selected: either this table is empty for the requested parameters or the
+        // caller's filter excluded every entry. This is the origin of the higher-level
+        // "[ForceGen] Could not generate unit" error, so record the table identity and shape here where
+        // the context still exists.
+        LOGGER.debug("[ForceGen][UnitTable] generateUnit selected nothing for faction={} unitType={} year={} " +
+                          "rating={}: filtered={} entries(total={}, afterFilter={}) weightSum={}",
+              key.getFaction(), key.getUnitType(), key.getYear(), key.getRating(),
+              filter != null, unitTable.size(), useUnitList.size(), unitMapSize);
         return null;
     }
 

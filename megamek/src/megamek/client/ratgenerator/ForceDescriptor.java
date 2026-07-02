@@ -254,7 +254,10 @@ public class ForceDescriptor {
                             + " element=true, will load by chassis name. chassis={} unitType={} faction={} year={}",
                       chassis, unitType, faction, year);
             } else {
-                LOGGER.error("Could not generate unit");
+                LOGGER.error("[ForceGen] Could not generate unit: RAT returned no model and no chassis/model " +
+                                  "fallback applied. unitType={} faction={} year={} weightClass={} roles={} " +
+                                  "models={} chassis={}",
+                      unitType, faction, year, weightClass, roles, models, chassis);
             }
         } else {
             if (null != formationType) {
@@ -922,26 +925,27 @@ public class ForceDescriptor {
             }
         }
 
-        LOGGER.debug("Could not find unit for {}", UnitType.getTypeDisplayableName(unitType));
-        if (unitType != null && unitType == UnitType.MEK) {
-            if (models.isEmpty()) {
-                // Genuine failure: no pinned model to fall back on, so the caller's
-                // getModelRecord(getModelName()) rescue (generateUnits) cannot recover. Log the full trace.
-                LOGGER.debug("[ForceGen][Weight] generate() FAILED requestedWeight={} -> no unit found."
-                            + " element: faction={} unitType={} year={} echelon={} roles={} movementModes={}"
-                            + " models={} chassis={}",
-                      weightClass, faction, unitType, year, echelon, roles, movementModes, models, chassis);
-                for (String line : failureTrace) {
-                    LOGGER.debug("[ForceGen][Weight]   attempt: {}", line);
-                }
-            } else {
-                // Not a real failure: a formation already pinned this model (setUnit) but it is not in the
-                // element's own faction/year/role/weight table. The caller resolves it by name via the
-                // getModelRecord fallback, so emit one concise line instead of the full FAILED + attempt trace.
-                LOGGER.debug("[ForceGen][Weight] generate() table-miss for pinned model(s) {} (faction={} year={}"
-                            + " weightClass={} roles={}); resolving by name via fallback",
-                      models, faction, year, weightClass, roles);
+        // Ladder exhausted: no unit found at any rating. Emit the diagnostic for EVERY unit type, not
+        // just Meks - a combined-arms force fails just as often on tanks, aero, infantry and vessels,
+        // and those were previously logged only by a terse one-liner with no context.
+        if (models.isEmpty()) {
+            // Genuine failure: no pinned model to fall back on, so the caller's
+            // getModelRecord(getModelName()) rescue (generateUnits) cannot recover. Log the full trace.
+            LOGGER.debug("[ForceGen][Weight] generate() FAILED for {} requestedWeight={} -> no unit found."
+                        + " element: faction={} unitType={} year={} echelon={} roles={} movementModes={}"
+                        + " models={} chassis={}",
+                  UnitType.getTypeDisplayableName(unitType), weightClass, faction, unitType, year, echelon,
+                  roles, movementModes, models, chassis);
+            for (String line : failureTrace) {
+                LOGGER.debug("[ForceGen][Weight]   attempt: {}", line);
             }
+        } else {
+            // Not a real failure: a formation already pinned this model (setUnit) but it is not in the
+            // element's own faction/year/role/weight table. The caller resolves it by name via the
+            // getModelRecord fallback, so emit one concise line instead of the full FAILED + attempt trace.
+            LOGGER.debug("[ForceGen][Weight] generate() table-miss for pinned model(s) {} (unitType={} faction={}"
+                        + " year={} weightClass={} roles={}); resolving by name via fallback",
+                  models, UnitType.getTypeDisplayableName(unitType), faction, year, weightClass, roles);
         }
         return null;
     }

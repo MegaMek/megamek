@@ -447,8 +447,8 @@ public class ConvInfantry extends Infantry {
 
     /**
      * Number of consecutive prior rounds this platoon has already spent fighting a fire in the given hex, used for the
-     * cumulative firefighting target-number reduction (TO:AuE p.153). Returns 0 when the platoon did not fight this same
-     * hex on the immediately preceding round.
+     * cumulative firefighting target-number reduction (TO:AuE p.153). Returns 0 when the platoon did not fight this
+     * same hex on the immediately preceding round.
      *
      * @param coords the burning hex being targeted
      * @param round  the current game round
@@ -638,8 +638,8 @@ public class ConvInfantry extends Infantry {
     private int bridgeDismantleRequiredTurns = 0;
 
     /**
-     * {@code true} while a bridge build is paused: the partial progress is held on the platoon but the platoon is
-     * freed (it may move and fight normally) until it returns to the site and resumes. Stored in saves (non-transient).
+     * {@code true} while a bridge build is paused: the partial progress is held on the platoon but the platoon is freed
+     * (it may move and fight normally) until it returns to the site and resumes. Stored in saves (non-transient).
      */
     private boolean bridgeBuildPaused = false;
 
@@ -652,7 +652,8 @@ public class ConvInfantry extends Infantry {
 
     /**
      * @return {@code true} while this platoon is actively raising a bridge (not paused). While actively building, the
-     *       platoon is eligible only in the movement phase (to continue or change the build) and takes no other action.
+     *       platoon is eligible only in the movement phase (to continue or change the build) and takes no other
+     *       action.
      */
     public boolean isBuildingBridge() {
         return (bridgeBuildTurns >= 0) && !bridgeBuildPaused;
@@ -676,7 +677,8 @@ public class ConvInfantry extends Infantry {
 
     /**
      * @return {@code true} while this platoon is actively occupied raising or dismantling a bridge - it takes no other
-     *       action this turn. A <i>paused</i> build is not "busy": the platoon is freed (see {@link #isBridgePaused()}).
+     *       action this turn. A <i>paused</i> build is not "busy": the platoon is freed (see
+     *       {@link #isBridgePaused()}).
      */
     public boolean isBusyWithBridge() {
         return isBuildingBridge() || isDismantlingBridge();
@@ -969,7 +971,8 @@ public class ConvInfantry extends Infantry {
 
     /**
      * Checks whether this platoon lost troopers since the last check; a turn with casualties extends the build by one
-     * turn, regardless of how many separate attacks caused them. TO:AUE p.152. Called once per turn from the END phase.
+     * turn, regardless of how many separate attacks caused them. TO:AUE p.152. Called once per turn from the END
+     * phase.
      *
      * @return {@code true} if casualties extended the build this turn.
      */
@@ -1322,8 +1325,8 @@ public class ConvInfantry extends Infantry {
 
     /**
      * Sets the platoon's one-shot Disposable Weapon (TO:AuE p.116, Corrected Sixth Printing). All troopers carry the
-     * same Disposable Weapon. This only records the weapon type; the corresponding fireable {@link
-     * megamek.common.equipment.WeaponMounted} is added to {@code LOC_INFANTRY} by the loader/editor.
+     * same Disposable Weapon. This only records the weapon type; the corresponding fireable
+     * {@link megamek.common.equipment.WeaponMounted} is added to {@code LOC_INFANTRY} by the loader/editor.
      *
      * @param weapon the Disposable Weapon, or null to clear it
      */

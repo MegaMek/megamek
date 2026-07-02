@@ -1707,8 +1707,8 @@ public class BattleArmor extends Infantry {
     /**
      * Determines whether this Battle Armor squad is permitted to carry Disposable Weapons (TO:AuE p.116, Corrected
      * Sixth Printing). A suit may only carry Disposable Weapons if it is also equipped with an anti-personnel weapon
-     * mount or two armored gloves. Note that armored gloves themselves carry the {@link MiscType#F_AP_MOUNT} flag, so
-     * a dedicated AP mount is identified as an {@code F_AP_MOUNT} item that is not an armored glove.
+     * mount or two armored gloves. Note that armored gloves themselves carry the {@link MiscType#F_AP_MOUNT} flag, so a
+     * dedicated AP mount is identified as an {@code F_AP_MOUNT} item that is not an armored glove.
      *
      * @return {@code true} if this squad may carry Disposable Weapons
      */
@@ -1926,14 +1926,14 @@ public class BattleArmor extends Infantry {
         }
 
         if ((hex.terrainLevel(Terrains.WATER) <= 0) &&
-              getMovementMode().isSubmarine() ) {
+              getMovementMode().isSubmarine()) {
             return true;
         }
 
         if (currElevation < 0) {
-                if (!getMovementMode().isUMUInfantry() && !getMovementMode().isSubmarine()) {
-                    return true;
-                }
+            if (!getMovementMode().isUMUInfantry() && !getMovementMode().isSubmarine()) {
+                return true;
+            }
         }
 
         if (hex.hasDepth1WaterOrDeeper() && !hex.containsTerrain(Terrains.ICE)) {

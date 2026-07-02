@@ -368,6 +368,11 @@ test {
     minHeapSize = "1024m"
     maxHeapSize = "8192m"
 
+    // Match the runtime add-opens (see application/mmJvmOptions) so tests can exercise the XStream
+    // save-game path, which reflects over java.util.concurrent collections such as CopyOnWriteArrayList.
+    jvmArgs '--add-opens', 'java.base/java.util=ALL-UNNAMED',
+            '--add-opens', 'java.base/java.util.concurrent=ALL-UNNAMED'
+
     finalizedBy jacocoTestReport
 }
 

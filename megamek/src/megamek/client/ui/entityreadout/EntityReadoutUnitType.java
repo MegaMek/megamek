@@ -33,10 +33,10 @@
 package megamek.client.ui.entityreadout;
 
 import megamek.client.ui.Messages;
-import megamek.common.units.BuildingEntity;
-import megamek.common.units.Entity;
 import megamek.common.equipment.GunEmplacement;
 import megamek.common.equipment.HandheldWeapon;
+import megamek.common.units.BuildingEntity;
+import megamek.common.units.Entity;
 import megamek.common.units.Infantry;
 import megamek.common.units.MobileStructure;
 import megamek.common.units.ProtoMek;

@@ -48,7 +48,6 @@ import megamek.common.units.AbstractBuildingEntity;
 import megamek.common.units.ConvInfantry;
 import megamek.common.units.Entity;
 import megamek.common.units.EntityMovementMode;
-import megamek.common.units.Infantry;
 import megamek.common.units.Tank;
 import megamek.common.units.Terrains;
 import megamek.common.units.VTOL;

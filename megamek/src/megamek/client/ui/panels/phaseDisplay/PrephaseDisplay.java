@@ -773,17 +773,17 @@ public class PrephaseDisplay extends StatusBarPhaseDisplay implements ListSelect
     }
 
     /**
-     * Returns the ghost target the player wants to assign at the clicked hex. When several units are stacked in
-     * the hex, a selection dialog is shown so a specific unit can be picked (for example a Demolisher sitting
-     * underneath a tank); otherwise the single deployed unit is returned. The current entity is never offered as
-     * a target. Eligibility checks (infantry immunity, range, available equipment) are left to
-     * {@link #assignGhostTarget(Entity)} so the player still receives the matching feedback.
+     * Returns the ghost target the player wants to assign at the clicked hex. When several units are stacked in the
+     * hex, a selection dialog is shown so a specific unit can be picked (for example a Demolisher sitting underneath a
+     * tank); otherwise the single deployed unit is returned. The current entity is never offered as a target.
+     * Eligibility checks (infantry immunity, range, available equipment) are left to {@link #assignGhostTarget(Entity)}
+     * so the player still receives the matching feedback.
      *
      * @param coords  the clicked hex
      * @param boardId the board the hex belongs to
      *
-     * @return the chosen target entity, or null if the hex holds no eligible unit or the player cancels the
-     *       selection dialog
+     * @return the chosen target entity, or null if the hex holds no eligible unit or the player cancels the selection
+     *       dialog
      */
     private @Nullable Entity chooseGhostTarget(Coords coords, int boardId) {
         Entity source = currentEntity();

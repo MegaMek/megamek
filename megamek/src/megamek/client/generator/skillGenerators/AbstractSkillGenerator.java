@@ -34,10 +34,10 @@ package megamek.client.generator.skillGenerators;
 
 import megamek.client.generator.enums.SkillGeneratorMethod;
 import megamek.client.generator.enums.SkillGeneratorType;
+import megamek.common.enums.SkillLevel;
 import megamek.common.units.ConvInfantry;
 import megamek.common.units.Entity;
 import megamek.common.units.LAMPilot;
-import megamek.common.enums.SkillLevel;
 
 public abstract class AbstractSkillGenerator {
     //region Variable Declarations

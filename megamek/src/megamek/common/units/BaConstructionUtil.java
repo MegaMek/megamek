@@ -145,6 +145,6 @@ public class BaConstructionUtil {
         if ((weapon instanceof WeaponMounted weaponMounted) && weapon.getType().hasFlag(WeaponType.F_INF_DISPOSABLE)) {
             weaponMounted.setDisposableWeapon(true);
         }
-//        weapon.setBaMountLoc(BattleArmor.MOUNT_LOC_NONE); // only necessary for DWP
+        //        weapon.setBaMountLoc(BattleArmor.MOUNT_LOC_NONE); // only necessary for DWP
     }
 }

@@ -33,14 +33,17 @@
 
 package megamek.client.ui;
 
+import static megamek.client.ui.Messages.getString;
+
+import java.awt.Container;
+import java.awt.Window;
+import java.awt.event.ActionEvent;
+import javax.swing.AbstractAction;
+import javax.swing.Action;
+import javax.swing.SwingUtilities;
+
 import megamek.client.ui.clientGUI.BugReportDialog;
 import megamek.common.annotations.Nullable;
-
-import javax.swing.*;
-import java.awt.*;
-import java.awt.event.ActionEvent;
-
-import static megamek.client.ui.Messages.getString;
 
 public class ShowBugReportDialogAction extends AbstractAction {
 

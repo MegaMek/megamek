@@ -64,7 +64,7 @@ class APWeaponChoice {
     private final Mounted<?> apMount;
 
     APWeaponChoice(Entity entity, Mounted<?> apMount, List<WeaponType> suitableWeapons, JPanel parentPanel,
-                   GBC2 gbc) {
+          GBC2 gbc) {
         Objects.requireNonNull(apMount);
         this.entity = entity;
         weaponTypes = suitableWeapons;
@@ -114,7 +114,7 @@ class APWeaponChoice {
         }
     }
 
-//    @Override
+    //    @Override
     public void setEnabled(boolean enabled) {
         comboChoices.setEnabled(enabled);
     }

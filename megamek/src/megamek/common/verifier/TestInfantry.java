@@ -333,7 +333,8 @@ public class TestInfantry extends TestEntity {
         if (!infantry.hasAbility(OptionsConstants.MD_PL_GLIDER)) {
             return false;
         }
-        return infantry.isMechanized() || infantry.getMovementMode().isMotorizedInfantry() || (infantry.getMount() != null);
+        return infantry.isMechanized() || infantry.getMovementMode().isMotorizedInfantry() || (infantry.getMount()
+              != null);
     }
 
     /**
@@ -346,7 +347,8 @@ public class TestInfantry extends TestEntity {
         if (!infantry.hasAbility(OptionsConstants.MD_PL_FLIGHT)) {
             return false;
         }
-        return infantry.isMechanized() || infantry.getBaseMovementMode().isMotorizedInfantry() || (infantry.getMount() != null);
+        return infantry.isMechanized() || infantry.getBaseMovementMode().isMotorizedInfantry() || (infantry.getMount()
+              != null);
     }
 
     /**

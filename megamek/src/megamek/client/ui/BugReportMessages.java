@@ -46,9 +46,9 @@ public class BugReportMessages {
 
     /**
      * Retrieves the string for the given key from this resource bundle or one of its parents. Additional parameters are
-     * applied using MessageFormat (so the resource string should use {x} formatting). This method works without
-     * giving additional parameters for strings that don't contain placeholders. Note that all exceptions are caught
-     * and, in when one occurs, "!!! key !!!" is returned.
+     * applied using MessageFormat (so the resource string should use {x} formatting). This method works without giving
+     * additional parameters for strings that don't contain placeholders. Note that all exceptions are caught and, in
+     * when one occurs, "!!! key !!!" is returned.
      *
      * @param key  The resource key
      * @param args Additional info to insert for placeholders

@@ -191,8 +191,8 @@ public final class MinimapPanel extends JPanel implements IPreferenceChangeListe
     private final IClientGUI clientGui;
     /**
      * Game UUIDs that already have a {@link MinimapPanel} writing the summary GIF. A multi-board game creates one
-     * MinimapPanel per board, but the GIF file is keyed per game, so without this guard several panels would write
-     * the same file at once and then race when saving at game end. Only the first panel per game owns the GIF.
+     * MinimapPanel per board, but the GIF file is keyed per game, so without this guard several panels would write the
+     * same file at once and then race when saving at game end. Only the first panel per game owns the GIF.
      */
     private static final Set<String> GIF_WRITING_GAMES = ConcurrentHashMap.newKeySet();
 
@@ -456,8 +456,8 @@ public final class MinimapPanel extends JPanel implements IPreferenceChangeListe
     }
 
     /**
-     * Releases this panel's claim on the summary GIF so a later game (a new UUID) can be written, and so the entry
-     * does not linger after the writer has stopped. Safe to call when this panel is not the owner.
+     * Releases this panel's claim on the summary GIF so a later game (a new UUID) can be written, and so the entry does
+     * not linger after the writer has stopped. Safe to call when this panel is not the owner.
      */
     private void releaseSummaryGifOwnership() {
         if (ownsSummaryGif) {

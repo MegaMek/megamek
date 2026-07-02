@@ -360,10 +360,11 @@ public class BLKFile {
     }
 
     /**
-     * Loads slotless equipment (equipment at LOC_NONE) such as cockpit modifications.
-     * This equipment has no location but still needs to be saved and loaded.
+     * Loads slotless equipment (equipment at LOC_NONE) such as cockpit modifications. This equipment has no location
+     * but still needs to be saved and loaded.
      *
      * @param t the entity to load equipment into
+     *
      * @throws EntityLoadingException if the equipment cannot be loaded
      */
     protected void loadSlotlessEquipment(Entity t) throws EntityLoadingException {

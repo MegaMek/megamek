@@ -46,11 +46,13 @@ import java.util.Vector;
 
 import megamek.common.Hex;
 import megamek.common.HexTarget;
+import megamek.common.IndustrialElevator;
 import megamek.common.LosEffects;
 import megamek.common.ManeuverType;
 import megamek.common.annotations.Nullable;
 import megamek.common.battleArmor.BattleArmor;
 import megamek.common.board.Board;
+import megamek.common.board.BoardLocation;
 import megamek.common.board.BridgeConstruction;
 import megamek.common.board.Coords;
 import megamek.common.board.FloorTarget;
@@ -874,8 +876,8 @@ public class MoveStep implements Serializable {
 
         if (isClimbing) {
             LOGGER.debug("[CLIMB-TRACE] compile FINAL: type={}, movementType={}, mp={}, mpUsed={}, " +
-                  "elevation={}, position={}, isClimbing={}, isStackingViolation={}, terrainInvalid={}, " +
-                  "isLegalEndPos={}",
+                        "elevation={}, position={}, isClimbing={}, isStackingViolation={}, terrainInvalid={}, " +
+                        "isLegalEndPos={}",
                   type, movementType, mp, mpUsed, elevation, position,
                   isClimbing, isStackingViolation, terrainInvalid, isLegalEndPos());
         }
@@ -1284,7 +1286,7 @@ public class MoveStep implements Serializable {
             if (isClimbing) {
                 LOGGER.debug("[CLIMB-TRACE] getMovementType: isLastStep={}, isLegalEndPos=false, " +
                             "overriding {} to MOVE_ILLEGAL, isStackingViolation={}, terrainInvalid={}, " +
-                      "isJumping={}, distance={}, hasEverUnloaded={}, position={}, elevation={}",
+                            "isJumping={}, distance={}, hasEverUnloaded={}, position={}, elevation={}",
                       isLastStep, movementType, isStackingViolation, terrainInvalid,
                       isJumping(), distance, hasEverUnloaded, position, elevation);
             }
@@ -2445,7 +2447,7 @@ public class MoveStep implements Serializable {
                 // but within run and running is legal
                 if (isClimbing) {
                     LOGGER.info("compileIllegal: climbing step classified as RUN! " +
-                          "mpUsed={}, walkMP={}, runMPMax={}, isRunProhibited={}, isRunAllowed={}",
+                                "mpUsed={}, walkMP={}, runMPMax={}, isRunProhibited={}, isRunAllowed={}",
                           getMpUsed(), tmpWalkMP, runMPMax, isRunProhibited, isRunAllowed());
                 }
 
@@ -2637,7 +2639,7 @@ public class MoveStep implements Serializable {
         if ((stepType == MoveStepType.GET_UP) || (stepType == MoveStepType.CAREFUL_STAND)) {
             LOGGER.debug("[STAND-TRACE] {} after checks: movementType={}, isProne={}, " +
                         "isClimbing={}, entity.isClimbing={}, climbMode={}, elevation={}, " +
-                  "entity.elevation={}, entity.position={}, entity.mpUsed={}",
+                        "entity.elevation={}, entity.position={}, entity.mpUsed={}",
                   stepType, movementType, isProne(), isClimbing, entity.isClimbing(),
                   climbMode, elevation, entity.getElevation(), entity.getPosition(), entity.mpUsed);
         }
@@ -3007,7 +3009,7 @@ public class MoveStep implements Serializable {
         ) {
             if (isClimbing) {
                 LOGGER.info("compileIllegal: climbing step overridden to MOVE_ILLEGAL! " +
-                      "movementPossible={}, movementType was={}, prevEl={}",
+                            "movementPossible={}, movementType was={}, prevEl={}",
                       movementPossible, movementType, prev.getElevation());
             }
             if ((stepType == MoveStepType.GET_UP) || (stepType == MoveStepType.CAREFUL_STAND)) {
@@ -4120,6 +4122,40 @@ public class MoveStep implements Serializable {
                 return false;// We can't intentionally crash.
             }
         }
+        // Industrial elevator movement validation
+        if ((type == MoveStepType.ELEVATOR_ASCEND) || (type == MoveStepType.ELEVATOR_DESCEND)) {
+            // Must be in a hex with an industrial elevator
+            if (!srcHex.containsTerrain(Terrains.INDUSTRIAL_ELEVATOR)) {
+                return false;
+            }
+            // Get the elevator from the game
+            BoardLocation elevatorLocation = BoardLocation.of(src, boardId);
+            IndustrialElevator elevator = game.getIndustrialElevator(elevatorLocation);
+            if (elevator == null) {
+                return false;
+            }
+            // Elevator must be functional
+            if (!elevator.isFunctional()) {
+                return false;
+            }
+            // An over-capacity elevator will not move in either direction (TO:AR)
+            if (elevator.getCurrentLoad(game) > elevator.getCapacityTons()) {
+                return false;
+            }
+            // Platform must be at the unit's current level
+            if (elevator.getPlatformLevel() != srcEl) {
+                return false;
+            }
+            // Check shaft bounds for the target elevation
+            int targetElevation = (type == MoveStepType.ELEVATOR_ASCEND)
+                  ? srcEl + 1
+                  : srcEl - 1;
+            if ((targetElevation > elevator.getShaftTop()) || (targetElevation < elevator.getShaftBottom())) {
+                return false;
+            }
+            // Elevator validation complete, skip normal elevation checks
+            return true;
+        }
         if (entity instanceof VTOL) {
             if ((type == MoveStepType.BACKWARDS) ||
                   (type == MoveStepType.FORWARDS) ||
@@ -4166,7 +4202,7 @@ public class MoveStep implements Serializable {
         if ((type != MoveStepType.DFA) && !entity.isElevationValid(elevation, destHex)) {
             LOGGER.debug("[CLIMB-TRACE] isMovementPossible: elevation NOT valid! elevation={}, " +
                         "destHex={}, destHex.level={}, destHex.ceiling={}, destHex.floor={}, " +
-                  "isClimbing={}, entity={}",
+                        "isClimbing={}, entity={}",
                   elevation, dest, destHex.getLevel(), destHex.ceiling(), destHex.floor(),
                   isClimbing, entity.getDisplayName());
             if (isJumping()) {

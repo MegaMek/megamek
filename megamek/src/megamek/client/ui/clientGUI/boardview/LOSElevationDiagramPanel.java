@@ -314,8 +314,8 @@ class LOSElevationDiagramPanel extends JPanel {
     }
 
     /**
-     * Returns the font metrics for the elevation axis level labels, used both to draw the labels and to size the
-     * left gutter so wide labels (negative or multi-digit levels) are not clipped.
+     * Returns the font metrics for the elevation axis level labels, used both to draw the labels and to size the left
+     * gutter so wide labels (negative or multi-digit levels) are not clipped.
      */
     private FontMetrics axisLabelFontMetrics() {
         return getFontMetrics(getFont().deriveFont(UIUtil.scaleForGUI(AXIS_LABEL_FONT_SIZE)));
@@ -323,7 +323,7 @@ class LOSElevationDiagramPanel extends JPanel {
 
     /** Vertical display range (in levels) and clip flags derived from the diagram data. */
     private record LevelRange(int minLevel, int maxLevel, int actualMinLevel, int actualMaxLevel,
-          boolean clippedTop, boolean clippedBottom) { }
+          boolean clippedTop, boolean clippedBottom) {}
 
     /**
      * Calculates rendering metrics (scale, offsets) for the current panel size and data. The left gutter is widened
@@ -457,9 +457,9 @@ class LOSElevationDiagramPanel extends JPanel {
 
     /**
      * Returns the left gutter width, widened beyond {@link #LEFT_MARGIN} when the level labels (negative or
-     * multi-digit) would otherwise clip at the left edge. The labels are right-aligned into the gutter at
-     * (leftMargin - labelWidth - 4), so it must hold the widest label plus that offset. {@code minLevel}/
-     * {@code maxLevel} are a safe upper bound for the widest drawn label (the padding levels are not labeled).
+     * multi-digit) would otherwise clip at the left edge. The labels are right-aligned into the gutter at (leftMargin -
+     * labelWidth - 4), so it must hold the widest label plus that offset. {@code minLevel}/ {@code maxLevel} are a safe
+     * upper bound for the widest drawn label (the padding levels are not labeled).
      */
     private int computeLeftMargin(int minLevel, int maxLevel) {
         FontMetrics axisFontMetrics = axisLabelFontMetrics();
@@ -657,10 +657,9 @@ class LOSElevationDiagramPanel extends JPanel {
     }
 
     /**
-     * Draws a {@code ///} pattern across the given rectangle in semi-opaque black, then a centered
-     * "Dead Zone" label on top so the marker is unambiguous. Used to mark a hex that sits inside a
-     * TacOps dead-zone shadow. Doesn't fill the air above the hex, so silhouettes and the LOS line
-     * stay readable.
+     * Draws a {@code ///} pattern across the given rectangle in semi-opaque black, then a centered "Dead Zone" label on
+     * top so the marker is unambiguous. Used to mark a hex that sits inside a TacOps dead-zone shadow. Doesn't fill the
+     * air above the hex, so silhouettes and the LOS line stay readable.
      */
     private static void drawDeadZoneHatch(Graphics2D g2d, int x, int y, int width, int height) {
         if (width <= 0 || height <= 0) {
@@ -1264,11 +1263,11 @@ class LOSElevationDiagramPanel extends JPanel {
     }
 
     /**
-     * Draws a VTOL Mast Mount "+1 spotting eye": a small diamond marker one level above the unit silhouette, joined
-     * to the unit top by a short dotted antenna. The Mast Mount raises onboard sensors by 1 level for spotting only
+     * Draws a VTOL Mast Mount "+1 spotting eye": a small diamond marker one level above the unit silhouette, joined to
+     * the unit top by a short dotted antenna. The Mast Mount raises onboard sensors by 1 level for spotting only
      * (TacOps), so this marks the elevation the unit actually sees from when spotting. The marker is green when the
-     * unit has clear spotting LOS to the other endpoint from the raised eye, red when blocked. The direct-fire LOS
-     * line is drawn separately and is unaffected.
+     * unit has clear spotting LOS to the other endpoint from the raised eye, red when blocked. The direct-fire LOS line
+     * is drawn separately and is unaffected.
      *
      * @param hexIndex      the hex column the unit occupies
      * @param unitTopLevel  the unit silhouette top elevation (its absolute height)
@@ -2339,12 +2338,12 @@ class LOSElevationDiagramPanel extends JPanel {
     }
 
     /**
-     * Draws the LOS line as a straight segment from the attacker's eye level to the target's eye level. The
-     * line is informational — it shows the path the units' eyes would trace toward each other. Whether terrain
-     * actually blocks LOS is conveyed by the red outline on the offending hex bar (drawn in {@link #drawTerrain})
-     * and by the colour of this line itself ({@link #COLOR_LOS_BLOCKED} vs {@link #COLOR_LOS_CLEAR}). Mode-aware
-     * blocking detection lives in {@link LOSDiagramDataBuilder}; the line stays the same shape in every mode so
-     * players read "blocked by this red hex" instead of trying to interpret a bent line.
+     * Draws the LOS line as a straight segment from the attacker's eye level to the target's eye level. The line is
+     * informational — it shows the path the units' eyes would trace toward each other. Whether terrain actually blocks
+     * LOS is conveyed by the red outline on the offending hex bar (drawn in {@link #drawTerrain}) and by the colour of
+     * this line itself ({@link #COLOR_LOS_BLOCKED} vs {@link #COLOR_LOS_CLEAR}). Mode-aware blocking detection lives in
+     * {@link LOSDiagramDataBuilder}; the line stays the same shape in every mode so players read "blocked by this red
+     * hex" instead of trying to interpret a bent line.
      */
     private void drawLosLine(Graphics2D g2d, DiagramMetrics metrics, List<HexRow> hexPath) {
         if (hexPath.size() < 2) {

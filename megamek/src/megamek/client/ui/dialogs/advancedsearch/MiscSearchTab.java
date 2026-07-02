@@ -273,13 +273,13 @@ class MiscSearchTab extends JPanel {
               createListPanel(Messages.getString("MekSelectorDialog.Search.CockpitType"), listCockpitType, null));
         addListPanel(baseComboBoxesPanel, 0, 1,
               createListPanel(Messages.getString("MekSelectorDialog.Search.Engine"), listEngineType,
-                  createComboFooter(Messages.getString("MekSelectorDialog.Search.ClanEngine"), cClanEngine)));
+                    createComboFooter(Messages.getString("MekSelectorDialog.Search.ClanEngine"), cClanEngine)));
         addListPanel(baseComboBoxesPanel, 0, 2,
               createListPanel(Messages.getString("MekSelectorDialog.Search.Gyro"), listGyroType, null));
 
         addListPanel(baseComboBoxesPanel, 1, 0,
               createListPanel(Messages.getString("MekSelectorDialog.Search.ArmorType"), listArmorType,
-                  createComboFooter(Messages.getString("MekSelectorDialog.Search.Patchwork"), cPatchwork)));
+                    createComboFooter(Messages.getString("MekSelectorDialog.Search.Patchwork"), cPatchwork)));
         addListPanel(baseComboBoxesPanel, 1, 1,
               createListPanel(Messages.getString("MekSelectorDialog.Search.InternalsType"), listInternalsType, null));
         addListPanel(baseComboBoxesPanel, 1, 2,

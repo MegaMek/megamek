@@ -651,7 +651,8 @@ public class LobbyUtility {
      *
      * @param entities The units to the cost report for
      */
-    public static void mekCostAction(final Collection<Entity> entities, boolean canSeeAll, boolean modal, JFrame frame) {
+    public static void mekCostAction(final Collection<Entity> entities, boolean canSeeAll, boolean modal,
+          JFrame frame) {
         if (entities.size() > 10) {
             LobbyErrors.showTenUnits(frame);
         } else if (!canSeeAll) {

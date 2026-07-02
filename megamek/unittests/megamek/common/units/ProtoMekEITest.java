@@ -55,9 +55,8 @@ import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 
 /**
- * Tests for ProtoMek Enhanced Imaging (EI) implementation per IO:AE p.69. ProtoMeks have EI
- * built-in. The {@code neural_interface_mode} game option controls whether EI is active and
- * how it affects tech level.
+ * Tests for ProtoMek Enhanced Imaging (EI) implementation per IO:AE p.69. ProtoMeks have EI built-in. The
+ * {@code neural_interface_mode} game option controls whether EI is active and how it affects tech level.
  *
  * <p>Off: No EI bonuses, Standard tech. Pilot Only: EI active, Standard tech.
  * Full Tracking: EI active, Experimental tech.</p>

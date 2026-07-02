@@ -333,9 +333,9 @@ public class MtfFile implements IMekLoader {
             mek.setMulId(mulId);
             mek.setYear(Integer.parseInt(techYear.substring(ERA.length()).trim()));
             String originalYearStr = originalTechYear.substring(ORIGINAL_ERA.length()).trim();
-            if (!originalYearStr.isBlank()) {            
+            if (!originalYearStr.isBlank()) {
                 int originalYear = Integer.parseInt(originalYearStr);
-                if (originalYear>0) {
+                if (originalYear > 0) {
                     mek.setOriginalBuildYear(originalYear);
                 }
             }
@@ -1665,7 +1665,7 @@ public class MtfFile implements IMekLoader {
             techYear = line;
             return true;
         }
-        
+
         if (lineLower.startsWith(ORIGINAL_ERA)) {
             originalTechYear = line;
             return true;

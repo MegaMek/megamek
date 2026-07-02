@@ -325,8 +325,8 @@ public abstract class Mek extends Entity implements Fortifiable, RubbleClearer {
     public static final String FRANKEN_MEK_STRUCTURE_HYBRID = "Hybrid";
 
     private static final TechAdvancement TA_FRANKENMEK = new TechAdvancement(TechBase.ALL)
-        .setAdvancement(ITechnology.DATE_PS)
-        .setStaticTechLevel(SimpleTechLevel.EXPERIMENTAL);
+          .setAdvancement(ITechnology.DATE_PS)
+          .setStaticTechLevel(SimpleTechLevel.EXPERIMENTAL);
 
     private boolean frankenMek = false;
 
@@ -595,7 +595,7 @@ public abstract class Mek extends Entity implements Fortifiable, RubbleClearer {
         boolean needsNewSourceSnapshots = (frankenMekLocationSources == null)
               || (frankenMekLocationSources.length != locations);
         if (frankenMekStructureInitialized && !needsNewTonnage && !needsNewStructureType
-            && !needsNewStructureTechLevel && !needsNewSourceSnapshots) {
+              && !needsNewStructureTechLevel && !needsNewSourceSnapshots) {
             return;
         }
 
@@ -985,7 +985,8 @@ public abstract class Mek extends Entity implements Fortifiable, RubbleClearer {
 
     public String getFrankenMekStructureDisplayName() {
         if (!isFrankenMek()) {
-            return EquipmentType.getStructureTypeName(getStructureType(), TechConstants.isClan(getStructureTechLevel()));
+            return EquipmentType.getStructureTypeName(getStructureType(),
+                  TechConstants.isClan(getStructureTechLevel()));
         }
         if (hasHybridFrankenMekStructure()) {
             return FRANKEN_MEK_STRUCTURE_HYBRID;
@@ -1028,9 +1029,9 @@ public abstract class Mek extends Entity implements Fortifiable, RubbleClearer {
               && (frankenMekStructureType[firstLeg] == frankenMekStructureType[otherLeg])
               && (frankenMekStructureTechLevel[firstLeg] == frankenMekStructureTechLevel[otherLeg])
               && sanitizeFrankenMekSourceValue(firstLegSource.getDisplayName()).equals(
-                    sanitizeFrankenMekSourceValue(otherLegSource.getDisplayName()))
+              sanitizeFrankenMekSourceValue(otherLegSource.getDisplayName()))
               && sanitizeFrankenMekSourceValue(firstLegSource.getType()).equals(
-                    sanitizeFrankenMekSourceValue(otherLegSource.getType()));
+              sanitizeFrankenMekSourceValue(otherLegSource.getType()));
     }
 
     private static String sanitizeFrankenMekSourceValue(String value) {
@@ -4167,8 +4168,7 @@ public abstract class Mek extends Entity implements Fortifiable, RubbleClearer {
         if (this.isFrankenMek()) {
             if (this.hasMismatchedTonnageFrankenMekLegs()) {
                 roll.addModifier(2, "Mismatched Legs with different tonnages");
-            } else
-            if (this.hasMismatchedFrankenMekLegs()) {
+            } else if (this.hasMismatchedFrankenMekLegs()) {
                 roll.addModifier(1, "Mismatched Legs from different Meks");
             }
         }

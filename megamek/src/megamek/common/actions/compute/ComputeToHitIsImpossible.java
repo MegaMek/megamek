@@ -2000,9 +2000,9 @@ class ComputeToHitIsImpossible {
      * is a single once-per-scenario attack made instead of the platoon's standard weapon attack, and may not be made
      * while the unit is engaged in an anti-Mek (leg/swarm) attack.
      *
-     * @param game         the current game
-     * @param attacker     the attacking infantry/battle armor unit
-     * @param weaponType   the disposable weapon's type
+     * @param game       the current game
+     * @param attacker   the attacking infantry/battle armor unit
+     * @param weaponType the disposable weapon's type
      *
      * @return a localized reason string if the attack is impossible, or null if it is allowed
      */

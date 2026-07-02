@@ -879,7 +879,7 @@ class TWGameManagerTest {
         ArmorType reactiveType = ArmorType.of(ArmorType.T_ARMOR_REACTIVE, false);
 
         // Initialize armor critical slots (normally done by unit loader)
-        for (int i=1; i<=12; i++) {
+        for (int i = 1; i <= 12; i++) {
             Mounted reactiveMounted = Mounted.createMounted(mek, reactiveType);
             mek.addEquipment(reactiveMounted, Mek.LOC_LEFT_TORSO, false);
         }
@@ -888,16 +888,16 @@ class TWGameManagerTest {
 
         // Apply single armor crit
         assertDoesNotThrow(() ->
-            gameManager.criticalEntity(
-                  mek,
-                  Mek.LOC_LEFT_TORSO,
-                  false,
-                  0,
-                  false,
-                  false,
-                  1,
-                  DamageType.NONE
-            )
+              gameManager.criticalEntity(
+                    mek,
+                    Mek.LOC_LEFT_TORSO,
+                    false,
+                    0,
+                    false,
+                    false,
+                    1,
+                    DamageType.NONE
+              )
         );
     }
 
@@ -914,7 +914,7 @@ class TWGameManagerTest {
 
         // Initialize armor critical slots (normally done by unit loader)
         // Note that we leave one slot empty in this case
-        for (int i=1; i<=11; i++) {
+        for (int i = 1; i <= 11; i++) {
             Mounted reactiveMounted = Mounted.createMounted(mek, reactiveType);
             mek.addEquipment(reactiveMounted, Mek.LOC_LEFT_TORSO, false);
         }

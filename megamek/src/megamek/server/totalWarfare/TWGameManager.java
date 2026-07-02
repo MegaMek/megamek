@@ -241,6 +241,7 @@ public class TWGameManager extends AbstractGameManager {
         terrainProcessors.add(new FireProcessor(this));
         terrainProcessors.add(new GeyserProcessor(this));
         terrainProcessors.add(new ElevatorProcessor(this));
+        terrainProcessors.add(new IndustrialElevatorProcessor(this));
         terrainProcessors.add(new ScreenProcessor(this));
         terrainProcessors.add(new WeatherProcessor(this));
         terrainProcessors.add(new QuicksandProcessor(this));
@@ -2429,6 +2430,31 @@ public class TWGameManager extends AbstractGameManager {
                   game.getPlanetaryConditions().getWind());
         }
         game.setBoard(newBoard);
+
+
+        // Initialize industrial elevators from terrain data
+        initializeIndustrialElevators();
+    }
+
+
+    /**
+     * Initializes industrial elevators by scanning the board for elevator terrain. Called after board is set to ensure
+     * elevators exist before movement phase. Skips if elevators already exist to preserve runtime state (platform
+     * positions).
+     */
+    private void initializeIndustrialElevators() {
+        // Skip if elevators already exist to preserve platform positions
+        if (!game.getIndustrialElevators().isEmpty()) {
+            return;
+        }
+
+        for (DynamicTerrainProcessor processor : terrainProcessors) {
+            if (processor instanceof IndustrialElevatorProcessor elevatorProcessor) {
+                elevatorProcessor.initializeElevators();
+                sendIndustrialElevatorUpdate();
+                break;
+            }
+        }
     }
 
     /**
@@ -7269,8 +7295,8 @@ public class TWGameManager extends AbstractGameManager {
 
     /**
      * Returns the entity's active (switched-on) minesweeper, or {@code null} if it has none, the sweeper is not ready,
-     * its armor is depleted, or the player has deactivated it in the End Phase (TO:AuE p.138, Corrected Sixth Printing).
-     * A unit may mount only one minesweeper.
+     * its armor is depleted, or the player has deactivated it in the End Phase (TO:AuE p.138, Corrected Sixth
+     * Printing). A unit may mount only one minesweeper.
      */
     private static @Nullable Mounted<?> getActiveMinesweeper(Entity entity) {
         for (Mounted<?> mounted : entity.getMisc()) {
@@ -8209,7 +8235,8 @@ public class TWGameManager extends AbstractGameManager {
 
             // build up heat from movement
             if (entity.moved == EntityMovementType.MOVE_NONE) {
-                entity.changeHeatBuildup(entity.getStandingHeat(), Messages.getString("HeatBreakdown.movementStanding"));
+                entity.changeHeatBuildup(entity.getStandingHeat(),
+                      Messages.getString("HeatBreakdown.movementStanding"));
             } else if ((entity.moved == EntityMovementType.MOVE_WALK) ||
                   (entity.moved == EntityMovementType.MOVE_VTOL_WALK) ||
                   (entity.moved == EntityMovementType.MOVE_CAREFUL_STAND)) {
@@ -8219,7 +8246,8 @@ public class TWGameManager extends AbstractGameManager {
                   (entity.moved == EntityMovementType.MOVE_SKID)) {
                 entity.changeHeatBuildup(entity.getRunHeat(), Messages.getString("HeatBreakdown.movementRunning"));
             } else if (entity.moved == EntityMovementType.MOVE_JUMP && !entity.isJumpingWithMechanicalBoosters()) {
-                entity.changeHeatBuildup(entity.getJumpHeat(entity.delta_distance), Messages.getString("HeatBreakdown.movementJumping"));
+                entity.changeHeatBuildup(entity.getJumpHeat(entity.delta_distance),
+                      Messages.getString("HeatBreakdown.movementJumping"));
             } else if (entity.moved == EntityMovementType.MOVE_SPRINT ||
                   entity.moved == EntityMovementType.MOVE_VTOL_SPRINT) {
                 entity.changeHeatBuildup(entity.getSprintHeat(), Messages.getString("HeatBreakdown.movementSprinting"));
@@ -15723,8 +15751,8 @@ public class TWGameManager extends AbstractGameManager {
     }
 
     /**
-     * End-phase resolution for Bridge-Building Engineers, TO:AUE p.152. Delegates to {@link BridgeBuildPhaseHandler}
-     * so the bridge rules do not add to this already very large class.
+     * End-phase resolution for Bridge-Building Engineers, TO:AUE p.152. Delegates to {@link BridgeBuildPhaseHandler} so
+     * the bridge rules do not add to this already very large class.
      */
     void checkBuildBridges() {
         new BridgeBuildPhaseHandler(this).checkBuildBridges();
@@ -32048,6 +32076,14 @@ public class TWGameManager extends AbstractGameManager {
      */
     public void sendGroundObjectUpdate() {
         send(new Packet(PacketCommand.UPDATE_GROUND_OBJECTS, game.getGroundObjects()));
+    }
+
+    /**
+     * Sends industrial elevator state to all clients.
+     */
+    public void sendIndustrialElevatorUpdate() {
+        Collection<IndustrialElevator> elevators = game.getIndustrialElevators();
+        send(new Packet(PacketCommand.UPDATE_INDUSTRIAL_ELEVATORS, new ArrayList<>(elevators)));
     }
 }
 

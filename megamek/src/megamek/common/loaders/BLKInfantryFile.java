@@ -233,7 +233,8 @@ public class BLKInfantryFile extends BLKFile implements IMekLoader {
             int[] amSkill = dataFile.getDataAsInt("antimek");
             if (amSkill[0] != 8) {
                 try {
-                    infantry.addEquipment(EquipmentType.get(EquipmentTypeLookup.ANTI_MEK_GEAR), ConvInfantry.LOC_INFANTRY);
+                    infantry.addEquipment(EquipmentType.get(EquipmentTypeLookup.ANTI_MEK_GEAR),
+                          ConvInfantry.LOC_INFANTRY);
                 } catch (LocationFullException ex) {
                     throw new EntityLoadingException(ex.getMessage());
                 }

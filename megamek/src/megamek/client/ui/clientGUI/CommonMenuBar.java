@@ -121,7 +121,8 @@ public class CommonMenuBar extends JMenuBar implements ActionListener, IPreferen
     private final JMenuItem boardSaveAs = new JMenuItem(getString("CommonMenuBar.fileBoardSaveAs"));
     private final JMenuItem boardSaveAsImage = new JMenuItem(getString("CommonMenuBar.fileBoardSaveAsImage"));
     private final JMenuItem boardSaveAsImageUnits = new JMenuItem(getString("CommonMenuBar.fileBoardSaveAsImageUnits"));
-    private final JCheckBoxMenuItem boardTraceOverlay = new JCheckBoxMenuItem(getString("CommonMenuBar.boardTraceOverlay"));
+    private final JCheckBoxMenuItem boardTraceOverlay = new JCheckBoxMenuItem(getString(
+          "CommonMenuBar.boardTraceOverlay"));
     private final JMenuItem boardResize = new JMenuItem(getString("CommonMenuBar.boardResize"));
     private final JMenuItem boardValidate = new JMenuItem(getString("CommonMenuBar.boardValidate"));
     private final JMenuItem boardRunBoardTagger = new JMenuItem(getString("CommonMenuBar.boardRunBoardTagger"));

@@ -326,7 +326,7 @@ public class TestAero extends TestEntity {
      * Returns true when the given equipment type uses a weapon slot on the given Aero entity. See TM p.341 ff, F
      * column.
      *
-     * @param aero The unit
+     * @param aero          The unit
      * @param equipmentType The type of equipment
      *
      * @return True when the equipment occupies a weapon slot, false otherwise

@@ -2118,9 +2118,9 @@ public abstract class Entity extends TurnOrdered
     }
 
     /**
-     * Returns true if this entity is currently climbing or dangling from a cliff face (TO:AR p.20).
-     * Both climbing and dangling entities have the same combat restrictions
-     * (rear weapons only, no physical attacks, -2 to-hit target modifier).
+     * Returns true if this entity is currently climbing or dangling from a cliff face (TO:AR p.20). Both climbing and
+     * dangling entities have the same combat restrictions (rear weapons only, no physical attacks, -2 to-hit target
+     * modifier).
      */
     public boolean isClimbing() {
         return climbing || dangling;
@@ -7855,12 +7855,12 @@ public abstract class Entity extends TurnOrdered
                               (weaponHandler instanceof CapitalMissileBearingsOnlyHandler) ?
                                     getGame().getTarget(
                                           weaponHandler.getWeaponAttackAction()
-                                          .getOriginalTargetType(),
+                                                .getOriginalTargetType(),
                                           weaponHandler.getWeaponAttackAction()
-                                          .getOriginalTargetId()) :
+                                                .getOriginalTargetId()) :
                                     getGame().getEntity(
                                           weaponHandler.getWeaponAttackAction()
-                                          .getEntityId())))
+                                                .getEntityId())))
                   .map(WeaponHandler::getWeaponAttackAction)
                   .collect(Collectors.toList());
 
@@ -11476,8 +11476,8 @@ public abstract class Entity extends TurnOrdered
     /**
      * Returns {@code true} if this unit's pre-end declaration is made per unit (it needs its own turn), as opposed to
      * the player-wide declarations (Nova networks, Variable Range Targeting, crew abandonment, minesweeper) that a
-     * player makes once for all their units through a single dialog. Used to collapse the player-wide turns to one
-     * per player while keeping the per-unit turns.
+     * player makes once for all their units through a single dialog. Used to collapse the player-wide turns to one per
+     * player while keeping the per-unit turns.
      */
     public boolean hasEntityScopedPreEndDeclaration() {
         // Infantry-vs-infantry combat and Bridge-Layer (AVLB) deployment are both declared per unit (TM p.242 / TW).

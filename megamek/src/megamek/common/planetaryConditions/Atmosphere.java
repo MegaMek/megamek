@@ -134,11 +134,13 @@ public enum Atmosphere {
     );
 
     /**
-     * Deserializes an Atmosphere from a string value, supporting both canonical
-     * enum names (case-insensitive) and legacy aliases from older data files.
+     * Deserializes an Atmosphere from a string value, supporting both canonical enum names (case-insensitive) and
+     * legacy aliases from older data files.
      *
      * @param value the string to parse
+     *
      * @return the matching Atmosphere, never null
+     *
      * @throws IllegalArgumentException if the value cannot be mapped
      */
     @JsonCreator

@@ -53,11 +53,11 @@ import megamek.server.totalWarfare.TWGameManager;
  * battle armor may make a single once-per-scenario attack with their one-shot Disposable Weapons instead of the
  * platoon's standard weapon attack.
  * <p>
- * The damage formula differs from a standard infantry weapon attack: the total damage equals three times the
- * disposable weapon's per-trooper damage value, multiplied by the number of troopers who hit on the Cluster Hits
- * Table, rounded normally. None of the standard conventional-infantry range-0 bonuses (TSM, prosthetic enhancements,
- * extraneous limbs, tail or beast-mount damage) and none of the primary-weapon damage caps apply: these are fired
- * weapons resolved strictly by the formula.
+ * The damage formula differs from a standard infantry weapon attack: the total damage equals three times the disposable
+ * weapon's per-trooper damage value, multiplied by the number of troopers who hit on the Cluster Hits Table, rounded
+ * normally. None of the standard conventional-infantry range-0 bonuses (TSM, prosthetic enhancements, extraneous limbs,
+ * tail or beast-mount damage) and none of the primary-weapon damage caps apply: these are fired weapons resolved
+ * strictly by the formula.
  * </p>
  *
  * @author HammerGS

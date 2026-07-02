@@ -1209,6 +1209,7 @@ public class EnhancedTabbedPane extends JTabbedPane {
      * Checks if a component is currently hosted by this pane, including detached tab windows.
      *
      * @param component The component to find
+     *
      * @return true if the component is attached or detached from this pane
      */
     public boolean containsTab(Component component) {
@@ -1219,6 +1220,7 @@ public class EnhancedTabbedPane extends JTabbedPane {
      * Removes a component from this pane, closing its floating window if the tab is currently detached.
      *
      * @param component The component to remove
+     *
      * @return true if the component was found and removed
      */
     public boolean removeTab(Component component) {

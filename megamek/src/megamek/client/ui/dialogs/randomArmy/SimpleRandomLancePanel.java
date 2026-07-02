@@ -33,14 +33,14 @@
 
 package megamek.client.ui.dialogs.randomArmy;
 
-import com.formdev.flatlaf.FlatClientProperties;
-import megamek.client.ui.Messages;
-import megamek.client.ui.dialogs.advancedsearch.ASAdvancedSearchPanel;
-import megamek.client.ui.dialogs.advancedsearch.AdvancedSearchDialog;
-import megamek.client.ui.dialogs.advancedsearch.MekSearchFilter;
-import megamek.common.loaders.MekSummary;
-import megamek.common.util.SimpleRandomLanceCreator;
-
+import java.awt.Dimension;
+import java.awt.FlowLayout;
+import java.awt.event.ActionEvent;
+import java.util.Arrays;
+import java.util.List;
+import java.util.function.Consumer;
+import java.util.function.Function;
+import java.util.function.ToDoubleFunction;
 import javax.swing.AbstractAction;
 import javax.swing.Action;
 import javax.swing.Box;
@@ -51,14 +51,14 @@ import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JPopupMenu;
 import javax.swing.border.EmptyBorder;
-import java.awt.Dimension;
-import java.awt.FlowLayout;
-import java.awt.event.ActionEvent;
-import java.util.Arrays;
-import java.util.List;
-import java.util.function.Consumer;
-import java.util.function.Function;
-import java.util.function.ToDoubleFunction;
+
+import com.formdev.flatlaf.FlatClientProperties;
+import megamek.client.ui.Messages;
+import megamek.client.ui.dialogs.advancedsearch.ASAdvancedSearchPanel;
+import megamek.client.ui.dialogs.advancedsearch.AdvancedSearchDialog;
+import megamek.client.ui.dialogs.advancedsearch.MekSearchFilter;
+import megamek.common.loaders.MekSummary;
+import megamek.common.util.SimpleRandomLanceCreator;
 
 class SimpleRandomLancePanel extends JPanel implements RandomArmyTab {
 

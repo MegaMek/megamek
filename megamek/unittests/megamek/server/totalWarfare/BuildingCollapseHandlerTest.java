@@ -54,6 +54,7 @@ import java.util.stream.Stream;
 
 import megamek.common.GameBoardTestCase;
 import megamek.common.HitData;
+import megamek.common.IndustrialElevator;
 import megamek.common.Player;
 import megamek.common.Report;
 import megamek.common.board.Board;
@@ -217,6 +218,33 @@ public class BuildingCollapseHandlerTest extends GameBoardTestCase {
                     any(Coords.class),
                     any(PilotingRollData.class),
                     any(boolean.class));
+    }
+
+    @Test
+    void collapsingBuildingDisablesIndustrialElevatorInHex() {
+        initializeBoard("ELEVATOR_BUILDING_BOARD", """
+              size 1 1
+              hex 0101 0 "bldg_elev:4;building:3;bldg_class:2;bldg_cf:80;bldg_armor:15" ""
+              end"""
+        );
+        setupBoardForTest(getBoard("ELEVATOR_BUILDING_BOARD"));
+        Coords position = new Coords(0, 0);
+        BuildingTerrain building = new BuildingTerrain(position, board, Terrains.BUILDING, BasementType.UNKNOWN);
+        initializeBuildingCF(building, 80);
+
+        // Register a functional elevator in the building hex
+        BoardLocation elevatorLocation = BoardLocation.of(position, board.getBoardId());
+        IndustrialElevator elevator = new IndustrialElevator(elevatorLocation, 0, 4, 500);
+        game.addIndustrialElevator(elevator);
+        assertTrue(elevator.isFunctional(), "Elevator should start functional");
+
+        Map<BoardLocation, List<Entity>> positionMap = new HashMap<>();
+        positionMap.put(elevatorLocation, new ArrayList<>());
+        Vector<Report> vPhaseReport = new Vector<>();
+
+        collapseHandler.collapseBuilding(building, positionMap, position, true, vPhaseReport);
+
+        assertFalse(elevator.isFunctional(), "Elevator should stop functioning when its building hex collapses");
     }
 
     /**

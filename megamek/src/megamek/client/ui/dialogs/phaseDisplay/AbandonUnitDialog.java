@@ -292,8 +292,7 @@ public class AbandonUnitDialog extends JDialog implements ActionListener {
     }
 
     /**
-     * {@code true} once Confirm announced at least one abandonment, so the caller can confirm a declaration was
-     * made.
+     * {@code true} once Confirm announced at least one abandonment, so the caller can confirm a declaration was made.
      */
     private boolean applied;
 

@@ -32,9 +32,9 @@
  */
 package megamek.client.ui.dialogs;
 
-import megamek.MMConstants;
-
 import java.awt.Window;
+
+import megamek.MMConstants;
 
 public class MMAboutDialog extends AbstractAboutDialog {
 

@@ -16,7 +16,7 @@
 # affiliated with Microsoft.
 key: MERC
 name: Mercenary
-sucsCodes: []
+sucsCodes: [ ]
 capital: Outreach
 tags:
   - MERC

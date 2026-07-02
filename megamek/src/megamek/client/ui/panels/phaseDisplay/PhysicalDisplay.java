@@ -2338,12 +2338,13 @@ public class PhysicalDisplay extends AttackPhaseDisplay {
     }
 
     /**
-     * Helper method that allows us to get the list of iNarc pods in a given attacker's Coords,
-     * used by PhysicalDisplay and the MapMenu right-click menu.
+     * Helper method that allows us to get the list of iNarc pods in a given attacker's Coords, used by PhysicalDisplay
+     * and the MapMenu right-click menu.
      *
-     * @param attacker  Should be the current entity for whom we're building attack data.
-     * @param pos       Coords of the hex to check; may not be the same as attacker.getPosition()
-     * @return          List of Targetables containing co-located iNarc pods
+     * @param attacker Should be the current entity for whom we're building attack data.
+     * @param pos      Coords of the hex to check; may not be the same as attacker.getPosition()
+     *
+     * @return List of Targetables containing co-located iNarc pods
      */
     public static List<Targetable> getINarcPods(Entity attacker, Coords pos) {
         List<Targetable> targets = new ArrayList<>();

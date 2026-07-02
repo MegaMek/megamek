@@ -288,26 +288,28 @@ Goal: let mapmakers and players start a game with fortified hexes already on the
 - **Player allotment + place in the Minefields deployment phase** (mirrors minefields; a fortified hex is just terrain,
   so no Minefield object / hidden-info needed). Decisions: deployment-zone-only placement, visible to all, own "
   Fortifications" settings section.
-  - [x] `Player`: `numFortifiedHexes` + `getNbrFortifiedHexes()`/`setNbrFortifiedHexes()`; added to `hasMinefields()` so
-    the deploy phase triggers (and a player gets a turn) on fortifications alone - independent of the minefields game
-    option, since the phase transition (`TWPhaseEndManager`) is gated by `hasMinefields()`, not the option. Serializes
-    automatically via `PLAYER_UPDATE`.
-  - [x] `PlayerSettingsDialog`: new "Fortifications" section (`fortificationSection()`) with a Fortified Hexes field,
-    shown unconditionally; read/write like the minefield fields.
-  - [x] `PacketCommand.DEPLOY_FORTIFICATIONS` + `Client.sendDeployFortifications(Vector<BoardLocation>)`.
-  - [x] `DeployMinefieldDisplay`: new "Fortify(N)" tool. Click a hex -> validate (fortifiable terrain via shared
-    `MoveStep.isFortifiableTerrain` + within deployment zone via `Board.isLegalDeployment`), preview locally (
-    `board.setHex` repaints), decrement count; the Remove tool undoes a fortification placed this turn (refund). Sends
-    placed `BoardLocation`s on Done.
-  - [x] `TWGameManager.receiveDeployFortifications` / `processDeployFortifications` / `isLegalFortificationPlacement`:
-    re-validates each hex (on board, fortifiable terrain, in the player's deployment zone, within allotment), writes
-    `FORTIFIED` terrain, `sendChangedHex` to all clients (visible to everyone). `[Fortify]` logging on
-    rejects/placement.
-  - [x] i18n: `DeployMinefieldDisplay.deployFortification`/`.tooltip`/`DuplicateFortification`/`fortifyIllegalTerrain`/
-    `fortifyOutsideZone`/`undeployedFortifications`/`undeployedItems`; `PlayerSettingsDialog.header.fortifications`/
-    `labFortifiedHexes`/`fortifiedHexesTT`.
-  - Reuses the existing FORTIFIED terrain rendering (sandbags tileset) and the combat rules already implemented (A-E).
-    Compiles; `FortifyTest`/`ComputeTerrainModsTest` still green. Remaining: manual playtest of the deploy-phase tool.
+    - [x] `Player`: `numFortifiedHexes` + `getNbrFortifiedHexes()`/`setNbrFortifiedHexes()`; added to `hasMinefields()`
+      so
+      the deploy phase triggers (and a player gets a turn) on fortifications alone - independent of the minefields game
+      option, since the phase transition (`TWPhaseEndManager`) is gated by `hasMinefields()`, not the option. Serializes
+      automatically via `PLAYER_UPDATE`.
+    - [x] `PlayerSettingsDialog`: new "Fortifications" section (`fortificationSection()`) with a Fortified Hexes field,
+      shown unconditionally; read/write like the minefield fields.
+    - [x] `PacketCommand.DEPLOY_FORTIFICATIONS` + `Client.sendDeployFortifications(Vector<BoardLocation>)`.
+    - [x] `DeployMinefieldDisplay`: new "Fortify(N)" tool. Click a hex -> validate (fortifiable terrain via shared
+      `MoveStep.isFortifiableTerrain` + within deployment zone via `Board.isLegalDeployment`), preview locally (
+      `board.setHex` repaints), decrement count; the Remove tool undoes a fortification placed this turn (refund). Sends
+      placed `BoardLocation`s on Done.
+    - [x] `TWGameManager.receiveDeployFortifications` / `processDeployFortifications` / `isLegalFortificationPlacement`:
+      re-validates each hex (on board, fortifiable terrain, in the player's deployment zone, within allotment), writes
+      `FORTIFIED` terrain, `sendChangedHex` to all clients (visible to everyone). `[Fortify]` logging on
+      rejects/placement.
+    - [x] i18n: `DeployMinefieldDisplay.deployFortification`/`.tooltip`/`DuplicateFortification`/
+      `fortifyIllegalTerrain`/
+      `fortifyOutsideZone`/`undeployedFortifications`/`undeployedItems`; `PlayerSettingsDialog.header.fortifications`/
+      `labFortifiedHexes`/`fortifiedHexesTT`.
+    - Reuses the existing FORTIFIED terrain rendering (sandbags tileset) and the combat rules already implemented (A-E).
+      Compiles; `FortifyTest`/`ComputeTerrainModsTest` still green. Remaining: manual playtest of the deploy-phase tool.
 
 ## 6c. Playtest fixes
 

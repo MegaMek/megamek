@@ -1951,7 +1951,10 @@ public class FormationType {
         allFormationTypes.put(ft.name, ft);
     }
 
-    /** Registers the Heavy Battle Lance (Campaign Operations p. 63): a heavy-weight Battle Lance variant; light-weight units are excluded. */
+    /**
+     * Registers the Heavy Battle Lance (Campaign Operations p. 63): a heavy-weight Battle Lance variant; light-weight
+     * units are excluded.
+     */
     private static void createHeavyBattleLance() {
         FormationType ft = new FormationType("Heavy Battle", "Battle");
         ft.allowedUnitTypes = FLAG_GROUND_NO_LIGHT;

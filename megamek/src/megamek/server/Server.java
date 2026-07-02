@@ -973,9 +973,9 @@ public class Server implements Runnable {
     }
 
     /**
-     * If the deserialized game's board has the placeholder map name (saves predate the name fix),
-     * reconstructs a display name from the saved MapSettings' selected board file names. The actual
-     * board hex data is unchanged; only the displayable name is filled in.
+     * If the deserialized game's board has the placeholder map name (saves predate the name fix), reconstructs a
+     * display name from the saved MapSettings' selected board file names. The actual board hex data is unchanged; only
+     * the displayable name is filled in.
      */
     private static void backfillBoardNameFromMapSettings(Game game) {
         Board board = game.getBoard();

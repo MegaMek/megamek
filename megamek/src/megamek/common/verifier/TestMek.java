@@ -592,7 +592,9 @@ public class TestMek extends TestEntity {
             boolean structureUsesSlots = structure != null && structure.getNumCriticalSlots(mek) > 0;
 
             int actualStructureCrits = countInternalStructureCriticalSlots(mek, location);
-            int actualMatchingStructureCrits = structure == null ? 0 : mek.getNumberOfCriticalSlots(structure, location);
+            int actualMatchingStructureCrits = structure == null ?
+                  0 :
+                  mek.getNumberOfCriticalSlots(structure, location);
             boolean hasOnlyMatchingStructureCrits = actualStructureCrits == actualMatchingStructureCrits;
 
             boolean validStructureCrits = structureUsesSlots
@@ -688,7 +690,7 @@ public class TestMek extends TestEntity {
                 }
 
             } else if ((mek.getOArmor(loc) + (mek.hasRearArmor(loc) ? mek
-                                                                      .getOArmor(loc, true) : 0)) > (2
+                  .getOArmor(loc, true) : 0)) > (2
                   * mek.getOInternal(loc))) {
                 buff.append(printArmorLocation(loc))
                       .append(printArmorLocProp(loc,
@@ -1039,7 +1041,7 @@ public class TestMek extends TestEntity {
                     illegal = true;
                 }
                 for (int loc = 0; loc < mek.locations(); loc++) {
-                    if (!mek.locationIsTorso(loc)) continue;
+                    if (!mek.locationIsTorso(loc)) {continue;}
                     if (!mek.hasReinforcedStructure(loc)) {
                         illegal = true;
                         buff.append(misc.getName()).append(" requires reinforced structure in each torso location.\n");

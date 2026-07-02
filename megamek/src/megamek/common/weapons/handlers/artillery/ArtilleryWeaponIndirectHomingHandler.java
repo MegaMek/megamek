@@ -144,7 +144,7 @@ public class ArtilleryWeaponIndirectHomingHandler extends ArtilleryWeaponIndirec
         try {
             convertHomingShotToEntityTarget();
             entityTarget = (aaa.getTargetType() == Targetable.TYPE_ENTITY) ? (Entity) aaa
-                                                                                      .getTarget(game) : null;
+                  .getTarget(game) : null;
         } catch (InvalidPacketDataException e) {
             LOGGER.error("Invalid packet data:", e);
             return false;

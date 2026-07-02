@@ -32,10 +32,6 @@
  */
 package megamek.client.ui.dialogs.advancedsearch;
 
-import com.fasterxml.jackson.core.type.TypeReference;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.SerializationFeature;
-
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -43,9 +39,13 @@ import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 
+import com.fasterxml.jackson.core.type.TypeReference;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.SerializationFeature;
+
 /**
- * This class implements a simple, not thread-safe recent-files-used storage. It is stored in a json file which must
- * be given as a constructor parameter.
+ * This class implements a simple, not thread-safe recent-files-used storage. It is stored in a json file which must be
+ * given as a constructor parameter.
  */
 public final class RecentFilesStore {
 

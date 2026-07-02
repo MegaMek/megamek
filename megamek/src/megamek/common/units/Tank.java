@@ -147,8 +147,8 @@ public class Tank extends Entity implements Fortifiable, RubbleClearer {
     private transient FortifyState fortifyState = new FortifyState();
 
     /**
-     * The rubble hex this vehicle is currently clearing with its bulldozer, or {@code null} if it is not clearing (TacOps). The
-     * vehicle must remain in this hex for the duration; if displaced or destroyed the work is abandoned.
+     * The rubble hex this vehicle is currently clearing with its bulldozer, or {@code null} if it is not clearing
+     * (TacOps). The vehicle must remain in this hex for the duration; if displaced or destroyed the work is abandoned.
      */
     private Coords rubbleClearTarget = null;
     /** Turns of bulldozer clearing banked so far against {@link #rubbleClearTurnsRequired}. */
@@ -1783,9 +1783,9 @@ public class Tank extends Entity implements Fortifiable, RubbleClearer {
     }
 
     /**
-     * Whether this vehicle type can use hull-down at all, independent of its current hex. Large Vehicles cannot use
-     * the cover, and naval, hydrofoil, and submarine (water-based) vehicles cannot dig in / hull down since
-     * hull-down requires a fortified land hex (TO:AR p.19).
+     * Whether this vehicle type can use hull-down at all, independent of its current hex. Large Vehicles cannot use the
+     * cover, and naval, hydrofoil, and submarine (water-based) vehicles cannot dig in / hull down since hull-down
+     * requires a fortified land hex (TO:AR p.19).
      *
      * @return true if this vehicle may ever go hull-down
      */

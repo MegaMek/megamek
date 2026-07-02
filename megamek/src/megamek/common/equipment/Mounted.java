@@ -1802,7 +1802,7 @@ public class Mounted<T extends EquipmentType> implements Serializable, RoundUpda
 
     /**
      * @return True if this equipment counts for the size and weight of a Targeting Computer, and benefits from it in
-     * case of weapons.
+     *       case of weapons.
      *
      * @see EquipmentType#relevantToTargetingComputer()
      */

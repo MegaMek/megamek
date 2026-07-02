@@ -46,9 +46,9 @@ import org.junit.jupiter.params.provider.MethodSource;
 
 /**
  * Round-trip tests for {@link CubeCoords#toOffset()}. {@code toOffset()} must be the exact inverse of
- * {@link Coords#toCube()} under the odd-q offset convention, so a cube coordinate must survive a
- * cube -> offset -> cube round-trip unchanged. These tests use the real {@link Coords} on the offset side
- * (no mocks), because the contract being verified is precisely how the two real classes agree.
+ * {@link Coords#toCube()} under the odd-q offset convention, so a cube coordinate must survive a cube -> offset -> cube
+ * round-trip unchanged. These tests use the real {@link Coords} on the offset side (no mocks), because the contract
+ * being verified is precisely how the two real classes agree.
  */
 class CubeCoordsTest {
 

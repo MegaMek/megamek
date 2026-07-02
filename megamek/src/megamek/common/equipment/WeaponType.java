@@ -2565,10 +2565,10 @@ public class WeaponType extends EquipmentType {
 
         // Export ranges (trimmed of trailing zeros)
         int[] ranges = {
-            this.getShortRange(),
-            this.getMediumRange(),
-            this.getLongRange(),
-            this.getExtremeRange()
+              this.getShortRange(),
+              this.getMediumRange(),
+              this.getLongRange(),
+              this.getExtremeRange()
         };
         int[] trimmedRanges = trimTrailingZeros(ranges);
         if (trimmedRanges.length > 0) {
@@ -2577,10 +2577,10 @@ public class WeaponType extends EquipmentType {
 
         // Export water ranges (trimmed of trailing zeros, only if different from ranges)
         int[] wRanges = {
-            this.getWShortRange(),
-            this.getWMediumRange(),
-            this.getWLongRange(),
-            this.getWExtremeRange()
+              this.getWShortRange(),
+              this.getWMediumRange(),
+              this.getWLongRange(),
+              this.getWExtremeRange()
         };
         int[] trimmedWRanges = trimTrailingZeros(wRanges);
         if (trimmedWRanges.length > 0 && !java.util.Arrays.equals(trimmedRanges, trimmedWRanges)) {
@@ -2595,10 +2595,10 @@ public class WeaponType extends EquipmentType {
 
         // Export AV values (trimmed of trailing zeros)
         double[] av = {
-            this.getShortAV(),
-            this.getMedAV(),
-            this.getLongAV(),
-            this.getExtAV()
+              this.getShortAV(),
+              this.getMedAV(),
+              this.getLongAV(),
+              this.getExtAV()
         };
         double[] trimmedAV = trimTrailingZeros(av);
         if (trimmedAV.length > 0) {
@@ -2616,11 +2616,9 @@ public class WeaponType extends EquipmentType {
     }
 
     /**
-     * Formats the damage value for YAML export.
-     * Returns:
-     * - A special damage type string ("variable", "cluster", "special", "artillery")
-     * - An array [short, medium, long] if range-specific damages are defined
-     * - A simple numeric value if damage is constant across ranges
+     * Formats the damage value for YAML export. Returns: - A special damage type string ("variable", "cluster",
+     * "special", "artillery") - An array [short, medium, long] if range-specific damages are defined - A simple numeric
+     * value if damage is constant across ranges
      */
     private Object formatDamage() {
         // Handle infantry weapons specially
@@ -2662,9 +2660,8 @@ public class WeaponType extends EquipmentType {
     }
 
     /**
-     * Trims trailing zeros from an int array.
-     * E.g., [0, 3, 6, 9, 0] becomes [0, 3, 6, 9]
-     * E.g., [0, 0, 0, 0, 0] becomes []
+     * Trims trailing zeros from an int array. E.g., [0, 3, 6, 9, 0] becomes [0, 3, 6, 9] E.g., [0, 0, 0, 0, 0] becomes
+     * []
      */
     private int[] trimTrailingZeros(int[] arr) {
         int lastNonZero = -1;
@@ -2681,9 +2678,8 @@ public class WeaponType extends EquipmentType {
     }
 
     /**
-     * Trims trailing zeros from a double array.
-     * E.g., [1.0, 2.0, 0.0, 0.0] becomes [1.0, 2.0]
-     * E.g., [0.0, 0.0, 0.0, 0.0] becomes []
+     * Trims trailing zeros from a double array. E.g., [1.0, 2.0, 0.0, 0.0] becomes [1.0, 2.0] E.g., [0.0, 0.0, 0.0,
+     * 0.0] becomes []
      */
     private double[] trimTrailingZeros(double[] arr) {
         int lastNonZero = -1;

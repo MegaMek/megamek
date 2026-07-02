@@ -57,6 +57,7 @@ import megamek.common.equipment.MiscType;
 import megamek.common.equipment.ObjectiveMarker;
 import megamek.common.interfaces.IEntityRemovalConditions;
 import megamek.common.options.OptionsConstants;
+import megamek.common.rolls.PilotingRollData;
 import megamek.common.units.Entity;
 import megamek.common.units.IAero;
 import megamek.common.units.IBuilding;
@@ -131,6 +132,8 @@ class ObjectiveResolutionHandler extends AbstractTWRuleHandler {
 
     private static final int REPORT_OBJECTIVE_CONFIRMED = 7124;
     private static final int REPORT_OBJECTIVE_USELESS = 7125;
+    private static final int REPORT_OBJECTIVE_DROPPED = 7126;
+    private static final int REPORT_FORCED_DROP_CHECK = 7127;
 
     /**
      * A scoring side. Normally this is a team; a player that is not on any team forms its own side.
@@ -141,13 +144,18 @@ class ObjectiveResolutionHandler extends AbstractTWRuleHandler {
     record Side(boolean isTeam, int id) {}
 
     /**
-     * An objective marker together with the position it is placed at (its position is the key of the game's ground
-     * object map).
+     * An objective marker together with its board position: the key of the game's ground object map, or the
+     * position of the unit carrying it (Mobile Objectives).
      *
      * @param position The board position of the marker
      * @param marker   The objective marker
+     * @param carrier  The unit carrying the marker, or {@code null} when it lies on the ground
      */
-    record PlacedObjective(Coords position, ObjectiveMarker marker) {}
+    record PlacedObjective(Coords position, ObjectiveMarker marker, @Nullable Entity carrier) {
+        PlacedObjective(Coords position, ObjectiveMarker marker) {
+            this(position, marker, null);
+        }
+    }
 
     /**
      * The control resolution of one objective for one End Phase.
@@ -170,6 +178,7 @@ class ObjectiveResolutionHandler extends AbstractTWRuleHandler {
      */
     void resolveObjectives() {
         resolveScanMission();
+        resolveCarriedObjectiveDrops();
 
         List<PlacedObjective> allObjectives = findAllObjectives();
         if (allObjectives.isEmpty()) {
@@ -222,7 +231,8 @@ class ObjectiveResolutionHandler extends AbstractTWRuleHandler {
     }
 
     /**
-     * @return All objective markers placed on the ground, including destroyed ones, with their positions
+     * @return All objective markers, including destroyed ones: those placed on the ground with their map positions,
+     *       and carried Mobile Objectives at their carrier's position
      */
     private List<PlacedObjective> findAllObjectives() {
         List<PlacedObjective> objectives = new ArrayList<>();
@@ -230,6 +240,13 @@ class ObjectiveResolutionHandler extends AbstractTWRuleHandler {
             for (ICarryable groundObject : groundObjectEntry.getValue()) {
                 if (groundObject instanceof ObjectiveMarker marker) {
                     objectives.add(new PlacedObjective(groundObjectEntry.getKey(), marker));
+                }
+            }
+        }
+        for (Entity entity : getGame().getEntitiesVector()) {
+            for (ICarryable carriedObject : entity.getDistinctCarriedObjects()) {
+                if ((carriedObject instanceof ObjectiveMarker marker) && (entity.getPosition() != null)) {
+                    objectives.add(new PlacedObjective(entity.getPosition(), marker, entity));
                 }
             }
         }
@@ -248,7 +265,14 @@ class ObjectiveResolutionHandler extends AbstractTWRuleHandler {
         Board board = getGame().getBoard();
         for (PlacedObjective objective : objectives) {
             if (board != null) {
-                checkBuildingDestruction(board, objective);
+                if (objective.carrier() == null) {
+                    checkBuildingDestruction(board, objective);
+                } else {
+                    // A carried objective rides no building; re-detect the link when it is set down
+                    objective.marker().setBuildingLinkInitialized(false);
+                    objective.marker().setInsideBuilding(false);
+                }
+                // The fire check applies wherever the objective is - on the ground or in a carrier's hex
                 checkFragileFireDestruction(board, objective);
             }
             reportDestructionOnce(objective);
@@ -320,6 +344,157 @@ class ObjectiveResolutionHandler extends AbstractTWRuleHandler {
         return (building == null) || (building.getCurrentCF(position) <= 0);
     }
 
+    // --- Mobile Objective carrying ---
+
+    /**
+     * End-Phase auto-drops for carried Mobile Objectives: a carrier that has become immobile drops its objective
+     * (with the Fragile destruction roll), and a carrier that went prone by choice drops it without a Fragile roll
+     * (carriers that fell already dropped their cargo when the fall was resolved).
+     */
+    private void resolveCarriedObjectiveDrops() {
+        for (Entity carrier : getGame().getEntitiesVector()) {
+            for (ICarryable carriedObject : List.copyOf(carrier.getDistinctCarriedObjects())) {
+                if (!(carriedObject instanceof ObjectiveMarker marker)) {
+                    continue;
+                }
+                if (carrier.isImmobile()) {
+                    LOGGER.info("[Objective] {} is immobile and drops {}", carrier.getShortName(),
+                          marker.generalName());
+                    dropObjective(carrier, marker, true);
+                } else if (carrier.isProne()) {
+                    // still carrying while prone at the End Phase = went prone by choice; the drop does
+                    // not trigger a Fragile Objective roll
+                    LOGGER.info("[Objective] {} is prone and drops {} (no Fragile roll for going prone "
+                          + "by choice)", carrier.getShortName(), marker.generalName());
+                    dropObjective(carrier, marker, false);
+                }
+            }
+        }
+    }
+
+    /**
+     * Forced-drop check after a phase with damage: a unit that took any damage in the phase while carrying a Mobile
+     * Objective must make a Piloting Skill Roll at the end of that phase to avoid dropping it. Failure does not
+     * cause a fall. A Mek with two intact hand actuators applies a -2 target number modifier (two claws do not).
+     * Called at the end of each combat phase, alongside the damage PSR checks.
+     */
+    void resolveForcedObjectiveDrops() {
+        for (Entity carrier : getGame().getEntitiesVector()) {
+            if (carrier.damageThisPhase <= 0) {
+                continue;
+            }
+            List<ObjectiveMarker> carriedMarkers = new ArrayList<>();
+            for (ICarryable carriedObject : carrier.getDistinctCarriedObjects()) {
+                if (carriedObject instanceof ObjectiveMarker marker) {
+                    carriedMarkers.add(marker);
+                }
+            }
+            if (carriedMarkers.isEmpty()) {
+                continue;
+            }
+            resolveForcedDropCheck(carrier, carriedMarkers);
+        }
+    }
+
+    private void resolveForcedDropCheck(Entity carrier, List<ObjectiveMarker> carriedMarkers) {
+        PilotingRollData rollData = carrier.getBasePilotingRoll();
+        if (hasTwoIntactHandActuators(carrier)) {
+            rollData.addModifier(-2, "two intact hand actuators");
+        }
+        int targetNumber = rollData.getValue();
+        int roll = rollForcedDropCheck();
+        boolean holdsOn = roll >= targetNumber;
+        LOGGER.debug("[Objective] {} took damage while carrying an objective - forced-drop Piloting Skill Roll: "
+              + "needs {}, rolled {} - {}", carrier.getShortName(), targetNumber, roll,
+              holdsOn ? "keeps hold" : "drops");
+
+        Report report = new Report(REPORT_FORCED_DROP_CHECK, Report.PUBLIC);
+        report.add(carrier.getDisplayName());
+        report.add(targetNumber);
+        report.add(roll);
+        report.choose(holdsOn);
+        addReport(report);
+
+        if (!holdsOn) {
+            for (ObjectiveMarker marker : carriedMarkers) {
+                // a forced drop is a Fragile Objective destruction trigger
+                dropObjective(carrier, marker, true);
+            }
+        }
+    }
+
+    /**
+     * @return {@code true} if the unit is a Mek with a working hand actuator in both arms; claws function as hand
+     *       actuators for carrying, but two claws do not provide the forced-drop bonus
+     */
+    private boolean hasTwoIntactHandActuators(Entity carrier) {
+        return (carrier instanceof Mek)
+              && carrier.hasWorkingSystem(Mek.ACTUATOR_HAND, Mek.LOC_LEFT_ARM)
+              && carrier.hasWorkingSystem(Mek.ACTUATOR_HAND, Mek.LOC_RIGHT_ARM);
+    }
+
+    /**
+     * Drops a carried Mobile Objective into the carrier's hex, rolling the Fragile Objective destruction check when
+     * the drop is a Fragile trigger, and updates the clients.
+     *
+     * @param carrier            The unit carrying the objective
+     * @param marker             The carried objective
+     * @param fragileRollApplies Whether this drop triggers the Fragile destruction roll (forced drops do; setting
+     *                           down or going prone by choice does not)
+     */
+    private void dropObjective(Entity carrier, ObjectiveMarker marker, boolean fragileRollApplies) {
+        carrier.dropCarriedObject(marker, false);
+        if (fragileRollApplies) {
+            rollFragileDropDestruction(marker);
+        }
+        if (carrier.getPosition() != null) {
+            getGame().placeGroundObject(carrier.getPosition(), marker);
+        }
+        gameManager.sendGroundObjectUpdate();
+        Report report = new Report(REPORT_OBJECTIVE_DROPPED, Report.PUBLIC);
+        report.add(carrier.getDisplayName());
+        report.add(marker.generalName());
+        addReport(report);
+    }
+
+    /**
+     * Resolves whether a dropped or carrier-lost objective is destroyed: never, unless it is a Fragile Objective -
+     * then 1D6, destroyed on 1-{@value #FRAGILE_DESTRUCTION_MAXIMUM_ROLL}. Called for objective markers instead of
+     * the generic cargo destruction roll when a carrier is destroyed or falls.
+     *
+     * @param carrier The carrier dropping the objective (for reporting)
+     * @param marker  The objective being dropped
+     *
+     * @return {@code true} if the objective is destroyed by the drop
+     */
+    boolean resolveObjectiveDropDamage(Entity carrier, ObjectiveMarker marker) {
+        boolean destroyed = rollFragileDropDestruction(marker);
+        if (destroyed) {
+            reportDestructionOnce(new PlacedObjective(carrier.getPosition(), marker, carrier));
+        }
+        return destroyed;
+    }
+
+    /**
+     * Rolls the Fragile Objective destruction check for a drop event, marking the objective destroyed on
+     * 1-{@value #FRAGILE_DESTRUCTION_MAXIMUM_ROLL}. Non-Fragile and indestructible objectives always survive.
+     *
+     * @return {@code true} if the objective was destroyed
+     */
+    private boolean rollFragileDropDestruction(ObjectiveMarker marker) {
+        if (!marker.isFragile() || marker.isInvulnerable() || marker.isDestroyed()) {
+            return marker.isDestroyed();
+        }
+        int roll = rollFragileCheck();
+        boolean destroyed = roll <= FRAGILE_DESTRUCTION_MAXIMUM_ROLL;
+        LOGGER.info("[Objective] Fragile objective {} takes a destruction roll from being dropped: rolled {} - {}",
+              marker.generalName(), roll, destroyed ? "destroyed" : "survives");
+        if (destroyed) {
+            marker.setDestroyed(true);
+        }
+        return destroyed;
+    }
+
     private void reportDestructionOnce(PlacedObjective objective) {
         ObjectiveMarker marker = objective.marker();
         if (!marker.isDestroyed() || marker.isDestructionProcessed()) {
@@ -344,6 +519,16 @@ class ObjectiveResolutionHandler extends AbstractTWRuleHandler {
      */
     @Nullable
     Side determineControllingSide(PlacedObjective objective, List<Entity> entities) {
+        // A unit carrying a Mobile Objective automatically controls it, regardless of how many enemy
+        // units are nearby or what the objective's control radius normally is
+        if (objective.carrier() != null) {
+            Side carrierSide = sideOfPlayer(objective.carrier().getOwner());
+            LOGGER.debug("[Objective] {} is carried by {} - automatically controlled by {}",
+                  objective.marker().generalName(), objective.carrier().getShortName(),
+                  (carrierSide == null) ? "no one (ownerless carrier)" : displayName(carrierSide));
+            return carrierSide;
+        }
+
         Map<Side, Integer> unitCountsBySide = new HashMap<>();
         for (Entity entity : entities) {
             if (!isEligibleToControl(entity, objective)) {
@@ -916,6 +1101,11 @@ class ObjectiveResolutionHandler extends AbstractTWRuleHandler {
     /** Seam for tests: the 1D6 Fragile Objective destruction roll (1-{@value #FRAGILE_DESTRUCTION_MAXIMUM_ROLL} destroys). */
     int rollFragileCheck() {
         return Compute.d6();
+    }
+
+    /** Seam for tests: the 2d6 forced-drop Piloting Skill Roll. */
+    int rollForcedDropCheck() {
+        return Compute.d6(2);
     }
 
     private void reportObjectiveControl(PlacedObjective objective, @Nullable Side controller) {

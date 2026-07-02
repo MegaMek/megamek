@@ -62,6 +62,7 @@ import megamek.common.game.Game;
 import megamek.common.interfaces.IEntityRemovalConditions;
 import megamek.common.options.GameOptions;
 import megamek.common.options.OptionsConstants;
+import megamek.common.rolls.PilotingRollData;
 import megamek.common.Hex;
 import megamek.common.units.Crew;
 import megamek.common.units.Entity;
@@ -94,6 +95,7 @@ class ObjectiveResolutionHandlerTest {
         private int scanRoll = 12;
         private int confirmationRoll = 6;
         private int fragileRoll = 6;
+        private int forcedDropRoll = 12;
 
         TestableObjectiveResolutionHandler(TWGameManager gameManager) {
             super(gameManager);
@@ -122,6 +124,11 @@ class ObjectiveResolutionHandlerTest {
         @Override
         int rollFragileCheck() {
             return fragileRoll;
+        }
+
+        @Override
+        int rollForcedDropCheck() {
+            return forcedDropRoll;
         }
     }
 
@@ -1079,6 +1086,181 @@ class ObjectiveResolutionHandlerTest {
         handler.resolveObjectives();
 
         assertFalse(objective.marker().isDestroyed());
+    }
+
+    // --- Mobile Objective carrying (Phase 5b) ---
+
+    private ObjectiveMarker mobileMarker(Player owner) {
+        ObjectiveMarker marker = new ObjectiveMarker();
+        marker.setName("MacGuffin");
+        marker.setMobile(true);
+        marker.setOwnerId(owner.getId());
+        return marker;
+    }
+
+    private Entity carrierOf(Player owner, Coords position, ObjectiveMarker marker) {
+        Entity carrier = groundUnit(owner, position);
+        when(carrier.getDistinctCarriedObjects()).thenReturn(List.of(marker));
+        return carrier;
+    }
+
+    @Test
+    void testCarriedObjectiveAutoControlledByCarrier() {
+        ObjectiveMarker marker = mobileMarker(teamTwoPlayer);
+        Coords position = new Coords(5, 5);
+        Entity carrier = groundUnit(teamOnePlayer, position);
+        PlacedObjective carriedObjective = new PlacedObjective(position, marker, carrier);
+        // a swarm of enemy units in the radius cannot contest a carried objective
+        List<Entity> entities = List.of(
+              carrier,
+              groundUnit(teamTwoPlayer, position),
+              groundUnit(teamTwoPlayer, new Coords(5, 6)),
+              groundUnit(teamTwoPlayer, new Coords(6, 5)));
+
+        assertEquals(TEAM_1, handler.determineControllingSide(carriedObjective, entities));
+    }
+
+    @Test
+    void testImmobileCarrierDropsObjectiveWithFragileRoll() {
+        ObjectiveMarker marker = mobileMarker(teamOnePlayer);
+        marker.setFragile(true);
+        Coords position = new Coords(5, 5);
+        Entity carrier = carrierOf(teamOnePlayer, position, marker);
+        when(carrier.isImmobile()).thenReturn(true);
+        when(game.getGroundObjects()).thenReturn(new HashMap<>());
+        List<Entity> entities = List.of(carrier);
+        when(game.getEntitiesVector()).thenReturn(entities);
+        handler.fragileRoll = ObjectiveResolutionHandler.FRAGILE_DESTRUCTION_MAXIMUM_ROLL;
+
+        handler.resolveObjectives();
+
+        verify(carrier).dropCarriedObject(marker, false);
+        verify(game).placeGroundObject(position, marker);
+        assertTrue(marker.isDestroyed());
+    }
+
+    @Test
+    void testProneCarrierDropsObjectiveWithoutFragileRoll() {
+        ObjectiveMarker marker = mobileMarker(teamOnePlayer);
+        marker.setFragile(true);
+        Coords position = new Coords(5, 5);
+        Entity carrier = carrierOf(teamOnePlayer, position, marker);
+        when(carrier.isProne()).thenReturn(true);
+        when(game.getGroundObjects()).thenReturn(new HashMap<>());
+        List<Entity> entities = List.of(carrier);
+        when(game.getEntitiesVector()).thenReturn(entities);
+        handler.fragileRoll = 1;
+
+        handler.resolveObjectives();
+
+        verify(carrier).dropCarriedObject(marker, false);
+        verify(game).placeGroundObject(position, marker);
+        assertFalse(marker.isDestroyed());
+    }
+
+    @Test
+    void testMobileCarrierKeepsObjective() {
+        ObjectiveMarker marker = mobileMarker(teamOnePlayer);
+        Coords position = new Coords(5, 5);
+        Entity carrier = carrierOf(teamOnePlayer, position, marker);
+        when(game.getGroundObjects()).thenReturn(new HashMap<>());
+        List<Entity> entities = List.of(carrier);
+        when(game.getEntitiesVector()).thenReturn(entities);
+
+        handler.resolveObjectives();
+
+        verify(carrier, never()).dropCarriedObject(marker, false);
+    }
+
+    @Test
+    void testFailedForcedDropCheckDropsObjective() {
+        ObjectiveMarker marker = mobileMarker(teamOnePlayer);
+        Coords position = new Coords(5, 5);
+        Entity carrier = carrierOf(teamOnePlayer, position, marker);
+        carrier.damageThisPhase = 5;
+        int carrierId = carrier.getId();
+        when(carrier.getBasePilotingRoll()).thenReturn(new PilotingRollData(carrierId, 5, "test piloting"));
+        List<Entity> entities = List.of(carrier);
+        when(game.getEntitiesVector()).thenReturn(entities);
+        handler.forcedDropRoll = 4;
+
+        handler.resolveForcedObjectiveDrops();
+
+        verify(carrier).dropCarriedObject(marker, false);
+        verify(game).placeGroundObject(position, marker);
+    }
+
+    @Test
+    void testPassedForcedDropCheckKeepsObjective() {
+        ObjectiveMarker marker = mobileMarker(teamOnePlayer);
+        Entity carrier = carrierOf(teamOnePlayer, new Coords(5, 5), marker);
+        carrier.damageThisPhase = 5;
+        int carrierId = carrier.getId();
+        when(carrier.getBasePilotingRoll()).thenReturn(new PilotingRollData(carrierId, 5, "test piloting"));
+        List<Entity> entities = List.of(carrier);
+        when(game.getEntitiesVector()).thenReturn(entities);
+        handler.forcedDropRoll = 5;
+
+        handler.resolveForcedObjectiveDrops();
+
+        verify(carrier, never()).dropCarriedObject(marker, false);
+    }
+
+    @Test
+    void testTwoHandActuatorsEaseForcedDropCheck() {
+        // Entity needs 5+, rolls 4 and drops; a Mek with two intact hand actuators needs 3+ and keeps hold
+        ObjectiveMarker marker = mobileMarker(teamOnePlayer);
+        Mek mekCarrier = mock(Mek.class);
+        when(mekCarrier.getId()).thenReturn(nextEntityId++);
+        when(mekCarrier.getOwner()).thenReturn(teamOnePlayer);
+        when(mekCarrier.getPosition()).thenReturn(new Coords(5, 5));
+        when(mekCarrier.getDistinctCarriedObjects()).thenReturn(List.of(marker));
+        when(mekCarrier.hasWorkingSystem(Mek.ACTUATOR_HAND, Mek.LOC_LEFT_ARM)).thenReturn(true);
+        when(mekCarrier.hasWorkingSystem(Mek.ACTUATOR_HAND, Mek.LOC_RIGHT_ARM)).thenReturn(true);
+        mekCarrier.damageThisPhase = 5;
+        int mekCarrierId = mekCarrier.getId();
+        when(mekCarrier.getBasePilotingRoll()).thenReturn(new PilotingRollData(mekCarrierId, 5, "test"));
+        List<Entity> entities = List.of(mekCarrier);
+        when(game.getEntitiesVector()).thenReturn(entities);
+        handler.forcedDropRoll = 4;
+
+        handler.resolveForcedObjectiveDrops();
+
+        verify(mekCarrier, never()).dropCarriedObject(marker, false);
+    }
+
+    @Test
+    void testUndamagedCarrierMakesNoForcedDropCheck() {
+        ObjectiveMarker marker = mobileMarker(teamOnePlayer);
+        Entity carrier = carrierOf(teamOnePlayer, new Coords(5, 5), marker);
+        List<Entity> entities = List.of(carrier);
+        when(game.getEntitiesVector()).thenReturn(entities);
+        handler.forcedDropRoll = 2;
+
+        handler.resolveForcedObjectiveDrops();
+
+        verify(carrier, never()).dropCarriedObject(marker, false);
+    }
+
+    @Test
+    void testDroppedObjectiveNeverDestroyedUnlessFragile() {
+        ObjectiveMarker plainMarker = mobileMarker(teamOnePlayer);
+        Entity carrier = carrierOf(teamOnePlayer, new Coords(5, 5), plainMarker);
+        handler.fragileRoll = 1;
+
+        assertFalse(handler.resolveObjectiveDropDamage(carrier, plainMarker));
+        assertFalse(plainMarker.isDestroyed());
+
+        ObjectiveMarker fragileMarker = mobileMarker(teamOnePlayer);
+        fragileMarker.setFragile(true);
+        assertTrue(handler.resolveObjectiveDropDamage(carrier, fragileMarker));
+        assertTrue(fragileMarker.isDestroyed());
+
+        ObjectiveMarker luckyFragileMarker = mobileMarker(teamOnePlayer);
+        luckyFragileMarker.setFragile(true);
+        handler.fragileRoll = ObjectiveResolutionHandler.FRAGILE_DESTRUCTION_MAXIMUM_ROLL + 1;
+        assertFalse(handler.resolveObjectiveDropDamage(carrier, luckyFragileMarker));
+        assertFalse(luckyFragileMarker.isDestroyed());
     }
 
     @Test

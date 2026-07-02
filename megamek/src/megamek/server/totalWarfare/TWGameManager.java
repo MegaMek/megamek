@@ -15740,6 +15740,15 @@ public class TWGameManager extends AbstractGameManager {
     }
 
     /**
+     * End-of-phase forced-drop checks for units that took damage while carrying a Mobile Objective (Standard
+     * Missions, Objectives). Delegates to {@link ObjectiveResolutionHandler} so the objectives rules do not add to
+     * this already very large class.
+     */
+    void resolveForcedObjectiveDrops() {
+        new ObjectiveResolutionHandler(this).resolveForcedObjectiveDrops();
+    }
+
+    /**
      * End-phase resolution for vehicles clearing rubble with a bulldozer, TacOps. Delegates to
      * {@link RubbleClearingHandler} so the bulldozer rules do not add to this already very large class.
      */
@@ -32004,6 +32013,12 @@ public class TWGameManager extends AbstractGameManager {
     boolean damageCargo(boolean isFlying, Entity entity, ICarryable cargo) {
         if (cargo.isInvulnerable()) {
             return false;
+        }
+
+        // Objective counters follow the Mobile/Fragile Objectives rules instead of the cargo drop roll:
+        // a dropped objective is never destroyed unless it is Fragile (then 1D6, destroyed on 1-4)
+        if (cargo instanceof ObjectiveMarker objectiveMarker) {
+            return new ObjectiveResolutionHandler(this).resolveObjectiveDropDamage(entity, objectiveMarker);
         }
 
         boolean cargoDestroyed = false;

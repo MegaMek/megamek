@@ -47,8 +47,10 @@ import java.io.Serial;
  *
  * <P>Objectives are destructible by default (destroyed with their building; a mission opts out with
  * {@code destructible: false}). The Potential, False and Fragile variant flags are stored here with their rules
- * resolving in the End Phase objective resolution; the Mobile Objective carry rules are a later implementation
- * phase - markers cannot be picked up yet.</P>
+ * resolving in the End Phase objective resolution. Mobile Objectives ride the carryable-cargo mechanics: they are
+ * picked up with the cargo pickup movement step, occupy the carrying arm (blocking its attacks), auto-control for
+ * the carrier, and are dropped voluntarily or when the carrier is destroyed, falls, becomes immobile or fails the
+ * forced-drop Piloting Skill Roll after taking damage.</P>
  */
 public class ObjectiveMarker extends GroundObject {
 
@@ -208,17 +210,17 @@ public class ObjectiveMarker extends GroundObject {
     }
 
     /**
-     * Objective markers cannot be picked up yet; the Mobile Objective carry rules resolve in a later implementation
-     * phase.
+     * Only Mobile Objectives can be picked up and carried (Mobile Objectives variant); other objective counters are
+     * static. A destroyed counter cannot be picked up.
      *
      * @param isCarrierHullDown is the unit that's picking this up hull down, or otherwise able to pick up ground-level
      *                          objects
      *
-     * @return {@code false}
+     * @return {@code true} for an intact Mobile Objective
      */
     @Override
     public boolean canBePickedUp(boolean isCarrierHullDown) {
-        return false;
+        return mobile && !destroyed;
     }
 
     @Override

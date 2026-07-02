@@ -74,6 +74,20 @@ class ObjectiveMarkerTest {
     }
 
     @Test
+    void testOnlyIntactMobileObjectivesCanBePickedUp() {
+        ObjectiveMarker mobileMarker = new ObjectiveMarker();
+        mobileMarker.setMobile(true);
+        assertTrue(mobileMarker.canBePickedUp(false));
+        assertTrue(mobileMarker.canBePickedUp(true));
+
+        mobileMarker.setDestroyed(true);
+        assertFalse(mobileMarker.canBePickedUp(false));
+
+        ObjectiveMarker staticMarker = new ObjectiveMarker();
+        assertFalse(staticMarker.canBePickedUp(false));
+    }
+
+    @Test
     void testAnyDamageDestroys() {
         ObjectiveMarker marker = new ObjectiveMarker();
 

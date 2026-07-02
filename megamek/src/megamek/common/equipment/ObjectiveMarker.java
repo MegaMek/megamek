@@ -35,6 +35,13 @@ package megamek.common.equipment;
 
 import java.io.Serial;
 
+import megamek.common.moves.MoveStep;
+import megamek.common.units.Entity;
+import megamek.common.units.EntityMovementType;
+import megamek.common.units.Mek;
+import megamek.logging.MMLogger;
+import megamek.server.totalWarfare.TWGameManager;
+
 /**
  * An objective counter for objective-based missions (Standard Missions, Objectives): an abstract marker placed on the
  * board that sides compete to control, scan or destroy. Each End Phase, the side with a strict majority of eligible
@@ -56,6 +63,8 @@ public class ObjectiveMarker extends GroundObject {
 
     @Serial
     private static final long serialVersionUID = 1L;
+
+    private static final MMLogger LOGGER = MMLogger.create(ObjectiveMarker.class);
 
     /** The highest control radius used by the objectives rules (radius is 0, 1 or 2 hexes). */
     public static final int MAX_CONTROL_RADIUS = 2;
@@ -221,6 +230,22 @@ public class ObjectiveMarker extends GroundObject {
     @Override
     public boolean canBePickedUp(boolean isCarrierHullDown) {
         return mobile && !destroyed;
+    }
+
+    // CHECKSTYLE IGNORE ForbiddenWords FOR 4 LINES - verbatim quote from the printed Objectives rules
+    /**
+     * Only Meks can pick up Mobile Objectives (RAW: "any standing mobile 'Mech with at least one functional hand
+     * actuator or claw"); pickup attempts by other unit types are refused here as the server-side gate.
+     */
+    @Override
+    public void processPickupStep(MoveStep step, Integer cargoPickupLocation, TWGameManager gameManager,
+          Entity entityPickingUpTarget, EntityMovementType overallMoveType) {
+        if (!(entityPickingUpTarget instanceof Mek)) {
+            LOGGER.debug("[Objective] {} cannot pick up {}: only Meks can carry Mobile Objectives",
+                  entityPickingUpTarget.getShortName(), generalName());
+            return;
+        }
+        super.processPickupStep(step, cargoPickupLocation, gameManager, entityPickingUpTarget, overallMoveType);
     }
 
     @Override

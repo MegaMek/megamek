@@ -3291,6 +3291,10 @@ public abstract class Entity extends TurnOrdered
               isHullDown())) {
             return false;
         }
+        // Only Meks can pick up Mobile Objectives (Standard Missions, Objectives)
+        if ((carryable instanceof ObjectiveMarker) && !(this instanceof Mek)) {
+            return false;
+        }
         boolean canPickupWithArms = carryable.getTonnage() <= maxGroundObjectTonnage();
         boolean canPickupWithLiftHoist = false;
 

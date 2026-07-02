@@ -37,6 +37,8 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.doAnswer;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
@@ -1261,6 +1263,150 @@ class ObjectiveResolutionHandlerTest {
         handler.fragileRoll = ObjectiveResolutionHandler.FRAGILE_DESTRUCTION_MAXIMUM_ROLL + 1;
         assertFalse(handler.resolveObjectiveDropDamage(carrier, luckyFragileMarker));
         assertFalse(luckyFragileMarker.isDestroyed());
+    }
+
+    // --- Objective stacking and Fragile event triggers (Phase 5c) ---
+
+    /**
+     * Backs the mocked game's ground-object accessors and mutators with a real map, so placement and displacement
+     * logic can be asserted against actual map state.
+     */
+    private Map<Coords, List<ICarryable>> installRealGroundObjectMap() {
+        Map<Coords, List<ICarryable>> groundMap = new HashMap<>();
+        when(game.getGroundObjects()).thenReturn(groundMap);
+        when(game.getGroundObjects(any(Coords.class))).thenAnswer(invocation ->
+              groundMap.getOrDefault(invocation.getArgument(0), new ArrayList<>()));
+        doAnswer(invocation -> {
+            groundMap.computeIfAbsent(invocation.getArgument(0), key -> new ArrayList<>())
+                  .add(invocation.getArgument(1));
+            return null;
+        }).when(game).placeGroundObject(any(Coords.class), any(ICarryable.class));
+        doAnswer(invocation -> {
+            List<ICarryable> objectsInHex = groundMap.get(invocation.getArgument(0));
+            if (objectsInHex != null) {
+                objectsInHex.remove((ICarryable) invocation.getArgument(1));
+            }
+            return null;
+        }).when(game).removeGroundObject(any(Coords.class), any(ICarryable.class));
+        return groundMap;
+    }
+
+    private Board boardContainingEverything() {
+        Board board = mock(Board.class);
+        when(board.contains(any(Coords.class))).thenReturn(true);
+        when(game.getBoard()).thenReturn(board);
+        return board;
+    }
+
+    @Test
+    void testDropIntoEmptyHexJustPlaces() {
+        Map<Coords, List<ICarryable>> groundMap = installRealGroundObjectMap();
+        boardContainingEverything();
+        Coords position = new Coords(5, 5);
+        ObjectiveMarker droppedMarker = mobileMarker(teamOnePlayer);
+        Entity droppingUnit = groundUnit(teamOnePlayer, position);
+
+        handler.placeDroppedObjective(droppingUnit, position, droppedMarker);
+
+        assertTrue(groundMap.get(position).contains(droppedMarker));
+        assertEquals(1, groundMap.get(position).size());
+    }
+
+    @Test
+    void testDropIntoOccupiedHexDisplacesExistingObjective() {
+        Map<Coords, List<ICarryable>> groundMap = installRealGroundObjectMap();
+        boardContainingEverything();
+        Coords position = new Coords(5, 5);
+        ObjectiveMarker existingMarker = mobileMarker(teamTwoPlayer);
+        groundMap.put(position, new ArrayList<>(List.of(existingMarker)));
+        ObjectiveMarker droppedMarker = mobileMarker(teamOnePlayer);
+        Entity droppingUnit = groundUnit(teamOnePlayer, position); // facing 0
+
+        handler.placeDroppedObjective(droppingUnit, position, droppedMarker);
+
+        Coords displacedTo = position.translated(0);
+        assertTrue(groundMap.get(position).contains(droppedMarker));
+        assertFalse(groundMap.get(position).contains(existingMarker));
+        assertTrue(groundMap.get(displacedTo).contains(existingMarker));
+    }
+
+    @Test
+    void testDisplacementChainsInTheSameDirection() {
+        Map<Coords, List<ICarryable>> groundMap = installRealGroundObjectMap();
+        boardContainingEverything();
+        Coords position = new Coords(5, 5);
+        Coords firstNeighbor = position.translated(0);
+        ObjectiveMarker firstMarker = mobileMarker(teamTwoPlayer);
+        ObjectiveMarker secondMarker = mobileMarker(teamTwoPlayer);
+        groundMap.put(position, new ArrayList<>(List.of(firstMarker)));
+        groundMap.put(firstNeighbor, new ArrayList<>(List.of(secondMarker)));
+        ObjectiveMarker droppedMarker = mobileMarker(teamOnePlayer);
+        Entity droppingUnit = groundUnit(teamOnePlayer, position);
+
+        handler.placeDroppedObjective(droppingUnit, position, droppedMarker);
+
+        assertTrue(groundMap.get(position).contains(droppedMarker));
+        assertTrue(groundMap.get(firstNeighbor).contains(firstMarker));
+        assertTrue(groundMap.get(firstNeighbor.translated(0)).contains(secondMarker));
+    }
+
+    @Test
+    void testDisplacementOffBoardStaysInLastInPlayHex() {
+        Map<Coords, List<ICarryable>> groundMap = installRealGroundObjectMap();
+        Board board = mock(Board.class);
+        when(board.contains(any(Coords.class))).thenReturn(false);
+        when(game.getBoard()).thenReturn(board);
+        Coords position = new Coords(0, 0);
+        ObjectiveMarker existingMarker = mobileMarker(teamTwoPlayer);
+        groundMap.put(position, new ArrayList<>(List.of(existingMarker)));
+        ObjectiveMarker droppedMarker = mobileMarker(teamOnePlayer);
+        Entity droppingUnit = groundUnit(teamOnePlayer, position);
+
+        handler.placeDroppedObjective(droppingUnit, position, droppedMarker);
+
+        // both objectives share the hex - the displaced one stays in its last in-play hex
+        assertTrue(groundMap.get(position).contains(droppedMarker));
+        assertTrue(groundMap.get(position).contains(existingMarker));
+    }
+
+    @Test
+    void testForcedLevelChangeTriggersFragileRoll() {
+        Map<Coords, List<ICarryable>> groundMap = installRealGroundObjectMap();
+        Board board = boardContainingEverything();
+        Coords position = new Coords(5, 5);
+        Coords displacedTo = position.translated(0);
+        Hex lowHex = mock(Hex.class);
+        when(lowHex.getLevel()).thenReturn(0);
+        Hex highHex = mock(Hex.class);
+        when(highHex.getLevel()).thenReturn(2);
+        when(board.getHex(position)).thenReturn(lowHex);
+        when(board.getHex(displacedTo)).thenReturn(highHex);
+        ObjectiveMarker fragileMarker = mobileMarker(teamTwoPlayer);
+        fragileMarker.setFragile(true);
+        groundMap.put(position, new ArrayList<>(List.of(fragileMarker)));
+        ObjectiveMarker droppedMarker = mobileMarker(teamOnePlayer);
+        Entity droppingUnit = groundUnit(teamOnePlayer, position);
+        handler.fragileRoll = ObjectiveResolutionHandler.FRAGILE_DESTRUCTION_MAXIMUM_ROLL;
+
+        handler.placeDroppedObjective(droppingUnit, position, droppedMarker);
+
+        assertTrue(fragileMarker.isDestroyed());
+    }
+
+    @Test
+    void testFragileObjectiveDestroyedByHexEvent() {
+        Map<Coords, List<ICarryable>> groundMap = installRealGroundObjectMap();
+        Coords position = new Coords(5, 5);
+        ObjectiveMarker fragileMarker = mobileMarker(teamOnePlayer);
+        fragileMarker.setFragile(true);
+        ObjectiveMarker plainMarker = mobileMarker(teamOnePlayer);
+        groundMap.put(position, new ArrayList<>(List.of(fragileMarker, plainMarker)));
+        handler.fragileRoll = ObjectiveResolutionHandler.FRAGILE_DESTRUCTION_MAXIMUM_ROLL;
+
+        handler.checkFragileObjectivesInHex(position, "area-effect damage in hex");
+
+        assertTrue(fragileMarker.isDestroyed());
+        assertFalse(plainMarker.isDestroyed());
     }
 
     @Test

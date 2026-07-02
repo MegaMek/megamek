@@ -134,6 +134,10 @@ class ObjectiveResolutionHandler extends AbstractTWRuleHandler {
     private static final int REPORT_OBJECTIVE_USELESS = 7125;
     private static final int REPORT_OBJECTIVE_DROPPED = 7126;
     private static final int REPORT_FORCED_DROP_CHECK = 7127;
+    private static final int REPORT_OBJECTIVE_DISPLACED = 7130;
+
+    // safety bound for the same-direction stacking displacement chain
+    private static final int MAXIMUM_DISPLACEMENT_CHAIN = 20;
 
     /**
      * A scoring side. Normally this is a team; a player that is not on any team forms its own side.
@@ -445,10 +449,10 @@ class ObjectiveResolutionHandler extends AbstractTWRuleHandler {
     private void dropObjective(Entity carrier, ObjectiveMarker marker, boolean fragileRollApplies) {
         carrier.dropCarriedObject(marker, false);
         if (fragileRollApplies) {
-            rollFragileDropDestruction(marker);
+            rollFragileEventDestruction(marker, "dropped");
         }
         if (carrier.getPosition() != null) {
-            getGame().placeGroundObject(carrier.getPosition(), marker);
+            placeDroppedObjective(carrier, carrier.getPosition(), marker);
         }
         gameManager.sendGroundObjectUpdate();
         Report report = new Report(REPORT_OBJECTIVE_DROPPED, Report.PUBLIC);
@@ -468,7 +472,7 @@ class ObjectiveResolutionHandler extends AbstractTWRuleHandler {
      * @return {@code true} if the objective is destroyed by the drop
      */
     boolean resolveObjectiveDropDamage(Entity carrier, ObjectiveMarker marker) {
-        boolean destroyed = rollFragileDropDestruction(marker);
+        boolean destroyed = rollFragileEventDestruction(marker, "carrier fell or was destroyed");
         if (destroyed) {
             reportDestructionOnce(new PlacedObjective(carrier.getPosition(), marker, carrier));
         }
@@ -476,23 +480,117 @@ class ObjectiveResolutionHandler extends AbstractTWRuleHandler {
     }
 
     /**
-     * Rolls the Fragile Objective destruction check for a drop event, marking the objective destroyed on
+     * Rolls the Fragile Objective destruction check for a qualifying event, marking the objective destroyed on
      * 1-{@value #FRAGILE_DESTRUCTION_MAXIMUM_ROLL}. Non-Fragile and indestructible objectives always survive.
+     *
+     * @param marker           The objective at risk
+     * @param eventDescription The triggering event, for the log
      *
      * @return {@code true} if the objective was destroyed
      */
-    private boolean rollFragileDropDestruction(ObjectiveMarker marker) {
+    private boolean rollFragileEventDestruction(ObjectiveMarker marker, String eventDescription) {
         if (!marker.isFragile() || marker.isInvulnerable() || marker.isDestroyed()) {
             return marker.isDestroyed();
         }
         int roll = rollFragileCheck();
         boolean destroyed = roll <= FRAGILE_DESTRUCTION_MAXIMUM_ROLL;
-        LOGGER.info("[Objective] Fragile objective {} takes a destruction roll from being dropped: rolled {} - {}",
-              marker.generalName(), roll, destroyed ? "destroyed" : "survives");
+        LOGGER.info("[Objective] Fragile objective {} takes a destruction roll ({}): rolled {} - {}",
+              marker.generalName(), eventDescription, roll, destroyed ? "destroyed" : "survives");
         if (destroyed) {
             marker.setDestroyed(true);
         }
         return destroyed;
+    }
+
+    /**
+     * Fragile Objective check for every objective lying in the given hex, triggered by area-effect damage or a
+     * heat-causing weapon hitting the hex (RAW triggers, rolled at the time of the event). Destroyed objectives are
+     * reported immediately.
+     *
+     * @param position         The hex that was hit
+     * @param eventDescription The triggering event, for the log
+     */
+    void checkFragileObjectivesInHex(Coords position, String eventDescription) {
+        for (ICarryable groundObject : List.copyOf(getGame().getGroundObjects(position))) {
+            if (groundObject instanceof ObjectiveMarker marker) {
+                boolean destroyed = rollFragileEventDestruction(marker, eventDescription);
+                if (destroyed) {
+                    reportDestructionOnce(new PlacedObjective(position, marker));
+                }
+            }
+        }
+    }
+
+    // --- Objective stacking (one objective per hex) ---
+
+    /**
+     * Places a dropped objective in the given hex, enforcing the stacking rule: only one objective can be in a
+     * single hex. An objective already in the hex is displaced one hex in the direction of the dropping unit's
+     * facing (chaining in the same direction while hexes are occupied); a displacement off the battlefield leaves
+     * the objective in its last in-play hex, and a forced level change on a Fragile objective triggers its
+     * destruction roll.
+     *
+     * @param droppingUnit The unit dropping the objective (its facing sets the displacement direction)
+     * @param position     The hex the objective is dropped into
+     * @param droppedMarker The objective being dropped
+     */
+    void placeDroppedObjective(Entity droppingUnit, Coords position, ObjectiveMarker droppedMarker) {
+        ObjectiveMarker displacedMarker = findOtherObjectiveAt(position, droppedMarker);
+        getGame().placeGroundObject(position, droppedMarker);
+        if (displacedMarker != null) {
+            displaceObjective(displacedMarker, position, droppingUnit.getFacing(), 0);
+        }
+    }
+
+    @Nullable
+    private ObjectiveMarker findOtherObjectiveAt(Coords position, ObjectiveMarker excludedMarker) {
+        for (ICarryable groundObject : getGame().getGroundObjects(position)) {
+            if ((groundObject instanceof ObjectiveMarker marker) && (marker != excludedMarker)) {
+                return marker;
+            }
+        }
+        return null;
+    }
+
+    private void displaceObjective(ObjectiveMarker marker, Coords from, int direction, int chainDepth) {
+        if ((direction < 0) || (chainDepth > MAXIMUM_DISPLACEMENT_CHAIN)) {
+            LOGGER.warn("[Objective] {} at {} cannot be displaced (direction {} / chain depth {}) - it stays, "
+                        + "sharing the hex", marker.generalName(), from, direction, chainDepth);
+            return;
+        }
+        Board board = getGame().getBoard();
+        Coords destination = from.translated(direction);
+        if ((board == null) || !board.contains(destination)) {
+            // RAW: an objective displaced off the battlefield is placed in the last in-play hex occupied
+            LOGGER.info("[Objective] {} would be displaced off the battlefield - it stays in its last in-play "
+                  + "hex {}", marker.generalName(), from);
+            return;
+        }
+
+        ObjectiveMarker nextDisplacedMarker = findOtherObjectiveAt(destination, marker);
+        getGame().removeGroundObject(from, marker);
+        getGame().placeGroundObject(destination, marker);
+        LOGGER.info("[Objective] {} is displaced from {} to {} (stacking - one objective per hex)",
+              marker.generalName(), from, destination);
+        Report report = new Report(REPORT_OBJECTIVE_DISPLACED, Report.PUBLIC);
+        report.add(marker.generalName());
+        report.add(destination.toFriendlyString());
+        addReport(report);
+
+        Hex fromHex = board.getHex(from);
+        Hex destinationHex = board.getHex(destination);
+        boolean levelChanged = (fromHex != null) && (destinationHex != null)
+              && (fromHex.getLevel() != destinationHex.getLevel());
+        if (levelChanged) {
+            boolean destroyed = rollFragileEventDestruction(marker, "forced level change from displacement");
+            if (destroyed) {
+                reportDestructionOnce(new PlacedObjective(destination, marker));
+            }
+        }
+
+        if (nextDisplacedMarker != null) {
+            displaceObjective(nextDisplacedMarker, destination, direction, chainDepth + 1);
+        }
     }
 
     private void reportDestructionOnce(PlacedObjective objective) {

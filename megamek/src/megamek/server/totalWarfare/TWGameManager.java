@@ -11149,6 +11149,12 @@ public class TWGameManager extends AbstractGameManager {
             return false;
         }
 
+        // Standard Missions, Objectives: a Fragile objective in a hex hit by a heat-causing weapon risks
+        // destruction, whether or not the hex ignites
+        if (bHotGun || bInferno) {
+            new ObjectiveResolutionHandler(this).checkFragileObjectivesInHex(c, "hit by a heat-causing weapon");
+        }
+
         // Ignore if fire is not enabled as a game option
         if (!game.getOptions().booleanOption(OptionsConstants.ADVANCED_COMBAT_TAC_OPS_START_FIRE)) {
             return false;
@@ -24242,7 +24248,13 @@ public class TWGameManager extends AbstractGameManager {
                 } else {
                     entity.dropCarriedObject(cargo, false);
                     if (game.getBoard().contains(coords)) {
-                        game.placeGroundObject(coords, cargo);
+                        if (cargo instanceof ObjectiveMarker objectiveMarker) {
+                            // stacking rule: only one objective per hex
+                            new ObjectiveResolutionHandler(this)
+                                  .placeDroppedObjective(entity, coords, objectiveMarker);
+                        } else {
+                            game.placeGroundObject(coords, cargo);
+                        }
                         cargoDropped = true;
                     }
                 }
@@ -31281,6 +31293,12 @@ public class TWGameManager extends AbstractGameManager {
                       vPhaseReport,
                       this);
             }
+        }
+
+        // Standard Missions, Objectives: a Fragile objective in a hex taking any area-effect damage risks
+        // destruction (air bursts against flyers do not affect objectives on the ground)
+        if (!flak && !asfFlak) {
+            new ObjectiveResolutionHandler(this).checkFragileObjectivesInHex(coords, "area-effect damage in hex");
         }
 
         return alreadyHit;

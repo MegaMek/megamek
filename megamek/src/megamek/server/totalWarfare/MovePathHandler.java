@@ -3855,7 +3855,11 @@ class MovePathHandler extends AbstractTWRuleHandler {
                 // note that this should not be moved into the "!isLastStep" block above as cargo may be either
                 // unloaded peacefully or dumped on the move
                 if (!cargoDestroyed) {
-                    if (cargo instanceof GroundObject) {
+                    if (cargo instanceof ObjectiveMarker objectiveMarker) {
+                        // stacking rule: only one objective per hex
+                        new ObjectiveResolutionHandler(gameManager)
+                              .placeDroppedObjective(entity, step.getPosition(), objectiveMarker);
+                    } else if (cargo instanceof GroundObject) {
                         getGame().placeGroundObject(step.getPosition(), cargo);
                     }
 

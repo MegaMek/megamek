@@ -63,6 +63,7 @@ import megamek.common.game.GameType;
 import megamek.common.game.IGame;
 import megamek.common.game.InGameObject;
 import megamek.common.hexArea.HexArea;
+import megamek.common.equipment.ObjectiveMarker;
 import megamek.common.icons.Camouflage;
 import megamek.common.icons.FileCamouflage;
 import megamek.common.interfaces.IStartingPositions;
@@ -478,6 +479,14 @@ public class ScenarioV2 implements Scenario {
                 for (JsonNode objectiveNode : playerNode.get(OBJECTIVES)) {
                     ObjectiveInfo objectiveInfo = ObjectiveDeserializer.parse(objectiveNode);
                     objectiveInfo.marker().setOwnerId(player.getId());
+                    // stacking rule: only one objective can be in a single hex
+                    boolean hexHasObjective = abstractGame.getGroundObjects(objectiveInfo.position()).stream()
+                          .anyMatch(groundObject -> groundObject instanceof ObjectiveMarker);
+                    if (hexHasObjective) {
+                        throw new IllegalArgumentException("Objective " + objectiveInfo.marker().generalName()
+                              + " at " + objectiveInfo.position()
+                              + ": only one objective can be in a single hex");
+                    }
                     abstractGame.placeGroundObject(objectiveInfo.position(), objectiveInfo.marker());
                 }
             }

@@ -37,12 +37,23 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.never;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 
+import megamek.common.board.Coords;
+import megamek.common.game.Game;
+import megamek.common.moves.MoveStep;
+import megamek.common.units.Entity;
+import megamek.common.units.EntityMovementType;
+import megamek.common.units.Mek;
+import megamek.server.totalWarfare.TWGameManager;
 import org.junit.jupiter.api.Test;
 
 class ObjectiveMarkerTest {
@@ -85,6 +96,27 @@ class ObjectiveMarkerTest {
 
         ObjectiveMarker staticMarker = new ObjectiveMarker();
         assertFalse(staticMarker.canBePickedUp(false));
+    }
+
+    @Test
+    void testOnlyMeksCanExecuteThePickup() {
+        ObjectiveMarker marker = new ObjectiveMarker();
+        marker.setName("MacGuffin");
+        marker.setMobile(true);
+        TWGameManager gameManager = mock(TWGameManager.class);
+        Game game = mock(Game.class);
+        when(gameManager.getGame()).thenReturn(game);
+        MoveStep step = mock(MoveStep.class);
+        when(step.getPosition()).thenReturn(new Coords(1, 1));
+
+        Entity nonMek = mock(Entity.class);
+        marker.processPickupStep(step, null, gameManager, nonMek, EntityMovementType.MOVE_WALK);
+        verify(nonMek, never()).pickupCarryableObject(marker, null);
+
+        Mek mek = mock(Mek.class);
+        when(mek.getDisplayName()).thenReturn("Test Mek");
+        marker.processPickupStep(step, null, gameManager, mek, EntityMovementType.MOVE_WALK);
+        verify(mek).pickupCarryableObject(marker, null);
     }
 
     @Test

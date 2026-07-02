@@ -206,6 +206,7 @@ class ObjectiveResolutionHandler extends AbstractTWRuleHandler {
             Side controller = determineControllingSide(objective, entities);
             Side owningSide = sideOfPlayerId(objective.marker().getOwnerId());
             resolvedObjectives.add(new ResolvedObjective(objective, owningSide, controller));
+            storeControllerOnMarker(objective.marker(), controller);
             reportObjectiveControl(objective, controller);
         }
         awardStandardControlVictoryPoints(resolvedObjectives, VictoryPointTracker.getTracker(getGame()));
@@ -1204,6 +1205,20 @@ class ObjectiveResolutionHandler extends AbstractTWRuleHandler {
     /** Seam for tests: the 2d6 forced-drop Piloting Skill Roll. */
     int rollForcedDropCheck() {
         return Compute.d6(2);
+    }
+
+    /**
+     * Records the resolved controller on the marker itself, so state-based victory triggers
+     * (objective control conditions) can read it without re-running the control algorithm.
+     */
+    private void storeControllerOnMarker(ObjectiveMarker marker, @Nullable Side controller) {
+        if (controller == null) {
+            marker.setController(ObjectiveMarker.NO_CONTROLLER, ObjectiveMarker.NO_CONTROLLER);
+        } else if (controller.isTeam()) {
+            marker.setController(controller.id(), ObjectiveMarker.NO_CONTROLLER);
+        } else {
+            marker.setController(ObjectiveMarker.NO_CONTROLLER, controller.id());
+        }
     }
 
     private void reportObjectiveControl(PlacedObjective objective, @Nullable Side controller) {

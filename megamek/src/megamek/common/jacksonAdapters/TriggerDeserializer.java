@@ -65,6 +65,13 @@ public class TriggerDeserializer extends StdDeserializer<Trigger> {
     private static final String TYPE_UNIT_POSITION = "position";
     private static final String TYPE_UNITS_POSITION = "positions";
     private static final String TYPE_BATTLEFIELD_CONTROL = "battlefieldcontrol";
+    private static final String TYPE_OBJECTIVE_CONTROL = "objectivecontrol";
+    private static final String TYPE_OBJECTIVE_DESTROYED = "objectivedestroyed";
+    private static final String TYPE_OBJECTIVE_CONFIRMED = "objectiveconfirmed";
+    private static final String TYPE_OBJECTIVE_CAPTURED = "objectivecaptured";
+    private static final String TYPE_VICTORY_POINTS = "victorypoints";
+    private static final String OBJECTIVE = "objective";
+    private static final String POINTS = "points";
     private static final String PLAYER = "player";
     private static final String COUNT = "count";
     private static final String AT_MOST = "atmost";
@@ -110,6 +117,11 @@ public class TriggerDeserializer extends StdDeserializer<Trigger> {
             case TYPE_KILLED_UNITS -> parseKilledUnitsTrigger(node);
             case TYPE_KILLED_UNIT -> parseKilledUnitTrigger(node);
             case TYPE_BATTLEFIELD_CONTROL -> new BattlefieldControlTrigger();
+            case TYPE_OBJECTIVE_CONTROL -> parseObjectiveControlTrigger(node);
+            case TYPE_OBJECTIVE_DESTROYED -> parseObjectiveDestroyedTrigger(node);
+            case TYPE_OBJECTIVE_CONFIRMED -> parseObjectiveConfirmedTrigger(node);
+            case TYPE_OBJECTIVE_CAPTURED -> parseObjectiveCapturedTrigger(node);
+            case TYPE_VICTORY_POINTS -> parseVictoryPointsTrigger(node);
             case TYPE_UNIT_POSITION -> parseUnitPositionTrigger(node);
             case TYPE_UNITS_POSITION -> parseUnitsPositionTrigger(node);
             case NOT -> parseNotTrigger(node);
@@ -134,6 +146,35 @@ public class TriggerDeserializer extends StdDeserializer<Trigger> {
 
     private static Trigger parseNotTrigger(JsonNode triggerNode) {
         return new NotTrigger(parseNode(triggerNode.get(TRIGGERS)));
+    }
+
+    private static Trigger parseObjectiveControlTrigger(JsonNode triggerNode) {
+        requireFields("ObjectiveControlTrigger", triggerNode, OBJECTIVE);
+        return new ObjectiveControlTrigger(triggerNode.get(OBJECTIVE).asText(), optionalPlayerName(triggerNode));
+    }
+
+    private static Trigger parseObjectiveDestroyedTrigger(JsonNode triggerNode) {
+        requireFields("ObjectiveDestroyedTrigger", triggerNode, OBJECTIVE);
+        return new ObjectiveDestroyedTrigger(triggerNode.get(OBJECTIVE).asText());
+    }
+
+    private static Trigger parseObjectiveConfirmedTrigger(JsonNode triggerNode) {
+        requireFields("ObjectiveConfirmedTrigger", triggerNode, OBJECTIVE);
+        return new ObjectiveConfirmedTrigger(triggerNode.get(OBJECTIVE).asText());
+    }
+
+    private static Trigger parseObjectiveCapturedTrigger(JsonNode triggerNode) {
+        requireFields("ObjectiveCapturedTrigger", triggerNode, OBJECTIVE);
+        return new ObjectiveCapturedTrigger(triggerNode.get(OBJECTIVE).asText(), optionalPlayerName(triggerNode));
+    }
+
+    private static Trigger parseVictoryPointsTrigger(JsonNode triggerNode) {
+        requireFields("VictoryPointsTrigger", triggerNode, POINTS);
+        return new VictoryPointsTrigger(optionalPlayerName(triggerNode), triggerNode.get(POINTS).asInt());
+    }
+
+    private static String optionalPlayerName(JsonNode triggerNode) {
+        return triggerNode.has(PLAYER) ? triggerNode.get(PLAYER).asText() : "";
     }
 
     private static Trigger parseAndTrigger(JsonNode triggerNode) {

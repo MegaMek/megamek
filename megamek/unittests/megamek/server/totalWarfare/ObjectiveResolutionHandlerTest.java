@@ -427,6 +427,10 @@ class ObjectiveResolutionHandlerTest {
         VictoryPointTracker tracker = VictoryPointTracker.findTracker(game.getVictoryContext());
         assertEquals(2, tracker.getTeamVictoryPoints(1));
         assertEquals(0, tracker.getTeamVictoryPoints(2));
+        // the resolved controller is stored on the markers for the objective victory triggers
+        assertEquals(1, leftObjective.marker().getControllingTeam());
+        assertEquals(1, rightObjective.marker().getControllingTeam());
+        assertEquals(ObjectiveMarker.NO_CONTROLLER, leftObjective.marker().getControllingPlayerId());
     }
 
     // --- Objective destruction via buildings ---

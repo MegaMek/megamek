@@ -80,6 +80,11 @@ public class ObjectiveMarker extends GroundObject {
     private boolean insideBuilding = false;
     private boolean buildingLinkInitialized = false;
     private boolean destructionProcessed = false;
+    private int controllingTeam = NO_CONTROLLER;
+    private int controllingPlayerId = NO_CONTROLLER;
+
+    /** Value of {@link #getControllingTeam()} / {@link #getControllingPlayerId()} when no side controls this objective. */
+    public static final int NO_CONTROLLER = -1;
 
     public ObjectiveMarker() {
         // RAW (Objectives - Buildings): objectives are destroyed with their building unless the mission
@@ -216,6 +221,35 @@ public class ObjectiveMarker extends GroundObject {
     public boolean damage(double amount) {
         destroyed = true;
         return true;
+    }
+
+    /**
+     * @return The team currently controlling this objective per the last End Phase control resolution, or
+     *       {@link #NO_CONTROLLER} when it is uncontrolled or controlled by an unteamed player (then see
+     *       {@link #getControllingPlayerId()})
+     */
+    public int getControllingTeam() {
+        return controllingTeam;
+    }
+
+    /**
+     * @return The ID of the unteamed player currently controlling this objective per the last End Phase control
+     *       resolution, or {@link #NO_CONTROLLER} when it is uncontrolled or controlled by a team
+     */
+    public int getControllingPlayerId() {
+        return controllingPlayerId;
+    }
+
+    /**
+     * Records the controller of this objective, as resolved in the End Phase. Exactly one of the two values should
+     * be set; pass {@link #NO_CONTROLLER} for both when the objective is uncontrolled.
+     *
+     * @param controllingTeam     The controlling team, or {@link #NO_CONTROLLER}
+     * @param controllingPlayerId The controlling unteamed player's ID, or {@link #NO_CONTROLLER}
+     */
+    public void setController(int controllingTeam, int controllingPlayerId) {
+        this.controllingTeam = controllingTeam;
+        this.controllingPlayerId = controllingPlayerId;
     }
 
     /**

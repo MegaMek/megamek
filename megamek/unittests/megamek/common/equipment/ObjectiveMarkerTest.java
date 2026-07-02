@@ -144,6 +144,7 @@ class ObjectiveMarkerTest {
         marker.setBuildingLinkInitialized(true);
         marker.setDestructionProcessed(true);
         marker.setInvulnerable(true);
+        marker.setController(4, ObjectiveMarker.NO_CONTROLLER);
 
         ByteArrayOutputStream byteStream = new ByteArrayOutputStream();
         try (ObjectOutputStream objectOutputStream = new ObjectOutputStream(byteStream)) {
@@ -169,5 +170,7 @@ class ObjectiveMarkerTest {
         assertTrue(restoredMarker.isInsideBuilding());
         assertTrue(restoredMarker.isBuildingLinkInitialized());
         assertTrue(restoredMarker.isDestructionProcessed());
+        assertEquals(4, restoredMarker.getControllingTeam());
+        assertEquals(ObjectiveMarker.NO_CONTROLLER, restoredMarker.getControllingPlayerId());
     }
 }

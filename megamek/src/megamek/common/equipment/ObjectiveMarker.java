@@ -65,10 +65,13 @@ public class ObjectiveMarker extends GroundObject {
     private boolean fragile = false;
     private boolean mobile = false;
     private boolean destroyed = false;
+    private boolean insideBuilding = false;
+    private boolean buildingLinkInitialized = false;
+    private boolean destructionProcessed = false;
 
     public ObjectiveMarker() {
-        // Objectives cannot be destroyed unless the mission says otherwise; missions that allow
-        // destruction clear this (objective destruction resolves in a later implementation phase)
+        // Objectives cannot be destroyed unless the mission says otherwise; scenario files clear this
+        // with "destructible: true"
         setInvulnerable(true);
     }
 
@@ -153,6 +156,54 @@ public class ObjectiveMarker extends GroundObject {
 
     public void setDestroyed(boolean destroyed) {
         this.destroyed = destroyed;
+    }
+
+    /**
+     * @return {@code true} if this objective sits inside a building and is destroyed with it. Only meaningful once
+     *       {@link #isBuildingLinkInitialized()} is {@code true}; the link is detected in the first End Phase.
+     */
+    public boolean isInsideBuilding() {
+        return insideBuilding;
+    }
+
+    public void setInsideBuilding(boolean insideBuilding) {
+        this.insideBuilding = insideBuilding;
+    }
+
+    /** @return {@code true} once the building link ({@link #isInsideBuilding()}) has been detected */
+    public boolean isBuildingLinkInitialized() {
+        return buildingLinkInitialized;
+    }
+
+    public void setBuildingLinkInitialized(boolean buildingLinkInitialized) {
+        this.buildingLinkInitialized = buildingLinkInitialized;
+    }
+
+    /**
+     * @return {@code true} if this objective's destruction has already been reported; used so a destroyed objective
+     *       is reported exactly once regardless of how it was destroyed
+     */
+    public boolean isDestructionProcessed() {
+        return destructionProcessed;
+    }
+
+    public void setDestructionProcessed(boolean destructionProcessed) {
+        this.destructionProcessed = destructionProcessed;
+    }
+
+    /**
+     * Damages this objective. Objective counters are abstract markers without a damage capacity: any damage destroys
+     * them. Per the {@link ICarryable} contract, this does <i>not</i> check {@link #isInvulnerable()} - callers must
+     * do that, and objectives are invulnerable unless the mission allows their destruction.
+     *
+     * @param amount The damage
+     *
+     * @return {@code true} - the objective is destroyed by any damage
+     */
+    @Override
+    public boolean damage(double amount) {
+        destroyed = true;
+        return true;
     }
 
     /**

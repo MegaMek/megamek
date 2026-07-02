@@ -73,6 +73,14 @@ class ObjectiveMarkerTest {
     }
 
     @Test
+    void testAnyDamageDestroys() {
+        ObjectiveMarker marker = new ObjectiveMarker();
+
+        assertTrue(marker.damage(0.5));
+        assertTrue(marker.isDestroyed());
+    }
+
+    @Test
     void testSerializationRoundTrip() throws Exception {
         ObjectiveMarker marker = new ObjectiveMarker();
         marker.setName("Left Counter");
@@ -85,6 +93,9 @@ class ObjectiveMarkerTest {
         marker.setFragile(true);
         marker.setMobile(true);
         marker.setDestroyed(true);
+        marker.setInsideBuilding(true);
+        marker.setBuildingLinkInitialized(true);
+        marker.setDestructionProcessed(true);
 
         ByteArrayOutputStream byteStream = new ByteArrayOutputStream();
         try (ObjectOutputStream objectOutputStream = new ObjectOutputStream(byteStream)) {
@@ -107,5 +118,8 @@ class ObjectiveMarkerTest {
         assertTrue(restoredMarker.isMobile());
         assertTrue(restoredMarker.isDestroyed());
         assertTrue(restoredMarker.isInvulnerable());
+        assertTrue(restoredMarker.isInsideBuilding());
+        assertTrue(restoredMarker.isBuildingLinkInitialized());
+        assertTrue(restoredMarker.isDestructionProcessed());
     }
 }

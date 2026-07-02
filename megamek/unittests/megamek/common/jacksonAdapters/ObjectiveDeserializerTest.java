@@ -95,6 +95,31 @@ class ObjectiveDeserializerTest {
     }
 
     @Test
+    void testDestructibleKey() throws Exception {
+        JsonNode node = parseYaml("""
+              name: Raid Target
+              at: [ 3, 4 ]
+              destructible: true
+              """);
+
+        ObjectiveInfo objectiveInfo = ObjectiveDeserializer.parse(node);
+
+        assertFalse(objectiveInfo.marker().isInvulnerable());
+    }
+
+    @Test
+    void testObjectivesAreIndestructibleByDefault() throws Exception {
+        JsonNode node = parseYaml("""
+              name: Standard Counter
+              at: [ 3, 4 ]
+              """);
+
+        ObjectiveInfo objectiveInfo = ObjectiveDeserializer.parse(node);
+
+        assertTrue(objectiveInfo.marker().isInvulnerable());
+    }
+
+    @Test
     void testFalseVariant() throws Exception {
         JsonNode node = parseYaml("""
               name: Decoy

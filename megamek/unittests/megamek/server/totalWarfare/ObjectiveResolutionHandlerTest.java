@@ -34,7 +34,9 @@
 package megamek.server.totalWarfare;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
@@ -44,11 +46,13 @@ import java.util.List;
 import java.util.Map;
 
 import megamek.common.Player;
+import megamek.common.board.Board;
 import megamek.common.board.Coords;
 import megamek.common.equipment.ICarryable;
 import megamek.common.equipment.ObjectiveMarker;
 import megamek.common.game.Game;
 import megamek.common.units.Entity;
+import megamek.common.units.IBuilding;
 import megamek.server.totalWarfare.ObjectiveResolutionHandler.PlacedObjective;
 import megamek.server.totalWarfare.ObjectiveResolutionHandler.ResolvedObjective;
 import megamek.server.totalWarfare.ObjectiveResolutionHandler.Side;
@@ -352,6 +356,119 @@ class ObjectiveResolutionHandlerTest {
         VictoryPointTracker tracker = VictoryPointTracker.findTracker(game.getVictoryContext());
         assertEquals(2, tracker.getTeamVictoryPoints(1));
         assertEquals(0, tracker.getTeamVictoryPoints(2));
+    }
+
+    // --- Objective destruction via buildings ---
+
+    /**
+     * Stubs the game with one objective marker placed at the given position inside a mocked building whose presence
+     * is taken from {@code buildingHolder[0]} on every check, so tests can "destroy" the building between End Phases
+     * by clearing the holder.
+     */
+    private PlacedObjective objectiveInBuilding(Coords position, IBuilding[] buildingHolder) {
+        PlacedObjective objective = objectiveAt(position, 1, teamOnePlayer);
+        Map<Coords, List<ICarryable>> groundObjects = new HashMap<>();
+        groundObjects.put(position, new ArrayList<>(List.of(objective.marker())));
+        Board board = mock(Board.class);
+        when(board.getBuildingAt(position)).thenAnswer(invocation -> buildingHolder[0]);
+        when(game.getBoard()).thenReturn(board);
+        when(game.getGroundObjects()).thenReturn(groundObjects);
+        when(game.getEntitiesVector()).thenReturn(List.of());
+        return objective;
+    }
+
+    private IBuilding buildingWithCF(Coords position, int constructionFactor) {
+        IBuilding building = mock(IBuilding.class);
+        when(building.getCurrentCF(position)).thenReturn(constructionFactor);
+        return building;
+    }
+
+    @Test
+    void testDestructibleObjectiveDestroyedWithBuilding() {
+        Coords position = new Coords(4, 4);
+        IBuilding[] buildingHolder = { buildingWithCF(position, 40) };
+        PlacedObjective objective = objectiveInBuilding(position, buildingHolder);
+        objective.marker().setInvulnerable(false);
+
+        handler.resolveObjectives();
+        assertTrue(objective.marker().isBuildingLinkInitialized());
+        assertTrue(objective.marker().isInsideBuilding());
+        assertFalse(objective.marker().isDestroyed());
+
+        buildingHolder[0] = null;
+        handler.resolveObjectives();
+
+        assertTrue(objective.marker().isDestroyed());
+        assertTrue(objective.marker().isDestructionProcessed());
+    }
+
+    @Test
+    void testDestructibleObjectiveDestroyedWhenBuildingCFReachesZero() {
+        Coords position = new Coords(4, 4);
+        IBuilding building = mock(IBuilding.class);
+        when(building.getCurrentCF(position)).thenReturn(40, 0);
+        IBuilding[] buildingHolder = { building };
+        PlacedObjective objective = objectiveInBuilding(position, buildingHolder);
+        objective.marker().setInvulnerable(false);
+
+        handler.resolveObjectives();
+        assertFalse(objective.marker().isDestroyed());
+
+        handler.resolveObjectives();
+
+        assertTrue(objective.marker().isDestroyed());
+    }
+
+    @Test
+    void testIndestructibleObjectiveSurvivesBuildingDestruction() {
+        // RAW: objectives cannot be destroyed unless the mission says otherwise (markers default invulnerable)
+        Coords position = new Coords(4, 4);
+        IBuilding[] buildingHolder = { buildingWithCF(position, 40) };
+        PlacedObjective objective = objectiveInBuilding(position, buildingHolder);
+
+        handler.resolveObjectives();
+        buildingHolder[0] = null;
+        handler.resolveObjectives();
+
+        assertFalse(objective.marker().isDestroyed());
+    }
+
+    @Test
+    void testObjectiveOutsideBuildingsIsNeverBuildingDestroyed() {
+        Coords position = new Coords(4, 4);
+        IBuilding[] buildingHolder = { null };
+        PlacedObjective objective = objectiveInBuilding(position, buildingHolder);
+        objective.marker().setInvulnerable(false);
+
+        handler.resolveObjectives();
+
+        assertTrue(objective.marker().isBuildingLinkInitialized());
+        assertFalse(objective.marker().isInsideBuilding());
+        assertFalse(objective.marker().isDestroyed());
+    }
+
+    @Test
+    void testDestroyedObjectiveExcludedFromScoring() {
+        // Two objectives; the destructible one dies with its building, leaving only the enemy-owned one under
+        // control - holding only enemy objectives scores nothing, and "controls all" ignores destroyed counters
+        Coords friendlyPosition = new Coords(2, 2);
+        Coords enemyPosition = new Coords(12, 2);
+        PlacedObjective friendlyObjective = objectiveAt(friendlyPosition, 1, teamOnePlayer);
+        friendlyObjective.marker().setInvulnerable(false);
+        friendlyObjective.marker().setDestroyed(true);
+        PlacedObjective enemyObjective = objectiveAt(enemyPosition, 1, teamTwoPlayer);
+        Map<Coords, List<ICarryable>> groundObjects = new HashMap<>();
+        groundObjects.put(friendlyPosition, new ArrayList<>(List.of(friendlyObjective.marker())));
+        groundObjects.put(enemyPosition, new ArrayList<>(List.of(enemyObjective.marker())));
+        List<Entity> entities = List.of(groundUnit(teamOnePlayer, enemyPosition));
+        when(game.getGroundObjects()).thenReturn(groundObjects);
+        when(game.getEntitiesVector()).thenReturn(entities);
+
+        handler.resolveObjectives();
+
+        VictoryPointTracker tracker = VictoryPointTracker.findTracker(game.getVictoryContext());
+        assertEquals(0, tracker.getTeamVictoryPoints(1));
+        assertTrue(friendlyObjective.marker().isDestructionProcessed());
     }
 
     @Test

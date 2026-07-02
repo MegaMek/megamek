@@ -58,9 +58,10 @@ import megamek.common.equipment.ObjectiveMarker;
  * </PRE>
  *
  * Keys: {@code name} and a position ({@code at} or {@code x}/{@code y}) are required. {@code controlRadius} (0-2,
- * default 0), {@code vp} (victory point value, default 1) and {@code variants} (any of {@code potential},
- * {@code false}, {@code fragile}, {@code mobile}) are optional. Variant rules resolve in later implementation
- * phases; the flags are parsed and stored.
+ * default 0), {@code vp} (victory point value, default 1), {@code destructible} ({@code true} when the mission
+ * allows this objective to be destroyed; objectives are indestructible by default) and {@code variants} (any of
+ * {@code potential}, {@code false}, {@code fragile}, {@code mobile}) are optional. Variant rules resolve in later
+ * implementation phases; the flags are parsed and stored.
  */
 public final class ObjectiveDeserializer {
 
@@ -70,6 +71,7 @@ public final class ObjectiveDeserializer {
     private static final String Y = "y";
     private static final String CONTROL_RADIUS = "controlRadius";
     private static final String VICTORY_POINTS = "vp";
+    private static final String DESTRUCTIBLE = "destructible";
     private static final String VARIANTS = "variants";
     private static final String VARIANT_POTENTIAL = "potential";
     private static final String VARIANT_FALSE = "false";
@@ -103,6 +105,9 @@ public final class ObjectiveDeserializer {
         }
         if (node.has(VICTORY_POINTS)) {
             marker.setVictoryPointValue(node.get(VICTORY_POINTS).asInt());
+        }
+        if (node.has(DESTRUCTIBLE)) {
+            marker.setInvulnerable(!node.get(DESTRUCTIBLE).asBoolean());
         }
         parseVariants(marker, node);
 

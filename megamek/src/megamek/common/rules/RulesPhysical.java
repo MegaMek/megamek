@@ -42,6 +42,7 @@ public abstract class RulesPhysical {
 
     // Return the claw to-hit modifier
     public abstract int getClawToHitModifier();
-    
+
+    // Should the shield reset with phase change
     public abstract boolean phaseChangeShield();
 }

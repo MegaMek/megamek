@@ -84,4 +84,9 @@ public class CoreRulesPhysical extends RulesPhysical {
 
     // Claws now have a TN modifier of 0. Core p.194
     public int getClawToHitModifier() { return 0; }
+
+    // Shields reset their state at the end of the phase
+    public boolean phaseChangeShield() {
+        return true;
+    }
 }

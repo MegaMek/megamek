@@ -104,7 +104,7 @@ public class TwRulesPsr extends CoreRulesPsr {
 
     @Override
     public boolean getFootActuatorPsr() {
-        return false;
+        return true;
     }
 
     @Override

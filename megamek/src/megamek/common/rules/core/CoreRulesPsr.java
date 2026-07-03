@@ -114,15 +114,17 @@ public class CoreRulesPsr extends RulesPsr {
                 // Assign rolls to locations
                 switch (roll.getLocation()) {
                     case Mek.LOC_RIGHT_LEG:
-                        rollLL.add(roll);
-                        break;
-                    case Mek.LOC_LEFT_LEG:
                         rollRL.add(roll);
                         break;
+                    case Mek.LOC_LEFT_LEG:
+                        rollLL.add(roll);
+                        break;
                     case Mek.LOC_LEFT_ARM:
+                        // Quads!
                         rollFLL.add(roll);
                         break;
                     case Mek.LOC_RIGHT_ARM:
+                        // Quads!
                         rollFRL.add(roll);
                         break;
                     case Mek.LOC_CENTER_LEG:

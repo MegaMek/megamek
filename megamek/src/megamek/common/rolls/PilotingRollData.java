@@ -41,6 +41,7 @@ public class PilotingRollData extends TargetRoll {
     @Serial
     private static final long serialVersionUID = -8965684775619336323L;
     private final int entityId;
+    private int location = 0;
 
     public PilotingRollData(int entityId) {
         this.entityId = entityId;
@@ -49,6 +50,12 @@ public class PilotingRollData extends TargetRoll {
     public PilotingRollData(int entityId, int value, String desc) {
         super(value, desc);
         this.entityId = entityId;
+    }
+    
+    public PilotingRollData(int entityId, int value, String desc, int location) {
+        super(value, desc);
+        this.entityId = entityId;
+        this.location = location;
     }
 
     public PilotingRollData(int entityId, int value, String desc, boolean cumulative) {
@@ -69,5 +76,8 @@ public class PilotingRollData extends TargetRoll {
     public int getEntityId() {
         return entityId;
     }
+    
+    // Return the location
+    public int getLocation() { return location; }
 
 }

@@ -2725,7 +2725,7 @@ public final class Game extends AbstractGame implements Serializable, PlanetaryC
         }
         return rollsForEntity;
     }
-    
+        
     public void removePSRsByArray(ArrayList<PilotingRollData> psrList) {
         pilotRolls.removeAll(psrList);
     }

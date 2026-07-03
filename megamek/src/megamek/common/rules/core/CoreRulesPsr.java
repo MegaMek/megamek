@@ -109,24 +109,24 @@ public class CoreRulesPsr extends RulesPsr {
         ArrayList<PilotingRollData> rollFLL = new ArrayList<>();
         ArrayList<PilotingRollData> rollFRL = new ArrayList<>();
         
-        // first, find all the rolls belonging to the target entity
-        // Locations are: 1 = left leg, 2 = right leg, 3 = front left leg, 4 = front right leg, 5 = center leg
+        // Organize all rolls by location
         for (PilotingRollData r : pilotRolls) {
                 // Assign rolls to locations
-                if (r.getDesc().equals("left leg actuator hit") || r.getDesc().equals("left hip actuator hit")) {
-                    rollLL.add(r);
-                } else if (r.getDesc().equals("right leg actuator hit") || r.getDesc()
-                      .equals("right hip actuator hit")) {
-                    rollRL.add(r);
-                } else if (r.getDesc().equals("front left leg actuator hit") || r.getDesc().equals("front left "
-                      + "hip actuator hit")) {
-                    rollFLL.add(r);
-                } else if (r.getDesc().equals("front right leg actuator hit") || r.getDesc().equals("front "
-                      + "right hip actuator hit")) {
-                    rollFRL.add(r);
-                } else if (r.getDesc().equals("center leg actuator hit") || r.getDesc().equals("center hip "
-                      + "actuator hit")) {
-                    rollCL.add(r);
+                switch (r.getLocation()) {
+                    case Mek.LOC_RIGHT_LEG:
+                        rollLL.add(r);
+                        break;
+                    case Mek.LOC_LEFT_LEG:
+                        rollRL.add(r);
+                        break;
+                    case Mek.LOC_LEFT_ARM:
+                        rollFLL.add(r);
+                        break;
+                    case Mek.LOC_RIGHT_ARM:
+                        rollFRL.add(r);
+                        break;
+                    case Mek.LOC_CENTER_LEG:
+                        rollCL.add(r);
                 }
         }
         
@@ -194,7 +194,9 @@ public class CoreRulesPsr extends RulesPsr {
         }
         
         if (getFootActuatorPsr() && hitPart == Mek.ACTUATOR_FOOT) {
-            game.addPSR(new PilotingRollData(en.getId(), psrPenalty, psrText));
+            game.addPSR(new PilotingRollData(en.getId(), psrPenalty, psrText, loc));
+        } else if (hitPart != Mek.ACTUATOR_FOOT) {
+            game.addPSR(new PilotingRollData(en.getId(), psrPenalty, psrText, loc));
         }
     }
     

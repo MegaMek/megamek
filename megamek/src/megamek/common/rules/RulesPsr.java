@@ -69,4 +69,10 @@ public abstract class RulesPsr {
     
     // PSRs for hit actuators
     public abstract void hitActuator(Game game, Entity en, int loc, int hitPart);
+    
+    // Hip Penalties
+    public abstract int getHipPenalty();
+    
+    // Foot Actuator PSR?
+    public abstract boolean getFootActuatorPsr();
 }

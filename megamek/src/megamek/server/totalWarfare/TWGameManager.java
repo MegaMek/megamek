@@ -20569,7 +20569,7 @@ public class TWGameManager extends AbstractGameManager {
                 break;
         }
 
-        // Get the PSRs for the game, move them into Vector format, then call the rules check
+        // Check if we need to reduce the PSR rolls
         Game.rulesManager.getRulesPsr().checkLegActuatorPsrRolls(game, en);
 
         return reports;

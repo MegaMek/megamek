@@ -53,9 +53,6 @@ import java.util.Vector;
 /* This class is for Core Rules that involve PSR checks and modifiers
  */
 public class CoreRulesPsr extends RulesPsr {
-    boolean footActuatorPsr = false;
-    int hipPenalty = 1;
-    
     // Called from Entity
     public void checkRunningWithDamage(Entity e, PilotingRollData r, int gyroDamage, EntityMovementType overallMoveType) {
         if (e.getGyroType() == Mek.GYRO_HEAVY_DUTY) {
@@ -193,11 +190,21 @@ public class CoreRulesPsr extends RulesPsr {
         int psrPenalty = 1;
         
         if (hitPart == Mek.ACTUATOR_HIP) {
-            psrPenalty = hipPenalty;
+            psrPenalty = getHipPenalty();
         }
         
-        if (footActuatorPsr && hitPart == Mek.ACTUATOR_FOOT) {
+        if (getFootActuatorPsr() && hitPart == Mek.ACTUATOR_FOOT) {
             game.addPSR(new PilotingRollData(en.getId(), psrPenalty, psrText));
         }
+    }
+    
+    // Do we do Foot Actuator PSRs? No, not in core.
+    public boolean getFootActuatorPsr() {
+        return false;
+    }
+    
+    // What is the hip hit penalty? Core p.99
+    public int getHipPenalty() {
+        return 1;
     }
 }

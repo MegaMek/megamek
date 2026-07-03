@@ -685,8 +685,6 @@ public class QuadMek extends Mek {
             }
         }
 
-        boolean playtestLocations = gameOptions().booleanOption(OptionsConstants.PLAYTEST_1);
-
         if (table == ToHitData.HIT_PUNCH) {
             roll = Compute.d6();
             try {
@@ -700,10 +698,6 @@ public class QuadMek extends Mek {
                 }
             } catch (Throwable t) {
                 logger.error("", t);
-            }
-
-            if (playtestLocations && (side == ToHitData.SIDE_LEFT || side == ToHitData.SIDE_RIGHT)) {
-                return getPlaytestSideLocation(table, side, cover);
             }
 
             if (side == ToHitData.SIDE_FRONT) {

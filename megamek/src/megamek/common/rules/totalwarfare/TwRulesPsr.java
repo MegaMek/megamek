@@ -36,6 +36,7 @@ package megamek.common.rules.totalwarfare;
  */
 
 import megamek.common.CriticalSlot;
+import megamek.common.game.Game;
 import megamek.common.rolls.PilotingRollData;
 import megamek.common.rolls.TargetRoll;
 import megamek.common.rules.core.CoreRulesPsr;
@@ -45,6 +46,7 @@ import megamek.common.units.Mek;
 import megamek.common.units.MekWithArms;
 
 import java.util.List;
+import java.util.Vector;
 
 public class TwRulesPsr extends CoreRulesPsr {
     public void checkRunningWithDamage(Entity e, PilotingRollData r, int gyroDamage, EntityMovementType overallMoveType) {
@@ -95,4 +97,8 @@ public class TwRulesPsr extends CoreRulesPsr {
             }
         }
     }
+
+    // We do not reduce leg actuator rolls in TW
+    @Override
+    public void checkLegActuatorPsrRolls(Vector<PilotingRollData> pilotRolls, Entity en) {};
 }

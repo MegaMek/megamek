@@ -33,6 +33,8 @@ package megamek.common.rules;
  * affiliated with Microsoft.
  */
 
+import megamek.common.ToHitData;
+import megamek.common.equipment.Mounted;
 import megamek.common.units.Entity;
 
 public abstract class RulesPhysical {
@@ -45,4 +47,8 @@ public abstract class RulesPhysical {
 
     // Should the shield reset with phase change
     public abstract boolean phaseChangeShield();
+
+    public abstract void getShieldToHitModifier(ToHitData toHit, Entity attacker, Mounted<?> weapon);
+
+    public abstract boolean retractableBladeArmCheck(boolean toRetractableBlake);
 }

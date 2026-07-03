@@ -2772,7 +2772,6 @@ public abstract class Mek extends Entity implements Fortifiable, RubbleClearer {
             }
         }
 
-        boolean playtestLocations = gameOptions().booleanOption(OptionsConstants.PLAYTEST_1);
         boolean toAdvHitLoc =
               gameOptions().booleanOption(OptionsConstants.ADVANCED_COMBAT_TAC_OPS_ADVANCED_MEK_HIT_LOCATIONS);
 
@@ -2790,14 +2789,6 @@ public abstract class Mek extends Entity implements Fortifiable, RubbleClearer {
                 }
             } catch (Throwable t) {
                 LOGGER.error("", t);
-            }
-
-            if (playtestLocations && !toAdvHitLoc
-                  && (side == ToHitData.SIDE_LEFT || side == ToHitData.SIDE_RIGHT)
-                  && roll != 2 // clarified on forum, TACs don't go to the CT in this case
-                // https://battletech.com/playtest-battletech/feedback-discussion/topic/through-armor-critical-hits-on-side-arc/
-            ) {
-                return getPlaytestSideLocation(table, side, cover);
             }
 
             if (side == ToHitData.SIDE_FRONT) {
@@ -3163,20 +3154,6 @@ public abstract class Mek extends Entity implements Fortifiable, RubbleClearer {
             }
         }
         return null;
-    }
-
-    public HitData getPlaytestSideLocation(int table, int side, int cover) {
-        var isLeft = side == ToHitData.SIDE_LEFT;
-
-        var hitData = innerRollHitLocation(table, ToHitData.SIDE_FRONT, LOC_NONE, AimingMode.NONE, cover);
-        hitData.setLocation(switch (hitData.getLocation()) {
-            case LOC_LEFT_ARM, LOC_RIGHT_ARM -> isLeft ? LOC_LEFT_ARM : LOC_RIGHT_ARM;
-            case LOC_LEFT_LEG, LOC_RIGHT_LEG -> isLeft ? LOC_LEFT_LEG : LOC_RIGHT_LEG;
-            case LOC_LEFT_TORSO, LOC_RIGHT_TORSO -> isLeft ? LOC_LEFT_TORSO : LOC_RIGHT_TORSO;
-            default -> hitData.getLocation();
-        });
-
-        return hitData;
     }
 
     /**

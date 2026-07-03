@@ -36,6 +36,7 @@ package megamek.common.rules.core;
  */
 
 import megamek.common.CriticalSlot;
+import megamek.common.game.Game;
 import megamek.common.options.OptionsConstants;
 import megamek.common.rolls.PilotingRollData;
 import megamek.common.rolls.TargetRoll;
@@ -45,7 +46,10 @@ import megamek.common.units.Mek;
 import megamek.common.units.Entity;
 import megamek.common.units.MekWithArms;
 
+import java.util.Collections;
+import java.util.Enumeration;
 import java.util.List;
+import java.util.Vector;
 
 /* This class is for Core Rules that involve PSR checks and modifiers
  */
@@ -92,6 +96,80 @@ public class CoreRulesPsr extends RulesPsr {
                 if (unit.getBadCriticalSlots(CriticalSlot.TYPE_SYSTEM, Mek.ACTUATOR_LOWER_LEG, loc) > 0) {
                     roll.addModifier(1, unit.getLocationName(loc) + " Lower Leg Actuator destroyed");
                 }
+            }
+        }
+    }
+
+    // Reduce PSR rolls for actuator hits to the highest per leg in a turn. Core p.93
+    public void checkLegActuatorPsrRolls(Vector<PilotingRollData> pilotRolls, Entity entity) {
+        PilotingRollData roll;
+        Vector<Integer> rollsToRemove = new Vector<>();
+        Vector<Integer> rollTarget = new Vector<>();
+        Vector<Integer> rollLocation = new Vector<>();
+        Vector<Integer> saveRolls = new Vector<>();
+
+        // first, find all the rolls belonging to the target entity
+        // Locations are: 1 = left leg, 2 = right leg, 3 = front left leg, 4 = front right leg, 5 = center leg
+        for (int i = 0; i < pilotRolls.size(); i++) {
+            roll = pilotRolls.elementAt(i);
+            if (roll.getEntityId() == entity.getId()) {
+                // This is the critical part.
+                if (roll.getDesc().equals("left leg actuator hit") || roll.getDesc().equals("left hip actuator hit")) {
+                    rollTarget.addElement(roll.getValue());
+                    rollLocation.addElement(1);
+                    rollsToRemove.addElement(i);
+                } else if (roll.getDesc().equals("right leg actuator hit") || roll.getDesc()
+                      .equals("right hip actuator hit")) {
+                    rollTarget.addElement(roll.getValue());
+                    rollLocation.addElement(2);
+                    rollsToRemove.addElement(i);
+                } else if (roll.getDesc().equals("front left leg actuator hit") || roll.getDesc().equals("front left "
+                      + "hip actuator hit")) {
+                    rollTarget.addElement(roll.getValue());
+                    rollLocation.addElement(3);
+                    rollsToRemove.addElement(i);
+                } else if (roll.getDesc().equals("front right leg actuator hit") || roll.getDesc().equals("front "
+                      + "right hip actuator hit")) {
+                    rollTarget.addElement(roll.getValue());
+                    rollLocation.addElement(4);
+                    rollsToRemove.addElement(i);
+                } else if (roll.getDesc().equals("center leg actuator hit") || roll.getDesc().equals("center hip "
+                      + "actuator hit")) {
+                    rollTarget.addElement(roll.getValue());
+                    rollLocation.addElement(5);
+                    rollsToRemove.addElement(i);
+                }
+            }
+        }
+
+        if (rollsToRemove.size() > 1) {
+            int saveEntry = 0;
+            int highTarget = 0;
+            boolean entrySaved = false;
+            // check which roll target is highest
+            for (int location = 1; location < 6; location++) {
+                highTarget = 0;
+                saveEntry = 0;
+                entrySaved = false;
+                for (int i = 0; i < rollTarget.size(); i++) {
+                    if ((rollTarget.elementAt(i) > highTarget) && (rollLocation.elementAt(i) == location)) {
+                        saveEntry = i;
+                        entrySaved = true;
+                        highTarget = rollTarget.elementAt(i);
+                    }
+                }
+                if (entrySaved) {
+                    saveRolls.addElement(rollsToRemove.elementAt(saveEntry));
+                }
+            }
+            // Remove the saved element from our removal list
+            for (int i = saveRolls.size() - 1; i > -1; i--) {
+                rollsToRemove.removeElementAt(saveRolls.elementAt(i));
+            }
+
+            // now, clear out remaining rolls from the PSRs
+            for (int i = rollsToRemove.size() - 1; i > -1; i--) {
+                pilotRolls.removeElementAt(rollsToRemove.elementAt(i));
             }
         }
     }

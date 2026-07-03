@@ -34,10 +34,13 @@ package megamek.common.rules;
  * affiliated with Microsoft.
  */
 
+import megamek.common.game.Game;
 import megamek.common.rolls.PilotingRollData;
 import megamek.common.units.Entity;
 import megamek.common.units.EntityMovementType;
 import megamek.common.units.MekWithArms;
+
+import java.util.Vector;
 
 /*
 This abstract class is to handle rules that are in relation to PSRs. 
@@ -56,4 +59,7 @@ public abstract class RulesPsr {
     
     // Apply leg damage modifiers to PSR
     public abstract void legDamageModifiers(MekWithArms unit, PilotingRollData roll, boolean toLegDamage);
+
+    // Do we need to reduce potential PSR rolls
+    public abstract void checkLegActuatorPsrRolls(Vector<PilotingRollData> pilotRolls, Entity en);
 }

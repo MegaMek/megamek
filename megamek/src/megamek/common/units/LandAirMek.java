@@ -1600,12 +1600,6 @@ public class LandAirMek extends BipedMek implements IAero, IBomber {
             }
         }
 
-        boolean playtestLocations = gameOptions().booleanOption(OptionsConstants.PLAYTEST_1);
-
-        if (playtestLocations && (side == ToHitData.SIDE_LEFT || side == ToHitData.SIDE_RIGHT)) {
-            return getPlaytestSideLocation(table, side, LosEffects.COVER_NONE);
-        }
-
         if (side == ToHitData.SIDE_FRONT) {
             // normal front hits
             switch (roll) {

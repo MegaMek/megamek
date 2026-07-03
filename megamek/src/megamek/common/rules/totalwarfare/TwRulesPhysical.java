@@ -33,6 +33,10 @@ package megamek.common.rules.totalwarfare;
  * affiliated with Microsoft.
  */
 
+import megamek.client.ui.Messages;
+import megamek.common.ToHitData;
+import megamek.common.equipment.Mounted;
+import megamek.common.options.OptionsConstants;
 import megamek.common.rules.core.CoreRulesPhysical;
 import megamek.common.units.Entity;
 
@@ -42,6 +46,17 @@ public class TwRulesPhysical extends CoreRulesPhysical {
     @Override
     public int getShieldDamageBoost(Entity entity, int armLoc) { return 0; }
 
+    // Shields make it harder to shoot
+    @Override
+    public void getShieldToHitModifier(ToHitData toHit, Entity attacker, Mounted<?> weapon) {
+        // time to check passive defense and no defense
+        if (attacker.hasLoweredShield(weapon.getLocation(), weapon.isRearMounted())) {
+            toHit.addModifier(+2, Messages.getString("WeaponAttackAction.PassiveShield"));
+        } else if (attacker.hasNoDefenseShield(weapon.getLocation())) {
+            toHit.addModifier(+1, Messages.getString("WeaponAttackAction.Shield"));
+        }
+    }
+
     // Do claws modify the to-hit number
     @Override
     public int getClawToHitModifier() { return 1; }
@@ -49,5 +64,11 @@ public class TwRulesPhysical extends CoreRulesPhysical {
     // Shields stay for round
     @Override
     public boolean phaseChangeShield() { return false; }
-    
+
+    // Retractable blades are only used if TO option is enabled
+    @Override
+    public boolean retractableBladeArmCheck(boolean toRetractableBlade) {
+        if (toRetractableBlade) { return true; }
+        return false;
+    }
 }

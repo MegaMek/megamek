@@ -20624,10 +20624,10 @@ public class TWGameManager extends AbstractGameManager {
                 }
                 break;
         }
-        // PLAYTEST2 Now we remove any stacked PSR rolls for actuators
-        if (game.getOptions().booleanOption(OptionsConstants.PLAYTEST_2)) {
-            game.reducePSRforActuatorCrits(en);
-        }
+
+        // Get the PSRs for the game, move them into Vector format, then call the rules check
+        Game.rulesManager.getRulesPsr().checkLegActuatorPsrRolls(game.getPsrVector(), en);
+
         return reports;
     }
 

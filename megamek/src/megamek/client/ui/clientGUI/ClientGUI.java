@@ -3235,7 +3235,7 @@ public class ClientGUI extends AbstractClientGUI
                         amsOptions.add(waaMsg);
                     }
 
-                    // Updated AMS selection code for dealing with Multi_AMS, Playtest3 and standard selection
+                    // Updated AMS selection code for dealing with Multi_AMS and standard selection
                     JList amsList = new JList(amsOptions.toArray());
                     JScrollPane amsScrollPane = new JScrollPane(amsList);
                     if (entity.getGame().getOptions().booleanOption(OptionsConstants.ADVANCED_COMBAT_MULTI_USE_AMS)) {

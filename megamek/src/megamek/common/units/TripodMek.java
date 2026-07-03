@@ -477,7 +477,6 @@ public class TripodMek extends MekWithArms {
             }
         }
 
-        boolean playtestLocations = gameOptions().booleanOption(OptionsConstants.PLAYTEST_1);
         boolean toAdvHitLoc =
               gameOptions().booleanOption(OptionsConstants.ADVANCED_COMBAT_TAC_OPS_ADVANCED_MEK_HIT_LOCATIONS);
 
@@ -494,13 +493,6 @@ public class TripodMek extends MekWithArms {
                 }
             } catch (Throwable t) {
                 logger.error("", t);
-            }
-
-            if (playtestLocations && !toAdvHitLoc
-                  && (side == ToHitData.SIDE_LEFT || side == ToHitData.SIDE_RIGHT)
-                  && roll != 2 // clarified on forum, TACs don't go to the CT in this case
-            ) {
-                return getPlaytestSideLocation(table, side, cover);
             }
 
             if (side == ToHitData.SIDE_FRONT) {
@@ -763,10 +755,6 @@ public class TripodMek extends MekWithArms {
                 }
             } catch (Throwable t) {
                 logger.error("", t);
-            }
-
-            if (playtestLocations && (side == ToHitData.SIDE_LEFT || side == ToHitData.SIDE_RIGHT)) {
-                return getPlaytestSideLocation(table, side, cover);
             }
 
             if ((side == ToHitData.SIDE_FRONT) || (side == ToHitData.SIDE_REAR)) {

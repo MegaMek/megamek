@@ -64,33 +64,4 @@ public class PlaytestTests {
         // Need equipment initialized
         EquipmentType.initializeTypes();
     }
-
-    @Test
-    void testBipedSideTable() {
-        Mek mek = new BipedMek();
-        for (int i = 0; i < 100; i++) {
-            var location = mek.getPlaytestSideLocation(HIT_NORMAL, SIDE_LEFT, LosEffects.COVER_NONE).getLocation();
-            assertNotEquals(LOC_RIGHT_ARM, location);
-            assertNotEquals(LOC_RIGHT_LEG, location);
-            assertNotEquals(LOC_RIGHT_TORSO, location);
-        }
-    }
-
-    @Test
-    void testTripodKickSideTable() {
-        Mek mek = new TripodMek();
-        for (int i = 0; i < 100; i++) {
-            var location = mek.getPlaytestSideLocation(HIT_KICK, SIDE_RIGHT, LosEffects.COVER_NONE).getLocation();
-            assertTrue(location == LOC_RIGHT_LEG || location == LOC_CENTER_LEG);
-        }
-    }
-
-    @Test
-    void testQuadPunchSideTable() {
-        Mek mek = new QuadMek();
-        for (int i = 0; i < 100; i++) {
-            var location = mek.getPlaytestSideLocation(HIT_PUNCH, SIDE_LEFT, LosEffects.COVER_NONE).getLocation();
-            assertTrue(location == LOC_LEFT_ARM || location == LOC_LEFT_TORSO || location == LOC_HEAD || location == LOC_CENTER_TORSO);
-        }
-    }
 }

@@ -34,6 +34,7 @@ package megamek.common.rules.core;
  */
 
 import megamek.common.CriticalSlot;
+import megamek.common.ToHitData;
 import megamek.common.equipment.EquipmentType;
 import megamek.common.equipment.MiscMounted;
 import megamek.common.equipment.MiscType;
@@ -82,11 +83,22 @@ public class CoreRulesPhysical extends RulesPhysical {
         return 0;
     }
 
+    // Core rules shield no longer modifies shooting out
+    public void getShieldToHitModifier(ToHitData toHit, Entity attacker, Mounted<?> weapon) {}
+
+
     // Claws now have a TN modifier of 0. Core p.194
     public int getClawToHitModifier() { return 0; }
 
     // Shields reset their state at the end of the phase
     public boolean phaseChangeShield() {
+        return true;
+    }
+
+    // Retractable blades can be extended for punches. Core p.194
+
+    @Override
+    public boolean retractableBladeArmCheck(boolean toRetractableBlake) {
         return true;
     }
 }

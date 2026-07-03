@@ -105,9 +105,8 @@ public class MissileWeaponsHandlerTest {
         gameManager = new TWGameManager();
         game = gameManager.getGame();
 
-        // Set Playtest3 option to True to be able to test AMS shooting twice
-        game.getOptions().getOption(OptionsConstants.PLAYTEST_3).setValue(true);
-
+        game.initializeRulesManager();
+        
         // Instantiate the players
         aPlayer = new Player(0, "Attacker");
         dPlayer = new Player(1, "Defender");

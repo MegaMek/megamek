@@ -431,9 +431,8 @@ class EntityTest {
             Player player2 = new Player(2, "ECM side");
             game.addPlayer(player1.getId(), player1);
             game.addPlayer(player2.getId(), player2);
-
-            game.getOptions().getOption(OptionsConstants.PLAYTEST_3).setValue(false);
-
+            
+            game.initializeRulesManager();
             // Set up initial C3 link
             setUpC3Link(game, player1, mek, new Coords(1, 1), tank, new Coords(3, 3), true);
 
@@ -460,8 +459,6 @@ class EntityTest {
             Player player2 = new Player(2, "ECM side");
             game.addPlayer(player1.getId(), player1);
             game.addPlayer(player2.getId(), player2);
-
-            game.getOptions().getOption(OptionsConstants.PLAYTEST_3).setValue(false);
 
             // Set up initial C3 link
             setUpC3Link(game, player1, mek, new Coords(1, 1), tank, new Coords(3, 3), false);
@@ -490,8 +487,7 @@ class EntityTest {
             game.addPlayer(player1.getId(), player1);
             game.addPlayer(player2.getId(), player2);
 
-            game.getOptions().getOption(OptionsConstants.PLAYTEST_3).setValue(false);
-
+            game.initializeRulesManager();
             // Set up initial C3 link
             setUpC3Link(game, player1, mek, new Coords(1, 1), tank, new Coords(3, 3), true);
 
@@ -518,8 +514,6 @@ class EntityTest {
             Player player2 = new Player(2, "ECM side");
             game.addPlayer(player1.getId(), player1);
             game.addPlayer(player2.getId(), player2);
-
-            game.getOptions().getOption(OptionsConstants.PLAYTEST_3).setValue(false);
 
             // Set up initial C3 link
             setUpC3Link(game, player1, mek, new Coords(1, 1), tank, new Coords(3, 3), false);
@@ -548,8 +542,7 @@ class EntityTest {
             game.addPlayer(player1.getId(), player1);
             game.addPlayer(player2.getId(), player2);
 
-            game.getOptions().getOption(OptionsConstants.PLAYTEST_3).setValue(false);
-
+            game.initializeRulesManager();
             // Set up initial C3 link
             setUpC3Link(game, player1, mek, new Coords(1, 1), tank, new Coords(3, 3), true);
 
@@ -584,9 +577,8 @@ class EntityTest {
             Game game = setUpGame();
             Player player = new Player(1, "C3 side");
             game.addPlayer(player.getId(), player);
-
-            game.getOptions().getOption(OptionsConstants.PLAYTEST_3).setValue(false);
-
+            
+            game.initializeRulesManager();
             // Standard (non-boosted) C3 link, master at (1,1), slave at (3,3).
             setUpC3Link(game, player, mek, new Coords(1, 1), tank, new Coords(3, 3), false);
 

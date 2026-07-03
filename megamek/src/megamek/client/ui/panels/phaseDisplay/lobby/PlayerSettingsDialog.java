@@ -96,6 +96,7 @@ import megamek.common.board.Coords;
 import megamek.common.containers.MunitionTree;
 import megamek.common.equipment.Briefcase;
 import megamek.common.equipment.ICarryable;
+import megamek.common.equipment.Minefield;
 import megamek.common.interfaces.IStartingPositions;
 import megamek.common.loaders.MapSettings;
 import megamek.common.options.GameOptions;
@@ -216,6 +217,16 @@ public class PlayerSettingsDialog extends AbstractButtonDialog {
     public int getFortifiedHexes() {
         return parseField(fldFortifiedHexes);
     }
+    
+    /** Returns the chosen number of tripwires */
+    public int getTripwires() {
+    	return parseField(fldTripwires);
+    }
+    
+    /** Returns the chosen number of pitfalls */
+    public int getPitfalls() {
+    	return parseField(fldPitfalls);
+    }
 
     /** Returns the start location offset */
     public int getStartOffset() {
@@ -280,11 +291,15 @@ public class PlayerSettingsDialog extends AbstractButtonDialog {
     private final JLabel labActive = new JLabel(getString("PlayerSettingsDialog.labActive"), SwingConstants.RIGHT);
     private final JLabel labInferno = new JLabel(getString("PlayerSettingsDialog.labInferno"), SwingConstants.RIGHT);
     private final JLabel labEMP = new JLabel(getString("PlayerSettingsDialog.labEMP"), SwingConstants.RIGHT);
+    private final JLabel labTripwires = new JLabel(getString("PlayerSettingsDialog.labTripwire"), SwingConstants.RIGHT);
+    private final JLabel labPitfalls = new JLabel(getString("PlayerSettingsDialog.labPitfall"), SwingConstants.RIGHT);
     private final JTextField fldConventional = new JTextField(3);
     private final JTextField fldVibrabomb = new JTextField(3);
     private final JTextField fldActive = new JTextField(3);
     private final JTextField fldInferno = new JTextField(3);
     private final JTextField fldEMP = new JTextField(3);
+    private final JTextField fldTripwires = new JTextField(3);
+    private final JTextField fldPitfalls = new JTextField(3);
 
     // Fortifications Section
     private final JLabel labFortifiedHexes = new JLabel(getString("PlayerSettingsDialog.labFortifiedHexes"),
@@ -621,11 +636,13 @@ public class PlayerSettingsDialog extends AbstractButtonDialog {
     private void apply() {
 
         player.setConstantInitBonus(getInit());
-        player.setNbrMFConventional(getCnvMines());
-        player.setNbrMFVibra(getVibMines());
-        player.setNbrMFActive(getActMines());
-        player.setNbrMFInferno(getInfMines());
-        player.setNbrMFEMP(getEmpMines());
+        player.setMinefieldCount(Minefield.TYPE_CONVENTIONAL, getCnvMines());
+        player.setMinefieldCount(Minefield.TYPE_VIBRABOMB, getVibMines());
+        player.setMinefieldCount(Minefield.TYPE_ACTIVE, getActMines());
+        player.setMinefieldCount(Minefield.TYPE_INFERNO, getInfMines());
+        player.setMinefieldCount(Minefield.TYPE_EMP, getEmpMines());
+        player.setMinefieldCount(Minefield.TYPE_TRIPWIRE, getTripwires());
+        player.setMinefieldCount(Minefield.TYPE_PITFALL, getPitfalls());
         player.setNbrFortifiedHexes(getFortifiedHexes());
         getSkillGenerationOptionsPanel().updateClient();
         player.setEmail(getEmail());
@@ -686,7 +703,7 @@ public class PlayerSettingsDialog extends AbstractButtonDialog {
 
     private JPanel mineSection() {
         JPanel result = new OptionPanel("PlayerSettingsDialog.header.minefields");
-        Content panContent = new Content(new GridLayout(5, 2, 10, 5));
+        Content panContent = new Content(new GridLayout(7, 2, 10, 5));
         result.add(panContent);
         panContent.add(labConventional);
         panContent.add(fldConventional);
@@ -698,6 +715,10 @@ public class PlayerSettingsDialog extends AbstractButtonDialog {
         panContent.add(fldInferno);
         panContent.add(labEMP);
         panContent.add(fldEMP);
+        panContent.add(labTripwires);
+        panContent.add(fldTripwires);
+        panContent.add(labPitfalls);
+        panContent.add(fldPitfalls);
         return result;
     }
 
@@ -745,11 +766,13 @@ public class PlayerSettingsDialog extends AbstractButtonDialog {
         originalMT.loadEntityList(client.getGame().getPlayerEntities(player, false));
 
         fldInit.setText(Integer.toString(player.getConstantInitBonus()));
-        fldConventional.setText(Integer.toString(player.getNbrMFConventional()));
-        fldVibrabomb.setText(Integer.toString(player.getNbrMFVibra()));
-        fldActive.setText(Integer.toString(player.getNbrMFActive()));
-        fldInferno.setText(Integer.toString(player.getNbrMFInferno()));
-        fldEMP.setText(Integer.toString(player.getNbrMFEMP()));
+        fldConventional.setText(Integer.toString(player.getMinefieldCount(Minefield.TYPE_CONVENTIONAL)));
+        fldVibrabomb.setText(Integer.toString(player.getMinefieldCount(Minefield.TYPE_VIBRABOMB)));
+        fldActive.setText(Integer.toString(player.getMinefieldCount(Minefield.TYPE_ACTIVE)));
+        fldInferno.setText(Integer.toString(player.getMinefieldCount(Minefield.TYPE_INFERNO)));
+        fldEMP.setText(Integer.toString(player.getMinefieldCount(Minefield.TYPE_EMP)));
+        fldTripwires.setText(Integer.toString(player.getMinefieldCount(Minefield.TYPE_TRIPWIRE)));
+        fldPitfalls.setText(Integer.toString(player.getMinefieldCount(Minefield.TYPE_PITFALL)));
         fldFortifiedHexes.setText(Integer.toString(player.getNbrFortifiedHexes()));
         fldEmail.setText(player.getEmail());
         txtWidth.setText(Integer.toString(player.getStartWidth()));

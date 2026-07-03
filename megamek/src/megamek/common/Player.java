@@ -107,7 +107,7 @@ public final class Player extends TurnOrdered {
     private int startingAnySEy = Entity.STARTING_ANY_NONE;
 
     // number of minefields
-    private int[] minefieldCounts = new int[Minefield.NUM_MINEFIELD_TYPES];
+    private int[] minefieldCounts = new int[Minefield.TYPE_SIZE];
 
     // number of fortified hexes the player may place during the minefield deployment phase (TO:AUE p.153)
     private int numFortifiedHexes = 0;
@@ -183,7 +183,7 @@ public final class Player extends TurnOrdered {
     public boolean hasMinefields() {
     	boolean hasMinefields = false;
     	
-    	for (int minefieldIndex = 0; minefieldIndex < Minefield.NUM_MINEFIELD_TYPES; minefieldIndex++) {
+    	for (int minefieldIndex = 0; minefieldIndex < Minefield.TYPE_SIZE; minefieldIndex++) {
     		if (minefieldCounts[minefieldIndex] > 0) {
     			hasMinefields = true;
     			break;
@@ -1088,7 +1088,7 @@ public final class Player extends TurnOrdered {
         copy.startingAnySEx = startingAnySEx;
         copy.startingAnySEy = startingAnySEy;
 
-        copy.minefieldCounts = Arrays.copyOf(minefieldCounts, Minefield.NUM_MINEFIELD_TYPES);
+        copy.minefieldCounts = Arrays.copyOf(minefieldCounts, Minefield.TYPE_SIZE);
 
         copy.artyAutoHitHexes = new ArrayList<>(artyAutoHitHexes);
 

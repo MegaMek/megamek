@@ -36,6 +36,10 @@ package megamek.common.rules.core;
 
 import megamek.common.compute.Compute;
 import megamek.common.rules.RulesCharts;
+import megamek.common.units.Entity;
+import megamek.common.units.Mek;
+import megamek.common.units.QuadMek;
+import megamek.common.units.TripodMek;
 
 public class CoreRulesCharts extends RulesCharts {
     // Escalating failure rules. Same as pilot numbers. Core p.111, 180
@@ -56,5 +60,42 @@ public class CoreRulesCharts extends RulesCharts {
             return 3;
         }
         return 0;
+    }
+    
+    // Return the names for locations
+    public String getLocationName(int loc, boolean quad) {        
+        switch (loc) {
+            case Mek.LOC_LEFT_LEG:
+                if (quad) {
+                    return "rear left leg";
+                    ;
+                }
+                return "left leg";
+            case Mek.LOC_RIGHT_LEG:
+                if (quad) {
+                    return "rear right leg";
+                }
+                return "right leg";
+            case Mek.LOC_CENTER_LEG:
+                return "center leg";
+            case Mek.LOC_LEFT_ARM:
+                if (quad) {
+                    return "front left leg";
+                }
+                return "left arm";
+            case Mek.LOC_RIGHT_ARM:
+                if (quad) {
+                    return "front right leg";
+                }
+                return "right arm";
+            case Mek.LOC_RIGHT_TORSO:
+                return "right torso";
+            case Mek.LOC_CENTER_TORSO:
+                return "center torso";
+            case Mek.LOC_LEFT_TORSO:
+                return "left torso";
+        }
+        
+        return "";
     }
 }

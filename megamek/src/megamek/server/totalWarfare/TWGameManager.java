@@ -20550,66 +20550,10 @@ public class TWGameManager extends AbstractGameManager {
                 break;
             case Mek.ACTUATOR_UPPER_LEG:
             case Mek.ACTUATOR_LOWER_LEG:
-                // PLAYTEST2 only leg actuators trigger this
-                if (game.getOptions().booleanOption(OptionsConstants.PLAYTEST_2)) {
-                    if (en.canFall(true)) {
-                        // leg/foot actuator piloting roll
-                        switch (loc) {
-                            case Mek.LOC_LEFT_LEG:
-                                game.addPSR(new PilotingRollData(en.getId(), 1, "left leg actuator hit"));
-                                break;
-                            case Mek.LOC_RIGHT_LEG:
-                                game.addPSR(new PilotingRollData(en.getId(), 1, "right leg actuator hit"));
-                                break;
-                            case Mek.LOC_CENTER_LEG:
-                                game.addPSR(new PilotingRollData(en.getId(), 1, "center leg actuator hit"));
-                                break;
-                            case Mek.LOC_LEFT_ARM:
-                                game.addPSR(new PilotingRollData(en.getId(), 1, "front left leg actuator hit"));
-                                break;
-                            case Mek.LOC_RIGHT_ARM:
-                                game.addPSR(new PilotingRollData(en.getId(), 1, "front right leg actuator hit"));
-                                break;
-                        }
-                    }
-                    break;
-                }
             case Mek.ACTUATOR_FOOT:
-                // PLAYTEST2 No PSR for a foot crit
-                if (!game.getOptions().booleanOption(OptionsConstants.PLAYTEST_2)) {
-                    if (en.canFall(true)) {
-                        // leg/foot actuator piloting roll
-                        game.addPSR(new PilotingRollData(en.getId(), 1, "leg/foot actuator hit"));
-                    }
-                }
-                break;
             case Mek.ACTUATOR_HIP:
                 if (en.canFall(true)) {
-                    // PLAYTEST2 only leg actuators trigger this
-                    if (game.getOptions().booleanOption(OptionsConstants.PLAYTEST_2)) {
-                        // leg/foot actuator piloting roll
-                        switch (loc) {
-                            case Mek.LOC_LEFT_LEG:
-                                game.addPSR(new PilotingRollData(en.getId(), 1, "left hip actuator hit"));
-                                break;
-                            case Mek.LOC_RIGHT_LEG:
-                                game.addPSR(new PilotingRollData(en.getId(), 1, "right hip actuator hit"));
-                                break;
-                            case Mek.LOC_CENTER_LEG:
-                                game.addPSR(new PilotingRollData(en.getId(), 1, "center hip actuator hit"));
-                                break;
-                            case Mek.LOC_LEFT_ARM:
-                                game.addPSR(new PilotingRollData(en.getId(), 1, "front left hip actuator hit"));
-                                break;
-                            case Mek.LOC_RIGHT_ARM:
-                                game.addPSR(new PilotingRollData(en.getId(), 1, "front right hip actuator hit"));
-                                break;
-                        }
-                        break;
-                    } else {
-                        // hip piloting roll
-                        game.addPSR(new PilotingRollData(en.getId(), 2, "hip actuator hit"));
-                    }
+                    Game.rulesManager.getRulesPsr().hitActuator(game, en, loc, cs.getIndex());
                 }
                 break;
             case LandAirMek.LAM_AVIONICS:
@@ -20626,7 +20570,7 @@ public class TWGameManager extends AbstractGameManager {
         }
 
         // Get the PSRs for the game, move them into Vector format, then call the rules check
-        Game.rulesManager.getRulesPsr().checkLegActuatorPsrRolls(game.getPsrVector(), en);
+        Game.rulesManager.getRulesPsr().checkLegActuatorPsrRolls(game, en);
 
         return reports;
     }

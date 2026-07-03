@@ -45,10 +45,14 @@ import megamek.common.units.EntityMovementType;
 import megamek.common.units.Mek;
 import megamek.common.units.MekWithArms;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Vector;
 
 public class TwRulesPsr extends CoreRulesPsr {
+    boolean footActuatorPsr = true;
+    int hipPenalty = 2;
+
     public void checkRunningWithDamage(Entity e, PilotingRollData r, int gyroDamage, EntityMovementType overallMoveType) {
         if (e.getGyroType() == Mek.GYRO_HEAVY_DUTY) {
             gyroDamage--; // HD gyro ignores 1st damage
@@ -100,5 +104,5 @@ public class TwRulesPsr extends CoreRulesPsr {
 
     // We do not reduce leg actuator rolls in TW
     @Override
-    public void checkLegActuatorPsrRolls(Vector<PilotingRollData> pilotRolls, Entity en) {};
+    public void checkLegActuatorPsrRolls(Game game, Entity en) {};
 }

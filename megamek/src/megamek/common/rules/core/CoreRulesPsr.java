@@ -37,7 +37,6 @@ package megamek.common.rules.core;
 
 import megamek.common.CriticalSlot;
 import megamek.common.game.Game;
-import megamek.common.options.OptionsConstants;
 import megamek.common.rolls.PilotingRollData;
 import megamek.common.rolls.TargetRoll;
 import megamek.common.rules.RulesPsr;
@@ -45,15 +44,18 @@ import megamek.common.units.EntityMovementType;
 import megamek.common.units.Mek;
 import megamek.common.units.Entity;
 import megamek.common.units.MekWithArms;
+import megamek.common.units.QuadMek;
 
-import java.util.Collections;
-import java.util.Enumeration;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Vector;
 
 /* This class is for Core Rules that involve PSR checks and modifiers
  */
 public class CoreRulesPsr extends RulesPsr {
+    boolean footActuatorPsr = false;
+    int hipPenalty = 1;
+    
     // Called from Entity
     public void checkRunningWithDamage(Entity e, PilotingRollData r, int gyroDamage, EntityMovementType overallMoveType) {
         if (e.getGyroType() == Mek.GYRO_HEAVY_DUTY) {
@@ -101,76 +103,101 @@ public class CoreRulesPsr extends RulesPsr {
     }
 
     // Reduce PSR rolls for actuator hits to the highest per leg in a turn. Core p.93
-    public void checkLegActuatorPsrRolls(Vector<PilotingRollData> pilotRolls, Entity entity) {
-        PilotingRollData roll;
-        Vector<Integer> rollsToRemove = new Vector<>();
-        Vector<Integer> rollTarget = new Vector<>();
-        Vector<Integer> rollLocation = new Vector<>();
-        Vector<Integer> saveRolls = new Vector<>();
-
+    public void checkLegActuatorPsrRolls(Game game, Entity entity) {
+        ArrayList<PilotingRollData> pilotRolls = game.getPSRsForEntity(entity);
+        ArrayList<PilotingRollData> rollsToRemove = new ArrayList<>();
+        ArrayList<PilotingRollData> rollLL = new ArrayList<>();
+        ArrayList<PilotingRollData> rollRL = new ArrayList<>();
+        ArrayList<PilotingRollData> rollCL = new ArrayList<>();
+        ArrayList<PilotingRollData> rollFLL = new ArrayList<>();
+        ArrayList<PilotingRollData> rollFRL = new ArrayList<>();
+        
         // first, find all the rolls belonging to the target entity
         // Locations are: 1 = left leg, 2 = right leg, 3 = front left leg, 4 = front right leg, 5 = center leg
-        for (int i = 0; i < pilotRolls.size(); i++) {
-            roll = pilotRolls.elementAt(i);
-            if (roll.getEntityId() == entity.getId()) {
-                // This is the critical part.
-                if (roll.getDesc().equals("left leg actuator hit") || roll.getDesc().equals("left hip actuator hit")) {
-                    rollTarget.addElement(roll.getValue());
-                    rollLocation.addElement(1);
-                    rollsToRemove.addElement(i);
-                } else if (roll.getDesc().equals("right leg actuator hit") || roll.getDesc()
+        for (PilotingRollData r : pilotRolls) {
+                // Assign rolls to locations
+                if (r.getDesc().equals("left leg actuator hit") || r.getDesc().equals("left hip actuator hit")) {
+                    rollLL.add(r);
+                } else if (r.getDesc().equals("right leg actuator hit") || r.getDesc()
                       .equals("right hip actuator hit")) {
-                    rollTarget.addElement(roll.getValue());
-                    rollLocation.addElement(2);
-                    rollsToRemove.addElement(i);
-                } else if (roll.getDesc().equals("front left leg actuator hit") || roll.getDesc().equals("front left "
+                    rollRL.add(r);
+                } else if (r.getDesc().equals("front left leg actuator hit") || r.getDesc().equals("front left "
                       + "hip actuator hit")) {
-                    rollTarget.addElement(roll.getValue());
-                    rollLocation.addElement(3);
-                    rollsToRemove.addElement(i);
-                } else if (roll.getDesc().equals("front right leg actuator hit") || roll.getDesc().equals("front "
+                    rollFLL.add(r);
+                } else if (r.getDesc().equals("front right leg actuator hit") || r.getDesc().equals("front "
                       + "right hip actuator hit")) {
-                    rollTarget.addElement(roll.getValue());
-                    rollLocation.addElement(4);
-                    rollsToRemove.addElement(i);
-                } else if (roll.getDesc().equals("center leg actuator hit") || roll.getDesc().equals("center hip "
+                    rollFRL.add(r);
+                } else if (r.getDesc().equals("center leg actuator hit") || r.getDesc().equals("center hip "
                       + "actuator hit")) {
-                    rollTarget.addElement(roll.getValue());
-                    rollLocation.addElement(5);
-                    rollsToRemove.addElement(i);
+                    rollCL.add(r);
                 }
+        }
+        
+        if (rollLL.size() > 0) {
+            rollRemoveHighest(rollLL);
+            if (rollLL.size() > 0) { rollsToRemove.addAll(rollLL); }
+        }
+        if (rollRL.size()>0) {
+            rollRemoveHighest(rollRL);
+            if (rollLL.size() > 0) { rollsToRemove.addAll(rollRL); }
+        }
+        if (rollFLL.size()>0) {
+            rollRemoveHighest(rollFLL);
+            if (rollLL.size() > 0) { rollsToRemove.addAll(rollFLL); }
+        }
+        if (rollFRL.size()>0) {
+            rollRemoveHighest(rollFRL);
+            if (rollLL.size() > 0) { rollsToRemove.addAll(rollFRL); }
+        }
+        if (rollCL.size()>0){
+            rollRemoveHighest(rollCL);
+            if (rollLL.size() > 0) { rollsToRemove.addAll(rollCL); }
+        }
+        
+        if (rollsToRemove.size() > 0) {
+            game.removePSRsByArray(rollsToRemove);
+        }
+    }
+    
+    // Remove the highest roll from the list
+    public void rollRemoveHighest(ArrayList<PilotingRollData> rollList) {
+        // If there is only one roll, remove it and early exit
+        if (rollList.size() == 1) {
+            rollList.remove(rollList.getFirst());
+            return;
+        }
+        
+        // Find the highest value by iterating the list, and remove it. If nothing is higher than 0, it removes the 
+        // first entry
+        int highest = 0;
+        int highestValue = 0;
+        for (int i = 0; i < rollList.size(); i++) {
+            if (rollList.get(i).getValue() > highestValue) {
+                highest = i;
+                highestValue = rollList.get(i).getValue();
             }
         }
-
-        if (rollsToRemove.size() > 1) {
-            int saveEntry = 0;
-            int highTarget = 0;
-            boolean entrySaved = false;
-            // check which roll target is highest
-            for (int location = 1; location < 6; location++) {
-                highTarget = 0;
-                saveEntry = 0;
-                entrySaved = false;
-                for (int i = 0; i < rollTarget.size(); i++) {
-                    if ((rollTarget.elementAt(i) > highTarget) && (rollLocation.elementAt(i) == location)) {
-                        saveEntry = i;
-                        entrySaved = true;
-                        highTarget = rollTarget.elementAt(i);
-                    }
-                }
-                if (entrySaved) {
-                    saveRolls.addElement(rollsToRemove.elementAt(saveEntry));
-                }
-            }
-            // Remove the saved element from our removal list
-            for (int i = saveRolls.size() - 1; i > -1; i--) {
-                rollsToRemove.removeElementAt(saveRolls.elementAt(i));
-            }
-
-            // now, clear out remaining rolls from the PSRs
-            for (int i = rollsToRemove.size() - 1; i > -1; i--) {
-                pilotRolls.removeElementAt(rollsToRemove.elementAt(i));
-            }
+        rollList.remove(highest);
+    }
+    
+    public void hitActuator(final Game game, Entity en, int loc, int hitPart) {
+        String psrText = Game.rulesManager.getRulesCharts().getLocationName(loc,(en instanceof QuadMek));
+        if (hitPart == Mek.ACTUATOR_FOOT) {
+            psrText += " foot";
+        }
+        if (hitPart == Mek.ACTUATOR_HIP) {
+            psrText += " hip";
+        } 
+        psrText += " actuator hit";
+        
+        int psrPenalty = 1;
+        
+        if (hitPart == Mek.ACTUATOR_HIP) {
+            psrPenalty = hipPenalty;
+        }
+        
+        if (footActuatorPsr && hitPart == Mek.ACTUATOR_FOOT) {
+            game.addPSR(new PilotingRollData(en.getId(), psrPenalty, psrText));
         }
     }
 }

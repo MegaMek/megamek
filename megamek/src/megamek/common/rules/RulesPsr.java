@@ -40,6 +40,7 @@ import megamek.common.units.Entity;
 import megamek.common.units.EntityMovementType;
 import megamek.common.units.MekWithArms;
 
+import java.util.ArrayList;
 import java.util.Vector;
 
 /*
@@ -61,5 +62,11 @@ public abstract class RulesPsr {
     public abstract void legDamageModifiers(MekWithArms unit, PilotingRollData roll, boolean toLegDamage);
 
     // Do we need to reduce potential PSR rolls
-    public abstract void checkLegActuatorPsrRolls(Vector<PilotingRollData> pilotRolls, Entity en);
+    public abstract void checkLegActuatorPsrRolls(Game game, Entity en);
+
+    // Remove the highest roll from the roll list
+    public abstract void rollRemoveHighest(ArrayList<PilotingRollData> rollList);
+    
+    // PSRs for hit actuators
+    public abstract void hitActuator(Game game, Entity en, int loc, int hitPart);
 }

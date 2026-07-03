@@ -41,4 +41,7 @@ public abstract class RulesCharts {
 
     // Get facing for a fall
     public abstract int getFacingForFall();
+    
+    // Get location names
+    public abstract String getLocationName(int loc, boolean quad);
 }

@@ -53,6 +53,11 @@ public class Minefield implements Serializable, Cloneable {
     public static final int TYPE_ACTIVE = 3;
     public static final int TYPE_EMP = 4;
     public static final int TYPE_INFERNO = 5;
+    public static final int TYPE_TRIPWIRE = 6;
+    public static final int TYPE_PITFALL = 7;
+    
+    // increment this when you add a new minefield type
+    public static final int NUM_MINEFIELD_TYPES = 8;
 
     public static final int TRIGGER_NONE = 0;
 
@@ -78,7 +83,7 @@ public class Minefield implements Serializable, Cloneable {
     public static final String FILENAME_IMAGE = "minefieldsign.gif";
 
     private static final String[] names = { "Conventional", "Command-detonated", "Vibrabomb", "Active", "EMP",
-                                            "Inferno" };
+                                            "Inferno", "Tripwire", "Pitfall" };
     //"Thunder", "Thunder-Inferno", "Thunder-Active",
     //"Thunder-Vibrabomb" };
 

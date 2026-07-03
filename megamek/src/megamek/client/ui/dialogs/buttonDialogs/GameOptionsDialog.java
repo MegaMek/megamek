@@ -60,7 +60,6 @@ import megamek.client.ui.clientGUI.ClientGUI;
 import megamek.client.ui.clientGUI.DialogOptionListener;
 import megamek.client.ui.dialogs.MMDialogs.MMConfirmDialog;
 import megamek.client.ui.panels.DialogOptionComponentYPanel;
-import megamek.client.ui.panels.phaseDisplay.lobby.VictoryConditionsDialog;
 import megamek.common.TechConstants;
 import megamek.common.options.GameOptions;
 import megamek.common.options.IBasicOption;
@@ -245,10 +244,6 @@ public class GameOptionsDialog extends AbstractButtonDialog implements ActionLis
 
         for (Enumeration<IOptionGroup> i = options.getGroups(); i.hasMoreElements(); ) {
             IOptionGroup group = i.nextElement();
-            // the victory options are edited in the lobby's Victory Conditions dialog instead
-            if (VictoryConditionsDialog.VICTORY_OPTIONS_GROUP_NAME.equals(group.getName())) {
-                continue;
-            }
             JPanel groupPanel = addGroup(group);
             for (Enumeration<IOption> j = group.getOptions(); j.hasMoreElements(); ) {
                 IOption option = j.nextElement();

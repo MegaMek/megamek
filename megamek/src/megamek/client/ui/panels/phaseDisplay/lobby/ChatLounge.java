@@ -2343,6 +2343,12 @@ public class ChatLounge extends AbstractPhaseDisplay
                   victoryConditionsDialog.getVictoryConditionsYaml());
             // objective markers ride the player's ground objects to place
             clientgui.getClient().sendPlayerInfo();
+            LOGGER.debug("[VictoryUI] Victory dialog confirmed: sent {} changed option(s), the victory "
+                        + "conditions YAML and player info with {} ground object(s) to place",
+                  changedOptions.size(),
+                  clientgui.getClient().getLocalPlayer().getGroundObjectsToPlace().size());
+        } else {
+            LOGGER.debug("[VictoryUI] Victory dialog cancelled - nothing sent");
         }
     }
 

@@ -313,6 +313,11 @@ public class VictoryConditionsDialog extends AbstractButtonDialog implements Dia
     private final JButton butToggleAdvanced =
           new JButton(Messages.getString("VictoryConditionsDialog.showAdvanced"));
     private final JPanel advancedPanel = new JPanel();
+
+    // mission length, promoted out of the options: every end-scored reward needs the game to actually end
+    private final JCheckBox checkMissionLength =
+          new JCheckBox(Messages.getString("VictoryConditionsDialog.missionEnds"));
+    private final JSpinner spinnerMissionLength = new JSpinner(new SpinnerNumberModel(10, 1, 999, 1));
     private final JCheckBox checkObjectivePotential =
           new JCheckBox(Messages.getString("VictoryConditionsDialog.variantPotential"));
     private final JCheckBox checkObjectiveFalse =
@@ -325,6 +330,9 @@ public class VictoryConditionsDialog extends AbstractButtonDialog implements Dia
           new JCheckBox(Messages.getString("VictoryConditionsDialog.destructible"), true);
     private final JButton butAddObjective = new JButton(Messages.getString("VictoryConditionsDialog.addObjective"));
 
+    // invoked when the user leaves the dialog via the Select Map button; the lobby switches to its map tab
+    private Runnable selectMapCallback = null;
+
     public VictoryConditionsDialog(ClientGUI clientGui) {
         super(clientGui.getFrame(), "VictoryConditionsDialog", "VictoryConditionsDialog.title");
         this.clientGui = clientGui;
@@ -334,6 +342,33 @@ public class VictoryConditionsDialog extends AbstractButtonDialog implements Dia
         refreshFormulaControls();
         setSize(UIUtil.scaleForGUI(1400, 900));
         setLocationRelativeTo(clientGui.getFrame());
+    }
+
+    @Override
+    protected JPanel createButtonPanel() {
+        JPanel buttonPanel = super.createButtonPanel();
+        JButton butSelectMap = new JButton(Messages.getString("VictoryConditionsDialog.selectMap"));
+        butSelectMap.setToolTipText(Messages.getString("VictoryConditionsDialog.selectMapTooltip"));
+        butSelectMap.addActionListener(event -> {
+            LOGGER.info("[VictoryUI] Leaving the victory dialog for the Select Map tab");
+            cancelActionPerformed(event);
+            if (selectMapCallback != null) {
+                selectMapCallback.run();
+            }
+        });
+        // between Ok and Cancel: Ok | Select Map | Cancel
+        buttonPanel.add(butSelectMap, 1);
+        return buttonPanel;
+    }
+
+    /**
+     * Sets the action to run when the user leaves the dialog via the Select Map button (the lobby switches to its map
+     * tab). Invoked directly from the button so it works regardless of how the dialog close is processed.
+     *
+     * @param selectMapCallback the action, or {@code null} for none
+     */
+    public void setSelectMapCallback(@Nullable Runnable selectMapCallback) {
+        this.selectMapCallback = selectMapCallback;
     }
 
     @Override
@@ -709,6 +744,11 @@ public class VictoryConditionsDialog extends AbstractButtonDialog implements Dia
                 DialogOptionComponentYPanel optionComponent = new DialogOptionComponentYPanel(this, option, true);
                 victoryOptionComps.add(optionComponent);
                 victoryOptionsPanel.add(optionComponent);
+                if (OptionsConstants.VICTORY_USE_GAME_TURN_LIMIT.equals(option.getName())) {
+                    checkMissionLength.setSelected((Boolean) option.getValue());
+                } else if (OptionsConstants.VICTORY_GAME_TURN_LIMIT.equals(option.getName())) {
+                    spinnerMissionLength.setValue(option.intValue());
+                }
             }
         }
         victoryOptionsPanel.revalidate();
@@ -819,6 +859,15 @@ public class VictoryConditionsDialog extends AbstractButtonDialog implements Dia
         JPanel advancedTogglePanel = new FixedYPanel();
         advancedTogglePanel.add(butToggleAdvanced);
 
+        JPanel missionLengthPanel = new FixedYPanel();
+        missionLengthPanel.setBorder(BorderFactory.createTitledBorder(
+              Messages.getString("VictoryConditionsDialog.mission")));
+        missionLengthPanel.add(checkMissionLength);
+        missionLengthPanel.add(spinnerMissionLength);
+        missionLengthPanel.add(new JLabel(Messages.getString("VictoryConditionsDialog.turns")));
+
+        result.add(missionLengthPanel);
+        result.add(Box.createVerticalStrut(5));
         result.add(ordersPanel);
         result.add(Box.createVerticalStrut(5));
         result.add(editorPanel);
@@ -857,6 +906,10 @@ public class VictoryConditionsDialog extends AbstractButtonDialog implements Dia
         butAddSurveyOrder.addActionListener(event -> addSurveyOrder());
         butRemoveOrder.addActionListener(event -> removeSelectedOrder());
         butToggleAdvanced.addActionListener(event -> toggleAdvanced());
+        checkMissionLength.addActionListener(event ->
+              setVictoryOption(OptionsConstants.VICTORY_USE_GAME_TURN_LIMIT, checkMissionLength.isSelected()));
+        spinnerMissionLength.addChangeListener(event ->
+              setVictoryOptionValue(OptionsConstants.VICTORY_GAME_TURN_LIMIT, spinnerMissionLength.getValue()));
         ordersList.addListSelectionListener(event -> {
             if (!event.getValueIsAdjusting()) {
                 orderSelected();
@@ -876,11 +929,30 @@ public class VictoryConditionsDialog extends AbstractButtonDialog implements Dia
 
     /** Sets a boolean victory game option by name (kept in sync with its option row in the Advanced section). */
     private void setVictoryOption(String optionName, boolean enabled) {
-        LOGGER.debug("[VictoryUI] Setting the victory option {} to {}", optionName, enabled);
+        setVictoryOptionValue(optionName, enabled);
+    }
+
+    /** Sets a victory game option value by name (kept in sync with its option row in the Advanced section). */
+    private void setVictoryOptionValue(String optionName, Object value) {
+        LOGGER.debug("[VictoryUI] Setting the victory option {} to {}", optionName, value);
         for (DialogOptionComponentYPanel optionComponent : victoryOptionComps) {
             if (optionName.equals(optionComponent.getOption().getName())) {
-                optionComponent.setSelected(enabled);
+                optionComponent.setValue(value);
             }
+        }
+    }
+
+    /**
+     * Auto-enables the mission length when an end-scored order is added and no turn limit is set yet - without a game
+     * end, end-scored rewards would never resolve. Visible in the mission length row, where it can be adjusted.
+     */
+    private void ensureMissionLengthEnabled() {
+        if (!checkMissionLength.isSelected()) {
+            checkMissionLength.setSelected(true);
+            setVictoryOption(OptionsConstants.VICTORY_USE_GAME_TURN_LIMIT, true);
+            setVictoryOptionValue(OptionsConstants.VICTORY_GAME_TURN_LIMIT, spinnerMissionLength.getValue());
+            LOGGER.info("[VictoryUI] End-scored order added with no turn limit set - mission length enabled "
+                  + "({} turns)", spinnerMissionLength.getValue());
         }
     }
 
@@ -920,12 +992,15 @@ public class VictoryConditionsDialog extends AbstractButtonDialog implements Dia
         ConditionEntry condition = null;
         if (reward == ControlReward.AT_END) {
             setVictoryOption(OptionsConstants.VICTORY_OBJECTIVE_RAID, true);
+            ensureMissionLengthEnabled();
         } else if (reward == ControlReward.WINS) {
             condition = new ConditionEntry(
                   List.of(VictoryConditionsBuilder.objectiveControlled(objectiveName, owner.getName())),
                   owner.getName(), true);
             conditionEntries.add(condition);
             conditionListModel.addElement(describe(condition));
+            // an only-at-game-end condition also needs the game to end
+            ensureMissionLengthEnabled();
         } else {
             setVictoryOption(OptionsConstants.VICTORY_USE_OBJECTIVES, true);
         }
@@ -1189,7 +1264,10 @@ public class VictoryConditionsDialog extends AbstractButtonDialog implements Dia
 
     @Override
     public void optionClicked(DialogOptionComponentYPanel comp, IOption option, boolean state) {
-        // no dependent-option handling needed for the victory options
+        // keep the mission length row in sync when the same option is toggled in the Advanced section
+        if (OptionsConstants.VICTORY_USE_GAME_TURN_LIMIT.equals(option.getName())) {
+            checkMissionLength.setSelected(state);
+        }
     }
 
     @Override

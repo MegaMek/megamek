@@ -449,6 +449,7 @@ public class ChatLounge extends AbstractPhaseDisplay
         butSkills.addActionListener(lobbyListener);
         butSpaceSize.addActionListener(lobbyListener);
         butVictory.addActionListener(lobbyListener);
+        refreshVictoryButton();
         butCamo.addActionListener(camoListener);
         butAddX.addActionListener(lobbyListener);
         butAddY.addActionListener(lobbyListener);
@@ -2332,9 +2333,15 @@ public class ChatLounge extends AbstractPhaseDisplay
     private void showVictoryConditionsDialog() {
         if (victoryConditionsDialog == null) {
             victoryConditionsDialog = new VictoryConditionsDialog(clientgui);
+            victoryConditionsDialog.setSelectMapCallback(() -> {
+                LOGGER.info("[VictoryUI] Switching to the Select Map tab from the victory dialog");
+                SwingUtilities.invokeLater(() -> panTabs.setSelectedComponent(panMap));
+            });
         }
         victoryConditionsDialog.refreshLobbyState();
-        if (victoryConditionsDialog.showDialog() == DialogResult.CONFIRMED) {
+        DialogResult dialogResult = victoryConditionsDialog.showDialog();
+        LOGGER.info("[VictoryUI] Victory dialog closed: result={}", dialogResult);
+        if (dialogResult == DialogResult.CONFIRMED) {
             Vector<IBasicOption> changedOptions = victoryConditionsDialog.getChangedVictoryOptions();
             if (!changedOptions.isEmpty()) {
                 clientgui.getClient().sendGameOptions(victoryConditionsDialog.getPassword(), changedOptions);
@@ -2453,6 +2460,22 @@ public class ChatLounge extends AbstractPhaseDisplay
         refreshBoardsAvailable();
         updateSearch(fldSearch.getText());
         refreshLabels();
+        refreshVictoryButton();
+    }
+
+    /**
+     * Enables the Victory Conditions button only when a board is chosen: victory conditions are planned on the map, so
+     * the dialog stays locked until there is one (UI design doc: no board, gate everything).
+     */
+    private void refreshVictoryButton() {
+        boolean hasBoard = (mapSettings != null)
+              && mapSettings.getBoardsSelectedVector().stream().anyMatch(boardName -> boardName != null);
+        butVictory.setEnabled(hasBoard);
+        butVictory.setToolTipText(Messages.getString(
+              hasBoard ? "ChatLounge.butVictory.tooltip" : "ChatLounge.butVictory.needBoardTooltip"));
+        if (!hasBoard) {
+            LOGGER.debug("[VictoryUI] Victory Conditions button disabled - no board selected yet");
+        }
     }
 
     /** OK Refreshes the Map Summary, Tech Level and Game Year labels. */

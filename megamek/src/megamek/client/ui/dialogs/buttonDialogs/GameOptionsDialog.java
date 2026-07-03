@@ -245,8 +245,7 @@ public class GameOptionsDialog extends AbstractButtonDialog implements ActionLis
 
         for (Enumeration<IOptionGroup> i = options.getGroups(); i.hasMoreElements(); ) {
             IOptionGroup group = i.nextElement();
-            // the victory options are edited in the lobby's Victory Conditions dialog instead
-            if (VictoryConditionsDialog.VICTORY_OPTIONS_GROUP_NAME.equals(group.getName())) {
+            if (isVictoryGroupHiddenForLobby(group)) {
                 continue;
             }
             JPanel groupPanel = addGroup(group);
@@ -259,6 +258,18 @@ public class GameOptionsDialog extends AbstractButtonDialog implements ActionLis
         toggleOptions();
         addSearchPanel();
         validate();
+    }
+
+    /**
+     * @param group the option group about to be added as a tab
+     *
+     * @return {@code true} when the group is the victory options group and this dialog is used in the lobby - the
+     *       lobby's Victory Conditions dialog edits those options instead. Scenario setup and mid-game use of this
+     *       dialog keep the tab, as no lobby button exists in those contexts.
+     */
+    private boolean isVictoryGroupHiddenForLobby(IOptionGroup group) {
+        boolean isInLobby = (clientGui != null) && clientGui.getClient().getGame().getPhase().isLounge();
+        return isInLobby && VictoryConditionsDialog.VICTORY_OPTIONS_GROUP_NAME.equals(group.getName());
     }
 
     /**

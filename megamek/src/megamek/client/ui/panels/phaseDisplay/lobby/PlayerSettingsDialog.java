@@ -715,8 +715,16 @@ public class PlayerSettingsDialog extends AbstractButtonDialog {
         panContent.add(fldInferno);
         panContent.add(labEMP);
         panContent.add(fldEMP);
+        
+        String tooltip = Messages.getString("PlayerSettingsDialog.tripwireTT");
+        labTripwires.setToolTipText(tooltip);
+        fldTripwires.setToolTipText(tooltip);        
         panContent.add(labTripwires);
         panContent.add(fldTripwires);
+        
+        tooltip = Messages.getString("PlayerSettingsDialog.pitfallTT");
+        labPitfalls.setToolTipText(tooltip);
+        fldPitfalls.setToolTipText(tooltip);
         panContent.add(labPitfalls);
         panContent.add(fldPitfalls);
         return result;

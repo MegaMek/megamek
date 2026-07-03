@@ -125,7 +125,7 @@ public class VictoryConditionsDialog extends AbstractButtonDialog implements Dia
         return result;
     }
 
-    /** @return The server password entered by the user (empty when the server has none) */
+    /** @return The text entered in the server password field; the server checks it only when it has a password */
     public String getPassword() {
         return fieldPassword.getText();
     }

@@ -32,12 +32,29 @@
  */
 package megamek.client.ui.panels.phaseDisplay;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import megamek.client.ui.clientGUI.ClientGUI;
 import megamek.client.ui.clientGUI.tooltip.EntityActionLog;
+import megamek.client.ui.dialogs.TurretFacingDialog;
+import megamek.common.actions.DirectionalMountFacingAction;
 import megamek.common.actions.EntityAction;
+import megamek.common.actions.FlipArmsAction;
 import megamek.common.actions.TorsoTwistAction;
+import megamek.common.compute.TurretFacing;
+import megamek.common.equipment.MiscType;
+import megamek.common.equipment.Mounted;
+import megamek.common.equipment.WeaponMounted;
+import megamek.common.options.OptionsConstants;
+import megamek.common.units.DirectionalTorsoMountRules;
+import megamek.common.units.Entity;
+import megamek.common.units.Mek;
+import megamek.common.units.Tank;
+import megamek.logging.MMLogger;
 
 public abstract class AttackPhaseDisplay extends ActionPhaseDisplay {
+    private static final MMLogger LOGGER = MMLogger.create(AttackPhaseDisplay.class);
 
     // client list of attacks user has input
     protected EntityActionLog attacks;
@@ -94,5 +111,232 @@ public abstract class AttackPhaseDisplay extends ActionPhaseDisplay {
     protected void addAttack(EntityAction entityAction) {
         attacks.add(entityAction);
         updateDonePanel();
+    }
+
+    // --- Directional Torso Mount and turret rotation controls (BMM p.83; issues #1040, #6518) ---
+    // These are shared by every attack-declaration display that offers the Flip Mount / Rotate Turret buttons
+    // (the firing phase and the targeting/TAG phase), so the controls behave identically wherever a unit can
+    // declare weapon attacks. Displays that do not offer the buttons inherit the no-op hooks below and are
+    // unaffected.
+
+    /**
+     * Clears the pending attack queue and resets any declared facing. The default is a no-op; displays that hold a
+     * pending attack list override this so {@link #flipDirectionalMount()} can rebuild the queue.
+     */
+    protected void clearAttacks() {}
+
+    /**
+     * Recomputes the to-hit / target information after a mount-facing change. The default is a no-op; attack displays
+     * override this to refresh their target panel (they cannot share a single {@code updateTarget()} because its
+     * visibility differs across the display family).
+     */
+    protected void refreshTargetAfterMountChange() {}
+
+    /**
+     * Enables or disables the Flip Mount button. The default is a no-op; displays that provide the button override this
+     * to toggle their own button and menu item.
+     *
+     * @param enabled whether the Flip Mount button should be enabled
+     */
+    protected void setFlipMountEnabled(boolean enabled) {}
+
+    /**
+     * Enables or disables the Rotate Turret button. The default is a no-op; displays that provide the button override
+     * this to toggle their own button and menu item.
+     *
+     * @param enabled whether the Rotate Turret button should be enabled
+     */
+    protected void setRotateTurretEnabled(boolean enabled) {}
+
+    /**
+     * Flips the selected weapon's 2-point Directional Torso Mount between the front and rear arc (BMM p.83). A
+     * Directional Torso Mount is a single mount holding every directional-mount weapon in one torso location, so the
+     * whole mount flips together. The facing is queued as a {@link DirectionalMountFacingAction} (applied by the server
+     * when the turn is committed) rather than sent immediately, so it composes with a torso twist or arms flip declared
+     * in the same turn and can still be cleared.
+     */
+    public void flipDirectionalMount() {
+        if (currentEntity() == null) {
+            LOGGER.info("[DirTorsoMount] flip ignored - no current entity");
+            return;
+        }
+        WeaponMounted weapon = clientgui.getUnitDisplay().wPan.getSelectedWeapon();
+        int weaponNumber = clientgui.getUnitDisplay().wPan.getSelectedWeaponNum();
+        if ((weapon == null) || (weaponNumber == -1)) {
+            LOGGER.info("[DirTorsoMount] {}: flip ignored - no weapon selected (weaponNumber={})",
+                  currentEntity().getShortName(), weaponNumber);
+            return;
+        }
+        LOGGER.info("[DirTorsoMount] {}: flip requested - {}",
+              currentEntity().getShortName(), weapon.directionalMountDebug());
+        if (!weapon.hasDirectionalTorsoMount()) {
+            LOGGER.info("[DirTorsoMount] {}: flip ignored - {} is not a directional mount",
+                  currentEntity().getShortName(), weapon.getName());
+            return;
+        }
+        if (weapon.hasDirectional360TorsoMount()) {
+            LOGGER.info("[DirTorsoMount] {}: flip ignored - {} is a 360-degree turret (no front/rear to flip)",
+                  currentEntity().getShortName(), weapon.getName());
+            return;
+        }
+        if (weapon.isDirectionalMountLocked()) {
+            LOGGER.info("[DirTorsoMount] {}: flip ignored - mount for {} is locked",
+                  currentEntity().getShortName(), weapon.getName());
+            return;
+        }
+        boolean newRear = !weapon.isDirectionalMountRear();
+        int newFacing = newRear ? 3 : 0;
+        int flippedLocation = weapon.getLocation();
+
+        // clearAttacks() below resets the secondary facing and drops every pending action; capture the declared
+        // torso twist, arms-flip and any other-location mount facings so the flip does not undo them (BMM p.83:
+        // the mount arc is declared alongside - and independently of - a torso twist).
+        int twistedFacing = currentEntity().getSecondaryFacing();
+        boolean wasTwisted = twistedFacing != currentEntity().getFacing();
+        boolean wasArmsFlipped = currentEntity().getArmsFlipped();
+        List<DirectionalMountFacingAction> otherMountFacings = pendingDirectionalMountFacings(flippedLocation);
+
+        clearAttacks();
+
+        if (wasTwisted) {
+            currentEntity().setSecondaryFacing(twistedFacing);
+            addAttack(new TorsoTwistAction(currentEntity, twistedFacing));
+        }
+        if (wasArmsFlipped) {
+            currentEntity().setArmsFlipped(true);
+            addAttack(new FlipArmsAction(currentEntity, true));
+        }
+        for (DirectionalMountFacingAction mountFacing : otherMountFacings) {
+            addAttack(mountFacing);
+        }
+
+        // The whole mount (every directional weapon in this location) shares one facing, so flip them together.
+        DirectionalTorsoMountRules.setMountFacing(currentEntity(), flippedLocation, newFacing);
+        addAttack(new DirectionalMountFacingAction(currentEntity, weaponNumber, newFacing));
+        LOGGER.info("[DirTorsoMount] {}: {} flipped to {} (facing offset {}); queued facing action",
+              currentEntity().getShortName(), weapon.getName(), newRear ? "REAR" : "FRONT", newFacing);
+        refreshTargetAfterMountChange();
+        // Rebuild the weapon display and reselect the flipped weapon (mirrors the mode-change flow). A full refresh
+        // is avoided here: it selects the first weapon and short-circuits the unit-display rebuild when the entity
+        // object is unchanged, which is what dropped the selection and left the arc indicator stale.
+        clientgui.onAllBoardViews(boardView -> boardView.redrawEntity(currentEntity()));
+        clientgui.getUnitDisplay().wPan.displayMek(currentEntity());
+        clientgui.getUnitDisplay().wPan.selectWeapon(weapon);
+        updateDonePanel();
+        clientgui.updateFiringArc(currentEntity());
+    }
+
+    /**
+     * Collects the pending Directional Torso Mount facing actions (BMM p.83) so they can be re-added after a
+     * {@link #clearAttacks()} that is only meant to rebuild the weapon attacks (a torso twist or another mount flip).
+     * The mount arc is a persistent, separately-declared state, not a weapon attack, so it must survive the clear.
+     *
+     * @param excludedLocation a location to omit because the caller re-declares it itself, or -1 to keep all
+     *
+     * @return the pending mount facing actions to preserve
+     */
+    protected List<DirectionalMountFacingAction> pendingDirectionalMountFacings(int excludedLocation) {
+        List<DirectionalMountFacingAction> mountFacings = new ArrayList<>();
+        if (currentEntity() == null) {
+            return mountFacings;
+        }
+        for (EntityAction action : attacks) {
+            if (action instanceof DirectionalMountFacingAction mountFacing) {
+                Mounted<?> mount = currentEntity().getEquipment(mountFacing.getWeaponNumber());
+                if ((mount != null) && (mount.getLocation() != excludedLocation)) {
+                    mountFacings.add(mountFacing);
+                }
+            }
+        }
+        return mountFacings;
+    }
+
+    /**
+     * Enables the flip-mount button only when the selected weapon is in a 2-point Directional Torso Mount whose arc can
+     * still be changed - i.e. it is a directional mount, is not a 360-degree turret (which has no front/rear to flip),
+     * and has not been locked by damage. Logs the decision for any directional-mount unit to aid playtesting.
+     */
+    protected void updateFlipMount() {
+        WeaponMounted weapon = clientgui.getUnitDisplay().wPan.getSelectedWeapon();
+        if ((currentEntity() == null) || (weapon == null)) {
+            setFlipMountEnabled(false);
+            return;
+        }
+        boolean canFlip = weapon.hasDirectionalTorsoMount()
+              && !weapon.hasDirectional360TorsoMount()
+              && !weapon.isDirectionalMountLocked();
+        boolean unitHasDirectionalMount =
+              currentEntity().hasQuirk(OptionsConstants.QUIRK_POS_DIRECTIONAL_TORSO_MOUNT)
+                    || currentEntity().hasQuirk(OptionsConstants.QUIRK_POS_DIRECTIONAL_TORSO_MOUNT_360)
+                    || weapon.hasDirectionalTorsoMount();
+        if (unitHasDirectionalMount) {
+            LOGGER.info("[DirTorsoMount] {}: flip-mount button {} - {}",
+                  currentEntity().getShortName(), canFlip ? "ENABLED" : "disabled",
+                  weapon.directionalMountDebug());
+        }
+        setFlipMountEnabled(canFlip);
+    }
+
+    /**
+     * Opens the facing dialog for the selected weapon's rotatable mount - a Mek shoulder/head/quad turret, a vehicle
+     * dual turret, or a Directional Torso Mount (issues #1040, #6518) - so turrets can be aimed with an action button,
+     * not only the right-click menu.
+     */
+    public void rotateSelectedMount() {
+        Entity entity = currentEntity();
+        if (entity == null) {
+            return;
+        }
+        WeaponMounted weapon = clientgui.getUnitDisplay().wPan.getSelectedWeapon();
+        if (weapon == null) {
+            return;
+        }
+        if (weapon.hasDirectionalTorsoMount() && (entity instanceof Mek directionalMek)) {
+            new TurretFacingDialog(clientgui.getFrame(), directionalMek, weapon, clientgui, true).setVisible(true);
+        } else if (weapon.isMekTurretMounted() && (entity instanceof Mek turretMek)) {
+            Mounted<?> turretItem = findMekTurretItem(turretMek, weapon.getLocation());
+            if (turretItem != null) {
+                new TurretFacingDialog(clientgui.getFrame(), turretMek, turretItem, clientgui).setVisible(true);
+            }
+        } else if ((entity instanceof Tank tank) && (weapon.getLocation() == tank.getLocTurret2())) {
+            new TurretFacingDialog(clientgui.getFrame(), tank, clientgui).setVisible(true);
+        }
+    }
+
+    /**
+     * @param mek      the unit
+     * @param location the location holding a Mek turret
+     *
+     * @return the turret {@link MiscType} equipment item in the location (shoulder/head/quad turret), or {@code null}
+     */
+    private Mounted<?> findMekTurretItem(Mek mek, int location) {
+        for (Mounted<?> miscMounted : mek.getMisc()) {
+            if ((miscMounted.getLocation() == location) && (miscMounted.getType().hasFlag(MiscType.F_SHOULDER_TURRET)
+                  || miscMounted.getType().hasFlag(MiscType.F_HEAD_TURRET)
+                  || miscMounted.getType().hasFlag(MiscType.F_QUAD_TURRET))) {
+                return miscMounted;
+            }
+        }
+        return null;
+    }
+
+    /**
+     * Enables the rotate-turret button when the selected weapon sits on a rotatable mount (a Mek turret, a vehicle dual
+     * turret, or a Directional Torso Mount) whose facing can still be changed.
+     */
+    protected void updateRotateTurret() {
+        WeaponMounted weapon = clientgui.getUnitDisplay().wPan.getSelectedWeapon();
+        if ((currentEntity() == null) || (weapon == null)) {
+            setRotateTurretEnabled(false);
+            return;
+        }
+        // A 2-point Directional Torso Mount is flipped front/rear with the Flip Mount button, so it does not use
+        // the rotate dialog; only the 3-point 360 quad turret (and Mek/vehicle turrets) use the rotate button.
+        boolean isTwoPointDirectionalMount = weapon.hasDirectionalTorsoMount() && !weapon.hasDirectional360TorsoMount();
+        boolean isLockedDirectionalMount = weapon.hasDirectionalTorsoMount() && weapon.isDirectionalMountLocked();
+        boolean canRotate = TurretFacing.isRotatable(currentEntity(), weapon)
+              && !isTwoPointDirectionalMount
+              && !isLockedDirectionalMount;
+        setRotateTurretEnabled(canRotate);
     }
 }

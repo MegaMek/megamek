@@ -146,12 +146,12 @@ public class VictoryConditionsDialog extends AbstractButtonDialog implements Dia
     }
 
     @Override
-    public void optionClicked(DialogOptionComponentYPanel comp, IOption option, boolean state) {
+    public void optionClicked(DialogOptionComponentYPanel optionComponent, IOption option, boolean state) {
         // no dependent-option handling needed for the victory options
     }
 
     @Override
-    public void optionSwitched(DialogOptionComponentYPanel comp, IOption option, int i) {
+    public void optionSwitched(DialogOptionComponentYPanel optionComponent, IOption option, int position) {
         // no dependent-option handling needed for the victory options
     }
 }

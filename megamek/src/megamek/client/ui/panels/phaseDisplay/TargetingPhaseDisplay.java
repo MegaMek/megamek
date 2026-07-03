@@ -118,6 +118,8 @@ public class TargetingPhaseDisplay extends AttackPhaseDisplay implements ListSel
         FIRE_NEXT_TARG("fireNextTarg"),
         FIRE_MODE("fireMode"),
         FIRE_FLIP_ARMS("fireFlipArms"),
+        FIRE_FLIP_MOUNT("fireFlipMount"),
+        FIRE_ROTATE_TURRET("fireRotateTurret"),
         FIRE_SEARCHLIGHT("fireSearchlight"),
         FIRE_CANCEL("fireCancel"),
         FIRE_DISENGAGE("fireDisengage"),
@@ -414,6 +416,8 @@ public class TargetingPhaseDisplay extends AttackPhaseDisplay implements ListSel
             setTwistEnabled(entity.canChangeSecondaryFacing() && entity.getCrew().isActive());
             setFlipArmsEnabled(entity.canFlipArms() && entity.getCrew().isActive());
             updateSearchlight();
+            updateFlipMount();
+            updateRotateTurret();
 
             setFireModeEnabled(true);
 
@@ -516,6 +520,8 @@ public class TargetingPhaseDisplay extends AttackPhaseDisplay implements ListSel
         setNextEnabled(false);
         butDone.setEnabled(false);
         setFlipArmsEnabled(false);
+        setFlipMountEnabled(false);
+        setRotateTurretEnabled(false);
         setFireModeEnabled(false);
         setNextTargetEnabled(false);
         setDisengageEnabled(false);
@@ -758,7 +764,8 @@ public class TargetingPhaseDisplay extends AttackPhaseDisplay implements ListSel
     /**
      * Removes all current fire
      */
-    private void clearAttacks() {
+    @Override
+    protected void clearAttacks() {
         // We may not have an entity selected yet (race condition).
         if (currentEntity() == null) {
             return;
@@ -899,6 +906,8 @@ public class TargetingPhaseDisplay extends AttackPhaseDisplay implements ListSel
             clientgui.getUnitDisplay().wPan.clearToHit();
         }
         updateSearchlight();
+        updateFlipMount();
+        updateRotateTurret();
     }
 
     private boolean showDistanceAsMapSheets(Entity attacker, Targetable target, Mounted<?> weapon) {
@@ -1029,11 +1038,7 @@ public class TargetingPhaseDisplay extends AttackPhaseDisplay implements ListSel
         }
 
         if (direction != currentEntity().getSecondaryFacing()) {
-            clearAttacks();
-            addAttack(new TorsoTwistAction(currentEntity, direction));
-            currentEntity().setSecondaryFacing(direction);
-            clientgui.updateFiringArc(currentEntity());
-            refreshAll();
+            applyTorsoTwist(direction);
         }
     }
 
@@ -1047,17 +1052,32 @@ public class TargetingPhaseDisplay extends AttackPhaseDisplay implements ListSel
     void torsoTwist(int twistDir) {
         int direction = currentEntity().getSecondaryFacing();
         if (twistDir == 0) {
-            clearAttacks();
-            direction = currentEntity().clipSecondaryFacing((direction + 5) % 6);
-            addAttack(new TorsoTwistAction(currentEntity, direction));
-            currentEntity().setSecondaryFacing(direction);
-            refreshAll();
+            applyTorsoTwist(currentEntity().clipSecondaryFacing((direction + 5) % 6));
         } else if (twistDir == 1) {
-            clearAttacks();
-            direction = currentEntity().clipSecondaryFacing((direction + 7) % 6);
-            addAttack(new TorsoTwistAction(currentEntity, direction));
-            currentEntity().setSecondaryFacing(direction);
-            refreshAll();
+            applyTorsoTwist(currentEntity().clipSecondaryFacing((direction + 7) % 6));
+        }
+    }
+
+    /**
+     * Declares a torso twist to the given secondary facing, preserving state that is declared independently of the
+     * twist. {@link #clearAttacks()} drops every pending action and reselects the first weapon, so this keeps the
+     * player's selected weapon selected and re-adds any pending Directional Torso Mount arc (BMM p.83) - matching the
+     * firing phase, so a Flip Mount and a torso twist can be declared together in either order.
+     *
+     * @param direction the secondary facing to twist to
+     */
+    private void applyTorsoTwist(int direction) {
+        WeaponMounted selectedWeapon = clientgui.getUnitDisplay().wPan.getSelectedWeapon();
+        List<DirectionalMountFacingAction> mountFacings = pendingDirectionalMountFacings(-1);
+        clearAttacks();
+        addAttack(new TorsoTwistAction(currentEntity, direction));
+        currentEntity().setSecondaryFacing(direction);
+        for (DirectionalMountFacingAction mountFacing : mountFacings) {
+            addAttack(mountFacing);
+        }
+        refreshAll();
+        if (selectedWeapon != null) {
+            clientgui.getUnitDisplay().wPan.selectWeapon(selectedWeapon);
         }
     }
 
@@ -1275,6 +1295,10 @@ public class TargetingPhaseDisplay extends AttackPhaseDisplay implements ListSel
             jumpToNextTarget();
         } else if (ev.getActionCommand().equals(TargetingCommand.FIRE_FLIP_ARMS.getCmd())) {
             updateFlipArms(!currentEntity().getArmsFlipped());
+        } else if (ev.getActionCommand().equals(TargetingCommand.FIRE_FLIP_MOUNT.getCmd())) {
+            flipDirectionalMount();
+        } else if (ev.getActionCommand().equals(TargetingCommand.FIRE_ROTATE_TURRET.getCmd())) {
+            rotateSelectedMount();
         } else if (ev.getActionCommand().equals(TargetingCommand.FIRE_MODE.getCmd())) {
             changeMode(true);
         } else if (ev.getActionCommand().equals(TargetingCommand.FIRE_CANCEL.getCmd())) {
@@ -1365,6 +1389,27 @@ public class TargetingPhaseDisplay extends AttackPhaseDisplay implements ListSel
     private void setFlipArmsEnabled(boolean enabled) {
         buttons.get(TargetingCommand.FIRE_FLIP_ARMS).setEnabled(enabled);
         clientgui.getMenuBar().setEnabled(FiringCommand.FIRE_FLIP_ARMS.getCmd(), enabled);
+    }
+
+    @Override
+    protected void setFlipMountEnabled(boolean enabled) {
+        buttons.get(TargetingCommand.FIRE_FLIP_MOUNT).setEnabled(enabled);
+        clientgui.getMenuBar().setEnabled(FiringCommand.FIRE_FLIP_MOUNT.getCmd(), enabled);
+    }
+
+    @Override
+    protected void setRotateTurretEnabled(boolean enabled) {
+        buttons.get(TargetingCommand.FIRE_ROTATE_TURRET).setEnabled(enabled);
+        clientgui.getMenuBar().setEnabled(FiringCommand.FIRE_ROTATE_TURRET.getCmd(), enabled);
+    }
+
+    /**
+     * Refreshes the targeting-phase target panel after a Directional Torso Mount arc change. See
+     * {@link AttackPhaseDisplay#flipDirectionalMount()}, which drives the shared flip logic.
+     */
+    @Override
+    protected void refreshTargetAfterMountChange() {
+        updateTarget();
     }
 
     private void setNextEnabled(boolean enabled) {

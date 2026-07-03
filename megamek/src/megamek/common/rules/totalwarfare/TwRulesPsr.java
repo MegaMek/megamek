@@ -48,23 +48,24 @@ import java.util.List;
 
 public class TwRulesPsr extends CoreRulesPsr {
 
-    public void checkRunningWithDamage(Entity e, PilotingRollData r, int gyroDamage, EntityMovementType overallMoveType) {
-        if (e.getGyroType() == Mek.GYRO_HEAVY_DUTY) {
+    public void checkRunningWithDamage(Entity entity, PilotingRollData roll, int gyroDamage,
+          EntityMovementType overallMoveType) {
+        if (entity.getGyroType() == Mek.GYRO_HEAVY_DUTY) {
             gyroDamage--; // HD gyro ignores 1st damage
         }
         if (((overallMoveType == EntityMovementType.MOVE_RUN) || (overallMoveType == EntityMovementType.MOVE_SPRINT)) &&
-              e.canFall() &&
-              ((gyroDamage > 0) || e.hasHipCrit())) {
+              entity.canFall() &&
+              ((gyroDamage > 0) || entity.hasHipCrit())) {
             // append the reason modifier
-            r.append(new PilotingRollData(e.getId(), 0, "running with damaged hip actuator or gyro"));
+            roll.append(new PilotingRollData(entity.getId(), 0, "running with damaged hip actuator or gyro"));
         } else {
-            r.addModifier(TargetRoll.CHECK_FALSE, "Check false: Entity is not attempting to run with damage");
+            roll.addModifier(TargetRoll.CHECK_FALSE, "Check false: Entity is not attempting to run with damage");
         }
     }
 
     // No modifier to stand
     @Override
-    public void standing(PilotingRollData r) { }
+    public void standing(PilotingRollData roll) { }
 
     @Override
     public void facingChangeAfterFall(Entity entity, int facing){
@@ -99,7 +100,7 @@ public class TwRulesPsr extends CoreRulesPsr {
 
     // We do not reduce leg actuator rolls in TW
     @Override
-    public void checkLegActuatorPsrRolls(Game game, Entity en) {};
+    public void checkLegActuatorPsrRolls(Game game, Entity entity) {};
 
     @Override
     public boolean getFootActuatorPsr() {

@@ -43,8 +43,8 @@ import megamek.common.units.TripodMek;
 
 public class CoreRulesCharts extends RulesCharts {
     // Escalating failure rules. Same as pilot numbers. Core p.111, 180
-    public int escalatingFailure(int round) {
-        return switch (round) {
+    public int escalatingFailure(int count) {
+        return switch (count) {
                 case 0 -> 2;
                 case 1 -> 3;
                 case 2 -> 5;
@@ -68,7 +68,6 @@ public class CoreRulesCharts extends RulesCharts {
             case Mek.LOC_LEFT_LEG:
                 if (quad) {
                     return "rear left leg";
-                    ;
                 }
                 return "left leg";
             case Mek.LOC_RIGHT_LEG:

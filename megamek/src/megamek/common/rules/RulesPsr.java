@@ -41,7 +41,6 @@ import megamek.common.units.EntityMovementType;
 import megamek.common.units.MekWithArms;
 
 import java.util.ArrayList;
-import java.util.Vector;
 
 /*
 This abstract class is to handle rules that are in relation to PSRs. 
@@ -49,11 +48,11 @@ This abstract class is to handle rules that are in relation to PSRs.
 public abstract class RulesPsr {
     
     // Entity calls this when trying to run with damage
-    public abstract void checkRunningWithDamage(Entity e, PilotingRollData r, int gyroDamage,
+    public abstract void checkRunningWithDamage(Entity entity, PilotingRollData roll, int gyroDamage,
           EntityMovementType overallMoveType);
 
     // Any modifier for standing
-    public abstract void standing(PilotingRollData r);
+    public abstract void standing(PilotingRollData roll);
 
     // Do we need to change facing when we fall?
     public abstract void facingChangeAfterFall(Entity entity, int facing);
@@ -62,13 +61,13 @@ public abstract class RulesPsr {
     public abstract void legDamageModifiers(MekWithArms unit, PilotingRollData roll, boolean toLegDamage);
 
     // Do we need to reduce potential PSR rolls
-    public abstract void checkLegActuatorPsrRolls(Game game, Entity en);
+    public abstract void checkLegActuatorPsrRolls(Game game, Entity entity);
 
     // Remove the highest roll from the roll list
     public abstract void rollRemoveHighest(ArrayList<PilotingRollData> rollList);
     
     // PSRs for hit actuators
-    public abstract void hitActuator(Game game, Entity en, int loc, int hitPart);
+    public abstract void hitActuator(Game game, Entity entity, int loc, int hitPart);
     
     // Hip Penalties
     public abstract int getHipPenalty();

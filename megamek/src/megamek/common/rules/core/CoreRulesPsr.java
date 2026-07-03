@@ -54,23 +54,23 @@ import java.util.Vector;
  */
 public class CoreRulesPsr extends RulesPsr {
     // Called from Entity
-    public void checkRunningWithDamage(Entity e, PilotingRollData r, int gyroDamage, EntityMovementType overallMoveType) {
-        if (e.getGyroType() == Mek.GYRO_HEAVY_DUTY) {
+    public void checkRunningWithDamage(Entity entity, PilotingRollData roll, int gyroDamage, EntityMovementType overallMoveType) {
+        if (entity.getGyroType() == Mek.GYRO_HEAVY_DUTY) {
             gyroDamage = 0;
         }
         if (((overallMoveType == EntityMovementType.MOVE_RUN) || (overallMoveType == EntityMovementType.MOVE_SPRINT)) &&
-              e.canFall() &&
-              ((gyroDamage > 0) || e.hasHipCrit())) {
+              entity.canFall() &&
+              ((gyroDamage > 0) || entity.hasHipCrit())) {
             // append the reason modifier
-            r.append(new PilotingRollData(e.getId(), 0, "running with damaged hip actuator or gyro"));
+            roll.append(new PilotingRollData(entity.getId(), 0, "running with damaged hip actuator or gyro"));
         } else {
-            r.addModifier(TargetRoll.CHECK_FALSE, "Check false: Entity is not attempting to run with damage");
+            roll.addModifier(TargetRoll.CHECK_FALSE, "Check false: Entity is not attempting to run with damage");
         }
     }
 
     // Trying to stand is a -1 modifier Core p.111
-    public void standing(PilotingRollData r) {
-        r.addModifier(-1, "trying to stand");
+    public void standing(PilotingRollData roll) {
+        roll.addModifier(-1, "trying to stand");
     }
 
     // No change of facing after a fall in Core p.115
@@ -110,23 +110,23 @@ public class CoreRulesPsr extends RulesPsr {
         ArrayList<PilotingRollData> rollFRL = new ArrayList<>();
         
         // Organize all rolls by location
-        for (PilotingRollData r : pilotRolls) {
+        for (PilotingRollData roll : pilotRolls) {
                 // Assign rolls to locations
-                switch (r.getLocation()) {
+                switch (roll.getLocation()) {
                     case Mek.LOC_RIGHT_LEG:
-                        rollLL.add(r);
+                        rollLL.add(roll);
                         break;
                     case Mek.LOC_LEFT_LEG:
-                        rollRL.add(r);
+                        rollRL.add(roll);
                         break;
                     case Mek.LOC_LEFT_ARM:
-                        rollFLL.add(r);
+                        rollFLL.add(roll);
                         break;
                     case Mek.LOC_RIGHT_ARM:
-                        rollFRL.add(r);
+                        rollFRL.add(roll);
                         break;
                     case Mek.LOC_CENTER_LEG:
-                        rollCL.add(r);
+                        rollCL.add(roll);
                 }
         }
         
@@ -168,17 +168,17 @@ public class CoreRulesPsr extends RulesPsr {
         // first entry
         int highest = 0;
         int highestValue = 0;
-        for (int i = 0; i < rollList.size(); i++) {
-            if (rollList.get(i).getValue() > highestValue) {
-                highest = i;
-                highestValue = rollList.get(i).getValue();
+        for (int index = 0; index < rollList.size(); index++) {
+            if (rollList.get(index).getValue() > highestValue) {
+                highest = index;
+                highestValue = rollList.get(index).getValue();
             }
         }
         rollList.remove(highest);
     }
     
-    public void hitActuator(final Game game, Entity en, int loc, int hitPart) {
-        String psrText = Game.rulesManager.getRulesCharts().getLocationName(loc,(en instanceof QuadMek));
+    public void hitActuator(final Game game, Entity entity, int loc, int hitPart) {
+        String psrText = Game.rulesManager.getRulesCharts().getLocationName(loc,(entity instanceof QuadMek));
         if (hitPart == Mek.ACTUATOR_FOOT) {
             psrText += " foot";
         }
@@ -194,9 +194,9 @@ public class CoreRulesPsr extends RulesPsr {
         }
         
         if (getFootActuatorPsr() && hitPart == Mek.ACTUATOR_FOOT) {
-            game.addPSR(new PilotingRollData(en.getId(), psrPenalty, psrText, loc));
+            game.addPSR(new PilotingRollData(entity.getId(), psrPenalty, psrText, loc));
         } else if (hitPart != Mek.ACTUATOR_FOOT) {
-            game.addPSR(new PilotingRollData(en.getId(), psrPenalty, psrText, loc));
+            game.addPSR(new PilotingRollData(entity.getId(), psrPenalty, psrText, loc));
         }
     }
     

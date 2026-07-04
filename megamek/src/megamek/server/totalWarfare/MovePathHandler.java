@@ -3480,6 +3480,9 @@ class MovePathHandler extends AbstractTWRuleHandler {
                 if (isOnGround) {
                     boom = gameManager.checkVibraBombs(entity, curPos, false, lastPos, curPos,
                           gameManager.getMainPhaseReport());
+                    
+                    boom |= gameManager.handleTripwire(entity, lastPos, curPos, stepMoveType, gameManager.getMainPhaseReport());
+                    
                     // Collect EMP reports separately for popup, then add to main report
                     Vector<Report> empReports = new Vector<>();
                     boolean empBoom = gameManager.checkEMPMines(entity, curPos, empReports);

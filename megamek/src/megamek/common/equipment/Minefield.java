@@ -203,6 +203,13 @@ public class Minefield implements Serializable, Cloneable {
      *
      */
     public int getTrigger() {
+    	// Pitfall traps as defined in 1654 - Fourth Succession Wars have a simple target number of 4
+    	if (type == TYPE_PITFALL) {
+    		return 4;
+    	} else if (type == TYPE_ACTIVE) {
+    		return 9;
+    	}
+    	
         if (density < 15) {
             return 9;
         } else if (density < 25) {

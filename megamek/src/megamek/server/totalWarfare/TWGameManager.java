@@ -7285,6 +7285,60 @@ public class TWGameManager extends AbstractGameManager {
     }
 
     /**
+     * Handles an entity stepping on a tripwire.
+     * Returns true if the entity entering the hex fell over
+     * Assumes that src != dest
+     */
+    public boolean handleTripwire(Entity entity, Coords src, Coords dest, EntityMovementType movementType, Vector<Report> vMineReport) {
+    	boolean fellOver = false;
+    	
+    	Minefield triggeredTripwire = null;
+    	
+    	for (Minefield minefield : getGame().getMinefields(dest)) {
+    		if (minefield.getType() != Minefield.TYPE_TRIPWIRE) {
+    			continue;
+    		}
+    		
+    		// meks are the only things that can be affected by tripwires
+	    	// if we neither walked nor ran, we don't need to be doing this
+	    	if (entity instanceof Mek &&
+	    		(movementType == EntityMovementType.MOVE_WALK ||
+	    		movementType == EntityMovementType.MOVE_RUN)) {
+	    		
+	            Report hitReport = new Report(2580);
+	            hitReport.subject = entity.getId();
+	            hitReport.add(entity.getShortName(), true);
+	            hitReport.add(dest.getBoardNum(), true);
+	            hitReport.indent();
+	            vMineReport.add(hitReport);
+	    		
+	    		int modifier = 0;
+	    		String modifierDesc = "";
+	    		
+	    		if (movementType == EntityMovementType.MOVE_WALK) {
+	    			modifier = 2;
+	    			modifierDesc = "walking";
+	    		} else if (movementType == EntityMovementType.MOVE_RUN) {
+	    			modifier = 4;
+	    			modifierDesc = "running";
+	    		}
+	    		
+	    		PilotingRollData rollData = entity.getBasePilotingRoll(entity.moved);
+	    		rollData.addModifier(modifier, modifierDesc);
+	    		int result = doSkillCheckWhileMoving(entity, 0, src, dest, rollData, true, vMineReport);
+	    		fellOver = result > 0;
+	    		triggeredTripwire = minefield;
+	    	}
+    	}
+    	
+    	if (triggeredTripwire != null) {
+    		removeMinefield(triggeredTripwire);
+    	}
+    	
+    	return fellOver;
+    }
+    
+    /**
      * Check for any detonations when an entity enters a minefield, except a vibrabomb.
      *
      * @param entity      - the <code>entity</code> who entered the minefield
@@ -7313,10 +7367,11 @@ public class TWGameManager extends AbstractGameManager {
         // loop through mines in this hex
         for (Minefield mf : game.getMinefields(c)) {
             // VibraBombs and EMP mines are handled differently (proximity-based detection)
-            if ((mf.getType() == Minefield.TYPE_VIBRABOMB) || (mf.getType() == Minefield.TYPE_EMP)) {
+            if ((mf.getType() == Minefield.TYPE_VIBRABOMB) || (mf.getType() == Minefield.TYPE_EMP) ||
+            	(mf.getType() == Minefield.TYPE_TRIPWIRE) || (mf.getType() == Minefield.TYPE_PITFALL)) {
                 continue;
             }
-
+            
             try {
                 // if we are in the water, then the sea mine will only blow up if at
                 // the right depth
@@ -7424,9 +7479,7 @@ public class TWGameManager extends AbstractGameManager {
             // set the target number
             if (target == -1) {
                 target = mf.getTrigger();
-                if (mf.getType() == Minefield.TYPE_ACTIVE) {
-                    target = 9;
-                }
+                
                 if (entity instanceof Infantry) {
                     target += 1;
                 }
@@ -7479,7 +7532,6 @@ public class TWGameManager extends AbstractGameManager {
 
             // apply damage
             trippedMine = true;
-            // explodedMines.add(mf);
             mf.setDetonated(true);
             if (mf.getType() == Minefield.TYPE_INFERNO) {
                 // report hitting an inferno mine

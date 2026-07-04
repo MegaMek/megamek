@@ -1474,7 +1474,6 @@ public class Mounted<T extends EquipmentType> implements Serializable, RoundUpda
         return repairable;
     }
 
-    // PLAYTEST3 set and get autocannon hit
     public void setAutocannonHit(boolean acHit) {
         this.autocannonHit = acHit;
     }

@@ -35,6 +35,7 @@ package megamek.common.rules.core;
  */
 
 import megamek.common.rules.RulesEquipment;
+import megamek.common.units.Mek;
 
 public class CoreRulesEquipment extends RulesEquipment {
     // AMS can shoot twice. Core P.206
@@ -42,4 +43,12 @@ public class CoreRulesEquipment extends RulesEquipment {
     
     // Shields are reset at end of phase, unless you are charging. Core p.195
     public boolean phaseChangeShield() { return true;}
+
+    // HD Gyros take 4 hits to destroy. Core p.98
+    public int hitsToDestroyGyro(int gyroType) {
+        if (gyroType == Mek.GYRO_HEAVY_DUTY) {
+            return 4;
+        }
+        return 2;
+    }
 }

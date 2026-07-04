@@ -34,6 +34,7 @@ package megamek.common.rules.core;
  * affiliated with Microsoft.
  */
 
+import megamek.common.Messages;
 import megamek.common.compute.Compute;
 import megamek.common.rules.RulesCharts;
 import megamek.common.units.Entity;
@@ -67,32 +68,32 @@ public class CoreRulesCharts extends RulesCharts {
         switch (loc) {
             case Mek.LOC_LEFT_LEG:
                 if (quad) {
-                    return "rear left leg";
+                    return Messages.getString("Locations.RearLeftLeg");
                 }
-                return "left leg";
+                return Messages.getString("Locations.LeftLeg");
             case Mek.LOC_RIGHT_LEG:
                 if (quad) {
-                    return "rear right leg";
+                    return Messages.getString("Locations.RearRightLeg");
                 }
-                return "right leg";
+                return Messages.getString("Locations.RightLeg");
             case Mek.LOC_CENTER_LEG:
-                return "center leg";
+                return Messages.getString("Locations.CenterLeg");
             case Mek.LOC_LEFT_ARM:
                 if (quad) {
-                    return "front left leg";
+                    return Messages.getString("Locations.FrontLeftLeg");
                 }
-                return "left arm";
+                return Messages.getString("Locations.LeftArm");
             case Mek.LOC_RIGHT_ARM:
                 if (quad) {
-                    return "front right leg";
+                    return Messages.getString("Locations.FrontRightLeg");
                 }
-                return "right arm";
+                return Messages.getString("Locations.RightArm");
             case Mek.LOC_RIGHT_TORSO:
-                return "right torso";
+                return Messages.getString("Locations.RightTorso");
             case Mek.LOC_CENTER_TORSO:
-                return "center torso";
+                return Messages.getString("Locations.CenterTorso");
             case Mek.LOC_LEFT_TORSO:
-                return "left torso";
+                return Messages.getString("Locations.LeftTorso");
         }
         
         return "";

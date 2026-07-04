@@ -74,4 +74,10 @@ public abstract class RulesPsr {
     
     // Foot Actuator PSR?
     public abstract boolean getFootActuatorPsr();
+
+    // What is the penalty got the gyro
+    public abstract int getGyroModifier(int gyroHits, int gyroType);
+
+    // What is the penalty for leg destroyed
+    public abstract int getLegDestroyedModifier();
 }

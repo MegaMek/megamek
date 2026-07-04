@@ -111,4 +111,18 @@ public class TwRulesPsr extends CoreRulesPsr {
     public int getHipPenalty() {
         return 1;
     }
+
+    // Gyro hit modifiers
+    @Override
+    public int getGyroModifier(int gyroHits, int gyroType) {
+        if (gyroType == Mek.GYRO_HEAVY_DUTY && gyroHits == 1) {
+            return gyroHits;
+        }
+        return 3;
+    }
+
+    // Leg destroyed in +5.
+    @Override
+    public int getLegDestroyedModifier() { return 5; }
+
 }

@@ -63,6 +63,7 @@ import megamek.common.equipment.*;
 import megamek.common.equipment.enums.BombType;
 import megamek.common.equipment.enums.MiscTypeFlag;
 import megamek.common.exceptions.LocationFullException;
+import megamek.common.game.Game;
 import megamek.common.interfaces.ILocationExposureStatus;
 import megamek.common.interfaces.ITechnology;
 import megamek.common.loaders.MtfFile;
@@ -4149,38 +4150,20 @@ public abstract class Mek extends Entity implements Fortifiable, RubbleClearer {
                 roll.addModifier(1, "Mismatched Legs from different Meks");
             }
         }
-
+        
         // gyro hit?
-        if (getBadCriticalSlots(CriticalSlot.TYPE_SYSTEM, Mek.SYSTEM_GYRO,
-              Mek.LOC_CENTER_TORSO) > 0) {
+        int gyroHits = getBadCriticalSlots(CriticalSlot.TYPE_SYSTEM, Mek.SYSTEM_GYRO,
+              Mek.LOC_CENTER_TORSO);
+        if (gyroHits > 0) {
+            String gyroMessage = "";
             if (getGyroType() == Mek.GYRO_HEAVY_DUTY) {
-                if (gameOptions().booleanOption(OptionsConstants.PLAYTEST_3)) {
-                    if (getBadCriticalSlots(CriticalSlot.TYPE_SYSTEM, Mek.SYSTEM_GYRO,
-                          Mek.LOC_CENTER_TORSO) == 1) {
-                        roll.addModifier(1, "HD Gyro damaged once");
-                    } else if (getBadCriticalSlots(CriticalSlot.TYPE_SYSTEM, Mek.SYSTEM_GYRO,
-                          Mek.LOC_CENTER_TORSO) == 2) {
-                        roll.addModifier(2, "HD Gyro damaged twice");
-                    } else if (getBadCriticalSlots(CriticalSlot.TYPE_SYSTEM, Mek.SYSTEM_GYRO,
-                          Mek.LOC_CENTER_TORSO) == 3) {
-                        roll.addModifier(3, "HD Gyro damaged thrice");
-                    }
-                } else {
-                    if (getBadCriticalSlots(CriticalSlot.TYPE_SYSTEM, Mek.SYSTEM_GYRO,
-                          Mek.LOC_CENTER_TORSO) == 1) {
-                        roll.addModifier(1, "HD Gyro damaged once");
-                    } else {
-                        roll.addModifier(3, "HD Gyro damaged twice");
-                    }
-                }
+                // HD Gyro
+                gyroMessage = Messages.getString("PilotingRoll.Gyro.HDGyro");
             } else {
-                if (gameOptions().booleanOption(OptionsConstants.PLAYTEST_2)) {
-                    roll.addModifier(2, "Gyro damaged");
-                } else {
-                    roll.addModifier(3, "Gyro damaged");
-                }
+                gyroMessage = Messages.getString("PilotingRoll.Gyro.Gyro");
             }
-
+            gyroMessage += " " + String.valueOf(gyroHits) + " " + Messages.getString("PilotingRoll.Gyro.Damaged"); 
+            roll.addModifier(Game.rulesManager.getRulesPsr().getGyroModifier(gyroHits, getGyroType()), gyroMessage);
         }
 
         // EI bonus?
@@ -6213,12 +6196,10 @@ public abstract class Mek extends Entity implements Fortifiable, RubbleClearer {
         super.destroyLocation(loc, blownOff);
         // if it's a leg, the entity falls
         if (game != null && locationIsLeg(loc) && canFall()) {
-            if (gameOptions().booleanOption(OptionsConstants.PLAYTEST_2)) {
-                game.addPSR(new PilotingRollData(getId(), TargetRoll.AUTOMATIC_FAIL, 4, "leg destroyed"));
-            } else {
-                game.addPSR(new PilotingRollData(getId(),
-                      TargetRoll.AUTOMATIC_FAIL, 5, "leg destroyed"));
-            }
+            game.addPSR(new PilotingRollData(getId(), TargetRoll.AUTOMATIC_FAIL,
+                  Game.rulesManager.getRulesPsr().getLegDestroyedModifier(), 
+                  "leg " 
+                  + "destroyed"));
         }
     }
 
@@ -6929,14 +6910,8 @@ public abstract class Mek extends Entity implements Fortifiable, RubbleClearer {
         // as being immobilized as well, which makes sense because the 'Mek
         // certainly isn't leaving that hex under its own power anymore.
 
-        int hitsToDestroyGyro = (gyroType == GYRO_HEAVY_DUTY) ? 3 : 2;
-
-        // PLAYTEST3 heavy duty gyro is now 4
-        if (game != null
-              && gameOptions().booleanOption(OptionsConstants.PLAYTEST_3)
-              && gyroType == GYRO_HEAVY_DUTY) {
-            hitsToDestroyGyro = 4;
-        }
+        int hitsToDestroyGyro = Game.rulesManager.getRulesEquipment().hitsToDestroyGyro(gyroType);
+        
         return getGyroHits() >= hitsToDestroyGyro;
     }
 

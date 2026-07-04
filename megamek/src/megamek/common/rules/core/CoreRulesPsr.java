@@ -36,6 +36,7 @@ package megamek.common.rules.core;
  */
 
 import megamek.common.CriticalSlot;
+import megamek.common.Messages;
 import megamek.common.game.Game;
 import megamek.common.rolls.PilotingRollData;
 import megamek.common.rolls.TargetRoll;
@@ -182,12 +183,12 @@ public class CoreRulesPsr extends RulesPsr {
     public void hitActuator(final Game game, Entity entity, int loc, int hitPart) {
         String psrText = Game.rulesManager.getRulesCharts().getLocationName(loc,(entity instanceof QuadMek));
         if (hitPart == Mek.ACTUATOR_FOOT) {
-            psrText += " foot";
+            psrText += Messages.getString("ActuatorHits.Foot");
         }
         if (hitPart == Mek.ACTUATOR_HIP) {
-            psrText += " hip";
+            psrText += Messages.getString("ActuatorHits.Hip");
         } 
-        psrText += " actuator hit";
+        psrText += Messages.getString("ActuatorHits.Actuator");
         
         int psrPenalty = 1;
         
@@ -211,4 +212,15 @@ public class CoreRulesPsr extends RulesPsr {
     public int getHipPenalty() {
         return 1;
     }
+    
+    // Gyro hit modifiers
+    public int getGyroModifier(int gyroHits, int gyroType) {
+        if (gyroType == Mek.GYRO_HEAVY_DUTY && gyroHits <4) {
+            return gyroHits;
+        }
+        return 2;
+    }
+
+    // Leg destroyed in +4. Core p.90
+    public int getLegDestroyedModifier() { return 4; }
 }

@@ -35,9 +35,18 @@ package megamek.common.rules.totalwarfare;
  */
 
 import megamek.common.rules.core.CoreRulesEquipment;
+import megamek.common.units.Mek;
 
 public class TwRulesEquipment extends CoreRulesEquipment {
     // AMS can shoot once
     @Override
     public boolean getAmsMultiShot() { return false;}
+    
+    @Override
+    public int hitsToDestroyGyro(int gyroType) {
+        if (gyroType == Mek.GYRO_HEAVY_DUTY) {
+            return 3;
+        }
+        return 2;
+    }
 }

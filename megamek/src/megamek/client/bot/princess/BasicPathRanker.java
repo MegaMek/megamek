@@ -770,7 +770,8 @@ public class BasicPathRanker extends PathRanker {
         // does not change during one ranking pass. Computing them once per pass instead of per candidate path
         // avoids O(paths x enemies) Battle Value recalculations - each of which, for C3/C3i/Nova units, also
         // rescans the whole network and its ECM state (issue #8443).
-        rankingPassClusterAnchor = highestBvClusterPosition(enemies, game);
+        rankingPassBattleValueCache.clear();
+        rankingPassClusterAnchor = highestBvClusterPosition(enemies);
         rankingPassSpotterPriority = null;
         return super.rankPaths(movePaths, game, maxRange, fallTolerance, enemies, friends);
     }
@@ -786,15 +787,15 @@ public class BasicPathRanker extends PathRanker {
      *
      * @return The cluster anchor position, or {@code null} if there are no deployed on-board enemies
      */
-    private @Nullable Coords highestBvClusterPosition(List<Entity> enemies, Game game) {
+    private @Nullable Coords highestBvClusterPosition(List<Entity> enemies) {
         // Battle Value is expensive to compute (for C3 units it scans the whole network), so look it up in the
-        // per-round cache instead of recalculating per enemy per ranking pass.
+        // per-pass cache instead of recalculating per enemy.
         List<Entity> deployedEnemies = new ArrayList<>();
         Map<Integer, Double> battleValueByEntityId = new HashMap<>();
         for (Entity enemy : enemies) {
             if (enemy.isDeployed() && !enemy.isOffBoard() && (enemy.getPosition() != null)) {
                 deployedEnemies.add(enemy);
-                battleValueByEntityId.put(enemy.getId(), cachedBattleValue(enemy, game));
+                battleValueByEntityId.put(enemy.getId(), cachedBattleValue(enemy));
             }
         }
 
@@ -815,28 +816,22 @@ public class BasicPathRanker extends PathRanker {
         return clusterAnchor;
     }
 
-    /** Battle Values cached for the current round; see {@link #cachedBattleValue(Entity, Game)}. */
-    private final Map<Integer, Double> roundBattleValueCache = new HashMap<>();
-    private int battleValueCacheRound = -1;
+    /** Battle Values cached for the current ranking pass; see {@link #cachedBattleValue(Entity)}. */
+    private final Map<Integer, Double> rankingPassBattleValueCache = new HashMap<>();
 
     /**
-     * Returns the entity's current Battle Value (at least 1), cached per game round. A BV calculation is expensive -
-     * for C3/C3i/Nova units it scans the whole network and recalculates every member - and a unit's BV only changes
-     * when it takes damage, which cannot happen while movement is being ranked. Damage taken later in the round is
-     * picked up when the cache resets on the next round.
+     * Returns the entity's current Battle Value (at least 1), cached for the current ranking pass (the cache is
+     * cleared in {@link #rankPaths(List, Game, int, double, List, List)}). A BV calculation is expensive - for
+     * C3/C3i/Nova units it scans the whole network and recalculates every member - and nothing that changes a BV
+     * (damage, C3/ECM connectivity) can change between the candidate paths of one pass, so each pass computes each
+     * enemy's BV at most once and the next unit's pass sees fresh values.
      *
      * @param entity The unit whose Battle Value is wanted
-     * @param game   The current {@link Game}, used for the round number that invalidates the cache
      *
      * @return The unit's current Battle Value, minimum 1
      */
-    private double cachedBattleValue(Entity entity, Game game) {
-        int currentRound = game.getCurrentRound();
-        if (currentRound != battleValueCacheRound) {
-            roundBattleValueCache.clear();
-            battleValueCacheRound = currentRound;
-        }
-        return roundBattleValueCache.computeIfAbsent(entity.getId(),
+    private double cachedBattleValue(Entity entity) {
+        return rankingPassBattleValueCache.computeIfAbsent(entity.getId(),
               entityId -> Math.max(1.0, entity.calculateBattleValue()));
     }
 
@@ -855,14 +850,14 @@ public class BasicPathRanker extends PathRanker {
      * @return The deployed on-board enemy with the highest {@link ArtilleryTargetingControl#tagTargetValue}, or
      *       {@code null} if there is none
      */
-    private @Nullable Entity highestValueEnemy(List<Entity> enemies, Game game) {
+    private @Nullable Entity highestValueEnemy(List<Entity> enemies) {
         Entity best = null;
         double bestValue = -1.0;
         for (Entity enemy : enemies) {
             if (!enemy.isDeployed() || enemy.isOffBoard() || (enemy.getPosition() == null)) {
                 continue;
             }
-            double value = ArtilleryTargetingControl.tagTargetValue(enemy, cachedBattleValue(enemy, game));
+            double value = ArtilleryTargetingControl.tagTargetValue(enemy, cachedBattleValue(enemy));
             if (value > bestValue) {
                 bestValue = value;
                 best = enemy;
@@ -886,7 +881,7 @@ public class BasicPathRanker extends PathRanker {
      *       when there is no on-board enemy)
      */
     private SpotterPriority determineSpotterPriorityTarget(Entity spotter, List<Entity> enemies, Game game) {
-        Entity highestValue = highestValueEnemy(enemies, game);
+        Entity highestValue = highestValueEnemy(enemies);
         if (highestValue == null) {
             lastSpotterPriorityTarget.remove(spotter.getId());
             return new SpotterPriority(null, "none");
@@ -897,9 +892,9 @@ public class BasicPathRanker extends PathRanker {
             boolean persistedValid = (persisted != null) && persisted.isDeployed() && !persisted.isOffBoard()
                   && (persisted.getPosition() != null) && persisted.isEnemyOf(spotter) && !persisted.isDestroyed();
             if (persistedValid
-                  && (ArtilleryTargetingControl.tagTargetValue(highestValue, cachedBattleValue(highestValue, game))
+                  && (ArtilleryTargetingControl.tagTargetValue(highestValue, cachedBattleValue(highestValue))
                   < (SPOTTER_PRIORITY_SWITCH_MARGIN
-                  * ArtilleryTargetingControl.tagTargetValue(persisted, cachedBattleValue(persisted, game))))) {
+                  * ArtilleryTargetingControl.tagTargetValue(persisted, cachedBattleValue(persisted))))) {
                 lastSpotterPriorityTarget.put(spotter.getId(), persisted.getId());
                 return new SpotterPriority(persisted, "PERSISTED");
             }

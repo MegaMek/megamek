@@ -43,6 +43,7 @@ import megamek.common.RangeType;
 import megamek.common.Report;
 import megamek.common.ToHitData;
 import megamek.common.actions.WeaponAttackAction;
+import megamek.common.annotations.Nullable;
 import megamek.common.battleArmor.BattleArmor;
 import megamek.common.board.Coords;
 import megamek.common.compute.Compute;
@@ -891,8 +892,8 @@ public class CLIATMHandler extends ATMHandler {
             // (DropShip/JumpShip/WarShip/SpaceStation).
             if (entityTarget instanceof BattleArmor battleArmor) {
                 // Each warhead disables one trooper through the End Phase of the following turn.
-                boolean wasDisabled = battleArmor.getImpDisabledTroopers() > 0;
-                int disabledTroopers = battleArmor.applyImpTrooperDisable(impWarheads);
+                boolean wasDisabled = battleArmor.getImprovedMagneticPulseDisabledTroopers() > 0;
+                int disabledTroopers = battleArmor.applyImprovedMagneticPulseTrooperDisable(impWarheads);
                 if (disabledTroopers > 0) {
                     Report disableReport = new Report(3346);
                     disableReport.subject = subjectId;
@@ -900,7 +901,7 @@ public class CLIATMHandler extends ATMHandler {
                     disableReport.add(disabledTroopers);
                     vPhaseReport.addElement(disableReport);
                 }
-                if (!wasDisabled && (battleArmor.getImpDisabledTroopers() > 0)) {
+                if (!wasDisabled && (battleArmor.getImprovedMagneticPulseDisabledTroopers() > 0)) {
                     gameManager.sendMagneticPulseToast(battleArmor, true, true);
                 }
             } else if (entityTarget instanceof ConvInfantry convInfantry) {
@@ -918,11 +919,7 @@ public class CLIATMHandler extends ATMHandler {
                         gameManager.sendMagneticPulseToast(convInfantry, true, true);
                     }
                 }
-            } else if ((entityTarget != null) && !entityTarget.isLargeCraft()
-                  && ((entityTarget instanceof Mek)
-                  || (entityTarget instanceof Tank)
-                  || (entityTarget instanceof ProtoMek)
-                  || (entityTarget instanceof Aero))) {
+            } else if (appliesImprovedMagneticPulseMovementInterference(entityTarget)) {
                 int impModifierBefore = entityTarget.getImpToHitModifier();
                 entityTarget.addIMPHits(impWarheads);
                 if (impWarheads > 0) {
@@ -940,5 +937,25 @@ public class CLIATMHandler extends ATMHandler {
         } else {
             return super.handle(phase, vPhaseReport);
         }
+    }
+
+    /**
+     * Determines whether the target is a unit type that suffers the IMP movement, to-hit, and ECM interference effects.
+     * These apply to {@link Mek}, {@link Tank}, {@link ProtoMek}, and {@link Aero} units, but never to large craft
+     * (DropShips, JumpShips, WarShips, and space stations are immune per the IO IMP rules). BattleArmor and
+     * conventional infantry are handled by their own branches, so they are not considered here.
+     *
+     * @param entityTarget the unit that was hit, may be {@code null}
+     *
+     * @return {@code true} if the IMP interference effects apply to {@code entityTarget}
+     */
+    private boolean appliesImprovedMagneticPulseMovementInterference(@Nullable Entity entityTarget) {
+        if ((entityTarget == null) || entityTarget.isLargeCraft()) {
+            return false;
+        }
+        return (entityTarget instanceof Mek)
+              || (entityTarget instanceof Tank)
+              || (entityTarget instanceof ProtoMek)
+              || (entityTarget instanceof Aero);
     }
 }

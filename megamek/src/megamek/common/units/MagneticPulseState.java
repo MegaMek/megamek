@@ -160,7 +160,7 @@ public class MagneticPulseState implements Serializable {
         return Math.min(isProtoMek ? 3 : 2, activeHits / IMP_STEP);
     }
 
-    /** @return true once at least 3 IMP warheads are affecting the unit (hostile ECM threshold). */
+    /** @return {@code true} once at least 3 IMP warheads are affecting the unit (hostile ECM threshold). */
     public boolean isImpEcmAffected() {
         return getActiveImpHits() >= IMP_STEP;
     }

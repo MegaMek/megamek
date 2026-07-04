@@ -1441,7 +1441,7 @@ public class ConvInfantry extends Infantry {
     }
 
     /**
-     * @return true if this platoon is equipped with cybernetic enhancements of any kind (IO p.84 prosthetic
+     * @return {@code true} if this platoon is equipped with cybernetic enhancements of any kind (IO p.84 prosthetic
      *       enhancements). Improved Magnetic Pulse missiles deal double damage to such units.
      */
     public boolean isCyberneticallyEnhanced() {
@@ -1449,7 +1449,8 @@ public class ConvInfantry extends Infantry {
     }
 
     /**
-     * @return true if this platoon's primary or secondary weapon is an energy weapon. Improved Magnetic Pulse missiles
+     * @return {@code true} if this platoon's primary or secondary weapon is an energy weapon. Improved Magnetic Pulse
+     *       missiles
      *       render such weapons inoperative through the End Phase of the following turn.
      */
     public boolean isUsingEnergyWeapons() {

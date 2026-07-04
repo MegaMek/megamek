@@ -657,7 +657,8 @@ public class TWGameManager extends AbstractGameManager {
         if (entity.getImpToHitModifier() > 0) {
             return true;
         }
-        if ((entity instanceof BattleArmor battleArmor) && (battleArmor.getImpDisabledTroopers() > 0)) {
+        if ((entity instanceof BattleArmor battleArmor) && (battleArmor.getImprovedMagneticPulseDisabledTroopers()
+              > 0)) {
             return true;
         }
         return (entity instanceof ConvInfantry convInfantry) && convInfantry.isEnergyWeaponsDisabled();

@@ -150,8 +150,8 @@ public class BattleArmor extends Infantry {
      * number of rounds the effect lasts. Disabled troopers cannot shoot and each costs the unit 1 Ground/Jump MP, but
      * are not destroyed; they recover when the effect ends.
      */
-    private int impDisabledTroopers = 0;
-    private int impDisabledRounds = 0;
+    private int improvedMagneticPulseDisabledTroopers = 0;
+    private int improvedMagneticPulseDisabledRounds = 0;
 
     /**
      * The cost of this unit. This value should be set when the unit's file is read.
@@ -489,7 +489,7 @@ public class BattleArmor extends Infantry {
         }
 
         // Troopers disabled by Improved Magnetic Pulse missiles each cost 1 Ground MP (IO IMP rules).
-        mp = Math.max(0, mp - impDisabledTroopers);
+        mp = Math.max(0, mp - improvedMagneticPulseDisabledTroopers);
 
         return mp;
     }
@@ -570,7 +570,7 @@ public class BattleArmor extends Infantry {
         }
 
         // Troopers disabled by Improved Magnetic Pulse missiles each cost 1 Jump MP (IO IMP rules).
-        mp = Math.max(0, mp - impDisabledTroopers);
+        mp = Math.max(0, mp - improvedMagneticPulseDisabledTroopers);
 
         return mp;
     }
@@ -875,10 +875,10 @@ public class BattleArmor extends Infantry {
         super.newRound(roundNumber);
 
         // Recover troopers knocked out by Improved Magnetic Pulse missiles once the effect expires.
-        if (impDisabledRounds > 0) {
-            impDisabledRounds--;
-            if (impDisabledRounds == 0) {
-                impDisabledTroopers = 0;
+        if (improvedMagneticPulseDisabledRounds > 0) {
+            improvedMagneticPulseDisabledRounds--;
+            if (improvedMagneticPulseDisabledRounds == 0) {
+                improvedMagneticPulseDisabledTroopers = 0;
             }
         }
 
@@ -911,7 +911,7 @@ public class BattleArmor extends Infantry {
     public int getShootingStrength() {
         // Troopers disabled by Improved Magnetic Pulse missiles cannot contribute to weapons fire,
         // so the cluster-hits column drops to the active trooper count (IO IMP rules).
-        return Math.max(0, troopersShooting - impDisabledTroopers);
+        return Math.max(0, troopersShooting - improvedMagneticPulseDisabledTroopers);
     }
 
     /**
@@ -924,19 +924,20 @@ public class BattleArmor extends Infantry {
      *
      * @return the number of troopers disabled
      */
-    public int applyImpTrooperDisable(int missiles) {
+    public int applyImprovedMagneticPulseTrooperDisable(int missiles) {
         if (missiles <= 0) {
             return 0;
         }
         // Take the higher count so a smaller follow-up salvo cannot let disabled troopers recover early.
-        impDisabledTroopers = Math.max(impDisabledTroopers, Math.min(missiles, troopersShooting));
+        improvedMagneticPulseDisabledTroopers = Math.max(improvedMagneticPulseDisabledTroopers,
+              Math.min(missiles, troopersShooting));
         // 2 rounds so the effect lasts through the End Phase of the turn after the attack.
-        impDisabledRounds = 2;
-        return impDisabledTroopers;
+        improvedMagneticPulseDisabledRounds = 2;
+        return improvedMagneticPulseDisabledTroopers;
     }
 
-    public int getImpDisabledTroopers() {
-        return impDisabledTroopers;
+    public int getImprovedMagneticPulseDisabledTroopers() {
+        return improvedMagneticPulseDisabledTroopers;
     }
 
     public void setCost(int inC) {

@@ -61,9 +61,9 @@ public class LRMMagneticPulseHandler extends LRMHandler {
 
     private boolean effectApplied = false;
 
-    public LRMMagneticPulseHandler(ToHitData t, WeaponAttackAction w, Game g, TWGameManager m)
-          throws EntityLoadingException {
-        super(t, w, g, m);
+    public LRMMagneticPulseHandler(ToHitData toHit, WeaponAttackAction weaponAttackAction, Game game,
+          TWGameManager gameManager) throws EntityLoadingException {
+        super(toHit, weaponAttackAction, game, gameManager);
     }
 
     @Override

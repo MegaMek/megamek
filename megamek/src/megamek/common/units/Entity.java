@@ -14269,7 +14269,7 @@ public abstract class Entity extends TurnOrdered
     }
 
     /**
-     * @return true if this unit is currently treated as standing inside a hostile standard ECM field because of
+     * @return {@code true} if this unit is currently treated as standing inside a hostile standard ECM field because of
      *       Improved Magnetic Pulse (iATM IMP) missile hits (IO IMP rules). Becomes true once at least 3 IMP warheads
      *       are affecting the unit (the same threshold as the +1 to-hit effect). Applies to fusion and non-fusion units
      *       alike.

@@ -1842,7 +1842,7 @@ public class FiringDisplay extends AttackPhaseDisplay implements ListSelectionLi
             WeaponMounted selectedWeapon = clientgui.getUnitDisplay().wPan.getSelectedWeapon();
             // A Directional Torso Mount arc (BMM p.83) is declared independently of the twist, so preserve it:
             // clearAttacks() would otherwise drop the mount facing action while rebuilding the attacks.
-            List<DirectionalMountFacingAction> mountFacings = pendingDirectionalMountFacings(-1);
+            List<DirectionalMountFacingAction> mountFacings = pendingDirectionalMountFacings(NO_EXCLUDED_LOCATION);
             clearAttacks();
             addAttack(new TorsoTwistAction(currentEntity, direction));
             currentEntity().setSecondaryFacing(direction);

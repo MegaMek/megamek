@@ -87,6 +87,7 @@ import megamek.common.board.Board;
 import megamek.common.board.BoardLocation;
 import megamek.common.board.Coords;
 import megamek.common.comparators.WeaponComparatorDamage;
+import megamek.common.compute.TurretFacing;
 import megamek.common.equipment.AmmoType;
 import megamek.common.equipment.EquipmentFlag;
 import megamek.common.equipment.EquipmentMode;
@@ -1854,9 +1855,7 @@ public class MapMenu extends JPopupMenu {
         menu.setText("Turret Rotation");
         if (myEntity instanceof Mek mek) {
             for (Mounted<?> mount : myEntity.getMisc()) {
-                if (mount.getType().hasFlag(MiscType.F_SHOULDER_TURRET) ||
-                      mount.getType().hasFlag(MiscType.F_HEAD_TURRET) ||
-                      mount.getType().hasFlag(MiscType.F_QUAD_TURRET)) {
+                if (TurretFacing.isMekTurretItem(mount)) {
                     menu.add(createRotateTurretJMenuItem(mek, mount));
                 }
             }
@@ -1874,7 +1873,8 @@ public class MapMenu extends JPopupMenu {
     }
 
     private JMenuItem createRotateDirectionalMountJMenuItem(final Mek mek, final WeaponMounted weapon) {
-        String label = "Rotate Directional Mount (" + mek.getLocationAbbr(weapon.getLocation()) + ")";
+        String label = Messages.getString("MapMenu.rotateDirectionalMount",
+              mek.getLocationAbbr(weapon.getLocation()));
         JMenuItem item = new JMenuItem(label);
         // Unavailable when destroyed by damage or already refaced in an earlier phase this turn (once per turn).
         item.setEnabled(!weapon.isDirectionalMountLocked() && !weapon.isDirectionalMountAlreadyFlipped());

@@ -64,9 +64,11 @@ import java.util.Set;
 import java.util.Vector;
 import java.util.concurrent.ConcurrentHashMap;
 import javax.imageio.ImageIO;
+import javax.swing.JCheckBox;
 import javax.swing.JCheckBoxMenuItem;
 import javax.swing.JDialog;
 import javax.swing.JMenu;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.SwingUtilities;
 
@@ -79,6 +81,7 @@ import megamek.client.ui.Messages;
 import megamek.client.ui.clientGUI.AbstractClientGUI;
 import megamek.client.ui.clientGUI.ClientGUI;
 import megamek.client.ui.clientGUI.GUIPreferences;
+import megamek.client.ui.clientGUI.GifRecordingMode;
 import megamek.client.ui.clientGUI.IClientGUI;
 import megamek.client.ui.clientGUI.boardview.BoardView;
 import megamek.client.ui.util.ScalingPopup;
@@ -195,6 +198,12 @@ public final class MinimapPanel extends JPanel implements IPreferenceChangeListe
      * the same file at once and then race when saving at game end. Only the first panel per game owns the GIF.
      */
     private static final Set<String> GIF_WRITING_GAMES = ConcurrentHashMap.newKeySet();
+
+    /**
+     * Per-game consent for GIF recording when the preference is {@link GifRecordingMode#ASK}, keyed by game UUID
+     * so the player is asked only once even in multi-board games with several minimap panels.
+     */
+    private static final Map<String, Boolean> GIF_RECORDING_DECISIONS = new ConcurrentHashMap<>();
 
     private GifWriterThread gifWriterThread;
     private volatile boolean ownsSummaryGif = false;
@@ -331,11 +340,14 @@ public final class MinimapPanel extends JPanel implements IPreferenceChangeListe
 
             @Override
             public void gamePhaseChange(GamePhaseChangeEvent e) {
-                if ((GUIP.getGameSummaryMinimap() || GUIP.getGifGameSummaryMinimap())
-                      && (e.getOldPhase().isDeployment() || e.getOldPhase().isMovement()
+                boolean phaseProducesSummaryFrame = e.getOldPhase().isDeployment() || e.getOldPhase().isMovement()
                       || e.getOldPhase().isTargeting() || e.getOldPhase().isPremovement()
                       || e.getOldPhase().isPreFiring() || e.getOldPhase().isFiring()
-                      || e.getOldPhase().isPhysical())) {
+                      || e.getOldPhase().isPhysical();
+                // GIF consent is established before any rendering happens, so a game the player declined (or a
+                // NEVER preference) does no summary work at all - the recording costs CPU for the whole game.
+                boolean recordGifFrame = phaseProducesSummaryFrame && shouldRecordGifForThisGame();
+                if (phaseProducesSummaryFrame && (GUIP.getGameSummaryMinimap() || recordGifFrame)) {
 
                     File dir = new File(Configuration.gameSummaryImagesMMDir(), game.getUUIDString());
                     if (!dir.exists()) {
@@ -351,7 +363,7 @@ public final class MinimapPanel extends JPanel implements IPreferenceChangeListe
                         if (GUIP.getGameSummaryMinimap()) {
                             ImageIO.write(image, "png", imgFile);
                         }
-                        if (GUIP.getGifGameSummaryMinimap()) {
+                        if (recordGifFrame) {
                             // Only one panel per game writes the GIF. In a multi-board game every board's panel
                             // reaches this code, but only the owner (first to claim the game UUID) writes; the others
                             // skip it so they don't share the file and race when saving at game end. Ownership is
@@ -374,15 +386,18 @@ public final class MinimapPanel extends JPanel implements IPreferenceChangeListe
                     }
                 }
 
-                if (e.getNewPhase().isVictory() && ownsSummaryGif && (gifWriterThread != null)) {
-                    try {
-                        if (gifWriterThread.isAlive()) {
-                            gifWriterThread.stopThread();
+                if (e.getNewPhase().isVictory()) {
+                    GIF_RECORDING_DECISIONS.remove(game.getUUIDString());
+                    if (ownsSummaryGif && (gifWriterThread != null)) {
+                        try {
+                            if (gifWriterThread.isAlive()) {
+                                gifWriterThread.stopThread();
+                            }
+                        } catch (Exception ex) {
+                            logger.error(ex, "Error closing gif writer.");
+                        } finally {
+                            releaseSummaryGifOwnership();
                         }
-                    } catch (Exception ex) {
-                        logger.error(ex, "Error closing gif writer.");
-                    } finally {
-                        releaseSummaryGifOwnership();
                     }
                 }
 
@@ -444,6 +459,7 @@ public final class MinimapPanel extends JPanel implements IPreferenceChangeListe
         }
         if (client != null) {
             client.addCloseClientListener(() -> {
+                GIF_RECORDING_DECISIONS.remove(game.getUUIDString());
                 if (ownsSummaryGif && (gifWriterThread != null)) {
                     if (gifWriterThread.isAlive()) {
                         gifWriterThread.stopThread(true);
@@ -464,6 +480,44 @@ public final class MinimapPanel extends JPanel implements IPreferenceChangeListe
             GIF_WRITING_GAMES.remove(game.getUUIDString());
             ownsSummaryGif = false;
         }
+    }
+
+    /**
+     * Returns {@code true} when the combat-summary GIF should be recorded for this game. With
+     * {@link GifRecordingMode#ASK} (the default), the player is asked once per game, the first time a frame would
+     * be recorded; the answer holds for the rest of the game.
+     *
+     * @return {@code true} if this game should be recorded
+     */
+    private boolean shouldRecordGifForThisGame() {
+        return switch (GUIP.getGifGameSummaryRecording()) {
+            case ALWAYS -> true;
+            case NEVER -> false;
+            case ASK -> GIF_RECORDING_DECISIONS.computeIfAbsent(game.getUUIDString(),
+                  gameId -> askWhetherToRecordGif());
+        };
+    }
+
+    /**
+     * Asks the player whether this game should be recorded as a combat-summary GIF. Checking "remember my choice"
+     * persists the answer as {@link GifRecordingMode#ALWAYS} or {@link GifRecordingMode#NEVER} so the dialog never
+     * shows again.
+     *
+     * @return {@code true} if the player wants this game recorded
+     */
+    private boolean askWhetherToRecordGif() {
+        JCheckBox rememberChoice = new JCheckBox(Messages.getString("MinimapPanel.RecordGifDialog.remember"));
+        Object[] dialogContent = { Messages.getString("MinimapPanel.RecordGifDialog.message"), rememberChoice };
+        int response = JOptionPane.showConfirmDialog(this,
+              dialogContent,
+              Messages.getString("MinimapPanel.RecordGifDialog.title"),
+              JOptionPane.YES_NO_OPTION,
+              JOptionPane.QUESTION_MESSAGE);
+        boolean recordThisGame = (response == JOptionPane.YES_OPTION);
+        if (rememberChoice.isSelected()) {
+            GUIP.setGifGameSummaryRecording(recordThisGame ? GifRecordingMode.ALWAYS : GifRecordingMode.NEVER);
+        }
+        return recordThisGame;
     }
 
     /**

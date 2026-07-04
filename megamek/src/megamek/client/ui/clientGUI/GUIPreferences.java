@@ -275,6 +275,7 @@ public class GUIPreferences extends PreferenceStoreProxy {
     public static final String GAME_SUMMARY_BOARD_VIEW = "GameSummaryBoardView";
     public static final String GAME_SUMMARY_MINIMAP = "GameSummaryMinimap";
     public static final String GIF_GAME_SUMMARY_MINIMAP = "GifGameSummaryMinimap";
+    public static final String GIF_GAME_SUMMARY_RECORDING = "GifGameSummaryRecording";
     public static final String SHOW_UNIT_DISPLAY_NAMES_ON_MINIMAP = "ShowUnitDisplayNamesOnMinimap";
     public static final String ENTITY_OWNER_LABEL_COLOR = "EntityOwnerLabelColor";
     public static final String UNIT_LABEL_BORDER = "EntityOwnerLabelColor";
@@ -823,7 +824,15 @@ public class GUIPreferences extends PreferenceStoreProxy {
         store.setDefault(MINI_MAP_SHOW_FACING_ARROW, true);
         store.setDefault(MINI_MAP_PAINT_BORDERS, true);
         store.setDefault(MINI_MAP_MOVE_PATH_PERSISTENCE, 2);
-        store.setDefault(GIF_GAME_SUMMARY_MINIMAP, true);
+        store.setDefault(GIF_GAME_SUMMARY_RECORDING, GifRecordingMode.ASK.name());
+        // Migrate the pre-0.50.11 boolean GIF setting: an explicit player choice carries over (true -> ALWAYS,
+        // false -> NEVER); players who never touched it get the new ask-at-game-start default.
+        if (store.hasProperty(GIF_GAME_SUMMARY_MINIMAP) && !store.hasProperty(GIF_GAME_SUMMARY_RECORDING)) {
+            store.setValue(GIF_GAME_SUMMARY_RECORDING,
+                  store.getBoolean(GIF_GAME_SUMMARY_MINIMAP)
+                        ? GifRecordingMode.ALWAYS.name()
+                        : GifRecordingMode.NEVER.name());
+        }
         store.setDefault(GAME_SUMMARY_MINIMAP, false);
         store.setDefault(SHOW_UNIT_DISPLAY_NAMES_ON_MINIMAP, false);
         store.setDefault(MOVE_DISPLAY_TAB_DURING_PHASES, true);
@@ -1225,8 +1234,20 @@ public class GUIPreferences extends PreferenceStoreProxy {
         return store.getBoolean(GAME_SUMMARY_MINIMAP);
     }
 
+    /**
+     * @return How the combat-summary GIF is recorded: always, ask at game start (the default), or never.
+     */
+    public GifRecordingMode getGifGameSummaryRecording() {
+        return GifRecordingMode.parse(store.getString(GIF_GAME_SUMMARY_RECORDING));
+    }
+
+    /**
+     * @deprecated since 0.50.11, use {@link #getGifGameSummaryRecording()}; returns {@code true} only for
+     *       {@link GifRecordingMode#ALWAYS}.
+     */
+    @Deprecated(since = "0.50.11", forRemoval = true)
     public boolean getGifGameSummaryMinimap() {
-        return store.getBoolean(GIF_GAME_SUMMARY_MINIMAP);
+        return getGifGameSummaryRecording() == GifRecordingMode.ALWAYS;
     }
 
     public boolean showUnitDisplayNamesOnMinimap() {
@@ -2140,8 +2161,17 @@ public class GUIPreferences extends PreferenceStoreProxy {
         store.setValue(GAME_SUMMARY_MINIMAP, state);
     }
 
+    public void setGifGameSummaryRecording(GifRecordingMode mode) {
+        store.setValue(GIF_GAME_SUMMARY_RECORDING, mode.name());
+    }
+
+    /**
+     * @deprecated since 0.50.11, use {@link #setGifGameSummaryRecording(GifRecordingMode)}; maps {@code true} to
+     *       {@link GifRecordingMode#ALWAYS} and {@code false} to {@link GifRecordingMode#NEVER}.
+     */
+    @Deprecated(since = "0.50.11", forRemoval = true)
     public void setGifGameSummaryMinimap(boolean state) {
-        store.setValue(GIF_GAME_SUMMARY_MINIMAP, state);
+        setGifGameSummaryRecording(state ? GifRecordingMode.ALWAYS : GifRecordingMode.NEVER);
     }
 
     public void setShowUnitDisplayNamesOnMinimap(boolean state) {

@@ -72,6 +72,7 @@ import megamek.client.ui.buttons.MMToggleButton;
 import megamek.client.ui.clientGUI.ButtonOrderPreferences;
 import megamek.client.ui.clientGUI.ClientGUI;
 import megamek.client.ui.clientGUI.GUIPreferences;
+import megamek.client.ui.clientGUI.GifRecordingMode;
 import megamek.client.ui.clientGUI.UITheme;
 import megamek.client.ui.clientGUI.UnitDisplayOrderPreferences;
 import megamek.client.ui.comboBoxes.MMComboBox;
@@ -393,8 +394,10 @@ public class CommonSettingsDialog extends AbstractButtonDialog
           new JCheckBox(Messages.getString("CommonSettingsDialog.gameSummaryBV.name"));
     private final JCheckBox gameSummaryMM =
           new JCheckBox(Messages.getString("CommonSettingsDialog.gameSummaryMM.name"));
-    private final JCheckBox gifGameSummaryMM = new JCheckBox(Messages.getString(
-          "CommonSettingsDialog.gifGameSummaryMM.name"));
+    private final JComboBox<String> gifGameSummaryRecording = new JComboBox<>(new String[] {
+          Messages.getString("CommonSettingsDialog.gifGameSummaryRecording.always"),
+          Messages.getString("CommonSettingsDialog.gifGameSummaryRecording.ask"),
+          Messages.getString("CommonSettingsDialog.gifGameSummaryRecording.never") });
     private final JCheckBox showUnitDisplayNamesOnMinimap = new JCheckBox(Messages.getString(
           "CommonSettingsDialog.showUnitDisplayNamesOnMinimap.name"));
     private JComboBox<String> skinFiles;
@@ -1913,9 +1916,18 @@ public class CommonSettingsDialog extends AbstractButtonDialog
         comps.add(checkboxEntry(gameSummaryMM,
               Messages.getString("CommonSettingsDialog.gameSummaryMM.tooltip",
                     Configuration.gameSummaryImagesMMDir())));
-        comps.add(checkboxEntry(gifGameSummaryMM,
-              Messages.getString("CommonSettingsDialog.gifGameSummaryMM.tooltip",
-                    Configuration.gameSummaryImagesMMDir())));
+        JLabel gifGameSummaryRecordingLabel =
+              new JLabel(Messages.getString("CommonSettingsDialog.gifGameSummaryRecording.name"));
+        String gifRecordingTooltip = Messages.getString("CommonSettingsDialog.gifGameSummaryRecording.tooltip",
+              Configuration.gameSummaryImagesMMDir());
+        gifGameSummaryRecordingLabel.setToolTipText(gifRecordingTooltip);
+        gifGameSummaryRecording.setToolTipText(gifRecordingTooltip);
+        gifGameSummaryRecording.setMaximumSize(new Dimension(250, 25));
+        List<Component> gifGameSummaryRow = new ArrayList<>();
+        gifGameSummaryRow.add(gifGameSummaryRecordingLabel);
+        gifGameSummaryRow.add(Box.createHorizontalStrut(15));
+        gifGameSummaryRow.add(gifGameSummaryRecording);
+        comps.add(gifGameSummaryRow);
         comps.add(checkboxEntry(drawFacingArrowsOnMiniMap, null));
         comps.add(checkboxEntry(drawSensorRangeOnMiniMap, null));
         comps.add(checkboxEntry(paintBordersOnMiniMap, null));
@@ -2373,7 +2385,7 @@ public class CommonSettingsDialog extends AbstractButtonDialog
 
             gameSummaryBV.setSelected(GUIP.getGameSummaryBoardView());
             gameSummaryMM.setSelected(GUIP.getGameSummaryMinimap());
-            gifGameSummaryMM.setSelected(GUIP.getGifGameSummaryMinimap());
+            gifGameSummaryRecording.setSelectedIndex(GUIP.getGifGameSummaryRecording().ordinal());
             skinFiles.removeAllItems();
             ArrayList<String> xmlFiles = new ArrayList<>(filteredFiles(Configuration.skinsDir(), ".xml"));
 
@@ -2840,7 +2852,7 @@ public class CommonSettingsDialog extends AbstractButtonDialog
         GUIP.setAutoSelectNextUnit(useAutoSelectNext.isSelected());
         GUIP.setGameSummaryBoardView(gameSummaryBV.isSelected());
         GUIP.setGameSummaryMinimap(gameSummaryMM.isSelected());
-        GUIP.setGifGameSummaryMinimap(gifGameSummaryMM.isSelected());
+        GUIP.setGifGameSummaryRecording(GifRecordingMode.values()[gifGameSummaryRecording.getSelectedIndex()]);
         GUIP.setShowUnitDisplayNamesOnMinimap(showUnitDisplayNamesOnMinimap.isSelected());
         UITheme newUITheme = (UITheme) uiThemes.getSelectedItem();
         String oldUITheme = GUIP.getUITheme();

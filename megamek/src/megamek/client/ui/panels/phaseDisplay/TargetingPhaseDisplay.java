@@ -1088,7 +1088,7 @@ public class TargetingPhaseDisplay extends AttackPhaseDisplay implements ListSel
      */
     private void applyTorsoTwist(int direction) {
         WeaponMounted selectedWeapon = clientgui.getUnitDisplay().wPan.getSelectedWeapon();
-        List<DirectionalMountFacingAction> mountFacings = pendingDirectionalMountFacings(-1);
+        List<DirectionalMountFacingAction> mountFacings = pendingDirectionalMountFacings(NO_EXCLUDED_LOCATION);
         clearAttacks();
         addAttack(new TorsoTwistAction(currentEntity, direction));
         currentEntity().setSecondaryFacing(direction);

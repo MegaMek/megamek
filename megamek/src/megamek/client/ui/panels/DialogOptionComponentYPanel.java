@@ -55,6 +55,7 @@ import javax.swing.JComboBox;
 import javax.swing.JLabel;
 import javax.swing.JTextField;
 
+import megamek.client.ui.Messages;
 import megamek.client.ui.clientGUI.DialogOptionListener;
 import megamek.client.ui.util.UIUtil;
 import megamek.client.ui.util.UIUtil.FixedYPanel;
@@ -85,10 +86,12 @@ public class DialogOptionComponentYPanel extends FixedYPanel
     private boolean torsoMultiSelect = false;
     /** Torso location abbreviation -&gt; its checkbox, for the Directional Torso Mount multi-select. */
     private final Map<String, JCheckBox> torsoCheckboxes = new LinkedHashMap<>();
-    /** The torso locations (abbreviation, tooltip name) offered by the Directional Torso Mount multi-select. */
-    private static final String[][] TORSO_MOUNT_LOCATIONS = {
-          { "H", "Head" }, { "LT", "Left Torso" }, { "RT", "Right Torso" }, { "CT", "Center Torso" }
-    };
+    /**
+     * The torso location codes offered by the Directional Torso Mount multi-select. These are the serialized tokens of
+     * the quirk's location string (e.g. {@code "LT RT"}), which {@code Mounted} parses back - not display text. The
+     * user-facing location names come from the {@code DialogOptionComponentYPanel.torsoMount.*} message keys.
+     */
+    private static final String[] TORSO_MOUNT_LOCATION_CODES = { "H", "LT", "RT", "CT" };
 
     public DialogOptionComponentYPanel(DialogOptionListener parent, IOption option, boolean editable) {
         this(parent, option, editable, false);
@@ -179,8 +182,9 @@ public class DialogOptionComponentYPanel extends FixedYPanel
      *       multi-select of torso locations rather than the default text field
      */
     private static boolean isTorsoMountQuirk(IOption option) {
-        return option.getName().equals(OptionsConstants.QUIRK_POS_DIRECTIONAL_TORSO_MOUNT)
-              || option.getName().equals(OptionsConstants.QUIRK_POS_DIRECTIONAL_TORSO_MOUNT_360);
+        String optionName = option.getName();
+        return optionName.equals(OptionsConstants.QUIRK_POS_DIRECTIONAL_TORSO_MOUNT)
+              || optionName.equals(OptionsConstants.QUIRK_POS_DIRECTIONAL_TORSO_MOUNT_360);
     }
 
     /**
@@ -197,12 +201,12 @@ public class DialogOptionComponentYPanel extends FixedYPanel
         add(Box.createHorizontalStrut(UIUtil.scaleForGUI(10)));
         add(label);
         Set<String> selected = parseTorsoValue(option.stringValue());
-        for (String[] torso : TORSO_MOUNT_LOCATIONS) {
-            JCheckBox box = new JCheckBox(torso[0], selected.contains(torso[0]));
-            box.setToolTipText(torso[1]);
+        for (String locationCode : TORSO_MOUNT_LOCATION_CODES) {
+            JCheckBox box = new JCheckBox(locationCode, selected.contains(locationCode));
+            box.setToolTipText(Messages.getString("DialogOptionComponentYPanel.torsoMount." + locationCode));
             box.setEnabled(editable);
             box.addItemListener(this);
-            torsoCheckboxes.put(torso[0], box);
+            torsoCheckboxes.put(locationCode, box);
             add(box);
         }
     }

@@ -281,6 +281,14 @@ public class FiringPlan extends ArrayList<WeaponFireInfo> implements Comparable<
         return directionalMountFacings;
     }
 
+    /**
+     * Sets the Directional Torso Mount arc changes this plan declares. The plan only ever reads the given map (and
+     * copies it in {@link #clone()}), so callers may pass an immutable map such as {@link Map#of()} when there are no
+     * mounts to orient.
+     *
+     * @param directionalMountFacings a map of equipment number to chosen rear ({@code true}) / front ({@code false})
+     *                                arc; never mutated by the plan
+     */
     public void setDirectionalMountFacings(Map<Integer, Boolean> directionalMountFacings) {
         this.directionalMountFacings = directionalMountFacings;
     }

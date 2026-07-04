@@ -49,6 +49,7 @@ import megamek.common.equipment.WeaponType;
 import megamek.common.units.Aero;
 import megamek.common.units.Entity;
 import megamek.common.units.Jumpship;
+import megamek.common.units.Mek;
 import megamek.common.units.ProtoMek;
 import megamek.common.units.QuadMek;
 import megamek.common.units.Tank;
@@ -197,9 +198,9 @@ public class WeaponQuirks extends AbstractOptions {
               qName.equals(OptionsConstants.QUIRK_WEAPON_POS_DIRECT_TORSO_MOUNT)
                     || qName.equals(OptionsConstants.QUIRK_WEAPON_POS_DIRECT_TORSO_MOUNT_QUAD);
         if (isDirectionalTorsoMountQuirk) {
-            // A Directional Torso Mount is a Mek-only feature (BMM p.83).
-            if ((en instanceof Aero) || (en instanceof BattleArmor) || (en instanceof Tank)
-                  || (en instanceof ProtoMek)) {
+            // A Directional Torso Mount is a Mek-only feature (BMM p.83), so exclude every non-Mek unit type
+            // rather than listing the known offenders.
+            if (!(en instanceof Mek)) {
                 return true;
             }
             // No weapon with location placement restrictions (such as a Heavy Gauss rifle) may be

@@ -34,6 +34,7 @@ package megamek.common.compute;
 
 import java.util.List;
 
+import megamek.common.equipment.MiscType;
 import megamek.common.equipment.Mounted;
 import megamek.common.units.Entity;
 import megamek.common.units.Tank;
@@ -90,6 +91,17 @@ public final class TurretFacing {
               || isInTankDualTurret(entity, weapon)
               || weapon.isMekTurretMounted()
               || weapon.hasDirectionalTorsoMount();
+    }
+
+    /**
+     * @param mounted the equipment item to test
+     *
+     * @return {@code true} if the item is a Mek turret (a shoulder, head or quad turret)
+     */
+    public static boolean isMekTurretItem(Mounted<?> mounted) {
+        return mounted.getType().hasFlag(MiscType.F_SHOULDER_TURRET)
+              || mounted.getType().hasFlag(MiscType.F_HEAD_TURRET)
+              || mounted.getType().hasFlag(MiscType.F_QUAD_TURRET);
     }
 
     /**

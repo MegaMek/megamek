@@ -42,6 +42,7 @@ import megamek.common.actions.DirectionalMountFacingAction;
 import megamek.common.actions.EntityAction;
 import megamek.common.actions.FlipArmsAction;
 import megamek.common.actions.TorsoTwistAction;
+import megamek.common.annotations.Nullable;
 import megamek.common.compute.TurretFacing;
 import megamek.common.equipment.MiscType;
 import megamek.common.equipment.Mounted;
@@ -55,6 +56,12 @@ import megamek.logging.MMLogger;
 
 public abstract class AttackPhaseDisplay extends ActionPhaseDisplay {
     private static final MMLogger LOGGER = MMLogger.create(AttackPhaseDisplay.class);
+
+    /**
+     * Passed to {@link #pendingDirectionalMountFacings(int)} as the excluded location when the caller wants the pending
+     * mount facing actions of every location preserved.
+     */
+    protected static final int NO_EXCLUDED_LOCATION = -1;
 
     // client list of attacks user has input
     protected EntityActionLog attacks;
@@ -253,7 +260,8 @@ public abstract class AttackPhaseDisplay extends ActionPhaseDisplay {
      * {@link #clearAttacks()} that is only meant to rebuild the weapon attacks (a torso twist or another mount flip).
      * The mount arc is a persistent, separately-declared state, not a weapon attack, so it must survive the clear.
      *
-     * @param excludedLocation a location to omit because the caller re-declares it itself, or -1 to keep all
+     * @param excludedLocation a location to omit because the caller re-declares it itself, or
+     *                         {@link #NO_EXCLUDED_LOCATION} to keep all
      *
      * @return the pending mount facing actions to preserve
      */
@@ -366,11 +374,11 @@ public abstract class AttackPhaseDisplay extends ActionPhaseDisplay {
      *
      * @return the turret {@link MiscType} equipment item in the location (shoulder/head/quad turret), or {@code null}
      */
-    private Mounted<?> findMekTurretItem(Mek mek, int location) {
+    private @Nullable Mounted<?> findMekTurretItem(Mek mek, int location) {
         for (Mounted<?> miscMounted : mek.getMisc()) {
-            if ((miscMounted.getLocation() == location) && (miscMounted.getType().hasFlag(MiscType.F_SHOULDER_TURRET)
-                  || miscMounted.getType().hasFlag(MiscType.F_HEAD_TURRET)
-                  || miscMounted.getType().hasFlag(MiscType.F_QUAD_TURRET))) {
+            boolean isInRequestedLocation = miscMounted.getLocation() == location;
+            boolean isMekTurret = TurretFacing.isMekTurretItem(miscMounted);
+            if (isInRequestedLocation && isMekTurret) {
                 return miscMounted;
             }
         }

@@ -6305,6 +6305,12 @@ public class TWGameManager extends AbstractGameManager {
                                     entity.setSecondaryFacing(tta.getFacing());
                                 }
                             }
+                            case DirectionalMountFacingAction mountFacingAction -> {
+                                if (entity instanceof Mek directionalMek) {
+                                    DirectionalTorsoMountRules.applyMountFacing(directionalMek,
+                                          mountFacingAction.getWeaponNumber(), mountFacingAction.getFacing());
+                                }
+                            }
                             case FlipArmsAction faa -> entity.setArmsFlipped(faa.getIsFlipped());
                             case SearchlightAttackAction saa -> {
                                 boolean hexesAdded = saa.setHexesIlluminated(game);
@@ -10447,6 +10453,12 @@ public class TWGameManager extends AbstractGameManager {
                     if (entity.canChangeSecondaryFacing()) {
                         entity.setSecondaryFacing(tta.getFacing());
                         entity.postProcessFacingChange();
+                    }
+                }
+                case DirectionalMountFacingAction mountFacingAction -> {
+                    if (entity instanceof Mek directionalMek) {
+                        DirectionalTorsoMountRules.applyMountFacing(directionalMek,
+                              mountFacingAction.getWeaponNumber(), mountFacingAction.getFacing());
                     }
                 }
                 case FlipArmsAction faa -> entity.setArmsFlipped(faa.getIsFlipped());
@@ -26785,7 +26797,12 @@ public class TWGameManager extends AbstractGameManager {
         if (m == null) {
             return;
         }
-        m.setFacing(facing);
+        // A Directional Torso Mount (BMM p.83) stores its facing separately and validates legal facings by mount type.
+        if (m.hasDirectionalTorsoMount() && (e instanceof Mek directionalMek)) {
+            DirectionalTorsoMountRules.applyMountFacing(directionalMek, equipId, facing);
+        } else {
+            m.setFacing(facing);
+        }
     }
 
     /**

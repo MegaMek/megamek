@@ -16072,6 +16072,13 @@ public abstract class Entity extends TurnOrdered
                             LOGGER.info("Legacy obsolete quirk found for {} {} - converting to 'unknown' marker",
                                   getChassis(), getModel());
                             option.setValue("unknown");
+                        } else if (OptionsConstants.QUIRK_POS_DIRECTIONAL_TORSO_MOUNT.equals(quirkEntry.getQuirk())) {
+                            // Legacy bare form (pre-torso-set): the boolean quirk applied the 2-point Directional
+                            // Torso Mount to every eligible torso weapon (BMM p.83), so default to all three torsos.
+                            // Units affected include the Barghest, Blitzkrieg and Omni-Marauder.
+                            LOGGER.info("[DirTorsoMount] Legacy directional_torso_mount quirk found for {} {}"
+                                  + " - defaulting to all torso locations (LT RT CT)", getChassis(), getModel());
+                            option.setValue("LT RT CT");
                         } else {
                             option.setValue("");
                         }

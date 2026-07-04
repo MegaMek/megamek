@@ -507,7 +507,9 @@ public final class MinimapPanel extends JPanel implements IPreferenceChangeListe
      */
     private boolean askWhetherToRecordGif() {
         JCheckBox rememberChoice = new JCheckBox(Messages.getString("MinimapPanel.RecordGifDialog.remember"));
-        Object[] dialogContent = { Messages.getString("MinimapPanel.RecordGifDialog.message"), rememberChoice };
+        Object[] dialogContent = { Messages.getString("MinimapPanel.RecordGifDialog.message"),
+                                   Messages.getString("MinimapPanel.RecordGifDialog.warning"),
+                                   rememberChoice };
         int response = JOptionPane.showConfirmDialog(this,
               dialogContent,
               Messages.getString("MinimapPanel.RecordGifDialog.title"),

@@ -7283,6 +7283,80 @@ public class TWGameManager extends AbstractGameManager {
         }
         return null;
     }
+    
+    /**
+     * Handles an entity stepping on a pit trap.
+     * Returns true if the entity entering the hex fell over
+     * Assumes that src != dest
+     */
+    public boolean handlePitfall(Entity entity, Coords src, Coords dest, Vector<Report> vMineReport) {
+    	boolean fellOver = false;
+    	
+    	Minefield triggeredPittrap = null;
+    	
+    	for (Minefield minefield : getGame().getMinefields(dest)) {
+    		if (minefield.getType() != Minefield.TYPE_PITFALL) {
+    			continue;
+    		}
+    		
+    		// meks are the only things that can be affected by pitfalls for now
+	    	if (entity instanceof Mek) {
+	    		
+	            Report stepReport = new Report(2581);
+	            stepReport.subject = entity.getId();
+	            stepReport.add(entity.getShortName(), true);
+	            stepReport.add(dest.getBoardNum(), true);
+	            vMineReport.add(stepReport);
+	            
+	            TargetRoll rollTarget = new TargetRoll(4, "pitfall");
+	            
+	            if (entity.hasAbility(OptionsConstants.MISC_EAGLE_EYES)) {
+	            	rollTarget.addModifier(+2, "eagle eyes");               
+	    		}
+
+	            int roll = Compute.d6(2);
+	            
+	            fellOver = roll >= rollTarget.getValue();
+	    		
+	            Report activationReport = new Report(2582);
+	            activationReport.subject = entity.getId();
+	            activationReport.add(rollTarget);
+	            activationReport.add(roll);
+	            activationReport.choose(fellOver);	 
+	            activationReport.indent();
+	            vMineReport.add(activationReport);	    		
+	    		if (fellOver) {
+	    			triggeredPittrap = minefield;
+	    			
+	    			PilotingRollData pilotingRollData = entity.getBasePilotingRoll();
+	    			vMineReport.addAll(doEntityFallsInto(entity,
+	                        0,
+	                        src,
+	                        dest,
+	                        pilotingRollData,
+	                        false));
+	    			
+	    			entity.doCheckEngineStallRoll(mainPhaseReport);
+	    			
+	    			Hex hex = getGame().getBoard().getHex(dest);
+	    			hex.addTerrain(new Terrain(Terrains.RUBBLE, 1));
+	    			sendChangedHex(dest, entity.getBoardId());
+	    			
+	    			Report rubbleReport = new Report(2583);
+	    			rubbleReport.indent();
+	    			vMineReport.add(rubbleReport);
+	    		} else {
+	    			revealMinefield(minefield);
+	    		}
+	    	}
+    	}
+    	
+    	if (triggeredPittrap != null) {
+    		removeMinefield(triggeredPittrap);
+    	}
+    	
+    	return fellOver;
+    }
 
     /**
      * Handles an entity stepping on a tripwire.
@@ -7312,19 +7386,19 @@ public class TWGameManager extends AbstractGameManager {
 	            hitReport.indent();
 	            vMineReport.add(hitReport);
 	    		
-	    		int modifier = 0;
-	    		String modifierDesc = "";
+	            PilotingRollData rollData = entity.getBasePilotingRoll(entity.moved);
 	    		
 	    		if (movementType == EntityMovementType.MOVE_WALK) {
-	    			modifier = 2;
-	    			modifierDesc = "walking";
+	    			rollData.addModifier(2, "walking");
 	    		} else if (movementType == EntityMovementType.MOVE_RUN) {
-	    			modifier = 4;
-	    			modifierDesc = "running";
+	    			rollData.addModifier(4, "running");
 	    		}
 	    		
-	    		PilotingRollData rollData = entity.getBasePilotingRoll(entity.moved);
-	    		rollData.addModifier(modifier, modifierDesc);
+	    		if (entity.hasAbility(OptionsConstants.MISC_EAGLE_EYES)) {
+	    			rollData.addModifier(-2, "eagle eyes");               
+	    		}
+	    		
+	    		// if we are here, we can assume we are on the ground level
 	    		int result = doSkillCheckWhileMoving(entity, 0, src, dest, rollData, true, vMineReport);
 	    		fellOver = result > 0;
 	    		triggeredTripwire = minefield;

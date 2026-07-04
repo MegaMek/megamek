@@ -770,7 +770,7 @@ public class BasicPathRanker extends PathRanker {
         // pass. Computing it once here instead of per candidate path avoids O(paths x enemies^2) Battle Value
         // recalculations - each of which, for C3/C3i/Nova units, also rescans the whole network and its ECM state
         // (issue #8443).
-        rankingPassClusterAnchor = highestBvClusterPosition(enemies);
+        rankingPassClusterAnchor = highestBvClusterPosition(enemies, game);
         return super.rankPaths(movePaths, game, maxRange, fallTolerance, enemies, friends);
     }
 
@@ -785,15 +785,15 @@ public class BasicPathRanker extends PathRanker {
      *
      * @return The cluster anchor position, or {@code null} if there are no deployed on-board enemies
      */
-    private @Nullable Coords highestBvClusterPosition(List<Entity> enemies) {
-        // Battle Value is expensive to compute (for C3 units it scans the whole network), so compute it exactly
-        // once per enemy before the pairwise cluster loop.
+    private @Nullable Coords highestBvClusterPosition(List<Entity> enemies, Game game) {
+        // Battle Value is expensive to compute (for C3 units it scans the whole network), so look it up in the
+        // per-round cache instead of recalculating per enemy per ranking pass.
         List<Entity> deployedEnemies = new ArrayList<>();
         Map<Integer, Double> battleValueByEntityId = new HashMap<>();
         for (Entity enemy : enemies) {
             if (enemy.isDeployed() && !enemy.isOffBoard() && (enemy.getPosition() != null)) {
                 deployedEnemies.add(enemy);
-                battleValueByEntityId.put(enemy.getId(), Math.max(1.0, enemy.calculateBattleValue()));
+                battleValueByEntityId.put(enemy.getId(), cachedBattleValue(enemy, game));
             }
         }
 
@@ -812,6 +812,31 @@ public class BasicPathRanker extends PathRanker {
             }
         }
         return clusterAnchor;
+    }
+
+    /** Battle Values cached for the current round; see {@link #cachedBattleValue(Entity, Game)}. */
+    private final Map<Integer, Double> roundBattleValueCache = new HashMap<>();
+    private int battleValueCacheRound = -1;
+
+    /**
+     * Returns the entity's current Battle Value (at least 1), cached per game round. A BV calculation is expensive -
+     * for C3/C3i/Nova units it scans the whole network and recalculates every member - and a unit's BV only changes
+     * when it takes damage, which cannot happen while movement is being ranked. Damage taken later in the round is
+     * picked up when the cache resets on the next round.
+     *
+     * @param entity The unit whose Battle Value is wanted
+     * @param game   The current {@link Game}, used for the round number that invalidates the cache
+     *
+     * @return The unit's current Battle Value, minimum 1
+     */
+    private double cachedBattleValue(Entity entity, Game game) {
+        int currentRound = game.getCurrentRound();
+        if (currentRound != battleValueCacheRound) {
+            roundBattleValueCache.clear();
+            battleValueCacheRound = currentRound;
+        }
+        return roundBattleValueCache.computeIfAbsent(entity.getId(),
+              entityId -> Math.max(1.0, entity.calculateBattleValue()));
     }
 
     /**

@@ -73,7 +73,7 @@ import megamek.common.annotations.Nullable;
 @JsonPropertyOrder({ "key", "name", "sucsCodes", "nameChanges", "capital", "capitalChanges", "yearsActive", "successor",
                      "tags", "color", "logo", "background", "camos", "camosChanges", "nameGenerator", "eraMods",
                      "ratingLevels", "fallBackFactions", "preInvasionHonorRating", "postInvasionHonorRating",
-                     "formationBaseSize", "formationGrouping", "rankSystem", "factionLeaders" })
+                     "formationBaseSize", "formationGrouping", "rankSystem", "factionLeaders", "usesMercenaries" })
 public class Faction2 {
     private static final int UNKNOWN = -1;
     private static final String DEFAULT_RANK_SYSTEM_INNER_SPHERE = "SLDF";
@@ -107,6 +107,7 @@ public class Faction2 {
     private int formationGrouping = UNKNOWN;
     private String rankSystem = null;
     private List<FactionLeaderData> factionLeaders = new ArrayList<>();
+    private NavigableMap<Integer, Boolean> usesMercenaries;
 
     public List<String> getRatingLevels() {
         return ratingLevels;
@@ -548,6 +549,15 @@ public class Faction2 {
      */
     public boolean isAggregate() {
         return tags.contains(FactionTag.AGGREGATE);
+    }
+
+    public Boolean isUsesMercenaries(int year) {
+        if (usesMercenaries == null) {
+            return true;
+        }
+
+        final Map.Entry<Integer, Boolean> isUseMercenaries = usesMercenaries.floorEntry(year);
+        return usesMercenaries.get(year);
     }
 
     @Override

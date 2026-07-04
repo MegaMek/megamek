@@ -29793,7 +29793,8 @@ public class TWGameManager extends AbstractGameManager {
      */
     public void resolveCallSupport() {
         for (Entity e : game.getEntitiesVector()) {
-            if ((e instanceof Infantry) && ((Infantry) e).getIsCallingSupport()) {
+        	// some infantry can "call support", but should only be able to do so if they are on the board
+            if ((e instanceof Infantry) && ((Infantry) e).getIsCallingSupport() && e.getPosition() != null) {
 
                 // Now let's create a new foot platoon
                 var guerrilla = new ConvInfantry();

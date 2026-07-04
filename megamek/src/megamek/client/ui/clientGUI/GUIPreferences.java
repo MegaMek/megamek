@@ -825,7 +825,7 @@ public class GUIPreferences extends PreferenceStoreProxy {
         store.setDefault(MINI_MAP_PAINT_BORDERS, true);
         store.setDefault(MINI_MAP_MOVE_PATH_PERSISTENCE, 2);
         store.setDefault(GIF_GAME_SUMMARY_RECORDING, GifRecordingMode.ASK.name());
-        // Migrate the pre-0.50.11 boolean GIF setting: an explicit player choice carries over (true -> ALWAYS,
+        // Migrate the pre-0.51.01 boolean GIF setting: an explicit player choice carries over (true -> ALWAYS,
         // false -> NEVER); players who never touched it get the new ask-at-game-start default.
         if (store.hasProperty(GIF_GAME_SUMMARY_MINIMAP) && !store.hasProperty(GIF_GAME_SUMMARY_RECORDING)) {
             store.setValue(GIF_GAME_SUMMARY_RECORDING,
@@ -1242,10 +1242,10 @@ public class GUIPreferences extends PreferenceStoreProxy {
     }
 
     /**
-     * @deprecated since 0.50.11, use {@link #getGifGameSummaryRecording()}; returns {@code true} only for
+     * @deprecated since 0.51.01, use {@link #getGifGameSummaryRecording()}; returns {@code true} only for
      *       {@link GifRecordingMode#ALWAYS}.
      */
-    @Deprecated(since = "0.50.11", forRemoval = true)
+    @Deprecated(since = "0.51.01", forRemoval = true)
     public boolean getGifGameSummaryMinimap() {
         return getGifGameSummaryRecording() == GifRecordingMode.ALWAYS;
     }
@@ -2166,10 +2166,10 @@ public class GUIPreferences extends PreferenceStoreProxy {
     }
 
     /**
-     * @deprecated since 0.50.11, use {@link #setGifGameSummaryRecording(GifRecordingMode)}; maps {@code true} to
+     * @deprecated since 0.51.01, use {@link #setGifGameSummaryRecording(GifRecordingMode)}; maps {@code true} to
      *       {@link GifRecordingMode#ALWAYS} and {@code false} to {@link GifRecordingMode#NEVER}.
      */
-    @Deprecated(since = "0.50.11", forRemoval = true)
+    @Deprecated(since = "0.51.01", forRemoval = true)
     public void setGifGameSummaryMinimap(boolean state) {
         setGifGameSummaryRecording(state ? GifRecordingMode.ALWAYS : GifRecordingMode.NEVER);
     }

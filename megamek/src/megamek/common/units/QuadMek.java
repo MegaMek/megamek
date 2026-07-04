@@ -50,6 +50,7 @@ import megamek.common.equipment.EquipmentType;
 import megamek.common.equipment.MiscType;
 import megamek.common.equipment.Mounted;
 import megamek.common.equipment.WeaponType;
+import megamek.common.game.Game;
 import megamek.common.options.OptionsConstants;
 import megamek.common.planetaryConditions.PlanetaryConditions;
 import megamek.common.preference.PreferenceManager;
@@ -699,65 +700,12 @@ public class QuadMek extends Mek {
             } catch (Throwable t) {
                 logger.error("", t);
             }
-
-            if (side == ToHitData.SIDE_FRONT) {
-                switch (roll) {
-                    case 1:
-                        return new HitData(Mek.LOC_LEFT_ARM);
-                    case 2:
-                        return new HitData(Mek.LOC_LEFT_TORSO);
-                    case 3:
-                        return new HitData(Mek.LOC_CENTER_TORSO);
-                    case 4:
-                        return new HitData(Mek.LOC_RIGHT_TORSO);
-                    case 5:
-                        return new HitData(Mek.LOC_RIGHT_ARM);
-                    case 6:
-                        return new HitData(Mek.LOC_HEAD, true);
-                }
-            } else if (side == ToHitData.SIDE_REAR) {
-                switch (roll) {
-                    case 1:
-                        return new HitData(Mek.LOC_LEFT_LEG, true);
-                    case 2:
-                        return new HitData(Mek.LOC_LEFT_TORSO, true);
-                    case 3:
-                        return new HitData(Mek.LOC_CENTER_TORSO, true);
-                    case 4:
-                        return new HitData(Mek.LOC_RIGHT_TORSO, true);
-                    case 5:
-                        return new HitData(Mek.LOC_RIGHT_LEG, true);
-                    case 6:
-                        return new HitData(Mek.LOC_HEAD, true);
-                }
-            } else if (side == ToHitData.SIDE_LEFT) {
-                switch (roll) {
-                    case 1:
-                    case 2:
-                        return new HitData(Mek.LOC_LEFT_TORSO);
-                    case 3:
-                        return new HitData(Mek.LOC_CENTER_TORSO);
-                    case 4:
-                        return new HitData(Mek.LOC_LEFT_ARM);
-                    case 5:
-                        return new HitData(Mek.LOC_LEFT_LEG);
-                    case 6:
-                        return new HitData(Mek.LOC_HEAD);
-                }
-            } else if (side == ToHitData.SIDE_RIGHT) {
-                switch (roll) {
-                    case 1:
-                    case 2:
-                        return new HitData(Mek.LOC_RIGHT_TORSO);
-                    case 3:
-                        return new HitData(Mek.LOC_CENTER_TORSO);
-                    case 4:
-                        return new HitData(Mek.LOC_RIGHT_ARM);
-                    case 5:
-                        return new HitData(Mek.LOC_RIGHT_LEG);
-                    case 6:
-                        return new HitData(Mek.LOC_HEAD);
-                }
+            if (side == ToHitData.SIDE_FRONT || side == ToHitData.SIDE_LEFT || side == ToHitData.SIDE_RIGHT) {
+                return new HitData(Game.rulesManager.getRulesCharts().getPunchHitLocation(roll, side, true));
+            }
+            if (side == ToHitData.SIDE_REAR) {
+                return new HitData(Game.rulesManager.getRulesCharts().getPunchHitLocation(roll, ToHitData.SIDE_FRONT,
+                      true), true);
             }
         } else if (table == ToHitData.HIT_KICK) {
             roll = Compute.d6(1);

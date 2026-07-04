@@ -34,7 +34,9 @@ package megamek.common.rules.core;
  * affiliated with Microsoft.
  */
 
+import megamek.common.HitData;
 import megamek.common.Messages;
+import megamek.common.ToHitData;
 import megamek.common.compute.Compute;
 import megamek.common.rules.RulesCharts;
 import megamek.common.units.Entity;
@@ -46,13 +48,13 @@ public class CoreRulesCharts extends RulesCharts {
     // Escalating failure rules. Same as pilot numbers. Core p.111, 180
     public int escalatingFailure(int count) {
         return switch (count) {
-                case 0 -> 2;
-                case 1 -> 3;
-                case 2 -> 5;
-                case 3 -> 7;
-                case 4 -> 10;
-                case 5 -> 11;
-                default -> Integer.MAX_VALUE;
+            case 0 -> 2;
+            case 1 -> 3;
+            case 2 -> 5;
+            case 3 -> 7;
+            case 4 -> 10;
+            case 5 -> 11;
+            default -> Integer.MAX_VALUE;
         };
     }
 
@@ -62,9 +64,9 @@ public class CoreRulesCharts extends RulesCharts {
         }
         return 0;
     }
-    
+
     // Return the names for locations
-    public String getLocationName(int loc, boolean quad) {        
+    public String getLocationName(int loc, boolean quad) {
         switch (loc) {
             case Mek.LOC_LEFT_LEG:
                 if (quad) {
@@ -95,7 +97,97 @@ public class CoreRulesCharts extends RulesCharts {
             case Mek.LOC_LEFT_TORSO:
                 return Messages.getString("Locations.LeftTorso");
         }
-        
+
         return "";
+    }
+
+    public int getPunchHitLocation(int roll, int side, boolean quad) {
+        // front punch hits
+        if (side == ToHitData.SIDE_FRONT) {
+            switch (roll) {
+                case 1:
+                    return Mek.LOC_RIGHT_ARM;
+                case 2:
+                    return Mek.LOC_RIGHT_TORSO;
+                case 3:
+                    return Mek.LOC_CENTER_TORSO;
+                case 4:
+                    return Mek.LOC_LEFT_TORSO;
+                case 5:
+                    return Mek.LOC_LEFT_ARM;
+                case 6:
+                    return Mek.LOC_HEAD;
+            }
+        }
+        if (side == ToHitData.SIDE_LEFT) {
+            // left side punch hits
+            switch (roll) {
+                case 1:
+                case 2:
+                    return Mek.LOC_LEFT_TORSO;
+                case 3:
+                    return Mek.LOC_CENTER_TORSO;
+                case 4:
+                case 5:
+                    return Mek.LOC_LEFT_ARM;
+                case 6:
+                    return Mek.LOC_HEAD;
+            }
+        }
+        if (side == ToHitData.SIDE_RIGHT) {
+            // right side punch hits
+            switch (roll) {
+                case 1:
+                case 2:
+                    return Mek.LOC_RIGHT_TORSO;
+                case 3:
+                    return Mek.LOC_CENTER_TORSO;
+                case 4:
+                case 5:
+                    return Mek.LOC_RIGHT_ARM;
+                case 6:
+                    return Mek.LOC_HEAD;
+            }
+        }
+        return getPunchHitLocationSide(roll, side, quad);
+    }
+
+    public int getPunchHitLocationSide(int roll, int side, boolean quad) {
+        if (side == ToHitData.SIDE_LEFT) {
+            // left side punch hits
+            switch (roll) {
+                case 1:
+                case 2:
+                    return Mek.LOC_LEFT_TORSO;
+                case 3:
+                    return Mek.LOC_CENTER_TORSO;
+                case 4:
+                    if (quad) {return Mek.LOC_LEFT_ARM;}
+                case 5:
+                    if (quad) {return Mek.LOC_LEFT_TORSO;}
+                    return Mek.LOC_LEFT_ARM;
+                case 6:
+                    return Mek.LOC_HEAD;
+            }
+        }
+        if (side == ToHitData.SIDE_RIGHT) {
+            // right side punch hits
+            switch (roll) {
+                case 1:
+                case 2:
+                    return Mek.LOC_RIGHT_TORSO;
+                case 3:
+                    return Mek.LOC_CENTER_TORSO;
+                case 4:
+                    if (quad) {return Mek.LOC_RIGHT_ARM;}
+                case 5:
+                    if (quad) {return Mek.LOC_RIGHT_TORSO;}
+                    return Mek.LOC_RIGHT_ARM;
+                case 6:
+                    return Mek.LOC_HEAD;
+            }
+        }
+        // No location found. Should never occur
+        return Mek.LOC_NONE;
     }
 }

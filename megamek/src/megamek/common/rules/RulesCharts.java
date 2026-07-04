@@ -44,4 +44,10 @@ public abstract class RulesCharts {
     
     // Get location names
     public abstract String getLocationName(int loc, boolean quad);
+
+    // Mek Punch hit chart
+    public abstract int getPunchHitLocation(int roll, int side, boolean quad);
+
+    // Mek punch hit chart side
+    public abstract int getPunchHitLocationSide(int roll, int side, boolean quad);
 }

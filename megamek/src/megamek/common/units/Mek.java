@@ -2942,69 +2942,12 @@ public abstract class Mek extends Entity implements Fortifiable, RubbleClearer {
                 LOGGER.error("", t);
             }
 
-            if (side == ToHitData.SIDE_FRONT) {
-                // front punch hits
-                switch (roll) {
-                    case 1:
-                        return new HitData(Mek.LOC_LEFT_ARM);
-                    case 2:
-                        return new HitData(Mek.LOC_LEFT_TORSO);
-                    case 3:
-                        return new HitData(Mek.LOC_CENTER_TORSO);
-                    case 4:
-                        return new HitData(Mek.LOC_RIGHT_TORSO);
-                    case 5:
-                        return new HitData(Mek.LOC_RIGHT_ARM);
-                    case 6:
-                        return new HitData(Mek.LOC_HEAD);
-                }
-            }
-            if (side == ToHitData.SIDE_LEFT) {
-                // left side punch hits
-                switch (roll) {
-                    case 1:
-                    case 2:
-                        return new HitData(Mek.LOC_LEFT_TORSO);
-                    case 3:
-                        return new HitData(Mek.LOC_CENTER_TORSO);
-                    case 4:
-                    case 5:
-                        return new HitData(Mek.LOC_LEFT_ARM);
-                    case 6:
-                        return new HitData(Mek.LOC_HEAD);
-                }
-            }
-            if (side == ToHitData.SIDE_RIGHT) {
-                // right side punch hits
-                switch (roll) {
-                    case 1:
-                    case 2:
-                        return new HitData(Mek.LOC_RIGHT_TORSO);
-                    case 3:
-                        return new HitData(Mek.LOC_CENTER_TORSO);
-                    case 4:
-                    case 5:
-                        return new HitData(Mek.LOC_RIGHT_ARM);
-                    case 6:
-                        return new HitData(Mek.LOC_HEAD);
-                }
+            if (side == ToHitData.SIDE_FRONT || side == ToHitData.SIDE_LEFT || side == ToHitData.SIDE_RIGHT) {
+                return new HitData(Game.rulesManager.getRulesCharts().getPunchHitLocation(roll, side, false));
             }
             if (side == ToHitData.SIDE_REAR) {
-                // rear punch hits
-                switch (roll) {
-                    case 1:
-                        return new HitData(Mek.LOC_LEFT_ARM, true);
-                    case 2:
-                        return new HitData(Mek.LOC_LEFT_TORSO, true);
-                    case 3:
-                        return new HitData(Mek.LOC_CENTER_TORSO, true);
-                    case 4:
-                        return new HitData(Mek.LOC_RIGHT_TORSO, true);
-                    case 5:
-                        return new HitData(Mek.LOC_RIGHT_ARM, true);
-                    case 6:
-                        return new HitData(Mek.LOC_HEAD, true);
-                }
+                return new HitData(Game.rulesManager.getRulesCharts().getPunchHitLocation(roll, ToHitData.SIDE_FRONT,
+                      false), true);
             }
         }
         if (table == ToHitData.HIT_KICK) {

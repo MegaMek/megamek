@@ -35,8 +35,10 @@ package megamek.common.rules.totalwarfare;
  */
 
 
+import megamek.common.ToHitData;
 import megamek.common.compute.Compute;
 import megamek.common.rules.core.CoreRulesCharts;
+import megamek.common.units.Mek;
 
 public class TwRulesCharts extends CoreRulesCharts {
 
@@ -44,5 +46,28 @@ public class TwRulesCharts extends CoreRulesCharts {
     @Override
     public int getFacingForFall() {
         return Compute.d6(1) - 1;
+    }
+
+    // Punch hit location chart
+    @Override
+    public int getPunchHitLocation(int roll, int side, boolean quad) {
+        // front punch hits
+        if (side == ToHitData.SIDE_FRONT) {
+            switch (roll) {
+                case 1:
+                    return Mek.LOC_LEFT_ARM;
+                case 2:
+                    return Mek.LOC_LEFT_TORSO;
+                case 3:
+                    return Mek.LOC_CENTER_TORSO;
+                case 4:
+                    return Mek.LOC_RIGHT_TORSO;
+                case 5:
+                    return Mek.LOC_RIGHT_ARM;
+                case 6:
+                    return Mek.LOC_HEAD;
+            }
+        }
+        return getPunchHitLocationSide(roll, side, quad);
     }
 }

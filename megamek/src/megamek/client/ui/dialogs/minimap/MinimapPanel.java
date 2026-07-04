@@ -53,6 +53,7 @@ import java.io.File;
 import java.io.FileReader;
 import java.io.Reader;
 import java.io.StreamTokenizer;
+import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -63,6 +64,7 @@ import java.util.Objects;
 import java.util.Set;
 import java.util.Vector;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.atomic.AtomicReference;
 import javax.imageio.ImageIO;
 import javax.swing.JCheckBox;
 import javax.swing.JCheckBoxMenuItem;
@@ -493,15 +495,59 @@ public final class MinimapPanel extends JPanel implements IPreferenceChangeListe
         return switch (GUIP.getGifGameSummaryRecording()) {
             case ALWAYS -> true;
             case NEVER -> false;
-            case ASK -> GIF_RECORDING_DECISIONS.computeIfAbsent(game.getUUIDString(),
-                  gameId -> askWhetherToRecordGif());
+            case ASK -> recallOrAskRecordingDecision();
         };
+    }
+
+    /**
+     * Returns this game's remembered recording decision, asking the player (on the EDT) if none exists yet. The
+     * dialog is deliberately shown outside any map computation: blocking on the EDT while holding a map lock could
+     * deadlock if the EDT itself entered this code for another board's panel.
+     *
+     * @return {@code true} if this game should be recorded; {@code false} also when the dialog could not be shown
+     *       (in that case no decision is stored, so the player is asked again at the next frame)
+     */
+    private boolean recallOrAskRecordingDecision() {
+        String gameId = game.getUUIDString();
+        Boolean existingDecision = GIF_RECORDING_DECISIONS.get(gameId);
+        if (existingDecision != null) {
+            return existingDecision;
+        }
+        Boolean answer = askWhetherToRecordGifOnEdt();
+        if (answer == null) {
+            return false;
+        }
+        Boolean concurrentDecision = GIF_RECORDING_DECISIONS.putIfAbsent(gameId, answer);
+        return (concurrentDecision != null) ? concurrentDecision : answer;
+    }
+
+    /**
+     * Shows the recording dialog on the event dispatch thread, blocking the calling game-event thread until the
+     * player answers.
+     *
+     * @return The player's answer, or {@code null} if the dialog could not be shown
+     */
+    private @Nullable Boolean askWhetherToRecordGifOnEdt() {
+        if (SwingUtilities.isEventDispatchThread()) {
+            return askWhetherToRecordGif();
+        }
+        AtomicReference<Boolean> answerHolder = new AtomicReference<>();
+        try {
+            SwingUtilities.invokeAndWait(() -> answerHolder.set(askWhetherToRecordGif()));
+        } catch (InterruptedException interruptedException) {
+            Thread.currentThread().interrupt();
+            return null;
+        } catch (InvocationTargetException invocationTargetException) {
+            logger.error(invocationTargetException, "Error showing the GIF recording dialog");
+            return null;
+        }
+        return answerHolder.get();
     }
 
     /**
      * Asks the player whether this game should be recorded as a combat-summary GIF. Checking "remember my choice"
      * persists the answer as {@link GifRecordingMode#ALWAYS} or {@link GifRecordingMode#NEVER} so the dialog never
-     * shows again.
+     * shows again. Must be called on the event dispatch thread - see {@link #askWhetherToRecordGifOnEdt()}.
      *
      * @return {@code true} if the player wants this game recorded
      */

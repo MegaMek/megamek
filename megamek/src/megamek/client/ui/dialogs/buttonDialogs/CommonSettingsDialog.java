@@ -2852,7 +2852,13 @@ public class CommonSettingsDialog extends AbstractButtonDialog
         GUIP.setAutoSelectNextUnit(useAutoSelectNext.isSelected());
         GUIP.setGameSummaryBoardView(gameSummaryBV.isSelected());
         GUIP.setGameSummaryMinimap(gameSummaryMM.isSelected());
-        GUIP.setGifGameSummaryRecording(GifRecordingMode.values()[gifGameSummaryRecording.getSelectedIndex()]);
+        int selectedRecordingIndex = gifGameSummaryRecording.getSelectedIndex();
+        GifRecordingMode[] recordingModes = GifRecordingMode.values();
+        boolean isValidRecordingIndex = (selectedRecordingIndex >= 0)
+              && (selectedRecordingIndex < recordingModes.length);
+        GUIP.setGifGameSummaryRecording(isValidRecordingIndex
+              ? recordingModes[selectedRecordingIndex]
+              : GifRecordingMode.ASK);
         GUIP.setShowUnitDisplayNamesOnMinimap(showUnitDisplayNamesOnMinimap.isSelected());
         UITheme newUITheme = (UITheme) uiThemes.getSelectedItem();
         String oldUITheme = GUIP.getUITheme();

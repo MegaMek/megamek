@@ -43,10 +43,13 @@ import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
+import java.util.List;
 import java.util.Optional;
 
+import megamek.common.QuirkEntry;
 import megamek.common.Report;
 import megamek.common.compute.Compute;
+import megamek.common.enums.GamePhase;
 import megamek.common.equipment.EquipmentType;
 import megamek.common.equipment.Mounted;
 import megamek.common.equipment.WeaponType;
@@ -79,6 +82,10 @@ class DirectionalTorsoMountTest {
 
     private static WeaponType heavyGaussRifle() {
         return (WeaponType) EquipmentType.get("ISHeavyGaussRifle");
+    }
+
+    private static WeaponType hyperAssaultGaussRifle30() {
+        return (WeaponType) EquipmentType.get("CLHAG30");
     }
 
     /**
@@ -358,6 +365,39 @@ class DirectionalTorsoMountTest {
         }
 
         @Test
+        @DisplayName("Covers an unsplit torso HAG/30 (the canon OmniMarauder Prime dorsal mount)")
+        void unitLevelCoversUnsplitHyperAssaultGauss() {
+            BipedMek mek = new BipedMek();
+            Mounted<?> weapon = unitLevelMek(mek, hyperAssaultGaussRifle30(), Mek.LOC_RIGHT_TORSO);
+
+            assertTrue(weapon.hasDirectionalTorsoMount(),
+                  "A HAG/30 mounted whole in one torso has no location placement restriction");
+        }
+
+        @Test
+        @DisplayName("Never covers a weapon that is physically split across two locations")
+        void doesNotCoverSplitWeapon() {
+            BipedMek mek = new BipedMek();
+            Mounted<?> weapon = unitLevelMek(mek, hyperAssaultGaussRifle30(), Mek.LOC_RIGHT_TORSO);
+            weapon.setSplit(true);
+
+            assertFalse(weapon.hasDirectionalTorsoMount(),
+                  "A split weapon cannot ride a single-location Directional Torso Mount");
+        }
+
+        @Test
+        @DisplayName("A split weapon is not a directional mount even with the weapon-level quirk")
+        void splitWeaponIgnoresWeaponLevelQuirk() {
+            BipedMek mek = new BipedMek();
+            Mounted<?> weapon = mountWithDirectionalQuirk(mek,
+                  OptionsConstants.QUIRK_WEAPON_POS_DIRECT_TORSO_MOUNT);
+            weapon.setSplit(true);
+
+            assertFalse(weapon.hasDirectionalTorsoMount(),
+                  "The split guard applies regardless of the quirk source");
+        }
+
+        @Test
         @DisplayName("Unit-level 2-pt quirk is front/rear even on a quad (not 360)")
         void unitLevelIsTwoPointOnQuad() {
             QuadMek mek = new QuadMek();
@@ -581,6 +621,111 @@ class DirectionalTorsoMountTest {
     }
 
     @Nested
+    @DisplayName("Once-per-turn facing change (modeled on torso twists)")
+    class OncePerTurnTests {
+
+        @Test
+        @DisplayName("A mount flipped in the targeting phase cannot flip again in the firing phase")
+        void flipInEarlierPhaseLocksLaterPhases() {
+            BipedMek mek = new BipedMek();
+            Mounted<?> weapon = mountWithDirectionalQuirk(mek,
+                  OptionsConstants.QUIRK_WEAPON_POS_DIRECT_TORSO_MOUNT);
+            mek.getGame().setPhase(GamePhase.TARGETING);
+
+            weapon.setDirectionalMountRear(true);
+            assertEquals(3, weapon.getDirectionalMountFacing());
+            assertFalse(weapon.isDirectionalMountAlreadyFlipped(),
+                  "The facing stays adjustable within the phase it was changed in");
+
+            mek.getGame().setPhase(GamePhase.FIRING);
+            assertTrue(weapon.isDirectionalMountAlreadyFlipped(),
+                  "A mount refaced in an earlier phase is locked for the rest of the turn");
+            weapon.setDirectionalMountRear(false);
+            assertEquals(3, weapon.getDirectionalMountFacing(),
+                  "The facing must not change again in a later phase of the same turn");
+        }
+
+        @Test
+        @DisplayName("Within the same phase the facing stays freely adjustable")
+        void sameFlipPhaseAllowsAdjustment() {
+            BipedMek mek = new BipedMek();
+            Mounted<?> weapon = mountWithDirectionalQuirk(mek,
+                  OptionsConstants.QUIRK_WEAPON_POS_DIRECT_TORSO_MOUNT);
+            mek.getGame().setPhase(GamePhase.FIRING);
+
+            weapon.setDirectionalMountRear(true);
+            weapon.setDirectionalMountRear(false);
+            assertEquals(0, weapon.getDirectionalMountFacing(),
+                  "Re-adjusting within the same phase (before committing) must remain possible");
+        }
+
+        @Test
+        @DisplayName("The once-per-turn tracker resets at the start of a new round; the facing persists")
+        void newRoundResetsOncePerTurnTracker() {
+            BipedMek mek = new BipedMek();
+            Mounted<?> weapon = mountWithDirectionalQuirk(mek,
+                  OptionsConstants.QUIRK_WEAPON_POS_DIRECT_TORSO_MOUNT);
+            mek.getGame().setPhase(GamePhase.TARGETING);
+            weapon.setDirectionalMountRear(true);
+            mek.getGame().setPhase(GamePhase.FIRING);
+            assertTrue(weapon.isDirectionalMountAlreadyFlipped());
+
+            mek.newRound(2);
+
+            assertTrue(weapon.isDirectionalMountRear(), "The chosen facing itself persists across rounds");
+            assertFalse(weapon.isDirectionalMountAlreadyFlipped(), "The once-per-turn tracker resets each round");
+            weapon.setDirectionalMountRear(false);
+            assertEquals(0, weapon.getDirectionalMountFacing(), "The mount can be refaced again next turn");
+        }
+
+        @Test
+        @DisplayName("The server-side facing action is refused after an earlier-phase flip")
+        void applyMountFacingRefusedWhenAlreadyFlipped() {
+            BipedMek mek = new BipedMek();
+            Mounted<?> weapon = mountWithDirectionalQuirk(mek,
+                  OptionsConstants.QUIRK_WEAPON_POS_DIRECT_TORSO_MOUNT);
+            mek.getGame().setPhase(GamePhase.TARGETING);
+            DirectionalTorsoMountRules.applyMountFacing(mek, mek.getEquipmentNum(weapon), 3);
+            assertEquals(3, weapon.getDirectionalMountFacing());
+
+            mek.getGame().setPhase(GamePhase.FIRING);
+            DirectionalTorsoMountRules.applyMountFacing(mek, mek.getEquipmentNum(weapon), 0);
+            assertEquals(3, weapon.getDirectionalMountFacing(),
+                  "The server must reject a second facing change in a later phase of the same turn");
+        }
+    }
+
+    @Nested
+    @DisplayName("Legacy bare quirk migration (pre-torso-set unit files)")
+    class LegacyQuirkTests {
+
+        @Test
+        @DisplayName("A valueless directional_torso_mount line loads as all three torso locations")
+        void bareChassisQuirkDefaultsToAllTorsos() {
+            BipedMek mek = new BipedMek();
+            Game game = new Game();
+            game.getOptions().getOption(OptionsConstants.ADVANCED_STRATOPS_QUIRKS).setValue(true);
+            mek.setGame(game);
+            Mounted<?> weapon;
+            try {
+                weapon = mek.addEquipment(erLargeLaser(), Mek.LOC_LEFT_TORSO);
+            } catch (Exception exception) {
+                throw new RuntimeException(exception);
+            }
+
+            // The Omni-Marauder, Barghest and others carry the legacy bare form "quirk:directional_torso_mount".
+            mek.loadQuirks(List.of(new QuirkEntry("directional_torso_mount")));
+
+            assertEquals("LT RT CT", mek.getQuirks()
+                        .getOption(OptionsConstants.QUIRK_POS_DIRECTIONAL_TORSO_MOUNT).stringValue(),
+                  "The legacy bare quirk must migrate to the all-torsos set, not load as inactive");
+            assertTrue(mek.hasQuirk(OptionsConstants.QUIRK_POS_DIRECTIONAL_TORSO_MOUNT));
+            assertTrue(weapon.hasDirectionalTorsoMount(),
+                  "A torso weapon on a legacy-quirk unit must be a directional mount");
+        }
+    }
+
+    @Nested
     @DisplayName("Quirk eligibility (customizer validation)")
     class EligibilityTests {
 
@@ -602,6 +747,16 @@ class DirectionalTorsoMountTest {
             assertTrue(WeaponQuirks.isQuirkDisallowed(
                   quirkOption(OptionsConstants.QUIRK_WEAPON_POS_DIRECT_TORSO_MOUNT),
                   new BipedMek(), heavyGaussRifle()));
+        }
+
+        @Test
+        @DisplayName("A HAG/30 may take a Directional Torso Mount (splittable-by-size is not a restriction)")
+        void hyperAssaultGaussAllowed() {
+            // The canon OmniMarauder Prime mounts its DTM HAG/30 whole in one torso (XTR: Caveat Emptor);
+            // being large enough that construction ALLOWS a split is not a location placement restriction.
+            assertFalse(WeaponQuirks.isQuirkDisallowed(
+                  quirkOption(OptionsConstants.QUIRK_WEAPON_POS_DIRECT_TORSO_MOUNT),
+                  new BipedMek(), hyperAssaultGaussRifle30()));
         }
 
         @Test

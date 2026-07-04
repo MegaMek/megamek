@@ -73,7 +73,12 @@ public class LargeSupportTank extends SupportTank {
     private double fuelTonnage = 0;
 
     private static final String[] LOCATION_ABBREVIATIONS = { "BD", "FR", "FRRS", "FRLS",
-                                                             "RRRS", "RRLS", "RR", "TU", "TU2" };
+                                                             "RRRS", "RRLS", "RR", "TU", "FT" };
+
+    // On a dual-turret tank the turret locations are the rear turret (RT) and the front turret (FT), so the
+    // abbreviations say which is which (a bare "TU" next to "FT" does not).
+    private static final String[] LOCATION_ABBREVIATIONS_DUAL_TURRET = { "BD", "FR", "FRRS", "FRLS",
+                                                                         "RRRS", "RRLS", "RR", "RT", "FT" };
 
     private static final String[] LOCATION_NAMES = { "Body", "Front", "Front Right",
                                                      "Front Left", "Rear Right", "Rear Left", "Rear", "Turret" };
@@ -87,6 +92,9 @@ public class LargeSupportTank extends SupportTank {
 
     @Override
     public String[] getLocationAbbreviations() {
+        if (!hasNoDualTurret()) {
+            return LOCATION_ABBREVIATIONS_DUAL_TURRET;
+        }
         return LOCATION_ABBREVIATIONS;
     }
 

@@ -85,6 +85,7 @@ import megamek.common.units.BuildingTarget;
 import megamek.common.units.Dropship;
 import megamek.common.units.Entity;
 import megamek.common.units.IBuilding;
+import megamek.common.units.Mek;
 import megamek.common.units.Tank;
 import megamek.common.units.Targetable;
 import megamek.common.weapons.Weapon;
@@ -120,6 +121,7 @@ public class TargetingPhaseDisplay extends AttackPhaseDisplay implements ListSel
         FIRE_FLIP_ARMS("fireFlipArms"),
         FIRE_FLIP_MOUNT("fireFlipMount"),
         FIRE_ROTATE_TURRET("fireRotateTurret"),
+        FIRE_ROTATE_TURRET_2("fireRotateTurret2"),
         FIRE_SEARCHLIGHT("fireSearchlight"),
         FIRE_CANCEL("fireCancel"),
         FIRE_DISENGAGE("fireDisengage"),
@@ -343,6 +345,9 @@ public class TargetingPhaseDisplay extends AttackPhaseDisplay implements ListSel
         ArrayList<MegaMekButton> buttonList = new ArrayList<>();
         TargetingCommand[] commands = TargetingCommand.values();
         CommandComparator comparator = new CommandComparator();
+        // The two turret-rotate buttons belong side by side: pin the rear button's priority to the front one's, so
+        // the stable sort keeps them adjacent regardless of any saved button-order preferences.
+        TargetingCommand.FIRE_ROTATE_TURRET_2.setPriority(TargetingCommand.FIRE_ROTATE_TURRET.getPriority());
         Arrays.sort(commands, comparator);
         for (TargetingCommand cmd : commands) {
             if (cmd == TargetingCommand.FIRE_CANCEL) {
@@ -353,6 +358,17 @@ public class TargetingPhaseDisplay extends AttackPhaseDisplay implements ListSel
                 continue;
             }
             if (cmd == TargetingCommand.FIRE_CLEAR_WEAPON && !(currentEntity() instanceof Tank)) {
+                continue;
+            }
+            // The Directional Torso Mount (BMM p.83) is a Mek-only quirk, so other unit types never show its button.
+            if ((cmd == TargetingCommand.FIRE_FLIP_MOUNT) && (currentEntity() != null)
+                  && !(currentEntity() instanceof Mek)) {
+                continue;
+            }
+            // The rear-turret rotate button exists only for dual-turret vehicles (the first rotate button then
+            // covers the front turret).
+            if ((cmd == TargetingCommand.FIRE_ROTATE_TURRET_2)
+                  && !((currentEntity() instanceof Tank tank) && !tank.hasNoDualTurret())) {
                 continue;
             }
             buttonList.add(buttons.get(cmd));
@@ -416,6 +432,9 @@ public class TargetingPhaseDisplay extends AttackPhaseDisplay implements ListSel
             setTwistEnabled(entity.canChangeSecondaryFacing() && entity.getCrew().isActive());
             setFlipArmsEnabled(entity.canFlipArms() && entity.getCrew().isActive());
             updateSearchlight();
+            // Rebuild the button ribbon for the newly selected unit: the Flip Mount button is Mek-only, so the
+            // ribbon differs by unit type (see getButtonList()).
+            setupButtonPanel();
             updateFlipMount();
             updateRotateTurret();
 
@@ -522,6 +541,7 @@ public class TargetingPhaseDisplay extends AttackPhaseDisplay implements ListSel
         setFlipArmsEnabled(false);
         setFlipMountEnabled(false);
         setRotateTurretEnabled(false);
+        setRotateRearTurretEnabled(false);
         setFireModeEnabled(false);
         setNextTargetEnabled(false);
         setDisengageEnabled(false);
@@ -1299,6 +1319,8 @@ public class TargetingPhaseDisplay extends AttackPhaseDisplay implements ListSel
             flipDirectionalMount();
         } else if (ev.getActionCommand().equals(TargetingCommand.FIRE_ROTATE_TURRET.getCmd())) {
             rotateSelectedMount();
+        } else if (ev.getActionCommand().equals(TargetingCommand.FIRE_ROTATE_TURRET_2.getCmd())) {
+            rotateRearTurret();
         } else if (ev.getActionCommand().equals(TargetingCommand.FIRE_MODE.getCmd())) {
             changeMode(true);
         } else if (ev.getActionCommand().equals(TargetingCommand.FIRE_CANCEL.getCmd())) {
@@ -1403,6 +1425,19 @@ public class TargetingPhaseDisplay extends AttackPhaseDisplay implements ListSel
         clientgui.getMenuBar().setEnabled(FiringCommand.FIRE_ROTATE_TURRET.getCmd(), enabled);
     }
 
+    @Override
+    protected void setRotateRearTurretEnabled(boolean enabled) {
+        buttons.get(TargetingCommand.FIRE_ROTATE_TURRET_2).setEnabled(enabled);
+        clientgui.getMenuBar().setEnabled(FiringCommand.FIRE_ROTATE_TURRET_2.getCmd(), enabled);
+    }
+
+    @Override
+    protected void setRotateTurretLabel(boolean dualTurretTank) {
+        buttons.get(TargetingCommand.FIRE_ROTATE_TURRET).setText(Messages.getString(
+              dualTurretTank ? "TargetingPhaseDisplay.fireRotateTurretFront"
+                    : "TargetingPhaseDisplay.fireRotateTurret"));
+    }
+
     /**
      * Refreshes the targeting-phase target panel after a Directional Torso Mount arc change. See
      * {@link AttackPhaseDisplay#flipDirectionalMount()}, which drives the shared flip logic.
@@ -1410,6 +1445,21 @@ public class TargetingPhaseDisplay extends AttackPhaseDisplay implements ListSel
     @Override
     protected void refreshTargetAfterMountChange() {
         updateTarget();
+    }
+
+    /**
+     * Declares a torso/turret twist to the given facing through the targeting-phase twist path, used by the Rotate
+     * Turret dialog for vehicle main turrets. See {@link AttackPhaseDisplay#rotateSelectedMount()}.
+     */
+    @Override
+    protected void declareSecondaryFacing(int facing) {
+        if ((currentEntity() == null) || currentEntity().getAlreadyTwisted()) {
+            return;
+        }
+        int direction = currentEntity().clipSecondaryFacing(facing);
+        if (direction != currentEntity().getSecondaryFacing()) {
+            applyTorsoTwist(direction);
+        }
     }
 
     private void setNextEnabled(boolean enabled) {

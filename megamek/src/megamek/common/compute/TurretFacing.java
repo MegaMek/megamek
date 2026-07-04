@@ -83,15 +83,39 @@ public final class TurretFacing {
      * @param weapon the weapon to test
      *
      * @return {@code true} if the weapon sits on a rotatable mount whose facing the player can change - a Mek
-     *       shoulder/head/quad turret, a vehicle dual turret, or a Directional Torso Mount
+     *       shoulder/head/quad turret, a vehicle main or dual (front) turret, or a Directional Torso Mount
      */
     public static boolean isRotatable(Entity entity, Mounted<?> weapon) {
-        if ((entity instanceof Tank tank)
-              && (weapon.getLocation() == tank.getLocTurret2())
-              && !tank.hasNoDualTurret()) {
-            return true;
-        }
-        return weapon.isMekTurretMounted() || weapon.hasDirectionalTorsoMount();
+        return isInTankMainTurret(entity, weapon)
+              || isInTankDualTurret(entity, weapon)
+              || weapon.isMekTurretMounted()
+              || weapon.hasDirectionalTorsoMount();
+    }
+
+    /**
+     * @param entity the unit carrying the weapon
+     * @param weapon the weapon to test
+     *
+     * @return {@code true} if the weapon sits in a vehicle's main turret - the turret that follows the unit's secondary
+     *       facing, so rotating it is a turret twist. On a dual-turret vehicle this is the rear turret.
+     */
+    public static boolean isInTankMainTurret(Entity entity, Mounted<?> weapon) {
+        return (entity instanceof Tank tank)
+              && !tank.hasNoTurret()
+              && (weapon.getLocation() == tank.getLocTurret());
+    }
+
+    /**
+     * @param entity the unit carrying the weapon
+     * @param weapon the weapon to test
+     *
+     * @return {@code true} if the weapon sits in a dual-turret vehicle's second (front) turret, whose facing is a
+     *       freely-set offset independent of the turret twist
+     */
+    public static boolean isInTankDualTurret(Entity entity, Mounted<?> weapon) {
+        return (entity instanceof Tank tank)
+              && !tank.hasNoDualTurret()
+              && (weapon.getLocation() == tank.getLocTurret2());
     }
 
     /**

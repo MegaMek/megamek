@@ -118,6 +118,12 @@ class ComputeC3SpotterTest {
         return mek;
     }
 
+    private Mek createNovaMek(int id, Coords position) throws LocationFullException {
+        Mek mek = createMek(id, position);
+        mek.addEquipment(EquipmentType.get("NovaCEWS"), Mek.LOC_LEFT_TORSO);
+        return mek;
+    }
+
     @Test
     void returnsAttackerWhenNotOnAC3Network() {
         Mek attacker = createMek(1, new Coords(0, 0));
@@ -133,6 +139,21 @@ class ComputeC3SpotterTest {
         Mek attacker = createC3iMek(1, new Coords(0, 0));
         Mek farSpotter = createC3iMek(2, new Coords(0, 10));
         Mek nearSpotter = createC3iMek(3, new Coords(0, 18));
+        Mek target = createMek(4, new Coords(0, 20));
+        attacker.setC3NetIdSelf();
+        farSpotter.setC3NetId(attacker);
+        nearSpotter.setC3NetId(attacker);
+
+        Entity spotter = ComputeC3Spotter.findC3Spotter(mockGame, attacker, target);
+
+        assertSame(nearSpotter, spotter);
+    }
+
+    @Test
+    void picksTheNovaNetworkMemberClosestToTheTarget() throws LocationFullException {
+        Mek attacker = createNovaMek(1, new Coords(0, 0));
+        Mek farSpotter = createNovaMek(2, new Coords(0, 10));
+        Mek nearSpotter = createNovaMek(3, new Coords(0, 18));
         Mek target = createMek(4, new Coords(0, 20));
         attacker.setC3NetIdSelf();
         farSpotter.setC3NetId(attacker);

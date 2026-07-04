@@ -107,7 +107,7 @@ public class Faction2 {
     private int formationGrouping = UNKNOWN;
     private String rankSystem = null;
     private List<FactionLeaderData> factionLeaders = new ArrayList<>();
-    private NavigableMap<Integer, Boolean> usesMercenaries;
+    private final NavigableMap<Integer, Boolean> usesMercenaries = new TreeMap<>();
 
     public List<String> getRatingLevels() {
         return ratingLevels;
@@ -266,6 +266,10 @@ public class Faction2 {
 
     public NavigableMap<Integer, String> getCapitalChanges() {
         return capitalChanges;
+    }
+
+    public NavigableMap<Integer, Boolean> getUsesMercenaries() {
+        return usesMercenaries;
     }
 
     public Set<String> getFallBackFactions() {
@@ -552,12 +556,8 @@ public class Faction2 {
     }
 
     public Boolean isUsesMercenaries(int year) {
-        if (usesMercenaries == null) {
-            return true;
-        }
-
         final Map.Entry<Integer, Boolean> isUseMercenaries = usesMercenaries.floorEntry(year);
-        return usesMercenaries.get(year);
+        return (isUseMercenaries == null) ? true : isUseMercenaries.getValue();
     }
 
     @Override

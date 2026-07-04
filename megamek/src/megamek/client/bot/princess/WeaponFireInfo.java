@@ -456,6 +456,17 @@ public class WeaponFireInfo {
                 return ZERO_DAMAGE;
             }
 
+            // TODO: value Magnetic Pulse debuff munitions (Munitions.M_MAGNETIC_PULSE and
+            //  Munitions.M_IATM_IMP) instead of letting them fall through to ~0 expected damage.
+            //  Both impose a +1 to-hit penalty and heat on the target; IMP also imposes a movement
+            //  penalty and a hostile-ECM field, and still deals 1 damage per missile. As written,
+            //  Princess never fires them because the scorer only sees damage. Follow the TAG pattern
+            //  below (see computeExpectedTAGDamage and Princess.computeTeamTagUtility): return a
+            //  synthetic utility-damage value estimating the enemy damage the debuff prevents -
+            //  weighted higher against accurate, high-firepower, or C3-spotter targets - and add
+            //  IMP's real per-missile damage on top. See FireControl.getPreferredAmmo for the
+            //  matching ammo-switch TODO.
+
             // Handle woods blocking cluster shots
             if (game.getOptions().booleanOption(OptionsConstants.ADVANCED_COMBAT_TAC_OPS_WOODS_COVER)) {
                 // SRMs, LB-X, Flak AC, AC-2 derivatives, MGs, smaller LRMs,

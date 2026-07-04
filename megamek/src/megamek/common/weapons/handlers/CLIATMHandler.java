@@ -113,11 +113,19 @@ public class CLIATMHandler extends ATMHandler {
                   ((Infantry) target).isMechanized(),
                   toHit.getThruBldg() != null, weaponEntity.getId(), calcDmgPerHitReport);
 
-            // IMP missiles deal double damage to cybernetically-enhanced infantry (IO IMP rules).
+            // IMP missiles deal double damage to cybernetically-enhanced infantry (IO p.61).
             if (ammoType.getMunitionType().contains(AmmoType.Munitions.M_IATM_IMP)
                   && (target instanceof ConvInfantry convInfantry)
                   && convInfantry.isCyberneticallyEnhanced()) {
                 toReturn *= 2;
+                // Report the doubling so the damage progression is clear (e.g. 2 -> 4 before the
+                // infantry armor divisor reduces it again). Without this line the doubled value
+                // appears with no explanation.
+                Report doublingReport = new Report(6094);
+                doublingReport.subject = subjectId;
+                doublingReport.indent(2);
+                doublingReport.add((int) toReturn);
+                calcDmgPerHitReport.addElement(doublingReport);
             }
 
             // some question here about "partial streak missiles"

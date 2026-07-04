@@ -36,6 +36,7 @@ package megamek.client.bot.princess;
 import java.text.DecimalFormat;
 import java.text.DecimalFormatSymbols;
 import java.text.NumberFormat;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -45,6 +46,7 @@ import java.util.Objects;
 import java.util.Optional;
 import java.util.Set;
 import java.util.TreeMap;
+import java.util.TreeSet;
 import java.util.stream.Stream;
 
 import megamek.client.bot.princess.UnitBehavior.BehaviorType;
@@ -755,6 +757,24 @@ public class BasicPathRanker extends PathRanker {
     }
 
     /**
+     * The highest-BV enemy cluster anchor for the current ranking pass, computed once per pass in
+     * {@link #rankPaths(List, Game, int, double, List, List)} and read by every {@link #rankPath} call of that
+     * pass, or {@code null} when there are no deployed on-board enemies.
+     */
+    private Coords rankingPassClusterAnchor;
+
+    @Override
+    public TreeSet<RankedPath> rankPaths(List<MovePath> movePaths, Game game, int maxRange, double fallTolerance,
+          List<Entity> enemies, List<Entity> friends) {
+        // The highest-BV cluster anchor depends only on the enemy list, which does not change during one ranking
+        // pass. Computing it once here instead of per candidate path avoids O(paths x enemies^2) Battle Value
+        // recalculations - each of which, for C3/C3i/Nova units, also rescans the whole network and its ECM state
+        // (issue #8443).
+        rankingPassClusterAnchor = highestBvClusterPosition(enemies);
+        return super.rankPaths(movePaths, game, maxRange, fallTolerance, enemies, friends);
+    }
+
+    /**
      * Finds the position at the highest concentration of enemy battle value - the deployed on-board enemy whose
      * neighbourhood (within {@link Compute#HOMING_RADIUS}) holds the most total current BV. Standoff artillery and TAG
      * spotters use this cluster as their anchor (to stand off from, and to point at) instead of the nearest single
@@ -766,17 +786,24 @@ public class BasicPathRanker extends PathRanker {
      * @return The cluster anchor position, or {@code null} if there are no deployed on-board enemies
      */
     private @Nullable Coords highestBvClusterPosition(List<Entity> enemies) {
+        // Battle Value is expensive to compute (for C3 units it scans the whole network), so compute it exactly
+        // once per enemy before the pairwise cluster loop.
+        List<Entity> deployedEnemies = new ArrayList<>();
+        Map<Integer, Double> battleValueByEntityId = new HashMap<>();
+        for (Entity enemy : enemies) {
+            if (enemy.isDeployed() && !enemy.isOffBoard() && (enemy.getPosition() != null)) {
+                deployedEnemies.add(enemy);
+                battleValueByEntityId.put(enemy.getId(), Math.max(1.0, enemy.calculateBattleValue()));
+            }
+        }
+
         Coords clusterAnchor = null;
         double bestClusterValue = -1.0;
-        for (Entity center : enemies) {
-            if (!center.isDeployed() || center.isOffBoard() || (center.getPosition() == null)) {
-                continue;
-            }
+        for (Entity center : deployedEnemies) {
             double clusterValue = 0.0;
-            for (Entity other : enemies) {
-                if (other.isDeployed() && !other.isOffBoard() && (other.getPosition() != null)
-                      && (center.getPosition().distance(other.getPosition()) <= Compute.HOMING_RADIUS)) {
-                    clusterValue += Math.max(1.0, other.calculateBattleValue());
+            for (Entity other : deployedEnemies) {
+                if (center.getPosition().distance(other.getPosition()) <= Compute.HOMING_RADIUS) {
+                    clusterValue += battleValueByEntityId.get(other.getId());
                 }
             }
             if (clusterValue > bestClusterValue) {
@@ -1456,8 +1483,9 @@ public class BasicPathRanker extends PathRanker {
         // (weighted by Aggression slider).
         double distToEnemy = distanceToClosestEnemy(movingUnit, path.getFinalCoords(), game);
         // Highest enemy BV concentration: standoff artillery and TAG spotters position and face relative to this cluster
-        // rather than the nearest single unit, so a lone low-value scout cannot decoy them.
-        Coords highValueClusterPosition = highestBvClusterPosition(enemies);
+        // rather than the nearest single unit, so a lone low-value scout cannot decoy them. Computed once per
+        // ranking pass in rankPaths - see rankingPassClusterAnchor.
+        Coords highValueClusterPosition = rankingPassClusterAnchor;
         double distToCluster = (highValueClusterPosition != null)
               ? path.getFinalCoords().distance(highValueClusterPosition)
               : distToEnemy;

@@ -137,6 +137,11 @@ public final class DirectionalTorsoMountRules {
                   entity.getShortName(), weapon.getName());
             return;
         }
+        if (weapon.isDirectionalMountAlreadyFlipped()) {
+            LOGGER.info("[DirTorsoMount] {}: server ignored facing - {} mount already changed facing in an earlier"
+                  + " phase this turn (once per turn, BMM p.83)", entity.getShortName(), weapon.getName());
+            return;
+        }
         int normalizedFacing = ((facing % 6) + 6) % 6;
         // The 2-point mount may only face forward (0) or rear (3); only the 3-point quad turret rotates freely.
         if (!weapon.hasDirectional360TorsoMount() && (normalizedFacing != 0) && (normalizedFacing != 3)) {
@@ -153,7 +158,8 @@ public final class DirectionalTorsoMountRules {
      * Sets the facing offset of every unlocked Directional Torso Mount weapon in a single location. All weapons in a
      * Directional Torso Mount share one facing (they occupy the same mount), so this is the shared entry point used by
      * the client controls and the server to keep them in lockstep. A 2-point mount weapon only accepts the front (0) or
-     * rear (3) offset; a locked weapon is left untouched.
+     * rear (3) offset; a locked weapon, or one whose facing was already changed in an earlier phase this turn (once per
+     * turn, BMM p.83), is left untouched.
      *
      * @param entity   the unit carrying the mount
      * @param location the torso location whose Directional Torso Mount is being rotated
@@ -166,7 +172,7 @@ public final class DirectionalTorsoMountRules {
         int updated = 0;
         for (WeaponMounted weapon : entity.getWeaponList()) {
             if ((weapon.getLocation() != location) || !weapon.hasDirectionalTorsoMount()
-                  || weapon.isDirectionalMountLocked()) {
+                  || weapon.isDirectionalMountLocked() || weapon.isDirectionalMountAlreadyFlipped()) {
                 continue;
             }
             // A 2-point mount may only face front or rear; skip any other offset for it.

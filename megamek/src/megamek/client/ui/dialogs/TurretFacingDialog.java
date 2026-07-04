@@ -42,6 +42,7 @@ import java.awt.event.ActionListener;
 import java.awt.image.BufferedImage;
 import java.io.Serial;
 import java.util.ArrayList;
+import java.util.function.IntConsumer;
 import javax.swing.ButtonGroup;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
@@ -60,6 +61,7 @@ import megamek.common.equipment.MiscType;
 import megamek.common.equipment.Mounted;
 import megamek.common.equipment.WeaponMounted;
 import megamek.common.units.DirectionalTorsoMountRules;
+import megamek.common.units.Entity;
 import megamek.common.units.Mek;
 import megamek.common.units.Tank;
 
@@ -75,6 +77,11 @@ public class TurretFacingDialog extends JDialog implements ActionListener {
     Tank tank;
     Mounted<?> turret;
     boolean directionalMount;
+    /**
+     * When set, the dialog only picks a facing and hands it to this consumer on OK (vehicle main-turret mode - the
+     * rotation is a turret twist declared by the attack display); when {@code null}, OK applies the facing itself.
+     */
+    private IntConsumer facingConsumer;
     ButtonGroup buttonGroup = new ButtonGroup();
     ClientGUI clientgui;
 
@@ -255,6 +262,96 @@ public class TurretFacingDialog extends JDialog implements ActionListener {
     }
 
     /**
+     * Facing picker for a vehicle's main turret, whose rotation is a turret twist - the turret follows the unit's
+     * secondary facing. The dialog only picks the facing: the chosen facing is handed to {@code facingConsumer}, which
+     * declares the twist through the attack display (clearing pending attacks like any other twist). On a dual-turret
+     * vehicle this is the rear turret; the front turret uses {@link #TurretFacingDialog(JFrame, Tank, ClientGUI)}.
+     *
+     * @param parent         the parent frame
+     * @param tank           the vehicle whose main turret is being rotated
+     * @param clientgui      the client GUI, used for the unit preview image
+     * @param facingConsumer receives the chosen absolute facing (0-5) when the player confirms
+     */
+    public TurretFacingDialog(JFrame parent, Tank tank, ClientGUI clientgui, IntConsumer facingConsumer) {
+        super(parent, "Turret facing", false);
+        super.setResizable(false);
+        this.tank = tank;
+        this.clientgui = clientgui;
+        this.facingConsumer = facingConsumer;
+        butOkay.addActionListener(this);
+        butCancel.addActionListener(this);
+
+        for (int i = 0; i <= 5; i++) {
+            JRadioButton button = new JRadioButton();
+            button.setActionCommand(i + "");
+            facings.add(button);
+            buttonGroup.add(button);
+        }
+        // Preselect the turret's current facing - the main turret follows the unit's secondary facing.
+        for (JRadioButton button : facings) {
+            if (button.getActionCommand().equals(tank.getSecondaryFacing() + "")) {
+                button.setSelected(true);
+            }
+        }
+        // The main turret rotates by turret twist; when the twist is unavailable (turret locked/jammed, or the
+        // unit already twisted in an earlier phase this turn) the facing cannot be changed.
+        if (!tank.canChangeSecondaryFacing()) {
+            for (JRadioButton button : facings) {
+                button.setEnabled(false);
+            }
+        }
+        layoutFacingPicker(parent, tank);
+    }
+
+    /**
+     * Lays out the shared six-facing picker around the unit's preview image and places the dialog. Expects the six
+     * radio buttons in {@link #facings} to be created, preselected and enabled/disabled by the caller.
+     *
+     * @param parent the parent frame the dialog is centered on
+     * @param unit   the unit whose preview image is shown in the center
+     */
+    private void layoutFacingPicker(JFrame parent, Entity unit) {
+        setLayout(new BorderLayout());
+        JPanel tempPanel = new JPanel(new BorderLayout());
+        JPanel panNorth = new JPanel(new GridBagLayout());
+        JPanel panWest = new JPanel(new BorderLayout());
+        JPanel panEast = new JPanel(new BorderLayout());
+        JPanel panSouth = new JPanel(new GridBagLayout());
+        panNorth.add(facings.getFirst());
+        panSouth.add(facings.get(3));
+        panWest.add(facings.get(5), BorderLayout.NORTH);
+        panWest.add(facings.get(4), BorderLayout.SOUTH);
+        panEast.add(facings.get(1), BorderLayout.NORTH);
+        panEast.add(facings.get(2), BorderLayout.SOUTH);
+        tempPanel.add(panNorth, BorderLayout.NORTH);
+        tempPanel.add(panWest, BorderLayout.WEST);
+
+        JLabel labImage = new JLabel();
+        clientgui.loadPreviewImage(labImage, unit);
+        Image unitImage = ((ImageIcon) labImage.getIcon()).getImage();
+        Image hexImage = clientgui.getTilesetManager().baseFor(new Hex());
+        BufferedImage toDraw = new BufferedImage(84, 72, BufferedImage.TYPE_INT_ARGB);
+        Graphics2D graphics = toDraw.createGraphics();
+        graphics.drawImage(hexImage, 0, 0, null);
+        graphics.drawImage(unitImage, 0, 0, null);
+        graphics.dispose();
+        labImage.setIcon(new ImageIcon(toDraw));
+        labImage.setHorizontalAlignment(SwingConstants.CENTER);
+        labImage.setOpaque(false);
+        tempPanel.add(labImage, BorderLayout.CENTER);
+        tempPanel.add(panEast, BorderLayout.EAST);
+        tempPanel.add(panSouth, BorderLayout.SOUTH);
+        JPanel buttonPanel = new JPanel();
+        buttonPanel.add(butOkay);
+        buttonPanel.add(butCancel);
+        add(tempPanel, BorderLayout.CENTER);
+        add(buttonPanel, BorderLayout.SOUTH);
+        pack();
+        setLocation((parent.getLocation().x + (parent.getSize().width / 2)) - (getSize().width / 2),
+              (parent.getLocation().y + (parent.getSize().height / 2)) - (getSize().height / 2));
+    }
+
+    /**
      * Facing picker for a Directional Torso Mount (BMM p.83). The 2-point mount allows only the forward and rear
      * facings; the 3-point quad turret allows all six. Reuses the same six-facing layout as the turret dialogs.
      *
@@ -308,7 +405,9 @@ public class TurretFacingDialog extends JDialog implements ActionListener {
                 }
             }
         }
-        if (directionalMountWeapon.isDirectionalMountLocked()) {
+        // Unavailable when destroyed by damage or already refaced in an earlier phase this turn (once per turn).
+        if (directionalMountWeapon.isDirectionalMountLocked()
+              || directionalMountWeapon.isDirectionalMountAlreadyFlipped()) {
             for (JRadioButton button : facings) {
                 button.setEnabled(false);
             }
@@ -362,6 +461,13 @@ public class TurretFacingDialog extends JDialog implements ActionListener {
         } else if (ae.getSource().equals(butOkay)) {
             int facing = MathUtility.parseInt(buttonGroup.getSelection().getActionCommand(), 0);
             int locToChange;
+            if (facingConsumer != null) {
+                // Vehicle main-turret mode: the attack display declares the facing as a turret twist; nothing is
+                // sent from the dialog itself.
+                facingConsumer.accept(facing);
+                dispose();
+                return;
+            }
             if (directionalMount && (mek != null)) {
                 // The mount offset composes with torso twist, so it is measured against the weapon's base facing
                 // (secondary facing when twisted) - the same base TurretFacing.weaponFacing() uses for the arc.

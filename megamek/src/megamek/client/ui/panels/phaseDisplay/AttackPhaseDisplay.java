@@ -149,6 +149,23 @@ public abstract class AttackPhaseDisplay extends ActionPhaseDisplay {
     protected void setRotateTurretEnabled(boolean enabled) {}
 
     /**
+     * Enables or disables the second Rotate Turret button (the rear turret of a dual-turret vehicle). The default is a
+     * no-op; displays that provide the button override this to toggle their own button and menu item.
+     *
+     * @param enabled whether the rear-turret rotate button should be enabled
+     */
+    protected void setRotateRearTurretEnabled(boolean enabled) {}
+
+    /**
+     * Relabels the Rotate Turret button for the selected unit: on a dual-turret vehicle it reads "Rotate Fr. Turret"
+     * (the second button covers the rear turret); on every other unit it reads the plain "Rotate Turret". The default
+     * is a no-op; displays that provide the button override this.
+     *
+     * @param dualTurretTank {@code true} when the selected unit is a dual-turret vehicle
+     */
+    protected void setRotateTurretLabel(boolean dualTurretTank) {}
+
+    /**
      * Flips the selected weapon's 2-point Directional Torso Mount between the front and rear arc (BMM p.83). A
      * Directional Torso Mount is a single mount holding every directional-mount weapon in one torso location, so the
      * whole mount flips together. The facing is queued as a {@link DirectionalMountFacingAction} (applied by the server
@@ -182,6 +199,11 @@ public abstract class AttackPhaseDisplay extends ActionPhaseDisplay {
         if (weapon.isDirectionalMountLocked()) {
             LOGGER.info("[DirTorsoMount] {}: flip ignored - mount for {} is locked",
                   currentEntity().getShortName(), weapon.getName());
+            return;
+        }
+        if (weapon.isDirectionalMountAlreadyFlipped()) {
+            LOGGER.info("[DirTorsoMount] {}: flip ignored - mount for {} already changed facing in an earlier phase"
+                  + " this turn (once per turn, BMM p.83)", currentEntity().getShortName(), weapon.getName());
             return;
         }
         boolean newRear = !weapon.isDirectionalMountRear();
@@ -254,7 +276,8 @@ public abstract class AttackPhaseDisplay extends ActionPhaseDisplay {
     /**
      * Enables the flip-mount button only when the selected weapon is in a 2-point Directional Torso Mount whose arc can
      * still be changed - i.e. it is a directional mount, is not a 360-degree turret (which has no front/rear to flip),
-     * and has not been locked by damage. Logs the decision for any directional-mount unit to aid playtesting.
+     * has not been locked by damage, and has not already changed facing in an earlier phase this turn (once per turn,
+     * like a torso twist). Logs the decision for any directional-mount unit to aid playtesting.
      */
     protected void updateFlipMount() {
         WeaponMounted weapon = clientgui.getUnitDisplay().wPan.getSelectedWeapon();
@@ -264,7 +287,8 @@ public abstract class AttackPhaseDisplay extends ActionPhaseDisplay {
         }
         boolean canFlip = weapon.hasDirectionalTorsoMount()
               && !weapon.hasDirectional360TorsoMount()
-              && !weapon.isDirectionalMountLocked();
+              && !weapon.isDirectionalMountLocked()
+              && !weapon.isDirectionalMountAlreadyFlipped();
         boolean unitHasDirectionalMount =
               currentEntity().hasQuirk(OptionsConstants.QUIRK_POS_DIRECTIONAL_TORSO_MOUNT)
                     || currentEntity().hasQuirk(OptionsConstants.QUIRK_POS_DIRECTIONAL_TORSO_MOUNT_360)
@@ -287,6 +311,20 @@ public abstract class AttackPhaseDisplay extends ActionPhaseDisplay {
         if (entity == null) {
             return;
         }
+        // Vehicle turrets rotate as a whole, independent of the selected weapon: on a dual-turret vehicle this
+        // button covers the front turret ("Rotate Fr. Turret"; the rear turret has its own button), on a
+        // single-turret vehicle the main turret.
+        if (entity instanceof Tank tank) {
+            if (!tank.hasNoDualTurret()) {
+                new TurretFacingDialog(clientgui.getFrame(), tank, clientgui).setVisible(true);
+            } else if (!tank.hasNoTurret()) {
+                // The main turret follows the unit's secondary facing, so rotating it is a turret twist: the dialog
+                // only picks the facing and the twist is declared through the same path as the Twist button.
+                new TurretFacingDialog(clientgui.getFrame(), tank, clientgui, this::declareSecondaryFacing)
+                      .setVisible(true);
+            }
+            return;
+        }
         WeaponMounted weapon = clientgui.getUnitDisplay().wPan.getSelectedWeapon();
         if (weapon == null) {
             return;
@@ -298,10 +336,29 @@ public abstract class AttackPhaseDisplay extends ActionPhaseDisplay {
             if (turretItem != null) {
                 new TurretFacingDialog(clientgui.getFrame(), turretMek, turretItem, clientgui).setVisible(true);
             }
-        } else if ((entity instanceof Tank tank) && (weapon.getLocation() == tank.getLocTurret2())) {
-            new TurretFacingDialog(clientgui.getFrame(), tank, clientgui).setVisible(true);
         }
     }
+
+    /**
+     * Opens the facing dialog for a dual-turret vehicle's rear (main) turret - the "Rotate Rr. Turret" button. The rear
+     * turret follows the unit's secondary facing, so the rotation is declared as a turret twist.
+     */
+    public void rotateRearTurret() {
+        if ((currentEntity() instanceof Tank tank) && !tank.hasNoDualTurret()) {
+            new TurretFacingDialog(clientgui.getFrame(), tank, clientgui, this::declareSecondaryFacing)
+                  .setVisible(true);
+        }
+    }
+
+    /**
+     * Declares a change of the unit's secondary facing (a torso/turret twist) to the given facing, as if the player had
+     * used the Twist control. The default is a no-op; attack displays override this with their twist-declaration path
+     * (which clears pending attacks like any twist). Used by {@link #rotateSelectedMount()} for vehicle main turrets,
+     * whose rotation is a turret twist.
+     *
+     * @param facing the absolute facing (0-5) to twist to
+     */
+    protected void declareSecondaryFacing(int facing) {}
 
     /**
      * @param mek      the unit
@@ -321,22 +378,60 @@ public abstract class AttackPhaseDisplay extends ActionPhaseDisplay {
     }
 
     /**
-     * Enables the rotate-turret button when the selected weapon sits on a rotatable mount (a Mek turret, a vehicle dual
-     * turret, or a Directional Torso Mount) whose facing can still be changed.
+     * Enables the rotate-turret buttons. Vehicle turrets rotate as a whole (independent of the selected weapon): a
+     * dual-turret vehicle gets both buttons - front turret on the first, rear turret on the second - while a
+     * single-turret vehicle gets only the first, for its main turret. On Meks the first button follows the selected
+     * weapon's rotatable mount (a Mek turret or a 360-degree Directional Torso Mount) as long as its facing can still
+     * be changed.
      */
     protected void updateRotateTurret() {
+        Entity entity = currentEntity();
+        if (entity == null) {
+            setRotateTurretEnabled(false);
+            setRotateRearTurretEnabled(false);
+            return;
+        }
+        if (entity instanceof Tank tank) {
+            updateTankRotateButtons(tank);
+            return;
+        }
+        setRotateTurretLabel(false);
+        setRotateRearTurretEnabled(false);
         WeaponMounted weapon = clientgui.getUnitDisplay().wPan.getSelectedWeapon();
-        if ((currentEntity() == null) || (weapon == null)) {
+        if (weapon == null) {
             setRotateTurretEnabled(false);
             return;
         }
         // A 2-point Directional Torso Mount is flipped front/rear with the Flip Mount button, so it does not use
-        // the rotate dialog; only the 3-point 360 quad turret (and Mek/vehicle turrets) use the rotate button.
+        // the rotate dialog; only the 3-point 360 quad turret (and Mek turrets) use the rotate button.
         boolean isTwoPointDirectionalMount = weapon.hasDirectionalTorsoMount() && !weapon.hasDirectional360TorsoMount();
-        boolean isLockedDirectionalMount = weapon.hasDirectionalTorsoMount() && weapon.isDirectionalMountLocked();
-        boolean canRotate = TurretFacing.isRotatable(currentEntity(), weapon)
+        // A directional mount locked by damage, or already refaced in an earlier phase this turn, cannot rotate.
+        boolean isUnavailableDirectionalMount = weapon.hasDirectionalTorsoMount()
+              && (weapon.isDirectionalMountLocked() || weapon.isDirectionalMountAlreadyFlipped());
+        boolean canRotate = TurretFacing.isRotatable(entity, weapon)
               && !isTwoPointDirectionalMount
-              && !isLockedDirectionalMount;
+              && !isUnavailableDirectionalMount;
         setRotateTurretEnabled(canRotate);
+    }
+
+    /**
+     * Enables and labels the rotate buttons for a vehicle. The front (dual) turret's facing is a freely-set offset and
+     * only needs its mechanism intact; the main turret follows the unit's secondary facing, so its rotation needs the
+     * turret twist to still be available (turret intact, not yet twisted this turn, crew active - matching the Twist
+     * button). On a dual-turret vehicle the main turret is the rear turret and uses the second button.
+     *
+     * @param tank the selected vehicle
+     */
+    private void updateTankRotateButtons(Tank tank) {
+        boolean canTwistTurret = tank.canChangeSecondaryFacing() && tank.getCrew().isActive();
+        boolean hasDualTurret = !tank.hasNoDualTurret();
+        setRotateTurretLabel(hasDualTurret);
+        if (hasDualTurret) {
+            setRotateTurretEnabled(!tank.isTurretLocked(tank.getLocTurret2()));
+            setRotateRearTurretEnabled(canTwistTurret);
+        } else {
+            setRotateTurretEnabled(!tank.hasNoTurret() && canTwistTurret);
+            setRotateRearTurretEnabled(false);
+        }
     }
 }

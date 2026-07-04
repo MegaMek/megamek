@@ -107,6 +107,11 @@ public class Mounted<T extends EquipmentType> implements Serializable, RoundUpda
     // Directional Torso Mount quirk (BMM p.83): true when the mount's rotation mechanism has been
     // destroyed (2D6 9+ on a location hit). The weapon still fires, but its arc is locked.
     private boolean directionalMountLocked = false;
+    // Directional Torso Mount quirk (BMM p.83): the attack phase in which the mount's facing was changed
+    // this round, or null when it has not been changed. Mirrors Entity.twistedPhase (torso twists): the
+    // facing may be adjusted freely within that phase, but not again in a later phase of the same turn.
+    // Cleared each round in newRound(int).
+    private GamePhase directionalMountFlippedPhase = null;
 
     private int mode; // Equipment's current state. On or Off. Six shot or
     // Four shot, etc
@@ -416,6 +421,10 @@ public class Mounted<T extends EquipmentType> implements Serializable, RoundUpda
 
         // PLAYTEST3 reset AMS usage value
         setAMSused(false);
+
+        // A Directional Torso Mount may change facing once per turn (BMM p.83); the chosen facing itself
+        // persists across rounds, only the once-per-turn tracker resets.
+        directionalMountFlippedPhase = null;
 
         if ((type != null) && (type.hasModes() && (pendingMode != -1))) {
             mode = pendingMode;
@@ -1549,10 +1558,14 @@ public class Mounted<T extends EquipmentType> implements Serializable, RoundUpda
      *       version or the 3-point quad 360-degree version), per BMM p.83. This is true when the weapon carries a
      *       Directional Torso Mount weapon quirk directly, or when its unit carries the chassis-wide
      *       {@code directional_torso_mount} quirk and this weapon is in its scope (see
-     *       {@link #isInUnitTorsoMountSet(String)}). Respects the quirks game option (see
+     *       {@link #isInUnitTorsoMountSet(String)}). A weapon that is physically split across two locations can never
+     *       ride the single-location mount, regardless of quirk source. Respects the quirks game option (see
      *       {@link #hasQuirk(String)}).
      */
     public boolean hasDirectionalTorsoMount() {
+        if (isSplit()) {
+            return false;
+        }
         return hasQuirk(OptionsConstants.QUIRK_WEAPON_POS_DIRECT_TORSO_MOUNT)
               || hasDirectional360TorsoMount()
               || isInUnitTorsoMountSet(OptionsConstants.QUIRK_POS_DIRECTIONAL_TORSO_MOUNT);
@@ -1638,6 +1651,7 @@ public class Mounted<T extends EquipmentType> implements Serializable, RoundUpda
         description.append(" loc=").append(getLocation());
         description.append(" rearMounted=").append(rearMounted);
         description.append(" turretMounted=").append(mekTurretMounted);
+        description.append(" split=").append(isSplit());
         description.append(" quirksOptionOn=").append(quirksOptionOn);
         description.append(" wpnQuirk2pt=").append(hasQuirk(OptionsConstants.QUIRK_WEAPON_POS_DIRECT_TORSO_MOUNT));
         description.append(" wpnQuirkQuad=")
@@ -1653,6 +1667,8 @@ public class Mounted<T extends EquipmentType> implements Serializable, RoundUpda
         description.append(" has360=").append(hasDirectional360TorsoMount());
         description.append(" facing=").append(directionalMountFacing);
         description.append(" locked=").append(directionalMountLocked);
+        description.append(" flippedPhase=").append(directionalMountFlippedPhase);
+        description.append(" alreadyFlipped=").append(isDirectionalMountAlreadyFlipped());
         return description.toString();
     }
 
@@ -1672,15 +1688,52 @@ public class Mounted<T extends EquipmentType> implements Serializable, RoundUpda
 
     /**
      * Sets the Directional Torso Mount's facing offset (0-5 from the unit's facing). Has no effect once the mount is
-     * locked (see {@link #isDirectionalMountLocked()}). The caller is responsible for restricting the value to the
-     * legal facings for the mount type (front/rear for 2-point, any for the 3-point quad turret).
+     * locked (see {@link #isDirectionalMountLocked()}) or once its facing was already changed in an earlier attack
+     * phase this turn (see {@link #isDirectionalMountAlreadyFlipped()} - the once-per-turn rule, modeled on torso
+     * twists). The caller is responsible for restricting the value to the legal facings for the mount type (front/rear
+     * for 2-point, any for the 3-point quad turret).
      *
      * @param facing the facing offset; normalized into the range 0-5
      */
     public void setDirectionalMountFacing(int facing) {
-        if (!directionalMountLocked) {
-            directionalMountFacing = ((facing % 6) + 6) % 6;
+        if (directionalMountLocked || isDirectionalMountAlreadyFlipped()) {
+            return;
         }
+        int normalizedFacing = ((facing % 6) + 6) % 6;
+        if (normalizedFacing != directionalMountFacing) {
+            markDirectionalMountFlipped();
+        }
+        directionalMountFacing = normalizedFacing;
+    }
+
+    /**
+     * Records the phase in which this Directional Torso Mount's facing was changed, mirroring how
+     * {@code Entity.setSecondaryFacing} records the torso-twist phase: only the attack-declaration phases (targeting,
+     * offboard, firing) are recorded, and only the first change of the turn sets the phase - later same-phase
+     * adjustments keep it, so the facing stays freely adjustable until the phase ends.
+     */
+    private void markDirectionalMountFlipped() {
+        if ((entity == null) || (entity.getGame() == null) || (directionalMountFlippedPhase != null)) {
+            return;
+        }
+        GamePhase gamePhase = entity.getGame().getPhase();
+        if ((gamePhase != null) && (gamePhase.isTargeting() || gamePhase.isOffboard() || gamePhase.isFiring())) {
+            directionalMountFlippedPhase = gamePhase;
+        }
+    }
+
+    /**
+     * @return {@code true} if this Directional Torso Mount's facing was already changed in an earlier phase of the
+     *       current turn. A mount's facing may be changed only once per turn - at the same time torso twists are made
+     *       (BMM p.83) - so a mount flipped in the targeting/TAG phase cannot flip again in the weapon attack phase.
+     *       Within the phase it was changed in, the facing remains freely adjustable (like a torso twist). Cleared at
+     *       the start of each round.
+     */
+    public boolean isDirectionalMountAlreadyFlipped() {
+        if ((directionalMountFlippedPhase == null) || (entity == null) || (entity.getGame() == null)) {
+            return false;
+        }
+        return directionalMountFlippedPhase.isBefore(entity.getGame().getPhase());
     }
 
     /**

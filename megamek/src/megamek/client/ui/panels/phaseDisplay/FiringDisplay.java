@@ -116,6 +116,7 @@ public class FiringDisplay extends AttackPhaseDisplay implements ListSelectionLi
         FIRE_FLIP_ARMS("fireFlipArms"),
         FIRE_FLIP_MOUNT("fireFlipMount"),
         FIRE_ROTATE_TURRET("fireRotateTurret"),
+        FIRE_ROTATE_TURRET_2("fireRotateTurret2"),
         FIRE_FIND_CLUB("fireFindClub"),
         FIRE_STRAFE("fireStrafe"),
         FIRE_SEARCHLIGHT("fireSearchlight"),
@@ -379,11 +380,25 @@ public class FiringDisplay extends AttackPhaseDisplay implements ListSelectionLi
         int i = 0;
         FiringCommand[] commands = FiringCommand.values();
         CommandComparator comparator = new CommandComparator();
+        // The two turret-rotate buttons belong side by side: pin the rear button's priority to the front one's, so
+        // the stable sort keeps them adjacent regardless of any saved button-order preferences.
+        FiringCommand.FIRE_ROTATE_TURRET_2.setPriority(FiringCommand.FIRE_ROTATE_TURRET.getPriority());
         Arrays.sort(commands, comparator);
         for (FiringCommand cmd : commands) {
             if (cmd == FiringCommand.FIRE_NEXT
                   || cmd == FiringCommand.FIRE_MORE
                   || cmd == FiringCommand.FIRE_CANCEL) {
+                continue;
+            }
+            // The Directional Torso Mount (BMM p.83) is a Mek-only quirk, so other unit types never show its button.
+            if ((cmd == FiringCommand.FIRE_FLIP_MOUNT) && (currentEntity() != null)
+                  && !(currentEntity() instanceof Mek)) {
+                continue;
+            }
+            // The rear-turret rotate button exists only for dual-turret vehicles (the first rotate button then
+            // covers the front turret).
+            if ((cmd == FiringCommand.FIRE_ROTATE_TURRET_2)
+                  && !((currentEntity() instanceof Tank tank) && !tank.hasNoDualTurret())) {
                 continue;
             }
             if (i % buttonsPerGroup == 0) {
@@ -487,6 +502,9 @@ public class FiringDisplay extends AttackPhaseDisplay implements ListSelectionLi
 
             setFindClubEnabled(FindClubAction.canMekFindClub(game, en));
             setFlipArmsEnabled(!currentEntity().getAlreadyTwisted() && currentEntity().canFlipArms());
+            // Rebuild the button ribbon for the newly selected unit: the Flip Mount button is Mek-only, so the
+            // ribbon differs by unit type (see getButtonList()).
+            setupButtonPanel();
             updateFlipMount();
             updateRotateTurret();
             updateSearchlight();
@@ -505,6 +523,7 @@ public class FiringDisplay extends AttackPhaseDisplay implements ListSelectionLi
                 setFlipArmsEnabled(false);
                 setFlipMountEnabled(false);
                 setRotateTurretEnabled(false);
+                setRotateRearTurretEnabled(false);
                 setStrafeEnabled(false);
                 clientgui.getUnitDisplay().wPan.setToHit("Hidden units are only allowed to spot!");
             }
@@ -611,6 +630,7 @@ public class FiringDisplay extends AttackPhaseDisplay implements ListSelectionLi
         setFlipArmsEnabled(false);
         setFlipMountEnabled(false);
         setRotateTurretEnabled(false);
+        setRotateRearTurretEnabled(false);
         setFireModeEnabled(false);
         setFireCalledEnabled(false);
         setFireClearTurretEnabled(false);
@@ -2021,6 +2041,8 @@ public class FiringDisplay extends AttackPhaseDisplay implements ListSelectionLi
             flipDirectionalMount();
         } else if (ev.getActionCommand().equals(FiringCommand.FIRE_ROTATE_TURRET.getCmd())) {
             rotateSelectedMount();
+        } else if (ev.getActionCommand().equals(FiringCommand.FIRE_ROTATE_TURRET_2.getCmd())) {
+            rotateRearTurret();
             // Fire Mode - More Fire Mode button handling - Rasia
         } else if (ev.getActionCommand().equals(FiringCommand.FIRE_MODE.getCmd())) {
             changeMode(true);
@@ -2078,6 +2100,18 @@ public class FiringDisplay extends AttackPhaseDisplay implements ListSelectionLi
     @Override
     protected void refreshTargetAfterMountChange() {
         updateTarget();
+    }
+
+    /**
+     * Declares a torso/turret twist to the given facing through the firing-phase twist path, used by the Rotate Turret
+     * dialog for vehicle main turrets. See {@link AttackPhaseDisplay#rotateSelectedMount()}.
+     */
+    @Override
+    protected void declareSecondaryFacing(int facing) {
+        if ((currentEntity() == null) || currentEntity().getAlreadyTwisted()) {
+            return;
+        }
+        addTorsoTwistAction(currentEntity().clipSecondaryFacing(facing));
     }
 
     protected void updateSearchlight() {
@@ -2309,6 +2343,18 @@ public class FiringDisplay extends AttackPhaseDisplay implements ListSelectionLi
     protected void setRotateTurretEnabled(boolean enabled) {
         buttons.get(FiringCommand.FIRE_ROTATE_TURRET).setEnabled(enabled);
         clientgui.getMenuBar().setEnabled(FiringCommand.FIRE_ROTATE_TURRET.getCmd(), enabled);
+    }
+
+    @Override
+    protected void setRotateRearTurretEnabled(boolean enabled) {
+        buttons.get(FiringCommand.FIRE_ROTATE_TURRET_2).setEnabled(enabled);
+        clientgui.getMenuBar().setEnabled(FiringCommand.FIRE_ROTATE_TURRET_2.getCmd(), enabled);
+    }
+
+    @Override
+    protected void setRotateTurretLabel(boolean dualTurretTank) {
+        buttons.get(FiringCommand.FIRE_ROTATE_TURRET).setText(Messages.getString(
+              dualTurretTank ? "FiringDisplay.fireRotateTurretFront" : "FiringDisplay.fireRotateTurret"));
     }
 
     protected void setSpotEnabled(boolean enabled) {

@@ -1876,7 +1876,8 @@ public class MapMenu extends JPopupMenu {
     private JMenuItem createRotateDirectionalMountJMenuItem(final Mek mek, final WeaponMounted weapon) {
         String label = "Rotate Directional Mount (" + mek.getLocationAbbr(weapon.getLocation()) + ")";
         JMenuItem item = new JMenuItem(label);
-        item.setEnabled(!weapon.isDirectionalMountLocked());
+        // Unavailable when destroyed by damage or already refaced in an earlier phase this turn (once per turn).
+        item.setEnabled(!weapon.isDirectionalMountLocked() && !weapon.isDirectionalMountAlreadyFlipped());
         item.addActionListener(evt -> {
             TurretFacingDialog dialog = new TurretFacingDialog(gui.frame, mek, weapon, gui, true);
             dialog.setVisible(true);

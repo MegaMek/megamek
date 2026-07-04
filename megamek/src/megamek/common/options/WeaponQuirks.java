@@ -40,6 +40,7 @@ import java.io.Serial;
 import java.util.List;
 
 import megamek.common.battleArmor.BattleArmor;
+import megamek.common.equipment.AmmoType;
 import megamek.common.equipment.EquipmentType;
 import megamek.common.equipment.GunEmplacement;
 import megamek.common.equipment.MiscType;
@@ -234,16 +235,20 @@ public class WeaponQuirks extends AbstractOptions {
 
     /**
      * Determines whether a weapon has location placement restrictions that forbid it from being placed in a Directional
-     * Torso Mount (BMM p.83). A weapon that can be split across two locations (its critical slots span more than one
-     * location, e.g. the Heavy Gauss and Improved Heavy Gauss rifles) cannot occupy a single-location Directional Torso
-     * Mount.
+     * Torso Mount (BMM p.83): the Heavy Gauss and Improved Heavy Gauss rifles, which carry genuine mandatory mounting
+     * rules. Merely being large enough that construction <i>allows</i> splitting over two locations (8+ critical
+     * slots, e.g. a HAG/30) is an allowance, not a restriction, and does not exclude the weapon - the canon
+     * OmniMarauder Prime mounts its Directional Torso Mount HAG/30 whole in one torso. A weapon that actually
+     * <i>is</i> split across two locations can never ride the single-location mount; that is checked per mount in
+     * {@link Mounted#hasDirectionalTorsoMount()}.
      *
      * @param weaponType the weapon being checked
      *
      * @return {@code true} if the weapon may not be placed in a Directional Torso Mount
      */
     public static boolean hasLocationPlacementRestriction(WeaponType weaponType) {
-        return weaponType.isSplittableOverCriticalSlots();
+        AmmoType.AmmoTypeEnum ammoType = weaponType.getAmmoType();
+        return (ammoType == AmmoType.AmmoTypeEnum.GAUSS_HEAVY) || (ammoType == AmmoType.AmmoTypeEnum.IGAUSS_HEAVY);
     }
 
     private static class WeaponQuirksInfo extends AbstractOptionsInfo {

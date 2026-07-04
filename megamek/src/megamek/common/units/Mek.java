@@ -2766,9 +2766,8 @@ public abstract class Mek extends Entity implements Fortifiable, RubbleClearer {
         int roll;
 
         if ((aimedLocation != LOC_NONE) && !aimingMode.isNone()) {
-            roll = Compute.d6(2);
-
-            if ((5 < roll) && (roll < 9)) {
+            if (Game.rulesManager.getRulesTarget().checkAimedLocation())
+            {
                 return new HitData(aimedLocation, side == ToHitData.SIDE_REAR, true);
             }
         }
@@ -2943,11 +2942,10 @@ public abstract class Mek extends Entity implements Fortifiable, RubbleClearer {
             }
 
             if (side == ToHitData.SIDE_FRONT || side == ToHitData.SIDE_LEFT || side == ToHitData.SIDE_RIGHT) {
-                return new HitData(Game.rulesManager.getRulesCharts().getPunchHitLocation(roll, side, false));
+                return new HitData(Game.rulesManager.getRulesCharts().getPunchHitLocation(roll, side));
             }
             if (side == ToHitData.SIDE_REAR) {
-                return new HitData(Game.rulesManager.getRulesCharts().getPunchHitLocation(roll, ToHitData.SIDE_FRONT,
-                      false), true);
+                return new HitData(Game.rulesManager.getRulesCharts().getPunchHitLocation(roll, ToHitData.SIDE_FRONT), true);
             }
         }
         if (table == ToHitData.HIT_KICK) {

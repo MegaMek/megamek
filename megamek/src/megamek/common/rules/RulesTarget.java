@@ -35,8 +35,10 @@ package megamek.common.rules;
 
 public abstract class RulesTarget {
     // Check if the target is large and if there is a modifier
-
     public abstract int largeTargetModifier(int weightclass, boolean markedLarge);
     public int largeTargetModifier(int weightclass) { return largeTargetModifier(weightclass, false); };
     public int largeTargetModifier(boolean markedLarge) {return largeTargetModifier(0,markedLarge);};
+
+    // Do we hit the aimed location?
+    public abstract boolean checkAimedLocation();
 }

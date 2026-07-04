@@ -566,9 +566,7 @@ public class QuadMek extends Mek {
         int roll;
 
         if ((aimedLocation != LOC_NONE) && !aimingMode.isNone()) {
-            roll = Compute.d6(2);
-
-            if ((5 < roll) && (roll < 9)) {
+            if (Game.rulesManager.getRulesTarget().checkAimedLocation()) {
                 return new HitData(aimedLocation, side == ToHitData.SIDE_REAR, true);
             }
         }

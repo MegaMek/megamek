@@ -33,6 +33,7 @@ package megamek.common.rules.core;
  * affiliated with Microsoft.
  */
 
+import megamek.common.compute.Compute;
 import megamek.common.rules.RulesTarget;
 import megamek.common.units.EntityWeightClass;
 
@@ -46,5 +47,14 @@ public class CoreRulesTarget extends RulesTarget {
             return -1;
         }
         return 0;
+    }
+
+    // Aimed shots hit on d6 4+. Core p.70
+    public boolean checkAimedLocation(){
+        int roll = Compute.d6(1);
+        if (roll >=4) {
+            return true;
+        }
+        return false;
     }
 }

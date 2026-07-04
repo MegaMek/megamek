@@ -48,6 +48,7 @@ import megamek.common.equipment.EquipmentType;
 import megamek.common.equipment.MiscType;
 import megamek.common.equipment.Mounted;
 import megamek.common.equipment.enums.MiscTypeFlag;
+import megamek.common.game.Game;
 import megamek.common.options.OptionsConstants;
 import megamek.common.planetaryConditions.PlanetaryConditions;
 import megamek.common.preference.PreferenceManager;
@@ -469,10 +470,7 @@ public class TripodMek extends MekWithArms {
         int roll;
 
         if ((aimedLocation != LOC_NONE) && !aimingMode.isNone()) {
-
-            roll = Compute.d6(2);
-
-            if ((5 < roll) && (roll < 9)) {
+            if (Game.rulesManager.getRulesTarget().checkAimedLocation()) {
                 return new HitData(aimedLocation, side == ToHitData.SIDE_REAR, true);
             }
         }

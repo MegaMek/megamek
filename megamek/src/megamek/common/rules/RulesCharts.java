@@ -47,6 +47,9 @@ public abstract class RulesCharts {
 
     // Mek Punch hit chart
     public abstract int getPunchHitLocation(int roll, int side, boolean quad);
+    public int getPunchHitLocation(int roll, int side) {
+        return getPunchHitLocation(roll, side, false);
+    }
 
     // Mek punch hit chart side
     public abstract int getPunchHitLocationSide(int roll, int side, boolean quad);

@@ -48,15 +48,7 @@ import megamek.common.loaders.EntityLoadingException;
 import megamek.common.units.Entity;
 import megamek.common.weapons.handlers.AttackHandler;
 import megamek.common.weapons.handlers.MissileMineClearanceHandler;
-import megamek.common.weapons.handlers.srm.SRMARADHandler;
-import megamek.common.weapons.handlers.srm.SRMAXHandler;
-import megamek.common.weapons.handlers.srm.SRMAntiTSMHandler;
-import megamek.common.weapons.handlers.srm.SRMDeadFireHandler;
-import megamek.common.weapons.handlers.srm.SRMFragHandler;
-import megamek.common.weapons.handlers.srm.SRMHandler;
-import megamek.common.weapons.handlers.srm.SRMInfernoHandler;
-import megamek.common.weapons.handlers.srm.SRMSmokeWarheadHandler;
-import megamek.common.weapons.handlers.srm.SRMTandemChargeHandler;
+import megamek.common.weapons.handlers.srm.*;
 import megamek.common.weapons.missiles.MissileWeapon;
 import megamek.server.totalWarfare.TWGameManager;
 
@@ -151,6 +143,9 @@ public abstract class SRMWeapon extends MissileWeapon {
                 }
                 if (ammoType.getMunitionType().contains(AmmoType.Munitions.M_ARAD)) {
                     return new SRMARADHandler(toHit, waa, game, manager);
+                }
+                if (ammoType.getMunitionType().contains(AmmoType.Munitions.M_MAGNETIC_PULSE)) {
+                    return new SRMMagneticPulseHandler(toHit, waa, game, manager);
                 }
             }
 

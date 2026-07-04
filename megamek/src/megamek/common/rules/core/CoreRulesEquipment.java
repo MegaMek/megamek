@@ -34,6 +34,7 @@ package megamek.common.rules.core;
  * affiliated with Microsoft.
  */
 
+import megamek.common.game.Game;
 import megamek.common.rules.RulesEquipment;
 import megamek.common.units.Mek;
 
@@ -50,5 +51,9 @@ public class CoreRulesEquipment extends RulesEquipment {
             return 4;
         }
         return 2;
+    }
+
+    public int getMascFailure(int nLevel) {
+        return Game.rulesManager.getRulesCharts().escalatingFailure(nLevel);
     }
 }

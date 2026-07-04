@@ -15248,7 +15248,7 @@ public abstract class Entity extends TurnOrdered
         } else if (game != null && gameOptions().booleanOption(OptionsConstants.ADVANCED_ALTERNATE_MASC)) {
             return ALTERNATE_MASC_FAILURE[nLevel];
         } else {
-            return MASC_FAILURE[nLevel];
+            return Game.rulesManager.getRulesEquipment().getMascFailure(nLevel);
         }
     }
 

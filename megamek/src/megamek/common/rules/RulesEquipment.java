@@ -39,4 +39,6 @@ public abstract class RulesEquipment {
     public abstract boolean getAmsMultiShot();
 
     public abstract int hitsToDestroyGyro( int gyroType);
+
+    public abstract int getMascFailure(int nLevel);
 }

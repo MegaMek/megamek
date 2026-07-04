@@ -49,4 +49,10 @@ public class TwRulesEquipment extends CoreRulesEquipment {
         }
         return 2;
     }
+
+    @Override
+    public int getMascFailure(int nLevel) {
+        int[] MASC_FAILURE = { 3, 5, 7, 11, 13, 13, 13 };
+        return MASC_FAILURE[nLevel];
+    }
 }

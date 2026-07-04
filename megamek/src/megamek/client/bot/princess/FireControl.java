@@ -1229,9 +1229,10 @@ public class FireControl {
           final AmmoMounted ammo,
           final Game game) {
 
-        // This really should only be done for debugging purposes. Regular play should
-        // avoid the overhead.
-        if (LOGGER.isLevelMoreSpecificThan(Level.INFO)) {
+        // Debugging only: cross-checks the guess with a real to-hit calculation, which is expensive
+        // (especially with C3 networks). Gated behind TRACE so ordinary DEBUG bot logging does not
+        // trigger it in regular play.
+        if (LOGGER.isLevelMoreSpecificThan(Level.DEBUG)) {
             return null;
         }
 
@@ -1269,9 +1270,9 @@ public class FireControl {
      */
     private @Nullable String checkGuessPhysical(final Entity shooter, final Targetable target,
           final PhysicalAttackType attackType, final Game game) {
-        // This really should only be done for debugging purposes. Regular play should
-        // avoid the overhead.
-        if (LOGGER.isLevelMoreSpecificThan(Level.INFO)) {
+        // Debugging only: cross-checks the guess with a real to-hit calculation. Gated behind TRACE
+        // so ordinary DEBUG bot logging does not trigger it in regular play.
+        if (LOGGER.isLevelMoreSpecificThan(Level.DEBUG)) {
             return null;
         }
 
@@ -1309,9 +1310,11 @@ public class FireControl {
      */
     @Nullable
     String checkAllGuesses(final Entity shooter, final Game game) {
-        // This really should only be done for debugging purposes. Regular play should
-        // avoid the overhead.
-        if (LOGGER.isLevelMoreSpecificThan(Level.INFO)) {
+        // Debugging only: this sweep computes a real to-hit for every enemy x weapon x ammo combination,
+        // which is extremely expensive (especially with C3 networks, where each real to-hit triggers
+        // spotter searches and ECM scans). The shipped log configuration runs the bot loggers at DEBUG,
+        // so gate this behind TRACE to keep it out of regular play. See issue #8442.
+        if (LOGGER.isLevelMoreSpecificThan(Level.DEBUG)) {
             return null;
         }
 

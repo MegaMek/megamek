@@ -1,7 +1,6 @@
 package megamek.common.rules.totalwarfare;
 /*
- * Copyright (C) 2026 James Magnan (bmazur@sev.org)
- * Copyright (C) 2004-2026 The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2026 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -34,7 +33,8 @@ package megamek.common.rules.totalwarfare;
  */
 
 
-import megamek.common.rules.core.CoreRulesC3;
+import megamek.common.rules.core.CoreRulesGame;
 
-public class TwRulesC3 extends CoreRulesC3 {
+public class TWRulesGame extends CoreRulesGame {
+
 }

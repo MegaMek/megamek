@@ -1,7 +1,7 @@
 package megamek.common.rules.totalwarfare;
+
 /*
- * Copyright (C) 2026 James Magnan (bmazur@sev.org)
- * Copyright (C) 2004-2026 The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2026 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -33,7 +33,8 @@ package megamek.common.rules.totalwarfare;
  * affiliated with Microsoft.
  */
 
-import megamek.common.rules.core.CoreRulesUnderwater;
 
-public class TwRulesUnderwater extends CoreRulesUnderwater {
+import megamek.common.rules.core.CoreRulesCharts;
+
+public class TWRulesCharts extends CoreRulesCharts {
 }

@@ -1,9 +1,7 @@
-package megamek.common.rules.core;
-
+package megamek.common.rules;
 
 /*
- * Copyright (C) 2026 James Magnan (bmazur@sev.org)
- * Copyright (C) 2004-2026 The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2026 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -35,10 +33,8 @@ package megamek.common.rules.core;
  * affiliated with Microsoft.
  */
 
-import megamek.common.rules.RulesPsr;
-
-/* This class is for Core Rules that involve PSR checks and modifiers
+/*
+This abstract class is to handle rules that are in relation to PSRs. 
  */
-public class CoreRulesPsr extends RulesPsr {
- 
+public abstract class RulesPSR {
 }

@@ -34,51 +34,50 @@ package megamek.common.rules.totalwarfare;
  * affiliated with Microsoft.
  */
 
-import megamek.common.rules.RulesManager;
-import megamek.common.rules.RulesTarget;
 import megamek.common.rules.*;
 
-public class TwRulesManager implements RulesManager {
-        private TwRulesTarget rulesTarget = new TwRulesTarget();
-        private TwRulesAmmo twRulesAmmo = new TwRulesAmmo();
-        private TwRulesC3 twRulesC3 = new TwRulesC3();
-        private TwRulesArtillery twRulesArtillery = new TwRulesArtillery();
-        private TwRulesArmor twRulesArmor = new TwRulesArmor();
-        private TwRulesCharts twRulesCharts = new TwRulesCharts();
-        private TwRulesEnvironment twRulesEnvironment = new TwRulesEnvironment();
-        private TwRulesEquipment twRulesEquipment = new TwRulesEquipment();
-        private TwRulesExplosions twRulesExplosions = new TwRulesExplosions();
-        private TwRulesGame twRulesGame = new TwRulesGame();
-        private TwRulesMovement twRulesMovement = new TwRulesMovement();
-        private TwRulesHeat twRulesHeat = new TwRulesHeat();
-        private TwRulesPhysical twRulesPhysical = new TwRulesPhysical();
-        private TwRulesPilot twRulesPilot = new TwRulesPilot();
-        private TwRulesPsr twRulesPsr = new TwRulesPsr();
-        private TwRulesTerrain twRulesTerrain = new TwRulesTerrain();
-        private TwRulesUnderwater twRulesUnderwater = new TwRulesUnderwater();
-        private TwRulesUnits twRulesUnits = new TwRulesUnits();
-        private TwRulesWeapons twRulesWeapons = new TwRulesWeapons();
-        
-        public RulesTarget getRulesTarget() { return rulesTarget;}
+public class TWRulesManager implements RulesManager {
+    private TWRulesTarget twRulesTarget = new TWRulesTarget();
+    private TWRulesAmmo twRulesAmmo = new TWRulesAmmo();
+    private TWRulesC3 twRulesC3 = new TWRulesC3();
+    private TWRulesArtillery twRulesArtillery = new TWRulesArtillery();
+    private TWRulesArmor twRulesArmor = new TWRulesArmor();
+    private TWRulesCharts twRulesCharts = new TWRulesCharts();
+    private TWRulesEnvironment twRulesEnvironment = new TWRulesEnvironment();
+    private TWRulesEquipment twRulesEquipment = new TWRulesEquipment();
+    private TWRulesExplosions twRulesExplosions = new TWRulesExplosions();
+    private TWRulesGame twRulesGame = new TWRulesGame();
+    private TWRulesMovement twRulesMovement = new TWRulesMovement();
+    private TWRulesHeat twRulesHeat = new TWRulesHeat();
+    private TWRulesPhysical twRulesPhysical = new TWRulesPhysical();
+    private TWRulesPilot twRulesPilot = new TWRulesPilot();
+    private TWRulesPSR twRulesPsr = new TWRulesPSR();
+    private TWRulesTerrain twRulesTerrain = new TWRulesTerrain();
+    private TWRulesUnderwater twRulesUnderwater = new TWRulesUnderwater();
+    private TWRulesUnits twRulesUnits = new TWRulesUnits();
+    private TWRulesWeapons twRulesWeapons = new TWRulesWeapons();
+
+    public RulesTarget getRulesTarget() {return twRulesTarget;}
 
     public RulesAmmo getRulesAmmo() {
         return twRulesAmmo;
     }
-    
+
     public RulesArtillery getRulesArtillery() {
         return twRulesArtillery;
     }
-    
+
     public RulesArmor getRulesArmor() {
         return twRulesArmor;
     }
-    
+
     public RulesCharts getRulesCharts() {
         return twRulesCharts;
     }
-    public RulesEnvironment getRulesEnvironment() { return twRulesEnvironment;}
-    
-    public RulesEquipment getRulesEquipment() { return twRulesEquipment;}
+
+    public RulesEnvironment getRulesEnvironment() {return twRulesEnvironment;}
+
+    public RulesEquipment getRulesEquipment() {return twRulesEquipment;}
 
     public RulesC3 getRulesC3() {
         return twRulesC3;
@@ -108,20 +107,21 @@ public class TwRulesManager implements RulesManager {
         return twRulesPilot;
     }
 
-    public RulesPsr getRulesPsr() {
+    public RulesPSR getRulesPsr() {
         return twRulesPsr;
     }
 
     public RulesTerrain getRulesTerrain() {
         return twRulesTerrain;
     }
+
     public RulesUnderwater getRulesUnderwater() {
         return twRulesUnderwater;
     }
-    
+
     public RulesUnits getRulesUnits() {return twRulesUnits;}
-    
+
     public RulesWeapons getRulesWeapons() {return twRulesWeapons;}
-    
+
 }
 

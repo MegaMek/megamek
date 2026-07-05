@@ -1,8 +1,6 @@
-package megamek.common.rules;
-
+package megamek.common.rules.totalwarfare;
 /*
- * Copyright (C) 2026 James Magnan (bmazur@sev.org)
- * Copyright (C) 2004-2026 The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2026 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -34,8 +32,7 @@ package megamek.common.rules;
  * affiliated with Microsoft.
  */
 
-/*
-This abstract class is to handle rules that are in relation to PSRs. 
- */
-public abstract class RulesPsr {
+import megamek.common.rules.core.CoreRulesUnderwater;
+
+public class TWRulesUnderwater extends CoreRulesUnderwater {
 }

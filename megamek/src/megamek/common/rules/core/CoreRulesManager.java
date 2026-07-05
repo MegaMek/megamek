@@ -1,8 +1,7 @@
 package megamek.common.rules.core;
 
 /*
- * Copyright (C) 2026 James Magnan
- * Copyright (C) 2004-2026 The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2026 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -34,87 +33,88 @@ package megamek.common.rules.core;
  * affiliated with Microsoft.
  */
 
-import megamek.common.rules.RulesManager;
-import megamek.common.rules.RulesTarget;
 import megamek.common.rules.*;
-import megamek.common.rules.core.*;
 
 public class CoreRulesManager implements RulesManager {
-    private CoreRulesTarget rulesTarget = new CoreRulesTarget();
-    private CoreRulesAmmo CoreRulesAmmo = new CoreRulesAmmo();
-    private CoreRulesC3 CoreRulesC3 = new CoreRulesC3();
-    private CoreRulesArtillery CoreRulesArtillery = new CoreRulesArtillery();
-    private CoreRulesArmor CoreRulesArmor = new CoreRulesArmor();
-    private CoreRulesCharts CoreRulesCharts = new CoreRulesCharts();
-    private CoreRulesEnvironment CoreRulesEnvironment = new CoreRulesEnvironment();
-    private CoreRulesEquipment CoreRulesEquipment = new CoreRulesEquipment();
-    private CoreRulesExplosions CoreRulesExplosions = new CoreRulesExplosions();
-    private CoreRulesGame CoreRulesGame = new CoreRulesGame();
-    private CoreRulesMovement CoreRulesMovement = new CoreRulesMovement();
-    private CoreRulesHeat CoreRulesHeat = new CoreRulesHeat();
-    private CoreRulesPhysical CoreRulesPhysical = new CoreRulesPhysical();
-    private CoreRulesPilot CoreRulesPilot = new CoreRulesPilot();
-    private CoreRulesPsr CoreRulesPsr = new CoreRulesPsr();
-    private CoreRulesTerrain CoreRulesTerrain = new CoreRulesTerrain();
-    private CoreRulesUnderwater CoreRulesUnderwater = new CoreRulesUnderwater();
-    private CoreRulesUnits CoreRulesUnits = new CoreRulesUnits();
-    private CoreRulesWeapons CoreRulesWeapons = new CoreRulesWeapons();
+    private CoreRulesTarget coreRulesTarget = new CoreRulesTarget();
+    private CoreRulesAmmo coreRulesAmmo = new CoreRulesAmmo();
+    private CoreRulesC3 coreRulesC3 = new CoreRulesC3();
+    private CoreRulesArtillery coreRulesArtillery = new CoreRulesArtillery();
+    private CoreRulesArmor coreRulesArmor = new CoreRulesArmor();
+    private CoreRulesCharts coreRulesCharts = new CoreRulesCharts();
+    private CoreRulesEnvironment coreRulesEnvironment = new CoreRulesEnvironment();
+    private CoreRulesEquipment coreRulesEquipment = new CoreRulesEquipment();
+    private CoreRulesExplosions coreRulesExplosions = new CoreRulesExplosions();
+    private CoreRulesGame coreRulesGame = new CoreRulesGame();
+    private CoreRulesMovement coreRulesMovement = new CoreRulesMovement();
+    private CoreRulesHeat coreRulesHeat = new CoreRulesHeat();
+    private CoreRulesPhysical coreRulesPhysical = new CoreRulesPhysical();
+    private CoreRulesPilot coreRulesPilot = new CoreRulesPilot();
+    private CoreRulesPSR coreRulesPSR = new CoreRulesPSR();
+    private CoreRulesTerrain coreRulesTerrain = new CoreRulesTerrain();
+    private CoreRulesUnderwater coreRulesUnderwater = new CoreRulesUnderwater();
+    private CoreRulesUnits coreRulesUnits = new CoreRulesUnits();
+    private CoreRulesWeapons coreRulesWeapons = new CoreRulesWeapons();
 
-    public RulesTarget getRulesTarget() { return rulesTarget;}
-    public RulesAmmo getRulesAmmo() { return CoreRulesAmmo;}
-    public RulesC3 getRulesC3() { return CoreRulesC3;}
+    public RulesTarget getRulesTarget() {return coreRulesTarget;}
+
+    public RulesAmmo getRulesAmmo() {return coreRulesAmmo;}
+
+    public RulesC3 getRulesC3() {return coreRulesC3;}
 
     public RulesArtillery getRulesArtillery() {
-        return CoreRulesArtillery;
+        return coreRulesArtillery;
     }
 
     public RulesArmor getRulesArmor() {
-        return CoreRulesArmor;
+        return coreRulesArmor;
     }
 
     public RulesCharts getRulesCharts() {
-        return CoreRulesCharts;
+        return coreRulesCharts;
     }
-    public RulesEnvironment getRulesEnvironment() { return CoreRulesEnvironment;}
 
-    public RulesEquipment getRulesEquipment() { return CoreRulesEquipment;}
+    public RulesEnvironment getRulesEnvironment() {return coreRulesEnvironment;}
+
+    public RulesEquipment getRulesEquipment() {return coreRulesEquipment;}
 
     public RulesExplosions getRulesExplosions() {
-        return CoreRulesExplosions;
+        return coreRulesExplosions;
     }
 
     public RulesGame getRulesGame() {
-        return CoreRulesGame;
+        return coreRulesGame;
     }
 
     public RulesHeat getRulesHeat() {
-        return CoreRulesHeat;
+        return coreRulesHeat;
     }
 
     public RulesMovement getRulesMovement() {
-        return CoreRulesMovement;
+        return coreRulesMovement;
     }
 
     public RulesPhysical getRulesPhysical() {
-        return CoreRulesPhysical;
+        return coreRulesPhysical;
     }
 
     public RulesPilot getRulesPilot() {
-        return CoreRulesPilot;
+        return coreRulesPilot;
     }
 
-    public RulesPsr getRulesPsr() {
-        return CoreRulesPsr;
+    public RulesPSR getRulesPsr() {
+        return coreRulesPSR;
     }
 
     public RulesTerrain getRulesTerrain() {
-        return CoreRulesTerrain;
+        return coreRulesTerrain;
     }
+
     public RulesUnderwater getRulesUnderwater() {
-        return CoreRulesUnderwater;
+        return coreRulesUnderwater;
     }
 
-    public RulesUnits getRulesUnits() {return CoreRulesUnits;}
+    public RulesUnits getRulesUnits() {return coreRulesUnits;}
 
-    public RulesWeapons getRulesWeapons() {return CoreRulesWeapons;}
+    public RulesWeapons getRulesWeapons() {return coreRulesWeapons;}
 }

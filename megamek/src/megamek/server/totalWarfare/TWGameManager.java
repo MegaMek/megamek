@@ -7329,14 +7329,7 @@ public class TWGameManager extends AbstractGameManager {
 	    			triggeredPittrap = minefield;
 	    			
 	    			PilotingRollData pilotingRollData = entity.getBasePilotingRoll();
-	    			vMineReport.addAll(doEntityFallsInto(entity,
-	                        0,
-	                        src,
-	                        dest,
-	                        pilotingRollData,
-	                        false));
-	    			
-	    			entity.doCheckEngineStallRoll(mainPhaseReport);
+	    			vMineReport.addAll(doEntityFall(entity, dest, 0, pilotingRollData));
 	    			
 	    			Hex hex = getGame().getBoard().getHex(dest);
 	    			hex.addTerrain(new Terrain(Terrains.RUBBLE, 1));

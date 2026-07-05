@@ -37,6 +37,7 @@ package megamek.common.units;
 import java.io.PrintWriter;
 import java.io.Serial;
 import java.util.List;
+import java.util.OptionalInt;
 import java.util.stream.IntStream;
 
 import megamek.common.CriticalSlot;
@@ -372,6 +373,9 @@ public class QuadMek extends Mek {
             mp = applyGravityEffectsOnMP(mp);
         }
 
+        // Improved Magnetic Pulse (iATM IMP) missile movement reduction (IO IMP rules)
+        mp = Math.max(0, mp - getImpMpReduction());
+
         return Math.max(0, mp);
     }
 
@@ -417,6 +421,11 @@ public class QuadMek extends Mek {
         // VGLs base arc on their facing
         if (mounted.getType().hasFlag(WeaponType.F_VGL)) {
             return Compute.firingArcFromVGLFacing(mounted.getFacing());
+        }
+        // Directional Torso Mount (BMM p.83): front/rear (2-point) or full 360 (quad 3-point)
+        OptionalInt directionalTorsoMountArc = getDirectionalTorsoMountArc(mounted);
+        if (directionalTorsoMountArc.isPresent()) {
+            return directionalTorsoMountArc.getAsInt();
         }
         // rear mounted?
         if (mounted.isRearMounted()) {

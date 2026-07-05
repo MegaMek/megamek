@@ -50,6 +50,7 @@ import megamek.common.board.BoardHelper;
 import megamek.common.board.Coords;
 import megamek.common.compute.Compute;
 import megamek.common.compute.ComputeArc;
+import megamek.common.compute.TurretFacing;
 import megamek.common.equipment.AmmoMounted;
 import megamek.common.equipment.AmmoType;
 import megamek.common.equipment.WeaponMounted;
@@ -62,7 +63,6 @@ import megamek.common.preference.PreferenceChangeEvent;
 import megamek.common.units.Dropship;
 import megamek.common.units.Entity;
 import megamek.common.units.Mek;
-import megamek.common.units.Tank;
 import megamek.common.units.Targetable;
 import megamek.common.units.Terrains;
 import megamek.common.weapons.infantry.InfantryWeapon;
@@ -372,26 +372,13 @@ public class FiringArcSpriteHandler extends BoardViewSpriteHandler implements IP
         if (firingEntity == null) {
             return;
         }
-        facing = firingEntity.getFacing();
-        if (game.getPhase().isFiring()) {
-            if (firingEntity.isSecondaryArcWeapon(firingEntity.getEquipmentNum(weapon))) {
-                facing = firingEntity.getSecondaryFacing();
-            }
-            // If this is mek with turrets, check to see if the weapon is on a turret.
-            if ((firingEntity instanceof Mek) && (weapon.isMekTurretMounted())) {
-                // facing is currently adjusted for mek torso twist and facing, adjust for
-                // turret facing.
-                facing = (weapon.getFacing() + facing) % 6;
-            }
-            // If this is a tank with dual turrets, check to see if the weapon is a second
-            // turret.
-            if ((firingEntity instanceof Tank) && (weapon.getLocation() == ((Tank) firingEntity).getLocTurret2())) {
-                facing = ((Tank) firingEntity).getDualTurretFacing();
-            }
-        } else if (game.getPhase().isTargeting() || game.getPhase().isOffboard()) {
-            if (firingEntity.isSecondaryArcWeapon(firingEntity.getEquipmentNum(weapon))) {
-                facing = firingEntity.getSecondaryFacing();
-            }
+        // In the aiming phases (firing and targeting/TAG/offboard) the effective facing includes torso twist and any
+        // turret or directional-mount rotation, so the field of fire matches the real firing arc (issues #1040, #6518).
+        // Other phases (e.g. the movement field-of-fire preview) use the base facing.
+        if (game.getPhase().isFiring() || game.getPhase().isTargeting() || game.getPhase().isOffboard()) {
+            facing = TurretFacing.weaponFacing(firingEntity, firingEntity.getEquipmentNum(weapon));
+        } else {
+            facing = firingEntity.getFacing();
         }
         facing = (assumedFacing + facing - firingEntity.getFacing() + 6) % 6;
     }

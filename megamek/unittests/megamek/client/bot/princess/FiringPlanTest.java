@@ -35,14 +35,18 @@ package megamek.client.bot.princess;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertInstanceOf;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.spy;
 import static org.mockito.Mockito.when;
 
 import java.util.EnumSet;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Vector;
 
+import megamek.common.actions.DirectionalMountFacingAction;
 import megamek.common.actions.EntityAction;
 import megamek.common.actions.WeaponAttackAction;
 import megamek.common.equipment.AmmoMounted;
@@ -50,6 +54,7 @@ import megamek.common.equipment.AmmoType;
 import megamek.common.equipment.Mounted;
 import megamek.common.equipment.WeaponMounted;
 import megamek.common.equipment.WeaponType;
+import megamek.common.units.Entity;
 import megamek.common.units.Targetable;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
@@ -180,6 +185,26 @@ class FiringPlanTest {
         assertEquals(expected, testFiringPlan.getEntityActionVector());
 
         // todo Test torso-twists.
+
+        // A plan that flips a Directional Torso Mount declares the facing action before the weapon
+        // attacks (BMM p.83).
+        FiringPlan mountPlan = new FiringPlan(mockTarget);
+        mountPlan.add(mockWeaponFireInfoMG);
+        Entity mockShooter = mock(Entity.class);
+        when(mockShooter.getId()).thenReturn(7);
+        when(mockWeaponFireInfoMG.getShooter()).thenReturn(mockShooter);
+        Map<Integer, Boolean> facings = new HashMap<>();
+        facings.put(3, true);
+        mountPlan.setDirectionalMountFacings(facings);
+
+        Vector<EntityAction> mountActions = mountPlan.getEntityActionVector();
+        assertEquals(2, mountActions.size());
+        assertInstanceOf(DirectionalMountFacingAction.class, mountActions.get(0));
+        DirectionalMountFacingAction facingAction = (DirectionalMountFacingAction) mountActions.get(0);
+        assertEquals(7, facingAction.getEntityId());
+        assertEquals(3, facingAction.getWeaponNumber());
+        assertEquals(3, facingAction.getFacing(), "rear maps to facing offset 3");
+        assertEquals(mockWeaponAttackActionMG, mountActions.get(1));
 
         // Test an empty firing plan.
         // noinspection MismatchedQueryAndUpdateOfCollection

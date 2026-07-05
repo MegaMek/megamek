@@ -253,6 +253,17 @@ public class ComputeAttackerToHitMods {
             toHit.addModifier(+2, Messages.getString("WeaponAttackAction.AeEMPInterference"));
         }
 
+        // Attacker hit by Magnetic Pulse (MP) missiles (IO p.62) - flat +1, does not stack
+        if (attacker.getMagneticPulseRounds() > 0) {
+            toHit.addModifier(+1, Messages.getString("WeaponAttackAction.AeMagneticPulse"));
+        }
+
+        // Attacker hit by Improved Magnetic Pulse (iATM IMP) missiles - +1 per 3 hits, capped
+        int impToHitModifier = attacker.getImpToHitModifier();
+        if (impToHitModifier > 0) {
+            toHit.addModifier(impToHitModifier, Messages.getString("WeaponAttackAction.AeImprovedMagneticPulse"));
+        }
+
         // Special Equipment that that attacker possesses
 
         // Attacker has an AES system

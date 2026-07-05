@@ -33,6 +33,7 @@
 package megamek.client.bot.princess;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertSame;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
@@ -133,6 +134,24 @@ class RankedPathTest {
         TreeSet<RankedPath> treeSet = new TreeSet<>(tiedPaths);
         assertEquals(tiedPaths.size(), treeSet.size(),
               "A valid total order must not collapse paths that are tied on every ranking key");
+    }
+
+    @Test
+    void reverseOrderedTreeSetBreaksTiesTowardTheEarliestPath() {
+        // Among paths tied on every ranking key, the earliest-created (earliest-enumerated) path wins, so the
+        // choice follows PathRanker's deterministic enumeration order rather than construction-timing luck.
+        RankedPath firstEnumerated = rankedPath(50.0, 4, 7.0);
+        RankedPath secondEnumerated = rankedPath(50.0, 4, 7.0);
+        RankedPath thirdEnumerated = rankedPath(50.0, 4, 7.0);
+
+        TreeSet<RankedPath> reverseOrdered = new TreeSet<>(Collections.reverseOrder());
+        // Insert out of creation order to prove the winner depends on creation order, not insertion order.
+        reverseOrdered.add(thirdEnumerated);
+        reverseOrdered.add(firstEnumerated);
+        reverseOrdered.add(secondEnumerated);
+
+        assertSame(firstEnumerated, reverseOrdered.first(),
+              "The earliest-created path must win a tie on every ranking key");
     }
 
     @Test

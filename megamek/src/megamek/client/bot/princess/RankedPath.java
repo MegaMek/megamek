@@ -56,8 +56,8 @@ public class RankedPath implements Comparable<RankedPath> {
     private final transient Map<String, Double> scores = new HashMap<>();
 
     /**
-     * Creation-order id, used only to break {@link #compareTo} ties so the ordering is a valid total order. Not
-     * part of {@link #equals(Object)}/{@link #hashCode()} identity.
+     * Creation-order id, used only to break {@link #compareTo} ties in favour of the earliest-created path so the
+     * ordering is a valid total order. Not part of {@link #equals(Object)}/{@link #hashCode()} identity.
      */
     private final long creationId = ID_GENERATOR.getAndIncrement();
 
@@ -114,11 +114,15 @@ public class RankedPath implements Comparable<RankedPath> {
         if (other.expectedDamage < expectedDamage) {
             return 1;
         }
-        // Final tie-break on a stable, unique creation-order id, so this is a valid total order (antisymmetric,
-        // transitive, consistent) as required for the TreeSet<RankedPath> best-path selection in PathRanker. The
-        // previous `hashCode() > 0 ? 1 : -1` ignored the argument and never returned a symmetric result, which
-        // could misorder or drop tied paths in the TreeSet so getBestPath was not guaranteed the true maximum.
-        return Long.compare(creationId, other.creationId);
+        // Final tie-break: among paths tied on rank, hexes moved and expected damage, prefer the
+        // earliest-enumerated one, so the choice is stable and reproducible. The only consumer of this ordering is
+        // PathRanker's reverse-ordered TreeSet<RankedPath>, whose first() (used by getBestPath) returns the natural
+        // maximum - so the earliest path (lowest creationId) must compare as the greatest, hence other.creationId
+        // is placed first in the comparison. This yields a valid total order (antisymmetric, transitive,
+        // consistent) as required for correct TreeSet selection; the previous `hashCode() > 0 ? 1 : -1` ignored
+        // the argument and was non-antisymmetric, so it could misorder or drop tied paths and getBestPath was not
+        // guaranteed the true maximum.
+        return Long.compare(other.creationId, creationId);
     }
 
     @Override

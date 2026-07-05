@@ -16001,7 +16001,6 @@ public class AmmoType extends EquipmentType {
 
         private final TechAdvancement techAdvancement;
 
-        // PLAyTEST3 changed to float for weightRatio
         public MunitionMutator(String munitionName, String munitionShortName, double weightRatio,
               Munitions munitionType,
               TechAdvancement techAdvancement, String rulesRefs) {
@@ -16244,7 +16243,6 @@ public class AmmoType extends EquipmentType {
                 munition.shots = Math.max(1, base.shots * 2);
                 munition.kgPerShot = base.kgPerShot * (weight / 2.0);
             } else {
-                // PLAYTEST3 Changed weight to be double from int, so casting it back.
                 munition.shots = Math.max(1, (int) (base.shots / weight));
                 munition.kgPerShot = base.kgPerShot * weight;
             }
@@ -16268,7 +16266,6 @@ public class AmmoType extends EquipmentType {
             if ((munition.getAmmoType() == AmmoTypeEnum.AC) ||
                   (munition.getAmmoType() == AmmoTypeEnum.LAC) ||
                   (munition.getAmmoType() == AmmoTypeEnum.PAC)) {
-                // PLAYTEST3 ammo changes
                 if (munition.getMunitionType().contains(Munitions.M_ARMOR_PIERCING)) {
                     cost *= 4;
                 } else if ((munition.getMunitionType().contains(Munitions.M_FLECHETTE)) ||

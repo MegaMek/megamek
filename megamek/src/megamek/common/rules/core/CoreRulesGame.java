@@ -33,6 +33,7 @@ package megamek.common.rules.core;
  */
 
 
+import megamek.common.enums.GamePhase;
 import megamek.common.rules.RulesGame;
 
 public class CoreRulesGame extends RulesGame {
@@ -40,5 +41,18 @@ public class CoreRulesGame extends RulesGame {
     // Ammo dumping is not in Core
     public boolean ammoDumping() {
         return false;
+    }
+
+    /**
+    * Is the unit eligible for the phase
+     * Immobile not eligible in movement Core p.49
+     * RAC Unjamming does not prevent usage (only limits movement) Core p.183
+     * Finding a club can use in physical phase Core p.79
+     * */
+    public boolean eligibleForPhase(GamePhase phase, boolean unjammingRAC, boolean findingClub, boolean immobile) {
+        if (immobile && phase.isMovement()) {
+            return false;
+        }
+        return true;
     }
 }

@@ -34,6 +34,7 @@ package megamek.common.rules.totalwarfare;
 
 import megamek.client.ui.Messages;
 import megamek.common.ToHitData;
+import megamek.common.compute.Compute;
 import megamek.common.equipment.Mounted;
 import megamek.common.rules.core.CoreRulesPhysical;
 import megamek.common.units.Entity;
@@ -69,4 +70,14 @@ public class TWRulesPhysical extends CoreRulesPhysical {
         if (toRetractableBlade) { return true; }
         return false;
     }
+
+    // Retractable blades in punch break on a 2d6 roll of 9+
+    @Override
+    public boolean checkRetractableBladeBroke() {
+        return (Compute.d6(2) > 9);
+    }
+
+    // Missed mace attacks cause a PSR
+    @Override
+    public boolean getMaceMissedPSR() { return true; }
 }

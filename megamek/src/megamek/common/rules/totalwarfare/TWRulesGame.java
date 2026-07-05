@@ -34,6 +34,7 @@ package megamek.common.rules.totalwarfare;
  */
 
 
+import megamek.common.enums.GamePhase;
 import megamek.common.rules.core.CoreRulesGame;
 
 public class TWRulesGame extends CoreRulesGame {
@@ -41,4 +42,13 @@ public class TWRulesGame extends CoreRulesGame {
     // Ammo dumping is allowed
     @Override
     public boolean ammoDumping() { return true; }
+
+    // In RW, unjamming the RAC or finding a club makes you ineligible for the phase
+    @Override
+    public boolean eligibleForPhase(GamePhase phase, boolean unjammingRAC, boolean findingClub, boolean immobile) {
+        if (unjammingRAC || findingClub) {
+            return false;
+        }
+        return true;
+    }
 }

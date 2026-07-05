@@ -33,8 +33,14 @@ package megamek.common.rules;
  */
 
 
+import megamek.common.enums.GamePhase;
+
 public abstract class RulesGame {
 
     // Allow ammo dumping
     public abstract boolean ammoDumping();
+
+    // Is the unit eligible for the phase
+    public abstract boolean eligibleForPhase(GamePhase Phase, boolean unjammingRAC, boolean findingClub,
+          boolean immobile);
 }

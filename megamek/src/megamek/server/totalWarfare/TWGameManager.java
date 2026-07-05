@@ -11813,9 +11813,7 @@ public class TWGameManager extends AbstractGameManager {
                     // blade retracts to its original mode
                     // attackingEntity.extendBlade(paa.getArm());
                     // check for breaking a nail
-                    // PLAYTEST3 no longer breaks nail
-                    if (!game.getOptions().booleanOption(OptionsConstants.PLAYTEST_3)) {
-                        if (Compute.d6(2) > 9) {
+                    if (Game.rulesManager.getRulesPhysical().checkRetractableBladeBroke()) {
                             addNewLines();
                             r = new Report(4456);
                             r.indent(2);
@@ -11823,7 +11821,6 @@ public class TWGameManager extends AbstractGameManager {
                             r.newlines = 0;
                             addReport(r);
                             ae.destroyRetractableBlade(armLoc);
-                        }
                     }
                 }
             }
@@ -13685,8 +13682,7 @@ public class TWGameManager extends AbstractGameManager {
             r.subject = ae.getId();
             addReport(r);
 
-            // PLAYTEST3 no more missed maces
-            if (!game.getOptions().booleanOption(OptionsConstants.PLAYTEST_3)) {
+            if (Game.rulesManager.getRulesPhysical().getMaceMissedPSR()) {
                 if (caa.getClub().getType().hasFlag(MiscTypeFlag.S_MACE)) {
                     if (ae instanceof LandAirMek && ae.isAirborneVTOLorWIGE()) {
                         game.addControlRoll(new PilotingRollData(ae.getId(), 2, "missed a mace attack"));

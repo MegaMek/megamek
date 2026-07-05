@@ -34,6 +34,7 @@ package megamek.common.rules.core;
 
 import megamek.common.CriticalSlot;
 import megamek.common.ToHitData;
+import megamek.common.compute.Compute;
 import megamek.common.equipment.EquipmentType;
 import megamek.common.equipment.MiscMounted;
 import megamek.common.equipment.MiscType;
@@ -95,9 +96,17 @@ public class CoreRulesPhysical extends RulesPhysical {
     }
 
     // Retractable blades can be extended for punches. Core p.194
-
-    @Override
     public boolean retractableBladeArmCheck(boolean toRetractableBlake) {
         return true;
+    }
+
+    // Restractable blade breaks if it is used in a punch. Core p.195
+    public boolean checkRetractableBladeBroke() {
+        return (Compute.d6(1) == 1);
+    }
+
+    // Missed mace attacks do not cause PSR Core p.194
+    public boolean getMaceMissedPSR() {
+        return false;
     }
 }

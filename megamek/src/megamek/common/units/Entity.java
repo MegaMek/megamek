@@ -7882,8 +7882,7 @@ public abstract class Entity extends TurnOrdered
                 if (waa != null) {
                     waa.addCounterEquipment(ams);
                 }
-            } else if (gameOptions().booleanOption(OptionsConstants.PLAYTEST_3)) {
-                // PLAYTEST3 AMS shoots twice handling
+            } else if (Game.rulesManager.getRulesEquipment().getAmsMultiShot()) {
                 // Assuming AMS has not been used at all yet, so both shots are available.
                 final WeaponAttackAction waa = Compute.getHighestExpectedDamage(getGame(), attacksInArc, true);
                 if (waa != null) {
@@ -11078,6 +11077,15 @@ public abstract class Entity extends TurnOrdered
      */
     public boolean canAssist(GamePhase phase) {
         if (!phase.isPhysical() && !phase.isFiring() && !phase.isOffboard()) {
+            return false;
+        }
+
+        if (!Game.rulesManager.getRulesGame().eligibleForPhase(phase, isUnjammingRAC(), isFindingClub(),
+              isImmobile())) {
+            return false;
+        }
+
+        if (isCharging() || isMakingDfa() || isRamming() || isOffBoard()) {
             return false;
         }
         // if you're charging or finding a club, it's already declared

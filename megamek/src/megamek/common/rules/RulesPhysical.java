@@ -47,7 +47,15 @@ public abstract class RulesPhysical {
     // Should the shield reset with phase change
     public abstract boolean phaseChangeShield();
 
+    // What is the to-hit modifier for attacking when there is a shield on the arm
     public abstract void getShieldToHitModifier(ToHitData toHit, Entity attacker, Mounted<?> weapon);
 
+    // Can retractable blades be used during punch attacks
     public abstract boolean retractableBladeArmCheck(boolean toRetractableBlake);
+
+    // Does a retractable blade break when used during the punch attack
+    public abstract boolean checkRetractableBladeBroke();
+
+    // Does a missed mace attack cause a PSR
+    public abstract boolean getMaceMissedPSR();
 }

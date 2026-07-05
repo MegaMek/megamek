@@ -342,14 +342,16 @@ public class HeatMap {
     }
 
     /**
-     * Gets the hot-spot (position of high activity) closest to the given position. Among the highest-rated
-     * hot-spots, the one nearest {@code testPosition} is returned.
+     * Gets the hot-spot (position of recorded activity) nearest the given position. When {@code topOnly} is
+     * {@code false}, every recorded hot-spot is considered and the nearest one is returned. When {@code topOnly}
+     * is {@code true}, only the single highest-rated tier of hot-spots is considered, and the nearest within that
+     * tier is returned.
      *
      * @param testPosition The position to measure distance from
-     * @param topOnly      When {@code true}, only the single highest-rated tier of hot-spots is considered;
-     *                     otherwise all hot-spots are ranked
+     * @param topOnly      When {@code true}, only the highest-rated tier of hot-spots is considered; when
+     *                     {@code false}, all recorded hot-spots are considered
      *
-     * @return The {@link Coords} of the nearest high-activity hot-spot, or {@code null} if there are none
+     * @return The {@link Coords} of the nearest considered hot-spot, or {@code null} if there are none
      */
     public @Nullable Coords getHotSpot(Coords testPosition, boolean topOnly) {
 

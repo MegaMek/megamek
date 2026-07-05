@@ -49,6 +49,7 @@ import megamek.common.equipment.ArmorType;
 import megamek.common.equipment.EquipmentMode;
 import megamek.common.equipment.MiscType;
 import megamek.common.equipment.Mounted;
+import megamek.common.game.Game;
 import megamek.common.options.OptionsConstants;
 import megamek.common.rolls.PilotingRollData;
 import megamek.common.rolls.Roll;
@@ -147,7 +148,8 @@ class HeatResolver extends AbstractTWRuleHandler {
                 // Increment consecutive RHS uses for this activation attempt (success or failure),
                 // then look up the target number based on the updated count.
                 entity.setConsecutiveRHSUses(entity.getConsecutiveRHSUses() + 1);
-                int targetNumber = ServerHelper.radicalHeatSinkSuccessTarget(entity.getConsecutiveRHSUses());
+                int targetNumber =
+                      Game.rulesManager.getRulesEquipment().radicalHeatSinkSuccessTarget(entity.getConsecutiveRHSUses());
                 boolean rhsFailure = diceRoll.getIntValue() < targetNumber;
 
                 report = new Report(5541);
@@ -160,8 +162,8 @@ class HeatResolver extends AbstractTWRuleHandler {
 
                 // Show RHS stress level and next activation TN (only if RHS didn't fail)
                 if (!rhsFailure) {
-                    int nextTargetNumber = ServerHelper.radicalHeatSinkSuccessTarget(entity.getConsecutiveRHSUses()
-                          + 1);
+                    int nextTargetNumber =
+                          Game.rulesManager.getRulesEquipment().radicalHeatSinkSuccessTarget(entity.getConsecutiveRHSUses() + 1);
                     report = new Report(5547);
                     report.indent(2);
                     report.subject = entity.getId();
@@ -200,7 +202,8 @@ class HeatResolver extends AbstractTWRuleHandler {
                 int decrement = entity.hasRHSWentUp() ? 2 : 1;
                 int reducedStress = Math.max(0, currentStress - decrement);
                 // If activated next turn, stress will increment from reduced level
-                int nextActivationTN = ServerHelper.radicalHeatSinkSuccessTarget(reducedStress + 1);
+                int nextActivationTN =
+                      Game.rulesManager.getRulesEquipment().radicalHeatSinkSuccessTarget(reducedStress + 1);
                 report = new Report(5548);
                 report.indent();
                 report.subject = entity.getId();

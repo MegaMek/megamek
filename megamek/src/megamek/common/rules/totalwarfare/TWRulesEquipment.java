@@ -33,6 +33,7 @@ package megamek.common.rules.totalwarfare;
  * affiliated with Microsoft.
  */
 
+import megamek.common.rolls.TargetRoll;
 import megamek.common.rules.core.CoreRulesEquipment;
 import megamek.common.units.Mek;
 
@@ -53,5 +54,32 @@ public class TWRulesEquipment extends CoreRulesEquipment {
     public int getMascFailure(int nLevel) {
         int[] MASC_FAILURE = { 3, 5, 7, 11, 13, 13, 13 };
         return MASC_FAILURE[nLevel];
+    }
+
+    // Blue shield is 3+ number of rounds over 6
+    @Override
+    public int getBlueShieldTarget(int blueShieldRounds) {
+        return (3 + blueShieldRounds - 6);
+    }
+
+    /**
+     * Returns the target number to avoid Radical Heat Sink Failure for the given number of rounds of consecutive use,
+     * IO p.89. The first round of use means consecutiveRounds = 1; this is the minimum as 0 rounds of use would not
+     * trigger a roll.
+     *
+     * @param consecutiveRounds The rounds the RHS has been used
+     *
+     * @return The roll target number to avoid failure
+     */
+    @Override
+    public int radicalHeatSinkSuccessTarget(int consecutiveRounds) {
+        return switch (consecutiveRounds) {
+            case 1 -> 3;
+            case 2 -> 5;
+            case 3 -> 7;
+            case 4 -> 10;
+            case 5 -> 11;
+            default -> TargetRoll.AUTOMATIC_FAIL;
+        };
     }
 }

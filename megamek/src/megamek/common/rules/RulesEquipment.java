@@ -37,7 +37,15 @@ public abstract class RulesEquipment {
     // Does AMS allow for multiple shots
     public abstract boolean getAmsMultiShot();
 
+    // How many hits destroy the gyro
     public abstract int hitsToDestroyGyro( int gyroType);
 
+    // What is the number for masc failure (also used for supercharger)
     public abstract int getMascFailure(int nLevel);
+
+    // What is the target number for Blue shield
+    public abstract int getBlueShieldTarget(int blueShieldRounds);
+
+    // What is the target number for radical heat sink
+    public abstract int radicalHeatSinkSuccessTarget(int consecutiveRounds);
 }

@@ -17553,7 +17553,7 @@ public class TWGameManager extends AbstractGameManager {
         for (Entity entity : game.inGameTWEntities()) {
             if (!(entity instanceof Aero) && entity.hasActiveBlueShield() && (entity.getBlueShieldRounds() >= 6)) {
                 Roll diceRoll = Compute.rollD6(2);
-                int target = (3 + entity.getBlueShieldRounds()) - 6;
+                int target = Game.rulesManager.getRulesEquipment().getBlueShieldTarget(entity.getBlueShieldRounds());
                 r = new Report(1240);
                 r.addDesc(entity);
                 r.add(target);

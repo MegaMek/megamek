@@ -39,10 +39,10 @@ import megamek.common.units.Mek;
 
 public class CoreRulesEquipment extends RulesEquipment {
     // AMS can shoot twice. Core P.206
-    public boolean getAmsMultiShot() { return true;}
-    
+    public boolean getAmsMultiShot() {return true;}
+
     // Shields are reset at end of phase, unless you are charging. Core p.195
-    public boolean phaseChangeShield() { return true;}
+    public boolean phaseChangeShield() {return true;}
 
     // HD Gyros take 4 hits to destroy. Core p.98
     public int hitsToDestroyGyro(int gyroType) {
@@ -52,7 +52,18 @@ public class CoreRulesEquipment extends RulesEquipment {
         return 2;
     }
 
+    // get the masc failure roll from the escalating chart
     public int getMascFailure(int nLevel) {
         return Game.rulesManager.getRulesCharts().escalatingFailure(nLevel);
+    }
+
+    // Blue Shield uses escalating failure for rounds after 6. Core p.207
+    public int getBlueShieldTarget(int blueShieldRounds) {
+        return Game.rulesManager.getRulesCharts().escalatingFailure(blueShieldRounds - 6);
+    }
+
+    // get the radical heat sink
+    public int radicalHeatSinkSuccessTarget(int consecutiveRounds) {
+        return Game.rulesManager.getRulesCharts().escalatingFailure(consecutiveRounds);
     }
 }

@@ -485,9 +485,30 @@ public final class MinimapPanel extends JPanel implements IPreferenceChangeListe
     }
 
     /**
+     * Prompts the local player, if necessary, whether to record this game's combat-summary GIF and stores the
+     * answer, so the per-phase recording never has to ask mid-game. This is the "at game start" entry point,
+     * intended to be called when the player readies up in the lobby.
+     *
+     * <p>No-op unless the preference is {@link GifRecordingMode#ASK} and no decision has been made for this game
+     * yet, so it is safe to call every time the player toggles ready. Must be called on the event dispatch
+     * thread.</p>
+     *
+     * @param game   The game about to start
+     * @param parent The parent component for the dialog, or {@code null} to center on screen
+     */
+    public static void promptForGifRecordingConsent(Game game, @Nullable Component parent) {
+        if (GUIPreferences.getInstance().getGifGameSummaryRecording() != GifRecordingMode.ASK) {
+            return;
+        }
+        GIF_RECORDING_DECISIONS.computeIfAbsent(game.getUUIDString(),
+              gameId -> askWhetherToRecordGif(parent));
+    }
+
+    /**
      * Returns {@code true} when the combat-summary GIF should be recorded for this game. With
-     * {@link GifRecordingMode#ASK} (the default), the player is asked once per game, the first time a frame would
-     * be recorded; the answer holds for the rest of the game.
+     * {@link GifRecordingMode#ASK} (the default) the answer normally comes from the lobby prompt
+     * ({@link #promptForGifRecordingConsent(Game, Component)}); this asks lazily only as a fallback for a game
+     * that never went through a lobby ready (e.g. a save resumed mid-game).
      *
      * @return {@code true} if this game should be recorded
      */
@@ -529,11 +550,11 @@ public final class MinimapPanel extends JPanel implements IPreferenceChangeListe
      */
     private @Nullable Boolean askWhetherToRecordGifOnEdt() {
         if (SwingUtilities.isEventDispatchThread()) {
-            return askWhetherToRecordGif();
+            return askWhetherToRecordGif(this);
         }
         AtomicReference<Boolean> answerHolder = new AtomicReference<>();
         try {
-            SwingUtilities.invokeAndWait(() -> answerHolder.set(askWhetherToRecordGif()));
+            SwingUtilities.invokeAndWait(() -> answerHolder.set(askWhetherToRecordGif(this)));
         } catch (InterruptedException interruptedException) {
             Thread.currentThread().interrupt();
             return null;
@@ -547,23 +568,26 @@ public final class MinimapPanel extends JPanel implements IPreferenceChangeListe
     /**
      * Asks the player whether this game should be recorded as a combat-summary GIF. Checking "remember my choice"
      * persists the answer as {@link GifRecordingMode#ALWAYS} or {@link GifRecordingMode#NEVER} so the dialog never
-     * shows again. Must be called on the event dispatch thread - see {@link #askWhetherToRecordGifOnEdt()}.
+     * shows again. Must be called on the event dispatch thread.
+     *
+     * @param parent The parent component for the dialog, or {@code null} to center on screen
      *
      * @return {@code true} if the player wants this game recorded
      */
-    private boolean askWhetherToRecordGif() {
+    private static boolean askWhetherToRecordGif(@Nullable Component parent) {
         JCheckBox rememberChoice = new JCheckBox(Messages.getString("MinimapPanel.RecordGifDialog.remember"));
         Object[] dialogContent = { Messages.getString("MinimapPanel.RecordGifDialog.message"),
                                    Messages.getString("MinimapPanel.RecordGifDialog.warning"),
                                    rememberChoice };
-        int response = JOptionPane.showConfirmDialog(this,
+        int response = JOptionPane.showConfirmDialog(parent,
               dialogContent,
               Messages.getString("MinimapPanel.RecordGifDialog.title"),
               JOptionPane.YES_NO_OPTION,
               JOptionPane.QUESTION_MESSAGE);
         boolean recordThisGame = (response == JOptionPane.YES_OPTION);
         if (rememberChoice.isSelected()) {
-            GUIP.setGifGameSummaryRecording(recordThisGame ? GifRecordingMode.ALWAYS : GifRecordingMode.NEVER);
+            GUIPreferences.getInstance()
+                  .setGifGameSummaryRecording(recordThisGame ? GifRecordingMode.ALWAYS : GifRecordingMode.NEVER);
         }
         return recordThisGame;
     }

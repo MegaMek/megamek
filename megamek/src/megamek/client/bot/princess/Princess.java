@@ -3921,8 +3921,12 @@ public class Princess extends BotClient {
      */
     private MovePath performPathPostProcessing(MovePath path, double expectedDamage) {
         MovePath retVal = path;
-        evadeIfNotFiring(retVal, expectedDamage >= 0);
-        turnOnSearchLight(retVal, expectedDamage >= 0);
+        // Guard on expectedDamage > 0, not >= 0: expected damage is never negative, so >= 0 was always true. That
+        // left evadeIfNotFiring (which only evades when NOT able to inflict damage) permanently dead, and turned
+        // the searchlight on even with no firing solution, giving away position for nothing.
+        boolean canInflictDamage = expectedDamage > 0;
+        evadeIfNotFiring(retVal, canInflictDamage);
+        turnOnSearchLight(retVal, canInflictDamage);
         unloadTransportedInfantry(retVal);
         launchFighters(retVal);
         abandonShip(retVal);

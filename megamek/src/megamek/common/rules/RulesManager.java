@@ -1,8 +1,7 @@
 package megamek.common.rules;
 
 /*
- * Copyright (C) 2026 James Magnan
- * Copyright (C) 2004-2026 The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2026 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -34,30 +33,43 @@ package megamek.common.rules;
  * affiliated with Microsoft.
  */
 
-import megamek.common.game.Game;
-import megamek.common.options.OptionsConstants;
-import megamek.common.rules.core.CoreRulesManager;
-import megamek.common.rules.totalwarfare.TwRulesManager;
-
 public interface RulesManager {
-    
+
     public RulesTarget getRulesTarget();
+
     public RulesAmmo getRulesAmmo();
+
     public RulesC3 getRulesC3();
+
     public RulesArtillery getRulesArtillery();
+
     public RulesArmor getRulesArmor();
+
     public RulesCharts getRulesCharts();
+
     public RulesEnvironment getRulesEnvironment();
+
     public RulesEquipment getRulesEquipment();
+
     public RulesExplosions getRulesExplosions();
+
     public RulesGame getRulesGame();
+
     public RulesHeat getRulesHeat();
+
     public RulesMovement getRulesMovement();
+
     public RulesPhysical getRulesPhysical();
+
     public RulesPilot getRulesPilot();
-    public RulesPsr getRulesPsr();
+
+    public RulesPSR getRulesPsr();
+
     public RulesTerrain getRulesTerrain();
+
     public RulesUnderwater getRulesUnderwater();
+
     public RulesUnits getRulesUnits();
+
     public RulesWeapons getRulesWeapons();
 }

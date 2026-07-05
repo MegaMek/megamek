@@ -41,6 +41,7 @@ import java.util.Map;
 import java.util.OptionalInt;
 import java.util.stream.Collectors;
 
+import megamek.common.annotations.Nullable;
 import megamek.common.board.Coords;
 import megamek.common.game.Game;
 import megamek.common.moves.MovePath;
@@ -341,11 +342,16 @@ public class HeatMap {
     }
 
     /**
-     * Get the closest hot-spot (position of high activity). May return null if the activity tracker is empty.
+     * Gets the hot-spot (position of high activity) closest to the given position. Among the highest-rated
+     * hot-spots, the one nearest {@code testPosition} is returned.
      *
-     * @return {@link Coords} with nearest hot-spot, or null if no valid position
+     * @param testPosition The position to measure distance from
+     * @param topOnly      When {@code true}, only the single highest-rated tier of hot-spots is considered;
+     *                     otherwise all hot-spots are ranked
+     *
+     * @return The {@link Coords} of the nearest high-activity hot-spot, or {@code null} if there are none
      */
-    public Coords getHotSpot(Coords testPosition, boolean topOnly) {
+    public @Nullable Coords getHotSpot(Coords testPosition, boolean topOnly) {
 
         // If there are no hot-spots, return null
         if (teamActivity.isEmpty() || teamActivity.values().stream().allMatch(w -> w == MIN_WEIGHT)) {
@@ -385,9 +391,10 @@ public class HeatMap {
         int shortestRange = Integer.MAX_VALUE;
         Coords bestPosition = null;
         for (Coords curPosition : rankedPositions) {
-            if (shortestRange > curPosition.distance(testPosition)) {
+            int rangeToTestPosition = curPosition.distance(testPosition);
+            if (rangeToTestPosition < shortestRange) {
                 bestPosition = curPosition;
-                shortestRange = curPosition.direction(testPosition);
+                shortestRange = rangeToTestPosition;
             }
         }
 

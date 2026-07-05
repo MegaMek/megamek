@@ -46,6 +46,7 @@ import megamek.common.units.TripodMek;
 public class CoreRulesCharts extends RulesCharts {
     // Escalating failure rules. Same as pilot numbers. Core p.111, 180
     public int escalatingFailure(int count) {
+        // For each count after 5, the number is 11+
         return switch (count) {
             case 0 -> 2;
             case 1 -> 3;
@@ -53,7 +54,7 @@ public class CoreRulesCharts extends RulesCharts {
             case 3 -> 7;
             case 4 -> 10;
             case 5 -> 11;
-            default -> Integer.MAX_VALUE;
+            default -> 11;
         };
     }
 

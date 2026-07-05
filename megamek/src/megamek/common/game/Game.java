@@ -97,7 +97,6 @@ import megamek.common.planetaryConditions.WindDirection;
 import megamek.common.rolls.PilotingRollData;
 import megamek.common.rules.RulesManager;
 import megamek.common.rules.core.CoreRulesManager;
-import megamek.common.rules.totalwarfare.TwRulesManager;
 import megamek.common.turns.SpecificEntityTurn;
 import megamek.common.turns.TurnOrdered;
 import megamek.common.units.*;
@@ -300,7 +299,7 @@ public final class Game extends AbstractGame implements Serializable, PlanetaryC
 
     public void initializeRulesManager() {
         if (getOptions().booleanOption(OptionsConstants.TWRULES)) {
-            rulesManager = new TwRulesManager();
+            rulesManager = new megamek.common.rules.totalwarfare.TWRulesManager();
         } 
         rulesManager = new CoreRulesManager();
     }

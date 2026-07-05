@@ -49,11 +49,6 @@ import megamek.common.equipment.WeaponMounted;
 import megamek.common.equipment.WeaponType;
 import megamek.common.game.Game;
 import megamek.common.options.OptionsConstants;
-import megamek.common.rules.core.CoreRulesUnits;
-import megamek.common.rules.RulesTarget;
-import megamek.common.rules.RulesUnits;
-import megamek.common.rules.totalwarfare.TwRulesTarget;
-import megamek.common.rules.totalwarfare.TwRulesUnits;
 import megamek.common.units.*;
 import megamek.common.weapons.artillery.ArtilleryCannonWeapon;
 

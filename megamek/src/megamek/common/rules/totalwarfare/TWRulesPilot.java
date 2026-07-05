@@ -1,7 +1,6 @@
 package megamek.common.rules.totalwarfare;
 /*
- * Copyright (C) 2026 James Magnan (bmazur@sev.org)
- * Copyright (C) 2004-2026 The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2026 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -43,7 +42,7 @@ import megamek.common.units.Entity;
 
 import java.util.Vector;
 
-public class TwRulesPilot extends CoreRulesPilot {
+public class TWRulesPilot extends CoreRulesPilot {
 
     public Vector<Report> pilotHits(Entity e, int totalHits, int damage, int crewPos, boolean toughness) {
         Vector<Report> vDesc = new Vector<>();

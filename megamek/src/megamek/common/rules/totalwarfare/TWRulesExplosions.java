@@ -1,8 +1,7 @@
 package megamek.common.rules.totalwarfare;
 
 /*
- * Copyright (C) 2026 James Magnan (bmazur@sev.org)
- * Copyright (C) 2004-2026 The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2026 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -46,11 +45,10 @@ import megamek.common.rolls.Roll;
 import megamek.common.rules.core.CoreRulesExplosions;
 import megamek.common.units.Entity;
 import megamek.common.units.Mek;
-import megamek.server.totalWarfare.TWDamageManager;
 
 import java.util.Vector;
 
-public class TwRulesExplosions extends CoreRulesExplosions {
+public class TWRulesExplosions extends CoreRulesExplosions {
     // Damage reduction for CASE, CASE II, explosions
     @Override
     public int explosionDamageReduction(Mek mek, HitData hit, int damage, boolean ammoExplosion,

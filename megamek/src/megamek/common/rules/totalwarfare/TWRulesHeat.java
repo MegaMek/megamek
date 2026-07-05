@@ -1,7 +1,6 @@
 package megamek.common.rules.totalwarfare;
 /*
- * Copyright (C) 2026 James Magnan (bmazur@sev.org)
- * Copyright (C) 2004-2026 The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2026 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -34,40 +33,11 @@ package megamek.common.rules.totalwarfare;
  */
 
 
-import megamek.common.Report;
-import megamek.common.rules.core.CoreRulesArmor;
-import megamek.common.units.Entity;
-import megamek.server.totalWarfare.TWDamageManager;
+import megamek.common.rules.core.CoreRulesHeat;
 
-import java.util.Vector;
-
-public class TwRulesArmor extends CoreRulesArmor {
-    // TW does not need to know about heat weapons for armor
-    @Override
-    public boolean allowHeatWeapon(boolean heat_weapon) {
-        return false;
-    }
-
-    // Hardened, FerroLam, and Reactive prevent AP ammo
-    @Override
-    public boolean allowArmorPiercing(TWDamageManager.ModsInfo mods) {
-        if (mods.hardenedArmor || mods.ferroLamellorArmor || mods.reactiveArmor) {
-            return false;
-        }
-        return true;
-    }
-
-    // Impact armor reduces crit rolls
-    @Override
-    public int impactArmorMod() { return 1; }
-
-    // Impact Resistant Armor breach
-    public int impactArmorBreach(Entity entity, Vector<Report> vDesc) {
-        Report r;
-        r = new Report(6344);
-        r.subject = entity.getId();
-        r.indent(3);
-        vDesc.addElement(r);
+public class TWRulesHeat extends CoreRulesHeat {
+    // Attempts to stand generates heat
+    public int standingHeat() {
         return 1;
     }
 }

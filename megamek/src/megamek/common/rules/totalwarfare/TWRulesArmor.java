@@ -1,7 +1,6 @@
 package megamek.common.rules.totalwarfare;
 /*
- * Copyright (C) 2026 James Magnan (bmazur@sev.org)
- * Copyright (C) 2004-2026 The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2026 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -34,48 +33,40 @@ package megamek.common.rules.totalwarfare;
  */
 
 
-import megamek.client.ui.Messages;
-import megamek.common.ToHitData;
-import megamek.common.equipment.AmmoType;
-import megamek.common.rules.core.CoreRulesAmmo;
+import megamek.common.Report;
+import megamek.common.rules.core.CoreRulesArmor;
+import megamek.common.units.Entity;
+import megamek.server.totalWarfare.TWDamageManager;
 
-public class TwRulesAmmo extends CoreRulesAmmo {
-    // Return the modifier for armor piercing based on size
+import java.util.Vector;
+
+public class TWRulesArmor extends CoreRulesArmor {
+    // TW does not need to know about heat weapons for armor
     @Override
-    public int armorPiercingMod(AmmoType inType) {
-        switch (inType.getRackSize()) {
-            case 2:
-                return -4;
-            case 4:
-            case 5:
-            case 6:
-                return -3;
-            case 8:
-            case 10:
-            case 15:
-                return -2;
-            case 20:
-                return -1;
-        }
-        return 0;
+    public boolean allowHeatWeapon(boolean heat_weapon) {
+        return false;
     }
 
-    // Armor Piercing attack modifiers
+    // Hardened, FerroLam, and Reactive prevent AP ammo
     @Override
-    public void armorPiercingAttackMod(AmmoType.AmmoTypeEnum ammoType, ToHitData toHit, boolean AP) {
-        switch (ammoType) {
-            case AmmoType.AmmoTypeEnum.AC:
-            case AmmoType.AmmoTypeEnum.LAC:
-            case AmmoType.AmmoTypeEnum.AC_IMP:
-            case AmmoType.AmmoTypeEnum.PAC:
-                if (AP) {
-                    toHit.addModifier(1, Messages.getString("WeaponAttackAction.ApAmmo"));
-                }
+    public boolean allowArmorPiercing(TWDamageManager.ModsInfo mods) {
+        if (mods.hardenedArmor || mods.ferroLamellorArmor || mods.reactiveArmor) {
+            return false;
         }
+        return true;
     }
 
-    // Do nothing. Not in TW
+    // Impact armor reduces crit rolls
     @Override
-    public void narcHomingTarget(ToHitData toHit) { }
+    public int impactArmorMod() { return 1; }
 
+    // Impact Resistant Armor breach
+    public int impactArmorBreach(Entity entity, Vector<Report> vDesc) {
+        Report r;
+        r = new Report(6344);
+        r.subject = entity.getId();
+        r.indent(3);
+        vDesc.addElement(r);
+        return 1;
+    }
 }

@@ -1,8 +1,6 @@
 package megamek.common.rules.totalwarfare;
-
 /*
- * Copyright (C) 2026 James Magnan (bmazur@sev.org)
- * Copyright (C) 2004-2026 The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2026 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -35,39 +33,48 @@ package megamek.common.rules.totalwarfare;
  */
 
 
+import megamek.client.ui.Messages;
 import megamek.common.ToHitData;
-import megamek.common.compute.Compute;
-import megamek.common.rules.core.CoreRulesCharts;
-import megamek.common.units.Mek;
+import megamek.common.equipment.AmmoType;
+import megamek.common.rules.core.CoreRulesAmmo;
 
-public class TwRulesCharts extends CoreRulesCharts {
-
-    // When falling, roll to see the new facing
+public class TWRulesAmmo extends CoreRulesAmmo {
+    // Return the modifier for armor piercing based on size
     @Override
-    public int getFacingForFall() {
-        return Compute.d6(1) - 1;
-    }
-
-    // Punch hit location chart
-    @Override
-    public int getPunchHitLocation(int roll, int side, boolean quad) {
-        // front punch hits
-        if (side == ToHitData.SIDE_FRONT) {
-            switch (roll) {
-                case 1:
-                    return Mek.LOC_LEFT_ARM;
-                case 2:
-                    return Mek.LOC_LEFT_TORSO;
-                case 3:
-                    return Mek.LOC_CENTER_TORSO;
-                case 4:
-                    return Mek.LOC_RIGHT_TORSO;
-                case 5:
-                    return Mek.LOC_RIGHT_ARM;
-                case 6:
-                    return Mek.LOC_HEAD;
-            }
+    public int armorPiercingMod(AmmoType inType) {
+        switch (inType.getRackSize()) {
+            case 2:
+                return -4;
+            case 4:
+            case 5:
+            case 6:
+                return -3;
+            case 8:
+            case 10:
+            case 15:
+                return -2;
+            case 20:
+                return -1;
         }
-        return getPunchHitLocationSide(roll, side, quad);
+        return 0;
     }
+
+    // Armor Piercing attack modifiers
+    @Override
+    public void armorPiercingAttackMod(AmmoType.AmmoTypeEnum ammoType, ToHitData toHit, boolean AP) {
+        switch (ammoType) {
+            case AmmoType.AmmoTypeEnum.AC:
+            case AmmoType.AmmoTypeEnum.LAC:
+            case AmmoType.AmmoTypeEnum.AC_IMP:
+            case AmmoType.AmmoTypeEnum.PAC:
+                if (AP) {
+                    toHit.addModifier(1, Messages.getString("WeaponAttackAction.ApAmmo"));
+                }
+        }
+    }
+
+    // Do nothing. Not in TW
+    @Override
+    public void narcHomingTarget(ToHitData toHit) { }
+
 }

@@ -40,7 +40,7 @@ import megamek.common.Messages;
 import megamek.common.game.Game;
 import megamek.common.rolls.PilotingRollData;
 import megamek.common.rolls.TargetRoll;
-import megamek.common.rules.RulesPsr;
+import megamek.common.rules.RulesPSR;
 import megamek.common.units.EntityMovementType;
 import megamek.common.units.Mek;
 import megamek.common.units.Entity;
@@ -49,11 +49,10 @@ import megamek.common.units.QuadMek;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Vector;
 
 /* This class is for Core Rules that involve PSR checks and modifiers
  */
-public class CoreRulesPsr extends RulesPsr {
+public class CoreRulesPSR extends RulesPSR {
     // Called from Entity
     public void checkRunningWithDamage(Entity entity, PilotingRollData roll, int gyroDamage, EntityMovementType overallMoveType) {
         if (entity.getGyroType() == Mek.GYRO_HEAVY_DUTY) {

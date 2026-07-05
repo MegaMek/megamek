@@ -1,8 +1,7 @@
 package megamek.common.rules;
 
 /*
- * Copyright (C) 2026 James Magnan (bmazur@sev.org)
- * Copyright (C) 2004-2026 The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2026 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -45,7 +44,7 @@ import java.util.ArrayList;
 /*
 This abstract class is to handle rules that are in relation to PSRs. 
  */
-public abstract class RulesPsr {
+public abstract class RulesPSR {
     
     // Entity calls this when trying to run with damage
     public abstract void checkRunningWithDamage(Entity entity, PilotingRollData roll, int gyroDamage,

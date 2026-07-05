@@ -1,7 +1,7 @@
 package megamek.common.rules.totalwarfare;
+
 /*
- * Copyright (C) 2026 James Magnan (bmazur@sev.org)
- * Copyright (C) 2004-2026 The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2026 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -33,7 +33,40 @@ package megamek.common.rules.totalwarfare;
  * affiliated with Microsoft.
  */
 
-import megamek.common.rules.core.CoreRulesWeapons;
 
-public class TwRulesWeapons extends CoreRulesWeapons {
+import megamek.common.ToHitData;
+import megamek.common.compute.Compute;
+import megamek.common.rules.core.CoreRulesCharts;
+import megamek.common.units.Mek;
+
+public class TWRulesCharts extends CoreRulesCharts {
+
+    // When falling, roll to see the new facing
+    @Override
+    public int getFacingForFall() {
+        return Compute.d6(1) - 1;
+    }
+
+    // Punch hit location chart
+    @Override
+    public int getPunchHitLocation(int roll, int side, boolean quad) {
+        // front punch hits
+        if (side == ToHitData.SIDE_FRONT) {
+            switch (roll) {
+                case 1:
+                    return Mek.LOC_LEFT_ARM;
+                case 2:
+                    return Mek.LOC_LEFT_TORSO;
+                case 3:
+                    return Mek.LOC_CENTER_TORSO;
+                case 4:
+                    return Mek.LOC_RIGHT_TORSO;
+                case 5:
+                    return Mek.LOC_RIGHT_ARM;
+                case 6:
+                    return Mek.LOC_HEAD;
+            }
+        }
+        return getPunchHitLocationSide(roll, side, quad);
+    }
 }

@@ -1,8 +1,6 @@
 package megamek.common.rules.totalwarfare;
-
 /*
- * Copyright (C) 2026 James Magnan (bmazur@sev.org)
- * Copyright (C) 2004-2026 The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2026 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -34,25 +32,7 @@ package megamek.common.rules.totalwarfare;
  * affiliated with Microsoft.
  */
 
-import megamek.common.rules.core.CoreRulesEquipment;
-import megamek.common.units.Mek;
+import megamek.common.rules.core.CoreRulesUnderwater;
 
-public class TwRulesEquipment extends CoreRulesEquipment {
-    // AMS can shoot once
-    @Override
-    public boolean getAmsMultiShot() { return false;}
-    
-    @Override
-    public int hitsToDestroyGyro(int gyroType) {
-        if (gyroType == Mek.GYRO_HEAVY_DUTY) {
-            return 3;
-        }
-        return 2;
-    }
-
-    @Override
-    public int getMascFailure(int nLevel) {
-        int[] MASC_FAILURE = { 3, 5, 7, 11, 13, 13, 13 };
-        return MASC_FAILURE[nLevel];
-    }
+public class TWRulesUnderwater extends CoreRulesUnderwater {
 }

@@ -1,5 +1,4 @@
 package megamek.common.rules.totalwarfare;
-
 /*
  * Copyright (C) 2026 James Magnan (bmazur@sev.org)
  * Copyright (C) 2004-2026 The MegaMek Team. All Rights Reserved.
@@ -35,7 +34,11 @@ package megamek.common.rules.totalwarfare;
  */
 
 
-import megamek.common.rules.core.CoreRulesArtillery;
+import megamek.common.rules.core.CoreRulesGame;
 
-public class TwRulesArtillery extends CoreRulesArtillery {
+public class TWRulesGame extends CoreRulesGame {
+
+    // Ammo dumping is allowed
+    @Override
+    public boolean ammoDumping() { return true; }
 }

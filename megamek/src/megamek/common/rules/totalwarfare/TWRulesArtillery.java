@@ -1,7 +1,7 @@
 package megamek.common.rules.totalwarfare;
+
 /*
- * Copyright (C) 2026 James Magnan (bmazur@sev.org)
- * Copyright (C) 2004-2026 The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2026 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -33,30 +33,8 @@ package megamek.common.rules.totalwarfare;
  * affiliated with Microsoft.
  */
 
-import megamek.common.compute.Compute;
-import megamek.common.rules.RulesTarget;
-import megamek.common.rules.core.CoreRulesTarget;
-import megamek.common.units.EntityWeightClass;
 
-public class TwRulesTarget extends CoreRulesTarget {
+import megamek.common.rules.core.CoreRulesArtillery;
 
-    // Check return if the target is considered large. Not used in TW.
-    @Override
-    public int largeTargetModifier(int weightclass, boolean markedLarge) {
-        if (weightclass == EntityWeightClass.WEIGHT_SUPER_HEAVY || weightclass == EntityWeightClass.WEIGHT_LARGE_SUPPORT) {
-            return -1;
-        }
-        return 0;
-    }
-
-    // Aimed shots hit if you roll 6-8
-    @Override
-    public boolean checkAimedLocation() {
-        int roll = Compute.d6(2);
-
-        if ((5 < roll) && (roll < 9)) {
-            return true;
-        }
-        return false;
-    }
+public class TWRulesArtillery extends CoreRulesArtillery {
 }

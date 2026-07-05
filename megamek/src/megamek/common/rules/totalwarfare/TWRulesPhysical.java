@@ -1,7 +1,6 @@
 package megamek.common.rules.totalwarfare;
 /*
- * Copyright (C) 2026 James Magnan (bmazur@sev.org)
- * Copyright (C) 2004-2026 The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2026 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -36,11 +35,10 @@ package megamek.common.rules.totalwarfare;
 import megamek.client.ui.Messages;
 import megamek.common.ToHitData;
 import megamek.common.equipment.Mounted;
-import megamek.common.options.OptionsConstants;
 import megamek.common.rules.core.CoreRulesPhysical;
 import megamek.common.units.Entity;
 
-public class TwRulesPhysical extends CoreRulesPhysical {
+public class TWRulesPhysical extends CoreRulesPhysical {
 
     // Shields do not provide punch damage bonus
     @Override

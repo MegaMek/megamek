@@ -2,8 +2,7 @@ package megamek.common.rules.totalwarfare;
 
 
 /*
- * Copyright (C) 2026 James Magnan (bmazur@sev.org)
- * Copyright (C) 2004-2026 The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2026 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -39,14 +38,14 @@ import megamek.common.CriticalSlot;
 import megamek.common.game.Game;
 import megamek.common.rolls.PilotingRollData;
 import megamek.common.rolls.TargetRoll;
-import megamek.common.rules.core.CoreRulesPsr;
+import megamek.common.rules.core.CoreRulesPSR;
 import megamek.common.units.Entity;
 import megamek.common.units.EntityMovementType;
 import megamek.common.units.Mek;
 import megamek.common.units.MekWithArms;
 import java.util.List;
 
-public class TwRulesPsr extends CoreRulesPsr {
+public class TWRulesPSR extends CoreRulesPSR {
 
     public void checkRunningWithDamage(Entity entity, PilotingRollData roll, int gyroDamage,
           EntityMovementType overallMoveType) {

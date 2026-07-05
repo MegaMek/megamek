@@ -33,4 +33,9 @@ package megamek.common.rules;
  */
 
 public abstract class RulesWeapons {
+    // Does a rac unjamming cause issues?
+    public abstract boolean getRACUnjamRestriction();
+
+    // What size doe ATMs cluster in
+    public abstract int getATMClusterSize();
 }

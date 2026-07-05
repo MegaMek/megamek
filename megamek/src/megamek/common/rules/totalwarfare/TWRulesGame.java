@@ -34,6 +34,7 @@ package megamek.common.rules.totalwarfare;
  */
 
 
+import megamek.common.annotations.Nullable;
 import megamek.common.enums.GamePhase;
 import megamek.common.rules.core.CoreRulesGame;
 
@@ -45,7 +46,8 @@ public class TWRulesGame extends CoreRulesGame {
 
     // In RW, unjamming the RAC or finding a club makes you ineligible for the phase
     @Override
-    public boolean eligibleForPhase(GamePhase phase, boolean unjammingRAC, boolean findingClub, boolean immobile) {
+    public boolean eligibleForPhase(boolean unjammingRAC, boolean findingClub, boolean immobile,
+          @Nullable GamePhase phase) {
         if (unjammingRAC || findingClub) {
             return false;
         }

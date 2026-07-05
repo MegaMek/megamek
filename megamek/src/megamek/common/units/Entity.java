@@ -11080,24 +11080,15 @@ public abstract class Entity extends TurnOrdered
             return false;
         }
 
-        if (!Game.rulesManager.getRulesGame().eligibleForPhase(phase, isUnjammingRAC(), isFindingClub(),
-              isImmobile())) {
+        if (!Game.rulesManager.getRulesGame().eligibleForPhase(isUnjammingRAC(), isFindingClub(),
+              isImmobile(), phase)) {
             return false;
         }
 
         if (isCharging() || isMakingDfa() || isRamming() || isOffBoard()) {
             return false;
         }
-        // if you're charging or finding a club, it's already declared
-        // PLAYTEST3 unjamming RAC no longer prevents weapon attacks
-        if ((isUnjammingRAC() && !gameOptions().booleanOption(OptionsConstants.PLAYTEST_3))
-              || isCharging()
-              || isMakingDfa()
-              || isRamming()
-              || isFindingClub()
-              || isOffBoard()) {
-            return false;
-        }
+
         // must be active
         if (!isActive()) {
             return false;
@@ -11117,8 +11108,7 @@ public abstract class Entity extends TurnOrdered
         }
 
         // if you're charging, no shooting
-        // PLAYTEST3 unjamming RAC you can still shoot
-        if ((isUnjammingRAC() && !gameOptions().booleanOption(OptionsConstants.PLAYTEST_3))
+        if ((isUnjammingRAC() && Game.rulesManager.getRulesWeapons().getRACUnjamRestriction())
               || isCharging()
               || isMakingDfa()
               || isRamming()) {
@@ -11190,10 +11180,10 @@ public abstract class Entity extends TurnOrdered
         }
 
         // if you're charging, no shooting
-        // PLAYTEST3 Unjamming RAC no longer prevents this
-        if ((isUnjammingRAC() && !gameOptions().booleanOption(OptionsConstants.PLAYTEST_3))
-              || isCharging()
-              || isMakingDfa()) {
+        if (!Game.rulesManager.getRulesGame().eligibleForPhase(isUnjammingRAC(), false, false, null)) {
+            return false;
+        }
+        if (isCharging() || isMakingDfa()) {
             return false;
         }
 
@@ -11248,12 +11238,13 @@ public abstract class Entity extends TurnOrdered
         }
 
         // if you're charging or finding a club, it's already declared
-        // PLAYTEST3 unjamming no longer prevents this
-        if ((isUnjammingRAC() && !gameOptions().booleanOption(OptionsConstants.PLAYTEST_3)) ||
-              isCharging() ||
+        if (!Game.rulesManager.getRulesGame().eligibleForPhase(isUnjammingRAC(), isFindingClub(), isImmobile(), null)) {
+            return false;
+        }
+
+        if (isCharging() ||
               isMakingDfa() ||
               isRamming() ||
-              isFindingClub() ||
               isOffBoard() ||
               isAssaultDropInProgress() ||
               isDropping() ||

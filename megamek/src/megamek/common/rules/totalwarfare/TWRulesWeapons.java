@@ -35,4 +35,14 @@ package megamek.common.rules.totalwarfare;
 import megamek.common.rules.core.CoreRulesWeapons;
 
 public class TWRulesWeapons extends CoreRulesWeapons {
+
+    // RAC is restricted in what it can do in weapons phase
+    @Override
+    public boolean getRACUnjamRestriction() {
+        return true;
+    }
+
+    // ATMs cluster in 5s
+    @Override
+    public int getATMClusterSize() { return 5; }
 }

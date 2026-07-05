@@ -37,6 +37,9 @@ public abstract class RulesEquipment {
     // Does AMS allow for multiple shots
     public abstract boolean getAmsMultiShot();
 
+    // Can AMS reduce the value to 0
+    public abstract boolean getAMSReduction(boolean toAdvancedAMS);
+
     // How many hits destroy the gyro
     public abstract int hitsToDestroyGyro( int gyroType);
 

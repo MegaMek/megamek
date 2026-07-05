@@ -33,6 +33,7 @@ package megamek.common.rules.core;
  */
 
 
+import megamek.common.annotations.Nullable;
 import megamek.common.enums.GamePhase;
 import megamek.common.rules.RulesGame;
 
@@ -49,9 +50,12 @@ public class CoreRulesGame extends RulesGame {
      * RAC Unjamming does not prevent usage (only limits movement) Core p.183
      * Finding a club can use in physical phase Core p.79
      * */
-    public boolean eligibleForPhase(GamePhase phase, boolean unjammingRAC, boolean findingClub, boolean immobile) {
-        if (immobile && phase.isMovement()) {
-            return false;
+    public boolean eligibleForPhase(boolean unjammingRAC, boolean findingClub, boolean immobile,
+          @Nullable GamePhase phase) {
+        if (phase != null) {
+            if ((immobile && phase.isMovement())) {
+                return false;
+            }
         }
         return true;
     }

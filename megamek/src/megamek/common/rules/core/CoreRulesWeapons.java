@@ -35,4 +35,11 @@ package megamek.common.rules.core;
 import megamek.common.rules.RulesWeapons;
 
 public class CoreRulesWeapons extends RulesWeapons {
+    // RAC unjamming does not limit other actions outside of movement Core p.183
+    public boolean getRACUnjamRestriction() {
+        return false;
+    }
+
+    // ATM cluster size Core p.186
+    public int getATMClusterSize() { return 6; }
 }

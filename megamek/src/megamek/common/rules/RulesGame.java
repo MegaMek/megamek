@@ -33,6 +33,7 @@ package megamek.common.rules;
  */
 
 
+import megamek.common.annotations.Nullable;
 import megamek.common.enums.GamePhase;
 
 public abstract class RulesGame {
@@ -41,6 +42,6 @@ public abstract class RulesGame {
     public abstract boolean ammoDumping();
 
     // Is the unit eligible for the phase
-    public abstract boolean eligibleForPhase(GamePhase Phase, boolean unjammingRAC, boolean findingClub,
-          boolean immobile);
+    public abstract boolean eligibleForPhase(boolean unjammingRAC, boolean findingClub,
+          boolean immobile, @Nullable GamePhase phase);
 }

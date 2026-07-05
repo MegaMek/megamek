@@ -41,7 +41,15 @@ public class TWRulesEquipment extends CoreRulesEquipment {
     // AMS can shoot once
     @Override
     public boolean getAmsMultiShot() { return false;}
-    
+
+    // Can AMS can reduce to 0?
+    @Override
+    public boolean getAMSReduction(boolean toAdvancedAMS) {
+        if (toAdvancedAMS) { return true; }
+        return false;
+    }
+
+
     @Override
     public int hitsToDestroyGyro(int gyroType) {
         if (gyroType == Mek.GYRO_HEAVY_DUTY) {

@@ -86,10 +86,8 @@ public class MissileWeaponHandler extends AmmoWeaponHandler {
           throws EntityLoadingException {
         super(t, w, g, m);
         generalDamageType = HitData.DAMAGE_MISSILE;
-        // PLAYTEST3 also enabled advanced AMS
         advancedAMS =
-              g.getOptions().booleanOption(OptionsConstants.ADVANCED_COMBAT_TAC_OPS_AMS) || g.getOptions()
-                    .booleanOption(OptionsConstants.PLAYTEST_3);
+              Game.rulesManager.getRulesEquipment().getAMSReduction(g.getOptions().booleanOption(OptionsConstants.ADVANCED_COMBAT_TAC_OPS_AMS));
         advancedPD = g.getOptions().booleanOption(OptionsConstants.ADVANCED_AERO_RULES_STRATOPS_ADV_POINT_DEFENSE);
         multiAMS = g.getOptions().booleanOption(OptionsConstants.ADVANCED_COMBAT_MULTI_USE_AMS);
         sSalvoType = " missile(s) ";

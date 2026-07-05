@@ -119,14 +119,9 @@ public class ATMHandler extends MissileWeaponHandler {
         return hits;
     }
 
-    // PLAYTEST3 ATMs now cluster in 6s
     @Override
     protected int calculateNumCluster() {
-        if (game.getOptions().booleanOption(OptionsConstants.PLAYTEST_3)) {
-            return 6;
-        } else {
-            return 5;
-        }
+        return Game.rulesManager.getRulesWeapons().getATMClusterSize();
     }
 
     /**

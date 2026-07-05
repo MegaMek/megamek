@@ -41,6 +41,9 @@ public class CoreRulesEquipment extends RulesEquipment {
     // AMS can shoot twice. Core P.206
     public boolean getAmsMultiShot() {return true;}
 
+    // AMS can reduce to 0. Core P.206
+    public boolean getAMSReduction(boolean toAdvancedAMS) { return true; }
+
     // Shields are reset at end of phase, unless you are charging. Core p.195
     public boolean phaseChangeShield() {return true;}
 

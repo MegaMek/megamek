@@ -1,6 +1,6 @@
 /*
  * Copyright (C) 2000-2004 Ben Mazur (bmazur@sev.org)
- * Copyright (C) 2013-2025 The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2013-2026 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -167,13 +167,13 @@ public class AddBotUtil {
                 final BehaviorSettings behavior = BehaviorSettingsFactory.getInstance()
                       .getBehavior(configName.toString());
                 if (null != behavior) {
-                    ((Princess) botClient).setBehaviorSettings(behavior);
+                    botClient.setBehaviorSettings(behavior);
                 } else {
                     results.add("Unrecognized Behavior Setting: '" + configName + "'.  Using DEFAULT.");
-                    ((Princess) botClient).setBehaviorSettings(BehaviorSettingsFactory.getInstance().DEFAULT_BEHAVIOR);
+                    botClient.setBehaviorSettings(BehaviorSettingsFactory.getInstance().DEFAULT_BEHAVIOR);
                 }
             } else {
-                ((Princess) botClient).setBehaviorSettings(BehaviorSettingsFactory.getInstance().DEFAULT_BEHAVIOR);
+                botClient.setBehaviorSettings(BehaviorSettingsFactory.getInstance().DEFAULT_BEHAVIOR);
             }
         } else {
             results.add("Unrecognized bot: '" + botName + "'.  Defaulting to Princess.");
@@ -196,11 +196,9 @@ public class AddBotUtil {
 
         final StringBuilder result = new StringBuilder(botName);
         result.append(" has replaced ").append(target.getName()).append(".");
-        if (botClient instanceof Princess) {
-            result.append("  Config: ")
-                  .append(((Princess) botClient).getBehaviorSettings().getDescription())
-                  .append(".");
-        }
+        result.append("  Config: ")
+              .append(botClient.getBehaviorSettings().getDescription())
+              .append(".");
         results.add(result.toString());
         return concatResults();
     }
@@ -286,12 +284,12 @@ public class AddBotUtil {
             if (bot == null) {
                 message.append("Player '").append(playerName).append("' is not a local bot.");
                 return;
-            } else if (!(bot instanceof Princess)) {
-                message.append("Player '").append(playerName).append("' is not a Princess bot.");
+            }
+            if (!(bot instanceof BotClient botClient)) {
+                message.append("Player '").append(playerName).append("' is not a configurable bot.");
                 return;
             }
-            Princess princess = (Princess) bot;
-            princess.setBehaviorSettings(behavior);
+            botClient.setBehaviorSettings(behavior);
         }
     }
 

@@ -1,6 +1,6 @@
 /*
  * Copyright (c) 2000-2011 Ben Mazur (bmazur@sev.org)
- * Copyright (C) 2021-2025 The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2021-2026 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -69,10 +69,10 @@ import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 
 import megamek.client.Client;
+import megamek.client.bot.BotClient;
 import megamek.client.bot.princess.BehaviorSettings;
 import megamek.client.bot.princess.BehaviorSettingsFactory;
 import megamek.client.bot.princess.CardinalEdge;
-import megamek.client.bot.princess.Princess;
 import megamek.client.bot.princess.PrincessException;
 import megamek.client.generator.RandomCallsignGenerator;
 import megamek.client.ui.Messages;
@@ -802,9 +802,9 @@ public class BotConfigDialog extends AbstractButtonDialog
     /** Copies the Configuration from another local bot player. */
     private void copyFromOtherBot(String botName) {
         var bc = client.getBots().get(botName);
-        if (bc instanceof Princess) {
+        if (bc instanceof BotClient botClient) {
             try {
-                princessBehavior = ((Princess) bc).getBehaviorSettings().getCopy();
+                princessBehavior = botClient.getBehaviorSettings().getCopy();
                 updateDialogFields();
             } catch (Exception e) {
                 logger.error(e, "copyFromOtherBot");

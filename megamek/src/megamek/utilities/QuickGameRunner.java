@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2025 The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2025-2026 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -52,7 +52,9 @@ import megamek.client.AbstractClient;
 import megamek.client.Client;
 import megamek.client.CloseClientListener;
 import megamek.client.HeadlessClient;
-import megamek.client.bot.princess.Princess;
+import megamek.client.bot.AiType;
+import megamek.client.bot.BotClient;
+import megamek.client.bot.BotFactory;
 import megamek.client.ui.clientGUI.ClientGUI;
 import megamek.client.ui.clientGUI.CommanderGUI;
 import megamek.client.ui.clientGUI.IClientGUI;
@@ -297,8 +299,8 @@ public class QuickGameRunner {
 
             for (var ghost : ghosts) {
                 var behavior = ((Game) server.getGame()).getBotSettings().get(ghost.getName());
-                Princess botClient = Princess.createPrincess(ghost.getName(), server.getHost(), server.getPort(),
-                      behavior);
+                BotClient botClient = BotFactory.createBot(AiType.PRINCESS, ghost.getName(), server.getHost(),
+                      server.getPort(), behavior);
                 if (botClient.connect()) {
                     getLocalBots().put(botClient.getName(), botClient);
                     int retryCount = 0;

@@ -46,9 +46,11 @@ import java.util.function.BooleanSupplier;
 
 import megamek.MMConstants;
 import megamek.client.HeadlessClient;
+import megamek.client.bot.AiType;
+import megamek.client.bot.BotClient;
+import megamek.client.bot.BotFactory;
 import megamek.client.bot.princess.BehaviorSettings;
 import megamek.client.bot.princess.BehaviorSettingsFactory;
-import megamek.client.bot.princess.Princess;
 import megamek.common.Player;
 import megamek.common.enums.GamePhase;
 import megamek.common.event.GameListenerAdapter;
@@ -162,15 +164,16 @@ public class ScenarioGameRunner {
         waitForLocalPlayer(watcher.getName(), () -> watcher.getLocalPlayer() != null);
 
         for (Player botSlot : players.subList(1, players.size())) {
-            Princess princess = Princess.createPrincess(botSlot.getName(),
+            BotClient botClient = BotFactory.createBot(AiType.PRINCESS,
+                  botSlot.getName(),
                   LOCALHOST_IP,
                   server.getPort(),
                   behaviorFor(botSlot.getName()));
-            if (!princess.connect()) {
+            if (!botClient.connect()) {
                 throw new IllegalStateException("Princess failed to connect for player " + botSlot.getName());
             }
-            waitForLocalPlayer(princess.getName(), () -> princess.getLocalPlayer() != null);
-            princess.sendPlayerInfo();
+            waitForLocalPlayer(botClient.getName(), () -> botClient.getLocalPlayer() != null);
+            botClient.sendPlayerInfo();
             logger.info("Connected Princess for {}", botSlot.getName());
         }
 

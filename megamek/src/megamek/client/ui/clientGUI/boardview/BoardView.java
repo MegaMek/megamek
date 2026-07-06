@@ -60,9 +60,6 @@ import javax.swing.plaf.metal.MetalTheme;
 
 import megamek.MMConstants;
 import megamek.client.TimerSingleton;
-import megamek.client.bot.princess.PathEnumerator;
-import megamek.client.bot.princess.Princess;
-import megamek.client.bot.princess.geometry.ConvexBoardArea;
 import megamek.client.event.BoardViewEvent;
 import megamek.client.event.BoardViewListener;
 import megamek.client.ui.IDisplayable;
@@ -1299,7 +1296,6 @@ public final class BoardView extends AbstractBoardView
 
         // debugging method that renders the bounding box of a unit's movement envelope.
         // renderClusters((Graphics2D) graphics2D);
-        // renderMovementBoundingBox((Graphics2D) graphics2D);
         // renderDonut(graphics2D, new Coords(10, 10), 2);
         // renderApproxHexDirection((Graphics2D) graphics2D);
     }
@@ -1323,58 +1319,6 @@ public final class BoardView extends AbstractBoardView
         Point p = getCentreHexLocation(donutCoords.getX(), donutCoords.getY(), true);
         p.translate(HEX_W / 2, HEX_H / 2);
         drawHexBorder(g, p, Color.BLUE, 0, 6);
-    }
-
-    /**
-     * Debugging method that renders the bounding hex of a unit's movement envelope. Warning: very slow when rendering
-     * the bounding hex for really fast units.
-     *
-     * @param graphics2D Graphics object on which to draw.
-     */
-    @SuppressWarnings("unused")
-    private void renderMovementBoundingBox(Graphics2D graphics2D) {
-        if (getSelectedEntity() != null) {
-            Princess princess = new Princess("test", MMConstants.LOCALHOST, 2020);
-            princess.startPrecognition();
-            princess.getGame().setBoard(game.getBoard(boardId));
-            PathEnumerator pathEnum = new PathEnumerator(princess, game);
-            pathEnum.recalculateMovesFor(getSelectedEntity());
-
-            ConvexBoardArea cba = pathEnum.getUnitMovableAreas().get(getSelectedEntity().getId());
-            for (int x = 0;
-                  x < game.getBoard(boardId).getWidth();
-                  x++) {
-                for (int y = 0;
-                      y < game.getBoard(boardId).getHeight();
-                      y++) {
-                    Point centreHexLocation = getCentreHexLocation(x, y, true);
-                    centreHexLocation.translate(HEX_W / 2, HEX_H / 2);
-                    Coords coords = new Coords(x, y);
-
-                    if (cba.contains(coords)) {
-                        drawHexBorder(graphics2D, centreHexLocation, Color.PINK, 0, 6);
-                    }
-                }
-            }
-
-            for (int x = 0;
-                  x < 6;
-                  x++) {
-                Coords coords = cba.getVertexNum(x);
-                if (coords == null) {
-                    continue;
-                }
-
-                Point centreHexLocation = getCentreHexLocation(coords.getX(), coords.getY(), true);
-                centreHexLocation.translate(HEX_W / 2, HEX_H / 2);
-
-                drawHexBorder(graphics2D, centreHexLocation, Color.yellow, 0, 3);
-                new StringDrawer(Integer.toString(x)).at(centreHexLocation)
-                      .center()
-                      .color(Color.YELLOW)
-                      .draw(graphics2D);
-            }
-        }
     }
 
     /**

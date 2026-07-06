@@ -73,8 +73,9 @@ import megamek.Version;
 import megamek.client.Client;
 import megamek.client.IClient;
 import megamek.client.SBFClient;
+import megamek.client.bot.AiType;
 import megamek.client.bot.BotClient;
-import megamek.client.bot.princess.Princess;
+import megamek.client.bot.BotFactory;
 import megamek.client.bot.ui.swing.BotGUI;
 import megamek.client.ui.Messages;
 import megamek.client.ui.boardeditor.BoardEditorPanel;
@@ -1075,16 +1076,18 @@ public class MegaMekGUI implements IPreferenceChangeListener {
             for (int x = 0; x < pa.length; x++) {
                 if (playerTypes[x] == ScenarioDialog.T_BOT) {
                     LOGGER.info("Adding bot {} as Princess", pa[x].getName());
-                    Princess c = new Princess(pa[x].getName(), MMConstants.LOCALHOST, port);
-                    c.startPrecognition();
+                    BotClient botClient = BotFactory.createBot(AiType.PRINCESS,
+                          pa[x].getName(),
+                          MMConstants.LOCALHOST,
+                          port);
                     if (scenario.hasBotInfo(pa[x].getName()) &&
                           scenario.getBotInfo(pa[x].getName()) instanceof BotParser.PrincessRecord(
                                 megamek.client.bot.princess.BehaviorSettings behaviorSettings
                           )) {
-                        c.setBehaviorSettings(behaviorSettings);
+                        botClient.setBehaviorSettings(behaviorSettings);
                     }
-                    c.getGame().addGameListener(new BotGUI(frame, c));
-                    c.connect();
+                    botClient.getGame().addGameListener(new BotGUI(frame, botClient));
+                    botClient.connect();
                 }
             }
         }
@@ -1138,7 +1141,8 @@ public class MegaMekGUI implements IPreferenceChangeListener {
         if (bcd.getResult() == DialogResult.CANCELLED) {
             return;
         }
-        client = Princess.createPrincess(bcd.getBotName(),
+        client = BotFactory.createBot(AiType.PRINCESS,
+              bcd.getBotName(),
               cd.getServerAddress(),
               cd.getPort(),
               bcd.getBehaviorSettings());

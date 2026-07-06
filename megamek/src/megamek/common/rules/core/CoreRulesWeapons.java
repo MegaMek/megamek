@@ -34,8 +34,12 @@ package megamek.common.rules.core;
 
 import megamek.common.CriticalSlot;
 import megamek.common.Report;
+import megamek.common.annotations.Nullable;
 import megamek.common.equipment.Mounted;
+import megamek.common.equipment.WeaponMounted;
 import megamek.common.rules.RulesWeapons;
+import megamek.common.units.Entity;
+import megamek.common.weapons.handlers.WeaponHandler;
 
 import java.util.Vector;
 
@@ -82,4 +86,12 @@ public class CoreRulesWeapons extends RulesWeapons {
 
     // Apollo does not change the to-hit Core p.197
     public int getApolloToHit() { return 0; }
+
+    // Flamers do heat and damage Core p.183
+    public boolean flamerHeatAndDamage(boolean bmmFlamers) { return true; }
+
+    // PPC Capacitors don't break on roll. Core p.188
+    @Nullable
+    public Report checkPPCCapacitor(int roll, Entity attackingEntity, WeaponMounted
+          weapon) { return null; }
 }

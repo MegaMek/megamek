@@ -34,8 +34,11 @@ package megamek.common.rules.totalwarfare;
 
 import megamek.common.CriticalSlot;
 import megamek.common.Report;
+import megamek.common.annotations.Nullable;
 import megamek.common.equipment.Mounted;
+import megamek.common.equipment.WeaponMounted;
 import megamek.common.rules.core.CoreRulesWeapons;
+import megamek.common.units.Entity;
 
 import java.util.Vector;
 
@@ -79,4 +82,38 @@ public class TWRulesWeapons extends CoreRulesWeapons {
     // Apollo is -1 to hit
     @Override
     public int getApolloToHit() { return -1; }
+
+    @Override
+    public boolean flamerHeatAndDamage(boolean bmmFlamers) {
+        return bmmFlamers ? true : false;
+    }
+
+    @Override
+    @Nullable
+    public Report checkPPCCapacitor(int roll, Entity attackingEntity, WeaponMounted
+          weapon) {
+        Report r = new Report(3178);
+        if (roll == 2) {
+            r.subject = attackingEntity.getId();
+            r.indent();
+            // Oops, we ruined our day...
+            int wLocation = weapon.getLocation();
+            weapon.setHit(true);
+            for (int i = 0; i < attackingEntity.getNumberOfCriticalSlots(wLocation); i++) {
+                CriticalSlot slot = attackingEntity.getCritical(wLocation, i);
+                if ((slot == null)
+                      || (slot.getType() == CriticalSlot.TYPE_SYSTEM)) {
+                    continue;
+                }
+                // Only one Crit needs to be damaged.
+                Mounted<?> mounted = slot.getMount();
+                if (mounted.equals(weapon)) {
+                    slot.setDestroyed(true);
+                    break;
+                }
+            }
+            return r;
+        }
+        return null;
+    }
 }

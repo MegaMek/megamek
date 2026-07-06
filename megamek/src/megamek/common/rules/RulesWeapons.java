@@ -35,6 +35,8 @@ package megamek.common.rules;
 import megamek.common.CriticalSlot;
 import megamek.common.Report;
 import megamek.common.equipment.Mounted;
+import megamek.common.equipment.WeaponMounted;
+import megamek.common.units.Entity;
 
 import java.util.Vector;
 
@@ -62,4 +64,11 @@ public abstract class RulesWeapons {
 
     // Does Apollo change to-hit number
     public abstract int getApolloToHit();
+
+    // Do flamers do damage and heat
+    public abstract boolean flamerHeatAndDamage(boolean bmmFlamers);
+
+    // PPC Capacitor check
+    public abstract Report checkPPCCapacitor(int roll, Entity attackingEntity, WeaponMounted
+    weapon);
 }

@@ -1,6 +1,6 @@
 /*
  * Copyright (C) 2007 Ben Mazur (bmazur@sev.org)
- * Copyright (C) 2003-2025 The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2003-2026 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -141,7 +141,9 @@ public class ChatProcessor {
             return;
         }
 
-        additionalPrincessCommands(ge, (Princess) bot);
+        if (bot instanceof Princess princess) {
+            additionalPrincessCommands(ge, princess);
+        }
     }
 
     private Player getPlayer(Game game, String playerName) {

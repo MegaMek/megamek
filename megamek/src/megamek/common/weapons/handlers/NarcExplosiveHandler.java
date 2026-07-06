@@ -103,7 +103,7 @@ public class NarcExplosiveHandler extends MissileWeaponHandler {
             vPhaseReport.add(r);
             Roll diceRoll = Compute.rollD6(1);
 
-            if (diceRoll.getIntValue() <= 3) {
+            if (Game.rulesManager.getRulesEquipment().checkAMSSingleMissile(diceRoll.getIntValue())) {
                 r = new Report(3240);
                 r.subject = subjectId;
                 r.add("pod");

@@ -592,12 +592,12 @@ public class MissileWeaponHandler extends AmmoWeaponHandler {
                     }
 
                     // Can we fire the AMS multiple times?
-                    if (!multiAMS && !Game.rulesManager.getRulesEquipment().getAmsMultiShot()) {
+                    if (!multiAMS && !Game.rulesManager.getRulesEquipment().getAMSMultiShot()) {
                         // set the ams as having fired
                         counter.setUsedThisRound(true);
                     }
 
-                    if (Game.rulesManager.getRulesEquipment().getAmsMultiShot()) {
+                    if (Game.rulesManager.getRulesEquipment().getAMSMultiShot()) {
                         if (!multiAMS && !isAMS) {
                             counter.setUsedThisRound(true);
                         }

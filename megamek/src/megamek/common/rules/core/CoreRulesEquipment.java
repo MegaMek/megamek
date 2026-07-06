@@ -39,10 +39,15 @@ import megamek.common.units.Mek;
 
 public class CoreRulesEquipment extends RulesEquipment {
     // AMS can shoot twice. Core P.206
-    public boolean getAmsMultiShot() {return true;}
+    public boolean getAMSMultiShot() {return true;}
 
     // AMS can reduce to 0. Core P.206
     public boolean getAMSReduction(boolean toAdvancedAMS) { return true; }
+
+    // AMS destroys a single missile on 4+. Core p.206
+    public boolean checkAMSSingleMissile(int roll) {
+        return roll >= 4 ? true : false;
+    }
 
     // Shields are reset at end of phase, unless you are charging. Core p.195
     public boolean phaseChangeShield() {return true;}

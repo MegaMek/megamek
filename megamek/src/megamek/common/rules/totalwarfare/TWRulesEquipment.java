@@ -40,7 +40,7 @@ import megamek.common.units.Mek;
 public class TWRulesEquipment extends CoreRulesEquipment {
     // AMS can shoot once
     @Override
-    public boolean getAmsMultiShot() { return false;}
+    public boolean getAMSMultiShot() { return false;}
 
     // Can AMS can reduce to 0?
     @Override
@@ -49,6 +49,11 @@ public class TWRulesEquipment extends CoreRulesEquipment {
         return false;
     }
 
+    // AMS shoots down the missile on 1-3
+    @Override
+    public boolean checkAMSSingleMissile(int roll) {
+        return roll <= 3 ? true : false;
+    }
 
     @Override
     public int hitsToDestroyGyro(int gyroType) {

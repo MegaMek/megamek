@@ -7882,7 +7882,7 @@ public abstract class Entity extends TurnOrdered
                 if (waa != null) {
                     waa.addCounterEquipment(ams);
                 }
-            } else if (Game.rulesManager.getRulesEquipment().getAmsMultiShot()) {
+            } else if (Game.rulesManager.getRulesEquipment().getAMSMultiShot()) {
                 // Assuming AMS has not been used at all yet, so both shots are available.
                 final WeaponAttackAction waa = Compute.getHighestExpectedDamage(getGame(), attacksInArc, true);
                 if (waa != null) {

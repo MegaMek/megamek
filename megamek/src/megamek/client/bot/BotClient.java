@@ -217,7 +217,7 @@ public abstract class BotClient extends Client {
 
                         // If AMS can make multiple attacks
                         WeaponAttackAction secondWaa = null;
-                        if (Game.rulesManager.getRulesEquipment().getAmsMultiShot()) {
+                        if (Game.rulesManager.getRulesEquipment().getAMSMultiShot()) {
                             secondWaa = Compute.getSecondHighestExpectedDamage(game, evt.getWAAs(), true);
                         }
 

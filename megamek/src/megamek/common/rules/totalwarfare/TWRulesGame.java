@@ -57,7 +57,7 @@ public class TWRulesGame extends CoreRulesGame {
     // Only do front-loaded init if the option is selected
     @Override
     public int getInitiativeOrder(int[] num_turns, int index, int min, boolean frontLoadOption) {
-        return frontLoadOption ? ((int) Math.ceil(((double) num_turns[index]) / (double) min)) :
+        return frontLoadOption ? super.getInitiativeOrder(num_turns, index, min, true) :
               (num_turns[index] / min);
     }
 }

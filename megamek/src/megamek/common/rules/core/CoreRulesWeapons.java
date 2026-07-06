@@ -68,4 +68,18 @@ public class CoreRulesWeapons extends RulesWeapons {
 
     // ELRMS under minimum do not reduce missiles that hit. Core p.186
     public int getELRMMinimumRackSize(int rackSize) { return rackSize; }
+
+    // MRMs have no additional modifier Core p.186
+    public int getMRMModifier(int modifier) { return modifier; }
+
+    // MRMs are -1 on the cluster hit Core p.186. With apollo they are 0. Core p.197
+    public int getMRMClusterModifier(boolean apollo) {
+        if (apollo) {
+            return 0;
+        }
+        return -1;
+    }
+
+    // Apollo does not change the to-hit Core p.197
+    public int getApolloToHit() { return 0; }
 }

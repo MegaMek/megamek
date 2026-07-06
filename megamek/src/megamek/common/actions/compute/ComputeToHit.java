@@ -887,7 +887,9 @@ public class ComputeToHit {
 
         // Apollo FCS for MRMs
         if (bApollo) {
-            toHit.addModifier(-1, Messages.getString("WeaponAttackAction.ApolloFcs"));
+            toHit.addModifier(Game.rulesManager.getRulesWeapons().getApolloToHit(), Messages.getString(
+                  "WeaponAttackAction"
+                  + ".ApolloFcs"));
         }
 
         // add Artemis V bonus

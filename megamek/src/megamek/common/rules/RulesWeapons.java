@@ -53,4 +53,13 @@ public abstract class RulesWeapons {
 
     // Do ELRMs reduce rack size under minimums?
     public abstract int getELRMMinimumRackSize(int rackSize);
+
+    // What is the modifier on MRMs
+    public abstract int getMRMModifier(int modifier);
+
+    // What is the cluster modifier for MRMs
+    public abstract int getMRMClusterModifier(boolean apollo);
+
+    // Does Apollo change to-hit number
+    public abstract int getApolloToHit();
 }

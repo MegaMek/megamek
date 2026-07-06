@@ -62,4 +62,21 @@ public class TWRulesWeapons extends CoreRulesWeapons {
     // ELRMs get half missiles hit under minimum
     @Override
     public int getELRMMinimumRackSize(int rackSize) { return (rackSize / 2 + rackSize % 2); }
+
+    // MRMs are +1 to hit
+    @Override
+    public int getMRMModifier(int modifier) { return (modifier + 1); }
+
+    // MRMs have no cluster modifier, but with Apollo they do
+    @Override
+    public int getMRMClusterModifier(boolean apollo) {
+        if (apollo) {
+            return -1;
+        }
+        return 0;
+    }
+
+    // Apollo is -1 to hit
+    @Override
+    public int getApolloToHit() { return -1; }
 }

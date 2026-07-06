@@ -63,18 +63,13 @@ public abstract class MRMWeapon extends MissileWeapon {
     public MRMWeapon() {
         super();
         ammoType = AmmoType.AmmoTypeEnum.MRM;
-        toHitModifier = 1;
+        toHitModifier = 0;
         atClass = CLASS_MRM;
     }
 
     @Override
-    // PLAYTEST3 MRMS no longer have a +1 to hit.
     public int getToHitModifier(@Nullable Mounted<?> mounted) {
-        if (mounted != null && mounted.getEntity() != null && mounted.getEntity().getGame() != null && mounted.getEntity().getGame().getOptions().booleanOption(OptionsConstants.PLAYTEST_3)) {
-            return 0;
-        } else {
-            return toHitModifier;
-        }
+        return Game.rulesManager.getRulesWeapons().getMRMModifier(toHitModifier);
     }
     
     @Override

@@ -61,7 +61,7 @@ public class CoreRulesGame extends RulesGame {
     }
 
     // Front loaded initiative Core p.41
-    public int getInitiativeOrder(int[] num_normal_turns, int index, int min, boolean frontLoadOption) {
-        return ((int) Math.ceil(((double) num_normal_turns[index]) / (double) min));
+    public int getInitiativeOrder(int[] num_turns, int index, int min, boolean frontLoadOption) {
+        return ((int) Math.ceil(((double) num_turns[index]) / (double) min));
     }
 }

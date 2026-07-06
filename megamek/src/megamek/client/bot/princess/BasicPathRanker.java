@@ -36,6 +36,7 @@ package megamek.client.bot.princess;
 import java.text.DecimalFormat;
 import java.text.DecimalFormatSymbols;
 import java.text.NumberFormat;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -45,6 +46,7 @@ import java.util.Objects;
 import java.util.Optional;
 import java.util.Set;
 import java.util.TreeMap;
+import java.util.TreeSet;
 import java.util.stream.Stream;
 
 import megamek.client.bot.princess.UnitBehavior.BehaviorType;
@@ -755,6 +757,26 @@ public class BasicPathRanker extends PathRanker {
     }
 
     /**
+     * The highest-BV enemy cluster anchor for the current ranking pass, computed once per pass in
+     * {@link #rankPaths(List, Game, int, double, List, List)} and read by every {@link #rankPath} call of that
+     * pass, or {@code null} when there are no deployed on-board enemies.
+     */
+    private Coords rankingPassClusterAnchor;
+
+    @Override
+    public TreeSet<RankedPath> rankPaths(List<MovePath> movePaths, Game game, int maxRange, double fallTolerance,
+          List<Entity> enemies, List<Entity> friends) {
+        // The highest-BV cluster anchor and the TAG-spotter priority target depend only on the enemy list, which
+        // does not change during one ranking pass. Computing them once per pass instead of per candidate path
+        // avoids O(paths x enemies) Battle Value recalculations - each of which, for C3/C3i/Nova units, also
+        // rescans the whole network and its ECM state (issue #8443).
+        rankingPassBattleValueCache.clear();
+        rankingPassClusterAnchor = highestBvClusterPosition(enemies);
+        rankingPassSpotterPriority = null;
+        return super.rankPaths(movePaths, game, maxRange, fallTolerance, enemies, friends);
+    }
+
+    /**
      * Finds the position at the highest concentration of enemy battle value - the deployed on-board enemy whose
      * neighbourhood (within {@link Compute#HOMING_RADIUS}) holds the most total current BV. Standoff artillery and TAG
      * spotters use this cluster as their anchor (to stand off from, and to point at) instead of the nearest single
@@ -766,17 +788,24 @@ public class BasicPathRanker extends PathRanker {
      * @return The cluster anchor position, or {@code null} if there are no deployed on-board enemies
      */
     private @Nullable Coords highestBvClusterPosition(List<Entity> enemies) {
+        // Battle Value is expensive to compute (for C3 units it scans the whole network), so look it up in the
+        // per-pass cache instead of recalculating per enemy.
+        List<Entity> deployedEnemies = new ArrayList<>();
+        Map<Integer, Double> battleValueByEntityId = new HashMap<>();
+        for (Entity enemy : enemies) {
+            if (enemy.isDeployed() && !enemy.isOffBoard() && (enemy.getPosition() != null)) {
+                deployedEnemies.add(enemy);
+                battleValueByEntityId.put(enemy.getId(), cachedBattleValue(enemy));
+            }
+        }
+
         Coords clusterAnchor = null;
         double bestClusterValue = -1.0;
-        for (Entity center : enemies) {
-            if (!center.isDeployed() || center.isOffBoard() || (center.getPosition() == null)) {
-                continue;
-            }
+        for (Entity center : deployedEnemies) {
             double clusterValue = 0.0;
-            for (Entity other : enemies) {
-                if (other.isDeployed() && !other.isOffBoard() && (other.getPosition() != null)
-                      && (center.getPosition().distance(other.getPosition()) <= Compute.HOMING_RADIUS)) {
-                    clusterValue += Math.max(1.0, other.calculateBattleValue());
+            for (Entity other : deployedEnemies) {
+                if (center.getPosition().distance(other.getPosition()) <= Compute.HOMING_RADIUS) {
+                    clusterValue += battleValueByEntityId.get(other.getId());
                 }
             }
             if (clusterValue > bestClusterValue) {
@@ -785,6 +814,25 @@ public class BasicPathRanker extends PathRanker {
             }
         }
         return clusterAnchor;
+    }
+
+    /** Battle Values cached for the current ranking pass; see {@link #cachedBattleValue(Entity)}. */
+    private final Map<Integer, Double> rankingPassBattleValueCache = new HashMap<>();
+
+    /**
+     * Returns the entity's current Battle Value (at least 1), cached for the current ranking pass (the cache is
+     * cleared in {@link #rankPaths(List, Game, int, double, List, List)}). A BV calculation is expensive - for
+     * C3/C3i/Nova units it scans the whole network and recalculates every member - and nothing that changes a BV
+     * (damage, C3/ECM connectivity) can change between the candidate paths of one pass, so each pass computes each
+     * enemy's BV at most once and the next unit's pass sees fresh values.
+     *
+     * @param entity The unit whose Battle Value is wanted
+     *
+     * @return The unit's current Battle Value, minimum 1
+     */
+    private double cachedBattleValue(Entity entity) {
+        return rankingPassBattleValueCache.computeIfAbsent(entity.getId(),
+              entityId -> Math.max(1.0, entity.calculateBattleValue()));
     }
 
     /**
@@ -809,7 +857,7 @@ public class BasicPathRanker extends PathRanker {
             if (!enemy.isDeployed() || enemy.isOffBoard() || (enemy.getPosition() == null)) {
                 continue;
             }
-            double value = ArtilleryTargetingControl.tagTargetValue(enemy);
+            double value = ArtilleryTargetingControl.tagTargetValue(enemy, cachedBattleValue(enemy));
             if (value > bestValue) {
                 bestValue = value;
                 best = enemy;
@@ -843,14 +891,38 @@ public class BasicPathRanker extends PathRanker {
             Entity persisted = game.getEntity(persistedId);
             boolean persistedValid = (persisted != null) && persisted.isDeployed() && !persisted.isOffBoard()
                   && (persisted.getPosition() != null) && persisted.isEnemyOf(spotter) && !persisted.isDestroyed();
-            if (persistedValid && (ArtilleryTargetingControl.tagTargetValue(highestValue)
-                  < (SPOTTER_PRIORITY_SWITCH_MARGIN * ArtilleryTargetingControl.tagTargetValue(persisted)))) {
+            if (persistedValid
+                  && (ArtilleryTargetingControl.tagTargetValue(highestValue, cachedBattleValue(highestValue))
+                  < (SPOTTER_PRIORITY_SWITCH_MARGIN
+                  * ArtilleryTargetingControl.tagTargetValue(persisted, cachedBattleValue(persisted))))) {
                 lastSpotterPriorityTarget.put(spotter.getId(), persisted.getId());
                 return new SpotterPriority(persisted, "PERSISTED");
             }
         }
         lastSpotterPriorityTarget.put(spotter.getId(), highestValue.getId());
         return new SpotterPriority(highestValue, "VALUE");
+    }
+
+    /**
+     * The TAG-spotter priority target for the current ranking pass, computed on first use per pass and reset in
+     * {@link #rankPaths(List, Game, int, double, List, List)}. The choice depends only on the enemy list and the
+     * persisted target, none of which change between the candidate paths of one pass - and computing it per path
+     * repeated an expensive Battle Value scan of every enemy (issue #8443).
+     */
+    private SpotterPriority rankingPassSpotterPriority;
+
+    /**
+     * @param spotter The TAG-carrying spotter being moved
+     * @param enemies The enemy units
+     * @param game    The current game
+     *
+     * @return The {@link #determineSpotterPriorityTarget(Entity, List, Game)} result, computed once per ranking pass
+     */
+    private SpotterPriority spotterPriorityForThisPass(Entity spotter, List<Entity> enemies, Game game) {
+        if (rankingPassSpotterPriority == null) {
+            rankingPassSpotterPriority = determineSpotterPriorityTarget(spotter, enemies, game);
+        }
+        return rankingPassSpotterPriority;
     }
 
     /**
@@ -946,7 +1018,7 @@ public class BasicPathRanker extends PathRanker {
                 // priority target is penalized and pulled toward regaining line of sight on it.
                 int tagRange = maxOperationalTagRange(movingUnit);
                 double hyperAggression = getOwner().getBehaviorSettings().getHyperAggressionValue();
-                SpotterPriority priority = determineSpotterPriorityTarget(movingUnit, enemies, game);
+                SpotterPriority priority = spotterPriorityForThisPass(movingUnit, enemies, game);
                 Entity priorityTarget = priority.target();
                 prioritySource = priority.source();
                 if ((priorityTarget != null) && (priorityTarget.getPosition() != null)) {
@@ -1456,8 +1528,9 @@ public class BasicPathRanker extends PathRanker {
         // (weighted by Aggression slider).
         double distToEnemy = distanceToClosestEnemy(movingUnit, path.getFinalCoords(), game);
         // Highest enemy BV concentration: standoff artillery and TAG spotters position and face relative to this cluster
-        // rather than the nearest single unit, so a lone low-value scout cannot decoy them.
-        Coords highValueClusterPosition = highestBvClusterPosition(enemies);
+        // rather than the nearest single unit, so a lone low-value scout cannot decoy them. Computed once per
+        // ranking pass in rankPaths - see rankingPassClusterAnchor.
+        Coords highValueClusterPosition = rankingPassClusterAnchor;
         double distToCluster = (highValueClusterPosition != null)
               ? path.getFinalCoords().distance(highValueClusterPosition)
               : distToEnemy;

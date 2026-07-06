@@ -51,6 +51,7 @@ import java.util.Vector;
 
 import megamek.common.Player;
 import megamek.common.Team;
+import megamek.common.game.Game;
 import megamek.common.game.IGame;
 import megamek.common.game.InitiativeBonusBreakdown;
 import megamek.common.game.InitiativeRoll;
@@ -658,14 +659,11 @@ public abstract class TurnOrdered implements ITurnOrdered {
                 if (num_normal_turns[index] == 0) {
                     continue;
                 }
+                
+                // Number to move. Changes based on front-loaded initiative
+                ntm = Game.rulesManager.getRulesGame().getInitiativeOrder(num_normal_turns, index,
+                            min, game.getOptions().booleanOption(OptionsConstants.INIT_FRONT_LOAD_INITIATIVE));
 
-                // If you have less than twice the lowest,
-                // move 1. Otherwise, move more.
-                if (game.getOptions().booleanOption(OptionsConstants.INIT_FRONT_LOAD_INITIATIVE)) {
-                    ntm = (int) Math.ceil(((double) num_normal_turns[index]) / (double) min);
-                } else {
-                    ntm = num_normal_turns[index] / min;
-                }
                 for (int j = 0; j < ntm; j++) {
                     turns.addNormal(order[index]);
                     num_normal_turns[index]--;
@@ -696,13 +694,10 @@ public abstract class TurnOrdered implements ITurnOrdered {
                         continue;
                     }
 
-                    // If you have less than twice the lowest,
-                    // move 1. Otherwise, move more.
-                    if (game.getOptions().booleanOption(OptionsConstants.INIT_FRONT_LOAD_INITIATIVE)) {
-                        ntm = (int) Math.ceil(((double) num_even_turns[index]) / (double) min);
-                    } else {
-                        ntm = num_even_turns[index] / min;
-                    }
+                    // Return the number of units per init turn
+                    ntm = Game.rulesManager.getRulesGame().getInitiativeOrder(num_even_turns, index,
+                          min, game.getOptions().booleanOption(OptionsConstants.INIT_FRONT_LOAD_INITIATIVE));
+                    
                     for (int j = 0; j < ntm; j++) {
                         turns.addEven(order[index]);
                         num_even_turns[index]--;
@@ -723,13 +718,10 @@ public abstract class TurnOrdered implements ITurnOrdered {
                     continue;
                 }
 
-                // If you have less than twice the lowest,
-                // move 1. Otherwise, move more.
-                if (game.getOptions().booleanOption(OptionsConstants.INIT_FRONT_LOAD_INITIATIVE)) {
-                    ntm = (int) Math.ceil(((double) num_space_station_turns[index]) / (double) minSS);
-                } else {
-                    ntm = num_space_station_turns[index] / minSS;
-                }
+                // Return the number of units per init turn
+                ntm = Game.rulesManager.getRulesGame().getInitiativeOrder(num_space_station_turns, index,
+                      minSS, game.getOptions().booleanOption(OptionsConstants.INIT_FRONT_LOAD_INITIATIVE));
+
                 for (int j = 0; j < ntm; j++) {
                     turns.addSpaceStation(order[index]);
                     num_space_station_turns[index]--;
@@ -751,13 +743,10 @@ public abstract class TurnOrdered implements ITurnOrdered {
                     continue;
                 }
 
-                // If you have less than twice the lowest,
-                // move 1. Otherwise, move more.
-                if (game.getOptions().booleanOption(OptionsConstants.INIT_FRONT_LOAD_INITIATIVE)) {
-                    ntm = (int) Math.ceil(((double) num_jumpship_turns[index]) / (double) minJS);
-                } else {
-                    ntm = num_jumpship_turns[index] / minJS;
-                }
+                // Return the number of units per init turn
+                ntm = Game.rulesManager.getRulesGame().getInitiativeOrder(num_jumpship_turns, index,
+                      minJS, game.getOptions().booleanOption(OptionsConstants.INIT_FRONT_LOAD_INITIATIVE));
+                
                 for (int j = 0; j < ntm; j++) {
                     turns.addJumpship(order[index]);
                     num_jumpship_turns[index]--;
@@ -779,13 +768,10 @@ public abstract class TurnOrdered implements ITurnOrdered {
                     continue;
                 }
 
-                // If you have less than twice the lowest,
-                // move 1. Otherwise, move more.
-                if (game.getOptions().booleanOption(OptionsConstants.INIT_FRONT_LOAD_INITIATIVE)) {
-                    ntm = (int) Math.ceil(((double) num_warship_turns[index]) / (double) minWS);
-                } else {
-                    ntm = num_warship_turns[index] / minWS;
-                }
+                // Return the number of units per init turn
+                ntm = Game.rulesManager.getRulesGame().getInitiativeOrder(num_warship_turns, index,
+                      minWS, game.getOptions().booleanOption(OptionsConstants.INIT_FRONT_LOAD_INITIATIVE));
+                
                 for (int j = 0; j < ntm; j++) {
                     turns.addWarship(order[index]);
                     num_warship_turns[index]--;
@@ -807,13 +793,10 @@ public abstract class TurnOrdered implements ITurnOrdered {
                     continue;
                 }
 
-                // If you have less than twice the lowest,
-                // move 1. Otherwise, move more.
-                if (game.getOptions().booleanOption(OptionsConstants.INIT_FRONT_LOAD_INITIATIVE)) {
-                    ntm = (int) Math.ceil(((double) num_dropship_turns[index]) / (double) minDS);
-                } else {
-                    ntm = num_dropship_turns[index] / minDS;
-                }
+                // Return the number of units per init turn
+                ntm = Game.rulesManager.getRulesGame().getInitiativeOrder(num_dropship_turns, index,
+                      minDS, game.getOptions().booleanOption(OptionsConstants.INIT_FRONT_LOAD_INITIATIVE));
+                
                 for (int j = 0; j < ntm; j++) {
                     turns.addDropship(order[index]);
                     num_dropship_turns[index]--;
@@ -835,13 +818,10 @@ public abstract class TurnOrdered implements ITurnOrdered {
                     continue;
                 }
 
-                // If you have less than twice the lowest,
-                // move 1. Otherwise, move more.
-                if (game.getOptions().booleanOption(OptionsConstants.INIT_FRONT_LOAD_INITIATIVE)) {
-                    ntm = (int) Math.ceil(((double) num_small_craft_turns[index]) / (double) minSC);
-                } else {
-                    ntm = num_small_craft_turns[index] / minSC;
-                }
+                // Return the number of units per init turn
+                ntm = Game.rulesManager.getRulesGame().getInitiativeOrder(num_small_craft_turns, index,
+                      minSC, game.getOptions().booleanOption(OptionsConstants.INIT_FRONT_LOAD_INITIATIVE));
+                
                 for (int j = 0; j < ntm; j++) {
                     turns.addSmallCraft(order[index]);
                     num_small_craft_turns[index]--;
@@ -863,13 +843,10 @@ public abstract class TurnOrdered implements ITurnOrdered {
                     continue;
                 }
 
-                // If you have less than twice the lowest,
-                // move 1. Otherwise, move more.
-                if (game.getOptions().booleanOption(OptionsConstants.INIT_FRONT_LOAD_INITIATIVE)) {
-                    ntm = (int) Math.ceil(((double) num_telemissile_turns[index]) / (double) minTM);
-                } else {
-                    ntm = num_telemissile_turns[index] / minTM;
-                }
+                // Return the number of units per init turn
+                ntm = Game.rulesManager.getRulesGame().getInitiativeOrder(num_telemissile_turns, index,
+                      minTM, game.getOptions().booleanOption(OptionsConstants.INIT_FRONT_LOAD_INITIATIVE));
+                
                 for (int j = 0; j < ntm; j++) {
                     turns.addTelemissile(order[index]);
                     num_telemissile_turns[index]--;

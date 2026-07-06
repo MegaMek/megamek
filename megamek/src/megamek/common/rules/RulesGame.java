@@ -44,4 +44,7 @@ public abstract class RulesGame {
     // Is the unit eligible for the phase
     public abstract boolean eligibleForPhase(boolean unjammingRAC, boolean findingClub,
           boolean immobile, @Nullable GamePhase phase);
+
+    // Return the number of units to move
+    public abstract int getInitiativeOrder(int[] num_normal_turns, int index, int min, boolean frontLoadOption);
 }

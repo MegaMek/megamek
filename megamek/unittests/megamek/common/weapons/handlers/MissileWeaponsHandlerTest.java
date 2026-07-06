@@ -171,7 +171,7 @@ public class MissileWeaponsHandlerTest {
      * Test for AMS with playtest three
      */
     @Test
-    void testAMSWorksForPlaytestThree() throws EntityLoadingException {
+    void testAMSWorksForCoreRules() throws EntityLoadingException {
 
         // Create the meks and set their positions
         attacker = createAttackerEntity();
@@ -205,14 +205,14 @@ public class MissileWeaponsHandlerTest {
         assertEquals(-4, AMSmod, "AMS did not engage");
         // End first AMS test
 
-        // Setup second AMS test shot. Will pass with Playtest 3, and fail without
+        // Setup second AMS test shot. Will pass with core, and fail without
         weaponAttack = new WeaponAttackAction(attacker.getId(), target.getId(), attacker.getEquipmentNum(lrmTwo));
         weaponAttack.addCounterEquipment(amsMount);
 
         handler = new MissileWeaponHandler(toHit, weaponAttack, game, gameManager);
         AMSmod = handler.getAMSHitsMod(reports);
 
-        // second call should return -4. If 0 is returned, the playtest did not work or is not enabled.
+        // second call should return -4. If 0 is returned, the core did not work
         assertEquals(-4, AMSmod, "AMS did not engage a 2nd time");
 
         // Setup 3rd AMS test. This should always return 0 (no AMS) if multiAMS is not enabled.
@@ -224,7 +224,5 @@ public class MissileWeaponsHandlerTest {
 
         // This should return 0, showing we did not engage.
         assertEquals(0, AMSmod, "AMS triggered when it shouldn't have");
-
-        // End testing of AMS for playtest3
     }
 }

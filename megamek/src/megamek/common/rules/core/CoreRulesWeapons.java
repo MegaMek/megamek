@@ -65,4 +65,7 @@ public class CoreRulesWeapons extends RulesWeapons {
             reports.addElement(r);
         }
     }
+
+    // ELRMS under minimum do not reduce missiles that hit. Core p.186
+    public int getELRMMinimumRackSize(int rackSize) { return rackSize; }
 }

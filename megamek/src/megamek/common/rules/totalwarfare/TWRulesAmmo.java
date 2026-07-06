@@ -77,4 +77,7 @@ public class TWRulesAmmo extends CoreRulesAmmo {
     @Override
     public void narcHomingTarget(ToHitData toHit) { }
 
+    // Acid (AX) missiles are -2 on the cluster roll.
+    @Override
+    public int getAXMissileModifier() { return -2; }
 }

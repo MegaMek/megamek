@@ -59,4 +59,7 @@ public class TWRulesWeapons extends CoreRulesWeapons {
     @Override
     public void setACHit(CriticalSlot cs, Mounted<?> mounted, Vector<Report> reports, int entityId) {}
 
+    // ELRMs get half missiles hit under minimum
+    @Override
+    public int getELRMMinimumRackSize(int rackSize) { return (rackSize / 2 + rackSize % 2); }
 }

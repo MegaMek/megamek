@@ -50,4 +50,7 @@ public abstract class RulesWeapons {
 
     // What happens when an AC is hit
     public abstract void setACHit(CriticalSlot cs, Mounted<?> mounted, Vector<Report> reports, int entityId);
+
+    // Do ELRMs reduce rack size under minimums?
+    public abstract int getELRMMinimumRackSize(int rackSize);
 }

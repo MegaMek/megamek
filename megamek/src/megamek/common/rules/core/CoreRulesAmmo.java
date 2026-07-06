@@ -65,4 +65,6 @@ public class CoreRulesAmmo extends RulesAmmo {
         toHit.addModifier(-1, "target has a narc pod");
     }
 
+    // Acid (AX) missiles are -1 on the cluster roll. Core p.192
+    public int getAXMissileModifier() { return -1; }
 }

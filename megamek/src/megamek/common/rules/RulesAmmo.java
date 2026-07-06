@@ -45,4 +45,8 @@ public abstract class RulesAmmo {
 
     // Does NARC affect the target number
     public abstract void narcHomingTarget(ToHitData toHit);
+
+    // Acid (AX) missiles reduce cluster roll
+    public abstract int getAXMissileModifier();
+
 }

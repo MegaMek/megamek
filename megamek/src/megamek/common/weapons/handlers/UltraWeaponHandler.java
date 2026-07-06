@@ -162,44 +162,44 @@ public class UltraWeaponHandler extends AmmoWeaponHandler {
             return true;
         }
 
-        if (!game.getOptions().booleanOption(OptionsConstants.PLAYTEST_3)) {
-            if ((roll.getIntValue() == 2) && (howManyShots == 2) && !weaponEntity.isConventionalInfantry()) {
-                Report r = new Report();
-                r.subject = subjectId;
-                weapon.setJammed(true);
-                isJammed = true;
-                if ((weaponType.getAmmoType() == AmmoType.AmmoTypeEnum.AC_ULTRA)
-                      || (weaponType.getAmmoType() == AmmoType.AmmoTypeEnum.AC_ULTRA_THB)) {
-                    r.messageId = 3160;
-                } else {
-                    r.messageId = 3170;
-                }
-                vPhaseReport.addElement(r);
+        if ((roll.getIntValue() == 2)
+              && (howManyShots == 2)
+              && !weaponEntity.isConventionalInfantry()
+              && Game.rulesManager.getRulesWeapons().canUACsJam()) {
+            Report r = new Report();
+            r.subject = subjectId;
+            weapon.setJammed(true);
+            isJammed = true;
+            if ((weaponType.getAmmoType() == AmmoType.AmmoTypeEnum.AC_ULTRA)
+                  || (weaponType.getAmmoType() == AmmoType.AmmoTypeEnum.AC_ULTRA_THB)) {
+                r.messageId = 3160;
+            } else {
+                r.messageId = 3170;
             }
-        } else {
-            // PLAYTEST3 Caseless ammo support for RAC
-            // Will potentially explode when rolling a 2. Can still jam if not blowing up.
-            // The check above will only get to this if playtest3 is enabled
-            if ((roll.getIntValue() <= 2) && !attackingEntity.isConventionalInfantry() 
-                  && ammoType.getMunitionType().contains(AmmoType.Munitions.M_CASELESS)) {
-                Roll diceRoll = Compute.rollD6(2);
-
-                Report r = new Report(3164);
-                r.subject = subjectId;
-                r.add(diceRoll);
-
-                if (diceRoll.getIntValue() >= 8) {
-                    // Round explodes destroying weapon
-                    weapon.setDestroyed(true);
-                    r.choose(false);
-                } else {
-                    // Just a jam
-                    weapon.setJammed(true);
-                    r.choose(true);
-                }
-                vPhaseReport.addElement(r);
-            }
+            vPhaseReport.addElement(r);
         }
+        // Only will apply if Caseless ammo is used, which is not typical with a UAC.
+        // Will potentially explode when rolling a 2. Can still jam if not blowing up.
+        if ((roll.getIntValue() <= 2) && !attackingEntity.isConventionalInfantry()
+              && ammoType.getMunitionType().contains(AmmoType.Munitions.M_CASELESS)) {
+            Roll diceRoll = Compute.rollD6(2);
+
+            Report r = new Report(3164);
+            r.subject = subjectId;
+            r.add(diceRoll);
+
+            if (diceRoll.getIntValue() >= 8) {
+                // Round explodes destroying weapon
+                weapon.setDestroyed(true);
+                r.choose(false);
+            } else {
+                // Just a jam
+                weapon.setJammed(true);
+                r.choose(true);
+            }
+            vPhaseReport.addElement(r);
+        }
+
         return false;
     }
 

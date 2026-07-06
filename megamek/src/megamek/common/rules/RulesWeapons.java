@@ -38,4 +38,7 @@ public abstract class RulesWeapons {
 
     // What size doe ATMs cluster in
     public abstract int getATMClusterSize();
+
+    // Can ultra autocannons jam?
+    public abstract boolean canUACsJam();
 }

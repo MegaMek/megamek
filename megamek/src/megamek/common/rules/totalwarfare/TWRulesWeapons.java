@@ -45,4 +45,9 @@ public class TWRulesWeapons extends CoreRulesWeapons {
     // ATMs cluster in 5s
     @Override
     public int getATMClusterSize() { return 5; }
+
+    // UACs jam
+    @Override
+    public boolean canUACsJam() { return true; }
+
 }

@@ -42,4 +42,7 @@ public class CoreRulesWeapons extends RulesWeapons {
 
     // ATM cluster size Core p.186
     public int getATMClusterSize() { return 6; }
+
+    // UACs cannot jam Core p.183
+    public boolean canUACsJam() { return false; }
 }

@@ -32,7 +32,12 @@ package megamek.common.rules.core;
  * affiliated with Microsoft.
  */
 
+import megamek.common.CriticalSlot;
+import megamek.common.Report;
+import megamek.common.equipment.Mounted;
 import megamek.common.rules.RulesWeapons;
+
+import java.util.Vector;
 
 public class CoreRulesWeapons extends RulesWeapons {
     // RAC unjamming does not limit other actions outside of movement Core p.183
@@ -45,4 +50,19 @@ public class CoreRulesWeapons extends RulesWeapons {
 
     // UACs cannot jam Core p.183
     public boolean canUACsJam() { return false; }
+
+    // ACs can get hit one time. Core p.183
+    public void setACHit(CriticalSlot cs, Mounted<?> mounted, Vector<Report> reports, int entityId) {
+        if (!mounted.isAutocannonHit()) {
+            cs.setHit(false);
+            mounted.setHit(false);
+            mounted.setAutocannonHit(true);
+
+            Report r = new Report(6256);
+            r.subject = entityId;
+            r.indent(2);
+            r.add(mounted.getName());
+            reports.addElement(r);
+        }
+    }
 }

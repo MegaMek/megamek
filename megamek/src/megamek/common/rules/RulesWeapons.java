@@ -32,6 +32,12 @@ package megamek.common.rules;
  * affiliated with Microsoft.
  */
 
+import megamek.common.CriticalSlot;
+import megamek.common.Report;
+import megamek.common.equipment.Mounted;
+
+import java.util.Vector;
+
 public abstract class RulesWeapons {
     // Does a rac unjamming cause issues?
     public abstract boolean getRACUnjamRestriction();
@@ -41,4 +47,7 @@ public abstract class RulesWeapons {
 
     // Can ultra autocannons jam?
     public abstract boolean canUACsJam();
+
+    // What happens when an AC is hit
+    public abstract void setACHit(CriticalSlot cs, Mounted<?> mounted, Vector<Report> reports, int entityId);
 }

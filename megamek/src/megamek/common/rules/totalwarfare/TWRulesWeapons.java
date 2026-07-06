@@ -32,7 +32,12 @@ package megamek.common.rules.totalwarfare;
  * affiliated with Microsoft.
  */
 
+import megamek.common.CriticalSlot;
+import megamek.common.Report;
+import megamek.common.equipment.Mounted;
 import megamek.common.rules.core.CoreRulesWeapons;
+
+import java.util.Vector;
 
 public class TWRulesWeapons extends CoreRulesWeapons {
 
@@ -49,5 +54,9 @@ public class TWRulesWeapons extends CoreRulesWeapons {
     // UACs jam
     @Override
     public boolean canUACsJam() { return true; }
+
+    // ACs get hit normally
+    @Override
+    public void setACHit(CriticalSlot cs, Mounted<?> mounted, Vector<Report> reports, int entityId) {}
 
 }

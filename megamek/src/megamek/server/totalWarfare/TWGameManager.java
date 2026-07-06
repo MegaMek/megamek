@@ -20374,21 +20374,9 @@ public class TWGameManager extends AbstractGameManager {
             mounted.setHit(true);
         }
 
-        // PLAYTEST3 ignore first AC crit hit
-        if (game.getOptions().booleanOption(OptionsConstants.PLAYTEST_3) && eqType instanceof ACWeapon) {
-            if (!mounted.isAutocannonHit()) {
-                cs.setHit(false);
-                mounted.setHit(false);
-                mounted.setAutocannonHit(true);
-
-                r = new Report(6256);
-                r.subject = en.getId();
-                r.indent(2);
-                r.add(mounted.getName());
-                reports.addElement(r);
-            }
+        if (eqType instanceof ACWeapon) {
+            Game.rulesManager.getRulesWeapons().setACHit(cs, mounted, reports, en.getId());
         }
-
 
         if ((eqType instanceof MiscType) && eqType.hasFlag(MiscType.F_EMERGENCY_COOLANT_SYSTEM)) {
             ((Mek) en).setHasDamagedCoolantSystem(true);

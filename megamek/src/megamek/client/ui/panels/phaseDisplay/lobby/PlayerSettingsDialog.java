@@ -1,6 +1,6 @@
 /*
  * Copyright (C) 2000-2004 Ben Mazur (bmazur@sev.org)
- * Copyright (C) 2020-2025 The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2020-2026 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -66,7 +66,6 @@ import megamek.MMConstants;
 import megamek.client.Client;
 import megamek.client.bot.BotClient;
 import megamek.client.bot.princess.BehaviorSettings;
-import megamek.client.bot.princess.Princess;
 import megamek.client.generator.ReconfigurationParameters;
 import megamek.client.generator.TeamLoadOutGenerator;
 import megamek.client.ratgenerator.FactionRecord;
@@ -961,15 +960,15 @@ public class PlayerSettingsDialog extends AbstractButtonDialog {
                     munitionTree = originalMT;
                 }
                 // Bot settings button
-            } else if (butBotSettings.equals(e.getSource()) && client instanceof Princess) {
-                BehaviorSettings behavior = ((Princess) client).getBehaviorSettings();
+            } else if (butBotSettings.equals(e.getSource()) && client instanceof BotClient botClient) {
+                BehaviorSettings behavior = botClient.getBehaviorSettings();
                 var bcd = new BotConfigDialog(clientgui.getFrame(),
                       client.getLocalPlayer().getName(),
                       behavior,
                       clientgui);
                 bcd.setVisible(true);
                 if (bcd.getResult() == DialogResult.CONFIRMED) {
-                    ((Princess) client).setBehaviorSettings(bcd.getBehaviorSettings());
+                    botClient.setBehaviorSettings(bcd.getBehaviorSettings());
                 }
             } else if (e.getActionCommand().equals(CMD_ADD_GROUND_OBJECT)) {
                 addGroundObject();

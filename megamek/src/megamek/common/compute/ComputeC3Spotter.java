@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2025 The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2025-2026 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -38,6 +38,7 @@ import java.util.List;
 
 import megamek.common.ECMInfo;
 import megamek.common.LosEffects;
+import megamek.common.annotations.Nullable;
 import megamek.common.game.Game;
 import megamek.common.options.OptionsConstants;
 import megamek.common.units.Entity;
@@ -62,36 +63,48 @@ public class ComputeC3Spotter {
      * @return A C3-type spotter or the attacker itself if no spotters are found
      */
     static Entity findC3Spotter(Game game, Entity attacker, Targetable target) {
+        return findC3Spotter(game, attacker, target, null);
+    }
+
+    /**
+     * Same as {@link #findC3Spotter(Game, Entity, Targetable)}, but accepts a precomputed list of ECM information
+     * for all game entities. Computing that list scans the entire game and is expensive; callers that evaluate many
+     * attacks in a row (bots, to-hit previews) should compute it once and pass it in.
+     *
+     * @param attacker   The firing unit
+     * @param target     The target of the potential attack
+     * @param game       The game
+     * @param allECMInfo Precomputed ECM information for all game entities, as returned by
+     *                   {@link ComputeECM#computeAllEntitiesECMInfo(List)}, or {@code null} to compute it on demand
+     *
+     * @return A C3-type spotter or the attacker itself if no spotters are found
+     */
+    static Entity findC3Spotter(Game game, Entity attacker, Targetable target,
+          @Nullable List<ECMInfo> allECMInfo) {
         if (!attackerCanUseC3(attacker, game)) {
             return attacker;
         }
 
-        List<SpotterInfo> spotters = new ArrayList<>();
-
-        for (Entity other : game.getEntitiesVector()) {
-            if (isValidC3Spotter(other, attacker, game)) {
-                int spotterRange = Compute.effectiveDistance(game, other, target, false);
-                spotters.add(new SpotterInfo(other, spotterRange));
-            }
-        }
+        List<SpotterInfo> spotters = collectSpotters(game, attacker, target);
 
         if (!spotters.isEmpty()) {
             // ensure network connectivity
-            List<ECMInfo> allECMInfo = ComputeECM.computeAllEntitiesECMInfo(game.getEntitiesVector());
+            List<ECMInfo> ecmInfo = (allECMInfo != null) ? allECMInfo
+                  : ComputeECM.computeAllEntitiesECMInfo(game.getEntitiesVector());
             spotters.sort(Comparator.comparingInt(SpotterInfo::rangeToTarget));
 
             // PLAYTEST3 C3 spotters can only work if they have LOS to the target.
-            LosEffects c3LOS;
+            boolean spotterNeedsLOS = game.getOptions().booleanOption(OptionsConstants.PLAYTEST_3);
 
             int position = 0;
             for (SpotterInfo spotterInfo : spotters) {
                 Entity spotter = spotterInfo.spotter;
                 for (int count = position++; count < spotters.size(); count++) {
-                    if (canCompleteNodePath(spotter, attacker, spotters, count, allECMInfo)) {
+                    if (canCompleteNodePath(spotter, attacker, spotters, count, ecmInfo)) {
 
                         // PLAYTEST3 check the LOS from the spotter to the target
-                        if (game.getOptions().booleanOption(OptionsConstants.PLAYTEST_3)) {
-                            c3LOS = LosEffects.calculateLOS(game, spotter, target);
+                        if (spotterNeedsLOS) {
+                            LosEffects c3LOS = LosEffects.calculateLOS(game, spotter, target);
                             if (!c3LOS.isBlocked()) {
                                 return spotter;
                             }
@@ -108,10 +121,60 @@ public class ComputeC3Spotter {
 
     // PLAYTEST3 return spotter even with ECM
     static Entity playtestFindC3Spotter(Game game, Entity attacker, Targetable target) {
+        return playtestFindC3Spotter(game, attacker, target, null);
+    }
+
+    /**
+     * Same as {@link #playtestFindC3Spotter(Game, Entity, Targetable)}, but accepts a precomputed list of ECM
+     * information for all game entities to avoid recomputing it on every call.
+     *
+     * @param attacker   The firing unit
+     * @param target     The target of the potential attack
+     * @param game       The game
+     * @param allECMInfo Precomputed ECM information for all game entities, as returned by
+     *                   {@link ComputeECM#computeAllEntitiesECMInfo(List)}, or {@code null} to compute it on demand
+     *
+     * @return A C3-type spotter or the attacker itself if no spotters are found
+     */
+    static Entity playtestFindC3Spotter(Game game, Entity attacker, Targetable target,
+          @Nullable List<ECMInfo> allECMInfo) {
         if (!attackerCanUseC3(attacker, game)) {
             return attacker;
         }
 
+        List<SpotterInfo> spotters = collectSpotters(game, attacker, target);
+
+        if (!spotters.isEmpty()) {
+            // ensure network connectivity
+            List<ECMInfo> ecmInfo = (allECMInfo != null) ? allECMInfo
+                  : ComputeECM.computeAllEntitiesECMInfo(game.getEntitiesVector());
+            spotters.sort(Comparator.comparingInt(SpotterInfo::rangeToTarget));
+
+            int position = 0;
+            for (SpotterInfo spotterInfo : spotters) {
+                Entity spotter = spotterInfo.spotter;
+                LosEffects c3LOS = LosEffects.calculateLOS(game, spotter, target);
+                if (!c3LOS.isBlocked()) {
+                    spotter.setC3ecmAffected(!canCompleteNodePath(spotter, attacker, spotters, position, ecmInfo));
+                    return spotter;
+                }
+                position++;
+            }
+        }
+
+        return attacker;
+    }
+
+    /**
+     * Collects all valid C3 spotters for the attacker, each with its effective distance to the target.
+     *
+     * @param attacker The firing unit
+     * @param target   The target of the potential attack
+     * @param game     The game
+     *
+     * @return The valid spotters for the attacker's network, unsorted; empty if there are none
+     */
+    private static List<SpotterInfo> collectSpotters(Game game, Entity attacker, Targetable target) {
         List<SpotterInfo> spotters = new ArrayList<>();
 
         for (Entity other : game.getEntitiesVector()) {
@@ -121,26 +184,7 @@ public class ComputeC3Spotter {
             }
         }
 
-        if (!spotters.isEmpty()) {
-            // ensure network connectivity
-            List<ECMInfo> allECMInfo = ComputeECM.computeAllEntitiesECMInfo(game.getEntitiesVector());
-            spotters.sort(Comparator.comparingInt(SpotterInfo::rangeToTarget));
-
-            LosEffects c3LOS;
-
-            int position = 0;
-            for (SpotterInfo spotterInfo : spotters) {
-                Entity spotter = spotterInfo.spotter;
-                c3LOS = LosEffects.calculateLOS(game, spotter, target);
-                if (!c3LOS.isBlocked()) {
-                    spotter.setC3ecmAffected(!canCompleteNodePath(spotter, attacker, spotters, position, allECMInfo));
-                    return spotter;
-                }
-                position++;
-            }
-        }
-
-        return attacker;
+        return spotters;
     }
 
     /**

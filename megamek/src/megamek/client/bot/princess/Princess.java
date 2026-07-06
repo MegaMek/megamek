@@ -189,7 +189,6 @@ public class Princess extends BotClient {
 
     private Integer spinUpThreshold = null;
 
-    private BehaviorSettings behaviorSettings;
     private double moveEvaluationTimeEstimate = 0;
     private final Precognition precognition;
     private final Thread precognitionThread;
@@ -825,6 +824,7 @@ public class Princess extends BotClient {
         return closestPosition;
     }
 
+    @Override
     public void setBehaviorSettings(final BehaviorSettings behaviorSettings) {
         LOGGER.info("New behavior settings for {}\n{}", getName(), behaviorSettings.toLog());
         try {
@@ -901,10 +901,6 @@ public class Princess extends BotClient {
             return damageMap.get(targetId);
         }
         return 0.0; // If we have no entry, return zero
-    }
-
-    public BehaviorSettings getBehaviorSettings() {
-        return behaviorSettings;
     }
 
     public Set<Coords> getStrategicBuildingTargets() {
@@ -3878,6 +3874,11 @@ public class Princess extends BotClient {
 
     public void sendPrincessSettings() {
         send(new Packet(PacketCommand.PRINCESS_SETTINGS, behaviorSettings));
+    }
+
+    @Override
+    protected void sendBotSettingsToServer() {
+        sendPrincessSettings();
     }
 
     @Override

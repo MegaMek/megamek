@@ -249,6 +249,10 @@ public class BotConfigDialog extends AbstractButtonDialog
                   Messages.getString("BotConfigDialog.aiType." + aiType.name()));
             radioButton.setActionCommand(aiType.name());
             radioButton.setSelected(aiType == AiType.PRINCESS);
+            String tooltipKey = "BotConfigDialog.aiType." + aiType.name() + ".tooltip";
+            if (Messages.keyExists(tooltipKey)) {
+                radioButton.setToolTipText(Messages.getString(tooltipKey));
+            }
             aiTypeGroup.add(radioButton);
             result.add(radioButton);
         }

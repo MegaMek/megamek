@@ -1091,7 +1091,10 @@ public class MegaMekGUI implements IPreferenceChangeListener {
                         botClient.setBehaviorSettings(scenarioBehavior);
                     }
                     botClient.getGame().addGameListener(new BotGUI(frame, botClient));
-                    botClient.connect();
+                    if (!botClient.connect()) {
+                        LOGGER.error("Bot {} failed to connect; shutting it down", pa[x].getName());
+                        botClient.die();
+                    }
                 }
             }
         }

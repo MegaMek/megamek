@@ -161,26 +161,24 @@ public class AddBotUtil {
             return concatResults();
         }
 
-        final BotClient botClient;
-        final AiType aiType = AiType.fromString(botName.toString());
-        if (aiType != null) {
-            botClient = makeNewBotClient(aiType, target, host, port);
-            if (!StringUtility.isNullOrBlank(configName)) {
-                final BehaviorSettings behavior = BehaviorSettingsFactory.getInstance()
-                      .getBehavior(configName.toString());
-                if (null != behavior) {
-                    botClient.setBehaviorSettings(behavior);
-                } else {
-                    results.add("Unrecognized Behavior Setting: '" + configName + "'.  Using DEFAULT.");
-                    botClient.setBehaviorSettings(BehaviorSettingsFactory.getInstance().DEFAULT_BEHAVIOR);
-                }
+        AiType aiType = AiType.fromString(botName.toString());
+        if (aiType == null) {
+            results.add("Unrecognized bot: '" + botName + "'.  Defaulting to Princess.");
+            botName = new StringBuilder("Princess");
+            aiType = AiType.PRINCESS;
+        }
+        final BotClient botClient = makeNewBotClient(aiType, target, host, port);
+        if (!StringUtility.isNullOrBlank(configName)) {
+            final BehaviorSettings behavior = BehaviorSettingsFactory.getInstance()
+                  .getBehavior(configName.toString());
+            if (null != behavior) {
+                botClient.setBehaviorSettings(behavior);
             } else {
+                results.add("Unrecognized Behavior Setting: '" + configName + "'.  Using DEFAULT.");
                 botClient.setBehaviorSettings(BehaviorSettingsFactory.getInstance().DEFAULT_BEHAVIOR);
             }
         } else {
-            results.add("Unrecognized bot: '" + botName + "'.  Defaulting to Princess.");
-            botName = new StringBuilder("Princess");
-            botClient = makeNewBotClient(AiType.PRINCESS, target, host, port);
+            botClient.setBehaviorSettings(BehaviorSettingsFactory.getInstance().DEFAULT_BEHAVIOR);
         }
 
         if (!GraphicsEnvironment.isHeadless()) {

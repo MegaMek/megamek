@@ -1287,13 +1287,13 @@ public class EntityListFile {
                         }
                         output.write("/>\n");
                     } else if (miscType.hasFlag(MiscType.F_AP_MOUNT)) {
-                        int mountIdx = entity.getEquipmentNum(mounted);
+                        int mountIndex = entity.getEquipmentNum(mounted);
                         EquipmentType apType = null;
                         if (mounted.getLinked() != null) {
                             apType = mounted.getLinked().getType();
                         }
                         output.write(indentStr(indentLvl + 1) + '<' + MULParser.ELE_BA_APM + ' ');
-                        output.write(MULParser.ATTR_BA_APM_MOUNT_NUM + "=\"" + mountIdx + "\" ");
+                        output.write(MULParser.ATTR_BA_APM_MOUNT_NUM + "=\"" + mountIndex + "\" ");
                         if (apType != null) {
                             output.write(MULParser.ATTR_BA_APM_TYPE_NAME + "=\"" + apType.getInternalName() + "\" ");
                         }

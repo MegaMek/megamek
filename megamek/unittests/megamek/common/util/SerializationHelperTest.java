@@ -33,6 +33,8 @@
 package megamek.common.util;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertInstanceOf;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 import com.thoughtworks.xstream.XStream;
 import megamek.common.units.HeatBreakdown;
@@ -57,5 +59,26 @@ class SerializationHelperTest {
         Object restored = loadXStream.fromXML(xml);
 
         assertEquals(original, restored);
+    }
+
+    /**
+     * A malformed numeric value must not deserialize to a {@code null} {@link HeatBreakdown.HeatContribution}: a
+     * null stored in {@link HeatBreakdown}'s buildup map would later NPE (for example in
+     * {@code buildupTooltip()}). The converter keeps the field default instead and returns a non-null record.
+     */
+    @Test
+    void malformedHeatContributionValueDeserializesToNonNullDefault() {
+        XStream saveXStream = SerializationHelper.getSaveGameXStream();
+        String xml = saveXStream.toXML(new HeatBreakdown.HeatContribution(3, 99));
+        String corrupted = xml.replace("99", "notANumber");
+
+        XStream loadXStream = SerializationHelper.getLoadSaveGameXStream();
+        Object restored = loadXStream.fromXML(corrupted);
+
+        assertNotNull(restored);
+        assertInstanceOf(HeatBreakdown.HeatContribution.class, restored);
+        HeatBreakdown.HeatContribution contribution = (HeatBreakdown.HeatContribution) restored;
+        assertEquals(3, contribution.count());
+        assertEquals(0, contribution.totalHeat());
     }
 }

@@ -468,11 +468,11 @@ public class SerializationHelper {
                             case "count" -> count = Integer.parseInt(reader.getValue());
                             case "totalHeat" -> totalHeat = Integer.parseInt(reader.getValue());
                         }
-                        reader.moveUp();
                     } catch (NumberFormatException e) {
-                        // HeatContribution entries with malformed numbers are silently ignored
-                        return null;
+                        // Keep the default for this field on a malformed value; never return null, because a
+                        // null contribution stored in HeatBreakdown.buildup would NPE in buildupTooltip().
                     }
+                    reader.moveUp();
                 }
                 return new HeatBreakdown.HeatContribution(count, totalHeat);
             }

@@ -88,6 +88,9 @@ import megamek.common.weapons.attacks.StopSwarmAttack;
 import megamek.common.weapons.missiles.ATMWeapon;
 import megamek.common.weapons.missiles.MMLWeapon;
 import megamek.server.SmokeCloud;
+import org.apache.logging.log4j.Level;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.core.config.Configurator;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -815,6 +818,20 @@ class FireControlTest {
         testToHitThreshold = new HashMap<>();
         for (final WeaponMounted weapon : mockShooter.getWeaponList()) {
             testToHitThreshold.put(weapon, 0.0);
+        }
+    }
+
+    @Test
+    void testCheckAllGuessesSkippedAtDebugLogLevel() {
+        // The guess-accuracy sweep computes a real to-hit for every enemy x weapon x ammo combination,
+        // which is extremely expensive (especially with C3 in play). The shipped log configuration runs
+        // the bot loggers at DEBUG, so the sweep must only engage at TRACE (issue #8442).
+        final Level previousLevel = LogManager.getLogger(FireControl.class).getLevel();
+        Configurator.setLevel(FireControl.class.getName(), Level.DEBUG);
+        try {
+            assertNull(testFireControl.checkAllGuesses(mockShooter, mockGame));
+        } finally {
+            Configurator.setLevel(FireControl.class.getName(), previousLevel);
         }
     }
 

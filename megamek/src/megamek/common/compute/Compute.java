@@ -1321,6 +1321,23 @@ public class Compute {
      */
     public static ToHitData getRangeMods(Game game, Entity attackingEntity, WeaponMounted weapon, AmmoMounted ammo,
           Targetable target) {
+        return getRangeMods(game, attackingEntity, weapon, ammo, target, null);
+    }
+
+    /**
+     * Determines the to-hit modifier due to range for an attack with the specified parameters. Includes minimum range,
+     * infantry 0-range mods, and target stealth mods. Accounts for friendly C3 units.
+     *
+     * <p>For a C3-equipped attacker, the C3 spotter search needs ECM information for every game entity, which is
+     * expensive to compute. Callers that evaluate many attacks in a row (bots, to-hit previews) should compute that
+     * list once via {@link ComputeECM#computeAllEntitiesECMInfo(List)} and pass it in.</p>
+     *
+     * @param allECMInfo Precomputed ECM information for all game entities, or {@code null} to compute it on demand
+     *
+     * @return the modifiers
+     */
+    public static ToHitData getRangeMods(Game game, Entity attackingEntity, WeaponMounted weapon, AmmoMounted ammo,
+          Targetable target, @Nullable List<ECMInfo> allECMInfo) {
         WeaponType weaponType = weapon.getType();
         int[] weaponRanges = weaponType.getRanges(weapon, ammo);
         boolean isAttackerInfantry = (attackingEntity instanceof Infantry);
@@ -1565,8 +1582,13 @@ public class Compute {
         }
 
         // find any c3 spotters that could help
-        Entity c3spotter = ComputeC3Spotter.findC3Spotter(game, attackingEntity, target);
-        Entity c3spotterWithECM = ComputeC3Spotter.playtestFindC3Spotter(game, attackingEntity, target);
+        boolean isPlaytest3 = game.getOptions().booleanOption(OptionsConstants.PLAYTEST_3);
+        Entity c3spotter = ComputeC3Spotter.findC3Spotter(game, attackingEntity, target, allECMInfo);
+        // The ECM-aware playtest spotter search runs a LOS check per network member; only PLAYTEST_3 rules read
+        // its result, so skip it entirely otherwise.
+        Entity c3spotterWithECM = isPlaytest3
+              ? ComputeC3Spotter.playtestFindC3Spotter(game, attackingEntity, target, allECMInfo)
+              : c3spotter;
 
         if (isIndirect) {
             c3spotter = attackingEntity; // no c3 when using indirect fire
@@ -1599,7 +1621,7 @@ public class Compute {
         int usingRange = range;
         boolean usingC3 = false;
 
-        if (game.getOptions().booleanOption(OptionsConstants.PLAYTEST_3)) {
+        if (isPlaytest3) {
             // PLAYTEST3 check ecm vs non ecm affected C3
             if ((c3range > c3ecmRange) && (c3range > range)) {
                 usingRange = c3ecmRange;
@@ -1671,7 +1693,7 @@ public class Compute {
         } else {
             // report c3 adjustment
             // PLAYTEST3 C3 ECM halving
-            if (game.getOptions().booleanOption(OptionsConstants.PLAYTEST_3)
+            if (isPlaytest3
                   && usingRange == c3ecmRange
                   && usingRange != c3range
                   && c3spotterWithECM.getC3ecmAffected()) {

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2025 The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2025-2026 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -53,7 +53,25 @@ public interface InfantryTransporter extends Serializable {
      * These methods are required for Infantry unit loading/unloading. In practice, all are provided by Bay() or
      * overridden in transports that can carry infantry.
      */
-    boolean canLoad(Entity unit);
+    default boolean canLoad(Entity unit) {
+        // Infantry that fits in the remaining space (TW pp. 223 - 225).
+        // Assume that we can carry the unit.
+        boolean result = true;
+
+        // Only Infantry and BattleArmor can be carried in TroopSpace.
+        if (!(unit instanceof Infantry)) {
+            result = false;
+        }
+
+        // We must have enough space for the new troops.
+        // POSSIBLE BUG: we may have to take the Math.ceil() of the weight.
+        else if (getUnused() < unit.getWeight()) {
+            result = false;
+        }
+
+        // Return our result.
+        return result;
+    }
 
     List<Entity> getDroppableUnits();
 

@@ -2540,6 +2540,12 @@ public class ChatLounge extends AbstractPhaseDisplay
 
         boolean done = !localPlayer().isDone();
 
+        // Ask up front (once) whether to record the combat-summary GIF, so recording never has to interrupt play
+        // mid-game. No-op unless the preference is "ask" and no choice has been made for this game yet.
+        if (done) {
+            MinimapPanel.promptForGifRecordingConsent(game, clientgui.getFrame());
+        }
+
         // Save lobby state if setting is enabled, player is marking as done, and we haven't saved yet
         if (done && GUIP.getSaveLobbyOnStart() && !lobbySavePerformed) {
             String timestamp = LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd_HHmmss"));

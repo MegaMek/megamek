@@ -67,9 +67,9 @@ public final class AiMatchRunner {
         }
 
         File scenarioFile = new File(args[0]);
-        int repetitions = (args.length > 1) ? Integer.parseInt(args[1]) : DEFAULT_REPETITIONS;
-        int roundsLimit = (args.length > 2) ? Integer.parseInt(args[2]) : DEFAULT_ROUNDS_LIMIT;
-        int timeoutMinutes = (args.length > 3) ? Integer.parseInt(args[3]) : DEFAULT_TIMEOUT_MINUTES;
+        int repetitions = parseIntArg(args, 1, DEFAULT_REPETITIONS, "repetitions");
+        int roundsLimit = parseIntArg(args, 2, DEFAULT_ROUNDS_LIMIT, "roundsLimit");
+        int timeoutMinutes = parseIntArg(args, 3, DEFAULT_TIMEOUT_MINUTES, "timeoutMinutes");
 
         // Keep each game's logs instead of overwriting them, so per-game decision data survives the batch.
         PreferenceManager.getClientPreferences().setStampFilenames(true);
@@ -99,7 +99,7 @@ public final class AiMatchRunner {
                           teamAiTypes.getOrDefault(result.winningTeam(), Set.of()));
                 }
             } catch (Exception exception) {
-                logger.error(exception, "Game {}/{} failed to run", gameNumber, repetitions);
+                logger.error(exception, "Game " + gameNumber + "/" + repetitions + " failed to run");
             } finally {
                 if (runner != null) {
                     runner.shutdown();
@@ -109,6 +109,30 @@ public final class AiMatchRunner {
 
         logger.info(formatSummary(repetitions, teamWins, teamAiTypes, draws, unfinished));
         System.exit(0);
+    }
+
+    /**
+     * Parses an optional integer command-line argument, or returns the default when it is not supplied. Exits
+     * with a usage-style message rather than throwing if the argument is present but not an integer.
+     *
+     * @param args         the command-line arguments
+     * @param index        the index of the argument to parse
+     * @param defaultValue the value to use when the argument is not supplied
+     * @param argumentName the argument name, for the error message
+     *
+     * @return the parsed value, or {@code defaultValue} when the argument is absent
+     */
+    private static int parseIntArg(String[] args, int index, int defaultValue, String argumentName) {
+        if (args.length <= index) {
+            return defaultValue;
+        }
+        try {
+            return Integer.parseInt(args[index]);
+        } catch (NumberFormatException exception) {
+            System.out.println("Invalid " + argumentName + ": '" + args[index] + "' is not an integer");
+            System.exit(1);
+            return defaultValue; // unreachable: System.exit does not return
+        }
     }
 
     private static String formatSummary(int repetitions, Map<Integer, Integer> teamWins,

@@ -109,17 +109,24 @@ public class ScenarioGameRunner {
               random.nextInt(MMConstants.MIN_PORT_FOR_QUICK_GAME, MMConstants.MAX_PORT),
               gameManager, false, "", null, true);
 
-        ScenarioLoader scenarioLoader = new ScenarioLoader(scenarioFile);
-        scenario = scenarioLoader.load();
-        IGame loadedGame = scenario.createGame();
-        if (!(loadedGame instanceof Game totalWarfareGame)) {
-            throw new IllegalArgumentException("Only Total Warfare scenarios are supported: " + scenarioFile);
-        }
-        game = totalWarfareGame;
+        // The Server has already opened its socket and started a non-daemon thread; if the rest of construction
+        // fails, tear it down so a failed runner cannot leak the port/thread and keep the JVM alive.
+        try {
+            ScenarioLoader scenarioLoader = new ScenarioLoader(scenarioFile);
+            scenario = scenarioLoader.load();
+            IGame loadedGame = scenario.createGame();
+            if (!(loadedGame instanceof Game totalWarfareGame)) {
+                throw new IllegalArgumentException("Only Total Warfare scenarios are supported: " + scenarioFile);
+            }
+            game = totalWarfareGame;
 
-        server.setGame(game);
-        scenario.applyDamage(gameManager);
-        gameManager.calculatePlayerInitialCounts();
+            server.setGame(game);
+            scenario.applyDamage(gameManager);
+            gameManager.calculatePlayerInitialCounts();
+        } catch (Exception constructionFailure) {
+            server.die();
+            throw constructionFailure;
+        }
     }
 
     /**

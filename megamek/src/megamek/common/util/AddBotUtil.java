@@ -231,13 +231,19 @@ public class AddBotUtil {
         final BotClient botClient = BotFactory.createBot(AiType.PRINCESS, target.getName(), host, port);
         botClient.setBehaviorSettings(behavior);
 
+        boolean connected;
         try {
-            botClient.connect();
+            connected = botClient.connect();
         } catch (final Exception ex) {
-            message.append("Princess failed to connect.");
+            connected = false;
+        }
+        if (!connected) {
+            botClient.die();
+            message.append("Bot failed to connect.");
+            return null;
         }
         botClient.setLocalPlayerNumber(target.getId());
-        message.append("Princess has replaced ").append(playerName).append(".");
+        message.append("Bot has replaced ").append(playerName).append(".");
         return botClient;
     }
 
@@ -271,13 +277,19 @@ public class AddBotUtil {
         if (target.isGhost()) {
             final BotClient botClient = BotFactory.createBot(AiType.PRINCESS, target.getName(), host, port);
             botClient.setBehaviorSettings(behavior);
+            boolean connected;
             try {
-                botClient.connect();
+                connected = botClient.connect();
             } catch (final Exception ex) {
-                message.append("Princess failed to connect.");
+                connected = false;
+            }
+            if (!connected) {
+                botClient.die();
+                message.append("Bot failed to connect.");
+                return;
             }
             botClient.setLocalPlayerNumber(target.getId());
-            message.append("Princess has replaced ").append(playerName).append(".");
+            message.append("Bot has replaced ").append(playerName).append(".");
         } else {
             AbstractClient bot = client.getBots().get(target.getName());
             if (bot == null) {

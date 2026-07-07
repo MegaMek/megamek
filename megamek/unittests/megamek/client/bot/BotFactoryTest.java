@@ -54,7 +54,9 @@ class BotFactoryTest {
             assertInstanceOf(Princess.class, bot);
             assertEquals("TestBot", bot.getName());
         } finally {
-            bot.die();
+            if (bot != null) {
+                bot.die();
+            }
         }
     }
 
@@ -66,7 +68,9 @@ class BotFactoryTest {
         try {
             assertEquals("FactoryTestBehavior", bot.getBehaviorSettings().getDescription());
         } finally {
-            bot.die();
+            if (bot != null) {
+                bot.die();
+            }
         }
     }
 }

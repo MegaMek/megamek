@@ -170,11 +170,11 @@ public class ScenarioGameRunner {
                   server.getPort(),
                   behaviorFor(botSlot.getName()));
             if (!botClient.connect()) {
-                throw new IllegalStateException("Princess failed to connect for player " + botSlot.getName());
+                throw new IllegalStateException("Bot failed to connect for player " + botSlot.getName());
             }
             waitForLocalPlayer(botClient.getName(), () -> botClient.getLocalPlayer() != null);
             botClient.sendPlayerInfo();
-            logger.info("Connected Princess for {}", botSlot.getName());
+            logger.info("Connected bot for {}", botSlot.getName());
         }
 
         logger.info("Running scenario '{}' for up to {} rounds ({} minute timeout)",

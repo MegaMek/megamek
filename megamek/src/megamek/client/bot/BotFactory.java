@@ -32,6 +32,8 @@
  */
 package megamek.client.bot;
 
+import java.util.Objects;
+
 import megamek.client.bot.princess.BehaviorSettings;
 import megamek.client.bot.princess.Princess;
 import megamek.logging.MMLogger;
@@ -63,6 +65,9 @@ public final class BotFactory {
      * @return a started {@link BotClient} of the requested type, not yet connected
      */
     public static BotClient createBot(AiType aiType, String name, String host, int port) {
+        Objects.requireNonNull(aiType, "aiType");
+        Objects.requireNonNull(name, "name");
+        Objects.requireNonNull(host, "host");
         LOGGER.debug("Creating {} bot '{}' for {}:{}", aiType, name, host, port);
         return switch (aiType) {
             case PRINCESS -> {
@@ -86,6 +91,7 @@ public final class BotFactory {
      */
     public static BotClient createBot(AiType aiType, String name, String host, int port,
           BehaviorSettings behaviorSettings) {
+        Objects.requireNonNull(behaviorSettings, "behaviorSettings");
         BotClient bot = createBot(aiType, name, host, port);
         bot.setBehaviorSettings(behaviorSettings);
         return bot;

@@ -30,28 +30,26 @@
  * <https://www.xbox.com/en-US/developers/rules> and it is not endorsed by or
  * affiliated with Microsoft.
  */
-package megamek.client.bot;
+package megamek.client.bot.caspar;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNull;
+import megamek.client.bot.princess.Princess;
 
-import org.junit.jupiter.api.Test;
+/**
+ * The CASPAR bot: the experimental successor to {@link Princess}. It shares Princess's entire
+ * network/phase/state plumbing and, in this initial version, plays identically to Princess. Experimental
+ * behavior is added by overriding Princess's wiring seams (for example {@code initializePathRankers()} and
+ * {@code initializeFireControls()}) so that each divergence can be compared against Princess.
+ */
+public class Caspar extends Princess {
 
-class AiTypeTest {
-
-    @Test
-    void fromStringMatchesCaseInsensitivelyAndTrims() {
-        assertEquals(AiType.PRINCESS, AiType.fromString("princess"));
-        assertEquals(AiType.PRINCESS, AiType.fromString("PRINCESS"));
-        assertEquals(AiType.PRINCESS, AiType.fromString("  Princess  "));
-        assertEquals(AiType.CASPAR, AiType.fromString("caspar"));
-        assertEquals(AiType.CASPAR, AiType.fromString("CASPAR"));
-    }
-
-    @Test
-    void fromStringReturnsNullForNullEmptyOrUnknown() {
-        assertNull(AiType.fromString(null));
-        assertNull(AiType.fromString(""));
-        assertNull(AiType.fromString("nonsense"));
+    /**
+     * Creates a new CASPAR bot with the given display name, configured for the given host and port.
+     *
+     * @param name The display name
+     * @param host The host address to which to connect
+     * @param port The port on the host where to connect
+     */
+    public Caspar(final String name, final String host, final int port) {
+        super(name, host, port);
     }
 }

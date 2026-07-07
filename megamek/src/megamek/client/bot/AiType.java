@@ -41,7 +41,10 @@ import megamek.common.annotations.Nullable;
  */
 public enum AiType {
     /** The default MegaMek bot, {@link megamek.client.bot.princess.Princess}. */
-    PRINCESS;
+    PRINCESS,
+
+    /** The experimental successor to Princess, {@link megamek.client.bot.caspar.Caspar}. */
+    CASPAR;
 
     /**
      * Parses an AI type from a string (case-insensitive match against the enum name), as used by the scenario

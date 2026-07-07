@@ -36,6 +36,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertInstanceOf;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 
+import megamek.client.bot.caspar.Caspar;
 import megamek.client.bot.princess.BehaviorSettings;
 import megamek.client.bot.princess.Princess;
 import megamek.client.bot.princess.PrincessException;
@@ -52,6 +53,20 @@ class BotFactoryTest {
         try {
             assertNotNull(bot);
             assertInstanceOf(Princess.class, bot);
+            assertEquals("TestBot", bot.getName());
+        } finally {
+            if (bot != null) {
+                bot.die();
+            }
+        }
+    }
+
+    @Test
+    void createBotBuildsCasparForCasparType() {
+        BotClient bot = BotFactory.createBot(AiType.CASPAR, "TestBot", TEST_HOST, TEST_PORT);
+        try {
+            assertNotNull(bot);
+            assertInstanceOf(Caspar.class, bot);
             assertEquals("TestBot", bot.getName());
         } finally {
             if (bot != null) {

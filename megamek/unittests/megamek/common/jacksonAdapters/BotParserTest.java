@@ -30,37 +30,37 @@
  * <https://www.xbox.com/en-US/developers/rules> and it is not endorsed by or
  * affiliated with Microsoft.
  */
-package megamek.client.bot;
+package megamek.common.jacksonAdapters;
 
-import megamek.common.annotations.Nullable;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertInstanceOf;
 
-/**
- * Identifies which bot AI implementation to construct. Used by {@link BotFactory} as the single selection point for
- * building bots, so callers (lobby, scenario loaders, headless runners) no longer hardcode a concrete bot class.
- * Additional AI types (for example a future experimental bot) are added here as their implementations land.
- */
-public enum AiType {
-    /** The default MegaMek bot, {@link megamek.client.bot.princess.Princess}. */
-    PRINCESS;
+import com.fasterxml.jackson.databind.JsonNode;
+import megamek.client.bot.AiType;
+import org.junit.jupiter.api.Test;
 
-    /**
-     * Parses an AI type from a string (case-insensitive match against the enum name), as used by the scenario
-     * {@code ai:} key and the {@code /replacePlayer -b:} chat argument.
-     *
-     * @param value the string to parse, may be {@code null}
-     *
-     * @return the matching {@link AiType}, or {@code null} if the value is {@code null} or matches no type
-     */
-    public static @Nullable AiType fromString(@Nullable String value) {
-        if (value == null) {
-            return null;
-        }
-        String trimmed = value.trim();
-        for (AiType aiType : values()) {
-            if (aiType.name().equalsIgnoreCase(trimmed)) {
-                return aiType;
-            }
-        }
-        return null;
+class BotParserTest {
+
+    private static BotParser.PrincessRecord parse(String yaml) throws Exception {
+        JsonNode node = BotParser.YAML_MAPPER.readTree(yaml);
+        BotParser.BotInfo botInfo = BotParser.parse(node);
+        assertInstanceOf(BotParser.PrincessRecord.class, botInfo);
+        return (BotParser.PrincessRecord) botInfo;
+    }
+
+    @Test
+    void defaultsToPrincessWhenNoAiKey() throws Exception {
+        assertEquals(AiType.PRINCESS, parse("name: TestBot").aiType());
+    }
+
+    @Test
+    void readsExplicitAiKeyCaseInsensitively() throws Exception {
+        assertEquals(AiType.PRINCESS, parse("ai: princess").aiType());
+        assertEquals(AiType.PRINCESS, parse("ai: PRINCESS").aiType());
+    }
+
+    @Test
+    void unknownAiKeyFallsBackToPrincess() throws Exception {
+        assertEquals(AiType.PRINCESS, parse("ai: nonsense").aiType());
     }
 }

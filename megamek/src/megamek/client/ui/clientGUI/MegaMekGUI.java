@@ -76,6 +76,7 @@ import megamek.client.SBFClient;
 import megamek.client.bot.AiType;
 import megamek.client.bot.BotClient;
 import megamek.client.bot.BotFactory;
+import megamek.client.bot.princess.BehaviorSettings;
 import megamek.client.bot.ui.swing.BotGUI;
 import megamek.client.ui.Messages;
 import megamek.client.ui.boardeditor.BoardEditorPanel;
@@ -1075,16 +1076,19 @@ public class MegaMekGUI implements IPreferenceChangeListener {
         if (scenario.getGameType() == GameType.TW) {
             for (int x = 0; x < pa.length; x++) {
                 if (playerTypes[x] == ScenarioDialog.T_BOT) {
-                    LOGGER.info("Adding bot {} as Princess", pa[x].getName());
-                    BotClient botClient = BotFactory.createBot(AiType.PRINCESS,
-                          pa[x].getName(),
-                          MMConstants.LOCALHOST,
-                          port);
+                    AiType aiType = AiType.PRINCESS;
+                    BehaviorSettings scenarioBehavior = null;
                     if (scenario.hasBotInfo(pa[x].getName()) &&
                           scenario.getBotInfo(pa[x].getName()) instanceof BotParser.PrincessRecord(
-                                megamek.client.bot.princess.BehaviorSettings behaviorSettings
+                                AiType recordAiType, BehaviorSettings behaviorSettings
                           )) {
-                        botClient.setBehaviorSettings(behaviorSettings);
+                        aiType = recordAiType;
+                        scenarioBehavior = behaviorSettings;
+                    }
+                    LOGGER.info("Adding bot {} as {}", pa[x].getName(), aiType);
+                    BotClient botClient = BotFactory.createBot(aiType, pa[x].getName(), MMConstants.LOCALHOST, port);
+                    if (scenarioBehavior != null) {
+                        botClient.setBehaviorSettings(scenarioBehavior);
                     }
                     botClient.getGame().addGameListener(new BotGUI(frame, botClient));
                     botClient.connect();
@@ -1141,7 +1145,7 @@ public class MegaMekGUI implements IPreferenceChangeListener {
         if (bcd.getResult() == DialogResult.CANCELLED) {
             return;
         }
-        client = BotFactory.createBot(AiType.PRINCESS,
+        client = BotFactory.createBot(bcd.getSelectedAiType(),
               bcd.getBotName(),
               cd.getServerAddress(),
               cd.getPort(),

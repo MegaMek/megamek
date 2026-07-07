@@ -69,6 +69,7 @@ import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 
 import megamek.client.Client;
+import megamek.client.bot.AiType;
 import megamek.client.bot.BotClient;
 import megamek.client.bot.princess.BehaviorSettings;
 import megamek.client.bot.princess.BehaviorSettingsFactory;
@@ -107,6 +108,9 @@ public class BotConfigDialog extends AbstractButtonDialog
     private static final ClientPreferences CLIENT_PREFERENCES = PreferenceManager.getClientPreferences();
     private final transient BehaviorSettingsFactory behaviorSettingsFactory = BehaviorSettingsFactory.getInstance();
     private BehaviorSettings princessBehavior;
+
+    /** Radio-button group for choosing which bot AI to use; defaults to {@link AiType#PRINCESS}. */
+    private final ButtonGroup aiTypeGroup = new ButtonGroup();
 
     private final JLabel nameLabel = new JLabel(Messages.getString("BotConfigDialog.nameLabel"));
     private final TipTextField nameField = new TipTextField("", 16);
@@ -233,6 +237,34 @@ public class BotConfigDialog extends AbstractButtonDialog
     }
 
     /**
+     * The bot-AI chooser, shown as a compact line under the name field. Presents one radio button per
+     * {@link AiType}, defaulting to {@link AiType#PRINCESS}; with a single AI type available it shows a single
+     * (selected) option.
+     */
+    private JPanel aiTypePanel() {
+        JPanel result = new JPanel();
+        result.add(new JLabel(Messages.getString("BotConfigDialog.aiTypeLabel")));
+        for (AiType aiType : AiType.values()) {
+            JRadioButton radioButton = new JRadioButton(
+                  Messages.getString("BotConfigDialog.aiType." + aiType.name()));
+            radioButton.setActionCommand(aiType.name());
+            radioButton.setSelected(aiType == AiType.PRINCESS);
+            aiTypeGroup.add(radioButton);
+            result.add(radioButton);
+        }
+        return result;
+    }
+
+    /**
+     * @return the {@link AiType} selected in the AI chooser, or {@link AiType#PRINCESS} if nothing is selected
+     */
+    public AiType getSelectedAiType() {
+        ButtonModel selection = aiTypeGroup.getSelection();
+        AiType selected = (selection != null) ? AiType.fromString(selection.getActionCommand()) : null;
+        return (selected != null) ? selected : AiType.PRINCESS;
+    }
+
+    /**
      * The setting section contains the presets list on the left side and the princess settings on the right.
      */
     private JPanel settingSection() {
@@ -277,6 +309,7 @@ public class BotConfigDialog extends AbstractButtonDialog
         namePanel.add(nameField);
 
         panContent.add(namePanel);
+        panContent.add(aiTypePanel());
         return result;
     }
 

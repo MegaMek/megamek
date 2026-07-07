@@ -32,35 +32,24 @@
  */
 package megamek.client.bot;
 
-import megamek.common.annotations.Nullable;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNull;
 
-/**
- * Identifies which bot AI implementation to construct. Used by {@link BotFactory} as the single selection point for
- * building bots, so callers (lobby, scenario loaders, headless runners) no longer hardcode a concrete bot class.
- * Additional AI types (for example a future experimental bot) are added here as their implementations land.
- */
-public enum AiType {
-    /** The default MegaMek bot, {@link megamek.client.bot.princess.Princess}. */
-    PRINCESS;
+import org.junit.jupiter.api.Test;
 
-    /**
-     * Parses an AI type from a string (case-insensitive match against the enum name), as used by the scenario
-     * {@code ai:} key and the {@code /replacePlayer -b:} chat argument.
-     *
-     * @param value the string to parse, may be {@code null}
-     *
-     * @return the matching {@link AiType}, or {@code null} if the value is {@code null} or matches no type
-     */
-    public static @Nullable AiType fromString(@Nullable String value) {
-        if (value == null) {
-            return null;
-        }
-        String trimmed = value.trim();
-        for (AiType aiType : values()) {
-            if (aiType.name().equalsIgnoreCase(trimmed)) {
-                return aiType;
-            }
-        }
-        return null;
+class AiTypeTest {
+
+    @Test
+    void fromStringMatchesCaseInsensitivelyAndTrims() {
+        assertEquals(AiType.PRINCESS, AiType.fromString("princess"));
+        assertEquals(AiType.PRINCESS, AiType.fromString("PRINCESS"));
+        assertEquals(AiType.PRINCESS, AiType.fromString("  Princess  "));
+    }
+
+    @Test
+    void fromStringReturnsNullForNullEmptyOrUnknown() {
+        assertNull(AiType.fromString(null));
+        assertNull(AiType.fromString(""));
+        assertNull(AiType.fromString("caspar"));
     }
 }

@@ -90,6 +90,7 @@ import megamek.client.ui.panels.phaseDisplay.commands.MoveCommand;
 import megamek.client.ui.util.FontHandler;
 import megamek.client.ui.util.KeyCommandBind;
 import megamek.client.ui.util.PlayerColour;
+import megamek.client.ui.util.UIUtil;
 import megamek.client.ui.widget.SkinXMLHandler;
 import megamek.codeUtilities.MathUtility;
 import megamek.common.Configuration;
@@ -1922,7 +1923,7 @@ public class CommonSettingsDialog extends AbstractButtonDialog
               Configuration.gameSummaryImagesMMDir());
         gifGameSummaryRecordingLabel.setToolTipText(gifRecordingTooltip);
         gifGameSummaryRecording.setToolTipText(gifRecordingTooltip);
-        gifGameSummaryRecording.setMaximumSize(new Dimension(250, 25));
+        gifGameSummaryRecording.setMaximumSize(UIUtil.scaleForGUI(250, 25));
         List<Component> gifGameSummaryRow = new ArrayList<>();
         gifGameSummaryRow.add(gifGameSummaryRecordingLabel);
         gifGameSummaryRow.add(Box.createHorizontalStrut(15));
@@ -1939,7 +1940,7 @@ public class CommonSettingsDialog extends AbstractButtonDialog
               100,
               1);
         movePathPersistenceOnMiniMap = new JSpinner(movePathPersistenceModel);
-        movePathPersistenceOnMiniMap.setMaximumSize(new Dimension(150, 40));
+        movePathPersistenceOnMiniMap.setMaximumSize(UIUtil.scaleForGUI(150, 40));
         movePathPersistenceOnMiniMap.setToolTipText(Messages.getString(
               "CommonSettingsDialog.movePathPersistence.tooltip"));
         JLabel movePathPersistenceOnMiniMapLabel = new JLabel(Messages.getString(

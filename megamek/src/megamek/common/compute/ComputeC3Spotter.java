@@ -98,9 +98,10 @@ public class ComputeC3Spotter {
             // PLAYTEST3 C3 spotters can only work if they have LOS to the target.
             boolean spotterNeedsLOS = game.getOptions().booleanOption(OptionsConstants.PLAYTEST_3);
 
-            // Memoizes canCompleteNodePath results for the duration of this lookup. The recursive search explores
-            // every increasing-index path through the network, which is exponential in a dense, ECM-heavy network;
-            // caching each (start, startPosition) subproblem makes it polynomial and dominates C3 to-hit cost.
+            // Memoizes canCompleteNodePath results for the duration of this lookup. Uncached, the recursive search
+            // explores every increasing-index path through the network - exponential in a dense, ECM-heavy network,
+            // which made this search the dominant cost in C3 to-hit evaluation. Caching each (start, startPosition)
+            // subproblem makes it polynomial.
             Map<Long, Boolean> pathCache = new HashMap<>();
 
             int position = 0;
@@ -266,7 +267,7 @@ public class ComputeC3Spotter {
           List<ECMInfo> allECMInfo, Map<Long, Boolean> pathCache) {
         // Within a single findC3Spotter lookup the network, end unit and ECM data are fixed, so the result depends
         // only on (start, startPosition). Memoizing that avoids the exponential re-exploration of increasing-index
-        // paths that dominates C3 to-hit cost in dense, ECM-heavy networks.
+        // paths that made this search dominate C3 to-hit cost in dense, ECM-heavy networks.
         long cacheKey = ((long) start.getId() << 32) | (startPosition & 0xFFFFFFFFL);
         Boolean cached = pathCache.get(cacheKey);
         if (cached != null) {

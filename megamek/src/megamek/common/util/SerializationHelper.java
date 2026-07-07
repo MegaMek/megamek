@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2020-2025 The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2020-2026 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -58,6 +58,7 @@ import megamek.common.rolls.Roll;
 import megamek.common.units.BTObject;
 import megamek.common.units.Crew;
 import megamek.common.units.EntityMovementMode;
+import megamek.common.units.HeatBreakdown;
 import megamek.common.units.IBuilding;
 import megamek.common.units.InfantryMount;
 import megamek.common.weapons.handlers.AttackHandler;
@@ -439,6 +440,41 @@ public class SerializationHelper {
                 } else {
                     return null;
                 }
+            }
+
+            @Override
+            public void marshal(Object object, HierarchicalStreamWriter writer, MarshallingContext context) {
+                // Unused here
+            }
+        });
+
+        // Necessary because XStream 1.4.x cannot deserialize records natively. HeatContribution is stored in
+        // Entity.heatBreakdown, so without this converter any save game containing heat-breakdown data fails to
+        // load.
+        xStream.registerConverter(new Converter() {
+            @Override
+            public boolean canConvert(Class cls) {
+                return (cls == HeatBreakdown.HeatContribution.class);
+            }
+
+            @Override
+            public Object unmarshal(HierarchicalStreamReader reader, UnmarshallingContext context) {
+                int count = 0;
+                int totalHeat = 0;
+                while (reader.hasMoreChildren()) {
+                    reader.moveDown();
+                    try {
+                        switch (reader.getNodeName()) {
+                            case "count" -> count = Integer.parseInt(reader.getValue());
+                            case "totalHeat" -> totalHeat = Integer.parseInt(reader.getValue());
+                        }
+                        reader.moveUp();
+                    } catch (NumberFormatException e) {
+                        // HeatContribution entries with malformed numbers are silently ignored
+                        return null;
+                    }
+                }
+                return new HeatBreakdown.HeatContribution(count, totalHeat);
             }
 
             @Override

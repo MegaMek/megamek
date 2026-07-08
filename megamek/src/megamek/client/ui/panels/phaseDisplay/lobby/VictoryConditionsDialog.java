@@ -52,6 +52,8 @@ import megamek.client.ui.clientGUI.DialogOptionListener;
 import megamek.client.ui.dialogs.buttonDialogs.AbstractButtonDialog;
 import megamek.client.ui.panels.DialogOptionComponentYPanel;
 import megamek.client.ui.util.UIUtil.FixedYPanel;
+import megamek.common.options.BasicOption;
+import megamek.common.options.GameOptions;
 import megamek.common.options.IBasicOption;
 import megamek.common.options.IOption;
 import megamek.common.options.IOptionGroup;
@@ -143,6 +145,47 @@ public class VictoryConditionsDialog extends AbstractButtonDialog implements Dia
             }
         }
         return changedOptions;
+    }
+
+    /**
+     * Persists all game options - including the victory options as edited in this dialog - to the default game options
+     * file, so that the victory conditions survive between games. This mirrors the save that the former Victory
+     * Conditions tab performed as part of the game options dialog's OK handling; without it, a newly hosted game
+     * reloads the options file and reverts every victory option to its default (the options sent to a running server
+     * are not written to disk).
+     *
+     * <p>The full option set is written because {@link GameOptions#saveOptions(Vector)} overwrites the entire
+     * file; saving only the victory options would drop every other game option. The victory options use the values
+     * currently shown in this dialog (the sent changes are not yet reflected in the local game options, which are only
+     * updated once the server echoes them back), while all other options keep their current game values.</p>
+     */
+    public void saveVictoryOptions() {
+        Vector<IBasicOption> optionsToSave = new Vector<>();
+        for (Enumeration<IOptionGroup> groups = clientGui.getClient().getGame().getOptions().getGroups();
+              groups.hasMoreElements(); ) {
+            IOptionGroup group = groups.nextElement();
+            for (Enumeration<IOption> optionsEnumeration = group.getOptions();
+                  optionsEnumeration.hasMoreElements(); ) {
+                IOption option = optionsEnumeration.nextElement();
+                optionsToSave.addElement(optionForSave(option));
+            }
+        }
+        GameOptions.saveOptions(optionsToSave);
+    }
+
+    /**
+     * @param option a game option being written to the options file
+     *
+     * @return the edited value from this dialog's component when it holds one for the given option, otherwise the
+     *       option's current value unchanged
+     */
+    private IBasicOption optionForSave(IOption option) {
+        for (DialogOptionComponentYPanel optionComponent : victoryOptionComps) {
+            if (optionComponent.getOption().getName().equals(option.getName())) {
+                return optionComponent.changedOption();
+            }
+        }
+        return new BasicOption(option.getName(), option.getValue());
     }
 
     @Override

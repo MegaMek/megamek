@@ -1264,16 +1264,21 @@ public class EntityListFile {
             }
 
             if (entity instanceof BattleArmor ba) {
-                for (Mounted<?> m : entity.getEquipment()) {
-                    if (m.getType().hasFlag(MiscType.F_BA_MEA)) {
+                for (Mounted<?> mounted : entity.getEquipment()) {
+                    // Only MiscType equipment carries the BA MEA / AP-mount flags; guarding on the type avoids
+                    // calling WeaponType/AmmoType.hasFlag with a MiscType flag, which logs a warning per call.
+                    if (!(mounted.getType() instanceof MiscType miscType)) {
+                        continue;
+                    }
+                    if (miscType.hasFlag(MiscType.F_BA_MEA)) {
                         Mounted<?> manipulator = null;
-                        if (m.getBaMountLoc() == BattleArmor.MOUNT_LOC_LEFT_ARM) {
+                        if (mounted.getBaMountLoc() == BattleArmor.MOUNT_LOC_LEFT_ARM) {
                             manipulator = ba.getLeftManipulator();
-                        } else if (m.getBaMountLoc() == BattleArmor.MOUNT_LOC_RIGHT_ARM) {
+                        } else if (mounted.getBaMountLoc() == BattleArmor.MOUNT_LOC_RIGHT_ARM) {
                             manipulator = ba.getRightManipulator();
                         }
                         output.write(indentStr(indentLvl + 1) + '<' + MULParser.ELE_BA_MEA + ' ');
-                        output.write(MULParser.ATTR_BA_MEA_MOUNT_LOC + "=\"" + m.getBaMountLoc() + "\" ");
+                        output.write(MULParser.ATTR_BA_MEA_MOUNT_LOC + "=\"" + mounted.getBaMountLoc() + "\" ");
                         if (manipulator != null) {
                             output.write(MULParser.ATTR_BA_MEA_TYPE_NAME +
                                   "=\"" +
@@ -1281,14 +1286,14 @@ public class EntityListFile {
                                   "\" ");
                         }
                         output.write("/>\n");
-                    } else if (m.getType().hasFlag(MiscType.F_AP_MOUNT)) {
-                        int mountIdx = entity.getEquipmentNum(m);
+                    } else if (miscType.hasFlag(MiscType.F_AP_MOUNT)) {
+                        int mountIndex = entity.getEquipmentNum(mounted);
                         EquipmentType apType = null;
-                        if (m.getLinked() != null) {
-                            apType = m.getLinked().getType();
+                        if (mounted.getLinked() != null) {
+                            apType = mounted.getLinked().getType();
                         }
                         output.write(indentStr(indentLvl + 1) + '<' + MULParser.ELE_BA_APM + ' ');
-                        output.write(MULParser.ATTR_BA_APM_MOUNT_NUM + "=\"" + mountIdx + "\" ");
+                        output.write(MULParser.ATTR_BA_APM_MOUNT_NUM + "=\"" + mountIndex + "\" ");
                         if (apType != null) {
                             output.write(MULParser.ATTR_BA_APM_TYPE_NAME + "=\"" + apType.getInternalName() + "\" ");
                         }

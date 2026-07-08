@@ -244,7 +244,12 @@ public class BotConfigDialog extends AbstractButtonDialog
     private JPanel aiTypePanel() {
         JPanel result = new JPanel();
         result.add(new JLabel(Messages.getString("BotConfigDialog.aiTypeLabel")));
+        boolean useCaspar = CLIENT_PREFERENCES.getUseCASPAR();
         for (AIType aiType : AIType.values()) {
+            if ((aiType == AIType.CASPAR) && !useCaspar) {
+                logger.debug("[Caspar] CASPAR AI option hidden - UseCASPAR client setting is off");
+                continue;
+            }
             JRadioButton radioButton = new JRadioButton(
                   Messages.getString("BotConfigDialog.aiType." + aiType.name()));
             radioButton.setActionCommand(aiType.name());

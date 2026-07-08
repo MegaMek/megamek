@@ -52,7 +52,7 @@ import megamek.client.AbstractClient;
 import megamek.client.Client;
 import megamek.client.CloseClientListener;
 import megamek.client.HeadlessClient;
-import megamek.client.bot.AiType;
+import megamek.client.bot.AIType;
 import megamek.client.bot.BotClient;
 import megamek.client.bot.BotFactory;
 import megamek.client.ui.clientGUI.ClientGUI;
@@ -299,7 +299,7 @@ public class QuickGameRunner {
 
             for (var ghost : ghosts) {
                 var behavior = ((Game) server.getGame()).getBotSettings().get(ghost.getName());
-                BotClient botClient = BotFactory.createBot(AiType.PRINCESS, ghost.getName(), server.getHost(),
+                BotClient botClient = BotFactory.createBot(AIType.PRINCESS, ghost.getName(), server.getHost(),
                       server.getPort(), behavior);
                 if (botClient.connect()) {
                     getLocalBots().put(botClient.getName(), botClient);

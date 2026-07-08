@@ -73,7 +73,7 @@ import megamek.Version;
 import megamek.client.Client;
 import megamek.client.IClient;
 import megamek.client.SBFClient;
-import megamek.client.bot.AiType;
+import megamek.client.bot.AIType;
 import megamek.client.bot.BotClient;
 import megamek.client.bot.BotFactory;
 import megamek.client.bot.princess.BehaviorSettings;
@@ -1076,13 +1076,13 @@ public class MegaMekGUI implements IPreferenceChangeListener {
         if (scenario.getGameType() == GameType.TW) {
             for (int x = 0; x < pa.length; x++) {
                 if (playerTypes[x] == ScenarioDialog.T_BOT) {
-                    AiType aiType = AiType.PRINCESS;
+                    AIType aiType = AIType.PRINCESS;
                     BehaviorSettings scenarioBehavior = null;
                     if (scenario.hasBotInfo(pa[x].getName()) &&
                           scenario.getBotInfo(pa[x].getName()) instanceof BotParser.PrincessRecord(
-                                AiType recordAiType, BehaviorSettings behaviorSettings
+                                AIType recordAIType, BehaviorSettings behaviorSettings
                           )) {
-                        aiType = recordAiType;
+                        aiType = recordAIType;
                         scenarioBehavior = behaviorSettings;
                     }
                     LOGGER.info("Adding bot {} as {}", pa[x].getName(), aiType);
@@ -1148,7 +1148,7 @@ public class MegaMekGUI implements IPreferenceChangeListener {
         if (bcd.getResult() == DialogResult.CANCELLED) {
             return;
         }
-        client = BotFactory.createBot(bcd.getSelectedAiType(),
+        client = BotFactory.createBot(bcd.getSelectedAIType(),
               bcd.getBotName(),
               cd.getServerAddress(),
               cd.getPort(),

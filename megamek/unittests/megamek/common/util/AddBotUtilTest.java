@@ -47,7 +47,7 @@ import java.util.HashSet;
 import java.util.Vector;
 
 import megamek.client.Client;
-import megamek.client.bot.AiType;
+import megamek.client.bot.AIType;
 import megamek.client.bot.princess.BehaviorSettings;
 import megamek.client.bot.princess.BehaviorSettingsFactory;
 import megamek.client.bot.princess.Princess;
@@ -106,7 +106,7 @@ class AddBotUtilTest {
 
         testAddBotUtil = spy(new AddBotUtil());
         doReturn(mockPrincess).when(testAddBotUtil).makeNewBotClient(
-              any(AiType.class), any(Player.class), anyString(), anyInt());
+              any(AIType.class), any(Player.class), anyString(), anyInt());
     }
 
     @Test

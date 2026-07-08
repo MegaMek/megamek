@@ -95,7 +95,7 @@ import megamek.MMConstants;
 import megamek.SuiteConstants;
 import megamek.client.AbstractClient;
 import megamek.client.Client;
-import megamek.client.bot.AiType;
+import megamek.client.bot.AIType;
 import megamek.client.bot.BotClient;
 import megamek.client.bot.BotFactory;
 import megamek.client.bot.princess.BehaviorSettings;
@@ -2233,7 +2233,7 @@ public class ChatLounge extends AbstractPhaseDisplay
         if (bcd.getResult() == DialogResult.CANCELLED) {
             return;
         }
-        BotClient botClient = BotFactory.createBot(bcd.getSelectedAiType(),
+        BotClient botClient = BotFactory.createBot(bcd.getSelectedAIType(),
               bcd.getBotName(),
               client().getHost(),
               client().getPort(),

@@ -43,10 +43,11 @@ import javax.swing.JFrame;
 
 import megamek.client.AbstractClient;
 import megamek.client.Client;
+import megamek.client.bot.AiType;
 import megamek.client.bot.BotClient;
+import megamek.client.bot.BotFactory;
 import megamek.client.bot.princess.BehaviorSettings;
 import megamek.client.bot.princess.BehaviorSettingsFactory;
-import megamek.client.bot.princess.Princess;
 import megamek.client.bot.ui.swing.BotGUI;
 import megamek.codeUtilities.StringUtility;
 import megamek.common.Player;
@@ -203,7 +204,7 @@ public class AddBotUtil {
         return concatResults();
     }
 
-    public @Nullable Princess replaceGhostWithBot(final BehaviorSettings behavior, final String playerName,
+    public @Nullable BotClient replaceGhostWithBot(final BehaviorSettings behavior, final String playerName,
           final Client client, StringBuilder message) {
         Objects.requireNonNull(client);
         Objects.requireNonNull(behavior);
@@ -227,18 +228,23 @@ public class AddBotUtil {
         }
 
         final Player target = possible.get();
-        final Princess princess = new Princess(target.getName(), host, port);
-        princess.startPrecognition();
-        princess.setBehaviorSettings(behavior);
+        final BotClient botClient = BotFactory.createBot(AiType.PRINCESS, target.getName(), host, port);
+        botClient.setBehaviorSettings(behavior);
 
+        boolean connected;
         try {
-            princess.connect();
+            connected = botClient.connect();
         } catch (final Exception ex) {
-            message.append("Princess failed to connect.");
+            connected = false;
         }
-        princess.setLocalPlayerNumber(target.getId());
-        message.append("Princess has replaced ").append(playerName).append(".");
-        return princess;
+        if (!connected) {
+            botClient.die();
+            message.append("Bot failed to connect.");
+            return null;
+        }
+        botClient.setLocalPlayerNumber(target.getId());
+        message.append("Bot has replaced ").append(playerName).append(".");
+        return botClient;
     }
 
     /**
@@ -269,16 +275,21 @@ public class AddBotUtil {
 
         final Player target = possible.get();
         if (target.isGhost()) {
-            final Princess princess = new Princess(target.getName(), host, port);
-            princess.setBehaviorSettings(behavior);
+            final BotClient botClient = BotFactory.createBot(AiType.PRINCESS, target.getName(), host, port);
+            botClient.setBehaviorSettings(behavior);
+            boolean connected;
             try {
-                princess.connect();
-                princess.startPrecognition();
+                connected = botClient.connect();
             } catch (final Exception ex) {
-                message.append("Princess failed to connect.");
+                connected = false;
             }
-            princess.setLocalPlayerNumber(target.getId());
-            message.append("Princess has replaced ").append(playerName).append(".");
+            if (!connected) {
+                botClient.die();
+                message.append("Bot failed to connect.");
+                return;
+            }
+            botClient.setLocalPlayerNumber(target.getId());
+            message.append("Bot has replaced ").append(playerName).append(".");
         } else {
             AbstractClient bot = client.getBots().get(target.getName());
             if (bot == null) {
@@ -319,8 +330,6 @@ public class AddBotUtil {
     }
 
     BotClient makeNewPrincessClient(final Player target, final String host, final int port) {
-        Princess princess = new Princess(target.getName(), host, port);
-        princess.startPrecognition();
-        return princess;
+        return BotFactory.createBot(AiType.PRINCESS, target.getName(), host, port);
     }
 }

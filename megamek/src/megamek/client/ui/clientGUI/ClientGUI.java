@@ -70,7 +70,6 @@ import megamek.client.Client;
 import megamek.client.TimerSingleton;
 import megamek.client.bot.BotClient;
 import megamek.client.bot.princess.BehaviorSettings;
-import megamek.client.bot.princess.Princess;
 import megamek.client.commands.*;
 import megamek.client.event.BoardViewEvent;
 import megamek.client.event.BoardViewListener;
@@ -3722,12 +3721,12 @@ public class ClientGUI extends AbstractClientGUI
         Map<String, BehaviorSettings> newBotSettings = rpd.getNewBots();
         for (String ghostName : newBotSettings.keySet()) {
             StringBuilder message = new StringBuilder();
-            Princess princess = util.replaceGhostWithBot(newBotSettings.get(ghostName), ghostName, client, message);
+            BotClient botClient = util.replaceGhostWithBot(newBotSettings.get(ghostName), ghostName, client, message);
             systemMessage(message.toString());
-            // Make this princess a locally owned bot. This way it can be configured, and if on the lobby
+            // Make this bot a locally owned bot. This way it can be configured, and if on the lobby
             // it will faithfully press Done when the local player does.
-            if (princess != null) {
-                getLocalBots().put(ghostName, princess);
+            if (botClient != null) {
+                getLocalBots().put(ghostName, botClient);
             }
         }
 

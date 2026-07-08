@@ -259,6 +259,48 @@ public class Terrains implements Serializable {
           Terrains.TUNDRA,
           Terrains.HAZARDOUS_LIQUID,
           Terrains.ULTRA_SUBLEVEL);
+    
+    public static final Set<Integer> INVALID_TRIPWIRE_TERRAIN = Set.of(Terrains.WOODS,
+    		Terrains.WATER,
+    		Terrains.JUNGLE,
+    		Terrains.MAGMA,
+    		Terrains.INDUSTRIAL,
+    		Terrains.SPACE,
+    		Terrains.BUILDING,
+    		Terrains.BLACK_ICE,
+    		Terrains.SWAMP,
+    		Terrains.MUD,
+    		Terrains.RAPIDS,
+    		Terrains.SNOW,
+    		Terrains.FIRE,
+    		Terrains.GEYSER,
+    		Terrains.BUILDING,
+    		Terrains.FUEL_TANK,
+    		Terrains.IMPASSABLE,
+    		Terrains.SKY,
+    		Terrains.HAZARDOUS_LIQUID,
+    		Terrains.ULTRA_SUBLEVEL);
+    
+    public static final Set<Integer> INVALID_PITFALL_TERRAIN = Set.of(Terrains.WOODS,
+    		Terrains.WATER,
+    		Terrains.JUNGLE,
+    		Terrains.MAGMA,
+    		Terrains.INDUSTRIAL,
+    		Terrains.SPACE,
+    		Terrains.BUILDING,
+    		Terrains.BLACK_ICE,
+    		Terrains.SWAMP,
+    		Terrains.MUD,
+    		Terrains.RAPIDS,
+    		Terrains.SNOW,
+    		Terrains.FIRE,
+    		Terrains.GEYSER,
+    		Terrains.BUILDING,
+    		Terrains.FUEL_TANK,
+    		Terrains.IMPASSABLE,
+    		Terrains.SKY,
+    		Terrains.HAZARDOUS_LIQUID,
+    		Terrains.ULTRA_SUBLEVEL);
 
     /**
      * Checks to see if the given terrain type can have exits.

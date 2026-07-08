@@ -3482,7 +3482,7 @@ class MovePathHandler extends AbstractTWRuleHandler {
                           gameManager.getMainPhaseReport());
                     
                     boom |= gameManager.handleTripwire(entity, lastPos, curPos, stepMoveType, gameManager.getMainPhaseReport());
-                    boom |= gameManager.handlePitfall(entity, lastPos, curPos, gameManager.getMainPhaseReport());
+                    boom |= gameManager.handlePitfall(entity, curPos, gameManager.getMainPhaseReport());
                     
                     // Collect EMP reports separately for popup, then add to main report
                     Vector<Report> empReports = new Vector<>();

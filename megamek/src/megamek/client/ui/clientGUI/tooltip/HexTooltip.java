@@ -213,6 +213,7 @@ public final class HexTooltip {
                     case Minefield.TYPE_TRIPWIRE:
                     case Minefield.TYPE_PITFALL:
                     	sMinefield = mf.getName();
+                    	break;
                     default:
                         break;
                 }

@@ -510,7 +510,7 @@ public class DeployMinefieldDisplay extends StatusBarPhaseDisplay {
 	                  return;
             	}
             	
-                // Fixed density of 5 since EMP mines are one-use
+                // Fixed density of 5 since tripwires are one-use
                 mf = Minefield.createMinefield(coords, p.getId(),
                       Minefield.TYPE_TRIPWIRE, 5, 5);
                 p.setMinefieldCount(Minefield.TYPE_TRIPWIRE, p.getMinefieldCount(Minefield.TYPE_TRIPWIRE) - 1);
@@ -527,7 +527,7 @@ public class DeployMinefieldDisplay extends StatusBarPhaseDisplay {
 	                  return;
             	}
             	
-                // Fixed density of 5 since EMP mines are one-use
+                // Fixed density of 5 since pitfalls are one-use
                 mf = Minefield.createMinefield(coords, p.getId(),
                       Minefield.TYPE_PITFALL, 5, 5);
                 p.setMinefieldCount(Minefield.TYPE_PITFALL, p.getMinefieldCount(Minefield.TYPE_PITFALL) - 1);

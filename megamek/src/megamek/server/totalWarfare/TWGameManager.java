@@ -7287,9 +7287,8 @@ public class TWGameManager extends AbstractGameManager {
     /**
      * Handles an entity stepping on a pit trap.
      * Returns true if the entity entering the hex fell over
-     * Assumes that src != dest
      */
-    public boolean handlePitfall(Entity entity, Coords src, Coords dest, Vector<Report> vMineReport) {
+    public boolean handlePitfall(Entity entity, Coords dest, Vector<Report> vMineReport) {
     	boolean fellOver = false;
     	
     	Minefield triggeredPittrap = null;
@@ -7331,7 +7330,8 @@ public class TWGameManager extends AbstractGameManager {
 	    			PilotingRollData pilotingRollData = entity.getBasePilotingRoll();
 	    			vMineReport.addAll(doEntityFall(entity, dest, 0, pilotingRollData));
 	    			
-	    			Hex hex = getGame().getBoard().getHex(dest);
+	    			Hex hex = getGame().getBoard(entity.getBoardId()).getHex(dest);
+	    			hex.removeAllTerrains();
 	    			hex.addTerrain(new Terrain(Terrains.RUBBLE, 1));
 	    			sendChangedHex(dest, entity.getBoardId());
 	    			

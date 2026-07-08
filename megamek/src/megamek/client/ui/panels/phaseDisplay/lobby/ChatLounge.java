@@ -2325,7 +2325,8 @@ public class ChatLounge extends AbstractPhaseDisplay
     /**
      * Shows the victory conditions dialog (the former Victory Conditions tab of the game options; the tab is
      * removed and this dialog is the only place to edit those options). On OK, the changed options are sent to the
-     * server.
+     * server and the full option set is saved to the game options file so the victory conditions persist between
+     * games.
      */
     private void showVictoryConditionsDialog() {
         if (victoryConditionsDialog == null) {
@@ -2337,6 +2338,9 @@ public class ChatLounge extends AbstractPhaseDisplay
             if (!changedOptions.isEmpty()) {
                 clientgui.getClient().sendGameOptions(victoryConditionsDialog.getPassword(), changedOptions);
             }
+            // Persist to the game options file so the victory conditions survive a re-host; the sent options only
+            // update the running server, which reloads defaults from the file when a new game is hosted.
+            victoryConditionsDialog.saveVictoryOptions();
         }
     }
 

@@ -36,7 +36,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertInstanceOf;
 
 import com.fasterxml.jackson.databind.JsonNode;
-import megamek.client.bot.AiType;
+import megamek.client.bot.AIType;
 import org.junit.jupiter.api.Test;
 
 class BotParserTest {
@@ -50,17 +50,17 @@ class BotParserTest {
 
     @Test
     void defaultsToPrincessWhenNoAiKey() throws Exception {
-        assertEquals(AiType.PRINCESS, parse("name: TestBot").aiType());
+        assertEquals(AIType.PRINCESS, parse("name: TestBot").aiType());
     }
 
     @Test
     void readsExplicitAiKeyCaseInsensitively() throws Exception {
-        assertEquals(AiType.PRINCESS, parse("ai: princess").aiType());
-        assertEquals(AiType.PRINCESS, parse("ai: PRINCESS").aiType());
+        assertEquals(AIType.PRINCESS, parse("ai: princess").aiType());
+        assertEquals(AIType.PRINCESS, parse("ai: PRINCESS").aiType());
     }
 
     @Test
     void unknownAiKeyFallsBackToPrincess() throws Exception {
-        assertEquals(AiType.PRINCESS, parse("ai: nonsense").aiType());
+        assertEquals(AIType.PRINCESS, parse("ai: nonsense").aiType());
     }
 }

@@ -37,21 +37,21 @@ import static org.junit.jupiter.api.Assertions.assertNull;
 
 import org.junit.jupiter.api.Test;
 
-class AiTypeTest {
+class AITypeTest {
 
     @Test
     void fromStringMatchesCaseInsensitivelyAndTrims() {
-        assertEquals(AiType.PRINCESS, AiType.fromString("princess"));
-        assertEquals(AiType.PRINCESS, AiType.fromString("PRINCESS"));
-        assertEquals(AiType.PRINCESS, AiType.fromString("  Princess  "));
-        assertEquals(AiType.CASPAR, AiType.fromString("caspar"));
-        assertEquals(AiType.CASPAR, AiType.fromString("CASPAR"));
+        assertEquals(AIType.PRINCESS, AIType.fromString("princess"));
+        assertEquals(AIType.PRINCESS, AIType.fromString("PRINCESS"));
+        assertEquals(AIType.PRINCESS, AIType.fromString("  Princess  "));
+        assertEquals(AIType.CASPAR, AIType.fromString("caspar"));
+        assertEquals(AIType.CASPAR, AIType.fromString("CASPAR"));
     }
 
     @Test
     void fromStringReturnsNullForNullEmptyOrUnknown() {
-        assertNull(AiType.fromString(null));
-        assertNull(AiType.fromString(""));
-        assertNull(AiType.fromString("nonsense"));
+        assertNull(AIType.fromString(null));
+        assertNull(AIType.fromString(""));
+        assertNull(AIType.fromString("nonsense"));
     }
 }

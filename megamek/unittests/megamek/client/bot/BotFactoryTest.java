@@ -49,7 +49,7 @@ class BotFactoryTest {
 
     @Test
     void createBotBuildsPrincessForPrincessType() {
-        BotClient bot = BotFactory.createBot(AiType.PRINCESS, "TestBot", TEST_HOST, TEST_PORT);
+        BotClient bot = BotFactory.createBot(AIType.PRINCESS, "TestBot", TEST_HOST, TEST_PORT);
         try {
             assertNotNull(bot);
             assertInstanceOf(Princess.class, bot);
@@ -63,7 +63,7 @@ class BotFactoryTest {
 
     @Test
     void createBotBuildsCasparForCasparType() {
-        BotClient bot = BotFactory.createBot(AiType.CASPAR, "TestBot", TEST_HOST, TEST_PORT);
+        BotClient bot = BotFactory.createBot(AIType.CASPAR, "TestBot", TEST_HOST, TEST_PORT);
         try {
             assertNotNull(bot);
             assertInstanceOf(Caspar.class, bot);
@@ -79,7 +79,7 @@ class BotFactoryTest {
     void createBotAppliesBehaviorSettings() throws PrincessException {
         BehaviorSettings behavior = new BehaviorSettings();
         behavior.setDescription("FactoryTestBehavior");
-        BotClient bot = BotFactory.createBot(AiType.PRINCESS, "TestBot", TEST_HOST, TEST_PORT, behavior);
+        BotClient bot = BotFactory.createBot(AIType.PRINCESS, "TestBot", TEST_HOST, TEST_PORT, behavior);
         try {
             assertEquals("FactoryTestBehavior", bot.getBehaviorSettings().getDescription());
         } finally {

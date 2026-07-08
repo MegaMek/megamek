@@ -41,7 +41,7 @@ import megamek.logging.MMLogger;
 
 /**
  * The single construction point for bot clients. Instead of scattering {@code new Princess(...)} calls across the
- * lobby, scenario loaders and headless runners, callers ask this factory for a bot by {@link AiType}. This keeps the
+ * lobby, scenario loaders and headless runners, callers ask this factory for a bot by {@link AIType}. This keeps the
  * choice of AI in one place (so a new AI type only has to be wired here and offered in the selection surfaces) and
  * returns the abstract {@link BotClient} type, so callers do not depend on a concrete bot class.
  *
@@ -65,7 +65,7 @@ public final class BotFactory {
      *
      * @return a started {@link BotClient} of the requested type, not yet connected
      */
-    public static BotClient createBot(AiType aiType, String name, String host, int port) {
+    public static BotClient createBot(AIType aiType, String name, String host, int port) {
         Objects.requireNonNull(aiType, "aiType");
         Objects.requireNonNull(name, "name");
         Objects.requireNonNull(host, "host");
@@ -95,7 +95,7 @@ public final class BotFactory {
      *
      * @return a started {@link BotClient} of the requested type, not yet connected
      */
-    public static BotClient createBot(AiType aiType, String name, String host, int port,
+    public static BotClient createBot(AIType aiType, String name, String host, int port,
           BehaviorSettings behaviorSettings) {
         Objects.requireNonNull(behaviorSettings, "behaviorSettings");
         BotClient bot = createBot(aiType, name, host, port);

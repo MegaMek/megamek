@@ -502,9 +502,8 @@ public class DeployMinefieldDisplay extends StatusBarPhaseDisplay {
                     }
                 }
             } else if (deployingTripwires()) {
-            	// TODO: move this logic to the "business layer"
             	// Decide where to allow tripwire/pitfall deployment
-            	if (!hex.isClearHex()) {
+            	if (hex.canPlaceMinefield(Minefield.TYPE_TRIPWIRE)) {
 	            	clientgui.addToast(ToastLevel.ERROR,
 	                        Messages.getString("DeployMinefieldDisplay.IllegalPlacement"));
 	                  return;
@@ -519,9 +518,8 @@ public class DeployMinefieldDisplay extends StatusBarPhaseDisplay {
                     currentCommand = DeployMinefieldCommand.COMMAND_NONE;
                 }
             } else if (deployingPitfalls()) {
-            	// TODO: move this logic to the "business layer"
             	// Decide where to allow tripwire/pitfall deployment
-            	if (!hex.isClearHex()) {
+            	if (hex.canPlaceMinefield(Minefield.TYPE_TRIPWIRE)) {
 	            	clientgui.addToast(ToastLevel.ERROR,
 	                        Messages.getString("DeployMinefieldDisplay.IllegalPlacement"));
 	                  return;

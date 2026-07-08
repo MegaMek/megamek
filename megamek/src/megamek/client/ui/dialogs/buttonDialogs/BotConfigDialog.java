@@ -69,7 +69,7 @@ import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 
 import megamek.client.Client;
-import megamek.client.bot.AiType;
+import megamek.client.bot.AIType;
 import megamek.client.bot.BotClient;
 import megamek.client.bot.princess.BehaviorSettings;
 import megamek.client.bot.princess.BehaviorSettingsFactory;
@@ -109,7 +109,7 @@ public class BotConfigDialog extends AbstractButtonDialog
     private final transient BehaviorSettingsFactory behaviorSettingsFactory = BehaviorSettingsFactory.getInstance();
     private BehaviorSettings princessBehavior;
 
-    /** Radio-button group for choosing which bot AI to use; defaults to {@link AiType#PRINCESS}. */
+    /** Radio-button group for choosing which bot AI to use; defaults to {@link AIType#PRINCESS}. */
     private final ButtonGroup aiTypeGroup = new ButtonGroup();
 
     private final JLabel nameLabel = new JLabel(Messages.getString("BotConfigDialog.nameLabel"));
@@ -238,17 +238,22 @@ public class BotConfigDialog extends AbstractButtonDialog
 
     /**
      * The bot-AI chooser, shown as a compact line under the name field. Presents one radio button per
-     * {@link AiType}, defaulting to {@link AiType#PRINCESS}; with a single AI type available it shows a single
+     * {@link AIType}, defaulting to {@link AIType#PRINCESS}; with a single AI type available it shows a single
      * (selected) option.
      */
     private JPanel aiTypePanel() {
         JPanel result = new JPanel();
         result.add(new JLabel(Messages.getString("BotConfigDialog.aiTypeLabel")));
-        for (AiType aiType : AiType.values()) {
+        boolean useCaspar = CLIENT_PREFERENCES.getUseCASPAR();
+        for (AIType aiType : AIType.values()) {
+            if ((aiType == AIType.CASPAR) && !useCaspar) {
+                logger.debug("[Caspar] CASPAR AI option hidden - UseCASPAR client setting is off");
+                continue;
+            }
             JRadioButton radioButton = new JRadioButton(
                   Messages.getString("BotConfigDialog.aiType." + aiType.name()));
             radioButton.setActionCommand(aiType.name());
-            radioButton.setSelected(aiType == AiType.PRINCESS);
+            radioButton.setSelected(aiType == AIType.PRINCESS);
             String tooltipKey = "BotConfigDialog.aiType." + aiType.name() + ".tooltip";
             if (Messages.keyExists(tooltipKey)) {
                 radioButton.setToolTipText(Messages.getString(tooltipKey));
@@ -260,12 +265,12 @@ public class BotConfigDialog extends AbstractButtonDialog
     }
 
     /**
-     * @return the {@link AiType} selected in the AI chooser, or {@link AiType#PRINCESS} if nothing is selected
+     * @return the {@link AIType} selected in the AI chooser, or {@link AIType#PRINCESS} if nothing is selected
      */
-    public AiType getSelectedAiType() {
+    public AIType getSelectedAIType() {
         ButtonModel selection = aiTypeGroup.getSelection();
-        AiType selected = (selection != null) ? AiType.fromString(selection.getActionCommand()) : null;
-        return (selected != null) ? selected : AiType.PRINCESS;
+        AIType selected = (selection != null) ? AIType.fromString(selection.getActionCommand()) : null;
+        return (selected != null) ? selected : AIType.PRINCESS;
     }
 
     /**

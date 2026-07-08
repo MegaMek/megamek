@@ -50,7 +50,7 @@ import java.util.function.BooleanSupplier;
 
 import megamek.MMConstants;
 import megamek.client.HeadlessClient;
-import megamek.client.bot.AiType;
+import megamek.client.bot.AIType;
 import megamek.client.bot.BotClient;
 import megamek.client.bot.BotFactory;
 import megamek.client.bot.princess.BehaviorSettings;
@@ -248,35 +248,35 @@ public class ScenarioGameRunner {
     }
 
     /**
-     * Returns the {@link AiType} declared for the named player in the scenario's {@code ai:} key, or
-     * {@link AiType#PRINCESS} if none is declared.
+     * Returns the {@link AIType} declared for the named player in the scenario's {@code ai:} key, or
+     * {@link AIType#PRINCESS} if none is declared.
      */
-    public AiType aiTypeFor(String playerName) {
+    public AIType aiTypeFor(String playerName) {
         if (scenario.hasBotInfo(playerName)
               && scenario.getBotInfo(playerName) instanceof BotParser.PrincessRecord record) {
             return record.aiType();
         }
-        return AiType.PRINCESS;
+        return AIType.PRINCESS;
     }
 
     /**
-     * Maps each team to the {@link AiType}s of its bot players. The first player slot (by id) is the headless
+     * Maps each team to the {@link AIType}s of its bot players. The first player slot (by id) is the headless
      * watcher and is excluded, so only the competing bot teams are reported.
      *
-     * @return team id to the set of bot {@link AiType}s on that team
+     * @return team id to the set of bot {@link AIType}s on that team
      */
-    public Map<Integer, Set<AiType>> getBotTeamAiTypes() {
-        Map<Integer, Set<AiType>> teamAiTypes = new TreeMap<>();
+    public Map<Integer, Set<AIType>> getBotTeamAITypes() {
+        Map<Integer, Set<AIType>> teamAITypes = new TreeMap<>();
         List<Player> players = new ArrayList<>(game.getPlayersList());
         if (players.isEmpty()) {
-            return teamAiTypes;
+            return teamAITypes;
         }
         players.sort(Comparator.comparingInt(Player::getId));
         for (Player botSlot : players.subList(1, players.size())) {
-            teamAiTypes.computeIfAbsent(botSlot.getTeam(), team -> new TreeSet<>())
+            teamAITypes.computeIfAbsent(botSlot.getTeam(), team -> new TreeSet<>())
                   .add(aiTypeFor(botSlot.getName()));
         }
-        return teamAiTypes;
+        return teamAITypes;
     }
 
     private void waitForLocalPlayer(String clientName, BooleanSupplier connected) throws InterruptedException {

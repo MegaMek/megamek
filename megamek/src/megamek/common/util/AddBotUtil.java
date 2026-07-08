@@ -43,7 +43,7 @@ import javax.swing.JFrame;
 
 import megamek.client.AbstractClient;
 import megamek.client.Client;
-import megamek.client.bot.AiType;
+import megamek.client.bot.AIType;
 import megamek.client.bot.BotClient;
 import megamek.client.bot.BotFactory;
 import megamek.client.bot.princess.BehaviorSettings;
@@ -161,11 +161,11 @@ public class AddBotUtil {
             return concatResults();
         }
 
-        AiType aiType = AiType.fromString(botName.toString());
+        AIType aiType = AIType.fromString(botName.toString());
         if (aiType == null) {
             results.add("Unrecognized bot: '" + botName + "'.  Defaulting to Princess.");
             botName = new StringBuilder("Princess");
-            aiType = AiType.PRINCESS;
+            aiType = AIType.PRINCESS;
         }
         final BotClient botClient = makeNewBotClient(aiType, target, host, port);
         if (!StringUtility.isNullOrBlank(configName)) {
@@ -227,7 +227,7 @@ public class AddBotUtil {
         }
 
         final Player target = possible.get();
-        final BotClient botClient = BotFactory.createBot(AiType.PRINCESS, target.getName(), host, port);
+        final BotClient botClient = BotFactory.createBot(AIType.PRINCESS, target.getName(), host, port);
         botClient.setBehaviorSettings(behavior);
 
         boolean connected;
@@ -274,7 +274,7 @@ public class AddBotUtil {
 
         final Player target = possible.get();
         if (target.isGhost()) {
-            final BotClient botClient = BotFactory.createBot(AiType.PRINCESS, target.getName(), host, port);
+            final BotClient botClient = BotFactory.createBot(AIType.PRINCESS, target.getName(), host, port);
             botClient.setBehaviorSettings(behavior);
             boolean connected;
             try {
@@ -328,7 +328,7 @@ public class AddBotUtil {
         client.sendChat("/kick " + target.getId());
     }
 
-    BotClient makeNewBotClient(final AiType aiType, final Player target, final String host, final int port) {
+    BotClient makeNewBotClient(final AIType aiType, final Player target, final String host, final int port) {
         return BotFactory.createBot(aiType, target.getName(), host, port);
     }
 }

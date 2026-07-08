@@ -37,31 +37,31 @@ import java.util.Map;
 import java.util.Set;
 import java.util.TreeMap;
 
-import megamek.client.bot.AiType;
+import megamek.client.bot.AIType;
 import megamek.common.Player;
 import megamek.common.preference.PreferenceManager;
 import megamek.logging.MMLogger;
 
 /**
- * Runs a scenario headlessly many times and reports the win rate per team (and the {@link AiType}s on each team),
+ * Runs a scenario headlessly many times and reports the win rate per team (and the {@link AIType}s on each team),
  * so two bot AIs assigned via the scenario {@code ai:} key - for example Princess versus CASPAR - can be compared
  * over a batch of games. The BotLogger TSVs from every game are kept, so the battle-analyzer tooling can also
  * score decision quality per side, not just wins.
  *
- * <p>Usage: {@code AiMatchRunner <scenarioFile> [repetitions] [roundsLimit] [timeoutMinutes]}</p>
+ * <p>Usage: {@code AIMatchRunner <scenarioFile> [repetitions] [roundsLimit] [timeoutMinutes]}</p>
  */
-public final class AiMatchRunner {
-    private static final MMLogger logger = MMLogger.create(AiMatchRunner.class);
+public final class AIMatchRunner {
+    private static final MMLogger logger = MMLogger.create(AIMatchRunner.class);
 
     private static final int DEFAULT_REPETITIONS = 10;
     private static final int DEFAULT_ROUNDS_LIMIT = 12;
     private static final int DEFAULT_TIMEOUT_MINUTES = 10;
 
-    private AiMatchRunner() {}
+    private AIMatchRunner() {}
 
     public static void main(String[] args) {
         if (args.length < 1) {
-            System.out.println("Usage: AiMatchRunner <scenarioFile> [repetitions] [roundsLimit] [timeoutMinutes]");
+            System.out.println("Usage: AIMatchRunner <scenarioFile> [repetitions] [roundsLimit] [timeoutMinutes]");
             System.out.println(" - assign AIs to the scenario's bot factions with the 'ai:' key (e.g. ai: caspar)");
             System.exit(1);
         }
@@ -75,7 +75,7 @@ public final class AiMatchRunner {
         PreferenceManager.getClientPreferences().setStampFilenames(true);
 
         Map<Integer, Integer> teamWins = new TreeMap<>();
-        Map<Integer, Set<AiType>> teamAiTypes = new TreeMap<>();
+        Map<Integer, Set<AIType>> teamAITypes = new TreeMap<>();
         int draws = 0;
         int unfinished = 0;
 
@@ -83,8 +83,8 @@ public final class AiMatchRunner {
             ScenarioGameRunner runner = null;
             try {
                 runner = new ScenarioGameRunner(scenarioFile);
-                if (teamAiTypes.isEmpty()) {
-                    teamAiTypes = runner.getBotTeamAiTypes();
+                if (teamAITypes.isEmpty()) {
+                    teamAITypes = runner.getBotTeamAITypes();
                 }
                 ScenarioGameRunner.GameResult result = runner.runGame(roundsLimit, timeoutMinutes);
                 if (!result.finished()) {
@@ -96,7 +96,7 @@ public final class AiMatchRunner {
                 } else {
                     teamWins.merge(result.winningTeam(), 1, Integer::sum);
                     logger.info("Game {}/{}: team {} {} wins", gameNumber, repetitions, result.winningTeam(),
-                          teamAiTypes.getOrDefault(result.winningTeam(), Set.of()));
+                          teamAITypes.getOrDefault(result.winningTeam(), Set.of()));
                 }
             } catch (Exception exception) {
                 logger.error(exception, "Game " + gameNumber + "/" + repetitions + " failed to run");
@@ -107,7 +107,7 @@ public final class AiMatchRunner {
             }
         }
 
-        logger.info(formatSummary(repetitions, teamWins, teamAiTypes, draws, unfinished));
+        logger.info(formatSummary(repetitions, teamWins, teamAITypes, draws, unfinished));
         System.exit(0);
     }
 
@@ -136,10 +136,10 @@ public final class AiMatchRunner {
     }
 
     private static String formatSummary(int repetitions, Map<Integer, Integer> teamWins,
-          Map<Integer, Set<AiType>> teamAiTypes, int draws, int unfinished) {
+          Map<Integer, Set<AIType>> teamAITypes, int draws, int unfinished) {
         StringBuilder summary = new StringBuilder(
               System.lineSeparator() + "=== AI match results over " + repetitions + " game(s) ===");
-        for (Map.Entry<Integer, Set<AiType>> entry : teamAiTypes.entrySet()) {
+        for (Map.Entry<Integer, Set<AIType>> entry : teamAITypes.entrySet()) {
             summary.append(System.lineSeparator())
                   .append("  Team ").append(entry.getKey())
                   .append(' ').append(entry.getValue())

@@ -39,7 +39,7 @@ import megamek.common.annotations.Nullable;
  * building bots, so callers (lobby, scenario loaders, headless runners) no longer hardcode a concrete bot class.
  * Additional AI types (for example a future experimental bot) are added here as their implementations land.
  */
-public enum AiType {
+public enum AIType {
     /** The default MegaMek bot, {@link megamek.client.bot.princess.Princess}. */
     PRINCESS,
 
@@ -52,14 +52,14 @@ public enum AiType {
      *
      * @param value the string to parse, may be {@code null}
      *
-     * @return the matching {@link AiType}, or {@code null} if the value is {@code null} or matches no type
+     * @return the matching {@link AIType}, or {@code null} if the value is {@code null} or matches no type
      */
-    public static @Nullable AiType fromString(@Nullable String value) {
+    public static @Nullable AIType fromString(@Nullable String value) {
         if (value == null) {
             return null;
         }
         String trimmed = value.trim();
-        for (AiType aiType : values()) {
+        for (AIType aiType : values()) {
             if (aiType.name().equalsIgnoreCase(trimmed)) {
                 return aiType;
             }

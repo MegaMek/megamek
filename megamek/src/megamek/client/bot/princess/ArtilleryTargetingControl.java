@@ -1627,7 +1627,21 @@ public class ArtilleryTargetingControl {
             return 1.0;
         }
         // Current (damage-adjusted) BV, not initial BV, so a battered high-tonnage unit is valued by what is left of it.
-        double value = Math.max(1.0, entity.calculateBattleValue());
+        return tagTargetValue(entity, entity.calculateBattleValue());
+    }
+
+    /**
+     * Same as {@link #tagTargetValue(Targetable)}, but with the entity's current Battle Value supplied by the
+     * caller. A BV calculation is expensive (for C3 units it rescans the whole network), so callers that evaluate
+     * many targets repeatedly - the path rankers - pass a cached value instead (see issue #8443).
+     *
+     * @param entity             A candidate TAG/homing target
+     * @param currentBattleValue The entity's current (damage-adjusted) Battle Value
+     *
+     * @return The relative "worth killing" value, floored at {@code 1.0}
+     */
+    static double tagTargetValue(Entity entity, double currentBattleValue) {
+        double value = Math.max(1.0, currentBattleValue);
         if (entity.isCrippled()) {
             // Already mission-killed: don't spend a TAG/homing strike finishing it while real threats remain.
             value *= CRIPPLED_TARGET_TAG_FACTOR;

@@ -633,8 +633,35 @@ public class TWGameManager extends AbstractGameManager {
 
     void resetEntityRound() {
         for (Entity entity : game.getEntitiesVector()) {
+            // Snapshot Magnetic Pulse effect state so we can notify the player when it wears off.
+            boolean wasMagneticPulseAffected = entity.getMagneticPulseRounds() > 0;
+            boolean wasImpAffected = isAffectedByImprovedMagneticPulse(entity);
+
             entity.newRound(game.getRoundCount());
+
+            if (wasMagneticPulseAffected && (entity.getMagneticPulseRounds() == 0)) {
+                sendMagneticPulseToast(entity, false, false);
+            }
+            if (wasImpAffected && !isAffectedByImprovedMagneticPulse(entity)) {
+                sendMagneticPulseToast(entity, true, false);
+            }
         }
+    }
+
+    /**
+     * @return {@code true} if the unit is currently under any iATM Improved Magnetic Pulse effect - the
+     *       to-hit / movement / ECM effect on Meks, vehicles, fighters and ProtoMeks, disabled troopers
+     *       on battle armor, or disabled energy weapons on conventional infantry.
+     */
+    private static boolean isAffectedByImprovedMagneticPulse(Entity entity) {
+        if (entity.getImpToHitModifier() > 0) {
+            return true;
+        }
+        if ((entity instanceof BattleArmor battleArmor) && (battleArmor.getImprovedMagneticPulseDisabledTroopers()
+              > 0)) {
+            return true;
+        }
+        return (entity instanceof ConvInfantry convInfantry) && convInfantry.isEnergyWeaponsDisabled();
     }
 
     /**
@@ -6305,6 +6332,12 @@ public class TWGameManager extends AbstractGameManager {
                                     entity.setSecondaryFacing(tta.getFacing());
                                 }
                             }
+                            case DirectionalMountFacingAction mountFacingAction -> {
+                                if (entity instanceof Mek directionalMek) {
+                                    DirectionalTorsoMountRules.applyMountFacing(directionalMek,
+                                          mountFacingAction.getWeaponNumber(), mountFacingAction.getFacing());
+                                }
+                            }
                             case FlipArmsAction faa -> entity.setArmsFlipped(faa.getIsFlipped());
                             case SearchlightAttackAction saa -> {
                                 boolean hexesAdded = saa.setHexesIlluminated(game);
@@ -8311,39 +8344,11 @@ public class TWGameManager extends AbstractGameManager {
     }
 
     /**
-     * Add heat from the movement phase
+     * Add heat from the movement phase. Delegates to {@link HeatResolver}, which itemizes the heat
+     * sources using the common message bundle (the {@code HeatBreakdown.*} keys live there).
      */
     public void addMovementHeat() {
-        for (Entity entity : game.inGameTWEntities()) {
-            if (entity.hasDamagedRHS()) {
-                entity.changeHeatBuildup(1, Messages.getString("HeatBreakdown.damagedRadicalHeatSink"));
-            }
-
-            if ((entity.getMovementMode() == EntityMovementMode.BIPED_SWIM) ||
-                  (entity.getMovementMode() == EntityMovementMode.QUAD_SWIM)) {
-                // UMU heat
-                entity.changeHeatBuildup(1, Messages.getString("HeatBreakdown.movementUMU"));
-                continue;
-            }
-
-            // build up heat from movement
-            if (entity.moved == EntityMovementType.MOVE_NONE) {
-                entity.changeHeatBuildup(entity.getStandingHeat(), Messages.getString("HeatBreakdown.movementStanding"));
-            } else if ((entity.moved == EntityMovementType.MOVE_WALK) ||
-                  (entity.moved == EntityMovementType.MOVE_VTOL_WALK) ||
-                  (entity.moved == EntityMovementType.MOVE_CAREFUL_STAND)) {
-                entity.changeHeatBuildup(entity.getWalkHeat(), Messages.getString("HeatBreakdown.movementWalking"));
-            } else if ((entity.moved == EntityMovementType.MOVE_RUN) ||
-                  (entity.moved == EntityMovementType.MOVE_VTOL_RUN) ||
-                  (entity.moved == EntityMovementType.MOVE_SKID)) {
-                entity.changeHeatBuildup(entity.getRunHeat(), Messages.getString("HeatBreakdown.movementRunning"));
-            } else if (entity.moved == EntityMovementType.MOVE_JUMP && !entity.isJumpingWithMechanicalBoosters()) {
-                entity.changeHeatBuildup(entity.getJumpHeat(entity.delta_distance), Messages.getString("HeatBreakdown.movementJumping"));
-            } else if (entity.moved == EntityMovementType.MOVE_SPRINT ||
-                  entity.moved == EntityMovementType.MOVE_VTOL_SPRINT) {
-                entity.changeHeatBuildup(entity.getSprintHeat(), Messages.getString("HeatBreakdown.movementSprinting"));
-            }
-        }
+        heatResolver.addMovementHeat();
     }
 
     /**
@@ -10566,6 +10571,12 @@ public class TWGameManager extends AbstractGameManager {
                     if (entity.canChangeSecondaryFacing()) {
                         entity.setSecondaryFacing(tta.getFacing());
                         entity.postProcessFacingChange();
+                    }
+                }
+                case DirectionalMountFacingAction mountFacingAction -> {
+                    if (entity instanceof Mek directionalMek) {
+                        DirectionalTorsoMountRules.applyMountFacing(directionalMek,
+                              mountFacingAction.getWeaponNumber(), mountFacingAction.getFacing());
                     }
                 }
                 case FlipArmsAction faa -> entity.setArmsFlipped(faa.getIsFlipped());
@@ -26904,7 +26915,12 @@ public class TWGameManager extends AbstractGameManager {
         if (m == null) {
             return;
         }
-        m.setFacing(facing);
+        // A Directional Torso Mount (BMM p.83) stores its facing separately and validates legal facings by mount type.
+        if (m.hasDirectionalTorsoMount() && (e instanceof Mek directionalMek)) {
+            DirectionalTorsoMountRules.applyMountFacing(directionalMek, equipId, facing);
+        } else {
+            m.setFacing(facing);
+        }
     }
 
     /**
@@ -31606,6 +31622,24 @@ public class TWGameManager extends AbstractGameManager {
     public void sendToast(GameToastEvent.Level level, String message, @Nullable Entity entity) {
         int entityId = (entity != null) ? entity.getId() : Entity.NONE;
         send(new Packet(PacketCommand.SEND_TOAST, level, message, entityId));
+    }
+
+    /**
+     * Sends a toast when a unit gains or loses a Magnetic Pulse missile effect (IO p.182 / IMP rules),
+     * so the player sees the debuff appear and expire rather than only in the report log.
+     *
+     * @param target   the affected unit
+     * @param improved true for the iATM Improved Magnetic Pulse effect, false for the standard MP effect
+     * @param applied  true when the unit becomes affected, false when the effect wears off
+     */
+    public void sendMagneticPulseToast(Entity target, boolean improved, boolean applied) {
+        String key;
+        if (improved) {
+            key = applied ? "MagneticPulse.impAffectedToast" : "MagneticPulse.impExpiredToast";
+        } else {
+            key = applied ? "MagneticPulse.affectedToast" : "MagneticPulse.expiredToast";
+        }
+        sendToast(GameToastEvent.Level.INFO, Messages.getString(key, target.getShortName()), target);
     }
 
     // Artillery call-for-fire notifications (Shot/Splash, counter-battery, homing-inbound) live in their own helper to

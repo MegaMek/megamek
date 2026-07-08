@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2021-2025 The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2021-2026 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -48,8 +48,8 @@ import javax.swing.JOptionPane;
 
 import megamek.client.AbstractClient;
 import megamek.client.Client;
+import megamek.client.bot.BotClient;
 import megamek.client.bot.princess.BehaviorSettings;
-import megamek.client.bot.princess.Princess;
 import megamek.client.generator.RandomCallsignGenerator;
 import megamek.client.generator.RandomGenderGenerator;
 import megamek.client.generator.RandomNameGenerator;
@@ -585,10 +585,10 @@ public class LobbyActions {
     /** Adds the given entities as strategic targets for the given local bot. */
     void setPriorityTarget(String botName, Collection<Entity> entities) {
         Map<String, AbstractClient> bots = lobby.getClientGUI().getLocalBots();
-        if (!bots.containsKey(botName) || !(bots.get(botName) instanceof Princess)) {
+        if (!bots.containsKey(botName) || !(bots.get(botName) instanceof BotClient botClient)) {
             return;
         }
-        BehaviorSettings behavior = ((Princess) bots.get(botName)).getBehaviorSettings();
+        BehaviorSettings behavior = botClient.getBehaviorSettings();
         entities.forEach(e -> behavior.addPriorityUnit(e.getId()));
     }
 

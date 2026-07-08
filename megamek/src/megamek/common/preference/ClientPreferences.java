@@ -1,6 +1,6 @@
 /*
  * Copyright (C) 2005 Ben Mazur (bmazur@sev.org)
- * Copyright (C) 2005-2025 The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2005-2026 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -80,6 +80,7 @@ public class ClientPreferences extends PreferenceStoreProxy {
     public static final String DATA_LOGGING = "GameDatasetLogging";
     public static final String STAMP_FORMAT = "StampFormat";
     public static final String SHOW_UNIT_ID = "ShowUnitId";
+    public static final String USE_CASPAR = "UseCASPAR";
     public static final String UNIT_START_CHAR = "UnitStartChar";
     public static final String DEFAULT_AUTO_EJECT_DISABLED = "DefaultAutoejectDisabled";
     public static final String USE_AVERAGE_SKILLS = "UseAverageSkills";
@@ -167,6 +168,7 @@ public class ClientPreferences extends PreferenceStoreProxy {
         store.setDefault(DATA_LOGGING, true);
         store.setDefault(SHOW_AUTO_RESOLVE_PANEL, false);
         store.setDefault(STAMP_FILENAMES, false);
+        store.setDefault(USE_CASPAR, false);
         store.setDefault(FAVORITE_PRINCESS_BEHAVIOR_SETTING, DEFAULT_BEHAVIOR_DESCRIPTION);
         store.setDefault(LAST_SCENARIO, "");
 
@@ -289,6 +291,15 @@ public class ClientPreferences extends PreferenceStoreProxy {
 
     public boolean getShowUnitId() {
         return store.getBoolean(SHOW_UNIT_ID);
+    }
+
+    /**
+     * @return {@code true} if the experimental CASPAR bot is offered as a selectable AI. This is a hidden
+     *       option: it is not shown in any settings UI and defaults to {@code false}; enable it by hand-adding
+     *       {@code <UseCASPAR>true</UseCASPAR>} to clientsettings.xml.
+     */
+    public boolean getUseCASPAR() {
+        return store.getBoolean(USE_CASPAR);
     }
 
     public char getUnitStartChar() {

@@ -2233,7 +2233,7 @@ public class ChatLounge extends AbstractPhaseDisplay
         if (bcd.getResult() == DialogResult.CANCELLED) {
             return;
         }
-        BotClient botClient = BotFactory.createBot(AiType.PRINCESS,
+        BotClient botClient = BotFactory.createBot(bcd.getSelectedAiType(),
               bcd.getBotName(),
               client().getHost(),
               client().getPort(),

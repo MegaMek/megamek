@@ -32,6 +32,8 @@
  */
 package megamek.client.bot;
 
+import megamek.common.annotations.Nullable;
+
 /**
  * Identifies which bot AI implementation to construct. Used by {@link BotFactory} as the single selection point for
  * building bots, so callers (lobby, scenario loaders, headless runners) no longer hardcode a concrete bot class.
@@ -39,5 +41,29 @@ package megamek.client.bot;
  */
 public enum AiType {
     /** The default MegaMek bot, {@link megamek.client.bot.princess.Princess}. */
-    PRINCESS
+    PRINCESS,
+
+    /** The experimental successor to Princess, {@link megamek.client.bot.caspar.Caspar}. */
+    CASPAR;
+
+    /**
+     * Parses an AI type from a string (case-insensitive match against the enum name), as used by the scenario
+     * {@code ai:} key and the {@code /replacePlayer -b:} chat argument.
+     *
+     * @param value the string to parse, may be {@code null}
+     *
+     * @return the matching {@link AiType}, or {@code null} if the value is {@code null} or matches no type
+     */
+    public static @Nullable AiType fromString(@Nullable String value) {
+        if (value == null) {
+            return null;
+        }
+        String trimmed = value.trim();
+        for (AiType aiType : values()) {
+            if (aiType.name().equalsIgnoreCase(trimmed)) {
+                return aiType;
+            }
+        }
+        return null;
+    }
 }

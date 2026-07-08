@@ -164,7 +164,7 @@ public class ScenarioGameRunner {
         waitForLocalPlayer(watcher.getName(), () -> watcher.getLocalPlayer() != null);
 
         for (Player botSlot : players.subList(1, players.size())) {
-            BotClient botClient = BotFactory.createBot(AiType.PRINCESS,
+            BotClient botClient = BotFactory.createBot(aiTypeFor(botSlot.getName()),
                   botSlot.getName(),
                   LOCALHOST_IP,
                   server.getPort(),
@@ -189,14 +189,26 @@ public class ScenarioGameRunner {
     }
 
     /**
-     * Returns the Princess behavior declared for the named player in the scenario, or default behavior.
+     * Returns the behavior declared for the named player in the scenario, or default behavior.
      */
     private BehaviorSettings behaviorFor(String playerName) {
         if (scenario.hasBotInfo(playerName)
-              && scenario.getBotInfo(playerName) instanceof BotParser.PrincessRecord(BehaviorSettings settings)) {
-            return settings;
+              && scenario.getBotInfo(playerName) instanceof BotParser.PrincessRecord record) {
+            return record.behaviorSettings();
         }
         return BehaviorSettingsFactory.getInstance().DEFAULT_BEHAVIOR;
+    }
+
+    /**
+     * Returns the {@link AiType} declared for the named player in the scenario's {@code ai:} key, or
+     * {@link AiType#PRINCESS} if none is declared.
+     */
+    private AiType aiTypeFor(String playerName) {
+        if (scenario.hasBotInfo(playerName)
+              && scenario.getBotInfo(playerName) instanceof BotParser.PrincessRecord record) {
+            return record.aiType();
+        }
+        return AiType.PRINCESS;
     }
 
     private void waitForLocalPlayer(String clientName, BooleanSupplier connected) throws InterruptedException {

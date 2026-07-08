@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2024-2026 The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2026 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -30,44 +30,37 @@
  * <https://www.xbox.com/en-US/developers/rules> and it is not endorsed by or
  * affiliated with Microsoft.
  */
-
 package megamek.common.jacksonAdapters;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertInstanceOf;
+
 import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.dataformat.yaml.YAMLFactory;
 import megamek.client.bot.AiType;
-import megamek.client.bot.princess.BehaviorSettings;
-import megamek.client.ui.dialogs.ScenarioDialog;
+import org.junit.jupiter.api.Test;
 
-public final class BotParser {
+class BotParserTest {
 
-    static final ObjectMapper YAML_MAPPER = new ObjectMapper(new YAMLFactory());
-
-    public interface BotInfo {
-        int type();
+    private static BotParser.PrincessRecord parse(String yaml) throws Exception {
+        JsonNode node = BotParser.YAML_MAPPER.readTree(yaml);
+        BotParser.BotInfo botInfo = BotParser.parse(node);
+        assertInstanceOf(BotParser.PrincessRecord.class, botInfo);
+        return (BotParser.PrincessRecord) botInfo;
     }
 
-    public record PrincessRecord(AiType aiType, BehaviorSettings behaviorSettings) implements BotInfo {
-
-        @Override
-        public int type() {
-            return ScenarioDialog.T_BOT;
-        }
+    @Test
+    void defaultsToPrincessWhenNoAiKey() throws Exception {
+        assertEquals(AiType.PRINCESS, parse("name: TestBot").aiType());
     }
 
-    public static BotInfo parse(JsonNode node) throws JsonProcessingException {
-        PrincessSettingsBuilder builder = YAML_MAPPER.treeToValue(node, PrincessSettingsBuilder.class);
-        AiType aiType = AiType.PRINCESS;
-        if (node.hasNonNull("ai")) {
-            AiType parsedAiType = AiType.fromString(node.get("ai").asText());
-            if (parsedAiType != null) {
-                aiType = parsedAiType;
-            }
-        }
-        return new PrincessRecord(aiType, builder.build());
+    @Test
+    void readsExplicitAiKeyCaseInsensitively() throws Exception {
+        assertEquals(AiType.PRINCESS, parse("ai: princess").aiType());
+        assertEquals(AiType.PRINCESS, parse("ai: PRINCESS").aiType());
     }
 
-    private BotParser() {}
+    @Test
+    void unknownAiKeyFallsBackToPrincess() throws Exception {
+        assertEquals(AiType.PRINCESS, parse("ai: nonsense").aiType());
+    }
 }

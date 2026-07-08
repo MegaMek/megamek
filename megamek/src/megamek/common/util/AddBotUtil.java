@@ -161,25 +161,24 @@ public class AddBotUtil {
             return concatResults();
         }
 
-        final BotClient botClient;
-        if ("Princess".equalsIgnoreCase(botName.toString())) {
-            botClient = makeNewPrincessClient(target, host, port);
-            if (!StringUtility.isNullOrBlank(configName)) {
-                final BehaviorSettings behavior = BehaviorSettingsFactory.getInstance()
-                      .getBehavior(configName.toString());
-                if (null != behavior) {
-                    botClient.setBehaviorSettings(behavior);
-                } else {
-                    results.add("Unrecognized Behavior Setting: '" + configName + "'.  Using DEFAULT.");
-                    botClient.setBehaviorSettings(BehaviorSettingsFactory.getInstance().DEFAULT_BEHAVIOR);
-                }
+        AiType aiType = AiType.fromString(botName.toString());
+        if (aiType == null) {
+            results.add("Unrecognized bot: '" + botName + "'.  Defaulting to Princess.");
+            botName = new StringBuilder("Princess");
+            aiType = AiType.PRINCESS;
+        }
+        final BotClient botClient = makeNewBotClient(aiType, target, host, port);
+        if (!StringUtility.isNullOrBlank(configName)) {
+            final BehaviorSettings behavior = BehaviorSettingsFactory.getInstance()
+                  .getBehavior(configName.toString());
+            if (null != behavior) {
+                botClient.setBehaviorSettings(behavior);
             } else {
+                results.add("Unrecognized Behavior Setting: '" + configName + "'.  Using DEFAULT.");
                 botClient.setBehaviorSettings(BehaviorSettingsFactory.getInstance().DEFAULT_BEHAVIOR);
             }
         } else {
-            results.add("Unrecognized bot: '" + botName + "'.  Defaulting to Princess.");
-            botName = new StringBuilder("Princess");
-            botClient = makeNewPrincessClient(target, host, port);
+            botClient.setBehaviorSettings(BehaviorSettingsFactory.getInstance().DEFAULT_BEHAVIOR);
         }
 
         if (!GraphicsEnvironment.isHeadless()) {
@@ -329,7 +328,7 @@ public class AddBotUtil {
         client.sendChat("/kick " + target.getId());
     }
 
-    BotClient makeNewPrincessClient(final Player target, final String host, final int port) {
-        return BotFactory.createBot(AiType.PRINCESS, target.getName(), host, port);
+    BotClient makeNewBotClient(final AiType aiType, final Player target, final String host, final int port) {
+        return BotFactory.createBot(aiType, target.getName(), host, port);
     }
 }

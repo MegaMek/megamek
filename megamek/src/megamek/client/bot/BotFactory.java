@@ -34,6 +34,7 @@ package megamek.client.bot;
 
 import java.util.Objects;
 
+import megamek.client.bot.caspar.Caspar;
 import megamek.client.bot.princess.BehaviorSettings;
 import megamek.client.bot.princess.Princess;
 import megamek.logging.MMLogger;
@@ -74,6 +75,11 @@ public final class BotFactory {
                 Princess princess = new Princess(name, host, port);
                 princess.startPrecognition();
                 yield princess;
+            }
+            case CASPAR -> {
+                Caspar caspar = new Caspar(name, host, port);
+                caspar.startPrecognition();
+                yield caspar;
             }
         };
     }

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2025 The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2025-2026 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -301,12 +301,12 @@ public class ComputeTerrainMods {
                   && targetHex.hasVegetation()
                   && !game.getOptions().booleanOption(OptionsConstants.ADVANCED_COMBAT_TAC_OPS_WOODS_COVER);
             if (los.canSee() && (targetWoodsAffectModifier || los.thruWoods())) {
-                if (bapInRange(game, attacker, entityTarget)) {
+                if (bapInRange(game, attacker, entityTarget, allECMInfo)) {
                     toHit.addModifier(-1, Messages.getString("WeaponAttackAction.BAPInWoods"));
                 } else {
                     boolean bapInRangeUsingC3 = game.getC3NetworkMembers(attacker).stream()
                           .filter(c3Member -> !attacker.equals(c3Member))
-                          .anyMatch(c3Member -> bapInRange(game, c3Member, entityTarget));
+                          .anyMatch(c3Member -> bapInRange(game, c3Member, entityTarget, allECMInfo));
                     if (bapInRangeUsingC3) {
                         toHit.addModifier(-1, Messages.getString("WeaponAttackAction.BAPInWoodsC3"));
                     }
@@ -367,13 +367,16 @@ public class ComputeTerrainMods {
     }
 
     /**
+     * @param allECMInfo Precomputed ECM information for all game entities, or {@code null} to compute it on demand
+     *
      * @return True when the attacker has an active BAP and is not affected by ECM and the target is in range.
      */
-    private static boolean bapInRange(Game game, Entity attacker, Entity target) {
+    private static boolean bapInRange(Game game, Entity attacker, Entity target,
+          @Nullable List<ECMInfo> allECMInfo) {
         return attacker.hasBAP()
               && (target != null) && !target.isOffBoard() && (target.getPosition() != null)
               && (attacker.getBAPRange() >= Compute.effectiveDistance(game, attacker, target))
-              && !ComputeECM.isAffectedByECM(attacker, attacker.getPosition(), target.getPosition());
+              && !ComputeECM.isAffectedByECM(attacker, attacker.getPosition(), target.getPosition(), allECMInfo);
     }
 
     /**

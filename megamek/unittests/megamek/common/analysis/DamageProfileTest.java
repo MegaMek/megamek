@@ -264,6 +264,8 @@ class DamageProfileTest {
               "Multiple bays of PPC/Gauss/LRM sum to serious firepower");
         assertTrue(profile.arcSummary(0).reach() > 0, "Nose bay bears forward");
         assertTrue(profile.arcSummary(3).reach() > 0, "Aft bay bears to the rear");
+        assertFalse(profile.hasCapitalScaleWeapons(),
+              "A standard-armed DropShip reads in standard scale");
     }
 
     @Test
@@ -278,6 +280,8 @@ class DamageProfileTest {
         assertTrue(profile.maxRange() >= 20, "Naval weapons reach far beyond ground ranges");
         assertTrue(profile.peakExpectedDamage() > 300,
               "Capital batteries convert at 10 standard damage per capital point");
+        assertTrue(profile.hasCapitalScaleWeapons(),
+              "A WarShip's naval batteries flag the profile for capital-scale display");
     }
 
     @Test

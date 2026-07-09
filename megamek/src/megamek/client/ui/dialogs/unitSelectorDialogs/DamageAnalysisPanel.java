@@ -88,11 +88,15 @@ public class DamageAnalysisPanel extends JPanel {
           "DamageAnalysisPanel.front", "DamageAnalysisPanel.frontRight", "DamageAnalysisPanel.rearRight",
           "DamageAnalysisPanel.rear", "DamageAnalysisPanel.rearLeft", "DamageAnalysisPanel.frontLeft" };
 
+    /** 1 capital = 10 standard damage points (SO p.116); display-only, the curves stay standard. */
+    private static final int CAPITAL_SCALE_DIVISOR = 10;
+
     private DamageProfile profile;
     private Entity entity;
     private Integer gunneryOverride;
     private String unitName = "";
     private boolean largeCraft;
+    private boolean capitalScale;
 
     public DamageAnalysisPanel() {
         setName("damageAnalysisPanel");
@@ -129,14 +133,26 @@ public class DamageAnalysisPanel extends JPanel {
             profile = null;
             unitName = "";
             largeCraft = false;
+            capitalScale = false;
         } else {
             profile = (gunneryOverride != null)
                   ? DamageProfile.of(entity, false, gunneryOverride)
                   : DamageProfile.of(entity, false);
             unitName = entity.getShortName();
             largeCraft = entity.isLargeCraft();
+            capitalScale = profile.hasCapitalScaleWeapons();
         }
         repaint();
+    }
+
+    /**
+     * Formats a damage value for an axis or ring label. Ships with capital-scale weapons are read
+     * in capital points (1 capital = 10 standard), so their damage labels divide by 10; the
+     * curves themselves always stay in standard points.
+     */
+    private String formatDamageLabel(double standardDamage) {
+        double displayed = capitalScale ? (standardDamage / CAPITAL_SCALE_DIVISOR) : standardDamage;
+        return String.valueOf((int) Math.round(displayed));
     }
 
     @Override
@@ -197,10 +213,10 @@ public class DamageAnalysisPanel extends JPanel {
         int maxRange = profile.maxRange();
         double damageCeiling = niceCeiling(profile.maxDamage(peakMaxRange()));
 
-        // Title: unit name and the gunnery the expected curves assume
+        // Title: unit name, the gunnery the expected curves assume, and the damage scale
         graphics2D.setColor(foreground);
-        String title = unitName + "  -  "
-              + Messages.getString("DamageAnalysisPanel.gunnery", profile.gunnery());
+        String titleKey = capitalScale ? "DamageAnalysisPanel.gunneryCapital" : "DamageAnalysisPanel.gunnery";
+        String title = unitName + "  -  " + Messages.getString(titleKey, profile.gunnery());
         graphics2D.drawString(title, marginLeft, marginTop - UIUtil.scaleForGUI(10));
 
         // Grid and axis labels
@@ -211,7 +227,7 @@ public class DamageAnalysisPanel extends JPanel {
             graphics2D.setColor(gridColor);
             graphics2D.drawLine(marginLeft, y, marginLeft + plotWidth, y);
             graphics2D.setColor(foreground);
-            String label = String.valueOf((int) Math.round(damageValue));
+            String label = formatDamageLabel(damageValue);
             graphics2D.drawString(label, marginLeft - metrics.stringWidth(label) - UIUtil.scaleForGUI(6),
                   y + (metrics.getAscent() / 2));
         }
@@ -311,7 +327,7 @@ public class DamageAnalysisPanel extends JPanel {
                              Messages.getString("DamageAnalysisPanel.shortAverage"),
                              Messages.getString("DamageAnalysisPanel.mediumAverage"),
                              Messages.getString("DamageAnalysisPanel.longAverage") },
-              niceCeiling(ceiling));
+              niceCeiling(ceiling), true);
     }
 
     private void paintReachRadar(Graphics2D graphics2D, int regionX, int regionY, int regionWidth,
@@ -327,12 +343,16 @@ public class DamageAnalysisPanel extends JPanel {
               series,
               new Color[] { REACH_COLOR },
               new String[] { Messages.getString("DamageAnalysisPanel.reach") },
-              niceCeiling(ceiling));
+              niceCeiling(ceiling), false);
     }
 
+    /**
+     * @param damageScale whether the ring values are damage (subject to the capital-scale
+     *                    relabel) as opposed to ranges in hexes
+     */
     private void paintRadar(Graphics2D graphics2D, int regionX, int regionY, int regionWidth,
           int regionHeight, String title, double[][] series, Color[] colors, String[] labels,
-          double ceiling) {
+          double ceiling, boolean damageScale) {
         Color foreground = UIManager.getColor("Label.foreground");
         FontMetrics metrics = graphics2D.getFontMetrics();
 
@@ -373,7 +393,9 @@ public class DamageAnalysisPanel extends JPanel {
             graphics2D.setColor(gridColor);
             graphics2D.drawPolygon(ringShape);
             graphics2D.setColor(foreground);
-            String ringLabel = String.valueOf((int) Math.round(ceiling * fraction));
+            String ringLabel = damageScale
+                  ? formatDamageLabel(ceiling * fraction)
+                  : String.valueOf((int) Math.round(ceiling * fraction));
             int labelX = centerX + UIUtil.scaleForGUI(3);
             graphics2D.drawString(ringLabel, labelX,
                   (int) (centerY - (radius * fraction)) + metrics.getAscent());

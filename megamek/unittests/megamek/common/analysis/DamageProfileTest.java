@@ -38,12 +38,15 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.io.File;
 
+import megamek.common.equipment.AmmoMounted;
 import megamek.common.equipment.EquipmentType;
+import megamek.common.equipment.WeaponMounted;
 import megamek.common.loaders.EntityLoadingException;
 import megamek.common.loaders.MekFileParser;
 import megamek.common.units.BipedMek;
 import megamek.common.units.Entity;
 import megamek.common.units.Infantry;
+import megamek.common.units.Mek;
 import megamek.common.weapons.infantry.InfantryWeapon;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
@@ -303,6 +306,42 @@ class DamageProfileTest {
     }
 
     @Test
+    void testUltraAndRotaryAutocannonsAverageTheirMultiShotFire() throws Exception {
+        // TW p.118: an ultra autocannon fires 2 shots and a rotary up to 6, with hits resolved on
+        // the cluster table for the shot count. Charting them as single shots under-reports every
+        // UAC/RAC unit.
+        BipedMek ultraMek = new BipedMek();
+        WeaponMounted ultraCannon = (WeaponMounted) ultraMek.addEquipment(
+              EquipmentType.get("ISUltraAC5"), Mek.LOC_RIGHT_TORSO);
+        AmmoMounted ultraAmmo = (AmmoMounted) ultraMek.addEquipment(
+              EquipmentType.get("ISUltraAC5 Ammo"), Mek.LOC_LEFT_TORSO);
+        ultraAmmo.setShotsLeft(20);
+        ultraMek.loadWeapon(ultraCannon, ultraAmmo);
+        DamageProfile ultraProfile = DamageProfile.of(ultraMek, false);
+
+        // Range 4: short bracket, past the minimum range - to-hit 4 at 91.6%
+        assertEquals(10.0, ultraProfile.maxDamage(4), TOLERANCE, "Ultra mode fires 2 shots of 5");
+        double expectedUltra = 5 * DamageProfile.expectedClusterHits(2) * 0.916;
+        assertEquals(expectedUltra, ultraProfile.expectedDamage(4), 0.05,
+              "Ultra expected damage is per-shot damage x cluster expectation on 2 x to-hit");
+        assertTrue(ultraProfile.expectedDamage(4) > 5 * 0.916,
+              "Two averaged shots beat a single shot");
+
+        BipedMek rotaryMek = new BipedMek();
+        WeaponMounted rotaryCannon = (WeaponMounted) rotaryMek.addEquipment(
+              EquipmentType.get("ISRotaryAC5"), Mek.LOC_RIGHT_TORSO);
+        AmmoMounted rotaryAmmo = (AmmoMounted) rotaryMek.addEquipment(
+              EquipmentType.get("ISRotaryAC5 Ammo"), Mek.LOC_LEFT_TORSO);
+        rotaryAmmo.setShotsLeft(20);
+        rotaryMek.loadWeapon(rotaryCannon, rotaryAmmo);
+        DamageProfile rotaryProfile = DamageProfile.of(rotaryMek, false);
+
+        assertEquals(30.0, rotaryProfile.maxDamage(4), TOLERANCE, "Rotary at full rate fires 6 shots of 5");
+        assertTrue(rotaryProfile.expectedDamage(4) > ultraProfile.expectedDamage(4),
+              "Six averaged shots beat two");
+    }
+
+    @Test
     void testWeaponlessUnitHasEmptyProfile() {
         Entity empty = new BipedMek();
         DamageProfile profile = DamageProfile.of(empty, false);
@@ -345,7 +384,7 @@ class DamageProfileTest {
         assertTrue(rear.maximumAverage() < front.maximumAverage() / 3,
               "Rear firepower is a small fraction of the front battery");
         assertEquals(0.0, rear.longRangeAverage(), 0.001,
-              "Nothing in the rear arc reaches past 12 hexes");
+              "Nothing in the rear arc reaches into the long band (15+)");
     }
 
     @Test

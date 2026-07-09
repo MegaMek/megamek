@@ -111,9 +111,12 @@ public final class DamageProfile {
     /** The number of hex-side directions a unit can be attacked from or fire toward. */
     public static final int DIRECTIONS = 6;
 
-    /** Range bands for the per-direction bracket averages (inclusive hex ranges). */
-    private static final int SHORT_BAND_END = 6;
-    private static final int MEDIUM_BAND_END = 12;
+    /**
+     * Range bands for the per-direction bracket averages (inclusive hex ranges): short 1-7,
+     * medium 8-14, long 15+.
+     */
+    private static final int SHORT_BAND_END = 7;
+    private static final int MEDIUM_BAND_END = 14;
 
     /** Distance of the synthetic target used to test whether a weapon arc covers a direction. */
     private static final int ARC_PROBE_DISTANCE = 6;
@@ -143,9 +146,9 @@ public final class DamageProfile {
      * contribute; torso twist and turret rotation are not applied - arcs are as mounted.
      *
      * @param maximumAverage     mean of the maximum-damage curve over the direction's reach
-     * @param shortRangeAverage  mean expected damage over ranges 1-6
-     * @param mediumRangeAverage mean expected damage over ranges 7-12
-     * @param longRangeAverage   mean expected damage over ranges 13 to the direction's reach
+     * @param shortRangeAverage  mean expected damage over ranges 1-7
+     * @param mediumRangeAverage mean expected damage over ranges 8-14
+     * @param longRangeAverage   mean expected damage over ranges 15 to the direction's reach
      * @param reach              longest range any bearing weapon covers in this direction
      */
     public record ArcSummary(double maximumAverage, double shortRangeAverage,
@@ -662,6 +665,8 @@ public final class DamageProfile {
 
             double maxDamage;
             double expectedDamage;
+            int heat = weaponType.getHeat();
+            int rapidFireShots = rapidFireShots(weaponType);
             if (baseDamage == WeaponType.DAMAGE_BY_CLUSTER_TABLE) {
                 // A battle armor squad pools its missiles into one cluster roll (TW p.218), so the
                 // effective rack is rack x troopers; everything else fires its plain rack.
@@ -677,6 +682,13 @@ public final class DamageProfile {
                 expectedDamage = maxDamage * hitProbability;
             } else if (baseDamage <= 0) {
                 return null;
+            } else if (rapidFireShots > 1) {
+                // Ultra autocannons fire 2 shots and rotaries up to 6, with hits resolved on the
+                // cluster table for the shot count (TW p.118); heat accrues per shot. Jamming is
+                // ignored (known approximation).
+                maxDamage = (double) baseDamage * rapidFireShots;
+                expectedDamage = baseDamage * expectedClusterHits(rapidFireShots) * hitProbability;
+                heat *= rapidFireShots;
             } else if (troopers > 1) {
                 // Battle armor direct-fire weapons: one attack, hits determined by the cluster
                 // table rolled on the number of firing suits, each hit dealing weapon damage.
@@ -698,7 +710,19 @@ public final class DamageProfile {
                 maxDamage *= 10;
                 expectedDamage *= 10;
             }
-            return new WeaponAtRange(maxDamage, expectedDamage, weaponType.getHeat());
+            return new WeaponAtRange(maxDamage, expectedDamage, heat);
+        }
+
+        /**
+         * The number of shots this weapon fires per turn at its maximum rate: 2 for ultra
+         * autocannons, 6 for rotaries, 1 for everything else.
+         */
+        private static int rapidFireShots(WeaponType weaponType) {
+            return switch (weaponType.getAmmoType()) {
+                case AC_ULTRA, AC_ULTRA_THB -> 2;
+                case AC_ROTARY -> 6;
+                default -> 1;
+            };
         }
     }
 

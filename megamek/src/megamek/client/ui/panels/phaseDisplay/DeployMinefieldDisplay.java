@@ -123,14 +123,6 @@ public class DeployMinefieldDisplay extends StatusBarPhaseDisplay {
 
             return COMMAND_NONE;
         }
-        
-        /**
-         * Given a minefield type constant from Minefield.java, 
-         * get the associated deployment command
-         */
-        public static DeployMinefieldCommand GetDeploymentCommand(int minefieldType) {
-            return actualCommands[minefieldType];
-        }
 
         /**
          * Get all the commands that aren't NO-OP
@@ -390,7 +382,7 @@ public class DeployMinefieldDisplay extends StatusBarPhaseDisplay {
             Enumeration<?> mfs = game.getMinefields(coords).elements();
             while (mfs.hasMoreElements()) {
                 Minefield mf = (Minefield) mfs.nextElement();
-                if (currentCommand == DeployMinefieldCommand.GetDeploymentCommand(mf.getType())) {
+                if (currentCommand == DeployMinefieldCommand.getActualCommands()[mf.getType()]) {
                     clientgui.addToast(ToastLevel.ERROR,
                           Messages.getString("DeployMinefieldDisplay.DuplicateMinefield"));
                     return;

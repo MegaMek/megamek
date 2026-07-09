@@ -38,7 +38,9 @@ import java.util.List;
 import java.util.Map;
 
 import megamek.common.RangeType;
+import megamek.common.board.Coords;
 import megamek.common.compute.Compute;
+import megamek.common.compute.ComputeArc;
 import megamek.common.equipment.AmmoMounted;
 import megamek.common.equipment.AmmoType;
 import megamek.common.equipment.WeaponMounted;
@@ -91,17 +93,47 @@ public final class DamageProfile {
     /** Expected cluster hits by rack size, shared across profiles (the table never changes). */
     private static final Map<Integer, Double> EXPECTED_CLUSTER_HITS_CACHE = new HashMap<>();
 
+    /** The number of hex-side directions a unit can be attacked from or fire toward. */
+    public static final int DIRECTIONS = 6;
+
+    /** Range bands for the per-direction bracket averages (inclusive hex ranges). */
+    private static final int SHORT_BAND_END = 6;
+    private static final int MEDIUM_BAND_END = 12;
+
+    /** Distance of the synthetic target used to test whether a weapon arc covers a direction. */
+    private static final int ARC_PROBE_DISTANCE = 6;
+
     private final double[] maxDamageByRange;
     private final double[] expectedDamageByRange;
     private final double[] sustainedDamageByRange;
+    private final ArcSummary[] arcSummaries;
     private final int gunnery;
 
     private DamageProfile(double[] maxDamageByRange, double[] expectedDamageByRange,
-          double[] sustainedDamageByRange, int gunnery) {
+          double[] sustainedDamageByRange, ArcSummary[] arcSummaries, int gunnery) {
         this.maxDamageByRange = maxDamageByRange;
         this.expectedDamageByRange = expectedDamageByRange;
         this.sustainedDamageByRange = sustainedDamageByRange;
+        this.arcSummaries = arcSummaries;
         this.gunnery = gunnery;
+    }
+
+    /**
+     * Per-direction firepower summary for one of the six hex-side directions relative to the
+     * unit's facing (0 = front, counting clockwise: 1 = front-right, 2 = rear-right, 3 = rear,
+     * 4 = rear-left, 5 = front-left). Only weapons whose firing arc covers the direction
+     * contribute; torso twist and turret rotation are not applied - arcs are as mounted.
+     *
+     * @param maximumAverage     mean of the maximum-damage curve over the direction's reach
+     * @param shortRangeAverage  mean expected damage over ranges 1-6
+     * @param mediumRangeAverage mean expected damage over ranges 7-12
+     * @param longRangeAverage   mean expected damage over ranges 13 to the direction's reach
+     * @param reach              longest range any bearing weapon covers in this direction
+     */
+    public record ArcSummary(double maximumAverage, double shortRangeAverage,
+          double mediumRangeAverage, double longRangeAverage, int reach) {
+
+        static final ArcSummary EMPTY = new ArcSummary(0, 0, 0, 0, 0);
     }
 
     /**
@@ -133,6 +165,9 @@ public final class DamageProfile {
         double[] maxDamage = new double[maxRange + 1];
         double[] expectedDamage = new double[maxRange + 1];
         double[] sustainedDamage = new double[maxRange + 1];
+        double[][] directionalMax = new double[DIRECTIONS][maxRange + 1];
+        double[][] directionalExpected = new double[DIRECTIONS][maxRange + 1];
+        int[] directionalReach = new int[DIRECTIONS];
 
         boolean tracksHeat = entity.tracksHeat();
         int heatCapacity = entity.getHeatCapacity();
@@ -147,6 +182,13 @@ public final class DamageProfile {
                     maxAtRange += atRange.maxDamage();
                     expectedAtRange += atRange.expectedDamage();
                     firing.add(atRange);
+                    for (int direction = 0; direction < DIRECTIONS; direction++) {
+                        if (weapon.bearsOn(direction)) {
+                            directionalMax[direction][range] += atRange.maxDamage();
+                            directionalExpected[direction][range] += atRange.expectedDamage();
+                            directionalReach[direction] = Math.max(directionalReach[direction], range);
+                        }
+                    }
                 }
             }
             maxDamage[range] = maxAtRange;
@@ -163,7 +205,47 @@ public final class DamageProfile {
             sustainedDamage[0] = sustainedDamage[1];
         }
 
-        return new DamageProfile(maxDamage, expectedDamage, sustainedDamage, gunnery);
+        ArcSummary[] arcSummaries = new ArcSummary[DIRECTIONS];
+        for (int direction = 0; direction < DIRECTIONS; direction++) {
+            arcSummaries[direction] = summarizeArc(directionalMax[direction],
+                  directionalExpected[direction], directionalReach[direction]);
+        }
+
+        return new DamageProfile(maxDamage, expectedDamage, sustainedDamage, arcSummaries, gunnery);
+    }
+
+    private static ArcSummary summarizeArc(double[] maxCurve, double[] expectedCurve, int reach) {
+        if (reach < 1) {
+            return ArcSummary.EMPTY;
+        }
+        return new ArcSummary(
+              bandAverage(maxCurve, 1, reach),
+              bandAverage(expectedCurve, 1, Math.min(SHORT_BAND_END, reach)),
+              bandAverage(expectedCurve, SHORT_BAND_END + 1, Math.min(MEDIUM_BAND_END, reach)),
+              bandAverage(expectedCurve, MEDIUM_BAND_END + 1, reach),
+              reach);
+    }
+
+    /** Mean of a curve over an inclusive range band; 0 when the band is empty. */
+    private static double bandAverage(double[] curve, int firstRange, int lastRange) {
+        if (lastRange < firstRange) {
+            return 0;
+        }
+        double total = 0;
+        for (int range = firstRange; range <= lastRange; range++) {
+            total += curve[range];
+        }
+        return total / (lastRange - firstRange + 1);
+    }
+
+    /**
+     * @param direction the hex-side direction relative to the unit's facing: 0 = front, clockwise
+     *                  (1 = front-right, 2 = rear-right, 3 = rear, 4 = rear-left, 5 = front-left)
+     *
+     * @return the firepower summary for that direction; an all-zero summary if no weapon bears
+     */
+    public ArcSummary arcSummary(int direction) {
+        return arcSummaries[((direction % DIRECTIONS) + DIRECTIONS) % DIRECTIONS];
     }
 
     /**
@@ -292,10 +374,31 @@ public final class DamageProfile {
     /**
      * One weapon's resolved firing options: for each candidate ammunition, the range array to use.
      * Damage is resolved lazily per range so range-variable weapons (which override
-     * {@code getDamage(int)}) are handled naturally.
+     * {@code getDamage(int)}) are handled naturally. The bearing array records which of the six
+     * hex-side directions the weapon's firing arc covers, as mounted (no torso twist).
      */
     private record WeaponContribution(WeaponMounted weapon, List<AmmoOption> ammoOptions, int gunnery,
-          boolean useExtremeRange) {
+          boolean useExtremeRange, boolean[] bearing) {
+
+        /** @return whether this weapon's firing arc covers the given hex-side direction */
+        boolean bearsOn(int direction) {
+            return bearing[direction];
+        }
+
+        /**
+         * Tests each of the six hex-side directions against the weapon's firing arc with a probe
+         * coordinate a few hexes out along that direction. Pure arc geometry - no game or board.
+         */
+        private static boolean[] computeBearing(Entity entity, WeaponMounted weapon) {
+            boolean[] bearing = new boolean[DIRECTIONS];
+            int arc = entity.getWeaponArc(entity.getEquipmentNum(weapon));
+            Coords center = new Coords(ARC_PROBE_DISTANCE * 2, ARC_PROBE_DISTANCE * 2);
+            for (int direction = 0; direction < DIRECTIONS; direction++) {
+                Coords probe = center.translated(direction, ARC_PROBE_DISTANCE);
+                bearing[direction] = ComputeArc.isInArc(center, 0, probe, arc);
+            }
+            return bearing;
+        }
 
         /** Ammo types whose loaded munitions genuinely differ per shot, so all of them are candidates. */
         private static final List<AmmoType.AmmoTypeEnum> MULTI_PROFILE_AMMO = List.of(
@@ -333,7 +436,8 @@ public final class DamageProfile {
             if (options.isEmpty()) {
                 return null;
             }
-            return new WeaponContribution(weapon, options, gunnery, useExtremeRange);
+            return new WeaponContribution(weapon, options, gunnery, useExtremeRange,
+                  computeBearing(entity, weapon));
         }
 
         /** @return the longest range this weapon reaches with any of its ammunition options */

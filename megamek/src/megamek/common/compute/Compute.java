@@ -4266,12 +4266,12 @@ public class Compute {
      * Determine if autocannon should fire more than one round. Includes standard ACs if the game option for
      * rapid-fire-mode is enabled.
      *
-     * @param atk             Attack action with weapon attack properties
+     * @param game            The current game
+     * @param attackAction    Attack action with weapon attack properties
      * @param spinupThreshold Maximum to-hit number to consider for rapid fire
      *
-     * @return the <code>int</code> ID of weapon mode, which is also the number of mode changes from single shot
+     * @return the {@code int} ID of weapon mode, which is also the number of mode changes from single shot
      */
-
     public static int spinUpCannon(Game game, WeaponAttackAction attackAction, int spinupThreshold) {
         // The number of mode changes needed to set a specific rate of fire
         int finalSpin = 0;
@@ -4288,6 +4288,10 @@ public class Compute {
             return finalSpin;
         }
         Mounted<?> weapon = shooter.getEquipment(attackAction.getWeaponId());
+        if (null == weapon) {
+            LOGGER.warn("attack action with an invalid weapon id passed to Compute.spinUpCannon");
+            return finalSpin;
+        }
         WeaponType weaponType = (WeaponType) weapon.getType();
 
         // Check the weapon type BEFORE computing the to-hit number: this method is called for every weapon

@@ -119,6 +119,14 @@ class ComputeSpinUpCannonTest {
     }
 
     @Test
+    void testInvalidWeaponIdReturnsZeroWithoutException() {
+        // An out-of-range weapon id makes getEquipment return null; the method must guard it, not NPE.
+        when(mockShooter.getEquipment(WEAPON_ID)).thenReturn(null);
+
+        assertEquals(0, Compute.spinUpCannon(mockGame, mockAttackAction, SPIN_UP_THRESHOLD));
+    }
+
+    @Test
     void testUltraAutocannonAtThresholdSpinsUpWithSingleToHitComputation() {
         arrangeWeaponType(mock(UACWeapon.class));
         arrangeToHitValue(SPIN_UP_THRESHOLD);

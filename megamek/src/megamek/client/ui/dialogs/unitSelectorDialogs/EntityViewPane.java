@@ -124,6 +124,16 @@ public class EntityViewPane extends EnhancedTabbedPane {
         analysisPanel.setEntity(entity);
     }
 
+    /**
+     * Sets the gunnery skill the Analysis tab displays its expected-damage curves at, so the tab
+     * can follow a live control such as the unit selector's BV gunnery field.
+     *
+     * @param gunnery the gunnery skill for the analysis charts
+     */
+    public void setAnalysisGunnery(int gunnery) {
+        analysisPanel.setGunnery(gunnery);
+    }
+
     private void toggleMenus() {
         menuVisible = !menuVisible;
         summaryPanel.toggleMenu(menuVisible);

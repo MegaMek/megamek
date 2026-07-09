@@ -89,6 +89,8 @@ public class DamageAnalysisPanel extends JPanel {
           "DamageAnalysisPanel.rear", "DamageAnalysisPanel.rearLeft", "DamageAnalysisPanel.frontLeft" };
 
     private DamageProfile profile;
+    private Entity entity;
+    private Integer gunneryOverride;
     private String unitName = "";
 
     public DamageAnalysisPanel() {
@@ -102,11 +104,33 @@ public class DamageAnalysisPanel extends JPanel {
      * @param entity the unit to analyze, or null to clear the display
      */
     public void setEntity(@Nullable Entity entity) {
+        this.entity = entity;
+        rebuildProfile();
+    }
+
+    /**
+     * Sets the gunnery skill for the expected and sustained curves, overriding the crew's, so the
+     * chart can follow a live control (e.g. the unit selector's BV gunnery field). The current
+     * unit's chart recomputes immediately.
+     *
+     * @param gunnery the gunnery skill to display the curves at
+     */
+    public void setGunnery(int gunnery) {
+        if ((gunneryOverride != null) && (gunneryOverride == gunnery)) {
+            return;
+        }
+        gunneryOverride = gunnery;
+        rebuildProfile();
+    }
+
+    private void rebuildProfile() {
         if (entity == null) {
             profile = null;
             unitName = "";
         } else {
-            profile = DamageProfile.of(entity, false);
+            profile = (gunneryOverride != null)
+                  ? DamageProfile.of(entity, false, gunneryOverride)
+                  : DamageProfile.of(entity, false);
             unitName = entity.getShortName();
         }
         repaint();

@@ -388,4 +388,23 @@ class DamageProfileTest {
         assertTrue(expectedTwenty > DamageProfile.expectedClusterHits(10),
               "Expectation grows with rack size");
     }
+
+    @Test
+    void testExpectedClusterHitsHandlesPooledRacksBeyondTheTable() {
+        // Pooled battle armor racks can exceed the cluster table's rows: a 6-suit squad of SRM-6s
+        // pools 36 missiles, and larger pools pass 40, the table's largest entry. These sizes must
+        // decompose (largest row plus remainder, like Compute.missilesHit), never collapse to 0.
+        double expectedThirtySix = DamageProfile.expectedClusterHits(36);
+        assertTrue(expectedThirtySix > 0, "A 36-missile pool must not collapse to 0 expected hits");
+        assertTrue((expectedThirtySix > 36 * 0.5) && (expectedThirtySix < 36 * 0.8),
+              "A 36-missile pool should average roughly 60% hits, was " + expectedThirtySix);
+
+        double expectedFortyFive = DamageProfile.expectedClusterHits(45);
+        assertTrue(expectedFortyFive > 0, "A 45-missile pool (past the 40 row) must not collapse to 0");
+        assertTrue(expectedFortyFive > expectedThirtySix, "Expectation keeps growing past the table");
+
+        // A single projectile is not a cluster: it hits when the attack hits
+        assertEquals(1.0, DamageProfile.expectedClusterHits(1), TOLERANCE,
+              "A 1-missile rack is a plain hit");
+    }
 }

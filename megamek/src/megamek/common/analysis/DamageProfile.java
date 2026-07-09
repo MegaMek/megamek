@@ -33,9 +33,9 @@
 package megamek.common.analysis;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 
 import megamek.common.RangeType;
 import megamek.common.battleArmor.BattleArmor;
@@ -102,8 +102,11 @@ public final class DamageProfile {
     /** Probability numerators (out of 36) for 2d6 rolls 2..12, used for cluster expectation. */
     private static final int[] TWO_D6_WEIGHTS = { 1, 2, 3, 4, 5, 6, 5, 4, 3, 2, 1 };
 
-    /** Expected cluster hits by rack size, shared across profiles (the table never changes). */
-    private static final Map<Integer, Double> EXPECTED_CLUSTER_HITS_CACHE = new HashMap<>();
+    /**
+     * Expected cluster hits by rack size, shared across profiles (the table never changes).
+     * Concurrent because profiles may be built from bot threads and the EDT at the same time.
+     */
+    private static final Map<Integer, Double> EXPECTED_CLUSTER_HITS_CACHE = new ConcurrentHashMap<>();
 
     /** The number of hex-side directions a unit can be attacked from or fire toward. */
     public static final int DIRECTIONS = 6;
@@ -427,15 +430,52 @@ public final class DamageProfile {
      * The expected number of hits from the cluster hits table for a rack of the given size: the
      * probability-weighted average over all 2d6 rolls. Unlike the common "roll a 7" shortcut, this
      * is the true expectation.
+     *
+     * <p>Sizes without an exact table row - pooled battle armor racks can exceed the table's
+     * largest entry - decompose into the largest available row plus the remainder, the same way
+     * {@code Compute.missilesHit} resolves oversized BA missile attacks. Expectation is linear,
+     * so the decomposed sum is exact.</p>
      */
     static double expectedClusterHits(int rackSize) {
-        return EXPECTED_CLUSTER_HITS_CACHE.computeIfAbsent(rackSize, size -> {
+        Double cached = EXPECTED_CLUSTER_HITS_CACHE.get(rackSize);
+        if (cached != null) {
+            return cached;
+        }
+        // Computed outside computeIfAbsent: the decomposition recurses into other sizes, and
+        // ConcurrentHashMap forbids map updates from inside a computeIfAbsent mapping function.
+        double expected = computeExpectedClusterHits(rackSize);
+        EXPECTED_CLUSTER_HITS_CACHE.putIfAbsent(rackSize, expected);
+        return expected;
+    }
+
+    private static double computeExpectedClusterHits(int rackSize) {
+        if (rackSize <= 1) {
+            // A single projectile is not a cluster: it simply hits when the attack hits.
+            return Math.max(0, rackSize);
+        }
+        if (hasClusterTableRow(rackSize)) {
             double expected = 0;
             for (int roll = 2; roll <= 12; roll++) {
-                expected += TWO_D6_WEIGHTS[roll - 2] * Compute.calculateClusterHitTableAmount(roll, size);
+                expected += TWO_D6_WEIGHTS[roll - 2] * Compute.calculateClusterHitTableAmount(roll, rackSize);
             }
             return expected / 36.0;
-        });
+        }
+        // No exact row: split off the largest row below this size and resolve the remainder
+        // separately (TW battle armor missile pooling; mirrors Compute.missilesHit).
+        for (int candidate = rackSize - 1; candidate >= 2; candidate--) {
+            if (hasClusterTableRow(candidate)) {
+                return computeExpectedClusterHits(candidate)
+                      + computeExpectedClusterHits(rackSize - candidate);
+            }
+        }
+        // Unreachable: the table always contains a row for 2.
+        return rackSize;
+    }
+
+    /** @return whether the cluster hits table has an exact row for this rack size */
+    private static boolean hasClusterTableRow(int rackSize) {
+        // Every real table row yields at least 1 hit on a roll of 7; missing sizes return 0.
+        return Compute.calculateClusterHitTableAmount(7, rackSize) > 0;
     }
 
     /**

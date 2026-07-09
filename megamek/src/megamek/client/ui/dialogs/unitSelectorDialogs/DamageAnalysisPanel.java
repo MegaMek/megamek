@@ -92,6 +92,7 @@ public class DamageAnalysisPanel extends JPanel {
     private Entity entity;
     private Integer gunneryOverride;
     private String unitName = "";
+    private boolean largeCraft;
 
     public DamageAnalysisPanel() {
         setName("damageAnalysisPanel");
@@ -127,11 +128,13 @@ public class DamageAnalysisPanel extends JPanel {
         if (entity == null) {
             profile = null;
             unitName = "";
+            largeCraft = false;
         } else {
             profile = (gunneryOverride != null)
                   ? DamageProfile.of(entity, false, gunneryOverride)
                   : DamageProfile.of(entity, false);
             unitName = entity.getShortName();
+            largeCraft = entity.isLargeCraft();
         }
         repaint();
     }
@@ -377,13 +380,17 @@ public class DamageAnalysisPanel extends JPanel {
             graphics2D.drawString(ringLabel, labelX,
                   (int) (centerY + (radius * fraction)) - UIUtil.scaleForGUI(2));
             // East-west crossings: the rings cross the horizontal axis at their flat-edge
-            // midpoints, one apothem (radius x cos 30) out from center.
-            int apothem = (int) Math.round(radius * fraction * Math.cos(Math.toRadians(30)));
-            int horizontalLabelY = centerY - UIUtil.scaleForGUI(3);
-            graphics2D.drawString(ringLabel,
-                  centerX + apothem - (metrics.stringWidth(ringLabel) / 2), horizontalLabelY);
-            graphics2D.drawString(ringLabel,
-                  centerX - apothem - (metrics.stringWidth(ringLabel) / 2), horizontalLabelY);
+            // midpoints, one apothem (radius x cos 30) out from center. Skipped for large craft
+            // (DropShips, JumpShips, WarShips, Space Stations): their four-digit values collide
+            // into an unreadable strip, and the north-south scale carries the same numbers.
+            if (!largeCraft) {
+                int apothem = (int) Math.round(radius * fraction * Math.cos(Math.toRadians(30)));
+                int horizontalLabelY = centerY - UIUtil.scaleForGUI(3);
+                graphics2D.drawString(ringLabel,
+                      centerX + apothem - (metrics.stringWidth(ringLabel) / 2), horizontalLabelY);
+                graphics2D.drawString(ringLabel,
+                      centerX - apothem - (metrics.stringWidth(ringLabel) / 2), horizontalLabelY);
+            }
         }
 
         // Spokes and direction labels

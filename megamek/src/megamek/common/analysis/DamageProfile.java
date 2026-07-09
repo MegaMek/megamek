@@ -120,14 +120,17 @@ public final class DamageProfile {
     private final double[] sustainedDamageByRange;
     private final ArcSummary[] arcSummaries;
     private final int gunnery;
+    private final boolean containsCapitalWeapons;
 
     private DamageProfile(double[] maxDamageByRange, double[] expectedDamageByRange,
-          double[] sustainedDamageByRange, ArcSummary[] arcSummaries, int gunnery) {
+          double[] sustainedDamageByRange, ArcSummary[] arcSummaries, int gunnery,
+          boolean containsCapitalWeapons) {
         this.maxDamageByRange = maxDamageByRange;
         this.expectedDamageByRange = expectedDamageByRange;
         this.sustainedDamageByRange = sustainedDamageByRange;
         this.arcSummaries = arcSummaries;
         this.gunnery = gunnery;
+        this.containsCapitalWeapons = containsCapitalWeapons;
     }
 
     /**
@@ -256,7 +259,26 @@ public final class DamageProfile {
                   directionalExpected[direction], directionalReach[direction]);
         }
 
-        return new DamageProfile(maxDamage, expectedDamage, sustainedDamage, arcSummaries, gunnery);
+        boolean containsCapitalWeapons = false;
+        for (WeaponContribution weapon : weapons) {
+            WeaponType weaponType = weapon.weapon().getType();
+            if (weaponType.isCapital() || weaponType.isSubCapital()) {
+                containsCapitalWeapons = true;
+                break;
+            }
+        }
+
+        return new DamageProfile(maxDamage, expectedDamage, sustainedDamage, arcSummaries, gunnery,
+              containsCapitalWeapons);
+    }
+
+    /**
+     * @return true if any contributing weapon is capital or sub-capital scale. The curves are
+     *       always in standard damage points (capital converts at x10); displays may use this to
+     *       relabel their axes in capital scale for naval reading.
+     */
+    public boolean hasCapitalScaleWeapons() {
+        return containsCapitalWeapons;
     }
 
     private static ArcSummary summarizeArc(double[] maxCurve, double[] expectedCurve, int reach) {

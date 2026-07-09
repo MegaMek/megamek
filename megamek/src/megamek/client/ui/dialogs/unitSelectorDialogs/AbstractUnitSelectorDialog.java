@@ -1176,28 +1176,22 @@ public abstract class AbstractUnitSelectorDialog extends JDialog implements Runn
     }
 
     /**
-     * Refreshes the table's BV/PV columns and the preview's Analysis tab when gunnery/piloting is
-     * changed.
+     * Sets the table to refresh when gunnery/piloting is changed
      */
     private class GPDocumentListener implements DocumentListener {
         @Override
-        public void changedUpdate(DocumentEvent event) {
-            skillValuesChanged();
-        }
-
-        @Override
-        public void insertUpdate(DocumentEvent event) {
-            skillValuesChanged();
-        }
-
-        @Override
-        public void removeUpdate(DocumentEvent event) {
-            skillValuesChanged();
-        }
-
-        private void skillValuesChanged() {
+        public void changedUpdate(DocumentEvent e) {
             sorter.allRowsChanged();
-            panePreview.setAnalysisGunnery(parseSkillValue(textGunnery, 4));
+        }
+
+        @Override
+        public void insertUpdate(DocumentEvent e) {
+            sorter.allRowsChanged();
+        }
+
+        @Override
+        public void removeUpdate(DocumentEvent e) {
+            sorter.allRowsChanged();
         }
     }
 

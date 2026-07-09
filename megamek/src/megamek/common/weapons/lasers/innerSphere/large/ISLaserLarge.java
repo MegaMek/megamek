@@ -75,7 +75,7 @@ public class ISLaserLarge extends LaserWeapon {
         medAV = 8;
         maxRange = RANGE_MED;
         rulesRefs = "227, TM";
-        techAdvancement.setTechBase(TechBase.ALL)
+        techAdvancement.setTechBase(TechBase.IS)
               .setIntroLevel(true)
               .setUnofficial(false)
               .setTechRating(TechRating.C)

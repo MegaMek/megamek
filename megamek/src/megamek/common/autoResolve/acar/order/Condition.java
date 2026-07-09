@@ -42,6 +42,7 @@ public interface Condition {
         return context -> true;
     }
 
+    @Deprecated(since = "0.51.0", forRemoval = true)
     static Condition alwaysFalse() {
         return context -> false;
     }

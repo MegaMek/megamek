@@ -1,6 +1,6 @@
 /*
  * Copyright (C) 2005 Ben Mazur (bmazur@sev.org)
- * Copyright (C) 2005-2025 The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2005-2026 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -81,6 +81,10 @@ public class GUIPreferences extends PreferenceStoreProxy {
     public static final String ADVANCED_KEY_REPEAT_DELAY = "AdvancedKeyRepeatDelay";
     public static final String ADVANCED_KEY_REPEAT_RATE = "AdvancedKeyRepeatRate";
     public static final String ADVANCED_SHOW_FPS = "AdvancedShowFPS";
+    // Testing/observer aid: reveal otherwise-obscured artillery markers (e.g. enemy incoming) on the local view only
+    public static final String ADVANCED_REVEAL_OBSCURED_ARTILLERY = "AdvancedRevealObscuredArtillery";
+    // Testing aid: have Princess paint her artillery heat map (predicted impacts + chosen targets) on the board
+    public static final String ADVANCED_SHOW_BOT_ARTILLERY_HEATMAP = "AdvancedShowBotArtilleryHeatMap";
     public static final String ADVANCED_NO_SAVE_NAG = "AdvancedNoSaveNag";
     public static final String ADVANCED_SAVE_LOBBY_ON_START = "AdvancedSaveLobbyOnStart";
 
@@ -113,6 +117,8 @@ public class GUIPreferences extends PreferenceStoreProxy {
     public static final String BOARD_UNIT_SELECTED_COLOR = "BoardUnitSelectedColor";
     public static final String BOARD_UNIT_VALID_COLOR = "BoardUnitValidColor";
     public static final String BOARD_UNIT_TEXT_COLOR = "BoardUnitTextColor";
+    public static final String BOARD_DEMOLITION_CHARGE_COLOR = "BoardDemolitionChargeColor";
+    public static final String BOARD_DEMOLITION_CHARGE_HAZARD_OUTLINE = "BoardDemolitionChargeHazardOutline";
 
     public static final String BOARD_ATTACK_ARROW_TRANSPARENCY = "BoardAttackArrowTransparency";
     public static final String BOARD_ECM_TRANSPARENCY = "BoardECMTransparency";
@@ -122,6 +128,7 @@ public class GUIPreferences extends PreferenceStoreProxy {
 
     public static final String SHOW_ARTILLERY_MISSES = "ShowArtilleryMisses";
     public static final String SHOW_ARTILLERY_DRIFTS = "ShowArtilleryHits";
+    public static final String SHOW_ARTILLERY_DRIFT_ARROWS = "ShowArtilleryDriftArrows";
     public static final String SHOW_BOMB_MISSES = "ShowBombMisses";
     public static final String SHOW_BOMB_DRIFTS = "ShowBombDrifts";
     public static final String SHOW_DEPLOY_ZONES_ARTY_AUTO = "ShowDeployZonesArtyAuto";
@@ -147,6 +154,8 @@ public class GUIPreferences extends PreferenceStoreProxy {
     public static final String TRACE_OVERLAY_ORIGIN_X = "TraceOverlayOriginX";
     public static final String TRACE_OVERLAY_ORIGIN_Y = "TraceOverlayOriginY";
     public static final String TRACE_OVERLAY_IMAGE_FILE = "TraceOverlayImageFile";
+
+    public static final String TOAST_DRIP_SECONDS = "ToastDripSeconds";
 
     public static final String PLAYERS_REMAINING_TO_SHOW = "PlayersRemainingToShow";
     public static final String BUTTONS_PER_ROW = "ButtonsPerRow";
@@ -266,6 +275,7 @@ public class GUIPreferences extends PreferenceStoreProxy {
     public static final String GAME_SUMMARY_BOARD_VIEW = "GameSummaryBoardView";
     public static final String GAME_SUMMARY_MINIMAP = "GameSummaryMinimap";
     public static final String GIF_GAME_SUMMARY_MINIMAP = "GifGameSummaryMinimap";
+    public static final String GIF_GAME_SUMMARY_RECORDING = "GifGameSummaryRecording";
     public static final String SHOW_UNIT_DISPLAY_NAMES_ON_MINIMAP = "ShowUnitDisplayNamesOnMinimap";
     public static final String ENTITY_OWNER_LABEL_COLOR = "EntityOwnerLabelColor";
     public static final String UNIT_LABEL_BORDER = "EntityOwnerLabelColor";
@@ -334,6 +344,14 @@ public class GUIPreferences extends PreferenceStoreProxy {
     public static final String PLAYER_LIST_POS_X = "PlayerListPosX";
     public static final String PLAYER_LIST_POS_Y = "PlayerListPosY";
     public static final String PLAYER_LIST_ENABLED = "PlayerListEnabled";
+    public static final String ROUNDS_IN_AIR_POS_X = "RoundsInAirPosX";
+    public static final String ROUNDS_IN_AIR_POS_Y = "RoundsInAirPosY";
+    public static final String ROUNDS_IN_AIR_ENABLED = "RoundsInAirEnabled";
+    // Hidden testing/debug flag: reveals ALL in-flight artillery (both teams' target hexes) to this client, overriding
+    // the normal hidden-information rule that a player sees only their own and allied rounds' target hexes. Deliberately
+    // NOT prefixed "Advanced" so it does not appear in the Client Settings > Advanced list - it can only be enabled by
+    // manually adding RevealAllArtilleryRounds=true to clientsettings.xml.
+    public static final String REVEAL_ALL_ARTILLERY_ROUNDS = "RevealAllArtilleryRounds";
     public static final String PLAYER_LIST_AUTO_DISPLAY_REPORT_PHASE = "PlayerListAutoDisplayReportPhase";
     public static final String PLAYER_LIST_AUTO_DISPLAY_NON_REPORT_PHASE = "PlayerListAutoDisplayNonReportPhase";
     public static final String MINI_MAP_COLOURS = "MinimapColours";
@@ -423,6 +441,7 @@ public class GUIPreferences extends PreferenceStoreProxy {
     public static final String BOARD_EDIT_LOAD_SIZE_HEIGHT = "BoardEditLoadSizeHeight";
     public static final String BOARD_EDIT_LOAD_SIZE_WIDTH = "BoardEditLoadSizeWidth";
     public static final String BOARD_EDIT_RANDOM_DIALOG_START = "BoardEditRandomDialogStart";
+    public static final String BOARD_SAVE_INCLUDE_LICENSE = "BoardSaveIncludeLicense";
     public static final String ALLY_UNIT_COLOR = "AllyUnitColor";
     public static final String MY_UNIT_COLOR = "MyUnitColor";
     public static final String ENEMY_UNIT_COLOR = "EnemyUnitColor";
@@ -430,6 +449,9 @@ public class GUIPreferences extends PreferenceStoreProxy {
     public static final String SHOW_PLANETARY_CONDITIONS_OVERLAY = "ShowPlanetaryConditionsOverlay";
     public static final String SHOW_TRACE_OVERLAY = "ShowTraceOverlay";
     public static final String UNIT_LABEL_STYLE = "UnitLabelStyle";
+    public static final String RULER_DIAGRAM_VISIBLE = "RulerDiagramVisible";
+    public static final String RULER_COMPARE_VISIBLE = "RulerCompareVisible";
+
     public static final String AS_CARD_FONT = "AsCardFont";
     public static final String AS_CARD_SIZE = "AsCardSize";
     public static final String SBF_SHEET_HEADER_FONT = "SBFSheetHeaderFont";
@@ -437,6 +459,7 @@ public class GUIPreferences extends PreferenceStoreProxy {
     public static final String SUMMARY_FONT = "SummaryCardFont";
 
     public static final String BOT_COMMANDS_ENABLED = "BotCommandsEnabled";
+    public static final String BOT_COMMANDS_LOCATION = "BotCommandsLocation";
     public static final String BOT_COMMANDS_POS_X = "BotCommandsPosX";
     public static final String BOT_COMMANDS_POS_Y = "BotCommandsPosY";
     public static final String BOT_COMMANDS_WIDTH = "BotCommandsWidth";
@@ -471,6 +494,7 @@ public class GUIPreferences extends PreferenceStoreProxy {
     private static final Color DEFAULT_RED = new Color(225, 51, 51);
     private static final Color DEFAULT_GREEN = new Color(0, 212, 0);
     private static final Color DEFAULT_BLUE = new Color(64, 96, 228);
+    private static final Color DEFAULT_GOLD = new Color(200, 160, 30);
     private static final Color DEFAULT_MEDIUM_DARK_RED = new Color(150, 80, 80); // medium dark red
     private static final Color DEFAULT_MEDIUM_YELLOW = new Color(180, 180, 100);
     private static final Color DEFAULT_ORANGE = new Color(248, 140, 0);
@@ -519,6 +543,8 @@ public class GUIPreferences extends PreferenceStoreProxy {
               .getPreferenceStore("GUIPreferences", getClass().getName(), "megamek.client.ui.swing.GUIPreferences");
 
         store.setDefault(BOARD_EDIT_RANDOM_DIALOG_START, false);
+        store.setDefault(BOARD_SAVE_INCLUDE_LICENSE, true);
+        store.setDefault(RULER_DIAGRAM_VISIBLE, true);
         setDefault(ADVANCED_NO_SAVE_NAG, false);
         store.setDefault(ADVANCED_SAVE_LOBBY_ON_START, false);
         store.setDefault(ADVANCED_MOVE_STEP_DELAY, 50);
@@ -547,6 +573,8 @@ public class GUIPreferences extends PreferenceStoreProxy {
         setDefault(TRACE_OVERLAY_ORIGIN_X, 0);
         setDefault(TRACE_OVERLAY_ORIGIN_Y, 0);
         setDefault(TRACE_OVERLAY_IMAGE_FILE, "");
+
+        setDefault(TOAST_DRIP_SECONDS, 2);
 
         setDefault(WARNING_COLOR, DEFAULT_RED);
         setDefault(CAUTION_COLOR, Color.yellow);
@@ -588,7 +616,7 @@ public class GUIPreferences extends PreferenceStoreProxy {
         setDefault(BOARD_MOVE_SPRINT_COLOR, DEFAULT_PINK);
         setDefault(BOARD_FIRE_SOLUTION_CAN_SEE_COLOR, DEFAULT_CYAN);
         setDefault(BOARD_FIRE_SOLUTION_NO_SEE_COLOR, DEFAULT_RED);
-        setDefault(BOARD_BUILDING_TEXT_COLOR, DEFAULT_BLUE);
+        setDefault(BOARD_BUILDING_TEXT_COLOR, DEFAULT_GOLD);
         setDefault(BOARD_LOW_FOLIAGE_COLOR, DEFAULT_MAP_BRIGHT_GREEN);
         setDefault(BOARD_TEXT_COLOR, DEFAULT_BLACK);
         setDefault(BOARD_SPACE_TEXT_COLOR, DEFAULT_LIGHT_GRAY);
@@ -603,6 +631,8 @@ public class GUIPreferences extends PreferenceStoreProxy {
         setDefault(BOARD_UNIT_SELECTED_COLOR, DEFAULT_MAGENTA);
         setDefault(BOARD_UNIT_VALID_COLOR, DEFAULT_CYAN);
         setDefault(BOARD_UNIT_TEXT_COLOR, Color.white);
+        setDefault(BOARD_DEMOLITION_CHARGE_COLOR, new Color(255, 80, 80));
+        setDefault(BOARD_DEMOLITION_CHARGE_HAZARD_OUTLINE, true);
 
         setDefault(BOARD_MOVE_FONT_TYPE, "SansSerif");
         setDefault(BOARD_MOVE_FONT_SIZE, 26);
@@ -615,6 +645,9 @@ public class GUIPreferences extends PreferenceStoreProxy {
 
         store.setDefault(SHOW_ARTILLERY_MISSES, true);
         store.setDefault(SHOW_ARTILLERY_DRIFTS, true);
+        store.setDefault(SHOW_ARTILLERY_DRIFT_ARROWS, true);
+        store.setDefault(ADVANCED_REVEAL_OBSCURED_ARTILLERY, false);
+        store.setDefault(ADVANCED_SHOW_BOT_ARTILLERY_HEATMAP, false);
         store.setDefault(SHOW_BOMB_MISSES, true);
         store.setDefault(SHOW_BOMB_DRIFTS, false);
         store.setDefault(SHOW_DEPLOY_ZONES_ARTY_AUTO, false);
@@ -655,6 +688,12 @@ public class GUIPreferences extends PreferenceStoreProxy {
         store.setDefault(FORCE_DISPLAY_AUTO_DISPLAY_REPORT_PHASE, 2);
         store.setDefault(FORCE_DISPLAY_AUTO_DISPLAY_NON_REPORT_PHASE, 2);
         store.setDefault(FORCE_DISPLAY_ENABLED, false);
+
+        // without these defaults the auto-display values read 0 (= HIDE) and the Bot Commands dialog
+        // is force-hidden on every phase change; 2 (= MANUAL) leaves it as the player set it
+        store.setDefault(BOT_COMMANDS_AUTO_DISPLAY_REPORT_PHASE, 2);
+        store.setDefault(BOT_COMMANDS_AUTO_DISPLAY_NON_REPORT_PHASE, 2);
+        store.setDefault(BOT_COMMANDS_ENABLED, false);
         store.setDefault(FORCE_DISPLAY_SIZE_HEIGHT, 500);
         store.setDefault(FORCE_DISPLAY_SIZE_WIDTH, 300);
         store.setDefault(FORCE_DISPLAY_BTN_ID, true);
@@ -685,6 +724,15 @@ public class GUIPreferences extends PreferenceStoreProxy {
         store.setDefault(UNIT_DISPLAY_AUTO_DISPLAY_NON_REPORT_PHASE, 1);
         store.setDefault(UNIT_DISPLAY_ENABLED, true);
         store.setDefault(UNIT_DISPLAY_LOCATION, 0);
+        store.setDefault(BOT_COMMANDS_LOCATION, 0);
+        // -1 is the "no saved position yet" sentinel so the floating dialog centers on first use; a real saved
+        // position (including a legitimate top-left 0,0) is restored instead.
+        store.setDefault(BOT_COMMANDS_POS_X, -1);
+        store.setDefault(BOT_COMMANDS_POS_Y, -1);
+        // Default to MANUAL so the bot commands panel stays in whatever mode the player chose (Float/Dock/Off)
+        // instead of being auto-hidden on every phase change.
+        store.setDefault(BOT_COMMANDS_AUTO_DISPLAY_REPORT_PHASE, MANUAL);
+        store.setDefault(BOT_COMMANDS_AUTO_DISPLAY_NON_REPORT_PHASE, MANUAL);
         store.setDefault(SPLIT_PANE_A_DIVIDER_LOCATION, 300);
         setDefault(UNIT_DISPLAY_HEAT_COLOR_1, DEFAULT_HEAT_1_COLOR);
         setDefault(UNIT_DISPLAY_HEAT_COLOR_2, DEFAULT_HEAT_2_COLOR);
@@ -776,7 +824,15 @@ public class GUIPreferences extends PreferenceStoreProxy {
         store.setDefault(MINI_MAP_SHOW_FACING_ARROW, true);
         store.setDefault(MINI_MAP_PAINT_BORDERS, true);
         store.setDefault(MINI_MAP_MOVE_PATH_PERSISTENCE, 2);
-        store.setDefault(GIF_GAME_SUMMARY_MINIMAP, true);
+        store.setDefault(GIF_GAME_SUMMARY_RECORDING, GifRecordingMode.ASK.name());
+        // Migrate the pre-0.51.01 boolean GIF setting: an explicit player choice carries over (true -> ALWAYS,
+        // false -> NEVER); players who never touched it get the new ask-at-game-start default.
+        if (store.hasProperty(GIF_GAME_SUMMARY_MINIMAP) && !store.hasProperty(GIF_GAME_SUMMARY_RECORDING)) {
+            store.setValue(GIF_GAME_SUMMARY_RECORDING,
+                  store.getBoolean(GIF_GAME_SUMMARY_MINIMAP)
+                        ? GifRecordingMode.ALWAYS.name()
+                        : GifRecordingMode.NEVER.name());
+        }
         store.setDefault(GAME_SUMMARY_MINIMAP, false);
         store.setDefault(SHOW_UNIT_DISPLAY_NAMES_ON_MINIMAP, false);
         store.setDefault(MOVE_DISPLAY_TAB_DURING_PHASES, true);
@@ -809,6 +865,10 @@ public class GUIPreferences extends PreferenceStoreProxy {
         store.setDefault(PLAYER_LIST_ENABLED, true);
         store.setDefault(PLAYER_LIST_POS_X, 200);
         store.setDefault(PLAYER_LIST_POS_Y, 150);
+        store.setDefault(ROUNDS_IN_AIR_ENABLED, false);
+        store.setDefault(ROUNDS_IN_AIR_POS_X, 200);
+        store.setDefault(ROUNDS_IN_AIR_POS_Y, 150);
+        store.setDefault(REVEAL_ALL_ARTILLERY_ROUNDS, false);
         store.setDefault(PLAYER_LIST_AUTO_DISPLAY_REPORT_PHASE, 1);
         store.setDefault(PLAYER_LIST_AUTO_DISPLAY_NON_REPORT_PHASE, 0);
 
@@ -832,10 +892,10 @@ public class GUIPreferences extends PreferenceStoreProxy {
 
         setDefault(RULER_COLOR_1, DEFAULT_CYAN);
         setDefault(RULER_COLOR_2, DEFAULT_MAGENTA);
-        store.setDefault(RULER_POS_X, 0);
-        store.setDefault(RULER_POS_Y, 0);
-        store.setDefault(RULER_SIZE_HEIGHT, 300);
-        store.setDefault(RULER_SIZE_WIDTH, 500);
+        store.setDefault(RULER_POS_X, -1);
+        store.setDefault(RULER_POS_Y, -1);
+        store.setDefault(RULER_SIZE_HEIGHT, 350);
+        store.setDefault(RULER_SIZE_WIDTH, 600);
 
         store.setDefault(SCROLL_SENSITIVITY, 3);
         store.setDefault(SHOW_FIELD_OF_FIRE, true);
@@ -1174,14 +1234,27 @@ public class GUIPreferences extends PreferenceStoreProxy {
         return store.getBoolean(GAME_SUMMARY_MINIMAP);
     }
 
+    /**
+     * @return How the combat-summary GIF is recorded: always, ask at game start (the default), or never.
+     */
+    public GifRecordingMode getGifGameSummaryRecording() {
+        return GifRecordingMode.parse(store.getString(GIF_GAME_SUMMARY_RECORDING));
+    }
+
+    /**
+     * @deprecated since 0.51.01, use {@link #getGifGameSummaryRecording()}; returns {@code true} only for
+     *       {@link GifRecordingMode#ALWAYS}.
+     */
+    @Deprecated(since = "0.51.01", forRemoval = true)
     public boolean getGifGameSummaryMinimap() {
-        return store.getBoolean(GIF_GAME_SUMMARY_MINIMAP);
+        return getGifGameSummaryRecording() == GifRecordingMode.ALWAYS;
     }
 
     public boolean showUnitDisplayNamesOnMinimap() {
         return store.getBoolean(SHOW_UNIT_DISPLAY_NAMES_ON_MINIMAP);
     }
 
+    @Deprecated(since = "0.51.0", forRemoval = true)
     public boolean getEntityOwnerLabelColor() {
         return store.getBoolean(ENTITY_OWNER_LABEL_COLOR);
     }
@@ -1246,38 +1319,47 @@ public class GUIPreferences extends PreferenceStoreProxy {
         return store.getBoolean(FOV_SPOTTING_MODE);
     }
 
+    @Deprecated(since = "0.51.0", forRemoval = true)
     public int getMapZoomIndex() {
         return store.getInt(MAP_ZOOM_INDEX);
     }
 
+    @Deprecated(since = "0.51.0", forRemoval = true)
     public boolean getMekSelectorIncludeModel() {
         return store.getBoolean(MEK_SELECTOR_INCLUDE_MODEL);
     }
 
+    @Deprecated(since = "0.51.0", forRemoval = true)
     public boolean getMekSelectorIncludeName() {
         return store.getBoolean(MEK_SELECTOR_INCLUDE_NAME);
     }
 
+    @Deprecated(since = "0.51.0", forRemoval = true)
     public boolean getMekSelectorIncludeTons() {
         return store.getBoolean(MEK_SELECTOR_INCLUDE_TONS);
     }
 
+    @Deprecated(since = "0.51.0", forRemoval = true)
     public boolean getMekSelectorIncludeBV() {
         return store.getBoolean(MEK_SELECTOR_INCLUDE_BV);
     }
 
+    @Deprecated(since = "0.51.0", forRemoval = true)
     public boolean getMekSelectorIncludeYear() {
         return store.getBoolean(MEK_SELECTOR_INCLUDE_YEAR);
     }
 
+    @Deprecated(since = "0.51.0", forRemoval = true)
     public boolean getMekSelectorIncludeLevel() {
         return store.getBoolean(MEK_SELECTOR_INCLUDE_LEVEL);
     }
 
+    @Deprecated(since = "0.51.0", forRemoval = true)
     public boolean getMekSelectorIncludeCost() {
         return store.getBoolean(MEK_SELECTOR_INCLUDE_COST);
     }
 
+    @Deprecated(since = "0.51.0", forRemoval = true)
     public boolean getMekSelectorShowAdvanced() {
         return store.getBoolean(MEK_SELECTOR_SHOW_ADVANCED);
     }
@@ -1350,6 +1432,7 @@ public class GUIPreferences extends PreferenceStoreProxy {
         return store.getInt(RND_ARMY_SPLIT_POS);
     }
 
+    @Deprecated(since = "0.51.0", forRemoval = true)
     public String getMinimapColours() {
         return store.getString(MINI_MAP_COLOURS);
     }
@@ -1440,6 +1523,18 @@ public class GUIPreferences extends PreferenceStoreProxy {
 
     public int getPlayerListPosY() {
         return store.getInt(PLAYER_LIST_POS_Y);
+    }
+
+    public boolean getRoundsInAirEnabled() {
+        return store.getBoolean(ROUNDS_IN_AIR_ENABLED);
+    }
+
+    public int getRoundsInAirPosX() {
+        return store.getInt(ROUNDS_IN_AIR_POS_X);
+    }
+
+    public int getRoundsInAirPosY() {
+        return store.getInt(ROUNDS_IN_AIR_POS_Y);
     }
 
     public int getPlayerListAutoDisplayReportPhase() {
@@ -1570,6 +1665,7 @@ public class GUIPreferences extends PreferenceStoreProxy {
         return store.getInt(RULER_SIZE_WIDTH);
     }
 
+    @Deprecated(since = "0.51.0", forRemoval = true)
     public int getScrollSensitivity() {
         return store.getInt(SCROLL_SENSITIVITY);
     }
@@ -1754,6 +1850,7 @@ public class GUIPreferences extends PreferenceStoreProxy {
         return store.getBoolean(ADVANCED_SAVE_LOBBY_ON_START);
     }
 
+    @Deprecated(since = "0.51.0", forRemoval = true)
     public void setSaveLobbyOnStart(boolean value) {
         store.setValue(ADVANCED_SAVE_LOBBY_ON_START, value);
     }
@@ -1776,6 +1873,10 @@ public class GUIPreferences extends PreferenceStoreProxy {
 
     public boolean getBoardEdRndStart() {
         return store.getBoolean(BOARD_EDIT_RANDOM_DIALOG_START);
+    }
+
+    public boolean getBoardSaveIncludeLicense() {
+        return store.getBoolean(BOARD_SAVE_INCLUDE_LICENSE);
     }
 
     public void setShadowMap(boolean state) {
@@ -1950,6 +2051,7 @@ public class GUIPreferences extends PreferenceStoreProxy {
         store.setValue(UNIT_DISPLAY_LOCATION, ((getInt(UNIT_DISPLAY_LOCATION) + 1) % 2));
     }
 
+    @Deprecated(since = "0.51.0", forRemoval = true)
     public void setUnitDisplayLocation(int i) {
         store.setValue(UNIT_DISPLAY_LOCATION, i);
     }
@@ -2046,6 +2148,7 @@ public class GUIPreferences extends PreferenceStoreProxy {
         store.setValue(SHOW_COORDS, !getBoolean(SHOW_COORDS));
     }
 
+    @Deprecated(since = "0.51.0", forRemoval = true)
     public void setCoordsEnabled(boolean b) {
         store.setValue(SHOW_COORDS, b);
     }
@@ -2058,14 +2161,24 @@ public class GUIPreferences extends PreferenceStoreProxy {
         store.setValue(GAME_SUMMARY_MINIMAP, state);
     }
 
+    public void setGifGameSummaryRecording(GifRecordingMode mode) {
+        store.setValue(GIF_GAME_SUMMARY_RECORDING, mode.name());
+    }
+
+    /**
+     * @deprecated since 0.51.01, use {@link #setGifGameSummaryRecording(GifRecordingMode)}; maps {@code true} to
+     *       {@link GifRecordingMode#ALWAYS} and {@code false} to {@link GifRecordingMode#NEVER}.
+     */
+    @Deprecated(since = "0.51.01", forRemoval = true)
     public void setGifGameSummaryMinimap(boolean state) {
-        store.setValue(GIF_GAME_SUMMARY_MINIMAP, state);
+        setGifGameSummaryRecording(state ? GifRecordingMode.ALWAYS : GifRecordingMode.NEVER);
     }
 
     public void setShowUnitDisplayNamesOnMinimap(boolean state) {
         store.setValue(SHOW_UNIT_DISPLAY_NAMES_ON_MINIMAP, state);
     }
 
+    @Deprecated(since = "0.51.0", forRemoval = true)
     public void setEntityOwnerLabelColor(boolean i) {
         store.setValue(ENTITY_OWNER_LABEL_COLOR, i);
     }
@@ -2134,34 +2247,42 @@ public class GUIPreferences extends PreferenceStoreProxy {
         store.setValue(MAP_ZOOM_INDEX, zoomIndex);
     }
 
+    @Deprecated(since = "0.51.0", forRemoval = true)
     public void setMekSelectorIncludeModel(boolean includeModel) {
         store.setValue(MEK_SELECTOR_INCLUDE_MODEL, includeModel);
     }
 
+    @Deprecated(since = "0.51.0", forRemoval = true)
     public void setMekSelectorIncludeName(boolean includeName) {
         store.setValue(MEK_SELECTOR_INCLUDE_NAME, includeName);
     }
 
+    @Deprecated(since = "0.51.0", forRemoval = true)
     public void setMekSelectorIncludeTons(boolean includeTons) {
         store.setValue(MEK_SELECTOR_INCLUDE_TONS, includeTons);
     }
 
+    @Deprecated(since = "0.51.0", forRemoval = true)
     public void setMekSelectorIncludeBV(boolean includeBV) {
         store.setValue(MEK_SELECTOR_INCLUDE_BV, includeBV);
     }
 
+    @Deprecated(since = "0.51.0", forRemoval = true)
     public void setMekSelectorIncludeYear(boolean includeYear) {
         store.setValue(MEK_SELECTOR_INCLUDE_YEAR, includeYear);
     }
 
+    @Deprecated(since = "0.51.0", forRemoval = true)
     public void setMekSelectorIncludeLevel(boolean includeLevel) {
         store.setValue(MEK_SELECTOR_INCLUDE_LEVEL, includeLevel);
     }
 
+    @Deprecated(since = "0.51.0", forRemoval = true)
     public void setMekSelectorIncludeCost(boolean includeCost) {
         store.setValue(MEK_SELECTOR_INCLUDE_COST, includeCost);
     }
 
+    @Deprecated(since = "0.51.0", forRemoval = true)
     public void setMekSelectorShowAdvanced(boolean showAdvanced) {
         store.setValue(MEK_SELECTOR_SHOW_ADVANCED, showAdvanced);
     }
@@ -2311,6 +2432,7 @@ public class GUIPreferences extends PreferenceStoreProxy {
         store.setValue(MINI_REPORT_LOCATION, ((getInt(MINI_REPORT_LOCATION) + 1) % 2));
     }
 
+    @Deprecated(since = "0.51.0", forRemoval = true)
     public void setMiniReportLocation(int i) {
         store.setValue(MINI_REPORT_LOCATION, i);
     }
@@ -2349,6 +2471,22 @@ public class GUIPreferences extends PreferenceStoreProxy {
 
     public void setPlayerListPosY(int i) {
         store.setValue(PLAYER_LIST_POS_Y, i);
+    }
+
+    public void setRoundsInAirEnabled(boolean b) {
+        store.setValue(ROUNDS_IN_AIR_ENABLED, b);
+    }
+
+    public void toggleRoundsInAirEnabled() {
+        setRoundsInAirEnabled(!getRoundsInAirEnabled());
+    }
+
+    public void setRoundsInAirPosX(int i) {
+        store.setValue(ROUNDS_IN_AIR_POS_X, i);
+    }
+
+    public void setRoundsInAirPosY(int i) {
+        store.setValue(ROUNDS_IN_AIR_POS_Y, i);
     }
 
     public void setPlayerListAutoDisplayReportPhase(int i) {
@@ -2455,6 +2593,7 @@ public class GUIPreferences extends PreferenceStoreProxy {
         store.setValue(RULER_SIZE_WIDTH, i);
     }
 
+    @Deprecated(since = "0.51.0", forRemoval = true)
     public void setScrollSensitivity(int i) {
         store.setValue(SCROLL_SENSITIVITY, i);
     }
@@ -2467,6 +2606,7 @@ public class GUIPreferences extends PreferenceStoreProxy {
         store.setValue(SHOW_SENSOR_RANGE, state);
     }
 
+    @Deprecated(since = "0.51.0", forRemoval = true)
     public void setShowMapHexPopup(boolean state) {
         store.setValue(SHOW_MAP_HEX_POPUP, state);
     }
@@ -2556,10 +2696,12 @@ public class GUIPreferences extends PreferenceStoreProxy {
         store.setValue(WINDOW_SIZE_WIDTH, i);
     }
 
+    @Deprecated(since = "0.51.0", forRemoval = true)
     public void setMekInFirst(boolean b) {
         store.setValue(LOS_MEK_IN_FIRST, b);
     }
 
+    @Deprecated(since = "0.51.0", forRemoval = true)
     public void setMekInSecond(boolean b) {
         store.setValue(LOS_MEK_IN_SECOND, b);
     }
@@ -2620,96 +2762,22 @@ public class GUIPreferences extends PreferenceStoreProxy {
         store.setValue(SBF_SHEET_VALUE_FONT, font);
     }
 
+    @Deprecated(since = "0.51.0", forRemoval = true)
     public int getRATTechLevel() {
         return store.getInt(RAT_TECH_LEVEL);
-    }
-
-    public void setRATTechLevel(int v) {
-        store.setValue(RAT_TECH_LEVEL, v);
-    }
-
-    public String getRATBVMin() {
-        return store.getString(RAT_BV_MIN);
-    }
-
-    public void setRATBVMin(String v) {
-        store.setValue(RAT_BV_MIN, v);
-    }
-
-    public String getRATBVMax() {
-        return store.getString(RAT_BV_MAX);
-    }
-
-    public void setRATBVMax(String v) {
-        store.setValue(RAT_BV_MAX, v);
-    }
-
-    public String getRATNumMeks() {
-        return store.getString(RAT_NUM_MEKS);
-    }
-
-    public void setRATNumMeks(String v) {
-        store.setValue(RAT_NUM_MEKS, v);
-    }
-
-    public String getRATNumVees() {
-        return store.getString(RAT_NUM_VEES);
-    }
-
-    public void setRATNumVees(String v) {
-        store.setValue(RAT_NUM_VEES, v);
-    }
-
-    public String getRATNumBA() {
-        return store.getString(RAT_NUM_BA);
-    }
-
-    public void setRATNumBA(String v) {
-        store.setValue(RAT_NUM_BA, v);
-    }
-
-    public String getRATNumInf() {
-        return store.getString(RAT_NUM_INF);
-    }
-
-    public void setRATNumInf(String v) {
-        store.setValue(RAT_NUM_INF, v);
-    }
-
-    public String getRATYearMin() {
-        return store.getString(RAT_YEAR_MIN);
-    }
-
-    public void setRATYearMin(String v) {
-        store.setValue(RAT_YEAR_MIN, v);
-    }
-
-    public String getRATYearMax() {
-        return store.getString(RAT_YEAR_MAX);
-    }
-
-    public void setRATYearMax(String v) {
-        store.setValue(RAT_YEAR_MAX, v);
-    }
-
-    public boolean getRATPadBV() {
-        return store.getBoolean(RAT_PAD_BV);
-    }
-
-    public void setRATPadBV(boolean v) {
-        store.setValue(RAT_PAD_BV, v);
     }
 
     public String getRATSelectedRAT() {
         return store.getString(RAT_SELECTED_RAT);
     }
 
-    public void setRATSelectedRAT(String v) {
-        store.setValue(RAT_SELECTED_RAT, v);
-    }
-
     public void setBoardEdRndStart(boolean b) {
         store.setValue(BOARD_EDIT_RANDOM_DIALOG_START, b);
+    }
+
+    @Deprecated(since = "0.51.0", forRemoval = true)
+    public void setBoardSaveIncludeLicense(boolean includeLicense) {
+        store.setValue(BOARD_SAVE_INCLUDE_LICENSE, includeLicense);
     }
 
     // region Colours
@@ -2881,6 +2949,22 @@ public class GUIPreferences extends PreferenceStoreProxy {
         store.setValue(BOARD_BUILDING_TEXT_COLOR, getColorString(color));
     }
 
+    public Color getDemolitionChargeColor() {
+        return getColor(BOARD_DEMOLITION_CHARGE_COLOR);
+    }
+
+    public void setDemolitionChargeColor(Color color) {
+        store.setValue(BOARD_DEMOLITION_CHARGE_COLOR, getColorString(color));
+    }
+
+    public boolean getDemolitionChargeHazardOutline() {
+        return store.getBoolean(BOARD_DEMOLITION_CHARGE_HAZARD_OUTLINE);
+    }
+
+    public void setDemolitionChargeHazardOutline(boolean state) {
+        store.setValue(BOARD_DEMOLITION_CHARGE_HAZARD_OUTLINE, state);
+    }
+
     public Color getLowFoliageColor() {
         return getColor(BOARD_LOW_FOLIAGE_COLOR);
     }
@@ -3039,6 +3123,14 @@ public class GUIPreferences extends PreferenceStoreProxy {
 
     public boolean getShowArtilleryDrifts() {
         return getBoolean(SHOW_ARTILLERY_DRIFTS);
+    }
+
+    public void setShowArtilleryDriftArrows(boolean b) {
+        store.setValue(SHOW_ARTILLERY_DRIFT_ARROWS, b);
+    }
+
+    public boolean getShowArtilleryDriftArrows() {
+        return getBoolean(SHOW_ARTILLERY_DRIFT_ARROWS);
     }
 
     public void setShowBombMisses(boolean b) {
@@ -3217,6 +3309,14 @@ public class GUIPreferences extends PreferenceStoreProxy {
         return getBoolean(BOT_COMMANDS_ENABLED);
     }
 
+    /**
+     * @return The bot commands panel location: {@code 0} for a floating dialog, {@code 1} for docked into the top of
+     *       the board area
+     */
+    public int getBotCommandsLocation() {
+        return store.getInt(BOT_COMMANDS_LOCATION);
+    }
+
     public void setReportLinkColor(Color color) {
         store.setValue(MINI_REPORT_COLOR_LINK, getColorString(color));
     }
@@ -3339,6 +3439,14 @@ public class GUIPreferences extends PreferenceStoreProxy {
 
     public void setTraceOverlayScale(int i) {
         store.setValue(TRACE_OVERLAY_SCALE, i);
+    }
+
+    public int getToastDripSeconds() {
+        return getInt(TOAST_DRIP_SECONDS);
+    }
+
+    public void setToastDripSeconds(int i) {
+        store.setValue(TOAST_DRIP_SECONDS, i);
     }
 
     public int getTraceOverlayOriginX() {
@@ -3473,6 +3581,15 @@ public class GUIPreferences extends PreferenceStoreProxy {
         store.setValue(BOT_COMMANDS_ENABLED, state);
     }
 
+    /**
+     * Sets the bot commands panel location.
+     *
+     * @param location {@code 0} for a floating dialog, {@code 1} for docked into the top of the board area
+     */
+    public void setBotCommandsLocation(int location) {
+        store.setValue(BOT_COMMANDS_LOCATION, location);
+    }
+
     public void setBotCommandsPosX(int i) {
         store.setValue(BOT_COMMANDS_POS_X, i);
     }
@@ -3489,18 +3606,22 @@ public class GUIPreferences extends PreferenceStoreProxy {
         return getInt(BOT_COMMANDS_POS_Y);
     }
 
+    @Deprecated(since = "0.51.0", forRemoval = true)
     public void setBotCommandsHeight(int i) {
         store.setValue(BOT_COMMANDS_HEIGHT, i);
     }
 
+    @Deprecated(since = "0.51.0", forRemoval = true)
     public int getBotCommandsHeight() {
         return getInt(BOT_COMMANDS_HEIGHT);
     }
 
+    @Deprecated(since = "0.51.0", forRemoval = true)
     public void setBotCommandsWidth(int i) {
         store.setValue(BOT_COMMANDS_WIDTH, i);
     }
 
+    @Deprecated(since = "0.51.0", forRemoval = true)
     public int getBotCommandsWidth() {
         return getInt(BOT_COMMANDS_WIDTH);
     }
@@ -3532,6 +3653,7 @@ public class GUIPreferences extends PreferenceStoreProxy {
         return getBoolean(SHOW_TRACE_OVERLAY);
     }
 
+    @Deprecated(since = "0.51.0", forRemoval = true)
     public void setShowPlanetaryConditionsOverlay(boolean b) {
         store.setValue(SHOW_PLANETARY_CONDITIONS_OVERLAY, b);
     }
@@ -3815,4 +3937,22 @@ public class GUIPreferences extends PreferenceStoreProxy {
     public void setForceDisplayBtnMisc(boolean value) {store.setValue(FORCE_DISPLAY_BTN_MISC, value);}
 
     public boolean getForceDisplayBtnMisc() {return getBoolean(FORCE_DISPLAY_BTN_MISC);}
+
+    // region Ruler Diagram
+    public boolean getRulerDiagramVisible() {
+        return store.getBoolean(RULER_DIAGRAM_VISIBLE);
+    }
+
+    public void setRulerDiagramVisible(boolean visible) {
+        store.setValue(RULER_DIAGRAM_VISIBLE, visible);
+    }
+
+    public boolean getRulerCompareVisible() {
+        return store.getBoolean(RULER_COMPARE_VISIBLE);
+    }
+
+    public void setRulerCompareVisible(boolean visible) {
+        store.setValue(RULER_COMPARE_VISIBLE, visible);
+    }
+    // endregion Ruler Diagram
 }

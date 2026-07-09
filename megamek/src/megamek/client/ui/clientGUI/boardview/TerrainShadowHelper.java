@@ -59,13 +59,13 @@ import java.util.TreeSet;
 import megamek.client.ui.clientGUI.GUIPreferences;
 import megamek.client.ui.tileset.HexTileset;
 import megamek.client.ui.util.ImageCache;
+import megamek.common.Hex;
+import megamek.common.annotations.Nullable;
 import megamek.common.board.Board;
 import megamek.common.board.BoardType;
 import megamek.common.board.Coords;
-import megamek.common.Hex;
-import megamek.common.units.Terrains;
-import megamek.common.annotations.Nullable;
 import megamek.common.planetaryConditions.PlanetaryConditions;
+import megamek.common.units.Terrains;
 import megamek.common.util.ImageUtil;
 import megamek.logging.MMLogger;
 
@@ -323,7 +323,7 @@ class TerrainShadowHelper {
                     List<Image> supers = boardView.getTilesetManager().supersFor(hex);
 
                     if (!supers.isEmpty()) {
-                        Image lastSuper = createBlurredShadow(supers.get(supers.size() - 1));
+                        Image lastSuper = createBlurredShadow(supers.getLast());
                         if (lastSuper == null) {
                             return null;
                         }
@@ -361,7 +361,7 @@ class TerrainShadowHelper {
                             break;
                         }
 
-                        Image maskB = createBlurredShadow(supers.get(supers.size() - 1));
+                        Image maskB = createBlurredShadow(supers.getLast());
 
                         if (maskB == null) {
                             return null;

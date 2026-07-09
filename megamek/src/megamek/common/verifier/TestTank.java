@@ -71,6 +71,11 @@ public class TestTank extends TestEntity {
      */
     public static int VTOL_MAX_ROTOR_ARMOR = 2;
 
+    /**
+     * The maximum number of bulldozer blades a Combat or Support Vehicle may mount (TM).
+     */
+    public static final int MAX_BULLDOZERS = 2;
+
     private final Tank tank;
 
     public TestTank(Tank tank, TestEntityOption options, String fileString) {
@@ -548,9 +553,9 @@ public class TestTank extends TestEntity {
     }
 
     @Override
-    public boolean correctWeight(StringBuffer buff, boolean showO, boolean showU) {
+    public boolean correctWeight(StringBuffer buff, boolean ignoreOverweight, boolean ignoreUnderweight) {
         if (!(getEntity() instanceof GunEmplacement)) {
-            boolean correct = super.correctWeight(buff, showO, showU);
+            boolean correct = super.correctWeight(buff, ignoreOverweight, ignoreUnderweight);
             double max = maxTonnage(getEntity().getMovementMode(), getEntity().isSuperHeavy());
             if (getEntity().getWeight() > max) {
                 correct = false;
@@ -607,7 +612,7 @@ public class TestTank extends TestEntity {
         buff.append("Intro year: ").append(tank.getYear()).append("\n");
         buff.append(printSource());
         buff.append(printShortMovement());
-        if (correctWeight(buff, true, true)) {
+        if (correctWeight(buff, false, false)) {
             buff.append("Weight: ").append(getWeight()).append(" (").append(
                   calculateWeight()).append(")\n");
         }
@@ -853,7 +858,79 @@ public class TestTank extends TestEntity {
             }
         }
 
+        if (hasIllegalBulldozerCombination(buff)) {
+            illegal = true;
+        }
+
         return illegal;
+    }
+
+    /**
+     * Validates the bulldozer construction limits (TM): a unit may mount at most two bulldozer blades, no more than one
+     * per location, and a location holding a bulldozer may not also hold a backhoe, chainsaw, combine, dual saw,
+     * heavy-duty pile driver, mining drill, rock cutter or wrecking ball.
+     *
+     * @param buff explanation buffer, appended to on any violation
+     *
+     * @return {@code true} if the unit has an illegal bulldozer configuration
+     */
+    private boolean hasIllegalBulldozerCombination(StringBuffer buff) {
+        int bulldozerCount = 0;
+        Map<Integer, Integer> bulldozersByLocation = new HashMap<>();
+        for (Mounted<?> mounted : tank.getMisc()) {
+            if (mounted.getType().hasFlag(MiscTypeFlag.F_BULLDOZER)) {
+                bulldozerCount++;
+                bulldozersByLocation.merge(mounted.getLocation(), 1, Integer::sum);
+            }
+        }
+
+        if (bulldozerCount == 0) {
+            return false;
+        }
+
+        boolean illegal = false;
+
+        if (bulldozerCount > MAX_BULLDOZERS) {
+            buff.append("A unit may mount at most ").append(MAX_BULLDOZERS).append(" bulldozer blades.\n");
+            illegal = true;
+        }
+
+        for (Map.Entry<Integer, Integer> locationCount : bulldozersByLocation.entrySet()) {
+            if (locationCount.getValue() > 1) {
+                buff.append("Only one bulldozer may be mounted per location (")
+                      .append(tank.getLocationName(locationCount.getKey())).append(").\n");
+                illegal = true;
+            }
+            if (hasBulldozerIncompatibleEquipment(locationCount.getKey())) {
+                buff.append("A bulldozer may not share a location with a backhoe, chainsaw, combine, dual saw, "
+                            + "heavy-duty pile driver, mining drill, rock cutter or wrecking ball (")
+                      .append(tank.getLocationName(locationCount.getKey())).append(").\n");
+                illegal = true;
+            }
+        }
+
+        return illegal;
+    }
+
+    /**
+     * @param location a location index on the Tank
+     *
+     * @return {@code true} if the given location mounts industrial equipment that may not share a location with a
+     *       bulldozer (backhoe, chainsaw, combine, dual saw, heavy-duty pile driver, mining drill, rock cutter or
+     *       wrecking ball)
+     */
+    private boolean hasBulldozerIncompatibleEquipment(int location) {
+        for (Mounted<?> mounted : tank.getMisc()) {
+            if ((mounted.getLocation() == location)
+                  && (mounted.getType() instanceof MiscType misc)
+                  && misc.hasFlag(MiscType.F_CLUB)
+                  && misc.hasAnyFlag(MiscTypeFlag.S_BACKHOE, MiscTypeFlag.S_CHAINSAW, MiscTypeFlag.S_COMBINE,
+                  MiscTypeFlag.S_DUAL_SAW, MiscTypeFlag.S_PILE_DRIVER, MiscTypeFlag.S_MINING_DRILL,
+                  MiscTypeFlag.S_ROCK_CUTTER, MiscTypeFlag.S_WRECKING_BALL)) {
+                return true;
+            }
+        }
+        return false;
     }
 
     /**

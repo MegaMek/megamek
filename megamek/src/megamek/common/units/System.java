@@ -39,13 +39,19 @@ public enum System {
     CHASSIS, ENGINE, ARMOR, JUMP_JET, COMMUNICATIONS, TARGETING;
 
     public static @Nullable System parse(String string) {
-        if (null != string) {
-            for (final System system : values()) {
-                if (system.toString().equals(string.toUpperCase())) {
-                    return system;
-                }
+        if (string == null) {
+            return null;
+        }
+        String normalizedInput = normalizeSystemName(string);
+        for (final System system : values()) {
+            if (normalizeSystemName(system.toString()).equals(normalizedInput)) {
+                return system;
             }
         }
         return null;
+    }
+
+    private static String normalizeSystemName(String value) {
+        return value.trim().toUpperCase().replaceAll("[^A-Z0-9]", "");
     }
 }

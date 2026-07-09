@@ -75,6 +75,7 @@ public abstract class AbstractValidationButtonDialog extends AbstractButtonDialo
      * This creates a modal AbstractValidationButtonDialog using the default resource bundle. This is the normal
      * constructor to use for an AbstractValidationButtonDialog.
      */
+    @Deprecated(since = "0.51.0", forRemoval = true)
     protected AbstractValidationButtonDialog(final JFrame frame, final String name, final String title) {
         this(frame, true, name, title);
     }

@@ -58,7 +58,9 @@ import megamek.common.equipment.WeaponType;
 import megamek.common.equipment.enums.MiscTypeFlag;
 import megamek.common.exceptions.LocationFullException;
 import megamek.common.units.Aero;
+import megamek.common.units.ConvInfantry;
 import megamek.common.units.Entity;
+import megamek.common.units.EntityMovementMode;
 import megamek.common.units.EntityWeightClass;
 import megamek.common.units.Infantry;
 import megamek.common.units.Mek;
@@ -360,7 +362,7 @@ public class MekFileParser {
                 if (m.getLinked() == null) {
                     LOGGER.error("Unable to match {} to laser for {}", m.getName(), ent.getShortName());
                 }
-            } else if ((m.getType().hasFlag(MiscType.F_DETACHABLE_WEAPON_PACK))) {
+            } else if (m.is(EquipmentTypeLookup.BA_DWP)) {
                 for (Mounted<?> mWeapon : ent.getTotalWeaponList()) {
                     if (!mWeapon.isDWPMounted()) {
                         continue;
@@ -369,16 +371,12 @@ public class MekFileParser {
                     if (mWeapon.getLinkedBy() != null) {
                         continue;
                     }
-
-                    // check location
+                    // check squad/trooper location (arm/body is not stored in the BLK file)
                     if (mWeapon.getLocation() == m.getLocation()) {
                         m.setLinked(mWeapon);
                         break;
                     }
-                }
-                if (m.getLinked() == null) {
-                    // huh. this shouldn't happen
-                    throw new EntityLoadingException("Unable to match DWP to weapon for " + ent.getShortName());
+                    // A DWP without a weapon is invalid (they're not modular mounts, TO:AUE p.99), but they may load
                 }
             } else if ((m.getType().hasFlag(MiscType.F_AP_MOUNT))) {
                 for (Mounted<?> mWeapon : ent.getTotalWeaponList()) {
@@ -699,23 +697,22 @@ public class MekFileParser {
         ent.addClanCase();
 
         if (ent instanceof BattleArmor) {
-            // now, depending on equipment and chassis, BA might be able to do leg and swarm
+            // now, depending on equipment, chassis, and movement type: BA might be able to do leg and swarm
             // attacks
             if (((BattleArmor) ent).getChassisType() != BattleArmor.CHASSIS_TYPE_QUAD) {
                 int tBasicManipulatorCount = ent.countWorkingMisc(MiscType.F_BASIC_MANIPULATOR);
                 int tArmoredGloveCount = ent.countWorkingMisc(MiscType.F_ARMORED_GLOVE);
                 int tBattleClawCount = ent.countWorkingMisc(MiscType.F_BATTLE_CLAW);
+                boolean isUMUMovement = ent.getMovementMode()
+                      == EntityMovementMode.INF_UMU; // BA that uses UMU equipment can't do swarm attacks
                 boolean hasSwarm, hasSwarmStart, hasSwarmStop, hasLegAttack;
                 hasSwarm = hasSwarmStart = hasSwarmStop = hasLegAttack = false;
                 for (Mounted<?> m : ent.getWeaponList()) {
-                    if (m.getType().getInternalName().equals(Infantry.SWARM_WEAPON_MEK)) {
-                        hasSwarm = true;
-                    } else if (m.getType().getInternalName().equals(Infantry.SWARM_MEK)) {
-                        hasSwarmStart = true;
-                    } else if (m.getType().getInternalName().equals(Infantry.STOP_SWARM)) {
-                        hasSwarmStop = true;
-                    } else if (m.getType().getInternalName().equals(Infantry.LEG_ATTACK)) {
-                        hasLegAttack = true;
+                    switch (m.getType().getInternalName()) {
+                        case Infantry.SWARM_WEAPON_MEK -> hasSwarm = !isUMUMovement;
+                        case Infantry.SWARM_MEK -> hasSwarmStart = !isUMUMovement;
+                        case Infantry.STOP_SWARM -> hasSwarmStop = !isUMUMovement;
+                        case Infantry.LEG_ATTACK -> hasLegAttack = true;
                     }
                 }
                 switch (ent.getWeightClass()) {
@@ -723,26 +720,28 @@ public class MekFileParser {
                     case EntityWeightClass.WEIGHT_LIGHT:
                         if ((tArmoredGloveCount > 1) || (tBasicManipulatorCount > 1) || (tBattleClawCount > 0)) {
                             try {
-                                if (!hasSwarmStart) {
-                                    ent.addEquipment(EquipmentType.get(Infantry.SWARM_MEK),
-                                          BattleArmor.LOC_SQUAD,
-                                          false,
-                                          BattleArmor.MOUNT_LOC_NONE,
-                                          false);
-                                }
-                                if (!hasSwarm) {
-                                    ent.addEquipment(EquipmentType.get(Infantry.SWARM_WEAPON_MEK),
-                                          BattleArmor.LOC_SQUAD,
-                                          false,
-                                          BattleArmor.MOUNT_LOC_NONE,
-                                          false);
-                                }
-                                if (!hasSwarmStop) {
-                                    ent.addEquipment(EquipmentType.get(Infantry.STOP_SWARM),
-                                          BattleArmor.LOC_SQUAD,
-                                          false,
-                                          BattleArmor.MOUNT_LOC_NONE,
-                                          false);
+                                if (!isUMUMovement) {
+                                    if (!hasSwarmStart) {
+                                        ent.addEquipment(EquipmentType.get(Infantry.SWARM_MEK),
+                                              BattleArmor.LOC_SQUAD,
+                                              false,
+                                              BattleArmor.MOUNT_LOC_NONE,
+                                              false);
+                                    }
+                                    if (!hasSwarm) {
+                                        ent.addEquipment(EquipmentType.get(Infantry.SWARM_WEAPON_MEK),
+                                              BattleArmor.LOC_SQUAD,
+                                              false,
+                                              BattleArmor.MOUNT_LOC_NONE,
+                                              false);
+                                    }
+                                    if (!hasSwarmStop) {
+                                        ent.addEquipment(EquipmentType.get(Infantry.STOP_SWARM),
+                                              BattleArmor.LOC_SQUAD,
+                                              false,
+                                              BattleArmor.MOUNT_LOC_NONE,
+                                              false);
+                                    }
                                 }
                                 if (!hasLegAttack) {
                                     ent.addEquipment(EquipmentType.get(Infantry.LEG_ATTACK),
@@ -759,26 +758,28 @@ public class MekFileParser {
                     case EntityWeightClass.WEIGHT_MEDIUM:
                         if ((tBasicManipulatorCount > 1) || (tBattleClawCount > 0)) {
                             try {
-                                if (!hasSwarmStart) {
-                                    ent.addEquipment(EquipmentType.get(Infantry.SWARM_MEK),
-                                          BattleArmor.LOC_SQUAD,
-                                          false,
-                                          BattleArmor.MOUNT_LOC_NONE,
-                                          false);
-                                }
-                                if (!hasSwarm) {
-                                    ent.addEquipment(EquipmentType.get(Infantry.SWARM_WEAPON_MEK),
-                                          BattleArmor.LOC_SQUAD,
-                                          false,
-                                          BattleArmor.MOUNT_LOC_NONE,
-                                          false);
-                                }
-                                if (!hasSwarmStop) {
-                                    ent.addEquipment(EquipmentType.get(Infantry.STOP_SWARM),
-                                          BattleArmor.LOC_SQUAD,
-                                          false,
-                                          BattleArmor.MOUNT_LOC_NONE,
-                                          false);
+                                if (!isUMUMovement) {
+                                    if (!hasSwarmStart) {
+                                        ent.addEquipment(EquipmentType.get(Infantry.SWARM_MEK),
+                                              BattleArmor.LOC_SQUAD,
+                                              false,
+                                              BattleArmor.MOUNT_LOC_NONE,
+                                              false);
+                                    }
+                                    if (!hasSwarm) {
+                                        ent.addEquipment(EquipmentType.get(Infantry.SWARM_WEAPON_MEK),
+                                              BattleArmor.LOC_SQUAD,
+                                              false,
+                                              BattleArmor.MOUNT_LOC_NONE,
+                                              false);
+                                    }
+                                    if (!hasSwarmStop) {
+                                        ent.addEquipment(EquipmentType.get(Infantry.STOP_SWARM),
+                                              BattleArmor.LOC_SQUAD,
+                                              false,
+                                              BattleArmor.MOUNT_LOC_NONE,
+                                              false);
+                                    }
                                 }
                                 if (!hasLegAttack) {
                                     ent.addEquipment(EquipmentType.get(Infantry.LEG_ATTACK),
@@ -800,8 +801,8 @@ public class MekFileParser {
             }
         }
         // physical attacks for conventional infantry
-        else if (ent instanceof Infantry) {
-            TestInfantry.adaptAntiMekAttacks((Infantry) ent);
+        else if (ent instanceof ConvInfantry infantry) {
+            TestInfantry.adaptAntiMekAttacks(infantry);
         }
 
         // Check if it's canon; if it is, mark it as such.

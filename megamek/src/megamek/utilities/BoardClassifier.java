@@ -73,6 +73,7 @@ public class BoardClassifier {
         return boardsByTag;
     }
 
+    @Deprecated(since = "0.51.0", forRemoval = true)
     public void setBoardsByTag(Map<Tags, List<String>> boardsByTag) {
         this.boardsByTag = boardsByTag;
     }
@@ -81,6 +82,7 @@ public class BoardClassifier {
         return boardsByHeight;
     }
 
+    @Deprecated(since = "0.51.0", forRemoval = true)
     public void setBoardsByHeight(Map<Integer, List<String>> boardsByHeight) {
         this.boardsByHeight = boardsByHeight;
     }
@@ -89,6 +91,7 @@ public class BoardClassifier {
         return boardsByWidth;
     }
 
+    @Deprecated(since = "0.51.0", forRemoval = true)
     public void setBoardsByWidth(Map<Integer, List<String>> boardsByWidth) {
         this.boardsByWidth = boardsByWidth;
     }
@@ -109,6 +112,7 @@ public class BoardClassifier {
         return boardHeight;
     }
 
+    @Deprecated(since = "0.51.0", forRemoval = true)
     public void setBoardPaths(Map<String, String> boardPaths) {
         this.boardPaths = boardPaths;
     }

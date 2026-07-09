@@ -39,6 +39,7 @@ import java.util.Vector;
 
 import megamek.MMConstants;
 import megamek.common.CriticalSlot;
+import megamek.common.EMPEffectFormatter;
 import megamek.common.Report;
 import megamek.common.ToHitData;
 import megamek.common.actions.WeaponAttackAction;
@@ -192,32 +193,42 @@ public class TSEMPHandler extends EnergyWeaponHandler {
         // Ugly code to set the target rolls
         int shutdownTarget = 13;
         int interferenceTarget = 13;
-        if (entityTarget instanceof Mek) {
-            if (((Mek) entityTarget).isIndustrial()) {
+        switch (entityTarget) {
+            case Mek mek -> {
+                if (mek.isIndustrial()) {
+                    interferenceTarget = 6;
+                    shutdownTarget = 8;
+                } else {
+                    interferenceTarget = 7;
+                    shutdownTarget = 9;
+                }
+            }
+            case SupportTank ignored -> {
+                interferenceTarget = 5;
+                shutdownTarget = 7;
+            }
+            case Tank ignored -> {
                 interferenceTarget = 6;
                 shutdownTarget = 8;
-            } else {
+            }
+            case BattleArmor ignored -> {
+                interferenceTarget = 6;
+                shutdownTarget = 8;
+            }
+            case ProtoMek ignored -> {
+                interferenceTarget = 6;
+                shutdownTarget = 9;
+            }
+            case ConvFighter ignored -> {
+                interferenceTarget = 6;
+                shutdownTarget = 8;
+            }
+            case Aero ignored -> {
                 interferenceTarget = 7;
                 shutdownTarget = 9;
             }
-        } else if (entityTarget instanceof SupportTank) {
-            interferenceTarget = 5;
-            shutdownTarget = 7;
-        } else if (entityTarget instanceof Tank) {
-            interferenceTarget = 6;
-            shutdownTarget = 8;
-        } else if (entityTarget instanceof BattleArmor) {
-            interferenceTarget = 6;
-            shutdownTarget = 8;
-        } else if (entityTarget instanceof ProtoMek) {
-            interferenceTarget = 6;
-            shutdownTarget = 9;
-        } else if (entityTarget instanceof ConvFighter) {
-            interferenceTarget = 6;
-            shutdownTarget = 8;
-        } else if (entityTarget instanceof Aero) {
-            interferenceTarget = 7;
-            shutdownTarget = 9;
+            default -> {
+            }
         }
 
         // Create the effect report
@@ -236,11 +247,11 @@ public class TSEMPHandler extends EnergyWeaponHandler {
         r.subject = entityTarget.getId();
         String tsempEffect;
 
-        // Determine the effect
+        // Determine the effect - use shared formatter for consistent display
         Report baShutdownReport = null;
         if (rollValue >= shutdownTarget) {
             entityTarget.setTsempEffect(MMConstants.TSEMP_EFFECT_SHUTDOWN);
-            tsempEffect = "<font color='C00000'><b>Shutdown!</b></font>";
+            tsempEffect = EMPEffectFormatter.formatEffect(MMConstants.TSEMP_EFFECT_SHUTDOWN);
             if (entityTarget instanceof BattleArmor) {
                 baShutdownReport = new Report(3706);
                 baShutdownReport.addDesc(entityTarget);
@@ -261,10 +272,10 @@ public class TSEMPHandler extends EnergyWeaponHandler {
             if (targetEffect != MMConstants.TSEMP_EFFECT_SHUTDOWN) {
                 entityTarget.setTsempEffect(MMConstants.TSEMP_EFFECT_INTERFERENCE);
             }
-            tsempEffect = "<b>Interference!</b>";
+            tsempEffect = EMPEffectFormatter.formatEffect(MMConstants.TSEMP_EFFECT_INTERFERENCE);
         } else {
             // No effect roll
-            tsempEffect = "No Effect!";
+            tsempEffect = EMPEffectFormatter.formatEffect(MMConstants.TSEMP_EFFECT_NONE);
         }
         r.add(tsempEffect);
         vPhaseReport.add(r);

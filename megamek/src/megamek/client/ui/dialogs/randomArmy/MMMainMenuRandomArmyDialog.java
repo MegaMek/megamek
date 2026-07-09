@@ -33,11 +33,13 @@
 
 package megamek.client.ui.dialogs.randomArmy;
 
-import megamek.client.ui.Messages;
-import megamek.common.loaders.MekSummary;
-import megamek.common.units.Entity;
-import megamek.common.units.EntityListFile;
+import static megamek.client.ui.clientGUI.ClientGUI.CG_FILEPATH_MUL;
 
+import java.awt.FlowLayout;
+import java.awt.event.ActionEvent;
+import java.io.File;
+import java.util.ArrayList;
+import java.util.List;
 import javax.swing.AbstractAction;
 import javax.swing.Action;
 import javax.swing.JButton;
@@ -47,13 +49,11 @@ import javax.swing.JFrame;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.filechooser.FileNameExtensionFilter;
-import java.awt.FlowLayout;
-import java.awt.event.ActionEvent;
-import java.io.File;
-import java.util.ArrayList;
-import java.util.List;
 
-import static megamek.client.ui.clientGUI.ClientGUI.CG_FILEPATH_MUL;
+import megamek.client.ui.Messages;
+import megamek.common.loaders.MekSummary;
+import megamek.common.units.Entity;
+import megamek.common.units.EntityListFile;
 
 /**
  * This Random Army Dialog is shown in MM's main menu. It allows generating armies and saving the chosen units to a MUL
@@ -85,9 +85,9 @@ public class MMMainMenuRandomArmyDialog extends AbstractRandomArmyDialog {
         public void actionPerformed(ActionEvent e) {
             List<Entity> unitList;
             if (tabbedPane.getSelectedIndex() == TAB_FORCE_GENERATOR) {
-                unitList = m_pForceGen.getChosenUnits();
+                unitList = forceGeneratorPanel.getChosenUnits();
             } else {
-                unitList = armyModel.getAllUnits().stream().map(MekSummary::loadEntity).toList();
+                unitList = chosenUnitsModel.getAllUnits().stream().map(MekSummary::loadEntity).toList();
             }
             if (unitList == null || unitList.isEmpty()) {
                 return;

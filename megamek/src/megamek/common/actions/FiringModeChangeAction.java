@@ -40,6 +40,7 @@ import java.io.Serial;
 /**
  * Represents intention to change a fire mode of a weapon.
  */
+@Deprecated(since = "0.51.0", forRemoval = true)
 public class FiringModeChangeAction extends AbstractEntityAction {
     /**
      *

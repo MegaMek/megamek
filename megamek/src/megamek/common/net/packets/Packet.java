@@ -52,7 +52,9 @@ import megamek.common.Player;
 import megamek.common.Report;
 import megamek.common.SpecialHexDisplay;
 import megamek.common.TagInfo;
+import megamek.common.TemporaryECMField;
 import megamek.common.actions.ArtilleryAttackAction;
+import megamek.common.actions.EnemyArtilleryInbound;
 import megamek.common.actions.EntityAction;
 import megamek.common.actions.WeaponAttackAction;
 import megamek.common.annotations.Nullable;
@@ -92,9 +94,7 @@ public record Packet(PacketCommand command, Object... data) implements Serializa
     /**
      * Creates a <code>Packet</code> with a command and an array of objects
      */
-    public Packet(PacketCommand command, Object... data) {
-        this.command = command;
-        this.data = data;
+    public Packet {
     }
 
     /**
@@ -296,6 +296,25 @@ public record Packet(PacketCommand command, Object... data) implements Serializa
     /**
      * @param index the index of the desired object
      *
+     * @return the {@link EnemyArtilleryInbound} entries at the specified index, or an empty list if the object is
+     *       absent (e.g. an older packet without this field) or not a list
+     */
+    public List<EnemyArtilleryInbound> getEnemyArtilleryInbound(int index) {
+        Object object = getObject(index);
+        List<EnemyArtilleryInbound> result = new ArrayList<>();
+        if (object instanceof List<?> list) {
+            for (Object item : list) {
+                if (item instanceof EnemyArtilleryInbound value) {
+                    result.add(value);
+                }
+            }
+        }
+        return result;
+    }
+
+    /**
+     * @param index the index of the desired object
+     *
      * @return a Set of {@link BoardDimensions}'s value of the object at the specified index
      */
     public Set<BoardDimensions> getBoardDimensionsSet(int index) throws InvalidPacketDataException {
@@ -396,6 +415,27 @@ public record Packet(PacketCommand command, Object... data) implements Serializa
         }
 
         throw new InvalidPacketDataException("HashSet", object, index);
+    }
+
+    /**
+     * @param index the index of the desired object
+     *
+     * @return a HashMap of {@link BoardLocation} to Integer at the specified index
+     */
+    public HashMap<BoardLocation, Integer> getBoardLocationIntegerMap(int index) throws InvalidPacketDataException {
+        Object object = getObject(index);
+
+        if (object instanceof HashMap<?, ?> map) {
+            HashMap<BoardLocation, Integer> result = new HashMap<>();
+            for (Map.Entry<?, ?> entry : map.entrySet()) {
+                if (entry.getKey() instanceof BoardLocation loc && entry.getValue() instanceof Integer val) {
+                    result.put(loc, val);
+                }
+            }
+            return result;
+        }
+
+        throw new InvalidPacketDataException("HashMap<BoardLocation, Integer>", object, index);
     }
 
     /**
@@ -1043,6 +1083,21 @@ public record Packet(PacketCommand command, Object... data) implements Serializa
         }
 
         throw new InvalidPacketDataException("SmokeCloud", object, index);
+    }
+
+    /**
+     * @param index the index of the desired object
+     *
+     * @return the {@link TemporaryECMField} value of the object at the specified index
+     */
+    public @Nullable TemporaryECMField getTemporaryECMField(int index) throws InvalidPacketDataException {
+        Object object = getObject(index);
+
+        if (object instanceof TemporaryECMField field) {
+            return field;
+        }
+
+        throw new InvalidPacketDataException("TemporaryECMField", object, index);
     }
 
     /**

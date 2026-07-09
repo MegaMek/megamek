@@ -44,8 +44,8 @@ import megamek.common.enums.ProstheticEnhancementType;
 import megamek.common.options.IOption;
 import megamek.common.options.IOptionGroup;
 import megamek.common.options.OptionsConstants;
+import megamek.common.units.ConvInfantry;
 import megamek.common.units.Entity;
-import megamek.common.units.Infantry;
 
 /** Provides static helper functions for creating entity and crew tooltips. */
 public final class TipUtil {
@@ -60,6 +60,7 @@ public final class TipUtil {
      * of e.g. e -&gt; crew.countOptions(e) or e -&gt; entity.countQuirks(e). A namer function for the group names must
      * be supplied, e.g. (e) -&gt; weapon.getDesc().
      */
+    @Deprecated(since = "0.51.0", forRemoval = true)
     public static List<String> getOptionListArray(Enumeration<IOptionGroup> optGroups,
           Function<String, Integer> counter, Function<IOptionGroup, String> namer) {
 
@@ -109,6 +110,7 @@ public final class TipUtil {
      * @param counter   function to count options by name
      * @param detailed  if true, returns full option list; if false, returns short summary
      * @param entity    optional entity context for enhanced display (may be null)
+     *
      * @return HTML formatted string listing the options
      */
     public static String getOptionList(Enumeration<IOptionGroup> optGroups,
@@ -183,7 +185,7 @@ public final class TipUtil {
      * @return String like "Laser x2, Grappler x1" or empty string if not applicable
      */
     private static String getRegularProstheticDetails(Entity entity) {
-        if (!(entity instanceof Infantry infantry)) {
+        if (!(entity instanceof ConvInfantry infantry)) {
             return "";
         }
 
@@ -193,7 +195,7 @@ public final class TipUtil {
             details.append(type1.getDisplayName()).append(" x").append(infantry.getProstheticEnhancement1Count());
         }
         if (infantry.hasProstheticEnhancement2()) {
-            if (details.length() > 0) {
+            if (!details.isEmpty()) {
                 details.append(", ");
             }
             ProstheticEnhancementType type2 = infantry.getProstheticEnhancement2();
@@ -210,7 +212,7 @@ public final class TipUtil {
      * @return String like "Laser x2, Grappler x2" or empty string if not applicable
      */
     private static String getExtraneousLimbDetails(Entity entity) {
-        if (!(entity instanceof Infantry infantry)) {
+        if (!(entity instanceof ConvInfantry infantry)) {
             return "";
         }
 
@@ -220,7 +222,7 @@ public final class TipUtil {
             details.append(pair1Type.getDisplayName()).append(" x2");
         }
         if (infantry.hasExtraneousPair2()) {
-            if (details.length() > 0) {
+            if (!details.isEmpty()) {
                 details.append(", ");
             }
             ProstheticEnhancementType pair2Type = infantry.getExtraneousPair2();
@@ -237,6 +239,7 @@ public final class TipUtil {
      *
      * @return String like "Laser x2, Grappler x1; Extra: Blade x2" or empty string if not applicable
      */
+    @Deprecated(since = "0.51.0", forRemoval = true)
     private static String getProstheticEnhancementDetails(Entity entity) {
         String regular = getRegularProstheticDetails(entity);
         String extraneous = getExtraneousLimbDetails(entity);

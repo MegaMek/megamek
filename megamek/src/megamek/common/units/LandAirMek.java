@@ -190,20 +190,52 @@ public class LandAirMek extends BipedMek implements IAero, IBomber {
         lamType = inLAMType;
 
         setTechLevel(TechConstants.T_IS_ADVANCED);
+        // Head avionics never conflicts with engine/gyro, safe to place here.
         setCritical(Mek.LOC_HEAD, 3, new CriticalSlot(CriticalSlot.TYPE_SYSTEM, LAM_AVIONICS));
-        setCritical(Mek.LOC_LEFT_TORSO, 1, new CriticalSlot(CriticalSlot.TYPE_SYSTEM, LAM_AVIONICS));
-        setCritical(Mek.LOC_RIGHT_TORSO, 1, new CriticalSlot(CriticalSlot.TYPE_SYSTEM, LAM_AVIONICS));
-        setCritical(Mek.LOC_LEFT_TORSO, 0, new CriticalSlot(CriticalSlot.TYPE_SYSTEM, LAM_LANDING_GEAR));
-        setCritical(Mek.LOC_RIGHT_TORSO, 0, new CriticalSlot(CriticalSlot.TYPE_SYSTEM, LAM_LANDING_GEAR));
-        for (int i = 0; i < getNumberOfCriticalSlots(Mek.LOC_CENTER_TORSO); i++) {
-            if (null == getCritical(Mek.LOC_CENTER_TORSO, i)) {
-                setCritical(Mek.LOC_CENTER_TORSO, i, new CriticalSlot(CriticalSlot.TYPE_SYSTEM, LAM_LANDING_GEAR));
-                break;
-            }
-        }
+        // LT/RT/CT landing gear and avionics are placed by addEngineCrits() after
+        // engine crits exist, so their positions adapt to the engine type.
 
         previousMovementMode = movementMode;
         setCrew(new LAMPilot(this));
+    }
+
+    @Override
+    public void clearEngineCrits() {
+        // Clear LAM crits whose positions depend on the engine layout
+        for (int loc : new int[] { LOC_LEFT_TORSO, LOC_RIGHT_TORSO, LOC_CENTER_TORSO }) {
+            removeCriticalSlots(loc, new CriticalSlot(CriticalSlot.TYPE_SYSTEM, LAM_LANDING_GEAR));
+            removeCriticalSlots(loc, new CriticalSlot(CriticalSlot.TYPE_SYSTEM, LAM_AVIONICS));
+        }
+        super.clearEngineCrits();
+    }
+
+    @Override
+    public void addEngineCrits() {
+        super.addEngineCrits();
+        // Place LAM crits after engine crits so they don't conflict
+        for (int loc : new int[] { LOC_LEFT_TORSO, LOC_RIGHT_TORSO }) {
+            boolean lgPlaced = false;
+            boolean avPlaced = false;
+            for (int i = 0; i < getNumberOfCriticalSlots(loc); i++) {
+                if (getCritical(loc, i) == null) {
+                    if (!lgPlaced) {
+                        setCritical(loc, i, new CriticalSlot(CriticalSlot.TYPE_SYSTEM, LAM_LANDING_GEAR));
+                        lgPlaced = true;
+                    } else if (!avPlaced) {
+                        setCritical(loc, i, new CriticalSlot(CriticalSlot.TYPE_SYSTEM, LAM_AVIONICS));
+                        avPlaced = true;
+                        break;
+                    }
+                }
+            }
+        }
+        // CT: Landing Gear in first available slot (after engine/gyro)
+        for (int i = 0; i < getNumberOfCriticalSlots(LOC_CENTER_TORSO); i++) {
+            if (getCritical(LOC_CENTER_TORSO, i) == null) {
+                setCritical(LOC_CENTER_TORSO, i, new CriticalSlot(CriticalSlot.TYPE_SYSTEM, LAM_LANDING_GEAR));
+                break;
+            }
+        }
     }
 
     @Override
@@ -737,15 +769,19 @@ public class LandAirMek extends BipedMek implements IAero, IBomber {
         }
 
         // VDNI bonus? (BVDNI does NOT get piloting bonus due to "neuro-lag" per IO pg 71)
-        if (hasAbility(OptionsConstants.MD_VDNI) && !hasAbility(OptionsConstants.MD_BVDNI)) {
-            roll.addModifier(-1, "VDNI");
-        } else if (hasAbility(OptionsConstants.MD_BVDNI)) {
-            roll.addModifier(0, "BVDNI (no piloting bonus)");
+        // When tracking neural interface hardware, require DNI cockpit mod for benefits
+        if (hasActiveDNI()) {
+            if (hasAbility(OptionsConstants.MD_VDNI) && !hasAbility(OptionsConstants.MD_BVDNI)) {
+                roll.addModifier(-1, "VDNI");
+            } else if (hasAbility(OptionsConstants.MD_BVDNI)) {
+                roll.addModifier(0, "BVDNI (no piloting bonus)");
+            }
         }
 
         // Small/torso-mounted cockpit penalty?
+        // BVDNI negates small cockpit penalty, requires active DNI when tracking
         if (getCockpitType() == Mek.COCKPIT_SMALL) {
-            if (hasAbility(OptionsConstants.MD_BVDNI)) {
+            if (hasActiveDNI() && hasAbility(OptionsConstants.MD_BVDNI)) {
                 roll.addModifier(0, "Small Cockpit (negated by BVDNI)");
             } else if (!hasAbility(OptionsConstants.UNOFFICIAL_SMALL_PILOT)) {
                 roll.addModifier(1, "Small Cockpit");
@@ -801,6 +837,10 @@ public class LandAirMek extends BipedMek implements IAero, IBomber {
     public PilotingRollData checkAirMekLanding() {
         // Base piloting skill
         PilotingRollData roll = new PilotingRollData(getId(), getCrew().getPiloting(), "Base piloting skill");
+
+        if ((hasAbility(OptionsConstants.PILOT_WIND_WALKER)) && PilotSPAHelper.isWindWalkerValid(this)) {
+            roll.addModifier(-1, "Wind Walker SPA");
+        }
 
         addEntityBonuses(roll);
 

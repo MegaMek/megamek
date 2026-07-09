@@ -102,8 +102,9 @@ public class ArtilleryBayWeaponIndirectHomingHandler extends ArtilleryBayWeaponI
         if (phase.isTargeting()) {
             if (!handledAmmoAndReport) {
                 addHeat();
-                // Report the firing itself
-                Report report = new Report(3121);
+                // Report the firing itself - name it counter-battery when the target is an off-board enemy battery.
+                boolean counterBattery = (target != null) && target.isOffBoard();
+                Report report = new Report(counterBattery ? 3127 : 3121);
                 report.indent();
                 report.newlines = 0;
                 report.subject = subjectId;
@@ -355,7 +356,7 @@ public class ArtilleryBayWeaponIndirectHomingHandler extends ArtilleryBayWeaponI
                     hit.setAttackerId(getAttackerId());
                     // BA gets damage to all troopers
                     if (entity instanceof BattleArmor ba) {
-                        for (int loc = 1; loc <= ba.getTroopers(); loc++) {
+                        for (int loc = 1; loc <= ba.getSquadSize(); loc++) {
                             hit.setLocation(loc);
                             vPhaseReport.addAll(gameManager.damageEntity(entity, hit,
                                   ratedDamage, false, DamageType.NONE, false,
@@ -445,7 +446,7 @@ public class ArtilleryBayWeaponIndirectHomingHandler extends ArtilleryBayWeaponI
                   "no tag in 8 hex radius of target hex");
         } else if (allowed.size() == 1) {
             // Just use target 0...
-            newTarget = allowed.get(0).target;
+            newTarget = allowed.getFirst().target;
             target = newTarget;
             aaa.setTargetId(target.getId());
             aaa.setTargetType(target.getTargetType());

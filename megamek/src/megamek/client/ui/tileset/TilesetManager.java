@@ -54,7 +54,9 @@ import megamek.client.ui.clientGUI.boardview.BoardView;
 import megamek.client.ui.tileset.MekTileset.MekEntry;
 import megamek.client.ui.util.EntityWreckHelper;
 import megamek.client.ui.util.RotateFilter;
-import megamek.common.*;
+import megamek.common.Configuration;
+import megamek.common.Hex;
+import megamek.common.Player;
 import megamek.common.annotations.Nullable;
 import megamek.common.equipment.Minefield;
 import megamek.common.game.Game;
@@ -511,6 +513,7 @@ public class TilesetManager implements IPreferenceChangeListener {
      *
      * @param hex the hex to load
      */
+    @Deprecated(since = "0.51.0", forRemoval = true)
     private synchronized void loadHexImage(Hex hex) {
         hexTileset.assignMatch(hex);
     }

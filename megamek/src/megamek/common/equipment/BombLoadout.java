@@ -123,6 +123,7 @@ public class BombLoadout extends HashMap<BombTypeEnum, Integer> {
      *
      * @return true if loadout contains any ground-capable bombs
      */
+    @Deprecated(since = "0.51.0", forRemoval = true)
     public boolean canGroundBomb() {
         return keySet().stream().anyMatch(BombTypeEnum::canGroundBomb);
     }
@@ -132,6 +133,7 @@ public class BombLoadout extends HashMap<BombTypeEnum, Integer> {
      *
      * @return true if loadout contains any space-capable bombs
      */
+    @Deprecated(since = "0.51.0", forRemoval = true)
     public boolean canSpaceBomb() {
         return keySet().stream().anyMatch(BombTypeEnum::canSpaceBomb);
     }

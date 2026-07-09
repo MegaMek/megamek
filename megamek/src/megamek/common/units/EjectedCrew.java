@@ -51,7 +51,7 @@ import megamek.logging.MMLogger;
  *
  * @author Klaus Mittag
  */
-public class EjectedCrew extends Infantry {
+public class EjectedCrew extends ConvInfantry {
     private static final MMLogger logger = MMLogger.create(EjectedCrew.class);
 
     protected int originalRideId;
@@ -87,7 +87,7 @@ public class EjectedCrew extends Infantry {
 
         // Finish initializing this unit.
         setOwner(originalRide.getOwner());
-        initializeInternal(originalRide.getCrew().getSize(), Infantry.LOC_INFANTRY);
+        initializeInternal(originalRide.getCrew().getSize(), LOC_INFANTRY);
         if (originalRide.getCrew().getSlotCount() > 1) {
             int dead = 0;
             for (int i = 0; i < originalRide.getCrew().getSlotCount(); i++) {
@@ -95,7 +95,7 @@ public class EjectedCrew extends Infantry {
                     dead++;
                 }
             }
-            setInternal(originalRide.getCrew().getSize() - dead, Infantry.LOC_INFANTRY);
+            setInternal(originalRide.getCrew().getSize() - dead, LOC_INFANTRY);
         }
         setOriginalRideId(originalRide.getId());
         setOriginalRideExternalId(originalRide.getExternalIdAsString());
@@ -104,8 +104,7 @@ public class EjectedCrew extends Infantry {
               && (!(this instanceof MekWarrior)
               || tmpGame.getOptions().booleanOption(OptionsConstants.ADVANCED_ARMED_MEKWARRIORS))) {
             try {
-                addEquipment(EquipmentType.get(EquipmentTypeLookup.INFANTRY_ASSAULT_RIFLE),
-                      Infantry.LOC_INFANTRY);
+                addEquipment(EquipmentType.get(EquipmentTypeLookup.INFANTRY_ASSAULT_RIFLE), LOC_INFANTRY);
                 setPrimaryWeapon((InfantryWeapon) InfantryWeapon.get(EquipmentTypeLookup.INFANTRY_ASSAULT_RIFLE));
             } catch (Exception ex) {
                 logger.error("", ex);
@@ -129,7 +128,7 @@ public class EjectedCrew extends Infantry {
         // Generate the display name, then add the original ride's name.
         setDisplayName(getDisplayName() + " of " + originalRide.getDisplayName());
 
-        initializeInternal(escapedThisRound, Infantry.LOC_INFANTRY);
+        initializeInternal(escapedThisRound, LOC_INFANTRY);
 
         setOriginalRideId(originalRide.getId());
         setOriginalRideExternalId(originalRide.getExternalIdAsString());
@@ -146,7 +145,7 @@ public class EjectedCrew extends Infantry {
         // assign some arbitrarily large number here for the internal so that locations
         // will get
         // the actual current number of trooper correct.
-        initializeInternal(Integer.MAX_VALUE, Infantry.LOC_INFANTRY);
+        initializeInternal(Integer.MAX_VALUE, LOC_INFANTRY);
     }
 
     public EjectedCrew(Crew crew, Player owner, Game game) {
@@ -157,7 +156,7 @@ public class EjectedCrew extends Infantry {
 
         // Finish initializing this unit.
         setOwner(owner);
-        initializeInternal(crew.getSize(), Infantry.LOC_INFANTRY);
+        initializeInternal(crew.getSize(), LOC_INFANTRY);
         if (crew.getSlotCount() > 1) {
             int dead = 0;
             for (int i = 0; i < crew.getSlotCount(); i++) {
@@ -165,12 +164,12 @@ public class EjectedCrew extends Infantry {
                     dead++;
                 }
             }
-            setInternal(crew.getSize() - dead, Infantry.LOC_INFANTRY);
+            setInternal(crew.getSize() - dead, LOC_INFANTRY);
         }
         if (game != null && (!(this instanceof MekWarrior)
               || gameOptions().booleanOption(OptionsConstants.ADVANCED_ARMED_MEKWARRIORS))) {
             try {
-                addEquipment(EquipmentType.get(EquipmentTypeLookup.INFANTRY_ASSAULT_RIFLE), Infantry.LOC_INFANTRY);
+                addEquipment(EquipmentType.get(EquipmentTypeLookup.INFANTRY_ASSAULT_RIFLE), LOC_INFANTRY);
                 setPrimaryWeapon((InfantryWeapon) InfantryWeapon.get(EquipmentTypeLookup.INFANTRY_ASSAULT_RIFLE));
             } catch (Exception ex) {
                 logger.error("", ex);
@@ -195,10 +194,12 @@ public class EjectedCrew extends Infantry {
     /**
      * @return the <code>int</code> external id of this MW's original ride
      */
+    @Deprecated(since = "0.51.0", forRemoval = true)
     public int getOriginalRideExternalId() {
         return Integer.parseInt(originalRideExternalId);
     }
 
+    @Deprecated(since = "0.51.0", forRemoval = true)
     public String getOriginalRideExternalIdAsString() {
         return originalRideExternalId;
     }
@@ -210,6 +211,7 @@ public class EjectedCrew extends Infantry {
         this.originalRideExternalId = originalRideExternalId;
     }
 
+    @Deprecated(since = "0.51.0", forRemoval = true)
     public void setOriginalRideExternalId(int originalRideExternalId) {
         this.originalRideExternalId = Integer.toString(originalRideExternalId);
     }
@@ -226,6 +228,7 @@ public class EjectedCrew extends Infantry {
      * Convenience method to return all crew from other craft aboard from the above Map
      *
      */
+    @Deprecated(since = "0.51.0", forRemoval = true)
     public int getTotalOtherCrew() {
         int toReturn = 0;
         for (String name : getNOtherCrew().keySet()) {
@@ -260,6 +263,7 @@ public class EjectedCrew extends Infantry {
      * Convenience method to return all passengers aboard from the above Map
      *
      */
+    @Deprecated(since = "0.51.0", forRemoval = true)
     public int getTotalPassengers() {
         int toReturn = 0;
         for (String name : getPassengers().keySet()) {
@@ -281,19 +285,6 @@ public class EjectedCrew extends Infantry {
             passengers.put(id, n);
         }
     }
-
-    /*
-     * @Override
-     * Taharqa: I don't think this should be here and I can't find a place where it
-     * is
-     * actually necessary. If you set this crew as unejected it will carry on to the
-     * original unit
-     * and the after battle MULs and processing will be wrong
-     * public void newRound(int number) {
-     * super.newRound(number);
-     * getCrew().setEjected(false);
-     * }
-     */
 
     /**
      * Because they deploy in their vehicles rather than as infantry, crews (including MekWarriors) never count as

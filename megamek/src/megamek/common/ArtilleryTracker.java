@@ -85,6 +85,7 @@ public class ArtilleryTracker implements Serializable {
      *
      * @param mounted existing weapon
      */
+    @Deprecated(since = "0.51.0", forRemoval = true)
     public void removeWeapon(Mounted<?> mounted) {
         weapons.remove(mounted);
     }
@@ -112,10 +113,12 @@ public class ArtilleryTracker implements Serializable {
         }
     }
 
+    @Deprecated(since = "0.51.0", forRemoval = true)
     public boolean weaponInList(Mounted<?> mounted) {
         return (weapons.containsKey(mounted));
     }
 
+    @Deprecated(since = "0.51.0", forRemoval = true)
     public boolean ammoTypeInList(AmmoTypeEnum ammoType) {
         for (Mounted<?> mounted : weapons.keySet()) {
             if (((WeaponType) mounted.getType()).getAmmoType() == ammoType) {

@@ -90,7 +90,7 @@ public class SoundManager implements AudioService {
         switch (id) {
             case BING_CHAT:
                 if (!GUIP.getSoundMuteChat()) {
-                    sound = sounds.get(0);
+                    sound = sounds.getFirst();
                 }
                 break;
             case BING_MY_TURN:

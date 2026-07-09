@@ -285,6 +285,7 @@ public class PhysicalInfo {
     /**
      * Current bot code requires physical attacks to be given as 'physical option'. This does the necessary conversion
      */
+    @Deprecated(since = "0.51.0", forRemoval = true)
     public PhysicalOption getAsPhysicalOption() {
         int optionInteger = 0;
         if (getAttackType() == PhysicalAttackType.RIGHT_PUNCH) {
@@ -403,6 +404,7 @@ public class PhysicalInfo {
         this.utility = utility;
     }
 
+    @Deprecated(since = "0.51.0", forRemoval = true)
     String getDebugDescription() {
         return getAttackType().toString() + " P. Hit: " + LOG_PER.format(getProbabilityToHit())
               + ", Max Dam: " + LOG_DEC.format(getMaxDamage())

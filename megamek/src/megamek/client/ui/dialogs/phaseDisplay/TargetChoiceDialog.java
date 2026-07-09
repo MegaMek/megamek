@@ -41,14 +41,14 @@ import megamek.client.ui.clientGUI.ClientGUI;
 import megamek.client.ui.clientGUI.tooltip.UnitToolTip;
 import megamek.client.ui.enums.DialogResult;
 import megamek.client.ui.util.UIUtil;
-import megamek.common.units.Entity;
-import megamek.common.equipment.INarcPod;
-import megamek.common.rolls.TargetRoll;
-import megamek.common.units.Targetable;
 import megamek.common.ToHitData;
 import megamek.common.actions.BrushOffAttackAction;
 import megamek.common.actions.WeaponAttackAction;
 import megamek.common.annotations.Nullable;
+import megamek.common.equipment.INarcPod;
+import megamek.common.rolls.TargetRoll;
+import megamek.common.units.Entity;
+import megamek.common.units.Targetable;
 
 /**
  * A modal dialog for choosing one or more Targetable objects. Can show stats in brief or in detail.
@@ -161,6 +161,7 @@ public class TargetChoiceDialog extends AbstractChoiceDialog<Targetable> {
      *
      * @return chosen Targetables or empty list if none chosen
      */
+    @Deprecated(since = "0.51.0", forRemoval = true)
     public static @Nullable List<Targetable> showMultiChoiceDialog(JFrame frame, String title, String message,
           @Nullable List<Targetable> targets,
           ClientGUI clientGUI, Entity firingEntity) {

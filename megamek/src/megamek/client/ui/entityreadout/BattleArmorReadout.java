@@ -48,7 +48,6 @@ import megamek.common.equipment.Mounted;
 import megamek.common.equipment.WeaponMounted;
 import megamek.common.equipment.WeaponTypeFlag;
 import megamek.common.units.Entity;
-import megamek.common.units.Infantry;
 import megamek.common.weapons.attacks.LegAttack;
 import megamek.common.weapons.attacks.StopSwarmAttack;
 import megamek.common.weapons.attacks.SwarmAttack;
@@ -145,15 +144,12 @@ class BattleArmorReadout extends GeneralEntityReadout {
 
     private static String getLocation(Mounted<?> mounted) {
         String location = BattleArmor.getBaMountLocName(mounted.getBaMountLoc());
-        if (mounted.isDWPMounted()) {
-            location = "DWP";
-        }
-        if (mounted.isAPMMounted()) {
-            Mounted<?> apMount = mounted.getLinkedBy();
-            if (apMount != null) {
-                location = BattleArmor.getBaMountLocName(apMount.getBaMountLoc());
+        if (mounted.isDWPMounted() || mounted.isAPMMounted()) {
+            Mounted<?> mount = mounted.getLinkedBy();
+            if (mount != null) {
+                location = BattleArmor.getBaMountLocName(mount.getBaMountLoc());
             }
-            location += " (APM)";
+            location += mounted.isDWPMounted() ? " (DWP)" : " (APM)";
         }
         if (mounted.isSquadSupportWeapon()) {
             location = "SSWM";
@@ -175,14 +171,14 @@ class BattleArmorReadout extends GeneralEntityReadout {
               .replace(" (APM)", "");
     }
 
-    public static boolean canSwarm(Infantry ba) {
+    public static boolean canSwarm(BattleArmor ba) {
         return ba.getEquipment()
               .stream()
               .map(Mounted::getType)
               .anyMatch(type -> (type instanceof SwarmAttack) || (type instanceof StopSwarmAttack));
     }
 
-    public static boolean canLegAttack(Infantry ba) {
+    public static boolean canLegAttack(BattleArmor ba) {
         return ba.getEquipment()
               .stream()
               .map(Mounted::getType)

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2021-2025 The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2021-2026 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -48,8 +48,8 @@ import javax.swing.JOptionPane;
 
 import megamek.client.AbstractClient;
 import megamek.client.Client;
+import megamek.client.bot.BotClient;
 import megamek.client.bot.princess.BehaviorSettings;
-import megamek.client.bot.princess.Princess;
 import megamek.client.generator.RandomCallsignGenerator;
 import megamek.client.generator.RandomGenderGenerator;
 import megamek.client.generator.RandomNameGenerator;
@@ -585,10 +585,10 @@ public class LobbyActions {
     /** Adds the given entities as strategic targets for the given local bot. */
     void setPriorityTarget(String botName, Collection<Entity> entities) {
         Map<String, AbstractClient> bots = lobby.getClientGUI().getLocalBots();
-        if (!bots.containsKey(botName) || !(bots.get(botName) instanceof Princess)) {
+        if (!bots.containsKey(botName) || !(bots.get(botName) instanceof BotClient botClient)) {
             return;
         }
-        BehaviorSettings behavior = ((Princess) bots.get(botName)).getBehaviorSettings();
+        BehaviorSettings behavior = botClient.getBehaviorSettings();
         entities.forEach(e -> behavior.addPriorityUnit(e.getId()));
     }
 
@@ -634,6 +634,27 @@ public class LobbyActions {
         for (Entity entity : entities) {
             if (entity.hasVariableRangeTargeting()) {
                 entity.setVariableRangeTargetingMode(mode);
+                updateCandidates.add(entity);
+            }
+        }
+        sendUpdates(updateCandidates);
+    }
+
+    /**
+     * Toggles Enhanced Imaging (EI) mode for the given entities. Only affects entities that have an EI Interface.
+     *
+     * @param entities the entities to update
+     * @param enableEI true to turn EI ON, false to turn EI OFF (shutdown)
+     */
+    void toggleEI(Collection<Entity> entities, boolean enableEI) {
+        if (!validateUpdate(entities)) {
+            return;
+        }
+        Set<Entity> updateCandidates = new HashSet<>();
+        for (Entity entity : entities) {
+            if (entity.hasEiCockpit()) {
+                // setEiShutdown(true) = OFF, setEiShutdown(false) = ON
+                entity.setEiShutdown(!enableEI);
                 updateCandidates.add(entity);
             }
         }
@@ -1189,6 +1210,7 @@ public class LobbyActions {
      * local bots so that the server accepts all changes as the server does not know of local bots and rejects updates
      * that are not for the sending client or its teammates.
      */
+    @Deprecated(since = "0.51.0", forRemoval = true)
     void sendUpdates(Collection<Entity> changedEntities, Collection<Force> changedForces) {
         // Gather the necessary sending clients; this list may contain null if some
         // units
@@ -1215,6 +1237,7 @@ public class LobbyActions {
         }
     }
 
+    @Deprecated(since = "0.51.0", forRemoval = true)
     void sendSingleUpdate(Collection<Entity> changedEntities, Collection<Force> changedForces) {
         if (!areAllied(changedEntities, changedForces)) {
             logger.error("Cannot send force update unless all changed entities and forces are allied!");
@@ -1318,6 +1341,7 @@ public class LobbyActions {
         return entities.stream().noneMatch(this::isLocalEnemy);
     }
 
+    @Deprecated(since = "0.51.0", forRemoval = true)
     boolean entityInLocalTeam(Entity entity) {
         return !localPlayer().isEnemyOf(entity.getOwner());
     }
@@ -1341,6 +1365,7 @@ public class LobbyActions {
         return chain.stream().map(f -> game().getForces().getOwner(f)).anyMatch(this::isSelfOrLocalBot);
     }
 
+    @Deprecated(since = "0.51.0", forRemoval = true)
     boolean isEditable(int forceId) {
         return game().getForces().contains(forceId) && isEditable(game().getForces().getForce(forceId));
     }

@@ -204,6 +204,7 @@ public class Hex implements Serializable {
      *
      * @see Hex#setExits(Hex, int, boolean)
      */
+    @Deprecated(since = "0.51.0", forRemoval = true)
     public void setExits(Hex other, int direction) {
         this.setExits(other, direction, true);
     }
@@ -554,6 +555,14 @@ public class Hex implements Serializable {
      */
     public boolean hasDepth1WaterOrDeeper() {
         return containsTerrain(Terrains.WATER) && (terrainLevel(Terrains.WATER) >= 1);
+    }
+
+    /**
+     * @return True if there is a bridge in this hex. Tests if the hex has Terrains.BRIDGE. When true, the hex will also
+     *       have Terrains.BRIDGE_ELEV and Terrains.BRIDGE_CF.
+     */
+    public boolean hasBridge() {
+        return containsTerrain(Terrains.BRIDGE);
     }
 
     /**

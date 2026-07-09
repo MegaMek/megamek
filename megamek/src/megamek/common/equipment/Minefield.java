@@ -210,10 +210,12 @@ public class Minefield implements Serializable, Cloneable {
         }
     }
 
+    @Deprecated(since = "0.51.0", forRemoval = true)
     public boolean isSeaBased() {
         return sea;
     }
 
+    @Deprecated(since = "0.51.0", forRemoval = true)
     public boolean isOneUse() {
         return oneUse;
     }

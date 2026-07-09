@@ -56,18 +56,22 @@ import megamek.common.actions.ClearMinefieldAction;
 import megamek.common.actions.DfaAttackAction;
 import megamek.common.actions.RamAttackAction;
 import megamek.common.actions.UnjamAction;
+import megamek.common.annotations.Nullable;
 import megamek.common.battleArmor.BattleArmor;
 import megamek.common.bays.Bay;
 import megamek.common.board.Board;
 import megamek.common.board.BoardHelper;
 import megamek.common.board.BoardLocation;
+import megamek.common.board.BridgeConstruction;
 import megamek.common.board.Coords;
 import megamek.common.compute.Compute;
 import megamek.common.enums.MoveStepType;
 import megamek.common.equipment.*;
 import megamek.common.equipment.enums.MiscTypeFlag;
+import megamek.common.event.GameToastEvent;
 import megamek.common.game.Game;
 import megamek.common.game.GameTurn;
+import megamek.common.moves.ClimbingHelper;
 import megamek.common.moves.MovePath;
 import megamek.common.moves.MoveStep;
 import megamek.common.net.packets.InvalidPacketDataException;
@@ -137,6 +141,8 @@ class MovePathHandler extends AbstractTWRuleHandler {
     private boolean continueTurnFromFishtail = false;
     private boolean continueTurnFromLevelDrop = false;
     private boolean continueTurnFromCliffAscent = false;
+    // Track if we already sent a special report popup for EMP mines during this move
+    private boolean sentEMPPopupThisMove = false;
 
     // get a list of coordinates that the unit passed through this turn
     // so that I can later recover potential bombing targets
@@ -166,6 +172,454 @@ class MovePathHandler extends AbstractTWRuleHandler {
     }
 
     void processMovement() {
+        // TacOps Climbing: check if a climbing/dangling entity lost its climbing ability
+        // due to actuator damage since last turn (TO:AR p.20)
+        // Climbing requires 1+ arms; dangling requires 2 arms
+        if (entity.isClimbing() && (entity instanceof Mek climbingMek)) {
+            int climbableArms = ClimbingHelper.countClimbableArms(climbingMek);
+            boolean cannotHoldOn = (climbableArms == 0)
+                  || (entity.isDangling() && (climbableArms < 2));
+            if (cannotHoldOn) {
+                logger.debug("[FALL-TRACE] Climbing/dangling Mek {} lost required arms, auto-falling " +
+                            "from elevation {} in hex {}",
+                      entity.getDisplayName(), entity.getElevation(), entity.getPosition());
+                // Surface as a special-report toast (kill-feed style) AND mirror to chat so the
+                // player sees the auto-fall immediately, not just buried in the round report.
+                // Matches the building-too-damaged path in TWGameManager.checkClimbingEntitiesOnBuilding.
+                Report armsLostReport = new Report(6465, Report.PUBLIC);
+                armsLostReport.add(entity.getDisplayName());
+                addReport(armsLostReport);
+                Vector<Report> armsLostSpecial = new Vector<>();
+                armsLostSpecial.add(armsLostReport);
+                gameManager.send(gameManager.createSpecialReportPacket(armsLostSpecial));
+                gameManager.sendServerChat(Messages.getString(
+                      "MovementDisplay.ClimbingDialog.armsLostChat",
+                      entity.getDisplayName()));
+                // Clear climbing/dangling flags BEFORE doEntityFallsInto so the entity
+                // updates pushed during fall processing carry the cleared state to clients.
+                // Otherwise the client copy retains isClimbing=true and the next-turn
+                // selectEntity dialog wrongly fires "can no longer hold on" while prone.
+                entity.setClimbing(false);
+                entity.setDangling(false);
+                entity.setClimbingLevelsChosen(0);
+                PilotingRollData autoFallRoll = new PilotingRollData(entity.getId(),
+                      TargetRoll.AUTOMATIC_FAIL, "climbing arms destroyed");
+                addReport(gameManager.doEntityFallsInto(entity, entity.getElevation(),
+                      entity.getPosition(), entity.getPosition(), autoFallRoll, true, 0));
+                addNewLines();
+                // The Mek just fell — terminate movement processing immediately. Without
+                // this return, processMovement would fall through to the edge-dangle block
+                // and then iterate the player's remaining steps in processSteps, executing
+                // movement on a prone unit (or worse, on a Mek that just lost the arms it
+                // would need to do that). Mirrors the early-return pattern used by the
+                // EDGE DANGLE and DROP server branches below.
+                entity.setDone(true);
+                entity.moved = EntityMovementType.MOVE_WALK;
+                entity.mpUsed = 0;
+                entity.delta_distance = 0;
+                gameManager.entityUpdate(entity.getId());
+                return;
+            }
+        }
+
+        // TacOps Dangle-and-Drop (TO:AR p.20)
+        // Detect dangle/drop intent:
+        // - Climbing/dangling entity with DOWN step(s): 1 DOWN = dangle, 2 DOWN = drop
+        // - Entity at elevated position with CLIMB_MODE_ON and no movement = edge dangle initiation
+        boolean hasDownStep = md.contains(MoveStepType.DOWN);
+        // Edge dangle: entity starts at high elevation, moves FORWARDS to lower hex with climb mode
+        boolean isEdgeDangle = false;
+        Coords edgeDangleTargetPos = null;
+        // Edge dangle is a walking-only descent (TO:AR p.20). Jumps clear the drop with jump
+        // jets and use normal jump-landing mechanics, so a jump from a cliff-top hex must NOT
+        // false-trigger the dangle handler — that would put the unit into a climbing state at
+        // the destination, which it never was.
+        boolean isJumpPath = md.contains(MoveStepType.START_JUMP)
+              || (md.getLastStepMovementType() == EntityMovementType.MOVE_JUMP);
+        // canClimb (1 arm) — not canDangle (2 arms) — so a one-armed Mek can still
+        // initiate edge climb-down. Whether the chosen action is dangle vs climb-down
+        // is determined later by entity.climbingLevelsChosen; dangle requires 2 arms
+        // and the client dialog already filters that option.
+        if (!entity.isClimbing() && !entity.isDangling()
+              && (entity instanceof Mek)
+              && ClimbingHelper.canClimb(entity)
+              && getGame().getOptions().booleanOption(OptionsConstants.ADVANCED_GROUND_MOVEMENT_TAC_OPS_CLIMBING)
+              && md.getFinalClimbMode()
+              && md.contains(MoveStepType.FORWARDS)
+              && !isJumpPath) {
+            // Check if the FORWARDS step goes to a lower hex (3+ levels down)
+            // Entity must not have moved (target must be adjacent to starting position)
+            MoveStep lastStep = md.getLastStep();
+            if (lastStep != null) {
+                Coords targetPos = lastStep.getPosition();
+                boolean entityAtStart = entity.getPosition().distance(targetPos) == 1;
+                if (entityAtStart && ClimbingHelper.isAtEdge(entity, targetPos, getGame())) {
+                    isEdgeDangle = true;
+                    edgeDangleTargetPos = targetPos;
+                }
+            }
+        }
+        // Server-side validation: dangle/drop only valid when TacOps Climbing is enabled.
+        // The entity's climbing/dangling state is server-controlled, so this also implicitly
+        // validates that the prior dangle initiation was approved.
+        boolean tacOpsClimbingEnabled = getGame().getOptions()
+              .booleanOption(OptionsConstants.ADVANCED_GROUND_MOVEMENT_TAC_OPS_CLIMBING);
+        boolean canProcessDangle = tacOpsClimbingEnabled
+              && (entity.isClimbing() || entity.isDangling()) && hasDownStep;
+        logger.debug("[DANGLE-TRACE] processMovement check: canProcessDangle={}, isEdgeDangle={}, " +
+                    "hasDownStep={}, isClimbing={}, isDangling={}, elevation={}, climbMode={}, stepCount={}",
+              canProcessDangle, isEdgeDangle, hasDownStep, entity.isClimbing(), entity.isDangling(),
+              entity.getElevation(), md.getFinalClimbMode(), md.length());
+        if (isEdgeDangle && (edgeDangleTargetPos != null)) {
+            // Edge initiation: move entity to lower hex, face the cliff/building.
+            // Discriminator: entity.climbingLevelsChosen > 0 = controlled climb-down (PSR per
+            // level); 0 = standard dangle (no PSR, fixed 2 levels). The client picks one or the
+            // other from the cliff-top dialog and pushes via sendUpdateEntity.
+            Coords originalPos = entity.getPosition();
+            Hex srcHex = getGame().getBoard(entity.getBoardId()).getHex(originalPos);
+            int cliffTopAlt = srcHex.getLevel() + entity.getElevation();
+            Hex destHex = getGame().getBoard(entity.getBoardId()).getHex(edgeDangleTargetPos);
+            int facingToCliff = edgeDangleTargetPos.direction(originalPos);
+            int chosenEdgeDescent = entity.getClimbingLevelsChosen();
+            if ((chosenEdgeDescent > 0) && (entity instanceof Mek edgeMek)
+                  && ClimbingHelper.canClimb(entity)) {
+                // EDGE CLIMB-DOWN (TO:AR p.20): PSR per level. On failure, fall from current
+                // descended elevation. Mek ends in lower hex at (cliffTopAlt - levelsDescended).
+                // Total drop measures to the destination hex's FLOOR — water bottom for water,
+                // basement for basements — so a Mek descending off a bridge into adjacent water
+                // can ride the cliff face all the way down, not stop at the water surface.
+                int costPerLevel = ClimbingHelper.getClimbingMPCostPerLevel(edgeMek);
+                int climbableArms = ClimbingHelper.countClimbableArms(edgeMek);
+                int totalDrop = cliffTopAlt - destHex.floor();
+                int levelsToDescend = Math.min(chosenEdgeDescent, totalDrop);
+                logger.debug("[CLIMB-TRACE] Server processing EDGE climb-down: entity={}, "
+                            + "from={} (alt {}), to={} (level {}), levelsToDescend={}, costPerLevel={}",
+                      entity.getDisplayName(), originalPos, cliffTopAlt,
+                      edgeDangleTargetPos, destHex.getLevel(), levelsToDescend, costPerLevel);
+                // Move to lower hex first so the PSR rolls happen at the new position.
+                entity.setPosition(edgeDangleTargetPos);
+                entity.setFacing(facingToCliff);
+                entity.setSecondaryFacing(facingToCliff);
+                int levelsDescended = 0;
+                boolean fellWhileDescending = false;
+                for (int i = 1; i <= levelsToDescend; i++) {
+                    PilotingRollData psr = entity.getBasePilotingRoll(EntityMovementType.MOVE_WALK);
+                    psr.append(new PilotingRollData(entity.getId(),
+                          ClimbingHelper.CLIMBING_PSR_MODIFIER,
+                          "climbing down (level " + i + " of " + levelsToDescend + ")"));
+                    if (climbableArms == 1) {
+                        psr.append(new PilotingRollData(entity.getId(),
+                              ClimbingHelper.ONE_ARM_PSR_MODIFIER, "climbing with one arm"));
+                    }
+                    int psrElevation = (cliffTopAlt - destHex.getLevel()) - levelsDescended;
+                    if (gameManager.doSkillCheckWhileMoving(entity, psrElevation,
+                          edgeDangleTargetPos, edgeDangleTargetPos, psr, true) > 0) {
+                        // PSR failed - fall from current climb-down elevation
+                        entity.setClimbing(false);
+                        entity.setDangling(false);
+                        entity.setClimbingLevelsChosen(0);
+                        fellWhileDescending = true;
+                        break;
+                    }
+                    levelsDescended++;
+                }
+                if (!fellWhileDescending) {
+                    int floorRelative = destHex.floor() - destHex.getLevel();
+                    int finalElevation = Math.max(floorRelative,
+                          (cliffTopAlt - destHex.getLevel()) - levelsDescended);
+                    entity.setElevation(finalElevation);
+                    // Climbing flag clears only at the actual hex floor — for a water hex that
+                    // means the water bottom, not the surface. Anywhere above the floor the Mek
+                    // is still clinging to the (above- or below-water) cliff face and can
+                    // continue the descent next turn.
+                    if (entityHasReachedFloor(entity)) {
+                        entity.setClimbing(false);
+                        entity.setDangling(false);
+                        Report groundReport = new Report(6463, Report.PUBLIC);
+                        groundReport.add(entity.getDisplayName());
+                        gameManager.getMainPhaseReport().add(groundReport);
+                    } else {
+                        entity.setClimbing(true);
+                        entity.setDangling(false);
+                    }
+                    entity.setClimbingLevelsChosen(0);
+                }
+                entity.setDone(true);
+                entity.moved = EntityMovementType.MOVE_WALK;
+                entity.mpUsed = levelsDescended * costPerLevel;
+                entity.delta_distance = 0;
+                gameManager.entityUpdate(entity.getId());
+                return;
+            }
+            // Standard EDGE DANGLE: 2 levels per turn, no PSR. Requires 2 functional arms
+            // (canDangle). If a one-armed Mek's path somehow falls through to here (client
+            // dialog hides Dangle in that case, but defensively guard) the path is rejected
+            // — the unit ends turn at the cliff top with no movement, so the player can pick
+            // a different action.
+            if (!ClimbingHelper.canDangle(entity)) {
+                logger.warn("[DANGLE-TRACE] Server rejecting EDGE dangle: entity={} lacks two "
+                            + "functional climbing arms; chosenLevels was 0 (dangle path).",
+                      entity.getDisplayName());
+                entity.setDone(true);
+                entity.moved = EntityMovementType.MOVE_NONE;
+                entity.mpUsed = 0;
+                entity.delta_distance = 0;
+                gameManager.entityUpdate(entity.getId());
+                return;
+            }
+            int dangleElevation = cliffTopAlt - ClimbingHelper.DANGLE_LEVELS_PER_TURN
+                  - destHex.getLevel();
+            dangleElevation = Math.max(0, dangleElevation);
+            logger.debug("[DANGLE-TRACE] Server processing EDGE dangle: entity={}, " +
+                        "from={} (alt {}), to={} (level {}), dangleElevation={}",
+                  entity.getDisplayName(), originalPos, cliffTopAlt,
+                  edgeDangleTargetPos, destHex.getLevel(), dangleElevation);
+            Report dangleReport = new Report(6462, Report.PUBLIC);
+            dangleReport.add(entity.getDisplayName());
+            dangleReport.add(ClimbingHelper.DANGLE_LEVELS_PER_TURN);
+            gameManager.getMainPhaseReport().add(dangleReport);
+            // Move to lower hex, face the cliff/building
+            entity.setPosition(edgeDangleTargetPos);
+            entity.setFacing(facingToCliff);
+            entity.setSecondaryFacing(facingToCliff);
+            entity.setElevation(dangleElevation);
+            entity.setDangling(true);
+            entity.setClimbingLevelsChosen(0);
+            // Dangle only clears when the Mek has reached the actual hex floor — water bottom
+            // for a water hex, basement floor for a basement hex, plain elev 0 otherwise.
+            if (entityHasReachedFloor(entity)) {
+                entity.setDangling(false);
+                Report groundReport = new Report(6463, Report.PUBLIC);
+                groundReport.add(entity.getDisplayName());
+                gameManager.getMainPhaseReport().add(groundReport);
+            }
+            entity.setDone(true);
+            entity.moved = EntityMovementType.MOVE_WALK;
+            entity.mpUsed = 0;
+            entity.delta_distance = 0;
+            gameManager.entityUpdate(entity.getId());
+            return;
+        }
+        if (canProcessDangle) {
+            int downStepCount = (int) md.getStepVector().stream()
+                  .filter(s -> s.getType() == MoveStepType.DOWN)
+                  .count();
+            // Controlled CLIMB DOWN (TO:AR p.20): same MP cost and PSRs as climbing up.
+            // Discriminated from DANGLE (1 bare DOWN) and DROP (2 bare DOWN) by the
+            // CLIMB_MODE_ON marker step the client adds before the DOWN steps.
+            // Edge dangle uses CLIMB_MODE_ON + FORWARDS (no DOWN), so no false positive.
+            // entity.climbingLevelsChosen isn't transmitted to the server — the path is.
+            boolean hasClimbModeOnMarker = md.contains(MoveStepType.CLIMB_MODE_ON);
+            if (hasClimbModeOnMarker && (downStepCount > 0) && (entity instanceof Mek descendingMek)
+                  && ClimbingHelper.canClimb(entity)) {
+                int costPerLevel = ClimbingHelper.getClimbingMPCostPerLevel(descendingMek);
+                int climbableArms = ClimbingHelper.countClimbableArms(descendingMek);
+                int currentElevation = entity.getElevation();
+                int floorRelativeForDescent = hexFloorRelative(entity);
+                // Cap requested descent at the hex floor (water bottom for water hexes, ground
+                // for dry hexes) and against available walking MP. The first cap previously read
+                // `currentElevation`, hardcoding ground-at-0 and blocking any descent below the
+                // water surface even though the underwater cliff face is climbable.
+                int descendableLevels = currentElevation - floorRelativeForDescent;
+                int requestedLevels = Math.min(downStepCount, descendableLevels);
+                int availableMP = entity.getWalkMP();
+                int affordableLevels = (costPerLevel > 0) ? (availableMP / costPerLevel) : 0;
+                int levelsToDescend = Math.min(requestedLevels, affordableLevels);
+                if (levelsToDescend < requestedLevels) {
+                    logger.warn("[CLIMB-TRACE] Server capping CLIMB_DOWN: entity={} requested {} "
+                                + "levels but {} walk MP at {} MP/level only allows {} (clinging at "
+                                + "intermediate elevation).",
+                          entity.getDisplayName(), requestedLevels, availableMP,
+                          costPerLevel, levelsToDescend);
+                }
+                logger.debug("[CLIMB-TRACE] Server processing CLIMB_DOWN: entity={}, " +
+                            "currentElevation={}, levelsToDescend={}, costPerLevel={}",
+                      entity.getDisplayName(), currentElevation, levelsToDescend, costPerLevel);
+                int levelsDescended = 0;
+                boolean fellWhileDescending = false;
+                for (int i = 1; i <= levelsToDescend; i++) {
+                    PilotingRollData psr = entity.getBasePilotingRoll(EntityMovementType.MOVE_WALK);
+                    psr.append(new PilotingRollData(entity.getId(),
+                          ClimbingHelper.CLIMBING_PSR_MODIFIER,
+                          "climbing down (level " + i + " of " + levelsToDescend + ")"));
+                    if (climbableArms == 1) {
+                        psr.append(new PilotingRollData(entity.getId(),
+                              ClimbingHelper.ONE_ARM_PSR_MODIFIER,
+                              "climbing with one arm"));
+                    }
+                    int psrElevation = currentElevation - levelsDescended;
+                    if (gameManager.doSkillCheckWhileMoving(entity, psrElevation,
+                          entity.getPosition(), entity.getPosition(), psr, true) > 0) {
+                        // PSR failed - fall from current climb-down elevation
+                        entity.setClimbing(false);
+                        entity.setDangling(false);
+                        entity.setClimbingLevelsChosen(0);
+                        fellWhileDescending = true;
+                        break;
+                    }
+                    levelsDescended++;
+                }
+                if (!fellWhileDescending) {
+                    int newElevation = Math.max(floorRelativeForDescent,
+                          currentElevation - levelsDescended);
+                    entity.setElevation(newElevation);
+                    // Climbing flag clears only when the Mek truly hits the hex floor — water
+                    // bottom counts, water surface doesn't. Above the floor the Mek is still
+                    // clinging and the next-turn dialog should reoffer Climb Down / Drop / Cling.
+                    if (entityHasReachedFloor(entity)) {
+                        entity.setClimbing(false);
+                        entity.setDangling(false);
+                        Report groundReport = new Report(6463, Report.PUBLIC);
+                        groundReport.add(entity.getDisplayName());
+                        addReport(groundReport);
+                    } else {
+                        entity.setClimbing(true);
+                        entity.setDangling(false);
+                    }
+                    entity.setClimbingLevelsChosen(0);
+                }
+                entity.mpUsed = levelsDescended * costPerLevel;
+                entity.delta_distance = 0;
+                entity.moved = EntityMovementType.MOVE_WALK;
+                entity.setDone(true);
+                gameManager.entityUpdate(entity.getId());
+                return;
+            }
+            boolean isDrop = (downStepCount >= 2);
+
+            if (isDrop) {
+                // DROP from climbing/dangling position: 4 MP required, leaping PSRs (TO:AR p.20).
+                // Reject if the unit lacks the MP to drop — prevents a malformed client path
+                // from triggering a free drop.
+                int availableMP = entity.getWalkMP();
+                if (availableMP < ClimbingHelper.DROP_MP_COST) {
+                    logger.warn("[DANGLE-TRACE] Server rejecting DROP: entity={} has {} walk MP, "
+                                + "needs {} for drop. Treating as cling.",
+                          entity.getDisplayName(), availableMP, ClimbingHelper.DROP_MP_COST);
+                    entity.setDone(true);
+                    entity.moved = EntityMovementType.MOVE_NONE;
+                    entity.mpUsed = 0;
+                    entity.delta_distance = 0;
+                    gameManager.entityUpdate(entity.getId());
+                    return;
+                }
+                // From dangling: reduce modifiers by 2 (TO:AR p.20)
+                // From climbing (not dangling): standard leaping modifiers.
+                // dropDistance is the DRY portion of the fall — only levels above the hex surface
+                // count for PSR/leg-damage purposes. Water/basement below the surface sinks the
+                // Mek the rest of the way with no additional damage (water cushions the landing).
+                int dropDistance = Math.max(0, entity.getElevation());
+                int modifierReduction = entity.isDangling() ? ClimbingHelper.DANGLE_LEVELS_PER_TURN : 0;
+                int effectiveDistance = Math.max(0, dropDistance - modifierReduction);
+                logger.debug("[DANGLE-TRACE] Server processing DROP: entity={}, " +
+                            "dropDistance={}, effectiveDistance={}, isDangling={}, modifierReduction={}",
+                      entity.getDisplayName(), dropDistance, effectiveDistance,
+                      entity.isDangling(), modifierReduction);
+
+                // PSR 1: Leg damage check (modifier = 2 * effectiveDistance)
+                String legDamageDesc = entity.isDangling()
+                      ? String.format("hanging from level %d, effective height for leg damage roll %d",
+                      dropDistance, effectiveDistance)
+                      : String.format("dropping from level %d, leg damage roll", dropDistance);
+                String fallDesc = entity.isDangling()
+                      ? String.format("hanging from level %d, effective height for fall roll %d",
+                      dropDistance, effectiveDistance)
+                      : String.format("dropping from level %d, fall roll", dropDistance);
+                if (effectiveDistance > 0) {
+                    rollTarget = entity.getBasePilotingRoll(EntityMovementType.MOVE_WALK);
+                    entity.addPilotingModifierForTerrain(rollTarget, entity.getPosition(),
+                          entity.getBoardId());
+                    rollTarget.append(new PilotingRollData(entity.getId(),
+                          2 * effectiveDistance, legDamageDesc));
+                    if (0 < gameManager.doSkillCheckWhileMoving(entity, entity.getElevation(),
+                          entity.getPosition(), entity.getPosition(), rollTarget, false)) {
+                        // Leg damage equal to effective distance
+                        addReport(gameManager.damageEntity(entity,
+                              new HitData(Mek.LOC_LEFT_LEG), effectiveDistance));
+                        addReport(gameManager.damageEntity(entity,
+                              new HitData(Mek.LOC_RIGHT_LEG), effectiveDistance));
+                        addNewLines();
+                        addReport(gameManager.criticalEntity(entity,
+                              Mek.LOC_LEFT_LEG, false, 0, 0));
+                        addNewLines();
+                        addReport(gameManager.criticalEntity(entity,
+                              Mek.LOC_RIGHT_LEG, false, 0, 0));
+                    }
+
+                    // PSR 2: Fall check (modifier = effectiveDistance)
+                    rollTarget = entity.getBasePilotingRoll(EntityMovementType.MOVE_WALK);
+                    entity.addPilotingModifierForTerrain(rollTarget, entity.getPosition(),
+                          entity.getBoardId());
+                    rollTarget.append(new PilotingRollData(entity.getId(),
+                          effectiveDistance, fallDesc));
+                    if (0 < gameManager.doSkillCheckWhileMoving(entity, entity.getElevation(),
+                          entity.getPosition(), entity.getPosition(), rollTarget, true)) {
+                        // Fall from elevation
+                        entity.setDangling(false);
+                        entity.setClimbing(false);
+                        entity.setClimbingLevelsChosen(0);
+                        entity.setDone(true);
+                        entity.moved = EntityMovementType.MOVE_WALK;
+                        gameManager.entityUpdate(entity.getId());
+                        return;
+                    }
+                }
+
+                // Both PSRs passed (or reducedDistance was 0) - safe landing. Land on the actual
+                // hex floor: for dry hexes that's elev 0, for water/basement hexes the Mek sinks
+                // through and settles on the floor below the surface.
+                Hex landingHex = getGame().getBoard(entity.getBoardId()).getHex(entity.getPosition());
+                int landingElevation = (landingHex != null)
+                      ? landingHex.floor() - landingHex.getLevel()
+                      : 0;
+                entity.setElevation(landingElevation);
+                entity.setDangling(false);
+                entity.setClimbing(false);
+                entity.setClimbingLevelsChosen(0);
+                Report landReport = new Report(6463, Report.PUBLIC);
+                landReport.add(entity.getDisplayName());
+                addReport(landReport);
+                entity.setDone(true);
+                entity.moved = EntityMovementType.MOVE_WALK;
+                gameManager.entityUpdate(entity.getId());
+                return;
+
+            } else if (!isDrop && ClimbingHelper.canDangle(entity)) {
+                // DANGLE: lower by 2 levels, spend full turn. The descent extends into water /
+                // basement depth if present (dangle is just hanging-and-lowering — works on the
+                // underwater cliff face too, capped at the actual hex floor).
+                int dangleFloor = hexFloorRelative(entity);
+                int dangleableLevels = entity.getElevation() - dangleFloor;
+                int dangleLevels = Math.min(ClimbingHelper.DANGLE_LEVELS_PER_TURN,
+                      dangleableLevels);
+                int newElevation = Math.max(dangleFloor, entity.getElevation() - dangleLevels);
+                logger.debug("[DANGLE-TRACE] Server processing dangle: entity={}, " +
+                            "currentElevation={}, dangleLevels={}, newElevation={}",
+                      entity.getDisplayName(), entity.getElevation(), dangleLevels, newElevation);
+                Report dangleReport = new Report(6462, Report.PUBLIC);
+                dangleReport.add(entity.getDisplayName());
+                dangleReport.add(dangleLevels);
+                addReport(dangleReport);
+                entity.setElevation(newElevation);
+                entity.setClimbing(false);
+                entity.setDangling(true);
+                entity.setClimbingLevelsChosen(0);
+                // Dangling flag clears only at the actual hex floor (water bottom for water,
+                // ground for dry). Above the floor the Mek is still dangling and the next-turn
+                // dialog should reoffer descent options.
+                if (entityHasReachedFloor(entity)) {
+                    entity.setDangling(false);
+                    Report groundReport = new Report(6463, Report.PUBLIC);
+                    groundReport.add(entity.getDisplayName());
+                    addReport(groundReport);
+                }
+                entity.setDone(true);
+                entity.moved = EntityMovementType.MOVE_WALK;
+                gameManager.entityUpdate(entity.getId());
+                return;
+            }
+        }
+
         if (md.getMpUsed() > 0) {
             // All auto-hit hexes for this unit (not including preset targets) are cleared
             // if any MP are expended.
@@ -463,7 +917,35 @@ class MovePathHandler extends AbstractTWRuleHandler {
             gameManager.doMagmaDamage(entity, false);
         }
 
+        // Defensive: clear stale climbing/dangling flags when the entity ends its turn
+        // at ground level and is not standing on a building roof. Catches state leaks
+        // (e.g., dangling flag carried forward through a climb-up) that would otherwise
+        // re-trigger the continue-climbing dialog at the start of the next turn.
+        // Exception: a Mek partway up a multi-turn climb ends at the SOURCE hex of the
+        // climb (see processSteps partial-climb branch). When the start elevation was
+        // negative (water bottom, basement), that intermediate elevation can land at 0
+        // while the Mek is genuinely clinging to the adjacent bridge/building. Preserve
+        // climbing in that case so the continue-climbing dialog fires next turn.
+        if ((entity.isClimbing() || entity.isDangling()) && (entity.getElevation() == 0)) {
+            Hex finalHex = getGame().getBoard(entity.getBoardId()).getHex(curPos);
+            boolean onBuildingRoof = (finalHex != null)
+                  && finalHex.containsTerrain(Terrains.BUILDING)
+                  && (entity.getElevation() >= finalHex.terrainLevel(Terrains.BLDG_ELEV));
+            boolean clingingToAdjacentClimbable = entity.isClimbing()
+                  && isClingingToAdjacentClimbable(entity, curPos, finalHex);
+            if (!onBuildingRoof && !clingingToAdjacentClimbable) {
+                logger.debug("[CLIMB-TRACE] Clearing stale climbing flags at end of move: entity={}, "
+                            + "climbing={}, dangling={}, elevation=0 in hex {}",
+                      entity.getDisplayName(), entity.isClimbing(), entity.isDangling(), curPos);
+                entity.setClimbing(false);
+                entity.setDangling(false);
+                entity.setClimbingLevelsChosen(0);
+            }
+        }
+
         // set entity parameters
+        logger.debug("End of movement: entity={}, curPos={}, climbing={}, elevation={}, curVTOLElevation={}",
+              entity.getDisplayName(), curPos, entity.isClimbing(), entity.getElevation(), curVTOLElevation);
         entity.setPosition(curPos);
         entity.setFacing(curFacing);
         entity.setSecondaryFacing(curFacing);
@@ -472,9 +954,9 @@ class MovePathHandler extends AbstractTWRuleHandler {
         entity.mpUsed = mpUsed;
         if (md.isAllUnderwater(getGame())) {
             entity.underwaterRounds++;
-            if ((entity instanceof Infantry) && (((Infantry) entity).getMount() != null)
+            if ((entity instanceof ConvInfantry infantry) && (infantry.getMount() != null)
                   && entity.getMovementMode().isSubmarine()
-                  && entity.underwaterRounds > ((Infantry) entity).getMount().getUWEndurance()) {
+                  && entity.underwaterRounds > infantry.getMount().getUWEndurance()) {
                 report = new Report(2412);
                 report.addDesc(entity);
                 addReport(report);
@@ -674,6 +1156,8 @@ class MovePathHandler extends AbstractTWRuleHandler {
         if (entity.isHullDown() && !md.getFinalHullDown()
               && (entity instanceof Tank
               || (entity instanceof QuadVee && entity.getConversionMode() == QuadVee.CONV_MODE_VEHICLE))) {
+            logger.debug("[HullDown] {}: hull-down cleared on move - path did not end hull-down",
+                  entity.getDisplayName());
             entity.setHullDown(false);
         }
 
@@ -1101,7 +1585,8 @@ class MovePathHandler extends AbstractTWRuleHandler {
             gameManager.send(gameManager.getPacketHelper().createTurnListPacket());
 
             // let everyone know about what just happened
-            if (gameManager.getMainPhaseReport().size() > 1) {
+            // Skip if we already sent an EMP popup this move (avoid duplicate popups)
+            if ((gameManager.getMainPhaseReport().size() > 1) && !sentEMPPopupThisMove) {
                 gameManager.send(entity.getOwner().getId(), gameManager.createSpecialReportPacket());
             }
         } else {
@@ -1140,7 +1625,10 @@ class MovePathHandler extends AbstractTWRuleHandler {
                         report.addDesc(entity);
                         report.subject = entity.getId();
                         addReport(report);
-                        addReport(gameManager.crashVTOLorWiGE((Tank) entity));
+
+                        if (entity instanceof Tank tankEntity) {
+                            addReport(gameManager.crashVTOLorWiGE(tankEntity));
+                        }
                     } else {
                         entity.setElevation(0);
                     }
@@ -1348,6 +1836,67 @@ class MovePathHandler extends AbstractTWRuleHandler {
                 addReport(report);
             }
         }
+    }
+
+    /**
+     * Returns the entity-relative elevation of its current hex's actual floor — 0 for dry hexes, negative for
+     * water/basement hexes. Multi-arity descents (climb-down, dangle, drop) treat this as the lower bound: descending
+     * past elev 0 in a water hex is fine as long as the Mek stays at or above this floor.
+     */
+    private int hexFloorRelative(Entity entity) {
+        Hex hex = getGame().getBoard(entity.getBoardId()).getHex(entity.getPosition());
+        return (hex == null) ? 0 : hex.floor() - hex.getLevel();
+    }
+
+    /**
+     * Returns true when the entity has reached the actual floor of its current hex — dry ground for a normal hex, water
+     * bottom for a water hex, basement floor for a basement hex. Used by every climb / dangle / drop completion path:
+     * only at the hex floor is the descent really "done"; anywhere above it (clinging on a cliff face, on a building
+     * wall, or on the underwater portion of either) the unit is still in the air/water column and the climbing or
+     * dangling flag must stay set so the next-turn dialog fires.
+     */
+    private boolean entityHasReachedFloor(Entity entity) {
+        return entity.getElevation() == hexFloorRelative(entity);
+    }
+
+    /**
+     * Returns true when the entity at {@code curPos} looks like it is clinging to a climbable feature (bridge or
+     * building) in its facing hex — i.e. that hex has a bridge or building roof higher than the entity's current
+     * absolute altitude. Used by the end-of-movement defensive cleanup to distinguish a legitimate mid-multi-turn climb
+     * (where the partial-climb branch in {@link #processSteps} intentionally leaves {@code climbing=true} in the SOURCE
+     * hex) from a stale flag that should be wiped. Without this gate, a Mek that climbed out of deep water onto a
+     * bridge stops mid-climb at water-surface (elevation 0), gets its climbing flag cleared, and never sees the
+     * continue-climbing dialog on the following turn.
+     *
+     * @param entity the entity being checked
+     * @param curPos the entity's current hex (source hex of an in-progress climb)
+     * @param curHex the resolved hex for {@code curPos}, or null if the board doesn't have it
+     *
+     * @return true if the facing hex has a climbable feature above the entity
+     */
+    private boolean isClingingToAdjacentClimbable(Entity entity, Coords curPos, @Nullable Hex curHex) {
+        if (curHex == null) {
+            return false;
+        }
+        Coords adjacent = curPos.translated(entity.getFacing());
+        Hex adjacentHex = getGame().getBoard(entity.getBoardId()).getHex(adjacent);
+        if (adjacentHex == null) {
+            return false;
+        }
+        int entityAbsAlt = curHex.getLevel() + entity.getElevation();
+        int adjacentBase = adjacentHex.getLevel();
+        if (adjacentHex.containsTerrain(Terrains.BRIDGE)
+              && (adjacentBase + adjacentHex.terrainLevel(Terrains.BRIDGE_ELEV)) > entityAbsAlt) {
+            return true;
+        }
+        if (adjacentHex.containsTerrain(Terrains.BUILDING)
+              && (adjacentBase + adjacentHex.terrainLevel(Terrains.BLDG_ELEV)) > entityAbsAlt) {
+            return true;
+        }
+        // Cliff edges count too: the climbable feature may be a bare elevation difference
+        // (the adjacent hex's bedrock sits well above the entity). A Mek that climbed down a
+        // cliff face into deep water and now hangs at water surface (elev 0) is in this state.
+        return (adjacentBase - entityAbsAlt) > entity.getMaxElevationChange();
     }
 
     /**
@@ -1819,21 +2368,17 @@ class MovePathHandler extends AbstractTWRuleHandler {
                                 if (ce.equals(a)) {
                                     continue;
                                 }
-                                if (ce instanceof SpaceStation) {
-                                    potentialSpaceStation.addElement(id);
-                                } else if (ce instanceof Warship) {
-                                    potentialWarShip.addElement(id);
-                                } else if (ce instanceof Jumpship) {
-                                    potentialJumpShip.addElement(id);
-                                } else if (ce instanceof Dropship) {
-                                    potentialDropShip.addElement(id);
-                                } else if (ce instanceof SmallCraft) {
-                                    potentialSmallCraft.addElement(id);
-                                } else {
-                                    // ASF can actually include anything,
-                                    // because we might
-                                    // have combat dropping troops
-                                    potentialASF.addElement(id);
+                                switch (ce) {
+                                    case SpaceStation ignored -> potentialSpaceStation.addElement(id);
+                                    case Warship ignored -> potentialWarShip.addElement(id);
+                                    case Jumpship ignored -> potentialJumpShip.addElement(id);
+                                    case Dropship ignored -> potentialDropShip.addElement(id);
+                                    case SmallCraft ignored -> potentialSmallCraft.addElement(id);
+                                    case null, default ->
+                                        // ASF can actually include anything,
+                                        // because we might
+                                        // have combat dropping troops
+                                          potentialASF.addElement(id);
                                 }
                             }
 
@@ -2144,8 +2689,8 @@ class MovePathHandler extends AbstractTWRuleHandler {
             if (cachedGravityLimit < 0) {
                 cachedGravityLimit = EntityMovementType.MOVE_JUMP == moveType
                       ? (step.isUsingMekJumpBooster()
-                      ? entity.getMechanicalJumpBoosterMP(MPCalculationSetting.NO_GRAVITY)
-                      : entity.getJumpMP(MPCalculationSetting.NO_GRAVITY))
+                         ? entity.getMechanicalJumpBoosterMP(MPCalculationSetting.NO_GRAVITY)
+                         : entity.getJumpMP(MPCalculationSetting.NO_GRAVITY))
                       : entity.getRunningGravityLimit();
             }
             // check for charge
@@ -2343,19 +2888,41 @@ class MovePathHandler extends AbstractTWRuleHandler {
             // check for dig in or fortify
             if (entity instanceof Infantry inf) {
                 if (step.getType() == MoveStepType.DIG_IN) {
-                    inf.setDugIn(Infantry.DUG_IN_WORKING);
+                    // A unit that has been hitting the deck long enough may convert straight to dug in. TO:AR p.106.
+                    inf.beginDigIn(inf.canDigInFromDeck());
+                    continue;
+                } else if (step.getType() == MoveStepType.HIT_THE_DECK) {
+                    inf.setHitTheDeck(true);
                     continue;
                 } else if (step.getType() == MoveStepType.FORTIFY) {
+                    // Building a fortified hex requires fieldworks-capable equipment (TO:AUE p.153). The move
+                    // step is already gated client-side, so this is a defensive server-side enforcement.
                     if (!inf.hasWorkingMisc(MiscType.F_TRENCH_CAPABLE)) {
-                        gameManager.sendServerChat(entity.getDisplayName()
-                              + " failed to fortify because it is missing suitable equipment");
+                        logger.debug("[Fortify] {}: fortify rejected - no fieldworks-capable equipment "
+                              + "(F_TRENCH_CAPABLE)", entity.getDisplayName());
+                        continue;
                     }
-                    inf.setDugIn(Infantry.DUG_IN_FORTIFYING1);
+                    inf.beginFortify();
+                    continue;
+                } else if (step.getType() == MoveStepType.BUILD_BRIDGE) {
+                    processBuildBridgeStep(inf, step);
+                    continue;
+                } else if (step.getType() == MoveStepType.CANCEL_BRIDGE) {
+                    processCancelBridgeStep(inf);
+                    continue;
+                } else if (step.getType() == MoveStepType.RESUME_BRIDGE) {
+                    processResumeBridgeStep(inf);
+                    continue;
+                } else if (step.getType() == MoveStepType.PAUSE_BRIDGE) {
+                    processPauseBridgeStep(inf);
+                    continue;
+                } else if (step.getType() == MoveStepType.ABANDON_BRIDGE) {
+                    processAbandonBridgeStep(inf);
                     continue;
                 } else if ((step.getType() != MoveStepType.TURN_LEFT)
                       && (step.getType() != MoveStepType.TURN_RIGHT)) {
-                    // other movement clears dug in status
-                    inf.setDugIn(Infantry.DUG_IN_NONE);
+                    // other movement clears dug in and hitting the deck status
+                    inf.clearGroundPostures();
                 }
 
                 if (step.getType() == MoveStepType.TAKE_COVER) {
@@ -2371,15 +2938,19 @@ class MovePathHandler extends AbstractTWRuleHandler {
                 }
             }
 
-            // check for tank fortify
-            if (entity instanceof Tank tnk) {
-                if (step.getType() == MoveStepType.FORTIFY) {
-                    if (!tnk.hasWorkingMisc(MiscType.F_TRENCH_CAPABLE)) {
-                        gameManager.sendServerChat(entity.getDisplayName()
-                              + " failed to fortify because it is missing suitable equipment");
-                    }
-                    tnk.setDugIn(Tank.DUG_IN_FORTIFYING1);
+            // Fieldworks: a vehicle or a Mek with fieldworks-capable equipment - bulldozer, backhoe or equivalent -
+            // builds a fortified hex (Vehicles and Fieldworks, TO:AUE p.153, Corrected Sixth Printing). A vehicle or
+            // backhoe-equipped Mek may also clear rubble.
+            if ((entity instanceof Fortifiable fortifier) && (step.getType() == MoveStepType.FORTIFY)) {
+                // Defensive server-side check mirroring the MoveStep legality.
+                if (!entity.hasWorkingMisc(MiscType.F_TRENCH_CAPABLE)) {
+                    logger.debug("[Fortify] {}: fortify rejected - no fieldworks-capable equipment "
+                          + "(F_TRENCH_CAPABLE)", entity.getDisplayName());
+                } else {
+                    fortifier.beginFortify();
                 }
+            } else if ((entity instanceof RubbleClearer) && (step.getType() == MoveStepType.CLEAR_RUBBLE)) {
+                beginRubbleClearing(entity, step.getPosition());
             }
 
             // If we have turned, check whether we have fulfilled any turn mode
@@ -2485,7 +3056,13 @@ class MovePathHandler extends AbstractTWRuleHandler {
                 int leapDistance = (lastElevation
                       + getGame().getBoard(curBoardId).getHex(lastPos).getLevel())
                       - (curElevation + curHex.getLevel());
+                logger.debug("[LEAP-TRACE] Leap check: lastPos={}, curPos={}, lastElevation={}, " +
+                            "curElevation={}, leapDistance={}, isClimbing={}, isDangling={}",
+                      lastPos, curPos, lastElevation, curElevation, leapDistance,
+                      entity.isClimbing(), entity.isDangling());
                 if (leapDistance > 2) {
+                    logger.debug("[LEAP-TRACE] Leaping {} levels from {} to {}",
+                          leapDistance, lastPos, curPos);
                     // skill check for leg damage
                     rollTarget = entity.getBasePilotingRoll(stepMoveType);
                     entity.addPilotingModifierForTerrain(rollTarget, curPos, step.getBoardId());
@@ -2525,7 +3102,7 @@ class MovePathHandler extends AbstractTWRuleHandler {
             }
 
             // Check for infantry gliding down terrain with glider wings (IO p.85)
-            if (!lastPos.equals(curPos) && (entity instanceof Infantry infantry)
+            if (!lastPos.equals(curPos) && (entity instanceof ConvInfantry infantry)
                   && infantry.hasAbility(OptionsConstants.MD_PL_GLIDER)
                   && infantry.canUseGliderWings()) {
                 int glideDistance = (lastElevation + getGame().getBoard(curBoardId).getHex(lastPos).getLevel())
@@ -2750,7 +3327,7 @@ class MovePathHandler extends AbstractTWRuleHandler {
                       .stream().filter(Mounted::isReady)
                       .collect(Collectors.toList());
                 if (!chaffDispensers.isEmpty()) {
-                    chaffDispensers.get(0).setFired(true);
+                    chaffDispensers.getFirst().setFired(true);
                     gameManager.createSmoke(curPos, getGame().getBoard(step.getBoardId()),
                           SmokeCloud.SMOKE_CHAFF_LIGHT, 1);
                     Hex hex = getGame().getBoard(curBoardId).getHex(curPos);
@@ -2901,6 +3478,18 @@ class MovePathHandler extends AbstractTWRuleHandler {
                 if (isOnGround) {
                     boom = gameManager.checkVibraBombs(entity, curPos, false, lastPos, curPos,
                           gameManager.getMainPhaseReport());
+                    // Collect EMP reports separately for popup, then add to main report
+                    Vector<Report> empReports = new Vector<>();
+                    boolean empBoom = gameManager.checkEMPMines(entity, curPos, empReports);
+                    // Send popup FIRST with only EMP reports, before adding to mainPhaseReport
+                    if (empBoom && !empReports.isEmpty()) {
+                        gameManager.send(entity.getOwner().getId(),
+                              gameManager.createSpecialReportPacket(empReports));
+                        sentEMPPopupThisMove = true;
+                    }
+                    // Now add to main phase report for end-of-phase display
+                    gameManager.getMainPhaseReport().addAll(empReports);
+                    boom = empBoom || boom;
                 }
                 if (getGame().containsMinefield(curPos)) {
                     // set the new position temporarily, because
@@ -3232,7 +3821,7 @@ class MovePathHandler extends AbstractTWRuleHandler {
                 // if we're not supplied a specific location, then the assumption is we only have one piece of cargo,
                 // and we're going to just drop that one
                 if (cargoLocation == null) {
-                    cargo = entity.getDistinctCarriedObjects().get(0);
+                    cargo = entity.getDistinctCarriedObjects().getFirst();
                 } else if (entity.getCarriedObject(cargoLocation) != null) {
                     cargo = entity.getCarriedObject(cargoLocation);
                 } else if ((cargoLocation >= 0) && (Integer.MAX_VALUE - cargoLocation < entity.getTransports()
@@ -3279,7 +3868,7 @@ class MovePathHandler extends AbstractTWRuleHandler {
                     // list.
                     if (cargo instanceof GroundObject) {
                         gameManager.sendGroundObjectUpdate();
-                    } else if (cargo instanceof Entity carriedEntity) {
+                    } else if (cargo instanceof Entity) {
                         gameManager.send(gameManager.getPacketHelper().createTurnListPacket());
                     }
                 }
@@ -3633,6 +4222,237 @@ class MovePathHandler extends AbstractTWRuleHandler {
                 }
             }
 
+            // TacOps Climbing PSR checks (TO:AR p.20)
+            // Each level climbed requires a Piloting Skill Roll with +1 modifier.
+            // Additional +2 modifier if only one functional arm.
+            // On failure, the Mek falls from the last level successfully reached.
+            // Multi-turn: if the climb costs more MP than available, only climb
+            // affordable levels this turn and persist climbing state for next turn.
+            if (step.isClimbing() && (entity instanceof Mek climbingMek)
+                  && (stepHeight > 0)) {
+                // Only process climbing PSRs for upward movement (stepHeight > 0)
+                // Downward movement is handled by leaping rules
+                int totalLevelsToClimb = Math.abs(stepHeight);
+                int climbableArms = ClimbingHelper.countClimbableArms(climbingMek);
+                int costPerLevel = ClimbingHelper.getClimbingMPCostPerLevel(climbingMek);
+                int walkMP = climbingMek.getWalkMP();
+
+                // Calculate how many levels we can afford this turn.
+                // Take MP already spent before this climbing step from the previous step's
+                // mpUsed (includes any walk + 1 MP for entering the climb hex). The previous
+                // approach (step.getMpUsed() - totalLevelsToClimb * costPerLevel) was wrong
+                // when the client compiled with chosenLevels < totalLevelsToClimb — it
+                // back-calculated against the FULL climb cost and produced a negative
+                // nonClimbMpUsed, granting more MP than the unit had.
+                int nonClimbMpUsed = (previousStep != null) ? previousStep.getMpUsed() : 0;
+                int availableMP = Math.max(0, walkMP - nonClimbMpUsed);
+                int affordableLevels = availableMP / costPerLevel;
+                int levelsThisTurn = Math.min(totalLevelsToClimb, Math.max(0, affordableLevels));
+                // Honor the player's choice from the climbing dialog (TO:AR p.20).
+                // Without this cap the server would climb the maximum affordable, ignoring
+                // a smaller player-chosen count. The client pushes this via sendUpdateEntity
+                // before committing the path. 0 means "no choice — use max affordable."
+                int chosenLevels = entity.getClimbingLevelsChosen();
+                if (chosenLevels > 0) {
+                    levelsThisTurn = Math.min(levelsThisTurn, chosenLevels);
+                }
+
+                boolean fellWhileClimbing = false;
+                // Track the climbing elevation - starts at the entity's elevation
+                // in the lower hex and increments by 1 for each successful level
+                int climbingElevation = lastElevation;
+                // Total climb height includes levels already climbed in prior turns
+                int levelsAlreadyClimbed = climbingElevation;
+                int overallClimbHeight = levelsAlreadyClimbed + totalLevelsToClimb;
+
+                logger.debug("Climbing: totalLevels={}, affordableLevels={}, levelsThisTurn={}, " +
+                            "walkMP={}, availableMP={}, costPerLevel={}, nonClimbMpUsed={}, " +
+                            "levelsAlreadyClimbed={}, overallClimbHeight={}",
+                      totalLevelsToClimb, affordableLevels, levelsThisTurn,
+                      walkMP, availableMP, costPerLevel, nonClimbMpUsed,
+                      levelsAlreadyClimbed, overallClimbHeight);
+
+                for (int levelClimbed = 1; levelClimbed <= levelsThisTurn; levelClimbed++) {
+                    int overallLevel = levelsAlreadyClimbed + levelClimbed;
+                    rollTarget = entity.getBasePilotingRoll(moveType);
+                    rollTarget.append(new PilotingRollData(entity.getId(),
+                          ClimbingHelper.CLIMBING_PSR_MODIFIER,
+                          "climbing (level " + overallLevel + " of " + overallClimbHeight + ")"));
+                    if (climbableArms == 1) {
+                        rollTarget.append(new PilotingRollData(entity.getId(),
+                              ClimbingHelper.ONE_ARM_PSR_MODIFIER,
+                              "climbing with one arm"));
+                    }
+
+                    // When climbingElevation is 0 the Mek hasn't actually risen yet — failing
+                    // the very first PSR means it slipped before getting off the ground, so
+                    // skip the fall mechanic (no damage, no prone). Climbing aborts for the
+                    // turn but the Mek stays on the ground. Per pragmatic reading of TO:AR p.20:
+                    // "fall from the height it has currently reached" — height 0 = no fall.
+                    boolean canFallFromHere = climbingElevation > 0;
+                    if (gameManager.doSkillCheckWhileMoving(entity, climbingElevation,
+                          lastPos, lastPos, rollTarget, canFallFromHere) > 0) {
+                        if (!canFallFromHere) {
+                            // Failed first PSR from elevation 0 — abort climb without fall.
+                            logger.debug("[CLIMB-TRACE] Failed first climbing PSR from elevation 0; "
+                                        + "no fall (entity stays on ground). entity={}, lastPos={}",
+                                  entity.getDisplayName(), lastPos);
+                            Report failReport = new Report(6464, Report.PUBLIC);
+                            failReport.add(entity.getDisplayName());
+                            addReport(failReport);
+                            entity.setClimbing(false);
+                            entity.setDangling(false);
+                            entity.setClimbingLevelsChosen(0);
+                            // Step processing earlier in the loop already moved the entity to the
+                            // climb step's destination (the building roof / cliff top). Revert it
+                            // to the source hex at ground level so the failed handhold actually
+                            // leaves the unit on the ground — otherwise the entity stays at the
+                            // top with climbing=false, looking like a successful zero-MP climb.
+                            entity.setPosition(lastPos);
+                            entity.setElevation(0);
+                            curPos = lastPos;
+                            curVTOLElevation = 0;
+                            mpUsed = step.getMpUsed();
+                            fellWhileClimbing = true;
+                            turnOver = true;
+                            break;
+                        }
+                        // Mek falls from the last level successfully reached
+                        // doEntityFallsInto handles positioning and elevation for the terrain
+                        entity.setClimbing(false);
+                        curPos = entity.getPosition();
+                        curVTOLElevation = entity.getElevation();
+                        logger.debug("[FALL-TRACE] After doSkillCheckWhileMoving fall: " +
+                                    "entity.position={}, entity.elevation={}, entity.isProne={}, " +
+                                    "climbingElevation={}, lastPos={}, curPos={}, curVTOLElevation={}",
+                              entity.getPosition(), entity.getElevation(), entity.isProne(),
+                              climbingElevation, lastPos, curPos, curVTOLElevation);
+                        Hex fallHex = getGame().getBoard(entity.getBoardId()).getHex(entity.getPosition());
+                        if (fallHex != null) {
+                            logger.debug("[FALL-TRACE] Fall hex: level={}, ceiling={}, floor={}, depth={}, " +
+                                        "containsWater={}, isElevationValid={}",
+                                  fallHex.getLevel(), fallHex.ceiling(), fallHex.floor(), fallHex.depth(),
+                                  fallHex.containsTerrain(Terrains.WATER),
+                                  entity.isElevationValid(entity.getElevation(), fallHex));
+                        }
+                        fellWhileClimbing = true;
+                        fellDuringMovement = true;
+                        turnOver = true;
+                        break;
+                    }
+                    // Successfully climbed one more level
+                    climbingElevation++;
+
+                    // Building CF check during climbing (TO:AR p.20)
+                    // "If the weight of the unit exceeds the Construction Factor of the
+                    // hex — whether that occurs when the unit starts the climb, or during
+                    // the climb — the hex collapses."
+                    // The building being climbed is at the destination hex (curPos)
+                    Hex climbHex = getGame().getBoard(entity.getBoardId()).getHex(curPos);
+                    logger.debug("[FALL-TRACE] Building check: curPos={}, lastPos={}, " +
+                                "containsBuilding={}", curPos, lastPos,
+                          climbHex.containsTerrain(Terrains.BUILDING));
+                    if (climbHex.containsTerrain(Terrains.BUILDING)) {
+                        IBuilding climbBldg = getGame().getBoard(entity.getBoardId()).getBuildingAt(curPos);
+                        if (climbBldg != null) {
+                            // On the first level of a NEW climb, damage the building (entering the hex)
+                            // Don't damage again on continued climbs (entity was already climbing)
+                            if ((levelClimbed == 1) && (levelsAlreadyClimbed == 0)) {
+                                int buildingDamage = (int) Math.ceil(entity.getWeight() / 10.0);
+                                logger.debug("[FALL-TRACE] Building climbing damage: {} points to {} at {}",
+                                      buildingDamage, climbBldg.getName(), curPos);
+                                addReport(gameManager.damageBuilding(climbBldg, buildingDamage, curPos));
+                            }
+
+                            // Check if unit weight exceeds current CF (may have changed
+                            // due to damage from other sources)
+                            int currentCF = climbBldg.getCurrentCF(curPos);
+                            logger.debug("[FALL-TRACE] Building CF check: weight={}, CF={}",
+                                  entity.getWeight(),
+                                  currentCF);
+                            if (entity.getWeight() > currentCF) {
+                                logger.debug("[FALL-TRACE] Building too weak for climbing entity: " +
+                                            "weight={}, CF={}, climbingElevation={}, curPos={}, lastPos={}",
+                                      entity.getWeight(), currentCF, climbingElevation, curPos, lastPos);
+                                // Entity falls from climbing elevation before collapse
+                                entity.setClimbing(false);
+                                entity.setDangling(false);
+                                entity.setElevation(climbingElevation);
+                                entity.setPosition(lastPos);
+                                // Process the fall from climbing elevation
+                                PilotingRollData climbFallRoll = new PilotingRollData(entity.getId(),
+                                      TargetRoll.AUTOMATIC_FAIL, "building too weak");
+                                addReport(gameManager.doEntityFallsInto(entity, climbingElevation,
+                                      lastPos, lastPos, climbFallRoll, true, 0));
+                                curPos = entity.getPosition();
+                                curVTOLElevation = entity.getElevation();
+                                fellWhileClimbing = true;
+                                fellDuringMovement = true;
+                                turnOver = true;
+                                break;
+                            }
+                        }
+                    }
+                }
+
+                if (fellWhileClimbing) {
+                    break;
+                }
+
+                // Did we complete the full climb or just a partial?
+                if (levelsThisTurn < totalLevelsToClimb) {
+                    // Partial climb - Mek clings to cliff face at intermediate elevation
+                    // Stay in the lower hex, facing the higher hex, at climbing elevation
+                    entity.setPosition(lastPos);
+                    entity.setFacing(curFacing);
+                    entity.setElevation(climbingElevation);
+                    entity.setClimbing(true);
+                    // Climbing back up exits any prior dangle state
+                    entity.setDangling(false);
+                    // Reset chosen-levels so next turn's dialog starts fresh
+                    entity.setClimbingLevelsChosen(0);
+                    curPos = lastPos;
+                    curVTOLElevation = climbingElevation;
+                    mpUsed = walkMP;
+                    logger.debug("Climbing: partial climb, {} of {} levels. " +
+                                "Clinging at elevation {} in hex {}",
+                          levelsThisTurn, totalLevelsToClimb, climbingElevation, lastPos);
+                    // End movement - spent all MP climbing
+                    turnOver = true;
+                    break;
+                } else if (totalLevelsToClimb > 0) {
+                    // Completed the climb - Mek enters the upper hex
+                    entity.setClimbing(false);
+                    // Climbing back up from a dangle terminates the dangle state
+                    entity.setDangling(false);
+                    entity.setClimbingLevelsChosen(0);
+                    // Push a "reached the top!" toast so the player gets explicit feedback that
+                    // the multi-turn climb finished. Without this they only know by spotting
+                    // the elevation indicator and the cleared climbing flag.
+                    Report topReport = new Report(6466, Report.PUBLIC);
+                    topReport.add(entity.getDisplayName());
+                    addReport(topReport);
+                    Vector<Report> topSpecial = new Vector<>();
+                    topSpecial.add(topReport);
+                    gameManager.send(gameManager.createSpecialReportPacket(topSpecial));
+                    logger.debug("Climbing: completed full climb of {} levels", totalLevelsToClimb);
+                } else {
+                    // No levels to climb (e.g. moved to same-level hex while climbing)
+                    // Keep climbing state if still at intermediate elevation
+                    if (climbingElevation > 0) {
+                        entity.setClimbing(true);
+                        entity.setElevation(climbingElevation);
+                        logger.debug("Climbing: no levels to climb but still at elevation {}, keeping climbing state",
+                              climbingElevation);
+                    } else {
+                        entity.setClimbing(false);
+                        entity.setDangling(false);
+                        entity.setClimbingLevelsChosen(0);
+                        logger.debug("Climbing: at ground level, clearing climbing state");
+                    }
+                }
+            }
+
             // did the entity just fall?
             if (!wasProne && entity.isProne()) {
                 curFacing = entity.getFacing();
@@ -3673,6 +4493,7 @@ class MovePathHandler extends AbstractTWRuleHandler {
             if (step.getType() == MoveStepType.HULL_DOWN) {
                 mpUsed = step.getMpUsed();
                 entity.setHullDown(true);
+                logger.debug("[HullDown] {}: went hull-down via movement at {}", entity.getDisplayName(), curPos);
             }
 
             // Check for crushing buildings by Dropships/Mobile Structures
@@ -3841,5 +4662,237 @@ class MovePathHandler extends AbstractTWRuleHandler {
 
     private boolean usingAeroOnGroundMovement() {
         return getGame().getOptions().booleanOption(OptionsConstants.ADVANCED_AERO_RULES_AERO_GROUND_MOVE);
+    }
+
+    /**
+     * Begins a bridge build for a Bridge-Building Engineer platoon: spends the bridge building budget, locks the
+     * platoon into the build for its duration and reports the started work. The step was already validated when the
+     * move path was compiled. TO:AUE p.152.
+     *
+     * @param infantry the platoon starting the build
+     * @param step     the BUILD_BRIDGE step carrying the site, orientation and bridge type
+     */
+    private void processBuildBridgeStep(Infantry infantry, MoveStep step) {
+        if (!(infantry instanceof ConvInfantry convInfantry)) {
+            logger.warn("[BuildBridge] BUILD_BRIDGE step ignored for {}: not a conventional infantry platoon",
+                  infantry.getShortName());
+            return;
+        }
+        if (step.getBridgeTargetCoords() == null) {
+            logger.warn("[BuildBridge] BUILD_BRIDGE step ignored for {}: no target hex in the step data",
+                  convInfantry.getShortName());
+            return;
+        }
+        // Another platoon may have started/paused a bridge in this hex since the path was plotted; an in-progress
+        // bridge places no terrain, so reject a second build in the same hex here.
+        if (ConvInfantry.isBridgeTargetClaimed(getGame(), convInfantry.getBoardId(), step.getBridgeTargetCoords(),
+              convInfantry)) {
+            logger.warn("[BuildBridge] BUILD_BRIDGE step ignored for {}: another platoon already has a bridge in "
+                  + "progress at {}", convInfantry.getShortName(), step.getBridgeTargetCoords());
+            return;
+        }
+        // A gap in an existing bridge (a destroyed section) is repaired rather than freshly built when the unofficial
+        // bridge-repair option is on; the work is identical but the finished section matches the surviving span's deck.
+        boolean repairAllowed = getGame().getOptions()
+              .booleanOption(OptionsConstants.UNOFFICIAL_BRIDGE_REPAIR_ENGINEERS);
+        boolean isRepair = repairAllowed && BridgeConstruction.isBridgeRepairSite(
+              getGame().getBoard(convInfantry.getBoardId()), step.getBridgeTargetCoords(), step.getBridgeExits());
+        logger.info("[BuildBridge] {} begins a bridge {}: target {}, exits bitmask {}, type {} (1=light, 2=medium)",
+              convInfantry.getShortName(), isRepair ? "repair" : "build", step.getBridgeTargetCoords(),
+              step.getBridgeExits(), step.getBridgeType());
+        // Building a bridge is the platoon's sole action, so any other ground posture (dug in / hitting the deck) ends
+        convInfantry.clearGroundPostures();
+        if (isRepair) {
+            convInfantry.startBridgeRepair(step.getBridgeTargetCoords(), step.getBridgeExits(), step.getBridgeType());
+        } else {
+            convInfantry.startBridgeBuild(step.getBridgeTargetCoords(), step.getBridgeExits(), step.getBridgeType());
+        }
+        convInfantry.spendBridgeBuildPoints(step.getBridgeType());
+        // Free facing change toward the construction site: the platoon works facing its bridge
+        if (convInfantry.getPosition() != null) {
+            int facingToBridge = convInfantry.getPosition().direction(step.getBridgeTargetCoords());
+            convInfantry.setFacing(facingToBridge);
+            convInfantry.setSecondaryFacing(facingToBridge);
+        }
+        Report report = new Report(isRepair ? 4288 : 4274);
+        report.subject = convInfantry.getId();
+        report.addDesc(convInfantry);
+        report.add(step.getBridgeTargetCoords().getBoardNum());
+        report.add(convInfantry.getBridgeBuildRequiredTurns());
+        addReport(report);
+    }
+
+    /**
+     * Cancels an in-progress bridge build and begins dismantling it. Dismantling takes as many turns as were spent
+     * building; the spent budget is refunded only once dismantling finishes, in the END phase. TO:AUE p.152.
+     *
+     * @param infantry the platoon cancelling its build
+     */
+    private void processCancelBridgeStep(Infantry infantry) {
+        if (!(infantry instanceof ConvInfantry convInfantry)) {
+            logger.warn("[BuildBridge] CANCEL_BRIDGE step ignored for {}: not a conventional infantry platoon",
+                  infantry.getShortName());
+            return;
+        }
+        if (!convInfantry.isBuildingBridge()) {
+            logger.warn("[BuildBridge] CANCEL_BRIDGE step ignored for {}: not currently building a bridge",
+                  convInfantry.getShortName());
+            return;
+        }
+        Coords target = convInfantry.getBridgeTargetCoords();
+        convInfantry.startBridgeDismantle();
+        logger.info("[BuildBridge] {} cancels its bridge build at {}: dismantling will take {} turn(s)",
+              convInfantry.getShortName(), target, convInfantry.getBridgeDismantleRequiredTurns());
+        Report report = new Report(4281);
+        report.subject = convInfantry.getId();
+        report.addDesc(convInfantry);
+        if (target != null) {
+            report.add(target.getBoardNum());
+        } else {
+            report.add("?");
+        }
+        report.add(convInfantry.getBridgeDismantleRequiredTurns());
+        addReport(report);
+    }
+
+    /**
+     * Resumes building, from either a paused build or a dismantling: the platoon resumes from the structure still
+     * standing (dismantling) or the held progress (paused). TO:AUE p.152.
+     *
+     * @param infantry the platoon resuming its build
+     */
+    private void processResumeBridgeStep(Infantry infantry) {
+        if (!(infantry instanceof ConvInfantry convInfantry)) {
+            logger.warn("[BuildBridge] RESUME_BRIDGE step ignored for {}: not a conventional infantry platoon",
+                  infantry.getShortName());
+            return;
+        }
+        if (!convInfantry.isDismantlingBridge() && !convInfantry.isBridgePaused()) {
+            logger.warn("[BuildBridge] RESUME_BRIDGE step ignored for {}: not currently dismantling or paused",
+                  convInfantry.getShortName());
+            return;
+        }
+        Coords target = convInfantry.getBridgeTargetCoords();
+        convInfantry.resumeBridgeBuild();
+        logger.info("[BuildBridge] {} resumes its bridge build at {}: {} of {} turns built",
+              convInfantry.getShortName(), target, convInfantry.getBridgeBuildTurns(),
+              convInfantry.getBridgeBuildRequiredTurns());
+        Report report = new Report(4284);
+        report.subject = convInfantry.getId();
+        report.addDesc(convInfantry);
+        report.add(convInfantry.getBridgeBuildTurns());
+        report.add(convInfantry.getBridgeBuildRequiredTurns());
+        addReport(report);
+    }
+
+    /**
+     * Pauses an active bridge build: the platoon holds its progress and is freed to act normally until it returns to
+     * resume. TO:AUE p.152.
+     *
+     * @param infantry the platoon pausing its build
+     */
+    private void processPauseBridgeStep(Infantry infantry) {
+        if (!(infantry instanceof ConvInfantry convInfantry)) {
+            logger.warn("[BuildBridge] PAUSE_BRIDGE step ignored for {}: not a conventional infantry platoon",
+                  infantry.getShortName());
+            return;
+        }
+        if (!convInfantry.isBuildingBridge()) {
+            logger.warn("[BuildBridge] PAUSE_BRIDGE step ignored for {}: not currently building a bridge",
+                  convInfantry.getShortName());
+            return;
+        }
+        Coords target = convInfantry.getBridgeTargetCoords();
+        convInfantry.pauseBridgeBuild();
+        logger.info("[BuildBridge] {} pauses its bridge build at {}: {} of {} turns held",
+              convInfantry.getShortName(), target, convInfantry.getBridgeBuildTurns(),
+              convInfantry.getBridgeBuildRequiredTurns());
+        Report report = new Report(4286);
+        report.subject = convInfantry.getId();
+        report.addDesc(convInfantry);
+        report.add(convInfantry.getBridgeBuildTurns());
+        report.add(convInfantry.getBridgeBuildRequiredTurns());
+        addReport(report);
+    }
+
+    /**
+     * Abandons any bridge work in progress: the partial structure is lost immediately and the spent budget is not
+     * refunded. TO:AUE p.152.
+     *
+     * @param infantry the platoon abandoning its bridge
+     */
+    private void processAbandonBridgeStep(Infantry infantry) {
+        if (!(infantry instanceof ConvInfantry convInfantry)) {
+            logger.warn("[BuildBridge] ABANDON_BRIDGE step ignored for {}: not a conventional infantry platoon",
+                  infantry.getShortName());
+            return;
+        }
+        if (!convInfantry.hasBridgeInProgress()) {
+            logger.warn("[BuildBridge] ABANDON_BRIDGE step ignored for {}: no bridge work in progress",
+                  convInfantry.getShortName());
+            return;
+        }
+        Coords target = convInfantry.getBridgeTargetCoords();
+        convInfantry.abandonBridge();
+        logger.info("[BuildBridge] {} abandons its bridge at {}; progress lost, points forfeit",
+              convInfantry.getShortName(), target);
+        Report report = new Report(4287);
+        report.subject = convInfantry.getId();
+        report.addDesc(convInfantry);
+        if (target != null) {
+            report.add(target.getBoardNum());
+        } else {
+            report.add("?");
+        }
+        addReport(report);
+    }
+
+    /**
+     * Begins a unit's clearing of a rubble hex (a vehicle with a bulldozer/backhoe, or a backhoe Mek), TacOps. The
+     * required number of turns is taken from the rubble's structure level (2/4/8/16, capped at 16) plus any backhoe
+     * penalty. Re-declaring the same hex while already clearing it does not reset progress.
+     *
+     * @param entity   the clearing unit (a {@link RubbleClearer})
+     * @param position the rubble hex being cleared (the unit's own hex)
+     */
+    private void beginRubbleClearing(Entity entity, Coords position) {
+        if (!(entity instanceof RubbleClearer clearer)) {
+            return;
+        }
+        // Defensive server-side checks mirror the MoveStep legality: a rubble-clearing tool (bulldozer, or backhoe
+        // under the unofficial rule) and a rubble hex.
+        if (!BulldozerRules.canClearRubble(entity, getGame())) {
+            logger.debug("[Bulldozer] {}: clear rubble rejected - no working rubble-clearing equipment / rule off",
+                  entity.getDisplayName());
+            return;
+        }
+        Hex hex = getGame().getBoard(entity.getBoardId()).getHex(position);
+        if ((hex == null) || (hex.terrainLevel(Terrains.RUBBLE) <= 0)) {
+            logger.debug("[Bulldozer] {}: clear rubble rejected - hex at {} contains no rubble",
+                  entity.getDisplayName(), position);
+            return;
+        }
+        // Already clearing this same hex: leave the in-progress counter untouched so progress is not reset.
+        if (clearer.isClearingRubble() && position.equals(clearer.getRubbleClearTarget())) {
+            return;
+        }
+        int rubbleLevel = hex.terrainLevel(Terrains.RUBBLE);
+        // The base time plus any backhoe penalty (a backhoe takes 4 turns longer, unofficial rule).
+        int requiredTurns = BulldozerRules.totalClearingTurns(entity, hex, getGame());
+        clearer.beginClearingRubble(position, requiredTurns);
+
+        // Player-visible feedback that the work has started (the QA pain point): a movement-phase report and a toast,
+        // naming the actual tool so a backhoe is not reported as a bulldozer.
+        String toolName = BulldozerRules.clearingToolName(entity);
+        Report report = new Report(5348);
+        report.subject = entity.getId();
+        report.addDesc(entity);
+        report.add(toolName);
+        report.add(requiredTurns);
+        addReport(report);
+        gameManager.sendToast(GameToastEvent.Level.INFO,
+              Messages.getString("Bulldozer.beginClearToast", entity.getShortName(), requiredTurns), entity);
+        logger.info("[Bulldozer] {} begins clearing rubble (level {}) at {}: {} turns required",
+              entity.getShortName(), rubbleLevel, position, requiredTurns);
     }
 }

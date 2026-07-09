@@ -1,6 +1,6 @@
 /*
  * Copyright (c) 2000-2005 - Ben Mazur (bmazur@sev.org)
- * Copyright (C) 2013-2025 The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2013-2026 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -38,6 +38,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.junit.jupiter.api.Assertions.fail;
+import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.spy;
 
@@ -45,29 +46,31 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Vector;
+import java.util.stream.Stream;
 
 import megamek.common.actions.DfaAttackAction;
+import megamek.common.battleArmor.BattleArmor;
 import megamek.common.board.Board;
 import megamek.common.board.Coords;
+import megamek.common.compute.ComputeECM;
+import megamek.common.enums.BuildingType;
 import megamek.common.equipment.EquipmentType;
-import megamek.common.equipment.Mounted;
+import megamek.common.equipment.EquipmentTypeLookup;
 import megamek.common.game.Game;
 import megamek.common.loaders.MekFileParser;
 import megamek.common.options.OptionsConstants;
-import megamek.common.units.BipedMek;
-import megamek.common.units.Crew;
-import megamek.common.units.Entity;
-import megamek.common.units.Mek;
-import megamek.common.units.Tank;
-import megamek.common.units.Terrain;
-import megamek.common.units.Terrains;
-import megamek.common.units.VTOL;
+import megamek.common.units.*;
 import megamek.common.util.C3Util;
 import megamek.utils.EntityLoader;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Named;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.MethodSource;
+import org.mockito.MockedStatic;
+import org.mockito.Mockito;
 
 /**
  * @author Deric "Netzilla" Page (deric dot page at usa dot net)
@@ -117,6 +120,11 @@ class EntityTest {
         MekFileParser.setCanonUnitNames(new Vector<>(Collections.singleton("Exterminator EXT-4A")));
         Entity e = EntityLoader.loadFromFile("Exterminator EXT-4A.mtf");
         assertTrue(e.isCanon());
+    }
+
+    @Test
+    void unknownSourcebookIsNonCanonBySource() {
+        assertTrue(Entity.isNonCanonBySource("Definitely Missing Sourcebook", ""));
     }
 
     /**
@@ -330,7 +338,6 @@ class EntityTest {
 
                 // Assert
                 assertFalse(isUnderwater);
-                ;
             }
 
             @Test
@@ -400,7 +407,7 @@ class EntityTest {
                 fail("Failed to add Boosted C3 equipment: " + e.getMessage());
             }
 
-            C3Util.connect(game, new ArrayList<Entity>(List.of(e1, e2)), e1.getId(), false);
+            C3Util.connect(game, new ArrayList<>(List.of(e1, e2)), e1.getId(), false);
 
         }
 
@@ -556,6 +563,511 @@ class EntityTest {
             assertEquals(tank, tank.getC3Top());
         }
 
+        /**
+         * Regression test for #8226: a C3 master is jammed at its own hex by enemy ECM, but the slave's line to the
+         * master is clear because friendly Angel ECCM cancels the ECM along the line (without reaching the master's
+         * hex). Pre-fix this asymmetric ECM/ECCM geometry threw
+         * {@code IllegalStateException("C3 slave/master connection not affected by ECM/AECM but master is!")} from
+         * {@code getC3Top}, which spammed any UI path that recomputed BV (tooltips, panel updates, turn-change
+         * handlers) and effectively locked the affected units out of the game.
+         *
+         * <p>{@link ComputeECM} is statically mocked so the asymmetric outcome is reproduced deterministically without
+         * having to recreate the rule-engine geometry that produced it in the field-reported savegame.</p>
+         */
+        @Test
+        public void testGetC3TopMasterJammedAtOwnHexButSlaveLineClear()
+              throws C3Util.C3CapacityException, C3Util.MismatchingC3MException {
+
+            Mek mek = new BipedMek();    // master (C3M)
+            Tank tank = new Tank();      // slave (C3S)
+
+            Game game = setUpGame();
+            Player player = new Player(1, "C3 side");
+            game.addPlayer(player.getId(), player);
+
+            game.getOptions().getOption(OptionsConstants.PLAYTEST_3).setValue(false);
+
+            // Standard (non-boosted) C3 link, master at (1,1), slave at (3,3).
+            setUpC3Link(game, player, mek, new Coords(1, 1), tank, new Coords(3, 3), false);
+
+            // Sanity: the link is in place before we mock anything.
+            assertEquals(mek, tank.getC3Master());
+
+            try (MockedStatic<ComputeECM> ecm = Mockito.mockStatic(ComputeECM.class)) {
+                // Slave line to master: clear. Friendly ECCM along the slave->master line cancels enemy ECM.
+                ecm.when(() -> ComputeECM.isAffectedByECM(eq(tank), eq(tank.getPosition()), eq(mek.getPosition())))
+                      .thenReturn(false);
+                // Master self-check: jammed. The master sits in an enemy ECM bubble that the friendly ECCM doesn't
+                // reach (e.g., the ECCM unit is far enough away that its radius covers the line but not the master's
+                // hex). Unstubbed isAffectedByAngelECM calls return false by default, which short-circuits cleanly
+                // since neither unit has Boosted C3.
+                ecm.when(() -> ComputeECM.isAffectedByECM(eq(mek), eq(mek.getPosition()), eq(mek.getPosition())))
+                      .thenReturn(true);
+
+                // Pre-fix this threw IllegalStateException; post-fix the master is treated as unreachable and the
+                // slave returns itself as the effective top of network (same handling as a slave-side jammed line).
+                assertEquals(tank, tank.getC3Top());
+            }
+        }
+
     }
     // endregion ECM Checks
+
+    @Nested
+    class InfantryVsInfantryTests {
+
+        private Game createGameWithBoard() {
+            Game game = new Game();
+            int width = 4, height = 4;
+            Hex[] hexes = new Hex[width * height];
+            for (int i = 0; i < hexes.length; i++) {
+                hexes[i] = new Hex(0);
+            }
+            game.setBoard(1, new Board(width, height, hexes));
+            return game;
+        }
+
+        static Stream<Named<Infantry>> eligibleEntities() {
+            return Stream.of(
+                  Named.of("Infantry", new ConvInfantry()),
+                  Named.of("BattleArmor", new BattleArmor())
+            );
+        }
+
+        static Stream<Named<Entity>> ineligibleEntities() {
+            return Stream.of(
+                  Named.of("BipedMek", new BipedMek()),
+                  Named.of("Tank", new Tank()),
+                  Named.of("VTOL", new VTOL()),
+                  Named.of("ProtoMek", new ProtoMek()),
+                  Named.of("AeroSpaceFighter", new AeroSpaceFighter())
+            );
+        }
+
+        /**
+         * Tests for {@link Infantry#canReinforceInfantryVsInfantry()}
+         */
+        @Nested
+        class CanReinforceInfantryVsInfantryTests {
+
+            @ParameterizedTest
+            @MethodSource("megamek.common.EntityTest$InfantryVsInfantryTests#eligibleEntities")
+            void returnsTrueWhenCombatExistsInHex(Infantry infantry) {
+                // Arrange
+                Game game = createGameWithBoard();
+                Player player = new Player(1, "Player 1");
+                game.addPlayer(1, player);
+                infantry.setId(1);
+                infantry.setOwner(player);
+                infantry.setPosition(new Coords(1, 1));
+                infantry.setBoardId(1);
+                game.addEntity(infantry);
+
+                ConvInfantry combatInfantry = new ConvInfantry();
+                combatInfantry.setId(2);
+                combatInfantry.setOwner(player);
+                combatInfantry.setPosition(new Coords(1, 1));
+                combatInfantry.setBoardId(1);
+                combatInfantry.setInfantryCombatTargetId(99);
+                game.addEntity(combatInfantry);
+
+                // Act
+                boolean result = infantry.canReinforceInfantryVsInfantry();
+
+                // Assert
+                assertTrue(result);
+            }
+
+            @ParameterizedTest
+            @MethodSource("megamek.common.EntityTest$InfantryVsInfantryTests#eligibleEntities")
+            void returnsFalseWhenNotOnBoard(Infantry infantry) {
+                // Arrange
+                Game game = createGameWithBoard();
+                Player player = new Player(1, "Player 1");
+                game.addPlayer(1, player);
+                infantry.setId(1);
+                infantry.setOwner(player);
+                // position intentionally NOT set — entity is in game but not at a valid board location
+                game.addEntity(infantry);
+
+                // Act
+                boolean result = infantry.canReinforceInfantryVsInfantry();
+
+                // Assert
+                assertFalse(result);
+            }
+
+            @ParameterizedTest
+            @MethodSource("megamek.common.EntityTest$InfantryVsInfantryTests#eligibleEntities")
+            void returnsFalseWhenAlreadyInCombatAsAttacker(Infantry infantry) {
+                // Arrange
+                Game game = createGameWithBoard();
+                Player player = new Player(1, "Player 1");
+                game.addPlayer(1, player);
+                infantry.setId(1);
+                infantry.setOwner(player);
+                infantry.setPosition(new Coords(1, 1));
+                infantry.setBoardId(1);
+                infantry.setInfantryCombatTargetId(99);
+                infantry.setInfantryCombatAttacker(true);
+                game.addEntity(infantry);
+
+                // Act
+                boolean result = infantry.canReinforceInfantryVsInfantry();
+
+                // Assert
+                assertFalse(result);
+            }
+
+            @ParameterizedTest
+            @MethodSource("megamek.common.EntityTest$InfantryVsInfantryTests#eligibleEntities")
+            void returnsFalseWhenAlreadyInCombatAsDefender(Infantry infantry) {
+                // Arrange
+                Game game = createGameWithBoard();
+                Player player = new Player(1, "Player 1");
+                game.addPlayer(1, player);
+                infantry.setId(1);
+                infantry.setOwner(player);
+                infantry.setPosition(new Coords(1, 1));
+                infantry.setBoardId(1);
+                infantry.setInfantryCombatTargetId(99);
+                infantry.setInfantryCombatAttacker(false);
+                game.addEntity(infantry);
+
+                // Act
+                boolean result = infantry.canReinforceInfantryVsInfantry();
+
+                // Assert
+                assertFalse(result);
+            }
+
+            @ParameterizedTest
+            @MethodSource("megamek.common.EntityTest$InfantryVsInfantryTests#eligibleEntities")
+            void returnsFalseWhenNoCombatExistsInHex(Infantry infantry) {
+                // Arrange
+                Game game = createGameWithBoard();
+                Player player = new Player(1, "Player 1");
+                game.addPlayer(1, player);
+                infantry.setId(1);
+                infantry.setOwner(player);
+                infantry.setPosition(new Coords(1, 1));
+                infantry.setBoardId(1);
+                game.addEntity(infantry);
+                // no other infantry in hex with an active combat target
+
+                // Act
+                boolean result = infantry.canReinforceInfantryVsInfantry();
+
+                // Assert
+                assertFalse(result);
+            }
+
+            @ParameterizedTest
+            @MethodSource("megamek.common.EntityTest$InfantryVsInfantryTests#ineligibleEntities")
+            void returnsFalseForNonInfantryEntity(Entity entity) {
+                // Arrange - (none; base Entity always returns false)
+
+                // Act
+                boolean result = entity.canReinforceInfantryVsInfantry();
+
+                // Assert
+                assertFalse(result);
+            }
+        }
+
+        /**
+         * Tests for {@link Infantry#canInitiateInfantryVsInfantryCombat()}
+         */
+        @Nested
+        class CanInitiateInfantryVsInfantryCombatTests {
+
+            @ParameterizedTest
+            @MethodSource("megamek.common.EntityTest$InfantryVsInfantryTests#eligibleEntities")
+            void returnsTrueWhenInsideBuildingWithEnemyBoardableEntityAndNoCombat(Infantry infantry) {
+                // Arrange
+                Game game = createGameWithBoard();
+                Player player1 = new Player(1, "Player 1");
+                Player player2 = new Player(2, "Player 2");
+                game.addPlayer(1, player1);
+                game.addPlayer(2, player2);
+
+                Infantry entity = spy(infantry);
+                doReturn(true).when(entity).isInBuilding();
+                entity.setId(1);
+                entity.setOwner(player1);
+                entity.setPosition(new Coords(1, 1));
+                entity.setBoardId(1);
+                game.addEntity(entity);
+
+                BuildingEntity enemyBuilding = new BuildingEntity(BuildingType.LIGHT, 1);
+                enemyBuilding.setId(2);
+                enemyBuilding.setOwner(player2);
+                enemyBuilding.setPosition(new Coords(1, 1));
+                enemyBuilding.setBoardId(1);
+                game.addEntity(enemyBuilding);
+
+                // Act
+                boolean result = entity.canInitiateInfantryVsInfantryCombat();
+
+                // Assert
+                assertTrue(result);
+            }
+
+            @ParameterizedTest
+            @MethodSource("megamek.common.EntityTest$InfantryVsInfantryTests#eligibleEntities")
+            void returnsFalseWhenNotOnBoard(Infantry infantry) {
+                // Arrange
+                Game game = createGameWithBoard();
+                Player player = new Player(1, "Player 1");
+                game.addPlayer(1, player);
+                infantry.setId(1);
+                infantry.setOwner(player);
+                // position intentionally NOT set — entity is in game but not at a valid board location
+                game.addEntity(infantry);
+
+                // Act
+                boolean result = infantry.canInitiateInfantryVsInfantryCombat();
+
+                // Assert
+                assertFalse(result);
+            }
+
+            @ParameterizedTest
+            @MethodSource("megamek.common.EntityTest$InfantryVsInfantryTests#eligibleEntities")
+            void returnsFalseWhenNotInBuilding(Infantry infantry) {
+                // Arrange
+                Game game = createGameWithBoard();
+                Player player = new Player(1, "Player 1");
+                game.addPlayer(1, player);
+                infantry.setId(1);
+                infantry.setOwner(player);
+                infantry.setPosition(new Coords(1, 1));
+                infantry.setBoardId(1);
+                game.addEntity(infantry);
+                // plain hex has no building terrain, so isInBuilding() returns false naturally
+
+                // Act
+                boolean result = infantry.canInitiateInfantryVsInfantryCombat();
+
+                // Assert
+                assertFalse(result);
+            }
+
+            @ParameterizedTest
+            @MethodSource("megamek.common.EntityTest$InfantryVsInfantryTests#eligibleEntities")
+            void returnsFalseWhenNoEnemyBoardableEntityInHex(Infantry infantry) {
+                // Arrange
+                Game game = createGameWithBoard();
+                Player player1 = new Player(1, "Player 1");
+                Player player2 = new Player(2, "Player 2");
+                game.addPlayer(1, player1);
+                game.addPlayer(2, player2);
+
+                Infantry entity = spy(infantry);
+                doReturn(true).when(entity).isInBuilding();
+                entity.setId(1);
+                entity.setOwner(player1);
+                entity.setPosition(new Coords(1, 1));
+                entity.setBoardId(1);
+                game.addEntity(entity);
+
+                BipedMek enemyMek = new BipedMek(); // isBoardable() returns false by default
+                enemyMek.setId(2);
+                enemyMek.setOwner(player2);
+                enemyMek.setPosition(new Coords(1, 1));
+                enemyMek.setBoardId(1);
+                game.addEntity(enemyMek);
+
+                // Act
+                boolean result = entity.canInitiateInfantryVsInfantryCombat();
+
+                // Assert
+                assertFalse(result);
+            }
+
+            @ParameterizedTest
+            @MethodSource("megamek.common.EntityTest$InfantryVsInfantryTests#eligibleEntities")
+            void returnsFalseWhenCombatAlreadyExistsInHex(Infantry infantry) {
+                // Arrange
+                Game game = createGameWithBoard();
+                Player player1 = new Player(1, "Player 1");
+                Player player2 = new Player(2, "Player 2");
+                game.addPlayer(1, player1);
+                game.addPlayer(2, player2);
+
+                Infantry entity = spy(infantry);
+                doReturn(true).when(entity).isInBuilding();
+                entity.setId(1);
+                entity.setOwner(player1);
+                entity.setPosition(new Coords(1, 1));
+                entity.setBoardId(1);
+                game.addEntity(entity);
+
+                BuildingEntity enemyBuilding = new BuildingEntity(BuildingType.LIGHT, 1);
+                enemyBuilding.setId(2);
+                enemyBuilding.setOwner(player2);
+                enemyBuilding.setPosition(new Coords(1, 1));
+                enemyBuilding.setBoardId(1);
+                game.addEntity(enemyBuilding);
+
+                Infantry existingCombatant = new ConvInfantry();
+                existingCombatant.setId(3);
+                existingCombatant.setOwner(player1);
+                existingCombatant.setPosition(new Coords(1, 1));
+                existingCombatant.setBoardId(1);
+                existingCombatant.setInfantryCombatTargetId(99);
+                game.addEntity(existingCombatant);
+
+                // Act
+                boolean result = entity.canInitiateInfantryVsInfantryCombat();
+
+                // Assert
+                assertFalse(result);
+            }
+
+            @ParameterizedTest
+            @MethodSource("megamek.common.EntityTest$InfantryVsInfantryTests#ineligibleEntities")
+            void returnsFalseForNonInfantryEntity(Entity entity) {
+                // Arrange - (none; base Entity always returns false)
+
+                // Act
+                boolean result = entity.canInitiateInfantryVsInfantryCombat();
+
+                // Assert
+                assertFalse(result);
+            }
+        }
+    }
+
+    /**
+     * Tests for {@link Entity#canLayDemolitionCharges()} and its interaction with
+     * {@link Entity#isEligibleForPhysical()}. Regression tests for issue #6614: carrying a Demolition Charge must not
+     * prevent Battle Armor from making vibroclaw attacks in the physical phase.
+     */
+    @Nested
+    class DemolitionChargeEligibilityTests {
+
+        private static final Coords BUILDING_COORDS = new Coords(1, 1);
+        private static final Coords CLEAR_COORDS = new Coords(2, 2);
+
+        private Game createGameWithBuildingHex() {
+            Game game = new Game();
+            int width = 4, height = 4;
+            Hex[] hexes = new Hex[width * height];
+            for (int i = 0; i < hexes.length; i++) {
+                hexes[i] = new Hex(0);
+            }
+            game.setBoard(1, new Board(width, height, hexes));
+            Hex buildingHex = game.getBoard(1).getHex(BUILDING_COORDS);
+            buildingHex.addTerrain(new Terrain(Terrains.BUILDING, 2));
+            buildingHex.addTerrain(new Terrain(Terrains.BLDG_ELEV, 1));
+            buildingHex.addTerrain(new Terrain(Terrains.BLDG_CF, 40));
+            return game;
+        }
+
+        private BattleArmor createBattleArmor(Game game, int id, Player owner, Coords position,
+              boolean withDemolitionCharge, boolean withVibroClaws) throws Exception {
+            BattleArmor battleArmor = new BattleArmor();
+            battleArmor.setId(id);
+            battleArmor.setOwner(owner);
+            battleArmor.setCrew(new Crew(CrewType.INFANTRY_CREW));
+            battleArmor.setSquadSize(4);
+            battleArmor.autoSetInternal();
+            if (withDemolitionCharge) {
+                battleArmor.addEquipment(EquipmentType.get(EquipmentTypeLookup.DEMOLITION_CHARGE),
+                      BattleArmor.LOC_SQUAD);
+            }
+            if (withVibroClaws) {
+                battleArmor.addEquipment(EquipmentType.get("BABattleClawVibro"), BattleArmor.LOC_SQUAD);
+            }
+            battleArmor.setPosition(position);
+            battleArmor.setBoardId(1);
+            battleArmor.setDeployed(true);
+            game.addEntity(battleArmor);
+            return battleArmor;
+        }
+
+        private Infantry createEnemyInfantry(Game game, int id, Player owner, Coords position) {
+            Infantry infantry = new ConvInfantry();
+            infantry.setId(id);
+            infantry.setOwner(owner);
+            infantry.setCrew(new Crew(CrewType.INFANTRY_CREW));
+            infantry.setSquadSize(7);
+            infantry.autoSetInternal();
+            infantry.setPosition(position);
+            infantry.setBoardId(1);
+            infantry.setDeployed(true);
+            game.addEntity(infantry);
+            return infantry;
+        }
+
+        @Test
+        void battleArmorWithDemolitionChargeCanStillMakeVibroClawAttacks() throws Exception {
+            // Arrange - regression test for #6614: BA with a demolition charge outside a building hex,
+            // enemy infantry in the same hex, must remain eligible for the physical phase (vibroclaw attack)
+            Game game = createGameWithBuildingHex();
+            Player player1 = new Player(1, "Player 1");
+            Player player2 = new Player(2, "Player 2");
+            game.addPlayer(1, player1);
+            game.addPlayer(2, player2);
+
+            BattleArmor battleArmor = createBattleArmor(game, 1, player1, CLEAR_COORDS, true, true);
+            createEnemyInfantry(game, 2, player2, CLEAR_COORDS);
+
+            // Act
+            boolean result = battleArmor.isEligibleForPhysical();
+
+            // Assert
+            assertTrue(result,
+                  "BA carrying a demolition charge must still be eligible for vibroclaw attacks (#6614)");
+        }
+
+        @Test
+        void infantryWithDemolitionChargeInBuildingIsEligibleForPhysical() throws Exception {
+            // Arrange - laying demolition charges is a physical-phase action, so a demo-equipped unit
+            // standing in a building hex must be eligible even without any attackable target
+            Game game = createGameWithBuildingHex();
+            Player player1 = new Player(1, "Player 1");
+            game.addPlayer(1, player1);
+
+            BattleArmor battleArmor = createBattleArmor(game, 1, player1, BUILDING_COORDS, true, false);
+
+            // Act
+            boolean result = battleArmor.isEligibleForPhysical();
+
+            // Assert
+            assertTrue(result, "Unit with a demolition charge in a building hex must be eligible to lay charges");
+        }
+
+        @Test
+        void canLayDemolitionChargesRequiresBuildingHex() throws Exception {
+            // Arrange
+            Game game = createGameWithBuildingHex();
+            Player player1 = new Player(1, "Player 1");
+            game.addPlayer(1, player1);
+
+            BattleArmor inBuilding = createBattleArmor(game, 1, player1, BUILDING_COORDS, true, false);
+            BattleArmor inClear = createBattleArmor(game, 2, player1, CLEAR_COORDS, true, false);
+
+            // Act & Assert
+            assertTrue(inBuilding.canLayDemolitionCharges(),
+                  "Demo-equipped unit in a building hex can lay charges");
+            assertFalse(inClear.canLayDemolitionCharges(),
+                  "Demo-equipped unit outside a building hex cannot lay charges");
+        }
+
+        @Test
+        void canLayDemolitionChargesRequiresDemolitionCharge() throws Exception {
+            // Arrange
+            Game game = createGameWithBuildingHex();
+            Player player1 = new Player(1, "Player 1");
+            game.addPlayer(1, player1);
+
+            BattleArmor noCharge = createBattleArmor(game, 1, player1, BUILDING_COORDS, false, false);
+
+            // Act & Assert
+            assertFalse(noCharge.canLayDemolitionCharges(),
+                  "Unit without a demolition charge cannot lay charges");
+        }
+    }
 }

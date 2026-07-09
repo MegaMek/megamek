@@ -33,7 +33,6 @@
 
 package megamek.common.actions.compute;
 
-import static org.junit.jupiter.api.Assertions.assertAll;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
@@ -65,15 +64,7 @@ import megamek.common.options.IOption;
 import megamek.common.options.OptionsConstants;
 import megamek.common.options.PilotOptions;
 import megamek.common.rolls.TargetRoll;
-import megamek.common.units.AbstractBuildingEntity;
-import megamek.common.units.BipedMek;
-import megamek.common.units.BuildingEntity;
-import megamek.common.units.Crew;
-import megamek.common.units.CrewType;
-import megamek.common.units.Entity;
-import megamek.common.units.Infantry;
-import megamek.common.units.Mek;
-import megamek.common.units.Targetable;
+import megamek.common.units.*;
 import megamek.server.totalWarfare.TWGameManager;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
@@ -81,8 +72,6 @@ import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
-
-import java.util.Vector;
 
 /**
  * Tests for
@@ -165,9 +154,10 @@ public class ComputeToHitTest extends GameBoardTestCase {
         return mockMek;
     }
 
+    @Deprecated(since = "0.51.0", forRemoval = true)
     Infantry createInfantry(String chassis, String model, String crewName) {
         // Create a real Infantry unit with some mocked fields
-        Infantry mockInfantry = new Infantry();
+        Infantry mockInfantry = new ConvInfantry();
         mockInfantry.setGame(game);
         mockInfantry.setChassis(chassis);
         mockInfantry.setModel(model);
@@ -767,6 +757,116 @@ public class ComputeToHitTest extends GameBoardTestCase {
                             .collect(java.util.stream.Collectors.joining(", ")));
                 assertFalse(result.cannotSucceed(), "Shot SHOULD succeed after building destroyed");
             }
+        }
+    }
+
+    @Nested
+    @DisplayName("toHitCalc Tests - Overhead Arms quirk")
+    class OverheadArmsTests {
+
+        private static final String BOARD_01_BY_04_WOODS_DATA = """
+              size 1 4
+              hex 0101 0 "" ""
+              hex 0102 0 "" ""
+              hex 0103 0 "woods:1;foliage_elev:2" ""
+              hex 0104 0 "" ""
+              end""";
+
+        private Mek attacker;
+        private Mek targetEntity;
+        private WeaponMounted armLaser;
+
+        private void buildScenario(String boardName, Coords attackerPos, Coords targetPos, boolean overheadArms)
+              throws LocationFullException {
+            setBoard(boardName);
+
+            attacker = createMek("Attacker", "ATK-1", "Alice");
+            when(attacker.getCrew().isActive()).thenReturn(true);
+            when(attacker.getCrew().getCrewType()).thenReturn(CrewType.SINGLE);
+            attacker.setOwnerId(player1.getId());
+            attacker.setId(1);
+            attacker.setPosition(attackerPos);
+            attacker.setFacing(0);
+            armLaser = (WeaponMounted) attacker.addEquipment(mediumLaserType, Mek.LOC_RIGHT_ARM);
+            if (overheadArms) {
+                attacker.getQuirks().getOption(OptionsConstants.QUIRK_POS_OVERHEAD_ARMS).setValue(true);
+                when(mockGameOptions.booleanOption(OptionsConstants.ADVANCED_STRATOPS_QUIRKS)).thenReturn(true);
+            }
+
+            targetEntity = createMek("Target", "TGT-2", "Bob");
+            targetEntity.setOwnerId(player2.getId());
+            targetEntity.setId(2);
+            targetEntity.setPosition(targetPos);
+
+            game.addEntity(attacker);
+            game.addEntity(targetEntity);
+        }
+
+        private ToHitData computeToHit() {
+            return ComputeToHit.toHitCalc(game, attacker.getId(), targetEntity,
+                  armLaser.getEquipmentNum(), Entity.LOC_NONE, AimingMode.NONE,
+                  false, false, null, null, false, false, null, false,
+                  WeaponAttackAction.UNASSIGNED, WeaponAttackAction.UNASSIGNED);
+        }
+
+        private boolean hasWoodsModifier(ToHitData toHitData) {
+            return toHitData.getModifiers()
+                  .stream()
+                  .anyMatch(modifier -> modifier.description().contains("light woods"));
+        }
+
+        private String describe(ToHitData toHitData) {
+            return toHitData.getModifiers().stream()
+                  .map(modifier -> "[" + modifier.value() + ": " + modifier.description() + "]")
+                  .collect(java.util.stream.Collectors.joining(", "));
+        }
+
+        @Test
+        @DisplayName("Without the quirk, an arm weapon takes the intervening light-woods modifier")
+        void armWeaponTakesWoodsModifierWithoutQuirk() throws LocationFullException {
+            initializeBoard("01_BY_04_WOODS", BOARD_01_BY_04_WOODS_DATA);
+            // Attacker at 0104, light woods at 0103 (adjacent to the attacker), target at 0101.
+            buildScenario("01_BY_04_WOODS", new Coords(0, 3), new Coords(0, 0), false);
+
+            ToHitData result = computeToHit();
+
+            assertNotNull(result, "ToHitData should not be null");
+            assertTrue(hasWoodsModifier(result),
+                  "A normal arm shot should be modified by the intervening light woods. Modifiers: "
+                        + describe(result));
+        }
+
+        @Test
+        @DisplayName("With the quirk, the standing Mek's arm weapon ignores the intervening light woods")
+        void armWeaponIgnoresWoodsWithQuirk() throws LocationFullException {
+            initializeBoard("01_BY_04_WOODS", BOARD_01_BY_04_WOODS_DATA);
+            buildScenario("01_BY_04_WOODS", new Coords(0, 3), new Coords(0, 0), true);
+
+            ToHitData result = computeToHit();
+
+            assertNotNull(result, "ToHitData should not be null");
+            assertFalse(hasWoodsModifier(result),
+                  "Overhead Arms should let the arm weapon ignore the intervening light woods. Modifiers: "
+                        + describe(result));
+            assertFalse(result.cannotSucceed(), "The shot should still be possible");
+        }
+
+        @Test
+        @DisplayName("The quirk cannot create line of sight over a tall hill")
+        void quirkDoesNotUnblockHill() throws LocationFullException {
+            initializeBoard("03_BY_05_CENTER_HILLS", BOARD_03_BY_05_CENTER_HILLS_DATA);
+            // Attacker at 0205 (level 0), target at 0201; the LOS passes through 0203 (elevation 4).
+            buildScenario("03_BY_05_CENTER_HILLS", new Coords(1, 4), new Coords(1, 0), true);
+
+            ToHitData result = computeToHit();
+
+            assertNotNull(result, "ToHitData should not be null");
+            boolean blockedByTerrain = result.getModifiers().stream()
+                  .anyMatch(modifier -> TARGET_IMPOSSIBLE == modifier.value()
+                        && LOS_BLOCKED_BY_TERRAIN.equals(modifier.description()));
+            assertTrue(blockedByTerrain,
+                  "Overhead Arms must not create LOS over a level-4 hill. Modifiers: " + describe(result));
+            assertTrue(result.cannotSucceed(), "Shot should remain impossible");
         }
     }
 }

@@ -36,11 +36,14 @@ package megamek.client.bot.princess;
 import java.io.Serial;
 import java.text.DecimalFormat;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Map;
 import java.util.Set;
 import java.util.Vector;
 
 import megamek.codeUtilities.StringUtility;
+import megamek.common.actions.DirectionalMountFacingAction;
 import megamek.common.actions.EntityAction;
 import megamek.common.actions.FlipArmsAction;
 import megamek.common.actions.TorsoTwistAction;
@@ -65,6 +68,9 @@ public class FiringPlan extends ArrayList<WeaponFireInfo> implements Comparable<
     private Targetable target;
     private int twist;
     private boolean flipArms;
+    // Directional Torso Mount (BMM p.83): equipment number -> chosen rear (true) / front (false) arc,
+    // for each mount whose facing this plan flips from the shooter's current facing.
+    private Map<Integer, Boolean> directionalMountFacings = new HashMap<>();
 
     FiringPlan() {
         setTwist(0);
@@ -88,6 +94,7 @@ public class FiringPlan extends ArrayList<WeaponFireInfo> implements Comparable<
         firingPlan.twist = this.twist;
         firingPlan.flipArms = this.flipArms;
         firingPlan.target = this.target;
+        firingPlan.directionalMountFacings = new HashMap<>(this.directionalMountFacings);
         return firingPlan;
     }
 
@@ -187,12 +194,23 @@ public class FiringPlan extends ArrayList<WeaponFireInfo> implements Comparable<
         }
 
         if (getTwist() != 0) {
-            actionVector.add(new TorsoTwistAction(get(0).getShooter().getId(),
-                  FireControl.correctFacing(get(0).getShooter().getFacing() + getTwist())));
+            actionVector.add(new TorsoTwistAction(getFirst().getShooter().getId(),
+                  FireControl.correctFacing(getFirst().getShooter().getFacing() + getTwist())));
         }
 
         if (flipArms) {
-            actionVector.addElement(new FlipArmsAction(get(0).getShooter().getId(), flipArms));
+            actionVector.addElement(new FlipArmsAction(getFirst().getShooter().getId(), flipArms));
+        }
+
+        // Directional Torso Mount arc changes (BMM p.83) - declared like a torso twist, before the
+        // weapon attacks that depend on them.
+        if (!directionalMountFacings.isEmpty()) {
+            int shooterId = getFirst().getShooter().getId();
+            for (Map.Entry<Integer, Boolean> mountFacing : directionalMountFacings.entrySet()) {
+                // Princess currently aims directional mounts front/rear only; map that to a facing offset (0/3).
+                int facing = mountFacing.getValue() ? 3 : 0;
+                actionVector.add(new DirectionalMountFacingAction(shooterId, mountFacing.getKey(), facing));
+            }
         }
 
         for (WeaponFireInfo weaponFireInfo : this) {
@@ -209,7 +227,7 @@ public class FiringPlan extends ArrayList<WeaponFireInfo> implements Comparable<
             return "Empty FiringPlan!";
         }
 
-        StringBuilder description = new StringBuilder("Firing Plan for ").append(get(0).getShooter().getChassis())
+        StringBuilder description = new StringBuilder("Firing Plan for ").append(getFirst().getShooter().getChassis())
               .append(" at ");
         Set<Integer> targets = new HashSet<>();
         // loop through all the targets for this firing plan, only show each target once.
@@ -253,6 +271,26 @@ public class FiringPlan extends ArrayList<WeaponFireInfo> implements Comparable<
 
     public void setTwist(int twist) {
         this.twist = twist;
+    }
+
+    /**
+     * @return a map of equipment number to chosen rear ({@code true}) / front ({@code false}) arc for each Directional
+     *       Torso Mount this plan flips from the shooter's current facing (BMM p.83)
+     */
+    public Map<Integer, Boolean> getDirectionalMountFacings() {
+        return directionalMountFacings;
+    }
+
+    /**
+     * Sets the Directional Torso Mount arc changes this plan declares. The plan only ever reads the given map (and
+     * copies it in {@link #clone()}), so callers may pass an immutable map such as {@link Map#of()} when there are no
+     * mounts to orient.
+     *
+     * @param directionalMountFacings a map of equipment number to chosen rear ({@code true}) / front ({@code false})
+     *                                arc; never mutated by the plan
+     */
+    public void setDirectionalMountFacings(Map<Integer, Boolean> directionalMountFacings) {
+        this.directionalMountFacings = directionalMountFacings;
     }
 
     public boolean getFlipArms() {

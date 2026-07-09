@@ -33,6 +33,15 @@
 
 package megamek.common.board;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+
+import java.util.List;
+import java.util.stream.Stream;
+
 import megamek.common.GameBoardTestCase;
 import megamek.common.Hex;
 import megamek.common.Player;
@@ -47,11 +56,6 @@ import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.MethodSource;
-
-import java.util.List;
-import java.util.stream.Stream;
-
-import static org.junit.jupiter.api.Assertions.*;
 
 @DisplayName(value = "AllowedDeploymentHelper Unit Tests")
 public class AllowedDeploymentHelperTest extends GameBoardTestCase {
@@ -82,6 +86,7 @@ public class AllowedDeploymentHelperTest extends GameBoardTestCase {
     }
 
     // Provider method for ground units - shared across all nested test classes
+    @Deprecated(since = "0.51.0", forRemoval = true)
     static Stream<Entity> elevationUnits() {
         return Stream.of(
               newEntity(VTOL.class),
@@ -135,9 +140,7 @@ public class AllowedDeploymentHelperTest extends GameBoardTestCase {
         } catch (Exception e) {
             throw new RuntimeException("Failed to create entity of type " + entityType.getName(), e);
         }
-        if (newEntity != null) {
-            newEntity.setId(0);
-        }
+        newEntity.setId(0);
         return (T) newEntity;
     }
 

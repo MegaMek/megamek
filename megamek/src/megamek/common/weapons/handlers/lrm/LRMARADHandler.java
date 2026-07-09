@@ -47,8 +47,8 @@ import megamek.server.totalWarfare.TWGameManager;
 
 /**
  * Weapon handler for ARAD (Anti-Radiation) LRM missiles. ARAD missiles receive cluster bonuses against targets with
- * active electronics, and penalties against targets without electronics.  ARAD missiles override the ECM malus
- * against NARC, allowing ARAD missiles to gain their bonuses against NARC-tagged targets even when affected by ECM.
+ * active electronics, and penalties against targets without electronics.  ARAD missiles override the ECM malus against
+ * NARC, allowing ARAD missiles to gain their bonuses against NARC-tagged targets even when affected by ECM.
  * <p>
  * Cluster Modifiers:
  * <ul>
@@ -61,7 +61,8 @@ import megamek.server.totalWarfare.TWGameManager;
  * effects when targeting a unit tagged by a friendly Narc pod. However, the ARAD missile does not receive any further
  * to-hit bonus from the pod."
  * <p>
- * Forum Ruling (Narc/ECM interaction): https://battletech.com/forums/index.php?topic=26824.msg609067#msg609067
+ * Forum Ruling (Narc/ECM interaction):
+ * <a href="https://battletech.com/forums/index.php?topic=26824.msg609067#msg609067">BT Forums</a>
  *
  * @author Hammer - Built with Claude Code
  * @since 2025-01-16

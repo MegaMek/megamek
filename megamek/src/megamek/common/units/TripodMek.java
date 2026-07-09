@@ -328,6 +328,9 @@ public class TripodMek extends MekWithArms {
             mp = applyGravityEffectsOnMP(mp);
         }
 
+        // Improved Magnetic Pulse (iATM IMP) missile movement reduction (IO IMP rules)
+        mp = Math.max(0, mp - getImpMpReduction());
+
         return Math.max(0, mp);
     }
 
@@ -478,6 +481,8 @@ public class TripodMek extends MekWithArms {
         }
 
         boolean playtestLocations = gameOptions().booleanOption(OptionsConstants.PLAYTEST_1);
+        boolean toAdvHitLoc =
+              gameOptions().booleanOption(OptionsConstants.ADVANCED_COMBAT_TAC_OPS_ADVANCED_MEK_HIT_LOCATIONS);
 
         if ((table == ToHitData.HIT_NORMAL) || (table == ToHitData.HIT_PARTIAL_COVER)) {
             roll = Compute.d6(2);
@@ -494,7 +499,7 @@ public class TripodMek extends MekWithArms {
                 logger.error("", t);
             }
 
-            if (playtestLocations
+            if (playtestLocations && !toAdvHitLoc
                   && (side == ToHitData.SIDE_LEFT || side == ToHitData.SIDE_RIGHT)
                   && roll != 2 // clarified on forum, TACs don't go to the CT in this case
             ) {
@@ -553,14 +558,12 @@ public class TripodMek extends MekWithArms {
                     case 7:
                         return new HitData(Mek.LOC_LEFT_TORSO);
                     case 8:
-                        if (gameOptions()
-                              .booleanOption(OptionsConstants.ADVANCED_COMBAT_TAC_OPS_ADVANCED_MEK_HIT_LOCATIONS)) {
+                        if (toAdvHitLoc) {
                             return new HitData(Mek.LOC_CENTER_TORSO, true);
                         }
                         return new HitData(Mek.LOC_CENTER_TORSO);
                     case 9:
-                        if (gameOptions()
-                              .booleanOption(OptionsConstants.ADVANCED_COMBAT_TAC_OPS_ADVANCED_MEK_HIT_LOCATIONS)) {
+                        if (toAdvHitLoc) {
                             return new HitData(Mek.LOC_RIGHT_TORSO, true);
                         }
                         return new HitData(Mek.LOC_RIGHT_TORSO);
@@ -591,14 +594,12 @@ public class TripodMek extends MekWithArms {
                     case 7:
                         return new HitData(Mek.LOC_RIGHT_TORSO);
                     case 8:
-                        if (gameOptions()
-                              .booleanOption(OptionsConstants.ADVANCED_COMBAT_TAC_OPS_ADVANCED_MEK_HIT_LOCATIONS)) {
+                        if (toAdvHitLoc) {
                             return new HitData(Mek.LOC_CENTER_TORSO, true);
                         }
                         return new HitData(Mek.LOC_CENTER_TORSO);
                     case 9:
-                        if (gameOptions()
-                              .booleanOption(OptionsConstants.ADVANCED_COMBAT_TAC_OPS_ADVANCED_MEK_HIT_LOCATIONS)) {
+                        if (toAdvHitLoc) {
                             return new HitData(Mek.LOC_LEFT_TORSO, true);
                         }
                         return new HitData(Mek.LOC_LEFT_TORSO);
@@ -609,7 +610,7 @@ public class TripodMek extends MekWithArms {
                 }
             } else if (side == ToHitData.SIDE_REAR) {
                 // normal rear hits
-                if (gameOptions().booleanOption(OptionsConstants.ADVANCED_COMBAT_TAC_OPS_ADVANCED_MEK_HIT_LOCATIONS)
+                if (toAdvHitLoc
                       &&
                       isProne()) {
                     switch (roll) {

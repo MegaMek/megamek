@@ -54,6 +54,7 @@ import javax.swing.event.ListSelectionListener;
 import megamek.client.Client;
 import megamek.client.ui.Messages;
 import megamek.client.ui.clientGUI.ClientGUI;
+import megamek.client.ui.clientGUI.boardview.overlay.ToastLevel;
 import megamek.client.ui.dialogs.ChoiceDialog;
 import megamek.client.ui.widget.BackGroundDrawer;
 import megamek.client.ui.widget.SkinXMLHandler;
@@ -64,6 +65,7 @@ import megamek.common.Configuration;
 import megamek.common.CriticalSlot;
 import megamek.common.battleArmor.BattleArmor;
 import megamek.common.equipment.AmmoType;
+import megamek.common.equipment.BridgeLayerState;
 import megamek.common.equipment.EquipmentMode;
 import megamek.common.equipment.GunEmplacement;
 import megamek.common.equipment.MiscMounted;
@@ -73,6 +75,7 @@ import megamek.common.equipment.WeaponType;
 import megamek.common.equipment.enums.MiscTypeFlag;
 import megamek.common.interfaces.ILocationExposureStatus;
 import megamek.common.options.OptionsConstants;
+import megamek.common.units.ConvInfantry;
 import megamek.common.units.Entity;
 import megamek.common.units.Mek;
 import megamek.common.units.ProtoMek;
@@ -447,11 +450,68 @@ class SystemPanel extends PicMap
         return getMountedDisplay(m, loc, null);
     }
 
+    /**
+     * Appends the remaining bridge building budget to the Infantry Bridge Kit line so a Bridge-Building Engineer
+     * platoon can see, in the systems tab, how many bridges it can still raise this scenario (TO:AUE p.152). The budget
+     * of 2 points covers either 2 Light Bridges (1 point each) or 1 Medium Bridge (2 points); the counts drop as
+     * bridges are built.
+     *
+     * @param displayText the systems-tab display text being built
+     * @param mounted     the mounted equipment for this row
+     */
+    private void appendBridgeKitBudget(StringBuilder displayText, Mounted<?> mounted) {
+        if (!(en instanceof ConvInfantry convInfantry)) {
+            return;
+        }
+        boolean isBridgeKit = (mounted.getType() instanceof MiscType miscType)
+              && miscType.hasFlag(MiscType.F_TOOLS)
+              && miscType.hasFlag(MiscTypeFlag.S_BRIDGE_KIT);
+        if (!isBridgeKit) {
+            return;
+        }
+        int pointsLeft = convInfantry.getBridgeBuildPoints();
+        int lightLeft = pointsLeft / ConvInfantry.BRIDGE_TYPE_LIGHT;
+        int mediumLeft = pointsLeft / ConvInfantry.BRIDGE_TYPE_MEDIUM;
+        displayText.append(' ').append(Messages.getString("MekDisplay.bridgeKitBudget", lightLeft, mediumLeft));
+    }
+
+    /**
+     * Appends the Bridge-Layer (AVLB) state to a systems-tab row: the carried bridge's remaining Construction Factor,
+     * "deploying" once a deployment has been declared but the bridge has not yet been laid (the stationary turn between
+     * the pre-end declaration and placement), "deployed" once the folding bridge has been laid, or "mechanism disabled"
+     * if a critical hit has knocked out the deploy mechanism (TM p.242 / TW). Does nothing for non-bridgelayer
+     * equipment.
+     *
+     * @param displayText the systems-tab display text being built
+     * @param mounted     the mounted equipment for this row
+     */
+    private void appendBridgeLayerState(StringBuilder displayText, Mounted<?> mounted) {
+        if (!(mounted instanceof MiscMounted miscMounted)) {
+            return;
+        }
+        BridgeLayerState bridgeState = miscMounted.getBridgeLayerState();
+        if (bridgeState == null) {
+            return;
+        }
+        if (bridgeState.isDeployed()) {
+            displayText.append(' ').append(Messages.getString("MekDisplay.bridgeLayerDeployed"));
+        } else if (bridgeState.isDeployPending()) {
+            displayText.append(' ').append(Messages.getString("MekDisplay.bridgeLayerDeploying",
+                  bridgeState.getCurrentCF()));
+        } else if (bridgeState.isDeployMechanismDisabled()) {
+            displayText.append(' ').append(Messages.getString("MekDisplay.bridgeLayerMechanismDisabled"));
+        } else {
+            displayText.append(' ').append(Messages.getString("MekDisplay.bridgeLayerCF", bridgeState.getCurrentCF()));
+        }
+    }
+
     private String getMountedDisplay(Mounted<?> m, int loc, CriticalSlot cs) {
         String hotLoaded = Messages.getString("MekDisplay.isHotLoaded");
         StringBuilder sb = new StringBuilder();
 
         sb.append(m.getDesc());
+        appendBridgeKitBudget(sb, m);
+        appendBridgeLayerState(sb, m);
 
         if ((cs != null) && cs.getMount2() != null) {
             sb.append(" ");
@@ -497,7 +557,6 @@ class SystemPanel extends PicMap
             if (ev.getSource().equals(m_chMode)
                   && (ev.getStateChange() == ItemEvent.SELECTED)) {
                 Mounted<?> m = getSelectedEquipment();
-                CriticalSlot cs = getSelectedCritical();
                 if ((m != null) && m.hasModes()) {
                     int nMode = m_chMode.getSelectedIndex();
                     if (nMode >= 0) {
@@ -516,7 +575,7 @@ class SystemPanel extends PicMap
                                     }
                                 }
                             } else {
-                                clientgui.doAlertDialog(Messages.getString("MekDisplay.BoobyTrapMode"),
+                                clientgui.addToast(ToastLevel.WARNING,
                                       Messages.getString("MekDisplay.BoobyTrapMode"));
                                 return;
                             }
@@ -561,17 +620,22 @@ class SystemPanel extends PicMap
                         if (m.canInstantSwitch(nMode)) {
                             clientgui.systemMessage(Messages.getString("MekDisplay.switched",
                                   m.getName(), m.curMode().getDisplayableName()));
+                            clientgui.addToast(ToastLevel.INFO,
+                                  m.getName() + ": " + m.curMode().getDisplayableName(), en);
                             int weapon = this.unitDisplayPanel.wPan.getSelectedWeaponNum();
                             this.unitDisplayPanel.wPan.displayMek(en);
                             this.unitDisplayPanel.wPan.selectWeapon(weapon);
                         } else {
+                            String pendingModeName = m.pendingMode().getDisplayableName();
                             if (clientgui.getClient().getGame().getPhase().isDeployment()) {
                                 clientgui.systemMessage(Messages.getString("MekDisplay.willSwitchAtStart",
-                                      m.getName(), m.pendingMode().getDisplayableName()));
+                                      m.getName(), pendingModeName));
                             } else {
                                 clientgui.systemMessage(Messages.getString("MekDisplay.willSwitchAtEnd",
-                                      m.getName(), m.pendingMode().getDisplayableName()));
+                                      m.getName(), pendingModeName));
                             }
+                            clientgui.addToast(ToastLevel.INFO,
+                                  m.getName() + " -> " + pendingModeName, en);
                         }
                         int loc = slotList.getSelectedIndex();
                         displaySlots();
@@ -889,4 +953,5 @@ class SystemPanel extends PicMap
         m_chMode.removeItemListener(this);
         m_bDumpAmmo.removeActionListener(this);
     }
+
 }

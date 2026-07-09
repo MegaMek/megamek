@@ -175,6 +175,7 @@ public class ModelRecord extends AbstractUnitRecord {
     /**
      * @return true, if unit is base IS tech and mounts Clan tech equipment
      */
+    @Deprecated(since = "0.51.0", forRemoval = true)
     public boolean isMixedISTech() {
         return mixedTech;
     }
@@ -202,6 +203,7 @@ public class ModelRecord extends AbstractUnitRecord {
      *
      * @return true, if unit contains both primitive and advanced tech
      */
+    @Deprecated(since = "0.51.0", forRemoval = true)
     public boolean isRetroTech() {
         return retroTech;
     }
@@ -252,6 +254,7 @@ public class ModelRecord extends AbstractUnitRecord {
      *
      * @return between zero (none) and 1.0 (all weapons)
      */
+    @Deprecated(since = "0.51.0", forRemoval = true)
     public double getArtilleryProportion() {
         return artilleryBVProportion;
     }
@@ -279,6 +282,7 @@ public class ModelRecord extends AbstractUnitRecord {
      *
      * @return between zero (none) and 1.0 (all weapons)
      */
+    @Deprecated(since = "0.51.0", forRemoval = true)
     public double getSRProportion() {
         return srBVProportion;
     }
@@ -321,6 +325,7 @@ public class ModelRecord extends AbstractUnitRecord {
      *
      * @return true if unit has remote drone operation equipment
      */
+    @Deprecated(since = "0.51.0", forRemoval = true)
     public boolean isRemoteDrone() {
         return remoteDrone;
     }
@@ -330,6 +335,7 @@ public class ModelRecord extends AbstractUnitRecord {
      *
      * @return true if unit has robotic operations system
      */
+    @Deprecated(since = "0.51.0", forRemoval = true)
     public boolean isRobotDrone() {
         return robotDrone;
     }
@@ -375,6 +381,7 @@ public class ModelRecord extends AbstractUnitRecord {
         return excludedFactions.contains(checkFaction.getKey());
     }
 
+    @Deprecated(since = "0.51.0", forRemoval = true)
     public boolean factionIsExcluded(String faction, String subfaction) {
         if (subfaction == null) {
             return excludedFactions.contains(faction);
@@ -404,6 +411,7 @@ public class ModelRecord extends AbstractUnitRecord {
         magClamp = flag;
     }
 
+    @Deprecated(since = "0.51.0", forRemoval = true)
     public boolean getAntiMek() {
         return canAntiMek;
     }
@@ -859,6 +867,7 @@ public class ModelRecord extends AbstractUnitRecord {
      *
      * @return true if unit contains primitive basic equipment
      */
+    @Deprecated(since = "0.51.0", forRemoval = true)
     private boolean unitHasPrimitiveTech(MekSummary unitData) {
 
         // Some unit types will not be built with primitive technology

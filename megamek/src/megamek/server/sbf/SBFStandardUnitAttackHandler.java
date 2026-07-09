@@ -71,7 +71,7 @@ public class SBFStandardUnitAttackHandler extends AbstractSBFActionHandler {
             SBFFormation target = game().getFormation(attack.getTargetId()).get();
             SBFUnit attackingUnit = attacker.getUnits().get(attack.getUnitNumber());
             List<SBFUnit> targetUnits = target.getUnits();
-            SBFUnit targetUnit = targetUnits.get(0);
+            SBFUnit targetUnit = targetUnits.getFirst();
 
             SBFToHitData toHit = SBFToHitData.compileToHit(game(), attack);
             SBFReportEntry report = new SBFReportEntry(2001).noNL();
@@ -100,7 +100,7 @@ public class SBFStandardUnitAttackHandler extends AbstractSBFActionHandler {
                         if (newArmor < 0) {
                             newArmor = 0;
                         }
-                        targetUnits.get(0).setCurrentArmor(newArmor);
+                        targetUnits.getFirst().setCurrentArmor(newArmor);
                         if (newArmor == 0) {
                             addReport(new SBFPublicReportEntry(3092));
                         }

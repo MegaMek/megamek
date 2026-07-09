@@ -15,17 +15,17 @@ jobs:
       matrix:
         os: [ ubuntu-latest ]
         java-distribution: [ temurin ]
-        java-version: [ 17, 21, 25 ]
+        java-version: [ 21, 25 ]
 
     steps:
       - name: Checkout Data Repo
-        uses: actions/checkout@v6
+        uses: actions/checkout@v7
         with:
           repository: megamek/mm-data
           path: mm-data
 
       - name: "Check out MegaMek"
-        uses: actions/checkout@v6
+        uses: actions/checkout@v7
         with:
           path: megamek
 
@@ -36,21 +36,21 @@ jobs:
           java-version: ${{ matrix.java-version }}
 
       - name: Setup Gradle
-        uses: gradle/actions/setup-gradle@v5
+        uses: gradle/actions/setup-gradle@v6
 
       - name: Build with Gradle
         working-directory: megamek
         run: ./gradlew test
 
       - name: Upload Test Logs on Failure
-        uses: actions/upload-artifact@v6
+        uses: actions/upload-artifact@v7
         if: failure()
         with:
           name: cd-failure-logs
           path: ./megamek/megamek/build/reports/
 
       - name: CodeCov.io Coverage Report
-        uses: codecov/codecov-action@v5
+        uses: codecov/codecov-action@v7
         with:
           directory: ./megamek/megamek/build/reports/jacoco/test
           fail_ci_if_error: false

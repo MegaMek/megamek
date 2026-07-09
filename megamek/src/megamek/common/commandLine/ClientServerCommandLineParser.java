@@ -120,7 +120,7 @@ public class ClientServerCommandLineParser extends AbstractCommandLineParser {
     @Override
     public String help() {
         StringBuilder sb = new StringBuilder();
-        sb.append(String.format("%s %s\n", Messages.getString("MegaMek.Version"), MMConstants.VERSION));
+        sb.append(Messages.getString("MegaMek.Version", MMConstants.VERSION)).append("\n");
         sb.append(String.format("Help for %s\n", parent));
         for (ClientServerCommandLineFlag flag : ClientServerCommandLineFlag.values()) {
             if ((flag.isClientArg() && client) || (flag.isServerArg() && server) || (flag.isHostArg() && host)) {

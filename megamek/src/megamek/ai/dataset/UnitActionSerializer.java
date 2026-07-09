@@ -43,7 +43,7 @@ import megamek.ai.dataset.UnitAction.Field;
 public class UnitActionSerializer extends EntityDataSerializer<UnitAction.Field, UnitAction> {
 
     /**
-     * Creates a serializer with default field order.
+     * Creates a serializer with the default field order.
      */
     public UnitActionSerializer() {
         super(Field.class);

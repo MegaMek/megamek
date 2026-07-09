@@ -477,6 +477,12 @@ class LobbyMekCellFormatter {
                 firstEntry = dotSpacer(result, firstEntry);
                 result.append(getString("ChatLounge.prone"));
             }
+
+            if ((entity instanceof Infantry dugInInfantry)
+                  && (dugInInfantry.getDugIn() == Infantry.DUG_IN_COMPLETE)) {
+                firstEntry = dotSpacer(result, firstEntry);
+                result.append(getString("ChatLounge.dugIn"));
+            }
         }
 
         if (entity.isOffBoard()) {
@@ -793,6 +799,12 @@ class LobbyMekCellFormatter {
                 result.append(MekTableModel.DOT_SPACER).append(UIUtil.fontHTML(uiGreen())).append("<I>");
                 result.append(Messages.getString("ChatLounge.compact.prone")).append("</I></FONT>");
             }
+
+            if ((entity instanceof Infantry dugInInfantry)
+                  && (dugInInfantry.getDugIn() == Infantry.DUG_IN_COMPLETE)) {
+                result.append(MekTableModel.DOT_SPACER).append(UIUtil.fontHTML(uiGreen())).append("<I>");
+                result.append(Messages.getString("ChatLounge.compact.dugIn")).append("</I></FONT>");
+            }
         }
 
         if (entity.countPartialRepairs() > 0) {
@@ -1059,12 +1071,14 @@ class LobbyMekCellFormatter {
         current.append(";>");
     }
 
+    @Deprecated(since = "0.51.0", forRemoval = true)
     static void formatSpan(StringBuilder current, String hexColor) {
         current.append("<SPAN style=color:");
         current.append(hexColor);
         current.append(";>");
     }
 
+    @Deprecated(since = "0.51.0", forRemoval = true)
     static void fullIDString(StringBuilder current, int id) {
         formatSpan(current, uiGray());
         current.append(" [ID: ").append(id).append("]</SPAN>");

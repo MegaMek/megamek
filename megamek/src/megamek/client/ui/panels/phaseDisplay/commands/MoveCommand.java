@@ -79,6 +79,7 @@ public enum MoveCommand implements StatusBarPhaseDisplay.PhaseCommand {
     MOVE_HULL_DOWN("moveHullDown", MovementDisplay.CMD_MEK | MovementDisplay.CMD_TANK),
     MOVE_CLIMB_MODE("moveClimbMode",
           MovementDisplay.CMD_MEK | MovementDisplay.CMD_TANK | MovementDisplay.CMD_INF | MovementDisplay.CMD_PROTOMEK),
+    MOVE_DESCEND("moveDescend", MovementDisplay.CMD_MEK),
     MOVE_SWIM("moveSwim", MovementDisplay.CMD_MEK),
     MOVE_SHAKE_OFF("moveShakeOff", MovementDisplay.CMD_TANK | MovementDisplay.CMD_VTOL),
     MOVE_BRACE("moveBrace", MovementDisplay.CMD_MEK),
@@ -101,7 +102,10 @@ public enum MoveCommand implements StatusBarPhaseDisplay.PhaseCommand {
 
     // Infantry only
     MOVE_DIG_IN("moveDigIn", MovementDisplay.CMD_INF),
-    MOVE_FORTIFY("moveFortify", MovementDisplay.CMD_INF | MovementDisplay.CMD_TANK),
+    MOVE_HIT_DECK("moveHitDeck", MovementDisplay.CMD_INF),
+    MOVE_FORTIFY("moveFortify", MovementDisplay.CMD_INF | MovementDisplay.CMD_TANK | MovementDisplay.CMD_MEK),
+    MOVE_CLEAR_RUBBLE("moveClearRubble", MovementDisplay.CMD_TANK | MovementDisplay.CMD_MEK),
+    MOVE_BUILD_BRIDGE("moveBuildBridge", MovementDisplay.CMD_INF),
     MOVE_TAKE_COVER("moveTakeCover", MovementDisplay.CMD_INF),
     MOVE_CALL_SUPPORT("moveCallSupport", MovementDisplay.CMD_INF),
 
@@ -255,11 +259,13 @@ public enum MoveCommand implements StatusBarPhaseDisplay.PhaseCommand {
         boolean selfDestruct = false;
         boolean advVehicle = false;
         boolean vtolStrafe = false;
+        boolean bridgeBuilding = false;
 
         if (opts != null) {
             selfDestruct = opts.booleanOption(OptionsConstants.ADVANCED_TAC_OPS_SELF_DESTRUCT);
             advVehicle = opts.booleanOption(OptionsConstants.ADVANCED_GROUND_MOVEMENT_VEHICLE_ADVANCED_MANEUVERS);
             vtolStrafe = opts.booleanOption(OptionsConstants.ADVANCED_COMBAT_VTOL_STRAFING);
+            bridgeBuilding = opts.booleanOption(OptionsConstants.ADVANCED_BRIDGE_BUILDING_ENGINEERS);
         }
 
         ArrayList<MoveCommand> flaggedCommands = new ArrayList<>();
@@ -272,6 +278,8 @@ public enum MoveCommand implements StatusBarPhaseDisplay.PhaseCommand {
             } else if ((command == MOVE_BOOTLEGGER) && !advVehicle) {
                 continue;
             } else if ((command == MOVE_STRAFE) && !vtolStrafe) {
+                continue;
+            } else if ((command == MOVE_BUILD_BRIDGE) && !bridgeBuilding) {
                 continue;
             }
 

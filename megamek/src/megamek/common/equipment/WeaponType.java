@@ -1,6 +1,6 @@
 /*
  * Copyright (C) 2002-2007 Ben Mazur (bmazur@sev.org)
- * Copyright (C) 2002-2025 The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2002-2026 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -309,6 +309,10 @@ import megamek.common.weapons.lrms.innerSphere.oneShot.ISLRM20IOS;
 import megamek.common.weapons.lrms.innerSphere.oneShot.ISLRM20OS;
 import megamek.common.weapons.lrms.innerSphere.oneShot.ISLRM5IOS;
 import megamek.common.weapons.lrms.innerSphere.oneShot.ISLRM5OS;
+import megamek.common.weapons.lrms.innerSphere.torpedo.ISEnhancedLRT10;
+import megamek.common.weapons.lrms.innerSphere.torpedo.ISEnhancedLRT15;
+import megamek.common.weapons.lrms.innerSphere.torpedo.ISEnhancedLRT20;
+import megamek.common.weapons.lrms.innerSphere.torpedo.ISEnhancedLRT5;
 import megamek.common.weapons.lrms.innerSphere.torpedo.ISLRT10;
 import megamek.common.weapons.lrms.innerSphere.torpedo.ISLRT15;
 import megamek.common.weapons.lrms.innerSphere.torpedo.ISLRT20;
@@ -382,7 +386,6 @@ import megamek.common.weapons.mortars.innerSphere.ISMekMortar4;
 import megamek.common.weapons.mortars.innerSphere.ISMekMortar8;
 import megamek.common.weapons.mortars.innerSphere.ISVehicularGrenadeLauncher;
 import megamek.common.weapons.other.clan.CLAMS;
-import megamek.common.weapons.other.clan.CLFireExtinguisher;
 import megamek.common.weapons.other.clan.CLFluidGun;
 import megamek.common.weapons.other.clan.CLFussilade;
 import megamek.common.weapons.other.clan.CLLaserAMS;
@@ -585,6 +588,7 @@ public class WeaponType extends EquipmentType {
     // fire Extinguisher
     public static final WeaponTypeFlag F_EXTINGUISHER = WeaponTypeFlag.F_EXTINGUISHER;
     public static final WeaponTypeFlag F_PULSE = WeaponTypeFlag.F_PULSE;
+    public static final WeaponTypeFlag F_VSP = WeaponTypeFlag.F_VSP;
     // Full Damage vs. Infantry
     public static final WeaponTypeFlag F_BURST_FIRE = WeaponTypeFlag.F_BURST_FIRE;
     // Machine Gun Array
@@ -616,6 +620,7 @@ public class WeaponType extends EquipmentType {
     public static final WeaponTypeFlag F_INF_SUPPORT = WeaponTypeFlag.F_INF_SUPPORT;
     public static final WeaponTypeFlag F_INF_ENCUMBER = WeaponTypeFlag.F_INF_ENCUMBER;
     public static final WeaponTypeFlag F_INF_ARCHAIC = WeaponTypeFlag.F_INF_ARCHAIC;
+    public static final WeaponTypeFlag F_INF_DISPOSABLE = WeaponTypeFlag.F_INF_DISPOSABLE;
 
     // TODO Add game rules IO pg 84
     public static final WeaponTypeFlag F_INF_CLIMBING_CLAWS = WeaponTypeFlag.F_INF_CLIMBING_CLAWS;
@@ -1548,6 +1553,10 @@ public class WeaponType extends EquipmentType {
         EquipmentType.addType(new ISLRM10Primitive());
         EquipmentType.addType(new ISLRM15Primitive());
         EquipmentType.addType(new ISLRM20Primitive());
+        EquipmentType.addType(new ISEnhancedLRT5());
+        EquipmentType.addType(new ISEnhancedLRT10());
+        EquipmentType.addType(new ISEnhancedLRT15());
+        EquipmentType.addType(new ISEnhancedLRT20());
 
         // LRTs
         EquipmentType.addType(new ISLRT5());
@@ -2197,8 +2206,8 @@ public class WeaponType extends EquipmentType {
         EquipmentType.addType(new InfantryProstheticVibroBladeWeapon());
         EquipmentType.addType(new InfantryProstheticClimbingClawsWeapon());
 
+        // IS and Clan fire extinguishers are mechanically identical; merged into one TechBase.ALL weapon.
         EquipmentType.addType(new ISFireExtinguisher());
-        EquipmentType.addType(new CLFireExtinguisher());
 
         // Plasma Weapons
         EquipmentType.addType(new ISPlasmaRifle());
@@ -2688,5 +2697,15 @@ public class WeaponType extends EquipmentType {
             return new double[0];
         }
         return java.util.Arrays.copyOf(arr, lastNonZero + 1);
+    }
+
+    @Override
+    public boolean canBeMountedOnBaDwp() {
+        return true;
+    }
+
+    @Override
+    public boolean relevantToTargetingComputer() {
+        return hasFlag(F_DIRECT_FIRE) && !hasFlag(F_TASER);
     }
 }

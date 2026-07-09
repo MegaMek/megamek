@@ -1,6 +1,6 @@
 /*
   Copyright (C) 2000-2003 Ben Mazur (bmazur@sev.org)
- * Copyright (C) 2008-2025 The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2008-2026 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -494,6 +494,10 @@ public abstract class Aero extends Entity implements IAero, IBomber {
             mp--;
         }
 
+        // Improved Magnetic Pulse (iATM IMP) missile Safe Thrust reduction (IO IMP rules). Zero for
+        // large craft, which never accumulate IMP hits, so they are unaffected as the rules require.
+        mp = Math.max(0, mp - getImpMpReduction());
+
         if (!mpCalculationSetting.ignoreGrounded() && !isAirborne()) {
             mp = isSpheroid() ? 0 : mp / 2;
         }
@@ -679,6 +683,7 @@ public abstract class Aero extends Entity implements IAero, IBomber {
         whoFirst = Compute.randomInt(500);
     }
 
+    @Deprecated(since = "0.51.0", forRemoval = true)
     public int getWhoFirst() {
         return whoFirst;
     }
@@ -1458,6 +1463,7 @@ public abstract class Aero extends Entity implements IAero, IBomber {
      *
      * @return BV Type Modifier.
      */
+    @Deprecated(since = "0.51.0", forRemoval = true)
     public double getBVTypeModifier() {
         return 1.2;
     }
@@ -1538,15 +1544,19 @@ public abstract class Aero extends Entity implements IAero, IBomber {
             prd.addModifier(1, "Modular Armor");
         }
         // VDNI bonus? (BVDNI does NOT get piloting bonus due to "neuro-lag" per IO pg 71)
-        if (hasAbility(OptionsConstants.MD_VDNI) && !hasAbility(OptionsConstants.MD_BVDNI)) {
-            prd.addModifier(-1, "VDNI");
-        } else if (hasAbility(OptionsConstants.MD_BVDNI)) {
-            prd.addModifier(0, "BVDNI (no piloting bonus)");
+        // When tracking neural interface hardware, require DNI cockpit mod for benefits
+        if (hasActiveDNI()) {
+            if (hasAbility(OptionsConstants.MD_VDNI) && !hasAbility(OptionsConstants.MD_BVDNI)) {
+                prd.addModifier(-1, "VDNI");
+            } else if (hasAbility(OptionsConstants.MD_BVDNI)) {
+                prd.addModifier(0, "BVDNI (no piloting bonus)");
+            }
         }
 
         // Small/torso-mounted cockpit penalty?
+        // BVDNI negates small cockpit penalty, requires active DNI when tracking
         if (getCockpitType() == Aero.COCKPIT_SMALL) {
-            if (hasAbility(OptionsConstants.MD_BVDNI)) {
+            if (hasActiveDNI() && hasAbility(OptionsConstants.MD_BVDNI)) {
                 prd.addModifier(0, "Small Cockpit (negated by BVDNI)");
             } else if (!hasAbility(OptionsConstants.UNOFFICIAL_SMALL_PILOT)) {
                 prd.addModifier(1, "Small Cockpit");
@@ -1629,7 +1639,10 @@ public abstract class Aero extends Entity implements IAero, IBomber {
         if (isAirborne()) {
             return super.getRunMP(mpCalculationSetting);
         } else {
-            return super.getWalkMP(mpCalculationSetting);
+            // Grounded aero: no run multiplier; cap at the grounded walk MP. Use Aero.getWalkMP (not Entity's)
+            // so the spheroid-grounded -> 0 and aerodyne-grounded -> thrust/2 rule at line 497 is honored.
+            // See issue #8187: bypassing this gave grounded spheroid Dropships non-zero run MP.
+            return getWalkMP(mpCalculationSetting);
         }
     }
 
@@ -1824,11 +1837,6 @@ public abstract class Aero extends Entity implements IAero, IBomber {
             return (int) (rating / (int) weight) + 2;
         }
         return (getEngine().getRating() / (int) weight) + 2;
-    }
-
-    @Override
-    public boolean isNuclearHardened() {
-        return true;
     }
 
     @Override
@@ -2337,6 +2345,7 @@ public abstract class Aero extends Entity implements IAero, IBomber {
     /**
      * @return is the crew of this vessel protected from gravitational effects, see StratOps, pg. 36
      */
+    @Deprecated(since = "0.51.0", forRemoval = true)
     public boolean isCrewProtected() {
         return true;
     }
@@ -2471,11 +2480,6 @@ public abstract class Aero extends Entity implements IAero, IBomber {
         return (getCockpitType() == Aero.COCKPIT_PRIMITIVE);
     }
 
-    @Override
-    public String getLocationDamage(int loc) {
-        return "";
-    }
-
     public String getCritDamageString() {
         ConditionalStringJoiner conditionalStringJoiner = new ConditionalStringJoiner();
         conditionalStringJoiner.add(getEngineHits() > 0,
@@ -2558,10 +2562,11 @@ public abstract class Aero extends Entity implements IAero, IBomber {
 
     @Override
     public boolean isDmgHeavy() {
-        if (getArmorRemainingPercent() <= 0.33) {
+        double armorPercent = getArmorRemainingPercent();
+        if ((armorPercent <= 0.33) && (armorPercent != IArmorState.ARMOR_NA)) {
             LOGGER.debug("{} Heavily Damaged: Armour Remaining percent of {} is less than or equal to 0.33.",
                   getDisplayName(),
-                  getArmorRemainingPercent());
+                  armorPercent);
             return true;
         } else if (getInternalRemainingPercent() < 0.67) {
             LOGGER.debug("{} Heavily Damaged: Internal Structure Remaining percent of {} is less than 0.67.",
@@ -2591,10 +2596,11 @@ public abstract class Aero extends Entity implements IAero, IBomber {
 
     @Override
     public boolean isDmgModerate() {
-        if (getArmorRemainingPercent() <= 0.5) {
+        double armorPercent = getArmorRemainingPercent();
+        if ((armorPercent <= 0.5) && (armorPercent != IArmorState.ARMOR_NA)) {
             LOGGER.debug("{} Moderately Damaged: Armour Remaining percent of {} is less than or equal to 0.50.",
                   getDisplayName(),
-                  getArmorRemainingPercent());
+                  armorPercent);
             return true;
         } else if (getInternalRemainingPercent() < 0.75) {
             LOGGER.debug("{} Moderately Damaged: Internal Structure Remaining percent of {} is less than 0.75.",
@@ -2623,10 +2629,11 @@ public abstract class Aero extends Entity implements IAero, IBomber {
 
     @Override
     public boolean isDmgLight() {
-        if (getArmorRemainingPercent() <= 0.75) {
+        double armorPercent = getArmorRemainingPercent();
+        if ((armorPercent <= 0.75) && (armorPercent != IArmorState.ARMOR_NA)) {
             LOGGER.debug("{} Lightly Damaged: Armour Remaining percent of {} is less than or equal to 0.75.",
                   getDisplayName(),
-                  getArmorRemainingPercent());
+                  armorPercent);
             return true;
         } else if (getInternalRemainingPercent() < 0.9) {
             LOGGER.debug("{} Lightly Damaged: Internal Structure Remaining percent of {} is less than 0.9.",
@@ -2787,6 +2794,7 @@ public abstract class Aero extends Entity implements IAero, IBomber {
     /**
      * @return number of marines assigned to a unit Used for abandoning a unit
      */
+    @Deprecated(since = "0.51.0", forRemoval = true)
     public int getMarineCount() {
         return 0;
     }

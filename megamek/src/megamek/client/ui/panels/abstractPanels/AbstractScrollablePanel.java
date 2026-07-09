@@ -62,6 +62,7 @@ public abstract class AbstractScrollablePanel extends AbstractPanel implements S
      *
      * @see AbstractPanel#AbstractPanel(JFrame, String)
      */
+    @Deprecated(since = "0.51.0", forRemoval = true)
     protected AbstractScrollablePanel(final JFrame frame, final String name) {
         super(frame, name);
     }
@@ -71,6 +72,7 @@ public abstract class AbstractScrollablePanel extends AbstractPanel implements S
      *
      * @see AbstractPanel#AbstractPanel(JFrame, String, boolean)
      */
+    @Deprecated(since = "0.51.0", forRemoval = true)
     protected AbstractScrollablePanel(final JFrame frame, final String name,
           final boolean isDoubleBuffered) {
         super(frame, name, isDoubleBuffered);
@@ -81,6 +83,7 @@ public abstract class AbstractScrollablePanel extends AbstractPanel implements S
      *
      * @see AbstractPanel#AbstractPanel(JFrame, String, LayoutManager)
      */
+    @Deprecated(since = "0.51.0", forRemoval = true)
     protected AbstractScrollablePanel(final JFrame frame, final String name,
           final LayoutManager layoutManager) {
         super(frame, name, layoutManager);
@@ -92,6 +95,7 @@ public abstract class AbstractScrollablePanel extends AbstractPanel implements S
      *
      * @see AbstractPanel#AbstractPanel(JFrame, String, LayoutManager, boolean)
      */
+    @Deprecated(since = "0.51.0", forRemoval = true)
     protected AbstractScrollablePanel(final JFrame frame, final String name,
           final LayoutManager layoutManager,
           final boolean isDoubleBuffered) {

@@ -153,6 +153,7 @@ public class BackGroundDrawer {
      *
      * @param type Possible values: NO_TILING, TILING_BOTH, TILING_VERTICAL, TILING_HORIZONTAL.
      */
+    @Deprecated(since = "0.51.0", forRemoval = true)
     public void setTilingType(int type) {
         type &= TILING_TYPE_SELECT_MASK;
         behavior &= TILING_TYPE_MASK;
@@ -186,6 +187,7 @@ public class BackGroundDrawer {
      * Sets exact vertical alignment exactly at "y" pixels
      */
 
+    @Deprecated(since = "0.51.0", forRemoval = true)
     public void setValignExactAt(int y) {
         setValign(V_ALIGN_EXACT);
         fixedY = y;
@@ -195,6 +197,7 @@ public class BackGroundDrawer {
      * Sets exact horizontal alignment exactly at "x" pixels
      */
 
+    @Deprecated(since = "0.51.0", forRemoval = true)
     public void setHAlignExactAt(int x) {
         setHAlign(H_ALIGN_EXACT);
         fixedX = x;

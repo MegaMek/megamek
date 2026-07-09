@@ -55,8 +55,8 @@ import megamek.common.equipment.WeaponType;
 import megamek.common.equipment.enums.BombType;
 import megamek.common.units.AbstractBuildingEntity;
 import megamek.common.units.Aero;
+import megamek.common.units.ConvInfantry;
 import megamek.common.units.Entity;
-import megamek.common.units.Infantry;
 import megamek.common.units.Jumpship;
 import megamek.common.units.Mek;
 import megamek.common.units.ProtoMek;
@@ -187,7 +187,7 @@ public class BulkUnitFileTest {
         } else if (unit.hasETypeFlag(Entity.ETYPE_BATTLEARMOR)) {
             testEntity = new TestBattleArmor((BattleArmor) unit, entityVerifier.baOption, null);
         } else if (unit.hasETypeFlag(Entity.ETYPE_INFANTRY)) {
-            testEntity = new TestInfantry((Infantry) unit, entityVerifier.infOption, null);
+            testEntity = new TestInfantry((ConvInfantry) unit, entityVerifier.infOption, null);
         } else if (unit.hasETypeFlag(Entity.ETYPE_BUILDING_ENTITY)) {
             testEntity = new TestBuilding((AbstractBuildingEntity) unit, entityVerifier.tankOption, null);
         }

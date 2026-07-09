@@ -221,6 +221,7 @@ public abstract class AbstractConnection {
      *
      * @param compress True when compression is to be used
      */
+    @Deprecated(since = "0.51.0", forRemoval = true)
     public void setCompression(boolean compress) {
         zipData = compress;
     }
@@ -274,6 +275,7 @@ public abstract class AbstractConnection {
      *
      * @param listener the connection listener.
      */
+    @Deprecated(since = "0.51.0", forRemoval = true)
     public void removeConnectionListener(ConnectionListener listener) {
         connectionListeners.removeElement(listener);
     }

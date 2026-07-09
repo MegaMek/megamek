@@ -40,6 +40,7 @@ import java.util.Comparator;
  * <p>
  * Order paths with fewer used MP first.
  */
+@Deprecated(since = "0.51.0", forRemoval = true)
 public class MovePathMPCostComparator implements Comparator<SBFMovePath> {
     @Override
     public int compare(final SBFMovePath first, final SBFMovePath second) {

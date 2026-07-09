@@ -214,12 +214,9 @@ Please include in bug reports:
 
 CONFIGURATION
 -------------
-CASPAR Protocol is enabled by default in 0.50.11+.
-
-To toggle:
-1. Open Bot Configuration dialog (when setting up Princess)
-2. Find "CASPAR Protocol (Alpha)" checkbox
-3. Check to enable, uncheck to disable
+The CASPAR Protocol runs only for the CASPAR bot type. To use it, select
+CASPAR instead of Princess when adding a bot. Princess never runs the
+protocol; there is no checkbox or behavior setting to toggle it.
 
 
 TECHNICAL REFERENCE

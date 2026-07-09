@@ -51,9 +51,8 @@ import megamek.common.units.Entity;
 import megamek.logging.MMLogger;
 
 /**
- * Read-only dialog for viewing Nova CEWS network configurations.
- * Displays current network status without allowing modifications.
- * Can be opened at any time during the game from View menu.
+ * Read-only dialog for viewing Nova CEWS network configurations. Displays current network status without allowing
+ * modifications. Can be opened at any time during the game from View menu.
  *
  * @author MegaMek Team (with Claude Code assistance)
  */
@@ -93,7 +92,7 @@ public class NovaNetworkViewDialog extends JDialog implements ActionListener {
         pack();
         setLocationRelativeTo(parent);
         logger.debug("Nova CEWS View Dialog initialized: {} player units, {} allied units",
-            playerNovaUnits.size(), alliedNovaUnits.size());
+              playerNovaUnits.size(), alliedNovaUnits.size());
     }
 
     /**
@@ -243,9 +242,8 @@ public class NovaNetworkViewDialog extends JDialog implements ActionListener {
     }
 
     /**
-     * Checks if an entity is currently networked with other units.
-     * An entity is considered networked if at least one other Nova CEWS unit
-     * shares its network ID.
+     * Checks if an entity is currently networked with other units. An entity is considered networked if at least one
+     * other Nova CEWS unit shares its network ID.
      */
     private boolean isEntityNetworked(Entity entity) {
         String networkId = entity.getC3NetId();
@@ -255,7 +253,7 @@ public class NovaNetworkViewDialog extends JDialog implements ActionListener {
 
         // Entity is networked if at least one other unit shares this network ID
         return game.getEntitiesVector().stream()
-              .filter(other -> other.hasNovaCEWS())
+              .filter(Entity::hasNovaCEWS)
               .filter(other -> other.getId() != entity.getId())
               .anyMatch(other -> networkId.equals(other.getC3NetId()));
     }
@@ -269,14 +267,14 @@ public class NovaNetworkViewDialog extends JDialog implements ActionListener {
         }
 
         return (int) game.getEntitiesVector().stream()
-              .filter(other -> other.hasNovaCEWS())
+              .filter(Entity::hasNovaCEWS)
               .filter(other -> networkId.equals(other.getC3NetId()))
-                .count();
+              .count();
     }
 
     /**
-     * Gets a human-readable display of network members (excluding the current entity).
-     * Returns a comma-separated list of IDs like "ID2, ID3" or "No other members".
+     * Gets a human-readable display of network members (excluding the current entity). Returns a comma-separated list
+     * of IDs like "ID2, ID3" or "No other members".
      */
     private String getNetworkMembersDisplay(Entity currentEntity, String networkId) {
         if (networkId == null) {

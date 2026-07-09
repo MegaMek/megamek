@@ -96,6 +96,7 @@ public final class PilotSPAHelper {
      *
      * @return A list of weapons from the given Entity that are valid choices for the Weapon Specialist SPA
      */
+    @Deprecated(since = "0.51.0", forRemoval = true)
     public static List<Mounted<?>> weaponSpecialistValidWeapons(Entity entity, @Nullable GameOptions options) {
         return entity.getTotalWeaponList().stream()
               .filter(mounted -> isWeaponSpecialistValid(mounted, options))
@@ -153,10 +154,38 @@ public final class PilotSPAHelper {
      *
      * @return A list of weapons from the given Entity that are valid choices for the Sandblaster SPA
      */
+    @Deprecated(since = "0.51.0", forRemoval = true)
     public static List<Mounted<?>> sandblasterValidWeapons(Entity entity, @Nullable GameOptions options) {
         return entity.getTotalWeaponList().stream()
               .filter(mounted -> isSandblasterValid(mounted, options))
               .collect(Collectors.toList());
+    }
+
+    /**
+     * Returns true when the given entity is a valid unit type for the Wind Walker SPA. Wind Walker applies to:
+     * aerospace, aircraft, WiGE, Land-Air-Meks, Glider ProtoMeks, and VTOL (while airborne).
+     *
+     * <p> VTOLs are valid for WindWalker effects only if they are counted as airborne, which only occurs when a VTOL
+     * using VTOL movement, as per total warfare 2023 pg 20. VTOL are considered ground units when not using VTOL
+     * movement mode. Therefore, Wind Walker, which requires airborne units would only be applicable when VTOL is using
+     * VTOL movement mode.</p>
+     *
+     * @param entity The entity to check
+     *
+     * @return {@code true} when the given entity is a valid unit type for the Wind Walker SPA.
+     **/
+    public static boolean isWindWalkerValid(@Nullable Entity entity) {
+        if (entity == null) {
+            return false;
+        }
+
+        return switch (entity) {
+            case VTOL vtol when vtol.getMovementMode().isVTOL() -> true;
+            case Entity switchEntity when switchEntity.getMovementMode().isWiGE() -> true;
+            case ProtoMek protoMek when protoMek.isGlider() -> true;
+            case IAero ignored -> true;
+            default -> false;
+        };
     }
 
     private PilotSPAHelper() {

@@ -151,7 +151,7 @@ public class FlyOverSprite extends Sprite {
         Point currPoint, nextPoint;
 
         // Handle First Coords
-        curr = en.getPassedThrough().get(0);
+        curr = en.getPassedThrough().getFirst();
         next = en.getPassedThrough().get(1);
         currPoint = bv.getCentreHexLocation(curr, true);
         angle = curr.radian(next);
@@ -214,7 +214,7 @@ public class FlyOverSprite extends Sprite {
         }
 
         // Handle First Coords
-        curr = en.getPassedThrough().get(0);
+        curr = en.getPassedThrough().getFirst();
         prev = en.getPassedThrough().get(1);
         currPoint = bv.getCentreHexLocation(curr, true);
         angle = prev.radian(curr);

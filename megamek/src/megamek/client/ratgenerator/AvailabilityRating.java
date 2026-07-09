@@ -267,7 +267,7 @@ public class AvailabilityRating {
                 for (String curLevel : levelNames) {
 
                     if (curLevel == null && fRec.getRatingLevels().size() == 1) {
-                        ratingLevel = factionRatings.indexOf(fRec.getRatingLevels().get(0));
+                        ratingLevel = factionRatings.indexOf(fRec.getRatingLevels().getFirst());
                     }
 
                     if (curLevel != null && numRatingLevels > 1) {
@@ -281,10 +281,12 @@ public class AvailabilityRating {
         }
     }
 
+    @Deprecated(since = "0.51.0", forRemoval = true)
     public int getRatingAdjustment() {
         return ratingAdjustment;
     }
 
+    @Deprecated(since = "0.51.0", forRemoval = true)
     public void setRatingAdjustment(int ratingAdjustment) {
         this.ratingAdjustment = ratingAdjustment;
     }

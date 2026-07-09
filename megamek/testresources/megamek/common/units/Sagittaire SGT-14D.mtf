@@ -184,7 +184,7 @@ primaryfactory:Robinson
 systemmanufacturer:CHASSIS:Skuel Heavy TRQ EC
 systemmanufacturer:ENGINE:Pitban 285 Light
 systemmanufacturer:ARMOR:Starshield Special Heavy
-systemmanufacturer:JUMPJET:HildCo LFT 9-X
+systemmanufacturer:JUMP_JET:HildCo LFT 9-X
 systemmanufacturer:COMMUNICATIONS:Sony MSF-31
 systemmanufacturer:TARGETING:Federated Stalker with Targeting Module
 

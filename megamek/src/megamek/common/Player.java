@@ -1,6 +1,6 @@
 /*
  * Copyright (c) 2000-2004 Ben Mazur (bmazur@sev.org)
- * Copyright (C) 2002-2025 The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2002-2026 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -111,6 +111,10 @@ public final class Player extends TurnOrdered {
     private int numMfVibra = 0;
     private int numMfActive = 0;
     private int numMfInferno = 0;
+    private int numMfEMP = 0;
+
+    // number of fortified hexes the player may place during the minefield deployment phase (TO:AUE p.153)
+    private int numFortifiedHexes = 0;
 
     // hexes that are automatically hit by artillery
     private List<BoardLocation> artyAutoHitHexes = new ArrayList<>();
@@ -136,6 +140,9 @@ public final class Player extends TurnOrdered {
     //Voting should not be stored in save game so marked transient
     private transient boolean votedToAllowTeamChange = false;
     private transient boolean votedToAllowGameMaster = false;
+    // Testing aid (client-set, server-only): when true the server includes enemy artillery attacks in this player's
+    // artillery packet so the Rounds in the Air view can show both sides. Transient - never serialized or saved.
+    private transient boolean artilleryRevealAll = false;
 
     private HexArea fleeArea = new BorderHexArea(true, true, true, true);
     //endregion Variable Declarations
@@ -183,6 +190,8 @@ public final class Player extends TurnOrdered {
               (numMfVibra > 0) ||
               (numMfActive > 0) ||
               (numMfInferno > 0) ||
+              (numMfEMP > 0) ||
+              (numFortifiedHexes > 0) ||
               !getGroundObjectsToPlace().isEmpty();
     }
 
@@ -224,6 +233,26 @@ public final class Player extends TurnOrdered {
 
     public int getNbrMFInferno() {
         return numMfInferno;
+    }
+
+    public void setNbrMFEMP(int nbrMF) {
+        numMfEMP = nbrMF;
+    }
+
+    public int getNbrMFEMP() {
+        return numMfEMP;
+    }
+
+    /**
+     * @return the number of fortified hexes this player may place during the minefield deployment phase
+     *       (Trench/Fieldworks Engineers, TO:AUE p.153)
+     */
+    public int getNbrFortifiedHexes() {
+        return numFortifiedHexes;
+    }
+
+    public void setNbrFortifiedHexes(int nbrFortifiedHexes) {
+        numFortifiedHexes = nbrFortifiedHexes;
     }
 
     public Camouflage getCamouflage() {
@@ -355,6 +384,22 @@ public final class Player extends TurnOrdered {
      */
     public boolean getSeeAll() {
         return seeAll;
+    }
+
+    /**
+     * @param artilleryRevealAll Whether the server should reveal all in-flight artillery (both teams) to this player -
+     *                           a client-set testing aid for the Rounds in the Air view
+     */
+    public void setArtilleryRevealAll(boolean artilleryRevealAll) {
+        this.artilleryRevealAll = artilleryRevealAll;
+    }
+
+    /**
+     * @return {@code true} if the server should include enemy artillery attacks in this player's artillery packet (the
+     *       Rounds in the Air testing reveal); {@code false} for normal team-only (double-blind) behavior
+     */
+    public boolean isArtilleryRevealAll() {
+        return artilleryRevealAll;
     }
 
     /**
@@ -670,7 +715,8 @@ public final class Player extends TurnOrdered {
 
         int bonus = 0;
         for (InGameObject object : game.getInGameObjects()) {
-            if (object instanceof Entity entity && entity.getOwner().equals(this)) {
+            if (object instanceof Entity entity && entity.getOwner().equals(this)
+                  && isActiveForCommandBonus(entity)) {
                 bonus = Math.max(entity.getHQIniBonus(), bonus);
             }
         }
@@ -687,7 +733,8 @@ public final class Player extends TurnOrdered {
 
         int bonus = 0;
         for (InGameObject object : game.getInGameObjects()) {
-            if (object instanceof Entity entity && entity.getOwner().equals(this)) {
+            if (object instanceof Entity entity && entity.getOwner().equals(this)
+                  && isActiveForCommandBonus(entity)) {
                 bonus = Math.max(bonus, entity.getQuirkIniBonus());
             }
         }
@@ -705,7 +752,8 @@ public final class Player extends TurnOrdered {
         int bestBonus = 0;
         String bestQuirkName = null;
         for (InGameObject object : game.getInGameObjects()) {
-            if (object instanceof Entity entity && entity.getOwner().equals(this)) {
+            if (object instanceof Entity entity && entity.getOwner().equals(this)
+                  && isActiveForCommandBonus(entity)) {
                 int entityBonus = entity.getQuirkIniBonus();
                 if (entityBonus > bestBonus) {
                     bestBonus = entityBonus;

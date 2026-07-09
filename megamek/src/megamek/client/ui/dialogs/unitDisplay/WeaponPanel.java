@@ -1444,9 +1444,9 @@ public class WeaponPanel extends PicMap implements ListSelectionListener, Action
         if ((weaponType instanceof InfantryWeapon infantryType) && !weaponType.hasFlag(WeaponType.F_TAG)) {
             wDamageTrooperL.setVisible(true);
             wDamageTrooperR.setVisible(true);
-            if (entity.isConventionalInfantry()) {
+            if (entity instanceof ConvInfantry infantry) {
                 wDamageTrooperR.setText(Double.toString((double) Math.round(
-                      ((Infantry) entity).getDamagePerTrooper() * 1000) / 1000));
+                      infantry.getDamagePerTrooper() * 1000) / 1000));
             } else {
                 wDamageTrooperR.setText(Double.toString(infantryType.getInfantryDamage()));
             }
@@ -1917,6 +1917,14 @@ public class WeaponPanel extends PicMap implements ListSelectionListener, Action
 
         } else if (weaponType.hasFlag(WeaponType.F_ONE_SHOT)) {
             // this is the situation where there's some kind of ammo, but it's not changeable
+            m_chAmmo.setEnabled(false);
+            Mounted<?> mountedAmmo = mounted.getLinked();
+            if (mountedAmmo != null) {
+                m_chAmmo.addItem(formatAmmo(mountedAmmo));
+            }
+
+        } else if (mounted.hasQuirk(OptionsConstants.QUIRK_WEAPON_NEG_STATIC_FEED)) {
+            // Static Ammo Feed weapons are locked to their specific ammo bin (CamOps p.235/BMM p.89)
             m_chAmmo.setEnabled(false);
             Mounted<?> mountedAmmo = mounted.getLinked();
             if (mountedAmmo != null) {

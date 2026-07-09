@@ -37,11 +37,12 @@ package megamek.common.weapons.bombs.clan;
 import java.io.Serial;
 
 import megamek.common.enums.AvailabilityValue;
+import megamek.common.enums.Faction;
 import megamek.common.enums.TechBase;
 import megamek.common.enums.TechRating;
 import megamek.common.equipment.AmmoType;
 import megamek.common.equipment.enums.BombType.BombTypeEnum;
-import megamek.common.weapons.missiles.thuunderbolt.ThunderboltWeapon;
+import megamek.common.weapons.missiles.thunderbolt.ThunderboltWeapon;
 
 /**
  * @author Jay Lawson
@@ -84,12 +85,16 @@ public class CLLAAMissileWeapon extends ThunderboltWeapon {
         this.capital = false;
         this.missileArmor = 6;
         rulesRefs = "171, TO:AUE";
-        techAdvancement.setTechBase(TechBase.CLAN)
+        techAdvancement.setTechBase(TechBase.ALL)
               .setIntroLevel(false)
               .setUnofficial(false)
               .setTechRating(TechRating.E)
               .setAvailability(AvailabilityValue.X, AvailabilityValue.X, AvailabilityValue.F, AvailabilityValue.D)
+              .setISAdvancement(3069, 3072, DATE_NONE, DATE_NONE, DATE_NONE)
+              .setISApproximate(true, false, false, false, false)
               .setClanAdvancement(DATE_NONE, DATE_NONE, 3074, DATE_NONE, DATE_NONE)
-              .setClanApproximate(false, false, false, false, false);
+              .setClanApproximate(false, false, false, false, false)
+              .setPrototypeFactions(Faction.FW)
+              .setProductionFactions(Faction.FW);
     }
 }

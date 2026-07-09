@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2025 The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2025-2026 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -46,13 +46,14 @@ import megamek.common.board.Coords;
 import megamek.common.board.CubeCoords;
 import megamek.common.enums.BasementType;
 import megamek.common.enums.BuildingType;
+import megamek.common.enums.GamePhase;
 import megamek.common.equipment.EquipmentType;
 import megamek.common.equipment.WeaponMounted;
 import megamek.common.game.Game;
 import megamek.common.net.packets.Packet;
 import megamek.common.rolls.PilotingRollData;
-import megamek.common.units.Building;
 import megamek.common.units.AbstractBuildingEntity;
+import megamek.common.units.Building;
 import megamek.common.units.BuildingEntity;
 import megamek.common.units.MobileStructure;
 import megamek.common.weapons.lasers.innerSphere.medium.ISLaserMedium;
@@ -66,7 +67,7 @@ import org.mockito.Mockito;
 /**
  * Tests for {@link AbstractBuildingEntity} that aren't tested by {@link IBuildingTests}. If the method is from the
  * {@link Building} interface, the test should probably be in {@code IBuildingTests}.
- *
+ * <p>
  * Many of these tests do not have their final values - this class is not yet fully implemented. Many of these
  * method's'll be removed from this class as they're overriden.
  */
@@ -100,10 +101,10 @@ public class AbstractBuildingEntityTest extends GameBoardTestCase {
      */
     static Stream<AbstractBuildingEntity> buildingProvider() {
         return Stream.of(
-            createBuildingEntity(BuildingType.LIGHT),
-            createBuildingEntity(BuildingType.MEDIUM),
-            createBuildingEntity(BuildingType.HEAVY),
-            createBuildingEntity(BuildingType.HARDENED)/*,
+              createBuildingEntity(BuildingType.LIGHT),
+              createBuildingEntity(BuildingType.MEDIUM),
+              createBuildingEntity(BuildingType.HEAVY),
+              createBuildingEntity(BuildingType.HARDENED)/*,
             createMobileStructure(BuildingType.LIGHT),
             createMobileStructure(BuildingType.MEDIUM),
             createMobileStructure(BuildingType.HEAVY),
@@ -120,6 +121,7 @@ public class AbstractBuildingEntityTest extends GameBoardTestCase {
     /**
      * Not yet implemented
      */
+    @Deprecated(since = "0.51.0", forRemoval = true)
     private static AbstractBuildingEntity createMobileStructure(BuildingType type) {
         AbstractBuildingEntity building = new MobileStructure(type, 1);
         return setupBuilding(building);
@@ -444,5 +446,19 @@ public class AbstractBuildingEntityTest extends GameBoardTestCase {
     @MethodSource("buildingProvider")
     void testGetEntityType(AbstractBuildingEntity building) {
         assertEquals(BuildingEntity.ETYPE_BUILDING_ENTITY, building.getEntityType());
+    }
+
+    @ParameterizedTest
+    @MethodSource("buildingProvider")
+    void testNewPhase_DoomedCrew_TransitionsToCarcass(AbstractBuildingEntity building) {
+        building.getCrew().setDoomed(true);
+        assertFalse(building.isCarcass(), "Building should not be carcass before newPhase");
+
+        building.newPhase(GamePhase.END);
+
+        assertTrue(building.isCarcass(), "Building with doomed crew should become carcass after newPhase");
+        assertTrue(building.getCrew().isDead(), "Building crew should be marked dead after newPhase");
+        assertFalse(building.isDestroyed(),
+              "Carcass building must not be pre-marked destroyed; prepareVictoryReport() calls destroyEntity with 'crew death' reason");
     }
 }

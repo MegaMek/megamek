@@ -35,10 +35,10 @@ package megamek.client.ratgenerator;
 import megamek.client.generator.RandomGenderGenerator;
 import megamek.client.generator.RandomNameGenerator;
 import megamek.common.compute.Compute;
+import megamek.common.enums.Gender;
 import megamek.common.units.Crew;
 import megamek.common.units.CrewType;
 import megamek.common.units.UnitType;
-import megamek.common.enums.Gender;
 
 /**
  * Description of crew.
@@ -209,7 +209,7 @@ public class CrewDescriptor {
      * @return The skill rating
      */
     private int randomSkillRating(int[][] table, int experience, int mod) {
-        int column = Math.max(0, Math.min(experience, table.length - 1));
+        int column = Math.clamp(experience, 0, table.length - 1);
         int roll = Compute.d6() + mod;
         if (roll < 0) {
             return table[column][0];

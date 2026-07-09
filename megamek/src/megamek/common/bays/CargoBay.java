@@ -1,6 +1,6 @@
 /*
  * Copyright (c) 2003-2004 Ben Mazur (bmazur@sev.org)
- * Copyright (C) 2008-2025 The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2008-2026 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -49,6 +49,7 @@ public final class CargoBay extends Bay implements InfantryTransporter {
     /**
      * The default constructor is only for serialization.
      */
+    @Deprecated(since = "0.51.0", forRemoval = true)
     private CargoBay() {
         totalSpace = 0;
         currentSpace = 0;
@@ -70,8 +71,7 @@ public final class CargoBay extends Bay implements InfantryTransporter {
 
     @Override
     public boolean canLoad(Entity unit) {
-        // Infantry is only restricted by adjacency requirements (TW pp. 223 - 225)
-        return unit.isInfantry();
+        return InfantryTransporter.super.canLoad(unit);
     }
 
     @Override

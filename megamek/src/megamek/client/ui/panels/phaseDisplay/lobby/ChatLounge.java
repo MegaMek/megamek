@@ -1,7 +1,7 @@
 /*
  * Copyright (C) 2000-2006 Ben Mazur (bmazur@sev.org)
  * Copyright (C) 2013 Edward Cullen (eddy@obsessedcomputers.co.uk)
- * Copyright (C) 2002-2025 The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2002-2026 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -96,9 +96,9 @@ import megamek.SuiteConstants;
 import megamek.client.AbstractClient;
 import megamek.client.Client;
 import megamek.client.bot.BotClient;
+import megamek.client.bot.BotFactory;
 import megamek.client.bot.princess.BehaviorSettings;
 import megamek.client.bot.princess.BehaviorSettingsFactory;
-import megamek.client.bot.princess.Princess;
 import megamek.client.bot.ui.swing.BotGUI;
 import megamek.client.generator.RandomCallsignGenerator;
 import megamek.client.generator.RandomNameGenerator;
@@ -110,10 +110,10 @@ import megamek.client.ui.clientGUI.CloseAction;
 import megamek.client.ui.clientGUI.GUIPreferences;
 import megamek.client.ui.clientGUI.IMapSettingsObserver;
 import megamek.client.ui.clientGUI.boardview.BoardView;
+import megamek.client.ui.clientGUI.boardview.RulerDialog;
 import megamek.client.ui.clientGUI.boardview.toolTip.TWBoardViewTooltip;
 import megamek.client.ui.dialogs.InformDialog;
 import megamek.client.ui.dialogs.MMDialogs.MMConfirmDialog;
-import megamek.client.ui.dialogs.RulerDialog;
 import megamek.client.ui.dialogs.abstractDialogs.AutoResolveChanceDialog;
 import megamek.client.ui.dialogs.abstractDialogs.AutoResolveProgressDialog;
 import megamek.client.ui.dialogs.advancedSearchMap.AdvancedSearchMapDialog;
@@ -158,6 +158,7 @@ import megamek.common.loaders.MapSettings;
 import megamek.common.loaders.MapSetup;
 import megamek.common.loaders.MekSummary;
 import megamek.common.loaders.MekSummaryCache;
+import megamek.common.options.IBasicOption;
 import megamek.common.options.IOption;
 import megamek.common.options.OptionsConstants;
 import megamek.common.options.PilotOptions;
@@ -244,7 +245,10 @@ public class ChatLounge extends AbstractPhaseDisplay
     private final JButton butAddBot = new JButton(Messages.getString("ChatLounge.butAddBot"));
     private final JButton butRemoveBot = new JButton(Messages.getString("ChatLounge.butRemoveBot"));
     private final JButton butConfigPlayer = new JButton(Messages.getString("ChatLounge.butConfigPlayer"));
+    private final JButton butVictory = new JButton(Messages.getString("ChatLounge.butVictory"));
     private final JButton butBotSettings = new JButton(Messages.getString("ChatLounge.butBotSettings"));
+    private FixedYPanel panBotInfo;
+    private VictoryConditionsDialog victoryConditionsDialog;
     PlayerSettingsDialog psd;
 
     private final transient MekTableMouseAdapter mekTableMouseAdapter = new MekTableMouseAdapter();
@@ -341,7 +345,7 @@ public class ChatLounge extends AbstractPhaseDisplay
     transient LobbyKeyDispatcher lobbyKeyDispatcher = new LobbyKeyDispatcher(this);
 
     private static final String CL_KEY_FILE_EXTENSION_XML = ".xml";
-    private static final String CL_KEY_FILEPATH_MAP_ASSEMBLY_HELP = "docs/help/en/Map and Board Stuff/MapAssemblyHelp.html";
+    private static final String CL_KEY_FILEPATH_MAP_ASSEMBLY_HELP = "docs/Customization/MegaMek/Map and Board Stuff/MapAssemblyHelp.html";
     private static final String CL_KEY_FILEPATH_MAP_SETUP = "/mapsetup";
     private static final String CL_KEY_NAME_HELP_PANE = "helpPane";
 
@@ -434,6 +438,7 @@ public class ChatLounge extends AbstractPhaseDisplay
         butCompact.addActionListener(lobbyListener);
         butConditions.addActionListener(lobbyListener);
         butConfigPlayer.addActionListener(lobbyListener);
+        butVictory.addActionListener(lobbyListener);
         butLoadList.addActionListener(lobbyListener);
         butNames.addActionListener(lobbyListener);
         butOptions.addActionListener(lobbyListener);
@@ -469,12 +474,12 @@ public class ChatLounge extends AbstractPhaseDisplay
 
         fldMapWidth.addActionListener(lobbyListener);
         fldMapHeight.addActionListener(lobbyListener);
-        fldMapWidth.addFocusListener(focusListener);
-        fldMapHeight.addFocusListener(focusListener);
+        fldMapWidth.addFocusListener(lobbyFocusListener);
+        fldMapHeight.addFocusListener(lobbyFocusListener);
         fldSpaceBoardWidth.addActionListener(lobbyListener);
         fldSpaceBoardHeight.addActionListener(lobbyListener);
-        fldSpaceBoardWidth.addFocusListener(focusListener);
-        fldSpaceBoardHeight.addFocusListener(focusListener);
+        fldSpaceBoardWidth.addFocusListener(lobbyFocusListener);
+        fldSpaceBoardHeight.addFocusListener(lobbyFocusListener);
 
         comboTeam.addActionListener(lobbyListener);
 
@@ -483,7 +488,7 @@ public class ChatLounge extends AbstractPhaseDisplay
     }
 
     /** Applies changes to the board and map size when the text fields lose focus. */
-    FocusListener focusListener = new FocusAdapter() {
+    FocusListener lobbyFocusListener = new FocusAdapter() {
 
         @Override
         public void focusLost(FocusEvent e) {
@@ -579,7 +584,7 @@ public class ChatLounge extends AbstractPhaseDisplay
         bvSorters.add(new PlayerBVSorter(clientgui, Sorting.DESCENDING));
         bvSorters.add(new BVSorter(Sorting.ASCENDING));
         bvSorters.add(new BVSorter(Sorting.DESCENDING));
-        activeSorter = unitSorters.get(0);
+        activeSorter = unitSorters.getFirst();
     }
 
     /** Enables buttons to allow adding units when the MSC has finished loading. */
@@ -672,14 +677,18 @@ public class ChatLounge extends AbstractPhaseDisplay
         panPlayerInfo = new FixedYPanel(new GridLayout(1, 2, 2, 2));
         panPlayerInfo.setBorder(BorderFactory.createTitledBorder(Messages.getString("ChatLounge.name.playerSetup")));
 
-        JPanel panPlayerInfoBts = new JPanel(new GridLayout(4, 1, 2, 2));
+        JPanel panPlayerInfoBts = new JPanel(new GridLayout(3, 1, 2, 2));
         panPlayerInfoBts.add(comboTeam);
         panPlayerInfoBts.add(butConfigPlayer);
-        panPlayerInfoBts.add(butAddBot);
-        panPlayerInfoBts.add(butRemoveBot);
+        panPlayerInfoBts.add(butVictory);
 
         panPlayerInfo.add(panPlayerInfoBts);
         panPlayerInfo.add(butCamo);
+
+        panBotInfo = new FixedYPanel(new GridLayout(1, 2, 2, 2));
+        panBotInfo.setBorder(BorderFactory.createTitledBorder(Messages.getString("ChatLounge.name.botSetup")));
+        panBotInfo.add(butAddBot);
+        panBotInfo.add(butRemoveBot);
 
         refreshPlayerTable();
     }
@@ -762,6 +771,8 @@ public class ChatLounge extends AbstractPhaseDisplay
         leftSide.add(panUnitInfo);
         leftSide.add(Box.createVerticalStrut(scaleForGUI(5)));
         leftSide.add(panPlayerInfo);
+        leftSide.add(Box.createVerticalStrut(scaleForGUI(5)));
+        leftSide.add(panBotInfo);
         leftSide.add(Box.createVerticalStrut(scaleForGUI(5)));
         leftSide.add(panAutoResolveInfo);
         leftSide.add(Box.createVerticalStrut(scaleForGUI(5)));
@@ -958,10 +969,7 @@ public class ChatLounge extends AbstractPhaseDisplay
 
             RulerDialog.color1 = GUIP.getRulerColor1();
             RulerDialog.color2 = GUIP.getRulerColor2();
-            RulerDialog ruler = new RulerDialog(clientgui.getFrame(), client(), previewBV, boardPreviewGame);
-            ruler.setLocation(GUIP.getRulerPosX(), GUIP.getRulerPosY());
-            ruler.setSize(GUIP.getRulerSizeHeight(), GUIP.getRulerSizeWidth());
-            UIUtil.updateWindowBounds(ruler);
+            RulerDialog ruler = new RulerDialog(clientgui.getFrame(), previewBV, boardPreviewGame);
 
             // Most boards will be far too large on the standard zoom
             previewBV.zoomOut();
@@ -1272,7 +1280,7 @@ public class ChatLounge extends AbstractPhaseDisplay
                         String boardForImage = boardName;
                         // For a surprise board, just use the first board as example
                         if (boardName.startsWith(MapSettings.BOARD_SURPRISE)) {
-                            boardForImage = extractSurpriseMaps(boardName).get(0);
+                            boardForImage = extractSurpriseMaps(boardName).getFirst();
                         }
 
                         boolean rotateBoard = false;
@@ -1732,6 +1740,7 @@ public class ChatLounge extends AbstractPhaseDisplay
      *
      * @see #isEditable(Entity)
      */
+    @Deprecated(since = "0.51.0", forRemoval = true)
     boolean isNotEditable(Entity entity) {
         return !isEditable(entity);
     }
@@ -1920,6 +1929,8 @@ public class ChatLounge extends AbstractPhaseDisplay
                 lobbyActions.changeTeam(getSelectedPlayers(), comboTeam.getSelectedIndex());
             } else if (ev.getSource().equals(butConfigPlayer)) {
                 configPlayer();
+            } else if (ev.getSource().equals(butVictory)) {
+                showVictoryConditionsDialog();
             } else if (ev.getSource().equals(butBotSettings)) {
                 doBotSettings();
             } else if (ev.getSource().equals(butOptions)) {
@@ -2221,7 +2232,8 @@ public class ChatLounge extends AbstractPhaseDisplay
         if (bcd.getResult() == DialogResult.CANCELLED) {
             return;
         }
-        Princess botClient = Princess.createPrincess(bcd.getBotName(),
+        BotClient botClient = BotFactory.createBot(bcd.getSelectedAIType(),
+              bcd.getBotName(),
               client().getHost(),
               client().getPort(),
               bcd.getBehaviorSettings());
@@ -2311,6 +2323,27 @@ public class ChatLounge extends AbstractPhaseDisplay
         }
     }
 
+    /**
+     * Shows the victory conditions dialog (the former Victory Conditions tab of the game options; the tab is removed
+     * and this dialog is the only place to edit those options). On OK, the changed options are sent to the server and
+     * the full option set is saved to the game options file so the victory conditions persist between games.
+     */
+    private void showVictoryConditionsDialog() {
+        if (victoryConditionsDialog == null) {
+            victoryConditionsDialog = new VictoryConditionsDialog(clientgui);
+        }
+        victoryConditionsDialog.refreshLobbyState();
+        if (victoryConditionsDialog.showDialog() == DialogResult.CONFIRMED) {
+            Vector<IBasicOption> changedOptions = victoryConditionsDialog.getChangedVictoryOptions();
+            if (!changedOptions.isEmpty()) {
+                clientgui.getClient().sendGameOptions(victoryConditionsDialog.getPassword(), changedOptions);
+            }
+            // Persist to the game options file so the victory conditions survive a re-host; the sent options only
+            // update the running server, which reloads defaults from the file when a new game is hosted.
+            victoryConditionsDialog.saveVictoryOptions();
+        }
+    }
+
     private void removeBot() {
         Client c = getSelectedClient();
         if (!client().getBots().containsValue(c)) {
@@ -2326,7 +2359,9 @@ public class ChatLounge extends AbstractPhaseDisplay
 
     private void doBotSettings() {
         Player player = playerModel.getPlayerAt(tablePlayers.getSelectedRow());
-        Princess bot = (Princess) clientgui.getLocalBots().get(player.getName());
+        if (!(clientgui.getLocalBots().get(player.getName()) instanceof BotClient bot)) {
+            return;
+        }
         var bcd = new BotConfigDialog(clientgui.getFrame(),
               bot.getLocalPlayer().getName(),
               bot.getBehaviorSettings(),
@@ -2508,6 +2543,12 @@ public class ChatLounge extends AbstractPhaseDisplay
         }
 
         boolean done = !localPlayer().isDone();
+
+        // Ask up front (once) whether to record the combat-summary GIF, so recording never has to interrupt play
+        // mid-game. No-op unless the preference is "ask" and no choice has been made for this game yet.
+        if (done) {
+            MinimapPanel.promptForGifRecordingConsent(game, clientgui.getFrame());
+        }
 
         // Save lobby state if setting is enabled, player is marking as done, and we haven't saved yet
         if (done && GUIP.getSaveLobbyOnStart() && !lobbySavePerformed) {
@@ -2833,7 +2874,7 @@ public class ChatLounge extends AbstractPhaseDisplay
             } else if (code == KeyEvent.VK_ENTER) {
                 evt.consume();
                 if (entities.size() == 1) {
-                    lobbyActions.customizeMek(entities.get(0));
+                    lobbyActions.customizeMek(entities.getFirst());
                 } else if (canConfigureMultipleDeployment(entities)) {
                     lobbyActions.customizeMeks(entities);
                 }
@@ -2981,7 +3022,7 @@ public class ChatLounge extends AbstractPhaseDisplay
 
             } else if (code == KeyEvent.VK_ENTER && onlyOneEntity) {
                 e.consume();
-                lobbyActions.customizeMek(selEntities.get(0));
+                lobbyActions.customizeMek(selEntities.getFirst());
 
             } else if (code == KeyEvent.VK_UP && e.getModifiersEx() == InputEvent.CTRL_DOWN_MASK) {
                 e.consume();
@@ -3474,7 +3515,7 @@ public class ChatLounge extends AbstractPhaseDisplay
         // the first sorter otherwise
         int index = sorters.indexOf(activeSorter);
         if (index == -1) {
-            activeSorter = sorters.get(0);
+            activeSorter = sorters.getFirst();
         } else {
             index = (index + 1) % sorters.size();
             activeSorter = sorters.get(index);

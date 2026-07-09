@@ -192,6 +192,48 @@ public class TransportCalculator {
     }
 
     /**
+     * Generates WarShips to provide additional docking collars for transporting DropShips. WarShips also serve as
+     * combat vessels in Clan toumans and IS naval fleets; this method only sizes the fleet to the docking-collar
+     * requirement implied by the ratio. The ratio is independent of the jumpship ratio, so callers can request, for
+     * example, 50% WarShip coverage + 50% JumpShip coverage to split the fleet evenly.
+     *
+     * @param ratio            The fraction (0.0–1.0+) of total DropShip docking demand to fulfill via WarShips
+     * @param transportCollars The number of DropShips that need docking-collar capacity
+     *
+     * @return The list of generated WarShips. May be empty if no WarShip is available for the faction/year/rating.
+     */
+    public List<MekSummary> calcWarShips(double ratio, int transportCollars) {
+        if (ratio <= 0) {
+            return new ArrayList<>();
+        }
+        UnitTable table = UnitTable.findTable(fd.getFactionRec(),
+              UnitType.WARSHIP,
+              fd.getYear(),
+              fd.getRating(),
+              null,
+              ModelRecord.NETWORK_NONE,
+              EnumSet.noneOf(EntityMovementMode.class),
+              EnumSet.noneOf(MissionRole.class),
+              0);
+        List<MekSummary> retVal = new ArrayList<>();
+        int currentCapacity = 0;
+
+        if (unitCounts.containsKey(UnitType.DROPSHIP)) {
+            transportCollars += unitCounts.get(UnitType.DROPSHIP);
+        }
+
+        while (transportCollars * ratio > (double) currentCapacity) {
+            MekSummary warship = table.generateUnit(ms -> countHardpoints(ms) > 0);
+            if (null == warship) {
+                break; // No WarShips available for this faction/year/rating
+            }
+            currentCapacity += countHardpoints(warship);
+            retVal.add(warship);
+        }
+        return retVal;
+    }
+
+    /**
      * Determines whether potential transport has capacity for the type of unit.
      *
      * @param ms       A potential transporting unit
@@ -209,6 +251,29 @@ public class TransportCalculator {
             return getBayCount(ms, UnitType.NAVAL) > 0;
         }
         return false;
+    }
+
+    /**
+     * Returns the Aerospace Fighter bay capacity of a unit (how many fighters it can carry), loading the Entity once
+     * and caching the result. Used to size the carried fighter complement of WarShips, DropShips, JumpShips, and Space
+     * Stations.
+     *
+     * @param mekSummary the carrier unit
+     *
+     * @return number of fighters the unit can carry, or 0 if none / could not be loaded
+     */
+    public static int fighterBayCapacity(MekSummary mekSummary) {
+        if (!bayTypeCache.containsKey(mekSummary)) {
+            try {
+                Entity entity = new MekFileParser(mekSummary.getSourceFile(), mekSummary.getEntryName()).getEntity();
+                bayTypeCache.put(mekSummary, countBays(entity));
+            } catch (EntityLoadingException ex) {
+                // Cache the failure as an empty bay map so we do not re-parse and re-throw this unit
+                // on every subsequent call.
+                bayTypeCache.put(mekSummary, Map.of());
+            }
+        }
+        return bayTypeCache.get(mekSummary).getOrDefault(UnitType.AEROSPACE_FIGHTER, 0);
     }
 
     private int getBayCount(MekSummary ms, int unitType) {
@@ -242,7 +307,7 @@ public class TransportCalculator {
      *
      * @return a Mapping of unit types with counts.
      */
-    private Map<Integer, Integer> countBays(Entity entity) {
+    private static Map<Integer, Integer> countBays(Entity entity) {
         Map<Integer, Integer> bayCount = new HashMap<>();
         for (Bay bay : entity.getTransportBays()) {
             if (bay instanceof MekBay) {

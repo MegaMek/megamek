@@ -1,6 +1,6 @@
 /*
  * Copyright (C) 2000-2005 Ben Mazur (bmazur@sev.org)
- * Copyright (C) 2005-2025 The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2005-2026 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -81,6 +81,14 @@ public abstract class TestEntity implements TestEntityOption {
     protected Structure structure;
     private final TestEntityOption options;
 
+    /**
+     * Optional game year to use for intro date validation instead of the unit's intro year. When set to a value > 0,
+     * {@link #hasIncorrectIntroYear(StringBuffer)} will compare equipment intro dates against this year instead of the
+     * entity's year. This supports the "Use Game Year" setting in MegaMekLab where equipment availability is determined
+     * by the configured game year rather than the unit's intro year.
+     */
+    private int gameYear = -1;
+
     public abstract Entity getEntity();
 
     public abstract boolean isTank();
@@ -149,7 +157,7 @@ public abstract class TestEntity implements TestEntityOption {
         } else if (unit.hasETypeFlag(Entity.ETYPE_BATTLEARMOR)) {
             testEntity = new TestBattleArmor((BattleArmor) unit, entityVerifier.baOption, null);
         } else if (unit.hasETypeFlag(Entity.ETYPE_INFANTRY)) {
-            testEntity = new TestInfantry((Infantry) unit, entityVerifier.infOption, null);
+            testEntity = new TestInfantry((ConvInfantry) unit, entityVerifier.infOption, null);
         }
         return testEntity;
     }
@@ -284,6 +292,27 @@ public abstract class TestEntity implements TestEntityOption {
         return options.getIntroYearMargin();
     }
 
+    /**
+     * Gets the game year to use for intro date validation. When > 0, equipment intro dates are compared against this
+     * year instead of the entity's intro year.
+     *
+     * @return The game year, or -1 if not set (use entity year)
+     */
+    public int getGameYear() {
+        return gameYear;
+    }
+
+    /**
+     * Sets the game year to use for intro date validation. When set to a value > 0, equipment intro dates will be
+     * compared against this year instead of the entity's intro year. This supports scenarios where equipment
+     * availability is determined by a campaign's current year rather than the unit's original intro year.
+     *
+     * @param gameYear The game year to use, or -1 to use entity year
+     */
+    public void setGameYear(int gameYear) {
+        this.gameYear = gameYear;
+    }
+
     @Override
     public boolean skip() {
         return !skipBuildValidation() && options.skip();
@@ -351,6 +380,7 @@ public abstract class TestEntity implements TestEntityOption {
      *
      * @return The input value truncated to the number of decimal places supplied
      */
+    @Deprecated(since = "0.51.0", forRemoval = true)
     public static double setPrecision(double value, int precision) {
         return Math.round(value * Math.pow(10, precision)) / Math.pow(10, precision);
     }
@@ -996,24 +1026,54 @@ public abstract class TestEntity implements TestEntityOption {
               + printMiscEquip() + printWeapon() + printAmmo();
     }
 
-    public boolean correctWeight(StringBuffer buff) {
-        return correctWeight(buff, showOverweightedEntity(),
-              showUnderweightEntity());
+    /**
+     * Tests the calculated weight of the unit (the sum of the weights of all its components) and the assumed weight
+     * (the fixed tonnage it is constructed with). Returns false if there are errors with the values (e.g. overweight,
+     * underweight if the unit type does not allow it, mek weight must be a multiple of 5t).
+     *
+     * @return true if there are no problems with the unit's assumed and calculated weight values
+     */
+    @Deprecated(since = "0.51.0", forRemoval = true)
+    public final boolean isWeightCorrect() {
+        return correctWeight(new StringBuffer());
     }
 
-    public boolean correctWeight(StringBuffer buff, boolean showO, boolean showU) {
+    /**
+     * Tests the calculated weight of the unit (the sum of the weights of all its components) and the assumed weight
+     * (the fixed tonnage it is constructed with). Returns false if there are errors with the values (e.g. overweight,
+     * underweight if the unit type does not allow it, mek weight must be a multiple of 5t). Any error reports are
+     * appended to the given StringBuffer.
+     *
+     * @return true if there are no problems with the unit's assumed and calculated weight values
+     */
+    public final boolean correctWeight(StringBuffer buff) {
+        return correctWeight(buff, !showOverweightedEntity(), !showUnderweightEntity());
+    }
+
+    /**
+     * Tests the calculated weight of the unit (the sum of the weights of all its components) and the assumed weight
+     * (the fixed tonnage it is constructed with). Returns false if there are errors with the values (e.g. overweight,
+     * underweight if the unit type does not allow it, mek weight must be a multiple of 5t).
+     *
+     * @param buff              The StringBuffer to append error messages to
+     * @param ignoreOverweight  When true, ignore overweight
+     * @param ignoreUnderweight When true, ignore underweight
+     *
+     * @return true if there are no problems with the unit's assumed and calculated weight values
+     */
+    public boolean correctWeight(StringBuffer buff, boolean ignoreOverweight, boolean ignoreUnderweight) {
         double weightSum = calculateWeight();
         double weight = getWeight();
+        boolean useKg = usesKgStandard();
 
-        if (showO && ((weight + getMaxOverweight()) < weightSum)) {
-            buff.append("Weight: ").append(calculateWeight())
-                  .append(" is greater than ").append(getWeight())
-                  .append("\n");
+        if (!ignoreOverweight && ((weight + getMaxOverweight()) < weightSum)) {
+            buff.append("Weight: %s is greater than %s\n"
+                  .formatted(makeWeightString(weightSum, useKg), makeWeightString(weight, useKg)));
             return false;
         }
-        if (showU && ((weight - getMinUnderweight()) > weightSum)) {
-            buff.append("Weight: ").append(calculateWeight())
-                  .append(" is less than ").append(getWeight()).append("\n");
+        if (!ignoreUnderweight && ((weight - getMinUnderweight()) > weightSum)) {
+            buff.append("Weight: %s is less than %s\n"
+                  .formatted(makeWeightString(weightSum, useKg), makeWeightString(weight, useKg)));
             return false;
         }
         return true;
@@ -1041,27 +1101,23 @@ public abstract class TestEntity implements TestEntityOption {
     }
 
     /**
-     * Returns the total number of armor points available to the unit for a given tonnage of armor. This does not round
-     * down the calculation or take into account any maximum number of armor points or tonnage allowed to the unit. It
-     * also does not include any free armor points due to SI on aerospace units.
+     * Returns the total number of armor points available to the unit for a given tonnage of armor -- NOT including the
+     * downgrade of primitive aerospace armor which cannot be factored into this number correctly (see IO:AE p.125).
+     * This does not round down the calculation or take into account any maximum number of armor points or tonnage
+     * allowed to the unit. It also does not include any free armor points due to SI on aerospace units.
      * <p>
      * NOTE: only use for non-patchwork armor
      *
      * @return the number of armor points available for the armor tonnage
      */
     public static double getRawArmorPoints(Entity unit, double armorTons) {
-        if (unit.hasETypeFlag(Entity.ETYPE_PROTOMEK)) {
+        if (unit.isProtoMek()) {
             return Math.round(armorTons / ArmorType.forEntity(unit).getWeightPerPoint());
         } else if (unit.isSupportVehicle()) {
             return Math.floor(armorTons / TestSupportVehicle.armorWeightPerPoint(unit));
-        } else if ((unit instanceof Jumpship)
-              && unit.getArmorType(unit.firstArmorIndex()) == EquipmentType.T_ARMOR_PRIMITIVE_AERO) {
-            // Because primitive JumpShip armor has an extra step of rounding we have to give it special treatment.
-            // Standard armor value is computed first, rounded down, then the primitive armor mod is applied.
-            return Math.floor(Math.floor(armorTons * TestAdvancedAerospace.armorPointsPerTon((Jumpship) unit,
-                  EquipmentType.T_ARMOR_AEROSPACE, false)) * 0.66);
+        } else {
+            return armorTons * getArmorPointsPerTon(unit);
         }
-        return armorTons * getArmorPointsPerTon(unit);
     }
 
     /**
@@ -1077,6 +1133,9 @@ public abstract class TestEntity implements TestEntityOption {
      */
     public static int getArmorPoints(Entity unit, double armorTons) {
         int raw = (int) Math.floor(getRawArmorPoints(unit, armorTons) + TestEntity.getSIBonusArmorPoints(unit));
+        if (unit.isPrimitive() && (unit instanceof Jumpship || unit instanceof SmallCraft)) {
+            raw = (int) (raw * 0.66);
+        }
         return Math.min(raw, getMaximumArmorPoints(unit));
     }
 
@@ -1139,29 +1198,25 @@ public abstract class TestEntity implements TestEntityOption {
     }
 
     /**
-     * Returns the number of free additional armor points provided for aerospace vessels based on their SI. This is
-     * usually a whole number but may be a fractional amount for primitive JumpShips. It is the total number, which is
-     * usually divided evenly among armor facings. For units other than SC/DS and capital craft, this is 0. See TM
-     * p.191, SO:AA p.140, IO:AE p.119-125
+     * Returns the number of free additional armor points provided for aerospace vessels based on their structural
+     * integrity (for primitive capital craft, *without* the 0.66 primitive adjustment factor). For units other than
+     * SC/DS and capital craft, this is 0. See TM p.191, SO:AA p.140, IO:AE p.119-125.
      *
      * @param entity The unit to compute bonus armor for
      *
      * @return The total number of extra armor points received for SI
      */
-    public static double getSIBonusArmorPoints(Entity entity) {
-        double points = 0;
+    public static int getSIBonusArmorPoints(Entity entity) {
         if (entity instanceof SmallCraft smallCraft) {
-            points = smallCraft.getSI() * (entity.locations() - 1);
+            return TestSmallCraft.getSIBonusArmorPointsForSC(smallCraft);
         } else if (entity instanceof Jumpship jumpship) {
-            points = Math.round(jumpship.getSI() / 10.0) * 6;
-        }
-        if (entity.isPrimitive()) {
-            return points * ArmorType.of(EquipmentType.T_ARMOR_PRIMITIVE_AERO, false).getArmorPointsMultiplier();
+            return TestAdvancedAerospace.getSIBonusArmorPointsForJS(jumpship);
         } else {
-            return points;
+            return 0;
         }
     }
 
+    @Deprecated(since = "0.51.0", forRemoval = true)
     public boolean hasIllegalTechLevels(StringBuffer buff) {
         return hasIllegalTechLevels(buff, getEntity().getTechLevel());
     }
@@ -1179,7 +1234,7 @@ public abstract class TestEntity implements TestEntityOption {
         int eTechLevel = SimpleTechLevel.convertCompoundToSimple(getEntity().getTechLevel()).ordinal();
         int ammoRulesLevel = SimpleTechLevel.convertCompoundToSimple(ammoTechLvl).ordinal();
         int eRulesLevel = getEntity().findMinimumRulesLevel().ordinal();
-        if ((eTechLevel >= eRulesLevel) && (getEntity().getEarliestTechDate() <= getEntity().getYear())) {
+        if ((eTechLevel >= eRulesLevel) && isIntroducedByValidationYear(getEntity().getEarliestTechDate(), 0)) {
             return false;
         }
 
@@ -1381,7 +1436,15 @@ public abstract class TestEntity implements TestEntityOption {
     }
 
     /**
-     * Compares intro dates of all components to the unit intro year.
+     * Compares intro dates of all components to the unit intro year (or game year if available). If the unit has an
+     * explicit original build year, that year is also accepted for components retained from the original build. The
+     * current/refit year used for comparison is determined in order of priority:
+     * <ol>
+     *   <li>If {@link #setGameYear(int)} was called with a value > 0, use that year</li>
+     *   <li>Otherwise, use {@link Entity#getTechLevelYear()} which returns the game's ALLOWED_YEAR
+     *       if the entity is part of a game, or the entity's intro year if not</li>
+     * </ol>
+     * This supports both MegaMek gameplay (using game options) and MegaMekLab (using config settings).
      *
      * @param buff Descriptions of problems will be added to the buffer.
      *
@@ -1389,14 +1452,14 @@ public abstract class TestEntity implements TestEntityOption {
      */
     public boolean hasIncorrectIntroYear(StringBuffer buff) {
         boolean retVal = false;
-        if (getEntity().getEarliestTechDate() <= getEntity().getYear() + getIntroYearMargin()) {
+        int introYearMargin = getIntroYearMargin();
+        if (isIntroducedByValidationYear(getEntity().getEarliestTechDate(), introYearMargin)) {
             return false;
         }
-        int useIntroYear = getEntity().getYear() + getIntroYearMargin();
         if (getEntity().isOmni()) {
             int introDate = Entity.getOmniAdvancement(getEntity()).getIntroductionDate(
                   getEntity().isClan() || getEntity().isMixedTech());
-            if (useIntroYear < introDate) {
+            if (!isIntroducedByValidationYear(introDate, introYearMargin)) {
                 retVal = true;
                 buff.append("Omni technology has intro date of ");
                 buff.append(introDate);
@@ -1409,9 +1472,10 @@ public abstract class TestEntity implements TestEntityOption {
             if (checked.contains(nextE) || (nextE instanceof AmmoType)) {
                 continue;
             }
-            // Skip EI Interface - it's retrofittable equipment (IO p.69)
-            // Its intro year should not be compared against unit intro year
-            if ((nextE instanceof MiscType) && nextE.hasFlag(MiscType.F_EI_INTERFACE)) {
+            // Skip EI Interface and DNI - they're retrofittable equipment (IO p.69)
+            // Their intro year should not be compared against unit intro year
+            if ((nextE instanceof MiscType) && (nextE.hasFlag(MiscType.F_EI_INTERFACE)
+                  || nextE.hasFlag(MiscType.F_DNI_COCKPIT_MOD))) {
                 continue;
             }
             checked.add(nextE);
@@ -1420,7 +1484,7 @@ public abstract class TestEntity implements TestEntityOption {
                 introDate = nextE.getIntroductionDate();
             }
 
-            if (introDate > useIntroYear) {
+            if (!isIntroducedByValidationYear(introDate, introYearMargin)) {
                 retVal = true;
                 buff.append(nextE.getName());
                 buff.append(" has intro date of ");
@@ -1436,7 +1500,7 @@ public abstract class TestEntity implements TestEntityOption {
             int intro = getEntity().isMixedTech()
                   ? Entity.getPatchworkArmorAdvancement().getIntroductionDate()
                   : Entity.getPatchworkArmorAdvancement().getIntroductionDate(getEntity().isClan());
-            if (useIntroYear < intro) {
+            if (!isIntroducedByValidationYear(intro, introYearMargin)) {
                 retVal = true;
                 buff.append("Patchwork armor has intro date of ");
                 buff.append(intro);
@@ -1462,7 +1526,7 @@ public abstract class TestEntity implements TestEntityOption {
             if (getEntity().isMixedTech()) {
                 introDate = at.getIntroductionDate();
             }
-            if (introDate > useIntroYear) {
+            if (!isIntroducedByValidationYear(introDate, introYearMargin)) {
                 retVal = true;
                 buff.append(at.getName());
                 buff.append(" armor has intro date of ");
@@ -1485,7 +1549,7 @@ public abstract class TestEntity implements TestEntityOption {
             if (getEntity().isMixedTech()) {
                 introDate = cockpit.getIntroductionDate();
             }
-            if (introDate > useIntroYear) {
+            if (!isIntroducedByValidationYear(introDate, introYearMargin)) {
                 retVal = true;
                 buff.append(cockpitName);
                 buff.append(" has intro date of ");
@@ -1500,7 +1564,7 @@ public abstract class TestEntity implements TestEntityOption {
                 if (getEntity().isMixedTech()) {
                     introDate = gyro.getIntroductionDate();
                 }
-                if (introDate > useIntroYear) {
+                if (!isIntroducedByValidationYear(introDate, introYearMargin)) {
                     retVal = true;
                     buff.append(((Mek) getEntity()).getGyroTypeString());
                     buff.append(" has intro date of ");
@@ -1515,7 +1579,7 @@ public abstract class TestEntity implements TestEntityOption {
             if (getEntity().isMixedTech()) {
                 introDate = engine.getIntroductionDate();
             }
-            if (introDate > useIntroYear) {
+            if (!isIntroducedByValidationYear(introDate, introYearMargin)) {
                 retVal = true;
                 buff.append(getEntity().getEngine().getShortEngineName());
                 buff.append(" has intro date of ");
@@ -1525,6 +1589,18 @@ public abstract class TestEntity implements TestEntityOption {
         }
 
         return retVal;
+    }
+
+    private List<Integer> getIntroYearValidationYears() {
+        int baseYear = (gameYear > 0) ? gameYear : getEntity().getTechLevelYear();
+        if (getEntity().hasOriginalBuildYear() && (getEntity().getOriginalBuildYear() != baseYear)) {
+            return List.of(baseYear, getEntity().getOriginalBuildYear());
+        }
+        return List.of(baseYear);
+    }
+
+    private boolean isIntroducedByValidationYear(int introDate, int margin) {
+        return getIntroYearValidationYears().stream().anyMatch(year -> introDate <= year + margin);
     }
 
     public boolean hasFailedEquipment(StringBuffer buff) {
@@ -1801,7 +1877,9 @@ public abstract class TestEntity implements TestEntityOption {
         for (var loc : modArmorByLocation.keySet()) {
             if (modArmorByLocation.get(loc) > 1) {
                 buff.append("Only one modular armor slot may be mounted in a single location (")
-                      .append(getEntity().getLocationName(loc.getLeft())).append(loc.getRight() ? " (R))" : ")").append('\n');
+                      .append(getEntity().getLocationName(loc.getLeft()))
+                      .append(loc.getRight() ? " (R))" : ")")
+                      .append('\n');
                 illegal = true;
             }
         }

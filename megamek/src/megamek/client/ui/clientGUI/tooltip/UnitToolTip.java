@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2020-2025 The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2020-2026 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -235,30 +235,42 @@ public final class UnitToolTip {
     }
 
     public static String getTargetTipDetail(Targetable target, @Nullable Client client) {
-        if (target instanceof Entity) {
-            return UnitToolTip.getEntityTipAsTarget((Entity) target, (client != null) ? client.getLocalPlayer() : null)
-                  .toString();
-        } else if (target instanceof BuildingTarget buildingTarget) {
-            Board board = (client != null) ? client.getBoard(target.getBoardId()) : null;
-            return HexTooltip.getBuildingTargetTip(buildingTarget, board);
-        } else if (target instanceof Hex hex) {
-            // LEGACY replace with real board ID
-            return HexTooltip.getHexTip(hex, client, 0);
-        } else {
-            return getTargetTipSummary(target, client);
+        switch (target) {
+            case Entity entity -> {
+                return UnitToolTip.getEntityTipAsTarget(entity, (client != null) ? client.getLocalPlayer() : null)
+                      .toString();
+            }
+            case BuildingTarget buildingTarget -> {
+                Board board = (client != null) ? client.getBoard(target.getBoardId()) : null;
+                return HexTooltip.getBuildingTargetTip(buildingTarget, board);
+            }
+            case Hex hex -> {
+                // LEGACY replace with real board ID
+                return HexTooltip.getHexTip(hex, client, 0);
+                // LEGACY replace with real board ID
+            }
+            case null, default -> {
+                return getTargetTipSummary(target, client);
+            }
         }
     }
 
     public static String getTargetTipSummary(Targetable target, @Nullable Client client) {
-        if (target == null) {
-            return Messages.getString("BoardView1.Tooltip.NoTarget");
-        } else if (target instanceof Entity targetEntity) {
-            String result = getTargetTipSummaryEntity(targetEntity, client);
-            result = UnitToolTip.addPlayerColorBoarder(targetEntity, result);
-            return result;
-        } else if (target instanceof BuildingTarget) {
-            if (client != null) {
-                return HexTooltip.getOneLineSummary((BuildingTarget) target, client.getGame().getBoard(target));
+        switch (target) {
+            case null -> {
+                return Messages.getString("BoardView1.Tooltip.NoTarget");
+            }
+            case Entity targetEntity -> {
+                String result = getTargetTipSummaryEntity(targetEntity, client);
+                result = UnitToolTip.addPlayerColorBoarder(targetEntity, result);
+                return result;
+            }
+            case BuildingTarget buildingTarget -> {
+                if (client != null) {
+                    return HexTooltip.getOneLineSummary(buildingTarget, client.getGame().getBoard(target));
+                }
+            }
+            default -> {
             }
         }
 
@@ -427,7 +439,7 @@ public final class UnitToolTip {
         return ((entity.getOArmor(location) <= 0) &&
               (entity.getOInternal(location) <= 0) &&
               !entity.hasRearArmor(location)) ||
-              (entity.isConventionalInfantry() && (location != Infantry.LOC_INFANTRY));
+              (entity.isConventionalInfantry() && (location != ConvInfantry.LOC_INFANTRY));
     }
 
     private static String locationHeader(Entity entity, int location) {
@@ -788,52 +800,58 @@ public final class UnitToolTip {
             rows.append(row);
         }
 
-        if (entity instanceof GunEmplacement tank) {
-            col1 = "&nbsp;";
-            col2 = sysSensorHit(tank, msg_abbr_sensors).toString();
-            col3 = "&nbsp;";
+        switch (entity) {
+            case GunEmplacement tank -> {
+                col1 = "&nbsp;";
+                col2 = sysSensorHit(tank, msg_abbr_sensors).toString();
+                col3 = "&nbsp;";
 
-            col1 = UIUtil.tag("span", fontSizeAttr, col1);
-            col2 = UIUtil.tag("span", fontSizeAttr, col2);
-            col3 = UIUtil.tag("span", fontSizeAttr, col3);
+                col1 = UIUtil.tag("span", fontSizeAttr, col1);
+                col2 = UIUtil.tag("span", fontSizeAttr, col2);
+                col3 = UIUtil.tag("span", fontSizeAttr, col3);
 
-            col1 = UIUtil.tag("TD", "", col1);
-            col2 = UIUtil.tag("TD", "", col2);
-            col3 = UIUtil.tag("TD", "", col3);
-            row = UIUtil.tag("TR", "", col1 + col2 + col3);
-            rows.append(row);
-        } else if (entity instanceof VTOL tank) {
-            col1 = "&nbsp;";
-            col2 = sysEngineHit(tank, msg_abbr_engine).toString();
-            col2 += sysSensorHit(tank, msg_abbr_sensors).toString();
-            col3 = "&nbsp;";
+                col1 = UIUtil.tag("TD", "", col1);
+                col2 = UIUtil.tag("TD", "", col2);
+                col3 = UIUtil.tag("TD", "", col3);
+                row = UIUtil.tag("TR", "", col1 + col2 + col3);
+                rows.append(row);
+            }
+            case VTOL tank -> {
+                col1 = "&nbsp;";
+                col2 = sysEngineHit(tank, msg_abbr_engine).toString();
+                col2 += sysSensorHit(tank, msg_abbr_sensors).toString();
+                col3 = "&nbsp;";
 
-            col1 = UIUtil.tag("span", fontSizeAttr, col1);
-            col2 = UIUtil.tag("span", fontSizeAttr, col2);
-            col3 = UIUtil.tag("span", fontSizeAttr, col3);
+                col1 = UIUtil.tag("span", fontSizeAttr, col1);
+                col2 = UIUtil.tag("span", fontSizeAttr, col2);
+                col3 = UIUtil.tag("span", fontSizeAttr, col3);
 
-            col1 = UIUtil.tag("TD", "", col1);
-            col2 = UIUtil.tag("TD", "", col2);
-            col3 = UIUtil.tag("TD", "", col3);
-            row = UIUtil.tag("TR", "", col1 + col2 + col3);
-            rows.append(row);
-        } else if (entity instanceof Tank tank) {
-            col1 = "";
-            col2 = sysEngineHit(tank, msg_abbr_engine).toString();
-            col2 += sysSensorHit(tank, msg_abbr_sensors).toString();
-            col3 = sysMinorMovementDamage(tank, msgAbbrMinorMovementDamage).toString();
-            col3 += sysModerateMovementDamage(tank, msgAbbrModerateMovementDamage).toString();
-            col3 += sysHeavyMovementDamage(tank, msgAbbrHeavyMovementDamage).toString();
+                col1 = UIUtil.tag("TD", "", col1);
+                col2 = UIUtil.tag("TD", "", col2);
+                col3 = UIUtil.tag("TD", "", col3);
+                row = UIUtil.tag("TR", "", col1 + col2 + col3);
+                rows.append(row);
+            }
+            case Tank tank -> {
+                col1 = "";
+                col2 = sysEngineHit(tank, msg_abbr_engine).toString();
+                col2 += sysSensorHit(tank, msg_abbr_sensors).toString();
+                col3 = sysMinorMovementDamage(tank, msgAbbrMinorMovementDamage).toString();
+                col3 += sysModerateMovementDamage(tank, msgAbbrModerateMovementDamage).toString();
+                col3 += sysHeavyMovementDamage(tank, msgAbbrHeavyMovementDamage).toString();
 
-            col1 = UIUtil.tag("span", fontSizeAttr, col1);
-            col2 = UIUtil.tag("span", fontSizeAttr, col2);
-            col3 = UIUtil.tag("span", fontSizeAttr, col3);
+                col1 = UIUtil.tag("span", fontSizeAttr, col1);
+                col2 = UIUtil.tag("span", fontSizeAttr, col2);
+                col3 = UIUtil.tag("span", fontSizeAttr, col3);
 
-            col1 = UIUtil.tag("TD", "", col1);
-            col2 = UIUtil.tag("TD", "", col2);
-            col3 = UIUtil.tag("TD", "", col3);
-            row = UIUtil.tag("TR", "", col1 + col2 + col3);
-            rows.append(row);
+                col1 = UIUtil.tag("TD", "", col1);
+                col2 = UIUtil.tag("TD", "", col2);
+                col3 = UIUtil.tag("TD", "", col3);
+                row = UIUtil.tag("TR", "", col1 + col2 + col3);
+                rows.append(row);
+            }
+            default -> {
+            }
         }
 
         String attr = String.format("FACE=Dialog COLOR=%s", UIUtil.toColorHexString(GUIP.getUnitToolTipFGColor()));
@@ -1172,7 +1190,11 @@ public final class UnitToolTip {
                             }
                         }
 
-                        wpInfos.put(curWp.getName() + msg_ammo, currAmmo);
+                        // Only add ammo entry if there's ammunition to display
+                        // Avoids "NULL Weapon Name!" for Static Ammo Feed weapons with incompatible ammo types
+                        if (!currAmmo.ammunition.isEmpty()) {
+                            wpInfos.put(curWp.getName() + msg_ammo, currAmmo);
+                        }
                     }
                 }
             }
@@ -1686,8 +1708,8 @@ public final class UnitToolTip {
             result += UIUtil.tag("FONT", attr, sMove);
         }
 
-        if (entity instanceof Infantry) {
-            InfantryMount mount = ((Infantry) entity).getMount();
+        if (entity instanceof ConvInfantry infantry) {
+            InfantryMount mount = infantry.getMount();
             if ((mount != null) && entity.getMovementMode().isSubmarine() && (entity.underwaterRounds > 0)) {
                 String uw = " " + addToTT("InfUWDuration", NOBR, mount.getUWEndurance() - entity.underwaterRounds);
                 if (entity.underwaterRounds >= mount.getUWEndurance()) {
@@ -1832,8 +1854,20 @@ public final class UnitToolTip {
             result += UIUtil.tag("FONT", attr, sNarced);
         }
 
+        // Magnetic Pulse missile interference (TO:AUE p.182 / iATM IMP rules)
+        if (entity.getMagneticPulseRounds() > 0) {
+            String sMagneticPulse = addToTT("MagneticPulse", NOBR, entity.getMagneticPulseRounds()) + " ";
+            attr = String.format("FACE=Dialog COLOR=%s", UIUtil.toColorHexString((GUIP.getCautionColor())));
+            result += UIUtil.tag("FONT", attr, sMagneticPulse);
+        }
+        if (entity.getImpToHitModifier() > 0) {
+            String sImprovedMagneticPulse = addToTT("ImprovedMagneticPulse", NOBR, entity.getImpToHitModifier()) + " ";
+            attr = String.format("FACE=Dialog COLOR=%s", UIUtil.toColorHexString((GUIP.getCautionColor())));
+            result += UIUtil.tag("FONT", attr, sImprovedMagneticPulse);
+        }
+
         // Pheromone impaired (IO pg 79)
-        if ((entity instanceof Infantry infantry) && infantry.isPheromoneImpaired()) {
+        if ((entity instanceof ConvInfantry infantry) && infantry.isPheromoneImpaired()) {
             String sPheromone = addToTT("PheromoneImpaired", NOBR) + " ";
             attr = String.format("FACE=Dialog COLOR=%s", UIUtil.toColorHexString((GUIP.getWarningColor())));
             result += UIUtil.tag("FONT", attr, sPheromone);
@@ -1927,6 +1961,43 @@ public final class UnitToolTip {
     }
 
     /**
+     * @return a short label describing the unit's fortification state for the unit display - building a fortified hex,
+     *       personally dug in / digging in, or occupying a fortified hex (cover) - or an empty string if none applies.
+     *       Cover only benefits infantry (TO:AR p.106 / TO:AUE p.153); a vehicle in a fortified hex is noted without
+     *       implying a benefit.
+     */
+    private static String getFortificationStatus(Entity entity) {
+        if (entity instanceof Infantry infantry) {
+            if (infantry.isFortifying()) {
+                return Messages.getString("BoardView1.fortifyProgress",
+                      infantry.getFortifyStage(), infantry.getFortifyTotalStages());
+            }
+            if (infantry.getDugIn() == Infantry.DUG_IN_COMPLETE) {
+                return Messages.getString("BoardView1.dugIn");
+            }
+            if (infantry.getDugIn() == Infantry.DUG_IN_WORKING) {
+                return Messages.getString("BoardView1.diggingIn");
+            }
+        } else if ((entity instanceof Tank tank) && tank.isFortifying()) {
+            return Messages.getString("BoardView1.fortifyProgress",
+                  tank.getFortifyStage(), tank.getFortifyTotalStages());
+        }
+
+        // A hull-down vehicle (or Mek) is in cover; report that explicitly rather than just "in a fortified hex".
+        if (entity.isHullDown() && !(entity instanceof Infantry)) {
+            return Messages.getString("BoardView1.hullDown");
+        }
+
+        Hex hex = entity.getGame().getHex(entity.getBoardLocation());
+        if ((hex != null) && hex.containsTerrain(Terrains.FORTIFIED)) {
+            return Messages.getString((entity instanceof Infantry)
+                  ? "BoardView1.inFortifiedHexCover"
+                  : "BoardView1.inFortifiedHex");
+        }
+        return "";
+    }
+
+    /**
      * Returns Variable Range Targeting mode info for tooltip display. Shows icon + mode name for units with VRT quirk
      * (BMM pg. 86).
      */
@@ -2003,6 +2074,18 @@ public final class UnitToolTip {
             sFacingTwist = UIUtil.tag("FONT", attr, sFacingTwist);
             sFacingTwist = UIUtil.tag("span", fontSizeAttr, sFacingTwist);
             col = UIUtil.tag("TD", "", sFacingTwist);
+            row = UIUtil.tag("TR", "", col);
+            rows += row;
+        }
+
+        // Fortification / dug-in status (TO:AR p.106 / TO:AUE p.153)
+        String fortInfo = getFortificationStatus(entity);
+        if (!fortInfo.isEmpty()) {
+            attr = String.format("FACE=Dialog COLOR=%s",
+                  UIUtil.toColorHexString((GUIP.getUnitToolTipHighlightColor())));
+            fortInfo = UIUtil.tag("FONT", attr, "&nbsp;&nbsp;" + fortInfo);
+            fortInfo = UIUtil.tag("span", fontSizeAttr, fortInfo);
+            col = UIUtil.tag("TD", "", fortInfo);
             row = UIUtil.tag("TR", "", col);
             rows += row;
         }
@@ -2313,10 +2396,10 @@ public final class UnitToolTip {
             }
         }
         // Infantry specialization like SCUBA
-        if (entity instanceof Infantry infantry) {
+        if (entity instanceof ConvInfantry infantry) {
             int spec = infantry.getSpecializations();
             if (spec > 0) {
-                String sInfantrySpec = addToTT("InfSpec", NOBR, Infantry.getSpecializationName(spec)).toString();
+                String sInfantrySpec = addToTT("InfSpec", NOBR, ConvInfantry.getSpecializationName(spec)).toString();
                 sInfantrySpec = UIUtil.tag("span", fontSizeAttr, sInfantrySpec);
                 col = UIUtil.tag("TD", "", sInfantrySpec);
                 row = UIUtil.tag("TR", "", col);
@@ -2635,6 +2718,7 @@ public final class UnitToolTip {
     }
 
     /** Returns true when Hot-Loading LRMs is on. */
+    @Deprecated(since = "0.51.0", forRemoval = true)
     static boolean isHotLoadActive(Game game) {
         return game.getOptions().booleanOption(OptionsConstants.ADVANCED_COMBAT_TAC_OPS_HOT_LOAD);
     }

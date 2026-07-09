@@ -1,6 +1,6 @@
 /*
  * Copyright (c) 2000-2011 Ben Mazur (bmazur@sev.org)
- * Copyright (C) 2021-2025 The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2021-2026 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -69,10 +69,11 @@ import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 
 import megamek.client.Client;
+import megamek.client.bot.AIType;
+import megamek.client.bot.BotClient;
 import megamek.client.bot.princess.BehaviorSettings;
 import megamek.client.bot.princess.BehaviorSettingsFactory;
 import megamek.client.bot.princess.CardinalEdge;
-import megamek.client.bot.princess.Princess;
 import megamek.client.bot.princess.PrincessException;
 import megamek.client.generator.RandomCallsignGenerator;
 import megamek.client.ui.Messages;
@@ -108,6 +109,9 @@ public class BotConfigDialog extends AbstractButtonDialog
     private final transient BehaviorSettingsFactory behaviorSettingsFactory = BehaviorSettingsFactory.getInstance();
     private BehaviorSettings princessBehavior;
 
+    /** Radio-button group for choosing which bot AI to use; defaults to {@link AIType#PRINCESS}. */
+    private final ButtonGroup aiTypeGroup = new ButtonGroup();
+
     private final JLabel nameLabel = new JLabel(Messages.getString("BotConfigDialog.nameLabel"));
     private final TipTextField nameField = new TipTextField("", 16);
 
@@ -128,8 +132,6 @@ public class BotConfigDialog extends AbstractButtonDialog
           new TipMMToggleButton(Messages.getString("BotConfigDialog.exclusiveHerdingCheck"));
     private final MMToggleButton experimentalCheck =
           new TipMMToggleButton(Messages.getString("BotConfigDialog.experimentalCheck"));
-    private final MMToggleButton useCasparProtocolCheck =
-          new TipMMToggleButton(Messages.getString("BotConfigDialog.useCasparProtocolCheck"));
 
     private final JLabel withdrawEdgeLabel = new JLabel(Messages.getString("BotConfigDialog.retreatEdgeLabel"));
     private final MMComboBox<CardinalEdge> withdrawEdgeCombo = new TipCombo<>("EdgeToWithdraw", CardinalEdge.values());
@@ -235,6 +237,42 @@ public class BotConfigDialog extends AbstractButtonDialog
     }
 
     /**
+     * The bot-AI chooser, shown as a compact line under the name field. Presents one radio button per {@link AIType},
+     * defaulting to {@link AIType#PRINCESS}; with a single AI type available it shows a single (selected) option.
+     */
+    private JPanel aiTypePanel() {
+        JPanel result = new JPanel();
+        result.add(new JLabel(Messages.getString("BotConfigDialog.aiTypeLabel")));
+        boolean useCaspar = CLIENT_PREFERENCES.getUseCASPAR();
+        for (AIType aiType : AIType.values()) {
+            if ((aiType == AIType.CASPAR) && !useCaspar) {
+                logger.debug("[Caspar] CASPAR AI option hidden - UseCASPAR client setting is off");
+                continue;
+            }
+            JRadioButton radioButton = new JRadioButton(
+                  Messages.getString("BotConfigDialog.aiType." + aiType.name()));
+            radioButton.setActionCommand(aiType.name());
+            radioButton.setSelected(aiType == AIType.PRINCESS);
+            String tooltipKey = "BotConfigDialog.aiType." + aiType.name() + ".tooltip";
+            if (Messages.keyExists(tooltipKey)) {
+                radioButton.setToolTipText(Messages.getString(tooltipKey));
+            }
+            aiTypeGroup.add(radioButton);
+            result.add(radioButton);
+        }
+        return result;
+    }
+
+    /**
+     * @return the {@link AIType} selected in the AI chooser, or {@link AIType#PRINCESS} if nothing is selected
+     */
+    public AIType getSelectedAIType() {
+        ButtonModel selection = aiTypeGroup.getSelection();
+        AIType selected = (selection != null) ? AIType.fromString(selection.getActionCommand()) : null;
+        return (selected != null) ? selected : AIType.PRINCESS;
+    }
+
+    /**
      * The setting section contains the presets list on the left side and the princess settings on the right.
      */
     private JPanel settingSection() {
@@ -279,6 +317,7 @@ public class BotConfigDialog extends AbstractButtonDialog
         namePanel.add(nameField);
 
         panContent.add(namePanel);
+        panContent.add(aiTypePanel());
         return result;
     }
 
@@ -423,10 +462,6 @@ public class BotConfigDialog extends AbstractButtonDialog
             panContent.add(experimentalCheck);
         }
 
-        useCasparProtocolCheck.setToolTipText(Messages.getString("BotConfigDialog.useCasparProtocolCheckToolTip"));
-        useCasparProtocolCheck.addActionListener(this);
-        panContent.add(useCasparProtocolCheck);
-
         var buttonPanel = new JPanel(new FlowLayout(FlowLayout.RIGHT, 10, 10));
         buttonPanel.setAlignmentX(SwingConstants.CENTER);
         result.add(buttonPanel);
@@ -546,7 +581,6 @@ public class BotConfigDialog extends AbstractButtonDialog
         exclusiveHerdingCheck.setSelected(princessBehavior.isExclusiveHerding());
         iAmAPirateCheck.setSelected(princessBehavior.iAmAPirate());
         experimentalCheck.setSelected(princessBehavior.isExperimental());
-        useCasparProtocolCheck.setSelected(princessBehavior.isUseCasparProtocol());
         numberOfEnemiesToConsiderFacingSlidebar.setValue(princessBehavior.getNumberOfEnemiesToConsiderFacing());
         allowFacingToleranceSlidebar.setValue(princessBehavior.getAllowFacingTolerance());
         ignoreDamageOutputCheck.setSelected(princessBehavior.isIgnoreDamageOutput());
@@ -608,8 +642,7 @@ public class BotConfigDialog extends AbstractButtonDialog
                           != numberOfEnemiesToConsiderFacingSlidebar.getValue() ||
                     chosenPreset.getAllowFacingTolerance() != allowFacingToleranceSlidebar.getValue() ||
                     chosenPreset.isIgnoreDamageOutput() != ignoreDamageOutputCheck.isSelected() ||
-                    chosenPreset.isExperimental() != experimentalCheck.isSelected() ||
-                    chosenPreset.isUseCasparProtocol() != useCasparProtocolCheck.isSelected());
+                    chosenPreset.isExperimental() != experimentalCheck.isSelected());
     }
 
     /**
@@ -795,7 +828,6 @@ public class BotConfigDialog extends AbstractButtonDialog
         newBehavior.setExclusiveHerding(exclusiveHerdingCheck.isSelected());
         newBehavior.setExperimental(experimentalCheck.isSelected());
         newBehavior.setIgnoreDamageOutput(ignoreDamageOutputCheck.isSelected());
-        newBehavior.setUseCasparProtocol(useCasparProtocolCheck.isSelected());
 
         behaviorSettingsFactory.addBehavior(newBehavior);
         behaviorSettingsFactory.saveBehaviorSettings(false);
@@ -811,9 +843,9 @@ public class BotConfigDialog extends AbstractButtonDialog
     /** Copies the Configuration from another local bot player. */
     private void copyFromOtherBot(String botName) {
         var bc = client.getBots().get(botName);
-        if (bc instanceof Princess) {
+        if (bc instanceof BotClient botClient) {
             try {
-                princessBehavior = ((Princess) bc).getBehaviorSettings().getCopy();
+                princessBehavior = botClient.getBehaviorSettings().getCopy();
                 updateDialogFields();
             } catch (Exception e) {
                 logger.error(e, "copyFromOtherBot");
@@ -845,7 +877,6 @@ public class BotConfigDialog extends AbstractButtonDialog
         tempBehavior.setExclusiveHerding(exclusiveHerdingCheck.isSelected());
         tempBehavior.setExperimental(experimentalCheck.isSelected());
         tempBehavior.setIgnoreDamageOutput(ignoreDamageOutputCheck.isSelected());
-        tempBehavior.setUseCasparProtocol(useCasparProtocolCheck.isSelected());
 
         for (int i = 0; i < targetsListModel.getSize(); i++) {
             if (targetsListModel.get(i) instanceof Coords) {
@@ -942,7 +973,7 @@ public class BotConfigDialog extends AbstractButtonDialog
 
         // Add the Configuration from a save game, if any to the top of the list
         if (saveGameBehavior != null) {
-            presets.add(0, Messages.getString("BotConfigDialog.previousConfig"));
+            presets.addFirst(Messages.getString("BotConfigDialog.previousConfig"));
         }
 
         // Other local bot Configurations

@@ -62,6 +62,7 @@ public class ServerLobbyHelper {
      * forces without error; i.e.: if the force's parent exists, or it is top-level, if it has no entities and no
      * subForces, if the client sending it is the owner
      */
+    @Deprecated(since = "0.51.0", forRemoval = true)
     static boolean isNewForceValid(Game game, Force force) {
         return (force.isTopLevel() || game.getForces().contains(force.getParentId()))
               && (force.getChildCount() == 0);
@@ -118,6 +119,7 @@ public class ServerLobbyHelper {
      * <p>
      * NOTE: This is a simplified unload that is only valid in the lobby!
      */
+    @Deprecated(since = "0.51.0", forRemoval = true)
     static HashSet<Entity> lobbyUnloadOthers(Game game, Collection<Entity> entities) {
         HashSet<Entity> result = new HashSet<>();
         for (Entity entity : entities) {
@@ -252,7 +254,7 @@ public class ServerLobbyHelper {
      */
     public static void receiveEntitiesAssign(
           Packet packet, int connId, Game game, TWGameManager gameManager
-    ) throws InvalidPacketDataException  {
+    ) throws InvalidPacketDataException {
         var entityList = packet.getEntityList(0);
         int newOwnerId = packet.getIntValue(1);
         Player newOwner = game.getPlayer(newOwnerId);
@@ -492,6 +494,7 @@ public class ServerLobbyHelper {
      * is owned by the sender. This allows editing forces of other players if they are a subforce of one's own force.
      * See also LobbyActions.isEditable(Force)
      */
+    @Deprecated(since = "0.51.0", forRemoval = true)
     static boolean isEditable(Force force, Game game, Player sender) {
         List<Force> chain = game.getForces().forceChain(force);
         return chain.stream().map(f -> game.getForces().getOwner(f)).anyMatch(p -> p.equals(sender));

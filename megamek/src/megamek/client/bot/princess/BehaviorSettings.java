@@ -154,14 +154,6 @@ public class BehaviorSettings implements Serializable {
     private boolean iAmAPirate = false; // Am I a pirate?
     private boolean ignoreDamageOutput = false;
     private boolean experimental = false; // running experimental features?
-    /**
-     * CASPAR Protocol: Combined Advanced Situational Positioning And Response
-     * Enables all advanced Princess AI features:
-     * - Allied damage consideration (factor in friendly firepower when evaluating threats)
-     * - Damage source pool tracking (track which enemies are being engaged as units move)
-     * - Role-aware positioning (position units at optimal range for their weapons)
-     */
-    private boolean useCasparProtocol = true;
     private final Set<Integer> ignoredUnitTargets = new HashSet<>();
     // endregion Variable Declarations
 
@@ -193,7 +185,6 @@ public class BehaviorSettings implements Serializable {
         copy.setIAmAPirate(iAmAPirate());
         copy.setIgnoreDamageOutput(isIgnoreDamageOutput());
         copy.setExperimental(isExperimental());
-        copy.setUseCasparProtocol(isUseCasparProtocol());
         getStrategicBuildingTargets().forEach(copy::addStrategicTarget);
         getPriorityUnitTargets().forEach(copy::addPriorityUnit);
         getIgnoredUnitTargets().forEach(copy::addIgnoredUnitTarget);
@@ -234,33 +225,6 @@ public class BehaviorSettings implements Serializable {
      */
     public void setIgnoreDamageOutput(boolean ignoreDamageOutput) {
         this.ignoreDamageOutput = ignoreDamageOutput;
-    }
-
-    /**
-     * @return TRUE if CASPAR Protocol is enabled (Combined Advanced Situational Positioning And Response).
-     */
-    public boolean isUseCasparProtocol() {
-        return useCasparProtocol;
-    }
-
-    /**
-     * Set TRUE to enable CASPAR Protocol (Combined Advanced Situational Positioning And Response).
-     * This enables all advanced Princess AI features:
-     * - Allied damage consideration
-     * - Damage source pool tracking
-     * - Role-aware positioning
-     *
-     * @param useCasparProtocol TRUE to enable CASPAR Protocol
-     */
-    public void setUseCasparProtocol(boolean useCasparProtocol) {
-        this.useCasparProtocol = useCasparProtocol;
-    }
-
-    /**
-     * @param useCasparProtocol Set TRUE to enable CASPAR Protocol.
-     */
-    public void setUseCasparProtocol(String useCasparProtocol) {
-        setUseCasparProtocol(Boolean.parseBoolean(useCasparProtocol));
     }
 
     /**
@@ -950,16 +914,6 @@ public class BehaviorSettings implements Serializable {
                 setIgnoreDamageOutput(Boolean.parseBoolean(child.getTextContent()));
             } else if ("experimental".equalsIgnoreCase(child.getNodeName())) {
                 setExperimental(child.getTextContent());
-            } else if ("useCasparProtocol".equalsIgnoreCase(child.getNodeName())) {
-                setUseCasparProtocol(child.getTextContent());
-            // Legacy XML support - old save files may have these separate fields
-            // Any of these being true enables CASPAR Protocol
-            } else if ("considerAlliedDamage".equalsIgnoreCase(child.getNodeName()) ||
-                       "useDamageSourcePool".equalsIgnoreCase(child.getNodeName()) ||
-                       "useRoleAwarePositioning".equalsIgnoreCase(child.getNodeName())) {
-                if (Boolean.parseBoolean(child.getTextContent())) {
-                    setUseCasparProtocol(true);
-                }
             } else if ("strategicTargets".equalsIgnoreCase(child.getNodeName())) {
                 final NodeList targets = child.getChildNodes();
                 for (int j = 0; j < targets.getLength(); j++) {
@@ -1071,10 +1025,6 @@ public class BehaviorSettings implements Serializable {
             ignoreDamageOutput.setTextContent("" + isIgnoreDamageOutput());
             behavior.appendChild(ignoreDamageOutput);
 
-            final Element useCasparProtocolNode = doc.createElement("useCasparProtocol");
-            useCasparProtocolNode.setTextContent("" + isUseCasparProtocol());
-            behavior.appendChild(useCasparProtocolNode);
-
             final Element targetsNode = doc.createElement("strategicBuildingTargets");
             if (includeTargets) {
                 for (final String t : getStrategicBuildingTargets()) {
@@ -1129,7 +1079,6 @@ public class BehaviorSettings implements Serializable {
         out.append("\n\t I am a Pirate: ").append(iAmAPirate());
         out.append("\n\t I Ignore Damage Output: ").append(isIgnoreDamageOutput());
         out.append("\n\t Experimental: ").append(isExperimental());
-        out.append("\n\t CASPAR Protocol: ").append(isUseCasparProtocol());
         out.append("\n\t Targets:");
         out.append("\n\t\t Priority Coords: ");
         for (final String t : getStrategicBuildingTargets()) {
@@ -1195,10 +1144,8 @@ public class BehaviorSettings implements Serializable {
             return false;
         } else if (ignoreDamageOutput != that.ignoreDamageOutput) {
             return false;
-        } else if (experimental != that.experimental) {
-            return false;
         }
-        return useCasparProtocol == that.useCasparProtocol;
+        return experimental == that.experimental;
     }
 
     @Override
@@ -1224,7 +1171,6 @@ public class BehaviorSettings implements Serializable {
         result = 31 * result + (iAmAPirate ? 1 : 0);
         result = 31 * result + (experimental ? 1 : 0);
         result = 31 * result + (ignoreDamageOutput ? 1 : 0);
-        result = 31 * result + (useCasparProtocol ? 1 : 0);
         return result;
     }
 }

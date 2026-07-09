@@ -420,7 +420,7 @@ public class CapitalMissileBearingsOnlyHandler extends AmmoBayWeaponHandler {
         if (bMissed && id != vPhaseReport.size()) {
             vPhaseReport.get(id - 1).newlines--;
             vPhaseReport.get(id).indent(2);
-            vPhaseReport.get(vPhaseReport.size() - 1).newlines++;
+            vPhaseReport.getLast().newlines++;
         }
 
         // Make sure the player knows when his attack causes no damage.

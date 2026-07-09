@@ -410,18 +410,22 @@ public class BombPayloadDialog extends JDialog implements ActionListener, ItemLi
         return choices.isEmpty() ? null : choices;
     }
 
+    @Deprecated(since = "0.51.0", forRemoval = true)
     public int getInternalBombLimit() {
         return internalBombLimit;
     }
 
+    @Deprecated(since = "0.51.0", forRemoval = true)
     public void setInternalBombLimit(int internalBombLimit) {
         this.internalBombLimit = internalBombLimit;
     }
 
+    @Deprecated(since = "0.51.0", forRemoval = true)
     public int getInternalBombCount() {
         return internalBombCount;
     }
 
+    @Deprecated(since = "0.51.0", forRemoval = true)
     public void setInternalBombCount(int internalBombCount) {
         this.internalBombCount = internalBombCount;
     }

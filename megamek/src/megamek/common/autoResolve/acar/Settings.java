@@ -40,10 +40,12 @@ public class Settings {
     public static final String longVersion = "Alpha Strike 2025.01";
     public static final String shortVersion = "AS.2025.01";
 
+    @Deprecated(since = "0.51.0", forRemoval = true)
     public static String getFullVersion() {
         return longName + " - " + longVersion;
     }
 
+    @Deprecated(since = "0.51.0", forRemoval = true)
     public static String getShortVersion() {
         return shortName + " - " + shortVersion;
     }

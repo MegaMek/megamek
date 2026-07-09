@@ -34,13 +34,13 @@
 package megamek.client.bot.princess;
 
 import megamek.client.bot.princess.geometry.CoordFacingCombo;
-import megamek.common.units.BuildingTarget;
 import megamek.common.board.Coords;
+import megamek.common.moves.MovePath;
+import megamek.common.options.OptionsConstants;
+import megamek.common.units.BuildingTarget;
 import megamek.common.units.Entity;
 import megamek.common.units.EntityMovementType;
 import megamek.common.units.Targetable;
-import megamek.common.moves.MovePath;
-import megamek.common.options.OptionsConstants;
 import org.apache.logging.log4j.message.ParameterizedMessage;
 
 /**
@@ -132,6 +132,7 @@ public class EntityState {
     /**
      * Create an entity state from a Targetable, but pretend it's in a different hex facing in a different direction.
      */
+    @Deprecated(since = "0.51.0", forRemoval = true)
     EntityState(Targetable target, CoordFacingCombo projectedTargetLocation) {
         this(target);
         position = projectedTargetLocation.getCoords();

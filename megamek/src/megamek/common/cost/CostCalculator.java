@@ -129,7 +129,7 @@ public class CostCalculator {
                   && mounted.getType().hasFlag(MiscType.F_BA_MANIPULATOR)) {
                 continue;
             }
-            // EI Interface is built-in for ProtoMeks and doesn't add cost (IO p.77)
+            // EI Interface is built-in for ProtoMeks and doesn't add cost (IO:AE p.69)
             if (entity.isProtoMek() && (mounted.getType() instanceof MiscType)
                   && mounted.getType().hasFlag(MiscType.F_EI_INTERFACE)) {
                 continue;

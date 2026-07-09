@@ -285,7 +285,7 @@ public class FovHighlightingAndDarkening {
      */
     public @Nullable LosEffects getCachedLosEffects(Coords src, Coords dest, int boardId) {
         ArrayList<StepSprite> pathSprites = boardView.pathSprites;
-        StepSprite lastStepSprite = pathSprites.isEmpty() ? null : pathSprites.get(pathSprites.size() - 1);
+        StepSprite lastStepSprite = pathSprites.isEmpty() ? null : pathSprites.getLast();
         // let's check if cache should be cleared
         if ((cachedSelectedEntity != boardView.getSelectedEntity()) ||
               (cachedStepSprite != lastStepSprite) ||

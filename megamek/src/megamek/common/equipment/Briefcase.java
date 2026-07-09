@@ -54,8 +54,4 @@ public class Briefcase extends GroundObject {
         return true; // Briefcases can always be picked up.
     }
 
-    @Override
-    public CarriedObjectDamageAllocation getCarriedObjectDamageAllocation() {
-        return CarriedObjectDamageAllocation.ANY_HIT;
-    }
 }

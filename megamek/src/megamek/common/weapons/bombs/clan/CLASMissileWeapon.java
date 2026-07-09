@@ -36,13 +36,13 @@ package megamek.common.weapons.bombs.clan;
 
 import java.io.Serial;
 
-import megamek.common.SimpleTechLevel;
 import megamek.common.enums.AvailabilityValue;
+import megamek.common.enums.Faction;
 import megamek.common.enums.TechBase;
 import megamek.common.enums.TechRating;
 import megamek.common.equipment.AmmoType;
 import megamek.common.equipment.enums.BombType.BombTypeEnum;
-import megamek.common.weapons.missiles.thuunderbolt.ThunderboltWeapon;
+import megamek.common.weapons.missiles.thunderbolt.ThunderboltWeapon;
 
 /**
  * @author Jay Lawson
@@ -86,13 +86,17 @@ public class CLASMissileWeapon extends ThunderboltWeapon {
         capital = false;
         this.missileArmor = 30;
         rulesRefs = "170, TO:AUE";
-        techAdvancement.setTechBase(TechBase.CLAN)
+        techAdvancement.setTechBase(TechBase.ALL)
               .setIntroLevel(false)
               .setUnofficial(false)
               .setTechRating(TechRating.D)
               .setAvailability(AvailabilityValue.X, AvailabilityValue.X, AvailabilityValue.F, AvailabilityValue.E)
-              .setISAdvancement(DATE_NONE, DATE_NONE, 3076, DATE_NONE, DATE_NONE)
-              .setStaticTechLevel(SimpleTechLevel.EXPERIMENTAL);
+              .setISAdvancement(3071, 3075, DATE_NONE, DATE_NONE, DATE_NONE)
+              .setISApproximate(false, true, false, false, false)
+              .setClanAdvancement(DATE_NONE, 3076, DATE_NONE, DATE_NONE, DATE_NONE)
+              .setClanApproximate(false, false, false, false, false)
+              .setPrototypeFactions(Faction.FS)
+              .setProductionFactions(Faction.FS);
     }
 
 }

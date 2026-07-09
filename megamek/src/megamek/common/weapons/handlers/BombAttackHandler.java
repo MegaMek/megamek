@@ -1,6 +1,6 @@
 /*
  * Copyright (C) 2004, 2005 Ben Mazur (bmazur@sev.org)
- * Copyright (C) 2009-2025 The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2009-2026 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -51,6 +51,8 @@ import megamek.common.ToHitData;
 import megamek.common.actions.WeaponAttackAction;
 import megamek.common.board.Coords;
 import megamek.common.compute.Compute;
+import megamek.common.compute.scatter.Scatter;
+import megamek.common.compute.scatter.ScatterMethod;
 import megamek.common.enums.GamePhase;
 import megamek.common.equipment.BombLoadout;
 import megamek.common.equipment.Mounted;
@@ -260,14 +262,10 @@ public class BombAttackHandler extends WeaponHandler {
                           new SpecialHexDisplay(Type.BOMB_HIT, game.getRoundCount(),
                                 player, bombMsg));
                 } else {
-                    int moF = -typeModifiedToHit.getMoS();
-                    if (attackingEntity.hasAbility(OptionsConstants.GUNNERY_GOLDEN_GOOSE)) {
-                        if ((-typeModifiedToHit.getMoS() - 2) < 1) {
-                            moF = 0;
-                        } else {
-                            moF = -typeModifiedToHit.getMoS() - 2;
-                        }
-                    }
+                    // Golden Goose reduces bomb scatter distance by two hexes, minimum 0 (CamOps p.75, 5th printing).
+                    int scatterReduction = attackingEntity.hasAbility(OptionsConstants.GUNNERY_GOLDEN_GOOSE)
+                          ? Scatter.SPA_SCATTER_REDUCTION : 0;
+                    ScatterMethod scatterMethod = ScatterMethod.forGame(game);
                     if (weaponType.hasFlag(WeaponType.F_ALT_BOMB)) {
                         // Need to determine location in flight path
                         int idx = 0;
@@ -279,9 +277,11 @@ public class BombAttackHandler extends WeaponHandler {
                         // Retrieve facing at current step in flight path
                         int facing = attackingEntity.getPassedThroughFacing().get(idx);
                         // Scatter, based on location and facing
-                        drop = Compute.scatterAltitudeBombs(coords, facing, moF);
+                        drop = scatterMethod.frontArc(coords, facing, typeModifiedToHit.getMoS(), scatterReduction)
+                              .landing();
                     } else {
-                        drop = Compute.scatterDiveBombs(coords, moF);
+                        drop = scatterMethod.omnidirectional(coords, typeModifiedToHit.getMoS(), scatterReduction)
+                              .landing();
                     }
 
                     if (game.getBoard(target).contains(drop)) {

@@ -60,6 +60,7 @@ public class CrewSkillSummaryUtil {
         }
     }
 
+    @Deprecated(since = "0.51.0", forRemoval = true)
     public static String getPilotSkillSummary(String gunnery, String gunneryL, String gunneryM, String gunneryB,
           String piloting, boolean rpgGunnery) {
         if (rpgGunnery) {
@@ -78,6 +79,7 @@ public class CrewSkillSummaryUtil {
         }
     }
 
+    @Deprecated(since = "0.51.0", forRemoval = true)
     public static String getGunnerySkillSummary(String gunnery, String gunneryL, String gunneryM, String gunneryB,
           boolean rpgGunnery) {
         if (rpgGunnery) {

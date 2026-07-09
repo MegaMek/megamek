@@ -72,7 +72,7 @@ public class InfantryShotgunWranglemanTriBarrel extends InfantryWeapon {
         flags = flags.or(F_NO_FIRES).or(F_DIRECT_FIRE).or(F_BALLISTIC);
         rulesRefs = "Shrapnel #7";
         techAdvancement
-              .setTechBase(TechBase.ALL)
+              .setTechBase(TechBase.IS)
               .setTechRating(TechRating.C)
               .setAvailability(AvailabilityValue.X, AvailabilityValue.X, AvailabilityValue.C, AvailabilityValue.F)
               .setISAdvancement(DATE_NONE, DATE_NONE, 3050, DATE_NONE, DATE_NONE)

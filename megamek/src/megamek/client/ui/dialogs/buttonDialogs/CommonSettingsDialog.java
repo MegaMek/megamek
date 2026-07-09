@@ -1,6 +1,6 @@
 /*
  * Copyright (c) 2003-2005 - Ben Mazur (bmazur@sev.org)
- * Copyright (C) 2003-2025 The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2003-2026 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -72,6 +72,7 @@ import megamek.client.ui.buttons.MMToggleButton;
 import megamek.client.ui.clientGUI.ButtonOrderPreferences;
 import megamek.client.ui.clientGUI.ClientGUI;
 import megamek.client.ui.clientGUI.GUIPreferences;
+import megamek.client.ui.clientGUI.GifRecordingMode;
 import megamek.client.ui.clientGUI.UITheme;
 import megamek.client.ui.clientGUI.UnitDisplayOrderPreferences;
 import megamek.client.ui.comboBoxes.MMComboBox;
@@ -89,6 +90,7 @@ import megamek.client.ui.panels.phaseDisplay.commands.MoveCommand;
 import megamek.client.ui.util.FontHandler;
 import megamek.client.ui.util.KeyCommandBind;
 import megamek.client.ui.util.PlayerColour;
+import megamek.client.ui.util.UIUtil;
 import megamek.client.ui.widget.SkinXMLHandler;
 import megamek.codeUtilities.MathUtility;
 import megamek.common.Configuration;
@@ -104,6 +106,15 @@ import megamek.logging.MMLogger;
 
 /**
  * The Client Settings Dialog offering GUI options concerning tooltips, map display, keybinds etc.
+ *
+ * <p>Hidden testing/debug preferences are intentionally NOT shown in the Advanced list (they are filtered out via
+ * {@link #HIDDEN_ADVANCED_OPTIONS}) and can only be enabled by manually adding them to {@code clientsettings.xml}:
+ * <pre>{@code
+ * <preference name="RevealAllArtilleryRounds" value="true"/>          reveal BOTH teams' in-flight artillery target hexes
+ * <preference name="AdvancedShowBotArtilleryHeatMap" value="true"/>   draw Princess's predicted/firing artillery heat map
+ * <preference name="AdvancedRevealObscuredArtillery" value="true"/>   reveal otherwise-obscured artillery hex markers
+ * }</pre>
+ * Each defaults to {@code false}; remove the line (or set {@code false}) to disable.
  */
 public class CommonSettingsDialog extends AbstractButtonDialog
       implements ItemListener, FocusListener, ListSelectionListener, ChangeListener {
@@ -260,8 +271,6 @@ public class CommonSettingsDialog extends AbstractButtonDialog
           "CommonSettingsDialog.defaultAutoejectDisabled"));
     private final JCheckBox useAverageSkills =
           new JCheckBox(Messages.getString("CommonSettingsDialog.useAverageSkills"));
-    private final JCheckBox useGPinUnitSelection = new JCheckBox(Messages.getString(
-          "CommonSettingsDialog.useGPinUnitSelection"));
     private final JCheckBox generateNames = new JCheckBox(Messages.getString("CommonSettingsDialog.generateNames"));
     private final JCheckBox showUnitId = new JCheckBox(Messages.getString("CommonSettingsDialog.showUnitId"));
     private final JCheckBox showAutoResolvePanel = new JCheckBox(Messages.getString(
@@ -270,8 +279,6 @@ public class CommonSettingsDialog extends AbstractButtonDialog
     private JComboBox<String> displayLocale;
     private final JCheckBox showIPAddressesInChat = new JCheckBox(Messages.getString(
           "CommonSettingsDialog.showIPAddressesInChat"));
-    private final JCheckBox startSearchlightsOn = new JCheckBox(Messages.getString(
-          "CommonSettingsDialog.startSearchlightsOn"));
     private final JCheckBox spritesOnly = new JCheckBox(Messages.getString(
           "CommonSettingsDialog.spritesOnly"));
     private final JCheckBox showDamageLevel = new JCheckBox(Messages.getString("CommonSettingsDialog.showDamageLevel"));
@@ -309,6 +316,8 @@ public class CommonSettingsDialog extends AbstractButtonDialog
           "CommonSettingsDialog.hexes.ShowArtilleryMisses"));
     private final JCheckBox artilleryDisplayDriftedHits = new JCheckBox(Messages.getString(
           "CommonSettingsDialog.hexes.ShowArtilleryDriftedHits"));
+    private final JCheckBox artilleryDisplayDriftArrows = new JCheckBox(Messages.getString(
+          "CommonSettingsDialog.hexes.ShowArtilleryDriftArrows"));
     private final JCheckBox bombsDisplayMisses = new JCheckBox(Messages.getString(
           "CommonSettingsDialog.hexes.ShowBombMisses"));
     private final JCheckBox bombsDisplayDrifts = new JCheckBox(Messages.getString(
@@ -342,6 +351,9 @@ public class CommonSettingsDialog extends AbstractButtonDialog
     private ColourSelectorButton csbUnitTextColor;
     private ColourSelectorButton csbBuildingTextColor;
     private ColourSelectorButton csbLowFoliageColor;
+    private ColourSelectorButton csbDemolitionChargeColor;
+    private final JCheckBox demolitionChargeHazardOutline = new JCheckBox(
+          Messages.getString("CommonSettingsDialog.demolitionChargeHazardOutline"));
     private ColourSelectorButton csbBoardTextColor;
     private ColourSelectorButton csbBoardSpaceTextColor;
     private ColourSelectorButton csbMapSheetColor;
@@ -383,8 +395,10 @@ public class CommonSettingsDialog extends AbstractButtonDialog
           new JCheckBox(Messages.getString("CommonSettingsDialog.gameSummaryBV.name"));
     private final JCheckBox gameSummaryMM =
           new JCheckBox(Messages.getString("CommonSettingsDialog.gameSummaryMM.name"));
-    private final JCheckBox gifGameSummaryMM = new JCheckBox(Messages.getString(
-          "CommonSettingsDialog.gifGameSummaryMM.name"));
+    private final JComboBox<String> gifGameSummaryRecording = new JComboBox<>(new String[] {
+          Messages.getString("CommonSettingsDialog.gifGameSummaryRecording.always"),
+          Messages.getString("CommonSettingsDialog.gifGameSummaryRecording.ask"),
+          Messages.getString("CommonSettingsDialog.gifGameSummaryRecording.never") });
     private final JCheckBox showUnitDisplayNamesOnMinimap = new JCheckBox(Messages.getString(
           "CommonSettingsDialog.showUnitDisplayNamesOnMinimap.name"));
     private JComboBox<String> skinFiles;
@@ -837,6 +851,9 @@ public class CommonSettingsDialog extends AbstractButtonDialog
         comps.add(checkboxEntry(artilleryDisplayDriftedHits,
               Messages.getString("CommonSettingsDialog.hexes.ShowArtilleryDriftedHits.tooltip")));
         artilleryDisplayDriftedHits.setSelected(GUIP.getShowArtilleryDrifts());
+        comps.add(checkboxEntry(artilleryDisplayDriftArrows,
+              Messages.getString("CommonSettingsDialog.hexes.ShowArtilleryDriftArrows.tooltip")));
+        artilleryDisplayDriftArrows.setSelected(GUIP.getShowArtilleryDriftArrows());
         comps.add(checkboxEntry(bombsDisplayMisses,
               Messages.getString("CommonSettingsDialog.hexes.ShowBombMisses.tooltip")));
         bombsDisplayMisses.setSelected(GUIP.getShowBombMisses());
@@ -864,7 +881,14 @@ public class CommonSettingsDialog extends AbstractButtonDialog
               new ColourSelectorButton(Messages.getString("CommonSettingsDialog.colors.LowFoliageColor"));
         csbLowFoliageColor.setColour(GUIP.getLowFoliageColor());
         row.add(csbLowFoliageColor);
+
+        csbDemolitionChargeColor = new ColourSelectorButton(Messages.getString(
+              "CommonSettingsDialog.colors.DemolitionChargeColor"));
+        csbDemolitionChargeColor.setColour(GUIP.getDemolitionChargeColor());
+        row.add(csbDemolitionChargeColor);
         comps.add(row);
+
+        comps.add(checkboxEntry(demolitionChargeHazardOutline, null));
 
         addLineSpacer(comps);
 
@@ -1893,9 +1917,18 @@ public class CommonSettingsDialog extends AbstractButtonDialog
         comps.add(checkboxEntry(gameSummaryMM,
               Messages.getString("CommonSettingsDialog.gameSummaryMM.tooltip",
                     Configuration.gameSummaryImagesMMDir())));
-        comps.add(checkboxEntry(gifGameSummaryMM,
-              Messages.getString("CommonSettingsDialog.gifGameSummaryMM.tooltip",
-                    Configuration.gameSummaryImagesMMDir())));
+        JLabel gifGameSummaryRecordingLabel =
+              new JLabel(Messages.getString("CommonSettingsDialog.gifGameSummaryRecording.name"));
+        String gifRecordingTooltip = Messages.getString("CommonSettingsDialog.gifGameSummaryRecording.tooltip",
+              Configuration.gameSummaryImagesMMDir());
+        gifGameSummaryRecordingLabel.setToolTipText(gifRecordingTooltip);
+        gifGameSummaryRecording.setToolTipText(gifRecordingTooltip);
+        gifGameSummaryRecording.setMaximumSize(UIUtil.scaleForGUI(250, 25));
+        List<Component> gifGameSummaryRow = new ArrayList<>();
+        gifGameSummaryRow.add(gifGameSummaryRecordingLabel);
+        gifGameSummaryRow.add(Box.createHorizontalStrut(15));
+        gifGameSummaryRow.add(gifGameSummaryRecording);
+        comps.add(gifGameSummaryRow);
         comps.add(checkboxEntry(drawFacingArrowsOnMiniMap, null));
         comps.add(checkboxEntry(drawSensorRangeOnMiniMap, null));
         comps.add(checkboxEntry(paintBordersOnMiniMap, null));
@@ -1907,7 +1940,7 @@ public class CommonSettingsDialog extends AbstractButtonDialog
               100,
               1);
         movePathPersistenceOnMiniMap = new JSpinner(movePathPersistenceModel);
-        movePathPersistenceOnMiniMap.setMaximumSize(new Dimension(150, 40));
+        movePathPersistenceOnMiniMap.setMaximumSize(UIUtil.scaleForGUI(150, 40));
         movePathPersistenceOnMiniMap.setToolTipText(Messages.getString(
               "CommonSettingsDialog.movePathPersistence.tooltip"));
         JLabel movePathPersistenceOnMiniMapLabel = new JLabel(Messages.getString(
@@ -2146,8 +2179,6 @@ public class CommonSettingsDialog extends AbstractButtonDialog
 
         comps.add(checkboxEntry(defaultAutoEjectDisabled, null));
         comps.add(checkboxEntry(useAverageSkills, null));
-        comps.add(checkboxEntry(useGPinUnitSelection,
-              "This changes the BV/PV displayed in the unit selection list. It does not change the pilot/gunnery of the mek once selected. Request restart of Megamek."));
         comps.add(checkboxEntry(generateNames, null));
 
         addLineSpacer(comps);
@@ -2188,8 +2219,6 @@ public class CommonSettingsDialog extends AbstractButtonDialog
 
         comps.add(checkboxEntry(showIPAddressesInChat,
               Messages.getString("CommonSettingsDialog.showIPAddressesInChat.tooltip")));
-        comps.add(checkboxEntry(startSearchlightsOn,
-              Messages.getString("CommonSettingsDialog.startSearchlightsOn.tooltip")));
         comps.add(checkboxEntry(spritesOnly,
               Messages.getString("CommonSettingsDialog.spritesOnly.tooltip")));
         return createSettingsPanel(comps);
@@ -2299,12 +2328,10 @@ public class CommonSettingsDialog extends AbstractButtonDialog
             reportKeywordsTextPane.setText(CLIENT_PREFERENCES.getReportKeywords());
             reportFilterKeywordsTextPane.setText(CLIENT_PREFERENCES.getReportFilterKeywords());
             showIPAddressesInChat.setSelected(CLIENT_PREFERENCES.getShowIPAddressesInChat());
-            startSearchlightsOn.setSelected(CLIENT_PREFERENCES.getStartSearchlightsOn());
             spritesOnly.setSelected(CLIENT_PREFERENCES.getSpritesOnly());
 
             defaultAutoEjectDisabled.setSelected(CLIENT_PREFERENCES.defaultAutoEjectDisabled());
             useAverageSkills.setSelected(CLIENT_PREFERENCES.useAverageSkills());
-            useGPinUnitSelection.setSelected(CLIENT_PREFERENCES.useGPinUnitSelection());
             generateNames.setSelected(CLIENT_PREFERENCES.generateNames());
             showUnitId.setSelected(CLIENT_PREFERENCES.getShowUnitId());
             showAutoResolvePanel.setSelected(CLIENT_PREFERENCES.getShowAutoResolvePanel());
@@ -2359,7 +2386,7 @@ public class CommonSettingsDialog extends AbstractButtonDialog
 
             gameSummaryBV.setSelected(GUIP.getGameSummaryBoardView());
             gameSummaryMM.setSelected(GUIP.getGameSummaryMinimap());
-            gifGameSummaryMM.setSelected(GUIP.getGifGameSummaryMinimap());
+            gifGameSummaryRecording.setSelectedIndex(GUIP.getGifGameSummaryRecording().ordinal());
             skinFiles.removeAllItems();
             ArrayList<String> xmlFiles = new ArrayList<>(filteredFiles(Configuration.skinsDir(), ".xml"));
 
@@ -2528,6 +2555,8 @@ public class CommonSettingsDialog extends AbstractButtonDialog
         csbBoardTextColor.setColour(GUIP.getBoardTextColor());
         csbBoardSpaceTextColor.setColour(GUIP.getBoardSpaceTextColor());
         csbLowFoliageColor.setColour(GUIP.getLowFoliageColor());
+        csbDemolitionChargeColor.setColour(GUIP.getDemolitionChargeColor());
+        demolitionChargeHazardOutline.setSelected(GUIP.getDemolitionChargeHazardOutline());
         csbMapSheetColor.setColour(GUIP.getMapsheetColor());
 
         attackArrowTransparency.setValue(GUIP.getAttackArrowTransparency());
@@ -2543,6 +2572,7 @@ public class CommonSettingsDialog extends AbstractButtonDialog
 
         artilleryDisplayMisses.setSelected(GUIP.getShowArtilleryMisses());
         artilleryDisplayDriftedHits.setSelected(GUIP.getShowArtilleryDrifts());
+        artilleryDisplayDriftArrows.setSelected(GUIP.getShowArtilleryDriftArrows());
         bombsDisplayMisses.setSelected(GUIP.getShowBombMisses());
         bombsDisplayDrifts.setSelected(GUIP.getShowBombDrifts());
 
@@ -2727,6 +2757,8 @@ public class CommonSettingsDialog extends AbstractButtonDialog
         GUIP.setBoardTextColor(csbBoardTextColor.getColour());
         GUIP.setBoardSpaceTextColor(csbBoardSpaceTextColor.getColour());
         GUIP.setLowFoliageColor(csbLowFoliageColor.getColour());
+        GUIP.setDemolitionChargeColor(csbDemolitionChargeColor.getColour());
+        GUIP.setDemolitionChargeHazardOutline(demolitionChargeHazardOutline.isSelected());
         GUIP.setMapSheetColor(csbMapSheetColor.getColour());
 
         GUIP.setAttackArrowTransparency((Integer) attackArrowTransparency.getValue());
@@ -2744,6 +2776,7 @@ public class CommonSettingsDialog extends AbstractButtonDialog
 
         GUIP.setShowArtilleryMisses(artilleryDisplayMisses.isSelected());
         GUIP.setShowArtilleryDrifts(artilleryDisplayDriftedHits.isSelected());
+        GUIP.setShowArtilleryDriftArrows(artilleryDisplayDriftArrows.isSelected());
         GUIP.setShowBombMisses(bombsDisplayMisses.isSelected());
         GUIP.setShowBombDrifts(bombsDisplayDrifts.isSelected());
 
@@ -2794,12 +2827,10 @@ public class CommonSettingsDialog extends AbstractButtonDialog
         CLIENT_PREFERENCES.setReportKeywords(reportKeywordsTextPane.getText());
         CLIENT_PREFERENCES.setReportFilterKeywords(reportFilterKeywordsTextPane.getText());
         CLIENT_PREFERENCES.setShowIPAddressesInChat(showIPAddressesInChat.isSelected());
-        CLIENT_PREFERENCES.setStartSearchlightsOn(startSearchlightsOn.isSelected());
         CLIENT_PREFERENCES.setSpritesOnly(spritesOnly.isSelected());
         CLIENT_PREFERENCES.setEnableExperimentalBotFeatures(enableExperimentalBotFeatures.isSelected());
         CLIENT_PREFERENCES.setDefaultAutoEjectDisabled(defaultAutoEjectDisabled.isSelected());
         CLIENT_PREFERENCES.setUseAverageSkills(useAverageSkills.isSelected());
-        CLIENT_PREFERENCES.setUseGpInUnitSelection(useGPinUnitSelection.isSelected());
         CLIENT_PREFERENCES.setGenerateNames(generateNames.isSelected());
         CLIENT_PREFERENCES.setShowUnitId(showUnitId.isSelected());
         CLIENT_PREFERENCES.setShowAutoResolvePanel(showAutoResolvePanel.isSelected());
@@ -2822,7 +2853,13 @@ public class CommonSettingsDialog extends AbstractButtonDialog
         GUIP.setAutoSelectNextUnit(useAutoSelectNext.isSelected());
         GUIP.setGameSummaryBoardView(gameSummaryBV.isSelected());
         GUIP.setGameSummaryMinimap(gameSummaryMM.isSelected());
-        GUIP.setGifGameSummaryMinimap(gifGameSummaryMM.isSelected());
+        int selectedRecordingIndex = gifGameSummaryRecording.getSelectedIndex();
+        GifRecordingMode[] recordingModes = GifRecordingMode.values();
+        boolean isValidRecordingIndex = (selectedRecordingIndex >= 0)
+              && (selectedRecordingIndex < recordingModes.length);
+        GUIP.setGifGameSummaryRecording(isValidRecordingIndex
+              ? recordingModes[selectedRecordingIndex]
+              : GifRecordingMode.ASK);
         GUIP.setShowUnitDisplayNamesOnMinimap(showUnitDisplayNamesOnMinimap.isSelected());
         UITheme newUITheme = (UITheme) uiThemes.getSelectedItem();
         String oldUITheme = GUIP.getUITheme();
@@ -3798,17 +3835,30 @@ public class CommonSettingsDialog extends AbstractButtonDialog
         return panel;
     }
 
+    // Advanced-preference keys deliberately hidden from the Advanced settings list: testing/debug gates that must only
+    // be enabled by manually editing clientsettings.xml, never via the UI. They keep their "Advanced" prefix so the
+    // value still loads from clientsettings.xml; they are simply filtered out of the displayed list here.
+    // (AdvancedRevealAllArtilleryRounds is the legacy key for the now-renamed RevealAllArtilleryRounds gate.)
+    private static final Set<String> HIDDEN_ADVANCED_OPTIONS = Set.of(
+          "AdvancedRevealAllArtilleryRounds",
+          "AdvancedShowBotArtilleryHeatMap",
+          "AdvancedRevealObscuredArtillery");
+
     private JPanel getAdvancedSettingsPanel() {
         JPanel p = new JPanel();
 
-        String[] s = GUIP.getAdvancedProperties();
-        AdvancedOptionData[] opts = new AdvancedOptionData[s.length];
-        for (int i = 0;
-              i < s.length;
-              i++) {
-            s[i] = s[i].substring(s[i].indexOf("Advanced") + 8);
-            opts[i] = new AdvancedOptionData(s[i]);
+        String[] advancedProperties = GUIP.getAdvancedProperties();
+        List<AdvancedOptionData> visibleOptions = new ArrayList<>();
+        for (String advancedProperty : advancedProperties) {
+            // Skip deliberately-hidden testing gates so they never appear in the Advanced list - they are controlled
+            // only by manually editing clientsettings.xml.
+            if (HIDDEN_ADVANCED_OPTIONS.contains(advancedProperty)) {
+                continue;
+            }
+            visibleOptions.add(new AdvancedOptionData(
+                  advancedProperty.substring(advancedProperty.indexOf("Advanced") + 8)));
         }
+        AdvancedOptionData[] opts = visibleOptions.toArray(new AdvancedOptionData[0]);
         Arrays.sort(opts);
         advancedKeys = new JList<>(opts);
         advancedKeys.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
@@ -3850,9 +3900,9 @@ public class CommonSettingsDialog extends AbstractButtonDialog
     @Override
     public void stateChanged(ChangeEvent evt) {
         if (evt.getSource().equals(fovHighlightAlpha)) {
-            GUIP.setFovHighlightAlpha(Math.max(0, Math.min(255, fovHighlightAlpha.getValue())));
+            GUIP.setFovHighlightAlpha(Math.clamp(fovHighlightAlpha.getValue(), 0, 255));
         } else if (evt.getSource().equals(fovDarkenAlpha)) {
-            GUIP.setFovDarkenAlpha(Math.max(0, Math.min(255, fovDarkenAlpha.getValue())));
+            GUIP.setFovDarkenAlpha(Math.clamp(fovDarkenAlpha.getValue(), 0, 255));
         } else if (evt.getSource().equals(numStripesSlider)) {
             GUIP.setFovStripes(numStripesSlider.getValue());
         } else if (evt.getSource().equals(traceOverlayTransparencySlider)) {

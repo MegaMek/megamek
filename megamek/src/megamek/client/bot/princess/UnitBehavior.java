@@ -156,6 +156,7 @@ public class UnitBehavior {
         return true;
     }
 
+    @Deprecated(since = "0.51.0", forRemoval = true)
     public boolean addEntityWaypoint(Entity entity, Coords destination, Princess owner) {
         return addEntityWaypoint(entity, List.of(destination), owner);
     }

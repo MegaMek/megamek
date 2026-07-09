@@ -143,6 +143,12 @@ public class WeaponAttackAction extends AbstractAttackAction {
      */
     protected boolean isHomingShot = false;
 
+    /**
+     * Memoize expectedDamage to make repeated calcs faster
+     */
+    private float expectedDamage = -1.0f;
+    private boolean assumedHit = false;
+
     // default to attacking an entity
     public WeaponAttackAction(int entityId, int targetId, int weaponId) {
         super(entityId, targetId);
@@ -615,6 +621,9 @@ public class WeaponAttackAction extends AbstractAttackAction {
               false,
               false);
 
+        // Add the combined EI terrain reduction as a single modifier (if any was accumulated)
+        toHit.finalizeEiModifier();
+
         // okay!
         return toHit;
     }
@@ -799,5 +808,21 @@ public class WeaponAttackAction extends AbstractAttackAction {
         } else {
             return "Invalid attack data";
         }
+    }
+
+    public float getExpectedDamage() {
+        return expectedDamage;
+    }
+
+    public void setExpectedDamage(float expectedDamage) {
+        this.expectedDamage = expectedDamage;
+    }
+
+    public boolean getAssumedHit() {
+        return assumedHit;
+    }
+
+    public void setAssumedHit(boolean assumedHit) {
+        this.assumedHit = assumedHit;
     }
 }

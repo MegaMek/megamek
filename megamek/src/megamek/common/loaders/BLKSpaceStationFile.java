@@ -1,6 +1,6 @@
 /*
  * Copyright (C) 2000-2002 Ben Mazur (bmazur@sev.org)
- * Copyright (C) 2008-2025 The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2008-2026 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -248,7 +248,11 @@ public class BLKSpaceStationFile extends BLKFile implements IMekLoader {
 
         addTransports(a);
 
-        a.setArmorTonnage(a.getArmorWeight());
+        if (dataFile.exists("armorWeight")) {
+            a.setArmorTonnage(dataFile.getDataAsDouble("armorWeight")[0]);
+        } else {
+            a.setArmorTonnage(a.getArmorWeight());
+        }
         loadQuirks(a);
         return a;
     }
@@ -267,7 +271,6 @@ public class BLKSpaceStationFile extends BLKFile implements IMekLoader {
             prefix = "IS ";
         }
 
-        boolean rearMount;
         int nAmmo;
         // set up a new weapons bay mount
         WeaponMounted bayMount = null;
@@ -276,7 +279,6 @@ public class BLKSpaceStationFile extends BLKFile implements IMekLoader {
         double bayDamage = 0;
         if (saEquip[0] != null) {
             for (String element : saEquip) {
-                rearMount = false;
                 nAmmo = 1;
                 newBay = false;
                 String equipName = element.trim();

@@ -387,8 +387,8 @@ public class OffBoardTargetOverlay implements IDisplayable {
                   "FiringDisplay.ChooseTargetDialog.title",
                   Messages.getString("FiringDisplay.ChooseCounterbatteryTargetDialog.message"),
                   eligibleTargets, clientGUI, null);
-        } else if ((eligibleTargets.size() == 1) && (eligibleTargets.get(0) != null)) {
-            choice = eligibleTargets.get(0);
+        } else if ((eligibleTargets.size() == 1) && (eligibleTargets.getFirst() != null)) {
+            choice = eligibleTargets.getFirst();
         } else {
             return;
         }
@@ -396,10 +396,12 @@ public class OffBoardTargetOverlay implements IDisplayable {
         if (choice != null) {
             // display dropdown containing all observed offboard enemy entities in given direction upon selection,
             // generate an ArtilleryAttackAction vs selected entity as per TargetingPhaseDisplay, like so:
-            WeaponAttackAction weaponAttackAction = new ArtilleryAttackAction(targetingPhaseDisplay.currentEntity().getId(),
+            WeaponAttackAction weaponAttackAction = new ArtilleryAttackAction(targetingPhaseDisplay.currentEntity()
+                  .getId(),
                   choice.getTargetType(),
                   choice.getId(),
-                  targetingPhaseDisplay.currentEntity().getEquipmentNum(clientGUI.getBoardView().getSelectedArtilleryWeapon()),
+                  targetingPhaseDisplay.currentEntity()
+                        .getEquipmentNum(clientGUI.getBoardView().getSelectedArtilleryWeapon()),
                   clientGUI.getClient().getGame());
 
             // Only add if chance of success.

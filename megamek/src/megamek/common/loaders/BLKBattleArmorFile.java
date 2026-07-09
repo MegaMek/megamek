@@ -41,6 +41,8 @@ import megamek.common.equipment.EquipmentType;
 import megamek.common.equipment.EquipmentTypeLookup;
 import megamek.common.equipment.MiscType;
 import megamek.common.equipment.Mounted;
+import megamek.common.equipment.WeaponMounted;
+import megamek.common.equipment.WeaponType;
 import megamek.common.exceptions.LocationFullException;
 import megamek.common.units.Entity;
 import megamek.common.units.EntityMovementMode;
@@ -71,13 +73,13 @@ public class BLKBattleArmorFile extends BLKFile implements IMekLoader {
         if (!dataFile.exists("trooper count")) {
             throw new EntityLoadingException("Could not find trooper count block.");
         }
-        t.setTroopers(dataFile.getDataAsInt("trooper count")[0]);
+        t.setSquadSize(dataFile.getDataAsInt("trooper count")[0]);
 
         if (!dataFile.exists("weightclass")) {
             throw new EntityLoadingException("Could not find weightclass block.");
         }
         t.setWeightClass(dataFile.getDataAsInt("weightclass")[0]);
-        t.setWeight(t.getTroopers());
+        t.setWeight(t.getSquadSize());
 
         if (!dataFile.exists("chassis")) {
             throw new EntityLoadingException("Could not find chassis block.");
@@ -96,25 +98,8 @@ public class BLKBattleArmorFile extends BLKFile implements IMekLoader {
         }
         String sMotion = dataFile.getDataAsString("motion_type")[0];
         t.setMovementMode(EntityMovementMode.parseFromString(sMotion));
-        // Add equipment to calculate unit tech advancement correctly
-        try {
-            switch (t.getMovementMode()) {
-                case INF_JUMP:
-                    t.addEquipment(EquipmentType.get(EquipmentTypeLookup.BA_JUMP_JET), Entity.LOC_NONE);
-                    break;
-                case VTOL:
-                    t.addEquipment(EquipmentType.get(EquipmentTypeLookup.BA_VTOL), Entity.LOC_NONE);
-                    break;
-                case INF_UMU:
-                    t.addEquipment(EquipmentType.get(EquipmentTypeLookup.BA_UMU), Entity.LOC_NONE);
-                    break;
-                case NONE:
-                    throw new EntityLoadingException("Invalid movement type: " + sMotion);
-                default:
-                    break;
-            }
-        } catch (LocationFullException ignore) {
-            // Adding to LOC_NONE
+        if (t.getMovementMode() == EntityMovementMode.NONE) {
+            throw new EntityLoadingException("Invalid movement type: " + sMotion);
         }
 
         if (!dataFile.exists("cruiseMP")) {
@@ -175,6 +160,30 @@ public class BLKBattleArmorFile extends BLKFile implements IMekLoader {
         }
         t.setArmorTonnage(t.getArmorWeight());
         loadQuirks(t);
+        loadSlotlessEquipment(t);
+
+        // Backward compatibility: add movement equipment if not already loaded from
+        // the slotless_equipment block (old files may not include it).
+        // This must happen after loadSlotlessEquipment so new files don't get duplicates.
+        String movementEquipName = switch (t.getMovementMode()) {
+            case INF_JUMP -> EquipmentTypeLookup.BA_JUMP_JET;
+            case VTOL -> EquipmentTypeLookup.BA_VTOL;
+            case INF_UMU -> EquipmentTypeLookup.BA_UMU;
+            default -> null;
+        };
+        if (movementEquipName != null) {
+            boolean alreadyPresent = t.getEquipment().stream()
+                  .anyMatch(m -> movementEquipName.equals(m.getType().getInternalName()));
+            if (!alreadyPresent) {
+                try {
+                    t.addEquipment(EquipmentType.get(movementEquipName), Entity.LOC_NONE);
+                } catch (LocationFullException ignore) {
+                    // Adding to LOC_NONE
+                }
+            }
+        }
+
+        t.recalculateTechAdvancement();
         return t;
     }
 
@@ -252,6 +261,13 @@ public class BLKBattleArmorFile extends BLKFile implements IMekLoader {
                             m.setShotsLeft(numShots);
                             m.setOriginalShots(numShots);
                             m.setSize(numShots * ((AmmoType) m.getType()).getKgPerShot() / 1000.0);
+                        }
+                        // Disposable Weapon (TO:AuE p.116, Corrected Sixth Printing): a one-shot weapon mounted in an
+                        // AP mount/armored glove, used for a single once-per-scenario attack and resolved with the
+                        // disposable damage formula.
+                        if ((m instanceof WeaponMounted weaponMounted)
+                              && etype.hasFlag(WeaponType.F_INF_DISPOSABLE)) {
+                            weaponMounted.setDisposableWeapon(true);
                         }
                         if ((etype instanceof MiscType)
                               && (etype.hasFlag(MiscType.F_AP_MOUNT) || etype.hasFlag(MiscType.F_ARMORED_GLOVE))) {

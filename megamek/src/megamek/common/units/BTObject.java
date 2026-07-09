@@ -353,6 +353,7 @@ public interface BTObject {
      *
      * @return True when this is an objective marker.
      */
+    @Deprecated(since = "0.51.0", forRemoval = true)
     default boolean isObjectiveMarker() {
         return false;
     }
@@ -392,6 +393,7 @@ public interface BTObject {
      *
      * @return True when this is a single unit or element.
      */
+    @Deprecated(since = "0.51.0", forRemoval = true)
     default boolean isSingleUnit() {
         return !isUnitGroup();
     }

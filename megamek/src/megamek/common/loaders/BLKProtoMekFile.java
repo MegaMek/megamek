@@ -38,6 +38,7 @@ import megamek.common.TechConstants;
 import megamek.common.equipment.ArmorType;
 import megamek.common.equipment.Engine;
 import megamek.common.equipment.EquipmentType;
+import megamek.common.equipment.MiscType;
 import megamek.common.equipment.Mounted;
 import megamek.common.equipment.WeaponType;
 import megamek.common.exceptions.LocationFullException;
@@ -147,19 +148,19 @@ public class BLKProtoMekFile extends BLKFile implements IMekLoader {
 
         loadQuirks(t);
 
-        // ProtoMeks have EI Interface built-in per IO p.77
-        // Add it automatically so it shows in the Equipment tab
-        // ProtoMeks cannot shut down EI, so it's always "On" (mode index 1)
-        try {
-            EquipmentType eiInterface = EquipmentType.get("EIInterface");
-            if (eiInterface != null) {
-                Mounted<?> eiMount = t.addEquipment(eiInterface, ProtoMek.LOC_BODY);
-                eiMount.setMode(1); // "Initiate enhanced imaging" (always on for ProtoMeks)
+        // ProtoMeks have EI built-in per IO:AE p.69. At BLK load time, game context is not
+        // available so default to Off (mode 0). The mode will be set correctly when the unit
+        // joins a game via setGameOptions().
+        for (Mounted<?> m : t.getEquipment()) {
+            if ((m.getType() instanceof MiscType) && m.getType().hasFlag(MiscType.F_EI_INTERFACE)) {
+                m.setMode(0);
+                break;
             }
-        } catch (LocationFullException e) {
-            // Should never happen for slotless equipment, but log if it does
-            throw new EntityLoadingException("Failed to add built-in EI Interface to ProtoMek", e);
         }
+
+        // Recalculate tech advancement after all equipment is loaded so that ProtoMek EI
+        // is properly skipped when no game context is present (defaults to non-Full Tracking)
+        t.recalculateTechAdvancement();
 
         return t;
     }

@@ -179,7 +179,7 @@ public class TestHandheldWeapon extends TestEntity {
         buff.append(printTechLevel());
         buff.append("Intro year: ").append(hhw.getYear()).append("\n");
         buff.append(printSource());
-        if (correctWeight(buff, true, true)) {
+        if (correctWeight(buff, false, false)) {
             buff.append("Weight: ").append(getWeight()).append(" (").append(
                   calculateWeight()).append(")\n");
         }

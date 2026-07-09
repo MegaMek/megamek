@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2024-2025 The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2024-2026 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -30,7 +30,6 @@
  * <https://www.xbox.com/en-US/developers/rules> and it is not endorsed by or
  * affiliated with Microsoft.
  */
-
 
 package megamek.common.equipment;
 
@@ -395,8 +394,8 @@ public class ArmorType extends MiscType {
               .setAvailability(AvailabilityValue.D, AvailabilityValue.F, AvailabilityValue.D, AvailabilityValue.C)
               .setISAdvancement(2557, 2571, 3055, 2810, 3040)
               .setISApproximate(false, false, false, true, false)
-//              .setClanAdvancement(DATE_NONE, DATE_NONE, 2820, DATE_NONE, DATE_NONE)
-//              .setClanApproximate(false, false, true, false, false)
+              .setClanAdvancement(2557, 2571, 2820, DATE_NONE, DATE_NONE)
+              .setClanApproximate(false, false, true, false, false)
               .setPrototypeFactions(Faction.TH)
               .setProductionFactions(Faction.TH)
               .setReintroductionFactions(Faction.DC);
@@ -670,7 +669,9 @@ public class ArmorType extends MiscType {
         armor.name = "Industrial "; // extra space at the end on purpose
         armor.setInternalName(armor.name);
         armor.addLookupName("IS Industrial");
+        armor.addLookupName("IS Industrial ");
         armor.addLookupName("Clan Industrial");
+        armor.addLookupName("Clan Industrial ");
         armor.addLookupName("Clan Industrial Armor");
         armor.cost = 5000.0;
         armor.industrial = true;
@@ -723,8 +724,7 @@ public class ArmorType extends MiscType {
               .setAvailability(AvailabilityValue.B, AvailabilityValue.C, AvailabilityValue.B, AvailabilityValue.B)
               .setISAdvancement(DATE_ES, 2290, 2315, DATE_NONE, DATE_NONE)
               .setISApproximate(false, true, true, false, false)
-              .setClanAdvancement(DATE_ES, 2290, 2315, DATE_NONE, DATE_NONE)
-              .setClanApproximate(false, true, true, false, false).setPrototypeFactions(Faction.TH)
+              .setPrototypeFactions(Faction.TH)
               .setProductionFactions(Faction.TH);
 
         armor.armorType = T_ARMOR_PRIMITIVE;
@@ -1242,12 +1242,12 @@ public class ArmorType extends MiscType {
         armor.flags = armor.flags.or(F_CAPITAL_ARMOR).or(F_JS_EQUIPMENT).or(F_WS_EQUIPMENT).or(F_SS_EQUIPMENT);
         armor.cost = 100000.0;
         armor.rulesRefs = "152, SO";
-        armor.techAdvancement.setTechBase(TechBase.IS).setTechRating(TechRating.E)
+        armor.techAdvancement.setTechBase(TechBase.ALL).setTechRating(TechRating.E)
               .setAvailability(AvailabilityValue.E, AvailabilityValue.F, AvailabilityValue.E, AvailabilityValue.D)
               .setISAdvancement(2600, 2615, DATE_NONE, 2950, 3055).setISApproximate(true, false, false, false, false)
               .setClanAdvancement(2600, 2615, DATE_NONE, DATE_NONE, DATE_NONE)
               .setClanApproximate(true, false, false, false, false).setPrototypeFactions(Faction.TH)
-              .setProductionFactions(Faction.TH).setReintroductionFactions(Faction.FS, Faction.FW, Faction.LC)
+              .setProductionFactions(Faction.TH).setReintroductionFactions(Faction.FS, Faction.FW, Faction.CC)
               .setStaticTechLevel(SimpleTechLevel.ADVANCED);
 
         armor.armorType = T_ARMOR_LC_LAMELLOR_FERRO_CARBIDE;
@@ -1294,8 +1294,11 @@ public class ArmorType extends MiscType {
               .setProductionFactions(Faction.TH).setStaticTechLevel(SimpleTechLevel.STANDARD);
 
         armor.armorType = T_ARMOR_PRIMITIVE_AERO;
-        armor.pptDropship = new double[] { 10.56, 9.24, 7.92, 6.6, 5.28, 3.96 };
-        armor.pptCapital = new double[] { 0.528, 0.396, 0.264 };
+        // the primitive factor 0.66 cannot be multiplied into the ppt values as the total armor is calculated by
+        // taking the armor tonnage times the points per ton, rounding down, then adding the SI free armor and THEN,
+        // multiplying by 0.66; see the example on IO:AE p.125 (3rd printing) which gives the precise process
+        armor.pptDropship = new double[] { 16.0, 14.0, 12.0, 10.0, 8.0, 6.0 };
+        armor.pptCapital = new double[] { 0.8, 0.6, 0.4 };
 
         return armor;
     }
@@ -1358,7 +1361,10 @@ public class ArmorType extends MiscType {
         armor.techAdvancement.setTechBase(TechBase.ALL)
               .setISAdvancement(2680, DATE_NONE, 3054, DATE_NONE, 3050)
               .setISApproximate(true, false, true, false, false)
+              .setClanAdvancement(2680, 2868, 3054, DATE_NONE, DATE_NONE)
+              .setClanApproximate(true, false, false, false, false)
               .setPrototypeFactions(Faction.TH)
+              .setProductionFactions(Faction.CWF)
               .setReintroductionFactions(Faction.FS, Faction.LC, Faction.DC)
               .setTechRating(TechRating.E)
               .setAvailability(AvailabilityValue.F, AvailabilityValue.F, AvailabilityValue.E, AvailabilityValue.D)

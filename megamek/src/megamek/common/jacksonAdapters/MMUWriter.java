@@ -97,7 +97,7 @@ public class MMUWriter {
         try (PrintStream outputStream = new PrintStream(file)) {
             outputStream.println(HEADER);
             if (supportedContents.size() == 1) {
-                writer.writeValue(outputStream, contents.get(0));
+                writer.writeValue(outputStream, contents.getFirst());
             } else {
                 writer.writeValue(outputStream, contents);
             }

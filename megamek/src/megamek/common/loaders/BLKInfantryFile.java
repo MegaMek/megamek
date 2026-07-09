@@ -42,9 +42,9 @@ import megamek.common.equipment.MiscType;
 import megamek.common.equipment.Mounted;
 import megamek.common.equipment.WeaponType;
 import megamek.common.exceptions.LocationFullException;
+import megamek.common.units.ConvInfantry;
 import megamek.common.units.Entity;
 import megamek.common.units.EntityMovementMode;
-import megamek.common.units.Infantry;
 import megamek.common.units.InfantryMount;
 import megamek.common.util.BuildingBlock;
 import megamek.common.weapons.infantry.InfantryWeapon;
@@ -64,7 +64,7 @@ public class BLKInfantryFile extends BLKFile implements IMekLoader {
     @Override
     public Entity getEntity() throws EntityLoadingException {
 
-        Infantry infantry = new Infantry();
+        ConvInfantry infantry = new ConvInfantry();
         setBasicEntityData(infantry);
 
         if (!dataFile.exists("squad_size")) {
@@ -148,16 +148,18 @@ public class BLKInfantryFile extends BLKFile implements IMekLoader {
             throw new EntityLoadingException(ex.getMessage());
         }
         try {
-            infantry.addEquipment(m, Infantry.LOC_INFANTRY, false);
+            infantry.addEquipment(m, ConvInfantry.LOC_INFANTRY, false);
         } catch (LocationFullException ex) {
             throw new EntityLoadingException(ex.getMessage());
         }
 
+        loadDisposableWeapon(infantry);
+
         // TAG infantry have separate attacks for primary and secondary weapons.
         if (null != secondaryWeaponType && secondaryWeaponType.hasFlag(WeaponType.F_TAG)) {
-            infantry.setSpecializations(infantry.getSpecializations() | Infantry.TAG_TROOPS);
+            infantry.setSpecializations(infantry.getSpecializations() | ConvInfantry.TAG_TROOPS);
             try {
-                infantry.addEquipment(primaryWeaponType, Infantry.LOC_INFANTRY);
+                infantry.addEquipment(primaryWeaponType, ConvInfantry.LOC_INFANTRY);
             } catch (LocationFullException ex) {
                 throw new EntityLoadingException(ex.getMessage());
             }
@@ -176,14 +178,6 @@ public class BLKInfantryFile extends BLKFile implements IMekLoader {
 
         if (dataFile.exists("dest")) {
             infantry.setDEST(true);
-        }
-
-        if (dataFile.exists("specialization")) {
-            try {
-                infantry.setSpecializations(Integer.parseInt(dataFile.getDataAsString("specialization")[0]));
-            } catch (NumberFormatException ex) {
-                throw new EntityLoadingException("Could not read specialization");
-            }
         }
 
         if (dataFile.exists("encumberingarmor")) {
@@ -214,10 +208,20 @@ public class BLKInfantryFile extends BLKFile implements IMekLoader {
             }
         }
 
-        loadEquipment(infantry, "Field Guns", Infantry.LOC_FIELD_GUNS);
-        loadEquipment(infantry, "Troopers", Infantry.LOC_INFANTRY);
+        loadEquipment(infantry, "Field Guns", ConvInfantry.LOC_FIELD_GUNS);
+        loadEquipment(infantry, "Troopers", ConvInfantry.LOC_INFANTRY);
 
-        // Update some internals if there's an armor kit
+        // Set specializations after loading equipment so that setSpecializations()
+        // can detect equipment already loaded from the file and avoid duplicates.
+        if (dataFile.exists("specialization")) {
+            try {
+                infantry.setSpecializations(Integer.parseInt(dataFile.getDataAsString("specialization")[0]));
+            } catch (NumberFormatException ex) {
+                throw new EntityLoadingException("Could not read specialization");
+            }
+        }
+
+        // Apply armor kit flags. setArmorKit detects the kit is already equipped
         infantry.getMisc().stream()
               .filter(misc -> misc.getType().hasFlag(MiscType.F_ARMOR_KIT))
               .findFirst()
@@ -229,7 +233,8 @@ public class BLKInfantryFile extends BLKFile implements IMekLoader {
             int[] amSkill = dataFile.getDataAsInt("antimek");
             if (amSkill[0] != 8) {
                 try {
-                    infantry.addEquipment(EquipmentType.get(EquipmentTypeLookup.ANTI_MEK_GEAR), Infantry.LOC_INFANTRY);
+                    infantry.addEquipment(EquipmentType.get(EquipmentTypeLookup.ANTI_MEK_GEAR),
+                          ConvInfantry.LOC_INFANTRY);
                 } catch (LocationFullException ex) {
                     throw new EntityLoadingException(ex.getMessage());
                 }
@@ -318,5 +323,31 @@ public class BLKInfantryFile extends BLKFile implements IMekLoader {
         infantry.recalculateTechAdvancement();
         loadQuirks(infantry);
         return infantry;
+    }
+
+    /**
+     * Loads the platoon's Disposable Weapon (TO:AuE p.116, Corrected Sixth Printing), if present. A Disposable Weapon
+     * is a one-shot weapon carried by every trooper; it is added to {@code LOC_INFANTRY} as a separate fireable mount
+     * marked disposable so it resolves with the disposable damage formula instead of the standard infantry weapon
+     * attack.
+     *
+     * @param infantry the platoon being loaded
+     *
+     * @throws EntityLoadingException if the named weapon is missing, not an infantry weapon, or not a Disposable
+     *                                Weapon
+     */
+    private void loadDisposableWeapon(ConvInfantry infantry) throws EntityLoadingException {
+        if (!dataFile.exists("disposableWeapon")) {
+            return;
+        }
+        String disposableWeaponName = dataFile.getDataAsString("disposableWeapon")[0];
+        EquipmentType disposableWeaponType = EquipmentType.get(disposableWeaponName);
+        if (!(disposableWeaponType instanceof InfantryWeapon disposableWeapon)) {
+            throw new EntityLoadingException(disposableWeaponName + " is not an infantry weapon");
+        }
+        if (!disposableWeapon.hasFlag(WeaponType.F_INF_DISPOSABLE)) {
+            throw new EntityLoadingException(disposableWeaponName + " is not a Disposable Weapon");
+        }
+        infantry.equipDisposableWeapon(disposableWeapon);
     }
 }

@@ -272,6 +272,7 @@ public class SBFFormation implements ASSpecialAbilityCollector, BattleForceSUAFo
      * Returns the Artillery Special's SBF damage for homing missiles. Returns 0 when the given SPA is not ARTAIS or
      * ARTAC.
      */
+    @Deprecated(since = "0.51.0", forRemoval = true)
     public static int getSbfArtilleryHomingDamage(BattleForceSUA spa) {
         return spa.isAnyOf(ARTAIS, ARTAC) ? 2 : 0;
     }

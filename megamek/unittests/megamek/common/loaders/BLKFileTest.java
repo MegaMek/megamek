@@ -34,24 +34,45 @@ package megamek.common.loaders;
 
 import static megamek.common.bays.Bay.UNSET_BAY;
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertInstanceOf;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.junit.jupiter.api.Assertions.fail;
 
+import java.io.File;
 import java.util.HashSet;
 
+import megamek.common.TechConstants;
+import megamek.common.battleArmor.BattleArmor;
 import megamek.common.bays.BattleArmorBay;
 import megamek.common.bays.Bay;
 import megamek.common.bays.InfantryBay;
 import megamek.common.bays.MekBay;
+import megamek.common.enums.Faction;
+import megamek.common.equipment.AmmoType;
+import megamek.common.equipment.Engine;
+import megamek.common.equipment.EquipmentType;
+import megamek.common.equipment.Mounted;
 import megamek.common.loaders.BLKFile.ParsedBayInfo;
 import megamek.common.units.DropShuttleBay;
+import megamek.common.units.Entity;
+import megamek.common.units.EntityMovementMode;
 import megamek.common.units.Jumpship;
 import megamek.common.units.NavalRepairFacility;
 import megamek.common.units.PlatoonType;
+import megamek.common.units.Tank;
+import megamek.common.util.BuildingBlock;
+import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 
 class BLKFileTest {
+
+    @BeforeAll
+    static void beforeAll() {
+        EquipmentType.initializeTypes();
+    }
 
     /**
      * Strips the bay type identifier from the bay string.
@@ -303,6 +324,162 @@ class BLKFileTest {
 
         }
 
+    }
+
+    /**
+     * Creates a minimal Tank entity for roundtrip testing.
+     */
+    private Tank createMinimalTank() {
+        Tank tank = new Tank();
+        tank.setChassis("Test");
+        tank.setModel("Tank");
+        tank.setWeight(20.0);
+        tank.setYear(3025);
+        tank.setTechLevel(TechConstants.T_INTRO_BOX_SET);
+        tank.setMovementMode(EntityMovementMode.TRACKED);
+        tank.setEngine(new Engine(100, Engine.NORMAL_ENGINE, Engine.TANK_ENGINE));
+        tank.setOriginalWalkMP(5);
+        tank.setArmorType(EquipmentType.T_ARMOR_STANDARD);
+        tank.setArmorTechLevel(TechConstants.T_INTRO_BOX_SET);
+        tank.autoSetInternal();
+        tank.initializeArmor(10, Tank.LOC_FRONT);
+        tank.initializeArmor(10, Tank.LOC_RIGHT);
+        tank.initializeArmor(10, Tank.LOC_LEFT);
+        tank.initializeArmor(10, Tank.LOC_REAR);
+        return tank;
+    }
+
+    @Test
+    void techFactionRoundtripsThroughBLK() throws Exception {
+        Tank tank = createMinimalTank();
+        tank.setTechFaction(Faction.DC);
+
+        // Save to BuildingBlock and reload
+        BuildingBlock blk = BLKFile.getBlock(tank);
+        BLKTankFile loader = new BLKTankFile(blk);
+        Tank loaded = (Tank) loader.getEntity();
+
+        assertEquals(Faction.DC, loaded.getTechFaction(),
+              "Tech faction should survive BLK roundtrip");
+    }
+
+    @Test
+    void noneFactionIsNotWrittenToBLK() throws Exception {
+        Tank tank = createMinimalTank();
+        // Faction.NONE is the default; make sure it is not written
+        assertEquals(Faction.NONE, tank.getTechFaction());
+
+        BuildingBlock blk = BLKFile.getBlock(tank);
+        BLKTankFile loader = new BLKTankFile(blk);
+        Tank loaded = (Tank) loader.getEntity();
+
+        assertEquals(Faction.NONE, loaded.getTechFaction(),
+              "NONE faction should remain NONE after roundtrip");
+    }
+
+    @Test
+    void multipleSourcesRoundtripThroughBLK() throws Exception {
+        Tank tank = createMinimalTank();
+        tank.setSource("TR:3039, RG29,, Custom Source");
+        tank.setPublished("RS:3050u, Custom Sheet,,");
+
+        BuildingBlock blk = BLKFile.getBlock(tank);
+        BLKTankFile loader = new BLKTankFile(blk);
+        Tank loaded = (Tank) loader.getEntity();
+
+        assertEquals("TR:3039,RG29,Custom Source", loaded.getSource(),
+              "Multiple sources should survive BLK roundtrip");
+        assertEquals("RS:3050u,Custom Sheet", loaded.getPublished(),
+              "Published record sheet sources should survive BLK roundtrip");
+    }
+
+    @Test
+    void multipleSourceBlockLinesLoadThroughBLK() throws Exception {
+        BuildingBlock blk = new BuildingBlock();
+        blk.writeBlockData("Name", "Test");
+        blk.writeBlockData("year", 3025);
+        blk.writeBlockData("type", "IS");
+        blk.writeBlockData("source", new String[] { "TR:3039", "RG29", "Custom Source" });
+        blk.writeBlockData("published", new String[] { "RS:3050u", "Custom Sheet" });
+        BLKFile loader = new BLKFile();
+        loader.dataFile = blk;
+        Tank tank = new Tank();
+
+        loader.setBasicEntityData(tank);
+
+        assertEquals("TR:3039,RG29,Custom Source", tank.getSource(),
+              "Multiple source lines should load as a source list");
+        assertEquals("RS:3050u,Custom Sheet", tank.getPublished(),
+              "Multiple published lines should load as a source list");
+    }
+
+    /**
+     * Loads a BattleArmor entity from the test resources directory.
+     */
+    private BattleArmor loadBattleArmor(String filename) throws EntityLoadingException {
+        File file = new File("testresources/megamek/common/units/" + filename);
+        MekFileParser parser = new MekFileParser(file);
+        Entity entity = parser.getEntity();
+        assertNotNull(entity, "Failed to load entity from " + filename);
+        assertInstanceOf(BattleArmor.class, entity, "Entity should be BattleArmor");
+        return (BattleArmor) entity;
+    }
+
+    /**
+     * Verifies that a BattleArmor unit with a one-shot weapon (which creates LOC_NONE ammo) can be saved and reloaded
+     * without the ammo appearing in the failed equipment list. Regression test for the :Shots# suffix not being
+     * stripped in loadSlotlessEquipment().
+     */
+    @Test
+    void battleArmorOneShotAmmoRoundTrip() throws Exception {
+        // Load BA with one-shot SRM3 - this creates auto-linked ammo at LOC_NONE
+        BattleArmor original = loadBattleArmor("Afreet Med BA (HH) (Sqd4).blk");
+        assertFalse(original.getFailedEquipment().hasNext(),
+              "Original entity should have no failed equipment");
+
+        // Verify the one-shot ammo exists at LOC_NONE
+        boolean hasOneShotAmmo = false;
+        for (Mounted<?> mounted : original.getAmmo()) {
+            if (mounted.getLocation() == Entity.LOC_NONE
+                  && mounted.getType() instanceof AmmoType
+                  && mounted.getLinkedBy() != null) {
+                hasOneShotAmmo = true;
+                break;
+            }
+        }
+        assertTrue(hasOneShotAmmo, "BA should have one-shot ammo at LOC_NONE");
+
+        // Save to BLK and reload
+        BuildingBlock blk = BLKFile.getBlock(original);
+        BLKBattleArmorFile loader = new BLKBattleArmorFile(blk);
+        BattleArmor reloaded = (BattleArmor) loader.getEntity();
+
+        assertNotNull(reloaded, "Reloaded entity should not be null");
+        assertFalse(reloaded.getFailedEquipment().hasNext(),
+              "Reloaded entity should have no failed equipment");
+    }
+
+    /**
+     * Verifies backward compatibility: a BA slotless_equipment block containing the old :Shots# suffix format loads
+     * correctly without failed equipment.
+     */
+    @Test
+    void battleArmorSlotlessAmmoWithShotsSuffixLoads() throws Exception {
+        // Build a BLK that mimics the old save format with :Shots# in slotless_equipment
+        BattleArmor original = loadBattleArmor("Afreet Med BA (HH) (Sqd4).blk");
+        BuildingBlock blk = BLKFile.getBlock(original);
+
+        // Inject a slotless_equipment entry with the old :Shots# format
+        // to simulate files saved before the fix
+        blk.writeBlockData("slotless_equipment",
+              new String[] { "BAJumpJet", "BA-SRM3 Ammo:Shots1#" });
+
+        BLKBattleArmorFile loader = new BLKBattleArmorFile(blk);
+        BattleArmor reloaded = (BattleArmor) loader.getEntity();
+
+        assertNotNull(reloaded, "Reloaded entity should not be null");
+        assertFalse(reloaded.getFailedEquipment().hasNext(),
+              "Reloaded entity should have no failed equipment even with old :Shots# format");
     }
 
 }

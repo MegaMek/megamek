@@ -202,10 +202,10 @@ public abstract class ClientServerCommand extends ServerCommand {
     public String getHelpHtml() {
         return "<html>" +
               this.getHelp()
-                    .replaceAll("<", "&lt;")
-                    .replaceAll(">", "&gt;")
+                    .replace("<", "&lt;")
+                    .replace(">", "&gt;")
                     .replaceAll(LONG_WHITESPACE, "| ")
-                    .replaceAll(NEWLINE, "<br>") +
+                    .replace(NEWLINE, "<br>") +
               "</html>";
     }
 

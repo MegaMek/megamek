@@ -159,6 +159,7 @@ public class Order {
             this.ownerId = ownerId;
         }
 
+        @Deprecated(since = "0.51.0", forRemoval = true)
         public OrderBuilder(Order other) {
             this.ownerId = other.ownerId;
             this.priority = other.priority;

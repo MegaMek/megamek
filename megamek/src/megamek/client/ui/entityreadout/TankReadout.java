@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2025 The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2025-2026 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -35,8 +35,8 @@ package megamek.client.ui.entityreadout;
 import java.util.List;
 
 import megamek.client.ui.Messages;
-import megamek.common.units.EntityWeightClass;
 import megamek.common.equipment.Mounted;
+import megamek.common.units.EntityWeightClass;
 import megamek.common.units.Tank;
 import megamek.common.weapons.infantry.InfantryWeapon;
 
@@ -45,7 +45,6 @@ class TankReadout extends GeneralEntityReadout {
     private final Tank tank;
 
     protected TankReadout(Tank tank, boolean showDetail, boolean useAlternateCost, boolean ignorePilotBV) {
-
         super(tank, showDetail, useAlternateCost, ignorePilotBV);
         this.tank = tank;
     }

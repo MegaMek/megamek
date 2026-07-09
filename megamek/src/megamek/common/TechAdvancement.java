@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2017-2025 The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2017-2026 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -436,7 +436,7 @@ public class TechAdvancement implements ITechnology {
     }
 
     private TechAdvancement setFactionsAdvancement(Set<Faction> factionAdvancement, Faction... factions) {
-        factionAdvancement = EnumSet.noneOf(Faction.class);
+        factionAdvancement.clear();
         Collections.addAll(factionAdvancement, factions);
         return this;
     }

@@ -42,6 +42,7 @@ import java.util.Objects;
 
 import megamek.client.ui.clientGUI.GUIPreferences;
 import megamek.common.annotations.Nullable;
+import megamek.common.board.Coords;
 import megamek.common.enums.GamePhase;
 import megamek.common.util.ImageUtil;
 import megamek.common.util.fileUtils.MegaMekFile;
@@ -187,6 +188,7 @@ public class SpecialHexDisplay implements Serializable {
             return defaultImage;
         }
 
+        @Deprecated(since = "0.51.0", forRemoval = true)
         public void setDefaultImage(Image defaultImage) {
             this.defaultImage = defaultImage;
         }
@@ -215,11 +217,36 @@ public class SpecialHexDisplay implements Serializable {
      */
     public static int SHD_VISIBLE_TO_ALL = 2;
 
+    /**
+     * Prefix marking a bot artillery heat-map testing marker. The turn number to render on the hex follows this prefix
+     * immediately, up to the first space; the rest of the info is the hover text.
+     */
+    public static final String HEAT_MAP_PREFIX = "[HM]";
+
+    /**
+     * Marks a heat-map control token's kind as a predicted enemy position (drawn as a cold-to-hot color fill). It is
+     * the third colon-separated field of the token, e.g. {@code [HM]<turn>:<heat>:P}.
+     */
+    public static final String HEAT_MAP_KIND_PREDICTED = "P";
+
+    /**
+     * Marks a heat-map control token's kind as a hex this turn's plan is firing at (drawn as a crosshair icon). It is
+     * the third colon-separated field of the token, e.g. {@code [HM]<turn>:<heat>:F}.
+     */
+    public static final String HEAT_MAP_KIND_FIRING = "F";
+
     private String info;
     private Type type;
     private int round;
     private Player owner;
     private String imageSignature;
+
+    /**
+     * For an artillery miss marker, the hex the round actually drifted to (this marker sits on the targeted hex). The
+     * board view draws a line from this marker's hex to it so the player can see the drift. {@code null} for any marker
+     * that is not a drift.
+     */
+    private Coords driftHex;
 
     private int obscured = SHD_VISIBLE_TO_ALL;
 
@@ -270,6 +297,7 @@ public class SpecialHexDisplay implements Serializable {
      *
      * @return A SpecialHexDisplay Incoming marker
      */
+    @Deprecated(since = "0.51.0", forRemoval = true)
     public static SpecialHexDisplay createIncomingArty(Player owner, int landingGameRound) {
         String artyMsg = "Artillery bay fire incoming, landing on round %d, fired by %s"
               .formatted(landingGameRound, owner.getName());
@@ -419,8 +447,9 @@ public class SpecialHexDisplay implements Serializable {
 
         if (phase.isBefore(GamePhase.OFFBOARD)
               && ((type == Type.ARTILLERY_TARGET)
-              || type == Type.ARTILLERY_MISS
-              || (type == Type.ARTILLERY_HIT))) {
+              || (type == Type.ARTILLERY_MISS)
+              || (type == Type.ARTILLERY_HIT)
+              || (type == Type.ARTILLERY_DRIFT))) {
             shouldDisplay = shouldDisplay || thisRound(curRound - 1);
         }
 
@@ -433,8 +462,15 @@ public class SpecialHexDisplay implements Serializable {
             return false;
         }
 
-        // Only display obscured hexes to owner
-        if (isObscured(playerChecking)) {
+        // Only display obscured hexes to owner - unless the local player has turned on the testing/observer aid to
+        // reveal otherwise-hidden artillery markers (e.g. an enemy battery's incoming rounds) on their own view.
+        boolean revealSettingEnabled = (guiPref != null)
+              && guiPref.getBoolean(GUIPreferences.ADVANCED_REVEAL_OBSCURED_ARTILLERY);
+        boolean isArtilleryMarker = (type == Type.ARTILLERY_INCOMING) || (type == Type.ARTILLERY_ADJUSTED)
+              || (type == Type.ARTILLERY_TARGET) || (type == Type.ARTILLERY_HIT)
+              || (type == Type.ARTILLERY_MISS) || (type == Type.ARTILLERY_DRIFT);
+        boolean revealForTesting = revealSettingEnabled && isArtilleryMarker;
+        if (!revealForTesting && isObscured(playerChecking)) {
             return false;
         }
 
@@ -447,7 +483,7 @@ public class SpecialHexDisplay implements Serializable {
                 case ARTILLERY_DRIFT -> shouldDisplay &= guiPref.getBoolean(GUIPreferences.SHOW_ARTILLERY_DRIFTS);
                 case BOMB_MISS -> shouldDisplay &= guiPref.getBoolean(GUIPreferences.SHOW_BOMB_MISSES);
                 case BOMB_DRIFT -> shouldDisplay &= guiPref.getBoolean(GUIPreferences.SHOW_BOMB_DRIFTS);
-                default -> { } // intentionally ignored
+                default -> {} // intentionally ignored
             }
         }
 
@@ -461,6 +497,24 @@ public class SpecialHexDisplay implements Serializable {
      */
     public boolean isOwner(Player toPlayer) {
         return (owner == null) || owner.equals(toPlayer);
+    }
+
+    /**
+     * @return The hex an artillery round drifted to (for a drift marker on the targeted hex), or {@code null} if this
+     *       marker is not a drift
+     */
+    public @Nullable Coords getDriftHex() {
+        return driftHex;
+    }
+
+    /**
+     * Records the hex an artillery round drifted to, so the board view can draw a drift line from this marker's
+     * (targeted) hex to it.
+     *
+     * @param driftHex The hex the round actually landed on, or {@code null} for no drift line
+     */
+    public void setDriftHex(@Nullable Coords driftHex) {
+        this.driftHex = driftHex;
     }
 
     @Override
@@ -484,6 +538,6 @@ public class SpecialHexDisplay implements Serializable {
     @Override
     public String toString() {
         return "SHD: " + type.name() + ", " + "round " + round + (owner != null ? ", by "
-              + owner.getName() : "");
+                                                                                  + owner.getName() : "");
     }
 }

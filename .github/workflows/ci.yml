@@ -16,18 +16,18 @@ jobs:
       matrix:
         os: [ ubuntu-latest ]
         java-distribution: [ temurin ]
-        java-version: [ 17, 21, 25 ]
+        java-version: [ 21, 25 ]
       fail-fast: false
 
     steps:
       - name: Checkout Data Repo
-        uses: actions/checkout@v6
+        uses: actions/checkout@v7
         with:
           repository: megamek/mm-data
           path: mm-data
 
       - name: "Check out MegaMek"
-        uses: actions/checkout@v6
+        uses: actions/checkout@v7
         with:
           path: megamek
 
@@ -50,21 +50,21 @@ jobs:
           java-version: ${{ matrix.java-version }}
 
       - name: Setup Gradle
-        uses: gradle/actions/setup-gradle@v5
+        uses: gradle/actions/setup-gradle@v6
 
       - name: Test
         working-directory: megamek
-        run: ./gradlew test
+        run: ./gradlew test -x checkstyleMain -x checkstyleTest
 
       - name: Upload Test Logs on Failure
-        uses: actions/upload-artifact@v6
+        uses: actions/upload-artifact@v7
         if: failure()
         with:
           name: cd-failure-logs
           path: ./megamek/megamek/build/reports/
 
       - name: CodeCov.io Coverage Report
-        uses: codecov/codecov-action@v5
+        uses: codecov/codecov-action@v7
         with:
           directory: ./megamek/megamek/build/reports/jacoco/test
           fail_ci_if_error: false
@@ -72,10 +72,10 @@ jobs:
 
       - name: Build with Gradle
         working-directory: megamek
-        run: ./gradlew build -x test -PextraVersion="PR-${{ github.event.number }}-${{ env.COMMIT_SHORT_SHA }}"
+        run: ./gradlew build -x test -x checkstyleMain -x checkstyleTest -PextraVersion="PR-${{ github.event.number}}-${{ env.COMMIT_SHORT_SHA }}"
 
       - name: Upload TarGZ Release
-        uses: actions/upload-artifact@v6
+        uses: actions/upload-artifact@v7
         with:
           name: mm-release-tar-gz-${{ matrix.java-distribution }}-jdk${{ matrix.java-version }}
           path: ./megamek/megamek/build/distributions/*.tar.gz

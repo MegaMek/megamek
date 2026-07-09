@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2025 The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2025-2026 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -211,6 +211,7 @@ public class SimulationContext implements IGame, PlanetaryConditionsUsing {
         return retVal;
     }
 
+    @Deprecated(since = "0.51.0", forRemoval = true)
     public SkillLevel getPlayerSkill(int playerId) {
         return playerSkillLevels.getOrDefault(playerId, SkillLevel.ULTRA_GREEN);
     }
@@ -472,6 +473,7 @@ public class SimulationContext implements IGame, PlanetaryConditionsUsing {
     }
 
     // check current turn, phase, formation
+    @Deprecated(since = "0.51.0", forRemoval = true)
     private boolean isEligibleForAction(Formation formation) {
         return (getTurn() instanceof FormationTurn)
               && getTurn().isValidEntity(formation, this);
@@ -659,6 +661,7 @@ public class SimulationContext implements IGame, PlanetaryConditionsUsing {
     /**
      * Remove the given EntityAction from the list of pending actions.
      */
+    @Deprecated(since = "0.51.0", forRemoval = true)
     public void removeAction(Action action) {
         pendingActions.remove(action);
     }
@@ -708,7 +711,7 @@ public class SimulationContext implements IGame, PlanetaryConditionsUsing {
     }
 
     public boolean shouldDeployForRound(int round) {
-        return deploymentTable.containsKey(round);
+        return !deploymentTable.isEmpty() && Collections.min(deploymentTable.keySet()) <= round;
     }
 
     /**
@@ -746,6 +749,7 @@ public class SimulationContext implements IGame, PlanetaryConditionsUsing {
      *
      * @param turnIndex the new turn index
      */
+    @Deprecated(since = "0.51.0", forRemoval = true)
     protected void setTurnIndex(int turnIndex) {
         this.turnIndex = turnIndex;
     }

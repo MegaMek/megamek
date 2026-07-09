@@ -597,22 +597,7 @@ public class ASAdvancedSearchPanel extends JPanel {
 
     /** Deactivates all AS search filters so that no units will be filtered out. */
     public void clearValues() {
-        useUnitType.setSelected(false);
-        useUnitRole.setSelected(false);
-        useSize.setSelected(false);
-        useTMM.setSelected(false);
-        useArmor.setSelected(false);
-        useStructure.setSelected(false);
-        useThreshold.setSelected(false);
-        useDamageS.setSelected(false);
-        useDamageM.setSelected(false);
-        useDamageL.setSelected(false);
-        useDamageE.setSelected(false);
-        usePV.setSelected(false);
-        useMV.setSelected(false);
-        useAbility1.setSelected(false);
-        useAbility2.setSelected(false);
-        useOV.setSelected(false);
+        applyState(new AdvSearchState.AsState());
     }
 
     /**
@@ -884,5 +869,180 @@ public class ASAdvancedSearchPanel extends JPanel {
             useAbility2.setSelected(ability2Use);
             ability2.setSelectedItem(ability2Value);
         }
+    }
+
+    AdvSearchState.AsState getState() {
+        var state = new AdvSearchState.AsState();
+        state.unitTypeUse = useUnitType.isSelected();
+        if (useUnitType.isSelected()) {
+            state.unitTypeSelected = selectedTypes();
+        }
+        state.unitRoleUse = useUnitRole.isSelected();
+        if (useUnitRole.isSelected()) {
+            state.unitRoleSelected = selectedRoles();
+        }
+        state.sizeUse = useSize.isSelected();
+        if (useSize.isSelected()) {
+            state.sizeSelected = selectedSizes();
+        }
+        state.tmmUse = useTMM.isSelected();
+        if (useTMM.isSelected()) {
+            state.tmmSelected = selectedTMMs();
+        }
+        state.ovUse = useOV.isSelected();
+        if (useOV.isSelected()) {
+            state.ovSelected = selectedOVs();
+        }
+        state.armorUse = useArmor.isSelected();
+        if (useArmor.isSelected()) {
+            state.armorFromText = armorFrom.getText();
+            state.armorToText = armorTo.getText();
+        }
+        state.structureUse = useStructure.isSelected();
+        if (useStructure.isSelected()) {
+            state.structureFromText = structureFrom.getText();
+            state.structureToText = structureTo.getText();
+        }
+        state.thresholdUse = useThreshold.isSelected();
+        if (useThreshold.isSelected()) {
+            state.thresholdFromText = thresholdFrom.getText();
+            state.thresholdToText = thresholdTo.getText();
+        }
+        state.damageSUse = useDamageS.isSelected();
+        if (useDamageS.isSelected()) {
+            state.damageSFromValue = damageSFrom.getSelectedItem();
+            state.damageSToValue = damageSTo.getSelectedItem();
+        }
+        state.damageMUse = useDamageM.isSelected();
+        if (useDamageM.isSelected()) {
+            state.damageMFromValue = damageMFrom.getSelectedItem();
+            state.damageMToValue = damageMTo.getSelectedItem();
+        }
+        state.damageLUse = useDamageL.isSelected();
+        if (useDamageL.isSelected()) {
+            state.damageLFromValue = damageLFrom.getSelectedItem();
+            state.damageLToValue = damageLTo.getSelectedItem();
+        }
+        state.damageEUse = useDamageE.isSelected();
+        if (useDamageE.isSelected()) {
+            state.damageEFromValue = damageEFrom.getSelectedItem();
+            state.damageEToValue = damageETo.getSelectedItem();
+        }
+        state.pvUse = usePV.isSelected();
+        if (usePV.isSelected()) {
+            state.pvFromText = pvFrom.getText();
+            state.pvToText = pvTo.getText();
+        }
+        state.mvUse = useMV.isSelected();
+        if (useMV.isSelected()) {
+            state.mvModeText = mvMode.getSelectedItem();
+            state.mvFromText = mvFrom.getText();
+            state.mvToText = mvTo.getText();
+        }
+        state.ability1Use = useAbility1.isSelected();
+        if (useAbility1.isSelected()) {
+            state.ability1Value = ability1.getSelectedItem();
+        }
+        state.ability2Use = useAbility2.isSelected();
+        if (useAbility2.isSelected()) {
+            state.ability2Value = ability2.getSelectedItem();
+        }
+        return state;
+    }
+
+    void applyState(AdvSearchState.AsState state) {
+        useUnitType.setSelected(state.unitTypeUse);
+        unitTypeBM.setSelected(state.unitTypeSelected.contains(ASUnitType.BM));
+        unitTypeCV.setSelected(state.unitTypeSelected.contains(ASUnitType.CV));
+        unitTypeCI.setSelected(state.unitTypeSelected.contains(ASUnitType.CI));
+        unitTypeBA.setSelected(state.unitTypeSelected.contains(ASUnitType.BA));
+        unitTypeIM.setSelected(state.unitTypeSelected.contains(ASUnitType.IM));
+        unitTypePM.setSelected(state.unitTypeSelected.contains(ASUnitType.PM));
+        unitTypeSV.setSelected(state.unitTypeSelected.contains(ASUnitType.SV));
+        unitTypeAF.setSelected(state.unitTypeSelected.contains(ASUnitType.AF));
+
+        useUnitRole.setSelected(state.unitRoleUse);
+        unitRoleUndetermined.setSelected(state.unitRoleSelected.contains(UnitRole.UNDETERMINED));
+        unitRoleAmbusher.setSelected(state.unitRoleSelected.contains(UnitRole.AMBUSHER));
+        unitRoleBrawler.setSelected(state.unitRoleSelected.contains(UnitRole.BRAWLER));
+        unitRoleJuggernaut.setSelected(state.unitRoleSelected.contains(UnitRole.JUGGERNAUT));
+        unitRoleMissileBoat.setSelected(state.unitRoleSelected.contains(UnitRole.MISSILE_BOAT));
+        unitRoleScout.setSelected(state.unitRoleSelected.contains(UnitRole.SCOUT));
+        unitRoleSkirmisher.setSelected(state.unitRoleSelected.contains(UnitRole.SKIRMISHER));
+        unitRoleSniper.setSelected(state.unitRoleSelected.contains(UnitRole.SNIPER));
+        unitRoleStriker.setSelected(state.unitRoleSelected.contains(UnitRole.STRIKER));
+        unitRoleAttackFighter.setSelected(state.unitRoleSelected.contains(UnitRole.ATTACK_FIGHTER));
+        unitRoleDogfighter.setSelected(state.unitRoleSelected.contains(UnitRole.DOGFIGHTER));
+        unitRoleFastDogfighter.setSelected(state.unitRoleSelected.contains(UnitRole.FAST_DOGFIGHTER));
+        unitRoleFireSupport.setSelected(state.unitRoleSelected.contains(UnitRole.FIRE_SUPPORT));
+        unitRoleInterceptor.setSelected(state.unitRoleSelected.contains(UnitRole.INTERCEPTOR));
+        unitRoleTransport.setSelected(state.unitRoleSelected.contains(UnitRole.TRANSPORT));
+        unitRoleNone.setSelected(state.unitRoleSelected.contains(UnitRole.NONE));
+
+        useSize.setSelected(state.sizeUse);
+        size1.setSelected(state.sizeSelected.contains(1));
+        size2.setSelected(state.sizeSelected.contains(2));
+        size3.setSelected(state.sizeSelected.contains(3));
+        size4.setSelected(state.sizeSelected.contains(4));
+        size5.setSelected(state.sizeSelected.contains(5));
+
+        useTMM.setSelected(state.tmmUse);
+        tmm0.setSelected(state.tmmSelected.contains(0));
+        tmm1.setSelected(state.tmmSelected.contains(1));
+        tmm2.setSelected(state.tmmSelected.contains(2));
+        tmm3.setSelected(state.tmmSelected.contains(3));
+        tmm4.setSelected(state.tmmSelected.contains(4));
+        tmm5.setSelected(state.tmmSelected.contains(5));
+
+        useOV.setSelected(state.ovUse);
+        ov0.setSelected(state.ovSelected.contains(0));
+        ov1.setSelected(state.ovSelected.contains(1));
+        ov2.setSelected(state.ovSelected.contains(2));
+        ov3.setSelected(state.ovSelected.contains(3));
+        ov4.setSelected(state.ovSelected.contains(4));
+
+        useArmor.setSelected(state.armorUse);
+        armorFrom.setText(state.armorFromText);
+        armorTo.setText(state.armorToText);
+
+        useStructure.setSelected(state.structureUse);
+        structureFrom.setText(state.structureFromText);
+        structureTo.setText(state.structureToText);
+
+        useThreshold.setSelected(state.thresholdUse);
+        thresholdFrom.setText(state.thresholdFromText);
+        thresholdTo.setText(state.thresholdToText);
+
+        useDamageS.setSelected(state.damageSUse);
+        damageSFrom.setSelectedItem(state.damageSFromValue);
+        damageSTo.setSelectedItem(state.damageSToValue);
+
+        useDamageM.setSelected(state.damageMUse);
+        damageMFrom.setSelectedItem(state.damageMFromValue);
+        damageMTo.setSelectedItem(state.damageMToValue);
+
+        useDamageL.setSelected(state.damageLUse);
+        damageLFrom.setSelectedItem(state.damageLFromValue);
+        damageLTo.setSelectedItem(state.damageLToValue);
+
+        useDamageE.setSelected(state.damageEUse);
+        damageEFrom.setSelectedItem(state.damageEFromValue);
+        damageETo.setSelectedItem(state.damageEToValue);
+
+        usePV.setSelected(state.pvUse);
+        pvFrom.setText(state.pvFromText);
+        pvTo.setText(state.pvToText);
+
+        useMV.setSelected(state.mvUse);
+        mvMode.setSelectedItem(state.mvModeText);
+        mvFrom.setText(state.mvFromText);
+        mvTo.setText(state.mvToText);
+
+        useAbility1.setSelected(state.ability1Use);
+        ability1.setSelectedItem(state.ability1Value);
+
+        useAbility2.setSelected(state.ability2Use);
+        ability2.setSelectedItem(state.ability2Value);
+        updateEnabled();
     }
 }

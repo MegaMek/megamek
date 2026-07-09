@@ -251,7 +251,8 @@ public class TestSupportVehicle extends TestEntity {
     }
 
     /**
-     * Additional construction data for chassis mods, used to determine whether they are legal for particular units.
+     * Additional construction data for chassis mods, used to determine whether they are legal for particular units. TM
+     * p.122
      */
     public enum ChassisModification implements ITechnologyDelegator {
         AMPHIBIOUS(1.75, EquipmentTypeLookup.AMPHIBIOUS_CHASSIS_MOD,
@@ -259,7 +260,7 @@ public class TestSupportVehicle extends TestEntity {
         ARMORED(1.5, EquipmentTypeLookup.ARMORED_CHASSIS_MOD,
               SVType.allBut(SVType.AIRSHIP)),
         BICYCLE(0.75, EquipmentTypeLookup.BICYCLE_CHASSIS_MOD,
-              EnumSet.of(SVType.HOVERCRAFT, SVType.WHEELED)),
+              EnumSet.of(SVType.HOVERCRAFT, SVType.WHEELED), true),
         CONVERTIBLE(1.1, EquipmentTypeLookup.CONVERTIBLE_CHASSIS_MOD,
               EnumSet.of(SVType.HOVERCRAFT, SVType.WHEELED, SVType.TRACKED)),
         DUNE_BUGGY(1.5, EquipmentTypeLookup.DUNE_BUGGY_CHASSIS_MOD,
@@ -802,6 +803,7 @@ public class TestSupportVehicle extends TestEntity {
         }
     }
 
+    @Deprecated(since = "0.51.0", forRemoval = true)
     private double getWeightFireControl() {
         for (Mounted<?> mounted : supportVee.getMisc()) {
             if (mounted.getType().hasFlag(MiscType.F_BASIC_FIRE_CONTROL)
@@ -935,7 +937,8 @@ public class TestSupportVehicle extends TestEntity {
         } else {
             return getWeightPowerAmp() != 0 ? StringUtil.makeLength(
                   "Power Amp:", getPrintSize() - 5)
-                  + TestEntity.makeWeightString(getWeightPowerAmp(), usesKgStandard()) + "\n" : "";
+                                              + TestEntity.makeWeightString(getWeightPowerAmp(), usesKgStandard())
+                                              + "\n" : "";
         }
     }
 
@@ -952,7 +955,7 @@ public class TestSupportVehicle extends TestEntity {
         }
         double weight = getWeightCrewAccommodations();
         String crewStr = weight > 0 ? StringUtil.makeLength("Crew Accommodations:", getPrintSize() - 5)
-              + TestEntity.makeWeightString(weight, usesKgStandard()) + "\n" : "";
+                                      + TestEntity.makeWeightString(weight, usesKgStandard()) + "\n" : "";
         return fireCon + crewStr;
     }
 
@@ -1445,7 +1448,7 @@ public class TestSupportVehicle extends TestEntity {
               .append(printSource())
               .append(printShortMovement());
 
-        if (correctWeight(buff, true, true)) {
+        if (correctWeight(buff, false, false)) {
             if (!usesKgStandard()) {
                 buff.append("Weight: ")
                       .append(getWeight())

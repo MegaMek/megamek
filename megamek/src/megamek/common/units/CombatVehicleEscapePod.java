@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2025 The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2025-2026 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -145,6 +145,7 @@ public class CombatVehicleEscapePod extends EjectedCrew {
     /**
      * @return true if the crew is still inside the pod
      */
+    @Deprecated(since = "0.51.0", forRemoval = true)
     public boolean isCrewInside() {
         return crewInside;
     }
@@ -240,12 +241,15 @@ public class CombatVehicleEscapePod extends EjectedCrew {
         var hex = getGame().getBoard().getHex(getPosition());
         if (hex != null && hex.containsTerrain(Terrains.WATER)) {
             int depth = hex.terrainLevel(Terrains.WATER);
-            if (depth > 0) {
-                return false; // Can't exit into water
-            }
+            return depth <= 0; // Can't exit into water
         }
 
         return true;
+    }
+
+    @Override
+    public boolean canAnnounceAbandon() {
+        return canCrewExit();
     }
 
     @Override

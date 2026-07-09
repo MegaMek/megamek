@@ -44,6 +44,7 @@ import megamek.common.options.OptionsConstants;
 import megamek.common.options.PilotOptions;
 import megamek.common.planetaryConditions.Atmosphere;
 import megamek.common.planetaryConditions.PlanetaryConditions;
+import megamek.common.units.ConvInfantry;
 import megamek.common.units.Crew;
 import megamek.common.units.CrewType;
 import megamek.common.units.EntityMovementMode;
@@ -107,8 +108,8 @@ public class InfantryPoweredFlightMovementTest extends GameBoardTestCase {
     /**
      * Creates infantry with powered flight wings enabled.
      */
-    private Infantry createPoweredFlightInfantry() {
-        Infantry infantry = new Infantry();
+    private ConvInfantry createPoweredFlightInfantry() {
+        ConvInfantry infantry = new ConvInfantry();
         infantry.setId(1);
         infantry.setMovementMode(EntityMovementMode.INF_LEG);
         infantry.setSquadSize(7);
@@ -133,8 +134,8 @@ public class InfantryPoweredFlightMovementTest extends GameBoardTestCase {
     /**
      * Creates regular leg infantry without powered flight.
      */
-    private Infantry createRegularInfantry() {
-        Infantry infantry = new Infantry();
+    private ConvInfantry createRegularInfantry() {
+        ConvInfantry infantry = new ConvInfantry();
         infantry.setId(2);
         infantry.setMovementMode(EntityMovementMode.INF_LEG);
         infantry.setSquadSize(7);
@@ -155,8 +156,8 @@ public class InfantryPoweredFlightMovementTest extends GameBoardTestCase {
     /**
      * Creates infantry with glider wings enabled (fall damage protection only, cannot traverse cliffs).
      */
-    private Infantry createGliderInfantry() {
-        Infantry infantry = new Infantry();
+    private ConvInfantry createGliderInfantry() {
+        ConvInfantry infantry = new ConvInfantry();
         infantry.setId(3);
         infantry.setMovementMode(EntityMovementMode.INF_LEG);
         infantry.setSquadSize(7);
@@ -181,8 +182,9 @@ public class InfantryPoweredFlightMovementTest extends GameBoardTestCase {
     /**
      * Creates native VTOL infantry (microlite - can traverse cliffs).
      */
-    private Infantry createNativeVTOLInfantry() {
-        Infantry infantry = new Infantry();
+    @Deprecated(since = "0.51.0", forRemoval = true)
+    private ConvInfantry createNativeVTOLInfantry() {
+        ConvInfantry infantry = new ConvInfantry();
         infantry.setId(4);
         infantry.setMovementMode(EntityMovementMode.VTOL);
         infantry.setSquadSize(7);
@@ -220,7 +222,7 @@ public class InfantryPoweredFlightMovementTest extends GameBoardTestCase {
             setBoard("BOARD_3x3_CLEAR");
             setAtmosphere(Atmosphere.STANDARD);
 
-            Infantry infantry = createPoweredFlightInfantry();
+            ConvInfantry infantry = createPoweredFlightInfantry();
             getGame().addEntity(infantry);
             infantry.setGame(getGame());
 
@@ -238,7 +240,7 @@ public class InfantryPoweredFlightMovementTest extends GameBoardTestCase {
             setBoard("BOARD_3x3_CLEAR");
             setAtmosphere(Atmosphere.STANDARD);
 
-            Infantry infantry = createRegularInfantry();
+            ConvInfantry infantry = createRegularInfantry();
             getGame().addEntity(infantry);
             infantry.setGame(getGame());
 
@@ -254,7 +256,7 @@ public class InfantryPoweredFlightMovementTest extends GameBoardTestCase {
             setBoard("BOARD_3x3_CLEAR");
             setAtmosphere(Atmosphere.VACUUM);
 
-            Infantry infantry = createPoweredFlightInfantry();
+            ConvInfantry infantry = createPoweredFlightInfantry();
             getGame().addEntity(infantry);
             infantry.setGame(getGame());
 
@@ -272,7 +274,7 @@ public class InfantryPoweredFlightMovementTest extends GameBoardTestCase {
             setBoard("BOARD_3x3_CLEAR");
             setAtmosphere(Atmosphere.TRACE);
 
-            Infantry infantry = createPoweredFlightInfantry();
+            ConvInfantry infantry = createPoweredFlightInfantry();
             getGame().addEntity(infantry);
             infantry.setGame(getGame());
 
@@ -288,7 +290,7 @@ public class InfantryPoweredFlightMovementTest extends GameBoardTestCase {
             setBoard("BOARD_3x3_CLEAR");
             setAtmosphere(Atmosphere.THIN);
 
-            Infantry infantry = createPoweredFlightInfantry();
+            ConvInfantry infantry = createPoweredFlightInfantry();
             getGame().addEntity(infantry);
             infantry.setGame(getGame());
 
@@ -341,7 +343,7 @@ public class InfantryPoweredFlightMovementTest extends GameBoardTestCase {
             setBoard("BOARD_3x3_CLEAR");
             setAtmosphere(Atmosphere.STANDARD);
 
-            Infantry infantry = createPoweredFlightInfantry();
+            ConvInfantry infantry = createPoweredFlightInfantry();
             getGame().addEntity(infantry);
             infantry.setGame(getGame());
 
@@ -406,7 +408,7 @@ public class InfantryPoweredFlightMovementTest extends GameBoardTestCase {
             setBoard("BOARD_3x3_CLEAR");
             setAtmosphere(Atmosphere.STANDARD);
 
-            Infantry infantry = createPoweredFlightInfantry();
+            ConvInfantry infantry = createPoweredFlightInfantry();
             getGame().addEntity(infantry);
             infantry.setGame(getGame());
 
@@ -420,7 +422,7 @@ public class InfantryPoweredFlightMovementTest extends GameBoardTestCase {
             setBoard("BOARD_3x3_CLEAR");
             setAtmosphere(Atmosphere.VACUUM);
 
-            Infantry infantry = createPoweredFlightInfantry();
+            ConvInfantry infantry = createPoweredFlightInfantry();
             getGame().addEntity(infantry);
             infantry.setGame(getGame());
 
@@ -519,8 +521,8 @@ public class InfantryPoweredFlightMovementTest extends GameBoardTestCase {
         /**
          * Creates infantry for elevation tests without setting ID so initializeUnit handles setup.
          */
-        private Infantry createElevationTestInfantry(boolean poweredFlight, boolean glider, boolean nativeVTOL) {
-            Infantry infantry = new Infantry();
+        private ConvInfantry createElevationTestInfantry(boolean poweredFlight, boolean glider, boolean nativeVTOL) {
+            ConvInfantry infantry = new ConvInfantry();
             // Don't set ID - let initializeUnit handle it
             if (nativeVTOL) {
                 infantry.setMovementMode(EntityMovementMode.VTOL);
@@ -655,7 +657,7 @@ public class InfantryPoweredFlightMovementTest extends GameBoardTestCase {
             setBoard("BOARD_1x2_CLIFF");
             setAtmosphere(Atmosphere.STANDARD);
 
-            Infantry infantry = createGliderInfantry();
+            ConvInfantry infantry = createGliderInfantry();
             getGame().addEntity(infantry);
             infantry.setGame(getGame());
 

@@ -36,9 +36,8 @@ package megamek.client.ui.dialogs.clientDialogs;
 
 import java.awt.Component;
 import java.awt.GridBagConstraints;
-import java.io.Serial;
+import java.awt.Window;
 import javax.swing.JDialog;
-import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 
@@ -47,18 +46,15 @@ import javax.swing.JPanel;
  */
 public class ClientDialog extends JDialog {
 
-    @Serial
-    private static final long serialVersionUID = 6154951760485853883L;
-
-    protected JFrame owner;
+    protected Window owner;
 
     /**
      * Creates a ClientDialog with modality as given by modal.
      *
-     * @see JDialog#JDialog(java.awt.Frame, String, boolean)
+     * @see JDialog#JDialog(Window, String, ModalityType) 
      */
-    public ClientDialog(JFrame owner, String title, boolean modal) {
-        super(owner, title, modal);
+    public ClientDialog(Window owner, String title, boolean modal) {
+        super(owner, title, modal ? ModalityType.APPLICATION_MODAL : ModalityType.MODELESS);
         this.owner = owner;
     }
 

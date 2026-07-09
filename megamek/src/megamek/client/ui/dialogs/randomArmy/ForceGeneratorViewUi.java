@@ -34,6 +34,7 @@ package megamek.client.ui.dialogs.randomArmy;
 
 import java.awt.Component;
 import java.awt.Dimension;
+import java.awt.FlowLayout;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Insets;
@@ -48,10 +49,13 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 import java.util.StringTokenizer;
 import java.util.stream.Collectors;
 import javax.swing.*;
+import javax.swing.event.DocumentEvent;
+import javax.swing.event.DocumentListener;
 import javax.swing.event.TreeExpansionEvent;
 import javax.swing.event.TreeExpansionListener;
 import javax.swing.event.TreeModelListener;
@@ -62,6 +66,7 @@ import javax.swing.tree.TreeModel;
 import javax.swing.tree.TreePath;
 
 import megamek.client.Client;
+import megamek.client.ratgenerator.CrewDescriptor;
 import megamek.client.ratgenerator.ForceDescriptor;
 import megamek.client.ratgenerator.RATGenerator;
 import megamek.client.ratgenerator.Ruleset;
@@ -71,16 +76,17 @@ import megamek.client.ui.clientGUI.calculationReport.FlexibleCalculationReport;
 import megamek.client.ui.panels.phaseDisplay.lobby.LobbyUtility;
 import megamek.client.ui.tileset.MMStaticDirectoryManager;
 import megamek.client.ui.util.UIUtil;
-import megamek.common.options.GameOptions;
-import megamek.common.units.Entity;
-import megamek.common.loaders.MekSummary;
-import megamek.common.loaders.MekSummaryCache;
 import megamek.common.Player;
-import megamek.common.units.UnitType;
 import megamek.common.alphaStrike.AlphaStrikeElement;
 import megamek.common.alphaStrike.conversion.ASConverter;
 import megamek.common.annotations.Nullable;
 import megamek.common.enums.SkillLevel;
+import megamek.common.loaders.MekSummary;
+import megamek.common.loaders.MekSummaryCache;
+import megamek.common.options.GameOptions;
+import megamek.common.units.Entity;
+import megamek.common.units.UnitType;
+import megamek.common.universe.Ranks;
 import megamek.logging.MMLogger;
 
 /**
@@ -103,6 +109,10 @@ public class ForceGeneratorViewUi implements ActionListener {
     private JLabel lblRating;
     private JScrollPane paneForceTree;
     private JTree forceTree;
+    private JTextField txtSearch;
+    private JLabel lblSearchStatus;
+    private final List<TreePath> searchMatches = new ArrayList<>();
+    private int searchIndex = -1;
 
     private JTable tblChosen;
     private ChosenEntityModel modelChosen;
@@ -122,8 +132,30 @@ public class ForceGeneratorViewUi implements ActionListener {
     }
 
     private void initUi() {
+        forceTree = new JTree(new ForceTreeModel(null));
+        forceTree.setCellRenderer(new UnitRenderer());
+        // JTree setRowHeight(0) the height for each row is determined by the renderer
+        forceTree.setRowHeight(0);
+        forceTree.setVisibleRowCount(12);
+        forceTree.addTreeExpansionListener(new TreeExpansionListener() {
+            @Override
+            public void treeCollapsed(TreeExpansionEvent evt) {
 
-        rightPanel = new JPanel();
+            }
+
+            @Override
+            public void treeExpanded(TreeExpansionEvent evt) {
+                if (forceTree.getPreferredSize().getWidth() > paneForceTree.getSize().getWidth()) {
+                    rightPanel.setMinimumSize(
+                          new Dimension(forceTree.getMinimumSize().width, rightPanel.getMinimumSize().height));
+                    rightPanel.setPreferredSize(
+                          new Dimension(forceTree.getPreferredSize().width, rightPanel.getPreferredSize().height));
+                }
+                rightPanel.revalidate();
+            }
+        });
+        forceTree.addMouseListener(treeMouseListener);
+
         rightPanel = new JPanel(new GridBagLayout());
         GridBagConstraints gbc = new GridBagConstraints();
         gbc.anchor = GridBagConstraints.NORTHWEST;
@@ -154,73 +186,53 @@ public class ForceGeneratorViewUi implements ActionListener {
         gbc.gridy = 2;
         rightPanel.add(lblRating, gbc);
 
+        // ToE search bar: a live, non-destructive find that highlights and steps through nodes
+        // whose unit name, pilot, ship name, or formation/cluster name matches the query.
         gbc.gridx = 0;
         gbc.gridy = 3;
-        gbc.gridwidth = 3;
-        gbc.weightx = 1.0;
-        gbc.weighty = 1.0;
-        paneForceTree = new JScrollPane();
-        paneForceTree.setViewportView(forceTree);
-        paneForceTree.setPreferredSize(new Dimension(600, 800));
-        paneForceTree.setMinimumSize(new Dimension(600, 800));
-        rightPanel.add(paneForceTree, gbc);
+        rightPanel.add(new JLabel(Messages.getString("ForceGeneratorDialog.search")), gbc);
 
-        forceTree = new JTree(new ForceTreeModel(null));
-        forceTree.setCellRenderer(new UnitRenderer());
-        // JTree setRowHeight(0) the height for each row is determined by the renderer
-        forceTree.setRowHeight(0);
-        forceTree.setVisibleRowCount(12);
-        forceTree.addTreeExpansionListener(new TreeExpansionListener() {
+        JPanel searchPanel = new JPanel(new FlowLayout(FlowLayout.LEFT, 5, 0));
+        txtSearch = new JTextField(18);
+        txtSearch.setToolTipText(Messages.getString("ForceGeneratorDialog.search.tooltip"));
+        JButton btnSearchPrev = new JButton(Messages.getString("ForceGeneratorDialog.search.prev"));
+        JButton btnSearchNext = new JButton(Messages.getString("ForceGeneratorDialog.search.next"));
+        lblSearchStatus = new JLabel();
+        searchPanel.add(txtSearch);
+        searchPanel.add(btnSearchPrev);
+        searchPanel.add(btnSearchNext);
+        searchPanel.add(lblSearchStatus);
+        gbc.gridx = 1;
+        gbc.gridy = 3;
+        gbc.gridwidth = 2;
+        gbc.fill = GridBagConstraints.HORIZONTAL;
+        rightPanel.add(searchPanel, gbc);
+        gbc.gridwidth = 1;
+        gbc.fill = GridBagConstraints.NONE;
+
+        txtSearch.getDocument().addDocumentListener(new DocumentListener() {
             @Override
-            public void treeCollapsed(TreeExpansionEvent evt) {
-
+            public void insertUpdate(DocumentEvent e) {
+                runToeSearch();
             }
 
             @Override
-            public void treeExpanded(TreeExpansionEvent evt) {
-                if (forceTree.getPreferredSize().getWidth() > paneForceTree.getSize().getWidth()) {
-                    rightPanel.setMinimumSize(
-                          new Dimension(forceTree.getMinimumSize().width, rightPanel.getMinimumSize().height));
-                    rightPanel.setPreferredSize(
-                          new Dimension(forceTree.getPreferredSize().width, rightPanel.getPreferredSize().height));
-                }
-                rightPanel.revalidate();
+            public void removeUpdate(DocumentEvent e) {
+                runToeSearch();
+            }
+
+            @Override
+            public void changedUpdate(DocumentEvent e) {
+                runToeSearch();
             }
         });
-        forceTree.addMouseListener(treeMouseListener);
-
-        rightPanel = new JPanel(new GridBagLayout());
-        gbc = new GridBagConstraints();
-        gbc.anchor = GridBagConstraints.NORTHWEST;
-        gbc.fill = GridBagConstraints.NONE;
-        gbc.insets = new Insets(5, 5, 5, 5);
+        // Enter in the field, and the buttons, step through matches.
+        txtSearch.addActionListener(e -> gotoToeMatch(1));
+        btnSearchNext.addActionListener(e -> gotoToeMatch(1));
+        btnSearchPrev.addActionListener(e -> gotoToeMatch(-1));
 
         gbc.gridx = 0;
-        gbc.gridy = 0;
-        rightPanel.add(new JLabel(Messages.getString("ForceGeneratorDialog.organization")), gbc);
-        lblOrganization = new JLabel();
-        gbc.gridx = 1;
-        gbc.gridy = 0;
-        rightPanel.add(lblOrganization, gbc);
-
-        gbc.gridx = 0;
-        gbc.gridy = 1;
-        rightPanel.add(new JLabel(Messages.getString("ForceGeneratorDialog.faction")), gbc);
-        lblFaction = new JLabel();
-        gbc.gridx = 1;
-        gbc.gridy = 1;
-        rightPanel.add(lblFaction, gbc);
-
-        gbc.gridx = 0;
-        gbc.gridy = 2;
-        rightPanel.add(new JLabel(Messages.getString("ForceGeneratorDialog.rating")), gbc);
-        lblRating = new JLabel();
-        gbc.gridx = 1;
-        gbc.gridy = 2;
-        rightPanel.add(lblRating, gbc);
-
-        gbc.gridx = 0;
-        gbc.gridy = 3;
+        gbc.gridy = 4;
         gbc.gridwidth = 3;
         gbc.weightx = 1.0;
         gbc.weighty = 1.0;
@@ -290,6 +302,13 @@ public class ForceGeneratorViewUi implements ActionListener {
                 e.setDone(true);
                 e.setUnloaded(true);
             }
+            if (e.getForceString().isBlank()) {
+                logger.warn("[ForceGen][ToE] add-to-game '{}' has a BLANK force string; ToE structure will be lost",
+                      e.getShortName());
+            } else {
+                logger.debug("[ForceGen][ToE] add-to-game '{}' forceString='{}'", e.getShortName(),
+                      e.getForceString());
+            }
             entities.add(e);
         }
         c.sendAddEntity(entities);
@@ -355,19 +374,106 @@ public class ForceGeneratorViewUi implements ActionListener {
 
     private void setGeneratedForce(ForceDescriptor fd) {
         forceTree.setModel(new ForceTreeModel(fd));
+        // A new force invalidates the previous search; clearing the field re-runs the (now empty)
+        // search via the document listener, resetting the match list and status.
+        if (txtSearch != null) {
+            txtSearch.setText("");
+        }
 
         if (null != fd) {
             lblOrganization.setText(Ruleset.findRuleset(fd).getEschelonNames(fd.getUnitType() == null
                   ? ""
                   : UnitType.getTypeName(fd.getUnitType())).get(fd.getEchelonCode()));
             lblFaction.setText(RATGenerator.getInstance().getFaction(fd.getFaction()).getName(fd.getYear()));
-            lblRating.setText(SkillLevel.values()[fd.getExperience()].toString()
+            lblRating.setText(SkillLevel.values()[fd.getExperience() + SkillLevel.GREEN.ordinal()].toString()
                   + ((fd.getRating() == null) ? "" : "/" + fd.getRating()));
         } else {
             lblOrganization.setText("");
             lblFaction.setText("");
             lblRating.setText("");
         }
+    }
+
+    /**
+     * Runs the order-of-battle search against the current field text and jumps to the first match. Matches are
+     * case-insensitive substring hits on each node's unit name/chassis/model, pilot name, ship fluff name, and
+     * formation/cluster name. Non-destructive: the tree is only expanded and selected, never rebuilt or filtered.
+     */
+    private void runToeSearch() {
+        searchMatches.clear();
+        searchIndex = -1;
+        String query = txtSearch.getText().trim().toLowerCase();
+        Object root = forceTree.getModel().getRoot();
+        if (!query.isEmpty() && (root instanceof ForceDescriptor rootForce)) {
+            collectToeMatches(rootForce, new ArrayList<>(), query, searchMatches);
+        }
+        if (searchMatches.isEmpty()) {
+            forceTree.clearSelection();
+            lblSearchStatus.setText(query.isEmpty()
+                  ? ""
+                  : Messages.getString("ForceGeneratorDialog.search.noMatches"));
+        } else {
+            gotoToeMatch(1);
+        }
+    }
+
+    /** Depth-first walk that records the {@link TreePath} of every node matching {@code query}. */
+    private void collectToeMatches(ForceDescriptor node, List<Object> ancestors, String query,
+          List<TreePath> out) {
+        List<Object> path = new ArrayList<>(ancestors);
+        path.add(node);
+        if (matchesToeQuery(node, query)) {
+            out.add(new TreePath(path.toArray()));
+        }
+        for (Object child : node.getAllChildren()) {
+            if (child instanceof ForceDescriptor childForce) {
+                collectToeMatches(childForce, path, query, out);
+            }
+        }
+    }
+
+    /** True when {@code query} (already lower-case) is a substring of any of the node's display text. */
+    private boolean matchesToeQuery(ForceDescriptor fd, String query) {
+        StringBuilder haystack = new StringBuilder();
+        appendSearchable(haystack, fd.parseName());
+        appendSearchable(haystack, fd.getDescription());
+        appendSearchable(haystack, fd.getFluffName());
+        appendSearchable(haystack, fd.getModelName());
+        if (fd.getCo() != null) {
+            appendSearchable(haystack, fd.getCo().getName());
+        }
+        if (fd.getXo() != null) {
+            appendSearchable(haystack, fd.getXo().getName());
+        }
+        Entity en = fd.getEntity();
+        if (en != null) {
+            appendSearchable(haystack, en.getShortName());
+            appendSearchable(haystack, en.getChassis());
+            appendSearchable(haystack, en.getModel());
+        }
+        return haystack.toString().toLowerCase().contains(query);
+    }
+
+    private static void appendSearchable(StringBuilder haystack, String value) {
+        if ((value != null) && !value.isBlank()) {
+            haystack.append(value).append(' ');
+        }
+    }
+
+    /**
+     * Steps the selection to the next ({@code delta > 0}) or previous ({@code delta < 0}) match, wrapping around,
+     * scrolls it into view, and updates the "k / N" status. No-op with no matches.
+     */
+    private void gotoToeMatch(int delta) {
+        if (searchMatches.isEmpty()) {
+            return;
+        }
+        int size = searchMatches.size();
+        searchIndex = (((searchIndex + delta) % size) + size) % size;
+        TreePath path = searchMatches.get(searchIndex);
+        forceTree.setSelectionPath(path);
+        forceTree.scrollPathToVisible(path);
+        lblSearchStatus.setText((searchIndex + 1) + " / " + size);
     }
 
     private final MouseListener treeMouseListener = new MouseAdapter() {
@@ -562,8 +668,59 @@ public class ForceGeneratorViewUi implements ActionListener {
     }
 
     private static class UnitRenderer extends DefaultTreeCellRenderer {
+        // Fallback rank-int -> short title used when the ruleset XML did not set an explicit
+        // title= attribute on the <co>/<xo> element (the typical case — mm-data only sets title
+        // for special honorifics like "Aide" or "ovKhan"). Values match the integer constants in
+        // mm-data/data/forcegenerator/faction_rules/constants.txt. Where IS and Clan share the
+        // same int the IS officer title is preferred since rulesets that need Clan/CS variants
+        // already populate title= explicitly.
+        private static final Map<Integer, String> DEFAULT_RANK_TITLES = Map.ofEntries(
+              Map.entry(12, "Sergeant"),
+              Map.entry(32, "Lieutenant JG"),
+              Map.entry(33, "Lieutenant"),
+              Map.entry(34, "Captain"),
+              Map.entry(35, "Major"),
+              Map.entry(37, "Lt. Colonel"),
+              Map.entry(38, "Colonel"),
+              Map.entry(39, "Lt. General"),
+              Map.entry(42, "Maj. General"),
+              Map.entry(43, "General"),
+              Map.entry(46, "Loremaster"),
+              Map.entry(47, "saKhan"),
+              Map.entry(48, "Khan"));
+
         public UnitRenderer() {
 
+        }
+
+        /**
+         * Builds the "Captain " / "CO: " prefix that precedes a commander's name in the tree. Resolution order:
+         * <ol>
+         *   <li>An explicit {@code title=} attribute from the ruleset XML (honorifics like "Aide", "ovKhan").</li>
+         *   <li>The faction-specific rank from {@code data/universe/ranks.xml} (e.g. "Tai-i" for DCMS, "Star Captain"
+         *       for CLAN) — looked up using the ratgen rank-system integer the ruleset assigned to this force.</li>
+         *   <li>A generic IS-leaning rank-int → title map as a safety net if {@code ranks.xml} is unavailable.</li>
+         *   <li>The {@code "CO: "} / {@code "XO: "} role marker as a last resort.</li>
+         * </ol>
+         */
+        private static String commanderPrefix(CrewDescriptor crew, String roleFallback) {
+            String title = crew.getTitle();
+            if (title != null && !title.isBlank()) {
+                return title.endsWith(" ") ? title : title + " ";
+            }
+            Integer rankSystemIndex = (crew.getAssignment() == null)
+                  ? null : crew.getAssignment().getRankSystem();
+            String factionRankName = Ranks.getInstance()
+                  .resolveRankName(rankSystemIndex, crew.getRank())
+                  .orElse(null);
+            if (factionRankName != null && !factionRankName.isBlank()) {
+                return factionRankName + " ";
+            }
+            String rankName = DEFAULT_RANK_TITLES.get(crew.getRank());
+            if (rankName != null) {
+                return rankName + " ";
+            }
+            return roleFallback + ": ";
         }
 
         @Override
@@ -580,22 +737,32 @@ public class ForceGeneratorViewUi implements ActionListener {
 
             ForceDescriptor fd = (ForceDescriptor) value;
             if (fd.isElement()) {
-                StringBuilder name = new StringBuilder();
-                String uname;
+                String commander;
                 if (fd.getCo() == null) {
-                    name.append("<font color='red'>")
-                          .append(Messages.getString("ForceGeneratorDialog.noCrew"))
-                          .append("</font>");
+                    commander = "<font color='red'>"
+                          + Messages.getString("ForceGeneratorDialog.noCrew") + "</font>";
                 } else {
-                    name.append(fd.getCo().getName());
-                    name.append(" (").append(fd.getCo().getGunnery()).append("/").append(fd.getCo().getPiloting())
-                          .append(")");
+                    commander = fd.getCo().getName()
+                          + " (" + fd.getCo().getGunnery() + "/" + fd.getCo().getPiloting() + ")";
                 }
-                uname = "<i>" + fd.getModelName() + "</i>";
-                if (fd.getFluffName() != null) {
-                    uname += "<br /><i>" + fd.getFluffName() + "</i>";
+                Entity en = fd.getEntity();
+                if ((en != null) && en.isLargeCraft()) {
+                    // Large craft (WarShip, DropShip, JumpShip, Space Station) read better
+                    // ship-first, the way a fleet roster is listed: ship name and class on
+                    // the top line, commander (skill) beneath.
+                    String shipClass = "<i>" + en.getChassis() + "</i>";
+                    String shipName = fd.getFluffName();
+                    String topLine = ((shipName != null) && !shipName.isBlank())
+                          ? "<b>" + shipName + "</b>, " + shipClass
+                          : shipClass;
+                    setText("<html>" + topLine + "<br />" + commander + "</html>");
+                } else {
+                    String uname = "<i>" + fd.getModelName() + "</i>";
+                    if (fd.getFluffName() != null) {
+                        uname += "<br /><i>" + fd.getFluffName() + "</i>";
+                    }
+                    setText("<html>" + commander + ", " + uname + "</html>");
                 }
-                setText("<html>" + name + ", " + uname + "</html>");
                 if (fd.getEntity() != null) {
                     try {
                         setIcon(new ImageIcon(MMStaticDirectoryManager.getMekTileset().imageFor(fd.getEntity())));
@@ -605,13 +772,29 @@ public class ForceGeneratorViewUi implements ActionListener {
                 }
             } else {
                 StringBuilder desc = new StringBuilder("<html>");
-                desc.append(fd.parseName()).append("<br />").append(fd.getDescription());
+                String parsedName = fd.parseName();
+                String description = fd.getDescription();
+                boolean hasName = parsedName != null && !parsedName.isBlank();
+                boolean hasDescription = description != null && !description.isBlank();
+                // Collapse "A Company" + "Heavy Mek Company" onto one row as
+                // "<b>A Company</b> (Heavy Mek Company)". Formation name is bolded so it pops at
+                // a glance when scrolling a battalion-sized tree; the descriptor (weight + unit
+                // type + role) is italicized to read as a supplementary label. When only one
+                // side is populated, it is rendered bold as the row's primary identifier.
+                if (hasName && hasDescription) {
+                    desc.append("<b>").append(parsedName).append("</b>")
+                          .append(" <i>(").append(description).append(")</i>");
+                } else if (hasName) {
+                    desc.append("<b>").append(parsedName).append("</b>");
+                } else if (hasDescription) {
+                    desc.append("<b>").append(description).append("</b>");
+                }
                 if (fd.getCo() != null) {
-                    desc.append("<br />").append(fd.getCo().getTitle() == null ? "CO: " : fd.getCo().getTitle());
+                    desc.append("<br />").append(commanderPrefix(fd.getCo(), "CO"));
                     desc.append(fd.getCo().getName());
                 }
                 if (fd.getXo() != null) {
-                    desc.append("<br />").append(fd.getXo().getTitle() == null ? "XO: " : fd.getXo().getTitle());
+                    desc.append("<br />").append(commanderPrefix(fd.getXo(), "XO"));
                     desc.append(fd.getXo().getName());
                 }
                 setText(desc.append("</html>").toString());

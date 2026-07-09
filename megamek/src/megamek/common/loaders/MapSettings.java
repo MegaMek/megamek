@@ -694,6 +694,7 @@ public class MapSettings implements Serializable {
         return boardBuildings;
     }
 
+    @Deprecated(since = "0.51.0", forRemoval = true)
     public void setBoardBuildings(ArrayList<BuildingTemplate> buildings) {
         boardBuildings = buildings;
     }
@@ -778,7 +779,7 @@ public class MapSettings implements Serializable {
                     if (remainingBoards.isEmpty()) {
                         boardsSelected.set(i, null);
                     } else if (remainingBoards.size() == 1) {
-                        boardsSelected.set(i, remainingBoards.get(0));
+                        boardsSelected.set(i, remainingBoards.getFirst());
                     } else {
                         String remBoards = String.join("\n", boards);
                         boardsSelected.set(i, MapSettings.BOARD_SURPRISE + remBoards);
@@ -804,6 +805,7 @@ public class MapSettings implements Serializable {
     /**
      * Checks, if the MapGenerator parameters are all valid. If not they are changed to valid values.
      */
+    @Deprecated(since = "0.51.0", forRemoval = true)
     public void validateMapGenParameters() {
         if (hilliness < 0) {
             hilliness = 0;
@@ -1324,6 +1326,7 @@ public class MapSettings implements Serializable {
         return minSandSpots;
     }
 
+    @Deprecated(since = "0.51.0", forRemoval = true)
     public void setMinSandSpots(int minSandSpots) {
         this.minSandSpots = minSandSpots;
     }
@@ -1332,6 +1335,7 @@ public class MapSettings implements Serializable {
         return maxSandSpots;
     }
 
+    @Deprecated(since = "0.51.0", forRemoval = true)
     public void setMaxSandSpots(int maxSandSpots) {
         this.maxSandSpots = maxSandSpots;
     }
@@ -1340,6 +1344,7 @@ public class MapSettings implements Serializable {
         return minSandSize;
     }
 
+    @Deprecated(since = "0.51.0", forRemoval = true)
     public void setMinSandSize(int minSandSize) {
         this.minSandSize = minSandSize;
     }
@@ -1348,6 +1353,7 @@ public class MapSettings implements Serializable {
         return maxSandSize;
     }
 
+    @Deprecated(since = "0.51.0", forRemoval = true)
     public void setMaxSandSize(int maxSandSize) {
         this.maxSandSize = maxSandSize;
     }
@@ -1356,6 +1362,7 @@ public class MapSettings implements Serializable {
         return minSnowSpots;
     }
 
+    @Deprecated(since = "0.51.0", forRemoval = true)
     public void setMinSnowSpots(int minSnowSpots) {
         this.minSnowSpots = minSnowSpots;
     }
@@ -1364,6 +1371,7 @@ public class MapSettings implements Serializable {
         return maxSnowSpots;
     }
 
+    @Deprecated(since = "0.51.0", forRemoval = true)
     public void setMaxSnowSpots(int maxSnowSpots) {
         this.maxSnowSpots = maxSnowSpots;
     }
@@ -1372,6 +1380,7 @@ public class MapSettings implements Serializable {
         return minSnowSize;
     }
 
+    @Deprecated(since = "0.51.0", forRemoval = true)
     public void setMinSnowSize(int minSnowSize) {
         this.minSnowSize = minSnowSize;
     }
@@ -1380,6 +1389,7 @@ public class MapSettings implements Serializable {
         return maxSnowSize;
     }
 
+    @Deprecated(since = "0.51.0", forRemoval = true)
     public void setMaxSnowSize(int maxSnowSize) {
         this.maxSnowSize = maxSnowSize;
     }
@@ -1388,6 +1398,7 @@ public class MapSettings implements Serializable {
         return minTundraSpots;
     }
 
+    @Deprecated(since = "0.51.0", forRemoval = true)
     public void setMinTundraSpots(int minTundraSpots) {
         this.minTundraSpots = minTundraSpots;
     }
@@ -1396,6 +1407,7 @@ public class MapSettings implements Serializable {
         return maxTundraSpots;
     }
 
+    @Deprecated(since = "0.51.0", forRemoval = true)
     public void setMaxTundraSpots(int maxTundraSpots) {
         this.maxTundraSpots = maxTundraSpots;
     }
@@ -1404,6 +1416,7 @@ public class MapSettings implements Serializable {
         return minTundraSize;
     }
 
+    @Deprecated(since = "0.51.0", forRemoval = true)
     public void setMinTundraSize(int minTundraSize) {
         this.minTundraSize = minTundraSize;
     }
@@ -1412,6 +1425,7 @@ public class MapSettings implements Serializable {
         return maxTundraSize;
     }
 
+    @Deprecated(since = "0.51.0", forRemoval = true)
     public void setMaxTundraSize(int maxTundraSize) {
         this.maxTundraSize = maxTundraSize;
     }
@@ -1420,6 +1434,7 @@ public class MapSettings implements Serializable {
         return minPlantedFieldSpots;
     }
 
+    @Deprecated(since = "0.51.0", forRemoval = true)
     public void setMinPlantedFieldSpots(int minPlantedFieldSpots) {
         this.minPlantedFieldSpots = minPlantedFieldSpots;
     }
@@ -1428,6 +1443,7 @@ public class MapSettings implements Serializable {
         return maxPlantedFieldSpots;
     }
 
+    @Deprecated(since = "0.51.0", forRemoval = true)
     public void setMaxPlantedFieldSpots(int maxPlantedFieldSpots) {
         this.maxPlantedFieldSpots = maxPlantedFieldSpots;
     }
@@ -1436,6 +1452,7 @@ public class MapSettings implements Serializable {
         return minPlantedFieldSize;
     }
 
+    @Deprecated(since = "0.51.0", forRemoval = true)
     public void setMinPlantedFieldSize(int minPlantedFieldSize) {
         this.minPlantedFieldSize = minPlantedFieldSize;
     }
@@ -1444,6 +1461,7 @@ public class MapSettings implements Serializable {
         return maxPlantedFieldSize;
     }
 
+    @Deprecated(since = "0.51.0", forRemoval = true)
     public void setMaxPlantedFieldSize(int maxPlantedFieldSize) {
         this.maxPlantedFieldSize = maxPlantedFieldSize;
     }
@@ -1882,6 +1900,7 @@ public class MapSettings implements Serializable {
         return medium;
     }
 
+    @Deprecated(since = "0.51.0", forRemoval = true)
     public static String getMediumName(int m) {
         return mediumNames[m];
     }

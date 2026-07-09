@@ -61,6 +61,7 @@ public enum EMI {
         return Messages.getString(name);
     }
 
+    @Deprecated(since = "0.51.0", forRemoval = true)
     public boolean isEMINone() {
         return this == EMI_NONE;
     }

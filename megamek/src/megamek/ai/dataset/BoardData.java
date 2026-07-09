@@ -35,8 +35,8 @@ package megamek.ai.dataset;
 import java.util.ArrayList;
 import java.util.List;
 
-import megamek.common.board.Board;
 import megamek.common.Hex;
+import megamek.common.board.Board;
 
 /**
  * Flexible container for board data using a map-based approach with enum keys.

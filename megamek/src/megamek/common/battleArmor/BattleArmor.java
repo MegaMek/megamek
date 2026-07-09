@@ -1,6 +1,6 @@
 /*
   Copyright (C) 2002-2004 Ben Mazur (bmazur@sev.org)
- * Copyright (C) 2003-2025 The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2003-2026 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -34,22 +34,15 @@
 
 package megamek.common.battleArmor;
 
-import java.io.Serial;
 import java.text.NumberFormat;
 import java.util.Arrays;
 import java.util.Vector;
 
 import megamek.client.ui.clientGUI.calculationReport.CalculationReport;
 import megamek.client.ui.clientGUI.calculationReport.DummyCalculationReport;
-import megamek.common.HitData;
-import megamek.common.LosEffects;
-import megamek.common.MPCalculationSetting;
-import megamek.common.RangeType;
-import megamek.common.SimpleTechLevel;
-import megamek.common.TechAdvancement;
+import megamek.common.*;
 import megamek.common.TechAdvancement.AdvancementPhase;
-import megamek.common.TechConstants;
-import megamek.common.ToHitData;
+import megamek.common.board.Coords;
 import megamek.common.compute.Compute;
 import megamek.common.cost.BattleArmorCostCalculator;
 import megamek.common.enums.AimingMode;
@@ -64,34 +57,18 @@ import megamek.common.planetaryConditions.Atmosphere;
 import megamek.common.planetaryConditions.PlanetaryConditions;
 import megamek.common.planetaryConditions.Wind;
 import megamek.common.rolls.TargetRoll;
-import megamek.common.units.Crew;
-import megamek.common.units.Entity;
-import megamek.common.units.EntityMovementMode;
-import megamek.common.units.EntityMovementType;
-import megamek.common.units.EntityWeightClass;
-import megamek.common.units.Infantry;
-import megamek.common.units.Mek;
-import megamek.common.units.Tank;
-import megamek.common.units.UnitType;
+import megamek.common.units.*;
 import megamek.common.weapons.attacks.InfantryAttack;
 import megamek.common.weapons.infantry.InfantryWeapon;
 import megamek.logging.MMLogger;
 
 /**
- * This class represents a squad or point of battle armor equipped infantry, sometimes referred to as "Elemental's".
- * Much of the behaviour of a battle armor unit is identical to that of an infantry platoon, and is rather different
- * from that of a Mek or Tank.
- * <p>
- * This was originally coded using the legacy programming style of putting constants first in tests so the compiler
- * catches the "= for ==" errors.
- *
- * @author Suvarov454@sourceforge.net (James A. Damour)
+ * This class represents a squad or point of battle armor equipped infantry, sometimes referred to as "Elementals".
  */
 public class BattleArmor extends Infantry {
+
     private static final MMLogger logger = MMLogger.create(BattleArmor.class);
 
-    @Serial
-    private static final long serialVersionUID = 4594311535026187825L;
     /*
      * Infantry have no critical slot limitations. IS squads usually have 4 men,
      * Clan points usually have 5. Have a location that represents the entire
@@ -169,9 +146,12 @@ public class BattleArmor extends Infantry {
     private int troopersShooting = 0;
 
     /**
-     * the number of troopers of this squad, dead or alive
+     * Number of troopers temporarily knocked out by Improved Magnetic Pulse (iATM IMP) missiles (IO IMP rules), and the
+     * number of rounds the effect lasts. Disabled troopers cannot shoot and each costs the unit 1 Ground/Jump MP, but
+     * are not destroyed; they recover when the effect ends.
      */
-    private int troopers = -1;
+    private int improvedMagneticPulseDisabledTroopers = 0;
+    private int improvedMagneticPulseDisabledRounds = 0;
 
     /**
      * The cost of this unit. This value should be set when the unit's file is read.
@@ -365,7 +345,7 @@ public class BattleArmor extends Infantry {
      */
     @Override
     public int locations() {
-        int retVal = getTroopers();
+        int retVal = getSquadSize();
         if (retVal == 0) {
             // Return one more than the maximum number of men in the unit.
             if (!isInitialized) {
@@ -385,18 +365,9 @@ public class BattleArmor extends Infantry {
      * Generate a new, blank, battle armor unit. Hopefully, we'll be loaded from somewhere.
      */
     public BattleArmor() {
-        // Instantiate the superclass.
-        super();
-
         setArmorType(EquipmentType.T_ARMOR_BA_STANDARD);
-
-        // BA are always one squad
-        squadCount = 1;
-
         // All Battle Armor squads are Clan until specified otherwise.
         setTechLevel(TechConstants.T_CLAN_TW);
-
-        // Construction complete.
         isInitialized = true;
     }
 
@@ -517,6 +488,9 @@ public class BattleArmor extends Infantry {
             mp = applyGravityEffectsOnMP(mp);
         }
 
+        // Troopers disabled by Improved Magnetic Pulse missiles each cost 1 Ground MP (IO IMP rules).
+        mp = Math.max(0, mp - improvedMagneticPulseDisabledTroopers);
+
         return mp;
     }
 
@@ -594,6 +568,9 @@ public class BattleArmor extends Infantry {
         if (!mpCalculationSetting.ignoreGravity()) {
             mp = applyGravityEffectsOnMP(mp);
         }
+
+        // Troopers disabled by Improved Magnetic Pulse missiles each cost 1 Jump MP (IO IMP rules).
+        mp = Math.max(0, mp - improvedMagneticPulseDisabledTroopers);
 
         return mp;
     }
@@ -827,20 +804,14 @@ public class BattleArmor extends Infantry {
      */
     @Override
     public int getOInternal(int loc) {
-        if (BattleArmor.LOC_SQUAD != loc) {
-            return super.getOInternal(loc);
-        }
-        return IArmorState.ARMOR_NA;
+        return BattleArmor.LOC_SQUAD == loc ? IArmorState.ARMOR_NA : super.getOInternal(loc);
     }
 
     @Override
     public int getOriginalTrooperCount() {
-        return troopers;
+        return squadSize;
     }
 
-    /**
-     * Set the troopers in the unit to the appropriate values.
-     */
     @Override
     public void autoSetInternal() {
         // No troopers in the squad location.
@@ -874,6 +845,7 @@ public class BattleArmor extends Infantry {
           throws LocationFullException {
         // Implement parent's behavior.
         super.addEquipment(mounted, loc, rearMounted);
+        addCritical(loc, new CriticalSlot(mounted));
 
         // Is the item a camo system equipment?
         String name = mounted.getType().getInternalName();
@@ -891,18 +863,7 @@ public class BattleArmor extends Infantry {
         if (!isInitialized) {
             return CLAN_NUM_OF_SLOTS;
         }
-        return Arrays.copyOf(isClan() ? CLAN_NUM_OF_SLOTS : IS_NUM_OF_SLOTS, troopers + 1);
-    }
-
-    /**
-     * Trooper's equipment dies when they do.
-     */
-    @Override
-    public boolean hasHittableCriticalSlots(int loc) {
-        if (LOC_SQUAD == loc) {
-            return false;
-        }
-        return super.hasHittableCriticalSlots(loc);
+        return Arrays.copyOf(isClan() ? CLAN_NUM_OF_SLOTS : IS_NUM_OF_SLOTS, squadSize + 1);
     }
 
     /**
@@ -912,6 +873,14 @@ public class BattleArmor extends Infantry {
     public void newRound(int roundNumber) {
         // Perform all base-class behavior.
         super.newRound(roundNumber);
+
+        // Recover troopers knocked out by Improved Magnetic Pulse missiles once the effect expires.
+        if (improvedMagneticPulseDisabledRounds > 0) {
+            improvedMagneticPulseDisabledRounds--;
+            if (improvedMagneticPulseDisabledRounds == 0) {
+                improvedMagneticPulseDisabledTroopers = 0;
+            }
+        }
 
         // If we're equipped with a Magnetic Mine
         // launcher, turn it to single shot mode.
@@ -938,14 +907,37 @@ public class BattleArmor extends Infantry {
         troopersShooting = troopersAlive;
     }
 
-    /**
-     * Get the number of men in the unit (before damage is applied).
-     *
-     * @see Infantry#getShootingStrength
-     */
     @Override
     public int getShootingStrength() {
-        return troopersShooting;
+        // Troopers disabled by Improved Magnetic Pulse missiles cannot contribute to weapons fire,
+        // so the cluster-hits column drops to the active trooper count (IO IMP rules).
+        return Math.max(0, troopersShooting - improvedMagneticPulseDisabledTroopers);
+    }
+
+    /**
+     * Records Improved Magnetic Pulse (iATM IMP) missile hits on this battle armor unit (IO IMP rules). Each warhead
+     * that hits disables one trooper through the End Phase of the following turn, capped at the number of troopers
+     * still alive. Additional hits have no effect beyond the missiles' normal damage, so a later hit never lowers the
+     * disabled count (it takes the higher of the existing and new count).
+     *
+     * @param missiles number of IMP warheads that hit this unit
+     *
+     * @return the number of troopers disabled
+     */
+    public int applyImprovedMagneticPulseTrooperDisable(int missiles) {
+        if (missiles <= 0) {
+            return 0;
+        }
+        // Take the higher count so a smaller follow-up salvo cannot let disabled troopers recover early.
+        improvedMagneticPulseDisabledTroopers = Math.max(improvedMagneticPulseDisabledTroopers,
+              Math.min(missiles, troopersShooting));
+        // 2 rounds so the effect lasts through the End Phase of the turn after the attack.
+        improvedMagneticPulseDisabledRounds = 2;
+        return improvedMagneticPulseDisabledTroopers;
+    }
+
+    public int getImprovedMagneticPulseDisabledTroopers() {
+        return improvedMagneticPulseDisabledTroopers;
     }
 
     public void setCost(int inC) {
@@ -1022,6 +1014,7 @@ public class BattleArmor extends Infantry {
      *
      * @return True if this BA can use a detachable weapon pack
      */
+    @Deprecated(since = "0.51.0", forRemoval = true)
     public boolean canMountDWP() {
         return (getOriginalWalkMP() >= 2)
               && (getWeightClass() >= EntityWeightClass.WEIGHT_MEDIUM);
@@ -1036,6 +1029,7 @@ public class BattleArmor extends Infantry {
         return stealthName;
     }
 
+    @Deprecated(since = "0.51.0", forRemoval = true)
     public String getCamoName() {
         return camoName;
     }
@@ -1045,6 +1039,7 @@ public class BattleArmor extends Infantry {
      *
      * @return shortStealthMod
      */
+    @Deprecated(since = "0.51.0", forRemoval = true)
     public int getShortStealthMod() {
         return shortStealthMod;
     }
@@ -1054,6 +1049,7 @@ public class BattleArmor extends Infantry {
      *
      * @return mediumStealthMod
      */
+    @Deprecated(since = "0.51.0", forRemoval = true)
     public int getMediumStealthMod() {
         return mediumStealthMod;
     }
@@ -1063,14 +1059,9 @@ public class BattleArmor extends Infantry {
      *
      * @return longStealthMod
      */
+    @Deprecated(since = "0.51.0", forRemoval = true)
     public int getLongStealthMod() {
         return longStealthMod;
-    }
-
-    // Only for ground vehicles and certain infantry
-    @Override
-    public boolean isEligibleForPavementOrRoadBonus() {
-        return false;
     }
 
     /**
@@ -1215,16 +1206,6 @@ public class BattleArmor extends Infantry {
         return weightClass;
     }
 
-    public int getTroopers() {
-        return troopers;
-    }
-
-    public void setTroopers(int troopers) {
-        this.troopers = troopers;
-        // this is also squad size
-        setSquadSize(troopers);
-    }
-
     public void setChassisType(int inCT) {
         chassisType = inCT;
     }
@@ -1235,11 +1216,6 @@ public class BattleArmor extends Infantry {
 
     @Override
     public boolean canAssaultDrop() {
-        return true;
-    }
-
-    @Override
-    public boolean isNuclearHardened() {
         return true;
     }
 
@@ -1415,7 +1391,7 @@ public class BattleArmor extends Infantry {
         if ((game != null) && game.getOptions().booleanOption(OptionsConstants.ADVANCED_TAC_OPS_BA_WEIGHT)) {
             return getTrooperTon();
         } else {
-            return troopers;
+            return squadSize;
         }
     }
 
@@ -1425,12 +1401,12 @@ public class BattleArmor extends Infantry {
 
     private double getTrooperTon() {
         return switch (getWeightClass()) {
-            case EntityWeightClass.WEIGHT_ULTRA_LIGHT -> troopers * 0.25;
-            case EntityWeightClass.WEIGHT_LIGHT -> troopers * 0.5;
-            case EntityWeightClass.WEIGHT_MEDIUM -> troopers * 1.0;
-            case EntityWeightClass.WEIGHT_HEAVY -> troopers * 1.5;
-            case EntityWeightClass.WEIGHT_ASSAULT -> troopers * 2.0;
-            default -> troopers;
+            case EntityWeightClass.WEIGHT_ULTRA_LIGHT -> squadSize * 0.25;
+            case EntityWeightClass.WEIGHT_LIGHT -> squadSize * 0.5;
+            case EntityWeightClass.WEIGHT_MEDIUM -> squadSize * 1.0;
+            case EntityWeightClass.WEIGHT_HEAVY -> squadSize * 1.5;
+            case EntityWeightClass.WEIGHT_ASSAULT -> squadSize * 2.0;
+            default -> squadSize;
         };
     }
 
@@ -1510,7 +1486,7 @@ public class BattleArmor extends Infantry {
             }
         }
         if (hasMyomerBooster()) {
-            damage += getTroopers() * 2;
+            damage += getSquadSize() * 2;
         }
 
         // we only track vibro claws at the squad level, so we have either 0, 1 or 2.
@@ -1518,11 +1494,6 @@ public class BattleArmor extends Infantry {
         damage += getVibroClaws();
 
         return damage;
-    }
-
-    @Override
-    public boolean isConventionalInfantry() {
-        return false;
     }
 
     @Override
@@ -1716,6 +1687,7 @@ public class BattleArmor extends Infantry {
         modularTurret = modular;
     }
 
+    @Deprecated(since = "0.51.0", forRemoval = true)
     public int getTotalCrits() {
         return (getArmCrits() * 2) + getBodyCrits() + getTurretCapacity();
     }
@@ -1782,14 +1754,20 @@ public class BattleArmor extends Infantry {
         }
     }
 
-    @Override
-    public boolean doomedInExtremeTemp() {
-        return false;
-    }
-
-    @Override
-    public boolean doomedInVacuum() {
-        return false;
+    /**
+     * Determines whether this Battle Armor squad is permitted to carry Disposable Weapons (TO:AuE p.116, Corrected
+     * Sixth Printing). A suit may only carry Disposable Weapons if it is also equipped with an anti-personnel weapon
+     * mount or two armored gloves. Note that armored gloves themselves carry the {@link MiscType#F_AP_MOUNT} flag, so a
+     * dedicated AP mount is identified as an {@code F_AP_MOUNT} item that is not an armored glove.
+     *
+     * @return {@code true} if this squad may carry Disposable Weapons
+     */
+    public boolean canCarryDisposableWeapons() {
+        boolean hasAntiPersonnelMount = getMisc().stream()
+              .map(Mounted::getType)
+              .anyMatch(type -> type.hasFlag(MiscType.F_AP_MOUNT) && !type.hasFlag(MiscType.F_ARMORED_GLOVE));
+        boolean hasTwoArmoredGloves = countWorkingMisc(MiscType.F_ARMORED_GLOVE) >= 2;
+        return hasAntiPersonnelMount || hasTwoArmoredGloves;
     }
 
     /**
@@ -1830,33 +1808,35 @@ public class BattleArmor extends Infantry {
     }
 
     /**
+     * Returns the Mounted for the manipulator in the given location of this BattleArmor squad or null if there is none.
+     * Note that the location should be MOUNT_LOC_LEFT_ARM or MOUNT_LOC_RIGHT_ARM.
+     *
+     * @throws IllegalArgumentException for locations that are not one of the arms
+     */
+    public MiscMounted getManipulator(int mountLocation) {
+        if (mountLocation != MOUNT_LOC_RIGHT_ARM && mountLocation != MOUNT_LOC_LEFT_ARM) {
+            throw new IllegalArgumentException("Invalid mount location");
+        }
+        return getMisc().stream()
+              .filter(m -> m.getType().hasFlag(MiscType.F_BA_MANIPULATOR))
+              .filter(m -> m.getBaMountLoc() == mountLocation)
+              .findFirst().orElse(null);
+    }
+
+    /**
      * Returns the <code>Mounted</code> for the manipulator mounted in the left arm of this <code>BattleArmor</code>
      * squad.
-     *
      */
     public Mounted<?> getLeftManipulator() {
-        for (Mounted<?> m : getMisc()) {
-            if (m.getType().hasFlag(MiscType.F_BA_MANIPULATOR)
-                  && (m.getBaMountLoc() == MOUNT_LOC_LEFT_ARM)) {
-                return m;
-            }
-        }
-        return null;
+        return getManipulator(MOUNT_LOC_LEFT_ARM);
     }
 
     /**
      * Returns the <code>Mounted</code> for the manipulator mounted in the right arm of this <code>BattleArmor</code>
      * squad.
-     *
      */
     public Mounted<?> getRightManipulator() {
-        for (Mounted<?> m : getMisc()) {
-            if (m.getType().hasFlag(MiscType.F_BA_MANIPULATOR)
-                  && (m.getBaMountLoc() == MOUNT_LOC_RIGHT_ARM)) {
-                return m;
-            }
-        }
-        return null;
+        return getManipulator(MOUNT_LOC_RIGHT_ARM);
     }
 
     public boolean isClanExoWithoutHarjel() {
@@ -1886,19 +1866,9 @@ public class BattleArmor extends Infantry {
         return toReturn.toString();
     }
 
-    /**
-     * Used to determine the draw priority of different Entity subclasses. This allows different unit types to always be
-     * draw above/below other types.
-     *
-     */
     @Override
     public int getSpriteDrawPriority() {
         return 2;
-    }
-
-    @Override
-    protected boolean isFieldWeapon(Mounted<?> equipment) {
-        return false;
     }
 
     @Override
@@ -1932,8 +1902,96 @@ public class BattleArmor extends Infantry {
         return 5;
     }
 
+    /**
+     * Returns true when the entity has a MiscType equipment of the given internalName, regardless of its state, in the
+     * given mount location (arm/body...). When available, use EquipmentTypeLookup internal names (or add one when it is
+     * not yet used for a MiscType). Note that any internal name, even of weapons, can be given but this method only
+     * searches misc equipment and will not find weapons.
+     *
+     * @param internalName The internal name of the misc, e.g. EquipmentTypeLookup.BA_MYOMER_BOOSTER
+     * @param location     The location, e.g. BattleArmor.MOUNT_LOC_LEFT_ARM
+     *
+     * @return True when the entity has a MiscType equipment of the given internalName in the given location
+     *
+     * @see MiscType
+     * @see EquipmentTypeLookup
+     */
+    public boolean hasMiscInMountLocation(String internalName, int location) {
+        return miscList.stream()
+              .filter(misc -> misc.getBaMountLoc() == location)
+              .anyMatch(misc -> misc.is(internalName));
+    }
+
+
     @Override
-    public int getRecoveryTime() {
-        return 10;
+    public boolean canChangeSecondaryFacing() {
+        return !getAlreadyTwisted();
+    }
+
+    @Override
+    public boolean isSecondaryArcWeapon(int wn) {
+        return false;
+    }
+
+    @Override
+    public boolean isLocationProhibited(Coords c, int testBoardId, int currElevation) {
+        if (!game.hasBoardLocation(c, testBoardId)) {
+            return true;
+        }
+
+        Hex hex = game.getHex(c, testBoardId);
+        // Taharqa: waiting to hear back from Welshie, but I am going to assume that
+        // units pulling artillery
+        // should be treated as wheeled rather than motorized because otherwise
+        // mechanized units face fewer
+        // terrain restrictions when pulling field artillery
+
+        if (hex.containsAnyTerrainOf(Terrains.IMPASSABLE, Terrains.MAGMA)) {
+            return true;
+        }
+        if (hex.containsTerrain(Terrains.SPACE) && doomedInSpace()) {
+            return true;
+        }
+
+        if (isHidden()) {
+            if ((hex.containsTerrain(Terrains.PAVEMENT) || hex.containsTerrain(Terrains.ROAD)) &&
+                  (!hex.containsTerrain(Terrains.BUILDING) && !hex.containsTerrain(Terrains.RUBBLE))) {
+                return true;
+            }
+            if ((hex.terrainLevel(Terrains.BRIDGE_ELEV) == currElevation) && hex.containsTerrain(Terrains.BRIDGE)) {
+                return true;
+            }
+            if (hex.containsTerrain(Terrains.WATER) && (currElevation == 0)) {
+                return true;
+            }
+        }
+
+        if (getMovementMode().isHover()) {
+            if (hex.containsTerrain(Terrains.WOODS) ||
+                  hex.containsTerrain(Terrains.JUNGLE) ||
+                  (hex.terrainLevel(Terrains.ROUGH) > 1) ||
+                  (hex.terrainLevel(Terrains.RUBBLE) > 5)) {
+                return true;
+            }
+        }
+
+        if ((hex.terrainLevel(Terrains.WATER) <= 0) &&
+              getMovementMode().isSubmarine()) {
+            return true;
+        }
+
+        if (currElevation < 0) {
+            if (!getMovementMode().isUMUInfantry() && !getMovementMode().isSubmarine()) {
+                return true;
+            }
+        }
+
+        if (hex.hasDepth1WaterOrDeeper() && !hex.containsTerrain(Terrains.ICE)) {
+            return !getMovementMode().isHover() &&
+                  !getMovementMode().isUMUInfantry() &&
+                  !getMovementMode().isSubmarine() &&
+                  !getMovementMode().isVTOL();
+        }
+        return false;
     }
 }

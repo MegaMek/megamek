@@ -150,6 +150,7 @@ public class ASGame extends AbstractGame {
         return new Report(messageId);
     }
 
+    @Deprecated(since = "0.51.0", forRemoval = true)
     private boolean isSupportedUnitType(InGameObject object) {
         return object instanceof AlphaStrikeElement;
     }

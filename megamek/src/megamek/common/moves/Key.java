@@ -39,11 +39,11 @@ public record Key(Coords coords, int facing, int type) {
 
     @Override
     public boolean equals(final Object obj) {
-        if (!(obj instanceof Key s1)) {
+        if (!(obj instanceof Key(Coords coords1, int facing1, int type1))) {
             return false;
         }
 
-        return (type == s1.type) && (facing == s1.facing) && coords.equals(s1.coords);
+        return (type == type1) && (facing == facing1) && coords.equals(coords1);
     }
 
 }

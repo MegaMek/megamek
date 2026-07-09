@@ -47,6 +47,7 @@ public final class MMConstants extends SuiteConstants {
     public static final String PROJECT_NAME = "MegaMek";
     public static final String MUL_URL_PREFIX = "http://www.masterunitlist.info/Unit/Details/";
     public static final String BT_URL_SHRAPNEL = "https://bg.battletech.com/shrapnel/";
+    public static final String DISCORD_LINK = "https://discord.gg/megamek";
     /**
      * When this text is found in the source field, the Mek View will display a link to {@link #BT_URL_SHRAPNEL}
      */
@@ -71,11 +72,13 @@ public final class MMConstants extends SuiteConstants {
     public static final String HISTORICAL_ETHNICITY_FILE = Paths.get("data/names/historicalEthnicity.csv").toString();
     public static final String GIVEN_NAME_MALE_FILE = Paths.get("data/names/maleGivenNames.csv").toString();
     public static final String SURNAME_FILE = Paths.get("data/names/surnames.csv").toString();
-    public static final String BOT_README_FILE_PATH = Paths.get("docs/help/en/princess/PrincessBotDocumentation.html")
+    public static final String BOT_README_FILE_PATH = Paths.get("docs/MegaMek/princess/PrincessBotDocumentation.html")
           .toString();
-    public static final String BOARD_README_FILE_PATH = Paths.get("docs/Map Editor-readme.txt").toString();
-    public static final String MEGAMEK_README_FILE_PATH = Paths.get("docs/mm-help.txt.html").toString();
-    public static final String USER_DIR_README_FILE = Paths.get("docs/help/en/UserDir/UserDirHelp.html").toString();
+    public static final String BOARD_README_FILE_PATH = Paths.get("docs/Customization/Map Editor-readme.txt")
+          .toString();
+    public static final String MEGAMEK_README_FILE_PATH = Paths.get("docs/MegaMek/mm-help.txt.html").toString();
+    public static final String USER_DIR_README_FILE = Paths.get("docs/Customization/UserDir/UserDirHelp.html")
+          .toString();
     public static final String USER_NAME_FACTIONS_DIRECTORY_PATH = Paths.get("userdata/data/names/factions/")
           .toString();
     public static final String USER_CALLSIGN_FILE_PATH = Paths.get("userdata/data/names/callsigns.csv").toString();
@@ -87,6 +90,7 @@ public final class MMConstants extends SuiteConstants {
           .toString();
     public static final String USER_SURNAME_FILE = Paths.get("userdata/data/names/surnames.csv").toString();
     public static final String ERAS_FILE_PATH = Paths.get("data/universe/eras.xml").toString();
+    public static final String RANKS_FILE_PATH = Paths.get("data/universe/ranks.xml").toString();
     public static final String USER_LOADOUTS_DIR = Paths.get("userdata/data/").toString();
     public static final String FACTIONS_DIR = Paths.get("data/universe/factions").toString();
     public static final String COMMANDS_DIR = Paths.get("data/universe/commands").toString();
@@ -124,6 +128,11 @@ public final class MMConstants extends SuiteConstants {
     public static final int TSEMP_EFFECT_NONE = 0;
     public static final int TSEMP_EFFECT_INTERFERENCE = 1;
     public static final int TSEMP_EFFECT_SHUTDOWN = 2;
+
+    // EMP Mine Effect Constants (Tactical Operations: Advanced Rules)
+    public static final int EMP_EFFECT_NONE = 0;
+    public static final int EMP_EFFECT_INTERFERENCE = 1;
+    public static final int EMP_EFFECT_SHUTDOWN = 2;
     // endregion Magic Numbers That Should Be Enums
 
     public static final String CL_KEY_FILE_EXTENSION_BOARD = ".board";

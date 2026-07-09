@@ -207,6 +207,7 @@ public class BLKLargeSupportTankFile extends BLKFile implements IMekLoader {
             }
         }
         loadQuirks(t);
+        loadSlotlessEquipment(t);
 
         resetCrew(t);
 

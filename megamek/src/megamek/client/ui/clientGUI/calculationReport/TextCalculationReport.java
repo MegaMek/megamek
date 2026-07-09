@@ -146,17 +146,17 @@ public class TextCalculationReport implements CalculationReport {
         int calcBegin = calculationBeginColumn();
         for (ReportLine line : reportLines) {
             if (line.lineType == LineType.LINE) {
-                result.append(" ".repeat(LINE_START_SPACER)).append(line.content1);
-                result.append(" ".repeat(calcBegin - line.content1.length() - LINE_START_SPACER)).append(line.content2);
-                result.append(" ".repeat(width - line.content3.length() - calcBegin - line.content2.length()))
+                result.repeat(" ", LINE_START_SPACER).append(line.content1);
+                result.repeat(" ", calcBegin - line.content1.length() - LINE_START_SPACER).append(line.content2);
+                result.repeat(" ", width - line.content3.length() - calcBegin - line.content2.length())
                       .append(line.content3);
             } else if (line.lineType == LineType.SUBHEADER) {
                 result.append(line.content1);
             } else if (line.lineType == LineType.HEADER) {
                 result.append(line.content1).append(System.lineSeparator());
-                result.append("-".repeat(line.content1.length()));
+                result.repeat("-", line.content1.length());
             } else {
-                result.append(" ".repeat(width - resultWidth)).append("-".repeat(resultWidth));
+                result.repeat(" ", width - resultWidth).repeat("-", resultWidth);
             }
             result.append(System.lineSeparator());
         }

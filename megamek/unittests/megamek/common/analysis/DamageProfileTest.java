@@ -204,6 +204,20 @@ class DamageProfileTest {
     }
 
     @Test
+    void testArcherRearLasersCoverTheRearSectors() throws EntityLoadingException {
+        Entity archer = loadUnit("Archer ARC-2R.mtf");
+        DamageProfile profile = DamageProfile.of(archer, false);
+
+        // The ARC-2R carries two rear-mounted medium lasers (long range 9). The TW rear arc spans
+        // all three rear hexsides, so every rear sector must register them - this is exactly the
+        // case a spine-only arc probe misses, because the rear arc's boundaries run along spines.
+        assertEquals(9, profile.arcSummary(3).reach(), "Rear sector sees the rear lasers");
+        assertTrue(profile.arcSummary(2).reach() >= 9, "Rear-right sector sees the rear lasers");
+        assertTrue(profile.arcSummary(4).reach() >= 9, "Rear-left sector sees the rear lasers");
+        assertTrue(profile.arcSummary(3).maximumAverage() > 0, "Rear arc carries real damage");
+    }
+
+    @Test
     void testAtlasArcSummariesReflectRearLasers() throws EntityLoadingException {
         Entity atlas = loadUnit("Atlas AS7-D.mtf");
         DamageProfile profile = DamageProfile.of(atlas, false);

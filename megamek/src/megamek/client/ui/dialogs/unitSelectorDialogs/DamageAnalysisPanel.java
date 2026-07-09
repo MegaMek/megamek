@@ -47,12 +47,14 @@ import javax.swing.UIManager;
 import megamek.client.ui.Messages;
 import megamek.client.ui.util.UIUtil;
 import megamek.common.analysis.DamageProfile;
+import megamek.common.analysis.DamageProfile.ArcSummary;
 import megamek.common.annotations.Nullable;
 import megamek.common.units.Entity;
 
 /**
- * A panel that renders a unit's damage-versus-range analysis chart from its {@link DamageProfile}:
- * the maximum, expected (to-hit weighted), and sustained (heat-balanced) damage curves.
+ * A panel that renders a unit's damage analysis from its {@link DamageProfile} as three charts:
+ * a Damage vs Range curve chart (maximum, expected, and heat-sustained damage), a Damage per
+ * Direction radar, and a Weapon Reach radar.
  *
  * <p>Shared by the unit viewers of MegaMek and MegaMekLab: it is a tab in
  * {@link EntityViewPane} (both unit selectors), and MegaMekLab's editor preview can mount the
@@ -64,17 +66,32 @@ import megamek.common.units.Entity;
  */
 public class DamageAnalysisPanel extends JPanel {
 
-    private static final Color MAX_DAMAGE_COLOR = new Color(76, 175, 80);      // green
-    private static final Color EXPECTED_DAMAGE_COLOR = new Color(211, 84, 66); // red
+    private static final Color MAX_DAMAGE_COLOR = new Color(76, 175, 80);        // green
+    private static final Color EXPECTED_DAMAGE_COLOR = new Color(211, 84, 66);   // red
     private static final Color SUSTAINED_DAMAGE_COLOR = new Color(66, 106, 211); // blue
+    private static final Color MEDIUM_BAND_COLOR = new Color(150, 140, 40);      // olive
+    private static final Color REACH_COLOR = new Color(230, 190, 40);            // yellow
     private static final int FILL_ALPHA = 70;
+
+    /** Subtle facing-sector tints for the radars: front, front-right, rear-right, rear, rear-left, front-left. */
+    private static final Color[] SECTOR_TINTS = {
+          new Color(66, 133, 244, 26),   // front - blue
+          new Color(76, 175, 80, 26),    // front-right - green
+          new Color(230, 190, 40, 26),   // rear-right - yellow
+          new Color(211, 84, 66, 26),    // rear - red
+          new Color(230, 190, 40, 26),   // rear-left - yellow
+          new Color(76, 175, 80, 26) };  // front-left - green
+
+    private static final String[] DIRECTION_LABEL_KEYS = {
+          "DamageAnalysisPanel.front", "DamageAnalysisPanel.frontRight", "DamageAnalysisPanel.rearRight",
+          "DamageAnalysisPanel.rear", "DamageAnalysisPanel.rearLeft", "DamageAnalysisPanel.frontLeft" };
 
     private DamageProfile profile;
     private String unitName = "";
 
     public DamageAnalysisPanel() {
         setName("damageAnalysisPanel");
-        setMinimumSize(UIUtil.scaleForGUI(400, 300));
+        setMinimumSize(UIUtil.scaleForGUI(480, 640));
     }
 
     /**
@@ -106,7 +123,16 @@ public class DamageAnalysisPanel extends JPanel {
                 paintEmptyMessage(graphics2D);
                 return;
             }
-            paintChart(graphics2D);
+
+            // Layout: range chart across the top, the two radars side by side below it
+            int rangeChartHeight = (int) (getHeight() * 0.52);
+            int radarTop = rangeChartHeight;
+            int radarHeight = getHeight() - radarTop;
+            int radarWidth = getWidth() / 2;
+
+            paintRangeChart(graphics2D, 0, 0, getWidth(), rangeChartHeight);
+            paintDirectionRadar(graphics2D, 0, radarTop, radarWidth, radarHeight);
+            paintReachRadar(graphics2D, radarWidth, radarTop, radarWidth, radarHeight);
         } finally {
             graphics2D.dispose();
         }
@@ -123,18 +149,18 @@ public class DamageAnalysisPanel extends JPanel {
         graphics2D.drawString(message, x, y);
     }
 
-    private void paintChart(Graphics2D graphics2D) {
+    // ========== Damage vs Range chart ==========
+
+    private void paintRangeChart(Graphics2D graphics2D, int regionX, int regionY, int regionWidth,
+          int regionHeight) {
         Color foreground = UIManager.getColor("Label.foreground");
         Color gridColor = new Color(foreground.getRed(), foreground.getGreen(), foreground.getBlue(), 60);
 
         FontMetrics metrics = graphics2D.getFontMetrics();
-        int marginLeft = UIUtil.scaleForGUI(48);
-        int marginRight = UIUtil.scaleForGUI(16);
-        int marginTop = UIUtil.scaleForGUI(28);
-        int marginBottom = UIUtil.scaleForGUI(64);
-
-        int plotWidth = getWidth() - marginLeft - marginRight;
-        int plotHeight = getHeight() - marginTop - marginBottom;
+        int marginLeft = regionX + UIUtil.scaleForGUI(48);
+        int marginTop = regionY + UIUtil.scaleForGUI(28);
+        int plotWidth = regionWidth - UIUtil.scaleForGUI(48) - UIUtil.scaleForGUI(16);
+        int plotHeight = regionHeight - UIUtil.scaleForGUI(28) - UIUtil.scaleForGUI(56);
         if ((plotWidth < 50) || (plotHeight < 50)) {
             return;
         }
@@ -179,8 +205,12 @@ public class DamageAnalysisPanel extends JPanel {
         paintCurve(graphics2D, SUSTAINED_DAMAGE_COLOR, range -> profile.sustainedDamage(range),
               maxRange, damageCeiling, marginLeft, marginTop, plotWidth, plotHeight);
 
-        paintLegend(graphics2D, marginLeft, marginTop + plotHeight + metrics.getHeight()
-              + UIUtil.scaleForGUI(14), plotWidth);
+        paintLegend(graphics2D,
+              new String[] { Messages.getString("DamageAnalysisPanel.maximum"),
+                             Messages.getString("DamageAnalysisPanel.expected"),
+                             Messages.getString("DamageAnalysisPanel.sustained") },
+              new Color[] { MAX_DAMAGE_COLOR, EXPECTED_DAMAGE_COLOR, SUSTAINED_DAMAGE_COLOR },
+              marginLeft, marginTop + plotHeight + metrics.getHeight() + UIUtil.scaleForGUI(14), plotWidth);
     }
 
     /** The range where the maximum-damage curve is highest, used to pick the chart's y ceiling. */
@@ -229,26 +259,163 @@ public class DamageAnalysisPanel extends JPanel {
         graphics2D.setStroke(savedStroke);
     }
 
-    private void paintLegend(Graphics2D graphics2D, int x, int y, int plotWidth) {
-        FontMetrics metrics = graphics2D.getFontMetrics();
-        String[] labels = {
-              Messages.getString("DamageAnalysisPanel.maximum"),
-              Messages.getString("DamageAnalysisPanel.expected"),
-              Messages.getString("DamageAnalysisPanel.sustained") };
-        Color[] colors = { MAX_DAMAGE_COLOR, EXPECTED_DAMAGE_COLOR, SUSTAINED_DAMAGE_COLOR };
+    // ========== Radars ==========
 
+    private void paintDirectionRadar(Graphics2D graphics2D, int regionX, int regionY, int regionWidth,
+          int regionHeight) {
+        double[][] series = new double[4][DamageProfile.DIRECTIONS];
+        double ceiling = 0;
+        for (int direction = 0; direction < DamageProfile.DIRECTIONS; direction++) {
+            ArcSummary arc = profile.arcSummary(direction);
+            series[0][direction] = arc.maximumAverage();
+            series[1][direction] = arc.shortRangeAverage();
+            series[2][direction] = arc.mediumRangeAverage();
+            series[3][direction] = arc.longRangeAverage();
+            ceiling = Math.max(ceiling, arc.maximumAverage());
+        }
+        paintRadar(graphics2D, regionX, regionY, regionWidth, regionHeight,
+              Messages.getString("DamageAnalysisPanel.directionRadar"),
+              series,
+              new Color[] { MAX_DAMAGE_COLOR, EXPECTED_DAMAGE_COLOR, MEDIUM_BAND_COLOR,
+                            SUSTAINED_DAMAGE_COLOR },
+              new String[] { Messages.getString("DamageAnalysisPanel.maxAverage"),
+                             Messages.getString("DamageAnalysisPanel.shortAverage"),
+                             Messages.getString("DamageAnalysisPanel.mediumAverage"),
+                             Messages.getString("DamageAnalysisPanel.longAverage") },
+              niceCeiling(ceiling));
+    }
+
+    private void paintReachRadar(Graphics2D graphics2D, int regionX, int regionY, int regionWidth,
+          int regionHeight) {
+        double[][] series = new double[1][DamageProfile.DIRECTIONS];
+        double ceiling = 0;
+        for (int direction = 0; direction < DamageProfile.DIRECTIONS; direction++) {
+            series[0][direction] = profile.arcSummary(direction).reach();
+            ceiling = Math.max(ceiling, series[0][direction]);
+        }
+        paintRadar(graphics2D, regionX, regionY, regionWidth, regionHeight,
+              Messages.getString("DamageAnalysisPanel.reachRadar"),
+              series,
+              new Color[] { REACH_COLOR },
+              new String[] { Messages.getString("DamageAnalysisPanel.reach") },
+              niceCeiling(ceiling));
+    }
+
+    private void paintRadar(Graphics2D graphics2D, int regionX, int regionY, int regionWidth,
+          int regionHeight, String title, double[][] series, Color[] colors, String[] labels,
+          double ceiling) {
+        Color foreground = UIManager.getColor("Label.foreground");
+        FontMetrics metrics = graphics2D.getFontMetrics();
+
+        int titleHeight = metrics.getHeight() + UIUtil.scaleForGUI(4);
+        int legendHeight = metrics.getHeight() + UIUtil.scaleForGUI(10);
+        int labelClearance = metrics.getHeight() + UIUtil.scaleForGUI(8);
+        int radius = Math.min((regionWidth / 2) - UIUtil.scaleForGUI(56),
+              ((regionHeight - titleHeight - legendHeight) / 2) - labelClearance);
+        if (radius < UIUtil.scaleForGUI(40)) {
+            return;
+        }
+        int centerX = regionX + (regionWidth / 2);
+        int centerY = regionY + titleHeight + labelClearance + radius;
+
+        graphics2D.setColor(foreground);
+        graphics2D.drawString(title, centerX - (metrics.stringWidth(title) / 2),
+              regionY + metrics.getAscent() + UIUtil.scaleForGUI(2));
+
+        // Facing-sector tints (60-degree wedges centered on each direction spoke)
+        for (int direction = 0; direction < DamageProfile.DIRECTIONS; direction++) {
+            graphics2D.setColor(SECTOR_TINTS[direction]);
+            graphics2D.fillArc(centerX - radius, centerY - radius, radius * 2, radius * 2,
+                  60 - (60 * direction), 60);
+        }
+
+        // Concentric hexagonal rings with value labels up the top spoke
+        Color gridColor = new Color(foreground.getRed(), foreground.getGreen(), foreground.getBlue(), 70);
+        int rings = 4;
+        for (int ring = 1; ring <= rings; ring++) {
+            double fraction = ring / (double) rings;
+            Polygon ringShape = new Polygon();
+            for (int direction = 0; direction < DamageProfile.DIRECTIONS; direction++) {
+                ringShape.addPoint(radarX(centerX, radius * fraction, direction),
+                      radarY(centerY, radius * fraction, direction));
+            }
+            graphics2D.setColor(gridColor);
+            graphics2D.drawPolygon(ringShape);
+            graphics2D.setColor(foreground);
+            String ringLabel = String.valueOf((int) Math.round(ceiling * fraction));
+            graphics2D.drawString(ringLabel,
+                  centerX + UIUtil.scaleForGUI(3),
+                  (int) (centerY - (radius * fraction)) + metrics.getAscent());
+        }
+
+        // Spokes and direction labels
+        for (int direction = 0; direction < DamageProfile.DIRECTIONS; direction++) {
+            int spokeX = radarX(centerX, radius, direction);
+            int spokeY = radarY(centerY, radius, direction);
+            graphics2D.setColor(gridColor);
+            graphics2D.drawLine(centerX, centerY, spokeX, spokeY);
+            graphics2D.setColor(foreground);
+            String label = Messages.getString(DIRECTION_LABEL_KEYS[direction]);
+            int labelX = radarX(centerX, radius + UIUtil.scaleForGUI(10), direction);
+            int labelY = radarY(centerY, radius + UIUtil.scaleForGUI(10), direction);
+            // Nudge the label so it sits outside the radar instead of overlapping it
+            labelX -= (int) (metrics.stringWidth(label) * (1 - Math.cos(radarAngle(direction))) / 2);
+            labelY += (int) (metrics.getAscent() * (1 + Math.sin(radarAngle(direction))) / 2);
+            graphics2D.drawString(label, labelX, labelY);
+        }
+
+        // Series polygons, first series at the back
+        for (int index = 0; index < series.length; index++) {
+            Polygon shape = new Polygon();
+            for (int direction = 0; direction < DamageProfile.DIRECTIONS; direction++) {
+                double fraction = Math.min(1.0, series[index][direction] / ceiling);
+                shape.addPoint(radarX(centerX, radius * fraction, direction),
+                      radarY(centerY, radius * fraction, direction));
+            }
+            Color color = colors[index];
+            graphics2D.setColor(new Color(color.getRed(), color.getGreen(), color.getBlue(), FILL_ALPHA));
+            graphics2D.fillPolygon(shape);
+            graphics2D.setColor(color);
+            Stroke savedStroke = graphics2D.getStroke();
+            graphics2D.setStroke(new BasicStroke(UIUtil.scaleForGUI(2)));
+            graphics2D.drawPolygon(shape);
+            graphics2D.setStroke(savedStroke);
+        }
+
+        paintLegend(graphics2D, labels, colors, regionX + UIUtil.scaleForGUI(8),
+              regionY + regionHeight - UIUtil.scaleForGUI(8), regionWidth - UIUtil.scaleForGUI(16));
+    }
+
+    /** The screen angle of a direction spoke in radians: front is straight up, clockwise after. */
+    private static double radarAngle(int direction) {
+        return Math.toRadians(-90 + (60 * direction));
+    }
+
+    private static int radarX(int centerX, double distance, int direction) {
+        return centerX + (int) Math.round(distance * Math.cos(radarAngle(direction)));
+    }
+
+    private static int radarY(int centerY, double distance, int direction) {
+        return centerY + (int) Math.round(distance * Math.sin(radarAngle(direction)));
+    }
+
+    // ========== Shared helpers ==========
+
+    private void paintLegend(Graphics2D graphics2D, String[] labels, Color[] colors, int x, int y,
+          int availableWidth) {
+        FontMetrics metrics = graphics2D.getFontMetrics();
         int dotSize = UIUtil.scaleForGUI(10);
-        int spacing = UIUtil.scaleForGUI(18);
+        int spacing = UIUtil.scaleForGUI(14);
         int legendWidth = 0;
         for (String label : labels) {
-            legendWidth += dotSize + UIUtil.scaleForGUI(6) + metrics.stringWidth(label) + spacing;
+            legendWidth += dotSize + UIUtil.scaleForGUI(5) + metrics.stringWidth(label) + spacing;
         }
-        int currentX = x + Math.max(0, (plotWidth - legendWidth) / 2);
+        int currentX = x + Math.max(0, (availableWidth - legendWidth) / 2);
         for (int index = 0; index < labels.length; index++) {
             graphics2D.setColor(colors[index]);
             graphics2D.fillOval(currentX, y - dotSize + UIUtil.scaleForGUI(2), dotSize, dotSize);
             graphics2D.setColor(UIManager.getColor("Label.foreground"));
-            int textX = currentX + dotSize + UIUtil.scaleForGUI(6);
+            int textX = currentX + dotSize + UIUtil.scaleForGUI(5);
             graphics2D.drawString(labels[index], textX, y);
             currentX = textX + metrics.stringWidth(labels[index]) + spacing;
         }
@@ -266,7 +433,7 @@ public class DamageAnalysisPanel extends JPanel {
         return marginTop + plotHeight - (int) Math.round(plotHeight * clamped / damageCeiling);
     }
 
-    /** Rounds a damage value up to a pleasant axis ceiling (multiples of 5, minimum 5). */
+    /** Rounds a value up to a pleasant axis ceiling (multiples of 5, minimum 5). */
     private static double niceCeiling(double value) {
         return Math.max(5, Math.ceil(value / 5.0) * 5);
     }

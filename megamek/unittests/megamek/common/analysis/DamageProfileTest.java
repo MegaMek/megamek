@@ -204,6 +204,38 @@ class DamageProfileTest {
     }
 
     @Test
+    void testAtlasArcSummariesReflectRearLasers() throws EntityLoadingException {
+        Entity atlas = loadUnit("Atlas AS7-D.mtf");
+        DamageProfile profile = DamageProfile.of(atlas, false);
+
+        // Front: everything but the two rear-mounted CT medium lasers; LRM-20 bounds the reach
+        DamageProfile.ArcSummary front = profile.arcSummary(0);
+        assertEquals(21, front.reach(), "Front reach is the LRM-20 long range");
+        assertTrue(front.maximumAverage() > 0, "Front arc carries the main battery");
+
+        // Rear: only the two rear CT medium lasers (long range 9)
+        DamageProfile.ArcSummary rear = profile.arcSummary(3);
+        assertEquals(9, rear.reach(), "Rear reach is the rear medium lasers' long range");
+        assertTrue(rear.maximumAverage() > 0, "Rear lasers register");
+        assertTrue(rear.maximumAverage() < front.maximumAverage() / 3,
+              "Rear firepower is a small fraction of the front battery");
+        assertEquals(0.0, rear.longRangeAverage(), 0.001,
+              "Nothing in the rear arc reaches past 12 hexes");
+    }
+
+    @Test
+    void testBarghestQuadTorsoWeaponsAreFrontOnly() throws EntityLoadingException {
+        Entity barghest = loadUnit("Barghest BGS-1T.mtf");
+        DamageProfile profile = DamageProfile.of(barghest, false);
+
+        assertEquals(19, profile.arcSummary(0).reach(),
+              "All torso weapons bear forward; lasers bound the front reach");
+        assertEquals(0, profile.arcSummary(3).reach(), "No weapon bears to the rear");
+        assertEquals(0.0, profile.arcSummary(3).maximumAverage(), 0.001,
+              "Rear arc is completely empty");
+    }
+
+    @Test
     void testExpectedClusterHitsMatchesTableExpectation() {
         // LRM-20 column of the cluster hits table, probability-weighted, lands between 12 and 13 -
         // well above the 12 that the common "roll a 7" shortcut gives.

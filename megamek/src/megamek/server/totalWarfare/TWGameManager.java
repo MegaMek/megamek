@@ -649,9 +649,9 @@ public class TWGameManager extends AbstractGameManager {
     }
 
     /**
-     * @return {@code true} if the unit is currently under any iATM Improved Magnetic Pulse effect - the
-     *       to-hit / movement / ECM effect on Meks, vehicles, fighters and ProtoMeks, disabled troopers
-     *       on battle armor, or disabled energy weapons on conventional infantry.
+     * @return {@code true} if the unit is currently under any iATM Improved Magnetic Pulse effect - the to-hit /
+     *       movement / ECM effect on Meks, vehicles, fighters and ProtoMeks, disabled troopers on battle armor, or
+     *       disabled energy weapons on conventional infantry.
      */
     private static boolean isAffectedByImprovedMagneticPulse(Entity entity) {
         if (entity.getImpToHitModifier() > 0) {
@@ -7302,8 +7302,8 @@ public class TWGameManager extends AbstractGameManager {
 
     /**
      * Returns the entity's active (switched-on) minesweeper, or {@code null} if it has none, the sweeper is not ready,
-     * its armor is depleted, or the player has deactivated it in the End Phase (TO:AuE p.138, Corrected Sixth Printing).
-     * A unit may mount only one minesweeper.
+     * its armor is depleted, or the player has deactivated it in the End Phase (TO:AuE p.138, Corrected Sixth
+     * Printing). A unit may mount only one minesweeper.
      */
     private static @Nullable Mounted<?> getActiveMinesweeper(Entity entity) {
         for (Mounted<?> mounted : entity.getMisc()) {
@@ -8225,8 +8225,8 @@ public class TWGameManager extends AbstractGameManager {
     }
 
     /**
-     * Add heat from the movement phase. Delegates to {@link HeatResolver}, which itemizes the heat
-     * sources using the common message bundle (the {@code HeatBreakdown.*} keys live there).
+     * Add heat from the movement phase. Delegates to {@link HeatResolver}, which itemizes the heat sources using the
+     * common message bundle (the {@code HeatBreakdown.*} keys live there).
      */
     public void addMovementHeat() {
         heatResolver.addMovementHeat();
@@ -15734,8 +15734,8 @@ public class TWGameManager extends AbstractGameManager {
     }
 
     /**
-     * End-phase resolution for Bridge-Building Engineers, TO:AUE p.152. Delegates to {@link BridgeBuildPhaseHandler}
-     * so the bridge rules do not add to this already very large class.
+     * End-phase resolution for Bridge-Building Engineers, TO:AUE p.152. Delegates to {@link BridgeBuildPhaseHandler} so
+     * the bridge rules do not add to this already very large class.
      */
     void checkBuildBridges() {
         new BridgeBuildPhaseHandler(this).checkBuildBridges();
@@ -17396,8 +17396,9 @@ public class TWGameManager extends AbstractGameManager {
             if ((((Mek) entity).getCockpitType() == Mek.COCKPIT_DUAL) && entity.getCrew().hasDedicatedPilot()) {
                 psrThreshold = 30;
             }
-            if ((entity.damageThisPhase >= psrThreshold) && !entity.isHullDown()) {
-                if (game.getOptions().booleanOption(OptionsConstants.ADVANCED_GROUND_MOVEMENT_TAC_OPS_TAKING_DAMAGE)) {
+            if (entity.damageThisPhase >= psrThreshold) {
+                if (game.getOptions().booleanOption(OptionsConstants.ADVANCED_GROUND_MOVEMENT_TAC_OPS_TAKING_DAMAGE)
+                      && !entity.isHullDown()) {
                     PilotingRollData damPRD = new PilotingRollData(entity.getId());
                     int damMod = entity.damageThisPhase / psrThreshold;
                     damPRD.addModifier(damMod, (damMod * psrThreshold) + "+ damage");
@@ -17899,7 +17900,7 @@ public class TWGameManager extends AbstractGameManager {
         }
 
         // non meks and prone meks can now return
-        if (!entity.canFall() || (entity.isHullDown() && entity.canGoHullDown())) {
+        if (!entity.canFall()) {
             return vPhaseReport;
         }
 
@@ -25309,9 +25310,9 @@ public class TWGameManager extends AbstractGameManager {
 
     /**
      * Removes the fire from a hex on a specific board, clearing any flamer-started-fire marker and notifying the
-     * clients that view that board. Fire processing runs once per board (see
-     * {@link megamek.server.FireProcessor}), so the board id must be passed through to keep the per-board
-     * {@link Board#removeFlamerStartedFire(Coords)} state and the hex update on the correct board.
+     * clients that view that board. Fire processing runs once per board (see {@link megamek.server.FireProcessor}), so
+     * the board id must be passed through to keep the per-board {@link Board#removeFlamerStartedFire(Coords)} state and
+     * the hex update on the correct board.
      *
      * @param boardId    the id of the board the burning hex is on
      * @param fireCoords {@link Coords} of the hex on fire
@@ -29792,7 +29793,7 @@ public class TWGameManager extends AbstractGameManager {
      */
     public void resolveCallSupport() {
         for (Entity e : game.getEntitiesVector()) {
-        	// some infantry can "call support", but should only be able to do so if they are on the board
+            // some infantry can "call support", but should only be able to do so if they are on the board
             if ((e instanceof Infantry) && ((Infantry) e).getIsCallingSupport() && e.getPosition() != null) {
 
                 // Now let's create a new foot platoon
@@ -31506,8 +31507,8 @@ public class TWGameManager extends AbstractGameManager {
     }
 
     /**
-     * Sends a toast when a unit gains or loses a Magnetic Pulse missile effect (IO p.182 / IMP rules),
-     * so the player sees the debuff appear and expire rather than only in the report log.
+     * Sends a toast when a unit gains or loses a Magnetic Pulse missile effect (IO p.182 / IMP rules), so the player
+     * sees the debuff appear and expire rather than only in the report log.
      *
      * @param target   the affected unit
      * @param improved true for the iATM Improved Magnetic Pulse effect, false for the standard MP effect

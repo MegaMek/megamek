@@ -38,12 +38,15 @@ import java.awt.FontMetrics;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.Polygon;
+import java.awt.Rectangle;
 import java.awt.RenderingHints;
 import java.awt.Stroke;
+import java.awt.event.MouseEvent;
 import java.util.ArrayList;
 import java.util.List;
 
 import javax.swing.JPanel;
+import javax.swing.ToolTipManager;
 import javax.swing.UIManager;
 
 import megamek.client.ui.Messages;
@@ -98,9 +101,26 @@ public class DamageAnalysisPanel extends JPanel {
     private boolean largeCraft;
     private boolean capitalScale;
 
+    /** A legend entry's screen bounds and its explanation, rebuilt on every paint for tooltips. */
+    private record LegendHitZone(Rectangle bounds, String tooltip) {
+    }
+
+    private final List<LegendHitZone> legendHitZones = new ArrayList<>();
+
     public DamageAnalysisPanel() {
         setName("damageAnalysisPanel");
         setMinimumSize(UIUtil.scaleForGUI(480, 640));
+        ToolTipManager.sharedInstance().registerComponent(this);
+    }
+
+    @Override
+    public String getToolTipText(MouseEvent event) {
+        for (LegendHitZone zone : legendHitZones) {
+            if (zone.bounds().contains(event.getPoint())) {
+                return zone.tooltip();
+            }
+        }
+        return super.getToolTipText(event);
     }
 
     /**
@@ -158,6 +178,7 @@ public class DamageAnalysisPanel extends JPanel {
     @Override
     protected void paintComponent(Graphics graphics) {
         super.paintComponent(graphics);
+        legendHitZones.clear();
         Graphics2D graphics2D = (Graphics2D) graphics.create();
         try {
             graphics2D.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
@@ -258,6 +279,9 @@ public class DamageAnalysisPanel extends JPanel {
                              Messages.getString("DamageAnalysisPanel.expected"),
                              Messages.getString("DamageAnalysisPanel.sustained") },
               new Color[] { MAX_DAMAGE_COLOR, EXPECTED_DAMAGE_COLOR, SUSTAINED_DAMAGE_COLOR },
+              new String[] { Messages.getString("DamageAnalysisPanel.maximumTip"),
+                             Messages.getString("DamageAnalysisPanel.expectedTip"),
+                             Messages.getString("DamageAnalysisPanel.sustainedTip") },
               marginLeft, marginTop + plotHeight + metrics.getHeight() + UIUtil.scaleForGUI(14), plotWidth);
     }
 
@@ -338,6 +362,10 @@ public class DamageAnalysisPanel extends JPanel {
                              Messages.getString("DamageAnalysisPanel.shortAverage"),
                              Messages.getString("DamageAnalysisPanel.mediumAverage"),
                              Messages.getString("DamageAnalysisPanel.longAverage") },
+              new String[] { Messages.getString("DamageAnalysisPanel.maxAverageTip"),
+                             Messages.getString("DamageAnalysisPanel.shortAverageTip"),
+                             Messages.getString("DamageAnalysisPanel.mediumAverageTip"),
+                             Messages.getString("DamageAnalysisPanel.longAverageTip") },
               niceCeiling(ceiling), true);
     }
 
@@ -354,6 +382,7 @@ public class DamageAnalysisPanel extends JPanel {
               series,
               new Color[] { REACH_COLOR },
               new String[] { Messages.getString("DamageAnalysisPanel.reach") },
+              new String[] { Messages.getString("DamageAnalysisPanel.reachTip") },
               niceCeiling(ceiling), false);
     }
 
@@ -363,7 +392,7 @@ public class DamageAnalysisPanel extends JPanel {
      */
     private void paintRadar(Graphics2D graphics2D, int regionX, int regionY, int regionWidth,
           int regionHeight, String title, double[][] series, Color[] colors, String[] labels,
-          double ceiling, boolean damageScale) {
+          String[] tooltips, double ceiling, boolean damageScale) {
         Color foreground = UIManager.getColor("Label.foreground");
         FontMetrics metrics = graphics2D.getFontMetrics();
 
@@ -460,7 +489,7 @@ public class DamageAnalysisPanel extends JPanel {
             graphics2D.setStroke(savedStroke);
         }
 
-        paintLegend(graphics2D, labels, colors, regionX + UIUtil.scaleForGUI(8),
+        paintLegend(graphics2D, labels, colors, tooltips, regionX + UIUtil.scaleForGUI(8),
               regionY + regionHeight - UIUtil.scaleForGUI(8), regionWidth - UIUtil.scaleForGUI(16));
     }
 
@@ -479,8 +508,8 @@ public class DamageAnalysisPanel extends JPanel {
 
     // ========== Shared helpers ==========
 
-    private void paintLegend(Graphics2D graphics2D, String[] labels, Color[] colors, int legendX,
-          int lastRowBaselineY, int availableWidth) {
+    private void paintLegend(Graphics2D graphics2D, String[] labels, Color[] colors, String[] tooltips,
+          int legendX, int lastRowBaselineY, int availableWidth) {
         FontMetrics metrics = graphics2D.getFontMetrics();
         int dotSize = UIUtil.scaleForGUI(10);
         int gap = UIUtil.scaleForGUI(5);
@@ -517,6 +546,10 @@ public class DamageAnalysisPanel extends JPanel {
                 graphics2D.setColor(UIManager.getColor("Label.foreground"));
                 int textX = currentX + dotSize + gap;
                 graphics2D.drawString(labels[index], textX, rowY);
+                legendHitZones.add(new LegendHitZone(
+                      new Rectangle(currentX, rowY - metrics.getAscent(),
+                            dotSize + gap + metrics.stringWidth(labels[index]), metrics.getHeight()),
+                      tooltips[index]));
                 currentX = textX + metrics.stringWidth(labels[index]) + spacing;
             }
             rowY += rowHeight;

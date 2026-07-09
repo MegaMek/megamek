@@ -48,6 +48,7 @@ import megamek.common.equipment.WeaponMounted;
 import megamek.common.equipment.WeaponType;
 import megamek.common.units.Entity;
 import megamek.common.units.Infantry;
+import megamek.common.weapons.bayWeapons.BayWeapon;
 import megamek.common.weapons.infantry.InfantryWeapon;
 
 /**
@@ -179,6 +180,24 @@ public final class DamageProfile {
         int maxRange = 0;
         for (WeaponMounted weapon : entity.getWeaponList()) {
             if (weapon.isCrippled()) {
+                continue;
+            }
+            // Large craft (DropShips, JumpShips, WarShips, Space Stations, Small Craft) list their
+            // weapon bays here; the bay type itself has no damage or range. Expand each bay into
+            // its member weapons, all firing through the bay's arc.
+            if (weapon.getType() instanceof BayWeapon) {
+                boolean[] bayBearing = WeaponContribution.computeBearing(entity, weapon);
+                for (WeaponMounted bayMember : weapon.getBayWeapons()) {
+                    if (bayMember.isCrippled()) {
+                        continue;
+                    }
+                    WeaponContribution contribution = WeaponContribution.of(entity, bayMember, gunnery,
+                          useExtremeRange, bayBearing);
+                    if (contribution != null) {
+                        weapons.add(contribution);
+                        maxRange = Math.max(maxRange, contribution.maxRange());
+                    }
+                }
                 continue;
             }
             WeaponContribution contribution = WeaponContribution.of(entity, weapon, gunnery, useExtremeRange);
@@ -442,6 +461,16 @@ public final class DamageProfile {
          *       ammunition for an ammo-dependent weapon)
          */
         static WeaponContribution of(Entity entity, WeaponMounted weapon, int gunnery, boolean useExtremeRange) {
+            return of(entity, weapon, gunnery, useExtremeRange, null);
+        }
+
+        /**
+         * @param precomputedBearing the firing directions to use instead of this weapon's own arc,
+         *                           for bay members that fire through their bay's arc; null to
+         *                           compute from the weapon itself
+         */
+        static WeaponContribution of(Entity entity, WeaponMounted weapon, int gunnery, boolean useExtremeRange,
+              boolean[] precomputedBearing) {
             WeaponType weaponType = weapon.getType();
             List<AmmoOption> options = new ArrayList<>();
 
@@ -462,11 +491,13 @@ public final class DamageProfile {
                 List<AmmoMounted> ammos;
                 if (MULTI_PROFILE_AMMO.contains(weaponType.getAmmoType())) {
                     ammos = entity.getAmmo(weapon);
-                } else {
+                } else if (weapon.getLinkedAmmo() != null) {
                     ammos = new ArrayList<>();
-                    if (weapon.getLinkedAmmo() != null) {
-                        ammos.add(weapon.getLinkedAmmo());
-                    }
+                    ammos.add(weapon.getLinkedAmmo());
+                } else {
+                    // Bay member weapons have no linked ammo - their ammunition lives in the bay -
+                    // so fall back to any compatible ammo the unit carries.
+                    ammos = entity.getAmmo(weapon);
                 }
                 for (AmmoMounted ammo : ammos) {
                     if ((ammo != null) && (ammo.getUsableShotsLeft() > 0)) {
@@ -478,8 +509,10 @@ public final class DamageProfile {
             if (options.isEmpty()) {
                 return null;
             }
+            boolean[] bearing = (precomputedBearing != null) ? precomputedBearing
+                  : computeBearing(entity, weapon);
             return new WeaponContribution(weapon, options, gunnery, useExtremeRange,
-                  computeBearing(entity, weapon), firingTroopers(entity, weapon));
+                  bearing, firingTroopers(entity, weapon));
         }
 
         /**
@@ -588,6 +621,14 @@ public final class DamageProfile {
 
             if (maxDamage <= 0) {
                 return null;
+            }
+
+            // Capital and sub-capital weapons report capital-scale damage: 1 capital = 10 standard
+            // (SO p.116). Convert so a WarShip's naval lasers and its standard-scale point defense
+            // read on the same axis.
+            if (weaponType.isCapital() || weaponType.isSubCapital()) {
+                maxDamage *= 10;
+                expectedDamage *= 10;
             }
             return new WeaponAtRange(maxDamage, expectedDamage, weaponType.getHeat());
         }

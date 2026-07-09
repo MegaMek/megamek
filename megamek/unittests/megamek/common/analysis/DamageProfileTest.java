@@ -251,6 +251,36 @@ class DamageProfileTest {
     }
 
     @Test
+    void testDropShipBaysExpandIntoMemberWeapons() throws EntityLoadingException {
+        Entity union = loadUnit("Union (3055).blk");
+        DamageProfile profile = DamageProfile.of(union, false);
+
+        // Large craft list weapon bays, not weapons; the profile must expand each bay into its
+        // members (ER PPC + Gauss + 2x LRM-20 per facing on the Union) or the ship reads as
+        // weaponless.
+        assertTrue(profile.hasWeapons(), "A Union is not weaponless");
+        assertEquals(23, profile.maxRange(), "ER PPC long range bounds the Union's curve");
+        assertTrue(profile.maxDamage(8) > 100,
+              "Multiple bays of PPC/Gauss/LRM sum to serious firepower");
+        assertTrue(profile.arcSummary(0).reach() > 0, "Nose bay bears forward");
+        assertTrue(profile.arcSummary(3).reach() > 0, "Aft bay bears to the rear");
+    }
+
+    @Test
+    void testWarShipCapitalWeaponsUseStandardScale() throws EntityLoadingException {
+        Entity aegis = loadUnit("Aegis Heavy Cruiser (2843).blk");
+        DamageProfile profile = DamageProfile.of(aegis, false);
+
+        // Capital weapons report capital-scale damage (1 capital = 10 standard, SO p.116); the
+        // curve must convert so naval batteries and point defense share one axis. A heavy
+        // cruiser's broadside is in the hundreds of standard points, far beyond any ground unit.
+        assertTrue(profile.hasWeapons(), "A WarShip is not weaponless");
+        assertTrue(profile.maxRange() >= 20, "Naval weapons reach far beyond ground ranges");
+        assertTrue(profile.peakExpectedDamage() > 300,
+              "Capital batteries convert at 10 standard damage per capital point");
+    }
+
+    @Test
     void testWeaponlessUnitHasEmptyProfile() {
         Entity empty = new BipedMek();
         DamageProfile profile = DamageProfile.of(empty, false);

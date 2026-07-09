@@ -43,6 +43,8 @@ import megamek.common.loaders.EntityLoadingException;
 import megamek.common.loaders.MekFileParser;
 import megamek.common.units.BipedMek;
 import megamek.common.units.Entity;
+import megamek.common.units.Infantry;
+import megamek.common.weapons.infantry.InfantryWeapon;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 
@@ -189,6 +191,63 @@ class DamageProfileTest {
             assertEquals(profile.expectedDamage(range), profile.sustainedDamage(range), TOLERANCE,
                   "No heat tracking means sustained equals expected at range " + range);
         }
+    }
+
+    @Test
+    void testConventionalInfantryPlatoonDamage() throws EntityLoadingException {
+        Entity platoon = loadUnit("Foot Platoon (AFFS) (Laser 3067+).blk");
+        DamageProfile profile = DamageProfile.of(platoon, false);
+
+        assertTrue(profile.hasWeapons(), "A rifle platoon is not weaponless");
+
+        // TW p.215: one attack dealing ceil(per-trooper damage x shooting troopers), reaching the
+        // infantry weapon's 3R long bracket. Derive the expectation from the unit's own weapon so
+        // the test follows the data file.
+        Infantry infantry = (Infantry) platoon;
+        InfantryWeapon rifle = (InfantryWeapon) infantry.getWeaponList().get(0).getType();
+        double attackDamage = Math.ceil(rifle.getInfantryDamage() * infantry.getShootingStrength());
+        assertTrue(attackDamage > 1, "A full platoon deals meaningful damage");
+        assertEquals(attackDamage, profile.maxDamage(1), TOLERANCE,
+              "Platoon max damage is per-trooper damage times shooting troopers, rounded up");
+        assertEquals(rifle.getInfantryRange() * 3, profile.maxRange(),
+              "Platoon reach is the infantry weapon's 3R long bracket");
+        assertTrue(profile.expectedDamage(1) > profile.expectedDamage(profile.maxRange()),
+              "Expected damage falls off across the infantry brackets");
+    }
+
+    @Test
+    void testBattleArmorSquadMultipliesByTroopers() throws EntityLoadingException {
+        Entity elemental = loadUnit("Elemental BA [Laser] (Sqd5).blk");
+        DamageProfile profile = DamageProfile.of(elemental, false);
+
+        // 5 suits: small lasers (3 dmg each) fire as one attack with a cluster roll on 5 suits;
+        // the SRM-2s pool into one 10-missile cluster roll at 2 damage per missile (TW p.218); and
+        // the AP mounts carry auto-filled Infantry Assault Rifles firing as infantry small arms:
+        // ceil(0.52 per trooper x 5 suits) = 3.
+        assertEquals(9, profile.maxRange(), "BA SRM-2 long range bounds the squad's curve");
+        assertEquals((3 * 5) + (2 * 5 * 2) + 3, profile.maxDamage(1), TOLERANCE,
+              "Max damage counts every suit's laser, the pooled missile rack, and the AP rifles");
+        assertTrue(profile.expectedDamage(1) > 3 + (2 * 2),
+              "Expected damage reflects the squad, not a single suit");
+        for (int range = 1; range <= profile.maxRange(); range++) {
+            assertEquals(profile.expectedDamage(range), profile.sustainedDamage(range), TOLERANCE,
+                  "Battle armor does not track heat at range " + range);
+        }
+    }
+
+    @Test
+    void testProtoMekResolvesAsIndividualWeapons() throws EntityLoadingException {
+        Entity roc = loadUnit("Roc 2.blk");
+        DamageProfile profile = DamageProfile.of(roc, false);
+
+        // Roc 2 carries a single Clan Heavy Medium Laser (10 damage, 3/6/9) in the main gun; no
+        // trooper multiplication may apply to ProtoMeks.
+        assertTrue(profile.hasWeapons(), "The Roc has a main gun");
+        assertEquals(9, profile.maxRange(), "Heavy Medium Laser long range bounds the curve");
+        assertEquals(10.0, profile.maxDamage(1), TOLERANCE,
+              "One laser, one contribution - no squad multiplier");
+        assertEquals(profile.expectedDamage(2), profile.sustainedDamage(2), TOLERANCE,
+              "ProtoMeks do not track heat");
     }
 
     @Test

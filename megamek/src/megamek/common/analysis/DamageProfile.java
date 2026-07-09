@@ -38,6 +38,7 @@ import java.util.List;
 import java.util.Map;
 
 import megamek.common.RangeType;
+import megamek.common.battleArmor.BattleArmor;
 import megamek.common.board.Coords;
 import megamek.common.compute.Compute;
 import megamek.common.compute.ComputeArc;
@@ -46,6 +47,8 @@ import megamek.common.equipment.AmmoType;
 import megamek.common.equipment.WeaponMounted;
 import megamek.common.equipment.WeaponType;
 import megamek.common.units.Entity;
+import megamek.common.units.Infantry;
+import megamek.common.weapons.infantry.InfantryWeapon;
 
 /**
  * An immutable per-unit damage-versus-range curve, computed from the unit's actual weapons and
@@ -69,8 +72,16 @@ import megamek.common.units.Entity;
  * Ammunition is chosen per range by best expected damage, mirroring how a player would load for
  * the engagement. Weapon facing is ignored; the curve is the unit's best case in any direction.</p>
  *
+ * <p>Infantry and battle armor follow their TW attack mechanics: a conventional platoon's small
+ * arms deal ceil(per-trooper damage x shooting troopers) as one attack over the R/2R/3R infantry
+ * brackets; a battle armor squad's direct-fire weapons roll the cluster table on the number of
+ * firing suits, and its missile racks pool across suits into one larger cluster roll. Crew-served
+ * field guns and squad support weapons fire once. ProtoMeks and all other unit types resolve as
+ * individually mounted weapons.</p>
+ *
  * <p>Known approximations: artillery is treated as a direct-fire weapon dealing its rack size;
- * cluster-roll bonuses from fire-control equipment (Artemis, Apollo) are not applied.</p>
+ * cluster-roll bonuses from fire-control equipment (Artemis, Apollo) are not applied; infantry
+ * use the standard bracket to-hit modifiers rather than the point-blank special cases.</p>
  *
  * <p>Build cost is O(weapons x maxRange) with small constants; instances are cheap enough to
  * rebuild once per game phase. Consumers that query per candidate path should cache the instance
@@ -390,10 +401,12 @@ public final class DamageProfile {
      * One weapon's resolved firing options: for each candidate ammunition, the range array to use.
      * Damage is resolved lazily per range so range-variable weapons (which override
      * {@code getDamage(int)}) are handled naturally. The bearing array records which of the six
-     * hex-side directions the weapon's firing arc covers, as mounted (no torso twist).
+     * hex-side directions the weapon's firing arc covers, as mounted (no torso twist). The trooper
+     * count is 1 except where multiple soldiers fire the weapon as one attack: every rifleman in a
+     * conventional platoon, or every suit in a battle armor squad (squad support weapons excepted).
      */
     private record WeaponContribution(WeaponMounted weapon, List<AmmoOption> ammoOptions, int gunnery,
-          boolean useExtremeRange, boolean[] bearing) {
+          boolean useExtremeRange, boolean[] bearing, int troopers) {
 
         /** @return whether this weapon's firing arc covers the given hex-side direction */
         boolean bearsOn(int direction) {
@@ -434,7 +447,16 @@ public final class DamageProfile {
 
             boolean ammoless = (weaponType.getAmmoType() == AmmoType.AmmoTypeEnum.NA)
                   || (weaponType.getAmmoType() == AmmoType.AmmoTypeEnum.INFANTRY);
-            if (ammoless) {
+            if (weaponType instanceof InfantryWeapon infantryWeapon) {
+                // Infantry weapons carry a single "infantry range" R instead of bracket fields;
+                // getRanges() would report 0/0/0/3R and put the whole band in the long bracket.
+                // The TW brackets are R / 2R / 3R (4R extreme); R=0 weapons reach only 1 hex.
+                int infantryRange = infantryWeapon.getInfantryRange();
+                int[] ranges = (infantryRange > 0)
+                      ? new int[] { 0, infantryRange, infantryRange * 2, infantryRange * 3, infantryRange * 4 }
+                      : new int[] { 0, 1, 1, 1, 1 };
+                options.add(new AmmoOption(null, ranges));
+            } else if (ammoless) {
                 options.add(new AmmoOption(null, weaponType.getRanges(weapon)));
             } else {
                 List<AmmoMounted> ammos;
@@ -457,7 +479,23 @@ public final class DamageProfile {
                 return null;
             }
             return new WeaponContribution(weapon, options, gunnery, useExtremeRange,
-                  computeBearing(entity, weapon));
+                  computeBearing(entity, weapon), firingTroopers(entity, weapon));
+        }
+
+        /**
+         * The number of soldiers firing this weapon as a single attack. Battle armor squads fire
+         * one attack per weapon type across all active suits (squad support weapons fire once);
+         * conventional infantry fire their small arms with every shooting trooper, but crew-served
+         * field guns fire once. Everything else is a single weapon.
+         */
+        private static int firingTroopers(Entity entity, WeaponMounted weapon) {
+            if (entity instanceof BattleArmor battleArmor) {
+                return weapon.isSquadSupportWeapon() ? 1 : Math.max(1, battleArmor.getShootingStrength());
+            }
+            if ((entity instanceof Infantry infantry) && (weapon.getType() instanceof InfantryWeapon)) {
+                return Math.max(1, infantry.getShootingStrength());
+            }
+            return 1;
         }
 
         /** @return the longest range this weapon reaches with any of its ammunition options */
@@ -508,13 +546,26 @@ public final class DamageProfile {
             double hitProbability = Compute.oddsAbove(gunnery + bracketMod + minRangeMod) / 100.0;
 
             WeaponType weaponType = weapon.getType();
+
+            // Infantry small arms: the whole platoon or squad fires as one attack dealing
+            // ceil(per-trooper damage x shooting troopers) on a single to-hit roll (TW p.215).
+            if (weaponType instanceof InfantryWeapon infantryWeapon) {
+                double attackDamage = Math.ceil(infantryWeapon.getInfantryDamage() * troopers);
+                if (attackDamage <= 0) {
+                    return null;
+                }
+                return new WeaponAtRange(attackDamage, attackDamage * hitProbability, 0);
+            }
+
             int baseDamage = weaponType.getDamage(range);
 
             double maxDamage;
             double expectedDamage;
             if (baseDamage == WeaponType.DAMAGE_BY_CLUSTER_TABLE) {
+                // A battle armor squad pools its missiles into one cluster roll (TW p.218), so the
+                // effective rack is rack x troopers; everything else fires its plain rack.
                 int damagePerShot = (option.ammo() != null) ? option.ammo().getType().getDamagePerShot() : 1;
-                int rackSize = weaponType.getRackSize();
+                int rackSize = weaponType.getRackSize() * troopers;
                 maxDamage = (double) rackSize * damagePerShot;
                 expectedDamage = expectedClusterHits(rackSize) * damagePerShot * hitProbability;
             } else if ((baseDamage == WeaponType.DAMAGE_ARTILLERY) || weaponType.hasFlag(WeaponType.F_ARTILLERY)
@@ -525,6 +576,11 @@ public final class DamageProfile {
                 expectedDamage = maxDamage * hitProbability;
             } else if (baseDamage <= 0) {
                 return null;
+            } else if (troopers > 1) {
+                // Battle armor direct-fire weapons: one attack, hits determined by the cluster
+                // table rolled on the number of firing suits, each hit dealing weapon damage.
+                maxDamage = (double) baseDamage * troopers;
+                expectedDamage = baseDamage * expectedClusterHits(troopers) * hitProbability;
             } else {
                 maxDamage = baseDamage;
                 expectedDamage = baseDamage * hitProbability;

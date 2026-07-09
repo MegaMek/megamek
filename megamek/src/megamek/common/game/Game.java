@@ -3847,9 +3847,15 @@ public final class Game extends AbstractGame implements Serializable, PlanetaryC
      * Format: yyyyMMdd_HHmmss (e.g., "20251207_160952")
      * Used for consistent file naming across TSV logs and GIF summaries.
      *
+     * <p>Lazily initialized because games deserialized from saves created before this field existed
+     * arrive with a null value (field initializers do not run during deserialization).</p>
+     *
      * @return the timestamp string
      */
     public String getTimestampString() {
+        if (timestampString == null) {
+            timestampString = generateTimestampString();
+        }
         return timestampString;
     }
 

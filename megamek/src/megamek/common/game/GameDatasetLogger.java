@@ -109,13 +109,20 @@ public class GameDatasetLogger {
 
     /**
      * Creates a new log file with a unique timestamp-based filename.
-     * Each game will get its own unique TSV file.
+     * Each game will get its own unique TSV file. If a file for the timestamp already exists
+     * (e.g., two games starting within the same second), a numeric suffix is appended so an
+     * existing log is never overwritten.
      */
     private void newLogFile() {
         try {
             String timestamp = (nextTimestamp != null) ? nextTimestamp : LocalDateTime.now().format(TIMESTAMP_FORMAT);
             String filename = prefix + "_" + timestamp;
             File logfile = new File(LOG_DIR + File.separator + filename + ".tsv");
+            int suffix = 1;
+            while (logfile.exists()) {
+                logfile = new File(LOG_DIR + File.separator + filename + "_" + suffix + ".tsv");
+                suffix++;
+            }
             writer = new BufferedWriter(new FileWriter(logfile));
             initialize();
         } catch (Exception ex) {

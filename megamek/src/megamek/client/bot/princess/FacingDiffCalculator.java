@@ -98,10 +98,10 @@ record FacingDiffCalculator(int allowFacingTolerance) {
         // Get armor bias: positive means left side has more armor, negative means right side
         int armorBias = getArmorBias(unit);
 
-        // Apply bias to expose the stronger side to the enemy
-        // If left armor > right (armorBias > 0), we want the left side facing the enemy
-        // Turning left (+1) from facing the enemy directly exposes our LEFT side to them
-        // Turning right (-1) from facing the enemy directly exposes our RIGHT side to them
+        // Apply bias to expose the stronger side to the enemy.
+        // Facing indices increase clockwise (0=N, 1=NE, ...), so +1 is a clockwise rotation and -1 counterclockwise.
+        // Rotating clockwise (+1) away from facing the enemy directly leaves them off our left front,
+        // exposing our LEFT side; rotating counterclockwise (-1) exposes our RIGHT side.
         desiredFacing += armorBias;
         if (desiredFacing < 0) {
             desiredFacing += 6;
@@ -179,12 +179,12 @@ record FacingDiffCalculator(int allowFacingTolerance) {
      * desired facing direction so the unit exposes its stronger armor side to the enemy.
      * </p>
      * <p>
-     * When facing direction D toward an enemy:
+     * When facing direction D toward an enemy (facing indices increase clockwise):
      * <ul>
-     *   <li>Turning left (D+1) exposes the LEFT side to the enemy</li>
-     *   <li>Turning right (D-1) exposes the RIGHT side to the enemy</li>
+     *   <li>Rotating clockwise (D+1) exposes the LEFT side to the enemy</li>
+     *   <li>Rotating counterclockwise (D-1) exposes the RIGHT side to the enemy</li>
      * </ul>
-     * So if left armor is stronger, we want to turn left (+1) to expose it.
+     * So if left armor is stronger, we rotate clockwise (+1) to expose it.
      * </p>
      *
      * @param unit The entity being evaluated

@@ -3592,12 +3592,10 @@ class BasicPathRankerTest {
             assertEquals(2, PathRankerState.DAMAGE_THRESHOLD,
                 "DAMAGE_THRESHOLD should be 2 to prevent oscillation");
 
-            // Document the expected behavior based on this threshold:
+            // Expected behavior based on this threshold:
             // - S=4, M=5 (diff=1): stays at SHORT (threshold not met)
             // - S=3, M=5 (diff=2): switches to MEDIUM (threshold met)
             // This ensures units don't constantly reposition on minor damage fluctuations
-            assertTrue(PathRankerState.DAMAGE_THRESHOLD > 1,
-                "Threshold must be > 1 to filter out single-point differences");
         }
 
         /**
@@ -4101,6 +4099,12 @@ class BasicPathRankerTest {
                 "Striker threat weight should be less than Brawler");
             assertTrue(threatWeight > sniperThreat,
                 "Striker threat weight should be greater than Sniper");
+
+            // Striker should also sit between Brawler (1.0) and Sniper (0.2) for melee threat
+            assertTrue(meleeThreat < state.getMeleeThreatMultiplier(brawler),
+                "Striker melee threat should be less than Brawler");
+            assertTrue(meleeThreat > state.getMeleeThreatMultiplier(sniper),
+                "Striker melee threat should be greater than Sniper");
 
             // Verify movement order is positive and reasonable
             assertTrue(moveOrder > 0, "Striker should have positive movement order");

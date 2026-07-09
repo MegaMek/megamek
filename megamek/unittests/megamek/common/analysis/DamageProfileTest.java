@@ -250,6 +250,19 @@ class DamageProfileTest {
     }
 
     @Test
+    void testGunneryOverrideShiftsTheExpectedCurve() throws EntityLoadingException {
+        Entity barghest = loadUnit("Barghest BGS-1T.mtf");
+        DamageProfile elite = DamageProfile.of(barghest, false, 2);
+        DamageProfile green = DamageProfile.of(barghest, false, 5);
+
+        assertEquals(2, elite.gunnery(), "Override is baked into the profile");
+        assertTrue(elite.expectedDamage(4) > green.expectedDamage(4),
+              "Better gunnery raises expected damage at every range");
+        assertEquals(elite.maxDamage(4), green.maxDamage(4), TOLERANCE,
+              "Maximum damage is gunnery-independent");
+    }
+
+    @Test
     void testExpectedClusterHitsMatchesTableExpectation() {
         // LRM-20 column of the cluster hits table, probability-weighted, lands between 12 and 13 -
         // well above the 12 that the common "roll a 7" shortcut gives.

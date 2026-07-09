@@ -137,9 +137,10 @@ public final class DamageProfile {
     }
 
     /**
-     * Builds the damage profile for a unit from its current weapon and ammunition state. Destroyed
-     * and out-of-ammo weapons contribute nothing, so a profile built mid-game reflects battle
-     * damage as of when it was built.
+     * Builds the damage profile for a unit from its current weapon and ammunition state, using the
+     * crew's gunnery skill (4 if the unit has no crew). Destroyed and out-of-ammo weapons
+     * contribute nothing, so a profile built mid-game reflects battle damage as of when it was
+     * built.
      *
      * @param entity          the unit to profile
      * @param useExtremeRange whether the TacOps extreme-range rules are in effect
@@ -147,7 +148,21 @@ public final class DamageProfile {
      * @return the unit's damage profile; never null, possibly empty (see {@link #hasWeapons()})
      */
     public static DamageProfile of(Entity entity, boolean useExtremeRange) {
-        int gunnery = (entity.getCrew() != null) ? entity.getCrew().getGunnery() : DEFAULT_GUNNERY;
+        int crewGunnery = (entity.getCrew() != null) ? entity.getCrew().getGunnery() : DEFAULT_GUNNERY;
+        return of(entity, useExtremeRange, crewGunnery);
+    }
+
+    /**
+     * Builds the damage profile for a unit at an explicit gunnery skill instead of the crew's,
+     * for what-if displays (e.g. the unit viewer's BV gunnery field).
+     *
+     * @param entity          the unit to profile
+     * @param useExtremeRange whether the TacOps extreme-range rules are in effect
+     * @param gunnery         the gunnery skill for the expected and sustained curves
+     *
+     * @return the unit's damage profile; never null, possibly empty (see {@link #hasWeapons()})
+     */
+    public static DamageProfile of(Entity entity, boolean useExtremeRange, int gunnery) {
 
         List<WeaponContribution> weapons = new ArrayList<>();
         int maxRange = 0;

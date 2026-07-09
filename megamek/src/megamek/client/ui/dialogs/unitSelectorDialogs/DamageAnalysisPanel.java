@@ -243,12 +243,15 @@ public class DamageAnalysisPanel extends JPanel {
         }
 
         // Curves back to front: maximum, expected, sustained
+        // The sustained curve is dashed: a heat-comfortable unit sustains its full expected damage,
+        // making the two curves identical - the dashes let the expected curve show through instead
+        // of being painted over and seeming to vanish.
         paintCurve(graphics2D, MAX_DAMAGE_COLOR, range -> profile.maxDamage(range),
-              maxRange, damageCeiling, marginLeft, marginTop, plotWidth, plotHeight);
+              maxRange, damageCeiling, marginLeft, marginTop, plotWidth, plotHeight, false);
         paintCurve(graphics2D, EXPECTED_DAMAGE_COLOR, range -> profile.expectedDamage(range),
-              maxRange, damageCeiling, marginLeft, marginTop, plotWidth, plotHeight);
+              maxRange, damageCeiling, marginLeft, marginTop, plotWidth, plotHeight, false);
         paintCurve(graphics2D, SUSTAINED_DAMAGE_COLOR, range -> profile.sustainedDamage(range),
-              maxRange, damageCeiling, marginLeft, marginTop, plotWidth, plotHeight);
+              maxRange, damageCeiling, marginLeft, marginTop, plotWidth, plotHeight, true);
 
         paintLegend(graphics2D,
               new String[] { Messages.getString("DamageAnalysisPanel.maximum"),
@@ -277,7 +280,8 @@ public class DamageAnalysisPanel extends JPanel {
     }
 
     private void paintCurve(Graphics2D graphics2D, Color color, CurveFunction curve, int maxRange,
-          double damageCeiling, int marginLeft, int marginTop, int plotWidth, int plotHeight) {
+          double damageCeiling, int marginLeft, int marginTop, int plotWidth, int plotHeight,
+          boolean dashed) {
         // Step outline: damage is constant across each hex, so the curve moves in steps, matching
         // how bracket boundaries actually behave (the drop happens between 12 and 13, not across 12).
         Polygon area = new Polygon();
@@ -299,7 +303,14 @@ public class DamageAnalysisPanel extends JPanel {
         graphics2D.fillPolygon(area);
         graphics2D.setColor(color);
         Stroke savedStroke = graphics2D.getStroke();
-        graphics2D.setStroke(new BasicStroke(UIUtil.scaleForGUI(2)));
+        float strokeWidth = UIUtil.scaleForGUI(2);
+        if (dashed) {
+            float dashLength = UIUtil.scaleForGUI(6);
+            graphics2D.setStroke(new BasicStroke(strokeWidth, BasicStroke.CAP_BUTT, BasicStroke.JOIN_MITER,
+                  10.0f, new float[] { dashLength, dashLength }, 0));
+        } else {
+            graphics2D.setStroke(new BasicStroke(strokeWidth));
+        }
         graphics2D.drawPolyline(area.xpoints, area.ypoints, area.npoints);
         graphics2D.setStroke(savedStroke);
     }

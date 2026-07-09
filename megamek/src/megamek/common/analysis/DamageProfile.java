@@ -386,16 +386,21 @@ public final class DamageProfile {
         }
 
         /**
-         * Tests each of the six hex-side directions against the weapon's firing arc with a probe
-         * coordinate a few hexes out along that direction. Pure arc geometry - no game or board.
+         * Determines which of the six hex-side sectors the weapon's firing arc covers by probing
+         * every hex on a ring around the unit and mapping each hex to its sector. Probing only the
+         * six sector spines would miss arcs whose boundaries run exactly along a spine - a
+         * rear-mounted weapon's arc covers all three rear hexsides, but its boundary spines can
+         * test as out-of-arc. A sector counts as covered when any of its ring hexes is in arc.
+         * Pure arc geometry - no game or board.
          */
         private static boolean[] computeBearing(Entity entity, WeaponMounted weapon) {
             boolean[] bearing = new boolean[DIRECTIONS];
             int arc = entity.getWeaponArc(entity.getEquipmentNum(weapon));
             Coords center = new Coords(ARC_PROBE_DISTANCE * 2, ARC_PROBE_DISTANCE * 2);
-            for (int direction = 0; direction < DIRECTIONS; direction++) {
-                Coords probe = center.translated(direction, ARC_PROBE_DISTANCE);
-                bearing[direction] = ComputeArc.isInArc(center, 0, probe, arc);
+            for (Coords probe : center.allAtDistance(ARC_PROBE_DISTANCE)) {
+                if (ComputeArc.isInArc(center, 0, probe, arc)) {
+                    bearing[center.direction(probe)] = true;
+                }
             }
             return bearing;
         }

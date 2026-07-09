@@ -40,6 +40,8 @@ import java.awt.Graphics2D;
 import java.awt.Polygon;
 import java.awt.RenderingHints;
 import java.awt.Stroke;
+import java.util.ArrayList;
+import java.util.List;
 
 import javax.swing.JPanel;
 import javax.swing.UIManager;
@@ -405,19 +407,43 @@ public class DamageAnalysisPanel extends JPanel {
           int availableWidth) {
         FontMetrics metrics = graphics2D.getFontMetrics();
         int dotSize = UIUtil.scaleForGUI(10);
+        int gap = UIUtil.scaleForGUI(5);
         int spacing = UIUtil.scaleForGUI(14);
-        int legendWidth = 0;
-        for (String label : labels) {
-            legendWidth += dotSize + UIUtil.scaleForGUI(5) + metrics.stringWidth(label) + spacing;
-        }
-        int currentX = x + Math.max(0, (availableWidth - legendWidth) / 2);
+        int rowHeight = metrics.getHeight() + UIUtil.scaleForGUI(2);
+
+        // Greedy row wrap so a legend never spills into a neighboring chart's region
+        int[] itemWidths = new int[labels.length];
         for (int index = 0; index < labels.length; index++) {
-            graphics2D.setColor(colors[index]);
-            graphics2D.fillOval(currentX, y - dotSize + UIUtil.scaleForGUI(2), dotSize, dotSize);
-            graphics2D.setColor(UIManager.getColor("Label.foreground"));
-            int textX = currentX + dotSize + UIUtil.scaleForGUI(5);
-            graphics2D.drawString(labels[index], textX, y);
-            currentX = textX + metrics.stringWidth(labels[index]) + spacing;
+            itemWidths[index] = dotSize + gap + metrics.stringWidth(labels[index]);
+        }
+        List<int[]> rows = new ArrayList<>(); // {firstIndex, lastIndex, rowWidth}
+        int rowStart = 0;
+        int rowWidth = 0;
+        for (int index = 0; index < labels.length; index++) {
+            int addedWidth = itemWidths[index] + ((rowWidth > 0) ? spacing : 0);
+            if ((rowWidth > 0) && (rowWidth + addedWidth > availableWidth)) {
+                rows.add(new int[] { rowStart, index - 1, rowWidth });
+                rowStart = index;
+                rowWidth = itemWidths[index];
+            } else {
+                rowWidth += addedWidth;
+            }
+        }
+        rows.add(new int[] { rowStart, labels.length - 1, rowWidth });
+
+        // y is the baseline of the LAST row; earlier rows stack upward so the legend stays in-region
+        int rowY = y - ((rows.size() - 1) * rowHeight);
+        for (int[] row : rows) {
+            int currentX = x + Math.max(0, (availableWidth - row[2]) / 2);
+            for (int index = row[0]; index <= row[1]; index++) {
+                graphics2D.setColor(colors[index]);
+                graphics2D.fillOval(currentX, rowY - dotSize + UIUtil.scaleForGUI(2), dotSize, dotSize);
+                graphics2D.setColor(UIManager.getColor("Label.foreground"));
+                int textX = currentX + dotSize + gap;
+                graphics2D.drawString(labels[index], textX, rowY);
+                currentX = textX + metrics.stringWidth(labels[index]) + spacing;
+            }
+            rowY += rowHeight;
         }
     }
 

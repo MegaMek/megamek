@@ -79,10 +79,8 @@ public class ArtilleryWeaponIndirectHomingHandler extends ArtilleryWeaponIndirec
     public ArtilleryWeaponIndirectHomingHandler(ToHitData toHitData, WeaponAttackAction weaponAttackAction, Game game,
           TWGameManager gameManager) throws EntityLoadingException {
         super(toHitData, weaponAttackAction, game, gameManager);
-        // PLAYTEST3 AMS below 0 is enabled
         advancedAMS =
-              game.getOptions().booleanOption(OptionsConstants.ADVANCED_COMBAT_TAC_OPS_AMS) || game.getOptions()
-                    .booleanOption(OptionsConstants.PLAYTEST_3);
+              Game.rulesManager.getRulesEquipment().getAMSReduction(game.getOptions().booleanOption(OptionsConstants.ADVANCED_COMBAT_TAC_OPS_AMS));
         advancedPD = game.getOptions().booleanOption(OptionsConstants.ADVANCED_AERO_RULES_STRATOPS_ADV_POINT_DEFENSE);
     }
 

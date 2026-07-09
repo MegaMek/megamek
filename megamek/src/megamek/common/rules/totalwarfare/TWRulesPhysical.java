@@ -33,6 +33,7 @@ package megamek.common.rules.totalwarfare;
  */
 
 import megamek.client.ui.Messages;
+import megamek.common.HitData;
 import megamek.common.ToHitData;
 import megamek.common.compute.Compute;
 import megamek.common.equipment.Mounted;
@@ -80,4 +81,18 @@ public class TWRulesPhysical extends CoreRulesPhysical {
     // Missed mace attacks cause a PSR
     @Override
     public boolean getMaceMissedPSR() { return true; }
+
+    // Lance does internal damage on 10+
+    @Override
+    public int getLanceTarget() { return 10; }
+
+    // Lance doesn't do anything special on a charge
+    @Override
+    public boolean isLanceCharging() { return false; }
+
+    // Shields do nothing in a charge
+    @Override
+    public HitData shieldChargeDamage(Entity attackingEntity) {
+        return null;
+    }
 }

@@ -2984,7 +2984,9 @@ public class TWDamageManager implements IDamageManager {
             for (int i = 0; i < mods.specCrits; i++) {
                 // against BAR or reflective armor, we get a +2 mod
                 int critMod = entity.hasBARArmor(hit.getLocation()) ? 2 : 0;
-                critMod += ((mods.reflectiveArmor) && !(mods.isBattleArmor)) ? 2 : 0; // BA
+                critMod += ((Game.rulesManager.getRulesArmor().reflectiveAP(mods.reflectiveArmor)) && !(mods.isBattleArmor)) ?
+                      2 :
+                      0; // BA
 
                 // Check for impact armor
                 critMod += (mods.impactArmor) ? Game.rulesManager.getRulesArmor().impactArmorMod() : 0;

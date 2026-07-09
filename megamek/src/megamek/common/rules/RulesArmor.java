@@ -51,4 +51,13 @@ public abstract class RulesArmor {
 
     // Impact Resistant Armor breach
     public abstract int impactArmorBreach(Entity entity, Vector<Report> vDesc);
+
+    // Does a lance penetrate the armor
+    public abstract boolean checkLancePenetration(int armorType);
+
+    // Does the armor reduce heat?
+    public abstract int reduceHeatDamageByArmor(int armorType, int heatDamage);
+
+    // Does reflective armor cause modifiers for AP?
+    public abstract boolean reflectiveAP(boolean reflectiveArmor);
 }

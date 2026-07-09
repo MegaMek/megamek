@@ -33,7 +33,9 @@ package megamek.common.rules.core;
  */
 
 import megamek.common.CriticalSlot;
+import megamek.common.HitData;
 import megamek.common.ToHitData;
+import megamek.common.annotations.Nullable;
 import megamek.common.compute.Compute;
 import megamek.common.equipment.EquipmentType;
 import megamek.common.equipment.MiscMounted;
@@ -42,6 +44,7 @@ import megamek.common.equipment.Mounted;
 import megamek.common.equipment.enums.MiscTypeFlag;
 import megamek.common.rules.RulesPhysical;
 import megamek.common.units.Entity;
+import megamek.common.units.Mek;
 
 public class CoreRulesPhysical extends RulesPhysical {
 
@@ -108,5 +111,40 @@ public class CoreRulesPhysical extends RulesPhysical {
     // Missed mace attacks do not cause PSR Core p.194
     public boolean getMaceMissedPSR() {
         return false;
+    }
+
+    // Lance does internal damage on 9+ Core p.194
+    public int getLanceTarget() { return 9; }
+
+    // Lance can penetrate on a charge. Core p.194
+    public boolean isLanceCharging() { return true; }
+
+    // Charge with shield allocated damage to shield. Core p.195
+    @Nullable
+    public HitData shieldChargeDamage(Entity attackingEntity) {
+        int[] armLocations = { Mek.LOC_LEFT_ARM, Mek.LOC_RIGHT_ARM };
+        HitData hit;
+
+        for (int armLoc : armLocations) {
+            for (int slot = 0; slot < attackingEntity.getNumberOfCriticalSlots(armLoc); slot++) {
+                CriticalSlot cs = attackingEntity.getCritical(armLoc, slot);
+                if (cs == null) {
+                    continue;
+                }
+                if (cs.getType() != CriticalSlot.TYPE_EQUIPMENT) {
+                    continue;
+                }
+                Mounted<?> m = cs.getMount();
+                EquipmentType type = m.getType();
+                if ((type instanceof MiscType) && ((MiscType) type).isShield()) {
+                    if ((((MiscMounted) m).getDamageAbsorption(attackingEntity, armLoc) > 0)
+                          && (((MiscMounted) m).getCurrentDamageCapacity(attackingEntity, armLoc) > 0)
+                          && attackingEntity.hasRaisedShield(armLoc)) {
+                        return new HitData(armLoc);
+                    }
+                }
+            }
+        }
+        return null;
     }
 }

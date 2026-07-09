@@ -11814,13 +11814,13 @@ public class TWGameManager extends AbstractGameManager {
                     // attackingEntity.extendBlade(paa.getArm());
                     // check for breaking a nail
                     if (Game.rulesManager.getRulesPhysical().checkRetractableBladeBroke()) {
-                            addNewLines();
-                            r = new Report(4456);
-                            r.indent(2);
-                            r.subject = ae.getId();
-                            r.newlines = 0;
-                            addReport(r);
-                            ae.destroyRetractableBlade(armLoc);
+                        addNewLines();
+                        r = new Report(4456);
+                        r.indent(2);
+                        r.subject = ae.getId();
+                        r.newlines = 0;
+                        addReport(r);
+                        ae.destroyRetractableBlade(armLoc);
                     }
                 }
             }
@@ -13819,38 +13819,24 @@ public class TWGameManager extends AbstractGameManager {
                 }
             }
 
-            // On a roll of 10+ a lance hitting a mek/Vehicle can cause 1 point of
+            // A lance hitting a mek/Vehicle may cause 1 point of
             // internal damage
-            // PLAYTEST3 Ferro-lam is no longer immune to AP. ABA/APA is.
             if (caa.getClub().getType().hasFlag(MiscTypeFlag.S_LANCE) &&
-                  (te.getArmor(hit) > 0) &&
-                  (te.getArmorType(hit.getLocation()) != EquipmentType.T_ARMOR_HARDENED)) {
-                // PLAYTEST3 Ferro_Lam does not block the lance in playtest3, but APA/ABA does
-                if ((!game.getOptions().booleanOption(OptionsConstants.PLAYTEST_3)
-                      && te.getArmorType(hit.getLocation()) != EquipmentType.T_ARMOR_FERRO_LAMELLOR)
-                      || (game.getOptions().booleanOption(OptionsConstants.PLAYTEST_3)
-                      && te.getArmorType(hit.getLocation()) != EquipmentType.T_ARMOR_ANTI_PENETRATIVE_ABLATION)) {
-                    Roll diceRoll2 = Compute.rollD6(2);
-                    // Pierce checking report
-                    r = new Report(4021);
-                    r.indent(2);
-                    r.subject = ae.getId();
-                    r.add(te.getLocationAbbr(hit));
-                    r.add(diceRoll2);
-                    addReport(r);
+                  (te.getArmor(hit) > 0) && Game.rulesManager.getRulesArmor()
+                  .checkLancePenetration(te.getArmorType(hit.getLocation())))
+            {
+                Roll diceRoll2 = Compute.rollD6(2);
+                // Pierce checking report
+                r = new Report(4021);
+                r.indent(2);
+                r.subject = ae.getId();
+                r.add(te.getLocationAbbr(hit));
+                r.add(diceRoll2);
+                addReport(r);
 
-                    // PLAYTEST3 this is now 9, not 10.
-                    if (game.getOptions().booleanOption(OptionsConstants.PLAYTEST_3)) {
-                        if (diceRoll2.getIntValue() >= 9) {
-                            hit.makeGlancingBlow();
-                            addReport(damageEntity(te, hit, 1, false, DamageType.NONE, true, false, throughFront));
-                        }
-                    } else {
-                        if (diceRoll2.getIntValue() >= 10) {
-                            hit.makeGlancingBlow();
-                            addReport(damageEntity(te, hit, 1, false, DamageType.NONE, true, false, throughFront));
-                        }
-                    }
+                if (diceRoll2.getIntValue() >= Game.rulesManager.getRulesPhysical().getLanceTarget()) {
+                    hit.makeGlancingBlow();
+                    addReport(damageEntity(te, hit, 1, false, DamageType.NONE, true, false, throughFront));
                 }
             }
 
@@ -15375,38 +15361,12 @@ public class TWGameManager extends AbstractGameManager {
             hit.setGeneralDamageType(HitData.DAMAGE_PHYSICAL);
             cluster = checkForSpikes(ae, hit.getLocation(), cluster, te, Mek.LOC_CENTER_TORSO);
 
-            // PLAYTEST3 raised shield takes all the charge damage
-            if (game.getOptions().booleanOption(OptionsConstants.PLAYTEST_3) && ae.hasShield()) {
-                int[] armLocations = { Mek.LOC_LEFT_ARM, Mek.LOC_RIGHT_ARM };
-                boolean foundShield = false;
-
-                for (int armLoc : armLocations) {
-                    for (int slot = 0; slot < ae.getNumberOfCriticalSlots(armLoc); slot++) {
-                        CriticalSlot cs = ae.getCritical(armLoc, slot);
-                        if (cs == null) {
-                            continue;
-                        }
-                        if (cs.getType() != CriticalSlot.TYPE_EQUIPMENT) {
-                            continue;
-                        }
-                        Mounted<?> m = cs.getMount();
-                        EquipmentType type = m.getType();
-                        if ((type instanceof MiscType) && ((MiscType) type).isShield()) {
-                            if ((((MiscMounted) m).getDamageAbsorption(ae, armLoc) > 0)
-                                  && (((MiscMounted) m).getCurrentDamageCapacity(ae, armLoc) > 0)
-                                  && m.curMode().equals(MiscType.S_ACTIVE_SHIELD)) {
-                                hit = new HitData(armLoc);
-                                foundShield = true;
-                                break;
-                            }
-                        }
-                    }
-                    if (foundShield) {
-                        break;
-                    }
+            if (ae.hasShield()) {
+                HitData hitShield = Game.rulesManager.getRulesPhysical().shieldChargeDamage(ae);
+                if (hitShield != null) {
+                    hit = hitShield;
                 }
             }
-
             addReport(damageEntity(ae, hit, cluster, false, DamageType.NONE, false, false, throughFront));
         }
 
@@ -15456,7 +15416,7 @@ public class TWGameManager extends AbstractGameManager {
 
         // track any additional damage to the attacker due to the target having spikes
 
-        // PLAYTEST3 lance only on first cluster
+        // Lances need to know this
         boolean firstCluster = true;
 
         while (damage > 0) {
@@ -15500,18 +15460,14 @@ public class TWGameManager extends AbstractGameManager {
                 }
                 cluster = checkForSpikes(te, hit.getLocation(), cluster, ae, Mek.LOC_CENTER_TORSO);
 
-                // PLAYTEST3 make lance deal 1 point internal to the first cluster if armor remained. ABA and
-                // hardened block this
-                if (game.getOptions().booleanOption(OptionsConstants.PLAYTEST_3) && firstCluster) {
+                if (Game.rulesManager.getRulesPhysical().isLanceCharging() && firstCluster) {
                     boolean hasLance = false;
                     boolean secondLance = false;
                     for (MiscMounted getClub : ae.getClubs()) {
                         if (getClub.getType().hasFlag(MiscTypeFlag.S_LANCE) &&
                               (te.getArmor(hit) > 0) &&
-                              (te.getArmorType(hit.getLocation()) != EquipmentType.T_ARMOR_HARDENED) &&
                               (te.getArmorType(hit.getLocation()) != EquipmentType.T_ARMOR_ANTI_PENETRATIVE_ABLATION)) {
                             if (hasLance) {
-                                // PLAYTEST3 the mek has 2 lances
                                 secondLance = true;
                             }
                             hasLance = true;
@@ -15526,7 +15482,6 @@ public class TWGameManager extends AbstractGameManager {
                         if (secondLance) {
                             Roll diceRoll3 = Compute.rollD6(2);
                             if (diceRoll3.getIntValue() >= 5) {
-                                // PLAYTEST3 another potential crit from the 2nd lance
                                 hit.setEffect(HitData.EFFECT_CRITICAL);
                                 addReport(damageEntity(te, hit, 0, false, DamageType.NONE, true, false, throughFront));
                             }
@@ -18639,7 +18594,12 @@ public class TWGameManager extends AbstractGameManager {
             return vDesc;
         }
 
-        return Game.rulesManager.getRulesPilot().pilotHits(e, totalHits, damage, crewPos, game.getOptions().booleanOption(OptionsConstants.RPG_TOUGHNESS));
+        return Game.rulesManager.getRulesPilot()
+              .pilotHits(e,
+                    totalHits,
+                    damage,
+                    crewPos,
+                    game.getOptions().booleanOption(OptionsConstants.RPG_TOUGHNESS));
     }
 
     /**

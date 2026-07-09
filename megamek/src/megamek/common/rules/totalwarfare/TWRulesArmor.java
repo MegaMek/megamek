@@ -34,6 +34,8 @@ package megamek.common.rules.totalwarfare;
 
 
 import megamek.common.Report;
+import megamek.common.equipment.EquipmentType;
+import megamek.common.options.OptionsConstants;
 import megamek.common.rules.core.CoreRulesArmor;
 import megamek.common.units.Entity;
 import megamek.server.totalWarfare.TWDamageManager;
@@ -68,5 +70,31 @@ public class TWRulesArmor extends CoreRulesArmor {
         r.indent(3);
         vDesc.addElement(r);
         return 1;
+    }
+
+    // Hardened and ferro lam prevent penetration
+    @Override
+    public boolean checkLancePenetration(int armorType) {
+        if (armorType == EquipmentType.T_ARMOR_HARDENED || armorType == EquipmentType.T_ARMOR_FERRO_LAMELLOR) {
+            return true;
+        }
+        return false;
+    }
+
+    @Override
+    public int reduceHeatDamageByArmor(int armorType, int heatDamage) {
+        if (armorType == EquipmentType.T_ARMOR_HEAT_DISSIPATING) {
+            return (heatDamage / 2);
+        } else if (armorType == EquipmentType.T_ARMOR_REFLECTIVE) {
+            // reflective armor divides heat damage by 2, with a minimum of 1
+            return Math.max(1, heatDamage / 2);
+        }
+        return heatDamage;
+    }
+
+    // In TW, reflective armor will cause AP crit chance changes
+    @Override
+    public boolean reflectiveAP(boolean reflectiveArmor) {
+        return reflectiveArmor;
     }
 }

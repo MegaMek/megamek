@@ -76,10 +76,8 @@ public class PlasmaRifleHandler extends AmmoWeaponHandler {
     @Override
     protected void handleEntityDamage(Entity entityTarget, Vector<Report> vPhaseReport, IBuilding bldg, int hits,
           int nCluster, int bldgAbsorbs) {
-        if (game.getOptions().booleanOption(OptionsConstants.PLAYTEST_3)) {
-            if (hit != null) {
-                hit.setHeatWeapon(true);
-            }
+        if (hit != null) {
+            hit.setHeatWeapon(true);
         }
         super.handleEntityDamage(entityTarget, vPhaseReport, bldg, hits, nCluster, bldgAbsorbs);
         if (!missed && entityTarget.tracksHeat()) {
@@ -93,29 +91,22 @@ public class PlasmaRifleHandler extends AmmoWeaponHandler {
                 extraHeat += Compute.d6();
             }
 
-            if (entityTarget.getArmor(hit) > 0
-                  &&
-                  (entityTarget.getArmorType(hit.getLocation()) == EquipmentType.T_ARMOR_REFLECTIVE)
-                  && !game.getOptions().booleanOption(OptionsConstants.PLAYTEST_3)) {
-                // PLAYTEST3 do not halve for reflective
-                entityTarget.heatFromExternal += Math.max(1, extraHeat / 2);
-                report.add(Math.max(1, extraHeat / 2));
-                report.choose(true);
-                report.messageId = 3406;
-                report.add(extraHeat);
-                report.add(ArmorType.forEntity(entityTarget, hit.getLocation()).getName());
-            } else if (entityTarget.getArmor(hit) > 0 &&
-                  (entityTarget.getArmorType(hit.getLocation()) == EquipmentType.T_ARMOR_HEAT_DISSIPATING)) {
-                if (game.getOptions().booleanOption(OptionsConstants.PLAYTEST_3)) {
-                    // PLAYTEST3 no heat from plasma
-                    extraHeat = 0;
+            if (entityTarget.getArmor(hit) > 0 &&
+                  ((entityTarget.getArmorType(hit.getLocation()) == EquipmentType.T_ARMOR_HEAT_DISSIPATING) || (entityTarget.getArmorType(hit.getLocation()) == EquipmentType.T_ARMOR_REFLECTIVE))) {
+                int reducedHeat =
+                      Game.rulesManager.getRulesArmor().reduceHeatDamageByArmor(entityTarget.getArmorType(hit.getLocation()), extraHeat);
+                if (reducedHeat != extraHeat) {
+                    entityTarget.heatFromExternal += reducedHeat;
+                    report.add(reducedHeat);
+                    report.choose(true);
+                    report.messageId = 3406;
+                    report.add(extraHeat);
+                    report.add(ArmorType.forEntity(entityTarget, hit.getLocation()).getName());
+                } else {
+                    entityTarget.heatFromExternal += extraHeat;
+                    report.add(extraHeat);
+                    report.choose(true);
                 }
-                entityTarget.heatFromExternal += extraHeat / 2;
-                report.add(extraHeat / 2);
-                report.choose(true);
-                report.messageId = 3406;
-                report.add(extraHeat);
-                report.add(ArmorType.forEntity(entityTarget, hit.getLocation()).getName());
             } else {
                 entityTarget.heatFromExternal += extraHeat;
                 report.add(extraHeat);

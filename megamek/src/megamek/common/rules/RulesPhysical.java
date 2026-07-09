@@ -32,7 +32,9 @@ package megamek.common.rules;
  * affiliated with Microsoft.
  */
 
+import megamek.common.HitData;
 import megamek.common.ToHitData;
+import megamek.common.annotations.Nullable;
 import megamek.common.equipment.Mounted;
 import megamek.common.units.Entity;
 
@@ -58,4 +60,14 @@ public abstract class RulesPhysical {
 
     // Does a missed mace attack cause a PSR
     public abstract boolean getMaceMissedPSR();
+
+    // What is the target number for a lance to do internal damage
+    public abstract int getLanceTarget();
+
+    // Does the lance do anything special on a charge?
+    public abstract boolean isLanceCharging();
+
+    // Does a shield do anything in a charge?
+    @Nullable
+    public abstract HitData shieldChargeDamage(Entity attackingEntity);
 }

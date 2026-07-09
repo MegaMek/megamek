@@ -34,6 +34,7 @@ package megamek.common.rules.core;
 
 
 import megamek.common.Report;
+import megamek.common.equipment.EquipmentType;
 import megamek.common.rules.RulesArmor;
 import megamek.common.units.Entity;
 import megamek.server.totalWarfare.TWDamageManager;
@@ -62,4 +63,17 @@ public class CoreRulesArmor extends RulesArmor {
     public int impactArmorBreach(Entity entity, Vector<Report> vDesc) {
         return 0;
     }
+
+    // Does a lance penetrate on hit? Not if it is ABA, but all others yes. Core p.201
+    public boolean checkLancePenetration(int armorType) {
+        return  (armorType == EquipmentType.T_ARMOR_ANTI_PENETRATIVE_ABLATION) ? true : false;
+    }
+
+    // Does armor reduce heat? Core p.202
+    public int reduceHeatDamageByArmor(int armorType, int heatDamage) {
+        return (armorType == EquipmentType.T_ARMOR_HEAT_DISSIPATING) ? 0 : heatDamage;
+    }
+
+    // Reflective armor does not have a modifier on AP rounds
+    public boolean reflectiveAP(boolean reflectiveArmor) { return false;}
 }

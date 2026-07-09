@@ -344,7 +344,10 @@ public class DamageAnalysisPanel extends JPanel {
         BufferedImage image = new BufferedImage(tile, tile, BufferedImage.TYPE_INT_ARGB);
         Graphics2D graphics2D = image.createGraphics();
         graphics2D.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
-        graphics2D.setColor(new Color(color.getRed(), color.getGreen(), color.getBlue(), 110));
+        // Opaque stripes: a translucent stripe composites with the fields underneath (red over the
+        // green backdrop reads orange), drifting every overlap away from the legend colors. Opaque
+        // stripe lines stay the series' true color and the underlying field shows only in the gaps.
+        graphics2D.setColor(color);
         graphics2D.setStroke(new BasicStroke(tile / 3.0f));
         // Three parallel lines cover the tile seams so the pattern tiles without gaps
         for (int offset = -tile; offset <= tile; offset += tile) {

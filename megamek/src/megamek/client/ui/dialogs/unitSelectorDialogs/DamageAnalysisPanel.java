@@ -60,8 +60,8 @@ import megamek.common.units.Entity;
  *
  * <p>Shared by the unit viewers of MegaMek and MegaMekLab: it is a tab in
  * {@link EntityViewPane} (both unit selectors), and MegaMekLab's editor preview can mount the
- * same panel for live refresh while editing. Call {@link #setEntity(Entity)} to update; null
- * clears the display.</p>
+ * same panel for live refresh while editing. Call {@link #setEntity(Entity)} to update;
+ * {@code null} clears the display.</p>
  *
  * <p>Curve colors are fixed hues readable on both light and dark themes; the axes and text use
  * the current look-and-feel colors.</p>
@@ -106,7 +106,7 @@ public class DamageAnalysisPanel extends JPanel {
     /**
      * Updates the displayed unit. The damage profile is computed once here, not per repaint.
      *
-     * @param entity the unit to analyze, or null to clear the display
+     * @param entity the unit to analyze, or {@code null} to clear the display
      */
     public void setEntity(@Nullable Entity entity) {
         this.entity = entity;
@@ -189,9 +189,9 @@ public class DamageAnalysisPanel extends JPanel {
               : Messages.getString("DamageAnalysisPanel.noWeapons");
         graphics2D.setColor(UIManager.getColor("Label.foreground"));
         FontMetrics metrics = graphics2D.getFontMetrics();
-        int x = (getWidth() - metrics.stringWidth(message)) / 2;
-        int y = (getHeight() + metrics.getAscent()) / 2;
-        graphics2D.drawString(message, x, y);
+        int messageX = (getWidth() - metrics.stringWidth(message)) / 2;
+        int messageY = (getHeight() + metrics.getAscent()) / 2;
+        graphics2D.drawString(message, messageX, messageY);
     }
 
     // ========== Damage vs Range chart ==========
@@ -223,22 +223,22 @@ public class DamageAnalysisPanel extends JPanel {
         int ySteps = 5;
         for (int step = 0; step <= ySteps; step++) {
             double damageValue = damageCeiling * step / ySteps;
-            int y = marginTop + plotHeight - (int) Math.round(plotHeight * step / (double) ySteps);
+            int gridLineY = marginTop + plotHeight - (int) Math.round(plotHeight * step / (double) ySteps);
             graphics2D.setColor(gridColor);
-            graphics2D.drawLine(marginLeft, y, marginLeft + plotWidth, y);
+            graphics2D.drawLine(marginLeft, gridLineY, marginLeft + plotWidth, gridLineY);
             graphics2D.setColor(foreground);
             String label = formatDamageLabel(damageValue);
             graphics2D.drawString(label, marginLeft - metrics.stringWidth(label) - UIUtil.scaleForGUI(6),
-                  y + (metrics.getAscent() / 2));
+                  gridLineY + (metrics.getAscent() / 2));
         }
         int xStep = Math.max(1, (int) Math.ceil(maxRange / 8.0));
         for (int range = 1; range <= maxRange; range += xStep) {
-            int x = xForRange(range, maxRange, marginLeft, plotWidth);
+            int gridLineX = xForRange(range, maxRange, marginLeft, plotWidth);
             graphics2D.setColor(gridColor);
-            graphics2D.drawLine(x, marginTop, x, marginTop + plotHeight);
+            graphics2D.drawLine(gridLineX, marginTop, gridLineX, marginTop + plotHeight);
             graphics2D.setColor(foreground);
             String label = String.valueOf(range);
-            graphics2D.drawString(label, x - (metrics.stringWidth(label) / 2),
+            graphics2D.drawString(label, gridLineX - (metrics.stringWidth(label) / 2),
                   marginTop + plotHeight + metrics.getAscent() + UIUtil.scaleForGUI(4));
         }
 
@@ -285,13 +285,13 @@ public class DamageAnalysisPanel extends JPanel {
         area.addPoint(xForRange(1, maxRange, marginLeft, plotWidth), baselineY);
         int previousY = baselineY;
         for (int range = 1; range <= maxRange; range++) {
-            int x = xForRange(range, maxRange, marginLeft, plotWidth);
-            int y = yForDamage(curve.valueAt(range), damageCeiling, marginTop, plotHeight);
+            int stepX = xForRange(range, maxRange, marginLeft, plotWidth);
+            int stepY = yForDamage(curve.valueAt(range), damageCeiling, marginTop, plotHeight);
             if (range > 1) {
-                area.addPoint(x, previousY);
+                area.addPoint(stepX, previousY);
             }
-            area.addPoint(x, y);
-            previousY = y;
+            area.addPoint(stepX, stepY);
+            previousY = stepY;
         }
         area.addPoint(xForRange(maxRange, maxRange, marginLeft, plotWidth), baselineY);
 
@@ -468,8 +468,8 @@ public class DamageAnalysisPanel extends JPanel {
 
     // ========== Shared helpers ==========
 
-    private void paintLegend(Graphics2D graphics2D, String[] labels, Color[] colors, int x, int y,
-          int availableWidth) {
+    private void paintLegend(Graphics2D graphics2D, String[] labels, Color[] colors, int legendX,
+          int lastRowBaselineY, int availableWidth) {
         FontMetrics metrics = graphics2D.getFontMetrics();
         int dotSize = UIUtil.scaleForGUI(10);
         int gap = UIUtil.scaleForGUI(5);
@@ -496,10 +496,10 @@ public class DamageAnalysisPanel extends JPanel {
         }
         rows.add(new int[] { rowStart, labels.length - 1, rowWidth });
 
-        // y is the baseline of the LAST row; earlier rows stack upward so the legend stays in-region
-        int rowY = y - ((rows.size() - 1) * rowHeight);
+        // Earlier rows stack upward from the last row's baseline so the legend stays in-region
+        int rowY = lastRowBaselineY - ((rows.size() - 1) * rowHeight);
         for (int[] row : rows) {
-            int currentX = x + Math.max(0, (availableWidth - row[2]) / 2);
+            int currentX = legendX + Math.max(0, (availableWidth - row[2]) / 2);
             for (int index = row[0]; index <= row[1]; index++) {
                 graphics2D.setColor(colors[index]);
                 graphics2D.fillOval(currentX, rowY - dotSize + UIUtil.scaleForGUI(2), dotSize, dotSize);

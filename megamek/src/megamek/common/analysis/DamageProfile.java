@@ -160,7 +160,7 @@ public final class DamageProfile {
      * @param entity          the unit to profile
      * @param useExtremeRange whether the TacOps extreme-range rules are in effect
      *
-     * @return the unit's damage profile; never null, possibly empty (see {@link #hasWeapons()})
+     * @return the unit's damage profile; never {@code null}, possibly empty (see {@link #hasWeapons()})
      */
     public static DamageProfile of(Entity entity, boolean useExtremeRange) {
         int crewGunnery = (entity.getCrew() != null) ? entity.getCrew().getGunnery() : DEFAULT_GUNNERY;
@@ -175,7 +175,7 @@ public final class DamageProfile {
      * @param useExtremeRange whether the TacOps extreme-range rules are in effect
      * @param gunnery         the gunnery skill for the expected and sustained curves
      *
-     * @return the unit's damage profile; never null, possibly empty (see {@link #hasWeapons()})
+     * @return the unit's damage profile; never {@code null}, possibly empty (see {@link #hasWeapons()})
      */
     public static DamageProfile of(Entity entity, boolean useExtremeRange, int gunnery) {
 
@@ -273,7 +273,7 @@ public final class DamageProfile {
     }
 
     /**
-     * @return true if any contributing weapon is capital or sub-capital scale. The curves are
+     * @return {@code true} if any contributing weapon is capital or sub-capital scale. The curves are
      *       always in standard damage points (capital converts at x10); displays may use this to
      *       relabel their axes in capital scale for naval reading.
      */
@@ -363,7 +363,7 @@ public final class DamageProfile {
     }
 
     private static double curveValue(double[] curve, int range) {
-        if (range < 0 || range >= curve.length) {
+        if ((range < 0) || (range >= curve.length)) {
             return 0;
         }
         return curve[range];
@@ -378,7 +378,7 @@ public final class DamageProfile {
     }
 
     /**
-     * @return true if the unit had at least one functioning weapon with a nonzero damage curve when
+     * @return {@code true} if the unit had at least one functioning weapon with a nonzero damage curve when
      *       the profile was built. Replaces sentinel values - consumers decide what "no weapons"
      *       means for them.
      */
@@ -479,7 +479,7 @@ public final class DamageProfile {
               AmmoType.AmmoTypeEnum.ATM, AmmoType.AmmoTypeEnum.IATM, AmmoType.AmmoTypeEnum.MML);
 
         /**
-         * @return the firing options for this weapon, or null if it has no way to fire (no usable
+         * @return the firing options for this weapon, or {@code null} if it has no way to fire (no usable
          *       ammunition for an ammo-dependent weapon)
          */
         static WeaponContribution of(Entity entity, WeaponMounted weapon, int gunnery, boolean useExtremeRange) {
@@ -488,8 +488,8 @@ public final class DamageProfile {
 
         /**
          * @param precomputedBearing the firing directions to use instead of this weapon's own arc,
-         *                           for bay members that fire through their bay's arc; null to
-         *                           compute from the weapon itself
+         *                           for bay members that fire through their bay's arc; {@code null}
+         *                           to compute from the weapon itself
          */
         static WeaponContribution of(Entity entity, WeaponMounted weapon, int gunnery, boolean useExtremeRange,
               boolean[] precomputedBearing) {
@@ -568,7 +568,7 @@ public final class DamageProfile {
         /**
          * Resolves this weapon at a range, choosing the ammunition with the best expected damage.
          *
-         * @return the weapon's contribution at this range, or null if it cannot reach
+         * @return the weapon's contribution at this range, or {@code null} if it cannot reach
          */
         WeaponAtRange atRange(int range) {
             WeaponAtRange best = null;

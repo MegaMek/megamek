@@ -107,6 +107,21 @@ public class DamageAnalysisPanel extends JPanel {
     private record LegendHitZone(Rectangle bounds, String tooltip) {
     }
 
+    /**
+     * One legend entry, carrying the series' actual rendering so the swatch shows exactly what is
+     * drawn on the chart: its fill ({@code null} for the plain translucent fill) and whether its
+     * outline is dashed.
+     *
+     * @param label         the series name
+     * @param color         the series line color
+     * @param tooltip       the hover explanation
+     * @param fill          the series' stripe fill, or {@code null} for translucent solid
+     * @param dashedOutline whether the series outline is dashed
+     */
+    private record LegendEntry(String label, Color color, String tooltip, TexturePaint fill,
+          boolean dashedOutline) {
+    }
+
     private final List<LegendHitZone> legendHitZones = new ArrayList<>();
 
     public DamageAnalysisPanel() {
@@ -228,12 +243,18 @@ public class DamageAnalysisPanel extends JPanel {
         int marginLeft = regionX + UIUtil.scaleForGUI(48);
         int marginTop = regionY + UIUtil.scaleForGUI(28);
         int plotWidth = regionWidth - UIUtil.scaleForGUI(48) - UIUtil.scaleForGUI(16);
-        String[] legendLabels = { Messages.getString("DamageAnalysisPanel.maximum"),
-                                  Messages.getString("DamageAnalysisPanel.expected"),
-                                  Messages.getString("DamageAnalysisPanel.sustained") };
+        TexturePaint expectedStripes = createStripePaint(EXPECTED_DAMAGE_COLOR, true);
+        TexturePaint sustainedStripes = createStripePaint(SUSTAINED_DAMAGE_COLOR, false);
+        List<LegendEntry> legendEntries = List.of(
+              new LegendEntry(Messages.getString("DamageAnalysisPanel.maximum"), MAX_DAMAGE_COLOR,
+                    Messages.getString("DamageAnalysisPanel.maximumTip"), null, false),
+              new LegendEntry(Messages.getString("DamageAnalysisPanel.expected"), EXPECTED_DAMAGE_COLOR,
+                    Messages.getString("DamageAnalysisPanel.expectedTip"), expectedStripes, false),
+              new LegendEntry(Messages.getString("DamageAnalysisPanel.sustained"), SUSTAINED_DAMAGE_COLOR,
+                    Messages.getString("DamageAnalysisPanel.sustainedTip"), sustainedStripes, true));
         // A narrow region wraps the legend onto several rows; the plot must shrink to make room,
         // or the extra rows climb up into the x-axis labels.
-        int extraLegendRows = wrapLegendRows(metrics, legendLabels, plotWidth).size() - 1;
+        int extraLegendRows = wrapLegendRows(metrics, legendEntries, plotWidth).size() - 1;
         int legendRowHeight = metrics.getHeight() + UIUtil.scaleForGUI(2);
         int plotHeight = regionHeight - UIUtil.scaleForGUI(28) - UIUtil.scaleForGUI(56)
               - (extraLegendRows * legendRowHeight);
@@ -283,16 +304,12 @@ public class DamageAnalysisPanel extends JPanel {
               maxRange, damageCeiling, marginLeft, marginTop, plotWidth, plotHeight, false, null);
         paintCurve(graphics2D, EXPECTED_DAMAGE_COLOR, range -> profile.expectedDamage(range),
               maxRange, damageCeiling, marginLeft, marginTop, plotWidth, plotHeight, false,
-              createStripePaint(EXPECTED_DAMAGE_COLOR, true));
+              expectedStripes);
         paintCurve(graphics2D, SUSTAINED_DAMAGE_COLOR, range -> profile.sustainedDamage(range),
               maxRange, damageCeiling, marginLeft, marginTop, plotWidth, plotHeight, true,
-              createStripePaint(SUSTAINED_DAMAGE_COLOR, false));
+              sustainedStripes);
 
-        paintLegend(graphics2D, legendLabels,
-              new Color[] { MAX_DAMAGE_COLOR, EXPECTED_DAMAGE_COLOR, SUSTAINED_DAMAGE_COLOR },
-              new String[] { Messages.getString("DamageAnalysisPanel.maximumTip"),
-                             Messages.getString("DamageAnalysisPanel.expectedTip"),
-                             Messages.getString("DamageAnalysisPanel.sustainedTip") },
+        paintLegend(graphics2D, legendEntries,
               marginLeft, marginTop + plotHeight + metrics.getHeight() + UIUtil.scaleForGUI(14)
                     + (extraLegendRows * legendRowHeight), plotWidth);
     }
@@ -399,19 +416,21 @@ public class DamageAnalysisPanel extends JPanel {
             series[3][direction] = arc.longRangeAverage();
             ceiling = Math.max(ceiling, arc.maximumAverage());
         }
+        List<LegendEntry> legendEntries = List.of(
+              new LegendEntry(Messages.getString("DamageAnalysisPanel.maxAverage"), MAX_DAMAGE_COLOR,
+                    Messages.getString("DamageAnalysisPanel.maxAverageTip"), null, false),
+              new LegendEntry(Messages.getString("DamageAnalysisPanel.shortAverage"), EXPECTED_DAMAGE_COLOR,
+                    Messages.getString("DamageAnalysisPanel.shortAverageTip"), null, false),
+              new LegendEntry(Messages.getString("DamageAnalysisPanel.mediumAverage"), MEDIUM_BAND_COLOR,
+                    Messages.getString("DamageAnalysisPanel.mediumAverageTip"), null, false),
+              new LegendEntry(Messages.getString("DamageAnalysisPanel.longAverage"), SUSTAINED_DAMAGE_COLOR,
+                    Messages.getString("DamageAnalysisPanel.longAverageTip"), null, false));
         paintRadar(graphics2D, regionX, regionY, regionWidth, regionHeight,
               Messages.getString("DamageAnalysisPanel.directionRadar"),
               series,
               new Color[] { MAX_DAMAGE_COLOR, EXPECTED_DAMAGE_COLOR, MEDIUM_BAND_COLOR,
                             SUSTAINED_DAMAGE_COLOR },
-              new String[] { Messages.getString("DamageAnalysisPanel.maxAverage"),
-                             Messages.getString("DamageAnalysisPanel.shortAverage"),
-                             Messages.getString("DamageAnalysisPanel.mediumAverage"),
-                             Messages.getString("DamageAnalysisPanel.longAverage") },
-              new String[] { Messages.getString("DamageAnalysisPanel.maxAverageTip"),
-                             Messages.getString("DamageAnalysisPanel.shortAverageTip"),
-                             Messages.getString("DamageAnalysisPanel.mediumAverageTip"),
-                             Messages.getString("DamageAnalysisPanel.longAverageTip") },
+              legendEntries,
               niceCeiling(ceiling), true);
     }
 
@@ -423,12 +442,14 @@ public class DamageAnalysisPanel extends JPanel {
             series[0][direction] = profile.arcSummary(direction).reach();
             ceiling = Math.max(ceiling, series[0][direction]);
         }
+        List<LegendEntry> legendEntries = List.of(
+              new LegendEntry(Messages.getString("DamageAnalysisPanel.reach"), REACH_COLOR,
+                    Messages.getString("DamageAnalysisPanel.reachTip"), null, false));
         paintRadar(graphics2D, regionX, regionY, regionWidth, regionHeight,
               Messages.getString("DamageAnalysisPanel.reachRadar"),
               series,
               new Color[] { REACH_COLOR },
-              new String[] { Messages.getString("DamageAnalysisPanel.reach") },
-              new String[] { Messages.getString("DamageAnalysisPanel.reachTip") },
+              legendEntries,
               niceCeiling(ceiling), false);
     }
 
@@ -437,15 +458,15 @@ public class DamageAnalysisPanel extends JPanel {
      *                    relabel) as opposed to ranges in hexes
      */
     private void paintRadar(Graphics2D graphics2D, int regionX, int regionY, int regionWidth,
-          int regionHeight, String title, double[][] series, Color[] colors, String[] labels,
-          String[] tooltips, double ceiling, boolean damageScale) {
+          int regionHeight, String title, double[][] series, Color[] colors,
+          List<LegendEntry> legendEntries, double ceiling, boolean damageScale) {
         Color foreground = UIManager.getColor("Label.foreground");
         FontMetrics metrics = graphics2D.getFontMetrics();
 
         int titleHeight = metrics.getHeight() + UIUtil.scaleForGUI(4);
         // The legend can wrap onto several rows in a narrow region; the radar must shrink to make
         // room for all of them, or the Rear spoke label lands on top of the legend text.
-        int legendRowCount = wrapLegendRows(metrics, labels, regionWidth - UIUtil.scaleForGUI(16)).size();
+        int legendRowCount = wrapLegendRows(metrics, legendEntries, regionWidth - UIUtil.scaleForGUI(16)).size();
         int legendHeight = (legendRowCount * (metrics.getHeight() + UIUtil.scaleForGUI(2)))
               + UIUtil.scaleForGUI(10);
         int labelClearance = metrics.getHeight() + UIUtil.scaleForGUI(8);
@@ -539,7 +560,7 @@ public class DamageAnalysisPanel extends JPanel {
             graphics2D.setStroke(savedStroke);
         }
 
-        paintLegend(graphics2D, labels, colors, tooltips, regionX + UIUtil.scaleForGUI(8),
+        paintLegend(graphics2D, legendEntries, regionX + UIUtil.scaleForGUI(8),
               regionY + regionHeight - UIUtil.scaleForGUI(8), regionWidth - UIUtil.scaleForGUI(16));
     }
 
@@ -565,18 +586,18 @@ public class DamageAnalysisPanel extends JPanel {
      *
      * @return one {firstIndex, lastIndex, rowWidth} triple per row
      */
-    private List<int[]> wrapLegendRows(FontMetrics metrics, String[] labels, int availableWidth) {
-        int dotSize = UIUtil.scaleForGUI(10);
+    private List<int[]> wrapLegendRows(FontMetrics metrics, List<LegendEntry> entries, int availableWidth) {
+        int swatchSize = UIUtil.scaleForGUI(11);
         int gap = UIUtil.scaleForGUI(5);
         int spacing = UIUtil.scaleForGUI(14);
-        int[] itemWidths = new int[labels.length];
-        for (int index = 0; index < labels.length; index++) {
-            itemWidths[index] = dotSize + gap + metrics.stringWidth(labels[index]);
+        int[] itemWidths = new int[entries.size()];
+        for (int index = 0; index < entries.size(); index++) {
+            itemWidths[index] = swatchSize + gap + metrics.stringWidth(entries.get(index).label());
         }
         List<int[]> rows = new ArrayList<>();
         int rowStart = 0;
         int rowWidth = 0;
-        for (int index = 0; index < labels.length; index++) {
+        for (int index = 0; index < entries.size(); index++) {
             int addedWidth = itemWidths[index] + ((rowWidth > 0) ? spacing : 0);
             if ((rowWidth > 0) && (rowWidth + addedWidth > availableWidth)) {
                 rows.add(new int[] { rowStart, index - 1, rowWidth });
@@ -586,35 +607,58 @@ public class DamageAnalysisPanel extends JPanel {
                 rowWidth += addedWidth;
             }
         }
-        rows.add(new int[] { rowStart, labels.length - 1, rowWidth });
+        rows.add(new int[] { rowStart, entries.size() - 1, rowWidth });
         return rows;
     }
 
-    private void paintLegend(Graphics2D graphics2D, String[] labels, Color[] colors, String[] tooltips,
-          int legendX, int lastRowBaselineY, int availableWidth) {
+    private void paintLegend(Graphics2D graphics2D, List<LegendEntry> entries, int legendX,
+          int lastRowBaselineY, int availableWidth) {
         FontMetrics metrics = graphics2D.getFontMetrics();
-        int dotSize = UIUtil.scaleForGUI(10);
+        int swatchSize = UIUtil.scaleForGUI(11);
         int gap = UIUtil.scaleForGUI(5);
         int spacing = UIUtil.scaleForGUI(14);
         int rowHeight = metrics.getHeight() + UIUtil.scaleForGUI(2);
 
-        List<int[]> rows = wrapLegendRows(metrics, labels, availableWidth);
+        List<int[]> rows = wrapLegendRows(metrics, entries, availableWidth);
 
         // Earlier rows stack upward from the last row's baseline so the legend stays in-region
         int rowY = lastRowBaselineY - ((rows.size() - 1) * rowHeight);
         for (int[] row : rows) {
             int currentX = legendX + Math.max(0, (availableWidth - row[2]) / 2);
             for (int index = row[0]; index <= row[1]; index++) {
-                graphics2D.setColor(colors[index]);
-                graphics2D.fillOval(currentX, rowY - dotSize + UIUtil.scaleForGUI(2), dotSize, dotSize);
+                LegendEntry entry = entries.get(index);
+                // The swatch shows the series exactly as drawn: its real fill and outline style,
+                // so the legend matches what the eye sees on the chart
+                int swatchY = rowY - swatchSize + UIUtil.scaleForGUI(2);
+                Color seriesColor = entry.color();
+                if (entry.fill() != null) {
+                    graphics2D.setPaint(entry.fill());
+                } else {
+                    graphics2D.setColor(new Color(seriesColor.getRed(), seriesColor.getGreen(),
+                          seriesColor.getBlue(), FILL_ALPHA));
+                }
+                graphics2D.fillRect(currentX, swatchY, swatchSize, swatchSize);
+                graphics2D.setColor(seriesColor);
+                Stroke savedStroke = graphics2D.getStroke();
+                float borderWidth = Math.max(1, UIUtil.scaleForGUI(1));
+                if (entry.dashedOutline()) {
+                    float dashLength = UIUtil.scaleForGUI(3);
+                    graphics2D.setStroke(new BasicStroke(borderWidth, BasicStroke.CAP_BUTT,
+                          BasicStroke.JOIN_MITER, 10.0f, new float[] { dashLength, dashLength }, 0));
+                } else {
+                    graphics2D.setStroke(new BasicStroke(borderWidth));
+                }
+                graphics2D.drawRect(currentX, swatchY, swatchSize, swatchSize);
+                graphics2D.setStroke(savedStroke);
+
                 graphics2D.setColor(UIManager.getColor("Label.foreground"));
-                int textX = currentX + dotSize + gap;
-                graphics2D.drawString(labels[index], textX, rowY);
+                int textX = currentX + swatchSize + gap;
+                graphics2D.drawString(entry.label(), textX, rowY);
                 legendHitZones.add(new LegendHitZone(
                       new Rectangle(currentX, rowY - metrics.getAscent(),
-                            dotSize + gap + metrics.stringWidth(labels[index]), metrics.getHeight()),
-                      tooltips[index]));
-                currentX = textX + metrics.stringWidth(labels[index]) + spacing;
+                            swatchSize + gap + metrics.stringWidth(entry.label()), metrics.getHeight()),
+                      entry.tooltip()));
+                currentX = textX + metrics.stringWidth(entry.label()) + spacing;
             }
             rowY += rowHeight;
         }

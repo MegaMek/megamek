@@ -41,7 +41,9 @@ import java.awt.Polygon;
 import java.awt.Rectangle;
 import java.awt.RenderingHints;
 import java.awt.Stroke;
+import java.awt.TexturePaint;
 import java.awt.event.MouseEvent;
+import java.awt.image.BufferedImage;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -272,15 +274,19 @@ public class DamageAnalysisPanel extends JPanel {
         }
 
         // Curves back to front: maximum, expected, sustained
-        // The sustained curve is dashed: a heat-comfortable unit sustains its full expected damage,
-        // making the two curves identical - the dashes let the expected curve show through instead
-        // of being painted over and seeming to vanish.
+        // Overlap treatment: the maximum area is a solid backdrop, the expected area fills with
+        // one diagonal stripe direction and the sustained area with the other, so stacked fields
+        // stay individually visible - even where two curves coincide exactly (a heat-comfortable
+        // unit sustains its full expected damage), the region reads as cross-hatched, not as one
+        // field. The sustained outline is additionally dashed for the same reason.
         paintCurve(graphics2D, MAX_DAMAGE_COLOR, range -> profile.maxDamage(range),
-              maxRange, damageCeiling, marginLeft, marginTop, plotWidth, plotHeight, false);
+              maxRange, damageCeiling, marginLeft, marginTop, plotWidth, plotHeight, false, null);
         paintCurve(graphics2D, EXPECTED_DAMAGE_COLOR, range -> profile.expectedDamage(range),
-              maxRange, damageCeiling, marginLeft, marginTop, plotWidth, plotHeight, false);
+              maxRange, damageCeiling, marginLeft, marginTop, plotWidth, plotHeight, false,
+              createStripePaint(EXPECTED_DAMAGE_COLOR, true));
         paintCurve(graphics2D, SUSTAINED_DAMAGE_COLOR, range -> profile.sustainedDamage(range),
-              maxRange, damageCeiling, marginLeft, marginTop, plotWidth, plotHeight, true);
+              maxRange, damageCeiling, marginLeft, marginTop, plotWidth, plotHeight, true,
+              createStripePaint(SUSTAINED_DAMAGE_COLOR, false));
 
         paintLegend(graphics2D, legendLabels,
               new Color[] { MAX_DAMAGE_COLOR, EXPECTED_DAMAGE_COLOR, SUSTAINED_DAMAGE_COLOR },
@@ -309,9 +315,39 @@ public class DamageAnalysisPanel extends JPanel {
         double valueAt(int range);
     }
 
+    /**
+     * Builds a seamlessly tiling diagonal-stripe fill in the series color, used so stacked chart
+     * areas stay individually recognizable where they overlap.
+     *
+     * @param forwardDiagonal {@code true} for stripes rising left-to-right, {@code false} for the
+     *                        opposite direction, so two striped series cross-hatch each other
+     */
+    private TexturePaint createStripePaint(Color color, boolean forwardDiagonal) {
+        int tile = UIUtil.scaleForGUI(8);
+        BufferedImage image = new BufferedImage(tile, tile, BufferedImage.TYPE_INT_ARGB);
+        Graphics2D graphics2D = image.createGraphics();
+        graphics2D.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+        graphics2D.setColor(new Color(color.getRed(), color.getGreen(), color.getBlue(), 110));
+        graphics2D.setStroke(new BasicStroke(tile / 3.0f));
+        // Three parallel lines cover the tile seams so the pattern tiles without gaps
+        for (int offset = -tile; offset <= tile; offset += tile) {
+            if (forwardDiagonal) {
+                graphics2D.drawLine(offset, tile, offset + tile, 0);
+            } else {
+                graphics2D.drawLine(offset, 0, offset + tile, tile);
+            }
+        }
+        graphics2D.dispose();
+        return new TexturePaint(image, new Rectangle(0, 0, tile, tile));
+    }
+
+    /**
+     * @param stripePaint diagonal-stripe fill for the curve's area, or {@code null} for a solid
+     *                    translucent fill
+     */
     private void paintCurve(Graphics2D graphics2D, Color color, CurveFunction curve, int maxRange,
           double damageCeiling, int marginLeft, int marginTop, int plotWidth, int plotHeight,
-          boolean dashed) {
+          boolean dashed, TexturePaint stripePaint) {
         // Step outline: damage is constant across each hex, so the curve moves in steps, matching
         // how bracket boundaries actually behave (the drop happens between 12 and 13, not across 12).
         Polygon area = new Polygon();
@@ -329,7 +365,11 @@ public class DamageAnalysisPanel extends JPanel {
         }
         area.addPoint(xForRange(maxRange, maxRange, marginLeft, plotWidth), baselineY);
 
-        graphics2D.setColor(new Color(color.getRed(), color.getGreen(), color.getBlue(), FILL_ALPHA));
+        if (stripePaint != null) {
+            graphics2D.setPaint(stripePaint);
+        } else {
+            graphics2D.setColor(new Color(color.getRed(), color.getGreen(), color.getBlue(), FILL_ALPHA));
+        }
         graphics2D.fillPolygon(area);
         graphics2D.setColor(color);
         Stroke savedStroke = graphics2D.getStroke();

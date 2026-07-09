@@ -95,7 +95,7 @@ public class DeployMinefieldDisplay extends StatusBarPhaseDisplay {
 
         private static final DeployMinefieldCommand[] actualCommands =
               { DEPLOY_MINE_CONV, DEPLOY_MINE_COM, DEPLOY_MINE_VIBRA, DEPLOY_MINE_ACTIVE,
-                DEPLOY_MINE_INFERNO, DEPLOY_MINE_EMP, DEPLOY_TRIPWIRE, DEPLOY_PITFALL, DEPLOY_FORTIFICATION, DEPLOY_CARRYABLE, REMOVE_MINES };
+                DEPLOY_MINE_EMP, DEPLOY_MINE_INFERNO, DEPLOY_TRIPWIRE, DEPLOY_PITFALL, DEPLOY_FORTIFICATION, DEPLOY_CARRYABLE, REMOVE_MINES };
 
         /**
          * Priority that determines this buttons order
@@ -122,6 +122,14 @@ public class DeployMinefieldDisplay extends StatusBarPhaseDisplay {
             }
 
             return COMMAND_NONE;
+        }
+        
+        /**
+         * Given a minefield type constant from Minefield.java, 
+         * get the associated deployment command
+         */
+        public static DeployMinefieldCommand GetDeploymentCommand(int minefieldType) {
+            return actualCommands[minefieldType];
         }
 
         /**
@@ -382,14 +390,7 @@ public class DeployMinefieldDisplay extends StatusBarPhaseDisplay {
             Enumeration<?> mfs = game.getMinefields(coords).elements();
             while (mfs.hasMoreElements()) {
                 Minefield mf = (Minefield) mfs.nextElement();
-                if ((deployingConventionalMinefields() && (mf.getType() == Minefield.TYPE_CONVENTIONAL))
-                      || (deployingCommandMinefields() && (mf.getType() == Minefield.TYPE_COMMAND_DETONATED))
-                      || (deployingVibrabombMinefields() && (mf.getType() == Minefield.TYPE_VIBRABOMB))
-                      || (deployingActiveMinefields() && (mf.getType() == Minefield.TYPE_ACTIVE))
-                      || (deployingInfernoMinefields() && (mf.getType() == Minefield.TYPE_INFERNO))
-                      || (deployingEMPMinefields() && (mf.getType() == Minefield.TYPE_EMP))
-                      || (deployingTripwires() && (mf.getType() == Minefield.TYPE_TRIPWIRE))
-                      || (deployingPitfalls() && (mf.getType() == Minefield.TYPE_PITFALL))) {
+                if (currentCommand == DeployMinefieldCommand.GetDeploymentCommand(mf.getType())) {
                     clientgui.addToast(ToastLevel.ERROR,
                           Messages.getString("DeployMinefieldDisplay.DuplicateMinefield"));
                     return;

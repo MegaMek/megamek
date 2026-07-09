@@ -1,0 +1,164 @@
+# MegaMek Data (C) 2025-2026 by The MegaMek Team is licensed under CC BY-NC-SA 4.0.
+# To view a copy of this license, visit https://creativecommons.org/licenses/by-nc-sa/4.0/
+#
+# NOTICE: The MegaMek organization is a non-profit group of volunteers
+# creating free software for the BattleTech community.
+#
+# MechWarrior, BattleMech, `Mech and AeroTech are registered trademarks
+# of The Topps Company, Inc. All Rights Reserved.
+#
+# Catalyst Game Labs and the Catalyst Game Labs logo are trademarks of
+# InMediaRes Productions, LLC.
+#
+# MechWarrior Copyright Microsoft Corporation. MegaMek Data was created under
+# Microsoft's "Game Content Usage Rules"
+# <https://www.xbox.com/en-US/developers/rules> and it is not endorsed by or
+# affiliated with Microsoft.
+
+#Saved from version 0.50.12 on 2026-02-26
+<UnitType>
+Tank
+</UnitType>
+
+<Name>
+LRM Carrier
+</Name>
+
+<Model>
+
+</Model>
+
+<mul id:>
+1952
+</mul id:>
+
+<year>
+2470
+</year>
+
+<originalBuildYear>
+2470
+</originalBuildYear>
+
+<type>
+IS Level 1
+</type>
+
+<role>
+Missile Boat
+</role>
+
+<motion_type>
+Tracked
+</motion_type>
+
+<cruiseMP>
+3
+</cruiseMP>
+
+<engine_type>
+1
+</engine_type>
+
+<armor_type>
+0
+</armor_type>
+
+<armor_tech_rating>
+0
+</armor_tech_rating>
+
+<armor_tech_level>
+1
+</armor_tech_level>
+
+<armor>
+12
+12
+12
+12
+</armor>
+
+<Body Equipment>
+IS Ammo LRM-20
+IS Ammo LRM-20
+IS Ammo LRM-20
+IS Ammo LRM-20
+</Body Equipment>
+
+<Front Equipment>
+LRM 20
+LRM 20
+LRM 20
+</Front Equipment>
+
+<Right Equipment>
+</Right Equipment>
+
+<Left Equipment>
+</Left Equipment>
+
+<Rear Equipment>
+</Rear Equipment>
+
+
+
+
+
+
+
+
+<source>
+TR:3039
+</source>
+
+<published>
+RS:3039u,RSFP:Battlefield
+</published>
+
+<tonnage>
+60.0
+</tonnage>
+
+<fuelType>
+PETROCHEMICALS
+</fuelType>
+
+# Fluff Date: 2026-02-28 17:47:08
+<overview>
+<p>The LRM Carrier is a sixty-ton tracked combat vehicle designed to deliver massed long-range missile fire at minimal cost. Developed by the Quikscell Company as a modernized successor to primitive Age of War designs dating back to the 2440s, the current production model entered service around 2470 and has remained in continuous use ever since. Manufactured by nearly every major military supplier across the Inner Sphere, the LRM Carrier fills the role of cheap, expendable indirect fire support in armies that cannot afford dedicated artillery assets. Its reputation as a disposable weapons platform belies its effectiveness when properly employed in massed formations, where concentrated volleys of missiles can devastate even heavily armored targets.</p>
+</overview>
+
+<capabilities>
+<p>The LRM Carrier mounts three forward-firing FarFire LRM-20 launchers as its sole armament, a configuration that prioritizes raw missile volume over versatility. An InterComBust 180 internal combustion engine propels the vehicle to a maximum speed of fifty-four kilometers per hour, adequate for repositioning between fire missions but insufficient for mobile warfare. A Communicator system and FireScan with IndirecTrack targeting handle battlefield coordination, the latter being essential for the indirect fire role that defines the carrier concept.</p><p>Eight tons of ammunition provide sustained fire far longer than most comparable platforms, though this high rate of consumption demands reliable supply lines for extended operations. The vehicle carries only three tons of Simple Armor Plate Standard protection, its most critical weakness. Unable to withstand even modest counterbattery fire, the carrier relies entirely on standoff distance and terrain masking for survival. To broaden market appeal, the launching systems accept a wide variety of missile ammunition from different manufacturers, though Quikscell does not warranty vehicles loaded with non-FarFire munitions.</p>
+</capabilities>
+
+<deployment>
+<p>Due to Quikscell's multiple plants scattered across the Inner Sphere, every major military fields LRM Carriers in significant numbers. The company's trade-in program during the War of 3039 eliminated most non-Quikscell carriers from mainline service, leaving only a handful in the hands of pirate groups or Periphery planets too poor to pay shipping expenses. The LRM Carrier typically serves in dedicated fire support lances, providing indirect missile barrages from concealed positions behind terrain features.</p>
+</deployment>
+
+<history>
+<p>The origins of the modern missile carrier stretch back to the Age of War, when Quik Products Inc developed the first standardized tracked platforms for massed missile delivery. These early designs, constructed using primitive technology, were crude but effective, establishing the basic formula of maximum firepower on a minimal chassis that would define the weapons carrier concept for centuries. As Quik Products evolved into the Quikscell Company, the original primitive carriers were refined into the modern designs that entered widespread service by the twenty-fifth century.</p><p>During the Succession Wars, the desperate need for cheap fire support led dozens of manufacturers across the Inner Sphere to produce their own versions, many of them little more than unauthorized copies of Quikscell designs built to even lower quality standards. Shortly before the Fourth Succession War, Quikscell launched a series of lawsuits against these clone manufacturers, successfully shutting down many smaller competitors and forcing larger firms to cease production of derivative designs. The company further consolidated its market dominance by offering to exchange any non-Quikscell carrier for legitimate replacement vehicles and parts, effectively cornering the missile carrier market. One company not targeted by the legal attacks was Joint Equipment Systems, which had negotiated in good faith with Quik Products Inc centuries before.</p><p>LRM Carrier production spread across an extensive network of facilities. Quikscell plants on Ares, Kalidasa, Layover, Oliver, Pandora, and Broken Wheel turned out thousands of units across every era. Joint Equipment Systems on Alshain, Aldis Industries on Terra, Amaris Armored Vehicles on Timbuktu, the King Dumount Defense Facility on Castile, and Maxwell Planetary Defense Consortium on Maxwell all contributed to a production network spanning the entire Inner Sphere.</p><p>The first significant modernization came in 3055, when Quikscell introduced an upgraded variant for the Federated Commonwealth. By incorporating ferro-fibrous armor and Artemis IV fire control systems linked to each launcher, engineers dramatically improved missile accuracy while adding a C3 slave unit for networked targeting. The reduced engine size was considered an acceptable trade for the enhanced combat capability. Oliver and Richvale became the primary production sites for this upgrade package.</p><p>The Word of Blake produced their own radical revision during the Jihad era, utilizing an extralight fusion engine to boost both speed and armor protection while retaining Artemis IV systems and adding a C3i computer. Aldis Industries on Terra manufactured this variant throughout the Blakist occupation. In the Dark Age, Joint Equipment Systems developed the LRM Carrier C for the Rasalhague Dominion, mounting the launchers in a partial-traverse turret with hardened armor inspired by the success of the Viking IIC. The LRM Carrier's continued evolution across more than six centuries of service stands as sign of the enduring viability of cheap, massed missile platforms in modern warfare.</p>
+</history>
+
+<manufacturer>
+Joint Equipment Systems|Quikscell Company|Quikscell Company|King Dumount Defense Facility|Quikscell Company|Quikscell Company|Maxwell Planetary Defense Consortium|Quikscell Company|Quikscell Company|Aldis Industries|Amaris Armored Vehicles
+</manufacturer>
+
+<primaryFactory>
+Alshain|Ares|Broken Wheel|Castile|Kalidasa|Layover|Maxwell|Oliver|Pandora|Terra|Timbuktu
+</primaryFactory>
+
+<systemManufacturers>
+ENGINE:InterComBust
+ARMOR:Simple Armor Plate
+COMMUNICATIONS:Communicator
+TARGETING:FireScan
+</systemManufacturers>
+
+<systemModels>
+ENGINE:180 ICE
+ARMOR:Standard
+TARGETING:with IndirecTrack
+</systemModels>
+

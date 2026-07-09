@@ -1,0 +1,428 @@
+/*
+ * Copyright (C) 2026 The MegaMek Team. All Rights Reserved.
+ *
+ * This file is part of MegaMek.
+ *
+ * MegaMek is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License (GPL),
+ * version 3 or (at your option) any later version,
+ * as published by the Free Software Foundation.
+ *
+ * MegaMek is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty
+ * of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+ * See the GNU General Public License for more details.
+ *
+ * A copy of the GPL should have been included with this project;
+ * if not, see <https://www.gnu.org/licenses/>.
+ *
+ * NOTICE: The MegaMek organization is a non-profit group of volunteers
+ * creating free software for the BattleTech community.
+ *
+ * MechWarrior, BattleMech, `Mech and AeroTech are registered trademarks
+ * of The Topps Company, Inc. All Rights Reserved.
+ *
+ * Catalyst Game Labs and the Catalyst Game Labs logo are trademarks of
+ * InMediaRes Productions, LLC.
+ *
+ * MechWarrior Copyright Microsoft Corporation. MegaMek was created under
+ * Microsoft's "Game Content Usage Rules"
+ * <https://www.xbox.com/en-US/developers/rules> and it is not endorsed by or
+ * affiliated with Microsoft.
+ */
+package megamek.common.analysis;
+
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
+import megamek.common.RangeType;
+import megamek.common.compute.Compute;
+import megamek.common.equipment.AmmoMounted;
+import megamek.common.equipment.AmmoType;
+import megamek.common.equipment.WeaponMounted;
+import megamek.common.equipment.WeaponType;
+import megamek.common.units.Entity;
+
+/**
+ * An immutable per-unit damage-versus-range curve, computed from the unit's actual weapons and
+ * loaded ammunition.
+ *
+ * <p>Three curves are exposed, indexed by range in hexes:</p>
+ * <ul>
+ *   <li>{@link #maxDamage(int)} - every functioning weapon that reaches the range, no to-hit
+ *       weighting. Cluster weapons count their full rack.</li>
+ *   <li>{@link #expectedDamage(int)} - each weapon's damage weighted by its 2d6 hit probability at
+ *       that range (gunnery + range bracket modifier + minimum range penalty). Cluster weapons use
+ *       the expected value of the cluster hits table instead of the full rack.</li>
+ *   <li>{@link #sustainedDamage(int)} - the best heat-sustainable subset of weapons by expected
+ *       damage: weapons are added in expected-damage-per-heat order until the unit's heat
+ *       dissipation is spent. Equal to the expected curve for units that do not track heat.</li>
+ * </ul>
+ *
+ * <p>The curves are unit properties, not situation properties: no terrain, movement, or target
+ * modifiers are included - those belong to fire control at attack time. The gunnery skill baked
+ * into the expected and sustained curves is the crew's actual gunnery (4 if the unit has no crew).
+ * Ammunition is chosen per range by best expected damage, mirroring how a player would load for
+ * the engagement. Weapon facing is ignored; the curve is the unit's best case in any direction.</p>
+ *
+ * <p>Known approximations: artillery is treated as a direct-fire weapon dealing its rack size;
+ * cluster-roll bonuses from fire-control equipment (Artemis, Apollo) are not applied.</p>
+ *
+ * <p>Build cost is O(weapons x maxRange) with small constants; instances are cheap enough to
+ * rebuild once per game phase. Consumers that query per candidate path should cache the instance
+ * per entity (see the CASPAR bot's phase-start caches for the intended lifecycle).</p>
+ */
+public final class DamageProfile {
+
+    /** To-hit modifier for the medium range bracket (TW p.303). */
+    private static final int BRACKET_MOD_MEDIUM = 2;
+    /** To-hit modifier for the long range bracket (TW p.303). */
+    private static final int BRACKET_MOD_LONG = 4;
+    /** To-hit modifier for the extreme range bracket (TO:AR p.85). */
+    private static final int BRACKET_MOD_EXTREME = 6;
+    /** Gunnery skill assumed when the unit has no crew. */
+    private static final int DEFAULT_GUNNERY = 4;
+
+    /** Probability numerators (out of 36) for 2d6 rolls 2..12, used for cluster expectation. */
+    private static final int[] TWO_D6_WEIGHTS = { 1, 2, 3, 4, 5, 6, 5, 4, 3, 2, 1 };
+
+    /** Expected cluster hits by rack size, shared across profiles (the table never changes). */
+    private static final Map<Integer, Double> EXPECTED_CLUSTER_HITS_CACHE = new HashMap<>();
+
+    private final double[] maxDamageByRange;
+    private final double[] expectedDamageByRange;
+    private final double[] sustainedDamageByRange;
+    private final int gunnery;
+
+    private DamageProfile(double[] maxDamageByRange, double[] expectedDamageByRange,
+          double[] sustainedDamageByRange, int gunnery) {
+        this.maxDamageByRange = maxDamageByRange;
+        this.expectedDamageByRange = expectedDamageByRange;
+        this.sustainedDamageByRange = sustainedDamageByRange;
+        this.gunnery = gunnery;
+    }
+
+    /**
+     * Builds the damage profile for a unit from its current weapon and ammunition state. Destroyed
+     * and out-of-ammo weapons contribute nothing, so a profile built mid-game reflects battle
+     * damage as of when it was built.
+     *
+     * @param entity          the unit to profile
+     * @param useExtremeRange whether the TacOps extreme-range rules are in effect
+     *
+     * @return the unit's damage profile; never null, possibly empty (see {@link #hasWeapons()})
+     */
+    public static DamageProfile of(Entity entity, boolean useExtremeRange) {
+        int gunnery = (entity.getCrew() != null) ? entity.getCrew().getGunnery() : DEFAULT_GUNNERY;
+
+        List<WeaponContribution> weapons = new ArrayList<>();
+        int maxRange = 0;
+        for (WeaponMounted weapon : entity.getWeaponList()) {
+            if (weapon.isCrippled()) {
+                continue;
+            }
+            WeaponContribution contribution = WeaponContribution.of(entity, weapon, gunnery, useExtremeRange);
+            if (contribution != null) {
+                weapons.add(contribution);
+                maxRange = Math.max(maxRange, contribution.maxRange());
+            }
+        }
+
+        double[] maxDamage = new double[maxRange + 1];
+        double[] expectedDamage = new double[maxRange + 1];
+        double[] sustainedDamage = new double[maxRange + 1];
+
+        boolean tracksHeat = entity.tracksHeat();
+        int heatCapacity = entity.getHeatCapacity();
+
+        for (int range = 1; range <= maxRange; range++) {
+            double maxAtRange = 0;
+            double expectedAtRange = 0;
+            List<WeaponAtRange> firing = new ArrayList<>(weapons.size());
+            for (WeaponContribution weapon : weapons) {
+                WeaponAtRange atRange = weapon.atRange(range);
+                if (atRange != null) {
+                    maxAtRange += atRange.maxDamage();
+                    expectedAtRange += atRange.expectedDamage();
+                    firing.add(atRange);
+                }
+            }
+            maxDamage[range] = maxAtRange;
+            expectedDamage[range] = expectedAtRange;
+            sustainedDamage[range] = tracksHeat
+                  ? bestSustainedDamage(firing, heatCapacity)
+                  : expectedAtRange;
+        }
+
+        // Range 0 (same hex) mirrors range 1: the bracket rules treat both as point-blank.
+        if (maxRange >= 1) {
+            maxDamage[0] = maxDamage[1];
+            expectedDamage[0] = expectedDamage[1];
+            sustainedDamage[0] = sustainedDamage[1];
+        }
+
+        return new DamageProfile(maxDamage, expectedDamage, sustainedDamage, gunnery);
+    }
+
+    /**
+     * Greedy heat allocation: fire weapons in expected-damage-per-heat order until dissipation is
+     * spent. Heat-free weapons always fire. Greedy is not an exact knapsack solution, but it matches
+     * how players alpha-judge and is deterministic.
+     */
+    private static double bestSustainedDamage(List<WeaponAtRange> firing, int heatCapacity) {
+        firing.sort((a, b) -> Double.compare(b.damagePerHeat(), a.damagePerHeat()));
+        double sustained = 0;
+        int heatBudget = heatCapacity;
+        for (WeaponAtRange weapon : firing) {
+            if (weapon.heat() <= 0) {
+                sustained += weapon.expectedDamage();
+            } else if (weapon.heat() <= heatBudget) {
+                sustained += weapon.expectedDamage();
+                heatBudget -= weapon.heat();
+            }
+        }
+        return sustained;
+    }
+
+    /**
+     * @param range the range in hexes (0 is treated as point-blank, i.e. range 1)
+     *
+     * @return the total damage of every functioning weapon that reaches this range, unweighted
+     */
+    public double maxDamage(int range) {
+        return curveValue(maxDamageByRange, range);
+    }
+
+    /**
+     * @param range the range in hexes (0 is treated as point-blank, i.e. range 1)
+     *
+     * @return the to-hit-weighted damage at this range, using the crew's gunnery
+     */
+    public double expectedDamage(int range) {
+        return curveValue(expectedDamageByRange, range);
+    }
+
+    /**
+     * @param range the range in hexes (0 is treated as point-blank, i.e. range 1)
+     *
+     * @return the to-hit-weighted damage of the best heat-sustainable weapon subset at this range
+     */
+    public double sustainedDamage(int range) {
+        return curveValue(sustainedDamageByRange, range);
+    }
+
+    private static double curveValue(double[] curve, int range) {
+        if (range < 0 || range >= curve.length) {
+            return 0;
+        }
+        return curve[range];
+    }
+
+    /**
+     * @return the longest range at which any functioning weapon can deal damage, under the range
+     *       rules the profile was built with; 0 if the unit has no usable weapons
+     */
+    public int maxRange() {
+        return maxDamageByRange.length - 1;
+    }
+
+    /**
+     * @return true if the unit had at least one functioning weapon with a nonzero damage curve when
+     *       the profile was built. Replaces sentinel values - consumers decide what "no weapons"
+     *       means for them.
+     */
+    public boolean hasWeapons() {
+        return maxDamageByRange.length > 1;
+    }
+
+    /**
+     * The range where the expected-damage curve peaks: the unit's optimal engagement range. Ties go
+     * to the longer range, since equal damage from farther away is strictly safer.
+     *
+     * @return the optimal range in hexes, or 0 if the unit has no usable weapons
+     */
+    public int peakExpectedRange() {
+        int bestRange = 0;
+        double bestDamage = 0;
+        for (int range = 1; range < expectedDamageByRange.length; range++) {
+            if (expectedDamageByRange[range] >= bestDamage) {
+                bestDamage = expectedDamageByRange[range];
+                bestRange = range;
+            }
+        }
+        return bestRange;
+    }
+
+    /**
+     * @return the peak of the expected-damage curve; the unit's threat at its best range. 0 if the
+     *       unit has no usable weapons.
+     */
+    public double peakExpectedDamage() {
+        double best = 0;
+        for (int range = 1; range < expectedDamageByRange.length; range++) {
+            best = Math.max(best, expectedDamageByRange[range]);
+        }
+        return best;
+    }
+
+    /**
+     * @return the gunnery skill baked into the expected and sustained curves
+     */
+    public int gunnery() {
+        return gunnery;
+    }
+
+    /**
+     * The expected number of hits from the cluster hits table for a rack of the given size: the
+     * probability-weighted average over all 2d6 rolls. Unlike the common "roll a 7" shortcut, this
+     * is the true expectation.
+     */
+    static double expectedClusterHits(int rackSize) {
+        return EXPECTED_CLUSTER_HITS_CACHE.computeIfAbsent(rackSize, size -> {
+            double expected = 0;
+            for (int roll = 2; roll <= 12; roll++) {
+                expected += TWO_D6_WEIGHTS[roll - 2] * Compute.calculateClusterHitTableAmount(roll, size);
+            }
+            return expected / 36.0;
+        });
+    }
+
+    /**
+     * One weapon's resolved firing options: for each candidate ammunition, the range array to use.
+     * Damage is resolved lazily per range so range-variable weapons (which override
+     * {@code getDamage(int)}) are handled naturally.
+     */
+    private record WeaponContribution(WeaponMounted weapon, List<AmmoOption> ammoOptions, int gunnery,
+          boolean useExtremeRange) {
+
+        /** Ammo types whose loaded munitions genuinely differ per shot, so all of them are candidates. */
+        private static final List<AmmoType.AmmoTypeEnum> MULTI_PROFILE_AMMO = List.of(
+              AmmoType.AmmoTypeEnum.ATM, AmmoType.AmmoTypeEnum.IATM, AmmoType.AmmoTypeEnum.MML);
+
+        /**
+         * @return the firing options for this weapon, or null if it has no way to fire (no usable
+         *       ammunition for an ammo-dependent weapon)
+         */
+        static WeaponContribution of(Entity entity, WeaponMounted weapon, int gunnery, boolean useExtremeRange) {
+            WeaponType weaponType = weapon.getType();
+            List<AmmoOption> options = new ArrayList<>();
+
+            boolean ammoless = (weaponType.getAmmoType() == AmmoType.AmmoTypeEnum.NA)
+                  || (weaponType.getAmmoType() == AmmoType.AmmoTypeEnum.INFANTRY);
+            if (ammoless) {
+                options.add(new AmmoOption(null, weaponType.getRanges(weapon)));
+            } else {
+                List<AmmoMounted> ammos;
+                if (MULTI_PROFILE_AMMO.contains(weaponType.getAmmoType())) {
+                    ammos = entity.getAmmo(weapon);
+                } else {
+                    ammos = new ArrayList<>();
+                    if (weapon.getLinkedAmmo() != null) {
+                        ammos.add(weapon.getLinkedAmmo());
+                    }
+                }
+                for (AmmoMounted ammo : ammos) {
+                    if ((ammo != null) && (ammo.getUsableShotsLeft() > 0)) {
+                        options.add(new AmmoOption(ammo, weaponType.getRanges(weapon, ammo)));
+                    }
+                }
+            }
+
+            if (options.isEmpty()) {
+                return null;
+            }
+            return new WeaponContribution(weapon, options, gunnery, useExtremeRange);
+        }
+
+        /** @return the longest range this weapon reaches with any of its ammunition options */
+        int maxRange() {
+            int reach = 0;
+            for (AmmoOption option : ammoOptions) {
+                int optionReach = useExtremeRange
+                      ? option.ranges()[RangeType.RANGE_EXTREME]
+                      : option.ranges()[RangeType.RANGE_LONG];
+                reach = Math.max(reach, optionReach);
+            }
+            return reach;
+        }
+
+        /**
+         * Resolves this weapon at a range, choosing the ammunition with the best expected damage.
+         *
+         * @return the weapon's contribution at this range, or null if it cannot reach
+         */
+        WeaponAtRange atRange(int range) {
+            WeaponAtRange best = null;
+            for (AmmoOption option : ammoOptions) {
+                WeaponAtRange candidate = resolve(option, range);
+                if ((candidate != null)
+                      && ((best == null) || (candidate.expectedDamage() > best.expectedDamage()))) {
+                    best = candidate;
+                }
+            }
+            return best;
+        }
+
+        private WeaponAtRange resolve(AmmoOption option, int range) {
+            int[] ranges = option.ranges();
+            int bracket = RangeType.rangeBracket(range, ranges, useExtremeRange, false);
+            if (bracket == RangeType.RANGE_OUT) {
+                return null;
+            }
+
+            int bracketMod = switch (bracket) {
+                case RangeType.RANGE_MEDIUM -> BRACKET_MOD_MEDIUM;
+                case RangeType.RANGE_LONG -> BRACKET_MOD_LONG;
+                case RangeType.RANGE_EXTREME -> BRACKET_MOD_EXTREME;
+                default -> 0;
+            };
+            int minRangeMod = (range <= ranges[RangeType.RANGE_MINIMUM])
+                  ? (ranges[RangeType.RANGE_MINIMUM] - range + 1)
+                  : 0;
+            double hitProbability = Compute.oddsAbove(gunnery + bracketMod + minRangeMod) / 100.0;
+
+            WeaponType weaponType = weapon.getType();
+            int baseDamage = weaponType.getDamage(range);
+
+            double maxDamage;
+            double expectedDamage;
+            if (baseDamage == WeaponType.DAMAGE_BY_CLUSTER_TABLE) {
+                int damagePerShot = (option.ammo() != null) ? option.ammo().getType().getDamagePerShot() : 1;
+                int rackSize = weaponType.getRackSize();
+                maxDamage = (double) rackSize * damagePerShot;
+                expectedDamage = expectedClusterHits(rackSize) * damagePerShot * hitProbability;
+            } else if ((baseDamage == WeaponType.DAMAGE_ARTILLERY) || weaponType.hasFlag(WeaponType.F_ARTILLERY)
+                  || (baseDamage == WeaponType.DAMAGE_SPECIAL) || (baseDamage == WeaponType.DAMAGE_VARIABLE)) {
+                // Artillery deals its rack size on a hit; special/variable weapons that did not
+                // resolve through getDamage(range) fall back to the same estimate.
+                maxDamage = weaponType.getRackSize();
+                expectedDamage = maxDamage * hitProbability;
+            } else if (baseDamage <= 0) {
+                return null;
+            } else {
+                maxDamage = baseDamage;
+                expectedDamage = baseDamage * hitProbability;
+            }
+
+            if (maxDamage <= 0) {
+                return null;
+            }
+            return new WeaponAtRange(maxDamage, expectedDamage, weaponType.getHeat());
+        }
+    }
+
+    /** One candidate ammunition load for a weapon: null ammo means the weapon needs none. */
+    private record AmmoOption(AmmoMounted ammo, int[] ranges) {
+    }
+
+    /** One weapon's resolved damage at a specific range. */
+    private record WeaponAtRange(double maxDamage, double expectedDamage, int heat) {
+
+        /** @return expected damage per point of heat; heat-free weapons rank above everything */
+        double damagePerHeat() {
+            return (heat <= 0) ? Double.MAX_VALUE : (expectedDamage / heat);
+        }
+    }
+}

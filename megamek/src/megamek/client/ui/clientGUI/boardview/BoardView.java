@@ -1952,6 +1952,20 @@ public final class BoardView extends AbstractBoardView
                                   graphics2D);
                         }
                         break;
+                    case Minefield.TYPE_TRIPWIRE:
+                    	drawCenteredString(Messages.getString("BoardView1.Tripwire"),
+                                hexLocation.x,
+                                hexLocation.y + (int) (31 * scale),
+                                font_minefield,
+                                graphics2D);
+                    	break;
+                    case Minefield.TYPE_PITFALL:
+                    	drawCenteredString(Messages.getString("BoardView1.Pitfall"),
+                                hexLocation.x,
+                                hexLocation.y + (int) (31 * scale),
+                                font_minefield,
+                                graphics2D);
+                    	break;
                 }
             }
         }

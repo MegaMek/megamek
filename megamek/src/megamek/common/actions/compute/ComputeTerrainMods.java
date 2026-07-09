@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2025 The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2025-2026 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -42,7 +42,10 @@ import static megamek.common.ToHitData.SIDE_RANDOM;
 import static megamek.common.ToHitData.SIDE_REAR;
 import static megamek.common.ToHitData.SIDE_RIGHT;
 
+import java.util.List;
+
 import megamek.client.ui.Messages;
+import megamek.common.ECMInfo;
 import megamek.common.Hex;
 import megamek.common.LosEffects;
 import megamek.common.ToHitData;
@@ -102,6 +105,25 @@ public class ComputeTerrainMods {
           int eiPilotStatus, WeaponType weaponType, WeaponMounted weapon, int weaponId, AmmoType ammoType,
           AmmoMounted ammo, boolean isAttackerInfantry, boolean inSameBuilding, boolean isIndirect,
           boolean isPointBlankShot, boolean underWater) {
+        return compileTerrainAndLosToHitMods(game, attacker, target, targetType, aElev, tElev, targEl, distance, los,
+              toHit, losMods, eiPilotStatus, weaponType, weapon, weaponId, ammoType, ammo, isAttackerInfantry,
+              inSameBuilding, isIndirect, isPointBlankShot, underWater, null);
+    }
+
+    /**
+     * Same as {@link #compileTerrainAndLosToHitMods(Game, Entity, Targetable, int, int, int, int, int, LosEffects,
+     * ToHitData, ToHitData, int, WeaponType, WeaponMounted, int, AmmoType, AmmoMounted, boolean, boolean, boolean,
+     * boolean, boolean)}, but accepts a precomputed list of ECM information for all game entities, which the C3
+     * spotter search inside the range-modifier calculation needs. Callers that evaluate many attacks in a row should
+     * compute that list once and pass it in.
+     *
+     * @param allECMInfo Precomputed ECM information for all game entities, or {@code null} to compute it on demand
+     */
+    public static ToHitData compileTerrainAndLosToHitMods(Game game, Entity attacker, Targetable target, int targetType,
+          int aElev, int tElev, int targEl, int distance, LosEffects los, ToHitData toHit, ToHitData losMods,
+          int eiPilotStatus, WeaponType weaponType, WeaponMounted weapon, int weaponId, AmmoType ammoType,
+          AmmoMounted ammo, boolean isAttackerInfantry, boolean inSameBuilding, boolean isIndirect,
+          boolean isPointBlankShot, boolean underWater, @Nullable List<ECMInfo> allECMInfo) {
 
         if (attacker == null || target == null) {
             // Can't handle these attacks without a valid attacker and target
@@ -125,7 +147,7 @@ public class ComputeTerrainMods {
 
         if (((los.getThruBldg() == null) || !los.getTargetPosition().equals(attacker.getPosition())) &&
               ((weaponType != null) && !isBombAttack && !isADA) && (weaponId > WeaponType.WEAPON_NA)) {
-            toHit.append(Compute.getRangeMods(game, attacker, weapon, ammo, target));
+            toHit.append(Compute.getRangeMods(game, attacker, weapon, ammo, target, allECMInfo));
         }
 
         // add in LOS mods that we've been keeping
@@ -279,12 +301,12 @@ public class ComputeTerrainMods {
                   && targetHex.hasVegetation()
                   && !game.getOptions().booleanOption(OptionsConstants.ADVANCED_COMBAT_TAC_OPS_WOODS_COVER);
             if (los.canSee() && (targetWoodsAffectModifier || los.thruWoods())) {
-                if (bapInRange(game, attacker, entityTarget)) {
+                if (bapInRange(game, attacker, entityTarget, allECMInfo)) {
                     toHit.addModifier(-1, Messages.getString("WeaponAttackAction.BAPInWoods"));
                 } else {
                     boolean bapInRangeUsingC3 = game.getC3NetworkMembers(attacker).stream()
                           .filter(c3Member -> !attacker.equals(c3Member))
-                          .anyMatch(c3Member -> bapInRange(game, c3Member, entityTarget));
+                          .anyMatch(c3Member -> bapInRange(game, c3Member, entityTarget, allECMInfo));
                     if (bapInRangeUsingC3) {
                         toHit.addModifier(-1, Messages.getString("WeaponAttackAction.BAPInWoodsC3"));
                     }
@@ -345,13 +367,16 @@ public class ComputeTerrainMods {
     }
 
     /**
+     * @param allECMInfo Precomputed ECM information for all game entities, or {@code null} to compute it on demand
+     *
      * @return True when the attacker has an active BAP and is not affected by ECM and the target is in range.
      */
-    private static boolean bapInRange(Game game, Entity attacker, Entity target) {
+    private static boolean bapInRange(Game game, Entity attacker, Entity target,
+          @Nullable List<ECMInfo> allECMInfo) {
         return attacker.hasBAP()
               && (target != null) && !target.isOffBoard() && (target.getPosition() != null)
               && (attacker.getBAPRange() >= Compute.effectiveDistance(game, attacker, target))
-              && !ComputeECM.isAffectedByECM(attacker, attacker.getPosition(), target.getPosition());
+              && !ComputeECM.isAffectedByECM(attacker, attacker.getPosition(), target.getPosition(), allECMInfo);
     }
 
     /**

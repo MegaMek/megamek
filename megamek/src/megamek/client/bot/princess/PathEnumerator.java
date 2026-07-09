@@ -1,6 +1,6 @@
 /*
  * Copyright (C) 2000-2011 Ben Mazur (bmazur@sev.org)
- * Copyright (C) 2011-2025 The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2011-2026 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -129,7 +129,9 @@ public class PathEnumerator {
                 continue;
             }
 
-            for (int facing = 0; facing < 5; facing++) {
+            // Hex facings are 0-5, so all six must be checked - stopping at 4 missed units whose only potential
+            // location here faces 5 (NW), leaving them under-dirtied with stale predicted paths.
+            for (int facing = 0; facing < 6; facing++) {
                 if (getUnitPotentialLocations().get(id)
                       .contains(CoordFacingCombo.createCoordFacingCombo(location, facing))) {
                     returnSet.add(id);

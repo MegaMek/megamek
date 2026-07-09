@@ -1854,6 +1854,18 @@ public final class UnitToolTip {
             result += UIUtil.tag("FONT", attr, sNarced);
         }
 
+        // Magnetic Pulse missile interference (TO:AUE p.182 / iATM IMP rules)
+        if (entity.getMagneticPulseRounds() > 0) {
+            String sMagneticPulse = addToTT("MagneticPulse", NOBR, entity.getMagneticPulseRounds()) + " ";
+            attr = String.format("FACE=Dialog COLOR=%s", UIUtil.toColorHexString((GUIP.getCautionColor())));
+            result += UIUtil.tag("FONT", attr, sMagneticPulse);
+        }
+        if (entity.getImpToHitModifier() > 0) {
+            String sImprovedMagneticPulse = addToTT("ImprovedMagneticPulse", NOBR, entity.getImpToHitModifier()) + " ";
+            attr = String.format("FACE=Dialog COLOR=%s", UIUtil.toColorHexString((GUIP.getCautionColor())));
+            result += UIUtil.tag("FONT", attr, sImprovedMagneticPulse);
+        }
+
         // Pheromone impaired (IO pg 79)
         if ((entity instanceof ConvInfantry infantry) && infantry.isPheromoneImpaired()) {
             String sPheromone = addToTT("PheromoneImpaired", NOBR) + " ";

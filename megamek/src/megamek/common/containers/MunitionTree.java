@@ -64,6 +64,12 @@ public class MunitionTree {
     // anti-infantry/BA damage, at the cost of regular damage.  But let's create those
     // options programmatically instead of by hand.
     // We do, however, need a single overall "Incendiary" entry to track computed overall weight.
+    // TODO: register the standard Magnetic Pulse munition so bot loadouts can field it. Add
+    //  "Magnetic Pulse" to both LRM_MUNITION_NAMES and SRM_MUNITION_NAMES (matching the mutator name
+    //  in AmmoType.MAGNETIC_PULSE_MUNITION_MUTATOR), and add it to a category list in
+    //  TeamLoadOutGenerator (e.g. UTILITY_MUNITIONS). iATM IMP is already registered. This only makes
+    //  Princess carry the ammo; firing it sensibly is a separate task (see the TODOs in
+    //  princess/WeaponFireInfo.computeExpectedDamage and princess/FireControl.getPreferredAmmo).
     public static final List<String> LRM_MUNITION_NAMES =
           addIncendiary(new ArrayList<>(List.of(
                 "Dead-Fire",

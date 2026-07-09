@@ -72,6 +72,7 @@ import megamek.client.ui.buttons.MMToggleButton;
 import megamek.client.ui.clientGUI.ButtonOrderPreferences;
 import megamek.client.ui.clientGUI.ClientGUI;
 import megamek.client.ui.clientGUI.GUIPreferences;
+import megamek.client.ui.clientGUI.GifRecordingMode;
 import megamek.client.ui.clientGUI.UITheme;
 import megamek.client.ui.clientGUI.UnitDisplayOrderPreferences;
 import megamek.client.ui.comboBoxes.MMComboBox;
@@ -89,6 +90,7 @@ import megamek.client.ui.panels.phaseDisplay.commands.MoveCommand;
 import megamek.client.ui.util.FontHandler;
 import megamek.client.ui.util.KeyCommandBind;
 import megamek.client.ui.util.PlayerColour;
+import megamek.client.ui.util.UIUtil;
 import megamek.client.ui.widget.SkinXMLHandler;
 import megamek.codeUtilities.MathUtility;
 import megamek.common.Configuration;
@@ -104,6 +106,15 @@ import megamek.logging.MMLogger;
 
 /**
  * The Client Settings Dialog offering GUI options concerning tooltips, map display, keybinds etc.
+ *
+ * <p>Hidden testing/debug preferences are intentionally NOT shown in the Advanced list (they are filtered out via
+ * {@link #HIDDEN_ADVANCED_OPTIONS}) and can only be enabled by manually adding them to {@code clientsettings.xml}:
+ * <pre>{@code
+ * <preference name="RevealAllArtilleryRounds" value="true"/>          reveal BOTH teams' in-flight artillery target hexes
+ * <preference name="AdvancedShowBotArtilleryHeatMap" value="true"/>   draw Princess's predicted/firing artillery heat map
+ * <preference name="AdvancedRevealObscuredArtillery" value="true"/>   reveal otherwise-obscured artillery hex markers
+ * }</pre>
+ * Each defaults to {@code false}; remove the line (or set {@code false}) to disable.
  */
 public class CommonSettingsDialog extends AbstractButtonDialog
       implements ItemListener, FocusListener, ListSelectionListener, ChangeListener {
@@ -305,6 +316,8 @@ public class CommonSettingsDialog extends AbstractButtonDialog
           "CommonSettingsDialog.hexes.ShowArtilleryMisses"));
     private final JCheckBox artilleryDisplayDriftedHits = new JCheckBox(Messages.getString(
           "CommonSettingsDialog.hexes.ShowArtilleryDriftedHits"));
+    private final JCheckBox artilleryDisplayDriftArrows = new JCheckBox(Messages.getString(
+          "CommonSettingsDialog.hexes.ShowArtilleryDriftArrows"));
     private final JCheckBox bombsDisplayMisses = new JCheckBox(Messages.getString(
           "CommonSettingsDialog.hexes.ShowBombMisses"));
     private final JCheckBox bombsDisplayDrifts = new JCheckBox(Messages.getString(
@@ -382,8 +395,10 @@ public class CommonSettingsDialog extends AbstractButtonDialog
           new JCheckBox(Messages.getString("CommonSettingsDialog.gameSummaryBV.name"));
     private final JCheckBox gameSummaryMM =
           new JCheckBox(Messages.getString("CommonSettingsDialog.gameSummaryMM.name"));
-    private final JCheckBox gifGameSummaryMM = new JCheckBox(Messages.getString(
-          "CommonSettingsDialog.gifGameSummaryMM.name"));
+    private final JComboBox<String> gifGameSummaryRecording = new JComboBox<>(new String[] {
+          Messages.getString("CommonSettingsDialog.gifGameSummaryRecording.always"),
+          Messages.getString("CommonSettingsDialog.gifGameSummaryRecording.ask"),
+          Messages.getString("CommonSettingsDialog.gifGameSummaryRecording.never") });
     private final JCheckBox showUnitDisplayNamesOnMinimap = new JCheckBox(Messages.getString(
           "CommonSettingsDialog.showUnitDisplayNamesOnMinimap.name"));
     private JComboBox<String> skinFiles;
@@ -836,6 +851,9 @@ public class CommonSettingsDialog extends AbstractButtonDialog
         comps.add(checkboxEntry(artilleryDisplayDriftedHits,
               Messages.getString("CommonSettingsDialog.hexes.ShowArtilleryDriftedHits.tooltip")));
         artilleryDisplayDriftedHits.setSelected(GUIP.getShowArtilleryDrifts());
+        comps.add(checkboxEntry(artilleryDisplayDriftArrows,
+              Messages.getString("CommonSettingsDialog.hexes.ShowArtilleryDriftArrows.tooltip")));
+        artilleryDisplayDriftArrows.setSelected(GUIP.getShowArtilleryDriftArrows());
         comps.add(checkboxEntry(bombsDisplayMisses,
               Messages.getString("CommonSettingsDialog.hexes.ShowBombMisses.tooltip")));
         bombsDisplayMisses.setSelected(GUIP.getShowBombMisses());
@@ -1899,9 +1917,18 @@ public class CommonSettingsDialog extends AbstractButtonDialog
         comps.add(checkboxEntry(gameSummaryMM,
               Messages.getString("CommonSettingsDialog.gameSummaryMM.tooltip",
                     Configuration.gameSummaryImagesMMDir())));
-        comps.add(checkboxEntry(gifGameSummaryMM,
-              Messages.getString("CommonSettingsDialog.gifGameSummaryMM.tooltip",
-                    Configuration.gameSummaryImagesMMDir())));
+        JLabel gifGameSummaryRecordingLabel =
+              new JLabel(Messages.getString("CommonSettingsDialog.gifGameSummaryRecording.name"));
+        String gifRecordingTooltip = Messages.getString("CommonSettingsDialog.gifGameSummaryRecording.tooltip",
+              Configuration.gameSummaryImagesMMDir());
+        gifGameSummaryRecordingLabel.setToolTipText(gifRecordingTooltip);
+        gifGameSummaryRecording.setToolTipText(gifRecordingTooltip);
+        gifGameSummaryRecording.setMaximumSize(UIUtil.scaleForGUI(250, 25));
+        List<Component> gifGameSummaryRow = new ArrayList<>();
+        gifGameSummaryRow.add(gifGameSummaryRecordingLabel);
+        gifGameSummaryRow.add(Box.createHorizontalStrut(15));
+        gifGameSummaryRow.add(gifGameSummaryRecording);
+        comps.add(gifGameSummaryRow);
         comps.add(checkboxEntry(drawFacingArrowsOnMiniMap, null));
         comps.add(checkboxEntry(drawSensorRangeOnMiniMap, null));
         comps.add(checkboxEntry(paintBordersOnMiniMap, null));
@@ -1913,7 +1940,7 @@ public class CommonSettingsDialog extends AbstractButtonDialog
               100,
               1);
         movePathPersistenceOnMiniMap = new JSpinner(movePathPersistenceModel);
-        movePathPersistenceOnMiniMap.setMaximumSize(new Dimension(150, 40));
+        movePathPersistenceOnMiniMap.setMaximumSize(UIUtil.scaleForGUI(150, 40));
         movePathPersistenceOnMiniMap.setToolTipText(Messages.getString(
               "CommonSettingsDialog.movePathPersistence.tooltip"));
         JLabel movePathPersistenceOnMiniMapLabel = new JLabel(Messages.getString(
@@ -2359,7 +2386,7 @@ public class CommonSettingsDialog extends AbstractButtonDialog
 
             gameSummaryBV.setSelected(GUIP.getGameSummaryBoardView());
             gameSummaryMM.setSelected(GUIP.getGameSummaryMinimap());
-            gifGameSummaryMM.setSelected(GUIP.getGifGameSummaryMinimap());
+            gifGameSummaryRecording.setSelectedIndex(GUIP.getGifGameSummaryRecording().ordinal());
             skinFiles.removeAllItems();
             ArrayList<String> xmlFiles = new ArrayList<>(filteredFiles(Configuration.skinsDir(), ".xml"));
 
@@ -2545,6 +2572,7 @@ public class CommonSettingsDialog extends AbstractButtonDialog
 
         artilleryDisplayMisses.setSelected(GUIP.getShowArtilleryMisses());
         artilleryDisplayDriftedHits.setSelected(GUIP.getShowArtilleryDrifts());
+        artilleryDisplayDriftArrows.setSelected(GUIP.getShowArtilleryDriftArrows());
         bombsDisplayMisses.setSelected(GUIP.getShowBombMisses());
         bombsDisplayDrifts.setSelected(GUIP.getShowBombDrifts());
 
@@ -2748,6 +2776,7 @@ public class CommonSettingsDialog extends AbstractButtonDialog
 
         GUIP.setShowArtilleryMisses(artilleryDisplayMisses.isSelected());
         GUIP.setShowArtilleryDrifts(artilleryDisplayDriftedHits.isSelected());
+        GUIP.setShowArtilleryDriftArrows(artilleryDisplayDriftArrows.isSelected());
         GUIP.setShowBombMisses(bombsDisplayMisses.isSelected());
         GUIP.setShowBombDrifts(bombsDisplayDrifts.isSelected());
 
@@ -2824,7 +2853,13 @@ public class CommonSettingsDialog extends AbstractButtonDialog
         GUIP.setAutoSelectNextUnit(useAutoSelectNext.isSelected());
         GUIP.setGameSummaryBoardView(gameSummaryBV.isSelected());
         GUIP.setGameSummaryMinimap(gameSummaryMM.isSelected());
-        GUIP.setGifGameSummaryMinimap(gifGameSummaryMM.isSelected());
+        int selectedRecordingIndex = gifGameSummaryRecording.getSelectedIndex();
+        GifRecordingMode[] recordingModes = GifRecordingMode.values();
+        boolean isValidRecordingIndex = (selectedRecordingIndex >= 0)
+              && (selectedRecordingIndex < recordingModes.length);
+        GUIP.setGifGameSummaryRecording(isValidRecordingIndex
+              ? recordingModes[selectedRecordingIndex]
+              : GifRecordingMode.ASK);
         GUIP.setShowUnitDisplayNamesOnMinimap(showUnitDisplayNamesOnMinimap.isSelected());
         UITheme newUITheme = (UITheme) uiThemes.getSelectedItem();
         String oldUITheme = GUIP.getUITheme();
@@ -3800,17 +3835,30 @@ public class CommonSettingsDialog extends AbstractButtonDialog
         return panel;
     }
 
+    // Advanced-preference keys deliberately hidden from the Advanced settings list: testing/debug gates that must only
+    // be enabled by manually editing clientsettings.xml, never via the UI. They keep their "Advanced" prefix so the
+    // value still loads from clientsettings.xml; they are simply filtered out of the displayed list here.
+    // (AdvancedRevealAllArtilleryRounds is the legacy key for the now-renamed RevealAllArtilleryRounds gate.)
+    private static final Set<String> HIDDEN_ADVANCED_OPTIONS = Set.of(
+          "AdvancedRevealAllArtilleryRounds",
+          "AdvancedShowBotArtilleryHeatMap",
+          "AdvancedRevealObscuredArtillery");
+
     private JPanel getAdvancedSettingsPanel() {
         JPanel p = new JPanel();
 
-        String[] s = GUIP.getAdvancedProperties();
-        AdvancedOptionData[] opts = new AdvancedOptionData[s.length];
-        for (int i = 0;
-              i < s.length;
-              i++) {
-            s[i] = s[i].substring(s[i].indexOf("Advanced") + 8);
-            opts[i] = new AdvancedOptionData(s[i]);
+        String[] advancedProperties = GUIP.getAdvancedProperties();
+        List<AdvancedOptionData> visibleOptions = new ArrayList<>();
+        for (String advancedProperty : advancedProperties) {
+            // Skip deliberately-hidden testing gates so they never appear in the Advanced list - they are controlled
+            // only by manually editing clientsettings.xml.
+            if (HIDDEN_ADVANCED_OPTIONS.contains(advancedProperty)) {
+                continue;
+            }
+            visibleOptions.add(new AdvancedOptionData(
+                  advancedProperty.substring(advancedProperty.indexOf("Advanced") + 8)));
         }
+        AdvancedOptionData[] opts = visibleOptions.toArray(new AdvancedOptionData[0]);
         Arrays.sort(opts);
         advancedKeys = new JList<>(opts);
         advancedKeys.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);

@@ -47,6 +47,7 @@ import javax.swing.ScrollPaneConstants;
 
 import megamek.client.AbstractClient;
 import megamek.client.Client;
+import megamek.client.bot.princess.BehaviorSettings;
 import megamek.client.bot.princess.CardinalEdge;
 import megamek.client.ui.clientGUI.ClientGUI;
 import megamek.common.ECMInfo;
@@ -120,6 +121,15 @@ public abstract class BotClient extends Client {
 
     // Let bots remember whether they've rerolled an initiative roll this round
     protected boolean rerolledInitiative = false;
+
+    /**
+     * The bot's personality/configuration state. Held on {@link BotClient} because it is generic bot-personality
+     * state (sliders, targeting, retreat edges) shared by every bot implementation, not specific to any one AI.
+     * Initialized to a default so it is never {@code null}: subclasses normally replace it via
+     * {@link #setBehaviorSettings(BehaviorSettings)} during construction, but the default preserves the
+     * non-null contract that {@link #getBehaviorSettings()} callers rely on even if a subclass does not.
+     */
+    protected BehaviorSettings behaviorSettings = new BehaviorSettings();
 
     /**
      * Store a reference to the ClientGUI for the client who created this bot. This is used to ensure keep the ClientGUI
@@ -298,6 +308,22 @@ public abstract class BotClient extends Client {
     protected abstract void calculateFiringTurn();
 
     protected abstract void calculateDeployment() throws Exception;
+
+    /**
+     * @return this bot's current behavior settings (personality/configuration state)
+     */
+    public BehaviorSettings getBehaviorSettings() {
+        return behaviorSettings;
+    }
+
+    /**
+     * Applies the given behavior settings to this bot. Implementations decide how the settings take effect (for
+     * example, re-initializing scorers or notifying the server) and are responsible for storing them in
+     * {@link #behaviorSettings}.
+     *
+     * @param behaviorSettings the new behavior settings to apply
+     */
+    public abstract void setBehaviorSettings(BehaviorSettings behaviorSettings);
 
     protected void initTargeting() {
     }

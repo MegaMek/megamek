@@ -70,6 +70,7 @@ import megamek.common.equipment.WeaponType;
 import megamek.common.exceptions.LocationFullException;
 import megamek.common.game.Game;
 import megamek.common.game.GameTurn;
+import megamek.common.moves.MovePath;
 import megamek.common.moves.MoveStep;
 import megamek.common.options.GameOptions;
 import megamek.common.options.OptionsConstants;
@@ -139,6 +140,27 @@ class PrincessTest {
 
         // Test a null ticks argument.
         assertEquals(0, Princess.calculateAdjustment(null));
+    }
+
+    @Test
+    void testGetMessageGuardsNonFiniteEstimate() {
+        Entity mockEntity = mock(Entity.class);
+        when(mockEntity.getChassis()).thenReturn("Flashman");
+        List<MovePath> paths = new ArrayList<>();
+
+        // A +Infinity estimate (produced when a prior zero-path turn divided elapsed time by 0) must not
+        // surface as the Integer.MAX_VALUE completion time that results from casting the double to int.
+        String infiniteMessage = Princess.getMessage(mockEntity, Double.POSITIVE_INFINITY, paths);
+        assertTrue(infiniteMessage.contains("unknown."));
+        assertFalse(infiniteMessage.contains(Integer.toString(Integer.MAX_VALUE)));
+
+        // NaN is likewise non-finite and must be reported as unknown rather than the 0 that (int) NaN yields.
+        String nanMessage = Princess.getMessage(mockEntity, Double.NaN, paths);
+        assertTrue(nanMessage.contains("unknown."));
+
+        // A normal finite estimate is still rendered as a seconds value.
+        String finiteMessage = Princess.getMessage(mockEntity, 12.0, paths);
+        assertTrue(finiteMessage.contains("12 seconds"));
     }
 
     @Test

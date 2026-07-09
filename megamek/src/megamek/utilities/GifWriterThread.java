@@ -42,7 +42,6 @@ import javax.swing.JOptionPane;
 import javax.swing.filechooser.FileNameExtensionFilter;
 
 import megamek.client.ui.Messages;
-import megamek.client.ui.clientGUI.GUIPreferences;
 import megamek.common.util.StringUtil;
 import megamek.logging.MMLogger;
 
@@ -126,15 +125,15 @@ public class GifWriterThread extends Thread {
     }
 
     private void saveGifNag() {
-        if (GUIPreferences.getInstance().getGifGameSummaryMinimap()) {
-            int response = JOptionPane.showConfirmDialog(null,
-                  Messages.getString("ClientGUI.SaveGifDialog.message"),
-                  Messages.getString("ClientGUI.SaveGifDialog.title"),
-                  JOptionPane.YES_NO_OPTION,
-                  JOptionPane.INFORMATION_MESSAGE);
-            if (response == JOptionPane.YES_OPTION) {
-                saveGif();
-            }
+        // Recording only ever runs with the player's up-front consent (see GifRecordingMode), so this dialog
+        // needs no preference gate: the player chose to record and now only decides whether to keep the result.
+        int response = JOptionPane.showConfirmDialog(null,
+              Messages.getString("ClientGUI.SaveGifDialog.message"),
+              Messages.getString("ClientGUI.SaveGifDialog.title"),
+              JOptionPane.YES_NO_OPTION,
+              JOptionPane.INFORMATION_MESSAGE);
+        if (response == JOptionPane.YES_OPTION) {
+            saveGif();
         }
         deleteGif();
     }

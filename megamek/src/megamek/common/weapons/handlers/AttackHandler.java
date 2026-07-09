@@ -59,6 +59,21 @@ public interface AttackHandler {
     boolean cares(GamePhase phase);
 
     /**
+     * Whether this handler will add report content (not just internal bookkeeping) when {@code handle()} runs this
+     * phase. Used to decide whether to print the "Weapons fire for X" announcement header: an in-flight artillery round
+     * that merely decrements its flight timer in the offboard phase produces no report body, so announcing it would
+     * leave a dangling empty header. Defaults to {@code true}; handlers with silent phases override it.
+     *
+     * @param phase The current game phase
+     *
+     * @return {@code true} if a report body will be produced this phase, {@code false} if the handler is silent this
+     *       phase
+     */
+    default boolean producesReportThisPhase(GamePhase phase) {
+        return true;
+    }
+
+    /**
      * This method is called to perform handling of its action or attack but only if cares() returns true in the present
      * game phase. This method must return true to keep this handler active for future phases. If it returns false, the
      * present handler will be discarded and no longer be called, ending any treatment of the associated attack or

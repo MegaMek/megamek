@@ -42,11 +42,13 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.spy;
 import static org.mockito.Mockito.when;
 
+import megamek.common.Hex;
 import megamek.common.Messages;
 import megamek.common.Player;
 import megamek.common.TechConstants;
 import megamek.common.ToHitData;
 import megamek.common.battleArmor.BattleArmor;
+import megamek.common.board.Board;
 import megamek.common.board.Coords;
 import megamek.common.equipment.EquipmentType;
 import megamek.common.game.Game;
@@ -61,6 +63,9 @@ import megamek.common.units.CrewType;
 import megamek.common.units.EntityWeightClass;
 import megamek.common.units.Infantry;
 import megamek.common.units.Mek;
+import megamek.common.units.EntityMovementMode;
+import megamek.common.units.Terrain;
+import megamek.common.units.Terrains;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -171,6 +176,37 @@ class AntiMekAttackTest {
 
         // Clan BA is never burdened
         when(battleArmor.isBurdened()).thenReturn(false);
+
+        return battleArmor;
+    }
+
+    /**
+     * Creates a UMU Equipped Battle Armor unit
+     */
+    private BattleArmor createUMUBattleArmor(int troopers) {
+        BattleArmor battleArmor = spy(new BattleArmor());
+        battleArmor.setGame(game);
+        battleArmor.setId(game.getNextEntityId());
+        battleArmor.setChassis("Test UMU BA");
+        battleArmor.setModel("Undine");
+        battleArmor.setSquadSize(troopers);
+        battleArmor.setWeightClass(EntityWeightClass.WEIGHT_MEDIUM);
+        battleArmor.setTechLevel(TechConstants.T_CLAN_TW);
+        battleArmor.setMovementMode(EntityMovementMode.INF_UMU);
+
+        // Initialize crew with piloting skill
+        Crew crew = new Crew(CrewType.INFANTRY_CREW);
+        crew.setGunnery(4, 0);
+        crew.setPiloting(5, 0);
+        battleArmor.setCrew(crew);
+
+        battleArmor.setOwner(player1);
+
+        // Set armor values for each trooper location
+        for (int i = 1; i <= troopers; i++) {
+            battleArmor.initializeArmor(4, i);
+        }
+        battleArmor.autoSetInternal();
 
         return battleArmor;
     }
@@ -325,6 +361,67 @@ class AntiMekAttackTest {
         }
 
         @Test
+        @DisplayName("UMU Equipped BA can leg attack only when target is in depth 1 or deeper water")
+        void umuBattleArmorCanConditionallyLegAttack() {
+            Infantry attacker = createUMUBattleArmor(5);
+            Mek defender = createTargetMek();
+            Hex depthOneHex = new Hex(
+                  0, new Terrain[] {new Terrain(Terrains.WATER, 1)}, null, new Coords(2,2));
+            Hex depthTwoHex = new Hex(
+                  0, new Terrain[] {new Terrain(Terrains.WATER, 2)}, null, new Coords(3,3));
+            Hex depthZeroHex = new Hex(
+                  0, new Terrain[] {new Terrain(Terrains.WATER, 0)}, null, new Coords(4,4));
+            Hex dryHex = new Hex(
+                  0, new Terrain[] {null}, null, new Coords(5,5));
+            Board testBoard = new Board(6,6);
+            ToHitData toHit;
+
+            game.addEntity(attacker);
+            game.addEntity(defender);
+            game.setBoard(testBoard);
+
+            testBoard.setHex(2,2,depthOneHex);
+            testBoard.setHex(3,3,depthTwoHex);
+            testBoard.setHex(4,4,depthZeroHex);
+            testBoard.setHex(5,5,dryHex);
+
+            attacker.setBoardId(testBoard.getBoardId());
+            defender.setBoardId(testBoard.getBoardId());
+
+            attacker.setPosition(new Coords(2, 2), true);
+            defender.setPosition(new Coords(2, 2), true);
+
+            //Verify that leg attacks can be made
+            toHit = Compute.getLegAttackBaseToHit(attacker, defender, game);
+            assertNotEquals(TargetRoll.IMPOSSIBLE, toHit.getValue(),
+                  "UMU Equipped BA should be able to leg attack in depth 1 water");
+
+            attacker.setPosition(new Coords(3, 3), true);
+            defender.setPosition(new Coords(3, 3), true);
+
+            //Verify that leg attacks can be made
+            toHit = Compute.getLegAttackBaseToHit(attacker, defender, game);
+            assertNotEquals(TargetRoll.IMPOSSIBLE, toHit.getValue(),
+                  "UMU Equipped BA should be able to leg attack in depth 2 water");
+
+            attacker.setPosition(new Coords(4, 4), true);
+            defender.setPosition(new Coords(4, 4), true);
+
+            //Verify that leg attacks cannot be made
+            toHit = Compute.getLegAttackBaseToHit(attacker, defender, game);
+            assertEquals(TargetRoll.IMPOSSIBLE, toHit.getValue(),
+                  "UMU Equipped BA should not be able to leg attack in depth 0 water");
+
+            attacker.setPosition(new Coords(5, 5), true);
+            defender.setPosition(new Coords(5, 5), true);
+
+            //Verify that leg attacks cannot be made
+            toHit = Compute.getLegAttackBaseToHit(attacker, defender, game);
+            assertEquals(TargetRoll.IMPOSSIBLE, toHit.getValue(),
+                  "UMU Equipped BA should not be able to leg attack outside of water");
+        }
+
+        @Test
         @DisplayName("Conventional infantry can leg attack")
         void conventionalInfantryCanLegAttack() {
             Infantry attacker = createConventionalInfantry(22);
@@ -407,6 +504,24 @@ class AntiMekAttackTest {
 
             assertNotEquals(TargetRoll.IMPOSSIBLE, toHit.getValue(),
                   "Clan BA should be able to swarm attack (never burdened)");
+        }
+
+        @Test
+        @DisplayName("UMU Equipped BA cannot swarm attack")
+        void umuBattleArmorCannotSwarmAttack() {
+            BattleArmor attacker = createUMUBattleArmor(5);
+            Mek defender = createTargetMek();
+
+            attacker.setPosition(new Coords(5, 5));
+            defender.setPosition(new Coords(5, 5));
+
+            game.addEntity(attacker);
+            game.addEntity(defender);
+
+            ToHitData toHit = Compute.getSwarmMekBaseToHit(attacker, defender, game);
+
+            assertEquals(TargetRoll.IMPOSSIBLE, toHit.getValue(),
+                  "UMU equipped BA should not be able to swarm attack");
         }
 
         @Test

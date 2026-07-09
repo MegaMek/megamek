@@ -729,8 +729,14 @@ public class EquipmentType implements ITechnology {
     }
 
     public void addLookupName(String s) {
+        addLookupName(s, true);
+    }
+
+    public void addLookupName(String s, boolean includeInNames) {
         EquipmentType.lookupHash.put(s.toLowerCase(), this); // static variable
-        namesVector.addElement(s); // member variable
+        if (includeInNames) {
+            namesVector.addElement(s); // member variable
+        }
     }
 
     /**

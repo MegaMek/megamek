@@ -1,6 +1,6 @@
 /*
  * Copyright (C) 2000-2011 Ben Mazur (bmazur@sev.org)
- * Copyright (C) 2013-2025 The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2013-2026 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -36,6 +36,7 @@ package megamek.client.bot.princess;
 import java.text.DecimalFormat;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.concurrent.atomic.AtomicLong;
 
 import megamek.common.moves.MovePath;
 import org.apache.commons.lang3.builder.EqualsBuilder;
@@ -46,10 +47,19 @@ import org.apache.commons.lang3.builder.HashCodeBuilder;
  * @since 12/5/13 10:19 AM
  */
 public class RankedPath implements Comparable<RankedPath> {
+    /** Source of the monotonic {@link #creationId} used only as a stable final tie-breaker in {@link #compareTo}. */
+    private static final AtomicLong ID_GENERATOR = new AtomicLong();
+
     private final MovePath path;
     private final double rank;
     private final String reason;
     private final transient Map<String, Double> scores = new HashMap<>();
+
+    /**
+     * Creation-order id, used only to break {@link #compareTo} ties in favour of the earliest-created path so the
+     * ordering is a valid total order. Not part of {@link #equals(Object)}/{@link #hashCode()} identity.
+     */
+    private final long creationId = ID_GENERATOR.getAndIncrement();
 
     // the expected damage resulting from the calculation of this ranked path
     private double expectedDamage;
@@ -85,26 +95,34 @@ public class RankedPath implements Comparable<RankedPath> {
     }
 
     @Override
-    public int compareTo(RankedPath p) {
-        if (rank < p.rank) {
+    public int compareTo(RankedPath other) {
+        if (rank < other.rank) {
             return -1;
         }
-        if (p.rank < rank) {
+        if (other.rank < rank) {
             return 1;
         }
-        if (path.getHexesMoved() < p.path.getHexesMoved()) {
+        if (path.getHexesMoved() < other.path.getHexesMoved()) {
             return -1;
         }
-        if (p.path.getHexesMoved() < path.getHexesMoved()) {
+        if (other.path.getHexesMoved() < path.getHexesMoved()) {
             return 1;
         }
-        if (expectedDamage < p.expectedDamage) {
+        if (expectedDamage < other.expectedDamage) {
             return -1;
         }
-        if (p.expectedDamage < expectedDamage) {
+        if (other.expectedDamage < expectedDamage) {
             return 1;
         }
-        return hashCode() > 0 ? 1 : -1;
+        // Final tie-break: among paths tied on rank, hexes moved and expected damage, prefer the
+        // earliest-enumerated one, so the choice is stable and reproducible. The only consumer of this ordering is
+        // PathRanker's reverse-ordered TreeSet<RankedPath>, whose first() (used by getBestPath) returns the natural
+        // maximum - so the earliest path (lowest creationId) must compare as the greatest, hence other.creationId
+        // is placed first in the comparison. This yields a valid total order (antisymmetric, transitive,
+        // consistent) as required for correct TreeSet selection; the previous `hashCode() > 0 ? 1 : -1` ignored
+        // the argument and was non-antisymmetric, so it could misorder or drop tied paths and getBestPath was not
+        // guaranteed the true maximum.
+        return Long.compare(other.creationId, creationId);
     }
 
     @Override

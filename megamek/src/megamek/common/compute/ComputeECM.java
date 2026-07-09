@@ -413,6 +413,16 @@ public class ComputeECM {
             }
         }
 
+        // Add a hostile, single-hex ECM field over any unit currently suffering Improved Magnetic
+        // Pulse (iATM IMP) missile interference (IO IMP rules). A null owner is hostile to everyone
+        // and range 0 affects only the stricken unit's own hex, not a surrounding bubble. eccmStrength
+        // 0 keeps it pure ECM, so it can never act as ECCM as the rules require.
+        for (Entity entity : entities) {
+            if (entity.isImpEcmAffected() && (entity.getPosition() != null)) {
+                allEcmInfo.add(new ECMInfo(0, entity.getPosition(), null, 1, 0));
+            }
+        }
+
         // Sort the ECM, as we need to take care of the stronger ECM/ECCM first
         // ie; Angel ECCM can counter any number of ECM, however if an angel
         //  ECM counters it first...

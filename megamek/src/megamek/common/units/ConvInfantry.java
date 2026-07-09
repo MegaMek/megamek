@@ -131,6 +131,11 @@ public class ConvInfantry extends Infantry {
     private String secondName;
     private int secondaryWeaponsPerSquad = 0;
 
+    // Number of rounds this platoon's energy weapons are rendered inoperative by an Improved Magnetic
+    // Pulse (iATM IMP) missile hit (IO IMP rules). Set to 2 on hit so the effect lasts through the End
+    // Phase of the following turn.
+    private int impEnergyWeaponsDisabledRounds = 0;
+
     // Disposable Weapon (TO:AuE p.116, Corrected Sixth Printing): a one-shot weapon carried by every trooper, used for
     // a single once-per-scenario attack instead of the platoon's standard weapon attack. Unlike primary/secondary, the
     // disposable weapon IS added to the equipment array as a separate, fireable WeaponMounted. disposableWeapon is
@@ -1023,6 +1028,9 @@ public class ConvInfantry extends Infantry {
             logger.debug("[BuildBridge] {} newRound (round {}): {} of {} dismantle turns banked",
                   getShortName(), roundNumber, bridgeDismantleTurns, bridgeDismantleRequiredTurns);
         }
+        if (impEnergyWeaponsDisabledRounds > 0) {
+            impEnergyWeaponsDisabledRounds--;
+        }
         super.newRound(roundNumber);
     }
 
@@ -1397,14 +1405,57 @@ public class ConvInfantry extends Infantry {
             return 0;
         }
 
+        // Improved Magnetic Pulse missiles render energy weapons inoperative for a turn (IO IMP rules).
+        boolean energyDisabled = impEnergyWeaponsDisabledRounds > 0;
+
         // per 09/2021 errata, primary infantry weapon damage caps out at 0.6
         double adjustedDamage = Math.min(MMConstants.INFANTRY_PRIMARY_WEAPON_DAMAGE_CAP,
               primaryWeapon.getInfantryDamage());
+        if (energyDisabled && primaryWeapon.hasFlag(WeaponType.F_ENERGY)) {
+            adjustedDamage = 0;
+        }
         double damage = adjustedDamage * (squadSize - secondaryWeaponsPerSquad);
-        if (null != secondaryWeapon) {
+        if ((null != secondaryWeapon)
+              && !(energyDisabled && secondaryWeapon.hasFlag(WeaponType.F_ENERGY))) {
             damage += secondaryWeapon.getInfantryDamage() * secondaryWeaponsPerSquad;
         }
         return damage / squadSize;
+    }
+
+    /**
+     * Records an Improved Magnetic Pulse (iATM IMP) missile hit on this platoon (IO IMP rules). If the platoon uses
+     * energy weapons, they are rendered inoperative through the End Phase of the following turn. Other weapon types are
+     * unaffected.
+     */
+    public void applyImpEnergyWeaponDisable() {
+        // 2 rounds so the effect lasts through the End Phase of the turn after the attack.
+        impEnergyWeaponsDisabledRounds = 2;
+    }
+
+    /**
+     * @return {@code true} while this platoon's energy weapons are rendered inoperative by an Improved Magnetic Pulse
+     *       missile hit (IO IMP rules).
+     */
+    public boolean isEnergyWeaponsDisabled() {
+        return impEnergyWeaponsDisabledRounds > 0;
+    }
+
+    /**
+     * @return {@code true} if this platoon is equipped with cybernetic enhancements of any kind (IO p.84 prosthetic
+     *       enhancements). Improved Magnetic Pulse missiles deal double damage to such units.
+     */
+    public boolean isCyberneticallyEnhanced() {
+        return hasProstheticEnhancement();
+    }
+
+    /**
+     * @return {@code true} if this platoon's primary or secondary weapon is an energy weapon. Improved Magnetic Pulse
+     *       missiles
+     *       render such weapons inoperative through the End Phase of the following turn.
+     */
+    public boolean isUsingEnergyWeapons() {
+        return ((primaryWeapon != null) && primaryWeapon.hasFlag(WeaponType.F_ENERGY))
+              || ((secondaryWeapon != null) && secondaryWeapon.hasFlag(WeaponType.F_ENERGY));
     }
 
     public boolean primaryWeaponDamageCapped() {

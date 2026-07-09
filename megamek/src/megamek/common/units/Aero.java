@@ -494,6 +494,10 @@ public abstract class Aero extends Entity implements IAero, IBomber {
             mp--;
         }
 
+        // Improved Magnetic Pulse (iATM IMP) missile Safe Thrust reduction (IO IMP rules). Zero for
+        // large craft, which never accumulate IMP hits, so they are unaffected as the rules require.
+        mp = Math.max(0, mp - getImpMpReduction());
+
         if (!mpCalculationSetting.ignoreGrounded() && !isAirborne()) {
             mp = isSpheroid() ? 0 : mp / 2;
         }

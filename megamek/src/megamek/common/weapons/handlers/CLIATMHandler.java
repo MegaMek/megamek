@@ -43,6 +43,7 @@ import megamek.common.RangeType;
 import megamek.common.Report;
 import megamek.common.ToHitData;
 import megamek.common.actions.WeaponAttackAction;
+import megamek.common.annotations.Nullable;
 import megamek.common.battleArmor.BattleArmor;
 import megamek.common.board.Coords;
 import megamek.common.compute.Compute;
@@ -59,10 +60,12 @@ import megamek.common.options.OptionsConstants;
 import megamek.common.planetaryConditions.PlanetaryConditions;
 import megamek.common.rolls.TargetRoll;
 import megamek.common.units.Aero;
+import megamek.common.units.ConvInfantry;
 import megamek.common.units.Entity;
 import megamek.common.units.IBuilding;
 import megamek.common.units.Infantry;
 import megamek.common.units.Mek;
+import megamek.common.units.ProtoMek;
 import megamek.common.units.Tank;
 import megamek.common.units.Targetable;
 import megamek.common.weapons.Weapon;
@@ -109,6 +112,21 @@ public class CLIATMHandler extends ATMHandler {
                   weaponType.getInfantryDamageClass(),
                   ((Infantry) target).isMechanized(),
                   toHit.getThruBldg() != null, weaponEntity.getId(), calcDmgPerHitReport);
+
+            // IMP missiles deal double damage to cybernetically-enhanced infantry (IO p.61).
+            if (ammoType.getMunitionType().contains(AmmoType.Munitions.M_IATM_IMP)
+                  && (target instanceof ConvInfantry convInfantry)
+                  && convInfantry.isCyberneticallyEnhanced()) {
+                toReturn *= 2;
+                // Report the doubling so the damage progression is clear (e.g. 2 -> 4 before the
+                // infantry armor divisor reduces it again). Without this line the doubled value
+                // appears with no explanation.
+                Report doublingReport = new Report(6094);
+                doublingReport.subject = subjectId;
+                doublingReport.indent(2);
+                doublingReport.add((int) toReturn);
+                calcDmgPerHitReport.addElement(doublingReport);
+            }
 
             // some question here about "partial streak missiles"
             if (streakInactive()) {
@@ -840,6 +858,10 @@ public class CLIATMHandler extends ATMHandler {
                 vPhaseReport.addElement(report);
             }
 
+            // The IMP effect scales with the total warheads that hit, so capture it before the
+            // damage loop decrements the running count.
+            int impWarheads = Math.max(0, hits - Math.max(0, bldgAbsorbs));
+
             // for each cluster of hits, do a chunk of damage
             while (hits > 0) {
                 int nDamage;
@@ -870,19 +892,78 @@ public class CLIATMHandler extends ATMHandler {
                     gameManager.creditKill(entityTarget, attackingEntity);
                     hits -= nCluster;
                     firstHit = false;
-                    // do IMP stuff here!
-                    if ((entityTarget instanceof Mek)
-                          || (entityTarget instanceof Aero)
-                          || (entityTarget instanceof Tank)) {
-                        entityTarget.addIMPHits(Math.max(0,
-                              hits - Math.max(0, bldgAbsorbs)));
-                    }
                 }
             } // Handle the next cluster.
+
+            // Apply the IMP effect once, based on the total warheads that hit. Battle armor and
+            // conventional infantry have their own rules; IMP has no effect against large craft
+            // (DropShip/JumpShip/WarShip/SpaceStation).
+            if (entityTarget instanceof BattleArmor battleArmor) {
+                // Each warhead disables one trooper through the End Phase of the following turn.
+                boolean wasDisabled = battleArmor.getImprovedMagneticPulseDisabledTroopers() > 0;
+                int disabledTroopers = battleArmor.applyImprovedMagneticPulseTrooperDisable(impWarheads);
+                if (disabledTroopers > 0) {
+                    Report disableReport = new Report(3346);
+                    disableReport.subject = subjectId;
+                    disableReport.indent(2);
+                    disableReport.add(disabledTroopers);
+                    vPhaseReport.addElement(disableReport);
+                }
+                if (!wasDisabled && (battleArmor.getImprovedMagneticPulseDisabledTroopers() > 0)) {
+                    gameManager.sendMagneticPulseToast(battleArmor, true, true);
+                }
+            } else if (entityTarget instanceof ConvInfantry convInfantry) {
+                // Energy weapons are rendered inoperative (only meaningful for energy-armed platoons);
+                // the damage doubling for cybernetic platoons is applied in calcDamagePerHit. Skip when
+                // no warheads actually reached the target (e.g. fully absorbed by a building).
+                if ((impWarheads > 0) && convInfantry.isUsingEnergyWeapons()) {
+                    boolean wasDisabled = convInfantry.isEnergyWeaponsDisabled();
+                    convInfantry.applyImpEnergyWeaponDisable();
+                    Report disableReport = new Report(3347);
+                    disableReport.subject = subjectId;
+                    disableReport.indent(2);
+                    vPhaseReport.addElement(disableReport);
+                    if (!wasDisabled) {
+                        gameManager.sendMagneticPulseToast(convInfantry, true, true);
+                    }
+                }
+            } else if (appliesImprovedMagneticPulseMovementInterference(entityTarget)) {
+                int impModifierBefore = entityTarget.getImpToHitModifier();
+                entityTarget.addIMPHits(impWarheads);
+                if (impWarheads > 0) {
+                    Report interferenceReport = new Report(3349);
+                    interferenceReport.subject = subjectId;
+                    interferenceReport.indent(2);
+                    vPhaseReport.addElement(interferenceReport);
+                }
+                if ((impModifierBefore == 0) && (entityTarget.getImpToHitModifier() > 0)) {
+                    gameManager.sendMagneticPulseToast(entityTarget, true, true);
+                }
+            }
             Report.addNewline(vPhaseReport);
             return false;
         } else {
             return super.handle(phase, vPhaseReport);
         }
+    }
+
+    /**
+     * Determines whether the target is a unit type that suffers the IMP movement, to-hit, and ECM interference effects.
+     * These apply to {@link Mek}, {@link Tank}, {@link ProtoMek}, and {@link Aero} units, but never to large craft
+     * (DropShips, JumpShips, WarShips, and space stations are immune per the IO IMP rules). BattleArmor and
+     * conventional infantry are handled by their own branches, so they are not considered here.
+     *
+     * @param entityTarget the unit that was hit, may be {@code null}
+     *
+     * @return {@code true} if the IMP interference effects apply to {@code entityTarget}
+     */
+    private boolean appliesImprovedMagneticPulseMovementInterference(@Nullable Entity entityTarget) {
+        if ((entityTarget == null) || entityTarget.isLargeCraft()) {
+            return false;
+        }
+        return (entityTarget instanceof Mek)
+              || (entityTarget instanceof Tank)
+              || (entityTarget instanceof ProtoMek)
+              || (entityTarget instanceof Aero);
     }
 }

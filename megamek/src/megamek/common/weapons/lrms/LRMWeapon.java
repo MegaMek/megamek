@@ -167,6 +167,9 @@ public abstract class LRMWeapon extends MissileWeapon {
             if (atype.getMunitionType().contains(AmmoType.Munitions.M_ARAD)) {
                 return new LRMARADHandler(toHit, waa, game, manager);
             }
+            if (atype.getMunitionType().contains(AmmoType.Munitions.M_MAGNETIC_PULSE)) {
+                return new LRMMagneticPulseHandler(toHit, waa, game, manager);
+            }
             // Note: Incendiary mixed is handled via LRMHandler.isIncendiaryMixed()
             return new LRMHandler(toHit, waa, game, manager);
         } catch (EntityLoadingException ignored) {

@@ -44,6 +44,10 @@ import java.awt.event.ItemListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.io.Serial;
+import java.util.HashSet;
+import java.util.LinkedHashMap;
+import java.util.Map;
+import java.util.Set;
 import java.util.StringTokenizer;
 import javax.swing.Box;
 import javax.swing.JCheckBox;
@@ -51,6 +55,7 @@ import javax.swing.JComboBox;
 import javax.swing.JLabel;
 import javax.swing.JTextField;
 
+import megamek.client.ui.Messages;
 import megamek.client.ui.clientGUI.DialogOptionListener;
 import megamek.client.ui.util.UIUtil;
 import megamek.client.ui.util.UIUtil.FixedYPanel;
@@ -58,6 +63,7 @@ import megamek.codeUtilities.MathUtility;
 import megamek.common.options.BasicOption;
 import megamek.common.options.IBasicOption;
 import megamek.common.options.IOption;
+import megamek.common.options.OptionsConstants;
 
 /** @author Cord Awtry */
 public class DialogOptionComponentYPanel extends FixedYPanel
@@ -76,6 +82,17 @@ public class DialogOptionComponentYPanel extends FixedYPanel
     /** Value used to force a change */
     private boolean hasOptionChanged = false;
 
+    /** True when this component renders the Directional Torso Mount torso multi-select (BMM p.83). */
+    private boolean torsoMultiSelect = false;
+    /** Torso location abbreviation -&gt; its checkbox, for the Directional Torso Mount multi-select. */
+    private final Map<String, JCheckBox> torsoCheckboxes = new LinkedHashMap<>();
+    /**
+     * The torso location codes offered by the Directional Torso Mount multi-select. These are the serialized tokens of
+     * the quirk's location string (e.g. {@code "LT RT"}), which {@code Mounted} parses back - not display text. The
+     * user-facing location names come from the {@code DialogOptionComponentYPanel.torsoMount.*} message keys.
+     */
+    private static final String[] TORSO_MOUNT_LOCATION_CODES = { "H", "LT", "RT", "CT" };
+
     public DialogOptionComponentYPanel(DialogOptionListener parent, IOption option, boolean editable) {
         this(parent, option, editable, false);
     }
@@ -87,6 +104,10 @@ public class DialogOptionComponentYPanel extends FixedYPanel
         JLabel label;
 
         setLayout(new FlowLayout(FlowLayout.LEFT, 5, 2));
+        if (isTorsoMountQuirk(option)) {
+            buildTorsoMultiSelect(editable);
+            return;
+        }
         switch (option.getType()) {
             case IOption.BOOLEAN:
                 checkbox = new JCheckBox("", option.booleanValue());
@@ -154,6 +175,76 @@ public class DialogOptionComponentYPanel extends FixedYPanel
         }
     }
 
+    /**
+     * @param option the quirk option being rendered
+     *
+     * @return {@code true} if this option is a Directional Torso Mount chassis quirk (BMM p.83), which is rendered as a
+     *       multi-select of torso locations rather than the default text field
+     */
+    private static boolean isTorsoMountQuirk(IOption option) {
+        String optionName = option.getName();
+        return optionName.equals(OptionsConstants.QUIRK_POS_DIRECTIONAL_TORSO_MOUNT)
+              || optionName.equals(OptionsConstants.QUIRK_POS_DIRECTIONAL_TORSO_MOUNT_360);
+    }
+
+    /**
+     * Builds the Directional Torso Mount torso multi-select: the quirk's display name followed by a checkbox per torso
+     * location (head, left/right/center torso). The checkboxes are initialized from, and serialized back to, the
+     * quirk's space-separated location string (e.g. {@code "LT RT"}).
+     *
+     * @param editable whether the checkboxes may be changed
+     */
+    private void buildTorsoMultiSelect(boolean editable) {
+        torsoMultiSelect = true;
+        JLabel label = new JLabel(option.getDisplayableName());
+        label.setToolTipText(convertToHtml(option.getDescription()));
+        add(Box.createHorizontalStrut(UIUtil.scaleForGUI(10)));
+        add(label);
+        Set<String> selected = parseTorsoValue(option.stringValue());
+        for (String locationCode : TORSO_MOUNT_LOCATION_CODES) {
+            JCheckBox box = new JCheckBox(locationCode, selected.contains(locationCode));
+            box.setToolTipText(Messages.getString("DialogOptionComponentYPanel.torsoMount." + locationCode));
+            box.setEnabled(editable);
+            box.addItemListener(this);
+            torsoCheckboxes.put(locationCode, box);
+            add(box);
+        }
+    }
+
+    /**
+     * @param value a Directional Torso Mount quirk value (space- or comma-separated location abbreviations), or
+     *              {@code null}
+     *
+     * @return the set of upper-case location abbreviations present in the value
+     */
+    private static Set<String> parseTorsoValue(String value) {
+        Set<String> selected = new HashSet<>();
+        if (value != null) {
+            for (String token : value.split("[ ,]+")) {
+                if (!token.isBlank()) {
+                    selected.add(token.trim().toUpperCase());
+                }
+            }
+        }
+        return selected;
+    }
+
+    /**
+     * @return the current torso multi-select as a space-separated location string (e.g. {@code "LT RT"})
+     */
+    private String torsoSelectionValue() {
+        StringBuilder result = new StringBuilder();
+        for (Map.Entry<String, JCheckBox> entry : torsoCheckboxes.entrySet()) {
+            if (entry.getValue().isSelected()) {
+                if (!result.isEmpty()) {
+                    result.append(' ');
+                }
+                result.append(entry.getKey());
+            }
+        }
+        return result.toString();
+    }
+
     public static String convertToHtml(String source) {
         StringBuilder result = new StringBuilder();
         result.append("<html><div width=500>");
@@ -175,6 +266,9 @@ public class DialogOptionComponentYPanel extends FixedYPanel
     }
 
     public Object getValue() {
+        if (torsoMultiSelect) {
+            return torsoSelectionValue();
+        }
         return switch (option.getType()) {
             case IOption.BOOLEAN -> checkbox.isSelected();
             case IOption.INTEGER -> textField.getText().isBlank() ? 0 : MathUtility.parseInt(textField.getText(), 0);
@@ -186,6 +280,11 @@ public class DialogOptionComponentYPanel extends FixedYPanel
     }
 
     public void setValue(Object v) {
+        if (torsoMultiSelect) {
+            Set<String> selected = parseTorsoValue((String) v);
+            torsoCheckboxes.forEach((abbreviation, box) -> box.setSelected(selected.contains(abbreviation)));
+            return;
+        }
         switch (option.getType()) {
             case IOption.BOOLEAN:
                 checkbox.setSelected((Boolean) v);
@@ -214,7 +313,10 @@ public class DialogOptionComponentYPanel extends FixedYPanel
      *                 view-only.
      */
     public void setEditable(boolean editable) {
-
+        if (torsoMultiSelect) {
+            torsoCheckboxes.values().forEach(box -> box.setEnabled(editable));
+            return;
+        }
         // Update the correct control.
         switch (option.getType()) {
             case IOption.BOOLEAN:
@@ -230,6 +332,9 @@ public class DialogOptionComponentYPanel extends FixedYPanel
     }
 
     public boolean getEditable() {
+        if (torsoMultiSelect) {
+            return !torsoCheckboxes.isEmpty() && torsoCheckboxes.values().iterator().next().isEnabled();
+        }
         return switch (option.getType()) {
             case IOption.BOOLEAN -> checkbox.isEnabled();
             case IOption.CHOICE -> choice.isEnabled();
@@ -253,6 +358,9 @@ public class DialogOptionComponentYPanel extends FixedYPanel
     }
 
     public boolean isDefaultValue() {
+        if (torsoMultiSelect) {
+            return torsoSelectionValue().equals(String.valueOf(option.getDefault()));
+        }
         return switch (option.getType()) {
             case IOption.BOOLEAN -> checkbox.isSelected() == (boolean) option.getDefault();
             case IOption.CHOICE ->
@@ -263,6 +371,10 @@ public class DialogOptionComponentYPanel extends FixedYPanel
     }
 
     public void resetToDefault() {
+        if (torsoMultiSelect) {
+            torsoCheckboxes.values().forEach(box -> box.setSelected(false));
+            return;
+        }
         switch (option.getType()) {
             case IOption.BOOLEAN:
                 checkbox.setSelected((boolean) option.getDefault());
@@ -283,6 +395,11 @@ public class DialogOptionComponentYPanel extends FixedYPanel
 
     @Override
     public void itemStateChanged(ItemEvent itemEvent) {
+        if (torsoMultiSelect) {
+            // Non-boolean option: the listener re-reads the value via getValue(); the flag is unused.
+            dialogOptionListener.optionClicked(this, option, true);
+            return;
+        }
         dialogOptionListener.optionClicked(this, option, checkbox.isSelected());
     }
 

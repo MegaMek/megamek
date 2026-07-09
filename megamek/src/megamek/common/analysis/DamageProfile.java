@@ -464,6 +464,12 @@ public final class DamageProfile {
          */
         private static boolean[] computeBearing(Entity entity, WeaponMounted weapon) {
             boolean[] bearing = new boolean[DIRECTIONS];
+            // A weapon not yet allocated to a location (a unit under construction in MegaMekLab)
+            // has no firing arc yet: it contributes to the omnidirectional damage curves but to no
+            // radar sector, so the radars fill in as the loadout is placed.
+            if (weapon.getLocation() == Entity.LOC_NONE) {
+                return bearing;
+            }
             int arc = entity.getWeaponArc(entity.getEquipmentNum(weapon));
             Coords center = new Coords(ARC_PROBE_DISTANCE * 2, ARC_PROBE_DISTANCE * 2);
             for (Coords probe : center.allAtDistance(ARC_PROBE_DISTANCE)) {

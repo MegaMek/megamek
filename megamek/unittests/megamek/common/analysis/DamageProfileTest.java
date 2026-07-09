@@ -285,6 +285,24 @@ class DamageProfileTest {
     }
 
     @Test
+    void testUnallocatedWeaponCountsInCurvesButNoArc() throws Exception {
+        // A unit under construction in MegaMekLab carries weapons at LOC_NONE before placement.
+        // They must contribute to the damage curves (the loadout exists) but to no radar sector
+        // (no location means no firing arc yet).
+        BipedMek underConstruction = new BipedMek();
+        EquipmentType mediumLaser = EquipmentType.get("Medium Laser");
+        underConstruction.addEquipment(mediumLaser, Entity.LOC_NONE);
+
+        DamageProfile profile = DamageProfile.of(underConstruction, false);
+        assertTrue(profile.hasWeapons(), "The unplaced laser is part of the loadout");
+        assertEquals(5.0, profile.maxDamage(3), TOLERANCE, "Curves include the unplaced laser");
+        for (int direction = 0; direction < DamageProfile.DIRECTIONS; direction++) {
+            assertEquals(0, profile.arcSummary(direction).reach(),
+                  "No firing arc before placement in direction " + direction);
+        }
+    }
+
+    @Test
     void testWeaponlessUnitHasEmptyProfile() {
         Entity empty = new BipedMek();
         DamageProfile profile = DamageProfile.of(empty, false);

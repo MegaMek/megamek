@@ -80,7 +80,6 @@ public class GameOptions extends BasicGameOptions {
         IBasicOptionGroup base = addGroup("basic");
         // Change this to false for normal release
         addOption(base, OptionsConstants.TWRULES, false);
-        addOption(base, OptionsConstants.PLAYTEST_1, false);
         addOption(base, OptionsConstants.PLAYTEST_2, false);
         addOption(base, OptionsConstants.PLAYTEST_3, false);
         addOption(base, OptionsConstants.SEARCHLIGHTS_ON, true);

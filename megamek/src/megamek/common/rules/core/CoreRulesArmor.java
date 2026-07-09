@@ -48,7 +48,7 @@ public class CoreRulesArmor extends RulesArmor {
         return heat_weapon;
     }
 
-    // Hardened and ABA armor prevent AP
+    // Hardened and ABA armor prevent AP. Core p.201
     public boolean allowArmorPiercing(TWDamageManager.ModsInfo mods) {
         if (mods.hardenedArmor || mods.abaArmor) {
             return false;
@@ -56,7 +56,7 @@ public class CoreRulesArmor extends RulesArmor {
         return true;
     }
 
-    // Impact armor does not reduce anything. p.201
+    // Impact armor does not reduce anything. Core p.201
     public int impactArmorMod() {return 0;}
 
     // Impact Resistant Armor breach. Does not apply in Core. p.201

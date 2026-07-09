@@ -75,9 +75,6 @@ public class TWRulesArmor extends CoreRulesArmor {
     // Hardened and ferro lam prevent penetration
     @Override
     public boolean checkLancePenetration(int armorType) {
-        if (armorType == EquipmentType.T_ARMOR_HARDENED || armorType == EquipmentType.T_ARMOR_FERRO_LAMELLOR) {
-            return true;
-        }
         return false;
     }
 

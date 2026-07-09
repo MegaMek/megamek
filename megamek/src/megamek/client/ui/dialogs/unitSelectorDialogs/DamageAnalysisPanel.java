@@ -331,7 +331,9 @@ public class DamageAnalysisPanel extends JPanel {
                   60 - (60 * direction), 60);
         }
 
-        // Concentric hexagonal rings with value labels up the top spoke
+        // Concentric hexagonal rings. One set of scale numbers on the north-south axis: each grid
+        // ring gets its value where it crosses the vertical axis, above and below center, so both
+        // the front and the rear halves of a polygon read against the same scale.
         Color gridColor = new Color(foreground.getRed(), foreground.getGreen(), foreground.getBlue(), 70);
         int rings = 4;
         for (int ring = 1; ring <= rings; ring++) {
@@ -345,9 +347,11 @@ public class DamageAnalysisPanel extends JPanel {
             graphics2D.drawPolygon(ringShape);
             graphics2D.setColor(foreground);
             String ringLabel = String.valueOf((int) Math.round(ceiling * fraction));
-            graphics2D.drawString(ringLabel,
-                  centerX + UIUtil.scaleForGUI(3),
+            int labelX = centerX + UIUtil.scaleForGUI(3);
+            graphics2D.drawString(ringLabel, labelX,
                   (int) (centerY - (radius * fraction)) + metrics.getAscent());
+            graphics2D.drawString(ringLabel, labelX,
+                  (int) (centerY + (radius * fraction)) - UIUtil.scaleForGUI(2));
         }
 
         // Spokes and direction labels
@@ -384,46 +388,8 @@ public class DamageAnalysisPanel extends JPanel {
             graphics2D.setStroke(savedStroke);
         }
 
-        paintRearValueLabels(graphics2D, series, colors, ceiling, centerX, centerY, radius);
-
         paintLegend(graphics2D, labels, colors, regionX + UIUtil.scaleForGUI(8),
               regionY + regionHeight - UIUtil.scaleForGUI(8), regionWidth - UIUtil.scaleForGUI(16));
-    }
-
-    /**
-     * Prints the series values at the rear-facing vertices (rear-right, rear, rear-left). The scale
-     * labels run up the top spoke, so rear values - usually a small bowl from a handful of
-     * rear-mounted weapons - would otherwise be unreadable. One number per nonzero series, in the
-     * series color, stacked outward along the spoke from the outermost vertex.
-     */
-    private void paintRearValueLabels(Graphics2D graphics2D, double[][] series, Color[] colors,
-          double ceiling, int centerX, int centerY, int radius) {
-        FontMetrics metrics = graphics2D.getFontMetrics();
-        int rowHeight = metrics.getHeight();
-        int[] rearDirections = { 2, 3, 4 };
-
-        for (int direction : rearDirections) {
-            double outermostFraction = 0;
-            for (double[] values : series) {
-                outermostFraction = Math.max(outermostFraction, Math.min(1.0, values[direction] / ceiling));
-            }
-            if (outermostFraction <= 0) {
-                continue;
-            }
-            double anchorDistance = (radius * outermostFraction) + UIUtil.scaleForGUI(6);
-            int labelX = radarX(centerX, anchorDistance, direction);
-            int labelY = radarY(centerY, anchorDistance, direction) + metrics.getAscent();
-            for (int index = 0; index < series.length; index++) {
-                long value = Math.round(series[index][direction]);
-                if (value <= 0) {
-                    continue;
-                }
-                String text = String.valueOf(value);
-                graphics2D.setColor(colors[index]);
-                graphics2D.drawString(text, labelX - (metrics.stringWidth(text) / 2), labelY);
-                labelY += rowHeight;
-            }
-        }
     }
 
     /** The screen angle of a direction spoke in radians: front is straight up, clockwise after. */

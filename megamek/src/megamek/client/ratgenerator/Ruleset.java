@@ -94,9 +94,11 @@ public class Ruleset {
     /**
      * Extra ruleset directories registered through {@link #addRulesetDirectory(String)}, searched after the
      * built-in one so a user file can override a stock faction. Copy-on-write because {@link #loadData()}
-     * runs on a background thread while callers register directories from the EDT.
+     * runs on a background thread while callers register directories from the EDT. Declared as the concrete
+     * type so registration can use {@link CopyOnWriteArrayList#addIfAbsent(Object)}, making the duplicate
+     * check and the insert a single atomic step.
      */
-    private static final List<String> additionalRulesetDirectories = new CopyOnWriteArrayList<>();
+    private static final CopyOnWriteArrayList<String> additionalRulesetDirectories = new CopyOnWriteArrayList<>();
 
     // Progress-bar weights for the phases of processRoot(), as fractions of the force-generation
     // pass. They are display hints for the ProgressListener only and do not affect generation.
@@ -625,11 +627,12 @@ public class Ruleset {
             logger.warn("addRulesetDirectory: ignoring null or blank ruleset directory path");
             return;
         }
-        if (additionalRulesetDirectories.contains(rulesetDirectoryPath)) {
+        // addIfAbsent rather than contains() followed by add(): the pair is not atomic, so two concurrent
+        // registrations of the same path could both pass the check and insert a duplicate.
+        if (!additionalRulesetDirectories.addIfAbsent(rulesetDirectoryPath)) {
             logger.debug("addRulesetDirectory: {} already registered, ignoring", rulesetDirectoryPath);
             return;
         }
-        additionalRulesetDirectories.add(rulesetDirectoryPath);
         if (initialized || initializing) {
             logger.warn("addRulesetDirectory: {} registered after loadData(); it will not be searched until"
                         + " the next loadData() call", rulesetDirectoryPath);
@@ -703,6 +706,13 @@ public class Ruleset {
     private static void loadRulesetDirectory(File directory) {
         if (!directory.exists()) {
             logger.warn("Skipping ruleset directory {}: it does not exist", directory);
+            return;
+        }
+        // Checked separately from listFiles() returning null: a registered path that points at a file
+        // rather than a directory would otherwise be reported as unreadable, which sends the reader
+        // looking for a permissions problem that does not exist.
+        if (!directory.isDirectory()) {
+            logger.warn("Skipping ruleset directory {}: it is not a directory", directory);
             return;
         }
         File[] files = directory.listFiles();

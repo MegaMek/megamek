@@ -41,11 +41,13 @@ import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import javax.xml.parsers.DocumentBuilder;
 
 import megamek.client.generator.RandomNameGenerator;
+import megamek.common.Configuration;
 import megamek.common.annotations.Nullable;
 import megamek.common.units.EntityWeightClass;
 import megamek.logging.MMLogger;
@@ -86,8 +88,15 @@ public class Ruleset {
         }
     }
 
-    private static final String directory = "data/forcegenerator/faction_rules";
+    private static final String FACTION_RULES_DIR_NAME = "faction_rules";
     private static final String CONSTANTS_FILE = "constants.txt";
+
+    /**
+     * Extra ruleset directories registered through {@link #addRulesetDirectory(String)}, searched after the
+     * built-in one so a user file can override a stock faction. Copy-on-write because {@link #loadData()}
+     * runs on a background thread while callers register directories from the EDT.
+     */
+    private static final List<String> additionalRulesetDirectories = new CopyOnWriteArrayList<>();
 
     // Progress-bar weights for the phases of processRoot(), as fractions of the force-generation
     // pass. They are display hints for the ProgressListener only and do not affect generation.
@@ -110,6 +119,12 @@ public class Ruleset {
     private final HashMap<Integer, String> customRanks;
     private final ArrayList<ForceNode> forceNodes;
     private String parent;
+    /**
+     * {@code true} only for the placeholder returned by {@link #findRuleset(String)} when no ruleset matched
+     * the requested faction or any of its parents. Never set on a ruleset parsed from a file, including a
+     * genuine {@link FactionRecord#IS_GENERAL_KEY} one.
+     */
+    private boolean defaultsOnly;
 
     private Ruleset() {
         faction = FactionRecord.IS_GENERAL_KEY;
@@ -168,8 +183,34 @@ public class Ruleset {
         }
         // This shouldn't happen unless the data is missing. Throw out a default ruleset
         // to prevent barfing.
-        logger.warn("findRuleset({}): no match in any parent — returning empty default ruleset", faction);
-        return new Ruleset();
+        logger.warn("findRuleset({}): no match in any parent - returning empty default ruleset", faction);
+        return createDefaultsOnlyRuleset();
+    }
+
+    /**
+     * Builds the empty placeholder ruleset returned when no faction ruleset matched, flagged so callers can
+     * distinguish it from a real ruleset via {@link #isDefaultsOnly()}.
+     *
+     * @return a placeholder ruleset carrying no faction rules
+     */
+    static Ruleset createDefaultsOnlyRuleset() {
+        Ruleset defaultRuleset = new Ruleset();
+        defaultRuleset.defaultsOnly = true;
+        return defaultRuleset;
+    }
+
+    /**
+     * Reports whether this ruleset is the empty placeholder produced by {@link #findRuleset(String)} when the
+     * requested faction matched neither a ruleset of its own nor one of any parent faction.
+     *
+     * <p>Consumers use this to warn before generating a force from rules that are not the faction's own.
+     * A ruleset loaded from {@code IS_General.xml} is a real ruleset and returns {@code false}, even though
+     * its faction is {@link FactionRecord#IS_GENERAL_KEY}.</p>
+     *
+     * @return {@code true} if this is the fallback placeholder, otherwise {@code false}
+     */
+    public boolean isDefaultsOnly() {
+        return defaultsOnly;
     }
 
     @Deprecated(since = "0.51.0", forRemoval = true)
@@ -556,19 +597,84 @@ public class Ruleset {
         }
     }
 
+    /**
+     * The directory shipped with MegaMek, resolved through {@link Configuration#forceGeneratorDir()} rather
+     * than a hardcoded path, so a relocated force generator data directory is honoured.
+     *
+     * @return the built-in faction rules directory
+     */
+    private static File baseRulesetDirectory() {
+        return new File(Configuration.forceGeneratorDir(), FACTION_RULES_DIR_NAME);
+    }
+
+    /**
+     * Registers an additional directory to be searched for faction ruleset XML files.
+     *
+     * <p>Directories are searched in registration order <em>after</em> the built-in one, so a ruleset in an
+     * added directory replaces a built-in ruleset for the same faction. Intended for user data directories,
+     * for example MekHQ's {@code userdata/forcegenerator/faction_rules}.</p>
+     *
+     * <p>Call this before {@link #loadData()}. Registering a directory afterwards has no effect until the
+     * next {@code loadData()} call; that case is logged rather than silently ignored.</p>
+     *
+     * @param rulesetDirectoryPath path to a directory containing faction ruleset XML files; ignored when
+     *                             {@code null}, blank, or already registered
+     */
+    public static void addRulesetDirectory(@Nullable String rulesetDirectoryPath) {
+        if ((rulesetDirectoryPath == null) || rulesetDirectoryPath.isBlank()) {
+            logger.warn("addRulesetDirectory: ignoring null or blank ruleset directory path");
+            return;
+        }
+        if (additionalRulesetDirectories.contains(rulesetDirectoryPath)) {
+            logger.debug("addRulesetDirectory: {} already registered, ignoring", rulesetDirectoryPath);
+            return;
+        }
+        additionalRulesetDirectories.add(rulesetDirectoryPath);
+        if (initialized || initializing) {
+            logger.warn("addRulesetDirectory: {} registered after loadData(); it will not be searched until"
+                        + " the next loadData() call", rulesetDirectoryPath);
+        } else {
+            logger.debug("addRulesetDirectory: registered {}", rulesetDirectoryPath);
+        }
+    }
+
+    /**
+     * Removes every directory registered through {@link #addRulesetDirectory(String)}, leaving only the
+     * built-in one. Exists so tests do not leak registrations into one another.
+     */
+    static void clearAdditionalRulesetDirectories() {
+        additionalRulesetDirectories.clear();
+    }
+
+    /**
+     * The directories to search, built-in first so that later entries override earlier ones.
+     *
+     * @return the ordered ruleset search path
+     */
+    static List<File> rulesetDirectories() {
+        List<File> directories = new ArrayList<>();
+        directories.add(baseRulesetDirectory());
+        for (String additionalDirectory : additionalRulesetDirectories) {
+            directories.add(new File(additionalDirectory));
+        }
+        return directories;
+    }
+
     public static void loadData() {
         initialized = false;
         initializing = true;
         rulesets = new HashMap<>();
 
-        File dir = new File(directory);
-        if (!dir.exists()) {
-            logger.error("Could not locate force generator faction rules.");
+        File baseDirectory = baseRulesetDirectory();
+        if (!baseDirectory.exists()) {
+            logger.error("Could not locate force generator faction rules at {}.", baseDirectory);
             initializing = false;
             return;
         }
 
-        loadConstants(new File(dir, CONSTANTS_FILE));
+        // Constants come from the built-in directory only: loadConstants replaces the map wholesale, so
+        // reading a second constants.txt would discard the built-in definitions the stock rulesets rely on.
+        loadConstants(new File(baseDirectory, CONSTANTS_FILE));
 
         // We need this so we can determine parent faction if not stated explicitly.
         while (!RATGenerator.getInstance().isInitialized()) {
@@ -579,26 +685,52 @@ public class Ruleset {
             }
         }
 
-        File[] files = dir.listFiles();
-
-        if (files != null) {
-            for (File file : files) {
-                if (!file.getPath().endsWith(".xml")) {
-                    continue;
-                }
-                try {
-                    Ruleset ruleset = createFromFile(file);
-                    if (ruleset != null) {
-                        rulesets.put(ruleset.getFaction(), ruleset);
-                    }
-                } catch (Exception ex) {
-                    logger.error(ex, "Failed while parsing file {}", file);
-                }
-            }
+        for (File directory : rulesetDirectories()) {
+            loadRulesetDirectory(directory);
         }
 
         initialized = true;
         initializing = false;
+    }
+
+    /**
+     * Parses every ruleset XML file in one directory into {@link #rulesets}, replacing any ruleset already
+     * loaded for the same faction.
+     *
+     * @param directory a directory from the ruleset search path; a missing directory is skipped with a
+     *                  warning, since an added user directory need not exist
+     */
+    private static void loadRulesetDirectory(File directory) {
+        if (!directory.exists()) {
+            logger.warn("Skipping ruleset directory {}: it does not exist", directory);
+            return;
+        }
+        File[] files = directory.listFiles();
+        if (files == null) {
+            logger.warn("Skipping ruleset directory {}: could not list its contents", directory);
+            return;
+        }
+
+        int loadedCount = 0;
+        int overriddenCount = 0;
+        for (File file : files) {
+            if (!file.getPath().endsWith(".xml")) {
+                continue;
+            }
+            try {
+                Ruleset ruleset = createFromFile(file);
+                if (ruleset != null) {
+                    if (rulesets.put(ruleset.getFaction(), ruleset) != null) {
+                        overriddenCount++;
+                    }
+                    loadedCount++;
+                }
+            } catch (Exception parseException) {
+                logger.error(parseException, "Failed while parsing file {}", file);
+            }
+        }
+        logger.info("Loaded {} faction ruleset(s) from {} ({} overrode an earlier ruleset)",
+              loadedCount, directory, overriddenCount);
     }
 
     private static @Nullable Ruleset createFromFile(File f) {

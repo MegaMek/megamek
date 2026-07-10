@@ -32,6 +32,19 @@ surnames.csv: This file contains weighted historical ethnic code organized surna
 This file is merge implemented, with names duplicated in the userdata folder having the userdata weight instead of the
 default weight. The first line of this file must be the standard header of "Ethnic Code,Name,Weight".
 
+### data/forcegenerator/faction_rules/
+
+This directory holds the XML faction rulesets used by the Force Generator, which builds faction-correct forces in
+MegaMek's Random Army dialog and in MekHQ's ruleset-based company generation. It is merge implemented: a file placed
+here overrides the shipped ruleset for the same faction, and any faction you do not override keeps using the shipped
+rules.
+
+To customise a faction, copy its file out of `data/forcegenerator/faction_rules/` into this directory under the same
+filename and edit the copy. Because your version lives in the userdata folder, updating MegaMek will not overwrite it.
+The directory is optional; if it is absent, only the shipped rulesets are loaded.
+
+Note that `constants.txt` is read only from the shipped directory. A copy placed here is ignored.
+
 ## MegaMek-specific Folders/Files:
 
 ## MegaMekLab-specific Directories/Files:

@@ -650,13 +650,31 @@ public class Ruleset {
     }
 
     /**
-     * The directories to search, built-in first so that later entries override earlier ones.
+     * The user data mirror of {@link #baseRulesetDirectory()}, resolving to
+     * {@code userdata/data/forcegenerator/faction_rules}. Composed the same way as MegaMek's other user
+     * data overlays - see {@code MekSummaryCache} for units and {@code ServerBoardHelper} for boards - and
+     * honouring the userdata contract that a duplicated file overrides the shipped one.
+     *
+     * <p>The directory need not exist; {@link #loadRulesetDirectory(File)} skips a missing one.</p>
+     *
+     * @return the user data faction rules directory
+     */
+    private static File userDataRulesetDirectory() {
+        return new File(Configuration.userDataDir(), baseRulesetDirectory().toString());
+    }
+
+    /**
+     * The directories to search, in override order: the directory shipped with MegaMek, then the user data
+     * directory, then any directory registered through {@link #addRulesetDirectory(String)}. Later entries
+     * override earlier ones, because {@link #loadData()} keys rulesets by faction and a later load replaces
+     * the ruleset already held for that faction.
      *
      * @return the ordered ruleset search path
      */
     static List<File> rulesetDirectories() {
         List<File> directories = new ArrayList<>();
         directories.add(baseRulesetDirectory());
+        directories.add(userDataRulesetDirectory());
         for (String additionalDirectory : additionalRulesetDirectories) {
             directories.add(new File(additionalDirectory));
         }

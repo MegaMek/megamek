@@ -59,6 +59,9 @@ import org.junit.jupiter.api.Test;
 @SuppressWarnings("removal")
 class RulesetTest {
 
+    /** The shipped directory plus its user data mirror, both always present in the search path. */
+    private static final int ALWAYS_PRESENT_DIRECTORIES = 2;
+
     private File originalForceGeneratorDir;
 
     @BeforeEach
@@ -74,11 +77,26 @@ class RulesetTest {
     }
 
     @Test
-    void searchPathContainsOnlyTheBuiltInDirectoryByDefault() {
+    void searchPathContainsTheBuiltInAndUserDataDirectoriesByDefault() {
         List<File> directories = Ruleset.rulesetDirectories();
 
-        assertEquals(1, directories.size(), "no directories should be registered by default");
+        assertEquals(ALWAYS_PRESENT_DIRECTORIES, directories.size(),
+              "no extra directories should be registered by default");
         assertEquals(new File(Configuration.forceGeneratorDir(), "faction_rules"), directories.get(0));
+    }
+
+    /**
+     * A player drops a faction ruleset into {@code userdata/data/forcegenerator/faction_rules} to override
+     * the shipped one, matching the userdata contract documented in {@code megamek/userdata/README.md}.
+     */
+    @Test
+    void userDataDirectoryMirrorsTheBuiltInDirectoryAndIsSearchedAfterIt() {
+        List<File> directories = Ruleset.rulesetDirectories();
+
+        // Asserted as literal paths rather than by recomposing them from Configuration, so the test fails
+        // if the location a player is told to use in megamek/userdata/README.md ever moves.
+        assertEquals(new File("data/forcegenerator/faction_rules"), directories.get(0));
+        assertEquals(new File("userdata/data/forcegenerator/faction_rules"), directories.get(1));
     }
 
     /**
@@ -95,18 +113,20 @@ class RulesetTest {
     }
 
     /**
-     * Added directories must come after the built-in one, because {@code loadData} keys rulesets by faction
-     * and a later entry replaces an earlier one. Reversing the order would make user rulesets unreachable.
+     * Added directories must come after the built-in and user data ones, because {@code loadData} keys
+     * rulesets by faction and a later entry replaces an earlier one. Reversing the order would make the
+     * registered rulesets unreachable.
      */
     @Test
-    void addedDirectoriesAreSearchedAfterTheBuiltInDirectory() {
-        Ruleset.addRulesetDirectory("userdata/forcegenerator/faction_rules");
+    void addedDirectoriesAreSearchedLast() {
+        Ruleset.addRulesetDirectory("campaign/forcegenerator/faction_rules");
 
         List<File> directories = Ruleset.rulesetDirectories();
 
-        assertEquals(2, directories.size());
+        assertEquals(ALWAYS_PRESENT_DIRECTORIES + 1, directories.size());
         assertEquals(new File(Configuration.forceGeneratorDir(), "faction_rules"), directories.get(0));
-        assertEquals(new File("userdata/forcegenerator/faction_rules"), directories.get(1));
+        assertEquals(new File("campaign/forcegenerator/faction_rules"),
+              directories.get(ALWAYS_PRESENT_DIRECTORIES));
     }
 
     @Test
@@ -116,31 +136,32 @@ class RulesetTest {
 
         List<File> directories = Ruleset.rulesetDirectories();
 
-        assertEquals(3, directories.size());
-        assertEquals(new File("first"), directories.get(1));
-        assertEquals(new File("second"), directories.get(2));
+        assertEquals(ALWAYS_PRESENT_DIRECTORIES + 2, directories.size());
+        assertEquals(new File("first"), directories.get(ALWAYS_PRESENT_DIRECTORIES));
+        assertEquals(new File("second"), directories.get(ALWAYS_PRESENT_DIRECTORIES + 1));
     }
 
     @Test
     void duplicateDirectoryIsIgnored() {
-        Ruleset.addRulesetDirectory("userdata/forcegenerator/faction_rules");
-        Ruleset.addRulesetDirectory("userdata/forcegenerator/faction_rules");
+        Ruleset.addRulesetDirectory("campaign/forcegenerator/faction_rules");
+        Ruleset.addRulesetDirectory("campaign/forcegenerator/faction_rules");
 
-        assertEquals(2, Ruleset.rulesetDirectories().size(), "duplicate registration should be ignored");
+        assertEquals(ALWAYS_PRESENT_DIRECTORIES + 1, Ruleset.rulesetDirectories().size(),
+              "duplicate registration should be ignored");
     }
 
     @Test
     void nullDirectoryIsIgnored() {
         Ruleset.addRulesetDirectory(null);
 
-        assertEquals(1, Ruleset.rulesetDirectories().size());
+        assertEquals(ALWAYS_PRESENT_DIRECTORIES, Ruleset.rulesetDirectories().size());
     }
 
     @Test
     void blankDirectoryIsIgnored() {
         Ruleset.addRulesetDirectory("   ");
 
-        assertEquals(1, Ruleset.rulesetDirectories().size());
+        assertEquals(ALWAYS_PRESENT_DIRECTORIES, Ruleset.rulesetDirectories().size());
     }
 
     @Test
@@ -169,11 +190,11 @@ class RulesetTest {
 
     @Test
     void clearAdditionalRulesetDirectoriesResetsTheSearchPath() {
-        Ruleset.addRulesetDirectory("userdata/forcegenerator/faction_rules");
-        assertEquals(2, Ruleset.rulesetDirectories().size());
+        Ruleset.addRulesetDirectory("campaign/forcegenerator/faction_rules");
+        assertEquals(ALWAYS_PRESENT_DIRECTORIES + 1, Ruleset.rulesetDirectories().size());
 
         Ruleset.clearAdditionalRulesetDirectories();
 
-        assertEquals(1, Ruleset.rulesetDirectories().size());
+        assertEquals(ALWAYS_PRESENT_DIRECTORIES, Ruleset.rulesetDirectories().size());
     }
 }

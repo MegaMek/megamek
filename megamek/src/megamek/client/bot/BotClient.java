@@ -39,6 +39,8 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.InputStreamReader;
 import java.util.*;
+import java.util.Map.Entry;
+
 import javax.swing.JFrame;
 import javax.swing.JOptionPane;
 import javax.swing.JScrollPane;
@@ -49,6 +51,7 @@ import megamek.client.AbstractClient;
 import megamek.client.Client;
 import megamek.client.bot.princess.BehaviorSettings;
 import megamek.client.bot.princess.CardinalEdge;
+import megamek.client.bot.princess.MinefieldDeploymentPlanner;
 import megamek.client.ui.clientGUI.ClientGUI;
 import megamek.common.ECMInfo;
 import megamek.common.Hex;
@@ -1401,20 +1404,34 @@ public abstract class BotClient extends Client {
         // Do nothing;
     }
 
-    private record MinefieldNumbers(int number, int type) {
-    }
-
     /**
      * Deploy minefields for the bot
      */
     protected void deployMinefields() {
-        MinefieldNumbers[] minefieldNumbers = getMinefieldNumbers();
-        int totalMines = Arrays.stream(minefieldNumbers).mapToInt(MinefieldNumbers::number).sum();
-        Deque<Coords> coordsSet = getMinefieldDeploymentPlanner().getRandomMinefieldPositions(totalMines);
-        Vector<Minefield> deployedMinefields = new Vector<>();
-        for (MinefieldNumbers minefieldNumber : minefieldNumbers) {
-            deployMinefields(minefieldNumber, coordsSet, deployedMinefields);
-        }
+    	MinefieldDeploymentPlanner mdp = new MinefieldDeploymentPlanner();
+    	Vector<Minefield> deployedMinefields = new Vector<>();
+    	
+    	for (int minefieldType = 0; minefieldType < Minefield.TYPE_SIZE; minefieldType++) {
+    		List<Entry<Coords, Double>> potentialCoords = 
+    				mdp.getOrderedCoords(minefieldType, getLocalPlayer(), getGame(), getBoard());
+    		
+    		int density = Compute.randomIntInclusive(30) + 5;
+    		
+    		// keep going until we run out of mines or places to put them
+    		// if we have run out of places to put mines it means there's absolutely no good place
+    		// on the board for the mines to go, which means they're effectively worthless
+    		// and so we can skip this entirely
+    		for (int mineIndex = 0; mineIndex < getLocalPlayer().getMinefieldCount(minefieldType) &&
+    				mineIndex < potentialCoords.size(); mineIndex++) {
+    			Minefield minefield = Minefield.createMinefield(potentialCoords.get(mineIndex).getKey(),
+    					getLocalPlayer().getId(),
+    					minefieldType,
+    					density);
+    			
+    			deployedMinefields.add(minefield);
+    		}
+    	}
+    	
         performMinefieldDeployment(deployedMinefields);
     }
 
@@ -1432,65 +1449,10 @@ public abstract class BotClient extends Client {
      * Reset the minefield counters for the bot and push the updated player info to the server
      */
     private void resetMinefieldCounters() {
-        getLocalPlayer().setNbrMFActive(0);
-        getLocalPlayer().setNbrMFCommand(0);
-        getLocalPlayer().setNbrMFConventional(0);
-        getLocalPlayer().setNbrMFInferno(0);
-        getLocalPlayer().setNbrMFVibra(0);
-        getLocalPlayer().setNbrMFEMP(0);
+    	for (int minefieldIndex = 0; minefieldIndex < Minefield.TYPE_SIZE; minefieldIndex++) {
+    		getLocalPlayer().setMinefieldCount(minefieldIndex, 0);
+    	}
         sendPlayerInfo();
-    }
-
-    /**
-     * Deploy the specified number of minefields of the specified type
-     *
-     * @param minefieldNumber    the number of minefields to deploy and the type of minefield to deploy
-     * @param coordsSet          the set of coordinates to deploy the minefields to
-     * @param deployedMinefields the vector to add the deployed minefields to
-     */
-    private void deployMinefields(MinefieldNumbers minefieldNumber, Deque<Coords> coordsSet,
-          Vector<Minefield> deployedMinefields) {
-        int minesToDeploy = minefieldNumber.number();
-        while (!coordsSet.isEmpty() && minesToDeploy > 0) {
-            Coords coords = coordsSet.poll();
-            int density = Compute.randomIntInclusive(30) + 5;
-            Minefield minefield = Minefield.createMinefield(coords,
-                  getLocalPlayer().getId(),
-                  minefieldNumber.type(),
-                  density);
-            deployedMinefields.add(minefield);
-            minesToDeploy--;
-        }
-    }
-
-    /**
-     * Get the number of minefields of each type that the bot should deploy
-     *
-     * @return an array of MinefieldNumbers, each representing the number of a specific type of minefield to deploy
-     */
-    private MinefieldNumbers[] getMinefieldNumbers() {
-        return new MinefieldNumbers[] { new MinefieldNumbers(getLocalPlayer().getNbrMFActive(), Minefield.TYPE_ACTIVE),
-                                        new MinefieldNumbers(getLocalPlayer().getNbrMFInferno(),
-                                              Minefield.TYPE_INFERNO),
-                                        new MinefieldNumbers(getLocalPlayer().getNbrMFConventional(),
-                                              Minefield.TYPE_CONVENTIONAL),
-                                        new MinefieldNumbers(getLocalPlayer().getNbrMFVibra(),
-                                              Minefield.TYPE_VIBRABOMB),
-                                        new MinefieldNumbers(getLocalPlayer().getNbrMFEMP(),
-                                              Minefield.TYPE_EMP),
-                                        // the following are added for completeness, but are not used by the bot
-                                        new MinefieldNumbers(0, Minefield.TYPE_COMMAND_DETONATED),
-                                        // no command detonated mines
-        };
-    }
-
-    /**
-     * Get the minefield deployment planner to use for this bot
-     *
-     * @return the minefield deployment planner
-     */
-    protected MinefieldDeploymentPlanner getMinefieldDeploymentPlanner() {
-        return new RandomMinefieldDeploymentPlanner(getBoard());
     }
 
     /**

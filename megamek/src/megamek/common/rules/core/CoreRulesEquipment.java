@@ -33,9 +33,12 @@ package megamek.common.rules.core;
  * affiliated with Microsoft.
  */
 
+import megamek.common.board.Coords;
 import megamek.common.game.Game;
 import megamek.common.rules.RulesEquipment;
 import megamek.common.units.Mek;
+
+import java.util.ArrayList;
 
 public class CoreRulesEquipment extends RulesEquipment {
     // AMS can shoot twice. Core P.206
@@ -73,5 +76,14 @@ public class CoreRulesEquipment extends RulesEquipment {
     // get the radical heat sink
     public int radicalHeatSinkSuccessTarget(int consecutiveRounds) {
         return Game.rulesManager.getRulesCharts().escalatingFailure(consecutiveRounds);
+    }
+    
+    // ECM only affects if the target or source is under the bubble. Not intervening. Core p.200
+    public ArrayList<Coords> getECMCoordsAffected(Coords a, Coords b) {
+        ArrayList<Coords> coords = new ArrayList<>();
+        coords.add(a);
+        coords.add(b);
+        
+        return coords;
     }
 }

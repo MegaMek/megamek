@@ -1582,13 +1582,9 @@ public class Compute {
         }
 
         // find any c3 spotters that could help
-        boolean isPlaytest3 = game.getOptions().booleanOption(OptionsConstants.PLAYTEST_3);
         Entity c3spotter = ComputeC3Spotter.findC3Spotter(game, attackingEntity, target, allECMInfo);
-        // The ECM-aware playtest spotter search runs a LOS check per network member; only PLAYTEST_3 rules read
-        // its result, so skip it entirely otherwise.
-        Entity c3spotterWithECM = isPlaytest3
-              ? ComputeC3Spotter.playtestFindC3Spotter(game, attackingEntity, target, allECMInfo)
-              : c3spotter;
+        // Check for C3 spotters under ECM
+        Entity c3spotterWithECM = ComputeC3Spotter.findC3SpotterUnderECM(game, attackingEntity, target, allECMInfo);
 
         if (isIndirect) {
             c3spotter = attackingEntity; // no c3 when using indirect fire
@@ -1599,12 +1595,12 @@ public class Compute {
         }
 
         int c3dist = Compute.effectiveDistance(game, c3spotter, target, false);
-        // PLAYTEST3 if there is a member that is ECM blocked
+        
         int c3ecmDist = Compute.effectiveDistance(game, c3spotterWithECM, target, false);
 
         // C3 can't benefit from LOS range.
         int c3range = RangeType.rangeBracketC3(c3dist, distance, weaponRanges, useExtremeRange, false);
-        // PLAYTEST3 checking for ECM ranged member
+        // checking for ECM ranged member
         int c3ecmRange = RangeType.rangeBracketC3(c3ecmDist, distance, weaponRanges, useExtremeRange, false);
 
         /*
@@ -1618,25 +1614,15 @@ public class Compute {
         }
 
         // determine which range we're using
-        int usingRange = range;
         boolean usingC3 = false;
 
-        if (isPlaytest3) {
-            // PLAYTEST3 check ecm vs non ecm affected C3
-            if ((c3range > c3ecmRange) && (c3range > range)) {
-                usingRange = c3ecmRange;
-                usingC3 = true;
-            } else if (range > c3range) {
-                usingRange = c3range;
-                usingC3 = true;
-            }
+        int usingRange = Game.rulesManager.getRulesC3().getC3RangeToUse(range, c3range, c3ecmRange);
+        if (usingRange != RangeType.RANGE_OUT) {
+            usingC3 = true;
         } else {
-            usingRange = min(range, c3range);
-            if (usingRange == c3range && range > c3range) {
-                usingC3 = true;
-            }
+            usingRange = range;
         }
-
+        
         // add range modifier, C3 can't be used with LOS Range
         if (((usingRange == range) && !usingC3) || (range == RangeType.RANGE_LOS) || (attackingEntity.hasNavalC3()
               && !nc3EnergyGuided)) {
@@ -1692,40 +1678,9 @@ public class Compute {
             }
         } else {
             // report c3 adjustment
-            // PLAYTEST3 C3 ECM halving
-            if (isPlaytest3
-                  && usingRange == c3ecmRange
-                  && usingRange != c3range
-                  && c3spotterWithECM.getC3ecmAffected()) {
-                // Halve the bonus, so we need to know what the original range was too.
-                int rangeModifier = 0;
-                if (range == RangeType.RANGE_LONG) {
-                    rangeModifier = attackingEntity.getLongRangeModifier();
-                } else if (range == RangeType.RANGE_MEDIUM) {
-                    rangeModifier = attackingEntity.getMediumRangeModifier();
-                } else if (range == RangeType.RANGE_EXTREME) {
-                    rangeModifier = attackingEntity.getExtremeRangeModifier();
-                }
-                if ((c3ecmRange == RangeType.RANGE_SHORT) || (c3ecmRange == RangeType.RANGE_MINIMUM)) {
-                    rangeModifier = (rangeModifier + attackingEntity.getShortRangeModifier()) / 2;
-                    mods.addModifier(rangeModifier, "short range due to C3 spotter under ECM");
-                } else if (c3ecmRange == RangeType.RANGE_MEDIUM) {
-                    rangeModifier = (rangeModifier + attackingEntity.getMediumRangeModifier()) / 2;
-                    mods.addModifier(rangeModifier, "medium range due to C3 spotter under ECM");
-                } else if (c3ecmRange == RangeType.RANGE_LONG) {
-                    rangeModifier = (rangeModifier + attackingEntity.getLongRangeModifier()) / 2;
-                    mods.addModifier(rangeModifier, "long range due to C3 spotter under ECM");
-                }
-            } else {
-                // Normal C3 operation, no ECM
-                if ((c3range == RangeType.RANGE_SHORT) || (c3range == RangeType.RANGE_MINIMUM)) {
-                    mods.addModifier(attackingEntity.getShortRangeModifier(), "short range due to C3 spotter");
-                } else if (c3range == RangeType.RANGE_MEDIUM) {
-                    mods.addModifier(attackingEntity.getMediumRangeModifier(), "medium range due to C3 spotter");
-                } else if (c3range == RangeType.RANGE_LONG) {
-                    mods.addModifier(attackingEntity.getLongRangeModifier(), "long range due to C3 spotter");
-                }
-            }
+            int rangeModifier = 0;
+            Game.rulesManager.getRulesC3().getC3RangeModifier(mods, range, usingRange, c3ecmRange, c3range,
+                  c3spotterWithECM.getC3ecmAffected(), attackingEntity);
         }
 
         // Variable Range Targeting quirk modifier (BMM pg. 86)

@@ -33,6 +33,10 @@ package megamek.common.rules;
  * affiliated with Microsoft.
  */
 
+import megamek.common.board.Coords;
+
+import java.util.ArrayList;
+
 public abstract class RulesEquipment {
     // Does AMS allow for multiple shots
     public abstract boolean getAMSMultiShot();
@@ -54,4 +58,7 @@ public abstract class RulesEquipment {
 
     // What is the target number for radical heat sink
     public abstract int radicalHeatSinkSuccessTarget(int consecutiveRounds);
+
+    // What hexes are affected by ECM
+    public abstract ArrayList<Coords> getECMCoordsAffected(final Coords a, final Coords b);
 }

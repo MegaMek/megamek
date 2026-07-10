@@ -510,14 +510,7 @@ public class ComputeECM {
         }
 
         // Get intervening Coords
-        ArrayList<Coords> coords = Coords.intervening(a, b);
-
-        // PLAYTEST3 only if the two coordinates are affected by ECM, not intervening
-        if (ae.getGame().getOptions().booleanOption(OptionsConstants.PLAYTEST_3)) {
-            coords.clear();
-            coords.add(a);
-            coords.add(b);
-        }
+        ArrayList<Coords> coords = Game.rulesManager.getRulesEquipment().getECMCoordsAffected(a, b);
         
         ECMInfo worstECMEffects = null;
         // Loop through intervening coords, and find the worst effects

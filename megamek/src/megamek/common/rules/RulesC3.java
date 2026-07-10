@@ -33,5 +33,21 @@ package megamek.common.rules;
  */
 
 
+import megamek.common.ToHitData;
+import megamek.common.units.Entity;
+
 public abstract class RulesC3 {
+
+    // What range should C3 use
+    public abstract int getC3RangeToUse(int range, int c3range, int c3ecmRange);
+
+    // What C3 range modifier to use
+    public abstract void getC3RangeModifier(ToHitData mods, int range, int usingRange,
+          int c3ecmRange, int c3range, boolean ecmAffected, Entity attacker);
+
+    // Do C3 spotters require LOS?
+    public abstract boolean c3SpotterLOSRequired();
+    
+    // Can C3 work with ECM
+    public abstract boolean c3AllowedWithECM();
 }

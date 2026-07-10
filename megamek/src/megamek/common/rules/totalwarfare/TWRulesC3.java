@@ -33,7 +33,40 @@ package megamek.common.rules.totalwarfare;
  */
 
 
+import megamek.common.RangeType;
+import megamek.common.ToHitData;
 import megamek.common.rules.core.CoreRulesC3;
+import megamek.common.units.Entity;
 
 public class TWRulesC3 extends CoreRulesC3 {
+    // ECM disrupts C3, so c3ecmRange is not used
+    @Override
+    public int getC3RangeToUse(int range, int c3range, int c3ecmRange) {
+        if (range > c3range) {
+            return c3range;
+        }
+        return RangeType.RANGE_OUT;
+    }
+
+    // C3 disrupted by ECM is ignored. Return the unaffected ECM range
+    @Override
+    public void getC3RangeModifier(ToHitData mods, int range, int usingRange, int c3ecmRange, int c3range,
+          boolean ecmAffected, Entity attacker) {
+        // Normal C3 operation, no ECM
+        if ((c3range == RangeType.RANGE_SHORT) || (c3range == RangeType.RANGE_MINIMUM)) {
+            mods.addModifier(attacker.getShortRangeModifier(), "short range due to C3 spotter");
+        } else if (c3range == RangeType.RANGE_MEDIUM) {
+            mods.addModifier(attacker.getMediumRangeModifier(), "medium range due to C3 spotter");
+        } else if (c3range == RangeType.RANGE_LONG) {
+            mods.addModifier(attacker.getLongRangeModifier(), "long range due to C3 spotter");
+        }
+    }
+
+    // C3 spotters don't require LOS to target
+    @Override
+    public boolean c3SpotterLOSRequired() { return false; }
+
+    // ECM disrupts C3.
+    @Override
+    public boolean c3AllowedWithECM() { return false; }
 }

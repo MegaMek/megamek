@@ -33,9 +33,12 @@ package megamek.common.rules.totalwarfare;
  * affiliated with Microsoft.
  */
 
+import megamek.common.board.Coords;
 import megamek.common.rolls.TargetRoll;
 import megamek.common.rules.core.CoreRulesEquipment;
 import megamek.common.units.Mek;
+
+import java.util.ArrayList;
 
 public class TWRulesEquipment extends CoreRulesEquipment {
     // AMS can shoot once
@@ -94,5 +97,10 @@ public class TWRulesEquipment extends CoreRulesEquipment {
             case 5 -> 11;
             default -> TargetRoll.AUTOMATIC_FAIL;
         };
+    }
+
+    // ECM affects things where LoS goes through the bubble
+    public ArrayList<Coords> getECMCoordsAffected(Coords a, Coords b) {
+        return Coords.intervening(a, b);
     }
 }

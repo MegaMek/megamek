@@ -220,6 +220,6 @@ public class CoreRulesPSR extends RulesPSR {
         return 2;
     }
 
-    // Leg destroyed in +4. Core p.90
+    // Leg destroyed is +4. Core p.90
     public int getLegDestroyedModifier() { return 4; }
 }

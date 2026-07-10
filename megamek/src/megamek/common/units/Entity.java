@@ -261,7 +261,6 @@ public abstract class Entity extends TurnOrdered
     public static final int MAX_NOVA_CEWS_NODES = 3;
     public static final String C3_NETWORK_ID_SEPARATOR = ".";
 
-    // PLAYTEST3 isC3ecmAffected
     protected boolean isC3ecmAffected = false;
 
     public static final int GRAPPLE_BOTH = 0;
@@ -7170,8 +7169,8 @@ public abstract class Entity extends TurnOrdered
         while ((master != null) &&
               !master.equals(m) &&
               master.hasC3()) {
-            // PLAYTEST3 broke out the logic so we return the master, even with ECM in play
-            if (game.getOptions().booleanOption(OptionsConstants.PLAYTEST_3)) {
+            if (Game.rulesManager.getRulesC3().c3AllowedWithECM()) {
+                // Even with ECM we can always talk to the master
                 m = master;
                 master = m.getC3Master();
             } else if ((m.hasBoostedC3() &&
@@ -7384,7 +7383,7 @@ public abstract class Entity extends TurnOrdered
                 return true;
             }
             // PLAYTEST3 we don't care about ECM here, the network is still there.
-            if (game.getOptions().booleanOption(OptionsConstants.PLAYTEST_3)) {
+            if (Game.rulesManager.getRulesC3().c3AllowedWithECM()) {
                 return true;
             }
             return !(ComputeECM.isAffectedByECM(e, e.getPosition(), e.getPosition())) &&
@@ -7414,8 +7413,8 @@ public abstract class Entity extends TurnOrdered
             }
             ECMInfo srcInfo = ComputeECM.getECMEffects(e, e.getPosition(), e.getPosition(), true, null);
             ECMInfo dstInfo = ComputeECM.getECMEffects(this, getPosition(), getPosition(), true, null);
-            // PLAYTEST3 ignoring ECM for this check
-            if (game.getOptions().booleanOption(OptionsConstants.PLAYTEST_3)) {
+            
+            if (Game.rulesManager.getRulesC3().c3AllowedWithECM()) {
                 return true;
             }
             return !((srcInfo != null) && srcInfo.isNovaECM()) && !((dstInfo != null) && dstInfo.isNovaECM());

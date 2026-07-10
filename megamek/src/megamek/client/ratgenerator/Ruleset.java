@@ -360,7 +360,7 @@ public class Ruleset {
                 logger.debug("Selecting force node {} from ruleset {}", forceNode.show(), ruleset.getFaction());
                 if (!applied && ++safetyCounter >= maxIterations) {
                     logger.error("buildForceTree: aborting after {} iterations on force node {} " +
-                                "(ruleset {}, faction {}, echelon {}). Likely a changeEschelon loop in the ruleset.",
+                          "(ruleset {}, faction {}, echelon {}). Likely a changeEschelon loop in the ruleset.",
                           maxIterations, forceNode.show(), ruleset.getFaction(),
                           fd.getFaction(), fd.getEchelon());
                     break;

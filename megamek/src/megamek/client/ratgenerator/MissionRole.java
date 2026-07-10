@@ -72,10 +72,8 @@ public enum MissionRole {
 
     /**
      * Identifies if a role applies to a given unit type
-     *
-     * @param unitType type of unit to check
-     *
-     * @return {@code true} if role applies to the provided unit type
+     * @param unitType  type of unit to check
+     * @return  {@code true} if role applies to the provided unit type
      */
     public boolean fitsUnitType(int unitType) {
         return switch (this) {

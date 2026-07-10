@@ -7382,7 +7382,6 @@ public abstract class Entity extends TurnOrdered
             if (ignoreECM) {
                 return true;
             }
-            // PLAYTEST3 we don't care about ECM here, the network is still there.
             if (Game.rulesManager.getRulesC3().c3AllowedWithECM()) {
                 return true;
             }
@@ -15055,13 +15054,12 @@ public abstract class Entity extends TurnOrdered
         // extra from c3 networks. a valid network requires at least 2 members some hackery and magic numbers here.
         // could be better also, each 'has' loops through all equipment. inefficient to do it 3 times Nova CEWS is
         // quirky and handled apart from the other C3
-        int extraBV = 0;
+        // This is updated as per Core Rules p.220
+        int returnBV = 0;
         if (game != null) {
-            int totalForceBV = 0;
             double multiplier = 0.05;
-            // PLAYTEST3 C3 BV changes. each unit is +30% BV, +35% for boosted
-            boolean playtestThree = gameOptions().booleanOption(OptionsConstants.PLAYTEST_3);
-
+            double c3BoostedMultiplier = 0;
+            
             // C3 network bonus requires at least 2 members. Check conditions:
             // - C3MM: has at least one C3M connected
             // - C3M: has C3S slaves connected OR is connected to a C3MM master
@@ -15071,45 +15069,36 @@ public abstract class Entity extends TurnOrdered
                   (hasC3M() && ((calculateFreeC3Nodes() < 3) || (getC3Master() != null))) ||
                   (hasC3S() && (c3Master > NONE)) ||
                   ((hasC3i() || hasNavalC3()) && (calculateFreeC3Nodes() < 5))) {
-                totalForceBV += baseBV;
-                // Ignore all other network members for playtest3
-                if (!playtestThree) {
-                    for (Entity entity : game.getC3NetworkMembers(this)) {
-                        if (!equals(entity) && onSameC3NetworkAs(entity)) {
-                            totalForceBV += entity.calculateBattleValue(true, true);
-                        }
-                    }
-                }
+                returnBV += baseBV;
+                
+                Vector<Entity> c3Members = game.getC3NetworkMembers(this);
+                int numberOfC3Members = c3Members.size();
+                
                 if (hasBoostedC3()) {
-                    multiplier = 0.07;
+                    // Only set this if they have C3 Boosted
+                    c3BoostedMultiplier = 0.05;
+                }
+                if (numberOfC3Members > 1 && numberOfC3Members <=8) {
+                    returnBV = (int) (returnBV * ((multiplier * numberOfC3Members) + c3BoostedMultiplier));
+                } else if (numberOfC3Members > 8) {
+                    returnBV = (int) (returnBV * ((multiplier * 8) + c3BoostedMultiplier));
                 }
             } else if (hasNovaCEWS()) { //Nova CEWS applies 5% to every mek with Nova on the team {
+                int novaMembers = 1;
                 for (Entity entity : game.getEntitiesVector()) {
-                    if (!equals(entity) && entity.hasNovaCEWS() && !(entity.owner.isEnemyOf(this.owner))) {
-                        totalForceBV += entity.calculateBattleValue(true, true);
+                    if (!equals(this) && entity.hasNovaCEWS() && !(entity.owner.isEnemyOf(this.owner))) {
+                        novaMembers++;
                     }
                 }
-                if (totalForceBV > 0) { //But only if there's at least one other mek with Nova CEWS
-                    totalForceBV += baseBV;
+                if (novaMembers > 1 && novaMembers <=7) {
+                    returnBV = (int) (returnBV * (multiplier * novaMembers));
+                } else if (novaMembers > 7) {
+                    // IO: Alternate Eras p.183: Nova CEWS BV bonus capped at 35% of unit's base BV
+                    returnBV = (int) (returnBV * (multiplier * 7));
                 }
             }
-            // PLAYTEST3 set the modifier. Since it is only a single unit, we are good.
-            if (playtestThree && !hasNovaCEWS()) {
-                if (hasBoostedC3()) {
-                    multiplier = 0.35;
-                } else {
-                    multiplier = 0.3;
-                }
-            }
-            double rawBonus = totalForceBV * multiplier;
-            // IO: Alternate Eras p.183: Nova CEWS BV bonus capped at 35% of unit's base BV
-            if (hasNovaCEWS()) {
-                double maxBonus = baseBV * 0.35;
-                rawBonus = Math.min(rawBonus, maxBonus);
-            }
-            extraBV += (int) Math.round(rawBonus);
         }
-        return extraBV;
+        return returnBV;
     }
 
     public boolean hasUnloadedUnitsFromBays() {

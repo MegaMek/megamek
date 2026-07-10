@@ -81,7 +81,6 @@ public class GameOptions extends BasicGameOptions {
         // Change this to false for normal release
         addOption(base, OptionsConstants.TWRULES, false);
         addOption(base, OptionsConstants.PLAYTEST_2, false);
-        addOption(base, OptionsConstants.PLAYTEST_3, false);
         addOption(base, OptionsConstants.SEARCHLIGHTS_ON, true);
         addOption(base, OptionsConstants.BASE_PUSH_OFF_BOARD, true);
         addOption(base, OptionsConstants.BASE_DUMPING_FROM_ROUND, 1);

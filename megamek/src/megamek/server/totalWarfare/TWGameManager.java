@@ -26493,7 +26493,8 @@ public class TWGameManager extends AbstractGameManager {
 
     /**
      * Returns {@code true} if the sending player may replace the given unit with a client-side edit. The sender must be
-     * the unit's owner, a teammate of the owner, or a gamemaster.
+     * the unit's owner, a teammate of the owner, or a gamemaster. Updates for a unit without an owner are rejected
+     * unless the sender is a gamemaster.
      *
      * @param sender    the player the update was received from; may be {@code null} for an unknown connection
      * @param oldEntity the server's current version of the unit being updated
@@ -26501,7 +26502,14 @@ public class TWGameManager extends AbstractGameManager {
      * @return {@code true} if the update may be applied
      */
     private boolean senderCanUpdateEntity(@Nullable Player sender, Entity oldEntity) {
-        return (sender != null) && (sender.isGameMaster() || !oldEntity.getOwner().isEnemyOf(sender));
+        if (sender == null) {
+            return false;
+        }
+        if (sender.isGameMaster()) {
+            return true;
+        }
+        Player owner = oldEntity.getOwner();
+        return (owner != null) && !owner.isEnemyOf(sender);
     }
 
     /**

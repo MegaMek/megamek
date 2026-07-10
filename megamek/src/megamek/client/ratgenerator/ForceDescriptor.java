@@ -930,24 +930,63 @@ public class ForceDescriptor {
         // and those were previously logged only by a terse one-liner with no context.
         if (models.isEmpty()) {
             // Genuine failure: no pinned model to fall back on, so the caller's
-            // getModelRecord(getModelName()) rescue (generateUnits) cannot recover. Log the full trace.
+            // getModelRecord(getModelName()) rescue (generateUnits) cannot recover. Log the full trace,
+            // joined into a single record rather than one line per attempt.
             LOGGER.debug("[ForceGen][Weight] generate() FAILED for {} requestedWeight={} -> no unit found."
                         + " element: faction={} unitType={} year={} echelon={} roles={} movementModes={}"
-                        + " models={} chassis={}",
-                  UnitType.getTypeDisplayableName(unitType), weightClass, faction, unitType, year, echelon,
-                  roles, movementModes, models, chassis);
-            for (String line : failureTrace) {
-                LOGGER.debug("[ForceGen][Weight]   attempt: {}", line);
-            }
+                        + " models={} chassis={}{}",
+                  describeUnitType(unitType), weightClass, faction, unitType, year, echelon,
+                  roles, movementModes, models, chassis, formatFailureTrace(failureTrace));
         } else {
             // Not a real failure: a formation already pinned this model (setUnit) but it is not in the
             // element's own faction/year/role/weight table. The caller resolves it by name via the
             // getModelRecord fallback, so emit one concise line instead of the full FAILED + attempt trace.
             LOGGER.debug("[ForceGen][Weight] generate() table-miss for pinned model(s) {} (unitType={} faction={}"
                         + " year={} weightClass={} roles={}); resolving by name via fallback",
-                  models, UnitType.getTypeDisplayableName(unitType), faction, year, weightClass, roles);
+                  models, describeUnitType(unitType), faction, year, weightClass, roles);
         }
         return null;
+    }
+
+    /**
+     * Renders a unit type for diagnostic messages without unboxing a {@code null}.
+     *
+     * <p>{@link #unitType} is a nullable {@link Integer} - a subforce can spawn child nodes without
+     * propagating a unit type (see {@link #generateAtRating(String, List)}) - while
+     * {@link UnitType#getTypeDisplayableName(int)} takes a primitive. Passing the field straight through
+     * throws a {@link NullPointerException} on unboxing, and because logger arguments are evaluated
+     * eagerly it throws even when {@code DEBUG} is disabled.</p>
+     *
+     * @param unitType the unit type constant to describe, or {@code null} if this element has none
+     *
+     * @return the displayable name of the unit type, or {@code "unspecified"} when {@code unitType} is
+     *       {@code null}
+     */
+    private static String describeUnitType(@Nullable Integer unitType) {
+        return (unitType == null) ? "unspecified" : UnitType.getTypeDisplayableName(unitType);
+    }
+
+    /**
+     * Formats the collected generation attempts as a single indented block appended to the failure message.
+     *
+     * <p>Emitted as one log record rather than one record per attempt: {@link #generate()} is called for
+     * every leaf of the force tree, so a per-attempt loop floods the log and violates the project rule
+     * against logging inside loops.</p>
+     *
+     * @param failureTrace the attempt descriptions gathered by {@link #generateAtRating(String, List)}; may
+     *                     be empty when {@code DEBUG} is disabled, in which case nothing is appended
+     *
+     * @return a newline-prefixed block of indented attempt lines, or the empty string when there are none
+     */
+    private static String formatFailureTrace(List<String> failureTrace) {
+        if (failureTrace.isEmpty()) {
+            return "";
+        }
+        StringBuilder formattedTrace = new StringBuilder();
+        for (String failureTraceLine : failureTrace) {
+            formattedTrace.append("\n[ForceGen][Weight]   attempt: ").append(failureTraceLine);
+        }
+        return formattedTrace.toString();
     }
 
     /**
@@ -1070,22 +1109,24 @@ public class ForceDescriptor {
                 } else {
                     mekSummary = table.generateUnit();
                 }
-                if (unitType != null && unitType == UnitType.MEK) {
+                // Gate on the log level, not on the unit type: the force generator serves combined-arms
+                // forces, so tanks, aero, infantry and vessels need this trace as much as Meks do. The
+                // check is still required because String.format runs on every rung of the rating ladder
+                // for every leaf of the force tree, and that cost must not be paid when DEBUG is off.
+                if (LOGGER.isDebugEnabled()) {
                     failureTrace.add(String.format(
-                          "rating=%s weightTierIndex=%d weightClass=%s roleStrictness=%d roles=%s moves=%s"
-                                + " models=%s chassis=%s tableEntries=%d unit=%s",
-                          ratGenRating, weightTierIndex, workingCopy.getWeightClass(), roleStrictness,
-                          workingCopy.getRoles(), workingCopy.getMovementModes(), workingCopy.getModels(),
-                          workingCopy.getChassis(),
+                          "unitType=%s rating=%s weightTierIndex=%d weightClass=%s roleStrictness=%d roles=%s"
+                                + " moves=%s models=%s chassis=%s tableEntries=%d unit=%s",
+                          describeUnitType(unitType), ratGenRating, weightTierIndex, workingCopy.getWeightClass(),
+                          roleStrictness, workingCopy.getRoles(), workingCopy.getMovementModes(),
+                          workingCopy.getModels(), workingCopy.getChassis(),
                           table.getNumEntries(), (mekSummary == null) ? "null" : mekSummary.getName()));
                 }
                 if (mekSummary != null && RATGenerator.getInstance().getModelRecord(mekSummary.getName()) != null) {
-                    if (unitType != null && unitType == UnitType.MEK) {
-                        LOGGER.debug("[ForceGen][Weight] generate() requestedWeight={} weightTierIndex={}"
-                                    + " tableWeight={} rating={} -> {} (mekWeightClass={})",
-                              weightClass, weightTierIndex, workingCopy.getWeightClass(), ratGenRating,
-                              mekSummary.getName(), mekSummary.getWeightClass());
-                    }
+                    LOGGER.debug("[ForceGen][Weight] generate() unitType={} requestedWeight={} weightTierIndex={}"
+                                + " tableWeight={} rating={} -> {} (unitWeightClass={})",
+                          describeUnitType(unitType), weightClass, weightTierIndex, workingCopy.getWeightClass(),
+                          ratGenRating, mekSummary.getName(), mekSummary.getWeightClass());
                     return RATGenerator.getInstance().getModelRecord(mekSummary.getName());
                 }
 

@@ -1246,8 +1246,8 @@ public class LobbyActions {
     }
 
     /**
-     * Returns the best sending client for an update of the given entity or null if none can be found (entity is an
-     * enemy to the local player and all his bots)
+     * Returns the best sending client for an update of the given entity or {@code null} if none can be found (entity
+     * is an enemy to the local player and all his bots, and the local player is not a gamemaster)
      */
     private Client correctSender(Entity entity) {
         Player owner = entity.getOwner();
@@ -1265,6 +1265,10 @@ public class LobbyActions {
             }
         }
 
+        // A gamemaster may update any unit; the server accepts GM updates sent from the local client
+        if (localPlayer().isGameMaster()) {
+            return client();
+        }
         return null;
     }
 

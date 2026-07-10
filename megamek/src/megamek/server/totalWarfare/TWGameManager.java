@@ -26470,7 +26470,8 @@ public class TWGameManager extends AbstractGameManager {
         }
 
         Entity oldEntity = game.getEntity(entity.getId());
-        if ((oldEntity != null) && (!oldEntity.getOwner().isEnemyOf(game.getPlayer(connIndex)))) {
+        Player sender = game.getPlayer(connIndex);
+        if ((oldEntity != null) && senderCanUpdateEntity(sender, oldEntity)) {
             game.setEntity(entity.getId(), entity);
             entityUpdate(entity.getId());
             if (entity.isPartOfFighterSquadron()) {
@@ -26491,9 +26492,22 @@ public class TWGameManager extends AbstractGameManager {
     }
 
     /**
+     * Returns {@code true} if the sending player may replace the given unit with a client-side edit. The sender must be
+     * the unit's owner, a teammate of the owner, or a gamemaster.
+     *
+     * @param sender    the player the update was received from; may be {@code null} for an unknown connection
+     * @param oldEntity the server's current version of the unit being updated
+     *
+     * @return {@code true} if the update may be applied
+     */
+    private boolean senderCanUpdateEntity(@Nullable Player sender, Entity oldEntity) {
+        return (sender != null) && (sender.isGameMaster() || !oldEntity.getOwner().isEnemyOf(sender));
+    }
+
+    /**
      * Updates multiple entities with the info from the client. Only valid during the lobby phase! Will only update
-     * units that are teammates of the sender. Other entities remain unchanged but still be sent back to overwrite
-     * incorrect client changes.
+     * units that are teammates of the sender or when the sender is a gamemaster. Other entities remain unchanged but
+     * still be sent back to overwrite incorrect client changes.
      */
     private void receiveEntitiesUpdate(Packet packet, int connIndex) throws InvalidPacketDataException {
         if (!getGame().getPhase().isLounge()) {
@@ -26501,10 +26515,11 @@ public class TWGameManager extends AbstractGameManager {
         }
         Set<Entity> newEntities = new HashSet<>();
         List<Entity> entities = packet.getEntityList(0);
+        Player sender = game.getPlayer(connIndex);
         for (Entity entity : entities) {
             Entity oldEntity = game.getEntity(entity.getId());
-            // Only update entities that existed and are owned by a teammate of the sender
-            if ((oldEntity != null) && (!oldEntity.getOwner().isEnemyOf(game.getPlayer(connIndex)))) {
+            // Only update entities that existed; senderCanUpdateEntity handles the permission check
+            if ((oldEntity != null) && senderCanUpdateEntity(sender, oldEntity)) {
                 game.setEntity(entity.getId(), entity);
 
                 // Reconstruct C3 network IDs from UUIDs (fixes lobby C3 configuration)

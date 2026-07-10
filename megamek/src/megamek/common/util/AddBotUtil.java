@@ -1,6 +1,6 @@
 /*
  * Copyright (C) 2000-2004 Ben Mazur (bmazur@sev.org)
- * Copyright (C) 2013-2025 The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2013-2026 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -43,10 +43,11 @@ import javax.swing.JFrame;
 
 import megamek.client.AbstractClient;
 import megamek.client.Client;
+import megamek.client.bot.AIType;
 import megamek.client.bot.BotClient;
+import megamek.client.bot.BotFactory;
 import megamek.client.bot.princess.BehaviorSettings;
 import megamek.client.bot.princess.BehaviorSettingsFactory;
-import megamek.client.bot.princess.Princess;
 import megamek.client.bot.ui.swing.BotGUI;
 import megamek.codeUtilities.StringUtility;
 import megamek.common.Player;
@@ -160,25 +161,24 @@ public class AddBotUtil {
             return concatResults();
         }
 
-        final BotClient botClient;
-        if ("Princess".equalsIgnoreCase(botName.toString())) {
-            botClient = makeNewPrincessClient(target, host, port);
-            if (!StringUtility.isNullOrBlank(configName)) {
-                final BehaviorSettings behavior = BehaviorSettingsFactory.getInstance()
-                      .getBehavior(configName.toString());
-                if (null != behavior) {
-                    ((Princess) botClient).setBehaviorSettings(behavior);
-                } else {
-                    results.add("Unrecognized Behavior Setting: '" + configName + "'.  Using DEFAULT.");
-                    ((Princess) botClient).setBehaviorSettings(BehaviorSettingsFactory.getInstance().DEFAULT_BEHAVIOR);
-                }
-            } else {
-                ((Princess) botClient).setBehaviorSettings(BehaviorSettingsFactory.getInstance().DEFAULT_BEHAVIOR);
-            }
-        } else {
+        AIType aiType = AIType.fromString(botName.toString());
+        if (aiType == null) {
             results.add("Unrecognized bot: '" + botName + "'.  Defaulting to Princess.");
             botName = new StringBuilder("Princess");
-            botClient = makeNewPrincessClient(target, host, port);
+            aiType = AIType.PRINCESS;
+        }
+        final BotClient botClient = makeNewBotClient(aiType, target, host, port);
+        if (!StringUtility.isNullOrBlank(configName)) {
+            final BehaviorSettings behavior = BehaviorSettingsFactory.getInstance()
+                  .getBehavior(configName.toString());
+            if (null != behavior) {
+                botClient.setBehaviorSettings(behavior);
+            } else {
+                results.add("Unrecognized Behavior Setting: '" + configName + "'.  Using DEFAULT.");
+                botClient.setBehaviorSettings(BehaviorSettingsFactory.getInstance().DEFAULT_BEHAVIOR);
+            }
+        } else {
+            botClient.setBehaviorSettings(BehaviorSettingsFactory.getInstance().DEFAULT_BEHAVIOR);
         }
 
         if (!GraphicsEnvironment.isHeadless()) {
@@ -196,16 +196,14 @@ public class AddBotUtil {
 
         final StringBuilder result = new StringBuilder(botName);
         result.append(" has replaced ").append(target.getName()).append(".");
-        if (botClient instanceof Princess) {
-            result.append("  Config: ")
-                  .append(((Princess) botClient).getBehaviorSettings().getDescription())
-                  .append(".");
-        }
+        result.append("  Config: ")
+              .append(botClient.getBehaviorSettings().getDescription())
+              .append(".");
         results.add(result.toString());
         return concatResults();
     }
 
-    public @Nullable Princess replaceGhostWithBot(final BehaviorSettings behavior, final String playerName,
+    public @Nullable BotClient replaceGhostWithBot(final BehaviorSettings behavior, final String playerName,
           final Client client, StringBuilder message) {
         Objects.requireNonNull(client);
         Objects.requireNonNull(behavior);
@@ -229,18 +227,23 @@ public class AddBotUtil {
         }
 
         final Player target = possible.get();
-        final Princess princess = new Princess(target.getName(), host, port);
-        princess.startPrecognition();
-        princess.setBehaviorSettings(behavior);
+        final BotClient botClient = BotFactory.createBot(AIType.PRINCESS, target.getName(), host, port);
+        botClient.setBehaviorSettings(behavior);
 
+        boolean connected;
         try {
-            princess.connect();
+            connected = botClient.connect();
         } catch (final Exception ex) {
-            message.append("Princess failed to connect.");
+            connected = false;
         }
-        princess.setLocalPlayerNumber(target.getId());
-        message.append("Princess has replaced ").append(playerName).append(".");
-        return princess;
+        if (!connected) {
+            botClient.die();
+            message.append("Bot failed to connect.");
+            return null;
+        }
+        botClient.setLocalPlayerNumber(target.getId());
+        message.append("Bot has replaced ").append(playerName).append(".");
+        return botClient;
     }
 
     /**
@@ -271,27 +274,32 @@ public class AddBotUtil {
 
         final Player target = possible.get();
         if (target.isGhost()) {
-            final Princess princess = new Princess(target.getName(), host, port);
-            princess.setBehaviorSettings(behavior);
+            final BotClient botClient = BotFactory.createBot(AIType.PRINCESS, target.getName(), host, port);
+            botClient.setBehaviorSettings(behavior);
+            boolean connected;
             try {
-                princess.connect();
-                princess.startPrecognition();
+                connected = botClient.connect();
             } catch (final Exception ex) {
-                message.append("Princess failed to connect.");
+                connected = false;
             }
-            princess.setLocalPlayerNumber(target.getId());
-            message.append("Princess has replaced ").append(playerName).append(".");
+            if (!connected) {
+                botClient.die();
+                message.append("Bot failed to connect.");
+                return;
+            }
+            botClient.setLocalPlayerNumber(target.getId());
+            message.append("Bot has replaced ").append(playerName).append(".");
         } else {
             AbstractClient bot = client.getBots().get(target.getName());
             if (bot == null) {
                 message.append("Player '").append(playerName).append("' is not a local bot.");
                 return;
-            } else if (!(bot instanceof Princess)) {
-                message.append("Player '").append(playerName).append("' is not a Princess bot.");
+            }
+            if (!(bot instanceof BotClient botClient)) {
+                message.append("Player '").append(playerName).append("' is not a configurable bot.");
                 return;
             }
-            Princess princess = (Princess) bot;
-            princess.setBehaviorSettings(behavior);
+            botClient.setBehaviorSettings(behavior);
         }
     }
 
@@ -320,9 +328,7 @@ public class AddBotUtil {
         client.sendChat("/kick " + target.getId());
     }
 
-    BotClient makeNewPrincessClient(final Player target, final String host, final int port) {
-        Princess princess = new Princess(target.getName(), host, port);
-        princess.startPrecognition();
-        return princess;
+    BotClient makeNewBotClient(final AIType aiType, final Player target, final String host, final int port) {
+        return BotFactory.createBot(aiType, target.getName(), host, port);
     }
 }

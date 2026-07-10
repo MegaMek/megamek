@@ -1,6 +1,6 @@
 /*
  * Copyright (c) 2000-2011 - Ben Mazur (bmazur@sev.org)
- * Copyright (C) 2005-2025 The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2005-2026 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -435,9 +435,11 @@ public class Precognition implements Runnable {
                 if (entityId != null) {
                     Entity entity = getGame().getEntity(entityId);
                     if (entity != null) {
-                        LOGGER.debug("ensureToDate = recalculating paths for {}", entity.getDisplayName());
+                        // Pass the entity itself: log4j only calls toString() when DEBUG is enabled, whereas
+                        // getDisplayName() would build the string eagerly on every pass of this hot loop.
+                        LOGGER.debug("ensureToDate = recalculating paths for {}", entity);
                         getPathEnumerator().recalculateMovesFor(entity);
-                        LOGGER.debug("ensureToDate = finished recalculating paths for {}", entity.getDisplayName());
+                        LOGGER.debug("ensureToDate = finished recalculating paths for {}", entity);
                     }
                 }
             }
@@ -462,9 +464,10 @@ public class Precognition implements Runnable {
                         Entity entity = getGame().getEntity(entityId);
                         if ((entity != null) && isEntityOnMap(entity)) {
                             unPause();
-                            LOGGER.debug("run = recalculating paths for {}", entity.getDisplayName());
+                            // Entity toString() is only evaluated when DEBUG is enabled; see ensureUpToDate.
+                            LOGGER.debug("run = recalculating paths for {}", entity);
                             getPathEnumerator().recalculateMovesFor(entity);
-                            LOGGER.debug("run = finished recalculating paths for {}", entity.getDisplayName());
+                            LOGGER.debug("run = finished recalculating paths for {}", entity);
                         }
 
                     }
@@ -553,7 +556,7 @@ public class Precognition implements Runnable {
                         continue; // no sense in updating a unit if it hasn't moved
                     }
                     LOGGER.debug("Received entity change event for {} (ID {})",
-                          changeEvent.getEntity().getDisplayName(),
+                          changeEvent.getEntity(),
                           entity.getId());
                     markUnitAsDirty(changeEvent.getEntity().getId());
                 } else if (event instanceof GamePhaseChangeEvent phaseChange) {

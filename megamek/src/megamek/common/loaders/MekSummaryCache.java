@@ -637,7 +637,26 @@ public class MekSummaryCache {
         done();
     }
 
-    private MekSummary getSummary(Entity e, File f, String entry) {
+    /**
+     * Builds a fully populated {@link MekSummary} from a standalone unit file, without requiring the entire unit
+     * cache to be loaded. The unit does not need to be part of the official cache.
+     *
+     * <p>This is intended for tooling (such as the SVG mass printer) that needs to process arbitrary or custom
+     * {@code .blk}/{@code .mtf} files.</p>
+     *
+     * @param unitFile the unit file to parse
+     *
+     * @return a populated {@link MekSummary}, or {@code null} if the file could not be loaded
+     */
+    public static @Nullable MekSummary getSummaryFromFile(File unitFile) {
+        Entity entity = MekSummary.loadEntity(unitFile);
+        if (entity == null) {
+            return null;
+        }
+        return getSummary(entity, unitFile, null);
+    }
+
+    private static MekSummary getSummary(Entity e, File f, String entry) {
         MekSummary ms = new MekSummary();
         ms.setName(e.getShortNameRaw());
         ms.setChassis(e.getChassis());

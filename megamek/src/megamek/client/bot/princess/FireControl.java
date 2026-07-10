@@ -1229,9 +1229,10 @@ public class FireControl {
           final AmmoMounted ammo,
           final Game game) {
 
-        // This really should only be done for debugging purposes. Regular play should
-        // avoid the overhead.
-        if (LOGGER.isLevelMoreSpecificThan(Level.INFO)) {
+        // Debugging only: cross-checks the guess with a real to-hit calculation, which is expensive
+        // (especially with C3 networks). Gated behind TRACE so ordinary DEBUG bot logging does not
+        // trigger it in regular play.
+        if (LOGGER.isLevelMoreSpecificThan(Level.DEBUG)) {
             return null;
         }
 
@@ -1269,9 +1270,9 @@ public class FireControl {
      */
     private @Nullable String checkGuessPhysical(final Entity shooter, final Targetable target,
           final PhysicalAttackType attackType, final Game game) {
-        // This really should only be done for debugging purposes. Regular play should
-        // avoid the overhead.
-        if (LOGGER.isLevelMoreSpecificThan(Level.INFO)) {
+        // Debugging only: cross-checks the guess with a real to-hit calculation. Gated behind TRACE
+        // so ordinary DEBUG bot logging does not trigger it in regular play.
+        if (LOGGER.isLevelMoreSpecificThan(Level.DEBUG)) {
             return null;
         }
 
@@ -1309,9 +1310,11 @@ public class FireControl {
      */
     @Nullable
     String checkAllGuesses(final Entity shooter, final Game game) {
-        // This really should only be done for debugging purposes. Regular play should
-        // avoid the overhead.
-        if (LOGGER.isLevelMoreSpecificThan(Level.INFO)) {
+        // Debugging only: this sweep computes a real to-hit for every enemy x weapon x ammo combination,
+        // which is extremely expensive (especially with C3 networks, where each real to-hit triggers
+        // spotter searches and ECM scans). The shipped log configuration runs the bot loggers at DEBUG,
+        // so gate this behind TRACE to keep it out of regular play. See issue #8442.
+        if (LOGGER.isLevelMoreSpecificThan(Level.DEBUG)) {
             return null;
         }
 
@@ -2489,6 +2492,95 @@ public class FireControl {
      *
      * @return the 'best' firing plan - uses heat as disutility and includes the possibility of twisting
      */
+    /**
+     * @param shooter the unit to check
+     *
+     * @return {@code true} if the shooter has at least one weapon in a Directional Torso Mount whose arc can still be
+     *       changed (BMM p.83), so it is worth orienting mounts during fire planning
+     */
+    private boolean usesDirectionalTorsoMounts(Entity shooter) {
+        for (final WeaponMounted weapon : shooter.getWeaponList()) {
+            if (isPlannableDirectionalMount(weapon)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    /**
+     * @param weapon the weapon to test
+     *
+     * @return {@code true} if the weapon is a 2-point Directional Torso Mount whose arc Princess can plan (front or
+     *       rear). The 3-point 360-degree quad turret is deliberately excluded: Princess only plans the front/rear
+     *       flip and cannot represent that mount's 0-5 facing offset, so it must not be mutated by the fire planner
+     *       (doing so would snap it to front/rear).
+     */
+    private static boolean isPlannableDirectionalMount(WeaponMounted weapon) {
+        return weapon.hasDirectionalTorsoMount()
+              && !weapon.hasDirectional360TorsoMount()
+              && !weapon.isDirectionalMountLocked();
+    }
+
+    /**
+     * @param shooter the unit whose mount facings to capture
+     *
+     * @return a map of equipment number to the current rear/front flag for every changeable Directional Torso Mount
+     *       weapon, so it can be restored after the (mutating) fire-planning search
+     */
+    private Map<Integer, Boolean> saveDirectionalMountFacings(Entity shooter) {
+        final Map<Integer, Boolean> saved = new HashMap<>();
+        for (final WeaponMounted weapon : shooter.getWeaponList()) {
+            if (isPlannableDirectionalMount(weapon)) {
+                saved.put(shooter.getEquipmentNum(weapon), weapon.isDirectionalMountRear());
+            }
+        }
+        return saved;
+    }
+
+    private void restoreDirectionalMountFacings(Entity shooter, Map<Integer, Boolean> savedFacings) {
+        for (final Map.Entry<Integer, Boolean> entry : savedFacings.entrySet()) {
+            shooter.getEquipment(entry.getKey()).setDirectionalMountRear(entry.getValue());
+        }
+    }
+
+    /**
+     * Points each changeable Directional Torso Mount weapon (BMM p.83) toward the target for the shooter's current
+     * facing - front if the target is in the front arc, otherwise rear if it is in the rear arc - mutating the mounts
+     * in place so the subsequent to-hit evaluation sees the right arc.
+     *
+     * @param shooter         the firing unit
+     * @param target          the target the plan is being built against
+     * @param originalFacings the mount facings before planning, to detect which mounts actually flip
+     *
+     * @return a map of equipment number to chosen rear/front flag for only the mounts whose facing differs from the
+     *       original (i.e. the arc changes this plan must declare to the server)
+     */
+    private Map<Integer, Boolean> orientDirectionalMountsAtTarget(Entity shooter, Targetable target,
+          Map<Integer, Boolean> originalFacings) {
+        final Map<Integer, Boolean> flips = new HashMap<>();
+        final Coords shooterPosition = shooter.getPosition();
+        final Coords targetPosition = (target == null) ? null : target.getPosition();
+        if ((shooterPosition == null) || (targetPosition == null)) {
+            return flips;
+        }
+        for (final WeaponMounted weapon : shooter.getWeaponList()) {
+            if (!isPlannableDirectionalMount(weapon)) {
+                continue;
+            }
+            final int weaponNumber = shooter.getEquipmentNum(weapon);
+            final int facing = shooter.isSecondaryArcWeapon(weaponNumber)
+                  ? shooter.getSecondaryFacing() : shooter.getFacing();
+            final boolean inFront = isInArc(shooterPosition, facing, targetPosition, Compute.ARC_FORWARD);
+            final boolean rear = !inFront
+                  && isInArc(shooterPosition, facing, targetPosition, Compute.ARC_REAR);
+            weapon.setDirectionalMountRear(rear);
+            if (originalFacings.containsKey(weaponNumber) && (originalFacings.get(weaponNumber) != rear)) {
+                flips.put(weaponNumber, rear);
+            }
+        }
+        return flips;
+    }
+
     FiringPlan determineBestFiringPlan(final FiringPlanCalculationParameters params) {
         // unpack parameters for easier reference
         final Entity shooter = params.getShooter();
@@ -2498,7 +2590,17 @@ public class FireControl {
         final int maxHeat = params.getMaxHeat();
         final Map<WeaponMounted, Double> ammoConservation = params.getAmmoConservation();
 
+        // Directional Torso Mounts (BMM p.83) are oriented toward the target during real fire planning
+        // (the GET path); the mount flags are mutated in place and restored when planning finishes.
+        final boolean orientMounts = (params.getCalculationType()
+              == FiringPlanCalculationParameters.FiringPlanCalculationType.GET)
+              && usesDirectionalTorsoMounts(shooter);
+        final Map<Integer, Boolean> originalMountFacings =
+              orientMounts ? saveDirectionalMountFacings(shooter) : Map.of();
+
         // Get the best plan without any twists.
+        Map<Integer, Boolean> noTwistMountFlips =
+              orientMounts ? orientDirectionalMountsAtTarget(shooter, target, originalMountFacings) : Map.of();
         FiringPlan noTwistPlan = switch (params.getCalculationType()) {
             case GET -> getBestFiringPlan(shooter, target, owner.getGame(), ammoConservation);
             case GUESS -> guessBestFiringPlanUnderHeat(shooter,
@@ -2508,9 +2610,13 @@ public class FireControl {
                   maxHeat,
                   owner.getGame());
         };
+        noTwistPlan.setDirectionalMountFacings(noTwistMountFlips);
 
         // If we can't change facing, we're done.
         if (!params.getShooter().canChangeSecondaryFacing()) {
+            if (orientMounts) {
+                restoreDirectionalMountFacings(shooter, originalMountFacings);
+            }
             return noTwistPlan;
         }
 
@@ -2527,6 +2633,8 @@ public class FireControl {
         for (final int currentTwist : validFacingChanges) {
             shooter.setSecondaryFacing(correctFacing(originalFacing + currentTwist), false);
 
+            Map<Integer, Boolean> twistMountFlips = orientMounts
+                  ? orientDirectionalMountsAtTarget(shooter, target, originalMountFacings) : Map.of();
             FiringPlan twistPlan = switch (params.getCalculationType()) {
                 case GET -> getBestFiringPlan(shooter, target, owner.getGame(), ammoConservation);
                 case GUESS -> guessBestFiringPlanUnderHeat(shooter,
@@ -2537,6 +2645,7 @@ public class FireControl {
                       owner.getGame());
             };
             twistPlan.setTwist(currentTwist);
+            twistPlan.setDirectionalMountFacings(twistMountFlips);
 
             if (twistPlan.getUtility() > bestFiringPlan.getUtility()) {
                 bestFiringPlan = twistPlan;
@@ -2545,6 +2654,9 @@ public class FireControl {
 
         // Back to where we started.
         shooter.setSecondaryFacing(originalFacing, false);
+        if (orientMounts) {
+            restoreDirectionalMountFacings(shooter, originalMountFacings);
+        }
 
         return bestFiringPlan;
     }
@@ -3130,6 +3242,13 @@ public class FireControl {
                         return preferredAmmo;
                     }
                 }
+                // TODO: switch to a Magnetic Pulse / Improved Magnetic Pulse round (Munitions.
+                //  M_MAGNETIC_PULSE / M_IATM_IMP) against high-value or hard-to-hit targets to debuff
+                //  them (+1 to-hit, heat, and for IMP movement + hostile ECM). Add a getMagneticPulseAmmo
+                //  helper mirroring getHeatAmmo, and gate it on the target being worth debuffing (e.g.
+                //  accurate, high-firepower, a C3 spotter, or a fast flanker). This pairs with the
+                //  scoring TODO in WeaponFireInfo.computeExpectedDamage - both are needed for Princess
+                //  to actually field and fire these munitions.
                 // Everything else.
                 msg.append("\n\tTarget is a hard target... ");
                 preferredAmmo = getHardTargetAmmo(validAmmo, weaponType, range);

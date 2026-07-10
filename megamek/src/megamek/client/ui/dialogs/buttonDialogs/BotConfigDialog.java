@@ -1,6 +1,6 @@
 /*
  * Copyright (c) 2000-2011 Ben Mazur (bmazur@sev.org)
- * Copyright (C) 2021-2025 The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2021-2026 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -69,10 +69,11 @@ import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 
 import megamek.client.Client;
+import megamek.client.bot.AIType;
+import megamek.client.bot.BotClient;
 import megamek.client.bot.princess.BehaviorSettings;
 import megamek.client.bot.princess.BehaviorSettingsFactory;
 import megamek.client.bot.princess.CardinalEdge;
-import megamek.client.bot.princess.Princess;
 import megamek.client.bot.princess.PrincessException;
 import megamek.client.generator.RandomCallsignGenerator;
 import megamek.client.ui.Messages;
@@ -107,6 +108,9 @@ public class BotConfigDialog extends AbstractButtonDialog
     private static final ClientPreferences CLIENT_PREFERENCES = PreferenceManager.getClientPreferences();
     private final transient BehaviorSettingsFactory behaviorSettingsFactory = BehaviorSettingsFactory.getInstance();
     private BehaviorSettings princessBehavior;
+
+    /** Radio-button group for choosing which bot AI to use; defaults to {@link AIType#PRINCESS}. */
+    private final ButtonGroup aiTypeGroup = new ButtonGroup();
 
     private final JLabel nameLabel = new JLabel(Messages.getString("BotConfigDialog.nameLabel"));
     private final TipTextField nameField = new TipTextField("", 16);
@@ -233,6 +237,43 @@ public class BotConfigDialog extends AbstractButtonDialog
     }
 
     /**
+     * The bot-AI chooser, shown as a compact line under the name field. Presents one radio button per
+     * {@link AIType}, defaulting to {@link AIType#PRINCESS}; with a single AI type available it shows a single
+     * (selected) option.
+     */
+    private JPanel aiTypePanel() {
+        JPanel result = new JPanel();
+        result.add(new JLabel(Messages.getString("BotConfigDialog.aiTypeLabel")));
+        boolean useCaspar = CLIENT_PREFERENCES.getUseCASPAR();
+        for (AIType aiType : AIType.values()) {
+            if ((aiType == AIType.CASPAR) && !useCaspar) {
+                logger.debug("[Caspar] CASPAR AI option hidden - UseCASPAR client setting is off");
+                continue;
+            }
+            JRadioButton radioButton = new JRadioButton(
+                  Messages.getString("BotConfigDialog.aiType." + aiType.name()));
+            radioButton.setActionCommand(aiType.name());
+            radioButton.setSelected(aiType == AIType.PRINCESS);
+            String tooltipKey = "BotConfigDialog.aiType." + aiType.name() + ".tooltip";
+            if (Messages.keyExists(tooltipKey)) {
+                radioButton.setToolTipText(Messages.getString(tooltipKey));
+            }
+            aiTypeGroup.add(radioButton);
+            result.add(radioButton);
+        }
+        return result;
+    }
+
+    /**
+     * @return the {@link AIType} selected in the AI chooser, or {@link AIType#PRINCESS} if nothing is selected
+     */
+    public AIType getSelectedAIType() {
+        ButtonModel selection = aiTypeGroup.getSelection();
+        AIType selected = (selection != null) ? AIType.fromString(selection.getActionCommand()) : null;
+        return (selected != null) ? selected : AIType.PRINCESS;
+    }
+
+    /**
      * The setting section contains the presets list on the left side and the princess settings on the right.
      */
     private JPanel settingSection() {
@@ -277,6 +318,7 @@ public class BotConfigDialog extends AbstractButtonDialog
         namePanel.add(nameField);
 
         panContent.add(namePanel);
+        panContent.add(aiTypePanel());
         return result;
     }
 
@@ -802,9 +844,9 @@ public class BotConfigDialog extends AbstractButtonDialog
     /** Copies the Configuration from another local bot player. */
     private void copyFromOtherBot(String botName) {
         var bc = client.getBots().get(botName);
-        if (bc instanceof Princess) {
+        if (bc instanceof BotClient botClient) {
             try {
-                princessBehavior = ((Princess) bc).getBehaviorSettings().getCopy();
+                princessBehavior = botClient.getBehaviorSettings().getCopy();
                 updateDialogFields();
             } catch (Exception e) {
                 logger.error(e, "copyFromOtherBot");

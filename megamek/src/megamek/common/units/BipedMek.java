@@ -291,6 +291,9 @@ public class BipedMek extends MekWithArms {
             mp = applyGravityEffectsOnMP(mp);
         }
 
+        // Improved Magnetic Pulse (iATM IMP) missile movement reduction (IO IMP rules)
+        mp = Math.max(0, mp - getImpMpReduction());
+
         return Math.max(0, mp);
     }
 

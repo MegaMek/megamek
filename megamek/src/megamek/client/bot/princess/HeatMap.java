@@ -41,6 +41,7 @@ import java.util.Map;
 import java.util.OptionalInt;
 import java.util.stream.Collectors;
 
+import megamek.common.annotations.Nullable;
 import megamek.common.board.Coords;
 import megamek.common.game.Game;
 import megamek.common.moves.MovePath;
@@ -341,11 +342,18 @@ public class HeatMap {
     }
 
     /**
-     * Get the closest hot-spot (position of high activity). May return null if the activity tracker is empty.
+     * Gets the hot-spot (position of recorded activity) nearest the given position. When {@code topOnly} is
+     * {@code false}, every recorded hot-spot is considered and the nearest one is returned. When {@code topOnly}
+     * is {@code true}, only the single highest-rated tier of hot-spots is considered, and the nearest within that
+     * tier is returned.
      *
-     * @return {@link Coords} with nearest hot-spot, or null if no valid position
+     * @param testPosition The position to measure distance from
+     * @param topOnly      When {@code true}, only the highest-rated tier of hot-spots is considered; when
+     *                     {@code false}, all recorded hot-spots are considered
+     *
+     * @return The {@link Coords} of the nearest considered hot-spot, or {@code null} if there are none
      */
-    public Coords getHotSpot(Coords testPosition, boolean topOnly) {
+    public @Nullable Coords getHotSpot(Coords testPosition, boolean topOnly) {
 
         // If there are no hot-spots, return null
         if (teamActivity.isEmpty() || teamActivity.values().stream().allMatch(w -> w == MIN_WEIGHT)) {
@@ -385,9 +393,10 @@ public class HeatMap {
         int shortestRange = Integer.MAX_VALUE;
         Coords bestPosition = null;
         for (Coords curPosition : rankedPositions) {
-            if (shortestRange > curPosition.distance(testPosition)) {
+            int rangeToTestPosition = curPosition.distance(testPosition);
+            if (rangeToTestPosition < shortestRange) {
                 bestPosition = curPosition;
-                shortestRange = curPosition.direction(testPosition);
+                shortestRange = rangeToTestPosition;
             }
         }
 

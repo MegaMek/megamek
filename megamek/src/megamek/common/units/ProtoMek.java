@@ -294,6 +294,9 @@ public class ProtoMek extends Entity {
             }
         }
 
+        // Improved Magnetic Pulse (iATM IMP) missile movement reduction (IO IMP rules)
+        mp = Math.max(0, mp - getImpMpReduction());
+
         return Math.max(mp, 0);
     }
 
@@ -482,6 +485,9 @@ public class ProtoMek extends Entity {
                 default:
             }
         }
+
+        // Improved Magnetic Pulse (iATM IMP) missile movement reduction (IO IMP rules)
+        jump = Math.max(0, jump - getImpMpReduction());
 
         return mpCalculationSetting.ignoreGravity() ? jump : Math.min(applyGravityEffectsOnMP(jump), jump);
     }

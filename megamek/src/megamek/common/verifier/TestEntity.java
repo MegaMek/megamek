@@ -1959,7 +1959,7 @@ public abstract class TestEntity implements TestEntityOption {
         } else if (entity instanceof ProtoMek) {
             return TestProtoMek.isValidProtoMekLocation((ProtoMek) entity, eq, location, buffer);
         } else if (entity.isFighter()) {
-            return TestAero.isValidAeroLocation(eq, location, buffer);
+            return TestAero.isValidAeroLocation((Aero) entity, eq, location, buffer);
         }
         return true;
     }

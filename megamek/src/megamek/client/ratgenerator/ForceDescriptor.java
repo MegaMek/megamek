@@ -257,7 +257,7 @@ public class ForceDescriptor {
                 LOGGER.error("[ForceGen] Could not generate unit: RAT returned no model and no chassis/model " +
                                   "fallback applied. unitType={} faction={} year={} weightClass={} roles={} " +
                                   "models={} chassis={}",
-                      unitType, faction, year, weightClass, roles, models, chassis);
+                      describeUnitType(unitType), faction, year, weightClass, roles, models, chassis);
             }
         } else {
             if (null != formationType) {
@@ -933,9 +933,9 @@ public class ForceDescriptor {
             // getModelRecord(getModelName()) rescue (generateUnits) cannot recover. Log the full trace,
             // joined into a single record rather than one line per attempt.
             LOGGER.debug("[ForceGen][Weight] generate() FAILED for {} requestedWeight={} -> no unit found."
-                        + " element: faction={} unitType={} year={} echelon={} roles={} movementModes={}"
+                        + " element: faction={} year={} echelon={} roles={} movementModes={}"
                         + " models={} chassis={}{}",
-                  describeUnitType(unitType), weightClass, faction, unitType, year, echelon,
+                  describeUnitType(unitType), weightClass, faction, year, echelon,
                   roles, movementModes, models, chassis, formatFailureTrace(failureTrace));
         } else {
             // Not a real failure: a formation already pinned this model (setUnit) but it is not in the
@@ -1122,12 +1122,18 @@ public class ForceDescriptor {
                           workingCopy.getModels(), workingCopy.getChassis(),
                           table.getNumEntries(), (mekSummary == null) ? "null" : mekSummary.getName()));
                 }
-                if (mekSummary != null && RATGenerator.getInstance().getModelRecord(mekSummary.getName()) != null) {
-                    LOGGER.debug("[ForceGen][Weight] generate() unitType={} requestedWeight={} weightTierIndex={}"
-                                + " tableWeight={} rating={} -> {} (unitWeightClass={})",
-                          describeUnitType(unitType), weightClass, weightTierIndex, workingCopy.getWeightClass(),
-                          ratGenRating, mekSummary.getName(), mekSummary.getWeightClass());
-                    return RATGenerator.getInstance().getModelRecord(mekSummary.getName());
+                if (mekSummary != null) {
+                    // Looked up once: the previous form called getModelRecord in both the condition and
+                    // the return, so the returned record was not guaranteed to be the one just checked.
+                    ModelRecord selectedModel = RATGenerator.getInstance().getModelRecord(mekSummary.getName());
+                    if (selectedModel != null) {
+                        LOGGER.debug("[ForceGen][Weight] generate() unitType={} requestedWeight={} weightTierIndex={}"
+                                    + " tableWeight={} rating={} -> {} (unitWeightClass={})",
+                              describeUnitType(unitType), weightClass, weightTierIndex,
+                              workingCopy.getWeightClass(), ratGenRating, mekSummary.getName(),
+                              mekSummary.getWeightClass());
+                        return selectedModel;
+                    }
                 }
 
                 if ((!useWeightClass() || weightTierIndex == 2) && !workingCopy.getRoles().isEmpty()) {

@@ -35,6 +35,7 @@ import megamek.client.ui.Messages;
 import megamek.common.ToHitData;
 import megamek.common.equipment.AmmoType;
 import megamek.common.rules.RulesAmmo;
+import megamek.server.totalWarfare.TWDamageManager;
 
 public class CoreRulesAmmo extends RulesAmmo {
     // Armor piercing modifiers. Core Rules P.191
@@ -67,4 +68,13 @@ public class CoreRulesAmmo extends RulesAmmo {
 
     // Acid (AX) missiles are -1 on the cluster roll. Core p.192
     public int getAXMissileModifier() { return -1; }
+
+    // Acid (AX) missiles do more damage to some kinds of armor. Core p.192
+    public int getAXMissileDamage(int armor, TWDamageManager.ModsInfo mods, int damage) {
+        if ((mods.ferroLamellorArmor || mods.ballisticArmor || mods.reactiveArmor || mods.reflectiveArmor) && armor > 2) {
+            damage = 3;
+        }
+        
+        return damage;
+    }
 }

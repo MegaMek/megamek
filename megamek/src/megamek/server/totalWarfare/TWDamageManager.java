@@ -3416,6 +3416,16 @@ public class TWDamageManager implements IDamageManager {
                 report.indent(3);
                 report.add(damage);
                 reportVec.addElement(report);
+            } else if (hit.getGeneralDamageType() == HitData.DAMAGE_AX) {
+                tmpDamageHold = Game.rulesManager.getRulesAmmo().getAXMissileDamage(entity.getArmor(hit), mods, damage);
+                if (tmpDamageHold != damage) {
+                    damage = tmpDamageHold;
+                    report = new Report();
+                    report.subject = entityId;
+                    report.indent(3);
+                    report.add(getArmorFriendlyName(mods));
+                    reportVec.addElement(report);
+                }
             }
 
             // if there's a mast mount in the rotor, it and all other equipment on it get destroyed if it takes
@@ -3570,6 +3580,29 @@ public class TWDamageManager implements IDamageManager {
             }
         }
         return damage;
+    }
+
+    // Get the friendly name for armors
+    public String getArmorFriendlyName(ModsInfo mods) {
+        if (mods.reflectiveArmor) {
+            return ArmorType.getArmorTypeName(ArmorType.T_ARMOR_REFLECTIVE);
+        }
+        if (mods.ballisticArmor) {
+            return ArmorType.getArmorTypeName(ArmorType.T_ARMOR_BALLISTIC_REINFORCED);
+        }
+        if (mods.hardenedArmor) {
+            return ArmorType.getArmorTypeName(ArmorType.T_ARMOR_HARDENED);
+        }
+        if (mods.abaArmor) {
+            return ArmorType.getArmorTypeName(ArmorType.T_ARMOR_ANTI_PENETRATIVE_ABLATION);
+        }
+        if (mods.ferroLamellorArmor) {
+            return ArmorType.getArmorTypeName(ArmorType.T_ARMOR_FERRO_LAMELLOR);
+        }
+        if (mods.reactiveArmor) {
+            return ArmorType.getArmorTypeName(ArmorType.T_ARMOR_REACTIVE);
+        }
+        return "";
     }
 
     /**

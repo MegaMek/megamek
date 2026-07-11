@@ -35,6 +35,7 @@ package megamek.common.rules;
 
 import megamek.common.ToHitData;
 import megamek.common.equipment.AmmoType;
+import megamek.server.totalWarfare.TWDamageManager;
 
 public abstract class RulesAmmo {
     // Armor Piercing crit modifiers
@@ -49,4 +50,6 @@ public abstract class RulesAmmo {
     // Acid (AX) missiles reduce cluster roll
     public abstract int getAXMissileModifier();
 
+    // Acid (AX) missiles damage
+    public abstract int getAXMissileDamage(int armor, TWDamageManager.ModsInfo mods, int damage);
 }

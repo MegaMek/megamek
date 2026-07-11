@@ -60,4 +60,5 @@ public abstract class RulesArmor {
 
     // Does reflective armor cause modifiers for AP?
     public abstract boolean reflectiveAP(boolean reflectiveArmor);
+
 }

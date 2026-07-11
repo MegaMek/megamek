@@ -37,6 +37,7 @@ import megamek.client.ui.Messages;
 import megamek.common.ToHitData;
 import megamek.common.equipment.AmmoType;
 import megamek.common.rules.core.CoreRulesAmmo;
+import megamek.server.totalWarfare.TWDamageManager;
 
 public class TWRulesAmmo extends CoreRulesAmmo {
     // Return the modifier for armor piercing based on size
@@ -75,9 +76,15 @@ public class TWRulesAmmo extends CoreRulesAmmo {
 
     // Do nothing. Not in TW
     @Override
-    public void narcHomingTarget(ToHitData toHit) { }
+    public void narcHomingTarget(ToHitData toHit) {}
 
     // Acid (AX) missiles are -2 on the cluster roll.
     @Override
-    public int getAXMissileModifier() { return -2; }
+    public int getAXMissileModifier() {return -2;}
+
+    // They only ignore damage reduction, no bonus
+    @Override
+    public int getAXMissileDamage(int armor, TWDamageManager.ModsInfo mods, int damage) {
+        return damage;
+    }
 }

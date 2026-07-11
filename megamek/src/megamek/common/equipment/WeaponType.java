@@ -399,8 +399,10 @@ import megamek.common.weapons.ppc.clan.CLImprovedPPC;
 import megamek.common.weapons.ppc.clan.CLPlasmaCannon;
 import megamek.common.weapons.ppc.innerSphere.ISERPPC;
 import megamek.common.weapons.ppc.innerSphere.ISHeavyPPC;
+import megamek.common.weapons.ppc.innerSphere.ISHeavyPlasmaRifle;
 import megamek.common.weapons.ppc.innerSphere.ISKinsSlaughterPPC;
 import megamek.common.weapons.ppc.innerSphere.ISLightPPC;
+import megamek.common.weapons.ppc.innerSphere.ISLightPlasmaRifle;
 import megamek.common.weapons.ppc.innerSphere.ISPPC;
 import megamek.common.weapons.ppc.innerSphere.ISPlasmaRifle;
 import megamek.common.weapons.ppc.innerSphere.ISSnubNosePPC;
@@ -2211,6 +2213,8 @@ public class WeaponType extends EquipmentType {
 
         // Plasma Weapons
         EquipmentType.addType(new ISPlasmaRifle());
+        EquipmentType.addType(new ISLightPlasmaRifle());
+        EquipmentType.addType(new ISHeavyPlasmaRifle());
         EquipmentType.addType(new CLPlasmaCannon());
 
         // MekMortarWeapons

@@ -81,10 +81,10 @@ public class TWRulesArmor extends CoreRulesArmor {
     @Override
     public int reduceHeatDamageByArmor(int armorType, int heatDamage) {
         if (armorType == EquipmentType.T_ARMOR_HEAT_DISSIPATING) {
-            return (heatDamage / 2);
+            return (int) Math.ceil(heatDamage / 2.0);
         } else if (armorType == EquipmentType.T_ARMOR_REFLECTIVE) {
             // reflective armor divides heat damage by 2, with a minimum of 1
-            return Math.max(1, heatDamage / 2);
+            return Math.max(1, (int) Math.ceil(heatDamage / 2.0));
         }
         return heatDamage;
     }

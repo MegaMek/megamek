@@ -198,7 +198,7 @@ public class Compute {
     public static int d6(int dice) {
         return rollD6(dice).getIntValue();
     }
-
+        
     /**
      * Wrapper to random#d6(n)
      */
@@ -219,7 +219,7 @@ public class Compute {
         }
         return roll;
     }
-
+    
     /**
      * Wrapper to random#d6(n)
      */

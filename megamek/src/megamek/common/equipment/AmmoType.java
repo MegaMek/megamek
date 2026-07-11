@@ -3048,6 +3048,8 @@ public class AmmoType extends EquipmentType {
         EquipmentType.addType(AmmoType.createCLHAG40Ammo());
         EquipmentType.addType(AmmoType.createCLPlasmaCannonAmmo());
         EquipmentType.addType(AmmoType.createISPlasmaRifleAmmo());
+        EquipmentType.addType(AmmoType.createISLightPlasmaRifleAmmo());
+        EquipmentType.addType(AmmoType.createISHeavyPlasmaRifleAmmo());
         EquipmentType.addType(AmmoType.createCLAPGaussRifleAmmo());
         EquipmentType.addType(AmmoType.createCLMediumChemicalLaserAmmo());
         EquipmentType.addType(AmmoType.createCLSmallChemicalLaserAmmo());
@@ -11830,6 +11832,60 @@ public class AmmoType extends EquipmentType {
         ammo.cost = 30000;
         ammo.explosive = false;
         ammo.rulesRefs = "234, TM";
+        ammo.techAdvancement.setTechBase(TechBase.IS)
+              .setIntroLevel(false)
+              .setUnofficial(false)
+              .setTechRating(TechRating.E)
+              .setAvailability(AvailabilityValue.X, AvailabilityValue.X, AvailabilityValue.E, AvailabilityValue.D)
+              .setISAdvancement(3061, 3068, 3072, DATE_NONE, DATE_NONE)
+              .setISApproximate(true, false, false, false, false)
+              .setPrototypeFactions(Faction.CC)
+              .setProductionFactions(Faction.CC);
+        return ammo;
+    }
+
+    private static AmmoType createISLightPlasmaRifleAmmo() {
+        AmmoType ammo = new AmmoType();
+
+        ammo.name = "Light Plasma Rifle Ammo";
+        ammo.shortName = "Light Plasma Rifle";
+        ammo.setInternalName("ISLightPlasmaRifleAmmo");
+        ammo.addLookupName("ISLightPlasmaRifle Ammo");
+        ammo.damagePerShot = 4;
+        ammo.rackSize = 1;
+        ammo.ammoType = AmmoTypeEnum.PLASMA;
+        ammo.shots = 20;
+        ammo.bv = 26;
+        ammo.cost = 30000;
+        ammo.explosive = false;
+        ammo.rulesRefs = "189, 248, Core";
+        ammo.techAdvancement.setTechBase(TechBase.IS)
+              .setIntroLevel(false)
+              .setUnofficial(false)
+              .setTechRating(TechRating.E)
+              .setAvailability(AvailabilityValue.X, AvailabilityValue.X, AvailabilityValue.E, AvailabilityValue.D)
+              .setISAdvancement(3061, 3068, 3072, DATE_NONE, DATE_NONE)
+              .setISApproximate(true, false, false, false, false)
+              .setPrototypeFactions(Faction.CC)
+              .setProductionFactions(Faction.CC);
+        return ammo;
+    }
+
+    private static AmmoType createISHeavyPlasmaRifleAmmo() {
+        AmmoType ammo = new AmmoType();
+
+        ammo.name = "Heavy Plasma Rifle Ammo";
+        ammo.shortName = "Heavy Plasma Rifle";
+        ammo.setInternalName("ISHeavyPlasmaRifleAmmo");
+        ammo.addLookupName("ISHeavyPlasmaRifle Ammo");
+        ammo.damagePerShot = 12;
+        ammo.rackSize = 1;
+        ammo.ammoType = AmmoTypeEnum.PLASMA;
+        ammo.shots = 8;
+        ammo.bv = 26;
+        ammo.cost = 30000;
+        ammo.explosive = false;
+        ammo.rulesRefs = "189, 248, Core";
         ammo.techAdvancement.setTechBase(TechBase.IS)
               .setIntroLevel(false)
               .setUnofficial(false)

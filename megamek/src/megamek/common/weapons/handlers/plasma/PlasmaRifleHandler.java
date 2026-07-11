@@ -1,6 +1,6 @@
 /*
  * Copyright (C) 2005 Ben Mazur (bmazur@sev.org)
- * Copyright (C) 2007-2025 The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2007-2026 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -55,6 +55,9 @@ import megamek.common.units.Entity;
 import megamek.common.units.IBuilding;
 import megamek.common.units.Infantry;
 import megamek.common.weapons.handlers.AmmoWeaponHandler;
+import megamek.common.weapons.ppc.innerSphere.ISHeavyPlasmaRifle;
+import megamek.common.weapons.ppc.innerSphere.ISLightPlasmaRifle;
+import megamek.common.weapons.ppc.innerSphere.ISPlasmaRifle;
 import megamek.server.totalWarfare.TWGameManager;
 
 public class PlasmaRifleHandler extends AmmoWeaponHandler {
@@ -85,10 +88,20 @@ public class PlasmaRifleHandler extends AmmoWeaponHandler {
             report.subject = subjectId;
             report.indent(2);
             int extraHeat = 0;
-            // if this is a fighter squadron, we need to account for the number of weapons should default to one for
-            // non-squadrons
+
+            /**
+             * if this is a fighter squadron, we need to account for the number of weapons should default to one for
+             * non-squadrons
+             * Handles light and heavy plasma rifles as well as per Core Rules p.189
+             */
             for (int i = 0; i < numWeaponsHit; i++) {
-                extraHeat += Compute.d6();
+                if (weapon.getType() instanceof ISLightPlasmaRifle) {
+                    extraHeat += (int) Math.ceil(Compute.d6() / 2.0);
+                } else if (weapon.getType() instanceof ISHeavyPlasmaRifle) {
+                    extraHeat += Compute.d6(2);
+                } else {
+                    extraHeat += Compute.d6();
+                }
             }
 
             if (entityTarget.getArmor(hit) > 0 &&

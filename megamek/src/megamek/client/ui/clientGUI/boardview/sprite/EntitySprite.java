@@ -182,7 +182,7 @@ public class EntitySprite extends Sprite {
                     } else if (!unitNick().isBlank()) {
                         return "'" + unitNick() + "' (" + abbreviated + ")";
                     } else {
-                        return reduceVehicleName(entity);
+                        return abbreviated;
                     }
                 }
                 case ONLY_NICKNAME:

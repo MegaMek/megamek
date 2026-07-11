@@ -123,11 +123,11 @@ public abstract class BotClient extends Client {
     protected boolean rerolledInitiative = false;
 
     /**
-     * The bot's personality/configuration state. Held on {@link BotClient} because it is generic bot-personality
-     * state (sliders, targeting, retreat edges) shared by every bot implementation, not specific to any one AI.
-     * Initialized to a default so it is never {@code null}: subclasses normally replace it via
-     * {@link #setBehaviorSettings(BehaviorSettings)} during construction, but the default preserves the
-     * non-null contract that {@link #getBehaviorSettings()} callers rely on even if a subclass does not.
+     * The bot's personality/configuration state. Held on {@link BotClient} because it is generic bot-personality state
+     * (sliders, targeting, retreat edges) shared by every bot implementation, not specific to any one AI. Initialized
+     * to a default so it is never {@code null}: subclasses normally replace it via
+     * {@link #setBehaviorSettings(BehaviorSettings)} during construction, but the default preserves the non-null
+     * contract that {@link #getBehaviorSettings()} callers rely on even if a subclass does not.
      */
     protected BehaviorSettings behaviorSettings = new BehaviorSettings();
 
@@ -521,6 +521,7 @@ public abstract class BotClient extends Client {
                       !entity.isOffBoard() &&
                       (entity.getCrew() != null) &&
                       !entity.getCrew().isDead() &&
+                      !entity.isAbandoned() &&
                       !entity.isHidden()) {
                     currentTurnEnemyEntities.add(entity);
                 }

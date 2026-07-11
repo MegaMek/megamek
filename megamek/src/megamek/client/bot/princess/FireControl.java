@@ -2511,9 +2511,9 @@ public class FireControl {
      * @param weapon the weapon to test
      *
      * @return {@code true} if the weapon is a 2-point Directional Torso Mount whose arc Princess can plan (front or
-     *       rear). The 3-point 360-degree quad turret is deliberately excluded: Princess only plans the front/rear
-     *       flip and cannot represent that mount's 0-5 facing offset, so it must not be mutated by the fire planner
-     *       (doing so would snap it to front/rear).
+     *       rear). The 3-point 360-degree quad turret is deliberately excluded: Princess only plans the front/rear flip
+     *       and cannot represent that mount's 0-5 facing offset, so it must not be mutated by the fire planner (doing
+     *       so would snap it to front/rear).
      */
     private static boolean isPlannableDirectionalMount(WeaponMounted weapon) {
         return weapon.hasDirectionalTorsoMount()
@@ -2829,6 +2829,7 @@ public class FireControl {
                   && (null != entity.getPosition())
                   && !entity.isOffBoard()
                   && entity.isTargetable()
+                  && !entity.isAbandoned()
                   && (null != entity.getCrew()) && !entity.getCrew().isDead()) {
                 targetableEnemyList.add(entity);
             }

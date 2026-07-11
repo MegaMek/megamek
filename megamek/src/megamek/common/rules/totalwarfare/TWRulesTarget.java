@@ -32,9 +32,12 @@ package megamek.common.rules.totalwarfare;
  * affiliated with Microsoft.
  */
 
+import megamek.common.CriticalSlot;
 import megamek.common.compute.Compute;
 import megamek.common.rules.core.CoreRulesTarget;
+import megamek.common.units.Entity;
 import megamek.common.units.EntityWeightClass;
+import megamek.common.units.Mek;
 
 public class TWRulesTarget extends CoreRulesTarget {
 
@@ -56,5 +59,30 @@ public class TWRulesTarget extends CoreRulesTarget {
             return true;
         }
         return false;
+    }
+
+    // Secondary Arc modifier is 2
+    @Override
+    public int getSecondaryArcModifier(){
+        return 2;
+    }
+
+    // Can only shoot with one arm while prone with TacOps Prone Fire
+    @Override
+    public boolean proneFireWithOneArm(final boolean toProneFire) {
+        return toProneFire;
+    }
+
+    // Both arm actuators increase the to hit for shooting.
+    @Override
+    public int getArmActuatorHitMod(Entity attacker, int location) {
+        int actuatorHits = 0;
+        if (attacker.getBadCriticalSlots(CriticalSlot.TYPE_SYSTEM, Mek.ACTUATOR_UPPER_ARM, location) > 0) {
+            actuatorHits++;
+        }
+        if (attacker.getBadCriticalSlots(CriticalSlot.TYPE_SYSTEM, Mek.ACTUATOR_LOWER_ARM, location) > 0) {
+            actuatorHits++;
+        }
+        return actuatorHits;
     }
 }

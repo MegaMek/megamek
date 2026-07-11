@@ -32,6 +32,8 @@ package megamek.common.rules;
  * affiliated with Microsoft.
  */
 
+import megamek.common.units.Entity;
+
 public abstract class RulesTarget {
     // Check if the target is large and if there is a modifier
     public abstract int largeTargetModifier(int weightclass, boolean markedLarge);
@@ -40,4 +42,13 @@ public abstract class RulesTarget {
 
     // Do we hit the aimed location?
     public abstract boolean checkAimedLocation();
+
+    // What is the secondary arc modifier
+    public abstract int getSecondaryArcModifier();
+
+    // Can you shoot with one arm while prone
+    public abstract boolean proneFireWithOneArm(boolean toProneFire);
+
+    // What is the arm actuator hit mod for shooting
+    public abstract int getArmActuatorHitMod(Entity attacker, int location);
 }

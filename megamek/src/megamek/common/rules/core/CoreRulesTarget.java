@@ -32,9 +32,12 @@ package megamek.common.rules.core;
  * affiliated with Microsoft.
  */
 
+import megamek.common.CriticalSlot;
 import megamek.common.compute.Compute;
 import megamek.common.rules.RulesTarget;
+import megamek.common.units.Entity;
 import megamek.common.units.EntityWeightClass;
+import megamek.common.units.Mek;
 
 public class CoreRulesTarget extends RulesTarget {
     /**
@@ -55,5 +58,23 @@ public class CoreRulesTarget extends RulesTarget {
             return true;
         }
         return false;
+    }
+    
+    // Secondary arcs are +1. Core p.64
+    public int getSecondaryArcModifier(){
+        return 1;
+    }
+    
+    // Can shoot with one arm while prone. Core p.67
+    public boolean proneFireWithOneArm(final boolean toProneFire) {
+        return true;
+    }
+
+    // Only upper arm actuators increase the to hit for shooting. Core p.97
+    public int getArmActuatorHitMod(Entity attacker, int location) {
+        if (attacker.getBadCriticalSlots(CriticalSlot.TYPE_SYSTEM, Mek.ACTUATOR_UPPER_ARM, location) > 0) {
+            return 1;
+        }
+        return 0;
     }
 }

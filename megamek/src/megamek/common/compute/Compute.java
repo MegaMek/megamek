@@ -2371,7 +2371,8 @@ public class Compute {
                 int l3ProneFiringArm = Entity.LOC_NONE;
 
                 if (attacker.isLocationBad(Mek.LOC_RIGHT_ARM) || attacker.isLocationBad(Mek.LOC_LEFT_ARM)) {
-                    if (game.getOptions().booleanOption(OptionsConstants.ADVANCED_COMBAT_TAC_OPS_PRONE_FIRE)) {
+                    if (Game.rulesManager.getRulesTarget().proneFireWithOneArm(
+                          game.getOptions().booleanOption(OptionsConstants.ADVANCED_COMBAT_TAC_OPS_PRONE_FIRE))) {
                         // Can fire with only one arm
                         if (attacker.isLocationBad(Mek.LOC_RIGHT_ARM) && attacker.isLocationBad(Mek.LOC_LEFT_ARM)) {
                             return new ToHitData(TargetRoll.IMPOSSIBLE,
@@ -2427,7 +2428,8 @@ public class Compute {
             int l3ProneFiringArm = Entity.LOC_NONE;
 
             if (attacker.isLocationBad(Mek.LOC_RIGHT_ARM) || attacker.isLocationBad(Mek.LOC_LEFT_ARM)) {
-                if (game.getOptions().booleanOption(OptionsConstants.ADVANCED_COMBAT_TAC_OPS_PRONE_FIRE)) {
+                if (Game.rulesManager.getRulesTarget().proneFireWithOneArm(
+                      game.getOptions().booleanOption(OptionsConstants.ADVANCED_COMBAT_TAC_OPS_PRONE_FIRE))) {
                     // Can fire with only one arm
                     if (attacker.isLocationBad(Mek.LOC_RIGHT_ARM) && attacker.isLocationBad(Mek.LOC_LEFT_ARM)) {
                         return new ToHitData(TargetRoll.IMPOSSIBLE,
@@ -2570,13 +2572,7 @@ public class Compute {
                     mods.addModifier(4, "shoulder actuator destroyed");
                 } else {
                     // no shoulder hits, add other arm hits
-                    int actuatorHits = 0;
-                    if (attacker.getBadCriticalSlots(CriticalSlot.TYPE_SYSTEM, Mek.ACTUATOR_UPPER_ARM, location) > 0) {
-                        actuatorHits++;
-                    }
-                    if (attacker.getBadCriticalSlots(CriticalSlot.TYPE_SYSTEM, Mek.ACTUATOR_LOWER_ARM, location) > 0) {
-                        actuatorHits++;
-                    }
+                    int actuatorHits = Game.rulesManager.getRulesTarget().getArmActuatorHitMod(attacker, location);
                     if (actuatorHits > 0) {
                         mods.addModifier(actuatorHits, actuatorHits + " destroyed arm actuators");
                     }
@@ -2740,7 +2736,7 @@ public class Compute {
                   "Can't target unit with active stealth armor as a secondary target");
         }
 
-        int mod = 2;
+        int mod = Game.rulesManager.getRulesTarget().getSecondaryArcModifier();
         if (curInFrontArc || (attacker instanceof BattleArmor)) {
             mod--;
         }

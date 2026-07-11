@@ -34,11 +34,16 @@ package megamek.common.rules.totalwarfare;
 
 import megamek.client.ui.Messages;
 import megamek.common.HitData;
+import megamek.common.Report;
 import megamek.common.ToHitData;
 import megamek.common.compute.Compute;
+import megamek.common.equipment.MiscType;
 import megamek.common.equipment.Mounted;
+import megamek.common.rolls.Roll;
 import megamek.common.rules.core.CoreRulesPhysical;
+import megamek.common.units.BipedMek;
 import megamek.common.units.Entity;
+import megamek.common.units.Mek;
 
 public class TWRulesPhysical extends CoreRulesPhysical {
 
@@ -95,4 +100,52 @@ public class TWRulesPhysical extends CoreRulesPhysical {
     public HitData shieldChargeDamage(Entity attackingEntity) {
         return null;
     }
+
+    // Spikes break on a 2d6 roll of 9+
+    @Override
+    public Report checkBreakSpikes(Entity entity, int loc) {
+        Report r;
+        Roll diceRoll = Compute.rollD6(2);
+        if (diceRoll.getIntValue() < 9) {
+            r = new Report(4445);
+            r.indent(2);
+            r.add(diceRoll);
+            r.subject = entity.getId();
+        } else {
+            r = new Report(4440);
+            r.indent(2);
+            r.add(diceRoll);
+            r.subject = entity.getId();
+
+            for (Mounted<?> m : entity.getMisc()) {
+                if (m.getType().hasFlag(MiscType.F_SPIKES) && (m.getLocation() == loc)) {
+                    m.setHit(true);
+                }
+            }
+        }
+        return r;
+    }
+
+    // Any talons create a damage boost on dfa
+    @Override
+    public boolean hasTalons(Entity entity) {
+        if (entity instanceof BipedMek) {
+            return (entity.hasWorkingMisc(MiscType.F_TALON, null, Mek.LOC_RIGHT_LEG) &&
+                  entity.hasWorkingSystem(Mek.ACTUATOR_FOOT, Mek.LOC_RIGHT_LEG)) ||
+                  (entity.hasWorkingMisc(MiscType.F_TALON, null, Mek.LOC_LEFT_LEG) &&
+                        entity.hasWorkingSystem(Mek.ACTUATOR_FOOT, Mek.LOC_LEFT_LEG));
+        }
+        return (entity.hasWorkingMisc(MiscType.F_TALON, null, Mek.LOC_RIGHT_LEG) &&
+              entity.hasWorkingSystem(Mek.ACTUATOR_FOOT, Mek.LOC_RIGHT_LEG)) ||
+              (entity.hasWorkingMisc(MiscType.F_TALON, null, Mek.LOC_LEFT_LEG) &&
+                    entity.hasWorkingSystem(Mek.ACTUATOR_FOOT, Mek.LOC_LEFT_LEG)) ||
+              ((entity.hasWorkingMisc(MiscType.F_TALON, null, Mek.LOC_RIGHT_ARM)) &&
+                    (entity.hasWorkingSystem(Mek.ACTUATOR_FOOT, Mek.LOC_RIGHT_ARM) ||
+                          (entity.hasWorkingMisc(MiscType.F_TALON, null, Mek.LOC_LEFT_ARM) &&
+                                entity.hasWorkingSystem(Mek.ACTUATOR_FOOT, Mek.LOC_LEFT_ARM))));
+    }
+
+    // Kick is -2 to hit
+    @Override
+    public int getKickModifier() { return -2; }
 }

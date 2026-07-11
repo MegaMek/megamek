@@ -79,4 +79,7 @@ public abstract class RulesPSR {
 
     // What is the penalty for leg destroyed
     public abstract int getLegDestroyedModifier();
+
+    // Handle HD Gyro Hits
+    public abstract void handleHDGyroHits(Game game, Entity en, int actualGyroHits);
 }

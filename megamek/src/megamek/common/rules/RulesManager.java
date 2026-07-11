@@ -49,7 +49,7 @@ public interface RulesManager {
     public RulesMovement getRulesMovement();
     public RulesPhysical getRulesPhysical();
     public RulesPilot getRulesPilot();
-    public RulesPSR getRulesPsr();
+    public RulesPSR getRulesPSR();
     public RulesTerrain getRulesTerrain();
     public RulesUnderwater getRulesUnderwater();
     public RulesUnits getRulesUnits();

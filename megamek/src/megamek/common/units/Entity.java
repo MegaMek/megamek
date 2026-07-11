@@ -8495,7 +8495,7 @@ public abstract class Entity extends TurnOrdered
 
         int gyroDamage = getBadCriticalSlots(CriticalSlot.TYPE_SYSTEM, Mek.SYSTEM_GYRO, Mek.LOC_CENTER_TORSO);
         
-        Game.rulesManager.getRulesPsr().checkRunningWithDamage(this, roll, gyroDamage, overallMoveType);
+        Game.rulesManager.getRulesPSR().checkRunningWithDamage(this, roll, gyroDamage, overallMoveType);
         
         addPilotingModifierForTerrain(roll);
         return roll;

@@ -33,4 +33,7 @@ package megamek.common.rules;
  */
 
 public abstract class RulesUnits {
+    // Any modifier for a mule kick
+    public abstract int getMuleKickModifier();
+
 }

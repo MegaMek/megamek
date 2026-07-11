@@ -34,6 +34,7 @@ package megamek.common.rules.core;
 
 import megamek.common.CriticalSlot;
 import megamek.common.HitData;
+import megamek.common.Report;
 import megamek.common.ToHitData;
 import megamek.common.annotations.Nullable;
 import megamek.common.compute.Compute;
@@ -42,7 +43,9 @@ import megamek.common.equipment.MiscMounted;
 import megamek.common.equipment.MiscType;
 import megamek.common.equipment.Mounted;
 import megamek.common.equipment.enums.MiscTypeFlag;
+import megamek.common.rolls.Roll;
 import megamek.common.rules.RulesPhysical;
+import megamek.common.units.BipedMek;
 import megamek.common.units.Entity;
 import megamek.common.units.Mek;
 
@@ -147,4 +150,53 @@ public class CoreRulesPhysical extends RulesPhysical {
         }
         return null;
     }
+
+    // Check if the spikes break on a 1. Core p.196
+    public Report checkBreakSpikes(Entity entity, int loc) {
+        Report r;
+        Roll diceRoll = Compute.rollD6(1);
+        if (diceRoll.getIntValue() > 1) {
+            r = new Report(4445);
+            r.indent(2);
+            r.add(diceRoll);
+            r.subject = entity.getId();
+        } else {
+            r = new Report(4440);
+            r.indent(2);
+            r.add(diceRoll);
+            r.subject = entity.getId();
+
+            for (Mounted<?> m : entity.getMisc()) {
+                if (m.getType().hasFlag(MiscType.F_SPIKES) && (m.getLocation() == loc)) {
+                    m.setHit(true);
+                }
+            }
+        }
+        return r;
+    }
+
+    // Require all limbs to have talons for a DFA damage boost. Core p.196
+    public boolean hasTalons(Entity entity) {
+        if (entity instanceof BipedMek) {
+            return (entity.hasWorkingMisc(MiscType.F_TALON, null, Mek.LOC_RIGHT_LEG) &&
+                  entity.hasWorkingSystem(Mek.ACTUATOR_FOOT, Mek.LOC_RIGHT_LEG)) &&
+                  (entity.hasWorkingMisc(MiscType.F_TALON, null, Mek.LOC_LEFT_LEG) &&
+                        entity.hasWorkingSystem(Mek.ACTUATOR_FOOT, Mek.LOC_LEFT_LEG));
+        }
+        int countTalons = 0;
+        int[] locs = { Mek.LOC_RIGHT_LEG, Mek.LOC_LEFT_LEG, Mek.LOC_RIGHT_ARM, Mek.LOC_LEFT_ARM, Mek.LOC_CENTER_LEG };
+        for (int loc : locs) {
+            if ((entity.hasWorkingMisc(MiscType.F_TALON, null, loc) &&
+                  entity.hasWorkingSystem(Mek.ACTUATOR_FOOT, loc))) {
+                countTalons++;
+            }
+        }
+        if (countTalons >= 2) {
+            return true;
+        }
+        return false;
+    }
+
+    // Kicks are -1 to hit. Core p.81
+    public int getKickModifier() { return -1; }
 }

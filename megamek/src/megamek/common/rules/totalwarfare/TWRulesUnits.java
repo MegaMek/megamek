@@ -35,5 +35,6 @@ package megamek.common.rules.totalwarfare;
 import megamek.common.rules.core.CoreRulesUnits;
 
 public class TWRulesUnits extends CoreRulesUnits {
-
+    // Mule kicks have a +1 modifier
+    public int getMuleKickModifier() { return 1; }
 }

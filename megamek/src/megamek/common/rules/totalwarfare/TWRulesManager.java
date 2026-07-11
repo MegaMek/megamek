@@ -108,7 +108,7 @@ public class TWRulesManager implements RulesManager {
         return twRulesPilot;
     }
 
-    public RulesPSR getRulesPsr() {
+    public RulesPSR getRulesPSR() {
         return twRulesPsr;
     }
 

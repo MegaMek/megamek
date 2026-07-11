@@ -316,7 +316,7 @@ public class BipedMek extends MekWithArms {
             roll.addModifier(-2, "AES bonus");
         }
 
-        Game.rulesManager.getRulesPsr().legDamageModifiers(this, roll, gameOptions()
+        Game.rulesManager.getRulesPSR().legDamageModifiers(this, roll, gameOptions()
               .booleanOption(OptionsConstants.ADVANCED_GROUND_MOVEMENT_TAC_OPS_LEG_DAMAGE));
         
         return super.addEntityBonuses(roll);

@@ -13835,8 +13835,7 @@ public class TWGameManager extends AbstractGameManager {
             // internal damage
             if (caa.getClub().getType().hasFlag(MiscTypeFlag.S_LANCE) &&
                   (te.getArmor(hit) > 0) && Game.rulesManager.getRulesArmor()
-                  .checkLancePenetration(te.getArmorType(hit.getLocation())))
-            {
+                  .checkLancePenetration(te.getArmorType(hit.getLocation()))) {
                 Roll diceRoll2 = Compute.rollD6(2);
                 // Pierce checking report
                 r = new Report(4021);
@@ -20543,7 +20542,7 @@ public class TWGameManager extends AbstractGameManager {
             case Mek.ACTUATOR_FOOT:
             case Mek.ACTUATOR_HIP:
                 if (en.canFall(true)) {
-                    Game.rulesManager.getRulesPsr().hitActuator(game, en, loc, cs.getIndex());
+                    Game.rulesManager.getRulesPSR().hitActuator(game, en, loc, cs.getIndex());
                 }
                 break;
             case LandAirMek.LAM_AVIONICS:
@@ -20560,7 +20559,7 @@ public class TWGameManager extends AbstractGameManager {
         }
 
         // Check if we need to reduce the PSR rolls
-        Game.rulesManager.getRulesPsr().checkLegActuatorPsrRolls(game, en);
+        Game.rulesManager.getRulesPSR().checkLegActuatorPsrRolls(game, en);
 
         return reports;
     }
@@ -21743,41 +21742,7 @@ public class TWGameManager extends AbstractGameManager {
      * @param actualGyroHits the number of gyro critical hits taken
      */
     private void handleHeavyDutyGyroHit(Entity en, int actualGyroHits) {
-        boolean isPlaytest2 = game.getOptions().booleanOption(OptionsConstants.PLAYTEST_2);
-
-        switch (actualGyroHits) {
-            case 4:
-                // Playtest 2: 4th hit to HD gyro (gyro destroyed)
-                if (isPlaytest2) {
-                    game.addPSR(new PilotingRollData(en.getId(),
-                          TargetRoll.AUTOMATIC_FAIL,
-                          1,
-                          "gyro destroyed"));
-                    en.setHullDown(false);
-                }
-                break;
-            case 3:
-                // 3rd hit to HD gyro (gyro destroyed)
-                game.addPSR(new PilotingRollData(en.getId(),
-                      TargetRoll.AUTOMATIC_FAIL,
-                      1,
-                      "gyro destroyed"));
-                en.setHullDown(false);
-                break;
-            case 2:
-                // 2nd hit to HD gyro (PSR +3, same as standard gyro 1st hit)
-                if (!isPlaytest2) {
-                    game.addPSR(new PilotingRollData(en.getId(), 3, "gyro hit"));
-                }
-                break;
-            case 1:
-                // 1st hit to HD gyro: NO PSR per errata (just +1 modifier to future PSRs)
-                // No action needed
-                break;
-            default:
-                // Ignore if >4 hits (auto-fail already happened)
-                break;
-        }
+        Game.rulesManager.getRulesPSR().handleHDGyroHits(game, en, actualGyroHits);
     }
 
     /**
@@ -21788,41 +21753,22 @@ public class TWGameManager extends AbstractGameManager {
      * @param actualGyroHits the number of gyro critical hits taken
      */
     private void handleStandardGyroHit(Entity en, int actualGyroHits) {
-        boolean isPlaytest2 = game.getOptions().booleanOption(OptionsConstants.PLAYTEST_2);
 
         switch (actualGyroHits) {
             case 3:
-                // 3rd+ hit to standard gyro (gyro destroyed)
-                if (isPlaytest2) {
-                    game.addPSR(new PilotingRollData(en.getId(), 3, "gyro hit"));
-                } else {
-                    game.addPSR(new PilotingRollData(en.getId(),
-                          TargetRoll.AUTOMATIC_FAIL,
-                          1,
-                          "gyro destroyed"));
-                    en.setHullDown(false);
-                }
-                break;
             case 2:
-                // 2nd hit to standard gyro
-                if (isPlaytest2) {
-                    game.addPSR(new PilotingRollData(en.getId(), 2, "gyro hit"));
-                } else {
-                    // Core rules: 2nd hit destroys gyro (auto-fail)
-                    game.addPSR(new PilotingRollData(en.getId(),
-                          TargetRoll.AUTOMATIC_FAIL,
-                          1,
-                          "gyro destroyed"));
-                    en.setHullDown(false);
-                }
+                // Core rules: 2nd hit destroys gyro (auto-fail)
+                game.addPSR(new PilotingRollData(en.getId(),
+                      TargetRoll.AUTOMATIC_FAIL,
+                      1,
+                      "gyro destroyed"));
+                en.setHullDown(false);
                 break;
             case 1:
                 // 1st hit to standard gyro
-                if (isPlaytest2) {
-                    game.addPSR(new PilotingRollData(en.getId(), 2, "gyro hit"));
-                } else {
-                    game.addPSR(new PilotingRollData(en.getId(), 3, "gyro hit"));
-                }
+                game.addPSR(new PilotingRollData(en.getId(),
+                      Game.rulesManager.getRulesPSR().getGyroModifier(actualGyroHits, Mek.GYRO_STANDARD),
+                      "gyro hit"));
                 break;
             default:
                 // Ignore if >3 hits (auto-fail already happened)
@@ -24662,7 +24608,7 @@ public class TWGameManager extends AbstractGameManager {
         entity.setElevation(newElevation);
         // Only 'meks change facing when they fall
         if (entity instanceof Mek) {
-            Game.rulesManager.getRulesPsr().facingChangeAfterFall(entity, facing);
+            Game.rulesManager.getRulesPSR().facingChangeAfterFall(entity, facing);
         }
 
         // if falling into a bog-down hex, the entity automatically gets stuck (except
@@ -31501,27 +31447,7 @@ public class TWGameManager extends AbstractGameManager {
      * @return A report showing the results of the roll
      */
     Report checkBreakSpikes(Entity e, int loc) {
-        Roll diceRoll = Compute.rollD6(2);
-        Report r;
-
-        if (diceRoll.getIntValue() < 9) {
-            r = new Report(4445);
-            r.indent(2);
-            r.add(diceRoll);
-            r.subject = e.getId();
-        } else {
-            r = new Report(4440);
-            r.indent(2);
-            r.add(diceRoll);
-            r.subject = e.getId();
-
-            for (Mounted<?> m : e.getMisc()) {
-                if (m.getType().hasFlag(MiscType.F_SPIKES) && (m.getLocation() == loc)) {
-                    m.setHit(true);
-                }
-            }
-        }
-        return r;
+        return Game.rulesManager.getRulesPhysical().checkBreakSpikes(e, loc);
     }
 
     /**

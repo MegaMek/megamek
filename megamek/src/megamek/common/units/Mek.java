@@ -4130,7 +4130,7 @@ public abstract class Mek extends Entity implements Fortifiable, RubbleClearer {
                 gyroMessage = Messages.getString("PilotingRoll.Gyro.Gyro");
             }
             gyroMessage += " " + String.valueOf(gyroHits) + " " + Messages.getString("PilotingRoll.Gyro.Damaged"); 
-            roll.addModifier(Game.rulesManager.getRulesPsr().getGyroModifier(gyroHits, getGyroType()), gyroMessage);
+            roll.addModifier(Game.rulesManager.getRulesPSR().getGyroModifier(gyroHits, getGyroType()), gyroMessage);
         }
 
         // EI bonus?
@@ -6164,7 +6164,7 @@ public abstract class Mek extends Entity implements Fortifiable, RubbleClearer {
         // if it's a leg, the entity falls
         if (game != null && locationIsLeg(loc) && canFall()) {
             game.addPSR(new PilotingRollData(getId(), TargetRoll.AUTOMATIC_FAIL,
-                  Game.rulesManager.getRulesPsr().getLegDestroyedModifier(), 
+                  Game.rulesManager.getRulesPSR().getLegDestroyedModifier(),
                   "leg " 
                   + "destroyed"));
         }

@@ -33,6 +33,7 @@ package megamek.common.rules;
  */
 
 import megamek.common.HitData;
+import megamek.common.Report;
 import megamek.common.ToHitData;
 import megamek.common.annotations.Nullable;
 import megamek.common.equipment.Mounted;
@@ -70,4 +71,13 @@ public abstract class RulesPhysical {
     // Does a shield do anything in a charge?
     @Nullable
     public abstract HitData shieldChargeDamage(Entity attackingEntity);
+
+    // Do the spikes break?
+    public abstract Report checkBreakSpikes(Entity entity, int loc);
+
+    // Can talons increase DFA damage
+    public abstract boolean hasTalons(Entity entity);
+
+    // What is the kick modifier
+    public abstract int getKickModifier();
 }

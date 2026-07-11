@@ -222,4 +222,14 @@ public class CoreRulesPSR extends RulesPSR {
 
     // Leg destroyed is +4. Core p.90
     public int getLegDestroyedModifier() { return 4; }
+
+    // HD Gyro hits. Core p.
+
+    @Override
+    public void handleHDGyroHits(Game game, Entity en, int actualGyroHits) {
+        if (actualGyroHits == 4) {
+            game.addPSR(new PilotingRollData(en.getId(),TargetRoll.AUTOMATIC_FAIL, 1, "Gyro Destroyed"));
+            en.setHullDown(false);
+        }
+    }
 }

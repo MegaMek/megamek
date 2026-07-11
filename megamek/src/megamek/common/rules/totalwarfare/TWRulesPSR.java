@@ -124,4 +124,31 @@ public class TWRulesPSR extends CoreRulesPSR {
     @Override
     public int getLegDestroyedModifier() { return 5; }
 
+    // HD Gyro hits cause issues
+    @Override
+    public void handleHDGyroHits(Game game, Entity en, int actualGyroHits) {
+        switch (actualGyroHits) {
+            case 4:
+            case 3:
+                // 3rd hit to HD gyro (gyro destroyed)
+                game.addPSR(new PilotingRollData(en.getId(),
+                      TargetRoll.AUTOMATIC_FAIL,
+                      1,
+                      "gyro destroyed"));
+                en.setHullDown(false);
+                break;
+            case 2:
+                // 2nd hit to HD gyro (PSR +3, same as standard gyro 1st hit)
+                game.addPSR(new PilotingRollData(en.getId(), 3, "gyro hit"));
+                break;
+            case 1:
+                // 1st hit to HD gyro: NO PSR per errata (just +1 modifier to future PSRs)
+                // No action needed
+                break;
+            default:
+                // Ignore if >4 hits (auto-fail already happened)
+                break;
+        }
+    }
+
 }

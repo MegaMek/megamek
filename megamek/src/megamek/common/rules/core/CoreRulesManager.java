@@ -101,7 +101,7 @@ public class CoreRulesManager implements RulesManager {
         return coreRulesPilot;
     }
 
-    public RulesPSR getRulesPsr() {
+    public RulesPSR getRulesPSR() {
         return coreRulesPSR;
     }
 

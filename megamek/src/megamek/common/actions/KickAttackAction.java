@@ -185,7 +185,7 @@ public class KickAttackAction extends PhysicalAttackAction {
                   || (leg == KickAttackAction.RIGHT_MULE)) {
                 kickLegs[0] = Mek.LOC_RIGHT_LEG;
                 kickLegs[1] = Mek.LOC_LEFT_LEG;
-                mule = 1; // To-hit modifier
+                mule = 1;
             } else {
                 kickLegs[0] = Mek.LOC_RIGHT_ARM;
                 kickLegs[1] = Mek.LOC_LEFT_ARM;
@@ -217,13 +217,22 @@ public class KickAttackAction extends PhysicalAttackAction {
         }
 
         // check if all hips are operational
-        if (!ae.hasWorkingSystem(Mek.ACTUATOR_HIP, Mek.LOC_LEFT_LEG)
-              || !ae.hasWorkingSystem(Mek.ACTUATOR_HIP, Mek.LOC_RIGHT_LEG)
-              || (ae.entityIsQuad()
-              && (!ae.hasWorkingSystem(Mek.ACTUATOR_HIP, Mek.LOC_LEFT_ARM)
-              || !ae.hasWorkingSystem(Mek.ACTUATOR_HIP, Mek.LOC_RIGHT_ARM)))) {
+        if (!ae.entityIsQuad() && (!ae.hasWorkingSystem(Mek.ACTUATOR_HIP, Mek.LOC_LEFT_LEG)
+              || !ae.hasWorkingSystem(Mek.ACTUATOR_HIP, Mek.LOC_RIGHT_LEG))) {
             return new ToHitData(TargetRoll.IMPOSSIBLE, "Hip destroyed");
         }
+        if (ae.entityIsQuad()) {
+            if ((leg == KickAttackAction.LEFT_MULE || leg == KickAttackAction.RIGHT_MULE) &&
+                  (!ae.hasWorkingSystem(Mek.ACTUATOR_HIP, Mek.LOC_LEFT_LEG)
+                  || !ae.hasWorkingSystem(Mek.ACTUATOR_HIP, Mek.LOC_RIGHT_LEG))) {
+                return new ToHitData(TargetRoll.IMPOSSIBLE, "Hip destroyed");
+            } else if ((leg == KickAttackAction.LEFT || leg == KickAttackAction.RIGHT) &&
+                        (!ae.hasWorkingSystem(Mek.ACTUATOR_HIP, Mek.LOC_LEFT_ARM)
+                              || !ae.hasWorkingSystem(Mek.ACTUATOR_HIP, Mek.LOC_RIGHT_ARM))) {
+                return new ToHitData(TargetRoll.IMPOSSIBLE, "Hip destroyed");
+            }
+        }
+
         // check if attacker has fired leg-mounted weapons
         for (Mounted<?> mounted : ae.getWeaponList()) {
             if (mounted.isUsedThisRound() && (mounted.getLocation() == legLoc)) {
@@ -300,7 +309,7 @@ public class KickAttackAction extends PhysicalAttackAction {
         // Start the To-Hit
         toHit = new ToHitData(base, "base");
 
-        toHit.addModifier(-2, "Kick");
+        toHit.addModifier(Game.rulesManager.getRulesPhysical().getKickModifier(), "Kick");
 
         PhysicalAttackAction.setCommonModifiers(toHit, game, ae, target);
 
@@ -312,7 +321,10 @@ public class KickAttackAction extends PhysicalAttackAction {
 
         // Mule kick?
         if (mule != 0) {
-            toHit.addModifier(mule, "Quad Mek making a mule kick");
+            int muleModifier = Game.rulesManager.getRulesUnits().getMuleKickModifier();
+            if (muleModifier > 0) {
+                toHit.addModifier(muleModifier, "Quad Mek making a mule kick");
+            }
         }
 
         // damaged or missing actuators

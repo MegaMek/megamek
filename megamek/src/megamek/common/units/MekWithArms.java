@@ -418,7 +418,7 @@ public abstract class MekWithArms extends Mek {
     }
 
     private void addAttemptStandingPenalties(PilotingRollData roll) {
-        Game.rulesManager.getRulesPsr().standing(roll);
+        Game.rulesManager.getRulesPSR().standing(roll);
 
         if (hasQuirk(OptionsConstants.QUIRK_NEG_NO_ARMS)) {
             roll.addModifier(2, "no/minimal arms");

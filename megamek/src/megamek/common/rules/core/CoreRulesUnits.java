@@ -35,5 +35,6 @@ package megamek.common.rules.core;
 import megamek.common.rules.RulesUnits;
 
 public class CoreRulesUnits extends RulesUnits {
-
+    // Mule kicks have no additional modifier Core p.238
+    public int getMuleKickModifier() { return 0; }
 }

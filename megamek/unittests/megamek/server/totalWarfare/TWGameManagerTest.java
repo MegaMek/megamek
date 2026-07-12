@@ -37,6 +37,9 @@ import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.mockStatic;
+import static org.mockito.Mockito.when;
 
 import java.io.IOException;
 import java.util.Collections;
@@ -45,6 +48,7 @@ import java.util.Vector;
 
 import megamek.common.CriticalSlot;
 import megamek.common.GameBoardTestCase;
+import megamek.common.compute.Compute;
 import megamek.common.Hex;
 import megamek.common.Player;
 import megamek.common.Report;
@@ -62,6 +66,7 @@ import megamek.common.game.Game;
 import megamek.common.moves.MovePath;
 import megamek.common.options.OptionsConstants;
 import megamek.common.rolls.PilotingRollData;
+import megamek.common.rolls.Roll;
 import megamek.common.units.*;
 import megamek.common.weapons.DamageType;
 import megamek.server.Server;
@@ -72,6 +77,7 @@ import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.EnumSource;
+import org.mockito.MockedStatic;
 
 class TWGameManagerTest {
     private TWGameManager gameManager;
@@ -980,5 +986,62 @@ class TWGameManagerTest {
         assertDoesNotThrow(() -> gameManager.resolveAllButWeaponAttacks());
         assertEquals(Entity.NONE, owner.getBloodStalkerTarget(),
               "Owner should have no Blood Stalker target when the designated enemy is gone");
+    }
+
+    /**
+     * Issue #8489: a VTOL that shuts down while airborne makes a forced landing, but the landing must not permanently
+     * immobilize it. Per TW p.197, permanent VTOL immobility comes only from an engine crit or from MP reduced to 0 by
+     * damage; a shutdown is neither. The forced-landing roll is mocked to succeed so no crash damage muddies the
+     * assertion.
+     */
+    @Test
+    void testShutdownVtolLandsWithoutPermanentImmobilization() {
+        Board board = new Board(3, 3);
+        initializeBoard(board);
+        game.setBoard(board);
+
+        VTOL vtol = new VTOL();
+        vtol.setOwner(game.getPlayer(0));
+        vtol.setMovementMode(EntityMovementMode.VTOL);
+        vtol.setPosition(new Coords(1, 1));
+        vtol.setElevation(2);
+        vtol.setShutDown(true);
+        game.addEntity(vtol);
+
+        Roll successfulRoll = mock(Roll.class);
+        when(successfulRoll.getIntValue()).thenReturn(12);
+        try (MockedStatic<Compute> mockedCompute = mockStatic(Compute.class)) {
+            mockedCompute.when(() -> Compute.rollD6(2)).thenReturn(successfulRoll);
+            gameManager.resolveShutdownCrashes();
+        }
+
+        assertEquals(0, vtol.getElevation(), "Shut-down VTOL should be forced to land");
+        assertFalse(vtol.isMovementHitPending(), "Forced landing must not mark the VTOL for immobilization");
+
+        vtol.applyDamage();
+        vtol.setShutDown(false);
+        assertFalse(vtol.isImmobile(), "VTOL should be mobile again after starting back up");
+    }
+
+    /**
+     * Issue #8489 follow-up: a LAM in AirMek mode uses WiGE movement, so it can be shut down while airborne without
+     * being a Tank. The shutdown landing must skip it instead of throwing a ClassCastException.
+     */
+    @Test
+    void testShutdownAirborneLamDoesNotThrow() {
+        Board board = new Board(3, 3);
+        initializeBoard(board);
+        game.setBoard(board);
+
+        LandAirMek lam = new LandAirMek(LandAirMek.GYRO_STANDARD, LandAirMek.COCKPIT_STANDARD,
+              LandAirMek.LAM_STANDARD);
+        lam.setOwner(game.getPlayer(0));
+        lam.setConversionMode(LandAirMek.CONV_MODE_AIR_MEK);
+        lam.setPosition(new Coords(1, 1));
+        lam.setElevation(2);
+        lam.setShutDown(true);
+        game.addEntity(lam);
+
+        assertDoesNotThrow(() -> gameManager.resolveShutdownCrashes());
     }
 }

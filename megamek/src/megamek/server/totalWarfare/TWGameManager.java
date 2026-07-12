@@ -18961,11 +18961,10 @@ public class TWGameManager extends AbstractGameManager {
      * VTOL or WiGE...
      */
     void resolveShutdownCrashes() {
-        for (Entity e : game.getEntitiesVector()) {
-            if (e.isShutDown() && e.isAirborneVTOLorWIGE() && !(e.isDestroyed() || e.isDoomed())) {
-                Tank t = (Tank) e;
-                t.immobilize();
-                addReport(forceLandVTOLorWiGE(t));
+        for (Entity entity : game.getEntitiesVector()) {
+            if (entity.isShutDown() && entity.isAirborneVTOLorWIGE()
+                  && !(entity.isDestroyed() || entity.isDoomed())) {
+                addReport(forceLandVTOLorWiGE((Tank) entity));
             }
         }
     }

@@ -300,13 +300,15 @@ public class ComputeToHitTest extends GameBoardTestCase {
             attacker.setOwnerId(player1.getId());
             attacker.setId(1);
             attacker.setPosition(new Coords(0, 0));
-            attacker.setFacing(2);
+            when(attacker.getCrew().isActive()).thenReturn(true);
+            when(attacker.getCrew().getCrewType()).thenReturn(CrewType.SINGLE);
             WeaponType vspLaserType = (WeaponType) EquipmentType.get("ISMediumVSPLaser");
             WeaponMounted vspLaser = (WeaponMounted) attacker.addEquipment(vspLaserType, Mek.LOC_CENTER_TORSO);
 
             Mek target = createMek("Target", "TGT-1", "Bob");
             target.setOwnerId(player2.getId());
             target.setId(2);
+            when(target.getCrew().isActive()).thenReturn(true);
 
             game.addEntity(attacker);
             game.addEntity(target);
@@ -317,6 +319,9 @@ public class ComputeToHitTest extends GameBoardTestCase {
                   int range = testCase[0];
                   int expectedModifier = testCase[1];
                   target.setPosition(new Coords(range, 0));
+                  int targetDirection = attacker.getPosition().direction(target.getPosition());
+                  attacker.setFacing(targetDirection);
+                  attacker.setSecondaryFacing(targetDirection);
 
                   ToHitData result = ComputeToHit.toHitCalc(game, attacker.getId(), target,
                           vspLaser.getEquipmentNum(), Entity.LOC_NONE, AimingMode.NONE,

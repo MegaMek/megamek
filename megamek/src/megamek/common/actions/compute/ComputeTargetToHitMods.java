@@ -234,6 +234,11 @@ public class ComputeTargetToHitMods {
             }
         }
 
+        boolean bSemiGuided = ((ammoType != null)
+              && ammoType.getAmmoType().isAnyOf(LRM, LRM_IMP, MML, NLRM, MEK_MORTAR, TBOLT_5, TBOLT_10, TBOLT_15,
+              TBOLT_20)
+              && munition.contains(AmmoType.Munitions.M_SEMIGUIDED));
+
         // Movement and Position modifiers
 
         // target movement - ignore for pointblank shots from hidden units
@@ -241,12 +246,10 @@ public class ComputeTargetToHitMods {
             ToHitData thTemp = Compute.getTargetMovementModifier(game, target.getId());
             toHit.append(thTemp);
 
-            // semi-guided ammo negates this modifier, if TAG succeeded
-            if ((ammoType != null)
-                  && ammoType.getAmmoType().isAnyOf(LRM, LRM_IMP, MML, NLRM, MEK_MORTAR)
-                  && munition.contains(AmmoType.Munitions.M_SEMIGUIDED)
+            // semi-guided ammo may negate this modifier, if TAG succeeded
+            if (bSemiGuided
                   && (entityTarget.getTaggedBy() != WeaponAttackAction.UNASSIGNED)) {
-                int nAdjust = thTemp.getValue();
+                int nAdjust = Game.rulesManager.getRulesAmmo().getSemiGuidedAdjustment(thTemp.getValue(), true, false);
                 if (nAdjust > 0) {
                     toHit.append(new ToHitData(-nAdjust, Messages.getString("WeaponAttackAction.SemiGuidedTag")));
                 }

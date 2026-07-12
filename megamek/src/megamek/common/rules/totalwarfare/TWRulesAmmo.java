@@ -87,4 +87,26 @@ public class TWRulesAmmo extends CoreRulesAmmo {
     public int getAXMissileDamage(int armor, TWDamageManager.ModsInfo mods, int damage) {
         return damage;
     }
+
+    // Semi-guided can eliminate movement modifiers
+    @Override
+    public int getSemiGuidedAdjustment(int modifierValue, boolean movementMod, boolean terrainMod) {
+        // Semi guided eliminates movement modifier
+        if (movementMod) {
+            return modifierValue;
+        }
+        return 0;
+    }
+
+    // Semi-guided when tag is present does not ignore cover
+    @Override
+    public boolean semiGuidedIgnoresCover() {
+        return false;
+    }
+
+    // Semi-guided does not modify number of missiles
+    @Override
+    public int getSemiGuidedNMissiles(boolean taggedTarget, boolean indirect) {
+        return 0;
+    }
 }

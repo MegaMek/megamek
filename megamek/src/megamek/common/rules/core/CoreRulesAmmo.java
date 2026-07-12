@@ -33,6 +33,7 @@ package megamek.common.rules.core;
  */
 import megamek.client.ui.Messages;
 import megamek.common.ToHitData;
+import megamek.common.actions.WeaponAttackAction;
 import megamek.common.equipment.AmmoType;
 import megamek.common.rules.RulesAmmo;
 import megamek.server.totalWarfare.TWDamageManager;
@@ -74,7 +75,35 @@ public class CoreRulesAmmo extends RulesAmmo {
         if ((mods.ferroLamellorArmor || mods.ballisticArmor || mods.reactiveArmor || mods.reflectiveArmor) && armor > 2) {
             damage = 3;
         }
-        
+
         return damage;
+    }
+
+    // Semi-guided can reduce terrain modifiers. Core p.193
+    public int getSemiGuidedAdjustment(int modifierValue, boolean movementMod, boolean terrainMod) {
+        // Semi guided reduces terrain modifiers by up to 2 (minimum 0)
+        if (terrainMod) {
+            if (modifierValue >= 2) {
+                return 2;
+            } else if (modifierValue == 1){
+                return 1;
+            }
+        }
+        return 0;
+    }
+
+    // Semi-guided when tag is present ignores partial cover except from water or buildings. Core p.193
+    public boolean semiGuidedIgnoresCover() {
+        return true;
+    }
+
+    // Semi-guided changes number of missiles depending on tag and direct/indirect. Core p.193
+    public int getSemiGuidedNMissiles(boolean taggedTarget, boolean indirect) {
+        if (!taggedTarget) {
+            return -1;
+        } else if (!indirect && taggedTarget) {
+            return 2;
+        }
+        return 0;
     }
 }

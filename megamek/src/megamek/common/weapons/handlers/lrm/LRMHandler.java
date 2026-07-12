@@ -315,6 +315,13 @@ public class LRMHandler extends MissileWeaponHandler {
                         nMissilesModifier += 2;
                     }
                 }
+            } else if (((ammoType.getAmmoType() == AmmoType.AmmoTypeEnum.LRM)
+                  || (ammoType.getAmmoType() == AmmoType.AmmoTypeEnum.LRM_IMP)
+                  || (ammoType.getAmmoType() == AmmoType.AmmoTypeEnum.MML)
+                  || (ammoType.getAmmoType() == AmmoType.AmmoTypeEnum.NLRM))
+                  && (ammoType.getMunitionType().contains(AmmoType.Munitions.M_SEMIGUIDED))) {
+                nMissilesModifier += Game.rulesManager.getRulesAmmo().getSemiGuidedNMissiles((entityTarget.getTaggedBy() != WeaponAttackAction.UNASSIGNED),
+                      weapon.curMode().equals("Indirect"));
             }
         }
 

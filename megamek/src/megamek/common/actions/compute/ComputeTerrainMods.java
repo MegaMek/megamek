@@ -165,6 +165,13 @@ public class ComputeTerrainMods {
               && ammoType.getMunitionType().contains(AmmoType.Munitions.M_SEMIGUIDED)
               && Compute.isTargetTagged(target, game);
 
+        boolean semiGuidedDirectVsTaggedTarget = (!isIndirect
+              && (ammoType != null)
+              && ammoType.getMunitionType().contains(AmmoType.Munitions.M_SEMIGUIDED)
+              && Compute.isTargetTagged(target, game) &&
+              Game.rulesManager.getRulesAmmo().semiGuidedIgnoresCover());
+
+
         // TW p.111
         boolean indirectMortarWithoutSpotter = (weaponType != null)
               && weaponType.hasFlag(WeaponType.F_MORTAR_TYPE_INDIRECT)
@@ -173,11 +180,23 @@ public class ComputeTerrainMods {
 
         // Base terrain calculations, not applicable when delivering minefields or bombs
         // also not applicable in pointblank shots from hidden units
+        ToHitData terrainModifier = Compute.getTargetTerrainModifier(game, target, eiPilotStatus, inSameBuilding,
+              underWater);
+
         if ((targetType != Targetable.TYPE_MINEFIELD_DELIVER)
               && !isPointBlankShot
               && !semiGuidedIndirectVsTaggedTarget
               && !indirectMortarWithoutSpotter) {
-            toHit.append(Compute.getTargetTerrainModifier(game, target, eiPilotStatus, inSameBuilding, underWater));
+            toHit.append(terrainModifier);
+        }
+
+        // Does Semi-guided direct reduce the terrain modifier
+        if (semiGuidedDirectVsTaggedTarget) {
+            int semiGuidedTerrain =
+                  Game.rulesManager.getRulesAmmo().getSemiGuidedAdjustment(terrainModifier.getValue(), false, true);
+            if (semiGuidedTerrain > 0) {
+                toHit.append(new ToHitData(-semiGuidedTerrain, Messages.getString("WeaponAttackAction.SemiGuidedTag")));
+            }
         }
 
         // Target's hex
@@ -231,7 +250,7 @@ public class ComputeTerrainMods {
         }
 
         // Change hit table for partial cover, accommodate for partial underwater (legs)
-        if (los.getTargetCover() != LosEffects.COVER_NONE) {
+        if (los.getTargetCover() != LosEffects.COVER_NONE && !(semiGuidedDirectVsTaggedTarget && !underWater)) {
             if (underWater && (targetInWater && (targEl == 0) && (entityTarget != null && entityTarget.height() > 0))) {
                 // weapon underwater, target in partial water
                 toHit.setHitTable(HIT_PARTIAL_COVER);

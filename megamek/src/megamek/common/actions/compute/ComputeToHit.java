@@ -281,6 +281,18 @@ public class ComputeToHit {
               (ammoType != null) &&
               (munition.contains(AmmoType.Munitions.M_ARTEMIS_V_CAPABLE)));
 
+        boolean bSemiGuided = ((ammoType != null) &&
+              ((ammoType.getAmmoType() == AmmoType.AmmoTypeEnum.LRM) ||
+                    (ammoType.getAmmoType() == AmmoType.AmmoTypeEnum.LRM_IMP) ||
+                    (ammoType.getAmmoType() == AmmoType.AmmoTypeEnum.MML) ||
+                    (ammoType.getAmmoType() == AmmoType.AmmoTypeEnum.NLRM) ||
+                    (ammoType.getAmmoType() == AmmoType.AmmoTypeEnum.MEK_MORTAR) ||
+                    (ammoType.getAmmoType() == AmmoType.AmmoTypeEnum.TBOLT_5) ||
+                    (ammoType.getAmmoType() == AmmoType.AmmoTypeEnum.TBOLT_10) ||
+                    (ammoType.getAmmoType() == AmmoType.AmmoTypeEnum.TBOLT_15) ||
+                    (ammoType.getAmmoType() == AmmoType.AmmoTypeEnum.TBOLT_20)) &&
+              (munition.contains(AmmoType.Munitions.M_SEMIGUIDED)));
+
         if (ae.usesWeaponBays()) {
             for (WeaponMounted bayW : weapon.getBayWeapons()) {
                 Mounted<?> bayWAmmo = bayW.getLinked();

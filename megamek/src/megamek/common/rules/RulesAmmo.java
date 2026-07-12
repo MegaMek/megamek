@@ -52,4 +52,13 @@ public abstract class RulesAmmo {
 
     // Acid (AX) missiles damage
     public abstract int getAXMissileDamage(int armor, TWDamageManager.ModsInfo mods, int damage);
+
+    // Semi-Guided missiles need special handling
+    public abstract int getSemiGuidedAdjustment(int modifierValue, boolean movementMod, boolean terrainMod);
+
+    // Does semi-guided ignore cover for a tagged entity
+    public abstract boolean semiGuidedIgnoresCover();
+
+    // Does the semi-guided impact the number of missiles?
+    public abstract int getSemiGuidedNMissiles(boolean taggedTarget, boolean indirect);
 }

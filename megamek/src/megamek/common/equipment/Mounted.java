@@ -539,7 +539,6 @@ public class Mounted<T extends EquipmentType> implements Serializable, RoundUpda
             }
         }
         if ((type instanceof AmmoType) && (location != Entity.LOC_NONE)) {
-
             desc.append(" (");
             desc.append(shotsLeft);
             desc.append(")");

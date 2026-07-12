@@ -1226,12 +1226,12 @@ public abstract class Entity extends TurnOrdered
 
     public void setUnitFileUUID(String unitFileUUID) {
         try {
-            UUID uuid = UUID.fromString(unitFileUUID);
-            if ((uuid.version() != 7) || (uuid.variant() != 2) || !uuid.toString().equals(unitFileUUID)) {
+            UUID uuid = UUID.fromString(unitFileUUID.trim());
+            if ((uuid.version() != 7) || (uuid.variant() != 2)) {
                 regenerateUnitFileUUID();
                 return;
             }
-            this.unitFileUUID = unitFileUUID;
+            this.unitFileUUID = uuid.toString();
         } catch (IllegalArgumentException | NullPointerException ex) {
             regenerateUnitFileUUID();
         }

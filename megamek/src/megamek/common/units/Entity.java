@@ -1225,11 +1225,16 @@ public abstract class Entity extends TurnOrdered
     }
 
     public void setUnitFileUUID(String unitFileUUID) {
-        UUID uuid = UUID.fromString(unitFileUUID);
-        if ((uuid.version() != 7) || (uuid.variant() != 2) || !uuid.toString().equals(unitFileUUID)) {
-            throw new IllegalArgumentException("Unit file UUID must be a canonical UUID version 7");
+        try {
+            UUID uuid = UUID.fromString(unitFileUUID);
+            if ((uuid.version() != 7) || (uuid.variant() != 2) || !uuid.toString().equals(unitFileUUID)) {
+                regenerateUnitFileUUID();
+                return;
+            }
+            this.unitFileUUID = unitFileUUID;
+        } catch (IllegalArgumentException | NullPointerException ex) {
+            regenerateUnitFileUUID();
         }
-        this.unitFileUUID = unitFileUUID;
     }
 
     public void regenerateUnitFileUUID() {

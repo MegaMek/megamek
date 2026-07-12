@@ -118,6 +118,43 @@ class BLKFileTest {
     }
 
     @Test
+    void emptyUnitFileUUIDKeepsGeneratedUUID() throws Exception {
+        BuildingBlock blk = new BuildingBlock();
+        blk.writeBlockData(BLKFile.UNIT_FILE_UUID, "");
+        blk.writeBlockData("Name", "Legacy Unit");
+        blk.writeBlockData("year", 3025);
+        blk.writeBlockData("type", "IS");
+        BLKFile loader = new BLKFile();
+        loader.dataFile = blk;
+        Tank tank = new Tank();
+        String generatedBeforeLoad = tank.getUnitFileUUID();
+
+        loader.setBasicEntityData(tank);
+
+        assertEquals(generatedBeforeLoad, tank.getUnitFileUUID());
+    }
+
+    @Test
+    void invalidUnitFileUUIDIsRegenerated() throws Exception {
+        BuildingBlock blk = new BuildingBlock();
+        blk.writeBlockData(BLKFile.UNIT_FILE_UUID, "invalid");
+        blk.writeBlockData("Name", "Invalid UUID Unit");
+        blk.writeBlockData("year", 3025);
+        blk.writeBlockData("type", "IS");
+        BLKFile loader = new BLKFile();
+        loader.dataFile = blk;
+        Tank tank = new Tank();
+        String generatedBeforeLoad = tank.getUnitFileUUID();
+
+        loader.setBasicEntityData(tank);
+
+        java.util.UUID regeneratedUUID = java.util.UUID.fromString(tank.getUnitFileUUID());
+        assertFalse(generatedBeforeLoad.equals(tank.getUnitFileUUID()));
+        assertEquals(7, regeneratedUUID.version());
+        assertEquals(2, regeneratedUUID.variant());
+    }
+
+    @Test
     void parseBayDataAssignsMissingBayNumber() throws BLKDecodingException {
         final double SIZE = 2.0;
         final int DOORS = 1;

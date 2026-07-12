@@ -120,10 +120,9 @@ public class BLKFile {
 
     protected void setBasicEntityData(Entity entity) throws EntityLoadingException {
         if (dataFile.exists(UNIT_FILE_UUID)) {
-            try {
-                entity.setUnitFileUUID(dataFile.getDataAsString(UNIT_FILE_UUID)[0]);
-            } catch (IllegalArgumentException ex) {
-                throw new EntityLoadingException("Invalid unit file UUID: " + ex.getMessage());
+            String unitFileUUID = dataFile.getDataAsString(UNIT_FILE_UUID)[0];
+            if (!unitFileUUID.isBlank()) {
+                entity.setUnitFileUUID(unitFileUUID);
             }
         }
 

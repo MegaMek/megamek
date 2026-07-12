@@ -110,11 +110,24 @@ class EntityTest {
     }
 
     @Test
-    void setUnitFileUUIDRejectsInvalidUUID() {
+    void setUnitFileUUIDRegeneratesInvalidUUID() {
         Entity entity = new BipedMek();
+        String originalUUID = entity.getUnitFileUUID();
 
-        assertThrows(IllegalArgumentException.class, () -> entity.setUnitFileUUID(UUID.randomUUID().toString()));
-        assertThrows(IllegalArgumentException.class, () -> entity.setUnitFileUUID("not-a-uuid"));
+        entity.setUnitFileUUID(UUID.randomUUID().toString());
+
+        UUID regeneratedUUID = UUID.fromString(entity.getUnitFileUUID());
+        assertNotEquals(originalUUID, entity.getUnitFileUUID());
+        assertEquals(7, regeneratedUUID.version());
+        assertEquals(2, regeneratedUUID.variant());
+
+        String UUIDBeforeMalformedValue = entity.getUnitFileUUID();
+        entity.setUnitFileUUID("not-a-uuid");
+
+        regeneratedUUID = UUID.fromString(entity.getUnitFileUUID());
+        assertNotEquals(UUIDBeforeMalformedValue, entity.getUnitFileUUID());
+        assertEquals(7, regeneratedUUID.version());
+        assertEquals(2, regeneratedUUID.variant());
     }
 
     @Test

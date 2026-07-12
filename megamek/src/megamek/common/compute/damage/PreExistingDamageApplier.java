@@ -292,6 +292,7 @@ public final class PreExistingDamageApplier {
         int[] scratchRear = rearArmor.clone();
         int[] scratchInternal = internal.clone();
         List<Integer> structureDamagedLocations = new ArrayList<>();
+        List<Integer> destroyedLocations = new ArrayList<>();
 
         HitData hit = rollGroupHit();
         int remaining = points;
@@ -325,6 +326,7 @@ public final class PreExistingDamageApplier {
                 remaining -= scratchInternal[location];
                 scratchInternal[location] = 0;
                 structureDamagedLocations.add(location);
+                destroyedLocations.add(location);
                 hit = entity.getTransferLocation(hit);
             } else {
                 scratchInternal[location] -= remaining;
@@ -333,6 +335,12 @@ public final class PreExistingDamageApplier {
             }
         }
 
+        // Losing a location destroys the engine slots it carried, so bank them before any later crit is rolled.
+        // Without this the engine hit count goes stale and a later engine crit elsewhere could be the third hit,
+        // destroying the unit. A destroyed location can never be picked for a crit, so this cannot double count.
+        for (int location : destroyedLocations) {
+            engineHits += survivingEngineSlotsIn(location);
+        }
         System.arraycopy(scratchArmor, 0, armor, 0, armor.length);
         System.arraycopy(scratchRear, 0, rearArmor, 0, rearArmor.length);
         System.arraycopy(scratchInternal, 0, internal, 0, internal.length);
@@ -351,12 +359,8 @@ public final class PreExistingDamageApplier {
             if ((location == Mek.LOC_HEAD) || (location == Mek.LOC_CENTER_TORSO) || mek.locationIsLeg(location)) {
                 return true;
             }
-            // Destroying a side torso destroys its engine slots; forbid it if that would kill the engine. Count only
-            // the slots this would newly hit: engineHits already includes any this simulation assigned here, and the
-            // entity itself is never mutated, so those must be excluded to avoid counting them twice.
-            int engineSlotsHere = entity.getNumberOfCriticalSlots(CriticalSlot.TYPE_SYSTEM, Mek.SYSTEM_ENGINE, location)
-                  - entity.getDamagedCriticalSlots(CriticalSlot.TYPE_SYSTEM, Mek.SYSTEM_ENGINE, location)
-                  - simulatedEngineHitsIn(location);
+            // Destroying a side torso destroys the engine slots it still carries; forbid it if that kills the engine.
+            int engineSlotsHere = survivingEngineSlotsIn(location);
             return (engineSlotsHere > 0) && ((engineHits + engineSlotsHere) >= ENGINE_HITS_TO_DESTROY);
         }
         // destroying any combat vehicle location destroys or immobilizes the vehicle (incl. VTOL rotors)
@@ -364,11 +368,21 @@ public final class PreExistingDamageApplier {
     }
 
     /**
+     * Counts the engine critical slots in a location that are not hit yet, and so would newly be lost if the location
+     * were destroyed.
+     *
+     * <p>Slots already hit are excluded twice over: those damaged on the entity itself, and those this simulation has
+     * assigned a crit to. The latter matters because {@link #engineHits} already counts them and the entity is never
+     * mutated, so counting them again here would overstate the engine damage.</p>
+     *
      * @param location the location to count in
      *
-     * @return the number of engine critical slots in the location that this simulation has already assigned a hit to
+     * @return the number of undamaged engine critical slots in the location, {@code 0} for non-Mek units
      */
-    private int simulatedEngineHitsIn(int location) {
+    private int survivingEngineSlotsIn(int location) {
+        if (!(entity instanceof Mek)) {
+            return 0;
+        }
         int simulatedHits = 0;
         for (int slotIndex = 0; slotIndex < entity.getNumberOfCriticalSlots(location); slotIndex++) {
             if (!assignedSlotKeys.contains(slotKey(location, slotIndex))) {
@@ -380,7 +394,9 @@ public final class PreExistingDamageApplier {
                 simulatedHits++;
             }
         }
-        return simulatedHits;
+        return entity.getNumberOfCriticalSlots(CriticalSlot.TYPE_SYSTEM, Mek.SYSTEM_ENGINE, location)
+              - entity.getDamagedCriticalSlots(CriticalSlot.TYPE_SYSTEM, Mek.SYSTEM_ENGINE, location)
+              - simulatedHits;
     }
 
     /** Rolls the hit location for one damage group, using the column the FSW rules assign to each unit type. */
@@ -580,6 +596,15 @@ public final class PreExistingDamageApplier {
         }
     }
 
+    /**
+     * Rolls one combat vehicle critical hit and records it.
+     *
+     * <p>A forbidden pick (one that would destroy or immobilize the unit) is never recorded. Per the FSW rules it is
+     * rerolled once; if the reroll is also forbidden the crit is discarded and a fallback damage group is queued
+     * instead, so the unit still takes the damage without being killed.</p>
+     *
+     * @param location the location the damage group hit, used to place a stabilizer crit when one is rolled
+     */
     private void assignVehicleCrit(int location) {
         List<VehiclePoolEntry> pool = buildVehiclePool();
         if (pool.isEmpty()) {
@@ -598,6 +623,17 @@ public final class PreExistingDamageApplier {
         queueFallbackGroup();
     }
 
+    /**
+     * Builds the candidate pool for one combat vehicle critical hit roll.
+     *
+     * <p>The pool deliberately still contains the destroying and immobilizing results ({@code ENGINE_DESTROYED},
+     * {@code CREW_KILLED}, {@code AMMO}, {@code MOTIVE_IMMOBILIZING}). They are not filtered out here because they
+     * must keep their share of the roll probability, otherwise the remaining crits would come up far more often than
+     * the vehicle critical hit table allows. {@link #assignVehicleCrit(int)} is what rejects them: a forbidden pick is
+     * never recorded, it triggers the FSW reroll rule instead.</p>
+     *
+     * @return the entries that may be rolled for this vehicle, forbidden entries included
+     */
     private List<VehiclePoolEntry> buildVehiclePool() {
         Tank tank = (Tank) entity;
         List<VehiclePoolEntry> pool = new ArrayList<>();
@@ -708,6 +744,13 @@ public final class PreExistingDamageApplier {
         }
     }
 
+    /**
+     * Rolls one aerospace fighter critical hit and records it.
+     *
+     * <p>A forbidden pick (one that would destroy the unit) is never recorded. Per the FSW rules it is rerolled once;
+     * if the reroll is also forbidden the crit is discarded and a fallback damage group is queued instead, so the unit
+     * still takes the damage without being killed.</p>
+     */
     private void assignFighterCrit() {
         List<FighterPoolEntry> pool = buildFighterPool();
         if (pool.isEmpty()) {
@@ -726,6 +769,16 @@ public final class PreExistingDamageApplier {
         queueFallbackGroup();
     }
 
+    /**
+     * Builds the candidate pool for one aerospace fighter critical hit roll.
+     *
+     * <p>As with the vehicle pool, the destroying results ({@code ENGINE_DESTROYED}, {@code FUEL_TANK},
+     * {@code CREW_KILLED}, {@code AMMO}) stay in the pool on purpose so they keep their share of the roll probability.
+     * {@link #assignFighterCrit()} rejects them: a forbidden pick is never recorded, it triggers the FSW reroll rule
+     * instead.</p>
+     *
+     * @return the entries that may be rolled for this fighter, forbidden entries included
+     */
     private List<FighterPoolEntry> buildFighterPool() {
         List<FighterPoolEntry> pool = new ArrayList<>();
         if (pickableEquipment() != null) {

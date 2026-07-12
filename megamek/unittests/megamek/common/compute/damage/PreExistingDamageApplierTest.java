@@ -300,9 +300,9 @@ class PreExistingDamageApplierTest {
     }
 
     /**
-     * A side torso on a Light-engine Mek holds two engine slots, so losing it costs two engine hits and the Mek
-     * survives. Engine hits assigned during the same simulation must not be counted twice, which would push the total
-     * to three and wrongly forbid the destruction.
+     * A side torso on a Light-engine Mek holds two engine slots, so losing one costs two engine hits and the Mek
+     * survives on two. A third hit anywhere would destroy the engine, so the simulation must count the slots lost with
+     * a destroyed location against the engine before it rolls any further crit.
      */
     @Test
     void lightEngineSideTorsoLossStaysAllowed() throws Exception {
@@ -313,22 +313,35 @@ class PreExistingDamageApplierTest {
             int dealt = startTotal - totalRemaining(result);
             assertTrue(dealt >= 40, "heavy damage on 50 tons is at least 40 points, was " + dealt);
             assertMekInvariants(mek, result);
+            assertTrue(engineHitsAfter(mek, result) < 3, "the engine must survive with fewer than three hits");
+        }
+    }
 
-            // a destroyed side torso plus its two engine hits must still leave the engine alive
-            int engineCrits = 0;
-            for (CritAssignment assignment : result.critAssignments()) {
-                if ((assignment instanceof MekSystemCrit mekSystemCrit)
-                      && (mekSystemCrit.system() == Mek.SYSTEM_ENGINE)) {
-                    engineCrits++;
-                }
-            }
-            for (int location : new int[] { Mek.LOC_LEFT_TORSO, Mek.LOC_RIGHT_TORSO }) {
-                if (result.internal()[location] == 0) {
-                    assertTrue(engineCrits + 2 < 3,
-                          "a destroyed side torso must not bring the engine to three hits");
-                }
+    /**
+     * Counts the engine hits the Mek ends up with. Destroying a location destroys every engine slot it carries, so
+     * those count in full; a location that survives only counts the engine crits the simulation assigned to it. A slot
+     * in a destroyed location must not be counted twice.
+     *
+     * @param mek    the Mek that was simulated on
+     * @param result the simulation output
+     *
+     * @return the total number of engine critical slots that would be hit
+     */
+    private int engineHitsAfter(Mek mek, PreExistingDamageResult result) {
+        int engineHits = 0;
+        for (int location = 0; location < mek.locations(); location++) {
+            if (result.internal()[location] == 0) {
+                engineHits += mek.getNumberOfCriticalSlots(CriticalSlot.TYPE_SYSTEM, Mek.SYSTEM_ENGINE, location);
             }
         }
+        for (CritAssignment assignment : result.critAssignments()) {
+            if ((assignment instanceof MekSystemCrit mekSystemCrit)
+                  && (mekSystemCrit.system() == Mek.SYSTEM_ENGINE)
+                  && (result.internal()[mekSystemCrit.location()] > 0)) {
+                engineHits++;
+            }
+        }
+        return engineHits;
     }
 
     @Test
@@ -385,6 +398,27 @@ class PreExistingDamageApplierTest {
             }
             assertTrue(engineCrits < 3, "three engine crits would destroy the fighter");
             assertEntityUntouched(fighter, startTotal);
+        }
+    }
+
+    /**
+     * The vehicle and fighter crit pools still contain the unit-killing results (crew killed, engine destroyed, ammo,
+     * fuel tank) so those keep their share of the roll probability. They must never reach the output: a forbidden pick
+     * is rerolled once and then discarded in favour of a fallback damage group.
+     */
+    @Test
+    void unitKillingCritsNeverReachTheResult() throws Exception {
+        for (int run = 0; run < SIMULATION_RUNS; run++) {
+            for (Entity entity : new Entity[] { buildTank(), buildVtol(), buildFighter() }) {
+                PreExistingDamageResult result = PreExistingDamageApplier.simulate(entity,
+                      PreExistingDamageLevel.HEAVY);
+                for (CritAssignment assignment : result.critAssignments()) {
+                    if (assignment instanceof CritAssignment.EquipmentCrit(int equipmentNumber)) {
+                        assertFalse(entity.getEquipment(equipmentNumber).getType() instanceof AmmoType,
+                              "an ammo crit would explode the unit");
+                    }
+                }
+            }
         }
     }
 }

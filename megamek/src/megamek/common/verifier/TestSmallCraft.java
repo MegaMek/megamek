@@ -601,9 +601,11 @@ public class TestSmallCraft extends TestAero {
             }
             for (AmmoMounted ammo : bay.getBayAmmo()) {
                 AmmoType ammoType = ammo.getType();
-                // Calculate slots in the same way as getWeightAmmo()
-                int slots = (int) Math.ceil((double) ammo.getBaseShotsLeft() / ammoType.getShots());
-                ammoTypeCount.merge(ammoType.getAmmoType(), ammoType.getShots() * slots, Integer::sum);
+                // Must use the design spec number of shots, as the in-game remaining shots must be allowed to fall
+                // below 10 without making this unit illegal; the "originalShots" value cannot be used as it is
+                // meaningless during construction and could be any starting value depending on scenario
+                int ammoBins = (int) Math.round(ammo.getSize() / ammoType.getTonnage(vessel));
+                ammoTypeCount.merge(ammoType.getAmmoType(), ammoType.getShots() * ammoBins, Integer::sum);
             }
             for (AmmoTypeEnum at : ammoWeaponCount.keySet()) {
                 if (at != AmmoType.AmmoTypeEnum.NA) {

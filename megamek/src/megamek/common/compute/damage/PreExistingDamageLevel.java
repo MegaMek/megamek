@@ -69,7 +69,7 @@ public enum PreExistingDamageLevel {
         return guaranteedCritCount;
     }
 
-    /** @return true if this level determines critical hits from internal structure damage */
+    /** @return {@code true} if this level determines critical hits from internal structure damage */
     public boolean rollsInternalStructureCrits() {
         return rollsInternalStructureCrits;
     }

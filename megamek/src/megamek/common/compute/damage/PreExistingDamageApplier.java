@@ -42,6 +42,7 @@ import java.util.Set;
 import megamek.common.CriticalSlot;
 import megamek.common.HitData;
 import megamek.common.ToHitData;
+import megamek.common.annotations.Nullable;
 import megamek.common.compute.Compute;
 import megamek.common.compute.damage.CritAssignment.AeroFighterCrit;
 import megamek.common.compute.damage.CritAssignment.AeroFighterCritKind;
@@ -158,8 +159,8 @@ public final class PreExistingDamageApplier {
     /**
      * @param entity the unit to check
      *
-     * @return true if the pre-existing damage rules cover this unit type (Meks, combat vehicles, and aerospace or
-     *       conventional fighters, per FSW p.144)
+     * @return {@code true} if the pre-existing damage rules cover this unit type (Meks, combat vehicles, and
+     *       aerospace or conventional fighters, per FSW p.144)
      */
     public static boolean isSupported(Entity entity) {
         if (entity instanceof Mek) {
@@ -342,7 +343,7 @@ public final class PreExistingDamageApplier {
     }
 
     /**
-     * @return true if destroying this location would destroy the unit or reduce its mobility to zero, which
+     * @return {@code true} if destroying this location would destroy the unit or reduce its mobility to zero, which
      *       pre-existing damage may not do (FSW p.144)
      */
     private boolean isForbiddenLocationDestruction(int location) {
@@ -431,7 +432,8 @@ public final class PreExistingDamageApplier {
         } else if (entity instanceof Tank) {
             assignVehicleCrit(location);
         } else {
-            assignFighterCrit(location);
+            // fighter crits are unit-wide (avionics, FCS, engine, gear), so the location is not used
+            assignFighterCrit();
         }
     }
 
@@ -683,7 +685,7 @@ public final class PreExistingDamageApplier {
         }
     }
 
-    private void assignFighterCrit(int location) {
+    private void assignFighterCrit() {
         List<FighterPoolEntry> pool = buildFighterPool();
         if (pool.isEmpty()) {
             return;
@@ -769,10 +771,10 @@ public final class PreExistingDamageApplier {
 
     /**
      * @return a random hittable, undamaged, not-yet-assigned piece of equipment (weapons first come to mind, but any
-     *       hittable equipment qualifies, matching the dialog's equipment list), or null if none is left. Ammunition is
-     *       excluded; ammo hits are forbidden results (FSW p.145).
+     *       hittable equipment qualifies, matching the dialog's equipment list), or {@code null} if none is left.
+     *       Ammunition is excluded; ammo hits are forbidden results (FSW p.145).
      */
-    private Mounted<?> pickableEquipment() {
+    private @Nullable Mounted<?> pickableEquipment() {
         List<Mounted<?>> candidates = new ArrayList<>();
         for (Mounted<?> mounted : entity.getEquipment()) {
             if ((mounted.getLocation() == Entity.LOC_NONE) || !mounted.getType().isHittable()

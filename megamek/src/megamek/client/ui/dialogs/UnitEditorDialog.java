@@ -59,6 +59,7 @@ import megamek.client.ui.clientGUI.GUIPreferences;
 import megamek.codeUtilities.MathUtility;
 import megamek.common.CriticalSlot;
 import megamek.common.Player;
+import megamek.common.annotations.Nullable;
 import megamek.common.bays.ASFBay;
 import megamek.common.bays.Bay;
 import megamek.common.bays.SmallCraftBay;
@@ -280,15 +281,15 @@ public class UnitEditorDialog extends JDialog {
         snapshotArmor = new int[entity.locations()];
         snapshotRear = new int[entity.locations()];
         snapshotInternal = new int[entity.locations()];
-        for (int loc = 0; loc < entity.locations(); loc++) {
-            if (null != spnArmor[loc]) {
-                snapshotArmor[loc] = (Integer) spnArmor[loc].getValue();
+        for (int location = 0; location < entity.locations(); location++) {
+            if (null != spnArmor[location]) {
+                snapshotArmor[location] = (Integer) spnArmor[location].getValue();
             }
-            if (null != spnRear[loc]) {
-                snapshotRear[loc] = (Integer) spnRear[loc].getValue();
+            if (null != spnRear[location]) {
+                snapshotRear[location] = (Integer) spnRear[location].getValue();
             }
-            if (null != spnInternal[loc]) {
-                snapshotInternal[loc] = (Integer) spnInternal[loc].getValue();
+            if (null != spnInternal[location]) {
+                snapshotInternal[location] = (Integer) spnInternal[location].getValue();
             }
         }
         snapshotCritHits = new HashMap<>();
@@ -306,15 +307,15 @@ public class UnitEditorDialog extends JDialog {
     }
 
     private void restorePreExistingSnapshot() {
-        for (int loc = 0; loc < entity.locations(); loc++) {
-            if (null != spnArmor[loc]) {
-                spnArmor[loc].setValue(snapshotArmor[loc]);
+        for (int location = 0; location < entity.locations(); location++) {
+            if (null != spnArmor[location]) {
+                spnArmor[location].setValue(snapshotArmor[location]);
             }
-            if (null != spnRear[loc]) {
-                spnRear[loc].setValue(snapshotRear[loc]);
+            if (null != spnRear[location]) {
+                spnRear[location].setValue(snapshotRear[location]);
             }
-            if (null != spnInternal[loc]) {
-                spnInternal[loc].setValue(snapshotInternal[loc]);
+            if (null != spnInternal[location]) {
+                spnInternal[location].setValue(snapshotInternal[location]);
             }
         }
         snapshotCritHits.forEach(CheckCritPanel::setHits);
@@ -332,12 +333,12 @@ public class UnitEditorDialog extends JDialog {
             return;
         }
         PreExistingDamageResult result = PreExistingDamageApplier.simulate(entity, level);
-        for (int loc = 0; loc < entity.locations(); loc++) {
-            if (null != spnArmor[loc]) {
-                spnArmor[loc].setValue(result.armor()[loc]);
+        for (int location = 0; location < entity.locations(); location++) {
+            if (null != spnArmor[location]) {
+                spnArmor[location].setValue(result.armor()[location]);
             }
-            if (null != spnRear[loc]) {
-                spnRear[loc].setValue(result.rearArmor()[loc]);
+            if (null != spnRear[location]) {
+                spnRear[location].setValue(result.rearArmor()[location]);
             }
         }
         if (entity instanceof Aero) {
@@ -345,9 +346,9 @@ public class UnitEditorDialog extends JDialog {
                 spnInternal[0].setValue(result.structuralIntegrity());
             }
         } else {
-            for (int loc = 0; loc < entity.locations(); loc++) {
-                if (null != spnInternal[loc]) {
-                    spnInternal[loc].setValue(result.internal()[loc]);
+            for (int location = 0; location < entity.locations(); location++) {
+                if (null != spnInternal[location]) {
+                    spnInternal[location].setValue(result.internal()[location]);
                 }
             }
         }
@@ -438,7 +439,7 @@ public class UnitEditorDialog extends JDialog {
         }
     }
 
-    private void incrementCrit(CheckCritPanel critPanel) {
+    private void incrementCrit(@Nullable CheckCritPanel critPanel) {
         if (null != critPanel) {
             critPanel.setHits(critPanel.getHits() + 1);
         }
@@ -446,29 +447,29 @@ public class UnitEditorDialog extends JDialog {
 
     /** Colors the armor and internal values whenever a spinner changes, like the unit tooltip armor readout. */
     private void wireDamageColoring() {
-        for (int loc = 0; loc < entity.locations(); loc++) {
-            if (null != spnArmor[loc]) {
-                spnArmor[loc].addChangeListener(event -> refreshDamageColoring());
+        for (int location = 0; location < entity.locations(); location++) {
+            if (null != spnArmor[location]) {
+                spnArmor[location].addChangeListener(event -> refreshDamageColoring());
             }
-            if (null != spnRear[loc]) {
-                spnRear[loc].addChangeListener(event -> refreshDamageColoring());
+            if (null != spnRear[location]) {
+                spnRear[location].addChangeListener(event -> refreshDamageColoring());
             }
-            if (null != spnInternal[loc]) {
-                spnInternal[loc].addChangeListener(event -> refreshDamageColoring());
+            if (null != spnInternal[location]) {
+                spnInternal[location].addChangeListener(event -> refreshDamageColoring());
             }
         }
         refreshDamageColoring();
     }
 
     private void refreshDamageColoring() {
-        for (int loc = 0; loc < entity.locations(); loc++) {
-            Color worstColor = colorSpinner(spnArmor[loc], entity.getOArmor(loc, false), null);
-            worstColor = colorSpinner(spnRear[loc], entity.getOArmor(loc, true), worstColor);
+        for (int location = 0; location < entity.locations(); location++) {
+            Color worstColor = colorSpinner(spnArmor[location], entity.getOArmor(location, false), null);
+            worstColor = colorSpinner(spnRear[location], entity.getOArmor(location, true), worstColor);
             if (!(entity instanceof Aero)) {
-                worstColor = colorSpinner(spnInternal[loc], entity.getOInternal(loc), worstColor);
+                worstColor = colorSpinner(spnInternal[location], entity.getOInternal(location), worstColor);
             }
-            if ((null != locationLabels) && (null != locationLabels[loc]) && (null != worstColor)) {
-                locationLabels[loc].setForeground(worstColor);
+            if ((null != locationLabels) && (null != locationLabels[location]) && (null != worstColor)) {
+                locationLabels[location].setForeground(worstColor);
             }
         }
         if ((entity instanceof Aero aero) && (null != structuralIntegrityLabel) && (null != spnInternal[0])) {
@@ -483,7 +484,7 @@ public class UnitEditorDialog extends JDialog {
      * Colors one spinner's text by how damaged its value is and returns the more severe of that color and the given
      * one, so callers can color the location label by its worst value.
      */
-    private Color colorSpinner(JSpinner spinner, int originalValue, Color worstSoFar) {
+    private @Nullable Color colorSpinner(@Nullable JSpinner spinner, int originalValue, @Nullable Color worstSoFar) {
         if ((null == spinner) || (originalValue <= 0)) {
             return worstSoFar;
         }
@@ -505,7 +506,7 @@ public class UnitEditorDialog extends JDialog {
         return guiPreferences.getUnitTooltipArmorMiniColorIntact();
     }
 
-    private Color moreSevere(Color first, Color second) {
+    private @Nullable Color moreSevere(@Nullable Color first, @Nullable Color second) {
         if (null == second) {
             return first;
         }

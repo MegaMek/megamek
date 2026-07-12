@@ -175,12 +175,12 @@ class PreExistingDamageApplierTest {
                 assertFalse(mek.getEquipment(equipmentNumber).getType() instanceof AmmoType,
                       "ammo crits are forbidden");
             }
-            if (assignment instanceof MekSystemCrit(int system, int location)) {
-                assertFalse(system == Mek.SYSTEM_COCKPIT, "cockpit crits are forbidden");
-                if (system == Mek.SYSTEM_ENGINE) {
+            if (assignment instanceof MekSystemCrit mekSystemCrit) {
+                assertFalse(mekSystemCrit.system() == Mek.SYSTEM_COCKPIT, "cockpit crits are forbidden");
+                if (mekSystemCrit.system() == Mek.SYSTEM_ENGINE) {
                     engineCrits++;
                 }
-                if (system == Mek.SYSTEM_GYRO) {
+                if (mekSystemCrit.system() == Mek.SYSTEM_GYRO) {
                     gyroCrits++;
                 }
             }
@@ -291,8 +291,8 @@ class PreExistingDamageApplierTest {
             }
             int motiveCrits = 0;
             for (CritAssignment assignment : result.critAssignments()) {
-                if (assignment instanceof VehicleCrit(CritAssignment.VehicleCritKind kind, int location)
-                      && (kind == CritAssignment.VehicleCritKind.MOTIVE)) {
+                if ((assignment instanceof VehicleCrit vehicleCrit)
+                      && (vehicleCrit.kind() == CritAssignment.VehicleCritKind.MOTIVE)) {
                     motiveCrits++;
                 }
             }

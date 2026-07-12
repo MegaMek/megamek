@@ -135,6 +135,23 @@ class BLKFileTest {
     }
 
     @Test
+    void unitFileUUIDIsCanonicalizedOnLoad() throws Exception {
+        Tank tank = new Tank();
+        String unitFileUUID = tank.getUnitFileUUID();
+        BuildingBlock blk = new BuildingBlock();
+        blk.writeBlockData(BLKFile.UNIT_FILE_UUID, "  " + unitFileUUID.toUpperCase() + "  ");
+        blk.writeBlockData("Name", "Unit With Noncanonical UUID");
+        blk.writeBlockData("year", 3025);
+        blk.writeBlockData("type", "IS");
+        BLKFile loader = new BLKFile();
+        loader.dataFile = blk;
+
+        loader.setBasicEntityData(tank);
+
+        assertEquals(unitFileUUID, tank.getUnitFileUUID());
+    }
+
+    @Test
     void invalidUnitFileUUIDIsRegenerated() throws Exception {
         BuildingBlock blk = new BuildingBlock();
         blk.writeBlockData(BLKFile.UNIT_FILE_UUID, "invalid");

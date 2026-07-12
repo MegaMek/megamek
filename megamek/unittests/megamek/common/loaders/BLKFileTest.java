@@ -87,6 +87,37 @@ class BLKFileTest {
     }
 
     @Test
+    void unitFileUUIDIsFirstBlock() throws EntitySavingException {
+        Tank tank = createMinimalTank();
+        String[] blockData = BLKFile.getBlock(tank).getAllDataAsString();
+        String serialized = String.join("\n", blockData);
+
+        int uuidIndex = serialized.indexOf("<" + BLKFile.UNIT_FILE_UUID + ">");
+        assertTrue(uuidIndex >= 0);
+        assertTrue(uuidIndex < serialized.indexOf("<UnitType>"));
+        assertTrue(serialized.indexOf(tank.getUnitFileUUID()) > uuidIndex);
+    }
+
+    @Test
+    void missingUnitFileUUIDKeepsGeneratedVersion7UUID() throws Exception {
+        BuildingBlock blk = new BuildingBlock();
+        blk.writeBlockData("Name", "Legacy Unit");
+        blk.writeBlockData("year", 3025);
+        blk.writeBlockData("type", "IS");
+        BLKFile loader = new BLKFile();
+        loader.dataFile = blk;
+        Tank tank = new Tank();
+        String generatedBeforeLoad = tank.getUnitFileUUID();
+
+        loader.setBasicEntityData(tank);
+
+        java.util.UUID generatedUUID = java.util.UUID.fromString(tank.getUnitFileUUID());
+        assertEquals(generatedBeforeLoad, tank.getUnitFileUUID());
+        assertEquals(7, generatedUUID.version());
+        assertEquals(2, generatedUUID.variant());
+    }
+
+    @Test
     void parseBayDataAssignsMissingBayNumber() throws BLKDecodingException {
         final double SIZE = 2.0;
         final int DOORS = 1;

@@ -70,6 +70,8 @@ import megamek.logging.MMLogger;
 public class BLKFile {
     private static final MMLogger logger = MMLogger.create(BLKFile.class);
 
+    public static final String UNIT_FILE_UUID = "UUID";
+
     BuildingBlock dataFile;
 
     public static final int FUSION = 0;
@@ -117,6 +119,14 @@ public class BLKFile {
     }
 
     protected void setBasicEntityData(Entity entity) throws EntityLoadingException {
+        if (dataFile.exists(UNIT_FILE_UUID)) {
+            try {
+                entity.setUnitFileUUID(dataFile.getDataAsString(UNIT_FILE_UUID)[0]);
+            } catch (IllegalArgumentException ex) {
+                throw new EntityLoadingException("Invalid unit file UUID: " + ex.getMessage());
+            }
+        }
+
         if (!dataFile.exists("Name")) {
             throw new EntityLoadingException("Could not find name block.");
         }
@@ -708,6 +718,7 @@ public class BLKFile {
     public static BuildingBlock getBlock(Entity t) throws EntitySavingException {
         BuildingBlock blk = new BuildingBlock();
         blk.createNewBlock();
+        blk.writeBlockData(UNIT_FILE_UUID, t.getUnitFileUUID());
 
         if (t instanceof BattleArmor) {
             blk.writeBlockData("UnitType", "BattleArmor");

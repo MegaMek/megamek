@@ -91,6 +91,32 @@ class MtfFileTest {
     }
 
     @Test
+    void unitFileUUIDIsFirstAndSurvivesRoundTrip() throws Exception {
+        Mek mek = new BipedMek();
+        String originalUUID = mek.getUnitFileUUID();
+        String mtf = mek.getMtf();
+
+        assertTrue(mtf.startsWith(MtfFile.UUID + originalUUID));
+        assertEquals(originalUUID, toMtfFile(mek).getEntity().getUnitFileUUID());
+    }
+
+    @Test
+    void missingUnitFileUUIDGeneratesVersion7UUID() throws Exception {
+        Mek mek = new BipedMek();
+        String originalUUID = mek.getUnitFileUUID();
+        toMtfFile(mek);
+        String mtf = mek.getMtf();
+        String legacyMtf = mtf.substring(mtf.indexOf('\n') + 1);
+
+        Entity loaded = new MtfFile(new ByteArrayInputStream(legacyMtf.getBytes())).getEntity();
+
+        java.util.UUID generatedUUID = java.util.UUID.fromString(loaded.getUnitFileUUID());
+        assertFalse(originalUUID.equals(loaded.getUnitFileUUID()));
+        assertEquals(7, generatedUUID.version());
+        assertEquals(2, generatedUUID.variant());
+    }
+
+    @Test
     void testLoadEquipment() throws Exception {
         Mek mek = new BipedMek();
         Mounted<?> mount = Mounted.createMounted(mek, EquipmentType.get("Medium Laser"));

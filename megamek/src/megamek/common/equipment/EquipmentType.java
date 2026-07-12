@@ -512,7 +512,7 @@ public class EquipmentType implements ITechnology {
     /**
      * Returns {@code true} if this equipment has a range-based to-hit modifier.
      */
-    protected boolean hasHitModifiersByRange() {
+    public boolean hasHitModifiersByRange() {
         return false;
     }
 

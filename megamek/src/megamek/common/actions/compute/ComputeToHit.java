@@ -1643,7 +1643,7 @@ public class ComputeToHit {
 
         // Flat to hit modifiers defined in WeaponType
         int modifier = weaponType.getToHitModifier(weapon);
-        if (target != null) {
+        if ((target != null) && weaponType.hasHitModifiersByRange()) {
             int nRange = ae.getPosition().distance(target.getPosition());
             int[] nRanges = weaponType.getRanges(weapon, ammo);
 

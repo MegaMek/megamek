@@ -75,7 +75,7 @@ public class VariableSpeedPulseLaserWeapon extends LaserWeapon {
     }
 
     @Override
-    protected boolean hasHitModifiersByRange() {
+    public boolean hasHitModifiersByRange() {
         return true;
     }
 

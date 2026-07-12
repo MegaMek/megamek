@@ -33,8 +33,16 @@ package megamek.common.rules.totalwarfare;
  */
 
 import megamek.common.rules.core.CoreRulesUnits;
+import megamek.common.units.Mek;
 
 public class TWRulesUnits extends CoreRulesUnits {
     // Mule kicks have a +1 modifier
+    @Override
     public int getMuleKickModifier() { return 1; }
+    
+    // Leg destruction does not cause immobile
+    @Override
+    public boolean getDoesLegDestructionCauseImmobile(Mek mek) {
+        return false;
+    }
 }

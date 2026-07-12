@@ -114,29 +114,14 @@ public class QuadMek extends Mek {
         return i >= 3;
     }
 
-    // PLAYTEST2 New Method for immobile due to no legs.
     @Override
     public boolean isImmobile() {
-        if (gameOptions().booleanOption(OptionsConstants.PLAYTEST_2)) {
-            int legsDestroyed = 0;
-            int hipHits = 0;
-            for (int i = 0; i < locations(); i++) {
-                if (locationIsLeg(i)) {
-                    if (isLocationBad(i)) {
-                        legsDestroyed++;
-                    } else if (legHasHipCrit(i)) {
-                        hipHits++;
-                    }
-                }
-            }
-            if (legsDestroyed == 4 || ((hipHits == 4) && (getJumpMP() == 0))) {
-                return true;
-            }
+        if (Game.rulesManager.getRulesUnits().getDoesLegDestructionCauseImmobile(this)) {
+            return false;
         }
         return super.isImmobile();
     }
-
-
+    
     @Override
     public int getWalkMP(MPCalculationSetting mpCalculationSetting) {
         int mp = getOriginalWalkMP();

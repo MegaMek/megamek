@@ -34,6 +34,19 @@ package megamek.common.rules;
  */
 
 
+import megamek.common.units.EntityMovementMode;
+
 public abstract class RulesMovement {
+    // Can units skid?
     public abstract boolean skidEnabled();
+
+    // Can a unit use run / flank MP in water
+    public abstract boolean cannotRunInWater(EntityMovementMode movementMode,
+                                    boolean amphibious);
+
+    // What is the MP cost of moving into a water hex that is fully submerged
+    public abstract int getUnderwaterMPCost();
+
+    // Can you move backwards up elevation?
+    public abstract boolean enableBackwardsElevationChange(boolean toBackwardsElevation);
 }

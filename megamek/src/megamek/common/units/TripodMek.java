@@ -119,18 +119,8 @@ public class TripodMek extends MekWithArms {
 
     @Override
     public boolean isImmobile() {
-        if (gameOptions().booleanOption(OptionsConstants.PLAYTEST_2)) {
-            int legsDestroyed = 0;
-            for (int i = 0; i < locations(); i++) {
-                if (locationIsLeg(i)) {
-                    if (isLocationBad(i)) {
-                        legsDestroyed++;
-                    }
-                }
-            }
-            if (legsDestroyed == 2) {
-                return true;
-            }
+        if (Game.rulesManager.getRulesUnits().getDoesLegDestructionCauseImmobile(this)) {
+            return false;
         }
         return super.isImmobile();
     }

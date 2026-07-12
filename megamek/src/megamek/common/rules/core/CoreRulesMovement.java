@@ -34,11 +34,42 @@ package megamek.common.rules.core;
  */
 
 
+import megamek.common.equipment.MiscType;
 import megamek.common.rules.RulesMovement;
+import megamek.common.units.EntityMovementMode;
 
 public class CoreRulesMovement extends RulesMovement {
     // No skidding in Core Rules
     public boolean skidEnabled() {
         return false;
+    }
+
+    // Can you run / flank in water? Core p.51
+    public boolean cannotRunInWater(EntityMovementMode movementMode,
+          boolean amphibious) {
+        if  ((movementMode != EntityMovementMode.HOVER) &&
+              (movementMode!= EntityMovementMode.NAVAL) &&
+              (movementMode != EntityMovementMode.HYDROFOIL) &&
+              (movementMode != EntityMovementMode.INF_UMU) &&
+              (movementMode != EntityMovementMode.SUBMARINE) &&
+              (movementMode != EntityMovementMode.VTOL) &&
+              (movementMode != EntityMovementMode.WIGE) &&
+              (movementMode != EntityMovementMode.BIPED) &&
+              (movementMode != EntityMovementMode.QUAD) &&
+              (movementMode != EntityMovementMode.TRIPOD) &&
+              !amphibious) {
+            return true;
+        }
+        return false;
+    }
+
+    // Fully underwater hexes cost 2MP. Core p.51
+    public int getUnderwaterMPCost() {
+        return 2;
+    }
+
+    // Backwards elevation changes are enabled. Core p.46
+    public boolean enableBackwardsElevationChange(final boolean toBackwardsElevation) {
+        return true;
     }
 }

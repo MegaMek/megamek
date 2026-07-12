@@ -33,8 +33,28 @@ package megamek.common.rules.core;
  */
 
 import megamek.common.rules.RulesUnits;
+import megamek.common.units.Mek;
+import megamek.common.units.QuadMek;
 
 public class CoreRulesUnits extends RulesUnits {
     // Mule kicks have no additional modifier Core p.238
     public int getMuleKickModifier() { return 0; }
+
+    // Is it immobile due to leg destruction? Core p.237 (tripod), p.239 (quad), p.90
+    public boolean getDoesLegDestructionCauseImmobile(Mek mek) {
+        int legsDestroyed = 0;
+        for (int i = 0; i < mek.locations(); i++) {
+            if (mek.locationIsLeg(i)) {
+                if (mek.isLocationBad(i)) {
+                    legsDestroyed++;
+                }
+            }
+        }
+        if (legsDestroyed == 2 && !(mek instanceof QuadMek)) {
+            return true;
+        } else if (legsDestroyed == 4 && (mek instanceof QuadMek)) {
+            return true;
+        }
+        return false;
+    }
 }

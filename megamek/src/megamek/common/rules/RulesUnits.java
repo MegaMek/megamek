@@ -32,8 +32,12 @@ package megamek.common.rules;
  * affiliated with Microsoft.
  */
 
+import megamek.common.units.Mek;
+
 public abstract class RulesUnits {
     // Any modifier for a mule kick
     public abstract int getMuleKickModifier();
 
+    // Does removing legs cause it to be immobile?
+    public abstract boolean getDoesLegDestructionCauseImmobile(Mek mek);
 }

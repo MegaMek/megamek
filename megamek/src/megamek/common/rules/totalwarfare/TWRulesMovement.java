@@ -35,6 +35,7 @@ package megamek.common.rules.totalwarfare;
 
 
 import megamek.common.rules.core.CoreRulesMovement;
+import megamek.common.units.EntityMovementMode;
 
 public class TWRulesMovement extends CoreRulesMovement {
 
@@ -42,5 +43,33 @@ public class TWRulesMovement extends CoreRulesMovement {
     @Override
     public boolean skidEnabled() {
         return true;
+    }
+
+    // Can you run / flank in water? Vehicles and mechs cannot
+    @Override
+    public boolean cannotRunInWater(EntityMovementMode movementMode,
+          boolean amphibious) {
+        if  ((movementMode != EntityMovementMode.HOVER) &&
+              (movementMode!= EntityMovementMode.NAVAL) &&
+              (movementMode != EntityMovementMode.HYDROFOIL) &&
+              (movementMode != EntityMovementMode.INF_UMU) &&
+              (movementMode != EntityMovementMode.SUBMARINE) &&
+              (movementMode != EntityMovementMode.VTOL) &&
+              (movementMode != EntityMovementMode.WIGE) &&
+              !amphibious) {
+            return true;
+        }
+        return false;
+    }
+
+    // Fully underwater hexes cost 3MP
+    public int getUnderwaterMPCost() {
+        return 3;
+    }
+    
+    // Backwards elevation changes only if tacops rule
+    @Override
+    public boolean enableBackwardsElevationChange(final boolean toBackwardsElevation) {
+        return toBackwardsElevation;
     }
 }

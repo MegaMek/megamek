@@ -108,7 +108,7 @@ class MtfFileTest {
         String mtf = mek.getMtf();
         String legacyMtf = mtf.substring(mtf.indexOf('\n') + 1);
 
-        Entity loaded = new MtfFile(new ByteArrayInputStream(legacyMtf.getBytes())).getEntity();
+        Entity loaded = new MtfFile(new ByteArrayInputStream(legacyMtf.getBytes(java.nio.charset.StandardCharsets.UTF_8))).getEntity();
 
         java.util.UUID generatedUUID = java.util.UUID.fromString(loaded.getUnitFileUUID());
         assertFalse(originalUUID.equals(loaded.getUnitFileUUID()));

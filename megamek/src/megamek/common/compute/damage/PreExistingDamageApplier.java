@@ -351,13 +351,36 @@ public final class PreExistingDamageApplier {
             if ((location == Mek.LOC_HEAD) || (location == Mek.LOC_CENTER_TORSO) || mek.locationIsLeg(location)) {
                 return true;
             }
-            // destroying a side torso destroys its engine slots; forbid it if that would kill the engine
+            // Destroying a side torso destroys its engine slots; forbid it if that would kill the engine. Count only
+            // the slots this would newly hit: engineHits already includes any this simulation assigned here, and the
+            // entity itself is never mutated, so those must be excluded to avoid counting them twice.
             int engineSlotsHere = entity.getNumberOfCriticalSlots(CriticalSlot.TYPE_SYSTEM, Mek.SYSTEM_ENGINE, location)
-                  - entity.getDamagedCriticalSlots(CriticalSlot.TYPE_SYSTEM, Mek.SYSTEM_ENGINE, location);
+                  - entity.getDamagedCriticalSlots(CriticalSlot.TYPE_SYSTEM, Mek.SYSTEM_ENGINE, location)
+                  - simulatedEngineHitsIn(location);
             return (engineSlotsHere > 0) && ((engineHits + engineSlotsHere) >= ENGINE_HITS_TO_DESTROY);
         }
         // destroying any combat vehicle location destroys or immobilizes the vehicle (incl. VTOL rotors)
         return true;
+    }
+
+    /**
+     * @param location the location to count in
+     *
+     * @return the number of engine critical slots in the location that this simulation has already assigned a hit to
+     */
+    private int simulatedEngineHitsIn(int location) {
+        int simulatedHits = 0;
+        for (int slotIndex = 0; slotIndex < entity.getNumberOfCriticalSlots(location); slotIndex++) {
+            if (!assignedSlotKeys.contains(slotKey(location, slotIndex))) {
+                continue;
+            }
+            CriticalSlot slot = entity.getCritical(location, slotIndex);
+            if ((slot != null) && (slot.getType() == CriticalSlot.TYPE_SYSTEM)
+                  && (slot.getIndex() == Mek.SYSTEM_ENGINE)) {
+                simulatedHits++;
+            }
+        }
+        return simulatedHits;
     }
 
     /** Rolls the hit location for one damage group, using the column the FSW rules assign to each unit type. */

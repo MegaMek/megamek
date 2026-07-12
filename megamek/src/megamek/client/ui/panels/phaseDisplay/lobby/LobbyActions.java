@@ -241,7 +241,7 @@ public class LobbyActions {
             return;
         }
         Entity entity = CollectionUtil.anyOneElement(entities);
-        UnitEditorDialog med = new UnitEditorDialog(frame(), entity);
+        UnitEditorDialog med = new UnitEditorDialog(frame(), entity, localPlayer().isGameMaster());
         med.setVisible(true);
         med.dispose();
         sendUpdates(entities);

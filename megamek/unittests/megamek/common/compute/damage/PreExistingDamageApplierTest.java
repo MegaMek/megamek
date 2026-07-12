@@ -92,6 +92,29 @@ class PreExistingDamageApplierTest {
         return mek;
     }
 
+    /**
+     * A Light engine puts two engine slots in each side torso, so destroying one side torso costs only two engine
+     * hits and leaves the Mek alive. This is the case where double-counting a simulation-assigned engine hit would
+     * wrongly forbid the destruction.
+     */
+    private Mek buildLightEngineMek() throws Exception {
+        Mek mek = new BipedMek();
+        mek.setWeight(50.0);
+        mek.setEngine(new Engine(250, Engine.LIGHT_ENGINE, 0));
+        mek.addCockpit();
+        mek.addGyro();
+        mek.addEngineCrits();
+        mek.autoSetInternal();
+        for (int location = 0; location < mek.locations(); location++) {
+            mek.initializeArmor(12, location);
+            if (mek.hasRearArmor(location)) {
+                mek.initializeRearArmor(4, location);
+            }
+        }
+        mek.addEquipment(EquipmentType.get("Medium Laser"), Mek.LOC_RIGHT_ARM);
+        return mek;
+    }
+
     private Tank buildTank() throws Exception {
         Tank tank = new Tank();
         tank.setMovementMode(EntityMovementMode.TRACKED);
@@ -273,6 +296,38 @@ class PreExistingDamageApplierTest {
             assertTrue(dealt >= 40, "heavy damage on 50 tons is at least 40 points, was " + dealt);
             assertMekInvariants(mek, result);
             assertEntityUntouched(mek, startTotal);
+        }
+    }
+
+    /**
+     * A side torso on a Light-engine Mek holds two engine slots, so losing it costs two engine hits and the Mek
+     * survives. Engine hits assigned during the same simulation must not be counted twice, which would push the total
+     * to three and wrongly forbid the destruction.
+     */
+    @Test
+    void lightEngineSideTorsoLossStaysAllowed() throws Exception {
+        for (int run = 0; run < SIMULATION_RUNS; run++) {
+            Mek mek = buildLightEngineMek();
+            int startTotal = totalRemaining(mek);
+            PreExistingDamageResult result = PreExistingDamageApplier.simulate(mek, PreExistingDamageLevel.HEAVY);
+            int dealt = startTotal - totalRemaining(result);
+            assertTrue(dealt >= 40, "heavy damage on 50 tons is at least 40 points, was " + dealt);
+            assertMekInvariants(mek, result);
+
+            // a destroyed side torso plus its two engine hits must still leave the engine alive
+            int engineCrits = 0;
+            for (CritAssignment assignment : result.critAssignments()) {
+                if ((assignment instanceof MekSystemCrit mekSystemCrit)
+                      && (mekSystemCrit.system() == Mek.SYSTEM_ENGINE)) {
+                    engineCrits++;
+                }
+            }
+            for (int location : new int[] { Mek.LOC_LEFT_TORSO, Mek.LOC_RIGHT_TORSO }) {
+                if (result.internal()[location] == 0) {
+                    assertTrue(engineCrits + 2 < 3,
+                          "a destroyed side torso must not bring the engine to three hits");
+                }
+            }
         }
     }
 

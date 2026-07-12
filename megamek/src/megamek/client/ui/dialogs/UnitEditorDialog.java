@@ -58,7 +58,6 @@ import megamek.client.ui.clientGUI.CloseAction;
 import megamek.client.ui.clientGUI.GUIPreferences;
 import megamek.codeUtilities.MathUtility;
 import megamek.common.CriticalSlot;
-import megamek.common.Player;
 import megamek.common.annotations.Nullable;
 import megamek.common.bays.ASFBay;
 import megamek.common.bays.Bay;
@@ -72,7 +71,6 @@ import megamek.common.equipment.EquipmentTypeLookup;
 import megamek.common.equipment.IArmorState;
 import megamek.common.equipment.MiscType;
 import megamek.common.equipment.Mounted;
-import megamek.common.game.Game;
 import megamek.common.options.OptionsConstants;
 import megamek.common.units.*;
 import megamek.common.weapons.attacks.InfantryAttack;
@@ -147,9 +145,30 @@ public class UnitEditorDialog extends JDialog {
     private JLabel[] locationLabels;
     private JLabel structuralIntegrityLabel;
 
-    public UnitEditorDialog(JFrame parent, Entity m) {
+    /** Whether the user opening this dialog is a gamemaster; only they may roll pre-existing damage. */
+    private final boolean gameMaster;
+
+    /**
+     * Opens the dialog without the pre-existing damage roller. Used where there is no gamemaster to speak of, such as
+     * MekHQ and MegaMekLab.
+     *
+     * @param parent the parent frame
+     * @param entity the unit to edit damage for
+     */
+    public UnitEditorDialog(JFrame parent, Entity entity) {
+        this(parent, entity, false);
+    }
+
+    /**
+     * @param parent     the parent frame
+     * @param entity     the unit to edit damage for
+     * @param gameMaster {@code true} if the user opening the dialog is a gamemaster, which enables the pre-existing
+     *                   damage roller (FSW p.144)
+     */
+    public UnitEditorDialog(JFrame parent, Entity entity, boolean gameMaster) {
         super(parent, true);
-        entity = m;
+        this.entity = entity;
+        this.gameMaster = gameMaster;
         initComponents();
         setLocationRelativeTo(parent);
     }
@@ -225,23 +244,11 @@ public class UnitEditorDialog extends JDialog {
     }
 
     /**
-     * The pre-existing damage panel appears only for the unit types the FSW rules cover and only when a gamemaster is
-     * assigned in the game; assigning pre-existing damage is a GM or scenario-setup decision.
+     * The pre-existing damage panel appears only for the unit types the FSW rules cover and only when the user opening
+     * the dialog is a gamemaster; assigning pre-existing damage is a GM or scenario-setup decision.
      */
     private boolean showPreExistingDamagePanel() {
-        if (!PreExistingDamageApplier.isSupported(entity)) {
-            return false;
-        }
-        Game game = entity.getGame();
-        if (game == null) {
-            return false;
-        }
-        for (Player player : game.getPlayersList()) {
-            if (player.isGameMaster()) {
-                return true;
-            }
-        }
-        return false;
+        return gameMaster && PreExistingDamageApplier.isSupported(entity);
     }
 
     private JPanel initPreExistingDamagePanel() {

@@ -61,7 +61,6 @@ public class ISBALaserVSPMedium extends VariableSpeedPulseLaserWeapon {
         sortingName = "Laser VSP C";
         heat = 7;
         damage = DAMAGE_VARIABLE;
-        toHitModifier = -4;
         shortRange = 2;
         mediumRange = 5;
         longRange = 9;

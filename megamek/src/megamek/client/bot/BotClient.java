@@ -1420,7 +1420,7 @@ public abstract class BotClient extends Client {
     		}    		
     		
     		Map<Double, List<Coords>> potentialCoords = 
-    				mdp.getBucketedCandidateCoords(minefieldType, getLocalPlayer(), getGame(), getBoard());
+    				mdp.getBucketedCandidateCoords(minefieldType, getBoard());
     		
     		// this operation takes the buckets and sorts them in descending order
     		List<Double> sortedBuckets = new ArrayList<>();

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2025 The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2026 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -39,7 +39,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-import java.util.SortedMap;
 
 import megamek.common.Hex;
 import megamek.common.Player;
@@ -122,6 +121,12 @@ public class MinefieldDeploymentPlanner {
 		}
 		
 		double hostileUnitCount = mekCount + trackedVeeCount + wheeledVeeCount + infantryCount + hoverVeeCount;
+		
+		// to be honest, it's not going to be a meaningful game in this case
+		if (hostileUnitCount <= 0) {
+			return;
+		}
+		
 		mekProportion = (double) mekCount / hostileUnitCount;
 		trackProportion = (double) trackedVeeCount / hostileUnitCount;
 		wheelProportion = (double) wheeledVeeCount / hostileUnitCount;
@@ -141,8 +146,8 @@ public class MinefieldDeploymentPlanner {
 		}
 		
 		// a simplification: we take the weight that has the most meks
-		// and we then put the setting at that. In case of a tie, we take the lower weight
-		// as lower-weight meks are probably faster and more likely to step on vibrabombs
+		// and we then put the setting at that. In case of a tie, we take an arbitrary
+		// weight (whichever one was added first) in the current implementation
 		int mekCount = 0;
 		double currentWeight = 0;
 		
@@ -169,10 +174,8 @@ public class MinefieldDeploymentPlanner {
 	 * Return a set of coordinates sorted into buckets by their utility score
 	 * Within a bucket, the list of coordinates is randomized
 	 */
-	public Map<Double, List<Coords>> getBucketedCandidateCoords(int minefieldType, 
-			Player player, Game game, Board board) {
-		Map<Coords, Double> minefieldScores = buildCoalescedMinefieldScores(minefieldType,
-				player, game, board);
+	public Map<Double, List<Coords>> getBucketedCandidateCoords(int minefieldType, Board board) {
+		Map<Coords, Double> minefieldScores = buildCoalescedMinefieldScores(minefieldType, board);
 		
 		Map<Double, List<Coords>> bucketedCoords = new HashMap<>();
 		
@@ -197,8 +200,7 @@ public class MinefieldDeploymentPlanner {
 	 * 
 	 * Currently, we only consider meks and ground-bound vehicles. 
 	 */
-	public Map<Coords, Double> buildCoalescedMinefieldScores(int minefieldType, 
-			Player player, Game game, Board board) {
+	public Map<Coords, Double> buildCoalescedMinefieldScores(int minefieldType, Board board) {
 		Map<Coords, Double> coalescedMap = new HashMap<>();		
 		
 		// now, we generate the map for each unit type
@@ -273,7 +275,7 @@ public class MinefieldDeploymentPlanner {
 		}
 				
 		for(int x = 0; x < board.getWidth(); x++) {
-			for (int y = 0; y < board.getWidth(); y++) {
+			for (int y = 0; y < board.getHeight(); y++) {
 				Coords coords = new Coords(x, y);
 				Hex hex = board.getHex(coords);
 				

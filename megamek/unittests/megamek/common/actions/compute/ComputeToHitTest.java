@@ -45,6 +45,7 @@ import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
+import megamek.client.ui.Messages;
 import megamek.common.GameBoardTestCase;
 import megamek.common.Player;
 import megamek.common.Team;
@@ -123,6 +124,20 @@ public class ComputeToHitTest extends GameBoardTestCase {
           hex 0305 0 "" ""
           end""";
 
+      private static final String BOARD_10_BY_01_FLAT_DATA = """
+              size 10 1
+              hex 0101 0 "" ""
+              hex 0201 0 "" ""
+              hex 0301 0 "" ""
+              hex 0401 0 "" ""
+              hex 0501 0 "" ""
+              hex 0601 0 "" ""
+              hex 0701 0 "" ""
+              hex 0801 0 "" ""
+              hex 0901 0 "" ""
+              hex 1001 0 "" ""
+              end""";
+
     private static TWGameManager mockGameManager;
     private static GameOptions mockGameOptions;
     private static Team team1;
@@ -135,6 +150,7 @@ public class ComputeToHitTest extends GameBoardTestCase {
     static {
         initializeBoard("03_BY_05_CENTER_HILLS", BOARD_03_BY_05_CENTER_HILLS_DATA);
         initializeBoard("03_BY_05_FLAT", BOARD_03_BY_05_FLAT_DATA);
+            initializeBoard("10_BY_01_FLAT", BOARD_10_BY_01_FLAT_DATA);
     }
 
     Mek createMek(String chassis, String model, String crewName) {
@@ -274,6 +290,51 @@ public class ComputeToHitTest extends GameBoardTestCase {
         game.addPlayer(0, player1);
         game.addPlayer(1, player2);
     }
+
+      @Test
+      @DisplayName("Medium VSP Laser applies its range-specific to-hit modifier")
+      void mediumVspLaserAppliesRangeSpecificToHitModifier() throws LocationFullException {
+            setBoard("10_BY_01_FLAT");
+
+            Mek attacker = createMek("Attacker", "ATK-1", "Alice");
+            attacker.setOwnerId(player1.getId());
+            attacker.setId(1);
+            attacker.setPosition(new Coords(0, 0));
+            when(attacker.getCrew().isActive()).thenReturn(true);
+            when(attacker.getCrew().getCrewType()).thenReturn(CrewType.SINGLE);
+            WeaponType vspLaserType = (WeaponType) EquipmentType.get("ISMediumVSPLaser");
+            WeaponMounted vspLaser = (WeaponMounted) attacker.addEquipment(vspLaserType, Mek.LOC_CENTER_TORSO);
+
+            Mek target = createMek("Target", "TGT-1", "Bob");
+            target.setOwnerId(player2.getId());
+            target.setId(2);
+            when(target.getCrew().isActive()).thenReturn(true);
+
+            game.addEntity(attacker);
+            game.addEntity(target);
+
+            int[][] rangeAndModifier = { { 2, -3 }, { 5, -2 }, { 9, -1 } };
+            String weaponModifierDescription = Messages.getString("WeaponAttackAction.WeaponMod");
+            for (int[] testCase : rangeAndModifier) {
+                  int range = testCase[0];
+                  int expectedModifier = testCase[1];
+                  target.setPosition(new Coords(range, 0));
+                  int targetDirection = attacker.getPosition().direction(target.getPosition());
+                  attacker.setFacing(targetDirection);
+                  attacker.setSecondaryFacing(targetDirection);
+
+                  ToHitData result = ComputeToHit.toHitCalc(game, attacker.getId(), target,
+                          vspLaser.getEquipmentNum(), Entity.LOC_NONE, AimingMode.NONE,
+                          false, false, null, null, false, false, null, false,
+                          WeaponAttackAction.UNASSIGNED, WeaponAttackAction.UNASSIGNED);
+
+                  assertTrue(result.getModifiers().stream().anyMatch(modifier ->
+                                    (modifier.value() == expectedModifier)
+                                            && weaponModifierDescription.equals(modifier.description())),
+                          () -> "Expected Medium VSP Laser modifier " + expectedModifier + " at range " + range
+                                    + ", but modifiers were " + result.getModifiers());
+            }
+      }
 
     @Nested
     @DisplayName(value = "toHitCalc Tests - BuildingEntity")

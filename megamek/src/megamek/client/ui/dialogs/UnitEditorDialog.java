@@ -202,7 +202,8 @@ public class UnitEditorDialog extends JDialog implements LocationSelectListener 
         JPanel panMain = new JPanel(new GridBagLayout());
         JPanel panButtons = new JPanel(new GridLayout(1, 2));
 
-        panelBuilder = new UnitDamagePanelBuilder(entity, controls);
+        // refilling ammo is a gamemaster's business, and MegaMek's alone: MekHQ counts what is in a bin itself
+        panelBuilder = new UnitDamagePanelBuilder(entity, controls, gameMaster);
         if (entity.isConventionalInfantry()) {
             GridBagConstraints gridBagConstraints = new GridBagConstraints();
             gridBagConstraints.gridx = 0;
@@ -631,7 +632,7 @@ public class UnitEditorDialog extends JDialog implements LocationSelectListener 
         }
         // a location with a critical hit is striped on the diagram, so it follows the crit controls as well
         controls.critsByLocation.values()
-              .forEach(crits -> crits.forEach(crit -> crit.setOnHitsChanged(this::refreshDamageDisplay)));
+              .forEach(crits -> crits.forEach(crit -> crit.addHitsChangedListener(this::refreshDamageDisplay)));
         refreshDamageDisplay();
     }
 
@@ -761,6 +762,11 @@ public class UnitEditorDialog extends JDialog implements LocationSelectListener 
     @Override
     public boolean selectsOnSingleClick() {
         return true;
+    }
+
+    /** The editor's controls, so that a test can set them the way a user would. */
+    UnitDamageControls controlsForTesting() {
+        return controls;
     }
 
     /** Shows the panel of the location the user picked in the armor diagram. */

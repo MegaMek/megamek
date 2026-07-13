@@ -32,6 +32,7 @@
  */
 package megamek.client.ui.dialogs.unitEditor;
 
+import java.util.Map;
 import javax.swing.JSpinner;
 
 import megamek.common.CriticalSlot;
@@ -414,6 +415,7 @@ public class UnitDamageApplier {
 
         applyCrewHits();
         applyHeat();
+        applyAmmoShots();
         logAppliedEdits();
     }
 
@@ -466,6 +468,19 @@ public class UnitDamageApplier {
             crew.setUnconscious(false, slot);
             crew.setKoThisRound(false, slot);
             crew.setHits((Integer) controls.spnCrewHits[slot].getValue(), slot);
+        }
+    }
+
+    /**
+     * Refills the ammo bins to what the gamemaster set. This runs after the equipment crits, so a bin whose crit
+     * was taken off is a working bin again by the time its shots are put back into it.
+     */
+    private void applyAmmoShots() {
+        for (Map.Entry<Integer, JSpinner> ammoShots : controls.ammoShots.entrySet()) {
+            Mounted<?> ammoBin = entity.getEquipment(ammoShots.getKey());
+            if (ammoBin != null) {
+                ammoBin.setShotsLeft((Integer) ammoShots.getValue().getValue());
+            }
         }
     }
 

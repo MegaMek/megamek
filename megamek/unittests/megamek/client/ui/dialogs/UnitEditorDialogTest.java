@@ -55,8 +55,10 @@ import javax.swing.SpinnerNumberModel;
 import megamek.client.Client;
 import megamek.client.ui.Messages;
 import megamek.client.ui.dialogs.unitDisplay.ArmorPanel;
+import megamek.client.ui.dialogs.unitEditor.CheckCritPanel;
 import megamek.client.ui.widget.picmap.PMSimplePolygonArea;
 import megamek.common.enums.GamePhase;
+import megamek.common.equipment.AmmoMounted;
 import megamek.common.equipment.EquipmentType;
 import megamek.common.game.Game;
 import megamek.common.units.Crew;
@@ -240,6 +242,57 @@ class UnitEditorDialogTest {
         JButton destroy = findButton(dialog.getContentPane(), Messages.getString("UnitEditorDialog.destroyUnit"));
         assertNotNull(destroy);
         assertFalse(destroy.isEnabled(), "Destroy Unit was offered without a client to destroy through");
+        dialog.dispose();
+    }
+
+    /**
+     * A gamemaster can refill an ammo bin. Critting the bin empties it, since a destroyed bin holds nothing, and
+     * taking the crit off restores the bin and the shots that were in it.
+     */
+    @Test
+    void aGameMasterCanRefillAnAmmoBin() {
+        Entity entity = MMTestUtilities.getEntityForUnitTesting("Atlas AS7-D", false);
+        assertNotNull(entity);
+        new Game().addEntity(entity);
+        AmmoMounted ammoBin = entity.getAmmo().getFirst();
+        int equipmentNumber = entity.getEquipmentNum(ammoBin);
+        ammoBin.setShotsLeft(3);
+
+        UnitEditorDialog dialog = new UnitEditorDialog(new JFrame(), entity, true);
+        JSpinner shots = dialog.controlsForTesting().ammoShots.get(equipmentNumber);
+        assertNotNull(shots, "the gamemaster was given no way to set the shots in a bin");
+        assertEquals(3, shots.getValue(), "the bin's shots were not read from the unit");
+
+        // critting the bin empties it and locks the count
+        CheckCritPanel crit = dialog.controlsForTesting().equipCrits.get(equipmentNumber);
+        crit.setHits(1);
+        assertEquals(0, shots.getValue(), "critting the bin did not empty it");
+        assertFalse(shots.isEnabled(), "the shots of a destroyed bin can still be set");
+
+        // taking the crit off restores the bin and what was in it
+        crit.setHits(0);
+        assertEquals(3, shots.getValue(), "the bin's shots were not restored with the bin");
+        assertTrue(shots.isEnabled(), "the restored bin's shots cannot be set");
+
+        shots.setValue(11);
+        clickOkay(dialog);
+
+        assertFalse(ammoBin.isDestroyed(), "the bin was not restored on the unit");
+        assertEquals(11, ammoBin.getBaseShotsLeft(), "the bin was not refilled on the unit");
+        dialog.dispose();
+    }
+
+    /** MekHQ counts what is in a bin itself, as campaign stock, so the editor does not offer to set it there. */
+    @Test
+    void ammoCannotBeSetWithoutTheGameMasterTools() {
+        Entity entity = MMTestUtilities.getEntityForUnitTesting("Atlas AS7-D", false);
+        assertNotNull(entity);
+        new Game().addEntity(entity);
+
+        UnitEditorDialog dialog = new UnitEditorDialog(new JFrame(), entity);
+
+        assertTrue(dialog.controlsForTesting().ammoShots.isEmpty(),
+              "ammo can be set without the gamemaster tools, which MekHQ opens the editor without");
         dialog.dispose();
     }
 

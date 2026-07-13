@@ -67,6 +67,9 @@ public class UnitDamageControls {
     /** The unit's current heat, for the unit types that track it. */
     public JSpinner spnHeat;
 
+    /** The shots left in each ammo bin, by its equipment number. Only a gamemaster edits these. */
+    public final Map<Integer, JSpinner> ammoShots = new HashMap<>();
+
     /** The crits of each piece of equipment, by its equipment number. */
     public Map<Integer, CheckCritPanel> equipCrits = new HashMap<>();
 

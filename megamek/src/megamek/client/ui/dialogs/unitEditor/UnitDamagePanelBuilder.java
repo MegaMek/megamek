@@ -32,6 +32,7 @@
  */
 package megamek.client.ui.dialogs.unitEditor;
 
+import java.awt.FlowLayout;
 import java.awt.Font;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
@@ -49,6 +50,7 @@ import javax.swing.SpinnerNumberModel;
 import megamek.client.ui.Messages;
 import megamek.common.CriticalSlot;
 import megamek.common.bays.Bay;
+import megamek.common.equipment.AmmoMounted;
 import megamek.common.equipment.DockingCollar;
 import megamek.common.equipment.MiscType;
 import megamek.common.equipment.Mounted;
@@ -77,10 +79,24 @@ public class UnitDamagePanelBuilder {
 
     private final Entity entity;
     private final UnitDamageControls controls;
+    /** Whether the ammo bins can be refilled here, which is a gamemaster's business and MegaMek's alone. */
+    private final boolean editAmmo;
 
     public UnitDamagePanelBuilder(Entity entity, UnitDamageControls controls) {
+        this(entity, controls, false);
+    }
+
+    /**
+     * @param entity   the unit to build the controls for
+     * @param controls the controls to fill in
+     * @param editAmmo whether an ammo bin's shots can be set. This is offered to a gamemaster in MegaMek only:
+     *                 MekHQ keeps its own count of what is in a bin, as campaign stock, and would be talking about
+     *                 a different thing.
+     */
+    public UnitDamagePanelBuilder(Entity entity, UnitDamageControls controls, boolean editAmmo) {
         this.entity = entity;
         this.controls = controls;
+        this.editAmmo = editAmmo;
     }
 
     /** Builds every control of the editor for the unit, filling in the controls this builder was given. */
@@ -310,8 +326,75 @@ public class UnitDamagePanelBuilder {
                 label += " (" + entity.getLocationAbbr(mounted.getLocation()) + "/"
                       + entity.getLocationAbbr(mounted.getSecondLocation()) + ")";
             }
-            addLabeledRow(targetPanel(mounted.getLocation()), label, crit);
+
+            JComponent control = crit;
+            if (editAmmo && (mounted instanceof AmmoMounted ammoBin)) {
+                control = ammoControl(eqNum, ammoBin, crit);
+            }
+            controls.addCritOfLocation(mounted.getLocation(), crit);
+            addLabeledRow(targetPanel(mounted.getLocation()), label, control);
         }
+    }
+
+    /**
+     * Builds the controls of an ammo bin: its crits, and the shots left in it. The two are tied together, because a
+     * destroyed bin holds no ammo: critting the bin empties it and locks the count, and taking the crit off again
+     * restores the bin and the shots that were in it, so a gamemaster can undo a mistake rather than having to
+     * reopen the dialog.
+     */
+    private JComponent ammoControl(int equipmentNumber, AmmoMounted ammoBin, CheckCritPanel crit) {
+        int fullShots = fullShots(ammoBin);
+        JSpinner shots = new JSpinner(new SpinnerNumberModel(Math.min(ammoBin.getBaseShotsLeft(), fullShots),
+              0,
+              fullShots,
+              1));
+        controls.ammoShots.put(equipmentNumber, shots);
+
+        // remembered so that taking the crit off can put the shots back
+        int[] shotsBeforeCrit = { (Integer) shots.getValue() };
+        boolean[] wasCritted = { crit.getHits() > 0 };
+        if (wasCritted[0]) {
+            // a bin already destroyed in play holds nothing, so there is a full bin to restore rather than none
+            shotsBeforeCrit[0] = fullShots;
+            shots.setValue(0);
+            shots.setEnabled(false);
+        }
+
+        crit.addHitsChangedListener(() -> {
+            boolean critted = crit.getHits() > 0;
+            if (critted == wasCritted[0]) {
+                return;
+            }
+            wasCritted[0] = critted;
+            if (critted) {
+                shotsBeforeCrit[0] = (Integer) shots.getValue();
+                shots.setValue(0);
+            } else {
+                shots.setValue(shotsBeforeCrit[0]);
+            }
+            shots.setEnabled(!critted);
+        });
+
+        JPanel control = new JPanel(new FlowLayout(FlowLayout.LEFT, 5, 0));
+        control.add(crit);
+        control.add(shots);
+        control.add(new JLabel(Messages.getString("UnitEditorDialog.shots")));
+        return control;
+    }
+
+    /**
+     * The shots a bin holds when full. A bin's original shots are only recorded for some unit types, so the ammo's
+     * own shot count stands in when they are not, and a bin that somehow holds more than either keeps what it has.
+     */
+    private int fullShots(AmmoMounted ammoBin) {
+        if (ammoBin.isOneShot()) {
+            return 1;
+        }
+        int fullShots = ammoBin.getType().getShots();
+        if (ammoBin.getOriginalShots() > 0) {
+            fullShots = ammoBin.getOriginalShots();
+        }
+        return Math.max(fullShots, ammoBin.getBaseShotsLeft());
     }
 
     /** Adds the unit-type specific system crits to the location panels they belong to. */

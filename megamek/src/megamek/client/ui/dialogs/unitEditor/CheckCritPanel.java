@@ -35,6 +35,7 @@ package megamek.client.ui.dialogs.unitEditor;
 import java.awt.event.ActionEvent;
 import java.io.Serial;
 import java.util.ArrayList;
+import java.util.List;
 import javax.swing.BoxLayout;
 import javax.swing.JCheckBox;
 import javax.swing.JPanel;
@@ -56,7 +57,7 @@ public class CheckCritPanel extends JPanel {
     private final ArrayList<JCheckBox> checks = new ArrayList<>();
 
     /** Told whenever the hits change, so the armor diagram can stripe the location. */
-    private Runnable onHitsChanged;
+    private final List<Runnable> hitsChangedListeners = new ArrayList<>();
 
     public CheckCritPanel(int crits, int current) {
         setLayout(new BoxLayout(this, BoxLayout.LINE_AXIS));
@@ -92,15 +93,16 @@ public class CheckCritPanel extends JPanel {
         hitsChanged();
     }
 
-    /** Runs the given action whenever the hits change, however they were changed. */
-    public void setOnHitsChanged(Runnable onHitsChanged) {
-        this.onHitsChanged = onHitsChanged;
+    /**
+     * Adds an action to run whenever the hits change, however they were changed. More than one thing follows a
+     * crit: the armor diagram stripes the location, and an ammo bin's shots follow its crit.
+     */
+    public void addHitsChangedListener(Runnable listener) {
+        hitsChangedListeners.add(listener);
     }
 
     private void hitsChanged() {
-        if (onHitsChanged != null) {
-            onHitsChanged.run();
-        }
+        hitsChangedListeners.forEach(Runnable::run);
     }
 
     private void checkBoxes(ActionEvent evt) {

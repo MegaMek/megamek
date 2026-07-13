@@ -36,6 +36,7 @@ package megamek.common;
 import static org.junit.jupiter.api.Assertions.assertAll;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.junit.jupiter.api.Assertions.fail;
 import static org.mockito.ArgumentMatchers.eq;
@@ -45,6 +46,7 @@ import static org.mockito.Mockito.spy;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.UUID;
 import java.util.Vector;
 import java.util.stream.Stream;
 
@@ -82,6 +84,59 @@ class EntityTest {
     @BeforeAll
     static void beforeAll() {
         EquipmentType.initializeTypes();
+    }
+
+    @Test
+    void unitFileUUIDIsVersion7() {
+        Entity entity = new BipedMek();
+        UUID uuid = UUID.fromString(entity.getUnitFileUUID());
+
+        assertEquals(7, uuid.version());
+        assertEquals(2, uuid.variant());
+    }
+
+    @Test
+    void regenerateUnitFileUUIDCreatesNewVersion7UUID() {
+        Entity entity = new BipedMek();
+        String originalUUID = entity.getUnitFileUUID();
+
+        entity.regenerateUnitFileUUID();
+
+        UUID regeneratedUUID = UUID.fromString(entity.getUnitFileUUID());
+        assertNotEquals(originalUUID, entity.getUnitFileUUID());
+        assertEquals(7, regeneratedUUID.version());
+        assertEquals(2, regeneratedUUID.variant());
+    }
+
+    @Test
+    void setUnitFileUUIDRegeneratesInvalidUUID() {
+        Entity entity = new BipedMek();
+        String originalUUID = entity.getUnitFileUUID();
+
+        entity.setUnitFileUUID(UUID.randomUUID().toString());
+
+        UUID regeneratedUUID = UUID.fromString(entity.getUnitFileUUID());
+        assertNotEquals(originalUUID, entity.getUnitFileUUID());
+        assertEquals(7, regeneratedUUID.version());
+        assertEquals(2, regeneratedUUID.variant());
+
+        String UUIDBeforeMalformedValue = entity.getUnitFileUUID();
+        entity.setUnitFileUUID("not-a-uuid");
+
+        regeneratedUUID = UUID.fromString(entity.getUnitFileUUID());
+        assertNotEquals(UUIDBeforeMalformedValue, entity.getUnitFileUUID());
+        assertEquals(7, regeneratedUUID.version());
+        assertEquals(2, regeneratedUUID.variant());
+    }
+
+    @Test
+    void setUnitFileUUIDCanonicalizesValidUUID() {
+        Entity entity = new BipedMek();
+        String unitFileUUID = entity.getUnitFileUUID();
+
+        entity.setUnitFileUUID("  " + unitFileUUID.toUpperCase() + "  ");
+
+        assertEquals(unitFileUUID, entity.getUnitFileUUID());
     }
 
     @Test

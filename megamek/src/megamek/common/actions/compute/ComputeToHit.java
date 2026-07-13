@@ -72,7 +72,6 @@ import megamek.common.weapons.battleArmor.clan.CLBALBX;
 import megamek.common.weapons.bayWeapons.ScreenLauncherBayWeapon;
 import megamek.common.weapons.capitalWeapons.CapitalMissileWeapon;
 import megamek.common.weapons.handlers.ARADEquipmentDetector;
-import megamek.common.weapons.lasers.VariableSpeedPulseLaserWeapon;
 import megamek.common.weapons.lasers.innerSphere.ISBombastLaser;
 import megamek.common.weapons.lrms.LRTWeapon;
 import megamek.common.weapons.srms.SRTWeapon;
@@ -1643,20 +1642,20 @@ public class ComputeToHit {
         }
 
         // Flat to hit modifiers defined in WeaponType
-        if (weaponType.getToHitModifier(weapon) != 0) {
-            int modifier = weaponType.getToHitModifier(weapon);
-            if (target != null && weaponType instanceof VariableSpeedPulseLaserWeapon) {
-                int nRange = ae.getPosition().distance(target.getPosition());
-                int[] nRanges = weaponType.getRanges(weapon, ammo);
+        int modifier = weaponType.getToHitModifier(weapon);
+        if ((target != null) && weaponType.hasHitModifiersByRange()) {
+            int nRange = ae.getPosition().distance(target.getPosition());
+            int[] nRanges = weaponType.getRanges(weapon, ammo);
 
-                if (nRange <= nRanges[RangeType.RANGE_SHORT]) {
-                    modifier += RangeType.RANGE_SHORT;
-                } else if (nRange <= nRanges[RangeType.RANGE_MEDIUM]) {
-                    modifier += RangeType.RANGE_MEDIUM;
-                } else {
-                    modifier += RangeType.RANGE_LONG;
-                }
+            if (nRange <= nRanges[RangeType.RANGE_SHORT]) {
+                modifier = weaponType.getToHitModifierAtRange(weapon, RangeType.RANGE_SHORT);
+            } else if (nRange <= nRanges[RangeType.RANGE_MEDIUM]) {
+                modifier = weaponType.getToHitModifierAtRange(weapon, RangeType.RANGE_MEDIUM);
+            } else {
+                modifier = weaponType.getToHitModifierAtRange(weapon, RangeType.RANGE_LONG);
             }
+        }
+        if (modifier != 0) {
             toHit.addModifier(modifier, Messages.getString("WeaponAttackAction.WeaponMod"));
 
         }

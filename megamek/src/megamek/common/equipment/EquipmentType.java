@@ -36,6 +36,7 @@ package megamek.common.equipment;
 import java.util.*;
 import java.util.stream.Collectors;
 
+import megamek.common.RangeType;
 import megamek.common.SimpleTechLevel;
 import megamek.common.TechAdvancement;
 import megamek.common.TechAdvancement.AdvancementPhase;
@@ -498,6 +499,21 @@ public class EquipmentType implements ITechnology {
 
     public int getToHitModifier(@Nullable Mounted<?> mounted) {
         return toHitModifier;
+    }
+
+    /**
+     * Returns the to-hit modifier for a range band. Equipment without a range-dependent modifier uses its regular
+     * mounted-equipment modifier.
+     */
+    public int getToHitModifierAtRange(@Nullable Mounted<?> mounted, int range) {
+        return getToHitModifier(mounted);
+    }
+
+    /**
+     * Returns {@code true} if this equipment has a range-based to-hit modifier.
+     */
+    public boolean hasHitModifiersByRange() {
+        return false;
     }
 
     public EquipmentBitSet getFlags() {
@@ -1212,7 +1228,13 @@ public class EquipmentType implements ITechnology {
         if (explosive) {
             stats.put("explosive", true);
         }
-        if (toHitModifier != 0) {
+        if (hasHitModifiersByRange()) {
+            int[] toHitModifiersByRange = {getToHitModifierAtRange(null, RangeType.RANGE_SHORT),
+                getToHitModifierAtRange(null, RangeType.RANGE_MEDIUM),
+                getToHitModifierAtRange(null, RangeType.RANGE_LONG)
+            };
+            stats.put("toHitModifier", toHitModifiersByRange);
+        } else if (toHitModifier != 0) {
             stats.put("toHitModifier", toHitModifier);
         }
         if (tankSlots > -1) {

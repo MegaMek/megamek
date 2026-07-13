@@ -558,7 +558,7 @@ public class MekFileParser {
             }
 
             if (m.getType().hasFlag(MiscType.F_HARJEL) && (m.getLocation() == Mek.LOC_HEAD)) {
-                throw new EntityLoadingException("Unable to load harjel in head for " + ent.getShortName());
+                throw new EntityLoadingException("Unable to load HarJel in head for " + ent.getShortName());
             }
 
             if (m.getType().hasFlag(MiscType.F_MODULAR_ARMOR) &&

@@ -8276,7 +8276,6 @@ public class MiscType extends EquipmentType {
         misc.name = "HarJel Repair Systems (HarJel II)";
         misc.setInternalName(misc.name);
         misc.addLookupName("HarJel II Self-Repair System");
-        misc.shortName = "Harjel II";
         misc.tonnage = 2;
         misc.criticalSlots = 1;
         misc.cost = 240000;
@@ -8307,7 +8306,6 @@ public class MiscType extends EquipmentType {
         misc.name = "HarJel Repair Systems (HarJel III)";
         misc.addLookupName("HarJel III Self-Repair System");
         misc.setInternalName(misc.name);
-        misc.shortName = "Harjel III";
         misc.tonnage = 3;
         misc.criticalSlots = 2;
         misc.cost = 360000;

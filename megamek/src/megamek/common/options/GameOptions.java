@@ -86,6 +86,7 @@ public class GameOptions extends BasicGameOptions {
         addOption(base, OptionsConstants.SEARCHLIGHTS_ON, true);
         addOption(base, OptionsConstants.BASE_PUSH_OFF_BOARD, true);
         addOption(base, OptionsConstants.BASE_DUMPING_FROM_ROUND, 1);
+        addOption(base, OptionsConstants.BASE_ALLOW_GAME_MASTER, true);
         addOption(base, OptionsConstants.BASE_LOBBY_AMMO_DUMP, false);
         addOption(base, OptionsConstants.BASE_SHOW_BAY_DETAIL, false);
         addOption(base, OptionsConstants.BASE_INDIRECT_FIRE, true);

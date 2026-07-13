@@ -42,6 +42,7 @@ import static org.mockito.Mockito.mock;
 
 import megamek.common.Player;
 import megamek.common.game.Game;
+import megamek.common.options.OptionsConstants;
 import megamek.server.totalWarfare.TWGameManager;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -97,5 +98,24 @@ class GameMasterCommandTest {
 
         assertNull(gameManager.getGameMaster());
         assertFalse(firstPlayer.getGameMaster());
+    }
+
+    /**
+     * Whether a game has a gamemaster is a rule of the game, so it is a game option, and it is on by default. A
+     * client setting cannot decide it, since a player could otherwise take the role by typing the command whatever
+     * their client showed them.
+     */
+    @Test
+    void gamesAllowAGameMasterByDefault() {
+        assertTrue(new Game().getOptions().booleanOption(OptionsConstants.BASE_ALLOW_GAME_MASTER),
+              "games no longer allow a Game Master by default");
+    }
+
+    @Test
+    void theGameOptionCanForbidAGameMaster() {
+        Game game = new Game();
+        game.getOptions().getOption(OptionsConstants.BASE_ALLOW_GAME_MASTER).setValue(false);
+
+        assertFalse(game.getOptions().booleanOption(OptionsConstants.BASE_ALLOW_GAME_MASTER));
     }
 }

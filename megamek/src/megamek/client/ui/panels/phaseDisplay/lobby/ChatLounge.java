@@ -3366,6 +3366,10 @@ public class ChatLounge extends AbstractPhaseDisplay
                 mekModel.refreshCells();
                 refreshTree();
                 break;
+            case GUIPreferences.ALLOW_GAME_MASTER_MODE:
+                // turning gamemaster mode off while holding the role gives it up, rather than leaving it stranded
+                refreshGameMasterButton();
+                break;
             case GUIPreferences.USE_CAMO_OVERLAY:
                 clientgui.getTilesetManager().reloadUnitIcons();
                 mekModel.refreshCells();
@@ -3413,9 +3417,27 @@ public class ChatLounge extends AbstractPhaseDisplay
         }
         boolean localPlayerIsGameMaster = (gameMaster != null) && gameMaster.equals(localPlayer());
 
+        // A client that does not do gamemaster mode must not sit on the role: it would hold it without any of the
+        // tools, and no other player could take it while it did. So it gives the role straight back.
+        if (localPlayerIsGameMaster && !GUIP.getAllowGameMasterMode()) {
+            LOGGER.info("Giving up the Game Master role: this client does not allow gamemaster mode");
+            client().sendChat(GAME_MASTER_COMMAND);
+            return;
+        }
+
+        // the game decides whether it has a gamemaster at all; the client setting only decides whether this player
+        // wants the role and its tools
+        boolean gameAllowsGameMaster = game().getOptions()
+              .booleanOption(OptionsConstants.BASE_ALLOW_GAME_MASTER);
+
         butGameMaster.setVisible(GUIP.getAllowGameMasterMode());
         butGameMaster.setSelected(localPlayerIsGameMaster);
-        if (gameMaster == null) {
+        if (!gameAllowsGameMaster) {
+            butGameMaster.setText(Messages.getString("ChatLounge.butGameMaster"));
+            butGameMaster.setIcon(null);
+            butGameMaster.setEnabled(false);
+            butGameMaster.setToolTipText(Messages.getString("ChatLounge.butGameMaster.tooltip.notAllowed"));
+        } else if (gameMaster == null) {
             butGameMaster.setText(Messages.getString("ChatLounge.butGameMaster"));
             butGameMaster.setIcon(null);
             butGameMaster.setEnabled(true);

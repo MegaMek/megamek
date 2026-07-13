@@ -34,6 +34,7 @@
 package megamek.server.commands;
 
 import megamek.common.Player;
+import megamek.common.options.OptionsConstants;
 import megamek.server.Server;
 import megamek.server.totalWarfare.TWGameManager;
 
@@ -73,8 +74,12 @@ public class GameMasterCommand extends ServerCommand {
         TWGameManager gameManager = (TWGameManager) server.getGameManager();
         Player currentGameMaster = gameManager.getGameMaster();
         if (player.getGameMaster()) {
-            // toggling off game master requires no vote
+            // giving up the role is always allowed, even in a game that no longer allows the role at all
             gameManager.setGameMaster(player, false);
+        } else if (!server.getGame().getOptions().booleanOption(OptionsConstants.BASE_ALLOW_GAME_MASTER)) {
+            // whether a game has a gamemaster is a rule of the game, so it is the game's option that decides,
+            // not each player's client
+            server.sendServerChat(connId, "This game does not allow a Game Master.");
         } else if (currentGameMaster != null) {
             // only one Game Master is allowed at a time
             server.sendServerChat(connId, currentGameMaster.getName()

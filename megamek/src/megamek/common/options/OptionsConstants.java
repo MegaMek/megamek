@@ -298,6 +298,7 @@ public class OptionsConstants {
     public static final String BASE_EXCLUSIVE_DB_DEPLOYMENT = "exclusive_db_deployment";
     public static final String BASE_BLIND_DROP = "blind_drop";
     public static final String BASE_REAL_BLIND_DROP = "real_blind_drop";
+    public static final String BASE_ALLOW_GAME_MASTER = "allow_game_master";
     public static final String BASE_LOBBY_AMMO_DUMP = "lobby_ammo_dump";
     public static final String BASE_DUMPING_FROM_ROUND = "dumping_from_round";
     public static final String BASE_SET_ARTY_PLAYER_HOME_EDGE = "set_arty_player_homeedge";

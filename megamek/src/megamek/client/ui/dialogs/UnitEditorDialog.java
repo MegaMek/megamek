@@ -113,7 +113,7 @@ public class UnitEditorDialog extends JDialog implements LocationSelectListener 
     private static final String SPLIT_PANE_NAME = "unitEditorSplitPane";
 
     /** The gamemaster command that has the server destroy a unit, as used by the map menu. */
-    private static final String DESTROY_UNIT_COMMAND = "/kill %d";
+    private static final String DESTROY_UNIT_COMMAND = "/kill %d %b";
 
     /** How much the armor diagram is enlarged even when there is no panel height to fill. */
     private static final double MIN_PAPERDOLL_SCALE = 1.6;
@@ -368,8 +368,15 @@ public class UnitEditorDialog extends JDialog implements LocationSelectListener 
      * </p>
      */
     private void destroyUnit() {
-        int choice = JOptionPane.showConfirmDialog(this,
+        JCheckBox chkEjectCrew = new JCheckBox(Messages.getString("UnitEditorDialog.destroyUnit.eject"));
+        chkEjectCrew.setToolTipText(Messages.getString("UnitEditorDialog.destroyUnit.eject.tooltip"));
+        chkEjectCrew.setEnabled(canEjectCrew());
+        Object[] message = {
               String.format(Messages.getString("UnitEditorDialog.destroyUnit.confirm"), entity.getDisplayName()),
+              chkEjectCrew
+        };
+        int choice = JOptionPane.showConfirmDialog(this,
+              message,
               Messages.getString("UnitEditorDialog.destroyUnit"),
               JOptionPane.YES_NO_OPTION,
               JOptionPane.WARNING_MESSAGE);
@@ -381,11 +388,23 @@ public class UnitEditorDialog extends JDialog implements LocationSelectListener 
                   entity.getDisplayName());
             return;
         }
-        LOGGER.info("Destroying {} at the request of the damage editor", entity.getDisplayName());
+        boolean ejectCrew = chkEjectCrew.isEnabled() && chkEjectCrew.isSelected();
+        LOGGER.info("Destroying {} at the request of the damage editor, ejecting crew: {}",
+              entity.getDisplayName(),
+              ejectCrew);
         entity.setDoomed(true);
         entity.setDestroyed(true);
-        client.sendChat(String.format(DESTROY_UNIT_COMMAND, entity.getId()));
+        client.sendChat(String.format(DESTROY_UNIT_COMMAND, entity.getId(), ejectCrew));
         setVisible(false);
+    }
+
+    /** A crew can only leave a unit that has one, that can eject, and that they have not already left. */
+    private boolean canEjectCrew() {
+        Crew crew = entity.getCrew();
+        return (crew != null)
+              && !crew.isEjected()
+              && !crew.isDead()
+              && (entity.isMek() || entity.isAero());
     }
 
     private void setSpinnerToZero(@Nullable JSpinner spinner) {
@@ -610,6 +629,9 @@ public class UnitEditorDialog extends JDialog implements LocationSelectListener 
         if (null != controls.spnHeat) {
             controls.spnHeat.addChangeListener(event -> refreshDamageDisplay());
         }
+        // a location with a critical hit is striped on the diagram, so it follows the crit controls as well
+        controls.critsByLocation.values()
+              .forEach(crits -> crits.forEach(crit -> crit.setOnHitsChanged(this::refreshDamageDisplay)));
         refreshDamageDisplay();
     }
 
@@ -800,6 +822,8 @@ public class UnitEditorDialog extends JDialog implements LocationSelectListener 
 
         try {
             applyPendingValuesForDisplay();
+            // the crits are not on the unit yet, so the diagram is told which locations to stripe
+            paperdoll.setCriticalLocations(controls.locationsWithCrits());
             paperdoll.displayMek(entity);
         } finally {
             for (int location = 0; location < entity.locations(); location++) {

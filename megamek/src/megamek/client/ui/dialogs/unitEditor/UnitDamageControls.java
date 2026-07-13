@@ -32,8 +32,12 @@
  */
 package megamek.client.ui.dialogs.unitEditor;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
+import java.util.Set;
+import java.util.stream.Collectors;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JSpinner;
@@ -103,6 +107,23 @@ public class UnitDamageControls {
     public CheckCritPanel lfBatteryCrit;
     public JSpinner sailDamage;
     public CheckCritPanel[] protoCrits;
+
+    /** The crit controls of each location, used to shade the locations that have taken a crit. */
+    public final Map<Integer, List<CheckCritPanel>> critsByLocation = new HashMap<>();
+
+    /** Remembers that the given crit control belongs to the given location. */
+    public void addCritOfLocation(int location, CheckCritPanel crit) {
+        critsByLocation.computeIfAbsent(location, key -> new ArrayList<>()).add(crit);
+    }
+
+    /** The locations that currently have at least one critical hit set on them. */
+    public Set<Integer> locationsWithCrits() {
+        return critsByLocation.entrySet()
+              .stream()
+              .filter(entry -> entry.getValue().stream().anyMatch(crit -> crit.getHits() > 0))
+              .map(Map.Entry::getKey)
+              .collect(Collectors.toSet());
+    }
 
     /* the location name labels, colored by how damaged the location is */
     public JLabel[] locationLabels;

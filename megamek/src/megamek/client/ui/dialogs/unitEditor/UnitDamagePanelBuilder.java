@@ -244,6 +244,12 @@ public class UnitDamagePanelBuilder {
         return generalPanel();
     }
 
+    /** Adds a crit control to a location's panel, and remembers which location it belongs to. */
+    private void addCritRow(int location, String labelText, CheckCritPanel crit) {
+        controls.addCritOfLocation(location, crit);
+        addLabeledRow(targetPanel(location), labelText, crit);
+    }
+
     /** Appends a bold label and a control as the next row of the given panel. */
     public void addLabeledRow(JPanel panel, String labelText, JComponent control) {
         addRow(panel, new JLabel("<html><b>" + labelText + "</b></html>"), control);
@@ -369,33 +375,30 @@ public class UnitDamagePanelBuilder {
             lifeSupportCrits += entity.getNumberOfCriticalSlots(CriticalSlot.TYPE_SYSTEM, Mek.SYSTEM_LIFE_SUPPORT, i);
         }
         controls.centerEngineCrit = new CheckCritPanel(centerEngineCrits, centerEngineHits);
-        addLabeledRow(targetPanel(Mek.LOC_CENTER_TORSO),
-              Messages.getString("UnitEditorDialog.engine"),
+        addCritRow(Mek.LOC_CENTER_TORSO, Messages.getString("UnitEditorDialog.engine"),
               controls.centerEngineCrit);
 
         if (entity.getNumberOfCriticalSlots(CriticalSlot.TYPE_SYSTEM, Mek.SYSTEM_ENGINE, Mek.LOC_RIGHT_TORSO) > 0) {
             controls.leftEngineCrit = new CheckCritPanel(leftEngineCrits, leftEngineHits);
-            addLabeledRow(targetPanel(Mek.LOC_LEFT_TORSO),
-                  Messages.getString("UnitEditorDialog.engine"),
+            addCritRow(Mek.LOC_LEFT_TORSO, Messages.getString("UnitEditorDialog.engine"),
                   controls.leftEngineCrit);
 
             controls.rightEngineCrit = new CheckCritPanel(rightEngineCrits, rightEngineHits);
-            addLabeledRow(targetPanel(Mek.LOC_RIGHT_TORSO),
-                  Messages.getString("UnitEditorDialog.engine"),
+            addCritRow(Mek.LOC_RIGHT_TORSO, Messages.getString("UnitEditorDialog.engine"),
                   controls.rightEngineCrit);
         }
 
         controls.gyroCrit = new CheckCritPanel(gyroCrits, gyroHits);
-        addLabeledRow(targetPanel(Mek.LOC_CENTER_TORSO), Messages.getString("UnitEditorDialog.gyro"), controls.gyroCrit);
+        addCritRow(Mek.LOC_CENTER_TORSO, Messages.getString("UnitEditorDialog.gyro"), controls.gyroCrit);
 
         controls.sensorCrit = new CheckCritPanel(sensorCrits, sensorHits);
-        addLabeledRow(targetPanel(Mek.LOC_HEAD), Messages.getString("UnitEditorDialog.sensor"), controls.sensorCrit);
+        addCritRow(Mek.LOC_HEAD, Messages.getString("UnitEditorDialog.sensor"), controls.sensorCrit);
 
         controls.lifeSupportCrit = new CheckCritPanel(lifeSupportCrits, lifeSupportHits);
-        addLabeledRow(targetPanel(Mek.LOC_HEAD), Messages.getString("UnitEditorDialog.lifeSupport"), controls.lifeSupportCrit);
+        addCritRow(Mek.LOC_HEAD, Messages.getString("UnitEditorDialog.lifeSupport"), controls.lifeSupportCrit);
 
         controls.cockpitCrit = new CheckCritPanel(cockpitCrits, cockpitHits);
-        addLabeledRow(targetPanel(Mek.LOC_HEAD), Messages.getString("UnitEditorDialog.cockpit"), controls.cockpitCrit);
+        addCritRow(Mek.LOC_HEAD, Messages.getString("UnitEditorDialog.cockpit"), controls.cockpitCrit);
 
         if (entity instanceof LandAirMek) {
             controls.lamAvionicsCrit = new TreeMap<>();
@@ -406,14 +409,14 @@ public class UnitDamagePanelBuilder {
                     int hits = entity.getBadCriticalSlots(CriticalSlot.TYPE_SYSTEM, LandAirMek.LAM_AVIONICS, loc);
                     CheckCritPanel critPanel = new CheckCritPanel(crits, hits);
                     controls.lamAvionicsCrit.put(loc, critPanel);
-                    addLabeledRow(targetPanel(loc), Messages.getString("UnitEditorDialog.avionics"), critPanel);
+                    addCritRow(loc, Messages.getString("UnitEditorDialog.avionics"), critPanel);
                 }
                 crits = entity.getNumberOfCriticalSlots(CriticalSlot.TYPE_SYSTEM, LandAirMek.LAM_LANDING_GEAR, loc);
                 if (crits > 0) {
                     int hits = entity.getBadCriticalSlots(CriticalSlot.TYPE_SYSTEM, LandAirMek.LAM_LANDING_GEAR, loc);
                     CheckCritPanel critPanel = new CheckCritPanel(crits, hits);
                     controls.lamLandingGearCrit.put(loc, critPanel);
-                    addLabeledRow(targetPanel(loc), Messages.getString("UnitEditorDialog.landingGear"), critPanel);
+                    addCritRow(loc, Messages.getString("UnitEditorDialog.landingGear"), critPanel);
                 }
             }
         }
@@ -442,15 +445,14 @@ public class UnitDamagePanelBuilder {
                 CheckCritPanel actuatorCrit = new CheckCritPanel(1,
                       entity.getDamagedCriticalSlots(CriticalSlot.TYPE_SYSTEM, i, loc));
                 controls.actuatorCrits[loc - Mek.LOC_RIGHT_ARM][i - start] = actuatorCrit;
-                addLabeledRow(targetPanel(loc), ((Mek) entity).getSystemName(i), actuatorCrit);
+                addCritRow(loc, ((Mek) entity).getSystemName(i), actuatorCrit);
             }
 
             if (entity instanceof QuadVee) {
                 CheckCritPanel actuatorCrit = new CheckCritPanel(1,
                       entity.getDamagedCriticalSlots(CriticalSlot.TYPE_SYSTEM, QuadVee.SYSTEM_CONVERSION_GEAR, loc));
                 controls.actuatorCrits[loc - Mek.LOC_RIGHT_ARM][Mek.ACTUATOR_FOOT - Mek.ACTUATOR_HIP + 1] = actuatorCrit;
-                addLabeledRow(targetPanel(loc),
-                      ((Mek) entity).getSystemName(QuadVee.SYSTEM_CONVERSION_GEAR),
+                addCritRow(loc, ((Mek) entity).getSystemName(QuadVee.SYSTEM_CONVERSION_GEAR),
                       actuatorCrit);
             }
         }
@@ -465,7 +467,7 @@ public class UnitDamagePanelBuilder {
         }
         controls.turretLockCrit = new CheckCritPanel(1, lock);
         int turretLocation = tank.hasNoTurret() ? Entity.LOC_NONE : tank.getLocTurret();
-        addLabeledRow(targetPanel(turretLocation), Messages.getString("UnitEditorDialog.turretLock"), controls.turretLockCrit);
+        addCritRow(turretLocation, Messages.getString("UnitEditorDialog.turretLock"), controls.turretLockCrit);
 
         controls.engineCrit = new CheckCritPanel(1, tank.getEngineHits());
         addLabeledRow(generalPanel(), Messages.getString("UnitEditorDialog.engine"), controls.engineCrit);
@@ -498,7 +500,7 @@ public class UnitDamagePanelBuilder {
             }
             CheckCritPanel stabCrit = new CheckCritPanel(1, hits);
             controls.stabilizerCrits[loc] = stabCrit;
-            addLabeledRow(targetPanel(loc), Messages.getString("UnitEditorDialog.stabilizer"), stabCrit);
+            addCritRow(loc, Messages.getString("UnitEditorDialog.stabilizer"), stabCrit);
         }
     }
 
@@ -530,7 +532,7 @@ public class UnitDamagePanelBuilder {
             }
             CheckCritPanel protoCrit = new CheckCritPanel(nCrits, hits);
             controls.protoCrits[loc] = protoCrit;
-            addLabeledRow(targetPanel(loc), Messages.getString("UnitEditorDialog.crits"), protoCrit);
+            addCritRow(loc, Messages.getString("UnitEditorDialog.crits"), protoCrit);
         }
     }
 
@@ -542,8 +544,7 @@ public class UnitDamagePanelBuilder {
             flightStabHit = 1;
         }
         controls.flightStabilizerCrit = new CheckCritPanel(1, flightStabHit);
-        addLabeledRow(targetPanel(VTOL.LOC_ROTOR),
-              Messages.getString("UnitEditorDialog.flightStabilizer"),
+        addCritRow(VTOL.LOC_ROTOR, Messages.getString("UnitEditorDialog.flightStabilizer"),
               controls.flightStabilizerCrit);
 
         controls.engineCrit = new CheckCritPanel(1, vtol.getEngineHits());
@@ -563,7 +564,7 @@ public class UnitDamagePanelBuilder {
             }
             CheckCritPanel stabCrit = new CheckCritPanel(1, hits);
             controls.stabilizerCrits[loc] = stabCrit;
-            addLabeledRow(targetPanel(loc), Messages.getString("UnitEditorDialog.stabilizer"), stabCrit);
+            addCritRow(loc, Messages.getString("UnitEditorDialog.stabilizer"), stabCrit);
         }
     }
 

@@ -55,6 +55,9 @@ public class CheckCritPanel extends JPanel {
 
     private final ArrayList<JCheckBox> checks = new ArrayList<>();
 
+    /** Told whenever the hits change, so the armor diagram can stripe the location. */
+    private Runnable onHitsChanged;
+
     public CheckCritPanel(int crits, int current) {
         setLayout(new BoxLayout(this, BoxLayout.LINE_AXIS));
         for (int i = 0; i < crits; i++) {
@@ -86,6 +89,18 @@ public class CheckCritPanel extends JPanel {
         for (int i = 0; i < checks.size(); i++) {
             checks.get(i).setSelected(i < hits);
         }
+        hitsChanged();
+    }
+
+    /** Runs the given action whenever the hits change, however they were changed. */
+    public void setOnHitsChanged(Runnable onHitsChanged) {
+        this.onHitsChanged = onHitsChanged;
+    }
+
+    private void hitsChanged() {
+        if (onHitsChanged != null) {
+            onHitsChanged.run();
+        }
     }
 
     private void checkBoxes(ActionEvent evt) {
@@ -102,6 +117,7 @@ public class CheckCritPanel extends JPanel {
                 checks.get(i).setSelected(false);
             }
         }
+        hitsChanged();
 
     }
 }

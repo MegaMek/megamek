@@ -34,6 +34,7 @@ package megamek.client.ui.dialogs.unitDisplay;
 
 import java.awt.Dimension;
 import java.awt.Rectangle;
+import java.util.Set;
 import java.io.Serial;
 import java.util.Enumeration;
 
@@ -94,6 +95,9 @@ public class ArmorPanel extends PicMap {
     private static final int minAeroLeftMargin = 8;
 
     private final Game game;
+
+    /** Locations shaded as having taken a critical hit; empty in the unit display, which shows damage only. */
+    private Set<Integer> criticalLocations = Set.of();
 
     public ArmorPanel(@Nullable Game g, @Nullable LocationSelectListener locationSelectListener) {
         game = g;
@@ -269,6 +273,8 @@ public class ArmorPanel extends PicMap {
             return;
         }
         ams.setEntity(en);
+        // shading the locations that took a crit has to follow setEntity, which colors them by their damage
+        ams.setCriticalLocations(criticalLocations);
         addElement(ams.getContentGroup());
         Enumeration<BackGroundDrawer> iter = ams.getBackgroundDrawers().elements();
         while (iter.hasMoreElements()) {
@@ -276,5 +282,16 @@ public class ArmorPanel extends PicMap {
         }
         onResize();
         update();
+    }
+
+    /**
+     * Sets the locations to shade as having taken a critical hit, shown the next time the unit is drawn. The damage
+     * editor uses this to show the crits the user has set but not yet applied, which the unit itself does not carry
+     * yet.
+     *
+     * @param criticalLocations the locations that have taken a critical hit
+     */
+    public void setCriticalLocations(Set<Integer> criticalLocations) {
+        this.criticalLocations = Set.copyOf(criticalLocations);
     }
 }

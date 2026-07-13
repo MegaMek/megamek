@@ -65,9 +65,15 @@ public class PMSimplePolygonArea implements PMHotArea {
 
     private ActionListener actionListener = null;
 
+    /** The stripes drawn over a location that has taken a critical hit, and the gap between them. */
+    private static final Color HATCH_COLOR = Color.black;
+    private static final int HATCH_SPACING = 6;
+
     public Color backColor = Color.lightGray;
     public Color normalBorderColor = Color.black;
     public Color highlightBorderColor = Color.red;
+    /** Whether this area is striped to show that it has taken a critical hit. */
+    private boolean criticalHatch = false;
     private final boolean highlight;
     private final Polygon areaShape;
     private boolean selected = false;
@@ -124,6 +130,9 @@ public class PMSimplePolygonArea implements PMHotArea {
         Color oldColor = g.getColor();
         g.setColor(this.backColor);
         g.fillPolygon(areaShape);
+        if (criticalHatch) {
+            drawCriticalHatch(g);
+        }
         if (selected && highlight) {
             g.setColor(highlightBorderColor);
         } else {
@@ -131,6 +140,28 @@ public class PMSimplePolygonArea implements PMHotArea {
         }
         g.drawPolygon(this.areaShape);
         g.setColor(oldColor);
+    }
+
+    /**
+     * Draws diagonal stripes across the area, over its fill. The fill already carries the location's damage as its
+     * color, so a critical hit is shown by striping the location rather than recoloring it, and both can be read at
+     * once.
+     */
+    private void drawCriticalHatch(Graphics g) {
+        Shape oldClip = g.getClip();
+        g.setClip(areaShape);
+        g.setColor(HATCH_COLOR);
+        Rectangle bounds = areaShape.getBounds();
+        int end = bounds.x + bounds.width + bounds.height;
+        for (int x = bounds.x - bounds.height; x < end; x += HATCH_SPACING) {
+            g.drawLine(x, bounds.y, x + bounds.height, bounds.y + bounds.height);
+        }
+        g.setClip(oldClip);
+    }
+
+    /** Marks the area as having taken a critical hit, drawn as stripes over its fill. */
+    public void setCriticalHatch(boolean criticalHatch) {
+        this.criticalHatch = criticalHatch;
     }
 
     @Override

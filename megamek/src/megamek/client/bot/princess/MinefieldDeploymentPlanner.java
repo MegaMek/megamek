@@ -1,3 +1,36 @@
+/*
+ * Copyright (C) 2025 The MegaMek Team. All Rights Reserved.
+ *
+ * This file is part of MegaMek.
+ *
+ * MegaMek is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License (GPL),
+ * version 3 or (at your option) any later version,
+ * as published by the Free Software Foundation.
+ *
+ * MegaMek is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty
+ * of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+ * See the GNU General Public License for more details.
+ *
+ * A copy of the GPL should have been included with this project;
+ * if not, see <https://www.gnu.org/licenses/>.
+ *
+ * NOTICE: The MegaMek organization is a non-profit group of volunteers
+ * creating free software for the BattleTech community.
+ *
+ * MechWarrior, BattleMech, `Mech and AeroTech are registered trademarks
+ * of The Topps Company, Inc. All Rights Reserved.
+ *
+ * Catalyst Game Labs and the Catalyst Game Labs logo are trademarks of
+ * InMediaRes Productions, LLC.
+ *
+ * MechWarrior Copyright Microsoft Corporation. MegaMek was created under
+ * Microsoft's "Game Content Usage Rules"
+ * <https://www.xbox.com/en-US/developers/rules> and it is not endorsed by or
+ * affiliated with Microsoft.
+ */
+
 package megamek.client.bot.princess;
 
 import java.util.ArrayList;
@@ -5,7 +38,6 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Map.Entry;
 import java.util.Set;
 
 import megamek.common.Hex;
@@ -19,16 +51,10 @@ import megamek.common.units.EntityMovementMode;
 import megamek.common.units.Terrains;
 import megamek.common.units.UnitType;
 
+/**
+ * This class handles evaluating spaces on the board for the purposes of minefield deployment
+ */
 public class MinefieldDeploymentPlanner {
-	// #1: go through list of hexes and determine suitability for mine placement
-	// - separate set for wheeled/tracked/mech hostiles
-	// - all: buildings, water, impassable: X
-	// - wheeled: woods X
-	// - tracked: light woods +1, light foliage +1, hvy woods/jungle X
-	// - mech/infantry: light woods +1, hvy woods +2, hvy jungle X, foliage -1
-	// construct ordered list by suitability
-	// do this for each mine type
-	// #2 pick random of top until mine counts 
 	
 	public static final Set<Integer> DISALLOWED_TERRAIN_TYPES = Set.of(
 			Terrains.MAGMA,
@@ -122,20 +148,6 @@ public class MinefieldDeploymentPlanner {
 	}
 	
 	/**
-	 * Given a minefield type, player, game and board, get a sorted list of coordinates/scores
-	 * @param minefieldType
-	 */
-	public List<Entry<Coords, Double>> getOrderedCoords(int minefieldType, Player player, Game game, Board board) {
-		Map<Coords, Double> minefieldScores = buildCoalescedMinefieldScores(minefieldType,
-				player, game, board);
-		
-		List<Entry<Coords, Double>> scoreList = new ArrayList<>(minefieldScores.entrySet());
-		scoreList.sort(Entry.comparingByValue());
-		
-		return scoreList.reversed();
-	}
-	
-	/**
 	 * Given a minefield type (from Minefield class), build a map of coordinates and
 	 * their associated scores. It's a weighted average depending on the numbers and types
 	 * of units the opponent has.
@@ -150,6 +162,8 @@ public class MinefieldDeploymentPlanner {
 		Map<Coords, Integer> mekScores = new HashMap<>();
 		Map<Coords, Integer> trackedVeeScores = new HashMap<>();
 		Map<Coords, Integer> wheeledVeeScores = new HashMap<>();
+		Map<Coords, Integer> infantryScores = new HashMap<>();
+		Map<Coords, Integer> hoverVeeScores = new HashMap<>();
 		
 		// only calculate the scores for a unit type if it's present in the opfor
 		if (mekProportion > 0) {
@@ -164,6 +178,14 @@ public class MinefieldDeploymentPlanner {
 			wheeledVeeScores = getMinefieldScores(minefieldType, UnitType.TANK, EntityMovementMode.WHEELED, board);
 		}
 		
+		if (hoverProportion > 0) {
+			hoverVeeScores = getMinefieldScores(minefieldType, UnitType.TANK, EntityMovementMode.HOVER, board);
+		}
+		
+		if (infantryProportion > 0) {
+			infantryScores = getMinefieldScores(minefieldType, UnitType.INFANTRY, EntityMovementMode.INF_LEG, board);
+		}
+		
 		// now, for each coordinate, we take the weighted average
 		// if a coordinate has no value, it means it is unsuitable for that unit type
 		// so we treat it as a 0.
@@ -175,10 +197,14 @@ public class MinefieldDeploymentPlanner {
 				double mekScore = mekScores.getOrDefault(coords, 0);
 				double trackedVeeScore = trackedVeeScores.getOrDefault(coords, 0);
 				double wheeledVeeScore = wheeledVeeScores.getOrDefault(coords, 0);
+				double infantryScore = infantryScores.getOrDefault(coords, 0);
+				double hoverVeeScore = hoverVeeScores.getOrDefault(coords, 0);
 				
 				double totalScore = mekScore * mekProportion +
 						trackedVeeScore * trackProportion +
-						wheeledVeeScore * wheelProportion;
+						wheeledVeeScore * wheelProportion +
+						infantryScore * infantryProportion + 
+						hoverVeeScore * hoverProportion;
 				
 				coalescedMap.put(coords, totalScore);
 			}
@@ -230,10 +256,17 @@ public class MinefieldDeploymentPlanner {
 						hexScore = getIndividualHexScoreForTrackedVees(hex, board);
 					} else if (movementMode == EntityMovementMode.WHEELED) {
 						hexScore = getIndividualHexScoreForWheeledVees(hex, board);
+					} else if (movementMode == EntityMovementMode.HOVER) {
+						hexScore = getIndividualHexScoreForHoverVees(hex, board);
 					}
 					break;
+				case UnitType.INFANTRY:
+				case UnitType.BATTLE_ARMOR:
+				case UnitType.PROTOMEK:
+					hexScore = getIndividualHexScoreForInfantry(hex, board);
+					break;
 				}
-				
+					
 				if (hexScore != Integer.MIN_VALUE) {
 					minefieldScores.put(coords, hexScore);
 				}
@@ -469,6 +502,58 @@ public class MinefieldDeploymentPlanner {
 	
 	/**
 	 * Worker function that takes the current hex and determines how good it is for
+	 * placing a minefield into when the opponent is a hover vehicle
+	 * Pro tip: mines are not very effective against hovercraft, so we cap this value at 1
+	 */
+	public int getIndividualHexScoreForHoverVees(Hex hex, Board board) {
+		int hexScore = 0;
+		
+		// hover vehicles can't go into spaces with "trees"
+		if (hex.hasVegetation()) {
+			return Integer.MIN_VALUE;
+		}
+		
+		// terrain that causes PSRs for no cover benefit is less likely
+		for (int terrain : hex.getTerrainTypes()) {
+			if (Terrains.HAZARDS_WITH_BLACK_ICE.contains(terrain)) {
+				hexScore -= hex.terrainLevel(terrain);
+			}
+		}
+		
+		int hexFloor = hex.floor();
+		
+		// terrain next to higher elevations is good to hide in
+		for (int direction = 0; direction < 6; direction++) {
+			Hex neighborHex = board.getHexInDir(hex.getCoords(), direction);
+			
+			if (neighborHex == null) {
+				continue;
+			}
+			
+			int neighborHexFloor = neighborHex.floor();
+			int neighborHexCeiling = neighborHex.ceiling();
+			
+			// LOS block/chokepoint bonus: buildings that go to this hex floor + 1 
+			if (neighborHex.containsTerrain(Terrains.BLDG_ELEV) &&
+					neighborHexCeiling > hexFloor) {
+				hexScore++;
+			}
+			
+			// partial cover bonus: terrain level goes to this hex floor + 1
+			if (neighborHexFloor > hexFloor) {
+				hexScore++;
+			}
+		}
+		
+		if (hexScore > 0) {
+			return POSITIVE_BUT_LOW_VALUE;
+		} else {
+			return hexScore;
+		}
+	}
+	
+	/**
+	 * Worker function that takes the current hex and determines how good it is for
 	 * placing a minefield into when the opponent is a mek
 	 * 
 	 * Note that infantry is inherently less valuable BV-wise,
@@ -535,9 +620,9 @@ public class MinefieldDeploymentPlanner {
 	// X mek partial cover bonus reduction based on how low we are
 	// bonus for distance from nearest deployment zone
 	// X wheeled vehicle map
-	// infantry map
-	// hover tank map
+	// Xinfantry map
+	// X hover tank map
 	// X weighted average for known opponent unit counts
-	// actual placement by bot
+	// Xactual placement by bot
 	// appropriately set vibrabom threshold
 }

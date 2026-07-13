@@ -1410,6 +1410,7 @@ public abstract class BotClient extends Client {
     	MinefieldDeploymentPlanner mdp = new MinefieldDeploymentPlanner(getLocalPlayer(), getGame());
     	Vector<Minefield> deployedMinefields = new Vector<>();
     	
+    	// cycle through all possible mine field types
     	for (int minefieldType = 0; minefieldType < Minefield.TYPE_SIZE; minefieldType++) {
     		int minesToPlace = getLocalPlayer().getMinefieldCount(minefieldType);
     		
@@ -1439,10 +1440,23 @@ public abstract class BotClient extends Client {
 	    			// while the bot is not
 	    			int density = Compute.randomIntInclusive(30) + 5;
 	    			
-	    			Minefield minefield = Minefield.createMinefield(coords,
+	    			Minefield minefield;
+	    			
+	    			// vibrabombs require a "setting"
+	    			if (minefieldType != Minefield.TYPE_VIBRABOMB) {
+	    				minefield = Minefield.createMinefield(coords,
 	    					getLocalPlayer().getId(),
 	    					minefieldType,
 	    					density);
+	    			} else {
+	    				minefield = Minefield.createMinefield(coords,
+	    						getLocalPlayer().getId(),
+	    						minefieldType,
+	    						density,
+	    						50,
+	    						false,
+	    						0);	    						
+	    			}
 	    			
 	    			deployedMinefields.add(minefield);
 	    			

@@ -39,7 +39,6 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.InputStreamReader;
 import java.util.*;
-import java.util.Map.Entry;
 
 import javax.swing.JFrame;
 import javax.swing.JOptionPane;
@@ -1408,27 +1407,52 @@ public abstract class BotClient extends Client {
      * Deploy minefields for the bot
      */
     protected void deployMinefields() {
-    	MinefieldDeploymentPlanner mdp = new MinefieldDeploymentPlanner();
+    	MinefieldDeploymentPlanner mdp = new MinefieldDeploymentPlanner(getLocalPlayer(), getGame());
     	Vector<Minefield> deployedMinefields = new Vector<>();
     	
     	for (int minefieldType = 0; minefieldType < Minefield.TYPE_SIZE; minefieldType++) {
-    		List<Entry<Coords, Double>> potentialCoords = 
-    				mdp.getOrderedCoords(minefieldType, getLocalPlayer(), getGame(), getBoard());
+    		int minesToPlace = getLocalPlayer().getMinefieldCount(minefieldType);
     		
-    		int density = Compute.randomIntInclusive(30) + 5;
+    		// avoid unnecessary loops and evaluations
+    		if (minesToPlace <= 0) {
+    			continue;
+    		}    		
     		
-    		// keep going until we run out of mines or places to put them
-    		// if we have run out of places to put mines it means there's absolutely no good place
-    		// on the board for the mines to go, which means they're effectively worthless
-    		// and so we can skip this entirely
-    		for (int mineIndex = 0; mineIndex < getLocalPlayer().getMinefieldCount(minefieldType) &&
-    				mineIndex < potentialCoords.size(); mineIndex++) {
-    			Minefield minefield = Minefield.createMinefield(potentialCoords.get(mineIndex).getKey(),
-    					getLocalPlayer().getId(),
-    					minefieldType,
-    					density);
-    			
-    			deployedMinefields.add(minefield);
+    		Map<Double, List<Coords>> potentialCoords = 
+    				mdp.getBucketedCandidateCoords(minefieldType, getLocalPlayer(), getGame(), getBoard());
+    		
+    		// this operation takes the buckets and sorts them in descending order
+    		List<Double> sortedBuckets = new ArrayList<>();
+    		sortedBuckets.addAll(potentialCoords.keySet());
+    		Collections.sort(sortedBuckets);
+    		sortedBuckets = sortedBuckets.reversed();
+    		    		
+    		
+    		// complicated loop:
+    		// while we have mines to place (minesToPlace > 0)
+    		// AND we have buckets left with coordinates in them, place mines.    		
+    		bucketloop:
+    		for (double bucket : sortedBuckets) {
+    			for (Coords coords : potentialCoords.get(bucket)) {
+    				// it's always more advantageous to put in higher density minefields
+	    			// but hardly fair when players may be bound by scenario restrictions
+	    			// while the bot is not
+	    			int density = Compute.randomIntInclusive(30) + 5;
+	    			
+	    			Minefield minefield = Minefield.createMinefield(coords,
+	    					getLocalPlayer().getId(),
+	    					minefieldType,
+	    					density);
+	    			
+	    			deployedMinefields.add(minefield);
+	    			
+	    			minesToPlace--;
+	    			
+	    			// if we run out of mines to place, break out of both loops
+	    			if (minesToPlace == 0) {
+	    				break bucketloop;
+	    			}
+    			}
     		}
     	}
     	

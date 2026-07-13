@@ -1358,8 +1358,6 @@ public final class BoardView extends AbstractBoardView
         }
     }
     
-    MinefieldDeploymentPlanner mdp = new MinefieldDeploymentPlanner();
-    
     /** 
      * Debugging method used to render minefield effectiveness ratings
      */
@@ -1368,6 +1366,7 @@ public final class BoardView extends AbstractBoardView
     	/*Map<Coords, Integer> minefieldScores = mdp.getMinefieldScores(Minefield.TYPE_CONVENTIONAL, UnitType.TANK,
     			EntityMovementMode.WHEELED, getBoard());*/
     	
+    	MinefieldDeploymentPlanner mdp = new MinefieldDeploymentPlanner(getLocalPlayer(), game);
     	Map<Coords, Double> minefieldScores = mdp.buildCoalescedMinefieldScores(Minefield.TYPE_CONVENTIONAL, 
     			localPlayer, game, getBoard());
     	

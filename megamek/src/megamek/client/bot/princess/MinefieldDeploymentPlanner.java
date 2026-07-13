@@ -1,6 +1,7 @@
 package megamek.client.bot.princess;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -40,6 +41,86 @@ public class MinefieldDeploymentPlanner {
 			Terrains.SKY
 			);
 	
+	public static final int LEGAL_BUT_USELESS = -1000;
+	public static final int POSITIVE_BUT_LOW_VALUE = 1;
+	
+	private double mekProportion = 0.0;
+	private double trackProportion = 0.0;
+	private double wheelProportion = 0.0;
+	private double hoverProportion = 0.0;
+	private double infantryProportion = 0.0;
+	
+	public MinefieldDeploymentPlanner(Player player, Game game) {
+		// would prefer to have a map of unit type to score, but tracked, wheeled and hover
+		// vehicles have different movement rules while being the same unit type
+		// so we settle on this somewhat awkward approach for now
+		int mekCount = 0;
+		int trackedVeeCount = 0;
+		int wheeledVeeCount = 0;
+		int infantryCount = 0;
+		int hoverVeeCount = 0;
+		
+		// first, we collect the unit type counts
+		for (Entity entity : game.getEntitiesVector()) {
+			// ignore off-board and non-hostile entities
+			if (entity.isOffBoard() || !entity.getOwner().isEnemyOf(player)) {
+				continue;
+			}
+			
+			if (entity.getUnitType() == UnitType.MEK) {
+				mekCount++;
+			} else if (entity.getUnitType() == UnitType.TANK) {
+				if (entity.getMovementMode() == EntityMovementMode.TRACKED) {
+					trackedVeeCount++;
+				} else if (entity.getMovementMode() == EntityMovementMode.WHEELED) {
+					wheeledVeeCount++;
+				} else if (entity.getMovementMode() == EntityMovementMode.HOVER) {
+					hoverVeeCount++;
+				}
+			// for now, we lump BA, Protomeks and infantry together; 
+			// they're relatively low-impact/low-BV and uncommon in general usage compared
+			// to meks and tanks
+			} else if (entity.getUnitType() == UnitType.INFANTRY || 
+					entity.getUnitType() == UnitType.BATTLE_ARMOR ||
+					entity.getUnitType() == UnitType.PROTOMEK) {
+				infantryCount++;
+			}
+		}
+		
+		double hostileUnitCount = mekCount + trackedVeeCount + wheeledVeeCount + infantryCount + hoverVeeCount;
+		mekProportion = (double) mekCount / hostileUnitCount;
+		trackProportion = (double) trackedVeeCount / hostileUnitCount;
+		wheelProportion = (double) wheeledVeeCount / hostileUnitCount;
+		infantryProportion = (double) infantryCount / hostileUnitCount;
+		hoverProportion = (double) hoverVeeCount / hostileUnitCount;
+	}
+	
+	/**
+	 * Given a minefield type, the player, game and board
+	 * Return a set of coordinates sorted into buckets by their utility score
+	 * Within a bucket, the list of coordinates is randomized
+	 */
+	public Map<Double, List<Coords>> getBucketedCandidateCoords(int minefieldType, 
+			Player player, Game game, Board board) {
+		Map<Coords, Double> minefieldScores = buildCoalescedMinefieldScores(minefieldType,
+				player, game, board);
+		
+		Map<Double, List<Coords>> bucketedCoords = new HashMap<>();
+		
+		for (Coords coords : minefieldScores.keySet()) {
+			double scoreBucket = minefieldScores.get(coords);
+			
+			bucketedCoords.putIfAbsent(scoreBucket, new ArrayList<Coords>());
+			bucketedCoords.get(scoreBucket).add(coords);
+		}
+		
+		for (double bucket : bucketedCoords.keySet()) {
+			Collections.shuffle(bucketedCoords.get(bucket));
+		}
+		
+		return bucketedCoords;
+	}
+	
 	/**
 	 * Given a minefield type, player, game and board, get a sorted list of coordinates/scores
 	 * @param minefieldType
@@ -63,53 +144,23 @@ public class MinefieldDeploymentPlanner {
 	 */
 	public Map<Coords, Double> buildCoalescedMinefieldScores(int minefieldType, 
 			Player player, Game game, Board board) {
-		Map<Coords, Double> coalescedMap = new HashMap<>();
-		
-		// would prefer to have a map of unit type to score, but tracked and wheeled
-		// vehicles are the same unit type, so we settle on this somewhat awkward approach for now
-		int mekCount = 0;
-		int trackedVeeCount = 0;
-		int wheeledVeeCount = 0;
-		
-		// first, we collect the unit type counts
-		for (Entity entity : game.getEntitiesVector()) {
-			// ignore off-board and non-hostile entities
-			if (entity.isOffBoard() || !entity.getOwner().isEnemyOf(player)) {
-				continue;
-			}
-			
-			if (entity.getUnitType() == UnitType.MEK) {
-				mekCount++;
-			} else if (entity.getUnitType() == UnitType.TANK) {
-				if (entity.getMovementMode() == EntityMovementMode.TRACKED) {
-					trackedVeeCount++;
-				} else if (entity.getMovementMode() == EntityMovementMode.WHEELED) {
-					wheeledVeeCount++;
-				}/* else if (entity.getMovementMode() == EntityMovementMode.HOVER) {
-					hoverVeeCount++;
-				}*/
-			}
-		}
-		
-		double hostileUnitCount = mekCount + trackedVeeCount + wheeledVeeCount;
-		double mekProportion = (double) mekCount / hostileUnitCount;
-		double trackProportion = (double) trackedVeeCount / hostileUnitCount;
-		double wheelProportion = (double) wheeledVeeCount / hostileUnitCount;
+		Map<Coords, Double> coalescedMap = new HashMap<>();		
 		
 		// now, we generate the map for each unit type
 		Map<Coords, Integer> mekScores = new HashMap<>();
 		Map<Coords, Integer> trackedVeeScores = new HashMap<>();
 		Map<Coords, Integer> wheeledVeeScores = new HashMap<>();
 		
-		if (mekCount > 0) {
+		// only calculate the scores for a unit type if it's present in the opfor
+		if (mekProportion > 0) {
 			mekScores = getMinefieldScores(minefieldType, UnitType.MEK, EntityMovementMode.BIPED, board);
 		}
 		
-		if (trackedVeeCount > 0) {
+		if (trackProportion > 0) {
 			trackedVeeScores = getMinefieldScores(minefieldType, UnitType.TANK, EntityMovementMode.TRACKED, board);
 		}
 		
-		if (wheeledVeeCount > 0) {
+		if (wheelProportion > 0) {
 			wheeledVeeScores = getMinefieldScores(minefieldType, UnitType.TANK, EntityMovementMode.WHEELED, board);
 		}
 		
@@ -240,6 +291,11 @@ public class MinefieldDeploymentPlanner {
 			hexScore -= hex.terrainLevel(Terrains.ROUGH);
 		}
 		
+		// it's fun to put mines on bridges
+		if (hex.containsAnyTerrainOf(Terrains.BRIDGE)) {
+			hexScore++;
+		}
+		
 		// calculate the partial cover bonus for this hex
 		// if we're really low relative to the rest of the map, you're probably not getting it
 		// if we're really high relative to the rest of the map you're probably getting it
@@ -325,6 +381,11 @@ public class MinefieldDeploymentPlanner {
 			hexScore -= hex.terrainLevel(Terrains.ROUGH);
 		}
 		
+		// vehicles like going on pavement because it makes them go faster
+		if (hex.containsAnyTerrainOf(Terrains.ROAD, Terrains.PAVEMENT, Terrains.BRIDGE)) {
+			hexScore++;
+		}
+		
 		int hexFloor = hex.floor();
 		
 		// terrain next to higher elevations is good to hide in
@@ -373,6 +434,11 @@ public class MinefieldDeploymentPlanner {
 			}
 		}
 		
+		// vehicles like going on pavement because it makes them go faster
+		if (hex.containsAnyTerrainOf(Terrains.ROAD, Terrains.PAVEMENT, Terrains.BRIDGE)) {
+			hexScore++;
+		}
+		
 		int hexFloor = hex.floor();
 		
 		// terrain next to higher elevations is good to hide in
@@ -386,7 +452,7 @@ public class MinefieldDeploymentPlanner {
 			int neighborHexFloor = neighborHex.floor();
 			int neighborHexCeiling = neighborHex.ceiling();
 			
-			// cover bonus: buildings that go to this hex floor + 1 
+			// LOS block/chokepoint bonus: buildings that go to this hex floor + 1 
 			if (neighborHex.containsTerrain(Terrains.BLDG_ELEV) &&
 					neighborHexCeiling > hexFloor) {
 				hexScore++;
@@ -399,6 +465,70 @@ public class MinefieldDeploymentPlanner {
 		}
 		
 		return hexScore;
+	}
+	
+	/**
+	 * Worker function that takes the current hex and determines how good it is for
+	 * placing a minefield into when the opponent is a mek
+	 * 
+	 * Note that infantry is inherently less valuable BV-wise,
+	 * so we cap the hex scores at 1.
+	 */
+	public int getIndividualHexScoreForInfantry(Hex hex, Board board) {
+		int hexScore = 0;
+		
+		// most infantry can't go into water
+		if (hex.hasDepth1WaterOrDeeper() || hex.containsAnyTerrainOf(Terrains.FIRE, 
+				Terrains.MAGMA, Terrains.HAZARDOUS_LIQUID)) {
+			return Integer.MIN_VALUE;
+		}
+		
+		// infantry are pretty likely to go into woods for cover
+		if (hex.containsTerrain(Terrains.WOODS)) {
+			hexScore += hex.terrainLevel(Terrains.WOODS);
+		}
+		
+		// infantry are pretty likely to go into jungle for cover
+		if (hex.containsTerrain(Terrains.JUNGLE)) {
+			hexScore += hex.terrainLevel(Terrains.JUNGLE);
+		}
+		
+		// infantry don't like being in open terrain because of the 2x damage
+		if (hex.isClearHex()) {
+			hexScore--;
+		}
+		
+		int hexFloor = hex.floor();
+		
+		// terrain next to higher elevation is actually pretty good
+		// a very rough estimation of partial cover as a full calculation of this is super expensive
+		for (int direction = 0; direction < 6; direction++) {
+			Hex neighborHex = board.getHexInDir(hex.getCoords(), direction);
+			
+			if (neighborHex == null) {
+				continue;
+			}
+			
+			int neighborHexFloor = neighborHex.floor();
+			int neighborHexCeiling = neighborHex.ceiling();
+			
+			// full cover bonus: buildings that go to this hex floor + 2 or higher
+			if (neighborHex.containsTerrain(Terrains.BLDG_ELEV) &&
+					neighborHexCeiling > hexFloor) {
+				hexScore++;
+			}
+			
+			// full cover bonus: terrain level goes to this hex floor + 2 or higher
+			if (neighborHexFloor > hexFloor) {
+				hexScore++;
+			}
+		}
+		
+		if (hexScore > 0) {
+			return POSITIVE_BUT_LOW_VALUE;
+		} else {
+			return hexScore;
+		}
 	}
 	
 	// TODO:

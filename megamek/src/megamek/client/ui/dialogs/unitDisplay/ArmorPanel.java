@@ -32,6 +32,7 @@
  */
 package megamek.client.ui.dialogs.unitDisplay;
 
+import java.awt.Dimension;
 import java.awt.Rectangle;
 import java.io.Serial;
 import java.util.Enumeration;
@@ -125,8 +126,10 @@ public class ArmorPanel extends PicMap {
     public void onResize() {
         Rectangle r = getContentBounds();
         if (r != null) {
-            int w = (getSize().width - r.width) / 2;
-            int h = (getSize().height - r.height) / 2;
+            // The content keeps its own unscaled coordinates, so center it within the scaled-back size.
+            Dimension contentSize = getContentSize();
+            int w = (contentSize.width - r.width) / 2;
+            int h = (contentSize.height - r.height) / 2;
             int dx = Math.max(w, minLeftMargin);
             int dy = Math.max(h, minTopMargin);
             setContentMargins(dx, dy, minRightMargin, minBottomMargin);

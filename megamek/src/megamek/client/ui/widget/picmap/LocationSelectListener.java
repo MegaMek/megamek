@@ -36,7 +36,6 @@ package megamek.client.ui.widget.picmap;
  * Receives the location a user picked out of an armor diagram, such as by double-clicking a unit location in the
  * unit display or the damage editor.
  */
-@FunctionalInterface
 public interface LocationSelectListener {
 
     /**
@@ -45,4 +44,15 @@ public interface LocationSelectListener {
      * @param location the index of the selected location, as used by {@link megamek.common.units.Entity}
      */
     void locationSelected(int location);
+
+    /**
+     * Whether a single click selects a location, rather than a double click. The unit display uses a double click,
+     * because a single click there would switch tabs whenever the diagram was clicked. A diagram whose whole
+     * purpose is picking a location, such as the one in the damage editor, selects on a single click.
+     *
+     * @return {@code true} to be told about single clicks as well
+     */
+    default boolean selectsOnSingleClick() {
+        return false;
+    }
 }

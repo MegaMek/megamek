@@ -1,6 +1,6 @@
 /*
  * Copyright (c) 2000-2004 - Ben Mazur (bmazur@sev.org)
- * Copyright (C) 2003-2025 The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2003-2026 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -38,6 +38,7 @@ import java.awt.AWTEvent;
 import java.awt.Cursor;
 import java.awt.Dimension;
 import java.awt.Graphics;
+import java.awt.Graphics2D;
 import java.awt.Image;
 import java.awt.Polygon;
 import java.awt.Rectangle;
@@ -98,6 +99,10 @@ public abstract class PicMap extends JComponent {
 
     // Is background opaque
     private boolean bgIsOpaque = true;
+
+    // Factor the drawn content is enlarged by. Areas and labels are laid out in fixed coordinates, so this scales
+    // them at draw time, and mouse coordinates are scaled back when looking up the area under the pointer.
+    private double displayScale = 1.0;
 
     /**
      * creates PicMap engine. If no areas, labels or Background-drawers added this is just transparent layer over
@@ -244,26 +249,48 @@ public abstract class PicMap extends JComponent {
         }
     }
 
+    /**
+     * Sets how much the drawn content is enlarged by. The areas and labels keep their own fixed coordinates; only
+     * drawing and mouse lookups are scaled, so a scaled component still reports the right area under the pointer.
+     *
+     * @param scale the factor to enlarge the content by; 1.0 draws it at its natural size
+     */
+    public void setDisplayScale(double scale) {
+        displayScale = Math.max(0.1, scale);
+        onResize();
+        update();
+    }
+
     private void drawInto(Graphics g) {
         int w = Math.max(getSize().width, minWidth);
         int h = Math.max(getSize().height, minHeight);
+
+        // Everything is laid out in the content's own coordinates, including the background images that frame the
+        // diagram, so it is all drawn through one scaled graphics context and stays aligned.
+        Graphics2D contentGraphics = (Graphics2D) g.create();
+        contentGraphics.scale(displayScale, displayScale);
+        int contentWidth = (int) (w / displayScale);
+        int contentHeight = (int) (h / displayScale);
+
         // Background painting
         Enumeration<BackGroundDrawer> iter = bgDrawers.elements();
         while (iter.hasMoreElements()) {
             BackGroundDrawer bgd = iter.nextElement();
-            bgd.drawInto(g, w, h);
+            bgd.drawInto(contentGraphics, contentWidth, contentHeight);
         }
-        Shape oldClip = g.getClip();
-        g.setClip(new Rectangle(leftMargin, topMargin, w - leftMargin
-              - rightMargin, h - topMargin - bottomMargin));
+
+        Shape oldClip = contentGraphics.getClip();
+        contentGraphics.setClip(new Rectangle(leftMargin, topMargin, contentWidth - leftMargin
+              - rightMargin, contentHeight - topMargin - bottomMargin));
 
         // Hot areas painting
-        hotAreas.drawInto(g);
+        hotAreas.drawInto(contentGraphics);
         if (activeHotArea != null) {
-            activeHotArea.drawInto(g);
+            activeHotArea.drawInto(contentGraphics);
         }
-        labels.drawInto(g);
-        g.setClip(oldClip);
+        labels.drawInto(contentGraphics);
+        contentGraphics.setClip(oldClip);
+        contentGraphics.dispose();
     }
 
     @Override
@@ -275,21 +302,29 @@ public abstract class PicMap extends JComponent {
     public Dimension getMinimumSize() {
         Rectangle r = rootGroup.getBounds();
         if (r != null) {
-            return new Dimension(r.x + r.width + rightMargin, r.y + r.height
-                  + bottomMargin);
+            return new Dimension((int) ((r.x + r.width + rightMargin) * displayScale),
+                  (int) ((r.y + r.height + bottomMargin) * displayScale));
         }
         return new Dimension(minWidth, minHeight);
+    }
+
+    /** Returns the size available to the content, in the unscaled coordinates the content is laid out in. */
+    protected Dimension getContentSize() {
+        return new Dimension((int) (getSize().width / displayScale), (int) (getSize().height / displayScale));
     }
 
     /**
      * Returns Hot Area under coordinates (x, y)
      */
     public PMHotArea getAreaUnder(int x, int y) {
+        // The areas keep their unscaled coordinates, so scale the pointer back into them.
+        int contentX = (int) (x / displayScale);
+        int contentY = (int) (y / displayScale);
         // Have to check all elements of hotAreas vector
         // from end to start. Compare against zero works faster.
         for (int i = (areasCount - 1); i >= 0; i--) {
             PMHotArea ha = (PMHotArea) hotAreas.elementAt(i);
-            if ((ha != null) && intersects(ha.getAreaShape(), x, y)) {
+            if ((ha != null) && intersects(ha.getAreaShape(), contentX, contentY)) {
                 return ha;
             }
         }

@@ -164,7 +164,10 @@ public class PMSimplePolygonArea implements PMHotArea {
 
     @Override
     public void onMouseClick(MouseEvent e) {
-        if ((e.getClickCount() == 2) && (locationSelectListener != null)) {
+        if (locationSelectListener == null) {
+            return;
+        }
+        if ((e.getClickCount() >= 2) || locationSelectListener.selectsOnSingleClick()) {
             locationSelectListener.locationSelected(loc);
         }
     }

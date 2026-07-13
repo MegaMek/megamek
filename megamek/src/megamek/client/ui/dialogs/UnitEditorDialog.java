@@ -93,8 +93,17 @@ public class UnitEditorDialog extends JDialog implements LocationSelectListener 
 
     private final Entity entity;
 
-    /** Key for the general panel in the anatomical position map; locations use their own index. */
+    /** Key for the general panel in the location chooser; locations use their own index. */
     private static final int GENERAL_PANEL_KEY = -1;
+
+    /** How much the armor diagram is enlarged even when there is no panel height to fill. */
+    private static final double MIN_PAPERDOLL_SCALE = 1.6;
+
+    /** How far the armor diagram may be enlarged, past which it turns blocky. */
+    private static final double MAX_PAPERDOLL_SCALE = 2.5;
+
+    /** How much of the screen height the enlarged armor diagram may take. */
+    private static final double MAX_SCREEN_FRACTION = 0.7;
 
     /** One panel per unit location, holding that location's armor, structure, systems and equipment. */
     private JPanel[] locationPanels;
@@ -248,15 +257,40 @@ public class UnitEditorDialog extends JDialog implements LocationSelectListener 
         getRootPane().getActionMap().put(closeAction, new CloseAction(this));
 
         // The armor diagram builds its map sets when it becomes displayable, so it can only be drawn after the
-        // first pack. It sizes itself to its content, so pack again afterwards to fit the drawn diagram.
+        // first pack. It sizes itself to its content, so pack again once it has been drawn and enlarged.
         pack();
         refreshPaperdoll();
+        enlargePaperdollToFillDialog();
         pack();
 
         // leave room for scroll bars and never grow beyond the screen
         Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
         setSize(Math.min(getWidth() + UIUtil.scaleForGUI(30), (int) (screenSize.width * 0.9)),
               Math.min(getHeight() + UIUtil.scaleForGUI(30), (int) (screenSize.height * 0.9)));
+    }
+
+    /**
+     * Enlarges the armor diagram. It is drawn at a fixed size that is small on a modern screen, and smaller still
+     * beside a location panel full of equipment, which leaves the dialog with a band of empty space. So it is
+     * grown to the height of the tallest location panel, but never less than {@link #MIN_PAPERDOLL_SCALE}, never
+     * so far that it turns blocky, and never past the screen.
+     */
+    private void enlargePaperdollToFillDialog() {
+        if ((paperdoll == null) || (panCards == null)) {
+            return;
+        }
+        int drawnHeight = paperdoll.getPreferredSize().height;
+        if (drawnHeight <= 0) {
+            return;
+        }
+        int screenHeight = Toolkit.getDefaultToolkit().getScreenSize().height;
+        double panelScale = (double) panCards.getPreferredSize().height / drawnHeight;
+        double screenScale = (screenHeight * MAX_SCREEN_FRACTION) / drawnHeight;
+        double scale = Math.max(panelScale, MIN_PAPERDOLL_SCALE);
+        scale = Math.min(scale, Math.min(MAX_PAPERDOLL_SCALE, screenScale));
+        if (scale > 1.0) {
+            paperdoll.setDisplayScale(scale);
+        }
     }
 
     /**
@@ -755,6 +789,12 @@ public class UnitEditorDialog extends JDialog implements LocationSelectListener 
         gridBagConstraints.gridx = 1;
         gridBagConstraints.weightx = 1.0;
         panMain.add(panRight, gridBagConstraints);
+    }
+
+    /** The diagram is here to pick locations with, so a single click is enough to select one. */
+    @Override
+    public boolean selectsOnSingleClick() {
+        return true;
     }
 
     /** Shows the panel of the location the user picked in the armor diagram. */

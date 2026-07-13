@@ -35,11 +35,16 @@ package megamek.client.ui.dialogs;
 import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assumptions.assumeFalse;
 
 import java.awt.GraphicsEnvironment;
+import java.awt.Polygon;
+import java.awt.Rectangle;
 import javax.swing.JFrame;
 
+import megamek.client.ui.dialogs.unitDisplay.ArmorPanel;
+import megamek.client.ui.widget.picmap.PMSimplePolygonArea;
 import megamek.common.equipment.EquipmentType;
 import megamek.common.game.Game;
 import megamek.common.units.Entity;
@@ -112,6 +117,30 @@ class UnitEditorDialogTest {
         assertEquals(2, entity.getArmor(Mek.LOC_CENTER_TORSO, true), "rear armor was changed");
         assertEquals(7, entity.getInternal(Mek.LOC_CENTER_TORSO), "internal structure was changed");
         dialog.dispose();
+    }
+
+    /**
+     * The armor diagram is enlarged in the dialog. Its areas keep their unscaled coordinates, so a click must be
+     * scaled back into them, or clicks would land on the wrong location.
+     */
+    @Test
+    void clickingAnEnlargedDiagramFindsTheClickedLocation() {
+        ArmorPanel diagram = new ArmorPanel(null, location -> { });
+        Polygon area = new Polygon(new int[] { 10, 30, 30, 10 }, new int[] { 10, 10, 30, 30 }, 4);
+        PMSimplePolygonArea polygonArea = new PMSimplePolygonArea(area, null, Mek.LOC_HEAD);
+        diagram.addElement(polygonArea);
+
+        diagram.setDisplayScale(3.0);
+
+        // At triple size the area's center is drawn beyond the area's own coordinates, so it can only be found
+        // there if the click is scaled back into those coordinates.
+        Rectangle bounds = polygonArea.getBounds();
+        int centerX = bounds.x + (bounds.width / 2);
+        int centerY = bounds.y + (bounds.height / 2);
+        assertEquals(polygonArea, diagram.getAreaUnder(centerX * 3, centerY * 3),
+              "the enlarged area was not found under the point it is drawn at");
+        assertNull(diagram.getAreaUnder((bounds.x + bounds.width + 2) * 3, centerY * 3),
+              "an area was found past the edge of the enlarged diagram");
     }
 
     /** Picking a location in the armor diagram must work for every location the unit has. */

@@ -433,9 +433,31 @@ public class TWGameManager extends AbstractGameManager {
 
     public void processGameMasterRequest() {
         if (playerRequestingGameMaster != null) {
-            setGameMaster(playerRequestingGameMaster, true);
+            Player currentGameMaster = getGameMaster();
+            if (currentGameMaster == null) {
+                setGameMaster(playerRequestingGameMaster, true);
+            } else {
+                sendServerChat(playerRequestingGameMaster.getName()
+                      + " cannot become Game Master: "
+                      + currentGameMaster.getName()
+                      + " already holds the role.");
+            }
             playerRequestingGameMaster = null;
         }
+    }
+
+    /**
+     * Returns the player currently holding the Game Master role. Only one player may hold the role at a time.
+     *
+     * @return the current Game Master, or {@code null} if there is none
+     */
+    public @Nullable Player getGameMaster() {
+        for (Player player : game.getPlayersList()) {
+            if (player.getGameMaster()) {
+                return player;
+            }
+        }
+        return null;
     }
 
     public void setGameMaster(Player player, boolean gameMaster) {
@@ -26471,7 +26493,8 @@ public class TWGameManager extends AbstractGameManager {
         }
 
         Entity oldEntity = game.getEntity(entity.getId());
-        if ((oldEntity != null) && (!oldEntity.getOwner().isEnemyOf(game.getPlayer(connIndex)))) {
+        Player sender = game.getPlayer(connIndex);
+        if ((oldEntity != null) && senderCanUpdateEntity(sender, oldEntity)) {
             game.setEntity(entity.getId(), entity);
             entityUpdate(entity.getId());
             if (entity.isPartOfFighterSquadron()) {
@@ -26487,14 +26510,90 @@ public class TWGameManager extends AbstractGameManager {
             // In the chat lounge, notify players of customizing of unit
             if (game.getPhase().isLounge()) {
                 sendServerChat(ServerLobbyHelper.entityUpdateMessage(entity, game));
+            } else {
+                destroyEntityIfFatallyDamaged(entity);
             }
         }
     }
 
     /**
+     * Returns {@code true} if the sending player may replace the given unit with a client-side edit. The sender must be
+     * the unit's owner, a teammate of the owner, or a gamemaster. Updates for a unit without an owner are rejected
+     * unless the sender is a gamemaster.
+     *
+     * @param sender    the player the update was received from; may be {@code null} for an unknown connection
+     * @param oldEntity the server's current version of the unit being updated
+     *
+     * @return {@code true} if the update may be applied
+     */
+    private boolean senderCanUpdateEntity(@Nullable Player sender, Entity oldEntity) {
+        if (sender == null) {
+            return false;
+        }
+        if (sender.isGameMaster()) {
+            return true;
+        }
+        Player owner = oldEntity.getOwner();
+        return (owner != null) && !owner.isEnemyOf(sender);
+    }
+
+    /**
+     * Destroys the given unit if an out-of-band edit (such as a gamemaster damage edit) left it in a state it
+     * cannot survive, e.g. with its center torso destroyed. Direct entity updates bypass normal damage
+     * resolution, which is where destruction is otherwise detected and applied.
+     *
+     * @param entity the server's version of the unit to check
+     */
+    private void destroyEntityIfFatallyDamaged(Entity entity) {
+        if (entity.isDestroyed() || entity.isDoomed()) {
+            return;
+        }
+
+        String destructionReason = null;
+        boolean survivable = true;
+
+        if ((entity.getCrew() != null) && entity.getCrew().isDead()) {
+            destructionReason = "crew death";
+            survivable = false;
+        } else if (entity instanceof Mek mek) {
+            // 3 engine hits destroy a Mek; superheavies with compact engines only take 2 (TW p.125, IO p.104)
+            int engineHitsToDestroy = (mek.isSuperHeavy()
+                  && mek.hasEngine()
+                  && (mek.getEngine().getEngineType() == Engine.COMPACT_ENGINE)) ? 2 : 3;
+            if (mek.getEngineHits() >= engineHitsToDestroy) {
+                destructionReason = "engine destruction";
+            }
+        } else if ((entity instanceof Aero aero) && (aero.getSI() <= 0)) {
+            destructionReason = "structural integrity collapse";
+        }
+
+        if (destructionReason == null) {
+            // Losing a location whose damage cannot transfer further inward (a Mek's center torso or head, any
+            // hull location of a vehicle, the last trooper of a squad) destroys the unit.
+            for (int location = 0; location < entity.locations(); location++) {
+                int internal = entity.getInternal(location);
+                boolean locationGone = (internal == IArmorState.ARMOR_DESTROYED)
+                      || (internal == IArmorState.ARMOR_DOOMED)
+                      || ((internal == 0) && (entity.getOInternal(location) > 0));
+                if (locationGone
+                      && (entity.getTransferLocation(new HitData(location)).getLocation() == Entity.LOC_DESTROYED)) {
+                    destructionReason = "damage";
+                    break;
+                }
+            }
+        }
+
+        if (destructionReason != null) {
+            destroyEntity(entity, destructionReason, survivable);
+            entityUpdate(entity.getId());
+            sendServerChat(entity.getDisplayName() + " did not survive its damage edits.");
+        }
+    }
+
+    /**
      * Updates multiple entities with the info from the client. Only valid during the lobby phase! Will only update
-     * units that are teammates of the sender. Other entities remain unchanged but still be sent back to overwrite
-     * incorrect client changes.
+     * units that are teammates of the sender or when the sender is a gamemaster. Other entities remain unchanged but
+     * still be sent back to overwrite incorrect client changes.
      */
     private void receiveEntitiesUpdate(Packet packet, int connIndex) throws InvalidPacketDataException {
         if (!getGame().getPhase().isLounge()) {
@@ -26502,10 +26601,11 @@ public class TWGameManager extends AbstractGameManager {
         }
         Set<Entity> newEntities = new HashSet<>();
         List<Entity> entities = packet.getEntityList(0);
+        Player sender = game.getPlayer(connIndex);
         for (Entity entity : entities) {
             Entity oldEntity = game.getEntity(entity.getId());
-            // Only update entities that existed and are owned by a teammate of the sender
-            if ((oldEntity != null) && (!oldEntity.getOwner().isEnemyOf(game.getPlayer(connIndex)))) {
+            // Only update entities that existed; senderCanUpdateEntity handles the permission check
+            if ((oldEntity != null) && senderCanUpdateEntity(sender, oldEntity)) {
                 game.setEntity(entity.getId(), entity);
 
                 // Reconstruct C3 network IDs from UUIDs (fixes lobby C3 configuration)

@@ -660,14 +660,4 @@ public class MinefieldDeploymentPlanner {
 			return hexScore;
 		}
 	}
-	
-	// TODO:
-	// X mek partial cover bonus reduction based on how low we are
-	// bonus for distance from nearest deployment zone
-	// X wheeled vehicle map
-	// Xinfantry map
-	// X hover tank map
-	// X weighted average for known opponent unit counts
-	// Xactual placement by bot
-	// appropriately set vibrabom threshold
 }

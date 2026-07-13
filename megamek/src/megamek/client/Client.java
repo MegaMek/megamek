@@ -479,6 +479,11 @@ public class Client extends AbstractClient {
      * Sends an "update entity" packet
      */
     public void sendUpdateEntity(Entity entity) {
+        LOGGER.debug("Sending update for {} (id {}): heat {}, destroyed {}",
+              entity.getDisplayName(),
+              entity.getId(),
+              entity.heat,
+              entity.isDestroyed());
         send(new Packet(PacketCommand.ENTITY_UPDATE, entity));
     }
 

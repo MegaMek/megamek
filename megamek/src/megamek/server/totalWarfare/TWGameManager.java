@@ -26471,23 +26471,35 @@ public class TWGameManager extends AbstractGameManager {
         }
 
         Entity oldEntity = game.getEntity(entity.getId());
-        if ((oldEntity != null) && (!oldEntity.getOwner().isEnemyOf(game.getPlayer(connIndex)))) {
-            game.setEntity(entity.getId(), entity);
-            entityUpdate(entity.getId());
-            if (entity.isPartOfFighterSquadron()) {
-                // Update the stats of any Squadrons that the new units are part of
-                FighterSquadron squadron = (FighterSquadron) game.getEntity(entity.getTransportId());
-                if (squadron != null) {
-                    squadron.updateSkills();
-                    squadron.updateWeaponGroups();
-                    squadron.updateSensors();
-                    entityUpdate(squadron.getId());
-                }
+        if (oldEntity == null) {
+            LOGGER.warn("Dropping update for unit id {}: no such unit is in the game", entity.getId());
+            return;
+        }
+        Player sender = game.getPlayer(connIndex);
+        if (oldEntity.getOwner().isEnemyOf(sender)) {
+            LOGGER.warn("Dropping update for {} from {}: it belongs to an enemy player",
+                  oldEntity.getDisplayName(),
+                  (sender == null) ? "an unknown connection" : sender.getName());
+            return;
+        }
+        LOGGER.debug("Applying update for {} from {}",
+              oldEntity.getDisplayName(),
+              (sender == null) ? "an unknown connection" : sender.getName());
+        game.setEntity(entity.getId(), entity);
+        entityUpdate(entity.getId());
+        if (entity.isPartOfFighterSquadron()) {
+            // Update the stats of any Squadrons that the new units are part of
+            FighterSquadron squadron = (FighterSquadron) game.getEntity(entity.getTransportId());
+            if (squadron != null) {
+                squadron.updateSkills();
+                squadron.updateWeaponGroups();
+                squadron.updateSensors();
+                entityUpdate(squadron.getId());
             }
-            // In the chat lounge, notify players of customizing of unit
-            if (game.getPhase().isLounge()) {
-                sendServerChat(ServerLobbyHelper.entityUpdateMessage(entity, game));
-            }
+        }
+        // In the chat lounge, notify players of customizing of unit
+        if (game.getPhase().isLounge()) {
+            sendServerChat(ServerLobbyHelper.entityUpdateMessage(entity, game));
         }
     }
 

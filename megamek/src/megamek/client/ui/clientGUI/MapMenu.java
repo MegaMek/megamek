@@ -802,7 +802,8 @@ public class MapMenu extends JPopupMenu {
         item.addActionListener(evt -> {
             UnitEditorDialog med = new UnitEditorDialog(gui.getFrame(),
                   entity,
-                  client.getLocalPlayer().isGameMaster());
+                  client.getLocalPlayer().isGameMaster(),
+                  client);
             gui.getBoardView().setShouldIgnoreKeys(true);
             med.setVisible(true);
             med.dispose();

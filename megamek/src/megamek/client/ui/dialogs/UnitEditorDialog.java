@@ -57,6 +57,7 @@ import java.util.Vector;
 import javax.swing.*;
 
 import megamek.MegaMek;
+import megamek.client.Client;
 import megamek.client.ui.Messages;
 import megamek.client.ui.clientGUI.CloseAction;
 import megamek.client.ui.clientGUI.GUIPreferences;
@@ -106,6 +107,9 @@ public class UnitEditorDialog extends JDialog implements LocationSelectListener 
     /** Names the dialog and its divider for the stored size, position and divider location. */
     private static final String DIALOG_NAME = "unitEditorDialog";
     private static final String SPLIT_PANE_NAME = "unitEditorSplitPane";
+
+    /** The gamemaster command that has the server destroy a unit, as used by the map menu. */
+    private static final String DESTROY_UNIT_COMMAND = "/kill %d";
 
     /** The most heat that can be set, matching the range the lobby's heat menu offers. */
     private static final int MAX_HEAT = 40;
@@ -203,6 +207,9 @@ public class UnitEditorDialog extends JDialog implements LocationSelectListener 
     /** Whether the user opening this dialog is a gamemaster; only they may roll pre-existing damage. */
     private final boolean gameMaster;
 
+    /** The client to destroy the unit through; null where there is no game, as in MekHQ and MegaMekLab. */
+    private final Client client;
+
     /**
      * Opens the dialog without the pre-existing damage roller. Used where there is no gamemaster to speak of, such as
      * MekHQ and MegaMekLab.
@@ -221,9 +228,22 @@ public class UnitEditorDialog extends JDialog implements LocationSelectListener 
      *                   damage roller (FSW p.144)
      */
     public UnitEditorDialog(JFrame parent, Entity entity, boolean gameMaster) {
+        this(parent, entity, gameMaster, null);
+    }
+
+    /**
+     * @param parent     the parent frame
+     * @param entity     the unit to edit damage for
+     * @param gameMaster {@code true} if the user opening the dialog is a gamemaster, which enables the pre-existing
+     *                   damage roller (FSW p.144)
+     * @param client     the client to destroy the unit through, or {@code null} where there is no game to destroy it
+     *                   in, such as in MekHQ and MegaMekLab. Without one, Destroy Unit is not offered.
+     */
+    public UnitEditorDialog(JFrame parent, Entity entity, boolean gameMaster, @Nullable Client client) {
         super(parent, true);
         this.entity = entity;
         this.gameMaster = gameMaster;
+        this.client = client;
         initComponents();
         setLocationRelativeTo(parent);
     }
@@ -378,18 +398,30 @@ public class UnitEditorDialog extends JDialog implements LocationSelectListener 
         butRestoreUnit.addActionListener(event -> restoreUnitToFactoryNew());
         panPreExisting.add(butRestoreUnit);
 
+        // In the lobby a unit that is not wanted is simply removed, and nothing is in play to destroy yet. Without
+        // a client there is no server to destroy it either, as in MekHQ and MegaMekLab.
+        boolean canDestroy = (client != null)
+              && (entity.getGame() != null)
+              && !entity.getGame().getPhase().isLounge();
         JButton butDestroyUnit = new JButton(Messages.getString("UnitEditorDialog.destroyUnit"));
-        butDestroyUnit.setToolTipText(Messages.getString("UnitEditorDialog.destroyUnit.tooltip"));
+        butDestroyUnit.setToolTipText(Messages.getString(canDestroy
+              ? "UnitEditorDialog.destroyUnit.tooltip"
+              : "UnitEditorDialog.destroyUnit.tooltip.lobby"));
+        butDestroyUnit.setEnabled(canDestroy);
         butDestroyUnit.addActionListener(event -> destroyUnit());
         panPreExisting.add(butDestroyUnit);
         return panPreExisting;
     }
 
     /**
-     * Asks first, then sets the controls to a unit that cannot survive: no armor and no structure anywhere. The
-     * unit is destroyed when Okay is pressed and the server sees a unit whose damage it cannot survive, the same
-     * way a unit shot to pieces is. The crew is left alone; the server decides who dies with the unit and who
-     * escapes.
+     * Asks first, then has the server destroy the unit, through the same gamemaster command the map menu uses. The
+     * server is what destroys a unit: it writes the reports, decides who dies with it and who escapes, and takes it
+     * off the board. Zeroing the unit's armor here would leave it standing.
+     * <p>
+     * The unit is also marked destroyed locally, because the caller sends the unit to the server once this dialog
+     * closes. That update would otherwise arrive after the destruction carrying a unit that is still alive, and put
+     * it straight back on the board.
+     * </p>
      */
     private void destroyUnit() {
         int choice = JOptionPane.showConfirmDialog(this,
@@ -400,11 +432,16 @@ public class UnitEditorDialog extends JDialog implements LocationSelectListener 
         if (choice != JOptionPane.YES_OPTION) {
             return;
         }
-        for (int location = 0; location < entity.locations(); location++) {
-            setSpinnerToZero(spnArmor[location]);
-            setSpinnerToZero(spnRear[location]);
-            setSpinnerToZero(spnInternal[location]);
+        if (client == null) {
+            LOGGER.error("Cannot destroy {}: the damage editor was opened without a client",
+                  entity.getDisplayName());
+            return;
         }
+        LOGGER.info("Destroying {} at the request of the damage editor", entity.getDisplayName());
+        entity.setDoomed(true);
+        entity.setDestroyed(true);
+        client.sendChat(String.format(DESTROY_UNIT_COMMAND, entity.getId()));
+        setVisible(false);
     }
 
     private void setSpinnerToZero(@Nullable JSpinner spinner) {
@@ -1859,6 +1896,37 @@ public class UnitEditorDialog extends JDialog implements LocationSelectListener 
 
         applyCrewHits();
         applyHeat();
+        logAppliedEdits();
+    }
+
+    /**
+     * Logs what the dialog wrote into the unit. The unit still has to reach the server, which drops updates it does
+     * not accept, so a log of what was applied here tells apart an edit that never happened from one that was
+     * refused on the way.
+     */
+    private void logAppliedEdits() {
+        StringBuilder summary = new StringBuilder();
+        for (int location = 0; location < entity.locations(); location++) {
+            if (null == spnArmor[location]) {
+                continue;
+            }
+            summary.append(' ')
+                  .append(entity.getLocationAbbr(location))
+                  .append(':')
+                  .append(entity.getInternal(location))
+                  .append('/')
+                  .append(entity.getArmor(location, false));
+            if (entity.hasRearArmor(location)) {
+                summary.append('/').append(entity.getArmor(location, true));
+            }
+        }
+        LOGGER.info("Applied damage edits to {} (id {}): heat {}, crew hits {}, destroyed {}, structure/armor{}",
+              entity.getDisplayName(),
+              entity.getId(),
+              entity.heat,
+              (entity.getCrew() == null) ? "none" : entity.getCrew().getHits(),
+              entity.isDestroyed(),
+              summary);
     }
 
     /**

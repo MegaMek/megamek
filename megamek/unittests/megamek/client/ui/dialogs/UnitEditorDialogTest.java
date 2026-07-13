@@ -39,6 +39,7 @@ import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.junit.jupiter.api.Assumptions.assumeFalse;
+import static org.mockito.Mockito.mock;
 
 import java.awt.Component;
 import java.awt.Container;
@@ -51,9 +52,11 @@ import javax.swing.JLabel;
 import javax.swing.JSpinner;
 import javax.swing.SpinnerNumberModel;
 
+import megamek.client.Client;
 import megamek.client.ui.Messages;
 import megamek.client.ui.dialogs.unitDisplay.ArmorPanel;
 import megamek.client.ui.widget.picmap.PMSimplePolygonArea;
+import megamek.common.enums.GamePhase;
 import megamek.common.equipment.EquipmentType;
 import megamek.common.game.Game;
 import megamek.common.units.Crew;
@@ -191,6 +194,52 @@ class UnitEditorDialogTest {
 
         assertFalse(entity.getCrew().isDead(), "the crew member was not revived");
         assertEquals(2, entity.getCrew().getHits(0), "the crew hits were not applied");
+        dialog.dispose();
+    }
+
+    /**
+     * There is nothing in play to destroy in the lobby, where an unwanted unit is simply removed, so the button is
+     * only offered once the game has started.
+     */
+    @Test
+    void destroyUnitIsOnlyOfferedInGame() {
+        Entity entity = MMTestUtilities.getEntityForUnitTesting("Atlas AS7-D", false);
+        assertNotNull(entity);
+        Game game = new Game();
+        game.addEntity(entity);
+        Client client = mock(Client.class);
+
+        game.setPhase(GamePhase.LOUNGE);
+        UnitEditorDialog lobbyDialog = new UnitEditorDialog(new JFrame(), entity, true, client);
+        JButton lobbyButton = findButton(lobbyDialog.getContentPane(),
+              Messages.getString("UnitEditorDialog.destroyUnit"));
+        assertNotNull(lobbyButton, "the dialog has no Destroy Unit button");
+        assertFalse(lobbyButton.isEnabled(), "Destroy Unit was offered in the lobby");
+        lobbyDialog.dispose();
+
+        game.setPhase(GamePhase.MOVEMENT);
+        UnitEditorDialog gameDialog = new UnitEditorDialog(new JFrame(), entity, true, client);
+        JButton gameButton = findButton(gameDialog.getContentPane(),
+              Messages.getString("UnitEditorDialog.destroyUnit"));
+        assertNotNull(gameButton);
+        assertTrue(gameButton.isEnabled(), "Destroy Unit was not offered in game");
+        gameDialog.dispose();
+    }
+
+    /** Without a client there is no server to destroy the unit, as in MekHQ and MegaMekLab. */
+    @Test
+    void destroyUnitIsNotOfferedWithoutAClient() {
+        Entity entity = MMTestUtilities.getEntityForUnitTesting("Atlas AS7-D", false);
+        assertNotNull(entity);
+        Game game = new Game();
+        game.addEntity(entity);
+        game.setPhase(GamePhase.MOVEMENT);
+
+        UnitEditorDialog dialog = new UnitEditorDialog(new JFrame(), entity, true);
+
+        JButton destroy = findButton(dialog.getContentPane(), Messages.getString("UnitEditorDialog.destroyUnit"));
+        assertNotNull(destroy);
+        assertFalse(destroy.isEnabled(), "Destroy Unit was offered without a client to destroy through");
         dialog.dispose();
     }
 

@@ -8303,8 +8303,8 @@ public class MiscType extends EquipmentType {
     public static MiscType createHarJelIII() {
         MiscType misc = new MiscType();
         misc.name = "HarJel Repair Systems (HarJel III)";
-        misc.addLookupName("HarJel III Self-Repair System");
         misc.setInternalName(misc.name);
+        misc.addLookupName("HarJel III Self-Repair System");
         misc.shortName = "HarJel III";
         misc.tonnage = 3;
         misc.criticalSlots = 2;

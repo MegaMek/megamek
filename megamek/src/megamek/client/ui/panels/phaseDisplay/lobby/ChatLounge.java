@@ -131,6 +131,7 @@ import megamek.client.ui.panels.phaseDisplay.AbstractPhaseDisplay;
 import megamek.client.ui.panels.phaseDisplay.lobby.PlayerTable.PlayerTableModel;
 import megamek.client.ui.panels.phaseDisplay.lobby.sorters.*;
 import megamek.client.ui.util.ScalingPopup;
+import megamek.client.ui.util.FontHandler;
 import megamek.client.ui.util.UIUtil;
 import megamek.client.ui.util.UIUtil.FixedXPanel;
 import megamek.client.ui.util.UIUtil.FixedYPanel;
@@ -228,6 +229,8 @@ public class ChatLounge extends AbstractPhaseDisplay
     public JScrollPane scrMekTable;
     private final MMToggleButton butCompact = new MMToggleButton(Messages.getString("ChatLounge.butCompact"));
     private final MMToggleButton butShowUnitID = new MMToggleButton(Messages.getString("ChatLounge.butShowUnitID"));
+    /** Takes and gives up the gamemaster role, and shows who holds it. */
+    private final MMToggleButton butGameMaster = new MMToggleButton(Messages.getString("ChatLounge.butGameMaster"));
     private final JToggleButton butListView = new JToggleButton(Messages.getString("ChatLounge.butSortableView"));
     private final JToggleButton butForceView = new JToggleButton(Messages.getString("ChatLounge.butForceView"));
     private final JButton butCollapse = new JButton(Messages.getString("ChatLounge.butCollapse"));
@@ -361,6 +364,10 @@ public class ChatLounge extends AbstractPhaseDisplay
     private static final String CL_ACTION_COMMAND_AUTO_RESOLVE = "AUTORESOLVE";
     private static final String CL_ACTION_COMMAND_CAMO = "camo";
 
+    /** The chat command that takes or gives up the gamemaster role, and the check mark shown while it is held. */
+    private static final String GAME_MASTER_COMMAND = "/gm";
+    private static final int GAME_MASTER_ICON_CODE_POINT = 0xE5CA;
+
     private static final GUIPreferences GUIP = GUIPreferences.getInstance();
     private static final ClientPreferences CLIENT_PREFERENCES = PreferenceManager.getClientPreferences();
     private transient ClientGUI clientgui;
@@ -394,6 +401,7 @@ public class ChatLounge extends AbstractPhaseDisplay
         setupUnitsPanel();
         setupMapPanel();
         refreshLabels();
+        refreshGameMasterButton();
         setupListeners();
     }
 
@@ -448,6 +456,7 @@ public class ChatLounge extends AbstractPhaseDisplay
         butSaveList.addActionListener(lobbyListener);
         butPrintList.addActionListener(lobbyListener);
         butShowUnitID.addActionListener(lobbyListener);
+        butGameMaster.addActionListener(lobbyListener);
         butSkills.addActionListener(lobbyListener);
         butSpaceSize.addActionListener(lobbyListener);
         butCamo.addActionListener(camoListener);
@@ -788,6 +797,8 @@ public class ChatLounge extends AbstractPhaseDisplay
         topRight.add(Box.createHorizontalStrut(30));
         topRight.add(butCollapse);
         topRight.add(butExpand);
+        topRight.add(Box.createHorizontalStrut(30));
+        topRight.add(butGameMaster);
 
         JPanel rightSide = new JPanel();
         rightSide.setLayout(new BoxLayout(rightSide, BoxLayout.PAGE_AXIS));
@@ -1830,6 +1841,7 @@ public class ChatLounge extends AbstractPhaseDisplay
         refreshPlayerTable();
         refreshPlayerConfig();
         refreshCamoButton();
+        refreshGameMasterButton();
         refreshEntities();
         panTeamOverview.refreshData();
     }
@@ -1938,6 +1950,8 @@ public class ChatLounge extends AbstractPhaseDisplay
                 clientgui.getGameOptionsDialog().setEditable(true);
                 clientgui.getGameOptionsDialog().update(clientgui.getClient().getGame().getOptions());
                 clientgui.getGameOptionsDialog().setVisible(true);
+            } else if (ev.getSource().equals(butGameMaster)) {
+                toggleGameMaster();
             } else if (ev.getSource().equals(butCompact)) {
                 toggleCompact();
             } else if (ev.getSource().equals(butLoadList)) {
@@ -3370,6 +3384,61 @@ public class ChatLounge extends AbstractPhaseDisplay
         butShowUnitID.removeActionListener(lobbyListener);
         butShowUnitID.setSelected(PreferenceManager.getClientPreferences().getShowUnitId());
         butShowUnitID.addActionListener(lobbyListener);
+    }
+
+    /**
+     * Asks the server for the gamemaster role, or gives it up when this player already holds it. The request goes
+     * through the same command the chat uses, so the rules for taking the role live in one place: it is granted
+     * without a vote in the lobby, needs a unanimous vote once the game has started, and is refused while another
+     * player holds it.
+     */
+    private void toggleGameMaster() {
+        client().sendChat(GAME_MASTER_COMMAND);
+        // the button follows the server's answer, not the click, so it is put back until that answer arrives
+        refreshGameMasterButton();
+    }
+
+    /**
+     * Shows who holds the gamemaster role, from what the server last said. Every player sees the same thing,
+     * because the server sends a player update to everyone when the role changes.
+     */
+    private void refreshGameMasterButton() {
+        butGameMaster.removeActionListener(lobbyListener);
+
+        Player gameMaster = null;
+        for (Player player : game().getPlayersList()) {
+            if (player.isGameMaster()) {
+                gameMaster = player;
+                break;
+            }
+        }
+        boolean localPlayerIsGameMaster = (gameMaster != null) && gameMaster.equals(localPlayer());
+
+        butGameMaster.setVisible(GUIP.getAllowGameMasterMode());
+        butGameMaster.setSelected(localPlayerIsGameMaster);
+        if (gameMaster == null) {
+            butGameMaster.setText(Messages.getString("ChatLounge.butGameMaster"));
+            butGameMaster.setIcon(null);
+            butGameMaster.setEnabled(true);
+            butGameMaster.setToolTipText(Messages.getString("ChatLounge.butGameMaster.tooltip"));
+        } else {
+            butGameMaster.setText(Messages.getString("ChatLounge.butGameMaster.held", gameMaster.getName()));
+            butGameMaster.setIcon(gameMasterIcon());
+            // only the player holding the role can give it up, and only one player may hold it at a time
+            butGameMaster.setEnabled(localPlayerIsGameMaster);
+            butGameMaster.setToolTipText(Messages.getString(localPlayerIsGameMaster
+                  ? "ChatLounge.butGameMaster.tooltip.held"
+                  : "ChatLounge.butGameMaster.tooltip.heldByOther", gameMaster.getName()));
+        }
+
+        butGameMaster.addActionListener(lobbyListener);
+    }
+
+    /** The check mark shown on the Game Master button while the role is held. */
+    private Icon gameMasterIcon() {
+        return FontHandler.symbolIcon(GAME_MASTER_ICON_CODE_POINT,
+              scaleForGUI(14),
+              GUIP.getOkColor());
     }
 
     /**

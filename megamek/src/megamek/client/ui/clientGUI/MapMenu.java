@@ -414,7 +414,7 @@ public class MapMenu extends JPopupMenu {
      */
     private JMenu createPleaToRoyaltyMenu() {
         JMenu menu = new JMenu(Messages.getString("Bot.commands.title"));
-        var isGM = client.getLocalPlayer().isGameMaster();
+        var isGM = isGameMasterEnabled();
         for (var player : client.getGame().getPlayersList()) {
             var isEnemy = player.isEnemyOf(client.getLocalPlayer());
             var playerIsBot = player.isBot();
@@ -714,11 +714,19 @@ public class MapMenu extends JPopupMenu {
     }
 
     /**
+     * Whether the gamemaster tools are offered: the player must hold the role, and this client must be set to allow
+     * gamemaster mode at all, which is a client setting a player can turn off to keep the tools out of their way.
+     */
+    private boolean isGameMasterEnabled() {
+        return GUIPreferences.getInstance().getAllowGameMasterMode() && client.getLocalPlayer().isGameMaster();
+    }
+
+    /**
      * Create various menus related to GameMaster (GM) mode
      */
     private JMenu createGameMasterMenu() {
         JMenu menu = new JMenu(Messages.getString("Gamemaster.Gamemaster"));
-        if (client.getLocalPlayer().isGameMaster()) {
+        if (isGameMasterEnabled()) {
             JMenu dmgMenu = new JMenu(Messages.getString("Gamemaster.EditDamage"));
             JMenu cfgMenu = new JMenu(Messages.getString("Gamemaster.Configure"));
             JMenu traitorMenu = new JMenu(Messages.getString("Gamemaster.Traitor"));

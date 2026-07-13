@@ -245,7 +245,9 @@ public class LobbyActions {
             LobbyErrors.showCannotEditDamage(frame());
             return;
         }
-        UnitEditorDialog med = new UnitEditorDialog(frame(), entity, localPlayer().isGameMaster());
+        boolean gameMasterTools = GUIPreferences.getInstance().getAllowGameMasterMode()
+              && localPlayer().isGameMaster();
+        UnitEditorDialog med = new UnitEditorDialog(frame(), entity, gameMasterTools);
         med.setVisible(true);
         med.dispose();
         sendUpdates(entities);

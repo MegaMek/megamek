@@ -282,6 +282,7 @@ public class CommonSettingsDialog extends AbstractButtonDialog
     private final JCheckBox spritesOnly = new JCheckBox(Messages.getString(
           "CommonSettingsDialog.spritesOnly"));
     private final JCheckBox showDamageLevel = new JCheckBox(Messages.getString("CommonSettingsDialog.showDamageLevel"));
+    private final JCheckBox allowGameMasterMode = new JCheckBox(Messages.getString("CommonSettingsDialog.allowGameMasterMode"));
     private final JCheckBox showDamageDecal = new JCheckBox(Messages.getString("CommonSettingsDialog.showDamageDecal"));
     private final JCheckBox showMapSheets = new JCheckBox(Messages.getString("CommonSettingsDialog.showMapsheets"));
     private final JCheckBox aOHexShadows = new JCheckBox(Messages.getString("CommonSettingsDialog.aOHexSHadows"));
@@ -2221,6 +2222,11 @@ public class CommonSettingsDialog extends AbstractButtonDialog
               Messages.getString("CommonSettingsDialog.showIPAddressesInChat.tooltip")));
         comps.add(checkboxEntry(spritesOnly,
               Messages.getString("CommonSettingsDialog.spritesOnly.tooltip")));
+
+        addLineSpacer(comps);
+
+        comps.add(checkboxEntry(allowGameMasterMode,
+              Messages.getString("CommonSettingsDialog.allowGameMasterMode.tooltip")));
         return createSettingsPanel(comps);
     }
 
@@ -2350,6 +2356,7 @@ public class CommonSettingsDialog extends AbstractButtonDialog
             chkHighQualityGraphics.setSelected(GUIP.getHighQualityGraphics());
             chkHighPerformanceGraphics.setSelected(GUIP.getHighPerformanceGraphics());
             showDamageLevel.setSelected(GUIP.getShowDamageLevel());
+            allowGameMasterMode.setSelected(GUIP.getAllowGameMasterMode());
             showDamageDecal.setSelected(GUIP.getShowDamageDecal());
             aOHexShadows.setSelected(GUIP.getAOHexShadows());
             floatingIso.setSelected(GUIP.getFloatingIso());
@@ -2690,6 +2697,7 @@ public class CommonSettingsDialog extends AbstractButtonDialog
     @Override
     protected void okAction() {
         GUIP.setShowDamageLevel(showDamageLevel.isSelected());
+        GUIP.setAllowGameMasterMode(allowGameMasterMode.isSelected());
         GUIP.setShowDamageDecal(showDamageDecal.isSelected());
         GUIP.setUnitLabelBorder(entityOwnerColor.isSelected());
         GUIP.setTeamColoring(teamColoring.isSelected());
@@ -3225,6 +3233,8 @@ public class CommonSettingsDialog extends AbstractButtonDialog
             GUIP.setShowDamageDecal(showDamageDecal.isSelected());
         } else if (source.equals(showDamageLevel)) {
             GUIP.setShowDamageLevel(showDamageLevel.isSelected());
+        } else if (source.equals(allowGameMasterMode)) {
+            GUIP.setAllowGameMasterMode(allowGameMasterMode.isSelected());
         } else if (source.equals(chkHighQualityGraphics)) {
             GUIP.setHighQualityGraphics(chkHighQualityGraphics.isSelected());
         } else if (source.equals(chkHighPerformanceGraphics)) {

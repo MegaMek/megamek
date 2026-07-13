@@ -1114,6 +1114,9 @@ public class BLKFile {
             if (ba.isExoskeleton()) {
                 blk.writeBlockData("exoskeleton", "true");
             }
+            if (ba.isClan() && ba.isExoskeleton() && ba.isClanExoWithoutHarJel()) {
+                blk.writeBlockData("clan_exo_without_harjel", "true");
+            }
             blk.writeBlockData("jumpingMP", ba.getOriginalJumpMP());
             blk.writeBlockData("armor", new int[] { ba.getArmor(1) });
             blk.writeBlockData("Trooper Count", (int) t.getWeight());

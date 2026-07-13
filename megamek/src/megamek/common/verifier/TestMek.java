@@ -841,8 +841,8 @@ public class TestMek extends TestEntity {
 
         boolean hasStealth = mek.hasStealth();
         boolean hasC3 = mek.hasAnyC3System();
-        boolean hasHarjelII = false;
-        boolean hasHarjelIII = false;
+        boolean hasHarJelII = false;
+        boolean hasHarJelIII = false;
         boolean hasNullSig = false;
         boolean hasVoidSig = false;
         boolean hasTC = false;
@@ -858,8 +858,8 @@ public class TestMek extends TestEntity {
         // so we don't have to execute another loop each time one of those situations
         // comes up.
         for (MiscMounted m : mek.getMisc()) {
-            hasHarjelII |= m.getType().hasFlag(MiscType.F_HARJEL_II);
-            hasHarjelIII |= m.getType().hasFlag(MiscType.F_HARJEL_III);
+            hasHarJelII |= m.getType().hasFlag(MiscType.F_HARJEL_II);
+            hasHarJelIII |= m.getType().hasFlag(MiscType.F_HARJEL_III);
             hasNullSig |= m.getType().hasFlag(MiscType.F_NULL_SIG);
             hasVoidSig |= m.getType().hasFlag(MiscType.F_VOID_SIG);
             hasTC |= m.getType().hasFlag(MiscType.F_TARGETING_COMPUTER);
@@ -1476,12 +1476,12 @@ public class TestMek extends TestEntity {
             }
         }
 
-        if (hasHarjelII && hasHarjelIII) {
+        if (hasHarJelII && hasHarJelIII) {
             illegal = true;
             buff.append("Can't mix HarJel II and HarJel III\n");
         }
 
-        if (hasHarjelII || hasHarjelIII) {
+        if (hasHarJelII || hasHarJelIII) {
             if (mek.isIndustrial()) {
                 buff.append("Cannot mount HarJel repair system on IndustrialMek\n");
                 illegal = true;

@@ -1630,8 +1630,8 @@ public abstract class TestEntity implements TestEntityOption {
         boolean illegal = false;
         int fieldKitchenCount = 0;
         int minesweeperCount = 0;
-        boolean hasHarjelII = false;
-        boolean hasHarjelIII = false;
+        boolean hasHarJelII = false;
+        boolean hasHarJelIII = false;
         boolean hasCoolantPod = false;
         int emergencyCoolantCount = 0;
         int networks = 0;
@@ -1674,10 +1674,10 @@ public abstract class TestEntity implements TestEntityOption {
                 buff.append("void signature system needs ECM suite\n");
             }
             if (m.getType().hasFlag(MiscType.F_HARJEL_II)) {
-                hasHarjelII = true;
+                hasHarJelII = true;
             }
             if (m.getType().hasFlag(MiscType.F_HARJEL_III)) {
-                hasHarjelIII = true;
+                hasHarJelIII = true;
             }
             if (m.getType().hasFlag(MiscType.F_FUEL)) {
                 hasExternalFuelTank = true;
@@ -1803,7 +1803,7 @@ public abstract class TestEntity implements TestEntityOption {
             buff.append("Unit has more than one RISC emergency coolant system\n");
             illegal = true;
         }
-        if (!(getEntity() instanceof Mek) && (hasHarjelII || hasHarjelIII)) {
+        if (!(getEntity() instanceof Mek) && (hasHarJelII || hasHarJelIII)) {
             buff.append("Cannot mount HarJel repair system on non-Mek\n");
             illegal = true;
         }

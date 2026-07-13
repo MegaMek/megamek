@@ -462,23 +462,34 @@ public class MovePath implements Cloneable, Serializable {
      * been declared illegal
      */
     private void performIllegalCheck(MoveStep step, Coords start, Coords land) {
-        //Flee
+        // Ensure that the appropriate steps to flee from stuck or prone were taken
         if (step.getType() == MoveStepType.FLEE) {
             if (!(getEntity().canFleeInState())) {
                 if ((getEntity().isStuck() && getEntity().isProne())) {
                     // A stuck and prone entity has no way to get up and flee during the move path
                     step.setMovementType(EntityMovementType.MOVE_ILLEGAL);
+                    return;
                 }
                 else if(getEntity().isStuck()) {
                     // A stuck entity has to jump to move during the move path
                     if (!(contains(MoveStepType.START_JUMP))) {
                         step.setMovementType(EntityMovementType.MOVE_ILLEGAL);
+                        return;
                     }
                 }
                 else if (getEntity().isProne()) {
                     // A prone entity can flee if it succeeds in getting up during the move path
+                    // The GET_UP step is cleared from the containedStepTypes when reaching this point
+                    boolean emptyStepTypes = containedStepTypes.isEmpty();
+                    if (emptyStepTypes) {
+                        regenerateStepTypes();
+                    }
                     if (!(contains(MoveStepType.GET_UP))) {
                         step.setMovementType(EntityMovementType.MOVE_ILLEGAL);
+                        return;
+                    }
+                    if (emptyStepTypes) {
+                        containedStepTypes.clear();
                     }
                 }
             }

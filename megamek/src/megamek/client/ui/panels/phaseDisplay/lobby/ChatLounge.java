@@ -409,6 +409,12 @@ public class ChatLounge extends AbstractPhaseDisplay
         GUIP.addPreferenceChangeListener(this);
         PreferenceManager.getClientPreferences().addPreferenceChangeListener(this);
         MekSummaryCache.getInstance().addListener(mekSummaryCacheListener);
+        // The cache may have finished loading between setupUnitConfig() reading its state and the listener
+        // being registered just above. Without this check that notification is missed and the buttons that
+        // need the cache stay disabled for the rest of the lobby.
+        if (MekSummaryCache.getInstance().isInitialized()) {
+            enableUnitAddButtons();
+        }
         clientgui.getClient().getGame().addGameListener(this);
         clientgui.boardViews().forEach(bv -> bv.addBoardViewListener(this));
 
@@ -588,12 +594,19 @@ public class ChatLounge extends AbstractPhaseDisplay
         activeSorter = unitSorters.getFirst();
     }
 
-    /** Enables buttons to allow adding units when the MSC has finished loading. */
-    private final transient MekSummaryCache.Listener mekSummaryCacheListener = () -> {
+    /**
+     * Enables buttons to allow adding units when the MSC has finished loading. The cache notifies its listeners
+     * from its loader thread, so the buttons must be enabled on the event dispatch thread.
+     */
+    private final transient MekSummaryCache.Listener mekSummaryCacheListener =
+          () -> SwingUtilities.invokeLater(this::enableUnitAddButtons);
+
+    /** Enables the buttons that need a loaded unit cache to work. */
+    private void enableUnitAddButtons() {
         butAdd.setEnabled(true);
         butArmy.setEnabled(true);
         butLoadList.setEnabled(true);
-    };
+    }
 
     /** Sets up the Mek Table and Mek Tree. */
     private void setupEntities() {

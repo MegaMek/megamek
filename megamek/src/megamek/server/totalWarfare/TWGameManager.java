@@ -433,9 +433,31 @@ public class TWGameManager extends AbstractGameManager {
 
     public void processGameMasterRequest() {
         if (playerRequestingGameMaster != null) {
-            setGameMaster(playerRequestingGameMaster, true);
+            Player currentGameMaster = getGameMaster();
+            if (currentGameMaster == null) {
+                setGameMaster(playerRequestingGameMaster, true);
+            } else {
+                sendServerChat(playerRequestingGameMaster.getName()
+                      + " cannot become Game Master: "
+                      + currentGameMaster.getName()
+                      + " already holds the role.");
+            }
             playerRequestingGameMaster = null;
         }
+    }
+
+    /**
+     * Returns the player currently holding the Game Master role. Only one player may hold the role at a time.
+     *
+     * @return the current Game Master, or {@code null} if there is none
+     */
+    public @Nullable Player getGameMaster() {
+        for (Player player : game.getPlayersList()) {
+            if (player.getGameMaster()) {
+                return player;
+            }
+        }
+        return null;
     }
 
     public void setGameMaster(Player player, boolean gameMaster) {
@@ -26488,6 +26510,8 @@ public class TWGameManager extends AbstractGameManager {
             // In the chat lounge, notify players of customizing of unit
             if (game.getPhase().isLounge()) {
                 sendServerChat(ServerLobbyHelper.entityUpdateMessage(entity, game));
+            } else {
+                destroyEntityIfFatallyDamaged(entity);
             }
         }
     }
@@ -26511,6 +26535,59 @@ public class TWGameManager extends AbstractGameManager {
         }
         Player owner = oldEntity.getOwner();
         return (owner != null) && !owner.isEnemyOf(sender);
+    }
+
+    /**
+     * Destroys the given unit if an out-of-band edit (such as a gamemaster damage edit) left it in a state it
+     * cannot survive, e.g. with its center torso destroyed. Direct entity updates bypass normal damage
+     * resolution, which is where destruction is otherwise detected and applied.
+     *
+     * @param entity the server's version of the unit to check
+     */
+    private void destroyEntityIfFatallyDamaged(Entity entity) {
+        if (entity.isDestroyed() || entity.isDoomed()) {
+            return;
+        }
+
+        String destructionReason = null;
+        boolean survivable = true;
+
+        if ((entity.getCrew() != null) && entity.getCrew().isDead()) {
+            destructionReason = "crew death";
+            survivable = false;
+        } else if (entity instanceof Mek mek) {
+            // 3 engine hits destroy a Mek; superheavies with compact engines only take 2 (TW p.125, IO p.104)
+            int engineHitsToDestroy = (mek.isSuperHeavy()
+                  && mek.hasEngine()
+                  && (mek.getEngine().getEngineType() == Engine.COMPACT_ENGINE)) ? 2 : 3;
+            if (mek.getEngineHits() >= engineHitsToDestroy) {
+                destructionReason = "engine destruction";
+            }
+        } else if ((entity instanceof Aero aero) && (aero.getSI() <= 0)) {
+            destructionReason = "structural integrity collapse";
+        }
+
+        if (destructionReason == null) {
+            // Losing a location whose damage cannot transfer further inward (a Mek's center torso or head, any
+            // hull location of a vehicle, the last trooper of a squad) destroys the unit.
+            for (int location = 0; location < entity.locations(); location++) {
+                int internal = entity.getInternal(location);
+                boolean locationGone = (internal == IArmorState.ARMOR_DESTROYED)
+                      || (internal == IArmorState.ARMOR_DOOMED)
+                      || ((internal == 0) && (entity.getOInternal(location) > 0));
+                if (locationGone
+                      && (entity.getTransferLocation(new HitData(location)).getLocation() == Entity.LOC_DESTROYED)) {
+                    destructionReason = "damage";
+                    break;
+                }
+            }
+        }
+
+        if (destructionReason != null) {
+            destroyEntity(entity, destructionReason, survivable);
+            entityUpdate(entity.getId());
+            sendServerChat(entity.getDisplayName() + " did not survive its damage edits.");
+        }
     }
 
     /**

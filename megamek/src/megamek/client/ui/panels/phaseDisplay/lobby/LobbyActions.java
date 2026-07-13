@@ -241,10 +241,35 @@ public class LobbyActions {
             return;
         }
         Entity entity = CollectionUtil.anyOneElement(entities);
+        if (!canEditDamage(client(), entity)) {
+            LobbyErrors.showCannotEditDamage(frame());
+            return;
+        }
         UnitEditorDialog med = new UnitEditorDialog(frame(), entity, localPlayer().isGameMaster());
         med.setVisible(true);
         med.dispose();
         sendUpdates(entities);
+    }
+
+    /**
+     * Returns true when the local player of the given client may edit damage on the given unit. When any player
+     * holds the Game Master role, only the Game Master may edit damage. Without a Game Master, players may edit
+     * damage only on their own units and the units of their local bots.
+     *
+     * @param client the client asking to edit damage
+     * @param entity the unit to edit damage on
+     *
+     * @return true when the client's local player may edit damage on the unit
+     */
+    static boolean canEditDamage(Client client, Entity entity) {
+        Player localPlayer = client.getLocalPlayer();
+        for (Player player : client.getGame().getPlayersList()) {
+            if (player.isGameMaster()) {
+                return localPlayer.isGameMaster();
+            }
+        }
+        return (entity.getOwnerId() == localPlayer.getId())
+              || client.getBots().containsKey(entity.getOwner().getName());
     }
 
     /**

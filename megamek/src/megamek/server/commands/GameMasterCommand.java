@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2022-2025 The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2022-2026 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -71,9 +71,14 @@ public class GameMasterCommand extends ServerCommand {
         }
 
         TWGameManager gameManager = (TWGameManager) server.getGameManager();
+        Player currentGameMaster = gameManager.getGameMaster();
         if (player.getGameMaster()) {
             // toggling off game master requires no vote
             gameManager.setGameMaster(player, false);
+        } else if (currentGameMaster != null) {
+            // only one Game Master is allowed at a time
+            server.sendServerChat(connId, currentGameMaster.getName()
+                  + " is already Game Master. They must give up the role (/gm) before another player can take it.");
         } else if (gameManager.getGame() != null && gameManager.getGame().getPhase().isLounge()) {
             // becoming GameMaster in Lobby is always permitted
             server.sendServerChat(player.getName() + " will become Game Master without vote.");

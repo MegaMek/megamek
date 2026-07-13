@@ -56,10 +56,14 @@ import java.util.TreeMap;
 import java.util.Vector;
 import javax.swing.*;
 
+import megamek.MegaMek;
 import megamek.client.ui.Messages;
 import megamek.client.ui.clientGUI.CloseAction;
 import megamek.client.ui.clientGUI.GUIPreferences;
 import megamek.client.ui.dialogs.unitDisplay.ArmorPanel;
+import megamek.client.ui.preferences.JSplitPanePreference;
+import megamek.client.ui.preferences.JWindowPreference;
+import megamek.client.ui.preferences.PreferencesNode;
 import megamek.client.ui.util.UIUtil;
 import megamek.client.ui.widget.picmap.LocationSelectListener;
 import megamek.codeUtilities.MathUtility;
@@ -80,6 +84,7 @@ import megamek.common.equipment.Mounted;
 import megamek.common.options.OptionsConstants;
 import megamek.common.units.*;
 import megamek.common.weapons.attacks.InfantryAttack;
+import megamek.logging.MMLogger;
 
 /**
  * This dialog will allow the user to edit the damage and status characteristics of a unit. This is designed for use in
@@ -88,6 +93,8 @@ import megamek.common.weapons.attacks.InfantryAttack;
  * @author Jay Lawson (jaylawson39 at yahoo.com)
  */
 public class UnitEditorDialog extends JDialog implements LocationSelectListener {
+    private static final MMLogger LOGGER = MMLogger.create(UnitEditorDialog.class);
+
     @Serial
     private static final long serialVersionUID = 8144354264100884817L;
 
@@ -95,6 +102,10 @@ public class UnitEditorDialog extends JDialog implements LocationSelectListener 
 
     /** Key for the general panel in the location chooser; locations use their own index. */
     private static final int GENERAL_PANEL_KEY = -1;
+
+    /** Names the dialog and its divider for the stored size, position and divider location. */
+    private static final String DIALOG_NAME = "unitEditorDialog";
+    private static final String SPLIT_PANE_NAME = "unitEditorSplitPane";
 
     /** How much the armor diagram is enlarged even when there is no panel height to fill. */
     private static final double MIN_PAPERDOLL_SCALE = 1.6;
@@ -114,6 +125,8 @@ public class UnitEditorDialog extends JDialog implements LocationSelectListener 
 
     /** The unit's armor diagram, the same one the unit display uses. Clicking a location shows its panel. */
     private ArmorPanel paperdoll;
+    /** Divides the armor diagram from the location panel; the user can drag it. */
+    private JSplitPane splitPane;
     /** Holds the location panels, one shown at a time. */
     private JPanel panCards;
     private final CardLayout cardLayout = new CardLayout();
@@ -267,6 +280,27 @@ public class UnitEditorDialog extends JDialog implements LocationSelectListener 
         Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
         setSize(Math.min(getWidth() + UIUtil.scaleForGUI(30), (int) (screenSize.width * 0.9)),
               Math.min(getHeight() + UIUtil.scaleForGUI(30), (int) (screenSize.height * 0.9)));
+
+        // last, so that a size, position and divider the user chose before override the ones worked out above
+        setPreferences();
+    }
+
+    /**
+     * Restores the size, position and divider location the user last left the dialog with, and keeps them up to
+     * date as the dialog is moved, resized and its divider dragged.
+     */
+    private void setPreferences() {
+        try {
+            setName(DIALOG_NAME);
+            PreferencesNode preferences = MegaMek.getMMPreferences().forClass(UnitEditorDialog.class);
+            preferences.manage(new JWindowPreference(this));
+            if (splitPane != null) {
+                preferences.manage(new JSplitPanePreference(splitPane));
+            }
+        } catch (Exception ex) {
+            // a dialog that cannot remember where it was is still perfectly usable
+            LOGGER.error(ex, "Could not set the preferences of the unit editor dialog");
+        }
     }
 
     /**
@@ -777,18 +811,20 @@ public class UnitEditorDialog extends JDialog implements LocationSelectListener 
         panRight.add(panChooser, BorderLayout.PAGE_START);
         panRight.add(new JScrollPane(panCards), BorderLayout.CENTER);
 
+        // The user can drag the divider to trade diagram size against panel size; the position is remembered.
+        splitPane = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT, new JScrollPane(paperdoll), panRight);
+        splitPane.setName(SPLIT_PANE_NAME);
+        splitPane.setResizeWeight(0.0);
+        splitPane.setOneTouchExpandable(true);
+
         GridBagConstraints gridBagConstraints = new GridBagConstraints();
         gridBagConstraints.gridx = 0;
         gridBagConstraints.gridy = 0;
         gridBagConstraints.insets = new Insets(4, 4, 4, 4);
         gridBagConstraints.fill = GridBagConstraints.BOTH;
-        gridBagConstraints.weightx = 0.0;
-        gridBagConstraints.weighty = 1.0;
-        panMain.add(paperdoll, gridBagConstraints);
-
-        gridBagConstraints.gridx = 1;
         gridBagConstraints.weightx = 1.0;
-        panMain.add(panRight, gridBagConstraints);
+        gridBagConstraints.weighty = 1.0;
+        panMain.add(splitPane, gridBagConstraints);
     }
 
     /** The diagram is here to pick locations with, so a single click is enough to select one. */

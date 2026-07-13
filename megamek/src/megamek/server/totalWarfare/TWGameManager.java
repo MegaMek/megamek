@@ -18961,11 +18961,12 @@ public class TWGameManager extends AbstractGameManager {
      * VTOL or WiGE...
      */
     void resolveShutdownCrashes() {
-        for (Entity e : game.getEntitiesVector()) {
-            if (e.isShutDown() && e.isAirborneVTOLorWIGE() && !(e.isDestroyed() || e.isDoomed())) {
-                Tank t = (Tank) e;
-                t.immobilize();
-                addReport(forceLandVTOLorWiGE(t));
+        for (Entity entity : game.getEntitiesVector()) {
+            // Not instanceof Tank: LAMs in AirMek mode and glider ProtoMeks also report
+            // airborne VTOL/WiGE movement but crash through their own handlers
+            if (entity instanceof Tank tank && tank.isShutDown() && tank.isAirborneVTOLorWIGE()
+                  && !(tank.isDestroyed() || tank.isDoomed())) {
+                addReport(forceLandVTOLorWiGE(tank));
             }
         }
     }

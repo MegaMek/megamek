@@ -1,6 +1,6 @@
 /*
  * Copyright (C) 2013 Jay Lawson
- * Copyright (C) 2013-2025 The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2013-2026 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -34,6 +34,10 @@
 package megamek.client.ui.dialogs;
 
 import java.awt.BorderLayout;
+import java.awt.Color;
+import java.awt.Component;
+import java.awt.Container;
+import java.awt.FlowLayout;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.GridLayout;
@@ -51,11 +55,17 @@ import javax.swing.*;
 
 import megamek.client.ui.Messages;
 import megamek.client.ui.clientGUI.CloseAction;
+import megamek.client.ui.clientGUI.GUIPreferences;
 import megamek.codeUtilities.MathUtility;
 import megamek.common.CriticalSlot;
+import megamek.common.annotations.Nullable;
 import megamek.common.bays.ASFBay;
 import megamek.common.bays.Bay;
 import megamek.common.bays.SmallCraftBay;
+import megamek.common.compute.damage.CritAssignment;
+import megamek.common.compute.damage.PreExistingDamageApplier;
+import megamek.common.compute.damage.PreExistingDamageLevel;
+import megamek.common.compute.damage.PreExistingDamageResult;
 import megamek.common.equipment.DockingCollar;
 import megamek.common.equipment.EquipmentTypeLookup;
 import megamek.common.equipment.IArmorState;
@@ -124,9 +134,41 @@ public class UnitEditorDialog extends JDialog {
     JSpinner sailDamage;
     CheckCritPanel[] protoCrits;
 
-    public UnitEditorDialog(JFrame parent, Entity m) {
+    /* pre-existing damage (FSW p.144) */
+    private JComboBox<PreExistingDamageLevel> choicePreExistingDamage;
+    private int[] snapshotArmor;
+    private int[] snapshotRear;
+    private int[] snapshotInternal;
+    private Map<CheckCritPanel, Integer> snapshotCritHits;
+
+    /* damage coloring, using the unit tooltip armor colors */
+    private JLabel[] locationLabels;
+    private JLabel structuralIntegrityLabel;
+
+    /** Whether the user opening this dialog is a gamemaster; only they may roll pre-existing damage. */
+    private final boolean gameMaster;
+
+    /**
+     * Opens the dialog without the pre-existing damage roller. Used where there is no gamemaster to speak of, such as
+     * MekHQ and MegaMekLab.
+     *
+     * @param parent the parent frame
+     * @param entity the unit to edit damage for
+     */
+    public UnitEditorDialog(JFrame parent, Entity entity) {
+        this(parent, entity, false);
+    }
+
+    /**
+     * @param parent     the parent frame
+     * @param entity     the unit to edit damage for
+     * @param gameMaster {@code true} if the user opening the dialog is a gamemaster, which enables the pre-existing
+     *                   damage roller (FSW p.144)
+     */
+    public UnitEditorDialog(JFrame parent, Entity entity, boolean gameMaster) {
         super(parent, true);
-        entity = m;
+        this.entity = entity;
+        this.gameMaster = gameMaster;
         initComponents();
         setLocationRelativeTo(parent);
     }
@@ -181,6 +223,15 @@ public class UnitEditorDialog extends JDialog {
 
         getContentPane().add(panButtons, BorderLayout.PAGE_END);
 
+        if (!entity.isConventionalInfantry()) {
+            wireDamageColoring();
+        }
+
+        if (showPreExistingDamagePanel()) {
+            getContentPane().add(initPreExistingDamagePanel(), BorderLayout.PAGE_START);
+            capturePreExistingSnapshot();
+        }
+
         // TODO: size right
 
         String closeAction = "closeAction";
@@ -190,6 +241,295 @@ public class UnitEditorDialog extends JDialog {
         getRootPane().getActionMap().put(closeAction, new CloseAction(this));
 
         pack();
+    }
+
+    /**
+     * The pre-existing damage panel appears only for the unit types the FSW rules cover and only when the user opening
+     * the dialog is a gamemaster; assigning pre-existing damage is a GM or scenario-setup decision.
+     */
+    private boolean showPreExistingDamagePanel() {
+        return gameMaster && PreExistingDamageApplier.isSupported(entity);
+    }
+
+    private JPanel initPreExistingDamagePanel() {
+        JPanel panPreExisting = new JPanel(new FlowLayout(FlowLayout.LEFT));
+        panPreExisting.setBorder(BorderFactory.createTitledBorder(
+              Messages.getString("UnitEditorDialog.preExistingDamage")));
+
+        choicePreExistingDamage = new JComboBox<>(PreExistingDamageLevel.values());
+        choicePreExistingDamage.setRenderer(new DefaultListCellRenderer() {
+            @Override
+            public Component getListCellRendererComponent(JList<?> list, Object value, int index, boolean isSelected,
+                  boolean cellHasFocus) {
+                super.getListCellRendererComponent(list, value, index, isSelected, cellHasFocus);
+                if (value instanceof PreExistingDamageLevel damageLevel) {
+                    setText(Messages.getString("UnitEditorDialog.preExistingDamage." + damageLevel.name()));
+                }
+                return this;
+            }
+        });
+        choicePreExistingDamage.setToolTipText(Messages.getString("UnitEditorDialog.preExistingDamage.tooltip"));
+        panPreExisting.add(choicePreExistingDamage);
+
+        JButton butApplyPreExisting = new JButton(Messages.getString("UnitEditorDialog.preExistingDamage.apply"));
+        butApplyPreExisting.setToolTipText(Messages.getString("UnitEditorDialog.preExistingDamage.tooltip"));
+        butApplyPreExisting.addActionListener(event -> applyPreExistingDamage());
+        panPreExisting.add(butApplyPreExisting);
+
+        JButton butResetPreExisting = new JButton(Messages.getString("UnitEditorDialog.preExistingDamage.reset"));
+        butResetPreExisting.setToolTipText(Messages.getString("UnitEditorDialog.preExistingDamage.tooltip"));
+        butResetPreExisting.addActionListener(event -> restorePreExistingSnapshot());
+        panPreExisting.add(butResetPreExisting);
+        return panPreExisting;
+    }
+
+    /** Remembers the control values at dialog open, so each pre-existing damage roll starts from the same state. */
+    private void capturePreExistingSnapshot() {
+        snapshotArmor = new int[entity.locations()];
+        snapshotRear = new int[entity.locations()];
+        snapshotInternal = new int[entity.locations()];
+        for (int location = 0; location < entity.locations(); location++) {
+            if (null != spnArmor[location]) {
+                snapshotArmor[location] = (Integer) spnArmor[location].getValue();
+            }
+            if (null != spnRear[location]) {
+                snapshotRear[location] = (Integer) spnRear[location].getValue();
+            }
+            if (null != spnInternal[location]) {
+                snapshotInternal[location] = (Integer) spnInternal[location].getValue();
+            }
+        }
+        snapshotCritHits = new HashMap<>();
+        collectCritPanels(getContentPane());
+    }
+
+    private void collectCritPanels(Container container) {
+        for (Component component : container.getComponents()) {
+            if (component instanceof CheckCritPanel critPanel) {
+                snapshotCritHits.put(critPanel, critPanel.getHits());
+            } else if (component instanceof Container childContainer) {
+                collectCritPanels(childContainer);
+            }
+        }
+    }
+
+    private void restorePreExistingSnapshot() {
+        for (int location = 0; location < entity.locations(); location++) {
+            if (null != spnArmor[location]) {
+                spnArmor[location].setValue(snapshotArmor[location]);
+            }
+            if (null != spnRear[location]) {
+                spnRear[location].setValue(snapshotRear[location]);
+            }
+            if (null != spnInternal[location]) {
+                spnInternal[location].setValue(snapshotInternal[location]);
+            }
+        }
+        snapshotCritHits.forEach(CheckCritPanel::setHits);
+    }
+
+    /**
+     * Rolls pre-existing damage at the selected level and writes it into the dialog's controls. The entity itself is
+     * untouched; only pressing Okay commits the values, and Cancel discards them. Each press rerolls from the state the
+     * unit had when the dialog opened.
+     */
+    private void applyPreExistingDamage() {
+        restorePreExistingSnapshot();
+        PreExistingDamageLevel level = (PreExistingDamageLevel) choicePreExistingDamage.getSelectedItem();
+        if ((null == level) || (level == PreExistingDamageLevel.NONE)) {
+            return;
+        }
+        PreExistingDamageResult result = PreExistingDamageApplier.simulate(entity, level);
+        for (int location = 0; location < entity.locations(); location++) {
+            if (null != spnArmor[location]) {
+                spnArmor[location].setValue(result.armor()[location]);
+            }
+            if (null != spnRear[location]) {
+                spnRear[location].setValue(result.rearArmor()[location]);
+            }
+        }
+        if (entity instanceof Aero) {
+            if (null != spnInternal[0]) {
+                spnInternal[0].setValue(result.structuralIntegrity());
+            }
+        } else {
+            for (int location = 0; location < entity.locations(); location++) {
+                if (null != spnInternal[location]) {
+                    spnInternal[location].setValue(result.internal()[location]);
+                }
+            }
+        }
+        for (CritAssignment assignment : result.critAssignments()) {
+            applyCritAssignment(assignment);
+        }
+    }
+
+    private void applyCritAssignment(CritAssignment assignment) {
+        switch (assignment) {
+            case CritAssignment.EquipmentCrit(int equipmentNumber) -> incrementCrit(equipCrits.get(equipmentNumber));
+            case CritAssignment.MekSystemCrit(int system, int location) -> applyMekSystemCrit(system, location);
+            case CritAssignment.VehicleCrit(CritAssignment.VehicleCritKind kind, int location) ->
+                  applyVehicleCrit(kind, location);
+            case CritAssignment.AeroFighterCrit(CritAssignment.AeroFighterCritKind kind) -> applyFighterCrit(kind);
+        }
+    }
+
+    private void applyMekSystemCrit(int system, int location) {
+        if (entity instanceof LandAirMek) {
+            if (system == LandAirMek.LAM_AVIONICS) {
+                incrementCrit(lamAvionicsCrit.get(location));
+                return;
+            }
+            if (system == LandAirMek.LAM_LANDING_GEAR) {
+                incrementCrit(lamLandingGearCrit.get(location));
+                return;
+            }
+        }
+        if ((entity instanceof QuadVee) && (system == QuadVee.SYSTEM_CONVERSION_GEAR)) {
+            incrementCrit(actuatorCrits[location - Mek.LOC_RIGHT_ARM][Mek.ACTUATOR_FOOT - Mek.ACTUATOR_HIP + 1]);
+            return;
+        }
+        switch (system) {
+            case Mek.SYSTEM_ENGINE -> {
+                switch (location) {
+                    case Mek.LOC_LEFT_TORSO -> incrementCrit(leftEngineCrit);
+                    case Mek.LOC_RIGHT_TORSO -> incrementCrit(rightEngineCrit);
+                    default -> incrementCrit(centerEngineCrit);
+                }
+            }
+            case Mek.SYSTEM_GYRO -> incrementCrit(gyroCrit);
+            case Mek.SYSTEM_SENSORS -> incrementCrit(sensorCrit);
+            case Mek.SYSTEM_LIFE_SUPPORT -> incrementCrit(lifeSupportCrit);
+            default -> applyActuatorCrit(system, location);
+        }
+    }
+
+    private void applyActuatorCrit(int actuator, int location) {
+        if ((actuator < Mek.ACTUATOR_SHOULDER) || (actuator > Mek.ACTUATOR_FOOT)) {
+            return;
+        }
+        int row = location - Mek.LOC_RIGHT_ARM;
+        if ((row < 0) || (row >= actuatorCrits.length)) {
+            return;
+        }
+        int start = ((location >= Mek.LOC_RIGHT_LEG) || (entity instanceof QuadMek))
+              ? Mek.ACTUATOR_HIP : Mek.ACTUATOR_SHOULDER;
+        int column = actuator - start;
+        if ((column < 0) || (column >= actuatorCrits[row].length)) {
+            return;
+        }
+        incrementCrit(actuatorCrits[row][column]);
+    }
+
+    private void applyVehicleCrit(CritAssignment.VehicleCritKind kind, int location) {
+        switch (kind) {
+            case TURRET_LOCK -> incrementCrit(turretLockCrit);
+            case SENSORS -> incrementCrit(sensorCrit);
+            case MOTIVE -> incrementCrit(motiveCrit);
+            case STABILIZER -> {
+                if ((entity instanceof VTOL) && (location == VTOL.LOC_ROTOR)) {
+                    incrementCrit(flightStabilizerCrit);
+                } else if ((null != stabilizerCrits) && (location >= 0) && (location < stabilizerCrits.length)) {
+                    incrementCrit(stabilizerCrits[location]);
+                }
+            }
+        }
+    }
+
+    private void applyFighterCrit(CritAssignment.AeroFighterCritKind kind) {
+        switch (kind) {
+            case AVIONICS -> incrementCrit(avionicsCrit);
+            case FIRE_CONTROL_SYSTEM -> incrementCrit(fcsCrit);
+            case SENSORS -> incrementCrit(sensorCrit);
+            case ENGINE -> incrementCrit(engineCrit);
+            case LANDING_GEAR -> incrementCrit(gearCrit);
+        }
+    }
+
+    private void incrementCrit(@Nullable CheckCritPanel critPanel) {
+        if (null != critPanel) {
+            critPanel.setHits(critPanel.getHits() + 1);
+        }
+    }
+
+    /** Colors the armor and internal values whenever a spinner changes, like the unit tooltip armor readout. */
+    private void wireDamageColoring() {
+        for (int location = 0; location < entity.locations(); location++) {
+            if (null != spnArmor[location]) {
+                spnArmor[location].addChangeListener(event -> refreshDamageColoring());
+            }
+            if (null != spnRear[location]) {
+                spnRear[location].addChangeListener(event -> refreshDamageColoring());
+            }
+            if (null != spnInternal[location]) {
+                spnInternal[location].addChangeListener(event -> refreshDamageColoring());
+            }
+        }
+        refreshDamageColoring();
+    }
+
+    private void refreshDamageColoring() {
+        for (int location = 0; location < entity.locations(); location++) {
+            Color worstColor = colorSpinner(spnArmor[location], entity.getOArmor(location, false), null);
+            worstColor = colorSpinner(spnRear[location], entity.getOArmor(location, true), worstColor);
+            if (!(entity instanceof Aero)) {
+                worstColor = colorSpinner(spnInternal[location], entity.getOInternal(location), worstColor);
+            }
+            if ((null != locationLabels) && (null != locationLabels[location]) && (null != worstColor)) {
+                locationLabels[location].setForeground(worstColor);
+            }
+        }
+        if ((entity instanceof Aero aero) && (null != structuralIntegrityLabel) && (null != spnInternal[0])) {
+            Color siColor = colorSpinner(spnInternal[0], aero.getOSI(), null);
+            if (null != siColor) {
+                structuralIntegrityLabel.setForeground(siColor);
+            }
+        }
+    }
+
+    /**
+     * Colors one spinner's text by how damaged its value is and returns the more severe of that color and the given
+     * one, so callers can color the location label by its worst value.
+     */
+    private @Nullable Color colorSpinner(@Nullable JSpinner spinner, int originalValue, @Nullable Color worstSoFar) {
+        if ((null == spinner) || (originalValue <= 0)) {
+            return worstSoFar;
+        }
+        int currentValue = (Integer) spinner.getValue();
+        Color color = damageColor(currentValue, originalValue);
+        if (spinner.getEditor() instanceof JSpinner.DefaultEditor editor) {
+            editor.getTextField().setForeground(color);
+        }
+        return moreSevere(color, worstSoFar);
+    }
+
+    private Color damageColor(int currentValue, int originalValue) {
+        GUIPreferences guiPreferences = GUIPreferences.getInstance();
+        if (currentValue <= 0) {
+            return guiPreferences.getUnitTooltipArmorMiniColorDamaged();
+        } else if (currentValue < originalValue) {
+            return guiPreferences.getUnitTooltipArmorMiniColorPartialDamage();
+        }
+        return guiPreferences.getUnitTooltipArmorMiniColorIntact();
+    }
+
+    private @Nullable Color moreSevere(@Nullable Color first, @Nullable Color second) {
+        if (null == second) {
+            return first;
+        }
+        if (null == first) {
+            return second;
+        }
+        GUIPreferences guiPreferences = GUIPreferences.getInstance();
+        Color damaged = guiPreferences.getUnitTooltipArmorMiniColorDamaged();
+        Color partial = guiPreferences.getUnitTooltipArmorMiniColorPartialDamage();
+        if (damaged.equals(first) || damaged.equals(second)) {
+            return damaged;
+        }
+        if (partial.equals(first) || partial.equals(second)) {
+            return partial;
+        }
+        return first;
     }
 
     private void initArmorPanel() {
@@ -209,6 +549,7 @@ public class UnitEditorDialog extends JDialog {
         spnArmor = new JSpinner[entity.locations()];
         spnInternal = new JSpinner[entity.locations()];
         spnRear = new JSpinner[entity.locations()];
+        locationLabels = new JLabel[entity.locations()];
 
         gridBagConstraints = new GridBagConstraints();
         gridBagConstraints.gridx = 0;
@@ -241,7 +582,8 @@ public class UnitEditorDialog extends JDialog {
             gridBagConstraints.gridy = i + 1;
             gridBagConstraints.insets = new Insets(1, 10, 1, 1);
             gridBagConstraints.anchor = java.awt.GridBagConstraints.WEST;
-            panArmor.add(new JLabel(entity.getLocationName(i)), gridBagConstraints);
+            locationLabels[i] = new JLabel(entity.getLocationName(i));
+            panArmor.add(locationLabels[i], gridBagConstraints);
             gridBagConstraints.gridx = 1;
             panArmor.add(spnInternal[i], gridBagConstraints);
             gridBagConstraints.gridx = 2;
@@ -266,6 +608,7 @@ public class UnitEditorDialog extends JDialog {
         spnArmor = new JSpinner[entity.locations()];
         spnInternal = new JSpinner[entity.locations()];
         spnRear = new JSpinner[entity.locations()];
+        locationLabels = new JLabel[entity.locations()];
 
         gridBagConstraints = new GridBagConstraints();
         gridBagConstraints.gridx = 0;
@@ -285,7 +628,8 @@ public class UnitEditorDialog extends JDialog {
         gridBagConstraints.gridy = 1;
         gridBagConstraints.insets = new Insets(1, 10, 1, 1);
         gridBagConstraints.anchor = java.awt.GridBagConstraints.WEST;
-        panArmor.add(new JLabel(Messages.getString("UnitEditorDialog.structuralIntegrity")), gridBagConstraints);
+        structuralIntegrityLabel = new JLabel(Messages.getString("UnitEditorDialog.structuralIntegrity"));
+        panArmor.add(structuralIntegrityLabel, gridBagConstraints);
         gridBagConstraints.gridx = 1;
         panArmor.add(spnInternal[0], gridBagConstraints);
 
@@ -301,7 +645,8 @@ public class UnitEditorDialog extends JDialog {
             gridBagConstraints.gridy = i + 2;
             gridBagConstraints.insets = new Insets(1, 10, 1, 1);
             gridBagConstraints.anchor = java.awt.GridBagConstraints.WEST;
-            panArmor.add(new JLabel(entity.getLocationName(i)), gridBagConstraints);
+            locationLabels[i] = new JLabel(entity.getLocationName(i));
+            panArmor.add(locationLabels[i], gridBagConstraints);
             gridBagConstraints.gridx = 1;
             panArmor.add(spnArmor[i], gridBagConstraints);
         }
@@ -1591,6 +1936,12 @@ public class UnitEditorDialog extends JDialog {
                 }
             }
             return hits;
+        }
+
+        public void setHits(int hits) {
+            for (int i = 0; i < checks.size(); i++) {
+                checks.get(i).setSelected(i < hits);
+            }
         }
 
         private void checkBoxes(ActionEvent evt) {

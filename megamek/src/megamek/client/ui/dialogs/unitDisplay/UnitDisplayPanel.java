@@ -1,7 +1,7 @@
 /*
  * Copyright (C) 2000-2004, 2006 Ben Mazur (bmazur@sev.org)
  * Copyright (C) 2013 Edward Cullen (eddy@obsessedcomputers.co.uk)
- * Copyright (C) 2015-2025 The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2015-2026 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -65,6 +65,7 @@ import megamek.client.ui.widget.BackGroundDrawer;
 import megamek.client.ui.widget.MekPanelTabStrip;
 import megamek.client.ui.widget.SkinXMLHandler;
 import megamek.client.ui.widget.UnitDisplaySkinSpecification;
+import megamek.client.ui.widget.picmap.LocationSelectListener;
 import megamek.client.ui.widget.picmap.PMUtil;
 import megamek.client.ui.widget.picmap.PicMap;
 import megamek.common.Configuration;
@@ -76,7 +77,7 @@ import megamek.logging.MMLogger;
 /**
  * Displays the info for a mek. This is also a sort of interface for special movement and firing actions.
  */
-public class UnitDisplayPanel extends JPanel {
+public class UnitDisplayPanel extends JPanel implements LocationSelectListener {
     private static final MMLogger logger = MMLogger.create(UnitDisplayPanel.class);
 
     // buttons & gizmos for top level
@@ -556,6 +557,17 @@ public class UnitDisplayPanel extends JPanel {
         }
         displayP.revalidate();
         displayP.repaint();
+    }
+
+    /**
+     * Shows the location the user picked in the armor diagram, which for the unit display means switching to the
+     * Systems tab and selecting that location there.
+     *
+     * @param location the location that was selected
+     */
+    @Override
+    public void locationSelected(int location) {
+        showSpecificSystem(location);
     }
 
     /**

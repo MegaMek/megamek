@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2015-2025 The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2015-2026 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -38,9 +38,11 @@ import java.util.Enumeration;
 
 import megamek.client.ui.widget.BackGroundDrawer;
 import megamek.client.ui.widget.mapset.*;
+import megamek.client.ui.widget.picmap.LocationSelectListener;
 import megamek.client.ui.widget.picmap.PicMap;
 import megamek.common.battleArmor.BattleArmor;
 import megamek.common.equipment.GunEmplacement;
+import megamek.common.annotations.Nullable;
 import megamek.common.game.Game;
 import megamek.common.units.*;
 import megamek.logging.MMLogger;
@@ -48,7 +50,7 @@ import megamek.logging.MMLogger;
 /**
  * This panel contains the armor readout display.
  */
-class ArmorPanel extends PicMap {
+public class ArmorPanel extends PicMap {
     private static final MMLogger logger = MMLogger.create(ArmorPanel.class);
 
     @Serial
@@ -75,7 +77,7 @@ class ArmorPanel extends PicMap {
     private int minBottomMargin;
     private int minRightMargin;
 
-    private final UnitDisplayPanel unitDisplayPanel;
+    private final LocationSelectListener locationSelectListener;
 
     private static final int minTankTopMargin = 8;
     private static final int minTankLeftMargin = 8;
@@ -92,30 +94,30 @@ class ArmorPanel extends PicMap {
 
     private final Game game;
 
-    ArmorPanel(Game g, UnitDisplayPanel unitDisplayPanel) {
+    public ArmorPanel(@Nullable Game g, @Nullable LocationSelectListener locationSelectListener) {
         game = g;
-        this.unitDisplayPanel = unitDisplayPanel;
+        this.locationSelectListener = locationSelectListener;
     }
 
     @Override
     public void addNotify() {
         super.addNotify();
-        tank = new TankMapSet(this, unitDisplayPanel);
-        mek = new MekMapSet(this, unitDisplayPanel);
+        tank = new TankMapSet(this, locationSelectListener);
+        mek = new MekMapSet(this, locationSelectListener);
         infantry = new InfantryMapSet(this);
         battleArmor = new BattleArmorMapSet(this);
-        proto = new ProtoMekMapSet(this, unitDisplayPanel);
-        vtol = new VTOLMapSet(this, unitDisplayPanel);
-        quad = new QuadMapSet(this, unitDisplayPanel);
-        tripod = new TripodMekMapSet(this, unitDisplayPanel);
+        proto = new ProtoMekMapSet(this, locationSelectListener);
+        vtol = new VTOLMapSet(this, locationSelectListener);
+        quad = new QuadMapSet(this, locationSelectListener);
+        tripod = new TripodMekMapSet(this, locationSelectListener);
         gunEmplacement = new GunEmplacementMapSet(this);
-        largeSupportTank = new LargeSupportTankMapSet(this, unitDisplayPanel);
-        superHeavyTank = new SuperHeavyTankMapSet(this, unitDisplayPanel);
-        aero = new AeroMapSet(this, unitDisplayPanel);
+        largeSupportTank = new LargeSupportTankMapSet(this, locationSelectListener);
+        superHeavyTank = new SuperHeavyTankMapSet(this, locationSelectListener);
+        aero = new AeroMapSet(this, locationSelectListener);
         capFighter = new CapitalFighterMapSet(this);
-        sphere = new SpheroidMapSet(this, unitDisplayPanel);
-        jump = new JumpshipMapSet(this, unitDisplayPanel);
-        warship = new WarshipMapSet(this, unitDisplayPanel);
+        sphere = new SpheroidMapSet(this, locationSelectListener);
+        jump = new JumpshipMapSet(this, locationSelectListener);
+        warship = new WarshipMapSet(this, locationSelectListener);
         squad = new SquadronMapSet(this, game);
     }
 

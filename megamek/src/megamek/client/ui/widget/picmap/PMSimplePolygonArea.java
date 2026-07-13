@@ -1,6 +1,6 @@
 /*
  * Copyright (C) 2000-2002 Ben Mazur (bmazur@sev.org)
- * Copyright (C) 2003-2025 The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2003-2026 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -45,7 +45,7 @@ import java.awt.Shape;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseEvent;
 
-import megamek.client.ui.dialogs.unitDisplay.UnitDisplayPanel;
+import megamek.common.annotations.Nullable;
 
 /**
  * Class for drawing a simple polygon, used to display the polygon areas for different locations on an Entity.
@@ -53,9 +53,10 @@ import megamek.client.ui.dialogs.unitDisplay.UnitDisplayPanel;
 public class PMSimplePolygonArea implements PMHotArea {
 
     /**
-     * References to the UnitDisplay for call-back purposes
+     * Told which location the user picked when this area is double-clicked; {@code null} when the diagram is
+     * display-only.
      */
-    private final UnitDisplayPanel unitDisplayPanel;
+    private final LocationSelectListener locationSelectListener;
 
     /**
      * The location of systems corresponding to this polygon area
@@ -75,7 +76,7 @@ public class PMSimplePolygonArea implements PMHotArea {
     private Cursor cursor = new Cursor(Cursor.HAND_CURSOR);
 
     public PMSimplePolygonArea(Polygon p, Color backColor, Color brdColor,
-          Color hiBrdColor, boolean highlight, UnitDisplayPanel unitDisplayPanel,
+          Color hiBrdColor, boolean highlight, @Nullable LocationSelectListener locationSelectListener,
           int loc) {
         this.areaShape = p;
         if (backColor != null) {
@@ -90,17 +91,17 @@ public class PMSimplePolygonArea implements PMHotArea {
             this.highlightBorderColor = hiBrdColor;
         }
         this.highlight = highlight;
-        this.unitDisplayPanel = unitDisplayPanel;
+        this.locationSelectListener = locationSelectListener;
         this.loc = loc;
     }
 
     public PMSimplePolygonArea(Polygon p, Color backColor, Color brdColor,
-          UnitDisplayPanel unitDisplayPanel, int loc) {
-        this(p, backColor, brdColor, null, false, unitDisplayPanel, loc);
+          @Nullable LocationSelectListener locationSelectListener, int loc) {
+        this(p, backColor, brdColor, null, false, locationSelectListener, loc);
     }
 
-    public PMSimplePolygonArea(Polygon p, UnitDisplayPanel unitDisplayPanel, int loc) {
-        this(p, null, null, null, true, unitDisplayPanel, loc);
+    public PMSimplePolygonArea(Polygon p, @Nullable LocationSelectListener locationSelectListener, int loc) {
+        this(p, null, null, null, true, locationSelectListener, loc);
 
     }
 
@@ -163,8 +164,8 @@ public class PMSimplePolygonArea implements PMHotArea {
 
     @Override
     public void onMouseClick(MouseEvent e) {
-        if (e.getClickCount() == 2) {
-            unitDisplayPanel.showSpecificSystem(loc);
+        if ((e.getClickCount() == 2) && (locationSelectListener != null)) {
+            locationSelectListener.locationSelected(loc);
         }
     }
 

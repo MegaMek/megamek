@@ -1,7 +1,7 @@
 /*
  * Copyright (C) 2000-2004 Ben Mazur (bmazur@sev.org)
  * Copyright © 2013 Edward Cullen (eddy@obsessedcomputers.co.uk)
- * Copyright (C) 2008-2025 The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2008-2026 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -46,7 +46,7 @@ import javax.swing.JComponent;
 import megamek.MMConstants;
 import megamek.client.ui.Messages;
 import megamek.client.ui.clientGUI.GUIPreferences;
-import megamek.client.ui.dialogs.unitDisplay.UnitDisplayPanel;
+import megamek.client.ui.widget.picmap.LocationSelectListener;
 import megamek.client.ui.widget.BackGroundDrawer;
 import megamek.client.ui.widget.SkinXMLHandler;
 import megamek.client.ui.widget.UnitDisplaySkinSpecification;
@@ -66,7 +66,7 @@ import megamek.common.util.fileUtils.MegaMekFile;
  */
 public class LargeSupportTankMapSet implements DisplayMapSet {
 
-    private final UnitDisplayPanel unitDisplayPanel;
+    private final LocationSelectListener locationSelectListener;
 
     private final JComponent jComponent;
     private final PMSimplePolygonArea[] areas = new PMSimplePolygonArea[15];
@@ -154,8 +154,8 @@ public class LargeSupportTankMapSet implements DisplayMapSet {
     private static final Font FONT_VALUE = new Font(MMConstants.FONT_SANS_SERIF, Font.PLAIN,
           GUIP.getUnitDisplayMekArmorLargeFontSize());
 
-    public LargeSupportTankMapSet(JComponent c, UnitDisplayPanel unitDisplayPanel) {
-        this.unitDisplayPanel = unitDisplayPanel;
+    public LargeSupportTankMapSet(JComponent c, LocationSelectListener locationSelectListener) {
+        this.locationSelectListener = locationSelectListener;
         jComponent = c;
         setAreas();
         setLabels();
@@ -210,20 +210,20 @@ public class LargeSupportTankMapSet implements DisplayMapSet {
     }
 
     private void setAreas() {
-        areas[1] = new PMSimplePolygonArea(frontArmor, unitDisplayPanel, LargeSupportTank.LOC_FRONT);
-        areas[2] = new PMSimplePolygonArea(rightFrontArmor, unitDisplayPanel, LargeSupportTank.LOC_FRONT_RIGHT);
-        areas[3] = new PMSimplePolygonArea(leftFrontArmor, unitDisplayPanel, LargeSupportTank.LOC_FRONT_LEFT);
-        areas[4] = new PMSimplePolygonArea(rightRearArmor, unitDisplayPanel, LargeSupportTank.LOC_REAR_RIGHT);
-        areas[5] = new PMSimplePolygonArea(leftRearArmor, unitDisplayPanel, LargeSupportTank.LOC_REAR_LEFT);
-        areas[6] = new PMSimplePolygonArea(rearArmor, unitDisplayPanel, LargeSupportTank.LOC_REAR);
-        areas[7] = new PMSimplePolygonArea(turretArmor, unitDisplayPanel, LargeSupportTank.LOC_TURRET);
-        areas[8] = new PMSimplePolygonArea(frontIS, unitDisplayPanel, LargeSupportTank.LOC_FRONT);
-        areas[9] = new PMSimplePolygonArea(rightFrontIS, unitDisplayPanel, LargeSupportTank.LOC_FRONT_RIGHT);
-        areas[10] = new PMSimplePolygonArea(leftFrontIS, unitDisplayPanel, LargeSupportTank.LOC_FRONT_LEFT);
-        areas[11] = new PMSimplePolygonArea(rightRearIS, unitDisplayPanel, LargeSupportTank.LOC_REAR_RIGHT);
-        areas[12] = new PMSimplePolygonArea(leftRearIS, unitDisplayPanel, LargeSupportTank.LOC_REAR_LEFT);
-        areas[13] = new PMSimplePolygonArea(rearIS, unitDisplayPanel, LargeSupportTank.LOC_REAR);
-        areas[14] = new PMSimplePolygonArea(turretIS, unitDisplayPanel, LargeSupportTank.LOC_TURRET);
+        areas[1] = new PMSimplePolygonArea(frontArmor, locationSelectListener, LargeSupportTank.LOC_FRONT);
+        areas[2] = new PMSimplePolygonArea(rightFrontArmor, locationSelectListener, LargeSupportTank.LOC_FRONT_RIGHT);
+        areas[3] = new PMSimplePolygonArea(leftFrontArmor, locationSelectListener, LargeSupportTank.LOC_FRONT_LEFT);
+        areas[4] = new PMSimplePolygonArea(rightRearArmor, locationSelectListener, LargeSupportTank.LOC_REAR_RIGHT);
+        areas[5] = new PMSimplePolygonArea(leftRearArmor, locationSelectListener, LargeSupportTank.LOC_REAR_LEFT);
+        areas[6] = new PMSimplePolygonArea(rearArmor, locationSelectListener, LargeSupportTank.LOC_REAR);
+        areas[7] = new PMSimplePolygonArea(turretArmor, locationSelectListener, LargeSupportTank.LOC_TURRET);
+        areas[8] = new PMSimplePolygonArea(frontIS, locationSelectListener, LargeSupportTank.LOC_FRONT);
+        areas[9] = new PMSimplePolygonArea(rightFrontIS, locationSelectListener, LargeSupportTank.LOC_FRONT_RIGHT);
+        areas[10] = new PMSimplePolygonArea(leftFrontIS, locationSelectListener, LargeSupportTank.LOC_FRONT_LEFT);
+        areas[11] = new PMSimplePolygonArea(rightRearIS, locationSelectListener, LargeSupportTank.LOC_REAR_RIGHT);
+        areas[12] = new PMSimplePolygonArea(leftRearIS, locationSelectListener, LargeSupportTank.LOC_REAR_LEFT);
+        areas[13] = new PMSimplePolygonArea(rearIS, locationSelectListener, LargeSupportTank.LOC_REAR);
+        areas[14] = new PMSimplePolygonArea(turretIS, locationSelectListener, LargeSupportTank.LOC_TURRET);
     }
 
     private void setLabels() {

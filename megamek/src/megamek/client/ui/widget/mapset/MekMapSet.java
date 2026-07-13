@@ -1,7 +1,7 @@
 /*
  * Copyright (C) 2000-2002 Ben Mazur (bmazur@sev.org)
  * Copyright © 2013 Edward Cullen (eddy@obsessedcomputers.co.uk)
- * Copyright (C) 2003-2025 The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2003-2026 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -47,7 +47,7 @@ import javax.swing.JComponent;
 import megamek.MMConstants;
 import megamek.client.ui.Messages;
 import megamek.client.ui.clientGUI.GUIPreferences;
-import megamek.client.ui.dialogs.unitDisplay.UnitDisplayPanel;
+import megamek.client.ui.widget.picmap.LocationSelectListener;
 import megamek.client.ui.widget.BackGroundDrawer;
 import megamek.client.ui.widget.SkinXMLHandler;
 import megamek.client.ui.widget.UnitDisplaySkinSpecification;
@@ -74,7 +74,7 @@ public class MekMapSet implements DisplayMapSet {
     private static final int REAR_AREA_OFFSET = 7;
     private static final int INT_STRUCTURE_OFFSET = 11;
 
-    private final UnitDisplayPanel unitDisplayPanel;
+    private final LocationSelectListener locationSelectListener;
 
     // Array of polygonal areas - parts of mek body.
     private final PMSimplePolygonArea[] areas = new PMSimplePolygonArea[19];
@@ -207,8 +207,8 @@ public class MekMapSet implements DisplayMapSet {
     private static final Font FONT_VALUE = new Font(MMConstants.FONT_SANS_SERIF, Font.PLAIN,
           GUIP.getUnitDisplayMekArmorLargeFontSize());
 
-    public MekMapSet(JComponent c, UnitDisplayPanel unitDisplayPanel) {
-        this.unitDisplayPanel = unitDisplayPanel;
+    public MekMapSet(JComponent c, LocationSelectListener locationSelectListener) {
+        this.locationSelectListener = locationSelectListener;
         jComponent = c;
         setAreas();
         setLabels();
@@ -267,44 +267,44 @@ public class MekMapSet implements DisplayMapSet {
     }
 
     private void setAreas() {
-        areas[Mek.LOC_HEAD] = new PMSimplePolygonArea(head, unitDisplayPanel, Mek.LOC_HEAD);
-        areas[Mek.LOC_CENTER_TORSO] = new PMSimplePolygonArea(centralTorso, unitDisplayPanel, Mek.LOC_CENTER_TORSO);
-        areas[Mek.LOC_RIGHT_TORSO] = new PMSimplePolygonArea(rightTorso, unitDisplayPanel, Mek.LOC_RIGHT_TORSO);
-        areas[Mek.LOC_LEFT_TORSO] = new PMSimplePolygonArea(leftTorso, unitDisplayPanel, Mek.LOC_LEFT_TORSO);
-        areas[Mek.LOC_RIGHT_ARM] = new PMSimplePolygonArea(rightArm, unitDisplayPanel, Mek.LOC_RIGHT_ARM);
-        areas[Mek.LOC_LEFT_ARM] = new PMSimplePolygonArea(leftArm, unitDisplayPanel, Mek.LOC_LEFT_ARM);
-        areas[Mek.LOC_RIGHT_LEG] = new PMSimplePolygonArea(rightLeg, unitDisplayPanel, Mek.LOC_RIGHT_LEG);
-        areas[Mek.LOC_LEFT_LEG] = new PMSimplePolygonArea(leftLeg, unitDisplayPanel, Mek.LOC_LEFT_LEG);
+        areas[Mek.LOC_HEAD] = new PMSimplePolygonArea(head, locationSelectListener, Mek.LOC_HEAD);
+        areas[Mek.LOC_CENTER_TORSO] = new PMSimplePolygonArea(centralTorso, locationSelectListener, Mek.LOC_CENTER_TORSO);
+        areas[Mek.LOC_RIGHT_TORSO] = new PMSimplePolygonArea(rightTorso, locationSelectListener, Mek.LOC_RIGHT_TORSO);
+        areas[Mek.LOC_LEFT_TORSO] = new PMSimplePolygonArea(leftTorso, locationSelectListener, Mek.LOC_LEFT_TORSO);
+        areas[Mek.LOC_RIGHT_ARM] = new PMSimplePolygonArea(rightArm, locationSelectListener, Mek.LOC_RIGHT_ARM);
+        areas[Mek.LOC_LEFT_ARM] = new PMSimplePolygonArea(leftArm, locationSelectListener, Mek.LOC_LEFT_ARM);
+        areas[Mek.LOC_RIGHT_LEG] = new PMSimplePolygonArea(rightLeg, locationSelectListener, Mek.LOC_RIGHT_LEG);
+        areas[Mek.LOC_LEFT_LEG] = new PMSimplePolygonArea(leftLeg, locationSelectListener, Mek.LOC_LEFT_LEG);
         areas[REAR_AREA_OFFSET + Mek.LOC_CENTER_TORSO] = new PMSimplePolygonArea(rearCentralTorso,
-              unitDisplayPanel,
+              locationSelectListener,
               Mek.LOC_CENTER_TORSO);
         areas[REAR_AREA_OFFSET + Mek.LOC_RIGHT_TORSO] = new PMSimplePolygonArea(rearRightTorso,
-              unitDisplayPanel,
+              locationSelectListener,
               Mek.LOC_RIGHT_TORSO);
         areas[REAR_AREA_OFFSET + Mek.LOC_LEFT_TORSO] = new PMSimplePolygonArea(rearLeftTorso,
-              unitDisplayPanel,
+              locationSelectListener,
               Mek.LOC_LEFT_TORSO);
-        areas[INT_STRUCTURE_OFFSET + Mek.LOC_HEAD] = new PMSimplePolygonArea(intStHead, unitDisplayPanel, Mek.LOC_HEAD);
+        areas[INT_STRUCTURE_OFFSET + Mek.LOC_HEAD] = new PMSimplePolygonArea(intStHead, locationSelectListener, Mek.LOC_HEAD);
         areas[INT_STRUCTURE_OFFSET + Mek.LOC_CENTER_TORSO] = new PMSimplePolygonArea(inStCentralTorso,
-              unitDisplayPanel,
+              locationSelectListener,
               Mek.LOC_CENTER_TORSO);
         areas[INT_STRUCTURE_OFFSET + Mek.LOC_RIGHT_TORSO] = new PMSimplePolygonArea(inStRightTorso,
-              unitDisplayPanel,
+              locationSelectListener,
               Mek.LOC_RIGHT_TORSO);
         areas[INT_STRUCTURE_OFFSET + Mek.LOC_LEFT_TORSO] = new PMSimplePolygonArea(inStLeftTorso,
-              unitDisplayPanel,
+              locationSelectListener,
               Mek.LOC_LEFT_TORSO);
         areas[INT_STRUCTURE_OFFSET + Mek.LOC_RIGHT_ARM] = new PMSimplePolygonArea(inStRightArm,
-              unitDisplayPanel,
+              locationSelectListener,
               Mek.LOC_RIGHT_ARM);
         areas[INT_STRUCTURE_OFFSET + Mek.LOC_LEFT_ARM] = new PMSimplePolygonArea(inStLeftArm,
-              unitDisplayPanel,
+              locationSelectListener,
               Mek.LOC_LEFT_ARM);
         areas[INT_STRUCTURE_OFFSET + Mek.LOC_RIGHT_LEG] = new PMSimplePolygonArea(inStRightLeg,
-              unitDisplayPanel,
+              locationSelectListener,
               Mek.LOC_RIGHT_LEG);
         areas[INT_STRUCTURE_OFFSET + Mek.LOC_LEFT_LEG] = new PMSimplePolygonArea(inStLeftLeg,
-              unitDisplayPanel,
+              locationSelectListener,
               Mek.LOC_LEFT_LEG);
         heatImage = jComponent.createImage(10, 120);
         drawHeatControl(0);

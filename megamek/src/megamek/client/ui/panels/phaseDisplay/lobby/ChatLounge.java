@@ -131,7 +131,6 @@ import megamek.client.ui.panels.phaseDisplay.AbstractPhaseDisplay;
 import megamek.client.ui.panels.phaseDisplay.lobby.PlayerTable.PlayerTableModel;
 import megamek.client.ui.panels.phaseDisplay.lobby.sorters.*;
 import megamek.client.ui.util.ScalingPopup;
-import megamek.client.ui.util.FontHandler;
 import megamek.client.ui.util.UIUtil;
 import megamek.client.ui.util.UIUtil.FixedXPanel;
 import megamek.client.ui.util.UIUtil.FixedYPanel;
@@ -364,9 +363,8 @@ public class ChatLounge extends AbstractPhaseDisplay
     private static final String CL_ACTION_COMMAND_AUTO_RESOLVE = "AUTORESOLVE";
     private static final String CL_ACTION_COMMAND_CAMO = "camo";
 
-    /** The chat command that takes or gives up the gamemaster role, and the check mark shown while it is held. */
+    /** The chat command that takes or gives up the gamemaster role. */
     private static final String GAME_MASTER_COMMAND = "/gm";
-    private static final int GAME_MASTER_ICON_CODE_POINT = 0xE5CA;
 
     private static final GUIPreferences GUIP = GUIPreferences.getInstance();
     private static final ClientPreferences CLIENT_PREFERENCES = PreferenceManager.getClientPreferences();
@@ -2640,6 +2638,7 @@ public class ChatLounge extends AbstractPhaseDisplay
         butSaveList.removeActionListener(lobbyListener);
         butPrintList.removeActionListener(lobbyListener);
         butShowUnitID.removeActionListener(lobbyListener);
+        butGameMaster.removeActionListener(lobbyListener);
         butSkills.removeActionListener(lobbyListener);
         butSpaceSize.removeActionListener(lobbyListener);
         butCamo.removeActionListener(camoListener);
@@ -3403,8 +3402,8 @@ public class ChatLounge extends AbstractPhaseDisplay
      * because the server sends a player update to everyone when the role changes.
      */
     private void refreshGameMasterButton() {
-        butGameMaster.removeActionListener(lobbyListener);
-
+        // The listener is registered once, in setupListeners. Setting a toggle button's state does not fire an
+        // action event, so it does not have to be taken off and put back here.
         Player gameMaster = null;
         for (Player player : game().getPlayersList()) {
             if (player.isGameMaster()) {
@@ -3423,22 +3422,50 @@ public class ChatLounge extends AbstractPhaseDisplay
             butGameMaster.setToolTipText(Messages.getString("ChatLounge.butGameMaster.tooltip"));
         } else {
             butGameMaster.setText(Messages.getString("ChatLounge.butGameMaster.held", gameMaster.getName()));
-            butGameMaster.setIcon(gameMasterIcon());
+            butGameMaster.setIcon(new GameMasterCheckIcon(GUIP.getOkColor()));
             // only the player holding the role can give it up, and only one player may hold it at a time
             butGameMaster.setEnabled(localPlayerIsGameMaster);
             butGameMaster.setToolTipText(Messages.getString(localPlayerIsGameMaster
                   ? "ChatLounge.butGameMaster.tooltip.held"
                   : "ChatLounge.butGameMaster.tooltip.heldByOther", gameMaster.getName()));
         }
-
-        butGameMaster.addActionListener(lobbyListener);
     }
 
-    /** The check mark shown on the Game Master button while the role is held. */
-    private Icon gameMasterIcon() {
-        return FontHandler.symbolIcon(GAME_MASTER_ICON_CODE_POINT,
-              scaleForGUI(14),
-              GUIP.getOkColor());
+    /**
+     * The check mark shown on the Game Master button while the role is held. It is drawn rather than taken from a
+     * symbol font, so that it cannot come out as a missing-glyph box on a system without that font.
+     */
+    private static class GameMasterCheckIcon implements Icon {
+        private final Color color;
+        private final int size = scaleForGUI(14);
+
+        GameMasterCheckIcon(Color color) {
+            this.color = color;
+        }
+
+        @Override
+        public void paintIcon(Component component, Graphics graphics, int x, int y) {
+            Graphics2D checkGraphics = (Graphics2D) graphics.create();
+            checkGraphics.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+            checkGraphics.setColor(color);
+            checkGraphics.setStroke(new BasicStroke(Math.max(2f, size / 7f),
+                  BasicStroke.CAP_ROUND,
+                  BasicStroke.JOIN_ROUND));
+            // the two strokes of a check mark, as fractions of the icon's size
+            checkGraphics.drawLine(x + (size / 5), y + (size / 2), x + (2 * size / 5), y + (4 * size / 5));
+            checkGraphics.drawLine(x + (2 * size / 5), y + (4 * size / 5), x + (4 * size / 5), y + (size / 5));
+            checkGraphics.dispose();
+        }
+
+        @Override
+        public int getIconWidth() {
+            return size;
+        }
+
+        @Override
+        public int getIconHeight() {
+            return size;
+        }
     }
 
     /**

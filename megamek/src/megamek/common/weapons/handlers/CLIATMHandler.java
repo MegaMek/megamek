@@ -64,6 +64,7 @@ import megamek.common.units.ConvInfantry;
 import megamek.common.units.Entity;
 import megamek.common.units.IBuilding;
 import megamek.common.units.Infantry;
+import megamek.common.units.ConvInfantry;
 import megamek.common.units.Mek;
 import megamek.common.units.ProtoMek;
 import megamek.common.units.Tank;
@@ -110,7 +111,7 @@ public class CLIATMHandler extends ATMHandler {
             toReturn = Compute.directBlowInfantryDamage(
                   weaponType.getRackSize(), bDirect ? toHit.getMoS() / 3 : 0,
                   weaponType.getInfantryDamageClass(),
-                  ((Infantry) target).isMechanized(),
+                  ((ConvInfantry) target).isMechanized(),
                   toHit.getThruBldg() != null, weaponEntity.getId(), calcDmgPerHitReport);
 
             // IMP missiles deal double damage to cybernetically-enhanced infantry (IO p.61).

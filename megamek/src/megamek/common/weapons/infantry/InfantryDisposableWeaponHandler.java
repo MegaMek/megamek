@@ -43,6 +43,7 @@ import megamek.common.compute.Compute;
 import megamek.common.equipment.WeaponType;
 import megamek.common.game.Game;
 import megamek.common.loaders.EntityLoadingException;
+import megamek.common.units.ConvInfantry;
 import megamek.common.units.IBuilding;
 import megamek.common.units.Infantry;
 import megamek.common.weapons.DamageType;
@@ -101,7 +102,7 @@ public class InfantryDisposableWeaponHandler extends InfantryWeaponHandler {
         double damagePerTrooper = DISPOSABLE_DAMAGE_MULTIPLIER * ((InfantryWeapon) weaponType).getInfantryDamage();
         int damageDealt = (int) Math.round(damagePerTrooper * troopersHit);
 
-        if ((target instanceof Infantry targetInfantry) && targetInfantry.isMechanized()) {
+        if ((target instanceof ConvInfantry targetInfantry) && targetInfantry.isMechanized()) {
             damageDealt /= 2;
         }
         if ((target instanceof IBuilding) && weaponType.hasFlag(WeaponType.F_INF_NONPENETRATING)) {

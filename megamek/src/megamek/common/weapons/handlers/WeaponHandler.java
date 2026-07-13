@@ -1301,7 +1301,7 @@ public class WeaponHandler implements AttackHandler, Serializable {
         if (target.isConventionalInfantry()) {
             // Flechette ammo is treated "as though attack were from infantry unit" (TW p.208)
             // so it should NOT get the non-infantry vs mechanized damage bonus
-            boolean isNonInfantryVsMechanized = ((Infantry) target).isMechanized()
+            boolean isNonInfantryVsMechanized = ((ConvInfantry) target).isMechanized()
                   && !attackingEntity.isConventionalInfantry()
                   && damageType != DamageType.FLECHETTE;
             toReturn = Compute.directBlowInfantryDamage(toReturn,

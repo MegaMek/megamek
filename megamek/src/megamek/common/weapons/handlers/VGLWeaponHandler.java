@@ -54,6 +54,7 @@ import megamek.common.units.BuildingTarget;
 import megamek.common.units.Entity;
 import megamek.common.units.IBuilding;
 import megamek.common.units.Infantry;
+import megamek.common.units.ConvInfantry;
 import megamek.common.units.Targetable;
 import megamek.server.totalWarfare.TWGameManager;
 
@@ -181,7 +182,7 @@ public class VGLWeaponHandler extends AmmoWeaponHandler {
                     if (!inBuilding && entTarget.isConventionalInfantry()) {
                         int infDmg = Compute.directBlowInfantryDamage(0, 0,
                               WeaponType.WEAPON_BURST_2D6,
-                              ((Infantry) entTarget).isMechanized(),
+                              ((ConvInfantry) entTarget).isMechanized(),
                               toHit.getThruBldg() != null);
                         dmgReports = gameManager.damageEntity(entTarget, hit, infDmg);
                     } else if (inBuilding && entTarget.isConventionalInfantry()) {

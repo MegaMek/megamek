@@ -42,6 +42,7 @@ import megamek.common.compute.Compute;
 import megamek.common.game.Game;
 import megamek.common.loaders.EntityLoadingException;
 import megamek.common.units.Infantry;
+import megamek.common.units.ConvInfantry;
 import megamek.server.totalWarfare.TWGameManager;
 
 /**
@@ -68,7 +69,7 @@ public class SRMDeadFireHandler extends SRMHandler {
             double toReturn = Compute.directBlowInfantryDamage(
                   weaponType.getRackSize() * 3, bDirect ? toHit.getMoS() / 3 : 0,
                   weaponType.getInfantryDamageClass(),
-                  ((Infantry) target).isMechanized(),
+                  ((ConvInfantry) target).isMechanized(),
                   toHit.getThruBldg() != null, attackingEntity.getId(), calcDmgPerHitReport);
 
             toReturn = applyGlancingBlowModifier(toReturn, true);

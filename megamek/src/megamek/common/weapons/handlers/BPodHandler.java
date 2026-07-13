@@ -45,6 +45,7 @@ import megamek.common.compute.Compute;
 import megamek.common.game.Game;
 import megamek.common.loaders.EntityLoadingException;
 import megamek.common.units.Infantry;
+import megamek.common.units.ConvInfantry;
 import megamek.server.totalWarfare.TWGameManager;
 
 /**
@@ -95,7 +96,7 @@ public class BPodHandler extends AmmoWeaponHandler {
         // we default to direct fire weapons for anti-infantry damage
         if (target.isConventionalInfantry()) {
             toReturn = Compute.d6();
-            if (((Infantry) target).isMechanized()) {
+            if (((ConvInfantry) target).isMechanized()) {
                 toReturn /= 3;
             } else {
                 toReturn /= 2;

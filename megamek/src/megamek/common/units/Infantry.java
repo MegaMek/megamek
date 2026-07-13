@@ -640,9 +640,8 @@ public abstract class Infantry extends Entity {
         super.setTransportId(transportID);
         clearGroundPostures();
     }
-
     public boolean isMechanized() {
-        return movementMode.isTrackedWheeledOrHover() || movementMode.isVTOL() || movementMode.isSubmarine();
+        return ( movementMode.isTrackedWheeledOrHover() || movementMode.isVTOL() || movementMode.isSubmarine());
     }
 
     //FIXME: This is currently unused, but MekHQ should probably reset this flag so the unit can call support again

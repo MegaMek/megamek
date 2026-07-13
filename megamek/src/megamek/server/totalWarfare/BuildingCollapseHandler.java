@@ -479,7 +479,7 @@ public class BuildingCollapseHandler extends AbstractTWRuleHandler {
 
                 // Infantry suffer more damage.
                 if (entity instanceof Infantry) {
-                    if ((entity instanceof BattleArmor) || ((Infantry) entity).isMechanized()) {
+                    if ((entity instanceof BattleArmor) || ((ConvInfantry) entity).isMechanized()) {
                         damage *= 2;
                     } else {
                         damage *= 3;

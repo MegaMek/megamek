@@ -4187,7 +4187,7 @@ public class MovementDisplay extends ActionPhaseDisplay {
                   && (currentEntity instanceof VTOL)) {
                 canUnloadHere |= unloadableUnits.stream()
                       .filter(Entity::isInfantry)
-                      .anyMatch(en -> !((Infantry) en).isMechanized());
+                      .anyMatch(en -> !((ConvInfantry) en).isMechanized());
             }
             // Glider wings allow infantry to exit VTOLs as if jump infantry (IO p.85)
             if (currentEntity instanceof VTOL) {

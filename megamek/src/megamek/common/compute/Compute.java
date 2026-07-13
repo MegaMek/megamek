@@ -3934,7 +3934,7 @@ public class Compute {
             fDamage = directBlowInfantryDamage(fDamage,
                   0,
                   wt.getInfantryDamageClass(),
-                  ((Infantry) (weaponTarget)).isMechanized(),
+                  ((ConvInfantry) (weaponTarget)).isMechanized(),
                   false);
         }
 

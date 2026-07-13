@@ -44,6 +44,7 @@ import megamek.common.compute.Compute;
 import megamek.common.game.Game;
 import megamek.common.loaders.EntityLoadingException;
 import megamek.common.units.Infantry;
+import megamek.common.units.ConvInfantry;
 import megamek.server.totalWarfare.TWGameManager;
 
 /**
@@ -84,7 +85,7 @@ public class HAGWeaponHandler extends AmmoWeaponHandler {
             toReturn = Compute.directBlowInfantryDamage(
                   toReturn, bDirect ? toHit.getMoS() / 3 : 0,
                   weaponType.getInfantryDamageClass(),
-                  ((Infantry) target).isMechanized(),
+                  ((ConvInfantry) target).isMechanized(),
                   toHit.getThruBldg() != null, attackingEntity.getId(), calcDmgPerHitReport);
             toReturn = applyGlancingBlowModifier(toReturn, true);
             return (int) toReturn;

@@ -47,6 +47,7 @@ import megamek.common.moves.MovePath;
 import megamek.common.units.ConvInfantry;
 import megamek.common.units.Entity;
 import megamek.common.units.Infantry;
+import megamek.common.units.ConvInfantry;
 import megamek.common.units.Targetable;
 import megamek.common.weapons.infantry.InfantryWeapon;
 import megamek.logging.MMLogger;
@@ -103,7 +104,7 @@ public class InfantryFireControl extends FireControl {
         boolean inOpen = ServerHelper.infantryInOpen(target, targetHex, target.getGame(), targetIsPlatoon, false,
               false);
         boolean nonInfantryVsMechanized = !shooter.hasETypeFlag(Entity.ETYPE_INFANTRY)
-              && target.hasETypeFlag(Entity.ETYPE_INFANTRY) && ((Infantry) target).isMechanized();
+              && target.hasETypeFlag(Entity.ETYPE_INFANTRY) && ((ConvInfantry) target).isMechanized();
 
         // cycle through my weapons
         for (final WeaponMounted weapon : shooter.getWeaponList()) {

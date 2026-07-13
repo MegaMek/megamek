@@ -216,6 +216,13 @@ public class ConvInfantry extends Infantry {
     }
 
     @Override
+    public boolean isMechanized() {
+        return ( movementMode.isTrackedWheeledOrHover()
+               || (movementMode.isVTOL() && !isMounted() )
+               || (movementMode.isSubmarine() && !isMounted()) );
+    }
+
+    @Override
     public String[] getLocationAbbreviations() {
         return LOCATION_ABBREVIATIONS;
     }

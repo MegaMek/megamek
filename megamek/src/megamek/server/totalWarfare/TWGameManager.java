@@ -3476,7 +3476,7 @@ public class TWGameManager extends AbstractGameManager {
         if (unit.moved == EntityMovementType.MOVE_WALK && !hasGliderWings) {
             if (game.getOptions().booleanOption(OptionsConstants.ADVANCED_GROUND_MOVEMENT_TAC_OPS_ZIPLINES) &&
                   (unit instanceof Infantry) &&
-                  !((Infantry) unit).isMechanized()) {
+                  !((ConvInfantry) unit).isMechanized()) {
 
                 // Handle zip lines
                 PilotingRollData psr = getEjectModifiers(game, unit, 0, false, unit.getPosition(), "Anti-mek skill");
@@ -24889,7 +24889,7 @@ public class TWGameManager extends AbstractGameManager {
                 if (entity.getMovementMode() == EntityMovementMode.INF_MOTORIZED) {
                     dice = 2;
                 } else if ((entity.getMovementMode() == EntityMovementMode.INF_JUMP) ||
-                      ((Infantry) entity).isMechanized()) {
+                      ((ConvInfantry) entity).isMechanized()) {
                     dice = 1;
                 }
                 damage = damage * Compute.d6(dice);

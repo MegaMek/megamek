@@ -49,6 +49,7 @@ import megamek.common.loaders.EntityLoadingException;
 import megamek.common.options.OptionsConstants;
 import megamek.common.planetaryConditions.PlanetaryConditions;
 import megamek.common.units.Infantry;
+import megamek.common.units.ConvInfantry;
 import megamek.server.totalWarfare.TWGameManager;
 
 /**
@@ -77,7 +78,7 @@ public class LBXHandler extends AmmoWeaponHandler {
             double toReturn = Compute.directBlowInfantryDamage(
                   weaponType.getDamage(), bDirect ? toHit.getMoS() / 3 : 0,
                   WeaponType.WEAPON_CLUSTER_BALLISTIC,
-                  ((Infantry) target).isMechanized(),
+                  ((ConvInfantry) target).isMechanized(),
                   toHit.getThruBldg() != null, attackingEntity.getId(), calcDmgPerHitReport);
             toReturn = applyGlancingBlowModifier(toReturn, true);
             return (int) toReturn;

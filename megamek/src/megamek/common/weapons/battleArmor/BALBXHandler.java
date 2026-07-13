@@ -45,6 +45,7 @@ import megamek.common.compute.Compute;
 import megamek.common.game.Game;
 import megamek.common.loaders.EntityLoadingException;
 import megamek.common.units.Infantry;
+import megamek.common.units.ConvInfantry;
 import megamek.common.weapons.handlers.WeaponHandler;
 import megamek.server.totalWarfare.TWGameManager;
 
@@ -70,7 +71,7 @@ public class BALBXHandler extends WeaponHandler {
             double toReturn = Compute.directBlowInfantryDamage(
                   weaponType.getRackSize() * 2, bDirect ? toHit.getMoS() / 3 : 0,
                   weaponType.getInfantryDamageClass(),
-                  ((Infantry) target).isMechanized(),
+                  ((ConvInfantry) target).isMechanized(),
                   toHit.getThruBldg() != null, attackingEntity.getId(), calcDmgPerHitReport);
             toReturn = applyGlancingBlowModifier(toReturn, true);
             return (int) toReturn;

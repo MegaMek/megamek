@@ -560,7 +560,7 @@ public class SharedUtility {
                       && (md.getFinalElevation() > 0)
                       && (targ instanceof Infantry)
                       && (((Entity) targ).getJumpMP() < 1)
-                      && !((Infantry) targ).isMechanized()) {
+                      && !((ConvInfantry) targ).isMechanized()) {
                     rollTarget = TWGameManager.getEjectModifiers(game, (Entity) targ, 0,
                           false, md.getFinalCoords(), "zip lining");
                     // Factor in Elevation

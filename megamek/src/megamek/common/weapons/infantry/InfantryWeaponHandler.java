@@ -54,6 +54,7 @@ import megamek.common.units.ConvInfantry;
 import megamek.common.units.Entity;
 import megamek.common.units.IBuilding;
 import megamek.common.units.Infantry;
+import megamek.common.units.ConvInfantry;
 import megamek.common.units.InfantryMount;
 import megamek.common.weapons.DamageType;
 import megamek.common.weapons.handlers.WeaponHandler;
@@ -251,7 +252,7 @@ public class InfantryWeaponHandler extends WeaponHandler {
                           && infantry.primaryWeaponDamageCapped()))) {
             damageDealt += Compute.d6();
         }
-        if ((target instanceof Infantry) && ((Infantry) target).isMechanized()) {
+        if ((target instanceof Infantry) && ((ConvInfantry) target).isMechanized()) {
             damageDealt /= 2;
         }
         // this doesn't work...

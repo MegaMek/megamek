@@ -53,6 +53,7 @@ import megamek.common.options.OptionsConstants;
 import megamek.common.rolls.Roll;
 import megamek.common.units.Entity;
 import megamek.common.units.Infantry;
+import megamek.common.units.ConvInfantry;
 import megamek.common.weapons.Weapon;
 import megamek.server.totalWarfare.TWGameManager;
 
@@ -214,14 +215,14 @@ public class UltraWeaponHandler extends AmmoWeaponHandler {
                 toReturn = Compute.directBlowInfantryDamage(toReturn,
                       bDirect ? toHit.getMoS() / 3 : 0,
                       WeaponType.WEAPON_CLUSTER_BALLISTIC, // treat as cluster
-                      ((Infantry) target).isMechanized(),
+                      ((ConvInfantry) target).isMechanized(),
                       toHit.getThruBldg() != null, weaponEntity.getId(),
                       calcDmgPerHitReport);
             } else { // No - only one shot fired
                 toReturn = Compute.directBlowInfantryDamage(weaponType.getDamage(),
                       bDirect ? toHit.getMoS() / 3 : 0,
                       weaponType.getInfantryDamageClass(),
-                      ((Infantry) target).isMechanized(),
+                      ((ConvInfantry) target).isMechanized(),
                       toHit.getThruBldg() != null, weaponEntity.getId(),
                       calcDmgPerHitReport);
             }

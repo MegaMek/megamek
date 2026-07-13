@@ -594,15 +594,23 @@ public class ChatLounge extends AbstractPhaseDisplay
         activeSorter = unitSorters.getFirst();
     }
 
-    /**
-     * Enables buttons to allow adding units when the MSC has finished loading. The cache notifies its listeners
-     * from its loader thread, so the buttons must be enabled on the event dispatch thread.
-     */
-    private final transient MekSummaryCache.Listener mekSummaryCacheListener =
-          () -> SwingUtilities.invokeLater(this::enableUnitAddButtons);
+    /** Enables buttons to allow adding units when the MSC has finished loading. */
+    private final transient MekSummaryCache.Listener mekSummaryCacheListener = this::enableUnitAddButtons;
 
-    /** Enables the buttons that need a loaded unit cache to work. */
+    /**
+     * Enables the buttons that need a loaded unit cache to work.
+     * <p>
+     * Both callers can run off the event dispatch thread: the unit cache notifies its listeners from its loader
+     * thread, and the lobby is constructed from the phase change, which is dispatched on the client's connection
+     * thread. The button updates are therefore moved onto the event dispatch thread here, so that every caller is
+     * covered.
+     * </p>
+     */
     private void enableUnitAddButtons() {
+        if (!SwingUtilities.isEventDispatchThread()) {
+            SwingUtilities.invokeLater(this::enableUnitAddButtons);
+            return;
+        }
         butAdd.setEnabled(true);
         butArmy.setEnabled(true);
         butLoadList.setEnabled(true);

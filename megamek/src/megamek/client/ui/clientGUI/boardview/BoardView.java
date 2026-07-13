@@ -1367,8 +1367,7 @@ public final class BoardView extends AbstractBoardView
     			EntityMovementMode.WHEELED, getBoard());*/
     	
     	MinefieldDeploymentPlanner mdp = new MinefieldDeploymentPlanner(getLocalPlayer(), game);
-    	Map<Coords, Double> minefieldScores = mdp.buildCoalescedMinefieldScores(Minefield.TYPE_CONVENTIONAL, 
-    			localPlayer, game, getBoard());
+    	Map<Coords, Double> minefieldScores = mdp.buildCoalescedMinefieldScores(Minefield.TYPE_CONVENTIONAL, getBoard());
     	
     	for (Coords coords : minefieldScores.keySet()) {
     		Point centreHexLocation = getCentreHexLocation(coords.getX(), coords.getY(), true);

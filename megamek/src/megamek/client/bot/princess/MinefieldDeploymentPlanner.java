@@ -39,6 +39,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.SortedMap;
 
 import megamek.common.Hex;
 import megamek.common.Player;
@@ -67,7 +68,6 @@ public class MinefieldDeploymentPlanner {
 			Terrains.SKY
 			);
 	
-	public static final int LEGAL_BUT_USELESS = -1000;
 	public static final int POSITIVE_BUT_LOW_VALUE = 1;
 	
 	private double mekProportion = 0.0;
@@ -75,6 +75,7 @@ public class MinefieldDeploymentPlanner {
 	private double wheelProportion = 0.0;
 	private double hoverProportion = 0.0;
 	private double infantryProportion = 0.0;
+	private int vibrabombSetting = 50;
 	
 	public MinefieldDeploymentPlanner(Player player, Game game) {
 		// would prefer to have a map of unit type to score, but tracked, wheeled and hover
@@ -86,6 +87,8 @@ public class MinefieldDeploymentPlanner {
 		int infantryCount = 0;
 		int hoverVeeCount = 0;
 		
+		Map<Double, Integer> mekWeightCount = new HashMap<>();
+		
 		// first, we collect the unit type counts
 		for (Entity entity : game.getEntitiesVector()) {
 			// ignore off-board and non-hostile entities
@@ -95,6 +98,10 @@ public class MinefieldDeploymentPlanner {
 			
 			if (entity.getUnitType() == UnitType.MEK) {
 				mekCount++;
+				// add an entry to the bucket if we don't have one
+				// increment that entry by one
+				mekWeightCount.putIfAbsent(entity.getWeight(), 0);
+				mekWeightCount.put(entity.getWeight(), mekWeightCount.get(entity.getWeight()) + 1);
 			} else if (entity.getUnitType() == UnitType.TANK) {
 				if (entity.getMovementMode() == EntityMovementMode.TRACKED) {
 					trackedVeeCount++;
@@ -105,7 +112,8 @@ public class MinefieldDeploymentPlanner {
 				}
 			// for now, we lump BA, Protomeks and infantry together; 
 			// they're relatively low-impact/low-BV and uncommon in general usage compared
-			// to meks and tanks
+			// to meks and tanks and have similar preferences for where
+			// you should place mines to counter them
 			} else if (entity.getUnitType() == UnitType.INFANTRY || 
 					entity.getUnitType() == UnitType.BATTLE_ARMOR ||
 					entity.getUnitType() == UnitType.PROTOMEK) {
@@ -119,6 +127,41 @@ public class MinefieldDeploymentPlanner {
 		wheelProportion = (double) wheeledVeeCount / hostileUnitCount;
 		infantryProportion = (double) infantryCount / hostileUnitCount;
 		hoverProportion = (double) hoverVeeCount / hostileUnitCount;
+		
+		calculateVibrabombSetting(mekWeightCount);
+	}
+	
+	/**
+	 * Worker function that calculates the vibra bomb setting
+	 * that'll get the most meks
+	 */
+	private void calculateVibrabombSetting(Map<Double, Integer> mekWeightCount) {
+		if (mekWeightCount.isEmpty()) {
+			return;
+		}
+		
+		// a simplification: we take the weight that has the most meks
+		// and we then put the setting at that. In case of a tie, we take the lower weight
+		// as lower-weight meks are probably faster and more likely to step on vibrabombs
+		int mekCount = 0;
+		double currentWeight = 0;
+		
+		for (double weight : mekWeightCount.keySet()) {
+			if (mekWeightCount.get(weight) > mekCount) {
+				mekCount = mekWeightCount.get(weight);
+				currentWeight = weight;
+			}
+		}
+		
+		vibrabombSetting = (int) currentWeight;
+	}
+	
+	/**
+	 * Recommended weight setting for vibrabombs, 
+	 * calculated at initialization based on the number and weights of enemy meks present
+	 */
+	public int getVibrabombSetting() {
+		return vibrabombSetting;
 	}
 	
 	/**

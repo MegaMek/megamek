@@ -1299,7 +1299,7 @@ public final class BoardView extends AbstractBoardView
         // renderClusters((Graphics2D) graphics2D);
         // renderDonut(graphics2D, new Coords(10, 10), 2);
         // renderApproxHexDirection((Graphics2D) graphics2D);
-        renderMinefieldScores((Graphics2D) graphics2D);
+        // renderMinefieldScores((Graphics2D) graphics2D);
     }
 
     /**

@@ -1453,7 +1453,7 @@ public abstract class BotClient extends Client {
 	    						getLocalPlayer().getId(),
 	    						minefieldType,
 	    						density,
-	    						50,
+	    						mdp.getVibrabombSetting(),
 	    						false,
 	    						0);	    						
 	    			}

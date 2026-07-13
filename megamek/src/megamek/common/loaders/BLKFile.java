@@ -139,6 +139,7 @@ public class BLKFile {
         } else {
             entity.setModel("");
         }
+        entity.storeOriginalUnitData();
 
         if (dataFile.exists(MtfFile.MUL_ID)) {
             entity.setMulId(dataFile.getDataAsInt(MtfFile.MUL_ID)[0]);

@@ -42,6 +42,7 @@ import java.awt.Graphics2D;
 import java.awt.Image;
 import java.awt.Polygon;
 import java.awt.Rectangle;
+import java.awt.RenderingHints;
 import java.awt.Shape;
 import java.awt.event.ComponentEvent;
 import java.awt.event.MouseEvent;
@@ -271,6 +272,17 @@ public abstract class PicMap extends JComponent {
         contentGraphics.scale(displayScale, displayScale);
         int contentWidth = (int) (w / displayScale);
         int contentHeight = (int) (h / displayScale);
+
+        if (displayScale != 1.0) {
+            // The frames around the diagram are bitmaps, and its outlines and text are drawn shapes, so enlarging
+            // any of them without smoothing leaves them jagged. Unscaled drawing is left exactly as it was.
+            contentGraphics.setRenderingHint(RenderingHints.KEY_INTERPOLATION,
+                  RenderingHints.VALUE_INTERPOLATION_BILINEAR);
+            contentGraphics.setRenderingHint(RenderingHints.KEY_ANTIALIASING,
+                  RenderingHints.VALUE_ANTIALIAS_ON);
+            contentGraphics.setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING,
+                  RenderingHints.VALUE_TEXT_ANTIALIAS_ON);
+        }
 
         // Background painting
         Enumeration<BackGroundDrawer> iter = bgDrawers.elements();

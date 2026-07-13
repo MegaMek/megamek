@@ -35,18 +35,28 @@ package megamek.client.ui.dialogs;
 import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.junit.jupiter.api.Assumptions.assumeFalse;
 
+import java.awt.Component;
+import java.awt.Container;
 import java.awt.GraphicsEnvironment;
 import java.awt.Polygon;
 import java.awt.Rectangle;
+import javax.swing.JButton;
 import javax.swing.JFrame;
+import javax.swing.JLabel;
+import javax.swing.JSpinner;
+import javax.swing.SpinnerNumberModel;
 
+import megamek.client.ui.Messages;
 import megamek.client.ui.dialogs.unitDisplay.ArmorPanel;
 import megamek.client.ui.widget.picmap.PMSimplePolygonArea;
 import megamek.common.equipment.EquipmentType;
 import megamek.common.game.Game;
+import megamek.common.units.Crew;
 import megamek.common.units.Entity;
 import megamek.common.units.Mek;
 import megamek.testUtilities.MMTestUtilities;
@@ -141,6 +151,115 @@ class UnitEditorDialogTest {
               "the enlarged area was not found under the point it is drawn at");
         assertNull(diagram.getAreaUnder((bounds.x + bounds.width + 2) * 3, centerY * 3),
               "an area was found past the edge of the enlarged diagram");
+    }
+
+    /**
+     * The crew hits control stops one short of the six hits that kill (TW p.41), so a gamemaster wounds and
+     * revives crew here but cannot kill a pilot outright; destroying a unit is what the Destroy Unit button does.
+     */
+    @Test
+    void crewHitsCannotReachTheHitsThatKill() {
+        Entity entity = MMTestUtilities.getEntityForUnitTesting("Atlas AS7-D", false);
+        assertNotNull(entity);
+        new Game().addEntity(entity);
+        UnitEditorDialog dialog = new UnitEditorDialog(new JFrame(), entity, true);
+
+        JSpinner crewHits = findCrewHitsSpinner(dialog);
+        assertNotNull(crewHits, "the dialog has no crew hits control");
+        assertEquals(Crew.DEATH - 1, ((SpinnerNumberModel) crewHits.getModel()).getMaximum(),
+              "the crew hits control can reach the hits that kill");
+        dialog.dispose();
+    }
+
+    /**
+     * A crew member killed in play must come back when their hits are lowered. Crew.setHits kills at six hits but
+     * never undoes it, so the dialog has to clear the death itself.
+     */
+    @Test
+    void loweringHitsRevivesADeadCrewMember() {
+        Entity entity = MMTestUtilities.getEntityForUnitTesting("Atlas AS7-D", false);
+        assertNotNull(entity);
+        new Game().addEntity(entity);
+        entity.getCrew().setHits(Crew.DEATH, 0);
+        assertTrue(entity.getCrew().isDead(), "the test needs a dead crew member to revive");
+
+        UnitEditorDialog dialog = new UnitEditorDialog(new JFrame(), entity, true);
+        JSpinner crewHits = findCrewHitsSpinner(dialog);
+        assertNotNull(crewHits);
+        crewHits.setValue(2);
+        clickOkay(dialog);
+
+        assertFalse(entity.getCrew().isDead(), "the crew member was not revived");
+        assertEquals(2, entity.getCrew().getHits(0), "the crew hits were not applied");
+        dialog.dispose();
+    }
+
+    /** Heat is set through the diagram's own heat scale, so the editor must apply it to the unit. */
+    @Test
+    void heatIsAppliedToTheUnit() {
+        Entity entity = MMTestUtilities.getEntityForUnitTesting("Atlas AS7-D", false);
+        assertNotNull(entity);
+        new Game().addEntity(entity);
+        assertTrue(entity.tracksHeat(), "the test needs a unit that tracks heat");
+
+        UnitEditorDialog dialog = new UnitEditorDialog(new JFrame(), entity, true);
+        JSpinner heat = findSpinnerAfterLabel(dialog, Messages.getString("UnitEditorDialog.heat"));
+        assertNotNull(heat, "the dialog has no heat control");
+        heat.setValue(12);
+        clickOkay(dialog);
+
+        assertEquals(12, entity.heat, "the heat was not applied");
+        dialog.dispose();
+    }
+
+    /** Presses the dialog's Okay button, which is what applies the edits to the unit. */
+    private static void clickOkay(UnitEditorDialog dialog) {
+        JButton okay = findButton(dialog.getContentPane(), Messages.getString("Okay"));
+        assertNotNull(okay, "the dialog has no Okay button");
+        okay.doClick();
+    }
+
+    private static JSpinner findCrewHitsSpinner(UnitEditorDialog dialog) {
+        return findSpinnerAfterLabel(dialog, Messages.getString("UnitEditorDialog.crewHits"));
+    }
+
+    /** Finds the spinner that sits next to the given label, which is how the dialog lays out its controls. */
+    private static JSpinner findSpinnerAfterLabel(UnitEditorDialog dialog, String labelText) {
+        return findSpinnerAfterLabel(dialog.getContentPane(), labelText);
+    }
+
+    private static JSpinner findSpinnerAfterLabel(Container container, String labelText) {
+        Component[] components = container.getComponents();
+        for (int index = 0; index < components.length; index++) {
+            if ((components[index] instanceof JLabel label)
+                  && label.getText().contains(labelText)
+                  && (index + 1 < components.length)
+                  && (components[index + 1] instanceof JSpinner spinner)) {
+                return spinner;
+            }
+            if (components[index] instanceof Container child) {
+                JSpinner found = findSpinnerAfterLabel(child, labelText);
+                if (found != null) {
+                    return found;
+                }
+            }
+        }
+        return null;
+    }
+
+    private static JButton findButton(Container container, String text) {
+        for (Component component : container.getComponents()) {
+            if ((component instanceof JButton button) && text.equals(button.getText())) {
+                return button;
+            }
+            if (component instanceof Container child) {
+                JButton found = findButton(child, text);
+                if (found != null) {
+                    return found;
+                }
+            }
+        }
+        return null;
     }
 
     /** Picking a location in the armor diagram must work for every location the unit has. */

@@ -107,6 +107,15 @@ public class UnitEditorDialog extends JDialog implements LocationSelectListener 
     private static final String DIALOG_NAME = "unitEditorDialog";
     private static final String SPLIT_PANE_NAME = "unitEditorSplitPane";
 
+    /** The most heat that can be set, matching the range the lobby's heat menu offers. */
+    private static final int MAX_HEAT = 40;
+
+    /**
+     * The most hits a crew member can be given here. Six hits kill (TW p.41), so the editor stops one short: it
+     * wounds and revives crew, and Destroy Unit is what kills a unit.
+     */
+    private static final int MAX_CREW_HITS = Crew.DEATH - 1;
+
     /** How much the armor diagram is enlarged even when there is no panel height to fill. */
     private static final double MIN_PAPERDOLL_SCALE = 1.6;
 
@@ -136,6 +145,10 @@ public class UnitEditorDialog extends JDialog implements LocationSelectListener 
     JSpinner[] spnInternal;
     JSpinner[] spnArmor;
     JSpinner[] spnRear;
+    /** Hits taken by each crew member; the entry of a missing crew member stays null. */
+    private JSpinner[] spnCrewHits;
+    /** The unit's current heat, for the unit types that track it. */
+    private JSpinner spnHeat;
 
     HashMap<Integer, CheckCritPanel> equipCrits;
 
@@ -364,7 +377,40 @@ public class UnitEditorDialog extends JDialog implements LocationSelectListener 
         butRestoreUnit.setToolTipText(Messages.getString("UnitEditorDialog.preExistingDamage.reset.tooltip"));
         butRestoreUnit.addActionListener(event -> restoreUnitToFactoryNew());
         panPreExisting.add(butRestoreUnit);
+
+        JButton butDestroyUnit = new JButton(Messages.getString("UnitEditorDialog.destroyUnit"));
+        butDestroyUnit.setToolTipText(Messages.getString("UnitEditorDialog.destroyUnit.tooltip"));
+        butDestroyUnit.addActionListener(event -> destroyUnit());
+        panPreExisting.add(butDestroyUnit);
         return panPreExisting;
+    }
+
+    /**
+     * Asks first, then sets the controls to a unit that cannot survive: no armor and no structure anywhere. The
+     * unit is destroyed when Okay is pressed and the server sees a unit whose damage it cannot survive, the same
+     * way a unit shot to pieces is. The crew is left alone; the server decides who dies with the unit and who
+     * escapes.
+     */
+    private void destroyUnit() {
+        int choice = JOptionPane.showConfirmDialog(this,
+              String.format(Messages.getString("UnitEditorDialog.destroyUnit.confirm"), entity.getDisplayName()),
+              Messages.getString("UnitEditorDialog.destroyUnit"),
+              JOptionPane.YES_NO_OPTION,
+              JOptionPane.WARNING_MESSAGE);
+        if (choice != JOptionPane.YES_OPTION) {
+            return;
+        }
+        for (int location = 0; location < entity.locations(); location++) {
+            setSpinnerToZero(spnArmor[location]);
+            setSpinnerToZero(spnRear[location]);
+            setSpinnerToZero(spnInternal[location]);
+        }
+    }
+
+    private void setSpinnerToZero(@Nullable JSpinner spinner) {
+        if (null != spinner) {
+            spinner.setValue(0);
+        }
     }
 
     /**
@@ -374,6 +420,13 @@ public class UnitEditorDialog extends JDialog implements LocationSelectListener 
     private void restoreUnitToFactoryNew() {
         restoreSpinnersToMaximum(getContentPane());
         snapshotCritHits.keySet().forEach(critPanel -> critPanel.setHits(0));
+        // heat and crew hits are damage counting up, not health counting down, so a repaired unit has none of them
+        setSpinnerToZero(spnHeat);
+        if (null != spnCrewHits) {
+            for (JSpinner crewHits : spnCrewHits) {
+                setSpinnerToZero(crewHits);
+            }
+        }
     }
 
     private void restoreSpinnersToMaximum(Container container) {
@@ -572,6 +625,10 @@ public class UnitEditorDialog extends JDialog implements LocationSelectListener 
                 spnInternal[location].addChangeListener(event -> refreshDamageDisplay());
             }
         }
+        // the diagram carries a heat scale, so it follows the heat control too
+        if (null != spnHeat) {
+            spnHeat.addChangeListener(event -> refreshDamageDisplay());
+        }
         refreshDamageDisplay();
     }
 
@@ -702,6 +759,55 @@ public class UnitEditorDialog extends JDialog implements LocationSelectListener 
                   "</b></html>");
             addRow(generalPanel(), structuralIntegrityLabel, spnInternal[0]);
         }
+
+        initCrewHits();
+        initHeat();
+    }
+
+    /**
+     * Adds a hits control per crew member to the panel of the location the crew sits in, which is the head of a
+     * Mek. Hits stop one short of the six that kill a crew member (TW p.41): the editor wounds and revives crew,
+     * and destroying a unit outright is what the Destroy Unit button is for. Revive is the reason the control
+     * matters as much as wounding, since a crew member killed in play can be brought back below six hits.
+     */
+    private void initCrewHits() {
+        Crew crew = entity.getCrew();
+        if ((crew == null) || (crew.getSlotCount() < 1)) {
+            return;
+        }
+        spnCrewHits = new JSpinner[crew.getSlotCount()];
+        for (int slot = 0; slot < crew.getSlotCount(); slot++) {
+            if (crew.isMissing(slot)) {
+                continue;
+            }
+            spnCrewHits[slot] = new JSpinner(new SpinnerNumberModel(Math.min(crew.getHits(slot), MAX_CREW_HITS),
+                  0,
+                  MAX_CREW_HITS,
+                  1));
+            String label = (crew.getSlotCount() > 1)
+                  ? String.format(Messages.getString("UnitEditorDialog.crewHitsFor"), crew.getNameAndRole(slot))
+                  : Messages.getString("UnitEditorDialog.crewHits");
+            addLabeledRow(targetPanel(crewLocation()), label, spnCrewHits[slot]);
+        }
+    }
+
+    /** Adds a heat control to the panel of the location that carries the engine, which is a Mek's center torso. */
+    private void initHeat() {
+        if (!entity.tracksHeat()) {
+            return;
+        }
+        spnHeat = new JSpinner(new SpinnerNumberModel(Math.max(entity.heat, 0), 0, MAX_HEAT, 1));
+        addLabeledRow(targetPanel(heatLocation()), Messages.getString("UnitEditorDialog.heat"), spnHeat);
+    }
+
+    /** The location the crew sits in, or {@code LOC_NONE} to put the crew in the general panel. */
+    private int crewLocation() {
+        return (entity instanceof Mek) ? Mek.LOC_HEAD : Entity.LOC_NONE;
+    }
+
+    /** The location the engine sits in, or {@code LOC_NONE} to put heat in the general panel. */
+    private int heatLocation() {
+        return (entity instanceof Mek) ? Mek.LOC_CENTER_TORSO : Entity.LOC_NONE;
     }
 
     private JPanel initInfantryPanel() {
@@ -888,6 +994,7 @@ public class UnitEditorDialog extends JDialog implements LocationSelectListener 
             actualInternal[location] = entity.getInternal(location);
         }
         int actualStructuralIntegrity = (entity instanceof Aero aero) ? aero.getSI() : 0;
+        int actualHeat = entity.heat;
 
         try {
             applyPendingValuesForDisplay();
@@ -901,6 +1008,7 @@ public class UnitEditorDialog extends JDialog implements LocationSelectListener 
             if (entity instanceof Aero aero) {
                 aero.setSI(actualStructuralIntegrity);
             }
+            entity.heat = actualHeat;
         }
     }
 
@@ -919,6 +1027,9 @@ public class UnitEditorDialog extends JDialog implements LocationSelectListener 
         }
         if ((entity instanceof Aero aero) && (null != spnInternal[0])) {
             aero.setSI((Integer) spnInternal[0].getValue());
+        }
+        if (null != spnHeat) {
+            entity.heat = (Integer) spnHeat.getValue();
         }
     }
 
@@ -1746,6 +1857,36 @@ public class UnitEditorDialog extends JDialog implements LocationSelectListener 
             }
         }
 
+        applyCrewHits();
+        applyHeat();
+    }
+
+    /**
+     * Writes the crew hits back to the unit. A crew member who is brought back below six hits is revived, which
+     * {@link Crew#setHits} does not do on its own: it kills at six hits but never undoes it, and a dead crew
+     * member would otherwise stay dead however far their hits were lowered.
+     */
+    private void applyCrewHits() {
+        Crew crew = entity.getCrew();
+        if ((null == crew) || (null == spnCrewHits)) {
+            return;
+        }
+        for (int slot = 0; slot < spnCrewHits.length; slot++) {
+            if (null == spnCrewHits[slot]) {
+                continue;
+            }
+            // the control cannot reach the six hits that kill, so every value here revives a dead crew member
+            crew.setDead(false, slot);
+            crew.setUnconscious(false, slot);
+            crew.setKoThisRound(false, slot);
+            crew.setHits((Integer) spnCrewHits[slot].getValue(), slot);
+        }
+    }
+
+    private void applyHeat() {
+        if (null != spnHeat) {
+            entity.heat = (Integer) spnHeat.getValue();
+        }
     }
 
     private static class CheckCritPanel extends JPanel {

@@ -1,0 +1,185 @@
+# MegaMek Data (C) 2025-2026 by The MegaMek Team is licensed under CC BY-NC-SA 4.0.
+# To view a copy of this license, visit https://creativecommons.org/licenses/by-nc-sa/4.0/
+#
+# NOTICE: The MegaMek organization is a non-profit group of volunteers
+# creating free software for the BattleTech community.
+#
+# MechWarrior, BattleMech, `Mech and AeroTech are registered trademarks
+# of The Topps Company, Inc. All Rights Reserved.
+#
+# Catalyst Game Labs and the Catalyst Game Labs logo are trademarks of
+# InMediaRes Productions, LLC.
+#
+# MechWarrior Copyright Microsoft Corporation. MegaMek Data was created under
+# Microsoft's "Game Content Usage Rules"
+# <https://www.xbox.com/en-US/developers/rules> and it is not endorsed by or
+# affiliated with Microsoft.
+
+#Saved from version 0.50.12 on 2026-02-26
+<UnitType>
+ProtoMek
+</UnitType>
+
+<Name>
+Roc
+</Name>
+
+<Model>
+2
+</Model>
+
+<mul id:>
+2727
+</mul id:>
+
+<year>
+3062
+</year>
+
+<originalBuildYear>
+3062
+</originalBuildYear>
+
+<type>
+Clan Level 2
+</type>
+
+<role>
+Brawler
+</role>
+
+<motion_type>
+Biped
+</motion_type>
+
+<cruiseMP>
+5
+</cruiseMP>
+
+<jumpingMP>
+5
+</jumpingMP>
+
+<interface_cockpit>
+false
+</interface_cockpit>
+
+<engine_type>
+0
+</engine_type>
+
+<clan_engine>
+false
+</clan_engine>
+
+<armor_type>
+42
+</armor_type>
+
+<armor_tech_rating>
+0
+</armor_tech_rating>
+
+<armor_tech_level>
+2
+</armor_tech_level>
+
+<internal_type>
+-1
+</internal_type>
+
+<armor>
+2
+6
+3
+3
+4
+3
+</armor>
+
+<Body Equipment>
+ProtoMechJumpJet
+ProtoMechJumpJet
+ProtoMechJumpJet
+ProtoMechJumpJet
+ProtoMechJumpJet
+EIInterface
+</Body Equipment>
+
+<Head Equipment>
+</Head Equipment>
+
+<Torso Equipment>
+</Torso Equipment>
+
+<Right Arm Equipment>
+</Right Arm Equipment>
+
+<Left Arm Equipment>
+</Left Arm Equipment>
+
+<Legs Equipment>
+</Legs Equipment>
+
+<Main Gun Equipment>
+CLHeavyMediumLaser
+</Main Gun Equipment>
+
+
+
+
+
+
+
+
+
+<source>
+TR:3060
+</source>
+
+<published>
+RS:3060u
+</published>
+
+<tonnage>
+7.0
+</tonnage>
+
+# Fluff Date: 2026-02-28 17:47:08
+<overview>
+<p>The Roc is a seven-ton first-generation ProtoMek developed by Clan Smoke Jaguar as the backbone of the original ProtoMek program on Huntress. Widely regarded as the most successful design to emerge from the program, the Roc combines mobility, armor, and firepower more effectively than any of its siblings, making it suitable for a wide variety of attack and defense missions. Built around an ER Medium Laser and five jump jets, the Roc delivers BattleMek-grade firepower from a platform capable of traversing nearly any terrain. Its balance of capabilities made it the most commonly fielded ProtoMek in the Homeworld Clans by the mid-3060s, forming the core of most mixed ProtoMek formations.</p>
+</overview>
+
+<capabilities>
+<p>The Roc primary weapon is its ER Medium Laser, a weapon that would be respectable on a light BattleMek and is devastating on a seven-ton ProtoMek. The extended-range variant allows engagement at distances where most ProtoMek opponents cannot effectively return fire, giving the Roc a significant tactical advantage in open terrain. Five jump jets provide one hundred and fifty meters of jumping distance, allowing the Roc to exploit terrain features, clear obstacles, and execute flanking maneuvers that ground-bound opponents cannot counter. The sixty-rated fusion engine delivers fifty-four kilometers per hour cruising speed, adequate for keeping pace with medium-weight formations.</p><p>The Roc armor protection of thirty-one points is among the best for first-generation ProtoMeks of its weight class, sufficient to absorb multiple medium weapon hits before structural compromise. As an energy-only design, the base Roc has no ammunition dependency, allowing indefinite combat endurance limited only by pilot fatigue and heat buildup. The Roc only significant limitation is the single-weapon loadout, which means a weapon hit or targeting system malfunction reduces the design to a very expensive paperweight. Despite this vulnerability, the Roc ratio of mobility to firepower and its all-around competence have made it the measuring stick against which other ProtoMek designs are judged.</p>
+</capabilities>
+
+<deployment>
+<p>The Roc 2 replaces the ER Medium Laser with a Heavy Medium Laser, substantially increasing damage output at short range at the cost of reduced effective range and armor protection. Twenty-one points of armor represent a significant reduction from the base model, making the Roc 2 considerably more fragile. The jump jet configuration remains unchanged at five jets providing one hundred and fifty meters of jumping distance. The Heavy Medium Laser generates considerable heat for a ProtoMek-scale weapon, but its raw damage output makes a Point of Roc 2s extremely dangerous to any target caught at close range.</p>
+</deployment>
+
+<history>
+<p>The Roc was conceived by Smoke Jaguar scientists as the primary combat ProtoMek in the original lineup, designed to balance all the competing demands of speed, protection, and firepower in a single chassis. Where other designs in the program specialized in reconnaissance, anti-infantry work, or heavy fire support, the Roc was intended to be the generalist, capable of performing adequately in any role. The decision to build it around an ER Medium Laser rather than a missile or ballistic weapon reflected the Jaguar scientists emphasis on reliability and endurance over burst damage potential.</p><p>The Roc combat debut during the Battle of Huntress in 3060 validated the design philosophy. In the varied terrain of Huntress, from dense jungle to rocky highlands, the Roc jump jets allowed it to operate effectively everywhere while its ER Medium Laser engaged targets at ranges that kept the fragile ProtoMek frame outside the effective envelope of most small arms. Multiple Points of Rocs were credited with delaying Inner Sphere advances long enough for Jaguar forces to establish secondary defensive positions, their combination of firepower and mobility making them difficult targets to pin down.</p><p>Following the Jaguar Annihilation, the Roc became arguably the most sought-after ProtoMek design. Virtually every Clan that acquired ProtoMek technology prioritized Roc production, recognizing it as the most versatile and capable design available. Clan Snow Raven established a major production line at the Snow Raven Industrial Complex Alpha on Dante, while Clan Wolf began manufacturing Rocs at Csesztreg. Clan Goliath Scorpion continued production at the original Abysmal Manufacturing Complex on Huntress, and several other Clans established smaller production runs at various facilities.</p><p>The Roc has inspired more variant configurations than any other first-generation ProtoMek. The Roc 2 mounts a Heavy Medium Laser for increased close-range damage. The Roc 3 trades jump jets for a Medium Pulse Laser and heavier armor. The Roc 4 combines an ECM Suite with an AP Gauss Rifle for electronic warfare capability. The Roc 5 pushes jump capability to seven jets with a Medium Chemical Laser. Each variant reflects a different Clan tactical philosophy applied to the proven Roc chassis.</p><p>The Wars of Reaving saw the Society produce the Roc Z variant at the Abysmal Manufacturing Complex, equipped with a Magnetic Clamp System for OmniMek transport and a Medium Chemical Laser. The upheaval of the Reaving disrupted several Roc production lines as Clans were absorbed or destroyed, but the design broad production base ensured continuity. The Roc remains the single most commonly fielded ProtoMek design across the surviving Homeworld Clans, its versatility and proven combat record ensuring that it will remain in production for decades to come.</p>
+</history>
+
+<manufacturer>
+Aeroyard Gargain|Beta Plant 3F|Kindraa Payne-Beyl-Grant Main Production Facility|Reserve Industriplex-2
+</manufacturer>
+
+<primaryFactory>
+Bearclaw|Tamaron|Shadow|York
+</primaryFactory>
+
+<systemManufacturers>
+CHASSIS:Unknown
+ENGINE:GM
+ARMOR:Unknown
+JUMP_JET:Unknown
+COMMUNICATIONS:Unknown
+TARGETING:Unknown
+</systemManufacturers>
+
+<systemModels>
+ENGINE:60 Fusion
+</systemModels>
+

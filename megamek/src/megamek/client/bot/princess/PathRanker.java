@@ -391,10 +391,15 @@ public abstract class PathRanker implements IPathRanker {
                 unmovedDistanceModifier = enemy.getWalkMP();
             }
 
+            // "Closest" is measured by the adjusted distance (an unmoved enemy is treated as farther, since it can
+            // still move away), so store the same adjusted value we compare against - not the raw distance. The
+            // minDistance filter is a "not within N raw hexes" gate (e.g. the not-zero-distance facing target), so
+            // it is tested against the raw hex distance, otherwise a same-hex enemy could pass it via its movement
+            // allowance.
             int distance = position.distance(enemy.getPosition());
-            if (((distance + unmovedDistanceModifier) < range) && ((distance + unmovedDistanceModifier)
-                  >= minDistance)) {
-                range = distance;
+            int adjustedDistance = distance + unmovedDistanceModifier;
+            if ((adjustedDistance < range) && (distance >= minDistance)) {
+                range = adjustedDistance;
                 closest = enemy;
             }
         }

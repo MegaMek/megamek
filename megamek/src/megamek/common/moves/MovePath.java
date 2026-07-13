@@ -37,7 +37,6 @@ import java.io.Serial;
 import java.io.Serializable;
 import java.util.*;
 
-import megamek.client.bot.princess.Princess;
 import megamek.common.Hex;
 import megamek.common.ManeuverType;
 import megamek.common.annotations.Nullable;
@@ -50,7 +49,6 @@ import megamek.common.equipment.Minefield;
 import megamek.common.game.Game;
 import megamek.common.options.OptionsConstants;
 import megamek.common.pathfinder.CachedEntityState;
-import megamek.common.pathfinder.DestructionAwareDestinationPathfinder;
 import megamek.common.pathfinder.ShortestPathFinder;
 import megamek.common.pathfinder.StopConditionTimeout;
 import megamek.common.pathfinder.comparators.MovePathGreedyComparator;
@@ -1381,8 +1379,6 @@ public class MovePath implements Cloneable, Serializable {
 
         pf.run(clone());
         MovePath finPath = pf.getComputedPath(dest);
-        // this can be used for debugging the "destruction aware pathfinder"
-        // MovePath finPath = calculateDestructionAwarePath(dest);
 
         if (timeoutCondition.timeoutEngaged || finPath == null) {
             /*
@@ -2017,30 +2013,6 @@ public class MovePath implements Cloneable, Serializable {
         }
 
         return stepCount;
-    }
-
-    /**
-     * Debugging method that calculates a destruction-aware move path to the destination coordinates
-     */
-    @SuppressWarnings("unused")
-    public MovePath calculateDestructionAwarePath(Coords dest) {
-        // code that's useful to test the destruction-aware pathfinder
-        DestructionAwareDestinationPathfinder dpf = new DestructionAwareDestinationPathfinder();
-        // the destruction aware pathfinder takes either a CardinalEdge or an explicit
-        // set of coordinates
-        Set<Coords> destinationSet = new HashSet<>();
-        destinationSet.add(dest);
-
-        // debugging code that can be used to find a path to a specific edge
-        Princess princess = new Princess("test", "test", 2020);
-        princess.startPrecognition();
-
-        long marker1 = java.lang.System.currentTimeMillis();
-        MovePath finPath = dpf.findPathToCoords(entity, destinationSet, false, princess.getClusterTracker());
-        long marker2 = java.lang.System.currentTimeMillis();
-        long marker3 = marker2 - marker1;
-
-        return finPath;
     }
 
     /**

@@ -1,7 +1,7 @@
 /*
  * Copyright (C) 2000-2006 Ben Mazur (bmazur@sev.org)
  * Copyright (C) 2013 Edward Cullen (eddy@obsessedcomputers.co.uk)
- * Copyright (C) 2002-2025 The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2002-2026 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -95,10 +95,11 @@ import megamek.MMConstants;
 import megamek.SuiteConstants;
 import megamek.client.AbstractClient;
 import megamek.client.Client;
+import megamek.client.bot.AIType;
 import megamek.client.bot.BotClient;
+import megamek.client.bot.BotFactory;
 import megamek.client.bot.princess.BehaviorSettings;
 import megamek.client.bot.princess.BehaviorSettingsFactory;
-import megamek.client.bot.princess.Princess;
 import megamek.client.bot.ui.swing.BotGUI;
 import megamek.client.generator.RandomCallsignGenerator;
 import megamek.client.generator.RandomNameGenerator;
@@ -2232,7 +2233,8 @@ public class ChatLounge extends AbstractPhaseDisplay
         if (bcd.getResult() == DialogResult.CANCELLED) {
             return;
         }
-        Princess botClient = Princess.createPrincess(bcd.getBotName(),
+        BotClient botClient = BotFactory.createBot(bcd.getSelectedAIType(),
+              bcd.getBotName(),
               client().getHost(),
               client().getPort(),
               bcd.getBehaviorSettings());
@@ -2325,7 +2327,8 @@ public class ChatLounge extends AbstractPhaseDisplay
     /**
      * Shows the victory conditions dialog (the former Victory Conditions tab of the game options; the tab is
      * removed and this dialog is the only place to edit those options). On OK, the changed options are sent to the
-     * server.
+     * server and the full option set is saved to the game options file so the victory conditions persist between
+     * games.
      */
     private void showVictoryConditionsDialog() {
         if (victoryConditionsDialog == null) {
@@ -2337,6 +2340,9 @@ public class ChatLounge extends AbstractPhaseDisplay
             if (!changedOptions.isEmpty()) {
                 clientgui.getClient().sendGameOptions(victoryConditionsDialog.getPassword(), changedOptions);
             }
+            // Persist to the game options file so the victory conditions survive a re-host; the sent options only
+            // update the running server, which reloads defaults from the file when a new game is hosted.
+            victoryConditionsDialog.saveVictoryOptions();
         }
     }
 
@@ -2355,7 +2361,9 @@ public class ChatLounge extends AbstractPhaseDisplay
 
     private void doBotSettings() {
         Player player = playerModel.getPlayerAt(tablePlayers.getSelectedRow());
-        Princess bot = (Princess) clientgui.getLocalBots().get(player.getName());
+        if (!(clientgui.getLocalBots().get(player.getName()) instanceof BotClient bot)) {
+            return;
+        }
         var bcd = new BotConfigDialog(clientgui.getFrame(),
               bot.getLocalPlayer().getName(),
               bot.getBehaviorSettings(),
@@ -2537,6 +2545,12 @@ public class ChatLounge extends AbstractPhaseDisplay
         }
 
         boolean done = !localPlayer().isDone();
+
+        // Ask up front (once) whether to record the combat-summary GIF, so recording never has to interrupt play
+        // mid-game. No-op unless the preference is "ask" and no choice has been made for this game yet.
+        if (done) {
+            MinimapPanel.promptForGifRecordingConsent(game, clientgui.getFrame());
+        }
 
         // Save lobby state if setting is enabled, player is marking as done, and we haven't saved yet
         if (done && GUIP.getSaveLobbyOnStart() && !lobbySavePerformed) {

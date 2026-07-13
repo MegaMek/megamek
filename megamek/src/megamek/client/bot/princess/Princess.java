@@ -189,7 +189,6 @@ public class Princess extends BotClient {
 
     private Integer spinUpThreshold = null;
 
-    private BehaviorSettings behaviorSettings;
     private double moveEvaluationTimeEstimate = 0;
     private final Precognition precognition;
     private final Thread precognitionThread;
@@ -825,6 +824,7 @@ public class Princess extends BotClient {
         return closestPosition;
     }
 
+    @Override
     public void setBehaviorSettings(final BehaviorSettings behaviorSettings) {
         LOGGER.info("New behavior settings for {}\n{}", getName(), behaviorSettings.toLog());
         try {
@@ -901,10 +901,6 @@ public class Princess extends BotClient {
             return damageMap.get(targetId);
         }
         return 0.0; // If we have no entry, return zero
-    }
-
-    public BehaviorSettings getBehaviorSettings() {
-        return behaviorSettings;
     }
 
     public Set<Coords> getStrategicBuildingTargets() {
@@ -3119,13 +3115,17 @@ public class Princess extends BotClient {
 
             final long stop_time = java.lang.System.currentTimeMillis();
 
-            // update path evaluation time estimate
-            final double updatedEstimate = ((double) (stop_time - startTime)) / ((double) paths.size());
-            if (0 == moveEvaluationTimeEstimate) {
-                moveEvaluationTimeEstimate = updatedEstimate;
-            }
+            // update path evaluation time estimate - skip empty path sets, otherwise the division by
+            // paths.size() yields +Infinity in double math and permanently poisons the running average
+            // (the reset guard below never re-fires because Infinity is never equal to 0).
+            if (!paths.isEmpty()) {
+                final double updatedEstimate = ((double) (stop_time - startTime)) / ((double) paths.size());
+                if (0 == moveEvaluationTimeEstimate) {
+                    moveEvaluationTimeEstimate = updatedEstimate;
+                }
 
-            moveEvaluationTimeEstimate = 0.5 * (updatedEstimate + moveEvaluationTimeEstimate);
+                moveEvaluationTimeEstimate = 0.5 * (updatedEstimate + moveEvaluationTimeEstimate);
+            }
 
             if (rankedPaths.isEmpty()) {
                 return performPathPostProcessing(new MovePath(game, entity), 0);
@@ -3145,9 +3145,11 @@ public class Princess extends BotClient {
         }
     }
 
-    private static String getMessage(Entity entity, double thisTimeEstimate, List<MovePath> paths) {
+    static String getMessage(Entity entity, double thisTimeEstimate, List<MovePath> paths) {
         String timeEstimate = "unknown.";
-        if (0 != thisTimeEstimate) {
+        // Guard against non-finite estimates: casting +Infinity to int saturates to Integer.MAX_VALUE
+        // (2147483647), which would otherwise surface as a nonsense "completion" time in chat.
+        if ((0 != thisTimeEstimate) && Double.isFinite(thisTimeEstimate)) {
             timeEstimate = (int) thisTimeEstimate + " seconds";
         }
         return "Moving " +
@@ -3165,8 +3167,10 @@ public class Princess extends BotClient {
 
             // ----Debugging: print out any errors made in guessing to hit
             // values-----
-            final List<Entity> entities = game.getEntitiesVector();
-            for (final Entity entity : entities) {
+            // Only runs at TRACE log level (see FireControl.checkAllGuesses). Sweep only our own
+            // units: Princess never fires with enemy units, so cross-checking their guesses costs
+            // real to-hit calculations for no diagnostic benefit.
+            for (final Entity entity : getEntitiesOwned()) {
                 final String errors = getFireControl(entity).checkAllGuesses(entity, game);
                 if (!StringUtility.isNullOrBlank(errors)) {
                     LOGGER.warn(errors);
@@ -3879,6 +3883,11 @@ public class Princess extends BotClient {
     }
 
     @Override
+    protected void sendBotSettingsToServer() {
+        sendPrincessSettings();
+    }
+
+    @Override
     protected void disconnected() {
         if (null != precognition) {
             precognition.signalDone();
@@ -3921,8 +3930,12 @@ public class Princess extends BotClient {
      */
     private MovePath performPathPostProcessing(MovePath path, double expectedDamage) {
         MovePath retVal = path;
-        evadeIfNotFiring(retVal, expectedDamage >= 0);
-        turnOnSearchLight(retVal, expectedDamage >= 0);
+        // Guard on expectedDamage > 0, not >= 0: expected damage is never negative, so >= 0 was always true. That
+        // left evadeIfNotFiring (which only evades when NOT able to inflict damage) permanently dead, and turned
+        // the searchlight on even with no firing solution, giving away position for nothing.
+        boolean canInflictDamage = expectedDamage > 0;
+        evadeIfNotFiring(retVal, canInflictDamage);
+        turnOnSearchLight(retVal, canInflictDamage);
         unloadTransportedInfantry(retVal);
         launchFighters(retVal);
         abandonShip(retVal);

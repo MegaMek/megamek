@@ -1321,6 +1321,23 @@ public class Compute {
      */
     public static ToHitData getRangeMods(Game game, Entity attackingEntity, WeaponMounted weapon, AmmoMounted ammo,
           Targetable target) {
+        return getRangeMods(game, attackingEntity, weapon, ammo, target, null);
+    }
+
+    /**
+     * Determines the to-hit modifier due to range for an attack with the specified parameters. Includes minimum range,
+     * infantry 0-range mods, and target stealth mods. Accounts for friendly C3 units.
+     *
+     * <p>For a C3-equipped attacker, the C3 spotter search needs ECM information for every game entity, which is
+     * expensive to compute. Callers that evaluate many attacks in a row (bots, to-hit previews) should compute that
+     * list once via {@link ComputeECM#computeAllEntitiesECMInfo(List)} and pass it in.</p>
+     *
+     * @param allECMInfo Precomputed ECM information for all game entities, or {@code null} to compute it on demand
+     *
+     * @return the modifiers
+     */
+    public static ToHitData getRangeMods(Game game, Entity attackingEntity, WeaponMounted weapon, AmmoMounted ammo,
+          Targetable target, @Nullable List<ECMInfo> allECMInfo) {
         WeaponType weaponType = weapon.getType();
         int[] weaponRanges = weaponType.getRanges(weapon, ammo);
         boolean isAttackerInfantry = (attackingEntity instanceof Infantry);
@@ -1565,8 +1582,13 @@ public class Compute {
         }
 
         // find any c3 spotters that could help
-        Entity c3spotter = ComputeC3Spotter.findC3Spotter(game, attackingEntity, target);
-        Entity c3spotterWithECM = ComputeC3Spotter.playtestFindC3Spotter(game, attackingEntity, target);
+        boolean isPlaytest3 = game.getOptions().booleanOption(OptionsConstants.PLAYTEST_3);
+        Entity c3spotter = ComputeC3Spotter.findC3Spotter(game, attackingEntity, target, allECMInfo);
+        // The ECM-aware playtest spotter search runs a LOS check per network member; only PLAYTEST_3 rules read
+        // its result, so skip it entirely otherwise.
+        Entity c3spotterWithECM = isPlaytest3
+              ? ComputeC3Spotter.playtestFindC3Spotter(game, attackingEntity, target, allECMInfo)
+              : c3spotter;
 
         if (isIndirect) {
             c3spotter = attackingEntity; // no c3 when using indirect fire
@@ -1599,7 +1621,7 @@ public class Compute {
         int usingRange = range;
         boolean usingC3 = false;
 
-        if (game.getOptions().booleanOption(OptionsConstants.PLAYTEST_3)) {
+        if (isPlaytest3) {
             // PLAYTEST3 check ecm vs non ecm affected C3
             if ((c3range > c3ecmRange) && (c3range > range)) {
                 usingRange = c3ecmRange;
@@ -1671,7 +1693,7 @@ public class Compute {
         } else {
             // report c3 adjustment
             // PLAYTEST3 C3 ECM halving
-            if (game.getOptions().booleanOption(OptionsConstants.PLAYTEST_3)
+            if (isPlaytest3
                   && usingRange == c3ecmRange
                   && usingRange != c3range
                   && c3spotterWithECM.getC3ecmAffected()) {
@@ -4236,54 +4258,54 @@ public class Compute {
      * @return the <code>int</code> ID of weapon mode
      */
     @Deprecated
-    public static int spinUpCannon(Game cgame, WeaponAttackAction atk) {
-        return spinUpCannon(cgame, atk, Compute.d6(2) - 1);
+    public static int spinUpCannon(Game game, WeaponAttackAction attackAction) {
+        return spinUpCannon(game, attackAction, Compute.d6(2) - 1);
     }
 
     /**
      * Determine if autocannon should fire more than one round. Includes standard ACs if the game option for
      * rapid-fire-mode is enabled.
      *
-     * @param atk             Attack action with weapon attack properties
+     * @param game            The current game
+     * @param attackAction    Attack action with weapon attack properties
      * @param spinupThreshold Maximum to-hit number to consider for rapid fire
      *
-     * @return the <code>int</code> ID of weapon mode, which is also the number of mode changes from single shot
+     * @return the {@code int} ID of weapon mode, which is also the number of mode changes from single shot
      */
-
-    public static int spinUpCannon(Game cgame, WeaponAttackAction atk, int spinupThreshold) {
-
-        int to_hit;
+    public static int spinUpCannon(Game game, WeaponAttackAction attackAction, int spinupThreshold) {
         // The number of mode changes needed to set a specific rate of fire
-        int final_spin = 0;
-        Entity shooter;
-        Mounted<?> weapon;
-        WeaponType weaponType;
-        boolean isUAC = false;
-        boolean isRAC = false;
+        int finalSpin = 0;
 
         // Basic protections against null values
-        if (null == atk || null == cgame || null == atk.toHit(cgame)) {
+        if ((null == attackAction) || (null == game)) {
             LOGGER.warn("null parameter passed to Compute.spinUpCannon");
-            return final_spin;
+            return finalSpin;
         }
 
-        // Get the to-hit number for this attack
-        to_hit = atk.toHit(cgame).getValue();
-
-        // If weapon can't hit target, exit with the default mode setting
-        if (to_hit > 12) {
-            return final_spin;
+        Entity shooter = attackAction.getEntity(game);
+        if (null == shooter) {
+            LOGGER.warn("attack action with no shooter passed to Compute.spinUpCannon");
+            return finalSpin;
         }
+        Mounted<?> weapon = shooter.getEquipment(attackAction.getWeaponId());
+        if (null == weapon) {
+            LOGGER.warn("attack action with an invalid weapon id passed to Compute.spinUpCannon");
+            return finalSpin;
+        }
+        WeaponType weaponType = (WeaponType) weapon.getType();
 
-        shooter = atk.getEntity(cgame);
-        weapon = shooter.getEquipment(atk.getWeaponId());
-        weaponType = (WeaponType) shooter.getEquipment(atk.getWeaponId()).getType();
+        // Check the weapon type BEFORE computing the to-hit number: this method is called for every weapon
+        // the bot evaluates while ranking candidate move paths, and the full to-hit calculation is by far
+        // the most expensive part. Anything other than an autocannon can exit without paying for it.
 
         // If optional rapid fire autocannons are enabled, check for conventional, LAC, and
-        // PAC types
+        // PAC types. Test the weapon class first so non-AC weapons skip the option lookup entirely.
         boolean isRapidFireAC =
-              cgame.getOptions().booleanOption(OptionsConstants.ADVANCED_COMBAT_TAC_OPS_RAPID_AC) &&
-                    weaponType instanceof ACWeapon;
+              weaponType instanceof ACWeapon &&
+                    game.getOptions().booleanOption(OptionsConstants.ADVANCED_COMBAT_TAC_OPS_RAPID_AC);
+
+        boolean isRAC = false;
+        boolean isUAC = false;
 
         // Anything other than a standard AC or equivalent, UAC, or RAC does not apply
         if (!isRapidFireAC) {
@@ -4291,16 +4313,29 @@ public class Compute {
             isUAC = !isRAC && (weaponType instanceof UACWeapon);
 
             if (!isRAC && !isUAC) {
-                return final_spin;
+                return finalSpin;
             }
+        }
+
+        // Get the to-hit number for this attack, computing it only once
+        ToHitData toHitData = attackAction.toHit(game);
+        if (null == toHitData) {
+            LOGGER.warn("no to-hit data for attack action passed to Compute.spinUpCannon");
+            return finalSpin;
+        }
+        int toHitValue = toHitData.getValue();
+
+        // If weapon can't hit target, exit with the default mode setting
+        if (toHitValue > 12) {
+            return finalSpin;
         }
 
         // Set the weapon to single shot mode
         weapon.setMode(isRapidFireAC ? "" : Weapon.MODE_AC_SINGLE);
 
         // If the to-hit number is under or at the provided threshold, set multiple shots
-        if (to_hit <= spinupThreshold) {
-            final_spin = 1;
+        if (toHitValue <= spinupThreshold) {
+            finalSpin = 1;
             if (isUAC) {
                 weapon.setMode(Weapon.MODE_UAC_ULTRA);
             } else if (isRAC) {
@@ -4310,43 +4345,43 @@ public class Compute {
                 // If the to-hit number is significantly lower than the provided threshold,
                 // set for either five or six shots
 
-                if (to_hit <= (spinupThreshold - 3)) {
-                    final_spin = 5;
+                if (toHitValue <= (spinupThreshold - 3)) {
+                    finalSpin = 5;
                     weapon.setMode(Weapon.MODE_RAC_SIX_SHOT);
-                    return final_spin;
+                    return finalSpin;
                 }
 
-                if (to_hit <= (spinupThreshold - 2)) {
-                    final_spin = 4;
+                if (toHitValue <= (spinupThreshold - 2)) {
+                    finalSpin = 4;
                     weapon.setMode(Weapon.MODE_RAC_FIVE_SHOT);
-                    return final_spin;
+                    return finalSpin;
                 }
 
                 // If the to-hit number is slightly lower than the provided threshold, set for
                 // four shots.  Reduce to three shots for high to-hit numbers to reduce ammo
                 // use and chance of jamming.
-                if (to_hit <= (spinupThreshold - 1)) {
-                    final_spin = to_hit >= 6 ? 2 : 3;
-                    weapon.setMode(to_hit >= 6 ? Weapon.MODE_RAC_THREE_SHOT : Weapon.MODE_RAC_FOUR_SHOT);
-                    return final_spin;
+                if (toHitValue <= (spinupThreshold - 1)) {
+                    finalSpin = toHitValue >= 6 ? 2 : 3;
+                    weapon.setMode(toHitValue >= 6 ? Weapon.MODE_RAC_THREE_SHOT : Weapon.MODE_RAC_FOUR_SHOT);
+                    return finalSpin;
                 }
 
             } else {
                 // Rapid firing standard autocannon is risky, so save it for better to-hit numbers,
                 // infantry field guns, or when the 'kinder' optional rule is set
-                if (to_hit <= (spinupThreshold - 2) ||
+                if (toHitValue <= (spinupThreshold - 2) ||
                       shooter.isConventionalInfantry() ||
-                      cgame.getOptions().booleanOption(OptionsConstants.ADVANCED_COMBAT_KIND_RAPID_AC)) {
+                      game.getOptions().booleanOption(OptionsConstants.ADVANCED_COMBAT_KIND_RAPID_AC)) {
                     weapon.setMode(Weapon.MODE_AC_RAPID);
                 } else {
-                    final_spin = 0;
+                    finalSpin = 0;
                     weapon.setMode("");
                 }
             }
         }
 
         // Return the number of mode changes needed to set the rate of fire
-        return final_spin;
+        return finalSpin;
     }
 
     /**

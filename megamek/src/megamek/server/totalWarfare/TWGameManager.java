@@ -649,9 +649,9 @@ public class TWGameManager extends AbstractGameManager {
     }
 
     /**
-     * @return {@code true} if the unit is currently under any iATM Improved Magnetic Pulse effect - the
-     *       to-hit / movement / ECM effect on Meks, vehicles, fighters and ProtoMeks, disabled troopers
-     *       on battle armor, or disabled energy weapons on conventional infantry.
+     * @return {@code true} if the unit is currently under any iATM Improved Magnetic Pulse effect - the to-hit /
+     *       movement / ECM effect on Meks, vehicles, fighters and ProtoMeks, disabled troopers on battle armor, or
+     *       disabled energy weapons on conventional infantry.
      */
     private static boolean isAffectedByImprovedMagneticPulse(Entity entity) {
         if (entity.getImpToHitModifier() > 0) {
@@ -7302,8 +7302,8 @@ public class TWGameManager extends AbstractGameManager {
 
     /**
      * Returns the entity's active (switched-on) minesweeper, or {@code null} if it has none, the sweeper is not ready,
-     * its armor is depleted, or the player has deactivated it in the End Phase (TO:AuE p.138, Corrected Sixth Printing).
-     * A unit may mount only one minesweeper.
+     * its armor is depleted, or the player has deactivated it in the End Phase (TO:AuE p.138, Corrected Sixth
+     * Printing). A unit may mount only one minesweeper.
      */
     private static @Nullable Mounted<?> getActiveMinesweeper(Entity entity) {
         for (Mounted<?> mounted : entity.getMisc()) {
@@ -7316,7 +7316,128 @@ public class TWGameManager extends AbstractGameManager {
         }
         return null;
     }
+    
+    /**
+     * Handles an entity stepping on a pit trap.
+     * Returns true if the entity entering the hex fell over
+     */
+    public boolean handlePitfall(Entity entity, Coords dest, Vector<Report> vMineReport) {
+    	boolean fellOver = false;
+    	
+    	Minefield triggeredPittrap = null;
+    	
+    	for (Minefield minefield : getGame().getMinefields(dest)) {
+    		if (minefield.getType() != Minefield.TYPE_PITFALL) {
+    			continue;
+    		}
+    		
+    		// meks are the only things that can be affected by pitfalls for now
+	    	if (entity instanceof Mek) {
+	    		
+	            Report stepReport = new Report(2581);
+	            stepReport.subject = entity.getId();
+	            stepReport.add(entity.getShortName(), true);
+	            stepReport.add(dest.getBoardNum(), true);
+	            vMineReport.add(stepReport);
+	            
+	            TargetRoll rollTarget = new TargetRoll(4, "pitfall");
+	            
+	            if (entity.hasAbility(OptionsConstants.MISC_EAGLE_EYES)) {
+	            	rollTarget.addModifier(+2, "eagle eyes");               
+	    		}
 
+	            int roll = Compute.d6(2);
+	            
+	            fellOver = roll >= rollTarget.getValue();
+	    		
+	            Report activationReport = new Report(2582);
+	            activationReport.subject = entity.getId();
+	            activationReport.add(rollTarget);
+	            activationReport.add(roll);
+	            activationReport.choose(fellOver);	 
+	            activationReport.indent();
+	            vMineReport.add(activationReport);	    		
+	    		if (fellOver) {
+	    			triggeredPittrap = minefield;
+	    			
+	    			PilotingRollData pilotingRollData = entity.getBasePilotingRoll();
+	    			vMineReport.addAll(doEntityFall(entity, dest, 0, pilotingRollData));
+	    			
+	    			Hex hex = getGame().getBoard(entity.getBoardId()).getHex(dest);
+	    			hex.removeAllTerrains();
+	    			hex.addTerrain(new Terrain(Terrains.RUBBLE, 1));
+	    			sendChangedHex(dest, entity.getBoardId());
+	    			
+	    			Report rubbleReport = new Report(2583);
+	    			rubbleReport.indent();
+	    			vMineReport.add(rubbleReport);
+	    		} else {
+	    			revealMinefield(minefield);
+	    		}
+	    	}
+    	}
+    	
+    	if (triggeredPittrap != null) {
+    		removeMinefield(triggeredPittrap);
+    	}
+    	
+    	return fellOver;
+    }
+
+    /**
+     * Handles an entity stepping on a tripwire.
+     * Returns true if the entity entering the hex fell over
+     * Assumes that src != dest
+     */
+    public boolean handleTripwire(Entity entity, Coords src, Coords dest, EntityMovementType movementType, Vector<Report> vMineReport) {
+    	boolean fellOver = false;
+    	
+    	Minefield triggeredTripwire = null;
+    	
+    	for (Minefield minefield : getGame().getMinefields(dest)) {
+    		if (minefield.getType() != Minefield.TYPE_TRIPWIRE) {
+    			continue;
+    		}
+    		
+    		// meks are the only things that can be affected by tripwires
+	    	// if we neither walked nor ran, we don't need to be doing this
+	    	if (entity instanceof Mek &&
+	    		(movementType == EntityMovementType.MOVE_WALK ||
+	    		movementType == EntityMovementType.MOVE_RUN)) {
+	    		
+	            Report hitReport = new Report(2580);
+	            hitReport.subject = entity.getId();
+	            hitReport.add(entity.getShortName(), true);
+	            hitReport.add(dest.getBoardNum(), true);
+	            hitReport.indent();
+	            vMineReport.add(hitReport);
+	    		
+	            PilotingRollData rollData = entity.getBasePilotingRoll(entity.moved);
+	    		
+	    		if (movementType == EntityMovementType.MOVE_WALK) {
+	    			rollData.addModifier(2, "walking");
+	    		} else if (movementType == EntityMovementType.MOVE_RUN) {
+	    			rollData.addModifier(4, "running");
+	    		}
+	    		
+	    		if (entity.hasAbility(OptionsConstants.MISC_EAGLE_EYES)) {
+	    			rollData.addModifier(-2, "eagle eyes");               
+	    		}
+	    		
+	    		// if we are here, we can assume we are on the ground level
+	    		int result = doSkillCheckWhileMoving(entity, 0, src, dest, rollData, true, vMineReport);
+	    		fellOver = result > 0;
+	    		triggeredTripwire = minefield;
+	    	}
+    	}
+    	
+    	if (triggeredTripwire != null) {
+    		removeMinefield(triggeredTripwire);
+    	}
+    	
+    	return fellOver;
+    }
+    
     /**
      * Check for any detonations when an entity enters a minefield, except a vibrabomb.
      *
@@ -7346,10 +7467,11 @@ public class TWGameManager extends AbstractGameManager {
         // loop through mines in this hex
         for (Minefield mf : game.getMinefields(c)) {
             // VibraBombs and EMP mines are handled differently (proximity-based detection)
-            if ((mf.getType() == Minefield.TYPE_VIBRABOMB) || (mf.getType() == Minefield.TYPE_EMP)) {
+            if ((mf.getType() == Minefield.TYPE_VIBRABOMB) || (mf.getType() == Minefield.TYPE_EMP) ||
+            	(mf.getType() == Minefield.TYPE_TRIPWIRE) || (mf.getType() == Minefield.TYPE_PITFALL)) {
                 continue;
             }
-
+            
             try {
                 // if we are in the water, then the sea mine will only blow up if at
                 // the right depth
@@ -7457,9 +7579,7 @@ public class TWGameManager extends AbstractGameManager {
             // set the target number
             if (target == -1) {
                 target = mf.getTrigger();
-                if (mf.getType() == Minefield.TYPE_ACTIVE) {
-                    target = 9;
-                }
+                
                 if (entity instanceof Infantry) {
                     target += 1;
                 }
@@ -7512,7 +7632,6 @@ public class TWGameManager extends AbstractGameManager {
 
             // apply damage
             trippedMine = true;
-            // explodedMines.add(mf);
             mf.setDetonated(true);
             if (mf.getType() == Minefield.TYPE_INFERNO) {
                 // report hitting an inferno mine
@@ -8225,8 +8344,8 @@ public class TWGameManager extends AbstractGameManager {
     }
 
     /**
-     * Add heat from the movement phase. Delegates to {@link HeatResolver}, which itemizes the heat
-     * sources using the common message bundle (the {@code HeatBreakdown.*} keys live there).
+     * Add heat from the movement phase. Delegates to {@link HeatResolver}, which itemizes the heat sources using the
+     * common message bundle (the {@code HeatBreakdown.*} keys live there).
      */
     public void addMovementHeat() {
         heatResolver.addMovementHeat();
@@ -15734,8 +15853,8 @@ public class TWGameManager extends AbstractGameManager {
     }
 
     /**
-     * End-phase resolution for Bridge-Building Engineers, TO:AUE p.152. Delegates to {@link BridgeBuildPhaseHandler}
-     * so the bridge rules do not add to this already very large class.
+     * End-phase resolution for Bridge-Building Engineers, TO:AUE p.152. Delegates to {@link BridgeBuildPhaseHandler} so
+     * the bridge rules do not add to this already very large class.
      */
     void checkBuildBridges() {
         new BridgeBuildPhaseHandler(this).checkBuildBridges();
@@ -17396,8 +17515,9 @@ public class TWGameManager extends AbstractGameManager {
             if ((((Mek) entity).getCockpitType() == Mek.COCKPIT_DUAL) && entity.getCrew().hasDedicatedPilot()) {
                 psrThreshold = 30;
             }
-            if ((entity.damageThisPhase >= psrThreshold) && !entity.isHullDown()) {
-                if (game.getOptions().booleanOption(OptionsConstants.ADVANCED_GROUND_MOVEMENT_TAC_OPS_TAKING_DAMAGE)) {
+            if (entity.damageThisPhase >= psrThreshold) {
+                if (game.getOptions().booleanOption(OptionsConstants.ADVANCED_GROUND_MOVEMENT_TAC_OPS_TAKING_DAMAGE)
+                      && !entity.isHullDown()) {
                     PilotingRollData damPRD = new PilotingRollData(entity.getId());
                     int damMod = entity.damageThisPhase / psrThreshold;
                     damPRD.addModifier(damMod, (damMod * psrThreshold) + "+ damage");
@@ -17899,7 +18019,7 @@ public class TWGameManager extends AbstractGameManager {
         }
 
         // non meks and prone meks can now return
-        if (!entity.canFall() || (entity.isHullDown() && entity.canGoHullDown())) {
+        if (!entity.canFall()) {
             return vPhaseReport;
         }
 
@@ -18841,11 +18961,12 @@ public class TWGameManager extends AbstractGameManager {
      * VTOL or WiGE...
      */
     void resolveShutdownCrashes() {
-        for (Entity e : game.getEntitiesVector()) {
-            if (e.isShutDown() && e.isAirborneVTOLorWIGE() && !(e.isDestroyed() || e.isDoomed())) {
-                Tank t = (Tank) e;
-                t.immobilize();
-                addReport(forceLandVTOLorWiGE(t));
+        for (Entity entity : game.getEntitiesVector()) {
+            // Not instanceof Tank: LAMs in AirMek mode and glider ProtoMeks also report
+            // airborne VTOL/WiGE movement but crash through their own handlers
+            if (entity instanceof Tank tank && tank.isShutDown() && tank.isAirborneVTOLorWIGE()
+                  && !(tank.isDestroyed() || tank.isDoomed())) {
+                addReport(forceLandVTOLorWiGE(tank));
             }
         }
     }
@@ -25309,9 +25430,9 @@ public class TWGameManager extends AbstractGameManager {
 
     /**
      * Removes the fire from a hex on a specific board, clearing any flamer-started-fire marker and notifying the
-     * clients that view that board. Fire processing runs once per board (see
-     * {@link megamek.server.FireProcessor}), so the board id must be passed through to keep the per-board
-     * {@link Board#removeFlamerStartedFire(Coords)} state and the hex update on the correct board.
+     * clients that view that board. Fire processing runs once per board (see {@link megamek.server.FireProcessor}), so
+     * the board id must be passed through to keep the per-board {@link Board#removeFlamerStartedFire(Coords)} state and
+     * the hex update on the correct board.
      *
      * @param boardId    the id of the board the burning hex is on
      * @param fireCoords {@link Coords} of the hex on fire
@@ -29792,7 +29913,7 @@ public class TWGameManager extends AbstractGameManager {
      */
     public void resolveCallSupport() {
         for (Entity e : game.getEntitiesVector()) {
-        	// some infantry can "call support", but should only be able to do so if they are on the board
+            // some infantry can "call support", but should only be able to do so if they are on the board
             if ((e instanceof Infantry) && ((Infantry) e).getIsCallingSupport() && e.getPosition() != null) {
 
                 // Now let's create a new foot platoon
@@ -31506,8 +31627,8 @@ public class TWGameManager extends AbstractGameManager {
     }
 
     /**
-     * Sends a toast when a unit gains or loses a Magnetic Pulse missile effect (IO p.182 / IMP rules),
-     * so the player sees the debuff appear and expire rather than only in the report log.
+     * Sends a toast when a unit gains or loses a Magnetic Pulse missile effect (IO p.182 / IMP rules), so the player
+     * sees the debuff appear and expire rather than only in the report log.
      *
      * @param target   the affected unit
      * @param improved true for the iATM Improved Magnetic Pulse effect, false for the standard MP effect

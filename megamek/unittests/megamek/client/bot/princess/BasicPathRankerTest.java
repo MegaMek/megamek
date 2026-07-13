@@ -1242,6 +1242,68 @@ class BasicPathRankerTest {
     }
 
     @Test
+    void testFindClosestEnemyUsesAdjustedDistanceConsistently() {
+        // A moved enemy at raw distance 20 (it cannot move again, so adjusted distance 20) versus an unmoved fast
+        // enemy at raw distance 16 that can still travel 6 hexes (adjusted distance 22). By adjusted distance the
+        // moved enemy is the nearer threat and must be chosen regardless of enemy iteration order. The old code
+        // compared the adjusted distance but stored the raw one, so the unmoved enemy could win when enumerated
+        // first (issue #8437). Positions share a column, where hex distance equals the row difference.
+        final Coords position = new Coords(0, 0);
+
+        final Entity movedEnemy = mock(BipedMek.class);
+        when(movedEnemy.getPosition()).thenReturn(new Coords(0, 20));
+        when(movedEnemy.isSelectableThisTurn()).thenReturn(false);
+        when(movedEnemy.isImmobile()).thenReturn(false);
+
+        final Entity unmovedFastEnemy = mock(BipedMek.class);
+        when(unmovedFastEnemy.getPosition()).thenReturn(new Coords(0, 16));
+        when(unmovedFastEnemy.isSelectableThisTurn()).thenReturn(true);
+        when(unmovedFastEnemy.isImmobile()).thenReturn(false);
+        when(unmovedFastEnemy.getWalkMP()).thenReturn(6);
+
+        final Entity me = mock(BipedMek.class);
+        final Game mockGame = mock(Game.class);
+        when(mockGame.onTheSameBoard(any(Targetable.class), any(Targetable.class))).thenCallRealMethod();
+        final BasicPathRanker testRanker = spy(new BasicPathRanker(mockPrincess));
+
+        doReturn(List.of(movedEnemy, unmovedFastEnemy)).when(mockPrincess).getEnemyEntities();
+        assertEquals(movedEnemy, testRanker.findClosestEnemy(me, position, mockGame, false),
+              "The nearer enemy by adjusted distance must be chosen");
+
+        doReturn(List.of(unmovedFastEnemy, movedEnemy)).when(mockPrincess).getEnemyEntities();
+        assertEquals(movedEnemy, testRanker.findClosestEnemy(me, position, mockGame, false),
+              "The result must not depend on enemy iteration order");
+    }
+
+    @Test
+    void testFindClosestEnemyMinDistanceIgnoresMovementAllowance() {
+        // A same-hex enemy that can still move (raw distance 0, adjusted distance 5) must be excluded by a
+        // minDistance of 1, because minDistance is a not-within-N-raw-hexes gate. The old code tested the adjusted
+        // distance, letting the same-hex enemy satisfy the gate through its movement allowance (issue #8437).
+        final Coords position = new Coords(0, 0);
+
+        final Entity sameHexEnemy = mock(BipedMek.class);
+        when(sameHexEnemy.getPosition()).thenReturn(position);
+        when(sameHexEnemy.isSelectableThisTurn()).thenReturn(true);
+        when(sameHexEnemy.isImmobile()).thenReturn(false);
+        when(sameHexEnemy.getWalkMP()).thenReturn(5);
+
+        final Entity nearbyEnemy = mock(BipedMek.class);
+        when(nearbyEnemy.getPosition()).thenReturn(new Coords(0, 4));
+        when(nearbyEnemy.isSelectableThisTurn()).thenReturn(false);
+        when(nearbyEnemy.isImmobile()).thenReturn(false);
+
+        final Entity me = mock(BipedMek.class);
+        final Game mockGame = mock(Game.class);
+        when(mockGame.onTheSameBoard(any(Targetable.class), any(Targetable.class))).thenCallRealMethod();
+        final BasicPathRanker testRanker = spy(new BasicPathRanker(mockPrincess));
+        doReturn(List.of(sameHexEnemy, nearbyEnemy)).when(mockPrincess).getEnemyEntities();
+
+        assertEquals(nearbyEnemy, testRanker.findClosestEnemy(me, position, mockGame, false, 1),
+              "A minDistance of 1 must exclude the same-hex enemy by its raw distance");
+    }
+
+    @Test
     void testCalcAllyCenter() {
         final int myId = 1;
 

@@ -49,6 +49,7 @@ import java.util.stream.Collectors;
 import megamek.common.annotations.Nullable;
 import megamek.common.board.Coords;
 import megamek.common.enums.BasementType;
+import megamek.common.equipment.Minefield;
 import megamek.common.rolls.PilotingRollData;
 import megamek.common.rolls.TargetRoll;
 import megamek.common.units.Entity;
@@ -787,6 +788,20 @@ public class Hex implements Serializable {
             }
         }
         return true;
+    }
+    
+    /** Determine whether a minefield of the given type can be placed here.
+     * @param minefieldType one of the constants from the Minefield class
+     */
+    public boolean canPlaceMinefield(int minefieldType) {
+    	switch (minefieldType) {
+    	case Minefield.TYPE_TRIPWIRE:
+    		return containsAnyTerrainOf(Terrains.INVALID_TRIPWIRE_TERRAIN);
+    	case Minefield.TYPE_PITFALL:
+    		return containsAnyTerrainOf(Terrains.INVALID_PITFALL_TERRAIN);
+    	}
+    	
+    	return true;
     }
 
     /**

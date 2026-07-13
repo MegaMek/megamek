@@ -759,7 +759,8 @@ public class ComputeToHit {
               inSameBuilding,
               isIndirect,
               isPointblankShot,
-              underWater);
+              underWater,
+              allECMInfo);
 
         // If this is a swarm LRM secondary attack, remove old target movement and
         // terrain mods, then

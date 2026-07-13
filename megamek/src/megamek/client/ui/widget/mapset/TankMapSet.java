@@ -346,10 +346,19 @@ public class TankMapSet implements DisplayMapSet {
                 area.setCriticalHatch(false);
             }
         }
+        for (PMValueLabel label : vLabels) {
+            if (label != null) {
+                label.setOutlined(false);
+            }
+        }
         for (int location : criticalLocations) {
             int area = location;
             if ((area >= 0) && (area < areas.length) && (areas[area] != null)) {
                 areas[area].setCriticalHatch(true);
+            }
+            // the value sits on top of the stripes, so it is outlined to stay readable
+            if ((area >= 0) && (area < vLabels.length) && (vLabels[area] != null)) {
+                vLabels[area].setOutlined(true);
             }
         }
     }

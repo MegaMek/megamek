@@ -59,6 +59,10 @@ public class PMSimpleLabel implements PMLabel {
 
     boolean visible = true;
 
+    /** The ring drawn around an outlined label, and whether this label has one. */
+    private static final Color OUTLINE_COLOR = Color.white;
+    protected boolean outlined = false;
+
     /*
      * Create the label with the specified string, font and color
      */
@@ -118,11 +122,34 @@ public class PMSimpleLabel implements PMLabel {
         }
         Font font = g.getFont();
         Color temp = g.getColor();
-        g.setColor(color);
         g.setFont(fm.getFont());
-        g.drawString(string, x, y);
+        drawOutlinedString(g, string, x, y);
         g.setColor(temp);
         g.setFont(font);
+    }
+
+    /**
+     * Draws the label, ringed with a contrasting outline when it is outlined. A label over a location striped for a
+     * critical hit would otherwise have to compete with the stripes drawn underneath it.
+     */
+    protected void drawOutlinedString(Graphics g, String text, int atX, int atY) {
+        if (outlined) {
+            g.setColor(OUTLINE_COLOR);
+            for (int dx = -1; dx <= 1; dx++) {
+                for (int dy = -1; dy <= 1; dy++) {
+                    if ((dx != 0) || (dy != 0)) {
+                        g.drawString(text, atX + dx, atY + dy);
+                    }
+                }
+            }
+        }
+        g.setColor(color);
+        g.drawString(text, atX, atY);
+    }
+
+    /** Rings the label with a contrasting outline, for when what is drawn under it would drown it out. */
+    public void setOutlined(boolean outlined) {
+        this.outlined = outlined;
     }
 
     @Override

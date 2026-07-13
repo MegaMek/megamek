@@ -36,11 +36,15 @@
 package megamek.client.ui.widget.picmap;
 
 import java.awt.AWTEventMulticaster;
+import java.awt.AlphaComposite;
+import java.awt.BasicStroke;
 import java.awt.Color;
 import java.awt.Cursor;
 import java.awt.Graphics;
+import java.awt.Graphics2D;
 import java.awt.Polygon;
 import java.awt.Rectangle;
+import java.awt.RenderingHints;
 import java.awt.Shape;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseEvent;
@@ -65,9 +69,11 @@ public class PMSimplePolygonArea implements PMHotArea {
 
     private ActionListener actionListener = null;
 
-    /** The stripes drawn over a location that has taken a critical hit, and the gap between them. */
+    /** The stripes drawn over a location that has taken a critical hit: color, gap, width and how solid they are. */
     private static final Color HATCH_COLOR = Color.black;
-    private static final int HATCH_SPACING = 6;
+    private static final int HATCH_SPACING = 8;
+    private static final float HATCH_WIDTH = 2.0f;
+    private static final float HATCH_OPACITY = 0.45f;
 
     public Color backColor = Color.lightGray;
     public Color normalBorderColor = Color.black;
@@ -146,17 +152,28 @@ public class PMSimplePolygonArea implements PMHotArea {
      * Draws diagonal stripes across the area, over its fill. The fill already carries the location's damage as its
      * color, so a critical hit is shown by striping the location rather than recoloring it, and both can be read at
      * once.
+     * <p>
+     * The stripes are translucent, and the location's name and value are drawn over them afterwards. Solid stripes
+     * would win against that text, which is the thing a player actually reads.
+     * </p>
      */
     private void drawCriticalHatch(Graphics g) {
-        Shape oldClip = g.getClip();
-        g.setClip(areaShape);
-        g.setColor(HATCH_COLOR);
+        if (!(g instanceof Graphics2D)) {
+            return;
+        }
+        Graphics2D hatchGraphics = (Graphics2D) g.create();
+        hatchGraphics.clip(areaShape);
+        hatchGraphics.setColor(HATCH_COLOR);
+        hatchGraphics.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, HATCH_OPACITY));
+        hatchGraphics.setStroke(new BasicStroke(HATCH_WIDTH));
+        hatchGraphics.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+
         Rectangle bounds = areaShape.getBounds();
         int end = bounds.x + bounds.width + bounds.height;
         for (int x = bounds.x - bounds.height; x < end; x += HATCH_SPACING) {
-            g.drawLine(x, bounds.y, x + bounds.height, bounds.y + bounds.height);
+            hatchGraphics.drawLine(x, bounds.y, x + bounds.height, bounds.y + bounds.height);
         }
-        g.setClip(oldClip);
+        hatchGraphics.dispose();
     }
 
     /** Marks the area as having taken a critical hit, drawn as stripes over its fill. */

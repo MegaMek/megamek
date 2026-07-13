@@ -265,13 +265,15 @@ public class LobbyActions {
      */
     static boolean canEditDamage(Client client, Entity entity) {
         Player localPlayer = client.getLocalPlayer();
+        boolean ownUnit = (entity.getOwnerId() == localPlayer.getId())
+              || client.getBots().containsKey(entity.getOwner().getName());
         for (Player player : client.getGame().getPlayersList()) {
             if (player.isGameMaster()) {
-                return localPlayer.isGameMaster();
+                // a gamemaster edits any unit; everyone else is still left with their own
+                return localPlayer.isGameMaster() || ownUnit;
             }
         }
-        return (entity.getOwnerId() == localPlayer.getId())
-              || client.getBots().containsKey(entity.getOwner().getName());
+        return ownUnit;
     }
 
     /**

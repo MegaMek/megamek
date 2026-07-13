@@ -202,14 +202,6 @@ public enum EntityMovementMode {
     public boolean isInfantryVehicle() {
         return isTrackedOrWheeled() || isMotorizedInfantry();
     }
-    
-    /**
-     * This returns true for units that can go into terrain that meks can go into
-     */
-    public boolean isMekLike() {
-    	return isBiped() || isTripod() || isQuad() || isLegInfantry() ||
-    			isMotorizedInfantry() || isJumpInfantry();
-    }
 
     public boolean isHoverOrWiGE() {
         return isHover() || isWiGE();

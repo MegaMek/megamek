@@ -52,6 +52,7 @@ import megamek.common.equipment.MiscType;
 import megamek.common.game.Game;
 import megamek.common.game.IGame;
 import megamek.common.game.InGameObject;
+import megamek.common.game.InitiativeRoll;
 import megamek.common.hexArea.BorderHexArea;
 import megamek.common.hexArea.HexArea;
 import megamek.common.icons.Camouflage;
@@ -1105,7 +1106,7 @@ public final class Player extends TurnOrdered {
 
         copy.admitsDefeat = admitsDefeat;
 
-        copy.setInitiative(getInitiative());
+        copy.setInitiative(new InitiativeRoll(getInitiative()));
 
         return copy;
     }

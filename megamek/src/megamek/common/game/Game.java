@@ -546,7 +546,7 @@ public final class Game extends AbstractGame implements Serializable, PlanetaryC
             for (Team newTeam : initTeams) {
                 for (Team oldTeam : teams) {
                     if (newTeam.equals(oldTeam)) {
-                        newTeam.setInitiative(oldTeam.getInitiative());
+                        newTeam.setInitiative(new InitiativeRoll(oldTeam.getInitiative()));
                     }
                 }
             }

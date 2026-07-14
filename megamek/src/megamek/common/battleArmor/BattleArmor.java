@@ -304,10 +304,10 @@ public class BattleArmor extends Infantry {
     private boolean exoskeleton = false;
 
     /**
-     * Clan industrial exoskeletons can opt to not use Harjel, to allow them to use IS chassis weight; this flag
+     * Clan industrial exoskeletons can opt to not use HarJel, to allow them to use IS chassis weight; this flag
      * indicates whether this is the case.
      */
-    private boolean clanExoWithoutHarjel = false;
+    private boolean clanExoWithoutHarJel = false;
 
     @Override
     public String[] getLocationAbbreviations() {
@@ -1839,12 +1839,12 @@ public class BattleArmor extends Infantry {
         return getManipulator(MOUNT_LOC_RIGHT_ARM);
     }
 
-    public boolean isClanExoWithoutHarjel() {
-        return clanExoWithoutHarjel;
+    public boolean isClanExoWithoutHarJel() {
+        return clanExoWithoutHarJel;
     }
 
-    public void setClanExoWithoutHarjel(boolean clanExoWithoutHarjel) {
-        this.clanExoWithoutHarjel = clanExoWithoutHarjel;
+    public void setClanExoWithoutHarJel(boolean clanExoWithoutHarJel) {
+        this.clanExoWithoutHarJel = clanExoWithoutHarJel;
     }
 
     @Override

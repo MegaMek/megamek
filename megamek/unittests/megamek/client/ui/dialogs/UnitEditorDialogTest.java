@@ -296,6 +296,47 @@ class UnitEditorDialogTest {
         dialog.dispose();
     }
 
+    /**
+     * The unit's conditions moved here from Configure, which is a lobby dialog about how a unit is built and
+     * deployed. In play a gamemaster wants the unit's condition, so shutting a unit down is done here.
+     */
+    @Test
+    void theUnitsConditionsAreAppliedToTheUnit() {
+        Entity entity = MMTestUtilities.getEntityForUnitTesting("Atlas AS7-D", false);
+        assertNotNull(entity);
+        new Game().addEntity(entity);
+        assertFalse(entity.isShutDown(), "the test needs a running unit to shut down");
+        assertFalse(entity.isProne(), "the test needs a standing unit to knock down");
+
+        UnitEditorDialog dialog = new UnitEditorDialog(new JFrame(), entity, true);
+        dialog.controlsForTesting().chkShutdown.setSelected(true);
+        dialog.controlsForTesting().chkProne.setSelected(true);
+        clickOkay(dialog);
+
+        assertTrue(entity.isShutDown(), "the unit was not shut down");
+        assertTrue(entity.isProne(), "the unit was not knocked prone");
+        dialog.dispose();
+    }
+
+    /** A unit that was shut down can be started again, which is the reason a gamemaster reaches for this. */
+    @Test
+    void aShutDownUnitCanBeStartedAgain() {
+        Entity entity = MMTestUtilities.getEntityForUnitTesting("Atlas AS7-D", false);
+        assertNotNull(entity);
+        new Game().addEntity(entity);
+        entity.performManualShutdown();
+        assertTrue(entity.isShutDown(), "the test needs a shut down unit to start");
+
+        UnitEditorDialog dialog = new UnitEditorDialog(new JFrame(), entity, true);
+        assertTrue(dialog.controlsForTesting().chkShutdown.isSelected(),
+              "the unit's shut down state was not read from the unit");
+        dialog.controlsForTesting().chkShutdown.setSelected(false);
+        clickOkay(dialog);
+
+        assertFalse(entity.isShutDown(), "the unit was not started again");
+        dialog.dispose();
+    }
+
     /** Heat is set through the diagram's own heat scale, so the editor must apply it to the unit. */
     @Test
     void heatIsAppliedToTheUnit() {

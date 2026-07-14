@@ -41,6 +41,7 @@ import java.util.Map;
 import java.util.TreeMap;
 import java.util.Vector;
 import javax.swing.BorderFactory;
+import javax.swing.JCheckBox;
 import javax.swing.JComponent;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
@@ -51,6 +52,8 @@ import megamek.client.ui.Messages;
 import megamek.common.CriticalSlot;
 import megamek.common.bays.Bay;
 import megamek.common.equipment.AmmoMounted;
+import megamek.common.equipment.EquipmentMode;
+import megamek.common.equipment.MiscMounted;
 import megamek.common.equipment.DockingCollar;
 import megamek.common.equipment.MiscType;
 import megamek.common.equipment.Mounted;
@@ -163,6 +166,65 @@ public class UnitDamagePanelBuilder {
 
         initCrewHits();
         initHeat();
+        initStatus();
+    }
+
+    /**
+     * Adds the unit's conditions to the general panel: whether it is shut down, prone, hidden and so on, and how
+     * much fuel it has left. These say what state the unit is in, which is what this dialog is for, rather than how
+     * it was built or where it deploys, which is what Configure is for.
+     */
+    private void initStatus() {
+        controls.chkShutdown = addStatusRow("UnitEditorDialog.status.shutdown", entity.isShutDown());
+
+        // a LAM in fighter mode, or an airborne unit, is neither prone nor hull down
+        boolean canLieDown = !entity.isAero() && !entity.isAirborne() && !entity.isAirborneVTOLorWIGE();
+        if (canLieDown && entity.isMek()) {
+            controls.chkProne = addStatusRow("UnitEditorDialog.status.prone", entity.isProne());
+        }
+        if (canLieDown && (entity.isMek() || entity.isVehicle())) {
+            controls.chkHullDown = addStatusRow("UnitEditorDialog.status.hullDown", entity.isHullDown());
+        }
+
+        boolean canHide = !(entity instanceof Dropship) && !entity.isAirborne() && !entity.isAirborneVTOLorWIGE();
+        if (canHide) {
+            controls.chkHidden = addStatusRow("UnitEditorDialog.status.hidden", entity.isHidden());
+        }
+
+        if (entity.hasStealth()) {
+            controls.chkStealth = addStatusRow("UnitEditorDialog.status.stealth", isStealthOn());
+        }
+
+        // mechanized infantry cannot dig in (TO:AR p.106)
+        if ((entity instanceof Infantry infantry) && !infantry.isMechanized()) {
+            controls.chkDugIn = addStatusRow("UnitEditorDialog.status.dugIn",
+                  infantry.getDugIn() != Infantry.DUG_IN_NONE);
+        }
+
+        if (entity instanceof Aero aero) {
+            controls.spnFuel = new JSpinner(new SpinnerNumberModel(Math.max(aero.getCurrentFuel(), 0),
+                  0,
+                  Math.max(aero.getFuel(), aero.getCurrentFuel()),
+                  1));
+            addLabeledRow(generalPanel(), Messages.getString("UnitEditorDialog.status.fuel"), controls.spnFuel);
+        }
+    }
+
+    private JCheckBox addStatusRow(String labelKey, boolean selected) {
+        JCheckBox checkBox = new JCheckBox();
+        checkBox.setSelected(selected);
+        addLabeledRow(generalPanel(), Messages.getString(labelKey), checkBox);
+        return checkBox;
+    }
+
+    /** Whether the unit's stealth armor is switched on, which it is when any of its stealth equipment is. */
+    private boolean isStealthOn() {
+        for (MiscMounted stealth : entity.getMiscEquipment(MiscType.F_STEALTH)) {
+            if (EquipmentMode.getMode("On").equals(stealth.curMode())) {
+                return true;
+            }
+        }
+        return false;
     }
 
     /**

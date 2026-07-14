@@ -40,6 +40,9 @@ import megamek.common.bays.ASFBay;
 import megamek.common.bays.Bay;
 import megamek.common.bays.SmallCraftBay;
 import megamek.common.equipment.DockingCollar;
+import megamek.common.equipment.EquipmentMode;
+import megamek.common.equipment.MiscMounted;
+import megamek.common.equipment.MiscType;
 import megamek.common.equipment.EquipmentTypeLookup;
 import megamek.common.equipment.IArmorState;
 import megamek.common.equipment.Mounted;
@@ -416,6 +419,7 @@ public class UnitDamageApplier {
         applyCrewHits();
         applyHeat();
         applyAmmoShots();
+        applyStatus();
         logAppliedEdits();
     }
 
@@ -468,6 +472,49 @@ public class UnitDamageApplier {
             crew.setUnconscious(false, slot);
             crew.setKoThisRound(false, slot);
             crew.setHits((Integer) controls.spnCrewHits[slot].getValue(), slot);
+        }
+    }
+
+    /**
+     * Writes the unit's conditions back: shut down, prone, hidden and so on. These use the same calls the Configure
+     * dialog uses, so that a unit shut down here is shut down the same way as one shut down there.
+     */
+    private void applyStatus() {
+        if (null != controls.chkShutdown) {
+            if (controls.chkShutdown.isSelected()) {
+                entity.performManualShutdown();
+            } else {
+                entity.performManualStartup();
+            }
+        }
+        if (null != controls.chkProne) {
+            entity.setProne(controls.chkProne.isSelected());
+        }
+        if (null != controls.chkHullDown) {
+            entity.setHullDown(controls.chkHullDown.isSelected());
+        }
+        if (null != controls.chkHidden) {
+            entity.setHidden(controls.chkHidden.isSelected());
+        }
+        if (null != controls.chkStealth) {
+            setStealth(controls.chkStealth.isSelected());
+        }
+        if ((null != controls.chkDugIn) && (entity instanceof Infantry infantry)) {
+            infantry.setDugIn(controls.chkDugIn.isSelected() ? Infantry.DUG_IN_COMPLETE : Infantry.DUG_IN_NONE);
+        }
+        if ((null != controls.spnFuel) && (entity instanceof Aero aero)) {
+            aero.setCurrentFuel((Integer) controls.spnFuel.getValue());
+        }
+    }
+
+    /** Switches the unit's stealth armor on or off, which means every piece of stealth equipment it carries. */
+    private void setStealth(boolean stealthOn) {
+        int stealthMode = stealthOn ? 1 : 0;
+        EquipmentMode newMode = EquipmentMode.getMode(stealthOn ? "On" : "Off");
+        for (MiscMounted stealth : entity.getMiscEquipment(MiscType.F_STEALTH)) {
+            if (!newMode.equals(stealth.curMode())) {
+                stealth.setMode(stealthMode);
+            }
         }
     }
 

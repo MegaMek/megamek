@@ -38,6 +38,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
+import javax.swing.JCheckBox;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JSpinner;
@@ -66,6 +67,16 @@ public class UnitDamageControls {
     public JSpinner[] spnCrewHits;
     /** The unit's current heat, for the unit types that track it. */
     public JSpinner spnHeat;
+
+    /* the unit's conditions: what state it is in, rather than how it was built */
+    public JCheckBox chkShutdown;
+    public JCheckBox chkProne;
+    public JCheckBox chkHullDown;
+    public JCheckBox chkHidden;
+    public JCheckBox chkStealth;
+    public JCheckBox chkDugIn;
+    /** The fuel left in an aero. */
+    public JSpinner spnFuel;
 
     /** The shots left in each ammo bin, by its equipment number. Only a gamemaster edits these. */
     public final Map<Integer, JSpinner> ammoShots = new HashMap<>();

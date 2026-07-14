@@ -727,8 +727,9 @@ public class MapMenu extends JPopupMenu {
     private JMenu createGameMasterMenu() {
         JMenu menu = new JMenu(Messages.getString("Gamemaster.Gamemaster"));
         if (isGameMasterEnabled()) {
+            // Configure is not offered here any more: it is a lobby dialog, about how a unit is built, crewed and
+            // deployed, and in play a gamemaster wants the unit's condition, which Edit Damage now covers.
             JMenu dmgMenu = new JMenu(Messages.getString("Gamemaster.EditDamage"));
-            JMenu cfgMenu = new JMenu(Messages.getString("Gamemaster.Configure"));
             JMenu traitorMenu = new JMenu(Messages.getString("Gamemaster.Traitor"));
             JMenu rescueMenu = new JMenu(Messages.getString("Gamemaster.Rescue"));
             JMenu killMenu = new JMenu(Messages.getString("Gamemaster.KillUnit"));
@@ -738,16 +739,12 @@ public class MapMenu extends JPopupMenu {
 
             for (Entity entity : entities) {
                 dmgMenu.add(createUnitEditorMenuItem(entity));
-                cfgMenu.add(createCustomMekMenuItem(entity));
                 traitorMenu.add(createTraitorMenuItem(entity));
                 rescueMenu.add(createRescueMenuItem(entity));
                 killMenu.add(createKillMenuItem(entity));
             }
             if (dmgMenu.getItemCount() != 0) {
                 menu.add(dmgMenu);
-            }
-            if (cfgMenu.getItemCount() != 0) {
-                menu.add(cfgMenu);
                 menu.addSeparator();
             }
             if (traitorMenu.getItemCount() != 0) {
@@ -791,19 +788,6 @@ public class MapMenu extends JPopupMenu {
         return menu;
     }
 
-    JMenuItem createCustomMekMenuItem(Entity entity) {
-        JMenuItem item = new JMenuItem(entity.getDisplayName());
-        item.addActionListener(evt -> {
-            CustomMekDialog med = new CustomMekDialog(gui, client, Collections.singletonList(entity), true, false);
-            med.refreshOptions();
-            gui.getBoardView().setShouldIgnoreKeys(true);
-            med.setVisible(true);
-            med.dispose();
-            client.sendUpdateEntity(entity);
-            gui.getBoardView().setShouldIgnoreKeys(false);
-        });
-        return item;
-    }
 
     JMenuItem createUnitEditorMenuItem(Entity entity) {
         JMenuItem item = new JMenuItem(entity.getDisplayName());

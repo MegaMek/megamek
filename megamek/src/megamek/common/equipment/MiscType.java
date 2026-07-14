@@ -277,6 +277,7 @@ public class MiscType extends EquipmentType {
 
     // Flag for Infantry Equipment
     public static final MiscTypeFlag F_INF_EQUIPMENT = MiscTypeFlag.F_INF_EQUIPMENT;
+    public static final MiscTypeFlag F_ANTI_MEK_GEAR = MiscTypeFlag.F_ANTI_MEK_GEAR;
     public static final MiscTypeFlag F_SCM = MiscTypeFlag.F_SCM;
     public static final MiscTypeFlag F_VIRAL_JAMMER_HOMING = MiscTypeFlag.F_VIRAL_JAMMER_HOMING;
     public static final MiscTypeFlag F_VIRAL_JAMMER_DECOY = MiscTypeFlag.F_VIRAL_JAMMER_DECOY;

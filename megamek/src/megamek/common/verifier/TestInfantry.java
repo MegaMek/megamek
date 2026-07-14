@@ -231,7 +231,7 @@ public class TestInfantry extends TestEntity {
             correct = false;
         }
 
-        if (inf.isMechanized() && inf.countEquipment(EquipmentTypeLookup.ANTI_MEK_GEAR) > 0) {
+        if (inf.isMechanized() && inf.hasMisc(MiscType.F_ANTI_MEK_GEAR)) {
             buff.append("Mechanized infantry may not have anti-mek gear!\n");
             correct = false;
         }

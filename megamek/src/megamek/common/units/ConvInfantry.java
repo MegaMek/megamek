@@ -266,7 +266,7 @@ public class ConvInfantry extends Infantry {
      * @return True when this infantry carries anti-mek gear
      */
     public boolean hasAntiMekGear() {
-        return hasWorkingMisc(EquipmentTypeLookup.ANTI_MEK_GEAR);
+        return hasWorkingMisc(MiscType.F_ANTI_MEK_GEAR);
     }
 
     @Override

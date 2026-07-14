@@ -1051,6 +1051,18 @@ public abstract class Entity extends TurnOrdered
     private UnitRole role = UnitRole.UNDETERMINED;
 
     /**
+     * Force Generator availability declared in this unit's file, used to let custom units appear in generated forces.
+     * This is NOT the tech availability rating from {@link megamek.common.interfaces.ITechnology}.
+     */
+    private List<ForceGeneratorAvailability> forceGeneratorAvailability = new ArrayList<>();
+
+    /**
+     * Comma-separated Force Generator mission roles declared in this unit's file, e.g. "fire_support,urban". Left as
+     * raw text here because the MissionRole enum lives in the client package; the Force Generator parses it.
+     */
+    private String missionRoles = "";
+
+    /**
      * Vector storing references to friendly weapon attack actions this entity may need to support; Primarily used by
      * Princess to speed up TAG utility calculations.
      */
@@ -17897,6 +17909,37 @@ public abstract class Entity extends TurnOrdered
     @Override
     public UnitRole getRole() {
         return (role == null) ? UnitRole.UNDETERMINED : role;
+    }
+
+    /**
+     * Returns the Force Generator availability entries declared in this unit's file. Empty for units that do not
+     * declare any, which is every canon unit; those get their availability from data/forcegenerator instead.
+     *
+     * @return the availability entries, never {@code null}
+     */
+    public List<ForceGeneratorAvailability> getForceGeneratorAvailability() {
+        return (forceGeneratorAvailability == null) ? new ArrayList<>() : forceGeneratorAvailability;
+    }
+
+    public void setForceGeneratorAvailability(List<ForceGeneratorAvailability> forceGeneratorAvailability) {
+        this.forceGeneratorAvailability = (forceGeneratorAvailability == null)
+              ? new ArrayList<>()
+              : new ArrayList<>(forceGeneratorAvailability);
+    }
+
+    /**
+     * Returns the Force Generator mission roles declared in this unit's file as raw comma-separated text, e.g.
+     * "fire_support,urban". Blank when the file declares none, in which case the Force Generator derives roles from
+     * the unit itself.
+     *
+     * @return the mission role text, never {@code null}
+     */
+    public String getMissionRoles() {
+        return (missionRoles == null) ? "" : missionRoles;
+    }
+
+    public void setMissionRoles(String missionRoles) {
+        this.missionRoles = (missionRoles == null) ? "" : missionRoles.trim();
     }
 
     /**

@@ -111,6 +111,8 @@ public class FactionRecord {
     public static final String IS_GENERAL_KEY = "IS";
     public static final String CL_GENERAL_KEY = "CLAN";
     public static final String PER_GENERAL_KEY = "PERIPHERY";
+    /** The catch-all availability key, used when a unit is equally available to everyone. */
+    public static final String GENERAL_KEY = "General";
 
     public FactionRecord() {
         this("Periphery", "Periphery");

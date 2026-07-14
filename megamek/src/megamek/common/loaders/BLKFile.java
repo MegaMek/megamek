@@ -91,6 +91,12 @@ public class BLKFile {
     public static final int EXTERNAL = 13;
 
     private static final String COMSTAR_BAY = "c*";
+
+    /** Force Generator availability block, e.g. a line of "FS:5,LA:3". One entry per line. */
+    private static final String BLOCK_AVAILABILITY = "availability";
+    /** Force Generator mission roles block, e.g. "fire_support,urban". */
+    private static final String BLOCK_MISSION_ROLES = "missionroles";
+
     private static final int TRANSPORTER_FIELDS = 6;
 
     /**
@@ -147,6 +153,15 @@ public class BLKFile {
 
         if (dataFile.exists("role")) {
             entity.setUnitRole(UnitRole.parseRole(dataFile.getDataAsString("role")[0]));
+        }
+
+        if (dataFile.exists(BLOCK_AVAILABILITY)) {
+            entity.setForceGeneratorAvailability(ForceGeneratorAvailability.parseAll(
+                  List.of(dataFile.getDataAsString(BLOCK_AVAILABILITY)), entity.getShortNameRaw()));
+        }
+
+        if (dataFile.exists(BLOCK_MISSION_ROLES)) {
+            entity.setMissionRoles(dataFile.getDataAsString(BLOCK_MISSION_ROLES)[0]);
         }
 
         if (dataFile.exists("source")) {
@@ -779,6 +794,19 @@ public class BLKFile {
 
         if (t.hasRole()) {
             blk.writeBlockData("role", t.getRole().toString());
+        }
+
+        List<ForceGeneratorAvailability> availabilityList = t.getForceGeneratorAvailability();
+        if (!availabilityList.isEmpty()) {
+            List<String> availabilityLines = new ArrayList<>();
+            for (ForceGeneratorAvailability availability : availabilityList) {
+                availabilityLines.add(availability.toFileFormat());
+            }
+            blk.writeBlockData(BLOCK_AVAILABILITY, availabilityLines);
+        }
+
+        if (!t.getMissionRoles().isBlank()) {
+            blk.writeBlockData(BLOCK_MISSION_ROLES, t.getMissionRoles());
         }
 
         List<String> quirkList = t.getQuirks()

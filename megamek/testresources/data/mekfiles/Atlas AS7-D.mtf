@@ -25,6 +25,8 @@ era:2755
 source:TRO: 3039
 rules level:1
 role:Juggernaut
+# Deliberate: this canon unit must be IGNORED by the Force Generator (RATGeneratorUnitFileAvailabilityTest)
+availability:LA:10
 
 quirk:battle_fists_la
 quirk:battle_fists_ra

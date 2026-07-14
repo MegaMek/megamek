@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2018-2025 The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2018-2026 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -43,6 +43,7 @@ import static org.junit.jupiter.api.Assertions.fail;
 
 import java.io.File;
 import java.util.HashSet;
+import java.util.List;
 
 import megamek.common.TechConstants;
 import megamek.common.battleArmor.BattleArmor;
@@ -59,6 +60,7 @@ import megamek.common.loaders.BLKFile.ParsedBayInfo;
 import megamek.common.units.DropShuttleBay;
 import megamek.common.units.Entity;
 import megamek.common.units.EntityMovementMode;
+import megamek.common.units.ForceGeneratorAvailability;
 import megamek.common.units.Jumpship;
 import megamek.common.units.NavalRepairFacility;
 import megamek.common.units.PlatoonType;
@@ -446,6 +448,39 @@ class BLKFileTest {
 
         assertEquals(Faction.DC, loaded.getTechFaction(),
               "Tech faction should survive BLK roundtrip");
+    }
+
+    @Test
+    void forceGeneratorAvailabilityRoundtripsThroughBLK() throws Exception {
+        Tank tank = createMinimalTank();
+        tank.setForceGeneratorAvailability(List.of(
+              ForceGeneratorAvailability.parse("FS:5,LA:3"),
+              ForceGeneratorAvailability.parse("3067-3085 FS:7")));
+        tank.setMissionRoles("fire_support,urban");
+
+        BuildingBlock blk = BLKFile.getBlock(tank);
+        Tank loaded = (Tank) new BLKTankFile(blk).getEntity();
+
+        assertEquals(2, loaded.getForceGeneratorAvailability().size(),
+              "Both availability lines should survive a BLK roundtrip");
+        assertEquals("FS:5,LA:3", loaded.getForceGeneratorAvailability().get(0).availabilityCodes());
+        assertEquals(3067, loaded.getForceGeneratorAvailability().get(1).startYear());
+        assertEquals(3085, loaded.getForceGeneratorAvailability().get(1).endYear());
+        assertEquals("fire_support,urban", loaded.getMissionRoles());
+    }
+
+    @Test
+    void noAvailabilityIsNotWrittenToBLK() throws Exception {
+        Tank tank = createMinimalTank();
+
+        BuildingBlock blk = BLKFile.getBlock(tank);
+        assertFalse(blk.exists("availability"));
+        assertFalse(blk.exists("missionroles"));
+
+        Tank loaded = (Tank) new BLKTankFile(blk).getEntity();
+
+        assertTrue(loaded.getForceGeneratorAvailability().isEmpty());
+        assertTrue(loaded.getMissionRoles().isBlank());
     }
 
     @Test

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2016-2025 The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2016-2026 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -86,6 +86,9 @@ public class RATGenerator {
 
     private final TreeSet<Integer> eraSet;
 
+    /** Feeds in units that declare their own availability in their unit file, rather than in the era files. */
+    private final UnitFileAvailabilityLoader unitFileAvailabilityLoader;
+
     private static RATGenerator ratGenerator = null;
     private static boolean interrupted = false;
     private static boolean dispose = false;
@@ -120,6 +123,14 @@ public class RATGenerator {
         eraSet = new TreeSet<>();
 
         listeners = new ArrayList<>();
+
+        // Shares the record store above rather than copying it, so reloadFromDir() stays valid
+        unitFileAvailabilityLoader = new UnitFileAvailabilityLoader(models,
+              chassis,
+              factions,
+              chassisIndex,
+              modelIndex,
+              eraSet);
     }
 
     public static RATGenerator getInstance() {
@@ -475,22 +486,28 @@ public class RATGenerator {
             return null;
         }
 
-        double totalWt = 0;
-        int totalAdj = 0;
+        double totalWeight = 0;
+        int totalAdjustment = 0;
 
-        for (AvailabilityRating ar : avList) {
-            totalWt += AvailabilityRating.calcWeight(ar.availability);
-            totalAdj += ar.ratingAdjustment;
+        for (AvailabilityRating availabilityRating : avList) {
+            totalWeight += AvailabilityRating.calcWeight(availabilityRating.availability);
+            totalAdjustment += availabilityRating.ratingAdjustment;
         }
 
-        AvailabilityRating retVal = avList.getFirst().makeCopy(faction);
+        AvailabilityRating mergedRating = avList.getFirst().makeCopy(faction);
 
-        retVal.availability = (int) (AvailabilityRating.calcAvRating(totalWt / avList.size()));
-        if (totalAdj != 0) {
-            retVal.ratingAdjustment = totalAdj > 0 ? 1 : -1;
+        mergedRating.availability = (int) (AvailabilityRating.calcAvRating(totalWeight / avList.size()));
+        if (totalAdjustment != 0) {
+            mergedRating.ratingAdjustment = totalAdjustment > 0 ? 1 : -1;
         }
 
-        return retVal;
+        // Per-rating values are indexed against a faction's own equipment rating system, so they have to be resolved
+        // again for the faction being merged for. Without this every lookup reads back 0 and the unit drops out.
+        if (mergedRating.hasMultipleRatings()) {
+            mergedRating.setRatingByNumericLevel(factions.get(faction));
+        }
+
+        return mergedRating;
     }
 
     /**
@@ -1524,6 +1541,9 @@ public class RATGenerator {
                 }
             }
         }
+
+        unitFileAvailabilityLoader.loadEra(era);
+
         notifyListenersEraLoaded();
     }
 

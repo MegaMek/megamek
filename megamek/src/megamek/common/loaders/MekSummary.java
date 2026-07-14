@@ -1,6 +1,6 @@
 /*
  * Copyright (C) 2002-2004 Josh Yockey
- * Copyright (C) 2002-2025 The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2002-2026 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -35,7 +35,9 @@ package megamek.common.loaders;
 
 import java.awt.Image;
 import java.io.File;
+import java.io.Serial;
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -63,6 +65,7 @@ import megamek.common.options.IOptionInfo;
 import megamek.common.options.Quirks;
 import megamek.common.units.Entity;
 import megamek.common.units.EntityMovementMode;
+import megamek.common.units.ForceGeneratorAvailability;
 import megamek.common.units.UnitRole;
 import megamek.logging.MMLogger;
 
@@ -70,6 +73,13 @@ import megamek.logging.MMLogger;
  * The MekSummary of a unit offers compiled information about the unit without having to load the file.
  */
 public class MekSummary implements Serializable, ASCardDisplayable {
+    /**
+     * Pinned so that adding a field no longer invalidates every player's units.cache. Bump only on a change that
+     * genuinely cannot be read back, and expect a full cache rebuild when you do.
+     */
+    @Serial
+    private static final long serialVersionUID = 1L;
+
     private static final MMLogger logger = MMLogger.create(MekSummary.class);
 
     private String name;
@@ -226,6 +236,12 @@ public class MekSummary implements Serializable, ASCardDisplayable {
     private int squadSize;
     private ASSpecialAbilityCollection specialAbilities = new ASSpecialAbilityCollection();
     private UnitRole role = UnitRole.UNDETERMINED;
+
+    /** Force Generator availability declared in the unit file. Empty for canon units, which use data/forcegenerator. */
+    private List<ForceGeneratorAvailability> forceGeneratorAvailability = new ArrayList<>();
+
+    /** Force Generator mission roles declared in the unit file, as raw comma-separated text. */
+    private String missionRoles = "";
 
     public MekSummary() {
         armorTypeSet = new HashSet<>();
@@ -700,6 +716,36 @@ public class MekSummary implements Serializable, ASCardDisplayable {
     @Override
     public UnitRole getRole() {
         return (role == null) ? UnitRole.UNDETERMINED : role;
+    }
+
+    /**
+     * Returns the Force Generator availability declared in this unit's file. Empty for canon units, whose availability
+     * comes from the era files in data/forcegenerator instead.
+     *
+     * @return the availability entries, never {@code null}
+     */
+    public List<ForceGeneratorAvailability> getForceGeneratorAvailability() {
+        return (forceGeneratorAvailability == null) ? new ArrayList<>() : forceGeneratorAvailability;
+    }
+
+    public void setForceGeneratorAvailability(List<ForceGeneratorAvailability> forceGeneratorAvailability) {
+        this.forceGeneratorAvailability = (forceGeneratorAvailability == null)
+              ? new ArrayList<>()
+              : new ArrayList<>(forceGeneratorAvailability);
+    }
+
+    /**
+     * Returns the Force Generator mission roles declared in this unit's file, as raw comma-separated text such as
+     * "fire_support,urban".
+     *
+     * @return the mission role text, never {@code null}
+     */
+    public String getMissionRoles() {
+        return (missionRoles == null) ? "" : missionRoles;
+    }
+
+    public void setMissionRoles(String missionRoles) {
+        this.missionRoles = (missionRoles == null) ? "" : missionRoles;
     }
 
     public void setFullAccurateUnitType(String type) {

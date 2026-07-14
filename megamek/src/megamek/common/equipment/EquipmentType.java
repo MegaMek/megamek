@@ -783,7 +783,12 @@ public class EquipmentType implements ITechnology {
         if (equipmentType != null) {
             return equipmentType;
         }
-        return allTypes().stream().filter(type -> type.getName().equals(key)).findFirst().orElse(null);
+        for (EquipmentType type : allTypes) {
+            if (type.getName().equals(key)) {
+                return type;
+            }
+        }
+        return null;
     }
 
     /**

@@ -33,6 +33,7 @@
 package megamek.client.ratgenerator;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
@@ -63,6 +64,8 @@ class RATGeneratorUnitFileAvailabilityTest {
     private static final String CUSTOM_VARIANT = "Archer ARC-9X";
     /** A custom variant declaring a HIGHER value than canon rates that chassis for, which must not inflate it. */
     private static final String INFLATED_VARIANT = "Archer ARC-8Z";
+    /** A custom variant of a canon chassis that the Lyrans do not get until 3054. */
+    private static final String GATED_UNIT = "Archer ARC-7Y";
     private static final String CANON_UNIT = "Archer ARC-2R";
     private static final String CANON_CHASSIS_KEY = "Archer[Mek]";
 
@@ -188,6 +191,35 @@ class RATGeneratorUnitFileAvailabilityTest {
     }
 
     @Test
+    void aModelIsNotAvailableBeforeItsStartYear() {
+        // QA report: a unit set to arrive later still turned up in the previous era. An availability code can name a
+        // year ("FS:5:3055"): the unit exists in the era, but the faction does not get it until then. The chassis
+        // lookup always applied that; the model lookup had no year to apply, so it ignored it and the unit appeared
+        // from the start of the era. There are 1,934 year-gated model codes in the canon data alone.
+        AvailabilityRating beforeStartYear =
+              ratGenerator.findModelAvailabilityRecord(ERA, GATED_UNIT, "LA", 3052);
+        AvailabilityRating onStartYear =
+              ratGenerator.findModelAvailabilityRecord(ERA, GATED_UNIT, "LA", 3054);
+
+        assertNull(beforeStartYear, "The Lyrans do not get this model until 3054, so 3052 must find nothing");
+        assertNotNull(onStartYear, "The model must appear once its start year arrives");
+        assertEquals(6, onStartYear.getAvailability());
+    }
+
+    @Test
+    void aYearGatedUnitStaysOutOfTheTableUntilItsYear() {
+        FactionRecord lyranCommonwealth = ratGenerator.getFaction("LA");
+
+        List<UnitTable.TableEntry> before = generateMekTable(lyranCommonwealth, 3052);
+        List<UnitTable.TableEntry> after = generateMekTable(lyranCommonwealth, 3054);
+
+        assertFalse(containsUnit(before, GATED_UNIT),
+              "A unit gated to 3054 must not be generated in 3052");
+        assertTrue(containsUnit(after, GATED_UNIT),
+              "The same unit must be generated once its year arrives");
+    }
+
+    @Test
     void customUnitIsGeneratedInATable() {
         FactionRecord lyranCommonwealth = ratGenerator.getFaction("LA");
         assertNotNull(lyranCommonwealth, "The test faction data should provide the Lyran Commonwealth");
@@ -201,9 +233,13 @@ class RATGeneratorUnitFileAvailabilityTest {
     }
 
     private static List<UnitTable.TableEntry> generateMekTable(FactionRecord factionRecord) {
+        return generateMekTable(factionRecord, ERA);
+    }
+
+    private static List<UnitTable.TableEntry> generateMekTable(FactionRecord factionRecord, int year) {
         return ratGenerator.generateTable(factionRecord,
               UnitType.MEK,
-              ERA,
+              year,
               null,
               null,
               0,

@@ -308,6 +308,56 @@ public class RATGenerator {
     }
 
     /**
+     * Generate the availability rating for a specific model, honouring the year the model becomes available.
+     * <p>
+     * An availability code can name a year, as in {@code FS:5:3055}: the unit exists in the era but the faction does
+     * not get it until that year. {@link #findChassisAvailabilityRecord(int, String, FactionRecord, int)} has always
+     * applied that. The model lookup could not, because it had no year to apply, so a model's year was ignored and the
+     * unit turned up from the start of the era instead. Use this overload anywhere a table is being generated.
+     * </p>
+     *
+     * @param era           era designation
+     * @param unit          string full chassis-model name
+     * @param factionRecord faction data
+     * @param year          the game year
+     *
+     * @return the availability rating, or {@code null} if the faction does not have this model yet in this year
+     */
+    public @Nullable AvailabilityRating findModelAvailabilityRecord(int era, String unit,
+          @Nullable FactionRecord factionRecord, int year) {
+
+        AvailabilityRating availabilityRating = findModelAvailabilityRecord(era, unit, factionRecord);
+
+        return isAvailableYet(availabilityRating, year) ? availabilityRating : null;
+    }
+
+    /**
+     * Generate the availability rating for a specific model, honouring the year the model becomes available.
+     *
+     * @param era     era designation
+     * @param unit    string full chassis-model name
+     * @param faction faction code
+     * @param year    the game year
+     *
+     * @return the availability rating, or {@code null} if the faction does not have this model yet in this year
+     */
+    public @Nullable AvailabilityRating findModelAvailabilityRecord(int era, String unit, String faction, int year) {
+        AvailabilityRating availabilityRating = findModelAvailabilityRecord(era, unit, faction);
+
+        return isAvailableYet(availabilityRating, year) ? availabilityRating : null;
+    }
+
+    /**
+     * @param availabilityRating the rating to test, which may be null
+     * @param year               the game year
+     *
+     * @return {@code true} if the rating exists and its start year has arrived
+     */
+    private static boolean isAvailableYet(@Nullable AvailabilityRating availabilityRating, int year) {
+        return (availabilityRating != null) && (year >= availabilityRating.getStartYear());
+    }
+
+    /**
      * Provides a list of availability ratings for a unit in a given era. Used in editing and reporting.
      *
      * @param era  The year of the record. This must be one of the years in the

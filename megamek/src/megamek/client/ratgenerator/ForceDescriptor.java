@@ -744,7 +744,8 @@ public class ForceDescriptor {
                         ModelRecord mRec = RATGenerator.getInstance().getModelRecord(model);
                         if (mRec != null &&
                               weights.contains(mRec.getWeightClass()) &&
-                              RATGenerator.getInstance().findModelAvailabilityRecord(era, model, faction) != null) {
+                              RATGenerator.getInstance().findModelAvailabilityRecord(era, model, faction, getYear())
+                                    != null) {
                             av = RATGenerator.getInstance()
                                   .findChassisAvailabilityRecord(era, mRec.getChassisKey(), faction, getYear());
                             if (av == null) {

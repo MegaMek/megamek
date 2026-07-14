@@ -290,7 +290,7 @@ public final class CompositeTechLevelReport {
     private static String renderHtml(ReportData data) {
         StringBuilder html = new StringBuilder("<div class='report'>");
 
-        html.append("<h2>Composite Tech Level</h2>");
+        appendTitle(html, "Composite Tech Level");
         html.append("<b>").append(escape(data.unitName())).append("</b>");
 
         html.append("<table cellpadding='2' cellspacing='0'>");
@@ -303,7 +303,7 @@ public final class CompositeTechLevelReport {
         }
         html.append("</table>");
 
-        html.append("<h3>Component Tech Progression</h3>");
+        appendSectionHeader(html, "Component Tech Progression");
         html.append(TABLE_START);
         // The component's own dates and the level it has in the evaluated year all belong to the Variable Tech
         // Level rule and are grouped under it. The Static level does not depend on the year, so it gets its own
@@ -335,7 +335,7 @@ public final class CompositeTechLevelReport {
         }
         html.append("</table>");
 
-        html.append("<h3>Unit Tech Progression</h3>");
+        appendSectionHeader(html, "Unit Tech Progression");
         html.append(TABLE_START);
         html.append("<tr>");
         appendHtmlHeaderCell(html, "Component");
@@ -365,7 +365,7 @@ public final class CompositeTechLevelReport {
         }
         html.append("</table>");
 
-        html.append("<h3>Unit result</h3>");
+        appendSectionHeader(html, "Unit result");
         html.append("<table cellpadding='2' cellspacing='0'>");
         appendHtmlSettingRow(html, "Static tech level", data.staticTechLevel());
         appendHtmlSettingRow(html, "Variable tech level in " + data.evaluationYear(), data.variableTechLevel());
@@ -379,6 +379,27 @@ public final class CompositeTechLevelReport {
         html.append("</table>");
 
         return html.append("</div>").toString();
+    }
+
+    /**
+     * Appends the report's main title. Swing gives {@code <h2>} a fixed size that ends up smaller than the report's
+     * body font once it is scaled for the GUI, so the size is set relative to the body font instead.
+     *
+     * @param html The document being built
+     * @param text The title text
+     */
+    private static void appendTitle(StringBuilder html, String text) {
+        html.append("<p><font size='+3'><b>").append(escape(text)).append("</b></font></p>");
+    }
+
+    /**
+     * Appends a section heading, sized relative to the body font for the same reason as {@link #appendTitle}.
+     *
+     * @param html The document being built
+     * @param text The heading text
+     */
+    private static void appendSectionHeader(StringBuilder html, String text) {
+        html.append("<p><font size='+2'><b>").append(escape(text)).append("</b></font></p>");
     }
 
     private static void appendHtmlSettingRow(StringBuilder html, String label, String value) {

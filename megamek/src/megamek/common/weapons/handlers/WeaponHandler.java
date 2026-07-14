@@ -1631,6 +1631,7 @@ public class WeaponHandler implements AttackHandler, Serializable {
             if (bLowProfileGlancing) {
                 hit.makeGlancingBlow();
             }
+
             vPhaseReport.addAll(gameManager.damageEntity(entityTarget, hit, nDamage, false,
                   attackingEntity.getSwarmTargetId() == entityTarget.getId() ? DamageType.IGNORE_PASSENGER : damageType,
                   false, false, throughFront, underWater, nukeS2S));

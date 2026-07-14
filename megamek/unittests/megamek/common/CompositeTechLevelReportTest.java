@@ -41,7 +41,6 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.util.List;
 
-import megamek.client.ui.clientGUI.calculationReport.TextCalculationReport;
 import megamek.common.RecordingCompositeTechLevel.ComponentTechRecord;
 import megamek.common.enums.Faction;
 import megamek.common.equipment.EquipmentType;
@@ -98,32 +97,44 @@ class CompositeTechLevelReportTest {
     public void reportNamesTheArmorThatDrivesTheCommonDate() {
         Entity entity = elemental();
 
-        TextCalculationReport report = new TextCalculationReport();
-        CompositeTechLevelReport.fillReport(report, entity, Faction.NONE, entity.getYear(), true);
-        String reportText = report.toString();
+        String reportText = CompositeTechLevelReport.toPlainText(entity, Faction.NONE, entity.getYear(), true);
 
-        // The suit's armor is what pushes the unit's common date out to 3054, so the report has to name it.
+        // The suit's armor is what pushes the unit's common date out to 3054, so the report has to name it,
+        // and has to flag it as the component that moves the unit.
         assertTrue(reportText.contains("Armor: BA Standard"),
               "Report does not name the BA Standard armor:\n" + reportText);
-        assertTrue(reportText.contains("Clan BA Small Laser") || reportText.contains("Small Laser"),
+        assertTrue(reportText.contains("Small Laser"),
               "Report does not name the small laser:\n" + reportText);
         assertTrue(reportText.contains("3054"),
               "Report does not show the 3054 common date:\n" + reportText);
+        assertTrue(reportText.contains("moves the unit"),
+              "Report does not flag the component that moves the unit:\n" + reportText);
     }
 
     @Test
     public void reportShowsBothTechLevelRules() {
         Entity entity = elemental();
 
-        TextCalculationReport variableReport = new TextCalculationReport();
-        CompositeTechLevelReport.fillReport(variableReport, entity, Faction.NONE, entity.getYear(), true);
+        String variableReport = CompositeTechLevelReport.toPlainText(entity, Faction.NONE, entity.getYear(), true);
+        String basicReport = CompositeTechLevelReport.toPlainText(entity, Faction.NONE, entity.getYear(), false);
 
-        TextCalculationReport basicReport = new TextCalculationReport();
-        CompositeTechLevelReport.fillReport(basicReport, entity, Faction.NONE, entity.getYear(), false);
-
-        assertTrue(variableReport.toString().contains("Variable Tech Level"),
+        assertTrue(variableReport.contains("Variable Tech Level"),
               "Variable report does not report the rule in use");
-        assertTrue(basicReport.toString().contains("Basic (static)"),
+        assertTrue(basicReport.contains("Basic (static)"),
               "Basic report does not report the rule in use");
+    }
+
+    @Test
+    public void htmlReportIsWellFormedAndEscaped() {
+        Entity entity = elemental();
+
+        String html = CompositeTechLevelReport.toHtml(entity, Faction.NONE, entity.getYear(), true);
+
+        assertTrue(html.startsWith("<div class='report'>") && html.endsWith("</div>"),
+              "HTML report is not wrapped in the themed report div");
+        assertTrue(html.contains("<table") && html.contains("</table>"), "HTML report contains no table");
+        assertTrue(html.contains("Armor: BA Standard"), "HTML report does not name the armor");
+        // The marker is written as escaped text, so no stray unescaped "<--" may reach the pane.
+        assertFalse(html.contains("<--"), "HTML report contains an unescaped '<--' marker");
     }
 }

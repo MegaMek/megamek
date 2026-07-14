@@ -45,12 +45,13 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JSeparator;
+import javax.swing.JTextPane;
 import javax.swing.ScrollPaneConstants;
 import javax.swing.border.EmptyBorder;
 
-import megamek.client.ui.clientGUI.calculationReport.FlexibleCalculationReport;
 import megamek.client.ui.util.UIUtil;
 import megamek.common.CompositeTechLevelReport;
+import megamek.common.Report;
 import megamek.common.annotations.Nullable;
 import megamek.common.enums.Faction;
 import megamek.common.units.Entity;
@@ -67,9 +68,8 @@ public class TechLevelDisplayDialog extends AbstractDialog {
     private final int evaluationYear;
     private final boolean useVariableTechLevel;
 
-    private FlexibleCalculationReport techLevelReport;
     private final JScrollPane reportScrollPane = new JScrollPane(ScrollPaneConstants.VERTICAL_SCROLLBAR_ALWAYS,
-          ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER);
+          ScrollPaneConstants.HORIZONTAL_SCROLLBAR_AS_NEEDED);
 
     /**
      * Creates a non-modal dialog showing the composite tech level breakdown for the given unit, evaluated in the unit's
@@ -117,9 +117,9 @@ public class TechLevelDisplayDialog extends AbstractDialog {
     @Override
     protected Container createCenterPane() {
         JButton exportText = new JButton("Copy as Text");
-        exportText.addActionListener(evt -> copyToClipboard(techLevelReport.getTextReport().toString()));
+        exportText.addActionListener(evt -> copyToClipboard(plainTextReport()));
         JButton exportHTML = new JButton("Copy as HTML");
-        exportHTML.addActionListener(evt -> copyToClipboard(techLevelReport.getHtmlReport().toString()));
+        exportHTML.addActionListener(evt -> copyToClipboard(htmlReport()));
 
         reportScrollPane.getVerticalScrollBar().setUnitIncrement(16);
         reportScrollPane.setBorder(new EmptyBorder(10, 0, 0, 0));
@@ -143,15 +143,24 @@ public class TechLevelDisplayDialog extends AbstractDialog {
             return;
         }
 
-        techLevelReport = new FlexibleCalculationReport();
-        CompositeTechLevelReport.fillReport(techLevelReport, entity, techFaction, evaluationYear,
-              useVariableTechLevel);
+        JTextPane reportPane = new JTextPane();
+        // Gives the pane the report font and the themed colour classes used elsewhere in the suite, so the
+        // report follows the user's light or dark theme instead of rendering as black text on white.
+        Report.setupStylesheet(reportPane);
+        reportPane.setEditable(false);
+        reportPane.setText(htmlReport());
+        reportPane.setCaretPosition(0);
 
-        // Use an inner panel to make the report top-left-aligned
-        JPanel anchorPanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
-        anchorPanel.add(techLevelReport.toJComponent());
-        reportScrollPane.setViewportView(anchorPanel);
+        reportScrollPane.setViewportView(reportPane);
         updateDialogSize();
+    }
+
+    private String htmlReport() {
+        return CompositeTechLevelReport.toHtml(entity, techFaction, evaluationYear, useVariableTechLevel);
+    }
+
+    private String plainTextReport() {
+        return CompositeTechLevelReport.toPlainText(entity, techFaction, evaluationYear, useVariableTechLevel);
     }
 
     /** Does gui-scaling, packs the dialog and reduces the height if it's too big. */

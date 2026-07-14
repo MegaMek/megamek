@@ -250,7 +250,7 @@ public class Mounted<T extends EquipmentType> implements Serializable, RoundUpda
     @SuppressWarnings("unchecked")
     public void restore() {
         if (typeName == null) {
-            typeName = type.getName();
+            typeName = type.getInternalName();
         } else {
             type = (T) EquipmentType.get(typeName);
         }

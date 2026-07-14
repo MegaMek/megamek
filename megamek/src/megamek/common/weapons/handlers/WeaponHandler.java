@@ -2131,7 +2131,7 @@ public class WeaponHandler implements AttackHandler, Serializable {
      */
     public void restore() {
         if (typeName == null) {
-            typeName = weaponType.getName();
+            typeName = weaponType.getInternalName();
         } else {
             weaponType = (WeaponType) EquipmentType.get(typeName);
         }

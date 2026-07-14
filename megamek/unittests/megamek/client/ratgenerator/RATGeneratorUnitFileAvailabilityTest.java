@@ -37,11 +37,10 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-import java.io.File;
 import java.util.List;
 
-import megamek.common.Configuration;
 import megamek.common.units.UnitType;
+import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 
@@ -70,12 +69,13 @@ class RATGeneratorUnitFileAvailabilityTest {
     private static RATGenerator ratGenerator;
 
     @BeforeAll
-    static void loadForceGeneratorFromTestData() {
-        Configuration.setDataDir(new File("testresources/data"));
+    static void loadForceGeneratorFromTestData() throws Exception {
+        ratGenerator = ForceGeneratorTestFixture.loadFromTestData(ERA);
+    }
 
-        ratGenerator = RATGenerator.getInstance();
-        ratGenerator.reloadFromDir(Configuration.forceGeneratorDir());
-        ratGenerator.loadYear(ERA);
+    @AfterAll
+    static void clearSharedSingletons() throws Exception {
+        ForceGeneratorTestFixture.reset();
     }
 
     @Test

@@ -35,10 +35,9 @@ package megamek.client.ratgenerator;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 
-import java.io.File;
 import java.util.List;
 
-import megamek.common.Configuration;
+import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 
@@ -58,12 +57,13 @@ class MergeFactionAvailabilityTest {
     private static RATGenerator ratGenerator;
 
     @BeforeAll
-    static void loadForceGeneratorFromTestData() {
-        Configuration.setDataDir(new File("testresources/data"));
+    static void loadForceGeneratorFromTestData() throws Exception {
+        ratGenerator = ForceGeneratorTestFixture.loadFromTestData(ERA);
+    }
 
-        ratGenerator = RATGenerator.getInstance();
-        ratGenerator.reloadFromDir(Configuration.forceGeneratorDir());
-        ratGenerator.loadYear(ERA);
+    @AfterAll
+    static void clearSharedSingletons() throws Exception {
+        ForceGeneratorTestFixture.reset();
     }
 
     @Test

@@ -2132,12 +2132,13 @@ public class WeaponHandler implements AttackHandler, Serializable {
     public void restore() {
         if (typeName == null) {
             typeName = weaponType.getInternalName();
-        } else {
-            weaponType = (WeaponType) EquipmentType.get(typeName);
         }
+        weaponType = (WeaponType) EquipmentType.get(typeName);
 
         if (weaponType == null) {
             LOGGER.error("Could not restore equipment type \"{}\"", typeName);
+        } else {
+            typeName = weaponType.getInternalName();
         }
     }
 

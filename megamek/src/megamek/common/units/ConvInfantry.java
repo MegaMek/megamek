@@ -1507,10 +1507,16 @@ public class ConvInfantry extends Infantry {
 
         if (null != primaryName) {
             primaryWeapon = restoreInfantryWeapon(primaryName);
+            if (null != primaryWeapon) {
+                primaryName = primaryWeapon.getInternalName();
+            }
         }
 
         if (null != secondName) {
             secondaryWeapon = restoreInfantryWeapon(secondName);
+            if (null != secondaryWeapon) {
+                secondName = secondaryWeapon.getInternalName();
+            }
         }
     }
 

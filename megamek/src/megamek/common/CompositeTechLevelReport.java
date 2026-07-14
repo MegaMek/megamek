@@ -58,12 +58,41 @@ import megamek.common.units.Entity;
 public final class CompositeTechLevelReport {
 
     private static final String NO_DATE = "--";
+    private static final String MESSAGE_PREFIX = "CompositeTechLevelReport.";
     /** Swing's HTML renderer draws gridlines from the table's border attribute, not from CSS. */
     private static final String TABLE_START = "<table border='1' cellpadding='6' cellspacing='0'>";
     private static final String INDENT = "  ";
     private static final String COLUMN_GAP = "  ";
 
     private CompositeTechLevelReport() {}
+
+    /**
+     * @param key A message key, without the shared {@value #MESSAGE_PREFIX} prefix
+     *
+     * @return The localized text for the key
+     */
+    private static String message(String key) {
+        return Messages.getString(MESSAGE_PREFIX + key);
+    }
+
+    /**
+     * @param key       A message key, without the shared {@value #MESSAGE_PREFIX} prefix
+     * @param arguments The arguments to substitute into the message
+     *
+     * @return The localized, formatted text for the key
+     */
+    private static String message(String key, Object... arguments) {
+        return Messages.getString(MESSAGE_PREFIX + key, arguments);
+    }
+
+    /**
+     * @param key A message key, without the shared {@value #MESSAGE_PREFIX} prefix
+     *
+     * @return The localized text for the key, followed by a colon, for use as a row label
+     */
+    private static String withColon(String key) {
+        return message(key) + ":";
+    }
 
     /**
      * One component of the unit, as it is presented in the report. Components that are identical in every respect, such
@@ -124,13 +153,13 @@ public final class CompositeTechLevelReport {
         String progressionNote() {
             List<String> becomes = new ArrayList<>();
             if (movesUnitPrototypeDate) {
-                becomes.add("Becomes Prototype (" + unitPrototypeDate + ")");
+                becomes.add(message("noteBecomesPrototype", unitPrototypeDate));
             }
             if (movesUnitProductionDate) {
-                becomes.add("Becomes Production (" + unitProductionDate + ")");
+                becomes.add(message("noteBecomesProduction", unitProductionDate));
             }
             if (movesUnitCommonDate) {
-                becomes.add("Becomes Common (" + unitCommonDate + ")");
+                becomes.add(message("noteBecomesCommon", unitCommonDate));
             }
             return String.join(", ", becomes);
         }
@@ -275,7 +304,7 @@ public final class CompositeTechLevelReport {
               techBaseName(entity),
               entity.getYear(),
               evaluationYear,
-              useVariableTechLevel ? "Variable Tech Level" : "Static Tech Level",
+              useVariableTechLevel ? message("groupVariable") : message("groupStatic"),
               (techFaction == Faction.NONE) ? null : techFaction.getCodeMM(),
               rows,
               formatLevel(staticTechLevel),
@@ -288,38 +317,41 @@ public final class CompositeTechLevelReport {
     }
 
     private static String renderHtml(ReportData data) {
+        String year = String.valueOf(data.evaluationYear());
         StringBuilder html = new StringBuilder("<div class='report'>");
 
-        appendTitle(html, "Composite Tech Level");
+        appendTitle(html, message("title"));
         html.append("<b>").append(escape(data.unitName())).append("</b>");
 
         html.append("<table cellpadding='2' cellspacing='0'>");
-        appendHtmlSettingRow(html, "Tech base", data.techBase());
-        appendHtmlSettingRow(html, "Introduction year", String.valueOf(data.introductionYear()));
-        appendHtmlSettingRow(html, "Evaluation year", String.valueOf(data.evaluationYear()));
-        appendHtmlSettingRow(html, "Tech level rule", data.techLevelRule());
+        appendHtmlSettingRow(html, message("labelTechBase"), data.techBase());
+        appendHtmlSettingRow(html, message("labelIntroductionYear"), String.valueOf(data.introductionYear()));
+        appendHtmlSettingRow(html, message("labelEvaluationYear"), year);
+        appendHtmlSettingRow(html, message("labelTechLevelRule"), data.techLevelRule());
         if (data.factionName() != null) {
-            appendHtmlSettingRow(html, "Faction", data.factionName());
+            appendHtmlSettingRow(html, message("labelFaction"), data.factionName());
         }
         html.append("</table>");
 
-        appendSectionHeader(html, "Component Tech Progression");
+        appendSectionHeader(html, message("sectionComponentProgression"));
         html.append(TABLE_START);
         // The component's own dates and the level it has in the evaluated year all belong to the Variable Tech
         // Level rule and are grouped under it. The Static level does not depend on the year, so it gets its own
         // heading over its single column, merged down over both header rows to sit alongside the group.
         html.append("<tr>");
-        html.append("<th rowspan='2' align='left' valign='bottom'><u>Component</u></th>");
-        html.append("<th colspan='6' align='center'>Variable Tech Level</th>");
-        html.append("<th rowspan='2' align='left' valign='bottom'><u>Static Tech Level</u></th>");
+        html.append("<th rowspan='2' align='left' valign='bottom'><u>").append(escape(message("columnComponent")))
+              .append("</u></th>");
+        html.append("<th colspan='6' align='center'>").append(escape(message("groupVariable"))).append("</th>");
+        html.append("<th rowspan='2' align='left' valign='bottom'><u>").append(escape(message("groupStatic")))
+              .append("</u></th>");
         html.append("</tr>");
         html.append("<tr>");
-        appendHtmlHeaderCell(html, "Prototype");
-        appendHtmlHeaderCell(html, "Production");
-        appendHtmlHeaderCell(html, "Common");
-        appendHtmlHeaderCell(html, "Extinct");
-        appendHtmlHeaderCell(html, "Returns");
-        appendHtmlHeaderCell(html, "Variable in " + data.evaluationYear());
+        appendHtmlHeaderCell(html, message("columnPrototype"));
+        appendHtmlHeaderCell(html, message("columnProduction"));
+        appendHtmlHeaderCell(html, message("columnCommon"));
+        appendHtmlHeaderCell(html, message("columnExtinct"));
+        appendHtmlHeaderCell(html, message("columnReturns"));
+        appendHtmlHeaderCell(html, message("columnVariableInYear", year));
         html.append("</tr>");
         for (ReportRow row : data.rows()) {
             html.append("<tr>");
@@ -335,15 +367,15 @@ public final class CompositeTechLevelReport {
         }
         html.append("</table>");
 
-        appendSectionHeader(html, "Unit Tech Progression");
+        appendSectionHeader(html, message("sectionUnitProgression"));
         html.append(TABLE_START);
         html.append("<tr>");
-        appendHtmlHeaderCell(html, "Component");
-        appendHtmlHeaderCell(html, "Unit prototype");
-        appendHtmlHeaderCell(html, "Unit production");
-        appendHtmlHeaderCell(html, "Unit common");
-        appendHtmlHeaderCell(html, "Unit extinct");
-        appendHtmlHeaderCell(html, "Unit returns");
+        appendHtmlHeaderCell(html, message("columnComponent"));
+        appendHtmlHeaderCell(html, message("columnUnitPrototype"));
+        appendHtmlHeaderCell(html, message("columnUnitProduction"));
+        appendHtmlHeaderCell(html, message("columnUnitCommon"));
+        appendHtmlHeaderCell(html, message("columnUnitExtinct"));
+        appendHtmlHeaderCell(html, message("columnUnitReturns"));
         appendHtmlHeaderCell(html, "");
         html.append("</tr>");
         for (ReportRow row : data.rows()) {
@@ -365,15 +397,17 @@ public final class CompositeTechLevelReport {
         }
         html.append("</table>");
 
-        appendSectionHeader(html, "Unit result");
+        appendSectionHeader(html, message("sectionUnitResult"));
         html.append("<table cellpadding='2' cellspacing='0'>");
-        appendHtmlSettingRow(html, "Static tech level", data.staticTechLevel());
-        appendHtmlSettingRow(html, "Variable tech level in " + data.evaluationYear(), data.variableTechLevel());
-        appendHtmlSettingRow(html, "Prototype", data.prototypeRange());
-        appendHtmlSettingRow(html, "Production", data.productionRange());
-        appendHtmlSettingRow(html, "Common", data.commonRange());
-        appendHtmlSettingRow(html, "Extinct", data.extinctionRange());
-        html.append("<tr><td><b>Effective tech level</b></td><td>&nbsp;&nbsp;</td><td><b>")
+        appendHtmlSettingRow(html, message("resultStaticTechLevel"), data.staticTechLevel());
+        appendHtmlSettingRow(html, message("resultVariableTechLevelInYear", year),
+              data.variableTechLevel());
+        appendHtmlSettingRow(html, message("columnPrototype"), data.prototypeRange());
+        appendHtmlSettingRow(html, message("columnProduction"), data.productionRange());
+        appendHtmlSettingRow(html, message("columnCommon"), data.commonRange());
+        appendHtmlSettingRow(html, message("columnExtinct"), data.extinctionRange());
+        html.append("<tr><td><b>").append(escape(message("resultEffectiveTechLevel")))
+              .append("</b></td><td>&nbsp;&nbsp;</td><td><b>")
               .append(escape(data.effectiveTechLevel()))
               .append("</b></td></tr>");
         html.append("</table>");
@@ -433,47 +467,57 @@ public final class CompositeTechLevelReport {
     }
 
     private static String renderPlainText(ReportData data) {
+        String year = String.valueOf(data.evaluationYear());
         StringBuilder text = new StringBuilder();
-        text.append("Composite Tech Level - ").append(data.unitName()).append('\n');
-        text.append("Tech base:          ").append(data.techBase()).append('\n');
-        text.append("Introduction year:  ").append(data.introductionYear()).append('\n');
-        text.append("Evaluation year:    ").append(data.evaluationYear()).append('\n');
-        text.append("Tech level rule:    ").append(data.techLevelRule()).append('\n');
+        text.append(message("title")).append(" - ").append(data.unitName()).append('\n');
+
+        List<String[]> settingsTable = new ArrayList<>();
+        settingsTable.add(new String[] { withColon("labelTechBase"), data.techBase() });
+        settingsTable.add(new String[] { withColon("labelIntroductionYear"),
+                                         String.valueOf(data.introductionYear()) });
+        settingsTable.add(new String[] { withColon("labelEvaluationYear"), year });
+        settingsTable.add(new String[] { withColon("labelTechLevelRule"), data.techLevelRule() });
         if (data.factionName() != null) {
-            text.append("Faction:            ").append(data.factionName()).append('\n');
+            settingsTable.add(new String[] { withColon("labelFaction"), data.factionName() });
         }
+        text.append(formatTextTable(settingsTable, null));
 
         List<String[]> componentTable = new ArrayList<>();
-        componentTable.add(new String[] { "Component", "Prototype", "Production", "Common", "Extinct", "Returns",
-                                          "Variable in " + data.evaluationYear(), "Static Tech Level" });
+        componentTable.add(new String[] { message("columnComponent"), message("columnPrototype"),
+                                          message("columnProduction"), message("columnCommon"),
+                                          message("columnExtinct"), message("columnReturns"),
+                                          message("columnVariableInYear", year), message("groupStatic") });
         for (ReportRow row : data.rows()) {
             componentTable.add(new String[] { row.displayName(), row.prototypeDate(), row.productionDate(),
                                               row.commonDate(), row.extinctionDate(), row.reintroductionDate(),
                                               row.variableTechLevel(), row.staticTechLevel() });
         }
-        text.append("\nComponent Tech Progression\n")
-              .append(formatTextTable(componentTable, new ColumnGroup("Variable Tech Level", 1, 6)));
+        text.append('\n').append(message("sectionComponentProgression")).append('\n')
+              .append(formatTextTable(componentTable, new ColumnGroup(message("groupVariable"), 1, 6)));
 
         List<String[]> buildUpTable = new ArrayList<>();
-        buildUpTable.add(new String[] { "Component", "Unit prototype", "Unit production", "Unit common",
-                                        "Unit extinct", "Unit returns", "" });
+        buildUpTable.add(new String[] { message("columnComponent"), message("columnUnitPrototype"),
+                                        message("columnUnitProduction"), message("columnUnitCommon"),
+                                        message("columnUnitExtinct"), message("columnUnitReturns"), "" });
         for (ReportRow row : data.rows()) {
             buildUpTable.add(new String[] { row.displayName(), row.unitPrototypeDate(), row.unitProductionDate(),
                                             row.unitCommonDate(), row.unitExtinctionDate(),
                                             row.unitReintroductionDate(), row.progressionNote() });
         }
-        text.append("\nUnit Tech Progression\n").append(formatTextTable(buildUpTable, null));
+        text.append('\n').append(message("sectionUnitProgression")).append('\n')
+              .append(formatTextTable(buildUpTable, null));
 
         List<String[]> resultTable = new ArrayList<>();
-        resultTable.add(new String[] { "Static tech level:", data.staticTechLevel() });
-        resultTable.add(new String[] { "Variable tech level in " + data.evaluationYear() + ":",
+        resultTable.add(new String[] { withColon("resultStaticTechLevel"), data.staticTechLevel() });
+        resultTable.add(new String[] { message("resultVariableTechLevelInYear", year) + ":",
                                        data.variableTechLevel() });
-        resultTable.add(new String[] { "Prototype:", data.prototypeRange() });
-        resultTable.add(new String[] { "Production:", data.productionRange() });
-        resultTable.add(new String[] { "Common:", data.commonRange() });
-        resultTable.add(new String[] { "Extinct:", data.extinctionRange() });
-        resultTable.add(new String[] { "Effective tech level:", data.effectiveTechLevel() });
-        text.append("\nUnit result\n").append(formatTextTable(resultTable, null));
+        resultTable.add(new String[] { withColon("columnPrototype"), data.prototypeRange() });
+        resultTable.add(new String[] { withColon("columnProduction"), data.productionRange() });
+        resultTable.add(new String[] { withColon("columnCommon"), data.commonRange() });
+        resultTable.add(new String[] { withColon("columnExtinct"), data.extinctionRange() });
+        resultTable.add(new String[] { withColon("resultEffectiveTechLevel"), data.effectiveTechLevel() });
+        text.append('\n').append(message("sectionUnitResult")).append('\n')
+              .append(formatTextTable(resultTable, null));
 
         return text.toString();
     }
@@ -547,10 +591,8 @@ public final class CompositeTechLevelReport {
     }
 
     private static String techBaseName(Entity entity) {
-        if (entity.isMixedTech()) {
-            return "Mixed (" + (entity.isClan() ? "Clan" : "Inner Sphere") + " base)";
-        }
-        return entity.isClan() ? "Clan" : "Inner Sphere";
+        String baseName = entity.isClan() ? message("techBaseClan") : message("techBaseInnerSphere");
+        return entity.isMixedTech() ? message("techBaseMixed", baseName) : baseName;
     }
 
     private static String formatDate(int date) {

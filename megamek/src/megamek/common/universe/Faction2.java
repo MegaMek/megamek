@@ -73,7 +73,8 @@ import megamek.common.annotations.Nullable;
 @JsonPropertyOrder({ "key", "name", "sucsCodes", "nameChanges", "capital", "capitalChanges", "yearsActive", "successor",
                      "tags", "color", "logo", "background", "camos", "camosChanges", "nameGenerator", "eraMods",
                      "ratingLevels", "fallBackFactions", "preInvasionHonorRating", "postInvasionHonorRating",
-                     "formationBaseSize", "formationGrouping", "rankSystem", "factionLeaders", "usesMercenaries" })
+                     "formationBaseSize", "formationGrouping", "rankSystem", "factionLeaders", "usesMercenaries",
+                     "aresConventionsSignatory" })
 public class Faction2 {
     private static final int UNKNOWN = -1;
     private static final String DEFAULT_RANK_SYSTEM_INNER_SPHERE = "SLDF";
@@ -108,6 +109,7 @@ public class Faction2 {
     private String rankSystem = null;
     private List<FactionLeaderData> factionLeaders = new ArrayList<>();
     private final NavigableMap<Integer, Boolean> usesMercenaries = new TreeMap<>();
+    private final NavigableMap<Integer, Boolean> aresConventionsSignatory = new TreeMap<>();
 
     public List<String> getRatingLevels() {
         return ratingLevels;
@@ -270,6 +272,10 @@ public class Faction2 {
 
     public NavigableMap<Integer, Boolean> getUsesMercenaries() {
         return usesMercenaries;
+    }
+
+    public NavigableMap<Integer, Boolean> getAresConventionsSignatory() {
+        return aresConventionsSignatory;
     }
 
     public Set<String> getFallBackFactions() {
@@ -558,6 +564,19 @@ public class Faction2 {
     public Boolean isUsesMercenaries(int year) {
         final Map.Entry<Integer, Boolean> isUseMercenaries = usesMercenaries.floorEntry(year);
         return isUseMercenaries == null || isUseMercenaries.getValue();
+    }
+
+    /**
+     * Whether this faction was a signatory of the Ares Conventions - and thus observed their restrictions on targeting
+     * population centers - in the given year. Defaults to {@code false} for years with no recorded signatory status.
+     *
+     * @param year the year to check
+     *
+     * @return {@code true} if the faction observed the Ares Conventions in that year
+     */
+    public boolean isAresConventionsSignatory(int year) {
+        final Map.Entry<Integer, Boolean> signatory = aresConventionsSignatory.floorEntry(year);
+        return (signatory != null) && signatory.getValue();
     }
 
     @Override

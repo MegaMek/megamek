@@ -145,7 +145,7 @@ class ConvInfantryDisposableWeaponTest {
     }
 
     @Test
-    @DisplayName("primary and secondary weapons are reconstructed by name after client/server serialization")
+    @DisplayName("primary and secondary weapons are reconstructed by internal name after client/server serialization")
     void infantryWeaponsSurviveSerialization() throws Exception {
         ConvInfantry infantry = createInfantry();
         InfantryWeapon primaryWeapon = infantry.getPrimaryWeapon();

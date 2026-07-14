@@ -105,9 +105,6 @@ public class UnitEditorDialog extends JDialog implements LocationSelectListener 
 
     private final Entity entity;
 
-    /** Key for the general panel in the location chooser; locations use their own index. */
-    private static final int GENERAL_PANEL_KEY = -1;
-
     /** Names the dialog and its divider for the stored size, position and divider location. */
     private static final String DIALOG_NAME = "unitEditorDialog";
     private static final String SPLIT_PANE_NAME = "unitEditorSplitPane";
@@ -719,11 +716,6 @@ public class UnitEditorDialog extends JDialog implements LocationSelectListener 
                 comboLocation.addItem(new LocationChoice(location, entity.getLocationName(location)));
             }
         }
-        if (controls.panGeneral != null) {
-            panCards.add(controls.panGeneral, cardName(GENERAL_PANEL_KEY));
-            comboLocation.addItem(new LocationChoice(GENERAL_PANEL_KEY,
-                  Messages.getString("UnitEditorDialog.general")));
-        }
         comboLocation.addActionListener(event -> {
             if (comboLocation.getSelectedItem() instanceof LocationChoice choice) {
                 cardLayout.show(panCards, cardName(choice.location()));
@@ -738,9 +730,21 @@ public class UnitEditorDialog extends JDialog implements LocationSelectListener 
         panChooser.add(new JLabel(Messages.getString("UnitEditorDialog.location")));
         panChooser.add(comboLocation);
 
+        // The general panel is shown under the chosen location rather than as another location to choose. There is
+        // no general part of a unit to click on the diagram, so a panel that had to be chosen there was a panel
+        // nobody would find, and what is in it - the unit's condition, its heat, its systems - is always relevant.
+        JPanel panPanels = new JPanel();
+        panPanels.setLayout(new BoxLayout(panPanels, BoxLayout.PAGE_AXIS));
+        panCards.setAlignmentX(Component.LEFT_ALIGNMENT);
+        panPanels.add(panCards);
+        if (controls.panGeneral != null) {
+            controls.panGeneral.setAlignmentX(Component.LEFT_ALIGNMENT);
+            panPanels.add(controls.panGeneral);
+        }
+
         JPanel panRight = new JPanel(new BorderLayout());
         panRight.add(panChooser, BorderLayout.PAGE_START);
-        panRight.add(new JScrollPane(panCards), BorderLayout.CENTER);
+        panRight.add(new JScrollPane(panPanels), BorderLayout.CENTER);
 
         // The user can drag the divider to trade diagram size against panel size; the position is remembered.
         splitPane = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT, new JScrollPane(paperdoll), panRight);

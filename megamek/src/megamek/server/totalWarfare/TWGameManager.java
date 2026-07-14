@@ -26505,9 +26505,8 @@ public class TWGameManager extends AbstractGameManager {
             return;
         }
 
-        LOGGER.debug("Applying update for {} from {}",
-              oldEntity.getDisplayName(),
-              (sender == null) ? "an unknown connection" : sender.getName());
+        // the sender cannot be null here: senderCanUpdateEntity rejects an update from an unknown connection
+        LOGGER.debug("Applying update for {} from {}", oldEntity.getDisplayName(), sender.getName());
         game.setEntity(entity.getId(), entity);
         entityUpdate(entity.getId());
         if (entity.isPartOfFighterSquadron()) {

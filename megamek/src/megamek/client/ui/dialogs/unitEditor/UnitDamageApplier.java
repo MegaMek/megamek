@@ -64,6 +64,9 @@ public class UnitDamageApplier {
         this.controls = controls;
     }
 
+    /**
+     * Applies the given number of total crits to a Super-Cooled Myomer, which is spread over 6 locations.
+     */
     private void damageSCM(Entity entity, int equipmentNumber, int hits) {
         int numHits = 0;
         Mounted<?> mounted = entity.getEquipment(equipmentNumber);
@@ -202,14 +205,14 @@ public class UnitDamageApplier {
                 }
 
                 if (entity instanceof QuadVee) {
-                    for (int j = 0; j < controls.actuatorCrits.length; j++) {
-                        CheckCritPanel actuatorCrit = controls.actuatorCrits[i][4];
-                        if (null == actuatorCrit) {
-                            continue;
-                        }
-                        int location = i + Mek.LOC_RIGHT_ARM;
-                        int actuator = QuadVee.SYSTEM_CONVERSION_GEAR;
-                        entity.damageSystem(CriticalSlot.TYPE_SYSTEM, actuator, location, actuatorCrit.getHits());
+                    // A leg carries one conversion gear, so it is applied once. This used to be written as a loop
+                    // that ran four times over the same control, applying the same hits to the same gear.
+                    CheckCritPanel conversionGearCrit = controls.actuatorCrits[i][UnitDamageControls.CONVERSION_GEAR_INDEX];
+                    if (null != conversionGearCrit) {
+                        entity.damageSystem(CriticalSlot.TYPE_SYSTEM,
+                              QuadVee.SYSTEM_CONVERSION_GEAR,
+                              i + Mek.LOC_RIGHT_ARM,
+                              conversionGearCrit.getHits());
                     }
                 }
             }

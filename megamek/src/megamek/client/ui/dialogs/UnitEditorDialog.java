@@ -150,8 +150,11 @@ public class UnitEditorDialog extends JDialog implements LocationSelectListener 
     /** Whether the user opening this dialog is a gamemaster; only they may roll pre-existing damage. */
     private final boolean gameMaster;
 
-    /** The client to destroy the unit through; null where there is no game, as in MekHQ and MegaMekLab. */
+    /** The client to destroy the unit through; {@code null} where there is no game, as in MekHQ and MegaMekLab. */
     private final Client client;
+
+    /** The window to center on the first time this dialog is opened, before it has a remembered position. */
+    private final JFrame parent;
 
     /**
      * Opens the dialog without the pre-existing damage roller. Used where there is no gamemaster to speak of, such as
@@ -187,8 +190,8 @@ public class UnitEditorDialog extends JDialog implements LocationSelectListener 
         this.entity = entity;
         this.gameMaster = gameMaster;
         this.client = client;
+        this.parent = parent;
         initComponents();
-        setLocationRelativeTo(parent);
     }
 
     private void initComponents() {
@@ -256,7 +259,10 @@ public class UnitEditorDialog extends JDialog implements LocationSelectListener 
         setSize(Math.min(getWidth() + UIUtil.scaleForGUI(30), (int) (screenSize.width * 0.9)),
               Math.min(getHeight() + UIUtil.scaleForGUI(30), (int) (screenSize.height * 0.9)));
 
-        // last, so that a size, position and divider the user chose before override the ones worked out above
+        // Center on the parent first, for the first time the dialog is ever opened. setPreferences comes after, so
+        // that a size, position and divider the user chose before win over both the centering and the size worked
+        // out above; centering afterwards would throw the remembered position away.
+        setLocationRelativeTo(parent);
         setPreferences();
     }
 

@@ -368,10 +368,10 @@ class UnitEditorDialogTest {
 
     /** Finds the spinner that sits next to the given label, which is how the dialog lays out its controls. */
     private static JSpinner findSpinnerAfterLabel(UnitEditorDialog dialog, String labelText) {
-        return findSpinnerAfterLabel(dialog.getContentPane(), labelText);
+        return findSpinnerAfterLabelInContainer(dialog.getContentPane(), labelText);
     }
 
-    private static JSpinner findSpinnerAfterLabel(Container container, String labelText) {
+    private static JSpinner findSpinnerAfterLabelInContainer(Container container, String labelText) {
         Component[] components = container.getComponents();
         for (int index = 0; index < components.length; index++) {
             if ((components[index] instanceof JLabel label)
@@ -381,7 +381,7 @@ class UnitEditorDialogTest {
                 return spinner;
             }
             if (components[index] instanceof Container child) {
-                JSpinner found = findSpinnerAfterLabel(child, labelText);
+                JSpinner found = findSpinnerAfterLabelInContainer(child, labelText);
                 if (found != null) {
                     return found;
                 }

@@ -596,7 +596,7 @@ public class UnitDamagePanelBuilder {
             if (entity instanceof QuadVee) {
                 CheckCritPanel actuatorCrit = new CheckCritPanel(1,
                       entity.getDamagedCriticalSlots(CriticalSlot.TYPE_SYSTEM, QuadVee.SYSTEM_CONVERSION_GEAR, location));
-                controls.actuatorCrits[location - Mek.LOC_RIGHT_ARM][Mek.ACTUATOR_FOOT - Mek.ACTUATOR_HIP + 1] = actuatorCrit;
+                controls.actuatorCrits[location - Mek.LOC_RIGHT_ARM][UnitDamageControls.CONVERSION_GEAR_INDEX] = actuatorCrit;
                 addCritRow(location, ((Mek) entity).getSystemName(QuadVee.SYSTEM_CONVERSION_GEAR),
                       actuatorCrit);
             }
@@ -883,7 +883,4 @@ public class UnitDamagePanelBuilder {
         }
     }
 
-    /**
-     * Applies the given number of total crits to a Super-Cooled Myomer (which is spread over 6 locations).
-     */
 }

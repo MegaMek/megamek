@@ -53,7 +53,6 @@ import megamek.common.options.OptionsConstants;
 import megamek.common.units.Entity;
 import megamek.common.units.IBuilding;
 import megamek.common.units.Infantry;
-import megamek.common.units.ConvInfantry;
 import megamek.common.weapons.DamageType;
 import megamek.server.totalWarfare.TWGameManager;
 
@@ -88,7 +87,7 @@ public class RifleWeaponHandler extends AmmoWeaponHandler {
             toReturn = Compute.directBlowInfantryDamage(toReturn,
                   bDirect ? toHit.getMoS() : 0,
                   weaponType.getInfantryDamageClass(),
-                  ((ConvInfantry) target).isMechanized(),
+                  ((Infantry) target).isMechanized(),
                   toHit.getThruBldg() != null, attackingEntity.getId(), calcDmgPerHitReport);
         } else if (bDirect) {
             toReturn = Math.min(toReturn + (int) floor(toHit.getMoS() / 3.0), toReturn * 2);

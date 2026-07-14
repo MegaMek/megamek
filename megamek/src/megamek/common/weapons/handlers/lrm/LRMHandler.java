@@ -57,7 +57,6 @@ import megamek.common.rolls.TargetRoll;
 import megamek.common.units.Entity;
 import megamek.common.units.IBuilding;
 import megamek.common.units.Infantry;
-import megamek.common.units.ConvInfantry;
 import megamek.common.units.Mek;
 import megamek.common.units.Tank;
 import megamek.common.units.Targetable;
@@ -427,7 +426,7 @@ public class LRMHandler extends MissileWeaponHandler {
             double toReturn = Compute.directBlowInfantryDamage(
                   effectiveRack, bDirect ? toHit.getMoS() / 3 : 0,
                   weaponType.getInfantryDamageClass(),
-                  ((ConvInfantry) target).isMechanized(),
+                  ((Infantry) target).isMechanized(),
                   toHit.getThruBldg() != null, attackingEntity.getId(), calcDmgPerHitReport);
 
             // Add incendiary bonus damage and report it

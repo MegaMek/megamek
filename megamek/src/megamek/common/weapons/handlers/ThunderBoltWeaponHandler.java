@@ -52,7 +52,6 @@ import megamek.common.options.OptionsConstants;
 import megamek.common.rolls.Roll;
 import megamek.common.units.Entity;
 import megamek.common.units.Infantry;
-import megamek.common.units.ConvInfantry;
 import megamek.common.units.Targetable;
 import megamek.server.totalWarfare.TWGameManager;
 
@@ -94,7 +93,7 @@ public class ThunderBoltWeaponHandler extends MissileWeaponHandler {
             toReturn = Compute.directBlowInfantryDamage(toReturn,
                   bDirect ? toHit.getMoS() / 3 : 0,
                   weaponType.getInfantryDamageClass(),
-                  ((ConvInfantry) target).isMechanized(),
+                  ((Infantry) target).isMechanized(),
                   toHit.getThruBldg() != null, attackingEntity.getId(), calcDmgPerHitReport);
         } else if (bDirect) {
             toReturn = Math.min(toReturn + (int) floor(toHit.getMoS() / 3.0), toReturn * 2);

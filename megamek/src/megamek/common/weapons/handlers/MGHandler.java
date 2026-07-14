@@ -50,7 +50,6 @@ import megamek.common.loaders.EntityLoadingException;
 import megamek.common.options.OptionsConstants;
 import megamek.common.rolls.TargetRoll;
 import megamek.common.units.Infantry;
-import megamek.common.units.ConvInfantry;
 import megamek.common.weapons.DamageType;
 import megamek.server.totalWarfare.TWGameManager;
 
@@ -93,7 +92,7 @@ public class MGHandler extends AmmoWeaponHandler {
                 toReturn = Compute.directBlowInfantryDamage(
                       weaponType.getDamage(), bDirect ? toHit.getMoS() / 3 : 0,
                       weaponType.getInfantryDamageClass(),
-                      ((ConvInfantry) target).isMechanized(),
+                      ((Infantry) target).isMechanized(),
                       toHit.getThruBldg() != null, weaponEntity.getId(), calcDmgPerHitReport);
 
                 toReturn = applyGlancingBlowModifier(toReturn, true);

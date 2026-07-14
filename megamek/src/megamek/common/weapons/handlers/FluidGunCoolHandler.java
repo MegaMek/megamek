@@ -48,7 +48,6 @@ import megamek.common.rolls.Roll;
 import megamek.common.units.Entity;
 import megamek.common.units.IBuilding;
 import megamek.common.units.Infantry;
-import megamek.common.units.ConvInfantry;
 import megamek.common.units.Mek;
 import megamek.common.units.Tank;
 import megamek.server.totalWarfare.TWGameManager;
@@ -79,7 +78,7 @@ public class FluidGunCoolHandler extends AmmoWeaponHandler {
             nDamPerHit = Compute.directBlowInfantryDamage(1,
                   bDirect ? toHit.getMoS() / 3 : 0,
                   WeaponType.WEAPON_DIRECT_FIRE,
-                  ((ConvInfantry) target).isMechanized(),
+                  ((Infantry) target).isMechanized(),
                   toHit.getThruBldg() != null);
             super.handleEntityDamage(entityTarget, vPhaseReport, building, hits, nCluster, bldgAbsorbs);
         }

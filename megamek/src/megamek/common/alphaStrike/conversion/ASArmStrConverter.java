@@ -45,7 +45,6 @@ import megamek.common.units.Aero;
 import megamek.common.units.ConvInfantry;
 import megamek.common.units.Entity;
 import megamek.common.units.Infantry;
-import megamek.common.units.ConvInfantry;
 import megamek.common.units.Jumpship;
 import megamek.common.units.Mek;
 import megamek.common.units.ProtoMek;
@@ -87,7 +86,7 @@ final class ASArmStrConverter {
         if (entity instanceof ConvInfantry infantry) {
             double divisor = infantry.calcDamageDivisor();
             report.addLine("Infantry Damage Divisor:", "", divisor);
-            if (((ConvInfantry) entity).isMechanized()) {
+            if (((Infantry) entity).isMechanized()) {
                 divisor /= 2.0;
                 report.addLine("Mechanized", "/ 2", "= ", divisor);
             }

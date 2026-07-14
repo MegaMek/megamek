@@ -51,7 +51,6 @@ import megamek.common.loaders.EntityLoadingException;
 import megamek.common.units.Entity;
 import megamek.common.units.IBuilding;
 import megamek.common.units.Infantry;
-import megamek.common.units.ConvInfantry;
 import megamek.common.units.Mek;
 import megamek.common.units.Tank;
 import megamek.common.weapons.DamageType;
@@ -176,7 +175,7 @@ public class SRMTandemChargeHandler extends SRMHandler {
             double toReturn = Compute.directBlowInfantryDamage(
                   weaponType.getRackSize(), bDirect ? toHit.getMoS() / 3 : 0,
                   weaponType.getInfantryDamageClass(),
-                  ((ConvInfantry) target).isMechanized(),
+                  ((Infantry) target).isMechanized(),
                   toHit.getThruBldg() != null, attackingEntity.getId(), calcDmgPerHitReport);
 
             toReturn = applyGlancingBlowModifier(toReturn, true);

@@ -49,7 +49,6 @@ import megamek.common.game.Game;
 import megamek.common.loaders.EntityLoadingException;
 import megamek.common.units.Entity;
 import megamek.common.units.Infantry;
-import megamek.common.units.ConvInfantry;
 import megamek.common.units.Targetable;
 import megamek.common.weapons.handlers.StreakHandler;
 import megamek.server.totalWarfare.TWGameManager;
@@ -76,7 +75,7 @@ public class StreakLRMHandler extends StreakHandler {
             return Compute.directBlowInfantryDamage(
                   weaponType.getRackSize(), bDirect ? toHit.getMoS() / 3 : 0,
                   weaponType.getInfantryDamageClass(),
-                  ((ConvInfantry) target).isMechanized(),
+                  ((Infantry) target).isMechanized(),
                   toHit.getThruBldg() != null, attackingEntity.getId(), calcDmgPerHitReport);
         }
         return 1;

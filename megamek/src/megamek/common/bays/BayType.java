@@ -44,7 +44,6 @@ import megamek.common.interfaces.ITechnologyDelegator;
 import megamek.common.units.Entity;
 import megamek.common.units.EntityMovementMode;
 import megamek.common.units.Infantry;
-import megamek.common.units.ConvInfantry;
 import megamek.common.units.PlatoonType;
 
 /**
@@ -68,7 +67,7 @@ public enum BayType implements ITechnologyDelegator {
     INFANTRY_MOTORIZED(BayType.CATEGORY_INFANTRY, 7.0, 1.0, 28, 15000, e -> e.hasETypeFlag(Entity.ETYPE_INFANTRY)
           && (e.getMovementMode() == EntityMovementMode.INF_MOTORIZED), InfantryBay.techAdvancement()),
     INFANTRY_MECHANIZED(BayType.CATEGORY_INFANTRY, 8.0, 1.0, 5, 15000, e -> e.hasETypeFlag(Entity.ETYPE_INFANTRY)
-          && ((ConvInfantry) e).isMechanized(), InfantryBay.techAdvancement()),
+          && ((Infantry) e).isMechanized(), InfantryBay.techAdvancement()),
     BATTLEARMOR_IS(BayType.CATEGORY_INFANTRY, 8.0, 1.0, 6, 15000, e -> e.hasETypeFlag(Entity.ETYPE_BATTLEARMOR)
           && (((BattleArmor) e).getSquadSize() <= 4), BattleArmorBay.techAdvancement()),
     BATTLEARMOR_CLAN(BayType.CATEGORY_INFANTRY, 10.0, 1.0, 6, 15000, e -> e.hasETypeFlag(Entity.ETYPE_BATTLEARMOR)

@@ -3151,10 +3151,7 @@ public class MoveStep implements Serializable {
         final Hex destHex = game.getBoard(boardId).getHex(getPosition());
         final boolean isInfantry = getEntity() instanceof Infantry;
         final boolean isSuperHeavyMek = (getEntity() instanceof Mek mek) && mek.isSuperHeavy();
-        final boolean isMechanizedInfantry = isInfantry 
-                                             && ( (getEntity() instanceof ConvInfantry
-                                             ? ((ConvInfantry) getEntity()).isMechanized() 
-                                             : ((Infantry) getEntity()).isMechanized()) );
+        final boolean isMechanizedInfantry = isInfantry && ((Infantry) getEntity()).isMechanized();
         final boolean isProto = getEntity() instanceof ProtoMek;
         final boolean isMek = getEntity() instanceof Mek;
         final boolean isAmphibious = cachedEntityState.hasWorkingMisc(MiscType.F_FULLY_AMPHIBIOUS) ||

@@ -103,7 +103,7 @@ public class InfantryFireControl extends FireControl {
         boolean inOpen = ServerHelper.infantryInOpen(target, targetHex, target.getGame(), targetIsPlatoon, false,
               false);
         boolean nonInfantryVsMechanized = !shooter.hasETypeFlag(Entity.ETYPE_INFANTRY)
-              && target.hasETypeFlag(Entity.ETYPE_INFANTRY) && ((ConvInfantry) target).isMechanized();
+              && target.hasETypeFlag(Entity.ETYPE_INFANTRY) && ((Infantry) target).isMechanized();
 
         // cycle through my weapons
         for (final WeaponMounted weapon : shooter.getWeaponList()) {

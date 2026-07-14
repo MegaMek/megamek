@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2016-2025 The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2016-2026 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -196,9 +196,11 @@ public class RATGenerator {
 
         AvailabilityRating retVal = null;
         if (chassisIndex.containsKey(era) && chassisIndex.get(era).containsKey(unit)) {
+            Map<String, AvailabilityRating> unitAvailability = chassisIndex.get(era).get(unit);
+            AvailabilityRating lineageAvailability = findLineageAvailability(unitAvailability, factionRecord, year);
 
-            if (chassisIndex.get(era).get(unit).containsKey(factionRecord.getKey())) {
-                retVal = chassisIndex.get(era).get(unit).get(factionRecord.getKey());
+            if (lineageAvailability != null) {
+                retVal = lineageAvailability;
             } else if (factionRecord.getParentFactions().size() == 1) {
                 retVal = findChassisAvailabilityRecord(era, unit, factionRecord.getParentFactions().getFirst(), year);
             } else if (!factionRecord.getParentFactions().isEmpty()) {
@@ -212,7 +214,7 @@ public class RATGenerator {
                 retVal = mergeFactionAvailability(factionRecord.getKey(), list);
 
             } else {
-                retVal = chassisIndex.get(era).get(unit).get("General");
+                retVal = unitAvailability.get("General");
             }
         }
 
@@ -220,6 +222,28 @@ public class RATGenerator {
             return retVal;
         }
 
+        return null;
+    }
+
+    /**
+     * Looks up the availability rating for a faction within a single unit's per-code availability map, trying the
+     * faction's lineage codes - its own key plus any historical rename {@link FactionRecord#getAliases() aliases} - in
+     * era-active-first order. For a faction without aliases this checks only its own key, so behavior is unchanged.
+     *
+     * @param unitAvailability the availability ratings for a single unit in a single era, keyed by faction code
+     * @param factionRecord    the faction whose availability is sought
+     * @param year             the game year, used to pick the era-active alias first
+     *
+     * @return the first matching {@link AvailabilityRating}, or {@code null} if no lineage code is listed
+     */
+    private @Nullable AvailabilityRating findLineageAvailability(Map<String, AvailabilityRating> unitAvailability,
+          FactionRecord factionRecord, int year) {
+        for (String lineageCode : factionRecord.getLineageCodesForYear(year)) {
+            AvailabilityRating availabilityRating = unitAvailability.get(lineageCode);
+            if (availabilityRating != null) {
+                return availabilityRating;
+            }
+        }
         return null;
     }
 
@@ -267,9 +291,12 @@ public class RATGenerator {
         }
 
         if (modelIndex.containsKey(era) && modelIndex.get(era).containsKey(unit)) {
-            // If the provided faction is directly specified, return its availability
-            if (modelIndex.get(era).get(unit).containsKey(factionRecord.getKey())) {
-                return modelIndex.get(era).get(unit).get(factionRecord.getKey());
+            // If the provided faction (or one of its lineage aliases) is directly specified, return its availability.
+            // The era stands in for the year when resolving the era-active alias, since no specific year is supplied.
+            AvailabilityRating lineageAvailability =
+                  findLineageAvailability(modelIndex.get(era).get(unit), factionRecord, era);
+            if (lineageAvailability != null) {
+                return lineageAvailability;
             }
 
             // If the provided faction has a single parent, return its availability
@@ -1448,6 +1475,29 @@ public class RATGenerator {
         // Since the unification of MHQ and RatGen factions, every faction can create a FactionRecord but not every
         // FactionRecord has enough data to produce units, so remove those
         factions.values().removeIf(fr -> fr.getRatingLevelSystem().isEmpty());
+        registerFactionAliases();
+    }
+
+    /**
+     * Registers each faction's historical code aliases (see {@link FactionRecord#getAliases()}) as additional keys
+     * pointing at the surviving {@link FactionRecord}, so that availability tokens still written under a retired code
+     * (for example {@code CEI:5} after Clan Goliath Scorpion absorbed the Escorpion Imperio into its {@code CGS} key)
+     * are recognized at load and resolve to the surviving faction. Runs after the real factions are indexed, so a real
+     * faction always wins over an alias claiming the same code.
+     */
+    private void registerFactionAliases() {
+        for (FactionRecord factionRecord : new ArrayList<>(factions.values())) {
+            for (String aliasCode : factionRecord.getAliases().values()) {
+                FactionRecord existing = factions.get(aliasCode);
+                if (existing == null) {
+                    factions.put(aliasCode, factionRecord);
+                    LOGGER.debug("[FactionAlias] {} registered as an alias of {}", aliasCode, factionRecord.getKey());
+                } else if (existing != factionRecord) {
+                    LOGGER.warn("[FactionAlias] Alias {} for faction {} collides with faction {}; keeping {}.",
+                          aliasCode, factionRecord.getKey(), existing.getKey(), existing.getKey());
+                }
+            }
+        }
     }
 
     /**

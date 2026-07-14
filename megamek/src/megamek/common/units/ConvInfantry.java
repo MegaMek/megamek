@@ -1074,6 +1074,7 @@ public class ConvInfantry extends Infantry {
             if ((getSecondaryWeaponsPerSquad() > 1)
                   && !hasAbility(OptionsConstants.MD_TSM_IMPLANT)
                   && !hasAbility(OptionsConstants.MD_DERMAL_ARMOR)
+                  && !hasNonEncumberingSecondaryWeaponSpecialization()
                   && (null != secondaryWeapon)
                   && secondaryWeapon.hasFlag(WeaponType.F_INF_SUPPORT)
                   && !getMovementMode().isTracked()
@@ -1400,6 +1401,10 @@ public class ConvInfantry extends Infantry {
         return secondaryWeaponsPerSquad;
     }
 
+    private boolean hasNonEncumberingSecondaryWeaponSpecialization() {
+        return hasSpecialization(PARAMEDICS | TAG_TROOPS);
+    }
+
     public double getDamagePerTrooper() {
         if (null == primaryWeapon) {
             return 0;
@@ -1592,6 +1597,7 @@ public class ConvInfantry extends Infantry {
             if ((getSecondaryWeaponsPerSquad() > 1) &&
                   !hasAbility(OptionsConstants.MD_TSM_IMPLANT) &&
                   !hasAbility(OptionsConstants.MD_DERMAL_ARMOR) &&
+                  !hasNonEncumberingSecondaryWeaponSpecialization() &&
                   !getMovementMode().isSubmarine() &&
                   (null != secondaryWeapon) &&
                   secondaryWeapon.hasFlag(WeaponType.F_INF_SUPPORT)) {

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2017-2025 The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2017-2026 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -238,12 +238,17 @@ public class CompositeTechLevel implements ITechnology, Serializable {
              * tech ranges may need to be converted to experimental
              */
             if (experimental == null) {
-                if (advanced != null && prodDate > advanced) {
-                    experimental = advanced;
-                } else if (advanced != null && prodDate < advanced) {
-                    experimental = protoDate;
+                if (advanced != null) {
+                    if (prodDate > advanced) {
+                        experimental = advanced;
+                    } else if (prodDate < advanced) {
+                        experimental = protoDate;
+                    }
+                    /* When the component enters production in the same year the composite already does,
+                     * none of the existing production range becomes experimental and the composite is
+                     * left untouched.
+                     */
                 } else if (standard != null) {
-                    advanced = null;
                     if (prodDate > standard) {
                         experimental = standard;
                     } else {

@@ -41,6 +41,7 @@ import java.util.EnumMap;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import megamek.common.annotations.Nullable;
 import megamek.common.enums.AvailabilityValue;
 import megamek.common.enums.Era;
 import megamek.common.enums.Faction;
@@ -200,6 +201,40 @@ public class CompositeTechLevel implements ITechnology, Serializable {
      * @param tech - the advancement for the new component
      */
     public void addComponent(ITechnology tech) {
+        addComponent(tech, null);
+    }
+
+    /**
+     * Adjust the dates for various tech levels to account for the tech advancement of a new component, giving the
+     * component a name for reporting purposes.
+     * <p>
+     * Most components can name themselves ({@link megamek.common.equipment.EquipmentType} and
+     * {@link megamek.common.equipment.Engine}), but system components such as the armor, the internal structure or a
+     * gyro are passed as bare {@link TechAdvancement} objects that carry no name. Those call sites supply one here so
+     * that a tech level report can identify every row.
+     *
+     * @param tech          - the advancement for the new component
+     * @param componentName - the name to report this component under, or {@code null} to derive the name from the
+     *                      component itself
+     */
+    public void addComponent(ITechnology tech, @Nullable String componentName) {
+        applyComponent(tech);
+        recordComponent(tech, componentName);
+    }
+
+    /**
+     * Called after every component has been folded into this composite. Does nothing by default; subclasses may
+     * override it to record the components that make up the composite. See
+     * {@link RecordingCompositeTechLevel}.
+     *
+     * @param tech          - the advancement of the component that was just added
+     * @param componentName - the name supplied for the component, or {@code null} if none was given
+     */
+    protected void recordComponent(ITechnology tech, @Nullable String componentName) {
+        // Nothing is recorded during normal play; recording is opt-in through a subclass.
+    }
+
+    private void applyComponent(ITechnology tech) {
         int protoDate = mixed ? tech.getPrototypeDate() : tech.getPrototypeDate(clan, techFaction);
         int prodDate = mixed ? tech.getProductionDate() : tech.getProductionDate(clan, techFaction);
         int commonDate = mixed ? tech.getCommonDate() : tech.getCommonDate(clan);

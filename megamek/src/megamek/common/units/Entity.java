@@ -1587,21 +1587,47 @@ public abstract class Entity extends TurnOrdered
      */
     public void recalculateTechAdvancement() {
         initTechAdvancement();
-        for (Mounted<?> m : getEquipment()) {
+        addEquipmentTechAdvancement(compositeTechLevel);
+    }
+
+    /**
+     * Folds every mounted item on this unit into the given composite tech level.
+     *
+     * @param techLevel The composite tech level to add this unit's equipment to
+     */
+    private void addEquipmentTechAdvancement(CompositeTechLevel techLevel) {
+        for (Mounted<?> mounted : getEquipment()) {
             // ProtoMek EI is built-in per IO:AE p.69 -- only count toward tech level
             // in Full Tracking mode (Off and Pilot Only = Standard tech)
             if (isProtoMek()
-                  && (m.getType() instanceof MiscType)
-                  && m.getType().hasFlag(MiscType.F_EI_INTERFACE)
+                  && (mounted.getType() instanceof MiscType)
+                  && mounted.getType().hasFlag(MiscType.F_EI_INTERFACE)
                   && !isNeuralInterfaceFullTracking()) {
                 continue;
             }
 
-            compositeTechLevel.addComponent(m.getType());
-            if (m.isArmored()) {
-                compositeTechLevel.addComponent(TA_ARMORED_COMPONENT);
+            techLevel.addComponent(mounted.getType());
+            if (mounted.isArmored()) {
+                techLevel.addComponent(TA_ARMORED_COMPONENT, "Armored component");
             }
         }
+    }
+
+    /**
+     * Rebuilds this unit's composite tech level, recording each component as it is folded in so that a report can show
+     * where the unit's tech level comes from. The result is calculated exactly as {@link #recalculateTechAdvancement()}
+     * calculates the unit's real tech level, so it always agrees with it.
+     *
+     * @param techFaction    The faction to evaluate faction-specific dates for
+     * @param evaluationYear The year to evaluate each component's variable tech level in
+     *
+     * @return A composite tech level that knows every component that went into it
+     */
+    public RecordingCompositeTechLevel recordedTechLevel(Faction techFaction, int evaluationYear) {
+        RecordingCompositeTechLevel recorded = new RecordingCompositeTechLevel(this, techFaction, evaluationYear);
+        addSystemTechAdvancement(recorded);
+        addEquipmentTechAdvancement(recorded);
+        return recorded;
     }
 
     protected static final TechAdvancement TA_OMNI = new TechAdvancement(TechBase.ALL).setISAdvancement(DATE_NONE,
@@ -1704,27 +1730,34 @@ public abstract class Entity extends TurnOrdered
     /**
      * Incorporate dates for components that are not in the equipment list, such as engines and structure.
      */
-    protected void addSystemTechAdvancement(CompositeTechLevel ctl) {
+    protected void addSystemTechAdvancement(CompositeTechLevel techLevel) {
         if (hasEngine()) {
-            ctl.addComponent(getEngine());
+            techLevel.addComponent(getEngine());
         }
         if (isOmni()) {
-            ctl.addComponent(TA_OMNI);
+            techLevel.addComponent(TA_OMNI, "Omni configuration");
         }
         if (hasPatchworkArmor()) {
-            ctl.addComponent(TA_PATCHWORK_ARMOR);
+            techLevel.addComponent(TA_PATCHWORK_ARMOR, "Patchwork armor");
             for (int loc = 0; loc < locations(); loc++) {
-                ctl.addComponent(ArmorType.forEntity(this, loc).getTechAdvancement());
+                ArmorType locationArmor = ArmorType.forEntity(this, loc);
+                techLevel.addComponent(locationArmor.getTechAdvancement(),
+                      "Armor (" + getLocationAbbr(loc) + "): " + locationArmor.getName());
             }
         } else {
             ArmorType armor = ArmorType.forEntity(this);
-            ctl.addComponent(armor.getTechAdvancement());
+            techLevel.addComponent(armor.getTechAdvancement(), "Armor: " + armor.getName());
         }
         if (isMixedTech()) {
-            ctl.addComponent(TA_MIXED_TECH);
+            techLevel.addComponent(TA_MIXED_TECH, "Mixed tech");
         }
-        ctl.addComponent(EquipmentType.getStructureTechAdvancement(structureType,
-              TechConstants.isClan(structureTechLevel)));
+        boolean isClanStructure = TechConstants.isClan(structureTechLevel);
+        // Unit types that have no internal structure type (battle armor, infantry) still contribute a blank
+        // advancement here, so name it generically rather than let the lookup report "UNKNOWN".
+        String structureName = (structureType == EquipmentType.T_STRUCTURE_UNKNOWN)
+              ? "Internal structure"
+              : "Internal structure: " + EquipmentType.getStructureTypeName(structureType, isClanStructure);
+        techLevel.addComponent(EquipmentType.getStructureTechAdvancement(structureType, isClanStructure), structureName);
     }
 
     public int getRecoveryTurn() {

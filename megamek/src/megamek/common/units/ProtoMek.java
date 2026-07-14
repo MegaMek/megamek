@@ -420,9 +420,9 @@ public class ProtoMek extends Entity {
     }
 
     @Override
-    protected void addSystemTechAdvancement(CompositeTechLevel ctl) {
+    protected void addSystemTechAdvancement(CompositeTechLevel techLevel) {
         if (interfaceCockpit) {
-            ctl.addComponent(TA_INTERFACE_COCKPIT);
+            techLevel.addComponent(TA_INTERFACE_COCKPIT, "Interface cockpit");
         }
     }
 

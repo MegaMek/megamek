@@ -34,8 +34,11 @@ package megamek.client.ratgenerator;
 
 import java.io.File;
 import java.lang.reflect.Field;
+import java.util.List;
+import java.util.Vector;
 
 import megamek.common.Configuration;
+import megamek.common.loaders.MekFileParser;
 import megamek.common.loaders.MekSummaryCache;
 import megamek.common.universe.Factions2;
 
@@ -60,6 +63,13 @@ import megamek.common.universe.Factions2;
  */
 final class ForceGeneratorTestFixture {
 
+    /**
+     * The test units that count as canon. Must stay sorted, because {@code MekFileParser} looks names up with a binary
+     * search. The custom units (Grimjack GRM-1A, Archer ARC-9X, Archer ARC-8Z) are deliberately absent, so that they
+     * are treated as custom and their unit-file availability is used.
+     */
+    private static final List<String> CANON_TEST_UNITS = List.of("Archer ARC-2R", "Atlas AS7-D");
+
     private ForceGeneratorTestFixture() {
     }
 
@@ -78,6 +88,11 @@ final class ForceGeneratorTestFixture {
         // Factions2 ignores Configuration.dataDir(), so point it at the test factions explicitly
         Factions2.setInstance(null);
         Factions2.getInstance(true);
+
+        // Entity.isCanon() is decided by docs/OfficialUnitList.txt, another build artifact that is absent on CI.
+        // Without this the list is empty, nothing counts as canon, and the canon-unit guard cannot be tested.
+        // Must be set before the units are parsed, since the canon flag is stamped on during the load.
+        MekFileParser.setCanonUnitNames(new Vector<>(CANON_TEST_UNITS));
 
         // Drop any cache another test class already built, so the test units are the ones that load
         resetMekSummaryCache();
@@ -101,6 +116,8 @@ final class ForceGeneratorTestFixture {
     static void reset() throws Exception {
         Factions2.setInstance(null);
         resetMekSummaryCache();
+        // Null restores the lazy default: the next unit load reads the real list again
+        MekFileParser.setCanonUnitNames(null);
     }
 
     /**

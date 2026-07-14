@@ -74,8 +74,13 @@ import megamek.logging.MMLogger;
  */
 public class MekSummary implements Serializable, ASCardDisplayable {
     /**
-     * Pinned so that adding a field no longer invalidates every player's units.cache. Bump only on a change that
-     * genuinely cannot be read back, and expect a full cache rebuild when you do.
+     * This class had no explicit serialVersionUID, so the JVM computed one from the field list. That meant every
+     * change to the fields silently invalidated units.cache, and this release changes them again, so one more rebuild
+     * happens on first run. {@code MekSummaryCache} catches the failure and rescans, so it heals itself.
+     * <p>
+     * Pinning it stops the next field addition from doing the same. Bump it only for a change that genuinely cannot
+     * be read back, and expect a full cache rebuild when you do.
+     * </p>
      */
     @Serial
     private static final long serialVersionUID = 1L;
@@ -725,7 +730,10 @@ public class MekSummary implements Serializable, ASCardDisplayable {
      * @return the availability entries, never {@code null}
      */
     public List<ForceGeneratorAvailability> getForceGeneratorAvailability() {
-        return (forceGeneratorAvailability == null) ? new ArrayList<>() : forceGeneratorAvailability;
+        // Empty rather than a fresh ArrayList: the Force Generator calls this for every unit in every era, so
+        // allocating here would churn. Null only happens for a summary read from a units.cache written before this
+        // field existed. Use the setter to change the entries; the returned list is not for mutating.
+        return (forceGeneratorAvailability == null) ? List.of() : forceGeneratorAvailability;
     }
 
     public void setForceGeneratorAvailability(List<ForceGeneratorAvailability> forceGeneratorAvailability) {

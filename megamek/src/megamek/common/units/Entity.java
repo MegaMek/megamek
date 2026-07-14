@@ -17918,7 +17918,10 @@ public abstract class Entity extends TurnOrdered
      * @return the availability entries, never {@code null}
      */
     public List<ForceGeneratorAvailability> getForceGeneratorAvailability() {
-        return (forceGeneratorAvailability == null) ? new ArrayList<>() : forceGeneratorAvailability;
+        // Empty rather than a fresh ArrayList: the Force Generator calls this for every unit in every era, so
+        // allocating here would churn. Null only happens for an Entity deserialized from a stream written before
+        // this field existed. Use the setter to change the entries; the returned list is not for mutating.
+        return (forceGeneratorAvailability == null) ? List.of() : forceGeneratorAvailability;
     }
 
     public void setForceGeneratorAvailability(List<ForceGeneratorAvailability> forceGeneratorAvailability) {

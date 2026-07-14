@@ -981,24 +981,23 @@ public class TestMek extends TestEntity {
                     }
                 }
             }
-            if (misc.hasFlag(MiscType.F_HEAD_TURRET) && isCockpitLocation(Mek.LOC_HEAD)) {
-                illegal = true;
-                buff.append("head turret requires torso mounted cockpit\n");
-            }
 
+            // Tactical Operations: Advanced Rules & Equipment, p. 158
             if (misc.hasFlag(MiscType.F_SHOULDER_TURRET) && mek instanceof QuadMek) {
                 illegal = true;
-                buff.append("quad meks can't mount shoulder turrets\n");
+                buff.append("Quad meks can't mount shoulder turrets\n");
             }
 
-            if (misc.hasFlag(MiscType.F_SHOULDER_TURRET)) {
-                if (m.getLocation() != Mek.LOC_RIGHT_TORSO
-                      && m.getLocation() != Mek.LOC_LEFT_TORSO) {
-                    if (mek.countWorkingMisc(MiscType.F_SHOULDER_TURRET, m.getLocation()) > 1) {
-                        illegal = true;
-                        buff.append("max of 1 shoulder turret per side torso\n");
-                    }
-                }
+            // Tactical Operations: Advanced Rules & Equipment, p. 158
+            if (misc.hasFlag(MiscType.F_HEAD_TURRET) && isCockpitLocation(Mek.LOC_HEAD)) {
+                illegal = true;
+                buff.append("Head turret requires torso mounted cockpit\n");
+            }
+
+            // Tactical Operations: Advanced Rules & Equipment, p. 158
+            if (misc.hasFlag(MiscType.F_QUAD_TURRET) && !(mek instanceof QuadMek)) {
+                illegal = true;
+                buff.append("Only quad meks can mount quad turrets\n");
             }
 
             if (misc.hasFlag(MiscType.F_TRACKS)) {
@@ -1132,6 +1131,25 @@ public class TestMek extends TestEntity {
                 buff.append("Quad meks and meks with torso cockpits may only mount a chain drape as a Cape");
                 illegal = true;
             }
+        }
+
+        // Tactical Operations: Advanced Rules & Equipment, p. 158
+        if (mek.countWorkingMisc(MiscType.F_SHOULDER_TURRET, Mek.LOC_LEFT_TORSO) > 1
+              || mek.countWorkingMisc(MiscType.F_SHOULDER_TURRET, Mek.LOC_RIGHT_TORSO) > 1) {
+            illegal = true;
+            buff.append("Max of 1 shoulder turret per side torso\n");
+        }
+
+        // Tactical Operations: Advanced Rules & Equipment, p. 158
+        if (mek.countWorkingMisc(MiscType.F_HEAD_TURRET) > 1) {
+            illegal = true;
+            buff.append("Max of 1 head turret\n");
+        }
+
+        // Tactical Operations: Advanced Rules & Equipment, p. 158
+        if (mek.countWorkingMisc(MiscType.F_QUAD_TURRET) > 1) {
+            illegal = true;
+            buff.append("Max of 1 quad turret\n");
         }
 
         if (mek.isSuperHeavy()) {

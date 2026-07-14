@@ -51,37 +51,44 @@ class ConvInfantrySupportWeaponMovementTest {
 
     @Test
     void supportWeaponsReduceGroundAndJumpMovement() {
-        ConvInfantry infantry = createJumpInfantry();
-        infantry.setSecondaryWeapon(infantryWeapon(EquipmentTypeLookup.INFANTRY_MORTAR_LIGHT));
+        ConvInfantry legInfantry = createInfantry(EntityMovementMode.INF_LEG,
+              EquipmentTypeLookup.INFANTRY_MORTAR_LIGHT, 0);
+        ConvInfantry jumpInfantry = createInfantry(EntityMovementMode.INF_JUMP,
+              EquipmentTypeLookup.INFANTRY_MORTAR_LIGHT, 0);
 
-        assertEquals(0, infantry.getWalkMP(MPCalculationSetting.NO_GRAVITY));
-        assertEquals(2, infantry.getJumpMP(MPCalculationSetting.NO_GRAVITY));
+        assertEquals(0, legInfantry.getWalkMP(MPCalculationSetting.NO_GRAVITY));
+        assertEquals(2, jumpInfantry.getJumpMP(MPCalculationSetting.NO_GRAVITY));
     }
 
     @Test
     void tagTroopsDoNotReduceGroundOrJumpMovement() {
-        ConvInfantry infantry = createJumpInfantry();
-        infantry.setSecondaryWeapon(infantryWeapon(EquipmentTypeLookup.INFANTRY_TAG));
-        infantry.setSpecializations(ConvInfantry.TAG_TROOPS);
+        ConvInfantry legInfantry = createInfantry(EntityMovementMode.INF_LEG,
+              EquipmentTypeLookup.INFANTRY_TAG, ConvInfantry.TAG_TROOPS);
+        ConvInfantry jumpInfantry = createInfantry(EntityMovementMode.INF_JUMP,
+              EquipmentTypeLookup.INFANTRY_TAG, ConvInfantry.TAG_TROOPS);
 
-        assertEquals(1, infantry.getWalkMP(MPCalculationSetting.NO_GRAVITY));
-        assertEquals(3, infantry.getJumpMP(MPCalculationSetting.NO_GRAVITY));
+        assertEquals(1, legInfantry.getWalkMP(MPCalculationSetting.NO_GRAVITY));
+        assertEquals(3, jumpInfantry.getJumpMP(MPCalculationSetting.NO_GRAVITY));
     }
 
     @Test
     void paramedicsDoNotReduceGroundOrJumpMovement() {
-        ConvInfantry infantry = createJumpInfantry();
-        infantry.setSecondaryWeapon(infantryWeapon(EquipmentTypeLookup.INFANTRY_MORTAR_LIGHT));
-        infantry.setSpecializations(ConvInfantry.PARAMEDICS);
+        ConvInfantry legInfantry = createInfantry(EntityMovementMode.INF_LEG,
+              EquipmentTypeLookup.INFANTRY_MORTAR_LIGHT, ConvInfantry.PARAMEDICS);
+        ConvInfantry jumpInfantry = createInfantry(EntityMovementMode.INF_JUMP,
+              EquipmentTypeLookup.INFANTRY_MORTAR_LIGHT, ConvInfantry.PARAMEDICS);
 
-        assertEquals(1, infantry.getWalkMP(MPCalculationSetting.NO_GRAVITY));
-        assertEquals(3, infantry.getJumpMP(MPCalculationSetting.NO_GRAVITY));
+        assertEquals(1, legInfantry.getWalkMP(MPCalculationSetting.NO_GRAVITY));
+        assertEquals(3, jumpInfantry.getJumpMP(MPCalculationSetting.NO_GRAVITY));
     }
 
-    private static ConvInfantry createJumpInfantry() {
+    private static ConvInfantry createInfantry(EntityMovementMode movementMode, String secondaryWeapon,
+          int specializations) {
         ConvInfantry infantry = new ConvInfantry();
-        infantry.setMovementMode(EntityMovementMode.INF_JUMP);
+        infantry.setMovementMode(movementMode);
         infantry.setSecondaryWeaponsPerSquad(2);
+        infantry.setSecondaryWeapon(infantryWeapon(secondaryWeapon));
+        infantry.setSpecializations(specializations);
         return infantry;
     }
 

@@ -81,6 +81,8 @@ public class RATGenerator {
     private final HashMap<String, ModelRecord> models;
     private final HashMap<String, ChassisRecord> chassis;
     private final HashMap<String, FactionRecord> factions;
+    /** Maps a retired/aliased faction code to the surviving canonical faction key; see {@link FactionRecord#getAliases()}. */
+    private final HashMap<String, String> factionAliases;
     private final HashMap<Integer, HashMap<String, HashMap<String, AvailabilityRating>>> modelIndex;
     private final HashMap<Integer, HashMap<String, HashMap<String, AvailabilityRating>>> chassisIndex;
 
@@ -115,6 +117,7 @@ public class RATGenerator {
         models = new HashMap<>();
         chassis = new HashMap<>();
         factions = new HashMap<>();
+        factionAliases = new HashMap<>();
         modelIndex = new HashMap<>();
         chassisIndex = new HashMap<>();
         eraSet = new TreeSet<>();
@@ -161,8 +164,9 @@ public class RATGenerator {
     }
 
     public AvailabilityRating findChassisAvailabilityRecord(int era, String unit, String faction, int year) {
-        if (factions.containsKey(faction)) {
-            return findChassisAvailabilityRecord(era, unit, factions.get(faction), year);
+        FactionRecord factionRecord = getFaction(faction);
+        if (factionRecord != null) {
+            return findChassisAvailabilityRecord(era, unit, factionRecord, year);
         }
 
         if (chassisIndex.containsKey(era) && chassisIndex.get(era).containsKey(unit)) {
@@ -248,8 +252,9 @@ public class RATGenerator {
     }
 
     public @Nullable AvailabilityRating findModelAvailabilityRecord(int era, String unit, String faction) {
-        if (factions.containsKey(faction)) {
-            return findModelAvailabilityRecord(era, unit, factions.get(faction));
+        FactionRecord factionRecord = getFaction(faction);
+        if (factionRecord != null) {
+            return findModelAvailabilityRecord(era, unit, factionRecord);
         }
         // Normalize the unit key to the canonical MekSummary name so name_changes aliases work.
         ModelRecord modelRecord = models.get(unit);
@@ -453,7 +458,14 @@ public class RATGenerator {
     }
 
     public FactionRecord getFaction(String key) {
-        return factions.get(key);
+        FactionRecord factionRecord = factions.get(key);
+        if (factionRecord == null) {
+            String canonicalKey = factionAliases.get(key);
+            if (canonicalKey != null) {
+                factionRecord = factions.get(canonicalKey);
+            }
+        }
+        return factionRecord;
     }
 
     public void addFaction(FactionRecord rec) {
@@ -1479,22 +1491,30 @@ public class RATGenerator {
     }
 
     /**
-     * Registers each faction's historical code aliases (see {@link FactionRecord#getAliases()}) as additional keys
-     * pointing at the surviving {@link FactionRecord}, so that availability tokens still written under a retired code
-     * (for example {@code CEI:5} after Clan Goliath Scorpion absorbed the Escorpion Imperio into its {@code CGS} key)
-     * are recognized at load and resolve to the surviving faction. Runs after the real factions are indexed, so a real
-     * faction always wins over an alias claiming the same code.
+     * Registers each faction's historical code aliases (see {@link FactionRecord#getAliases()}) in a separate
+     * alias-to-canonical map, so that availability tokens still written under a retired code (for example
+     * {@code CEI:5} after Clan Goliath Scorpion absorbed the Escorpion Imperio into its {@code CGS} key) are recognized
+     * at load and resolve to the surviving faction via {@link #getFaction(String)}. The aliases are kept out of the
+     * {@code factions} map itself so that iterations over {@link #getFactionList()} and RAT export do not see the same
+     * record under multiple keys. Runs after the real factions are indexed, so a real faction always wins over an alias
+     * claiming the same code.
      */
     private void registerFactionAliases() {
-        for (FactionRecord factionRecord : new ArrayList<>(factions.values())) {
+        for (FactionRecord factionRecord : factions.values()) {
             for (String aliasCode : factionRecord.getAliases().values()) {
-                FactionRecord existing = factions.get(aliasCode);
-                if (existing == null) {
-                    factions.put(aliasCode, factionRecord);
+                if (factions.containsKey(aliasCode)) {
+                    if (factions.get(aliasCode) != factionRecord) {
+                        LOGGER.warn("[FactionAlias] Alias {} for faction {} collides with an existing faction; " +
+                                    "keeping the existing faction.", aliasCode, factionRecord.getKey());
+                    }
+                    continue;
+                }
+                String previousKey = factionAliases.putIfAbsent(aliasCode, factionRecord.getKey());
+                if (previousKey != null && !previousKey.equals(factionRecord.getKey())) {
+                    LOGGER.warn("[FactionAlias] Alias {} is claimed by both {} and {}; keeping {}.",
+                          aliasCode, previousKey, factionRecord.getKey(), previousKey);
+                } else if (previousKey == null) {
                     LOGGER.debug("[FactionAlias] {} registered as an alias of {}", aliasCode, factionRecord.getKey());
-                } else if (existing != factionRecord) {
-                    LOGGER.warn("[FactionAlias] Alias {} for faction {} collides with faction {}; keeping {}.",
-                          aliasCode, factionRecord.getKey(), existing.getKey(), existing.getKey());
                 }
             }
         }
@@ -1641,13 +1661,13 @@ public class RATGenerator {
                 for (String code : codes) {
 
                     AvailabilityRating ar = new AvailabilityRating(chassisKey, era, code);
-                    FactionRecord chassisFaction = factions.get(ar.getFaction());
+                    FactionRecord chassisFaction = getFaction(ar.getFaction());
                     if (null != chassisFaction || code.startsWith("General")) {
 
                         // If it provides availability values based on equipment ratings,
                         // generate index values in addition to letter values
                         if (ar.hasMultipleRatings()) {
-                            ar.setRatingByNumericLevel(factions.get(ar.getFaction()));
+                            ar.setRatingByNumericLevel(chassisFaction);
                         }
 
                         cr.getIncludedFactions().add(ar.getFaction());
@@ -1717,12 +1737,12 @@ public class RATGenerator {
                 for (String code : codes) {
 
                     AvailabilityRating ar = new AvailabilityRating(modelRecord.getKey(), era, code);
-                    FactionRecord modelFaction = factions.get(ar.getFaction());
+                    FactionRecord modelFaction = getFaction(ar.getFaction());
                     if (null != modelFaction || code.startsWith("General")) {
                         // If it provides availability values based on equipment ratings,
                         // generate index values in addition to letter values
                         if (ar.hasMultipleRatings()) {
-                            ar.setRatingByNumericLevel(factions.get(ar.getFaction()));
+                            ar.setRatingByNumericLevel(modelFaction);
                         }
 
                         modelRecord.getIncludedFactions().add(ar.getFaction());

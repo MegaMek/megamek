@@ -161,7 +161,7 @@ public class FactionRecord {
                 setName(entry.getKey(), entry.getValue());
             }
         }
-        aliases.putAll(faction2.getAliases());
+        faction2.getAliases().forEach(this::addAlias);
     }
 
     @Override
@@ -208,7 +208,17 @@ public class FactionRecord {
     }
 
     public TreeMap<Integer, String> getAliases() {
-        return aliases;
+        return new TreeMap<>(aliases);
+    }
+
+    /**
+     * Adds a historical faction-code alias effective from the given year. See {@link #getAliases()}.
+     *
+     * @param year      the year the alias code became active
+     * @param aliasCode the retired faction code that resolves to this faction
+     */
+    public void addAlias(int year, String aliasCode) {
+        aliases.put(year, aliasCode);
     }
 
     /**

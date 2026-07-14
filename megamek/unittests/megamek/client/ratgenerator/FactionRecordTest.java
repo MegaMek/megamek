@@ -148,8 +148,8 @@ class FactionRecordTest {
     @Test
     void lineageCodesPreferEraActiveAliasFirst() {
         FactionRecord factionRecord = new FactionRecord("CGS");
-        factionRecord.getAliases().put(3080, "CEI");
-        factionRecord.getAliases().put(3141, "SE");
+        factionRecord.addAlias(3080, "CEI");
+        factionRecord.addAlias(3141, "SE");
 
         // Before the first alias year, the faction's own key is era-active.
         assertEquals(List.of("CGS", "CEI", "SE"), factionRecord.getLineageCodesForYear(3050));

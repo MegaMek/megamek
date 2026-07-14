@@ -458,8 +458,8 @@ public class MovePath implements Cloneable, Serializable {
     }
 
     /**
-     * Perform all the possible "is this illegal" checks. Short-circuits to omit unnecessary checks once the move has
-     * been declared illegal
+     * Perform all the possible "is this illegal" checks.
+     * Short-circuits to omit unnecessary checks once the move has been declared illegal
      */
     private void performIllegalCheck(MoveStep step, Coords start, Coords land) {
         // Ensure that the appropriate steps to flee from stuck or prone were taken
@@ -470,7 +470,7 @@ public class MovePath implements Cloneable, Serializable {
                     step.setMovementType(EntityMovementType.MOVE_ILLEGAL);
                     return;
                 }
-                else if(getEntity().isStuck()) {
+                else if (getEntity().isStuck()) {
                     // A stuck entity has to jump to move during the move path
                     if (!(contains(MoveStepType.START_JUMP))) {
                         step.setMovementType(EntityMovementType.MOVE_ILLEGAL);
@@ -491,6 +491,10 @@ public class MovePath implements Cloneable, Serializable {
                     if (emptyStepTypes) {
                         containedStepTypes.clear();
                     }
+                }
+                else {
+                    step.setMovementType(EntityMovementType.MOVE_ILLEGAL);
+                    return;
                 }
             }
         }

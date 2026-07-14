@@ -32,12 +32,15 @@
  */
 package megamek.common;
 
+import static org.junit.jupiter.api.Assertions.assertArrayEquals;
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.mockito.ArgumentMatchers.anyInt;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
 import java.util.Enumeration;
+import java.util.Map;
 
 import megamek.common.equipment.AmmoType.AmmoTypeEnum;
 import megamek.common.equipment.EquipmentType;
@@ -109,5 +112,16 @@ class WeaponTypeTest {
         WeaponMounted isLightGaussRifleBay = setupBayWeapon("ISLightGaussRifle");
         weaponType = isLightGaussRifleBay.getType();
         assertEquals(RangeType.RANGE_EXTREME, weaponType.getMaxRange(isLightGaussRifleBay));
+    }
+
+    @Test
+    void testVariableSpeedPulseLaserYamlHitModifiers() {
+        EquipmentType equipmentType = EquipmentType.get("ISMediumVSPLaser");
+        assertNotNull(equipmentType);
+
+        @SuppressWarnings("unchecked")
+        Map<String, Object> stats = (Map<String, Object>) equipmentType.getYamlData().get("stats");
+        assertEquals(-3, equipmentType.getToHitModifier(null));
+        assertArrayEquals(new int[] { -3, -2, -1 }, (int[]) stats.get("toHitModifier"));
     }
 }

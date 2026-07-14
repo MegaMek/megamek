@@ -3115,13 +3115,17 @@ public class Princess extends BotClient {
 
             final long stop_time = java.lang.System.currentTimeMillis();
 
-            // update path evaluation time estimate
-            final double updatedEstimate = ((double) (stop_time - startTime)) / ((double) paths.size());
-            if (0 == moveEvaluationTimeEstimate) {
-                moveEvaluationTimeEstimate = updatedEstimate;
-            }
+            // update path evaluation time estimate - skip empty path sets, otherwise the division by
+            // paths.size() yields +Infinity in double math and permanently poisons the running average
+            // (the reset guard below never re-fires because Infinity is never equal to 0).
+            if (!paths.isEmpty()) {
+                final double updatedEstimate = ((double) (stop_time - startTime)) / ((double) paths.size());
+                if (0 == moveEvaluationTimeEstimate) {
+                    moveEvaluationTimeEstimate = updatedEstimate;
+                }
 
-            moveEvaluationTimeEstimate = 0.5 * (updatedEstimate + moveEvaluationTimeEstimate);
+                moveEvaluationTimeEstimate = 0.5 * (updatedEstimate + moveEvaluationTimeEstimate);
+            }
 
             if (rankedPaths.isEmpty()) {
                 return performPathPostProcessing(new MovePath(game, entity), 0);
@@ -3141,9 +3145,11 @@ public class Princess extends BotClient {
         }
     }
 
-    private static String getMessage(Entity entity, double thisTimeEstimate, List<MovePath> paths) {
+    static String getMessage(Entity entity, double thisTimeEstimate, List<MovePath> paths) {
         String timeEstimate = "unknown.";
-        if (0 != thisTimeEstimate) {
+        // Guard against non-finite estimates: casting +Infinity to int saturates to Integer.MAX_VALUE
+        // (2147483647), which would otherwise surface as a nonsense "completion" time in chat.
+        if ((0 != thisTimeEstimate) && Double.isFinite(thisTimeEstimate)) {
             timeEstimate = (int) thisTimeEstimate + " seconds";
         }
         return "Moving " +

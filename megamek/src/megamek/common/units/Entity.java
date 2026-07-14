@@ -120,6 +120,7 @@ import megamek.common.rolls.PilotingRollData;
 import megamek.common.rolls.Roll;
 import megamek.common.rolls.TargetRoll;
 import megamek.common.turns.TurnOrdered;
+import megamek.common.util.UUIDUtil;
 import megamek.common.util.RoundWeight;
 import megamek.common.weapons.AlamoMissileWeapon;
 import megamek.common.weapons.TeleMissileTracker;
@@ -285,6 +286,15 @@ public abstract class Entity extends TurnOrdered
      * ID settable by external sources (such as mm.net)
      */
     protected String externalId = "-1";
+
+    /**
+     * Persistent identity of this unit design in MTF and BLK files.
+     */
+    private String unitFileUUID;
+    private transient String originalChassis;
+    private transient String originalModel;
+    private transient String originalUnitFileUUID;
+    private transient boolean unitFileUUIDWasProvided;
 
     protected double weight;
     protected boolean omni = false;
@@ -1104,6 +1114,7 @@ public abstract class Entity extends TurnOrdered
         // prisoners in MHQ
         // and should have no effect on MM
         externalId = UUID.randomUUID().toString();
+        regenerateUnitFileUUID();
         initTechAdvancement();
         offBoardShotObservers = new HashSet<>();
         incomingGuidedAttacks = new ArrayList<>();
@@ -1211,6 +1222,54 @@ public abstract class Entity extends TurnOrdered
 
     public void setExternalId(int id) {
         externalId = Integer.toString(id);
+    }
+
+    public String getUnitFileUUID() {
+        return unitFileUUID;
+    }
+
+    public void setUnitFileUUID(String unitFileUUID) {
+        try {
+            UUID uuid = UUID.fromString(unitFileUUID.trim());
+            if ((uuid.version() != 7) || (uuid.variant() != 2)) {
+                regenerateUnitFileUUID();
+                return;
+            }
+            this.unitFileUUID = uuid.toString();
+            unitFileUUIDWasProvided = true;
+        } catch (IllegalArgumentException | NullPointerException ex) {
+            regenerateUnitFileUUID();
+        }
+    }
+
+    public void regenerateUnitFileUUID() {
+        unitFileUUID = UUIDUtil.newUUIDv7().toString();
+        unitFileUUIDWasProvided = false;
+    }
+
+    public @Nullable String getOriginalChassis() {
+        return originalChassis;
+    }
+
+    public @Nullable String getOriginalModel() {
+        return originalModel;
+    }
+
+    public @Nullable String getOriginalUnitFileUUID() {
+        return originalUnitFileUUID;
+    }
+
+    public void storeOriginalUnitData() {
+        originalChassis = chassis;
+        originalModel = model;
+        originalUnitFileUUID = unitFileUUIDWasProvided ? unitFileUUID : null;
+    }
+
+    public void storeSavedUnitData() {
+        originalChassis = chassis;
+        originalModel = model;
+        originalUnitFileUUID = unitFileUUID;
+        unitFileUUIDWasProvided = true;
     }
 
     /**

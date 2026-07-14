@@ -87,6 +87,91 @@ class BLKFileTest {
     }
 
     @Test
+    void unitFileUUIDIsFirstBlock() throws EntitySavingException {
+        Tank tank = createMinimalTank();
+        String[] blockData = BLKFile.getBlock(tank).getAllDataAsString();
+        String serialized = String.join("\n", blockData);
+
+        int uuidIndex = serialized.indexOf("<" + BLKFile.UNIT_FILE_UUID + ">");
+        assertTrue(uuidIndex >= 0);
+        assertTrue(uuidIndex < serialized.indexOf("<UnitType>"));
+        assertTrue(serialized.indexOf(tank.getUnitFileUUID()) > uuidIndex);
+    }
+
+    @Test
+    void missingUnitFileUUIDKeepsGeneratedVersion7UUID() throws Exception {
+        BuildingBlock blk = new BuildingBlock();
+        blk.writeBlockData("Name", "Legacy Unit");
+        blk.writeBlockData("year", 3025);
+        blk.writeBlockData("type", "IS");
+        BLKFile loader = new BLKFile();
+        loader.dataFile = blk;
+        Tank tank = new Tank();
+        String generatedBeforeLoad = tank.getUnitFileUUID();
+
+        loader.setBasicEntityData(tank);
+
+        java.util.UUID generatedUUID = java.util.UUID.fromString(tank.getUnitFileUUID());
+        assertEquals(generatedBeforeLoad, tank.getUnitFileUUID());
+        assertEquals(7, generatedUUID.version());
+        assertEquals(2, generatedUUID.variant());
+    }
+
+    @Test
+    void emptyUnitFileUUIDKeepsGeneratedUUID() throws Exception {
+        BuildingBlock blk = new BuildingBlock();
+        blk.writeBlockData(BLKFile.UNIT_FILE_UUID, "");
+        blk.writeBlockData("Name", "Legacy Unit");
+        blk.writeBlockData("year", 3025);
+        blk.writeBlockData("type", "IS");
+        BLKFile loader = new BLKFile();
+        loader.dataFile = blk;
+        Tank tank = new Tank();
+        String generatedBeforeLoad = tank.getUnitFileUUID();
+
+        loader.setBasicEntityData(tank);
+
+        assertEquals(generatedBeforeLoad, tank.getUnitFileUUID());
+    }
+
+    @Test
+    void unitFileUUIDIsCanonicalizedOnLoad() throws Exception {
+        Tank tank = new Tank();
+        String unitFileUUID = tank.getUnitFileUUID();
+        BuildingBlock blk = new BuildingBlock();
+        blk.writeBlockData(BLKFile.UNIT_FILE_UUID, "  " + unitFileUUID.toUpperCase() + "  ");
+        blk.writeBlockData("Name", "Unit With Noncanonical UUID");
+        blk.writeBlockData("year", 3025);
+        blk.writeBlockData("type", "IS");
+        BLKFile loader = new BLKFile();
+        loader.dataFile = blk;
+
+        loader.setBasicEntityData(tank);
+
+        assertEquals(unitFileUUID, tank.getUnitFileUUID());
+    }
+
+    @Test
+    void invalidUnitFileUUIDIsRegenerated() throws Exception {
+        BuildingBlock blk = new BuildingBlock();
+        blk.writeBlockData(BLKFile.UNIT_FILE_UUID, "invalid");
+        blk.writeBlockData("Name", "Invalid UUID Unit");
+        blk.writeBlockData("year", 3025);
+        blk.writeBlockData("type", "IS");
+        BLKFile loader = new BLKFile();
+        loader.dataFile = blk;
+        Tank tank = new Tank();
+        String generatedBeforeLoad = tank.getUnitFileUUID();
+
+        loader.setBasicEntityData(tank);
+
+        java.util.UUID regeneratedUUID = java.util.UUID.fromString(tank.getUnitFileUUID());
+        assertFalse(generatedBeforeLoad.equals(tank.getUnitFileUUID()));
+        assertEquals(7, regeneratedUUID.version());
+        assertEquals(2, regeneratedUUID.variant());
+    }
+
+    @Test
     void parseBayDataAssignsMissingBayNumber() throws BLKDecodingException {
         final double SIZE = 2.0;
         final int DOORS = 1;
@@ -480,6 +565,32 @@ class BLKFileTest {
         assertNotNull(reloaded, "Reloaded entity should not be null");
         assertFalse(reloaded.getFailedEquipment().hasNext(),
               "Reloaded entity should have no failed equipment even with old :Shots# format");
+    }
+
+    /**
+     * Verifies a Clan exoskeleton without HarJel BattleArmor unit can be saved and reloaded
+     */
+    @Test
+    void battleArmorClanExoWithoutHarJel() throws Exception {
+        // Load ultra light Clan BA
+        BattleArmor original = loadBattleArmor("Aerie PA(L) (Sqd4).blk");
+
+        // Verify BLK has exoskeleton and clan_exo_without_harjel blocks
+        original.setIsExoskeleton(true);
+        original.setClanExoWithoutHarJel(true);
+        BuildingBlock blk = BLKFile.getBlock(original);
+        assertTrue(blk.exists("exoskeleton") &&
+              blk.getDataAsString("exoskeleton")[0].equalsIgnoreCase(
+              "true"), "BLK should have exoskeleton block");
+        assertTrue(blk.exists("clan_exo_without_harjel") &&
+              blk.getDataAsString("clan_exo_without_harjel")[0].equalsIgnoreCase("true"),
+              "BLK should have clan_exo_without_harjel block");
+
+        // Verify reloaded BA is exoskeleton and clan exo without harjel
+        BLKBattleArmorFile loader = new BLKBattleArmorFile(blk);
+        BattleArmor reloaded = (BattleArmor) loader.getEntity();
+        assertTrue(reloaded.isExoskeleton(), "Reloaded entity should be exoskeleton");
+        assertTrue(reloaded.isClanExoWithoutHarJel(), "Reloaded entity should be clan exo without HarJel");
     }
 
 }

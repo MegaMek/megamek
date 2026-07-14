@@ -137,6 +137,7 @@ public class MtfFile implements IMekLoader {
     private int bv = 0;
     private String role;
     private String faction;
+    private String unitFileUUID;
 
     private final Map<EquipmentType, Mounted<?>> hSharedEquip = new HashMap<>();
     private final List<Mounted<?>> vSplitWeapons = new ArrayList<>();
@@ -201,6 +202,7 @@ public class MtfFile implements IMekLoader {
     public static final String LOCATION_DONOR = "donor:";
     public static final String LOCATION_DONOR_TYPE = "donor type:";
     public static final String SIZE = ":SIZE:";
+    public static final String UUID = "uuid:";
     public static final String MUL_ID = "mul id:";
     public static final String QUIRK = "quirk:";
     public static final String WEAPON_QUIRK = "weaponquirk:";
@@ -330,6 +332,10 @@ public class MtfFile implements IMekLoader {
             mek.setChassis(chassis.trim());
             mek.setClanChassisName(clanChassisName);
             mek.setModel(model.trim());
+            if (!StringUtility.isNullOrBlank(unitFileUUID)) {
+                mek.setUnitFileUUID(unitFileUUID);
+            }
+            mek.storeOriginalUnitData();
             mek.setMulId(mulId);
             mek.setYear(Integer.parseInt(techYear.substring(ERA.length()).trim()));
             String originalYearStr = originalTechYear.substring(ORIGINAL_ERA.length()).trim();
@@ -1785,6 +1791,11 @@ public class MtfFile implements IMekLoader {
 
         if (lineLower.startsWith(BV)) {
             bv = Integer.parseInt(line.substring(BV.length()));
+            return true;
+        }
+
+        if (lineLower.startsWith(UUID)) {
+            unitFileUUID = line.substring(UUID.length()).trim();
             return true;
         }
 

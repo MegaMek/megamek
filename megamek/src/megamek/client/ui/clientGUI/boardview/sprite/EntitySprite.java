@@ -174,6 +174,17 @@ public class EntitySprite extends Sprite {
                     } else {
                         return reduceVehicleName(entity);
                     }
+                case NICKNAME_AND_ABBREVIATED: {
+                    String abbreviated = (entity instanceof Mek) ? entity.getModel()
+                          : abbreviateUnitName(standardLabelName());
+                    if (!pilotNick().isBlank()) {
+                        return "\"" + pilotNick().toUpperCase() + "\" (" + abbreviated + ")";
+                    } else if (!unitNick().isBlank()) {
+                        return "'" + unitNick() + "' (" + abbreviated + ")";
+                    } else {
+                        return abbreviated;
+                    }
+                }
                 case ONLY_NICKNAME:
                     if (!pilotNick().isBlank()) {
                         return "\"" + pilotNick().toUpperCase() + "\"";
@@ -783,7 +794,9 @@ public class EntitySprite extends Sprite {
             // draw facing
             graph.setColor(Color.white);
             if ((entity.getFacing() != -1)
-                  && !((entity instanceof ConvInfantry infantry) && !infantry.hasFieldWeapon() && !infantry.isTakingCover())
+                  && !((entity instanceof ConvInfantry infantry)
+                  && !infantry.hasFieldWeapon()
+                  && !infantry.isTakingCover())
                   && !((entity instanceof IAero) && ((IAero) entity).isSpheroid() && !board.isSpace())) {
                 // Indicate a stacked unit with the same facing that can still move
                 if (shouldIndicateNotDone() && bv.game.getPhase().isMovement()) {

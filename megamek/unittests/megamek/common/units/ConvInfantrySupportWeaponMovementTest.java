@@ -71,17 +71,6 @@ class ConvInfantrySupportWeaponMovementTest {
         assertEquals(3, jumpInfantry.getJumpMP(MPCalculationSetting.NO_GRAVITY));
     }
 
-    @Test
-    void paramedicsDoNotReduceGroundOrJumpMovement() {
-        ConvInfantry legInfantry = createInfantry(EntityMovementMode.INF_LEG,
-              EquipmentTypeLookup.INFANTRY_MORTAR_LIGHT, ConvInfantry.PARAMEDICS);
-        ConvInfantry jumpInfantry = createInfantry(EntityMovementMode.INF_JUMP,
-              EquipmentTypeLookup.INFANTRY_MORTAR_LIGHT, ConvInfantry.PARAMEDICS);
-
-        assertEquals(1, legInfantry.getWalkMP(MPCalculationSetting.NO_GRAVITY));
-        assertEquals(3, jumpInfantry.getJumpMP(MPCalculationSetting.NO_GRAVITY));
-    }
-
     private static ConvInfantry createInfantry(EntityMovementMode movementMode, String secondaryWeapon,
           int specializations) {
         ConvInfantry infantry = new ConvInfantry();

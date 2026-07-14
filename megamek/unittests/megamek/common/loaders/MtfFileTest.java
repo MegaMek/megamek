@@ -41,6 +41,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.InputStream;
+import java.nio.charset.StandardCharsets;
 import java.util.Objects;
 
 import megamek.common.CriticalSlot;
@@ -71,7 +72,7 @@ class MtfFileTest {
             mek.setEngine(new Engine(100, Engine.NORMAL_ENGINE, 0));
         }
         String mtf = mek.getMtf();
-        byte[] bytes = mtf.getBytes();
+        byte[] bytes = mtf.getBytes(StandardCharsets.UTF_8);
         InputStream inputStream = new ByteArrayInputStream(bytes);
         return new MtfFile(inputStream);
     }
@@ -88,6 +89,45 @@ class MtfFileTest {
         StringBuffer report = new StringBuffer();
         new TestMek(mek, entityVerifier.mekOption, null).correctEntity(report, mek.getTechLevel());
         return report.toString();
+    }
+
+    @Test
+    void unitFileUUIDIsFirstAndSurvivesRoundTrip() throws Exception {
+        Mek mek = new BipedMek();
+        String originalUUID = mek.getUnitFileUUID();
+        String mtf = mek.getMtf();
+
+        assertTrue(mtf.startsWith(MtfFile.UUID + originalUUID));
+        assertEquals(originalUUID, toMtfFile(mek).getEntity().getUnitFileUUID());
+    }
+
+    @Test
+    void unitFileUUIDIsCanonicalizedOnLoad() throws Exception {
+        Mek mek = new BipedMek();
+        mek.setWeight(20.0);
+        mek.setEngine(new Engine(100, Engine.NORMAL_ENGINE, 0));
+        String unitFileUUID = mek.getUnitFileUUID();
+        String mtf = mek.getMtf().replace(unitFileUUID, "  " + unitFileUUID.toUpperCase() + "  ");
+
+        Entity loaded = new MtfFile(new ByteArrayInputStream(mtf.getBytes(StandardCharsets.UTF_8))).getEntity();
+
+        assertEquals(unitFileUUID, loaded.getUnitFileUUID());
+    }
+
+    @Test
+    void missingUnitFileUUIDGeneratesVersion7UUID() throws Exception {
+        Mek mek = new BipedMek();
+        String originalUUID = mek.getUnitFileUUID();
+        toMtfFile(mek);
+        String mtf = mek.getMtf();
+        String legacyMtf = mtf.substring(mtf.indexOf('\n') + 1);
+
+        Entity loaded = new MtfFile(new ByteArrayInputStream(legacyMtf.getBytes(StandardCharsets.UTF_8))).getEntity();
+
+        java.util.UUID generatedUUID = java.util.UUID.fromString(loaded.getUnitFileUUID());
+        assertFalse(originalUUID.equals(loaded.getUnitFileUUID()));
+        assertEquals(7, generatedUUID.version());
+        assertEquals(2, generatedUUID.variant());
     }
 
     @Test

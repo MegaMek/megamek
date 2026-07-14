@@ -48,6 +48,7 @@ import java.util.Set;
 import java.util.Vector;
 import java.util.stream.Collectors;
 
+import megamek.codeUtilities.StringUtility;
 import megamek.common.QuirkEntry;
 import megamek.common.SourceBooks;
 import megamek.common.TechConstants;
@@ -69,6 +70,8 @@ import megamek.logging.MMLogger;
 
 public class BLKFile {
     private static final MMLogger logger = MMLogger.create(BLKFile.class);
+
+    public static final String UNIT_FILE_UUID = "UUID";
 
     BuildingBlock dataFile;
 
@@ -117,6 +120,13 @@ public class BLKFile {
     }
 
     protected void setBasicEntityData(Entity entity) throws EntityLoadingException {
+        if (dataFile.exists(UNIT_FILE_UUID)) {
+            String unitFileUUID = dataFile.getDataAsString(UNIT_FILE_UUID)[0];
+            if (!StringUtility.isNullOrBlank(unitFileUUID)) {
+                entity.setUnitFileUUID(unitFileUUID.trim());
+            }
+        }
+
         if (!dataFile.exists("Name")) {
             throw new EntityLoadingException("Could not find name block.");
         }
@@ -129,6 +139,7 @@ public class BLKFile {
         } else {
             entity.setModel("");
         }
+        entity.storeOriginalUnitData();
 
         if (dataFile.exists(MtfFile.MUL_ID)) {
             entity.setMulId(dataFile.getDataAsInt(MtfFile.MUL_ID)[0]);
@@ -708,6 +719,7 @@ public class BLKFile {
     public static BuildingBlock getBlock(Entity t) throws EntitySavingException {
         BuildingBlock blk = new BuildingBlock();
         blk.createNewBlock();
+        blk.writeBlockData(UNIT_FILE_UUID, t.getUnitFileUUID());
 
         if (t instanceof BattleArmor) {
             blk.writeBlockData("UnitType", "BattleArmor");

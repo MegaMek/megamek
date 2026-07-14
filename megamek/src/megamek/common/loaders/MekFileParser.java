@@ -194,6 +194,26 @@ public class MekFileParser {
         canonUnitNames = unitNames;
     }
 
+    /**
+     * Tests whether a unit name is on the official canon unit list.
+     * <p>
+     * Callers that hold an {@link megamek.common.units.Entity} usually want {@link
+     * megamek.common.units.Entity#isCanon()} instead. That flag is stamped when the unit is loaded, so it goes stale
+     * the moment an editor renames the unit; ask this method when the name may have changed since the load.
+     * </p>
+     *
+     * @param unitName the unit's short name, as returned by {@code Entity.getShortNameRaw()}
+     *
+     * @return {@code true} if the name is a canon unit
+     */
+    public static boolean isCanonUnitName(String unitName) {
+        if (canonUnitNames == null) {
+            initCanonUnitNames();
+        }
+
+        return Collections.binarySearch(canonUnitNames, unitName) >= 0;
+    }
+
     public Entity getEntity() {
         return m_entity;
     }
@@ -805,15 +825,7 @@ public class MekFileParser {
         }
 
         // Check if it's canon; if it is, mark it as such.
-        ent.setCanon(false);// Guilty until proven innocent
-        if (canonUnitNames == null) {
-            initCanonUnitNames();
-        }
-
-        int index = Collections.binarySearch(canonUnitNames, ent.getShortNameRaw());
-        if (index >= 0) {
-            ent.setCanon(true);
-        }
+        ent.setCanon(isCanonUnitName(ent.getShortNameRaw()));
         ent.initMilitary();
         linkDumpers(ent);
     }

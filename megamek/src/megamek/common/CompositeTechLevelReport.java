@@ -358,7 +358,8 @@ public final class CompositeTechLevelReport {
             if (progressionNote.isEmpty()) {
                 html.append("<td></td>");
             } else {
-                html.append("<td><span class='warning'>").append(escape(progressionNote)).append("</span></td>");
+                html.append("<td><b><span class='warning'>").append(escape(progressionNote))
+                      .append("</span></b></td>");
             }
             html.append("</tr>");
         }
@@ -404,7 +405,7 @@ public final class CompositeTechLevelReport {
      */
     private static void appendHtmlDateCell(StringBuilder html, String date, boolean highlight) {
         if (highlight) {
-            html.append("<td><span class='warning'>").append(escape(date)).append("</span></td>");
+            html.append("<td><b><span class='warning'>").append(escape(date)).append("</span></b></td>");
         } else {
             html.append("<td>").append(escape(date)).append("</td>");
         }

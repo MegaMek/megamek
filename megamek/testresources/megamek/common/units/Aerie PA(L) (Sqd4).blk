@@ -1,0 +1,160 @@
+# MegaMek Data (C) 2026 by The MegaMek Team is licensed under CC BY-NC-SA 4.0.
+# To view a copy of this license, visit https://creativecommons.org/licenses/by-nc-sa/4.0/
+#
+# NOTICE: The MegaMek organization is a non-profit group of volunteers
+# creating free software for the BattleTech community.
+#
+# MechWarrior, BattleMech, `Mech and AeroTech are registered trademarks
+# of The Topps Company, Inc. All Rights Reserved.
+#
+# Catalyst Game Labs and the Catalyst Game Labs logo are trademarks of
+# InMediaRes Productions, LLC.
+#
+# MechWarrior Copyright Microsoft Corporation. MegaMek Data was created under
+# Microsoft's "Game Content Usage Rules"
+# <https://www.xbox.com/en-US/developers/rules> and it is not endorsed by or
+# affiliated with Microsoft.
+
+#Saved from version 0.51.01 on 2026-07-12
+<UUID>
+019f583e-a372-7b97-bb22-667694904044
+</UUID>
+
+<UnitType>
+BattleArmor
+</UnitType>
+
+<Name>
+Aerie PA(L)
+</Name>
+
+<Model>
+(Sqd4)
+</Model>
+
+<mul id:>
+3674
+</mul id:>
+
+<year>
+3067
+</year>
+
+<type>
+Clan Level 2
+</type>
+
+<role>
+Ambusher
+</role>
+
+<motion_type>
+Jump
+</motion_type>
+
+<cruiseMP>
+2
+</cruiseMP>
+
+<armor_type>
+32
+</armor_type>
+
+<armor_tech>
+2
+</armor_tech>
+
+<Point Equipment>
+BAArmoredGlove:LA
+BAArmoredGlove:RA
+Laser Rifle (Mauser IIC IAS):APM:RA
+ISBASpaceOperationsAdaptation:Body
+Clan BA Stealth (Standard):RA
+Clan BA Stealth (Standard):LA
+Clan BA Stealth (Standard):RA
+Clan BA Stealth (Standard):LA
+BAExtendedLifeSupport:Body
+</Point Equipment>
+
+<Trooper 1 Equipment>
+</Trooper 1 Equipment>
+
+<Trooper 2 Equipment>
+</Trooper 2 Equipment>
+
+<Trooper 3 Equipment>
+</Trooper 3 Equipment>
+
+<Trooper 4 Equipment>
+</Trooper 4 Equipment>
+
+<slotless_equipment>
+BAJumpJet
+</slotless_equipment>
+
+<capabilities>
+<p>The Aerie masses just under 400 kilograms, making it one of the lightest combat-rated suits in production. Its 35 kilograms of advanced armor composites offer protection against the hazards of vacuum and small-arms fire, though the coverage is minimal compared to heavier battle armor designs. The suit's exoskeleton enhances the wearer's strength for melee combat and load-shifting tasks without restricting freedom of movement, making it well-suited for close-quarters fighting aboard spacecraft and during boarding actions.</p><p>The Aerie carries no integral weapons. Instead, armored gloves allow troopers to wield standard infantry weapons. Laser rifles are preferred in null-gravity environments to avoid recoil complications, though ballistic and missile weapons see use when conditions allow. An extended life support module permits prolonged operations in vacuum or hostile atmospheres. Jump jets provide up to ninety meters of leap capability, useful both planetside and for maneuvering between vessels. The suit can engage in anti-BattleMech attacks and travel mechanized aboard OmniMechs, giving it tactical flexibility well beyond its weight class.</p>
+</capabilities>
+
+<overview>
+<p>The Aerie is a lightweight power armor suit developed by Clan Snow Raven in collaboration with Outworlds Alliance scientists in the late 3060s. Designed for space-borne operations, the suit fills a role that earlier Raven battle armor designs had left unaddressed: purpose-built combat capability in zero-gravity and shipboard environments. Classified as PA(L), the Aerie prioritizes agility and freedom of movement over heavy protection, making it well-suited for boarding actions, marine security, and close-quarters fighting aboard spacecraft. A dedicated salvage configuration extends the platform's utility beyond direct combat roles.</p>
+</overview>
+
+<deployment>
+<p>The Outworlds Alliance adopted the Aerie in four-trooper squads consistent with Inner Sphere infantry organization. Alliance marines equipped with the suit served primarily aboard naval vessels, providing boarding defense and security for merchant convoys operating along periphery trade routes. By the mid-3070s, nearly all dedicated Alliance military vessels carried Aerie-equipped marine squads.</p>
+</deployment>
+
+<history>
+<p>Clan Snow Raven had developed numerous zero-g and space battle armor variants since the Golden Century, but none were purpose-built for space-borne operations. That changed in the 3060s when the Clan expanded beyond its homeworld holdings into the Deep Periphery. Collaboration with leading scientists in the Outworlds Alliance opened new research avenues, and the lightweight Aerie was the only design from this effort to enter widespread use. Production began at CSR Battle Armor Facility Alpha on Ramora, reaching full operational capacity around 3077. A second line at Quatre Belle was reportedly established by 3081.</p><p>The Salvage configuration originated in 3069 as a field modification after the destruction of the Swift Wing Naval Assault Star left the Ravens critically short on repair capacity. A senior technician persuaded the Clan Council to allocate resources for dedicated production. The timing proved fortunate. Shortly after production began, the Lum yards were destroyed and several resource facilities in the homeworlds were lost. Cut off and overstretched, the Ravens found themselves in desperate need of repair and salvage capability, and the Aerie filled that gap across the Clan's fleet operations throughout the Jihad era.</p>
+</history>
+
+<manufacturer>
+CSR Battle Armor Facility Alpha
+</manufacturer>
+
+<primaryFactory>
+Ramora
+</primaryFactory>
+
+<systemManufacturers>
+CHASSIS:Unknown
+ENGINE:Unknown
+ARMOR:Unknown
+JUMP_JET:Unknown
+COMMUNICATIONS:Unknown
+TARGETING:Unknown
+</systemManufacturers>
+
+<systemModels>
+CHASSIS:Unknown
+ENGINE:Unknown
+ARMOR:Unknown
+JUMP_JET:Unknown
+COMMUNICATIONS:Unknown
+TARGETING:Unknown
+</systemModels>
+
+<source>
+TR:3075
+</source>
+
+<chassis>
+biped
+</chassis>
+
+<jumpingMP>
+3
+</jumpingMP>
+
+<armor>
+1
+</armor>
+
+<Trooper Count>
+4
+</Trooper Count>
+
+<weightclass>
+0
+</weightclass>
+

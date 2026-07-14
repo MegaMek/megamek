@@ -1100,112 +1100,119 @@ public class BLKFile {
             blk.writeBlockData("faction", t.getTechFaction().getCode());
         }
 
-        if (t instanceof BattleArmor ba) {
-            if (ba.getChassisType() == BattleArmor.CHASSIS_TYPE_BIPED) {
-                blk.writeBlockData("chassis", "biped");
+        switch (t) {
+            case BattleArmor ba -> {
+                if (ba.getChassisType() == BattleArmor.CHASSIS_TYPE_BIPED) {
+                    blk.writeBlockData("chassis", "biped");
 
-            } else if (ba.getChassisType() == BattleArmor.CHASSIS_TYPE_QUAD) {
-                blk.writeBlockData("chassis", "quad");
-                if (ba.getTurretCapacity() > 0) {
-                    blk.writeBlockData("turret",
-                          (ba.hasModularTurretMount() ? "Modular:" : "Standard:") + ba.getTurretCapacity());
+                } else if (ba.getChassisType() == BattleArmor.CHASSIS_TYPE_QUAD) {
+                    blk.writeBlockData("chassis", "quad");
+                    if (ba.getTurretCapacity() > 0) {
+                        blk.writeBlockData("turret",
+                              (ba.hasModularTurretMount() ? "Modular:" : "Standard:") + ba.getTurretCapacity());
+                    }
+                }
+                if (ba.isExoskeleton()) {
+                    blk.writeBlockData("exoskeleton", "true");
+                }
+                if (ba.isClan() && ba.isExoskeleton() && ba.isClanExoWithoutHarJel()) {
+                    blk.writeBlockData("clan_exo_without_harjel", "true");
+                }
+                blk.writeBlockData("jumpingMP", ba.getOriginalJumpMP());
+                blk.writeBlockData("armor", new int[] { ba.getArmor(1) });
+                blk.writeBlockData("Trooper Count", (int) t.getWeight());
+                blk.writeBlockData("weightclass", ba.getWeightClass());
+            }
+            case ConvInfantry infantry -> {
+                blk.writeBlockData("squad_size", infantry.getSquadSize());
+                blk.writeBlockData("squadn", infantry.getSquadCount());
+                if (infantry.getSecondaryWeaponsPerSquad() > 0) {
+                    blk.writeBlockData("secondn", infantry.getSecondaryWeaponsPerSquad());
+                }
+                if (null != infantry.getPrimaryWeapon()) {
+                    blk.writeBlockData("Primary", infantry.getPrimaryWeapon().getInternalName());
+                }
+                if (null != infantry.getSecondaryWeapon()) {
+                    blk.writeBlockData("Secondary", infantry.getSecondaryWeapon().getInternalName());
+                }
+                if (null != infantry.getDisposableWeapon()) {
+                    blk.writeBlockData("disposableWeapon", infantry.getDisposableWeapon().getInternalName());
+                }
+
+                if (infantry.getCustomArmorDamageDivisor() != 1) {
+                    blk.writeBlockData("armordivisor", Double.toString(infantry.getCustomArmorDamageDivisor()));
+                }
+                if (infantry.isArmorEncumbering()) {
+                    blk.writeBlockData("encumberingarmor", "true");
+                }
+                if (infantry.hasSpaceSuit()) {
+                    blk.writeBlockData("spacesuit", "true");
+                }
+                if (infantry.hasDEST()) {
+                    blk.writeBlockData("dest", "true");
+                }
+                if (infantry.hasSneakCamo()) {
+                    blk.writeBlockData("sneakcamo", "true");
+                }
+                if (infantry.hasSneakIR()) {
+                    blk.writeBlockData("sneakir", "true");
+                }
+                if (infantry.hasSneakECM()) {
+                    blk.writeBlockData("sneakecm", "true");
+                }
+                if (infantry.hasSpecialization()) {
+                    blk.writeBlockData("specialization", infantry.getSpecializations());
+                }
+                ArrayList<String> augmentations = new ArrayList<>();
+                for (Enumeration<IOption> e = infantry.getCrew().getOptions(PilotOptions.MD_ADVANTAGES);
+                      e.hasMoreElements(); ) {
+                    final IOption o = e.nextElement();
+                    if (o.booleanValue()) {
+                        augmentations.add(o.getName());
+                    }
+                }
+                if (!augmentations.isEmpty()) {
+                    blk.writeBlockData("augmentation", augmentations.toArray(new String[0]));
+                }
+
+                // Prosthetic Enhancement (Enhanced Limbs) - IO p.84
+                if (infantry.hasProstheticEnhancement1()) {
+                    blk.writeBlockData("prostheticEnhancement1", infantry.getProstheticEnhancement1().toString());
+                    if (infantry.getProstheticEnhancement1Count() > 0) {
+                        blk.writeBlockData("prostheticEnhancement1Count", infantry.getProstheticEnhancement1Count());
+                    }
+                }
+                if (infantry.hasProstheticEnhancement2()) {
+                    blk.writeBlockData("prostheticEnhancement2", infantry.getProstheticEnhancement2().toString());
+                    if (infantry.getProstheticEnhancement2Count() > 0) {
+                        blk.writeBlockData("prostheticEnhancement2Count", infantry.getProstheticEnhancement2Count());
+                    }
+                }
+
+                // Extraneous (Enhanced) Limbs - IO p.84
+                // Each pair always provides 2 items, so no count needed
+                if (infantry.hasExtraneousPair1()) {
+                    blk.writeBlockData("extraneousPair1", infantry.getExtraneousPair1().toString());
+                }
+                if (infantry.hasExtraneousPair2()) {
+                    blk.writeBlockData("extraneousPair2", infantry.getExtraneousPair2().toString());
                 }
             }
-            if (ba.isExoskeleton()) {
-                blk.writeBlockData("exoskeleton", "true");
-            }
-            blk.writeBlockData("jumpingMP", ba.getOriginalJumpMP());
-            blk.writeBlockData("armor", new int[] { ba.getArmor(1) });
-            blk.writeBlockData("Trooper Count", (int) t.getWeight());
-            blk.writeBlockData("weightclass", ba.getWeightClass());
-        } else if (t instanceof ConvInfantry infantry) {
-            blk.writeBlockData("squad_size", infantry.getSquadSize());
-            blk.writeBlockData("squadn", infantry.getSquadCount());
-            if (infantry.getSecondaryWeaponsPerSquad() > 0) {
-                blk.writeBlockData("secondn", infantry.getSecondaryWeaponsPerSquad());
-            }
-            if (null != infantry.getPrimaryWeapon()) {
-                blk.writeBlockData("Primary", infantry.getPrimaryWeapon().getInternalName());
-            }
-            if (null != infantry.getSecondaryWeapon()) {
-                blk.writeBlockData("Secondary", infantry.getSecondaryWeapon().getInternalName());
-            }
-            if (null != infantry.getDisposableWeapon()) {
-                blk.writeBlockData("disposableWeapon", infantry.getDisposableWeapon().getInternalName());
-            }
-
-            if (infantry.getCustomArmorDamageDivisor() != 1) {
-                blk.writeBlockData("armordivisor", Double.toString(infantry.getCustomArmorDamageDivisor()));
-            }
-            if (infantry.isArmorEncumbering()) {
-                blk.writeBlockData("encumberingarmor", "true");
-            }
-            if (infantry.hasSpaceSuit()) {
-                blk.writeBlockData("spacesuit", "true");
-            }
-            if (infantry.hasDEST()) {
-                blk.writeBlockData("dest", "true");
-            }
-            if (infantry.hasSneakCamo()) {
-                blk.writeBlockData("sneakcamo", "true");
-            }
-            if (infantry.hasSneakIR()) {
-                blk.writeBlockData("sneakir", "true");
-            }
-            if (infantry.hasSneakECM()) {
-                blk.writeBlockData("sneakecm", "true");
-            }
-            if (infantry.hasSpecialization()) {
-                blk.writeBlockData("specialization", infantry.getSpecializations());
-            }
-            ArrayList<String> augmentations = new ArrayList<>();
-            for (Enumeration<IOption> e = infantry.getCrew().getOptions(PilotOptions.MD_ADVANTAGES);
-                  e.hasMoreElements(); ) {
-                final IOption o = e.nextElement();
-                if (o.booleanValue()) {
-                    augmentations.add(o.getName());
+            case GunEmplacement gunEmplacement -> {
+                if (!gunEmplacement.hasNoTurret()) {
+                    blk.writeBlockData("turret", 1);
                 }
             }
-            if (!augmentations.isEmpty()) {
-                blk.writeBlockData("augmentation", augmentations.toArray(new String[0]));
-            }
+            case AbstractBuildingEntity abstractBuildingEntity -> {
+                blk.writeBlockData("building_class", abstractBuildingEntity.getBldgClass());
+                blk.writeBlockData("building_type", abstractBuildingEntity.getBuildingType().getTypeValue());
+                blk.writeBlockData("height", abstractBuildingEntity.getInternalBuilding().getBuildingHeight());
+                blk.writeBlockData("cf", abstractBuildingEntity.getInternalBuilding().getCurrentCF(CubeCoords.ZERO));
 
-            // Prosthetic Enhancement (Enhanced Limbs) - IO p.84
-            if (infantry.hasProstheticEnhancement1()) {
-                blk.writeBlockData("prostheticEnhancement1", infantry.getProstheticEnhancement1().toString());
-                if (infantry.getProstheticEnhancement1Count() > 0) {
-                    blk.writeBlockData("prostheticEnhancement1Count", infantry.getProstheticEnhancement1Count());
-                }
+                blk.writeBlockData("coords",
+                      abstractBuildingEntity.getInternalBuilding().getCoordsList().toArray(new CubeCoords[0]));
             }
-            if (infantry.hasProstheticEnhancement2()) {
-                blk.writeBlockData("prostheticEnhancement2", infantry.getProstheticEnhancement2().toString());
-                if (infantry.getProstheticEnhancement2Count() > 0) {
-                    blk.writeBlockData("prostheticEnhancement2Count", infantry.getProstheticEnhancement2Count());
-                }
-            }
-
-            // Extraneous (Enhanced) Limbs - IO p.84
-            // Each pair always provides 2 items, so no count needed
-            if (infantry.hasExtraneousPair1()) {
-                blk.writeBlockData("extraneousPair1", infantry.getExtraneousPair1().toString());
-            }
-            if (infantry.hasExtraneousPair2()) {
-                blk.writeBlockData("extraneousPair2", infantry.getExtraneousPair2().toString());
-            }
-        } else if (t instanceof GunEmplacement gunEmplacement) {
-            if (!gunEmplacement.hasNoTurret()) {
-                blk.writeBlockData("turret", 1);
-            }
-        } else if (t instanceof AbstractBuildingEntity abstractBuildingEntity) {
-            blk.writeBlockData("building_class", abstractBuildingEntity.getBldgClass());
-            blk.writeBlockData("building_type", abstractBuildingEntity.getBuildingType().getTypeValue());
-            blk.writeBlockData("height", abstractBuildingEntity.getInternalBuilding().getBuildingHeight());
-            blk.writeBlockData("cf", abstractBuildingEntity.getInternalBuilding().getCurrentCF(CubeCoords.ZERO));
-
-            blk.writeBlockData("coords",
-                  abstractBuildingEntity.getInternalBuilding().getCoordsList().toArray(new CubeCoords[0]));
-        } else {
-            blk.writeBlockData("tonnage", t.getWeight());
+            default -> blk.writeBlockData("tonnage", t.getWeight());
         }
 
         if (t.getUseManualBV()) {

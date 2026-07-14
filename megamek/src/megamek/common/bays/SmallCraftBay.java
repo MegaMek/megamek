@@ -116,7 +116,7 @@ public final class SmallCraftBay extends AbstractSmallCraftASFBay {
     }
 
     @Override
-    public int getPersonnel(boolean clan)  {
+    public int getPersonnel(boolean clan) {
         return hasARTS() ? 0 : (int) totalSpace * 5;
     }
 

@@ -47,7 +47,6 @@ import megamek.common.moves.MovePath;
 import megamek.common.units.ConvInfantry;
 import megamek.common.units.Entity;
 import megamek.common.units.Infantry;
-import megamek.common.units.ConvInfantry;
 import megamek.common.units.Targetable;
 import megamek.common.weapons.infantry.InfantryWeapon;
 import megamek.logging.MMLogger;

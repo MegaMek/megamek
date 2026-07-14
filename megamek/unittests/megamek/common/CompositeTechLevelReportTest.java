@@ -130,12 +130,67 @@ class CompositeTechLevelReportTest {
         Entity entity = elemental();
 
         String variableReport = CompositeTechLevelReport.toPlainText(entity, Faction.NONE, entity.getYear(), true);
-        String basicReport = CompositeTechLevelReport.toPlainText(entity, Faction.NONE, entity.getYear(), false);
+        String staticReport = CompositeTechLevelReport.toPlainText(entity, Faction.NONE, entity.getYear(), false);
 
         assertTrue(variableReport.contains("Variable Tech Level"),
               "Variable report does not report the rule in use");
-        assertTrue(basicReport.contains("Basic (static)"),
-              "Basic report does not report the rule in use");
+        assertTrue(staticReport.contains("Static Tech Level"),
+              "Static report does not report the rule in use");
+    }
+
+    @Test
+    public void extinctionAndReintroductionAreTrackedInTheirOwnColumns() {
+        // The Devastator DVS-2-EC carries Star League tech (a 300 XL engine) that goes extinct in the
+        // Succession Wars and returns later, so the whole unit goes extinct and comes back.
+        Entity devastator = getEntityForUnitTesting("Devastator DVS-2-EC", false);
+        assertNotNull(devastator, "Devastator DVS-2-EC not found");
+
+        String reportText = CompositeTechLevelReport.toPlainText(devastator, Faction.NONE, devastator.getYear(), true);
+
+        assertTrue(reportText.contains("Unit extinct") && reportText.contains("Unit returns"),
+              "Build-up table is missing the extinction columns:\n" + reportText);
+        assertTrue(reportText.contains("Extinct:"), "Report has no extinction result line:\n" + reportText);
+
+        // The 300 XL is the component that first drives the unit extinct, so its row carries the extinction and
+        // reintroduction dates.
+        String xlEngineBuildUpRow = reportText.lines()
+              .filter(line -> line.contains("300 XL") && line.contains("Becomes Common"))
+              .findFirst()
+              .orElse("");
+        assertTrue(xlEngineBuildUpRow.contains("2865") && xlEngineBuildUpRow.contains("3035"),
+              "The XL engine row does not show the unit's extinction and return dates:\n" + reportText);
+    }
+
+    @Test
+    public void progressionNoteCarriesTheYearItSets() {
+        Entity entity = elemental();
+
+        String reportText = CompositeTechLevelReport.toPlainText(entity, Faction.NONE, entity.getYear(), true);
+
+        // The note reads as plain English with the year in brackets rather than a bare label.
+        assertTrue(reportText.contains("Becomes Common (3054)"),
+              "Progression note does not carry the year it sets:\n" + reportText);
+    }
+
+    @Test
+    public void aBackfilledProductionDateIsNotReportedAsAProgression() {
+        // The 300 XL pushes the Devastator's common date out; the algorithm then backfills the production
+        // column with the old common date. That backfill must not be reported as "Becomes Production" -- the
+        // engine only makes the unit take longer to become common.
+        Entity devastator = getEntityForUnitTesting("Devastator DVS-2-EC", false);
+        assertNotNull(devastator, "Devastator DVS-2-EC not found");
+
+        String reportText = CompositeTechLevelReport.toPlainText(devastator, Faction.NONE, devastator.getYear(), true);
+
+        // The engine appears in both the components table and the build-up table; only the build-up row carries
+        // a progression note, so check the note across every row that mentions the engine.
+        List<String> xlEngineRows = reportText.lines()
+              .filter(line -> line.contains("300 XL"))
+              .toList();
+        assertTrue(xlEngineRows.stream().anyMatch(row -> row.contains("Becomes Common")),
+              "The XL engine should be flagged as driving the common date:\n" + reportText);
+        assertTrue(xlEngineRows.stream().noneMatch(row -> row.contains("Becomes Production")),
+              "A backfilled production date was wrongly reported as a progression:\n" + reportText);
     }
 
     @Test

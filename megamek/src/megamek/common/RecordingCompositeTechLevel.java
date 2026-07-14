@@ -80,14 +80,19 @@ public class RecordingCompositeTechLevel extends CompositeTechLevel {
      * @param staticTechLevel        The component's tech level when variable tech level is off
      * @param variableTechLevel      The component's tech level in the evaluated year, or {@code null} when the
      *                               component has no advancement dates and therefore no era progression
+     * @param extinctionDate         The component's own extinction date, or {@link ITechnology#DATE_NONE}
+     * @param reintroductionDate     The component's own reintroduction date, or {@link ITechnology#DATE_NONE}
      * @param compositePrototypeDate The unit's prototype date after this component was added
      * @param compositeProductionDate The unit's production date after this component was added
      * @param compositeCommonDate    The unit's common date after this component was added
+     * @param compositeExtinctionDate The unit's extinction date after this component was added
+     * @param compositeReintroductionDate The unit's reintroduction date after this component was added
      */
     public record ComponentTechRecord(String componentName, int prototypeDate, int productionDate, int commonDate,
                                       SimpleTechLevel staticTechLevel, @Nullable SimpleTechLevel variableTechLevel,
-                                      int compositePrototypeDate, int compositeProductionDate,
-                                      int compositeCommonDate) {}
+                                      int extinctionDate, int reintroductionDate, int compositePrototypeDate,
+                                      int compositeProductionDate, int compositeCommonDate,
+                                      int compositeExtinctionDate, int compositeReintroductionDate) {}
 
     /**
      * Creates a composite tech level for the given unit that records each component as it is added.
@@ -131,15 +136,22 @@ public class RecordingCompositeTechLevel extends CompositeTechLevel {
         SimpleTechLevel variableTechLevel = hasNoDates ? null
               : (isMixed ? tech.getSimpleLevel(evaluationYear) : tech.getSimpleLevel(evaluationYear, isClan()));
 
+        int extinctionDate = isMixed ? tech.getExtinctionDate() : tech.getExtinctionDate(isClan());
+        int reintroductionDate = isMixed ? tech.getReintroductionDate() : tech.getReintroductionDate(isClan());
+
         componentRecords.add(new ComponentTechRecord(resolveName(tech, componentName),
               prototypeDate,
               productionDate,
               commonDate,
               tech.getStaticTechLevel(),
               variableTechLevel,
+              extinctionDate,
+              reintroductionDate,
               getPrototypeDate(),
               getProductionDate(),
-              getCommonDate()));
+              getCommonDate(),
+              getExtinctionDate(),
+              getReintroductionDate()));
     }
 
     /**

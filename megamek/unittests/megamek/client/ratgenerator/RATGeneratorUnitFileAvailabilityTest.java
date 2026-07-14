@@ -66,6 +66,8 @@ class RATGeneratorUnitFileAvailabilityTest {
     private static final String INFLATED_VARIANT = "Archer ARC-8Z";
     /** A custom variant of a canon chassis that the Lyrans do not get until 3054. */
     private static final String GATED_UNIT = "Archer ARC-7Y";
+    /** A unit whose two disjoint ranges both land in the 3050 era bucket, straddling the 3057/3058 boundary. */
+    private static final String STRADDLE_UNIT = "Straddle STR-1";
     private static final String CANON_UNIT = "Archer ARC-2R";
     private static final String CANON_CHASSIS_KEY = "Archer[Mek]";
 
@@ -217,6 +219,43 @@ class RATGeneratorUnitFileAvailabilityTest {
               "A unit gated to 3054 must not be generated in 3052");
         assertTrue(containsUnit(after, GATED_UNIT),
               "The same unit must be generated once its year arrives");
+    }
+
+    @Test
+    void aStraddlingRangeUsesTheEntryInEffectAtTheEraAnchor() {
+        // The Straddle STR-1 declares "3050-3057 LA:2" then "3058-3070 LA:4,CBS:1". The 3050 era runs to 3059, so
+        // both LA ranges land in that one bucket, which can hold only one LA rating. LA:2 is in effect at the era's
+        // own year (3050), so it is the one to keep. Last-wins used to stamp LA:4 with a 3058 start, which then read
+        // as nothing at all at the start of the era.
+        AvailabilityRating lyranAtAnchor = ratGenerator.findModelAvailabilityRecord(3050, STRADDLE_UNIT, "LA", 3050);
+
+        assertNotNull(lyranAtAnchor, "The Lyrans field this from 3050, so it must not be missing at the era anchor");
+        assertEquals(2, lyranAtAnchor.getAvailability(), "The entry in effect at 3050 is LA:2, not the later LA:4");
+    }
+
+    @Test
+    void aFactionThatStartsMidEraStaysOutUntilItsYear() {
+        // CBS only appears in the 3058-3070 range, which starts partway through the 3050 era. It must not leak into
+        // the start of the era, and must appear once its year arrives.
+        AvailabilityRating early = ratGenerator.findModelAvailabilityRecord(3050, STRADDLE_UNIT, "CBS", 3050);
+        AvailabilityRating onceStarted = ratGenerator.findModelAvailabilityRecord(3050, STRADDLE_UNIT, "CBS", 3058);
+
+        assertNull(early, "CBS does not field this until 3058, so 3050 must find nothing");
+        assertNotNull(onceStarted, "CBS must appear once its year arrives, even mid-era");
+        assertEquals(1, onceStarted.getAvailability());
+    }
+
+    @Test
+    void theNextEraReadsTheEntryInEffectThere() {
+        ratGenerator.loadYear(3060);
+
+        AvailabilityRating lyran = ratGenerator.findModelAvailabilityRecord(3060, STRADDLE_UNIT, "LA", 3060);
+        AvailabilityRating bloodSpirit = ratGenerator.findModelAvailabilityRecord(3060, STRADDLE_UNIT, "CBS", 3060);
+
+        assertNotNull(lyran);
+        assertEquals(4, lyran.getAvailability(), "By the 3060 era the 3058-3070 entry is in effect, so LA is 4");
+        assertNotNull(bloodSpirit);
+        assertEquals(1, bloodSpirit.getAvailability());
     }
 
     @Test

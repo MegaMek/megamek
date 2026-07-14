@@ -202,12 +202,20 @@ class UnitFileAvailabilityLoader {
 
     /**
      * Builds the availability codes a unit declares for one era, keyed by faction. Entries whose year range misses the
-     * era are ignored, as are codes naming a faction that does not exist. When two entries cover the same era and
-     * faction, the last one in the file wins.
+     * era are ignored, as are codes naming a faction that does not exist.
+     * <p>
+     * A player's year range can straddle an era bucket. The 3060 era runs to 3066, so a unit written as
+     * {@code 3055-3062 FS:2} then {@code 3063-3070 FS:4} has both ranges land in the 3060 era, and the bucket can only
+     * hold one rating for the Federated Suns. The Force Generator anchors each era at its own year and interpolates
+     * forward, so the entry in effect at the era's own year is the one to keep: it is what the era should read at its
+     * start, and it ramps toward the next era from there. A faction that only starts partway through the era (the
+     * Periphery from 3063, in the 3060 era) is kept with its real start year, so the year gate holds it out until then
+     * rather than leaking it into the start of the era.
+     * </p>
      *
      * @param mekSummary           the unit
      * @param declaredAvailability the availability entries from the unit file
-     * @param era                  the era being loaded
+     * @param era                  the era being loaded, which is also the era's anchor year
      * @param eraEndYear           the last year of the era
      *
      * @return the ratings for this era, keyed by faction code; empty if the unit is not available in this era
@@ -226,6 +234,8 @@ class UnitFileAvailabilityLoader {
             }
 
             int startYear = availability.effectiveStartYear(introYear);
+            // Whether this entry is in effect at the era's own year, as opposed to only starting partway through it
+            boolean inEffectAtAnchor = (startYear <= era) && (availability.effectiveEndYear() >= era);
 
             for (String code : availability.availabilityCodes().split(",")) {
                 String trimmedCode = code.trim();
@@ -246,8 +256,15 @@ class UnitFileAvailabilityLoader {
                 // A unit that arrives partway through an era is unavailable until then
                 int resolvedStartYear = Math.max(startYear, availabilityRating.getStartYear());
 
-                ratingsForEra.put(availabilityRating.getFactionCode(),
-                      new UnitFileRating(trimmedCode, resolvedStartYear, availabilityRating.getAvailability()));
+                UnitFileRating candidate = new UnitFileRating(trimmedCode,
+                      resolvedStartYear,
+                      availabilityRating.getAvailability(),
+                      inEffectAtAnchor);
+                UnitFileRating existing = ratingsForEra.get(availabilityRating.getFactionCode());
+
+                if ((existing == null) || candidate.beats(existing)) {
+                    ratingsForEra.put(availabilityRating.getFactionCode(), candidate);
+                }
             }
         }
 
@@ -383,7 +400,28 @@ class UnitFileAvailabilityLoader {
      * @param startYear    the first year the unit is available within the era
      * @param availability the parsed availability value, used to pick the highest when variants disagree
      */
-    private record UnitFileRating(String code, int startYear, int availability) {
+    private record UnitFileRating(String code, int startYear, int availability, boolean inEffectAtAnchor) {
+
+        /**
+         * Whether this candidate should replace one already collected for the same faction in the same era. An entry
+         * in effect at the era's own year always wins over one that only starts partway through it; among entries in
+         * effect at the anchor, the later one in the file wins; among entries that all start partway through, the one
+         * that starts earliest wins, so the unit appears as soon as any entry allows.
+         *
+         * @param existing the rating already collected for this faction
+         *
+         * @return {@code true} if this candidate should replace it
+         */
+        private boolean beats(UnitFileRating existing) {
+            if (inEffectAtAnchor != existing.inEffectAtAnchor) {
+                return inEffectAtAnchor;
+            }
+            if (inEffectAtAnchor) {
+                return true;
+            }
+
+            return startYear < existing.startYear;
+        }
 
         /**
          * Builds a rating for one index entry.

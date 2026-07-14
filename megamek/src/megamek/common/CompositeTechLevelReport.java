@@ -303,7 +303,7 @@ public final class CompositeTechLevelReport {
         }
         html.append("</table>");
 
-        html.append("<h3>Components</h3>");
+        html.append("<h3>Component Tech Progression</h3>");
         html.append(TABLE_START);
         // The component's own dates and the level it has in the evaluated year all belong to the Variable Tech
         // Level rule and are grouped under it. The Static level does not depend on the year, so it gets its own
@@ -335,7 +335,7 @@ public final class CompositeTechLevelReport {
         }
         html.append("</table>");
 
-        html.append("<h3>How the unit's dates are built up</h3>");
+        html.append("<h3>Unit Tech Progression</h3>");
         html.append(TABLE_START);
         html.append("<tr>");
         appendHtmlHeaderCell(html, "Component");
@@ -430,7 +430,7 @@ public final class CompositeTechLevelReport {
                                               row.commonDate(), row.extinctionDate(), row.reintroductionDate(),
                                               row.variableTechLevel(), row.staticTechLevel() });
         }
-        text.append("\nComponents\n")
+        text.append("\nComponent Tech Progression\n")
               .append(formatTextTable(componentTable, new ColumnGroup("Variable Tech Level", 1, 6)));
 
         List<String[]> buildUpTable = new ArrayList<>();
@@ -441,7 +441,7 @@ public final class CompositeTechLevelReport {
                                             row.unitCommonDate(), row.unitExtinctionDate(),
                                             row.unitReintroductionDate(), row.progressionNote() });
         }
-        text.append("\nHow the unit's dates are built up\n").append(formatTextTable(buildUpTable, null));
+        text.append("\nUnit Tech Progression\n").append(formatTextTable(buildUpTable, null));
 
         List<String[]> resultTable = new ArrayList<>();
         resultTable.add(new String[] { "Static tech level:", data.staticTechLevel() });

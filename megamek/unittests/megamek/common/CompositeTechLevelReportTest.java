@@ -125,6 +125,22 @@ class CompositeTechLevelReportTest {
     }
 
     @Test
+    public void identicalComponentsAreCollectedIntoOneCountedRow() {
+        Entity atlas = getEntityForUnitTesting("Atlas AS7-D", false);
+        assertNotNull(atlas, "Atlas AS7-D not found");
+
+        String reportText = CompositeTechLevelReport.toPlainText(atlas, Faction.NONE, atlas.getYear(), true);
+
+        // The Atlas carries 20 heat sinks and 4 medium lasers. Folding the same component in again cannot move
+        // the unit's dates a second time, so they are counted on one row instead of repeated.
+        assertTrue(reportText.contains("Heat Sink x20"),
+              "Report does not collect the heat sinks into one row:\n" + reportText);
+        assertTrue(reportText.contains("Medium Laser x4"),
+              "Report does not collect the medium lasers into one row:\n" + reportText);
+        assertFalse(reportText.contains("Heat Sink x1"), "A single component was given a count");
+    }
+
+    @Test
     public void htmlReportIsWellFormedAndEscaped() {
         Entity entity = elemental();
 

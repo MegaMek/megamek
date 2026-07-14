@@ -34,7 +34,9 @@
 package megamek.common;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import megamek.common.RecordingCompositeTechLevel.ComponentTechRecord;
 import megamek.common.annotations.Nullable;
@@ -57,26 +59,59 @@ public final class CompositeTechLevelReport {
 
     private static final String NO_DATE = "--";
     private static final String MOVES_THE_UNIT = "moves the unit";
+    /** Swing's HTML renderer draws gridlines from the table's border attribute, not from CSS. */
+    private static final String TABLE_START = "<table border='1' cellpadding='6' cellspacing='0'>";
+    private static final String INDENT = "  ";
+    private static final String COLUMN_GAP = "  ";
 
     private CompositeTechLevelReport() {}
 
     /**
-     * One component of the unit, as it is presented in the report.
+     * One component of the unit, as it is presented in the report. Components that are identical in every respect, such
+     * as the ten heat sinks of a Mek, are collected into a single row with a count rather than repeated.
      *
-     * @param componentName    The component's name
-     * @param prototypeDate    The component's own prototype date
-     * @param productionDate   The component's own production date
-     * @param commonDate       The component's own common date
-     * @param basicTechLevel   The component's tech level with the Variable Tech Level rule off
-     * @param variableTechLevel The component's tech level in the evaluated year
+     * @param componentName      The component's name
+     * @param count              How many identical copies of this component the unit carries
+     * @param prototypeDate      The component's own prototype date
+     * @param productionDate     The component's own production date
+     * @param commonDate         The component's own common date
+     * @param basicTechLevel     The component's tech level with the Variable Tech Level rule off
+     * @param variableTechLevel  The component's tech level in the evaluated year
      * @param unitPrototypeDate  The unit's prototype date once this component has been folded in
      * @param unitProductionDate The unit's production date once this component has been folded in
      * @param unitCommonDate     The unit's common date once this component has been folded in
-     * @param movesTheUnit     Whether this component changed any of the unit's dates
+     * @param movesTheUnit       Whether this component changed any of the unit's dates
      */
-    private record ReportRow(String componentName, String prototypeDate, String productionDate, String commonDate,
-                             String basicTechLevel, String variableTechLevel, String unitPrototypeDate,
-                             String unitProductionDate, String unitCommonDate, boolean movesTheUnit) {}
+    private record ReportRow(String componentName, int count, String prototypeDate, String productionDate,
+                             String commonDate, String basicTechLevel, String variableTechLevel,
+                             String unitPrototypeDate, String unitProductionDate, String unitCommonDate,
+                             boolean movesTheUnit) {
+
+        /** @return The component's name, with a count appended when the unit carries more than one */
+        String displayName() {
+            return (count > 1) ? componentName + " x" + count : componentName;
+        }
+
+        ReportRow withOneMore() {
+            return new ReportRow(componentName, count + 1, prototypeDate, productionDate, commonDate, basicTechLevel,
+                  variableTechLevel, unitPrototypeDate, unitProductionDate, unitCommonDate, movesTheUnit);
+        }
+
+        /** @return A key identifying components that are identical and can therefore share a row */
+        String mergeKey() {
+            return String.join("|", componentName, prototypeDate, productionDate, commonDate, basicTechLevel,
+                  variableTechLevel);
+        }
+    }
+
+    /**
+     * A group of adjacent columns that share a heading spanning all of them.
+     *
+     * @param label       The heading to draw above the group
+     * @param firstColumn The index of the first column in the group
+     * @param lastColumn  The index of the last column in the group
+     */
+    private record ColumnGroup(String label, int firstColumn, int lastColumn) {}
 
     /**
      * Everything the report displays, collected once so that the HTML and plain text renderings cannot disagree.
@@ -123,6 +158,7 @@ public final class CompositeTechLevelReport {
         RecordingCompositeTechLevel techLevel = entity.recordedTechLevel(techFaction, evaluationYear);
 
         List<ReportRow> rows = new ArrayList<>();
+        Map<String, Integer> rowIndexByComponent = new HashMap<>();
         int previousPrototype = ITechnology.DATE_NONE;
         int previousProduction = ITechnology.DATE_NONE;
         int previousCommon = ITechnology.DATE_NONE;
@@ -134,7 +170,8 @@ public final class CompositeTechLevelReport {
                   || (component.compositeProductionDate() != previousProduction)
                   || (component.compositeCommonDate() != previousCommon));
 
-            rows.add(new ReportRow(component.componentName(),
+            ReportRow row = new ReportRow(component.componentName(),
+                  1,
                   formatDate(component.prototypeDate()),
                   formatDate(component.productionDate()),
                   formatDate(component.commonDate()),
@@ -143,7 +180,18 @@ public final class CompositeTechLevelReport {
                   formatDate(component.compositePrototypeDate()),
                   formatDate(component.compositeProductionDate()),
                   formatDate(component.compositeCommonDate()),
-                  movesTheUnit));
+                  movesTheUnit);
+
+            // Folding the same component in twice cannot change the unit's dates a second time, so every copy
+            // after the first is a repeat of a row the report has already shown. Count them on the first row
+            // instead of listing ten identical heat sinks.
+            Integer existingRowIndex = rowIndexByComponent.get(row.mergeKey());
+            if (existingRowIndex == null) {
+                rowIndexByComponent.put(row.mergeKey(), rows.size());
+                rows.add(row);
+            } else {
+                rows.set(existingRowIndex, rows.get(existingRowIndex).withOneMore());
+            }
 
             previousPrototype = component.compositePrototypeDate();
             previousProduction = component.compositeProductionDate();
@@ -186,29 +234,32 @@ public final class CompositeTechLevelReport {
         html.append("</table>");
 
         html.append("<h3>Components</h3>");
-        html.append("<table cellpadding='6' cellspacing='0'>");
+        html.append(TABLE_START);
+        // The component's own dates and the level it has in the evaluated year all belong to the Variable Tech
+        // Level rule; the Basic level is the static one and does not depend on the year, so it sits outside.
+        html.append("<tr><th></th><th colspan='4' align='center'>Variable Tech Level</th><th></th></tr>");
         html.append("<tr>");
         appendHtmlHeaderCell(html, "Component");
         appendHtmlHeaderCell(html, "Prototype");
         appendHtmlHeaderCell(html, "Production");
         appendHtmlHeaderCell(html, "Common");
-        appendHtmlHeaderCell(html, "Basic");
         appendHtmlHeaderCell(html, "Variable in " + data.evaluationYear());
+        appendHtmlHeaderCell(html, "Basic");
         html.append("</tr>");
         for (ReportRow row : data.rows()) {
             html.append("<tr>");
-            appendHtmlCell(html, row.componentName());
+            appendHtmlCell(html, row.displayName());
             appendHtmlCell(html, row.prototypeDate());
             appendHtmlCell(html, row.productionDate());
             appendHtmlCell(html, row.commonDate());
-            appendHtmlCell(html, row.basicTechLevel());
             appendHtmlCell(html, row.variableTechLevel());
+            appendHtmlCell(html, row.basicTechLevel());
             html.append("</tr>");
         }
         html.append("</table>");
 
         html.append("<h3>How the unit's dates are built up</h3>");
-        html.append("<table cellpadding='6' cellspacing='0'>");
+        html.append(TABLE_START);
         html.append("<tr>");
         appendHtmlHeaderCell(html, "Component");
         appendHtmlHeaderCell(html, "Unit prototype");
@@ -218,7 +269,7 @@ public final class CompositeTechLevelReport {
         html.append("</tr>");
         for (ReportRow row : data.rows()) {
             html.append("<tr>");
-            appendHtmlCell(html, row.componentName());
+            appendHtmlCell(html, row.displayName());
             appendHtmlCell(html, row.unitPrototypeDate());
             appendHtmlCell(html, row.unitProductionDate());
             appendHtmlCell(html, row.unitCommonDate());
@@ -272,21 +323,22 @@ public final class CompositeTechLevelReport {
         }
 
         List<String[]> componentTable = new ArrayList<>();
-        componentTable.add(new String[] { "Component", "Prototype", "Production", "Common", "Basic",
-                                          "Variable in " + data.evaluationYear() });
+        componentTable.add(new String[] { "Component", "Prototype", "Production", "Common",
+                                          "Variable in " + data.evaluationYear(), "Basic" });
         for (ReportRow row : data.rows()) {
-            componentTable.add(new String[] { row.componentName(), row.prototypeDate(), row.productionDate(),
-                                              row.commonDate(), row.basicTechLevel(), row.variableTechLevel() });
+            componentTable.add(new String[] { row.displayName(), row.prototypeDate(), row.productionDate(),
+                                              row.commonDate(), row.variableTechLevel(), row.basicTechLevel() });
         }
-        text.append("\nComponents\n").append(formatTextTable(componentTable));
+        text.append("\nComponents\n")
+              .append(formatTextTable(componentTable, new ColumnGroup("Variable Tech Level", 1, 4)));
 
         List<String[]> buildUpTable = new ArrayList<>();
         buildUpTable.add(new String[] { "Component", "Unit prototype", "Unit production", "Unit common", "" });
         for (ReportRow row : data.rows()) {
-            buildUpTable.add(new String[] { row.componentName(), row.unitPrototypeDate(), row.unitProductionDate(),
+            buildUpTable.add(new String[] { row.displayName(), row.unitPrototypeDate(), row.unitProductionDate(),
                                             row.unitCommonDate(), row.movesTheUnit() ? "<-- " + MOVES_THE_UNIT : "" });
         }
-        text.append("\nHow the unit's dates are built up\n").append(formatTextTable(buildUpTable));
+        text.append("\nHow the unit's dates are built up\n").append(formatTextTable(buildUpTable, null));
 
         List<String[]> resultTable = new ArrayList<>();
         resultTable.add(new String[] { "Basic (static) tech level:", data.basicTechLevel() });
@@ -296,7 +348,7 @@ public final class CompositeTechLevelReport {
         resultTable.add(new String[] { "Production:", data.productionRange() });
         resultTable.add(new String[] { "Common:", data.commonRange() });
         resultTable.add(new String[] { "Effective tech level:", data.effectiveTechLevel() });
-        text.append("\nUnit result\n").append(formatTextTable(resultTable));
+        text.append("\nUnit result\n").append(formatTextTable(resultTable, null));
 
         return text.toString();
     }
@@ -305,11 +357,12 @@ public final class CompositeTechLevelReport {
      * Lays a table out with every column padded to the width of its widest entry, so that the columns line up when the
      * report is pasted somewhere that uses a fixed-width font.
      *
-     * @param table The rows of the table, each holding one entry per column
+     * @param table       The rows of the table, each holding one entry per column
+     * @param columnGroup A heading to draw above a span of columns, or {@code null} for none
      *
      * @return The table as aligned plain text
      */
-    private static String formatTextTable(List<String[]> table) {
+    private static String formatTextTable(List<String[]> table, @Nullable ColumnGroup columnGroup) {
         int columnCount = table.getFirst().length;
         int[] columnWidths = new int[columnCount];
         for (String[] row : table) {
@@ -319,17 +372,49 @@ public final class CompositeTechLevelReport {
         }
 
         StringBuilder text = new StringBuilder();
+        if (columnGroup != null) {
+            text.append(formatColumnGroupLine(columnGroup, columnWidths)).append('\n');
+        }
         for (String[] row : table) {
-            StringBuilder line = new StringBuilder("  ");
+            StringBuilder line = new StringBuilder(INDENT);
             for (int column = 0; column < columnCount; column++) {
                 line.append(padRight(row[column], columnWidths[column]));
                 if (column < columnCount - 1) {
-                    line.append("  ");
+                    line.append(COLUMN_GAP);
                 }
             }
             text.append(line.toString().stripTrailing()).append('\n');
         }
         return text.toString();
+    }
+
+    /**
+     * Draws the heading of a column group centred in dashes above the columns it spans, so that the plain text shows
+     * the same grouping the HTML table shows with a spanning header cell.
+     *
+     * @param columnGroup  The group to draw
+     * @param columnWidths The width of every column in the table
+     *
+     * @return The line to place above the table's header row
+     */
+    private static String formatColumnGroupLine(ColumnGroup columnGroup, int[] columnWidths) {
+        int leadingWidth = 0;
+        for (int column = 0; column < columnGroup.firstColumn(); column++) {
+            leadingWidth += columnWidths[column] + COLUMN_GAP.length();
+        }
+
+        int groupWidth = 0;
+        for (int column = columnGroup.firstColumn(); column <= columnGroup.lastColumn(); column++) {
+            groupWidth += columnWidths[column];
+        }
+        groupWidth += COLUMN_GAP.length() * (columnGroup.lastColumn() - columnGroup.firstColumn());
+
+        String label = " " + columnGroup.label() + " ";
+        int dashCount = Math.max(0, groupWidth - label.length());
+        int leadingDashes = dashCount / 2;
+        String groupLabel = "-".repeat(leadingDashes) + label + "-".repeat(dashCount - leadingDashes);
+
+        return INDENT + " ".repeat(leadingWidth) + groupLabel;
     }
 
     private static String padRight(String text, int width) {

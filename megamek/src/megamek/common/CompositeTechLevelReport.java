@@ -58,7 +58,6 @@ import megamek.common.units.Entity;
 public final class CompositeTechLevelReport {
 
     private static final String NO_DATE = "--";
-    private static final String MOVES_THE_UNIT = "moves the unit";
     /** Swing's HTML renderer draws gridlines from the table's border attribute, not from CSS. */
     private static final String TABLE_START = "<table border='1' cellpadding='6' cellspacing='0'>";
     private static final String INDENT = "  ";
@@ -70,22 +69,25 @@ public final class CompositeTechLevelReport {
      * One component of the unit, as it is presented in the report. Components that are identical in every respect, such
      * as the ten heat sinks of a Mek, are collected into a single row with a count rather than repeated.
      *
-     * @param componentName      The component's name
-     * @param count              How many identical copies of this component the unit carries
-     * @param prototypeDate      The component's own prototype date
-     * @param productionDate     The component's own production date
-     * @param commonDate         The component's own common date
-     * @param basicTechLevel     The component's tech level with the Variable Tech Level rule off
-     * @param variableTechLevel  The component's tech level in the evaluated year
-     * @param unitPrototypeDate  The unit's prototype date once this component has been folded in
-     * @param unitProductionDate The unit's production date once this component has been folded in
-     * @param unitCommonDate     The unit's common date once this component has been folded in
-     * @param movesTheUnit       Whether this component changed any of the unit's dates
+     * @param componentName          The component's name
+     * @param count                  How many identical copies of this component the unit carries
+     * @param prototypeDate          The component's own prototype date
+     * @param productionDate         The component's own production date
+     * @param commonDate             The component's own common date
+     * @param basicTechLevel         The component's tech level with the Variable Tech Level rule off
+     * @param variableTechLevel      The component's tech level in the evaluated year
+     * @param unitPrototypeDate      The unit's prototype date once this component has been folded in
+     * @param unitProductionDate     The unit's production date once this component has been folded in
+     * @param unitCommonDate         The unit's common date once this component has been folded in
+     * @param movesUnitPrototypeDate Whether this component set or moved the unit's prototype date
+     * @param movesUnitProductionDate Whether this component set or moved the unit's production date
+     * @param movesUnitCommonDate    Whether this component set or moved the unit's common date
      */
     private record ReportRow(String componentName, int count, String prototypeDate, String productionDate,
                              String commonDate, String basicTechLevel, String variableTechLevel,
                              String unitPrototypeDate, String unitProductionDate, String unitCommonDate,
-                             boolean movesTheUnit) {
+                             boolean movesUnitPrototypeDate, boolean movesUnitProductionDate,
+                             boolean movesUnitCommonDate) {
 
         /** @return The component's name, with a count appended when the unit carries more than one */
         String displayName() {
@@ -94,13 +96,32 @@ public final class CompositeTechLevelReport {
 
         ReportRow withOneMore() {
             return new ReportRow(componentName, count + 1, prototypeDate, productionDate, commonDate, basicTechLevel,
-                  variableTechLevel, unitPrototypeDate, unitProductionDate, unitCommonDate, movesTheUnit);
+                  variableTechLevel, unitPrototypeDate, unitProductionDate, unitCommonDate, movesUnitPrototypeDate,
+                  movesUnitProductionDate, movesUnitCommonDate);
         }
 
         /** @return A key identifying components that are identical and can therefore share a row */
         String mergeKey() {
             return String.join("|", componentName, prototypeDate, productionDate, commonDate, basicTechLevel,
                   variableTechLevel);
+        }
+
+        /**
+         * @return A note naming the tech progression points this component drives -- when it sets when the unit
+         *       becomes a prototype, enters production or becomes common -- or an empty string when it changes none.
+         */
+        String progressionNote() {
+            List<String> becomes = new ArrayList<>();
+            if (movesUnitPrototypeDate) {
+                becomes.add("Becomes Prototype");
+            }
+            if (movesUnitProductionDate) {
+                becomes.add("Becomes Production");
+            }
+            if (movesUnitCommonDate) {
+                becomes.add("Becomes Common");
+            }
+            return String.join(", ", becomes);
         }
     }
 
@@ -165,10 +186,17 @@ public final class CompositeTechLevelReport {
         boolean isFirstComponent = true;
 
         for (ComponentTechRecord component : techLevel.getComponentRecords()) {
-            boolean movesTheUnit = !isFirstComponent
-                  && ((component.compositePrototypeDate() != previousPrototype)
-                  || (component.compositeProductionDate() != previousProduction)
-                  || (component.compositeCommonDate() != previousCommon));
+            // A date "moves" when this component changes it to a real date. Changing it only to "no date"
+            // means the component removed a phase rather than driving one, which "Becomes X" would misdescribe.
+            boolean movesPrototype = !isFirstComponent
+                  && (component.compositePrototypeDate() != previousPrototype)
+                  && (component.compositePrototypeDate() != ITechnology.DATE_NONE);
+            boolean movesProduction = !isFirstComponent
+                  && (component.compositeProductionDate() != previousProduction)
+                  && (component.compositeProductionDate() != ITechnology.DATE_NONE);
+            boolean movesCommon = !isFirstComponent
+                  && (component.compositeCommonDate() != previousCommon)
+                  && (component.compositeCommonDate() != ITechnology.DATE_NONE);
 
             ReportRow row = new ReportRow(component.componentName(),
                   1,
@@ -180,7 +208,9 @@ public final class CompositeTechLevelReport {
                   formatDate(component.compositePrototypeDate()),
                   formatDate(component.compositeProductionDate()),
                   formatDate(component.compositeCommonDate()),
-                  movesTheUnit);
+                  movesPrototype,
+                  movesProduction,
+                  movesCommon);
 
             // Folding the same component in twice cannot change the unit's dates a second time, so every copy
             // after the first is a repeat of a row the report has already shown. Count them on the first row
@@ -270,13 +300,14 @@ public final class CompositeTechLevelReport {
         for (ReportRow row : data.rows()) {
             html.append("<tr>");
             appendHtmlCell(html, row.displayName());
-            appendHtmlCell(html, row.unitPrototypeDate());
-            appendHtmlCell(html, row.unitProductionDate());
-            appendHtmlCell(html, row.unitCommonDate());
-            if (row.movesTheUnit()) {
-                html.append("<td><span class='warning'>&lt;-- ").append(MOVES_THE_UNIT).append("</span></td>");
-            } else {
+            appendHtmlDateCell(html, row.unitPrototypeDate(), row.movesUnitPrototypeDate());
+            appendHtmlDateCell(html, row.unitProductionDate(), row.movesUnitProductionDate());
+            appendHtmlDateCell(html, row.unitCommonDate(), row.movesUnitCommonDate());
+            String progressionNote = row.progressionNote();
+            if (progressionNote.isEmpty()) {
                 html.append("<td></td>");
+            } else {
+                html.append("<td><span class='warning'>").append(escape(progressionNote)).append("</span></td>");
             }
             html.append("</tr>");
         }
@@ -311,6 +342,22 @@ public final class CompositeTechLevelReport {
         html.append("<td>").append(escape(text)).append("</td>");
     }
 
+    /**
+     * Appends a date cell to the build-up table, drawing it in the themed warning colour when this is the component
+     * that set that date, so the eye is drawn to the exact value that changed.
+     *
+     * @param html      The document being built
+     * @param date      The unit date to show
+     * @param highlight Whether this component set this date
+     */
+    private static void appendHtmlDateCell(StringBuilder html, String date, boolean highlight) {
+        if (highlight) {
+            html.append("<td><span class='warning'>").append(escape(date)).append("</span></td>");
+        } else {
+            html.append("<td>").append(escape(date)).append("</td>");
+        }
+    }
+
     private static String renderPlainText(ReportData data) {
         StringBuilder text = new StringBuilder();
         text.append("Composite Tech Level - ").append(data.unitName()).append('\n');
@@ -336,7 +383,7 @@ public final class CompositeTechLevelReport {
         buildUpTable.add(new String[] { "Component", "Unit prototype", "Unit production", "Unit common", "" });
         for (ReportRow row : data.rows()) {
             buildUpTable.add(new String[] { row.displayName(), row.unitPrototypeDate(), row.unitProductionDate(),
-                                            row.unitCommonDate(), row.movesTheUnit() ? "<-- " + MOVES_THE_UNIT : "" });
+                                            row.unitCommonDate(), row.progressionNote() });
         }
         text.append("\nHow the unit's dates are built up\n").append(formatTextTable(buildUpTable, null));
 

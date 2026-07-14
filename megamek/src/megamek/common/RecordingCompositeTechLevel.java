@@ -45,6 +45,7 @@ import megamek.common.equipment.EquipmentType;
 import megamek.common.interfaces.ITechnology;
 import megamek.common.units.Entity;
 import megamek.common.units.UnitType;
+import megamek.common.weapons.attacks.InfantryAttack;
 
 /**
  * A {@link CompositeTechLevel} that remembers every component folded into it, together with the state of the composite
@@ -105,6 +106,13 @@ public class RecordingCompositeTechLevel extends CompositeTechLevel {
 
     @Override
     protected void recordComponent(ITechnology tech, @Nullable String componentName) {
+        // Every infantry and battle armor unit automatically carries the anti-Mek attack pseudo-weapons (Swarm
+        // Mek, Leg Attack and the like). They are noise in a tech level report, so they are not recorded as
+        // rows. Their dates are still folded into the composite by the base class before this point, so the
+        // unit's overall tech level is unaffected -- they simply never limit it.
+        if (tech instanceof InfantryAttack) {
+            return;
+        }
         addRecord(tech, componentName);
     }
 

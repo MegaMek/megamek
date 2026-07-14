@@ -107,8 +107,22 @@ class CompositeTechLevelReportTest {
               "Report does not name the small laser:\n" + reportText);
         assertTrue(reportText.contains("3054"),
               "Report does not show the 3054 common date:\n" + reportText);
-        assertTrue(reportText.contains("moves the unit"),
-              "Report does not flag the component that moves the unit:\n" + reportText);
+        // The armor pushes the unit's common date out to 3054, so it is the component that drives when the
+        // unit becomes common.
+        assertTrue(reportText.contains("Becomes Common"),
+              "Report does not name the progression the armor drives:\n" + reportText);
+    }
+
+    @Test
+    public void antiMekAttacksAreNotShownForBattleArmor() {
+        Entity entity = elemental();
+
+        String reportText = CompositeTechLevelReport.toPlainText(entity, Faction.NONE, entity.getYear(), true);
+
+        // The anti-Mek attack pseudo-weapons every BA unit carries are noise and are dropped from the report.
+        assertFalse(reportText.contains("Swarm Mek"), "Report still lists the Swarm Mek attack:\n" + reportText);
+        assertFalse(reportText.contains("Leg Attack"), "Report still lists the Leg Attack:\n" + reportText);
+        assertFalse(reportText.contains("Stop Swarm"), "Report still lists the Stop Swarm attack:\n" + reportText);
     }
 
     @Test

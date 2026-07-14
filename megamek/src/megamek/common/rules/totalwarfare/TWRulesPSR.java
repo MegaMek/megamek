@@ -151,4 +151,8 @@ public class TWRulesPSR extends CoreRulesPSR {
         }
     }
 
+    // Entering water causes a PSR
+    public boolean psrForWaterEntry(EntityMovementType overallMoveType) {
+        return true;
+    }
 }

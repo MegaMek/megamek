@@ -8948,25 +8948,23 @@ public abstract class Entity extends TurnOrdered
         } else {
             mod = 1;
         }
-        // PLAYTEST2 water PSR changes
-        if (gameOptions().booleanOption(OptionsConstants.PLAYTEST_2)) {
-            if (waterLevel >= 1 && overallMoveType == EntityMovementType.MOVE_RUN) {
-                roll.append(new PilotingRollData(getId(), 0, "entering Depth " + waterLevel + " Water"));
-            } else {
-                roll.addModifier(TargetRoll.CHECK_FALSE, "No need for roll");
-            }
-            return roll;
-        }
-
+        
+        if (waterLevel >=1 && overallMoveType == EntityMovementType.MOVE_RUN && !Game.rulesManager.getRulesMovement().cannotRunInWater(movementMode, false)) {
+            roll.append(new PilotingRollData(getId(), 0, "entering Depth " + waterLevel + " Water"));
+        } 
+        
         if ((waterLevel > 1) &&
               hasAbility(OptionsConstants.PILOT_TM_FROGMAN) &&
               ((this instanceof Mek) || (this instanceof ProtoMek))) {
             roll.append(new PilotingRollData(getId(), -1, "Frogman"));
         }
         if (waterLevel > 0) {
-            // append the reason modifier
-            roll.append(new PilotingRollData(getId(), mod, "entering Depth " + waterLevel + " Water"));
-            adjustDifficultTerrainPSRModifier(roll);
+            if(!Game.rulesManager.getRulesPSR().psrForWaterEntry(overallMoveType)) {
+                roll.addModifier(TargetRoll.CHECK_FALSE, "No roll required for walk");
+            } else {
+                roll.append(new PilotingRollData(getId(), mod, "entering Depth " + waterLevel + " Water"));
+                adjustDifficultTerrainPSRModifier(roll);
+            }
         } else {
             roll.addModifier(TargetRoll.CHECK_FALSE, "Check false: No water here.");
         }

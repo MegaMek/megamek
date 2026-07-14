@@ -223,13 +223,16 @@ public class CoreRulesPSR extends RulesPSR {
     // Leg destroyed is +4. Core p.90
     public int getLegDestroyedModifier() { return 4; }
 
-    // HD Gyro hits. Core p.
-
-    @Override
+    // HD Gyro hits. Core p.98
     public void handleHDGyroHits(Game game, Entity en, int actualGyroHits) {
         if (actualGyroHits == 4) {
             game.addPSR(new PilotingRollData(en.getId(),TargetRoll.AUTOMATIC_FAIL, 1, "Gyro Destroyed"));
             en.setHullDown(false);
         }
+    }
+
+    // Walking into water does not cause a PSR. Core p.45, 51
+    public boolean psrForWaterEntry(EntityMovementType overallMoveType) {
+        return (overallMoveType == EntityMovementType.MOVE_WALK) ? false : true;
     }
 }

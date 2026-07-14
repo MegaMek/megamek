@@ -702,7 +702,6 @@ public class MoveStep implements Serializable {
             calcMovementCostFor(game, prev, cachedEntityState);
         }
         // check for water
-        // PLAYTEST2 water changes
         if (Game.rulesManager.getRulesMovement().cannotRunInWater(entity.getMovementMode(),
               cachedEntityState.hasWorkingMisc(MiscType.F_FULLY_AMPHIBIOUS))
               && !isPavementStep()
@@ -1071,7 +1070,6 @@ public class MoveStep implements Serializable {
                   (nMove != EntityMovementMode.HYDROFOIL) &&
                   (nMove != EntityMovementMode.SUBMARINE) &&
                   (nMove != EntityMovementMode.INF_UMU)) {
-                // PLAYTEST2 Water changes
                 if (Game.rulesManager.getRulesMovement().cannotRunInWater(nMove, false)) {
                     isRunProhibited = true;
                 }
@@ -3602,8 +3600,7 @@ public class MoveStep implements Serializable {
             }
         }
 
-        // Can't back up across an elevation change.
-        // PLAYTEST2 Enabling backwards up elevation changes
+        // Can we backup up hills?
         boolean bBackwardsElevationChange =
               Game.rulesManager.getRulesMovement()
                     .enableBackwardsElevationChange(game.getOptions()

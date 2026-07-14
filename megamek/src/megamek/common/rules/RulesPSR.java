@@ -82,4 +82,7 @@ public abstract class RulesPSR {
 
     // Handle HD Gyro Hits
     public abstract void handleHDGyroHits(Game game, Entity en, int actualGyroHits);
+
+    // When entering water, do we trigger a PSR
+    public abstract boolean psrForWaterEntry(EntityMovementType overallMoveType);
 }

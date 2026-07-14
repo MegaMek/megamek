@@ -84,7 +84,6 @@ public class BipedMek extends MekWithArms {
         setCritical(LOC_LEFT_ARM, 3, new CriticalSlot(CriticalSlot.TYPE_SYSTEM, ACTUATOR_HAND));
     }
 
-    // PLAYTEST2 New Method for immobile due to no legs.
     @Override
     public boolean isImmobile() {
         if (Game.rulesManager.getRulesUnits().getDoesLegDestructionCauseImmobile(this)) {

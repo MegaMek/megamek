@@ -365,14 +365,14 @@ public class UnitDamagePanelBuilder {
                 continue;
             }
             int nCrits = mounted.getNumCriticalSlots();
-            int eqNum = entity.getEquipmentNum(mounted);
-            int hits = entity.getDamagedCriticalSlots(CriticalSlot.TYPE_EQUIPMENT, eqNum, mounted.getLocation());
+            int equipmentNumber = entity.getEquipmentNum(mounted);
+            int hits = entity.getDamagedCriticalSlots(CriticalSlot.TYPE_EQUIPMENT, equipmentNumber, mounted.getLocation());
             if (mounted.isSplit()) {
-                hits += entity.getDamagedCriticalSlots(CriticalSlot.TYPE_EQUIPMENT, eqNum, mounted.getSecondLocation());
+                hits += entity.getDamagedCriticalSlots(CriticalSlot.TYPE_EQUIPMENT, equipmentNumber, mounted.getSecondLocation());
             }
             if ((mounted.getType() instanceof MiscType) && (mounted.getType().hasFlag(MiscType.F_PARTIAL_WING))) {
-                hits = entity.getDamagedCriticalSlots(CriticalSlot.TYPE_EQUIPMENT, eqNum, Mek.LOC_LEFT_TORSO);
-                hits += entity.getDamagedCriticalSlots(CriticalSlot.TYPE_EQUIPMENT, eqNum, Mek.LOC_RIGHT_TORSO);
+                hits = entity.getDamagedCriticalSlots(CriticalSlot.TYPE_EQUIPMENT, equipmentNumber, Mek.LOC_LEFT_TORSO);
+                hits += entity.getDamagedCriticalSlots(CriticalSlot.TYPE_EQUIPMENT, equipmentNumber, Mek.LOC_RIGHT_TORSO);
             }
 
             if (!(entity instanceof Mek)) {
@@ -382,7 +382,7 @@ public class UnitDamagePanelBuilder {
                 }
             }
             CheckCritPanel crit = new CheckCritPanel(nCrits, hits);
-            controls.equipCrits.put(eqNum, crit);
+            controls.equipCrits.put(equipmentNumber, crit);
             String label = mounted.getName();
             if (mounted.isSplit()) {
                 label += " (" + entity.getLocationAbbr(mounted.getLocation()) + "/"
@@ -391,7 +391,7 @@ public class UnitDamagePanelBuilder {
 
             JComponent control = crit;
             if (editAmmo && (mounted instanceof AmmoMounted ammoBin)) {
-                control = ammoControl(eqNum, ammoBin, crit);
+                control = ammoControl(equipmentNumber, ammoBin, crit);
             }
             controls.addCritOfLocation(mounted.getLocation(), crit);
             addLabeledRow(targetPanel(mounted.getLocation()), label, control);
@@ -548,20 +548,20 @@ public class UnitDamagePanelBuilder {
         if (entity instanceof LandAirMek) {
             controls.lamAvionicsCrit = new TreeMap<>();
             controls.lamLandingGearCrit = new TreeMap<>();
-            for (int loc = 0; loc < entity.locations(); loc++) {
-                int crits = entity.getNumberOfCriticalSlots(CriticalSlot.TYPE_SYSTEM, LandAirMek.LAM_AVIONICS, loc);
+            for (int location = 0; location < entity.locations(); location++) {
+                int crits = entity.getNumberOfCriticalSlots(CriticalSlot.TYPE_SYSTEM, LandAirMek.LAM_AVIONICS, location);
                 if (crits > 0) {
-                    int hits = entity.getBadCriticalSlots(CriticalSlot.TYPE_SYSTEM, LandAirMek.LAM_AVIONICS, loc);
+                    int hits = entity.getBadCriticalSlots(CriticalSlot.TYPE_SYSTEM, LandAirMek.LAM_AVIONICS, location);
                     CheckCritPanel critPanel = new CheckCritPanel(crits, hits);
-                    controls.lamAvionicsCrit.put(loc, critPanel);
-                    addCritRow(loc, Messages.getString("UnitEditorDialog.avionics"), critPanel);
+                    controls.lamAvionicsCrit.put(location, critPanel);
+                    addCritRow(location, Messages.getString("UnitEditorDialog.avionics"), critPanel);
                 }
-                crits = entity.getNumberOfCriticalSlots(CriticalSlot.TYPE_SYSTEM, LandAirMek.LAM_LANDING_GEAR, loc);
+                crits = entity.getNumberOfCriticalSlots(CriticalSlot.TYPE_SYSTEM, LandAirMek.LAM_LANDING_GEAR, location);
                 if (crits > 0) {
-                    int hits = entity.getBadCriticalSlots(CriticalSlot.TYPE_SYSTEM, LandAirMek.LAM_LANDING_GEAR, loc);
+                    int hits = entity.getBadCriticalSlots(CriticalSlot.TYPE_SYSTEM, LandAirMek.LAM_LANDING_GEAR, location);
                     CheckCritPanel critPanel = new CheckCritPanel(crits, hits);
-                    controls.lamLandingGearCrit.put(loc, critPanel);
-                    addCritRow(loc, Messages.getString("UnitEditorDialog.landingGear"), critPanel);
+                    controls.lamLandingGearCrit.put(location, critPanel);
+                    addCritRow(location, Messages.getString("UnitEditorDialog.landingGear"), critPanel);
                 }
             }
         }
@@ -575,29 +575,29 @@ public class UnitDamagePanelBuilder {
             controls.actuatorCrits = new CheckCritPanel[4][4];
         }
 
-        for (int loc = Mek.LOC_RIGHT_ARM; loc <= (tripod ? Mek.LOC_CENTER_LEG : Mek.LOC_LEFT_LEG); loc++) {
+        for (int location = Mek.LOC_RIGHT_ARM; location <= (tripod ? Mek.LOC_CENTER_LEG : Mek.LOC_LEFT_LEG); location++) {
             int start = Mek.ACTUATOR_SHOULDER;
             int end = Mek.ACTUATOR_HAND;
-            if ((loc >= Mek.LOC_RIGHT_LEG) || (entity instanceof QuadMek)) {
+            if ((location >= Mek.LOC_RIGHT_LEG) || (entity instanceof QuadMek)) {
                 start = Mek.ACTUATOR_HIP;
                 end = Mek.ACTUATOR_FOOT;
             }
 
             for (int i = start; i <= end; i++) {
-                if (!entity.hasSystem(i, loc)) {
+                if (!entity.hasSystem(i, location)) {
                     continue;
                 }
                 CheckCritPanel actuatorCrit = new CheckCritPanel(1,
-                      entity.getDamagedCriticalSlots(CriticalSlot.TYPE_SYSTEM, i, loc));
-                controls.actuatorCrits[loc - Mek.LOC_RIGHT_ARM][i - start] = actuatorCrit;
-                addCritRow(loc, ((Mek) entity).getSystemName(i), actuatorCrit);
+                      entity.getDamagedCriticalSlots(CriticalSlot.TYPE_SYSTEM, i, location));
+                controls.actuatorCrits[location - Mek.LOC_RIGHT_ARM][i - start] = actuatorCrit;
+                addCritRow(location, ((Mek) entity).getSystemName(i), actuatorCrit);
             }
 
             if (entity instanceof QuadVee) {
                 CheckCritPanel actuatorCrit = new CheckCritPanel(1,
-                      entity.getDamagedCriticalSlots(CriticalSlot.TYPE_SYSTEM, QuadVee.SYSTEM_CONVERSION_GEAR, loc));
-                controls.actuatorCrits[loc - Mek.LOC_RIGHT_ARM][Mek.ACTUATOR_FOOT - Mek.ACTUATOR_HIP + 1] = actuatorCrit;
-                addCritRow(loc, ((Mek) entity).getSystemName(QuadVee.SYSTEM_CONVERSION_GEAR),
+                      entity.getDamagedCriticalSlots(CriticalSlot.TYPE_SYSTEM, QuadVee.SYSTEM_CONVERSION_GEAR, location));
+                controls.actuatorCrits[location - Mek.LOC_RIGHT_ARM][Mek.ACTUATOR_FOOT - Mek.ACTUATOR_HIP + 1] = actuatorCrit;
+                addCritRow(location, ((Mek) entity).getSystemName(QuadVee.SYSTEM_CONVERSION_GEAR),
                       actuatorCrit);
             }
         }
@@ -635,17 +635,17 @@ public class UnitDamagePanelBuilder {
         addLabeledRow(generalPanel(), Messages.getString("UnitEditorDialog.motiveDamage"), controls.motiveCrit);
 
         controls.stabilizerCrits = new CheckCritPanel[tank.locations()];
-        for (int loc = 0; loc < tank.locations(); loc++) {
-            if ((loc == Tank.LOC_BODY) || (loc == tank.getLocTurret()) || (loc == tank.getLocTurret2())) {
+        for (int location = 0; location < tank.locations(); location++) {
+            if ((location == Tank.LOC_BODY) || (location == tank.getLocTurret()) || (location == tank.getLocTurret2())) {
                 continue;
             }
             int hits = 0;
-            if (tank.isStabiliserHit(loc)) {
+            if (tank.isStabiliserHit(location)) {
                 hits = 1;
             }
             CheckCritPanel stabCrit = new CheckCritPanel(1, hits);
-            controls.stabilizerCrits[loc] = stabCrit;
-            addCritRow(loc, Messages.getString("UnitEditorDialog.stabilizer"), stabCrit);
+            controls.stabilizerCrits[location] = stabCrit;
+            addCritRow(location, Messages.getString("UnitEditorDialog.stabilizer"), stabCrit);
         }
     }
 
@@ -654,30 +654,30 @@ public class UnitDamagePanelBuilder {
 
         controls.protoCrits = new CheckCritPanel[proto.locations()];
 
-        for (int loc = 0; loc < proto.locations(); loc++) {
-            if ((loc == ProtoMek.LOC_MAIN_GUN) || (loc == ProtoMek.LOC_NEAR_MISS)) {
+        for (int location = 0; location < proto.locations(); location++) {
+            if ((location == ProtoMek.LOC_MAIN_GUN) || (location == ProtoMek.LOC_NEAR_MISS)) {
                 continue;
             }
             int hits = 0;
-            if ((loc == ProtoMek.LOC_LEFT_ARM) || (loc == ProtoMek.LOC_RIGHT_ARM)) {
-                hits = entity.getDamagedCriticalSlots(CriticalSlot.TYPE_SYSTEM, ProtoMek.SYSTEM_ARM_CRIT, loc);
+            if ((location == ProtoMek.LOC_LEFT_ARM) || (location == ProtoMek.LOC_RIGHT_ARM)) {
+                hits = entity.getDamagedCriticalSlots(CriticalSlot.TYPE_SYSTEM, ProtoMek.SYSTEM_ARM_CRIT, location);
             }
-            if (loc == ProtoMek.LOC_LEG) {
-                hits = entity.getDamagedCriticalSlots(CriticalSlot.TYPE_SYSTEM, ProtoMek.SYSTEM_LEG_CRIT, loc);
+            if (location == ProtoMek.LOC_LEG) {
+                hits = entity.getDamagedCriticalSlots(CriticalSlot.TYPE_SYSTEM, ProtoMek.SYSTEM_LEG_CRIT, location);
             }
-            if (loc == ProtoMek.LOC_HEAD) {
-                hits = entity.getDamagedCriticalSlots(CriticalSlot.TYPE_SYSTEM, ProtoMek.SYSTEM_HEAD_CRIT, loc);
+            if (location == ProtoMek.LOC_HEAD) {
+                hits = entity.getDamagedCriticalSlots(CriticalSlot.TYPE_SYSTEM, ProtoMek.SYSTEM_HEAD_CRIT, location);
             }
-            if (loc == ProtoMek.LOC_TORSO) {
-                hits = entity.getDamagedCriticalSlots(CriticalSlot.TYPE_SYSTEM, ProtoMek.SYSTEM_TORSO_CRIT, loc);
+            if (location == ProtoMek.LOC_TORSO) {
+                hits = entity.getDamagedCriticalSlots(CriticalSlot.TYPE_SYSTEM, ProtoMek.SYSTEM_TORSO_CRIT, location);
             }
             int nCrits = 2;
-            if (loc == ProtoMek.LOC_LEG) {
+            if (location == ProtoMek.LOC_LEG) {
                 nCrits = 3;
             }
             CheckCritPanel protoCrit = new CheckCritPanel(nCrits, hits);
-            controls.protoCrits[loc] = protoCrit;
-            addCritRow(loc, Messages.getString("UnitEditorDialog.crits"), protoCrit);
+            controls.protoCrits[location] = protoCrit;
+            addCritRow(location, Messages.getString("UnitEditorDialog.crits"), protoCrit);
         }
     }
 
@@ -699,17 +699,17 @@ public class UnitDamagePanelBuilder {
         addLabeledRow(generalPanel(), Messages.getString("UnitEditorDialog.sensor"), controls.sensorCrit);
 
         controls.stabilizerCrits = new CheckCritPanel[vtol.locations()];
-        for (int loc = 0; loc < vtol.locations(); loc++) {
-            if ((loc == Tank.LOC_BODY) || (loc == VTOL.LOC_ROTOR)) {
+        for (int location = 0; location < vtol.locations(); location++) {
+            if ((location == Tank.LOC_BODY) || (location == VTOL.LOC_ROTOR)) {
                 continue;
             }
             int hits = 0;
-            if (vtol.isStabiliserHit(loc)) {
+            if (vtol.isStabiliserHit(location)) {
                 hits = 1;
             }
             CheckCritPanel stabCrit = new CheckCritPanel(1, hits);
-            controls.stabilizerCrits[loc] = stabCrit;
-            addCritRow(loc, Messages.getString("UnitEditorDialog.stabilizer"), stabCrit);
+            controls.stabilizerCrits[location] = stabCrit;
+            addCritRow(location, Messages.getString("UnitEditorDialog.stabilizer"), stabCrit);
         }
     }
 

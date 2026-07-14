@@ -64,26 +64,26 @@ public class UnitDamageApplier {
         this.controls = controls;
     }
 
-    private void damageSCM(Entity entity, int eqNum, int hits) {
+    private void damageSCM(Entity entity, int equipmentNumber, int hits) {
         int numHits = 0;
-        Mounted<?> m = entity.getEquipment(eqNum);
-        for (int loc = 0; loc < entity.locations(); loc++) {
-            for (int i = 0; i < entity.getNumberOfCriticalSlots(loc); i++) {
-                CriticalSlot cs = entity.getCritical(loc, i);
-                if ((cs == null) ||
-                      (cs.getType() != CriticalSlot.TYPE_EQUIPMENT) ||
-                      ((m != cs.getMount()) && (m != cs.getMount2()))) {
+        Mounted<?> mounted = entity.getEquipment(equipmentNumber);
+        for (int location = 0; location < entity.locations(); location++) {
+            for (int i = 0; i < entity.getNumberOfCriticalSlots(location); i++) {
+                CriticalSlot criticalSlot = entity.getCritical(location, i);
+                if ((criticalSlot == null) ||
+                      (criticalSlot.getType() != CriticalSlot.TYPE_EQUIPMENT) ||
+                      ((mounted != criticalSlot.getMount()) && (mounted != criticalSlot.getMount2()))) {
                     continue;
                 }
 
                 if (numHits < hits) {
-                    cs.setHit(true);
-                    cs.setDestroyed(true);
+                    criticalSlot.setHit(true);
+                    criticalSlot.setDestroyed(true);
                     numHits++;
                 } else {
-                    cs.setHit(false);
-                    cs.setDestroyed(false);
-                    cs.setRepairable(true);
+                    criticalSlot.setHit(false);
+                    criticalSlot.setDestroyed(false);
+                    criticalSlot.setRepairable(true);
                 }
             }
         }
@@ -117,19 +117,19 @@ public class UnitDamageApplier {
                 entity.setArmor(rear, i, true);
             }
         }
-        for (Mounted<?> m : entity.getEquipment()) {
-            int eqNum = entity.getEquipmentNum(m);
-            CheckCritPanel crit = controls.equipCrits.get(eqNum);
+        for (Mounted<?> mounted : entity.getEquipment()) {
+            int equipmentNumber = entity.getEquipmentNum(mounted);
+            CheckCritPanel crit = controls.equipCrits.get(equipmentNumber);
             if (null != crit) {
                 int hits = crit.getHits();
-                if (m.is(EquipmentTypeLookup.SCM)) {
-                    m.setDestroyed(hits >= 6);
-                    m.setHit(hits >= 6);
-                    damageSCM(entity, eqNum, hits);
+                if (mounted.is(EquipmentTypeLookup.SCM)) {
+                    mounted.setDestroyed(hits >= 6);
+                    mounted.setHit(hits >= 6);
+                    damageSCM(entity, equipmentNumber, hits);
                 } else {
-                    m.setDestroyed(hits > 0);
-                    m.setHit(hits > 0);
-                    entity.damageSystem(CriticalSlot.TYPE_EQUIPMENT, eqNum, hits);
+                    mounted.setDestroyed(hits > 0);
+                    mounted.setHit(hits > 0);
+                    entity.damageSystem(CriticalSlot.TYPE_EQUIPMENT, equipmentNumber, hits);
                 }
             }
         }
@@ -171,19 +171,19 @@ public class UnitDamageApplier {
                 entity.damageSystem(CriticalSlot.TYPE_SYSTEM, Mek.SYSTEM_COCKPIT, controls.cockpitCrit.getHits());
             }
             if (null != controls.lamAvionicsCrit && !controls.lamAvionicsCrit.isEmpty()) {
-                for (int loc : controls.lamAvionicsCrit.keySet()) {
+                for (int location : controls.lamAvionicsCrit.keySet()) {
                     entity.damageSystem(CriticalSlot.TYPE_SYSTEM,
                           LandAirMek.LAM_AVIONICS,
-                          loc,
-                          controls.lamAvionicsCrit.get(loc).getHits());
+                          location,
+                          controls.lamAvionicsCrit.get(location).getHits());
                 }
             }
             if (null != controls.lamLandingGearCrit && !controls.lamLandingGearCrit.isEmpty()) {
-                for (int loc : controls.lamLandingGearCrit.keySet()) {
+                for (int location : controls.lamLandingGearCrit.keySet()) {
                     entity.damageSystem(CriticalSlot.TYPE_SYSTEM,
                           LandAirMek.LAM_LANDING_GEAR,
-                          loc,
-                          controls.lamLandingGearCrit.get(loc).getHits());
+                          location,
+                          controls.lamLandingGearCrit.get(location).getHits());
                 }
             }
 
@@ -193,12 +193,12 @@ public class UnitDamageApplier {
                     if (null == actuatorCrit) {
                         continue;
                     }
-                    int loc = i + Mek.LOC_RIGHT_ARM;
+                    int location = i + Mek.LOC_RIGHT_ARM;
                     int actuator = j + Mek.ACTUATOR_SHOULDER;
-                    if ((loc >= Mek.LOC_RIGHT_LEG) || (entity instanceof QuadMek)) {
+                    if ((location >= Mek.LOC_RIGHT_LEG) || (entity instanceof QuadMek)) {
                         actuator = j + Mek.ACTUATOR_HIP;
                     }
-                    entity.damageSystem(CriticalSlot.TYPE_SYSTEM, actuator, loc, actuatorCrit.getHits());
+                    entity.damageSystem(CriticalSlot.TYPE_SYSTEM, actuator, location, actuatorCrit.getHits());
                 }
 
                 if (entity instanceof QuadVee) {
@@ -207,40 +207,40 @@ public class UnitDamageApplier {
                         if (null == actuatorCrit) {
                             continue;
                         }
-                        int loc = i + Mek.LOC_RIGHT_ARM;
+                        int location = i + Mek.LOC_RIGHT_ARM;
                         int actuator = QuadVee.SYSTEM_CONVERSION_GEAR;
-                        entity.damageSystem(CriticalSlot.TYPE_SYSTEM, actuator, loc, actuatorCrit.getHits());
+                        entity.damageSystem(CriticalSlot.TYPE_SYSTEM, actuator, location, actuatorCrit.getHits());
                     }
                 }
             }
         } else if (entity instanceof ProtoMek) {
-            for (int loc = 0; loc < entity.locations(); loc++) {
-                if (null == controls.protoCrits[loc]) {
+            for (int location = 0; location < entity.locations(); location++) {
+                if (null == controls.protoCrits[location]) {
                     continue;
                 }
-                if ((loc == ProtoMek.LOC_LEFT_ARM) || (loc == ProtoMek.LOC_RIGHT_ARM)) {
+                if ((location == ProtoMek.LOC_LEFT_ARM) || (location == ProtoMek.LOC_RIGHT_ARM)) {
                     entity.damageSystem(CriticalSlot.TYPE_SYSTEM,
                           ProtoMek.SYSTEM_ARM_CRIT,
-                          loc,
-                          controls.protoCrits[loc].getHits());
+                          location,
+                          controls.protoCrits[location].getHits());
                 }
-                if (loc == ProtoMek.LOC_LEG) {
+                if (location == ProtoMek.LOC_LEG) {
                     entity.damageSystem(CriticalSlot.TYPE_SYSTEM,
                           ProtoMek.SYSTEM_LEG_CRIT,
-                          loc,
-                          controls.protoCrits[loc].getHits());
+                          location,
+                          controls.protoCrits[location].getHits());
                 }
-                if (loc == ProtoMek.LOC_HEAD) {
+                if (location == ProtoMek.LOC_HEAD) {
                     entity.damageSystem(CriticalSlot.TYPE_SYSTEM,
                           ProtoMek.SYSTEM_HEAD_CRIT,
-                          loc,
-                          controls.protoCrits[loc].getHits());
+                          location,
+                          controls.protoCrits[location].getHits());
                 }
-                if (loc == ProtoMek.LOC_TORSO) {
+                if (location == ProtoMek.LOC_TORSO) {
                     entity.damageSystem(CriticalSlot.TYPE_SYSTEM,
                           ProtoMek.SYSTEM_TORSO_CRIT,
-                          loc,
-                          controls.protoCrits[loc].getHits());
+                          location,
+                          controls.protoCrits[location].getHits());
                 }
             }
         } else if (entity instanceof Tank tank) {
@@ -276,15 +276,15 @@ public class UnitDamageApplier {
                     tank.clearStabiliserHit(VTOL.LOC_ROTOR);
                 }
             }
-            for (int loc = 0; loc < tank.locations(); loc++) {
-                CheckCritPanel stabCrit = controls.stabilizerCrits[loc];
+            for (int location = 0; location < tank.locations(); location++) {
+                CheckCritPanel stabCrit = controls.stabilizerCrits[location];
                 if (null == stabCrit) {
                     continue;
                 }
                 if (stabCrit.getHits() > 0) {
-                    tank.setStabiliserHit(loc);
+                    tank.setStabiliserHit(location);
                 } else {
-                    tank.clearStabiliserHit(loc);
+                    tank.clearStabiliserHit(location);
                 }
             }
         } else if (entity instanceof Aero aero) {

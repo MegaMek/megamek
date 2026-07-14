@@ -47,7 +47,8 @@ import javax.swing.JSpinner;
  * The controls of the unit damage editor, held in one place so that the classes that build them, the classes that
  * read them back onto the unit, and the dialog that lays them out all work on the same set.
  * <p>
- * A control is null when the unit has nothing for it to edit, so every user has to check before reaching for one:
+ * A control is {@code null} when the unit has nothing for it to edit, so every user must check before reaching for
+ * one:
  * a unit without rear armor has no rear armor spinner, and a unit that does not track heat has no heat spinner.
  * </p>
  */

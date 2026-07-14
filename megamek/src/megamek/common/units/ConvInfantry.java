@@ -1308,7 +1308,7 @@ public class ConvInfantry extends Infantry {
 
     public void setPrimaryWeapon(InfantryWeapon w) {
         primaryWeapon = w;
-        primaryName = w.getName();
+        primaryName = w.getInternalName();
     }
 
     public InfantryWeapon getPrimaryWeapon() {
@@ -1320,7 +1320,7 @@ public class ConvInfantry extends Infantry {
         if (null == w) {
             secondName = null;
         } else {
-            secondName = w.getName();
+            secondName = w.getInternalName();
         }
     }
 
@@ -1501,12 +1501,19 @@ public class ConvInfantry extends Infantry {
         super.restore();
 
         if (null != primaryName) {
-            primaryWeapon = (InfantryWeapon) EquipmentType.get(primaryName);
+            primaryWeapon = restoreInfantryWeapon(primaryName);
         }
 
         if (null != secondName) {
-            secondaryWeapon = (InfantryWeapon) EquipmentType.get(secondName);
+            secondaryWeapon = restoreInfantryWeapon(secondName);
         }
+    }
+
+    private static @Nullable InfantryWeapon restoreInfantryWeapon(String weaponName) {
+        if (EquipmentType.get(weaponName) instanceof InfantryWeapon infantryWeapon) {
+            return infantryWeapon;
+        }
+        return null;
     }
 
     @Override

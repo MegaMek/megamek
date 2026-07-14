@@ -81,7 +81,7 @@ class UnitEditorDialogTest {
 
     /** The buttons that take a unit out of play, which are offered under the same rules. */
     private static final String[] TAKE_OUT_OF_PLAY_BUTTONS = {
-          "UnitEditorDialog.rescueUnit", "UnitEditorDialog.destroyUnit"
+          "UnitEditorDialog.withdrawUnit", "UnitEditorDialog.destroyUnit"
     };
 
     @BeforeAll

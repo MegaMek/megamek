@@ -111,7 +111,8 @@ public class UnitEditorDialog extends JDialog implements LocationSelectListener 
 
     /** The gamemaster commands that have the server take a unit out of play, as used by the map menu. */
     private static final String DESTROY_UNIT_COMMAND = "/kill %d %b";
-    private static final String RESCUE_UNIT_COMMAND = "/rescue %d";
+    /** The server calls it rescue; to a player it is the unit withdrawing from the battlefield. */
+    private static final String WITHDRAW_UNIT_COMMAND = "/rescue %d";
 
     /** How much the armor diagram is enlarged even when there is no panel height to fill. */
     private static final double MIN_PAPERDOLL_SCALE = 1.6;
@@ -353,13 +354,13 @@ public class UnitEditorDialog extends JDialog implements LocationSelectListener 
               && (entity.getGame() != null)
               && !entity.getGame().getPhase().isLounge();
 
-        JButton butRescueUnit = new JButton(Messages.getString("UnitEditorDialog.rescueUnit"));
-        butRescueUnit.setToolTipText(Messages.getString(canRemoveFromPlay
-              ? "UnitEditorDialog.rescueUnit.tooltip"
-              : "UnitEditorDialog.rescueUnit.tooltip.lobby"));
-        butRescueUnit.setEnabled(canRemoveFromPlay);
-        butRescueUnit.addActionListener(event -> rescueUnit());
-        panPreExisting.add(butRescueUnit);
+        JButton butWithdrawUnit = new JButton(Messages.getString("UnitEditorDialog.withdrawUnit"));
+        butWithdrawUnit.setToolTipText(Messages.getString(canRemoveFromPlay
+              ? "UnitEditorDialog.withdrawUnit.tooltip"
+              : "UnitEditorDialog.withdrawUnit.tooltip.lobby"));
+        butWithdrawUnit.setEnabled(canRemoveFromPlay);
+        butWithdrawUnit.addActionListener(event -> withdrawUnit());
+        panPreExisting.add(butWithdrawUnit);
 
         JButton butDestroyUnit = new JButton(Messages.getString("UnitEditorDialog.destroyUnit"));
         butDestroyUnit.setToolTipText(Messages.getString(canRemoveFromPlay
@@ -372,29 +373,29 @@ public class UnitEditorDialog extends JDialog implements LocationSelectListener 
     }
 
     /**
-     * Asks first, then has the server rescue the unit, through the same gamemaster command the map menu uses. The
-     * unit flees the board and leaves play in one piece, which is the opposite of destroying it: the crew and the
-     * unit both survive.
+     * Asks first, then withdraws the unit from the battlefield, through the server's rescue command. The unit flees
+     * the board and leaves the game intact: crew, unit, and anything it carries, counted as retreated rather than
+     * destroyed. It is the opposite of destroying it, and it does not bring anything back onto the board.
      * <p>
      * There is nothing to mark on the unit here, as there is for a destroyed unit. The server takes the unit out of
      * the game, so the update the caller sends once this dialog closes finds no unit to apply to and is dropped.
      * </p>
      */
-    private void rescueUnit() {
+    private void withdrawUnit() {
         int choice = JOptionPane.showConfirmDialog(this,
-              String.format(Messages.getString("UnitEditorDialog.rescueUnit.confirm"), entity.getDisplayName()),
-              Messages.getString("UnitEditorDialog.rescueUnit"),
+              String.format(Messages.getString("UnitEditorDialog.withdrawUnit.confirm"), entity.getDisplayName()),
+              Messages.getString("UnitEditorDialog.withdrawUnit"),
               JOptionPane.YES_NO_OPTION,
               JOptionPane.QUESTION_MESSAGE);
         if (choice != JOptionPane.YES_OPTION) {
             return;
         }
         if (client == null) {
-            LOGGER.error("Cannot rescue {}: the damage editor was opened without a client", entity.getDisplayName());
+            LOGGER.error("Cannot withdraw {}: the damage editor was opened without a client", entity.getDisplayName());
             return;
         }
-        LOGGER.info("Rescuing {} at the request of the damage editor", entity.getDisplayName());
-        client.sendChat(String.format(RESCUE_UNIT_COMMAND, entity.getId()));
+        LOGGER.info("Withdrawing {} from the battlefield at the request of the damage editor", entity.getDisplayName());
+        client.sendChat(String.format(WITHDRAW_UNIT_COMMAND, entity.getId()));
         setVisible(false);
     }
 

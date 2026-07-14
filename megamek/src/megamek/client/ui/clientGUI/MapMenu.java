@@ -62,7 +62,6 @@ import megamek.client.bot.princess.ChatCommands;
 import megamek.client.event.BoardViewEvent;
 import megamek.client.ui.Messages;
 import megamek.client.ui.clientGUI.boardview.overlay.ToastLevel;
-import megamek.client.ui.dialogs.ClientCommandDialog;
 import megamek.client.ui.dialogs.NoteDialog;
 import megamek.client.ui.dialogs.TurretFacingDialog;
 import megamek.client.ui.dialogs.UnitEditorDialog;
@@ -102,7 +101,6 @@ import megamek.common.options.OptionsConstants;
 import megamek.common.rolls.TargetRoll;
 import megamek.common.units.*;
 import megamek.logging.MMLogger;
-import megamek.server.commands.*;
 
 /**
  * Context menu for the board.
@@ -724,7 +722,7 @@ public class MapMenu extends JPopupMenu {
             JMenu traitorMenu = new JMenu(Messages.getString("Gamemaster.Traitor"));
             JMenu rescueMenu = new JMenu(Messages.getString("Gamemaster.Rescue"));
             JMenu killMenu = new JMenu(Messages.getString("Gamemaster.KillUnit"));
-            JMenu specialCommandsMenu = createGMSpecialCommandsMenu();
+            JMenu specialCommandsMenu = GameMasterCommandMenu.createSpecialCommandsMenu(gui, coords);
 
             var entities = client.getGame().getEntitiesVector(coords);
 
@@ -754,32 +752,6 @@ public class MapMenu extends JPopupMenu {
             }
             menu.add(specialCommandsMenu);
         }
-        return menu;
-    }
-
-    /**
-     * Create a menu for special commands for the GM
-     *
-     * @return the menu
-     */
-    private JMenu createGMSpecialCommandsMenu() {
-        JMenu menu = new JMenu(Messages.getString("Gamemaster.SpecialCommands"));
-        List.of(new ChangeOwnershipCommand(null, null),
-              new ChangeWeatherCommand(null, null),
-              new DisasterCommand(null, null),
-              new KillCommand(null, null),
-              new FirefightCommand(null, null),
-              new FirestarterCommand(null, null),
-              new FirestormCommand(null, null),
-              new NoFiresCommand(null, null),
-              new OrbitalBombardmentCommand(null, null),
-              new RemoveSmokeCommand(null, null),
-              new RescueCommand(null, null)).forEach(cmd -> {
-            JMenuItem item = new JMenuItem(cmd.getLongName());
-            item.addActionListener(evt -> new ClientCommandDialog(gui.getFrame(), gui, cmd, coords).setVisible(true));
-            menu.add(item);
-        });
-
         return menu;
     }
 

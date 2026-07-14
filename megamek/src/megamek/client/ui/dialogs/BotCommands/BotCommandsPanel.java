@@ -33,7 +33,6 @@
 
 package megamek.client.ui.dialogs.BotCommands;
 
-import java.awt.Color;
 import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.GridLayout;
@@ -52,7 +51,6 @@ import javax.swing.JMenuItem;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JPopupMenu;
-import javax.swing.UIManager;
 
 import megamek.client.AbstractClient;
 import megamek.client.bot.princess.ArtilleryCommandAndControl.ArtilleryOrder;
@@ -187,7 +185,7 @@ public class BotCommandsPanel extends JPanel {
 
     private void initialize() {
         applyLayout(false);
-        applyTopBarBackground();
+        UIUtil.applyTopBarBackground(this);
         var retreat = createButton("Retreat");
         pauseContinue = createButton("PauseGame");
         var maneuver = createButton("Maneuver");
@@ -217,8 +215,9 @@ public class BotCommandsPanel extends JPanel {
         this.add(priorityTarget);
         this.add(ignoreTarget);
         this.add(waypoints);
-        this.add(miscButton);
-        // the misc button only becomes visible once a caller configures it (e.g. as Request Victory)
+        // The misc button is only added to the panel once a caller configures it (e.g. as Request Victory). It is left
+        // out until then because GridLayout reserves a cell for a child even while that child is invisible, which would
+        // leave an empty gap at the end of the strip in the GUIs that never configure it.
         miscButton.setEnabled(false);
         miscButton.setVisible(false);
         if (controller != null) {
@@ -274,6 +273,9 @@ public class BotCommandsPanel extends JPanel {
         this.miscButton.addActionListener(miscButtonActionListener);
         this.miscButton.setEnabled(true);
         this.miscButton.setVisible(true);
+        this.add(miscButton);
+        this.revalidate();
+        this.repaint();
     }
 
     /**
@@ -287,7 +289,8 @@ public class BotCommandsPanel extends JPanel {
     }
 
     /**
-     * Clears the misc button, removing any text, tooltip, and action listener and disabling it.
+     * Clears the misc button, removing any text, tooltip, and action listener, disabling it and taking it back out of
+     * the panel so that it does not leave an empty cell behind.
      */
     public void clearMiscButton() {
         this.miscButton.setText("");
@@ -298,6 +301,9 @@ public class BotCommandsPanel extends JPanel {
         }
         this.miscButton.setEnabled(false);
         this.miscButton.setVisible(false);
+        this.remove(miscButton);
+        this.revalidate();
+        this.repaint();
     }
 
     private Collection<Player> getBotPlayersUnderYourCommand() {
@@ -338,19 +344,6 @@ public class BotCommandsPanel extends JPanel {
         } catch (Exception exception) {
             LOGGER.error(exception, "[BotPanel] Failed to build the {} popup", button.getText());
         }
-    }
-
-    /**
-     * Sets the panel background to the top menu bar color so the docked strip blends with the bar above it. Falls back
-     * to the generic control color when the theme does not define a menu bar background.
-     */
-    private void applyTopBarBackground() {
-        Color barBackground = UIManager.getColor("MenuBar.background");
-        if (barBackground == null) {
-            barBackground = UIManager.getColor("control");
-        }
-        setOpaque(true);
-        setBackground(barBackground);
     }
 
     private JPopupMenu createSelectBehaviorPopup() {

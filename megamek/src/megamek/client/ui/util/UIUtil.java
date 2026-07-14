@@ -474,6 +474,22 @@ public final class UIUtil {
     }
 
     /**
+     * Paints the given component in the top menu bar's color, so that a strip placed directly below the menu bar blends
+     * with the bar above it. Falls back to the generic control color when the current theme does not define a menu bar
+     * background.
+     *
+     * @param component The component to paint in the menu bar color
+     */
+    public static void applyTopBarBackground(JComponent component) {
+        Color barBackground = UIManager.getColor("MenuBar.background");
+        if (barBackground == null) {
+            barBackground = UIManager.getColor("control");
+        }
+        component.setOpaque(true);
+        component.setBackground(barBackground);
+    }
+
+    /**
      * Returns the given values multiplied by the current GUI scaling as a Dimension. Use this to adapt things that the
      * automatic scaling doesn't affect, e.g. images.
      *

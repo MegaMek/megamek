@@ -1402,7 +1402,7 @@ public class ConvInfantry extends Infantry {
     }
 
     private boolean hasNonEncumberingSecondaryWeaponSpecialization() {
-        return hasSpecialization(PARAMEDICS | TAG_TROOPS);
+        return hasSpecialization(TAG_TROOPS);
     }
 
     public double getDamagePerTrooper() {
@@ -1521,7 +1521,7 @@ public class ConvInfantry extends Infantry {
     }
 
     private static @Nullable InfantryWeapon restoreInfantryWeapon(String weaponName) {
-        if (EquipmentType.get(weaponName) instanceof InfantryWeapon infantryWeapon) {
+        if (EquipmentType.getWithFallbackToDisplayName(weaponName) instanceof InfantryWeapon infantryWeapon) {
             return infantryWeapon;
         }
         return null;

@@ -2133,7 +2133,7 @@ public class WeaponHandler implements AttackHandler, Serializable {
         if (typeName == null) {
             typeName = weaponType.getInternalName();
         }
-        weaponType = (WeaponType) EquipmentType.get(typeName);
+        weaponType = (WeaponType) EquipmentType.getWithFallbackToDisplayName(typeName);
 
         if (weaponType == null) {
             LOGGER.error("Could not restore equipment type \"{}\"", typeName);

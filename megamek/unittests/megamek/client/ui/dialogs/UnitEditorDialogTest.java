@@ -79,6 +79,11 @@ import org.junit.jupiter.params.provider.CsvSource;
  */
 class UnitEditorDialogTest {
 
+    /** The buttons that take a unit out of play, which are offered under the same rules. */
+    private static final String[] TAKE_OUT_OF_PLAY_BUTTONS = {
+          "UnitEditorDialog.rescueUnit", "UnitEditorDialog.destroyUnit"
+    };
+
     @BeforeAll
     static void beforeAll() {
         assumeFalse(GraphicsEnvironment.isHeadless(),
@@ -204,7 +209,7 @@ class UnitEditorDialogTest {
      * only offered once the game has started.
      */
     @Test
-    void destroyUnitIsOnlyOfferedInGame() {
+    void takingAUnitOutOfPlayIsOnlyOfferedInGame() {
         Entity entity = MMTestUtilities.getEntityForUnitTesting("Atlas AS7-D", false);
         assertNotNull(entity);
         Game game = new Game();
@@ -213,18 +218,20 @@ class UnitEditorDialogTest {
 
         game.setPhase(GamePhase.LOUNGE);
         UnitEditorDialog lobbyDialog = new UnitEditorDialog(new JFrame(), entity, true, client);
-        JButton lobbyButton = findButton(lobbyDialog.getContentPane(),
-              Messages.getString("UnitEditorDialog.destroyUnit"));
-        assertNotNull(lobbyButton, "the dialog has no Destroy Unit button");
-        assertFalse(lobbyButton.isEnabled(), "Destroy Unit was offered in the lobby");
+        for (String button : TAKE_OUT_OF_PLAY_BUTTONS) {
+            JButton lobbyButton = findButton(lobbyDialog.getContentPane(), Messages.getString(button));
+            assertNotNull(lobbyButton, "the dialog has no " + button + " button");
+            assertFalse(lobbyButton.isEnabled(), button + " was offered in the lobby");
+        }
         lobbyDialog.dispose();
 
         game.setPhase(GamePhase.MOVEMENT);
         UnitEditorDialog gameDialog = new UnitEditorDialog(new JFrame(), entity, true, client);
-        JButton gameButton = findButton(gameDialog.getContentPane(),
-              Messages.getString("UnitEditorDialog.destroyUnit"));
-        assertNotNull(gameButton);
-        assertTrue(gameButton.isEnabled(), "Destroy Unit was not offered in game");
+        for (String button : TAKE_OUT_OF_PLAY_BUTTONS) {
+            JButton gameButton = findButton(gameDialog.getContentPane(), Messages.getString(button));
+            assertNotNull(gameButton);
+            assertTrue(gameButton.isEnabled(), button + " was not offered in game");
+        }
         gameDialog.dispose();
     }
 
@@ -239,9 +246,11 @@ class UnitEditorDialogTest {
 
         UnitEditorDialog dialog = new UnitEditorDialog(new JFrame(), entity, true);
 
-        JButton destroy = findButton(dialog.getContentPane(), Messages.getString("UnitEditorDialog.destroyUnit"));
-        assertNotNull(destroy);
-        assertFalse(destroy.isEnabled(), "Destroy Unit was offered without a client to destroy through");
+        for (String button : TAKE_OUT_OF_PLAY_BUTTONS) {
+            JButton takeOutOfPlay = findButton(dialog.getContentPane(), Messages.getString(button));
+            assertNotNull(takeOutOfPlay);
+            assertFalse(takeOutOfPlay.isEnabled(), button + " was offered without a client to reach the server");
+        }
         dialog.dispose();
     }
 

@@ -109,8 +109,9 @@ public class UnitEditorDialog extends JDialog implements LocationSelectListener 
     private static final String DIALOG_NAME = "unitEditorDialog";
     private static final String SPLIT_PANE_NAME = "unitEditorSplitPane";
 
-    /** The gamemaster command that has the server destroy a unit, as used by the map menu. */
+    /** The gamemaster commands that have the server take a unit out of play, as used by the map menu. */
     private static final String DESTROY_UNIT_COMMAND = "/kill %d %b";
+    private static final String RESCUE_UNIT_COMMAND = "/rescue %d";
 
     /** How much the armor diagram is enlarged even when there is no panel height to fill. */
     private static final double MIN_PAPERDOLL_SCALE = 1.6;
@@ -346,19 +347,55 @@ public class UnitEditorDialog extends JDialog implements LocationSelectListener 
         butRestoreUnit.addActionListener(event -> restoreUnitToFactoryNew());
         panPreExisting.add(butRestoreUnit);
 
-        // In the lobby a unit that is not wanted is simply removed, and nothing is in play to destroy yet. Without
-        // a client there is no server to destroy it either, as in MekHQ and MegaMekLab.
-        boolean canDestroy = (client != null)
+        // In the lobby a unit that is not wanted is simply removed, and there is nothing in play to take off the
+        // board. Without a client there is no server to take it off either, as in MekHQ and MegaMekLab.
+        boolean canRemoveFromPlay = (client != null)
               && (entity.getGame() != null)
               && !entity.getGame().getPhase().isLounge();
+
+        JButton butRescueUnit = new JButton(Messages.getString("UnitEditorDialog.rescueUnit"));
+        butRescueUnit.setToolTipText(Messages.getString(canRemoveFromPlay
+              ? "UnitEditorDialog.rescueUnit.tooltip"
+              : "UnitEditorDialog.rescueUnit.tooltip.lobby"));
+        butRescueUnit.setEnabled(canRemoveFromPlay);
+        butRescueUnit.addActionListener(event -> rescueUnit());
+        panPreExisting.add(butRescueUnit);
+
         JButton butDestroyUnit = new JButton(Messages.getString("UnitEditorDialog.destroyUnit"));
-        butDestroyUnit.setToolTipText(Messages.getString(canDestroy
+        butDestroyUnit.setToolTipText(Messages.getString(canRemoveFromPlay
               ? "UnitEditorDialog.destroyUnit.tooltip"
               : "UnitEditorDialog.destroyUnit.tooltip.lobby"));
-        butDestroyUnit.setEnabled(canDestroy);
+        butDestroyUnit.setEnabled(canRemoveFromPlay);
         butDestroyUnit.addActionListener(event -> destroyUnit());
         panPreExisting.add(butDestroyUnit);
         return panPreExisting;
+    }
+
+    /**
+     * Asks first, then has the server rescue the unit, through the same gamemaster command the map menu uses. The
+     * unit flees the board and leaves play in one piece, which is the opposite of destroying it: the crew and the
+     * unit both survive.
+     * <p>
+     * There is nothing to mark on the unit here, as there is for a destroyed unit. The server takes the unit out of
+     * the game, so the update the caller sends once this dialog closes finds no unit to apply to and is dropped.
+     * </p>
+     */
+    private void rescueUnit() {
+        int choice = JOptionPane.showConfirmDialog(this,
+              String.format(Messages.getString("UnitEditorDialog.rescueUnit.confirm"), entity.getDisplayName()),
+              Messages.getString("UnitEditorDialog.rescueUnit"),
+              JOptionPane.YES_NO_OPTION,
+              JOptionPane.QUESTION_MESSAGE);
+        if (choice != JOptionPane.YES_OPTION) {
+            return;
+        }
+        if (client == null) {
+            LOGGER.error("Cannot rescue {}: the damage editor was opened without a client", entity.getDisplayName());
+            return;
+        }
+        LOGGER.info("Rescuing {} at the request of the damage editor", entity.getDisplayName());
+        client.sendChat(String.format(RESCUE_UNIT_COMMAND, entity.getId()));
+        setVisible(false);
     }
 
     /**

@@ -1,6 +1,6 @@
 /*
  * Copyright (C) 2000-2003 Ben Mazur (bmazur@sev.org)
- * Copyright (C) 2005-2025 The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2005-2026 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -151,6 +151,7 @@ public class PilotOptions extends AbstractOptions {
         addOption(edge, OptionsConstants.EDGE_WHEN_AERO_LUCKY_CRIT, true);
         addOption(edge, OptionsConstants.EDGE_WHEN_AERO_NUKE_CRIT, true);
         addOption(edge, OptionsConstants.EDGE_WHEN_AERO_UNIT_CARGO_LOST, true);
+        addOption(edge, OptionsConstants.EDGE_WHEN_AERO_CATASTROPHIC, true);
 
         // Enhanced Imaging (Clan technology, IO p.69)
         IBasicOptionGroup ei = addGroup("ei", EI_ADVANTAGES);

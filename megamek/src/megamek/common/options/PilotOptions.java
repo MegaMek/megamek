@@ -151,10 +151,10 @@ public class PilotOptions extends AbstractOptions {
         addOption(edge, OptionsConstants.EDGE_WHEN_AERO_LUCKY_CRIT, true);
         addOption(edge, OptionsConstants.EDGE_WHEN_AERO_NUKE_CRIT, true);
         addOption(edge, OptionsConstants.EDGE_WHEN_AERO_UNIT_CARGO_LOST, true);
-        // Infantry Triggers
-        addOption(edge, OptionsConstants.EDGE_WHEN_FIRE, true);
         // General Triggers
-        addOption(edge, OptionsConstants.EDGE_WHEN_ZIPLINE, true);
+        addOption(edge, OptionsConstants.EDGE_WHEN_FIRE, true);
+        // Infantry Triggers
+        addOption(edge, OptionsConstants.EDGE_WHEN_ZIPLINE, true)
 
         // Enhanced Imaging (Clan technology, IO p.69)
         IBasicOptionGroup ei = addGroup("ei", EI_ADVANTAGES);

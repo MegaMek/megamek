@@ -131,12 +131,23 @@ The unit is only available between those years. You can leave the end open:
 
        availability:3067- FS:7
 
+You can separate the range from the codes with a space or a colon, whichever reads better to you.
+These two lines mean the same thing:
+
+       availability:3067-3085 FS:7,LA:6
+       availability:3067-3085:FS:7,LA:6
+
 You can use more than one availability line to change the numbers over time:
 
        availability:3049-3066 FS:4
        availability:3067-3085 FS:7
 
 That is a unit that was uncommon, then became common after 3067.
+
+Line your ranges up with the game's eras. The Force Generator works in eras, not single years, so a
+change in the middle of an era is spread across it instead of happening on the exact year. If you
+want a clean change, end one range the year before an era begins and start the next range on the
+era's first year. The MegaMekLab Availability tab warns you when a range does not line up.
 
 
 More than one variant of the same design

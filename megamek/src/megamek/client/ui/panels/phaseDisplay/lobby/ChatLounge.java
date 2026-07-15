@@ -409,6 +409,12 @@ public class ChatLounge extends AbstractPhaseDisplay
         GUIP.addPreferenceChangeListener(this);
         PreferenceManager.getClientPreferences().addPreferenceChangeListener(this);
         MekSummaryCache.getInstance().addListener(mekSummaryCacheListener);
+        // The cache may have finished loading between setupUnitConfig() reading its state and the listener
+        // being registered just above. Without this check that notification is missed and the buttons that
+        // need the cache stay disabled for the rest of the lobby.
+        if (MekSummaryCache.getInstance().isInitialized()) {
+            enableUnitAddButtons();
+        }
         clientgui.getClient().getGame().addGameListener(this);
         clientgui.boardViews().forEach(bv -> bv.addBoardViewListener(this));
 
@@ -589,11 +595,26 @@ public class ChatLounge extends AbstractPhaseDisplay
     }
 
     /** Enables buttons to allow adding units when the MSC has finished loading. */
-    private final transient MekSummaryCache.Listener mekSummaryCacheListener = () -> {
+    private final transient MekSummaryCache.Listener mekSummaryCacheListener = this::enableUnitAddButtons;
+
+    /**
+     * Enables the buttons that need a loaded unit cache to work.
+     * <p>
+     * Both callers can run off the event dispatch thread: the unit cache notifies its listeners from its loader
+     * thread, and the lobby is constructed from the phase change, which is dispatched on the client's connection
+     * thread. The button updates are therefore moved onto the event dispatch thread here, so that every caller is
+     * covered.
+     * </p>
+     */
+    private void enableUnitAddButtons() {
+        if (!SwingUtilities.isEventDispatchThread()) {
+            SwingUtilities.invokeLater(this::enableUnitAddButtons);
+            return;
+        }
         butAdd.setEnabled(true);
         butArmy.setEnabled(true);
         butLoadList.setEnabled(true);
-    };
+    }
 
     /** Sets up the Mek Table and Mek Tree. */
     private void setupEntities() {

@@ -100,7 +100,9 @@ final class EntityReadoutUnitType {
             result += Messages.getString("MekView.unitType.support") + " ";
         }
 
-        if (entity instanceof MobileStructure) {
+        if (entity.isBattlefieldSupportAsset()) {
+            result += Messages.getString("MekView.unitType.battlefieldSupportAsset");
+        } else if (entity instanceof MobileStructure) {
             result += Messages.getString("MekView.unitType.mobileStructure") + " ";
         } else if (entity instanceof BuildingEntity) {
             result += Messages.getString("MekView.unitType.advancedBuilding") + " ";

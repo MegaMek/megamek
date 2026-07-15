@@ -36,6 +36,7 @@ package megamek.common.loaders;
 import java.awt.Image;
 import java.io.File;
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -57,6 +58,11 @@ import megamek.common.alphaStrike.ASUnitType;
 import megamek.common.alphaStrike.AlphaStrikeHelper;
 import megamek.common.alphaStrike.BattleForceSUA;
 import megamek.common.annotations.Nullable;
+import megamek.common.battlefieldSupport.BFSAssetType;
+import megamek.common.battlefieldSupport.BFSDamage;
+import megamek.common.battlefieldSupport.BFSRange;
+import megamek.common.battlefieldSupport.BFSSpecial;
+import megamek.common.battlefieldSupport.BFSSpecialType;
 import megamek.common.equipment.Mounted;
 import megamek.common.options.IOption;
 import megamek.common.options.IOptionInfo;
@@ -76,6 +82,10 @@ public class MekSummary implements Serializable, ASCardDisplayable {
     private String chassis;
     private String clanChassisName;
     private String model;
+    /** The unit's own unit-file UUID (from its {@code .blk}/{@code .mtf}/{@code .bfs} file), or {@code null}. */
+    private String unitFileUUID;
+    /** For a Battlefield Support Asset, the base unit's UUID it links to, or {@code null} when standalone. */
+    private String linkedUnitId;
     private int mulId;
     private String unitType;
     private String unitSubType;
@@ -105,6 +115,46 @@ public class MekSummary implements Serializable, ASCardDisplayable {
     private int weightClass;
     private int bv;
     private int genericBattleValue;
+
+    /**
+     * For Battlefield Support Assets: the Veteran cost expressed in Battle Value (Veteran BSP times 20), or 0 if the
+     * asset has no Veteran variant. Non-asset units leave this at 0.
+     */
+    private int bfsVeteranBv;
+
+    // === Battlefield Support Asset stats, cached for Advanced Search filtering. ===
+    // These are populated only for .bfs Assets (isBattlefieldSupportAsset()); non-assets leave them at their defaults.
+    /** The Asset's rules category, or {@code null} for a non-asset. */
+    private BFSAssetType bfsAssetType;
+    /** The Asset card title (chassis if not overridden), for the basic name filter. */
+    private String bfsCardTitle;
+    /** The Asset card subtitle (model if not overridden), for the basic name filter. */
+    private String bfsCardSubtitle;
+    /** The Asset's movement mode, or {@code null} for a non-asset. */
+    private EntityMovementMode bfsMovementMode;
+    /** The Asset's single Movement Point allowance for its declared mode. */
+    private int bfsMp;
+    /** The Asset's fixed Target Movement Modifier. */
+    private int bfsTmm;
+    /** The Asset's Short/Medium/Long range, or {@code null} for a non-asset. */
+    private BFSRange bfsRange;
+    /** The Asset's keyword-range label (for example {@code Artillery}), or {@code null} for a numeric/absent range. */
+    private String bfsRangeKeyword;
+    /** The Asset's crew Skill (to-hit base target number). */
+    private int bfsSkill;
+    /** The Asset's attack damage, or {@code null} for a non-asset. */
+    private BFSDamage bfsDamage;
+    /** The Asset's undamaged (original) Destroy Check target number. */
+    private int bfsDestroyCheck;
+    /** The Asset's damage Threshold. */
+    private int bfsThreshold;
+    /** The Asset's effective Battlefield Support Point cost. */
+    private int bfsBsp;
+    /** The recognized Specials present on the Asset, for presence filtering. */
+    private List<BFSSpecialType> bfsSpecials = new ArrayList<>();
+    /** The full Specials present on the Asset, retaining parameter values (for example {@code ECM4},
+     * {@code Artillery (LT)}), for value-based filtering. */
+    private List<BFSSpecial> bfsSpecialDetails = new ArrayList<>();
 
     /** The full cost of the unit (including ammo). */
     private long cost;
@@ -305,6 +355,29 @@ public class MekSummary implements Serializable, ASCardDisplayable {
 
     public boolean isSupport() {
         return support;
+    }
+
+    /** @return true if this summary represents a Battlefield Support Asset (a {@code .bfs} unit). */
+    public boolean isBattlefieldSupportAsset() {
+        return (entityType & Entity.ETYPE_BATTLEFIELD_SUPPORT_ASSET) != 0;
+    }
+
+    /** @return this unit's own unit-file UUID, or {@code null} if the file carries none */
+    public @Nullable String getUnitFileUUID() {
+        return unitFileUUID;
+    }
+
+    public void setUnitFileUUID(@Nullable String unitFileUUID) {
+        this.unitFileUUID = unitFileUUID;
+    }
+
+    /** @return for a Battlefield Support Asset, the base unit's UUID it links to; {@code null} when standalone/non-asset */
+    public @Nullable String getLinkedUnitId() {
+        return linkedUnitId;
+    }
+
+    public void setLinkedUnitId(@Nullable String linkedUnitId) {
+        this.linkedUnitId = linkedUnitId;
     }
 
     public String getUnitSubType() {
@@ -559,6 +632,153 @@ public class MekSummary implements Serializable, ASCardDisplayable {
 
     public int getBV() {
         return bv;
+    }
+
+    /**
+     * @return for a Battlefield Support Asset, the Veteran cost in Battle Value (Veteran BSP times 20), or 0 if the
+     *       asset has no Veteran variant (or is not an asset)
+     */
+    public int getBfsVeteranBv() {
+        return bfsVeteranBv;
+    }
+
+    public void setBfsVeteranBv(int bfsVeteranBv) {
+        this.bfsVeteranBv = bfsVeteranBv;
+    }
+
+    /** @return the Asset's rules category, or {@code null} if this summary is not a Battlefield Support Asset */
+    public @Nullable BFSAssetType getBfsAssetType() {
+        return bfsAssetType;
+    }
+
+    public void setBfsAssetType(@Nullable BFSAssetType bfsAssetType) {
+        this.bfsAssetType = bfsAssetType;
+    }
+
+    /** @return the Asset card title, or {@code null} for a non-asset */
+    public @Nullable String getBfsCardTitle() {
+        return bfsCardTitle;
+    }
+
+    public void setBfsCardTitle(@Nullable String bfsCardTitle) {
+        this.bfsCardTitle = bfsCardTitle;
+    }
+
+    /** @return the Asset card subtitle, or {@code null} for a non-asset */
+    public @Nullable String getBfsCardSubtitle() {
+        return bfsCardSubtitle;
+    }
+
+    public void setBfsCardSubtitle(@Nullable String bfsCardSubtitle) {
+        this.bfsCardSubtitle = bfsCardSubtitle;
+    }
+
+    /** @return the Asset's movement mode, or {@code null} for a non-asset */
+    public @Nullable EntityMovementMode getBfsMovementMode() {
+        return bfsMovementMode;
+    }
+
+    public void setBfsMovementMode(@Nullable EntityMovementMode bfsMovementMode) {
+        this.bfsMovementMode = bfsMovementMode;
+    }
+
+    /** @return the Asset's single Movement Point allowance */
+    public int getBfsMp() {
+        return bfsMp;
+    }
+
+    public void setBfsMp(int bfsMp) {
+        this.bfsMp = bfsMp;
+    }
+
+    /** @return the Asset's fixed Target Movement Modifier */
+    public int getBfsTmm() {
+        return bfsTmm;
+    }
+
+    public void setBfsTmm(int bfsTmm) {
+        this.bfsTmm = bfsTmm;
+    }
+
+    /** @return the Asset's Short/Medium/Long range, or {@code null} for a non-asset */
+    public @Nullable BFSRange getBfsRange() {
+        return bfsRange;
+    }
+
+    public void setBfsRange(@Nullable BFSRange bfsRange) {
+        this.bfsRange = bfsRange;
+    }
+
+    /** @return the Asset's keyword-range label, or {@code null} for a numeric/absent range */
+    public @Nullable String getBfsRangeKeyword() {
+        return bfsRangeKeyword;
+    }
+
+    public void setBfsRangeKeyword(@Nullable String bfsRangeKeyword) {
+        this.bfsRangeKeyword = bfsRangeKeyword;
+    }
+
+    /** @return the Asset's crew Skill */
+    public int getBfsSkill() {
+        return bfsSkill;
+    }
+
+    public void setBfsSkill(int bfsSkill) {
+        this.bfsSkill = bfsSkill;
+    }
+
+    /** @return the Asset's attack damage, or {@code null} for a non-asset */
+    public @Nullable BFSDamage getBfsDamage() {
+        return bfsDamage;
+    }
+
+    public void setBfsDamage(@Nullable BFSDamage bfsDamage) {
+        this.bfsDamage = bfsDamage;
+    }
+
+    /** @return the Asset's undamaged Destroy Check target number */
+    public int getBfsDestroyCheck() {
+        return bfsDestroyCheck;
+    }
+
+    public void setBfsDestroyCheck(int bfsDestroyCheck) {
+        this.bfsDestroyCheck = bfsDestroyCheck;
+    }
+
+    /** @return the Asset's damage Threshold */
+    public int getBfsThreshold() {
+        return bfsThreshold;
+    }
+
+    public void setBfsThreshold(int bfsThreshold) {
+        this.bfsThreshold = bfsThreshold;
+    }
+
+    /** @return the Asset's effective Battlefield Support Point cost */
+    public int getBfsBsp() {
+        return bfsBsp;
+    }
+
+    public void setBfsBsp(int bfsBsp) {
+        this.bfsBsp = bfsBsp;
+    }
+
+    /** @return the recognized Specials present on the Asset (never {@code null}) */
+    public List<BFSSpecialType> getBfsSpecials() {
+        return (bfsSpecials != null) ? bfsSpecials : new ArrayList<>();
+    }
+
+    public void setBfsSpecials(List<BFSSpecialType> bfsSpecials) {
+        this.bfsSpecials = (bfsSpecials != null) ? bfsSpecials : new ArrayList<>();
+    }
+
+    /** @return the full Specials present on the Asset, retaining parameter values (never {@code null}) */
+    public List<BFSSpecial> getBfsSpecialDetails() {
+        return (bfsSpecialDetails != null) ? bfsSpecialDetails : new ArrayList<>();
+    }
+
+    public void setBfsSpecialDetails(List<BFSSpecial> bfsSpecialDetails) {
+        this.bfsSpecialDetails = (bfsSpecialDetails != null) ? bfsSpecialDetails : new ArrayList<>();
     }
 
     public int getGenericBattleValue() {

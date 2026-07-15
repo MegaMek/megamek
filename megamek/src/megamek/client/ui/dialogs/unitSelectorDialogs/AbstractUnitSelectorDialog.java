@@ -78,6 +78,7 @@ import megamek.client.ui.models.XTableColumnModel;
 import megamek.common.TechConstants;
 import megamek.common.annotations.Nullable;
 import megamek.common.battleValue.BVCalculator;
+import megamek.common.battlefieldSupport.BattlefieldSupportAsset;
 import megamek.common.internationalization.I18n;
 import megamek.common.loaders.EntityLoadingException;
 import megamek.common.loaders.MekFileParser;
@@ -119,6 +120,11 @@ public abstract class AbstractUnitSelectorDialog extends JDialog implements Runn
     private JButton buttonAdvancedSearch;
     private JButton buttonResetSearch;
     private final JToggleButton buttonPvToggle = new JToggleButton(Messages.getString("MekSelectorDialog.TogglePV"));
+    private final JToggleButton buttonAssetCostToggle =
+          new JToggleButton(Messages.getString("MekSelectorDialog.ToggleAssetCost"));
+    private final JComboBox<String> assetSkillChooser = new JComboBox<>(new String[] {
+          Messages.getString("MekSelectorDialog.AssetSkill.Regular"),
+          Messages.getString("MekSelectorDialog.AssetSkill.Veteran") });
     private final JToggleButton buttonGPToggle = new JToggleButton(Messages.getString("MekSelectorDialog.ToggleGP"));
     protected JList<String> listTechLevel = new JList<>();
     private final JComponent gpLine = new JPanel();
@@ -151,13 +157,28 @@ public abstract class AbstractUnitSelectorDialog extends JDialog implements Runn
     protected static MekSummaryCache mscInstance = MekSummaryCache.getInstance();
     protected MekSummary[] meks;
 
+    /** Sentinel type-codes for the unit-type filter combo entries that are not real {@link UnitType} values. */
+    static final int UNIT_TYPE_ALL = -1;
+    static final int UNIT_TYPE_SUPPORT_VEE = -2;
+    /**
+     * Maps each unit-type filter combo index to its {@link UnitType} code (or a sentinel above). This decouples the
+     * filter from the combo's positional order, which is necessary because some unit types (AERO) are omitted from the
+     * combo, so {@code selectedIndex - 1} no longer equals the {@link UnitType} value.
+     */
+    private final List<Integer> unitTypeComboCodes = new ArrayList<>();
+
     private final MekTableModel unitModel = new MekTableModel();
     private final XTableColumnModel unitColumnModel = new XTableColumnModel();
     private Predicate<MekSummary> unitSelectionScopeFilter = Objects::nonNull;
     private TableColumn pvColumn;
     private TableColumn bvColumn;
+    private TableColumn assetBvColumn;
+    private TableColumn assetBspColumn;
     private TableColumn rulesLevelColumn;
     private TableColumn variableRulesLevelColumn;
+
+    /** When true, skill-input listeners skip refreshing the table so a batch of changes triggers a single refresh. */
+    private boolean suppressSkillRefresh;
     protected MekSearchFilter searchFilter;
 
     protected JFrame frame;
@@ -277,6 +298,16 @@ public abstract class AbstractUnitSelectorDialog extends JDialog implements Runn
         tableUnits.getColumnModel().getColumn(MekTableModel.COL_LEVEL).setCellRenderer(centeredRenderer);
         tableUnits.getColumnModel().getColumn(MekTableModel.COL_VTL).setCellRenderer(centeredRenderer);
 
+        AssetCostRenderer assetCostRenderer = new AssetCostRenderer();
+        tableUnits.getColumnModel().getColumn(MekTableModel.COL_ASSET_BV).setCellRenderer(assetCostRenderer);
+        tableUnits.getColumnModel().getColumn(MekTableModel.COL_ASSET_BSP).setCellRenderer(assetCostRenderer);
+
+        // Battlefield Support Assets have no BV or PV of their own (their cost is the asset cost column),
+        // so those cells are left blank for asset rows.
+        BvPvRenderer bvPvRenderer = new BvPvRenderer();
+        tableUnits.getColumnModel().getColumn(MekTableModel.COL_BV).setCellRenderer(bvPvRenderer);
+        tableUnits.getColumnModel().getColumn(MekTableModel.COL_PV).setCellRenderer(bvPvRenderer);
+
         tableUnits.setSelectionMode(multiSelect ?
               ListSelectionModel.MULTIPLE_INTERVAL_SELECTION :
               ListSelectionModel.SINGLE_SELECTION);
@@ -298,9 +329,12 @@ public abstract class AbstractUnitSelectorDialog extends JDialog implements Runn
         }
         bvColumn = tableUnits.getColumnModel().getColumn(MekTableModel.COL_BV);
         pvColumn = tableUnits.getColumnModel().getColumn(MekTableModel.COL_PV);
+        assetBvColumn = tableUnits.getColumnModel().getColumn(MekTableModel.COL_ASSET_BV);
+        assetBspColumn = tableUnits.getColumnModel().getColumn(MekTableModel.COL_ASSET_BSP);
         rulesLevelColumn = tableUnits.getColumnModel().getColumn(MekTableModel.COL_LEVEL);
         variableRulesLevelColumn = tableUnits.getColumnModel().getColumn(MekTableModel.COL_VTL);
         togglePV(false);
+        toggleAssetCost(false);
         toggleVtl(isVTL());
         JScrollPane scrollTableUnits = new JScrollPane(tableUnits);
         scrollTableUnits.setName("scrollTableUnits");
@@ -349,14 +383,18 @@ public abstract class AbstractUnitSelectorDialog extends JDialog implements Runn
         panelFilterButtons.add(labelUnitType, gridBagConstraints);
 
         DefaultComboBoxModel<String> unitTypeModel = new DefaultComboBoxModel<>();
+        unitTypeComboCodes.clear();
         unitTypeModel.addElement(Messages.getString("MekSelectorDialog.All"));
+        unitTypeComboCodes.add(UNIT_TYPE_ALL);
         for (int i = 0; i < UnitType.SIZE; i++) {
             // the AERO type does not match any units and there are no preconstructed lifeboats or escape pods
             if (i != UnitType.AERO) {
                 unitTypeModel.addElement(UnitType.getTypeDisplayableName(i));
+                unitTypeComboCodes.add(i);
             }
         }
         unitTypeModel.addElement(Messages.getString("MekSelectorDialog.SupportVee"));
+        unitTypeComboCodes.add(UNIT_TYPE_SUPPORT_VEE);
         comboUnitType.setModel(unitTypeModel);
         comboUnitType.setName("comboUnitType");
         comboUnitType.addActionListener(this);
@@ -429,6 +467,15 @@ public abstract class AbstractUnitSelectorDialog extends JDialog implements Runn
         gpLine.add(Box.createHorizontalStrut(10));
         gpLine.add(lblPilot);
         gpLine.add(textPilot);
+        gpLine.add(Box.createHorizontalStrut(10));
+        JLabel lblAssetSkill = new JLabel(Messages.getString("MekSelectorDialog.m_labelAssetSkill"));
+        lblAssetSkill.setName("lblAssetSkill");
+        gpLine.add(lblAssetSkill);
+        assetSkillChooser.setName("assetSkillChooser");
+        assetSkillChooser.setToolTipText(Messages.getString("MekSelectorDialog.AssetSkill.ToolTip"));
+        // Recompute the asset cost column when the Regular/Veteran selection changes.
+        assetSkillChooser.addActionListener(e -> refreshSkillAdjustedColumns());
+        gpLine.add(assetSkillChooser);
         gpLine.setVisible(CLIENT_PREFERENCES.useGPinUnitSelection());
 
         labelImage.setHorizontalAlignment(SwingConstants.CENTER);
@@ -465,6 +512,12 @@ public abstract class AbstractUnitSelectorDialog extends JDialog implements Runn
         gridBagConstraintsWest.gridx = 2;
         gridBagConstraintsWest.gridy = 0;
         panelSearchButtons.add(buttonPvToggle, gridBagConstraintsWest);
+
+        buttonAssetCostToggle.setName("buttonToggleAssetCost");
+        buttonAssetCostToggle.setToolTipText(Messages.getString("MekSelectorDialog.ToggleAssetCost.ToolTip"));
+        buttonAssetCostToggle.addActionListener(e -> toggleAssetCost(buttonAssetCostToggle.isSelected()));
+        gridBagConstraintsWest.gridx++;
+        panelSearchButtons.add(buttonAssetCostToggle, gridBagConstraintsWest);
 
         buttonGPToggle.setSelected(CLIENT_PREFERENCES.useGPinUnitSelection());
         buttonGPToggle.addActionListener(e -> toggleGP());
@@ -615,10 +668,21 @@ public abstract class AbstractUnitSelectorDialog extends JDialog implements Runn
     private void toggleGP() {
         CLIENT_PREFERENCES.setUseGpInUnitSelection(buttonGPToggle.isSelected());
         gpLine.setVisible(CLIENT_PREFERENCES.useGPinUnitSelection());
-        // Reset the values when hidden so there isn't an invisible BV modifier
+        // Reset the values when hidden so there isn't an invisible BV/cost modifier. Each reset would normally
+        // trigger a full table re-sort via its listener; suppress those and do a single refresh at the end, and only
+        // when a value actually changed (so closing an unedited Skills row does no work).
         if (!CLIENT_PREFERENCES.useGPinUnitSelection()) {
+            boolean changed = !textGunnery.getText().equals("4")
+                  || !textPilot.getText().equals("5")
+                  || (assetSkillChooser.getSelectedIndex() != 0);
+            suppressSkillRefresh = true;
             textGunnery.setText("4");
             textPilot.setText("5");
+            assetSkillChooser.setSelectedIndex(0);
+            suppressSkillRefresh = false;
+            if (changed) {
+                sorter.allRowsChanged();
+            }
         }
     }
 
@@ -652,9 +716,7 @@ public abstract class AbstractUnitSelectorDialog extends JDialog implements Runn
         techLevels.toArray(nTypes);
 
         final int nClass = comboWeight.getSelectedIndex();
-        final int nUnit = comboUnitType.getSelectedIndex() - 1;
-        final boolean checkSupportVee = Messages.getString("MekSelectorDialog.SupportVee")
-              .equals(comboUnitType.getSelectedItem());
+        final int selectedTypeCode = unitTypeCodeForComboIndex(comboUnitType.getSelectedIndex());
         // If current expression doesn't parse, don't update.
         try {
             unitTypeFilter = new RowFilter<>() {
@@ -683,14 +745,16 @@ public abstract class AbstractUnitSelectorDialog extends JDialog implements Runn
                                 && ((nClass == EntityWeightClass.SIZE) || (nClass == mek.getWeightClass()))
                                 /* Technology Level */
                                 && (techLevelMatch)
-                                /* Support Vehicles */
-                                && ((nUnit == -1) || (checkSupportVee && mek.isSupport())
-                                || (!checkSupportVee && mek.getUnitType().equals(UnitType.getTypeName(nUnit))))
+                                /* Unit Type (incl. Support Vehicles and Battlefield Support Assets) */
+                                && matchesUnitTypeSelection(mek, selectedTypeCode)
                                 /* Additional caller-specific restrictions */
                                 && unitSelectionScopeFilter.test(mek)
                                 /* Advanced Search */
                                 && ((searchFilter == null) || MekSearchFilter.isMatch(mek, searchFilter))
-                                && advancedSearchDialog.getASAdvancedSearch().matches(mek)) {
+                                && advancedSearchDialog.getASAdvancedSearch().matches(mek)
+                                /* Asset Advanced Search: tested against the row's asset form (the row
+                                 * itself for a standalone asset, or the linked asset for a base unit) */
+                                && advancedSearchDialog.getBFSAdvancedSearch().matches(assetSummaryFor(mek))) {
                         return matchesTextFilter(mek);
                     }
                     return false;
@@ -700,6 +764,60 @@ public abstract class AbstractUnitSelectorDialog extends JDialog implements Runn
             return;
         }
         sorter.setRowFilter(unitTypeFilter);
+    }
+
+    /**
+     * Resolves a unit-type filter combo index to its {@link UnitType} code (or a sentinel: {@link #UNIT_TYPE_ALL},
+     * {@link #UNIT_TYPE_SUPPORT_VEE}). Robust to the AERO gap in the combo.
+     *
+     * @param comboIndex the selected combo index
+     *
+     * @return the type code, or {@link #UNIT_TYPE_ALL} if the index is out of range
+     */
+    protected int unitTypeCodeForComboIndex(int comboIndex) {
+        if ((comboIndex < 0) || (comboIndex >= unitTypeComboCodes.size())) {
+            return UNIT_TYPE_ALL;
+        }
+        return unitTypeComboCodes.get(comboIndex);
+    }
+
+    /**
+     * @param mek      the unit summary to test
+     * @param typeCode the selected unit-type code (see {@link #unitTypeCodeForComboIndex(int)})
+     *
+     * @return whether the unit matches the selected unit-type filter. The Battlefield Support Asset filter matches an
+     *       asset OR a base unit that has a linked asset, so a linked base/asset pair (shown as the base unit's row)
+     *       appears under both its own type filter and the Asset filter.
+     */
+    protected boolean matchesUnitTypeSelection(MekSummary mek, int typeCode) {
+        boolean hasLinkedAsset = !mek.isBattlefieldSupportAsset() && (mscInstance.getLinkedAsset(mek) != null);
+        return matchesUnitTypeSelection(typeCode, mek.getUnitType(), mek.isBattlefieldSupportAsset(),
+              mek.isSupport(), hasLinkedAsset);
+    }
+
+    /**
+     * Pure decision function for the unit-type filter (extracted for testability).
+     *
+     * @param typeCode       the selected unit-type code
+     * @param unitTypeName   the unit's {@link UnitType} name
+     * @param isAsset        whether the unit is a Battlefield Support Asset
+     * @param isSupport      whether the unit is a Support Vehicle
+     * @param hasLinkedAsset whether the unit is a base unit with a linked asset
+     *
+     * @return whether the unit matches the selected filter
+     */
+    static boolean matchesUnitTypeSelection(int typeCode, String unitTypeName, boolean isAsset, boolean isSupport,
+          boolean hasLinkedAsset) {
+        if (typeCode == UNIT_TYPE_ALL) {
+            return true;
+        }
+        if (typeCode == UNIT_TYPE_SUPPORT_VEE) {
+            return isSupport;
+        }
+        if (typeCode == UnitType.BATTLEFIELD_SUPPORT_ASSET) {
+            return isAsset || hasLinkedAsset;
+        }
+        return unitTypeName.equals(UnitType.getTypeName(typeCode));
     }
 
     protected void updateUnitCount() {
@@ -730,7 +848,8 @@ public abstract class AbstractUnitSelectorDialog extends JDialog implements Runn
         if (!textFilter.getText().isBlank()) {
             String text = I18n.normalizeTextToASCII(textFilter.getText(), false).toLowerCase();
             String[] tokens = text.split(" ");
-            String searchText = I18n.normalizeTextToASCII(unit.getName() + "###" + unit.getModel(), true).toLowerCase();
+            String searchText = I18n.normalizeTextToASCII(unit.getName() + "###" + unit.getModel()
+                  + assetNameSearchSuffix(unit), true).toLowerCase();
             for (String token : tokens) {
                 if (!searchText.contains(token)) {
                     return false;
@@ -738,6 +857,25 @@ public abstract class AbstractUnitSelectorDialog extends JDialog implements Runn
             }
         }
         return true;
+    }
+
+    /**
+     * Returns extra searchable text for the basic name filter so that a Battlefield Support Asset can be found by its
+     * card title/subtitle. For a standalone asset row this is the asset's own card title/subtitle; for a base unit row
+     * with a linked asset it is the linked asset's; otherwise it is empty.
+     *
+     * @param unit the unit summary shown in the row
+     *
+     * @return the extra text (prefixed with a separator), or an empty string when the row has no asset form
+     */
+    private String assetNameSearchSuffix(MekSummary unit) {
+        MekSummary asset = assetSummaryFor(unit);
+        if (asset == null) {
+            return "";
+        }
+        String title = (asset.getBfsCardTitle() != null) ? asset.getBfsCardTitle() : "";
+        String subtitle = (asset.getBfsCardSubtitle() != null) ? asset.getBfsCardSubtitle() : "";
+        return "###" + title + "###" + subtitle;
     }
 
     /**
@@ -761,24 +899,46 @@ public abstract class AbstractUnitSelectorDialog extends JDialog implements Runn
      * @return the selected entity (required for MekHQ/MegaMek overrides)
      */
     protected Entity refreshUnitView() {
-        Entity selectedEntity = getSelectedEntity();
-        panePreview.updateDisplayedEntity(selectedEntity, getSelectedMekSummary());
-        // Empty the unit preview icon if there's no entity selected
-        if (selectedEntity == null) {
+        MekSummary selectedSummary = getSelectedMekSummary();
+        // A row that is itself an asset uses the asset Entity for its Summary and TRO as well as its BFS Card.
+        boolean standaloneAsset = (selectedSummary != null) && selectedSummary.isBattlefieldSupportAsset();
+
+        Entity baseEntity = standaloneAsset ? null : getSelectedEntity();
+
+        MekSummary assetSummary = getSelectedAssetSummary();
+        Entity loadedAsset = (assetSummary != null) ? loadEntity(assetSummary) : null;
+        BattlefieldSupportAsset assetEntity =
+              (loadedAsset instanceof BattlefieldSupportAsset asset) ? asset : null;
+
+        Entity textualEntity = standaloneAsset ? assetEntity : baseEntity;
+        panePreview.updateDisplayedEntity(textualEntity, standaloneAsset ? null : selectedSummary, assetEntity);
+
+        Entity previewEntity = (textualEntity != null) ? textualEntity : assetEntity;
+        // Empty the unit preview icon if there's nothing selected
+        if (previewEntity == null) {
             labelImage.setIcon(null);
         }
-        return selectedEntity;
+        return previewEntity;
     }
 
     /**
      * @return the selected entity
      */
     public @Nullable Entity getSelectedEntity() {
-        MekSummary ms = getSelectedMekSummary();
+        return loadEntity(getSelectedMekSummary());
+    }
+
+    /**
+     * Loads the {@link Entity} for the given unit summary.
+     *
+     * @param ms the unit summary to load, or {@code null}
+     *
+     * @return the loaded entity, or {@code null} if the summary is {@code null} or cannot be loaded
+     */
+    protected @Nullable Entity loadEntity(@Nullable MekSummary ms) {
         if (ms == null) {
             return null;
         }
-
         try {
             // For some unknown reason the base path gets screwed up after you
             // print so this sets the source file to the full path.
@@ -802,6 +962,68 @@ public abstract class AbstractUnitSelectorDialog extends JDialog implements Runn
         ).filter(Objects::nonNull).collect(Collectors.toCollection(ArrayList::new));
     }
 
+    /**
+     * Returns the Battlefield Support Asset form of every selected row that has one. For a standalone asset row this is
+     * the asset itself; for a base unit row with a linked asset this is the linked asset; rows with no asset form are
+     * skipped. Callers that offer a "Select as Asset" action use this to obtain the asset entities for the selection.
+     *
+     * @return the asset entities for the selection (may be empty)
+     */
+    public ArrayList<Entity> getSelectedAssetEntities() {
+        return getSelectedMekSummaries().stream()
+              .map(this::assetSummaryFor)
+              .filter(Objects::nonNull)
+              .map(this::loadEntity)
+              .filter(Objects::nonNull)
+              .collect(Collectors.toCollection(ArrayList::new));
+    }
+
+    /**
+     * @return true if the current selection is non-empty and every selected row has a standard (TW) unit form, i.e. no
+     *       row is a standalone Battlefield Support Asset. Callers use this to enable a "Select as Unit" action.
+     */
+    public boolean selectionCanSelectAsUnit() {
+        List<MekSummary> summaries = getSelectedMekSummaries();
+        long assetOnly = summaries.stream().filter(MekSummary::isBattlefieldSupportAsset).count();
+        return canSelectSelectionAsUnit(summaries.size(), (int) assetOnly);
+    }
+
+    /**
+     * @return true if the current selection is non-empty and every selected row has a Battlefield Support Asset form
+     *       (either it is an asset itself or has a linked asset). Callers use this to enable a "Select as Asset" action.
+     */
+    public boolean selectionCanSelectAsAsset() {
+        List<MekSummary> summaries = getSelectedMekSummaries();
+        long withoutAssetForm = summaries.stream().filter(ms -> assetSummaryFor(ms) == null).count();
+        return canSelectSelectionAsAsset(summaries.size(), (int) withoutAssetForm);
+    }
+
+    /**
+     * Pure decision: a selection may be added in standard (TW) unit form when it is non-empty and none of its rows is a
+     * standalone (asset-only) Battlefield Support Asset.
+     *
+     * @param selectedCount  number of selected rows
+     * @param assetOnlyCount number of selected rows that are standalone assets (no unit form)
+     *
+     * @return true if the selection can be added as units
+     */
+    static boolean canSelectSelectionAsUnit(int selectedCount, int assetOnlyCount) {
+        return (selectedCount > 0) && (assetOnlyCount == 0);
+    }
+
+    /**
+     * Pure decision: a selection may be added as Battlefield Support Assets when it is non-empty and every row has an
+     * asset form.
+     *
+     * @param selectedCount        number of selected rows
+     * @param withoutAssetFormCount number of selected rows that have no asset form
+     *
+     * @return true if the selection can be added as assets
+     */
+    static boolean canSelectSelectionAsAsset(int selectedCount, int withoutAssetFormCount) {
+        return (selectedCount > 0) && (withoutAssetFormCount == 0);
+    }
+
     /** @return The MekSummary for the selected unit. */
     public @Nullable MekSummary getSelectedMekSummary() {
         var summaries = getSelectedMekSummaries();
@@ -809,6 +1031,87 @@ public abstract class AbstractUnitSelectorDialog extends JDialog implements Runn
             return null;
         }
         return summaries.getFirst();
+    }
+
+    /**
+     * Returns the Battlefield Support Asset form of the selected row, if any. For a standalone asset row this is the
+     * row itself; for a base unit row that has a linked asset this is the linked asset; otherwise {@code null}. Callers
+     * that offer a "Select as Asset" action use this to obtain the asset summary.
+     *
+     * @return the selected asset summary, or {@code null} if the selection has no asset form
+     */
+    public @Nullable MekSummary getSelectedAssetSummary() {
+        return assetSummaryFor(getSelectedMekSummary());
+    }
+
+    /**
+     * Returns the Battlefield Support Asset form of the given unit summary, if any. For an asset summary this is the
+     * summary itself; for a base unit that has a linked asset this is the linked asset; otherwise {@code null}.
+     *
+     * @param ms a unit summary, or {@code null}
+     *
+     * @return the asset form of the given summary, or {@code null} if it has none
+     */
+    protected @Nullable MekSummary assetSummaryFor(@Nullable MekSummary ms) {
+        if (ms == null) {
+            return null;
+        }
+        return ms.isBattlefieldSupportAsset() ? ms : mscInstance.getLinkedAsset(ms);
+    }
+
+    /**
+     * Returns the cost, in Battle Value, to display for the given asset summary, honoring the selected Regular/Veteran
+     * asset skill. When Veteran is selected and the asset has a Veteran variant, its Veteran cost is returned;
+     * otherwise the Regular cost is returned (for a Veteran selection on an asset with no Veteran variant, the Regular
+     * cost is shown with an asterisk by the renderer).
+     *
+     * @param asset an asset summary, or {@code null}
+     *
+     * @return the asset cost in Battle Value, or 0 if {@code asset} is {@code null}
+     */
+    protected int assetCostBv(@Nullable MekSummary asset) {
+        if (asset == null) {
+            return 0;
+        }
+        if (showVeteranAssetCost() && (asset.getBfsVeteranBv() > 0)) {
+            return asset.getBfsVeteranBv();
+        }
+        return asset.getBV();
+    }
+
+    /** @return true if the asset skill selector is set to Veteran (so Veteran asset costs are shown). */
+    protected boolean showVeteranAssetCost() {
+        return assetSkillChooser.getSelectedIndex() == 1;
+    }
+
+    /** @return the Gunnery skill currently entered in the Skills controls (default 4). */
+    public int getSelectedGunnery() {
+        return parseSkillValue(textGunnery, 4);
+    }
+
+    /** @return the Piloting skill currently entered in the Skills controls (default 5). */
+    public int getSelectedPiloting() {
+        return parseSkillValue(textPilot, 5);
+    }
+
+    /** @return true if the asset skill selector is set to Veteran (rather than Regular). */
+    public boolean isVeteranAssetSkillSelected() {
+        return showVeteranAssetCost();
+    }
+
+    /**
+     * @param asset an asset summary, or {@code null}
+     *
+     * @return true if the asset cost shown for this row is a Regular cost standing in for a missing Veteran cost (i.e.
+     *       Veteran is selected but the asset has no Veteran variant) and should therefore be marked with an asterisk
+     */
+    protected boolean isAssetCostVeteranFallback(@Nullable MekSummary asset) {
+        return showVeteranAssetCost() && (asset != null) && (asset.getBfsVeteranBv() == 0);
+    }
+
+    /** @return true if the current selection has a Battlefield Support Asset form (see {@link #getSelectedAssetSummary()}). */
+    public boolean selectionHasAssetForm() {
+        return getSelectedAssetSummary() != null;
     }
 
     public List<MekSummary> getSelectedMekSummaries() {
@@ -821,7 +1124,7 @@ public abstract class AbstractUnitSelectorDialog extends JDialog implements Runn
         // Loading meks can take a while, so it will have its own thread for MegaMek
         // This prevents the UI from freezing, and allows the
         // "Please wait..." dialog to behave properly on various Java VMs.
-        meks = mscInstance.getAllMeks();
+        meks = condenseLinkedAssets(mscInstance.getAllMeks());
         unitLoadingDialog.setVisible(false);
 
         // break out if there are no units to filter
@@ -830,6 +1133,24 @@ public abstract class AbstractUnitSelectorDialog extends JDialog implements Runn
         } else {
             SwingUtilities.invokeLater(() -> unitModel.setData(meks));
         }
+    }
+
+    /**
+     * Removes Battlefield Support Asset summaries that have a linked base unit, so that a linked base/asset pair is
+     * shown as a single row (the base unit's). Standalone assets (no base unit) and all non-asset units are kept.
+     * When there are no assets this returns the input unchanged.
+     *
+     * @param allMeks the full set of unit summaries
+     *
+     * @return the condensed set, or {@code null} if the input was {@code null}
+     */
+    protected MekSummary[] condenseLinkedAssets(MekSummary[] allMeks) {
+        if (allMeks == null) {
+            return null;
+        }
+        return Arrays.stream(allMeks)
+              .filter(ms -> !(ms.isBattlefieldSupportAsset() && (mscInstance.getLinkedBaseUnit(ms) != null)))
+              .toArray(MekSummary[]::new);
     }
 
     /**
@@ -962,7 +1283,8 @@ public abstract class AbstractUnitSelectorDialog extends JDialog implements Runn
 
     private void setResetSearchEnabledStatus() {
         buttonResetSearch.setEnabled(((searchFilter != null) && !searchFilter.isDisabled)
-              || advancedSearchDialog.getASAdvancedSearch().isActive());
+              || advancedSearchDialog.getASAdvancedSearch().isActive()
+              || advancedSearchDialog.getBFSAdvancedSearch().isActive());
     }
 
     private void close() {
@@ -989,6 +1311,15 @@ public abstract class AbstractUnitSelectorDialog extends JDialog implements Runn
         unitColumnModel.setColumnVisible(bvColumn, !showPV);
     }
 
+    /**
+     * Toggles the Battlefield Support asset cost column between the asset's cost in Battle Value ("BFS BV") and its
+     * cost in Battlefield Support Points ("BSP").
+     */
+    private void toggleAssetCost(boolean showBsp) {
+        unitColumnModel.setColumnVisible(assetBspColumn, showBsp);
+        unitColumnModel.setColumnVisible(assetBvColumn, !showBsp);
+    }
+
     private void toggleVtl(boolean showVTL) {
         unitColumnModel.setColumnVisible(rulesLevelColumn, !showVTL);
         unitColumnModel.setColumnVisible(variableRulesLevelColumn, showVTL);
@@ -1005,11 +1336,13 @@ public abstract class AbstractUnitSelectorDialog extends JDialog implements Runn
         private static final int COL_WEIGHT = 2;
         private static final int COL_BV = 3;
         private static final int COL_PV = 4;
-        private static final int COL_YEAR = 5;
-        private static final int COL_COST = 6;
-        private static final int COL_LEVEL = 7;
-        private static final int COL_VTL = 8;
-        private static final int N_COL = 9;
+        private static final int COL_ASSET_BV = 5;
+        private static final int COL_ASSET_BSP = 6;
+        private static final int COL_YEAR = 7;
+        private static final int COL_COST = 8;
+        private static final int COL_LEVEL = 9;
+        private static final int COL_VTL = 10;
+        private static final int N_COL = 11;
 
         private MekSummary[] data = new MekSummary[0];
 
@@ -1040,6 +1373,8 @@ public abstract class AbstractUnitSelectorDialog extends JDialog implements Runn
                 case COL_WEIGHT -> I18n.getTextAt("megamek.client.messages", "MekView.column.weight");
                 case COL_BV -> I18n.getTextAt("megamek.client.messages", "MekView.column.bv");
                 case COL_PV -> I18n.getTextAt("megamek.client.messages", "MekView.column.pv");
+                case COL_ASSET_BV -> I18n.getTextAt("megamek.client.messages", "MekView.column.bfsBV");
+                case COL_ASSET_BSP -> I18n.getTextAt("megamek.client.messages", "MekView.column.bsp");
                 case COL_YEAR -> I18n.getTextAt("megamek.client.messages", "MekView.column.year");
                 case COL_COST -> I18n.getTextAt("megamek.client.messages", "MekView.column.price");
                 case COL_LEVEL -> I18n.getTextAt("megamek.client.messages", "MekView.column.rulesLevel");
@@ -1083,12 +1418,21 @@ public abstract class AbstractUnitSelectorDialog extends JDialog implements Runn
                 return ms.getTons();
 
             } else if (col == COL_BV) {
+                // Standalone assets have no Battle Value of their own (their cost lives in the asset cost column); a
+                // blank BV cell distinguishes them at a glance from linked units that show both.
+                if (ms.isBattlefieldSupportAsset()) {
+                    return 0;
+                }
                 int gunnery = parseSkillValue(textGunnery, 4);
                 int piloting = parseSkillValue(textPilot, 5);
                 double gp_multiply = BVCalculator.bvSkillMultiplier(gunnery, piloting);
                 return (int) Math.round(ms.getBV() * gp_multiply);
 
             } else if (col == COL_PV) {
+                // Point Value is an Alpha Strike concept; assets have none, so their PV cell is blank.
+                if (ms.isBattlefieldSupportAsset()) {
+                    return 0;
+                }
                 //FIXME It uses Gunnery as the skill - should be improved to show an AS "Skill" instead
                 int gunnery = parseSkillValue(textGunnery, 4);
 
@@ -1113,6 +1457,14 @@ public abstract class AbstractUnitSelectorDialog extends JDialog implements Runn
                     modifier = 1;
                 }
                 return (int) Math.round(ms.getPointValue() * modifier);
+            } else if (col == COL_ASSET_BV) {
+                // The asset's cost expressed in Battle Value, shown on asset rows and base units that have a linked
+                // asset; 0 (rendered blank) for units with no asset form. Reflects the selected Regular/Veteran skill.
+                return assetCostBv(assetSummaryFor(ms));
+            } else if (col == COL_ASSET_BSP) {
+                // The asset's cost in Battlefield Support Points (BV / 20); 0 (rendered blank) when there is no asset.
+                int bv = assetCostBv(assetSummaryFor(ms));
+                return (bv == 0) ? 0 : bv / BattlefieldSupportAsset.BV_PER_BSP;
             } else if (col == COL_YEAR) {
                 return ms.getYear();
             } else if (col == COL_COST) {
@@ -1175,27 +1527,82 @@ public abstract class AbstractUnitSelectorDialog extends JDialog implements Runn
         }
     }
 
+    /** Renderer for the Battlefield Support asset cost columns: right-aligned, blank when the unit has no asset. */
+    public class AssetCostRenderer extends DefaultTableCellRenderer {
+
+        public AssetCostRenderer() {
+            setHorizontalAlignment(JLabel.CENTER);
+        }
+
+        @Override
+        public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected, boolean hasFocus,
+              int row, int column) {
+
+            String text = "";
+            if ((value instanceof Integer cost) && (cost != 0)) {
+                text = String.format(MegaMek.getMMOptions().getLocale(), "%,d", cost);
+                // Mark a Regular cost shown in place of a missing Veteran cost with an asterisk.
+                int modelRow = table.convertRowIndexToModel(row);
+                MekSummary asset = assetSummaryFor(unitModel.getMekSummary(modelRow));
+                if (isAssetCostVeteranFallback(asset)) {
+                    text += "*";
+                }
+            }
+            return super.getTableCellRendererComponent(table, text, isSelected, hasFocus, row, column);
+        }
+    }
+
+    /**
+     * Renderer for the BV and PV columns: centered, but blank for Battlefield Support Asset rows, which have no BV or
+     * PV of their own (their cost lives in the asset cost column; PV is an Alpha Strike concept).
+     */
+    public class BvPvRenderer extends DefaultTableCellRenderer {
+
+        public BvPvRenderer() {
+            setHorizontalAlignment(JLabel.CENTER);
+        }
+
+        @Override
+        public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected, boolean hasFocus,
+              int row, int column) {
+
+            Object display = value;
+            int modelRow = table.convertRowIndexToModel(row);
+            MekSummary ms = unitModel.getMekSummary(modelRow);
+            if ((ms != null) && ms.isBattlefieldSupportAsset()) {
+                display = "";
+            }
+            return super.getTableCellRendererComponent(table, display, isSelected, hasFocus, row, column);
+        }
+    }
+
     /**
      * Refreshes the table's BV/PV columns and the preview's Analysis tab when gunnery/piloting is
      * changed.
      */
     private class GPDocumentListener implements DocumentListener {
         @Override
-        public void changedUpdate(DocumentEvent event) {
-            skillValuesChanged();
+        public void changedUpdate(DocumentEvent e) {
+            refreshSkillAdjustedColumns();
         }
 
         @Override
-        public void insertUpdate(DocumentEvent event) {
-            skillValuesChanged();
+        public void insertUpdate(DocumentEvent e) {
+            refreshSkillAdjustedColumns();
         }
 
         @Override
-        public void removeUpdate(DocumentEvent event) {
-            skillValuesChanged();
+        public void removeUpdate(DocumentEvent e) {
+            refreshSkillAdjustedColumns();
         }
+    }
 
-        private void skillValuesChanged() {
+    /**
+     * Refreshes the skill-adjusted columns (BV and asset cost) after a skill input change, unless refresh is currently
+     * suppressed to coalesce a batch of changes into a single refresh (see {@link #toggleGP()}).
+     */
+    private void refreshSkillAdjustedColumns() {
+        if (!suppressSkillRefresh) {
             sorter.allRowsChanged();
             panePreview.setAnalysisGunnery(parseSkillValue(textGunnery, 4));
         }

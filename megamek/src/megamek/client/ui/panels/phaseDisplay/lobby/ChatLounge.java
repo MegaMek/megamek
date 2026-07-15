@@ -515,9 +515,7 @@ public class ChatLounge extends AbstractPhaseDisplay
         CamoChooserDialog ccd = new CamoChooserDialog(clientgui.getFrame(), player.getCamouflage());
         try {
             java.util.List<Entity> playerEntities = game().getPlayerEntities(player, false);
-            if (!playerEntities.isEmpty()) {
-                ccd.setDisplayedEntity(CollectionUtil.anyOneElement(playerEntities));
-            }
+            ccd.setDisplayedEntities(playerEntities);
             // If the dialog was canceled or nothing selected, do nothing
             if (!ccd.showDialog().isConfirmed()) {
                 return;

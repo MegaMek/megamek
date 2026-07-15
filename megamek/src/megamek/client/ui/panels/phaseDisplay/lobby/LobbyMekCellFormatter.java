@@ -52,6 +52,7 @@ import megamek.common.Player;
 import megamek.common.alphaStrike.AlphaStrikeElement;
 import megamek.common.board.Board;
 import megamek.common.force.Force;
+import megamek.common.battlefieldSupport.BattlefieldSupportAsset;
 import megamek.common.game.Game;
 import megamek.common.game.InGameObject;
 import megamek.common.interfaces.ForceAssignable;
@@ -161,7 +162,8 @@ class LobbyMekCellFormatter {
         // Unit Name
         if (hasCritical) {
             result.append(UIUtil.fontHTML(GUIP.getWarningColor()));
-        } else if (hasWarning) {
+        } else if (hasWarning || (entity instanceof BattlefieldSupportAsset)) {
+            // Battlefield Support Assets always show their name in yellow to stand out from ordinary units.
             result.append(UIUtil.fontHTML(uiYellow()));
         } else {
             result.append(fontHTML());
@@ -182,9 +184,14 @@ class LobbyMekCellFormatter {
         if (forceView) {
             result.append(MekTableModel.DOT_SPACER);
         }
-        NumberFormat formatter = NumberFormat.getNumberInstance(MegaMek.getMMOptions().getLocale());
-        result.append(formatter.format(entity.getWeight()));
-        result.append(Messages.getString("ChatLounge.Tons"));
+        if (entity instanceof BattlefieldSupportAsset) {
+            // Assets have no weight; show what they are instead of a "0 Tons" reading.
+            result.append(Messages.getString("ChatLounge.BFSAsset"));
+        } else {
+            NumberFormat formatter = NumberFormat.getNumberInstance(MegaMek.getMMOptions().getLocale());
+            result.append(formatter.format(entity.getWeight()));
+            result.append(Messages.getString("ChatLounge.Tons"));
+        }
         result.append("</FONT>");
 
         // Alpha Strike Unit Role
@@ -656,6 +663,10 @@ class LobbyMekCellFormatter {
         if (entity.isPartOfFighterSquadron()) {
             result.append(UIUtil.fontHTML(uiGray()));
             result.append(entity.getShortNameRaw()).append("</FONT>");
+        } else if (entity instanceof BattlefieldSupportAsset) {
+            // Battlefield Support Assets show their name in yellow to stand out from ordinary units.
+            result.append(UIUtil.fontHTML(uiYellow()));
+            result.append(entity.getShortNameRaw()).append("</FONT>");
         } else {
             result.append(entity.getShortNameRaw());
         }
@@ -1002,7 +1013,13 @@ class LobbyMekCellFormatter {
             result.append(pilot.getDesc(0));
         }
 
-        result.append(" (").append(pilot.getSkillsAsString(rpgSkills)).append(")");
+        result.append(" (");
+        if (entity instanceof BattlefieldSupportAsset asset) {
+            result.append(asset.getCrewSkillLevel());
+        } else {
+            result.append(pilot.getSkillsAsString(rpgSkills));
+        }
+        result.append(")");
         if (pilot.countOptions() > 0) {
             result.append(MekTableModel.DOT_SPACER).append(UIUtil.fontHTML(uiQuirksColor()));
             result.append(Messages.getString("ChatLounge.abilities"));
@@ -1051,8 +1068,13 @@ class LobbyMekCellFormatter {
                 result.append("<I>").append(Messages.getString("ChatLounge.multipleCrew")).append("</I>");
                 result.append("<BR>");
             }
-            result.append(CrewSkillSummaryUtil.getSkillNames(entity)).append(": ");
-            result.append("<B>").append(crew.getSkillsAsString(rpgSkills)).append("</B><BR>");
+            if (entity instanceof BattlefieldSupportAsset asset) {
+                // Assets have only a Regular/Veteran grade, not gunnery/piloting numbers.
+                result.append("<B>").append(asset.getCrewSkillLevel()).append("</B><BR>");
+            } else {
+                result.append(CrewSkillSummaryUtil.getSkillNames(entity)).append(": ");
+                result.append("<B>").append(crew.getSkillsAsString(rpgSkills)).append("</B><BR>");
+            }
 
             // Advantages, MD, Edge
             if ((crew.countOptions(LVL3_ADVANTAGES) > 0) || (crew.countOptions(MD_ADVANTAGES) > 0)) {

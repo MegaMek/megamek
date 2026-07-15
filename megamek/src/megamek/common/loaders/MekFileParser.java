@@ -239,6 +239,8 @@ public class MekFileParser {
             } else {
                 loader = new BLKMekFile(bb);
             }
+        } else if (lowerName.endsWith(".bfs")) {
+            loader = new BFSFile(is);
         } else {
             throw new EntityLoadingException("Unsupported file suffix");
         }
@@ -254,8 +256,15 @@ public class MekFileParser {
      * @param content String containing the unit representation
      */
     public void parse(String content) throws Exception {
-        final boolean isBlk = content.contains("<BlockVersion>") || content.contains("<UnitType>");
-        parse(new ByteArrayInputStream(content.getBytes()), isBlk ? ".blk" : ".mtf");
+        final String suffix;
+        if (content.contains("<BlockVersion>") || content.contains("<UnitType>")) {
+            suffix = ".blk";
+        } else if (BFSFile.isBfsContent(content)) {
+            suffix = ".bfs";
+        } else {
+            suffix = ".mtf";
+        }
+        parse(new ByteArrayInputStream(content.getBytes()), suffix);
     }
 
     /**

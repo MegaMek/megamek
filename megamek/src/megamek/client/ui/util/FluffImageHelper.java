@@ -44,6 +44,8 @@ import javax.swing.ImageIcon;
 import megamek.common.Configuration;
 import megamek.common.loaders.MekSummary;
 import megamek.common.annotations.Nullable;
+import megamek.common.battlefieldSupport.BFSAssetType;
+import megamek.common.battlefieldSupport.BattlefieldSupportAsset;
 import megamek.common.preference.PreferenceManager;
 import megamek.common.units.BTObject;
 import megamek.common.units.Mek;
@@ -55,6 +57,7 @@ import megamek.common.units.Mek;
 public final class FluffImageHelper {
 
     public static final String DIR_NAME_BA = "BattleArmor";
+    public static final String DIR_NAME_ASSET = "Asset";
     public static final String DIR_NAME_CONV_FIGHTER = "ConvFighter";
     public static final String DIR_NAME_DROPSHIP = "DropShip";
     public static final String DIR_NAME_FIGHTER = "Fighter";
@@ -137,35 +140,42 @@ public final class FluffImageHelper {
 
     private static @Nullable File findFluffFile(BTObject unit, boolean recordSheet) {
         List<File> fileCandidates = new ArrayList<>();
-        var fluffDir = new File(Configuration.fluffImagesDir(), FluffImageHelper.getFluffPath(unit));
         var rsFluffSuperDir = new File(Configuration.imagesDir(), "rs");
-        var rsFluffDir = new File(rsFluffSuperDir, FluffImageHelper.getFluffPath(unit));
 
         List<String> nameCandidates = nameCandidates(unit);
 
-        // UserDir matches
-        // For internal use: in [user dir]/data/images/rs/<type> images for record sheets can be placed; these will
-        // be preferentially loaded when the recordSheet parameter is true (i.e. when called from RS printing)
         String userDir = PreferenceManager.getClientPreferences().getUserDir();
-        if (!userDir.isBlank() && new File(userDir).isDirectory()) {
-            var fluffUserDir = new File(userDir, fluffDir.toString());
-            var rsFluffUserDir = new File(userDir, rsFluffDir.toString());
+        boolean hasUserDir = !userDir.isBlank() && new File(userDir).isDirectory();
 
-            if (recordSheet) {
-                fileCandidates.addAll(findMatchingFiles(rsFluffUserDir, nameCandidates));
+        // Assets search their own folder first, then the folder of the corresponding TW unit type; all other units
+        // search a single folder. The folders are searched in order so that the most specific art wins.
+        for (String fluffPath : getFluffPaths(unit)) {
+            var fluffDir = new File(Configuration.fluffImagesDir(), fluffPath);
+            var rsFluffDir = new File(rsFluffSuperDir, fluffPath);
+
+            // UserDir matches
+            // For internal use: in [user dir]/data/images/rs/<type> images for record sheets can be placed; these
+            // will be preferentially loaded when the recordSheet parameter is true (i.e. when called from RS printing)
+            if (hasUserDir) {
+                var fluffUserDir = new File(userDir, fluffDir.toString());
+                var rsFluffUserDir = new File(userDir, rsFluffDir.toString());
+
+                if (recordSheet) {
+                    fileCandidates.addAll(findMatchingFiles(rsFluffUserDir, nameCandidates));
+                }
+                fileCandidates.addAll(findMatchingFiles(fluffUserDir, nameCandidates));
             }
-            fileCandidates.addAll(findMatchingFiles(fluffUserDir, nameCandidates));
-        }
 
-        // Internal fluff path matches
-        fileCandidates.addAll(findMatchingFiles(fluffDir, nameCandidates));
+            // Internal fluff path matches
+            fileCandidates.addAll(findMatchingFiles(fluffDir, nameCandidates));
 
-        // Fallback for units other than HHWs.
-        // The HHW fallback image is embedded into the RS template.
-        if (recordSheet && !unit.isHandheldWeapon()) {
-            File hudFile = findMatchingFile(fluffDir, "hud.png");
-            if (hudFile != null) {
-                fileCandidates.add(hudFile);
+            // Fallback for units other than HHWs.
+            // The HHW fallback image is embedded into the RS template.
+            if (recordSheet && !unit.isHandheldWeapon()) {
+                File hudFile = findMatchingFile(fluffDir, "hud.png");
+                if (hudFile != null) {
+                    fileCandidates.add(hudFile);
+                }
             }
         }
 
@@ -268,7 +278,9 @@ public final class FluffImageHelper {
      * @return The unit type subdirectory for fluff images
      */
     public static String getFluffPath(BTObject unit) {
-        if (unit.isWarShip()) {
+        if (unit.isBattlefieldSupportAsset()) {
+            return DIR_NAME_ASSET;
+        } else if (unit.isWarShip()) {
             return DIR_NAME_WARSHIP;
         } else if (unit.isSpaceStation()) {
             return DIR_NAME_SPACE_STATION;
@@ -293,5 +305,44 @@ public final class FluffImageHelper {
         } else {
             return DIR_NAME_MEK;
         }
+    }
+
+    /**
+     * Returns the ordered list of fluff image subdirectories to search for the given unit. Most units search a single
+     * folder (see {@link #getFluffPath(BTObject)}). Battlefield Support Assets rarely have their own art, so they
+     * search the "Asset" folder first (for asset-specific art such as Emplacements, which have no standard-unit folder)
+     * and then fall back to the folder of the corresponding TW unit type, letting a linked asset share its base unit's
+     * art by chassis/model.
+     *
+     * @param unit The unit
+     *
+     * @return the ordered fluff image subdirectories to search
+     */
+    public static List<String> getFluffPaths(BTObject unit) {
+        if (unit instanceof BattlefieldSupportAsset asset) {
+            List<String> paths = new ArrayList<>();
+            paths.add(DIR_NAME_ASSET);
+            String twFolder = twFolderForAssetType(asset.getAssetType());
+            if ((twFolder != null) && !paths.contains(twFolder)) {
+                paths.add(twFolder);
+            }
+            return paths;
+        }
+        return List.of(getFluffPath(unit));
+    }
+
+    /**
+     * @param assetType a Battlefield Support Asset type
+     *
+     * @return the fluff image folder of the corresponding TW unit type, or {@code null} if the asset type has no
+     *       standard-unit folder of its own (e.g. Emplacements)
+     */
+    private static @Nullable String twFolderForAssetType(BFSAssetType assetType) {
+        return switch (assetType) {
+            case VEHICLE -> DIR_NAME_VEHICLE;
+            case CONV_INFANTRY -> DIR_NAME_INFANTRY;
+            case BATTLE_ARMOR -> DIR_NAME_BA;
+            case EMPLACEMENT -> null;
+        };
     }
 }

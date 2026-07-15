@@ -43,6 +43,10 @@ import com.fasterxml.jackson.annotation.JsonInclude;
 import megamek.common.alphaStrike.ASDamage;
 import megamek.common.alphaStrike.ASUnitType;
 import megamek.common.alphaStrike.BattleForceSUA;
+import megamek.common.battlefieldSupport.BFSArtilleryType;
+import megamek.common.battlefieldSupport.BFSAssetType;
+import megamek.common.battlefieldSupport.BFSSpecialType;
+import megamek.common.units.EntityMovementMode;
 import megamek.common.units.UnitRole;
 
 @JsonInclude(JsonInclude.Include.NON_DEFAULT)
@@ -65,6 +69,7 @@ class AdvSearchState {
     public String name = "Unnamed";
     public TwState twState = new TwState();
     public AsState asState = new AsState();
+    public BfsState bfsState = new BfsState();
 
     // === END ===
 
@@ -181,6 +186,69 @@ class AdvSearchState {
 
         public boolean ability2Use = false;
         public BattleForceSUA ability2Value = BattleForceSUA.UNKNOWN;
+    }
+
+    @JsonInclude(JsonInclude.Include.NON_DEFAULT)
+    static class BfsState {
+
+        public boolean assetTypeUse = false;
+        public List<BFSAssetType> assetTypeSelected = new ArrayList<>();
+
+        public boolean moveModeUse = false;
+        public List<EntityMovementMode> moveModeSelected = new ArrayList<>();
+
+        public boolean specialsUse = false;
+        public List<BFSSpecialType> specialsSelected = new ArrayList<>();
+
+        public boolean mpUse = false;
+        public String mpFromText = "";
+        public String mpToText = "";
+
+        public boolean tmmUse = false;
+        public String tmmFromText = "";
+        public String tmmToText = "";
+
+        public boolean skillUse = false;
+        public String skillFromText = "";
+        public String skillToText = "";
+
+        public boolean damageUse = false;
+        public String damageFromText = "";
+        public String damageToText = "";
+
+        public boolean damagePerHitUse = false;
+        public String damagePerHitFromText = "";
+        public String damagePerHitToText = "";
+
+        public boolean damageHitsUse = false;
+        public String damageHitsFromText = "";
+        public String damageHitsToText = "";
+
+        public boolean destroyCheckUse = false;
+        public String destroyCheckFromText = "";
+        public String destroyCheckToText = "";
+
+        public boolean thresholdUse = false;
+        public String thresholdFromText = "";
+        public String thresholdToText = "";
+
+        public boolean bspUse = false;
+        public String bspFromText = "";
+        public String bspToText = "";
+
+        public boolean bvUse = false;
+        public String bvFromText = "";
+        public String bvToText = "";
+
+        public boolean longRangeUse = false;
+        public String longRangeFromText = "";
+        public String longRangeToText = "";
+
+        public List<BFSSpecialType> numericSpecialSelected = new ArrayList<>();
+        public Map<BFSSpecialType, String> numericSpecialMinTexts = new HashMap<>();
+
+        public boolean artilleryTypeUse = false;
+        public List<BFSArtilleryType> artilleryTypeSelected = new ArrayList<>();
     }
 
     @JsonInclude(JsonInclude.Include.NON_DEFAULT)

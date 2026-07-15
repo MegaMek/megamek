@@ -50,6 +50,7 @@ import megamek.common.alphaStrike.conversion.ASConverter;
 import megamek.common.annotations.Nullable;
 import megamek.common.battleArmor.BattleArmor;
 import megamek.common.battleArmor.BattleArmorHandles;
+import megamek.common.battlefieldSupport.BattlefieldSupportAsset;
 import megamek.common.bays.*;
 import megamek.common.equipment.DockingCollar;
 import megamek.common.equipment.EquipmentType;
@@ -91,7 +92,7 @@ public class MekSummaryCache {
     public static final String FILENAME_LOOKUP = "name_changes.txt";
 
     private static final List<String> SUPPORTED_FILE_EXTENSIONS = List.of(".mtf", ".blk", ".mep", ".hmv", ".tdb",
-          ".hmp", ".zip");
+          ".hmp", ".bfs", ".zip");
 
     private static MekSummaryCache instance;
     private static volatile boolean disposeInstance = false;
@@ -102,6 +103,13 @@ public class MekSummaryCache {
     private MekSummary[] data;
     private final Map<String, MekSummary> nameMap;
     private final Map<String, MekSummary> fileNameMap;
+    // Battlefield Support Assets keyed by their name (chassis + model). Assets share a name with their base unit, so
+    // they are tracked separately here to keep both retrievable via name lookups (e.g. MUL loading).
+    private final Map<String, MekSummary> assetNameMap;
+    /** All units keyed by their unit-file UUID (the identity used for asset&lt;-&gt;base-unit linking). */
+    private final Map<String, MekSummary> uuidMap;
+    /** Battlefield Support Assets keyed by the UUID of the base unit they link to. */
+    private final Map<String, MekSummary> assetByLinkedUnitId;
     private Map<String, String> failedFiles;
     private int cacheCount;
     private int fileCount;
@@ -267,6 +275,9 @@ public class MekSummaryCache {
     private MekSummaryCache() {
         nameMap = new HashMap<>();
         fileNameMap = new HashMap<>();
+        assetNameMap = new HashMap<>();
+        uuidMap = new HashMap<>();
+        assetByLinkedUnitId = new HashMap<>();
     }
 
     public MekSummary[] getAllMeks() {
@@ -297,7 +308,79 @@ public class MekSummaryCache {
             return nameMap.get(sRef);
         }
 
+        if (assetNameMap.containsKey(sRef)) {
+            return assetNameMap.get(sRef);
+        }
+
         return fileNameMap.get(sRef);
+    }
+
+    /**
+     * @param name the unit name (chassis + model)
+     *
+     * @return the Battlefield Support Asset summary with the given name, or {@code null} if none exists. Unlike
+     *       {@link #getMek(String)}, this returns the Asset form even when a base unit shares the same name.
+     */
+    @Nullable
+    public MekSummary getAsset(String name) {
+        block();
+        return assetNameMap.get(name);
+    }
+
+    /**
+     * @param unitFileUUID a unit-file UUID
+     *
+     * @return the unit summary with the given unit-file UUID, or {@code null} if none exists
+     */
+    @Nullable
+    public MekSummary getByUnitFileUUID(@Nullable String unitFileUUID) {
+        if ((unitFileUUID == null) || unitFileUUID.isBlank()) {
+            return null;
+        }
+        block();
+        return uuidMap.get(unitFileUUID);
+    }
+
+    /**
+     * @param baseUnit a non-asset unit summary
+     *
+     * @return the Battlefield Support Asset linked to the given base unit (whose {@code linkedUnitId} is the base
+     *       unit's UUID), or {@code null} if the base unit has no linked asset (or is itself an asset)
+     */
+    @Nullable
+    public MekSummary getLinkedAsset(@Nullable MekSummary baseUnit) {
+        if ((baseUnit == null) || baseUnit.isBattlefieldSupportAsset()) {
+            return null;
+        }
+        return getLinkedAssetForUnitFileUUID(baseUnit.getUnitFileUUID());
+    }
+
+    /**
+     * @param baseUnitFileUUID the base unit's unit-file UUID
+     *
+     * @return the Battlefield Support Asset linked to the base unit with that UUID, or {@code null} if there is none
+     */
+    @Nullable
+    public MekSummary getLinkedAssetForUnitFileUUID(@Nullable String baseUnitFileUUID) {
+        if ((baseUnitFileUUID == null) || baseUnitFileUUID.isBlank()) {
+            return null;
+        }
+        block();
+        return assetByLinkedUnitId.get(baseUnitFileUUID);
+    }
+
+    /**
+     * @param asset a Battlefield Support Asset summary
+     *
+     * @return the base unit linked to the given asset (the unit whose UUID equals the asset's {@code linkedUnitId}), or
+     *       {@code null} if the asset is standalone (or is not an asset)
+     */
+    @Nullable
+    public MekSummary getLinkedBaseUnit(@Nullable MekSummary asset) {
+        if ((asset == null) || !asset.isBattlefieldSupportAsset()) {
+            return null;
+        }
+        return getByUnitFileUUID(asset.getLinkedUnitId());
     }
 
     public Map<String, String> getFailedFiles() {
@@ -439,13 +522,30 @@ public class MekSummaryCache {
         vMeks.copyInto(updatedData);
         Map<String, MekSummary> updatedNameMap = new HashMap<>();
         Map<String, MekSummary> updatedFileNameMap = new HashMap<>();
+        Map<String, MekSummary> updatedAssetNameMap = new HashMap<>();
+        Map<String, MekSummary> updatedUuidMap = new HashMap<>();
+        Map<String, MekSummary> updatedAssetByLinkedUnitId = new HashMap<>();
 
         // store map references
         for (MekSummary element : updatedData) {
             if (shouldStopLoading()) {
                 return false;
             }
-            updatedNameMap.put(element.getName(), element);
+            if (element.isBattlefieldSupportAsset()) {
+                // Assets share a name with their base unit; keep them in a dedicated map so both remain retrievable
+                // and the plain-name lookup keeps returning the base unit (what MUL/other name lookups expect).
+                updatedAssetNameMap.put(element.getName(), element);
+                String linkedUnitId = element.getLinkedUnitId();
+                if ((linkedUnitId != null) && !linkedUnitId.isBlank()) {
+                    updatedAssetByLinkedUnitId.put(linkedUnitId, element);
+                }
+            } else {
+                updatedNameMap.put(element.getName(), element);
+            }
+            String unitFileUUID = element.getUnitFileUUID();
+            if ((unitFileUUID != null) && !unitFileUUID.isBlank()) {
+                updatedUuidMap.put(unitFileUUID, element);
+            }
             String entryName = element.getEntryName();
             if (entryName == null) {
                 updatedFileNameMap.put(element.getSourceFile().getName(), element);
@@ -469,6 +569,12 @@ public class MekSummaryCache {
         nameMap.putAll(updatedNameMap);
         fileNameMap.clear();
         fileNameMap.putAll(updatedFileNameMap);
+        assetNameMap.clear();
+        assetNameMap.putAll(updatedAssetNameMap);
+        uuidMap.clear();
+        uuidMap.putAll(updatedUuidMap);
+        assetByLinkedUnitId.clear();
+        assetByLinkedUnitId.putAll(updatedAssetByLinkedUnitId);
         return true;
     }
 
@@ -662,6 +768,10 @@ public class MekSummaryCache {
         ms.setChassis(e.getChassis());
         ms.setClanChassisName(e.getClanChassisName());
         ms.setModel(e.getModel());
+        ms.setUnitFileUUID(e.getUnitFileUUID());
+        if (e instanceof megamek.common.battlefieldSupport.BattlefieldSupportAsset asset) {
+            ms.setLinkedUnitId(asset.getLinkedUnitId());
+        }
         ms.setMulId(e.getMulId());
         ms.setUnitType(UnitType.getTypeName(e.getUnitType()));
         ms.setFullAccurateUnitType(Entity.getEntityTypeName(e.getEntityType()));
@@ -707,6 +817,29 @@ public class MekSummaryCache {
         }
 
         ms.setBV(e.calculateBattleValue(true, true));
+        if (e instanceof BattlefieldSupportAsset asset) {
+            Integer veteranBv = asset.getVeteranBv();
+            ms.setBfsVeteranBv((veteranBv != null) ? veteranBv : 0);
+            ms.setBfsAssetType(asset.getAssetType());
+            ms.setBfsCardTitle(asset.getEffectiveCardTitle());
+            ms.setBfsCardSubtitle(asset.getEffectiveCardSubtitle());
+            ms.setBfsMovementMode(asset.getMovementMode());
+            ms.setBfsMp(asset.getMp());
+            ms.setBfsTmm(asset.getTmm());
+            ms.setBfsRange(asset.getRange());
+            ms.setBfsRangeKeyword(asset.getRangeKeywordLabel());
+            ms.setBfsSkill(asset.getSkill());
+            ms.setBfsDamage(asset.getDamage());
+            ms.setBfsDestroyCheck(asset.getODestroyCheck());
+            ms.setBfsThreshold(asset.getThreshold());
+            ms.setBfsBsp(asset.getEffectiveBsp());
+            ms.setBfsSpecials(asset.getSpecials().stream()
+                  .map(special -> special.knownType().orElse(null))
+                  .filter(java.util.Objects::nonNull)
+                  .distinct()
+                  .collect(java.util.stream.Collectors.toList()));
+            ms.setBfsSpecialDetails(new java.util.ArrayList<>(asset.getSpecials()));
+        }
         ms.setGenericBattleValue(e.getGenericBattleValue());
         ms.setLevel(TechConstants.T_SIMPLE_LEVEL[e.getTechLevel()]);
         ms.setAdvancedYear(e.getProductionDate(e.isClan()));

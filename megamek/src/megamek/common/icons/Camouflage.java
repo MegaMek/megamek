@@ -45,6 +45,8 @@ import java.util.Objects;
 import megamek.client.ui.tileset.MMStaticDirectoryManager;
 import megamek.client.ui.util.PlayerColour;
 import megamek.common.annotations.Nullable;
+import megamek.common.battlefieldSupport.OverlayStyle;
+import megamek.common.battlefieldSupport.StripeDirection;
 import megamek.logging.MMLogger;
 import org.w3c.dom.Node;
 
@@ -65,6 +67,9 @@ public class Camouflage extends AbstractIcon {
     public static final String COLOUR_CAMOUFLAGE = "-- Colour Camo --";
     public static final String XML_TAG = "camouflage";
 
+    /** The default marker-overlay color (a caution-tape yellow) drawn on a Battlefield Support Asset's sprite. */
+    public static final Color DEFAULT_ASSET_OVERLAY_COLOR = new Color(0xFF, 0xCC, 0x00);
+
     // Rotation and scaling are stored as integers to avoid the usual rounding
     // problems with doubles (e.g.
     // when comparing camos with equals())
@@ -76,6 +81,13 @@ public class Camouflage extends AbstractIcon {
      * The scale times 10 (10 = no scaling) to apply to this camo when applying it to units.
      */
     protected int scale = 10;
+
+    // Battlefield Support Asset marker-overlay settings. Carried on the camo (not the entity) so a unit that uses the
+    // player/force camo also inherits its overlay, and changing the player camo updates those units automatically. Only
+    // assets actually render the overlay; for other units these values are simply ignored.
+    private Color overlayColor = DEFAULT_ASSET_OVERLAY_COLOR;
+    private StripeDirection overlayDirection = StripeDirection.DIAGONAL;
+    private OverlayStyle overlayStyle = OverlayStyle.BAND;
 
     // region Constructors
     public Camouflage() {
@@ -188,7 +200,46 @@ public class Camouflage extends AbstractIcon {
         Camouflage newCamo = new Camouflage(getCategory(), getFilename());
         newCamo.setRotationAngle(rotationAngle);
         newCamo.setScale(scale);
+        newCamo.overlayColor = getOverlayColor();
+        newCamo.overlayDirection = getOverlayDirection();
+        newCamo.overlayStyle = getOverlayStyle();
         return newCamo;
+    }
+
+    /** @return the Battlefield Support Asset marker-overlay color (defaults to {@link #DEFAULT_ASSET_OVERLAY_COLOR}). */
+    public Color getOverlayColor() {
+        return (overlayColor != null) ? overlayColor : DEFAULT_ASSET_OVERLAY_COLOR;
+    }
+
+    public void setOverlayColor(Color overlayColor) {
+        this.overlayColor = (overlayColor != null) ? overlayColor : DEFAULT_ASSET_OVERLAY_COLOR;
+    }
+
+    /** @return the marker-overlay stripe direction. */
+    public StripeDirection getOverlayDirection() {
+        return (overlayDirection != null) ? overlayDirection : StripeDirection.DIAGONAL;
+    }
+
+    public void setOverlayDirection(StripeDirection overlayDirection) {
+        this.overlayDirection = (overlayDirection != null) ? overlayDirection : StripeDirection.DIAGONAL;
+    }
+
+    /** @return the marker-overlay style (none, single band or repeating hazard stripes). */
+    public OverlayStyle getOverlayStyle() {
+        return (overlayStyle != null) ? overlayStyle : OverlayStyle.BAND;
+    }
+
+    public void setOverlayStyle(OverlayStyle overlayStyle) {
+        this.overlayStyle = (overlayStyle != null) ? overlayStyle : OverlayStyle.NONE;
+    }
+
+    /**
+     * @return {@code true} if the marker-overlay settings are all at their defaults (single band, diagonal, default
+     *       color), i.e. there is nothing worth persisting.
+     */
+    public boolean hasDefaultOverlay() {
+        return (getOverlayStyle() == OverlayStyle.BAND) && (getOverlayDirection() == StripeDirection.DIAGONAL)
+              && DEFAULT_ASSET_OVERLAY_COLOR.equals(getOverlayColor());
     }
 
     public void setRotationAngle(int rotationAngle) {
@@ -235,7 +286,10 @@ public class Camouflage extends AbstractIcon {
     @Override
     public boolean equals(Object other) {
         if (super.equals(other) && other instanceof Camouflage otherCamo) {
-            return (otherCamo.rotationAngle == rotationAngle) && (otherCamo.scale == scale);
+            return (otherCamo.rotationAngle == rotationAngle) && (otherCamo.scale == scale)
+                  && (otherCamo.getOverlayStyle() == getOverlayStyle())
+                  && (otherCamo.getOverlayDirection() == getOverlayDirection())
+                  && Objects.equals(otherCamo.getOverlayColor(), getOverlayColor());
         } else {
             return false;
         }
@@ -243,7 +297,8 @@ public class Camouflage extends AbstractIcon {
 
     @Override
     public int hashCode() {
-        return Objects.hash(getFilename(), getCategory(), rotationAngle, scale);
+        return Objects.hash(getFilename(), getCategory(), rotationAngle, scale, getOverlayStyle(),
+              getOverlayDirection(), getOverlayColor());
     }
 
     public static String getDirectory(File file) {

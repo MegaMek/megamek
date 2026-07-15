@@ -1,0 +1,32 @@
+uuid: "019f5efd-5a93-78c3-b4f2-dd83804af175"
+linkedUnitId: "019f583e-e2c6-7b99-a188-ba0759db128e"
+chassis: "Maxim Heavy Hover Transport"
+model: ""
+assetType: "Vehicle"
+cardTitle: "Maxim"
+cardSubtitle: "Hover Transport"
+year: 3151
+techBase: "IS"
+source: "BattleTech: Mercenaries"
+movement:
+  mp: 8
+  mode: "HOVER"
+tmm: 3
+range:
+- 3
+- 6
+- 9
+skill:
+  standard: 6
+  veteran: 5
+damage:
+  perHit: 5
+  hits: 4
+destroyCheck: 7
+threshold: 5
+cost:
+  standard: 23
+  veteran: 27
+specials:
+- "APC1"
+- "IF2"

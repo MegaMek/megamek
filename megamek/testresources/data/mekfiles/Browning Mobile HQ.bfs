@@ -1,0 +1,29 @@
+uuid: "019f5efd-5a92-7998-8d1c-c51bb7ed756b"
+linkedUnitId: "019f583e-e9d8-752e-ab72-4cdf93c4a3b5"
+chassis: "Browning Mobile HQ"
+model: ""
+assetType: "Vehicle"
+cardTitle: "Mobile HQ"
+cardSubtitle: "(Browning)"
+movement:
+  mp: 7
+  mode: "WHEELED"
+tmm: 3
+range:
+- -1
+- -1
+- -1
+skill:
+  standard: 6
+  veteran: 5
+damage:
+  perHit: 0
+  hits: 0
+destroyCheck: 7
+threshold: 5
+cost:
+  standard: 18
+  veteran: 21
+specials:
+- "AMS"
+- "ECM6"

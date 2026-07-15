@@ -1,0 +1,30 @@
+uuid: "019f5efd-5a92-7299-af72-f45188f52e91"
+linkedUnitId: "019f583e-c003-7c02-b5ed-d81e96df79d5"
+chassis: "Foot Platoon"
+model: "(Rifle)"
+assetType: "ConvInfantry"
+cardTitle: "Foot"
+cardSubtitle: "Conv. Infantry"
+movement:
+  mp: 1
+  mode: "INF_LEG"
+tmm: 0
+range:
+- 1
+- 2
+- 3
+skill:
+  standard: 6
+  veteran: 5
+damage:
+  perHit: 5
+  hits: 2
+destroyCheck: 8
+threshold: 1
+cost:
+  standard: 7
+  veteran: 8
+specials:
+- "Nimble"
+- "Spotter"
+- "Swarm"

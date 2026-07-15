@@ -34,16 +34,19 @@ package megamek.client.ui.dialogs.unitSelectorDialogs;
 
 import javax.swing.JButton;
 import javax.swing.JFrame;
+import javax.swing.JTabbedPane;
 
 import megamek.client.ui.Messages;
 import megamek.client.ui.baseComponents.MenuButton;
 import megamek.client.ui.clientGUI.calculationReport.FlexibleCalculationReport;
 import megamek.client.ui.panels.alphaStrike.ConfigurableASCardPanel;
+import megamek.client.ui.panels.battlefieldSupport.ConfigurableBFSCardPanel;
 import megamek.client.ui.util.ViewFormatting;
 import megamek.common.alphaStrike.ASCardDisplayable;
 import megamek.common.alphaStrike.AlphaStrikeElement;
 import megamek.common.alphaStrike.conversion.ASConverter;
 import megamek.common.annotations.Nullable;
+import megamek.common.battlefieldSupport.BattlefieldSupportAsset;
 import megamek.common.templates.TROView;
 import megamek.common.ui.EnhancedTabbedPane;
 import megamek.common.units.Entity;
@@ -56,9 +59,20 @@ public class EntityViewPane extends EnhancedTabbedPane {
     private final ConfigurableMekViewPanel summaryPanel = new ConfigurableMekViewPanel();
     private final EntityReadoutPanel troPanel = new EntityReadoutPanel();
     private final ConfigurableASCardPanel cardPanel;
+    private final ConfigurableMekViewPanel assetSummaryPanel = new ConfigurableMekViewPanel();
+    private final EntityReadoutPanel assetTroPanel = new EntityReadoutPanel();
+    private final ConfigurableBFSCardPanel bfsCardPanel = new ConfigurableBFSCardPanel();
+    private final ConfigurableBFSCardPanel linkedBfsCardPanel = new ConfigurableBFSCardPanel();
+    private final JTabbedPane bfsViewPane = new JTabbedPane();
     private final AvailabilityPanel factionPanel = new AvailabilityPanel();
     private final DamageAnalysisPanel analysisPanel = new DamageAnalysisPanel();
     private boolean menuVisible = true;
+
+    /** Which set of tabs is currently shown, so tabs are only rebuilt when the configuration actually changes. */
+    private TabConfiguration tabConfiguration;
+
+    /** The tab layouts for a standard unit, a linked unit/Asset pair, or a standalone Asset. */
+    private enum TabConfiguration { STANDARD, WITH_ASSET_CARD, STANDALONE_ASSET }
 
     public EntityViewPane(final JFrame frame, final @Nullable Entity entity) {
         super(false, true);
@@ -81,12 +95,54 @@ public class EntityViewPane extends EnhancedTabbedPane {
 
         summaryPanel.setName("entityPanel");
         troPanel.setName("troPanel");
+        assetSummaryPanel.setName("assetEntityPanel");
+        assetTroPanel.setName("assetTroPanel");
+        bfsViewPane.setName("bfsViewPane");
+        bfsViewPane.addTab(Messages.getString("Summary.title"), assetSummaryPanel);
+        bfsViewPane.addTab(Messages.getString("TRO.title"), assetTroPanel);
+        bfsViewPane.addTab(Messages.getString("BFSCard.title"), linkedBfsCardPanel);
 
+        applyTabConfiguration(TabConfiguration.STANDARD);
+    }
+
+    /** Adds the standard unit tabs (Summary, TRO, AS Card, Faction Availability) in order. */
+    private void addStandardTabs() {
         addTab(Messages.getString("Summary.title"), summaryPanel);
         addTab(Messages.getString("TRO.title"), troPanel);
         addTab(Messages.getString("ASCard.title"), cardPanel);
         addTab(Messages.getString("FactionAvailability.title"), factionPanel.getPanel());
         addTab(Messages.getString("DamageAnalysis.title"), analysisPanel);
+    }
+
+    /**
+     * Rebuilds the tab set to the given configuration, but only when it differs from the current one (so switching
+     * between units of the same kind keeps the selected tab). The selected tab is restored by title where possible.
+     */
+    private void applyTabConfiguration(TabConfiguration configuration) {
+        if (configuration == tabConfiguration) {
+            return;
+        }
+        String selectedTitle = (getSelectedIndex() >= 0) ? getTitleAt(getSelectedIndex()) : null;
+        removeAll();
+        switch (configuration) {
+            case STANDALONE_ASSET -> {
+                addTab(Messages.getString("Summary.title"), summaryPanel);
+                addTab(Messages.getString("TRO.title"), troPanel);
+                addTab(Messages.getString("BFSCard.title"), bfsCardPanel);
+            }
+            case WITH_ASSET_CARD -> {
+                addStandardTabs();
+                addTab(Messages.getString("BFSViews.title"), bfsViewPane);
+            }
+            case STANDARD -> addStandardTabs();
+        }
+        tabConfiguration = configuration;
+        if (selectedTitle != null) {
+            int index = indexOfTab(selectedTitle);
+            if (index >= 0) {
+                setSelectedIndex(index);
+            }
+        }
     }
 
     /**
@@ -111,17 +167,53 @@ public class EntityViewPane extends EnhancedTabbedPane {
      * @param asUnit the Alpha Strike unit corresponding to entity (maybe a MekSummary)
      */
     public void updateDisplayedEntity(@Nullable Entity entity, @Nullable ASCardDisplayable asUnit) {
+        updateDisplayedEntity(entity, asUnit, null);
+    }
+
+    /**
+     * Updates the pane's displayed unit, including a Battlefield Support Asset for the BFS Card tab. The BFS Card tab
+     * is shown whenever an asset is present. A standalone Asset uses its Entity for Summary and TRO while omitting the
+     * standard-unit AS Card, Faction Availability and Damage Analysis tabs.
+     *
+     * @param entity      the entity for the standard Summary/TRO tabs; the Asset itself for a standalone Asset
+     * @param asUnit      the Alpha Strike unit corresponding to entity (maybe a MekSummary), or null
+     * @param assetEntity the Battlefield Support Asset to show in the Asset views, or null if the unit has no asset
+     */
+    public void updateDisplayedEntity(@Nullable Entity entity, @Nullable ASCardDisplayable asUnit,
+          @Nullable BattlefieldSupportAsset assetEntity) {
+        boolean hasAsset = assetEntity != null;
+        boolean standaloneAsset = hasAsset && (entity instanceof BattlefieldSupportAsset);
+        if (standaloneAsset) {
+            applyTabConfiguration(TabConfiguration.STANDALONE_ASSET);
+        } else if (hasAsset) {
+            applyTabConfiguration(TabConfiguration.WITH_ASSET_CARD);
+        } else {
+            applyTabConfiguration(TabConfiguration.STANDARD);
+        }
+
         if (entity == null) {
             troPanel.reset();
             factionPanel.reset();
         } else {
             troPanel.showEntity(entity, TROView.createView(entity, ViewFormatting.HTML));
-            factionPanel.setUnit(entity.getModel(), entity.getFullChassis());
+            if (standaloneAsset) {
+                factionPanel.reset();
+            } else {
+                factionPanel.setUnit(entity.getModel(), entity.getFullChassis());
+            }
         }
 
         summaryPanel.setEntity(entity);
         cardPanel.setASElement(ASConverter.canConvert(entity) ? asUnit : null);
-        analysisPanel.setEntity(entity);
+        assetSummaryPanel.setEntity(assetEntity);
+        if (assetEntity == null) {
+            assetTroPanel.reset();
+        } else {
+            assetTroPanel.showEntity(assetEntity, TROView.createView(assetEntity, ViewFormatting.HTML));
+        }
+        bfsCardPanel.setAsset(assetEntity);
+        linkedBfsCardPanel.setAsset(assetEntity);
+        analysisPanel.setEntity(standaloneAsset ? null : entity);
     }
 
     /**
@@ -138,5 +230,8 @@ public class EntityViewPane extends EnhancedTabbedPane {
         menuVisible = !menuVisible;
         summaryPanel.toggleMenu(menuVisible);
         cardPanel.toggleMenu(menuVisible);
+        assetSummaryPanel.toggleMenu(menuVisible);
+        bfsCardPanel.toggleMenu(menuVisible);
+        linkedBfsCardPanel.toggleMenu(menuVisible);
     }
 }

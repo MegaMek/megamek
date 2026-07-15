@@ -1,0 +1,29 @@
+uuid: "019f5efd-5a92-7d48-a718-a6b36869bee6"
+chassis: "Heavy Emplacement"
+model: ""
+assetType: "Emplacement"
+cardTitle: "Heavy"
+cardSubtitle: "Emplacement"
+movement:
+  mp: 0
+  mode: "NONE"
+tmm: 0
+range:
+- 3
+- 6
+- 9
+skill:
+  standard: 5
+  veteran: 4
+damage:
+  perHit: 15
+  hits: 1
+destroyCheck: 10
+threshold: 8
+cost:
+  standard: 13
+  veteran: 15
+specials:
+- "Immobile"
+- "No Turret"
+- "Spotter"

@@ -59,6 +59,8 @@ import megamek.client.ui.dialogs.MMDialogs.MMConfirmDialog;
 import megamek.client.ui.dialogs.SBFStats.SBFStatsDialog;
 import megamek.client.ui.dialogs.UnitEditorDialog;
 import megamek.client.ui.dialogs.abstractDialogs.ASStatsDialog;
+import megamek.client.ui.dialogs.customMek.BattlefieldSupportAssetConfigDialog;
+import megamek.client.ui.dialogs.customMek.BattlefieldSupportAssetDamageDialog;
 import megamek.client.ui.dialogs.customMek.CustomMekDialog;
 import megamek.client.ui.dialogs.iconChooser.CamoChooserDialog;
 import megamek.common.Player;
@@ -77,6 +79,7 @@ import megamek.common.net.packets.InvalidPacketDataException;
 import megamek.common.options.OptionsConstants;
 import megamek.common.strategicBattleSystems.SBFFormationConverter;
 import megamek.common.units.Crew;
+import megamek.common.battlefieldSupport.BattlefieldSupportAsset;
 import megamek.common.units.Entity;
 import megamek.common.units.FighterSquadron;
 import megamek.common.units.LandAirMek;
@@ -245,6 +248,17 @@ public class LobbyActions {
             LobbyErrors.showCannotEditDamage(frame());
             return;
         }
+
+        // An asset has no armor/structure/criticals; its only persistent damage is a lowered Destroy Check.
+        if (entity instanceof BattlefieldSupportAsset asset) {
+            BattlefieldSupportAssetDamageDialog dialog = new BattlefieldSupportAssetDamageDialog(frame(), asset);
+            if (dialog.showDialog().isConfirmed()) {
+                dialog.applyChoices();
+                sendUpdates(entities);
+            }
+            return;
+        }
+
         UnitEditorDialog med = new UnitEditorDialog(frame(), entity, localPlayer().isGameMaster());
         med.setVisible(true);
         med.dispose();
@@ -324,11 +338,12 @@ public class LobbyActions {
         boolean hasIndividualCamo = entities.stream().anyMatch(e -> !e.getCamouflage().hasDefaultCategory());
         CamoChooserDialog ccd = new CamoChooserDialog(frame(), entity.getCamouflageOrElseOwners(), hasIndividualCamo);
         try {
-            ccd.setDisplayedEntity(entity);
+            ccd.setDisplayedEntities(new ArrayList<>(entities));
             if (ccd.showDialog().isCancelled()) {
                 return;
             }
-            // Choosing the player camo resets the units to have no individual camo.
+            // Choosing the player camo resets the units to have no individual camo. The asset marker overlay rides on
+            // the camo, so it is carried automatically (including on a reset back to the player camo).
             Camouflage selectedItem = ccd.getSelectedItem();
             Camouflage ownerCamo = entity.getOwner().getCamouflage();
             boolean noIndividualCamo = selectedItem.equals(ownerCamo);
@@ -357,6 +372,17 @@ public class LobbyActions {
             return;
         }
         Entity oneSelected = CollectionUtil.anyOneElement(entities);
+
+        // Assets use their own minimal crew dialog; configure any selected assets one at a time.
+        if (oneSelected instanceof BattlefieldSupportAsset) {
+            for (Entity entity : entities) {
+                if (entity instanceof BattlefieldSupportAsset) {
+                    customizeBattlefieldSupportAsset(entity);
+                }
+            }
+            return;
+        }
+
         Client client = clientForCustomization(oneSelected);
         boolean editable = allowCustomization(oneSelected);
 
@@ -382,12 +408,34 @@ public class LobbyActions {
     }
 
     /**
+     * Shows the minimal crew configuration dialog for a Battlefield Support Asset (name and Regular/Veteran grade) and,
+     * if confirmed and editable, applies the choices and sends the update to the server.
+     *
+     * @param entity the asset to configure
+     */
+    private void customizeBattlefieldSupportAsset(Entity entity) {
+        boolean editable = allowCustomization(entity);
+        BattlefieldSupportAssetConfigDialog dialog =
+              new BattlefieldSupportAssetConfigDialog(frame(), (BattlefieldSupportAsset) entity, editable);
+        if (dialog.showDialog().isConfirmed() && editable) {
+            dialog.applyChoices();
+            sendCustomizationUpdate(List.of(entity));
+        }
+    }
+
+    /**
      * Shows the unit configuration dialog for the given unit.
      *
      * @param entity the unit to configure
      */
     public void customizeMek(Entity entity) {
         if (!validateUpdate(List.of(entity))) {
+            return;
+        }
+
+        // Assets have no equipment/quirks/weapon tabs; only a crew name and Regular/Veteran grade to configure.
+        if (entity instanceof BattlefieldSupportAsset) {
+            customizeBattlefieldSupportAsset(entity);
             return;
         }
 

@@ -9,9 +9,10 @@ lives in the era files in data/forcegenerator (2398.xml through 3160.xml). Those
 MegaMek and get overwritten every time you update, so editing them is not a good place to put your
 own work.
 
-Instead, a custom unit can carry its own availability inside its own unit file. Add one line to your
-.mtf or .blk and the Force Generator will start rolling your unit for the factions you name. Nothing
-you do here touches the canon data, and an update will not wipe it.
+Instead, a unit can carry its own availability inside its own unit file. Add one line to your .mtf
+or .blk and the Force Generator will start rolling your unit for the factions you name, and an
+update will not wipe it. You can do this on your own custom units, or on canon units to change how
+they generate (see "Overriding canon units" near the end).
 
 This only affects units you have written availability into. Every other unit behaves exactly as
 before.
@@ -189,28 +190,35 @@ You cannot use this to make a canon design more common than canon says it is. Yo
 own variant to the mix, and hand it to factions that did not have the design before.
 
 
-You cannot override canon units
+Overriding canon units
 
-This only works for your own units. You cannot add an availability line to a canon unit and change
-how it generates.
+You can put an availability line on a canon unit and change how it generates. The line replaces the
+canon numbers for the factions you list. Factions you do not list keep their canon values.
 
-If you copy, say, Archer ARC-2R.mtf into your user directory and add an availability line to it,
-MegaMek ignores the line completely. Canon availability comes from the era files, and the era files
-win. You will see this in megamek.log:
+For example, if you add this to the canon Archer ARC-2R:
 
-       [UnitAvailability] Canon unit Archer ARC-2R declares availability in its unit file.
-       Canon availability comes from data/forcegenerator, so the unit file entry is ignored.
-       Save it under a new model name to make it a custom variant.
+       availability:FS:8
 
-A unit counts as canon if its name matches the official unit list, no matter which folder the file
-sits in. Renaming the file does not help; it is the chassis and model inside the file that count.
+then the Federated Suns field Archers as "common" instead of whatever canon says, while every other
+faction keeps its canon rating. The new number wins even if it is lower than canon.
 
-This is deliberate. It means installing somebody else's custom units can never quietly change how
-canon forces generate in your game. Everything you add is additive.
+MegaMek writes a line to megamek.log each time, so you can see it happened:
 
-If you want a changed version of a canon design, give it a NEW model name. Archer ARC-9X, not
-Archer ARC-2R. Then it is your own variant, the availability line works, and the rules in the
-previous section apply.
+       [UnitAvailability] Canon unit Archer ARC-2R is overridden by the availability in its own unit
+       file. The values in the file replace the canon data for the factions it names.
+
+Two things to keep in mind:
+
+  - This changes canon for everyone who installs the file. If you share a unit pack that edits canon
+    units, it changes how canon forces generate in their game too. That is why every override is
+    logged.
+
+  - A unit counts as canon if its name matches the official unit list, no matter which folder the
+    file sits in.
+
+If you want a new design rather than a changed canon one, give it a NEW model name. Archer ARC-9X,
+not Archer ARC-2R. Then it is your own variant and the custom-variant rules in the previous section
+apply, so it cannot change how common the canon Archer is for factions that already field it.
 
 
 Mission roles
@@ -293,8 +301,9 @@ Work through these in order:
   4. Check megamek.log for a bad faction code. Every message from this feature is tagged
      [UnitAvailability], so search for that.
 
-  5. Is it a canon unit? You cannot add availability to a canon unit; the line is ignored and a
-     warning goes to megamek.log. Give it a new model name to make it your own variant.
+  5. Is it a canon unit? Availability on a canon unit REPLACES canon only for the factions you list.
+     If a faction still uses its canon number, check that you actually listed it. See "Overriding
+     canon units" above.
 
   6. Is the faction you are generating for actually around in that year?
      A unit set to CW will never appear in 3150, because Clan Wolf does not exist then.

@@ -37,6 +37,8 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
+import java.util.stream.Collectors;
+
 import megamek.common.equipment.ArmorType;
 import megamek.common.equipment.EquipmentType;
 import megamek.common.equipment.StructureType;
@@ -76,7 +78,12 @@ class EquipmentTypeTest {
         EquipmentType.initializeTypes();
 
         assertTrue(EquipmentType.getLookupCollisions().isEmpty(),
-              () -> "Equipment lookup name collisions: " + EquipmentType.getLookupCollisions());
+              () -> "Equipment lookup name collisions:\n" + EquipmentType.getLookupCollisions().entrySet().stream()
+                  .map(collision -> collision.getKey() + ": " + collision.getValue().stream()
+                      .map(EquipmentType::getInternalName)
+                      .sorted()
+                      .collect(Collectors.joining(", ")))
+                  .collect(Collectors.joining("\n")));
     }
 
     @Test

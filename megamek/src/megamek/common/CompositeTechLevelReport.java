@@ -309,9 +309,9 @@ public final class CompositeTechLevelReport {
               rows,
               formatLevel(staticTechLevel),
               formatLevel(variableTechLevel),
-              techLevel.getPrototypeDateRange(),
-              techLevel.getProductionDateRange(),
-              techLevel.getCommonDateRange(),
+              normalizeRange(techLevel.getPrototypeDateRange()),
+              normalizeRange(techLevel.getProductionDateRange()),
+              normalizeRange(techLevel.getCommonDateRange()),
               normalizeRange(techLevel.getExtinctionRange()),
               formatLevel(useVariableTechLevel ? variableTechLevel : staticTechLevel));
     }

@@ -29374,7 +29374,7 @@ public class TWGameManager extends AbstractGameManager {
 
     /**
      * Applies Edge to an ejection roll: if the roll failed and the crew has the failed-ejection Edge trigger enabled
-     * with Edge remaining, spends one Edge point and rerolls once. A single roll is never rerolled more than once.
+     * with Edge remaining, spends one Edge point and rerolls once.
      *
      * @param entity     the ejecting unit
      * @param rollTarget the ejection roll target number

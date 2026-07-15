@@ -1473,8 +1473,11 @@ public class RATGenerator {
         }
 
         if (!interrupted) {
-            ratGenerator.initialized = true;
+            // Load every era first, THEN mark initialized. Setting the flag before the loop let callers that poll
+            // isInitialized() start iterating chassis/model/faction collections on another thread while this loop was
+            // still adding to them, which threw ConcurrentModificationException.
             ratGenerator.getEraSet().forEach(e -> ratGenerator.loadEra(e, dir));
+            ratGenerator.initialized = true;
             ratGenerator.notifyListenersOfInitialization();
         }
 

@@ -35,6 +35,7 @@ package megamek.common.rules;
 
 
 import megamek.common.units.EntityMovementMode;
+import megamek.common.units.Entity;
 
 public abstract class RulesMovement {
     // Can units skid?
@@ -48,7 +49,7 @@ public abstract class RulesMovement {
     public abstract int getUnderwaterMPCost();
 
     // Can you move backwards up elevation?
-    public abstract boolean enableBackwardsElevationChange(boolean toBackwardsElevation);
+    public abstract boolean enableBackwardsElevationChange(boolean toBackwardsElevation, Entity entity);
 
     // Do we add leg damage together, or do hips override
     public abstract boolean cumulativeLegDamage(boolean b);

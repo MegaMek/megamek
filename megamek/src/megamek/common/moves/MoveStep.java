@@ -3389,8 +3389,10 @@ public class MoveStep implements Serializable {
                 deltaElevation *= 2;
             }
             if (entity.hasAbility(OptionsConstants.PILOT_TM_MOUNTAINEER)) {
+                // CORE reduce this by -1 if it is pavementstep
                 mp += deltaElevation - 1;
             } else {
+                // CORE reduce this by -1 if it is pavementstep
                 mp += deltaElevation;
             }
         }
@@ -3604,7 +3606,7 @@ public class MoveStep implements Serializable {
         boolean bBackwardsElevationChange =
               Game.rulesManager.getRulesMovement()
                     .enableBackwardsElevationChange(game.getOptions()
-                          .booleanOption(OptionsConstants.ADVANCED_GROUND_MOVEMENT_TAC_OPS_WALK_BACKWARDS));
+                          .booleanOption(OptionsConstants.ADVANCED_GROUND_MOVEMENT_TAC_OPS_WALK_BACKWARDS), entity);
         if (!(entity instanceof VTOL) &&
               isThisStepBackwards() &&
               !(isJumping() && isUsingMekJumpBooster) &&
@@ -3719,6 +3721,7 @@ public class MoveStep implements Serializable {
               (movementType == EntityMovementType.MOVE_VTOL_SPRINT);
 
         if ((movementType != EntityMovementType.MOVE_JUMP) && !isVTOLFlight) {
+            // CORE change the max elevation if on pavement
             int maxDown = entity.getMaxElevationDown(srcAlt);
             if (movementMode == EntityMovementMode.WIGE &&
                   (srcEl == 0 ||
@@ -3745,6 +3748,7 @@ public class MoveStep implements Serializable {
             int elevationUp = (destAlt - srcAlt);
             int elevationDown = (srcAlt - destAlt);
 
+            // CORE check for pacement on the max up
             if (((elevationDown > 0) && (elevationDown > maxDown)) ||
                   ((elevationUp > 0) && (elevationUp > entity.getMaxElevationChange()))) {
                 // Allow climbing UP if the option is enabled and entity can climb;
@@ -3779,7 +3783,7 @@ public class MoveStep implements Serializable {
         boolean isDownCliff = !src.equals(dest) &&
               srcHex.hasCliffTopTowards(destHex) &&
               (stepHeight == -1 || stepHeight == -2);
-
+        
         // For vehicles exc. VTOL, WIGE, upward Sheer Cliffs is forbidden
         // QuadVees in vehicle mode drive as vehicles, IO p.133
         if ((vehicleAffectedByCliff || quadVeeVehicleMode) && isUpCliff && !isPavementStep) {
@@ -3814,7 +3818,7 @@ public class MoveStep implements Serializable {
             // Generally forbidden without TacOps Expanded Backward Movement p.22
             if (!Game.rulesManager.getRulesMovement()
                   .enableBackwardsElevationChange(game.getOptions()
-                        .booleanOption(OptionsConstants.ADVANCED_GROUND_MOVEMENT_TAC_OPS_WALK_BACKWARDS))) {
+                        .booleanOption(OptionsConstants.ADVANCED_GROUND_MOVEMENT_TAC_OPS_WALK_BACKWARDS), entity)) {
                 return false;
             }
             // Even with Expanded Backward Movement, ...
@@ -3832,7 +3836,6 @@ public class MoveStep implements Serializable {
                   (!src.equals(dest))) {
                 return false;
             }
-            // May not move across more than 1 level
             if (Math.abs(destAlt - srcAlt) > 1) {
                 return false;
             }

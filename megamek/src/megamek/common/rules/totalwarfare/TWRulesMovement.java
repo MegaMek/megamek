@@ -35,6 +35,7 @@ package megamek.common.rules.totalwarfare;
 
 
 import megamek.common.rules.core.CoreRulesMovement;
+import megamek.common.units.Entity;
 import megamek.common.units.EntityMovementMode;
 
 public class TWRulesMovement extends CoreRulesMovement {
@@ -69,7 +70,7 @@ public class TWRulesMovement extends CoreRulesMovement {
     
     // Backwards elevation changes only if tacops rule
     @Override
-    public boolean enableBackwardsElevationChange(final boolean toBackwardsElevation) {
+    public boolean enableBackwardsElevationChange(final boolean toBackwardsElevation, Entity entity) {
         return toBackwardsElevation;
     }
 

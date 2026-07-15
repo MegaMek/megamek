@@ -834,7 +834,11 @@ public class MekFileParser {
               .stream()
               .filter(mounted -> mounted.is(EquipmentTypeLookup.CARGO))
               .collect(Collectors.toList());
-        cargos.forEach(cargo -> cargo.getLinkedBy().setLinked(null));
+        for (Mounted<?> cargo : cargos) {
+            if (cargo.getLinkedBy() != null) {
+                cargo.getLinkedBy().setLinked(null);
+            }
+        }
 
         for (Mounted<?> dumper : dumpers) {
             dumper.setLinked(null);

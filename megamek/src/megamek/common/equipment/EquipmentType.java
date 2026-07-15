@@ -160,6 +160,8 @@ public class EquipmentType implements ITechnology {
     protected String sortingName;
 
     protected Vector<String> namesVector = new Vector<>();
+    private Vector<String> lookupNamesVector = new Vector<>();
+    private boolean registered = false;
 
     protected double tonnage = 0;
     protected int criticalSlots = 0;
@@ -753,15 +755,29 @@ public class EquipmentType implements ITechnology {
     }
 
     public void addLookupName(String s, boolean includeInNames) {
-        String lookupName = s.toLowerCase(Locale.ROOT);
+        lookupNamesVector.addElement(s);
+        if (includeInNames) {
+            namesVector.addElement(s); // member variable
+        }
+        if (registered) {
+            registerLookupName(s);
+        }
+    }
+
+    private void registerLookupNames() {
+        registered = true;
+        for (String lookupName : lookupNamesVector) {
+            registerLookupName(lookupName);
+        }
+    }
+
+    private void registerLookupName(String name) {
+        String lookupName = name.toLowerCase(Locale.ROOT);
         EquipmentType previous = EquipmentType.lookupHash.put(lookupName, this); // static variable
         if ((previous != null) && (previous != this)) {
             EquipmentType.lookupCollisions.computeIfAbsent(lookupName, key -> new LinkedHashSet<>())
                   .add(previous);
             EquipmentType.lookupCollisions.get(lookupName).add(this);
-        }
-        if (includeInNames) {
-            namesVector.addElement(s); // member variable
         }
     }
 
@@ -937,6 +953,7 @@ public class EquipmentType implements ITechnology {
             EquipmentType.initializeTypes();
         }
         EquipmentType.allTypes.addElement(type);
+        type.registerLookupNames();
     }
 
     public static int getArmorType(EquipmentType et) {

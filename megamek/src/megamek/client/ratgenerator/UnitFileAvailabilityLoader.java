@@ -124,19 +124,15 @@ class UnitFileAvailabilityLoader {
                 continue;
             }
 
-            // A canon unit's availability belongs to the era files. Editing one must never shift canon forces,
-            // no matter which era is being loaded or whether the era files happen to cover it
-            if (mekSummary.isCanon()) {
-                LOGGER.warn("[UnitAvailability] Canon unit {} declares availability in its unit file. Canon availability comes from "
-                            + "data/forcegenerator, so the unit file entry is ignored. Save it under a new model "
-                            + "name to make it a custom variant.", mekSummary.getName());
-                continue;
-            }
-
-            if (canonModelKeys.contains(mekSummary.getName())) {
-                LOGGER.warn("[UnitAvailability] Unit {} declares availability in its unit file, but the era {} data already covers it. "
-                            + "The unit file availability is ignored.", mekSummary.getName(), era);
-                continue;
+            // A unit that is canon, or that the era files already cover, is being deliberately overridden: the player
+            // typed an availability line into it. Honour it and replace the canon values for the factions it names,
+            // but say so in the log, because a shared unit pack that edits canon units changes canon forces for
+            // whoever installs it.
+            boolean overridesCanon = mekSummary.isCanon() || canonModelKeys.contains(mekSummary.getName());
+            if (overridesCanon) {
+                LOGGER.info("[UnitAvailability] Canon unit {} is overridden by the availability in its own unit file. "
+                            + "The values in the file replace the canon data for the factions it names.",
+                      mekSummary.getName());
             }
 
             Map<String, UnitFileRating> ratingsForEra = collectRatingsForEra(mekSummary,
@@ -151,7 +147,9 @@ class UnitFileAvailabilityLoader {
             ChassisRecord chassisRecord = addChassis(modelRecord);
 
             addModelAvailability(era, modelRecord, ratingsForEra);
-            addChassisAvailability(era, chassisRecord, ratingsForEra, canonChassisRatings);
+            // An override replaces the canon chassis rating for the factions it names; a plain custom variant leaves
+            // the canon chassis ratings alone and only fills in factions canon did not rate.
+            addChassisAvailability(era, chassisRecord, ratingsForEra, canonChassisRatings, overridesCanon);
         }
     }
 
@@ -348,19 +346,23 @@ class UnitFileAvailabilityLoader {
      * Records a custom unit's chassis availability for an era. This value competes against every other chassis in the
      * table, so it decides how often the design shows up at all.
      * <p>
-     * A faction the era XML already rates for this chassis is left exactly as canon has it. A faction canon does not
-     * rate takes the value from the unit file. Where several custom variants rate the same unrated faction, the highest
-     * wins.
+     * For a plain custom variant, a faction the era XML already rates for this chassis is left exactly as canon has it,
+     * a faction canon does not rate takes the value from the unit file, and where several variants rate the same
+     * unrated faction the highest wins. For an override, the file replaces the chassis rating for the factions it
+     * names, canon or not.
      * </p>
      *
      * @param era                 the era being loaded
      * @param chassisRecord       the chassis record for the unit
      * @param ratingsForEra       the unit's ratings for this era, keyed by faction code
-     * @param canonChassisRatings the chassis/faction pairs the era XML defined, which must not be overwritten
+     * @param canonChassisRatings the chassis/faction pairs the era XML defined
+     * @param override            {@code true} to replace canon ratings for the named factions, {@code false} to
+     *                            protect them
      */
     private void addChassisAvailability(int era, ChassisRecord chassisRecord,
           Map<String, UnitFileRating> ratingsForEra,
-          Set<String> canonChassisRatings) {
+          Set<String> canonChassisRatings,
+          boolean override) {
 
         String chassisKey = chassisRecord.getChassisKey();
         Map<String, AvailabilityRating> chassisRatings = chassisIndex.get(era)
@@ -369,15 +371,18 @@ class UnitFileAvailabilityLoader {
         for (Map.Entry<String, UnitFileRating> entry : ratingsForEra.entrySet()) {
             String factionCode = entry.getKey();
 
-            // Canon wins: a faction the era XML already rates for this chassis keeps its value
-            if (canonChassisRatings.contains(chassisRatingKey(chassisKey, factionCode))) {
-                continue;
-            }
+            if (!override) {
+                // Canon wins: a faction the era XML already rates for this chassis keeps its value
+                if (canonChassisRatings.contains(chassisRatingKey(chassisKey, factionCode))) {
+                    continue;
+                }
 
-            // Several variants rating the same faction: the chassis takes the highest value given
-            AvailabilityRating existingRating = chassisRatings.get(factionCode);
-            if ((existingRating != null) && (existingRating.getAvailability() >= entry.getValue().availability())) {
-                continue;
+                // Several variants rating the same faction: the chassis takes the highest value given
+                AvailabilityRating existingRating = chassisRatings.get(factionCode);
+                if ((existingRating != null)
+                      && (existingRating.getAvailability() >= entry.getValue().availability())) {
+                    continue;
+                }
             }
 
             AvailabilityRating chassisRating = entry.getValue()

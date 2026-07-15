@@ -114,13 +114,18 @@ class RATGeneratorUnitFileAvailabilityTest {
     }
 
     @Test
-    void canonUnitCannotDeclareItsOwnAvailability() {
-        // The Atlas AS7-D is canon. Its unit file deliberately carries "availability:LA:10", which must be ignored
-        // outright: a player editing a canon unit must never be able to shift how canon forces generate
-        assertNull(ratGenerator.findModelAvailabilityRecord(ERA, "Atlas AS7-D", "LA"),
-              "A canon unit's own file must never feed the Force Generator");
-        assertNull(ratGenerator.findChassisAvailabilityRecord(ERA, "Atlas[Mek]", "LA", ERA),
-              "A canon unit's own file must not create a chassis rating either");
+    void aCanonUnitOverridesItsOwnAvailability() {
+        // The era file rates the canon Atlas chassis LA:8. The Atlas AS7-D unit file carries "availability:LA:3". A
+        // player who types availability into a canon unit means to override it, so the file replaces canon: the
+        // chassis reads 3, not the canon 8, and not the higher of the two.
+        AvailabilityRating chassisRating = ratGenerator.findChassisAvailabilityRecord(ERA, "Atlas[Mek]", "LA", ERA);
+        AvailabilityRating modelRating = ratGenerator.findModelAvailabilityRecord(ERA, "Atlas AS7-D", "LA");
+
+        assertNotNull(chassisRating);
+        assertEquals(3, chassisRating.getAvailability(),
+              "The override must replace the canon LA:8, even though 3 is lower");
+        assertNotNull(modelRating);
+        assertEquals(3, modelRating.getAvailability());
     }
 
     @Test

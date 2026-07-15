@@ -25,8 +25,9 @@ era:2755
 source:TRO: 3039
 rules level:1
 role:Juggernaut
-# Deliberate: this canon unit must be IGNORED by the Force Generator (RATGeneratorUnitFileAvailabilityTest)
-availability:LA:10
+# Deliberate override: the era file rates the canon Atlas chassis LA:8. This lower LA:3 must replace it, proving
+# a canon unit overrides its own availability and that override replaces rather than keeps-the-highest.
+availability:LA:3
 
 quirk:battle_fists_la
 quirk:battle_fists_ra

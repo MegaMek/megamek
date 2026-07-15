@@ -35,5 +35,11 @@
                 <availability>General:6</availability>
             </model>
         </chassis>
+        <chassis name='Atlas' unitType='Mek'>
+            <availability>LA:8</availability>
+            <model name='AS7-D'>
+                <availability>General:5</availability>
+            </model>
+        </chassis>
     </units>
 </ratgen>

@@ -79,8 +79,15 @@ public record ForceGeneratorAvailability(int startYear, int endYear, String avai
     /** Marks a year that the unit file did not specify, so the unit's own introduction/extinction dates are used. */
     public static final int UNSPECIFIED_YEAR = 0;
 
-    /** Matches a leading year range, e.g. "3067-3085 FS:7,LA:6" or "3067- FS:7". */
-    private static final Pattern YEAR_RANGE = Pattern.compile("^(\\d{3,4})\\s*-\\s*(\\d{3,4})?\\s+(.+)$");
+    /**
+     * Matches a leading year range, e.g. "3067-3085 FS:7,LA:6" or "3067- FS:7".
+     * <p>
+     * The range and the codes may be separated by a space or a colon. The documented form uses a space, but the codes
+     * themselves are full of colons ("ZN:8"), so a player naturally writes "3056-3061:ZN:8". Both are accepted; a
+     * "NNNN-NNNN" prefix can never be a faction code, so there is nothing to confuse it with.
+     * </p>
+     */
+    private static final Pattern YEAR_RANGE = Pattern.compile("^(\\d{3,4})\\s*-\\s*(\\d{3,4})?[\\s:]+(.+)$");
 
     public ForceGeneratorAvailability {
         if ((availabilityCodes == null) || availabilityCodes.isBlank()) {

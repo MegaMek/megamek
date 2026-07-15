@@ -86,6 +86,47 @@ class ForceGeneratorAvailabilityTest {
     }
 
     @Test
+    void acceptsAColonAfterTheYearRange() {
+        // The codes are full of colons (ZN:8), so a player naturally writes the range with a colon too. QA hit this:
+        // a colon separator was not recognised, the range was lost, and the codes read as undated across every era.
+        ForceGeneratorAvailability availability = ForceGeneratorAvailability.parse("3056-3061:ZN:8,FS:4");
+
+        assertEquals(3056, availability.startYear());
+        assertEquals(3061, availability.endYear());
+        assertEquals("ZN:8,FS:4", availability.availabilityCodes());
+    }
+
+    @Test
+    void acceptsAColonAfterAnOpenEndedRange() {
+        ForceGeneratorAvailability availability = ForceGeneratorAvailability.parse("3068-:PIR:3,Periphery:2");
+
+        assertEquals(3068, availability.startYear());
+        assertEquals(UNSPECIFIED_YEAR, availability.endYear());
+        assertEquals("PIR:3,Periphery:2", availability.availabilityCodes());
+    }
+
+    @Test
+    void handlesAFileThatMixesSpaceAndColonSeparators() {
+        // The exact QA block: line 1 uses a space, the rest use a colon. Every line must parse the same way.
+        List<ForceGeneratorAvailability> entries = ForceGeneratorAvailability.parseAll(List.of(
+              "3015-3055 ZN:8",
+              "3056-3061:ZN:8,FS:4",
+              "3062-3067:ZN:6,FS:6,PIR:3,Periphery:1",
+              "3068-3090:ZN:4,FS:4,PIR:3,Periphery:2"), "Republic of Zeon test unit");
+
+        assertEquals(4, entries.size());
+        assertEquals(3015, entries.get(0).startYear());
+        assertEquals("ZN:8", entries.get(0).availabilityCodes());
+        assertEquals(3056, entries.get(1).startYear());
+        assertEquals(3061, entries.get(1).endYear());
+        assertEquals("ZN:8,FS:4", entries.get(1).availabilityCodes());
+        assertEquals(3062, entries.get(2).startYear());
+        assertEquals("ZN:6,FS:6,PIR:3,Periphery:1", entries.get(2).availabilityCodes());
+        assertEquals(3068, entries.get(3).startYear());
+        assertEquals(3090, entries.get(3).endYear());
+    }
+
+    @Test
     void parseKeepsRatingAndYearSuffixesIntact() {
         // The codes are handed to AvailabilityRating unchanged, so the +/-, !rating and :year forms must survive
         ForceGeneratorAvailability availability =

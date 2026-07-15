@@ -1680,7 +1680,6 @@ public class MiscType extends EquipmentType {
         EquipmentType.addType(MiscType.createISBAMineDispenser());
         EquipmentType.addType(MiscType.createBAMissionEquipStorage());
         EquipmentType.addType(MiscType.createISBADropChuteCamo());
-        EquipmentType.addType(MiscType.createISBADropChuteCamo());
         EquipmentType.addType(MiscType.createISBADropChuteStd());
         EquipmentType.addType(MiscType.createISBADropChuteStealth());
         EquipmentType.addType(MiscType.createVeeDropChuteCamo());

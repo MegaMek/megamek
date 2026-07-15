@@ -58,8 +58,7 @@ import org.junit.jupiter.api.Test;
 import org.mockito.MockedStatic;
 
 /**
- * Tests for the fire-avoidance ({@link TWGameManager#applyFlamingDamageEdge}) and zip line
- * ({@link TWGameManager#applyZiplineEdge}) Edge rerolls. A failed check may be rerolled with Edge, but only once.
+ * Tests for the fire-avoidance Edge rerolls. A failed check may be rerolled with Edge, but only once.
  */
 class FireEdgeTest {
 

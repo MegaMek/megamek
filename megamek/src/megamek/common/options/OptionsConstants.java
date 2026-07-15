@@ -561,7 +561,6 @@ public class OptionsConstants {
     public static final String RPG_TOUGHNESS = "toughness";
     public static final String RPG_CONDITIONAL_EJECTION = "conditional_ejection";
     public static final String RPG_BEGIN_SHUTDOWN = "begin_shutdown";
-    public static final String PLAYTEST_2 = "playtest_2";
     public static final String SEARCHLIGHTS_ON = "searchlights_on";
     public static final String TWRULES = "twrules";
 

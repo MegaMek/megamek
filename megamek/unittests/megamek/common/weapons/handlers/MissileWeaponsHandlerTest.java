@@ -64,7 +64,7 @@ import org.junit.jupiter.api.Test;
 /**
  * Unit tests for MissileWeaponHandler.
  * <p>
- * Test to verify that with Playtest 3, AMS can engage twice.
+ * Test to verify that AMS can engage twice.
  *
  * @since 2025-12-14
  */
@@ -168,7 +168,7 @@ public class MissileWeaponsHandlerTest {
     }
 
     /**
-     * Test for AMS with playtest three
+     * Test for AMS
      */
     @Test
     void testAMSWorksForCoreRules() throws EntityLoadingException {

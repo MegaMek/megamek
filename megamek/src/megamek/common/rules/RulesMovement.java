@@ -49,4 +49,7 @@ public abstract class RulesMovement {
 
     // Can you move backwards up elevation?
     public abstract boolean enableBackwardsElevationChange(boolean toBackwardsElevation);
+
+    // Do we add leg damage together, or do hips override
+    public abstract boolean cumulativeLegDamage(boolean b);
 }

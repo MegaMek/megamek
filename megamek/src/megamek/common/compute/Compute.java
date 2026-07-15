@@ -3384,8 +3384,8 @@ public class Compute {
     }
 
     /**
-     * Returns the weapon attack out of a list that has the second highest expected damage Used for Playtest 3 AMS
-     * engaging multiple salvos
+     * Returns the weapon attack out of a list that has the second highest expected damage
+     * used for engaging multiple salvos
      */
     public static WeaponAttackAction getSecondHighestExpectedDamage(Game g,
           List<WeaponAttackAction> vAttacks, boolean assumeHit) {

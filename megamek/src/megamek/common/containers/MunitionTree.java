@@ -128,9 +128,7 @@ public class MunitionTree {
           "Caseless",
           "Flak",
           "Tracer",
-          "Flechette",
-          "Armor-Piercing Playtest",
-          "Precision Playtest"));
+          "Flechette"));
 
     public static final List<String> ATM_MUNITION_NAMES = new ArrayList<>(List.of("HE", "ER", "Standard"));
     public static final List<String> iATM_MUNITION_NAMES = new ArrayList<>(List.of("HE", "ER", "Standard", "IIW",

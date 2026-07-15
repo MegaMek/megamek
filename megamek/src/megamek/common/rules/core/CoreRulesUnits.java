@@ -32,6 +32,9 @@ package megamek.common.rules.core;
  * affiliated with Microsoft.
  */
 
+import megamek.common.game.Game;
+import megamek.common.options.OptionsConstants;
+import megamek.common.rolls.PilotingRollData;
 import megamek.common.rules.RulesUnits;
 import megamek.common.units.Mek;
 import megamek.common.units.QuadMek;
@@ -56,5 +59,57 @@ public class CoreRulesUnits extends RulesUnits {
             return true;
         }
         return false;
+    }
+
+    // reduce a quad's walk MP for legs destroyed, hip hits, and actuator hits. Core p.90, 238
+    public int reduceQuadWalkMP(int mp, int legsDestroyed, int hipHits, int actuatorHits,
+          boolean bTOLegDamage) {
+        if (legsDestroyed > 0) {
+            if (legsDestroyed == 1) {
+                mp--;
+            } else if (legsDestroyed == 2) {
+                mp = mp - 2;
+            } else if (legsDestroyed == 3) {
+                mp = 1;
+            } else if (legsDestroyed == 4) {
+                mp = 0;
+            }
+        }
+        mp -= hipHits;
+        mp -= actuatorHits;
+
+        if (mp > 0) {
+            return mp;
+        }
+        if (legsDestroyed < 4 && mp <= 0) {
+            return 1;
+        }
+        return 0;
+    }
+
+    // Quads modify PSR rolls for legs as per Core p.238
+    public void quadPilotModForLegsDestroyed(int destroyedLegs, PilotingRollData roll) {
+        switch (destroyedLegs) {
+            case 1:
+                roll.addModifier(1, "1 leg destroyed");
+                break;
+            case 2:
+                roll.addModifier(2, "2 legs destroyed");
+                break;
+            case 3:
+                roll.addModifier(Game.rulesManager.getRulesPSR().getLegDestroyedModifier(), "3 legs destroyed");
+                break;
+        }
+    }
+
+    // Reduce MP for a mek with hip hits. Core p.99
+    public int getMekMPReduction(int hipHits, boolean bTOLegDamage, int mp) {
+        mp -= hipHits;
+        return mp;
+    }
+
+    // MP cannot be reduced below 1 by actuator damage. only by leg destruction Core p.99
+    public int getMinimumMP(int mp) {
+        return 1;
     }
 }

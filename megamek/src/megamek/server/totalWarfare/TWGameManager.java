@@ -21735,8 +21735,7 @@ public class TWGameManager extends AbstractGameManager {
     }
 
     /**
-     * Handle heavy-duty gyro critical hit effects. Per errata: 1st hit = no PSR (just +1 modifier to future PSRs) 2nd
-     * hit = PSR +3 3rd hit = auto-fail (gyro destroyed) 4th hit = auto-fail (Playtest 2 only)
+     * Handle heavy-duty gyro critical hit effects.
      *
      * @param en             the Mek with heavy-duty gyro
      * @param actualGyroHits the number of gyro critical hits taken

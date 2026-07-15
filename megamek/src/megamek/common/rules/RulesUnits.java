@@ -32,6 +32,7 @@ package megamek.common.rules;
  * affiliated with Microsoft.
  */
 
+import megamek.common.rolls.PilotingRollData;
 import megamek.common.units.Mek;
 
 public abstract class RulesUnits {
@@ -40,4 +41,17 @@ public abstract class RulesUnits {
 
     // Does removing legs cause it to be immobile?
     public abstract boolean getDoesLegDestructionCauseImmobile(Mek mek);
+
+    // reduce a quad's walk MP for legs destroyed, hip hits, and actuator hits
+    public abstract int reduceQuadWalkMP(int mp, int legsDestroyed, int hipHits, int actuatorHits,
+          boolean bTOLegDamage);
+
+    // What modifiers to we add for legs destroyed on a quad
+    public abstract void quadPilotModForLegsDestroyed(int destroyedLegs, PilotingRollData roll);
+
+    // Reduce MP for a mek with hip hits
+    public abstract int getMekMPReduction(int hipHits, boolean bTOLegDamage, int mp);
+
+    // Is there a limit to how much we can reduce MP?
+    public abstract int getMinimumMP(int mp);
 }

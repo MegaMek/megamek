@@ -47,8 +47,8 @@ public class CoreRulesMovement extends RulesMovement {
     // Can you run / flank in water? Core p.51
     public boolean cannotRunInWater(EntityMovementMode movementMode,
           boolean amphibious) {
-        if  ((movementMode != EntityMovementMode.HOVER) &&
-              (movementMode!= EntityMovementMode.NAVAL) &&
+        if ((movementMode != EntityMovementMode.HOVER) &&
+              (movementMode != EntityMovementMode.NAVAL) &&
               (movementMode != EntityMovementMode.HYDROFOIL) &&
               (movementMode != EntityMovementMode.INF_UMU) &&
               (movementMode != EntityMovementMode.SUBMARINE) &&
@@ -72,4 +72,10 @@ public class CoreRulesMovement extends RulesMovement {
     public boolean enableBackwardsElevationChange(final boolean toBackwardsElevation) {
         return true;
     }
+
+    // Do we add leg damage together, yes. Core p.98
+    public boolean cumulativeLegDamage(boolean bTOLegDamage) {
+        return true;
+    }
+
 }

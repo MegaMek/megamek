@@ -72,4 +72,10 @@ public class TWRulesMovement extends CoreRulesMovement {
     public boolean enableBackwardsElevationChange(final boolean toBackwardsElevation) {
         return toBackwardsElevation;
     }
+
+    // Do we add leg damage together, no unless TO.
+    @Override
+    public boolean cumulativeLegDamage(boolean bTOLegDamage) {
+        return bTOLegDamage;
+    }
 }

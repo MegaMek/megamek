@@ -48,4 +48,13 @@ public abstract class RulesPilot {
 
     // Crew takeover report. required by damage
     public abstract Report createCrewTakeoverReport(Entity e, int slot, boolean wasPilot, boolean wasGunner);
+
+    // Is there a modifier for the gyro being destroyed
+    public abstract int getSeatbeltGyroModifier(int piloting);
+
+    // Do we modify seatbelt by legs destroyed
+    public abstract int getSeatbeltLegModifier(int piloting, int legsDestroyed);
+
+    // What is the seatbelt check on shutdown
+    public abstract int getSeatbeltShutdown(int piloting);
 }

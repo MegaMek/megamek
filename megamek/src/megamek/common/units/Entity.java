@@ -8216,22 +8216,14 @@ public abstract class Entity extends TurnOrdered
         }
         // gyro operational? does not apply if using tracked/quadvee vehicle/lam fighter
         // movement
-        // PLAYTEST2 Gyro destroyed no longer adds +6
         if (isGyroDestroyed() &&
               canFall() &&
               moveType != EntityMovementType.MOVE_VTOL_WALK &&
               moveType != EntityMovementType.MOVE_VTOL_RUN) {
-            if (gameOptions().booleanOption(OptionsConstants.PLAYTEST_2)) {
                 return new PilotingRollData(entityId,
                       TargetRoll.AUTOMATIC_FAIL,
-                      getCrew().getPiloting(),
+                      Game.rulesManager.getRulesPilot().getSeatbeltGyroModifier(getCrew().getPiloting()),
                       "Gyro destroyed");
-            } else {
-                return new PilotingRollData(entityId,
-                      TargetRoll.AUTOMATIC_FAIL,
-                      getCrew().getPiloting() + 6,
-                      "Gyro destroyed");
-            }
         }
 
         // both legs present?
@@ -8239,37 +8231,23 @@ public abstract class Entity extends TurnOrdered
               (((BipedMek) this).countBadLegs() == 2) &&
               (moveType != EntityMovementType.MOVE_VTOL_WALK) &&
               (moveType != EntityMovementType.MOVE_VTOL_RUN)) {
-            if (gameOptions().booleanOption(OptionsConstants.PLAYTEST_2)) {
                 return new PilotingRollData(entityId,
                       TargetRoll.AUTOMATIC_FAIL,
-                      getCrew().getPiloting() + 8,
+                      Game.rulesManager.getRulesPilot().getSeatbeltLegModifier(getCrew().getPiloting(), 2),
                       "Both legs destroyed");
-            } else {
-                return new PilotingRollData(entityId,
-                      TargetRoll.AUTOMATIC_FAIL,
-                      getCrew().getPiloting() + 10,
-                      "Both legs destroyed");
-            }
         } else if (this instanceof QuadMek) {
             if (((QuadMek) this).countBadLegs() >= 3) {
-                if (gameOptions().booleanOption(OptionsConstants.PLAYTEST_2)) {
-                    return new PilotingRollData(entityId,
+                   return new PilotingRollData(entityId,
                           TargetRoll.AUTOMATIC_FAIL,
-                          getCrew().getPiloting() + (((Mek) this).countBadLegs() * 4),
-                          ((Mek) this).countBadLegs() + " legs destroyed");
-                } else {
-                    return new PilotingRollData(entityId,
-                          TargetRoll.AUTOMATIC_FAIL,
-                          getCrew().getPiloting() + (((Mek) this).countBadLegs() * 5),
-                          ((Mek) this).countBadLegs() + " legs destroyed");
-                }
+                         Game.rulesManager.getRulesPilot().getSeatbeltLegModifier(getCrew().getPiloting(),
+                               ((Mek) this).countBadLegs()), "legs destroyed");
             }
         }
         // entity shut down?
         if (isShutDown() && isShutDownThisPhase()) {
             return new PilotingRollData(entityId,
                   TargetRoll.AUTOMATIC_FAIL,
-                  getCrew().getPiloting() + 3,
+                  Game.rulesManager.getRulesPilot().getSeatbeltShutdown(getCrew().getPiloting()),
                   "Reactor shut down");
         } else if (isShutDown()) {
             return new PilotingRollData(entityId,

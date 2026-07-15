@@ -116,4 +116,27 @@ public class TWRulesPilot extends CoreRulesPilot {
     public int getExplosionPilotHits() {
         return 2;
     }
+
+    // Seatbelt check for gyro is +6
+    @Override
+    public int getSeatbeltGyroModifier(int piloting) {
+        return piloting + 6;
+    }
+
+    @Override
+    public int getSeatbeltLegModifier(int piloting, int legsDestroyed) {
+        if (legsDestroyed == 2) {
+            return piloting + 8;
+        }
+        if (legsDestroyed >=3) {
+            return piloting + legsDestroyed * 5;
+        }
+        return piloting;
+    }
+
+    // What is the seatbelt check modifier for shutdown reactor
+    @Override
+    public int getSeatbeltShutdown(int piloting) {
+        return piloting + 3;
+    }
 }

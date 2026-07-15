@@ -152,4 +152,19 @@ public class CoreRulesPilot extends RulesPilot {
     public int getExplosionPilotHits() {
         return 1;
     }
+
+    // Seatbelt check for gyro has no modifier Core p.117
+    public int getSeatbeltGyroModifier(int piloting) {
+        return piloting;
+    }
+
+    // Seatbelt check for legs destroyed has no modifier Core p.117
+    public int getSeatbeltLegModifier(int piloting, int legsDestroyed) {
+        return piloting;
+    }
+
+    // Seatbelt check for shutdown has no modifier Core p.117
+    public int getSeatbeltShutdown(int piloting) {
+        return piloting;
+    }
 }

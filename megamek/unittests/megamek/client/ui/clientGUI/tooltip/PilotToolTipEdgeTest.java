@@ -52,8 +52,8 @@ import org.junit.jupiter.api.Test;
  */
 class PilotToolTipEdgeTest {
 
-    /** A stable, Edge-specific token from the trigger display names (e.g. "(Mek) Use Edge for TACs"). */
-    private static final String EDGE_TRIGGER_TOKEN = "Use Edge for";
+    /** A specific Edge trigger the test explicitly enables, rather than relying on option defaults. */
+    private static final String SAMPLE_EDGE_TRIGGER = OptionsConstants.EDGE_WHEN_HEAD_HIT;
 
     @BeforeAll
     static void initializeEquipment() {
@@ -62,6 +62,8 @@ class PilotToolTipEdgeTest {
 
     private Entity mekWithEdgeOption(boolean edgeEnabled) {
         BipedMek mek = new BipedMek();
+        // Explicitly enable a known Edge trigger so the test does not depend on option defaults.
+        mek.getCrew().getOptions().getOption(SAMPLE_EDGE_TRIGGER).setValue(true);
         Game game = new Game();
         GameOptions options = new GameOptions();
         options.getOption(OptionsConstants.EDGE).setValue(edgeEnabled);
@@ -70,19 +72,29 @@ class PilotToolTipEdgeTest {
         return mek;
     }
 
+    /**
+     * The trigger's localized display name, taken from the option itself. For a boolean option this is exactly what the
+     * tooltip renders, so it stays correct across localization and wording changes.
+     */
+    private String edgeTriggerDisplayName(Entity mek) {
+        return mek.getCrew().getOptions().getOption(SAMPLE_EDGE_TRIGGER).getDisplayableName();
+    }
+
     @Test
     @DisplayName("Edge triggers are hidden on the unit card when the Edge option is disabled")
     void edgeGroupHiddenWhenEdgeDisabled() {
-        String tip = PilotToolTip.getCrewAdvantages(mekWithEdgeOption(false), true).toString();
-        assertFalse(tip.contains(EDGE_TRIGGER_TOKEN),
+        Entity mek = mekWithEdgeOption(false);
+        String tip = PilotToolTip.getCrewAdvantages(mek, true).toString();
+        assertFalse(tip.contains(edgeTriggerDisplayName(mek)),
               "Edge triggers should not be listed when the Edge game option is disabled");
     }
 
     @Test
     @DisplayName("Edge triggers are shown on the unit card when the Edge option is enabled")
     void edgeGroupShownWhenEdgeEnabled() {
-        String tip = PilotToolTip.getCrewAdvantages(mekWithEdgeOption(true), true).toString();
-        assertTrue(tip.contains(EDGE_TRIGGER_TOKEN),
+        Entity mek = mekWithEdgeOption(true);
+        String tip = PilotToolTip.getCrewAdvantages(mek, true).toString();
+        assertTrue(tip.contains(edgeTriggerDisplayName(mek)),
               "Edge triggers should be listed when the Edge game option is enabled");
     }
 }

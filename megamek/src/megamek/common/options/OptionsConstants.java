@@ -248,7 +248,7 @@ public class OptionsConstants {
     public static final String EDGE_WHEN_AERO_NUKE_CRIT = "edge_when_aero_nuke_crit";
     public static final String EDGE_WHEN_AERO_UNIT_CARGO_LOST = "edge_when_aero_unit_cargo_lost";
     // General Triggers
-    public static final String EDGE_WHEN_UAC_JAMS = "edge_when_uac_jams";
+    public static final String EDGE_WHEN_AC_JAMS_OR_MALFUNCTIONS = "edge_when_uac_jams_or_malfunctions";
 
     // Manei Domini
     public static final String MD_PAIN_SHUNT = "artificial_pain_shunt";

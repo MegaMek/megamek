@@ -221,7 +221,7 @@ public class UltraWeaponHandler extends AmmoWeaponHandler {
      */
     // package-private static for testing
     static int rerollJamCheckWithEdge(Entity attacker, int subjectId, Vector<Report> reportVector) {
-        if (!attacker.shouldUseEdge(OptionsConstants.EDGE_WHEN_UAC_JAMS)) {
+        if (!attacker.shouldUseEdge(OptionsConstants.EDGE_WHEN_AC_JAMS_OR_MALFUNCTIONS)) {
             return -1;
         }
         attacker.getCrew().decreaseEdge();

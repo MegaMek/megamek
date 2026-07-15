@@ -78,7 +78,7 @@ class UltraWeaponHandlerEdgeTest {
         lenient().when(crewOptions.intOption(OptionsConstants.EDGE)).thenReturn(1);
         lenient().when(crew.getOptions()).thenReturn(crewOptions);
         lenient().when(entity.getCrew()).thenReturn(crew);
-        lenient().when(entity.shouldUseEdge(OptionsConstants.EDGE_WHEN_UAC_JAMS)).thenReturn(jamTrigger);
+        lenient().when(entity.shouldUseEdge(OptionsConstants.EDGE_WHEN_AC_JAMS_OR_MALFUNCTIONS)).thenReturn(jamTrigger);
         return entity;
     }
 

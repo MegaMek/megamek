@@ -33,11 +33,48 @@ package megamek.common.rules.totalwarfare;
  */
 
 
+import megamek.common.options.OptionsConstants;
 import megamek.common.rules.core.CoreRulesHeat;
+import megamek.common.units.Mek;
+
+import java.util.ArrayList;
 
 public class TWRulesHeat extends CoreRulesHeat {
     // Attempts to stand generates heat
     public int standingHeat() {
         return 1;
+    }
+
+    // Life support damage and heat
+    @Override
+    public void checkLifeSupportHeat(ArrayList<Integer> heatLimitDamage,
+          int damageHeat,
+          boolean torsoMountedCockpit,
+          boolean mtHeat, boolean bPainShunt) {
+        if ((damageHeat >= 47) && mtHeat) {
+            // mekwarrior takes 5 damage
+            heatLimitDamage.add(47);
+            heatLimitDamage.add(5);
+        } else if ((damageHeat >= 39) && mtHeat) {
+            // mekwarrior takes 4 damage
+            heatLimitDamage.add(39);
+            heatLimitDamage.add(4);
+        } else if ((damageHeat >= 32) && mtHeat) {
+            // mekwarrior takes 3 damage
+            heatLimitDamage.add(32);
+            heatLimitDamage.add(3);
+        } else if (damageHeat >= 25) {
+            // mekwarrior takes 2 damage
+            heatLimitDamage.add(25);
+            heatLimitDamage.add(2);
+        } else if (damageHeat >= 15) {
+            // mekwarrior takes 1 damage
+            heatLimitDamage.add(15);
+            heatLimitDamage.add(1);
+        }
+        if ((torsoMountedCockpit) &&
+              !bPainShunt) {
+            heatLimitDamage.set(1, heatLimitDamage.get(1) + 1);
+        }
     }
 }

@@ -33,12 +33,54 @@ package megamek.common.rules.core;
  */
 
 
+import megamek.common.options.OptionsConstants;
 import megamek.common.rules.RulesHeat;
+import megamek.common.units.Mek;
+
+import java.util.ArrayList;
 
 public class CoreRulesHeat extends RulesHeat {
 
     // Attempts to stand do not generate heat Core p.100
     public int standingHeat() {
         return 0;
+    }
+
+    // Life support crit hits affect heat and pilot damage. Core p.98
+    // heatLimitDamage holds the description heat in the first element, and the pilot hits in the 2nd
+    public void checkLifeSupportHeat(ArrayList<Integer> heatLimitDamage,
+          int damageHeat,
+          boolean torsoMountedCockpit,
+          boolean mtHeat, boolean bPainShunt) {
+        if ((damageHeat >= 47) && mtHeat) {
+            // mekwarrior takes 5 damage
+            heatLimitDamage.add(47);
+            heatLimitDamage.add(5);
+        } else if ((damageHeat >= 39) && mtHeat) {
+            // mekwarrior takes 4 damage
+            heatLimitDamage.add(39);
+            heatLimitDamage.add(4);
+        } else if ((damageHeat >= 32) && mtHeat) {
+            // mekwarrior takes 3 damage
+            heatLimitDamage.add(32);
+            heatLimitDamage.add(3);
+        } else if (damageHeat >= 20) {
+            // mekwarrior takes 2 damage
+            heatLimitDamage.add(20);
+            heatLimitDamage.add(2);
+        } else if (damageHeat >= 15 && torsoMountedCockpit) {
+            heatLimitDamage.add(15);
+            heatLimitDamage.add(2);
+        } else if (damageHeat >=1 && torsoMountedCockpit) {
+            heatLimitDamage.add(1);
+            heatLimitDamage.add(1);
+        } else if (damageHeat >= 10) {
+            // mekwarrior takes 1 damage
+            heatLimitDamage.add(10);
+            heatLimitDamage.add(1);
+        }
+        if (bPainShunt) {
+            heatLimitDamage.clear();
+        }
     }
 }

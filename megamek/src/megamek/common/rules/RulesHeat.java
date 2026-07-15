@@ -33,8 +33,16 @@ package megamek.common.rules;
  */
 
 
+import java.util.ArrayList;
+
 public abstract class RulesHeat {
 
     // Does stating generate heat
     public abstract int standingHeat();
+
+    // How does heat affect when life support is hit    
+    public abstract void checkLifeSupportHeat(ArrayList<Integer> heatLimitDamage,
+                                        int damageHeat,
+                                        boolean torsoMountedCockpit,
+                                        boolean mtHeat, boolean bPainShunt);
 }

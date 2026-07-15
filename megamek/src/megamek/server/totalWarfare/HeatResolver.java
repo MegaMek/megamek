@@ -34,6 +34,7 @@
 package megamek.server.totalWarfare;
 
 import java.awt.Color;
+import java.util.ArrayList;
 import java.util.Vector;
 
 import megamek.MMConstants;
@@ -900,44 +901,26 @@ class HeatResolver extends AbstractTWRuleHandler {
                 damageHeat += 5;
             }
             if ((lifeSupportCritCount > 0) &&
-                  ((damageHeat >= 15) || (torsoMountedCockpit && (damageHeat > 0))) &&
                   !entity.getCrew().isDead() &&
                   !entity.getCrew().isDoomed() &&
                   !entity.getCrew().isEjected()) {
                 int heatLimitDesc = 1;
                 int damageToCrew = 0;
-                if ((damageHeat >= 47) && mtHeat) {
-                    // mekwarrior takes 5 damage
-                    heatLimitDesc = 47;
-                    damageToCrew = 5;
-                } else if ((damageHeat >= 39) && mtHeat) {
-                    // mekwarrior takes 4 damage
-                    heatLimitDesc = 39;
-                    damageToCrew = 4;
-                } else if ((damageHeat >= 32) && mtHeat) {
-                    // mekwarrior takes 3 damage
-                    heatLimitDesc = 32;
-                    damageToCrew = 3;
-                } else if (damageHeat >= 25) {
-                    // mekwarrior takes 2 damage
-                    heatLimitDesc = 25;
-                    damageToCrew = 2;
-                } else if (damageHeat >= 15) {
-                    // mekwarrior takes 1 damage
-                    heatLimitDesc = 15;
-                    damageToCrew = 1;
+                // Holds the heat limit desc in the first element, damage to crew in the second
+                ArrayList<Integer> heatLimitDamage = new ArrayList<>();
+                Game.rulesManager.getRulesHeat().checkLifeSupportHeat(heatLimitDamage, damageHeat,
+                      torsoMountedCockpit, mtHeat, entity.hasAbility(OptionsConstants.MD_PAIN_SHUNT));
+                if (heatLimitDamage.size() > 0) {
+                    heatLimitDesc = heatLimitDamage.get(0);
+                    damageToCrew = heatLimitDamage.get(1);
+                    report = new Report(5070);
+                    report.subject = entity.getId();
+                    report.addDesc(entity);
+                    report.add(heatLimitDesc);
+                    report.add(damageToCrew);
+                    addReport(report);
+                    addReport(gameManager.damageCrew(entity, damageToCrew));
                 }
-                if ((mek.getCockpitType() == Mek.COCKPIT_TORSO_MOUNTED) &&
-                      !entity.hasAbility(OptionsConstants.MD_PAIN_SHUNT)) {
-                    damageToCrew += 1;
-                }
-                report = new Report(5070);
-                report.subject = entity.getId();
-                report.addDesc(entity);
-                report.add(heatLimitDesc);
-                report.add(damageToCrew);
-                addReport(report);
-                addReport(gameManager.damageCrew(entity, damageToCrew));
             } else if (mtHeat &&
                   (entity.heat >= 32) &&
                   !entity.getCrew().isDead() &&

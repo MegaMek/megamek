@@ -33,13 +33,31 @@
 
 package megamek.common.equipment;
 
+import java.util.LinkedHashMap;
+import java.util.Map;
+
 /**
  * Equipment definition for an internal structure system.
  */
 public class StructureType extends MiscType {
 
+    private final int structureTypeId;
+
+    public StructureType(int structureTypeId) {
+        this.structureTypeId = structureTypeId;
+    }
+
     @Override
     protected String getYamlTypeName() {
         return "structure";
+    }
+
+    @Override
+    public Map<String, Object> getYamlData() {
+        Map<String, Object> data = super.getYamlData();
+        Map<String, Object> structureDetails = new LinkedHashMap<>();
+        structureDetails.put("typeId", structureTypeId);
+        data.put("structure", structureDetails);
+        return data;
     }
 }

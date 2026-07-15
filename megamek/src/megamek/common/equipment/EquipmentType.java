@@ -903,8 +903,12 @@ public class EquipmentType implements ITechnology {
         StringBuilder message = new StringBuilder("Equipment lookup name collisions:\n");
         collisions.forEach((name, types) -> {
             message.append(name).append(": ");
-            types.stream().map(EquipmentType::getInternalName).sorted().forEach(type -> message.append(type)
-                  .append(", "));
+            List<String> internalNames = new ArrayList<>();
+            for (EquipmentType type : types) {
+                internalNames.add(String.valueOf(Objects.requireNonNull(type).getInternalName()));
+            }
+            Collections.sort(internalNames);
+            internalNames.forEach(type -> message.append(type).append(", "));
             message.setLength(message.length() - 2);
             message.append('\n');
         });

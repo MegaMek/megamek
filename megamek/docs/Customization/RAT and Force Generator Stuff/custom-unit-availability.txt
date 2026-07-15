@@ -132,6 +132,10 @@ The unit is only available between those years. You can leave the end open:
 
        availability:3067- FS:7
 
+You can leave the start open too. This runs from the unit's introduction year through 3068:
+
+       availability:-3068 FS:2
+
 You can separate the range from the codes with a space or a colon, whichever reads better to you.
 These two lines mean the same thing:
 

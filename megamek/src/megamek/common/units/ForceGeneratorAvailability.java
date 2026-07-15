@@ -80,14 +80,15 @@ public record ForceGeneratorAvailability(int startYear, int endYear, String avai
     public static final int UNSPECIFIED_YEAR = 0;
 
     /**
-     * Matches a leading year range, e.g. "3067-3085 FS:7,LA:6" or "3067- FS:7".
+     * Matches a leading year range, e.g. "3067-3085 FS:7,LA:6", "3067- FS:7", or "-3068 FS:2".
      * <p>
-     * The range and the codes may be separated by a space or a colon. The documented form uses a space, but the codes
-     * themselves are full of colons ("ZN:8"), so a player naturally writes "3056-3061:ZN:8". Both are accepted; a
-     * "NNNN-NNNN" prefix can never be a faction code, so there is nothing to confuse it with.
+     * Either end of the range may be left off: "3067-" starts in 3067 with no end, and "-3068" runs from the unit's
+     * own start through 3068. The range and the codes may be separated by a space or a colon; the documented form uses
+     * a space, but the codes are full of colons ("ZN:8"), so a player naturally writes "3056-3061:ZN:8". Both are
+     * accepted, and a range prefix can never be a faction code, so there is nothing to confuse it with.
      * </p>
      */
-    private static final Pattern YEAR_RANGE = Pattern.compile("^(\\d{3,4})\\s*-\\s*(\\d{3,4})?[\\s:]+(.+)$");
+    private static final Pattern YEAR_RANGE = Pattern.compile("^(\\d{3,4})?\\s*-\\s*(\\d{3,4})?[\\s:]+(.+)$");
 
     public ForceGeneratorAvailability {
         if ((availabilityCodes == null) || availabilityCodes.isBlank()) {
@@ -116,11 +117,15 @@ public record ForceGeneratorAvailability(int startYear, int endYear, String avai
 
         String trimmedLine = line.trim();
         Matcher yearRangeMatcher = YEAR_RANGE.matcher(trimmedLine);
-        if (!yearRangeMatcher.matches()) {
+        if (!yearRangeMatcher.matches()
+              || ((yearRangeMatcher.group(1) == null) && (yearRangeMatcher.group(2) == null))) {
+            // No leading range, or a bare "-" with neither year: treat the whole line as codes with no year limit
             return new ForceGeneratorAvailability(UNSPECIFIED_YEAR, UNSPECIFIED_YEAR, trimmedLine);
         }
 
-        int parsedStartYear = Integer.parseInt(yearRangeMatcher.group(1));
+        int parsedStartYear = (yearRangeMatcher.group(1) == null)
+              ? UNSPECIFIED_YEAR
+              : Integer.parseInt(yearRangeMatcher.group(1));
         int parsedEndYear = (yearRangeMatcher.group(2) == null)
               ? UNSPECIFIED_YEAR
               : Integer.parseInt(yearRangeMatcher.group(2));

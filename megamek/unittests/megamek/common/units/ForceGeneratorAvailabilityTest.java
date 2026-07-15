@@ -97,6 +97,27 @@ class ForceGeneratorAvailabilityTest {
     }
 
     @Test
+    void parsesOpenStartYearRange() {
+        // QA hit this: "-3068 FS:2" means from the unit's own start through 3068. The start year was required, so the
+        // range was not recognised and the codes read as undated.
+        ForceGeneratorAvailability availability = ForceGeneratorAvailability.parse("-3068 FS:2");
+
+        assertEquals(UNSPECIFIED_YEAR, availability.startYear());
+        assertEquals(3068, availability.endYear());
+        assertEquals("FS:2", availability.availabilityCodes());
+        assertEquals(3049, availability.effectiveStartYear(3049));
+    }
+
+    @Test
+    void parsesOpenStartRangeWithAColon() {
+        ForceGeneratorAvailability availability = ForceGeneratorAvailability.parse("-3068:FS:2,LA:1");
+
+        assertEquals(UNSPECIFIED_YEAR, availability.startYear());
+        assertEquals(3068, availability.endYear());
+        assertEquals("FS:2,LA:1", availability.availabilityCodes());
+    }
+
+    @Test
     void acceptsAColonAfterAnOpenEndedRange() {
         ForceGeneratorAvailability availability = ForceGeneratorAvailability.parse("3068-:PIR:3,Periphery:2");
 

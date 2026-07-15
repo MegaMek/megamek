@@ -2399,11 +2399,11 @@ public class MiscType extends EquipmentType {
     // TODO - At some point the "Standard" below needs to be broken out as they
     // all have Separate Tech Advancement information.
 
-    public static MiscType createStandard() {
+    public static StructureType createStandard() {
         // This is not really a single piece of equipment, it is used to
         // identify "standard" internal structure, armor, whatever.
 
-        MiscType misc = new MiscType();
+        StructureType misc = new StructureType();
 
         misc.name = EquipmentType.getStructureTypeName(T_STRUCTURE_STANDARD);
         misc.setInternalName(EquipmentType.getStructureTypeName(T_STRUCTURE_STANDARD));
@@ -9056,8 +9056,8 @@ public class MiscType extends EquipmentType {
     // Structural Components (Mek)
     // Standard - See note above the Armor Standard (search for createStandard)
 
-    public static MiscType createISEndoSteel() {
-        MiscType misc = new MiscType();
+    public static StructureType createISEndoSteel() {
+        StructureType misc = new StructureType();
 
         misc.name = EquipmentType.getStructureTypeName(T_STRUCTURE_ENDO_STEEL);
         misc.setInternalName(EquipmentType.getStructureTypeName(T_STRUCTURE_ENDO_STEEL, false));
@@ -9087,8 +9087,8 @@ public class MiscType extends EquipmentType {
         return misc;
     }
 
-    public static MiscType createISEndoSteelPrototype() {
-        MiscType misc = new MiscType();
+    public static StructureType createISEndoSteelPrototype() {
+        StructureType misc = new StructureType();
 
         misc.name = EquipmentType.getStructureTypeName(T_STRUCTURE_ENDO_PROTOTYPE);
         misc.setInternalName(EquipmentType.getStructureTypeName(T_STRUCTURE_ENDO_PROTOTYPE, false));
@@ -9116,8 +9116,8 @@ public class MiscType extends EquipmentType {
         return misc;
     }
 
-    public static MiscType createCLEndoSteel() {
-        MiscType misc = new MiscType();
+    public static StructureType createCLEndoSteel() {
+        StructureType misc = new StructureType();
         misc.name = EquipmentType.getStructureTypeName(T_STRUCTURE_ENDO_STEEL);
         misc.setInternalName(EquipmentType.getStructureTypeName(T_STRUCTURE_ENDO_STEEL, true));
         misc.addLookupName("Clan Endo-Steel");
@@ -9145,8 +9145,8 @@ public class MiscType extends EquipmentType {
         return misc;
     }
 
-    public static MiscType createISCompositeStructure() {
-        MiscType misc = new MiscType();
+    public static StructureType createISCompositeStructure() {
+        StructureType misc = new StructureType();
 
         misc.name = EquipmentType.getStructureTypeName(T_STRUCTURE_COMPOSITE);
         misc.setInternalName(EquipmentType.getStructureTypeName(T_STRUCTURE_COMPOSITE, false));
@@ -9170,8 +9170,8 @@ public class MiscType extends EquipmentType {
         return misc;
     }
 
-    public static MiscType createISEndoComposite() {
-        MiscType misc = new MiscType();
+    public static StructureType createISEndoComposite() {
+        StructureType misc = new StructureType();
 
         misc.name = EquipmentType.getStructureTypeName(T_STRUCTURE_ENDO_COMPOSITE);
         misc.setInternalName(EquipmentType.getStructureTypeName(T_STRUCTURE_ENDO_COMPOSITE, false));
@@ -9197,8 +9197,8 @@ public class MiscType extends EquipmentType {
         return misc;
     }
 
-    public static MiscType createClanEndoComposite() {
-        MiscType misc = new MiscType();
+    public static StructureType createClanEndoComposite() {
+        StructureType misc = new StructureType();
 
         misc.name = EquipmentType.getStructureTypeName(T_STRUCTURE_ENDO_COMPOSITE);
         misc.setInternalName(EquipmentType.getStructureTypeName(T_STRUCTURE_ENDO_COMPOSITE, true));
@@ -9223,8 +9223,8 @@ public class MiscType extends EquipmentType {
         return misc;
     }
 
-    public static MiscType createReinforcedStructure() {
-        MiscType misc = new MiscType();
+    public static StructureType createReinforcedStructure() {
+        StructureType misc = new StructureType();
 
         misc.name = EquipmentType.getStructureTypeName(T_STRUCTURE_REINFORCED);
         misc.setInternalName(EquipmentType.getStructureTypeName(T_STRUCTURE_REINFORCED));
@@ -9253,8 +9253,8 @@ public class MiscType extends EquipmentType {
         return misc;
     }
 
-    public static MiscType createIndustrialStructure() {
-        MiscType misc = new MiscType();
+    public static StructureType createIndustrialStructure() {
+        StructureType misc = new StructureType();
 
         misc.name = EquipmentType.getStructureTypeName(T_STRUCTURE_INDUSTRIAL);
         misc.setInternalName(EquipmentType.getStructureTypeName(T_STRUCTURE_INDUSTRIAL));

@@ -41,7 +41,6 @@ import megamek.client.ui.clientGUI.calculationReport.DummyCalculationReport;
 import megamek.client.ui.clientGUI.calculationReport.TextCalculationReport;
 import megamek.common.annotations.Nullable;
 import megamek.common.equipment.EquipmentType;
-import megamek.common.equipment.EquipmentTypeLookup;
 import megamek.common.equipment.MiscType;
 import megamek.common.equipment.Mounted;
 import megamek.common.exceptions.LocationFullException;

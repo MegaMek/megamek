@@ -1692,7 +1692,6 @@ public class MiscType extends EquipmentType {
          * Included for completeness.
          * EquipmentType.addType(MiscType.createCLBAHarjel());
          * EquipmentType.addType(MiscType.createBACLUMU());
-         * EquipmentType.addType(MiscType.createBAJumpJet());
          */
 
         // Support Vee Chassis stuff

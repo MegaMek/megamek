@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2024-2025 The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2026 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -31,30 +31,33 @@
  * affiliated with Microsoft.
  */
 
-package megamek.common.miscGear;
+package megamek.common.equipment;
 
-import megamek.common.SimpleTechLevel;
-import megamek.common.enums.AvailabilityValue;
-import megamek.common.enums.Faction;
-import megamek.common.enums.TechBase;
-import megamek.common.enums.TechRating;
-import megamek.common.equipment.EquipmentTypeLookup;
-import megamek.common.equipment.MiscType;
+import java.util.LinkedHashMap;
+import java.util.Map;
 
-public class AntiMekGear extends MiscType {
+/**
+ * Equipment definition for an internal structure system.
+ */
+public class StructureType extends MiscType {
 
-    public AntiMekGear() {
-        name = "Anti-Mek Gear";
-        setInternalName(EquipmentTypeLookup.ANTI_MEK_GEAR);
-        tonnage = 0.015;
-        flags = flags.or(F_INF_EQUIPMENT).or(F_ANTI_MEK_GEAR);
-        cost = COST_VARIABLE;
-        rulesRefs = "155, TM";
-        techAdvancement.setTechBase(TechBase.ALL).setAdvancement(2456, 2460, 2500)
-              .setStaticTechLevel(SimpleTechLevel.STANDARD)
-              .setApproximate(true, false, false)
-              .setTechRating(TechRating.D)
-              .setPrototypeFactions(Faction.LC).setProductionFactions(Faction.LC)
-              .setAvailability(AvailabilityValue.D, AvailabilityValue.D, AvailabilityValue.D, AvailabilityValue.D);
+    private final int structureTypeId;
+
+    public StructureType(int structureTypeId) {
+        this.structureTypeId = structureTypeId;
+    }
+
+    @Override
+    protected String getYamlTypeName() {
+        return "structure";
+    }
+
+    @Override
+    public Map<String, Object> getYamlData() {
+        Map<String, Object> data = super.getYamlData();
+        Map<String, Object> structureDetails = new LinkedHashMap<>();
+        structureDetails.put("typeId", structureTypeId);
+        data.put("structure", structureDetails);
+        return data;
     }
 }

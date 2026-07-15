@@ -7338,128 +7338,127 @@ public class TWGameManager extends AbstractGameManager {
         }
         return null;
     }
-    
+
     /**
-     * Handles an entity stepping on a pit trap.
-     * Returns true if the entity entering the hex fell over
+     * Handles an entity stepping on a pit trap. Returns true if the entity entering the hex fell over
      */
     public boolean handlePitfall(Entity entity, Coords dest, Vector<Report> vMineReport) {
-    	boolean fellOver = false;
-    	
-    	Minefield triggeredPittrap = null;
-    	
-    	for (Minefield minefield : getGame().getMinefields(dest)) {
-    		if (minefield.getType() != Minefield.TYPE_PITFALL) {
-    			continue;
-    		}
-    		
-    		// meks are the only things that can be affected by pitfalls for now
-	    	if (entity instanceof Mek) {
-	    		
-	            Report stepReport = new Report(2581);
-	            stepReport.subject = entity.getId();
-	            stepReport.add(entity.getShortName(), true);
-	            stepReport.add(dest.getBoardNum(), true);
-	            vMineReport.add(stepReport);
-	            
-	            TargetRoll rollTarget = new TargetRoll(4, "pitfall");
-	            
-	            if (entity.hasAbility(OptionsConstants.MISC_EAGLE_EYES)) {
-	            	rollTarget.addModifier(+2, "eagle eyes");               
-	    		}
+        boolean fellOver = false;
 
-	            int roll = Compute.d6(2);
-	            
-	            fellOver = roll >= rollTarget.getValue();
-	    		
-	            Report activationReport = new Report(2582);
-	            activationReport.subject = entity.getId();
-	            activationReport.add(rollTarget);
-	            activationReport.add(roll);
-	            activationReport.choose(fellOver);	 
-	            activationReport.indent();
-	            vMineReport.add(activationReport);	    		
-	    		if (fellOver) {
-	    			triggeredPittrap = minefield;
-	    			
-	    			PilotingRollData pilotingRollData = entity.getBasePilotingRoll();
-	    			vMineReport.addAll(doEntityFall(entity, dest, 0, pilotingRollData));
-	    			
-	    			Hex hex = getGame().getBoard(entity.getBoardId()).getHex(dest);
-	    			hex.removeAllTerrains();
-	    			hex.addTerrain(new Terrain(Terrains.RUBBLE, 1));
-	    			sendChangedHex(dest, entity.getBoardId());
-	    			
-	    			Report rubbleReport = new Report(2583);
-	    			rubbleReport.indent();
-	    			vMineReport.add(rubbleReport);
-	    		} else {
-	    			revealMinefield(minefield);
-	    		}
-	    	}
-    	}
-    	
-    	if (triggeredPittrap != null) {
-    		removeMinefield(triggeredPittrap);
-    	}
-    	
-    	return fellOver;
+        Minefield triggeredPittrap = null;
+
+        for (Minefield minefield : getGame().getMinefields(dest)) {
+            if (minefield.getType() != Minefield.TYPE_PITFALL) {
+                continue;
+            }
+
+            // meks are the only things that can be affected by pitfalls for now
+            if (entity instanceof Mek) {
+
+                Report stepReport = new Report(2581);
+                stepReport.subject = entity.getId();
+                stepReport.add(entity.getShortName(), true);
+                stepReport.add(dest.getBoardNum(), true);
+                vMineReport.add(stepReport);
+
+                TargetRoll rollTarget = new TargetRoll(4, "pitfall");
+
+                if (entity.hasAbility(OptionsConstants.MISC_EAGLE_EYES)) {
+                    rollTarget.addModifier(+2, "eagle eyes");
+                }
+
+                int roll = Compute.d6(2);
+
+                fellOver = roll >= rollTarget.getValue();
+
+                Report activationReport = new Report(2582);
+                activationReport.subject = entity.getId();
+                activationReport.add(rollTarget);
+                activationReport.add(roll);
+                activationReport.choose(fellOver);
+                activationReport.indent();
+                vMineReport.add(activationReport);
+                if (fellOver) {
+                    triggeredPittrap = minefield;
+
+                    PilotingRollData pilotingRollData = entity.getBasePilotingRoll();
+                    vMineReport.addAll(doEntityFall(entity, dest, 0, pilotingRollData));
+
+                    Hex hex = getGame().getBoard(entity.getBoardId()).getHex(dest);
+                    hex.removeAllTerrains();
+                    hex.addTerrain(new Terrain(Terrains.RUBBLE, 1));
+                    sendChangedHex(dest, entity.getBoardId());
+
+                    Report rubbleReport = new Report(2583);
+                    rubbleReport.indent();
+                    vMineReport.add(rubbleReport);
+                } else {
+                    revealMinefield(minefield);
+                }
+            }
+        }
+
+        if (triggeredPittrap != null) {
+            removeMinefield(triggeredPittrap);
+        }
+
+        return fellOver;
     }
 
     /**
-     * Handles an entity stepping on a tripwire.
-     * Returns true if the entity entering the hex fell over
-     * Assumes that src != dest
+     * Handles an entity stepping on a tripwire. Returns true if the entity entering the hex fell over Assumes that src
+     * != dest
      */
-    public boolean handleTripwire(Entity entity, Coords src, Coords dest, EntityMovementType movementType, Vector<Report> vMineReport) {
-    	boolean fellOver = false;
-    	
-    	Minefield triggeredTripwire = null;
-    	
-    	for (Minefield minefield : getGame().getMinefields(dest)) {
-    		if (minefield.getType() != Minefield.TYPE_TRIPWIRE) {
-    			continue;
-    		}
-    		
-    		// meks are the only things that can be affected by tripwires
-	    	// if we neither walked nor ran, we don't need to be doing this
-	    	if (entity instanceof Mek &&
-	    		(movementType == EntityMovementType.MOVE_WALK ||
-	    		movementType == EntityMovementType.MOVE_RUN)) {
-	    		
-	            Report hitReport = new Report(2580);
-	            hitReport.subject = entity.getId();
-	            hitReport.add(entity.getShortName(), true);
-	            hitReport.add(dest.getBoardNum(), true);
-	            hitReport.indent();
-	            vMineReport.add(hitReport);
-	    		
-	            PilotingRollData rollData = entity.getBasePilotingRoll(entity.moved);
-	    		
-	    		if (movementType == EntityMovementType.MOVE_WALK) {
-	    			rollData.addModifier(2, "walking");
-	    		} else if (movementType == EntityMovementType.MOVE_RUN) {
-	    			rollData.addModifier(4, "running");
-	    		}
-	    		
-	    		if (entity.hasAbility(OptionsConstants.MISC_EAGLE_EYES)) {
-	    			rollData.addModifier(-2, "eagle eyes");               
-	    		}
-	    		
-	    		// if we are here, we can assume we are on the ground level
-	    		int result = doSkillCheckWhileMoving(entity, 0, src, dest, rollData, true, vMineReport);
-	    		fellOver = result > 0;
-	    		triggeredTripwire = minefield;
-	    	}
-    	}
-    	
-    	if (triggeredTripwire != null) {
-    		removeMinefield(triggeredTripwire);
-    	}
-    	
-    	return fellOver;
+    public boolean handleTripwire(Entity entity, Coords src, Coords dest, EntityMovementType movementType,
+          Vector<Report> vMineReport) {
+        boolean fellOver = false;
+
+        Minefield triggeredTripwire = null;
+
+        for (Minefield minefield : getGame().getMinefields(dest)) {
+            if (minefield.getType() != Minefield.TYPE_TRIPWIRE) {
+                continue;
+            }
+
+            // meks are the only things that can be affected by tripwires
+            // if we neither walked nor ran, we don't need to be doing this
+            if (entity instanceof Mek &&
+                  (movementType == EntityMovementType.MOVE_WALK ||
+                        movementType == EntityMovementType.MOVE_RUN)) {
+
+                Report hitReport = new Report(2580);
+                hitReport.subject = entity.getId();
+                hitReport.add(entity.getShortName(), true);
+                hitReport.add(dest.getBoardNum(), true);
+                hitReport.indent();
+                vMineReport.add(hitReport);
+
+                PilotingRollData rollData = entity.getBasePilotingRoll(entity.moved);
+
+                if (movementType == EntityMovementType.MOVE_WALK) {
+                    rollData.addModifier(2, "walking");
+                } else if (movementType == EntityMovementType.MOVE_RUN) {
+                    rollData.addModifier(4, "running");
+                }
+
+                if (entity.hasAbility(OptionsConstants.MISC_EAGLE_EYES)) {
+                    rollData.addModifier(-2, "eagle eyes");
+                }
+
+                // if we are here, we can assume we are on the ground level
+                int result = doSkillCheckWhileMoving(entity, 0, src, dest, rollData, true, vMineReport);
+                fellOver = result > 0;
+                triggeredTripwire = minefield;
+            }
+        }
+
+        if (triggeredTripwire != null) {
+            removeMinefield(triggeredTripwire);
+        }
+
+        return fellOver;
     }
-    
+
     /**
      * Check for any detonations when an entity enters a minefield, except a vibrabomb.
      *
@@ -7490,10 +7489,10 @@ public class TWGameManager extends AbstractGameManager {
         for (Minefield mf : game.getMinefields(c)) {
             // VibraBombs and EMP mines are handled differently (proximity-based detection)
             if ((mf.getType() == Minefield.TYPE_VIBRABOMB) || (mf.getType() == Minefield.TYPE_EMP) ||
-            	(mf.getType() == Minefield.TYPE_TRIPWIRE) || (mf.getType() == Minefield.TYPE_PITFALL)) {
+                  (mf.getType() == Minefield.TYPE_TRIPWIRE) || (mf.getType() == Minefield.TYPE_PITFALL)) {
                 continue;
             }
-            
+
             try {
                 // if we are in the water, then the sea mine will only blow up if at
                 // the right depth
@@ -7601,7 +7600,7 @@ public class TWGameManager extends AbstractGameManager {
             // set the target number
             if (target == -1) {
                 target = mf.getTrigger();
-                
+
                 if (entity instanceof Infantry) {
                     target += 1;
                 }
@@ -23608,6 +23607,46 @@ public class TWGameManager extends AbstractGameManager {
     }
 
     /**
+     * Applies Edge to a location breach check: if the roll would breach the location and the crew has the breach Edge
+     * trigger enabled with Edge remaining, spends one Edge point and rerolls the breach check once. A single check is
+     * never rerolled more than once.
+     *
+     * @param entity       the entity making the breach check
+     * @param loc          the location being checked (for reporting)
+     * @param target       the breach target number (a breach occurs on a roll of {@code target} or higher)
+     * @param breachRoll   the breach roll that was made
+     * @param reportVector the report vector to append the Edge-use and reroll reports to
+     *
+     * @return the breach roll to use — the reroll if Edge was spent, otherwise the original roll
+     */
+    // package-private for testing
+    int applyBreachEdge(Entity entity, int loc, int target, int breachRoll, Vector<Report> reportVector) {
+        boolean isBreach = breachRoll >= target;
+        boolean shouldUseEdge = entity.shouldUseEdge(OptionsConstants.EDGE_WHEN_BREACH);
+
+        if (isBreach && shouldUseEdge) {
+            entity.getCrew().decreaseEdge();
+            Report edgeReport = new Report(6348);
+            edgeReport.subject = entity.getId();
+            edgeReport.indent(3);
+            edgeReport.add(entity.getCrew().getOptions().intOption(OptionsConstants.EDGE));
+            reportVector.addElement(edgeReport);
+
+            Roll diceRoll = Compute.rollD6(2);
+            breachRoll = diceRoll.getIntValue();
+            Report report = new Report(6345);
+            report.subject = entity.getId();
+            report.indent(3);
+            report.add(entity.getLocationAbbr(loc));
+            report.add(diceRoll);
+            report.newlines = 0;
+            report.choose(breachRoll < target);
+            reportVector.addElement(report);
+        }
+        return breachRoll;
+    }
+
+    /**
      * Checks for location breach and returns phase logging.
      * <p>
      *
@@ -23711,6 +23750,9 @@ public class TWGameManager extends AbstractGameManager {
 
                 r.choose(breachRoll < target);
                 vDesc.addElement(r);
+
+                // Edge may reroll a breach check that would breach the location.
+                breachRoll = applyBreachEdge(entity, loc, target, breachRoll, vDesc);
             }
             // Breach by damage or lack of armor.
             if ((breachRoll >= target) ||
@@ -26538,9 +26580,9 @@ public class TWGameManager extends AbstractGameManager {
     }
 
     /**
-     * Destroys the given unit if an out-of-band edit (such as a gamemaster damage edit) left it in a state it
-     * cannot survive, e.g. with its center torso destroyed. Direct entity updates bypass normal damage
-     * resolution, which is where destruction is otherwise detected and applied.
+     * Destroys the given unit if an out-of-band edit (such as a gamemaster damage edit) left it in a state it cannot
+     * survive, e.g. with its center torso destroyed. Direct entity updates bypass normal damage resolution, which is
+     * where destruction is otherwise detected and applied.
      *
      * @param entity the server's version of the unit to check
      */

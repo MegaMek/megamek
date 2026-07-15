@@ -208,4 +208,36 @@ class PilotSPAHelperTest {
 
         assertTrue(PilotSPAHelper.isWindWalkerValid(spaceStation), "Wind Walker should be valid for Space Stations");
     }
+
+    @Test
+    void testSandblasterValidForSilverBulletGauss() {
+        EquipmentType silverBulletGauss = EquipmentType.get("ISSBGR");
+
+        assertTrue(PilotSPAHelper.isSandblasterValid(silverBulletGauss, null),
+              "Sandblaster should be valid for the Silver Bullet Gauss Rifle (fires on the cluster hit table)");
+    }
+
+    @Test
+    void testSandblasterValidForLBXAutocannon() {
+        EquipmentType lb10x = EquipmentType.get("ISLBXAC10");
+
+        assertTrue(PilotSPAHelper.isSandblasterValid(lb10x, null),
+              "Sandblaster should be valid for LB-X autocannons");
+    }
+
+    @Test
+    void testSandblasterInvalidForStandardGauss() {
+        EquipmentType standardGauss = EquipmentType.get("ISGaussRifle");
+
+        assertFalse(PilotSPAHelper.isSandblasterValid(standardGauss, null),
+              "Sandblaster should NOT be valid for the standard Gauss Rifle (single-slug, direct fire)");
+    }
+
+    @Test
+    void testSandblasterInvalidForMediumLaser() {
+        EquipmentType mediumLaser = EquipmentType.get("ISMediumLaser");
+
+        assertFalse(PilotSPAHelper.isSandblasterValid(mediumLaser, null),
+              "Sandblaster should NOT be valid for the Medium Laser");
+    }
 }

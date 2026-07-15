@@ -58,6 +58,7 @@ import megamek.common.board.Board;
 import megamek.common.board.BoardDimensions;
 import megamek.common.board.BoardLocation;
 import megamek.common.board.Coords;
+import megamek.common.board.postprocess.TWBoardTransformer;
 import megamek.common.comparators.WeaponComparatorBV;
 import megamek.common.compute.Compute;
 import megamek.common.compute.ComputeArc;
@@ -114,11 +115,9 @@ import megamek.common.turns.TurnOrdered;
 import megamek.common.turns.TurnVectors;
 import megamek.common.turns.UnloadStrandedTurn;
 import megamek.common.units.*;
-import megamek.common.util.BoardUtilities;
 import megamek.common.util.C3Util;
 import megamek.common.util.EmailService;
 import megamek.common.util.HazardousLiquidPoolUtil;
-import megamek.common.util.fileUtils.MegaMekFile;
 import megamek.common.verifier.TestEntity;
 import megamek.common.weapons.DamageType;
 import megamek.common.weapons.TeleMissile;
@@ -2434,49 +2433,12 @@ public class TWGameManager extends AbstractGameManager {
 
     /**
      * Applies board settings. This loads and combines all the boards that were specified into one mega-board and sets
-     * that board as current.
+     * that board as current. Surprise board picks are resolved into the game's map settings so that the settings
+     * record the board that is actually played.
      */
     public void applyBoardSettings() {
-        MapSettings mapSettings = game.getMapSettings();
-        mapSettings.chooseSurpriseBoards();
-        Board[] sheetBoards = new Board[mapSettings.getMapWidth() * mapSettings.getMapHeight()];
-        for (int i = 0; i < (mapSettings.getMapWidth() * mapSettings.getMapHeight()); i++) {
-            sheetBoards[i] = new Board();
-            // Need to set map type prior to loading to adjust foliage height, etc.
-            sheetBoards[i].setType(mapSettings.getMedium());
-            String name = mapSettings.getBoardsSelectedVector().get(i);
-            boolean isRotated = false;
-            if (name.startsWith(Board.BOARD_REQUEST_ROTATION)) {
-                // only rotate boards with an even width
-                if ((mapSettings.getBoardWidth() % 2) == 0) {
-                    isRotated = true;
-                }
-                name = name.substring(Board.BOARD_REQUEST_ROTATION.length());
-            }
-            if (name.startsWith(MapSettings.BOARD_GENERATED) || (mapSettings.getMedium() == MapSettings.MEDIUM_SPACE)) {
-                sheetBoards[i] = BoardUtilities.generateRandom(mapSettings);
-            } else {
-                sheetBoards[i].load(new MegaMekFile(Configuration.boardsDir(), name + ".board").getFile());
-                BoardUtilities.flip(sheetBoards[i], isRotated, isRotated);
-            }
-        }
-        Board newBoard = BoardUtilities.combine(mapSettings.getBoardWidth(),
-              mapSettings.getBoardHeight(),
-              mapSettings.getMapWidth(),
-              mapSettings.getMapHeight(),
-              sheetBoards,
-              mapSettings.getMedium());
-        if (game.getOptions().getOption(OptionsConstants.BASE_BRIDGE_CF).intValue() > 0) {
-            newBoard.setBridgeCF(game.getOptions().getOption(OptionsConstants.BASE_BRIDGE_CF).intValue());
-        }
-        if (!game.getOptions().booleanOption(OptionsConstants.BASE_RANDOM_BASEMENTS)) {
-            newBoard.setRandomBasementsOff();
-        }
-        if (game.getPlanetaryConditions().isTerrainAffected()) {
-            BoardUtilities.addWeatherConditions(newBoard,
-                  game.getPlanetaryConditions().getWeather(),
-                  game.getPlanetaryConditions().getWind());
-        }
+        Board newBoard = TWBoardTransformer.instantiateBoardResolvingSettings(game.getMapSettings(),
+              game.getPlanetaryConditions(), game.getOptions());
         game.setBoard(newBoard);
     }
 

@@ -148,4 +148,9 @@ public class TWRulesPhysical extends CoreRulesPhysical {
     // Kick is -2 to hit
     @Override
     public int getKickModifier() { return -2; }
+
+    // Punches are 0 to hit
+    @Override
+    public int getPunchModifier() { return 0;}
+
 }

@@ -257,7 +257,7 @@ public class PunchAttackAction extends PhysicalAttackAction {
 
         toHit = new ToHitData(base, "base");
 
-        toHit.addModifier(0, "Punch");
+        toHit.addModifier(Game.rulesManager.getRulesPhysical().getPunchModifier(), "Punch");
 
         PhysicalAttackAction.setCommonModifiers(toHit, game, ae, target);
 

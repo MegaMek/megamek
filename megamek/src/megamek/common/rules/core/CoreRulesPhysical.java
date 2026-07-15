@@ -199,4 +199,7 @@ public class CoreRulesPhysical extends RulesPhysical {
 
     // Kicks are -1 to hit. Core p.81
     public int getKickModifier() { return -1; }
+    
+    // Punches are -1 to hit. Core p.82
+    public int getPunchModifier() { return -1;}
 }

@@ -80,4 +80,7 @@ public abstract class RulesPhysical {
 
     // What is the kick modifier
     public abstract int getKickModifier();
+
+    // Do we have a modifier for punching
+    public abstract int getPunchModifier();
 }

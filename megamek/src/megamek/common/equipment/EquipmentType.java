@@ -56,6 +56,7 @@ import megamek.common.weapons.autoCannons.HVACWeapon;
 import megamek.common.weapons.defensivePods.BPodWeapon;
 import megamek.common.weapons.defensivePods.MPodWeapon;
 import megamek.common.weapons.ppc.PPCWeapon;
+import megamek.logging.MMLogger;
 
 /**
  * Represents any type of equipment mounted on a 'Mek, excluding systems and actuators.
@@ -64,6 +65,8 @@ import megamek.common.weapons.ppc.PPCWeapon;
  * @since April 1, 2002, 1:35 PM
  */
 public class EquipmentType implements ITechnology {
+
+    private static final MMLogger LOGGER = MMLogger.create(EquipmentType.class);
 
     public static final double TONNAGE_VARIABLE = Float.MIN_VALUE;
     public static final int CRITICAL_SLOTS_VARIABLE = Integer.MIN_VALUE;
@@ -198,6 +201,7 @@ public class EquipmentType implements ITechnology {
     // static list of equipment
     protected static Vector<EquipmentType> allTypes;
     protected static Hashtable<String, EquipmentType> lookupHash;
+    private static Map<String, Set<EquipmentType>> lookupCollisions = new TreeMap<>();
 
     /**
      * Keeps track of page numbers for rules references.
@@ -749,7 +753,13 @@ public class EquipmentType implements ITechnology {
     }
 
     public void addLookupName(String s, boolean includeInNames) {
-        EquipmentType.lookupHash.put(s.toLowerCase(), this); // static variable
+        String lookupName = s.toLowerCase(Locale.ROOT);
+        EquipmentType previous = EquipmentType.lookupHash.put(lookupName, this); // static variable
+        if ((previous != null) && (previous != this)) {
+            EquipmentType.lookupCollisions.computeIfAbsent(lookupName, key -> new LinkedHashSet<>())
+                  .add(previous);
+            EquipmentType.lookupCollisions.get(lookupName).add(this);
+        }
         if (includeInNames) {
             namesVector.addElement(s); // member variable
         }
@@ -768,7 +778,7 @@ public class EquipmentType implements ITechnology {
         if (null == EquipmentType.lookupHash) {
             EquipmentType.initializeTypes();
         }
-        return EquipmentType.lookupHash.get(key.toLowerCase());
+        return EquipmentType.lookupHash.get(key.toLowerCase(Locale.ROOT));
     }
 
     /**
@@ -792,13 +802,57 @@ public class EquipmentType implements ITechnology {
     }
 
     /**
-     * Explicit structure lookup by name, to avoid armor type collisions (mainly "IS Standard")
-     * Works because all structure names (q.v.) are added to the hash with " structure" appended.
-     * @param key   String name, probably generated from looking up a structure type name using an index
+     * Explicit structure lookup by name
+     * 
+     * @param key   String name
      * @return      The matching Structure-specific Equipment Type.
      */
-    public static @Nullable EquipmentType getStructureFromName(String key) {
-        return EquipmentType.get(String.format("%s structure", key));
+    public static @Nullable StructureType getStructureFromName(String key) {
+        if (key == null) {
+            return null;
+        }
+
+        String normalizedKey = key.trim();
+        EquipmentType structure = normalizedKey.toLowerCase(Locale.ROOT).endsWith(" structure")
+              ? EquipmentType.get(normalizedKey)
+              : EquipmentType.get(normalizedKey + " Structure");
+        if (structure instanceof StructureType structureType) {
+            return structureType;
+        }
+        return null;
+    }
+
+    /**
+     * Explicit armor lookup by name
+     *
+     * @param key String name
+     * @return The matching Armor-specific Equipment Type, or null when the name is unknown
+     */
+    public static @Nullable ArmorType getArmorFromName(String key) {
+        if (key == null) {
+            return null;
+        }
+
+        String normalizedKey = key.trim();
+        EquipmentType armor = normalizedKey.toLowerCase(Locale.ROOT).endsWith(" armor")
+              ? EquipmentType.get(normalizedKey)
+              : EquipmentType.get(normalizedKey + " Armor");
+        if (armor instanceof ArmorType armorType) {
+            return armorType;
+        }
+        return null;
+    }
+
+    /**
+     * @return A snapshot of lookup names registered by more than one equipment type.
+     */
+    public static Map<String, Set<EquipmentType>> getLookupCollisions() {
+        if (EquipmentType.lookupHash == null) {
+            EquipmentType.initializeTypes();
+        }
+        Map<String, Set<EquipmentType>> result = new TreeMap<>();
+        lookupCollisions.forEach((key, value) -> result.put(key, Set.copyOf(value)));
+        return Collections.unmodifiableMap(result);
     }
 
     /**
@@ -821,6 +875,7 @@ public class EquipmentType implements ITechnology {
         if (null == EquipmentType.allTypes) {
             EquipmentType.allTypes = new Vector<>();
             EquipmentType.lookupHash = new Hashtable<>();
+            EquipmentType.lookupCollisions = new TreeMap<>();
 
             WeaponType.initializeTypes();
             AmmoType.initializeTypes();
@@ -835,7 +890,25 @@ public class EquipmentType implements ITechnology {
                           .setStaticTechLevel(et.getTechAdvancement().guessStaticTechLevel(et.getRulesRefs()));
                 }
             }
+            reportLookupCollisions();
         }
+    }
+
+    private static void reportLookupCollisions() {
+        Map<String, Set<EquipmentType>> collisions = getLookupCollisions();
+        if (collisions.isEmpty()) {
+            return;
+        }
+
+        StringBuilder message = new StringBuilder("Equipment lookup name collisions:\n");
+        collisions.forEach((name, types) -> {
+            message.append(name).append(": ");
+            types.stream().map(type -> type.getInternalName()).sorted().forEach(type -> message.append(type)
+                  .append(", "));
+            message.setLength(message.length() - 2);
+            message.append('\n');
+        });
+        LOGGER.errorDialog("Equipment Lookup Collision", message.toString().trim());
     }
 
     public static Enumeration<EquipmentType> getAllTypes() {
@@ -892,15 +965,7 @@ public class EquipmentType implements ITechnology {
     }
 
     public static int getStructureType(EquipmentType et) {
-        if (et == null) {
-            return T_STRUCTURE_UNKNOWN;
-        }
-        for (int x = 0; x < structureNames.length; x++) {
-            if (structureNames[x].equals(et.getName())) {
-                return x;
-            }
-        }
-        return T_STRUCTURE_UNKNOWN;
+        return et instanceof StructureType structureType ? structureType.getStructureTypeId() : T_STRUCTURE_UNKNOWN;
     }
 
     public static String getStructureTypeName(int structureType) {
@@ -957,8 +1022,7 @@ public class EquipmentType implements ITechnology {
         if (at == T_STRUCTURE_STANDARD) {
             return TA_STANDARD_STRUCTURE;
         }
-        String structureName = EquipmentType.getStructureTypeName(at, clan);
-        EquipmentType structure = EquipmentType.get(structureName);
+        EquipmentType structure = EquipmentType.getStructureFromName(EquipmentType.getStructureTypeName(at, clan));
         if (structure != null) {
             return structure.getTechAdvancement();
         }

@@ -54,6 +54,7 @@ import megamek.common.battleArmor.BattleArmor;
 import megamek.common.enums.Faction;
 import megamek.common.enums.TechBase;
 import megamek.common.equipment.AmmoType;
+import megamek.common.equipment.ArmorType;
 import megamek.common.equipment.Engine;
 import megamek.common.equipment.EquipmentType;
 import megamek.common.equipment.EquipmentTypeLookup;
@@ -464,7 +465,8 @@ public class MtfFile implements IMekLoader {
                       locationOrder[x]);
                 if (thisArmorType.equals(EquipmentType.getArmorTypeName(EquipmentType.T_ARMOR_PATCHWORK))) {
                     String armorName = isClan(x);
-                    mek.setArmorType(EquipmentType.getArmorType(EquipmentType.get(armorName)), locationOrder[x]);
+                    ArmorType armor = EquipmentType.getArmorFromName(armorName);
+                    mek.setArmorType(armor == null ? EquipmentType.T_ARMOR_UNKNOWN : armor.getArmorType(), locationOrder[x]);
 
                     String armorValue = armorValues[x].toLowerCase();
                     if (armorValue.contains("clan")) {
@@ -693,7 +695,7 @@ public class MtfFile implements IMekLoader {
         if (!lookupName.endsWith("Structure")) {
             lookupName += " Structure";
         }
-        EquipmentType structure = EquipmentType.get(lookupName);
+        EquipmentType structure = EquipmentType.getStructureFromName(lookupName);
         if (structure == null) {
             throw new EntityLoadingException("Unknown structure type: " + structureName);
         }

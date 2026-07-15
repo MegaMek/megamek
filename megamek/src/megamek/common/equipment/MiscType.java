@@ -1455,7 +1455,7 @@ public class MiscType extends EquipmentType {
         EquipmentType.addType(MiscType.createGirderClub());
         EquipmentType.addType(MiscType.createLimbClub());
         EquipmentType.addType(MiscType.createHatchet());
-        EquipmentType.addType(MiscType.createStandard());
+        EquipmentType.addType(MiscType.createStandardStructure());
 
         // Start of Level2 stuff
         EquipmentType.addType(MiscType.createISDoubleHeatSink());
@@ -2399,19 +2399,15 @@ public class MiscType extends EquipmentType {
     // TODO - At some point the "Standard" below needs to be broken out as they
     // all have Separate Tech Advancement information.
 
-    public static StructureType createStandard() {
-        // This is not really a single piece of equipment, it is used to
-        // identify "standard" internal structure, armor, whatever.
-
+    public static StructureType createStandardStructure() {
         StructureType misc = new StructureType(T_STRUCTURE_STANDARD);
 
         misc.name = EquipmentType.getStructureTypeName(T_STRUCTURE_STANDARD);
         misc.setInternalName(EquipmentType.getStructureTypeName(T_STRUCTURE_STANDARD));
-        misc.addLookupName(EquipmentType.getStructureTypeName(T_STRUCTURE_STANDARD, false));
-        misc.addLookupName(EquipmentType.getStructureTypeName(T_STRUCTURE_STANDARD, true));
-        misc.addLookupName("Regular");
+        misc.addLookupName(misc.internalName + " Structure");
         misc.addLookupName("IS Standard Structure");
         misc.addLookupName("Clan Standard Structure");
+        misc.addLookupName("Regular Structure");
         misc.flags = misc.flags.or(F_MEK_EQUIPMENT,
               F_TANK_EQUIPMENT,
               F_SUPPORT_TANK_EQUIPMENT,
@@ -9065,7 +9061,7 @@ public class MiscType extends EquipmentType {
         misc.addLookupName("IS Endo-Steel");
         misc.addLookupName("IS Endo Steel Structure");
         misc.addLookupName("IS EndoSteel Structure");
-        misc.addLookupName("IS Endo-Steel Structure");
+        misc.addLookupName(misc.internalName + " Structure");
         misc.tonnage = TONNAGE_VARIABLE;
         misc.criticalSlots = CRITICAL_SLOTS_VARIABLE;
         misc.hittable = false;
@@ -9095,7 +9091,7 @@ public class MiscType extends EquipmentType {
         misc.addLookupName("IS Endo Steel Prototype");
         misc.addLookupName("IS Endo-Steel Prototype");
         misc.addLookupName("IS Endo Steel Prototype Structure");
-        misc.addLookupName("IS Endo-Steel Prototype Structure");
+        misc.addLookupName(misc.internalName + " Structure");
         misc.tonnage = TONNAGE_VARIABLE;
         misc.criticalSlots = CRITICAL_SLOTS_VARIABLE;
         misc.hittable = false;
@@ -9122,9 +9118,9 @@ public class MiscType extends EquipmentType {
         misc.setInternalName(EquipmentType.getStructureTypeName(T_STRUCTURE_ENDO_STEEL, true));
         misc.addLookupName("Clan Endo-Steel");
         misc.addLookupName("Clan EndoSteel");
-        misc.addLookupName("Clan Endo-Steel Structure");
         misc.addLookupName("Clan EndoSteel Structure");
         misc.addLookupName("Clan Endo Steel Structure");
+        misc.addLookupName(misc.internalName + " Structure");
         misc.tonnage = TONNAGE_VARIABLE;
         misc.criticalSlots = CRITICAL_SLOTS_VARIABLE;
         misc.hittable = false;

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2025 The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2026 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -30,25 +30,34 @@
  * <https://www.xbox.com/en-US/developers/rules> and it is not endorsed by or
  * affiliated with Microsoft.
  */
-package megamek.client.bot;
 
-import java.util.Deque;
+package megamek.common.equipment;
 
-import megamek.common.board.Coords;
+import java.util.LinkedHashMap;
+import java.util.Map;
 
 /**
- * Interface for classes that can plan minefield deployments.
- *
- * @author Luana Coppio
+ * Equipment definition for an internal structure system.
  */
-public interface MinefieldDeploymentPlanner {
+public class StructureType extends MiscType {
 
-    /**
-     * Get a set of planed positions on the board to be used to lay minefields.
-     *
-     * @param numberOfCoords the number of positions to get
-     *
-     * @return a deque of positions
-     */
-    Deque<Coords> getRandomMinefieldPositions(int numberOfCoords);
+    private final int structureTypeId;
+
+    public StructureType(int structureTypeId) {
+        this.structureTypeId = structureTypeId;
+    }
+
+    @Override
+    protected String getYamlTypeName() {
+        return "structure";
+    }
+
+    @Override
+    public Map<String, Object> getYamlData() {
+        Map<String, Object> data = super.getYamlData();
+        Map<String, Object> structureDetails = new LinkedHashMap<>();
+        structureDetails.put("typeId", structureTypeId);
+        data.put("structure", structureDetails);
+        return data;
+    }
 }

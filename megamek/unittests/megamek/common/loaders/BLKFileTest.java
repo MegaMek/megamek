@@ -567,4 +567,30 @@ class BLKFileTest {
               "Reloaded entity should have no failed equipment even with old :Shots# format");
     }
 
+    /**
+     * Verifies a Clan exoskeleton without HarJel BattleArmor unit can be saved and reloaded
+     */
+    @Test
+    void battleArmorClanExoWithoutHarJel() throws Exception {
+        // Load ultra light Clan BA
+        BattleArmor original = loadBattleArmor("Aerie PA(L) (Sqd4).blk");
+
+        // Verify BLK has exoskeleton and clan_exo_without_harjel blocks
+        original.setIsExoskeleton(true);
+        original.setClanExoWithoutHarJel(true);
+        BuildingBlock blk = BLKFile.getBlock(original);
+        assertTrue(blk.exists("exoskeleton") &&
+              blk.getDataAsString("exoskeleton")[0].equalsIgnoreCase(
+              "true"), "BLK should have exoskeleton block");
+        assertTrue(blk.exists("clan_exo_without_harjel") &&
+              blk.getDataAsString("clan_exo_without_harjel")[0].equalsIgnoreCase("true"),
+              "BLK should have clan_exo_without_harjel block");
+
+        // Verify reloaded BA is exoskeleton and clan exo without harjel
+        BLKBattleArmorFile loader = new BLKBattleArmorFile(blk);
+        BattleArmor reloaded = (BattleArmor) loader.getEntity();
+        assertTrue(reloaded.isExoskeleton(), "Reloaded entity should be exoskeleton");
+        assertTrue(reloaded.isClanExoWithoutHarJel(), "Reloaded entity should be clan exo without HarJel");
+    }
+
 }

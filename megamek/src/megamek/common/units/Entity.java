@@ -291,6 +291,10 @@ public abstract class Entity extends TurnOrdered
      * Persistent identity of this unit design in MTF and BLK files.
      */
     private String unitFileUUID;
+    private transient String originalChassis;
+    private transient String originalModel;
+    private transient String originalUnitFileUUID;
+    private transient boolean unitFileUUIDWasProvided;
 
     protected double weight;
     protected boolean omni = false;
@@ -1232,6 +1236,7 @@ public abstract class Entity extends TurnOrdered
                 return;
             }
             this.unitFileUUID = uuid.toString();
+            unitFileUUIDWasProvided = true;
         } catch (IllegalArgumentException | NullPointerException ex) {
             regenerateUnitFileUUID();
         }
@@ -1239,6 +1244,32 @@ public abstract class Entity extends TurnOrdered
 
     public void regenerateUnitFileUUID() {
         unitFileUUID = UUIDUtil.newUUIDv7().toString();
+        unitFileUUIDWasProvided = false;
+    }
+
+    public @Nullable String getOriginalChassis() {
+        return originalChassis;
+    }
+
+    public @Nullable String getOriginalModel() {
+        return originalModel;
+    }
+
+    public @Nullable String getOriginalUnitFileUUID() {
+        return originalUnitFileUUID;
+    }
+
+    public void storeOriginalUnitData() {
+        originalChassis = chassis;
+        originalModel = model;
+        originalUnitFileUUID = unitFileUUIDWasProvided ? unitFileUUID : null;
+    }
+
+    public void storeSavedUnitData() {
+        originalChassis = chassis;
+        originalModel = model;
+        originalUnitFileUUID = unitFileUUID;
+        unitFileUUIDWasProvided = true;
     }
 
     /**

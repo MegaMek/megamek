@@ -60,6 +60,7 @@ import javax.swing.plaf.metal.MetalTheme;
 
 import megamek.MMConstants;
 import megamek.client.TimerSingleton;
+import megamek.client.bot.princess.MinefieldDeploymentPlanner;
 import megamek.client.event.BoardViewEvent;
 import megamek.client.event.BoardViewListener;
 import megamek.client.ui.IDisplayable;
@@ -1298,6 +1299,7 @@ public final class BoardView extends AbstractBoardView
         // renderClusters((Graphics2D) graphics2D);
         // renderDonut(graphics2D, new Coords(10, 10), 2);
         // renderApproxHexDirection((Graphics2D) graphics2D);
+        // renderMinefieldScores((Graphics2D) graphics2D);
     }
 
     /**
@@ -1354,6 +1356,26 @@ public final class BoardView extends AbstractBoardView
                 drawHexBorder(graphics2D, centreHexLocation, new Color(0, 0, (20 * cluster.id) % 255), 0, 6);
             }
         }
+    }
+    
+    /** 
+     * Debugging method used to render minefield effectiveness ratings
+     */
+    @SuppressWarnings("unused")
+    private void renderMinefieldScores(Graphics2D graphics2D) {
+    	/*Map<Coords, Integer> minefieldScores = mdp.getMinefieldScores(Minefield.TYPE_CONVENTIONAL, UnitType.TANK,
+    			EntityMovementMode.WHEELED, getBoard());*/
+    	
+    	MinefieldDeploymentPlanner mdp = new MinefieldDeploymentPlanner(getLocalPlayer(), game);
+    	Map<Coords, Double> minefieldScores = mdp.buildCoalescedMinefieldScores(Minefield.TYPE_CONVENTIONAL, getBoard());
+    	
+    	for (Coords coords : minefieldScores.keySet()) {
+    		Point centreHexLocation = getCentreHexLocation(coords.getX(), coords.getY(), true);
+            centreHexLocation.translate(HEX_W / 2, HEX_H);
+            graphics2D.setColor(Color.pink);
+            drawCenteredString(String.format("%3.1f", minefieldScores.get(coords)), 
+            		centreHexLocation.x, centreHexLocation.y, FONT_14, graphics2D);
+    	}
     }
 
     public void clearShadowMap() {

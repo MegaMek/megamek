@@ -772,6 +772,26 @@ public class EquipmentType implements ITechnology {
     }
 
     /**
+     * Looks up equipment by internal name or lookup name, falling back to its display name for legacy serialized data.
+     *
+     * @param key The internal name, lookup name, or display name
+     *
+     * @return The matching equipment type, or null if there is none
+     */
+    public static @Nullable EquipmentType getWithFallbackToDisplayName(String key) {
+        EquipmentType equipmentType = get(key);
+        if (equipmentType != null) {
+            return equipmentType;
+        }
+        for (EquipmentType type : allTypes) {
+            if (type.getName().equals(key)) {
+                return type;
+            }
+        }
+        return null;
+    }
+
+    /**
      * Explicit structure lookup by name, to avoid armor type collisions (mainly "IS Standard")
      * Works because all structure names (q.v.) are added to the hash with " structure" appended.
      * @param key   String name, probably generated from looking up a structure type name using an index

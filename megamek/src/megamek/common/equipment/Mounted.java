@@ -250,14 +250,15 @@ public class Mounted<T extends EquipmentType> implements Serializable, RoundUpda
     @SuppressWarnings("unchecked")
     public void restore() {
         if (typeName == null) {
-            typeName = type.getName();
-        } else {
-            type = (T) EquipmentType.get(typeName);
+            typeName = type.getInternalName();
         }
+        type = (T) EquipmentType.getWithFallbackToDisplayName(typeName);
 
         if (type == null) {
             String message = String.format("Could not restore equipment type \"%s\"", typeName);
             LOGGER.error(message);
+        } else {
+            typeName = type.getInternalName();
         }
     }
 
@@ -539,7 +540,6 @@ public class Mounted<T extends EquipmentType> implements Serializable, RoundUpda
             }
         }
         if ((type instanceof AmmoType) && (location != Entity.LOC_NONE)) {
-
             desc.append(" (");
             desc.append(shotsLeft);
             desc.append(")");

@@ -266,7 +266,7 @@ public class ConvInfantry extends Infantry {
      * @return True when this infantry carries anti-mek gear
      */
     public boolean hasAntiMekGear() {
-        return hasWorkingMisc(EquipmentTypeLookup.ANTI_MEK_GEAR);
+        return hasWorkingMisc(MiscType.F_ANTI_MEK_GEAR);
     }
 
     @Override
@@ -1074,6 +1074,7 @@ public class ConvInfantry extends Infantry {
             if ((getSecondaryWeaponsPerSquad() > 1)
                   && !hasAbility(OptionsConstants.MD_TSM_IMPLANT)
                   && !hasAbility(OptionsConstants.MD_DERMAL_ARMOR)
+                  && !hasNonEncumberingSecondaryWeaponSpecialization()
                   && (null != secondaryWeapon)
                   && secondaryWeapon.hasFlag(WeaponType.F_INF_SUPPORT)
                   && !getMovementMode().isTracked()
@@ -1308,7 +1309,7 @@ public class ConvInfantry extends Infantry {
 
     public void setPrimaryWeapon(InfantryWeapon w) {
         primaryWeapon = w;
-        primaryName = w.getName();
+        primaryName = w.getInternalName();
     }
 
     public InfantryWeapon getPrimaryWeapon() {
@@ -1320,7 +1321,7 @@ public class ConvInfantry extends Infantry {
         if (null == w) {
             secondName = null;
         } else {
-            secondName = w.getName();
+            secondName = w.getInternalName();
         }
     }
 
@@ -1398,6 +1399,10 @@ public class ConvInfantry extends Infantry {
 
     public int getSecondaryWeaponsPerSquad() {
         return secondaryWeaponsPerSquad;
+    }
+
+    private boolean hasNonEncumberingSecondaryWeaponSpecialization() {
+        return hasSpecialization(TAG_TROOPS);
     }
 
     public double getDamagePerTrooper() {
@@ -1501,12 +1506,25 @@ public class ConvInfantry extends Infantry {
         super.restore();
 
         if (null != primaryName) {
-            primaryWeapon = (InfantryWeapon) EquipmentType.get(primaryName);
+            primaryWeapon = restoreInfantryWeapon(primaryName);
+            if (null != primaryWeapon) {
+                primaryName = primaryWeapon.getInternalName();
+            }
         }
 
         if (null != secondName) {
-            secondaryWeapon = (InfantryWeapon) EquipmentType.get(secondName);
+            secondaryWeapon = restoreInfantryWeapon(secondName);
+            if (null != secondaryWeapon) {
+                secondName = secondaryWeapon.getInternalName();
+            }
         }
+    }
+
+    private static @Nullable InfantryWeapon restoreInfantryWeapon(String weaponName) {
+        if (EquipmentType.getWithFallbackToDisplayName(weaponName) instanceof InfantryWeapon infantryWeapon) {
+            return infantryWeapon;
+        }
+        return null;
     }
 
     @Override
@@ -1585,6 +1603,7 @@ public class ConvInfantry extends Infantry {
             if ((getSecondaryWeaponsPerSquad() > 1) &&
                   !hasAbility(OptionsConstants.MD_TSM_IMPLANT) &&
                   !hasAbility(OptionsConstants.MD_DERMAL_ARMOR) &&
+                  !hasNonEncumberingSecondaryWeaponSpecialization() &&
                   !getMovementMode().isSubmarine() &&
                   (null != secondaryWeapon) &&
                   secondaryWeapon.hasFlag(WeaponType.F_INF_SUPPORT)) {

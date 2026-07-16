@@ -147,7 +147,7 @@ class CompositeTechLevelReportTest {
 
         String reportText = CompositeTechLevelReport.toPlainText(devastator, Faction.NONE, devastator.getYear(), true);
 
-        assertTrue(reportText.contains("Unit extinct") && reportText.contains("Unit returns"),
+        assertTrue(reportText.contains("Equipment extinct") && reportText.contains("Equipment returns"),
               "Build-up table is missing the extinction columns:\n" + reportText);
         assertTrue(reportText.contains("Extinct:"), "Report has no extinction result line:\n" + reportText);
 
@@ -159,6 +159,32 @@ class CompositeTechLevelReportTest {
               .orElse("");
         assertTrue(xlEngineBuildUpRow.contains("2865") && xlEngineBuildUpRow.contains("3035"),
               "The XL engine row does not show the unit's extinction and return dates:\n" + reportText);
+    }
+
+    @Test
+    public void unitEvaluatedBeforeItExistsReportsWhenItBecomesAvailable() {
+        // The DVS-X10 MUSE EARTH is introduced in 3075, so in 3031 it cannot be built at all. A bare level
+        // would read as "you can build this in 3031"; the report says when that actually becomes true.
+        Entity devastator = getEntityForUnitTesting("Devastator DVS-X10 MUSE EARTH", false);
+        assertNotNull(devastator, "Devastator DVS-X10 MUSE EARTH not found");
+
+        String reportText = CompositeTechLevelReport.toPlainText(devastator, Faction.NONE, 3031, true);
+
+        assertTrue(reportText.contains("Becomes Experimental (3075)"),
+              "Report does not say when the unit becomes available:\n" + reportText);
+    }
+
+    @Test
+    public void unitEvaluatedInsideItsExtinctionWindowReportsWhenItReturns() {
+        // The Devastator DVS-2-EC carries Star League tech that is extinct through 3080, so in 2900 the unit
+        // is not makeable; it becomes available again when the last lost component returns.
+        Entity devastator = getEntityForUnitTesting("Devastator DVS-2-EC", false);
+        assertNotNull(devastator, "Devastator DVS-2-EC not found");
+
+        String reportText = CompositeTechLevelReport.toPlainText(devastator, Faction.NONE, 2900, true);
+
+        assertTrue(reportText.contains("Becomes Advanced (3081)"),
+              "Report does not say when the extinct unit returns:\n" + reportText);
     }
 
     @Test

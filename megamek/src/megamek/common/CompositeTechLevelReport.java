@@ -107,24 +107,29 @@ public final class CompositeTechLevelReport {
      * @param reintroductionDate     The component's own reintroduction date, or "--" when it never returns
      * @param staticTechLevel        The component's tech level with the Variable Tech Level rule off
      * @param variableTechLevel      The component's tech level in the evaluated year
-     * @param unitPrototypeDate      The unit's prototype date once this component has been folded in
-     * @param unitProductionDate     The unit's production date once this component has been folded in
-     * @param unitCommonDate         The unit's common date once this component has been folded in
-     * @param unitExtinctionDate     The unit's extinction date once this component has been folded in
-     * @param unitReintroductionDate The unit's reintroduction date once this component has been folded in
-     * @param movesUnitPrototypeDate Whether this component set the unit's prototype date
-     * @param movesUnitProductionDate Whether this component set the unit's production date
-     * @param movesUnitCommonDate    Whether this component set the unit's common date
-     * @param movesUnitExtinctionDate Whether this component set the unit's extinction date
-     * @param movesUnitReintroductionDate Whether this component set the unit's reintroduction date
+     * @param equipmentPrototypeDate           The combined equipment's prototype date once this component has been
+     *                                         folded in
+     * @param equipmentProductionDate          The combined equipment's production date once this component has been
+     *                                         folded in
+     * @param equipmentCommonDate              The combined equipment's common date once this component has been
+     *                                         folded in
+     * @param equipmentExtinctionDate          The combined equipment's extinction date once this component has been
+     *                                         folded in
+     * @param equipmentReintroductionDate      The combined equipment's reintroduction date once this component has
+     *                                         been folded in
+     * @param movesEquipmentPrototypeDate      Whether this component set the equipment prototype date
+     * @param movesEquipmentProductionDate     Whether this component set the equipment production date
+     * @param movesEquipmentCommonDate         Whether this component set the equipment common date
+     * @param movesEquipmentExtinctionDate     Whether this component set the equipment extinction date
+     * @param movesEquipmentReintroductionDate Whether this component set the equipment reintroduction date
      */
     private record ReportRow(String componentName, int count, String prototypeDate, String productionDate,
                              String commonDate, String extinctionDate, String reintroductionDate,
-                             String staticTechLevel, String variableTechLevel, String unitPrototypeDate,
-                             String unitProductionDate, String unitCommonDate, String unitExtinctionDate,
-                             String unitReintroductionDate, boolean movesUnitPrototypeDate,
-                             boolean movesUnitProductionDate, boolean movesUnitCommonDate,
-                             boolean movesUnitExtinctionDate, boolean movesUnitReintroductionDate) {
+                             String staticTechLevel, String variableTechLevel, String equipmentPrototypeDate,
+                             String equipmentProductionDate, String equipmentCommonDate, String equipmentExtinctionDate,
+                             String equipmentReintroductionDate, boolean movesEquipmentPrototypeDate,
+                             boolean movesEquipmentProductionDate, boolean movesEquipmentCommonDate,
+                             boolean movesEquipmentExtinctionDate, boolean movesEquipmentReintroductionDate) {
 
         /** @return The component's name, with a count appended when the unit carries more than one */
         String displayName() {
@@ -133,10 +138,10 @@ public final class CompositeTechLevelReport {
 
         ReportRow withOneMore() {
             return new ReportRow(componentName, count + 1, prototypeDate, productionDate, commonDate, extinctionDate,
-                  reintroductionDate, staticTechLevel, variableTechLevel, unitPrototypeDate, unitProductionDate,
-                  unitCommonDate, unitExtinctionDate, unitReintroductionDate, movesUnitPrototypeDate,
-                  movesUnitProductionDate, movesUnitCommonDate, movesUnitExtinctionDate,
-                  movesUnitReintroductionDate);
+                  reintroductionDate, staticTechLevel, variableTechLevel, equipmentPrototypeDate, equipmentProductionDate,
+                  equipmentCommonDate, equipmentExtinctionDate, equipmentReintroductionDate, movesEquipmentPrototypeDate,
+                  movesEquipmentProductionDate, movesEquipmentCommonDate, movesEquipmentExtinctionDate,
+                  movesEquipmentReintroductionDate);
         }
 
         /** @return A key identifying components that are identical and can therefore share a row */
@@ -152,14 +157,14 @@ public final class CompositeTechLevelReport {
          */
         String progressionNote() {
             List<String> becomes = new ArrayList<>();
-            if (movesUnitPrototypeDate) {
-                becomes.add(message("noteBecomesPrototype", unitPrototypeDate));
+            if (movesEquipmentPrototypeDate) {
+                becomes.add(message("noteBecomesPrototype", equipmentPrototypeDate));
             }
-            if (movesUnitProductionDate) {
-                becomes.add(message("noteBecomesProduction", unitProductionDate));
+            if (movesEquipmentProductionDate) {
+                becomes.add(message("noteBecomesProduction", equipmentProductionDate));
             }
-            if (movesUnitCommonDate) {
-                becomes.add(message("noteBecomesCommon", unitCommonDate));
+            if (movesEquipmentCommonDate) {
+                becomes.add(message("noteBecomesCommon", equipmentCommonDate));
             }
             return String.join(", ", becomes);
         }
@@ -229,11 +234,11 @@ public final class CompositeTechLevelReport {
         boolean isFirstComponent = true;
 
         for (ComponentTechRecord component : techLevel.getComponentRecords()) {
-            int unitPrototype = component.compositePrototypeDate();
-            int unitProduction = component.compositeProductionDate();
-            int unitCommon = component.compositeCommonDate();
-            int unitExtinction = component.compositeExtinctionDate();
-            int unitReintroduction = component.compositeReintroductionDate();
+            int equipmentPrototype = component.compositePrototypeDate();
+            int equipmentProduction = component.compositeProductionDate();
+            int equipmentCommon = component.compositeCommonDate();
+            int equipmentExtinction = component.compositeExtinctionDate();
+            int equipmentReintroduction = component.compositeReintroductionDate();
 
             // A date "moves" when this component changes it to a real date. When a later phase's date is pushed
             // out, the algorithm backfills the earlier phase with that phase's old date -- for example, pushing
@@ -241,22 +246,22 @@ public final class CompositeTechLevelReport {
             // makes the unit available no earlier than before, so it is not the component "becoming" that phase;
             // suppressing it keeps a single common-date push from also reading as "Becomes Production".
             boolean movesPrototype = !isFirstComponent
-                  && (unitPrototype != previousPrototype)
-                  && (unitPrototype != ITechnology.DATE_NONE)
-                  && (unitPrototype != previousProduction);
+                  && (equipmentPrototype != previousPrototype)
+                  && (equipmentPrototype != ITechnology.DATE_NONE)
+                  && (equipmentPrototype != previousProduction);
             boolean movesProduction = !isFirstComponent
-                  && (unitProduction != previousProduction)
-                  && (unitProduction != ITechnology.DATE_NONE)
-                  && (unitProduction != previousCommon);
+                  && (equipmentProduction != previousProduction)
+                  && (equipmentProduction != ITechnology.DATE_NONE)
+                  && (equipmentProduction != previousCommon);
             boolean movesCommon = !isFirstComponent
-                  && (unitCommon != previousCommon)
-                  && (unitCommon != ITechnology.DATE_NONE);
+                  && (equipmentCommon != previousCommon)
+                  && (equipmentCommon != ITechnology.DATE_NONE);
             boolean movesExtinction = !isFirstComponent
-                  && (unitExtinction != previousExtinction)
-                  && (unitExtinction != ITechnology.DATE_NONE);
+                  && (equipmentExtinction != previousExtinction)
+                  && (equipmentExtinction != ITechnology.DATE_NONE);
             boolean movesReintroduction = !isFirstComponent
-                  && (unitReintroduction != previousReintroduction)
-                  && (unitReintroduction != ITechnology.DATE_NONE);
+                  && (equipmentReintroduction != previousReintroduction)
+                  && (equipmentReintroduction != ITechnology.DATE_NONE);
 
             ReportRow row = new ReportRow(component.componentName(),
                   1,
@@ -267,11 +272,11 @@ public final class CompositeTechLevelReport {
                   formatDate(component.reintroductionDate()),
                   formatLevel(component.staticTechLevel()),
                   formatLevel(component.variableTechLevel()),
-                  formatDate(unitPrototype),
-                  formatDate(unitProduction),
-                  formatDate(unitCommon),
-                  formatDate(unitExtinction),
-                  formatDate(unitReintroduction),
+                  formatDate(equipmentPrototype),
+                  formatDate(equipmentProduction),
+                  formatDate(equipmentCommon),
+                  formatDate(equipmentExtinction),
+                  formatDate(equipmentReintroduction),
                   movesPrototype,
                   movesProduction,
                   movesCommon,
@@ -289,16 +294,16 @@ public final class CompositeTechLevelReport {
                 rows.set(existingRowIndex, rows.get(existingRowIndex).withOneMore());
             }
 
-            previousPrototype = unitPrototype;
-            previousProduction = unitProduction;
-            previousCommon = unitCommon;
-            previousExtinction = unitExtinction;
-            previousReintroduction = unitReintroduction;
+            previousPrototype = equipmentPrototype;
+            previousProduction = equipmentProduction;
+            previousCommon = equipmentCommon;
+            previousExtinction = equipmentExtinction;
+            previousReintroduction = equipmentReintroduction;
             isFirstComponent = false;
         }
 
         SimpleTechLevel staticTechLevel = entity.getStaticTechLevel();
-        SimpleTechLevel variableTechLevel = entity.getSimpleLevel(evaluationYear);
+        String variableTechLevelText = variableTechLevelText(entity, techLevel, evaluationYear);
 
         return new ReportData(entity.getShortName(),
               techBaseName(entity),
@@ -308,12 +313,37 @@ public final class CompositeTechLevelReport {
               (techFaction == Faction.NONE) ? null : techFaction.getCodeMM(),
               rows,
               formatLevel(staticTechLevel),
-              formatLevel(variableTechLevel),
+              variableTechLevelText,
               normalizeRange(techLevel.getPrototypeDateRange()),
               normalizeRange(techLevel.getProductionDateRange()),
               normalizeRange(techLevel.getCommonDateRange()),
               normalizeRange(techLevel.getExtinctionRange()),
-              formatLevel(useVariableTechLevel ? variableTechLevel : staticTechLevel));
+              useVariableTechLevel ? variableTechLevelText : formatLevel(staticTechLevel));
+    }
+
+    /**
+     * Returns the unit's variable tech level in the evaluated year, as the report presents it. A unit that cannot be
+     * built in that year -- because it is not yet available, or because a component has gone extinct -- does not get a
+     * bare level, which would read as "you can build this": it gets the level it will hold when it first becomes
+     * available, and the year that happens, such as {@code "Becomes Experimental (3058)"}.
+     *
+     * @param entity         The unit being reported on
+     * @param techLevel      The unit's composite tech level
+     * @param evaluationYear The year the variable tech level is evaluated in
+     *
+     * @return The variable tech level line for the report
+     */
+    private static String variableTechLevelText(Entity entity, RecordingCompositeTechLevel techLevel,
+          int evaluationYear) {
+        int firstAvailableYear = techLevel.firstAvailableYearFrom(evaluationYear);
+        if (firstAvailableYear == evaluationYear) {
+            return formatLevel(entity.getSimpleLevel(evaluationYear));
+        }
+        if (firstAvailableYear == ITechnology.DATE_NONE) {
+            return message("resultExtinctNoReturn");
+        }
+        SimpleTechLevel levelWhenAvailable = entity.getSimpleLevel(firstAvailableYear);
+        return message("resultBecomesAvailable", formatLevel(levelWhenAvailable), String.valueOf(firstAvailableYear));
     }
 
     private static String renderHtml(ReportData data) {
@@ -371,21 +401,21 @@ public final class CompositeTechLevelReport {
         html.append(TABLE_START);
         html.append("<tr>");
         appendHtmlHeaderCell(html, message("columnComponent"));
-        appendHtmlHeaderCell(html, message("columnUnitPrototype"));
-        appendHtmlHeaderCell(html, message("columnUnitProduction"));
-        appendHtmlHeaderCell(html, message("columnUnitCommon"));
-        appendHtmlHeaderCell(html, message("columnUnitExtinct"));
-        appendHtmlHeaderCell(html, message("columnUnitReturns"));
+        appendHtmlHeaderCell(html, message("columnEquipmentPrototype"));
+        appendHtmlHeaderCell(html, message("columnEquipmentProduction"));
+        appendHtmlHeaderCell(html, message("columnEquipmentCommon"));
+        appendHtmlHeaderCell(html, message("columnEquipmentExtinct"));
+        appendHtmlHeaderCell(html, message("columnEquipmentReturns"));
         appendHtmlHeaderCell(html, "");
         html.append("</tr>");
         for (ReportRow row : data.rows()) {
             html.append("<tr>");
             appendHtmlCell(html, row.displayName());
-            appendHtmlDateCell(html, row.unitPrototypeDate(), row.movesUnitPrototypeDate());
-            appendHtmlDateCell(html, row.unitProductionDate(), row.movesUnitProductionDate());
-            appendHtmlDateCell(html, row.unitCommonDate(), row.movesUnitCommonDate());
-            appendHtmlDateCell(html, row.unitExtinctionDate(), row.movesUnitExtinctionDate());
-            appendHtmlDateCell(html, row.unitReintroductionDate(), row.movesUnitReintroductionDate());
+            appendHtmlDateCell(html, row.equipmentPrototypeDate(), row.movesEquipmentPrototypeDate());
+            appendHtmlDateCell(html, row.equipmentProductionDate(), row.movesEquipmentProductionDate());
+            appendHtmlDateCell(html, row.equipmentCommonDate(), row.movesEquipmentCommonDate());
+            appendHtmlDateCell(html, row.equipmentExtinctionDate(), row.movesEquipmentExtinctionDate());
+            appendHtmlDateCell(html, row.equipmentReintroductionDate(), row.movesEquipmentReintroductionDate());
             String progressionNote = row.progressionNote();
             if (progressionNote.isEmpty()) {
                 html.append("<td></td>");
@@ -496,13 +526,13 @@ public final class CompositeTechLevelReport {
               .append(formatTextTable(componentTable, new ColumnGroup(message("groupVariable"), 1, 6)));
 
         List<String[]> buildUpTable = new ArrayList<>();
-        buildUpTable.add(new String[] { message("columnComponent"), message("columnUnitPrototype"),
-                                        message("columnUnitProduction"), message("columnUnitCommon"),
-                                        message("columnUnitExtinct"), message("columnUnitReturns"), "" });
+        buildUpTable.add(new String[] { message("columnComponent"), message("columnEquipmentPrototype"),
+                                        message("columnEquipmentProduction"), message("columnEquipmentCommon"),
+                                        message("columnEquipmentExtinct"), message("columnEquipmentReturns"), "" });
         for (ReportRow row : data.rows()) {
-            buildUpTable.add(new String[] { row.displayName(), row.unitPrototypeDate(), row.unitProductionDate(),
-                                            row.unitCommonDate(), row.unitExtinctionDate(),
-                                            row.unitReintroductionDate(), row.progressionNote() });
+            buildUpTable.add(new String[] { row.displayName(), row.equipmentPrototypeDate(), row.equipmentProductionDate(),
+                                            row.equipmentCommonDate(), row.equipmentExtinctionDate(),
+                                            row.equipmentReintroductionDate(), row.progressionNote() });
         }
         text.append('\n').append(message("sectionUnitProgression")).append('\n')
               .append(formatTextTable(buildUpTable, null));

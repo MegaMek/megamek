@@ -460,6 +460,44 @@ public class CompositeTechLevel implements ITechnology, Serializable {
         extinct = merged;
     }
 
+    /**
+     * Returns the first year at or after the given year in which the unit is actually available: no earlier than its
+     * first advancement phase, and not inside an extinction period. When the given year falls inside an extinction
+     * period, this is the year the unit returns.
+     *
+     * @param year The year to check from
+     *
+     * @return The first year at or after {@code year} in which the unit is available, or {@link #DATE_NONE} when the
+     *       unit has gone extinct by then and is never reintroduced
+     */
+    public int firstAvailableYearFrom(int year) {
+        Integer firstPhase = experimental;
+        if (firstPhase == null) {
+            firstPhase = advanced;
+        }
+        if (firstPhase == null) {
+            firstPhase = standard;
+        }
+        if (firstPhase == null) {
+            return DATE_NONE;
+        }
+
+        int candidate = Math.max(year, firstPhase);
+        // The ranges are sorted and merged, so a single pass suffices: each bump moves the candidate past the
+        // current range, and only later ranges can still contain it.
+        for (DateRange extinctionRange : extinct) {
+            boolean startsBeforeCandidate = extinctionRange.start <= candidate;
+            boolean endsAfterCandidate = (extinctionRange.end == null) || (candidate <= extinctionRange.end);
+            if (startsBeforeCandidate && endsAfterCandidate) {
+                if (extinctionRange.end == null) {
+                    return DATE_NONE;
+                }
+                candidate = extinctionRange.end + 1;
+            }
+        }
+        return candidate;
+    }
+
     public static class DateRange implements Serializable, Comparable<DateRange> {
         @Serial
         private static final long serialVersionUID = 3144194494591950878L;

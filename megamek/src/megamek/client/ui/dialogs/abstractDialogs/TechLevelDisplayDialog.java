@@ -64,6 +64,12 @@ import megamek.common.units.Entity;
  */
 public class TechLevelDisplayDialog extends AbstractDialog {
 
+    /**
+     * The smallest height the dialog will size itself to. Guards against a zero or near-zero screen height (as can be
+     * reported during display changes) collapsing the dialog into a zero-height window.
+     */
+    private static final int MINIMUM_DIALOG_HEIGHT = 200;
+
     private final Entity entity;
     private final Faction techFaction;
     private final int evaluationYear;
@@ -168,7 +174,8 @@ public class TechLevelDisplayDialog extends AbstractDialog {
     private void updateDialogSize() {
         pack();
         Dimension screenSize = UIUtil.getScaledScreenSize(this);
-        setSize(new Dimension(getSize().width, Math.min(getHeight(), (int) (screenSize.getHeight() * 0.8))));
+        int maximumHeight = Math.max(MINIMUM_DIALOG_HEIGHT, (int) (screenSize.getHeight() * 0.8));
+        setSize(new Dimension(getSize().width, Math.min(getHeight(), maximumHeight)));
     }
 
     private void copyToClipboard(String reportString) {

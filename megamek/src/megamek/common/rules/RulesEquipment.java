@@ -34,6 +34,8 @@ package megamek.common.rules;
  */
 
 import megamek.common.board.Coords;
+import megamek.common.equipment.MiscType;
+import megamek.common.units.Entity;
 
 import java.util.ArrayList;
 
@@ -61,4 +63,13 @@ public abstract class RulesEquipment {
 
     // What hexes are affected by ECM
     public abstract ArrayList<Coords> getECMCoordsAffected(final Coords a, final Coords b);
+
+    // What are the ECM ranges other than angel
+    public abstract int getECMRanges(MiscType type);
+
+    // What are the Sensor ranges for probes
+    public abstract int getSensorRanges(int type);
+
+    // Is the probe impacted by ECM?
+    public abstract boolean isBAPActive(boolean checkECM, MiscType type, Entity entity, Coords position);
 }

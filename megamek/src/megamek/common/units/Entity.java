@@ -6384,17 +6384,9 @@ public abstract class Entity extends TurnOrdered
         }
         for (MiscMounted m : getMisc()) {
             if (m.getType().hasFlag(MiscType.F_BAP)) {
-
                 if (!m.isInoperable()) {
-                    // Beagle Isn't affected by normal ECM
-                    if (m.getType().getName().equals("Beagle Active Probe")) {
-                        return (game == null) ||
-                              !checkECM ||
-                              !ComputeECM.isAffectedByAngelECM(this, getPosition(), getPosition());
-                    }
-                    return !checkECM ||
-                          (game == null) ||
-                          !ComputeECM.isAffectedByECM(this, getPosition(), getPosition());
+                    return (game == null) || Game.rulesManager.getRulesEquipment().isBAPActive(checkECM, m.getType(),
+                          this, getPosition());
                 }
             }
         }

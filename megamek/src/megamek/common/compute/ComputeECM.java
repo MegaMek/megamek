@@ -621,14 +621,7 @@ public class ComputeECM {
                 }
                 // Anything that's not Angel ECM
             } else if (m.getType().hasFlag(MiscType.F_ECM) && m.curMode().equals("ECM")) {
-                int range = 6;
-                if (m.getType().hasFlag(MiscType.F_SINGLE_HEX_ECM)) {
-                    range = 0;
-                } else if (m.getType().hasFlag(MiscType.F_EW_EQUIPMENT) ||
-                      m.getType().hasFlag(MiscType.F_NOVA) ||
-                      m.getType().hasFlag(MiscType.F_WATCHDOG)) {
-                    range = 3;
-                }
+                int range = Game.rulesManager.getRulesEquipment().getECMRanges(m.getType());
                 newInfo = new ECMInfo(range, 1, entity);
                 newInfo.setECMNova(m.getType().hasFlag(MiscType.F_NOVA));
             }
@@ -710,14 +703,8 @@ public class ComputeECM {
                 }
                 // Anything that's not Angel ECM
             } else if (m.getType().hasFlag(MiscType.F_ECM) && m.curMode().equals("ECCM")) {
-                int range = 6;
-                if (m.getType().hasFlag(MiscType.F_SINGLE_HEX_ECM)) {
-                    range = 0;
-                } else if (m.getType().hasFlag(MiscType.F_EW_EQUIPMENT) ||
-                      m.getType().hasFlag(MiscType.F_NOVA) ||
-                      m.getType().hasFlag(MiscType.F_WATCHDOG)) {
-                    range = 3;
-                }
+                int range = Game.rulesManager.getRulesEquipment().getECMRanges(m.getType());
+                
                 newInfo = new ECMInfo(range, 0, entity);
                 newInfo.setECCMStrength(1);
             }

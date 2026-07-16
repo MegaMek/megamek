@@ -34,8 +34,12 @@ package megamek.common.rules.totalwarfare;
  */
 
 import megamek.common.board.Coords;
+import megamek.common.compute.ComputeECM;
+import megamek.common.equipment.MiscType;
+import megamek.common.equipment.Sensor;
 import megamek.common.rolls.TargetRoll;
 import megamek.common.rules.core.CoreRulesEquipment;
+import megamek.common.units.Entity;
 import megamek.common.units.Mek;
 
 import java.util.ArrayList;
@@ -102,5 +106,58 @@ public class TWRulesEquipment extends CoreRulesEquipment {
     // ECM affects things where LoS goes through the bubble
     public ArrayList<Coords> getECMCoordsAffected(Coords a, Coords b) {
         return Coords.intervening(a, b);
+    }
+    
+    // ECM ranges 
+    @Override
+    public int getECMRanges(MiscType type) {
+        if (type.hasFlag(MiscType.F_SINGLE_HEX_ECM)) {
+            return 0;
+        } else if (type.hasFlag(MiscType.F_EW_EQUIPMENT) ||
+              type.hasFlag(MiscType.F_NOVA) ||
+              type.hasFlag(MiscType.F_WATCHDOG)) {
+            return 3;
+        }
+        return 6;
+    }
+
+    // Sensor ranges for probes.
+    public int getSensorRanges(int type) {
+        return switch (type) {
+            case Sensor.TYPE_BAP, Sensor.TYPE_BAPP -> 12;
+            case Sensor.TYPE_BLOODHOUND -> 16;
+            case Sensor.TYPE_CLAN_AP -> 15;
+            case Sensor.TYPE_WATCHDOG, Sensor.TYPE_NOVA, Sensor.TYPE_LIGHT_AP, Sensor.TYPE_VEE_MAG_SCAN,
+                 Sensor.TYPE_VEE_IR,
+                 Sensor.TYPE_BA_HEAT -> 9;
+            //Under the current errata (3.0,Dec 2017), the rules only give aero sensor ranges against overflown ground units
+            //No differences in range are mentioned for any sensor but active probe, so I'm assuming magscan range for standard sensors
+            case Sensor.TYPE_MEK_MAG_SCAN, Sensor.TYPE_MEK_IR, Sensor.TYPE_AERO_SENSOR -> 10;
+            case Sensor.TYPE_MEK_RADAR -> 8;
+            case Sensor.TYPE_VEE_RADAR, Sensor.TYPE_BA_IMPROVED -> 6;
+            case Sensor.TYPE_EW_EQUIPMENT -> 3;
+            case Sensor.TYPE_MEK_SEISMIC -> 2;
+            case Sensor.TYPE_VEE_SEISMIC, Sensor.TYPE_EI_PROBE -> 1;
+            //The ranges listed for the various sensors in SO are so far beyond gameplay distances that I'm condensing
+            //them into just the types that have different detection mechanics.
+            case Sensor.TYPE_SPACECRAFT_RADAR, Sensor.TYPE_SPACECRAFT_ESM -> 5555;
+            case Sensor.TYPE_SPACECRAFT_THERMAL -> 1388;
+            case Sensor.TYPE_AERO_THERMAL -> 139;
+            default -> 0;
+        };
+    }
+
+    // Active probes not affected by things other than angel
+    public boolean isBAPActive(boolean checkECM,
+          final MiscType type,
+          final Entity entity,
+          final Coords position) {
+        // Beagle Isn't affected by normal ECM
+        if (type.getName().equals("Beagle Active Probe")) {
+            return !checkECM ||
+                  !ComputeECM.isAffectedByAngelECM(entity, position, position);
+        }
+        return !checkECM ||
+              !ComputeECM.isAffectedByECM(entity, position, position);
     }
 }

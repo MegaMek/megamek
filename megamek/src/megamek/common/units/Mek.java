@@ -4040,10 +4040,10 @@ public abstract class Mek extends Entity implements Fortifiable, RubbleClearer {
         // Meks with non-fusion engines are experimental
         if (hasEngine() && !isIndustrial() && !getEngine().isFusion()) {
             techLevel.addComponent(new TechAdvancement().setStaticTechLevel(SimpleTechLevel.EXPERIMENTAL),
-                  "Non-fusion engine in a BattleMek");
+                  Messages.getString("CompositeTechLevel.component.nonFusionEngineBattleMek"));
         }
         if (isFrankenMek()) {
-            techLevel.addComponent(TA_FRANKENMEK, "FrankenMek");
+            techLevel.addComponent(TA_FRANKENMEK, Messages.getString("CompositeTechLevel.component.frankenMek"));
         }
         if (getGyroTechAdvancement() != null) {
             techLevel.addComponent(getGyroTechAdvancement(), getGyroTypeString());
@@ -4052,13 +4052,16 @@ public abstract class Mek extends Entity implements Fortifiable, RubbleClearer {
             techLevel.addComponent(getCockpitTechAdvancement(), getCockpitTypeString());
         }
         if (isIndustrial() && hasAdvancedFireControl()) {
-            techLevel.addComponent(getIndustrialAdvFireConTA(), "Advanced fire control");
+            techLevel.addComponent(getIndustrialAdvFireConTA(),
+                  Messages.getString("CompositeTechLevel.component.advancedFireControl"));
         }
         if (hasFullHeadEject()) {
-            techLevel.addComponent(getFullHeadEjectAdvancement(), "Full-head ejection system");
+            techLevel.addComponent(getFullHeadEjectAdvancement(),
+                  Messages.getString("CompositeTechLevel.component.fullHeadEjection"));
         }
         if (hasRiscHeatSinkOverrideKit()) {
-            techLevel.addComponent(getRiscHeatSinkOverrideKitAdvancement(), "RISC heat sink override kit");
+            techLevel.addComponent(getRiscHeatSinkOverrideKitAdvancement(),
+                  Messages.getString("CompositeTechLevel.component.riscHeatSinkOverrideKit"));
         }
     }
 

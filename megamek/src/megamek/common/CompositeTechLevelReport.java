@@ -133,7 +133,7 @@ public final class CompositeTechLevelReport {
 
         /** @return The component's name, with a count appended when the unit carries more than one */
         String displayName() {
-            return (count > 1) ? componentName + " x" + count : componentName;
+            return (count > 1) ? message("componentCount", componentName, String.valueOf(count)) : componentName;
         }
 
         ReportRow withOneMore() {

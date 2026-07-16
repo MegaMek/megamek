@@ -45,6 +45,7 @@ import megamek.common.CriticalSlot;
 import megamek.common.Hex;
 import megamek.common.HitData;
 import megamek.common.MPCalculationSetting;
+import megamek.common.Messages;
 import megamek.common.SimpleTechLevel;
 import megamek.common.TechAdvancement;
 import megamek.common.ToHitData;
@@ -752,7 +753,7 @@ public class VTOL extends Tank implements IBomber {
     protected void addSystemTechAdvancement(CompositeTechLevel techLevel) {
         super.addSystemTechAdvancement(techLevel);
         if (!hasNoTurret()) {
-            techLevel.addComponent(getChinTurretTA(), "Chin turret");
+            techLevel.addComponent(getChinTurretTA(), Messages.getString("CompositeTechLevel.component.chinTurret"));
         }
     }
 

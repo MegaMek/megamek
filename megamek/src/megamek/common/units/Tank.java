@@ -363,7 +363,7 @@ public class Tank extends Entity implements Fortifiable, RubbleClearer {
     protected void addSystemTechAdvancement(CompositeTechLevel techLevel) {
         super.addSystemTechAdvancement(techLevel);
         if (!hasNoDualTurret()) {
-            techLevel.addComponent(getDualTurretTA(), "Dual turret");
+            techLevel.addComponent(getDualTurretTA(), Messages.getString("CompositeTechLevel.component.dualTurret"));
         }
         if (hasSponsons) {
             EquipmentType sponsonTurret = EquipmentType.get(EquipmentTypeLookup.SPONSON_TURRET);

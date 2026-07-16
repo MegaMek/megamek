@@ -1608,7 +1608,8 @@ public abstract class Entity extends TurnOrdered
 
             techLevel.addComponent(mounted.getType());
             if (mounted.isArmored()) {
-                techLevel.addComponent(TA_ARMORED_COMPONENT, "Armored component");
+                techLevel.addComponent(TA_ARMORED_COMPONENT,
+                      Messages.getString("CompositeTechLevel.component.armoredComponent"));
             }
         }
     }
@@ -1735,28 +1736,32 @@ public abstract class Entity extends TurnOrdered
             techLevel.addComponent(getEngine());
         }
         if (isOmni()) {
-            techLevel.addComponent(TA_OMNI, "Omni configuration");
+            techLevel.addComponent(TA_OMNI, Messages.getString("CompositeTechLevel.component.omniConfiguration"));
         }
         if (hasPatchworkArmor()) {
-            techLevel.addComponent(TA_PATCHWORK_ARMOR, "Patchwork armor");
+            techLevel.addComponent(TA_PATCHWORK_ARMOR,
+                  Messages.getString("CompositeTechLevel.component.patchworkArmor"));
             for (int loc = 0; loc < locations(); loc++) {
                 ArmorType locationArmor = ArmorType.forEntity(this, loc);
                 techLevel.addComponent(locationArmor.getTechAdvancement(),
-                      "Armor (" + getLocationAbbr(loc) + "): " + locationArmor.getName());
+                      Messages.getString("CompositeTechLevel.component.armorInLocation",
+                            getLocationAbbr(loc), locationArmor.getName()));
             }
         } else {
             ArmorType armor = ArmorType.forEntity(this);
-            techLevel.addComponent(armor.getTechAdvancement(), "Armor: " + armor.getName());
+            techLevel.addComponent(armor.getTechAdvancement(),
+                  Messages.getString("CompositeTechLevel.component.armorNamed", armor.getName()));
         }
         if (isMixedTech()) {
-            techLevel.addComponent(TA_MIXED_TECH, "Mixed tech");
+            techLevel.addComponent(TA_MIXED_TECH, Messages.getString("CompositeTechLevel.component.mixedTech"));
         }
         boolean isClanStructure = TechConstants.isClan(structureTechLevel);
         // Unit types that have no internal structure type (battle armor, infantry) still contribute a blank
         // advancement here, so name it generically rather than let the lookup report "UNKNOWN".
         String structureName = (structureType == EquipmentType.T_STRUCTURE_UNKNOWN)
-              ? "Internal structure"
-              : "Internal structure: " + EquipmentType.getStructureTypeName(structureType, isClanStructure);
+              ? Messages.getString("CompositeTechLevel.component.internalStructure")
+              : Messages.getString("CompositeTechLevel.component.internalStructureNamed",
+                    EquipmentType.getStructureTypeName(structureType, isClanStructure));
         techLevel.addComponent(EquipmentType.getStructureTechAdvancement(structureType, isClanStructure), structureName);
     }
 

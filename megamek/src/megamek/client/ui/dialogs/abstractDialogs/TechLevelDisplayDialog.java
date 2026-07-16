@@ -49,6 +49,7 @@ import javax.swing.JTextPane;
 import javax.swing.ScrollPaneConstants;
 import javax.swing.border.EmptyBorder;
 
+import megamek.client.ui.Messages;
 import megamek.client.ui.util.UIUtil;
 import megamek.common.CompositeTechLevelReport;
 import megamek.common.Report;
@@ -116,10 +117,10 @@ public class TechLevelDisplayDialog extends AbstractDialog {
 
     @Override
     protected Container createCenterPane() {
-        JButton exportText = new JButton("Copy as Text");
-        exportText.addActionListener(evt -> copyToClipboard(plainTextReport()));
-        JButton exportHTML = new JButton("Copy as HTML");
-        exportHTML.addActionListener(evt -> copyToClipboard(htmlReport()));
+        JButton exportText = new JButton(Messages.getString("TechLevelDisplayDialog.copyAsText"));
+        exportText.addActionListener(event -> copyToClipboard(plainTextReport()));
+        JButton exportHTML = new JButton(Messages.getString("TechLevelDisplayDialog.copyAsHTML"));
+        exportHTML.addActionListener(event -> copyToClipboard(htmlReport()));
 
         reportScrollPane.getVerticalScrollBar().setUnitIncrement(16);
         reportScrollPane.setBorder(new EmptyBorder(10, 0, 0, 0));
@@ -139,7 +140,7 @@ public class TechLevelDisplayDialog extends AbstractDialog {
 
     private void buildReport() {
         if (entity == null) {
-            reportScrollPane.setViewportView(new JLabel("Error: Could not access the unit!"));
+            reportScrollPane.setViewportView(new JLabel(Messages.getString("TechLevelDisplayDialog.noUnit")));
             return;
         }
 

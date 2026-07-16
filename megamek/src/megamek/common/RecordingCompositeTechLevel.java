@@ -65,7 +65,7 @@ public class RecordingCompositeTechLevel extends CompositeTechLevel {
     @Serial
     private static final long serialVersionUID = 1L;
 
-    private static final String UNNAMED_COMPONENT = "Unnamed component";
+    private static final String UNNAMED_COMPONENT = Messages.getString("CompositeTechLevel.component.unnamed");
 
     private final transient List<ComponentTechRecord> componentRecords = new ArrayList<>();
     private final int evaluationYear;
@@ -163,9 +163,10 @@ public class RecordingCompositeTechLevel extends CompositeTechLevel {
         String unitTypeName = UnitType.getTypeDisplayableName(entity.getUnitType());
         String weightClassName = entity.getWeightClassName();
         if ((weightClassName == null) || weightClassName.isBlank()) {
-            return "Chassis (" + unitTypeName + ")";
+            return Messages.getString("CompositeTechLevel.component.chassis", unitTypeName);
         }
-        return "Chassis (" + weightClassName + " " + unitTypeName + ")";
+        return Messages.getString("CompositeTechLevel.component.chassisWithWeightClass", weightClassName,
+              unitTypeName);
     }
 
     /**

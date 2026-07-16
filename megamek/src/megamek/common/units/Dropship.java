@@ -429,7 +429,7 @@ public class Dropship extends SmallCraft {
     protected void addSystemTechAdvancement(CompositeTechLevel techLevel) {
         super.addSystemTechAdvancement(techLevel);
         if (collarType != COLLAR_NO_BOOM) {
-            techLevel.addComponent(getCollarTA(), "Docking collar");
+            techLevel.addComponent(getCollarTA(), Messages.getString("CompositeTechLevel.component.dockingCollar"));
         }
     }
 

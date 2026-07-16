@@ -39,6 +39,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.TreeMap;
 
 import megamek.common.Hex;
 import megamek.common.Player;
@@ -177,7 +178,7 @@ public class MinefieldDeploymentPlanner {
 	public Map<Double, List<Coords>> getBucketedCandidateCoords(int minefieldType, Board board) {
 		Map<Coords, Double> minefieldScores = buildCoalescedMinefieldScores(minefieldType, board);
 		
-		Map<Double, List<Coords>> bucketedCoords = new HashMap<>();
+		Map<Double, List<Coords>> bucketedCoords = new TreeMap<>(Collections.reverseOrder());
 		
 		for (Coords coords : minefieldScores.keySet()) {
 			double scoreBucket = minefieldScores.get(coords);
@@ -209,6 +210,10 @@ public class MinefieldDeploymentPlanner {
 		Map<Coords, Integer> wheeledVeeScores = new HashMap<>();
 		Map<Coords, Integer> infantryScores = new HashMap<>();
 		Map<Coords, Integer> hoverVeeScores = new HashMap<>();
+		
+		if (minefieldType == Minefield.TYPE_TRIPWIRE) {
+			int alpha = 1;
+		}
 		
 		// only calculate the scores for a unit type if it's present in the opfor
 		if (mekProportion > 0) {
@@ -281,10 +286,12 @@ public class MinefieldDeploymentPlanner {
 				
 				// if we can't place the minefield, just move on
 				if (hex.containsAnyTerrainOf(DISALLOWED_TERRAIN_TYPES)) {
+					minefieldScores.put(coords, Integer.MIN_VALUE);
 					continue;
 				}
 				
 				if (!hex.canPlaceMinefield(minefieldType)) {
+					minefieldScores.put(coords, Integer.MIN_VALUE);
 					continue;
 				}
 				

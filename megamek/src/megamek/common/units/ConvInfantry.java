@@ -216,6 +216,11 @@ public class ConvInfantry extends Infantry {
     }
 
     @Override
+    public boolean isMechanized() {
+        return isMounted() ? false : super.isMechanized();
+    }
+
+    @Override
     public String[] getLocationAbbreviations() {
         return LOCATION_ABBREVIATIONS;
     }
@@ -266,7 +271,7 @@ public class ConvInfantry extends Infantry {
      * @return True when this infantry carries anti-mek gear
      */
     public boolean hasAntiMekGear() {
-        return hasWorkingMisc(EquipmentTypeLookup.ANTI_MEK_GEAR);
+        return hasWorkingMisc(MiscType.F_ANTI_MEK_GEAR);
     }
 
     @Override

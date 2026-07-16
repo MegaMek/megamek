@@ -562,4 +562,18 @@ public class MathUtility {
             return defaultValue;
         }
     }
+
+    /**
+     * Parses a string into a boolean, returning {@code false} when the input is {@code null} or empty.
+     *
+     * <p>Note: {@link Boolean#parseBoolean(String)} returns {@code true} only for (case-insensitive)
+     * {@code "true"}.</p>
+     *
+     * @param value String value to parse.
+     *
+     * @return The {@code boolean} value, or {@code false} if {@code value} is {@code null} or empty.
+     */
+    public static boolean parseBoolean(final String value) {
+        return parseBoolean(value, false);
+    }
 }

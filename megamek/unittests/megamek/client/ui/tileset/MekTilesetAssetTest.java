@@ -23,8 +23,12 @@
 package megamek.client.ui.tileset;
 
 import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
-import static org.junit.jupiter.api.Assumptions.assumeTrue;
+
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
 
 import megamek.common.battlefieldSupport.BFSAssetType;
 import megamek.common.battlefieldSupport.BattlefieldSupportAsset;
@@ -32,6 +36,7 @@ import megamek.common.equipment.EquipmentType;
 import megamek.common.units.EntityMovementMode;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.io.TempDir;
 
 /**
  * Verifies that the mek tileset resolves a sensible generic sprite for each Battlefield Support Asset type, so an
@@ -42,10 +47,23 @@ class MekTilesetAssetTest {
 
     private static MekTileset tileset;
 
+    @TempDir
+    private static Path tilesetDirectory;
+
     @BeforeAll
-    static void beforeAll() {
+    static void beforeAll() throws IOException {
         EquipmentType.initializeTypes();
-        tileset = MMStaticDirectoryManager.getMekTileset();
+        Files.writeString(tilesetDirectory.resolve("mekset.txt"), """
+              exact "default_tracked" "tracked.png"
+              exact "default_wheeled" "wheeled.png"
+              exact "default_hover" "hover.png"
+              exact "default_vtol" "vtol.png"
+              exact "default_infantry" "infantry.png"
+              exact "default_ba" "ba.png"
+              exact "default_gun_emplacement" "emplacement.png"
+              """);
+        tileset = new MekTileset(tilesetDirectory.toFile());
+        tileset.loadFromFile("mekset.txt");
     }
 
     private static BattlefieldSupportAsset asset(BFSAssetType type, EntityMovementMode mode) {
@@ -56,7 +74,6 @@ class MekTilesetAssetTest {
     }
 
     private String genericImageFor(BFSAssetType type, EntityMovementMode mode) {
-        assumeTrue(tileset != null, "Mek tileset could not be loaded");
         MekTileset.MekEntry entry = tileset.genericFor(asset(type, mode), -1);
         assertNotNull(entry);
         return entry.getImageFile().toLowerCase();
@@ -95,5 +112,12 @@ class MekTilesetAssetTest {
     @Test
     void emplacementResolvesToGunEmplacementSprite() {
         assertTrue(genericImageFor(BFSAssetType.EMPLACEMENT, EntityMovementMode.NONE).contains("emplacement"));
+    }
+
+    @Test
+    void missingTilesetDefaultsReturnNoImage() {
+        MekTileset emptyTileset = new MekTileset(tilesetDirectory.toFile());
+
+        assertNull(emptyTileset.imageFor(asset(BFSAssetType.VEHICLE, EntityMovementMode.TRACKED)));
     }
 }

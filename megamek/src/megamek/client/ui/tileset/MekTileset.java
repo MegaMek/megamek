@@ -212,6 +212,10 @@ public class MekTileset {
             entry = default_light;
         }
 
+        if (entry == null) {
+            return null;
+        }
+
         if (entry.getImage() == null) {
             entry.loadImage();
         }

@@ -32,9 +32,14 @@ package megamek.common.rules;
  * affiliated with Microsoft.
  */
 
+import megamek.common.CriticalSlot;
 import megamek.common.Report;
+import megamek.common.compute.Compute;
 import megamek.common.game.Game;
+import megamek.common.rolls.Roll;
+import megamek.common.rolls.TargetRoll;
 import megamek.common.units.Entity;
+import megamek.common.units.Mek;
 
 import java.util.Vector;
 
@@ -57,4 +62,38 @@ public abstract class RulesPilot {
 
     // What is the seatbelt check on shutdown
     public abstract int getSeatbeltShutdown(int piloting);
+
+    /**
+     * Returns the result of a sensor roll, and adds to a report
+     * @param entity The entity rolling
+     * @param modifier any external modifiers
+     * @return the margin of success or failure. negative is a failure, 0 or higher is a success.
+     */
+    public int rollSensorCheck(Entity entity, int modifier, Vector<Report> vDesc) {
+        int targetNumber = entity.getCrew().getPiloting();
+        int sensorHits = 0;
+        Roll diceRoll = Compute.rollD6(2);
+        int rollValue = diceRoll.getIntValue();
+        String rollCalc = String.valueOf(rollValue);
+        if (entity instanceof Mek) {
+            sensorHits = entity.getBadCriticalSlots(CriticalSlot.TYPE_SYSTEM, Mek.SYSTEM_SENSORS, Mek.LOC_HEAD);
+            sensorHits += entity.getBadCriticalSlots(CriticalSlot.TYPE_SYSTEM,Mek.SYSTEM_SENSORS, Mek.LOC_CENTER_TORSO);
+        }
+        if (sensorHits > 1) {
+            return TargetRoll.IMPOSSIBLE;
+        } else if (sensorHits == 1) {
+            targetNumber += 2;
+        }
+        targetNumber += modifier;
+
+        Report r = new Report(2366);
+        r.subject = entity.getId();
+        r.addDesc(entity);
+        r.add(targetNumber);
+        r.add(rollValue);
+        vDesc.addElement(r);
+        
+        // Return the MoS/Failure
+        return targetNumber - rollValue;
+    }
 }

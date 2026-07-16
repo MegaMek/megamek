@@ -87,7 +87,7 @@ public class CoreRulesTarget extends RulesTarget {
         return 0;
     }
     
-    // BAP reduces smoke within its range. It is blocked by ECM (Handled prior to this call) Core p.197
+    // BAP reduces smoke within its range. It is blocked by ECM (Handled prior to this call) Core p.197, 124
     public int getBAPSmokeReduction(LosEffects los) {
         return los.getBAPReduceSmoke();
     }

@@ -39,6 +39,7 @@ import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.text.ParseException;
 import java.util.HashMap;
+import java.util.List;
 import javax.xml.parsers.DocumentBuilder;
 
 import megamek.utilities.xml.MMXMLUtility;
@@ -136,5 +137,27 @@ class FactionRecordTest {
         // Assert SL/IS ASF value
         pct = fr.findPctTech(FactionRecord.TechCategory.IS_ADVANCED_AERO, 3151, 0);
         assertEquals(20, pct);
+    }
+
+    @Test
+    void lineageCodesWithoutAliasesReturnsOnlyKey() {
+        FactionRecord factionRecord = new FactionRecord("CGS");
+        assertEquals(List.of("CGS"), factionRecord.getLineageCodesForYear(3100));
+    }
+
+    @Test
+    void lineageCodesPreferEraActiveAliasFirst() {
+        FactionRecord factionRecord = new FactionRecord("CGS");
+        factionRecord.addAlias(3080, "CEI");
+        factionRecord.addAlias(3141, "SE");
+
+        // Before the first alias year, the faction's own key is era-active.
+        assertEquals(List.of("CGS", "CEI", "SE"), factionRecord.getLineageCodesForYear(3050));
+        // In the Escorpion Imperio era, CEI is preferred, then the key, then the remaining alias.
+        assertEquals(List.of("CEI", "CGS", "SE"), factionRecord.getLineageCodesForYear(3100));
+        // Exactly on a boundary year, the alias that begins that year is era-active.
+        assertEquals(List.of("CEI", "CGS", "SE"), factionRecord.getLineageCodesForYear(3080));
+        // In the Scorpion Empire era, SE is preferred.
+        assertEquals(List.of("SE", "CGS", "CEI"), factionRecord.getLineageCodesForYear(3200));
     }
 }

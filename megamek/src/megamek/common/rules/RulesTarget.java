@@ -32,7 +32,11 @@ package megamek.common.rules;
  * affiliated with Microsoft.
  */
 
+import megamek.common.board.Coords;
 import megamek.common.units.Entity;
+import megamek.common.units.Targetable;
+
+import java.util.ArrayList;
 
 public abstract class RulesTarget {
     // Check if the target is large and if there is a modifier
@@ -51,4 +55,18 @@ public abstract class RulesTarget {
 
     // What is the arm actuator hit mod for shooting
     public abstract int getArmActuatorHitMod(Entity attacker, int location);
+
+    // Do we reduce smoke?
+    public abstract int getBAPSmokeReduction(Entity attacker, Targetable target, int totalSmoke);
+
+    // Get the coordinates on a path between attacker and target, to a specific distance
+    public ArrayList<Coords> coordsOnPath(Coords attackerPos, Coords targetPos, int distance) {
+        ArrayList<Coords> hexesOnPath = new ArrayList<>();
+        for (Coords position : Coords.intervening(attackerPos, targetPos)) {
+            if (attackerPos.distance(position) == distance) {
+                hexesOnPath.add(position);
+            }
+        }
+        return hexesOnPath;
+    }
 }

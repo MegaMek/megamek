@@ -33,38 +33,47 @@ package megamek.common.rules.core;
  */
 
 import megamek.common.CriticalSlot;
+import megamek.common.LosEffects;
+import megamek.common.TargetRollModifier;
+import megamek.common.ToHitData;
+import megamek.common.board.Coords;
 import megamek.common.compute.Compute;
 import megamek.common.rules.RulesTarget;
 import megamek.common.units.Entity;
 import megamek.common.units.EntityWeightClass;
 import megamek.common.units.Mek;
+import megamek.common.units.Targetable;
+
+import java.util.ArrayList;
+import java.util.List;
 
 public class CoreRulesTarget extends RulesTarget {
     /**
-     * Large targets get a -1 modifier to hit them. Superheavy meks are large targets
-     * Core rules page 64, 240
+     * Large targets get a -1 modifier to hit them. Superheavy meks are large targets Core rules page 64, 240
      */
     public int largeTargetModifier(int weightclass, boolean markedLarge) {
-        if (weightclass == EntityWeightClass.WEIGHT_SUPER_HEAVY || weightclass == EntityWeightClass.WEIGHT_LARGE_SUPPORT || markedLarge) {
+        if (weightclass == EntityWeightClass.WEIGHT_SUPER_HEAVY
+              || weightclass == EntityWeightClass.WEIGHT_LARGE_SUPPORT
+              || markedLarge) {
             return -1;
         }
         return 0;
     }
 
     // Aimed shots hit on d6 4+. Core p.70
-    public boolean checkAimedLocation(){
+    public boolean checkAimedLocation() {
         int roll = Compute.d6(1);
-        if (roll >=4) {
+        if (roll >= 4) {
             return true;
         }
         return false;
     }
-    
+
     // Secondary arcs are +1. Core p.64
-    public int getSecondaryArcModifier(){
+    public int getSecondaryArcModifier() {
         return 1;
     }
-    
+
     // Can shoot with one arm while prone. Core p.67
     public boolean proneFireWithOneArm(final boolean toProneFire) {
         return true;
@@ -76,5 +85,34 @@ public class CoreRulesTarget extends RulesTarget {
             return 1;
         }
         return 0;
+    }
+    
+    // BAP reduces smoke within its range. It is blocked by ECM (Handled prior to this call) Core p.197
+    public int getBAPSmokeReduction(Entity attacker, Targetable target, int totalSmoke) {
+        LosEffects los;
+        int smokeEffect = 0;
+        int lowestModifier = 0;
+        boolean setLowest = false;
+        ArrayList<Coords> probeCoords = coordsOnPath(attacker.getPosition(), target.getPosition(),
+              attacker.getBAPRange());
+        if (probeCoords.size() > 0) {
+            for (Coords position : probeCoords) {
+                int totalModifier = 0;
+                los = LosEffects.calculateLOS(attacker.getGame(), attacker, target, attacker.getPosition(), position,
+                      false);
+                ToHitData getTotalModifiers = los.losModifiers(attacker.getGame());
+                int tempSmokeEffect = (los.getHeavySmoke()*2) + los.getLightSmoke();
+                List<TargetRollModifier> targetModifiers = getTotalModifiers.getModifiers();
+                for (TargetRollModifier modifier : targetModifiers) {
+                    totalModifier += modifier.value();
+                }
+                if (totalModifier < lowestModifier || !setLowest) {
+                    lowestModifier = totalModifier;
+                    smokeEffect = tempSmokeEffect;
+                    setLowest = true;
+                }
+            }
+        }
+        return smokeEffect;
     }
 }

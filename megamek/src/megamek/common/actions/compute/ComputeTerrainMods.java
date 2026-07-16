@@ -305,7 +305,7 @@ public class ComputeTerrainMods {
                 }
             }
         }
-
+        
         // Special Equipment
 
         // BAP Targeting rule enabled - TO:AR 6th p.97
@@ -332,8 +332,15 @@ public class ComputeTerrainMods {
                 }
             }
         }
-
-        // To-hit table changes with no to-hit modifiers
+        if (attacker.hasBAP(true) && (los.getLightSmoke() + los.getHeavySmoke() > 0)) {
+            int smokeReduction = Game.rulesManager.getRulesTarget().getBAPSmokeReduction(attacker, target,
+                  los.getLightSmoke() + los.getHeavySmoke());
+            if (smokeReduction > 0) {
+                toHit.addModifier(-smokeReduction, Messages.getString("WeaponAttackAction.BAPSmokeReduction"));
+            }
+        }
+        
+                // To-hit table changes with no to-hit modifiers
 
         // Aero's in air-to-air combat can hit above and below
         if (Compute.isAirToAir(game, attacker, target)) {

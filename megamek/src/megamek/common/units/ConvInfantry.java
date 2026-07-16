@@ -216,6 +216,11 @@ public class ConvInfantry extends Infantry {
     }
 
     @Override
+    public boolean isMechanized() {
+        return isMounted() ? false : super.isMechanized();
+    }
+
+    @Override
     public String[] getLocationAbbreviations() {
         return LOCATION_ABBREVIATIONS;
     }

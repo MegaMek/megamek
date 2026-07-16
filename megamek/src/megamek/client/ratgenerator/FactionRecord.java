@@ -1,6 +1,6 @@
 /*
  * Copyright (C) 2005 Ben Mazur (bmazur@sev.org)
- * Copyright (C) 2016-2025 The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2016-2026 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -78,6 +78,7 @@ public class FactionRecord {
     private boolean periphery;
     private String name;
     private final TreeMap<Integer, String> altNames;
+    private final TreeMap<Integer, String> aliases;
     private final ArrayList<DateRange> yearsActive;
     private final ArrayList<String> ratingLevels;
     private final HashMap<Integer, Integer> pctSalvage;
@@ -126,6 +127,7 @@ public class FactionRecord {
         minor = clan = periphery = false;
         ratingLevels = new ArrayList<>();
         altNames = new TreeMap<>();
+        aliases = new TreeMap<>();
         yearsActive = new ArrayList<>();
         pctSalvage = new HashMap<>();
         pctTech = new HashMap<>();
@@ -159,6 +161,7 @@ public class FactionRecord {
                 setName(entry.getKey(), entry.getValue());
             }
         }
+        faction2.getAliases().forEach(this::addAlias);
     }
 
     @Override
@@ -202,6 +205,53 @@ public class FactionRecord {
 
     public TreeMap<Integer, String> getAltNames() {
         return altNames;
+    }
+
+    public TreeMap<Integer, String> getAliases() {
+        return new TreeMap<>(aliases);
+    }
+
+    /**
+     * Adds a historical faction-code alias effective from the given year. See {@link #getAliases()}.
+     *
+     * @param year      the year the alias code became active
+     * @param aliasCode the retired faction code that resolves to this faction
+     */
+    public void addAlias(int year, String aliasCode) {
+        aliases.put(year, aliasCode);
+    }
+
+    /**
+     * Returns the faction codes under which this faction's unit availability may be recorded, for the given year,
+     * ordered so the era-active code (per the {@link #getAliases() alias} date map) is tried first, then this
+     * faction's own key, then any remaining historical alias codes.
+     *
+     * <p>For a faction with no aliases this is simply a single-element list of {@link #getKey() the key}, so
+     * availability resolution is unchanged. For a consolidated rename lineage (for example Clan Goliath Scorpion,
+     * aliased to {@code CEI} from 3080 and {@code SE} from 3141) generating in 3100 this yields
+     * {@code [CEI, CGS, SE]} - so the era-appropriate {@code CEI} availability is preferred while units still listed
+     * only under the legacy {@code CGS} code remain reachable.</p>
+     *
+     * @param year the game year the availability is being resolved for
+     *
+     * @return the ordered, de-duplicated lineage codes to try. Never {@code null} or empty.
+     */
+    public List<String> getLineageCodesForYear(int year) {
+        if (aliases.isEmpty()) {
+            return List.of(key);
+        }
+        List<String> lineageCodes = new ArrayList<>();
+        Map.Entry<Integer, String> activeAlias = aliases.floorEntry(year);
+        lineageCodes.add((activeAlias != null) ? activeAlias.getValue() : key);
+        if (!lineageCodes.contains(key)) {
+            lineageCodes.add(key);
+        }
+        for (String aliasCode : aliases.values()) {
+            if (!lineageCodes.contains(aliasCode)) {
+                lineageCodes.add(aliasCode);
+            }
+        }
+        return lineageCodes;
     }
 
     /**

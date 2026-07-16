@@ -7089,13 +7089,14 @@ public class TWGameManager extends AbstractGameManager {
                             }
                             coverDamageReports.addAll(coverDamageReport);
                         } else { // No partial cover, missile hits
+                            int missileHeat = 2;
                             if ((te.getArmor(hit) > 0) &&
                                   (te.getArmorType(hit.getLocation()) == EquipmentType.T_ARMOR_HEAT_DISSIPATING)) {
-                                heatDamage += 1;
+                                heatDamage += Game.rulesManager.getRulesArmor().reduceHeatDamageByArmor(te.getArmorType(hit.getLocation()),missileHeat);
                                 heatReduced = true;
                                 reductionCause = ArmorType.forEntity(te, hit.getLocation()).getName();
                             } else {
-                                heatDamage += 2;
+                                heatDamage += missileHeat;
                             }
                         }
                     }

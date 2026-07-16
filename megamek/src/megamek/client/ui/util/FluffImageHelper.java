@@ -140,7 +140,6 @@ public final class FluffImageHelper {
 
     private static @Nullable File findFluffFile(BTObject unit, boolean recordSheet) {
         List<File> fileCandidates = new ArrayList<>();
-        var rsFluffSuperDir = new File(Configuration.imagesDir(), "rs");
 
         List<String> nameCandidates = nameCandidates(unit);
 
@@ -151,14 +150,13 @@ public final class FluffImageHelper {
         // search a single folder. The folders are searched in order so that the most specific art wins.
         for (String fluffPath : getFluffPaths(unit)) {
             var fluffDir = new File(Configuration.fluffImagesDir(), fluffPath);
-            var rsFluffDir = new File(rsFluffSuperDir, fluffPath);
 
             // UserDir matches
             // For internal use: in [user dir]/data/images/rs/<type> images for record sheets can be placed; these
             // will be preferentially loaded when the recordSheet parameter is true (i.e. when called from RS printing)
             if (hasUserDir) {
-                var fluffUserDir = new File(userDir, fluffDir.toString());
-                var rsFluffUserDir = new File(userDir, rsFluffDir.toString());
+                var fluffUserDir = userFluffDir(userDir, false, fluffPath);
+                var rsFluffUserDir = userFluffDir(userDir, true, fluffPath);
 
                 if (recordSheet) {
                     fileCandidates.addAll(findMatchingFiles(rsFluffUserDir, nameCandidates));
@@ -185,6 +183,12 @@ public final class FluffImageHelper {
             }
         }
         return null;
+    }
+
+    static File userFluffDir(String userDir, boolean recordSheet, String fluffPath) {
+        File imageTypeDir = new File(new File(new File(userDir, "data"), "images"),
+              recordSheet ? "rs" : "fluff");
+        return new File(imageTypeDir, fluffPath);
     }
 
     private static List<File> findMatchingFiles(File directory, List<String> nameCandidates) {

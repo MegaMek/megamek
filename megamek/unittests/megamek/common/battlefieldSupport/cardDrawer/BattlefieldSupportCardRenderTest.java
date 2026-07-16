@@ -28,6 +28,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.awt.image.BufferedImage;
 import java.io.File;
+import java.nio.file.Path;
 import javax.imageio.ImageIO;
 
 import megamek.common.battlefieldSupport.BattlefieldSupportAsset;
@@ -35,13 +36,16 @@ import megamek.common.equipment.EquipmentType;
 import megamek.common.loaders.MekFileParser;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.io.TempDir;
 
 /**
- * Dev harness / smoke test for {@link BattlefieldSupportCard}. Renders every {@code .bfs} test fixture to a PNG
- * under {@code build/bfs-cards/} for visual inspection, and asserts each card renders to an image of the expected
- * size without error (including the frequent no-fluff-art case).
+ * Smoke tests for {@link BattlefieldSupportCard}. Renders every {@code .bfs} test fixture to a temporary PNG and
+ * asserts each card renders to an image of the expected size without error (including the frequent no-fluff-art case).
  */
 class BattlefieldSupportCardRenderTest {
+
+    @TempDir
+    Path temporaryDirectory;
 
     private static final String[] FIXTURES = {
           "Maxim Heavy Hover Transport.bfs",
@@ -59,8 +63,7 @@ class BattlefieldSupportCardRenderTest {
 
     @Test
     void rendersAllFixturesToPng() throws Exception {
-        File outDir = new File("build/bfs-cards");
-        assertTrue(outDir.exists() || outDir.mkdirs());
+        File outDir = temporaryDirectory.toFile();
 
         for (String fixture : FIXTURES) {
             BattlefieldSupportAsset asset = (BattlefieldSupportAsset) new MekFileParser(
@@ -80,8 +83,7 @@ class BattlefieldSupportCardRenderTest {
     @Test
     void rendersVeteranCrewCard() throws Exception {
         // Same fixture as the Regular default, but with a Veteran crew so the Veteran value is the bold one.
-        File outDir = new File("build/bfs-cards");
-        assertTrue(outDir.exists() || outDir.mkdirs());
+        File outDir = temporaryDirectory.toFile();
 
         BattlefieldSupportAsset asset = (BattlefieldSupportAsset) new MekFileParser(
               new File("testresources/data/mekfiles/Maxim Heavy Hover Transport.bfs")).getEntity();
@@ -95,8 +97,7 @@ class BattlefieldSupportCardRenderTest {
     @Test
     void rendersColorLogoCards() throws Exception {
         // Renders the logo-only and full-color modes so the colored BATTLETECH logo can be visually inspected.
-        File outDir = new File("build/bfs-cards");
-        assertTrue(outDir.exists() || outDir.mkdirs());
+        File outDir = temporaryDirectory.toFile();
 
         BattlefieldSupportAsset asset = (BattlefieldSupportAsset) new MekFileParser(
               new File("testresources/data/mekfiles/Maxim Heavy Hover Transport.bfs")).getEntity();
@@ -118,8 +119,7 @@ class BattlefieldSupportCardRenderTest {
     void rendersDamagedCards() throws Exception {
         // A damaged asset shows the struck-through original Destroy Check next to the current value; verify the card
         // renders (in black-and-white and in a color mode) and that the damaged card differs from the undamaged one.
-        File outDir = new File("build/bfs-cards");
-        assertTrue(outDir.exists() || outDir.mkdirs());
+        File outDir = temporaryDirectory.toFile();
 
         BattlefieldSupportAsset asset = (BattlefieldSupportAsset) new MekFileParser(
               new File("testresources/data/mekfiles/Maxim Heavy Hover Transport.bfs")).getEntity();

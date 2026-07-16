@@ -101,7 +101,14 @@ public record BFSSpecial(String code, @Nullable String value) implements Seriali
 
     /** @return the Special's value parsed as an integer, or empty if it is absent or non-numeric */
     public Optional<Integer> intValue() {
-        return hasNumericValue() ? Optional.of(Integer.valueOf(value)) : Optional.empty();
+        if (!hasNumericValue()) {
+            return Optional.empty();
+        }
+        try {
+            return Optional.of(Integer.valueOf(value));
+        } catch (NumberFormatException ignored) {
+            return Optional.empty();
+        }
     }
 
     /** @return the known-Special registry entry for this code, if it is recognized */

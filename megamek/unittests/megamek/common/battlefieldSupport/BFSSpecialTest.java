@@ -96,4 +96,12 @@ class BFSSpecialTest {
         assertTrue(BFSSpecial.of("XYZ").knownType().isEmpty());
         assertFalse(BFSSpecial.of("XYZ").isKnown());
     }
+
+    @Test
+    void numericValueOutsideIntegerRangeIsEmpty() {
+        BFSSpecial special = BFSSpecial.of("ECM", "999999999999999999999999");
+
+        assertTrue(special.hasNumericValue());
+        assertEquals(Optional.empty(), special.intValue());
+    }
 }

@@ -230,7 +230,7 @@ public class Camouflage extends AbstractIcon {
     }
 
     public void setOverlayStyle(OverlayStyle overlayStyle) {
-        this.overlayStyle = (overlayStyle != null) ? overlayStyle : OverlayStyle.NONE;
+        this.overlayStyle = (overlayStyle != null) ? overlayStyle : OverlayStyle.BAND;
     }
 
     /**

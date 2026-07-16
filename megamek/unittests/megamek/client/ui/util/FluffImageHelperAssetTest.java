@@ -26,6 +26,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
+import java.io.File;
 import java.util.List;
 
 import megamek.common.battlefieldSupport.BFSAssetType;
@@ -76,5 +77,15 @@ class FluffImageHelperAssetTest {
         assertEquals(List.of(FluffImageHelper.DIR_NAME_ASSET), paths);
         assertTrue(paths.contains(FluffImageHelper.DIR_NAME_ASSET));
         assertFalse(paths.contains(FluffImageHelper.DIR_NAME_VEHICLE));
+    }
+
+    @Test
+    void userFluffPathsStayUnderTheUserDirectory() {
+        File userDir = new File("user-root");
+
+        assertEquals(new File(userDir, "data/images/fluff/Asset"),
+              FluffImageHelper.userFluffDir(userDir.getPath(), false, "Asset"));
+        assertEquals(new File(userDir, "data/images/rs/Vehicle"),
+              FluffImageHelper.userFluffDir(userDir.getPath(), true, "Vehicle"));
     }
 }

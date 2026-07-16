@@ -72,6 +72,17 @@ class CamouflageTest {
         assertFalse(camouflage.hasDefaultOverlay());
     }
 
+    @Test
+    void nullOverlayStyleRestoresTheDefaultBand() {
+        Camouflage camouflage = new Camouflage();
+        camouflage.setOverlayStyle(OverlayStyle.NONE);
+
+        camouflage.setOverlayStyle(null);
+
+        assertEquals(OverlayStyle.BAND, camouflage.getOverlayStyle());
+        assertTrue(camouflage.hasDefaultOverlay());
+    }
+
     private static void setOverlayField(Camouflage camouflage, String fieldName, Object value)
           throws ReflectiveOperationException {
         Field field = Camouflage.class.getDeclaredField(fieldName);

@@ -1882,12 +1882,15 @@ public class ChatLounge extends AbstractPhaseDisplay
         if (isIgnoringEvents()) {
             return;
         }
-        // The server built (or discarded) the lobby battlefield - update an open preview to match
+        // The server built (or discarded) the lobby battlefield - update an open preview to match.
+        // This event arrives on the network thread; the preview is Swing, so hop onto the EDT.
         LOGGER.debug("[LobbyBoard] board {} received from the server ({}x{})", e.getBoardId(),
               e.getNewBoard().getWidth(), e.getNewBoard().getHeight());
-        if ((boardPreviewW != null) && boardPreviewW.isVisible()) {
-            previewGameBoard();
-        }
+        SwingUtilities.invokeLater(() -> {
+            if ((boardPreviewW != null) && boardPreviewW.isVisible()) {
+                previewGameBoard();
+            }
+        });
     }
 
     @Override

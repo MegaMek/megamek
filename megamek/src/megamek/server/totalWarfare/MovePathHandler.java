@@ -2040,8 +2040,6 @@ class MovePathHandler extends AbstractTWRuleHandler {
                         curFacing = this.entity.getFacing();
                         curPos = this.entity.getPosition();
                         mpUsed = step.getMpUsed();
-
-                        break;
                     } else if (Compute.canDetectHidden(this.entity, dist, md.isEndStep(step))) {
                         // There are a variety of other ways to detect a hidden unit.
                         // Reveal the detected unit and add the report to the movement report.

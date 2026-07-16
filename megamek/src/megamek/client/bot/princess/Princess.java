@@ -69,6 +69,7 @@ import megamek.common.board.ElevationOption;
 import megamek.common.compute.Compute;
 import megamek.common.containers.PlayerIDAndList;
 import megamek.common.enums.AimingMode;
+import megamek.common.enums.GamePhase;
 import megamek.common.enums.MoveStepType;
 import megamek.common.equipment.AmmoMounted;
 import megamek.common.equipment.AmmoType;
@@ -4646,6 +4647,50 @@ public class Princess extends BotClient {
         return artilleryCommandAndControl;
     }
 
+    /**
+     * Given an entity that just moved, decide if I should reveal any entities in response
+     */
+    @Override
+    protected void revealEntities(int movedEntityID) {
+    	// for each hidden entity I own
+    	// calculate a firing plan to the moved entity as if it wasn't hidden
+    	// if the firing plan has good odds to hit (based on aggression rating)
+    	// then send the reveal command for that entity
+    	if (getGame().getOptions().booleanOption(OptionsConstants.ADVANCED_HIDDEN_UNITS)) {
+    		Entity target = getGame().getEntity(movedEntityID);
+    		
+    		// if the target is destroyed/abandoned/"broken", we don't bother considering it
+    		if (target.isDestroyed() || target.isAbandoned() ||
+    				getHonorUtil().isEnemyBroken(movedEntityID, target.getOwnerId(), getForcedWithdrawal())) {
+    			return;
+    		}
+    		
+    		for (Entity shooter : getGame().getEntitiesVector()) {
+    			// if the shooter is hidden, owned by me, on the board and not already activating
+                if (shooter.isHidden() && shooter.getOwnerId() == getLocalPlayerNumber() && 
+                		(shooter.getPosition() != null) && 
+                		(shooter.getHiddenActivationPhase() == GamePhase.UNKNOWN)) {
+                	final Map<WeaponMounted, Double> ammoConservation = calcAmmoConservation(shooter);
+                	
+                	double maxDamage = FireControl.getMaxDamageAtRange(shooter, 
+                			target.getPosition().distance(shooter.getPosition()), false, false);
+                	
+                	if (maxDamage <= 0) {
+                		continue;
+                	}
+                	
+                	FiringPlan firingPlan = getFireControl(shooter).getBestFiringPlan(shooter, target, getGame(), ammoConservation);
+                	
+                	double percentage = firingPlan.getExpectedDamage() / maxDamage;
+                	
+                	if ((1 - percentage) > (getBehaviorSettings().getHyperAggressionValue() / 10)) {
+                		sendActivateHidden(shooter.getId(), GamePhase.FIRING);
+                	}
+                }
+    		}
+        }
+    }
+    
     /**
      * Determines whether Princess should reroll initiative using the Tactical Genius special ability.
      *

@@ -32,6 +32,7 @@ package megamek.common.rules;
  * affiliated with Microsoft.
  */
 
+import megamek.common.LosEffects;
 import megamek.common.board.Coords;
 import megamek.common.units.Entity;
 import megamek.common.units.Targetable;
@@ -57,16 +58,5 @@ public abstract class RulesTarget {
     public abstract int getArmActuatorHitMod(Entity attacker, int location);
 
     // Do we reduce smoke?
-    public abstract int getBAPSmokeReduction(Entity attacker, Targetable target, int totalSmoke);
-
-    // Get the coordinates on a path between attacker and target, to a specific distance
-    public ArrayList<Coords> coordsOnPath(Coords attackerPos, Coords targetPos, int distance) {
-        ArrayList<Coords> hexesOnPath = new ArrayList<>();
-        for (Coords position : Coords.intervening(attackerPos, targetPos)) {
-            if (attackerPos.distance(position) == distance) {
-                hexesOnPath.add(position);
-            }
-        }
-        return hexesOnPath;
-    }
+    public abstract int getBAPSmokeReduction(LosEffects los);
 }

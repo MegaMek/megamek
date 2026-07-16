@@ -332,15 +332,15 @@ public class ComputeTerrainMods {
                 }
             }
         }
-        if (attacker.hasBAP(true) && (los.getLightSmoke() + los.getHeavySmoke() > 0)) {
-            int smokeReduction = Game.rulesManager.getRulesTarget().getBAPSmokeReduction(attacker, target,
-                  los.getLightSmoke() + los.getHeavySmoke());
+        // Reduces smoke modifiers for Active Probes if the rules support it.
+        if (attacker.hasBAP(true) && (los.getLightSmoke() + los.getHeavySmoke() > 0) && los.canSee()) {
+            int smokeReduction = Game.rulesManager.getRulesTarget().getBAPSmokeReduction(los);
             if (smokeReduction > 0) {
                 toHit.addModifier(-smokeReduction, Messages.getString("WeaponAttackAction.BAPSmokeReduction"));
             }
         }
         
-                // To-hit table changes with no to-hit modifiers
+        // To-hit table changes with no to-hit modifiers
 
         // Aero's in air-to-air combat can hit above and below
         if (Compute.isAirToAir(game, attacker, target)) {

@@ -158,6 +158,7 @@ public class LosEffects {
     int heavyWoods = 0;
     int ultraWoods = 0;
     int lightSmoke = 0;
+    int bapReduceSmoke = 0;
     int heavySmoke = 0;
     int screen = 0;
     int softBuildings = 0;
@@ -251,6 +252,7 @@ public class LosEffects {
         ultraWoods += other.ultraWoods;
         lightSmoke += other.lightSmoke;
         heavySmoke += other.heavySmoke;
+        bapReduceSmoke += other.bapReduceSmoke;
         buildingLevelsOrHexes += other.buildingLevelsOrHexes;
         screen += other.screen;
         softBuildings += other.softBuildings;
@@ -297,6 +299,8 @@ public class LosEffects {
     public int getHeavySmoke() {
         return heavySmoke;
     }
+    
+    public int getBAPReduceSmoke() { return bapReduceSmoke; }
 
     public int getScreen() {
         return screen;
@@ -1593,6 +1597,8 @@ public class LosEffects {
                           ((terrainEl > ai.attackAbsHeight) && attackerAdjacent) ||
                           ((terrainEl > ai.targetAbsHeight) && targetAdjacent);
                 }
+                
+                int smokeModifier = 0;
                 if (affectsLos) {
                     // smoke and woods stack for LOS so check them both
                     switch (hex.terrainLevel(Terrains.SMOKE)) {
@@ -1602,12 +1608,18 @@ public class LosEffects {
                         case SmokeCloud.SMOKE_CHAFF_LIGHT:
                         case SmokeCloud.SMOKE_GREEN:
                             los.lightSmoke++;
+                            smokeModifier = 1;
                             logger.debug("    -> {} counted as LIGHT SMOKE (2-level check)", coords);
                             break;
                         case SmokeCloud.SMOKE_HEAVY:
                             los.heavySmoke++;
+                            smokeModifier = 2;
                             logger.debug("    -> {} counted as HEAVY SMOKE (2-level check)", coords);
                             break;
+                    }
+                    Entity attacker = game.getEntity(ai.attackerId);
+                    if (attacker.hasBAP(true) && attacker.getPosition().distance(coords) <= attacker.getBAPRange()) {
+                        los.bapReduceSmoke += smokeModifier; 
                     }
                     // Check woods/jungle
                     if ((woodsLevel == 1) || (jungleLevel == 1)) {

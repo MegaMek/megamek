@@ -33,6 +33,7 @@ package megamek.common.rules.totalwarfare;
  */
 
 import megamek.common.CriticalSlot;
+import megamek.common.LosEffects;
 import megamek.common.compute.Compute;
 import megamek.common.rules.core.CoreRulesTarget;
 import megamek.common.units.Entity;
@@ -84,5 +85,11 @@ public class TWRulesTarget extends CoreRulesTarget {
             actuatorHits++;
         }
         return actuatorHits;
+    }
+
+    // BAP does not reduce smoke
+    @Override
+    public int getBAPSmokeReduction(LosEffects los) {
+        return 0;
     }
 }

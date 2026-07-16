@@ -88,31 +88,7 @@ public class CoreRulesTarget extends RulesTarget {
     }
     
     // BAP reduces smoke within its range. It is blocked by ECM (Handled prior to this call) Core p.197
-    public int getBAPSmokeReduction(Entity attacker, Targetable target, int totalSmoke) {
-        LosEffects los;
-        int smokeEffect = 0;
-        int lowestModifier = 0;
-        boolean setLowest = false;
-        ArrayList<Coords> probeCoords = coordsOnPath(attacker.getPosition(), target.getPosition(),
-              attacker.getBAPRange());
-        if (probeCoords.size() > 0) {
-            for (Coords position : probeCoords) {
-                int totalModifier = 0;
-                los = LosEffects.calculateLOS(attacker.getGame(), attacker, target, attacker.getPosition(), position,
-                      false);
-                ToHitData getTotalModifiers = los.losModifiers(attacker.getGame());
-                int tempSmokeEffect = (los.getHeavySmoke()*2) + los.getLightSmoke();
-                List<TargetRollModifier> targetModifiers = getTotalModifiers.getModifiers();
-                for (TargetRollModifier modifier : targetModifiers) {
-                    totalModifier += modifier.value();
-                }
-                if (totalModifier < lowestModifier || !setLowest) {
-                    lowestModifier = totalModifier;
-                    smokeEffect = tempSmokeEffect;
-                    setLowest = true;
-                }
-            }
-        }
-        return smokeEffect;
+    public int getBAPSmokeReduction(LosEffects los) {
+        return los.getBAPReduceSmoke();
     }
 }

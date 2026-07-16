@@ -518,7 +518,7 @@ public class WeaponAttackAction extends AbstractAttackAction {
                 eiStatus = 1;
             }
         }
-
+        
         ToHitData losMods = los.losModifiers(game, eiStatus, attackingEntity.isUnderwater());
         ToHitData toHit = new ToHitData(0, Messages.getString("WeaponAttackAction.BaseToHit"));
 

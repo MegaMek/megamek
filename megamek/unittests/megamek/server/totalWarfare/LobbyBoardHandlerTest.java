@@ -46,6 +46,7 @@ import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.util.Arrays;
 import java.util.List;
 
 import megamek.common.Configuration;
@@ -138,6 +139,31 @@ class LobbyBoardHandlerTest {
 
         assertFalse(lobbyBoardHandler.hasBoardFromLounge());
         assertEquals(0, game.getBoard().getWidth());
+    }
+
+    @Test
+    void generationRequestIsRefusedWhileBoardSlotsAreUnset() {
+        // Map size changes fill new board slots with null until they are replaced (MapSettings.setMapSize)
+        MapSettings mapSettings = createMapSettingsFor(List.of(BOARD_NAME));
+        mapSettings.setMapSize(2, 1);
+        game.setMapSettings(mapSettings);
+
+        lobbyBoardHandler.handleGenerationRequest(0);
+
+        assertFalse(lobbyBoardHandler.hasBoardFromLounge());
+        assertEquals(0, game.getBoard().getWidth());
+    }
+
+    @Test
+    void surpriseCheckToleratesUnsetBoardSlots() {
+        MapSettings mapSettings = createMapSettingsFor(
+              Arrays.asList(null, MapSettings.BOARD_SURPRISE + BOARD_NAME));
+        game.setMapSettings(mapSettings);
+
+        // Must refuse (surprise present) without throwing on the null slot
+        lobbyBoardHandler.handleGenerationRequest(0);
+
+        assertFalse(lobbyBoardHandler.hasBoardFromLounge());
     }
 
     @Test

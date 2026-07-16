@@ -33,6 +33,8 @@
 
 package megamek.server.totalWarfare;
 
+import java.util.Objects;
+
 import megamek.common.Player;
 import megamek.common.board.Board;
 import megamek.common.board.postprocess.TWBoardTransformer;
@@ -86,6 +88,11 @@ class LobbyBoardHandler extends AbstractTWRuleHandler {
         if (!getGame().getPhase().isLounge()) {
             LOGGER.debug("[LobbyBoard] {}: generation request ignored - phase is {}, not the lounge",
                   playerName, getGame().getPhase());
+            return;
+        }
+        if (hasUnsetBoardSelection()) {
+            LOGGER.debug("[LobbyBoard] {}: generation request refused - the board selection is not complete "
+                  + "(unset board slots, usually right after a map size change)", playerName);
             return;
         }
         if (hasSurpriseBoardSelection()) {
@@ -182,6 +189,14 @@ class LobbyBoardHandler extends AbstractTWRuleHandler {
     /** @return {@code true} if any selected board is a surprise board, whose pick must stay hidden until game start */
     private boolean hasSurpriseBoardSelection() {
         return getGame().getMapSettings().getBoardsSelectedVector().stream()
-              .anyMatch(boardName -> boardName.startsWith(MapSettings.BOARD_SURPRISE));
+              .anyMatch(boardName -> (boardName != null) && boardName.startsWith(MapSettings.BOARD_SURPRISE));
+    }
+
+    /**
+     * @return {@code true} if any board slot is still unset ({@code null}): map size changes fill new slots with
+     *       {@code null} until they are replaced, and a board cannot be built from an incomplete selection
+     */
+    private boolean hasUnsetBoardSelection() {
+        return getGame().getMapSettings().getBoardsSelectedVector().stream().anyMatch(Objects::isNull);
     }
 }

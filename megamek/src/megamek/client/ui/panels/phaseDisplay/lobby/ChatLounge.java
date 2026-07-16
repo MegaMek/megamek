@@ -1410,8 +1410,9 @@ public class ChatLounge extends AbstractPhaseDisplay
      * disabled with an explanatory tooltip instead.
      */
     private void refreshGenerateBattlefieldButton() {
+        // Board slots may be null right after a map size change, before the server fills them in
         boolean hasSurpriseBoard = mapSettings.getBoardsSelectedVector().stream()
-              .anyMatch(boardName -> boardName.startsWith(MapSettings.BOARD_SURPRISE));
+              .anyMatch(boardName -> (boardName != null) && boardName.startsWith(MapSettings.BOARD_SURPRISE));
         butGenerateBattlefield.setEnabled(!hasSurpriseBoard);
         butGenerateBattlefield.setToolTipText(Messages.getString(hasSurpriseBoard
               ? "ChatLounge.GenerateBattlefieldTooltipSurprise"

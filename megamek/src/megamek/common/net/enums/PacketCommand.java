@@ -144,6 +144,13 @@ public enum PacketCommand {
 
     SENDING_MAP_DIMENSIONS,
     SENDING_MAP_SETTINGS,
+
+    /**
+     * A Client to Server packet requesting that the server build the game board from the current map settings
+     * during the lobby and broadcast it to all clients, so that everyone sees the battlefield that will actually
+     * be played before the game starts.
+     */
+    LOBBY_GENERATE_BOARD,
     END_OF_GAME,
     DEPLOY_MINEFIELDS,
 

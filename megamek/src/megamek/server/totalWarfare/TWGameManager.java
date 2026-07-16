@@ -215,6 +215,7 @@ public class TWGameManager extends AbstractGameManager {
 
     private final TWPhaseEndManager phaseEndManager = new TWPhaseEndManager(this);
     private final TWPhasePreparationManager phasePreparationManager = new TWPhasePreparationManager(this);
+    private LobbyBoardHandler lobbyBoardHandler;
     private final InfantryActionTracker infantryActionTracker = new InfantryActionTracker();
     private final BuildingCollapseHandler buildingCollapseHandler = new BuildingCollapseHandler(this);
     private final DeploymentProcessor deploymentProcessor = new DeploymentProcessor(this);
@@ -323,6 +324,18 @@ public class TWGameManager extends AbstractGameManager {
         return game;
     }
 
+    /**
+     * @return the handler for lobby-built game boards, created on first use. Lazy creation (rather than a field
+     *       initializer) keeps the handler available on mock instances of this class, whose field initializers
+     *       never run; several existing tests call the real {@link #setGame(IGame)} on such mocks.
+     */
+    private LobbyBoardHandler lobbyBoardHandler() {
+        if (lobbyBoardHandler == null) {
+            lobbyBoardHandler = new LobbyBoardHandler(this);
+        }
+        return lobbyBoardHandler;
+    }
+
     @Override
     public void setGame(IGame game) {
         if (!(game instanceof Game)) {
@@ -330,6 +343,7 @@ public class TWGameManager extends AbstractGameManager {
             return;
         }
         this.game = (Game) game;
+        lobbyBoardHandler().restoreFromGame(this.game);
 
         List<Integer> orphanEntities = new ArrayList<>();
 
@@ -701,6 +715,7 @@ public class TWGameManager extends AbstractGameManager {
             if (getGame().getPhase().isLounge()) {
                 send(connId, createMapSettingsPacket());
                 send(createMapSizesPacket());
+                lobbyBoardHandler().sendBoardToNewConnection(connId);
                 // Send Entities *after* the Lounge Phase Change
                 send(connId, packetHelper.createPhaseChangePacket());
                 if (doBlind()) {
@@ -936,13 +951,18 @@ public class TWGameManager extends AbstractGameManager {
                         }
                     }
                     break;
-                case SENDING_GAME_SETTINGS:
+                case SENDING_GAME_SETTINGS: {
+                    int previousBridgeCF = game.getOptions().getOption(OptionsConstants.BASE_BRIDGE_CF).intValue();
+                    boolean previousRandomBasements = game.getOptions()
+                          .booleanOption(OptionsConstants.BASE_RANDOM_BASEMENTS);
                     if (receiveGameOptions(packet, connId)) {
                         resetPlayersDone();
                         send(packetHelper.createGameSettingsPacket());
                         receiveGameOptionsAux(packet, connId);
+                        lobbyBoardHandler().invalidateIfBoardOptionsChanged(previousBridgeCF, previousRandomBasements);
                     }
                     break;
+                }
                 case SENDING_MAP_SETTINGS:
                     if (game.getPhase().isBefore(GamePhase.DEPLOYMENT)) {
                         MapSettings newSettings = packet.getMapSettings(0);
@@ -958,6 +978,7 @@ public class TWGameManager extends AbstractGameManager {
                         cleanupCustomDZs();
                         resetPlayersDone();
                         send(createMapSettingsPacket());
+                        lobbyBoardHandler().invalidate("map settings changed");
                     }
                     break;
                 case SENDING_MAP_DIMENSIONS:
@@ -974,6 +995,7 @@ public class TWGameManager extends AbstractGameManager {
                         }
                         resetPlayersDone();
                         send(createMapSettingsPacket());
+                        lobbyBoardHandler().invalidate("map dimensions changed");
                     }
                     break;
                 case SENDING_PLANETARY_CONDITIONS:
@@ -983,7 +1005,11 @@ public class TWGameManager extends AbstractGameManager {
                         game.setPlanetaryConditions(conditions);
                         resetPlayersDone();
                         send(packetHelper.createPlanetaryConditionsPacket());
+                        lobbyBoardHandler().invalidate("planetary conditions changed");
                     }
+                    break;
+                case LOBBY_GENERATE_BOARD:
+                    lobbyBoardHandler().handleGenerationRequest(connId);
                     break;
                 case UNLOAD_STRANDED:
                     receiveUnloadStranded(packet, connId);
@@ -2008,7 +2034,11 @@ public class TWGameManager extends AbstractGameManager {
                 calculatePlayerInitialCounts();
                 // Build teams vector
                 game.setupTeams();
-                applyBoardSettings();
+                if (lobbyBoardHandler().hasBoardFromLounge()) {
+                    LOGGER.info("[LobbyBoard] game start reuses the battlefield built in the lounge");
+                } else {
+                    applyBoardSettings();
+                }
                 game.getPlanetaryConditions().determineWind();
                 send(packetHelper.createPlanetaryConditionsPacket());
                 // transmit the board to everybody

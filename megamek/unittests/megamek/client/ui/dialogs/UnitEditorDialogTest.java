@@ -164,11 +164,11 @@ class UnitEditorDialogTest {
     }
 
     /**
-     * The crew hits control stops one short of the six hits that kill (TW p.41), so a gamemaster wounds and
-     * revives crew here but cannot kill a pilot outright; destroying a unit is what the Destroy Unit button does.
+     * The crew hits control reaches the six hits that kill (TW p.41), so a gamemaster can kill a pilot outright.
+     * A unit whose whole crew is dead is then destroyed by the server when the edit reaches it in play.
      */
     @Test
-    void crewHitsCannotReachTheHitsThatKill() {
+    void crewHitsCanReachTheHitsThatKill() {
         Entity entity = MMTestUtilities.getEntityForUnitTesting("Atlas AS7-D", false);
         assertNotNull(entity);
         new Game().addEntity(entity);
@@ -176,8 +176,11 @@ class UnitEditorDialogTest {
 
         JSpinner crewHits = findCrewHitsSpinner(dialog);
         assertNotNull(crewHits, "the dialog has no crew hits control");
-        assertEquals(Crew.DEATH - 1, ((SpinnerNumberModel) crewHits.getModel()).getMaximum(),
-              "the crew hits control can reach the hits that kill");
+        assertEquals(Crew.DEATH, ((SpinnerNumberModel) crewHits.getModel()).getMaximum(),
+              "the crew hits control cannot reach the hits that kill");
+        crewHits.setValue(Crew.DEATH);
+        clickOkay(dialog);
+        assertTrue(entity.getCrew().isDead(), "six crew hits did not kill the pilot");
         dialog.dispose();
     }
 

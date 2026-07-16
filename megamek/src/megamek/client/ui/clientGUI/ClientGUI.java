@@ -100,6 +100,7 @@ import megamek.client.ui.dialogs.ChoiceDialog;
 import megamek.client.ui.dialogs.ConfirmDialog;
 import megamek.client.ui.dialogs.InformDialog;
 import megamek.client.ui.dialogs.MMAboutDialog;
+import megamek.client.ui.dialogs.GameMasterVoteDialog;
 import megamek.client.ui.dialogs.PlayerListDialog;
 import megamek.client.ui.dialogs.RandomNameDialog;
 import megamek.client.ui.dialogs.RoundsInAirDialog;
@@ -181,6 +182,7 @@ import megamek.common.units.Targetable;
 import megamek.common.util.AddBotUtil;
 import megamek.common.util.Distractable;
 import megamek.common.util.StringUtil;
+import megamek.common.voting.Poll;
 import megamek.common.weapons.handlers.WeaponOrderHandler;
 import megamek.logging.MMLogger;
 
@@ -394,6 +396,8 @@ public class ClientGUI extends AbstractClientGUI
     private PlayerListDialog playerListDialog;
     private RoundsInAirDialog roundsInAirDialog;
     private RandomArmyDialog randomArmyDialog;
+    /** The poll a running Game Master vote is taken in; open only while a vote runs. */
+    private GameMasterVoteDialog gameMasterVoteDialog;
     /**
      * Save and Open dialogs for MegaMek Unit List (mul) files.
      */
@@ -801,6 +805,26 @@ public class ClientGUI extends AbstractClientGUI
      * X - Phase phase - MegaMek" For phases before the game starts (lobby, selection, etc.), only shows: "PlayerName -
      * MegaMek"
      */
+    /**
+     * Opens, follows and closes the Game Master vote dialog as the server shares the vote's state: the dialog opens
+     * when a vote is called, follows the ballots as they come in, and closes when the vote resolves. The outcome
+     * itself is announced in the chat.
+     */
+    private void updateGameMasterVoteDialog(Poll poll) {
+        if (poll.getStatus().isResolved()) {
+            if (gameMasterVoteDialog != null) {
+                gameMasterVoteDialog.dispose();
+                gameMasterVoteDialog = null;
+            }
+            return;
+        }
+        if (gameMasterVoteDialog == null) {
+            gameMasterVoteDialog = new GameMasterVoteDialog(frame, client);
+        }
+        gameMasterVoteDialog.update(poll);
+        gameMasterVoteDialog.setVisible(true);
+    }
+
     private void updateFrameTitle() {
         StringBuilder title = new StringBuilder(client.getName());
 
@@ -2924,6 +2948,11 @@ public class ClientGUI extends AbstractClientGUI
     }
 
     private final GameListener gameListener = new GameListenerAdapter() {
+
+        @Override
+        public void gamePollChange(GamePollEvent evt) {
+            updateGameMasterVoteDialog(evt.getPoll());
+        }
 
         @Override
         public void gameBoardChanged(GameBoardChangeEvent e) {

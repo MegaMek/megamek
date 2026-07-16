@@ -230,7 +230,13 @@ public enum PacketCommand {
      * set, the server includes enemy artillery attacks in that player's artillery packet so the Rounds in the Air view
      * can show both sides. Bots never send it, so their filtered view - and their decisions - are unchanged.
      */
-    CLIENT_ARTILLERY_REVEAL;
+    CLIENT_ARTILLERY_REVEAL,
+
+    /**
+     * A Server to Client packet carrying the running vote among the players - a gamemaster request - as a
+     * {@link megamek.common.voting.Poll}, sent whenever the vote is called, receives a ballot, or resolves.
+     */
+    GAME_MASTER_POLL;
     //endregion Enum Declarations
 
     //region Boolean Comparison Methods

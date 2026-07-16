@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2022-2025 The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2026 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -30,36 +30,17 @@
  * <https://www.xbox.com/en-US/developers/rules> and it is not endorsed by or
  * affiliated with Microsoft.
  */
+package megamek.common.voting;
 
-package megamek.server.commands;
+/** Where a {@link Poll} stands: still collecting votes, or closed one of three ways. */
+public enum PollStatus {
+    OPEN,
+    PASSED,
+    FAILED,
+    CANCELLED;
 
-import megamek.common.Player;
-import megamek.server.Server;
-import megamek.server.totalWarfare.TWGameManager;
-
-/**
- * This command votes to allow another player to assume the elevated Game Master role
- *
- * @author pakfront
- */
-public class AllowGameMasterCommand extends ServerCommand {
-
-    private final TWGameManager gameManager;
-
-    public AllowGameMasterCommand(Server server, TWGameManager gameManager) {
-        super(server, "allowGM", "Votes yes on another player's request to become Game Master. "
-              + "Usage: /allowGM");
-        this.gameManager = gameManager;
-    }
-
-    /**
-     * Run this command with the arguments supplied
-     *
-     * @see megamek.server.commands.ServerCommand#run(int, java.lang.String[])
-     */
-    @Override
-    public void run(int connId, String[] args) {
-        Player player = server.getPlayer(connId);
-        gameManager.castGameMasterVote(player, true);
+    /** @return true when the poll has closed, whichever way it went */
+    public boolean isResolved() {
+        return this != OPEN;
     }
 }

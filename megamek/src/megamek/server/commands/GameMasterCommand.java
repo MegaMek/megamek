@@ -39,19 +39,17 @@ import megamek.server.Server;
 import megamek.server.totalWarfare.TWGameManager;
 
 /**
- * This command starts a vote to allow player to assume the elevated Game Master role
+ * This command starts a vote to allow a player to assume the elevated Game Master role, or gives the role up when
+ * the player already holds it. The vote runs the same way in the lobby and in play; the game options decide whether
+ * it needs to be unanimous or a majority.
  *
  * @author arlith
  */
 public class GameMasterCommand extends ServerCommand {
 
-    public static String SERVER_VOTE_PROMPT_MSG = "All players with an assigned team "
-          + "must allow this change.  Use /allowGM "
-          + "to allow this change.";
-
     public GameMasterCommand(Server server) {
-        super(server, "gm", "Starts a vote to gives a player game master authority "
-              + "Usage: /gm ");
+        super(server, "gm", "Starts a vote to give you Game Master authority, or gives the role up "
+              + "when you hold it. Usage: /gm");
     }
 
     /**
@@ -76,7 +74,7 @@ public class GameMasterCommand extends ServerCommand {
         if (player.getGameMaster()) {
             // giving up the role is always allowed, even in a game that no longer allows the role at all
             gameManager.setGameMaster(player, false);
-        } else if (!server.getGame().getOptions().booleanOption(OptionsConstants.BASE_ALLOW_GAME_MASTER)) {
+        } else if (!server.getGame().getOptions().booleanOption(OptionsConstants.GAME_MASTER_ALLOW)) {
             // whether a game has a gamemaster is a rule of the game, so it is the game's option that decides,
             // not each player's client
             server.sendServerChat(connId, "This game does not allow a Game Master.");
@@ -84,29 +82,8 @@ public class GameMasterCommand extends ServerCommand {
             // only one Game Master is allowed at a time
             server.sendServerChat(connId, currentGameMaster.getName()
                   + " is already Game Master. They must give up the role (/gm) before another player can take it.");
-        } else if (gameManager.getGame() != null && gameManager.getGame().getPhase().isLounge()) {
-            // becoming GameMaster in Lobby is always permitted
-            server.sendServerChat(player.getName() + " will become Game Master without vote.");
-            gameManager.setGameMaster(player, true);
         } else {
-            // becoming GameMaster in regular gameplay requires unanimous human player
-            // voting
-            for (Player p : server.getGame().getPlayersList()) {
-                if (p.getId() != player.getId()) {
-                    server.sendServerChat(p.getId(),
-                          player.getName() + " wants to become a Game Master" + SERVER_VOTE_PROMPT_MSG);
-                }
-            }
-
-            server.requestGameMaster(player);
-
-            for (Player p : server.getGame().getPlayersList()) {
-                p.setVotedToAllowGameMaster(false);
-            }
-
-            // requester automatically votes yes
-            AllowGameMasterCommand.voteYes(server, player);
+            gameManager.startGameMasterVote(player);
         }
     }
-
 }

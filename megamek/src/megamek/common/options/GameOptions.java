@@ -86,7 +86,6 @@ public class GameOptions extends BasicGameOptions {
         addOption(base, OptionsConstants.SEARCHLIGHTS_ON, true);
         addOption(base, OptionsConstants.BASE_PUSH_OFF_BOARD, true);
         addOption(base, OptionsConstants.BASE_DUMPING_FROM_ROUND, 1);
-        addOption(base, OptionsConstants.BASE_ALLOW_GAME_MASTER, true);
         addOption(base, OptionsConstants.BASE_LOBBY_AMMO_DUMP, false);
         addOption(base, OptionsConstants.BASE_SHOW_BAY_DETAIL, false);
         addOption(base, OptionsConstants.BASE_INDIRECT_FIRE, true);
@@ -95,6 +94,11 @@ public class GameOptions extends BasicGameOptions {
         addOption(base, OptionsConstants.BASE_AUTO_AMS, true);
         addOption(base, OptionsConstants.BASE_RANDOM_BASEMENTS, true);
         addOption(base, OptionsConstants.BASE_BREEZE, false);
+
+        IBasicOptionGroup gameMaster = addGroup("gameMaster");
+        addOption(gameMaster, OptionsConstants.GAME_MASTER_ALLOW, true);
+        addOption(gameMaster, OptionsConstants.GAME_MASTER_VOTE_THRESHOLD, IOption.CHOICE,
+              OptionsConstants.GAME_MASTER_VOTE_UNANIMOUS);
 
         IBasicOptionGroup victory = addGroup("victory");
         addOption(victory, OptionsConstants.VICTORY_SKIP_FORCED_VICTORY, false);

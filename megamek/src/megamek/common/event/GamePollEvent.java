@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2022-2025 The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2026 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -30,36 +30,40 @@
  * <https://www.xbox.com/en-US/developers/rules> and it is not endorsed by or
  * affiliated with Microsoft.
  */
+package megamek.common.event;
 
-package megamek.server.commands;
+import java.io.Serial;
 
-import megamek.common.Player;
-import megamek.server.Server;
-import megamek.server.totalWarfare.TWGameManager;
+import megamek.common.voting.Poll;
 
 /**
- * This command votes to allow another player to assume the elevated Game Master role
- *
- * @author pakfront
+ * Fired when a vote among the players - a gamemaster request - is called, receives a ballot, or resolves. The event
+ * carries the poll as the server last shared it, resolved or not; listeners read its status to tell the two apart.
  */
-public class AllowGameMasterCommand extends ServerCommand {
+public class GamePollEvent extends GameEvent {
 
-    private final TWGameManager gameManager;
+    @Serial
+    private static final long serialVersionUID = 1L;
 
-    public AllowGameMasterCommand(Server server, TWGameManager gameManager) {
-        super(server, "allowGM", "Votes yes on another player's request to become Game Master. "
-              + "Usage: /allowGM");
-        this.gameManager = gameManager;
+    private final Poll poll;
+
+    public GamePollEvent(Object source, Poll poll) {
+        super(source);
+        this.poll = poll;
     }
 
-    /**
-     * Run this command with the arguments supplied
-     *
-     * @see megamek.server.commands.ServerCommand#run(int, java.lang.String[])
-     */
+    /** @return the poll as the server last shared it */
+    public Poll getPoll() {
+        return poll;
+    }
+
     @Override
-    public void run(int connId, String[] args) {
-        Player player = server.getPlayer(connId);
-        gameManager.castGameMasterVote(player, true);
+    public void fireEvent(GameListener gl) {
+        gl.gamePollChange(this);
+    }
+
+    @Override
+    public String getEventName() {
+        return "Game Master Vote";
     }
 }

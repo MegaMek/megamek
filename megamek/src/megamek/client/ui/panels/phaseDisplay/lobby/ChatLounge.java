@@ -3449,7 +3449,7 @@ public class ChatLounge extends AbstractPhaseDisplay
 
         // the host decides whether the game has a gamemaster at all, through the Allow Game Master game option
         boolean gameAllowsGameMaster = game().getOptions()
-              .booleanOption(OptionsConstants.BASE_ALLOW_GAME_MASTER);
+              .booleanOption(OptionsConstants.GAME_MASTER_ALLOW);
 
         // MMToggleButton shows its own green check when selected and red cross when not, so the button needs no
         // separate check icon of its own; adding one would show a second, redundant check.

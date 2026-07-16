@@ -46,6 +46,7 @@ import megamek.client.ui.widget.picmap.PicMap;
 import megamek.common.CriticalSlot;
 import megamek.common.battleArmor.BattleArmor;
 import megamek.common.equipment.GunEmplacement;
+import megamek.common.equipment.HandheldWeapon;
 import megamek.common.annotations.Nullable;
 import megamek.common.game.Game;
 import megamek.common.units.*;
@@ -67,7 +68,7 @@ public class ArmorPanel extends PicMap {
     private VTOLMapSet vtol;
     private QuadMapSet quad;
     private TripodMekMapSet tripod;
-    private GunEmplacementMapSet gunEmplacement;
+    private SimpleUnitMapSet simpleUnit;
     private LargeSupportTankMapSet largeSupportTank;
     private SuperHeavyTankMapSet superHeavyTank;
     private AeroMapSet aero;
@@ -139,7 +140,7 @@ public class ArmorPanel extends PicMap {
         vtol = new VTOLMapSet(this, locationSelectListener);
         quad = new QuadMapSet(this, locationSelectListener);
         tripod = new TripodMekMapSet(this, locationSelectListener);
-        gunEmplacement = new GunEmplacementMapSet(this);
+        simpleUnit = new SimpleUnitMapSet(this, locationSelectListener);
         largeSupportTank = new LargeSupportTankMapSet(this, locationSelectListener);
         superHeavyTank = new SuperHeavyTankMapSet(this, locationSelectListener);
         aero = new AeroMapSet(this, locationSelectListener);
@@ -157,12 +158,15 @@ public class ArmorPanel extends PicMap {
         }
         Rectangle r = getContentBounds();
         if (r != null) {
-            // The content keeps its own unscaled coordinates. Center it horizontally, but keep it at the top
-            // (north) rather than centering it vertically, so the diagram sits at the top of the space it has.
+            // Center the content within the scaled-back size. The frame behind it - the labeled boxes for rear
+            // armor, internal structure and heat - is drawn centered by the map set, so centering the values and
+            // figures the same way keeps the two lined up. Top-aligning only the content would split them apart.
             Dimension contentSize = getContentSize();
             int w = (contentSize.width - r.width) / 2;
+            int h = (contentSize.height - r.height) / 2;
             int dx = Math.max(w, minLeftMargin);
-            setContentMargins(dx, minTopMargin, minRightMargin, minBottomMargin);
+            int dy = Math.max(h, minTopMargin);
+            setContentMargins(dx, dy, minRightMargin, minBottomMargin);
         }
     }
 
@@ -222,7 +226,7 @@ public class ArmorPanel extends PicMap {
                 minRightMargin = minMekRightMargin;
             }
             case GunEmplacement ignored -> {
-                ams = gunEmplacement;
+                ams = simpleUnit;
                 minLeftMargin = minTankLeftMargin;
                 minTopMargin = minTankTopMargin;
                 minBottomMargin = minTankTopMargin;
@@ -312,6 +316,21 @@ public class ArmorPanel extends PicMap {
                 minTopMargin = minAeroTopMargin;
                 minBottomMargin = minAeroTopMargin;
                 minRightMargin = minAeroLeftMargin;
+            }
+            // Units with no drawn figure of their own get the plain box-per-location diagram.
+            case HandheldWeapon ignored -> {
+                ams = simpleUnit;
+                minLeftMargin = minInfLeftMargin;
+                minTopMargin = minInfTopMargin;
+                minBottomMargin = minInfTopMargin;
+                minRightMargin = minInfLeftMargin;
+            }
+            case AbstractBuildingEntity ignored -> {
+                ams = simpleUnit;
+                minLeftMargin = minInfLeftMargin;
+                minTopMargin = minInfTopMargin;
+                minBottomMargin = minInfTopMargin;
+                minRightMargin = minInfLeftMargin;
             }
             default -> {
             }

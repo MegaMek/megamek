@@ -470,7 +470,8 @@ public class UnitDamageApplier {
             if (null == controls.spnCrewHits[slot]) {
                 continue;
             }
-            // the control cannot reach the six hits that kill, so every value here revives a dead crew member
+            // Revive the crew member first, then set the hits. Fewer than six revives a wounded or dead member;
+            // six re-kills it, since setHits marks a member with the killing number of hits dead again.
             crew.setDead(false, slot);
             crew.setUnconscious(false, slot);
             crew.setKoThisRound(false, slot);

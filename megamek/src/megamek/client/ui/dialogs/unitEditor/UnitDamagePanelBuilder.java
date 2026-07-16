@@ -78,13 +78,13 @@ public class UnitDamagePanelBuilder {
     public static final int MAX_HEAT = 40;
 
     /**
-     * The most hits a crew member can be given. Six hits kill (TW p.41), so the editor stops one short: it wounds
-     * and revives crew, and destroying a unit is a separate, deliberate act.
+     * The most hits a crew member can be given. Six hits kill (TW p.41), and a unit whose whole crew is dead is
+     * destroyed by the server when the edit reaches it (crew death, {@code destroyEntityIfFatallyDamaged}).
      */
-    public static final int MAX_CREW_HITS = Crew.DEATH - 1;
+    public static final int MAX_CREW_HITS = Crew.DEATH;
 
     /** The most rows a panel column may hold before the next rows wrap into a new column beside it. */
-    private static final int MAX_ROWS_PER_COLUMN = 15;
+    private static final int MAX_ROWS_PER_COLUMN = 20;
 
     private final Entity entity;
     private final UnitDamageControls controls;
@@ -124,39 +124,43 @@ public class UnitDamagePanelBuilder {
 
         boolean isAero = entity instanceof Aero;
         for (int location = 0; location < entity.locations(); location++) {
-            // some units have hidden locations, skip these
-            if (isAero ? (entity.getOArmor(location) <= 0) : (entity.getOInternal(location) <= 0)) {
+            int originalArmor = entity.getOArmor(location);
+            // Aero keeps its structure as one structural-integrity value, edited on the general panel rather than
+            // per location. Other units edit per-location internal where they have it.
+            boolean editsInternal = !isAero && (entity.getOInternal(location) > 0);
+            boolean editsArmor = originalArmor > 0;
+            // Skip a location with nothing to edit: a hidden location, or one with neither armor nor structure (a
+            // handheld weapon's armor-only gun, a gun emplacement's guns).
+            if (!editsArmor && !editsInternal) {
                 continue;
             }
             controls.locationLabels[location] = new JLabel(entity.getLocationName(location));
             controls.locationPanels[location] = createTitledPanel(controls.locationLabels[location]);
 
-            if (!isAero) {
-                int internal = Math.max(entity.getInternal(location), 0);
-                controls.spnInternal[location] = new JSpinner(new SpinnerNumberModel(internal,
-                      0,
-                      entity.getOInternal(location),
-                      1));
+            if (editsInternal) {
+                int originalInternal = entity.getOInternal(location);
+                int internal = Math.min(Math.max(entity.getInternal(location), 0), originalInternal);
+                controls.spnInternal[location] = new JSpinner(new SpinnerNumberModel(internal, 0, originalInternal, 1));
                 addLabeledRow(controls.locationPanels[location],
                       Messages.getString("UnitEditorDialog.internal"),
                       controls.spnInternal[location]);
             }
 
-            int armor = Math.max(entity.getArmor(location, false), 0);
-            controls.spnArmor[location] = new JSpinner(new SpinnerNumberModel(armor, 0, entity.getOArmor(location), 1));
-            boolean hasRear = entity.hasRearArmor(location);
-            addLabeledRow(controls.locationPanels[location],
-                  Messages.getString(hasRear ? "UnitEditorDialog.armorFront" : "UnitEditorDialog.armor"),
-                  controls.spnArmor[location]);
-            if (hasRear) {
-                int rear = Math.max(entity.getArmor(location, true), 0);
-                controls.spnRear[location] = new JSpinner(new SpinnerNumberModel(rear,
-                      0,
-                      entity.getOArmor(location, true),
-                      1));
+            if (editsArmor) {
+                int armor = Math.min(Math.max(entity.getArmor(location, false), 0), originalArmor);
+                controls.spnArmor[location] = new JSpinner(new SpinnerNumberModel(armor, 0, originalArmor, 1));
+                boolean hasRear = entity.hasRearArmor(location);
                 addLabeledRow(controls.locationPanels[location],
-                      Messages.getString("UnitEditorDialog.armorRear"),
-                      controls.spnRear[location]);
+                      Messages.getString(hasRear ? "UnitEditorDialog.armorFront" : "UnitEditorDialog.armor"),
+                      controls.spnArmor[location]);
+                if (hasRear) {
+                    int originalRear = Math.max(entity.getOArmor(location, true), 0);
+                    int rear = Math.min(Math.max(entity.getArmor(location, true), 0), originalRear);
+                    controls.spnRear[location] = new JSpinner(new SpinnerNumberModel(rear, 0, originalRear, 1));
+                    addLabeledRow(controls.locationPanels[location],
+                          Messages.getString("UnitEditorDialog.armorRear"),
+                          controls.spnRear[location]);
+                }
             }
         }
 
@@ -228,6 +232,12 @@ public class UnitDamagePanelBuilder {
     private JCheckBox addStatusRow(String labelKey, boolean selected) {
         JCheckBox checkBox = new JCheckBox();
         checkBox.setSelected(selected);
+        // A status checkbox only shows the current state, so its tooltip names the state and the action the next
+        // click performs - "The unit is prone. Click to stand it up." - and follows the checkbox as it is toggled.
+        String onTooltip = Messages.getString(labelKey + ".tooltip.on");
+        String offTooltip = Messages.getString(labelKey + ".tooltip.off");
+        checkBox.setToolTipText(selected ? onTooltip : offTooltip);
+        checkBox.addItemListener(event -> checkBox.setToolTipText(checkBox.isSelected() ? onTooltip : offTooltip));
         addLabeledRow(generalPanel(), Messages.getString(labelKey), checkBox);
         return checkBox;
     }
@@ -916,18 +926,24 @@ public class UnitDamagePanelBuilder {
                       nextbay.getCapacity(),
                       nextbay.isCargo() ? 0.5 : 1.0));
                 controls.bayDamage[b] = bayCrit;
-                addLabeledRow(generalPanel(),
-                      String.format(Messages.getString("UnitEditorDialog.bayCrit"),
-                            nextbay.getTransporterType(),
-                            nextbay.getBayNumber()),
-                      bayCrit);
 
                 CheckCritPanel doorCrit = new CheckCritPanel(nextbay.getDoors(),
                       (nextbay.getDoors() - nextbay.getCurrentDoors()));
                 controls.bayDoorCrit[b] = doorCrit;
+
+                // Put the bay's capacity and its door checkboxes on one row, so a bay reads as a single line
+                // rather than a separate capacity row and doors row.
+                JPanel bayControl = new JPanel(new FlowLayout(FlowLayout.LEFT, 5, 0));
+                bayControl.add(bayCrit);
+                if (nextbay.getDoors() > 0) {
+                    bayControl.add(new JLabel(Messages.getString("UnitEditorDialog.bayDoors")));
+                    bayControl.add(doorCrit);
+                }
                 addLabeledRow(generalPanel(),
-                      String.format(Messages.getString("UnitEditorDialog.bayDoorCrit"), nextbay.getBayNumber()),
-                      doorCrit);
+                      String.format(Messages.getString("UnitEditorDialog.bayCrit"),
+                            nextbay.getTransporterType(),
+                            nextbay.getBayNumber()),
+                      bayControl);
                 b++;
             }
         }

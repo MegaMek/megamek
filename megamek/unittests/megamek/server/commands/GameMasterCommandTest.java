@@ -107,15 +107,15 @@ class GameMasterCommandTest {
      */
     @Test
     void gamesAllowAGameMasterByDefault() {
-        assertTrue(new Game().getOptions().booleanOption(OptionsConstants.BASE_ALLOW_GAME_MASTER),
+        assertTrue(new Game().getOptions().booleanOption(OptionsConstants.GAME_MASTER_ALLOW),
               "games no longer allow a Game Master by default");
     }
 
     @Test
     void theGameOptionCanForbidAGameMaster() {
         Game game = new Game();
-        game.getOptions().getOption(OptionsConstants.BASE_ALLOW_GAME_MASTER).setValue(false);
+        game.getOptions().getOption(OptionsConstants.GAME_MASTER_ALLOW).setValue(false);
 
-        assertFalse(game.getOptions().booleanOption(OptionsConstants.BASE_ALLOW_GAME_MASTER));
+        assertFalse(game.getOptions().booleanOption(OptionsConstants.GAME_MASTER_ALLOW));
     }
 }

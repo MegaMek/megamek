@@ -91,6 +91,7 @@ import megamek.common.equipment.ICarryable;
 import megamek.common.equipment.Minefield;
 import megamek.common.equipment.Mounted;
 import megamek.common.event.GameCFREvent;
+import megamek.common.event.GamePollEvent;
 import megamek.common.event.GameReportEvent;
 import megamek.common.event.GameSettingsChangeEvent;
 import megamek.common.event.GameVictoryEvent;
@@ -122,6 +123,7 @@ import megamek.common.units.IBuilding;
 import megamek.common.units.UnitLocation;
 import megamek.common.util.C3Util;
 import megamek.common.util.ImageUtil;
+import megamek.common.voting.Poll;
 import megamek.common.util.SerializationHelper;
 import megamek.common.util.StringUtil;
 import megamek.logging.MMLogger;
@@ -1173,6 +1175,11 @@ public class Client extends AbstractClient {
                         game.setOptions(options);
                     }
 
+                    break;
+                case GAME_MASTER_POLL:
+                    if (packet.getObject(0) instanceof Poll poll) {
+                        game.processGameEvent(new GamePollEvent(this, poll));
+                    }
                     break;
                 case SENDING_MAP_SETTINGS:
                     MapSettings mapSettings = packet.getMapSettings(0);

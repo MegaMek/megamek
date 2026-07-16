@@ -44,12 +44,15 @@ import java.awt.Insets;
 import java.awt.Toolkit;
 import java.awt.event.KeyEvent;
 import java.io.Serial;
+import java.util.ArrayList;
+import java.util.List;
 import javax.swing.*;
 
 import megamek.MegaMek;
 import megamek.client.Client;
 import megamek.client.ui.Messages;
 import megamek.client.ui.clientGUI.CloseAction;
+import megamek.common.Player;
 import megamek.client.ui.dialogs.unitEditor.DamageEditorDiagram;
 import megamek.client.ui.dialogs.unitEditor.PreExistingDamageRoller;
 import megamek.client.ui.dialogs.unitEditor.UnitDamageApplier;
@@ -86,6 +89,11 @@ public class UnitEditorDialog extends JDialog {
     private static final String DESTROY_UNIT_COMMAND = "/kill %d %b";
     /** The server calls it rescue; to a player it is the unit withdrawing from the battlefield. */
     private static final String WITHDRAW_UNIT_COMMAND = "/rescue %d";
+    /** Hands the unit to another player, by unit id then player id. */
+    private static final String CHANGE_OWNER_COMMAND = "/changeOwner %d %d";
+
+    /** Guards the owner chooser against the listener firing again while its value is put back after a cancel. */
+    private boolean reassigningOwner;
 
     /** The smallest the dialog may be resized to, before GUI scaling, so the paperdoll and panel stay usable. */
     private static final int MIN_DIALOG_WIDTH = 650;
@@ -171,6 +179,7 @@ public class UnitEditorDialog extends JDialog {
             panMain.add(panelBuilder.initInfantryPanel(), gridBagConstraints);
         } else {
             panelBuilder.build();
+            addOwnerReassign();
             diagram = new DamageEditorDiagram(entity, controls);
             GridBagConstraints gridBagConstraints = new GridBagConstraints();
             gridBagConstraints.gridx = 0;
@@ -194,9 +203,9 @@ public class UnitEditorDialog extends JDialog {
 
         getContentPane().add(panButtons, BorderLayout.PAGE_END);
 
-        if (showPreExistingDamagePanel()) {
+        if (offerGameMasterTools) {
             preExistingDamageRoller = new PreExistingDamageRoller(entity, controls);
-            getContentPane().add(initPreExistingDamagePanel(), BorderLayout.PAGE_START);
+            getContentPane().add(initGamemasterActionPanel(), BorderLayout.PAGE_START);
             preExistingDamageRoller.captureSnapshot(getContentPane());
         }
 
@@ -252,48 +261,50 @@ public class UnitEditorDialog extends JDialog {
     }
 
     /**
-     * The pre-existing damage panel appears only for the unit types the FSW rules cover and only when the gamemaster
-     * editing tools are offered; assigning pre-existing damage is a gamemaster or scenario-setup decision.
+     * The gamemaster action toolbar. It always carries the general actions - restore, withdraw and destroy - and
+     * adds the pre-existing damage roller only for the unit types the FSW rules cover, since assigning pre-existing
+     * damage is a scenario-setup decision that does not fit every unit (a warship, for one). So a unit without the
+     * roller still shows the general actions, rather than losing the whole toolbar with it.
      */
-    private boolean showPreExistingDamagePanel() {
-        return offerGameMasterTools && PreExistingDamageApplier.isSupported(entity);
-    }
+    private JPanel initGamemasterActionPanel() {
+        JPanel panActions = new JPanel(new FlowLayout(FlowLayout.LEFT));
+        boolean preExistingSupported = PreExistingDamageApplier.isSupported(entity);
+        panActions.setBorder(preExistingSupported
+              ? BorderFactory.createTitledBorder(Messages.getString("UnitEditorDialog.preExistingDamage"))
+              : BorderFactory.createEtchedBorder());
 
-    private JPanel initPreExistingDamagePanel() {
-        JPanel panPreExisting = new JPanel(new FlowLayout(FlowLayout.LEFT));
-        panPreExisting.setBorder(BorderFactory.createTitledBorder(
-              Messages.getString("UnitEditorDialog.preExistingDamage")));
-
-        choicePreExistingDamage = new JComboBox<>(PreExistingDamageLevel.values());
-        choicePreExistingDamage.setRenderer(new DefaultListCellRenderer() {
-            @Override
-            public Component getListCellRendererComponent(JList<?> list, Object value, int index, boolean isSelected,
-                  boolean cellHasFocus) {
-                super.getListCellRendererComponent(list, value, index, isSelected, cellHasFocus);
-                if (value instanceof PreExistingDamageLevel damageLevel) {
-                    setText(Messages.getString("UnitEditorDialog.preExistingDamage." + damageLevel.name()));
+        if (preExistingSupported) {
+            choicePreExistingDamage = new JComboBox<>(PreExistingDamageLevel.values());
+            choicePreExistingDamage.setRenderer(new DefaultListCellRenderer() {
+                @Override
+                public Component getListCellRendererComponent(JList<?> list, Object value, int index,
+                      boolean isSelected, boolean cellHasFocus) {
+                    super.getListCellRendererComponent(list, value, index, isSelected, cellHasFocus);
+                    if (value instanceof PreExistingDamageLevel damageLevel) {
+                        setText(Messages.getString("UnitEditorDialog.preExistingDamage." + damageLevel.name()));
+                    }
+                    return this;
                 }
-                return this;
-            }
-        });
-        choicePreExistingDamage.setToolTipText(Messages.getString("UnitEditorDialog.preExistingDamage.tooltip"));
-        panPreExisting.add(choicePreExistingDamage);
+            });
+            choicePreExistingDamage.setToolTipText(Messages.getString("UnitEditorDialog.preExistingDamage.tooltip"));
+            panActions.add(choicePreExistingDamage);
 
-        JButton butRollPreExisting = new JButton(Messages.getString("UnitEditorDialog.preExistingDamage.roll"));
-        butRollPreExisting.setToolTipText(Messages.getString("UnitEditorDialog.preExistingDamage.roll.tooltip"));
-        butRollPreExisting.addActionListener(event ->
-              preExistingDamageRoller.roll((PreExistingDamageLevel) choicePreExistingDamage.getSelectedItem()));
-        panPreExisting.add(butRollPreExisting);
+            JButton butRollPreExisting = new JButton(Messages.getString("UnitEditorDialog.preExistingDamage.roll"));
+            butRollPreExisting.setToolTipText(Messages.getString("UnitEditorDialog.preExistingDamage.roll.tooltip"));
+            butRollPreExisting.addActionListener(event ->
+                  preExistingDamageRoller.roll((PreExistingDamageLevel) choicePreExistingDamage.getSelectedItem()));
+            panActions.add(butRollPreExisting);
 
-        JButton butApplyPreExisting = new JButton(Messages.getString("UnitEditorDialog.preExistingDamage.apply"));
-        butApplyPreExisting.setToolTipText(Messages.getString("UnitEditorDialog.preExistingDamage.apply.tooltip"));
-        butApplyPreExisting.addActionListener(event -> commitDamageAndClose());
-        panPreExisting.add(butApplyPreExisting);
+            JButton butApplyPreExisting = new JButton(Messages.getString("UnitEditorDialog.preExistingDamage.apply"));
+            butApplyPreExisting.setToolTipText(Messages.getString("UnitEditorDialog.preExistingDamage.apply.tooltip"));
+            butApplyPreExisting.addActionListener(event -> commitDamageAndClose());
+            panActions.add(butApplyPreExisting);
+        }
 
         JButton butRestoreUnit = new JButton(Messages.getString("UnitEditorDialog.preExistingDamage.reset"));
         butRestoreUnit.setToolTipText(Messages.getString("UnitEditorDialog.preExistingDamage.reset.tooltip"));
         butRestoreUnit.addActionListener(event -> preExistingDamageRoller.restoreToFactoryNew(getContentPane()));
-        panPreExisting.add(butRestoreUnit);
+        panActions.add(butRestoreUnit);
 
         // In the lobby a unit that is not wanted is simply removed, and there is nothing in play to take off the
         // board. Without a client there is no server to take it off either, as in MekHQ and MegaMekLab.
@@ -307,7 +318,7 @@ public class UnitEditorDialog extends JDialog {
               : "UnitEditorDialog.withdrawUnit.tooltip.lobby"));
         butWithdrawUnit.setEnabled(canRemoveFromPlay);
         butWithdrawUnit.addActionListener(event -> withdrawUnit());
-        panPreExisting.add(butWithdrawUnit);
+        panActions.add(butWithdrawUnit);
 
         JButton butDestroyUnit = new JButton(Messages.getString("UnitEditorDialog.destroyUnit"));
         butDestroyUnit.setToolTipText(Messages.getString(canRemoveFromPlay
@@ -315,8 +326,8 @@ public class UnitEditorDialog extends JDialog {
               : "UnitEditorDialog.destroyUnit.tooltip.lobby"));
         butDestroyUnit.setEnabled(canRemoveFromPlay);
         butDestroyUnit.addActionListener(event -> destroyUnit());
-        panPreExisting.add(butDestroyUnit);
-        return panPreExisting;
+        panActions.add(butDestroyUnit);
+        return panActions;
     }
 
     /** Writes the shown damage onto the unit and closes the dialog. Shared by Okay and by the Apply button. */
@@ -400,6 +411,75 @@ public class UnitEditorDialog extends JDialog {
               && !crew.isEjected()
               && !crew.isDead()
               && (entity.isMek() || entity.isAero());
+    }
+
+    /**
+     * Adds an Owner chooser to the general panel that hands the unit to another player. It is offered only in the
+     * gamemaster dialog and only in a running game, where there is a server to make the change and more than one
+     * player to hand the unit to. Choosing another player asks first, then reassigns the unit.
+     */
+    private void addOwnerReassign() {
+        if (!offerGameMasterTools || (client == null) || (controls.panGeneral == null) || (entity.getGame() == null)) {
+            return;
+        }
+        List<Player> owners = new ArrayList<>();
+        for (Player player : entity.getGame().getPlayersList()) {
+            if (player.getTeam() != Player.TEAM_UNASSIGNED) {
+                owners.add(player);
+            }
+        }
+        Player currentOwner = entity.getOwner();
+        // there has to be a current owner to start from and at least one other player to hand the unit to
+        if (!owners.contains(currentOwner) || (owners.size() < 2)) {
+            return;
+        }
+
+        JComboBox<Player> comboOwner = new JComboBox<>(owners.toArray(new Player[0]));
+        comboOwner.setSelectedItem(currentOwner);
+        comboOwner.setRenderer(new DefaultListCellRenderer() {
+            @Override
+            public Component getListCellRendererComponent(JList<?> list, Object value, int index, boolean isSelected,
+                  boolean cellHasFocus) {
+                super.getListCellRendererComponent(list, value, index, isSelected, cellHasFocus);
+                if (value instanceof Player player) {
+                    setText(player.getName());
+                }
+                return this;
+            }
+        });
+        comboOwner.addActionListener(event -> reassignOwner(comboOwner, currentOwner));
+        panelBuilder.addLabeledRow(controls.panGeneral, Messages.getString("UnitEditorDialog.owner"), comboOwner);
+    }
+
+    /**
+     * Asks first, then hands the unit to the chosen player through the same gamemaster command the map menu uses.
+     * On cancel the chooser is put back to the current owner, without letting that put-back ask again.
+     */
+    private void reassignOwner(JComboBox<Player> comboOwner, Player currentOwner) {
+        if (reassigningOwner) {
+            return;
+        }
+        if (!(comboOwner.getSelectedItem() instanceof Player chosen) || (chosen.getId() == currentOwner.getId())) {
+            return;
+        }
+        int choice = JOptionPane.showConfirmDialog(this,
+              String.format(Messages.getString("Gamemaster.Traitor.confirmation"),
+                    entity.getDisplayName(),
+                    chosen.getName()),
+              Messages.getString("Gamemaster.Traitor.confirm"),
+              JOptionPane.YES_NO_OPTION,
+              JOptionPane.QUESTION_MESSAGE);
+        if (choice == JOptionPane.YES_OPTION) {
+            LOGGER.info("Reassigning {} to {} at the request of the damage editor",
+                  entity.getDisplayName(),
+                  chosen.getName());
+            client.sendChat(String.format(CHANGE_OWNER_COMMAND, entity.getId(), chosen.getId()));
+            setVisible(false);
+        } else {
+            reassigningOwner = true;
+            comboOwner.setSelectedItem(currentOwner);
+            reassigningOwner = false;
+        }
     }
 
     /** The editor's controls, so that a test can set them the way a user would. */

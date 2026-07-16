@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2022-2025 The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2026 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -30,7 +30,6 @@
  * <https://www.xbox.com/en-US/developers/rules> and it is not endorsed by or
  * affiliated with Microsoft.
  */
-
 package megamek.server.commands;
 
 import megamek.common.Player;
@@ -38,28 +37,22 @@ import megamek.server.Server;
 import megamek.server.totalWarfare.TWGameManager;
 
 /**
- * This command votes to allow another player to assume the elevated Game Master role
- *
- * @author pakfront
+ * This command withdraws the player's own request to assume the elevated Game Master role. There is no time limit on
+ * the vote, so cancelling is how a requester takes back a request that is not going to be answered.
  */
-public class AllowGameMasterCommand extends ServerCommand {
+public class CancelGameMasterCommand extends ServerCommand {
 
     private final TWGameManager gameManager;
 
-    public AllowGameMasterCommand(Server server, TWGameManager gameManager) {
-        super(server, "allowGM", "Votes yes on another player's request to become Game Master. "
-              + "Usage: /allowGM");
+    public CancelGameMasterCommand(Server server, TWGameManager gameManager) {
+        super(server, "cancelGM", "Withdraws your own request to become Game Master. "
+              + "Usage: /cancelGM");
         this.gameManager = gameManager;
     }
 
-    /**
-     * Run this command with the arguments supplied
-     *
-     * @see megamek.server.commands.ServerCommand#run(int, java.lang.String[])
-     */
     @Override
     public void run(int connId, String[] args) {
         Player player = server.getPlayer(connId);
-        gameManager.castGameMasterVote(player, true);
+        gameManager.cancelGameMasterVote(player);
     }
 }

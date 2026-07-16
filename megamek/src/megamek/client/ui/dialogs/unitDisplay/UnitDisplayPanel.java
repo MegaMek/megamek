@@ -184,6 +184,8 @@ public class UnitDisplayPanel extends JPanel implements LocationSelectListener {
         mPan = new SummaryPanel(this);
         pPan = new PilotPanel(this);
         aPan = new ArmorPanel(clientgui != null ? clientgui.getClient().getGame() : null, this);
+        // fill the panel with the diagram instead of leaving it small in a large empty area
+        aPan.setFitToWindow(true);
         wPan = new WeaponPanel(this, clientgui != null ? clientgui.getClient() : null);
         sPan = new SystemPanel(this);
         ePan = new ExtraPanel(this);

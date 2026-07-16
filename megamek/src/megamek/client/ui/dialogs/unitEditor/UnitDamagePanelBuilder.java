@@ -37,7 +37,9 @@ import java.awt.Font;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Insets;
+import java.util.HashSet;
 import java.util.Map;
+import java.util.Set;
 import java.util.TreeMap;
 import java.util.Vector;
 import javax.swing.BorderFactory;
@@ -57,6 +59,7 @@ import megamek.common.equipment.MiscMounted;
 import megamek.common.equipment.DockingCollar;
 import megamek.common.equipment.MiscType;
 import megamek.common.equipment.Mounted;
+import megamek.common.equipment.WeaponMounted;
 import megamek.common.options.OptionsConstants;
 import megamek.common.units.*;
 import megamek.common.weapons.attacks.InfantryAttack;
@@ -79,6 +82,9 @@ public class UnitDamagePanelBuilder {
      * and revives crew, and destroying a unit is a separate, deliberate act.
      */
     public static final int MAX_CREW_HITS = Crew.DEATH - 1;
+
+    /** The most rows a panel column may hold before the next rows wrap into a new column beside it. */
+    private static final int MAX_ROWS_PER_COLUMN = 15;
 
     private final Entity entity;
     private final UnitDamageControls controls;
@@ -161,7 +167,16 @@ public class UnitDamagePanelBuilder {
             controls.structuralIntegrityLabel = new JLabel("<html><b>" +
                   Messages.getString("UnitEditorDialog.structuralIntegrity") +
                   "</b></html>");
-            addRow(generalPanel(), controls.structuralIntegrityLabel, controls.spnInternal[0]);
+            // A capital ship's SI sits in the paperdoll's centre, over the hull, which has no armor and so no panel
+            // of its own. Give the hull a panel there and put the SI in it, so the hull's own equipment lands in it
+            // rather than the general panel. Other aero have no hull location, so their SI stays in general.
+            JPanel structuralIntegrityPanel = generalPanel();
+            if (entity instanceof Jumpship) {
+                controls.locationLabels[Jumpship.LOC_HULL] = new JLabel(entity.getLocationName(Jumpship.LOC_HULL));
+                controls.locationPanels[Jumpship.LOC_HULL] = createTitledPanel(controls.locationLabels[Jumpship.LOC_HULL]);
+                structuralIntegrityPanel = controls.locationPanels[Jumpship.LOC_HULL];
+            }
+            addRow(structuralIntegrityPanel, controls.structuralIntegrityLabel, controls.spnInternal[0]);
         }
 
         initCrewHits();
@@ -322,6 +337,22 @@ public class UnitDamagePanelBuilder {
         return generalPanel();
     }
 
+    /**
+     * Returns the panel a location's equipment belongs in, creating one for the location when it has none of its
+     * own yet. A location can carry weapons without carrying armor - a warship's hull, or an arc with no armor - so
+     * its equipment would otherwise fall back to the general panel, mixing the unit's weapons in with its systems.
+     */
+    private JPanel equipmentPanel(int location) {
+        if ((location < 0) || (location >= controls.locationPanels.length)) {
+            return generalPanel();
+        }
+        if (controls.locationPanels[location] == null) {
+            controls.locationLabels[location] = new JLabel(entity.getLocationName(location));
+            controls.locationPanels[location] = createTitledPanel(controls.locationLabels[location]);
+        }
+        return controls.locationPanels[location];
+    }
+
     /** Adds a crit control to a location's panel, and remembers which location it belongs to. */
     private void addCritRow(int location, String labelText, CheckCritPanel crit) {
         controls.addCritOfLocation(location, crit);
@@ -334,15 +365,21 @@ public class UnitDamagePanelBuilder {
     }
 
     public void addRow(JPanel panel, JLabel label, JComponent control) {
-        int row = controls.panelRows.merge(panel, 1, Integer::sum) - 1;
+        // Fill the panel column by column, so a unit with many rows - a warship, say - wraps into further columns
+        // rather than a single column that runs off the screen. Each column is filled top to bottom in order before
+        // the next begins, so the items still read a, b, c... down one column and then the next.
+        int itemIndex = controls.panelRows.merge(panel, 1, Integer::sum) - 2;
+        int column = itemIndex / MAX_ROWS_PER_COLUMN;
+        int rowInColumn = itemIndex % MAX_ROWS_PER_COLUMN;
         GridBagConstraints gridBagConstraints = new GridBagConstraints();
-        gridBagConstraints.gridx = 0;
-        gridBagConstraints.gridy = row;
-        gridBagConstraints.insets = new Insets(1, 5, 1, 5);
+        // a wider left inset on later columns sets them apart from the column before
+        gridBagConstraints.gridx = column * 2;
+        gridBagConstraints.gridy = rowInColumn + 1;
+        gridBagConstraints.insets = new Insets(1, (column > 0) ? 15 : 5, 1, 5);
         gridBagConstraints.anchor = GridBagConstraints.WEST;
         gridBagConstraints.weightx = 0.0;
         panel.add(label, gridBagConstraints);
-        gridBagConstraints.gridx = 1;
+        gridBagConstraints.gridx = column * 2 + 1;
         gridBagConstraints.weightx = 1.0;
         panel.add(control, gridBagConstraints);
     }
@@ -355,6 +392,16 @@ public class UnitDamagePanelBuilder {
      */
 
     private void initEquipCrits() {
+        // On a capital ship the weapon bay is the crit unit: its member weapons are destroyed with the bay, so
+        // listing each of them alongside the bay only repeats it, once per bay across every arc. Show the bay (and
+        // its ammo, which still tracks shots) but skip its member weapons.
+        Set<Integer> bayMemberWeapons = new HashSet<>();
+        for (WeaponMounted bay : entity.getWeaponBayList()) {
+            for (WeaponMounted member : bay.getBayWeapons()) {
+                bayMemberWeapons.add(entity.getEquipmentNum(member));
+            }
+        }
+
         for (Mounted<?> mounted : entity.getEquipment()) {
             if ((mounted.getLocation() == Entity.LOC_NONE) ||
                   !mounted.getType().isHittable() ||
@@ -362,6 +409,9 @@ public class UnitDamagePanelBuilder {
                 continue;
             }
             if (mounted.getType() instanceof InfantryAttack) {
+                continue;
+            }
+            if (bayMemberWeapons.contains(entity.getEquipmentNum(mounted))) {
                 continue;
             }
             int nCrits = mounted.getNumCriticalSlots();
@@ -394,7 +444,7 @@ public class UnitDamagePanelBuilder {
                 control = ammoControl(equipmentNumber, ammoBin, crit);
             }
             controls.addCritOfLocation(mounted.getLocation(), crit);
-            addLabeledRow(targetPanel(mounted.getLocation()), label, control);
+            addLabeledRow(equipmentPanel(mounted.getLocation()), label, control);
         }
     }
 

@@ -433,7 +433,6 @@ public class GUIPreferences extends PreferenceStoreProxy {
     public static final String SHOW_MAP_SHEETS = "ShowMapSheets";
     public static final String USE_ISOMETRIC = "UseIsometric";
     public static final String SHOW_UNIT_OVERVIEW = "ShowUnitOverview";
-    public static final String ALLOW_GAME_MASTER_MODE = "AllowGameMasterMode";
     public static final String SHOW_DAMAGE_LEVEL = "ShowDamageLevel";
     public static final String SHOW_DAMAGE_DECAL = "ShowDamageDecal";
     public static final String SKIN_FILE = "SkinFile";
@@ -938,7 +937,6 @@ public class GUIPreferences extends PreferenceStoreProxy {
 
         store.setDefault(SHOW_UNIT_OVERVIEW, true);
         store.setDefault(DEFAULT_WEAPON_SORT_ORDER, WeaponSortOrder.DEFAULT.name());
-        store.setDefault(ALLOW_GAME_MASTER_MODE, true);
         store.setDefault(SHOW_DAMAGE_LEVEL, true);
         store.setDefault(SHOW_DAMAGE_DECAL, true);
         store.setDefault(SKIN_FILE, "BW - Default.xml");
@@ -1907,15 +1905,6 @@ public class GUIPreferences extends PreferenceStoreProxy {
 
     public void setLevelHighlight(boolean state) {
         store.setValue(LEVEL_HIGHLIGHT, state);
-    }
-
-    /** Whether this client offers the gamemaster role at all: the lobby's Game Master button and the GM tools. */
-    public boolean getAllowGameMasterMode() {
-        return store.getBoolean(ALLOW_GAME_MASTER_MODE);
-    }
-
-    public void setAllowGameMasterMode(boolean state) {
-        store.setValue(ALLOW_GAME_MASTER_MODE, state);
     }
 
     public boolean getShowDamageLevel() {

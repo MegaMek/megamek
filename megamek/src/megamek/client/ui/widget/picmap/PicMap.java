@@ -262,6 +262,11 @@ public abstract class PicMap extends JComponent {
         update();
     }
 
+    /** @return the factor the drawn content is currently enlarged by; 1.0 is its natural size */
+    public double getDisplayScale() {
+        return displayScale;
+    }
+
     private void drawInto(Graphics g) {
         int w = Math.max(getSize().width, minWidth);
         int h = Math.max(getSize().height, minHeight);
@@ -300,9 +305,32 @@ public abstract class PicMap extends JComponent {
         if (activeHotArea != null) {
             activeHotArea.drawInto(contentGraphics);
         }
-        labels.drawInto(contentGraphics);
         contentGraphics.setClip(oldClip);
         contentGraphics.dispose();
+
+        // Labels are drawn last and at native resolution: each is positioned and sized by the scale rather than
+        // magnified through the content transform, so its text stays crisp when the diagram is enlarged.
+        drawLabels(g, w, h);
+    }
+
+    private void drawLabels(Graphics g, int w, int h) {
+        Graphics2D labelGraphics = (Graphics2D) g.create();
+        if (displayScale != 1.0) {
+            labelGraphics.setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING,
+                  RenderingHints.VALUE_TEXT_ANTIALIAS_ON);
+        }
+        labelGraphics.setClip(new Rectangle((int) (leftMargin * displayScale), (int) (topMargin * displayScale),
+              w - (int) ((leftMargin + rightMargin) * displayScale),
+              h - (int) ((topMargin + bottomMargin) * displayScale)));
+        Enumeration<PMElement> labelElements = labels.elements();
+        while (labelElements.hasMoreElements()) {
+            PMElement element = labelElements.nextElement();
+            if (element instanceof PMLabel label) {
+                label.setDrawScale(displayScale);
+            }
+            element.drawInto(labelGraphics);
+        }
+        labelGraphics.dispose();
     }
 
     @Override

@@ -712,11 +712,12 @@ public class MapMenu extends JPopupMenu {
     }
 
     /**
-     * Whether the gamemaster tools are offered: the player must hold the role, and this client must be set to allow
-     * gamemaster mode at all, which is a client setting a player can turn off to keep the tools out of their way.
+     * Whether the gamemaster tools are offered: the player must hold the role, and the game must allow a gamemaster
+     * at all. The host controls that through the Allow Game Master game option; turning it off strips the role.
      */
     private boolean isGameMasterEnabled() {
-        return GUIPreferences.getInstance().getAllowGameMasterMode() && client.getLocalPlayer().isGameMaster();
+        return client.getGame().getOptions().booleanOption(OptionsConstants.BASE_ALLOW_GAME_MASTER)
+              && client.getLocalPlayer().isGameMaster();
     }
 
     /**
@@ -790,9 +791,10 @@ public class MapMenu extends JPopupMenu {
     JMenuItem createUnitEditorMenuItem(Entity entity) {
         JMenuItem item = new JMenuItem(entity.getDisplayName());
         item.addActionListener(evt -> {
+            // This menu item is only built for a gamemaster, so the dialog offers the full editing tools directly.
             UnitEditorDialog med = new UnitEditorDialog(gui.getFrame(),
                   entity,
-                  client.getLocalPlayer().isGameMaster(),
+                  true,
                   client);
             gui.getBoardView().setShouldIgnoreKeys(true);
             med.setVisible(true);

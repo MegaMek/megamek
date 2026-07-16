@@ -245,9 +245,9 @@ public class LobbyActions {
             LobbyErrors.showCannotEditDamage(frame());
             return;
         }
-        boolean gameMasterTools = GUIPreferences.getInstance().getAllowGameMasterMode()
-              && localPlayer().isGameMaster();
-        UnitEditorDialog med = new UnitEditorDialog(frame(), entity, gameMasterTools);
+        // Reaching here means the local player may edit this unit: the gamemaster, or the owner when no gamemaster
+        // is present. Either way the dialog offers the full editing tools without re-checking the gamemaster role.
+        UnitEditorDialog med = new UnitEditorDialog(frame(), entity, true);
         med.setVisible(true);
         med.dispose();
         sendUpdates(entities);
@@ -269,8 +269,8 @@ public class LobbyActions {
               || client.getBots().containsKey(entity.getOwner().getName());
         for (Player player : client.getGame().getPlayersList()) {
             if (player.isGameMaster()) {
-                // a gamemaster edits any unit; everyone else is still left with their own
-                return localPlayer.isGameMaster() || ownUnit;
+                // when a gamemaster is present, only the gamemaster may edit damage; everyone else loses access
+                return localPlayer.isGameMaster();
             }
         }
         return ownUnit;

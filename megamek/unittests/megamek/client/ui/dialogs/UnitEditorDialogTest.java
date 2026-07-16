@@ -424,7 +424,7 @@ class UnitEditorDialogTest {
 
         for (int location = 0; location < entity.locations(); location++) {
             int selected = location;
-            assertDoesNotThrow(() -> dialog.locationSelected(selected), "location " + selected);
+            assertDoesNotThrow(() -> dialog.diagramForTesting().locationSelected(selected), "location " + selected);
         }
         dialog.dispose();
     }

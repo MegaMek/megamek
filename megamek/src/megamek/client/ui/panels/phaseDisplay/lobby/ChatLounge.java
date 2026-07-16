@@ -148,6 +148,7 @@ import megamek.common.equipment.BombLoadout;
 import megamek.common.event.GameCFREvent;
 import megamek.common.event.GamePhaseChangeEvent;
 import megamek.common.event.GameSettingsChangeEvent;
+import megamek.common.event.entity.GameEntityChangeEvent;
 import megamek.common.event.entity.GameEntityNewEvent;
 import megamek.common.event.player.GamePlayerChangeEvent;
 import megamek.common.force.Force;
@@ -1898,12 +1899,24 @@ public class ChatLounge extends AbstractPhaseDisplay
     }
 
     @Override
+    public void gameEntityChange(GameEntityChangeEvent e) {
+        if (isIgnoringEvents()) {
+            return;
+        }
+        // A unit's shown state may have changed - its damage, and so its damage decal, most of all. Without this
+        // the lobby table and tree kept drawing the unit as it was, since nothing else redrew them on a change.
+        refreshEntities();
+    }
+
+    @Override
     public void gameSettingsChange(GameSettingsChangeEvent e) {
         // Are we ignoring events?
         if (isIgnoringEvents()) {
             return;
         }
         refreshGameSettings();
+        // the Allow Game Master option lives in the game settings, so the button that offers the role tracks it here
+        refreshGameMasterButton();
         // The table sorting may no longer be allowed (e.g. when blind drop was
         // activated)
         if (!activeSorter.isAllowed(clientgui.getClient().getGame().getOptions())) {
@@ -3387,10 +3400,6 @@ public class ChatLounge extends AbstractPhaseDisplay
                 mekModel.refreshCells();
                 refreshTree();
                 break;
-            case GUIPreferences.ALLOW_GAME_MASTER_MODE:
-                // turning gamemaster mode off while holding the role gives it up, rather than leaving it stranded
-                refreshGameMasterButton();
-                break;
             case GUIPreferences.USE_CAMO_OVERLAY:
                 clientgui.getTilesetManager().reloadUnitIcons();
                 mekModel.refreshCells();
@@ -3438,76 +3447,28 @@ public class ChatLounge extends AbstractPhaseDisplay
         }
         boolean localPlayerIsGameMaster = (gameMaster != null) && gameMaster.equals(localPlayer());
 
-        // A client that does not do gamemaster mode must not sit on the role: it would hold it without any of the
-        // tools, and no other player could take it while it did. So it gives the role straight back.
-        if (localPlayerIsGameMaster && !GUIP.getAllowGameMasterMode()) {
-            LOGGER.info("Giving up the Game Master role: this client does not allow gamemaster mode");
-            client().sendChat(GAME_MASTER_COMMAND);
-            return;
-        }
-
-        // the game decides whether it has a gamemaster at all; the client setting only decides whether this player
-        // wants the role and its tools
+        // the host decides whether the game has a gamemaster at all, through the Allow Game Master game option
         boolean gameAllowsGameMaster = game().getOptions()
               .booleanOption(OptionsConstants.BASE_ALLOW_GAME_MASTER);
 
-        butGameMaster.setVisible(GUIP.getAllowGameMasterMode());
+        // MMToggleButton shows its own green check when selected and red cross when not, so the button needs no
+        // separate check icon of its own; adding one would show a second, redundant check.
         butGameMaster.setSelected(localPlayerIsGameMaster);
         if (!gameAllowsGameMaster) {
             butGameMaster.setText(Messages.getString("ChatLounge.butGameMaster"));
-            butGameMaster.setIcon(null);
             butGameMaster.setEnabled(false);
             butGameMaster.setToolTipText(Messages.getString("ChatLounge.butGameMaster.tooltip.notAllowed"));
         } else if (gameMaster == null) {
             butGameMaster.setText(Messages.getString("ChatLounge.butGameMaster"));
-            butGameMaster.setIcon(null);
             butGameMaster.setEnabled(true);
             butGameMaster.setToolTipText(Messages.getString("ChatLounge.butGameMaster.tooltip"));
         } else {
             butGameMaster.setText(Messages.getString("ChatLounge.butGameMaster.held", gameMaster.getName()));
-            butGameMaster.setIcon(new GameMasterCheckIcon(GUIP.getOkColor()));
             // only the player holding the role can give it up, and only one player may hold it at a time
             butGameMaster.setEnabled(localPlayerIsGameMaster);
             butGameMaster.setToolTipText(Messages.getString(localPlayerIsGameMaster
                   ? "ChatLounge.butGameMaster.tooltip.held"
                   : "ChatLounge.butGameMaster.tooltip.heldByOther", gameMaster.getName()));
-        }
-    }
-
-    /**
-     * The check mark shown on the Game Master button while the role is held. It is drawn rather than taken from a
-     * symbol font, so that it cannot come out as a missing-glyph box on a system without that font.
-     */
-    private static class GameMasterCheckIcon implements Icon {
-        private final Color color;
-        private final int size = scaleForGUI(14);
-
-        GameMasterCheckIcon(Color color) {
-            this.color = color;
-        }
-
-        @Override
-        public void paintIcon(Component component, Graphics graphics, int x, int y) {
-            Graphics2D checkGraphics = (Graphics2D) graphics.create();
-            checkGraphics.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
-            checkGraphics.setColor(color);
-            checkGraphics.setStroke(new BasicStroke(Math.max(2f, size / 7f),
-                  BasicStroke.CAP_ROUND,
-                  BasicStroke.JOIN_ROUND));
-            // the two strokes of a check mark, as fractions of the icon's size
-            checkGraphics.drawLine(x + (size / 5), y + (size / 2), x + (2 * size / 5), y + (4 * size / 5));
-            checkGraphics.drawLine(x + (2 * size / 5), y + (4 * size / 5), x + (4 * size / 5), y + (size / 5));
-            checkGraphics.dispose();
-        }
-
-        @Override
-        public int getIconWidth() {
-            return size;
-        }
-
-        @Override
-        public int getIconHeight() {
-            return size;
         }
     }
 

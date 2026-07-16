@@ -34,6 +34,7 @@ package megamek.client.ui.dialogs.unitDisplay;
 
 import java.awt.Dimension;
 import java.awt.Rectangle;
+import java.util.HashSet;
 import java.util.Set;
 import java.io.Serial;
 import java.util.Enumeration;
@@ -42,6 +43,7 @@ import megamek.client.ui.widget.BackGroundDrawer;
 import megamek.client.ui.widget.mapset.*;
 import megamek.client.ui.widget.picmap.LocationSelectListener;
 import megamek.client.ui.widget.picmap.PicMap;
+import megamek.common.CriticalSlot;
 import megamek.common.battleArmor.BattleArmor;
 import megamek.common.equipment.GunEmplacement;
 import megamek.common.annotations.Nullable;
@@ -96,12 +98,34 @@ public class ArmorPanel extends PicMap {
 
     private final Game game;
 
-    /** Locations shaded as having taken a critical hit; empty in the unit display, which shows damage only. */
+    /** Locations shaded as having taken a critical hit. */
     private Set<Integer> criticalLocations = Set.of();
+
+    /**
+     * Whether a caller set the shaded locations itself. The damage editor does, to show the crits it has staged but
+     * not yet applied. When no caller sets them, the panel shades the locations the unit itself has crits in, so the
+     * unit display stripes damaged locations the same way the editor does.
+     */
+    private boolean criticalLocationsSetByCaller = false;
+
+    /** Whether the diagram enlarges itself to fill the space it is given, rather than staying at its drawn size. */
+    private boolean fitToWindow = false;
+
+    /** How far the diagram may be enlarged to fill its space, past which its bitmap frames turn blocky. */
+    private static final double MAX_FIT_SCALE = 2.5;
 
     public ArmorPanel(@Nullable Game g, @Nullable LocationSelectListener locationSelectListener) {
         game = g;
         this.locationSelectListener = locationSelectListener;
+    }
+
+    /**
+     * Sets whether the diagram enlarges itself to fill the space it is given. The unit display turns this on so the
+     * diagram uses the panel instead of sitting small in a large empty area. It is drawn at its natural size
+     * otherwise, as in the damage editor, which sizes the diagram itself.
+     */
+    public void setFitToWindow(boolean fitToWindow) {
+        this.fitToWindow = fitToWindow;
     }
 
     @Override
@@ -128,15 +152,40 @@ public class ArmorPanel extends PicMap {
 
     @Override
     public void onResize() {
+        if (fitToWindow) {
+            fitScaleToWindow();
+        }
         Rectangle r = getContentBounds();
         if (r != null) {
-            // The content keeps its own unscaled coordinates, so center it within the scaled-back size.
+            // The content keeps its own unscaled coordinates. Center it horizontally, but keep it at the top
+            // (north) rather than centering it vertically, so the diagram sits at the top of the space it has.
             Dimension contentSize = getContentSize();
             int w = (contentSize.width - r.width) / 2;
-            int h = (contentSize.height - r.height) / 2;
             int dx = Math.max(w, minLeftMargin);
-            int dy = Math.max(h, minTopMargin);
-            setContentMargins(dx, dy, minRightMargin, minBottomMargin);
+            setContentMargins(dx, minTopMargin, minRightMargin, minBottomMargin);
+        }
+    }
+
+    /**
+     * Enlarges the diagram to fill the space it has been given, leaving a little room around it, but never shrinking
+     * it below its natural size and never past {@link #MAX_FIT_SCALE}, where its bitmap frames turn blocky. The
+     * content size is in unscaled coordinates, so the scale it works out does not depend on the current scale, and
+     * re-applying the same scale is a no-op that stops this from looping through {@link #setDisplayScale}.
+     */
+    private void fitScaleToWindow() {
+        Rectangle content = getContentBounds();
+        Dimension available = getSize();
+        if ((content == null) || (content.width <= 0) || (content.height <= 0)
+              || (available.width <= 0) || (available.height <= 0)) {
+            return;
+        }
+        double widthScale = available.width / (double) content.width;
+        double heightScale = available.height / (double) content.height;
+        // leave a little breathing room so the diagram does not touch the panel edges
+        double scale = 0.9 * Math.min(widthScale, heightScale);
+        scale = Math.max(1.0, Math.min(scale, MAX_FIT_SCALE));
+        if (Math.abs(scale - getDisplayScale()) > 0.01) {
+            setDisplayScale(scale);
         }
     }
 
@@ -273,8 +322,9 @@ public class ArmorPanel extends PicMap {
             return;
         }
         ams.setEntity(en);
-        // shading the locations that took a crit has to follow setEntity, which colors them by their damage
-        ams.setCriticalLocations(criticalLocations);
+        // shading the locations that took a crit has to follow setEntity, which colors them by their damage. The
+        // editor sets the locations itself to preview staged crits; otherwise shade the ones the unit really has.
+        ams.setCriticalLocations(criticalLocationsSetByCaller ? criticalLocations : unitCriticalLocations(en));
         addElement(ams.getContentGroup());
         Enumeration<BackGroundDrawer> iter = ams.getBackgroundDrawers().elements();
         while (iter.hasMoreElements()) {
@@ -287,11 +337,26 @@ public class ArmorPanel extends PicMap {
     /**
      * Sets the locations to shade as having taken a critical hit, shown the next time the unit is drawn. The damage
      * editor uses this to show the crits the user has set but not yet applied, which the unit itself does not carry
-     * yet.
+     * yet. Once a caller sets them, the panel stops shading the unit's own crits and shows only what it is given.
      *
      * @param criticalLocations the locations that have taken a critical hit
      */
     public void setCriticalLocations(Set<Integer> criticalLocations) {
         this.criticalLocations = Set.copyOf(criticalLocations);
+        criticalLocationsSetByCaller = true;
+    }
+
+    /** The locations the unit itself carries a critical hit in: any location with a damaged critical slot. */
+    private static Set<Integer> unitCriticalLocations(Entity entity) {
+        Set<Integer> locations = new HashSet<>();
+        for (int location = 0; location < entity.locations(); location++) {
+            for (CriticalSlot slot : entity.getCriticalSlots(location)) {
+                if ((slot != null) && slot.isDamaged()) {
+                    locations.add(location);
+                    break;
+                }
+            }
+        }
+        return locations;
     }
 }

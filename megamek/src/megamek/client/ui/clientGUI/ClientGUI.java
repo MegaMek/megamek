@@ -804,6 +804,11 @@ public class ClientGUI extends AbstractClientGUI
     private void updateFrameTitle() {
         StringBuilder title = new StringBuilder(client.getName());
 
+        // mark the local player as the Game Master right after their name, so it is clear who holds the role
+        if ((client.getLocalPlayer() != null) && client.getLocalPlayer().isGameMaster()) {
+            title.append(Messages.getString("ClientGUI.titleGameMaster"));
+        }
+
         GamePhase phase = client.getGame().getPhase();
         int round = client.getGame().getCurrentRound();
 
@@ -2989,6 +2994,8 @@ public class ClientGUI extends AbstractClientGUI
                     currPhaseDisplay.setStatusBarWithNotDonePlayers();
                 }
             }
+            // the local player may have gained or lost the Game Master role, so keep the title's marker in step
+            updateFrameTitle();
         }
 
         @Override

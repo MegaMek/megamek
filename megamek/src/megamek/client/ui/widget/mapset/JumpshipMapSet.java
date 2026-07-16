@@ -221,7 +221,8 @@ public class JumpshipMapSet implements DisplayMapSet {
         areas[Jumpship.LOC_ALS] = new PMSimplePolygonArea(leftASArmor, locationSelectListener, Jumpship.LOC_ALS);
         areas[Jumpship.LOC_ARS] = new PMSimplePolygonArea(rightASArmor, locationSelectListener, Jumpship.LOC_ARS);
         areas[Jumpship.LOC_AFT] = new PMSimplePolygonArea(aftArmor, locationSelectListener, Jumpship.LOC_AFT);
-        areas[6] = new PMSimplePolygonArea(Structure, locationSelectListener, Jumpship.LOC_NOSE);
+        // the central structural-integrity area stands in for the hull, so clicking it selects the hull's panel
+        areas[6] = new PMSimplePolygonArea(Structure, locationSelectListener, Jumpship.LOC_HULL);
     }
 
     private void setLabels() {

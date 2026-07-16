@@ -27316,6 +27316,7 @@ public class TWGameManager extends AbstractGameManager {
         Compute.setRNG(game.getOptions().intOption(OptionsConstants.BASE_RNG_TYPE));
 
         if (changed > 0) {
+            revokeGameMasterIfDisallowed();
             for (Entity en : game.getEntitiesVector()) {
                 en.setGameOptions();
             }
@@ -27323,6 +27324,23 @@ public class TWGameManager extends AbstractGameManager {
             return true;
         }
         return false;
+    }
+
+    /**
+     * Revokes the Game Master role when the game no longer allows one, so that turning off Allow Game Master takes
+     * the role and its tools away from whoever holds it. The player update is sent to every client, so their view of
+     * who is Game Master stays in step with the server.
+     */
+    private void revokeGameMasterIfDisallowed() {
+        if (game.getOptions().booleanOption(OptionsConstants.BASE_ALLOW_GAME_MASTER)) {
+            return;
+        }
+        Player gameMaster = getGameMaster();
+        if (gameMaster != null) {
+            LOGGER.info("Revoking the Game Master role from {}: the game no longer allows a Game Master",
+                  gameMaster.getName());
+            setGameMaster(gameMaster, false);
+        }
     }
 
     /**

@@ -516,13 +516,14 @@ public final class BoardView extends AbstractBoardView
                     tileManager.reloadImage(entity);
                 }
 
-                // for units that have been blown up, damaged or ejected, force a reload
-                if ((gameEntityChangeEvent.getOldEntity() != null) && ((entity.getDamageLevel()
-                      != gameEntityChangeEvent.getOldEntity()
-                      .getDamageLevel()) || (entity.isDestroyed()
-                      != gameEntityChangeEvent.getOldEntity().isDestroyed()) || (
-                      entity.getCrew().isEjected()
-                            != gameEntityChangeEvent.getOldEntity().getCrew().isEjected()))) {
+                // For units that have been blown up, damaged or ejected, force a reload. Without the old state we
+                // cannot tell whether the damage changed, so reload to be safe; the reload reuses the cached image
+                // when the damage level is in fact unchanged, so it costs nothing in the common case.
+                final Entity oldEntity = gameEntityChangeEvent.getOldEntity();
+                if ((oldEntity == null)
+                      || (entity.getDamageLevel() != oldEntity.getDamageLevel())
+                      || (entity.isDestroyed() != oldEntity.isDestroyed())
+                      || (entity.getCrew().isEjected() != oldEntity.getCrew().isEjected())) {
                     tileManager.reloadImage(entity);
                 }
 

@@ -18813,7 +18813,8 @@ public class TWGameManager extends AbstractGameManager {
      * @param crewPos The <code>int</code> index of the crew member for multi crew cockpits, ignored by basic
      *                <code>crew</code>
      */
-    private Vector<Report> resolveCrewDamage(Entity e, int damage, int crewPos) {
+    // package-private for testing
+    Vector<Report> resolveCrewDamage(Entity e, int damage, int crewPos) {
         Vector<Report> vDesc = new Vector<>();
         final int totalHits = e.getCrew().getHits(crewPos);
         if ((e instanceof MekWarrior) || !e.isTargetable() || !e.getCrew().isActive(crewPos) || (damage == 0)) {
@@ -18835,10 +18836,15 @@ public class TWGameManager extends AbstractGameManager {
             if (game.getOptions().booleanOption(OptionsConstants.RPG_TOUGHNESS)) {
                 rollTarget -= e.getCrew().getToughness(crewPos);
             }
-            boolean edgeUsed = false;
+            // Edge may reroll a failed consciousness roll, but only once: a single roll cannot be rerolled
+            // repeatedly even if the crew has several Edge points remaining.
+            boolean rerollWithEdge = false;
+            boolean edgeAlreadyUsed = false;
             do {
-                if (edgeUsed) {
+                if (rerollWithEdge) {
                     e.getCrew().decreaseEdge();
+                    edgeAlreadyUsed = true;
+                    rerollWithEdge = false;
                 }
                 Roll diceRoll = Compute.rollD6(2);
                 int rollValue = diceRoll.getIntValue();
@@ -18864,9 +18870,11 @@ public class TWGameManager extends AbstractGameManager {
                 } else {
                     e.getCrew().setKoThisRound(true, crewPos);
                     r.choose(false);
-                    if (e.shouldUseEdge(OptionsConstants.EDGE_WHEN_KO) ||
-                          e.shouldUseEdge(OptionsConstants.EDGE_WHEN_AERO_KO)) {
-                        edgeUsed = true;
+                    // Only offer an Edge reroll if one hasn't already been spent on this consciousness roll.
+                    if (!edgeAlreadyUsed &&
+                          (e.shouldUseEdge(OptionsConstants.EDGE_WHEN_KO) ||
+                                e.shouldUseEdge(OptionsConstants.EDGE_WHEN_AERO_KO))) {
+                        rerollWithEdge = true;
                         vDesc.add(r);
                         r = new Report(6520);
                         r.subject = e.getId();
@@ -18877,9 +18885,7 @@ public class TWGameManager extends AbstractGameManager {
                     // return true;
                 } // else
                 vDesc.add(r);
-            } while (e.getCrew().isKoThisRound(crewPos) &&
-                  (e.shouldUseEdge(OptionsConstants.EDGE_WHEN_KO) ||
-                        e.shouldUseEdge(OptionsConstants.EDGE_WHEN_AERO_KO)));
+            } while (rerollWithEdge);
             // end of do-while
             if (e.getCrew().isKoThisRound(crewPos)) {
                 boolean wasPilot = e.getCrew().getCurrentPilotIndex() == crewPos;

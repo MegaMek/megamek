@@ -822,7 +822,6 @@ public class WeaponHandler implements AttackHandler, Serializable {
                     }
                 } else {
                     bSalvo = false;
-                    nDamPerHit = attackValue;
                     nCluster = 1;
                 }
             }

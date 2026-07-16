@@ -298,6 +298,7 @@ public class TWGameManager extends AbstractGameManager {
         commands.add(new KillCommand(server, this));
         commands.add(new OrbitalBombardmentCommand(server, this));
         commands.add(new ChangeOwnershipCommand(server, this));
+        commands.add(new SkillModifierCommand(server, this));
         commands.add(new DisasterCommand(server, this));
         commands.add(new FirestarterCommand(server, this));
         commands.add(new NoFiresCommand(server, this));
@@ -784,6 +785,7 @@ public class TWGameManager extends AbstractGameManager {
             // Snapshot Magnetic Pulse effect state so we can notify the player when it wears off.
             boolean wasMagneticPulseAffected = entity.getMagneticPulseRounds() > 0;
             boolean wasImpAffected = isAffectedByImprovedMagneticPulse(entity);
+            boolean hadSkillModifiers = (entity.getCrew() != null) && entity.getCrew().getSkillModifiers().isActive();
 
             entity.newRound(game.getRoundCount());
 
@@ -792,6 +794,11 @@ public class TWGameManager extends AbstractGameManager {
             }
             if (wasImpAffected && !isAffectedByImprovedMagneticPulse(entity)) {
                 sendMagneticPulseToast(entity, true, false);
+            }
+            if (hadSkillModifiers && !entity.getCrew().getSkillModifiers().isActive()) {
+                sendToast(GameToastEvent.Level.GAMEMASTER,
+                      Messages.getString("Gamemaster.toast.skillModExpired", entity.getDisplayName()),
+                      entity);
             }
         }
     }
@@ -26633,6 +26640,13 @@ public class TWGameManager extends AbstractGameManager {
 
         // the sender cannot be null here: senderCanUpdateEntity rejects an update from an unknown connection
         LOGGER.debug("Applying update for {} from {}", oldEntity.getDisplayName(), sender.getName());
+        // In play, the client-sent copy carries whatever turn state it held when it was captured, which may be
+        // stale (for example a unit that has not moved yet but whose client snapshot is marked done). Swapping it
+        // in would overwrite the server's live turn state and could rob the owner of a move they still have. A
+        // gamemaster editing damage must not spend the owner's action, so keep the server's turn/move state.
+        if (!game.getPhase().isLounge()) {
+            preserveInPlayTurnState(oldEntity, entity);
+        }
         game.setEntity(entity.getId(), entity);
         entityUpdate(entity.getId());
         if (entity.isPartOfFighterSquadron()) {
@@ -26650,7 +26664,33 @@ public class TWGameManager extends AbstractGameManager {
             sendServerChat(ServerLobbyHelper.entityUpdateMessage(entity, game));
         } else {
             destroyEntityIfFatallyDamaged(entity);
+            // Editing a unit's damage in play is a gamemaster act, but it arrives as a unit update rather than a
+            // command, so it is announced here with the same toast the gamemaster commands use.
+            if (sender.isGameMaster()) {
+                sendToast(GameToastEvent.Level.GAMEMASTER,
+                      Messages.getString("Gamemaster.toast.editDamage", sender.getName(), entity.getDisplayName()),
+                      null);
+            }
         }
+    }
+
+    /**
+     * Copies the server's live turn and movement state from {@code oldEntity} onto a client-sent {@code newEntity}
+     * before it replaces the server's copy. This keeps an in-play edit (such as a gamemaster changing another unit's
+     * damage or status) from carrying the client's stale done/moved state, which would otherwise decide whether the
+     * unit can still act this turn and could silently cost the owner their move.
+     *
+     * @param oldEntity the server's authoritative unit, whose turn state is kept
+     * @param newEntity the client-sent replacement, whose turn state is overwritten
+     */
+    private void preserveInPlayTurnState(Entity oldEntity, Entity newEntity) {
+        newEntity.setDone(oldEntity.isDone());
+        newEntity.setUnloaded(oldEntity.isUnloadedThisTurn());
+        newEntity.setLoadedThisTurn(oldEntity.wasLoadedThisTurn());
+        newEntity.moved = oldEntity.moved;
+        newEntity.movedLastRound = oldEntity.movedLastRound;
+        newEntity.delta_distance = oldEntity.delta_distance;
+        newEntity.mpUsed = oldEntity.mpUsed;
     }
 
     /**

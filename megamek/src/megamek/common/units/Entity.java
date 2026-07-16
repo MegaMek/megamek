@@ -7672,6 +7672,11 @@ public abstract class Entity extends TurnOrdered
             crew.incrementFatigueCount();
         }
 
+        // count down any temporary gamemaster skill modifiers, which clear themselves when their time runs out
+        if (null != crew) {
+            crew.getSkillModifiers().newRound();
+        }
+
         // Update the inferno tracker.
         infernos.newRound(roundNumber);
         if (taserShutdownRounds > 0) {

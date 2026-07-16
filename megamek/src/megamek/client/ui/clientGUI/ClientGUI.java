@@ -183,6 +183,7 @@ import megamek.common.util.AddBotUtil;
 import megamek.common.util.Distractable;
 import megamek.common.util.StringUtil;
 import megamek.common.voting.Poll;
+import megamek.common.voting.PollStatus;
 import megamek.common.weapons.handlers.WeaponOrderHandler;
 import megamek.logging.MMLogger;
 
@@ -605,6 +606,7 @@ public class ClientGUI extends AbstractClientGUI
             case WARNING -> ToastLevel.WARNING;
             case ERROR -> ToastLevel.ERROR;
             case INFO -> ToastLevel.INFO;
+            case GAMEMASTER -> ToastLevel.GAMEMASTER;
         };
     }
 
@@ -816,6 +818,9 @@ public class ClientGUI extends AbstractClientGUI
                 gameMasterVoteDialog.dispose();
                 gameMasterVoteDialog = null;
             }
+            if (poll.getStatus() == PollStatus.PASSED) {
+                announceNewGameMaster(poll.getRequesterId());
+            }
             return;
         }
         if (gameMasterVoteDialog == null) {
@@ -823,6 +828,24 @@ public class ClientGUI extends AbstractClientGUI
         }
         gameMasterVoteDialog.update(poll);
         gameMasterVoteDialog.setVisible(true);
+    }
+
+    /**
+     * Tells every player who won a passed Game Master vote and how the role is taken away again: the host turns off
+     * Allow Game Master in the game options. Shown after the vote dialog closes, so the outcome is not just a line of
+     * chat that scrolls away. Queued on the event thread so it does not block the game event that brought the result.
+     *
+     * @param gameMasterId the id of the player the vote made Game Master
+     */
+    private void announceNewGameMaster(int gameMasterId) {
+        Player gameMaster = client.getGame().getPlayer(gameMasterId);
+        String gameMasterName = (gameMaster != null)
+              ? gameMaster.getName()
+              : Messages.getString("GameMasterVoteDialog.unknownPlayer");
+        SwingUtilities.invokeLater(() -> JOptionPane.showMessageDialog(frame,
+              Messages.getString("GameMasterVoteDialog.passed.message", gameMasterName),
+              Messages.getString("GameMasterVoteDialog.passed.title"),
+              JOptionPane.INFORMATION_MESSAGE));
     }
 
     private void updateFrameTitle() {

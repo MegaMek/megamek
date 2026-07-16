@@ -39,6 +39,8 @@ import java.awt.Font;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Insets;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
 import java.io.Serial;
 import java.util.Map;
 import javax.swing.BorderFactory;
@@ -50,15 +52,20 @@ import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JRadioButton;
+import javax.swing.WindowConstants;
 
+import megamek.MegaMek;
 import megamek.client.Client;
 import megamek.client.ui.Messages;
 import megamek.client.ui.clientGUI.GUIPreferences;
+import megamek.client.ui.preferences.JWindowPreference;
+import megamek.client.ui.preferences.PreferencesNode;
 import megamek.client.ui.util.UIUtil;
 import megamek.common.Player;
 import megamek.common.voting.Poll;
 import megamek.common.voting.VoteChoice;
 import megamek.common.voting.VoteThreshold;
+import megamek.logging.MMLogger;
 
 /**
  * The poll a Game Master vote runs in: every voter sees the same dialog with each voter's ballot as the server last
@@ -70,6 +77,11 @@ public class GameMasterVoteDialog extends JDialog {
 
     @Serial
     private static final long serialVersionUID = 1L;
+
+    private static final MMLogger LOGGER = MMLogger.create(GameMasterVoteDialog.class);
+
+    /** The name the dialog stores its remembered size and position under. */
+    private static final String DIALOG_NAME = "GameMasterVoteDialog";
 
     /** The chat commands the dialog votes and cancels through, so the rules stay with the server commands. */
     private static final String ALLOW_COMMAND = "/allowGM";
@@ -90,12 +102,54 @@ public class GameMasterVoteDialog extends JDialog {
     private final JButton butSend = new JButton(Messages.getString("GameMasterVoteDialog.send"));
     private final JButton butCancel = new JButton(Messages.getString("GameMasterVoteDialog.cancel"));
 
+    /** Whether the local player is the one who called the vote; only the requester may withdraw it. */
+    private boolean localPlayerIsRequester = false;
+
     public GameMasterVoteDialog(JFrame parent, Client client) {
         // the game goes on while the vote runs, so the dialog must not block it
         super(parent, Messages.getString("GameMasterVoteDialog.title"), false);
         this.client = client;
         initComponents();
+        // Closing the window is handled by hand so the requester's close withdraws the vote instead of leaving it
+        // running on the server with no dialog to end it.
+        setDefaultCloseOperation(WindowConstants.DO_NOTHING_ON_CLOSE);
+        addWindowListener(new WindowAdapter() {
+            @Override
+            public void windowClosing(WindowEvent event) {
+                onWindowClosing();
+            }
+        });
+        setMinimumSize(UIUtil.scaleForGUI(300, 150));
+        // Center on the parent as a first-time default; setPreferences then restores a remembered spot over it.
         setLocationRelativeTo(parent);
+        setPreferences();
+    }
+
+    /**
+     * Handles the window's close button. The requester withdraws the vote, so it does not sit running on the server
+     * with no dialog left to end it; any other voter just hides their copy, which returns on the next ballot.
+     */
+    private void onWindowClosing() {
+        if (localPlayerIsRequester) {
+            client.sendChat(CANCEL_COMMAND);
+        } else {
+            setVisible(false);
+        }
+    }
+
+    /**
+     * Restores the size and position the dialog was last left at, and keeps them up to date as it is moved and
+     * resized. A remembered spot wins over the first-time centering above.
+     */
+    private void setPreferences() {
+        try {
+            setName(DIALOG_NAME);
+            PreferencesNode preferences = MegaMek.getMMPreferences().forClass(GameMasterVoteDialog.class);
+            preferences.manage(new JWindowPreference(this));
+        } catch (Exception ex) {
+            // a dialog that cannot remember where it was is still perfectly usable
+            LOGGER.error(ex, "Could not set the preferences of the game master vote dialog");
+        }
     }
 
     private void initComponents() {
@@ -168,7 +222,7 @@ public class GameMasterVoteDialog extends JDialog {
         }
 
         int localPlayerId = client.getLocalPlayer().getId();
-        boolean localPlayerIsRequester = localPlayerId == poll.getRequesterId();
+        localPlayerIsRequester = localPlayerId == poll.getRequesterId();
         boolean localPlayerVotes = poll.hasVoter(localPlayerId) && !localPlayerIsRequester;
         radioYes.setVisible(localPlayerVotes);
         radioNo.setVisible(localPlayerVotes);
@@ -176,7 +230,6 @@ public class GameMasterVoteDialog extends JDialog {
         butCancel.setVisible(localPlayerIsRequester);
 
         pack();
-        setMinimumSize(UIUtil.scaleForGUI(300, 150));
         repaint();
     }
 

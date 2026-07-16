@@ -763,7 +763,8 @@ public class MapMenu extends JPopupMenu {
               new FirestormCommand(null, null),
               new NoFiresCommand(null, null),
               new OrbitalBombardmentCommand(null, null),
-              new RemoveSmokeCommand(null, null)).forEach(cmd -> {
+              new RemoveSmokeCommand(null, null),
+              new SkillModifierCommand(null, null)).forEach(cmd -> {
             JMenuItem item = new JMenuItem(cmd.getLongName());
             item.addActionListener(evt -> new ClientCommandDialog(gui.getFrame(), gui, cmd, coords).setVisible(true));
             menu.add(item);

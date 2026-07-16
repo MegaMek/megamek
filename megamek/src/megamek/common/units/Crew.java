@@ -1,6 +1,6 @@
 /*
  * Copyright (C) 2000-2004 Ben Mazur (bmazur@sev.org)
- * Copyright (C) 2002-2025 The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2002-2026 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -101,6 +101,10 @@ public class Crew implements Serializable {
     // also need to track turns for fatigue by pilot because some may have later
     // deployment
     private int fatigueTurnCount;
+
+    // A gamemaster-set temporary change to the crew's effective skills; applied in the effective-skill
+    // getters and never written into the skill arrays, so it reverses itself completely when it expires.
+    private TemporarySkillModifiers skillModifiers = new TemporarySkillModifiers();
 
     // region RPG Skills
     // MW3e uses 3 different gunnery skills
@@ -423,8 +427,26 @@ public class Crew implements Serializable {
         return crewType.getCrewSlots();
     }
 
+    /**
+     * The gamemaster-set temporary change to this crew's effective skills. Always present; when no change is
+     * active it leaves every skill untouched.
+     *
+     * @return the crew's temporary skill modifiers, never {@code null}
+     */
+    public TemporarySkillModifiers getSkillModifiers() {
+        // Saves from before the modifiers existed load with the field null, so it is filled in lazily.
+        if (skillModifiers == null) {
+            skillModifiers = new TemporarySkillModifiers();
+        }
+        return skillModifiers;
+    }
+
+    // The positionless skill getters below return the EFFECTIVE skill - the stored skill with any temporary
+    // gamemaster modifier applied - and are what combat, PSRs and the bot read. The per-slot (pos) getters
+    // return the raw stored skill and are what unit-list export and lobby customization read.
+
     public int getGunnery() {
-        return gunnery[gunnerPos];
+        return getSkillModifiers().adjustGunnery(gunnery[gunnerPos]);
     }
 
     public int getGunnery(int pos) {
@@ -432,7 +454,7 @@ public class Crew implements Serializable {
     }
 
     public int getGunneryL() {
-        return gunneryL[gunnerPos];
+        return getSkillModifiers().adjustGunnery(gunneryL[gunnerPos]);
     }
 
     public int getGunneryL(int pos) {
@@ -440,7 +462,7 @@ public class Crew implements Serializable {
     }
 
     public int getGunneryM() {
-        return gunneryM[gunnerPos];
+        return getSkillModifiers().adjustGunnery(gunneryM[gunnerPos]);
     }
 
     public int getGunneryM(int pos) {
@@ -448,7 +470,7 @@ public class Crew implements Serializable {
     }
 
     public int getGunneryB() {
-        return gunneryB[gunnerPos];
+        return getSkillModifiers().adjustGunnery(gunneryB[gunnerPos]);
     }
 
     public int getGunneryB(int pos) {
@@ -456,7 +478,7 @@ public class Crew implements Serializable {
     }
 
     public int getArtillery() {
-        return artillery[gunnerPos];
+        return getSkillModifiers().adjustGunnery(artillery[gunnerPos]);
     }
 
     public int getArtillery(int pos) {
@@ -464,7 +486,7 @@ public class Crew implements Serializable {
     }
 
     public int getPiloting() {
-        return piloting[pilotPos];
+        return getSkillModifiers().adjustPiloting(piloting[pilotPos]);
     }
 
     public int getPiloting(int pos) {
@@ -475,7 +497,7 @@ public class Crew implements Serializable {
      * LAMs use a different skill in AirMEK mode depending on whether they are grounded or airborne.
      */
     public int getPiloting(EntityMovementType moveType) {
-        return piloting[pilotPos];
+        return getSkillModifiers().adjustPiloting(piloting[pilotPos]);
     }
 
     /**

@@ -4659,9 +4659,12 @@ public class Princess extends BotClient {
     	if (getGame().getOptions().booleanOption(OptionsConstants.ADVANCED_HIDDEN_UNITS)) {
     		Entity target = getGame().getEntity(movedEntityID);
     		
-    		// if the target is destroyed/abandoned/"broken", we don't bother considering it
-    		if (target.isDestroyed() || target.isAbandoned() ||
-    				getHonorUtil().isEnemyBroken(movedEntityID, target.getOwnerId(), getForcedWithdrawal())) {
+    		// if the target is not hostile/destroyed/abandoned/"broken", we don't bother considering it
+    		// also, don't bother if the target can still move after this update
+    		if (target == null || target.isDestroyed() || target.isAbandoned() 
+    				|| (target.turnWasInterrupted() && !target.isDone())
+    				|| !target.getOwner().isEnemyOf(getLocalPlayer())
+    				|| getHonorUtil().isEnemyBroken(movedEntityID, target.getOwnerId(), getForcedWithdrawal())) {
     			return;
     		}
     		
@@ -4675,6 +4678,7 @@ public class Princess extends BotClient {
                 	double maxDamage = FireControl.getMaxDamageAtRange(shooter, 
                 			target.getPosition().distance(shooter.getPosition()), false, false);
                 	
+                	// if we're not going to do any damage, don't reveal
                 	if (maxDamage <= 0) {
                 		continue;
                 	}
@@ -4683,7 +4687,10 @@ public class Princess extends BotClient {
                 	
                 	double percentage = firingPlan.getExpectedDamage() / maxDamage;
                 	
-                	if ((1 - percentage) > (getBehaviorSettings().getHyperAggressionValue() / 10)) {
+                	// if the expected damage (% of max possible damage at that range)
+                	// is higher than our aggression value (e.g. aggression 7 means we tolerate 30%)
+                	// then reveal
+                	if (percentage > (1.0 - (getBehaviorSettings().getHyperAggressionValue() / 10.0))) {
                 		sendActivateHidden(shooter.getId(), GamePhase.FIRING);
                 	}
                 }

@@ -2959,6 +2959,10 @@ public class FireControl {
             // still better than just discounting them completely.
             if (weaponDamage == WeaponType.DAMAGE_BY_CLUSTER_TABLE || weaponType.hasFlag(WeaponType.F_ARTILLERY)) {
                 weaponDamage = weaponType.getRackSize();
+            } else if (weaponDamage == WeaponType.DAMAGE_VARIABLE && shooter.isConventionalInfantry()) {
+            	ConvInfantry infantryShooter = (ConvInfantry) shooter;
+            	
+            	weaponDamage = (int) Math.round(infantryShooter.getDamagePerTrooper() * infantryShooter.getShootingStrength());
             }
 
             if ((RangeType.RANGE_OUT != bestBracket) && (0 < weaponDamage)) {

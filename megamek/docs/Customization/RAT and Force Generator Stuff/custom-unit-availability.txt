@@ -17,8 +17,62 @@ they generate (see "Overriding canon units" near the end).
 This only affects units you have written availability into. Every other unit behaves exactly as
 before.
 
+There are two ways to set availability: the Availability tab in MegaMekLab, or by editing the file
+by hand. The tab is the easy way and is covered first. Both write the same lines to the same file,
+so you can use whichever you like and switch between them.
 
-Quick start
+
+The MegaMekLab Availability tab
+
+MegaMekLab has an Availability tab in the unit editor, next to Quirks. It is shown by default; if
+you do not use it you can hide it under Options → General, "Show the Force Generator Availability
+tab". A change to that setting takes effect on the next unit you open.
+
+Do this tab last. Build the unit and set its introduction year on the first tab first, because the
+tab uses that year to decide which factions to offer.
+
+The order that works:
+
+1. Click "+ Add factions..." A dialog opens. It lists the factions that exist in the unit's
+   introduction year, which is a short list, not all four hundred. Type in the filter box to narrow
+   it. Tick the factions you want and click Add.
+
+   - "Show minor factions" adds the smaller states to the list.
+   - "Show factions from later eras" adds factions that do not exist yet at the unit's intro year
+     but appear later, such as the Republic of the Sphere. Use this with a year range so the unit
+     only reaches them once they exist.
+   - The "Groups" box at the top holds the four umbrella keys (Everybody, All Inner Sphere, All
+     Clans, All Periphery). Ticking one reaches every faction in that group at once.
+
+2. Select a faction row and set how common the unit is with the slider. It runs 0 to 10 and says
+   the number in words (rare, uncommon, common, and so on). Below it the tab names a few canon
+   designs that are about as common at that number, so you have something real to compare against.
+
+3. Set the years if you want to. "From" and "To" limit the faction to a range of years. Tick
+   "never stops" to leave the end open. Leaving "From" at the unit's intro year means "from when the
+   unit first exists".
+
+   To give one faction a different availability early and late, add the SAME faction again and give
+   the second row a different year range. For example, the Federated Suns common from 3050 to 3060,
+   then rare from 3061 on: two rows, both Federated Suns, different ranges and numbers.
+
+4. Tick any Mission roles that apply. Only the roles that make sense for this unit type are shown.
+
+Two shortcuts:
+
+- "Copy numbers from a unit..." fills the table from a canon design you pick. Start from something
+  whose commonness you already know, then adjust.
+- The red text at the top warns you about problems: a faction that does not exist in the unit's
+  year, a year range that does not line up with the game's eras, and so on.
+
+If the unit is a canon unit, the tab warns you in red that your numbers will REPLACE the canon
+availability for the factions you list. See "Overriding canon units" below.
+
+The tab writes the same file lines described in the rest of this document, so read on if you want to
+know exactly what it produces or you would rather edit the file by hand.
+
+
+Quick start (editing the file by hand)
 
 1. Put your custom unit in your user directory. Set that directory in MegaMek under
    Client Settings → User Files Directory. This is the same folder MegaMek already uses to find

@@ -266,6 +266,19 @@ class ForceGeneratorAvailabilityTest {
         assertRoundTrip("FS:5,LA:3");
         assertRoundTrip("3067-3085 FS:7,LA:6");
         assertRoundTrip("3067- FS:7");
+        // Open start: a row that begins at the unit's intro year but ends on a specific year. Dropping the end here is
+        // what made the "never stops" box re-check itself on reload.
+        assertRoundTrip("-3060 FS:4");
+    }
+
+    @Test
+    void anOpenStartRangeKeepsItsEndYearThroughTheFile() {
+        ForceGeneratorAvailability availability =
+              new ForceGeneratorAvailability(UNSPECIFIED_YEAR, 3060, "FS:4");
+
+        assertEquals("-3060 FS:4", availability.toFileFormat(),
+              "The end year must survive being written out, or the range reads back as never-ending");
+        assertEquals(3060, ForceGeneratorAvailability.parse(availability.toFileFormat()).endYear());
     }
 
     private static void assertRoundTrip(String line) {

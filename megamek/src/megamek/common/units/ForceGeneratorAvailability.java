@@ -205,10 +205,14 @@ public record ForceGeneratorAvailability(int startYear, int endYear, String avai
      * @return the file representation of this entry
      */
     public String toFileFormat() {
-        if (startYear == UNSPECIFIED_YEAR) {
+        // No range at all: just the codes.
+        if ((startYear == UNSPECIFIED_YEAR) && (endYear == UNSPECIFIED_YEAR)) {
             return availabilityCodes;
         }
+        // Either end may be open. "3050-" starts in 3050 with no end; "-3060" runs from the intro year through 3060.
+        // Leaving the start off here is what previously dropped the end year, which read back as "never stops".
+        String startYearText = (startYear == UNSPECIFIED_YEAR) ? "" : String.valueOf(startYear);
         String endYearText = (endYear == UNSPECIFIED_YEAR) ? "" : String.valueOf(endYear);
-        return startYear + "-" + endYearText + " " + availabilityCodes;
+        return startYearText + "-" + endYearText + " " + availabilityCodes;
     }
 }

@@ -340,6 +340,24 @@ public class FactionRecord {
     }
 
     /**
+     * Whether the faction is active in the given year or becomes active in some later year. Used to offer a unit
+     * factions that do not exist yet at its introduction date but will field it later, such as the Republic of the
+     * Sphere for a unit built before 3081.
+     *
+     * @param year the earliest year of interest
+     *
+     * @return {@code true} if the faction is active at or after that year
+     */
+    public boolean isActiveInOrAfterYear(int year) {
+        for (DateRange dateRange : yearsActive) {
+            if ((dateRange.end == null) || (dateRange.end >= year)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    /**
      * Sets one or more ranges of years the faction is active.
      *
      * @param formattedRange The range of years the faction is active, as YYYY-YYYY. The start or end year can be

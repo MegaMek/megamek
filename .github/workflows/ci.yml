@@ -20,10 +20,26 @@ jobs:
       fail-fast: false
 
     steps:
+      - name: Find the Right Data Branch
+        id: find_data
+        shell: bash {0}
+        run: |
+          if git ls-remote --exit-code --heads \
+            ${{ github.event.pull_request.head.repo.owner.html_url }}/mm-data.git \
+            ${{ github.event.pull_request.head.ref }} > /dev/null 2>&1
+          then
+            echo "dataRepo=${{ github.event.pull_request.head.repo.owner.login }}/mm-data" >> $GITHUB_OUTPUT
+            echo "dataBranch=${{ github.event.pull_request.head.ref }}" >> $GITHUB_OUTPUT
+          else
+            echo "dataRepo=MegaMek/mm-data" >> $GITHUB_OUTPUT
+            echo "dataBranch=main" >> $GITHUB_OUTPUT
+          fi
+
       - name: Checkout Data Repo
         uses: actions/checkout@v7
         with:
-          repository: megamek/mm-data
+          repository: ${{ steps.find_data.outputs.dataRepo }}
+          ref: ${{ steps.find_data.outputs.dataBranch }}
           path: mm-data
 
       - name: "Check out MegaMek"

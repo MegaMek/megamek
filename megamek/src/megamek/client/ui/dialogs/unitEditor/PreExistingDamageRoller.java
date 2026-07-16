@@ -167,6 +167,17 @@ public class PreExistingDamageRoller {
                 setSpinnerToZero(crewHits);
             }
         }
+        // a factory-new unit carries no gamemaster skill modifiers either; every delta at zero clears them on Okay,
+        // and without this the sweep above would leave the modifier spinners at their maximum instead
+        setSpinnerToZero(controls.spnGunneryModifier);
+        setSpinnerToZero(controls.spnPilotingModifier);
+        setSpinnerToZero(controls.spnInitiativeModifier);
+        if (null != controls.spnModifierRounds) {
+            controls.spnModifierRounds.setValue(UnitDamagePanelBuilder.DEFAULT_MODIFIER_ROUNDS);
+        }
+        if (null != controls.chkModifierPermanent) {
+            controls.chkModifierPermanent.setSelected(false);
+        }
     }
 
     private void restoreSpinnersToMaximum(Container container) {

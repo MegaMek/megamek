@@ -420,6 +420,7 @@ public class UnitDamageApplier {
         }
 
         applyCrewHits();
+        applySkillModifiers();
         applyHeat();
         applyAmmoShots();
         applyStatus();
@@ -477,6 +478,29 @@ public class UnitDamageApplier {
             crew.setKoThisRound(false, slot);
             crew.setHits((Integer) controls.spnCrewHits[slot].getValue(), slot);
         }
+    }
+
+    /**
+     * Writes the gamemaster's temporary skill modifiers back to the crew, through the same state object the
+     * /skillMod command sets. Every delta at zero clears them, which is also how a gamemaster takes a modifier
+     * back before it runs out.
+     */
+    private void applySkillModifiers() {
+        Crew crew = entity.getCrew();
+        if ((null == crew) || (null == controls.spnGunneryModifier)) {
+            return;
+        }
+        int gunneryDelta = (Integer) controls.spnGunneryModifier.getValue();
+        int pilotingDelta = (Integer) controls.spnPilotingModifier.getValue();
+        int initiativeDelta = (Integer) controls.spnInitiativeModifier.getValue();
+        if ((gunneryDelta == 0) && (pilotingDelta == 0) && (initiativeDelta == 0)) {
+            crew.getSkillModifiers().clear();
+            return;
+        }
+        int rounds = controls.chkModifierPermanent.isSelected()
+              ? TemporarySkillModifiers.PERMANENT
+              : (Integer) controls.spnModifierRounds.getValue();
+        crew.getSkillModifiers().set(gunneryDelta, pilotingDelta, initiativeDelta, rounds);
     }
 
     /**

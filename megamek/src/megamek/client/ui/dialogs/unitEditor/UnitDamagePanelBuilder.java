@@ -86,10 +86,17 @@ public class UnitDamagePanelBuilder {
     /** The most rows a panel column may hold before the next rows wrap into a new column beside it. */
     private static final int MAX_ROWS_PER_COLUMN = 20;
 
+    /** The rounds a fresh skill modifier is offered with, before the gamemaster sets a duration of their own. */
+    public static final int DEFAULT_MODIFIER_ROUNDS = 3;
+    /** The farthest a skill modifier can move a skill either way, matching the /skillMod command. */
+    private static final int MAX_SKILL_DELTA = 8;
+    /** The longest a timed skill modifier can last, matching the /skillMod command. */
+    private static final int MAX_MODIFIER_ROUNDS = 100;
+
     private final Entity entity;
     private final UnitDamageControls controls;
-    /** Whether the ammo bins can be refilled here, which is a gamemaster's business and MegaMek's alone. */
-    private final boolean editAmmo;
+    /** Whether the gamemaster-only controls are offered: refilling ammo bins and temporary skill modifiers. */
+    private final boolean offerGameMasterTools;
 
     public UnitDamagePanelBuilder(Entity entity, UnitDamageControls controls) {
         this(entity, controls, false);
@@ -98,14 +105,14 @@ public class UnitDamagePanelBuilder {
     /**
      * @param entity   the unit to build the controls for
      * @param controls the controls to fill in
-     * @param editAmmo whether an ammo bin's shots can be set. This is offered to a gamemaster in MegaMek only:
-     *                 MekHQ keeps its own count of what is in a bin, as campaign stock, and would be talking about
-     *                 a different thing.
+     * @param offerGameMasterTools whether the gamemaster-only controls are offered: setting an ammo bin's shots
+     *                 and temporary skill modifiers. These belong to a gamemaster in MegaMek only: MekHQ keeps its
+     *                 own count of what is in a bin, as campaign stock, and has no game to run modifiers in.
      */
-    public UnitDamagePanelBuilder(Entity entity, UnitDamageControls controls, boolean editAmmo) {
+    public UnitDamagePanelBuilder(Entity entity, UnitDamageControls controls, boolean offerGameMasterTools) {
         this.entity = entity;
         this.controls = controls;
-        this.editAmmo = editAmmo;
+        this.offerGameMasterTools = offerGameMasterTools;
     }
 
     /** Builds every control of the editor for the unit, filling in the controls this builder was given. */
@@ -184,8 +191,65 @@ public class UnitDamagePanelBuilder {
         }
 
         initCrewHits();
+        initSkillModifiers(targetPanel(crewLocation()));
         initHeat();
         initStatus();
+    }
+
+    /**
+     * Adds the gamemaster's temporary skill modifier controls: a delta to gunnery, piloting and the unit's
+     * individual initiative roll, and how long they last. They are offered only in a running game - in the lobby
+     * the crew's real skills are edited directly - and are applied through {@link TemporarySkillModifiers}, so the
+     * crew's stored skills are never touched and the change reverses itself when it expires.
+     */
+    private void initSkillModifiers(JPanel panel) {
+        Crew crew = entity.getCrew();
+        boolean inPlay = (entity.getGame() != null) && !entity.getGame().getPhase().isLounge();
+        if (!offerGameMasterTools || !inPlay || (crew == null) || (crew.getSlotCount() < 1)) {
+            return;
+        }
+        TemporarySkillModifiers modifiers = crew.getSkillModifiers();
+
+        controls.spnGunneryModifier = skillDeltaSpinner(modifiers.getGunneryDelta(),
+              "UnitEditorDialog.skillModifier.gunnery.tooltip");
+        addLabeledRow(panel, Messages.getString("UnitEditorDialog.skillModifier.gunnery"),
+              controls.spnGunneryModifier);
+
+        controls.spnPilotingModifier = skillDeltaSpinner(modifiers.getPilotingDelta(),
+              "UnitEditorDialog.skillModifier.piloting.tooltip");
+        addLabeledRow(panel, Messages.getString("UnitEditorDialog.skillModifier.piloting"),
+              controls.spnPilotingModifier);
+
+        controls.spnInitiativeModifier = skillDeltaSpinner(modifiers.getInitiativeDelta(),
+              "UnitEditorDialog.skillModifier.initiative.tooltip");
+        addLabeledRow(panel, Messages.getString("UnitEditorDialog.skillModifier.initiative"),
+              controls.spnInitiativeModifier);
+
+        int roundsRemaining = modifiers.getRoundsRemaining();
+        boolean permanent = roundsRemaining == TemporarySkillModifiers.PERMANENT;
+        int rounds = (roundsRemaining > 0) ? roundsRemaining : DEFAULT_MODIFIER_ROUNDS;
+        controls.spnModifierRounds = new JSpinner(new SpinnerNumberModel(rounds, 1, MAX_MODIFIER_ROUNDS, 1));
+        controls.spnModifierRounds.setToolTipText(Messages.getString("UnitEditorDialog.skillModifier.rounds.tooltip"));
+        controls.spnModifierRounds.setEnabled(!permanent);
+        controls.chkModifierPermanent = new JCheckBox(Messages.getString("UnitEditorDialog.skillModifier.permanent"),
+              permanent);
+        controls.chkModifierPermanent.setToolTipText(
+              Messages.getString("UnitEditorDialog.skillModifier.permanent.tooltip"));
+        controls.chkModifierPermanent.addItemListener(event ->
+              controls.spnModifierRounds.setEnabled(!controls.chkModifierPermanent.isSelected()));
+
+        JPanel durationControl = new JPanel(new FlowLayout(FlowLayout.LEFT, 5, 0));
+        durationControl.add(controls.spnModifierRounds);
+        durationControl.add(new JLabel(Messages.getString("UnitEditorDialog.skillModifier.roundsLabel")));
+        durationControl.add(controls.chkModifierPermanent);
+        addLabeledRow(panel, Messages.getString("UnitEditorDialog.skillModifier.duration"), durationControl);
+    }
+
+    /** A spinner for one skill delta, starting at what the crew already carries so an open edit reads back. */
+    private JSpinner skillDeltaSpinner(int delta, String tooltipKey) {
+        JSpinner spinner = new JSpinner(new SpinnerNumberModel(delta, -MAX_SKILL_DELTA, MAX_SKILL_DELTA, 1));
+        spinner.setToolTipText(Messages.getString(tooltipKey));
+        return spinner;
     }
 
     /**
@@ -312,6 +376,7 @@ public class UnitDamagePanelBuilder {
               1));
         JPanel panel = createTitledPanel(new JLabel(Messages.getString("UnitEditorDialog.troopersLeft")));
         addLabeledRow(panel, Messages.getString("UnitEditorDialog.menLeft"), controls.spnInternal[0]);
+        initSkillModifiers(panel);
         return panel;
     }
 
@@ -450,7 +515,7 @@ public class UnitDamagePanelBuilder {
             }
 
             JComponent control = crit;
-            if (editAmmo && (mounted instanceof AmmoMounted ammoBin)) {
+            if (offerGameMasterTools && (mounted instanceof AmmoMounted ammoBin)) {
                 control = ammoControl(equipmentNumber, ammoBin, crit);
             }
             controls.addCritOfLocation(mounted.getLocation(), crit);

@@ -87,6 +87,15 @@ public class UnitDamageControls {
     /** The shots left in each ammo bin, by its equipment number. Only a gamemaster edits these. */
     public final Map<Integer, JSpinner> ammoShots = new HashMap<>();
 
+    /* The gamemaster's temporary skill modifiers; null when the editor is not the gamemaster's, or out of game. */
+    public JSpinner spnGunneryModifier;
+    public JSpinner spnPilotingModifier;
+    public JSpinner spnInitiativeModifier;
+    /** How many rounds the modifiers last; disabled while they are permanent. */
+    public JSpinner spnModifierRounds;
+    /** Whether the modifiers last until cleared instead of counting down. */
+    public JCheckBox chkModifierPermanent;
+
     /** The crits of each piece of equipment, by its equipment number. */
     public Map<Integer, CheckCritPanel> equipCrits = new HashMap<>();
 

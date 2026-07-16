@@ -56,6 +56,7 @@ import megamek.client.Client;
 import megamek.client.ui.Messages;
 import megamek.client.ui.dialogs.unitDisplay.ArmorPanel;
 import megamek.client.ui.dialogs.unitEditor.CheckCritPanel;
+import megamek.client.ui.dialogs.unitEditor.UnitDamagePanelBuilder;
 import megamek.client.ui.widget.picmap.PMSimplePolygonArea;
 import megamek.common.enums.GamePhase;
 import megamek.common.equipment.AmmoMounted;
@@ -64,6 +65,7 @@ import megamek.common.game.Game;
 import megamek.common.units.Crew;
 import megamek.common.units.Entity;
 import megamek.common.units.Mek;
+import megamek.common.units.TemporarySkillModifiers;
 import megamek.testUtilities.MMTestUtilities;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
@@ -365,6 +367,92 @@ class UnitEditorDialogTest {
 
         assertEquals(12, entity.heat, "the heat was not applied");
         dialog.dispose();
+    }
+
+    /** A gamemaster can hand a crew a temporary skill modifier, applied to the crew's effective skills on Okay. */
+    @Test
+    void skillModifiersAreAppliedToTheCrew() {
+        Entity entity = entityInGame();
+        int baseGunnery = entity.getCrew().getGunnery();
+
+        UnitEditorDialog dialog = new UnitEditorDialog(new JFrame(), entity, true);
+        dialog.controlsForTesting().spnGunneryModifier.setValue(1);
+        dialog.controlsForTesting().spnModifierRounds.setValue(3);
+        clickOkay(dialog);
+
+        assertEquals(baseGunnery + 1, entity.getCrew().getGunnery(), "the gunnery modifier was not applied");
+        assertEquals(3, entity.getCrew().getSkillModifiers().getRoundsRemaining(), "the duration was not applied");
+        dialog.dispose();
+    }
+
+    /** The controls read an active modifier back, and setting every delta to zero takes it off the crew. */
+    @Test
+    void zeroedModifiersClearAnActiveModifier() {
+        Entity entity = entityInGame();
+        entity.getCrew().getSkillModifiers().set(2, 0, 0, TemporarySkillModifiers.PERMANENT);
+
+        UnitEditorDialog dialog = new UnitEditorDialog(new JFrame(), entity, true);
+        assertEquals(2, dialog.controlsForTesting().spnGunneryModifier.getValue(),
+              "the active modifier was not read from the crew");
+        assertTrue(dialog.controlsForTesting().chkModifierPermanent.isSelected(),
+              "a permanent modifier was not read back as permanent");
+        dialog.controlsForTesting().spnGunneryModifier.setValue(0);
+        clickOkay(dialog);
+
+        assertFalse(entity.getCrew().getSkillModifiers().isActive(), "the modifier was not cleared");
+        dialog.dispose();
+    }
+
+    /** In the lobby the crew's real skills are edited directly, so the modifier controls are not offered there. */
+    @Test
+    void skillModifiersAreOnlyOfferedInGame() {
+        Entity entity = MMTestUtilities.getEntityForUnitTesting("Atlas AS7-D", false);
+        assertNotNull(entity);
+        Game game = new Game();
+        game.addEntity(entity);
+        game.setPhase(GamePhase.LOUNGE);
+
+        UnitEditorDialog dialog = new UnitEditorDialog(new JFrame(), entity, true);
+
+        assertNull(dialog.controlsForTesting().spnGunneryModifier,
+              "the skill modifier controls were offered in the lobby");
+        dialog.dispose();
+    }
+
+    /**
+     * Restore Unit sweeps every spinner to its maximum to repair the unit, which would turn the skill modifier
+     * spinners into a +8 skill penalty. It must clear the modifier controls instead.
+     */
+    @Test
+    void restoreUnitClearsTheSkillModifierControls() {
+        Entity entity = entityInGame();
+
+        UnitEditorDialog dialog = new UnitEditorDialog(new JFrame(), entity, true);
+        dialog.controlsForTesting().spnGunneryModifier.setValue(2);
+        dialog.controlsForTesting().chkModifierPermanent.setSelected(true);
+        JButton restore = findButton(dialog.getContentPane(),
+              Messages.getString("UnitEditorDialog.preExistingDamage.reset"));
+        assertNotNull(restore, "the dialog has no Restore Unit button");
+        restore.doClick();
+
+        assertEquals(0, dialog.controlsForTesting().spnGunneryModifier.getValue(),
+              "Restore Unit left a skill modifier behind");
+        assertFalse(dialog.controlsForTesting().chkModifierPermanent.isSelected(),
+              "Restore Unit left the modifier permanent");
+        assertEquals(UnitDamagePanelBuilder.DEFAULT_MODIFIER_ROUNDS,
+              dialog.controlsForTesting().spnModifierRounds.getValue(),
+              "Restore Unit swept the duration to its maximum");
+        dialog.dispose();
+    }
+
+    /** A unit in a game that has started, which is when the gamemaster's skill modifiers are offered. */
+    private static Entity entityInGame() {
+        Entity entity = MMTestUtilities.getEntityForUnitTesting("Atlas AS7-D", false);
+        assertNotNull(entity);
+        Game game = new Game();
+        game.addEntity(entity);
+        game.setPhase(GamePhase.MOVEMENT);
+        return entity;
     }
 
     /** Presses the dialog's Okay button, which is what applies the edits to the unit. */

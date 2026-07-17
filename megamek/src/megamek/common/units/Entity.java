@@ -10873,33 +10873,56 @@ public abstract class Entity extends TurnOrdered
     }
 
     /**
-     * Returns true when this unit can flee from its current position. This requires the unit to have mobility and be in
-     * control as well as its position being eligible for fleeing. When no special flee area is set by a scenario, the
-     * latter will typically be true when the unit is at the edge of its board. The position of units with a null
-     * position as well as offboard units are considered to be eligible for fleeing.
+     * Returns true when this unit can flee from its current position in its current state. 
+     * This requires the unit to have mobility and be in control as well as the position being eligible for fleeing.
+     * When no special flee area is set by a scenario, the latter will typically be true when the position is at the edge of its board.
+     * A null position as well as offboard units are considered to be eligible for fleeing.
      *
-     * @return True when the unit can flee given its position and status
+     * @return True when the unit can flee from the given position, given its current status
      */
-    public final boolean canFlee() {
-        return canFlee(position);
+
+    public boolean canFlee() {
+        return (canFleeInState() && canFleeFrom(position));
     }
 
     /**
-     * Returns true when this unit can flee from the given position. This requires the unit to have mobility and be in
-     * control as well as the position being eligible for fleeing. When no special flee area is set by a scenario, the
-     * latter will typically be true when the position is at the edge of its board. A null position as well as offboard
-     * units are considered to be eligible for fleeing.
+     * Returns true when this unit can flee from the given position in its current state. 
+     * This requires the unit to have mobility and be in control as well as the position being eligible for fleeing.
+     * When no special flee area is set by a scenario, the latter will typically be true when the position is at the edge of its board.
+     * A null position as well as offboard units are considered to be eligible for fleeing.
      *
      * @return True when the unit can flee from the given position, given its current status
      */
     public boolean canFlee(@Nullable Coords position) {
-        return ((getWalkMP() > 0) || (this instanceof Infantry)) &&
-              !isProne() &&
+        return (canFleeInState() && canFleeFrom(position));
+    }
+
+    /**
+     * Returns true when this unit can flee in its current state.
+     * This requires the unit to have mobility and be in control
+     *
+     * @return True when the unit can flee given its status
+     */
+    public final boolean canFleeInState() {
+        return (((getWalkMP() > 0) || (this instanceof Infantry)) &&
+              !isProne()  &&
               !isStuck() &&
               !isShutDown() &&
               !getCrew().isUnconscious() &&
-              (getSwarmTargetId() == NONE) &&
-              (isOffBoard() || (position == null) || game.canFleeFrom(this, position));
+              (getSwarmTargetId() == NONE));
+    }
+
+    /**
+     * Returns true when this unit can flee from the given position. 
+     * This requires the position be eligible for fleeing. 
+     * When no special flee area is set by a scenario, the latter will typically be true when the position is at the edge of its board.
+     * A null position as well as offboard units are considered to be eligible for fleeing.
+     *
+     * @return True when the unit can flee from the given position
+     */
+
+    public boolean canFleeFrom(@Nullable Coords position) {
+        return (isOffBoard() || (position == null) || game.canFleeFrom(this, position));
     }
 
     public void setEverSeenByEnemy(boolean b) {

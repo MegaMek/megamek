@@ -151,6 +151,7 @@ public class PilotOptions extends AbstractOptions {
         addOption(edge, OptionsConstants.EDGE_WHEN_AERO_LUCKY_CRIT, true);
         addOption(edge, OptionsConstants.EDGE_WHEN_AERO_NUKE_CRIT, true);
         addOption(edge, OptionsConstants.EDGE_WHEN_AERO_UNIT_CARGO_LOST, true);
+        addOption(edge, OptionsConstants.EDGE_WHEN_AERO_CATASTROPHIC, true);
         // Vehicle Triggers
         addOption(edge, OptionsConstants.EDGE_WHEN_TANK_MOTIVE_CRIT, true);
         addOption(edge, OptionsConstants.EDGE_WHEN_TANK_DESTROYED, true);

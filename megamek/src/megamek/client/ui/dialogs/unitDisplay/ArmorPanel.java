@@ -318,21 +318,14 @@ public class ArmorPanel extends PicMap {
                 minRightMargin = minAeroLeftMargin;
             }
             // Units with no drawn figure of their own get the plain box-per-location diagram.
-            case HandheldWeapon ignored -> {
-                ams = simpleUnit;
-                minLeftMargin = minInfLeftMargin;
-                minTopMargin = minInfTopMargin;
-                minBottomMargin = minInfTopMargin;
-                minRightMargin = minInfLeftMargin;
-            }
-            case AbstractBuildingEntity ignored -> {
-                ams = simpleUnit;
-                minLeftMargin = minInfLeftMargin;
-                minTopMargin = minInfTopMargin;
-                minBottomMargin = minInfTopMargin;
-                minRightMargin = minInfLeftMargin;
-            }
             default -> {
+                if ((en instanceof HandheldWeapon) || (en instanceof AbstractBuildingEntity)) {
+                    ams = simpleUnit;
+                    minLeftMargin = minInfLeftMargin;
+                    minTopMargin = minInfTopMargin;
+                    minBottomMargin = minInfTopMargin;
+                    minRightMargin = minInfLeftMargin;
+                }
             }
         }
 

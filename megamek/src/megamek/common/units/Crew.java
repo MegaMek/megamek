@@ -452,10 +452,57 @@ public class Crew implements Serializable {
     /**
      * The part of the effective gunnery that comes from the gamemaster's temporary modifier: effective minus
      * stored, zero while no modifier is active. Lets a to-hit breakdown show the gamemaster's intervention as a
-     * line of its own instead of silently folding it into the skill number.
+     * line of its own instead of silently folding it into the skill number. Each gunnery variant has an applied
+     * modifier of its own, because the clamp to the skill range can eat a different part of the delta for each.
      */
     public int appliedGunneryModifier() {
-        return getGunnery() - gunnery[gunnerPos];
+        return getGunnery() - rawGunnery();
+    }
+
+    /** @see #appliedGunneryModifier() */
+    public int appliedGunneryLModifier() {
+        return getGunneryL() - rawGunneryL();
+    }
+
+    /** @see #appliedGunneryModifier() */
+    public int appliedGunneryMModifier() {
+        return getGunneryM() - rawGunneryM();
+    }
+
+    /** @see #appliedGunneryModifier() */
+    public int appliedGunneryBModifier() {
+        return getGunneryB() - rawGunneryB();
+    }
+
+    /** @see #appliedGunneryModifier() */
+    public int appliedArtilleryModifier() {
+        return getArtillery() - rawArtillery();
+    }
+
+    /*
+     * The stored skill each effective getter adjusts. LAMPilot overrides the effective getters with its own
+     * mode-dependent skills, so it overrides these to match; without that, the applied-modifier math above would
+     * subtract the wrong base.
+     */
+
+    protected int rawGunnery() {
+        return gunnery[gunnerPos];
+    }
+
+    protected int rawGunneryL() {
+        return gunneryL[gunnerPos];
+    }
+
+    protected int rawGunneryM() {
+        return gunneryM[gunnerPos];
+    }
+
+    protected int rawGunneryB() {
+        return gunneryB[gunnerPos];
+    }
+
+    protected int rawArtillery() {
+        return artillery[gunnerPos];
     }
 
     public int getGunnery(int pos) {

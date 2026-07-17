@@ -3421,9 +3421,9 @@ public class ChatLounge extends AbstractPhaseDisplay
 
     /**
      * Asks the server for the gamemaster role, or gives it up when this player already holds it. The request goes
-     * through the same command the chat uses, so the rules for taking the role live in one place: it is granted
-     * without a vote in the lobby, needs a unanimous vote once the game has started, and is refused while another
-     * player holds it.
+     * through the same command the chat uses, so the rules for taking the role live in one place: it is put to a
+     * vote of the human players (a lone player's own yes passes at once), and it is refused while another player
+     * holds the role.
      */
     private void toggleGameMaster() {
         client().sendChat(GAME_MASTER_COMMAND);

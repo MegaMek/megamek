@@ -50,7 +50,7 @@ import megamek.server.totalWarfare.TWGameManager;
  * piloting, and a delta to the unit's individual initiative roll, lasting a set number of rounds or until cleared.
  * <p>
  * Skill deltas are added to the skill number, so a negative delta improves the crew (a -1 makes a 4 gunner a 3) and
- * a positive delta worsens it; the initiative delta is added to the roll, so there positive is the improvement. A
+ * a positive delta worsens it; the initiative delta is added to the roll, where a positive delta is the improvement. A
  * duration of {@link TemporarySkillModifiers#PERMANENT} lasts until cleared, and a duration of 0 clears whatever is
  * active. The stored skills are never touched, so the change reverses itself completely when it expires.
  * </p>

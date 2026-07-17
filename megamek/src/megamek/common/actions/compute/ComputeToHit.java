@@ -590,26 +590,31 @@ public class ComputeToHit {
 
         // Start with the attacker's weapon skill. A gamemaster's temporary modifier is taken back out of the
         // skill number and shown as a line of its own below, so a shifted to-hit number can be traced to the
-        // gamemaster's intervention instead of looking like a different gunner.
+        // gamemaster's intervention instead of looking like a different gunner. Each gunnery variant has an
+        // applied modifier of its own, since the clamp to the skill range can eat a different part of the delta.
         int gamemasterModifier = ae.getCrew().appliedGunneryModifier();
         toHit = new ToHitData(ae.getCrew().getGunnery() - gamemasterModifier,
               Messages.getString("WeaponAttackAction.GunSkill"));
         if (game.getOptions().booleanOption(OptionsConstants.RPG_RPG_GUNNERY)) {
             if (weaponType.hasFlag(WeaponType.F_ENERGY)) {
+                gamemasterModifier = ae.getCrew().appliedGunneryLModifier();
                 toHit = new ToHitData(ae.getCrew().getGunneryL() - gamemasterModifier,
                       Messages.getString("WeaponAttackAction.GunLSkill"));
             }
             if (weaponType.hasFlag(WeaponType.F_MISSILE)) {
+                gamemasterModifier = ae.getCrew().appliedGunneryMModifier();
                 toHit = new ToHitData(ae.getCrew().getGunneryM() - gamemasterModifier,
                       Messages.getString("WeaponAttackAction.GunMSkill"));
             }
             if (weaponType.hasFlag(WeaponType.F_BALLISTIC)) {
+                gamemasterModifier = ae.getCrew().appliedGunneryBModifier();
                 toHit = new ToHitData(ae.getCrew().getGunneryB() - gamemasterModifier,
                       Messages.getString("WeaponAttackAction.GunBSkill"));
             }
         }
         if (weaponType.hasFlag(WeaponType.F_ARTILLERY) &&
               game.getOptions().booleanOption(OptionsConstants.RPG_ARTILLERY_SKILL)) {
+            gamemasterModifier = ae.getCrew().appliedArtilleryModifier();
             toHit = new ToHitData(ae.getCrew().getArtillery() - gamemasterModifier,
                   Messages.getString("WeaponAttackAction.ArtySkill"));
         }

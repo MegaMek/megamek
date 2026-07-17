@@ -227,6 +227,31 @@ public class LAMPilot extends Crew {
         return getSkillModifiers().adjustGunnery(useAeroGunnery() ? getGunneryAeroM() : getGunneryMekM());
     }
 
+    /*
+     * The stored skills the getters above adjust are the mode-dependent LAM fields, not the base class arrays, so
+     * the raw hooks the applied-modifier math subtracts must pick the same fields.
+     */
+
+    @Override
+    protected int rawGunnery() {
+        return useAeroGunnery() ? getGunneryAero() : getGunneryMek();
+    }
+
+    @Override
+    protected int rawGunneryB() {
+        return useAeroGunnery() ? getGunneryAeroB() : getGunneryMekB();
+    }
+
+    @Override
+    protected int rawGunneryL() {
+        return useAeroGunnery() ? getGunneryAeroL() : getGunneryMekL();
+    }
+
+    @Override
+    protected int rawGunneryM() {
+        return useAeroGunnery() ? getGunneryAeroM() : getGunneryMekM();
+    }
+
     @Override
     public int getPiloting() {
         if (lam.getConversionMode() == LandAirMek.CONV_MODE_FIGHTER

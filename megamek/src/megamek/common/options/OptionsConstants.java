@@ -252,6 +252,8 @@ public class OptionsConstants {
     public static final String EDGE_WHEN_TANK_MOTIVE_CRIT = "edge_when_tank_motive_crit";
     public static final String EDGE_WHEN_TANK_DESTROYED = "edge_when_tank_destroyed";
     public static final String EDGE_WHEN_TANK_TURRET_BLOWN_OFF = "edge_when_tank_turret_blown_off";
+    // General Triggers
+    public static final String EDGE_WHEN_EJECT_FAILS = "edge_when_eject_fails";
 
     // Manei Domini
     public static final String MD_PAIN_SHUNT = "artificial_pain_shunt";

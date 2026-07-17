@@ -29485,6 +29485,35 @@ public class TWGameManager extends AbstractGameManager {
     }
 
     /**
+     * Applies Edge to an ejection roll: if the roll failed and the crew has the failed-ejection Edge trigger enabled
+     * with Edge remaining, spends one Edge point and rerolls once.
+     *
+     * @param entity     the ejecting unit
+     * @param rollTarget the ejection roll target number
+     * @param diceRoll   the ejection roll that was made
+     * @param vDesc      the report vector to append the Edge-use report to
+     *
+     * @return the roll to use — the reroll if Edge was spent, otherwise the original roll
+     */
+    // package-private for testing
+    Roll applyEjectionEdge(Entity entity, PilotingRollData rollTarget, Roll diceRoll, Vector<Report> vDesc) {
+        boolean isCheckFailed = diceRoll.getIntValue() < rollTarget.getValue();
+        boolean shouldUseEdge = entity.shouldUseEdge(OptionsConstants.EDGE_WHEN_EJECT_FAILS);
+        if (isCheckFailed && shouldUseEdge) {
+            entity.getCrew().decreaseEdge();
+            Report edgeReport = new Report(6396);
+            edgeReport.subject = entity.getId();
+            edgeReport.indent();
+            edgeReport.add(entity.getCrew().getOptions().intOption(OptionsConstants.EDGE));
+            vDesc.addElement(edgeReport);
+
+            return entity.getCrew().rollPilotingSkill();
+        }
+
+        return diceRoll;
+    }
+
+    /**
      * Eject an Entity.
      *
      * @param entity            The <code>Entity</code> to eject.
@@ -29544,7 +29573,9 @@ public class TWGameManager extends AbstractGameManager {
                 }
                 rollTarget = getEjectModifiers(game, entity, crewPos, autoEject);
                 // roll
-                final Roll diceRoll = entity.getCrew().rollPilotingSkill();
+                Roll diceRoll = entity.getCrew().rollPilotingSkill();
+                // Edge may reroll a failed ejection roll once.
+                diceRoll = applyEjectionEdge(entity, rollTarget, diceRoll, vDesc);
 
                 if (entity.getCrew().getSlotCount() > 1) {
                     r = new Report(2193);

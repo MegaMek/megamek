@@ -54,9 +54,8 @@ import megamek.logging.MMLogger;
  * have no L/M/H/A weight class, so this is the only machine-readable record of them.</p>
  *
  * <p>The {@code status} column is {@code EMPTY} when a large-craft slot generated no unit (an empty WarShip Point in
- * the
- * tree) and {@code OK} otherwise - so empty points surface with a grep instead of a visual scan. The file is appended
- * to across runs; delete it to start a fresh batch. Purely diagnostic; no effect on generation.</p>
+ * the tree) and {@code OK} otherwise - so empty points surface with a grep instead of a visual scan. The file is
+ * appended to across runs; delete it to start a fresh batch. Purely diagnostic; no effect on generation.</p>
  */
 final class ForceGenWarshipCsv {
     private static final MMLogger LOGGER = MMLogger.create(ForceGenWarshipCsv.class);

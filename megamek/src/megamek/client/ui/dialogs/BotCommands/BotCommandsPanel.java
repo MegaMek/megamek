@@ -125,8 +125,10 @@ public class BotCommandsPanel extends JPanel {
      *
      * @param client       reference to the client instance
      * @param audioService reference to the instance of the AudioService
-     * @param controller   reference to the MegaMekController for key binds, or {@code null} when key binds are not used
-     * @param clientGUI    reference to the ClientGUI for toast notifications, or {@code null} when toasts are unavailable
+     * @param controller   reference to the MegaMekController for key binds, or {@code null} when key binds are not
+     *                     used
+     * @param clientGUI    reference to the ClientGUI for toast notifications, or {@code null} when toasts are
+     *                     unavailable
      */
     public BotCommandsPanel(AbstractClient client, @Nullable AudioService audioService,
           @Nullable MegaMekController controller, @Nullable ClientGUI clientGUI) {
@@ -995,8 +997,8 @@ public class BotCommandsPanel extends JPanel {
     }
 
     /**
-     * Adds to {@code available} every special-ammo category that the given entity has loaded (with shots remaining)
-     * for one of its artillery weapons.
+     * Adds to {@code available} every special-ammo category that the given entity has loaded (with shots remaining) for
+     * one of its artillery weapons.
      *
      * @param entity       The unit whose artillery weapons are inspected
      * @param nukesAllowed Whether the nuke game option is enabled (gates Davy Crockett rounds)
@@ -1035,8 +1037,8 @@ public class BotCommandsPanel extends JPanel {
     }
 
     /**
-     * Lets the player pick fire mission target hexes by clicking the board, then sends the artillery order. Falls
-     * back to a typed hex number prompt when no board view is available.
+     * Lets the player pick fire mission target hexes by clicking the board, then sends the artillery order. Falls back
+     * to a typed hex number prompt when no board view is available.
      *
      * @param botPlayer The bot to receive the order
      * @param order     The artillery order to issue
@@ -1141,7 +1143,8 @@ public class BotCommandsPanel extends JPanel {
      * @param promptTitleKey   The resource key for the prompt dialog title
      * @param maxHexes         The maximum number of hexes accepted, or 0 for no limit
      *
-     * @return The entered hex numbers joined with dashes, or {@code null} if the player canceled or the input was invalid
+     * @return The entered hex numbers joined with dashes, or {@code null} if the player canceled or the input was
+     *       invalid
      */
     private @Nullable String promptForHexNumbers(String promptMessageKey, String promptTitleKey, int maxHexes) {
         String input = JOptionPane.showInputDialog(this,

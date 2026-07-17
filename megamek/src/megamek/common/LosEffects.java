@@ -143,7 +143,8 @@ public class LosEffects {
     /**
      * Height in levels that an erupting geyser's plume rises above its hex. Per TacOps, an erupting geyser blocks line
      * of sight as ultra-heavy woods, which rises three levels above the hex. Shared with the LOS Ruler/diagram so the
-     * UI cannot drift out of sync with the rule. The erupting terrain level itself is {@link Terrains#GEYSER_LVL_ACTIVE}.
+     * UI cannot drift out of sync with the rule. The erupting terrain level itself is
+     * {@link Terrains#GEYSER_LVL_ACTIVE}.
      */
     public static final int GEYSER_PLUME_HEIGHT = 3;
 
@@ -395,9 +396,9 @@ public class LosEffects {
     }
 
     /**
-     * @return true if this LOS was blocked by the TacOps dead-zone rule. Set by the engine when a tall
-     *       intervening hill projects a geometric shadow that the lower unit sits inside (see the
-     *       private static dead-zone check called from {@link #calculateLos}).
+     * @return true if this LOS was blocked by the TacOps dead-zone rule. Set by the engine when a tall intervening hill
+     *       projects a geometric shadow that the lower unit sits inside (see the private static dead-zone check called
+     *       from {@link #calculateLos}).
      */
     public boolean isBlockedByDeadZone() {
         return deadZone;

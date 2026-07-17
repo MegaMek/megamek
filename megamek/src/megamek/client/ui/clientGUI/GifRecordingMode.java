@@ -35,9 +35,9 @@ package megamek.client.ui.clientGUI;
 import megamek.common.annotations.Nullable;
 
 /**
- * How the client handles recording the combat-summary GIF of the minimap. Recording costs CPU for the whole game
- * (a minimap render and a GIF frame encode per phase), so consent is established before any work is done rather
- * than asking whether to keep the file at game end.
+ * How the client handles recording the combat-summary GIF of the minimap. Recording costs CPU for the whole game (a
+ * minimap render and a GIF frame encode per phase), so consent is established before any work is done rather than
+ * asking whether to keep the file at game end.
  */
 public enum GifRecordingMode {
 

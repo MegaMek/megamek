@@ -43,10 +43,10 @@ import megamek.common.preference.PreferenceManager;
 import megamek.logging.MMLogger;
 
 /**
- * Runs a scenario headlessly many times and reports the win rate per team (and the {@link AIType}s on each team),
- * so two bot AIs assigned via the scenario {@code ai:} key - for example Princess versus CASPAR - can be compared
- * over a batch of games. The BotLogger TSVs from every game are kept, so the battle-analyzer tooling can also
- * score decision quality per side, not just wins.
+ * Runs a scenario headlessly many times and reports the win rate per team (and the {@link AIType}s on each team), so
+ * two bot AIs assigned via the scenario {@code ai:} key - for example Princess versus CASPAR - can be compared over a
+ * batch of games. The BotLogger TSVs from every game are kept, so the battle-analyzer tooling can also score decision
+ * quality per side, not just wins.
  *
  * <p>Usage: {@code AIMatchRunner <scenarioFile> [repetitions] [roundsLimit] [timeoutMinutes]}</p>
  */
@@ -112,8 +112,8 @@ public final class AIMatchRunner {
     }
 
     /**
-     * Parses an optional integer command-line argument, or returns the default when it is not supplied. Exits
-     * with a usage-style message rather than throwing if the argument is present but not an integer.
+     * Parses an optional integer command-line argument, or returns the default when it is not supplied. Exits with a
+     * usage-style message rather than throwing if the argument is present but not an integer.
      *
      * @param args         the command-line arguments
      * @param index        the index of the argument to parse

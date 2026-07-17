@@ -56,16 +56,7 @@ import megamek.common.options.GameOptions;
 import megamek.common.options.Option;
 import megamek.common.options.OptionsConstants;
 import megamek.common.rolls.TargetRoll;
-import megamek.common.units.BipedMek;
-import megamek.common.units.ConvInfantry;
-import megamek.common.units.Crew;
-import megamek.common.units.CrewType;
-import megamek.common.units.EntityWeightClass;
-import megamek.common.units.Infantry;
-import megamek.common.units.Mek;
-import megamek.common.units.EntityMovementMode;
-import megamek.common.units.Terrain;
-import megamek.common.units.Terrains;
+import megamek.common.units.*;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -366,24 +357,24 @@ class AntiMekAttackTest {
             Infantry attacker = createUMUBattleArmor(5);
             Mek defender = createTargetMek();
             Hex depthOneHex = new Hex(
-                  0, new Terrain[] {new Terrain(Terrains.WATER, 1)}, null, new Coords(2,2));
+                  0, new Terrain[] { new Terrain(Terrains.WATER, 1) }, null, new Coords(2, 2));
             Hex depthTwoHex = new Hex(
-                  0, new Terrain[] {new Terrain(Terrains.WATER, 2)}, null, new Coords(3,3));
+                  0, new Terrain[] { new Terrain(Terrains.WATER, 2) }, null, new Coords(3, 3));
             Hex depthZeroHex = new Hex(
-                  0, new Terrain[] {new Terrain(Terrains.WATER, 0)}, null, new Coords(4,4));
+                  0, new Terrain[] { new Terrain(Terrains.WATER, 0) }, null, new Coords(4, 4));
             Hex dryHex = new Hex(
-                  0, new Terrain[] {null}, null, new Coords(5,5));
-            Board testBoard = new Board(6,6);
+                  0, new Terrain[] { null }, null, new Coords(5, 5));
+            Board testBoard = new Board(6, 6);
             ToHitData toHit;
 
             game.addEntity(attacker);
             game.addEntity(defender);
             game.setBoard(testBoard);
 
-            testBoard.setHex(2,2,depthOneHex);
-            testBoard.setHex(3,3,depthTwoHex);
-            testBoard.setHex(4,4,depthZeroHex);
-            testBoard.setHex(5,5,dryHex);
+            testBoard.setHex(2, 2, depthOneHex);
+            testBoard.setHex(3, 3, depthTwoHex);
+            testBoard.setHex(4, 4, depthZeroHex);
+            testBoard.setHex(5, 5, dryHex);
 
             attacker.setBoardId(testBoard.getBoardId());
             defender.setBoardId(testBoard.getBoardId());

@@ -130,9 +130,9 @@ public class ScenarioGameRunner {
     }
 
     /**
-     * The result of a single scenario game: whether it finished (rather than timing out) and which team won,
-     * defined as the sole surviving combatant team. The unit-less headless watcher is ignored, and a game that
-     * ends with more than one (or no) combatant team still standing is a draw.
+     * The result of a single scenario game: whether it finished (rather than timing out) and which team won, defined as
+     * the sole surviving combatant team. The unit-less headless watcher is ignored, and a game that ends with more than
+     * one (or no) combatant team still standing is a draw.
      *
      * @param finished    whether the game finished within the timeout
      * @param winningTeam the sole surviving combatant team, or {@link Player#TEAM_NONE} for a draw
@@ -229,8 +229,8 @@ public class ScenarioGameRunner {
     }
 
     /**
-     * Shuts down this runner's server, releasing its port and connections. Call between games when running many
-     * in one process.
+     * Shuts down this runner's server, releasing its port and connections. Call between games when running many in one
+     * process.
      */
     public void shutdown() {
         server.die();
@@ -260,8 +260,8 @@ public class ScenarioGameRunner {
     }
 
     /**
-     * Maps each team to the {@link AIType}s of its bot players. The first player slot (by id) is the headless
-     * watcher and is excluded, so only the competing bot teams are reported.
+     * Maps each team to the {@link AIType}s of its bot players. The first player slot (by id) is the headless watcher
+     * and is excluded, so only the competing bot teams are reported.
      *
      * @return team id to the set of bot {@link AIType}s on that team
      */

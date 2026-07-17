@@ -59,11 +59,10 @@ import megamek.common.options.IOption;
 import megamek.common.options.IOptionGroup;
 
 /**
- * The lobby victory conditions dialog. It holds the victory game options that formerly lived on the Victory
- * Conditions tab of the game options dialog (turn limit, BV thresholds, kill count etc.); the tab is removed and
- * this dialog, opened by the lobby's Victory Conditions button in the Player Setup panel, is the only place to edit
- * them. On OK, the caller sends the changed options (see
- * {@link megamek.client.Client#sendGameOptions(String, Vector)}).
+ * The lobby victory conditions dialog. It holds the victory game options that formerly lived on the Victory Conditions
+ * tab of the game options dialog (turn limit, BV thresholds, kill count etc.); the tab is removed and this dialog,
+ * opened by the lobby's Victory Conditions button in the Player Setup panel, is the only place to edit them. On OK, the
+ * caller sends the changed options (see {@link megamek.client.Client#sendGameOptions(String, Vector)}).
  */
 public class VictoryConditionsDialog extends AbstractButtonDialog implements DialogOptionListener {
 

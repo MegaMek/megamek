@@ -867,9 +867,9 @@ public class WeaponFireInfo {
         final boolean debugEnabled = logger.isDebugEnabled();
         final StringBuilder msg = debugEnabled
               ? new StringBuilder("Initializing Damage for ").append(getShooter().getDisplayName())
-                    .append(" firing ").append(getWeapon().getDesc())
-                    .append(" at ").append(getTarget().getDisplayName())
-                    .append(":")
+              .append(" firing ").append(getWeapon().getDesc())
+              .append(" at ").append(getTarget().getDisplayName())
+              .append(":")
               : null;
 
         // Set up the attack action and calculate the chance to hit.

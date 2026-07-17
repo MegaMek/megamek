@@ -59,10 +59,10 @@ import org.junit.jupiter.api.Test;
  * Tests for {@link Compute#spinUpCannon(Game, WeaponAttackAction, int)}.
  *
  * <p>Besides the spin-up mode ladder, these tests pin down the performance contract that motivated the
- * method's guard ordering: the weapon-type check must run BEFORE any to-hit computation, because the
- * method is invoked for every weapon the bot evaluates while ranking candidate move paths and the full
- * to-hit calculation is very expensive. A non-autocannon must return without a single {@code toHit} call,
- * and autocannons must pay for exactly one.</p>
+ * method's guard ordering: the weapon-type check must run BEFORE any to-hit computation, because the method is invoked
+ * for every weapon the bot evaluates while ranking candidate move paths and the full to-hit calculation is very
+ * expensive. A non-autocannon must return without a single {@code toHit} call, and autocannons must pay for exactly
+ * one.</p>
  */
 class ComputeSpinUpCannonTest {
 

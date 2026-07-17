@@ -568,9 +568,9 @@ public class WeaponHandler implements AttackHandler, Serializable {
               && !(attackingEntity.getSwarmTargetId() == target.getId())) {
             bSalvo = true;
             int toReturn = allShotsHit() ? ((BattleArmor) attackingEntity)
-                                           .getShootingStrength()
+                  .getShootingStrength()
                   : Compute
-                    .missilesHit(((BattleArmor) attackingEntity).getShootingStrength());
+                  .missilesHit(((BattleArmor) attackingEntity).getShootingStrength());
             Report r = new Report(3325);
             r.newlines = 0;
             r.subject = subjectId;

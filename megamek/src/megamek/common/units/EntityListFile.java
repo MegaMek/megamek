@@ -118,7 +118,7 @@ public class EntityListFile {
      * @return a <code>String</code> describing the slot.
      */
     private static String formatSlot(String index, Mounted<?> mount, boolean isHit, boolean isDestroyed,
-                    boolean isRepairable, boolean isMissing, boolean armorHit, int indentLvl) {
+          boolean isRepairable, boolean isMissing, boolean armorHit, int indentLvl) {
         StringBuilder output = new StringBuilder();
 
         output.append(indentStr(indentLvl))

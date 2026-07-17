@@ -294,8 +294,8 @@ public class ClientPreferences extends PreferenceStoreProxy {
     }
 
     /**
-     * @return {@code true} if the experimental CASPAR bot is offered as a selectable AI. This is a hidden
-     *       option: it is not shown in any settings UI and defaults to {@code false}; enable it by hand-adding
+     * @return {@code true} if the experimental CASPAR bot is offered as a selectable AI. This is a hidden option: it is
+     *       not shown in any settings UI and defaults to {@code false}; enable it by hand-adding
      *       {@code <UseCASPAR>true</UseCASPAR>} to clientsettings.xml.
      */
     public boolean getUseCASPAR() {

@@ -2110,12 +2110,11 @@ public final class BoardView extends AbstractBoardView
 
     /**
      * Draws a single combined turn label for all the bot artillery heat-map markers stacked on one hex, so the text is
-     * visible in screenshots and not just in the hover text. Several tubes can target the same hex with different flight
-     * times, so the distinct values are merged into one label rather than drawn over each other: firing markers count
-     * down the turns until impact ({@code T-2}, joined as {@code T-1/2} when they differ, {@code SPLASH} when the only
-     * one is this turn), and otherwise a predicted-position hex shows the prediction's turn ({@code T<turn>}). No-op when
-     * no
-     * heat-map markers are given.
+     * visible in screenshots and not just in the hover text. Several tubes can target the same hex with different
+     * flight times, so the distinct values are merged into one label rather than drawn over each other: firing markers
+     * count down the turns until impact ({@code T-2}, joined as {@code T-1/2} when they differ, {@code SPLASH} when the
+     * only one is this turn), and otherwise a predicted-position hex shows the prediction's turn ({@code T<turn>}).
+     * No-op when no heat-map markers are given.
      *
      * @param heatMapMarkers The heat-map markers drawn on this hex
      * @param graphics2D     The hex graphics context
@@ -2184,9 +2183,9 @@ public final class BoardView extends AbstractBoardView
     }
 
     /**
-     * The cold-to-hot diverging color ramp for predicted-position heat-map markers: navy blue (coldest, a single
-     * enemy converging on the hex) through light blue, light gray, and light orange to crimson red (hottest, many
-     * enemies converging).
+     * The cold-to-hot diverging color ramp for predicted-position heat-map markers: navy blue (coldest, a single enemy
+     * converging on the hex) through light blue, light gray, and light orange to crimson red (hottest, many enemies
+     * converging).
      */
     private static final Color[] HEAT_MAP_COLOR_RAMP = {
           new Color(0, 0, 128),      // navy blue - coldest
@@ -2203,8 +2202,8 @@ public final class BoardView extends AbstractBoardView
     private static final float HEAT_MAP_FILL_ALPHA = 0.55f;
 
     /**
-     * Extracts the colon-separated heat-map control token (the {@code <turn>:<heat>:<kind>} part up to the first
-     * space) from a heat-map marker's info text. See {@link SpecialHexDisplay#HEAT_MAP_PREFIX}.
+     * Extracts the colon-separated heat-map control token (the {@code <turn>:<heat>:<kind>} part up to the first space)
+     * from a heat-map marker's info text. See {@link SpecialHexDisplay#HEAT_MAP_PREFIX}.
      *
      * @param info The marker's info text
      *
@@ -2284,8 +2283,8 @@ public final class BoardView extends AbstractBoardView
 
     /**
      * Paints a predicted-position heat-map marker as a cold-to-hot translucent fill over the whole hex (navy = one
-     * enemy converging, crimson = many), so the predicted enemy concentration reads at a glance and cools as units
-     * are destroyed. No-op for any other special hex display.
+     * enemy converging, crimson = many), so the predicted enemy concentration reads at a glance and cools as units are
+     * destroyed. No-op for any other special hex display.
      *
      * @param specialHexDisplay The special hex display being drawn
      * @param graphics2D        The hex graphics context
@@ -3150,39 +3149,39 @@ public final class BoardView extends AbstractBoardView
             int yPosition = HEX_H - 2;
             if (level != 0) {
                 drawCenteredString(Messages.getString("BoardView1.LEVEL") + level,
-                        hexX,
-                        hexY + (int) (yPosition * scale),
-                        font_elev,
-                        boardGraph);
+                      hexX,
+                      hexY + (int) (yPosition * scale),
+                      font_elev,
+                      boardGraph);
                 yPosition -= 10;
             }
 
             if (depth != 0) {
                 drawCenteredString(Messages.getString("BoardView1.DEPTH") + depth,
-                        hexX,
-                        hexY + (int) (yPosition * scale),
-                        font_elev,
-                        boardGraph);
+                      hexX,
+                      hexY + (int) (yPosition * scale),
+                      font_elev,
+                      boardGraph);
                 yPosition -= 10;
             }
 
             if (height > 0) {
                 boardGraph.setColor(GUIP.getBuildingTextColor());
                 drawCenteredString(Messages.getString("BoardView1.HEIGHT") + height,
-                        hexX,
-                        hexY + (int) (yPosition * scale),
-                        font_elev,
-                        boardGraph);
+                      hexX,
+                      hexY + (int) (yPosition * scale),
+                      font_elev,
+                      boardGraph);
                 yPosition -= 10;
             }
 
             if (hex.terrainLevel(Terrains.FOLIAGE_ELEV) == 1) {
                 boardGraph.setColor(GUIP.getLowFoliageColor());
                 drawCenteredString(Messages.getString("BoardView1.LowFoliage"),
-                        hexX,
-                        hexY + (int) (yPosition * scale),
-                        font_elev,
-                        boardGraph);
+                      hexX,
+                      hexY + (int) (yPosition * scale),
+                      font_elev,
+                      boardGraph);
             }
         }
     }

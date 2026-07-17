@@ -220,7 +220,9 @@ public class MDAugmentationCostTest {
         @DisplayName("Multiple augmentations stack costs")
         void multipleAugmentationsStackCosts() {
             ConvInfantry singleAug = createInfantry(10, OptionsConstants.MD_PAIN_SHUNT);
-            ConvInfantry doubleAug = createInfantry(10, OptionsConstants.MD_PAIN_SHUNT, OptionsConstants.MD_COMM_IMPLANT);
+            ConvInfantry doubleAug = createInfantry(10,
+                  OptionsConstants.MD_PAIN_SHUNT,
+                  OptionsConstants.MD_COMM_IMPLANT);
 
             double costSingle = InfantryCostCalculator.calculateCost(singleAug, new DummyCalculationReport(), true);
             double costDouble = InfantryCostCalculator.calculateCost(doubleAug, new DummyCalculationReport(), true);

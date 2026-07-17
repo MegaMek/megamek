@@ -126,7 +126,8 @@ public class RoundsInAirDialog extends JDialog {
     /**
      * Rebuilds the table from the current in-flight artillery, sorted so the soonest-landing rounds are at the top. Own
      * and allied rounds are shown in full; enemy rounds (a redacted, team-safe feed from the server) show only their
-     * landing time, with the target hex and warhead listed as "Unknown". Safe to call repeatedly (e.g. on phase change).
+     * landing time, with the target hex and warhead listed as "Unknown". Safe to call repeatedly (e.g. on phase
+     * change).
      */
     public void refresh() {
         tableModel.setRowCount(0);

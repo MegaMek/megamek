@@ -276,6 +276,17 @@ public class Princess extends BotClient {
     }
 
     /**
+     * Whether this bot runs the CASPAR Protocol (Combined Advanced Situational Positioning And Response): allied damage
+     * consideration, damage source pool tracking, and role-aware positioning. Princess itself never uses it;
+     * {@link megamek.client.bot.caspar.Caspar} overrides this to enable it.
+     *
+     * @return TRUE if the CASPAR Protocol features are active for this bot
+     */
+    protected boolean usesCasparProtocol() {
+        return false;
+    }
+
+    /**
      * Lazy-loading accessor for the artillery targeting control.
      *
      * @return {@link ArtilleryTargetingControl}
@@ -471,8 +482,8 @@ public class Princess extends BotClient {
     }
 
     /**
-     * @return The hex the bot's artillery should fall back to under shoot-and-scoot, or {@code null} to auto-displace away from
-     *       the nearest enemy
+     * @return The hex the bot's artillery should fall back to under shoot-and-scoot, or {@code null} to auto-displace
+     *       away from the nearest enemy
      */
     public @Nullable Coords getShootAndScootHex() {
         return shootAndScootHex;
@@ -532,8 +543,8 @@ public class Princess extends BotClient {
 
     /**
      * Optionally paints this bot's artillery heat map on the board for testing: a cold-to-hot color fill at each hex an
-     * enemy is predicted to advance to (navy blue for a single enemy converging, up to crimson red for many, so the
-     * map cools as units are destroyed), and a crosshair at each hex it is firing at. A predicted hex shows the
+     * enemy is predicted to advance to (navy blue for a single enemy converging, up to crimson red for many, so the map
+     * cools as units are destroyed), and a crosshair at each hex it is firing at. A predicted hex shows the
      * prediction's turn; a firing hex counts down the turns until the rounds land. Only acts when the local client has
      * the "Show Bot Artillery Heat Map" advanced testing setting on; the markers are visible to all and clear
      * themselves each round. No-op for a headless bot (no GUI preferences).
@@ -562,8 +573,8 @@ public class Princess extends BotClient {
      * Sends one heat-map special hex display. The info text is prefixed with {@link SpecialHexDisplay#HEAT_MAP_PREFIX}
      * followed by the control token {@code <turn>:<heat>:<kind>}, which the board view parses to draw the turn on the
      * hex, pick the cold-to-hot color from the enemy count (heat), and tell a predicted-position fill apart from a
-     * firing crosshair. Both marker kinds use the crosshair icon type; the board view paints predicted hexes as a
-     * color fill instead and only draws the icon for firing hexes.
+     * firing crosshair. Both marker kinds use the crosshair icon type; the board view paints predicted hexes as a color
+     * fill instead and only draws the icon for firing hexes.
      *
      * @param coords      The hex to mark
      * @param boardId     The board the hex is on
@@ -583,8 +594,8 @@ public class Princess extends BotClient {
     }
 
     /**
-     * @return {@code true} if the local client has the artillery-heat-map testing setting on, {@code false} for a headless bot with no
-     *       GUI preferences
+     * @return {@code true} if the local client has the artillery-heat-map testing setting on, {@code false} for a
+     *       headless bot with no GUI preferences
      */
     private boolean showBotArtilleryHeatMap() {
         try {
@@ -1851,6 +1862,15 @@ public class Princess extends BotClient {
                 modifiers.append("\tx1/3 (is Stealth-ed)");
             }
 
+            // Role-Aware Positioning: apply role-based movement order
+            // Scouts move first, Juggernauts anchor and move last
+            if (usesCasparProtocol()) {
+                double roleMultiplier = pathRankerState.getRoleMoveOrderMultiplier(entity);
+                total *= roleMultiplier;
+                modifiers.append("\tx").append(numberFormat.format(roleMultiplier)).append(" (Role: ")
+                    .append(entity.getRole() != null ? entity.getRole() : "none").append(")");
+            }
+
             return total;
         } finally {
             msg.append("\n\t\tModifiers:").append(modifiers);
@@ -3058,6 +3078,12 @@ public class Princess extends BotClient {
 
             // moves this entity during movement phase
             LOGGER.debug("Moving {} (ID {})", entity.getDisplayName(), entity.getId());
+
+            // Log role-aware positioning info if enabled
+            if (usesCasparProtocol()) {
+                logRoleAwareInfo(entity);
+            }
+
             getPrecognition().ensureUpToDate();
 
             if (isFallingBack(entity)) {
@@ -3137,6 +3163,11 @@ public class Princess extends BotClient {
             final RankedPath bestPath = getPathRanker(entity).getBestPath(rankedPaths);
             LOGGER.info("Best Path: {}  Rank: {}", bestPath.getPath(), bestPath.getRank());
 
+            // Update damage source pool after path selection
+            if (usesCasparProtocol()) {
+                updateDamagePoolAfterMove(entity, bestPath.getPath());
+            }
+
             return performPathPostProcessing(bestPath);
         } catch (Exception e) {
             LOGGER.error("MP is now null!", e);
@@ -3159,6 +3190,44 @@ public class Princess extends BotClient {
               Long.toString(paths.size()) +
               " paths to consider.  Estimated time to completion: " +
               timeEstimate;
+    }
+
+    /**
+     * Update the damage source pool after a unit commits to a move. Reduces threat from enemies that this unit can
+     * engage from its final position.
+     *
+     * @param entity The entity that just moved
+     * @param path   The movement path chosen
+     */
+    private void updateDamagePoolAfterMove(Entity entity, MovePath path) {
+        if (path == null || path.getFinalCoords() == null) {
+            return;
+        }
+
+        Coords finalPos = path.getFinalCoords();
+        int maxRange = getMaxWeaponRange(entity, false);
+
+        for (Entity enemy : getEnemyEntities()) {
+            if (enemy.getPosition() == null || enemy.isOffBoard()) {
+                continue;
+            }
+
+            int distance = finalPos.distance(enemy.getPosition());
+            if (distance <= maxRange) {
+                // This unit can engage this enemy - allocate threat proportional to damage potential
+                double myDamage = FireControl.getMaxDamageAtRange(entity, distance, false, false);
+                double enemyHealth = enemy.getTotalArmor() + enemy.getTotalInternal();
+
+                if (enemyHealth > 0) {
+                    double allocationFactor = Math.min(myDamage / enemyHealth, 1.0);
+                    boolean useRoleAware = usesCasparProtocol();
+                    pathRankerState.allocateDamageSource(enemy.getId(), allocationFactor, entity, useRoleAware);
+                    LOGGER.debug("Unit {} engaging enemy {} at range {}, allocating {}{}",
+                          entity.getDisplayName(), enemy.getDisplayName(), distance, allocationFactor,
+                          useRoleAware ? " (role-weighted)" : "");
+                }
+            }
+        }
     }
 
     @Override
@@ -3485,6 +3554,19 @@ public class Princess extends BotClient {
                   fireControlState);
             for (final Targetable target : potentialTargets) {
                 damageMap.put(target.getId(), 0d);
+            }
+
+            // Initialize damage source pool if enabled
+            if (usesCasparProtocol()) {
+                pathRankerState.initializeDamagePool(getEnemyEntities(), this);
+            }
+
+            // Initialize Alpha Strike damage cache for optimal range calculations
+            // This captures current weapon/ammo state at phase start
+            if (usesCasparProtocol()) {
+                List<Entity> allUnits = new ArrayList<>(getEntitiesOwned());
+                allUnits.addAll(getEnemyEntities());
+                pathRankerState.initializeASDamageCache(allUnits);
             }
         } catch (Exception ignored) {
 
@@ -4598,6 +4680,45 @@ public class Princess extends BotClient {
         if (LOGGER.getLevel().isLessSpecificThan(logLevel)) {
             super.sendChat(message);
         }
+    }
+
+    /**
+     * Logs role-aware positioning information for a unit about to move.
+     * Outputs to both debug log and game chat for monitoring.
+     *
+     * @param entity The entity about to move
+     */
+    private void logRoleAwareInfo(Entity entity) {
+        PathRankerState state = getPathRankerState();
+
+        // Get role info
+        UnitRole role = entity.getRole();
+        String roleName = (role != null) ? role.toString() : "NONE";
+
+        // Get optimal range
+        int optimalRange = state.getOptimalRange(entity);
+        String rangeStr = (optimalRange == Integer.MAX_VALUE) ? "MAX (flee)" : String.valueOf(optimalRange);
+
+        // Get threat weight and move order
+        double threatWeight = state.getRoleThreatWeight(entity);
+        double moveOrder = state.getRoleMoveOrderMultiplier(entity);
+
+        // Check if long-range unit
+        boolean isLongRange = state.isLongRangeOptimal(entity);
+
+        // Build log message
+        String logMsg = String.format("[Role-Aware] %s: Role=%s, OptRange=%s, ThreatWt=%.2f, MoveOrder=%.1f%s",
+            entity.getDisplayName(),
+            roleName,
+            rangeStr,
+            threatWeight,
+            moveOrder,
+            isLongRange ? " (Long-Range)" : "");
+
+        LOGGER.debug(logMsg);
+
+        // Also send to game chat for in-game monitoring
+        sendChat(logMsg, Level.DEBUG);
     }
 
     /**

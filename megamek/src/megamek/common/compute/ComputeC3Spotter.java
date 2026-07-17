@@ -69,9 +69,9 @@ public class ComputeC3Spotter {
     }
 
     /**
-     * Same as {@link #findC3Spotter(Game, Entity, Targetable)}, but accepts a precomputed list of ECM information
-     * for all game entities. Computing that list scans the entire game and is expensive; callers that evaluate many
-     * attacks in a row (bots, to-hit previews) should compute it once and pass it in.
+     * Same as {@link #findC3Spotter(Game, Entity, Targetable)}, but accepts a precomputed list of ECM information for
+     * all game entities. Computing that list scans the entire game and is expensive; callers that evaluate many attacks
+     * in a row (bots, to-hit previews) should compute it once and pass it in.
      *
      * @param attacker   The firing unit
      * @param target     The target of the potential attack

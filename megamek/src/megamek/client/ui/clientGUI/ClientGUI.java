@@ -607,8 +607,8 @@ public class ClientGUI extends AbstractClientGUI
     /**
      * Shows a progress toast for each of the local player's platoons that is busy raising or dismantling a bridge
      * (TO:AUE). Called once per round at the start of the movement phase: a busy platoon is eligible only in the
-     * movement phase (movement-only, so it can continue/cancel/pause/resume) and takes no other action, so this is
-     * its main per-turn feedback besides the hex indicator and the END phase report.
+     * movement phase (movement-only, so it can continue/cancel/pause/resume) and takes no other action, so this is its
+     * main per-turn feedback besides the hex indicator and the END phase report.
      */
     private void showBridgeBuildProgressToasts() {
         for (Entity entity : getClient().getGame().getEntitiesVector()) {
@@ -3792,8 +3792,8 @@ public class ClientGUI extends AbstractClientGUI
                  GUIPreferences.SOUND_BING_FILENAME_OTHERS_TURN -> audioService.loadSoundFiles();
             case GUIPreferences.MASTER_VOLUME -> audioService.setVolume();
             case GUIPreferences.BOT_COMMANDS_ENABLED, GUIPreferences.BOT_COMMANDS_LOCATION ->
-                  // Route through maybeShowBotCommands() so the phase rules (non-board phases never show the panel)
-                  // are enforced consistently, whether the change came from the menu, the hotkey, or a phase change.
+                // Route through maybeShowBotCommands() so the phase rules (non-board phases never show the panel)
+                // are enforced consistently, whether the change came from the menu, the hotkey, or a phase change.
                   maybeShowBotCommands();
         }
     }

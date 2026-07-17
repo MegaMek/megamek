@@ -36,17 +36,7 @@ package megamek.client.bot.princess;
 import java.text.DecimalFormat;
 import java.text.DecimalFormatSymbols;
 import java.text.NumberFormat;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Locale;
-import java.util.Map;
-import java.util.Objects;
-import java.util.Optional;
-import java.util.Set;
-import java.util.TreeMap;
-import java.util.TreeSet;
+import java.util.*;
 import java.util.stream.Stream;
 
 import megamek.client.bot.princess.UnitBehavior.BehaviorType;
@@ -461,6 +451,13 @@ public class BasicPathRanker extends PathRanker {
             theirDamagePotential += calculateKickDamagePotential(enemy, path, game);
         }
 
+        // Role-aware melee threat: penalize being at melee range of melee-focused enemies
+        // This encourages staying at range 2-3 from Brawlers/Juggernauts
+        if (getOwner().usesCasparProtocol()) {
+            double meleeThreatPenalty = getOwner().getPathRankerState().calculateMeleeThreatPenalty(enemy, distance);
+            theirDamagePotential += meleeThreatPenalty;
+        }
+
         returnResponse.setEstimatedEnemyDamage(theirDamagePotential);
 
         // A unit that sprinted may not make any deliberate attacks this turn, weapon or physical,
@@ -680,6 +677,58 @@ public class BasicPathRanker extends PathRanker {
         }
 
         double aggression = getOwner().getBehaviorSettings().getHyperAggressionValue();
+
+        // Role-Aware Positioning: penalize distance from optimal range, not just distance to enemy
+        if (getOwner().usesCasparProtocol()) {
+            PathRankerState state = getOwner().getPathRankerState();
+            int optimalRange = state.getOptimalRange(movingUnit);
+
+            // Civilians should maximize distance from enemies
+            if (optimalRange == Integer.MAX_VALUE) {
+                // Invert: higher distance = lower penalty (negative aggression effect)
+                double civilianMod = -distToEnemy * aggression;
+                logger.debug("aggression mod (civilian flee) [ {} = -{} * {}]", civilianMod, distToEnemy, aggression);
+                return civilianMod;
+            }
+
+            // AM units: dynamically choose melee vs short range based on distance
+            // This is a TACTICAL OVERRIDE of the cached optimal range (from getOptimalRange).
+            // If the enemy is close enough to reach in 1-2 turns, close for swarm attack.
+            // Otherwise, wait in ambush position at short range (avoid reckless charge).
+            if (state.hasAntiMech(movingUnit)) {
+                int mp = movingUnit.getWalkMP();
+                int strikingDistance = mp * 2;  // Can reach enemy in ~2 turns
+
+                if (distToEnemy <= strikingDistance) {
+                    // Enemy within striking distance - close aggressively for swarm
+                    optimalRange = PathRankerState.OPTIMAL_RANGE_MELEE;
+                    logger.debug("{} AM unit - enemy at {} within striking distance ({}), closing to melee",
+                        movingUnit.getDisplayName(), (int) distToEnemy, strikingDistance);
+                } else {
+                    // Enemy too far - wait in ambush position instead of charging across open ground
+                    optimalRange = PathRankerState.OPTIMAL_RANGE_SHORT;
+                    logger.debug("{} AM unit - enemy at {} beyond striking distance ({}), waiting in ambush",
+                        movingUnit.getDisplayName(), (int) distToEnemy, strikingDistance);
+                }
+            }
+
+            // Calculate distance from optimal range
+            double distanceFromOptimal = Math.abs(distToEnemy - optimalRange);
+
+            // Asymmetric penalty: being too close is significantly worse for long-range units
+            // (they lose their range advantage and may have minimum range penalties)
+            // 2.0x multiplier ensures long-range units strongly prefer backing away
+            if (state.isLongRangeOptimal(movingUnit) && distToEnemy < optimalRange) {
+                distanceFromOptimal *= 2.0;
+            }
+
+            double aggressionMod = distanceFromOptimal * aggression;
+            logger.debug("{} aggression mod (role-aware) [ -{} = |{} - {}| * {} ]",
+                movingUnit.getDisplayName(), aggressionMod, distToEnemy, optimalRange, aggression);
+            return aggressionMod;
+        }
+
+        // Classic behavior: penalize distance to enemy
         double aggressionMod = distToEnemy * aggression;
         logger.trace("aggression mod [ -{} = {} * {}]", aggressionMod, distToEnemy, aggression);
         return aggressionMod;
@@ -758,8 +807,8 @@ public class BasicPathRanker extends PathRanker {
 
     /**
      * The highest-BV enemy cluster anchor for the current ranking pass, computed once per pass in
-     * {@link #rankPaths(List, Game, int, double, List, List)} and read by every {@link #rankPath} call of that
-     * pass, or {@code null} when there are no deployed on-board enemies.
+     * {@link #rankPaths(List, Game, int, double, List, List)} and read by every {@link #rankPath} call of that pass, or
+     * {@code null} when there are no deployed on-board enemies.
      */
     private Coords rankingPassClusterAnchor;
 
@@ -820,11 +869,11 @@ public class BasicPathRanker extends PathRanker {
     private final Map<Integer, Double> rankingPassBattleValueCache = new HashMap<>();
 
     /**
-     * Returns the entity's current Battle Value (at least 1), cached for the current ranking pass (the cache is
-     * cleared in {@link #rankPaths(List, Game, int, double, List, List)}). A BV calculation is expensive - for
-     * C3/C3i/Nova units it scans the whole network and recalculates every member - and nothing that changes a BV
-     * (damage, C3/ECM connectivity) can change between the candidate paths of one pass, so each pass computes each
-     * enemy's BV at most once and the next unit's pass sees fresh values.
+     * Returns the entity's current Battle Value (at least 1), cached for the current ranking pass (the cache is cleared
+     * in {@link #rankPaths(List, Game, int, double, List, List)}). A BV calculation is expensive - for C3/C3i/Nova
+     * units it scans the whole network and recalculates every member - and nothing that changes a BV (damage, C3/ECM
+     * connectivity) can change between the candidate paths of one pass, so each pass computes each enemy's BV at most
+     * once and the next unit's pass sees fresh values.
      *
      * @param entity The unit whose Battle Value is wanted
      *
@@ -1126,7 +1175,8 @@ public class BasicPathRanker extends PathRanker {
     /**
      * @param unit The unit to check
      *
-     * @return {@code true} if the unit has an undamaged artillery weapon (so it should fight from standoff range as a tube)
+     * @return {@code true} if the unit has an undamaged artillery weapon (so it should fight from standoff range as a
+     *       tube)
      */
     private boolean hasOperationalArtillery(Entity unit) {
         return unit.getWeaponList().stream()
@@ -1140,8 +1190,8 @@ public class BasicPathRanker extends PathRanker {
      * @param tagRange The spotter's TAG range
      * @param game     The current game
      *
-     * @return {@code true} if, from the given hex, the spotter has both TAG range and line of sight to at least one enemy (so
-     *       it can actually designate from there)
+     * @return {@code true} if, from the given hex, the spotter has both TAG range and line of sight to at least one
+     *       enemy (so it can actually designate from there)
      */
     private boolean canDesignateFrom(Entity tagUnit, Coords from, List<Entity> enemies, int tagRange, Game game) {
         if ((from == null) || (tagRange <= 0)) {
@@ -1190,35 +1240,76 @@ public class BasicPathRanker extends PathRanker {
 
     /**
      * Calculates a herding modifier that penalizes paths taking the unit away from friendly forces.
-     *
-     * <p>This method implements the tactical preference for maintaining formation with friendly units based on:
-     * <ul>
-     *   <li>The distance from the path's final position to the center of friendly forces</li>
-     *   <li>The AI's configured herd mentality value</li>
-     * </ul>
-     *
-     * <p>The herding modifier follows this formula:
-     * <pre>
-     * herdingMod = distanceToFriends * herdMentalityValue
-     * </pre>
-     *
-     * <p>Since this value is subtracted in the final utility calculation, higher values represent
-     * stronger penalties for straying from the friendly force. If no friendly forces are present
-     * (friendsCoords is null), the method returns 0, applying no penalty.
+     * This is a simplified version that does not consider role-aware overwatch positioning.
      *
      * @param friendsCoords The coordinate representing the center of friendly forces, or null if no friends
      * @param path          The movement path being evaluated
      *
      * @return A herding modifier value (higher is worse) to be used in path ranking
+     *
+     * @see #calculateHerdingMod(Coords, MovePath, Entity, Coords)
      */
     protected double calculateHerdingMod(Coords friendsCoords, MovePath path) {
+        return calculateHerdingMod(friendsCoords, path, null, null);
+    }
+
+    /**
+     * Calculates a herding modifier that penalizes paths taking the unit away from friendly forces.
+     *
+     * <p>This method implements the tactical preference for maintaining formation with friendly units based on:
+     * <ul>
+     *   <li>The distance from the path's final position to the center of friendly forces</li>
+     *   <li>The AI's configured herd mentality value</li>
+     *   <li>For long-range units: an offset toward an "overwatch" position behind friendly lines</li>
+     * </ul>
+     *
+     * <p>The herding modifier follows this formula:
+     * <pre>
+     * herdingMod = distanceToHerdTarget * herdMentalityValue
+     * </pre>
+     *
+     * <p>For long-range units (snipers, missile boats), the herd target is offset away from enemies
+     * by the unit's optimal range. This allows them to "move with" advancing friendlies while maintaining
+     * their preferred standoff distance - providing overwatch rather than joining the melee.
+     *
+     * <p>Since this value is subtracted in the final utility calculation, higher values represent
+     * stronger penalties for straying from the friendly force. If no friendly forces are present
+     * (friendsCoords is null), the method returns 0, applying no penalty.
+     *
+     * @param friendsCoords       The coordinate representing the center of friendly forces, or null if no friends
+     * @param path                The movement path being evaluated
+     * @param movingUnit          The entity being moved, or null to skip role-aware positioning
+     * @param medianEnemyPosition The median position of enemy forces, or null if no enemies
+     *
+     * @return A herding modifier value (higher is worse) to be used in path ranking
+     */
+    protected double calculateHerdingMod(Coords friendsCoords, MovePath path, @Nullable Entity movingUnit,
+          @Nullable Coords medianEnemyPosition) {
         if (friendsCoords == null) {
             logger.trace(" herdingMod [-0 no friends]");
             return 0;
         }
 
-        double finalDistance = friendsCoords.distance(path.getFinalCoords());
+        Coords herdTarget = friendsCoords;
         double herding = getOwner().getBehaviorSettings().getHerdMentalityValue();
+
+        // Long-range units herd to an "overwatch" position behind friendly lines
+        if (movingUnit != null && getOwner().usesCasparProtocol() && medianEnemyPosition != null) {
+            PathRankerState state = getOwner().getPathRankerState();
+            if (state.isLongRangeOptimal(movingUnit)) {
+                int optimalRange = state.getOptimalRange(movingUnit);
+                // Calculate direction from enemies to friends (the "retreat" direction)
+                int direction = medianEnemyPosition.direction(friendsCoords);
+                // Offset herd target away from enemies by half the optimal range
+                // (full range would put them too far back; half keeps them supporting)
+                int overwatchOffset = optimalRange / 2;
+                herdTarget = friendsCoords.translated(direction, overwatchOffset);
+                logger.trace("Long-range unit {} herding to overwatch position {} hexes behind friends",
+                    movingUnit.getDisplayName(), overwatchOffset);
+            }
+        }
+
+        double finalDistance = herdTarget.distance(path.getFinalCoords());
         double herdingMod = finalDistance * herding;
 
         logger.trace("herding mod [-{} = {} * {}]", herdingMod, finalDistance, herding);
@@ -1476,7 +1567,31 @@ public class BasicPathRanker extends PathRanker {
                 }
             }
 
-            expectedDamageTaken += eval.getEstimatedEnemyDamage();
+            // Apply allied damage discount if enabled - when allies can also engage this enemy,
+            // the threat is reduced proportionally
+            double enemyDamage = eval.getEstimatedEnemyDamage();
+
+            // Damage Source Pool takes precedence: check if pool is enabled and initialized
+            PathRankerState state = getOwner().getPathRankerState();
+            if (getOwner().usesCasparProtocol() && state.isDamagePoolInitialized()) {
+                double remainingThreat = state.getRemainingThreat(enemy.getId());
+                if (remainingThreat < enemyDamage) {
+                    logger.debug("Damage pool for {}: remaining threat {} < estimated {}, using pool value",
+                          enemy.getDisplayName(), remainingThreat, enemyDamage);
+                    enemyDamage = remainingThreat;
+                }
+            } else if (getOwner().usesCasparProtocol()) {
+                // Fall back to ally counting heuristic (pool not initialized yet)
+                int alliesEngaging = countAlliesWhoCanEngage(enemy, movingUnit);
+                if (alliesEngaging > 0) {
+                    double allyFactor = alliesEngaging + 1.0;  // +1 for self
+                    double originalDamage = enemyDamage;
+                    enemyDamage = enemyDamage / allyFactor;
+                    logger.debug("Allied discount for {}: {} allies engaging, damage {} -> {} (factor {})",
+                          enemy.getDisplayName(), alliesEngaging, originalDamage, enemyDamage, allyFactor);
+                }
+            }
+            expectedDamageTaken += enemyDamage;
         }
 
         // if we're not in the air, we may get hit by friendly artillery
@@ -1568,12 +1683,17 @@ public class BasicPathRanker extends PathRanker {
         scores.put("aggressionIndex", (double) getOwner().getBehaviorSettings().getHyperAggressionIndex());
         scores.put("aggressionMod", aggressionMod);
 
+        // Calculate median enemy position early - needed for both herding and facing calculations
+        Coords medianEnemyPosition = unitsMedianCoordinateCalculator.getEnemiesMedianCoordinate(enemies,
+              path.getFinalCoords(), path.getFinalBoardId());
+
         // The further I am from my teammates, the lower this path
         // ranks (weighted by Herd Mentality).
         // Standoff artillery (whether holding at range or falling back when the enemy breaches its standoff) ignores the
         // herd pull, so it never gets dragged toward the advancing friendly line instead of keeping its distance.
+        // Other long-range units herd to an "overwatch" position offset from friends, away from enemies.
         double herdingMod = (isNotAirborne && !standoffArtillery)
-              ? calculateHerdingMod(friendsCoords, pathCopy)
+              ? calculateHerdingMod(friendsCoords, pathCopy, movingUnit, medianEnemyPosition)
               : 0;
 
         // Movement is good, it gives defense and extends a player power in the game.
@@ -1594,8 +1714,6 @@ public class BasicPathRanker extends PathRanker {
         scores.put("selfPreservationIndex", (double) getOwner().getBehaviorSettings().getSelfPreservationIndex());
         scores.put("movementMod", movementMod);
         // Try to face the enemy.
-        Coords medianEnemyPosition = unitsMedianCoordinateCalculator.getEnemiesMedianCoordinate(enemies,
-              path.getFinalCoords(), path.getFinalBoardId());
         Coords closestEnemyPositionNotZeroDistance = Optional.ofNullable(findClosestEnemy(movingUnit,
               pathCopy.getFinalCoords(),
               game,
@@ -2788,6 +2906,47 @@ public class BasicPathRanker extends PathRanker {
         }
         logger.trace("Total Hazard = {}", hazard);
         return Math.round(hazard);
+    }
+
+    /**
+     * Count friendly units (excluding the moving unit) who can potentially engage the given enemy.
+     * Used for allied damage discount calculation - when multiple allies can engage an enemy,
+     * the threat from that enemy is reduced proportionally.
+     *
+     * @param enemy      The enemy entity to check engagement range against
+     * @param movingUnit The unit currently being evaluated (excluded from count to avoid double-counting)
+     *
+     * @return The number of allied units (excluding the moving unit) who are in weapon range of the enemy
+     */
+    protected int countAlliesWhoCanEngage(Entity enemy, Entity movingUnit) {
+        if (enemy.getPosition() == null) {
+            return 0;
+        }
+
+        int count = 0;
+        List<Entity> friends = getOwner().getFriendEntities();
+
+        for (Entity ally : friends) {
+            // Skip the moving unit to avoid double-counting (we add +1 for self in the caller)
+            if (ally.getId() == movingUnit.getId()) {
+                continue;
+            }
+
+            // Skip if ally has no position or is off-board
+            if (ally.getPosition() == null || ally.isOffBoard()) {
+                continue;
+            }
+
+            // Check if ally is in weapon range of the enemy
+            int distance = ally.getPosition().distance(enemy.getPosition());
+            int allyMaxRange = getOwner().getMaxWeaponRange(ally, enemy.isAirborne());
+
+            if (distance <= allyMaxRange) {
+                count++;
+            }
+        }
+
+        return count;
     }
 
     /**

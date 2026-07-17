@@ -42,8 +42,8 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 /**
- * Tests for {@link HoldPositionCommand}: hold-position must set the bot's hold flag, and hold-position with {@code false} must
- * lift it.
+ * Tests for {@link HoldPositionCommand}: hold-position must set the bot's hold flag, and hold-position with
+ * {@code false} must lift it.
  *
  * @author HammerGS
  */

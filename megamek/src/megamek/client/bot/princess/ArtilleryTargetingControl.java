@@ -570,9 +570,10 @@ public class ArtilleryTargetingControl {
      * designation per TAG weapon per turn, so a homing round aimed near a different enemy is structurally un-guidable.
      * <p>
      * Deliberately predictive: it credits each TAG unit's move-plus-TAG reach, not current line of sight, because the
-     * spotter fires TAG in a later phase from its post-movement position. For each TAG unit a player-designated target it
-     * can reach wins; otherwise the highest-value (BV) reachable enemy - homing onto an assault is worth far more than
-     * onto a fleeing light, and {@code getTAGInfo} selects by value too, so this prediction matches the actual TAG.
+     * spotter fires TAG in a later phase from its post-movement position. For each TAG unit a player-designated target
+     * it can reach wins; otherwise the highest-value (BV) reachable enemy - homing onto an assault is worth far more
+     * than onto a fleeing light, and {@code getTAGInfo} selects by value too, so this prediction matches the actual
+     * TAG.
      *
      * @param shooter The firing artillery unit (used to tell friend from foe)
      * @param game    The current game
@@ -663,7 +664,8 @@ public class ArtilleryTargetingControl {
      * @param target The enemy the homing rounds would home onto
      *
      * @return How many homing Arrow IV hits to commit to this target before it counts as saturated - scaled to its
-     *       durability so the team does not spend a whole salvo on a light mek (each homing hit is ~20 to one location)
+     *       durability so the team does not spend a whole salvo on a light mek (each homing hit is ~20 to one
+     *       location)
      */
     private int weightClassHomingCap(Entity target) {
         return switch (target.getWeightClass()) {
@@ -675,14 +677,15 @@ public class ArtilleryTargetingControl {
     }
 
     /**
-     * Whether a candidate homing shot is worth firing, computed from the committed designations and the shot's legality.
+     * Whether a candidate homing shot is worth firing, computed from the committed designations and the shot's
+     * legality.
      *
-     * @param designation         the committed TAG designation this shot would home onto (within
-     *                            {@link Compute#HOMING_RADIUS}), or {@code null} if the shot is aimed outside every one
-     * @param saturated           {@code true} if that designation already has its weight-class fill of homing committed
-     * @param guidedByTag         {@code true} if this is a legal homing shot guided onto a non-saturated designation
-     * @param unguidedAutonomous  {@code true} if this is autonomous (non-player-ordered) homing with no guiding
-     *                            designation - it would scatter, so it must not be fired
+     * @param designation        the committed TAG designation this shot would home onto (within
+     *                           {@link Compute#HOMING_RADIUS}), or {@code null} if the shot is aimed outside every one
+     * @param saturated          {@code true} if that designation already has its weight-class fill of homing committed
+     * @param guidedByTag        {@code true} if this is a legal homing shot guided onto a non-saturated designation
+     * @param unguidedAutonomous {@code true} if this is autonomous (non-player-ordered) homing with no guiding
+     *                           designation - it would scatter, so it must not be fired
      */
     private record HomingEligibility(@Nullable Coords designation, boolean saturated, boolean guidedByTag,
           boolean unguidedAutonomous) {}
@@ -1631,9 +1634,9 @@ public class ArtilleryTargetingControl {
     }
 
     /**
-     * Same as {@link #tagTargetValue(Targetable)}, but with the entity's current Battle Value supplied by the
-     * caller. A BV calculation is expensive (for C3 units it rescans the whole network), so callers that evaluate
-     * many targets repeatedly - the path rankers - pass a cached value instead (see issue #8443).
+     * Same as {@link #tagTargetValue(Targetable)}, but with the entity's current Battle Value supplied by the caller. A
+     * BV calculation is expensive (for C3 units it rescans the whole network), so callers that evaluate many targets
+     * repeatedly - the path rankers - pass a cached value instead (see issue #8443).
      *
      * @param entity             A candidate TAG/homing target
      * @param currentBattleValue The entity's current (damage-adjusted) Battle Value

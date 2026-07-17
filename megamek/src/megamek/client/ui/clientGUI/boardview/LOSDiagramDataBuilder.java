@@ -94,8 +94,8 @@ final class LOSDiagramDataBuilder {
     /**
      * Builds diagram data with a pre-computed LOS blocked result. Use this when the LOS calculation was already
      * performed via the entity-based path (fire phase code), so the diagram doesn't re-compute with the manual
-     * AttackInfo (which may produce different results). {@code losRuleMode} controls the per-hex comparison level
-     * the diagram uses to flag blockers; pick it from the active game options via
+     * AttackInfo (which may produce different results). {@code losRuleMode} controls the per-hex comparison level the
+     * diagram uses to flag blockers; pick it from the active game options via
      * {@link LosRuleMode#fromGameOptions(Game)}. {@code deadZone} comes from the engine's
      * {@link LosEffects#isBlockedByDeadZone()} flag and drives the dead-zone hatch overlay.
      */
@@ -237,12 +237,12 @@ final class LOSDiagramDataBuilder {
     }
 
     /**
-     * Returns the LOS line's reference level at a given hex, in BMM LOS-level units (= hex + twHeight). Standard
-     * and Dead Zone use the BMM adjacency rule, which is a step function: the comparison level is the
-     * attacker-adjacent unit's LOS for hexes adjacent to the attacker, the target-adjacent unit's LOS for hexes
-     * adjacent to the target, the lower of the two for hexes adjacent to both (only possible at distance 2), and
-     * the higher of the two for non-adjacent intermediate hexes. Diagrammed uses a smooth linear interpolation
-     * matching {@code LosEffects.losElevation = 1 + interp(absHeight)} at line 1404.
+     * Returns the LOS line's reference level at a given hex, in BMM LOS-level units (= hex + twHeight). Standard and
+     * Dead Zone use the BMM adjacency rule, which is a step function: the comparison level is the attacker-adjacent
+     * unit's LOS for hexes adjacent to the attacker, the target-adjacent unit's LOS for hexes adjacent to the target,
+     * the lower of the two for hexes adjacent to both (only possible at distance 2), and the higher of the two for
+     * non-adjacent intermediate hexes. Diagrammed uses a smooth linear interpolation matching
+     * {@code LosEffects.losElevation = 1 + interp(absHeight)} at line 1404.
      */
     private static double calculateLosLineElevation(LosEffects.AttackInfo attackInfo,
           Coords coords, Coords attackPos, Coords targetPos, LosRuleMode mode) {

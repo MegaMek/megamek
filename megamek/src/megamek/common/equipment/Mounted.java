@@ -1577,9 +1577,9 @@ public class Mounted<T extends EquipmentType> implements Serializable, RoundUpda
 
     /**
      * @return {@code true} if this weapon is in the 3-point Directional Torso Mount, which operates as a full
-     *       360-degree turret. This version is available only to quad Meks (BMM p.83) - enforced here as well as
-     *       during construction so the 360-degree arc can never be granted to a biped. It is in effect when the
-     *       weapon carries the 360 weapon quirk, or its unit's 360 chassis quirk lists this weapon's location.
+     *       360-degree turret. This version is available only to quad Meks (BMM p.83) - enforced here as well as during
+     *       construction so the 360-degree arc can never be granted to a biped. It is in effect when the weapon carries
+     *       the 360 weapon quirk, or its unit's 360 chassis quirk lists this weapon's location.
      */
     public boolean hasDirectional360TorsoMount() {
         if (!(entity instanceof QuadMek)) {
@@ -1643,8 +1643,8 @@ public class Mounted<T extends EquipmentType> implements Serializable, RoundUpda
 
     /**
      * Builds a detailed one-line diagnostic of this weapon's Directional Torso Mount state (BMM p.83) for
-     * troubleshooting from the log. Reports every quirk source and the computed flags, so a playtest log can show why
-     * a weapon is (or is not) a flippable directional mount. Intended for log statements only, not the hot path.
+     * troubleshooting from the log. Reports every quirk source and the computed flags, so a playtest log can show why a
+     * weapon is (or is not) a flippable directional mount. Intended for log statements only, not the hot path.
      *
      * @return a human-readable description of the mount's quirk sources, flags and computed arc state
      */
@@ -1682,9 +1682,9 @@ public class Mounted<T extends EquipmentType> implements Serializable, RoundUpda
     }
 
     /**
-     * @return the Directional Torso Mount's current facing, as an offset (0-5) from the unit's (secondary) facing:
-     *       0 = forward, 3 = rear (BMM p.83). The 2-point version uses only 0 or 3; the 3-point quad turret may use
-     *       any of the six. Persists across rounds (unlike a torso twist).
+     * @return the Directional Torso Mount's current facing, as an offset (0-5) from the unit's (secondary) facing: 0 =
+     *       forward, 3 = rear (BMM p.83). The 2-point version uses only 0 or 3; the 3-point quad turret may use any of
+     *       the six. Persists across rounds (unlike a torso twist).
      */
     public int getDirectionalMountFacing() {
         return directionalMountFacing;
@@ -2062,7 +2062,7 @@ public class Mounted<T extends EquipmentType> implements Serializable, RoundUpda
 
     /**
      * @return True if this equipment counts for the size and weight of a Targeting Computer, and benefits from it in
-     * case of weapons.
+     *       case of weapons.
      *
      * @see EquipmentType#relevantToTargetingComputer()
      */

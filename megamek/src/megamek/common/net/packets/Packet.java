@@ -296,8 +296,8 @@ public record Packet(PacketCommand command, Object... data) implements Serializa
     /**
      * @param index the index of the desired object
      *
-     * @return the {@link EnemyArtilleryInbound} entries at the specified index, or an empty list if the object is absent
-     *       (e.g. an older packet without this field) or not a list
+     * @return the {@link EnemyArtilleryInbound} entries at the specified index, or an empty list if the object is
+     *       absent (e.g. an older packet without this field) or not a list
      */
     public List<EnemyArtilleryInbound> getEnemyArtilleryInbound(int index) {
         Object object = getObject(index);

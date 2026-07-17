@@ -186,6 +186,20 @@ public final class MinimapPanel extends JPanel implements IPreferenceChangeListe
 
     private static final GUIPreferences GUIP = GUIPreferences.getInstance();
     private static final ClientPreferences CLIENT_PREFERENCES = PreferenceManager.getClientPreferences();
+
+    /**
+     * Colors for distinguishing different enemy teams on the minimap.
+     * Index 0 is the default enemy color (red), subsequent indices are for additional enemy teams.
+     */
+    private static final Color[] ENEMY_TEAM_COLORS = {
+        new Color(200, 40, 40),   // Red (default enemy)
+        new Color(200, 120, 40),  // Orange
+        new Color(160, 40, 200),  // Purple
+        new Color(200, 200, 40),  // Yellow
+        new Color(40, 180, 180),  // Cyan
+        new Color(200, 80, 120)   // Pink
+    };
+
     private BufferedImage mapImage;
     private final BoardView bv;
     private final Game game;
@@ -196,14 +210,14 @@ public final class MinimapPanel extends JPanel implements IPreferenceChangeListe
     private final IClientGUI clientGui;
     /**
      * Game UUIDs that already have a {@link MinimapPanel} writing the summary GIF. A multi-board game creates one
-     * MinimapPanel per board, but the GIF file is keyed per game, so without this guard several panels would write
-     * the same file at once and then race when saving at game end. Only the first panel per game owns the GIF.
+     * MinimapPanel per board, but the GIF file is keyed per game, so without this guard several panels would write the
+     * same file at once and then race when saving at game end. Only the first panel per game owns the GIF.
      */
     private static final Set<String> GIF_WRITING_GAMES = ConcurrentHashMap.newKeySet();
 
     /**
-     * Per-game consent for GIF recording when the preference is {@link GifRecordingMode#ASK}, keyed by game UUID
-     * so the player is asked only once even in multi-board games with several minimap panels.
+     * Per-game consent for GIF recording when the preference is {@link GifRecordingMode#ASK}, keyed by game UUID so the
+     * player is asked only once even in multi-board games with several minimap panels.
      */
     private static final Map<String, Boolean> GIF_RECORDING_DECISIONS = new ConcurrentHashMap<>();
 
@@ -351,7 +365,7 @@ public final class MinimapPanel extends JPanel implements IPreferenceChangeListe
                 boolean recordGifFrame = phaseProducesSummaryFrame && shouldRecordGifForThisGame();
                 if (phaseProducesSummaryFrame && (GUIP.getGameSummaryMinimap() || recordGifFrame)) {
 
-                    File dir = new File(Configuration.gameSummaryImagesMMDir(), game.getUUIDString());
+                    File dir = new File(Configuration.gameSummaryImagesMMDir(), game.getTimestampString());
                     if (!dir.exists()) {
                         dir.mkdirs();
                     }
@@ -474,8 +488,8 @@ public final class MinimapPanel extends JPanel implements IPreferenceChangeListe
     }
 
     /**
-     * Releases this panel's claim on the summary GIF so a later game (a new UUID) can be written, and so the entry
-     * does not linger after the writer has stopped. Safe to call when this panel is not the owner.
+     * Releases this panel's claim on the summary GIF so a later game (a new UUID) can be written, and so the entry does
+     * not linger after the writer has stopped. Safe to call when this panel is not the owner.
      */
     private void releaseSummaryGifOwnership() {
         if (ownsSummaryGif) {
@@ -485,13 +499,12 @@ public final class MinimapPanel extends JPanel implements IPreferenceChangeListe
     }
 
     /**
-     * Prompts the local player, if necessary, whether to record this game's combat-summary GIF and stores the
-     * answer, so the per-phase recording never has to ask mid-game. This is the "at game start" entry point,
-     * intended to be called when the player readies up in the lobby.
+     * Prompts the local player, if necessary, whether to record this game's combat-summary GIF and stores the answer,
+     * so the per-phase recording never has to ask mid-game. This is the "at game start" entry point, intended to be
+     * called when the player readies up in the lobby.
      *
      * <p>No-op unless the preference is {@link GifRecordingMode#ASK} and no decision has been made for this game
-     * yet, so it is safe to call every time the player toggles ready. Must be called on the event dispatch
-     * thread.</p>
+     * yet, so it is safe to call every time the player toggles ready. Must be called on the event dispatch thread.</p>
      *
      * @param game   The game about to start
      * @param parent The parent component for the dialog, or {@code null} to center on screen
@@ -507,8 +520,8 @@ public final class MinimapPanel extends JPanel implements IPreferenceChangeListe
     /**
      * Returns {@code true} when the combat-summary GIF should be recorded for this game. With
      * {@link GifRecordingMode#ASK} (the default) the answer normally comes from the lobby prompt
-     * ({@link #promptForGifRecordingConsent(Game, Component)}); this asks lazily only as a fallback for a game
-     * that never went through a lobby ready (e.g. a save resumed mid-game).
+     * ({@link #promptForGifRecordingConsent(Game, Component)}); this asks lazily only as a fallback for a game that
+     * never went through a lobby ready (e.g. a save resumed mid-game).
      *
      * @return {@code true} if this game should be recorded
      */
@@ -521,12 +534,12 @@ public final class MinimapPanel extends JPanel implements IPreferenceChangeListe
     }
 
     /**
-     * Returns this game's remembered recording decision, asking the player (on the EDT) if none exists yet. The
-     * dialog is deliberately shown outside any map computation: blocking on the EDT while holding a map lock could
-     * deadlock if the EDT itself entered this code for another board's panel.
+     * Returns this game's remembered recording decision, asking the player (on the EDT) if none exists yet. The dialog
+     * is deliberately shown outside any map computation: blocking on the EDT while holding a map lock could deadlock if
+     * the EDT itself entered this code for another board's panel.
      *
-     * @return {@code true} if this game should be recorded; {@code false} also when the dialog could not be shown
-     *       (in that case no decision is stored, so the player is asked again at the next frame)
+     * @return {@code true} if this game should be recorded; {@code false} also when the dialog could not be shown (in
+     *       that case no decision is stored, so the player is asked again at the next frame)
      */
     private boolean recallOrAskRecordingDecision() {
         String gameId = game.getUUIDString();
@@ -543,8 +556,8 @@ public final class MinimapPanel extends JPanel implements IPreferenceChangeListe
     }
 
     /**
-     * Shows the recording dialog on the event dispatch thread, blocking the calling game-event thread until the
-     * player answers.
+     * Shows the recording dialog on the event dispatch thread, blocking the calling game-event thread until the player
+     * answers.
      *
      * @return The player's answer, or {@code null} if the dialog could not be shown
      */
@@ -614,6 +627,64 @@ public final class MinimapPanel extends JPanel implements IPreferenceChangeListe
             return clientGui.getClient().getLocalPlayer();
         }
         return null;
+    }
+
+    /**
+     * Determines the minimap icon color for an entity based on team coloring preferences.
+     * When team coloring is enabled and there's a local player:
+     * - Local player's units: My Unit Color (green)
+     * - Same team as local player: Ally Unit Color (blue)
+     * - Different teams: Distinct colors from ENEMY_TEAM_COLORS palette
+     *
+     * @param entity the entity to get the color for
+     * @return the color to use for the entity's minimap icon
+     */
+    private Color getTeamColor(Entity entity) {
+        // Fall back to player's chosen color if team coloring is disabled or no client
+        if (!GUIP.getTeamColoring() || client == null) {
+            return entity.getOwner().getColour().getColour(false);
+        }
+
+        Player localPlayer = getLocalPlayer();
+        Player owner = entity.getOwner();
+
+        if (localPlayer == null) {
+            // No local player - use team-based coloring for all units
+            // Assign colors based on team number
+            int team = owner.getTeam();
+            if (team <= Player.TEAM_NONE) {
+                // No team - use player's color
+                return owner.getColour().getColour(false);
+            }
+            // Use team number to index into colors (wrapping if needed)
+            return ENEMY_TEAM_COLORS[(team - 1) % ENEMY_TEAM_COLORS.length];
+        }
+
+        // Local player exists - use my/ally/enemy coloring
+        if (owner.equals(localPlayer)) {
+            return GUIP.getMyUnitColor();
+        }
+
+        int localTeam = localPlayer.getTeam();
+        int ownerTeam = owner.getTeam();
+
+        if (localTeam > Player.TEAM_NONE && localTeam == ownerTeam) {
+            return GUIP.getAllyUnitColor();
+        }
+
+        // Enemy - assign color based on their team number to distinguish different enemy teams
+        if (ownerTeam > Player.TEAM_NONE) {
+            // Get a distinct index for this enemy team relative to the local player's team
+            // Skip the local team's index to avoid color collision
+            int colorIndex = ownerTeam - 1;
+            if (localTeam > Player.TEAM_NONE && ownerTeam > localTeam) {
+                colorIndex--;  // Adjust index since we skip local team
+            }
+            return ENEMY_TEAM_COLORS[colorIndex % ENEMY_TEAM_COLORS.length];
+        }
+
+        // Default to standard enemy color
+        return GUIP.getEnemyUnitColor();
     }
 
     @Override
@@ -1527,19 +1598,7 @@ public final class MinimapPanel extends JPanel implements IPreferenceChangeListe
         boolean stratOpsSymbols = GUIP.getMmSymbol();
 
         // Choose player or team color depending on preferences
-        Color iconColor = entity.getOwner().getColour().getColour(false);
-        if (GUIP.getTeamColoring() && (client != null)) {
-            boolean isLocalTeam = (getLocalPlayer() != null) && (entity.getOwner().getTeam()
-                  == getLocalPlayer().getTeam());
-            boolean isLocalPlayer = entity.getOwner().equals(getLocalPlayer());
-            if (isLocalPlayer) {
-                iconColor = GUIP.getMyUnitColor();
-            } else if (isLocalTeam) {
-                iconColor = GUIP.getAllyUnitColor();
-            } else {
-                iconColor = GUIP.getEnemyUnitColor();
-            }
-        }
+        Color iconColor = getTeamColor(entity);
 
         if (removedFromGame) {
             iconColor = changeColorForDestroyedUnit(iconColor.brighter(), DESTROYED_UNIT_ALPHA);
@@ -1738,19 +1797,7 @@ public final class MinimapPanel extends JPanel implements IPreferenceChangeListe
 
 
         // Choose player or team color depending on preferences
-        Color iconColor = entity.getOwner().getColour().getColour(false);
-        if (GUIP.getTeamColoring() && (client != null)) {
-            boolean isLocalTeam = (getLocalPlayer() != null) && (entity.getOwner().getTeam()
-                  == getLocalPlayer().getTeam());
-            boolean isLocalPlayer = entity.getOwner().equals(getLocalPlayer());
-            if (isLocalPlayer) {
-                iconColor = GUIP.getMyUnitColor();
-            } else if (isLocalTeam) {
-                iconColor = GUIP.getAllyUnitColor();
-            } else {
-                iconColor = GUIP.getEnemyUnitColor();
-            }
-        }
+        Color iconColor = getTeamColor(entity);
         Graphics2D g2 = (Graphics2D) g;
         Stroke saveStroke = g2.getStroke();
 

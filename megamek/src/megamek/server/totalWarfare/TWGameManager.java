@@ -2019,6 +2019,7 @@ public class TWGameManager extends AbstractGameManager {
                 game.createVictoryConditions();
                 // some entities may need to be checked and updated
                 checkEntityExchange();
+                datasetLogger.setNextTimestamp(game.getTimestampString());
                 datasetLogger.append(game.getBoard(), true);
                 datasetLogger.append(game.getMapSettings(), true);
                 datasetLogger.append(game.getPlanetaryConditions(), true);

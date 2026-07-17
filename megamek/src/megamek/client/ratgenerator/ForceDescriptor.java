@@ -91,9 +91,9 @@ public class ForceDescriptor {
 
     private int index;
     /**
-     * Unique id of this node within the generated force, assigned by {@link #assignForceIds(int)} and
-     * emitted by {@link #getForceString()}. Must be unique across the whole generated force so the
-     * server does not merge distinct forces that would otherwise share an id. -1 means unassigned.
+     * Unique id of this node within the generated force, assigned by {@link #assignForceIds(int)} and emitted by
+     * {@link #getForceString()}. Must be unique across the whole generated force so the server does not merge distinct
+     * forces that would otherwise share an id. -1 means unassigned.
      */
     private int forceId = -1;
     private String name;
@@ -1250,11 +1250,10 @@ public class ForceDescriptor {
     }
 
     /**
-     * Assigns a unique {@link #forceId} to every formation node in this subtree - that is, every
-     * node from the lance/star/point level up. Leaf element nodes (the individual units) are skipped:
-     * they become entities in the game, not forces, so they need no force id. Must be run after the
-     * force tree is fully built and before {@link #loadEntities} so the force strings stamped onto
-     * entities are collision-free.
+     * Assigns a unique {@link #forceId} to every formation node in this subtree - that is, every node from the
+     * lance/star/point level up. Leaf element nodes (the individual units) are skipped: they become entities in the
+     * game, not forces, so they need no force id. Must be run after the force tree is fully built and before
+     * {@link #loadEntities} so the force strings stamped onto entities are collision-free.
      *
      * @param nextId the first id to assign
      *
@@ -1616,9 +1615,9 @@ public class ForceDescriptor {
     }
 
     /**
-     * Adds Clan-style Star groupings (5 vessels per Star) under the given parent category node. Stars are named
-     * "Alpha Star", "Bravo Star", … per Clan convention (phonetic identifier precedes the formation level). When
-     * only a single Star is generated, the phonetic is omitted and the node is simply named "Star".
+     * Adds Clan-style Star groupings (5 vessels per Star) under the given parent category node. Stars are named "Alpha
+     * Star", "Bravo Star", … per Clan convention (phonetic identifier precedes the formation level). When only a single
+     * Star is generated, the phonetic is omitted and the node is simply named "Star".
      *
      * @param parent The category node that will receive the Star(s) as subforces
      * @param ships  The ships to add to this category (must be non-empty; callers should pre-filter)
@@ -1708,8 +1707,8 @@ public class ForceDescriptor {
     }
 
     /**
-     * Creates an intermediate force-tree node for a transport sub-grouping (Star, Squadron, Division, Flotilla)
-     * and attaches it to the parent.
+     * Creates an intermediate force-tree node for a transport sub-grouping (Star, Squadron, Division, Flotilla) and
+     * attaches it to the parent.
      */
     private ForceDescriptor createGroupNode(ForceDescriptor parent, String name, int echelon, int coRank) {
         ForceDescriptor group = parent.createChild(parent.getSubForces().size());
@@ -1722,9 +1721,9 @@ public class ForceDescriptor {
     }
 
     /**
-     * Adds a Flotilla node (2 vessels) under the given parent and appends its vessels as element children.
-     * Suffix is appended to the Flotilla name only when non-null (e.g., when there are multiple Flotillas at the
-     * same level under the same Division).
+     * Adds a Flotilla node (2 vessels) under the given parent and appends its vessels as element children. Suffix is
+     * appended to the Flotilla name only when non-null (e.g., when there are multiple Flotillas at the same level under
+     * the same Division).
      */
     private void addFlotilla(ForceDescriptor parent, List<MekSummary> flotillaShips, @Nullable String suffix) {
         String name = "Flotilla" + (suffix != null ? " " + suffix : "");

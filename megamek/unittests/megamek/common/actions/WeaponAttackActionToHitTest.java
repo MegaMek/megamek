@@ -856,7 +856,7 @@ public class WeaponAttackActionToHitTest {
         for (int i = 0; i < hexes.length; i++) {
             hexes[i] = new Hex();
         }
-        Board board =  new Board(17, 16, hexes);
+        Board board = new Board(17, 16, hexes);
         Coords attackerCoords = new Coords(7, 6);
         Coords targetCoords = new Coords(7, 5);
         game.setBoard(board);

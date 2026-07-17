@@ -41,11 +41,11 @@ import javax.swing.SpinnerNumberModel;
 
 import megamek.client.ui.GBC2;
 import megamek.client.ui.Messages;
-import megamek.common.units.Entity;
 import megamek.common.equipment.EquipmentType;
 import megamek.common.equipment.EquipmentTypeLookup;
-import megamek.common.exceptions.LocationFullException;
 import megamek.common.equipment.Mounted;
+import megamek.common.exceptions.LocationFullException;
+import megamek.common.units.Entity;
 import megamek.common.weapons.infantry.InfantryWeapon;
 
 /**

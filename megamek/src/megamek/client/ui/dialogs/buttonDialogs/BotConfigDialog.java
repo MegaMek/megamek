@@ -237,9 +237,8 @@ public class BotConfigDialog extends AbstractButtonDialog
     }
 
     /**
-     * The bot-AI chooser, shown as a compact line under the name field. Presents one radio button per
-     * {@link AIType}, defaulting to {@link AIType#PRINCESS}; with a single AI type available it shows a single
-     * (selected) option.
+     * The bot-AI chooser, shown as a compact line under the name field. Presents one radio button per {@link AIType},
+     * defaulting to {@link AIType#PRINCESS}; with a single AI type available it shows a single (selected) option.
      */
     private JPanel aiTypePanel() {
         JPanel result = new JPanel();

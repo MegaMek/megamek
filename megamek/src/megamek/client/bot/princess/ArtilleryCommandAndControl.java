@@ -96,8 +96,8 @@ public class ArtilleryCommandAndControl {
         }
 
         /**
-         * @return {@code true} for zero-damage utility munitions (smoke, flare, mines and their variants), which the bot only
-         *       fires when the player explicitly orders them at a hex
+         * @return {@code true} for zero-damage utility munitions (smoke, flare, mines and their variants), which the
+         *       bot only fires when the player explicitly orders them at a hex
          */
         public boolean isUtility() {
             return utility;

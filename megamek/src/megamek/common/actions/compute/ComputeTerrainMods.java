@@ -111,11 +111,12 @@ public class ComputeTerrainMods {
     }
 
     /**
-     * Same as {@link #compileTerrainAndLosToHitMods(Game, Entity, Targetable, int, int, int, int, int, LosEffects,
-     * ToHitData, ToHitData, int, WeaponType, WeaponMounted, int, AmmoType, AmmoMounted, boolean, boolean, boolean,
-     * boolean, boolean)}, but accepts a precomputed list of ECM information for all game entities, which the C3
-     * spotter search inside the range-modifier calculation needs. Callers that evaluate many attacks in a row should
-     * compute that list once and pass it in.
+     * Same as
+     * {@link #compileTerrainAndLosToHitMods(Game, Entity, Targetable, int, int, int, int, int, LosEffects, ToHitData,
+     * ToHitData, int, WeaponType, WeaponMounted, int, AmmoType, AmmoMounted, boolean, boolean, boolean, boolean,
+     * boolean)}, but accepts a precomputed list of ECM information for all game entities, which the C3 spotter search
+     * inside the range-modifier calculation needs. Callers that evaluate many attacks in a row should compute that list
+     * once and pass it in.
      *
      * @param allECMInfo Precomputed ECM information for all game entities, or {@code null} to compute it on demand
      */

@@ -862,9 +862,9 @@ public class LosEffectsTest extends GameBoardTestCase {
     }
 
     /**
-     * Tests for the VTOL Mast Mount spotting rule (issue #8385). A Mast Mount treats the VTOL's onboard sensors as
-     * 1 elevation higher for spotting only (TacOps), letting a VTOL hovering behind cover spot over it. The +1 must
-     * apply only when {@code spotting} is true, and never for a unit without a working Mast Mount.
+     * Tests for the VTOL Mast Mount spotting rule (issue #8385). A Mast Mount treats the VTOL's onboard sensors as 1
+     * elevation higher for spotting only (TacOps), letting a VTOL hovering behind cover spot over it. The +1 must apply
+     * only when {@code spotting} is true, and never for a unit without a working Mast Mount.
      */
     @Nested
     @DisplayName("VTOL Mast Mount Spotting Tests (Issue #8385)")

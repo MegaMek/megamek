@@ -44,9 +44,9 @@ class SerializationHelperTest {
 
     /**
      * XStream 1.4 can serialize records but cannot deserialize them without an explicit converter.
-     * {@link HeatBreakdown.HeatContribution} is a {@code Serializable} record stored in {@code Entity}, so a
-     * missing converter makes save games containing heat-breakdown data fail to load. This pins the converter
-     * registered in {@link SerializationHelper#getLoadSaveGameXStream()}.
+     * {@link HeatBreakdown.HeatContribution} is a {@code Serializable} record stored in {@code Entity}, so a missing
+     * converter makes save games containing heat-breakdown data fail to load. This pins the converter registered in
+     * {@link SerializationHelper#getLoadSaveGameXStream()}.
      */
     @Test
     void heatContributionRecordSurvivesSaveGameRoundTrip() {
@@ -62,9 +62,9 @@ class SerializationHelperTest {
     }
 
     /**
-     * A malformed numeric value must not deserialize to a {@code null} {@link HeatBreakdown.HeatContribution}: a
-     * null stored in {@link HeatBreakdown}'s buildup map would later NPE (for example in
-     * {@code buildupTooltip()}). The converter keeps the field default instead and returns a non-null record.
+     * A malformed numeric value must not deserialize to a {@code null} {@link HeatBreakdown.HeatContribution}: a null
+     * stored in {@link HeatBreakdown}'s buildup map would later NPE (for example in {@code buildupTooltip()}). The
+     * converter keeps the field default instead and returns a non-null record.
      */
     @Test
     void malformedHeatContributionValueDeserializesToNonNullDefault() {

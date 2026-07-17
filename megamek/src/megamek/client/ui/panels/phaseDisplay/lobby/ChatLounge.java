@@ -95,7 +95,6 @@ import megamek.MMConstants;
 import megamek.SuiteConstants;
 import megamek.client.AbstractClient;
 import megamek.client.Client;
-import megamek.client.bot.AIType;
 import megamek.client.bot.BotClient;
 import megamek.client.bot.BotFactory;
 import megamek.client.bot.princess.BehaviorSettings;
@@ -2346,10 +2345,9 @@ public class ChatLounge extends AbstractPhaseDisplay
     }
 
     /**
-     * Shows the victory conditions dialog (the former Victory Conditions tab of the game options; the tab is
-     * removed and this dialog is the only place to edit those options). On OK, the changed options are sent to the
-     * server and the full option set is saved to the game options file so the victory conditions persist between
-     * games.
+     * Shows the victory conditions dialog (the former Victory Conditions tab of the game options; the tab is removed
+     * and this dialog is the only place to edit those options). On OK, the changed options are sent to the server and
+     * the full option set is saved to the game options file so the victory conditions persist between games.
      */
     private void showVictoryConditionsDialog() {
         if (victoryConditionsDialog == null) {

@@ -169,6 +169,11 @@ class PrincessTest {
         when(mockPrincess.calculateMoveIndex(any(Entity.class), any(StringBuilder.class))).thenCallRealMethod();
         when(mockPrincess.isFallingBack(any(Entity.class))).thenReturn(false);
 
+        // Mock BehaviorSettings for this basic test. The mocked Princess reports usesCasparProtocol() as
+        // false (the Mockito boolean default), so no CASPAR Protocol logic runs here.
+        BehaviorSettings mockBehavior = mock(BehaviorSettings.class);
+        when(mockPrincess.getBehaviorSettings()).thenReturn(mockBehavior);
+
         when(mockPathRanker.distanceToClosestEnemy(any(Entity.class),
               nullable(Coords.class),
               nullable(Game.class))).thenReturn(10.0);

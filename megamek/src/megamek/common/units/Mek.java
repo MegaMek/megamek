@@ -6852,27 +6852,27 @@ public abstract class Mek extends Entity implements Fortifiable, RubbleClearer {
     @Override
     public boolean isCrippled(boolean checkCrew) {
         if (countInternalDamagedLimbs() >= 3) {
-            LOGGER.debug("{} CRIPPLED: 3+ limbs have taken internals.", getDisplayName());
+            LOGGER.trace("{} CRIPPLED: 3+ limbs have taken internals.", getDisplayName());
             return true;
         }
 
         if (countInternalDamagedTorsos() >= 2) {
-            LOGGER.debug("{} CRIPPLED: 2+ torsos have taken internals.", getDisplayName());
+            LOGGER.trace("{} CRIPPLED: 2+ torsos have taken internals.", getDisplayName());
             return true;
         }
 
         if (isLocationBad(LOC_LEFT_TORSO)) {
-            LOGGER.debug("{} CRIPPLED: Left Torso destroyed.", getDisplayName());
+            LOGGER.trace("{} CRIPPLED: Left Torso destroyed.", getDisplayName());
             return true;
         }
 
         if (isLocationBad(LOC_RIGHT_TORSO)) {
-            LOGGER.debug("{} CRIPPLED: Right Torso destroyed.", getDisplayName());
+            LOGGER.trace("{} CRIPPLED: Right Torso destroyed.", getDisplayName());
             return true;
         }
 
         if (getEngineHits() >= 2) {
-            LOGGER.debug("{} CRIPPLED: 2 or more Engine Hits.", getDisplayName());
+            LOGGER.trace("{} CRIPPLED: 2 or more Engine Hits.", getDisplayName());
             return true;
 
         }
@@ -6888,13 +6888,13 @@ public abstract class Mek extends Entity implements Fortifiable, RubbleClearer {
             if ((getCockpitType() != COCKPIT_TORSO_MOUNTED)
                   || (getHitCriticalSlots(CriticalSlot.TYPE_SYSTEM,
                   SYSTEM_SENSORS, LOC_CENTER_TORSO) > 0)) {
-                LOGGER.debug("{} CRIPPLED: Sensors destroyed.", getDisplayName());
+                LOGGER.trace("{} CRIPPLED: Sensors destroyed.", getDisplayName());
                 return true;
             }
         }
 
         if ((getCrew() != null) && (getCrew().getHits() >= 4)) {
-            LOGGER.debug("{} CRIPPLED: Pilot has taken 4+ damage.", getDisplayName());
+            LOGGER.trace("{} CRIPPLED: Pilot has taken 4+ damage.", getDisplayName());
             return true;
         }
 
@@ -6907,7 +6907,7 @@ public abstract class Mek extends Entity implements Fortifiable, RubbleClearer {
         // combined weapons damage,
         // or has no weapons with range greater than 5 hexes
         if (!hasViableWeapons()) {
-            LOGGER.debug("{} CRIPPLED: has no more viable weapons.", getDisplayName());
+            LOGGER.trace("{} CRIPPLED: has no more viable weapons.", getDisplayName());
             return true;
         }
         return false;

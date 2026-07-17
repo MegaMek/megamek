@@ -365,7 +365,7 @@ public class TWDamageManager implements IDamageManager {
                 return handleCombatVehicleEscapePodDamage(cvep, damage, reportVec);
                 // CVEP uses parent's specialized handler (2-damage threshold breach model per TO:AUE p.121)
             }
-            case ConvInfantry teCast  -> damageInfantry(reportVec,
+            case ConvInfantry teCast -> damageInfantry(reportVec,
                   teCast,
                   hit,
                   damage,

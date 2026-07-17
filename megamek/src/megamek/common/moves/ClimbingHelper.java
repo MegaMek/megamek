@@ -45,8 +45,8 @@ import megamek.common.units.Terrains;
  * Utility class for Mek climbing rules (TO:AR p.20).
  *
  * <p>Climbing allows a Mek to enter a hex that is 3 or more levels higher or lower
- * than the hex it occupies, provided it has at least one arm with all four actuators
- * functional and the hand free. Only walking MP can be used when climbing.</p>
+ * than the hex it occupies, provided it has at least one arm with all four actuators functional and the hand free. Only
+ * walking MP can be used when climbing.</p>
  */
 public final class ClimbingHelper {
 
@@ -150,11 +150,12 @@ public final class ClimbingHelper {
     }
 
     /**
-     * Checks whether a specific arm on a Mek has all four actuators functional and
-     * the hand is free (not holding a physical weapon or carried object).
+     * Checks whether a specific arm on a Mek has all four actuators functional and the hand is free (not holding a
+     * physical weapon or carried object).
      *
-     * @param mek the Mek to check
+     * @param mek      the Mek to check
      * @param location the arm location ({@link Mek#LOC_LEFT_ARM} or {@link Mek#LOC_RIGHT_ARM})
+     *
      * @return true if the arm is fully functional and hand is free
      */
     public static boolean isArmClimbCapable(Mek mek, int location) {
@@ -190,6 +191,7 @@ public final class ClimbingHelper {
      * Returns the number of arms (0, 1, or 2) eligible for climbing on the given Mek.
      *
      * @param mek the Mek to check
+     *
      * @return the number of climbable arms
      */
     public static int countClimbableArms(Mek mek) {
@@ -204,11 +206,11 @@ public final class ClimbingHelper {
     }
 
     /**
-     * Returns true if the given entity is a Mek capable of climbing (TO:AR p.20).
-     * Requires at least one arm with all four actuators functional and hand free,
-     * and the unit must not be prone or shut down.
+     * Returns true if the given entity is a Mek capable of climbing (TO:AR p.20). Requires at least one arm with all
+     * four actuators functional and hand free, and the unit must not be prone or shut down.
      *
      * @param entity the entity to check
+     *
      * @return true if this entity can climb
      */
     public static boolean canClimb(Entity entity) {
@@ -243,6 +245,7 @@ public final class ClimbingHelper {
      * Returns a human-readable reason why the entity cannot climb, or null if climbing is possible.
      *
      * @param entity the entity to check
+     *
      * @return the reason climbing is impossible, or null if climbing is allowed
      */
     public static String getClimbingImpossibleReason(Entity entity) {
@@ -311,10 +314,11 @@ public final class ClimbingHelper {
     }
 
     /**
-     * Returns the MP cost per level climbed for the given Mek (TO:AR p.20).
-     * 2 MP per level with two functional hands, 3 MP per level with one.
+     * Returns the MP cost per level climbed for the given Mek (TO:AR p.20). 2 MP per level with two functional hands, 3
+     * MP per level with one.
      *
      * @param mek the Mek to check
+     *
      * @return the MP cost per level of climbing
      */
     public static int getClimbingMPCostPerLevel(Mek mek) {
@@ -322,11 +326,10 @@ public final class ClimbingHelper {
     }
 
     /**
-     * Returns the absolute level of the top climbable surface in the given hex — the building roof,
-     * the bridge surface, or the bare hex level if neither is present. Used by the climbing dialog
-     * to compute remaining levels of an in-progress climb; without the bridge branch a continuation
-     * climb toward a bridge hex measures only to the bare hex level (the water/ground beneath the
-     * bridge), reports 0 levels remaining, and skips the dialog entirely.
+     * Returns the absolute level of the top climbable surface in the given hex — the building roof, the bridge surface,
+     * or the bare hex level if neither is present. Used by the climbing dialog to compute remaining levels of an
+     * in-progress climb; without the bridge branch a continuation climb toward a bridge hex measures only to the bare
+     * hex level (the water/ground beneath the bridge), reports 0 levels remaining, and skips the dialog entirely.
      *
      * @param hex the hex whose climbable top to measure
      *

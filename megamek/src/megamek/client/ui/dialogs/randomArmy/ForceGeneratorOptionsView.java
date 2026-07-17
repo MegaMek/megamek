@@ -86,8 +86,8 @@ public class ForceGeneratorOptionsView extends JPanel implements FocusListener, 
     private int currentYear;
     private final Consumer<ForceDescriptor> onGenerate;
     /**
-     * Optional override for the Export-MUL button action. When set, replaces the built-in {@link #exportMUL}
-     * call so embedders can route the descriptor through their own export path. Null means use the default.
+     * Optional override for the Export-MUL button action. When set, replaces the built-in {@link #exportMUL} call so
+     * embedders can route the descriptor through their own export path. Null means use the default.
      */
     private Consumer<ForceDescriptor> onExportMUL;
 
@@ -1152,8 +1152,8 @@ public class ForceGeneratorOptionsView extends JPanel implements FocusListener, 
     }
 
     /**
-     * Shows or hides the Generate button. Embedders that drive generation through their own controls
-     * (e.g. an OK button on a parent dialog) hide the built-in button.
+     * Shows or hides the Generate button. Embedders that drive generation through their own controls (e.g. an OK button
+     * on a parent dialog) hide the built-in button.
      */
     public void setGenerateButtonVisible(boolean visible) {
         btnGenerate.setVisible(visible);
@@ -1174,35 +1174,33 @@ public class ForceGeneratorOptionsView extends JPanel implements FocusListener, 
     }
 
     /**
-     * Sets a custom handler for the Export-MUL button. When non-null, the built-in {@link #exportMUL} call is
-     * replaced by this consumer; the panel passes the live {@link ForceDescriptor} for the embedder to handle.
-     * Pass {@code null} to restore default behavior.
+     * Sets a custom handler for the Export-MUL button. When non-null, the built-in {@link #exportMUL} call is replaced
+     * by this consumer; the panel passes the live {@link ForceDescriptor} for the embedder to handle. Pass {@code null}
+     * to restore default behavior.
      */
     public void setOnExportMUL(Consumer<ForceDescriptor> handler) {
         this.onExportMUL = handler;
     }
 
     /**
-     * Makes the year text field read-only. Use this when an embedder anchors the year to an external value
-     * (e.g. MekHQ's campaign year) and doesn't want the user editing it on this panel.
+     * Makes the year text field read-only. Use this when an embedder anchors the year to an external value (e.g.
+     * MekHQ's campaign year) and doesn't want the user editing it on this panel.
      */
     public void setYearFieldEditable(boolean editable) {
         txtYear.setEditable(editable);
     }
 
     /**
-     * Programmatically picks a faction in the embedded picker. Embedders (e.g. MekHQ) call this to
-     * seed the picker with their campaign's faction so the dialog opens pre-aligned instead of
-     * defaulting to "IS". Looks up the FactionRecord from the loaded RATGenerator data; if the
-     * code doesn't match a known faction, the picker is left unchanged and {@code false} is
-     * returned.
+     * Programmatically picks a faction in the embedded picker. Embedders (e.g. MekHQ) call this to seed the picker with
+     * their campaign's faction so the dialog opens pre-aligned instead of defaulting to "IS". Looks up the
+     * FactionRecord from the loaded RATGenerator data; if the code doesn't match a known faction, the picker is left
+     * unchanged and {@code false} is returned.
      *
      * <p>The picker's existing {@link ActionListener} fires as a result of the
-     * {@code setSelectedItem} call, so the descriptor is updated as if the user had picked the
-     * faction by hand.</p>
+     * {@code setSelectedItem} call, so the descriptor is updated as if the user had picked the faction by hand.</p>
      *
-     * @param factionCode the short-name faction code (e.g. {@code "CHH"}, {@code "LC"},
-     *                    {@code "FS"})
+     * @param factionCode the short-name faction code (e.g. {@code "CHH"}, {@code "LC"}, {@code "FS"})
+     *
      * @return {@code true} if a matching faction was found and selected; {@code false} otherwise
      */
     public boolean setSelectedFaction(String factionCode) {

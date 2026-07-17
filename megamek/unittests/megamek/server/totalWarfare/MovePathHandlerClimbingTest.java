@@ -63,9 +63,8 @@ import megamek.utils.ServerFactory;
 import org.junit.jupiter.api.Test;
 
 /**
- * Server-side regression tests for TacOps Climbing fall/abort handling in
- * {@link MovePathHandler}. Lives in this package so it can construct the
- * package-private {@code MovePathHandler} directly.
+ * Server-side regression tests for TacOps Climbing fall/abort handling in {@link MovePathHandler}. Lives in this
+ * package so it can construct the package-private {@code MovePathHandler} directly.
  */
 public class MovePathHandlerClimbingTest extends GameBoardTestCase {
 

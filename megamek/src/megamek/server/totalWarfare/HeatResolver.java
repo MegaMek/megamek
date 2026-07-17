@@ -360,7 +360,8 @@ class HeatResolver extends AbstractTWRuleHandler {
 
             // If a Mek had an active Stealth suite, add 10 heat.
             if (entity.isStealthOn()) {
-                entity.changeHeatBuildup(ArmorType.STEALTH_ARMOR_HEAT, Messages.getString("HeatBreakdown.stealthArmor"));
+                entity.changeHeatBuildup(ArmorType.STEALTH_ARMOR_HEAT,
+                      Messages.getString("HeatBreakdown.stealthArmor"));
                 report = new Report(5015);
                 report.subject = entity.getId();
                 heatEffectsReports.add(report);
@@ -468,7 +469,8 @@ class HeatResolver extends AbstractTWRuleHandler {
                   Messages.getString("HeatBreakdown.externalHeat"));
             entity.heatFromExternal = 0;
             // remove heat we cooled down
-            entity.changeHeatBuildup(-Math.min(9, entity.coolFromExternal), Messages.getString("HeatBreakdown.cooling"));
+            entity.changeHeatBuildup(-Math.min(9, entity.coolFromExternal),
+                  Messages.getString("HeatBreakdown.cooling"));
             entity.coolFromExternal = 0;
 
             // Combat computers help manage heat
@@ -501,13 +503,16 @@ class HeatResolver extends AbstractTWRuleHandler {
             // how much heat can we sink?
             int toSink = entity.getHeatCapacityWithWater() + radicalHSBonus;
             // Record where the dissipation comes from for the heat-report "sinks" tooltip.
-            entity.getHeatBreakdown().addDissipation(entity.getHeatCapacity(), Messages.getString("HeatBreakdown.heatSinks"));
+            entity.getHeatBreakdown()
+                  .addDissipation(entity.getHeatCapacity(), Messages.getString("HeatBreakdown.heatSinks"));
             int submergedDissipation = entity.getHeatCapacityWithWater() - entity.getHeatCapacity();
             if (submergedDissipation > 0) {
-                entity.getHeatBreakdown().addDissipation(submergedDissipation, Messages.getString("HeatBreakdown.submerged"));
+                entity.getHeatBreakdown()
+                      .addDissipation(submergedDissipation, Messages.getString("HeatBreakdown.submerged"));
             }
             if (radicalHSBonus > 0) {
-                entity.getHeatBreakdown().addDissipation(radicalHSBonus, Messages.getString("HeatBreakdown.radicalHeatSink"));
+                entity.getHeatBreakdown()
+                      .addDissipation(radicalHSBonus, Messages.getString("HeatBreakdown.radicalHeatSink"));
             }
 
             if (getGame().getOptions().booleanOption(OptionsConstants.ADVANCED_COMBAT_TAC_OPS_COOLANT_FAILURE) &&
@@ -556,7 +561,9 @@ class HeatResolver extends AbstractTWRuleHandler {
             }
 
             if (toSink > dissipationBeforeCoolantPod) {
-                entity.getHeatBreakdown().addDissipation(toSink - dissipationBeforeCoolantPod, Messages.getString("HeatBreakdown.coolantPod"));
+                entity.getHeatBreakdown()
+                      .addDissipation(toSink - dissipationBeforeCoolantPod,
+                            Messages.getString("HeatBreakdown.coolantPod"));
             }
             toSink = Math.min(toSink, entity.heat);
             entity.heat -= toSink;
@@ -1120,13 +1127,16 @@ class HeatResolver extends AbstractTWRuleHandler {
         // how much heat can we sink?
         int toSink = entity.getHeatCapacityWithWater() + radicalHSBonus;
         // Record where the dissipation comes from for the heat-report "sinks" tooltip.
-        entity.getHeatBreakdown().addDissipation(entity.getHeatCapacity(), Messages.getString("HeatBreakdown.heatSinks"));
+        entity.getHeatBreakdown()
+              .addDissipation(entity.getHeatCapacity(), Messages.getString("HeatBreakdown.heatSinks"));
         int submergedDissipation = entity.getHeatCapacityWithWater() - entity.getHeatCapacity();
         if (submergedDissipation > 0) {
-            entity.getHeatBreakdown().addDissipation(submergedDissipation, Messages.getString("HeatBreakdown.submerged"));
+            entity.getHeatBreakdown()
+                  .addDissipation(submergedDissipation, Messages.getString("HeatBreakdown.submerged"));
         }
         if (radicalHSBonus > 0) {
-            entity.getHeatBreakdown().addDissipation(radicalHSBonus, Messages.getString("HeatBreakdown.radicalHeatSink"));
+            entity.getHeatBreakdown()
+                  .addDissipation(radicalHSBonus, Messages.getString("HeatBreakdown.radicalHeatSink"));
         }
 
         // should we use a coolant pod?
@@ -1167,7 +1177,8 @@ class HeatResolver extends AbstractTWRuleHandler {
         }
 
         if (toSink > dissipationBeforeCoolantPod) {
-            entity.getHeatBreakdown().addDissipation(toSink - dissipationBeforeCoolantPod, Messages.getString("HeatBreakdown.coolantPod"));
+            entity.getHeatBreakdown()
+                  .addDissipation(toSink - dissipationBeforeCoolantPod, Messages.getString("HeatBreakdown.coolantPod"));
         }
         toSink = Math.min(toSink, entity.heat);
         entity.heat -= toSink;

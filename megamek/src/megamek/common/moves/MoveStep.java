@@ -874,8 +874,8 @@ public class MoveStep implements Serializable {
 
         if (isClimbing) {
             LOGGER.debug("[CLIMB-TRACE] compile FINAL: type={}, movementType={}, mp={}, mpUsed={}, " +
-                  "elevation={}, position={}, isClimbing={}, isStackingViolation={}, terrainInvalid={}, " +
-                  "isLegalEndPos={}",
+                        "elevation={}, position={}, isClimbing={}, isStackingViolation={}, terrainInvalid={}, " +
+                        "isLegalEndPos={}",
                   type, movementType, mp, mpUsed, elevation, position,
                   isClimbing, isStackingViolation, terrainInvalid, isLegalEndPos());
         }
@@ -1284,7 +1284,7 @@ public class MoveStep implements Serializable {
             if (isClimbing) {
                 LOGGER.debug("[CLIMB-TRACE] getMovementType: isLastStep={}, isLegalEndPos=false, " +
                             "overriding {} to MOVE_ILLEGAL, isStackingViolation={}, terrainInvalid={}, " +
-                      "isJumping={}, distance={}, hasEverUnloaded={}, position={}, elevation={}",
+                            "isJumping={}, distance={}, hasEverUnloaded={}, position={}, elevation={}",
                       isLastStep, movementType, isStackingViolation, terrainInvalid,
                       isJumping(), distance, hasEverUnloaded, position, elevation);
             }
@@ -2446,7 +2446,7 @@ public class MoveStep implements Serializable {
                 // but within run and running is legal
                 if (isClimbing) {
                     LOGGER.info("compileIllegal: climbing step classified as RUN! " +
-                          "mpUsed={}, walkMP={}, runMPMax={}, isRunProhibited={}, isRunAllowed={}",
+                                "mpUsed={}, walkMP={}, runMPMax={}, isRunProhibited={}, isRunAllowed={}",
                           getMpUsed(), tmpWalkMP, runMPMax, isRunProhibited, isRunAllowed());
                 }
 
@@ -2638,7 +2638,7 @@ public class MoveStep implements Serializable {
         if ((stepType == MoveStepType.GET_UP) || (stepType == MoveStepType.CAREFUL_STAND)) {
             LOGGER.debug("[STAND-TRACE] {} after checks: movementType={}, isProne={}, " +
                         "isClimbing={}, entity.isClimbing={}, climbMode={}, elevation={}, " +
-                  "entity.elevation={}, entity.position={}, entity.mpUsed={}",
+                        "entity.elevation={}, entity.position={}, entity.mpUsed={}",
                   stepType, movementType, isProne(), isClimbing, entity.isClimbing(),
                   climbMode, elevation, entity.getElevation(), entity.getPosition(), entity.mpUsed);
         }
@@ -3008,7 +3008,7 @@ public class MoveStep implements Serializable {
         ) {
             if (isClimbing) {
                 LOGGER.info("compileIllegal: climbing step overridden to MOVE_ILLEGAL! " +
-                      "movementPossible={}, movementType was={}, prevEl={}",
+                            "movementPossible={}, movementType was={}, prevEl={}",
                       movementPossible, movementType, prev.getElevation());
             }
             if ((stepType == MoveStepType.GET_UP) || (stepType == MoveStepType.CAREFUL_STAND)) {
@@ -4167,7 +4167,7 @@ public class MoveStep implements Serializable {
         if ((type != MoveStepType.DFA) && !entity.isElevationValid(elevation, destHex)) {
             LOGGER.debug("[CLIMB-TRACE] isMovementPossible: elevation NOT valid! elevation={}, " +
                         "destHex={}, destHex.level={}, destHex.ceiling={}, destHex.floor={}, " +
-                  "isClimbing={}, entity={}",
+                        "isClimbing={}, entity={}",
                   elevation, dest, destHex.getLevel(), destHex.ceiling(), destHex.floor(),
                   isClimbing, entity.getDisplayName());
             if (isJumping()) {

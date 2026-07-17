@@ -32,9 +32,9 @@
  */
 package megamek.client.ui.util;
 
+import java.awt.Cursor;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
-import java.awt.Cursor;
 import java.util.Objects;
 import java.util.function.Consumer;
 import javax.swing.JLabel;

@@ -166,9 +166,9 @@ public enum FacingArc {
     }
 
     /**
-     * Cached copy of {@link #values()}. {@code values()} clones its backing array on every call, which showed up
-     * as a heavy allocation source in hot arc lookups (JFR profiling, 2026-06-21). Iterating this shared,
-     * never-modified array avoids that per-call clone. Treat as read-only.
+     * Cached copy of {@link #values()}. {@code values()} clones its backing array on every call, which showed up as a
+     * heavy allocation source in hot arc lookups (JFR profiling, 2026-06-21). Iterating this shared, never-modified
+     * array avoids that per-call clone. Treat as read-only.
      */
     private static final FacingArc[] VALUES = values();
 

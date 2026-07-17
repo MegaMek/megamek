@@ -37,7 +37,12 @@ package megamek.client.ui.dialogs;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Window;
-import javax.swing.*;
+import javax.swing.Box;
+import javax.swing.JComponent;
+import javax.swing.JEditorPane;
+import javax.swing.JLabel;
+import javax.swing.JOptionPane;
+import javax.swing.JPanel;
 import javax.swing.border.EmptyBorder;
 
 import com.formdev.flatlaf.FlatClientProperties;

@@ -45,8 +45,8 @@ import megamek.common.game.Game;
 import org.junit.jupiter.api.Test;
 
 /**
- * Tests for {@link PathEnumerator#getEntitiesWithLocation(Coords, boolean)}, in particular that a unit is found at
- * a location regardless of which of the six hex facings its potential location uses (issue #8439).
+ * Tests for {@link PathEnumerator#getEntitiesWithLocation(Coords, boolean)}, in particular that a unit is found at a
+ * location regardless of which of the six hex facings its potential location uses (issue #8439).
  */
 class PathEnumeratorTest {
 

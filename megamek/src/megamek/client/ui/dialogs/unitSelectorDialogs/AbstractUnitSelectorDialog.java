@@ -674,9 +674,9 @@ public abstract class AbstractUnitSelectorDialog extends JDialog implements Runn
                         /* Year Limits */
                           (!enableYearLimits || (mek.getYear() <= allowedYear))
                                 /* Canon */
-                                                                && matchesCanonFilter(mek)
+                                && matchesCanonFilter(mek)
                                 /* Published Record Sheet */
-                                                                && matchesPublishedRecordSheetFilter(mek)
+                                && matchesPublishedRecordSheetFilter(mek)
                                 /* Invalid units */
                                 && (allowInvalid || !mek.getLevel().equals("F"))
                                 /* Weight */

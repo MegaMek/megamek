@@ -2042,11 +2042,13 @@ public class MapMenu extends JPopupMenu {
     }
 
     /**
-     * Create a menu entry for sweeping off a specific target (currently only supports iNarc pods)
-     * Each valid iNarc pod should get one entry with the target's name, which will create the
-     * BrushOffAttackAction to try to clear that target only.
-     * @param brushTarget   Targetable iNarc pod instance
-     * @return              JMenuItem that will launch the physical attack selection dialog
+     * Create a menu entry for sweeping off a specific target (currently only supports iNarc pods) Each valid iNarc pod
+     * should get one entry with the target's name, which will create the BrushOffAttackAction to try to clear that
+     * target only.
+     *
+     * @param brushTarget Targetable iNarc pod instance
+     *
+     * @return JMenuItem that will launch the physical attack selection dialog
      */
     private JMenuItem createBrushOffJMenuItem(Targetable brushTarget) {
         JMenuItem item = new JMenuItem(String.format("Brush Off [%s]", brushTarget.getDisplayName()));

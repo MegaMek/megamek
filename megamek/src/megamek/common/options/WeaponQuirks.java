@@ -237,9 +237,9 @@ public class WeaponQuirks extends AbstractOptions {
     /**
      * Determines whether a weapon has location placement restrictions that forbid it from being placed in a Directional
      * Torso Mount (BMM p.83): the Heavy Gauss and Improved Heavy Gauss rifles, which carry genuine mandatory mounting
-     * rules. Merely being large enough that construction <i>allows</i> splitting over two locations (8+ critical
-     * slots, e.g. a HAG/30) is an allowance, not a restriction, and does not exclude the weapon - the canon
-     * OmniMarauder Prime mounts its Directional Torso Mount HAG/30 whole in one torso. A weapon that actually
+     * rules. Merely being large enough that construction <i>allows</i> splitting over two locations (8+ critical slots,
+     * e.g. a HAG/30) is an allowance, not a restriction, and does not exclude the weapon - the canon OmniMarauder Prime
+     * mounts its Directional Torso Mount HAG/30 whole in one torso. A weapon that actually
      * <i>is</i> split across two locations can never ride the single-location mount; that is checked per mount in
      * {@link Mounted#hasDirectionalTorsoMount()}.
      *

@@ -370,8 +370,8 @@ class PreEndDeclarationsEligibilityTest {
     }
 
     /**
-     * Returns a BipedMek spy with every pre-end declaration capability stubbed to {@code false}, so a single
-     * capability can be flipped on to test that {@link Entity#isEligibleForPreEndDeclarations()} reacts to it.
+     * Returns a BipedMek spy with every pre-end declaration capability stubbed to {@code false}, so a single capability
+     * can be flipped on to test that {@link Entity#isEligibleForPreEndDeclarations()} reacts to it.
      */
     private BipedMek eligibilitySpyAllFalse() {
         BipedMek mek = spy(new BipedMek());

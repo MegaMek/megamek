@@ -125,8 +125,8 @@ public final class FontHandler {
      * @param size      the glyph height in (already scaled) pixels
      * @param color     the color to paint the glyph
      *
-     * @return an {@link Icon} drawing the glyph, or {@code null} on invalid input (out-of-range code point, non-positive
-     *       size, or null color) or if the symbols font cannot display the code point
+     * @return an {@link Icon} drawing the glyph, or {@code null} on invalid input (out-of-range code point,
+     *       non-positive size, or null color) or if the symbols font cannot display the code point
      */
     public static Icon symbolIcon(int codePoint, int size, Color color) {
         if (!Character.isValidCodePoint(codePoint) || size <= 0 || color == null) {
@@ -186,7 +186,8 @@ public final class FontHandler {
                 graphics.setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING, RenderingHints.VALUE_TEXT_ANTIALIAS_ON);
                 // Match the fractional metrics used when the ink bounds were measured, so the glyph lands exactly
                 // where width/drawX expect; mismatched metrics could otherwise clip an edge or shift it a pixel.
-                graphics.setRenderingHint(RenderingHints.KEY_FRACTIONALMETRICS, RenderingHints.VALUE_FRACTIONALMETRICS_ON);
+                graphics.setRenderingHint(RenderingHints.KEY_FRACTIONALMETRICS,
+                      RenderingHints.VALUE_FRACTIONALMETRICS_ON);
                 graphics.setFont(font);
                 graphics.setColor(color);
                 graphics.drawString(glyph, x + drawX, y + drawY);

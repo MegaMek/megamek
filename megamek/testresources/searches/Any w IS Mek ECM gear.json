@@ -1,26 +1,34 @@
 {
-  "content" : "ADVANCED_SEARCH_STATE",
-  "name" : "Any w/ IS Mek ECM gear",
-  "twState" : {
-    "unitTypeState" : { },
-    "transportsState" : { },
-    "quirksState" : {
-      "chassisQuirks" : { },
-      "weaponQuirks" : { }
+  "content": "ADVANCED_SEARCH_STATE",
+  "name": "Any w/ IS Mek ECM gear",
+  "twState": {
+    "unitTypeState": {},
+    "transportsState": {},
+    "quirksState": {
+      "chassisQuirks": {},
+      "weaponQuirks": {}
     },
-    "miscState" : {
-      "cockpitType" : { },
-      "armorType" : { },
-      "internalsType" : { },
-      "engineType" : { },
-      "gyroType" : { },
-      "techLevel" : { },
-      "techBase" : { },
-      "moveMode" : { }
+    "miscState": {
+      "cockpitType": {},
+      "armorType": {},
+      "internalsType": {},
+      "engineType": {},
+      "gyroType": {},
+      "techLevel": {},
+      "techBase": {},
+      "moveMode": {}
     },
-    "equipmentState" : {
-      "filterTokens" : [ "(", "ISAngelECMSuite__1__>=", "or", "ISGuardianECMSuite__1__>=", "or", "ISGuardianECMSuitePrototype__1__>=", ")" ]
+    "equipmentState": {
+      "filterTokens": [
+        "(",
+        "ISAngelECMSuite__1__>=",
+        "or",
+        "ISGuardianECMSuite__1__>=",
+        "or",
+        "ISGuardianECMSuitePrototype__1__>=",
+        ")"
+      ]
     }
   },
-  "asState" : { }
+  "asState": {}
 }

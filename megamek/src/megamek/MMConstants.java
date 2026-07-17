@@ -74,9 +74,11 @@ public final class MMConstants extends SuiteConstants {
     public static final String SURNAME_FILE = Paths.get("data/names/surnames.csv").toString();
     public static final String BOT_README_FILE_PATH = Paths.get("docs/MegaMek/princess/PrincessBotDocumentation.html")
           .toString();
-    public static final String BOARD_README_FILE_PATH = Paths.get("docs/Customization/Map Editor-readme.txt").toString();
+    public static final String BOARD_README_FILE_PATH = Paths.get("docs/Customization/Map Editor-readme.txt")
+          .toString();
     public static final String MEGAMEK_README_FILE_PATH = Paths.get("docs/MegaMek/mm-help.txt.html").toString();
-    public static final String USER_DIR_README_FILE = Paths.get("docs/Customization/UserDir/UserDirHelp.html").toString();
+    public static final String USER_DIR_README_FILE = Paths.get("docs/Customization/UserDir/UserDirHelp.html")
+          .toString();
     public static final String USER_NAME_FACTIONS_DIRECTORY_PATH = Paths.get("userdata/data/names/factions/")
           .toString();
     public static final String USER_CALLSIGN_FILE_PATH = Paths.get("userdata/data/names/callsigns.csv").toString();

@@ -1379,8 +1379,8 @@ public class Board implements Serializable {
     }
 
     /**
-     * Record that a fire at the given coordinates was started by a fuel-fed flamer (TO:AuE p.153). Such fires are harder
-     * for firefighting engineers to extinguish.
+     * Record that a fire at the given coordinates was started by a fuel-fed flamer (TO:AuE p.153). Such fires are
+     * harder for firefighting engineers to extinguish.
      *
      * @param coords the <code>Coords</code> of the flamer-started fire
      */

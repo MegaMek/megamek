@@ -174,7 +174,7 @@ public class BattleArmorTROView extends TROView {
             if (m.getLocation() == BattleArmor.LOC_NONE) {
                 if (!(m.getType() instanceof MiscType) ||
                       (!m.getType().hasFlag(MiscType.F_DNI_COCKPIT_MOD) &&
-                       !m.getType().hasFlag(MiscType.F_EI_INTERFACE))) {
+                            !m.getType().hasFlag(MiscType.F_EI_INTERFACE))) {
                     continue;
                 }
             }

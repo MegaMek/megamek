@@ -35,10 +35,14 @@ package megamek.client.bot.caspar;
 import megamek.client.bot.princess.Princess;
 
 /**
- * The CASPAR bot: the experimental successor to {@link Princess}. It shares Princess's entire
- * network/phase/state plumbing and, in this initial version, plays identically to Princess. Experimental
- * behavior is added by overriding Princess's wiring seams (for example {@code initializePathRankers()} and
- * {@code initializeFireControls()}) so that each divergence can be compared against Princess.
+ * The CASPAR bot: the experimental successor to {@link Princess}. It shares Princess's entire network/phase/state
+ * plumbing. Experimental behavior is added by overriding Princess's wiring seams (for example
+ * {@code initializePathRankers()} and {@code initializeFireControls()}) so that each divergence can be compared against
+ * Princess.
+ *
+ * <p>CASPAR currently diverges from Princess by running the CASPAR Protocol (see
+ * {@code usesCasparProtocol()}): allied damage consideration, damage source pool tracking, and role-aware
+ * positioning.</p>
  */
 public class Caspar extends Princess {
 
@@ -51,5 +55,16 @@ public class Caspar extends Princess {
      */
     public Caspar(final String name, final String host, final int port) {
         super(name, host, port);
+    }
+
+    /**
+     * CASPAR always runs the CASPAR Protocol (allied damage consideration, damage source pool tracking, and role-aware
+     * positioning). Princess never does; the bot type is the only switch.
+     *
+     * @return TRUE, always
+     */
+    @Override
+    protected boolean usesCasparProtocol() {
+        return true;
     }
 }

@@ -32,7 +32,7 @@
  */
 package megamek.client.ui.dialogs.advancedsearch;
 
-import org.junit.jupiter.api.Test;
+import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 
 import java.io.IOException;
 import java.net.URISyntaxException;
@@ -40,7 +40,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.stream.Stream;
 
-import static org.junit.jupiter.api.Assertions.*;
+import org.junit.jupiter.api.Test;
 
 class AdvancedSearchDialogTest {
 

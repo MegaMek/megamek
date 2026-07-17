@@ -638,8 +638,8 @@ public class MekSummaryCache {
     }
 
     /**
-     * Builds a fully populated {@link MekSummary} from a standalone unit file, without requiring the entire unit
-     * cache to be loaded. The unit does not need to be part of the official cache.
+     * Builds a fully populated {@link MekSummary} from a standalone unit file, without requiring the entire unit cache
+     * to be loaded. The unit does not need to be part of the official cache.
      *
      * <p>This is intended for tooling (such as the SVG mass printer) that needs to process arbitrary or custom
      * {@code .blk}/{@code .mtf} files.</p>

@@ -463,7 +463,7 @@ public class UnitEditorDialog extends JDialog {
             return;
         }
         int choice = JOptionPane.showConfirmDialog(this,
-              String.format(Messages.getString("Gamemaster.Traitor.confirmation"),
+              Messages.getString("Gamemaster.Traitor.confirmation",
                     entity.getDisplayName(),
                     chosen.getName()),
               Messages.getString("Gamemaster.Traitor.confirm"),

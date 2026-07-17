@@ -6836,6 +6836,8 @@ public class MovementDisplay extends ActionPhaseDisplay {
                       JOptionPane.YES_NO_OPTION);
                 if (confirm == JOptionPane.YES_OPTION) {
                     e.setTraitorId(id);
+                    LOGGER.info("[Traitor] Sending update for {} (unit id {}) with traitorId {} ({})",
+                          e.getDisplayName(), e.getId(), id, name);
                     clientgui.getClient().sendUpdateEntity(e);
                 }
             }

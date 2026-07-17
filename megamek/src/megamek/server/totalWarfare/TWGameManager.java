@@ -18373,11 +18373,21 @@ public class TWGameManager extends AbstractGameManager {
         // check for traitors
         for (Entity entity : game.inGameTWEntities()) {
             if (entity.isDoomed() || entity.isDestroyed() || entity.isOffBoard() || !entity.isDeployed()) {
+                if (entity.getTraitorId() != -1) {
+                    LOGGER.info("[Traitor] {} (unit id {}) has traitorId {} but is skipped: doomed={} destroyed={} "
+                                + "offBoard={} deployed={}", entity.getDisplayName(), entity.getId(),
+                          entity.getTraitorId(), entity.isDoomed(), entity.isDestroyed(), entity.isOffBoard(),
+                          entity.isDeployed());
+                }
                 continue;
             }
             if ((entity.getTraitorId() != -1) && (entity.getOwnerId() != entity.getTraitorId())) {
                 final Player oldPlayer = game.getPlayer(entity.getOwnerId());
                 final Player newPlayer = game.getPlayer(entity.getTraitorId());
+                LOGGER.info("[Traitor] Resolving {} (unit id {}): owner {} (id {}) -> traitorId {} ({})",
+                      entity.getDisplayName(), entity.getId(),
+                      (oldPlayer != null) ? oldPlayer.getName() : "<no player>", entity.getOwnerId(),
+                      entity.getTraitorId(), (newPlayer != null) ? newPlayer.getName() : "NO SUCH PLAYER - dropped");
                 if (newPlayer != null) {
                     Report r = new Report(7305);
                     r.subject = entity.getId();
@@ -26640,12 +26650,26 @@ public class TWGameManager extends AbstractGameManager {
 
         // the sender cannot be null here: senderCanUpdateEntity rejects an update from an unknown connection
         LOGGER.debug("Applying update for {} from {}", oldEntity.getDisplayName(), sender.getName());
+        if (entity.getTraitorId() != -1) {
+            LOGGER.info("[Traitor] Update for {} (unit id {}) from {} carries traitorId {}; server copy had {}",
+                  entity.getDisplayName(), entity.getId(), sender.getName(),
+                  entity.getTraitorId(), oldEntity.getTraitorId());
+        }
         // In play, the client-sent copy carries whatever turn state it held when it was captured, which may be
         // stale (for example a unit that has not moved yet but whose client snapshot is marked done). Swapping it
         // in would overwrite the server's live turn state and could rob the owner of a move they still have. A
         // gamemaster editing damage must not spend the owner's action, so keep the server's turn/move state.
         if (!game.getPhase().isLounge()) {
             preserveInPlayTurnState(oldEntity, entity);
+            // A pending traitor switch is server-side state: /changeOwner sets it on the server's copy only, so a
+            // client-sent copy never carries it. An update that does not itself order a switch (the Traitor button
+            // does, and wins here) must not erase the pending one while it waits for the END phase.
+            if ((entity.getTraitorId() == -1) && (oldEntity.getTraitorId() != -1)) {
+                LOGGER.info("[Traitor] Update for {} (unit id {}) from {} would have erased pending traitorId {}; "
+                      + "keeping it", entity.getDisplayName(), entity.getId(), sender.getName(),
+                      oldEntity.getTraitorId());
+                entity.setTraitorId(oldEntity.getTraitorId());
+            }
         }
         game.setEntity(entity.getId(), entity);
         entityUpdate(entity.getId());

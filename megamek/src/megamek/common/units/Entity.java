@@ -15046,9 +15046,9 @@ public abstract class Entity extends TurnOrdered
                     c3BoostedMultiplier = 0.05;
                 }
                 if (numberOfC3Members > 1 && numberOfC3Members <=8) {
-                    returnBV = (int) Math.ceil(baseBV * ((multiplier * numberOfC3Members) + c3BoostedMultiplier));
+                    returnBV = (int) Math.round(baseBV * ((multiplier * numberOfC3Members) + c3BoostedMultiplier));
                 } else if (numberOfC3Members > 8) {
-                    returnBV = (int) Math.ceil(baseBV * ((multiplier * 8) + c3BoostedMultiplier));
+                    returnBV = (int) Math.round(baseBV * ((multiplier * 8) + c3BoostedMultiplier));
                 }
             } else if (hasNovaCEWS()) { //Nova CEWS applies 5% to every mek with Nova on the team {
                 int novaMembers = 1;
@@ -15058,10 +15058,10 @@ public abstract class Entity extends TurnOrdered
                     }
                 }
                 if (novaMembers > 1 && novaMembers <=7) {
-                    returnBV = (int) Math.ceil(baseBV * (multiplier * novaMembers));
+                    returnBV = (int) Math.round(baseBV * (multiplier * novaMembers));
                 } else if (novaMembers > 7) {
                     // IO: Alternate Eras p.183: Nova CEWS BV bonus capped at 35% of unit's base BV
-                    returnBV = (int) Math.ceil(baseBV * (multiplier * 7));
+                    returnBV = (int) Math.round(baseBV * (multiplier * 7));
                 }
             }
         }

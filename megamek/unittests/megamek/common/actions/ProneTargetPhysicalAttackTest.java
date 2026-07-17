@@ -89,6 +89,7 @@ public class ProneTargetPhysicalAttackTest {
     private Mek mockTarget;
     private Hex mockAttackerHex;
     private Hex mockTargetHex;
+    private Light mockLight;
     private Crew mockCrew;
     private Player mockPlayer;
     private Coords attackerCoords;
@@ -103,7 +104,7 @@ public class ProneTargetPhysicalAttackTest {
         // Mock planetary conditions (for nightModifiers)
         mockConditions = mock(PlanetaryConditions.class);
         when(mockConditions.getLight()).thenReturn(Light.DAY);
-
+        
         // Mock game
         mockGame = mock(Game.class);
         when(mockGame.getOptions()).thenReturn(mockOptions);

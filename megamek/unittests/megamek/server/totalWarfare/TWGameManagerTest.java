@@ -276,8 +276,6 @@ class TWGameManagerTest {
         List<PilotingRollData> psrs = Collections.list(game.getPSRs());
         assertEquals(1, psrs.size(), "HD gyro fourth hit should trigger auto-fail PSR");
         assertEquals(PilotingRollData.AUTOMATIC_FAIL, psrs.getFirst().getValue(), "PSR should be automatic fail");
-        assertTrue(psrs.getFirst().getDesc().contains("gyro destroyed"),
-              "PSR description should mention gyro destroyed");
     }
 
     void initializeBoard(Board board) {

@@ -831,9 +831,10 @@ public class ClientGUI extends AbstractClientGUI
     }
 
     /**
-     * Tells every player who won a passed Game Master vote and how the role is taken away again: the host turns off
-     * Allow Game Master in the game options. Shown after the vote dialog closes, so the outcome is not just a line of
-     * chat that scrolls away. Queued on the event thread so it does not block the game event that brought the result.
+     * Tells every player who won a passed Game Master vote and how the role is taken away again: the Game Master
+     * gives it up (GM Mode button or /gm), or the host turns off Allow Game Master in the game options. Shown after
+     * the vote dialog closes, so the outcome is not just a line of chat that scrolls away. Queued on the event thread
+     * so it does not block the game event that brought the result.
      *
      * @param gameMasterId the id of the player the vote made Game Master
      */

@@ -44,6 +44,7 @@ import megamek.client.ui.Messages;
 import megamek.client.ui.panels.phaseDisplay.MovementDisplay;
 import megamek.common.Hex;
 import megamek.common.HitData;
+import megamek.common.IndustrialElevator;
 import megamek.common.LosEffects;
 import megamek.common.MPCalculationSetting;
 import megamek.common.Player;
@@ -169,6 +170,101 @@ class MovePathHandler extends AbstractTWRuleHandler {
         this.entity = entity;
         this.md = md;
         this.losCache = (losCache == null) ? new HashMap<>() : losCache;
+    }
+
+    /**
+     * Moves an industrial elevator platform along with the unit riding it. Only applies to elevator ascend/descend
+     * steps; the platform tracks the unit's new elevation and the updated state is broadcast to all clients.
+     *
+     * @param step         the move step being processed
+     * @param curPos       the unit's current hex
+     * @param curBoardId   the board the unit is on
+     * @param curElevation the unit's elevation after the step
+     */
+    private void moveElevatorPlatformWithEntity(MoveStep step, Coords curPos, int curBoardId, int curElevation) {
+        if ((step.getType() != MoveStepType.ELEVATOR_ASCEND) && (step.getType() != MoveStepType.ELEVATOR_DESCEND)) {
+            return;
+        }
+        IndustrialElevator elevator = getGame().getIndustrialElevator(BoardLocation.of(curPos, curBoardId));
+        if (elevator != null) {
+            elevator.setPlatformLevel(curElevation);
+            // Update the hex so the tileset shows the platform at its new level
+            if (elevator.syncDisplayLevel(getGame())) {
+                gameManager.sendChangedHex(curPos, curBoardId);
+            }
+            gameManager.sendIndustrialElevatorUpdate();
+        }
+    }
+
+    /**
+     * Handles a unit that enters an industrial elevator shaft when the platform is not at the unit's level: the unit
+     * falls to the platform (if it is below) or to the shaft bottom. The fall is skipped for jumping units and for
+     * elevator ascend/descend steps, where the platform moves with the unit.
+     *
+     * @param step         the move step being processed
+     * @param curHex       the hex the unit is in
+     * @param curPos       the unit's current hex
+     * @param curBoardId   the board the unit is on
+     * @param curElevation the unit's elevation after the step
+     * @param stepMoveType the movement type of this step
+     *
+     * @return {@code true} if the unit fell, which ends its movement
+     */
+    private boolean entityFallsDownElevatorShaft(MoveStep step, Hex curHex, Coords curPos, int curBoardId,
+          int curElevation, EntityMovementType stepMoveType) {
+        boolean isElevatorStep = (step.getType() == MoveStepType.ELEVATOR_ASCEND)
+              || (step.getType() == MoveStepType.ELEVATOR_DESCEND);
+        if (!curHex.containsTerrain(Terrains.INDUSTRIAL_ELEVATOR)
+              || (stepMoveType == EntityMovementType.MOVE_JUMP)
+              || isElevatorStep) {
+            return false;
+        }
+        IndustrialElevator elevator = getGame().getIndustrialElevator(BoardLocation.of(curPos, curBoardId));
+        if ((elevator == null) || !elevator.isFunctional() || elevator.isPlatformAt(curElevation)) {
+            return false;
+        }
+        // Fall to the platform if it is below the unit, otherwise to the shaft bottom
+        int platformLevel = elevator.getPlatformLevel();
+        int fallToLevel = (platformLevel < curElevation) ? platformLevel : elevator.getShaftBottom();
+        int fallDistance = curElevation - fallToLevel;
+        if (fallDistance <= 0) {
+            return false;
+        }
+        logger.debug("[IndustrialElevator] {} entered shaft at {} with platform at level {}; falling {} levels",
+              entity.getShortName(), curPos, platformLevel, fallDistance);
+        Report fallReport = new Report(5298, Report.PUBLIC);
+        fallReport.subject = entity.getId();
+        fallReport.add(entity.getDisplayName());
+        addReport(fallReport);
+
+        // The unit falls within the same hex
+        PilotingRollData pilotingRoll = entity.getBasePilotingRoll(stepMoveType);
+        pilotingRoll.addModifier(fallDistance, "fell down elevator shaft");
+        addReport(gameManager.doEntityFallsInto(entity, curElevation, curPos, curPos, pilotingRoll, false, 0));
+        fellDuringMovement = true;
+        return true;
+    }
+
+    /**
+     * Adds the report announcing a unit's successful use of an industrial elevator. Only applies to elevator
+     * ascend/descend steps.
+     *
+     * @param step         the move step being processed
+     * @param curElevation the unit's elevation after the step
+     */
+    private void reportElevatorUse(MoveStep step, int curElevation) {
+        if ((step.getType() != MoveStepType.ELEVATOR_ASCEND) && (step.getType() != MoveStepType.ELEVATOR_DESCEND)) {
+            return;
+        }
+        String direction = (step.getType() == MoveStepType.ELEVATOR_ASCEND)
+              ? Messages.getString("IndustrialElevator.directionUp")
+              : Messages.getString("IndustrialElevator.directionDown");
+        Report elevatorReport = new Report(5299, Report.PUBLIC);
+        elevatorReport.subject = entity.getId();
+        elevatorReport.add(entity.getDisplayName());
+        elevatorReport.add(direction);
+        elevatorReport.add(curElevation);
+        addReport(elevatorReport);
     }
 
     void processMovement() {
@@ -3040,6 +3136,15 @@ class MovePathHandler extends AbstractTWRuleHandler {
                     gameManager.sendChangedBuildings(buildings);
                 }
             }
+
+            // Industrial elevator: the platform rides with the unit, an off-platform unit falls down
+            // the shaft, and a successful ride is reported. A fall ends the unit's movement.
+            moveElevatorPlatformWithEntity(step, curPos, curBoardId, curElevation);
+            if (entityFallsDownElevatorShaft(step, curHex, curPos, curBoardId, curElevation, stepMoveType)) {
+                curElevation = entity.getElevation();
+                break;
+            }
+            reportElevatorUse(step, curElevation);
 
             // check for automatic unstick
             if (entity.canUnstickByJumping() && entity.isStuck()

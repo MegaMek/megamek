@@ -50,6 +50,7 @@ import megamek.client.ui.clientGUI.boardview.sprite.Sprite;
 import megamek.client.ui.util.KeyCommandBind;
 import megamek.client.ui.util.UIUtil;
 import megamek.common.Hex;
+import megamek.common.IndustrialElevator;
 import megamek.common.Player;
 import megamek.common.ReportMessages;
 import megamek.common.annotations.Nullable;
@@ -387,6 +388,12 @@ public final class HexTooltip {
             String name = Terrains.getDisplayName(terType, ttl);
 
             if (name != null) {
+                if (terType == Terrains.INDUSTRIAL_ELEVATOR) {
+                    int capacityTons = (mhex.getTerrain(terType).getExits() & IndustrialElevator.CAPACITY_MASK)
+                          * IndustrialElevator.CAPACITY_MULTIPLIER;
+                    name += " (" + Messages.getString("BoardView1.Tooltip.IndustrialElevatorCapacity", capacityTons)
+                          + ")";
+                }
                 String msg_tf = Messages.getString("BoardView1.Tooltip.TF");
                 name += (tf > 0) ? " (" + msg_tf + ": " + tf + ')' : "";
                 sTerrain.append(DOT_SPACER).append(name);

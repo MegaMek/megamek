@@ -7465,6 +7465,17 @@ public class TWGameManager extends AbstractGameManager {
                         r.indent(3);
                         vPhaseReport.add(r);
                     } else {
+                        // The whole platoon is wiped out. Report the inferno damage (three troopers
+                        // per missile, TW p.141) before destroying it, matching the surviving-infantry
+                        // branch and normal infantry damage reporting instead of jumping straight to a
+                        // bare "DESTROYED" line.
+                        r = new Report(6065);
+                        r.addDesc(te);
+                        r.add(3 * missiles);
+                        r.indent(2);
+                        r.add(te.getLocationAbbr(hit));
+                        r.subject = te.getId();
+                        vPhaseReport.add(r);
                         vPhaseReport.addAll(destroyEntity(te, "damage", false));
                         creditKill(te, ae);
                         Report.addNewline(vPhaseReport);

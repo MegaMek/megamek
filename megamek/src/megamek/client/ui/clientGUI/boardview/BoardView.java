@@ -516,13 +516,15 @@ public final class BoardView extends AbstractBoardView
                     tileManager.reloadImage(entity);
                 }
 
-                // For units that have been blown up, damaged or ejected, force a reload. Without the old state we
-                // cannot tell whether the damage changed, so reload to be safe; the reload reuses the cached image
-                // when the damage level is in fact unchanged, so it costs nothing in the common case.
+                // For units that have been blown up, damaged, ejected or handed to another player (a traitor
+                // switch means the new owner's camouflage), force a reload. Without the old state we cannot tell
+                // whether the damage changed, so reload to be safe; the reload reuses the cached image when
+                // nothing shown in fact changed, so it costs nothing in the common case.
                 final Entity oldEntity = gameEntityChangeEvent.getOldEntity();
                 if ((oldEntity == null)
                       || (entity.getDamageLevel() != oldEntity.getDamageLevel())
                       || (entity.isDestroyed() != oldEntity.isDestroyed())
+                      || (entity.getOwnerId() != oldEntity.getOwnerId())
                       || (entity.getCrew().isEjected() != oldEntity.getCrew().isEjected())) {
                     tileManager.reloadImage(entity);
                 }

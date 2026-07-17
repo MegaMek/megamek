@@ -159,4 +159,20 @@ class TemporarySkillModifiersTest {
         crew.getSkillModifiers().newRound();
         assertEquals(baseGunnery, crew.getGunnery());
     }
+
+    @Test
+    void appliedGunneryModifierIsTheEffectiveMinusStoredSkill() {
+        Crew crew = new Crew(CrewType.SINGLE);
+        assertEquals(0, crew.appliedGunneryModifier());
+
+        crew.getSkillModifiers().set(2, 0, 0, 3);
+        // the to-hit breakdown rebuilds the raw skill from these two, so together they must equal the effective
+        assertEquals(2, crew.appliedGunneryModifier());
+        assertEquals(crew.getGunnery(), crew.getGunnery(0) + crew.appliedGunneryModifier());
+
+        // held to the skill range: a huge bonus only counts for what the clamp lets through
+        crew.getSkillModifiers().set(-8, 0, 0, 3);
+        assertEquals(crew.getGunnery() - crew.getGunnery(0), crew.appliedGunneryModifier());
+        assertEquals(crew.getGunnery(), crew.getGunnery(0) + crew.appliedGunneryModifier());
+    }
 }

@@ -449,6 +449,15 @@ public class Crew implements Serializable {
         return getSkillModifiers().adjustGunnery(gunnery[gunnerPos]);
     }
 
+    /**
+     * The part of the effective gunnery that comes from the gamemaster's temporary modifier: effective minus
+     * stored, zero while no modifier is active. Lets a to-hit breakdown show the gamemaster's intervention as a
+     * line of its own instead of silently folding it into the skill number.
+     */
+    public int appliedGunneryModifier() {
+        return getGunnery() - gunnery[gunnerPos];
+    }
+
     public int getGunnery(int pos) {
         return gunnery[pos];
     }

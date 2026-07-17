@@ -80,6 +80,11 @@ class TWGameManagerGameMasterVoteTest {
         doCallRealMethod().when(gameManager).getGameMaster();
         doCallRealMethod().when(gameManager).setGameMaster(any(), anyBoolean());
         gameManager.setGame(game);
+
+        // setGame ghosts every player, as when a saved game loads and waits for them to reconnect. These
+        // players are connected: a ghost is not a gamemaster voter, and a vote among ghosts resolves at once.
+        firstPlayer.setGhost(false);
+        secondPlayer.setGhost(false);
     }
 
     @Test

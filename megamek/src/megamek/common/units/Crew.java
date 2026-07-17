@@ -479,6 +479,11 @@ public class Crew implements Serializable {
         return getArtillery() - rawArtillery();
     }
 
+    /** @see #appliedGunneryModifier() */
+    public int appliedPilotingModifier() {
+        return getPiloting() - rawPiloting();
+    }
+
     /*
      * The stored skill each effective getter adjusts. LAMPilot overrides the effective getters with its own
      * mode-dependent skills, so it overrides these to match; without that, the applied-modifier math above would
@@ -503,6 +508,10 @@ public class Crew implements Serializable {
 
     protected int rawArtillery() {
         return artillery[gunnerPos];
+    }
+
+    protected int rawPiloting() {
+        return piloting[pilotPos];
     }
 
     public int getGunnery(int pos) {

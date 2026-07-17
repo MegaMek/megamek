@@ -423,6 +423,26 @@ class UnitEditorDialogTest {
         dialog.dispose();
     }
 
+    /**
+     * The skill spinners run from what improves the skill to 0 up to what worsens it to 8, so no offered value is
+     * ever lost to the skill range - and an oversized modifier set through /skillMod reads back as what applies.
+     */
+    @Test
+    void skillModifierSpinnerIsBoundedByTheCrewSkill() {
+        Entity entity = entityInGame();
+        // the Atlas crew is a 4 gunner; an oversized -8 from /skillMod can only ever apply as -4
+        entity.getCrew().getSkillModifiers().set(-8, 0, 0, 3);
+
+        UnitEditorDialog dialog = new UnitEditorDialog(new JFrame(), entity, true);
+        SpinnerNumberModel model = (SpinnerNumberModel) dialog.controlsForTesting().spnGunneryModifier.getModel();
+
+        assertEquals(-4, ((Number) model.getMinimum()).intValue(), "the spinner must bottom out at skill 0");
+        assertEquals(4, ((Number) model.getMaximum()).intValue(), "the spinner must top out at skill 8");
+        assertEquals(-4, ((Number) model.getValue()).intValue(),
+              "an oversized modifier must read back as what applies");
+        dialog.dispose();
+    }
+
     /** The initiative modifier only does anything under individual initiative, so its row only appears there. */
     @Test
     void initiativeModifierIsOnlyOfferedUnderIndividualInitiative() {

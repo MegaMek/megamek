@@ -253,6 +253,15 @@ public class LAMPilot extends Crew {
     }
 
     @Override
+    protected int rawPiloting() {
+        if (lam.getConversionMode() == LandAirMek.CONV_MODE_FIGHTER
+              || (lam.getConversionMode() == LandAirMek.CONV_MODE_AIR_MEK && lam.isAirborneVTOLorWIGE())) {
+            return pilotingAero;
+        }
+        return getPilotingMek();
+    }
+
+    @Override
     public int getPiloting() {
         if (lam.getConversionMode() == LandAirMek.CONV_MODE_FIGHTER
               || (lam.getConversionMode() == LandAirMek.CONV_MODE_AIR_MEK && lam.isAirborneVTOLorWIGE())) {

@@ -89,7 +89,10 @@ public class UnitDamagePanelBuilder {
 
     /** The rounds a fresh skill modifier is offered with, before the gamemaster sets a duration of their own. */
     public static final int DEFAULT_MODIFIER_ROUNDS = 3;
-    /** The farthest a skill modifier can move a skill either way, matching the /skillMod command. */
+    /**
+     * The farthest the initiative modifier can move a roll either way, matching the /skillMod command. The skill
+     * modifiers do not use it: their spinners are bounded by the crew's skill instead.
+     */
     private static final int MAX_SKILL_DELTA = 8;
     /** The longest a timed skill modifier can last, matching the /skillMod command. */
     private static final int MAX_MODIFIER_ROUNDS = 100;
@@ -236,7 +239,11 @@ public class UnitDamagePanelBuilder {
         Crew crew = entity.getCrew();
         TemporarySkillModifiers modifiers = crew.getSkillModifiers();
 
-        controls.spnGunneryModifier = skillDeltaSpinner(modifiers.getGunneryDelta(),
+        // The spinners run from what improves the skill to 0 to what worsens it to 8, so every value they offer
+        // applies in full and no part of a modifier is ever lost to the skill range. They start at the applied
+        // modifier for the same reason: an oversized delta set through /skillMod reads back as what counts.
+        int rawGunnery = crew.getGunnery() - crew.appliedGunneryModifier();
+        controls.spnGunneryModifier = skillDeltaSpinner(crew.appliedGunneryModifier(), rawGunnery,
               "UnitEditorDialog.skillModifier.gunnery.tooltip");
         controls.spnGunneryRounds = modifierRoundsSpinner(modifiers.getGunneryRounds());
         controls.chkGunneryPermanent = modifierPermanentCheckbox(modifiers.getGunneryRounds(),
@@ -244,7 +251,8 @@ public class UnitDamagePanelBuilder {
         addLabeledRow(panel, Messages.getString("UnitEditorDialog.skillModifier.gunnery"),
               modifierRow(controls.spnGunneryModifier, controls.spnGunneryRounds, controls.chkGunneryPermanent));
 
-        controls.spnPilotingModifier = skillDeltaSpinner(modifiers.getPilotingDelta(),
+        int rawPiloting = crew.getPiloting() - crew.appliedPilotingModifier();
+        controls.spnPilotingModifier = skillDeltaSpinner(crew.appliedPilotingModifier(), rawPiloting,
               "UnitEditorDialog.skillModifier.piloting.tooltip");
         controls.spnPilotingRounds = modifierRoundsSpinner(modifiers.getPilotingRounds());
         controls.chkPilotingPermanent = modifierPermanentCheckbox(modifiers.getPilotingRounds(),
@@ -255,8 +263,7 @@ public class UnitDamagePanelBuilder {
         // the initiative delta only exists where each unit rolls its own initiative, so the row is only offered
         // where it would do something; everywhere else it would be a control that silently does nothing
         if (entity.getGame().getOptions().booleanOption(OptionsConstants.RPG_INDIVIDUAL_INITIATIVE)) {
-            controls.spnInitiativeModifier = skillDeltaSpinner(modifiers.getInitiativeDelta(),
-                  "UnitEditorDialog.skillModifier.initiative.tooltip");
+            controls.spnInitiativeModifier = initiativeDeltaSpinner(modifiers.getInitiativeDelta());
             controls.spnInitiativeRounds = modifierRoundsSpinner(modifiers.getInitiativeRounds());
             controls.chkInitiativePermanent = modifierPermanentCheckbox(modifiers.getInitiativeRounds(),
                   controls.spnInitiativeRounds);
@@ -266,10 +273,22 @@ public class UnitDamagePanelBuilder {
         }
     }
 
-    /** A spinner for one skill delta, starting at what the crew already carries so an open edit reads back. */
-    private JSpinner skillDeltaSpinner(int delta, String tooltipKey) {
-        JSpinner spinner = new JSpinner(new SpinnerNumberModel(delta, -MAX_SKILL_DELTA, MAX_SKILL_DELTA, 1));
+    /**
+     * A spinner for one skill delta, running from what improves the given stored skill to 0 up to what worsens it
+     * to {@link Crew#MAX_SKILL}, so every offered value applies in full. Starts at the modifier the crew already
+     * carries, so an open edit reads back.
+     */
+    private JSpinner skillDeltaSpinner(int appliedDelta, int rawSkill, String tooltipKey) {
+        JSpinner spinner = new JSpinner(new SpinnerNumberModel(appliedDelta, -rawSkill, Crew.MAX_SKILL - rawSkill, 1));
         spinner.setToolTipText(UIUtil.formatSideTooltip(Messages.getString(tooltipKey)));
+        return spinner;
+    }
+
+    /** A spinner for the initiative delta, which is added to a roll rather than a skill and has no skill range. */
+    private JSpinner initiativeDeltaSpinner(int delta) {
+        JSpinner spinner = new JSpinner(new SpinnerNumberModel(delta, -MAX_SKILL_DELTA, MAX_SKILL_DELTA, 1));
+        spinner.setToolTipText(UIUtil.formatSideTooltip(
+              Messages.getString("UnitEditorDialog.skillModifier.initiative.tooltip")));
         return spinner;
     }
 

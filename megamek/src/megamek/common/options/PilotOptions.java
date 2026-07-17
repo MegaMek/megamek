@@ -160,6 +160,7 @@ public class PilotOptions extends AbstractOptions {
         addOption(edge, OptionsConstants.EDGE_WHEN_EJECT_FAILS, true);
         addOption(edge, OptionsConstants.EDGE_WHEN_BREACH, true);
         addOption(edge, OptionsConstants.EDGE_WHEN_AC_JAMS_OR_MALFUNCTIONS, true);
+        addOption(edge, OptionsConstants.EDGE_WHEN_RISC_FAIL, true);
 
         // Enhanced Imaging (Clan technology, IO p.69)
         IBasicOptionGroup ei = addGroup("ei", EI_ADVANTAGES);

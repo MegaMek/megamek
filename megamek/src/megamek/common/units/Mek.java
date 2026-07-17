@@ -325,8 +325,8 @@ public abstract class Mek extends Entity implements Fortifiable, RubbleClearer {
     public static final String FRANKEN_MEK_STRUCTURE_HYBRID = "Hybrid";
 
     private static final TechAdvancement TA_FRANKENMEK = new TechAdvancement(TechBase.ALL)
-        .setAdvancement(ITechnology.DATE_PS)
-        .setStaticTechLevel(SimpleTechLevel.EXPERIMENTAL);
+          .setAdvancement(ITechnology.DATE_PS)
+          .setStaticTechLevel(SimpleTechLevel.EXPERIMENTAL);
 
     private boolean frankenMek = false;
 
@@ -595,7 +595,7 @@ public abstract class Mek extends Entity implements Fortifiable, RubbleClearer {
         boolean needsNewSourceSnapshots = (frankenMekLocationSources == null)
               || (frankenMekLocationSources.length != locations);
         if (frankenMekStructureInitialized && !needsNewTonnage && !needsNewStructureType
-            && !needsNewStructureTechLevel && !needsNewSourceSnapshots) {
+              && !needsNewStructureTechLevel && !needsNewSourceSnapshots) {
             return;
         }
 
@@ -985,7 +985,8 @@ public abstract class Mek extends Entity implements Fortifiable, RubbleClearer {
 
     public String getFrankenMekStructureDisplayName() {
         if (!isFrankenMek()) {
-            return EquipmentType.getStructureTypeName(getStructureType(), TechConstants.isClan(getStructureTechLevel()));
+            return EquipmentType.getStructureTypeName(getStructureType(),
+                  TechConstants.isClan(getStructureTechLevel()));
         }
         if (hasHybridFrankenMekStructure()) {
             return FRANKEN_MEK_STRUCTURE_HYBRID;
@@ -1028,9 +1029,9 @@ public abstract class Mek extends Entity implements Fortifiable, RubbleClearer {
               && (frankenMekStructureType[firstLeg] == frankenMekStructureType[otherLeg])
               && (frankenMekStructureTechLevel[firstLeg] == frankenMekStructureTechLevel[otherLeg])
               && sanitizeFrankenMekSourceValue(firstLegSource.getDisplayName()).equals(
-                    sanitizeFrankenMekSourceValue(otherLegSource.getDisplayName()))
+              sanitizeFrankenMekSourceValue(otherLegSource.getDisplayName()))
               && sanitizeFrankenMekSourceValue(firstLegSource.getType()).equals(
-                    sanitizeFrankenMekSourceValue(otherLegSource.getType()));
+              sanitizeFrankenMekSourceValue(otherLegSource.getType()));
     }
 
     private static String sanitizeFrankenMekSourceValue(String value) {
@@ -2681,7 +2682,8 @@ public abstract class Mek extends Entity implements Fortifiable, RubbleClearer {
      *
      * @param mounted the weapon being checked
      *
-     * @return {@code ARC_FORWARD} if this weapon is in a Directional Torso Mount, otherwise an empty {@link OptionalInt}
+     * @return {@code ARC_FORWARD} if this weapon is in a Directional Torso Mount, otherwise an empty
+     *       {@link OptionalInt}
      */
     protected OptionalInt getDirectionalTorsoMountArc(Mounted<?> mounted) {
         if (mounted.hasDirectionalTorsoMount()) {
@@ -4197,8 +4199,7 @@ public abstract class Mek extends Entity implements Fortifiable, RubbleClearer {
         if (this.isFrankenMek()) {
             if (this.hasMismatchedTonnageFrankenMekLegs()) {
                 roll.addModifier(2, "Mismatched Legs with different tonnages");
-            } else
-            if (this.hasMismatchedFrankenMekLegs()) {
+            } else if (this.hasMismatchedFrankenMekLegs()) {
                 roll.addModifier(1, "Mismatched Legs from different Meks");
             }
         }
@@ -7237,6 +7238,8 @@ public abstract class Mek extends Entity implements Fortifiable, RubbleClearer {
             bUsedCoolantSystem = true;
             vDesc.addElement(Report.subjectReport(2365, getId()).addDesc(this).add(coolantSystem.getName()));
             int requiredRoll = EMERGENCY_COOLANT_SYSTEM_FAILURE[nCoolantSystemLevel];
+            // Edge may reroll a failed RISC coolant system check once (part of the shared RISC Edge trigger).
+            diceRoll = rerollRiscCoolantWithEdge(this, requiredRoll, diceRoll, vDesc);
             Report r = Report.subjectReport(2370, getId()).indent().add(requiredRoll).add(diceRoll);
 
             if (diceRoll.getIntValue() < requiredRoll) {
@@ -7284,6 +7287,37 @@ public abstract class Mek extends Entity implements Fortifiable, RubbleClearer {
             return bFailure;
         }
         return false;
+    }
+
+    /**
+     * Applies Edge to a RISC Emergency Coolant System failure check: if the initial roll failed and the crew has the
+     * RISC Edge trigger enabled with Edge remaining, spends one Edge point and rerolls the check once. This rolls the
+     * coolant system into the same Edge trigger as the RISC laser malfunctions.
+     *
+     * @param entity       the Mek making the check
+     * @param requiredRoll the target number the roll must meet to succeed
+     * @param initialRoll  the roll that was made
+     * @param reportVector the report vector to append the Edge-use report to
+     *
+     * @return the roll to use - the reroll if Edge was spent, otherwise the original roll
+     */
+    // package-private static for testing
+    static Roll rerollRiscCoolantWithEdge(Entity entity, int requiredRoll, Roll initialRoll,
+          Vector<Report> reportVector) {
+        boolean isFailedCheck = initialRoll.getIntValue() < requiredRoll;
+        boolean shouldUseEdge = entity.shouldUseEdge(OptionsConstants.EDGE_WHEN_RISC_FAIL);
+
+        if (isFailedCheck && shouldUseEdge) {
+            entity.getCrew().decreaseEdge();
+
+            reportVector.addElement(Report.subjectReport(3166, entity.getId())
+                  .indent()
+                  .add(entity.getCrew().getOptions().intOption(OptionsConstants.EDGE)));
+
+            return Compute.rollD6(2);
+        }
+
+        return initialRoll;
     }
 
     public boolean hasDamagedCoolantSystem() {

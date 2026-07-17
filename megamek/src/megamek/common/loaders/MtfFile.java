@@ -70,6 +70,7 @@ import megamek.common.units.QuadMek;
 import megamek.common.units.QuadVee;
 import megamek.common.units.System;
 import megamek.common.units.TripodMek;
+import megamek.common.units.ForceGeneratorAvailability;
 import megamek.common.units.UnitRole;
 import megamek.logging.MMLogger;
 
@@ -136,8 +137,11 @@ public class MtfFile implements IMekLoader {
 
     private int bv = 0;
     private String role;
+    private String missionRoles;
     private String faction;
     private String unitFileUUID;
+
+    private final List<String> availabilityLines = new ArrayList<>();
 
     private final Map<EquipmentType, Mounted<?>> hSharedEquip = new HashMap<>();
     private final List<Mounted<?>> vSplitWeapons = new ArrayList<>();
@@ -207,6 +211,8 @@ public class MtfFile implements IMekLoader {
     public static final String QUIRK = "quirk:";
     public static final String WEAPON_QUIRK = "weaponquirk:";
     public static final String ROLE = "role:";
+    public static final String AVAILABILITY = "availability:";
+    public static final String MISSION_ROLES = "missionroles:";
     public static final String FACTION = "faction:";
     public static final String CLAN_CASE_OPT_OUT = "clancaseoptedoutlocs:";
     public static final String FLUFF_IMAGE = "fluffimage:";
@@ -351,6 +357,11 @@ public class MtfFile implements IMekLoader {
                 mek.setUnitRole(UnitRole.UNDETERMINED);
             } else {
                 mek.setUnitRole(UnitRole.parseRole(role));
+            }
+            mek.setForceGeneratorAvailability(
+                  ForceGeneratorAvailability.parseAll(availabilityLines, mek.getShortNameRaw()));
+            if (!StringUtility.isNullOrBlank(missionRoles)) {
+                mek.setMissionRoles(missionRoles);
             }
             if (!StringUtility.isNullOrBlank(faction)) {
                 mek.setTechFaction(Faction.fromAbbr(faction));
@@ -1821,6 +1832,16 @@ public class MtfFile implements IMekLoader {
 
         if (lineLower.startsWith(ROLE)) {
             role = line.substring(ROLE.length());
+            return true;
+        }
+
+        if (lineLower.startsWith(AVAILABILITY)) {
+            availabilityLines.add(line.substring(AVAILABILITY.length()).trim());
+            return true;
+        }
+
+        if (lineLower.startsWith(MISSION_ROLES)) {
+            missionRoles = line.substring(MISSION_ROLES.length()).trim();
             return true;
         }
 

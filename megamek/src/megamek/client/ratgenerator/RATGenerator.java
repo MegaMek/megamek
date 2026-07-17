@@ -88,6 +88,9 @@ public class RATGenerator {
 
     private final TreeSet<Integer> eraSet;
 
+    /** Feeds in units that declare their own availability in their unit file, rather than in the era files. */
+    private final UnitFileAvailabilityLoader unitFileAvailabilityLoader;
+
     private static RATGenerator ratGenerator = null;
     private static boolean interrupted = false;
     private static boolean dispose = false;
@@ -123,6 +126,14 @@ public class RATGenerator {
         eraSet = new TreeSet<>();
 
         listeners = new ArrayList<>();
+
+        // Shares the record store above rather than copying it, so reloadFromDir() stays valid
+        unitFileAvailabilityLoader = new UnitFileAvailabilityLoader(models,
+              chassis,
+              factions,
+              chassisIndex,
+              modelIndex,
+              eraSet);
     }
 
     public static RATGenerator getInstance() {
@@ -329,6 +340,56 @@ public class RATGenerator {
     }
 
     /**
+     * Generate the availability rating for a specific model, honouring the year the model becomes available.
+     * <p>
+     * An availability code can name a year, as in {@code FS:5:3055}: the unit exists in the era but the faction does
+     * not get it until that year. {@link #findChassisAvailabilityRecord(int, String, FactionRecord, int)} has always
+     * applied that. The model lookup could not, because it had no year to apply, so a model's year was ignored and the
+     * unit turned up from the start of the era instead. Use this overload anywhere a table is being generated.
+     * </p>
+     *
+     * @param era           era designation
+     * @param unit          string full chassis-model name
+     * @param factionRecord faction data
+     * @param year          the game year
+     *
+     * @return the availability rating, or {@code null} if the faction does not have this model yet in this year
+     */
+    public @Nullable AvailabilityRating findModelAvailabilityRecord(int era, String unit,
+          @Nullable FactionRecord factionRecord, int year) {
+
+        AvailabilityRating availabilityRating = findModelAvailabilityRecord(era, unit, factionRecord);
+
+        return isAvailableYet(availabilityRating, year) ? availabilityRating : null;
+    }
+
+    /**
+     * Generate the availability rating for a specific model, honouring the year the model becomes available.
+     *
+     * @param era     era designation
+     * @param unit    string full chassis-model name
+     * @param faction faction code
+     * @param year    the game year
+     *
+     * @return the availability rating, or {@code null} if the faction does not have this model yet in this year
+     */
+    public @Nullable AvailabilityRating findModelAvailabilityRecord(int era, String unit, String faction, int year) {
+        AvailabilityRating availabilityRating = findModelAvailabilityRecord(era, unit, faction);
+
+        return isAvailableYet(availabilityRating, year) ? availabilityRating : null;
+    }
+
+    /**
+     * @param availabilityRating the rating to test, which may be null
+     * @param year               the game year
+     *
+     * @return {@code true} if the rating exists and its start year has arrived
+     */
+    private static boolean isAvailableYet(@Nullable AvailabilityRating availabilityRating, int year) {
+        return (availabilityRating != null) && (year >= availabilityRating.getStartYear());
+    }
+
+    /**
      * Provides a list of availability ratings for a unit in a given era. Used in editing and reporting.
      *
      * @param era  The year of the record. This must be one of the years in the
@@ -514,22 +575,28 @@ public class RATGenerator {
             return null;
         }
 
-        double totalWt = 0;
-        int totalAdj = 0;
+        double totalWeight = 0;
+        int totalAdjustment = 0;
 
-        for (AvailabilityRating ar : avList) {
-            totalWt += AvailabilityRating.calcWeight(ar.availability);
-            totalAdj += ar.ratingAdjustment;
+        for (AvailabilityRating availabilityRating : avList) {
+            totalWeight += AvailabilityRating.calcWeight(availabilityRating.availability);
+            totalAdjustment += availabilityRating.ratingAdjustment;
         }
 
-        AvailabilityRating retVal = avList.getFirst().makeCopy(faction);
+        AvailabilityRating mergedRating = avList.getFirst().makeCopy(faction);
 
-        retVal.availability = (int) (AvailabilityRating.calcAvRating(totalWt / avList.size()));
-        if (totalAdj != 0) {
-            retVal.ratingAdjustment = totalAdj > 0 ? 1 : -1;
+        mergedRating.availability = (int) (AvailabilityRating.calcAvRating(totalWeight / avList.size()));
+        if (totalAdjustment != 0) {
+            mergedRating.ratingAdjustment = totalAdjustment > 0 ? 1 : -1;
         }
 
-        return retVal;
+        // Per-rating values are indexed against a faction's own equipment rating system, so they have to be resolved
+        // again for the faction being merged for. Without this every lookup reads back 0 and the unit drops out.
+        if (mergedRating.hasMultipleRatings()) {
+            mergedRating.setRatingByNumericLevel(factions.get(faction));
+        }
+
+        return mergedRating;
     }
 
     /**
@@ -1445,8 +1512,11 @@ public class RATGenerator {
         }
 
         if (!interrupted) {
-            ratGenerator.initialized = true;
+            // Load every era first, THEN mark initialized. Setting the flag before the loop let callers that poll
+            // isInitialized() start iterating chassis/model/faction collections on another thread while this loop was
+            // still adding to them, which threw ConcurrentModificationException.
             ratGenerator.getEraSet().forEach(e -> ratGenerator.loadEra(e, dir));
+            ratGenerator.initialized = true;
             ratGenerator.notifyListenersOfInitialization();
         }
 
@@ -1594,6 +1664,9 @@ public class RATGenerator {
                 }
             }
         }
+
+        unitFileAvailabilityLoader.loadEra(era);
+
         notifyListenersEraLoaded();
     }
 

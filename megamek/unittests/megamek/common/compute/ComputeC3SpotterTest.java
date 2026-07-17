@@ -43,6 +43,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import megamek.common.ECMInfo;
+import megamek.common.Hex;
 import megamek.common.Player;
 import megamek.common.board.Board;
 import megamek.common.board.Coords;
@@ -86,7 +87,7 @@ class ComputeC3SpotterTest {
         when(mockOptions.booleanOption(anyString())).thenReturn(false);
 
         gameEntities = new ArrayList<>();
-
+    
         mockGame = mock(Game.class);
         when(mockGame.getBoard()).thenReturn(mockBoard);
         when(mockGame.getBoard(anyInt())).thenReturn(mockBoard);
@@ -100,6 +101,7 @@ class ComputeC3SpotterTest {
         when(mockGame.onConnectedBoards(any(Entity.class), any(Targetable.class))).thenReturn(true);
         when(mockGame.onTheSameBoard(any(Entity.class), any(Entity.class))).thenReturn(true);
         when(mockGame.hasBoardLocationOf(any(Targetable.class))).thenReturn(true);
+        when(mockGame.hasBoardLocation(any(Coords.class),anyInt())).thenReturn(true);
     }
 
     private Mek createMek(int id, Coords position) {

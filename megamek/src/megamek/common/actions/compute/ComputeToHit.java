@@ -1737,7 +1737,7 @@ public class ComputeToHit {
         boolean isTargetECMAffected = ComputeECM.isAffectedByECM(ae,
               target.getPosition(),
               target.getPosition());
-        if (entityTarget != null) {
+        if (entityTarget != null && ammoType != null) {
             if (ammoType.getMunitionType().contains(AmmoType.Munitions.M_NARC_CAPABLE) && (entityTarget.isNarcedBy(
                   ae.getOwner().getTeam()) || entityTarget
                   .isINarcedBy(ae.getOwner().getTeam())) && !isTargetECMAffected) {

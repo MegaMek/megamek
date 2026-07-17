@@ -121,7 +121,7 @@ public final class Game extends AbstractGame implements Serializable, PlanetaryC
     public static final int TEAM_HAS_COMBAT_SENSE = 1;
     public static final int TEAM_HAS_NO_INITIATIVE_APTITUDE = 0;
     public static final int TEAM_HAS_COMBAT_PARALYSIS = -1;
-    public static RulesManager rulesManager;
+    public static RulesManager rulesManager = new CoreRulesManager();
     /**
      * A UUID to identify this game instance.
      */

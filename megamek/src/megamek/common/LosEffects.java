@@ -1618,7 +1618,7 @@ public class LosEffects {
                             break;
                     }
                     Entity attacker = game.getEntity(ai.attackerId);
-                    if (attacker.hasBAP(true) && attacker.getPosition().distance(coords) <= attacker.getBAPRange()) {
+                    if (attacker != null && attacker.hasBAP(true) && attacker.getPosition().distance(coords) <= attacker.getBAPRange()) {
                         los.bapReduceSmoke += smokeModifier; 
                     }
                     // Check woods/jungle

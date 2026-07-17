@@ -422,8 +422,35 @@ public class DamageEditApplier {
         applySkillModifiers();
         applyHeat();
         applyAmmoShots();
+        applyEquipmentSettings();
         applyStatus();
         logAppliedEdits();
+    }
+
+    /**
+     * Writes the gamemaster's per-equipment settings back: burst fire on single machine guns and hot-loading on
+     * single ammo bins, so a game can start without them and have a gamemaster switch them per launcher in play.
+     */
+    private void applyEquipmentSettings() {
+        for (Map.Entry<Integer, Boolean> mgBurst : spec.mgBurst.entrySet()) {
+            Mounted<?> machineGun = entity.getEquipment(mgBurst.getKey());
+            if (machineGun != null) {
+                machineGun.setRapidFire(mgBurst.getValue());
+            }
+        }
+        for (Map.Entry<Integer, Boolean> hotLoaded : spec.hotLoadedAmmo.entrySet()) {
+            Mounted<?> ammoBin = entity.getEquipment(hotLoaded.getKey());
+            if (ammoBin == null) {
+                continue;
+            }
+            // the same call pair the lobby uses: setHotLoad tracks the state, the mode is what the rules read
+            ammoBin.setHotLoad(hotLoaded.getValue());
+            if (hotLoaded.getValue()) {
+                ammoBin.setMode("HotLoad");
+            } else if (ammoBin.hasModeType("HotLoad")) {
+                ammoBin.setMode("");
+            }
+        }
     }
 
     /**

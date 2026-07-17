@@ -87,6 +87,11 @@ public class UnitDamageControls {
     /** The shots left in each ammo bin, by its equipment number. Only a gamemaster edits these. */
     public final Map<Integer, JSpinner> ammoShots = new HashMap<>();
 
+    /** Burst fire on each machine gun, by its equipment number. Only a gamemaster's in-game editor builds these. */
+    public final Map<Integer, JCheckBox> mgBurst = new HashMap<>();
+    /** Hot-loading on each ammo bin allowing it, by equipment number. Only a gamemaster's in-game editor builds these. */
+    public final Map<Integer, JCheckBox> hotLoadedAmmo = new HashMap<>();
+
     /*
      * The gamemaster's temporary skill modifiers; null when the editor is not the gamemaster's, or out of game.
      * Each modifier carries its own duration: a rounds spinner, disabled while its Permanent checkbox is on.

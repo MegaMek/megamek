@@ -88,6 +88,11 @@ public class DamageEditSpec implements Serializable {
     /** The crit hits on each piece of equipment, by its equipment number. */
     public final Map<Integer, Integer> equipmentHits = new HashMap<>();
 
+    /** Burst fire on each machine gun, by its equipment number; only carried by a gamemaster's in-game edit. */
+    public final Map<Integer, Boolean> mgBurst = new HashMap<>();
+    /** Hot-loading on each ammo bin, by its equipment number; only carried by a gamemaster's in-game edit. */
+    public final Map<Integer, Boolean> hotLoadedAmmo = new HashMap<>();
+
     /*
      * the gamemaster's temporary skill modifiers, each with a duration of its own (rounds, ignored while its
      * permanent flag is on). Gunnery and piloting travel together; the initiative trio is present only where the

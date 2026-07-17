@@ -37,9 +37,11 @@ import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
+import megamek.common.equipment.AmmoType;
 import megamek.common.equipment.IArmorState;
 import megamek.common.equipment.Mounted;
 import megamek.common.equipment.EquipmentType;
+import megamek.common.equipment.WeaponType;
 import megamek.testUtilities.MMTestUtilities;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
@@ -212,5 +214,56 @@ class DamageEditApplierTest {
         apply(spec);
 
         assertEquals(1, ammoBin.getBaseShotsLeft());
+    }
+
+    @Test
+    void burstFireLandsOnTheMachineGun() {
+        // the test Atlas carries no machine gun, so this test brings its own unit
+        Entity tank = MMTestUtilities.getEntityForUnitTesting("Bulldog Medium Tank", true);
+        assertNotNull(tank, "Test unit could not be loaded");
+        Mounted<?> machineGun = null;
+        for (Mounted<?> weapon : tank.getWeaponList()) {
+            if (weapon.getType().hasFlag(WeaponType.F_MG)) {
+                machineGun = weapon;
+                break;
+            }
+        }
+        assertNotNull(machineGun, "the test unit carries no machine gun");
+        int equipmentNumber = tank.getEquipmentNum(machineGun);
+
+        DamageEditSpec burstOn = new DamageEditSpec();
+        burstOn.entityId = tank.getId();
+        burstOn.mgBurst.put(equipmentNumber, true);
+        new DamageEditApplier(tank, burstOn).applyToEntity();
+        assertTrue(machineGun.isRapidFire());
+
+        DamageEditSpec burstOff = new DamageEditSpec();
+        burstOff.entityId = tank.getId();
+        burstOff.mgBurst.put(equipmentNumber, false);
+        new DamageEditApplier(tank, burstOff).applyToEntity();
+        assertFalse(machineGun.isRapidFire());
+    }
+
+    @Test
+    void hotLoadingLandsOnTheAmmoBin() {
+        Mounted<?> lrmBin = null;
+        for (Mounted<?> ammoBin : mek.getAmmo()) {
+            if (ammoBin.getType().hasFlag(AmmoType.F_HOTLOAD)) {
+                lrmBin = ammoBin;
+                break;
+            }
+        }
+        assertNotNull(lrmBin, "the test unit carries no hot-loadable ammo");
+        int equipmentNumber = mek.getEquipmentNum(lrmBin);
+
+        DamageEditSpec hotLoadOn = emptySpec();
+        hotLoadOn.hotLoadedAmmo.put(equipmentNumber, true);
+        apply(hotLoadOn);
+        assertTrue(lrmBin.isHotLoaded());
+
+        DamageEditSpec hotLoadOff = emptySpec();
+        hotLoadOff.hotLoadedAmmo.put(equipmentNumber, false);
+        apply(hotLoadOff);
+        assertFalse(lrmBin.isHotLoaded());
     }
 }

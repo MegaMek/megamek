@@ -79,6 +79,12 @@ public class UnitDamageSpecBuilder {
         for (Map.Entry<Integer, CheckCritPanel> equipCrit : controls.equipCrits.entrySet()) {
             spec.equipmentHits.put(equipCrit.getKey(), equipCrit.getValue().getHits());
         }
+        for (Map.Entry<Integer, JCheckBox> mgBurst : controls.mgBurst.entrySet()) {
+            spec.mgBurst.put(mgBurst.getKey(), mgBurst.getValue().isSelected());
+        }
+        for (Map.Entry<Integer, JCheckBox> hotLoaded : controls.hotLoadedAmmo.entrySet()) {
+            spec.hotLoadedAmmo.put(hotLoaded.getKey(), hotLoaded.getValue().isSelected());
+        }
 
         if (null != controls.spnGunneryModifier) {
             spec.gunneryModifier = (Integer) controls.spnGunneryModifier.getValue();

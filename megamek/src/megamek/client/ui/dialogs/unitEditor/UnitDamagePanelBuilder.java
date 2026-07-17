@@ -55,12 +55,14 @@ import megamek.client.ui.util.UIUtil;
 import megamek.common.CriticalSlot;
 import megamek.common.bays.Bay;
 import megamek.common.equipment.AmmoMounted;
+import megamek.common.equipment.AmmoType;
 import megamek.common.equipment.EquipmentMode;
 import megamek.common.equipment.MiscMounted;
 import megamek.common.equipment.DockingCollar;
 import megamek.common.equipment.MiscType;
 import megamek.common.equipment.Mounted;
 import megamek.common.equipment.WeaponMounted;
+import megamek.common.equipment.WeaponType;
 import megamek.common.options.OptionsConstants;
 import megamek.common.units.*;
 import megamek.common.weapons.attacks.InfantryAttack;
@@ -591,9 +593,35 @@ public class UnitDamagePanelBuilder {
             if (offerGameMasterTools && (mounted instanceof AmmoMounted ammoBin)) {
                 control = ammoControl(equipmentNumber, ammoBin, crit);
             }
+            if (offersEquipmentSettings() && (mounted.getType() instanceof WeaponType weaponType)
+                  && weaponType.hasFlag(WeaponType.F_MG)
+                  && entity.getGame().getOptions().booleanOption(OptionsConstants.ADVANCED_COMBAT_TAC_OPS_BURST)) {
+                control = withMgBurstCheckbox(equipmentNumber, mounted, control);
+            }
             controls.addCritOfLocation(mounted.getLocation(), crit);
             addLabeledRow(equipmentPanel(mounted.getLocation()), label, control);
         }
+    }
+
+    /**
+     * Whether the in-game equipment settings (burst MG fire, hot-loading) are offered: only in the gamemaster's
+     * editor and only in a running game. In the lobby the Configure dialog owns these settings.
+     */
+    private boolean offersEquipmentSettings() {
+        return offerGameMasterTools && (entity.getGame() != null) && !entity.getGame().getPhase().isLounge();
+    }
+
+    /** Appends a burst fire checkbox to a machine gun's row, prefilled with the gun's current setting. */
+    private JComponent withMgBurstCheckbox(int equipmentNumber, Mounted<?> machineGun, JComponent control) {
+        JCheckBox burstCheckbox = new JCheckBox(Messages.getString("UnitEditorDialog.mgBurst"),
+              machineGun.isRapidFire());
+        burstCheckbox.setToolTipText(UIUtil.formatSideTooltip(
+              Messages.getString("UnitEditorDialog.mgBurst.tooltip")));
+        controls.mgBurst.put(equipmentNumber, burstCheckbox);
+        JPanel row = new JPanel(new FlowLayout(FlowLayout.LEFT, 5, 0));
+        row.add(control);
+        row.add(burstCheckbox);
+        return row;
     }
 
     /**
@@ -639,6 +667,15 @@ public class UnitDamagePanelBuilder {
         control.add(crit);
         control.add(shots);
         control.add(new JLabel(Messages.getString("UnitEditorDialog.shots")));
+        if (offersEquipmentSettings() && ammoBin.getType().hasFlag(AmmoType.F_HOTLOAD)
+              && entity.getGame().getOptions().booleanOption(OptionsConstants.ADVANCED_COMBAT_TAC_OPS_HOT_LOAD)) {
+            JCheckBox hotLoadCheckbox = new JCheckBox(Messages.getString("UnitEditorDialog.hotLoad"),
+                  ammoBin.isHotLoaded());
+            hotLoadCheckbox.setToolTipText(UIUtil.formatSideTooltip(
+                  Messages.getString("UnitEditorDialog.hotLoad.tooltip")));
+            controls.hotLoadedAmmo.put(equipmentNumber, hotLoadCheckbox);
+            control.add(hotLoadCheckbox);
+        }
         return control;
     }
 

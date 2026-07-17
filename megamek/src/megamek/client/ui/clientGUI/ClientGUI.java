@@ -282,6 +282,10 @@ public class ClientGUI extends AbstractClientGUI
     public static final String VIEW_GAME_OPTIONS = "viewGameOptions";
     public static final String GAME_GIVE_UP_GAME_MASTER = "gameGiveUpGameMaster";
     public static final String GAME_REQUEST_GAME_MASTER = "gameRequestGameMaster";
+    public static final String GAME_ALL_MG_BURST_ON = "gameAllMgBurstOn";
+    public static final String GAME_ALL_MG_BURST_OFF = "gameAllMgBurstOff";
+    public static final String GAME_ALL_HOT_LOAD_ON = "gameAllHotLoadOn";
+    public static final String GAME_ALL_HOT_LOAD_OFF = "gameAllHotLoadOff";
     public static final String VIEW_NETWORK_INFORMATION = "viewNetworkInformation";
     public static final String VIEW_CLIENT_SETTINGS = "viewClientSettings";
     public static final String VIEW_LOS_SETTING = "viewLOSSetting";
@@ -854,6 +858,13 @@ public class ClientGUI extends AbstractClientGUI
         menuBar.setGameMasterState(localPlayer.isGameMaster(), gameAllowsGameMaster && !anyoneHoldsRole);
     }
 
+    /** Keeps the lobby's all-units equipment shortcuts in step with the game options that allow them. */
+    private void updateLobbyEquipmentMenuItems() {
+        menuBar.setLobbyEquipmentOptions(
+              client.getGame().getOptions().booleanOption(OptionsConstants.ADVANCED_COMBAT_TAC_OPS_BURST),
+              client.getGame().getOptions().booleanOption(OptionsConstants.ADVANCED_COMBAT_TAC_OPS_HOT_LOAD));
+    }
+
     /**
      * Asks first, then gives up the Game Master role through the same /gm command that takes it, so the rules stay
      * with the server. The menu entry that leads here is only shown while the local player holds the role.
@@ -983,8 +994,10 @@ public class ClientGUI extends AbstractClientGUI
 
         layoutFrame();
         menuBar.addActionListener(this);
-        // the Game Master role may already be settled, taken in the lobby before this window opened
+        // the Game Master role may already be settled, taken in the lobby before this window opened, and the
+        // options behind the lobby's all-units equipment shortcuts are set before it opens too
         updateGameMasterMenuItems();
+        updateLobbyEquipmentMenuItems();
 
         aw = new AccessibilityDialog(this);
         aw.setLocation(0, 0);
@@ -1387,6 +1400,18 @@ public class ClientGUI extends AbstractClientGUI
                 // the same /gm command the lobby button uses: it puts the role to a vote, and the vote dialog is
                 // where the request is followed and can be withdrawn, so there is nothing to confirm here first
                 client.sendChat("/gm");
+                break;
+            case GAME_ALL_MG_BURST_ON:
+            case GAME_ALL_MG_BURST_OFF:
+                if (curPanel instanceof ChatLounge lounge) {
+                    lounge.setAllBurstMg(event.getActionCommand().equals(GAME_ALL_MG_BURST_ON));
+                }
+                break;
+            case GAME_ALL_HOT_LOAD_ON:
+            case GAME_ALL_HOT_LOAD_OFF:
+                if (curPanel instanceof ChatLounge lounge) {
+                    lounge.setAllHotLoad(event.getActionCommand().equals(GAME_ALL_HOT_LOAD_ON));
+                }
                 break;
             case VIEW_NETWORK_INFORMATION:
                 showNetworkInformation();
@@ -3289,8 +3314,10 @@ public class ClientGUI extends AbstractClientGUI
                 cl.updateMapSettings(getClient().getMapSettings());
             }
 
-            // the host may have turned Allow Game Master on or off, which offers or takes away the Become entry
+            // the host may have turned Allow Game Master on or off, which offers or takes away the Become entry,
+            // or the burst fire and hot-loading options behind the lobby's all-units equipment shortcuts
             updateGameMasterMenuItems();
+            updateLobbyEquipmentMenuItems();
         }
 
         @Override

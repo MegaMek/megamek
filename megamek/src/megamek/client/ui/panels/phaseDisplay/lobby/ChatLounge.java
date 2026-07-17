@@ -3420,6 +3420,33 @@ public class ChatLounge extends AbstractPhaseDisplay
     }
 
     /**
+     * Sets burst MG fire on or off on every unit the local player may configure at once: their own units and
+     * their local bots'. The menu bar's shortcut for the per-unit action in the unit right-click menu.
+     */
+    public void setAllBurstMg(boolean burstOn) {
+        lobbyActions.toggleBurstMg(configurableEntities(), burstOn);
+    }
+
+    /**
+     * Sets LRM hot-loading on or off on every unit the local player may configure at once: their own units and
+     * their local bots'. The menu bar's shortcut for the per-unit action in the unit right-click menu.
+     */
+    public void setAllHotLoad(boolean hotLoadOn) {
+        lobbyActions.toggleHotLoad(configurableEntities(), hotLoadOn);
+    }
+
+    /** The units the local player may configure: their own and their local bots'. */
+    private List<Entity> configurableEntities() {
+        List<Entity> configurable = new ArrayList<>();
+        for (Entity entity : clientgui.getClient().getGame().getEntitiesVector()) {
+            if (lobbyActions.isEditable(entity)) {
+                configurable.add(entity);
+            }
+        }
+        return configurable;
+    }
+
+    /**
      * Asks the server for the gamemaster role, or gives it up when this player already holds it. The request goes
      * through the same command the chat uses, so the rules for taking the role live in one place: it is put to a
      * vote of the human players (a lone player's own yes passes at once), and it is refused while another player

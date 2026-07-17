@@ -97,6 +97,8 @@ public class CommonMenuBar extends JMenuBar implements ActionListener, IPreferen
     private final JMenuItem gameConnect = new JMenuItem(getString("CommonMenuBar.fileGameConnect"));
     private final JCheckBoxMenuItem gameRoundReport = new JCheckBoxMenuItem(getString("CommonMenuBar.viewRoundReport"));
     private final JMenuItem gameEditBots = new JMenuItem(getString("CommonMenuBar.editBots"));
+    /** Asks for the Game Master role; only shown while nobody holds it and the game allows one. */
+    private final JMenuItem gameRequestGameMaster = new JMenuItem(getString("CommonMenuBar.gameRequestGameMaster"));
     /** Gives up the Game Master role; only shown while the local player holds it. */
     private final JMenuItem gameGiveUpGameMaster = new JMenuItem(getString("CommonMenuBar.gameGiveUpGameMaster"));
     private final JCheckBoxMenuItem gamePlayerList = new JCheckBoxMenuItem(getString("CommonMenuBar.viewPlayerList"));
@@ -245,8 +247,10 @@ public class CommonMenuBar extends JMenuBar implements ActionListener, IPreferen
         menu.setMnemonic(VK_G);
 
         initMenuItem(gameEditBots, menu, FILE_GAME_EDIT_BOTS, VK_R);
+        initMenuItem(gameRequestGameMaster, menu, GAME_REQUEST_GAME_MASTER);
         initMenuItem(gameGiveUpGameMaster, menu, GAME_GIVE_UP_GAME_MASTER);
-        // only the player holding the Game Master role sees the entry; setGameMaster keeps it in step
+        // at most one of the two is shown, by who holds the role; setGameMasterState keeps them in step
+        gameRequestGameMaster.setVisible(false);
         gameGiveUpGameMaster.setVisible(false);
         menu.addSeparator();
 
@@ -621,9 +625,13 @@ public class CommonMenuBar extends JMenuBar implements ActionListener, IPreferen
         }
     }
 
-    /** Shows or hides the Give Up Game Master entry, which only the player holding the role sees. */
-    public synchronized void setGameMaster(boolean isGameMaster) {
-        gameGiveUpGameMaster.setVisible(isGameMaster);
+    /**
+     * Shows the Game Master entry that applies: Give Up for the player holding the role, Become for anyone while
+     * the role is free and the game allows one, and neither while another player holds it.
+     */
+    public synchronized void setGameMasterState(boolean localPlayerHoldsRole, boolean roleFreeToRequest) {
+        gameGiveUpGameMaster.setVisible(localPlayerHoldsRole);
+        gameRequestGameMaster.setVisible(roleFreeToRequest);
     }
 
     @Override

@@ -281,6 +281,7 @@ public class ClientGUI extends AbstractClientGUI
     public static final String VIEW_ROUND_REPORT = "viewRoundReport";
     public static final String VIEW_GAME_OPTIONS = "viewGameOptions";
     public static final String GAME_GIVE_UP_GAME_MASTER = "gameGiveUpGameMaster";
+    public static final String GAME_REQUEST_GAME_MASTER = "gameRequestGameMaster";
     public static final String VIEW_NETWORK_INFORMATION = "viewNetworkInformation";
     public static final String VIEW_CLIENT_SETTINGS = "viewClientSettings";
     public static final String VIEW_LOS_SETTING = "viewLOSSetting";
@@ -833,6 +834,27 @@ public class ClientGUI extends AbstractClientGUI
     }
 
     /**
+     * Keeps the Game menu's Game Master entries in step with who holds the role and whether the game allows one:
+     * Give Up while the local player holds it, Become while the role is free, neither while another player has it.
+     */
+    private void updateGameMasterMenuItems() {
+        Player localPlayer = client.getLocalPlayer();
+        if (localPlayer == null) {
+            return;
+        }
+        boolean gameAllowsGameMaster = client.getGame().getOptions()
+              .booleanOption(OptionsConstants.GAME_MASTER_ALLOW);
+        boolean anyoneHoldsRole = false;
+        for (Player player : client.getGame().getPlayersList()) {
+            if (player.isGameMaster()) {
+                anyoneHoldsRole = true;
+                break;
+            }
+        }
+        menuBar.setGameMasterState(localPlayer.isGameMaster(), gameAllowsGameMaster && !anyoneHoldsRole);
+    }
+
+    /**
      * Asks first, then gives up the Game Master role through the same /gm command that takes it, so the rules stay
      * with the server. The menu entry that leads here is only shown while the local player holds the role.
      */
@@ -960,10 +982,8 @@ public class ClientGUI extends AbstractClientGUI
 
         layoutFrame();
         menuBar.addActionListener(this);
-        // the local player may already hold the Game Master role, taken in the lobby before this window opened
-        if (client.getLocalPlayer() != null) {
-            menuBar.setGameMaster(client.getLocalPlayer().isGameMaster());
-        }
+        // the Game Master role may already be settled, taken in the lobby before this window opened
+        updateGameMasterMenuItems();
 
         aw = new AccessibilityDialog(this);
         aw.setLocation(0, 0);
@@ -1361,6 +1381,11 @@ public class ClientGUI extends AbstractClientGUI
                 break;
             case GAME_GIVE_UP_GAME_MASTER:
                 giveUpGameMaster();
+                break;
+            case GAME_REQUEST_GAME_MASTER:
+                // the same /gm command the lobby button uses: it puts the role to a vote, and the vote dialog is
+                // where the request is followed and can be withdrawn, so there is nothing to confirm here first
+                client.sendChat("/gm");
                 break;
             case VIEW_NETWORK_INFORMATION:
                 showNetworkInformation();
@@ -3069,12 +3094,10 @@ public class ClientGUI extends AbstractClientGUI
                     currPhaseDisplay.setStatusBarWithNotDonePlayers();
                 }
             }
-            // the local player may have gained or lost the Game Master role, so keep the title's marker and the
-            // Give Up Game Master menu entry in step
+            // the Game Master role may have changed hands, so keep the title's marker and the Game menu's
+            // Game Master entries in step
             updateFrameTitle();
-            if (client.getLocalPlayer() != null) {
-                menuBar.setGameMaster(client.getLocalPlayer().isGameMaster());
-            }
+            updateGameMasterMenuItems();
         }
 
         @Override
@@ -3264,6 +3287,9 @@ public class ClientGUI extends AbstractClientGUI
             if (curPanel instanceof ChatLounge cl) {
                 cl.updateMapSettings(getClient().getMapSettings());
             }
+
+            // the host may have turned Allow Game Master on or off, which offers or takes away the Become entry
+            updateGameMasterMenuItems();
         }
 
         @Override

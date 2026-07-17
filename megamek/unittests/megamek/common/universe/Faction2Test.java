@@ -32,8 +32,10 @@
  */
 package megamek.common.universe;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertIterableEquals;
+import static org.junit.jupiter.api.Assertions.assertSame;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.util.List;
@@ -103,5 +105,45 @@ class Faction2Test {
         Factions2 testFactions = getTestFactions2();
         Faction2 mercFaction = testFactions.getFaction("MERC").orElseThrow();
         assertTrue(mercFaction.getSucsCodes().isEmpty());
+    }
+
+    @Test
+    void aliasesParsedFromYaml() {
+        Factions2 testFactions = getTestFactions2();
+        Faction2 mergedFaction = testFactions.getFaction("MRG").orElseThrow();
+        assertEquals("OLDCODE", mergedFaction.getAliases().get(3080));
+        assertEquals("LA", mergedFaction.getAliases().get(3141));
+    }
+
+    @Test
+    void aliasResolvesToCanonicalFaction() {
+        Factions2 testFactions = getTestFactions2();
+        Faction2 mergedFaction = testFactions.getFaction("MRG").orElseThrow();
+        // A retired code with no faction file of its own resolves to the surviving faction via the alias.
+        assertSame(mergedFaction, testFactions.getFaction("OLDCODE").orElseThrow());
+    }
+
+    @Test
+    void realFactionWinsOverCollidingAlias() {
+        Factions2 testFactions = getTestFactions2();
+        // MRG declares LA as an alias, but LA is a real faction and must win the lookup.
+        Faction2 laFaction = testFactions.getFaction("LA").orElseThrow();
+        assertEquals("Lyran Commonwealth", laFaction.getName());
+    }
+
+    @Test
+    void logoAndBackgroundResolveByYear() {
+        Factions2 testFactions = getTestFactions2();
+        Faction2 mergedFaction = testFactions.getFaction("MRG").orElseThrow();
+        // No-arg getters return the base value.
+        assertEquals("base_logo.png", mergedFaction.getLogo());
+        assertEquals("base_background.png", mergedFaction.getBackground());
+        // Before the change year, the year-aware getters fall back to the base value.
+        assertEquals("base_logo.png", mergedFaction.getLogo(3050));
+        assertEquals("base_background.png", mergedFaction.getBackground(3050));
+        // From the change year onward, the era value applies.
+        assertEquals("era_logo.png", mergedFaction.getLogo(3080));
+        assertEquals("era_logo.png", mergedFaction.getLogo(3200));
+        assertEquals("era_background.png", mergedFaction.getBackground(3200));
     }
 }

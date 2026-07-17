@@ -417,10 +417,10 @@ public abstract class Aero extends Entity implements IAero, IBomber {
     }
 
     @Override
-    protected void addSystemTechAdvancement(CompositeTechLevel ctl) {
-        super.addSystemTechAdvancement(ctl);
+    protected void addSystemTechAdvancement(CompositeTechLevel techLevel) {
+        super.addSystemTechAdvancement(techLevel);
         if (isFighter() && (getCockpitTechAdvancement() != null)) {
-            ctl.addComponent(getCockpitTechAdvancement());
+            techLevel.addComponent(getCockpitTechAdvancement(), getCockpitTypeString());
         }
     }
 

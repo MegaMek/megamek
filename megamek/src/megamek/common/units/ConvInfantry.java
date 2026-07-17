@@ -216,6 +216,11 @@ public class ConvInfantry extends Infantry {
     }
 
     @Override
+    public boolean isMechanized() {
+        return isMounted() ? false : super.isMechanized();
+    }
+
+    @Override
     public String[] getLocationAbbreviations() {
         return LOCATION_ABBREVIATIONS;
     }
@@ -236,26 +241,26 @@ public class ConvInfantry extends Infantry {
     }
 
     @Override
-    protected void addSystemTechAdvancement(CompositeTechLevel ctl) {
-        super.addSystemTechAdvancement(ctl);
-        ctl.addComponent(getMotiveTechAdvancement());
+    protected void addSystemTechAdvancement(CompositeTechLevel techLevel) {
+        super.addSystemTechAdvancement(techLevel);
+        techLevel.addComponent(getMotiveTechAdvancement(), getMovementModeAsString());
         if (hasSpecialization(COMBAT_ENGINEERS)) {
-            ctl.addComponent(getCombatEngineerTA());
+            techLevel.addComponent(getCombatEngineerTA(), getSpecializationName(COMBAT_ENGINEERS));
         }
         if (hasSpecialization(MARINES)) {
-            ctl.addComponent(getMarineTA());
+            techLevel.addComponent(getMarineTA(), getSpecializationName(MARINES));
         }
         if (hasSpecialization(MOUNTAIN_TROOPS)) {
-            ctl.addComponent(getMountainTA());
+            techLevel.addComponent(getMountainTA(), getSpecializationName(MOUNTAIN_TROOPS));
         }
         if (hasSpecialization(PARATROOPS)) {
-            ctl.addComponent(getParatrooperTA());
+            techLevel.addComponent(getParatrooperTA(), getSpecializationName(PARATROOPS));
         }
         if (hasSpecialization(PARAMEDICS)) {
-            ctl.addComponent(getParamedicTA());
+            techLevel.addComponent(getParamedicTA(), getSpecializationName(PARAMEDICS));
         }
         if (hasSpecialization(TAG_TROOPS)) {
-            ctl.addComponent(getTAGTroopsTA());
+            techLevel.addComponent(getTAGTroopsTA(), getSpecializationName(TAG_TROOPS));
         }
     }
 

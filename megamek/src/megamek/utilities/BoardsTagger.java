@@ -123,6 +123,7 @@ public class BoardsTagger {
         TAG_ARMORED_BUILDING("ArmoredBuilding"),
         TAG_IMPASSABLE("Impassable"),
         TAG_ELEVATOR("Elevator"),
+        TAG_INDUSTRIAL_ELEVATOR("IndustrialElevator"),
         TAG_MULTIPLE_THEME("MultipleTheme"),
         TAG_UNDERWATER_BRIDGE("UnderWaterBridge"),
         TAG_METAL_CONTENT("MetalContent"),
@@ -200,6 +201,7 @@ public class BoardsTagger {
         int armoredBuilding = 0;
         int impassable = 0;
         int elevator = 0;
+        int industrialElevator = 0;
         int multipleTheme = 0;
         int underWaterBridge = 0;
         int metalContent = 0;
@@ -268,7 +270,8 @@ public class BoardsTagger {
                           0;
                 }
                 impassable += hex.containsTerrain(IMPASSABLE) ? 1 : 0;
-                elevator += hex.containsTerrain(ELEVATOR) ? 1 : 0;
+                elevator += hex.containsTerrain(SOLARIS_ELEVATOR) ? 1 : 0;
+                industrialElevator += hex.containsTerrain(INDUSTRIAL_ELEVATOR) ? 1 : 0;
                 if (hex.containsTerrain(WATER)
                       && hex.containsTerrain(BRIDGE)
                       && (hex.terrainLevel(BRIDGE_ELEV) < hex.terrainLevel(WATER))) {
@@ -336,6 +339,7 @@ public class BoardsTagger {
         matchingTags.put(Tags.TAG_ARMORED_BUILDING, armoredBuilding > 10);
         matchingTags.put(Tags.TAG_IMPASSABLE, impassable > 0);
         matchingTags.put(Tags.TAG_ELEVATOR, elevator > 0);
+        matchingTags.put(Tags.TAG_INDUSTRIAL_ELEVATOR, industrialElevator > 0);
         matchingTags.put(Tags.TAG_METAL_CONTENT, metalContent > normSide / 3);
         matchingTags.put(Tags.TAG_HAZARDOUS_LIQUID, hazardousLiquid > 0);
         matchingTags.put(Tags.TAG_ULTRA_SUBLEVEL, ultraSublevel > 0);

@@ -1,6 +1,6 @@
 /*
  * Copyright (c) 2005 - Ben Mazur (bmazur@sev.org)
- * Copyright (C) 2007-2025 The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2007-2026 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -37,9 +37,11 @@ package megamek.common.weapons.handlers;
 import static java.lang.Math.floor;
 
 import java.io.Serial;
+import java.util.Vector;
 
 import megamek.common.HitData;
 import megamek.common.RangeType;
+import megamek.common.Report;
 import megamek.common.ToHitData;
 import megamek.common.actions.WeaponAttackAction;
 import megamek.common.battleArmor.BattleArmor;
@@ -48,6 +50,8 @@ import megamek.common.equipment.WeaponType;
 import megamek.common.game.Game;
 import megamek.common.loaders.EntityLoadingException;
 import megamek.common.options.OptionsConstants;
+import megamek.common.rolls.Roll;
+import megamek.common.units.Entity;
 import megamek.common.units.Infantry;
 import megamek.server.totalWarfare.TWGameManager;
 
@@ -62,6 +66,52 @@ public class EnergyWeaponHandler extends WeaponHandler {
           throws EntityLoadingException {
         super(toHit, waa, g, m);
         generalDamageType = HitData.DAMAGE_ENERGY;
+    }
+
+    /**
+     * Applies Edge to a RISC equipment malfunction (explosion) check: if the attacker has the RISC Edge trigger enabled
+     * with Edge remaining, spends one Edge point and rerolls the malfunction check once. The caller re-evaluates its
+     * own explosion threshold against the returned value.
+     *
+     * @param attacker     the firing unit
+     * @param subjectId    the report subject id
+     * @param reportVector the report vector to append the Edge reports to
+     *
+     * @return the rerolled 2d6 value if Edge was spent, or -1 if Edge was not used
+     */
+    // package-private static for testing
+    static int rerollRiscMalfunctionWithEdge(Entity attacker, int subjectId, Vector<Report> reportVector) {
+        if (!attacker.shouldUseEdge(OptionsConstants.EDGE_WHEN_RISC_FAIL)) {
+            return -1;
+        }
+        attacker.getCrew().decreaseEdge();
+        Report report = new Report(3166);
+        report.subject = subjectId;
+        report.add(attacker.getCrew().getOptions().intOption(OptionsConstants.EDGE));
+        reportVector.addElement(report);
+
+        Roll reroll = Compute.rollD6(2);
+        report = new Report(3167);
+        report.subject = subjectId;
+        report.add(reroll);
+        reportVector.addElement(report);
+        return reroll.getIntValue();
+    }
+
+    /**
+     * Decides whether a RISC equipment malfunction still occurs after an Edge reroll. The malfunction stands unless
+     * Edge was used ({@code edgeReroll >= 0}) and the rerolled value is above the explosion threshold.
+     *
+     * @param edgeReroll         the rerolled value from {@link #rerollRiscMalfunctionWithEdge}, or -1 if Edge was not
+     *                           used
+     * @param explosionThreshold the value at or below which the equipment malfunctions
+     *
+     * @return true if the malfunction (explosion) still occurs
+     */
+    // package-private static for testing
+    static boolean riscStillMalfunctions(int edgeReroll, int explosionThreshold) {
+        // A negative reroll means Edge was not used, so the original malfunction stands.
+        return (edgeReroll < 0) || (edgeReroll <= explosionThreshold);
     }
 
     /*

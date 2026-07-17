@@ -242,7 +242,13 @@ public enum PacketCommand {
      * A Server to Client packet carrying the running vote among the players - a gamemaster request - as a
      * {@link megamek.common.voting.Poll}, sent whenever the vote is called, receives a ballot, or resolves.
      */
-    GAME_MASTER_POLL;
+    GAME_MASTER_POLL,
+
+    /**
+     * A Server to Client packet carrying the current state of all player-controlled industrial elevators
+     * (platform levels, call queues) so clients can render platforms and validate elevator moves.
+     */
+    UPDATE_INDUSTRIAL_ELEVATORS;
     //endregion Enum Declarations
 
     //region Boolean Comparison Methods

@@ -67,6 +67,7 @@ import megamek.client.ui.clientGUI.tooltip.PilotToolTip;
 import megamek.client.ui.tileset.TilesetManager;
 import megamek.client.ui.util.UIUtil;
 import megamek.common.Hex;
+import megamek.common.IndustrialElevator;
 import megamek.common.Player;
 import megamek.common.Report;
 import megamek.common.SpecialHexDisplay;
@@ -711,6 +712,15 @@ public class Client extends AbstractClient {
         game.processGameEvent(new GameBoardChangeEvent(this));
     }
 
+    @SuppressWarnings("unchecked")
+    protected void receiveUpdateIndustrialElevators(Packet packet) {
+        Object data = packet.getObject(0);
+        if (data instanceof Collection) {
+            Collection<IndustrialElevator> elevators = (Collection<IndustrialElevator>) data;
+            game.setIndustrialElevators(elevators);
+        }
+    }
+
     protected void receiveDeployMinefields(Packet packet) throws InvalidPacketDataException {
         game.addMinefields(packet.getMinefieldVector(0));
     }
@@ -1076,6 +1086,9 @@ public class Client extends AbstractClient {
                     break;
                 case UPDATE_GROUND_OBJECTS:
                     receiveUpdateGroundObjects(packet);
+                    break;
+                case UPDATE_INDUSTRIAL_ELEVATORS:
+                    receiveUpdateIndustrialElevators(packet);
                     break;
                 case ADD_SMOKE_CLOUD:
                     SmokeCloud cloud = packet.getSmokeCloud(0);

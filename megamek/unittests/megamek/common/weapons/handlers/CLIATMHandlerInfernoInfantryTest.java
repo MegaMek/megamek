@@ -134,7 +134,7 @@ class CLIATMHandlerInfernoInfantryTest {
             attacker = createAttacker();
             launcher = addImprovedInfernoLauncher(attacker);
         } catch (Exception exception) {
-            throw new EntityLoadingException(exception.getMessage());
+            throw new EntityLoadingException(exception.getMessage(), exception);
         }
         ConvInfantry target = createInfantryTarget(7, 4);
         game.addEntity(attacker);

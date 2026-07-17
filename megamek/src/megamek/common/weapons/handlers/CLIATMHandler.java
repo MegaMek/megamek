@@ -195,8 +195,9 @@ public class CLIATMHandler extends ATMHandler {
 
         // conventional infantry gets hit in one lump
         // BAs do one lump of damage per BA suit
-        // The infantry hit line ends the line normally (no newlines = 0) so the following damage or
-        // destruction reports render on their own line, matching the standard SRM/LRM inferno output.
+        // The infantry hit line keeps the default line break (Report.newlines = 1) so the following
+        // damage or destruction reports render on their own line, matching the standard SRM/LRM
+        // inferno output.
         if (target.isConventionalInfantry()) {
             if (attackingEntity instanceof BattleArmor) {
                 bSalvo = true;

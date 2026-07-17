@@ -1,7 +1,7 @@
 /*
  * Copyright (C) 2000-2004 Ben Mazur (bmazur@sev.org)
  * Copyright (C) 2013 Edward Cullen (eddy@obsessedcomputers.co.uk)
- * Copyright (C) 2008-2025 The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2008-2026 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -40,13 +40,14 @@ import java.awt.Font;
 import java.awt.FontMetrics;
 import java.awt.Image;
 import java.awt.Polygon;
+import java.util.Set;
 import java.util.Vector;
 import javax.swing.JComponent;
 
 import megamek.MMConstants;
 import megamek.client.ui.Messages;
 import megamek.client.ui.clientGUI.GUIPreferences;
-import megamek.client.ui.dialogs.unitDisplay.UnitDisplayPanel;
+import megamek.client.ui.widget.picmap.LocationSelectListener;
 import megamek.client.ui.widget.BackGroundDrawer;
 import megamek.client.ui.widget.SkinXMLHandler;
 import megamek.client.ui.widget.UnitDisplaySkinSpecification;
@@ -66,7 +67,7 @@ import megamek.common.util.fileUtils.MegaMekFile;
  */
 public class SuperHeavyTankMapSet implements DisplayMapSet {
 
-    private final UnitDisplayPanel unitDisplayPanel;
+    private final LocationSelectListener locationSelectListener;
 
     private final JComponent jComponent;
     private final PMSimplePolygonArea[] areas = new PMSimplePolygonArea[15];
@@ -153,8 +154,8 @@ public class SuperHeavyTankMapSet implements DisplayMapSet {
     private static final Font FONT_VALUE = new Font(MMConstants.FONT_SANS_SERIF, Font.PLAIN,
           GUIP.getUnitDisplayMekArmorLargeFontSize());
 
-    public SuperHeavyTankMapSet(JComponent c, UnitDisplayPanel unitDisplayPanel) {
-        this.unitDisplayPanel = unitDisplayPanel;
+    public SuperHeavyTankMapSet(JComponent c, LocationSelectListener locationSelectListener) {
+        this.locationSelectListener = locationSelectListener;
         jComponent = c;
         setAreas();
         setLabels();
@@ -208,20 +209,20 @@ public class SuperHeavyTankMapSet implements DisplayMapSet {
     }
 
     private void setAreas() {
-        areas[1] = new PMSimplePolygonArea(frontArmor, unitDisplayPanel, SuperHeavyTank.LOC_FRONT);
-        areas[2] = new PMSimplePolygonArea(rightFrontArmor, unitDisplayPanel, SuperHeavyTank.LOC_FRONT_RIGHT);
-        areas[3] = new PMSimplePolygonArea(leftFrontArmor, unitDisplayPanel, SuperHeavyTank.LOC_FRONT_LEFT);
-        areas[4] = new PMSimplePolygonArea(rightRearArmor, unitDisplayPanel, SuperHeavyTank.LOC_REAR_RIGHT);
-        areas[5] = new PMSimplePolygonArea(leftRearArmor, unitDisplayPanel, SuperHeavyTank.LOC_REAR_LEFT);
-        areas[6] = new PMSimplePolygonArea(rearArmor, unitDisplayPanel, SuperHeavyTank.LOC_REAR);
-        areas[7] = new PMSimplePolygonArea(turretArmor, unitDisplayPanel, SuperHeavyTank.LOC_TURRET);
-        areas[8] = new PMSimplePolygonArea(frontIS, unitDisplayPanel, SuperHeavyTank.LOC_FRONT);
-        areas[9] = new PMSimplePolygonArea(rightFrontIS, unitDisplayPanel, SuperHeavyTank.LOC_FRONT_RIGHT);
-        areas[10] = new PMSimplePolygonArea(leftFrontIS, unitDisplayPanel, SuperHeavyTank.LOC_FRONT_LEFT);
-        areas[11] = new PMSimplePolygonArea(rightRearIS, unitDisplayPanel, SuperHeavyTank.LOC_REAR_RIGHT);
-        areas[12] = new PMSimplePolygonArea(leftRearIS, unitDisplayPanel, SuperHeavyTank.LOC_REAR_LEFT);
-        areas[13] = new PMSimplePolygonArea(rearIS, unitDisplayPanel, SuperHeavyTank.LOC_REAR);
-        areas[14] = new PMSimplePolygonArea(turretIS, unitDisplayPanel, SuperHeavyTank.LOC_TURRET);
+        areas[1] = new PMSimplePolygonArea(frontArmor, locationSelectListener, SuperHeavyTank.LOC_FRONT);
+        areas[2] = new PMSimplePolygonArea(rightFrontArmor, locationSelectListener, SuperHeavyTank.LOC_FRONT_RIGHT);
+        areas[3] = new PMSimplePolygonArea(leftFrontArmor, locationSelectListener, SuperHeavyTank.LOC_FRONT_LEFT);
+        areas[4] = new PMSimplePolygonArea(rightRearArmor, locationSelectListener, SuperHeavyTank.LOC_REAR_RIGHT);
+        areas[5] = new PMSimplePolygonArea(leftRearArmor, locationSelectListener, SuperHeavyTank.LOC_REAR_LEFT);
+        areas[6] = new PMSimplePolygonArea(rearArmor, locationSelectListener, SuperHeavyTank.LOC_REAR);
+        areas[7] = new PMSimplePolygonArea(turretArmor, locationSelectListener, SuperHeavyTank.LOC_TURRET);
+        areas[8] = new PMSimplePolygonArea(frontIS, locationSelectListener, SuperHeavyTank.LOC_FRONT);
+        areas[9] = new PMSimplePolygonArea(rightFrontIS, locationSelectListener, SuperHeavyTank.LOC_FRONT_RIGHT);
+        areas[10] = new PMSimplePolygonArea(leftFrontIS, locationSelectListener, SuperHeavyTank.LOC_FRONT_LEFT);
+        areas[11] = new PMSimplePolygonArea(rightRearIS, locationSelectListener, SuperHeavyTank.LOC_REAR_RIGHT);
+        areas[12] = new PMSimplePolygonArea(leftRearIS, locationSelectListener, SuperHeavyTank.LOC_REAR_LEFT);
+        areas[13] = new PMSimplePolygonArea(rearIS, locationSelectListener, SuperHeavyTank.LOC_REAR);
+        areas[14] = new PMSimplePolygonArea(turretIS, locationSelectListener, SuperHeavyTank.LOC_TURRET);
     }
 
     private void setLabels() {
@@ -349,4 +350,30 @@ public class SuperHeavyTankMapSet implements DisplayMapSet {
         bgDrawers.addElement(new BackGroundDrawer(tile, b));
     }
 
+
+    @Override
+    public void setCriticalLocations(Set<Integer> criticalLocations) {
+        // setEntity is what colors the areas by damage, and it runs again on every redraw, so the stripes are
+        // cleared and reapplied here rather than left to accumulate.
+        for (PMSimplePolygonArea area : areas) {
+            if (area != null) {
+                area.setCriticalHatch(false);
+            }
+        }
+        for (PMValueLabel label : vLabels) {
+            if (label != null) {
+                label.setOutlined(false);
+            }
+        }
+        for (int location : criticalLocations) {
+            int area = location;
+            if ((area >= 0) && (area < areas.length) && (areas[area] != null)) {
+                areas[area].setCriticalHatch(true);
+            }
+            // the value sits on top of the stripes, so it is outlined to stay readable
+            if ((area >= 0) && (area < vLabels.length) && (vLabels[area] != null)) {
+                vLabels[area].setOutlined(true);
+            }
+        }
+    }
 }

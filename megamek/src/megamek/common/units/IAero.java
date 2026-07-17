@@ -514,9 +514,15 @@ public interface IAero {
      */
     default PilotingRollData getLandingControlRoll(int velocity, Coords landingPos, int face,
           boolean isVertical) {
-        // Base piloting skill
-        PilotingRollData roll = new PilotingRollData(((Entity) this).getId(), ((Entity) this).getCrew().getPiloting(),
+        // Base piloting skill, with any gamemaster modifier shown as a line of its own
+        Crew crew = ((Entity) this).getCrew();
+        int gamemasterModifier = crew.appliedPilotingModifier();
+        PilotingRollData roll = new PilotingRollData(((Entity) this).getId(),
+              crew.getPiloting() - gamemasterModifier,
               "Base piloting skill");
+        if (gamemasterModifier != 0) {
+            roll.addModifier(gamemasterModifier, "GM Modifier");
+        }
 
         // Apply critical hit effects, TW pg 239
         int aviationHits = getAvionicsHits();

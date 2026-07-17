@@ -516,13 +516,20 @@ public final class BoardView extends AbstractBoardView
                     tileManager.reloadImage(entity);
                 }
 
-                // for units that have been blown up, damaged or ejected, force a reload
-                if ((gameEntityChangeEvent.getOldEntity() != null) && ((entity.getDamageLevel()
-                      != gameEntityChangeEvent.getOldEntity()
-                      .getDamageLevel()) || (entity.isDestroyed()
-                      != gameEntityChangeEvent.getOldEntity().isDestroyed()) || (
-                      entity.getCrew().isEjected()
-                            != gameEntityChangeEvent.getOldEntity().getCrew().isEjected()))) {
+                // For units that have been blown up, damaged, ejected or handed to another player (a traitor
+                // switch means the new owner's camouflage), force a reload. Without the old state we cannot tell
+                // whether the damage changed, so reload to be safe; the reload reuses the cached image when
+                // nothing shown in fact changed, so it costs nothing in the common case.
+                final Entity oldEntity = gameEntityChangeEvent.getOldEntity();
+                boolean shownStateChanged = true;
+                if (oldEntity != null) {
+                    boolean damageChanged = entity.getDamageLevel() != oldEntity.getDamageLevel();
+                    boolean destructionChanged = entity.isDestroyed() != oldEntity.isDestroyed();
+                    boolean ownerChanged = entity.getOwnerId() != oldEntity.getOwnerId();
+                    boolean ejectionChanged = entity.getCrew().isEjected() != oldEntity.getCrew().isEjected();
+                    shownStateChanged = damageChanged || destructionChanged || ownerChanged || ejectionChanged;
+                }
+                if (shownStateChanged) {
                     tileManager.reloadImage(entity);
                 }
 

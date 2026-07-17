@@ -136,7 +136,6 @@ public final class Player extends TurnOrdered {
 
     //Voting should not be stored in save game so marked transient
     private transient boolean votedToAllowTeamChange = false;
-    private transient boolean votedToAllowGameMaster = false;
     // Testing aid (client-set, server-only): when true the server includes enemy artillery attacks in this player's
     // artillery packet so the Rounds in the Air view can show both sides. Transient - never serialized or saved.
     private transient boolean artilleryRevealAll = false;
@@ -601,14 +600,6 @@ public final class Player extends TurnOrdered {
 
     public boolean getVotedToAllowTeamChange() {
         return votedToAllowTeamChange;
-    }
-
-    public void setVotedToAllowGameMaster(boolean allowChange) {
-        votedToAllowGameMaster = allowChange;
-    }
-
-    public boolean getVotedToAllowGameMaster() {
-        return votedToAllowGameMaster;
     }
 
     public void setArtyAutoHitHexes(List<BoardLocation> newArtyAutoHitHexes) {

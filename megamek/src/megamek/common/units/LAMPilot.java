@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2017-2025 The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2017-2026 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -203,33 +203,81 @@ public class LAMPilot extends Crew {
         }
     }
 
+    // The mode-switching getters below pick the raw Mek or Aero skill and then apply any temporary gamemaster
+    // modifier themselves, since the raw fields bypass the effective-skill getters of the base class. The Mek
+    // branches must read the raw skills too, or the modifier would be applied twice.
+
     @Override
     public int getGunnery() {
-        return useAeroGunnery() ? getGunneryAero() : getGunneryMek();
+        return getSkillModifiers().adjustGunnery(useAeroGunnery() ? getGunneryAero() : getGunneryMek());
     }
 
     @Override
     public int getGunneryB() {
-        return useAeroGunnery() ? getGunneryAeroB() : getGunneryMekB();
+        return getSkillModifiers().adjustGunnery(useAeroGunnery() ? getGunneryAeroB() : getGunneryMekB());
     }
 
     @Override
     public int getGunneryL() {
-        return useAeroGunnery() ? getGunneryAeroL() : getGunneryMekL();
+        return getSkillModifiers().adjustGunnery(useAeroGunnery() ? getGunneryAeroL() : getGunneryMekL());
     }
 
     @Override
     public int getGunneryM() {
+        return getSkillModifiers().adjustGunnery(useAeroGunnery() ? getGunneryAeroM() : getGunneryMekM());
+    }
+
+    /*
+     * The stored skills the getters above adjust are the mode-dependent LAM fields, not the base class arrays, so
+     * the raw hooks the applied-modifier math subtracts must pick the same fields.
+     */
+
+    @Override
+    protected int rawGunnery() {
+        return useAeroGunnery() ? getGunneryAero() : getGunneryMek();
+    }
+
+    @Override
+    protected int rawGunneryB() {
+        return useAeroGunnery() ? getGunneryAeroB() : getGunneryMekB();
+    }
+
+    @Override
+    protected int rawGunneryL() {
+        return useAeroGunnery() ? getGunneryAeroL() : getGunneryMekL();
+    }
+
+    @Override
+    protected int rawGunneryM() {
         return useAeroGunnery() ? getGunneryAeroM() : getGunneryMekM();
+    }
+
+    @Override
+    protected int rawPiloting() {
+        if (lam.getConversionMode() == LandAirMek.CONV_MODE_FIGHTER
+              || (lam.getConversionMode() == LandAirMek.CONV_MODE_AIR_MEK && lam.isAirborneVTOLorWIGE())) {
+            return pilotingAero;
+        }
+        return getPilotingMek();
+    }
+
+    @Override
+    protected int rawPiloting(EntityMovementType moveType) {
+        if (lam.getConversionMode() == LandAirMek.CONV_MODE_FIGHTER
+              || (lam.getConversionMode() == LandAirMek.CONV_MODE_AIR_MEK
+              && (moveType == EntityMovementType.MOVE_VTOL_WALK || moveType == EntityMovementType.MOVE_VTOL_RUN))) {
+            return pilotingAero;
+        }
+        return getPilotingMek();
     }
 
     @Override
     public int getPiloting() {
         if (lam.getConversionMode() == LandAirMek.CONV_MODE_FIGHTER
               || (lam.getConversionMode() == LandAirMek.CONV_MODE_AIR_MEK && lam.isAirborneVTOLorWIGE())) {
-            return pilotingAero;
+            return getSkillModifiers().adjustPiloting(pilotingAero);
         } else {
-            return super.getPiloting();
+            return getSkillModifiers().adjustPiloting(getPilotingMek());
         }
     }
 
@@ -238,9 +286,9 @@ public class LAMPilot extends Crew {
         if (lam.getConversionMode() == LandAirMek.CONV_MODE_FIGHTER || (lam
               .getConversionMode() == LandAirMek.CONV_MODE_AIR_MEK
               && (moveType == EntityMovementType.MOVE_VTOL_WALK || moveType == EntityMovementType.MOVE_VTOL_RUN))) {
-            return pilotingAero;
+            return getSkillModifiers().adjustPiloting(pilotingAero);
         } else {
-            return super.getPiloting();
+            return getSkillModifiers().adjustPiloting(getPilotingMek());
         }
     }
 

@@ -7724,6 +7724,11 @@ public abstract class Entity extends TurnOrdered
             crew.incrementFatigueCount();
         }
 
+        // count down any temporary gamemaster skill modifiers, which clear themselves when their time runs out
+        if (null != crew) {
+            crew.getSkillModifiers().newRound();
+        }
+
         // Update the inferno tracker.
         infernos.newRound(roundNumber);
         if (taserShutdownRounds > 0) {
@@ -8391,10 +8396,15 @@ public abstract class Entity extends TurnOrdered
                   "Reactor shut down");
         }
 
-        // okay, let's figure out the stuff then
+        // okay, let's figure out the stuff then. A gamemaster's temporary modifier is taken back out of the skill
+        // and shown as a line of its own, so a shifted target can be traced to the gamemaster's intervention.
+        int gamemasterModifier = getCrew().appliedPilotingModifier(moveType);
         roll = new PilotingRollData(entityId,
-              getCrew().getPiloting(moveType),
+              getCrew().getPiloting(moveType) - gamemasterModifier,
               (this instanceof Infantry) ? "Anti-Mek skill" : "Base piloting skill");
+        if (gamemasterModifier != 0) {
+            roll.addModifier(gamemasterModifier, "GM Modifier");
+        }
 
         // Let's see if we have a modifier to our piloting skill roll. We'll pass in the roll object and adjust as necessary
         roll = addEntityBonuses(roll);
@@ -13060,6 +13070,28 @@ public abstract class Entity extends TurnOrdered
     /** Returns true if this unit is currently hidden (hidden units, TW pg 259). */
     public boolean isHidden() {
         return isHidden;
+    }
+
+    /**
+     * Returns whether this unit can be hidden at all (hidden units, TW pg 259): a unit in the air cannot, and unit
+     * types that can never hide override this. Whether it is currently hidden is {@link #isHidden()}.
+     */
+    public boolean canHide() {
+        return !isAirborne() && !isAirborneVTOLorWIGE();
+    }
+
+    /**
+     * Returns whether this unit's crew could leave it now: eject or abandon, the way the server's abandonEntity
+     * resolves it. False here; the unit types whose crews can leave override it, each with its own conditions on
+     * top of the shared {@link #crewCanLeave()}.
+     */
+    public boolean canEjectCrew() {
+        return false;
+    }
+
+    /** Shared by the {@link #canEjectCrew()} overrides: a crew can only leave while it is aboard and alive. */
+    protected boolean crewCanLeave() {
+        return (getCrew() != null) && !getCrew().isEjected() && !getCrew().isDead();
     }
 
     /**

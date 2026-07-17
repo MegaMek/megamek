@@ -1,7 +1,7 @@
 /*
  * Copyright (C) 2000-2004, 2005 Ben Mazur (bmazur@sev.org)
  * Copyright (C) 2013 Edward Cullen (eddy@obsessedcomputers.co.uk)
- * Copyright (C) 2005-2025 The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2005-2026 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -40,13 +40,14 @@ import java.awt.Font;
 import java.awt.FontMetrics;
 import java.awt.Image;
 import java.awt.Polygon;
+import java.util.Set;
 import java.util.Vector;
 import javax.swing.JComponent;
 
 import megamek.MMConstants;
 import megamek.client.ui.Messages;
 import megamek.client.ui.clientGUI.GUIPreferences;
-import megamek.client.ui.dialogs.unitDisplay.UnitDisplayPanel;
+import megamek.client.ui.widget.picmap.LocationSelectListener;
 import megamek.client.ui.widget.BackGroundDrawer;
 import megamek.client.ui.widget.SkinXMLHandler;
 import megamek.client.ui.widget.UnitDisplaySkinSpecification;
@@ -89,7 +90,7 @@ public class VTOLMapSet implements DisplayMapSet {
     public static final int LABEL_LOC_NUMBER = 18;
     public static final int LABEL_BAR_RATING = 18;
 
-    UnitDisplayPanel unitDisplayPanel;
+    LocationSelectListener locationSelectListener;
 
     private final JComponent jComponent;
     private final PMSimplePolygonArea[] areas = new PMSimplePolygonArea[LABEL_LOC_NUMBER];
@@ -169,8 +170,8 @@ public class VTOLMapSet implements DisplayMapSet {
     private static final Font FONT_VALUE = new Font(MMConstants.FONT_SANS_SERIF, Font.PLAIN,
           GUIP.getUnitDisplayMekArmorLargeFontSize());
 
-    public VTOLMapSet(JComponent c, UnitDisplayPanel unitDisplayPanel) {
-        this.unitDisplayPanel = unitDisplayPanel;
+    public VTOLMapSet(JComponent c, LocationSelectListener locationSelectListener) {
+        this.locationSelectListener = locationSelectListener;
         jComponent = c;
         setAreas();
         setLabels();
@@ -255,23 +256,23 @@ public class VTOLMapSet implements DisplayMapSet {
     }
 
     private void setAreas() {
-        areas[LABEL_FRONT_ARMOR] = new PMSimplePolygonArea(frontArmor, unitDisplayPanel, VTOL.LOC_FRONT);
-        areas[LABEL_RIGHT_ARMOR_1] = new PMSimplePolygonArea(rightArmor1, unitDisplayPanel, VTOL.LOC_RIGHT);
-        areas[LABEL_RIGHT_ARMOR_2] = new PMSimplePolygonArea(rightArmor2, unitDisplayPanel, VTOL.LOC_RIGHT);
-        areas[LABEL_LEFT_ARMOR_1] = new PMSimplePolygonArea(leftArmor1, unitDisplayPanel, VTOL.LOC_LEFT);
-        areas[LABEL_LEFT_ARMOR_2] = new PMSimplePolygonArea(leftArmor2, unitDisplayPanel, VTOL.LOC_LEFT);
-        areas[LABEL_REAR_ARMOR] = new PMSimplePolygonArea(rearArmor, unitDisplayPanel, VTOL.LOC_REAR);
-        areas[LABEL_ROTOR_ARMOR_1] = new PMSimplePolygonArea(rotorArmor1, unitDisplayPanel, VTOL.LOC_ROTOR);
-        areas[LABEL_ROTOR_ARMOR_2] = new PMSimplePolygonArea(rotorArmor2, unitDisplayPanel, VTOL.LOC_ROTOR);
-        areas[LABEL_CHIN_TU_ARMOR] = new PMSimplePolygonArea(chinTurretArmor, unitDisplayPanel, VTOL.LOC_TURRET_2);
-        areas[LABEL_FRONT_IS] = new PMSimplePolygonArea(frontIS, unitDisplayPanel, VTOL.LOC_FRONT);
-        areas[LABEL_RIGHT_IS_1] = new PMSimplePolygonArea(rightIS1, unitDisplayPanel, VTOL.LOC_RIGHT);
-        areas[LABEL_RIGHT_IS_2] = new PMSimplePolygonArea(rightIS2, unitDisplayPanel, VTOL.LOC_RIGHT);
-        areas[LABEL_LEFT_IS_1] = new PMSimplePolygonArea(leftIS1, unitDisplayPanel, VTOL.LOC_LEFT);
-        areas[LABEL_LEFT_IS_2] = new PMSimplePolygonArea(leftIS2, unitDisplayPanel, VTOL.LOC_LEFT);
-        areas[LABEL_REAR_IS] = new PMSimplePolygonArea(rearIS, unitDisplayPanel, VTOL.LOC_REAR);
-        areas[LABEL_ROTOR_IS] = new PMSimplePolygonArea(rotorIS, unitDisplayPanel, VTOL.LOC_ROTOR);
-        areas[LABEL_CHIN_TU_IS] = new PMSimplePolygonArea(chinTurretIS, unitDisplayPanel, VTOL.LOC_TURRET);
+        areas[LABEL_FRONT_ARMOR] = new PMSimplePolygonArea(frontArmor, locationSelectListener, VTOL.LOC_FRONT);
+        areas[LABEL_RIGHT_ARMOR_1] = new PMSimplePolygonArea(rightArmor1, locationSelectListener, VTOL.LOC_RIGHT);
+        areas[LABEL_RIGHT_ARMOR_2] = new PMSimplePolygonArea(rightArmor2, locationSelectListener, VTOL.LOC_RIGHT);
+        areas[LABEL_LEFT_ARMOR_1] = new PMSimplePolygonArea(leftArmor1, locationSelectListener, VTOL.LOC_LEFT);
+        areas[LABEL_LEFT_ARMOR_2] = new PMSimplePolygonArea(leftArmor2, locationSelectListener, VTOL.LOC_LEFT);
+        areas[LABEL_REAR_ARMOR] = new PMSimplePolygonArea(rearArmor, locationSelectListener, VTOL.LOC_REAR);
+        areas[LABEL_ROTOR_ARMOR_1] = new PMSimplePolygonArea(rotorArmor1, locationSelectListener, VTOL.LOC_ROTOR);
+        areas[LABEL_ROTOR_ARMOR_2] = new PMSimplePolygonArea(rotorArmor2, locationSelectListener, VTOL.LOC_ROTOR);
+        areas[LABEL_CHIN_TU_ARMOR] = new PMSimplePolygonArea(chinTurretArmor, locationSelectListener, VTOL.LOC_TURRET_2);
+        areas[LABEL_FRONT_IS] = new PMSimplePolygonArea(frontIS, locationSelectListener, VTOL.LOC_FRONT);
+        areas[LABEL_RIGHT_IS_1] = new PMSimplePolygonArea(rightIS1, locationSelectListener, VTOL.LOC_RIGHT);
+        areas[LABEL_RIGHT_IS_2] = new PMSimplePolygonArea(rightIS2, locationSelectListener, VTOL.LOC_RIGHT);
+        areas[LABEL_LEFT_IS_1] = new PMSimplePolygonArea(leftIS1, locationSelectListener, VTOL.LOC_LEFT);
+        areas[LABEL_LEFT_IS_2] = new PMSimplePolygonArea(leftIS2, locationSelectListener, VTOL.LOC_LEFT);
+        areas[LABEL_REAR_IS] = new PMSimplePolygonArea(rearIS, locationSelectListener, VTOL.LOC_REAR);
+        areas[LABEL_ROTOR_IS] = new PMSimplePolygonArea(rotorIS, locationSelectListener, VTOL.LOC_ROTOR);
+        areas[LABEL_CHIN_TU_IS] = new PMSimplePolygonArea(chinTurretIS, locationSelectListener, VTOL.LOC_TURRET);
     }
 
     private void setLabels() {
@@ -430,4 +431,30 @@ public class VTOLMapSet implements DisplayMapSet {
     private void translateAreas() {
     }
 
+
+    @Override
+    public void setCriticalLocations(Set<Integer> criticalLocations) {
+        // setEntity is what colors the areas by damage, and it runs again on every redraw, so the stripes are
+        // cleared and reapplied here rather than left to accumulate.
+        for (PMSimplePolygonArea area : areas) {
+            if (area != null) {
+                area.setCriticalHatch(false);
+            }
+        }
+        for (PMValueLabel label : vLabels) {
+            if (label != null) {
+                label.setOutlined(false);
+            }
+        }
+        for (int location : criticalLocations) {
+            int area = location;
+            if ((area >= 0) && (area < areas.length) && (areas[area] != null)) {
+                areas[area].setCriticalHatch(true);
+            }
+            // the value sits on top of the stripes, so it is outlined to stay readable
+            if ((area >= 0) && (area < vLabels.length) && (vLabels[area] != null)) {
+                vLabels[area].setOutlined(true);
+            }
+        }
+    }
 }

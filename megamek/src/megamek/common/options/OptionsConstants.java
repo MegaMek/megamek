@@ -312,6 +312,14 @@ public class OptionsConstants {
     public static final String BASE_BLIND_DROP = "blind_drop";
     public static final String BASE_REAL_BLIND_DROP = "real_blind_drop";
     public static final String BASE_LOBBY_AMMO_DUMP = "lobby_ammo_dump";
+
+    // Game Master group. The allow option keeps its old key, from when it lived in the basic group, so that saved
+    // games and scenarios that set it keep working.
+    public static final String GAME_MASTER_ALLOW = "allow_game_master";
+    public static final String GAME_MASTER_VOTE_THRESHOLD = "gm_vote_threshold";
+    public static final String GAME_MASTER_VOTE_UNANIMOUS = "Unanimous (100%)";
+    public static final String GAME_MASTER_VOTE_MAJORITY = "Majority";
+
     public static final String BASE_DUMPING_FROM_ROUND = "dumping_from_round";
     public static final String BASE_SET_ARTY_PLAYER_HOME_EDGE = "set_arty_player_homeedge";
     public static final String BASE_SET_DEFAULT_TEAM_1 = "set_default_team_1";

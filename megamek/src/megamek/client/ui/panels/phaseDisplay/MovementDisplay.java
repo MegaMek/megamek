@@ -6945,8 +6945,11 @@ public class MovementDisplay extends ActionPhaseDisplay {
                       "Confirm",
                       JOptionPane.YES_NO_OPTION);
                 if (confirm == JOptionPane.YES_OPTION) {
-                    e.setTraitorId(id);
-                    clientgui.getClient().sendUpdateEntity(e);
+                    // the /traitor command sets the pending switch on the server's own copy of the unit, where the
+                    // END phase resolves it; sending the whole unit back for one field would carry stale state along
+                    LOGGER.info("[Traitor] Requesting switch of {} (unit id {}) to player {} ({})",
+                          e.getDisplayName(), e.getId(), id, name);
+                    clientgui.getClient().sendChat(String.format("/traitor %d %d", e.getId(), id));
                 }
             }
         } else if (actionCmd.equals(MoveCommand.MOVE_CHAFF.getCmd())) {

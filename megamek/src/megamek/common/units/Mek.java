@@ -83,6 +83,12 @@ public abstract class Mek extends Entity implements Fortifiable, RubbleClearer {
     private static final long serialVersionUID = -1929593228891136561L;
     private static final MMLogger LOGGER = MMLogger.create(Mek.class);
 
+    /** A MekWarrior can always eject while alive and aboard. */
+    @Override
+    public boolean canEjectCrew() {
+        return crewCanLeave();
+    }
+
     private static final class FrankenMekLocationSourceSnapshot implements Serializable {
         @Serial
         private static final long serialVersionUID = 2955102329477149771L;

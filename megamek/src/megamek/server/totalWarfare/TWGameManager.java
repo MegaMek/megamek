@@ -99,6 +99,8 @@ import megamek.common.net.packets.Packet;
 import megamek.common.options.IBasicOption;
 import megamek.common.options.IOption;
 import megamek.common.options.OptionsConstants;
+import megamek.common.voting.Poll;
+import megamek.common.voting.VoteThreshold;
 import megamek.common.planetaryConditions.Atmosphere;
 import megamek.common.planetaryConditions.PlanetaryConditions;
 import megamek.common.planetaryConditions.Wind;
@@ -209,10 +211,8 @@ public class TWGameManager extends AbstractGameManager {
      */
     private boolean changePlayersTeam = false;
 
-    /**
-     * Keeps track of which player made a request to become Game Master.
-     */
-    private Player playerRequestingGameMaster = null;
+    /** The open vote on granting a player the gamemaster role, or {@code null} when none is running. */
+    private Poll gameMasterPoll = null;
 
     private final TWPhaseEndManager phaseEndManager = new TWPhaseEndManager(this);
     private final TWPhasePreparationManager phasePreparationManager = new TWPhasePreparationManager(this);
@@ -299,6 +299,7 @@ public class TWGameManager extends AbstractGameManager {
         commands.add(new KillCommand(server, this));
         commands.add(new OrbitalBombardmentCommand(server, this));
         commands.add(new ChangeOwnershipCommand(server, this));
+        commands.add(new SkillModifierCommand(server, this));
         commands.add(new DisasterCommand(server, this));
         commands.add(new FirestarterCommand(server, this));
         commands.add(new NoFiresCommand(server, this));
@@ -312,6 +313,8 @@ public class TWGameManager extends AbstractGameManager {
         commands.add(new AssignNovaNetServerCommand(server, this));
         commands.add(new AllowTeamChangeCommand(server, this));
         commands.add(new AllowGameMasterCommand(server, this));
+        commands.add(new DenyGameMasterCommand(server, this));
+        commands.add(new CancelGameMasterCommand(server, this));
         commands.add(new GameMasterCommand(server));
         commands.add(new ChangeTeamCommand(server, this));
         commands.add(new EndGameCommand(server, this));
@@ -421,30 +424,146 @@ public class TWGameManager extends AbstractGameManager {
 
     @Override
     public void requestGameMaster(Player player) {
-        playerRequestingGameMaster = player;
+        startGameMasterVote(player);
     }
 
-    public boolean isGameMasterRequestInProgress() {
-        return playerRequestingGameMaster != null;
+    /** @return the open vote on granting a player the gamemaster role, or {@code null} when none is running */
+    public @Nullable Poll getGameMasterPoll() {
+        return gameMasterPoll;
     }
 
-    public Player getPlayerRequestingGameMaster() {
-        return playerRequestingGameMaster;
-    }
-
-    public void processGameMasterRequest() {
-        if (playerRequestingGameMaster != null) {
-            Player currentGameMaster = getGameMaster();
-            if (currentGameMaster == null) {
-                setGameMaster(playerRequestingGameMaster, true);
-            } else {
-                sendServerChat(playerRequestingGameMaster.getName()
-                      + " cannot become Game Master: "
-                      + currentGameMaster.getName()
-                      + " already holds the role.");
-            }
-            playerRequestingGameMaster = null;
+    /**
+     * Opens a vote on granting the requester the gamemaster role, one request at a time. Every human player with a
+     * team may vote; the requester starts having voted yes, so a player alone in the game passes at once. There is
+     * no time limit: the vote stands until it is decided or the requester cancels it.
+     *
+     * @param requester the player asking for the gamemaster role
+     */
+    public void startGameMasterVote(Player requester) {
+        if (gameMasterPoll != null) {
+            Player currentRequester = game.getPlayer(gameMasterPoll.getRequesterId());
+            sendServerChat(requester.getId(), Messages.getString("Gamemaster.vote.alreadyRunning",
+                  (currentRequester != null)
+                        ? currentRequester.getName()
+                        : Messages.getString("Gamemaster.vote.unknownRequester")));
+            return;
         }
+        gameMasterPoll = new Poll(requester.getId(), eligibleGameMasterVoterIds(), gameMasterVoteThreshold());
+        sendServerChat(Messages.getString("Gamemaster.vote.called", requester.getName()));
+        applyGameMasterPollOutcome();
+    }
+
+    /**
+     * Casts a player's vote in the running gamemaster vote and applies the outcome once it is decided. Players who
+     * became eligible after the vote was called are taken in as voters here, so a vote never resolves past them.
+     *
+     * @param voter   the player voting
+     * @param inFavor {@code true} to vote yes, {@code false} to vote no
+     */
+    public void castGameMasterVote(Player voter, boolean inFavor) {
+        if (gameMasterPoll == null) {
+            sendServerChat(voter.getId(), Messages.getString("Gamemaster.vote.noneRunning"));
+            return;
+        }
+        syncGameMasterPollVoters();
+        gameMasterPoll.castVote(voter.getId(), inFavor);
+        sendServerChat(Messages.getString(inFavor ? "Gamemaster.vote.ballot.allow" : "Gamemaster.vote.ballot.deny",
+              voter.getName()));
+        applyGameMasterPollOutcome();
+    }
+
+    /**
+     * Cancels the running gamemaster vote. Only the player who called the vote may cancel it.
+     *
+     * @param player the player asking to cancel
+     */
+    public void cancelGameMasterVote(Player player) {
+        if (gameMasterPoll == null) {
+            sendServerChat(player.getId(), Messages.getString("Gamemaster.vote.noneRunning"));
+            return;
+        }
+        if (player.getId() != gameMasterPoll.getRequesterId()) {
+            sendServerChat(player.getId(), Messages.getString("Gamemaster.vote.onlyRequesterCancels"));
+            return;
+        }
+        gameMasterPoll.cancel();
+        applyGameMasterPollOutcome();
+    }
+
+    /** Shares the gamemaster vote as it stands with every client, so their view of it stays in step. */
+    private void transmitGameMasterPoll() {
+        send(new Packet(PacketCommand.GAME_MASTER_POLL, gameMasterPoll));
+    }
+
+    /** The players who may vote on a gamemaster request: humans with a team who are still connected. */
+    private List<Integer> eligibleGameMasterVoterIds() {
+        List<Integer> voterIds = new ArrayList<>();
+        for (Player player : game.getPlayersList()) {
+            if (!player.isGhost() && !player.isBot() && (player.getTeam() != Player.TEAM_UNASSIGNED)) {
+                voterIds.add(player.getId());
+            }
+        }
+        return voterIds;
+    }
+
+    /** The host decides through the game options how many yes votes the gamemaster vote needs. */
+    private VoteThreshold gameMasterVoteThreshold() {
+        String threshold = game.getOptions().stringOption(OptionsConstants.GAME_MASTER_VOTE_THRESHOLD);
+        return OptionsConstants.GAME_MASTER_VOTE_MAJORITY.equals(threshold)
+              ? VoteThreshold.MAJORITY
+              : VoteThreshold.UNANIMOUS;
+    }
+
+    /**
+     * Brings the running vote's voters in line with who may vote now: players who joined since the vote was called
+     * are added with their ballot pending, and players who lost their eligibility are dropped from the tally.
+     */
+    private void syncGameMasterPollVoters() {
+        if (gameMasterPoll == null) {
+            return;
+        }
+        List<Integer> eligibleIds = eligibleGameMasterVoterIds();
+        for (int voterId : eligibleIds) {
+            gameMasterPoll.addVoter(voterId);
+        }
+        for (int voterId : new ArrayList<>(gameMasterPoll.getVotes().keySet())) {
+            if (!eligibleIds.contains(voterId)) {
+                gameMasterPoll.removeVoter(voterId);
+            }
+        }
+    }
+
+    /**
+     * Acts on where the gamemaster vote stands: shares the state with every client, and once the vote has resolved,
+     * announces the outcome, grants the role on a pass, and clears the vote.
+     */
+    private void applyGameMasterPollOutcome() {
+        if (gameMasterPoll == null) {
+            return;
+        }
+        transmitGameMasterPoll();
+        if (!gameMasterPoll.getStatus().isResolved()) {
+            return;
+        }
+        Player requester = game.getPlayer(gameMasterPoll.getRequesterId());
+        String requesterName = (requester != null)
+              ? requester.getName()
+              : Messages.getString("Gamemaster.vote.unknownRequesterName");
+        switch (gameMasterPoll.getStatus()) {
+            case PASSED -> {
+                if ((requester != null) && (getGameMaster() == null)) {
+                    sendServerChat(Messages.getString("Gamemaster.vote.passed", requesterName));
+                    setGameMaster(requester, true);
+                } else {
+                    sendServerChat(Messages.getString("Gamemaster.vote.passedRoleTaken", requesterName));
+                }
+            }
+            case FAILED -> sendServerChat(Messages.getString("Gamemaster.vote.failed", requesterName));
+            case CANCELLED -> sendServerChat(Messages.getString("Gamemaster.vote.withdrawn", requesterName));
+            default -> {
+            }
+        }
+        gameMasterPoll = null;
     }
 
     /**
@@ -574,6 +693,17 @@ public class TWGameManager extends AbstractGameManager {
             checkReady();
         }
 
+        // A running gamemaster vote must not wait on a ballot that can no longer come. The requester leaving
+        // withdraws the request; any other voter leaving is dropped from the tally, which may decide the vote.
+        if (gameMasterPoll != null) {
+            if (player.getId() == gameMasterPoll.getRequesterId()) {
+                gameMasterPoll.cancel();
+            } else {
+                gameMasterPoll.removeVoter(player.getId());
+            }
+            applyGameMasterPollOutcome();
+        }
+
         // notify other players
         sendServerChat(player.getName() + " disconnected.");
 
@@ -659,6 +789,7 @@ public class TWGameManager extends AbstractGameManager {
             // Snapshot Magnetic Pulse effect state so we can notify the player when it wears off.
             boolean wasMagneticPulseAffected = entity.getMagneticPulseRounds() > 0;
             boolean wasImpAffected = isAffectedByImprovedMagneticPulse(entity);
+            boolean hadSkillModifiers = (entity.getCrew() != null) && entity.getCrew().getSkillModifiers().isActive();
 
             entity.newRound(game.getRoundCount());
 
@@ -667,6 +798,11 @@ public class TWGameManager extends AbstractGameManager {
             }
             if (wasImpAffected && !isAffectedByImprovedMagneticPulse(entity)) {
                 sendMagneticPulseToast(entity, true, false);
+            }
+            if (hadSkillModifiers && !entity.getCrew().getSkillModifiers().isActive()) {
+                sendToast(GameToastEvent.Level.GAMEMASTER,
+                      Messages.getString("Gamemaster.toast.skillModExpired", entity.getDisplayName()),
+                      entity);
             }
         }
     }
@@ -840,6 +976,9 @@ public class TWGameManager extends AbstractGameManager {
                 case ENTITY_UPDATE:
                     receiveEntityUpdate(packet, connId);
                     resetPlayersDone();
+                    break;
+                case ENTITY_DAMAGE_EDIT:
+                    receiveDamageEdit(packet, connId);
                     break;
                 case ENTITY_MULTI_UPDATE:
                     receiveEntitiesUpdate(packet, connId);
@@ -18329,11 +18468,21 @@ public class TWGameManager extends AbstractGameManager {
         // check for traitors
         for (Entity entity : game.inGameTWEntities()) {
             if (entity.isDoomed() || entity.isDestroyed() || entity.isOffBoard() || !entity.isDeployed()) {
+                if (entity.getTraitorId() != -1) {
+                    LOGGER.info("[Traitor] {} (unit id {}) has traitorId {} but is skipped: doomed={} destroyed={} "
+                                + "offBoard={} deployed={}", entity.getDisplayName(), entity.getId(),
+                          entity.getTraitorId(), entity.isDoomed(), entity.isDestroyed(), entity.isOffBoard(),
+                          entity.isDeployed());
+                }
                 continue;
             }
             if ((entity.getTraitorId() != -1) && (entity.getOwnerId() != entity.getTraitorId())) {
                 final Player oldPlayer = game.getPlayer(entity.getOwnerId());
                 final Player newPlayer = game.getPlayer(entity.getTraitorId());
+                LOGGER.info("[Traitor] Resolving {} (unit id {}): owner {} (id {}) -> traitorId {} ({})",
+                      entity.getDisplayName(), entity.getId(),
+                      (oldPlayer != null) ? oldPlayer.getName() : "<no player>", entity.getOwnerId(),
+                      entity.getTraitorId(), (newPlayer != null) ? newPlayer.getName() : "NO SUCH PLAYER - dropped");
                 if (newPlayer != null) {
                     Report r = new Report(7305);
                     r.subject = entity.getId();
@@ -26737,27 +26886,119 @@ public class TWGameManager extends AbstractGameManager {
         }
 
         Entity oldEntity = game.getEntity(entity.getId());
+        if (oldEntity == null) {
+            LOGGER.warn("Dropping update for unit id {}: no such unit is in the game", entity.getId());
+            return;
+        }
         Player sender = game.getPlayer(connIndex);
-        if ((oldEntity != null) && senderCanUpdateEntity(sender, oldEntity)) {
-            game.setEntity(entity.getId(), entity);
-            entityUpdate(entity.getId());
-            if (entity.isPartOfFighterSquadron()) {
-                // Update the stats of any Squadrons that the new units are part of
-                FighterSquadron squadron = (FighterSquadron) game.getEntity(entity.getTransportId());
-                if (squadron != null) {
-                    squadron.updateSkills();
-                    squadron.updateWeaponGroups();
-                    squadron.updateSensors();
-                    entityUpdate(squadron.getId());
-                }
-            }
-            // In the chat lounge, notify players of customizing of unit
-            if (game.getPhase().isLounge()) {
-                sendServerChat(ServerLobbyHelper.entityUpdateMessage(entity, game));
-            } else {
-                destroyEntityIfFatallyDamaged(entity);
+        if (!senderCanUpdateEntity(sender, oldEntity)) {
+            LOGGER.warn("Dropping update for {} from {}: they may not change that unit",
+                  oldEntity.getDisplayName(),
+                  (sender == null) ? "an unknown connection" : sender.getName());
+            return;
+        }
+
+        // the sender cannot be null here: senderCanUpdateEntity rejects an update from an unknown connection
+        LOGGER.debug("Applying update for {} from {}", oldEntity.getDisplayName(), sender.getName());
+        if (entity.getTraitorId() != -1) {
+            LOGGER.info("[Traitor] Update for {} (unit id {}) from {} carries traitorId {}; server copy had {}",
+                  entity.getDisplayName(), entity.getId(), sender.getName(),
+                  entity.getTraitorId(), oldEntity.getTraitorId());
+        }
+        // In play, the client-sent copy carries whatever turn state it held when it was captured, which may be
+        // stale (for example a unit that has not moved yet but whose client snapshot is marked done). Swapping it
+        // in would overwrite the server's live turn state and could rob the owner of a move they still have. A
+        // gamemaster editing damage must not spend the owner's action, so keep the server's turn/move state.
+        if (!game.getPhase().isLounge()) {
+            preserveInPlayTurnState(oldEntity, entity);
+            // A pending traitor switch is server-side state: /changeOwner sets it on the server's copy only, so a
+            // client-sent copy never carries it. An update that does not itself order a switch (the Traitor button
+            // does, and wins here) must not erase the pending one while it waits for the END phase.
+            if ((entity.getTraitorId() == -1) && (oldEntity.getTraitorId() != -1)) {
+                LOGGER.info("[Traitor] Update for {} (unit id {}) from {} would have erased pending traitorId {}; "
+                      + "keeping it", entity.getDisplayName(), entity.getId(), sender.getName(),
+                      oldEntity.getTraitorId());
+                entity.setTraitorId(oldEntity.getTraitorId());
             }
         }
+        game.setEntity(entity.getId(), entity);
+        entityUpdate(entity.getId());
+        if (entity.isPartOfFighterSquadron()) {
+            // Update the stats of any Squadrons that the new units are part of
+            FighterSquadron squadron = (FighterSquadron) game.getEntity(entity.getTransportId());
+            if (squadron != null) {
+                squadron.updateSkills();
+                squadron.updateWeaponGroups();
+                squadron.updateSensors();
+                entityUpdate(squadron.getId());
+            }
+        }
+        // In the chat lounge, notify players of customizing of unit
+        if (game.getPhase().isLounge()) {
+            sendServerChat(ServerLobbyHelper.entityUpdateMessage(entity, game));
+        } else {
+            destroyEntityIfFatallyDamaged(entity);
+            // Editing a unit's damage in play is a gamemaster act, but it arrives as a unit update rather than a
+            // command, so it is announced here with the same toast the gamemaster commands use.
+            if (sender.isGameMaster()) {
+                sendToast(GameToastEvent.Level.GAMEMASTER,
+                      Messages.getString("Gamemaster.toast.editDamage", sender.getName(), entity.getDisplayName()),
+                      null);
+            }
+        }
+    }
+
+    /**
+     * Applies a gamemaster's damage editor edits to the server's own copy of the unit. The edits arrive as a
+     * {@link DamageEditSpec} of plain values rather than an edited unit, so everything the editor did not touch -
+     * turn state, a pending traitor switch, anything that changed since the editor opened - keeps the server's
+     * authoritative value without having to be preserved field by field.
+     */
+    private void receiveDamageEdit(Packet packet, int connIndex) {
+        if (!(packet.getObject(0) instanceof DamageEditSpec spec)) {
+            LOGGER.warn("Dropping damage edit: the packet carries no spec");
+            return;
+        }
+        Player sender = game.getPlayer(connIndex);
+        if ((sender == null) || !sender.isGameMaster()) {
+            LOGGER.warn("Dropping damage edit for unit id {} from {}: only a gamemaster may edit a unit in play",
+                  spec.entityId, (sender == null) ? "an unknown connection" : sender.getName());
+            return;
+        }
+        Entity entity = game.getEntity(spec.entityId);
+        if (entity == null) {
+            LOGGER.warn("Dropping damage edit for unit id {}: no such unit is in the game", spec.entityId);
+            return;
+        }
+
+        LOGGER.debug("Applying damage edits for {} from {}", entity.getDisplayName(), sender.getName());
+        new DamageEditApplier(entity, spec).applyToEntity();
+        entityUpdate(entity.getId());
+        destroyEntityIfFatallyDamaged(entity);
+        // Editing a unit's damage in play is a gamemaster act, but it arrives as its own packet rather than a
+        // command, so it is announced here with the same toast the gamemaster commands use.
+        sendToast(GameToastEvent.Level.GAMEMASTER,
+              Messages.getString("Gamemaster.toast.editDamage", sender.getName(), entity.getDisplayName()),
+              null);
+    }
+
+    /**
+     * Copies the server's live turn and movement state from {@code oldEntity} onto a client-sent {@code newEntity}
+     * before it replaces the server's copy. This keeps an in-play edit (such as a gamemaster changing another unit's
+     * damage or status) from carrying the client's stale done/moved state, which would otherwise decide whether the
+     * unit can still act this turn and could silently cost the owner their move.
+     *
+     * @param oldEntity the server's authoritative unit, whose turn state is kept
+     * @param newEntity the client-sent replacement, whose turn state is overwritten
+     */
+    private void preserveInPlayTurnState(Entity oldEntity, Entity newEntity) {
+        newEntity.setDone(oldEntity.isDone());
+        newEntity.setUnloaded(oldEntity.isUnloadedThisTurn());
+        newEntity.setLoadedThisTurn(oldEntity.wasLoadedThisTurn());
+        newEntity.moved = oldEntity.moved;
+        newEntity.movedLastRound = oldEntity.movedLastRound;
+        newEntity.delta_distance = oldEntity.delta_distance;
+        newEntity.mpUsed = oldEntity.mpUsed;
     }
 
     /**
@@ -27549,6 +27790,7 @@ public class TWGameManager extends AbstractGameManager {
         Compute.setRNG(game.getOptions().intOption(OptionsConstants.BASE_RNG_TYPE));
 
         if (changed > 0) {
+            revokeGameMasterIfDisallowed();
             for (Entity en : game.getEntitiesVector()) {
                 en.setGameOptions();
             }
@@ -27556,6 +27798,23 @@ public class TWGameManager extends AbstractGameManager {
             return true;
         }
         return false;
+    }
+
+    /**
+     * Revokes the Game Master role when the game no longer allows one, so that turning off Allow Game Master takes
+     * the role and its tools away from whoever holds it. The player update is sent to every client, so their view of
+     * who is Game Master stays in step with the server.
+     */
+    private void revokeGameMasterIfDisallowed() {
+        if (game.getOptions().booleanOption(OptionsConstants.GAME_MASTER_ALLOW)) {
+            return;
+        }
+        Player gameMaster = getGameMaster();
+        if (gameMaster != null) {
+            LOGGER.info("Revoking the Game Master role from {}: the game no longer allows a Game Master",
+                  gameMaster.getName());
+            setGameMaster(gameMaster, false);
+        }
     }
 
     /**

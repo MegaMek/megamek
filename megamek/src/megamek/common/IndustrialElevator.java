@@ -53,6 +53,10 @@ import megamek.common.units.Terrains;
  * Industrial elevators have a cargo capacity, a shaft spanning multiple levels, and a platform that moves 1 level per
  * turn. Players can call the elevator during the End Phase, and units can ride it during the Movement Phase.
  * <p>
+ * All shaft and platform levels are <b>relative to the hex surface</b>, matching {@code Entity.getElevation()}:
+ * level 0 is the hex surface, negative levels are below it (basement shaft), positive levels are above it (building
+ * floors). The same terrain encoding therefore works on a hex of any board level.
+ * <p>
  * Key rules:
  * <ul>
  *   <li>Maximum cargo capacity - elevator won't move if exceeded</li>
@@ -123,14 +127,14 @@ public class IndustrialElevator implements Serializable {
     /**
      * Creates an industrial elevator from terrain data.
      * <p>
-     * Terrain encoding:
+     * Terrain encoding (levels relative to the hex surface, see the class doc):
      * <ul>
-     *   <li>level = shaft bottom elevation</li>
-     *   <li>exits = (shaftTop &lt;&lt; 8) | capacityTens</li>
+     *   <li>level = shaft bottom, e.g. {@code -3} for a shaft reaching 3 levels below the surface</li>
+     *   <li>exits = (shaftTop &lt;&lt; 8) | capacityTens, with shaft top {@code 0} meaning the hex surface</li>
      * </ul>
      *
      * @param location The hex location
-     * @param level    The terrain level (shaft bottom)
+     * @param level    The terrain level (shaft bottom, relative to the hex surface)
      * @param exits    The terrain exits field (encoded shaft top and capacity)
      *
      * @return A new IndustrialElevator instance

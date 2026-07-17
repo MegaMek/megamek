@@ -33,6 +33,7 @@
 package megamek.common.moves;
 
 import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import megamek.common.GameBoardTestCase;
 import megamek.common.IndustrialElevator;
@@ -47,8 +48,9 @@ import org.junit.jupiter.api.Test;
 /**
  * Tests for industrial elevator movement validation.
  * <p>
- * These tests verify the MoveStep.isMovementPossible() validation logic for elevator steps. They focus on cases where
- * movement should be ILLEGAL due to various elevator constraints.
+ * These tests verify the MoveStep.isMovementPossible() validation logic for elevator steps: the cases where movement
+ * must be ILLEGAL due to elevator constraints, and legal rides - including on hexes whose surface is above board
+ * level 0, which pins down that all shaft levels are relative to the hex surface.
  */
 public class IndustrialElevatorMovementTest extends GameBoardTestCase {
 
@@ -164,6 +166,53 @@ public class IndustrialElevatorMovementTest extends GameBoardTestCase {
                   MoveStepType.ELEVATOR_DESCEND, MoveStepType.ELEVATOR_DESCEND);
 
             assertFalse(movePath.isMoveLegal(), "Should only be able to move one level per turn");
+        }
+    }
+
+    @Nested
+    class LegalRidesOnRaisedHex {
+
+        static {
+            // The QA scenario: elevator in a hex whose SURFACE is at board level 2. All shaft levels are
+            // relative to the hex surface: top 0 = the surface, bottom -2 = two levels down.
+            // Encoding: level = -2, exits = (0 << 8) | 10 = 10 (100 tons)
+            initializeBoard("BOARD_ELEVATOR_RAISED", """
+                  size 1 2
+                  hex 0101 2 "industrial_elevator:-2:10" ""
+                  hex 0102 2 "" ""
+                  end""");
+        }
+
+        @Test
+        void canDescendFromSurfaceOfRaisedHex() {
+            setBoard("BOARD_ELEVATOR_RAISED");
+            BoardLocation elevatorLocation = BoardLocation.of(new Coords(0, 0), 0);
+            // Initialize from terrain exactly like IndustrialElevatorProcessor does; platform starts at top (0)
+            IndustrialElevator elevator = IndustrialElevator.fromTerrain(elevatorLocation, -2, 10);
+            getGame().addIndustrialElevator(elevator);
+
+            // Mek standing on the hex surface (elevation 0) with the platform at the top: ride down
+            MovePath movePath = getMovePathFor(new BipedMek(), 0, EntityMovementMode.BIPED,
+                  MoveStepType.ELEVATOR_DESCEND);
+
+            assertTrue(movePath.isMoveLegal(),
+                  "A unit on the surface of a raised elevator hex should be able to ride the platform down");
+        }
+
+        @Test
+        void canAscendFromShaftBottomOfRaisedHex() {
+            setBoard("BOARD_ELEVATOR_RAISED");
+            BoardLocation elevatorLocation = BoardLocation.of(new Coords(0, 0), 0);
+            IndustrialElevator elevator = IndustrialElevator.fromTerrain(elevatorLocation, -2, 10);
+            elevator.setPlatformLevel(-2);
+            getGame().addIndustrialElevator(elevator);
+
+            // Mek at the shaft bottom (2 levels below the surface) with the platform: ride up
+            MovePath movePath = getMovePathFor(new BipedMek(), -2, EntityMovementMode.BIPED,
+                  MoveStepType.ELEVATOR_ASCEND);
+
+            assertTrue(movePath.isMoveLegal(),
+                  "A unit at the shaft bottom with the platform should be able to ride it up");
         }
     }
 

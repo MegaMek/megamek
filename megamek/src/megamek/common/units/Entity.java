@@ -1051,6 +1051,18 @@ public abstract class Entity extends TurnOrdered
     private UnitRole role = UnitRole.UNDETERMINED;
 
     /**
+     * Force Generator availability declared in this unit's file, used to let custom units appear in generated forces.
+     * This is NOT the tech availability rating from {@link megamek.common.interfaces.ITechnology}.
+     */
+    private List<ForceGeneratorAvailability> forceGeneratorAvailability = new ArrayList<>();
+
+    /**
+     * Comma-separated Force Generator mission roles declared in this unit's file, e.g. "fire_support,urban". Left as
+     * raw text here because the MissionRole enum lives in the client package; the Force Generator parses it.
+     */
+    private String missionRoles = "";
+
+    /**
      * Vector storing references to friendly weapon attack actions this entity may need to support; Primarily used by
      * Princess to speed up TAG utility calculations.
      */
@@ -10861,33 +10873,56 @@ public abstract class Entity extends TurnOrdered
     }
 
     /**
-     * Returns true when this unit can flee from its current position. This requires the unit to have mobility and be in
-     * control as well as its position being eligible for fleeing. When no special flee area is set by a scenario, the
-     * latter will typically be true when the unit is at the edge of its board. The position of units with a null
-     * position as well as offboard units are considered to be eligible for fleeing.
+     * Returns true when this unit can flee from its current position in its current state. 
+     * This requires the unit to have mobility and be in control as well as the position being eligible for fleeing.
+     * When no special flee area is set by a scenario, the latter will typically be true when the position is at the edge of its board.
+     * A null position as well as offboard units are considered to be eligible for fleeing.
      *
-     * @return True when the unit can flee given its position and status
+     * @return True when the unit can flee from the given position, given its current status
      */
-    public final boolean canFlee() {
-        return canFlee(position);
+
+    public boolean canFlee() {
+        return (canFleeInState() && canFleeFrom(position));
     }
 
     /**
-     * Returns true when this unit can flee from the given position. This requires the unit to have mobility and be in
-     * control as well as the position being eligible for fleeing. When no special flee area is set by a scenario, the
-     * latter will typically be true when the position is at the edge of its board. A null position as well as offboard
-     * units are considered to be eligible for fleeing.
+     * Returns true when this unit can flee from the given position in its current state. 
+     * This requires the unit to have mobility and be in control as well as the position being eligible for fleeing.
+     * When no special flee area is set by a scenario, the latter will typically be true when the position is at the edge of its board.
+     * A null position as well as offboard units are considered to be eligible for fleeing.
      *
      * @return True when the unit can flee from the given position, given its current status
      */
     public boolean canFlee(@Nullable Coords position) {
-        return ((getWalkMP() > 0) || (this instanceof Infantry)) &&
-              !isProne() &&
+        return (canFleeInState() && canFleeFrom(position));
+    }
+
+    /**
+     * Returns true when this unit can flee in its current state.
+     * This requires the unit to have mobility and be in control
+     *
+     * @return True when the unit can flee given its status
+     */
+    public final boolean canFleeInState() {
+        return (((getWalkMP() > 0) || (this instanceof Infantry)) &&
+              !isProne()  &&
               !isStuck() &&
               !isShutDown() &&
               !getCrew().isUnconscious() &&
-              (getSwarmTargetId() == NONE) &&
-              (isOffBoard() || (position == null) || game.canFleeFrom(this, position));
+              (getSwarmTargetId() == NONE));
+    }
+
+    /**
+     * Returns true when this unit can flee from the given position. 
+     * This requires the position be eligible for fleeing. 
+     * When no special flee area is set by a scenario, the latter will typically be true when the position is at the edge of its board.
+     * A null position as well as offboard units are considered to be eligible for fleeing.
+     *
+     * @return True when the unit can flee from the given position
+     */
+
+    public boolean canFleeFrom(@Nullable Coords position) {
+        return (isOffBoard() || (position == null) || game.canFleeFrom(this, position));
     }
 
     public void setEverSeenByEnemy(boolean b) {
@@ -17937,6 +17972,40 @@ public abstract class Entity extends TurnOrdered
     @Override
     public UnitRole getRole() {
         return (role == null) ? UnitRole.UNDETERMINED : role;
+    }
+
+    /**
+     * Returns the Force Generator availability entries declared in this unit's file. Empty for units that do not
+     * declare any, which is every canon unit; those get their availability from data/forcegenerator instead.
+     *
+     * @return the availability entries, never {@code null}
+     */
+    public List<ForceGeneratorAvailability> getForceGeneratorAvailability() {
+        // Empty rather than a fresh ArrayList: the Force Generator calls this for every unit in every era, so
+        // allocating here would churn. Null only happens for an Entity deserialized from a stream written before
+        // this field existed. Use the setter to change the entries; the returned list is not for mutating.
+        return (forceGeneratorAvailability == null) ? List.of() : forceGeneratorAvailability;
+    }
+
+    public void setForceGeneratorAvailability(List<ForceGeneratorAvailability> forceGeneratorAvailability) {
+        this.forceGeneratorAvailability = (forceGeneratorAvailability == null)
+              ? new ArrayList<>()
+              : new ArrayList<>(forceGeneratorAvailability);
+    }
+
+    /**
+     * Returns the Force Generator mission roles declared in this unit's file as raw comma-separated text, e.g.
+     * "fire_support,urban". Blank when the file declares none, in which case the Force Generator derives roles from
+     * the unit itself.
+     *
+     * @return the mission role text, never {@code null}
+     */
+    public String getMissionRoles() {
+        return (missionRoles == null) ? "" : missionRoles;
+    }
+
+    public void setMissionRoles(String missionRoles) {
+        this.missionRoles = (missionRoles == null) ? "" : missionRoles.trim();
     }
 
     /**

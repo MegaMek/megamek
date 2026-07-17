@@ -1,5 +1,7 @@
+package megamek.common.rules.core;
+
 /*
- * Copyright (C) 2025 The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2026 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -30,25 +32,9 @@
  * <https://www.xbox.com/en-US/developers/rules> and it is not endorsed by or
  * affiliated with Microsoft.
  */
-package megamek.client.bot;
 
-import java.util.Deque;
 
-import megamek.common.board.Coords;
+import megamek.common.rules.RulesMovement;
 
-/**
- * Interface for classes that can plan minefield deployments.
- *
- * @author Luana Coppio
- */
-public interface MinefieldDeploymentPlanner {
-
-    /**
-     * Get a set of planed positions on the board to be used to lay minefields.
-     *
-     * @param numberOfCoords the number of positions to get
-     *
-     * @return a deque of positions
-     */
-    Deque<Coords> getRandomMinefieldPositions(int numberOfCoords);
+public class CoreRulesMovement extends RulesMovement {
 }

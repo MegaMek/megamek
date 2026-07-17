@@ -48,8 +48,8 @@ import megamek.client.ui.clientGUI.CloseAction;
 import megamek.client.ui.util.UIUtil;
 
 /**
- * Dialog for choosing how many levels to climb during TacOps Climbing (TO:AR p.20). Presents options as buttons, each
- * showing the number of levels and MP cost.
+ * Dialog for choosing how many levels to climb during TacOps Climbing (TO:AR p.20).
+ * Presents options as buttons, each showing the number of levels and MP cost.
  */
 public class ClimbingChoiceDialog extends AbstractChoiceDialog<ClimbingChoiceDialog.ClimbingOption> {
 
@@ -67,10 +67,11 @@ public class ClimbingChoiceDialog extends AbstractChoiceDialog<ClimbingChoiceDia
         DANGLE_DOWN,
         DROP,
         /**
-         * "Commit the path the planner already drew" — for the edge-descent dialog, this means walking the
-         * routed-around path or taking the leap that's already attached to the move command. Distinct from CLING (which
-         * holds the dialog open) because this option explicitly commits the existing path so the player doesn't have to
-         * dismiss the dialog and click Move separately.
+         * "Commit the path the planner already drew" — for the edge-descent dialog, this means
+         * walking the routed-around path or taking the leap that's already attached to the
+         * move command. Distinct from CLING (which holds the dialog open) because this option
+         * explicitly commits the existing path so the player doesn't have to dismiss the
+         * dialog and click Move separately.
          */
         WALK_AS_CALCULATED
     }
@@ -80,8 +81,8 @@ public class ClimbingChoiceDialog extends AbstractChoiceDialog<ClimbingChoiceDia
      *
      * @param levels the number of levels for this action (0 = cling/drop)
      * @param mpCost the MP cost for this action
-     * @param label  the display label
-     * @param type   the type of climbing action
+     * @param label the display label
+     * @param type the type of climbing action
      */
     public record ClimbingOption(int levels, int mpCost, String label, ClimbingActionType type) {
     }
@@ -89,9 +90,9 @@ public class ClimbingChoiceDialog extends AbstractChoiceDialog<ClimbingChoiceDia
     /**
      * Creates a climbing choice dialog.
      *
-     * @param parent        the parent frame
+     * @param parent the parent frame
      * @param headerMessage HTML message to display at the top of the dialog
-     * @param options       the list of climbing options
+     * @param options the list of climbing options
      */
     public ClimbingChoiceDialog(JFrame parent, String headerMessage, List<ClimbingOption> options) {
         super(parent, "MovementDisplay.ClimbingDialog.title", formatHeader(headerMessage), options, false);

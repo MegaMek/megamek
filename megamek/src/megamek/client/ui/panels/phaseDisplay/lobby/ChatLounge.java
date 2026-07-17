@@ -1,7 +1,7 @@
 /*
  * Copyright (C) 2000-2006 Ben Mazur (bmazur@sev.org)
  * Copyright (C) 2013 Edward Cullen (eddy@obsessedcomputers.co.uk)
- * Copyright (C) 2002-2025 The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2002-2026 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -95,10 +95,11 @@ import megamek.MMConstants;
 import megamek.SuiteConstants;
 import megamek.client.AbstractClient;
 import megamek.client.Client;
+import megamek.client.bot.AIType;
 import megamek.client.bot.BotClient;
+import megamek.client.bot.BotFactory;
 import megamek.client.bot.princess.BehaviorSettings;
 import megamek.client.bot.princess.BehaviorSettingsFactory;
-import megamek.client.bot.princess.Princess;
 import megamek.client.bot.ui.swing.BotGUI;
 import megamek.client.generator.RandomCallsignGenerator;
 import megamek.client.generator.RandomNameGenerator;
@@ -158,6 +159,7 @@ import megamek.common.loaders.MapSettings;
 import megamek.common.loaders.MapSetup;
 import megamek.common.loaders.MekSummary;
 import megamek.common.loaders.MekSummaryCache;
+import megamek.common.options.IBasicOption;
 import megamek.common.options.IOption;
 import megamek.common.options.OptionsConstants;
 import megamek.common.options.PilotOptions;
@@ -244,7 +246,10 @@ public class ChatLounge extends AbstractPhaseDisplay
     private final JButton butAddBot = new JButton(Messages.getString("ChatLounge.butAddBot"));
     private final JButton butRemoveBot = new JButton(Messages.getString("ChatLounge.butRemoveBot"));
     private final JButton butConfigPlayer = new JButton(Messages.getString("ChatLounge.butConfigPlayer"));
+    private final JButton butVictory = new JButton(Messages.getString("ChatLounge.butVictory"));
     private final JButton butBotSettings = new JButton(Messages.getString("ChatLounge.butBotSettings"));
+    private FixedYPanel panBotInfo;
+    private VictoryConditionsDialog victoryConditionsDialog;
     PlayerSettingsDialog psd;
 
     private final transient MekTableMouseAdapter mekTableMouseAdapter = new MekTableMouseAdapter();
@@ -341,7 +346,7 @@ public class ChatLounge extends AbstractPhaseDisplay
     transient LobbyKeyDispatcher lobbyKeyDispatcher = new LobbyKeyDispatcher(this);
 
     private static final String CL_KEY_FILE_EXTENSION_XML = ".xml";
-    private static final String CL_KEY_FILEPATH_MAP_ASSEMBLY_HELP = "docs/help/en/Map and Board Stuff/MapAssemblyHelp.html";
+    private static final String CL_KEY_FILEPATH_MAP_ASSEMBLY_HELP = "docs/Customization/MegaMek/Map and Board Stuff/MapAssemblyHelp.html";
     private static final String CL_KEY_FILEPATH_MAP_SETUP = "/mapsetup";
     private static final String CL_KEY_NAME_HELP_PANE = "helpPane";
 
@@ -404,6 +409,12 @@ public class ChatLounge extends AbstractPhaseDisplay
         GUIP.addPreferenceChangeListener(this);
         PreferenceManager.getClientPreferences().addPreferenceChangeListener(this);
         MekSummaryCache.getInstance().addListener(mekSummaryCacheListener);
+        // The cache may have finished loading between setupUnitConfig() reading its state and the listener
+        // being registered just above. Without this check that notification is missed and the buttons that
+        // need the cache stay disabled for the rest of the lobby.
+        if (MekSummaryCache.getInstance().isInitialized()) {
+            enableUnitAddButtons();
+        }
         clientgui.getClient().getGame().addGameListener(this);
         clientgui.boardViews().forEach(bv -> bv.addBoardViewListener(this));
 
@@ -434,6 +445,7 @@ public class ChatLounge extends AbstractPhaseDisplay
         butCompact.addActionListener(lobbyListener);
         butConditions.addActionListener(lobbyListener);
         butConfigPlayer.addActionListener(lobbyListener);
+        butVictory.addActionListener(lobbyListener);
         butLoadList.addActionListener(lobbyListener);
         butNames.addActionListener(lobbyListener);
         butOptions.addActionListener(lobbyListener);
@@ -583,11 +595,26 @@ public class ChatLounge extends AbstractPhaseDisplay
     }
 
     /** Enables buttons to allow adding units when the MSC has finished loading. */
-    private final transient MekSummaryCache.Listener mekSummaryCacheListener = () -> {
+    private final transient MekSummaryCache.Listener mekSummaryCacheListener = this::enableUnitAddButtons;
+
+    /**
+     * Enables the buttons that need a loaded unit cache to work.
+     * <p>
+     * Both callers can run off the event dispatch thread: the unit cache notifies its listeners from its loader
+     * thread, and the lobby is constructed from the phase change, which is dispatched on the client's connection
+     * thread. The button updates are therefore moved onto the event dispatch thread here, so that every caller is
+     * covered.
+     * </p>
+     */
+    private void enableUnitAddButtons() {
+        if (!SwingUtilities.isEventDispatchThread()) {
+            SwingUtilities.invokeLater(this::enableUnitAddButtons);
+            return;
+        }
         butAdd.setEnabled(true);
         butArmy.setEnabled(true);
         butLoadList.setEnabled(true);
-    };
+    }
 
     /** Sets up the Mek Table and Mek Tree. */
     private void setupEntities() {
@@ -672,14 +699,18 @@ public class ChatLounge extends AbstractPhaseDisplay
         panPlayerInfo = new FixedYPanel(new GridLayout(1, 2, 2, 2));
         panPlayerInfo.setBorder(BorderFactory.createTitledBorder(Messages.getString("ChatLounge.name.playerSetup")));
 
-        JPanel panPlayerInfoBts = new JPanel(new GridLayout(4, 1, 2, 2));
+        JPanel panPlayerInfoBts = new JPanel(new GridLayout(3, 1, 2, 2));
         panPlayerInfoBts.add(comboTeam);
         panPlayerInfoBts.add(butConfigPlayer);
-        panPlayerInfoBts.add(butAddBot);
-        panPlayerInfoBts.add(butRemoveBot);
+        panPlayerInfoBts.add(butVictory);
 
         panPlayerInfo.add(panPlayerInfoBts);
         panPlayerInfo.add(butCamo);
+
+        panBotInfo = new FixedYPanel(new GridLayout(1, 2, 2, 2));
+        panBotInfo.setBorder(BorderFactory.createTitledBorder(Messages.getString("ChatLounge.name.botSetup")));
+        panBotInfo.add(butAddBot);
+        panBotInfo.add(butRemoveBot);
 
         refreshPlayerTable();
     }
@@ -762,6 +793,8 @@ public class ChatLounge extends AbstractPhaseDisplay
         leftSide.add(panUnitInfo);
         leftSide.add(Box.createVerticalStrut(scaleForGUI(5)));
         leftSide.add(panPlayerInfo);
+        leftSide.add(Box.createVerticalStrut(scaleForGUI(5)));
+        leftSide.add(panBotInfo);
         leftSide.add(Box.createVerticalStrut(scaleForGUI(5)));
         leftSide.add(panAutoResolveInfo);
         leftSide.add(Box.createVerticalStrut(scaleForGUI(5)));
@@ -1918,6 +1951,8 @@ public class ChatLounge extends AbstractPhaseDisplay
                 lobbyActions.changeTeam(getSelectedPlayers(), comboTeam.getSelectedIndex());
             } else if (ev.getSource().equals(butConfigPlayer)) {
                 configPlayer();
+            } else if (ev.getSource().equals(butVictory)) {
+                showVictoryConditionsDialog();
             } else if (ev.getSource().equals(butBotSettings)) {
                 doBotSettings();
             } else if (ev.getSource().equals(butOptions)) {
@@ -2219,7 +2254,8 @@ public class ChatLounge extends AbstractPhaseDisplay
         if (bcd.getResult() == DialogResult.CANCELLED) {
             return;
         }
-        Princess botClient = Princess.createPrincess(bcd.getBotName(),
+        BotClient botClient = BotFactory.createBot(bcd.getSelectedAIType(),
+              bcd.getBotName(),
               client().getHost(),
               client().getPort(),
               bcd.getBehaviorSettings());
@@ -2309,6 +2345,28 @@ public class ChatLounge extends AbstractPhaseDisplay
         }
     }
 
+    /**
+     * Shows the victory conditions dialog (the former Victory Conditions tab of the game options; the tab is
+     * removed and this dialog is the only place to edit those options). On OK, the changed options are sent to the
+     * server and the full option set is saved to the game options file so the victory conditions persist between
+     * games.
+     */
+    private void showVictoryConditionsDialog() {
+        if (victoryConditionsDialog == null) {
+            victoryConditionsDialog = new VictoryConditionsDialog(clientgui);
+        }
+        victoryConditionsDialog.refreshLobbyState();
+        if (victoryConditionsDialog.showDialog() == DialogResult.CONFIRMED) {
+            Vector<IBasicOption> changedOptions = victoryConditionsDialog.getChangedVictoryOptions();
+            if (!changedOptions.isEmpty()) {
+                clientgui.getClient().sendGameOptions(victoryConditionsDialog.getPassword(), changedOptions);
+            }
+            // Persist to the game options file so the victory conditions survive a re-host; the sent options only
+            // update the running server, which reloads defaults from the file when a new game is hosted.
+            victoryConditionsDialog.saveVictoryOptions();
+        }
+    }
+
     private void removeBot() {
         Client c = getSelectedClient();
         if (!client().getBots().containsValue(c)) {
@@ -2324,7 +2382,9 @@ public class ChatLounge extends AbstractPhaseDisplay
 
     private void doBotSettings() {
         Player player = playerModel.getPlayerAt(tablePlayers.getSelectedRow());
-        Princess bot = (Princess) clientgui.getLocalBots().get(player.getName());
+        if (!(clientgui.getLocalBots().get(player.getName()) instanceof BotClient bot)) {
+            return;
+        }
         var bcd = new BotConfigDialog(clientgui.getFrame(),
               bot.getLocalPlayer().getName(),
               bot.getBehaviorSettings(),
@@ -2506,6 +2566,12 @@ public class ChatLounge extends AbstractPhaseDisplay
         }
 
         boolean done = !localPlayer().isDone();
+
+        // Ask up front (once) whether to record the combat-summary GIF, so recording never has to interrupt play
+        // mid-game. No-op unless the preference is "ask" and no choice has been made for this game yet.
+        if (done) {
+            MinimapPanel.promptForGifRecordingConsent(game, clientgui.getFrame());
+        }
 
         // Save lobby state if setting is enabled, player is marking as done, and we haven't saved yet
         if (done && GUIP.getSaveLobbyOnStart() && !lobbySavePerformed) {

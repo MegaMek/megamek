@@ -81,6 +81,10 @@ public class GUIPreferences extends PreferenceStoreProxy {
     public static final String ADVANCED_KEY_REPEAT_DELAY = "AdvancedKeyRepeatDelay";
     public static final String ADVANCED_KEY_REPEAT_RATE = "AdvancedKeyRepeatRate";
     public static final String ADVANCED_SHOW_FPS = "AdvancedShowFPS";
+    // Testing/observer aid: reveal otherwise-obscured artillery markers (e.g. enemy incoming) on the local view only
+    public static final String ADVANCED_REVEAL_OBSCURED_ARTILLERY = "AdvancedRevealObscuredArtillery";
+    // Testing aid: have Princess paint her artillery heat map (predicted impacts + chosen targets) on the board
+    public static final String ADVANCED_SHOW_BOT_ARTILLERY_HEATMAP = "AdvancedShowBotArtilleryHeatMap";
     public static final String ADVANCED_NO_SAVE_NAG = "AdvancedNoSaveNag";
     public static final String ADVANCED_SAVE_LOBBY_ON_START = "AdvancedSaveLobbyOnStart";
 
@@ -124,6 +128,7 @@ public class GUIPreferences extends PreferenceStoreProxy {
 
     public static final String SHOW_ARTILLERY_MISSES = "ShowArtilleryMisses";
     public static final String SHOW_ARTILLERY_DRIFTS = "ShowArtilleryHits";
+    public static final String SHOW_ARTILLERY_DRIFT_ARROWS = "ShowArtilleryDriftArrows";
     public static final String SHOW_BOMB_MISSES = "ShowBombMisses";
     public static final String SHOW_BOMB_DRIFTS = "ShowBombDrifts";
     public static final String SHOW_DEPLOY_ZONES_ARTY_AUTO = "ShowDeployZonesArtyAuto";
@@ -270,6 +275,7 @@ public class GUIPreferences extends PreferenceStoreProxy {
     public static final String GAME_SUMMARY_BOARD_VIEW = "GameSummaryBoardView";
     public static final String GAME_SUMMARY_MINIMAP = "GameSummaryMinimap";
     public static final String GIF_GAME_SUMMARY_MINIMAP = "GifGameSummaryMinimap";
+    public static final String GIF_GAME_SUMMARY_RECORDING = "GifGameSummaryRecording";
     public static final String SHOW_UNIT_DISPLAY_NAMES_ON_MINIMAP = "ShowUnitDisplayNamesOnMinimap";
     public static final String ENTITY_OWNER_LABEL_COLOR = "EntityOwnerLabelColor";
     public static final String UNIT_LABEL_BORDER = "EntityOwnerLabelColor";
@@ -338,6 +344,14 @@ public class GUIPreferences extends PreferenceStoreProxy {
     public static final String PLAYER_LIST_POS_X = "PlayerListPosX";
     public static final String PLAYER_LIST_POS_Y = "PlayerListPosY";
     public static final String PLAYER_LIST_ENABLED = "PlayerListEnabled";
+    public static final String ROUNDS_IN_AIR_POS_X = "RoundsInAirPosX";
+    public static final String ROUNDS_IN_AIR_POS_Y = "RoundsInAirPosY";
+    public static final String ROUNDS_IN_AIR_ENABLED = "RoundsInAirEnabled";
+    // Hidden testing/debug flag: reveals ALL in-flight artillery (both teams' target hexes) to this client, overriding
+    // the normal hidden-information rule that a player sees only their own and allied rounds' target hexes. Deliberately
+    // NOT prefixed "Advanced" so it does not appear in the Client Settings > Advanced list - it can only be enabled by
+    // manually adding RevealAllArtilleryRounds=true to clientsettings.xml.
+    public static final String REVEAL_ALL_ARTILLERY_ROUNDS = "RevealAllArtilleryRounds";
     public static final String PLAYER_LIST_AUTO_DISPLAY_REPORT_PHASE = "PlayerListAutoDisplayReportPhase";
     public static final String PLAYER_LIST_AUTO_DISPLAY_NON_REPORT_PHASE = "PlayerListAutoDisplayNonReportPhase";
     public static final String MINI_MAP_COLOURS = "MinimapColours";
@@ -631,6 +645,9 @@ public class GUIPreferences extends PreferenceStoreProxy {
 
         store.setDefault(SHOW_ARTILLERY_MISSES, true);
         store.setDefault(SHOW_ARTILLERY_DRIFTS, true);
+        store.setDefault(SHOW_ARTILLERY_DRIFT_ARROWS, true);
+        store.setDefault(ADVANCED_REVEAL_OBSCURED_ARTILLERY, false);
+        store.setDefault(ADVANCED_SHOW_BOT_ARTILLERY_HEATMAP, false);
         store.setDefault(SHOW_BOMB_MISSES, true);
         store.setDefault(SHOW_BOMB_DRIFTS, false);
         store.setDefault(SHOW_DEPLOY_ZONES_ARTY_AUTO, false);
@@ -671,6 +688,12 @@ public class GUIPreferences extends PreferenceStoreProxy {
         store.setDefault(FORCE_DISPLAY_AUTO_DISPLAY_REPORT_PHASE, 2);
         store.setDefault(FORCE_DISPLAY_AUTO_DISPLAY_NON_REPORT_PHASE, 2);
         store.setDefault(FORCE_DISPLAY_ENABLED, false);
+
+        // without these defaults the auto-display values read 0 (= HIDE) and the Bot Commands dialog
+        // is force-hidden on every phase change; 2 (= MANUAL) leaves it as the player set it
+        store.setDefault(BOT_COMMANDS_AUTO_DISPLAY_REPORT_PHASE, 2);
+        store.setDefault(BOT_COMMANDS_AUTO_DISPLAY_NON_REPORT_PHASE, 2);
+        store.setDefault(BOT_COMMANDS_ENABLED, false);
         store.setDefault(FORCE_DISPLAY_SIZE_HEIGHT, 500);
         store.setDefault(FORCE_DISPLAY_SIZE_WIDTH, 300);
         store.setDefault(FORCE_DISPLAY_BTN_ID, true);
@@ -760,7 +783,7 @@ public class GUIPreferences extends PreferenceStoreProxy {
         store.setDefault(GAME_SUMMARY_BOARD_VIEW, false);
         store.setDefault(ENTITY_OWNER_LABEL_COLOR, true);
         store.setDefault(UNIT_LABEL_BORDER, true);
-        store.setDefault(UNIT_LABEL_STYLE, LabelDisplayStyle.NICKNAME.name());
+        store.setDefault(UNIT_LABEL_STYLE, LabelDisplayStyle.NICKNAME_AND_ABBREVIATED.name());
         store.setDefault(FIRING_SOLUTIONS, true);
         store.setDefault(CONSTRUCTOR_FACTOR_WARNING, true);
         store.setDefault(GUI_SCALE, 1);
@@ -801,7 +824,15 @@ public class GUIPreferences extends PreferenceStoreProxy {
         store.setDefault(MINI_MAP_SHOW_FACING_ARROW, true);
         store.setDefault(MINI_MAP_PAINT_BORDERS, true);
         store.setDefault(MINI_MAP_MOVE_PATH_PERSISTENCE, 2);
-        store.setDefault(GIF_GAME_SUMMARY_MINIMAP, true);
+        store.setDefault(GIF_GAME_SUMMARY_RECORDING, GifRecordingMode.ASK.name());
+        // Migrate the pre-0.51.01 boolean GIF setting: an explicit player choice carries over (true -> ALWAYS,
+        // false -> NEVER); players who never touched it get the new ask-at-game-start default.
+        if (store.hasProperty(GIF_GAME_SUMMARY_MINIMAP) && !store.hasProperty(GIF_GAME_SUMMARY_RECORDING)) {
+            store.setValue(GIF_GAME_SUMMARY_RECORDING,
+                  store.getBoolean(GIF_GAME_SUMMARY_MINIMAP)
+                        ? GifRecordingMode.ALWAYS.name()
+                        : GifRecordingMode.NEVER.name());
+        }
         store.setDefault(GAME_SUMMARY_MINIMAP, false);
         store.setDefault(SHOW_UNIT_DISPLAY_NAMES_ON_MINIMAP, false);
         store.setDefault(MOVE_DISPLAY_TAB_DURING_PHASES, true);
@@ -834,6 +865,10 @@ public class GUIPreferences extends PreferenceStoreProxy {
         store.setDefault(PLAYER_LIST_ENABLED, true);
         store.setDefault(PLAYER_LIST_POS_X, 200);
         store.setDefault(PLAYER_LIST_POS_Y, 150);
+        store.setDefault(ROUNDS_IN_AIR_ENABLED, false);
+        store.setDefault(ROUNDS_IN_AIR_POS_X, 200);
+        store.setDefault(ROUNDS_IN_AIR_POS_Y, 150);
+        store.setDefault(REVEAL_ALL_ARTILLERY_ROUNDS, false);
         store.setDefault(PLAYER_LIST_AUTO_DISPLAY_REPORT_PHASE, 1);
         store.setDefault(PLAYER_LIST_AUTO_DISPLAY_NON_REPORT_PHASE, 0);
 
@@ -1199,8 +1234,20 @@ public class GUIPreferences extends PreferenceStoreProxy {
         return store.getBoolean(GAME_SUMMARY_MINIMAP);
     }
 
+    /**
+     * @return How the combat-summary GIF is recorded: always, ask at game start (the default), or never.
+     */
+    public GifRecordingMode getGifGameSummaryRecording() {
+        return GifRecordingMode.parse(store.getString(GIF_GAME_SUMMARY_RECORDING));
+    }
+
+    /**
+     * @deprecated since 0.51.01, use {@link #getGifGameSummaryRecording()}; returns {@code true} only for
+     *       {@link GifRecordingMode#ALWAYS}.
+     */
+    @Deprecated(since = "0.51.01", forRemoval = true)
     public boolean getGifGameSummaryMinimap() {
-        return store.getBoolean(GIF_GAME_SUMMARY_MINIMAP);
+        return getGifGameSummaryRecording() == GifRecordingMode.ALWAYS;
     }
 
     public boolean showUnitDisplayNamesOnMinimap() {
@@ -1476,6 +1523,18 @@ public class GUIPreferences extends PreferenceStoreProxy {
 
     public int getPlayerListPosY() {
         return store.getInt(PLAYER_LIST_POS_Y);
+    }
+
+    public boolean getRoundsInAirEnabled() {
+        return store.getBoolean(ROUNDS_IN_AIR_ENABLED);
+    }
+
+    public int getRoundsInAirPosX() {
+        return store.getInt(ROUNDS_IN_AIR_POS_X);
+    }
+
+    public int getRoundsInAirPosY() {
+        return store.getInt(ROUNDS_IN_AIR_POS_Y);
     }
 
     public int getPlayerListAutoDisplayReportPhase() {
@@ -2102,8 +2161,17 @@ public class GUIPreferences extends PreferenceStoreProxy {
         store.setValue(GAME_SUMMARY_MINIMAP, state);
     }
 
+    public void setGifGameSummaryRecording(GifRecordingMode mode) {
+        store.setValue(GIF_GAME_SUMMARY_RECORDING, mode.name());
+    }
+
+    /**
+     * @deprecated since 0.51.01, use {@link #setGifGameSummaryRecording(GifRecordingMode)}; maps {@code true} to
+     *       {@link GifRecordingMode#ALWAYS} and {@code false} to {@link GifRecordingMode#NEVER}.
+     */
+    @Deprecated(since = "0.51.01", forRemoval = true)
     public void setGifGameSummaryMinimap(boolean state) {
-        store.setValue(GIF_GAME_SUMMARY_MINIMAP, state);
+        setGifGameSummaryRecording(state ? GifRecordingMode.ALWAYS : GifRecordingMode.NEVER);
     }
 
     public void setShowUnitDisplayNamesOnMinimap(boolean state) {
@@ -2403,6 +2471,22 @@ public class GUIPreferences extends PreferenceStoreProxy {
 
     public void setPlayerListPosY(int i) {
         store.setValue(PLAYER_LIST_POS_Y, i);
+    }
+
+    public void setRoundsInAirEnabled(boolean b) {
+        store.setValue(ROUNDS_IN_AIR_ENABLED, b);
+    }
+
+    public void toggleRoundsInAirEnabled() {
+        setRoundsInAirEnabled(!getRoundsInAirEnabled());
+    }
+
+    public void setRoundsInAirPosX(int i) {
+        store.setValue(ROUNDS_IN_AIR_POS_X, i);
+    }
+
+    public void setRoundsInAirPosY(int i) {
+        store.setValue(ROUNDS_IN_AIR_POS_Y, i);
     }
 
     public void setPlayerListAutoDisplayReportPhase(int i) {
@@ -3039,6 +3123,14 @@ public class GUIPreferences extends PreferenceStoreProxy {
 
     public boolean getShowArtilleryDrifts() {
         return getBoolean(SHOW_ARTILLERY_DRIFTS);
+    }
+
+    public void setShowArtilleryDriftArrows(boolean b) {
+        store.setValue(SHOW_ARTILLERY_DRIFT_ARROWS, b);
+    }
+
+    public boolean getShowArtilleryDriftArrows() {
+        return getBoolean(SHOW_ARTILLERY_DRIFT_ARROWS);
     }
 
     public void setShowBombMisses(boolean b) {

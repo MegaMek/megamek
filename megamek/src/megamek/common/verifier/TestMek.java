@@ -592,9 +592,7 @@ public class TestMek extends TestEntity {
             boolean structureUsesSlots = structure != null && structure.getNumCriticalSlots(mek) > 0;
 
             int actualStructureCrits = countInternalStructureCriticalSlots(mek, location);
-            int actualMatchingStructureCrits = structure == null ?
-                  0 :
-                  mek.getNumberOfCriticalSlots(structure, location);
+            int actualMatchingStructureCrits = structure == null ? 0 : mek.getNumberOfCriticalSlots(structure, location);
             boolean hasOnlyMatchingStructureCrits = actualStructureCrits == actualMatchingStructureCrits;
 
             boolean validStructureCrits = structureUsesSlots
@@ -690,7 +688,7 @@ public class TestMek extends TestEntity {
                 }
 
             } else if ((mek.getOArmor(loc) + (mek.hasRearArmor(loc) ? mek
-                  .getOArmor(loc, true) : 0)) > (2
+                                                                      .getOArmor(loc, true) : 0)) > (2
                   * mek.getOInternal(loc))) {
                 buff.append(printArmorLocation(loc))
                       .append(printArmorLocProp(loc,
@@ -843,8 +841,8 @@ public class TestMek extends TestEntity {
 
         boolean hasStealth = mek.hasStealth();
         boolean hasC3 = mek.hasAnyC3System();
-        boolean hasHarjelII = false;
-        boolean hasHarjelIII = false;
+        boolean hasHarJelII = false;
+        boolean hasHarJelIII = false;
         boolean hasNullSig = false;
         boolean hasVoidSig = false;
         boolean hasTC = false;
@@ -860,8 +858,8 @@ public class TestMek extends TestEntity {
         // so we don't have to execute another loop each time one of those situations
         // comes up.
         for (MiscMounted m : mek.getMisc()) {
-            hasHarjelII |= m.getType().hasFlag(MiscType.F_HARJEL_II);
-            hasHarjelIII |= m.getType().hasFlag(MiscType.F_HARJEL_III);
+            hasHarJelII |= m.getType().hasFlag(MiscType.F_HARJEL_II);
+            hasHarJelIII |= m.getType().hasFlag(MiscType.F_HARJEL_III);
             hasNullSig |= m.getType().hasFlag(MiscType.F_NULL_SIG);
             hasVoidSig |= m.getType().hasFlag(MiscType.F_VOID_SIG);
             hasTC |= m.getType().hasFlag(MiscType.F_TARGETING_COMPUTER);
@@ -983,24 +981,23 @@ public class TestMek extends TestEntity {
                     }
                 }
             }
-            if (misc.hasFlag(MiscType.F_HEAD_TURRET) && isCockpitLocation(Mek.LOC_HEAD)) {
-                illegal = true;
-                buff.append("head turret requires torso mounted cockpit\n");
-            }
 
+            // Tactical Operations: Advanced Rules & Equipment, p. 158
             if (misc.hasFlag(MiscType.F_SHOULDER_TURRET) && mek instanceof QuadMek) {
                 illegal = true;
-                buff.append("quad meks can't mount shoulder turrets\n");
+                buff.append("Quad meks can't mount shoulder turrets\n");
             }
 
-            if (misc.hasFlag(MiscType.F_SHOULDER_TURRET)) {
-                if (m.getLocation() != Mek.LOC_RIGHT_TORSO
-                      && m.getLocation() != Mek.LOC_LEFT_TORSO) {
-                    if (mek.countWorkingMisc(MiscType.F_SHOULDER_TURRET, m.getLocation()) > 1) {
-                        illegal = true;
-                        buff.append("max of 1 shoulder turret per side torso\n");
-                    }
-                }
+            // Tactical Operations: Advanced Rules & Equipment, p. 158
+            if (misc.hasFlag(MiscType.F_HEAD_TURRET) && isCockpitLocation(Mek.LOC_HEAD)) {
+                illegal = true;
+                buff.append("Head turret requires torso mounted cockpit\n");
+            }
+
+            // Tactical Operations: Advanced Rules & Equipment, p. 158
+            if (misc.hasFlag(MiscType.F_QUAD_TURRET) && !(mek instanceof QuadMek)) {
+                illegal = true;
+                buff.append("Only quad meks can mount quad turrets\n");
             }
 
             if (misc.hasFlag(MiscType.F_TRACKS)) {
@@ -1041,7 +1038,7 @@ public class TestMek extends TestEntity {
                     illegal = true;
                 }
                 for (int loc = 0; loc < mek.locations(); loc++) {
-                    if (!mek.locationIsTorso(loc)) {continue;}
+                    if (!mek.locationIsTorso(loc)) continue;
                     if (!mek.hasReinforcedStructure(loc)) {
                         illegal = true;
                         buff.append(misc.getName()).append(" requires reinforced structure in each torso location.\n");
@@ -1134,6 +1131,25 @@ public class TestMek extends TestEntity {
                 buff.append("Quad meks and meks with torso cockpits may only mount a chain drape as a Cape");
                 illegal = true;
             }
+        }
+
+        // Tactical Operations: Advanced Rules & Equipment, p. 158
+        if (mek.countWorkingMisc(MiscType.F_SHOULDER_TURRET, Mek.LOC_LEFT_TORSO) > 1
+              || mek.countWorkingMisc(MiscType.F_SHOULDER_TURRET, Mek.LOC_RIGHT_TORSO) > 1) {
+            illegal = true;
+            buff.append("Max of 1 shoulder turret per side torso\n");
+        }
+
+        // Tactical Operations: Advanced Rules & Equipment, p. 158
+        if (mek.countWorkingMisc(MiscType.F_HEAD_TURRET) > 1) {
+            illegal = true;
+            buff.append("Max of 1 head turret\n");
+        }
+
+        // Tactical Operations: Advanced Rules & Equipment, p. 158
+        if (mek.countWorkingMisc(MiscType.F_QUAD_TURRET) > 1) {
+            illegal = true;
+            buff.append("Max of 1 quad turret\n");
         }
 
         if (mek.isSuperHeavy()) {
@@ -1460,12 +1476,12 @@ public class TestMek extends TestEntity {
             }
         }
 
-        if (hasHarjelII && hasHarjelIII) {
+        if (hasHarJelII && hasHarJelIII) {
             illegal = true;
             buff.append("Can't mix HarJel II and HarJel III\n");
         }
 
-        if (hasHarjelII || hasHarjelIII) {
+        if (hasHarJelII || hasHarJelIII) {
             if (mek.isIndustrial()) {
                 buff.append("Cannot mount HarJel repair system on IndustrialMek\n");
                 illegal = true;

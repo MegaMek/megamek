@@ -33,6 +33,8 @@
 
 package megamek.common.event;
 
+import megamek.logging.MMLogger;
+
 import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.Comparator;
@@ -40,8 +42,6 @@ import java.util.IdentityHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
-
-import megamek.logging.MMLogger;
 
 public final class EventBus {
     private static final MMLogger LOGGER = MMLogger.create(EventBus.class);

@@ -674,9 +674,9 @@ public abstract class AbstractUnitSelectorDialog extends JDialog implements Runn
                         /* Year Limits */
                           (!enableYearLimits || (mek.getYear() <= allowedYear))
                                 /* Canon */
-                                && matchesCanonFilter(mek)
+                                                                && matchesCanonFilter(mek)
                                 /* Published Record Sheet */
-                                && matchesPublishedRecordSheetFilter(mek)
+                                                                && matchesPublishedRecordSheetFilter(mek)
                                 /* Invalid units */
                                 && (allowInvalid || !mek.getLevel().equals("F"))
                                 /* Weight */
@@ -1176,22 +1176,28 @@ public abstract class AbstractUnitSelectorDialog extends JDialog implements Runn
     }
 
     /**
-     * Sets the table to refresh when gunnery/piloting is changed
+     * Refreshes the table's BV/PV columns and the preview's Analysis tab when gunnery/piloting is
+     * changed.
      */
     private class GPDocumentListener implements DocumentListener {
         @Override
-        public void changedUpdate(DocumentEvent e) {
-            sorter.allRowsChanged();
+        public void changedUpdate(DocumentEvent event) {
+            skillValuesChanged();
         }
 
         @Override
-        public void insertUpdate(DocumentEvent e) {
-            sorter.allRowsChanged();
+        public void insertUpdate(DocumentEvent event) {
+            skillValuesChanged();
         }
 
         @Override
-        public void removeUpdate(DocumentEvent e) {
+        public void removeUpdate(DocumentEvent event) {
+            skillValuesChanged();
+        }
+
+        private void skillValuesChanged() {
             sorter.allRowsChanged();
+            panePreview.setAnalysisGunnery(parseSkillValue(textGunnery, 4));
         }
     }
 

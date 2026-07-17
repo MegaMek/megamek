@@ -37,6 +37,8 @@ import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
+import megamek.common.units.Entity;
+
 import megamek.common.CriticalSlot;
 import megamek.common.GameBoardTestCase;
 import megamek.common.enums.MoveStepType;
@@ -47,7 +49,6 @@ import megamek.common.options.OptionsConstants;
 import megamek.common.units.BipedMek;
 import megamek.common.units.Crew;
 import megamek.common.units.CrewType;
-import megamek.common.units.Entity;
 import megamek.common.units.EntityMovementMode;
 import megamek.common.units.Mek;
 import org.junit.jupiter.api.Test;

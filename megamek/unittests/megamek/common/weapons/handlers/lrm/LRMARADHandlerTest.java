@@ -171,7 +171,7 @@ public class LRMARADHandlerTest {
         // Set up a targetable hex.
         Coords coords = new Coords(7, 6);
         Hex hex = new Hex(1, "", null, coords);
-        Board board = new Board(17, 16);
+        Board board =  new Board(17, 16);
         board.setHex(coords, hex);
 
         // HexTargets take a type, the "mode" in which the hex is being targeted.

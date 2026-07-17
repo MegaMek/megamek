@@ -41,10 +41,9 @@ import org.junit.jupiter.api.Test;
 
 /**
  * Tests the base VTOL movement points of mechanized VTOL conventional infantry: Microlite platoons get 6 VTOL MP and
- * Micro-Copter platoons get 5 VTOL MP (TO:AUE p.136). The MP must come out correct regardless of whether the microlite
- * flag is set before or after the movement mode, because the two construction paths set them in different orders (the
- * .blk loader sets microlite first; the MegaMekLab structure tab sets the mode first). Regression test for MegaMek
- * issue #8354.
+ * Micro-Copter platoons get 5 VTOL MP (TO:AUE p.136). The MP must come out correct regardless of whether the microlite flag
+ * is set before or after the movement mode, because the two construction paths set them in different orders (the .blk
+ * loader sets microlite first; the MegaMekLab structure tab sets the mode first). Regression test for MegaMek issue #8354.
  */
 class ConvInfantryVtolMovementTest {
 

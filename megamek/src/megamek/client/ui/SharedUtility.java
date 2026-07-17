@@ -541,7 +541,7 @@ public class SharedUtility {
                   + (prevHex
                   .containsTerrain(Terrains.BRIDGE)
                   ? prevHex
-                  .terrainLevel(Terrains.BRIDGE_ELEV)
+                    .terrainLevel(Terrains.BRIDGE_ELEV)
                   : 0))))) {
                 nagReport.append(Messages.getString("MovementDisplay.BackWardsElevationChange"));
                 SharedUtility.checkNag(entity.getBasePilotingRoll(overallMoveType), nagReport, psrList);

@@ -40,6 +40,7 @@ import java.awt.Color;
 import java.awt.Font;
 import java.io.Serial;
 import java.util.Hashtable;
+import java.util.Optional;
 import java.util.Vector;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -667,7 +668,7 @@ public class Report implements ReportEntry {
                 rawBuilder.append(extText);
             }
         }
-
+        
         // `raw` may be empty; this is intentional (e.g., 1210 = blank-line spacer)
         // - process zero chars, render nothing.
         String raw = rawBuilder.toString();

@@ -359,9 +359,7 @@ public class DeploymentProcessor extends AbstractTWRuleHandler {
             if (!deployingVehicle.isHullDownCapable() || !fortifiedHex) {
                 entity.setHullDown(false);
                 LOGGER.debug("[HullDown] {}: cleared illegal deploy hull-down - {}", entity.getDisplayName(),
-                      !deployingVehicle.isHullDownCapable() ?
-                            "vehicle type cannot hull down" :
-                            "deploy hex is not fortified");
+                      !deployingVehicle.isHullDownCapable() ? "vehicle type cannot hull down" : "deploy hex is not fortified");
             } else {
                 LOGGER.debug("[HullDown] {}: deployed hull-down on a fortified hex", entity.getDisplayName());
             }

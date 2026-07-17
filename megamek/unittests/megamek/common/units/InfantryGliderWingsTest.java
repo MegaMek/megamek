@@ -54,7 +54,8 @@ import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 
 /**
- * Tests for MD_PL_GLIDER (Prosthetic Wings, Glider) cybernetic implant functionality on Infantry units per IO p.85.
+ * Tests for MD_PL_GLIDER (Prosthetic Wings, Glider) cybernetic implant functionality
+ * on Infantry units per IO p.85.
  *
  * <p>Rules implemented:
  * <ul>

@@ -33,19 +33,19 @@
  */
 package megamek.common.commandLine;
 
-import java.io.BufferedWriter;
-import java.io.File;
-import java.io.FileWriter;
-import java.util.Enumeration;
-import java.util.List;
-import java.util.stream.Collectors;
-
 import megamek.common.RangeType;
 import megamek.common.TechConstants;
 import megamek.common.equipment.AmmoType;
 import megamek.common.equipment.EquipmentType;
 import megamek.common.equipment.WeaponType;
 import megamek.logging.MMLogger;
+
+import java.io.BufferedWriter;
+import java.io.File;
+import java.io.FileWriter;
+import java.util.Enumeration;
+import java.util.List;
+import java.util.stream.Collectors;
 
 /**
  * Utility methods for exporting the equipment database from the command line.

@@ -34,10 +34,10 @@
 
 package megamek.client.ui.dialogs.randomArmy;
 
-import javax.swing.table.AbstractTableModel;
-
 import megamek.client.ui.Messages;
 import megamek.common.loaders.MekSummary;
+
+import javax.swing.table.AbstractTableModel;
 
 /**
  * A table model for displaying a generated RAT

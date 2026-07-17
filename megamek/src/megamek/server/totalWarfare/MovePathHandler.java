@@ -2132,8 +2132,6 @@ class MovePathHandler extends AbstractTWRuleHandler {
                         curFacing = this.entity.getFacing();
                         curPos = this.entity.getPosition();
                         mpUsed = step.getMpUsed();
-
-                        break;
                     } else if (Compute.canDetectHidden(this.entity, dist, md.isEndStep(step))) {
                         // There are a variety of other ways to detect a hidden unit.
                         // Reveal the detected unit and add the report to the movement report.
@@ -3581,6 +3579,10 @@ class MovePathHandler extends AbstractTWRuleHandler {
                 if (isOnGround) {
                     boom = gameManager.checkVibraBombs(entity, curPos, false, lastPos, curPos,
                           gameManager.getMainPhaseReport());
+                    
+                    boom |= gameManager.handleTripwire(entity, lastPos, curPos, stepMoveType, gameManager.getMainPhaseReport());
+                    boom |= gameManager.handlePitfall(entity, curPos, gameManager.getMainPhaseReport());
+                    
                     // Collect EMP reports separately for popup, then add to main report
                     Vector<Report> empReports = new Vector<>();
                     boolean empBoom = gameManager.checkEMPMines(entity, curPos, empReports);

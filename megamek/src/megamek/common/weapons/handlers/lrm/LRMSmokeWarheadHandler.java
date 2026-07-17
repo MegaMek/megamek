@@ -67,7 +67,7 @@ public class LRMSmokeWarheadHandler extends LRMHandler {
     protected boolean specialResolution(Vector<Report> vPhaseReport, Entity entityTarget) {
         Coords coords = target.getPosition();
         AmmoType ammoType = ammo.getType();
-
+        
         if (!bMissed) {
             Report r = new Report(3190);
             r.subject = subjectId;
@@ -78,10 +78,10 @@ public class LRMSmokeWarheadHandler extends LRMHandler {
             // scatterable LRMs scatter like dive bombing
             int range = RangeType.rangeBracket(coords.distance(attackingEntity.getPosition()),
                   weaponType.getRanges(weapon, weapon.getLinkedAmmo()),
-                  game.getOptions().booleanOption(OptionsConstants.ADVANCED_COMBAT_TAC_OPS_RANGE),
-                  game.getOptions().booleanOption(OptionsConstants.ADVANCED_COMBAT_TAC_OPS_LOS_RANGE));
+                  game.getOptions().booleanOption(OptionsConstants.ADVANCED_COMBAT_TAC_OPS_RANGE), 
+                        game.getOptions().booleanOption(OptionsConstants.ADVANCED_COMBAT_TAC_OPS_LOS_RANGE));
             coords = Compute.scatter(coords, 1);
-
+            
             if (game.getBoard().contains(coords) && (range != RangeType.RANGE_OUT)) {
                 // misses and scatters to another hex
                 Report r = new Report(3195);

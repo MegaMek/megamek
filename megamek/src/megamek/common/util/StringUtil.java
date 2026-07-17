@@ -222,13 +222,12 @@ public class StringUtil {
     }
 
     /**
-     * Wrap an input string, inserting newlines such that line length will not exceed the given length. Used primarily
-     * for formatting tooltips with wrapping, because apparently Swing doesn't have a nice provision to automatically
-     * wordwrap tooltips.
+     * Wrap an input string, inserting newlines such that line length will not exceed the given length.
+     * Used primarily for formatting tooltips with wrapping, because apparently Swing doesn't have a nice
+     * provision to automatically wordwrap tooltips.
      *
-     * @param in     Input string
+     * @param in Input string
      * @param length The maximum line length in characters
-     *
      * @return The string, with lines wrapped to at most length
      */
     public static String wrapLines(String in, int length) {

@@ -33,13 +33,11 @@
 
 package megamek.client.ui.dialogs.randomArmy;
 
-import static megamek.client.ui.clientGUI.ClientGUI.CG_FILEPATH_MUL;
+import megamek.client.ui.Messages;
+import megamek.common.loaders.MekSummary;
+import megamek.common.units.Entity;
+import megamek.common.units.EntityListFile;
 
-import java.awt.FlowLayout;
-import java.awt.event.ActionEvent;
-import java.io.File;
-import java.util.ArrayList;
-import java.util.List;
 import javax.swing.AbstractAction;
 import javax.swing.Action;
 import javax.swing.JButton;
@@ -49,11 +47,13 @@ import javax.swing.JFrame;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.filechooser.FileNameExtensionFilter;
+import java.awt.FlowLayout;
+import java.awt.event.ActionEvent;
+import java.io.File;
+import java.util.ArrayList;
+import java.util.List;
 
-import megamek.client.ui.Messages;
-import megamek.common.loaders.MekSummary;
-import megamek.common.units.Entity;
-import megamek.common.units.EntityListFile;
+import static megamek.client.ui.clientGUI.ClientGUI.CG_FILEPATH_MUL;
 
 /**
  * This Random Army Dialog is shown in MM's main menu. It allows generating armies and saving the chosen units to a MUL
@@ -62,10 +62,10 @@ import megamek.common.units.EntityListFile;
 public class MMMainMenuRandomArmyDialog extends AbstractRandomArmyDialog {
 
     /**
-     * Creates a random army dialog for the given parent frame. It has a button that allows saving the chosen units to a
-     * MUL file.
+     * Creates a random army dialog for the given parent frame. It has a button that allows saving the chosen units
+     * to a MUL file.
      *
-     * @param parent A parent frame for the dialog
+     * @param parent   A parent frame for the dialog
      */
     public MMMainMenuRandomArmyDialog(JFrame parent) {
         super(parent);
@@ -115,5 +115,5 @@ public class MMMainMenuRandomArmyDialog extends AbstractRandomArmyDialog {
                       JOptionPane.ERROR_MESSAGE);
             }
         }
-    };
+   };
 }

@@ -147,8 +147,8 @@ public class Tank extends Entity implements Fortifiable, RubbleClearer {
     private transient FortifyState fortifyState = new FortifyState();
 
     /**
-     * The rubble hex this vehicle is currently clearing with its bulldozer, or {@code null} if it is not clearing
-     * (TacOps). The vehicle must remain in this hex for the duration; if displaced or destroyed the work is abandoned.
+     * The rubble hex this vehicle is currently clearing with its bulldozer, or {@code null} if it is not clearing (TacOps). The
+     * vehicle must remain in this hex for the duration; if displaced or destroyed the work is abandoned.
      */
     private Coords rubbleClearTarget = null;
     /** Turns of bulldozer clearing banked so far against {@link #rubbleClearTurnsRequired}. */
@@ -160,6 +160,9 @@ public class Tank extends Entity implements Fortifiable, RubbleClearer {
     private static final int[] NUM_OF_SLOTS = { 25, 25, 25, 25, 25, 25, 25 };
 
     private static final String[] LOCATION_ABBREVIATIONS = { "BD", "FR", "RS", "LS", "RR", "TU", "FT" };
+    // On a dual-turret tank the turret locations are the rear turret (RT) and the front turret (FT), so the
+    // abbreviations say which is which (a bare "TU" next to "FT" does not).
+    private static final String[] LOCATION_ABBREVIATIONS_DUAL_TURRET = { "BD", "FR", "RS", "LS", "RR", "RT", "FT" };
     private static final String[] LOCATION_NAMES = { "Body", "Front", "Right", "Left", "Rear", "Turret" };
 
     private static final String[] LOCATION_NAMES_DUAL_TURRET = { "Body", "Front", "Right", "Left", "Rear",
@@ -189,6 +192,9 @@ public class Tank extends Entity implements Fortifiable, RubbleClearer {
 
     @Override
     public String[] getLocationAbbreviations() {
+        if (!hasNoDualTurret()) {
+            return LOCATION_ABBREVIATIONS_DUAL_TURRET;
+        }
         return LOCATION_ABBREVIATIONS;
     }
 
@@ -439,6 +445,9 @@ public class Tank extends Entity implements Fortifiable, RubbleClearer {
             }
             mp = (int) ((getEngine().getRating() + lowestSuspensionFactor) / trainWeight);
         }
+
+        // Improved Magnetic Pulse (iATM IMP) missile movement reduction (IO IMP rules)
+        mp = Math.max(0, mp - getImpMpReduction());
 
         return Math.max(mp, 0);
     }
@@ -1783,9 +1792,9 @@ public class Tank extends Entity implements Fortifiable, RubbleClearer {
     }
 
     /**
-     * Whether this vehicle type can use hull-down at all, independent of its current hex. Large Vehicles cannot use the
-     * cover, and naval, hydrofoil, and submarine (water-based) vehicles cannot dig in / hull down since hull-down
-     * requires a fortified land hex (TO:AR p.19).
+     * Whether this vehicle type can use hull-down at all, independent of its current hex. Large Vehicles cannot use
+     * the cover, and naval, hydrofoil, and submarine (water-based) vehicles cannot dig in / hull down since
+     * hull-down requires a fortified land hex (TO:AR p.19).
      *
      * @return true if this vehicle may ever go hull-down
      */

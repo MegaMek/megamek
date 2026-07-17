@@ -41,38 +41,38 @@ import megamek.common.board.Coords;
  * Immutable data model for rendering a LOS elevation diagram between two hexes. Decoupled from the game state so the
  * rendering panel does not depend on game logic.
  *
- * @param hexPath               the ordered list of hex data along the LOS path (attacker to target)
- * @param attackerAbsHeight     the attacker's absolute height (hex floor + unit height)
- * @param targetAbsHeight       the target's absolute height (hex floor + unit height)
- * @param attackPos             the attacker's hex coordinates
- * @param targetPos             the target's hex coordinates
- * @param losBlocked            whether LOS is completely blocked along this path
- * @param attackerUnitType      the attacker's unit type for silhouette rendering
- * @param targetUnitType        the target's unit type for silhouette rendering
- * @param attackerIsHullDown    whether the attacker is hull-down (reduces LOS profile by 1 TW level)
- * @param targetIsHullDown      whether the target is hull-down (reduces LOS profile by 1 TW level)
- * @param attackerName          display name of the attacker entity, or empty if none
- * @param targetName            display name of the target entity, or empty if none
- * @param losRuleMode           the active LOS rule set; drives the per-hex comparison level used to flag blockers (BMM
- *                              adjacency rule for {@link LosRuleMode#STANDARD} and {@link LosRuleMode#DEAD_ZONE},
- *                              linear interp matching the engine's {@code losElevation} for
- *                              {@link LosRuleMode#DIAGRAMMED}). The line itself is drawn straight from eye level to eye
- *                              level in every mode
- * @param deadZone              true if the engine flagged this LOS as blocked by a TacOps dead-zone shadow (see
- *                              {@link megamek.common.LosEffects#isBlockedByDeadZone()}). The panel hatches the lower
- *                              endpoint's hex column as a marker
- * @param deadZoneVictimPos     the lower-elevation endpoint - the unit sitting inside the dead-zone shadow.
- *                              {@code null} when {@code deadZone} is false
- * @param attackerHasMastMount  whether the attacker is a VTOL with a working Mast Mount. The Mast Mount raises onboard
- *                              sensors by 1 level for spotting only (TacOps), so the diagram draws a "+1 spotting eye"
- *                              marker one level above the attacker silhouette
- * @param targetHasMastMount    whether the target is a VTOL with a working Mast Mount (same marker as the attacker)
- * @param attackerSpottingClear whether the attacker, spotting from its +1 Mast Mount elevation, has clear LOS to the
- *                              target. Colors the attacker's eye marker. Meaningful only when
+ * @param hexPath            the ordered list of hex data along the LOS path (attacker to target)
+ * @param attackerAbsHeight  the attacker's absolute height (hex floor + unit height)
+ * @param targetAbsHeight    the target's absolute height (hex floor + unit height)
+ * @param attackPos          the attacker's hex coordinates
+ * @param targetPos          the target's hex coordinates
+ * @param losBlocked         whether LOS is completely blocked along this path
+ * @param attackerUnitType   the attacker's unit type for silhouette rendering
+ * @param targetUnitType     the target's unit type for silhouette rendering
+ * @param attackerIsHullDown whether the attacker is hull-down (reduces LOS profile by 1 TW level)
+ * @param targetIsHullDown   whether the target is hull-down (reduces LOS profile by 1 TW level)
+ * @param attackerName       display name of the attacker entity, or empty if none
+ * @param targetName         display name of the target entity, or empty if none
+ * @param losRuleMode        the active LOS rule set; drives the per-hex comparison level used to flag
+ *                           blockers (BMM adjacency rule for {@link LosRuleMode#STANDARD} and
+ *                           {@link LosRuleMode#DEAD_ZONE}, linear interp matching the engine's
+ *                           {@code losElevation} for {@link LosRuleMode#DIAGRAMMED}). The line itself is
+ *                           drawn straight from eye level to eye level in every mode
+ * @param deadZone           true if the engine flagged this LOS as blocked by a TacOps dead-zone shadow
+ *                           (see {@link megamek.common.LosEffects#isBlockedByDeadZone()}). The panel
+ *                           hatches the lower endpoint's hex column as a marker
+ * @param deadZoneVictimPos  the lower-elevation endpoint - the unit sitting inside the dead-zone shadow.
+ *                           {@code null} when {@code deadZone} is false
+ * @param attackerHasMastMount whether the attacker is a VTOL with a working Mast Mount. The Mast Mount raises
+ *                             onboard sensors by 1 level for spotting only (TacOps), so the diagram draws a
+ *                             "+1 spotting eye" marker one level above the attacker silhouette
+ * @param targetHasMastMount   whether the target is a VTOL with a working Mast Mount (same marker as the attacker)
+ * @param attackerSpottingClear whether the attacker, spotting from its +1 Mast Mount elevation, has clear LOS to
+ *                              the target. Colors the attacker's eye marker. Meaningful only when
  *                              {@code attackerHasMastMount} is true
- * @param targetSpottingClear   whether the target, spotting from its +1 Mast Mount elevation, has clear LOS to the
- *                              attacker. Colors the target's eye marker. Meaningful only when
- *                              {@code targetHasMastMount} is true
+ * @param targetSpottingClear  whether the target, spotting from its +1 Mast Mount elevation, has clear LOS to the
+ *                             attacker. Colors the target's eye marker. Meaningful only when
+ *                             {@code targetHasMastMount} is true
  */
 record LOSDiagramData(
       List<HexRow> hexPath,

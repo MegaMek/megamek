@@ -46,8 +46,8 @@ import megamek.common.units.Infantry;
 
 /**
  * Manages fortification-under-construction indicator sprites on the board view (TO:AUE Trench/Fieldworks Engineers and
- * Vehicles &amp; Fieldworks). Creates and removes {@link FortifyBuildSprite} instances on the hexes of all units that
- * are currently building a fortified hex; the build state is read from the synced entities.
+ * Vehicles &amp; Fieldworks). Creates and removes {@link FortifyBuildSprite} instances on the hexes of all units that are
+ * currently building a fortified hex; the build state is read from the synced entities.
  */
 public class FortifyBuildSpriteHandler extends BoardViewSpriteHandler {
 

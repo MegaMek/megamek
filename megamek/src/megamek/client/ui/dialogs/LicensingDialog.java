@@ -54,11 +54,12 @@ import megamek.client.ui.util.UIUtil;
 import megamek.common.preference.PreferenceManager;
 
 /**
- * Displays licensing, legal, and welcome information about the MegaMek Suite on application startup. The user must
- * click Acknowledge to proceed.
+ * Displays licensing, legal, and welcome information about the MegaMek Suite on
+ * application startup. The user must click Acknowledge to proceed.
  *
  * <p>Includes a "don't show again" checkbox that takes effect when the user
- * acknowledges. Closing the dialog via the X button or Escape key exits the application.</p>
+ * acknowledges. Closing the dialog via the X button or Escape key exits
+ * the application.</p>
  *
  * <p>Subclasses in MegaMekLab and MekHQ can override {@link #buildHtmlContent()}
  * to customize the displayed text.</p>
@@ -83,8 +84,8 @@ public class LicensingDialog extends AbstractButtonDialog {
     }
 
     /**
-     * Creates a new licensing dialog with a custom title. Used by MegaMekLab and MekHQ to show their own product name
-     * and version.
+     * Creates a new licensing dialog with a custom title. Used by MegaMekLab
+     * and MekHQ to show their own product name and version.
      *
      * @param frame       the parent frame
      * @param customTitle the full title string (e.g. "Welcome to MekHQ 0.50.13")
@@ -140,8 +141,8 @@ public class LicensingDialog extends AbstractButtonDialog {
     }
 
     /**
-     * Builds the HTML content for the licensing dialog. Subclasses can override this method to customize the displayed
-     * text.
+     * Builds the HTML content for the licensing dialog. Subclasses can override
+     * this method to customize the displayed text.
      *
      * @return the HTML string to display
      */
@@ -154,8 +155,8 @@ public class LicensingDialog extends AbstractButtonDialog {
     }
 
     /**
-     * Builds the shared legal/licensing HTML block used by both the licensing dialog and About dialogs across the
-     * suite.
+     * Builds the shared legal/licensing HTML block used by both the licensing
+     * dialog and About dialogs across the suite.
      *
      * @return the legal HTML content (without outer html/body tags)
      */
@@ -219,8 +220,8 @@ public class LicensingDialog extends AbstractButtonDialog {
     }
 
     /**
-     * Shows the licensing dialog with a custom title if the user has not opted out. Used by MegaMekLab and MekHQ to
-     * display their own product name.
+     * Shows the licensing dialog with a custom title if the user has not opted
+     * out. Used by MegaMekLab and MekHQ to display their own product name.
      *
      * @param frame       the parent frame, or {@code null} if no frame exists yet
      * @param customTitle the full title string (e.g. "Welcome to MekHQ 0.50.13")

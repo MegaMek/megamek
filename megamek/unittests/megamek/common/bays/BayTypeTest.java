@@ -38,8 +38,9 @@ import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
-import megamek.common.units.*;
 import org.junit.jupiter.api.Test;
+
+import megamek.common.units.*;
 
 class BayTypeTest {
 

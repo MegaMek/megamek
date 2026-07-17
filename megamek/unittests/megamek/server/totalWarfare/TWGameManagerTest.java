@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2024-2025 The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2024-2026 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -37,6 +37,9 @@ import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.mockStatic;
+import static org.mockito.Mockito.when;
 
 import java.io.IOException;
 import java.util.Collections;
@@ -45,9 +48,11 @@ import java.util.Vector;
 
 import megamek.common.CriticalSlot;
 import megamek.common.GameBoardTestCase;
+import megamek.common.compute.Compute;
 import megamek.common.Hex;
 import megamek.common.Player;
 import megamek.common.Report;
+import megamek.common.actions.ActivateBloodStalkerAction;
 import megamek.common.bays.CargoBay;
 import megamek.common.board.Board;
 import megamek.common.board.Coords;
@@ -59,7 +64,9 @@ import megamek.common.equipment.Mounted;
 import megamek.common.exceptions.LocationFullException;
 import megamek.common.game.Game;
 import megamek.common.moves.MovePath;
+import megamek.common.options.OptionsConstants;
 import megamek.common.rolls.PilotingRollData;
+import megamek.common.rolls.Roll;
 import megamek.common.units.*;
 import megamek.common.weapons.DamageType;
 import megamek.server.Server;
@@ -70,6 +77,7 @@ import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.EnumSource;
+import org.mockito.MockedStatic;
 
 class TWGameManagerTest {
     private TWGameManager gameManager;
@@ -877,7 +885,42 @@ class TWGameManagerTest {
         ArmorType reactiveType = ArmorType.of(ArmorType.T_ARMOR_REACTIVE, false);
 
         // Initialize armor critical slots (normally done by unit loader)
-        for (int i = 1; i <= 12; i++) {
+        for (int i=1; i<=12; i++) {
+            Mounted reactiveMounted = Mounted.createMounted(mek, reactiveType);
+            mek.addEquipment(reactiveMounted, Mek.LOC_LEFT_TORSO, false);
+        }
+
+        game.addEntity(mek);
+
+        // Apply single armor crit
+        assertDoesNotThrow(() ->
+            gameManager.criticalEntity(
+                  mek,
+                  Mek.LOC_LEFT_TORSO,
+                  false,
+                  0,
+                  false,
+                  false,
+                  1,
+                  DamageType.NONE
+            )
+        );
+    }
+
+    @Test
+    void testCriticalEntityAllButOneReactiveSlots() throws LocationFullException {
+        // Verify that reactive armor crit handling in cases with one empty slot.
+        BipedMek mek = new BipedMek();
+
+        // Configure Reactive armor
+        mek.setArmorType(EquipmentType.T_ARMOR_REACTIVE);
+        mek.setArmor(10, Mek.LOC_LEFT_TORSO);
+
+        ArmorType reactiveType = ArmorType.of(ArmorType.T_ARMOR_REACTIVE, false);
+
+        // Initialize armor critical slots (normally done by unit loader)
+        // Note that we leave one slot empty in this case
+        for (int i=1; i<=11; i++) {
             Mounted reactiveMounted = Mounted.createMounted(mek, reactiveType);
             mek.addEquipment(reactiveMounted, Mek.LOC_LEFT_TORSO, false);
         }
@@ -899,38 +942,106 @@ class TWGameManagerTest {
         );
     }
 
+    /**
+     * Issue #8125: activating Blood Stalker must set the stalker flag on the acting unit (the owner of the SPA), not on
+     * the designated enemy. The old code set it on the enemy, so the enemy ended up stalking itself and took the +2
+     * non-target penalty on its own shots, while the owner gained no benefit at all. Per TacOps:AR, the modifiers apply
+     * only to the warrior with the ability (-1 against the designated target, +2 against everyone else); the target's
+     * own shooting is unaffected.
+     */
     @Test
-    void testCriticalEntityAllButOneReactiveSlots() throws LocationFullException {
-        // Verify that reactive armor crit handling in cases with one empty slot.
-        BipedMek mek = new BipedMek();
+    void testActivateBloodStalkerSetsTargetOnOwnerNotEnemy() {
+        BipedMek owner = new BipedMek();
+        owner.setId(1);
+        owner.getCrew().getOptions().getOption(OptionsConstants.GUNNERY_BLOOD_STALKER).setValue(true);
+        game.addEntity(owner);
 
-        // Configure Reactive armor
-        mek.setArmorType(EquipmentType.T_ARMOR_REACTIVE);
-        mek.setArmor(10, Mek.LOC_LEFT_TORSO);
+        BipedMek prey = new BipedMek();
+        prey.setId(2);
+        game.addEntity(prey);
 
-        ArmorType reactiveType = ArmorType.of(ArmorType.T_ARMOR_REACTIVE, false);
+        game.addAction(new ActivateBloodStalkerAction(owner.getId(), prey.getId()));
+        gameManager.resolveAllButWeaponAttacks();
 
-        // Initialize armor critical slots (normally done by unit loader)
-        // Note that we leave one slot empty in this case
-        for (int i = 1; i <= 11; i++) {
-            Mounted reactiveMounted = Mounted.createMounted(mek, reactiveType);
-            mek.addEquipment(reactiveMounted, Mek.LOC_LEFT_TORSO, false);
+        assertEquals(prey.getId(), owner.getBloodStalkerTarget(),
+              "Blood Stalker owner should track the designated enemy");
+        assertEquals(Entity.NONE, prey.getBloodStalkerTarget(),
+              "Designated enemy must not receive a Blood Stalker target of its own");
+    }
+
+    /**
+     * Issue #8125: activating Blood Stalker against a target that is no longer on the board (already destroyed/removed)
+     * must leave the owner without a stalker flag and must not throw.
+     */
+    @Test
+    void testActivateBloodStalkerWithMissingTargetDoesNothing() {
+        BipedMek owner = new BipedMek();
+        owner.setId(1);
+        owner.getCrew().getOptions().getOption(OptionsConstants.GUNNERY_BLOOD_STALKER).setValue(true);
+        game.addEntity(owner);
+
+        int missingTargetId = 999;
+        game.addAction(new ActivateBloodStalkerAction(owner.getId(), missingTargetId));
+
+        assertDoesNotThrow(() -> gameManager.resolveAllButWeaponAttacks());
+        assertEquals(Entity.NONE, owner.getBloodStalkerTarget(),
+              "Owner should have no Blood Stalker target when the designated enemy is gone");
+    }
+
+    /**
+     * Issue #8489: a VTOL that shuts down while airborne makes a forced landing, but the landing must not permanently
+     * immobilize it. Per TW p.197, permanent VTOL immobility comes only from an engine crit or from MP reduced to 0 by
+     * damage; a shutdown is neither. The forced-landing roll is mocked to succeed so no crash damage muddies the
+     * assertion.
+     */
+    @Test
+    void testShutdownVtolLandsWithoutPermanentImmobilization() {
+        Board board = new Board(3, 3);
+        initializeBoard(board);
+        game.setBoard(board);
+
+        VTOL vtol = new VTOL();
+        vtol.setOwner(game.getPlayer(0));
+        vtol.setMovementMode(EntityMovementMode.VTOL);
+        vtol.setPosition(new Coords(1, 1));
+        vtol.setElevation(2);
+        vtol.setShutDown(true);
+        game.addEntity(vtol);
+
+        Roll successfulRoll = mock(Roll.class);
+        when(successfulRoll.getIntValue()).thenReturn(12);
+        try (MockedStatic<Compute> mockedCompute = mockStatic(Compute.class)) {
+            mockedCompute.when(() -> Compute.rollD6(2)).thenReturn(successfulRoll);
+            gameManager.resolveShutdownCrashes();
         }
 
-        game.addEntity(mek);
+        assertEquals(0, vtol.getElevation(), "Shut-down VTOL should be forced to land");
+        assertFalse(vtol.isMovementHitPending(), "Forced landing must not mark the VTOL for immobilization");
 
-        // Apply single armor crit
-        assertDoesNotThrow(() ->
-              gameManager.criticalEntity(
-                    mek,
-                    Mek.LOC_LEFT_TORSO,
-                    false,
-                    0,
-                    false,
-                    false,
-                    1,
-                    DamageType.NONE
-              )
-        );
+        vtol.applyDamage();
+        vtol.setShutDown(false);
+        assertFalse(vtol.isImmobile(), "VTOL should be mobile again after starting back up");
+    }
+
+    /**
+     * Issue #8489 follow-up: a LAM in AirMek mode uses WiGE movement, so it can be shut down while airborne without
+     * being a Tank. The shutdown landing must skip it instead of throwing a ClassCastException.
+     */
+    @Test
+    void testShutdownAirborneLamDoesNotThrow() {
+        Board board = new Board(3, 3);
+        initializeBoard(board);
+        game.setBoard(board);
+
+        LandAirMek lam = new LandAirMek(LandAirMek.GYRO_STANDARD, LandAirMek.COCKPIT_STANDARD,
+              LandAirMek.LAM_STANDARD);
+        lam.setOwner(game.getPlayer(0));
+        lam.setConversionMode(LandAirMek.CONV_MODE_AIR_MEK);
+        lam.setPosition(new Coords(1, 1));
+        lam.setElevation(2);
+        lam.setShutDown(true);
+        game.addEntity(lam);
+
+        assertDoesNotThrow(() -> gameManager.resolveShutdownCrashes());
     }
 }

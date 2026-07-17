@@ -218,9 +218,9 @@ public class BoardUtilities {
     }
 
     /**
-     * Returns a display name for a combined board, derived from the names of its source sheets. A single non-default
-     * sheet name is used as-is; multiple distinct sheet names are joined with " + " in iteration order. If every sheet
-     * is unnamed (random generation, etc.) returns {@link Board#BOARD_NAME_UNNAMED}.
+     * Returns a display name for a combined board, derived from the names of its source sheets. A single
+     * non-default sheet name is used as-is; multiple distinct sheet names are joined with " + " in iteration
+     * order. If every sheet is unnamed (random generation, etc.) returns {@link Board#BOARD_NAME_UNNAMED}.
      */
     private static String deriveCombinedName(Board[] sheets) {
         LinkedHashSet<String> names = new LinkedHashSet<>();

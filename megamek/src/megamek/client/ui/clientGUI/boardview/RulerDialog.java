@@ -62,10 +62,10 @@ import megamek.client.ui.clientGUI.GUIPreferences;
 import megamek.client.ui.util.UIUtil;
 import megamek.common.Hex;
 import megamek.common.LosEffects;
+import megamek.common.equipment.MiscType;
 import megamek.common.Player;
 import megamek.common.board.Board;
 import megamek.common.board.Coords;
-import megamek.common.equipment.MiscType;
 import megamek.common.game.Game;
 import megamek.common.options.OptionsConstants;
 import megamek.common.units.Entity;
@@ -138,15 +138,9 @@ public class RulerDialog extends JDialog implements BoardViewListener {
           + "<b>Altitude</b> (aerospace): fixed value (1-10)</html>";
     private final JComboBox<EntityItem> cboEntity1 = new JComboBox<>();
     private final JComboBox<EntityItem> cboEntity2 = new JComboBox<>();
-    /**
-     * When selected, clicks update only the END point; the START hex stays put. Mutually exclusive with
-     * {@link #lockEnd}.
-     */
+    /** When selected, clicks update only the END point; the START hex stays put. Mutually exclusive with {@link #lockEnd}. */
     private final JCheckBox lockStart = new JCheckBox();
-    /**
-     * When selected, clicks update only the START point; the END hex stays put. Mutually exclusive with
-     * {@link #lockStart}.
-     */
+    /** When selected, clicks update only the START point; the END hex stays put. Mutually exclusive with {@link #lockStart}. */
     private final JCheckBox lockEnd = new JCheckBox();
     private String entityName1 = "";
     private String entityName2 = "";
@@ -709,9 +703,9 @@ public class RulerDialog extends JDialog implements BoardViewListener {
     }
 
     /**
-     * Appends a localized "(Mast Mount)" marker to a POV name when that endpoint's unit is a VTOL with a working Mast
-     * Mount whose identity is visible (not a sensor return). Returns {@code name} unchanged otherwise, including when
-     * it is null, so the generic POV fallback still applies.
+     * Appends a localized "(Mast Mount)" marker to a POV name when that endpoint's unit is a VTOL with a working
+     * Mast Mount whose identity is visible (not a sensor return). Returns {@code name} unchanged otherwise, including
+     * when it is null, so the generic POV fallback still applies.
      */
     private String decorateWithMastMount(String name, boolean isFirstPoint) {
         if (name == null || !hasVisibleMastMount(isFirstPoint)) {
@@ -847,8 +841,8 @@ public class RulerDialog extends JDialog implements BoardViewListener {
     }
 
     /**
-     * Recomputes the Range header and value font sizes based on the current rendered height of the range panel. The
-     * base sizes (scaled with the user's GUI scale) act as a floor; if the rendered height is large enough that the
+     * Recomputes the Range header and value font sizes based on the current rendered height of the range panel. The base
+     * sizes (scaled with the user's GUI scale) act as a floor; if the rendered height is large enough that the
      * fractional sizes exceed the floor, those win — keeping the display proportionally filled. Called from a
      * {@link ComponentAdapter#componentResized} listener on the range panel.
      *
@@ -881,8 +875,8 @@ public class RulerDialog extends JDialog implements BoardViewListener {
 
     /**
      * Resets the entity-related unit-panel state for one point (name, short name, unit type, altitude flag, expected
-     * height, height labels). Called from the lock branches when a click lands on a hex with no unit, so the unit panel
-     * doesn't keep displaying the previous endpoint's occupant. The combo box itself is reset by
+     * height, height labels). Called from the lock branches when a click lands on a hex with no unit, so the unit
+     * panel doesn't keep displaying the previous endpoint's occupant. The combo box itself is reset by
      * {@link #populateEntityCombo} on the same click; this method handles everything else.
      *
      * @param isFirstPoint true to reset point 1 (start side), false to reset point 2 (end side)
@@ -1409,8 +1403,9 @@ public class RulerDialog extends JDialog implements BoardViewListener {
     }
 
     /**
-     * Returns the ruler dialog title with the active LOS rule set and the current board name. The board name is
-     * appended in brackets so screenshots include the map identity, which speeds up triage of player LOS questions.
+     * Returns the ruler dialog title with the active LOS rule set and the current board name. The board name
+     * is appended in brackets so screenshots include the map identity, which speeds up triage of player LOS
+     * questions.
      */
     private static String getRulerTitle(Game game) {
         String modeTitle;
@@ -1485,10 +1480,10 @@ public class RulerDialog extends JDialog implements BoardViewListener {
     }
 
     /**
-     * Swaps every piece of point-1 / point-2 state in the dialog: the {@link Coords}, the height spinner values, the
-     * entity combo box selections, the lock checkbox states, the unit name / type / altitude flags, and the height
-     * labels. After the swap, point 1 holds what point 2 used to hold and vice versa, so any code that reads "point 1 =
-     * attacker" naturally renders the flipped view.
+     * Swaps every piece of point-1 / point-2 state in the dialog: the {@link Coords}, the height spinner
+     * values, the entity combo box selections, the lock checkbox states, the unit name / type / altitude
+     * flags, and the height labels. After the swap, point 1 holds what point 2 used to hold and vice versa,
+     * so any code that reads "point 1 = attacker" naturally renders the flipped view.
      */
     private void swapPointData() {
         // Suppress combo-box listeners (would re-trigger entity application logic and clobber values)

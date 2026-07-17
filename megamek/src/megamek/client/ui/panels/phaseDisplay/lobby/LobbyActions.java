@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2021-2025 The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2021-2026 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -48,8 +48,8 @@ import javax.swing.JOptionPane;
 
 import megamek.client.AbstractClient;
 import megamek.client.Client;
+import megamek.client.bot.BotClient;
 import megamek.client.bot.princess.BehaviorSettings;
-import megamek.client.bot.princess.Princess;
 import megamek.client.generator.RandomCallsignGenerator;
 import megamek.client.generator.RandomGenderGenerator;
 import megamek.client.generator.RandomNameGenerator;
@@ -241,10 +241,35 @@ public class LobbyActions {
             return;
         }
         Entity entity = CollectionUtil.anyOneElement(entities);
-        UnitEditorDialog med = new UnitEditorDialog(frame(), entity);
+        if (!canEditDamage(client(), entity)) {
+            LobbyErrors.showCannotEditDamage(frame());
+            return;
+        }
+        UnitEditorDialog med = new UnitEditorDialog(frame(), entity, localPlayer().isGameMaster());
         med.setVisible(true);
         med.dispose();
         sendUpdates(entities);
+    }
+
+    /**
+     * Returns true when the local player of the given client may edit damage on the given unit. When any player
+     * holds the Game Master role, only the Game Master may edit damage. Without a Game Master, players may edit
+     * damage only on their own units and the units of their local bots.
+     *
+     * @param client the client asking to edit damage
+     * @param entity the unit to edit damage on
+     *
+     * @return true when the client's local player may edit damage on the unit
+     */
+    static boolean canEditDamage(Client client, Entity entity) {
+        Player localPlayer = client.getLocalPlayer();
+        for (Player player : client.getGame().getPlayersList()) {
+            if (player.isGameMaster()) {
+                return localPlayer.isGameMaster();
+            }
+        }
+        return (entity.getOwnerId() == localPlayer.getId())
+              || client.getBots().containsKey(entity.getOwner().getName());
     }
 
     /**
@@ -585,10 +610,10 @@ public class LobbyActions {
     /** Adds the given entities as strategic targets for the given local bot. */
     void setPriorityTarget(String botName, Collection<Entity> entities) {
         Map<String, AbstractClient> bots = lobby.getClientGUI().getLocalBots();
-        if (!bots.containsKey(botName) || !(bots.get(botName) instanceof Princess)) {
+        if (!bots.containsKey(botName) || !(bots.get(botName) instanceof BotClient botClient)) {
             return;
         }
-        BehaviorSettings behavior = ((Princess) bots.get(botName)).getBehaviorSettings();
+        BehaviorSettings behavior = botClient.getBehaviorSettings();
         entities.forEach(e -> behavior.addPriorityUnit(e.getId()));
     }
 
@@ -1246,8 +1271,8 @@ public class LobbyActions {
     }
 
     /**
-     * Returns the best sending client for an update of the given entity or null if none can be found (entity is an
-     * enemy to the local player and all his bots)
+     * Returns the best sending client for an update of the given entity or {@code null} if none can be found (entity
+     * is an enemy to the local player and all his bots, and the local player is not a gamemaster)
      */
     private Client correctSender(Entity entity) {
         Player owner = entity.getOwner();
@@ -1265,6 +1290,10 @@ public class LobbyActions {
             }
         }
 
+        // A gamemaster may update any unit; the server accepts GM updates sent from the local client
+        if (localPlayer().isGameMaster()) {
+            return client();
+        }
         return null;
     }
 

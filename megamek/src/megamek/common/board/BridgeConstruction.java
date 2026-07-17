@@ -47,10 +47,10 @@ import megamek.logging.MMLogger;
  * part of the board file. Used by Bridge-Building Engineer infantry (TO:AUE p.152) and intended for reuse by vehicle
  * Bridge-Layer equipment (TM p.242). Placement rules (TO:AUE p.152): a bridge may be placed in any water hex that
  * connects to at least one land hex or another bridge, or across a dry canyon of any depth (a hex below its rims). A
- * single-hex span changes at most one level (the multi-level bridge rule of at most 1 level per hex), so its two mount
- * banks must be within one level; a deeper canyon-floor or deep-water far side is exempt and continued by a further
- * span. A building hex cannot be bridged. Note: ramping multi-hex bridges (a sloped deck) are not modelled - each
- * bridge hex has a single flat deck level.
+ * single-hex span changes at most one level (the multi-level bridge rule of at most 1 level per hex), so its two
+ * mount banks must be within one level; a deeper canyon-floor or deep-water far side is exempt and continued by a
+ * further span. A building hex cannot be bridged. Note: ramping multi-hex bridges (a sloped deck) are not modelled -
+ * each bridge hex has a single flat deck level.
  * <p>
  * The Construction Factor of the new bridge is supplied by the caller, since it differs by source: engineers raise
  * bridges with CF 15/40 (doubled over water), while Bridge-Layer equipment deploys bridges with its own CF values and
@@ -204,9 +204,9 @@ public final class BridgeConstruction {
      * @return {@code true} if the hex is a water hex for bridge purposes. A water hex (Total Warfare p.32) is one
      *       covered by a stream, river, swamp, pond or lake, so this is any hex holding water of any depth
      *       (streams/rivers/ponds/lakes), a swamp, or rapids. A bridge may be placed in any water hex (when adjacent to
-     *       a land hex or another bridge), and a bridge over water gains double CF from its flotation devices. Shared
-     *       by Bridge-Building Engineers (TO:AUE p.152) and the Bridge-Layer / AVLB (TM p.242 / TW) so both use the
-     *       same water-hex definition.
+     *       a land hex or another bridge), and a bridge over water gains double CF from its flotation devices. Shared by
+     *       Bridge-Building Engineers (TO:AUE p.152) and the Bridge-Layer / AVLB (TM p.242 / TW) so both use the same
+     *       water-hex definition.
      */
     public static boolean isOverWater(Hex hex) {
         return hex.containsAnyTerrainOf(Terrains.WATER, Terrains.SWAMP, Terrains.RAPIDS);
@@ -215,9 +215,10 @@ public final class BridgeConstruction {
     /**
      * Places a finished single-hex bridge in the target hex: adds the bridge terrain, registers the bridge as a board
      * structure so it can take damage and collapse, and recomputes terrain exits around the hex. The deck sits at the
-     * lower anchoring rim (the two rims are within one level) so units cross at grade and a chain of spans stays level.
-     * The caller is responsible for validating the site with {@link #isValidBridgeSite(Board, Coords, int)} and for
-     * sending the changed hex and the new building to the clients.
+     * lower anchoring rim (the two rims are within one level) so units cross at grade and a chain of spans stays
+     * level. The caller is responsible for validating the site with
+     * {@link #isValidBridgeSite(Board, Coords, int)} and for sending the changed hex and the new building to the
+     * clients.
      *
      * @param board      the board to build on
      * @param target     the hex the bridge is placed in

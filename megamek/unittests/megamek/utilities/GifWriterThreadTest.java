@@ -52,9 +52,10 @@ import org.junit.jupiter.api.Test;
 class GifWriterThreadTest {
 
     /**
-     * Regression guard: the producer ({@code addFrame}) must not block while the consumer is busy encoding a frame. The
-     * old implementation held a lock across the encode, so the game thread stalled on every frame. With a bounded queue
-     * the producer only blocks if the encoder falls far behind, never for a single in-progress encode.
+     * Regression guard: the producer ({@code addFrame}) must not block while the consumer is busy
+     * encoding a frame. The old implementation held a lock across the encode, so the game thread
+     * stalled on every frame. With a bounded queue the producer only blocks if the encoder falls far
+     * behind, never for a single in-progress encode.
      */
     @Test
     void testAddFrameDoesNotBlockWhileEncoding() throws Exception {

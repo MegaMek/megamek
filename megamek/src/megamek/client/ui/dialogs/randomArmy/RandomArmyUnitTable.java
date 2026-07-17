@@ -34,11 +34,13 @@
 
 package megamek.client.ui.dialogs.randomArmy;
 
-import java.awt.Dimension;
-import java.awt.event.ActionEvent;
-import java.awt.event.MouseEvent;
-import java.util.List;
-import java.util.Objects;
+import megamek.client.ui.Messages;
+import megamek.client.ui.models.UnitTableModel;
+import megamek.client.ui.panels.phaseDisplay.lobby.LobbyUtility;
+import megamek.client.ui.util.LambdaAction;
+import megamek.common.loaders.MekSummary;
+import megamek.common.units.Entity;
+
 import javax.swing.Action;
 import javax.swing.JFrame;
 import javax.swing.JPopupMenu;
@@ -47,13 +49,11 @@ import javax.swing.ListSelectionModel;
 import javax.swing.SwingUtilities;
 import javax.swing.event.MouseInputAdapter;
 import javax.swing.table.TableRowSorter;
-
-import megamek.client.ui.Messages;
-import megamek.client.ui.models.UnitTableModel;
-import megamek.client.ui.panels.phaseDisplay.lobby.LobbyUtility;
-import megamek.client.ui.util.LambdaAction;
-import megamek.common.loaders.MekSummary;
-import megamek.common.units.Entity;
+import java.awt.Dimension;
+import java.awt.event.ActionEvent;
+import java.awt.event.MouseEvent;
+import java.util.List;
+import java.util.Objects;
 
 public class RandomArmyUnitTable extends JTable {
 

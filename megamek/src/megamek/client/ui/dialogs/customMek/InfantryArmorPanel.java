@@ -80,8 +80,7 @@ public class InfantryArmorPanel {
     public InfantryArmorPanel(ConvInfantry entity, JPanel parentPanel, GBC2 gbc) {
         infantry = entity;
 
-        JComponent armorTitle = new EquipChoicePanel.SectionTitleLabel(Messages.getString(
-              "CustomMekDialog.infArmorSection"));
+        JComponent armorTitle = new EquipChoicePanel.SectionTitleLabel(Messages.getString("CustomMekDialog.infArmorSection"));
         parentPanel.add(armorTitle, gbc.fullLine());
 
         SimpleTechLevel gameTechLevel = SimpleTechLevel.getGameTechLevel(entity.getGame());
@@ -149,8 +148,7 @@ public class InfantryArmorPanel {
         });
         chDEST.addItemListener(e -> armorStateChanged());
 
-        JComponent specTitle = new EquipChoicePanel.SectionTitleLabel(Messages.getString(
-              "CustomMekDialog.infSpecSection"));
+        JComponent specTitle = new EquipChoicePanel.SectionTitleLabel(Messages.getString("CustomMekDialog.infSpecSection"));
         parentPanel.add(specTitle, gbc.fullLine());
 
         for (int i = 0; i < ConvInfantry.NUM_SPECIALIZATIONS; i++) {

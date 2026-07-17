@@ -82,7 +82,7 @@ public class SRMSmokeWarheadHandler extends SRMHandler {
                   game.getOptions().booleanOption(OptionsConstants.ADVANCED_COMBAT_TAC_OPS_RANGE),
                   game.getOptions().booleanOption(OptionsConstants.ADVANCED_COMBAT_TAC_OPS_LOS_RANGE));
             coords = Compute.scatter(coords, 1);
-
+            
             if (game.getBoard().contains(coords) && (range != RangeType.RANGE_OUT)) {
                 // misses and scatters to another hex
                 Report r = new Report(3195);

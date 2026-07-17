@@ -653,8 +653,8 @@ class ClimbingHelperTest {
     class GetEdgeDropHeightTests {
 
         /**
-         * Builds a 1x2 board so a Mek at (0,0) is adjacent to a target hex at (0,1), places the Mek on the
-         * {@code entityHex}, and returns it ready for getEdgeDropHeight tests.
+         * Builds a 1x2 board so a Mek at (0,0) is adjacent to a target hex at (0,1), places the
+         * Mek on the {@code entityHex}, and returns it ready for getEdgeDropHeight tests.
          */
         private Mek setupEdgeTest(Hex entityHex, int entityElevation, Hex targetHex) {
             Board board = new Board(1, 2);

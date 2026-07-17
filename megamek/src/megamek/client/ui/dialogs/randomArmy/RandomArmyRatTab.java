@@ -34,12 +34,11 @@
 
 package megamek.client.ui.dialogs.randomArmy;
 
-import java.awt.BorderLayout;
-import java.awt.FlowLayout;
-import java.util.Collections;
-import java.util.Enumeration;
-import java.util.Iterator;
-import java.util.List;
+import megamek.client.generator.RandomUnitGenerator;
+import megamek.client.ui.Messages;
+import megamek.client.ui.clientGUI.GUIPreferences;
+import megamek.common.loaders.MekSummary;
+
 import javax.swing.Box;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
@@ -54,11 +53,12 @@ import javax.swing.tree.DefaultTreeModel;
 import javax.swing.tree.TreeNode;
 import javax.swing.tree.TreePath;
 import javax.swing.tree.TreeSelectionModel;
-
-import megamek.client.generator.RandomUnitGenerator;
-import megamek.client.ui.Messages;
-import megamek.client.ui.clientGUI.GUIPreferences;
-import megamek.common.loaders.MekSummary;
+import java.awt.BorderLayout;
+import java.awt.FlowLayout;
+import java.util.Collections;
+import java.util.Enumeration;
+import java.util.Iterator;
+import java.util.List;
 
 class RandomArmyRatTab extends JPanel implements RandomArmyTab, TreeSelectionListener {
 

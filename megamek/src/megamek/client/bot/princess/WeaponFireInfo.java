@@ -1,6 +1,6 @@
 /*
  * Copyright (C) 2000-2011 Ben Mazur (bmazur@sev.org)
- * Copyright (C) 2013-2025 The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2013-2026 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -456,6 +456,17 @@ public class WeaponFireInfo {
                 return ZERO_DAMAGE;
             }
 
+            // TODO: value Magnetic Pulse debuff munitions (Munitions.M_MAGNETIC_PULSE and
+            //  Munitions.M_IATM_IMP) instead of letting them fall through to ~0 expected damage.
+            //  Both impose a +1 to-hit penalty and heat on the target; IMP also imposes a movement
+            //  penalty and a hostile-ECM field, and still deals 1 damage per missile. As written,
+            //  Princess never fires them because the scorer only sees damage. Follow the TAG pattern
+            //  below (see computeExpectedTAGDamage and Princess.computeTeamTagUtility): return a
+            //  synthetic utility-damage value estimating the enemy damage the debuff prevents -
+            //  weighted higher against accurate, high-firepower, or C3-spotter targets - and add
+            //  IMP's real per-missile damage on top. See FireControl.getPreferredAmmo for the
+            //  matching ammo-switch TODO.
+
             // Handle woods blocking cluster shots
             if (game.getOptions().booleanOption(OptionsConstants.ADVANCED_COMBAT_TAC_OPS_WOODS_COVER)) {
                 // SRMs, LB-X, Flak AC, AC-2 derivatives, MGs, smaller LRMs,
@@ -851,10 +862,15 @@ public class WeaponFireInfo {
           final boolean guess,
           final HashMap<String, BombLoadout> bombPayloads) {
 
-        final StringBuilder msg = new StringBuilder("Initializing Damage for ").append(getShooter().getDisplayName())
-              .append(" firing ").append(getWeapon().getDesc())
-              .append(" at ").append(getTarget().getDisplayName())
-              .append(":");
+        // This method runs for every weapon of every enemy of every candidate path the bot ranks, so the
+        // debug message (display names, percentage formatting) must only be built when it will be logged.
+        final boolean debugEnabled = logger.isDebugEnabled();
+        final StringBuilder msg = debugEnabled
+              ? new StringBuilder("Initializing Damage for ").append(getShooter().getDisplayName())
+                    .append(" firing ").append(getWeapon().getDesc())
+                    .append(" at ").append(getTarget().getDisplayName())
+                    .append(":")
+              : null;
 
         // Set up the attack action and calculate the chance to hit.
         if ((null == bombPayloads) || (0 == bombPayloads.get("external").getTotalBombs())) {
@@ -878,10 +894,12 @@ public class WeaponFireInfo {
         }
         // If we can't hit, set everything zero and return...
         if (12 < getToHit().getValue()) {
-            logger.debug(
-                  msg.append("\n\tImpossible toHit: ").append(getToHit().getValue())
-                        .append(" (").append(getToHit().getCumulativePlainDesc()).append(")")
-                        .append((guess) ? " [guess]" : " [real]"));
+            if (debugEnabled) {
+                logger.debug(
+                      msg.append("\n\tImpossible toHit: ").append(getToHit().getValue())
+                            .append(" (").append(getToHit().getCumulativePlainDesc()).append(")")
+                            .append((guess) ? " [guess]" : " [real]"));
+            }
             setProbabilityToHit(0);
             setMaxDamage(ZERO_DAMAGE);
             setHeat(0);
@@ -891,13 +909,15 @@ public class WeaponFireInfo {
             return;
         }
 
-        if (getShooterState().hasNaturalAptGun()) {
+        if (debugEnabled && getShooterState().hasNaturalAptGun()) {
             msg.append("\n\tAttacker has Natural Aptitude Gunnery");
         }
 
         setProbabilityToHit(Compute.oddsAbove(getToHit().getValue(), getShooterState().hasNaturalAptGun()) / 100);
 
-        msg.append("\n\tHit Chance: ").append(LOG_PER.format(getProbabilityToHit()));
+        if (debugEnabled) {
+            msg.append("\n\tHit Chance: ").append(LOG_PER.format(getProbabilityToHit()));
+        }
 
         // now that we've calculated hit odds, if we're shooting
         // a weapon capable of rapid fire, it's time to decide whether we're going to
@@ -910,19 +930,21 @@ public class WeaponFireInfo {
 
         setHeat(computeHeat(weapon));
 
-        msg.append("\n\tHeat: ").append(getHeat());
-
         setMaxDamage(computeExpectedDamage());
         setDamageOnHit(getMaxDamage());
 
-        msg.append("\n\tMax Damage: ").append(LOG_DEC.format(maxDamage));
-        msg.append("\n\tExpected Damage: ").append(LOG_DEC.format(damageOnHit));
+        if (debugEnabled) {
+            msg.append("\n\tHeat: ").append(getHeat());
+            msg.append("\n\tMax Damage: ").append(LOG_DEC.format(maxDamage));
+            msg.append("\n\tExpected Damage: ").append(LOG_DEC.format(damageOnHit));
+        }
 
         // If expected damage from Aero tagging is zero, return out - save attacks for
         // later.
         if (weapon.getType().hasFlag(WeaponType.F_TAG) && shooter.isAero() && getDamageOnHit() <= 0) {
-            logger
-                  .debug(msg.append("\n\tAerospace TAG attack not advised at this juncture").toString());
+            if (debugEnabled) {
+                logger.debug(msg.append("\n\tAerospace TAG attack not advised at this juncture").toString());
+            }
             setProbabilityToHit(0);
             setMaxDamage(ZERO_DAMAGE);
             setHeat(0);
@@ -962,7 +984,9 @@ public class WeaponFireInfo {
         }
         // No target Mek found; nothing to do
         if (null == targetMek) {
-            logger.debug(msg.toString());
+            if (debugEnabled) {
+                logger.debug(msg.toString());
+            }
             return;
         }
 
@@ -1014,7 +1038,9 @@ public class WeaponFireInfo {
             }
         }
 
-        logger.debug(msg.toString());
+        if (debugEnabled) {
+            logger.debug(msg.toString());
+        }
     }
 
     WeaponAttackAction getWeaponAttackAction() {

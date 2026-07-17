@@ -70,6 +70,14 @@ public class BLKBattleArmorFile extends BLKFile implements IMekLoader {
             t.setIsExoskeleton(true);
         }
 
+        if (dataFile.exists("clan_exo_without_harjel") && dataFile.getDataAsString("clan_exo_without_harjel")[0].equalsIgnoreCase("true")) {
+            if (t.isClan() && t.isExoskeleton()) {
+                t.setClanExoWithoutHarJel(true);
+            } else {
+                throw new EntityLoadingException("Unexpected Clan exo without HarJel found on non-Clan exoskeleton");
+            }
+        }
+
         if (!dataFile.exists("trooper count")) {
             throw new EntityLoadingException("Could not find trooper count block.");
         }

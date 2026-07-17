@@ -174,6 +174,17 @@ public class EntitySprite extends Sprite {
                     } else {
                         return reduceVehicleName(entity);
                     }
+                case NICKNAME_AND_ABBREVIATED: {
+                    String abbreviated = (entity instanceof Mek) ? entity.getModel()
+                          : abbreviateUnitName(standardLabelName());
+                    if (!pilotNick().isBlank()) {
+                        return "\"" + pilotNick().toUpperCase() + "\" (" + abbreviated + ")";
+                    } else if (!unitNick().isBlank()) {
+                        return "'" + unitNick() + "' (" + abbreviated + ")";
+                    } else {
+                        return abbreviated;
+                    }
+                }
                 case ONLY_NICKNAME:
                     if (!pilotNick().isBlank()) {
                         return "\"" + pilotNick().toUpperCase() + "\"";

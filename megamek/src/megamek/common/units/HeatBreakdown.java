@@ -101,16 +101,16 @@ public class HeatBreakdown implements Serializable {
     }
 
     /**
-     * @return an unmodifiable, insertion-ordered view of this turn's heat-buildup contributions (source label -> count
-     *       and signed total)
+     * @return an unmodifiable, insertion-ordered view of this turn's heat-buildup contributions
+     *       (source label -> count and signed total)
      */
     public Map<String, HeatContribution> buildup() {
         return Collections.unmodifiableMap(buildup);
     }
 
     /**
-     * @return an unmodifiable, insertion-ordered view of this turn's heat-dissipation contributions (source label ->
-     *       heat removed)
+     * @return an unmodifiable, insertion-ordered view of this turn's heat-dissipation contributions
+     *       (source label -> heat removed)
      */
     public Map<String, Integer> dissipation() {
         return Collections.unmodifiableMap(dissipation);
@@ -162,10 +162,7 @@ public class HeatBreakdown implements Serializable {
             if (tooltip.length() > 0) {
                 tooltip.append(", ");
             }
-            tooltip.append(Messages.getString("HeatBreakdown.other"))
-                  .append(": ")
-                  .append(remainder > 0 ? "+" : "")
-                  .append(remainder);
+            tooltip.append(Messages.getString("HeatBreakdown.other")).append(": ").append(remainder > 0 ? "+" : "").append(remainder);
         }
         return tooltip.toString();
     }

@@ -189,8 +189,8 @@ public class TemporaryECMField implements Serializable {
     /**
      * Converts this temporary field to an ECMInfo object for use in ECM calculations.
      * <p>
-     * EMP mine ECM is hostile to everyone (including the player who placed the mine), similar to Chaff. This is
-     * achieved by passing null as the owner.
+     * EMP mine ECM is hostile to everyone (including the player who placed the mine),
+     * similar to Chaff. This is achieved by passing null as the owner.
      * </p>
      *
      * @return An ECMInfo representing this temporary field, hostile to all players

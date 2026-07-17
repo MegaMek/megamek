@@ -32,11 +32,12 @@
  */
 package megamek.client.ui.dialogs;
 
-import java.awt.Component;
-import java.awt.Dimension;
-import java.awt.GridBagConstraints;
-import java.awt.GridBagLayout;
-import java.awt.Insets;
+import megamek.client.ui.Messages;
+import megamek.common.SourceBook;
+import megamek.common.SourceBooks;
+import megamek.common.annotations.Nullable;
+
+import java.awt.*;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
@@ -46,11 +47,6 @@ import java.util.stream.Collectors;
 import javax.swing.*;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
-
-import megamek.client.ui.Messages;
-import megamek.common.SourceBook;
-import megamek.common.SourceBooks;
-import megamek.common.annotations.Nullable;
 
 public class SourceChooserDialog {
 
@@ -175,8 +171,7 @@ public class SourceChooserDialog {
         JDialog dialog = optionPane.createDialog(parent, Messages.getString("SourceChooser.title"));
         if (firstSelectedCheckBox != null) {
             JCheckBox selectedCheckBox = firstSelectedCheckBox;
-            SwingUtilities.invokeLater(() -> bookScrollPane.getViewport()
-                  .setViewPosition(selectedCheckBox.getLocation()));
+            SwingUtilities.invokeLater(() -> bookScrollPane.getViewport().setViewPosition(selectedCheckBox.getLocation()));
         }
         dialog.setVisible(true);
 

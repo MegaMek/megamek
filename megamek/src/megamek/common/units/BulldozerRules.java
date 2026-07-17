@@ -148,9 +148,9 @@ public final class BulldozerRules {
 
     /**
      * Checks whether a vehicle may declare a Clear Rubble action ending in the given hex (TacOps): it must be a vehicle
-     * with a working bulldozer (or, with the unofficial rule, a backhoe), the relevant optional rule(s) must be
-     * enabled, and the hex must hold rubble. Returns the specific reason it is illegal so the caller can log it, or
-     * {@code null} when legal.
+     * with a working bulldozer (or, with the unofficial rule, a backhoe), the relevant optional rule(s) must be enabled,
+     * and the hex must hold rubble. Returns the specific reason it is illegal so the caller can log it, or {@code null}
+     * when legal.
      *
      * @param entity the unit attempting to clear rubble
      * @param hex    the hex the clearing would take place in (the unit's final hex), or {@code null}

@@ -132,8 +132,7 @@ class InfantryHeatWeaponHandlerTest {
         doReturn(true).when(mockEntityTarget).tracksHeat();
 
         HitData hitData = new HitData(Mek.LOC_CENTER_TORSO, false);
-        doReturn(hitData).when(mockEntityTarget)
-              .rollHitLocation(anyInt(), anyInt(), anyInt(), any(AimingMode.class), anyInt());
+        doReturn(hitData).when(mockEntityTarget).rollHitLocation(anyInt(), anyInt(), anyInt(), any(AimingMode.class), anyInt());
         doReturn("CT").when(mockEntityTarget).getLocationAbbr(any(HitData.class));
         doReturn(false).when(mockEntityTarget).removePartialCoverHits(anyInt(), anyInt(), anyInt());
 
@@ -195,19 +194,9 @@ class InfantryHeatWeaponHandlerTest {
 
             ArgumentCaptor<Integer> damageCaptor = ArgumentCaptor.forClass(Integer.class);
             verify(mockGameManager).damageEntity(
-                  any(),
-                  any(),
-                  damageCaptor.capture(),
-                  anyBoolean(),
-                  any(DamageType.class),
-                  anyBoolean(),
-                  anyBoolean(),
-                  anyBoolean(),
-                  anyBoolean(),
-                  anyBoolean());
-            assertEquals(5,
-                  damageCaptor.getValue(),
-                  "Damage should be halved (floor(0.5 * 10)) when entity is inside the building");
+                  any(), any(), damageCaptor.capture(),
+                  anyBoolean(), any(DamageType.class), anyBoolean(), anyBoolean(), anyBoolean(), anyBoolean(), anyBoolean());
+            assertEquals(5, damageCaptor.getValue(), "Damage should be halved (floor(0.5 * 10)) when entity is inside the building");
         }
 
         @Test
@@ -219,19 +208,9 @@ class InfantryHeatWeaponHandlerTest {
 
             ArgumentCaptor<Integer> damageCaptor = ArgumentCaptor.forClass(Integer.class);
             verify(mockGameManager).damageEntity(
-                  any(),
-                  any(),
-                  damageCaptor.capture(),
-                  anyBoolean(),
-                  any(DamageType.class),
-                  anyBoolean(),
-                  anyBoolean(),
-                  anyBoolean(),
-                  anyBoolean(),
-                  anyBoolean());
-            assertEquals(10,
-                  damageCaptor.getValue(),
-                  "Damage should be unmodified when entity is not inside the building");
+                  any(), any(), damageCaptor.capture(),
+                  anyBoolean(), any(DamageType.class), anyBoolean(), anyBoolean(), anyBoolean(), anyBoolean(), anyBoolean());
+            assertEquals(10, damageCaptor.getValue(), "Damage should be unmodified when entity is not inside the building");
         }
 
         @Test
@@ -241,16 +220,8 @@ class InfantryHeatWeaponHandlerTest {
 
             ArgumentCaptor<Integer> damageCaptor = ArgumentCaptor.forClass(Integer.class);
             verify(mockGameManager).damageEntity(
-                  any(),
-                  any(),
-                  damageCaptor.capture(),
-                  anyBoolean(),
-                  any(DamageType.class),
-                  anyBoolean(),
-                  anyBoolean(),
-                  anyBoolean(),
-                  anyBoolean(),
-                  anyBoolean());
+                  any(), any(), damageCaptor.capture(),
+                  anyBoolean(), any(DamageType.class), anyBoolean(), anyBoolean(), anyBoolean(), anyBoolean(), anyBoolean());
             assertEquals(10, damageCaptor.getValue(), "Damage should be unmodified when there is no building");
         }
     }

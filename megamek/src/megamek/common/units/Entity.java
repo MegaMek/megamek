@@ -120,6 +120,7 @@ import megamek.common.rolls.PilotingRollData;
 import megamek.common.rolls.Roll;
 import megamek.common.rolls.TargetRoll;
 import megamek.common.turns.TurnOrdered;
+import megamek.common.util.UUIDUtil;
 import megamek.common.util.RoundWeight;
 import megamek.common.weapons.AlamoMissileWeapon;
 import megamek.common.weapons.TeleMissileTracker;
@@ -165,12 +166,23 @@ public abstract class Entity extends TurnOrdered
 
     @Deprecated(since = "0.51.0", forRemoval = true)
     public int getImpLastTurn() {
-        return impLastTurn;
+        return getMagneticPulseState().getImpLastTurn();
     }
 
     @Deprecated(since = "0.51.0", forRemoval = true)
     public void setImpLastTurn(int impLastTurn) {
-        this.impLastTurn = impLastTurn;
+        getMagneticPulseState().setImpLastTurn(impLastTurn);
+    }
+
+    /**
+     * @return this unit's Magnetic Pulse effect state, lazily created so it is non-null even after an older save (which
+     *       predates the field) is loaded.
+     */
+    private MagneticPulseState getMagneticPulseState() {
+        if (magneticPulseState == null) {
+            magneticPulseState = new MagneticPulseState();
+        }
+        return magneticPulseState;
     }
 
     public enum InvalidSourceBuildReason {
@@ -274,6 +286,15 @@ public abstract class Entity extends TurnOrdered
      * ID settable by external sources (such as mm.net)
      */
     protected String externalId = "-1";
+
+    /**
+     * Persistent identity of this unit design in MTF and BLK files.
+     */
+    private String unitFileUUID;
+    private transient String originalChassis;
+    private transient String originalModel;
+    private transient String originalUnitFileUUID;
+    private transient boolean unitFileUUIDWasProvided;
 
     protected double weight;
     protected boolean omni = false;
@@ -925,6 +946,11 @@ public abstract class Entity extends TurnOrdered
     protected boolean empInterferenceHeat = false;
     protected int empShutdownRounds = 0;
 
+    // Magnetic Pulse (MP, TO:AUE p.182) and Improved Magnetic Pulse (iATM IMP) missile effect state.
+    // All counters, heat remainders and derived modifiers live in this helper; the methods below are
+    // thin delegators. May be null after loading an older save, so access it via getMagneticPulseState().
+    private MagneticPulseState magneticPulseState = new MagneticPulseState();
+
     // for how many rounds has blue shield been active?
     private int blueShieldRounds = 0;
 
@@ -954,18 +980,6 @@ public abstract class Entity extends TurnOrdered
      * turn.
      */
     private String newC3NetIdString = null;
-
-    /**
-     * Keeps track of the number of iATM improved magnetic pulse (IMP) his this entity took this turn.
-     */
-    private int impThisTurn = 0;
-
-    /**
-     * Keeps track of the number of iATM improved magnetic pulse (IMP) his this entity took last turn.
-     */
-    private int impLastTurn = 0;
-
-    private int impThisTurnHeatHelp = 0;
 
     protected boolean military;
 
@@ -1093,8 +1107,6 @@ public abstract class Entity extends TurnOrdered
         setC3NetId(this);
         quirks.initialize();
         secondaryPositions = new HashMap<>();
-        impThisTurn = 0;
-        impLastTurn = 0;
 
         weaponSortOrder = GUIP.getDefaultWeaponSortOrder();
 
@@ -1102,6 +1114,7 @@ public abstract class Entity extends TurnOrdered
         // prisoners in MHQ
         // and should have no effect on MM
         externalId = UUID.randomUUID().toString();
+        regenerateUnitFileUUID();
         initTechAdvancement();
         offBoardShotObservers = new HashSet<>();
         incomingGuidedAttacks = new ArrayList<>();
@@ -1209,6 +1222,54 @@ public abstract class Entity extends TurnOrdered
 
     public void setExternalId(int id) {
         externalId = Integer.toString(id);
+    }
+
+    public String getUnitFileUUID() {
+        return unitFileUUID;
+    }
+
+    public void setUnitFileUUID(String unitFileUUID) {
+        try {
+            UUID uuid = UUID.fromString(unitFileUUID.trim());
+            if ((uuid.version() != 7) || (uuid.variant() != 2)) {
+                regenerateUnitFileUUID();
+                return;
+            }
+            this.unitFileUUID = uuid.toString();
+            unitFileUUIDWasProvided = true;
+        } catch (IllegalArgumentException | NullPointerException ex) {
+            regenerateUnitFileUUID();
+        }
+    }
+
+    public void regenerateUnitFileUUID() {
+        unitFileUUID = UUIDUtil.newUUIDv7().toString();
+        unitFileUUIDWasProvided = false;
+    }
+
+    public @Nullable String getOriginalChassis() {
+        return originalChassis;
+    }
+
+    public @Nullable String getOriginalModel() {
+        return originalModel;
+    }
+
+    public @Nullable String getOriginalUnitFileUUID() {
+        return originalUnitFileUUID;
+    }
+
+    public void storeOriginalUnitData() {
+        originalChassis = chassis;
+        originalModel = model;
+        originalUnitFileUUID = unitFileUUIDWasProvided ? unitFileUUID : null;
+    }
+
+    public void storeSavedUnitData() {
+        originalChassis = chassis;
+        originalModel = model;
+        originalUnitFileUUID = unitFileUUID;
+        unitFileUUIDWasProvided = true;
     }
 
     /**
@@ -2118,9 +2179,9 @@ public abstract class Entity extends TurnOrdered
     }
 
     /**
-     * Returns true if this entity is currently climbing or dangling from a cliff face (TO:AR p.20). Both climbing and
-     * dangling entities have the same combat restrictions (rear weapons only, no physical attacks, -2 to-hit target
-     * modifier).
+     * Returns true if this entity is currently climbing or dangling from a cliff face (TO:AR p.20).
+     * Both climbing and dangling entities have the same combat restrictions
+     * (rear weapons only, no physical attacks, -2 to-hit target modifier).
      */
     public boolean isClimbing() {
         return climbing || dangling;
@@ -3529,6 +3590,10 @@ public abstract class Entity extends TurnOrdered
             mp = Math.max(0, mp - getHeatMPReduction());
         }
 
+        // Improved Magnetic Pulse (iATM IMP) missile movement reduction (IO IMP rules). Zero unless
+        // this unit was recently hit by IMP missiles; Running/Sprint recalculate from this value.
+        mp = Math.max(0, mp - getImpMpReduction());
+
         if (!mpCalculationSetting.ignoreCargo()) {
             mp = Math.max(mp - getCargoMpReduction(this), 0);
         }
@@ -3728,11 +3793,14 @@ public abstract class Entity extends TurnOrdered
     }
 
     public int getJumpMP(MPCalculationSetting mpCalculationSetting) {
+        int mp;
         if (mpCalculationSetting.ignoreGravity()) {
-            return getOriginalJumpMP();
+            mp = getOriginalJumpMP();
         } else {
-            return applyGravityEffectsOnMP(getOriginalJumpMP());
+            mp = applyGravityEffectsOnMP(getOriginalJumpMP());
         }
+        // Improved Magnetic Pulse (iATM IMP) missile movement reduction (IO IMP rules)
+        return Math.max(0, mp - getImpMpReduction());
     }
 
     public int getJumpType() {
@@ -4995,7 +5063,9 @@ public abstract class Entity extends TurnOrdered
             // Make sure this ammo is in the chain, then move it to the head.
             for (Mounted<?> current = mounted; current != null; current = current.getLinked()) {
                 if (current == mountedAmmo) {
-                    current.getLinkedBy().setLinked(current.getLinked());
+                    if (current.getLinkedBy() != null) {
+                        current.getLinkedBy().setLinked(current.getLinked());
+                    }
                     current.setLinked(mounted.getLinked());
                     mounted.setLinked(current);
                     return true;
@@ -7543,7 +7613,7 @@ public abstract class Entity extends TurnOrdered
 
         newRoundNovaNetSwitch();
         newRoundVariableRangeSwitch();
-        doNewRoundIMP();
+        getMagneticPulseState().newRound();
 
         // reset hexes passed through
         setPassedThrough(new Vector<>());
@@ -7855,12 +7925,12 @@ public abstract class Entity extends TurnOrdered
                               (weaponHandler instanceof CapitalMissileBearingsOnlyHandler) ?
                                     getGame().getTarget(
                                           weaponHandler.getWeaponAttackAction()
-                                                .getOriginalTargetType(),
+                                          .getOriginalTargetType(),
                                           weaponHandler.getWeaponAttackAction()
-                                                .getOriginalTargetId()) :
+                                          .getOriginalTargetId()) :
                                     getGame().getEntity(
                                           weaponHandler.getWeaponAttackAction()
-                                                .getEntityId())))
+                                          .getEntityId())))
                   .map(WeaponHandler::getWeaponAttackAction)
                   .collect(Collectors.toList());
 
@@ -11476,8 +11546,8 @@ public abstract class Entity extends TurnOrdered
     /**
      * Returns {@code true} if this unit's pre-end declaration is made per unit (it needs its own turn), as opposed to
      * the player-wide declarations (Nova networks, Variable Range Targeting, crew abandonment, minesweeper) that a
-     * player makes once for all their units through a single dialog. Used to collapse the player-wide turns to one per
-     * player while keeping the per-unit turns.
+     * player makes once for all their units through a single dialog. Used to collapse the player-wide turns to one
+     * per player while keeping the per-unit turns.
      */
     public boolean hasEntityScopedPreEndDeclaration() {
         // Infantry-vs-infantry combat and Bridge-Layer (AVLB) deployment are both declared per unit (TM p.242 / TW).
@@ -12310,6 +12380,19 @@ public abstract class Entity extends TurnOrdered
     public boolean hasTAG() {
         for (WeaponMounted m : getWeaponList()) {
             if (m.getType().hasFlag(WeaponType.F_TAG)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    /**
+     * @return {@code true} if this unit mounts at least one artillery weapon (regardless of whether it is currently
+     *       loaded or operational)
+     */
+    public boolean hasArtillery() {
+        for (WeaponMounted weapon : getWeaponList()) {
+            if (weapon.getType().hasFlag(WeaponType.F_ARTILLERY)) {
                 return true;
             }
         }
@@ -14141,6 +14224,37 @@ public abstract class Entity extends TurnOrdered
     }
 
     /**
+     * Applies the Magnetic Pulse (MP) missile effect to this unit (IO p.62). While active the unit takes a +1 to-hit
+     * penalty on all of its own weapon attacks. Additional MP hits do not extend or stack the effect.
+     */
+    public void setMagneticPulseHit() {
+        getMagneticPulseState().applyStandardPulse();
+    }
+
+    public int getMagneticPulseRounds() {
+        return getMagneticPulseState().getStandardRounds();
+    }
+
+    /**
+     * Applies a Magnetic Pulse (MP) missile salvo that hit this unit (TO:AUE p.182). MP missiles deal no damage; they
+     * impose a +1 to-hit penalty on the unit's own weapon attacks, and add outside heat to fusion-powered units at +1
+     * per {@code heatDivisor} warheads (5 for LRM, 3 for SRM, rounded down). MP missiles have no effect against
+     * conventional infantry.
+     *
+     * @param missiles    number of MP warheads that hit this unit
+     * @param heatDivisor warheads needed per +1 heat (5 for LRM, 3 for SRM)
+     */
+    public void applyMagneticPulse(int missiles, int heatDivisor) {
+        if ((missiles <= 0) || isConventionalInfantry()) {
+            return;
+        }
+        getMagneticPulseState().applyStandardPulse();
+        if (hasEngine() && getEngine().isFusion()) {
+            heatFromExternal += getMagneticPulseState().computeStandardHeat(missiles, heatDivisor);
+        }
+    }
+
+    /**
      * Sets EMP mine interference effect on this entity.
      *
      * @param rounds Number of rounds the interference lasts
@@ -14181,19 +14295,48 @@ public abstract class Entity extends TurnOrdered
         return empShutdownRounds;
     }
 
+    /**
+     * Records Improved Magnetic Pulse (iATM IMP) missile hits on this unit (IO IMP rules). The hit
+     * count drives the to-hit, movement and hostile-ECM effects (see {@link #getImpToHitModifier()},
+     * {@link #getImpMpReduction()}). Only fusion-powered units also take outside heat, at +1 per 3
+     * warheads that hit (rounded down, with the remainder carried across the turn's salvos).
+     *
+     * @param missiles number of IMP warheads that hit this unit
+     */
     public void addIMPHits(int missiles) {
-        // effects last for only one turn.
-        impThisTurn += missiles;
-        int heatAdd = missiles + impThisTurnHeatHelp;
-        impThisTurnHeatHelp = heatAdd % 3;
-        heatAdd = heatAdd - impThisTurnHeatHelp;
-        heatAdd = heatAdd / 3;
-        heatFromExternal += heatAdd;
+        getMagneticPulseState().addImpHits(missiles);
+        // Non-fusion units ignore the heat effect (IO IMP rules).
+        if (hasEngine() && getEngine().isFusion()) {
+            heatFromExternal += getMagneticPulseState().computeImpHeat(missiles);
+        }
     }
 
-    private void doNewRoundIMP() {
-        impLastTurn = impThisTurn;
-        impThisTurn = 0;
+    /**
+     * @return the +to-hit penalty this unit currently suffers on its own weapon attacks from iATM IMP missiles: +1 per
+     *       3 warheads that hit, capped at +2 (or +3 for ProtoMeks). This applies to fusion and non-fusion units alike
+     *       (IO IMP rules).
+     */
+    public int getImpToHitModifier() {
+        return getMagneticPulseState().getImpToHitModifier(isProtoMek());
+    }
+
+    /**
+     * @return the Walking/Cruise and Jumping/Thrust MP reduction this unit currently suffers from iATM IMP missiles: -1
+     *       per 3 warheads that hit, capped at -2 (or -3 for ProtoMeks). Non-fusion units ignore this reduction (IO IMP
+     *       rules).
+     */
+    public int getImpMpReduction() {
+        return getMagneticPulseState().getImpMpReduction(hasEngine() && getEngine().isFusion(), isProtoMek());
+    }
+
+    /**
+     * @return {@code true} if this unit is currently treated as standing inside a hostile standard ECM field because of
+     *       Improved Magnetic Pulse (iATM IMP) missile hits (IO IMP rules). Becomes true once at least 3 IMP warheads
+     *       are affecting the unit (the same threshold as the +1 to-hit effect). Applies to fusion and non-fusion units
+     *       alike.
+     */
+    public boolean isImpEcmAffected() {
+        return getMagneticPulseState().isImpEcmAffected();
     }
 
     /**
@@ -16059,6 +16202,13 @@ public abstract class Entity extends TurnOrdered
                             LOGGER.info("Legacy obsolete quirk found for {} {} - converting to 'unknown' marker",
                                   getChassis(), getModel());
                             option.setValue("unknown");
+                        } else if (OptionsConstants.QUIRK_POS_DIRECTIONAL_TORSO_MOUNT.equals(quirkEntry.getQuirk())) {
+                            // Legacy bare form (pre-torso-set): the boolean quirk applied the 2-point Directional
+                            // Torso Mount to every eligible torso weapon (BMM p.83), so default to all three torsos.
+                            // Units affected include the Barghest, Blitzkrieg and Omni-Marauder.
+                            LOGGER.info("[DirTorsoMount] Legacy directional_torso_mount quirk found for {} {}"
+                                  + " - defaulting to all torso locations (LT RT CT)", getChassis(), getModel());
+                            option.setValue("LT RT CT");
                         } else {
                             option.setValue("");
                         }

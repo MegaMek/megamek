@@ -434,9 +434,31 @@ public class TWGameManager extends AbstractGameManager {
 
     public void processGameMasterRequest() {
         if (playerRequestingGameMaster != null) {
-            setGameMaster(playerRequestingGameMaster, true);
+            Player currentGameMaster = getGameMaster();
+            if (currentGameMaster == null) {
+                setGameMaster(playerRequestingGameMaster, true);
+            } else {
+                sendServerChat(playerRequestingGameMaster.getName()
+                      + " cannot become Game Master: "
+                      + currentGameMaster.getName()
+                      + " already holds the role.");
+            }
             playerRequestingGameMaster = null;
         }
+    }
+
+    /**
+     * Returns the player currently holding the Game Master role. Only one player may hold the role at a time.
+     *
+     * @return the current Game Master, or {@code null} if there is none
+     */
+    public @Nullable Player getGameMaster() {
+        for (Player player : game.getPlayersList()) {
+            if (player.getGameMaster()) {
+                return player;
+            }
+        }
+        return null;
     }
 
     public void setGameMaster(Player player, boolean gameMaster) {
@@ -634,8 +656,35 @@ public class TWGameManager extends AbstractGameManager {
 
     void resetEntityRound() {
         for (Entity entity : game.getEntitiesVector()) {
+            // Snapshot Magnetic Pulse effect state so we can notify the player when it wears off.
+            boolean wasMagneticPulseAffected = entity.getMagneticPulseRounds() > 0;
+            boolean wasImpAffected = isAffectedByImprovedMagneticPulse(entity);
+
             entity.newRound(game.getRoundCount());
+
+            if (wasMagneticPulseAffected && (entity.getMagneticPulseRounds() == 0)) {
+                sendMagneticPulseToast(entity, false, false);
+            }
+            if (wasImpAffected && !isAffectedByImprovedMagneticPulse(entity)) {
+                sendMagneticPulseToast(entity, true, false);
+            }
         }
+    }
+
+    /**
+     * @return {@code true} if the unit is currently under any iATM Improved Magnetic Pulse effect - the to-hit /
+     *       movement / ECM effect on Meks, vehicles, fighters and ProtoMeks, disabled troopers on battle armor, or
+     *       disabled energy weapons on conventional infantry.
+     */
+    private static boolean isAffectedByImprovedMagneticPulse(Entity entity) {
+        if (entity.getImpToHitModifier() > 0) {
+            return true;
+        }
+        if ((entity instanceof BattleArmor battleArmor) && (battleArmor.getImprovedMagneticPulseDisabledTroopers()
+              > 0)) {
+            return true;
+        }
+        return (entity instanceof ConvInfantry convInfantry) && convInfantry.isEnergyWeaponsDisabled();
     }
 
     /**
@@ -969,6 +1018,9 @@ public class TWGameManager extends AbstractGameManager {
                     break;
                 case PLAYER_TEAM_CHANGE:
                     ServerLobbyHelper.receiveLobbyTeamChange(packet, connId, getGame(), this);
+                    break;
+                case CLIENT_ARTILLERY_REVEAL:
+                    receiveArtilleryRevealPreference(connId, packet);
                     break;
                 default:
                     break;
@@ -6328,6 +6380,12 @@ public class TWGameManager extends AbstractGameManager {
                                     entity.setSecondaryFacing(tta.getFacing());
                                 }
                             }
+                            case DirectionalMountFacingAction mountFacingAction -> {
+                                if (entity instanceof Mek directionalMek) {
+                                    DirectionalTorsoMountRules.applyMountFacing(directionalMek,
+                                          mountFacingAction.getWeaponNumber(), mountFacingAction.getFacing());
+                                }
+                            }
                             case FlipArmsAction faa -> entity.setArmsFlipped(faa.getIsFlipped());
                             case SearchlightAttackAction saa -> {
                                 boolean hexesAdded = saa.setHexesIlluminated(game);
@@ -7306,7 +7364,128 @@ public class TWGameManager extends AbstractGameManager {
         }
         return null;
     }
+    
+    /**
+     * Handles an entity stepping on a pit trap.
+     * Returns true if the entity entering the hex fell over
+     */
+    public boolean handlePitfall(Entity entity, Coords dest, Vector<Report> vMineReport) {
+    	boolean fellOver = false;
+    	
+    	Minefield triggeredPittrap = null;
+    	
+    	for (Minefield minefield : getGame().getMinefields(dest)) {
+    		if (minefield.getType() != Minefield.TYPE_PITFALL) {
+    			continue;
+    		}
+    		
+    		// meks are the only things that can be affected by pitfalls for now
+	    	if (entity instanceof Mek) {
+	    		
+	            Report stepReport = new Report(2581);
+	            stepReport.subject = entity.getId();
+	            stepReport.add(entity.getShortName(), true);
+	            stepReport.add(dest.getBoardNum(), true);
+	            vMineReport.add(stepReport);
+	            
+	            TargetRoll rollTarget = new TargetRoll(4, "pitfall");
+	            
+	            if (entity.hasAbility(OptionsConstants.MISC_EAGLE_EYES)) {
+	            	rollTarget.addModifier(+2, "eagle eyes");               
+	    		}
 
+	            int roll = Compute.d6(2);
+	            
+	            fellOver = roll >= rollTarget.getValue();
+	    		
+	            Report activationReport = new Report(2582);
+	            activationReport.subject = entity.getId();
+	            activationReport.add(rollTarget);
+	            activationReport.add(roll);
+	            activationReport.choose(fellOver);	 
+	            activationReport.indent();
+	            vMineReport.add(activationReport);	    		
+	    		if (fellOver) {
+	    			triggeredPittrap = minefield;
+	    			
+	    			PilotingRollData pilotingRollData = entity.getBasePilotingRoll();
+	    			vMineReport.addAll(doEntityFall(entity, dest, 0, pilotingRollData));
+	    			
+	    			Hex hex = getGame().getBoard(entity.getBoardId()).getHex(dest);
+	    			hex.removeAllTerrains();
+	    			hex.addTerrain(new Terrain(Terrains.RUBBLE, 1));
+	    			sendChangedHex(dest, entity.getBoardId());
+	    			
+	    			Report rubbleReport = new Report(2583);
+	    			rubbleReport.indent();
+	    			vMineReport.add(rubbleReport);
+	    		} else {
+	    			revealMinefield(minefield);
+	    		}
+	    	}
+    	}
+    	
+    	if (triggeredPittrap != null) {
+    		removeMinefield(triggeredPittrap);
+    	}
+    	
+    	return fellOver;
+    }
+
+    /**
+     * Handles an entity stepping on a tripwire.
+     * Returns true if the entity entering the hex fell over
+     * Assumes that src != dest
+     */
+    public boolean handleTripwire(Entity entity, Coords src, Coords dest, EntityMovementType movementType, Vector<Report> vMineReport) {
+    	boolean fellOver = false;
+    	
+    	Minefield triggeredTripwire = null;
+    	
+    	for (Minefield minefield : getGame().getMinefields(dest)) {
+    		if (minefield.getType() != Minefield.TYPE_TRIPWIRE) {
+    			continue;
+    		}
+    		
+    		// meks are the only things that can be affected by tripwires
+	    	// if we neither walked nor ran, we don't need to be doing this
+	    	if (entity instanceof Mek &&
+	    		(movementType == EntityMovementType.MOVE_WALK ||
+	    		movementType == EntityMovementType.MOVE_RUN)) {
+	    		
+	            Report hitReport = new Report(2580);
+	            hitReport.subject = entity.getId();
+	            hitReport.add(entity.getShortName(), true);
+	            hitReport.add(dest.getBoardNum(), true);
+	            hitReport.indent();
+	            vMineReport.add(hitReport);
+	    		
+	            PilotingRollData rollData = entity.getBasePilotingRoll(entity.moved);
+	    		
+	    		if (movementType == EntityMovementType.MOVE_WALK) {
+	    			rollData.addModifier(2, "walking");
+	    		} else if (movementType == EntityMovementType.MOVE_RUN) {
+	    			rollData.addModifier(4, "running");
+	    		}
+	    		
+	    		if (entity.hasAbility(OptionsConstants.MISC_EAGLE_EYES)) {
+	    			rollData.addModifier(-2, "eagle eyes");               
+	    		}
+	    		
+	    		// if we are here, we can assume we are on the ground level
+	    		int result = doSkillCheckWhileMoving(entity, 0, src, dest, rollData, true, vMineReport);
+	    		fellOver = result > 0;
+	    		triggeredTripwire = minefield;
+	    	}
+    	}
+    	
+    	if (triggeredTripwire != null) {
+    		removeMinefield(triggeredTripwire);
+    	}
+    	
+    	return fellOver;
+    }
+    
     /**
      * Check for any detonations when an entity enters a minefield, except a vibrabomb.
      *
@@ -7336,10 +7515,11 @@ public class TWGameManager extends AbstractGameManager {
         // loop through mines in this hex
         for (Minefield mf : game.getMinefields(c)) {
             // VibraBombs and EMP mines are handled differently (proximity-based detection)
-            if ((mf.getType() == Minefield.TYPE_VIBRABOMB) || (mf.getType() == Minefield.TYPE_EMP)) {
+            if ((mf.getType() == Minefield.TYPE_VIBRABOMB) || (mf.getType() == Minefield.TYPE_EMP) ||
+            	(mf.getType() == Minefield.TYPE_TRIPWIRE) || (mf.getType() == Minefield.TYPE_PITFALL)) {
                 continue;
             }
-
+            
             try {
                 // if we are in the water, then the sea mine will only blow up if at
                 // the right depth
@@ -7447,9 +7627,7 @@ public class TWGameManager extends AbstractGameManager {
             // set the target number
             if (target == -1) {
                 target = mf.getTrigger();
-                if (mf.getType() == Minefield.TYPE_ACTIVE) {
-                    target = 9;
-                }
+                
                 if (entity instanceof Infantry) {
                     target += 1;
                 }
@@ -7502,7 +7680,6 @@ public class TWGameManager extends AbstractGameManager {
 
             // apply damage
             trippedMine = true;
-            // explodedMines.add(mf);
             mf.setDetonated(true);
             if (mf.getType() == Minefield.TYPE_INFERNO) {
                 // report hitting an inferno mine
@@ -8215,41 +8392,11 @@ public class TWGameManager extends AbstractGameManager {
     }
 
     /**
-     * Add heat from the movement phase
+     * Add heat from the movement phase. Delegates to {@link HeatResolver}, which itemizes the heat sources using the
+     * common message bundle (the {@code HeatBreakdown.*} keys live there).
      */
     public void addMovementHeat() {
-        for (Entity entity : game.inGameTWEntities()) {
-            if (entity.hasDamagedRHS()) {
-                entity.changeHeatBuildup(1, Messages.getString("HeatBreakdown.damagedRadicalHeatSink"));
-            }
-
-            if ((entity.getMovementMode() == EntityMovementMode.BIPED_SWIM) ||
-                  (entity.getMovementMode() == EntityMovementMode.QUAD_SWIM)) {
-                // UMU heat
-                entity.changeHeatBuildup(1, Messages.getString("HeatBreakdown.movementUMU"));
-                continue;
-            }
-
-            // build up heat from movement
-            if (entity.moved == EntityMovementType.MOVE_NONE) {
-                entity.changeHeatBuildup(entity.getStandingHeat(),
-                      Messages.getString("HeatBreakdown.movementStanding"));
-            } else if ((entity.moved == EntityMovementType.MOVE_WALK) ||
-                  (entity.moved == EntityMovementType.MOVE_VTOL_WALK) ||
-                  (entity.moved == EntityMovementType.MOVE_CAREFUL_STAND)) {
-                entity.changeHeatBuildup(entity.getWalkHeat(), Messages.getString("HeatBreakdown.movementWalking"));
-            } else if ((entity.moved == EntityMovementType.MOVE_RUN) ||
-                  (entity.moved == EntityMovementType.MOVE_VTOL_RUN) ||
-                  (entity.moved == EntityMovementType.MOVE_SKID)) {
-                entity.changeHeatBuildup(entity.getRunHeat(), Messages.getString("HeatBreakdown.movementRunning"));
-            } else if (entity.moved == EntityMovementType.MOVE_JUMP && !entity.isJumpingWithMechanicalBoosters()) {
-                entity.changeHeatBuildup(entity.getJumpHeat(entity.delta_distance),
-                      Messages.getString("HeatBreakdown.movementJumping"));
-            } else if (entity.moved == EntityMovementType.MOVE_SPRINT ||
-                  entity.moved == EntityMovementType.MOVE_VTOL_SPRINT) {
-                entity.changeHeatBuildup(entity.getSprintHeat(), Messages.getString("HeatBreakdown.movementSprinting"));
-            }
-        }
+        heatResolver.addMovementHeat();
     }
 
     /**
@@ -10474,6 +10621,12 @@ public class TWGameManager extends AbstractGameManager {
                         entity.postProcessFacingChange();
                     }
                 }
+                case DirectionalMountFacingAction mountFacingAction -> {
+                    if (entity instanceof Mek directionalMek) {
+                        DirectionalTorsoMountRules.applyMountFacing(directionalMek,
+                              mountFacingAction.getWeaponNumber(), mountFacingAction.getFacing());
+                    }
+                }
                 case FlipArmsAction faa -> entity.setArmsFlipped(faa.getIsFlipped());
                 case FindClubAction ignored -> resolveFindClub(entity);
                 case UnjamAction ignored -> resolveUnjam(entity);
@@ -10541,7 +10694,7 @@ public class TWGameManager extends AbstractGameManager {
                     Entity target = game.getEntity(bloodStalkerAction.getTargetID());
 
                     if (target != null) {
-                        target.setBloodStalkerTarget(bloodStalkerAction.getTargetID());
+                        entity.setBloodStalkerTarget(bloodStalkerAction.getTargetID());
                         Report r = new Report(10000);
                         r.subject = entity.getId();
                         r.add(entity.getDisplayName());
@@ -17410,8 +17563,9 @@ public class TWGameManager extends AbstractGameManager {
             if ((((Mek) entity).getCockpitType() == Mek.COCKPIT_DUAL) && entity.getCrew().hasDedicatedPilot()) {
                 psrThreshold = 30;
             }
-            if ((entity.damageThisPhase >= psrThreshold) && !entity.isHullDown()) {
-                if (game.getOptions().booleanOption(OptionsConstants.ADVANCED_GROUND_MOVEMENT_TAC_OPS_TAKING_DAMAGE)) {
+            if (entity.damageThisPhase >= psrThreshold) {
+                if (game.getOptions().booleanOption(OptionsConstants.ADVANCED_GROUND_MOVEMENT_TAC_OPS_TAKING_DAMAGE)
+                      && !entity.isHullDown()) {
                     PilotingRollData damPRD = new PilotingRollData(entity.getId());
                     int damMod = entity.damageThisPhase / psrThreshold;
                     damPRD.addModifier(damMod, (damMod * psrThreshold) + "+ damage");
@@ -17913,7 +18067,7 @@ public class TWGameManager extends AbstractGameManager {
         }
 
         // non meks and prone meks can now return
-        if (!entity.canFall() || (entity.isHullDown() && entity.canGoHullDown())) {
+        if (!entity.canFall()) {
             return vPhaseReport;
         }
 
@@ -18685,7 +18839,8 @@ public class TWGameManager extends AbstractGameManager {
      * @param crewPos The <code>int</code> index of the crew member for multi crew cockpits, ignored by basic
      *                <code>crew</code>
      */
-    private Vector<Report> resolveCrewDamage(Entity e, int damage, int crewPos) {
+    // package-private for testing
+    Vector<Report> resolveCrewDamage(Entity e, int damage, int crewPos) {
         Vector<Report> vDesc = new Vector<>();
         final int totalHits = e.getCrew().getHits(crewPos);
         if ((e instanceof MekWarrior) || !e.isTargetable() || !e.getCrew().isActive(crewPos) || (damage == 0)) {
@@ -18707,10 +18862,15 @@ public class TWGameManager extends AbstractGameManager {
             if (game.getOptions().booleanOption(OptionsConstants.RPG_TOUGHNESS)) {
                 rollTarget -= e.getCrew().getToughness(crewPos);
             }
-            boolean edgeUsed = false;
+            // Edge may reroll a failed consciousness roll, but only once: a single roll cannot be rerolled
+            // repeatedly even if the crew has several Edge points remaining.
+            boolean rerollWithEdge = false;
+            boolean edgeAlreadyUsed = false;
             do {
-                if (edgeUsed) {
+                if (rerollWithEdge) {
                     e.getCrew().decreaseEdge();
+                    edgeAlreadyUsed = true;
+                    rerollWithEdge = false;
                 }
                 Roll diceRoll = Compute.rollD6(2);
                 int rollValue = diceRoll.getIntValue();
@@ -18736,9 +18896,11 @@ public class TWGameManager extends AbstractGameManager {
                 } else {
                     e.getCrew().setKoThisRound(true, crewPos);
                     r.choose(false);
-                    if (e.shouldUseEdge(OptionsConstants.EDGE_WHEN_KO) ||
-                          e.shouldUseEdge(OptionsConstants.EDGE_WHEN_AERO_KO)) {
-                        edgeUsed = true;
+                    // Only offer an Edge reroll if one hasn't already been spent on this consciousness roll.
+                    if (!edgeAlreadyUsed &&
+                          (e.shouldUseEdge(OptionsConstants.EDGE_WHEN_KO) ||
+                                e.shouldUseEdge(OptionsConstants.EDGE_WHEN_AERO_KO))) {
+                        rerollWithEdge = true;
                         vDesc.add(r);
                         r = new Report(6520);
                         r.subject = e.getId();
@@ -18749,9 +18911,7 @@ public class TWGameManager extends AbstractGameManager {
                     // return true;
                 } // else
                 vDesc.add(r);
-            } while (e.getCrew().isKoThisRound(crewPos) &&
-                  (e.shouldUseEdge(OptionsConstants.EDGE_WHEN_KO) ||
-                        e.shouldUseEdge(OptionsConstants.EDGE_WHEN_AERO_KO)));
+            } while (rerollWithEdge);
             // end of do-while
             if (e.getCrew().isKoThisRound(crewPos)) {
                 boolean wasPilot = e.getCrew().getCurrentPilotIndex() == crewPos;
@@ -18855,11 +19015,12 @@ public class TWGameManager extends AbstractGameManager {
      * VTOL or WiGE...
      */
     void resolveShutdownCrashes() {
-        for (Entity e : game.getEntitiesVector()) {
-            if (e.isShutDown() && e.isAirborneVTOLorWIGE() && !(e.isDestroyed() || e.isDoomed())) {
-                Tank t = (Tank) e;
-                t.immobilize();
-                addReport(forceLandVTOLorWiGE(t));
+        for (Entity entity : game.getEntitiesVector()) {
+            // Not instanceof Tank: LAMs in AirMek mode and glider ProtoMeks also report
+            // airborne VTOL/WiGE movement but crash through their own handlers
+            if (entity instanceof Tank tank && tank.isShutDown() && tank.isAirborneVTOLorWIGE()
+                  && !(tank.isDestroyed() || tank.isDoomed())) {
+                addReport(forceLandVTOLorWiGE(tank));
             }
         }
     }
@@ -25323,9 +25484,9 @@ public class TWGameManager extends AbstractGameManager {
 
     /**
      * Removes the fire from a hex on a specific board, clearing any flamer-started-fire marker and notifying the
-     * clients that view that board. Fire processing runs once per board (see
-     * {@link megamek.server.FireProcessor}), so the board id must be passed through to keep the per-board
-     * {@link Board#removeFlamerStartedFire(Coords)} state and the hex update on the correct board.
+     * clients that view that board. Fire processing runs once per board (see {@link megamek.server.FireProcessor}), so
+     * the board id must be passed through to keep the per-board {@link Board#removeFlamerStartedFire(Coords)} state and
+     * the hex update on the correct board.
      *
      * @param boardId    the id of the board the burning hex is on
      * @param fireCoords {@link Coords} of the hex on fire
@@ -26364,7 +26525,8 @@ public class TWGameManager extends AbstractGameManager {
         }
 
         Entity oldEntity = game.getEntity(entity.getId());
-        if ((oldEntity != null) && (!oldEntity.getOwner().isEnemyOf(game.getPlayer(connIndex)))) {
+        Player sender = game.getPlayer(connIndex);
+        if ((oldEntity != null) && senderCanUpdateEntity(sender, oldEntity)) {
             game.setEntity(entity.getId(), entity);
             entityUpdate(entity.getId());
             if (entity.isPartOfFighterSquadron()) {
@@ -26380,14 +26542,90 @@ public class TWGameManager extends AbstractGameManager {
             // In the chat lounge, notify players of customizing of unit
             if (game.getPhase().isLounge()) {
                 sendServerChat(ServerLobbyHelper.entityUpdateMessage(entity, game));
+            } else {
+                destroyEntityIfFatallyDamaged(entity);
             }
         }
     }
 
     /**
+     * Returns {@code true} if the sending player may replace the given unit with a client-side edit. The sender must be
+     * the unit's owner, a teammate of the owner, or a gamemaster. Updates for a unit without an owner are rejected
+     * unless the sender is a gamemaster.
+     *
+     * @param sender    the player the update was received from; may be {@code null} for an unknown connection
+     * @param oldEntity the server's current version of the unit being updated
+     *
+     * @return {@code true} if the update may be applied
+     */
+    private boolean senderCanUpdateEntity(@Nullable Player sender, Entity oldEntity) {
+        if (sender == null) {
+            return false;
+        }
+        if (sender.isGameMaster()) {
+            return true;
+        }
+        Player owner = oldEntity.getOwner();
+        return (owner != null) && !owner.isEnemyOf(sender);
+    }
+
+    /**
+     * Destroys the given unit if an out-of-band edit (such as a gamemaster damage edit) left it in a state it
+     * cannot survive, e.g. with its center torso destroyed. Direct entity updates bypass normal damage
+     * resolution, which is where destruction is otherwise detected and applied.
+     *
+     * @param entity the server's version of the unit to check
+     */
+    private void destroyEntityIfFatallyDamaged(Entity entity) {
+        if (entity.isDestroyed() || entity.isDoomed()) {
+            return;
+        }
+
+        String destructionReason = null;
+        boolean survivable = true;
+
+        if ((entity.getCrew() != null) && entity.getCrew().isDead()) {
+            destructionReason = "crew death";
+            survivable = false;
+        } else if (entity instanceof Mek mek) {
+            // 3 engine hits destroy a Mek; superheavies with compact engines only take 2 (TW p.125, IO p.104)
+            int engineHitsToDestroy = (mek.isSuperHeavy()
+                  && mek.hasEngine()
+                  && (mek.getEngine().getEngineType() == Engine.COMPACT_ENGINE)) ? 2 : 3;
+            if (mek.getEngineHits() >= engineHitsToDestroy) {
+                destructionReason = "engine destruction";
+            }
+        } else if ((entity instanceof Aero aero) && (aero.getSI() <= 0)) {
+            destructionReason = "structural integrity collapse";
+        }
+
+        if (destructionReason == null) {
+            // Losing a location whose damage cannot transfer further inward (a Mek's center torso or head, any
+            // hull location of a vehicle, the last trooper of a squad) destroys the unit.
+            for (int location = 0; location < entity.locations(); location++) {
+                int internal = entity.getInternal(location);
+                boolean locationGone = (internal == IArmorState.ARMOR_DESTROYED)
+                      || (internal == IArmorState.ARMOR_DOOMED)
+                      || ((internal == 0) && (entity.getOInternal(location) > 0));
+                if (locationGone
+                      && (entity.getTransferLocation(new HitData(location)).getLocation() == Entity.LOC_DESTROYED)) {
+                    destructionReason = "damage";
+                    break;
+                }
+            }
+        }
+
+        if (destructionReason != null) {
+            destroyEntity(entity, destructionReason, survivable);
+            entityUpdate(entity.getId());
+            sendServerChat(entity.getDisplayName() + " did not survive its damage edits.");
+        }
+    }
+
+    /**
      * Updates multiple entities with the info from the client. Only valid during the lobby phase! Will only update
-     * units that are teammates of the sender. Other entities remain unchanged but still be sent back to overwrite
-     * incorrect client changes.
+     * units that are teammates of the sender or when the sender is a gamemaster. Other entities remain unchanged but
+     * still be sent back to overwrite incorrect client changes.
      */
     private void receiveEntitiesUpdate(Packet packet, int connIndex) throws InvalidPacketDataException {
         if (!getGame().getPhase().isLounge()) {
@@ -26395,10 +26633,11 @@ public class TWGameManager extends AbstractGameManager {
         }
         Set<Entity> newEntities = new HashSet<>();
         List<Entity> entities = packet.getEntityList(0);
+        Player sender = game.getPlayer(connIndex);
         for (Entity entity : entities) {
             Entity oldEntity = game.getEntity(entity.getId());
-            // Only update entities that existed and are owned by a teammate of the sender
-            if ((oldEntity != null) && (!oldEntity.getOwner().isEnemyOf(game.getPlayer(connIndex)))) {
+            // Only update entities that existed; senderCanUpdateEntity handles the permission check
+            if ((oldEntity != null) && senderCanUpdateEntity(sender, oldEntity)) {
                 game.setEntity(entity.getId(), entity);
 
                 // Reconstruct C3 network IDs from UUIDs (fixes lobby C3 configuration)
@@ -26810,7 +27049,12 @@ public class TWGameManager extends AbstractGameManager {
         if (m == null) {
             return;
         }
-        m.setFacing(facing);
+        // A Directional Torso Mount (BMM p.83) stores its facing separately and validates legal facings by mount type.
+        if (m.hasDirectionalTorsoMount() && (e instanceof Mek directionalMek)) {
+            DirectionalTorsoMountRules.applyMountFacing(directionalMek, equipId, facing);
+        } else {
+            m.setFacing(facing);
+        }
     }
 
     /**
@@ -27440,22 +27684,64 @@ public class TWGameManager extends AbstractGameManager {
     }
 
     /**
+     * Applies a player's "reveal all artillery rounds" testing preference (see
+     * {@link PacketCommand#CLIENT_ARTILLERY_REVEAL}) and immediately resends that player's artillery packet so their
+     * Rounds in the Air view updates at once. Only affects the requesting player's own packet - other players (and
+     * bots, which never send this) are unchanged.
+     *
+     * @param connId The connection id of the player whose preference changed
+     * @param packet The packet carrying the boolean reveal preference
+     */
+    private void receiveArtilleryRevealPreference(int connId, Packet packet) throws InvalidPacketDataException {
+        Player player = game.getPlayer(connId);
+        if (player == null) {
+            return;
+        }
+        player.setArtilleryRevealAll(packet.getBooleanValue(0));
+        send(connId, createArtilleryPacket(player));
+    }
+
+    /**
      * Creates a packet containing off board artillery attacks
      */
     Packet createArtilleryPacket(Player p) {
         Vector<ArtilleryAttackAction> v = new Vector<>();
+        List<EnemyArtilleryInbound> enemyInbound = new ArrayList<>();
         int team = p.getTeam();
         for (Enumeration<AttackHandler> i = game.getAttacks(); i.hasMoreElements(); ) {
             WeaponHandler wh = (WeaponHandler) i.nextElement();
             if (wh.weaponAttackAction instanceof ArtilleryAttackAction aaa) {
-                if ((aaa.getPlayerId() == p.getId()) ||
-                      ((team != Player.TEAM_NONE) && (team == game.getPlayer(aaa.getPlayerId()).getTeam())) ||
-                      p.canIgnoreDoubleBlind()) {
+                boolean ownOrAllied = (aaa.getPlayerId() == p.getId())
+                      || ((team != Player.TEAM_NONE) && (team == game.getPlayer(aaa.getPlayerId()).getTeam()));
+                if (ownOrAllied || p.canIgnoreDoubleBlind() || p.isArtilleryRevealAll()) {
                     v.addElement(aaa);
+                } else if (enemyArtilleryRoundIsKnownTo(aaa, p)) {
+                    // The player knows an enemy round is inbound (its firing is announced in the report) but not its
+                    // target hex or munition - send only a redacted summary so the Rounds-in-Air window can list it with
+                    // "Unknown" target/warhead, without ever sending the aim point to the client.
+                    enemyInbound.add(new EnemyArtilleryInbound(aaa.getEntityId(), aaa.getPlayerId(),
+                          aaa.getTurnsTilHit()));
                 }
             }
         }
-        return new Packet(PacketCommand.SENDING_ARTILLERY_ATTACKS, v);
+        return new Packet(PacketCommand.SENDING_ARTILLERY_ATTACKS, v, enemyInbound);
+    }
+
+    /**
+     * @param aaa An enemy artillery attack in flight
+     * @param p   The viewing player
+     *
+     * @return {@code true} if the player is entitled to know the enemy round exists (so it can be listed, redacted, in
+     *       the Rounds-in-Air window): always without double-blind, and under double-blind only when the firing unit is
+     *       off-board (treated as public) or the player has detected it - matching when the firing is announced in the
+     *       report
+     */
+    private boolean enemyArtilleryRoundIsKnownTo(ArtilleryAttackAction aaa, Player p) {
+        if (!doBlind()) {
+            return true;
+        }
+        Entity firingEntity = aaa.getEntity(game);
+        return (firingEntity != null) && (firingEntity.isOffBoard() || firingEntity.hasSeenEntity(p));
     }
 
     private Packet createIlluminatedHexesPacket() {
@@ -29759,7 +30045,8 @@ public class TWGameManager extends AbstractGameManager {
      */
     public void resolveCallSupport() {
         for (Entity e : game.getEntitiesVector()) {
-            if ((e instanceof Infantry) && ((Infantry) e).getIsCallingSupport()) {
+            // some infantry can "call support", but should only be able to do so if they are on the board
+            if ((e instanceof Infantry) && ((Infantry) e).getIsCallingSupport() && e.getPosition() != null) {
 
                 // Now let's create a new foot platoon
                 var guerrilla = new ConvInfantry();
@@ -31472,6 +31759,77 @@ public class TWGameManager extends AbstractGameManager {
     }
 
     /**
+     * Sends a toast when a unit gains or loses a Magnetic Pulse missile effect (IO p.182 / IMP rules), so the player
+     * sees the debuff appear and expire rather than only in the report log.
+     *
+     * @param target   the affected unit
+     * @param improved true for the iATM Improved Magnetic Pulse effect, false for the standard MP effect
+     * @param applied  true when the unit becomes affected, false when the effect wears off
+     */
+    public void sendMagneticPulseToast(Entity target, boolean improved, boolean applied) {
+        String key;
+        if (improved) {
+            key = applied ? "MagneticPulse.impAffectedToast" : "MagneticPulse.impExpiredToast";
+        } else {
+            key = applied ? "MagneticPulse.affectedToast" : "MagneticPulse.expiredToast";
+        }
+        sendToast(GameToastEvent.Level.INFO, Messages.getString(key, target.getShortName()), target);
+    }
+
+    // Artillery call-for-fire notifications (Shot/Splash, counter-battery, homing-inbound) live in their own helper to
+    // keep that logic out of this already-large class; the methods below are thin delegators.
+    private final ArtilleryNotifications artilleryNotifications = new ArtilleryNotifications(this);
+
+    /**
+     * Sends a single artillery call-for-fire toast (Shot / Splash / Rounds complete) to the firing player and their
+     * teammates only. Delegates to {@link ArtilleryNotifications#sendArtilleryNetToast}.
+     *
+     * @param momentKey    the call-for-fire moment ({@code Artillery.netToast.<momentKey>})
+     * @param firingEntity the artillery unit (its owner and team define the audience)
+     * @param momentRound  the round the moment occurs in, used to scope de-duplication
+     */
+    public void sendArtilleryNetToast(String momentKey, Entity firingEntity, int momentRound) {
+        artilleryNotifications.sendArtilleryNetToast(momentKey, firingEntity, momentRound);
+    }
+
+    /**
+     * Sends a single artillery call-for-fire toast naming the target grid, to the firing player and their teammates
+     * only. The grid is the team-only channel for the aim point. Delegates to
+     * {@link ArtilleryNotifications#sendArtilleryNetToast(String, Entity, int, String)}.
+     *
+     * @param momentKey    the call-for-fire moment ({@code Artillery.netToast.<momentKey>})
+     * @param firingEntity the artillery unit (its owner and team define the audience)
+     * @param momentRound  the round the moment occurs in, used to scope de-duplication
+     * @param targetGrid   the target grid square to name in the toast (team-only), or {@code null} for none
+     */
+    public void sendArtilleryNetToast(String momentKey, Entity firingEntity, int momentRound,
+          @Nullable String targetGrid) {
+        artilleryNotifications.sendArtilleryNetToast(momentKey, firingEntity, momentRound, targetGrid);
+    }
+
+    /**
+     * Sends a radio-flavored counter-battery toast to the team that just spotted an enemy off-board battery's fall of
+     * shot. Delegates to {@link ArtilleryNotifications#sendCounterBatteryObservedToast}.
+     *
+     * @param observer     the friendly unit that observed the enemy battery's fall of shot
+     * @param enemyBattery the off-board enemy battery that was spotted
+     * @param impactHex    the hex the enemy rounds landed on (what the observer saw)
+     * @param momentRound  the round the observation happens in, used to scope de-duplication
+     */
+    public void sendCounterBatteryObservedToast(Entity observer, Entity enemyBattery, Coords impactHex,
+          int momentRound) {
+        artilleryNotifications.sendCounterBatteryObservedToast(observer, enemyBattery, impactHex, momentRound);
+    }
+
+    /**
+     * Reminds each team with a homing artillery round landing next round to put a TAG on the target. Delegates to
+     * {@link ArtilleryNotifications#remindHomingArtilleryInbound}.
+     */
+    public void remindHomingArtilleryInbound() {
+        artilleryNotifications.remindHomingArtilleryInbound();
+    }
+
+    /**
      * Resolve any Infantry units which are fortifying hexes
      */
     void resolveFortify() {
@@ -31629,7 +31987,8 @@ public class TWGameManager extends AbstractGameManager {
 
             if (ah.cares(game.getPhase())) {
                 int aId = ah.getAttackerId();
-                if ((aId != lastAttackerId) && !ah.announcedEntityFiring()) {
+                if ((aId != lastAttackerId) && !ah.announcedEntityFiring()
+                      && ah.producesReportThisPhase(game.getPhase())) {
                     // report who is firing
                     if (pointblankShot) {
                         r = new Report(3102);
@@ -31657,7 +32016,8 @@ public class TWGameManager extends AbstractGameManager {
             }
             if (ah.cares(game.getPhase())) {
                 int aId = ah.getAttackerId();
-                if ((aId != lastAttackerId) && !ah.announcedEntityFiring()) {
+                if ((aId != lastAttackerId) && !ah.announcedEntityFiring()
+                      && ah.producesReportThisPhase(game.getPhase())) {
                     // if this is a new attacker then resolve any standard-to-cap damage from previous
                     handleAttackReports.addAll(checkFatalThresholds(aId, lastAttackerId));
                     // report who is firing

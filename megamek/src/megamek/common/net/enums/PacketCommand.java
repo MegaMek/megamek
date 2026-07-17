@@ -224,7 +224,14 @@ public enum PacketCommand {
      * A Server to Client packet instructing the Client to show a transient toast notification on the board view, with a
      * severity level, message text and an optional acting unit (for its icon).
      */
-    SEND_TOAST;
+    SEND_TOAST,
+
+    /**
+     * A Client to Server packet carrying a player's "reveal all artillery rounds" testing preference (a boolean). When
+     * set, the server includes enemy artillery attacks in that player's artillery packet so the Rounds in the Air view
+     * can show both sides. Bots never send it, so their filtered view - and their decisions - are unchanged.
+     */
+    CLIENT_ARTILLERY_REVEAL;
     //endregion Enum Declarations
 
     //region Boolean Comparison Methods

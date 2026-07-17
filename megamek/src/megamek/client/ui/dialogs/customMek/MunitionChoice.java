@@ -70,7 +70,7 @@ public class MunitionChoice {
     private boolean numShotsChanged = false;
 
     public MunitionChoice(AmmoMounted ammoMounted, Vector<AmmoType> ammoTypes,
-          List<WeaponAmmoChoice> weaponAmmoChoices, Entity entity, Game game, JPanel parentPanel, GBC2 gbc) {
+                          List<WeaponAmmoChoice> weaponAmmoChoices, Entity entity, Game game, JPanel parentPanel, GBC2 gbc) {
 
         this.ammoTypes = ammoTypes;
         this.ammoMounted = ammoMounted;

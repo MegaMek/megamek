@@ -98,7 +98,6 @@ enum DiagramUnitType {
      * (e.g., BattleArmor extends Infantry, VTOL extends Tank, Dropship extends SmallCraft extends Aero).
      *
      * @param entity the game entity
-     *
      * @return the corresponding diagram unit type
      */
     public static DiagramUnitType fromEntity(Entity entity) {

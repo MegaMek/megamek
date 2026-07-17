@@ -39,16 +39,22 @@ import java.io.ObjectInputFilter;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
+import java.util.Map;
 import java.util.Random;
+import java.util.Set;
+import java.util.TreeMap;
+import java.util.TreeSet;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
 import java.util.function.BooleanSupplier;
 
 import megamek.MMConstants;
 import megamek.client.HeadlessClient;
+import megamek.client.bot.AIType;
+import megamek.client.bot.BotClient;
+import megamek.client.bot.BotFactory;
 import megamek.client.bot.princess.BehaviorSettings;
 import megamek.client.bot.princess.BehaviorSettingsFactory;
-import megamek.client.bot.princess.Princess;
 import megamek.common.Player;
 import megamek.common.enums.GamePhase;
 import megamek.common.event.GameListenerAdapter;
@@ -61,6 +67,7 @@ import megamek.common.net.marshalling.SanityInputFilter;
 import megamek.common.preference.PreferenceManager;
 import megamek.common.scenario.Scenario;
 import megamek.common.scenario.ScenarioLoader;
+import megamek.common.units.Entity;
 import megamek.logging.MMLogger;
 import megamek.server.Server;
 import megamek.server.totalWarfare.TWGameManager;
@@ -102,18 +109,35 @@ public class ScenarioGameRunner {
               random.nextInt(MMConstants.MIN_PORT_FOR_QUICK_GAME, MMConstants.MAX_PORT),
               gameManager, false, "", null, true);
 
-        ScenarioLoader scenarioLoader = new ScenarioLoader(scenarioFile);
-        scenario = scenarioLoader.load();
-        IGame loadedGame = scenario.createGame();
-        if (!(loadedGame instanceof Game totalWarfareGame)) {
-            throw new IllegalArgumentException("Only Total Warfare scenarios are supported: " + scenarioFile);
-        }
-        game = totalWarfareGame;
+        // The Server has already opened its socket and started a non-daemon thread; if the rest of construction
+        // fails, tear it down so a failed runner cannot leak the port/thread and keep the JVM alive.
+        try {
+            ScenarioLoader scenarioLoader = new ScenarioLoader(scenarioFile);
+            scenario = scenarioLoader.load();
+            IGame loadedGame = scenario.createGame();
+            if (!(loadedGame instanceof Game totalWarfareGame)) {
+                throw new IllegalArgumentException("Only Total Warfare scenarios are supported: " + scenarioFile);
+            }
+            game = totalWarfareGame;
 
-        server.setGame(game);
-        scenario.applyDamage(gameManager);
-        gameManager.calculatePlayerInitialCounts();
+            server.setGame(game);
+            scenario.applyDamage(gameManager);
+            gameManager.calculatePlayerInitialCounts();
+        } catch (Exception constructionFailure) {
+            server.die();
+            throw constructionFailure;
+        }
     }
+
+    /**
+     * The result of a single scenario game: whether it finished (rather than timing out) and which team won,
+     * defined as the sole surviving combatant team. The unit-less headless watcher is ignored, and a game that
+     * ends with more than one (or no) combatant team still standing is a draw.
+     *
+     * @param finished    whether the game finished within the timeout
+     * @param winningTeam the sole surviving combatant team, or {@link Player#TEAM_NONE} for a draw
+     */
+    public record GameResult(boolean finished, int winningTeam) {}
 
     /**
      * Connects the watcher and bots, then runs the game.
@@ -121,9 +145,9 @@ public class ScenarioGameRunner {
      * @param roundsLimit    maximum number of rounds before the game is ended via /victory
      * @param timeoutMinutes wall-clock limit; the game is abandoned when exceeded
      *
-     * @return true if the game finished (victory or round limit), false on timeout
+     * @return the {@link GameResult} for this game
      */
-    private boolean run(int roundsLimit, int timeoutMinutes) throws Exception {
+    public GameResult runGame(int roundsLimit, int timeoutMinutes) throws Exception {
         List<Player> players = new ArrayList<>(game.getPlayersList());
         if (players.isEmpty()) {
             throw new IllegalStateException("Scenario defines no players");
@@ -162,16 +186,17 @@ public class ScenarioGameRunner {
         waitForLocalPlayer(watcher.getName(), () -> watcher.getLocalPlayer() != null);
 
         for (Player botSlot : players.subList(1, players.size())) {
-            Princess princess = Princess.createPrincess(botSlot.getName(),
+            BotClient botClient = BotFactory.createBot(aiTypeFor(botSlot.getName()),
+                  botSlot.getName(),
                   LOCALHOST_IP,
                   server.getPort(),
                   behaviorFor(botSlot.getName()));
-            if (!princess.connect()) {
-                throw new IllegalStateException("Princess failed to connect for player " + botSlot.getName());
+            if (!botClient.connect()) {
+                throw new IllegalStateException("Bot failed to connect for player " + botSlot.getName());
             }
-            waitForLocalPlayer(princess.getName(), () -> princess.getLocalPlayer() != null);
-            princess.sendPlayerInfo();
-            logger.info("Connected Princess for {}", botSlot.getName());
+            waitForLocalPlayer(botClient.getName(), () -> botClient.getLocalPlayer() != null);
+            botClient.sendPlayerInfo();
+            logger.info("Connected bot for {}", botSlot.getName());
         }
 
         logger.info("Running scenario '{}' for up to {} rounds ({} minute timeout)",
@@ -182,18 +207,76 @@ public class ScenarioGameRunner {
         } else {
             logger.error("Scenario game timed out");
         }
-        return finished;
+        return new GameResult(finished, determineWinningTeam(watcherSlot.getTeam()));
     }
 
     /**
-     * Returns the Princess behavior declared for the named player in the scenario, or default behavior.
+     * Determines the winner as the sole combatant team with surviving units, ignoring the unit-less watcher.
+     *
+     * @param watcherTeam the team of the headless watcher, which is excluded
+     *
+     * @return the sole surviving combatant team, or {@link Player#TEAM_NONE} if zero or more than one remain
+     */
+    private int determineWinningTeam(int watcherTeam) {
+        Set<Integer> survivingTeams = new TreeSet<>();
+        for (Entity entity : game.getEntitiesVector()) {
+            Player owner = entity.getOwner();
+            if (!entity.isDestroyed() && (owner != null) && (owner.getTeam() != watcherTeam)) {
+                survivingTeams.add(owner.getTeam());
+            }
+        }
+        return (survivingTeams.size() == 1) ? survivingTeams.iterator().next() : Player.TEAM_NONE;
+    }
+
+    /**
+     * Shuts down this runner's server, releasing its port and connections. Call between games when running many
+     * in one process.
+     */
+    public void shutdown() {
+        server.die();
+    }
+
+    /**
+     * Returns the behavior declared for the named player in the scenario, or default behavior.
      */
     private BehaviorSettings behaviorFor(String playerName) {
         if (scenario.hasBotInfo(playerName)
-              && scenario.getBotInfo(playerName) instanceof BotParser.PrincessRecord(BehaviorSettings settings)) {
-            return settings;
+              && scenario.getBotInfo(playerName) instanceof BotParser.PrincessRecord record) {
+            return record.behaviorSettings();
         }
         return BehaviorSettingsFactory.getInstance().DEFAULT_BEHAVIOR;
+    }
+
+    /**
+     * Returns the {@link AIType} declared for the named player in the scenario's {@code ai:} key, or
+     * {@link AIType#PRINCESS} if none is declared.
+     */
+    public AIType aiTypeFor(String playerName) {
+        if (scenario.hasBotInfo(playerName)
+              && scenario.getBotInfo(playerName) instanceof BotParser.PrincessRecord record) {
+            return record.aiType();
+        }
+        return AIType.PRINCESS;
+    }
+
+    /**
+     * Maps each team to the {@link AIType}s of its bot players. The first player slot (by id) is the headless
+     * watcher and is excluded, so only the competing bot teams are reported.
+     *
+     * @return team id to the set of bot {@link AIType}s on that team
+     */
+    public Map<Integer, Set<AIType>> getBotTeamAITypes() {
+        Map<Integer, Set<AIType>> teamAITypes = new TreeMap<>();
+        List<Player> players = new ArrayList<>(game.getPlayersList());
+        if (players.isEmpty()) {
+            return teamAITypes;
+        }
+        players.sort(Comparator.comparingInt(Player::getId));
+        for (Player botSlot : players.subList(1, players.size())) {
+            teamAITypes.computeIfAbsent(botSlot.getTeam(), team -> new TreeSet<>())
+                  .add(aiTypeFor(botSlot.getName()));
+        }
+        return teamAITypes;
     }
 
     private void waitForLocalPlayer(String clientName, BooleanSupplier connected) throws InterruptedException {
@@ -241,14 +324,19 @@ public class ScenarioGameRunner {
         PreferenceManager.getClientPreferences().setStampFilenames(true);
 
         int exitCode = 0;
+        ScenarioGameRunner runner = null;
         try {
-            ScenarioGameRunner runner = new ScenarioGameRunner(scenarioFile);
-            if (!runner.run(roundsLimit, timeoutMinutes)) {
+            runner = new ScenarioGameRunner(scenarioFile);
+            if (!runner.runGame(roundsLimit, timeoutMinutes).finished()) {
                 exitCode = 2;
             }
-        } catch (Exception e) {
-            logger.fatal(e, "Failed to run scenario game");
+        } catch (Exception exception) {
+            logger.fatal(exception, "Failed to run scenario game");
             exitCode = 1;
+        } finally {
+            if (runner != null) {
+                runner.shutdown();
+            }
         }
         System.exit(exitCode);
     }

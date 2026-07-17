@@ -33,19 +33,19 @@
 
 package megamek.client.ui.entityreadout;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-
 import megamek.client.ui.Messages;
 import megamek.common.equipment.AmmoMounted;
 import megamek.common.equipment.HandheldWeapon;
+
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
 
 /**
  * Entity Readout specialties for Handheld Weapons
  */
 class HhwReadout extends GeneralEntityReadout {
-
+    
     private final HandheldWeapon hhw;
 
     protected HhwReadout(HandheldWeapon entity, boolean showDetail, boolean useAlternateCost, boolean ignorePilotBV) {

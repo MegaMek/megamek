@@ -68,6 +68,7 @@ import megamek.common.Player;
 import megamek.common.annotations.Nullable;
 import megamek.common.board.Board;
 import megamek.common.commandLine.AbstractCommandLineParser.ParseException;
+import megamek.common.equipment.Minefield;
 import megamek.common.game.Game;
 import megamek.common.game.IGame;
 import megamek.common.icons.Camouflage;
@@ -617,12 +618,12 @@ public class Server implements Runnable {
             gamePlayer.setStartingAnySEy(player.getStartingAnySEy());
             gamePlayer.setTeam(player.getTeam());
             gamePlayer.setCamouflage(player.getCamouflage().clone());
-            gamePlayer.setNbrMFConventional(player.getNbrMFConventional());
-            gamePlayer.setNbrMFCommand(player.getNbrMFCommand());
-            gamePlayer.setNbrMFVibra(player.getNbrMFVibra());
-            gamePlayer.setNbrMFActive(player.getNbrMFActive());
-            gamePlayer.setNbrMFInferno(player.getNbrMFInferno());
-            gamePlayer.setNbrMFEMP(player.getNbrMFEMP());
+            
+            // minefields
+            for (int minefieldIndex = 0; minefieldIndex < Minefield.TYPE_SIZE; minefieldIndex++) {
+            	gamePlayer.setMinefieldCount(minefieldIndex, player.getMinefieldCount(minefieldIndex));
+            }
+            
             gamePlayer.setNbrFortifiedHexes(player.getNbrFortifiedHexes());
             if (gamePlayer.getConstantInitBonus() != player.getConstantInitBonus()) {
                 sendServerChat("Player " +
@@ -973,9 +974,9 @@ public class Server implements Runnable {
     }
 
     /**
-     * If the deserialized game's board has the placeholder map name (saves predate the name fix), reconstructs a
-     * display name from the saved MapSettings' selected board file names. The actual board hex data is unchanged; only
-     * the displayable name is filled in.
+     * If the deserialized game's board has the placeholder map name (saves predate the name fix),
+     * reconstructs a display name from the saved MapSettings' selected board file names. The actual
+     * board hex data is unchanged; only the displayable name is filled in.
      */
     private static void backfillBoardNameFromMapSettings(Game game) {
         Board board = game.getBoard();

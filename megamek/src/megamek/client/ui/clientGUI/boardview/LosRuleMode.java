@@ -36,9 +36,9 @@ import megamek.common.game.Game;
 import megamek.common.options.OptionsConstants;
 
 /**
- * The three line-of-sight rule sets the engine implements. The Ruler tool reads the active rule from game options; the
- * diagram always draws the LOS line straight from eye level to eye level, but the per-hex blocker detection follows the
- * rule the engine is actually applying.
+ * The three line-of-sight rule sets the engine implements. The Ruler tool reads the active rule from game options;
+ * the diagram always draws the LOS line straight from eye level to eye level, but the per-hex blocker detection
+ * follows the rule the engine is actually applying.
  *
  * <ul>
  *   <li>{@link #STANDARD} — BMM default. A hex's terrain intervenes if its top is at or above the
@@ -57,8 +57,8 @@ enum LosRuleMode {
     DEAD_ZONE;
 
     /**
-     * Selects the active rule based on which TacOps options the game has enabled. Diagrammed and Dead Zone are mutually
-     * exclusive in the comparison table and treated the same way here.
+     * Selects the active rule based on which TacOps options the game has enabled. Diagrammed and Dead Zone are
+     * mutually exclusive in the comparison table and treated the same way here.
      */
     static LosRuleMode fromGameOptions(Game game) {
         if (game.getOptions().booleanOption(OptionsConstants.ADVANCED_COMBAT_TAC_OPS_LOS1)) {

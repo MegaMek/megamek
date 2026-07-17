@@ -131,6 +131,11 @@ public class ConvInfantry extends Infantry {
     private String secondName;
     private int secondaryWeaponsPerSquad = 0;
 
+    // Number of rounds this platoon's energy weapons are rendered inoperative by an Improved Magnetic
+    // Pulse (iATM IMP) missile hit (IO IMP rules). Set to 2 on hit so the effect lasts through the End
+    // Phase of the following turn.
+    private int impEnergyWeaponsDisabledRounds = 0;
+
     // Disposable Weapon (TO:AuE p.116, Corrected Sixth Printing): a one-shot weapon carried by every trooper, used for
     // a single once-per-scenario attack instead of the platoon's standard weapon attack. Unlike primary/secondary, the
     // disposable weapon IS added to the equipment array as a separate, fireable WeaponMounted. disposableWeapon is
@@ -211,6 +216,11 @@ public class ConvInfantry extends Infantry {
     }
 
     @Override
+    public boolean isMechanized() {
+        return isMounted() ? false : super.isMechanized();
+    }
+
+    @Override
     public String[] getLocationAbbreviations() {
         return LOCATION_ABBREVIATIONS;
     }
@@ -261,7 +271,7 @@ public class ConvInfantry extends Infantry {
      * @return True when this infantry carries anti-mek gear
      */
     public boolean hasAntiMekGear() {
-        return hasWorkingMisc(EquipmentTypeLookup.ANTI_MEK_GEAR);
+        return hasWorkingMisc(MiscType.F_ANTI_MEK_GEAR);
     }
 
     @Override
@@ -447,8 +457,8 @@ public class ConvInfantry extends Infantry {
 
     /**
      * Number of consecutive prior rounds this platoon has already spent fighting a fire in the given hex, used for the
-     * cumulative firefighting target-number reduction (TO:AuE p.153). Returns 0 when the platoon did not fight this
-     * same hex on the immediately preceding round.
+     * cumulative firefighting target-number reduction (TO:AuE p.153). Returns 0 when the platoon did not fight this same
+     * hex on the immediately preceding round.
      *
      * @param coords the burning hex being targeted
      * @param round  the current game round
@@ -638,8 +648,8 @@ public class ConvInfantry extends Infantry {
     private int bridgeDismantleRequiredTurns = 0;
 
     /**
-     * {@code true} while a bridge build is paused: the partial progress is held on the platoon but the platoon is freed
-     * (it may move and fight normally) until it returns to the site and resumes. Stored in saves (non-transient).
+     * {@code true} while a bridge build is paused: the partial progress is held on the platoon but the platoon is
+     * freed (it may move and fight normally) until it returns to the site and resumes. Stored in saves (non-transient).
      */
     private boolean bridgeBuildPaused = false;
 
@@ -652,8 +662,7 @@ public class ConvInfantry extends Infantry {
 
     /**
      * @return {@code true} while this platoon is actively raising a bridge (not paused). While actively building, the
-     *       platoon is eligible only in the movement phase (to continue or change the build) and takes no other
-     *       action.
+     *       platoon is eligible only in the movement phase (to continue or change the build) and takes no other action.
      */
     public boolean isBuildingBridge() {
         return (bridgeBuildTurns >= 0) && !bridgeBuildPaused;
@@ -677,8 +686,7 @@ public class ConvInfantry extends Infantry {
 
     /**
      * @return {@code true} while this platoon is actively occupied raising or dismantling a bridge - it takes no other
-     *       action this turn. A <i>paused</i> build is not "busy": the platoon is freed (see
-     *       {@link #isBridgePaused()}).
+     *       action this turn. A <i>paused</i> build is not "busy": the platoon is freed (see {@link #isBridgePaused()}).
      */
     public boolean isBusyWithBridge() {
         return isBuildingBridge() || isDismantlingBridge();
@@ -971,8 +979,7 @@ public class ConvInfantry extends Infantry {
 
     /**
      * Checks whether this platoon lost troopers since the last check; a turn with casualties extends the build by one
-     * turn, regardless of how many separate attacks caused them. TO:AUE p.152. Called once per turn from the END
-     * phase.
+     * turn, regardless of how many separate attacks caused them. TO:AUE p.152. Called once per turn from the END phase.
      *
      * @return {@code true} if casualties extended the build this turn.
      */
@@ -1026,6 +1033,9 @@ public class ConvInfantry extends Infantry {
             logger.debug("[BuildBridge] {} newRound (round {}): {} of {} dismantle turns banked",
                   getShortName(), roundNumber, bridgeDismantleTurns, bridgeDismantleRequiredTurns);
         }
+        if (impEnergyWeaponsDisabledRounds > 0) {
+            impEnergyWeaponsDisabledRounds--;
+        }
         super.newRound(roundNumber);
     }
 
@@ -1069,6 +1079,7 @@ public class ConvInfantry extends Infantry {
             if ((getSecondaryWeaponsPerSquad() > 1)
                   && !hasAbility(OptionsConstants.MD_TSM_IMPLANT)
                   && !hasAbility(OptionsConstants.MD_DERMAL_ARMOR)
+                  && !hasNonEncumberingSecondaryWeaponSpecialization()
                   && (null != secondaryWeapon)
                   && secondaryWeapon.hasFlag(WeaponType.F_INF_SUPPORT)
                   && !getMovementMode().isTracked()
@@ -1303,7 +1314,7 @@ public class ConvInfantry extends Infantry {
 
     public void setPrimaryWeapon(InfantryWeapon w) {
         primaryWeapon = w;
-        primaryName = w.getName();
+        primaryName = w.getInternalName();
     }
 
     public InfantryWeapon getPrimaryWeapon() {
@@ -1315,7 +1326,7 @@ public class ConvInfantry extends Infantry {
         if (null == w) {
             secondName = null;
         } else {
-            secondName = w.getName();
+            secondName = w.getInternalName();
         }
     }
 
@@ -1325,8 +1336,8 @@ public class ConvInfantry extends Infantry {
 
     /**
      * Sets the platoon's one-shot Disposable Weapon (TO:AuE p.116, Corrected Sixth Printing). All troopers carry the
-     * same Disposable Weapon. This only records the weapon type; the corresponding fireable
-     * {@link megamek.common.equipment.WeaponMounted} is added to {@code LOC_INFANTRY} by the loader/editor.
+     * same Disposable Weapon. This only records the weapon type; the corresponding fireable {@link
+     * megamek.common.equipment.WeaponMounted} is added to {@code LOC_INFANTRY} by the loader/editor.
      *
      * @param weapon the Disposable Weapon, or null to clear it
      */
@@ -1395,19 +1406,66 @@ public class ConvInfantry extends Infantry {
         return secondaryWeaponsPerSquad;
     }
 
+    private boolean hasNonEncumberingSecondaryWeaponSpecialization() {
+        return hasSpecialization(TAG_TROOPS);
+    }
+
     public double getDamagePerTrooper() {
         if (null == primaryWeapon) {
             return 0;
         }
 
+        // Improved Magnetic Pulse missiles render energy weapons inoperative for a turn (IO IMP rules).
+        boolean energyDisabled = impEnergyWeaponsDisabledRounds > 0;
+
         // per 09/2021 errata, primary infantry weapon damage caps out at 0.6
         double adjustedDamage = Math.min(MMConstants.INFANTRY_PRIMARY_WEAPON_DAMAGE_CAP,
               primaryWeapon.getInfantryDamage());
+        if (energyDisabled && primaryWeapon.hasFlag(WeaponType.F_ENERGY)) {
+            adjustedDamage = 0;
+        }
         double damage = adjustedDamage * (squadSize - secondaryWeaponsPerSquad);
-        if (null != secondaryWeapon) {
+        if ((null != secondaryWeapon)
+              && !(energyDisabled && secondaryWeapon.hasFlag(WeaponType.F_ENERGY))) {
             damage += secondaryWeapon.getInfantryDamage() * secondaryWeaponsPerSquad;
         }
         return damage / squadSize;
+    }
+
+    /**
+     * Records an Improved Magnetic Pulse (iATM IMP) missile hit on this platoon (IO IMP rules). If the platoon uses
+     * energy weapons, they are rendered inoperative through the End Phase of the following turn. Other weapon types are
+     * unaffected.
+     */
+    public void applyImpEnergyWeaponDisable() {
+        // 2 rounds so the effect lasts through the End Phase of the turn after the attack.
+        impEnergyWeaponsDisabledRounds = 2;
+    }
+
+    /**
+     * @return {@code true} while this platoon's energy weapons are rendered inoperative by an Improved Magnetic Pulse
+     *       missile hit (IO IMP rules).
+     */
+    public boolean isEnergyWeaponsDisabled() {
+        return impEnergyWeaponsDisabledRounds > 0;
+    }
+
+    /**
+     * @return {@code true} if this platoon is equipped with cybernetic enhancements of any kind (IO p.84 prosthetic
+     *       enhancements). Improved Magnetic Pulse missiles deal double damage to such units.
+     */
+    public boolean isCyberneticallyEnhanced() {
+        return hasProstheticEnhancement();
+    }
+
+    /**
+     * @return {@code true} if this platoon's primary or secondary weapon is an energy weapon. Improved Magnetic Pulse
+     *       missiles
+     *       render such weapons inoperative through the End Phase of the following turn.
+     */
+    public boolean isUsingEnergyWeapons() {
+        return ((primaryWeapon != null) && primaryWeapon.hasFlag(WeaponType.F_ENERGY))
+              || ((secondaryWeapon != null) && secondaryWeapon.hasFlag(WeaponType.F_ENERGY));
     }
 
     public boolean primaryWeaponDamageCapped() {
@@ -1453,12 +1511,25 @@ public class ConvInfantry extends Infantry {
         super.restore();
 
         if (null != primaryName) {
-            primaryWeapon = (InfantryWeapon) EquipmentType.get(primaryName);
+            primaryWeapon = restoreInfantryWeapon(primaryName);
+            if (null != primaryWeapon) {
+                primaryName = primaryWeapon.getInternalName();
+            }
         }
 
         if (null != secondName) {
-            secondaryWeapon = (InfantryWeapon) EquipmentType.get(secondName);
+            secondaryWeapon = restoreInfantryWeapon(secondName);
+            if (null != secondaryWeapon) {
+                secondName = secondaryWeapon.getInternalName();
+            }
         }
+    }
+
+    private static @Nullable InfantryWeapon restoreInfantryWeapon(String weaponName) {
+        if (EquipmentType.getWithFallbackToDisplayName(weaponName) instanceof InfantryWeapon infantryWeapon) {
+            return infantryWeapon;
+        }
+        return null;
     }
 
     @Override
@@ -1537,6 +1608,7 @@ public class ConvInfantry extends Infantry {
             if ((getSecondaryWeaponsPerSquad() > 1) &&
                   !hasAbility(OptionsConstants.MD_TSM_IMPLANT) &&
                   !hasAbility(OptionsConstants.MD_DERMAL_ARMOR) &&
+                  !hasNonEncumberingSecondaryWeaponSpecialization() &&
                   !getMovementMode().isSubmarine() &&
                   (null != secondaryWeapon) &&
                   secondaryWeapon.hasFlag(WeaponType.F_INF_SUPPORT)) {

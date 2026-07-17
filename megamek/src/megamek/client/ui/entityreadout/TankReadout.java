@@ -35,8 +35,8 @@ package megamek.client.ui.entityreadout;
 import java.util.List;
 
 import megamek.client.ui.Messages;
-import megamek.common.equipment.Mounted;
 import megamek.common.units.EntityWeightClass;
+import megamek.common.equipment.Mounted;
 import megamek.common.units.Tank;
 import megamek.common.weapons.infantry.InfantryWeapon;
 

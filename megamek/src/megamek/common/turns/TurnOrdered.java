@@ -40,14 +40,7 @@ import static megamek.common.options.OptionsConstants.ATOW_COMBAT_PARALYSIS;
 import static megamek.common.options.OptionsConstants.ATOW_COMBAT_SENSE;
 
 import java.io.Serial;
-import java.util.ArrayList;
-import java.util.Comparator;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
-import java.util.Vector;
+import java.util.*;
 
 import megamek.common.Player;
 import megamek.common.Team;
@@ -404,6 +397,21 @@ public abstract class TurnOrdered implements ITurnOrdered {
     public static void rollInitAndResolveTies(List<? extends ITurnOrdered> initiativeCandidates,
           List<? extends ITurnOrdered> rerollRequests, boolean bInitCompBonus,
           Map<Team, Integer> initiativeAptitude) {
+        rollInitAndResolveTies(initiativeCandidates, rerollRequests, bInitCompBonus, initiativeAptitude, 0);
+    }
+
+    /**
+     * Backstop that guarantees the tie-break recursion terminates. Genuine ties break within a handful of re-rolls, so
+     * this bound is never approached in practice; it only guards against a degenerate case where candidates compare
+     * equal every pass (e.g. if they were to share the same {@link InitiativeRoll} instance), which would otherwise
+     * recurse until a {@link StackOverflowError}. Kept well below the stack limit while far above any legitimate tie
+     * streak.
+     */
+    private static final int MAX_TIE_BREAK_DEPTH = 100;
+
+    private static void rollInitAndResolveTies(List<? extends ITurnOrdered> initiativeCandidates,
+          List<? extends ITurnOrdered> rerollRequests, boolean bInitCompBonus,
+          Map<Team, Integer> initiativeAptitude, int tieBreakDepth) {
         // Cache the team-level breakdown per player.
         Map<Player, InitiativeBonusBreakdown> playerBreakdownCache = new HashMap<>();
 
@@ -498,23 +506,38 @@ public abstract class TurnOrdered implements ITurnOrdered {
 
         // check for ties
         Vector<ITurnOrdered> ties = new Vector<>();
+        // A tie group is resolved by the single recursive call below, so once an item has been folded into a group we
+        // must not process it again as its own group. Skipping handled items keeps this pass linear: without it, every
+        // member of an unresolvable tie would spawn its own recursion, turning a would-be stack overflow into an
+        // exponential blow-up.
+        Set<ITurnOrdered> alreadyResolved = new HashSet<>();
         for (ITurnOrdered item : initiativeCandidates) {
             // Observers don't have initiative, and were already set to -1
             if (((item instanceof Player) && ((Player) item).isObserver()) ||
                   ((item instanceof Team) && ((Team) item).isObserverTeam())) {
                 continue;
             }
+            if (alreadyResolved.contains(item)) {
+                continue;
+            }
             ties.removeAllElements();
             ties.addElement(item);
             for (ITurnOrdered other : initiativeCandidates) {
-                if ((!Objects.equals(item, other)) && item.getInitiative().equals(other.getInitiative())) {
+                // The identity check guards against two distinct candidates sharing the same InitiativeRoll instance:
+                // that would make equals() trivially true forever and the tie-break below would never resolve.
+                if ((!Objects.equals(item, other)) && (item.getInitiative() != other.getInitiative()) &&
+                      item.getInitiative().equals(other.getInitiative())) {
                     ties.addElement(other);
                 }
             }
 
             if (ties.size() > 1) {
-                // Initiative compensation is retained here, as it should persist in the reroll, like all other bonuses
-                rollInitAndResolveTies(ties, null, bInitCompBonus, initiativeAptitude);
+                alreadyResolved.addAll(ties);
+                if (tieBreakDepth < MAX_TIE_BREAK_DEPTH) {
+                    // Initiative compensation is retained here, as it should persist in the reroll, like all other
+                    // bonuses
+                    rollInitAndResolveTies(ties, null, bInitCompBonus, initiativeAptitude, tieBreakDepth + 1);
+                }
             }
         }
     }

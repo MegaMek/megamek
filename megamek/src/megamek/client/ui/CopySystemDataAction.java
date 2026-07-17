@@ -33,16 +33,16 @@
 
 package megamek.client.ui;
 
-import static megamek.client.ui.Messages.getString;
+import megamek.MMConstants;
+import megamek.MegaMek;
 
+import javax.swing.AbstractAction;
 import java.awt.Toolkit;
 import java.awt.datatransfer.Clipboard;
 import java.awt.datatransfer.StringSelection;
 import java.awt.event.ActionEvent;
-import javax.swing.AbstractAction;
 
-import megamek.MMConstants;
-import megamek.MegaMek;
+import static megamek.client.ui.Messages.getString;
 
 /**
  * This Action copies OS, Java and project data to the clipboard.

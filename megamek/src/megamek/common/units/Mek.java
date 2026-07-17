@@ -325,8 +325,8 @@ public abstract class Mek extends Entity implements Fortifiable, RubbleClearer {
     public static final String FRANKEN_MEK_STRUCTURE_HYBRID = "Hybrid";
 
     private static final TechAdvancement TA_FRANKENMEK = new TechAdvancement(TechBase.ALL)
-          .setAdvancement(ITechnology.DATE_PS)
-          .setStaticTechLevel(SimpleTechLevel.EXPERIMENTAL);
+        .setAdvancement(ITechnology.DATE_PS)
+        .setStaticTechLevel(SimpleTechLevel.EXPERIMENTAL);
 
     private boolean frankenMek = false;
 
@@ -595,7 +595,7 @@ public abstract class Mek extends Entity implements Fortifiable, RubbleClearer {
         boolean needsNewSourceSnapshots = (frankenMekLocationSources == null)
               || (frankenMekLocationSources.length != locations);
         if (frankenMekStructureInitialized && !needsNewTonnage && !needsNewStructureType
-              && !needsNewStructureTechLevel && !needsNewSourceSnapshots) {
+            && !needsNewStructureTechLevel && !needsNewSourceSnapshots) {
             return;
         }
 
@@ -985,8 +985,7 @@ public abstract class Mek extends Entity implements Fortifiable, RubbleClearer {
 
     public String getFrankenMekStructureDisplayName() {
         if (!isFrankenMek()) {
-            return EquipmentType.getStructureTypeName(getStructureType(),
-                  TechConstants.isClan(getStructureTechLevel()));
+            return EquipmentType.getStructureTypeName(getStructureType(), TechConstants.isClan(getStructureTechLevel()));
         }
         if (hasHybridFrankenMekStructure()) {
             return FRANKEN_MEK_STRUCTURE_HYBRID;
@@ -1029,9 +1028,9 @@ public abstract class Mek extends Entity implements Fortifiable, RubbleClearer {
               && (frankenMekStructureType[firstLeg] == frankenMekStructureType[otherLeg])
               && (frankenMekStructureTechLevel[firstLeg] == frankenMekStructureTechLevel[otherLeg])
               && sanitizeFrankenMekSourceValue(firstLegSource.getDisplayName()).equals(
-              sanitizeFrankenMekSourceValue(otherLegSource.getDisplayName()))
+                    sanitizeFrankenMekSourceValue(otherLegSource.getDisplayName()))
               && sanitizeFrankenMekSourceValue(firstLegSource.getType()).equals(
-              sanitizeFrankenMekSourceValue(otherLegSource.getType()));
+                    sanitizeFrankenMekSourceValue(otherLegSource.getType()));
     }
 
     private static String sanitizeFrankenMekSourceValue(String value) {
@@ -1868,10 +1867,11 @@ public abstract class Mek extends Entity implements Fortifiable, RubbleClearer {
         }
 
         if (!mpCalculationSetting.ignoreGravity()) {
-            return Math.max(applyGravityEffectsOnMP(mp), 0);
+            mp = applyGravityEffectsOnMP(mp);
         }
 
-        return Math.max(mp, 0);
+        // Improved Magnetic Pulse (iATM IMP) missile movement reduction (IO IMP rules)
+        return Math.max(0, mp - getImpMpReduction());
     }
 
     /**
@@ -2651,6 +2651,11 @@ public abstract class Mek extends Entity implements Fortifiable, RubbleClearer {
         if (mounted.getType().hasFlag(WeaponType.F_VGL)) {
             return Compute.firingArcFromVGLFacing(mounted.getFacing());
         }
+        // Directional Torso Mount (BMM p.83): front/rear (2-point) or full 360 (quad 3-point)
+        OptionalInt directionalTorsoMountArc = getDirectionalTorsoMountArc(mounted);
+        if (directionalTorsoMountArc.isPresent()) {
+            return directionalTorsoMountArc.getAsInt();
+        }
         // rear mounted?
         if (mounted.isRearMounted()) {
             return Compute.ARC_REAR;
@@ -2663,6 +2668,26 @@ public abstract class Mek extends Entity implements Fortifiable, RubbleClearer {
             case LOC_LEFT_ARM -> getArmsFlipped() ? Compute.ARC_REAR : Compute.ARC_LEFT_ARM;
             default -> Compute.ARC_360;
         };
+    }
+
+    /**
+     * Computes the firing arc for a weapon in a Directional Torso Mount (BMM p.83).
+     * <p>
+     * The mount behaves like a turret: it always fires into a forward arc, but that arc is measured against the unit's
+     * (secondary) facing plus the mount's facing offset (see {@code ComputeArc.getFacing} and
+     * {@link Mounted#getDirectionalMountFacing()}). The 2-point version restricts the offset to forward or rear; the
+     * 3-point quad turret may rotate to any of the six facings. The mount therefore returns {@code ARC_FORWARD} and the
+     * direction is conveyed entirely by the offset, exactly as Mek turret-mounted weapons work.
+     *
+     * @param mounted the weapon being checked
+     *
+     * @return {@code ARC_FORWARD} if this weapon is in a Directional Torso Mount, otherwise an empty {@link OptionalInt}
+     */
+    protected OptionalInt getDirectionalTorsoMountArc(Mounted<?> mounted) {
+        if (mounted.hasDirectionalTorsoMount()) {
+            return OptionalInt.of(Compute.ARC_FORWARD);
+        }
+        return OptionalInt.empty();
     }
 
     /**
@@ -4168,7 +4193,8 @@ public abstract class Mek extends Entity implements Fortifiable, RubbleClearer {
         if (this.isFrankenMek()) {
             if (this.hasMismatchedTonnageFrankenMekLegs()) {
                 roll.addModifier(2, "Mismatched Legs with different tonnages");
-            } else if (this.hasMismatchedFrankenMekLegs()) {
+            } else
+            if (this.hasMismatchedFrankenMekLegs()) {
                 roll.addModifier(1, "Mismatched Legs from different Meks");
             }
         }
@@ -5113,6 +5139,7 @@ public abstract class Mek extends Entity implements Fortifiable, RubbleClearer {
         StringBuilder sb = new StringBuilder();
         String newLine = "\n";
 
+        sb.append(MtfFile.UUID).append(getUnitFileUUID()).append(newLine);
         sb.append(MtfFile.GENERATOR).append(SuiteConstants.PROJECT_NAME)
               .append(" ").append(SuiteConstants.VERSION).append(" on ").append(LocalDate.now()).append(newLine);
 

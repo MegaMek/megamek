@@ -41,6 +41,7 @@ import java.awt.geom.AffineTransform;
 import java.awt.image.BufferedImage;
 import java.awt.image.ImageObserver;
 import java.io.Serial;
+import java.net.URI;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;

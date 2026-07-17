@@ -33,9 +33,9 @@
 
 package megamek.client.ui.util;
 
+import javax.swing.*;
 import java.awt.event.ActionEvent;
 import java.util.function.Consumer;
-import javax.swing.AbstractAction;
 
 /**
  * This class can be used to simplify creating a Java Swing Action if it only requires a name and its action handling

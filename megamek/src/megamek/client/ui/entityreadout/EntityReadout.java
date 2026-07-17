@@ -44,6 +44,7 @@ import megamek.common.units.Aero;
 import megamek.common.units.ConvInfantry;
 import megamek.common.units.Entity;
 import megamek.common.units.FighterSquadron;
+import megamek.common.units.Infantry;
 import megamek.common.units.Mek;
 import megamek.common.units.ProtoMek;
 import megamek.common.units.Tank;
@@ -129,7 +130,8 @@ public interface EntityReadout {
             case Aero aero -> new AeroReadout(aero, showDetail, useAlternateCost, ignorePilotBV);
             case Tank tank -> new TankReadout(tank, showDetail, useAlternateCost, ignorePilotBV);
             case HandheldWeapon hhw -> new HhwReadout(hhw, showDetail, useAlternateCost, ignorePilotBV);
-            case null, default -> new GeneralEntityReadout(entity, showDetail, useAlternateCost, ignorePilotBV);
+            case null, default ->
+                  new GeneralEntityReadout(entity, showDetail, useAlternateCost, ignorePilotBV);
         };
     }
 

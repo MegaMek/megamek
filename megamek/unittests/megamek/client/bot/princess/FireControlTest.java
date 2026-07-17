@@ -62,6 +62,7 @@ import megamek.codeUtilities.StringUtility;
 import megamek.common.CriticalSlot;
 import megamek.common.Hex;
 import megamek.common.LosEffects;
+import megamek.common.Player;
 import megamek.common.TargetRollModifier;
 import megamek.common.ToHitData;
 import megamek.common.battleArmor.BattleArmor;
@@ -88,6 +89,9 @@ import megamek.common.weapons.attacks.StopSwarmAttack;
 import megamek.common.weapons.missiles.ATMWeapon;
 import megamek.common.weapons.missiles.MMLWeapon;
 import megamek.server.SmokeCloud;
+import org.apache.logging.log4j.Level;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.core.config.Configurator;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -815,6 +819,20 @@ class FireControlTest {
         testToHitThreshold = new HashMap<>();
         for (final WeaponMounted weapon : mockShooter.getWeaponList()) {
             testToHitThreshold.put(weapon, 0.0);
+        }
+    }
+
+    @Test
+    void testCheckAllGuessesSkippedAtDebugLogLevel() {
+        // The guess-accuracy sweep computes a real to-hit for every enemy x weapon x ammo combination,
+        // which is extremely expensive (especially with C3 in play). The shipped log configuration runs
+        // the bot loggers at DEBUG, so the sweep must only engage at TRACE (issue #8442).
+        final Level previousLevel = LogManager.getLogger(FireControl.class).getLevel();
+        Configurator.setLevel(FireControl.class.getName(), Level.DEBUG);
+        try {
+            assertNull(testFireControl.checkAllGuesses(mockShooter, mockGame));
+        } finally {
+            Configurator.setLevel(FireControl.class.getName(), previousLevel);
         }
     }
 
@@ -3172,5 +3190,37 @@ class FireControlTest {
               mockGame,
               testToHitThreshold);
         assertFalse(0.00001 > Math.abs(0 - plan.getUtility()), "Expected not 0.0.  Got " + plan.getUtility());
+    }
+
+    @Test
+    void getAllTargetableEnemyEntitiesSkipsAbandonedUnits() {
+        final Player localPlayer = mock(Player.class);
+        final Player enemyPlayer = mock(Player.class);
+        when(enemyPlayer.isEnemyOf(localPlayer)).thenReturn(true);
+
+        final Entity liveEnemy = mockTargetableEnemy(enemyPlayer, false);
+        final Entity abandonedEnemy = mockTargetableEnemy(enemyPlayer, true);
+
+        when(mockGame.getEntitiesVector()).thenReturn(List.of(liveEnemy, abandonedEnemy));
+
+        final List<Targetable> targets =
+              FireControl.getAllTargetableEnemyEntities(localPlayer, mockGame, new FireControlState());
+
+        assertTrue(targets.contains(liveEnemy), "a crewed enemy should be targetable");
+        assertFalse(targets.contains(abandonedEnemy), "an abandoned (crewless, intact) enemy should be skipped");
+    }
+
+    /** Builds an enemy entity that passes every targetability gate except, optionally, the abandoned check. */
+    private Entity mockTargetableEnemy(final Player owner, final boolean abandoned) {
+        final Entity entity = mock(Entity.class);
+        when(entity.getOwner()).thenReturn(owner);
+        when(entity.getPosition()).thenReturn(new Coords(5, 5));
+        when(entity.isOffBoard()).thenReturn(false);
+        when(entity.isTargetable()).thenReturn(true);
+        when(entity.isAbandoned()).thenReturn(abandoned);
+        final Crew crew = mock(Crew.class);
+        when(crew.isDead()).thenReturn(false);
+        when(entity.getCrew()).thenReturn(crew);
+        return entity;
     }
 }

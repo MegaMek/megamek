@@ -36,6 +36,7 @@ package megamek.common.equipment;
 import java.util.*;
 import java.util.stream.Collectors;
 
+import megamek.common.RangeType;
 import megamek.common.SimpleTechLevel;
 import megamek.common.TechAdvancement;
 import megamek.common.TechAdvancement.AdvancementPhase;
@@ -500,6 +501,21 @@ public class EquipmentType implements ITechnology {
         return toHitModifier;
     }
 
+    /**
+     * Returns the to-hit modifier for a range band. Equipment without a range-dependent modifier uses its regular
+     * mounted-equipment modifier.
+     */
+    public int getToHitModifierAtRange(@Nullable Mounted<?> mounted, int range) {
+        return getToHitModifier(mounted);
+    }
+
+    /**
+     * Returns {@code true} if this equipment has a range-based to-hit modifier.
+     */
+    public boolean hasHitModifiersByRange() {
+        return false;
+    }
+
     public EquipmentBitSet getFlags() {
         return flags;
     }
@@ -729,8 +745,14 @@ public class EquipmentType implements ITechnology {
     }
 
     public void addLookupName(String s) {
+        addLookupName(s, true);
+    }
+
+    public void addLookupName(String s, boolean includeInNames) {
         EquipmentType.lookupHash.put(s.toLowerCase(), this); // static variable
-        namesVector.addElement(s); // member variable
+        if (includeInNames) {
+            namesVector.addElement(s); // member variable
+        }
     }
 
     /**
@@ -747,6 +769,26 @@ public class EquipmentType implements ITechnology {
             EquipmentType.initializeTypes();
         }
         return EquipmentType.lookupHash.get(key.toLowerCase());
+    }
+
+    /**
+     * Looks up equipment by internal name or lookup name, falling back to its display name for legacy serialized data.
+     *
+     * @param key The internal name, lookup name, or display name
+     *
+     * @return The matching equipment type, or null if there is none
+     */
+    public static @Nullable EquipmentType getWithFallbackToDisplayName(String key) {
+        EquipmentType equipmentType = get(key);
+        if (equipmentType != null) {
+            return equipmentType;
+        }
+        for (EquipmentType type : allTypes) {
+            if (type.getName().equals(key)) {
+                return type;
+            }
+        }
+        return null;
     }
 
     /**
@@ -1206,7 +1248,13 @@ public class EquipmentType implements ITechnology {
         if (explosive) {
             stats.put("explosive", true);
         }
-        if (toHitModifier != 0) {
+        if (hasHitModifiersByRange()) {
+            int[] toHitModifiersByRange = {getToHitModifierAtRange(null, RangeType.RANGE_SHORT),
+                getToHitModifierAtRange(null, RangeType.RANGE_MEDIUM),
+                getToHitModifierAtRange(null, RangeType.RANGE_LONG)
+            };
+            stats.put("toHitModifier", toHitModifiersByRange);
+        } else if (toHitModifier != 0) {
             stats.put("toHitModifier", toHitModifier);
         }
         if (tankSlots > -1) {
@@ -1509,7 +1557,7 @@ public class EquipmentType implements ITechnology {
 
     /**
      * @return True if this equipment counts for the size and weight of a Targeting Computer, and benefits from it in
-     *       the case of weapons. TM p.238, TO:AUE p.157
+     * the case of weapons. TM p.238, TO:AUE p.157
      */
     public boolean relevantToTargetingComputer() {
         return false;

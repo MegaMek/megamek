@@ -60,9 +60,7 @@ import javax.swing.plaf.metal.MetalTheme;
 
 import megamek.MMConstants;
 import megamek.client.TimerSingleton;
-import megamek.client.bot.princess.PathEnumerator;
-import megamek.client.bot.princess.Princess;
-import megamek.client.bot.princess.geometry.ConvexBoardArea;
+import megamek.client.bot.princess.MinefieldDeploymentPlanner;
 import megamek.client.event.BoardViewEvent;
 import megamek.client.event.BoardViewListener;
 import megamek.client.ui.IDisplayable;
@@ -1227,6 +1225,9 @@ public final class BoardView extends AbstractBoardView
         // draw onscreen attacks
         drawSprites(graphics2D, attackSprites);
 
+        // draw artillery drift lines (from the targeted hex to where the round actually landed)
+        drawArtilleryDriftLines(graphics2D);
+
         // draw movement vectors.
         if (game.useVectorMove() && game.getPhase().isMovement()) {
             drawSprites(graphics2D, movementSprites);
@@ -1296,9 +1297,9 @@ public final class BoardView extends AbstractBoardView
 
         // debugging method that renders the bounding box of a unit's movement envelope.
         // renderClusters((Graphics2D) graphics2D);
-        // renderMovementBoundingBox((Graphics2D) graphics2D);
         // renderDonut(graphics2D, new Coords(10, 10), 2);
         // renderApproxHexDirection((Graphics2D) graphics2D);
+        // renderMinefieldScores((Graphics2D) graphics2D);
     }
 
     /**
@@ -1320,58 +1321,6 @@ public final class BoardView extends AbstractBoardView
         Point p = getCentreHexLocation(donutCoords.getX(), donutCoords.getY(), true);
         p.translate(HEX_W / 2, HEX_H / 2);
         drawHexBorder(g, p, Color.BLUE, 0, 6);
-    }
-
-    /**
-     * Debugging method that renders the bounding hex of a unit's movement envelope. Warning: very slow when rendering
-     * the bounding hex for really fast units.
-     *
-     * @param graphics2D Graphics object on which to draw.
-     */
-    @SuppressWarnings("unused")
-    private void renderMovementBoundingBox(Graphics2D graphics2D) {
-        if (getSelectedEntity() != null) {
-            Princess princess = new Princess("test", MMConstants.LOCALHOST, 2020);
-            princess.startPrecognition();
-            princess.getGame().setBoard(game.getBoard(boardId));
-            PathEnumerator pathEnum = new PathEnumerator(princess, game);
-            pathEnum.recalculateMovesFor(getSelectedEntity());
-
-            ConvexBoardArea cba = pathEnum.getUnitMovableAreas().get(getSelectedEntity().getId());
-            for (int x = 0;
-                  x < game.getBoard(boardId).getWidth();
-                  x++) {
-                for (int y = 0;
-                      y < game.getBoard(boardId).getHeight();
-                      y++) {
-                    Point centreHexLocation = getCentreHexLocation(x, y, true);
-                    centreHexLocation.translate(HEX_W / 2, HEX_H / 2);
-                    Coords coords = new Coords(x, y);
-
-                    if (cba.contains(coords)) {
-                        drawHexBorder(graphics2D, centreHexLocation, Color.PINK, 0, 6);
-                    }
-                }
-            }
-
-            for (int x = 0;
-                  x < 6;
-                  x++) {
-                Coords coords = cba.getVertexNum(x);
-                if (coords == null) {
-                    continue;
-                }
-
-                Point centreHexLocation = getCentreHexLocation(coords.getX(), coords.getY(), true);
-                centreHexLocation.translate(HEX_W / 2, HEX_H / 2);
-
-                drawHexBorder(graphics2D, centreHexLocation, Color.yellow, 0, 3);
-                new StringDrawer(Integer.toString(x)).at(centreHexLocation)
-                      .center()
-                      .color(Color.YELLOW)
-                      .draw(graphics2D);
-            }
-        }
     }
 
     /**
@@ -1407,6 +1356,26 @@ public final class BoardView extends AbstractBoardView
                 drawHexBorder(graphics2D, centreHexLocation, new Color(0, 0, (20 * cluster.id) % 255), 0, 6);
             }
         }
+    }
+    
+    /** 
+     * Debugging method used to render minefield effectiveness ratings
+     */
+    @SuppressWarnings("unused")
+    private void renderMinefieldScores(Graphics2D graphics2D) {
+    	/*Map<Coords, Integer> minefieldScores = mdp.getMinefieldScores(Minefield.TYPE_CONVENTIONAL, UnitType.TANK,
+    			EntityMovementMode.WHEELED, getBoard());*/
+    	
+    	MinefieldDeploymentPlanner mdp = new MinefieldDeploymentPlanner(getLocalPlayer(), game);
+    	Map<Coords, Double> minefieldScores = mdp.buildCoalescedMinefieldScores(Minefield.TYPE_CONVENTIONAL, getBoard());
+    	
+    	for (Coords coords : minefieldScores.keySet()) {
+    		Point centreHexLocation = getCentreHexLocation(coords.getX(), coords.getY(), true);
+            centreHexLocation.translate(HEX_W / 2, HEX_H);
+            graphics2D.setColor(Color.pink);
+            drawCenteredString(String.format("%3.1f", minefieldScores.get(coords)), 
+            		centreHexLocation.x, centreHexLocation.y, FONT_14, graphics2D);
+    	}
     }
 
     public void clearShadowMap() {
@@ -2005,6 +1974,20 @@ public final class BoardView extends AbstractBoardView
                                   graphics2D);
                         }
                         break;
+                    case Minefield.TYPE_TRIPWIRE:
+                    	drawCenteredString(Messages.getString("BoardView1.Tripwire"),
+                                hexLocation.x,
+                                hexLocation.y + (int) (31 * scale),
+                                font_minefield,
+                                graphics2D);
+                    	break;
+                    case Minefield.TYPE_PITFALL:
+                    	drawCenteredString(Messages.getString("BoardView1.Pitfall"),
+                                hexLocation.x,
+                                hexLocation.y + (int) (31 * scale),
+                                font_minefield,
+                                graphics2D);
+                    	break;
                 }
             }
         }
@@ -2123,6 +2106,273 @@ public final class BoardView extends AbstractBoardView
         x += ((hex_size.width - stringWidth) / 2);
         graphics2D.setFont(font);
         graphics2D.drawString(string, x, y);
+    }
+
+    /**
+     * Draws a single combined turn label for all the bot artillery heat-map markers stacked on one hex, so the text is
+     * visible in screenshots and not just in the hover text. Several tubes can target the same hex with different flight
+     * times, so the distinct values are merged into one label rather than drawn over each other: firing markers count
+     * down the turns until impact ({@code T-2}, joined as {@code T-1/2} when they differ, {@code SPLASH} when the only
+     * one is this turn), and otherwise a predicted-position hex shows the prediction's turn ({@code T<turn>}). No-op when
+     * no
+     * heat-map markers are given.
+     *
+     * @param heatMapMarkers The heat-map markers drawn on this hex
+     * @param graphics2D     The hex graphics context
+     * @param scale          The current board scale
+     */
+    private void drawHeatMapTurnLabel(Collection<SpecialHexDisplay> heatMapMarkers, Graphics2D graphics2D,
+          float scale) {
+        SortedSet<Integer> firingCountdowns = new TreeSet<>();
+        SortedSet<Integer> predictedTurns = new TreeSet<>();
+        for (SpecialHexDisplay marker : heatMapMarkers) {
+            String info = marker.getInfo();
+            if ((info == null) || !info.startsWith(SpecialHexDisplay.HEAT_MAP_PREFIX)) {
+                continue;
+            }
+            // Control token is "<turn-or-countdown>:<heat>:<kind>".
+            String[] fields = heatMapToken(info).split(":");
+            if (fields.length == 0) {
+                continue;
+            }
+            try {
+                int value = Integer.parseInt(fields[0]);
+                if ((fields.length >= 3) && SpecialHexDisplay.HEAT_MAP_KIND_FIRING.equals(fields[2])) {
+                    firingCountdowns.add(value);
+                } else {
+                    predictedTurns.add(value);
+                }
+            } catch (NumberFormatException ignored) {
+                // skip a marker whose turn value is not numeric
+            }
+        }
+
+        String label;
+        if (!firingCountdowns.isEmpty()) {
+            // A firing marker's countdown wins over a predicted label; merge distinct countdowns with '/'.
+            if ((firingCountdowns.size() == 1) && (firingCountdowns.first() == 0)) {
+                label = Messages.getString("BoardView.artillery.splash");
+            } else {
+                label = Messages.getString("BoardView.artillery.firingCountdown", joinValues(firingCountdowns));
+            }
+        } else if (!predictedTurns.isEmpty()) {
+            label = Messages.getString("BoardView.artillery.predictedTurns", joinValues(predictedTurns));
+        } else {
+            return;
+        }
+
+        Color previousColor = graphics2D.getColor();
+        graphics2D.setColor(Color.WHITE);
+        drawCenteredString(label, 0, (int) (45 * scale), font_note, graphics2D);
+        graphics2D.setColor(previousColor);
+    }
+
+    /**
+     * @param values The values to render
+     *
+     * @return The values joined with a slash, e.g. {@code 1/2}
+     */
+    private String joinValues(Collection<Integer> values) {
+        StringBuilder joined = new StringBuilder();
+        for (Integer value : values) {
+            if (joined.length() > 0) {
+                joined.append('/');
+            }
+            joined.append(value);
+        }
+        return joined.toString();
+    }
+
+    /**
+     * The cold-to-hot diverging color ramp for predicted-position heat-map markers: navy blue (coldest, a single
+     * enemy converging on the hex) through light blue, light gray, and light orange to crimson red (hottest, many
+     * enemies converging).
+     */
+    private static final Color[] HEAT_MAP_COLOR_RAMP = {
+          new Color(0, 0, 128),      // navy blue - coldest
+          new Color(102, 178, 255),  // light blue
+          new Color(220, 220, 220),  // light gray (neutral middle)
+          new Color(255, 178, 102),  // light orange
+          new Color(220, 20, 60)     // crimson red - hottest
+    };
+
+    /** The enemy count at which a predicted-position heat-map hex is drawn fully hot (crimson). */
+    private static final int HEAT_MAP_MAX_HEAT_UNITS = 5;
+
+    /** Opacity of the predicted-position heat-map color fill, so the underlying terrain still shows through. */
+    private static final float HEAT_MAP_FILL_ALPHA = 0.55f;
+
+    /**
+     * Extracts the colon-separated heat-map control token (the {@code <turn>:<heat>:<kind>} part up to the first
+     * space) from a heat-map marker's info text. See {@link SpecialHexDisplay#HEAT_MAP_PREFIX}.
+     *
+     * @param info The marker's info text
+     *
+     * @return The control token (without the prefix), or an empty string if there is none
+     */
+    private String heatMapToken(String info) {
+        int prefixLength = SpecialHexDisplay.HEAT_MAP_PREFIX.length();
+        int space = info.indexOf(' ', prefixLength);
+        return (space > prefixLength) ? info.substring(prefixLength, space) : info.substring(prefixLength);
+    }
+
+    /**
+     * @param specialHexDisplay A special hex display being drawn
+     *
+     * @return {@code true} if this is any bot artillery heat-map marker (predicted-position or firing)
+     */
+    private boolean isHeatMapMarker(SpecialHexDisplay specialHexDisplay) {
+        String info = specialHexDisplay.getInfo();
+        return (info != null) && info.startsWith(SpecialHexDisplay.HEAT_MAP_PREFIX);
+    }
+
+    /**
+     * @param specialHexDisplay A special hex display being drawn
+     *
+     * @return {@code true} if this is a predicted-position heat-map marker (painted as a cold-to-hot color fill),
+     *       {@code false} for a firing marker or any non-heat-map display
+     */
+    private boolean isPredictedHeatMapMarker(SpecialHexDisplay specialHexDisplay) {
+        String info = specialHexDisplay.getInfo();
+        if ((info == null) || !info.startsWith(SpecialHexDisplay.HEAT_MAP_PREFIX)) {
+            return false;
+        }
+        String[] fields = heatMapToken(info).split(":");
+        return (fields.length >= 3) && SpecialHexDisplay.HEAT_MAP_KIND_PREDICTED.equals(fields[2]);
+    }
+
+    /**
+     * @param info A heat-map marker's info text
+     *
+     * @return The number of enemies predicted to converge on the hex (the marker's heat), or 1 if it cannot be parsed
+     */
+    private int heatMapHeatUnits(String info) {
+        String[] fields = heatMapToken(info).split(":");
+        if (fields.length >= 2) {
+            try {
+                return Integer.parseInt(fields[1]);
+            } catch (NumberFormatException ignored) {
+                return 1;
+            }
+        }
+        return 1;
+    }
+
+    /**
+     * Maps a predicted hex's heat (number of enemies converging on it) to a color on the cold-to-hot diverging ramp:
+     * one enemy is navy blue (coldest) and {@link #HEAT_MAP_MAX_HEAT_UNITS} or more is crimson red (hottest), with the
+     * intermediate counts interpolated through the ramp.
+     *
+     * @param heatUnits The number of enemies converging on the hex
+     *
+     * @return The color to paint the hex
+     */
+    private Color heatMapDivergingColor(int heatUnits) {
+        float normalized = (float) (heatUnits - 1) / (HEAT_MAP_MAX_HEAT_UNITS - 1);
+        normalized = Math.max(0.0f, Math.min(1.0f, normalized));
+        float scaledPosition = normalized * (HEAT_MAP_COLOR_RAMP.length - 1);
+        int lowerStop = (int) Math.floor(scaledPosition);
+        int upperStop = Math.min(lowerStop + 1, HEAT_MAP_COLOR_RAMP.length - 1);
+        float fraction = scaledPosition - lowerStop;
+        Color from = HEAT_MAP_COLOR_RAMP[lowerStop];
+        Color to = HEAT_MAP_COLOR_RAMP[upperStop];
+        int red = Math.round(from.getRed() + (fraction * (to.getRed() - from.getRed())));
+        int green = Math.round(from.getGreen() + (fraction * (to.getGreen() - from.getGreen())));
+        int blue = Math.round(from.getBlue() + (fraction * (to.getBlue() - from.getBlue())));
+        return new Color(red, green, blue);
+    }
+
+    /**
+     * Paints a predicted-position heat-map marker as a cold-to-hot translucent fill over the whole hex (navy = one
+     * enemy converging, crimson = many), so the predicted enemy concentration reads at a glance and cools as units
+     * are destroyed. No-op for any other special hex display.
+     *
+     * @param specialHexDisplay The special hex display being drawn
+     * @param graphics2D        The hex graphics context
+     * @param scale             The current board scale
+     */
+    private void drawHeatMapPredictedHex(SpecialHexDisplay specialHexDisplay, Graphics2D graphics2D, float scale) {
+        Color heatColor = heatMapDivergingColor(heatMapHeatUnits(specialHexDisplay.getInfo()));
+        Color previousColor = graphics2D.getColor();
+        Composite previousComposite = graphics2D.getComposite();
+        graphics2D.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, HEAT_MAP_FILL_ALPHA));
+        graphics2D.setColor(heatColor);
+        AffineTransform hexScale = new AffineTransform();
+        hexScale.scale(scale, scale);
+        graphics2D.fill(hexScale.createTransformedShape(HEX_POLY));
+        graphics2D.setComposite(previousComposite);
+        graphics2D.setColor(previousColor);
+    }
+
+    /** Color of the artillery drift line drawn from a targeted hex to where the round actually landed. */
+    private static final Color ARTILLERY_DRIFT_LINE_COLOR = new Color(255, 191, 0);
+
+    /**
+     * Draws a thin dashed line from each visible artillery miss marker's targeted hex to the hex the round actually
+     * drifted to, with an arrowhead at the landing hex, so the drift reads at a glance (in addition to the combat
+     * report). Only drawn for drift markers currently shown to the local player.
+     *
+     * @param graphics2D The board graphics context, in board pixel space at the current scale
+     */
+    private void drawArtilleryDriftLines(Graphics2D graphics2D) {
+        if (!GUIP.getShowArtilleryDriftArrows()) {
+            return;
+        }
+        Board board = game.getBoard(boardId);
+        if (board == null) {
+            return;
+        }
+        Map<Coords, Collection<SpecialHexDisplay>> specialHexDisplays = board.getSpecialHexDisplayTable();
+        if ((specialHexDisplays == null) || specialHexDisplays.isEmpty()) {
+            return;
+        }
+        Stroke previousStroke = graphics2D.getStroke();
+        Color previousColor = graphics2D.getColor();
+        float dashLength = Math.max(4.0f, hex_size.width / 14.0f);
+        graphics2D.setColor(ARTILLERY_DRIFT_LINE_COLOR);
+        graphics2D.setStroke(new BasicStroke(Math.max(1.0f, hex_size.width / 60.0f), BasicStroke.CAP_ROUND,
+              BasicStroke.JOIN_ROUND, 1.0f, new float[] { dashLength, dashLength }, 0.0f));
+        for (Map.Entry<Coords, Collection<SpecialHexDisplay>> entry : specialHexDisplays.entrySet()) {
+            for (SpecialHexDisplay specialHexDisplay : entry.getValue()) {
+                Coords landingHex = specialHexDisplay.getDriftHex();
+                if ((landingHex == null)
+                      || !specialHexDisplay.drawNow(game.getPhase(), game.getRoundCount(), getLocalPlayer(), GUIP)) {
+                    continue;
+                }
+                drawDriftLine(graphics2D, entry.getKey(), landingHex);
+            }
+        }
+        graphics2D.setStroke(previousStroke);
+        graphics2D.setColor(previousColor);
+    }
+
+    /**
+     * Draws a single drift line, with an arrowhead at the landing hex, between the centers of two hexes.
+     *
+     * @param graphics2D  The board graphics context
+     * @param targetedHex The hex that was targeted (line origin)
+     * @param landingHex  The hex the round drifted to (arrowhead end)
+     */
+    private void drawDriftLine(Graphics2D graphics2D, Coords targetedHex, Coords landingHex) {
+        Point targetedPoint = getHexLocation(targetedHex);
+        Point landingPoint = getHexLocation(landingHex);
+        if ((targetedPoint == null) || (landingPoint == null)) {
+            return;
+        }
+        int fromX = targetedPoint.x + (hex_size.width / 2);
+        int fromY = targetedPoint.y + (hex_size.height / 2);
+        int toX = landingPoint.x + (hex_size.width / 2);
+        int toY = landingPoint.y + (hex_size.height / 2);
+        graphics2D.drawLine(fromX, fromY, toX, toY);
+        double angle = Math.atan2((double) toY - fromY, (double) toX - fromX);
+        int headLength = Math.max(6, hex_size.width / 6);
+        double spread = Math.toRadians(28);
+        int leftX = (int) Math.round(toX - (headLength * Math.cos(angle - spread)));
+        int leftY = (int) Math.round(toY - (headLength * Math.sin(angle - spread)));
+        int rightX = (int) Math.round(toX - (headLength * Math.cos(angle + spread)));
+        int rightY = (int) Math.round(toY - (headLength * Math.sin(angle + spread)));
+        graphics2D.drawLine(toX, toY, leftX, leftY);
+        graphics2D.drawLine(toX, toY, rightX, rightY);
     }
 
     @Override
@@ -2656,11 +2906,28 @@ public final class BoardView extends AbstractBoardView
         final Collection<SpecialHexDisplay> shdList = game.getBoard(boardId).getSpecialHexDisplay(coords);
         try {
             if (shdList != null) {
+                // Several heat-map markers can stack on one hex (multiple tubes firing it, or a prediction plus a
+                // shot). Draw each marker's icon/fill, but collect them so a single combined turn label is drawn (their
+                // distinct values merged), rather than each marker drawing its label over the others.
+                List<SpecialHexDisplay> heatMapMarkers = new ArrayList<>();
                 for (SpecialHexDisplay shd : shdList) {
                     if (shd.drawNow(game.getPhase(), game.getRoundCount(), getLocalPlayer(), GUIP)) {
-                        scaledImage = getScaledImage(shd.getDefaultImage(), true);
-                        graphics2D.drawImage(scaledImage, 0, 0, boardPanel);
+                        // A predicted-position heat-map marker paints the hex with a cold-to-hot color (navy = one
+                        // enemy converging, crimson = many) instead of an icon; the firing marker and every other
+                        // display draw their icon.
+                        if (isPredictedHeatMapMarker(shd)) {
+                            drawHeatMapPredictedHex(shd, graphics2D, scale);
+                        } else {
+                            scaledImage = getScaledImage(shd.getDefaultImage(), true);
+                            graphics2D.drawImage(scaledImage, 0, 0, boardPanel);
+                        }
+                        if (isHeatMapMarker(shd)) {
+                            heatMapMarkers.add(shd);
+                        }
                     }
+                }
+                if (!heatMapMarkers.isEmpty()) {
+                    drawHeatMapTurnLabel(heatMapMarkers, graphics2D, scale);
                 }
             }
         } catch (Exception e) {

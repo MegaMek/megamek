@@ -33,11 +33,11 @@
 
 package megamek.client.ui.dialogs.randomArmy;
 
-import java.util.List;
-
 import megamek.client.generator.skillGenerators.AbstractSkillGenerator;
 import megamek.common.loaders.MekSummary;
 import megamek.common.options.GameOptions;
+
+import java.util.List;
 
 /**
  * This interface is implemented by Tabs that are shown in the Random Army Dialogs which are subclassed from

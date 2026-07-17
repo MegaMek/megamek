@@ -33,9 +33,9 @@
 
 package megamek.common.ui;
 
-import javax.swing.border.EmptyBorder;
-
 import com.formdev.flatlaf.extras.components.FlatLabel;
+
+import javax.swing.border.EmptyBorder;
 
 /**
  * This JLabel is a specialized small-text label for use as a help/info text to be shown directly in a GUI, e.g. under

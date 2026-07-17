@@ -32,8 +32,8 @@
  */
 package megamek.common.verifier;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import java.util.List;
 
@@ -44,13 +44,15 @@ import megamek.common.equipment.MiscType;
 import megamek.common.units.BipedMek;
 import megamek.common.units.Entity;
 import megamek.common.units.Mek;
+
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 
 /**
- * Tests for TestEntity game year validation functionality. Verifies that hasIncorrectIntroYear() correctly uses the
- * game year setting when validating equipment intro dates, and that retrofittable equipment (DNI, EI) is skipped during
- * validation.
+ * Tests for TestEntity game year validation functionality.
+ * Verifies that hasIncorrectIntroYear() correctly uses the game year setting
+ * when validating equipment intro dates, and that retrofittable equipment
+ * (DNI, EI) is skipped during validation.
  */
 class TestEntityGameYearValidationTest {
 
@@ -77,7 +79,7 @@ class TestEntityGameYearValidationTest {
      */
     private TestMek createTestEntity(Mek mek) {
         EntityVerifier verifier = EntityVerifier.getInstance(
-              new java.io.File("testresources/data/mekfiles/UnitVerifierOptions.xml"));
+                new java.io.File("testresources/data/mekfiles/UnitVerifierOptions.xml"));
         return new TestMek(mek, verifier.mekOption, null);
     }
 
@@ -119,7 +121,7 @@ class TestEntityGameYearValidationTest {
 
         // DNI is retrofittable equipment, so it should be skipped in validation
         assertFalse(hasIncorrectIntro,
-              "DNI should not cause validation failure (retrofittable equipment): " + buff);
+                "DNI should not cause validation failure (retrofittable equipment): " + buff);
     }
 
     @Test
@@ -138,7 +140,7 @@ class TestEntityGameYearValidationTest {
 
         // DNI is retrofittable equipment, so it should be skipped in validation
         assertFalse(hasIncorrectIntro,
-              "DNI should not cause validation failure even with early game year (retrofittable): " + buff);
+                "DNI should not cause validation failure even with early game year (retrofittable): " + buff);
     }
 
     // ========== EI Interface Retrofittable Equipment Tests ==========
@@ -160,7 +162,7 @@ class TestEntityGameYearValidationTest {
 
         // EI is retrofittable equipment, so it should be skipped in validation
         assertFalse(hasIncorrectIntro,
-              "EI should not cause validation failure (retrofittable equipment): " + buff);
+                "EI should not cause validation failure (retrofittable equipment): " + buff);
     }
 
     @Test
@@ -180,7 +182,7 @@ class TestEntityGameYearValidationTest {
 
         // EI is retrofittable equipment, so it should be skipped in validation
         assertFalse(hasIncorrectIntro,
-              "EI should not cause validation failure even with early game year (retrofittable): " + buff);
+                "EI should not cause validation failure even with early game year (retrofittable): " + buff);
     }
 
     // ========== Game Year Field Tests ==========
@@ -237,6 +239,6 @@ class TestEntityGameYearValidationTest {
 
         // Both should be skipped as retrofittable
         assertFalse(hasIncorrectIntro,
-              "Both DNI and EI should be skipped as retrofittable: " + buff);
+                "Both DNI and EI should be skipped as retrofittable: " + buff);
     }
 }

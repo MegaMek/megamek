@@ -512,7 +512,7 @@ public class AreaEffectHelper {
                     if (!ServerHelper.infantryInOpen(entity, hex, gameManager.getGame(), true, false, false)
                           && !hex.containsTerrain(Terrains.BUILDING) && !hex.containsTerrain(Terrains.FUEL_TANK)) {
                         hits *= 2;
-
+                        
                         // Report that we doubled the damage when not in the open
                         report = new Report(6046);
                         report.subject = entity.getId();

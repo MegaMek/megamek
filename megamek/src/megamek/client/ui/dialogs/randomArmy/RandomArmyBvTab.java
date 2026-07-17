@@ -34,23 +34,6 @@
 
 package megamek.client.ui.dialogs.randomArmy;
 
-import static megamek.client.ui.clientGUI.calculationReport.HTMLCalculationReport.HTML_START;
-
-import java.awt.Dimension;
-import java.awt.FlowLayout;
-import java.awt.Graphics;
-import java.awt.Graphics2D;
-import java.awt.GridBagConstraints;
-import java.awt.GridBagLayout;
-import java.awt.Insets;
-import java.awt.event.FocusAdapter;
-import java.awt.event.FocusEvent;
-import java.util.Collections;
-import java.util.List;
-import java.util.function.Predicate;
-import javax.swing.*;
-import javax.swing.border.EmptyBorder;
-
 import megamek.client.generator.skillGenerators.AbstractSkillGenerator;
 import megamek.client.ui.Messages;
 import megamek.client.ui.dialogs.advancedsearch.ASAdvancedSearchPanel;
@@ -64,6 +47,23 @@ import megamek.common.options.GameOptions;
 import megamek.common.options.OptionsConstants;
 import megamek.common.util.RandomArmyCreator;
 import megamek.common.util.SimpleRandomLanceCreator;
+
+import javax.swing.*;
+import javax.swing.border.EmptyBorder;
+import java.awt.Dimension;
+import java.awt.FlowLayout;
+import java.awt.Graphics;
+import java.awt.Graphics2D;
+import java.awt.GridBagConstraints;
+import java.awt.GridBagLayout;
+import java.awt.Insets;
+import java.awt.event.FocusAdapter;
+import java.awt.event.FocusEvent;
+import java.util.Collections;
+import java.util.List;
+import java.util.function.Predicate;
+
+import static megamek.client.ui.clientGUI.calculationReport.HTMLCalculationReport.HTML_START;
 
 class RandomArmyBvTab extends JPanel implements RandomArmyTab {
 

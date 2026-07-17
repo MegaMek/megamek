@@ -558,7 +558,7 @@ public class MekFileParser {
             }
 
             if (m.getType().hasFlag(MiscType.F_HARJEL) && (m.getLocation() == Mek.LOC_HEAD)) {
-                throw new EntityLoadingException("Unable to load harjel in head for " + ent.getShortName());
+                throw new EntityLoadingException("Unable to load HarJel in head for " + ent.getShortName());
             }
 
             if (m.getType().hasFlag(MiscType.F_MODULAR_ARMOR) &&
@@ -703,8 +703,7 @@ public class MekFileParser {
                 int tBasicManipulatorCount = ent.countWorkingMisc(MiscType.F_BASIC_MANIPULATOR);
                 int tArmoredGloveCount = ent.countWorkingMisc(MiscType.F_ARMORED_GLOVE);
                 int tBattleClawCount = ent.countWorkingMisc(MiscType.F_BATTLE_CLAW);
-                boolean isUMUMovement = ent.getMovementMode()
-                      == EntityMovementMode.INF_UMU; // BA that uses UMU equipment can't do swarm attacks
+                boolean isUMUMovement = ent.getMovementMode() == EntityMovementMode.INF_UMU; // BA that uses UMU equipment can't do swarm attacks
                 boolean hasSwarm, hasSwarmStart, hasSwarmStop, hasLegAttack;
                 hasSwarm = hasSwarmStart = hasSwarmStop = hasLegAttack = false;
                 for (Mounted<?> m : ent.getWeaponList()) {
@@ -761,24 +760,24 @@ public class MekFileParser {
                                 if (!isUMUMovement) {
                                     if (!hasSwarmStart) {
                                         ent.addEquipment(EquipmentType.get(Infantry.SWARM_MEK),
-                                              BattleArmor.LOC_SQUAD,
-                                              false,
-                                              BattleArmor.MOUNT_LOC_NONE,
-                                              false);
+                                            BattleArmor.LOC_SQUAD,
+                                            false,
+                                            BattleArmor.MOUNT_LOC_NONE,
+                                            false);
                                     }
                                     if (!hasSwarm) {
                                         ent.addEquipment(EquipmentType.get(Infantry.SWARM_WEAPON_MEK),
-                                              BattleArmor.LOC_SQUAD,
-                                              false,
-                                              BattleArmor.MOUNT_LOC_NONE,
-                                              false);
+                                            BattleArmor.LOC_SQUAD,
+                                            false,
+                                            BattleArmor.MOUNT_LOC_NONE,
+                                            false);
                                     }
                                     if (!hasSwarmStop) {
                                         ent.addEquipment(EquipmentType.get(Infantry.STOP_SWARM),
-                                              BattleArmor.LOC_SQUAD,
-                                              false,
-                                              BattleArmor.MOUNT_LOC_NONE,
-                                              false);
+                                            BattleArmor.LOC_SQUAD,
+                                            false,
+                                            BattleArmor.MOUNT_LOC_NONE,
+                                            false);
                                     }
                                 }
                                 if (!hasLegAttack) {
@@ -835,14 +834,17 @@ public class MekFileParser {
               .stream()
               .filter(mounted -> mounted.is(EquipmentTypeLookup.CARGO))
               .collect(Collectors.toList());
-        cargos.forEach(cargo -> cargo.setLinkedBy(null));
+        for (Mounted<?> cargo : cargos) {
+            if (cargo.getLinkedBy() != null) {
+                cargo.getLinkedBy().setLinked(null);
+            }
+        }
 
         for (Mounted<?> dumper : dumpers) {
             dumper.setLinked(null);
             for (Mounted<?> cargo : cargos) {
                 if ((cargo.getLinkedBy() == null) && (cargo.getLocation() == dumper.getLocation())) {
                     dumper.setLinked(cargo);
-                    cargo.setLinkedBy(dumper);
                     break;
                 }
             }

@@ -70,7 +70,6 @@ import megamek.client.Client;
 import megamek.client.TimerSingleton;
 import megamek.client.bot.BotClient;
 import megamek.client.bot.princess.BehaviorSettings;
-import megamek.client.bot.princess.Princess;
 import megamek.client.commands.*;
 import megamek.client.event.BoardViewEvent;
 import megamek.client.event.BoardViewListener;
@@ -103,6 +102,7 @@ import megamek.client.ui.dialogs.InformDialog;
 import megamek.client.ui.dialogs.MMAboutDialog;
 import megamek.client.ui.dialogs.PlayerListDialog;
 import megamek.client.ui.dialogs.RandomNameDialog;
+import megamek.client.ui.dialogs.RoundsInAirDialog;
 import megamek.client.ui.dialogs.UnitLoadingDialog;
 import megamek.client.ui.dialogs.buttonDialogs.CommonSettingsDialog;
 import megamek.client.ui.dialogs.buttonDialogs.EditBotsDialog;
@@ -154,6 +154,7 @@ import megamek.common.equipment.ICarryable;
 import megamek.common.equipment.Mounted;
 import megamek.common.equipment.WeaponMounted;
 import megamek.common.event.*;
+import megamek.common.event.board.GameBoardChangeEvent;
 import megamek.common.event.board.GameBoardNewEvent;
 import megamek.common.event.entity.GameEntityChangeEvent;
 import megamek.common.event.entity.GameEntityNewEvent;
@@ -280,6 +281,7 @@ public class ClientGUI extends AbstractClientGUI
     public static final String VIEW_LOS_SETTING = "viewLOSSetting";
     public static final String VIEW_PLAYER_SETTINGS = "viewPlayerSettings";
     public static final String VIEW_PLAYER_LIST = "viewPlayerList";
+    public static final String VIEW_ROUNDS_IN_AIR = "viewRoundsInAir";
     public static final String VIEW_RESET_WINDOW_POSITIONS = "viewResetWindowPos";
     public static final String VIEW_BOT_COMMANDS = "viewBotCommands";
     public static final String VIEW_BOT_COMMANDS_OFF = "viewBotCommandsOff";
@@ -390,6 +392,7 @@ public class ClientGUI extends AbstractClientGUI
     private NetworkInformationDialog networkInformationDialog;
     private MegaMekUnitSelectorDialog mekSelectorDialog;
     private PlayerListDialog playerListDialog;
+    private RoundsInAirDialog roundsInAirDialog;
     private RandomArmyDialog randomArmyDialog;
     /**
      * Save and Open dialogs for MegaMek Unit List (mul) files.
@@ -604,8 +607,8 @@ public class ClientGUI extends AbstractClientGUI
     /**
      * Shows a progress toast for each of the local player's platoons that is busy raising or dismantling a bridge
      * (TO:AUE). Called once per round at the start of the movement phase: a busy platoon is eligible only in the
-     * movement phase (movement-only, so it can continue/cancel/pause/resume) and takes no other action, so this is its
-     * main per-turn feedback besides the hex indicator and the END phase report.
+     * movement phase (movement-only, so it can continue/cancel/pause/resume) and takes no other action, so this is
+     * its main per-turn feedback besides the hex indicator and the END phase report.
      */
     private void showBridgeBuildProgressToasts() {
         for (Entity entity : getClient().getGame().getEntitiesVector()) {
@@ -747,6 +750,15 @@ public class ClientGUI extends AbstractClientGUI
     public void setPlayerListDialog(final PlayerListDialog playerListDialog) {
         this.playerListDialog = playerListDialog;
         this.playerListDialog.setFocusableWindowState(false);
+    }
+
+    public RoundsInAirDialog getRoundsInAirDialog() {
+        return roundsInAirDialog;
+    }
+
+    public void setRoundsInAirDialog(final RoundsInAirDialog roundsInAirDialog) {
+        this.roundsInAirDialog = roundsInAirDialog;
+        this.roundsInAirDialog.setFocusableWindowState(false);
     }
 
     @Override
@@ -900,12 +912,13 @@ public class ClientGUI extends AbstractClientGUI
         setMiniReportVisible(GUIP.getMiniReportEnabled());
 
         setPlayerListDialog(new PlayerListDialog(frame, client, false));
+        setRoundsInAirDialog(new RoundsInAirDialog(frame, client));
 
         RulerDialog.color1 = GUIP.getRulerColor1();
         RulerDialog.color2 = GUIP.getRulerColor2();
 
         setBotCommandsDialog(new BotCommandsDialog(frame, this));
-        botCommandsPanel = new BotCommandsPanel(getClient(), audioService, null);
+        botCommandsPanel = new BotCommandsPanel(getClient(), audioService, null, this);
         // Place the panel in its configured location (floating dialog or docked strip) before first use.
         setBotCommandsLocation(GUIP.getBotCommandsEnabled());
         // The Bot Commands submenu can no longer carry a working menu accelerator, so wire the show/hide hotkey here.
@@ -1282,6 +1295,9 @@ public class ClientGUI extends AbstractClientGUI
                 break;
             case VIEW_PLAYER_LIST:
                 GUIP.togglePlayerListEnabled();
+                break;
+            case VIEW_ROUNDS_IN_AIR:
+                GUIP.toggleRoundsInAirEnabled();
                 break;
             case VIEW_ROUND_REPORT:
                 GUIP.toggleRoundReportEnabled();
@@ -2040,6 +2056,22 @@ public class ClientGUI extends AbstractClientGUI
             showPlayerList();
         } else if (getPlayerListDialog() != null) {
             getPlayerListDialog().setVisible(false);
+        }
+    }
+
+    void setRoundsInAirVisible(boolean visible) {
+        if (getRoundsInAirDialog() != null) {
+            if (visible) {
+                // Push the current "reveal all artillery" preference to the server on open. The preference change
+                // listener only fires the push when the toggle CHANGES, so a value already set to true at game start
+                // would otherwise never reach the server and enemy rounds would stay hidden. The server's reply
+                // refreshes the list.
+                getClient().sendArtilleryRevealPreference(
+                      GUIP.getBoolean(GUIPreferences.REVEAL_ALL_ARTILLERY_ROUNDS));
+                getRoundsInAirDialog().refresh();
+            }
+            getRoundsInAirDialog().setVisible(visible);
+            conditionalRequestFocus(visible);
         }
     }
 
@@ -2889,6 +2921,16 @@ public class ClientGUI extends AbstractClientGUI
     private final GameListener gameListener = new GameListenerAdapter() {
 
         @Override
+        public void gameBoardChanged(GameBoardChangeEvent e) {
+            // Keep the Rounds in the Air window current the moment in-flight artillery changes. The artillery packet
+            // arrives after the phase-change event, so a phase-change-only refresh would lag a phase (and miss
+            // off-board counter-battery rounds entirely until the next phase).
+            if (roundsInAirDialog != null) {
+                roundsInAirDialog.refresh();
+            }
+        }
+
+        @Override
         public void gameBoardNew(GameBoardNewEvent e) {
             Board newBoard = e.getNewBoard();
             final int boardId = e.getBoardId();
@@ -2986,6 +3028,11 @@ public class ClientGUI extends AbstractClientGUI
             // Swap to this phase's panel.
             GamePhase phase = getClient().getGame().getPhase();
             switchPanel(phase);
+
+            // Keep the Rounds in the Air list current as rounds are declared, fly, and land each phase.
+            if (roundsInAirDialog != null) {
+                roundsInAirDialog.refresh();
+            }
 
             // Once per round, remind the player of own platoons busy raising bridges (TO:AUE); building
             // platoons are ineligible for all phases, so no phase display ever selects them
@@ -3674,12 +3721,12 @@ public class ClientGUI extends AbstractClientGUI
         Map<String, BehaviorSettings> newBotSettings = rpd.getNewBots();
         for (String ghostName : newBotSettings.keySet()) {
             StringBuilder message = new StringBuilder();
-            Princess princess = util.replaceGhostWithBot(newBotSettings.get(ghostName), ghostName, client, message);
+            BotClient botClient = util.replaceGhostWithBot(newBotSettings.get(ghostName), ghostName, client, message);
             systemMessage(message.toString());
-            // Make this princess a locally owned bot. This way it can be configured, and if on the lobby
+            // Make this bot a locally owned bot. This way it can be configured, and if on the lobby
             // it will faithfully press Done when the local player does.
-            if (princess != null) {
-                getLocalBots().put(ghostName, princess);
+            if (botClient != null) {
+                getLocalBots().put(ghostName, botClient);
             }
         }
 
@@ -3720,6 +3767,13 @@ public class ClientGUI extends AbstractClientGUI
         switch (e.getName()) {
             case GUIPreferences.MINI_MAP_ENABLED -> setMapVisible(GUIP.getMinimapEnabled());
             case GUIPreferences.PLAYER_LIST_ENABLED -> setPlayerListVisible(GUIP.getPlayerListEnabled());
+            case GUIPreferences.ROUNDS_IN_AIR_ENABLED -> setRoundsInAirVisible(GUIP.getRoundsInAirEnabled());
+            case GUIPreferences.REVEAL_ALL_ARTILLERY_ROUNDS -> {
+                getClient().sendArtilleryRevealPreference(GUIP.getBoolean(GUIPreferences.REVEAL_ALL_ARTILLERY_ROUNDS));
+                if (roundsInAirDialog != null) {
+                    roundsInAirDialog.refresh();
+                }
+            }
             case GUIPreferences.UNIT_DISPLAY_ENABLED, GUIPreferences.UNIT_DISPLAY_LOCATION ->
                   setUnitDisplayVisible(GUIP.getUnitDisplayEnabled());
             case GUIPreferences.FORCE_DISPLAY_ENABLED -> setForceDisplayVisible(GUIP.getForceDisplayEnabled());
@@ -3738,8 +3792,8 @@ public class ClientGUI extends AbstractClientGUI
                  GUIPreferences.SOUND_BING_FILENAME_OTHERS_TURN -> audioService.loadSoundFiles();
             case GUIPreferences.MASTER_VOLUME -> audioService.setVolume();
             case GUIPreferences.BOT_COMMANDS_ENABLED, GUIPreferences.BOT_COMMANDS_LOCATION ->
-                // Route through maybeShowBotCommands() so the phase rules (non-board phases never show the panel)
-                // are enforced consistently, whether the change came from the menu, the hotkey, or a phase change.
+                  // Route through maybeShowBotCommands() so the phase rules (non-board phases never show the panel)
+                  // are enforced consistently, whether the change came from the menu, the hotkey, or a phase change.
                   maybeShowBotCommands();
         }
     }

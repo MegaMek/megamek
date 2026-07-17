@@ -82,7 +82,7 @@ class MathUtilityTest {
         assertEquals(4L, MathUtility.lerp(0L, 8L, 0.5));
     }
     // endregion Linear Interpolation
-
+    
     @Test
     void testStringToInt() {
         assertEquals(1, MathUtility.parseInt("1", 0));

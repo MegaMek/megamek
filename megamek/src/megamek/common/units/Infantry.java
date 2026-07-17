@@ -98,8 +98,8 @@ public abstract class Infantry extends Entity {
     private transient FortifyState fortifyState = new FortifyState();
 
     /**
-     * @return the fortify damage tracker, recreated lazily so it is never {@code null} on a deserialized platoon (the
-     *       field is transient runtime state, so its initializer does not run during deserialization).
+     * @return the fortify damage tracker, recreated lazily so it is never {@code null} on a deserialized platoon (the field is
+     *       transient runtime state, so its initializer does not run during deserialization).
      */
     private FortifyState fortifyState() {
         if (fortifyState == null) {

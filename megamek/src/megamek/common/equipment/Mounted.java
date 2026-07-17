@@ -39,7 +39,9 @@ import java.io.Serial;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 import megamek.common.CalledShot;
@@ -52,10 +54,13 @@ import megamek.common.equipment.enums.MiscTypeFlag;
 import megamek.common.interfaces.PhaseUpdated;
 import megamek.common.interfaces.RoundUpdated;
 import megamek.common.options.IGameOptions;
+import megamek.common.options.IOption;
 import megamek.common.options.OptionsConstants;
 import megamek.common.options.WeaponQuirks;
 import megamek.common.units.AbstractBuildingEntity;
 import megamek.common.units.Entity;
+import megamek.common.units.Mek;
+import megamek.common.units.QuadMek;
 import megamek.common.units.Tank;
 import megamek.common.util.RoundWeight;
 import megamek.common.weapons.AmmoWeapon;
@@ -95,6 +100,18 @@ public class Mounted<T extends EquipmentType> implements Serializable, RoundUpda
     private boolean sponsonTurretMounted = false; // is this mounted in a sponson turret
     private boolean pintleTurretMounted = false; // is this mounted in a pintle turret
     private int facing = -1; // facing for turrets
+    // Directional Torso Mount quirk (BMM p.83): the mount's current facing as an offset (0-5) from the
+    // unit's (secondary) facing - 0 = forward, 3 = rear. The 2-point version uses only 0 or 3; the
+    // 3-point quad turret may use any of the six. Unlike a torso twist this persists across rounds.
+    private int directionalMountFacing = 0;
+    // Directional Torso Mount quirk (BMM p.83): true when the mount's rotation mechanism has been
+    // destroyed (2D6 9+ on a location hit). The weapon still fires, but its arc is locked.
+    private boolean directionalMountLocked = false;
+    // Directional Torso Mount quirk (BMM p.83): the attack phase in which the mount's facing was changed
+    // this round, or null when it has not been changed. Mirrors Entity.twistedPhase (torso twists): the
+    // facing may be adjusted freely within that phase, but not again in a later phase of the same turn.
+    // Cleared each round in newRound(int).
+    private GamePhase directionalMountFlippedPhase = null;
 
     private int mode; // Equipment's current state. On or Off. Six shot or
     // Four shot, etc
@@ -233,14 +250,15 @@ public class Mounted<T extends EquipmentType> implements Serializable, RoundUpda
     @SuppressWarnings("unchecked")
     public void restore() {
         if (typeName == null) {
-            typeName = type.getName();
-        } else {
-            type = (T) EquipmentType.get(typeName);
+            typeName = type.getInternalName();
         }
+        type = (T) EquipmentType.getWithFallbackToDisplayName(typeName);
 
         if (type == null) {
             String message = String.format("Could not restore equipment type \"%s\"", typeName);
             LOGGER.error(message);
+        } else {
+            typeName = type.getInternalName();
         }
     }
 
@@ -405,6 +423,10 @@ public class Mounted<T extends EquipmentType> implements Serializable, RoundUpda
         // PLAYTEST3 reset AMS usage value
         setAMSused(false);
 
+        // A Directional Torso Mount may change facing once per turn (BMM p.83); the chosen facing itself
+        // persists across rounds, only the once-per-turn tracker resets.
+        directionalMountFlippedPhase = null;
+
         if ((type != null) && (type.hasModes() && (pendingMode != -1))) {
             mode = pendingMode;
             pendingMode = -1;
@@ -476,6 +498,23 @@ public class Mounted<T extends EquipmentType> implements Serializable, RoundUpda
         if (pintleTurretMounted) {
             desc.append(" (PT)");
         }
+        // Directional Torso Mount (BMM p.83): mark the weapon as a directional mount so the player can see at a
+        // glance that it can flip/rotate, then show which way it is aimed (forward shows no facing suffix) and
+        // whether the mount has been locked by damage.
+        if (hasDirectionalTorsoMount()) {
+            desc.append(" (DTM)");
+            switch (directionalMountFacing) {
+                case 1 -> desc.append(" (FR)");
+                case 2 -> desc.append(" (RR)");
+                case 3 -> desc.append(" (R)");
+                case 4 -> desc.append(" (RL)");
+                case 5 -> desc.append(" (FL)");
+                default -> {} // 0 = forward, no suffix
+            }
+            if (isDirectionalMountLocked()) {
+                desc.append(" (Locked)");
+            }
+        }
         // Append the facing for VGLs or if mounted on an AbstractBuildingEntity
         if (((getType() instanceof WeaponType) && getType().hasFlag(WeaponType.F_VGL))
               || getEntity() instanceof AbstractBuildingEntity) {
@@ -501,7 +540,6 @@ public class Mounted<T extends EquipmentType> implements Serializable, RoundUpda
             }
         }
         if ((type instanceof AmmoType) && (location != Entity.LOC_NONE)) {
-
             desc.append(" (");
             desc.append(shotsLeft);
             desc.append(")");
@@ -1078,15 +1116,15 @@ public class Mounted<T extends EquipmentType> implements Serializable, RoundUpda
         return locations;
     }
 
-    public Mounted<?> getLinked() {
+    public @Nullable Mounted<?> getLinked() {
         return linked;
     }
 
-    public Mounted<?> getLinkedBy() {
+    public @Nullable Mounted<?> getLinkedBy() {
         return linkedBy;
     }
 
-    public Mounted<?> getCrossLinkedBy() {
+    public @Nullable Mounted<?> getCrossLinkedBy() {
         return crossLinkedBy;
     }
 
@@ -1100,9 +1138,25 @@ public class Mounted<T extends EquipmentType> implements Serializable, RoundUpda
      * @see #setLinkedBy(Mounted)
      */
     public void setLinked(@Nullable Mounted<?> linked) {
+        if (linked == null && this.linked != null) {
+            this.linked.setLinkedBy(null);
+        }
+
         this.linked = linked;
+
         if (linked != null) {
             linked.setLinkedBy(this);
+        }
+    }
+
+    /**
+     * Sets the linkedBy equipment. Meaningless in case of a many-to-one relationship (ammo, etc.).
+     *
+     * @param linkedBy The inverse of linked
+     */
+    private void setLinkedBy(@Nullable Mounted<?> linkedBy) {
+        if (linkedBy == null || linkedBy.getLinked() == this) {
+            this.linkedBy = linkedBy;
         }
     }
 
@@ -1111,23 +1165,11 @@ public class Mounted<T extends EquipmentType> implements Serializable, RoundUpda
         linked.setCrossLinkedBy(this);
     }
 
-    // should only be called by setLinked(), or when dumping a DWP
-    // in the case of a many-to-one relationship (like ammo) this is meaningless
-    public void setLinkedBy(Mounted<?> linker) {
-        if ((linker != null) && (linker.getLinked() != this)) {
-            // liar
-            return;
-        }
-        linkedBy = linker;
-    }
-
     // called by setCrossLinked() when using cross-linked capacitors.
-    public void setCrossLinkedBy(Mounted<?> linker) {
-        if ((linker != null) && (linker.getLinked() != this)) {
-            // liar
-            return;
+    private void setCrossLinkedBy(Mounted<?> crossLinkedBy) {
+        if (crossLinkedBy == null || crossLinkedBy.getLinked() == this) {
+            this.crossLinkedBy = crossLinkedBy;
         }
-        crossLinkedBy = linker;
     }
 
     public int getFoundCrits() {
@@ -1515,6 +1557,224 @@ public class Mounted<T extends EquipmentType> implements Serializable, RoundUpda
         return facing;
     }
 
+    /**
+     * @return {@code true} if this weapon is in a Directional Torso Mount of either type (the 2-point front/rear
+     *       version or the 3-point quad 360-degree version), per BMM p.83. This is true when the weapon carries a
+     *       Directional Torso Mount weapon quirk directly, or when its unit carries the chassis-wide
+     *       {@code directional_torso_mount} quirk and this weapon is in its scope (see
+     *       {@link #isInUnitTorsoMountSet(String)}). A weapon that is physically split across two locations can never
+     *       ride the single-location mount, regardless of quirk source. Respects the quirks game option (see
+     *       {@link #hasQuirk(String)}).
+     */
+    public boolean hasDirectionalTorsoMount() {
+        if (isSplit()) {
+            return false;
+        }
+        return hasQuirk(OptionsConstants.QUIRK_WEAPON_POS_DIRECT_TORSO_MOUNT)
+              || hasDirectional360TorsoMount()
+              || isInUnitTorsoMountSet(OptionsConstants.QUIRK_POS_DIRECTIONAL_TORSO_MOUNT);
+    }
+
+    /**
+     * @return {@code true} if this weapon is in the 3-point Directional Torso Mount, which operates as a full
+     *       360-degree turret. This version is available only to quad Meks (BMM p.83) - enforced here as well as
+     *       during construction so the 360-degree arc can never be granted to a biped. It is in effect when the
+     *       weapon carries the 360 weapon quirk, or its unit's 360 chassis quirk lists this weapon's location.
+     */
+    public boolean hasDirectional360TorsoMount() {
+        if (!(entity instanceof QuadMek)) {
+            return false;
+        }
+        return hasQuirk(OptionsConstants.QUIRK_WEAPON_POS_DIRECT_TORSO_MOUNT_QUAD)
+              || isInUnitTorsoMountSet(OptionsConstants.QUIRK_POS_DIRECTIONAL_TORSO_MOUNT_360);
+    }
+
+    /**
+     * Determines whether this weapon is covered by one of its unit's chassis-wide Directional Torso Mount quirks. The
+     * chassis quirks ({@link OptionsConstants#QUIRK_POS_DIRECTIONAL_TORSO_MOUNT} for the 2-point version,
+     * {@link OptionsConstants#QUIRK_POS_DIRECTIONAL_TORSO_MOUNT_360} for the quad 360 version) carry the set of torso
+     * locations (head, left/right/center torso) that form mounts; every eligible weapon in a listed location is
+     * covered. The weapon must be a real weapon, not already turret-mounted, and not a weapon with location placement
+     * restrictions such as a Heavy Gauss rifle (BMM p.83).
+     *
+     * @param quirkName the chassis Directional Torso Mount quirk to test against
+     *
+     * @return {@code true} if that chassis quirk lists this weapon's location and the weapon is eligible
+     */
+    private boolean isInUnitTorsoMountSet(String quirkName) {
+        if (!(entity instanceof Mek mek) || !mek.hasQuirk(quirkName)) {
+            return false;
+        }
+        if (!(getType() instanceof WeaponType weaponType) || mekTurretMounted) {
+            return false;
+        }
+        if (WeaponQuirks.hasLocationPlacementRestriction(weaponType)) {
+            return false;
+        }
+        IOption option = mek.getQuirks().getOption(quirkName);
+        return (option != null) && parseTorsoMountLocations(option.stringValue()).contains(getLocation());
+    }
+
+    /**
+     * Parses a Directional Torso Mount chassis quirk's value - a list of location abbreviations such as
+     * {@code "H LT RT"} - into the set of location indices it designates as mounts (BMM p.83). Unknown tokens are
+     * ignored, so only head and the three torso locations are ever returned.
+     *
+     * @param value the quirk value (space- or comma-separated location abbreviations), or {@code null}
+     *
+     * @return the set of mount location indices
+     */
+    private static Set<Integer> parseTorsoMountLocations(@Nullable String value) {
+        Set<Integer> locations = new HashSet<>();
+        if (value == null) {
+            return locations;
+        }
+        for (String token : value.split("[ ,]+")) {
+            switch (token.trim().toUpperCase()) {
+                case "H", "HD", "HEAD" -> locations.add(Mek.LOC_HEAD);
+                case "LT" -> locations.add(Mek.LOC_LEFT_TORSO);
+                case "RT" -> locations.add(Mek.LOC_RIGHT_TORSO);
+                case "CT" -> locations.add(Mek.LOC_CENTER_TORSO);
+                default -> {}
+            }
+        }
+        return locations;
+    }
+
+    /**
+     * Builds a detailed one-line diagnostic of this weapon's Directional Torso Mount state (BMM p.83) for
+     * troubleshooting from the log. Reports every quirk source and the computed flags, so a playtest log can show why
+     * a weapon is (or is not) a flippable directional mount. Intended for log statements only, not the hot path.
+     *
+     * @return a human-readable description of the mount's quirk sources, flags and computed arc state
+     */
+    public String directionalMountDebug() {
+        boolean quirksOptionOn = (entity != null) && (entity.getGame() != null)
+              && entity.getGame().getOptions().booleanOption(OptionsConstants.ADVANCED_STRATOPS_QUIRKS);
+        StringBuilder description = new StringBuilder(getName());
+        description.append(" loc=").append(getLocation());
+        description.append(" rearMounted=").append(rearMounted);
+        description.append(" turretMounted=").append(mekTurretMounted);
+        description.append(" split=").append(isSplit());
+        description.append(" quirksOptionOn=").append(quirksOptionOn);
+        description.append(" wpnQuirk2pt=").append(hasQuirk(OptionsConstants.QUIRK_WEAPON_POS_DIRECT_TORSO_MOUNT));
+        description.append(" wpnQuirkQuad=")
+              .append(hasQuirk(OptionsConstants.QUIRK_WEAPON_POS_DIRECT_TORSO_MOUNT_QUAD));
+        if (entity instanceof Mek mek) {
+            description.append(" isQuad=").append(entity instanceof QuadMek);
+            description.append(" chassis2pt='")
+                  .append(chassisQuirkValue(mek, OptionsConstants.QUIRK_POS_DIRECTIONAL_TORSO_MOUNT)).append('\'');
+            description.append(" chassis360='")
+                  .append(chassisQuirkValue(mek, OptionsConstants.QUIRK_POS_DIRECTIONAL_TORSO_MOUNT_360)).append('\'');
+        }
+        description.append(" => hasDirectionalMount=").append(hasDirectionalTorsoMount());
+        description.append(" has360=").append(hasDirectional360TorsoMount());
+        description.append(" facing=").append(directionalMountFacing);
+        description.append(" locked=").append(directionalMountLocked);
+        description.append(" flippedPhase=").append(directionalMountFlippedPhase);
+        description.append(" alreadyFlipped=").append(isDirectionalMountAlreadyFlipped());
+        return description.toString();
+    }
+
+    private static String chassisQuirkValue(Mek mek, String quirkName) {
+        IOption option = mek.getQuirks().getOption(quirkName);
+        return (option == null) ? "<none>" : option.stringValue();
+    }
+
+    /**
+     * @return the Directional Torso Mount's current facing, as an offset (0-5) from the unit's (secondary) facing:
+     *       0 = forward, 3 = rear (BMM p.83). The 2-point version uses only 0 or 3; the 3-point quad turret may use
+     *       any of the six. Persists across rounds (unlike a torso twist).
+     */
+    public int getDirectionalMountFacing() {
+        return directionalMountFacing;
+    }
+
+    /**
+     * Sets the Directional Torso Mount's facing offset (0-5 from the unit's facing). Has no effect once the mount is
+     * locked (see {@link #isDirectionalMountLocked()}) or once its facing was already changed in an earlier attack
+     * phase this turn (see {@link #isDirectionalMountAlreadyFlipped()} - the once-per-turn rule, modeled on torso
+     * twists). The caller is responsible for restricting the value to the legal facings for the mount type (front/rear
+     * for 2-point, any for the 3-point quad turret).
+     *
+     * @param facing the facing offset; normalized into the range 0-5
+     */
+    public void setDirectionalMountFacing(int facing) {
+        if (directionalMountLocked || isDirectionalMountAlreadyFlipped()) {
+            return;
+        }
+        int normalizedFacing = ((facing % 6) + 6) % 6;
+        if (normalizedFacing != directionalMountFacing) {
+            markDirectionalMountFlipped();
+        }
+        directionalMountFacing = normalizedFacing;
+    }
+
+    /**
+     * Records the phase in which this Directional Torso Mount's facing was changed, mirroring how
+     * {@code Entity.setSecondaryFacing} records the torso-twist phase: only the attack-declaration phases (targeting,
+     * offboard, firing) are recorded, and only the first change of the turn sets the phase - later same-phase
+     * adjustments keep it, so the facing stays freely adjustable until the phase ends.
+     */
+    private void markDirectionalMountFlipped() {
+        if ((entity == null) || (entity.getGame() == null) || (directionalMountFlippedPhase != null)) {
+            return;
+        }
+        GamePhase gamePhase = entity.getGame().getPhase();
+        if ((gamePhase != null) && (gamePhase.isTargeting() || gamePhase.isOffboard() || gamePhase.isFiring())) {
+            directionalMountFlippedPhase = gamePhase;
+        }
+    }
+
+    /**
+     * @return {@code true} if this Directional Torso Mount's facing was already changed in an earlier phase of the
+     *       current turn. A mount's facing may be changed only once per turn - at the same time torso twists are made
+     *       (BMM p.83) - so a mount flipped in the targeting/TAG phase cannot flip again in the weapon attack phase.
+     *       Within the phase it was changed in, the facing remains freely adjustable (like a torso twist). Cleared at
+     *       the start of each round.
+     */
+    public boolean isDirectionalMountAlreadyFlipped() {
+        if ((directionalMountFlippedPhase == null) || (entity == null) || (entity.getGame() == null)) {
+            return false;
+        }
+        return directionalMountFlippedPhase.isBefore(entity.getGame().getPhase());
+    }
+
+    /**
+     * @return {@code true} if this weapon's Directional Torso Mount currently points to the rear arc (facing offset 3).
+     *       Convenience for the 2-point front/rear case.
+     */
+    public boolean isDirectionalMountRear() {
+        return directionalMountFacing == 3;
+    }
+
+    /**
+     * Convenience setter for a 2-point Directional Torso Mount: points it to the rear (offset 3) or front (offset 0).
+     *
+     * @param rear {@code true} to point the mount to the rear arc, {@code false} for the front arc
+     */
+    public void setDirectionalMountRear(boolean rear) {
+        setDirectionalMountFacing(rear ? 3 : 0);
+    }
+
+    /**
+     * @return {@code true} if the Directional Torso Mount's rotation mechanism has been destroyed (2D6 9+ on a hit to
+     *       its location, BMM p.83). The weapon still fires, but its arc can no longer be changed.
+     */
+    public boolean isDirectionalMountLocked() {
+        return directionalMountLocked;
+    }
+
+    /**
+     * Marks the Directional Torso Mount's rotation mechanism as destroyed, locking the weapon in its current arc. The
+     * weapon remains able to fire.
+     *
+     * @param locked {@code true} to lock the mount in its current arc
+     */
+    public void setDirectionalMountLocked(boolean locked) {
+        directionalMountLocked = locked;
+    }
+
     public int getOriginalShots() {
         return originalShots;
     }
@@ -1802,7 +2062,7 @@ public class Mounted<T extends EquipmentType> implements Serializable, RoundUpda
 
     /**
      * @return True if this equipment counts for the size and weight of a Targeting Computer, and benefits from it in
-     *       case of weapons.
+     * case of weapons.
      *
      * @see EquipmentType#relevantToTargetingComputer()
      */

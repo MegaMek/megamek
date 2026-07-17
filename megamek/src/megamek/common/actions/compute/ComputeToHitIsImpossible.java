@@ -239,6 +239,12 @@ class ComputeToHitIsImpossible {
             return Messages.getString("WeaponAttackAction.AttackerNotReady");
         }
 
+        // A battle armor squad with every trooper disabled by Improved Magnetic Pulse missiles has no
+        // active troopers left to fire this turn (IO IMP rules).
+        if ((attacker instanceof BattleArmor battleArmor) && (battleArmor.getShootingStrength() == 0)) {
+            return Messages.getString("WeaponAttackAction.BaAllTroopersDisabled");
+        }
+
         // If the attacker is involved in a grapple
         if (attacker.getGrappled() != Entity.NONE) {
             int grappleOpponent = attacker.getGrappled();
@@ -2000,9 +2006,9 @@ class ComputeToHitIsImpossible {
      * is a single once-per-scenario attack made instead of the platoon's standard weapon attack, and may not be made
      * while the unit is engaged in an anti-Mek (leg/swarm) attack.
      *
-     * @param game       the current game
-     * @param attacker   the attacking infantry/battle armor unit
-     * @param weaponType the disposable weapon's type
+     * @param game         the current game
+     * @param attacker     the attacking infantry/battle armor unit
+     * @param weaponType   the disposable weapon's type
      *
      * @return a localized reason string if the attack is impossible, or null if it is allowed
      */

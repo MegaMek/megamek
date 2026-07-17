@@ -38,6 +38,7 @@ import java.util.List;
 import megamek.client.ui.Messages;
 import megamek.common.*;
 import megamek.common.actions.WeaponAttackAction;
+import megamek.common.annotations.Nullable;
 import megamek.common.battleArmor.BattleArmor;
 import megamek.common.board.Coords;
 import megamek.common.compute.Compute;
@@ -71,7 +72,6 @@ import megamek.common.weapons.battleArmor.clan.CLBALBX;
 import megamek.common.weapons.bayWeapons.ScreenLauncherBayWeapon;
 import megamek.common.weapons.capitalWeapons.CapitalMissileWeapon;
 import megamek.common.weapons.handlers.ARADEquipmentDetector;
-import megamek.common.weapons.lasers.VariableSpeedPulseLaserWeapon;
 import megamek.common.weapons.lasers.innerSphere.ISBombastLaser;
 import megamek.common.weapons.lrms.LRTWeapon;
 import megamek.common.weapons.srms.SRTWeapon;
@@ -456,6 +456,17 @@ public class ComputeToHit {
             }
 
             losMods = los.losModifiers(game, eiSystemStatus, underWater);
+
+            // Overhead Arms quirk (BMM p.85): a standing Mek treats its arm-mounted weapons as one
+            // level higher when determining terrain LOS modifiers (intervening woods, partial cover).
+            // The quirk may not create line of sight where none exists, so it only applies when the
+            // normal line of sight is not blocked.
+            OverheadArmsLos overheadArmsLos = overheadArmsLos(game, weaponEntity, game.getEntity(ae.getId()),
+                  weapon, target, eiSystemStatus, underWater, losMods);
+            if (overheadArmsLos != null) {
+                los = overheadArmsLos.los();
+                losMods = overheadArmsLos.losMods();
+            }
         } else {
             if (exchangeSwarmTarget) {
                 // Swarm should draw LoS between targets, not attacker, since we don't want LoS to be blocked
@@ -747,7 +758,8 @@ public class ComputeToHit {
               inSameBuilding,
               isIndirect,
               isPointblankShot,
-              underWater);
+              underWater,
+              allECMInfo);
 
         // If this is a swarm LRM secondary attack, remove old target movement and
         // terrain mods, then
@@ -981,6 +993,70 @@ public class ComputeToHit {
         }
 
         return toHit;
+    }
+
+    /**
+     * The result of applying the Overhead Arms quirk to weapon-fire line of sight: the elevated line of sight and the
+     * matching terrain LOS modifiers.
+     *
+     * @param los     the line of sight recalculated one level higher
+     * @param losMods the terrain LOS modifiers derived from the elevated line of sight
+     */
+    private record OverheadArmsLos(LosEffects los, ToHitData losMods) {}
+
+    /**
+     * Applies the Overhead Arms quirk (BMM p.85) to weapon-fire line of sight. A standing {@code Mek} with this quirk
+     * treats its arm-mounted weapons as one level higher when determining the effect of terrain on line of sight
+     * (intervening woods, partial cover). The quirk may not create line of sight where none exists, so it only takes
+     * effect when the normal line of sight is not blocked.
+     *
+     * @param game           the current {@link Game}
+     * @param weaponEntity   the entity carrying the firing weapon, used for the quirk and weapon-location checks
+     * @param attacker       the attacking entity used as the line-of-sight origin, which may be {@code null}
+     * @param weapon         the firing weapon
+     * @param target         the target of the attack
+     * @param eiSystemStatus the attacker's EI cockpit status used when computing LOS modifiers
+     * @param underWater     whether the weapon is firing under water
+     * @param baseLosMods    the terrain LOS modifiers computed at the normal firing height
+     *
+     * @return the elevated line of sight and its modifiers when the quirk applies and the elevated line of sight is not
+     *       blocked; otherwise {@code null}, meaning the normal line of sight should be used unchanged
+     */
+    private static @Nullable OverheadArmsLos overheadArmsLos(Game game, Entity weaponEntity,
+          @Nullable Entity attacker, WeaponMounted weapon, Targetable target, int eiSystemStatus,
+          boolean underWater, ToHitData baseLosMods) {
+        if (!(weaponEntity instanceof Mek mek) || !mek.hasQuirk(OptionsConstants.QUIRK_POS_OVERHEAD_ARMS)) {
+            return null;
+        }
+        if (mek.isProne()) {
+            logger.debug("[OverheadArms] {}: quirk inactive - Mek is prone", mek.getShortName());
+            return null;
+        }
+        int weaponLocation = weapon.getLocation();
+        boolean armMounted = (weaponLocation == Mek.LOC_LEFT_ARM) || (weaponLocation == Mek.LOC_RIGHT_ARM);
+        if (!armMounted) {
+            return null;
+        }
+        // The quirk cannot grant line of sight that does not already exist (BMM p.85), so do nothing when
+        // the normal line of sight is already blocked.
+        if (baseLosMods.getValue() == TargetRoll.IMPOSSIBLE) {
+            logger.debug("[OverheadArms] {}: quirk inactive - no normal line of sight to elevate", mek.getShortName());
+            return null;
+        }
+        Coords firingPosition = weaponEntity.getWeaponFiringPosition(weapon);
+        int elevatedFiringHeight = weaponEntity.getWeaponFiringHeight(weapon) + 1;
+        LosEffects elevatedLos = LosEffects.calculateLOS(game, attacker, target, firingPosition,
+              target.getPosition(), elevatedFiringHeight, weaponEntity.getBoardId(), false);
+        ToHitData elevatedLosMods = elevatedLos.losModifiers(game, eiSystemStatus, underWater);
+        // A higher vantage point can never be more blocked than a lower one, but guard the result so the
+        // quirk can never turn an otherwise-legal shot into an impossible one.
+        if (elevatedLosMods.getValue() == TargetRoll.IMPOSSIBLE) {
+            return null;
+        }
+        logger.debug("[OverheadArms] {}: arm weapon in location {} - terrain LOS modifier recalculated one level "
+                    + "higher: +{} (normal) -> +{} (elevated)",
+              mek.getShortName(), weaponLocation, baseLosMods.getValue(), elevatedLosMods.getValue());
+        return new OverheadArmsLos(elevatedLos, elevatedLosMods);
     }
 
     /**
@@ -1566,20 +1642,20 @@ public class ComputeToHit {
         }
 
         // Flat to hit modifiers defined in WeaponType
-        if (weaponType.getToHitModifier(weapon) != 0) {
-            int modifier = weaponType.getToHitModifier(weapon);
-            if (target != null && weaponType instanceof VariableSpeedPulseLaserWeapon) {
-                int nRange = ae.getPosition().distance(target.getPosition());
-                int[] nRanges = weaponType.getRanges(weapon, ammo);
+        int modifier = weaponType.getToHitModifier(weapon);
+        if ((target != null) && weaponType.hasHitModifiersByRange()) {
+            int nRange = ae.getPosition().distance(target.getPosition());
+            int[] nRanges = weaponType.getRanges(weapon, ammo);
 
-                if (nRange <= nRanges[RangeType.RANGE_SHORT]) {
-                    modifier += RangeType.RANGE_SHORT;
-                } else if (nRange <= nRanges[RangeType.RANGE_MEDIUM]) {
-                    modifier += RangeType.RANGE_MEDIUM;
-                } else {
-                    modifier += RangeType.RANGE_LONG;
-                }
+            if (nRange <= nRanges[RangeType.RANGE_SHORT]) {
+                modifier = weaponType.getToHitModifierAtRange(weapon, RangeType.RANGE_SHORT);
+            } else if (nRange <= nRanges[RangeType.RANGE_MEDIUM]) {
+                modifier = weaponType.getToHitModifierAtRange(weapon, RangeType.RANGE_MEDIUM);
+            } else {
+                modifier = weaponType.getToHitModifierAtRange(weapon, RangeType.RANGE_LONG);
             }
+        }
+        if (modifier != 0) {
             toHit.addModifier(modifier, Messages.getString("WeaponAttackAction.WeaponMod"));
 
         }

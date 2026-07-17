@@ -226,17 +226,21 @@ public abstract class PathRanker implements IPathRanker {
         }
 
         RankedPath bestPath = rankedPaths.first();
-        logger.debug("Sprint decision for {}: best path {} (rank {}); {} of {} candidate paths sprint, "
+        // The score breakdown (getReason) answers "why did this unit move here?" - include it at debug so a playtest
+        // can see the winning path's factors without enabling the per-path trace flood.
+        logger.debug("[Move] {}: best path ends {} ({}, rank {}); {} of {} candidate paths sprint, "
                     + "{} sprint paths penalized for ending in enemy weapon range; "
-                    + "best sprint rank {}, best non-sprint rank {}",
+                    + "best sprint rank {}, best non-sprint rank {}. Breakdown: {}",
               bestPath.getPath().getEntity().getDisplayName(),
+              bestPath.getPath().getFinalCoords(),
               BasicPathRanker.isSprintingPath(bestPath.getPath()) ? "SPRINTS" : "does not sprint",
               bestPath.getRank(),
               sprintPathCount,
               rankedPaths.size(),
               penalizedPathCount,
               (bestSprintPath == null) ? "n/a" : bestSprintPath.getRank(),
-              (bestNonSprintPath == null) ? "n/a" : bestNonSprintPath.getRank());
+              (bestNonSprintPath == null) ? "n/a" : bestNonSprintPath.getRank(),
+              bestPath.getReason());
     }
 
     private List<MovePath> validatePaths(List<MovePath> startingPathList, Game game, int maxRange,
@@ -387,10 +391,15 @@ public abstract class PathRanker implements IPathRanker {
                 unmovedDistanceModifier = enemy.getWalkMP();
             }
 
+            // "Closest" is measured by the adjusted distance (an unmoved enemy is treated as farther, since it can
+            // still move away), so store the same adjusted value we compare against - not the raw distance. The
+            // minDistance filter is a "not within N raw hexes" gate (e.g. the not-zero-distance facing target), so
+            // it is tested against the raw hex distance, otherwise a same-hex enemy could pass it via its movement
+            // allowance.
             int distance = position.distance(enemy.getPosition());
-            if (((distance + unmovedDistanceModifier) < range) && ((distance + unmovedDistanceModifier)
-                  >= minDistance)) {
-                range = distance;
+            int adjustedDistance = distance + unmovedDistanceModifier;
+            if ((adjustedDistance < range) && (distance >= minDistance)) {
+                range = adjustedDistance;
                 closest = enemy;
             }
         }

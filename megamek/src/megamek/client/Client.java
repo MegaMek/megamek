@@ -1,7 +1,7 @@
 /*
  * Copyright (c) 2000-2005 Ben Mazur (bmazur@sev.org)
  * Copyright (c) 2013 Edward Cullen (eddy@obsessedcomputers.co.uk)
- * Copyright (C) 2002-2025 The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2002-2026 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -60,7 +60,6 @@ import java.util.stream.Collectors;
 import java.util.zip.GZIPInputStream;
 
 import megamek.MMConstants;
-import megamek.client.bot.princess.Princess;
 import megamek.client.generator.skillGenerators.AbstractSkillGenerator;
 import megamek.client.generator.skillGenerators.ModifiedTotalWarfareSkillGenerator;
 import megamek.client.ui.clientGUI.GUIPreferences;
@@ -1007,14 +1006,20 @@ public class Client extends AbstractClient {
         send(new Packet(PacketCommand.SPECIAL_HEX_DISPLAY_DELETE, c, boardId, shd));
     }
 
+    /**
+     * Hook invoked when the server greets this client, allowing a bot client to push its behavior settings to the
+     * server. Non-bot clients have no settings to send, so this default implementation does nothing; bot clients
+     * override it.
+     */
+    protected void sendBotSettingsToServer() {
+    }
+
     @Override
     protected boolean handleGameSpecificPacket(Packet packet) {
         try {
             switch (packet.command()) {
                 case SERVER_GREETING:
-                    if (this instanceof Princess) {
-                        ((Princess) this).sendPrincessSettings();
-                    }
+                    sendBotSettingsToServer();
                     break;
                 case PRINCESS_SETTINGS:
                     game.setBotSettings(packet.getStringWIthBehaviorSettingsMap(0));
@@ -1213,6 +1218,13 @@ public class Client extends AbstractClient {
                 case SENDING_ARTILLERY_ATTACKS:
                     Vector<ArtilleryAttackAction> artilleryAttackActions = packet.getArtilleryAttackAction(0);
                     game.setArtilleryVector(artilleryAttackActions);
+                    // Redacted enemy rounds (landing time only; target/munition withheld by the server) for the
+                    // Rounds-in-Air window; this list never feeds the board, so it cannot leak the enemy aim point.
+                    game.setEnemyArtilleryInbound(packet.getEnemyArtilleryInbound(1));
+                    // Fire a board-change event so views tracking in-flight artillery (e.g. the Rounds in the Air
+                    // window) refresh now. This packet arrives AFTER the phase-change event, so a phase-change-only
+                    // refresh would always be one phase stale - notably for off-board counter-battery rounds.
+                    game.processGameEvent(new GameBoardChangeEvent(this));
                     break;
                 case SENDING_FLARES:
                     Vector<Flare> flareVector = packet.getFlareVector(0);

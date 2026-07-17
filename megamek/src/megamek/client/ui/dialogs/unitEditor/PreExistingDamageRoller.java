@@ -36,6 +36,7 @@ import java.awt.Component;
 import java.awt.Container;
 import java.util.HashMap;
 import java.util.Map;
+import javax.swing.JCheckBox;
 import javax.swing.JSpinner;
 import javax.swing.SpinnerNumberModel;
 
@@ -172,11 +173,18 @@ public class PreExistingDamageRoller {
         setSpinnerToZero(controls.spnGunneryModifier);
         setSpinnerToZero(controls.spnPilotingModifier);
         setSpinnerToZero(controls.spnInitiativeModifier);
-        if (null != controls.spnModifierRounds) {
-            controls.spnModifierRounds.setValue(UnitDamagePanelBuilder.DEFAULT_MODIFIER_ROUNDS);
+        resetModifierDuration(controls.spnGunneryRounds, controls.chkGunneryPermanent);
+        resetModifierDuration(controls.spnPilotingRounds, controls.chkPilotingPermanent);
+        resetModifierDuration(controls.spnInitiativeRounds, controls.chkInitiativePermanent);
+    }
+
+    /** Puts one modifier's duration controls back to their fresh state: the default rounds, not permanent. */
+    private void resetModifierDuration(JSpinner roundsSpinner, JCheckBox permanentCheckbox) {
+        if (null != roundsSpinner) {
+            roundsSpinner.setValue(UnitDamagePanelBuilder.DEFAULT_MODIFIER_ROUNDS);
         }
-        if (null != controls.chkModifierPermanent) {
-            controls.chkModifierPermanent.setSelected(false);
+        if (null != permanentCheckbox) {
+            permanentCheckbox.setSelected(false);
         }
     }
 

@@ -82,10 +82,14 @@ public class UnitDamageSpecBuilder {
 
         if (null != controls.spnGunneryModifier) {
             spec.gunneryModifier = (Integer) controls.spnGunneryModifier.getValue();
+            spec.gunneryRounds = (Integer) controls.spnGunneryRounds.getValue();
+            spec.gunneryPermanent = controls.chkGunneryPermanent.isSelected();
             spec.pilotingModifier = (Integer) controls.spnPilotingModifier.getValue();
+            spec.pilotingRounds = (Integer) controls.spnPilotingRounds.getValue();
+            spec.pilotingPermanent = controls.chkPilotingPermanent.isSelected();
             spec.initiativeModifier = (Integer) controls.spnInitiativeModifier.getValue();
-            spec.modifierRounds = (Integer) controls.spnModifierRounds.getValue();
-            spec.modifierPermanent = controls.chkModifierPermanent.isSelected();
+            spec.initiativeRounds = (Integer) controls.spnInitiativeRounds.getValue();
+            spec.initiativePermanent = controls.chkInitiativePermanent.isSelected();
         }
 
         spec.centerEngineHits = critHits(controls.centerEngineCrit);

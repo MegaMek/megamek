@@ -133,6 +133,40 @@ class TemporarySkillModifiersTest {
     }
 
     @Test
+    void eachModifierCountsDownOnItsOwnClock() {
+        TemporarySkillModifiers modifiers = new TemporarySkillModifiers();
+        modifiers.setGunnery(1, 1);
+        modifiers.setPiloting(2, 2);
+        modifiers.setInitiative(3, TemporarySkillModifiers.PERMANENT);
+
+        modifiers.newRound();
+        // the gunnery round is spent, the piloting modifier has a round left, the initiative one never expires
+        assertEquals(4, modifiers.adjustGunnery(4));
+        assertEquals(7, modifiers.adjustPiloting(5));
+        assertEquals(3, modifiers.getInitiativeDelta());
+
+        modifiers.newRound();
+        assertEquals(5, modifiers.adjustPiloting(5));
+        assertEquals(3, modifiers.getInitiativeDelta());
+        assertTrue(modifiers.isActive(), "the permanent initiative modifier keeps the modifiers active");
+    }
+
+    @Test
+    void settingOneModifierLeavesTheOthersAlone() {
+        TemporarySkillModifiers modifiers = new TemporarySkillModifiers();
+        modifiers.setGunnery(2, 3);
+        modifiers.setPiloting(1, TemporarySkillModifiers.PERMANENT);
+
+        modifiers.setGunnery(0, 3);
+
+        // clearing the gunnery modifier by its zero delta does not touch the piloting one
+        assertEquals(4, modifiers.adjustGunnery(4));
+        assertEquals(6, modifiers.adjustPiloting(5));
+        assertEquals(TemporarySkillModifiers.PERMANENT, modifiers.getPilotingRounds());
+        assertEquals(0, modifiers.getGunneryRounds());
+    }
+
+    @Test
     void crewEffectiveSkillsFollowTheModifiersButStoredSkillsStayRaw() {
         Crew crew = new Crew(CrewType.SINGLE);
         int baseGunnery = crew.getGunnery();

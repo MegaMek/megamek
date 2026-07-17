@@ -136,18 +136,26 @@ class DamageEditApplierTest {
     }
 
     @Test
-    void skillModifiersLandOnTheCrew() {
+    void skillModifiersLandOnTheCrewEachWithItsOwnDuration() {
         int baseGunnery = mek.getCrew().getGunnery();
+        int basePiloting = mek.getCrew().getPiloting();
 
         DamageEditSpec spec = emptySpec();
         spec.gunneryModifier = 1;
-        spec.pilotingModifier = 0;
+        spec.gunneryRounds = 3;
+        spec.pilotingModifier = -1;
+        spec.pilotingRounds = 1;
+        spec.pilotingPermanent = true;
         spec.initiativeModifier = 0;
-        spec.modifierRounds = 3;
+        spec.initiativeRounds = 3;
         apply(spec);
 
         assertEquals(baseGunnery + 1, mek.getCrew().getGunnery());
-        assertEquals(3, mek.getCrew().getSkillModifiers().getRoundsRemaining());
+        assertEquals(basePiloting - 1, mek.getCrew().getPiloting());
+        assertEquals(3, mek.getCrew().getSkillModifiers().getGunneryRounds());
+        assertEquals(TemporarySkillModifiers.PERMANENT, mek.getCrew().getSkillModifiers().getPilotingRounds());
+        assertEquals(0, mek.getCrew().getSkillModifiers().getInitiativeRounds(),
+              "a zero delta must not start an initiative modifier");
     }
 
     @Test
@@ -156,9 +164,11 @@ class DamageEditApplierTest {
 
         DamageEditSpec spec = emptySpec();
         spec.gunneryModifier = 0;
+        spec.gunneryRounds = 3;
         spec.pilotingModifier = 0;
+        spec.pilotingRounds = 3;
         spec.initiativeModifier = 0;
-        spec.modifierRounds = 3;
+        spec.initiativeRounds = 3;
         apply(spec);
 
         assertFalse(mek.getCrew().getSkillModifiers().isActive());

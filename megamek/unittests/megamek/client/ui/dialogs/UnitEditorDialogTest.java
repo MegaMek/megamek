@@ -377,11 +377,30 @@ class UnitEditorDialogTest {
 
         UnitEditorDialog dialog = new UnitEditorDialog(new JFrame(), entity, true);
         dialog.controlsForTesting().spnGunneryModifier.setValue(1);
-        dialog.controlsForTesting().spnModifierRounds.setValue(3);
+        dialog.controlsForTesting().spnGunneryRounds.setValue(3);
         clickOkay(dialog);
 
         assertEquals(baseGunnery + 1, entity.getCrew().getGunnery(), "the gunnery modifier was not applied");
-        assertEquals(3, entity.getCrew().getSkillModifiers().getRoundsRemaining(), "the duration was not applied");
+        assertEquals(3, entity.getCrew().getSkillModifiers().getGunneryRounds(), "the duration was not applied");
+        dialog.dispose();
+    }
+
+    /** Each modifier carries a duration of its own: one can count down while another is permanent. */
+    @Test
+    void eachModifierIsAppliedWithItsOwnDuration() {
+        Entity entity = entityInGame();
+
+        UnitEditorDialog dialog = new UnitEditorDialog(new JFrame(), entity, true);
+        dialog.controlsForTesting().spnGunneryModifier.setValue(1);
+        dialog.controlsForTesting().spnGunneryRounds.setValue(2);
+        dialog.controlsForTesting().spnPilotingModifier.setValue(-1);
+        dialog.controlsForTesting().chkPilotingPermanent.setSelected(true);
+        clickOkay(dialog);
+
+        assertEquals(2, entity.getCrew().getSkillModifiers().getGunneryRounds(),
+              "the gunnery duration was not applied");
+        assertEquals(TemporarySkillModifiers.PERMANENT, entity.getCrew().getSkillModifiers().getPilotingRounds(),
+              "the piloting modifier was not applied as permanent");
         dialog.dispose();
     }
 
@@ -394,7 +413,7 @@ class UnitEditorDialogTest {
         UnitEditorDialog dialog = new UnitEditorDialog(new JFrame(), entity, true);
         assertEquals(2, dialog.controlsForTesting().spnGunneryModifier.getValue(),
               "the active modifier was not read from the crew");
-        assertTrue(dialog.controlsForTesting().chkModifierPermanent.isSelected(),
+        assertTrue(dialog.controlsForTesting().chkGunneryPermanent.isSelected(),
               "a permanent modifier was not read back as permanent");
         dialog.controlsForTesting().spnGunneryModifier.setValue(0);
         clickOkay(dialog);
@@ -429,7 +448,7 @@ class UnitEditorDialogTest {
 
         UnitEditorDialog dialog = new UnitEditorDialog(new JFrame(), entity, true);
         dialog.controlsForTesting().spnGunneryModifier.setValue(2);
-        dialog.controlsForTesting().chkModifierPermanent.setSelected(true);
+        dialog.controlsForTesting().chkGunneryPermanent.setSelected(true);
         JButton restore = findButton(dialog.getContentPane(),
               Messages.getString("UnitEditorDialog.preExistingDamage.reset"));
         assertNotNull(restore, "the dialog has no Restore Unit button");
@@ -437,10 +456,10 @@ class UnitEditorDialogTest {
 
         assertEquals(0, dialog.controlsForTesting().spnGunneryModifier.getValue(),
               "Restore Unit left a skill modifier behind");
-        assertFalse(dialog.controlsForTesting().chkModifierPermanent.isSelected(),
+        assertFalse(dialog.controlsForTesting().chkGunneryPermanent.isSelected(),
               "Restore Unit left the modifier permanent");
         assertEquals(UnitDamagePanelBuilder.DEFAULT_MODIFIER_ROUNDS,
-              dialog.controlsForTesting().spnModifierRounds.getValue(),
+              dialog.controlsForTesting().spnGunneryRounds.getValue(),
               "Restore Unit swept the duration to its maximum");
         dialog.dispose();
     }

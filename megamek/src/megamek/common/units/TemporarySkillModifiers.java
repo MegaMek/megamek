@@ -37,9 +37,10 @@ import java.io.Serial;
 import java.io.Serializable;
 
 /**
- * A gamemaster-set temporary change to a crew's effective skills: a delta to gunnery and piloting, a delta to the
- * unit's individual initiative roll, and how many rounds the change lasts. The stored skills are never touched; the
- * deltas are applied when the effective skill is read, so the change reverses itself completely when it expires.
+ * A gamemaster-set temporary change to a crew's effective skills: a delta to gunnery, a delta to piloting, and a
+ * delta to the unit's individual initiative roll, each with a duration of its own, counting down in rounds or
+ * permanent. The stored skills are never touched; the deltas are applied when the effective skill is read, so each
+ * change reverses itself completely when it expires.
  * <p>
  * Skill deltas are added to the skill number, so a negative delta improves the crew (a -1 makes a 4 gunner a 3) and
  * a positive delta worsens it. The initiative delta is added to the unit's initiative roll, so there a positive
@@ -48,7 +49,7 @@ import java.io.Serializable;
  * </p>
  * <p>
  * Follows the countdown convention of the taser and magnetic pulse effects: {@link #newRound()} is called once per
- * round from {@link Entity#newRound(int)} and the modifiers clear themselves when the counter runs out.
+ * round from {@link Entity#newRound(int)} and each modifier clears itself when its own counter runs out.
  * </p>
  */
 public class TemporarySkillModifiers implements Serializable {
@@ -56,20 +57,23 @@ public class TemporarySkillModifiers implements Serializable {
     @Serial
     private static final long serialVersionUID = 1L;
 
-    /** Value for {@link #getRoundsRemaining()} meaning the modifiers last until they are cleared by hand. */
+    /** Rounds value meaning a modifier lasts until it is cleared by hand. */
     public static final int PERMANENT = -1;
 
     /** The effective skill is held to the normal skill range no matter the delta. */
     private static final int MIN_SKILL = 0;
 
+    /* each modifier is a delta and its own duration; a cleared modifier is zero in both */
     private int gunneryDelta = 0;
+    private int gunneryRounds = 0;
     private int pilotingDelta = 0;
+    private int pilotingRounds = 0;
     private int initiativeDelta = 0;
-    /** Rounds the modifiers still last: 0 means none are active, {@link #PERMANENT} means they do not expire. */
-    private int roundsRemaining = 0;
+    private int initiativeRounds = 0;
 
     /**
-     * Sets the modifiers, replacing any that were active. Zero rounds clears them no matter the deltas.
+     * Sets all three modifiers with one shared duration, replacing any that were active; the /skillMod command's
+     * form of a change. A zero delta clears its modifier, and zero rounds clears all three.
      *
      * @param gunneryDelta    added to the gunnery skill number; negative improves the crew
      * @param pilotingDelta   added to the piloting skill number; negative improves the crew
@@ -77,27 +81,57 @@ public class TemporarySkillModifiers implements Serializable {
      * @param rounds          how many rounds the modifiers last, or {@link #PERMANENT}
      */
     public void set(int gunneryDelta, int pilotingDelta, int initiativeDelta, int rounds) {
-        if (rounds == 0) {
-            clear();
-            return;
-        }
-        this.gunneryDelta = gunneryDelta;
-        this.pilotingDelta = pilotingDelta;
-        this.initiativeDelta = initiativeDelta;
-        roundsRemaining = rounds;
+        setGunnery(gunneryDelta, rounds);
+        setPiloting(pilotingDelta, rounds);
+        setInitiative(initiativeDelta, rounds);
     }
 
-    /** Removes the modifiers at once, as when a gamemaster takes back a change before it runs out. */
+    /**
+     * Sets the gunnery modifier alone, replacing an active one. A zero delta or zero rounds clears it.
+     *
+     * @param delta  added to the gunnery skill number; negative improves the crew
+     * @param rounds how many rounds the modifier lasts, or {@link #PERMANENT}
+     */
+    public void setGunnery(int delta, int rounds) {
+        boolean cleared = (delta == 0) || (rounds == 0);
+        gunneryDelta = cleared ? 0 : delta;
+        gunneryRounds = cleared ? 0 : rounds;
+    }
+
+    /**
+     * Sets the piloting modifier alone, replacing an active one. A zero delta or zero rounds clears it.
+     *
+     * @param delta  added to the piloting skill number; negative improves the crew
+     * @param rounds how many rounds the modifier lasts, or {@link #PERMANENT}
+     */
+    public void setPiloting(int delta, int rounds) {
+        boolean cleared = (delta == 0) || (rounds == 0);
+        pilotingDelta = cleared ? 0 : delta;
+        pilotingRounds = cleared ? 0 : rounds;
+    }
+
+    /**
+     * Sets the initiative modifier alone, replacing an active one. A zero delta or zero rounds clears it.
+     *
+     * @param delta  added to the unit's individual initiative roll; positive improves the crew
+     * @param rounds how many rounds the modifier lasts, or {@link #PERMANENT}
+     */
+    public void setInitiative(int delta, int rounds) {
+        boolean cleared = (delta == 0) || (rounds == 0);
+        initiativeDelta = cleared ? 0 : delta;
+        initiativeRounds = cleared ? 0 : rounds;
+    }
+
+    /** Removes every modifier at once, as when a gamemaster takes back a change before it runs out. */
     public void clear() {
-        gunneryDelta = 0;
-        pilotingDelta = 0;
-        initiativeDelta = 0;
-        roundsRemaining = 0;
+        setGunnery(0, 0);
+        setPiloting(0, 0);
+        setInitiative(0, 0);
     }
 
-    /** @return {@code true} while any modifiers are set, whether counting down or permanent */
+    /** @return {@code true} while any modifier is set, whether counting down or permanent */
     public boolean isActive() {
-        return roundsRemaining != 0;
+        return (gunneryRounds != 0) || (pilotingRounds != 0) || (initiativeRounds != 0);
     }
 
     /**
@@ -119,42 +153,60 @@ public class TemporarySkillModifiers implements Serializable {
     }
 
     private int adjustSkill(int baseSkill, int delta) {
-        if (!isActive() || (delta == 0)) {
+        if (delta == 0) {
             return baseSkill;
         }
         return Math.max(MIN_SKILL, Math.min(Crew.MAX_SKILL, baseSkill + delta));
     }
 
-    /** @return the delta to the unit's individual initiative roll, or 0 while no modifiers are active */
+    /** @return the delta to the unit's individual initiative roll; 0 while its modifier is not active */
     public int getInitiativeDelta() {
-        return isActive() ? initiativeDelta : 0;
+        return initiativeDelta;
     }
 
+    /** @return the delta to the gunnery skill number; 0 while its modifier is not active */
     public int getGunneryDelta() {
         return gunneryDelta;
     }
 
+    /** @return the delta to the piloting skill number; 0 while its modifier is not active */
     public int getPilotingDelta() {
         return pilotingDelta;
     }
 
-    /** @return rounds the modifiers still last: 0 when none are active, {@link #PERMANENT} when they do not expire */
-    public int getRoundsRemaining() {
-        return roundsRemaining;
+    /** @return rounds the gunnery modifier still lasts: 0 when inactive, {@link #PERMANENT} when it does not expire */
+    public int getGunneryRounds() {
+        return gunneryRounds;
+    }
+
+    /** @return rounds the piloting modifier still lasts: 0 when inactive, {@link #PERMANENT} when it does not expire */
+    public int getPilotingRounds() {
+        return pilotingRounds;
     }
 
     /**
-     * Advances the modifiers one round and clears them when their time runs out, following the taser-effect
+     * @return rounds the initiative modifier still lasts: 0 when inactive, {@link #PERMANENT} when it does not
+     *       expire
+     */
+    public int getInitiativeRounds() {
+        return initiativeRounds;
+    }
+
+    /**
+     * Advances every modifier one round and clears each one whose time runs out, following the taser-effect
      * countdown idiom. Permanent modifiers are never counted down. Called from {@link Entity#newRound(int)}, which
      * runs before the round's initiative is rolled, so a modifier set during round N covers the rest of round N
      * plus the initiative rolls of the following {@code rounds - 1} rounds.
      */
     public void newRound() {
-        if (roundsRemaining > 0) {
-            roundsRemaining--;
-            if (roundsRemaining == 0) {
-                clear();
-            }
+        if (gunneryRounds > 0) {
+            setGunnery(gunneryDelta, gunneryRounds - 1);
+        }
+        if (pilotingRounds > 0) {
+            setPiloting(pilotingDelta, pilotingRounds - 1);
+        }
+        if (initiativeRounds > 0) {
+            setInitiative(initiativeDelta, initiativeRounds - 1);
         }
     }
 }

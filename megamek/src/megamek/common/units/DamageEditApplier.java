@@ -480,23 +480,21 @@ public class DamageEditApplier {
 
     /**
      * Writes the gamemaster's temporary skill modifiers back to the crew, through the same state object the
-     * /skillMod command sets. Every delta at zero clears them, which is also how a gamemaster takes a modifier
-     * back before it runs out.
+     * /skillMod command sets. Each modifier carries its own duration, and a delta at zero clears its modifier,
+     * which is also how a gamemaster takes a change back before it runs out.
      */
     private void applySkillModifiers() {
         Crew crew = entity.getCrew();
         if ((null == crew) || (null == spec.gunneryModifier)) {
             return;
         }
-        int gunneryDelta = spec.gunneryModifier;
-        int pilotingDelta = spec.pilotingModifier;
-        int initiativeDelta = spec.initiativeModifier;
-        if ((gunneryDelta == 0) && (pilotingDelta == 0) && (initiativeDelta == 0)) {
-            crew.getSkillModifiers().clear();
-            return;
-        }
-        int rounds = spec.modifierPermanent ? TemporarySkillModifiers.PERMANENT : spec.modifierRounds;
-        crew.getSkillModifiers().set(gunneryDelta, pilotingDelta, initiativeDelta, rounds);
+        TemporarySkillModifiers modifiers = crew.getSkillModifiers();
+        modifiers.setGunnery(spec.gunneryModifier,
+              spec.gunneryPermanent ? TemporarySkillModifiers.PERMANENT : spec.gunneryRounds);
+        modifiers.setPiloting(spec.pilotingModifier,
+              spec.pilotingPermanent ? TemporarySkillModifiers.PERMANENT : spec.pilotingRounds);
+        modifiers.setInitiative(spec.initiativeModifier,
+              spec.initiativePermanent ? TemporarySkillModifiers.PERMANENT : spec.initiativeRounds);
     }
 
     /**

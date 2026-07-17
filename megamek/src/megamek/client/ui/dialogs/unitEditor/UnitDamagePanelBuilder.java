@@ -238,38 +238,28 @@ public class UnitDamagePanelBuilder {
 
         controls.spnGunneryModifier = skillDeltaSpinner(modifiers.getGunneryDelta(),
               "UnitEditorDialog.skillModifier.gunnery.tooltip");
+        controls.spnGunneryRounds = modifierRoundsSpinner(modifiers.getGunneryRounds());
+        controls.chkGunneryPermanent = modifierPermanentCheckbox(modifiers.getGunneryRounds(),
+              controls.spnGunneryRounds);
         addLabeledRow(panel, Messages.getString("UnitEditorDialog.skillModifier.gunnery"),
-              controls.spnGunneryModifier);
+              modifierRow(controls.spnGunneryModifier, controls.spnGunneryRounds, controls.chkGunneryPermanent));
 
         controls.spnPilotingModifier = skillDeltaSpinner(modifiers.getPilotingDelta(),
               "UnitEditorDialog.skillModifier.piloting.tooltip");
+        controls.spnPilotingRounds = modifierRoundsSpinner(modifiers.getPilotingRounds());
+        controls.chkPilotingPermanent = modifierPermanentCheckbox(modifiers.getPilotingRounds(),
+              controls.spnPilotingRounds);
         addLabeledRow(panel, Messages.getString("UnitEditorDialog.skillModifier.piloting"),
-              controls.spnPilotingModifier);
+              modifierRow(controls.spnPilotingModifier, controls.spnPilotingRounds, controls.chkPilotingPermanent));
 
         controls.spnInitiativeModifier = skillDeltaSpinner(modifiers.getInitiativeDelta(),
               "UnitEditorDialog.skillModifier.initiative.tooltip");
+        controls.spnInitiativeRounds = modifierRoundsSpinner(modifiers.getInitiativeRounds());
+        controls.chkInitiativePermanent = modifierPermanentCheckbox(modifiers.getInitiativeRounds(),
+              controls.spnInitiativeRounds);
         addLabeledRow(panel, Messages.getString("UnitEditorDialog.skillModifier.initiative"),
-              controls.spnInitiativeModifier);
-
-        int roundsRemaining = modifiers.getRoundsRemaining();
-        boolean permanent = roundsRemaining == TemporarySkillModifiers.PERMANENT;
-        int rounds = (roundsRemaining > 0) ? roundsRemaining : DEFAULT_MODIFIER_ROUNDS;
-        controls.spnModifierRounds = new JSpinner(new SpinnerNumberModel(rounds, 1, MAX_MODIFIER_ROUNDS, 1));
-        controls.spnModifierRounds.setToolTipText(
-              UIUtil.formatSideTooltip(Messages.getString("UnitEditorDialog.skillModifier.rounds.tooltip")));
-        controls.spnModifierRounds.setEnabled(!permanent);
-        controls.chkModifierPermanent = new JCheckBox(Messages.getString("UnitEditorDialog.skillModifier.permanent"),
-              permanent);
-        controls.chkModifierPermanent.setToolTipText(
-              UIUtil.formatSideTooltip(Messages.getString("UnitEditorDialog.skillModifier.permanent.tooltip")));
-        controls.chkModifierPermanent.addItemListener(event ->
-              controls.spnModifierRounds.setEnabled(!controls.chkModifierPermanent.isSelected()));
-
-        JPanel durationControl = new JPanel(new FlowLayout(FlowLayout.LEFT, 5, 0));
-        durationControl.add(controls.spnModifierRounds);
-        durationControl.add(new JLabel(Messages.getString("UnitEditorDialog.skillModifier.roundsLabel")));
-        durationControl.add(controls.chkModifierPermanent);
-        addLabeledRow(panel, Messages.getString("UnitEditorDialog.skillModifier.duration"), durationControl);
+              modifierRow(controls.spnInitiativeModifier, controls.spnInitiativeRounds,
+                    controls.chkInitiativePermanent));
     }
 
     /** A spinner for one skill delta, starting at what the crew already carries so an open edit reads back. */
@@ -277,6 +267,37 @@ public class UnitDamagePanelBuilder {
         JSpinner spinner = new JSpinner(new SpinnerNumberModel(delta, -MAX_SKILL_DELTA, MAX_SKILL_DELTA, 1));
         spinner.setToolTipText(UIUtil.formatSideTooltip(Messages.getString(tooltipKey)));
         return spinner;
+    }
+
+    /** A spinner for one modifier's duration, prefilled with what remains of an active countdown. */
+    private JSpinner modifierRoundsSpinner(int roundsRemaining) {
+        int rounds = (roundsRemaining > 0) ? roundsRemaining : DEFAULT_MODIFIER_ROUNDS;
+        JSpinner spinner = new JSpinner(new SpinnerNumberModel(rounds, 1, MAX_MODIFIER_ROUNDS, 1));
+        spinner.setToolTipText(UIUtil.formatSideTooltip(
+              Messages.getString("UnitEditorDialog.skillModifier.rounds.tooltip")));
+        spinner.setEnabled(roundsRemaining != TemporarySkillModifiers.PERMANENT);
+        return spinner;
+    }
+
+    /** A checkbox that makes one modifier permanent, disabling its rounds spinner while it is on. */
+    private JCheckBox modifierPermanentCheckbox(int roundsRemaining, JSpinner roundsSpinner) {
+        JCheckBox checkbox = new JCheckBox(Messages.getString("UnitEditorDialog.skillModifier.permanent"),
+              roundsRemaining == TemporarySkillModifiers.PERMANENT);
+        checkbox.setToolTipText(UIUtil.formatSideTooltip(
+              Messages.getString("UnitEditorDialog.skillModifier.permanent.tooltip")));
+        checkbox.addItemListener(event -> roundsSpinner.setEnabled(!checkbox.isSelected()));
+        return checkbox;
+    }
+
+    /** Lays out one modifier's row: the delta, then its own duration - "for N rounds" or Permanent. */
+    private JPanel modifierRow(JSpinner deltaSpinner, JSpinner roundsSpinner, JCheckBox permanentCheckbox) {
+        JPanel row = new JPanel(new FlowLayout(FlowLayout.LEFT, 5, 0));
+        row.add(deltaSpinner);
+        row.add(new JLabel(Messages.getString("UnitEditorDialog.skillModifier.forLabel")));
+        row.add(roundsSpinner);
+        row.add(new JLabel(Messages.getString("UnitEditorDialog.skillModifier.roundsLabel")));
+        row.add(permanentCheckbox);
+        return row;
     }
 
     /**

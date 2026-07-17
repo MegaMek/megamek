@@ -88,14 +88,19 @@ public class DamageEditSpec implements Serializable {
     /** The crit hits on each piece of equipment, by its equipment number. */
     public final Map<Integer, Integer> equipmentHits = new HashMap<>();
 
-    /* the gamemaster's temporary skill modifiers; all present together or all absent */
+    /*
+     * the gamemaster's temporary skill modifiers, each with a duration of its own (rounds, ignored while its
+     * permanent flag is on); all present together or all absent
+     */
     public Integer gunneryModifier;
+    public Integer gunneryRounds;
+    public boolean gunneryPermanent;
     public Integer pilotingModifier;
+    public Integer pilotingRounds;
+    public boolean pilotingPermanent;
     public Integer initiativeModifier;
-    /** How many rounds the modifiers last; ignored while they are permanent. */
-    public Integer modifierRounds;
-    /** Whether the modifiers last until cleared instead of counting down. */
-    public boolean modifierPermanent;
+    public Integer initiativeRounds;
+    public boolean initiativePermanent;
 
     /* Mek system crit hits */
     public Integer centerEngineHits;

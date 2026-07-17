@@ -1901,7 +1901,9 @@ public class FiringDisplay extends AttackPhaseDisplay implements ListSelectionLi
                 if (currentEntity().getPassedThroughBoardId() == event.getBoardId()) {
                     if (isValidStrafingHex(coords)) {
                         strafingCoords.add(coords);
-                        event.getBoardView().addStrafingCoords(coords);
+                        // Re-sync the board view from the authoritative list; setStrafingCoords repaints the
+                        // strafing overlay, whereas addStrafingCoords would only append without a repaint.
+                        event.getBoardView().setStrafingCoords(strafingCoords);
                         updateStrafingTargets();
                     }
                 }

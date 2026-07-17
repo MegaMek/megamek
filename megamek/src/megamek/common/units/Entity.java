@@ -5063,7 +5063,9 @@ public abstract class Entity extends TurnOrdered
             // Make sure this ammo is in the chain, then move it to the head.
             for (Mounted<?> current = mounted; current != null; current = current.getLinked()) {
                 if (current == mountedAmmo) {
-                    current.getLinkedBy().setLinked(current.getLinked());
+                    if (current.getLinkedBy() != null) {
+                        current.getLinkedBy().setLinked(current.getLinked());
+                    }
                     current.setLinked(mounted.getLinked());
                     mounted.setLinked(current);
                     return true;

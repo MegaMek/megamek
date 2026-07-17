@@ -493,8 +493,12 @@ public class DamageEditApplier {
               spec.gunneryPermanent ? TemporarySkillModifiers.PERMANENT : spec.gunneryRounds);
         modifiers.setPiloting(spec.pilotingModifier,
               spec.pilotingPermanent ? TemporarySkillModifiers.PERMANENT : spec.pilotingRounds);
-        modifiers.setInitiative(spec.initiativeModifier,
-              spec.initiativePermanent ? TemporarySkillModifiers.PERMANENT : spec.initiativeRounds);
+        // absent where the editor had no initiative row, which is any game without individual initiative;
+        // an active initiative modifier is left alone there rather than silently cleared
+        if (null != spec.initiativeModifier) {
+            modifiers.setInitiative(spec.initiativeModifier,
+                  spec.initiativePermanent ? TemporarySkillModifiers.PERMANENT : spec.initiativeRounds);
+        }
     }
 
     /**

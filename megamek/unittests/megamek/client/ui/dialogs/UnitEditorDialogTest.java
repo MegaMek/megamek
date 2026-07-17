@@ -62,6 +62,7 @@ import megamek.common.enums.GamePhase;
 import megamek.common.equipment.AmmoMounted;
 import megamek.common.equipment.EquipmentType;
 import megamek.common.game.Game;
+import megamek.common.options.OptionsConstants;
 import megamek.common.units.Crew;
 import megamek.common.units.Entity;
 import megamek.common.units.Mek;
@@ -419,6 +420,22 @@ class UnitEditorDialogTest {
         clickOkay(dialog);
 
         assertFalse(entity.getCrew().getSkillModifiers().isActive(), "the modifier was not cleared");
+        dialog.dispose();
+    }
+
+    /** The initiative modifier only does anything under individual initiative, so its row only appears there. */
+    @Test
+    void initiativeModifierIsOnlyOfferedUnderIndividualInitiative() {
+        Entity entity = entityInGame();
+        UnitEditorDialog dialog = new UnitEditorDialog(new JFrame(), entity, true);
+        assertNull(dialog.controlsForTesting().spnInitiativeModifier,
+              "the initiative modifier was offered without individual initiative");
+        dialog.dispose();
+
+        entity.getGame().getOptions().getOption(OptionsConstants.RPG_INDIVIDUAL_INITIATIVE).setValue(true);
+        dialog = new UnitEditorDialog(new JFrame(), entity, true);
+        assertNotNull(dialog.controlsForTesting().spnInitiativeModifier,
+              "the initiative modifier was not offered under individual initiative");
         dialog.dispose();
     }
 

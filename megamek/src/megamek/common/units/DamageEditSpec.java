@@ -90,7 +90,8 @@ public class DamageEditSpec implements Serializable {
 
     /*
      * the gamemaster's temporary skill modifiers, each with a duration of its own (rounds, ignored while its
-     * permanent flag is on); all present together or all absent
+     * permanent flag is on). Gunnery and piloting travel together; the initiative trio is present only where the
+     * editor offered its row, which is a game using individual initiative.
      */
     public Integer gunneryModifier;
     public Integer gunneryRounds;

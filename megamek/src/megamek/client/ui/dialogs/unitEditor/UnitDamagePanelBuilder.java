@@ -252,14 +252,18 @@ public class UnitDamagePanelBuilder {
         addLabeledRow(panel, Messages.getString("UnitEditorDialog.skillModifier.piloting"),
               modifierRow(controls.spnPilotingModifier, controls.spnPilotingRounds, controls.chkPilotingPermanent));
 
-        controls.spnInitiativeModifier = skillDeltaSpinner(modifiers.getInitiativeDelta(),
-              "UnitEditorDialog.skillModifier.initiative.tooltip");
-        controls.spnInitiativeRounds = modifierRoundsSpinner(modifiers.getInitiativeRounds());
-        controls.chkInitiativePermanent = modifierPermanentCheckbox(modifiers.getInitiativeRounds(),
-              controls.spnInitiativeRounds);
-        addLabeledRow(panel, Messages.getString("UnitEditorDialog.skillModifier.initiative"),
-              modifierRow(controls.spnInitiativeModifier, controls.spnInitiativeRounds,
-                    controls.chkInitiativePermanent));
+        // the initiative delta only exists where each unit rolls its own initiative, so the row is only offered
+        // where it would do something; everywhere else it would be a control that silently does nothing
+        if (entity.getGame().getOptions().booleanOption(OptionsConstants.RPG_INDIVIDUAL_INITIATIVE)) {
+            controls.spnInitiativeModifier = skillDeltaSpinner(modifiers.getInitiativeDelta(),
+                  "UnitEditorDialog.skillModifier.initiative.tooltip");
+            controls.spnInitiativeRounds = modifierRoundsSpinner(modifiers.getInitiativeRounds());
+            controls.chkInitiativePermanent = modifierPermanentCheckbox(modifiers.getInitiativeRounds(),
+                  controls.spnInitiativeRounds);
+            addLabeledRow(panel, Messages.getString("UnitEditorDialog.skillModifier.initiative"),
+                  modifierRow(controls.spnInitiativeModifier, controls.spnInitiativeRounds,
+                        controls.chkInitiativePermanent));
+        }
     }
 
     /** A spinner for one skill delta, starting at what the crew already carries so an open edit reads back. */

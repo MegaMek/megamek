@@ -87,6 +87,9 @@ public class UnitDamageSpecBuilder {
             spec.pilotingModifier = (Integer) controls.spnPilotingModifier.getValue();
             spec.pilotingRounds = (Integer) controls.spnPilotingRounds.getValue();
             spec.pilotingPermanent = controls.chkPilotingPermanent.isSelected();
+        }
+        // offered separately: the initiative row only exists under individual initiative
+        if (null != controls.spnInitiativeModifier) {
             spec.initiativeModifier = (Integer) controls.spnInitiativeModifier.getValue();
             spec.initiativeRounds = (Integer) controls.spnInitiativeRounds.getValue();
             spec.initiativePermanent = controls.chkInitiativePermanent.isSelected();

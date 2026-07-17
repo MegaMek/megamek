@@ -23719,6 +23719,46 @@ public class TWGameManager extends AbstractGameManager {
     }
 
     /**
+     * Applies Edge to a location breach check: if the roll would breach the location and the crew has the breach Edge
+     * trigger enabled with Edge remaining, spends one Edge point and rerolls the breach check once. A single check is
+     * never rerolled more than once.
+     *
+     * @param entity       the entity making the breach check
+     * @param loc          the location being checked (for reporting)
+     * @param target       the breach target number (a breach occurs on a roll of {@code target} or higher)
+     * @param breachRoll   the breach roll that was made
+     * @param reportVector the report vector to append the Edge-use and reroll reports to
+     *
+     * @return the breach roll to use — the reroll if Edge was spent, otherwise the original roll
+     */
+    // package-private for testing
+    int applyBreachEdge(Entity entity, int loc, int target, int breachRoll, Vector<Report> reportVector) {
+        boolean isBreach = breachRoll >= target;
+        boolean shouldUseEdge = entity.shouldUseEdge(OptionsConstants.EDGE_WHEN_BREACH);
+
+        if (isBreach && shouldUseEdge) {
+            entity.getCrew().decreaseEdge();
+            Report edgeReport = new Report(6348);
+            edgeReport.subject = entity.getId();
+            edgeReport.indent(3);
+            edgeReport.add(entity.getCrew().getOptions().intOption(OptionsConstants.EDGE));
+            reportVector.addElement(edgeReport);
+
+            Roll diceRoll = Compute.rollD6(2);
+            breachRoll = diceRoll.getIntValue();
+            Report report = new Report(6345);
+            report.subject = entity.getId();
+            report.indent(3);
+            report.add(entity.getLocationAbbr(loc));
+            report.add(diceRoll);
+            report.newlines = 0;
+            report.choose(breachRoll < target);
+            reportVector.addElement(report);
+        }
+        return breachRoll;
+    }
+
+    /**
      * Checks for location breach and returns phase logging.
      * <p>
      *
@@ -23822,6 +23862,9 @@ public class TWGameManager extends AbstractGameManager {
 
                 r.choose(breachRoll < target);
                 vDesc.addElement(r);
+
+                // Edge may reroll a breach check that would breach the location.
+                breachRoll = applyBreachEdge(entity, loc, target, breachRoll, vDesc);
             }
             // Breach by damage or lack of armor.
             if ((breachRoll >= target) ||

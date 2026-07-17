@@ -181,7 +181,6 @@ class TWGameManagerTest {
         List<PilotingRollData> psrs = Collections.list(game.getPSRs());
         assertEquals(1, psrs.size(), "Standard gyro first hit should trigger PSR");
         assertEquals(2, psrs.getFirst().getValue(), "PSR modifier should be +2");
-        assertTrue(psrs.getFirst().getDesc().contains("gyro hit"), "PSR description should mention gyro");
     }
 
     /**

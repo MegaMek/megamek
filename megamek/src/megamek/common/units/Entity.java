@@ -15037,7 +15037,6 @@ public abstract class Entity extends TurnOrdered
                   (hasC3M() && ((calculateFreeC3Nodes() < 3) || (getC3Master() != null))) ||
                   (hasC3S() && (c3Master > NONE)) ||
                   ((hasC3i() || hasNavalC3()) && (calculateFreeC3Nodes() < 5))) {
-                returnBV += baseBV;
                 
                 Vector<Entity> c3Members = game.getC3NetworkMembers(this);
                 int numberOfC3Members = c3Members.size();
@@ -15047,23 +15046,22 @@ public abstract class Entity extends TurnOrdered
                     c3BoostedMultiplier = 0.05;
                 }
                 if (numberOfC3Members > 1 && numberOfC3Members <=8) {
-                    returnBV = (int) (returnBV * ((multiplier * numberOfC3Members) + c3BoostedMultiplier));
+                    returnBV = (int) Math.ceil(baseBV * ((multiplier * numberOfC3Members) + c3BoostedMultiplier));
                 } else if (numberOfC3Members > 8) {
-                    returnBV = (int) (returnBV * ((multiplier * 8) + c3BoostedMultiplier));
+                    returnBV = (int) Math.ceil(baseBV * ((multiplier * 8) + c3BoostedMultiplier));
                 }
             } else if (hasNovaCEWS()) { //Nova CEWS applies 5% to every mek with Nova on the team {
                 int novaMembers = 1;
-                returnBV += baseBV;
                 for (Entity entity : game.getEntitiesVector()) {
                     if (!equals(this) && entity.hasNovaCEWS() && !(entity.owner.isEnemyOf(this.owner))) {
                         novaMembers++;
                     }
                 }
                 if (novaMembers > 1 && novaMembers <=7) {
-                    returnBV = (int) (returnBV * (multiplier * novaMembers));
+                    returnBV = (int) Math.ceil(baseBV * (multiplier * novaMembers));
                 } else if (novaMembers > 7) {
                     // IO: Alternate Eras p.183: Nova CEWS BV bonus capped at 35% of unit's base BV
-                    returnBV = (int) (returnBV * (multiplier * 7));
+                    returnBV = (int) Math.ceil(baseBV * (multiplier * 7));
                 }
             }
         }

@@ -187,7 +187,7 @@ public class CriticalSlot implements Serializable {
      */
     @Override
     public boolean equals(Object object) {
-        if (this == object) {
+        if (object == this) return true; {
             return true;
         } else if ((object == null) || (getClass() != object.getClass())) {
             return false;

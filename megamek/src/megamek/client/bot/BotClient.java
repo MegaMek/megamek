@@ -1419,23 +1419,16 @@ public abstract class BotClient extends Client {
     		// avoid unnecessary loops and evaluations
     		if (minesToPlace <= 0) {
     			continue;
-    		}    		
+    		}
     		
     		Map<Double, List<Coords>> potentialCoords = 
-    				mdp.getBucketedCandidateCoords(minefieldType, getBoard());
-    		
-    		// this operation takes the buckets and sorts them in descending order
-    		List<Double> sortedBuckets = new ArrayList<>();
-    		sortedBuckets.addAll(potentialCoords.keySet());
-    		Collections.sort(sortedBuckets);
-    		sortedBuckets = sortedBuckets.reversed();
-    		    		
+    				mdp.getBucketedCandidateCoords(minefieldType, getBoard());    		    		
     		
     		// complicated loop:
     		// while we have mines to place (minesToPlace > 0)
     		// AND we have buckets left with coordinates in them, place mines.    		
     		bucketloop:
-    		for (double bucket : sortedBuckets) {
+    		for (double bucket : potentialCoords.keySet()) {
     			for (Coords coords : potentialCoords.get(bucket)) {
     				// it's always more advantageous to put in higher density minefields
 	    			// but hardly fair when players may be bound by scenario restrictions
@@ -1461,6 +1454,7 @@ public abstract class BotClient extends Client {
 	    			}
 	    			
 	    			deployedMinefields.add(minefield);
+	    			mdp.markMinePlacement(coords);
 	    			
 	    			minesToPlace--;
 	    			

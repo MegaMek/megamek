@@ -143,6 +143,10 @@ public class AimedShotDialog extends JDialog {
         // the current target has. Re-pack after restoring preferences so the size always fits this
         // target, while keeping the remembered location (pack() resizes but never moves the window).
         pack();
+
+        // Growing the dialog at a remembered edge location (or a resolution change between sessions)
+        // could leave it partially off-screen. Clamp its bounds so it always stays fully visible.
+        UIUtil.updateWindowBounds(this);
     }
 
     /**

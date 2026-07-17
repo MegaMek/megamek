@@ -85,6 +85,7 @@ import megamek.common.event.player.GamePlayerChatEvent;
 import megamek.common.game.Game;
 import megamek.common.game.InitiativeRoll;
 import megamek.common.moves.MovePath;
+import megamek.common.net.packets.InvalidPacketDataException;
 import megamek.common.net.packets.Packet;
 import megamek.common.options.OptionsConstants;
 import megamek.common.pathfinder.BoardClusterTracker;
@@ -1502,7 +1503,28 @@ public abstract class BotClient extends Client {
     public String receiveReport(List<Report> reports) {
         return "";
     }
-
+    
+    /**
+     * In addition to handling the entity update normally, the bot needs to decide
+     * if it should activate its hidden units
+     */
+    @Override
+    protected void receiveEntityUpdate(Packet packet) throws InvalidPacketDataException {
+    	super.receiveEntityUpdate(packet);
+    	
+    	if (this.getGame().getPhase() == GamePhase.MOVEMENT) {
+    		int entityIndex = packet.getIntValue(0);
+    		revealEntities(entityIndex);
+    	}
+    }
+    
+    /**
+     * Given an entity that just moved, decide if I should reveal any entities in response
+     */
+    protected void revealEntities(int movedEntityID) {
+    	// default does nothing
+    }
+    
     /**
      * Let the bot decide whether to reroll initiative based on report info
      *

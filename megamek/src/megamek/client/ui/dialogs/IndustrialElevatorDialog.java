@@ -94,14 +94,14 @@ public class IndustrialElevatorDialog extends JDialog {
         // Build the panel
         JPanel mainPanel = new JPanel(new GridBagLayout());
         mainPanel.setBorder(BorderFactory.createEmptyBorder(
-              UIUtil.scaleForGUI(10),
-              UIUtil.scaleForGUI(15),
+              BorderConstants.PADDING,
+              BorderConstants.MARGIN,
               UIUtil.scaleForGUI(10),
               UIUtil.scaleForGUI(15)));
 
         GridBagConstraints constraints = new GridBagConstraints();
         constraints.insets = new Insets(
-              UIUtil.scaleForGUI(5),
+              BorderConstants.GAP,
               UIUtil.scaleForGUI(5),
               UIUtil.scaleForGUI(5),
               UIUtil.scaleForGUI(5));

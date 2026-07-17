@@ -55,6 +55,7 @@ import megamek.common.enums.AvailabilityValue;
 import megamek.common.enums.TechBase;
 import megamek.common.enums.TechRating;
 import megamek.common.exceptions.LocationFullException;
+import megamek.common.options.OptionsConstants;
 import megamek.common.rolls.PilotingRollData;
 import megamek.common.units.BuildingEntity;
 import megamek.common.units.Entity;
@@ -158,9 +159,12 @@ public class GunEmplacement extends Tank {
         if (hex.containsTerrain(Terrains.SPACE) && doomedInSpace()) {
             return true;
         }
-        // gun emplacements must be placed on a building
-        return !hex.containsTerrain(Terrains.BUILDING);
-
+        // gun emplacements must be placed on a building - or, with the unofficial structures-on-elevators
+        // option, on an industrial elevator platform
+        boolean onBuilding = hex.containsTerrain(Terrains.BUILDING);
+        boolean onPermittedElevator = hex.containsTerrain(Terrains.INDUSTRIAL_ELEVATOR)
+              && game.getOptions().booleanOption(OptionsConstants.UNOFFICIAL_STRUCTURES_ON_ELEVATORS);
+        return !(onBuilding || onPermittedElevator);
     }
 
     @Override

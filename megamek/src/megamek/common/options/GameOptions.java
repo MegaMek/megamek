@@ -159,6 +159,7 @@ public class GameOptions extends BasicGameOptions {
         addOption(advancedRules, OptionsConstants.ADVANCED_PARATROOPERS, false);
         addOption(advancedRules, OptionsConstants.ADVANCED_BRIDGE_BUILDING_ENGINEERS, false);
         addOption(advancedRules, OptionsConstants.UNOFFICIAL_BRIDGE_REPAIR_ENGINEERS, false);
+        addOption(advancedRules, OptionsConstants.UNOFFICIAL_STRUCTURES_ON_ELEVATORS, false);
         addOption(advancedRules, OptionsConstants.ADVANCED_INCLUSIVE_SENSOR_RANGE, false);
         addOption(advancedRules, OptionsConstants.ADVANCED_SENSORS_DETECT_ALL, false);
         addOption(advancedRules, OptionsConstants.ADVANCED_MAG_SCAN_NO_HILLS, false);

@@ -168,7 +168,7 @@ public class ConstructionUtil {
         // would be removing a linked Artemis IV FCS
         for (Mounted<?> m : unit.getEquipment()) {
             if (mount.equals(m.getLinkedBy())) {
-                m.setLinkedBy(null);
+                m.getLinkedBy().setLinked(null);
             }
         }
 
@@ -250,12 +250,10 @@ public class ConstructionUtil {
           boolean rear) {
         if ((location != eq.getLocation() && !eq.isOneShot())) {
             if (eq.getLinked() != null) {
-                eq.getLinked().setLinkedBy(null);
                 eq.setLinked(null);
             }
             if (eq.getLinkedBy() != null) {
                 eq.getLinkedBy().setLinked(null);
-                eq.setLinkedBy(null);
             }
         }
         eq.setLocation(location, rear);

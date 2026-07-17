@@ -1,7 +1,7 @@
 /*
   Copyright (C) 2000-2004 Ben Mazur (bmazur@sev.org)
  * Copyright (C) 2013 Edward Cullen (eddy@obsessedcomputers.co.uk)
- * Copyright (C) 2002-2025 The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2002-2026 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -712,6 +712,8 @@ public class MekSummaryCache {
         ms.setAdvancedYear(e.getProductionDate(e.isClan()));
         ms.setStandardYear(e.getCommonDate(e.isClan()));
         ms.setExtinctRange(e.getExtinctionRange());
+        ms.setForceGeneratorAvailability(e.getForceGeneratorAvailability());
+        ms.setMissionRoles(e.getMissionRoles());
         ms.setCost((long) e.getCost(false));
         ms.setDryCost((long) e.getCost(true));
         ms.setAlternateCost((int) e.getAlternateCost());

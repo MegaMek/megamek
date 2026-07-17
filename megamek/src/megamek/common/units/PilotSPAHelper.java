@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2023-2025 The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2023-2026 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -124,13 +124,19 @@ public final class PilotSPAHelper {
      * @return True when the given EquipmentType is a valid choice for the Sandblaster SPA.
      */
     public static boolean isSandblasterValid(EquipmentType equipmentType, @Nullable GameOptions options) {
+        if (!(equipmentType instanceof WeaponType weaponType)) {
+            return false;
+        }
+
         boolean rapidFireAC = (options != null)
               && options.booleanOption(OptionsConstants.ADVANCED_COMBAT_TAC_OPS_RAPID_AC)
-              && (equipmentType instanceof ACWeapon);
+              && (weaponType instanceof ACWeapon);
 
-        return (equipmentType instanceof WeaponType)
-              && ((equipmentType instanceof UACWeapon) || (equipmentType instanceof LBXACWeapon) || rapidFireAC
-              || ((WeaponType) equipmentType).getDamage() == WeaponType.DAMAGE_BY_CLUSTER_TABLE);
+        return (weaponType instanceof UACWeapon)
+              || (weaponType instanceof LBXACWeapon)
+              || rapidFireAC
+              || (weaponType.getDamage() == WeaponType.DAMAGE_BY_CLUSTER_TABLE)
+              || (weaponType.getAtClass() == WeaponType.CLASS_LBX_AC);
     }
 
     /**

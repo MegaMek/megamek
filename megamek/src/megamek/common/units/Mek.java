@@ -4035,29 +4035,33 @@ public abstract class Mek extends Entity implements Fortifiable, RubbleClearer {
     }
 
     @Override
-    protected void addSystemTechAdvancement(CompositeTechLevel ctl) {
-        super.addSystemTechAdvancement(ctl);
+    protected void addSystemTechAdvancement(CompositeTechLevel techLevel) {
+        super.addSystemTechAdvancement(techLevel);
         // Meks with non-fusion engines are experimental
         if (hasEngine() && !isIndustrial() && !getEngine().isFusion()) {
-            ctl.addComponent(new TechAdvancement().setStaticTechLevel(SimpleTechLevel.EXPERIMENTAL));
+            techLevel.addComponent(new TechAdvancement().setStaticTechLevel(SimpleTechLevel.EXPERIMENTAL),
+                  Messages.getString("CompositeTechLevel.component.nonFusionEngineBattleMek"));
         }
         if (isFrankenMek()) {
-            ctl.addComponent(TA_FRANKENMEK);
+            techLevel.addComponent(TA_FRANKENMEK, Messages.getString("CompositeTechLevel.component.frankenMek"));
         }
         if (getGyroTechAdvancement() != null) {
-            ctl.addComponent(getGyroTechAdvancement());
+            techLevel.addComponent(getGyroTechAdvancement(), getGyroTypeString());
         }
         if (getCockpitTechAdvancement() != null) {
-            ctl.addComponent(getCockpitTechAdvancement());
+            techLevel.addComponent(getCockpitTechAdvancement(), getCockpitTypeString());
         }
         if (isIndustrial() && hasAdvancedFireControl()) {
-            ctl.addComponent(getIndustrialAdvFireConTA());
+            techLevel.addComponent(getIndustrialAdvFireConTA(),
+                  Messages.getString("CompositeTechLevel.component.advancedFireControl"));
         }
         if (hasFullHeadEject()) {
-            ctl.addComponent(getFullHeadEjectAdvancement());
+            techLevel.addComponent(getFullHeadEjectAdvancement(),
+                  Messages.getString("CompositeTechLevel.component.fullHeadEjection"));
         }
         if (hasRiscHeatSinkOverrideKit()) {
-            ctl.addComponent(getRiscHeatSinkOverrideKitAdvancement());
+            techLevel.addComponent(getRiscHeatSinkOverrideKitAdvancement(),
+                  Messages.getString("CompositeTechLevel.component.riscHeatSinkOverrideKit"));
         }
     }
 
@@ -5201,6 +5205,14 @@ public abstract class Mek extends Entity implements Fortifiable, RubbleClearer {
         sb.append(newLine);
         if (hasRole()) {
             sb.append(MtfFile.ROLE).append(getRole().toString());
+            sb.append(newLine);
+        }
+        for (ForceGeneratorAvailability availability : getForceGeneratorAvailability()) {
+            sb.append(MtfFile.AVAILABILITY).append(availability.toFileFormat());
+            sb.append(newLine);
+        }
+        if (!getMissionRoles().isBlank()) {
+            sb.append(MtfFile.MISSION_ROLES).append(getMissionRoles());
             sb.append(newLine);
         }
         if (techFaction != null && techFaction != Faction.NONE) {

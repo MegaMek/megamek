@@ -8344,10 +8344,15 @@ public abstract class Entity extends TurnOrdered
                   "Reactor shut down");
         }
 
-        // okay, let's figure out the stuff then
+        // okay, let's figure out the stuff then. A gamemaster's temporary modifier is taken back out of the skill
+        // and shown as a line of its own, so a shifted target can be traced to the gamemaster's intervention.
+        int gamemasterModifier = getCrew().appliedPilotingModifier(moveType);
         roll = new PilotingRollData(entityId,
-              getCrew().getPiloting(moveType),
+              getCrew().getPiloting(moveType) - gamemasterModifier,
               (this instanceof Infantry) ? "Anti-Mek skill" : "Base piloting skill");
+        if (gamemasterModifier != 0) {
+            roll.addModifier(gamemasterModifier, "GM Modifier");
+        }
 
         // Let's see if we have a modifier to our piloting skill roll. We'll pass in the roll object and adjust as necessary
         roll = addEntityBonuses(roll);

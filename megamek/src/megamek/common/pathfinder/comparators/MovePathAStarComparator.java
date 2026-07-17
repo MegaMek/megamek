@@ -108,12 +108,13 @@ public class MovePathAStarComparator implements Comparator<MovePath>, Serializab
         if (hexesMovedDiff != 0) {
             return hexesMovedDiff;
         }
-        // Same cost, same distance covered: prefer the path with fewer steps. This mirrors the aerospace
-        // branch above and makes ties deterministic instead of heap-order dependent. It matters for quad
-        // lateral shifts (sidesteps): a single lateral-shift step and a turn-then-forward pair reach the
-        // same hex for the same MP, and without this tie-break the two-step turn-and-walk could win the
-        // tie, so a quad clicking a side hex that costs extra MP (rough, rubble) was turned to face the
-        // hex and walked forward instead of sidestepping into it (issue #8446).
+        // Equal estimated total (MP used plus heuristic) and equal hexes moved: prefer the path with fewer
+        // steps. This mirrors the aerospace branch above and reduces the previous reliance on priority-queue
+        // (heap) order to resolve such near-ties. It matters for quad lateral shifts (sidesteps): a single
+        // lateral-shift step and a turn-then-forward pair reach the same adjacent hex for the same MP, and
+        // without this tie-break the two-step turn-and-walk could win, so a quad clicking a side hex that
+        // costs extra MP (rough, rubble) was turned to face the hex and walked forward instead of
+        // sidestepping into it (issue #8446). Paths still equal after this remain heap-order dependent.
         return first.length() - second.length();
     }
 }

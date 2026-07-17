@@ -85,13 +85,13 @@ public class EnergyWeaponHandler extends WeaponHandler {
             return -1;
         }
         attacker.getCrew().decreaseEdge();
-        Report report = new Report(3166);
+        Report report = new Report(3168);
         report.subject = subjectId;
         report.add(attacker.getCrew().getOptions().intOption(OptionsConstants.EDGE));
         reportVector.addElement(report);
 
         Roll reroll = Compute.rollD6(2);
-        report = new Report(3167);
+        report = new Report(3169);
         report.subject = subjectId;
         report.add(reroll);
         reportVector.addElement(report);

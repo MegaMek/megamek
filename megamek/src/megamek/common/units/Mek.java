@@ -7310,7 +7310,7 @@ public abstract class Mek extends Entity implements Fortifiable, RubbleClearer {
         if (isFailedCheck && shouldUseEdge) {
             entity.getCrew().decreaseEdge();
 
-            reportVector.addElement(Report.subjectReport(3166, entity.getId())
+            reportVector.addElement(Report.subjectReport(3168, entity.getId())
                   .indent()
                   .add(entity.getCrew().getOptions().intOption(OptionsConstants.EDGE)));
 

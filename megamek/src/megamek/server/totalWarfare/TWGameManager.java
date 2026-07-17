@@ -7338,128 +7338,127 @@ public class TWGameManager extends AbstractGameManager {
         }
         return null;
     }
-    
+
     /**
-     * Handles an entity stepping on a pit trap.
-     * Returns true if the entity entering the hex fell over
+     * Handles an entity stepping on a pit trap. Returns true if the entity entering the hex fell over
      */
     public boolean handlePitfall(Entity entity, Coords dest, Vector<Report> vMineReport) {
-    	boolean fellOver = false;
-    	
-    	Minefield triggeredPittrap = null;
-    	
-    	for (Minefield minefield : getGame().getMinefields(dest)) {
-    		if (minefield.getType() != Minefield.TYPE_PITFALL) {
-    			continue;
-    		}
-    		
-    		// meks are the only things that can be affected by pitfalls for now
-	    	if (entity instanceof Mek) {
-	    		
-	            Report stepReport = new Report(2581);
-	            stepReport.subject = entity.getId();
-	            stepReport.add(entity.getShortName(), true);
-	            stepReport.add(dest.getBoardNum(), true);
-	            vMineReport.add(stepReport);
-	            
-	            TargetRoll rollTarget = new TargetRoll(4, "pitfall");
-	            
-	            if (entity.hasAbility(OptionsConstants.MISC_EAGLE_EYES)) {
-	            	rollTarget.addModifier(+2, "eagle eyes");               
-	    		}
+        boolean fellOver = false;
 
-	            int roll = Compute.d6(2);
-	            
-	            fellOver = roll >= rollTarget.getValue();
-	    		
-	            Report activationReport = new Report(2582);
-	            activationReport.subject = entity.getId();
-	            activationReport.add(rollTarget);
-	            activationReport.add(roll);
-	            activationReport.choose(fellOver);	 
-	            activationReport.indent();
-	            vMineReport.add(activationReport);	    		
-	    		if (fellOver) {
-	    			triggeredPittrap = minefield;
-	    			
-	    			PilotingRollData pilotingRollData = entity.getBasePilotingRoll();
-	    			vMineReport.addAll(doEntityFall(entity, dest, 0, pilotingRollData));
-	    			
-	    			Hex hex = getGame().getBoard(entity.getBoardId()).getHex(dest);
-	    			hex.removeAllTerrains();
-	    			hex.addTerrain(new Terrain(Terrains.RUBBLE, 1));
-	    			sendChangedHex(dest, entity.getBoardId());
-	    			
-	    			Report rubbleReport = new Report(2583);
-	    			rubbleReport.indent();
-	    			vMineReport.add(rubbleReport);
-	    		} else {
-	    			revealMinefield(minefield);
-	    		}
-	    	}
-    	}
-    	
-    	if (triggeredPittrap != null) {
-    		removeMinefield(triggeredPittrap);
-    	}
-    	
-    	return fellOver;
+        Minefield triggeredPittrap = null;
+
+        for (Minefield minefield : getGame().getMinefields(dest)) {
+            if (minefield.getType() != Minefield.TYPE_PITFALL) {
+                continue;
+            }
+
+            // meks are the only things that can be affected by pitfalls for now
+            if (entity instanceof Mek) {
+
+                Report stepReport = new Report(2581);
+                stepReport.subject = entity.getId();
+                stepReport.add(entity.getShortName(), true);
+                stepReport.add(dest.getBoardNum(), true);
+                vMineReport.add(stepReport);
+
+                TargetRoll rollTarget = new TargetRoll(4, "pitfall");
+
+                if (entity.hasAbility(OptionsConstants.MISC_EAGLE_EYES)) {
+                    rollTarget.addModifier(+2, "eagle eyes");
+                }
+
+                int roll = Compute.d6(2);
+
+                fellOver = roll >= rollTarget.getValue();
+
+                Report activationReport = new Report(2582);
+                activationReport.subject = entity.getId();
+                activationReport.add(rollTarget);
+                activationReport.add(roll);
+                activationReport.choose(fellOver);
+                activationReport.indent();
+                vMineReport.add(activationReport);
+                if (fellOver) {
+                    triggeredPittrap = minefield;
+
+                    PilotingRollData pilotingRollData = entity.getBasePilotingRoll();
+                    vMineReport.addAll(doEntityFall(entity, dest, 0, pilotingRollData));
+
+                    Hex hex = getGame().getBoard(entity.getBoardId()).getHex(dest);
+                    hex.removeAllTerrains();
+                    hex.addTerrain(new Terrain(Terrains.RUBBLE, 1));
+                    sendChangedHex(dest, entity.getBoardId());
+
+                    Report rubbleReport = new Report(2583);
+                    rubbleReport.indent();
+                    vMineReport.add(rubbleReport);
+                } else {
+                    revealMinefield(minefield);
+                }
+            }
+        }
+
+        if (triggeredPittrap != null) {
+            removeMinefield(triggeredPittrap);
+        }
+
+        return fellOver;
     }
 
     /**
-     * Handles an entity stepping on a tripwire.
-     * Returns true if the entity entering the hex fell over
-     * Assumes that src != dest
+     * Handles an entity stepping on a tripwire. Returns true if the entity entering the hex fell over Assumes that src
+     * != dest
      */
-    public boolean handleTripwire(Entity entity, Coords src, Coords dest, EntityMovementType movementType, Vector<Report> vMineReport) {
-    	boolean fellOver = false;
-    	
-    	Minefield triggeredTripwire = null;
-    	
-    	for (Minefield minefield : getGame().getMinefields(dest)) {
-    		if (minefield.getType() != Minefield.TYPE_TRIPWIRE) {
-    			continue;
-    		}
-    		
-    		// meks are the only things that can be affected by tripwires
-	    	// if we neither walked nor ran, we don't need to be doing this
-	    	if (entity instanceof Mek &&
-	    		(movementType == EntityMovementType.MOVE_WALK ||
-	    		movementType == EntityMovementType.MOVE_RUN)) {
-	    		
-	            Report hitReport = new Report(2580);
-	            hitReport.subject = entity.getId();
-	            hitReport.add(entity.getShortName(), true);
-	            hitReport.add(dest.getBoardNum(), true);
-	            hitReport.indent();
-	            vMineReport.add(hitReport);
-	    		
-	            PilotingRollData rollData = entity.getBasePilotingRoll(entity.moved);
-	    		
-	    		if (movementType == EntityMovementType.MOVE_WALK) {
-	    			rollData.addModifier(2, "walking");
-	    		} else if (movementType == EntityMovementType.MOVE_RUN) {
-	    			rollData.addModifier(4, "running");
-	    		}
-	    		
-	    		if (entity.hasAbility(OptionsConstants.MISC_EAGLE_EYES)) {
-	    			rollData.addModifier(-2, "eagle eyes");               
-	    		}
-	    		
-	    		// if we are here, we can assume we are on the ground level
-	    		int result = doSkillCheckWhileMoving(entity, 0, src, dest, rollData, true, vMineReport);
-	    		fellOver = result > 0;
-	    		triggeredTripwire = minefield;
-	    	}
-    	}
-    	
-    	if (triggeredTripwire != null) {
-    		removeMinefield(triggeredTripwire);
-    	}
-    	
-    	return fellOver;
+    public boolean handleTripwire(Entity entity, Coords src, Coords dest, EntityMovementType movementType,
+          Vector<Report> vMineReport) {
+        boolean fellOver = false;
+
+        Minefield triggeredTripwire = null;
+
+        for (Minefield minefield : getGame().getMinefields(dest)) {
+            if (minefield.getType() != Minefield.TYPE_TRIPWIRE) {
+                continue;
+            }
+
+            // meks are the only things that can be affected by tripwires
+            // if we neither walked nor ran, we don't need to be doing this
+            if (entity instanceof Mek &&
+                  (movementType == EntityMovementType.MOVE_WALK ||
+                        movementType == EntityMovementType.MOVE_RUN)) {
+
+                Report hitReport = new Report(2580);
+                hitReport.subject = entity.getId();
+                hitReport.add(entity.getShortName(), true);
+                hitReport.add(dest.getBoardNum(), true);
+                hitReport.indent();
+                vMineReport.add(hitReport);
+
+                PilotingRollData rollData = entity.getBasePilotingRoll(entity.moved);
+
+                if (movementType == EntityMovementType.MOVE_WALK) {
+                    rollData.addModifier(2, "walking");
+                } else if (movementType == EntityMovementType.MOVE_RUN) {
+                    rollData.addModifier(4, "running");
+                }
+
+                if (entity.hasAbility(OptionsConstants.MISC_EAGLE_EYES)) {
+                    rollData.addModifier(-2, "eagle eyes");
+                }
+
+                // if we are here, we can assume we are on the ground level
+                int result = doSkillCheckWhileMoving(entity, 0, src, dest, rollData, true, vMineReport);
+                fellOver = result > 0;
+                triggeredTripwire = minefield;
+            }
+        }
+
+        if (triggeredTripwire != null) {
+            removeMinefield(triggeredTripwire);
+        }
+
+        return fellOver;
     }
-    
+
     /**
      * Check for any detonations when an entity enters a minefield, except a vibrabomb.
      *
@@ -7490,10 +7489,10 @@ public class TWGameManager extends AbstractGameManager {
         for (Minefield mf : game.getMinefields(c)) {
             // VibraBombs and EMP mines are handled differently (proximity-based detection)
             if ((mf.getType() == Minefield.TYPE_VIBRABOMB) || (mf.getType() == Minefield.TYPE_EMP) ||
-            	(mf.getType() == Minefield.TYPE_TRIPWIRE) || (mf.getType() == Minefield.TYPE_PITFALL)) {
+                  (mf.getType() == Minefield.TYPE_TRIPWIRE) || (mf.getType() == Minefield.TYPE_PITFALL)) {
                 continue;
             }
-            
+
             try {
                 // if we are in the water, then the sea mine will only blow up if at
                 // the right depth
@@ -7601,7 +7600,7 @@ public class TWGameManager extends AbstractGameManager {
             // set the target number
             if (target == -1) {
                 target = mf.getTrigger();
-                
+
                 if (entity instanceof Infantry) {
                     target += 1;
                 }
@@ -18813,7 +18812,8 @@ public class TWGameManager extends AbstractGameManager {
      * @param crewPos The <code>int</code> index of the crew member for multi crew cockpits, ignored by basic
      *                <code>crew</code>
      */
-    private Vector<Report> resolveCrewDamage(Entity e, int damage, int crewPos) {
+    // package-private for testing
+    Vector<Report> resolveCrewDamage(Entity e, int damage, int crewPos) {
         Vector<Report> vDesc = new Vector<>();
         final int totalHits = e.getCrew().getHits(crewPos);
         if ((e instanceof MekWarrior) || !e.isTargetable() || !e.getCrew().isActive(crewPos) || (damage == 0)) {
@@ -18835,10 +18835,15 @@ public class TWGameManager extends AbstractGameManager {
             if (game.getOptions().booleanOption(OptionsConstants.RPG_TOUGHNESS)) {
                 rollTarget -= e.getCrew().getToughness(crewPos);
             }
-            boolean edgeUsed = false;
+            // Edge may reroll a failed consciousness roll, but only once: a single roll cannot be rerolled
+            // repeatedly even if the crew has several Edge points remaining.
+            boolean rerollWithEdge = false;
+            boolean edgeAlreadyUsed = false;
             do {
-                if (edgeUsed) {
+                if (rerollWithEdge) {
                     e.getCrew().decreaseEdge();
+                    edgeAlreadyUsed = true;
+                    rerollWithEdge = false;
                 }
                 Roll diceRoll = Compute.rollD6(2);
                 int rollValue = diceRoll.getIntValue();
@@ -18864,9 +18869,11 @@ public class TWGameManager extends AbstractGameManager {
                 } else {
                     e.getCrew().setKoThisRound(true, crewPos);
                     r.choose(false);
-                    if (e.shouldUseEdge(OptionsConstants.EDGE_WHEN_KO) ||
-                          e.shouldUseEdge(OptionsConstants.EDGE_WHEN_AERO_KO)) {
-                        edgeUsed = true;
+                    // Only offer an Edge reroll if one hasn't already been spent on this consciousness roll.
+                    if (!edgeAlreadyUsed &&
+                          (e.shouldUseEdge(OptionsConstants.EDGE_WHEN_KO) ||
+                                e.shouldUseEdge(OptionsConstants.EDGE_WHEN_AERO_KO))) {
+                        rerollWithEdge = true;
                         vDesc.add(r);
                         r = new Report(6520);
                         r.subject = e.getId();
@@ -18877,9 +18884,7 @@ public class TWGameManager extends AbstractGameManager {
                     // return true;
                 } // else
                 vDesc.add(r);
-            } while (e.getCrew().isKoThisRound(crewPos) &&
-                  (e.shouldUseEdge(OptionsConstants.EDGE_WHEN_KO) ||
-                        e.shouldUseEdge(OptionsConstants.EDGE_WHEN_AERO_KO)));
+            } while (rerollWithEdge);
             // end of do-while
             if (e.getCrew().isKoThisRound(crewPos)) {
                 boolean wasPilot = e.getCrew().getCurrentPilotIndex() == crewPos;
@@ -23031,8 +23036,48 @@ public class TWGameManager extends AbstractGameManager {
         r.add(t.getLocationAbbr(loc));
         r.newlines = 0;
         vDesc.add(r);
-        int roll = Compute.d6(2);
-        r = new Report(6310);
+        int roll = reportTankCritRoll(vDesc, t, Compute.d6(2), critMod);
+
+        // now look up on vehicle crits table
+        int critType = t.getCriticalEffect(roll, loc, damagedByFire);
+
+        // Allow a single reroll of the critical hit roll if the crew has Edge remaining and an applicable Edge
+        // trigger is enabled for this result.
+        if (tankShouldUseEdgeForCrit(t, critType)) {
+            t.getCrew().decreaseEdge();
+            r = new Report(6730);
+            r.subject = t.getId();
+            r.indent(3);
+            r.add(t.getCrew().getOptions().intOption(OptionsConstants.EDGE));
+            vDesc.add(r);
+            roll = reportTankCritRoll(vDesc, t, Compute.d6(2), critMod);
+            critType = t.getCriticalEffect(roll, loc, damagedByFire);
+        }
+
+        vDesc.addAll(applyCriticalHit(t, loc, new CriticalSlot(0, critType), true, damage, false));
+        if ((critType != Tank.CRIT_NONE) &&
+              t.hasEngine() &&
+              !t.getEngine().isFusion() &&
+              t.hasQuirk(OptionsConstants.QUIRK_NEG_FRAGILE_FUEL) &&
+              (Compute.d6(2) > 9)) {
+            // BOOM!!
+            vDesc.addAll(applyCriticalHit(t, loc, new CriticalSlot(0, Tank.CRIT_FUEL_TANK), true, damage, false));
+        }
+        return vDesc;
+    }
+
+    /**
+     * Reports a vehicle critical hit table roll (report 6310), applying the given critical hit modifier.
+     *
+     * @param vDesc   the report {@code Vector} to append the roll report to
+     * @param t       the vehicle being critted
+     * @param roll    the raw 2d6 roll before any modifier is applied
+     * @param critMod the modifier to add to the roll
+     *
+     * @return the modified roll used to look up the vehicle criticals table
+     */
+    private int reportTankCritRoll(Vector<Report> vDesc, Tank t, int roll, int critMod) {
+        Report r = new Report(6310);
         r.subject = t.getId();
         String rollString = "";
         if (critMod != 0) {
@@ -23047,19 +23092,38 @@ public class TWGameManager extends AbstractGameManager {
         r.add(rollString);
         r.newlines = 0;
         vDesc.add(r);
+        return roll;
+    }
 
-        // now look up on vehicle crits table
-        int critType = t.getCriticalEffect(roll, loc, damagedByFire);
-        vDesc.addAll(applyCriticalHit(t, loc, new CriticalSlot(0, critType), true, damage, false));
-        if ((critType != Tank.CRIT_NONE) &&
-              t.hasEngine() &&
-              !t.getEngine().isFusion() &&
-              t.hasQuirk(OptionsConstants.QUIRK_NEG_FRAGILE_FUEL) &&
-              (Compute.d6(2) > 9)) {
-            // BOOM!!
-            vDesc.addAll(applyCriticalHit(t, loc, new CriticalSlot(0, Tank.CRIT_FUEL_TANK), true, damage, false));
+    /**
+     * Determines whether a vehicle should spend Edge to reroll a critical hit roll that produced the given critical
+     * effect. This covers the "catastrophic result" and "turret blown off" triggers, which reroll the critical hit
+     * table roll for any source of critical hit. Also checks that the crew still has Edge remaining.
+     *
+     * @param tank     the vehicle taking the critical hit
+     * @param critType the critical effect produced by the initial roll (a {@code Tank.CRIT_*} value)
+     *
+     * @return true if an applicable Edge trigger is enabled and Edge is available
+     */
+    // package-private for testing
+    boolean tankShouldUseEdgeForCrit(Tank tank, int critType) {
+        if (critType == Tank.CRIT_NONE) {
+            return false;
         }
-        return vDesc;
+        // Results that destroy or immobilize the vehicle (TW p. 194). A blown-off rotor forces a VTOL to crash,
+        // so it is treated as catastrophic as well.
+        boolean catastrophic = (critType == Tank.CRIT_CREW_KILLED)
+              || (critType == Tank.CRIT_AMMO)
+              || (critType == Tank.CRIT_FUEL_TANK)
+              || (critType == Tank.CRIT_ENGINE)
+              || (critType == VTOL.CRIT_ROTOR_DESTROYED);
+
+        boolean shouldUseCatastrophicEdge = catastrophic
+              && tank.shouldUseEdge(OptionsConstants.EDGE_WHEN_TANK_DESTROYED);
+        boolean shouldUseTurretEdge = critType == Tank.CRIT_TURRET_DESTROYED
+              && tank.shouldUseEdge(OptionsConstants.EDGE_WHEN_TANK_TURRET_BLOWN_OFF);
+
+        return shouldUseCatastrophicEdge || shouldUseTurretEdge;
     }
 
     /**
@@ -23226,10 +23290,43 @@ public class TWGameManager extends AbstractGameManager {
         r.indent(3);
         r.newlines = 0;
         vDesc.add(r);
-        int roll = Compute.d6(2);
-        r = new Report(9101);
-        r.subject = a.getId();
-        r.add(target);
+        int roll = reportAeroCritRoll(vDesc, a, Compute.d6(2), critMod, target);
+
+        // now look up on vehicle crits table
+        int critType = a.getCriticalEffect(roll, target);
+
+        // Allow a single reroll of the critical hit roll if the crew has Edge remaining and the result is a
+        // potentially unit-destroying (catastrophic) critical.
+        if (aeroShouldUseEdgeForCrit(a, critType)) {
+            a.getCrew().decreaseEdge();
+            r = new Report(9104);
+            r.subject = a.getId();
+            r.indent(3);
+            r.add(a.getCrew().getOptions().intOption(OptionsConstants.EDGE));
+            vDesc.add(r);
+            roll = reportAeroCritRoll(vDesc, a, Compute.d6(2), critMod, target);
+            critType = a.getCriticalEffect(roll, target);
+        }
+
+        vDesc.addAll(applyCriticalHit(a, loc, new CriticalSlot(0, critType), true, damage, isCapital));
+        return vDesc;
+    }
+
+    /**
+     * Reports an aerospace critical hit table roll (report 9101), applying the given critical hit modifier.
+     *
+     * @param vDesc   the report {@code Vector} to append the roll report to
+     * @param aero    the aerospace unit being critted
+     * @param roll    the raw 2d6 roll before any modifier is applied
+     * @param critMod the modifier to add to the roll
+     * @param target  the target number for the critical hit table lookup
+     *
+     * @return the modified roll used to look up the aerospace criticals table
+     */
+    private int reportAeroCritRoll(Vector<Report> vDesc, Aero aero, int roll, int critMod, int target) {
+        Report report = new Report(9101);
+        report.subject = aero.getId();
+        report.add(target);
         String rollString = "";
         if (critMod != 0) {
             rollString = "(" + roll;
@@ -23240,14 +23337,28 @@ public class TWGameManager extends AbstractGameManager {
             roll += critMod;
         }
         rollString += roll;
-        r.add(rollString);
-        r.newlines = 0;
-        vDesc.add(r);
+        report.add(rollString);
+        report.newlines = 0;
+        vDesc.add(report);
+        return roll;
+    }
 
-        // now look up on vehicle crits table
-        int critType = a.getCriticalEffect(roll, target);
-        vDesc.addAll(applyCriticalHit(a, loc, new CriticalSlot(0, critType), true, damage, isCapital));
-        return vDesc;
+    /**
+     * Determines whether an aerospace unit should spend Edge to reroll a critical hit roll that produced the given
+     * critical effect. This covers the catastrophic trigger, which rerolls the critical hit table roll on results that
+     * can destroy the unit (crew, engine, or fuel tank hits). Also checks that the crew still has Edge remaining.
+     *
+     * @param aero     the aerospace unit taking the critical hit
+     * @param critType the critical effect produced by the initial roll (an {@code Aero.CRIT_*} value)
+     *
+     * @return true if the catastrophic trigger is enabled and Edge is available
+     */
+    // package-private for testing
+    boolean aeroShouldUseEdgeForCrit(Aero aero, int critType) {
+        boolean catastrophic = (critType == Aero.CRIT_CREW)
+              || (critType == Aero.CRIT_ENGINE)
+              || (critType == Aero.CRIT_FUEL_TANK);
+        return catastrophic && aero.shouldUseEdge(OptionsConstants.EDGE_WHEN_AERO_CATASTROPHIC);
     }
 
     /**
@@ -23608,6 +23719,46 @@ public class TWGameManager extends AbstractGameManager {
     }
 
     /**
+     * Applies Edge to a location breach check: if the roll would breach the location and the crew has the breach Edge
+     * trigger enabled with Edge remaining, spends one Edge point and rerolls the breach check once. A single check is
+     * never rerolled more than once.
+     *
+     * @param entity       the entity making the breach check
+     * @param loc          the location being checked (for reporting)
+     * @param target       the breach target number (a breach occurs on a roll of {@code target} or higher)
+     * @param breachRoll   the breach roll that was made
+     * @param reportVector the report vector to append the Edge-use and reroll reports to
+     *
+     * @return the breach roll to use — the reroll if Edge was spent, otherwise the original roll
+     */
+    // package-private for testing
+    int applyBreachEdge(Entity entity, int loc, int target, int breachRoll, Vector<Report> reportVector) {
+        boolean isBreach = breachRoll >= target;
+        boolean shouldUseEdge = entity.shouldUseEdge(OptionsConstants.EDGE_WHEN_BREACH);
+
+        if (isBreach && shouldUseEdge) {
+            entity.getCrew().decreaseEdge();
+            Report edgeReport = new Report(6348);
+            edgeReport.subject = entity.getId();
+            edgeReport.indent(3);
+            edgeReport.add(entity.getCrew().getOptions().intOption(OptionsConstants.EDGE));
+            reportVector.addElement(edgeReport);
+
+            Roll diceRoll = Compute.rollD6(2);
+            breachRoll = diceRoll.getIntValue();
+            Report report = new Report(6345);
+            report.subject = entity.getId();
+            report.indent(3);
+            report.add(entity.getLocationAbbr(loc));
+            report.add(diceRoll);
+            report.newlines = 0;
+            report.choose(breachRoll < target);
+            reportVector.addElement(report);
+        }
+        return breachRoll;
+    }
+
+    /**
      * Checks for location breach and returns phase logging.
      * <p>
      *
@@ -23711,6 +23862,9 @@ public class TWGameManager extends AbstractGameManager {
 
                 r.choose(breachRoll < target);
                 vDesc.addElement(r);
+
+                // Edge may reroll a breach check that would breach the location.
+                breachRoll = applyBreachEdge(entity, loc, target, breachRoll, vDesc);
             }
             // Breach by damage or lack of armor.
             if ((breachRoll >= target) ||
@@ -26538,9 +26692,9 @@ public class TWGameManager extends AbstractGameManager {
     }
 
     /**
-     * Destroys the given unit if an out-of-band edit (such as a gamemaster damage edit) left it in a state it
-     * cannot survive, e.g. with its center torso destroyed. Direct entity updates bypass normal damage
-     * resolution, which is where destruction is otherwise detected and applied.
+     * Destroys the given unit if an out-of-band edit (such as a gamemaster damage edit) left it in a state it cannot
+     * survive, e.g. with its center torso destroyed. Direct entity updates bypass normal damage resolution, which is
+     * where destruction is otherwise detected and applied.
      *
      * @param entity the server's version of the unit to check
      */
@@ -29374,6 +29528,35 @@ public class TWGameManager extends AbstractGameManager {
     }
 
     /**
+     * Applies Edge to an ejection roll: if the roll failed and the crew has the failed-ejection Edge trigger enabled
+     * with Edge remaining, spends one Edge point and rerolls once.
+     *
+     * @param entity     the ejecting unit
+     * @param rollTarget the ejection roll target number
+     * @param diceRoll   the ejection roll that was made
+     * @param vDesc      the report vector to append the Edge-use report to
+     *
+     * @return the roll to use — the reroll if Edge was spent, otherwise the original roll
+     */
+    // package-private for testing
+    Roll applyEjectionEdge(Entity entity, PilotingRollData rollTarget, Roll diceRoll, Vector<Report> vDesc) {
+        boolean isCheckFailed = diceRoll.getIntValue() < rollTarget.getValue();
+        boolean shouldUseEdge = entity.shouldUseEdge(OptionsConstants.EDGE_WHEN_EJECT_FAILS);
+        if (isCheckFailed && shouldUseEdge) {
+            entity.getCrew().decreaseEdge();
+            Report edgeReport = new Report(6396);
+            edgeReport.subject = entity.getId();
+            edgeReport.indent();
+            edgeReport.add(entity.getCrew().getOptions().intOption(OptionsConstants.EDGE));
+            vDesc.addElement(edgeReport);
+
+            return entity.getCrew().rollPilotingSkill();
+        }
+
+        return diceRoll;
+    }
+
+    /**
      * Eject an Entity.
      *
      * @param entity            The <code>Entity</code> to eject.
@@ -29433,7 +29616,9 @@ public class TWGameManager extends AbstractGameManager {
                 }
                 rollTarget = getEjectModifiers(game, entity, crewPos, autoEject);
                 // roll
-                final Roll diceRoll = entity.getCrew().rollPilotingSkill();
+                Roll diceRoll = entity.getCrew().rollPilotingSkill();
+                // Edge may reroll a failed ejection roll once.
+                diceRoll = applyEjectionEdge(entity, rollTarget, diceRoll, vDesc);
 
                 if (entity.getCrew().getSlotCount() > 1) {
                     r = new Report(2193);
@@ -30942,6 +31127,33 @@ public class TWGameManager extends AbstractGameManager {
         vDesc.add(r);
 
         if (!noRoll) {
+            r = new Report(6310);
+            r.subject = te.getId();
+            if (modifier != 0) {
+                r.addDataWithTooltip(rollCalc, diceRoll.getReport());
+            } else {
+                r.add(diceRoll);
+            }
+            r.newlines = 0;
+            vDesc.add(r);
+            r = new Report(3340);
+            r.add(modifier);
+            r.subject = te.getId();
+            vDesc.add(r);
+        }
+
+        // Edge: allow a single reroll of a motive system roll that would immobilize the vehicle
+        if (!noRoll && (rollValue > 11) && te.shouldUseEdge(OptionsConstants.EDGE_WHEN_TANK_MOTIVE_CRIT)) {
+            te.getCrew().decreaseEdge();
+            r = new Report(6731);
+            r.subject = te.getId();
+            r.indent(3);
+            r.add(te.getCrew().getOptions().intOption(OptionsConstants.EDGE));
+            vDesc.add(r);
+
+            diceRoll = Compute.rollD6(2);
+            rollValue = diceRoll.getIntValue() + modifier;
+            rollCalc = rollValue + " [" + diceRoll.getIntValue() + " + " + modifier + "]";
             r = new Report(6310);
             r.subject = te.getId();
             if (modifier != 0) {

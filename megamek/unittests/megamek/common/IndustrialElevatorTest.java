@@ -49,6 +49,7 @@ import java.util.List;
 import megamek.common.IndustrialElevator.ElevatorCall;
 import megamek.common.board.BoardLocation;
 import megamek.common.board.Coords;
+import megamek.common.game.Game;
 import megamek.common.util.SerializationHelper;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -530,6 +531,29 @@ class IndustrialElevatorTest {
         IndustrialElevator restored = (IndustrialElevator) SerializationHelper.getLoadSaveGameXStream().fromXML(xml);
 
         assertElevatorMatches(original, restored);
+    }
+
+    @Test
+    void gameElevatorMapSurvivesSaveGameXStreamRoundTrip() {
+        // The save-game graph stores elevators in a map keyed by the BoardLocation RECORD. Records need the
+        // hand-written XStream converter from SerializationHelper (see PR #7949) and the map-key path exercises
+        // it differently than a plain record field, so round-trip the map through a whole Game.
+        Game game = new Game();
+        IndustrialElevator towerElevator = new IndustrialElevator(testLocation, 0, 5, 100);
+        towerElevator.addCall(new ElevatorCall(1, new Coords(4, 5), 3, 1, 5, 5));
+        IndustrialElevator basementElevator =
+              new IndustrialElevator(BoardLocation.of(new Coords(2, 3), BOARD_ID), -2, 1, 300);
+        basementElevator.setFunctional(false);
+        game.addIndustrialElevator(towerElevator);
+        game.addIndustrialElevator(basementElevator);
+
+        String xml = SerializationHelper.getSaveGameXStream().toXML(game);
+        Game restoredGame = (Game) SerializationHelper.getLoadSaveGameXStream().fromXML(xml);
+
+        assertEquals(2, restoredGame.getIndustrialElevators().size());
+        assertElevatorMatches(towerElevator, restoredGame.getIndustrialElevator(testLocation));
+        assertElevatorMatches(basementElevator,
+              restoredGame.getIndustrialElevator(BoardLocation.of(new Coords(2, 3), BOARD_ID)));
     }
 
     @Test

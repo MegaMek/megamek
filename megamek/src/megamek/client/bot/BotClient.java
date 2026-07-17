@@ -1454,6 +1454,7 @@ public abstract class BotClient extends Client {
 	    			}
 	    			
 	    			deployedMinefields.add(minefield);
+	    			mdp.markMinePlacement(coords);
 	    			
 	    			minesToPlace--;
 	    			

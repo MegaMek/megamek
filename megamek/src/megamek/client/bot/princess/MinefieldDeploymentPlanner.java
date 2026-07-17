@@ -77,6 +77,20 @@ public class MinefieldDeploymentPlanner {
 	private double infantryProportion = 0.0;
 	private int vibrabombSetting = 50;
 	
+	private Map<Coords, Integer> placedMines = new HashMap<>();
+	
+	/**
+	 * Increment mine placement counter
+	 */
+	public void markMinePlacement(Coords coords) {
+		placedMines.putIfAbsent(coords, 0);
+		placedMines.put(coords, placedMines.get(coords) + 1);
+	}
+	
+	/**
+	 * Constructor for the minefield deployment planner.
+	 * Initializes opposition unit counts and "reasonable" vibrabomb setting
+	 */
 	public MinefieldDeploymentPlanner(Player player, Game game) {
 		// would prefer to have a map of unit type to score, but tracked, wheeled and hover
 		// vehicles have different movement rules while being the same unit type
@@ -211,10 +225,6 @@ public class MinefieldDeploymentPlanner {
 		Map<Coords, Integer> infantryScores = new HashMap<>();
 		Map<Coords, Integer> hoverVeeScores = new HashMap<>();
 		
-		if (minefieldType == Minefield.TYPE_TRIPWIRE) {
-			int alpha = 1;
-		}
-		
 		// only calculate the scores for a unit type if it's present in the opfor
 		if (mekProportion > 0) {
 			mekScores = getMinefieldScores(minefieldType, UnitType.MEK, EntityMovementMode.BIPED, board);
@@ -255,6 +265,11 @@ public class MinefieldDeploymentPlanner {
 						wheeledVeeScore * wheelProportion +
 						infantryScore * infantryProportion + 
 						hoverVeeScore * hoverProportion;
+				
+				// if we've already placed a minefield here, we discourage placing more
+				if (placedMines.containsKey(coords)) {
+					totalScore -= placedMines.get(coords);
+				}
 				
 				coalescedMap.put(coords, totalScore);
 			}

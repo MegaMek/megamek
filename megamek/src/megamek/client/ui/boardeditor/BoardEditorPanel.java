@@ -1,6 +1,6 @@
 /*
  * Copyright (c) 2000-2003 Ben Mazur (bmazur@sev.org)
- * Copyright (C) 2002-2025 The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2002-2026 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -108,6 +108,7 @@ import megamek.common.util.BoardUtilities;
 import megamek.common.util.ImageUtil;
 import megamek.common.util.fileUtils.MegaMekFile;
 import megamek.logging.MMLogger;
+import megamek.utilities.BoardClassifier;
 import megamek.utilities.BoardsTagger;
 
 // TODO: center map
@@ -183,6 +184,7 @@ public class BoardEditorPanel extends JPanel
     private EditorTextField texTerrExits;
     private ScalingIconButton butTerrExits;
     private JCheckBox cheRoadsAutoExit;
+    private JCheckBox cheArena;
     private final JButton copyButton = new JButton(Messages.getString("BoardEditor.copyButton"));
     private final JButton pasteButton = new JButton(Messages.getString("BoardEditor.pasteButton"));
     private ScalingIconButton butExitUp, butExitDown;
@@ -946,6 +948,12 @@ public class BoardEditorPanel extends JPanel
         cheRoadsAutoExit.addItemListener(this);
         cheRoadsAutoExit.setSelected(true);
 
+        // Arena tag (marks a Solaris-style arena board)
+        cheArena = new JCheckBox(Messages.getString("BoardEditor.cheArena"));
+        cheArena.setToolTipText(Messages.getString("BoardEditor.cheArena.tooltip"));
+        cheArena.addItemListener(this);
+        cheArena.setSelected(false);
+
         // Theme
         JPanel panTheme = new JPanel(new FlowLayout(FlowLayout.LEFT, 4, 4));
         choTheme = new JComboBox<>();
@@ -979,6 +987,7 @@ public class BoardEditorPanel extends JPanel
         // The board settings panel (Auto exit roads to pavement)
         panelBoardSettings.setBorder(new TitledBorder("Board Settings"));
         panelBoardSettings.add(cheRoadsAutoExit);
+        panelBoardSettings.add(cheArena);
 
         // Board Buttons (Save, Load...)
         JButton butBoardNew = new JButton(Messages.getString("BoardEditor.butBoardNew"));
@@ -1545,6 +1554,7 @@ public class BoardEditorPanel extends JPanel
                 board.addTag(tag);
             }
             cheRoadsAutoExit.setSelected(board.getRoadsAutoExit());
+            cheArena.setSelected(board.getTags().contains(BoardClassifier.ARENA_TAG));
             mapSettings.setBoardSize(board.getWidth(), board.getHeight());
             curBoardFile = file;
             RecentBoardList.addBoard(curBoardFile);
@@ -1726,6 +1736,18 @@ public class BoardEditorPanel extends JPanel
             board.setRoadsAutoExit(cheRoadsAutoExit.isSelected());
             bv.updateBoard();
             repaintWorkingHex();
+        } else if (ie.getSource().equals(cheArena)) {
+            // Add or remove the Arena tag. Guard against no-op events fired during board load.
+            boolean isArena = board.getTags().contains(BoardClassifier.ARENA_TAG);
+            if (cheArena.isSelected() != isArena) {
+                if (cheArena.isSelected()) {
+                    board.addTag(BoardClassifier.ARENA_TAG);
+                } else {
+                    board.removeTag(BoardClassifier.ARENA_TAG);
+                }
+                hasChanges = true;
+                setFrameTitle();
+            }
         }
     }
 
@@ -1804,6 +1826,8 @@ public class BoardEditorPanel extends JPanel
         savedUndoStackSize = 0;
         canReturnToSaved = true;
         resetUndo();
+        // Sync the Arena checkbox to the (possibly fresh) board's tags
+        cheArena.setSelected(board.getTags().contains(BoardClassifier.ARENA_TAG));
         hasChanges = false;
         // When a board was loaded, we have a file, otherwise not
         butSourceFile.setEnabled(curBoardFile != null);

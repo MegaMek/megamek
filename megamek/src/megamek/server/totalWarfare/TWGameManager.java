@@ -3515,6 +3515,11 @@ public class TWGameManager extends AbstractGameManager {
                 report.newlines = 0;
                 addReport(report);
 
+                // Edge may reroll a failed zip line check.
+                Vector<Report> ziplineEdgeReports = new Vector<>();
+                diceRoll = applyZiplineEdge(unit, psr, diceRoll, ziplineEdgeReports);
+                ziplineEdgeReports.forEach(this::addReport);
+
                 // Report TN
                 report = new Report(9921);
                 report.subject = unit.getId();
@@ -17250,6 +17255,62 @@ public class TWGameManager extends AbstractGameManager {
     }
 
     /**
+     * Applies Edge to a fire-avoidance roll: if the 8+ roll to avoid the effects of standing in fire failed and the
+     * crew has the fire Edge trigger enabled with Edge remaining, spends one Edge point and rerolls the check once.
+     *
+     * @param entity      the unit exposed to fire
+     * @param diceRoll    the roll that was made (needs 8+ to avoid the fire's effects)
+     * @param edgeReports a report vector to append the Edge-use report to
+     *
+     * @return the roll to use - the reroll if Edge was spent, otherwise the original roll
+     */
+    static Roll applyFlamingDamageEdge(Entity entity, Roll diceRoll, Vector<Report> edgeReports) {
+        boolean checkFailed = diceRoll.getIntValue() < 8;
+        boolean shouldUseEdge = entity.shouldUseEdge(OptionsConstants.EDGE_WHEN_FIRE);
+
+        if (checkFailed && shouldUseEdge) {
+            entity.getCrew().decreaseEdge();
+            Report report = new Report(5096);
+            report.subject = entity.getId();
+            report.indent();
+            report.add(entity.getCrew().getOptions().intOption(OptionsConstants.EDGE));
+            edgeReports.add(report);
+
+            return Compute.rollD6(2);
+        }
+
+        return diceRoll;
+    }
+
+    /**
+     * Applies Edge to a zip line descent check: if the check failed and the crew has the zip line Edge trigger enabled
+     * with Edge remaining, spends one Edge point and rerolls the check once.
+     *
+     * @param entity      the unit making the zip line descent
+     * @param rollTarget  the target number the roll must meet to succeed
+     * @param diceRoll    the roll that was made
+     * @param edgeReports a report vector to append the Edge-use report to
+     *
+     * @return the roll to use - the reroll if Edge was spent, otherwise the original roll
+     */
+    static Roll applyZiplineEdge(Entity entity, PilotingRollData rollTarget, Roll diceRoll,
+          Vector<Report> edgeReports) {
+        boolean checkFailed = diceRoll.getIntValue() < rollTarget.getValue();
+        boolean shouldUseEdge = entity.shouldUseEdge(OptionsConstants.EDGE_WHEN_ZIPLINE);
+
+        if (checkFailed && shouldUseEdge) {
+            entity.getCrew().decreaseEdge();
+            Report report = new Report(9924);
+            report.subject = entity.getId();
+            report.indent();
+            report.add(entity.getCrew().getOptions().intOption(OptionsConstants.EDGE));
+            edgeReports.add(report);
+            return Compute.rollD6(2);
+        }
+        return diceRoll;
+    }
+
+    /**
      * Resolve Flaming Damage for the given Entity Taharqa: This is now updated to TacOps rules which is much more
      * lenient So I have changed the name to Flaming Damage rather than flaming death
      *
@@ -17285,6 +17346,11 @@ public class TWGameManager extends AbstractGameManager {
             addReport(r);
             return;
         }
+
+        // Edge may reroll a failed roll to avoid the effects of fire.
+        Vector<Report> edgeReports = new Vector<>();
+        diceRoll = applyFlamingDamageEdge(entity, diceRoll, edgeReports);
+        edgeReports.forEach(this::addReport);
 
         // Must roll 8+ to survive...
         r = new Report(5100);

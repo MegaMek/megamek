@@ -32,6 +32,7 @@
  */
 package megamek.server.commands;
 
+import megamek.client.ui.Messages;
 import megamek.common.Player;
 import megamek.server.Server;
 import megamek.server.totalWarfare.TWGameManager;
@@ -45,8 +46,7 @@ public class CancelGameMasterCommand extends ServerCommand {
     private final TWGameManager gameManager;
 
     public CancelGameMasterCommand(Server server, TWGameManager gameManager) {
-        super(server, "cancelGM", "Withdraws your own request to become Game Master. "
-              + "Usage: /cancelGM");
+        super(server, "cancelGM", Messages.getString("Gamemaster.vote.help.cancel"));
         this.gameManager = gameManager;
     }
 

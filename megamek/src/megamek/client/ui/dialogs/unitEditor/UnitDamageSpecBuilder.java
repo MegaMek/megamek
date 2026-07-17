@@ -36,6 +36,7 @@ import java.util.Map;
 import javax.swing.JCheckBox;
 import javax.swing.JSpinner;
 
+import megamek.common.annotations.Nullable;
 import megamek.common.units.DamageEditSpec;
 import megamek.common.units.Entity;
 
@@ -165,7 +166,7 @@ public class UnitDamageSpecBuilder {
     }
 
     /** The values of a row of spinners; {@code null} for a missing row, with null elements for missing spinners. */
-    private Integer[] spinnerValues(JSpinner[] spinners) {
+    private @Nullable Integer[] spinnerValues(@Nullable JSpinner[] spinners) {
         if (null == spinners) {
             return null;
         }
@@ -176,25 +177,28 @@ public class UnitDamageSpecBuilder {
         return values;
     }
 
-    private Integer spinnerValue(JSpinner spinner) {
+    /** A spinner's value; {@code null} for a missing spinner, which means the unit has nothing for it to edit. */
+    private @Nullable Integer spinnerValue(@Nullable JSpinner spinner) {
         return (null == spinner) ? null : (Integer) spinner.getValue();
     }
 
     /** A spinner's value as an integer whatever its model's number type, for the models that hold doubles. */
-    private Integer numberValue(JSpinner spinner) {
+    private @Nullable Integer numberValue(@Nullable JSpinner spinner) {
         return (null == spinner) ? null : ((Number) spinner.getValue()).intValue();
     }
 
-    private Boolean checkboxValue(JCheckBox checkbox) {
+    /** A checkbox's state; {@code null} for a missing checkbox, which means the unit has nothing for it to edit. */
+    private @Nullable Boolean checkboxValue(@Nullable JCheckBox checkbox) {
         return (null == checkbox) ? null : checkbox.isSelected();
     }
 
-    private Integer critHits(CheckCritPanel crit) {
+    /** A crit control's hits; {@code null} for a missing control, which means the unit has no such system. */
+    private @Nullable Integer critHits(@Nullable CheckCritPanel crit) {
         return (null == crit) ? null : crit.getHits();
     }
 
     /** The hits of a row of crit controls; {@code null} for a missing row, with null elements for missing crits. */
-    private Integer[] critHitsRow(CheckCritPanel[] crits) {
+    private @Nullable Integer[] critHitsRow(@Nullable CheckCritPanel[] crits) {
         if (null == crits) {
             return null;
         }

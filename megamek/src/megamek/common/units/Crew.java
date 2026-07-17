@@ -44,7 +44,6 @@ import java.util.UUID;
 import java.util.Vector;
 
 import megamek.client.ui.clientGUI.tooltip.PilotToolTip;
-import megamek.codeUtilities.MathUtility;
 import megamek.common.Report;
 import megamek.common.annotations.Nullable;
 import megamek.common.compute.Compute;
@@ -1166,7 +1165,7 @@ public class Crew implements Serializable {
         int fatigueModifier = 0;
 
         for (int i = 0; i < getSlotCount(); i++) {
-            fatigueModifier = MathUtility.clamp((fatigue[i] - 1) / 4, 0, 4);
+            fatigueModifier = Math.clamp((fatigue[i] - 1) / 4, 0, 4);
         }
 
         return -(fatigueModifier / getSlotCount());

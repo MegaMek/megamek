@@ -177,55 +177,55 @@ public class SimpleUnitMapSet implements DisplayMapSet {
         Image tile = jComponent.getToolkit()
               .getImage(new MegaMekFile(Configuration.widgetsDir(), udSpec.getBackgroundTile()).toString());
         PMUtil.setImage(tile, jComponent);
-        int b = BackGroundDrawer.TILING_BOTH;
-        bgDrawers.addElement(new BackGroundDrawer(tile, b));
+        int tilingType = BackGroundDrawer.TILING_BOTH;
+        bgDrawers.addElement(new BackGroundDrawer(tile, tilingType));
 
-        b = BackGroundDrawer.TILING_HORIZONTAL | BackGroundDrawer.V_ALIGN_TOP;
+        tilingType = BackGroundDrawer.TILING_HORIZONTAL | BackGroundDrawer.V_ALIGN_TOP;
         tile = jComponent.getToolkit()
               .getImage(new MegaMekFile(Configuration.widgetsDir(), udSpec.getTopLine()).toString());
         PMUtil.setImage(tile, jComponent);
-        bgDrawers.addElement(new BackGroundDrawer(tile, b));
+        bgDrawers.addElement(new BackGroundDrawer(tile, tilingType));
 
-        b = BackGroundDrawer.TILING_HORIZONTAL | BackGroundDrawer.V_ALIGN_BOTTOM;
+        tilingType = BackGroundDrawer.TILING_HORIZONTAL | BackGroundDrawer.V_ALIGN_BOTTOM;
         tile = jComponent.getToolkit()
               .getImage(new MegaMekFile(Configuration.widgetsDir(), udSpec.getBottomLine()).toString());
         PMUtil.setImage(tile, jComponent);
-        bgDrawers.addElement(new BackGroundDrawer(tile, b));
+        bgDrawers.addElement(new BackGroundDrawer(tile, tilingType));
 
-        b = BackGroundDrawer.TILING_VERTICAL | BackGroundDrawer.H_ALIGN_LEFT;
+        tilingType = BackGroundDrawer.TILING_VERTICAL | BackGroundDrawer.H_ALIGN_LEFT;
         tile = jComponent.getToolkit()
               .getImage(new MegaMekFile(Configuration.widgetsDir(), udSpec.getLeftLine()).toString());
         PMUtil.setImage(tile, jComponent);
-        bgDrawers.addElement(new BackGroundDrawer(tile, b));
+        bgDrawers.addElement(new BackGroundDrawer(tile, tilingType));
 
-        b = BackGroundDrawer.TILING_VERTICAL | BackGroundDrawer.H_ALIGN_RIGHT;
+        tilingType = BackGroundDrawer.TILING_VERTICAL | BackGroundDrawer.H_ALIGN_RIGHT;
         tile = jComponent.getToolkit()
               .getImage(new MegaMekFile(Configuration.widgetsDir(), udSpec.getRightLine()).toString());
         PMUtil.setImage(tile, jComponent);
-        bgDrawers.addElement(new BackGroundDrawer(tile, b));
+        bgDrawers.addElement(new BackGroundDrawer(tile, tilingType));
 
-        b = BackGroundDrawer.NO_TILING | BackGroundDrawer.V_ALIGN_TOP | BackGroundDrawer.H_ALIGN_LEFT;
+        tilingType = BackGroundDrawer.NO_TILING | BackGroundDrawer.V_ALIGN_TOP | BackGroundDrawer.H_ALIGN_LEFT;
         tile = jComponent.getToolkit()
               .getImage(new MegaMekFile(Configuration.widgetsDir(), udSpec.getTopLeftCorner()).toString());
         PMUtil.setImage(tile, jComponent);
-        bgDrawers.addElement(new BackGroundDrawer(tile, b));
+        bgDrawers.addElement(new BackGroundDrawer(tile, tilingType));
 
-        b = BackGroundDrawer.NO_TILING | BackGroundDrawer.V_ALIGN_BOTTOM | BackGroundDrawer.H_ALIGN_LEFT;
+        tilingType = BackGroundDrawer.NO_TILING | BackGroundDrawer.V_ALIGN_BOTTOM | BackGroundDrawer.H_ALIGN_LEFT;
         tile = jComponent.getToolkit()
               .getImage(new MegaMekFile(Configuration.widgetsDir(), udSpec.getBottomLeftCorner()).toString());
         PMUtil.setImage(tile, jComponent);
-        bgDrawers.addElement(new BackGroundDrawer(tile, b));
+        bgDrawers.addElement(new BackGroundDrawer(tile, tilingType));
 
-        b = BackGroundDrawer.NO_TILING | BackGroundDrawer.V_ALIGN_TOP | BackGroundDrawer.H_ALIGN_RIGHT;
+        tilingType = BackGroundDrawer.NO_TILING | BackGroundDrawer.V_ALIGN_TOP | BackGroundDrawer.H_ALIGN_RIGHT;
         tile = jComponent.getToolkit()
               .getImage(new MegaMekFile(Configuration.widgetsDir(), udSpec.getTopRightCorner()).toString());
         PMUtil.setImage(tile, jComponent);
-        bgDrawers.addElement(new BackGroundDrawer(tile, b));
+        bgDrawers.addElement(new BackGroundDrawer(tile, tilingType));
 
-        b = BackGroundDrawer.NO_TILING | BackGroundDrawer.V_ALIGN_BOTTOM | BackGroundDrawer.H_ALIGN_RIGHT;
+        tilingType = BackGroundDrawer.NO_TILING | BackGroundDrawer.V_ALIGN_BOTTOM | BackGroundDrawer.H_ALIGN_RIGHT;
         tile = jComponent.getToolkit()
               .getImage(new MegaMekFile(Configuration.widgetsDir(), udSpec.getBottomRightCorner()).toString());
         PMUtil.setImage(tile, jComponent);
-        bgDrawers.addElement(new BackGroundDrawer(tile, b));
+        bgDrawers.addElement(new BackGroundDrawer(tile, tilingType));
     }
 }

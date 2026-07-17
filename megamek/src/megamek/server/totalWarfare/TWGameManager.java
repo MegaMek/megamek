@@ -441,14 +441,14 @@ public class TWGameManager extends AbstractGameManager {
     public void startGameMasterVote(Player requester) {
         if (gameMasterPoll != null) {
             Player currentRequester = game.getPlayer(gameMasterPoll.getRequesterId());
-            sendServerChat(requester.getId(), "A Game Master vote called by "
-                  + ((currentRequester != null) ? currentRequester.getName() : "another player")
-                  + " is already running.");
+            sendServerChat(requester.getId(), Messages.getString("Gamemaster.vote.alreadyRunning",
+                  (currentRequester != null)
+                        ? currentRequester.getName()
+                        : Messages.getString("Gamemaster.vote.unknownRequester")));
             return;
         }
         gameMasterPoll = new Poll(requester.getId(), eligibleGameMasterVoterIds(), gameMasterVoteThreshold());
-        sendServerChat(requester.getName()
-              + " has called a vote to become Game Master. Vote with /allowGM or /denyGM.");
+        sendServerChat(Messages.getString("Gamemaster.vote.called", requester.getName()));
         applyGameMasterPollOutcome();
     }
 
@@ -461,12 +461,13 @@ public class TWGameManager extends AbstractGameManager {
      */
     public void castGameMasterVote(Player voter, boolean inFavor) {
         if (gameMasterPoll == null) {
-            sendServerChat(voter.getId(), "There is no Game Master vote running.");
+            sendServerChat(voter.getId(), Messages.getString("Gamemaster.vote.noneRunning"));
             return;
         }
         syncGameMasterPollVoters();
         gameMasterPoll.castVote(voter.getId(), inFavor);
-        sendServerChat(voter.getName() + " has voted " + (inFavor ? "to allow" : "against") + " the request.");
+        sendServerChat(Messages.getString(inFavor ? "Gamemaster.vote.ballot.allow" : "Gamemaster.vote.ballot.deny",
+              voter.getName()));
         applyGameMasterPollOutcome();
     }
 
@@ -477,11 +478,11 @@ public class TWGameManager extends AbstractGameManager {
      */
     public void cancelGameMasterVote(Player player) {
         if (gameMasterPoll == null) {
-            sendServerChat(player.getId(), "There is no Game Master vote running.");
+            sendServerChat(player.getId(), Messages.getString("Gamemaster.vote.noneRunning"));
             return;
         }
         if (player.getId() != gameMasterPoll.getRequesterId()) {
-            sendServerChat(player.getId(), "Only the player who called the Game Master vote may cancel it.");
+            sendServerChat(player.getId(), Messages.getString("Gamemaster.vote.onlyRequesterCancels"));
             return;
         }
         gameMasterPoll.cancel();
@@ -544,18 +545,20 @@ public class TWGameManager extends AbstractGameManager {
             return;
         }
         Player requester = game.getPlayer(gameMasterPoll.getRequesterId());
-        String requesterName = (requester != null) ? requester.getName() : "The requesting player";
+        String requesterName = (requester != null)
+              ? requester.getName()
+              : Messages.getString("Gamemaster.vote.unknownRequesterName");
         switch (gameMasterPoll.getStatus()) {
             case PASSED -> {
                 if ((requester != null) && (getGameMaster() == null)) {
-                    sendServerChat("The vote has passed: " + requesterName + " becomes Game Master.");
+                    sendServerChat(Messages.getString("Gamemaster.vote.passed", requesterName));
                     setGameMaster(requester, true);
                 } else {
-                    sendServerChat("The vote passed, but " + requesterName + " cannot take the role.");
+                    sendServerChat(Messages.getString("Gamemaster.vote.passedRoleTaken", requesterName));
                 }
             }
-            case FAILED -> sendServerChat("The vote has failed: " + requesterName + " does not become Game Master.");
-            case CANCELLED -> sendServerChat(requesterName + " has withdrawn the Game Master request.");
+            case FAILED -> sendServerChat(Messages.getString("Gamemaster.vote.failed", requesterName));
+            case CANCELLED -> sendServerChat(Messages.getString("Gamemaster.vote.withdrawn", requesterName));
             default -> {
             }
         }

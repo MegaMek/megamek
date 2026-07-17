@@ -388,7 +388,7 @@ public class UnitEditorDialog extends JDialog {
     private void destroyUnit() {
         JCheckBox chkEjectCrew = new JCheckBox(Messages.getString("UnitEditorDialog.destroyUnit.eject"));
         chkEjectCrew.setToolTipText(Messages.getString("UnitEditorDialog.destroyUnit.eject.tooltip"));
-        chkEjectCrew.setEnabled(canEjectCrew());
+        chkEjectCrew.setEnabled(entity.canEjectCrew());
         Object[] message = {
               String.format(Messages.getString("UnitEditorDialog.destroyUnit.confirm"), entity.getDisplayName()),
               chkEjectCrew
@@ -412,15 +412,6 @@ public class UnitEditorDialog extends JDialog {
               ejectCrew);
         client.sendChat(String.format(DESTROY_UNIT_COMMAND, entity.getId(), ejectCrew));
         setVisible(false);
-    }
-
-    /** A crew can only leave a unit that has one, that can eject, and that they have not already left. */
-    private boolean canEjectCrew() {
-        Crew crew = entity.getCrew();
-        return (crew != null)
-              && !crew.isEjected()
-              && !crew.isDead()
-              && (entity.isMek() || entity.isAero());
     }
 
     /**

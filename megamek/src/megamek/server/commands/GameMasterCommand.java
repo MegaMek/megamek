@@ -33,6 +33,7 @@
 
 package megamek.server.commands;
 
+import megamek.client.ui.Messages;
 import megamek.common.Player;
 import megamek.common.options.OptionsConstants;
 import megamek.server.Server;
@@ -48,8 +49,7 @@ import megamek.server.totalWarfare.TWGameManager;
 public class GameMasterCommand extends ServerCommand {
 
     public GameMasterCommand(Server server) {
-        super(server, "gm", "Starts a vote to give you Game Master authority, or gives the role up "
-              + "when you hold it. Usage: /gm");
+        super(server, "gm", Messages.getString("Gamemaster.vote.help.request"));
     }
 
     /**
@@ -62,9 +62,7 @@ public class GameMasterCommand extends ServerCommand {
         Player player = server.getPlayer(connId);
 
         if (args.length != 1) {
-            server.sendServerChat(connId, "Incorrect number of arguments "
-                  + "for gm command!  Expected 0, received, "
-                  + (args.length - 1) + ".");
+            server.sendServerChat(connId, Messages.getString("Gamemaster.vote.noArguments"));
             server.sendServerChat(connId, getHelp());
             return;
         }
@@ -77,11 +75,11 @@ public class GameMasterCommand extends ServerCommand {
         } else if (!server.getGame().getOptions().booleanOption(OptionsConstants.GAME_MASTER_ALLOW)) {
             // whether a game has a gamemaster is a rule of the game, so it is the game's option that decides,
             // not each player's client
-            server.sendServerChat(connId, "This game does not allow a Game Master.");
+            server.sendServerChat(connId, Messages.getString("Gamemaster.vote.notAllowed"));
         } else if (currentGameMaster != null) {
             // only one Game Master is allowed at a time
-            server.sendServerChat(connId, currentGameMaster.getName()
-                  + " is already Game Master. They must give up the role (/gm) before another player can take it.");
+            server.sendServerChat(connId,
+                  Messages.getString("Gamemaster.vote.roleHeld", currentGameMaster.getName()));
         } else {
             gameManager.startGameMasterVote(player);
         }

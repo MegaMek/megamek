@@ -32,6 +32,7 @@
  */
 package megamek.server.commands;
 
+import megamek.client.ui.Messages;
 import megamek.common.Player;
 import megamek.server.Server;
 import megamek.server.totalWarfare.TWGameManager;
@@ -44,8 +45,7 @@ public class DenyGameMasterCommand extends ServerCommand {
     private final TWGameManager gameManager;
 
     public DenyGameMasterCommand(Server server, TWGameManager gameManager) {
-        super(server, "denyGM", "Votes no on another player's request to become Game Master. "
-              + "Usage: /denyGM");
+        super(server, "denyGM", Messages.getString("Gamemaster.vote.help.deny"));
         this.gameManager = gameManager;
     }
 

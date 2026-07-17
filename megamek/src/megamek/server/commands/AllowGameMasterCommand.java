@@ -33,6 +33,7 @@
 
 package megamek.server.commands;
 
+import megamek.client.ui.Messages;
 import megamek.common.Player;
 import megamek.server.Server;
 import megamek.server.totalWarfare.TWGameManager;
@@ -47,8 +48,7 @@ public class AllowGameMasterCommand extends ServerCommand {
     private final TWGameManager gameManager;
 
     public AllowGameMasterCommand(Server server, TWGameManager gameManager) {
-        super(server, "allowGM", "Votes yes on another player's request to become Game Master. "
-              + "Usage: /allowGM");
+        super(server, "allowGM", Messages.getString("Gamemaster.vote.help.allow"));
         this.gameManager = gameManager;
     }
 

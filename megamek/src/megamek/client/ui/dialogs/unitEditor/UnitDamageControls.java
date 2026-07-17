@@ -34,10 +34,10 @@ package megamek.client.ui.dialogs.unitEditor;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-import java.util.stream.Collectors;
 import javax.swing.JCheckBox;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
@@ -157,11 +157,16 @@ public class UnitDamageControls {
 
     /** The locations that currently have at least one critical hit set on them. */
     public Set<Integer> locationsWithCrits() {
-        return critsByLocation.entrySet()
-              .stream()
-              .filter(entry -> entry.getValue().stream().anyMatch(crit -> crit.getHits() > 0))
-              .map(Map.Entry::getKey)
-              .collect(Collectors.toSet());
+        Set<Integer> locations = new HashSet<>();
+        for (Map.Entry<Integer, List<CheckCritPanel>> locationCrits : critsByLocation.entrySet()) {
+            for (CheckCritPanel crit : locationCrits.getValue()) {
+                if (crit.getHits() > 0) {
+                    locations.add(locationCrits.getKey());
+                    break;
+                }
+            }
+        }
+        return locations;
     }
 
     /* the location name labels, colored by how damaged the location is */

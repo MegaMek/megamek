@@ -82,6 +82,15 @@ public class Tank extends Entity implements Fortifiable, RubbleClearer {
 
     @Serial
     private static final long serialVersionUID = -857210851169206264L;
+
+    /** A vehicle crew can abandon where the game's options allow vehicle crews to leave at all. */
+    @Override
+    public boolean canEjectCrew() {
+        return crewCanLeave()
+              && (getGame() != null)
+              && getGame().getOptions()
+              .booleanOption(OptionsConstants.ADVANCED_GROUND_MOVEMENT_VEHICLES_CAN_EJECT);
+    }
     protected boolean m_bHasNoTurret = false;
     protected boolean m_bTurretLocked = false;
     protected boolean m_bTurretJammed = false;

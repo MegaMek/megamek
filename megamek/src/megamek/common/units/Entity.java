@@ -12998,6 +12998,28 @@ public abstract class Entity extends TurnOrdered
     }
 
     /**
+     * Returns whether this unit can be hidden at all (hidden units, TW pg 259): a unit in the air cannot, and unit
+     * types that can never hide override this. Whether it is currently hidden is {@link #isHidden()}.
+     */
+    public boolean canHide() {
+        return !isAirborne() && !isAirborneVTOLorWIGE();
+    }
+
+    /**
+     * Returns whether this unit's crew could leave it now: eject or abandon, the way the server's abandonEntity
+     * resolves it. False here; the unit types whose crews can leave override it, each with its own conditions on
+     * top of the shared {@link #crewCanLeave()}.
+     */
+    public boolean canEjectCrew() {
+        return false;
+    }
+
+    /** Shared by the {@link #canEjectCrew()} overrides: a crew can only leave while it is aboard and alive. */
+    protected boolean crewCanLeave() {
+        return (getCrew() != null) && !getCrew().isEjected() && !getCrew().isDead();
+    }
+
+    /**
      * @return True if this unit has already made a pointblank shot this round.
      */
     public boolean madePointblankShot() {

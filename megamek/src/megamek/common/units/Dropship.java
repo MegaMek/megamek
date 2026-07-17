@@ -74,6 +74,12 @@ public class Dropship extends SmallCraft {
     @Serial
     private static final long serialVersionUID = 1528728632696989565L;
 
+    /** A DropShip is far too large to be hidden (hidden units, TW pg 259). */
+    @Override
+    public boolean canHide() {
+        return false;
+    }
+
     // ASEW Missile Effects, per location
     // Values correspond to Locations: NOS, Left, Right, AFT
     private final int[] asewAffectedTurns = { 0, 0, 0, 0 };

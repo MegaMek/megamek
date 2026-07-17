@@ -281,14 +281,19 @@ public class UnitDamagePanelBuilder {
      * carries, so an open edit reads back.
      */
     private JSpinner skillDeltaSpinner(int appliedDelta, int rawSkill, String tooltipKey) {
-        JSpinner spinner = new JSpinner(new SpinnerNumberModel(appliedDelta, -rawSkill, Crew.MAX_SKILL - rawSkill, 1));
+        // an applied modifier always fits the skill range by construction, but the model throws on a starting
+        // value outside its bounds, so the value is held to them rather than trusting every caller forever
+        int startingDelta = Math.clamp(appliedDelta, -rawSkill, Crew.MAX_SKILL - rawSkill);
+        JSpinner spinner = new JSpinner(new SpinnerNumberModel(startingDelta, -rawSkill,
+              Crew.MAX_SKILL - rawSkill, 1));
         spinner.setToolTipText(UIUtil.formatSideTooltip(Messages.getString(tooltipKey)));
         return spinner;
     }
 
     /** A spinner for the initiative delta, which is added to a roll rather than a skill and has no skill range. */
     private JSpinner initiativeDeltaSpinner(int delta) {
-        JSpinner spinner = new JSpinner(new SpinnerNumberModel(delta, -MAX_SKILL_DELTA, MAX_SKILL_DELTA, 1));
+        int startingDelta = Math.clamp(delta, -MAX_SKILL_DELTA, MAX_SKILL_DELTA);
+        JSpinner spinner = new JSpinner(new SpinnerNumberModel(startingDelta, -MAX_SKILL_DELTA, MAX_SKILL_DELTA, 1));
         spinner.setToolTipText(UIUtil.formatSideTooltip(
               Messages.getString("UnitEditorDialog.skillModifier.initiative.tooltip")));
         return spinner;
@@ -296,7 +301,8 @@ public class UnitDamagePanelBuilder {
 
     /** A spinner for one modifier's duration, prefilled with what remains of an active countdown. */
     private JSpinner modifierRoundsSpinner(int roundsRemaining) {
-        int rounds = (roundsRemaining > 0) ? roundsRemaining : DEFAULT_MODIFIER_ROUNDS;
+        int rounds = Math.clamp((roundsRemaining > 0) ? roundsRemaining : DEFAULT_MODIFIER_ROUNDS,
+              1, MAX_MODIFIER_ROUNDS);
         JSpinner spinner = new JSpinner(new SpinnerNumberModel(rounds, 1, MAX_MODIFIER_ROUNDS, 1));
         spinner.setToolTipText(UIUtil.formatSideTooltip(
               Messages.getString("UnitEditorDialog.skillModifier.rounds.tooltip")));
@@ -342,8 +348,7 @@ public class UnitDamagePanelBuilder {
             controls.chkHullDown = addStatusRow("UnitEditorDialog.status.hullDown", entity.isHullDown());
         }
 
-        boolean canHide = !(entity instanceof Dropship) && !entity.isAirborne() && !entity.isAirborneVTOLorWIGE();
-        if (canHide) {
+        if (entity.canHide()) {
             controls.chkHidden = addStatusRow("UnitEditorDialog.status.hidden", entity.isHidden());
         }
 

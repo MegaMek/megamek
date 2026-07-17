@@ -100,6 +100,7 @@ import megamek.client.ui.dialogs.ChoiceDialog;
 import megamek.client.ui.dialogs.ConfirmDialog;
 import megamek.client.ui.dialogs.InformDialog;
 import megamek.client.ui.dialogs.MMAboutDialog;
+import megamek.client.ui.dialogs.GameMasterAppointedDialog;
 import megamek.client.ui.dialogs.GameMasterVoteDialog;
 import megamek.client.ui.dialogs.PlayerListDialog;
 import megamek.client.ui.dialogs.RandomNameDialog;
@@ -843,10 +844,8 @@ public class ClientGUI extends AbstractClientGUI
         String gameMasterName = (gameMaster != null)
               ? gameMaster.getName()
               : Messages.getString("GameMasterVoteDialog.unknownPlayer");
-        SwingUtilities.invokeLater(() -> JOptionPane.showMessageDialog(frame,
-              Messages.getString("GameMasterVoteDialog.passed.message", gameMasterName),
-              Messages.getString("GameMasterVoteDialog.passed.title"),
-              JOptionPane.INFORMATION_MESSAGE));
+        SwingUtilities.invokeLater(() -> new GameMasterAppointedDialog(frame,
+              Messages.getString("GameMasterVoteDialog.passed.message", gameMasterName)).setVisible(true));
     }
 
     private void updateFrameTitle() {

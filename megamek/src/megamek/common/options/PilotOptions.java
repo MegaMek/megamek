@@ -158,6 +158,7 @@ public class PilotOptions extends AbstractOptions {
         addOption(edge, OptionsConstants.EDGE_WHEN_TANK_TURRET_BLOWN_OFF, true);
         // General Triggers
         addOption(edge, OptionsConstants.EDGE_WHEN_EJECT_FAILS, true);
+        addOption(edge, OptionsConstants.EDGE_WHEN_BREACH, true);
 
         // Enhanced Imaging (Clan technology, IO p.69)
         IBasicOptionGroup ei = addGroup("ei", EI_ADVANTAGES);

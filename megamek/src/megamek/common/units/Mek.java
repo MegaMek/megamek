@@ -5207,6 +5207,14 @@ public abstract class Mek extends Entity implements Fortifiable, RubbleClearer {
             sb.append(MtfFile.ROLE).append(getRole().toString());
             sb.append(newLine);
         }
+        for (ForceGeneratorAvailability availability : getForceGeneratorAvailability()) {
+            sb.append(MtfFile.AVAILABILITY).append(availability.toFileFormat());
+            sb.append(newLine);
+        }
+        if (!getMissionRoles().isBlank()) {
+            sb.append(MtfFile.MISSION_ROLES).append(getMissionRoles());
+            sb.append(newLine);
+        }
         if (techFaction != null && techFaction != Faction.NONE) {
             sb.append(MtfFile.FACTION).append(techFaction.getCode());
             sb.append(newLine);

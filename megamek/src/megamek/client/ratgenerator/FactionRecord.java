@@ -112,6 +112,8 @@ public class FactionRecord {
     public static final String IS_GENERAL_KEY = "IS";
     public static final String CL_GENERAL_KEY = "CLAN";
     public static final String PER_GENERAL_KEY = "PERIPHERY";
+    /** The catch-all availability key, used when a unit is equally available to everyone. */
+    public static final String GENERAL_KEY = "General";
 
     public FactionRecord() {
         this("Periphery", "Periphery");
@@ -331,6 +333,24 @@ public class FactionRecord {
     public boolean isActiveInYear(int year) {
         for (DateRange dr : yearsActive) {
             if (dr.isInRange(year)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    /**
+     * Whether the faction is active in the given year or becomes active in some later year. Used to offer a unit
+     * factions that do not exist yet at its introduction date but will field it later, such as the Republic of the
+     * Sphere for a unit built before 3081.
+     *
+     * @param year the earliest year of interest
+     *
+     * @return {@code true} if the faction is active at or after that year
+     */
+    public boolean isActiveInOrAfterYear(int year) {
+        for (DateRange dateRange : yearsActive) {
+            if ((dateRange.end == null) || (dateRange.end >= year)) {
                 return true;
             }
         }

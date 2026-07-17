@@ -876,8 +876,8 @@ public class MoveStep implements Serializable {
 
         if (isClimbing) {
             LOGGER.debug("[CLIMB-TRACE] compile FINAL: type={}, movementType={}, mp={}, mpUsed={}, " +
-                        "elevation={}, position={}, isClimbing={}, isStackingViolation={}, terrainInvalid={}, " +
-                        "isLegalEndPos={}",
+                  "elevation={}, position={}, isClimbing={}, isStackingViolation={}, terrainInvalid={}, " +
+                  "isLegalEndPos={}",
                   type, movementType, mp, mpUsed, elevation, position,
                   isClimbing, isStackingViolation, terrainInvalid, isLegalEndPos());
         }
@@ -1286,7 +1286,7 @@ public class MoveStep implements Serializable {
             if (isClimbing) {
                 LOGGER.debug("[CLIMB-TRACE] getMovementType: isLastStep={}, isLegalEndPos=false, " +
                             "overriding {} to MOVE_ILLEGAL, isStackingViolation={}, terrainInvalid={}, " +
-                            "isJumping={}, distance={}, hasEverUnloaded={}, position={}, elevation={}",
+                      "isJumping={}, distance={}, hasEverUnloaded={}, position={}, elevation={}",
                       isLastStep, movementType, isStackingViolation, terrainInvalid,
                       isJumping(), distance, hasEverUnloaded, position, elevation);
             }
@@ -2447,7 +2447,7 @@ public class MoveStep implements Serializable {
                 // but within run and running is legal
                 if (isClimbing) {
                     LOGGER.info("compileIllegal: climbing step classified as RUN! " +
-                                "mpUsed={}, walkMP={}, runMPMax={}, isRunProhibited={}, isRunAllowed={}",
+                          "mpUsed={}, walkMP={}, runMPMax={}, isRunProhibited={}, isRunAllowed={}",
                           getMpUsed(), tmpWalkMP, runMPMax, isRunProhibited, isRunAllowed());
                 }
 
@@ -2639,7 +2639,7 @@ public class MoveStep implements Serializable {
         if ((stepType == MoveStepType.GET_UP) || (stepType == MoveStepType.CAREFUL_STAND)) {
             LOGGER.debug("[STAND-TRACE] {} after checks: movementType={}, isProne={}, " +
                         "isClimbing={}, entity.isClimbing={}, climbMode={}, elevation={}, " +
-                        "entity.elevation={}, entity.position={}, entity.mpUsed={}",
+                  "entity.elevation={}, entity.position={}, entity.mpUsed={}",
                   stepType, movementType, isProne(), isClimbing, entity.isClimbing(),
                   climbMode, elevation, entity.getElevation(), entity.getPosition(), entity.mpUsed);
         }
@@ -3009,7 +3009,7 @@ public class MoveStep implements Serializable {
         ) {
             if (isClimbing) {
                 LOGGER.info("compileIllegal: climbing step overridden to MOVE_ILLEGAL! " +
-                            "movementPossible={}, movementType was={}, prevEl={}",
+                      "movementPossible={}, movementType was={}, prevEl={}",
                       movementPossible, movementType, prev.getElevation());
             }
             if ((stepType == MoveStepType.GET_UP) || (stepType == MoveStepType.CAREFUL_STAND)) {
@@ -4122,39 +4122,9 @@ public class MoveStep implements Serializable {
                 return false;// We can't intentionally crash.
             }
         }
-        // Industrial elevator movement validation
         if ((type == MoveStepType.ELEVATOR_ASCEND) || (type == MoveStepType.ELEVATOR_DESCEND)) {
-            // Must be in a hex with an industrial elevator
-            if (!srcHex.containsTerrain(Terrains.INDUSTRIAL_ELEVATOR)) {
-                return false;
-            }
-            // Get the elevator from the game
-            BoardLocation elevatorLocation = BoardLocation.of(src, boardId);
-            IndustrialElevator elevator = game.getIndustrialElevator(elevatorLocation);
-            if (elevator == null) {
-                return false;
-            }
-            // Elevator must be functional
-            if (!elevator.isFunctional()) {
-                return false;
-            }
-            // An over-capacity elevator will not move in either direction (TO:AR)
-            if (elevator.getCurrentLoad(game) > elevator.getCapacityTons()) {
-                return false;
-            }
-            // Platform must be at the unit's current level
-            if (elevator.getPlatformLevel() != srcEl) {
-                return false;
-            }
-            // Check shaft bounds for the target elevation
-            int targetElevation = (type == MoveStepType.ELEVATOR_ASCEND)
-                  ? srcEl + 1
-                  : srcEl - 1;
-            if ((targetElevation > elevator.getShaftTop()) || (targetElevation < elevator.getShaftBottom())) {
-                return false;
-            }
-            // Elevator validation complete, skip normal elevation checks
-            return true;
+            // Elevator validation replaces the normal elevation checks entirely
+            return isElevatorMovementPossible(game, srcHex, src, srcEl);
         }
         if (entity instanceof VTOL) {
             if ((type == MoveStepType.BACKWARDS) ||
@@ -4202,7 +4172,7 @@ public class MoveStep implements Serializable {
         if ((type != MoveStepType.DFA) && !entity.isElevationValid(elevation, destHex)) {
             LOGGER.debug("[CLIMB-TRACE] isMovementPossible: elevation NOT valid! elevation={}, " +
                         "destHex={}, destHex.level={}, destHex.ceiling={}, destHex.floor={}, " +
-                        "isClimbing={}, entity={}",
+                  "isClimbing={}, entity={}",
                   elevation, dest, destHex.getLevel(), destHex.ceiling(), destHex.floor(),
                   isClimbing, entity.getDisplayName());
             if (isJumping()) {
@@ -4212,6 +4182,54 @@ public class MoveStep implements Serializable {
             }
         }
 
+        return true;
+    }
+
+    /**
+     * Checks whether an {@code ELEVATOR_ASCEND}/{@code ELEVATOR_DESCEND} step is possible from the given source hex.
+     * The step is possible only when a functional, not-overloaded industrial elevator exists there, its platform is at
+     * the unit's current level, and the target level stays within the shaft. Each failing condition logs its reason so
+     * a playtest can diagnose a greyed-out elevator move from megamek.log.
+     *
+     * @param game   the current game
+     * @param srcHex the hex the unit occupies
+     * @param src    the coordinates of that hex
+     * @param srcEl  the unit's current elevation in that hex
+     *
+     * @return {@code true} if the elevator step is possible
+     */
+    private boolean isElevatorMovementPossible(Game game, Hex srcHex, Coords src, int srcEl) {
+        if (!srcHex.containsTerrain(Terrains.INDUSTRIAL_ELEVATOR)) {
+            LOGGER.debug("[IndustrialElevator] Step impossible at {}: no elevator terrain in hex", src);
+            return false;
+        }
+        IndustrialElevator elevator = game.getIndustrialElevator(BoardLocation.of(src, boardId));
+        if (elevator == null) {
+            LOGGER.debug("[IndustrialElevator] Step impossible at {}: elevator terrain present but no elevator "
+                  + "registered with the game", src);
+            return false;
+        }
+        if (!elevator.isFunctional()) {
+            LOGGER.debug("[IndustrialElevator] Step impossible at {}: elevator is disabled", src);
+            return false;
+        }
+        // An over-capacity elevator will not move in either direction (TO:AR)
+        if (elevator.getCurrentLoad(game) > elevator.getCapacityTons()) {
+            LOGGER.debug("[IndustrialElevator] Step impossible at {}: overloaded ({}t load, {}t capacity)",
+                  src, elevator.getCurrentLoad(game), elevator.getCapacityTons());
+            return false;
+        }
+        if (elevator.getPlatformLevel() != srcEl) {
+            LOGGER.debug("[IndustrialElevator] Step impossible at {}: platform at level {}, unit at level {}",
+                  src, elevator.getPlatformLevel(), srcEl);
+            return false;
+        }
+        int targetElevation = (type == MoveStepType.ELEVATOR_ASCEND) ? srcEl + 1 : srcEl - 1;
+        if ((targetElevation > elevator.getShaftTop()) || (targetElevation < elevator.getShaftBottom())) {
+            LOGGER.debug("[IndustrialElevator] Step impossible at {}: target level {} outside shaft [{}, {}]",
+                  src, targetElevation, elevator.getShaftBottom(), elevator.getShaftTop());
+            return false;
+        }
         return true;
     }
 

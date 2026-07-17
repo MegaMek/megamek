@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2025 The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2025-2026 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -39,6 +39,7 @@ import megamek.common.Hex;
 import megamek.common.IndustrialElevator;
 import megamek.common.Messages;
 import megamek.common.Report;
+import megamek.common.Team;
 import megamek.common.actions.CallElevatorAction;
 import megamek.common.actions.EntityAction;
 import megamek.common.board.Board;
@@ -48,6 +49,7 @@ import megamek.common.game.Game;
 import megamek.common.units.Entity;
 import megamek.common.units.Terrain;
 import megamek.common.units.Terrains;
+import megamek.logging.MMLogger;
 import megamek.server.totalWarfare.TWGameManager;
 
 /**
@@ -66,9 +68,12 @@ import megamek.server.totalWarfare.TWGameManager;
  * </ul>
  *
  * @author MegaMek Team
- * @since 0.50.07
+ * @since 0.51.01
  */
 public class IndustrialElevatorProcessor extends DynamicTerrainProcessor {
+
+    private static final MMLogger LOGGER = MMLogger.create(IndustrialElevatorProcessor.class);
+
     private boolean initialized = false;
 
     public IndustrialElevatorProcessor(TWGameManager gameManager) {
@@ -157,18 +162,22 @@ public class IndustrialElevatorProcessor extends DynamicTerrainProcessor {
     private void processCallAction(Game game, CallElevatorAction callAction, Vector<Report> vPhaseReport) {
         IndustrialElevator elevator = game.getIndustrialElevator(callAction.getElevatorLocation());
         if (elevator == null) {
-            // Elevator not found - shouldn't happen but log a warning
+            LOGGER.warn("[IndustrialElevator] Ignoring call action for entity {}: no elevator at {}",
+                  callAction.getEntityId(), callAction.getElevatorLocation());
             return;
         }
 
         Entity caller = game.getEntity(callAction.getEntityId());
         if (caller == null) {
+            LOGGER.warn("[IndustrialElevator] Ignoring call action for elevator at {}: calling entity {} not found",
+                  callAction.getElevatorLocation(), callAction.getEntityId());
             return;
         }
 
         // Validate caller is adjacent to elevator
         if (!isAdjacentToElevator(caller, elevator)) {
-            // Not adjacent - invalid call
+            LOGGER.debug("[IndustrialElevator] Ignoring call by {}: not adjacent to elevator at {}",
+                  caller.getShortName(), elevator.getLocation());
             return;
         }
 
@@ -206,12 +215,17 @@ public class IndustrialElevatorProcessor extends DynamicTerrainProcessor {
     }
 
     /**
-     * Gets the initiative value for a player (for tie-breaking in queue).
+     * Gets the initiative value for a player (for tie-breaking in queue). Higher initiative means earlier in the turn
+     * order, which wins call-queue ties.
      */
     private int getPlayerInitiative(Game game, int playerId) {
-        // Get initiative from team turn order
-        // Higher initiative = earlier in turn order = priority
-        return game.getTeamForPlayer(game.getPlayer(playerId)).getInitiative().getRoll(0);
+        Team team = game.getTeamForPlayer(game.getPlayer(playerId));
+        if (team == null) {
+            LOGGER.warn("[IndustrialElevator] No team found for player {}; using initiative 0 for call priority",
+                  playerId);
+            return 0;
+        }
+        return team.getInitiative().getRoll(0);
     }
 
     /**

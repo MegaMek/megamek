@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2025 The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2025-2026 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -48,7 +48,7 @@ import megamek.common.units.EntityMovementType;
  * Walking/Cruising MP when using an industrial elevator.
  *
  * @author MegaMek Team
- * @since 0.50.07
+ * @since 0.51.01
  */
 class ElevatorDescendStep implements PhasePass {
     private static final EnumSet<MoveStepType> TYPES = EnumSet.of(MoveStepType.ELEVATOR_DESCEND);

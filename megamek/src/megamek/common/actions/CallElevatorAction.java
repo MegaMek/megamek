@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2025 The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2025-2026 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -44,7 +44,7 @@ import megamek.common.units.Entity;
  * caller first, ties resolved by initiative).
  *
  * @author MegaMek Team
- * @since 0.50.07
+ * @since 0.51.01
  */
 public class CallElevatorAction extends AbstractEntityAction {
 

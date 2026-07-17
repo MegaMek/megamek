@@ -569,6 +569,7 @@ public class BuildingCollapseHandler extends AbstractTWRuleHandler {
     private void disableIndustrialElevatorAt(Coords coords, int boardId) {
         IndustrialElevator elevator = getGame().getIndustrialElevator(BoardLocation.of(coords, boardId));
         if ((elevator != null) && elevator.isFunctional()) {
+            LOGGER.info("[IndustrialElevator] Elevator at {} disabled by building collapse", coords);
             elevator.setFunctional(false);
             gameManager.sendIndustrialElevatorUpdate();
         }

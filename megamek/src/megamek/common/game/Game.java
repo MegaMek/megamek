@@ -3654,7 +3654,7 @@ public final class Game extends AbstractGame implements Serializable, PlanetaryC
      *
      * @return The elevator at this location, or {@code null} if none exists
      */
-    public IndustrialElevator getIndustrialElevator(BoardLocation location) {
+    public @Nullable IndustrialElevator getIndustrialElevator(BoardLocation location) {
         return industrialElevators.get(location);
     }
 
@@ -3666,7 +3666,7 @@ public final class Game extends AbstractGame implements Serializable, PlanetaryC
      *
      * @return The elevator at this location, or {@code null} if none exists
      */
-    public IndustrialElevator getIndustrialElevator(Coords coords, int boardId) {
+    public @Nullable IndustrialElevator getIndustrialElevator(Coords coords, int boardId) {
         return getIndustrialElevator(BoardLocation.of(coords, boardId));
     }
 
@@ -3697,7 +3697,7 @@ public final class Game extends AbstractGame implements Serializable, PlanetaryC
      *
      * @return The removed elevator, or {@code null} if none was found
      */
-    public IndustrialElevator removeIndustrialElevator(BoardLocation location) {
+    public @Nullable IndustrialElevator removeIndustrialElevator(BoardLocation location) {
         return industrialElevators.remove(location);
     }
 

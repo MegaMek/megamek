@@ -3150,39 +3150,39 @@ public final class BoardView extends AbstractBoardView
             int yPosition = HEX_H - 2;
             if (level != 0) {
                 drawCenteredString(Messages.getString("BoardView1.LEVEL") + level,
-                      hexX,
-                      hexY + (int) (yPosition * scale),
-                      font_elev,
-                      boardGraph);
+                        hexX,
+                        hexY + (int) (yPosition * scale),
+                        font_elev,
+                        boardGraph);
                 yPosition -= 10;
             }
 
             if (depth != 0) {
                 drawCenteredString(Messages.getString("BoardView1.DEPTH") + depth,
-                      hexX,
-                      hexY + (int) (yPosition * scale),
-                      font_elev,
-                      boardGraph);
+                        hexX,
+                        hexY + (int) (yPosition * scale),
+                        font_elev,
+                        boardGraph);
                 yPosition -= 10;
             }
 
             if (height > 0) {
                 boardGraph.setColor(GUIP.getBuildingTextColor());
                 drawCenteredString(Messages.getString("BoardView1.HEIGHT") + height,
-                      hexX,
-                      hexY + (int) (yPosition * scale),
-                      font_elev,
-                      boardGraph);
+                        hexX,
+                        hexY + (int) (yPosition * scale),
+                        font_elev,
+                        boardGraph);
                 yPosition -= 10;
             }
 
             if (hex.terrainLevel(Terrains.FOLIAGE_ELEV) == 1) {
                 boardGraph.setColor(GUIP.getLowFoliageColor());
                 drawCenteredString(Messages.getString("BoardView1.LowFoliage"),
-                      hexX,
-                      hexY + (int) (yPosition * scale),
-                      font_elev,
-                      boardGraph);
+                        hexX,
+                        hexY + (int) (yPosition * scale),
+                        font_elev,
+                        boardGraph);
             }
         }
     }

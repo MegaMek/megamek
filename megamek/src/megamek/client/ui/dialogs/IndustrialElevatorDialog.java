@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2025 The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2025-2026 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -82,8 +82,10 @@ public class IndustrialElevatorDialog extends JDialog {
         setResizable(false);
 
         // Create spinners
-        // Shaft top: typically 0-15 (building floors)
-        spinnerShaftTop = new JSpinner(new SpinnerNumberModel(0, -100, 100, 1));
+        // Shaft top: typically 0-15 (building floors); the exits encoding stores it as an unsigned
+        // byte, so negative values cannot be represented (a basement shaft uses a negative bottom
+        // level with a top at or above 0)
+        spinnerShaftTop = new JSpinner(new SpinnerNumberModel(0, 0, IndustrialElevator.CAPACITY_MASK, 1));
         // Capacity: 0-2550 tons (stored as tens, so 0-255 * 10)
         spinnerCapacity = new JSpinner(new SpinnerNumberModel(100, 0, 2550, 10));
 

@@ -152,7 +152,6 @@ public enum PacketCommand {
     SENDING_MINEFIELDS,
     UPDATE_MINEFIELDS,
     UPDATE_GROUND_OBJECTS,
-    UPDATE_INDUSTRIAL_ELEVATORS,
     REROLL_INITIATIVE,
     UNLOAD_STRANDED,
     SET_ARTILLERY_AUTO_HIT_HEXES,
@@ -231,7 +230,13 @@ public enum PacketCommand {
      * set, the server includes enemy artillery attacks in that player's artillery packet so the Rounds in the Air view
      * can show both sides. Bots never send it, so their filtered view - and their decisions - are unchanged.
      */
-    CLIENT_ARTILLERY_REVEAL;
+    CLIENT_ARTILLERY_REVEAL,
+
+    /**
+     * A Server to Client packet carrying the current state of all player-controlled industrial elevators
+     * (platform levels, call queues) so clients can render platforms and validate elevator moves.
+     */
+    UPDATE_INDUSTRIAL_ELEVATORS;
     //endregion Enum Declarations
 
     //region Boolean Comparison Methods

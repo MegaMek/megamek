@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2025 The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2025-2026 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -38,6 +38,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.concurrent.CopyOnWriteArrayList;
 
+import megamek.common.annotations.Nullable;
 import megamek.common.board.BoardLocation;
 import megamek.common.board.Coords;
 import megamek.common.game.Game;
@@ -248,11 +249,11 @@ public class IndustrialElevator implements Serializable {
     /**
      * Checks if an entity is currently on the elevator platform.
      *
-     * @param entity The entity to check
+     * @param entity The entity to check, or {@code null} (never on the platform)
      *
      * @return {@code true} if the entity is on the platform
      */
-    public boolean isEntityOnPlatform(Entity entity) {
+    public boolean isEntityOnPlatform(@Nullable Entity entity) {
         if (entity == null) {
             return false;
         }
@@ -311,8 +312,8 @@ public class IndustrialElevator implements Serializable {
      *
      * @return The next call, or {@code null} if queue is empty
      */
-    public ElevatorCall getNextCall() {
-        return callQueue.isEmpty() ? null : callQueue.get(0);
+    public @Nullable ElevatorCall getNextCall() {
+        return callQueue.isEmpty() ? null : callQueue.getFirst();
     }
 
     /**

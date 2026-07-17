@@ -86,8 +86,10 @@ public class IndustrialElevatorDialog extends JDialog {
         // byte, so negative values cannot be represented (a basement shaft uses a negative bottom
         // level with a top at or above 0)
         spinnerShaftTop = new JSpinner(new SpinnerNumberModel(0, 0, IndustrialElevator.CAPACITY_MASK, 1));
+        spinnerShaftTop.setToolTipText(Messages.getString("BoardEditor.IndustrialElevatorDialog.shaftTop.tooltip"));
         // Capacity: 0-2550 tons (stored as tens, so 0-255 * 10)
         spinnerCapacity = new JSpinner(new SpinnerNumberModel(100, 0, 2550, 10));
+        spinnerCapacity.setToolTipText(Messages.getString("BoardEditor.IndustrialElevatorDialog.capacity.tooltip"));
 
         // Build the panel
         JPanel mainPanel = new JPanel(new GridBagLayout());
@@ -176,8 +178,8 @@ public class IndustrialElevatorDialog extends JDialog {
      * @return The exits value encoding shaft top and capacity
      */
     public int getExits() {
-        int shaftTop = (Integer) spinnerShaftTop.getValue();
-        int capacityTons = (Integer) spinnerCapacity.getValue();
+        int shaftTop = (int) spinnerShaftTop.getValue();
+        int capacityTons = (int) spinnerCapacity.getValue();
         int capacityTens = capacityTons / IndustrialElevator.CAPACITY_MULTIPLIER;
 
         return (shaftTop << IndustrialElevator.SHAFT_TOP_SHIFT) | (capacityTens & IndustrialElevator.CAPACITY_MASK);
@@ -189,7 +191,7 @@ public class IndustrialElevatorDialog extends JDialog {
      * @return The shaft top level
      */
     public int getShaftTop() {
-        return (Integer) spinnerShaftTop.getValue();
+        return (int) spinnerShaftTop.getValue();
     }
 
     /**
@@ -198,7 +200,7 @@ public class IndustrialElevatorDialog extends JDialog {
      * @return The capacity in tons
      */
     public int getCapacityTons() {
-        return (Integer) spinnerCapacity.getValue();
+        return (int) spinnerCapacity.getValue();
     }
 
     /**

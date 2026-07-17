@@ -5080,8 +5080,9 @@ public final class BoardView extends AbstractBoardView
         // An elevator changes its terrain overlay level, which the isometric view can draw beyond the immediate
         // neighbors. A per-hex cache clear leaves the isometric view stale (it only recovers on a full reload), so
         // for elevator hexes clear the whole hex image cache - the same thing a board reload does.
-        if ((hex != null) && (hex.containsTerrain(Terrains.INDUSTRIAL_ELEVATOR)
-              || hex.containsTerrain(Terrains.SOLARIS_ELEVATOR))) {
+        boolean hasIndustrialElevator = (hex != null) && hex.containsTerrain(Terrains.INDUSTRIAL_ELEVATOR);
+        boolean hasSolarisElevator = (hex != null) && hex.containsTerrain(Terrains.SOLARIS_ELEVATOR);
+        if (hasIndustrialElevator || hasSolarisElevator) {
             clearHexImageCache();
         } else {
             hexImageCache.remove(coords);

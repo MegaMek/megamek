@@ -35,6 +35,7 @@ package megamek.common;
 import java.io.Serial;
 import java.io.Serializable;
 import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 import java.util.concurrent.CopyOnWriteArrayList;
 
@@ -317,12 +318,11 @@ public class IndustrialElevator implements Serializable {
     }
 
     /**
-     * Sorts the call queue by distance from current platform position. Calls at the same distance maintain their
-     * original order (FIFO for ties).
+     * Sorts the call queue by priority ({@link ElevatorCall#CALL_PRIORITY_ORDER}). The sort is stable, so calls that
+     * compare equal keep their arrival order (FIFO).
      */
     private void sortCallQueue() {
-        // Stable sort - maintains order for equal distances
-        Collections.sort(callQueue);
+        callQueue.sort(ElevatorCall.CALL_PRIORITY_ORDER);
     }
 
     /**
@@ -442,13 +442,23 @@ public class IndustrialElevator implements Serializable {
     /**
      * Represents a call to an industrial elevator.
      * <p>
-     * Calls are sorted by distance from the platform (nearest first), with ties broken by turn called (earlier first),
-     * then by initiative.
+     * Calls are queued in {@link #CALL_PRIORITY_ORDER}: distance from the platform (nearest first), with ties broken
+     * by turn called (earlier first), then by initiative (higher first). The ordering is intentionally a separate
+     * {@link Comparator} rather than {@code Comparable}: it deliberately ignores fields such as the calling player,
+     * so it would be inconsistent with {@link #equals(Object)}.
      */
-    public static class ElevatorCall implements Comparable<ElevatorCall>, Serializable {
+    public static class ElevatorCall implements Serializable {
 
         @Serial
         private static final long serialVersionUID = 1L;
+
+        /**
+         * Queue priority: nearest to the platform first, then earliest turn called, then highest initiative.
+         */
+        public static final Comparator<ElevatorCall> CALL_PRIORITY_ORDER = Comparator
+              .comparingInt(ElevatorCall::getDistanceFromPlatform)
+              .thenComparingInt(ElevatorCall::getTurnCalled)
+              .thenComparing(Comparator.comparingInt(ElevatorCall::getInitiativeBonus).reversed());
 
         private final int playerId;
         private final Coords callerPosition;
@@ -508,22 +518,6 @@ public class IndustrialElevator implements Serializable {
          */
         public void updateDistance(int currentPlatformLevel) {
             this.distanceFromPlatform = Math.abs(targetLevel - currentPlatformLevel);
-        }
-
-        @Override
-        public int compareTo(ElevatorCall other) {
-            // Primary: distance (nearest first)
-            int distanceCompare = Integer.compare(this.distanceFromPlatform, other.distanceFromPlatform);
-            if (distanceCompare != 0) {
-                return distanceCompare;
-            }
-            // Secondary: turn called (earlier first)
-            int turnCompare = Integer.compare(this.turnCalled, other.turnCalled);
-            if (turnCompare != 0) {
-                return turnCompare;
-            }
-            // Tertiary: initiative (higher wins, so reverse order)
-            return Integer.compare(other.initiativeBonus, this.initiativeBonus);
         }
 
         @Override

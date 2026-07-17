@@ -34,6 +34,7 @@ package megamek.common.actions;
 
 import java.io.Serial;
 
+import megamek.client.ui.Messages;
 import megamek.common.board.BoardLocation;
 import megamek.common.game.Game;
 import megamek.common.units.Entity;
@@ -88,8 +89,11 @@ public class CallElevatorAction extends AbstractEntityAction {
     @Override
     public String toSummaryString(final Game game) {
         Entity entity = game.getEntity(getEntityId());
-        String entityName = (entity != null) ? entity.getShortName() : "Unknown";
-        return entityName + " calls elevator at " + elevatorLocation.toFriendlyString() + " to level " + targetLevel;
+        String entityName = (entity != null)
+              ? entity.getShortName()
+              : Messages.getString("BoardView1.CallElevatorAction.unknownUnit");
+        return Messages.getString("BoardView1.CallElevatorAction",
+              entityName, elevatorLocation.toFriendlyString(), targetLevel);
     }
 
     @Override

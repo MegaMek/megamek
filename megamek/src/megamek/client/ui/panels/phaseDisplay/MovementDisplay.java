@@ -3020,9 +3020,16 @@ public class MovementDisplay extends ActionPhaseDisplay {
     }
 
     /**
+     * Tracks the last unusable-elevator toast shown by {@link #updateElevatorButtons()} so each state is announced
+     * once, not on every UI refresh.
+     */
+    private String lastElevatorToastKey;
+
+    /**
      * Updates the elevator up/down buttons based on whether the entity is on a functional industrial elevator
      * platform. The buttons stay disabled when there is no unit or path, the unit is airborne, or the path's final hex
-     * carries no industrial elevator; when an elevator is present, each disabling condition logs its reason.
+     * carries no industrial elevator; when an elevator is present but unusable, the reason is logged and announced to
+     * the player with a toast (once per state) so a missing button never reads as "broken".
      */
     private synchronized void updateElevatorButtons() {
         final Entity currentEntity = currentEntity();
@@ -3043,6 +3050,7 @@ public class MovementDisplay extends ActionPhaseDisplay {
 
         Hex hex = game.getBoard(finalBoardId).getHex(finalPos);
         if ((hex == null) || !hex.containsTerrain(Terrains.INDUSTRIAL_ELEVATOR)) {
+            lastElevatorToastKey = null;
             setElevatorUpEnabled(false);
             setElevatorDownEnabled(false);
             return;
@@ -3059,6 +3067,19 @@ public class MovementDisplay extends ActionPhaseDisplay {
         if (!elevator.isFunctional()) {
             LOGGER.debug("[IndustrialElevator] Buttons disabled for {}: elevator at {} is disabled",
                   currentEntity.getShortName(), finalPos);
+            showElevatorStateToast(currentEntity, finalPos, "disabled", ToastLevel.WARNING,
+                  Messages.getString("MovementDisplay.ElevatorToast.disabled", currentEntity.getShortName()));
+            setElevatorUpEnabled(false);
+            setElevatorDownEnabled(false);
+            return;
+        }
+        int currentLoad = (int) elevator.getCurrentLoad(game);
+        if (currentLoad > elevator.getCapacityTons()) {
+            LOGGER.debug("[IndustrialElevator] Buttons disabled for {}: elevator at {} overloaded ({}t / {}t)",
+                  currentEntity.getShortName(), finalPos, currentLoad, elevator.getCapacityTons());
+            showElevatorStateToast(currentEntity, finalPos, "overloaded", ToastLevel.WARNING,
+                  Messages.getString("MovementDisplay.ElevatorToast.overloaded",
+                        currentEntity.getShortName(), currentLoad, elevator.getCapacityTons()));
             setElevatorUpEnabled(false);
             setElevatorDownEnabled(false);
             return;
@@ -3066,6 +3087,9 @@ public class MovementDisplay extends ActionPhaseDisplay {
         if (!elevator.isPlatformAt(finalElevation)) {
             LOGGER.debug("[IndustrialElevator] Buttons disabled for {}: platform at level {}, unit at level {}",
                   currentEntity.getShortName(), elevator.getPlatformLevel(), finalElevation);
+            showElevatorStateToast(currentEntity, finalPos, "platform" + elevator.getPlatformLevel(), ToastLevel.INFO,
+                  Messages.getString("MovementDisplay.ElevatorToast.platformElsewhere",
+                        currentEntity.getShortName(), elevator.getPlatformLevel()));
             setElevatorUpEnabled(false);
             setElevatorDownEnabled(false);
             return;
@@ -3073,6 +3097,26 @@ public class MovementDisplay extends ActionPhaseDisplay {
 
         setElevatorUpEnabled(finalElevation < elevator.getShaftTop());
         setElevatorDownEnabled(finalElevation > elevator.getShaftBottom());
+    }
+
+    /**
+     * Shows a toast explaining why the elevator in the unit's hex cannot be used right now. Deduplicated per
+     * unit + hex + state: {@link #updateElevatorButtons()} runs on every UI refresh, but the player only needs to
+     * hear about each state once.
+     *
+     * @param entity  the unit whose elevator buttons are disabled
+     * @param hexPos  the elevator hex
+     * @param state   a short discriminator for the unusable state (part of the deduplication key)
+     * @param level   the toast level
+     * @param message the ready-to-display toast text
+     */
+    private void showElevatorStateToast(Entity entity, Coords hexPos, String state, ToastLevel level, String message) {
+        String toastKey = entity.getId() + "|" + hexPos + "|" + state;
+        if (toastKey.equals(lastElevatorToastKey)) {
+            return;
+        }
+        lastElevatorToastKey = toastKey;
+        clientgui.addToast(level, message, entity);
     }
 
     private synchronized void updateTakeOffButtons() {

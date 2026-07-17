@@ -458,24 +458,24 @@ class IndustrialElevatorTest {
     }
 
     @Test
-    void testElevatorCallCompareTo() {
+    void testElevatorCallPriorityOrder() {
         // Test distance comparison
         ElevatorCall near = new ElevatorCall(1, new Coords(4, 5), 1, 1, 5, 0);
         ElevatorCall far = new ElevatorCall(2, new Coords(6, 5), 3, 1, 5, 0);
 
-        assertTrue(near.compareTo(far) < 0); // Near comes first
+        assertTrue(ElevatorCall.CALL_PRIORITY_ORDER.compare(near, far) < 0); // Near comes first
 
         // Test turn comparison (same distance)
         ElevatorCall earlier = new ElevatorCall(1, new Coords(4, 5), 2, 1, 5, 0);
         ElevatorCall later = new ElevatorCall(2, new Coords(6, 5), 2, 3, 5, 0);
 
-        assertTrue(earlier.compareTo(later) < 0); // Earlier comes first
+        assertTrue(ElevatorCall.CALL_PRIORITY_ORDER.compare(earlier, later) < 0); // Earlier comes first
 
         // Test initiative comparison (same distance, same turn)
         ElevatorCall lowInit = new ElevatorCall(1, new Coords(4, 5), 2, 1, 3, 0);
         ElevatorCall highInit = new ElevatorCall(2, new Coords(6, 5), 2, 1, 8, 0);
 
-        assertTrue(highInit.compareTo(lowInit) < 0); // Higher initiative comes first
+        assertTrue(ElevatorCall.CALL_PRIORITY_ORDER.compare(highInit, lowInit) < 0); // Higher initiative comes first
     }
 
     @Test

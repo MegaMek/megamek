@@ -1,6 +1,6 @@
 /*
  * Copyright (C) 2007 Jay Lawson
- * Copyright (C) 2008-2025 The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2008-2026 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -426,10 +426,10 @@ public class Dropship extends SmallCraft {
     }
 
     @Override
-    protected void addSystemTechAdvancement(CompositeTechLevel ctl) {
-        super.addSystemTechAdvancement(ctl);
+    protected void addSystemTechAdvancement(CompositeTechLevel techLevel) {
+        super.addSystemTechAdvancement(techLevel);
         if (collarType != COLLAR_NO_BOOM) {
-            ctl.addComponent(getCollarTA());
+            techLevel.addComponent(getCollarTA(), Messages.getString("CompositeTechLevel.component.dockingCollar"));
         }
     }
 

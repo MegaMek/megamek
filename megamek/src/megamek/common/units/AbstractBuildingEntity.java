@@ -56,7 +56,6 @@ import megamek.common.equipment.IArmorState;
 import megamek.common.equipment.Mounted;
 import megamek.common.equipment.WeaponMounted;
 import megamek.common.exceptions.LocationFullException;
-import megamek.common.options.OptionsConstants;
 import megamek.common.rolls.PilotingRollData;
 import megamek.logging.MMLogger;
 import megamek.server.totalWarfare.TWGameManager;
@@ -318,11 +317,6 @@ public abstract class AbstractBuildingEntity extends Entity implements IBuilding
             return false;
         }
 
-        // Check industrial elevator hexes (only a single-hex building may stand on a platform, by option)
-        if (!isElevatorPlacementValid(thisBuildingCoords, testBoardId)) {
-            return false;
-        }
-
         // Check that all hexes are at the same elevation
         if (!areAllCoordsAtSameElevation(thisBuildingCoords, testBoardId)) {
             return false;
@@ -346,40 +340,6 @@ public abstract class AbstractBuildingEntity extends Entity implements IBuilding
             }
         }
 
-        return true;
-    }
-
-    /**
-     * Checks whether this building's footprint is allowed with respect to industrial elevator hexes. A building may
-     * never overlap an industrial elevator hex, with one exception: a single-hex building may stand on the platform
-     * when the unofficial structures-on-elevators game option is enabled. Each rejection logs its reason.
-     *
-     * @param buildingCoords the board coordinates the building would occupy
-     * @param boardId        the board being tested
-     *
-     * @return {@code true} if the placement is allowed with respect to elevators
-     */
-    private boolean isElevatorPlacementValid(List<Coords> buildingCoords, int boardId) {
-        for (Coords coords : buildingCoords) {
-            Hex hex = game.getHex(coords, boardId);
-            if ((hex == null) || !hex.containsTerrain(Terrains.INDUSTRIAL_ELEVATOR)) {
-                continue;
-            }
-            boolean optionEnabled = game.getOptions()
-                  .booleanOption(OptionsConstants.UNOFFICIAL_STRUCTURES_ON_ELEVATORS);
-            if (!optionEnabled) {
-                logger.debug("[IndustrialElevator] {} cannot deploy at {}: hex has an industrial elevator and the "
-                      + "unofficial structures-on-elevators option is disabled", getShortName(), coords);
-                return false;
-            }
-            boolean isSingleHexBuilding = buildingCoords.size() == 1;
-            if (!isSingleHexBuilding) {
-                logger.debug("[IndustrialElevator] {} cannot deploy at {}: only single-hex buildings may stand on "
-                      + "an elevator platform ({} hexes in footprint)", getShortName(), coords,
-                      buildingCoords.size());
-                return false;
-            }
-        }
         return true;
     }
 

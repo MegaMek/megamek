@@ -97,6 +97,8 @@ public class CommonMenuBar extends JMenuBar implements ActionListener, IPreferen
     private final JMenuItem gameConnect = new JMenuItem(getString("CommonMenuBar.fileGameConnect"));
     private final JCheckBoxMenuItem gameRoundReport = new JCheckBoxMenuItem(getString("CommonMenuBar.viewRoundReport"));
     private final JMenuItem gameEditBots = new JMenuItem(getString("CommonMenuBar.editBots"));
+    /** Gives up the Game Master role; only shown while the local player holds it. */
+    private final JMenuItem gameGiveUpGameMaster = new JMenuItem(getString("CommonMenuBar.gameGiveUpGameMaster"));
     private final JCheckBoxMenuItem gamePlayerList = new JCheckBoxMenuItem(getString("CommonMenuBar.viewPlayerList"));
     private final JCheckBoxMenuItem gameRoundsInAir =
           new JCheckBoxMenuItem(getString("CommonMenuBar.viewRoundsInAir"));
@@ -243,6 +245,9 @@ public class CommonMenuBar extends JMenuBar implements ActionListener, IPreferen
         menu.setMnemonic(VK_G);
 
         initMenuItem(gameEditBots, menu, FILE_GAME_EDIT_BOTS, VK_R);
+        initMenuItem(gameGiveUpGameMaster, menu, GAME_GIVE_UP_GAME_MASTER);
+        // only the player holding the Game Master role sees the entry; setGameMaster keeps it in step
+        gameGiveUpGameMaster.setVisible(false);
         menu.addSeparator();
 
         initMenuItem(gameGameOptions, menu, VIEW_GAME_OPTIONS, VK_O);
@@ -614,6 +619,11 @@ public class CommonMenuBar extends JMenuBar implements ActionListener, IPreferen
         if (itemMap.containsKey(command)) {
             itemMap.get(command).setEnabled(enabled);
         }
+    }
+
+    /** Shows or hides the Give Up Game Master entry, which only the player holding the role sees. */
+    public synchronized void setGameMaster(boolean isGameMaster) {
+        gameGiveUpGameMaster.setVisible(isGameMaster);
     }
 
     @Override

@@ -280,6 +280,7 @@ public class ClientGUI extends AbstractClientGUI
     public static final String VIEW_CHANGE_THEME = "viewChangeTheme";
     public static final String VIEW_ROUND_REPORT = "viewRoundReport";
     public static final String VIEW_GAME_OPTIONS = "viewGameOptions";
+    public static final String GAME_GIVE_UP_GAME_MASTER = "gameGiveUpGameMaster";
     public static final String VIEW_NETWORK_INFORMATION = "viewNetworkInformation";
     public static final String VIEW_CLIENT_SETTINGS = "viewClientSettings";
     public static final String VIEW_LOS_SETTING = "viewLOSSetting";
@@ -832,6 +833,21 @@ public class ClientGUI extends AbstractClientGUI
     }
 
     /**
+     * Asks first, then gives up the Game Master role through the same /gm command that takes it, so the rules stay
+     * with the server. The menu entry that leads here is only shown while the local player holds the role.
+     */
+    private void giveUpGameMaster() {
+        int choice = JOptionPane.showConfirmDialog(frame,
+              Messages.getString("ClientGUI.giveUpGameMaster.message"),
+              Messages.getString("ClientGUI.giveUpGameMaster.title"),
+              JOptionPane.YES_NO_OPTION,
+              JOptionPane.QUESTION_MESSAGE);
+        if (choice == JOptionPane.YES_OPTION) {
+            client.sendChat("/gm");
+        }
+    }
+
+    /**
      * Tells every player who won a passed Game Master vote and how the role is taken away again: the Game Master
      * gives it up (GM Mode button or /gm), or the host turns off Allow Game Master in the game options. Shown after
      * the vote dialog closes, so the outcome is not just a line of chat that scrolls away. Queued on the event thread
@@ -944,6 +960,10 @@ public class ClientGUI extends AbstractClientGUI
 
         layoutFrame();
         menuBar.addActionListener(this);
+        // the local player may already hold the Game Master role, taken in the lobby before this window opened
+        if (client.getLocalPlayer() != null) {
+            menuBar.setGameMaster(client.getLocalPlayer().isGameMaster());
+        }
 
         aw = new AccessibilityDialog(this);
         aw.setLocation(0, 0);
@@ -1338,6 +1358,9 @@ public class ClientGUI extends AbstractClientGUI
                 break;
             case VIEW_GAME_OPTIONS:
                 showOptions();
+                break;
+            case GAME_GIVE_UP_GAME_MASTER:
+                giveUpGameMaster();
                 break;
             case VIEW_NETWORK_INFORMATION:
                 showNetworkInformation();
@@ -3046,8 +3069,12 @@ public class ClientGUI extends AbstractClientGUI
                     currPhaseDisplay.setStatusBarWithNotDonePlayers();
                 }
             }
-            // the local player may have gained or lost the Game Master role, so keep the title's marker in step
+            // the local player may have gained or lost the Game Master role, so keep the title's marker and the
+            // Give Up Game Master menu entry in step
             updateFrameTitle();
+            if (client.getLocalPlayer() != null) {
+                menuBar.setGameMaster(client.getLocalPlayer().isGameMaster());
+            }
         }
 
         @Override

@@ -247,7 +247,13 @@ public class OptionsConstants {
     public static final String EDGE_WHEN_AERO_LUCKY_CRIT = "edge_when_aero_lucky_crit";
     public static final String EDGE_WHEN_AERO_NUKE_CRIT = "edge_when_aero_nuke_crit";
     public static final String EDGE_WHEN_AERO_UNIT_CARGO_LOST = "edge_when_aero_unit_cargo_lost";
+    public static final String EDGE_WHEN_AERO_CATASTROPHIC = "edge_when_aero_catastrophic";
+    // Vehicle Triggers
+    public static final String EDGE_WHEN_TANK_MOTIVE_CRIT = "edge_when_tank_motive_crit";
+    public static final String EDGE_WHEN_TANK_DESTROYED = "edge_when_tank_destroyed";
+    public static final String EDGE_WHEN_TANK_TURRET_BLOWN_OFF = "edge_when_tank_turret_blown_off";
     // General Triggers
+    public static final String EDGE_WHEN_EJECT_FAILS = "edge_when_eject_fails";
     public static final String EDGE_WHEN_AC_JAMS_OR_MALFUNCTIONS = "edge_when_uac_jams_or_malfunctions";
 
     // Manei Domini

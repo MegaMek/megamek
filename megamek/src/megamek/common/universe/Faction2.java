@@ -70,8 +70,8 @@ import megamek.common.annotations.Nullable;
  * avoid repetition.
  */
 @SuppressWarnings("unused") // Class fields are assigned when factions are loaded from YAML files
-@JsonPropertyOrder({ "key", "name", "sucsCodes", "nameChanges", "capital", "capitalChanges", "yearsActive", "successor",
-                     "tags", "color", "logo", "background", "camos", "camosChanges", "nameGenerator", "eraMods",
+@JsonPropertyOrder({ "key", "name", "sucsCodes", "nameChanges", "aliases", "capital", "capitalChanges", "yearsActive", "successor",
+                     "tags", "color", "logo", "logoChanges", "background", "backgroundChanges", "camos", "camosChanges", "nameGenerator", "eraMods",
                      "ratingLevels", "fallBackFactions", "preInvasionHonorRating", "postInvasionHonorRating",
                      "formationBaseSize", "formationGrouping", "rankSystem", "factionLeaders", "usesMercenaries",
                      "aresConventionsSignatory" })
@@ -84,6 +84,7 @@ public class Faction2 {
     private String name;
     private final Set<String> sucsCodes = new LinkedHashSet<>();
     private final NavigableMap<Integer, String> nameChanges = new TreeMap<>();
+    private final NavigableMap<Integer, String> aliases = new TreeMap<>();
     private String capital;
     private final NavigableMap<Integer, String> capitalChanges = new TreeMap<>();
     private final ArrayList<FactionRecord.DateRange> yearsActive = new ArrayList<>();
@@ -91,7 +92,9 @@ public class Faction2 {
     private final Set<FactionTag> tags = new HashSet<>();
     private final Color color = Color.LIGHT_GRAY;
     private String logo;
+    private final NavigableMap<Integer, String> logoChanges = new TreeMap<>();
     private String background;
+    private final NavigableMap<Integer, String> backgroundChanges = new TreeMap<>();
 
     @JsonProperty("camos")
     private String camosFolder;
@@ -155,8 +158,45 @@ public class Faction2 {
         return background;
     }
 
+    /**
+     * Returns the faction's background image path for the given year, honoring any era-based
+     * {@link #getBackgroundChanges() background changes}. Falls back to the base {@link #getBackground() background}
+     * when no change applies for the year.
+     *
+     * @param year the game year to resolve the background for
+     *
+     * @return the era-appropriate background image path, or the base background when none applies
+     */
+    public String getBackground(int year) {
+        final Map.Entry<Integer, String> backgroundByYear = backgroundChanges.floorEntry(year);
+        return (backgroundByYear == null) ? background : backgroundByYear.getValue();
+    }
+
+    public NavigableMap<Integer, String> getBackgroundChanges() {
+        return backgroundChanges;
+    }
+
     public String getLogo() {
         return logo;
+    }
+
+    /**
+     * Returns the faction's logo image path for the given year, honoring any era-based
+     * {@link #getLogoChanges() logo changes}. Falls back to the base {@link #getLogo() logo} when no change applies
+     * for the year. Used to keep a consolidated rename lineage (for example Clan Goliath Scorpion becoming the
+     * Escorpion Imperio in 3080) visually era-correct after its faction files are merged into one.
+     *
+     * @param year the game year to resolve the logo for
+     *
+     * @return the era-appropriate logo image path, or the base logo when none applies
+     */
+    public String getLogo(int year) {
+        final Map.Entry<Integer, String> logoByYear = logoChanges.floorEntry(year);
+        return (logoByYear == null) ? logo : logoByYear.getValue();
+    }
+
+    public NavigableMap<Integer, String> getLogoChanges() {
+        return logoChanges;
     }
 
     public int[] getEraMods() {
@@ -264,6 +304,24 @@ public class Faction2 {
 
     public NavigableMap<Integer, String> getNameChanges() {
         return nameChanges;
+    }
+
+    /**
+     * Returns the historical faction-code aliases for this faction, keyed by the year each alias became active.
+     * When a faction is the consolidation of an earlier faction that was renamed (for example Clan Goliath Scorpion
+     * becoming the Escorpion Imperio in 3080), the retired faction code is kept here as an alias of the surviving
+     * key, so that saved games, planetary ownership and RAT availability tables that still reference the old code
+     * continue to resolve to this faction.
+     *
+     * <p>Aliases are for <em>rename lineages</em> only - a single entity renamed over time, with disjoint date
+     * ranges. They must not be used for a merger of two distinct factions (for example Clan Snow Raven and the
+     * Outworlds Alliance both becoming the Raven Alliance); those relationships belong in
+     * {@link #getFallBackFactions()} instead.</p>
+     *
+     * @return The alias codes keyed by the year each became active, in ascending year order. Never {@code null}.
+     */
+    public NavigableMap<Integer, String> getAliases() {
+        return aliases;
     }
 
     public NavigableMap<Integer, String> getCapitalChanges() {

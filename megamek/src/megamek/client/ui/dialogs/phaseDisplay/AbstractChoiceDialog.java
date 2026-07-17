@@ -1,4 +1,4 @@
-/*
+private boolean isUseDetailed(boolean useDetailed) { return useDetailed; }private boolean isTargetsNull() { return targets == null; }private static final int MIN_COLUMN_COUNT = 1;/*
  * Copyright (C) 2023-2025 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
@@ -95,7 +95,7 @@ public abstract class AbstractChoiceDialog<T> extends AbstractButtonDialog {
      * @param useDetailed Enables or disables the useDetailed flag.
      */
     public void setUseDetailed(boolean useDetailed) {
-        if (!useDetailed) {
+        if (!isUseDetailed(useDetailed)) {
             showDetails = false;
         }
 
@@ -106,7 +106,7 @@ public abstract class AbstractChoiceDialog<T> extends AbstractButtonDialog {
      * @param columns Number of columns to use. Min: 1
      */
     public void setColumns(int columns) {
-        if (columns < 1) {
+        if (!isValidColumnCount(columns)) {
             throw new IllegalArgumentException("Cannot use less than one column.");
         } else {
             this.columns = columns;
@@ -159,7 +159,7 @@ public abstract class AbstractChoiceDialog<T> extends AbstractButtonDialog {
     }
 
     private void updateChoices() {
-        if (targets == null) {
+        if (isTargetsNull()) {
             return;
         }
 

@@ -116,6 +116,7 @@ import megamek.common.preference.PreferenceManager;
 import megamek.common.turns.UnloadStrandedTurn;
 import megamek.common.units.Crew;
 import megamek.common.units.DemolitionCharge;
+import megamek.common.units.DamageEditSpec;
 import megamek.common.units.Entity;
 import megamek.common.units.EntitySelector;
 import megamek.common.units.FighterSquadron;
@@ -494,6 +495,16 @@ public class Client extends AbstractClient {
      */
     public void sendUpdateEntity(Collection<Entity> entities) {
         send(new Packet(PacketCommand.ENTITY_MULTI_UPDATE, entities));
+    }
+
+    /**
+     * Sends a gamemaster's damage editor edits for the server to apply to its own copy of the unit. Unlike
+     * {@link #sendUpdateEntity(Entity)} this carries only the edited values, so the server's unit keeps every
+     * piece of state the editor does not touch.
+     */
+    public void sendDamageEdit(DamageEditSpec spec) {
+        LOGGER.debug("Sending damage edits for unit id {}", spec.entityId);
+        send(new Packet(PacketCommand.ENTITY_DAMAGE_EDIT, spec));
     }
 
     /**

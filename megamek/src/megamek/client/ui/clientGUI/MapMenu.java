@@ -778,6 +778,7 @@ public class MapMenu extends JPopupMenu {
         JMenuItem item = new JMenuItem(entity.getDisplayName());
         item.addActionListener(evt -> {
             // This menu item is only built for a gamemaster, so the dialog offers the full editing tools directly.
+            // The dialog commits its edits to the server itself, so there is nothing to send here when it closes.
             UnitEditorDialog med = new UnitEditorDialog(gui.getFrame(),
                   entity,
                   true,
@@ -785,7 +786,6 @@ public class MapMenu extends JPopupMenu {
             gui.getBoardView().setShouldIgnoreKeys(true);
             med.setVisible(true);
             med.dispose();
-            client.sendUpdateEntity(entity);
             gui.getBoardView().setShouldIgnoreKeys(false);
         });
         return item;

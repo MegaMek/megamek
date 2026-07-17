@@ -973,6 +973,9 @@ public class TWGameManager extends AbstractGameManager {
                     receiveEntityUpdate(packet, connId);
                     resetPlayersDone();
                     break;
+                case ENTITY_DAMAGE_EDIT:
+                    receiveDamageEdit(packet, connId);
+                    break;
                 case ENTITY_MULTI_UPDATE:
                     receiveEntitiesUpdate(packet, connId);
                     resetPlayersDone();
@@ -26696,6 +26699,40 @@ public class TWGameManager extends AbstractGameManager {
                       null);
             }
         }
+    }
+
+    /**
+     * Applies a gamemaster's damage editor edits to the server's own copy of the unit. The edits arrive as a
+     * {@link DamageEditSpec} of plain values rather than an edited unit, so everything the editor did not touch -
+     * turn state, a pending traitor switch, anything that changed since the editor opened - keeps the server's
+     * authoritative value without having to be preserved field by field.
+     */
+    private void receiveDamageEdit(Packet packet, int connIndex) {
+        if (!(packet.getObject(0) instanceof DamageEditSpec spec)) {
+            LOGGER.warn("Dropping damage edit: the packet carries no spec");
+            return;
+        }
+        Player sender = game.getPlayer(connIndex);
+        if ((sender == null) || !sender.isGameMaster()) {
+            LOGGER.warn("Dropping damage edit for unit id {} from {}: only a gamemaster may edit a unit in play",
+                  spec.entityId, (sender == null) ? "an unknown connection" : sender.getName());
+            return;
+        }
+        Entity entity = game.getEntity(spec.entityId);
+        if (entity == null) {
+            LOGGER.warn("Dropping damage edit for unit id {}: no such unit is in the game", spec.entityId);
+            return;
+        }
+
+        LOGGER.debug("Applying damage edits for {} from {}", entity.getDisplayName(), sender.getName());
+        new DamageEditApplier(entity, spec).applyToEntity();
+        entityUpdate(entity.getId());
+        destroyEntityIfFatallyDamaged(entity);
+        // Editing a unit's damage in play is a gamemaster act, but it arrives as its own packet rather than a
+        // command, so it is announced here with the same toast the gamemaster commands use.
+        sendToast(GameToastEvent.Level.GAMEMASTER,
+              Messages.getString("Gamemaster.toast.editDamage", sender.getName(), entity.getDisplayName()),
+              null);
     }
 
     /**

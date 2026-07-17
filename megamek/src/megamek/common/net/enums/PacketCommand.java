@@ -83,6 +83,12 @@ public enum PacketCommand {
     /** A packet informing the receiver of an unspecified change to a unit. */
     ENTITY_UPDATE,
 
+    /**
+     * A packet carrying a gamemaster's damage editor edits as a {@link megamek.common.units.DamageEditSpec}, for
+     * the server to apply to its own copy of the unit.
+     */
+    ENTITY_DAMAGE_EDIT,
+
     /** A packet instructing the Client to forget the unit of the given id as it is / has become invisible (SBF). */
     UNIT_INVISIBLE,
 

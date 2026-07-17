@@ -51,6 +51,7 @@ import javax.swing.JSpinner;
 import javax.swing.SpinnerNumberModel;
 
 import megamek.client.ui.Messages;
+import megamek.client.ui.util.UIUtil;
 import megamek.common.CriticalSlot;
 import megamek.common.bays.Bay;
 import megamek.common.equipment.AmmoMounted;
@@ -191,23 +192,48 @@ public class UnitDamagePanelBuilder {
         }
 
         initCrewHits();
-        initSkillModifiers(targetPanel(crewLocation()));
         initHeat();
         initStatus();
     }
 
     /**
+     * Whether the gamemaster's skill modifier controls are offered: only in the gamemaster's editor, only in a
+     * running game - in the lobby the crew's real skills are edited directly - and only for a unit with a crew.
+     */
+    private boolean offersSkillModifiers() {
+        Crew crew = entity.getCrew();
+        boolean inPlay = (entity.getGame() != null) && !entity.getGame().getPhase().isLounge();
+        return offerGameMasterTools && inPlay && (crew != null) && (crew.getSlotCount() >= 1);
+    }
+
+    /**
+     * Adds the gamemaster's skill modifier controls to the general panel, as a column of their own so they stand
+     * apart from the unit's systems and are always in view, unlike a location panel that only shows when its
+     * location is chosen. Called by the dialog after every other general row is in place, so the column is the
+     * panel's last.
+     */
+    public void addSkillModifiersColumn() {
+        if (!offersSkillModifiers()) {
+            return;
+        }
+        startNewColumn(generalPanel());
+        initSkillModifiers(generalPanel());
+    }
+
+    /** Pads the given panel's row count so the next row added to it starts at the top of a fresh column. */
+    private void startNewColumn(JPanel panel) {
+        int itemCount = controls.panelRows.getOrDefault(panel, 1) - 1;
+        int padding = (MAX_ROWS_PER_COLUMN - (itemCount % MAX_ROWS_PER_COLUMN)) % MAX_ROWS_PER_COLUMN;
+        controls.panelRows.merge(panel, padding, Integer::sum);
+    }
+
+    /**
      * Adds the gamemaster's temporary skill modifier controls: a delta to gunnery, piloting and the unit's
-     * individual initiative roll, and how long they last. They are offered only in a running game - in the lobby
-     * the crew's real skills are edited directly - and are applied through {@link TemporarySkillModifiers}, so the
-     * crew's stored skills are never touched and the change reverses itself when it expires.
+     * individual initiative roll, and how long they last. They are applied through {@link TemporarySkillModifiers},
+     * so the crew's stored skills are never touched and the change reverses itself when it expires.
      */
     private void initSkillModifiers(JPanel panel) {
         Crew crew = entity.getCrew();
-        boolean inPlay = (entity.getGame() != null) && !entity.getGame().getPhase().isLounge();
-        if (!offerGameMasterTools || !inPlay || (crew == null) || (crew.getSlotCount() < 1)) {
-            return;
-        }
         TemporarySkillModifiers modifiers = crew.getSkillModifiers();
 
         controls.spnGunneryModifier = skillDeltaSpinner(modifiers.getGunneryDelta(),
@@ -229,12 +255,13 @@ public class UnitDamagePanelBuilder {
         boolean permanent = roundsRemaining == TemporarySkillModifiers.PERMANENT;
         int rounds = (roundsRemaining > 0) ? roundsRemaining : DEFAULT_MODIFIER_ROUNDS;
         controls.spnModifierRounds = new JSpinner(new SpinnerNumberModel(rounds, 1, MAX_MODIFIER_ROUNDS, 1));
-        controls.spnModifierRounds.setToolTipText(Messages.getString("UnitEditorDialog.skillModifier.rounds.tooltip"));
+        controls.spnModifierRounds.setToolTipText(
+              UIUtil.formatSideTooltip(Messages.getString("UnitEditorDialog.skillModifier.rounds.tooltip")));
         controls.spnModifierRounds.setEnabled(!permanent);
         controls.chkModifierPermanent = new JCheckBox(Messages.getString("UnitEditorDialog.skillModifier.permanent"),
               permanent);
         controls.chkModifierPermanent.setToolTipText(
-              Messages.getString("UnitEditorDialog.skillModifier.permanent.tooltip"));
+              UIUtil.formatSideTooltip(Messages.getString("UnitEditorDialog.skillModifier.permanent.tooltip")));
         controls.chkModifierPermanent.addItemListener(event ->
               controls.spnModifierRounds.setEnabled(!controls.chkModifierPermanent.isSelected()));
 
@@ -248,7 +275,7 @@ public class UnitDamagePanelBuilder {
     /** A spinner for one skill delta, starting at what the crew already carries so an open edit reads back. */
     private JSpinner skillDeltaSpinner(int delta, String tooltipKey) {
         JSpinner spinner = new JSpinner(new SpinnerNumberModel(delta, -MAX_SKILL_DELTA, MAX_SKILL_DELTA, 1));
-        spinner.setToolTipText(Messages.getString(tooltipKey));
+        spinner.setToolTipText(UIUtil.formatSideTooltip(Messages.getString(tooltipKey)));
         return spinner;
     }
 
@@ -376,7 +403,9 @@ public class UnitDamagePanelBuilder {
               1));
         JPanel panel = createTitledPanel(new JLabel(Messages.getString("UnitEditorDialog.troopersLeft")));
         addLabeledRow(panel, Messages.getString("UnitEditorDialog.menLeft"), controls.spnInternal[0]);
-        initSkillModifiers(panel);
+        if (offersSkillModifiers()) {
+            initSkillModifiers(panel);
+        }
         return panel;
     }
 

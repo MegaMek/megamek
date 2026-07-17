@@ -43,7 +43,7 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JSpinner;
 
-import megamek.common.units.Mek;
+import megamek.common.units.DamageEditSpec;
 
 /**
  * The controls of the unit damage editor, held in one place so that the classes that build them, the classes that
@@ -57,7 +57,7 @@ import megamek.common.units.Mek;
 public class UnitDamageControls {
 
     /** Where a QuadVee's conversion gear sits in its leg's actuator controls, after the hip to foot actuators. */
-    public static final int CONVERSION_GEAR_INDEX = Mek.ACTUATOR_FOOT - Mek.ACTUATOR_HIP + 1;
+    public static final int CONVERSION_GEAR_INDEX = DamageEditSpec.CONVERSION_GEAR_INDEX;
 
     /** One panel per unit location, holding that location's armor, structure, systems and equipment. */
     public JPanel[] locationPanels;

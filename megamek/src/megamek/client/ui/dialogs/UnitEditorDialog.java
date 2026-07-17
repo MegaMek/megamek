@@ -55,9 +55,9 @@ import megamek.client.ui.clientGUI.CloseAction;
 import megamek.common.Player;
 import megamek.client.ui.dialogs.unitEditor.DamageEditorDiagram;
 import megamek.client.ui.dialogs.unitEditor.PreExistingDamageRoller;
-import megamek.client.ui.dialogs.unitEditor.UnitDamageApplier;
 import megamek.client.ui.dialogs.unitEditor.UnitDamageControls;
 import megamek.client.ui.dialogs.unitEditor.UnitDamagePanelBuilder;
+import megamek.client.ui.dialogs.unitEditor.UnitDamageSpecBuilder;
 import megamek.client.ui.preferences.JSplitPanePreference;
 import megamek.client.ui.preferences.JWindowPreference;
 import megamek.client.ui.preferences.PreferencesNode;
@@ -180,6 +180,9 @@ public class UnitEditorDialog extends JDialog {
         } else {
             panelBuilder.build();
             addOwnerReassign();
+            // after the owner row, so the modifiers form the general panel's last column instead of trapping the
+            // owner chooser in the middle of their column
+            panelBuilder.addSkillModifiersColumn();
             diagram = new DamageEditorDiagram(entity, controls);
             GridBagConstraints gridBagConstraints = new GridBagConstraints();
             gridBagConstraints.gridx = 0;
@@ -330,20 +333,34 @@ public class UnitEditorDialog extends JDialog {
         return panActions;
     }
 
-    /** Writes the shown damage onto the unit and closes the dialog. Shared by Okay and by the Apply button. */
+    /**
+     * Commits the shown damage and closes the dialog. Shared by Okay and by the Apply button. In play the edits go
+     * to the server as plain values, which applies them to its own authoritative copy of the unit and sends the
+     * result back to every client; the unit here stays untouched. In the lobby, and without a game as in MekHQ,
+     * they are applied to the unit directly and the caller sends the edited unit on as it always has.
+     */
     private void commitDamageAndClose() {
-        new UnitDamageApplier(entity, controls).applyToEntity();
+        DamageEditSpec spec = new UnitDamageSpecBuilder(entity, controls).build();
+        if (commitsThroughServer()) {
+            client.sendDamageEdit(spec);
+        } else {
+            new DamageEditApplier(entity, spec).applyToEntity();
+        }
         setVisible(false);
+    }
+
+    /**
+     * Whether the edits are committed by sending them to the server rather than applied to the local unit: only in
+     * a running game, where the server's copy of the unit is the authoritative one.
+     */
+    private boolean commitsThroughServer() {
+        return (client != null) && (entity.getGame() != null) && !entity.getGame().getPhase().isLounge();
     }
 
     /**
      * Asks first, then withdraws the unit from the battlefield, through the server's rescue command. The unit flees
      * the board and leaves the game intact: crew, unit, and anything it carries, counted as retreated rather than
      * destroyed. It is the opposite of destroying it, and it does not bring anything back onto the board.
-     * <p>
-     * There is nothing to mark on the unit here, as there is for a destroyed unit. The server takes the unit out of
-     * the game, so the update the caller sends once this dialog closes finds no unit to apply to and is dropped.
-     * </p>
      */
     private void withdrawUnit() {
         int choice = JOptionPane.showConfirmDialog(this,
@@ -367,11 +384,6 @@ public class UnitEditorDialog extends JDialog {
      * Asks first, then has the server destroy the unit, through the same gamemaster command the map menu uses. The
      * server is what destroys a unit: it writes the reports, decides who dies with it and who escapes, and takes it
      * off the board. Zeroing the unit's armor here would leave it standing.
-     * <p>
-     * The unit is also marked destroyed locally, because the caller sends the unit to the server once this dialog
-     * closes. That update would otherwise arrive after the destruction carrying a unit that is still alive, and put
-     * it straight back on the board.
-     * </p>
      */
     private void destroyUnit() {
         JCheckBox chkEjectCrew = new JCheckBox(Messages.getString("UnitEditorDialog.destroyUnit.eject"));
@@ -398,8 +410,6 @@ public class UnitEditorDialog extends JDialog {
         LOGGER.info("Destroying {} at the request of the damage editor, ejecting crew: {}",
               entity.getDisplayName(),
               ejectCrew);
-        entity.setDoomed(true);
-        entity.setDestroyed(true);
         client.sendChat(String.format(DESTROY_UNIT_COMMAND, entity.getId(), ejectCrew));
         setVisible(false);
     }

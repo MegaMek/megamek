@@ -1596,6 +1596,9 @@ public final class Game extends AbstractGame implements Serializable, PlanetaryC
         clearAllReports();
         smokeCloudList.clear();
         temporaryECMFields.clear();
+        // Without this, a reset game re-uses the previous game's elevators: initialization deliberately
+        // skips boards whose elevators already exist, so stale platform positions would carry over.
+        clearIndustrialElevators();
 
         forceVictory = false;
         victoryPlayerId = Player.PLAYER_NONE;

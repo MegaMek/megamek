@@ -557,6 +557,21 @@ class IndustrialElevatorTest {
     }
 
     @Test
+    void gameResetClearsIndustrialElevators() {
+        // Regression: elevators surviving a game reset kept their previous platform positions in the next
+        // game, because initialization skips boards whose elevators already exist.
+        Game game = new Game();
+        IndustrialElevator elevator = new IndustrialElevator(testLocation, 0, 4, 100);
+        elevator.setPlatformLevel(2);
+        game.addIndustrialElevator(elevator);
+
+        game.reset();
+
+        assertTrue(game.getIndustrialElevators().isEmpty(),
+              "A reset game must not keep the previous game's elevators");
+    }
+
+    @Test
     void elevatorCallSurvivesJavaSerialization() throws Exception {
         ElevatorCall original = new ElevatorCall(7, new Coords(3, 9), 4, 2, 6, 1);
 

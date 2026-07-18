@@ -35,6 +35,7 @@ package megamek.client.bot.princess;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.mockito.ArgumentMatchers.anyDouble;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
@@ -204,7 +205,7 @@ class FireControlHeatAwarenessTest {
 
         fireControl.applyTsmHeatIncentive(mek, plan);
 
-        verify(plan, never()).setUtility(org.mockito.ArgumentMatchers.anyDouble());
+        verify(plan, never()).setUtility(anyDouble());
     }
 
     @Test
@@ -262,7 +263,7 @@ class FireControlHeatAwarenessTest {
 
         fireControl.applyTsmHeatIncentive(mek, plan);
 
-        verify(plan, never()).setUtility(org.mockito.ArgumentMatchers.anyDouble());
+        verify(plan, never()).setUtility(anyDouble());
     }
 
     @Test
@@ -277,7 +278,7 @@ class FireControlHeatAwarenessTest {
 
         fireControl.applyTsmHeatIncentive(mek, plan);
 
-        verify(plan, never()).setUtility(org.mockito.ArgumentMatchers.anyDouble());
+        verify(plan, never()).setUtility(anyDouble());
     }
 
     // --- firingActivatesTsm (spot-gate protection) -------------------------------------------

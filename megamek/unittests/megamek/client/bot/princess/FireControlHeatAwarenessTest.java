@@ -157,14 +157,33 @@ class FireControlHeatAwarenessTest {
         assertEquals(12, fireControl.calcHeatTolerance(newHeatTrackingMek(), false, 3));
     }
 
+    // --- projectedEndOfTurnHeat (dissipation-aware) ------------------------------------------
+
+    @Test
+    void projectedEndOfTurnHeatSubtractsDissipation() {
+        // capacity 10: current heat 15 + weapon heat 4 - 10 dissipation = 9
+        BipedMek mek = newHeatTrackingMek();
+        when(mek.getHeat()).thenReturn(15);
+        assertEquals(9, fireControl.projectedEndOfTurnHeat(mek, 4));
+    }
+
+    @Test
+    void projectedEndOfTurnHeatFloorsAtZeroWhenHeatIsShed() {
+        // capacity 10 exceeds current heat 3 + weapon heat 4, so all heat dissipates
+        BipedMek mek = newHeatTrackingMek();
+        when(mek.getHeat()).thenReturn(3);
+        assertEquals(0, fireControl.projectedEndOfTurnHeat(mek, 4));
+    }
+
     // --- TSM incentive -----------------------------------------------------------------------
 
     @Test
     void nonTsmMekGetsNoHeatIncentive() {
         BipedMek mek = newHeatTrackingMek();
+        when(mek.getHeat()).thenReturn(15);
         when(mek.hasTSM(false)).thenReturn(false);
         FiringPlan plan = mock(FiringPlan.class);
-        when(plan.getHeat()).thenReturn(9);
+        when(plan.getHeat()).thenReturn(4);
 
         fireControl.applyTsmHeatIncentive(mek, plan);
 
@@ -174,9 +193,10 @@ class FireControlHeatAwarenessTest {
     @Test
     void tsmMekReachingActivationHeatGetsFullBonus() {
         BipedMek mek = newHeatTrackingMek();
+        when(mek.getHeat()).thenReturn(15);
         when(mek.hasTSM(false)).thenReturn(true);
         FiringPlan plan = mock(FiringPlan.class);
-        when(plan.getHeat()).thenReturn(9); // projected heat 0 + 0 + 0 + 9 = 9 -> TSM active
+        when(plan.getHeat()).thenReturn(4); // end-of-turn heat 15 + 4 - 10 = 9 -> TSM active
         when(plan.getUtility()).thenReturn(100.0);
 
         fireControl.applyTsmHeatIncentive(mek, plan);
@@ -187,41 +207,59 @@ class FireControlHeatAwarenessTest {
     @Test
     void tsmMekBelowActivationHeatGetsPartialBonus() {
         BipedMek mek = newHeatTrackingMek();
+        when(mek.getHeat()).thenReturn(15);
         when(mek.hasTSM(false)).thenReturn(true);
         FiringPlan plan = mock(FiringPlan.class);
-        when(plan.getHeat()).thenReturn(6); // projected 6 -> partial 6/9 of the bonus
+        when(plan.getHeat()).thenReturn(2); // end-of-turn heat 15 + 2 - 10 = 7 -> partial 7/9
         when(plan.getUtility()).thenReturn(100.0);
 
         fireControl.applyTsmHeatIncentive(mek, plan);
 
-        double expectedBonus = FireControl.TSM_ACTIVATION_UTILITY * (6.0 / FireControl.TSM_DESIRED_HEAT);
+        double expectedBonus = FireControl.TSM_ACTIVATION_UTILITY * (7.0 / FireControl.TSM_DESIRED_HEAT);
         verify(plan).setUtility(100.0 + expectedBonus);
+    }
+
+    @Test
+    void wellCooledTsmMekGetsNoBonusWhenHeatFullyDissipates() {
+        // Regression for the Commando COM-7T playtest: a TSM Mek whose sinks shed everything it fires
+        // never reaches the threshold, so it must earn no bonus (heat 0 + plan 9 - capacity 10 = 0).
+        BipedMek mek = newHeatTrackingMek();
+        when(mek.getHeat()).thenReturn(0);
+        when(mek.hasTSM(false)).thenReturn(true);
+        FiringPlan plan = mock(FiringPlan.class);
+        when(plan.getHeat()).thenReturn(9);
+
+        fireControl.applyTsmHeatIncentive(mek, plan);
+
+        verify(plan, never()).setUtility(org.mockito.ArgumentMatchers.anyDouble());
     }
 
     // --- firingActivatesTsm (spot-gate protection) -------------------------------------------
 
     @Test
     void firingActivatesTsmWhenShotReachesThreshold() {
-        BipedMek mek = newHeatTrackingMek(); // base heat 0
+        BipedMek mek = newHeatTrackingMek();
+        when(mek.getHeat()).thenReturn(15); // without plan: 15 - 10 = 5 (below 9)
         when(mek.hasTSM(false)).thenReturn(true);
         FiringPlan plan = mock(FiringPlan.class);
-        when(plan.getHeat()).thenReturn(9); // 0 + 9 = 9 -> activates
+        when(plan.getHeat()).thenReturn(4); // with plan: 15 + 4 - 10 = 9 -> activates
         assertTrue(fireControl.firingActivatesTsm(mek, plan));
     }
 
     @Test
     void firingDoesNotActivateTsmWhenShotFallsShort() {
-        BipedMek mek = newHeatTrackingMek(); // base heat 0
+        BipedMek mek = newHeatTrackingMek();
+        when(mek.getHeat()).thenReturn(15);
         when(mek.hasTSM(false)).thenReturn(true);
         FiringPlan plan = mock(FiringPlan.class);
-        when(plan.getHeat()).thenReturn(5); // 0 + 5 = 5 -> still below 9
+        when(plan.getHeat()).thenReturn(2); // with plan: 15 + 2 - 10 = 7 -> still below 9
         assertFalse(fireControl.firingActivatesTsm(mek, plan));
     }
 
     @Test
     void firingDoesNotActivateTsmWhenAlreadyHot() {
         BipedMek mek = newHeatTrackingMek();
-        when(mek.getHeat()).thenReturn(9); // already at the threshold without firing
+        when(mek.getHeat()).thenReturn(20); // without plan: 20 - 10 = 10, already active
         when(mek.hasTSM(false)).thenReturn(true);
         FiringPlan plan = mock(FiringPlan.class);
         when(plan.getHeat()).thenReturn(3);
@@ -231,26 +269,28 @@ class FireControlHeatAwarenessTest {
     @Test
     void firingNeverActivatesTsmForNonTsmMek() {
         BipedMek mek = newHeatTrackingMek();
+        when(mek.getHeat()).thenReturn(15);
         when(mek.hasTSM(false)).thenReturn(false);
         FiringPlan plan = mock(FiringPlan.class);
-        when(plan.getHeat()).thenReturn(9);
+        when(plan.getHeat()).thenReturn(4);
         assertFalse(fireControl.firingActivatesTsm(mek, plan));
     }
 
     @Test
     void tsmMekPrefersHotterPlanTowardActivation() {
         BipedMek mek = newHeatTrackingMek();
+        when(mek.getHeat()).thenReturn(15);
         when(mek.hasTSM(false)).thenReturn(true);
 
         FiringPlan coolPlan = mock(FiringPlan.class);
-        when(coolPlan.getHeat()).thenReturn(4);
+        when(coolPlan.getHeat()).thenReturn(1); // end-of-turn heat 15 + 1 - 10 = 6
         when(coolPlan.getUtility()).thenReturn(50.0);
 
         FiringPlan hotPlan = mock(FiringPlan.class);
-        when(hotPlan.getHeat()).thenReturn(9);
+        when(hotPlan.getHeat()).thenReturn(4); // end-of-turn heat 15 + 4 - 10 = 9 -> activates
         when(hotPlan.getUtility()).thenReturn(50.0);
 
-        double coolBonus = FireControl.TSM_ACTIVATION_UTILITY * (4.0 / FireControl.TSM_DESIRED_HEAT);
+        double coolBonus = FireControl.TSM_ACTIVATION_UTILITY * (6.0 / FireControl.TSM_DESIRED_HEAT);
         double hotBonus = FireControl.TSM_ACTIVATION_UTILITY;
 
         // The plan that reaches the activation threshold earns the larger incentive.

@@ -2312,6 +2312,30 @@ public class FireControl {
     }
 
     /**
+     * Estimates the heat this unit will carry after the upcoming heat phase if it executes a firing plan
+     * of the given weapon heat: its current heat plus everything the engine will add this turn (committed
+     * movement heat, predicted environmental heat, active-stealth-armor heat, and the plan's weapon heat)
+     * minus its heat-sink dissipation ({@link Entity#getHeatCapacity()}), floored at zero. Unlike a raw
+     * sum of heat sources this accounts for heat sinks shedding heat every turn, so a well-cooled unit may
+     * never reach a target heat level no matter what it fires.
+     *
+     * @param shooter    the unit whose end-of-turn heat is being estimated
+     * @param weaponHeat the weapon heat of the firing plan under consideration
+     *
+     * @return the estimated post-heat-phase heat, never negative
+     */
+    int projectedEndOfTurnHeat(final Entity shooter, final int weaponHeat) {
+        if (Entity.DOES_NOT_TRACK_HEAT == shooter.getHeatCapacity()) {
+            return 0;
+        }
+
+        int stealthLoad = shooter.isStealthOn() ? ArmorType.STEALTH_ARMOR_HEAT : 0;
+        int gains = shooter.getHeat() + shooter.heatBuildup + predictEnvironmentalHeat(shooter)
+              + stealthLoad + weaponHeat;
+        return Math.max(0, gains - shooter.getHeatCapacity());
+    }
+
+    /**
      * Creates an array that gives the 'best' firing plan (the maximum utility) under the heat of the index
      *
      * @param shooter     The unit doing the shooting.
@@ -2586,8 +2610,7 @@ public class FireControl {
             return;
         }
 
-        int projectedHeat = shooter.getHeat() + shooter.heatBuildup
-              + predictEnvironmentalHeat(shooter) + firingPlan.getHeat();
+        int projectedHeat = projectedEndOfTurnHeat(shooter, firingPlan.getHeat());
         if (projectedHeat <= 0) {
             return;
         }
@@ -2597,7 +2620,7 @@ public class FireControl {
               : TSM_ACTIVATION_UTILITY * ((double) projectedHeat / TSM_DESIRED_HEAT);
         firingPlan.setUtility(firingPlan.getUtility() + bonus);
 
-        LOGGER.debug("[HeatTSM] {}: projected heat {} toward target {} -> TSM utility bonus {}",
+        LOGGER.debug("[HeatTSM] {}: projected end-of-turn heat {} toward target {} -> TSM utility bonus {}",
               mek.getShortName(), projectedHeat, TSM_DESIRED_HEAT, bonus);
     }
 
@@ -2619,9 +2642,9 @@ public class FireControl {
             return false;
         }
 
-        int baseHeat = shooter.getHeat() + shooter.heatBuildup + predictEnvironmentalHeat(shooter);
-        int projectedHeat = baseHeat + firingPlan.getHeat();
-        return (projectedHeat >= TSM_DESIRED_HEAT) && (baseHeat < TSM_DESIRED_HEAT);
+        int heatWithoutPlan = projectedEndOfTurnHeat(shooter, 0);
+        int heatWithPlan = projectedEndOfTurnHeat(shooter, firingPlan.getHeat());
+        return (heatWithPlan >= TSM_DESIRED_HEAT) && (heatWithoutPlan < TSM_DESIRED_HEAT);
     }
 
     /**

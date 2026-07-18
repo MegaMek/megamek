@@ -100,6 +100,10 @@ public class FireControl {
 
     // Heat level at which standard Triple-Strength Myomer activates (+2 walk MP, double physical damage).
     protected static final int TSM_DESIRED_HEAT = 9;
+    // Highest end-of-turn heat a heat-activated TSM Mek is allowed to fire toward without the overheat
+    // penalty. Chosen to keep TSM active (heat >= TSM_DESIRED_HEAT) while staying below the 14-heat
+    // shutdown roll, so the Mek can reach and hold the activation band without being pulled back. Tunable.
+    protected static final int TSM_HEAT_CEILING = 13;
     // Utility a TSM Mek gains for a firing plan that switches TSM on. Tunable; sized to outweigh a few
     // points of overheat disutility so the Mek will run up to TSM_DESIRED_HEAT to activate it.
     protected static final double TSM_ACTIVATION_UTILITY = 20.0;
@@ -2262,6 +2266,16 @@ public class FireControl {
 
         // Aero's *really* don't want to overheat, so they don't get the extra slack non-Aeros do.
         int tolerance = isAero ? baseTolerance : baseTolerance + 5; // todo add Heat Tolerance to Behavior Settings.
+
+        // A heat-activated standard TSM Mek wants to run up to its activation band, so the overheat penalty
+        // must not fight the climb. Raise its tolerance to permit end-of-turn heat up to TSM_HEAT_CEILING
+        // (kept below the shutdown roll): a plan whose weapon heat lands the Mek at or under that ceiling is
+        // not treated as overheating. This lets it both reach and hold the threshold, while heat that would
+        // push past the ceiling is still penalised. Applies whether or not TSM is active yet.
+        if ((entity instanceof Mek mek) && mek.hasTSM(false)) {
+            int tsmTolerance = (entity.getHeatCapacity() - projectedHeat) + TSM_HEAT_CEILING;
+            tolerance = Math.max(tolerance, tsmTolerance);
+        }
 
         // Log only the low-frequency firing-phase calls (predictedMovementHeat == 0). The path-ranker
         // calls this once per candidate path (a loop), so logging those would flood the log. MMLogger

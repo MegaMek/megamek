@@ -2614,14 +2614,23 @@ public class FireControl {
      * hot; this nudges it to fire enough to switch TSM on. The reward peaks at the threshold and tapers to
      * zero at {@link #TSM_HEAT_CEILING}, so the Mek stays as close to the threshold as it can rather than
      * riding up into shutdown territory; heat past the ceiling gets no reward and the overheat disutility
-     * pulls it back. No effect on non-TSM Meks or on prototype/industrial TSM, which do not use the heat
-     * threshold.
+     * pulls it back. A plan that adds no weapon heat earns nothing, so a Mek already hot from passive
+     * sources is not nudged toward not firing. No effect on non-TSM Meks or on prototype/industrial TSM,
+     * which do not use the heat threshold.
      *
      * @param shooter    the unit doing the shooting
      * @param firingPlan the plan whose utility is adjusted in place
      */
     protected void applyTsmHeatIncentive(final Entity shooter, final FiringPlan firingPlan) {
         if (!(shooter instanceof Mek mek) || !mek.hasTSM(false)) {
+            return;
+        }
+
+        // Only reward plans that actually build heat toward the threshold. A plan that adds no weapon heat
+        // (the empty placeholder plan, or one made entirely of heatless weapons) contributes nothing to TSM
+        // activation, so it must not earn the incentive - otherwise a Mek already hot from passive sources
+        // (current heat, stealth armor, planetary temperature) could be nudged toward not firing.
+        if (firingPlan.getHeat() <= 0) {
             return;
         }
 

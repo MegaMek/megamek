@@ -33,6 +33,7 @@ package megamek.common.rules;
  */
 
 
+import megamek.common.HitData;
 import megamek.common.Report;
 import megamek.common.units.Entity;
 import megamek.server.totalWarfare.TWDamageManager;
@@ -61,4 +62,8 @@ public abstract class RulesArmor {
     // Does reflective armor cause modifiers for AP?
     public abstract boolean reflectiveAP(boolean reflectiveArmor);
 
+    public abstract boolean blockTAC(int armorType);
+
+    // How does impact armor reduce damage
+    public abstract int reduceImpactDamage(int entityId, HitData hit, int damage, Vector<Report> reportVec);
 }

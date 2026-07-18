@@ -116,4 +116,10 @@ public class TWRulesWeapons extends CoreRulesWeapons {
         }
         return null;
     }
+
+    // No MGA cluster bonus
+    @Override
+    public int getMGABonus() {
+        return 0;
+    }
 }

@@ -71,4 +71,7 @@ public abstract class RulesWeapons {
     // PPC Capacitor check
     public abstract Report checkPPCCapacitor(int roll, Entity attackingEntity, WeaponMounted
     weapon);
+
+    // increase the number of hits for MGA
+    public abstract int getMGABonus();
 }

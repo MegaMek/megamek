@@ -94,4 +94,9 @@ public class CoreRulesWeapons extends RulesWeapons {
     @Nullable
     public Report checkPPCCapacitor(int roll, Entity attackingEntity, WeaponMounted
           weapon) { return null; }
+
+    // MGA gives +2 to cluster roll. Core p.185
+    public int getMGABonus() {
+        return 2;
+    }
 }

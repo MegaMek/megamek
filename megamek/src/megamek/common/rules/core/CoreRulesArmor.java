@@ -33,7 +33,9 @@ package megamek.common.rules.core;
  */
 
 
+import megamek.common.HitData;
 import megamek.common.Report;
+import megamek.common.equipment.ArmorType;
 import megamek.common.equipment.EquipmentType;
 import megamek.common.rules.RulesArmor;
 import megamek.common.units.Entity;
@@ -66,7 +68,7 @@ public class CoreRulesArmor extends RulesArmor {
 
     // Does a lance penetrate on hit? Not if it is ABA, but all others yes. Core p.201
     public boolean checkLancePenetration(int armorType) {
-        return  (armorType == EquipmentType.T_ARMOR_ANTI_PENETRATIVE_ABLATION) ? true : false;
+        return (armorType == EquipmentType.T_ARMOR_ANTI_PENETRATIVE_ABLATION) ? true : false;
     }
 
     // Does armor reduce heat? Core p.202
@@ -75,5 +77,36 @@ public class CoreRulesArmor extends RulesArmor {
     }
 
     // Reflective armor does not have a modifier on AP rounds
-    public boolean reflectiveAP(boolean reflectiveArmor) { return false;}
+    public boolean reflectiveAP(boolean reflectiveArmor) {return false;}
+
+    // ABA armor stops TACs from generating a crit. Core p.201
+    public boolean blockTAC(int armorType) {
+        return (armorType == ArmorType.T_ARMOR_ANTI_PENETRATIVE_ABLATION) ? true : false;
+    }
+
+    // Impact armor reduces damage from falls, collisions, and buildings by half. 1/3 for physical
+    public int reduceImpactDamage(int entityId, HitData hit, int damage, Vector<Report> reportVec) {
+        Report report;
+        if (hit.isFallDamage()) {
+            damage = Math.max(1, damage / 2);
+            report = new Report(6099);
+            report.subject = entityId;
+            report.indent(3);
+            report.add(damage);
+            reportVec.addElement(report);
+
+            return damage;
+        }
+        // CORE collision and building damage currently are as below, need to be as above
+        
+        // As long as there is even 1 point of armor in this location, reduce _all_ damage
+        // to 2 points for every whole 3 points applied (IntOps pg 88).
+        damage = Math.max(1, (2 * (damage / 3)) + (damage % 3));
+        report = new Report(6089);
+        report.subject = entityId;
+        report.indent(3);
+        report.add(damage);
+        reportVec.addElement(report);
+        return damage;
+    }
 }

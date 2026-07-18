@@ -72,4 +72,7 @@ public abstract class RulesEquipment {
 
     // Is the probe impacted by ECM?
     public abstract boolean isBAPActive(boolean checkECM, MiscType type, Entity entity, Coords position);
+
+    // Is there an init bonus for the command console or tripod tech officer?
+    public abstract int getCommandConsoleBonus();
 }

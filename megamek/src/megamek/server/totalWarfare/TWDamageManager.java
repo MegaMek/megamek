@@ -251,8 +251,16 @@ public class TWDamageManager implements IDamageManager {
 
         // TACs from the hit location table
         int crits;
-        if ((hit.getEffect() & HitData.EFFECT_CRITICAL) == HitData.EFFECT_CRITICAL) {
-            crits = 1;
+        if ((hit.getEffect() & HitData.EFFECT_CRITICAL) == HitData.EFFECT_CRITICAL); {
+            if (Game.rulesManager.getRulesArmor().blockTAC(entity.getArmorType(hit.getLocation()))) {
+                crits = 0;
+                Report tacBlockedReport = new Report(6266);
+                tacBlockedReport.subject = entityId;
+                tacBlockedReport.indent(2);
+                reportVec.addElement(tacBlockedReport);
+            } else {
+                crits = 1;
+            }
             // Damage Interrupt Circuit (IO p.39) is disabled by any hit that rolls "2" on
             // the hit location table (TAC), regardless of whether a critical actually occurs
             if ((entity instanceof Mek mek) && (mek.hasDamageInterruptCircuit()) && (!mek.isDICDisabled())) {
@@ -3344,14 +3352,7 @@ public class TWDamageManager implements IDamageManager {
                 report.add(damage);
                 reportVec.addElement(report);
             } else if (impactArmor && (hit.getGeneralDamageType() == HitData.DAMAGE_PHYSICAL)) {
-                // As long as there is even 1 point of armor in this location, reduce _all_ damage
-                // to 2 points for every whole 3 points applied (IntOps pg 88).
-                damage = Math.max(1, (2 * (damage / 3)) + (damage % 3));
-                report = new Report(6089);
-                report.subject = entityId;
-                report.indent(3);
-                report.add(damage);
-                reportVec.addElement(report);
+                damage = Game.rulesManager.getRulesArmor().reduceImpactDamage(entityId, hit, damage, reportVec);
             } else if (reflectiveArmor &&
                   (hit.getGeneralDamageType() == HitData.DAMAGE_PHYSICAL) &&
                   !isBattleArmor) { // BA reflect does not receive extra physical damage

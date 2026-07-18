@@ -33,6 +33,7 @@ package megamek.common.rules.totalwarfare;
  */
 
 
+import megamek.common.HitData;
 import megamek.common.Report;
 import megamek.common.equipment.EquipmentType;
 import megamek.common.options.OptionsConstants;
@@ -60,7 +61,7 @@ public class TWRulesArmor extends CoreRulesArmor {
 
     // Impact armor reduces crit rolls
     @Override
-    public int impactArmorMod() { return 1; }
+    public int impactArmorMod() {return 1;}
 
     // Impact Resistant Armor breach
     public int impactArmorBreach(Entity entity, Vector<Report> vDesc) {
@@ -93,5 +94,22 @@ public class TWRulesArmor extends CoreRulesArmor {
     @Override
     public boolean reflectiveAP(boolean reflectiveArmor) {
         return reflectiveArmor;
+    }
+
+    public boolean blockTAC(int armorType) {
+        return false;
+    }
+
+    @Override
+    public int reduceImpactDamage(int entityId,HitData hit, int damage, Vector<Report> reportVec) {
+        // As long as there is even 1 point of armor in this location, reduce _all_ damage
+        // to 2 points for every whole 3 points applied (IntOps pg 88).
+        damage = Math.max(1, (2 * (damage / 3)) + (damage % 3));
+        Report report = new Report(6089);
+        report.subject = entityId;
+        report.indent(3);
+        report.add(damage);
+        reportVec.addElement(report);
+        return damage;
     }
 }

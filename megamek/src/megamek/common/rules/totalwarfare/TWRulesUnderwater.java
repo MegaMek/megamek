@@ -35,4 +35,9 @@ package megamek.common.rules.totalwarfare;
 import megamek.common.rules.core.CoreRulesUnderwater;
 
 public class TWRulesUnderwater extends CoreRulesUnderwater {
+    // get the breach number
+    @Override
+    public int getBreachTarget() {
+        return 10;
+    }
 }

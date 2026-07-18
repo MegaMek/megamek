@@ -35,4 +35,8 @@ package megamek.common.rules.core;
 import megamek.common.rules.RulesUnderwater;
 
 public class CoreRulesUnderwater extends RulesUnderwater {
+    // Underwater target number is 5+ to avoid
+    public int getBreachTarget() {
+        return 4;
+    }
 }

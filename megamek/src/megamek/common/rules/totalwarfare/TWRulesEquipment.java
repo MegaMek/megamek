@@ -160,4 +160,10 @@ public class TWRulesEquipment extends CoreRulesEquipment {
         return !checkECM ||
               !ComputeECM.isAffectedByECM(entity, position, position);
     }
+    
+    // Command console and tech officer return bonus to init
+    @Override
+    public int getCommandConsoleBonus() {
+        return 2;
+    }
 }

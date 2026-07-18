@@ -23285,21 +23285,28 @@ public class TWGameManager extends AbstractGameManager {
               (entity.isSurfaceNaval() && (loc != ((Tank) entity).getLocTurret()))) {
             // Does the location have armor (check rear armor on Mek)
             // and is the check due to damage?
-            int breachRoll = 0;
+            int breachRoll = 12;
+            boolean lowFail = true;
+
+            if (Game.rulesManager.getRulesUnderwater() instanceof TWRulesUnderwater) {
+                breachRoll = 0;
+                lowFail = false;
+            }
             // set the target roll for the breach
-            int target = 10;
+            int target = Game.rulesManager.getRulesUnderwater().getBreachTarget();
+            
             PlanetaryConditions conditions = game.getPlanetaryConditions();
             // if this is a vacuum check, and we are in trace atmosphere then
             // adjust target
             if ((entity.getLocationStatus(loc) == ILocationExposureStatus.VACUUM) &&
                   conditions.getAtmosphere().isTrace()) {
-                target = 12;
+                target = (lowFail) ? target-2 : target+2;
             }
             // if this is a surface naval vessel and the attack is not from
             // underwater
-            // then the breach should only occur on a roll of 12
+            // then the breach should only occur on a roll of 2 / 12
             if (entity.isSurfaceNaval() && !underWater) {
-                target = 12;
+                target = (lowFail) ? target-2 : target+2;
             }
             if ((entity.getArmor(loc) > 0) &&
                   (!(entity instanceof Mek) || entity.getArmor(loc, true) > 0) &&
@@ -23318,12 +23325,13 @@ public class TWGameManager extends AbstractGameManager {
                     r.subject = entity.getId();
                     r.indent(3);
                     vDesc.addElement(r);
-                    target -= 2;
+                    target = (lowFail) ? target + 2 : target - 2;
                 }
 
                 // Check for impact resistant armor
                 if ((entity.getArmorType(loc) == EquipmentType.T_ARMOR_IMPACT_RESISTANT)) {
-                    target += Game.rulesManager.getRulesArmor().impactArmorBreach(entity, vDesc);
+                    int impactChange = Game.rulesManager.getRulesArmor().impactArmorBreach(entity, vDesc);
+                    target = (lowFail) ? target + impactChange: target - impactChange;
                 }
 
                 Roll diceRoll = Compute.rollD6(2);
@@ -23334,12 +23342,17 @@ public class TWGameManager extends AbstractGameManager {
                 r.add(entity.getLocationAbbr(loc));
                 r.add(diceRoll);
                 r.newlines = 0;
-
-                r.choose(breachRoll < target);
+                if (lowFail) {
+                    r.choose(breachRoll > target);
+                } else {
+                    r.choose(breachRoll < target);
+                }
                 vDesc.addElement(r);
             }
+            
+            boolean breached = (lowFail) ? (breachRoll <= target) : (breachRoll >=target);
             // Breach by damage or lack of armor.
-            if ((breachRoll >= target) ||
+            if ((breached) ||
                   !(entity.getArmor(loc) > 0) ||
                   (dumping &&
                         (!(entity instanceof Mek) ||

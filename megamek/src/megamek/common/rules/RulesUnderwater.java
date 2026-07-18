@@ -33,4 +33,7 @@ package megamek.common.rules;
  */
 
 public abstract class RulesUnderwater {
+
+    // what is the target number for the breach
+    public abstract int getBreachTarget();
 }

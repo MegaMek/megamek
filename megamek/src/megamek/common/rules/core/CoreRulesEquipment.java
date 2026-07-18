@@ -140,4 +140,9 @@ public class CoreRulesEquipment extends RulesEquipment {
         return !checkECM ||
               !ComputeECM.isAffectedByECM(entity, position, position);
     }
+    
+    // No init bonus for command console or tech officer Core p.203, 236
+    public int getCommandConsoleBonus() {
+        return 0;
+    }
 }

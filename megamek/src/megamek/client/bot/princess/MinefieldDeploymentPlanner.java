@@ -39,6 +39,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.TreeMap;
 
 import megamek.common.Hex;
 import megamek.common.Player;
@@ -76,6 +77,20 @@ public class MinefieldDeploymentPlanner {
 	private double infantryProportion = 0.0;
 	private int vibrabombSetting = 50;
 	
+	private Map<Coords, Integer> placedMines = new HashMap<>();
+	
+	/**
+	 * Increment mine placement counter
+	 */
+	public void markMinePlacement(Coords coords) {
+		placedMines.putIfAbsent(coords, 0);
+		placedMines.put(coords, placedMines.get(coords) + 1);
+	}
+	
+	/**
+	 * Constructor for the minefield deployment planner.
+	 * Initializes opposition unit counts and "reasonable" vibrabomb setting
+	 */
 	public MinefieldDeploymentPlanner(Player player, Game game) {
 		// would prefer to have a map of unit type to score, but tracked, wheeled and hover
 		// vehicles have different movement rules while being the same unit type
@@ -177,7 +192,7 @@ public class MinefieldDeploymentPlanner {
 	public Map<Double, List<Coords>> getBucketedCandidateCoords(int minefieldType, Board board) {
 		Map<Coords, Double> minefieldScores = buildCoalescedMinefieldScores(minefieldType, board);
 		
-		Map<Double, List<Coords>> bucketedCoords = new HashMap<>();
+		Map<Double, List<Coords>> bucketedCoords = new TreeMap<>(Collections.reverseOrder());
 		
 		for (Coords coords : minefieldScores.keySet()) {
 			double scoreBucket = minefieldScores.get(coords);
@@ -251,6 +266,11 @@ public class MinefieldDeploymentPlanner {
 						infantryScore * infantryProportion + 
 						hoverVeeScore * hoverProportion;
 				
+				// if we've already placed a minefield here, we discourage placing more
+				if (placedMines.containsKey(coords)) {
+					totalScore -= placedMines.get(coords);
+				}
+				
 				coalescedMap.put(coords, totalScore);
 			}
 		}
@@ -281,10 +301,12 @@ public class MinefieldDeploymentPlanner {
 				
 				// if we can't place the minefield, just move on
 				if (hex.containsAnyTerrainOf(DISALLOWED_TERRAIN_TYPES)) {
+					minefieldScores.put(coords, Integer.MIN_VALUE);
 					continue;
 				}
 				
 				if (!hex.canPlaceMinefield(minefieldType)) {
+					minefieldScores.put(coords, Integer.MIN_VALUE);
 					continue;
 				}
 				

@@ -44,7 +44,9 @@ import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.ArgumentMatchers.nullable;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.spy;
+import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 import java.util.ArrayList;
@@ -61,6 +63,7 @@ import megamek.common.board.Board;
 import megamek.common.board.Coords;
 import megamek.common.compute.Compute;
 import megamek.common.enums.GamePhase;
+import megamek.common.enums.MoveStepType;
 import megamek.common.equipment.AmmoType;
 import megamek.common.equipment.EquipmentType;
 import megamek.common.equipment.IArmorState;
@@ -1181,6 +1184,69 @@ class PrincessTest {
                 // Assert
                 assertEquals(0, result.size());
             }
+        }
+    }
+
+    /**
+     * Regression tests for {@link Princess#evadeIfNotFiring} (issue #8542): an airborne entity that
+     * is not an {@code IAero} (an ejected pilot descending by parachute) must not trigger the
+     * {@code IAero} cast, which threw a {@code ClassCastException} and hung the bot's whole turn.
+     */
+    @Nested
+    class EvadeIfNotFiringTests {
+
+        private void invokeEvadeIfNotFiring(Princess princess, MovePath path, boolean possibleToInflictDamage) {
+            try {
+                java.lang.reflect.Method method = Princess.class.getDeclaredMethod(
+                      "evadeIfNotFiring", MovePath.class, boolean.class);
+                method.setAccessible(true);
+                method.invoke(princess, path, possibleToInflictDamage);
+            } catch (java.lang.reflect.InvocationTargetException e) {
+                // Unwrap so the original failure (e.g. the ClassCastException this test guards
+                // against) surfaces directly instead of being hidden inside a reflection wrapper.
+                throw new RuntimeException("evadeIfNotFiring threw", e.getCause());
+            } catch (ReflectiveOperationException e) {
+                throw new RuntimeException("Failed to invoke evadeIfNotFiring", e);
+            }
+        }
+
+        @Test
+        void testDoesNotCrashAndDoesNotEvadeForAirborneEjectedPilot() {
+            // An ejected pilot (MekWarrior) is airborne (altitude > 0) but is not an IAero.
+            // Before the fix, reaching the IAero cast threw a ClassCastException here.
+            Princess princess = spy(new Princess("TestPrincess", UUID.randomUUID().toString(), 1));
+
+            MekWarrior ejectedPilot = mock(MekWarrior.class);
+            when(ejectedPilot.isAirborne()).thenReturn(true);
+
+            MovePath path = mock(MovePath.class);
+            when(path.getEntity()).thenReturn(ejectedPilot);
+
+            invokeEvadeIfNotFiring(princess, path, false);
+
+            verify(path, never()).addStep(MoveStepType.EVADE);
+        }
+
+        @Test
+        void testAddsEvadeForAirborneAeroThatCannotFire() {
+            // An airborne aerospace fighter that cannot inflict damage and can spare the thrust
+            // should still receive an EVADE step - the fix must not change this behavior.
+            Princess princess = spy(new Princess("TestPrincess", UUID.randomUUID().toString(), 1));
+
+            AeroSpaceFighter fighter = mock(AeroSpaceFighter.class);
+            when(fighter.isAirborne()).thenReturn(true);
+            when(fighter.isAero()).thenReturn(true);
+            when(fighter.isOutControlTotal()).thenReturn(false);
+            when(fighter.getCurrentThrust()).thenReturn(5);
+            when(fighter.getSI()).thenReturn(5);
+
+            MovePath path = mock(MovePath.class);
+            when(path.getEntity()).thenReturn(fighter);
+            when(path.getMpUsed()).thenReturn(0);
+
+            invokeEvadeIfNotFiring(princess, path, false);
+
+            verify(path).addStep(MoveStepType.EVADE);
         }
     }
 }

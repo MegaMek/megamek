@@ -38,6 +38,7 @@ import java.util.List;
 import megamek.client.ui.Messages;
 import megamek.common.Player;
 import megamek.common.units.Entity;
+import megamek.logging.MMLogger;
 import megamek.server.Server;
 import megamek.server.commands.arguments.Argument;
 import megamek.server.commands.arguments.Arguments;
@@ -51,6 +52,8 @@ import megamek.server.totalWarfare.TWGameManager;
  * @author Luana Coppio
  */
 public class ChangeOwnershipCommand extends GamemasterServerCommand {
+
+    private static final MMLogger LOGGER = MMLogger.create(ChangeOwnershipCommand.class);
 
     public static final String UNIT_ID = "unitID";
     public static final String PLAYER_ID = "playerID";
@@ -78,12 +81,18 @@ public class ChangeOwnershipCommand extends GamemasterServerCommand {
         Entity ent = gameManager.getGame().getEntity(unitID.getValue());
         Player player = server.getGame().getPlayer(playerID.getValue());
         if (null == ent) {
+            LOGGER.info("[Traitor] /changeOwner rejected: no unit with id {}", unitID.getValue());
             server.sendServerChat(connId, Messages.getString("Gamemaster.cmd.changeOwnership.unitNotFound"));
         } else if (null == player) {
+            LOGGER.info("[Traitor] /changeOwner rejected: no player with id {}", playerID.getValue());
             server.sendServerChat(connId, Messages.getString("Gamemaster.cmd.changeOwnership.playerNotFound"));
         } else if (player.getTeam() == Player.TEAM_UNASSIGNED) {
+            LOGGER.info("[Traitor] /changeOwner rejected: {} (player id {}) has no team",
+                  player.getName(), player.getId());
             server.sendServerChat(connId, Messages.getString("Gamemaster.cmd.changeOwnership.playerUnassigned"));
         } else {
+            LOGGER.info("[Traitor] /changeOwner set traitorId {} ({}) on {} (unit id {}); resolves at END phase",
+                  player.getId(), player.getName(), ent.getDisplayName(), ent.getId());
             server.sendServerChat(connId,
                   Messages.getString("Gamemaster.cmd.changeOwnership.success", ent.getDisplayName(), player.getName()));
             ent.setTraitorId(player.getId());

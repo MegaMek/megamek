@@ -42,6 +42,7 @@ import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.InputStream;
 import java.nio.charset.StandardCharsets;
+import java.util.List;
 import java.util.Objects;
 
 import megamek.common.CriticalSlot;
@@ -53,8 +54,10 @@ import megamek.common.equipment.EquipmentTypeLookup;
 import megamek.common.equipment.Mounted;
 import megamek.common.units.BipedMek;
 import megamek.common.units.Entity;
+import megamek.common.units.ForceGeneratorAvailability;
 import megamek.common.units.Mek;
 import megamek.common.units.TripodMek;
+import megamek.common.units.UnitRole;
 import megamek.common.verifier.EntityVerifier;
 import megamek.common.verifier.TestMek;
 import org.junit.jupiter.api.BeforeAll;
@@ -99,6 +102,60 @@ class MtfFileTest {
 
         assertTrue(mtf.startsWith(MtfFile.UUID + originalUUID));
         assertEquals(originalUUID, toMtfFile(mek).getEntity().getUnitFileUUID());
+    }
+
+    @Test
+    void forceGeneratorAvailabilityRoundTrips() throws Exception {
+        Mek mek = new BipedMek();
+        mek.setForceGeneratorAvailability(List.of(
+              ForceGeneratorAvailability.parse("FS:5,LA:3"),
+              ForceGeneratorAvailability.parse("3067-3085 FS:7,LA:6")));
+        mek.setMissionRoles("fire_support,urban");
+
+        String mtf = mek.getMtf();
+        assertTrue(mtf.contains("availability:FS:5,LA:3\n"));
+        assertTrue(mtf.contains("availability:3067-3085 FS:7,LA:6\n"));
+        assertTrue(mtf.contains("missionroles:fire_support,urban\n"));
+
+        Entity loaded = toMtfFile(mek).getEntity();
+
+        assertEquals(2, loaded.getForceGeneratorAvailability().size());
+        assertEquals("FS:5,LA:3", loaded.getForceGeneratorAvailability().get(0).availabilityCodes());
+        assertEquals(3067, loaded.getForceGeneratorAvailability().get(1).startYear());
+        assertEquals(3085, loaded.getForceGeneratorAvailability().get(1).endYear());
+        assertEquals("FS:7,LA:6", loaded.getForceGeneratorAvailability().get(1).availabilityCodes());
+        assertEquals("fire_support,urban", loaded.getMissionRoles());
+    }
+
+    @Test
+    void unitWithoutForceGeneratorAvailabilityWritesNoAvailabilityLine() throws Exception {
+        Mek mek = new BipedMek();
+
+        String mtf = mek.getMtf();
+        assertFalse(mtf.contains(MtfFile.AVAILABILITY));
+        assertFalse(mtf.contains(MtfFile.MISSION_ROLES));
+
+        Entity loaded = toMtfFile(mek).getEntity();
+
+        assertTrue(loaded.getForceGeneratorAvailability().isEmpty());
+        assertTrue(loaded.getMissionRoles().isBlank());
+    }
+
+    @Test
+    void malformedAvailabilityLineIsSkippedWithoutFailingTheLoad() throws Exception {
+        Mek mek = new BipedMek();
+        mek.setWeight(20.0);
+        mek.setEngine(new Engine(100, Engine.NORMAL_ENGINE, 0));
+        mek.setUnitRole(UnitRole.SNIPER);
+        // The good line must survive; 3085-3067 has its years backwards and is not parseable
+        String mtf = mek.getMtf().replace(MtfFile.ROLE,
+              "availability:3085-3067 FS:5\navailability:LA:4\n" + MtfFile.ROLE);
+
+        Entity loaded = new MtfFile(new ByteArrayInputStream(mtf.getBytes(StandardCharsets.UTF_8))).getEntity();
+
+        assertNotNull(loaded);
+        assertEquals(1, loaded.getForceGeneratorAvailability().size());
+        assertEquals("LA:4", loaded.getForceGeneratorAvailability().getFirst().availabilityCodes());
     }
 
     @Test

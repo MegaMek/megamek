@@ -236,7 +236,16 @@ class LobbyMekPopup {
         }
         boolean canEditDamage = hasJoinedEntities && joinedEntities.stream()
               .allMatch(entity -> LobbyActions.canEditDamage(clientGui.getClient(), entity));
-        popup.add(menuItem("Edit Damage...", LMP_DAMAGE + NO_INFO + seIds, canEditDamage, listener, KeyEvent.VK_E));
+        JMenuItem damageItem = menuItem("Edit Damage...",
+              LMP_DAMAGE + NO_INFO + seIds,
+              canEditDamage,
+              listener,
+              KeyEvent.VK_E);
+        if (!canEditDamage) {
+            // a greyed out item with no reason is a puzzle, so say who may edit the damage of a unit
+            damageItem.setToolTipText(Messages.getString("ChatLounge.editDamage.notAllowed.tooltip"));
+        }
+        popup.add(damageItem);
         popup.add(menuItem("Set individual camo...", LMP_INDI_CAMO + NO_INFO + seIds, hasJoinedEntities, listener,
               KeyEvent.VK_I));
 

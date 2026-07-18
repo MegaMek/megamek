@@ -69,6 +69,7 @@ import megamek.common.board.ElevationOption;
 import megamek.common.compute.Compute;
 import megamek.common.containers.PlayerIDAndList;
 import megamek.common.enums.AimingMode;
+import megamek.common.enums.GamePhase;
 import megamek.common.enums.MoveStepType;
 import megamek.common.equipment.AmmoMounted;
 import megamek.common.equipment.AmmoType;
@@ -3980,8 +3981,16 @@ public class Princess extends BotClient {
     private void evadeIfNotFiring(MovePath path, boolean possibleToInflictDamage) {
         Entity pathEntity = path.getEntity();
 
+        // Only aerospace units (IAero) can take an EVADE step. An ejected pilot descending by
+        // parachute is a MekWarrior that reports isAirborne() (altitude > 0) but is not an IAero;
+        // without this guard the isAirborne()-only check below would throw a ClassCastException on
+        // the cast to IAero and hang the bot's entire turn (issue #8542).
+        if (!(pathEntity instanceof IAero aero)) {
+            return;
+        }
+
         // we cannot evade if we are out of control
-        if (pathEntity.isAero() && pathEntity.isAirborne() && ((IAero) pathEntity).isOutControlTotal()) {
+        if (pathEntity.isAero() && pathEntity.isAirborne() && aero.isOutControlTotal()) {
             return;
         }
 
@@ -3991,7 +4000,7 @@ public class Princess extends BotClient {
         // then evade
         if (pathEntity.isAirborne() &&
               !possibleToInflictDamage &&
-              (path.getMpUsed() <= AeroPathUtil.calculateMaxSafeThrust((IAero) path.getEntity()) - 2)) {
+              (path.getMpUsed() <= AeroPathUtil.calculateMaxSafeThrust(aero) - 2)) {
             path.addStep(MoveStepType.EVADE);
         }
     }
@@ -4646,6 +4655,57 @@ public class Princess extends BotClient {
         return artilleryCommandAndControl;
     }
 
+    /**
+     * Given an entity that just moved, decide if I should reveal any entities in response
+     */
+    @Override
+    protected void revealEntities(int movedEntityID) {
+    	// for each hidden entity I own
+    	// calculate a firing plan to the moved entity as if it wasn't hidden
+    	// if the firing plan has good odds to hit (based on aggression rating)
+    	// then send the reveal command for that entity
+    	if (getGame().getOptions().booleanOption(OptionsConstants.ADVANCED_HIDDEN_UNITS)) {
+    		Entity target = getGame().getEntity(movedEntityID);
+    		
+    		// if the target is not hostile/destroyed/abandoned/"broken", we don't bother considering it
+    		// also, don't bother if the target can still move after this update
+    		if (target == null || target.isDestroyed() || target.isAbandoned() 
+    				|| (target.turnWasInterrupted() && !target.isDone())
+    				|| !target.getOwner().isEnemyOf(getLocalPlayer())
+    				|| getHonorUtil().isEnemyBroken(movedEntityID, target.getOwnerId(), getForcedWithdrawal())) {
+    			return;
+    		}
+    		
+    		for (Entity shooter : getGame().getEntitiesVector()) {
+    			// if the shooter is hidden, owned by me, on the board and not already activating
+                if (shooter.isHidden() && shooter.getOwnerId() == getLocalPlayerNumber() && 
+                		(shooter.getPosition() != null) && 
+                		(shooter.getHiddenActivationPhase() == GamePhase.UNKNOWN)) {
+                	final Map<WeaponMounted, Double> ammoConservation = calcAmmoConservation(shooter);
+                	
+                	double maxDamage = FireControl.getMaxDamageAtRange(shooter, 
+                			target.getPosition().distance(shooter.getPosition()), false, false);
+                	
+                	// if we're not going to do any damage, don't reveal
+                	if (maxDamage <= 0) {
+                		continue;
+                	}
+                	
+                	FiringPlan firingPlan = getFireControl(shooter).getBestFiringPlan(shooter, target, getGame(), ammoConservation);
+                	
+                	double percentage = firingPlan.getExpectedDamage() / maxDamage;
+                	
+                	// if the expected damage (% of max possible damage at that range)
+                	// is higher than our aggression value (e.g. aggression 7 means we tolerate 30%)
+                	// then reveal
+                	if (percentage > (1.0 - (getBehaviorSettings().getHyperAggressionValue() / 10.0))) {
+                		sendActivateHidden(shooter.getId(), GamePhase.FIRING);
+                	}
+                }
+    		}
+        }
+    }
+    
     /**
      * Determines whether Princess should reroll initiative using the Tactical Genius special ability.
      *

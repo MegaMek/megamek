@@ -76,6 +76,12 @@ public abstract class Aero extends Entity implements IAero, IBomber {
     @Serial
     private static final long serialVersionUID = 7196307097459255187L;
 
+    /** An aerospace crew can only abandon on the ground; the server's abandonEntity has no airborne path. */
+    @Override
+    public boolean canEjectCrew() {
+        return crewCanLeave() && !isAirborne();
+    }
+
     // locations
     public static final int LOC_NOSE = 0;
     public static final int LOC_LEFT_WING = 1;
@@ -411,10 +417,10 @@ public abstract class Aero extends Entity implements IAero, IBomber {
     }
 
     @Override
-    protected void addSystemTechAdvancement(CompositeTechLevel ctl) {
-        super.addSystemTechAdvancement(ctl);
+    protected void addSystemTechAdvancement(CompositeTechLevel techLevel) {
+        super.addSystemTechAdvancement(techLevel);
         if (isFighter() && (getCockpitTechAdvancement() != null)) {
-            ctl.addComponent(getCockpitTechAdvancement());
+            techLevel.addComponent(getCockpitTechAdvancement(), getCockpitTypeString());
         }
     }
 

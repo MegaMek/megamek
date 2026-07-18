@@ -72,6 +72,7 @@ import megamek.client.ui.widget.MekPanelTabStrip;
 import megamek.codeUtilities.MathUtility;
 import megamek.common.AtmosphericLandingMovePath;
 import megamek.common.Hex;
+import megamek.common.IndustrialElevator;
 import megamek.common.LandingDirection;
 import megamek.common.ManeuverType;
 import megamek.common.OffBoardDirection;
@@ -873,6 +874,7 @@ public class MovementDisplay extends ActionPhaseDisplay {
         updateSearchlightButton();
         updateLoadButtons();
         updateElevationButtons();
+        updateElevatorButtons();
         updateTakeOffButtons();
         updateLandButtons();
         updateJoinButton();
@@ -1784,6 +1786,8 @@ public class MovementDisplay extends ActionPhaseDisplay {
         setVLandEnabled(false);
         setLowerEnabled(false);
         setRaiseEnabled(false);
+        setElevatorUpEnabled(false);
+        setElevatorDownEnabled(false);
         setRecklessEnabled(false);
         setGoProneEnabled(false);
         setManeuverEnabled(false);
@@ -1858,6 +1862,7 @@ public class MovementDisplay extends ActionPhaseDisplay {
         updateRACButton();
         updateSearchlightButton();
         updateElevationButtons();
+        updateElevatorButtons();
         updateTakeOffButtons();
         updateLandButtons();
         updateFlyOffButton();
@@ -2830,6 +2835,7 @@ public class MovementDisplay extends ActionPhaseDisplay {
             updateSearchlightButton();
             updateLoadButtons();
             updateElevationButtons();
+            updateElevatorButtons();
             updateTakeOffButtons();
             updateLandButtons();
             updateEvadeButton();
@@ -3011,6 +3017,106 @@ public class MovementDisplay extends ActionPhaseDisplay {
                   cmd.getFinalBoardId()));
         }
         setLowerEnabled(currentEntity.canGoDown(cmd.getFinalElevation(), cmd.getFinalCoords(), cmd.getFinalBoardId()));
+    }
+
+    /**
+     * Tracks the last unusable-elevator toast shown by {@link #updateElevatorButtons()} so each state is announced
+     * once, not on every UI refresh.
+     */
+    private String lastElevatorToastKey;
+
+    /**
+     * Updates the elevator up/down buttons based on whether the entity is on a functional industrial elevator
+     * platform. The buttons stay disabled when there is no unit or path, the unit is airborne, or the path's final hex
+     * carries no industrial elevator; when an elevator is present but unusable, the reason is logged and announced to
+     * the player with a toast (once per state) so a missing button never reads as "broken".
+     */
+    private synchronized void updateElevatorButtons() {
+        final Entity currentEntity = currentEntity();
+        if ((currentEntity == null) || (cmd == null) || currentEntity.isAirborne()) {
+            setElevatorUpEnabled(false);
+            setElevatorDownEnabled(false);
+            return;
+        }
+
+        Coords finalPos = cmd.getFinalCoords();
+        int finalBoardId = cmd.getFinalBoardId();
+        int finalElevation = cmd.getFinalElevation();
+        if (finalPos == null) {
+            setElevatorUpEnabled(false);
+            setElevatorDownEnabled(false);
+            return;
+        }
+
+        Hex hex = game.getBoard(finalBoardId).getHex(finalPos);
+        if ((hex == null) || !hex.containsTerrain(Terrains.INDUSTRIAL_ELEVATOR)) {
+            lastElevatorToastKey = null;
+            setElevatorUpEnabled(false);
+            setElevatorDownEnabled(false);
+            return;
+        }
+
+        IndustrialElevator elevator = game.getIndustrialElevator(BoardLocation.of(finalPos, finalBoardId));
+        if (elevator == null) {
+            LOGGER.debug("[IndustrialElevator] Buttons disabled for {}: elevator terrain at {} but no elevator "
+                  + "registered with the game", currentEntity.getShortName(), finalPos);
+            setElevatorUpEnabled(false);
+            setElevatorDownEnabled(false);
+            return;
+        }
+        if (!elevator.isFunctional()) {
+            LOGGER.debug("[IndustrialElevator] Buttons disabled for {}: elevator at {} is disabled",
+                  currentEntity.getShortName(), finalPos);
+            showElevatorStateToast(currentEntity, finalPos, "disabled", ToastLevel.WARNING,
+                  Messages.getString("MovementDisplay.ElevatorToast.disabled", currentEntity.getShortName()));
+            setElevatorUpEnabled(false);
+            setElevatorDownEnabled(false);
+            return;
+        }
+        int currentLoad = (int) elevator.getCurrentLoad(game);
+        if (currentLoad > elevator.getCapacityTons()) {
+            LOGGER.debug("[IndustrialElevator] Buttons disabled for {}: elevator at {} overloaded ({}t / {}t)",
+                  currentEntity.getShortName(), finalPos, currentLoad, elevator.getCapacityTons());
+            showElevatorStateToast(currentEntity, finalPos, "overloaded", ToastLevel.WARNING,
+                  Messages.getString("MovementDisplay.ElevatorToast.overloaded",
+                        currentEntity.getShortName(), currentLoad, elevator.getCapacityTons()));
+            setElevatorUpEnabled(false);
+            setElevatorDownEnabled(false);
+            return;
+        }
+        if (!elevator.isPlatformAt(finalElevation)) {
+            LOGGER.debug("[IndustrialElevator] Buttons disabled for {}: platform at level {}, unit at level {}",
+                  currentEntity.getShortName(), elevator.getPlatformLevel(), finalElevation);
+            showElevatorStateToast(currentEntity, finalPos, "platform" + elevator.getPlatformLevel(), ToastLevel.INFO,
+                  Messages.getString("MovementDisplay.ElevatorToast.platformElsewhere",
+                        currentEntity.getShortName(), elevator.getPlatformLevel()));
+            setElevatorUpEnabled(false);
+            setElevatorDownEnabled(false);
+            return;
+        }
+
+        setElevatorUpEnabled(finalElevation < elevator.getShaftTop());
+        setElevatorDownEnabled(finalElevation > elevator.getShaftBottom());
+    }
+
+    /**
+     * Shows a toast explaining why the elevator in the unit's hex cannot be used right now. Deduplicated per
+     * unit + hex + state: {@link #updateElevatorButtons()} runs on every UI refresh, but the player only needs to
+     * hear about each state once.
+     *
+     * @param entity  the unit whose elevator buttons are disabled
+     * @param hexPos  the elevator hex
+     * @param state   a short discriminator for the unusable state (part of the deduplication key)
+     * @param level   the toast level
+     * @param message the ready-to-display toast text
+     */
+    private void showElevatorStateToast(Entity entity, Coords hexPos, String state, ToastLevel level, String message) {
+        String toastKey = entity.getId() + "|" + hexPos + "|" + state;
+        if (toastKey.equals(lastElevatorToastKey)) {
+            return;
+        }
+        lastElevatorToastKey = toastKey;
+        clientgui.addToast(level, message, entity);
     }
 
     private synchronized void updateTakeOffButtons() {
@@ -6509,6 +6615,10 @@ public class MovementDisplay extends ActionPhaseDisplay {
                 }
             }
             addStepToMovePath(MoveStepType.DOWN);
+        } else if (actionCmd.equals(MoveCommand.MOVE_ELEVATOR_UP.getCmd())) {
+            addStepToMovePath(MoveStepType.ELEVATOR_ASCEND);
+        } else if (actionCmd.equals(MoveCommand.MOVE_ELEVATOR_DOWN.getCmd())) {
+            addStepToMovePath(MoveStepType.ELEVATOR_DESCEND);
         } else if (actionCmd.equals(MoveCommand.MOVE_CLIMB_MODE.getCmd())) {
             // When toggling climb mode ON, check if the Mek can actually climb
             boolean turningOn = !cmd.getFinalClimbMode();
@@ -6835,8 +6945,11 @@ public class MovementDisplay extends ActionPhaseDisplay {
                       "Confirm",
                       JOptionPane.YES_NO_OPTION);
                 if (confirm == JOptionPane.YES_OPTION) {
-                    e.setTraitorId(id);
-                    clientgui.getClient().sendUpdateEntity(e);
+                    // the /traitor command sets the pending switch on the server's own copy of the unit, where the
+                    // END phase resolves it; sending the whole unit back for one field would carry stale state along
+                    LOGGER.info("[Traitor] Requesting switch of {} (unit id {}) to player {} ({})",
+                          e.getDisplayName(), e.getId(), id, name);
+                    clientgui.getClient().sendChat(String.format("/traitor %d %d", e.getId(), id));
                 }
             }
         } else if (actionCmd.equals(MoveCommand.MOVE_CHAFF.getCmd())) {
@@ -6849,6 +6962,7 @@ public class MovementDisplay extends ActionPhaseDisplay {
         updateRACButton();
         updateSearchlightButton();
         updateElevationButtons();
+        updateElevatorButtons();
         updateTakeOffButtons();
         updateLandButtons();
         updateFlyOffButton();
@@ -7429,6 +7543,16 @@ public class MovementDisplay extends ActionPhaseDisplay {
     private void setLowerEnabled(boolean enabled) {
         getBtn(MoveCommand.MOVE_LOWER_ELEVATION).setEnabled(enabled);
         clientgui.getMenuBar().setEnabled(MoveCommand.MOVE_LOWER_ELEVATION.getCmd(), enabled);
+    }
+
+    private void setElevatorUpEnabled(boolean enabled) {
+        getBtn(MoveCommand.MOVE_ELEVATOR_UP).setEnabled(enabled);
+        clientgui.getMenuBar().setEnabled(MoveCommand.MOVE_ELEVATOR_UP.getCmd(), enabled);
+    }
+
+    private void setElevatorDownEnabled(boolean enabled) {
+        getBtn(MoveCommand.MOVE_ELEVATOR_DOWN).setEnabled(enabled);
+        clientgui.getMenuBar().setEnabled(MoveCommand.MOVE_ELEVATOR_DOWN.getCmd(), enabled);
     }
 
     private void setRecklessEnabled(boolean enabled) {

@@ -33,6 +33,7 @@
 
 package megamek.server.commands;
 
+import megamek.client.ui.Messages;
 import megamek.common.Player;
 import megamek.server.Server;
 import megamek.server.totalWarfare.TWGameManager;
@@ -47,10 +48,7 @@ public class AllowGameMasterCommand extends ServerCommand {
     private final TWGameManager gameManager;
 
     public AllowGameMasterCommand(Server server, TWGameManager gameManager) {
-        super(server, "allowGM", "Allows a player become Game Master "
-              + "Usage: /allowGM used in respond to another " +
-              "Player's request to become Game Master.  All players assigned to" +
-              " a team must allow the change.");
+        super(server, "allowGM", Messages.getString("Gamemaster.vote.help.allow"));
         this.gameManager = gameManager;
     }
 
@@ -62,48 +60,6 @@ public class AllowGameMasterCommand extends ServerCommand {
     @Override
     public void run(int connId, String[] args) {
         Player player = server.getPlayer(connId);
-
-        if (!gameManager.isGameMasterRequestInProgress()) {
-            server.sendServerChat(connId, "No vote to for Game Master is process!");
-            return;
-        }
-        voteYes(server, player);
+        gameManager.castGameMasterVote(player, true);
     }
-
-    protected static void voteYes(Server server, Player player) {
-        player.setVotedToAllowGameMaster(true);
-
-        // Tally votes
-        boolean allowGameMaster = true;
-        int voteCount = 0;
-        int eligiblePlayerCount = 0;
-        for (Player p : server.getGame().getPlayersList()) {
-            if (p.getTeam() != Player.TEAM_UNASSIGNED) {
-                allowGameMaster &= p.getVotedToAllowGameMaster();
-                if (p.getVotedToAllowGameMaster()) {
-                    voteCount++;
-                }
-                eligiblePlayerCount++;
-            }
-        }
-
-        TWGameManager gameManager = (TWGameManager) server.getGameManager();
-
-        // Inform all players about the vote
-        server.sendServerChat(player.getName() + " has voted to allow "
-              + gameManager.getPlayerRequestingGameMaster().getName()
-              + " to become Game Master"
-              + ", " + voteCount
-              + " vote(s) received out of " + eligiblePlayerCount
-              + " vote(s) needed");
-
-        // If all votes are received, perform team change
-        if (allowGameMaster) {
-            server.sendServerChat("All votes received, "
-                  + gameManager.getPlayerRequestingGameMaster().getName()
-                  + " will become Game Master.");
-            gameManager.processGameMasterRequest();
-        }
-    }
-
 }

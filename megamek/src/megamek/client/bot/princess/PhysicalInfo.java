@@ -220,6 +220,15 @@ public class PhysicalInfo {
             setMaxDamage((int) Math.floor(getShooter().getWeight() / 5.0));
         }
 
+        // Triple-Strength Myomer doubles physical damage when active (see KickAttackAction). Use the
+        // projected (post-move) heat from the shooter state so the path ranker values heating a standard
+        // TSM Mek up to its activation threshold before striking; industrial/prototype TSM are always on.
+        if ((getShooter() instanceof Mek mek)
+              && (mek.hasActiveTSM()
+                    || (mek.hasTSM(false) && (shooterState.getHeat() >= FireControl.TSM_DESIRED_HEAT)))) {
+            setMaxDamage(getMaxDamage() * 2);
+        }
+
         if (shooterState.hasNaturalAptPiloting()) {
             msg.append("\n\tAttacker has Natural Aptitude Piloting");
         }

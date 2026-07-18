@@ -1,0 +1,264 @@
+/*
+ * Copyright (C) 2026 The MegaMek Team. All Rights Reserved.
+ *
+ * This file is part of MegaMek.
+ *
+ * MegaMek is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License (GPL),
+ * version 3 or (at your option) any later version,
+ * as published by the Free Software Foundation.
+ *
+ * MegaMek is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty
+ * of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+ * See the GNU General Public License for more details.
+ *
+ * A copy of the GPL should have been included with this project;
+ * if not, see <https://www.gnu.org/licenses/>.
+ *
+ * NOTICE: The MegaMek organization is a non-profit group of volunteers
+ * creating free software for the BattleTech community.
+ *
+ * MechWarrior, BattleMech, `Mech and AeroTech are registered trademarks
+ * of The Topps Company, Inc. All Rights Reserved.
+ *
+ * Catalyst Game Labs and the Catalyst Game Labs logo are trademarks of
+ * InMediaRes Productions, LLC.
+ *
+ * MechWarrior Copyright Microsoft Corporation. MegaMek was created under
+ * Microsoft's "Game Content Usage Rules"
+ * <https://www.xbox.com/en-US/developers/rules> and it is not endorsed by or
+ * affiliated with Microsoft.
+ */
+package megamek.client.bot.princess;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.never;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
+
+import megamek.common.game.Game;
+import megamek.common.planetaryConditions.PlanetaryConditions;
+import megamek.common.units.BipedMek;
+import megamek.common.units.Entity;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+
+/**
+ * Tests for the environmental / movement / TSM heat awareness added to {@link FireControl}. These
+ * exercise the shared {@code FireControl} methods used by both Princess and CASPAR (CASPAR extends
+ * Princess and reuses this class), so they cover both bots.
+ *
+ * @author The MegaMek Team
+ */
+class FireControlHeatAwarenessTest {
+
+    private static final int HEAT_CAPACITY = 10;
+
+    private FireControl fireControl;
+    private Game mockGame;
+    private PlanetaryConditions planetaryConditions;
+
+    @BeforeEach
+    void setUp() {
+        fireControl = new FireControl(mock(Princess.class));
+
+        planetaryConditions = new PlanetaryConditions();
+        planetaryConditions.setTemperature(25); // temperate baseline
+
+        mockGame = mock(Game.class);
+        when(mockGame.getPlanetaryConditions()).thenReturn(planetaryConditions);
+    }
+
+    private BipedMek newHeatTrackingMek() {
+        BipedMek mek = mock(BipedMek.class);
+        when(mek.getHeatCapacity()).thenReturn(HEAT_CAPACITY);
+        when(mek.getHeat()).thenReturn(0);
+        when(mek.isStealthOn()).thenReturn(false);
+        when(mek.isAero()).thenReturn(false);
+        when(mek.isSpaceborne()).thenReturn(false);
+        when(mek.getGame()).thenReturn(mockGame);
+        when(mek.getShortName()).thenReturn("Test Mek");
+        return mek;
+    }
+
+    // --- predictEnvironmentalHeat -------------------------------------------------------------
+
+    @Test
+    void temperateMapAddsNoEnvironmentalHeat() {
+        planetaryConditions.setTemperature(25);
+        assertEquals(0, fireControl.predictEnvironmentalHeat(newHeatTrackingMek()));
+    }
+
+    @Test
+    void hotMapAddsEnvironmentalHeat() {
+        planetaryConditions.setTemperature(70); // (70 - 50) / 10 = 2 points added
+        assertEquals(2, fireControl.predictEnvironmentalHeat(newHeatTrackingMek()));
+    }
+
+    @Test
+    void coldMapRemovesHeatAsFreeCooling() {
+        planetaryConditions.setTemperature(-50); // (-30 - -50) / 10 = 2 points removed
+        assertEquals(-2, fireControl.predictEnvironmentalHeat(newHeatTrackingMek()));
+    }
+
+    @Test
+    void heatDissipatingArmorHalvesTheHotPenalty() {
+        planetaryConditions.setTemperature(90); // (90 - 50) / 10 = 4 points, halved to 2
+        BipedMek mek = newHeatTrackingMek();
+        when(mek.hasIntactHeatDissipatingArmor()).thenReturn(true);
+        assertEquals(2, fireControl.predictEnvironmentalHeat(mek));
+    }
+
+    @Test
+    void spacebornUnitIgnoresEnvironmentalHeat() {
+        planetaryConditions.setTemperature(90);
+        BipedMek mek = newHeatTrackingMek();
+        when(mek.isSpaceborne()).thenReturn(true);
+        assertEquals(0, fireControl.predictEnvironmentalHeat(mek));
+    }
+
+    // --- calcHeatTolerance -------------------------------------------------------------------
+
+    @Test
+    void temperateToleranceMatchesLegacyValue() {
+        // capacity 10 - heat 0 + 5 non-aero slack = 15
+        assertEquals(15, fireControl.calcHeatTolerance(newHeatTrackingMek(), false));
+    }
+
+    @Test
+    void hotMapLowersHeatTolerance() {
+        planetaryConditions.setTemperature(70); // +2 environmental heat
+        // capacity 10 - (heat 0 + environmental 2) + 5 = 13, i.e. 2 lower than the temperate 15
+        assertEquals(13, fireControl.calcHeatTolerance(newHeatTrackingMek(), false));
+    }
+
+    @Test
+    void coldMapRaisesHeatTolerance() {
+        planetaryConditions.setTemperature(-50); // -2 environmental heat -> +2 tolerance
+        // capacity 10 - (-2) + 5 = 17
+        assertEquals(17, fireControl.calcHeatTolerance(newHeatTrackingMek(), false));
+    }
+
+    @Test
+    void committedMovementHeatLowersHeatTolerance() {
+        BipedMek mek = newHeatTrackingMek();
+        mek.heatBuildup = 3; // e.g. jump heat already committed this turn
+        // capacity 10 - (heat 0 + committed 3) + 5 = 12
+        assertEquals(12, fireControl.calcHeatTolerance(mek, false));
+    }
+
+    @Test
+    void predictedMovementHeatLowersHeatTolerance() {
+        // capacity 10 - (heat 0 + predicted move 3) + 5 = 12
+        assertEquals(12, fireControl.calcHeatTolerance(newHeatTrackingMek(), false, 3));
+    }
+
+    // --- TSM incentive -----------------------------------------------------------------------
+
+    @Test
+    void nonTsmMekGetsNoHeatIncentive() {
+        BipedMek mek = newHeatTrackingMek();
+        when(mek.hasTSM(false)).thenReturn(false);
+        FiringPlan plan = mock(FiringPlan.class);
+        when(plan.getHeat()).thenReturn(9);
+
+        fireControl.applyTsmHeatIncentive(mek, plan);
+
+        verify(plan, never()).setUtility(org.mockito.ArgumentMatchers.anyDouble());
+    }
+
+    @Test
+    void tsmMekReachingActivationHeatGetsFullBonus() {
+        BipedMek mek = newHeatTrackingMek();
+        when(mek.hasTSM(false)).thenReturn(true);
+        FiringPlan plan = mock(FiringPlan.class);
+        when(plan.getHeat()).thenReturn(9); // projected heat 0 + 0 + 0 + 9 = 9 -> TSM active
+        when(plan.getUtility()).thenReturn(100.0);
+
+        fireControl.applyTsmHeatIncentive(mek, plan);
+
+        verify(plan).setUtility(100.0 + FireControl.TSM_ACTIVATION_UTILITY);
+    }
+
+    @Test
+    void tsmMekBelowActivationHeatGetsPartialBonus() {
+        BipedMek mek = newHeatTrackingMek();
+        when(mek.hasTSM(false)).thenReturn(true);
+        FiringPlan plan = mock(FiringPlan.class);
+        when(plan.getHeat()).thenReturn(6); // projected 6 -> partial 6/9 of the bonus
+        when(plan.getUtility()).thenReturn(100.0);
+
+        fireControl.applyTsmHeatIncentive(mek, plan);
+
+        double expectedBonus = FireControl.TSM_ACTIVATION_UTILITY * (6.0 / FireControl.TSM_DESIRED_HEAT);
+        verify(plan).setUtility(100.0 + expectedBonus);
+    }
+
+    // --- firingActivatesTsm (spot-gate protection) -------------------------------------------
+
+    @Test
+    void firingActivatesTsmWhenShotReachesThreshold() {
+        BipedMek mek = newHeatTrackingMek(); // base heat 0
+        when(mek.hasTSM(false)).thenReturn(true);
+        FiringPlan plan = mock(FiringPlan.class);
+        when(plan.getHeat()).thenReturn(9); // 0 + 9 = 9 -> activates
+        assertTrue(fireControl.firingActivatesTsm(mek, plan));
+    }
+
+    @Test
+    void firingDoesNotActivateTsmWhenShotFallsShort() {
+        BipedMek mek = newHeatTrackingMek(); // base heat 0
+        when(mek.hasTSM(false)).thenReturn(true);
+        FiringPlan plan = mock(FiringPlan.class);
+        when(plan.getHeat()).thenReturn(5); // 0 + 5 = 5 -> still below 9
+        assertFalse(fireControl.firingActivatesTsm(mek, plan));
+    }
+
+    @Test
+    void firingDoesNotActivateTsmWhenAlreadyHot() {
+        BipedMek mek = newHeatTrackingMek();
+        when(mek.getHeat()).thenReturn(9); // already at the threshold without firing
+        when(mek.hasTSM(false)).thenReturn(true);
+        FiringPlan plan = mock(FiringPlan.class);
+        when(plan.getHeat()).thenReturn(3);
+        assertFalse(fireControl.firingActivatesTsm(mek, plan));
+    }
+
+    @Test
+    void firingNeverActivatesTsmForNonTsmMek() {
+        BipedMek mek = newHeatTrackingMek();
+        when(mek.hasTSM(false)).thenReturn(false);
+        FiringPlan plan = mock(FiringPlan.class);
+        when(plan.getHeat()).thenReturn(9);
+        assertFalse(fireControl.firingActivatesTsm(mek, plan));
+    }
+
+    @Test
+    void tsmMekPrefersHotterPlanTowardActivation() {
+        BipedMek mek = newHeatTrackingMek();
+        when(mek.hasTSM(false)).thenReturn(true);
+
+        FiringPlan coolPlan = mock(FiringPlan.class);
+        when(coolPlan.getHeat()).thenReturn(4);
+        when(coolPlan.getUtility()).thenReturn(50.0);
+
+        FiringPlan hotPlan = mock(FiringPlan.class);
+        when(hotPlan.getHeat()).thenReturn(9);
+        when(hotPlan.getUtility()).thenReturn(50.0);
+
+        double coolBonus = FireControl.TSM_ACTIVATION_UTILITY * (4.0 / FireControl.TSM_DESIRED_HEAT);
+        double hotBonus = FireControl.TSM_ACTIVATION_UTILITY;
+
+        // The plan that reaches the activation threshold earns the larger incentive.
+        assertTrue(hotBonus > coolBonus);
+
+        fireControl.applyTsmHeatIncentive(mek, coolPlan);
+        fireControl.applyTsmHeatIncentive(mek, hotPlan);
+        verify(coolPlan).setUtility(50.0 + coolBonus);
+        verify(hotPlan).setUtility(50.0 + hotBonus);
+    }
+}

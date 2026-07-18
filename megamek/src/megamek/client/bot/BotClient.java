@@ -1285,6 +1285,16 @@ public abstract class BotClient extends Client {
                                     // before they come back on-board.
                                     new_stealth = 1;
 
+                                } else if (wantsStealthHeatForTsm(check_ent)) {
+                                    // A Mek with heat-activated Triple-Strength Myomer wants the heat that
+                                    // stealth armor generates to reach and hold the TSM activation threshold,
+                                    // and benefits from staying cloaked as it closes for doubled physical
+                                    // attacks. Keep stealth on below the shutdown-risk heat handled above,
+                                    // rather than shedding it to free heat sinks for weapons fire.
+                                    new_stealth = 1;
+                                    LOGGER.debug("[HeatTSM] {}: keeping stealth armor on to feed TSM heat",
+                                          check_ent.getShortName());
+
                                 } else {
 
                                     // Mek is not in danger of shutting down soon;
@@ -1336,6 +1346,21 @@ public abstract class BotClient extends Client {
                 }
             }
         }
+    }
+
+    /**
+     * Reports whether keeping stealth armor active benefits this unit's Triple-Strength Myomer. A Mek with
+     * heat-activated standard TSM (which switches on at elevated heat) wants the extra heat stealth armor
+     * generates to reach and hold the activation threshold, so it should not shed stealth to free heat
+     * sinks. Prototype and industrial TSM are always on and do not use the heat threshold, so they gain
+     * nothing here.
+     *
+     * @param entity the unit whose stealth armor is being toggled
+     *
+     * @return {@code true} if the unit has heat-activated standard TSM, otherwise {@code false}
+     */
+    static boolean wantsStealthHeatForTsm(Entity entity) {
+        return (entity instanceof Mek mek) && mek.hasTSM(false);
     }
 
     private @Nullable String getRandomBotMessage() {

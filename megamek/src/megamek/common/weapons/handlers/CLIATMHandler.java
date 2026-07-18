@@ -1,6 +1,6 @@
 /*
  * Copyright (c) 2005 - Ben Mazur (bmazur@sev.org).
- * Copyright (C) 2013-2025 The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2013-2026 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -69,12 +69,15 @@ import megamek.common.units.ProtoMek;
 import megamek.common.units.Tank;
 import megamek.common.units.Targetable;
 import megamek.common.weapons.Weapon;
+import megamek.logging.MMLogger;
 import megamek.server.totalWarfare.TWGameManager;
 
 /**
  * @author Sebastian Brocks, modified by Greg
  */
 public class CLIATMHandler extends ATMHandler {
+    private static final MMLogger LOGGER = MMLogger.create(CLIATMHandler.class);
+
     @Serial
     private static final long serialVersionUID = 5476183194060709574L;
     boolean isAngelECMAffected;
@@ -149,9 +152,20 @@ public class CLIATMHandler extends ATMHandler {
         // compute amount of missiles hit - this is the same for all ATM ammo types.
         int hits = calcMissileHits(vPhaseReport);
 
-        // If we use IIW or IMP we are done.
-        if ((ammoType.getMunitionType().contains(AmmoType.Munitions.M_IATM_IIW))
-              || (ammoType.getMunitionType().contains(AmmoType.Munitions.M_IATM_IMP))) {
+        // IIW warheads resolve as standard Infernos (WoR p.202 -> TW p.141): every inferno missile
+        // that strikes conventional infantry eliminates three troopers. Against infantry,
+        // calcMissileHits() collapses the salvo into a single lump (correct for standard/HE damage,
+        // wrong for infernos), so deliver one inferno missile per missile in the rack instead - this
+        // matches the count already reported by calcMissileHits() and the standard SRM inferno rule.
+        if (ammoType.getMunitionType().contains(AmmoType.Munitions.M_IATM_IIW)) {
+            if (target.isConventionalInfantry()) {
+                return infernoMissilesVersusInfantry();
+            }
+            return hits;
+        }
+
+        // If we use IMP we are done (its infantry lump is handled with directBlowInfantryDamage).
+        if (ammoType.getMunitionType().contains(AmmoType.Munitions.M_IATM_IMP)) {
             return hits;
         }
 
@@ -181,11 +195,13 @@ public class CLIATMHandler extends ATMHandler {
 
         // conventional infantry gets hit in one lump
         // BAs do one lump of damage per BA suit
+        // The infantry hit line keeps the default line break (Report.newlines = 1) so the following
+        // damage or destruction reports render on their own line, matching the standard SRM/LRM
+        // inferno output.
         if (target.isConventionalInfantry()) {
             if (attackingEntity instanceof BattleArmor) {
                 bSalvo = true;
                 Report report = new Report(3325);
-                report.newlines = 0;
                 report.subject = subjectId;
                 report.add(weaponType.getRackSize() * ((BattleArmor) attackingEntity).getShootingStrength());
                 report.add(sSalvoType);
@@ -195,7 +211,6 @@ public class CLIATMHandler extends ATMHandler {
             }
             Report report = new Report(3325);
             report.subject = subjectId;
-            report.newlines = 0;
             report.add(weaponType.getRackSize());
             report.add(sSalvoType);
             report.add(toHit.getTableDesc());
@@ -343,6 +358,24 @@ public class CLIATMHandler extends ATMHandler {
         vPhaseReport.addElement(r);
         bSalvo = true;
         return missilesHit;
+    }
+
+    /**
+     * Counts the inferno missiles delivered to a conventional infantry target by an IIW salvo. Per WoR p.202 and TW
+     * p.141, every inferno missile that strikes conventional infantry eliminates three troopers, so the whole rack
+     * strikes as individual inferno missiles rather than a single lumped hit (mirroring the standard SRM inferno
+     * behaviour). BattleArmor cannot mount iATMs, but the shooting-strength multiplier is kept for parity with the
+     * count reported in {@link #calcMissileHits(Vector)}.
+     *
+     * @return the number of inferno missiles to deliver to the conventional infantry target
+     */
+    private int infernoMissilesVersusInfantry() {
+        int infernoMissiles = (attackingEntity instanceof BattleArmor battleArmor)
+              ? weaponType.getRackSize() * battleArmor.getShootingStrength()
+              : weaponType.getRackSize();
+        LOGGER.debug("[iATM IIW] {} inferno missile(s) vs conventional infantry {} (3 troopers each)",
+              infernoMissiles, target.getDisplayName());
+        return infernoMissiles;
     }
 
     // I don't think I need to change anything here for iATMs. Seems just to

@@ -2264,8 +2264,9 @@ public class FireControl {
         int tolerance = isAero ? baseTolerance : baseTolerance + 5; // todo add Heat Tolerance to Behavior Settings.
 
         // Log only the low-frequency firing-phase calls (predictedMovementHeat == 0). The path-ranker
-        // calls this once per candidate path (a loop), so logging those would flood the log.
-        if ((predictedMovementHeat == 0) && !LOGGER.isLevelMoreSpecificThan(Level.DEBUG)) {
+        // calls this once per candidate path (a loop), so logging those would flood the log. MMLogger
+        // checks the DEBUG level itself, so no explicit level guard is needed here.
+        if (predictedMovementHeat == 0) {
             LOGGER.debug("[HeatEnv] {}: tolerance={} (capacity={}, heat={}, committedMove={}, "
                         + "environmental={}, stealth={})",
                   entity.getShortName(), tolerance, entity.getHeatCapacity(), entity.getHeat(),
@@ -2596,10 +2597,8 @@ public class FireControl {
               : TSM_ACTIVATION_UTILITY * ((double) projectedHeat / TSM_DESIRED_HEAT);
         firingPlan.setUtility(firingPlan.getUtility() + bonus);
 
-        if (!LOGGER.isLevelMoreSpecificThan(Level.DEBUG)) {
-            LOGGER.debug("[HeatTSM] {}: projected heat {} toward target {} -> TSM utility bonus {}",
-                  mek.getShortName(), projectedHeat, TSM_DESIRED_HEAT, bonus);
-        }
+        LOGGER.debug("[HeatTSM] {}: projected heat {} toward target {} -> TSM utility bonus {}",
+              mek.getShortName(), projectedHeat, TSM_DESIRED_HEAT, bonus);
     }
 
     /**

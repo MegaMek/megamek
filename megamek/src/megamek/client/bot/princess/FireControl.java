@@ -2611,10 +2611,11 @@ public class FireControl {
      * Adds a utility bonus for a Mek carrying heat-activated standard Triple-Strength Myomer when a
      * firing plan would bring its projected end-of-turn heat up to the {@link #TSM_DESIRED_HEAT}
      * activation threshold. TSM grants +2 walk MP and double physical damage, so a TSM Mek wants to run
-     * hot; this nudges it to fire enough to switch TSM on and stay as close to the threshold as it can
-     * (plans above the threshold gain no extra TSM bonus, leaving the existing overheat disutility to
-     * pull heat back down). No effect on non-TSM Meks or on prototype/industrial TSM, which do not use
-     * the heat threshold.
+     * hot; this nudges it to fire enough to switch TSM on. The reward peaks at the threshold and tapers to
+     * zero at {@link #TSM_HEAT_CEILING}, so the Mek stays as close to the threshold as it can rather than
+     * riding up into shutdown territory; heat past the ceiling gets no reward and the overheat disutility
+     * pulls it back. No effect on non-TSM Meks or on prototype/industrial TSM, which do not use the heat
+     * threshold.
      *
      * @param shooter    the unit doing the shooting
      * @param firingPlan the plan whose utility is adjusted in place
@@ -2629,9 +2630,20 @@ public class FireControl {
             return;
         }
 
-        double bonus = (projectedHeat >= TSM_DESIRED_HEAT)
-              ? TSM_ACTIVATION_UTILITY
-              : TSM_ACTIVATION_UTILITY * ((double) projectedHeat / TSM_DESIRED_HEAT);
+        // Reward rises with heat up to the activation threshold, then tapers back to zero at the ceiling,
+        // so among plans that keep TSM on the Mek prefers the one closest to the threshold and does not
+        // ride the heat scale up toward shutdown.
+        double bonus;
+        if (projectedHeat < TSM_DESIRED_HEAT) {
+            bonus = TSM_ACTIVATION_UTILITY * ((double) projectedHeat / TSM_DESIRED_HEAT);
+        } else {
+            int band = Math.max(1, TSM_HEAT_CEILING - TSM_DESIRED_HEAT);
+            double overshoot = projectedHeat - TSM_DESIRED_HEAT;
+            bonus = TSM_ACTIVATION_UTILITY * Math.max(0.0, 1.0 - (overshoot / band));
+        }
+        if (bonus <= 0.0) {
+            return;
+        }
         firingPlan.setUtility(firingPlan.getUtility() + bonus);
 
         LOGGER.debug("[HeatTSM] {}: projected end-of-turn heat {} toward target {} -> TSM utility bonus {}",

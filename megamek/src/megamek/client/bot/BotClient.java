@@ -1286,14 +1286,17 @@ public abstract class BotClient extends Client {
                                     new_stealth = 1;
 
                                 } else if (wantsStealthHeatForTsm(check_ent)) {
-                                    // A Mek with heat-activated Triple-Strength Myomer wants the heat that
-                                    // stealth armor generates to reach and hold the TSM activation threshold,
-                                    // and benefits from staying cloaked as it closes for doubled physical
-                                    // attacks. Keep stealth on below the shutdown-risk heat handled above,
-                                    // rather than shedding it to free heat sinks for weapons fire.
-                                    new_stealth = 1;
-                                    LOGGER.debug("[HeatTSM] {}: keeping stealth armor on to feed TSM heat",
-                                          check_ent.getShortName());
+                                    // A Mek with heat-activated Triple-Strength Myomer uses stealth armor's
+                                    // heat to reach the TSM activation threshold while it closes, and stays
+                                    // cloaked during the approach. Once it is adjacent to an enemy, though, it
+                                    // drops stealth: at melee it needs its heat sinks free to fire weapons
+                                    // (keeping its own heat up for TSM) while it makes doubled physical
+                                    // attacks, and stealth's defensive value against an adjacent foe is small.
+                                    boolean adjacentToEnemy = isAdjacentToEnemy(check_ent);
+                                    new_stealth = adjacentToEnemy ? 0 : 1;
+                                    LOGGER.debug("[HeatTSM] {}: stealth armor {} for TSM ({})",
+                                          check_ent.getShortName(), (new_stealth == 1) ? "on" : "off",
+                                          adjacentToEnemy ? "adjacent - firing/melee" : "closing");
 
                                 } else {
 
@@ -1361,6 +1364,25 @@ public abstract class BotClient extends Client {
      */
     static boolean wantsStealthHeatForTsm(Entity entity) {
         return (entity instanceof Mek mek) && mek.hasTSM(false);
+    }
+
+    /**
+     * @param entity the unit whose surroundings are being checked
+     *
+     * @return {@code true} if any enemy of {@code entity} occupies a hex adjacent to it (melee range),
+     *       otherwise {@code false}
+     */
+    private boolean isAdjacentToEnemy(Entity entity) {
+        if (entity.getPosition() == null) {
+            return false;
+        }
+        for (Entity other : game.getEntitiesVector()) {
+            if (entity.isEnemyOf(other) && (other.getPosition() != null)
+                  && (Compute.effectiveDistance(game, entity, other) <= 1)) {
+                return true;
+            }
+        }
+        return false;
     }
 
     private @Nullable String getRandomBotMessage() {

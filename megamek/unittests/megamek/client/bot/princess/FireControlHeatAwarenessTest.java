@@ -237,6 +237,35 @@ class FireControlHeatAwarenessTest {
     }
 
     @Test
+    void tsmMekOvershootAboveTargetGetsTaperedBonus() {
+        BipedMek mek = newHeatTrackingMek();
+        when(mek.getHeat()).thenReturn(17);
+        when(mek.hasTSM(false)).thenReturn(true);
+        FiringPlan plan = mock(FiringPlan.class);
+        when(plan.getHeat()).thenReturn(4); // end-of-turn heat 17 + 4 - 10 = 11, i.e. 2 into the safe band
+        when(plan.getUtility()).thenReturn(100.0);
+
+        fireControl.applyTsmHeatIncentive(mek, plan);
+
+        int band = FireControl.TSM_HEAT_CEILING - FireControl.TSM_DESIRED_HEAT;
+        double expectedBonus = FireControl.TSM_ACTIVATION_UTILITY * (1.0 - 2.0 / band);
+        verify(plan).setUtility(100.0 + expectedBonus);
+    }
+
+    @Test
+    void tsmMekAtCeilingGetsNoBonus() {
+        BipedMek mek = newHeatTrackingMek();
+        when(mek.getHeat()).thenReturn(19);
+        when(mek.hasTSM(false)).thenReturn(true);
+        FiringPlan plan = mock(FiringPlan.class);
+        when(plan.getHeat()).thenReturn(4); // end-of-turn heat 19 + 4 - 10 = 13 = ceiling -> reward tapered to 0
+
+        fireControl.applyTsmHeatIncentive(mek, plan);
+
+        verify(plan, never()).setUtility(org.mockito.ArgumentMatchers.anyDouble());
+    }
+
+    @Test
     void wellCooledTsmMekGetsNoBonusWhenHeatFullyDissipates() {
         // Regression for the Commando COM-7T playtest: a TSM Mek whose sinks shed everything it fires
         // never reaches the threshold, so it must earn no bonus (heat 0 + plan 9 - capacity 10 = 0).

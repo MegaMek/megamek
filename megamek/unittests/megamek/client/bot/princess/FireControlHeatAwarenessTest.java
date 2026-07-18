@@ -267,6 +267,21 @@ class FireControlHeatAwarenessTest {
     }
 
     @Test
+    void tsmMekWithNoWeaponHeatGetsNoBonus() {
+        // A Mek already at TSM heat from passive sources (here current heat 20 vs capacity 10) must not be
+        // rewarded for a plan that fires nothing, since such a plan builds no heat toward activation.
+        BipedMek mek = newHeatTrackingMek();
+        when(mek.getHeat()).thenReturn(20);
+        when(mek.hasTSM(false)).thenReturn(true);
+        FiringPlan plan = mock(FiringPlan.class);
+        when(plan.getHeat()).thenReturn(0);
+
+        fireControl.applyTsmHeatIncentive(mek, plan);
+
+        verify(plan, never()).setUtility(anyDouble());
+    }
+
+    @Test
     void wellCooledTsmMekGetsNoBonusWhenHeatFullyDissipates() {
         // Regression for the Commando COM-7T playtest: a TSM Mek whose sinks shed everything it fires
         // never reaches the threshold, so it must earn no bonus (heat 0 + plan 9 - capacity 10 = 0).

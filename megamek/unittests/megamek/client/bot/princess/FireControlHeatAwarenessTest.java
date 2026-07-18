@@ -157,6 +157,23 @@ class FireControlHeatAwarenessTest {
         assertEquals(12, fireControl.calcHeatTolerance(newHeatTrackingMek(), false, 3));
     }
 
+    @Test
+    void heatActivatedTsmMekGetsRaisedTolerance() {
+        BipedMek mek = newHeatTrackingMek();
+        when(mek.hasTSM(false)).thenReturn(true);
+        // TSM tolerance = (capacity 10 - load 0) + ceiling 13 = 23, above the normal non-TSM 15, so the
+        // overheat penalty does not fight the Mek's climb to the activation band.
+        assertEquals(HEAT_CAPACITY + FireControl.TSM_HEAT_CEILING,
+              fireControl.calcHeatTolerance(mek, false));
+    }
+
+    @Test
+    void nonTsmMekKeepsNormalTolerance() {
+        BipedMek mek = newHeatTrackingMek();
+        when(mek.hasTSM(false)).thenReturn(false);
+        assertEquals(15, fireControl.calcHeatTolerance(mek, false));
+    }
+
     // --- projectedEndOfTurnHeat (dissipation-aware) ------------------------------------------
 
     @Test

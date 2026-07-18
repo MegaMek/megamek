@@ -267,6 +267,25 @@ public class ForceGeneratorViewUi implements ActionListener {
         return rightPanel;
     }
 
+    /**
+     * The embedded options panel (inputs, transport, composition summary, and the Generate button).
+     * Exposed so hosts (e.g. MekHQ's Force Generator tab) can seed the faction / year and read back
+     * the user's selections without re-implementing the controls.
+     */
+    public ForceGeneratorOptionsView getOptionsView() {
+        return panControls;
+    }
+
+    /**
+     * The force rolled by the most recent Generate, or {@code null} if nothing has been generated yet.
+     * The tree root holds the rolled {@link ForceDescriptor}; hosts can commit exactly what the player
+     * previewed.
+     */
+    public ForceDescriptor getGeneratedForce() {
+        Object root = (forceTree == null) ? null : forceTree.getModel().getRoot();
+        return (root instanceof ForceDescriptor fd) ? fd : null;
+    }
+
     public void setYear(int year) {
         panControls.setCurrentYear(year);
     }

@@ -66,7 +66,7 @@ public class CLHeavyMGA extends AmmoWeapon {
 
         name = "Heavy Machine Gun Array";
         setInternalName("CLHMGA");
-        setInternalName("Clan Heavy Machine Gun Array");
+        addLookupName("Clan Heavy Machine Gun Array");
         sortingName = "MGA D";
         heat = 0;
         damage = 3;

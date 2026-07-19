@@ -11609,10 +11609,10 @@ public class MiscType extends EquipmentType {
         MiscType misc = new MiscType();
         // Not Covered in IO so using the old stats from TO.
         misc.name = "Mission Equipment Storage";
+        misc.setInternalName(EquipmentTypeLookup.BA_MISSION_EQUIPMENT);
         misc.addLookupName("Mission Equipment Storage (20 kg)");
         misc.addLookupName("Mission Equipment Storage (5kg)");
         misc.addLookupName("Mission Equipment Storage (200 kg)");
-        misc.setInternalName(EquipmentTypeLookup.BA_MISSION_EQUIPMENT);
         misc.tonnage = TONNAGE_VARIABLE;
         misc.criticalSlots = 1;
         misc.flags = misc.flags.or(F_VARIABLE_SIZE, F_BA_EQUIPMENT, F_BA_MISSION_EQUIPMENT)

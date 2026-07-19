@@ -42,6 +42,7 @@ import megamek.common.equipment.AmmoType;
 import megamek.common.equipment.Engine;
 import megamek.common.equipment.EquipmentType;
 import megamek.common.equipment.MiscType;
+import megamek.common.equipment.enums.MiscTypeFlag;
 import megamek.common.equipment.WeaponType;
 import megamek.common.loaders.MekSummary;
 import megamek.common.units.Aero;
@@ -724,6 +725,9 @@ public class ModelRecord extends AbstractUnitRecord {
                 if (eq.hasFlag(MiscType.F_SPACE_ADAPTATION)) {
                     roles.add(MissionRole.MARINE);
                 }
+                // Add the umbrella ENGINEER role plus any specific engineer facet (bridging,
+                // demolition, fieldworks, minesweeping) implied by carried engineering equipment.
+                addEngineerRoles(eq, roles);
                 // Save a bit of time, anything introduced after this date is assumed to be
                 // advanced
                 if (!losTech && (eq.getIntroductionDate() >= 3067)) {
@@ -755,6 +759,74 @@ public class ModelRecord extends AbstractUnitRecord {
         primitive = basePrimitive && !losTech && !clan;
         retroTech = basePrimitive && (losTech || clan);
 
+    }
+
+    /**
+     * Adds the umbrella {@link MissionRole#ENGINEER} role, plus any specific combat engineer facet, based on engineering
+     * equipment carried by the unit. Facets are additive: a unit that mounts a bridge layer, for example, gains both
+     * {@code ENGINEER} and {@code BRIDGE_LAYER}. Infantry engineer specializations are covered here as well, because
+     * they are implemented as carried equipment (vibro-shovel for trench/fieldworks, demolition charge, infantry bridge
+     * kit, and minesweeper).
+     *
+     * <p>Firefighting is intentionally not derived here. Firefighting sprayers are dual-use (they may instead carry
+     * incendiary or other fluids), so {@link MissionRole#FIREFIGHTER} is left to explicit data tagging to avoid false
+     * positives.</p>
+     *
+     * @param equipment a single piece of the unit's equipment to inspect for engineering capability
+     * @param roles     the role set to add any derived engineer roles to
+     */
+    static void addEngineerRoles(EquipmentType equipment, Set<MissionRole> roles) {
+        boolean isEngineerEquipment = false;
+
+        // Bridging: vehicle/Mek bridge layers and the infantry bridge kit
+        if (equipment.hasFlag(MiscTypeFlag.F_LIGHT_BRIDGE_LAYER)
+              || equipment.hasFlag(MiscTypeFlag.F_MEDIUM_BRIDGE_LAYER)
+              || equipment.hasFlag(MiscTypeFlag.F_HEAVY_BRIDGE_LAYER)
+              || equipment.hasFlag(MiscTypeFlag.S_BRIDGE_KIT)) {
+            roles.add(MissionRole.BRIDGE_LAYER);
+            isEngineerEquipment = true;
+        }
+
+        // Fieldworks / earthmoving: bulldozer, backhoe, mining drill, and the infantry vibro-shovel
+        if (equipment.hasFlag(MiscTypeFlag.F_BULLDOZER)
+              || equipment.hasFlag(MiscTypeFlag.S_BACKHOE)
+              || equipment.hasFlag(MiscTypeFlag.S_MINING_DRILL)
+              || equipment.hasFlag(MiscTypeFlag.S_VIBRO_SHOVEL)) {
+            roles.add(MissionRole.FIELDWORKS);
+            isEngineerEquipment = true;
+        }
+
+        // Demolition / breaching: wrecking ball, rock cutter, pile driver, and the infantry demolition charge
+        if (equipment.hasFlag(MiscTypeFlag.S_WRECKING_BALL)
+              || equipment.hasFlag(MiscTypeFlag.S_ROCK_CUTTER)
+              || equipment.hasFlag(MiscTypeFlag.S_PILE_DRIVER)
+              || equipment.hasFlag(MiscTypeFlag.S_DEMOLITION_CHARGE)) {
+            roles.add(MissionRole.DEMOLITION);
+            isEngineerEquipment = true;
+        }
+
+        // Mine clearance: the vehicle minesweeper and the infantry/battle armor minesweeper
+        if (equipment.hasFlag(MiscTypeFlag.F_MINESWEEPER)
+              || equipment.hasFlag(MiscTypeFlag.S_MINESWEEPER)) {
+            roles.add(MissionRole.MINESWEEPER);
+            isEngineerEquipment = true;
+        }
+
+        // General engineering/industrial work tools that mark a unit as an engineer without implying a
+        // specific specialization: recovery (salvage arm, lift hoist), fabrication (spot welder), and
+        // cutting/clearing (chainsaw, dual saw, combine).
+        if (equipment.hasFlag(MiscTypeFlag.F_SALVAGE_ARM)
+              || equipment.hasFlag(MiscTypeFlag.F_LIFT_HOIST)
+              || equipment.hasFlag(MiscTypeFlag.S_SPOT_WELDER)
+              || equipment.hasFlag(MiscTypeFlag.S_CHAINSAW)
+              || equipment.hasFlag(MiscTypeFlag.S_DUAL_SAW)
+              || equipment.hasFlag(MiscTypeFlag.S_COMBINE)) {
+            isEngineerEquipment = true;
+        }
+
+        if (isEngineerEquipment) {
+            roles.add(MissionRole.ENGINEER);
+        }
     }
 
     /**

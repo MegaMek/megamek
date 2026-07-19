@@ -133,6 +133,11 @@ public class ForceGeneratorOptionsView extends JPanel implements FocusListener, 
     private JCheckBox chkRoleFieldGun;
     private JCheckBox chkRoleFieldArtillery;
     private JCheckBox chkRoleFieldMissileArtillery;
+    private JCheckBox chkRoleInfEngineer;
+    private JCheckBox chkRoleInfFieldworks;
+    private JCheckBox chkRoleInfBridgeLayer;
+    private JCheckBox chkRoleInfDemolition;
+    private JCheckBox chkRoleInfFirefighter;
 
     private JCheckBox chkRoleAirRecon;
     private JCheckBox chkRoleGroundSupport;
@@ -487,6 +492,31 @@ public class ForceGeneratorOptionsView extends JPanel implements FocusListener, 
         gbc.gridy = 0;
         panInfRole.add(chkRoleFieldMissileArtillery, gbc);
 
+        chkRoleInfEngineer = createMissionRoleCheck(MissionRole.ENGINEER);
+        gbc.gridx = 0;
+        gbc.gridy = 1;
+        panInfRole.add(chkRoleInfEngineer, gbc);
+
+        chkRoleInfFieldworks = createMissionRoleCheck(MissionRole.FIELDWORKS);
+        gbc.gridx = 1;
+        gbc.gridy = 1;
+        panInfRole.add(chkRoleInfFieldworks, gbc);
+
+        chkRoleInfBridgeLayer = createMissionRoleCheck(MissionRole.BRIDGE_LAYER);
+        gbc.gridx = 2;
+        gbc.gridy = 1;
+        panInfRole.add(chkRoleInfBridgeLayer, gbc);
+
+        chkRoleInfDemolition = createMissionRoleCheck(MissionRole.DEMOLITION);
+        gbc.gridx = 0;
+        gbc.gridy = 2;
+        panInfRole.add(chkRoleInfDemolition, gbc);
+
+        chkRoleInfFirefighter = createMissionRoleCheck(MissionRole.FIREFIGHTER);
+        gbc.gridx = 1;
+        gbc.gridy = 2;
+        panInfRole.add(chkRoleInfFirefighter, gbc);
+
         gbc = new GridBagConstraints();
         gbc.anchor = GridBagConstraints.NORTHWEST;
 
@@ -617,6 +647,21 @@ public class ForceGeneratorOptionsView extends JPanel implements FocusListener, 
                     }
                     if (chkRoleFieldMissileArtillery.isSelected()) {
                         fd.getRoles().add(MissionRole.MISSILE_ARTILLERY);
+                    }
+                    if (chkRoleInfEngineer.isSelected()) {
+                        fd.getRoles().add(MissionRole.ENGINEER);
+                    }
+                    if (chkRoleInfFieldworks.isSelected()) {
+                        fd.getRoles().add(MissionRole.FIELDWORKS);
+                    }
+                    if (chkRoleInfBridgeLayer.isSelected()) {
+                        fd.getRoles().add(MissionRole.BRIDGE_LAYER);
+                    }
+                    if (chkRoleInfDemolition.isSelected()) {
+                        fd.getRoles().add(MissionRole.DEMOLITION);
+                    }
+                    if (chkRoleInfFirefighter.isSelected()) {
+                        fd.getRoles().add(MissionRole.FIREFIGHTER);
                     }
                     break;
                 case UnitType.AERO:

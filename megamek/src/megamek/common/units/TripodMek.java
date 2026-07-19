@@ -120,7 +120,10 @@ public class TripodMek extends MekWithArms {
     @Override
     public boolean isImmobile() {
         if (Game.rulesManager.getRulesUnits().getDoesLegDestructionCauseImmobile(this)) {
-            return false;
+            return true;
+        }
+        if (getOriginalWalkMP() > 0 && Game.rulesManager.getRulesMovement().checkMPZeroCauseImmobile(getWalkMP(MPCalculationSetting.NO_HEAT_OR_EQUIPMENT))) {
+            return true;
         }
         return super.isImmobile();
     }

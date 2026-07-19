@@ -34,9 +34,11 @@ package megamek.common.rules.totalwarfare;
  */
 
 
+import megamek.common.MPCalculationSetting;
 import megamek.common.rules.core.CoreRulesMovement;
 import megamek.common.units.Entity;
 import megamek.common.units.EntityMovementMode;
+import megamek.common.units.Mek;
 
 public class TWRulesMovement extends CoreRulesMovement {
 
@@ -78,5 +80,18 @@ public class TWRulesMovement extends CoreRulesMovement {
     @Override
     public boolean cumulativeLegDamage(boolean bTOLegDamage) {
         return bTOLegDamage;
+    }
+    
+    // Only unconscious, shut down, or leg destruction causes immobile
+    @Override
+    public boolean checkMPZeroCauseImmobile(int walkMP) { return false; }
+    
+    @Override
+    public int getMekRunMP(int badLegs, int walkMP, int runMP) {
+        if (badLegs == 0) {
+            return runMP;
+        } else {
+            return walkMP;
+        }
     }
 }

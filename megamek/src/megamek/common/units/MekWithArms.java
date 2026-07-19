@@ -446,11 +446,8 @@ public abstract class MekWithArms extends Mek {
 
     @Override
     public int getRunMP(MPCalculationSetting mpCalculationSetting) {
-        if (countBadLegs() == 0) {
-            return super.getRunMP(mpCalculationSetting);
-        } else {
-            return getWalkMP(mpCalculationSetting);
-        }
+        return Game.rulesManager.getRulesMovement().getMekRunMP(countBadLegs(), getWalkMP(mpCalculationSetting),
+              super.getRunMP(mpCalculationSetting));
     }
 
     @Override

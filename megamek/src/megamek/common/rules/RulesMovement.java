@@ -34,8 +34,11 @@ package megamek.common.rules;
  */
 
 
+import megamek.common.MPCalculationSetting;
 import megamek.common.units.EntityMovementMode;
 import megamek.common.units.Entity;
+import megamek.common.units.Mek;
+import megamek.common.units.MekWithArms;
 
 public abstract class RulesMovement {
     // Can units skid?
@@ -53,4 +56,12 @@ public abstract class RulesMovement {
 
     // Do we add leg damage together, or do hips override
     public abstract boolean cumulativeLegDamage(boolean b);
+
+    // Does 0 MP cause immobile? yes. Core p.49
+    public boolean checkMPZeroCauseImmobile(int walkMP) {
+        return (walkMP == 0) ? true : false; 
+    }
+
+    // What is our Running MP?
+    public abstract int getMekRunMP(int badLegs, int walkMP, int runMP);
 }

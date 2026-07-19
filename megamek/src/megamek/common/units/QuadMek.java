@@ -117,7 +117,10 @@ public class QuadMek extends Mek {
     @Override
     public boolean isImmobile() {
         if (Game.rulesManager.getRulesUnits().getDoesLegDestructionCauseImmobile(this)) {
-            return false;
+            return true;
+        }
+        if (getOriginalWalkMP() > 0 && Game.rulesManager.getRulesMovement().checkMPZeroCauseImmobile(getWalkMP(MPCalculationSetting.NO_HEAT_OR_EQUIPMENT))) {
+            return true;
         }
         return super.isImmobile();
     }
@@ -236,12 +239,11 @@ public class QuadMek extends Mek {
 
     @Override
     public int getRunMP(MPCalculationSetting mpCalculationSetting) {
-        if (countBadLegs() <= 1 ||
-              (this instanceof QuadVee && getConversionMode() == QuadVee.CONV_MODE_VEHICLE && !convertingNow)) {
+        if (this instanceof QuadVee && getConversionMode() == QuadVee.CONV_MODE_VEHICLE && !convertingNow) {
             return super.getRunMP(mpCalculationSetting);
-        } else {
-            return getWalkMP(mpCalculationSetting);
         }
+        return Game.rulesManager.getRulesMovement().getMekRunMP(countBadLegs(), getWalkMP(mpCalculationSetting),
+              super.getRunMP(mpCalculationSetting));
     }
 
     @Override

@@ -87,7 +87,10 @@ public class BipedMek extends MekWithArms {
     @Override
     public boolean isImmobile() {
         if (Game.rulesManager.getRulesUnits().getDoesLegDestructionCauseImmobile(this)) {
-            return false;
+            return true;
+        }
+        if (getOriginalWalkMP() > 0 && Game.rulesManager.getRulesMovement().checkMPZeroCauseImmobile(getWalkMP(MPCalculationSetting.NO_HEAT_OR_EQUIPMENT))) {
+            return true;
         }
         return super.isImmobile();
     }
@@ -146,7 +149,7 @@ public class BipedMek extends MekWithArms {
             }
         }
 
-        if (hasShield()) {
+        if (!mpCalculationSetting.ignoreShield() && hasShield()) {
             mp -= getNumberOfShields(MiscTypeFlag.S_SHIELD_LARGE);
             mp -= getNumberOfShields(MiscTypeFlag.S_SHIELD_MEDIUM);
         }

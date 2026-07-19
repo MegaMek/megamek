@@ -34,6 +34,7 @@ package megamek.common.rules.core;
  */
 
 
+import megamek.common.MPCalculationSetting;
 import megamek.common.equipment.MiscType;
 import megamek.common.rules.RulesMovement;
 import megamek.common.units.BipedMek;
@@ -112,4 +113,8 @@ public class CoreRulesMovement extends RulesMovement {
         return true;
     }
 
+    // Run is still allowed with a broken leg. Core p.90
+    public int getMekRunMP(int badLegs, int walkMP, int runMP) {
+        return runMP;
+    }
 }

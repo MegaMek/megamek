@@ -1395,6 +1395,8 @@ public abstract class BVCalculator {
      */
     public void processTagBonus() {
         long tagCount = workingTAGCount(entity);
+        // CORE if we need to adapt this for only SG, replace (munitionType.contains(AmmoType.Munitions.M_SEMIGUIDED))
+        // (munitionType.contains(AmmoType.Munitions.M_SEMIGUIDED) && Game.rulesManager.getRulesGame().tagBVBump())
         if ((tagCount == 0) || (entity.getGame() == null) || !Game.rulesManager.getRulesGame().tagBVBump()) {
             return;
         }

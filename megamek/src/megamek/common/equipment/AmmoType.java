@@ -6523,7 +6523,6 @@ public class AmmoType extends EquipmentType {
         ammo.addLookupName("Clan Ammo MG - Half");
         ammo.addLookupName("CLMG Ammo (100)");
         ammo.addLookupName("Clan Machine Gun Ammo (1/2 ton)");
-        ammo.addLookupName("Half Machine Gun Ammo");
         ammo.damagePerShot = 1;
         ammo.rackSize = 2;
         ammo.ammoType = AmmoTypeEnum.MG;

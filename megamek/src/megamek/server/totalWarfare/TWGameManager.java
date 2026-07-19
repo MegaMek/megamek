@@ -15864,9 +15864,11 @@ public class TWGameManager extends AbstractGameManager {
                 addNewLines();
                 addReport(doEntityDisplacement(te, src, dest, new PilotingRollData(te.getId(), 2, "was charged")));
                 addReport(doEntityDisplacement(ae, ae.getPosition(), src, chargePSR));
+            } else {
+                PilotingRollData psr = new PilotingRollData(te.getId(), 2, "was charged", false);
+                game.addPSR(psr);
+                game.addPSR(chargePSR);
             }
-
-            // CORE even though we don't displace, we should do a PSR
 
             addNewLines();
 

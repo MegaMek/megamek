@@ -99,4 +99,9 @@ public class CoreRulesWeapons extends RulesWeapons {
     public int getMGABonus() {
         return 2;
     }
+
+    // HGR does not cause PSRs
+    public boolean canHGRTriggerPSR(int mpUsed, int weightClass) {
+        return false;
+    }
 }

@@ -74,4 +74,7 @@ public abstract class RulesWeapons {
 
     // increase the number of hits for MGA
     public abstract int getMGABonus();
+
+    // does the HGR trigger a PSR?
+    public abstract boolean canHGRTriggerPSR(int mpUsed, int weightClass);
 }

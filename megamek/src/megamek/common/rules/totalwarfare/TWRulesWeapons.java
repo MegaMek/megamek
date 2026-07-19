@@ -39,6 +39,8 @@ import megamek.common.equipment.Mounted;
 import megamek.common.equipment.WeaponMounted;
 import megamek.common.rules.core.CoreRulesWeapons;
 import megamek.common.units.Entity;
+import megamek.common.units.EntityWeightClass;
+import megamek.common.units.Mek;
 
 import java.util.Vector;
 
@@ -121,5 +123,14 @@ public class TWRulesWeapons extends CoreRulesWeapons {
     @Override
     public int getMGABonus() {
         return 0;
+    }
+
+    // HGR can cause PSR
+    @Override
+    public boolean canHGRTriggerPSR(int mpUsed, int weightClass) {
+        if (mpUsed > 0 && weightClass <= EntityWeightClass.WEIGHT_ASSAULT) {
+            return true;
+        }
+        return false;
     }
 }

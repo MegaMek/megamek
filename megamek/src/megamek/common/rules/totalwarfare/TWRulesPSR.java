@@ -35,6 +35,7 @@ package megamek.common.rules.totalwarfare;
  */
 
 import megamek.common.CriticalSlot;
+import megamek.common.annotations.Nullable;
 import megamek.common.game.Game;
 import megamek.common.rolls.PilotingRollData;
 import megamek.common.rolls.TargetRoll;

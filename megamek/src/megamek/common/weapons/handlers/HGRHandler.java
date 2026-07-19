@@ -73,10 +73,8 @@ public class HGRHandler extends GRHandler {
             return true;
         }
 
-        if ((attackingEntity.mpUsed > 0) && (attackingEntity instanceof Mek) && attackingEntity.canFall()
-              // Only check up to assault class, superheavies do not roll.
-              && attackingEntity.getWeightClass() <= EntityWeightClass.WEIGHT_ASSAULT) {
-            // Modifier is weight-based.
+        if (Game.rulesManager.getRulesWeapons().canHGRTriggerPSR(attackingEntity.mpUsed,
+              attackingEntity.getWeightClass()) && attackingEntity instanceof Mek && attackingEntity.canFall()) {
             PilotingRollData psr = getPilotingRollData();
             game.addPSR(psr);
         }

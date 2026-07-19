@@ -33,6 +33,7 @@ package megamek.common.rules;
  * affiliated with Microsoft.
  */
 
+import megamek.common.annotations.Nullable;
 import megamek.common.game.Game;
 import megamek.common.rolls.PilotingRollData;
 import megamek.common.units.Entity;

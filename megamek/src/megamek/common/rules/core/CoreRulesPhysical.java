@@ -43,6 +43,7 @@ import megamek.common.equipment.MiscMounted;
 import megamek.common.equipment.MiscType;
 import megamek.common.equipment.Mounted;
 import megamek.common.equipment.enums.MiscTypeFlag;
+import megamek.common.interfaces.ILocationExposureStatus;
 import megamek.common.rolls.Roll;
 import megamek.common.rules.RulesPhysical;
 import megamek.common.units.BipedMek;
@@ -202,4 +203,19 @@ public class CoreRulesPhysical extends RulesPhysical {
     
     // Punches are -1 to hit. Core p.82
     public int getPunchModifier() { return -1;}
+
+    // Charges deal different damage Core p.78
+    public int getChargeDamage(Entity entity, Entity target, boolean tacOps, int mos, int hexesMoved) {
+        return (int) Math
+                  .ceil((entity.getWeight() / 5.0)
+                        * (Compute.getTargetMovementModifier(hexesMoved, false, false, entity.getGame()).getValue() + 1)
+                  * (entity.getLocationStatus(1) == ILocationExposureStatus.WET ? 0.5 : 1));
+    }
+
+    // Attacker damage from a charge. Core p.78
+    public int getChargeDamageTakenBy(Entity entity, double effectiveTargetWeight, boolean tacOps, int distance) {
+        return (int) Math
+                  .ceil((effectiveTargetWeight / 10.0)
+                        * (entity.getLocationStatus(1) == ILocationExposureStatus.WET ? 0.5 : 1));
+    }
 }

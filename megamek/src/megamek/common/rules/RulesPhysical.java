@@ -83,4 +83,11 @@ public abstract class RulesPhysical {
 
     // Do we have a modifier for punching
     public abstract int getPunchModifier();
+
+    // What is the damage of the charge
+    public abstract int getChargeDamage(Entity entity, Entity target, boolean tacOps, int mos, int hexesMoved);
+
+    // How much damage does the charge attacker take
+    public abstract int getChargeDamageTakenBy(Entity entity, double effectiveTargetWeight, boolean tacOps,
+          int distance);
 }

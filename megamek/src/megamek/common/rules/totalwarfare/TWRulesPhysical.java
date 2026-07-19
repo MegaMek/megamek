@@ -39,6 +39,7 @@ import megamek.common.ToHitData;
 import megamek.common.compute.Compute;
 import megamek.common.equipment.MiscType;
 import megamek.common.equipment.Mounted;
+import megamek.common.interfaces.ILocationExposureStatus;
 import megamek.common.rolls.Roll;
 import megamek.common.rules.core.CoreRulesPhysical;
 import megamek.common.units.BipedMek;
@@ -153,4 +154,38 @@ public class TWRulesPhysical extends CoreRulesPhysical {
     @Override
     public int getPunchModifier() { return 0;}
 
+    @Override
+    public int getChargeDamage(Entity entity, Entity target, boolean tacOps, int mos, int hexesMoved) {
+        if (!tacOps) {
+            if (hexesMoved == 0) {
+                hexesMoved = 1;
+            }
+            return (int) Math
+                  .ceil((entity.getWeight() / 10.0)
+                        * (hexesMoved - 1)
+                        * (entity.getLocationStatus(1) == ILocationExposureStatus.WET ? 0.5
+                        : 1));
+        }
+        return (int) Math
+              .floor(((((target.getWeight() * entity.getWeight()) * hexesMoved) / (target
+                    .getWeight()
+                    + entity
+                    .getWeight()))
+                    / 10) +
+                    mos);
+    }
+
+    // Charge damage for the attacker
+    @Override
+    public int getChargeDamageTakenBy(Entity entity, double effectiveTargetWeight, boolean tacOps, int distance) {
+        if (!tacOps) {
+            return (int) Math
+                  .ceil((effectiveTargetWeight / 10.0)
+                        * (entity.getLocationStatus(1) == ILocationExposureStatus.WET ? 0.5 : 1));
+        } else {
+            return (int) Math
+                  .floor((((effectiveTargetWeight * entity.getWeight()) * distance)
+                        / (effectiveTargetWeight + entity.getWeight())) / 10);
+        }
+    }
 }

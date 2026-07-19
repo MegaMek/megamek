@@ -15866,7 +15866,10 @@ public class TWGameManager extends AbstractGameManager {
                 addReport(doEntityDisplacement(ae, ae.getPosition(), src, chargePSR));
             }
 
+            // CORE even though we don't displace, we should do a PSR
+
             addNewLines();
+
         }
 
         // if the target is an industrial mek, it needs to check for crits at the end of

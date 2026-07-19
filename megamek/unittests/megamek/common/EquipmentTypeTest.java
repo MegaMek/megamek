@@ -125,6 +125,7 @@ class EquipmentTypeTest {
             setInternalName("Parent");
             addLookupName("AAAA");
             addLookupName("BBBB");
+            clearLookupNames();
             setInternalName("Child");
         }
     }

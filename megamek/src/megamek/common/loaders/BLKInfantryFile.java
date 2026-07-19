@@ -338,7 +338,7 @@ public class BLKInfantryFile extends BLKFile implements IMekLoader {
      */
     private void loadDisposableWeapon(ConvInfantry infantry) throws EntityLoadingException {
         if (dataFile.exists("disposableWeapon")) {
-            if (infantry.getTechLevel() < SimpleTechLevel.ADVANCED.ordinal()) {
+            if (SimpleTechLevel.convertCompoundToSimple(infantry.getTechLevel()).ordinal() < SimpleTechLevel.ADVANCED.ordinal()) {
                 throw new EntityLoadingException("Only Advanced or greater Tech Level infantry can have a Disposable "
                       + "Weapon");
             }

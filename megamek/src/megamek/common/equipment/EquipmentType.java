@@ -750,7 +750,8 @@ public class EquipmentType implements ITechnology {
             throw new IllegalArgumentException("Internal name cannot be null or empty");
         }
         if (internalName != null) {
-            clearLookupNames();
+            namesVector.remove(internalName);
+            lookupNamesVector.remove(internalName);
         }
         internalName = s;
         addLookupName(s);

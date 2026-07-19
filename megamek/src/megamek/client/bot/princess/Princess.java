@@ -1552,9 +1552,12 @@ public class Princess extends BotClient {
                     }
 
                     EntityAction spotAction = getFireControl(shooter).getSpotAction(plan, shooter, fireControlState);
-                    // If the unit's own shot is too trivial to be worth the spotting penalty, spot instead of firing.
+                    // If the unit's own shot is too trivial to be worth the spotting penalty, spot instead of firing -
+                    // unless the shot is what switches Triple-Strength Myomer on this turn, in which case the heat it
+                    // builds is worth more than the trivial damage suggests.
                     boolean spotInsteadOfTrivialFire = (spotAction != null)
-                          && (plan.getExpectedDamage() < FireControl.MIN_USEFUL_FIRING_DAMAGE);
+                          && (plan.getExpectedDamage() < FireControl.MIN_USEFUL_FIRING_DAMAGE)
+                          && !getFireControl(shooter).firingActivatesTsm(shooter, plan);
                     if (!spotInsteadOfTrivialFire) {
                         actions.addAll(plan.getEntityActionVector());
                     }

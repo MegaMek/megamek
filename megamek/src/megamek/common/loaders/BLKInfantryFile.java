@@ -34,6 +34,7 @@
 
 package megamek.common.loaders;
 
+import megamek.common.SimpleTechLevel;
 import megamek.common.enums.ProstheticEnhancementType;
 import megamek.common.equipment.EquipmentType;
 import megamek.common.equipment.EquipmentTypeLookup;
@@ -336,17 +337,20 @@ public class BLKInfantryFile extends BLKFile implements IMekLoader {
      *                                Weapon
      */
     private void loadDisposableWeapon(ConvInfantry infantry) throws EntityLoadingException {
-        if (!dataFile.exists("disposableWeapon")) {
-            return;
+        if (dataFile.exists("disposableWeapon")) {
+            if (SimpleTechLevel.convertCompoundToSimple(infantry.getTechLevel()).ordinal() < SimpleTechLevel.ADVANCED.ordinal()) {
+                throw new EntityLoadingException("Only Advanced or greater Tech Level infantry can have a Disposable "
+                      + "Weapon");
+            }
+            String disposableWeaponName = dataFile.getDataAsString("disposableWeapon")[0];
+            EquipmentType disposableWeaponType = EquipmentType.get(disposableWeaponName);
+            if (!(disposableWeaponType instanceof InfantryWeapon disposableWeapon)) {
+                throw new EntityLoadingException(disposableWeaponName + " is not an infantry weapon");
+            }
+            if (!disposableWeapon.hasFlag(WeaponType.F_INF_DISPOSABLE)) {
+                throw new EntityLoadingException(disposableWeaponName + " is not a Disposable Weapon");
+            }
+            infantry.equipDisposableWeapon(disposableWeapon);
         }
-        String disposableWeaponName = dataFile.getDataAsString("disposableWeapon")[0];
-        EquipmentType disposableWeaponType = EquipmentType.get(disposableWeaponName);
-        if (!(disposableWeaponType instanceof InfantryWeapon disposableWeapon)) {
-            throw new EntityLoadingException(disposableWeaponName + " is not an infantry weapon");
-        }
-        if (!disposableWeapon.hasFlag(WeaponType.F_INF_DISPOSABLE)) {
-            throw new EntityLoadingException(disposableWeaponName + " is not a Disposable Weapon");
-        }
-        infantry.equipDisposableWeapon(disposableWeapon);
     }
 }

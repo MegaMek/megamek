@@ -59,6 +59,7 @@ import megamek.client.ui.widget.MegaMekButton;
 import megamek.client.ui.widget.MekPanelTabStrip;
 import megamek.common.Hex;
 import megamek.common.HexTarget;
+import megamek.common.IdealHex;
 import megamek.common.LosEffects;
 import megamek.common.Player;
 import megamek.common.ToHitData;
@@ -1898,10 +1899,13 @@ public class FiringDisplay extends AttackPhaseDisplay implements ListSelectionLi
             updateExtinguish();
             if (isStrafing) {
                 if (currentEntity().getPassedThroughBoardId() == event.getBoardId()) {
-                    strafingCoords.clear();
-                    strafingCoords.addAll(getStrafingCoords(coords));
-                    event.getBoardView().setStrafingCoords(strafingCoords);
-                    updateStrafingTargets();
+                    if (isValidStrafingHex(coords)) {
+                        strafingCoords.add(coords);
+                        // Re-sync the board view from the authoritative list; setStrafingCoords repaints the
+                        // strafing overlay, whereas addStrafingCoords would only append without a repaint.
+                        event.getBoardView().setStrafingCoords(strafingCoords);
+                        updateStrafingTargets();
+                    }
                 }
             } else if (!coords.equals(currentEntity().getPosition())) {
                 // HACK : sometimes we don't show the target choice window
@@ -2623,70 +2627,93 @@ public class FiringDisplay extends AttackPhaseDisplay implements ListSelectionLi
     }
 
     /**
-     * Determines the five (or fewer in case the flight path is shorter than 5 hexes) hexes on the flight path of the
-     * current entity centered around the given coord, if possible. In case of a flight path that crosses itself, the
-     * player may select which of the hexes to use.
+     * Determines whether the given hex may be added to the current strafing selection. Per the strafing rules
+     * (Total Warfare / Tactical Operations), a strafing run covers one to five consecutive hexes that were flown
+     * over and that lie in a single straight line. Hexes are selected one at a time, so the player may stop at any
+     * count from one to five. The reason for any rejection is logged so playtests can diagnose it from the log.
      *
-     * @param center The middle hex of the strafing path
+     * @param newCoords The hex the player clicked to add to the strafing run
      *
-     * @return The up to five coords that make up a strafing path
+     * @return {@code true} if the hex extends a legal 1-to-5 hex straight strafing line, otherwise {@code false}
      */
-    private List<Coords> getStrafingCoords(Coords center) {
+    private boolean isValidStrafingHex(Coords newCoords) {
         Entity strafingAero = currentEntity();
 
         if ((strafingAero == null) || !strafingAero.isAero()) {
-            return Collections.emptyList();
+            logger.debug("[Strafe] Rejecting hex {}: current unit is not an aero", newCoords);
+            return false;
         }
 
         // Can't update strafe hexes after weapons are fired, otherwise we'd
         // have to have a way to update the attacks vector
         if (!attacks.isEmpty()) {
-            return Collections.emptyList();
+            logger.debug("[Strafe] Rejecting hex {}: weapons already fired this strafing run", newCoords);
+            return false;
         }
 
         // Can only strafe hexes that were flown over
-        if (!strafingAero.passedThrough(center)) {
-            return Collections.emptyList();
+        if (!strafingAero.passedThrough(newCoords)) {
+            logger.debug("[Strafe] Rejecting hex {}: not on the flight path", newCoords);
+            return false;
         }
 
-        // Path could hit the same hex multiple times with aero on ground maps, find all such hexes
-        List<Integer> centerCandidates = new ArrayList<>();
-        List<Coords> flightPath = strafingAero.getPassedThrough();
-        for (int index = 0; index < flightPath.size(); index++) {
-            if (center.equals(flightPath.get(index))) {
-                centerCandidates.add(index);
+        // No further limitations for the first hex of the run
+        if (strafingCoords.isEmpty()) {
+            return true;
+        }
+
+        // A strafing run covers at most five hexes
+        if (strafingCoords.size() >= 5) {
+            logger.debug("[Strafe] Rejecting hex {}: already at the five-hex maximum", newCoords);
+            return false;
+        }
+
+        // The same hex cannot be strafed twice in one run
+        if (strafingCoords.contains(newCoords)) {
+            logger.debug("[Strafe] Rejecting hex {}: hex already selected", newCoords);
+            return false;
+        }
+
+        // The new hex must be adjacent to an already-selected hex (consecutive)
+        boolean isConsecutive = false;
+        for (Coords selected : strafingCoords) {
+            isConsecutive |= (selected.distance(newCoords) == 1);
+        }
+        if (!isConsecutive) {
+            logger.debug("[Strafe] Rejecting hex {}: not adjacent to the current selection", newCoords);
+            return false;
+        }
+
+        // All selected hexes plus the new one must lie in a single straight line
+        if (!isInStraightLine(newCoords)) {
+            logger.debug("[Strafe] Rejecting hex {}: would break the straight line", newCoords);
+            return false;
+        }
+
+        return true;
+    }
+
+    /**
+     * Checks that every already-selected strafing hex lies on the straight line formed by the first selected hex
+     * and the candidate hex. With fewer than two hexes already selected any single addition is trivially linear.
+     *
+     * @param newCoords The candidate hex being added to the strafing run
+     *
+     * @return {@code true} if the resulting set of hexes stays in one straight line, otherwise {@code false}
+     */
+    private boolean isInStraightLine(Coords newCoords) {
+        if (strafingCoords.size() < 2) {
+            return true;
+        }
+        IdealHex newHex = IdealHex.get(newCoords);
+        IdealHex start = IdealHex.get(strafingCoords.getFirst());
+        for (int index = 1; index < strafingCoords.size(); index++) {
+            IdealHex selectedHex = IdealHex.get(strafingCoords.get(index));
+            if (!selectedHex.isIntersectedBy(start.cx, start.cy, newHex.cx, newHex.cy)) {
+                return false;
             }
         }
-
-        int centerIndex;
-        if (centerCandidates.isEmpty()) {
-            // shouldn't happen here, but be safe
-            return Collections.emptyList();
-
-        } else if (centerCandidates.size() == 1) {
-            centerIndex = centerCandidates.getFirst();
-
-        } else {
-            // incomplete: choose one of the candidates
-            centerIndex = (int) JOptionPane.showInputDialog(clientgui.getFrame(),
-                  "Choose the hex to center the strafing path on",
-                  "Strafing - Choose Hex", JOptionPane.QUESTION_MESSAGE, null,
-                  centerCandidates.toArray(), centerCandidates.getFirst());
-        }
-
-        // When the flight path is shorter than 5 hexes, only that many can be strafed (may happen for aeros that are
-        // not on the ground board)
-        int maxStrafingHexes = Math.min(flightPath.size(), 5);
-        int startIndex = Math.max(centerIndex - 2, 0);
-        startIndex = Math.min(flightPath.size() - 5, startIndex);
-        startIndex = Math.max(startIndex, 0);
-        List<Coords> strafingPath = new ArrayList<>();
-        for (int index = startIndex; index < startIndex + maxStrafingHexes; index++) {
-            if (flightPath.size() > index) {
-                strafingPath.add(flightPath.get(index));
-            }
-        }
-        return strafingPath;
+        return true;
     }
 
     private void incrementInternalBombs(WeaponAttackAction waa) {

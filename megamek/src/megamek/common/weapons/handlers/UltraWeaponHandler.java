@@ -175,7 +175,7 @@ public class UltraWeaponHandler extends AmmoWeaponHandler {
                 weapon.setJammed(true);
                 isJammed = true;
                 if ((weaponType.getAmmoType() == AmmoType.AmmoTypeEnum.AC_ULTRA)
-                  || (weaponType.getAmmoType() == AmmoType.AmmoTypeEnum.AC_ULTRA_THB)) {
+                      || (weaponType.getAmmoType() == AmmoType.AmmoTypeEnum.AC_ULTRA_THB)) {
                     r.messageId = 3160;
                 } else {
                     r.messageId = 3170;

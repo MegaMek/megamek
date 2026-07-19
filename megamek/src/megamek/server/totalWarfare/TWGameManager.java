@@ -99,6 +99,7 @@ import megamek.common.net.packets.Packet;
 import megamek.common.options.IBasicOption;
 import megamek.common.options.IOption;
 import megamek.common.options.OptionsConstants;
+import megamek.common.rules.totalwarfare.TWRulesUnderwater;
 import megamek.common.voting.Poll;
 import megamek.common.voting.VoteThreshold;
 import megamek.common.planetaryConditions.Atmosphere;
@@ -23750,7 +23751,8 @@ public class TWGameManager extends AbstractGameManager {
      * @return the breach roll to use — the reroll if Edge was spent, otherwise the original roll
      */
     // package-private for testing
-    int applyBreachEdge(Entity entity, int loc, int target, int breachRoll, Vector<Report> reportVector) {
+    int applyBreachEdge(Entity entity, int loc, int target, int breachRoll, Vector<Report> reportVector,
+          boolean lowFail) {
         boolean isBreach = breachRoll >= target;
         boolean shouldUseEdge = entity.shouldUseEdge(OptionsConstants.EDGE_WHEN_BREACH);
 
@@ -23770,7 +23772,11 @@ public class TWGameManager extends AbstractGameManager {
             report.add(entity.getLocationAbbr(loc));
             report.add(diceRoll);
             report.newlines = 0;
-            report.choose(breachRoll < target);
+            if (lowFail) {
+                report.choose(breachRoll > target);
+            } else {
+                report.choose(breachRoll < target);
+            }
             reportVector.addElement(report);
         }
         return breachRoll;
@@ -23888,7 +23894,7 @@ public class TWGameManager extends AbstractGameManager {
                 vDesc.addElement(r);
 
                 // Edge may reroll a breach check that would breach the location.
-                breachRoll = applyBreachEdge(entity, loc, target, breachRoll, vDesc);
+                breachRoll = applyBreachEdge(entity, loc, target, breachRoll, vDesc, lowFail);
             }
             
             boolean breached = (lowFail) ? (breachRoll <= target) : (breachRoll >=target);

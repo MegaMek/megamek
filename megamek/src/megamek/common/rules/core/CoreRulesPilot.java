@@ -55,10 +55,15 @@ public class CoreRulesPilot extends RulesPilot {
         if (toughness) {
             rollTarget -= e.getCrew().getToughness(crewPos);
         }
-        boolean edgeUsed = false;
+
+        boolean rerollWithEdge = false;
+        boolean edgeAlreadyUsed = false;
+        
         do {
-            if (edgeUsed) {
+            if (rerollWithEdge) {
                 e.getCrew().decreaseEdge();
+                edgeAlreadyUsed = true;
+                rerollWithEdge = false;
             }
             Roll diceRoll = Compute.rollD6(2);
             int rollValue = diceRoll.getIntValue();
@@ -84,9 +89,9 @@ public class CoreRulesPilot extends RulesPilot {
             } else {
                 e.getCrew().setKoThisRound(true, crewPos);
                 r.choose(false);
-                if (e.shouldUseEdge(OptionsConstants.EDGE_WHEN_KO) ||
+                if (!edgeAlreadyUsed && e.shouldUseEdge(OptionsConstants.EDGE_WHEN_KO) ||
                       e.shouldUseEdge(OptionsConstants.EDGE_WHEN_AERO_KO)) {
-                    edgeUsed = true;
+                    rerollWithEdge = true;
                     vDesc.add(r);
                     r = new Report(6520);
                     r.subject = e.getId();
@@ -97,9 +102,7 @@ public class CoreRulesPilot extends RulesPilot {
                 // return true;
             } // else
             vDesc.add(r);
-        } while (e.getCrew().isKoThisRound(crewPos) &&
-              (e.shouldUseEdge(OptionsConstants.EDGE_WHEN_KO) ||
-                    e.shouldUseEdge(OptionsConstants.EDGE_WHEN_AERO_KO)));
+        } while (rerollWithEdge);
         // end of do-while
         if (e.getCrew().isKoThisRound(crewPos)) {
             boolean wasPilot = e.getCrew().getCurrentPilotIndex() == crewPos;

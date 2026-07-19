@@ -742,9 +742,15 @@ public class EquipmentType implements ITechnology {
         return instantModeSwitch;
     }
 
+    /**
+     * Sets the unique internal name and clears any set alias
+     */
     public void setInternalName(String s) {
         if (s == null || s.isEmpty()) {
             throw new IllegalArgumentException("Internal name cannot be null or empty");
+        }
+        if (internalName != null) {
+            clearLookupNames();
         }
         internalName = s;
         addLookupName(s);
@@ -762,6 +768,19 @@ public class EquipmentType implements ITechnology {
         if (registered) {
             registerLookupName(s);
         }
+    }
+
+    /**
+     * Clears lookup identity inherited from a superclass constructor. 
+     * This must only be used before the equipment type is registered.
+     */
+    protected void clearLookupNames() {
+        if (registered) {
+            throw new IllegalStateException("Cannot clear lookup names after registration");
+        }
+        internalName = null;
+        lookupNamesVector.clear();
+        namesVector.clear();
     }
 
     private void registerLookupNames() {

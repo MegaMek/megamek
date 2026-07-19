@@ -143,6 +143,10 @@ public class ForceDescriptor {
     private double cargo = 0.0;
     private boolean fighterComplement = false;
 
+    // Preview-time flag (not persisted): hosts such as MekHQ let the user exclude nodes from the
+    // generated force in the preview tree. Defaults to included; see setIncludedRecursively.
+    private boolean included = true;
+
     public ForceDescriptor() {
         faction = FactionRecord.IS_GENERAL_KEY;
         year = 3067;
@@ -2312,6 +2316,47 @@ public class ForceDescriptor {
 
     public void setAttached(ArrayList<ForceDescriptor> attached) {
         this.attached = attached;
+    }
+
+    /**
+     * Whether this descriptor is included in the generated force. Preview-only state (not persisted):
+     * a host UI can mark nodes excluded so they are struck out in the preview and skipped when the
+     * force is committed.
+     *
+     * @return {@code true} if this node is included (the default)
+     */
+    public boolean isIncluded() {
+        return included;
+    }
+
+    /**
+     * Sets whether this descriptor alone is included. Use {@link #setIncludedRecursively(boolean)} to
+     * cascade the value to the whole subtree.
+     *
+     * @param included {@code true} to include this node, {@code false} to exclude it
+     */
+    public void setIncluded(boolean included) {
+        this.included = included;
+    }
+
+    /**
+     * Sets this descriptor's included flag and cascades the same value to every subforce and attached
+     * descriptor beneath it, so excluding (or re-including) a formation applies to all its units.
+     *
+     * @param included {@code true} to include the subtree, {@code false} to exclude it
+     */
+    public void setIncludedRecursively(boolean included) {
+        this.included = included;
+        if (subForces != null) {
+            for (ForceDescriptor subForce : subForces) {
+                subForce.setIncludedRecursively(included);
+            }
+        }
+        if (attached != null) {
+            for (ForceDescriptor attachedForce : attached) {
+                attachedForce.setIncludedRecursively(included);
+            }
+        }
     }
 
     public void addAttached(ForceDescriptor forceDescriptor) {

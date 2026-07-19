@@ -117,6 +117,10 @@ public class ForceGeneratorViewUi implements ActionListener {
     private JTable tblChosen;
     private ChosenEntityModel modelChosen;
 
+    // When set by a host (e.g. MekHQ) that commits the preview tree into a TOE, the tree's right-click
+    // menu offers Include/Exclude instead of "Add to game", and excluded nodes render struck out.
+    private boolean toeExclusionMode = false;
+
     protected TableRowSorter<ChosenEntityModel> sorterChosen;
 
     static final String FGV_BV = "FGV_BV";
@@ -274,6 +278,18 @@ public class ForceGeneratorViewUi implements ActionListener {
      */
     public ForceGeneratorOptionsView getOptionsView() {
         return panControls;
+    }
+
+    /**
+     * Enables TOE exclusion mode for hosts that commit the preview tree into a table of organization.
+     * In this mode the tree's right-click menu offers Include/Exclude (instead of "Add to game") and
+     * excluded nodes are struck out in red. Defaults to {@code false} (the standalone Random Army
+     * behavior).
+     *
+     * @param enabled {@code true} to enable the Include/Exclude menu and struck-out excluded nodes
+     */
+    public void setToeExclusionMode(boolean enabled) {
+        this.toeExclusionMode = enabled;
     }
 
     /**
@@ -516,13 +532,23 @@ public class ForceGeneratorViewUi implements ActionListener {
                 if (node instanceof ForceDescriptor fd) {
                     JPopupMenu menu = new JPopupMenu();
 
-                    JMenuItem item = new JMenuItem("Add to game");
-                    item.addActionListener(ev -> modelChosen.addEntities(fd));
-                    menu.add(item);
+                    if (toeExclusionMode) {
+                        // Host (e.g. MekHQ) commits the tree into a TOE; let the user exclude nodes.
+                        JMenuItem toggleItem = new JMenuItem(fd.isIncluded() ? "Exclude from TOE" : "Include in TOE");
+                        toggleItem.addActionListener(ev -> {
+                            fd.setIncludedRecursively(!fd.isIncluded());
+                            forceTree.repaint();
+                        });
+                        menu.add(toggleItem);
+                    } else {
+                        JMenuItem addItem = new JMenuItem("Add to game");
+                        addItem.addActionListener(ev -> modelChosen.addEntities(fd));
+                        menu.add(addItem);
+                    }
 
-                    item = new JMenuItem("Export as MUL");
-                    item.addActionListener(ev -> panControls.exportMUL(fd));
-                    menu.add(item);
+                    JMenuItem exportItem = new JMenuItem("Export as MUL");
+                    exportItem.addActionListener(ev -> panControls.exportMUL(fd));
+                    menu.add(exportItem);
                     menu.show(evt.getComponent(), evt.getX(), evt.getY());
                 }
             }
@@ -687,6 +713,9 @@ public class ForceGeneratorViewUi implements ActionListener {
     }
 
     private static class UnitRenderer extends DefaultTreeCellRenderer {
+        // HTML color for nodes the user has excluded from the TOE (rendered struck out).
+        private static final String EXCLUDED_COLOR_HTML = "#C84B4B";
+
         // Fallback rank-int -> short title used when the ruleset XML did not set an explicit
         // title= attribute on the <co>/<xo> element (the typical case — mm-data only sets title
         // for special honorifics like "Aide" or "ovKhan"). Values match the integer constants in
@@ -817,6 +846,16 @@ public class ForceGeneratorViewUi implements ActionListener {
                     desc.append(fd.getXo().getName());
                 }
                 setText(desc.append("</html>").toString());
+            }
+
+            // Excluded nodes: strike out the whole label in red so it's clear it won't be committed.
+            if (!fd.isIncluded()) {
+                String current = getText();
+                if (current != null && current.startsWith("<html>") && current.endsWith("</html>")) {
+                    String inner = current.substring("<html>".length(), current.length() - "</html>".length());
+                    setText("<html><strike><font color='" + EXCLUDED_COLOR_HTML + "'>"
+                          + inner + "</font></strike></html>");
+                }
             }
             return this;
         }

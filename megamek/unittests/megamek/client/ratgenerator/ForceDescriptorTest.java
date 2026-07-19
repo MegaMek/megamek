@@ -33,6 +33,7 @@
 package megamek.client.ratgenerator;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.lang.reflect.Method;
@@ -99,5 +100,39 @@ class ForceDescriptorTest {
         assertTrue(formattedTrace.contains("rating=B tableEntries=0"), "second attempt missing from trace");
         assertEquals(failureTrace.size(), formattedTrace.lines().filter(line -> line.contains("attempt:")).count(),
               "each attempt should appear exactly once");
+    }
+
+    @Test
+    void includedDefaultsToTrue() {
+        assertTrue(new ForceDescriptor().isIncluded(), "a new descriptor should be included by default");
+    }
+
+    @Test
+    void setIncludedRecursivelyCascadesToSubForcesAndAttached() {
+        ForceDescriptor root = new ForceDescriptor();
+        ForceDescriptor subForce = new ForceDescriptor();
+        ForceDescriptor grandChild = new ForceDescriptor();
+        ForceDescriptor attached = new ForceDescriptor();
+        subForce.addSubForce(grandChild);
+        root.addSubForce(subForce);
+        root.addAttached(attached);
+
+        root.setIncludedRecursively(false);
+        assertFalse(root.isIncluded());
+        assertFalse(subForce.isIncluded());
+        assertFalse(grandChild.isIncluded(), "exclusion must cascade through nested subforces");
+        assertFalse(attached.isIncluded(), "exclusion must cascade to attached descriptors");
+
+        // Re-including a single leaf must not re-include its ancestors.
+        grandChild.setIncluded(true);
+        assertTrue(grandChild.isIncluded());
+        assertFalse(subForce.isIncluded());
+
+        // Re-including the root cascades back across the whole subtree.
+        root.setIncludedRecursively(true);
+        assertTrue(root.isIncluded());
+        assertTrue(subForce.isIncluded());
+        assertTrue(grandChild.isIncluded());
+        assertTrue(attached.isIncluded());
     }
 }

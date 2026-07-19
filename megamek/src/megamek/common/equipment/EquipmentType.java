@@ -814,13 +814,14 @@ public class EquipmentType implements ITechnology {
         if (null == EquipmentType.lookupHash) {
             EquipmentType.initializeTypes();
         }
-        EquipmentType equipmentType = EquipmentType.lookupHash.get(key.toLowerCase(Locale.ROOT));
+        String normalizedKey = key.toLowerCase(Locale.ROOT);
+        EquipmentType equipmentType = EquipmentType.lookupHash.get(normalizedKey);
         if (equipmentType != null) {
             return equipmentType;
         }
         // Fallback to display name
         for (EquipmentType type : allTypes) {
-            if (type.getName().equals(key)) {
+            if (type.getName().toLowerCase().equals(normalizedKey)) {
                 return type;
             }
         }
@@ -838,12 +839,20 @@ public class EquipmentType implements ITechnology {
             return null;
         }
 
-        String normalizedKey = key.trim();
-        EquipmentType structure = normalizedKey.toLowerCase(Locale.ROOT).endsWith(" structure")
+        String normalizedKey = key.trim().toLowerCase(Locale.ROOT);
+        EquipmentType structure = normalizedKey.endsWith(" structure")
               ? EquipmentType.get(normalizedKey)
-              : EquipmentType.get(normalizedKey + " Structure");
+              : EquipmentType.get(normalizedKey + " structure");
         if (structure instanceof StructureType structureType) {
             return structureType;
+        }
+        // Fallback fullscan for display name
+        for (EquipmentType type : allTypes) {
+            if (type instanceof StructureType structureType) {
+                if (structureType.getName().toLowerCase().equals(normalizedKey)) {
+                    return structureType;
+                }
+            }
         }
         return null;
     }
@@ -859,12 +868,20 @@ public class EquipmentType implements ITechnology {
             return null;
         }
 
-        String normalizedKey = key.trim();
-        EquipmentType armor = normalizedKey.toLowerCase(Locale.ROOT).endsWith(" armor")
+        String normalizedKey = key.trim().toLowerCase(Locale.ROOT);
+        EquipmentType armor = normalizedKey.endsWith(" armor")
               ? EquipmentType.get(normalizedKey)
-              : EquipmentType.get(normalizedKey + " Armor");
+              : EquipmentType.get(normalizedKey + " armor");
         if (armor instanceof ArmorType armorType) {
             return armorType;
+        }
+        // Fallback fullscan for display name
+        for (EquipmentType type : allTypes) {
+            if (type instanceof ArmorType armorType) {
+                if (armorType.getName().toLowerCase().equals(normalizedKey)) {
+                    return armorType;
+                }
+            }
         }
         return null;
     }
@@ -1299,15 +1316,15 @@ public class EquipmentType implements ITechnology {
      * Adds alias names to the YAML data map, excluding duplicates.
      */
     private void addAliases(Map<String, Object> data) {
-        Enumeration<String> names = getNames();
-        if (names == null || !names.hasMoreElements()) {
+        Enumeration<String> lookupNames = lookupNamesVector.elements();
+        if (lookupNames == null || !lookupNames.hasMoreElements()) {
             return;
         }
 
         Set<String> uniqueAliases = new LinkedHashSet<>();
 
-        while (names.hasMoreElements()) {
-            String aliasName = names.nextElement();
+        while (lookupNames.hasMoreElements()) {
+            String aliasName = lookupNames.nextElement();
             if (aliasName != null && !aliasName.trim().isEmpty()) {
                 if (aliasName.equals(internalName) || aliasName.equals(name) || aliasName.equals(shortName)) {
                     continue;

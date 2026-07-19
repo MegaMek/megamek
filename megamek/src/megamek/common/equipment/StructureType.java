@@ -70,7 +70,7 @@ public class StructureType extends MiscType {
     public void addLookupName(String s, boolean includeInNames) {
         super.addLookupName(s, includeInNames);
         if (!s.toLowerCase(Locale.ROOT).endsWith(" structure")) {
-            super.addLookupName(s + " Structure", includeInNames);
+            super.addLookupName(s + " structure", includeInNames);
         }
     }
 }

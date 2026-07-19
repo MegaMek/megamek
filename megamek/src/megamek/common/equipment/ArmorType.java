@@ -84,7 +84,7 @@ public class ArmorType extends MiscType {
     public void addLookupName(String s, boolean includeInNames) {
         super.addLookupName(s, includeInNames);
         if (!s.toLowerCase(Locale.ROOT).endsWith(" armor")) {
-            super.addLookupName(s + " Armor", includeInNames);
+            super.addLookupName(s + " armor", includeInNames);
         }
     }
 

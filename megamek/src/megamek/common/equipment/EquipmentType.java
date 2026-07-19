@@ -914,7 +914,7 @@ public class EquipmentType implements ITechnology {
         return namesVector.elements();
     }
 
-    public static void initializeTypes() {
+    public static synchronized void initializeTypes() {
         if (null == EquipmentType.allTypes) {
             EquipmentType.allTypes = new Vector<>();
             EquipmentType.lookupHash = new Hashtable<>();

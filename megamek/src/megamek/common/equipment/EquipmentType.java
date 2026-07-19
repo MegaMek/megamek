@@ -794,21 +794,11 @@ public class EquipmentType implements ITechnology {
         if (null == EquipmentType.lookupHash) {
             EquipmentType.initializeTypes();
         }
-        return EquipmentType.lookupHash.get(key.toLowerCase(Locale.ROOT));
-    }
-
-    /**
-     * Looks up equipment by internal name or lookup name, falling back to its display name for legacy serialized data.
-     *
-     * @param key The internal name, lookup name, or display name
-     *
-     * @return The matching equipment type, or null if there is none
-     */
-    public static @Nullable EquipmentType getWithFallbackToDisplayName(String key) {
-        EquipmentType equipmentType = get(key);
+        EquipmentType equipmentType = EquipmentType.lookupHash.get(key.toLowerCase(Locale.ROOT));
         if (equipmentType != null) {
             return equipmentType;
         }
+        // Fallback to display name
         for (EquipmentType type : allTypes) {
             if (type.getName().equals(key)) {
                 return type;

@@ -60,6 +60,7 @@ import javax.swing.plaf.metal.MetalTheme;
 
 import megamek.MMConstants;
 import megamek.client.TimerSingleton;
+import megamek.client.bot.princess.MinefieldDeploymentPlanner;
 import megamek.client.event.BoardViewEvent;
 import megamek.client.event.BoardViewListener;
 import megamek.client.ui.IDisplayable;
@@ -515,13 +516,20 @@ public final class BoardView extends AbstractBoardView
                     tileManager.reloadImage(entity);
                 }
 
-                // for units that have been blown up, damaged or ejected, force a reload
-                if ((gameEntityChangeEvent.getOldEntity() != null) && ((entity.getDamageLevel()
-                      != gameEntityChangeEvent.getOldEntity()
-                      .getDamageLevel()) || (entity.isDestroyed()
-                      != gameEntityChangeEvent.getOldEntity().isDestroyed()) || (
-                      entity.getCrew().isEjected()
-                            != gameEntityChangeEvent.getOldEntity().getCrew().isEjected()))) {
+                // For units that have been blown up, damaged, ejected or handed to another player (a traitor
+                // switch means the new owner's camouflage), force a reload. Without the old state we cannot tell
+                // whether the damage changed, so reload to be safe; the reload reuses the cached image when
+                // nothing shown in fact changed, so it costs nothing in the common case.
+                final Entity oldEntity = gameEntityChangeEvent.getOldEntity();
+                boolean shownStateChanged = true;
+                if (oldEntity != null) {
+                    boolean damageChanged = entity.getDamageLevel() != oldEntity.getDamageLevel();
+                    boolean destructionChanged = entity.isDestroyed() != oldEntity.isDestroyed();
+                    boolean ownerChanged = entity.getOwnerId() != oldEntity.getOwnerId();
+                    boolean ejectionChanged = entity.getCrew().isEjected() != oldEntity.getCrew().isEjected();
+                    shownStateChanged = damageChanged || destructionChanged || ownerChanged || ejectionChanged;
+                }
+                if (shownStateChanged) {
                     tileManager.reloadImage(entity);
                 }
 
@@ -1298,6 +1306,7 @@ public final class BoardView extends AbstractBoardView
         // renderClusters((Graphics2D) graphics2D);
         // renderDonut(graphics2D, new Coords(10, 10), 2);
         // renderApproxHexDirection((Graphics2D) graphics2D);
+        // renderMinefieldScores((Graphics2D) graphics2D);
     }
 
     /**
@@ -1354,6 +1363,26 @@ public final class BoardView extends AbstractBoardView
                 drawHexBorder(graphics2D, centreHexLocation, new Color(0, 0, (20 * cluster.id) % 255), 0, 6);
             }
         }
+    }
+    
+    /** 
+     * Debugging method used to render minefield effectiveness ratings
+     */
+    @SuppressWarnings("unused")
+    private void renderMinefieldScores(Graphics2D graphics2D) {
+    	/*Map<Coords, Integer> minefieldScores = mdp.getMinefieldScores(Minefield.TYPE_CONVENTIONAL, UnitType.TANK,
+    			EntityMovementMode.WHEELED, getBoard());*/
+    	
+    	MinefieldDeploymentPlanner mdp = new MinefieldDeploymentPlanner(getLocalPlayer(), game);
+    	Map<Coords, Double> minefieldScores = mdp.buildCoalescedMinefieldScores(Minefield.TYPE_CONVENTIONAL, getBoard());
+    	
+    	for (Coords coords : minefieldScores.keySet()) {
+    		Point centreHexLocation = getCentreHexLocation(coords.getX(), coords.getY(), true);
+            centreHexLocation.translate(HEX_W / 2, HEX_H);
+            graphics2D.setColor(Color.pink);
+            drawCenteredString(String.format("%3.1f", minefieldScores.get(coords)), 
+            		centreHexLocation.x, centreHexLocation.y, FONT_14, graphics2D);
+    	}
     }
 
     public void clearShadowMap() {
@@ -1952,6 +1981,20 @@ public final class BoardView extends AbstractBoardView
                                   graphics2D);
                         }
                         break;
+                    case Minefield.TYPE_TRIPWIRE:
+                    	drawCenteredString(Messages.getString("BoardView1.Tripwire"),
+                                hexLocation.x,
+                                hexLocation.y + (int) (31 * scale),
+                                font_minefield,
+                                graphics2D);
+                    	break;
+                    case Minefield.TYPE_PITFALL:
+                    	drawCenteredString(Messages.getString("BoardView1.Pitfall"),
+                                hexLocation.x,
+                                hexLocation.y + (int) (31 * scale),
+                                font_minefield,
+                                graphics2D);
+                    	break;
                 }
             }
         }
@@ -5039,10 +5082,21 @@ public final class BoardView extends AbstractBoardView
 
     @Override
     public void boardChangedHex(BoardEvent boardEvent) {
-        hexImageCache.remove(boardEvent.getCoords());
-        // Also repaint the surrounding hexes because of shadows, border etc.
-        for (int direction : allDirections) {
-            hexImageCache.remove(boardEvent.getCoords().translated(direction));
+        Coords coords = boardEvent.getCoords();
+        Hex hex = game.getBoard(boardId).getHex(coords);
+        // An elevator changes its terrain overlay level, which the isometric view can draw beyond the immediate
+        // neighbors. A per-hex cache clear leaves the isometric view stale (it only recovers on a full reload), so
+        // for elevator hexes clear the whole hex image cache - the same thing a board reload does.
+        boolean hasIndustrialElevator = (hex != null) && hex.containsTerrain(Terrains.INDUSTRIAL_ELEVATOR);
+        boolean hasSolarisElevator = (hex != null) && hex.containsTerrain(Terrains.SOLARIS_ELEVATOR);
+        if (hasIndustrialElevator || hasSolarisElevator) {
+            clearHexImageCache();
+        } else {
+            hexImageCache.remove(coords);
+            // Also repaint the surrounding hexes because of shadows, border etc.
+            for (int direction : allDirections) {
+                hexImageCache.remove(coords.translated(direction));
+            }
         }
         clearShadowMap();
         boardPanel.repaint();

@@ -250,14 +250,15 @@ public class Mounted<T extends EquipmentType> implements Serializable, RoundUpda
     @SuppressWarnings("unchecked")
     public void restore() {
         if (typeName == null) {
-            typeName = type.getName();
-        } else {
-            type = (T) EquipmentType.get(typeName);
+            typeName = type.getInternalName();
         }
+        type = (T) EquipmentType.getWithFallbackToDisplayName(typeName);
 
         if (type == null) {
             String message = String.format("Could not restore equipment type \"%s\"", typeName);
             LOGGER.error(message);
+        } else {
+            typeName = type.getInternalName();
         }
     }
 
@@ -538,7 +539,6 @@ public class Mounted<T extends EquipmentType> implements Serializable, RoundUpda
             }
         }
         if ((type instanceof AmmoType) && (location != Entity.LOC_NONE)) {
-
             desc.append(" (");
             desc.append(shotsLeft);
             desc.append(")");
@@ -1123,15 +1123,15 @@ public class Mounted<T extends EquipmentType> implements Serializable, RoundUpda
         return locations;
     }
 
-    public Mounted<?> getLinked() {
+    public @Nullable Mounted<?> getLinked() {
         return linked;
     }
 
-    public Mounted<?> getLinkedBy() {
+    public @Nullable Mounted<?> getLinkedBy() {
         return linkedBy;
     }
 
-    public Mounted<?> getCrossLinkedBy() {
+    public @Nullable Mounted<?> getCrossLinkedBy() {
         return crossLinkedBy;
     }
 
@@ -1145,9 +1145,25 @@ public class Mounted<T extends EquipmentType> implements Serializable, RoundUpda
      * @see #setLinkedBy(Mounted)
      */
     public void setLinked(@Nullable Mounted<?> linked) {
+        if (linked == null && this.linked != null) {
+            this.linked.setLinkedBy(null);
+        }
+
         this.linked = linked;
+
         if (linked != null) {
             linked.setLinkedBy(this);
+        }
+    }
+
+    /**
+     * Sets the linkedBy equipment. Meaningless in case of a many-to-one relationship (ammo, etc.).
+     *
+     * @param linkedBy The inverse of linked
+     */
+    private void setLinkedBy(@Nullable Mounted<?> linkedBy) {
+        if (linkedBy == null || linkedBy.getLinked() == this) {
+            this.linkedBy = linkedBy;
         }
     }
 
@@ -1156,23 +1172,11 @@ public class Mounted<T extends EquipmentType> implements Serializable, RoundUpda
         linked.setCrossLinkedBy(this);
     }
 
-    // should only be called by setLinked(), or when dumping a DWP
-    // in the case of a many-to-one relationship (like ammo) this is meaningless
-    public void setLinkedBy(Mounted<?> linker) {
-        if ((linker != null) && (linker.getLinked() != this)) {
-            // liar
-            return;
-        }
-        linkedBy = linker;
-    }
-
     // called by setCrossLinked() when using cross-linked capacitors.
-    public void setCrossLinkedBy(Mounted<?> linker) {
-        if ((linker != null) && (linker.getLinked() != this)) {
-            // liar
-            return;
+    private void setCrossLinkedBy(Mounted<?> crossLinkedBy) {
+        if (crossLinkedBy == null || crossLinkedBy.getLinked() == this) {
+            this.crossLinkedBy = crossLinkedBy;
         }
-        crossLinkedBy = linker;
     }
 
     public int getFoundCrits() {

@@ -42,7 +42,9 @@ public enum ToastLevel {
     INFO(new Color(41, 98, 168), 3000),
     SUCCESS(new Color(46, 125, 50), 3000),
     WARNING(new Color(183, 134, 11), 4000),
-    ERROR(new Color(176, 42, 42), 5000);
+    ERROR(new Color(176, 42, 42), 5000),
+    /** A Game Master's action - purple, so it reads as the GM's hand rather than a game outcome. */
+    GAMEMASTER(new Color(106, 61, 154), 4000);
 
     private final Color backgroundColor;
     private final int defaultDurationMs;

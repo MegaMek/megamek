@@ -158,4 +158,22 @@ class EditorTextField extends JTextField {
             return 0;
         }
     }
+
+    /**
+     * Sets the minimum value that this field will enforce when using incValue/decValue/setNumber.
+     *
+     * @param minimum the new minimum value
+     */
+    public void setMinValue(int minimum) {
+        this.minValue = minimum;
+    }
+
+    /**
+     * Gets the current minimum value.
+     *
+     * @return the minimum value
+     */
+    public int getMinValue() {
+        return minValue;
+    }
 }

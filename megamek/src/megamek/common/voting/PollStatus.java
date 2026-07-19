@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2025 The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2026 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -30,25 +30,17 @@
  * <https://www.xbox.com/en-US/developers/rules> and it is not endorsed by or
  * affiliated with Microsoft.
  */
-package megamek.client.bot;
+package megamek.common.voting;
 
-import java.util.Deque;
+/** Where a {@link Poll} stands: still collecting votes, or closed one of three ways. */
+public enum PollStatus {
+    OPEN,
+    PASSED,
+    FAILED,
+    CANCELLED;
 
-import megamek.common.board.Coords;
-
-/**
- * Interface for classes that can plan minefield deployments.
- *
- * @author Luana Coppio
- */
-public interface MinefieldDeploymentPlanner {
-
-    /**
-     * Get a set of planed positions on the board to be used to lay minefields.
-     *
-     * @param numberOfCoords the number of positions to get
-     *
-     * @return a deque of positions
-     */
-    Deque<Coords> getRandomMinefieldPositions(int numberOfCoords);
+    /** @return true when the poll has closed, whichever way it went */
+    public boolean isResolved() {
+        return this != OPEN;
+    }
 }

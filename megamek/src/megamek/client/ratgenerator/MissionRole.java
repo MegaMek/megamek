@@ -391,21 +391,31 @@ public enum MissionRole {
                     // COMMAND units may be specialized in other roles. Units with C3 master
                     // equipment take priority, while others without the role or equipment are
                     // reduced in priority.
+                    // Command Meks will always be combat units unless specifically called
+                    // for with the SUPPORT role. Other unit types may mix SUPPORT and combat
+                    // roles due to construction under both combat and support vehicle rules.
                     case COMMAND:
                         if (mRec.getRoles().contains(CIVILIAN) &&
                               !desiredRoles.contains(CIVILIAN)) {
                             return null;
                         }
                         if (mRec.getRoles().contains(COMMAND)) {
-                            avRating += medium_adjust;
+                            avRating += max_adjust;
+                        } else {
+                            avRating -= strong_adjust;
+                        }
+                        if (mRec.unitType == UnitType.MEK) {
+                            if (mRec.getRoles().contains(SUPPORT) &&
+                                  !desiredRoles.contains(SUPPORT)) {
+                                return null;
+                            }
                         }
                         if ((ModelRecord.NETWORK_COMPANY_COMMAND & mRec.getNetworkMask()) != 0) {
                             avRating += light_adjust;
                         } else if ((ModelRecord.NETWORK_C3_MASTER & mRec.getNetworkMask()) != 0) {
                             avRating += min_adjust;
-                        } else {
-                            avRating -= strong_adjust;
                         }
+
                         break;
 
                     // Calling for FIRE_SUPPORT prioritizes units with a significant percentage of

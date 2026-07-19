@@ -411,11 +411,15 @@ public class BasicPathRanker extends PathRanker {
                   game,
                   false);
         } else {
+            EntityState shooterState = new EntityState(path);
+            // Heat this path would add (walk/run/jump) is not yet committed to the unit, so pass it
+            // explicitly; calcHeatTolerance lowers the firing budget by it so a hot move throttles fire.
+            int predictedMovementHeat = shooterState.getHeat() - me.getHeat();
             FiringPlanCalculationParameters guess = new Builder().buildGuess(path.getEntity(),
-                  new EntityState(path),
+                  shooterState,
                   enemy,
                   null,
-                  getFireControl(me).calcHeatTolerance(me, me.isAero()),
+                  getFireControl(me).calcHeatTolerance(me, me.isAero(), predictedMovementHeat),
                   null);
             myFiringPlan = getFireControl(me).determineBestFiringPlan(guess);
         }

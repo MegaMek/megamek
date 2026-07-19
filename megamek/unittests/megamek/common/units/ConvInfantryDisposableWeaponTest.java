@@ -143,4 +143,27 @@ class ConvInfantryDisposableWeaponTest {
         assertEquals(law, infantry.getDisposableWeapon());
         assertEquals("Rocket Launcher (LAW)", infantry.getDisposableWeapon().getInternalName());
     }
+
+    @Test
+    @DisplayName("primary and secondary weapons are reconstructed by internal name after client/server serialization")
+    void infantryWeaponsSurviveSerialization() throws Exception {
+        ConvInfantry infantry = createInfantry();
+        InfantryWeapon primaryWeapon = infantry.getPrimaryWeapon();
+        InfantryWeapon secondaryWeapon = (InfantryWeapon) EquipmentType.get("InfantryGrenade");
+        infantry.setSecondaryWeapon(secondaryWeapon);
+
+        clearWeaponReference(infantry, "primaryWeapon");
+        clearWeaponReference(infantry, "secondaryWeapon");
+
+        infantry.restore();
+
+        assertEquals(primaryWeapon, infantry.getPrimaryWeapon());
+        assertEquals(secondaryWeapon, infantry.getSecondaryWeapon());
+    }
+
+    private static void clearWeaponReference(ConvInfantry infantry, String fieldName) throws Exception {
+        Field weaponField = ConvInfantry.class.getDeclaredField(fieldName);
+        weaponField.setAccessible(true);
+        weaponField.set(infantry, null);
+    }
 }

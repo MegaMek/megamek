@@ -67,6 +67,7 @@ import megamek.common.event.GameListener;
 import megamek.common.force.Forces;
 import megamek.common.game.IGame;
 import megamek.common.game.InGameObject;
+import megamek.common.game.InitiativeRoll;
 import megamek.common.interfaces.IEntityRemovalConditions;
 import megamek.common.interfaces.PlanetaryConditionsUsing;
 import megamek.common.interfaces.ReportEntry;
@@ -379,7 +380,7 @@ public class SimulationContext implements IGame, PlanetaryConditionsUsing {
         for (Team newTeam : initTeams) {
             for (Team oldTeam : teams) {
                 if (newTeam.equals(oldTeam)) {
-                    newTeam.setInitiative(oldTeam.getInitiative());
+                    newTeam.setInitiative(new InitiativeRoll(oldTeam.getInitiative()));
                 }
             }
         }

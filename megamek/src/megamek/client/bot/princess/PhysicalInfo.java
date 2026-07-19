@@ -220,6 +220,14 @@ public class PhysicalInfo {
             setMaxDamage((int) Math.floor(getShooter().getWeight() / 5.0));
         }
 
+        // Triple-Strength Myomer doubles physical damage when active (see KickAttackAction). Activation is
+        // based on the Mek's current heat (this turn's heat is not applied until the heat phase, after
+        // physicals resolve), so double the estimate whenever TSM is active now; a Mek runs hot over prior
+        // turns to switch standard TSM on, and industrial/prototype TSM are always on.
+        if ((getShooter() instanceof Mek mek) && mek.hasActiveTSM()) {
+            setMaxDamage(getMaxDamage() * 2);
+        }
+
         if (shooterState.hasNaturalAptPiloting()) {
             msg.append("\n\tAttacker has Natural Aptitude Piloting");
         }

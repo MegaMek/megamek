@@ -1624,7 +1624,6 @@ public class CustomMekDialog extends AbstractButtonDialog
             for (int i = 0; i < entities.getFirst().getCrew().getSlotCount(); i++) {
                 String name = panCrewMember[i].getPilotName();
                 String nick = panCrewMember[i].getNickname();
-                String hits = panCrewMember[i].getHits();
                 Gender gender = panCrewMember[i].getGender();
                 if (gender == Gender.RANDOMIZE) {
                     gender = entities.getFirst().getCrew().getGender(i);
@@ -1738,7 +1737,7 @@ public class CustomMekDialog extends AbstractButtonDialog
                 entity.getCrew().setCrewFatigue(fatigue, i);
                 entity.getCrew().setName(name, i);
                 entity.getCrew().setNickname(nick, i);
-                entity.getCrew().setHits(MathUtility.parseInt(hits, 0), i);
+                // crew hits are damage, so they are edited in the damage editor rather than here
                 entity.getCrew().setGender(gender, i);
                 entity.getCrew().setClanPilot(panCrewMember[i].isClanPilot(), i);
                 if (clientGUI != null) {

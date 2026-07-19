@@ -65,6 +65,22 @@ public class InitiativeRoll implements Comparable<InitiativeRoll>, Serializable 
 
     }
 
+    /**
+     * Copy constructor. Produces an independent {@link InitiativeRoll} with its own backing vectors, so mutating the
+     * copy (e.g. appending tiebreak rolls) does not affect the source. This is important because several call sites
+     * carry initiative state over between game/team/entity instances; sharing the same instance by reference lets two
+     * distinct candidates compare equal forever, which causes unbounded tie-break recursion.
+     *
+     * @param other The initiative roll to copy; must not be {@code null}
+     */
+    public InitiativeRoll(InitiativeRoll other) {
+        // Integer, Boolean and InitiativeBonusBreakdown are immutable, so copying the vectors themselves is sufficient.
+        rolls.addAll(other.rolls);
+        originalRolls.addAll(other.originalRolls);
+        wasRollReplaced.addAll(other.wasRollReplaced);
+        bonuses.addAll(other.bonuses);
+    }
+
     public void clear() {
         rolls.removeAllElements();
         originalRolls.removeAllElements();

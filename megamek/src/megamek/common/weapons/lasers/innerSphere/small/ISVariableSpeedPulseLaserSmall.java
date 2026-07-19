@@ -63,7 +63,6 @@ public class ISVariableSpeedPulseLaserSmall extends VariableSpeedPulseLaserWeapo
         sortingName = "Laser VSP B";
         heat = 3;
         damage = WeaponType.DAMAGE_VARIABLE;
-        toHitModifier = -4;
         shortRange = 2;
         mediumRange = 4;
         longRange = 6;

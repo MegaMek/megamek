@@ -41,6 +41,7 @@ import megamek.common.Player;
 import megamek.common.equipment.EquipmentType;
 import megamek.common.equipment.EquipmentTypeLookup;
 import megamek.common.game.Game;
+import megamek.common.game.InitiativeRoll;
 import megamek.common.options.OptionsConstants;
 import megamek.common.weapons.infantry.InfantryWeapon;
 import megamek.logging.MMLogger;
@@ -80,7 +81,7 @@ public class EjectedCrew extends ConvInfantry {
         logger.debug("Ejecting crew size: {}", originalRide.getCrew().getSize());
         setChassis(VEE_EJECT_NAME);
         setModel(originalRide.getCrew().getName());
-        setInitiative(originalRide.getInitiative());
+        setInitiative(new InitiativeRoll(originalRide.getInitiative()));
 
         // Generate the display name, then add the original ride's name.
         setDisplayName(getDisplayName() + " of " + originalRide.getDisplayName());

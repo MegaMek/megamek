@@ -371,6 +371,7 @@ public class SerializationHelper {
                 int constant = 0;
                 int compensation = 0;
                 int crew = 0;
+                int gamemaster = 0;
 
                 while (reader.hasMoreChildren()) {
                     reader.moveDown();
@@ -385,6 +386,7 @@ public class SerializationHelper {
                             case "constant" -> constant = Integer.parseInt(reader.getValue());
                             case "compensation" -> compensation = Integer.parseInt(reader.getValue());
                             case "crew" -> crew = Integer.parseInt(reader.getValue());
+                            case "gamemaster" -> gamemaster = Integer.parseInt(reader.getValue());
                         }
                         reader.moveUp();
                     } catch (NumberFormatException e) {
@@ -393,7 +395,7 @@ public class SerializationHelper {
                     }
                 }
                 return new InitiativeBonusBreakdown(hq, quirk, quirkName, console, crewCommand,
-                      tcp, constant, compensation, crew);
+                      tcp, constant, compensation, crew, gamemaster);
             }
 
             @Override

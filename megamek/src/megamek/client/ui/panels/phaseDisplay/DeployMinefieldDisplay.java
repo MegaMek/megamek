@@ -87,13 +87,15 @@ public class DeployMinefieldDisplay extends StatusBarPhaseDisplay {
         DEPLOY_MINE_ACTIVE("deployMineActive"),
         DEPLOY_MINE_INFERNO("deployMineInferno"),
         DEPLOY_MINE_EMP("deployMineEMP"),
+        DEPLOY_TRIPWIRE("deployTripwire"),
+        DEPLOY_PITFALL("deployPitfall"),
         DEPLOY_FORTIFICATION("deployFortification"),
         DEPLOY_CARRYABLE("deployCarriable"),
         REMOVE_MINES("removeMines");
 
         private static final DeployMinefieldCommand[] actualCommands =
               { DEPLOY_MINE_CONV, DEPLOY_MINE_COM, DEPLOY_MINE_VIBRA, DEPLOY_MINE_ACTIVE,
-                DEPLOY_MINE_INFERNO, DEPLOY_MINE_EMP, DEPLOY_FORTIFICATION, DEPLOY_CARRYABLE, REMOVE_MINES };
+                DEPLOY_MINE_EMP, DEPLOY_MINE_INFERNO, DEPLOY_TRIPWIRE, DEPLOY_PITFALL, DEPLOY_FORTIFICATION, DEPLOY_CARRYABLE, REMOVE_MINES };
 
         /**
          * Priority that determines this buttons order
@@ -182,6 +184,14 @@ public class DeployMinefieldDisplay extends StatusBarPhaseDisplay {
     private boolean deployingEMPMinefields() {
         return currentCommand.equals(DeployMinefieldCommand.DEPLOY_MINE_EMP);
     }
+    
+    private boolean deployingTripwires() {
+        return currentCommand.equals(DeployMinefieldCommand.DEPLOY_TRIPWIRE);
+    }
+    
+    private boolean deployingPitfalls() {
+        return currentCommand.equals(DeployMinefieldCommand.DEPLOY_PITFALL);
+    }
 
     private boolean deployingFortifications() {
         return currentCommand.equals(DeployMinefieldCommand.DEPLOY_FORTIFICATION);
@@ -241,12 +251,14 @@ public class DeployMinefieldDisplay extends StatusBarPhaseDisplay {
      */
     private void beginMyTurn() {
         p = clientgui.getClient().getLocalPlayer();// necessary to make it work after resets.
-        setConventionalEnabled(p.getNbrMFConventional());
-        setCommandEnabled(p.getNbrMFCommand());
-        setVibrabombEnabled(p.getNbrMFVibra());
-        setActiveEnabled(p.getNbrMFActive());
-        setInfernoEnabled(p.getNbrMFInferno());
-        setEMPEnabled(p.getNbrMFEMP());
+        setConventionalEnabled(p.getMinefieldCount(Minefield.TYPE_CONVENTIONAL));
+        setCommandEnabled(p.getMinefieldCount(Minefield.TYPE_COMMAND_DETONATED));
+        setVibrabombEnabled(p.getMinefieldCount(Minefield.TYPE_VIBRABOMB));
+        setActiveEnabled(p.getMinefieldCount(Minefield.TYPE_ACTIVE));
+        setInfernoEnabled(p.getMinefieldCount(Minefield.TYPE_INFERNO));
+        setEMPEnabled(p.getMinefieldCount(Minefield.TYPE_EMP));
+        setTripwireEnabled(p.getMinefieldCount(Minefield.TYPE_TRIPWIRE));
+        setPitfallEnabled(p.getMinefieldCount(Minefield.TYPE_PITFALL));
         setFortificationEnabled(p.getNbrFortifiedHexes());
         setCarryableEnabled(p.getGroundObjectsToPlace().size());
         setRemoveMineEnabled(true);
@@ -274,6 +286,8 @@ public class DeployMinefieldDisplay extends StatusBarPhaseDisplay {
         setActiveEnabled(0);
         setInfernoEnabled(0);
         setEMPEnabled(0);
+        setTripwireEnabled(0);
+        setPitfallEnabled(0);
         setFortificationEnabled(0);
         setCarryableEnabled(0);
         setRemoveMineEnabled(false);
@@ -317,19 +331,8 @@ public class DeployMinefieldDisplay extends StatusBarPhaseDisplay {
                 if (mf.getPlayerId() == clientgui.getClient().getLocalPlayer().getId()) {
                     mfRemoved.add(mf);
                     deployedMinefields.removeElement(mf);
-                    if (mf.getType() == Minefield.TYPE_CONVENTIONAL) {
-                        p.setNbrMFConventional(p.getNbrMFConventional() + 1);
-                    } else if (mf.getType() == Minefield.TYPE_COMMAND_DETONATED) {
-                        p.setNbrMFCommand(p.getNbrMFCommand() + 1);
-                    } else if (mf.getType() == Minefield.TYPE_VIBRABOMB) {
-                        p.setNbrMFVibra(p.getNbrMFVibra() + 1);
-                    } else if (mf.getType() == Minefield.TYPE_ACTIVE) {
-                        p.setNbrMFActive(p.getNbrMFActive() + 1);
-                    } else if (mf.getType() == Minefield.TYPE_INFERNO) {
-                        p.setNbrMFInferno(p.getNbrMFInferno() + 1);
-                    } else if (mf.getType() == Minefield.TYPE_EMP) {
-                        p.setNbrMFEMP(p.getNbrMFEMP() + 1);
-                    }
+                    
+                    p.setMinefieldCount(mf.getType(), p.getMinefieldCount(mf.getType()) + 1);
                 }
             }
 
@@ -379,12 +382,7 @@ public class DeployMinefieldDisplay extends StatusBarPhaseDisplay {
             Enumeration<?> mfs = game.getMinefields(coords).elements();
             while (mfs.hasMoreElements()) {
                 Minefield mf = (Minefield) mfs.nextElement();
-                if ((deployingConventionalMinefields() && (mf.getType() == Minefield.TYPE_CONVENTIONAL))
-                      || (deployingCommandMinefields() && (mf.getType() == Minefield.TYPE_COMMAND_DETONATED))
-                      || (deployingVibrabombMinefields() && (mf.getType() == Minefield.TYPE_VIBRABOMB))
-                      || (deployingActiveMinefields() && (mf.getType() == Minefield.TYPE_ACTIVE))
-                      || (deployingInfernoMinefields() && (mf.getType() == Minefield.TYPE_INFERNO))
-                      || (deployingEMPMinefields() && (mf.getType() == Minefield.TYPE_EMP))) {
+                if (currentCommand == DeployMinefieldCommand.getActualCommands()[mf.getType()]) {
                     clientgui.addToast(ToastLevel.ERROR,
                           Messages.getString("DeployMinefieldDisplay.DuplicateMinefield"));
                     return;
@@ -482,12 +480,6 @@ public class DeployMinefieldDisplay extends StatusBarPhaseDisplay {
                     }
                 }
             } else if (deployingEMPMinefields()) {
-                // EMP mines cannot be placed in water
-                if (sea) {
-                    clientgui.addToast(ToastLevel.ERROR,
-                          Messages.getString("DeployMinefieldDisplay.WaterPlacement"));
-                    return;
-                }
                 // Get weight threshold setting from dialog
                 EMPMineSettingDialog esd = new EMPMineSettingDialog(clientgui.getFrame());
                 runWithSuspendedTooltips(() -> esd.setVisible(true));
@@ -502,9 +494,42 @@ public class DeployMinefieldDisplay extends StatusBarPhaseDisplay {
                         currentCommand = DeployMinefieldCommand.COMMAND_NONE;
                     }
                 }
-            } else {
+            } else if (deployingTripwires()) {
+            	// Decide where to allow tripwire/pitfall deployment
+            	if (hex.canPlaceMinefield(Minefield.TYPE_TRIPWIRE)) {
+	            	clientgui.addToast(ToastLevel.ERROR,
+	                        Messages.getString("DeployMinefieldDisplay.IllegalPlacement"));
+	                  return;
+            	}
+            	
+                // Fixed density of 5 since tripwires are one-use
+                mf = Minefield.createMinefield(coords, p.getId(),
+                      Minefield.TYPE_TRIPWIRE, 5, 5);
+                p.setMinefieldCount(Minefield.TYPE_TRIPWIRE, p.getMinefieldCount(Minefield.TYPE_TRIPWIRE) - 1);
+
+                if (p.getMinefieldCount(Minefield.TYPE_TRIPWIRE) <= 0) {
+                    currentCommand = DeployMinefieldCommand.COMMAND_NONE;
+                }
+            } else if (deployingPitfalls()) {
+            	// Decide where to allow tripwire/pitfall deployment
+            	if (hex.canPlaceMinefield(Minefield.TYPE_TRIPWIRE)) {
+	            	clientgui.addToast(ToastLevel.ERROR,
+	                        Messages.getString("DeployMinefieldDisplay.IllegalPlacement"));
+	                  return;
+            	}
+            	
+                // Fixed density of 5 since pitfalls are one-use
+                mf = Minefield.createMinefield(coords, p.getId(),
+                      Minefield.TYPE_PITFALL, 5, 5);
+                p.setMinefieldCount(Minefield.TYPE_PITFALL, p.getMinefieldCount(Minefield.TYPE_PITFALL) - 1);
+
+                if (p.getMinefieldCount(Minefield.TYPE_PITFALL) <= 0) {
+                    currentCommand = DeployMinefieldCommand.COMMAND_NONE;
+                }
+            }else {
                 return;
             }
+            
             if (mf != null) {
                 mf.setWeaponDelivered(false);
                 game.addMinefield(mf);
@@ -513,12 +538,14 @@ public class DeployMinefieldDisplay extends StatusBarPhaseDisplay {
             clientgui.getBoardView().refreshDisplayables();
         }
 
-        setConventionalEnabled(p.getNbrMFConventional());
-        setCommandEnabled(p.getNbrMFCommand());
-        setVibrabombEnabled(p.getNbrMFVibra());
-        setActiveEnabled(p.getNbrMFActive());
-        setInfernoEnabled(p.getNbrMFInferno());
-        setEMPEnabled(p.getNbrMFEMP());
+        setConventionalEnabled(p.getMinefieldCount(Minefield.TYPE_CONVENTIONAL));
+        setCommandEnabled(p.getMinefieldCount(Minefield.TYPE_COMMAND_DETONATED));
+        setVibrabombEnabled(p.getMinefieldCount(Minefield.TYPE_VIBRABOMB));
+        setActiveEnabled(p.getMinefieldCount(Minefield.TYPE_ACTIVE));
+        setInfernoEnabled(p.getMinefieldCount(Minefield.TYPE_INFERNO));
+        setEMPEnabled(p.getMinefieldCount(Minefield.TYPE_EMP));
+        setTripwireEnabled(p.getMinefieldCount(Minefield.TYPE_TRIPWIRE));
+        setPitfallEnabled(p.getMinefieldCount(Minefield.TYPE_PITFALL));
         setFortificationEnabled(p.getNbrFortifiedHexes());
         setCarryableEnabled(p.getGroundObjectsToPlace().size());
     }
@@ -743,6 +770,18 @@ public class DeployMinefieldDisplay extends StatusBarPhaseDisplay {
         buttons.get(DeployMinefieldCommand.DEPLOY_MINE_EMP).setText(Messages.getString(
               "DeployMinefieldDisplay." + DeployMinefieldCommand.DEPLOY_MINE_EMP.getCmd(), nbr));
         buttons.get(DeployMinefieldCommand.DEPLOY_MINE_EMP).setEnabled(nbr > 0);
+    }
+    
+    private void setTripwireEnabled(int nbr) {
+        buttons.get(DeployMinefieldCommand.DEPLOY_TRIPWIRE).setText(Messages.getString(
+              "DeployMinefieldDisplay." + DeployMinefieldCommand.DEPLOY_TRIPWIRE.getCmd(), nbr));
+        buttons.get(DeployMinefieldCommand.DEPLOY_TRIPWIRE).setEnabled(nbr > 0);
+    }
+    
+    private void setPitfallEnabled(int nbr) {
+        buttons.get(DeployMinefieldCommand.DEPLOY_PITFALL).setText(Messages.getString(
+              "DeployMinefieldDisplay." + DeployMinefieldCommand.DEPLOY_PITFALL.getCmd(), nbr));
+        buttons.get(DeployMinefieldCommand.DEPLOY_PITFALL).setEnabled(nbr > 0);
     }
 
     private void setFortificationEnabled(int nbr) {

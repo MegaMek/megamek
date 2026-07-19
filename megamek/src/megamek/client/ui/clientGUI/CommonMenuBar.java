@@ -97,6 +97,23 @@ public class CommonMenuBar extends JMenuBar implements ActionListener, IPreferen
     private final JMenuItem gameConnect = new JMenuItem(getString("CommonMenuBar.fileGameConnect"));
     private final JCheckBoxMenuItem gameRoundReport = new JCheckBoxMenuItem(getString("CommonMenuBar.viewRoundReport"));
     private final JMenuItem gameEditBots = new JMenuItem(getString("CommonMenuBar.editBots"));
+    /** Asks for the Game Master role; only shown while nobody holds it and the game allows one. */
+    private final JMenuItem gameRequestGameMaster = new JMenuItem(getString("CommonMenuBar.gameRequestGameMaster"));
+    /** Gives up the Game Master role; only shown while the local player holds it. */
+    private final JMenuItem gameGiveUpGameMaster = new JMenuItem(getString("CommonMenuBar.gameGiveUpGameMaster"));
+    /*
+     * Lobby-only shortcuts that set MG burst fire and LRM hot-loading on every unit the player may configure at
+     * once, sharing the labels of the same actions in the unit right-click menu. Shown only in the lobby and only
+     * while the matching game option is on; setLobbyEquipmentOptions keeps them in step.
+     */
+    private final JMenuItem gameAllMgBurstOn = new JMenuItem(getString("ChatLounge.RapidFireToggleOn"));
+    private final JMenuItem gameAllMgBurstOff = new JMenuItem(getString("ChatLounge.RapidFireToggleOff"));
+    private final JMenuItem gameAllHotLoadOn = new JMenuItem(getString("ChatLounge.HotLoadToggleOn"));
+    private final JMenuItem gameAllHotLoadOff = new JMenuItem(getString("ChatLounge.HotLoadToggleOff"));
+    /** Whether the burst MG fire game option is on, which offers the all-units MG entries in the lobby. */
+    private boolean burstMgAvailable = false;
+    /** Whether the hot-loading game option is on, which offers the all-units LRM entries in the lobby. */
+    private boolean hotLoadAvailable = false;
     private final JCheckBoxMenuItem gamePlayerList = new JCheckBoxMenuItem(getString("CommonMenuBar.viewPlayerList"));
     private final JCheckBoxMenuItem gameRoundsInAir =
           new JCheckBoxMenuItem(getString("CommonMenuBar.viewRoundsInAir"));
@@ -243,6 +260,11 @@ public class CommonMenuBar extends JMenuBar implements ActionListener, IPreferen
         menu.setMnemonic(VK_G);
 
         initMenuItem(gameEditBots, menu, FILE_GAME_EDIT_BOTS, VK_R);
+        initMenuItem(gameRequestGameMaster, menu, GAME_REQUEST_GAME_MASTER);
+        initMenuItem(gameGiveUpGameMaster, menu, GAME_GIVE_UP_GAME_MASTER);
+        // at most one of the two is shown, by who holds the role; setGameMasterState keeps them in step
+        gameRequestGameMaster.setVisible(false);
+        gameGiveUpGameMaster.setVisible(false);
         menu.addSeparator();
 
         initMenuItem(gameGameOptions, menu, VIEW_GAME_OPTIONS, VK_O);
@@ -255,6 +277,12 @@ public class CommonMenuBar extends JMenuBar implements ActionListener, IPreferen
         initMenuItem(fileUnitsReinforce, menu, FILE_UNITS_REINFORCE);
         initMenuItem(isMainMenu ? fileCreateRandom : fileUnitsReinforceRAT, menu, FILE_UNITS_REINFORCE_RAT);
         initMenuItem(fileUnitsSave, menu, FILE_UNITS_SAVE);
+        menu.addSeparator();
+
+        initMenuItem(gameAllMgBurstOn, menu, GAME_ALL_MG_BURST_ON);
+        initMenuItem(gameAllMgBurstOff, menu, GAME_ALL_MG_BURST_OFF);
+        initMenuItem(gameAllHotLoadOn, menu, GAME_ALL_HOT_LOAD_ON);
+        initMenuItem(gameAllHotLoadOff, menu, GAME_ALL_HOT_LOAD_OFF);
         menu.addSeparator();
 
         JMenuItem fileRefreshCache = new JMenuItem(getString("CommonMenuBar.fileUnitsRefreshUnitCache"));
@@ -547,6 +575,11 @@ public class CommonMenuBar extends JMenuBar implements ActionListener, IPreferen
         gameSaveServer.setEnabled(isLobby || (isInGame && canSave));
         gameQSave.setEnabled(isLobby || (isInGame && canSave));
         gameEditBots.setEnabled(isLobby || (isInGame && canSave));
+        // the all-units equipment shortcuts belong to lobby setup, and only where their game option is on
+        gameAllMgBurstOn.setVisible(isLobby && burstMgAvailable);
+        gameAllMgBurstOff.setVisible(isLobby && burstMgAvailable);
+        gameAllHotLoadOn.setVisible(isLobby && hotLoadAvailable);
+        gameAllHotLoadOff.setVisible(isLobby && hotLoadAvailable);
         boardSave.setEnabled(isBoardEditor);
         boardSaveAs.setEnabled(isBoardEditor || isInGame); // TODO: should work in the lobby
         boardSaveAsImage.setEnabled(isBoardEditor || isInGame); // TODO: should work in the lobby
@@ -614,6 +647,25 @@ public class CommonMenuBar extends JMenuBar implements ActionListener, IPreferen
         if (itemMap.containsKey(command)) {
             itemMap.get(command).setEnabled(enabled);
         }
+    }
+
+    /**
+     * Shows the Game Master entry that applies: Give Up for the player holding the role, Become for anyone while
+     * the role is free and the game allows one, and neither while another player holds it.
+     */
+    public synchronized void setGameMasterState(boolean localPlayerHoldsRole, boolean roleFreeToRequest) {
+        gameGiveUpGameMaster.setVisible(localPlayerHoldsRole);
+        gameRequestGameMaster.setVisible(roleFreeToRequest);
+    }
+
+    /**
+     * Sets which of the lobby's all-units equipment shortcuts the game's options allow, offering the MG burst
+     * entries under the burst fire option and the LRM hot-loading entries under the hot-loading option.
+     */
+    public synchronized void setLobbyEquipmentOptions(boolean burstMgAvailable, boolean hotLoadAvailable) {
+        this.burstMgAvailable = burstMgAvailable;
+        this.hotLoadAvailable = hotLoadAvailable;
+        updateEnabledStates();
     }
 
     @Override

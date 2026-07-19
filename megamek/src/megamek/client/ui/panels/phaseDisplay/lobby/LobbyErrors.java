@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2021-2025 The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2021-2026 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -68,6 +68,8 @@ public final class LobbyErrors {
           "A converted force must conform to the rules given in Interstellar Operations. Conversion " +
           "will typically work with companies created in the Force Generator.";
     private static final String NO_DUAL_TOW = "Both units must have an open appropriate tow hitch.";
+    private static final String EDIT_DAMAGE = "The Game Master edits the damage of every unit. "
+          + "When there is no Game Master, you may edit the damage of your own units.";
 
     public static void showOnlyOwnBot(JFrame owner) {
         JOptionPane.showMessageDialog(owner, ONLY_OWN_BOT);
@@ -131,6 +133,10 @@ public final class LobbyErrors {
 
     public static void showCannotViewHidden(JFrame owner) {
         JOptionPane.showMessageDialog(owner, VIEW_HIDDEN);
+    }
+
+    public static void showCannotEditDamage(JFrame owner) {
+        JOptionPane.showMessageDialog(owner, EDIT_DAMAGE);
     }
 
     public static void showSingleUnit(JFrame owner, String action) {

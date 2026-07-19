@@ -44,10 +44,11 @@ public class GameToastEvent extends GameEvent {
 
     /**
      * Layer-neutral severity for a toast, mirrored by the client UI's own toast styling. INFO is routine, SUCCESS marks
-     * a completed action, WARNING flags a rejected or risky situation, and ERROR marks a failure.
+     * a completed action, WARNING flags a rejected or risky situation, ERROR marks a failure, and GAMEMASTER marks a
+     * Game Master's intervention, which gets its own color so it reads as the GM's hand rather than a game outcome.
      */
     public enum Level {
-        INFO, SUCCESS, WARNING, ERROR
+        INFO, SUCCESS, WARNING, ERROR, GAMEMASTER
     }
 
     private final Level level;

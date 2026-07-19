@@ -1049,6 +1049,8 @@ public class TestTank extends TestEntity {
     public static boolean isBodyEquipment(EquipmentType type) {
         if (type instanceof MiscType) {
             return type.hasFlag(MiscType.F_CHASSIS_MODIFICATION)
+                  || type.hasFlag(MiscType.F_BASIC_FIRE_CONTROL)
+                  || type.hasFlag(MiscType.F_ADVANCED_FIRE_CONTROL)
                   || type.hasFlag(MiscType.F_CASE)
                   || type.is(EquipmentTypeLookup.IS_CASE_P)
                   || type.hasFlag(MiscType.F_CASEII)

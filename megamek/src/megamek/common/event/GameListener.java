@@ -81,6 +81,10 @@ public interface GameListener extends java.util.EventListener {
 
     void gameSettingsChange(GameSettingsChangeEvent e);
 
+    /** A vote among the players - a gamemaster request - was called, received a ballot, or resolved. */
+    default void gamePollChange(GamePollEvent e) {
+    }
+
     void gameMapQuery(GameMapQueryEvent e);
 
     void gameEntityNew(GameEntityNewEvent e);

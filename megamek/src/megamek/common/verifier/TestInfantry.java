@@ -41,7 +41,6 @@ import megamek.client.ui.clientGUI.calculationReport.DummyCalculationReport;
 import megamek.client.ui.clientGUI.calculationReport.TextCalculationReport;
 import megamek.common.annotations.Nullable;
 import megamek.common.equipment.EquipmentType;
-import megamek.common.equipment.EquipmentTypeLookup;
 import megamek.common.equipment.MiscType;
 import megamek.common.equipment.Mounted;
 import megamek.common.exceptions.LocationFullException;
@@ -231,7 +230,7 @@ public class TestInfantry extends TestEntity {
             correct = false;
         }
 
-        if (inf.isMechanized() && inf.countEquipment(EquipmentTypeLookup.ANTI_MEK_GEAR) > 0) {
+        if (inf.isMechanized() && inf.hasMisc(MiscType.F_ANTI_MEK_GEAR)) {
             buff.append("Mechanized infantry may not have anti-mek gear!\n");
             correct = false;
         }

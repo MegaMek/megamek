@@ -51,4 +51,11 @@ public interface PMLabel extends PMElement {
     void setColor(Color c);
 
     void setString(String s);
+
+    /**
+     * Sets the factor the label's text is enlarged by, so it can be drawn at that size rather than magnified through
+     * the component's transform, which would leave it blocky. 1.0 draws it at its natural size.
+     */
+    default void setDrawScale(double scale) {
+    }
 }

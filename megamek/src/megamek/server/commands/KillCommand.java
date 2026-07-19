@@ -39,6 +39,7 @@ import megamek.client.ui.Messages;
 import megamek.server.Server;
 import megamek.server.commands.arguments.Argument;
 import megamek.server.commands.arguments.Arguments;
+import megamek.server.commands.arguments.BooleanArgument;
 import megamek.server.commands.arguments.UnitArgument;
 import megamek.server.totalWarfare.TWGameManager;
 
@@ -48,6 +49,7 @@ import megamek.server.totalWarfare.TWGameManager;
 public class KillCommand extends GamemasterServerCommand {
 
     public static final String UNIT_ID = "unitID";
+    public static final String EJECT = "eject";
 
     /** Creates new KillCommand */
     public KillCommand(Server server, TWGameManager gameManager) {
@@ -57,7 +59,8 @@ public class KillCommand extends GamemasterServerCommand {
 
     @Override
     public List<Argument<?>> defineArguments() {
-        return List.of(new UnitArgument(UNIT_ID, Messages.getString("Gamemaster.cmd.kill.unitID")));
+        return List.of(new UnitArgument(UNIT_ID, Messages.getString("Gamemaster.cmd.kill.unitID")),
+              new BooleanArgument(EJECT, Messages.getString("Gamemaster.cmd.kill.eject"), false));
     }
 
     /**
@@ -71,6 +74,12 @@ public class KillCommand extends GamemasterServerCommand {
         if (unit == null) {
             server.sendServerChat(connId, Messages.getString("Gamemaster.cmd.missingUnit"));
             return;
+        }
+        boolean eject = (boolean) args.get(EJECT).getValue();
+        if (eject) {
+            // The crew must leave before the unit is destroyed: a crew that is already dead or doomed cannot
+            // abandon it, and destroying a unit this way is not survivable.
+            gameManager.addReport(gameManager.abandonEntity(unit));
         }
         gameManager.destroyEntity(unit, Messages.getString("Gamemaster.cmd.kill.reason"), false, false);
         server.sendServerChat(unit.getDisplayName() + Messages.getString("Gamemaster.cmd.kill.success"));

@@ -241,10 +241,39 @@ public class LobbyActions {
             return;
         }
         Entity entity = CollectionUtil.anyOneElement(entities);
-        UnitEditorDialog med = new UnitEditorDialog(frame(), entity);
+        if (!canEditDamage(client(), entity)) {
+            LobbyErrors.showCannotEditDamage(frame());
+            return;
+        }
+        // Reaching here means the local player may edit this unit: the gamemaster, or the owner when no gamemaster
+        // is present. Either way the dialog offers the full editing tools without re-checking the gamemaster role.
+        UnitEditorDialog med = new UnitEditorDialog(frame(), entity, true);
         med.setVisible(true);
         med.dispose();
         sendUpdates(entities);
+    }
+
+    /**
+     * Returns true when the local player of the given client may edit damage on the given unit. When any player
+     * holds the Game Master role, only the Game Master may edit damage. Without a Game Master, players may edit
+     * damage only on their own units and the units of their local bots.
+     *
+     * @param client the client asking to edit damage
+     * @param entity the unit to edit damage on
+     *
+     * @return true when the client's local player may edit damage on the unit
+     */
+    static boolean canEditDamage(Client client, Entity entity) {
+        Player localPlayer = client.getLocalPlayer();
+        boolean ownUnit = (entity.getOwnerId() == localPlayer.getId())
+              || client.getBots().containsKey(entity.getOwner().getName());
+        for (Player player : client.getGame().getPlayersList()) {
+            if (player.isGameMaster()) {
+                // when a gamemaster is present, only the gamemaster may edit damage; everyone else loses access
+                return localPlayer.isGameMaster();
+            }
+        }
+        return ownUnit;
     }
 
     /**
@@ -1246,8 +1275,8 @@ public class LobbyActions {
     }
 
     /**
-     * Returns the best sending client for an update of the given entity or null if none can be found (entity is an
-     * enemy to the local player and all his bots)
+     * Returns the best sending client for an update of the given entity or {@code null} if none can be found (entity
+     * is an enemy to the local player and all his bots, and the local player is not a gamemaster)
      */
     private Client correctSender(Entity entity) {
         Player owner = entity.getOwner();
@@ -1265,6 +1294,10 @@ public class LobbyActions {
             }
         }
 
+        // A gamemaster may update any unit; the server accepts GM updates sent from the local client
+        if (localPlayer().isGameMaster()) {
+            return client();
+        }
         return null;
     }
 

@@ -508,7 +508,7 @@ public class TestSmallCraft extends TestAero {
     }
 
     /**
-     * Checks that the heatsink type is a legal value.
+     * Checks that the heat sink type is a legal value.
      *
      * @param buff A buffer that collects messages about validation failures
      *
@@ -517,7 +517,7 @@ public class TestSmallCraft extends TestAero {
     @Override
     public boolean correctHeatSinks(StringBuffer buff) {
         if ((smallCraft.getHeatType() != Aero.HEAT_SINGLE) && (smallCraft.getHeatType() != Aero.HEAT_DOUBLE)) {
-            buff.append("Invalid heatsink type!  Valid types are ")
+            buff.append("Invalid heat sink type!  Valid types are ")
                   .append(Aero.HEAT_SINGLE)
                   .append(" and ")
                   .append(Aero.HEAT_DOUBLE)
@@ -616,8 +616,13 @@ public class TestSmallCraft extends TestAero {
                         needed *= 6;
                     }
                     if (!ammoTypeCount.containsKey(at) || ammoTypeCount.get(at) < needed) {
-                        buff.append("%s (%s) does not have the minimum amount of ammo for each weapon\n"
-                              .formatted(bay.getName(), bay.getEntity().getLocationAbbr(bay.getLocation())));
+                        buff.append(("%s (%s) %s has <b>%s</b>/%s minimum ammo required\n").formatted(
+                              bay.getName(),
+                              bay.getEntity().getLocationAbbr(bay.getLocation()),
+                              at.getName(),
+                              ammoTypeCount.getOrDefault(at, 0),
+                              needed
+                        ));
                         illegal = true;
                         break;
                     }

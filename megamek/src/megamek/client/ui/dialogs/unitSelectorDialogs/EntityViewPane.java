@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2021-2025 The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2021-2026 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -57,6 +57,7 @@ public class EntityViewPane extends EnhancedTabbedPane {
     private final EntityReadoutPanel troPanel = new EntityReadoutPanel();
     private final ConfigurableASCardPanel cardPanel;
     private final AvailabilityPanel factionPanel = new AvailabilityPanel();
+    private final DamageAnalysisPanel analysisPanel = new DamageAnalysisPanel();
     private boolean menuVisible = true;
 
     public EntityViewPane(final JFrame frame, final @Nullable Entity entity) {
@@ -85,6 +86,7 @@ public class EntityViewPane extends EnhancedTabbedPane {
         addTab(Messages.getString("TRO.title"), troPanel);
         addTab(Messages.getString("ASCard.title"), cardPanel);
         addTab(Messages.getString("FactionAvailability.title"), factionPanel.getPanel());
+        addTab(Messages.getString("DamageAnalysis.title"), analysisPanel);
     }
 
     /**
@@ -119,6 +121,17 @@ public class EntityViewPane extends EnhancedTabbedPane {
 
         summaryPanel.setEntity(entity);
         cardPanel.setASElement(ASConverter.canConvert(entity) ? asUnit : null);
+        analysisPanel.setEntity(entity);
+    }
+
+    /**
+     * Sets the gunnery skill the Analysis tab displays its expected-damage curves at, so the tab
+     * can follow a live control such as the unit selector's BV gunnery field.
+     *
+     * @param gunnery the gunnery skill for the analysis charts
+     */
+    public void setAnalysisGunnery(int gunnery) {
+        analysisPanel.setGunnery(gunnery);
     }
 
     private void toggleMenus() {

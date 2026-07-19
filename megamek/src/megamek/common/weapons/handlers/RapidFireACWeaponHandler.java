@@ -1,6 +1,6 @@
 /*
  * Copyright (C) 2004 Ben Mazur (bmazur@sev.org)
- * Copyright (C) 2007-2025 The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2007-2026 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -49,9 +49,9 @@ import megamek.common.weapons.Weapon;
 import megamek.server.totalWarfare.TWGameManager;
 
 /**
- * Handler for rapid-fire autocannons. When using special ammunition, this handler spawns
- * auto-hit attacks using the appropriate special ammo handler (ACAPHandler, ACFlakHandler, etc.)
- * to ensure special ammo effects are properly applied to each hit.
+ * Handler for rapid-fire autocannons. When using special ammunition, this handler spawns auto-hit attacks using the
+ * appropriate special ammo handler (ACAPHandler, ACFlakHandler, etc.) to ensure special ammo effects are properly
+ * applied to each hit.
  *
  * @author Andrew Hunter
  */
@@ -79,24 +79,62 @@ public class RapidFireACWeaponHandler extends UltraWeaponHandler {
             jamLevel = 2;
         }
         if ((roll.getIntValue() <= jamLevel) && (howManyShots == 2) && !attackingEntity.isConventionalInfantry()) {
-            if (roll.getIntValue() > 2 || kindRapidFire) {
-                Report r = new Report(3161);
-                r.subject = subjectId;
-                r.newlines = 0;
-                vPhaseReport.addElement(r);
-                weapon.setJammed(true);
-            } else {
-                Report r = new Report(3162);
-                r.subject = subjectId;
-                r.choose(false);
-                r.indent();
-                vPhaseReport.addElement(r);
+            // Edge may reroll the jam check; a reroll above the jam level avoids the jam (and any barrel explosion).
+            int edgeReroll = rerollJamCheckWithEdge(attackingEntity, subjectId, vPhaseReport);
+            switch (rapidFireJamOutcome(edgeReroll, roll.getIntValue(), jamLevel, kindRapidFire)) {
+                case CLEARED:
+                    break;
+                case JAM: {
+                    Report r = new Report(3161);
+                    r.subject = subjectId;
+                    r.newlines = 0;
+                    vPhaseReport.addElement(r);
+                    weapon.setJammed(true);
+                    break;
+                }
+                case EXPLODE: {
+                    Report r = new Report(3162);
+                    r.subject = subjectId;
+                    r.choose(false);
+                    r.indent();
+                    vPhaseReport.addElement(r);
 
-                explodeRoundInBarrel(vPhaseReport);
+                    explodeRoundInBarrel(vPhaseReport);
+                    break;
+                }
             }
             return false;
         }
         return false;
+    }
+
+    /** The possible outcomes of a rapid-fire AC jam check after an optional Edge reroll. */
+    enum RapidFireJamResult {CLEARED, JAM, EXPLODE}
+
+    /**
+     * Decides the outcome of a rapid-fire AC jam check. A rapid-fire AC jams on a to-hit roll at or below the jam
+     * level; a natural 2 (without the "kind" rapid-fire rule) explodes the round in the barrel instead. If Edge was
+     * spent, the rerolled value replaces the original roll for this decision, and a reroll above the jam level clears
+     * the jam (and any explosion) entirely.
+     *
+     * @param edgeReroll    the rerolled value from {@link #rerollJamCheckWithEdge}, or -1 if Edge was not used
+     * @param originalRoll  the original to-hit roll value
+     * @param jamLevel      the value at or below which the weapon jams
+     * @param kindRapidFire whether the "kind" rapid-fire rule (no barrel explosions) is in effect
+     *
+     * @return the resolved outcome
+     */
+    // package-private static for testing
+    static RapidFireJamResult rapidFireJamOutcome(int edgeReroll, int originalRoll, int jamLevel,
+          boolean kindRapidFire) {
+        if ((edgeReroll >= 0) && (edgeReroll > jamLevel)) {
+            return RapidFireJamResult.CLEARED;
+        }
+        int effectiveRoll = (edgeReroll < 0) ? originalRoll : edgeReroll;
+        if ((effectiveRoll > 2) || kindRapidFire) {
+            return RapidFireJamResult.JAM;
+        }
+        return RapidFireJamResult.EXPLODE;
     }
 
     @Override
@@ -105,8 +143,8 @@ public class RapidFireACWeaponHandler extends UltraWeaponHandler {
     }
 
     /**
-     * Checks if the current ammo type has special effects that require a specialized handler.
-     * Note: M_INCENDIARY_AC is intentionally excluded as it was retconned (FMFS pg 158).
+     * Checks if the current ammo type has special effects that require a specialized handler. Note: M_INCENDIARY_AC is
+     * intentionally excluded as it was retconned (FMFS pg 158).
      *
      * @return true if using special ammo (AP, flak, flechette, tracer, caseless)
      */

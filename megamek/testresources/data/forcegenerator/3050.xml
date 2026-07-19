@@ -1,0 +1,45 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<!--
+# MegaMek Data (C) 2026 by The MegaMek Team is licensed under CC BY-NC-SA 4.0.
+# To view a copy of this license, visit https://creativecommons.org/licenses/by-nc-sa/4.0/
+#
+# NOTICE: The MegaMek organization is a non-profit group of volunteers
+# creating free software for the BattleTech community.
+#
+# MechWarrior, BattleMech, `Mech and AeroTech are registered trademarks
+# of The Topps Company, Inc. All Rights Reserved.
+#
+# Catalyst Game Labs and the Catalyst Game Labs logo are trademarks of
+# InMediaRes Productions, LLC.
+#
+# MechWarrior Copyright Microsoft Corporation. MegaMek Data was created under
+# Microsoft's "Game Content Usage Rules"
+# <https://www.xbox.com/en-US/developers/rules> and it is not endorsed by or
+# affiliated with Microsoft.
+-->
+<!-- Minimal era file for RATGeneratorUnitFileAvailabilityTest. The Archer is the canon baseline; the custom
+     Grimjack is deliberately absent here, so it can only reach a table via its own unit file. -->
+<ratgen>
+    <factions>
+        <faction key='LA'>
+            <pctOmni>0,0</pctOmni>
+            <pctClan>0,0</pctClan>
+            <pctSL>0,0</pctSL>
+        </faction>
+    </factions>
+    <units>
+        <chassis name='Archer' unitType='Mek'>
+            <availability>LA:6</availability>
+            <model name='ARC-2R'>
+                <roles>fire_support</roles>
+                <availability>General:6</availability>
+            </model>
+        </chassis>
+        <chassis name='Atlas' unitType='Mek'>
+            <availability>LA:8</availability>
+            <model name='AS7-D'>
+                <availability>General:5</availability>
+            </model>
+        </chassis>
+    </units>
+</ratgen>

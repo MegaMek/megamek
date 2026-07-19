@@ -39,6 +39,7 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.InputStreamReader;
 import java.util.*;
+
 import javax.swing.JFrame;
 import javax.swing.JOptionPane;
 import javax.swing.JScrollPane;
@@ -49,6 +50,7 @@ import megamek.client.AbstractClient;
 import megamek.client.Client;
 import megamek.client.bot.princess.BehaviorSettings;
 import megamek.client.bot.princess.CardinalEdge;
+import megamek.client.bot.princess.MinefieldDeploymentPlanner;
 import megamek.client.ui.clientGUI.ClientGUI;
 import megamek.common.ECMInfo;
 import megamek.common.Hex;
@@ -83,6 +85,7 @@ import megamek.common.event.player.GamePlayerChatEvent;
 import megamek.common.game.Game;
 import megamek.common.game.InitiativeRoll;
 import megamek.common.moves.MovePath;
+import megamek.common.net.packets.InvalidPacketDataException;
 import megamek.common.net.packets.Packet;
 import megamek.common.options.OptionsConstants;
 import megamek.common.pathfinder.BoardClusterTracker;
@@ -123,11 +126,11 @@ public abstract class BotClient extends Client {
     protected boolean rerolledInitiative = false;
 
     /**
-     * The bot's personality/configuration state. Held on {@link BotClient} because it is generic bot-personality
-     * state (sliders, targeting, retreat edges) shared by every bot implementation, not specific to any one AI.
-     * Initialized to a default so it is never {@code null}: subclasses normally replace it via
-     * {@link #setBehaviorSettings(BehaviorSettings)} during construction, but the default preserves the
-     * non-null contract that {@link #getBehaviorSettings()} callers rely on even if a subclass does not.
+     * The bot's personality/configuration state. Held on {@link BotClient} because it is generic bot-personality state
+     * (sliders, targeting, retreat edges) shared by every bot implementation, not specific to any one AI. Initialized
+     * to a default so it is never {@code null}: subclasses normally replace it via
+     * {@link #setBehaviorSettings(BehaviorSettings)} during construction, but the default preserves the non-null
+     * contract that {@link #getBehaviorSettings()} callers rely on even if a subclass does not.
      */
     protected BehaviorSettings behaviorSettings = new BehaviorSettings();
 
@@ -521,6 +524,7 @@ public abstract class BotClient extends Client {
                       !entity.isOffBoard() &&
                       (entity.getCrew() != null) &&
                       !entity.getCrew().isDead() &&
+                      !entity.isAbandoned() &&
                       !entity.isHidden()) {
                     currentTurnEnemyEntities.add(entity);
                 }
@@ -1281,6 +1285,19 @@ public abstract class BotClient extends Client {
                                     // before they come back on-board.
                                     new_stealth = 1;
 
+                                } else if (wantsStealthHeatForTsm(check_ent)) {
+                                    // A Mek with heat-activated Triple-Strength Myomer uses stealth armor's
+                                    // heat to reach the TSM activation threshold while it closes, and stays
+                                    // cloaked during the approach. Once it is adjacent to an enemy, though, it
+                                    // drops stealth: at melee it needs its heat sinks free to fire weapons
+                                    // (keeping its own heat up for TSM) while it makes doubled physical
+                                    // attacks, and stealth's defensive value against an adjacent foe is small.
+                                    boolean adjacentToEnemy = isAdjacentToEnemy(check_ent);
+                                    new_stealth = adjacentToEnemy ? 0 : 1;
+                                    LOGGER.debug("[HeatTSM] {}: stealth armor {} for TSM ({})",
+                                          check_ent.getShortName(), (new_stealth == 1) ? "on" : "off",
+                                          adjacentToEnemy ? "adjacent - firing/melee" : "closing");
+
                                 } else {
 
                                     // Mek is not in danger of shutting down soon;
@@ -1332,6 +1349,40 @@ public abstract class BotClient extends Client {
                 }
             }
         }
+    }
+
+    /**
+     * Reports whether keeping stealth armor active benefits this unit's Triple-Strength Myomer. A Mek with
+     * heat-activated standard TSM (which switches on at elevated heat) wants the extra heat stealth armor
+     * generates to reach and hold the activation threshold, so it should not shed stealth to free heat
+     * sinks. Prototype and industrial TSM are always on and do not use the heat threshold, so they gain
+     * nothing here.
+     *
+     * @param entity the unit whose stealth armor is being toggled
+     *
+     * @return {@code true} if the unit has heat-activated standard TSM, otherwise {@code false}
+     */
+    static boolean wantsStealthHeatForTsm(Entity entity) {
+        return (entity instanceof Mek mek) && mek.hasTSM(false);
+    }
+
+    /**
+     * @param entity the unit whose surroundings are being checked
+     *
+     * @return {@code true} if any enemy of {@code entity} occupies a hex adjacent to it (melee range),
+     *       otherwise {@code false}
+     */
+    private boolean isAdjacentToEnemy(Entity entity) {
+        if (entity.getPosition() == null) {
+            return false;
+        }
+        for (Entity other : game.getEntitiesVector()) {
+            if (entity.isEnemyOf(other) && (other.getPosition() != null)
+                  && (Compute.effectiveDistance(game, entity, other) <= 1)) {
+                return true;
+            }
+        }
+        return false;
     }
 
     private @Nullable String getRandomBotMessage() {
@@ -1401,20 +1452,67 @@ public abstract class BotClient extends Client {
         // Do nothing;
     }
 
-    private record MinefieldNumbers(int number, int type) {
-    }
-
     /**
      * Deploy minefields for the bot
      */
     protected void deployMinefields() {
-        MinefieldNumbers[] minefieldNumbers = getMinefieldNumbers();
-        int totalMines = Arrays.stream(minefieldNumbers).mapToInt(MinefieldNumbers::number).sum();
-        Deque<Coords> coordsSet = getMinefieldDeploymentPlanner().getRandomMinefieldPositions(totalMines);
-        Vector<Minefield> deployedMinefields = new Vector<>();
-        for (MinefieldNumbers minefieldNumber : minefieldNumbers) {
-            deployMinefields(minefieldNumber, coordsSet, deployedMinefields);
-        }
+    	MinefieldDeploymentPlanner mdp = new MinefieldDeploymentPlanner(getLocalPlayer(), getGame());
+    	Vector<Minefield> deployedMinefields = new Vector<>();
+    	
+    	// cycle through all possible mine field types
+    	for (int minefieldType = 0; minefieldType < Minefield.TYPE_SIZE; minefieldType++) {
+    		int minesToPlace = getLocalPlayer().getMinefieldCount(minefieldType);
+    		
+    		// avoid unnecessary loops and evaluations
+    		if (minesToPlace <= 0) {
+    			continue;
+    		}
+    		
+    		Map<Double, List<Coords>> potentialCoords = 
+    				mdp.getBucketedCandidateCoords(minefieldType, getBoard());    		    		
+    		
+    		// complicated loop:
+    		// while we have mines to place (minesToPlace > 0)
+    		// AND we have buckets left with coordinates in them, place mines.    		
+    		bucketloop:
+    		for (double bucket : potentialCoords.keySet()) {
+    			for (Coords coords : potentialCoords.get(bucket)) {
+    				// it's always more advantageous to put in higher density minefields
+	    			// but hardly fair when players may be bound by scenario restrictions
+	    			// while the bot is not
+	    			int density = Compute.randomIntInclusive(30) + 5;
+	    			
+	    			Minefield minefield;
+	    			
+	    			// vibrabombs require a "setting"
+	    			if (minefieldType != Minefield.TYPE_VIBRABOMB) {
+	    				minefield = Minefield.createMinefield(coords,
+	    					getLocalPlayer().getId(),
+	    					minefieldType,
+	    					density);
+	    			} else {
+	    				minefield = Minefield.createMinefield(coords,
+	    						getLocalPlayer().getId(),
+	    						minefieldType,
+	    						density,
+	    						mdp.getVibrabombSetting(),
+	    						false,
+	    						0);	    						
+	    			}
+	    			
+	    			deployedMinefields.add(minefield);
+	    			mdp.markMinePlacement(coords);
+	    			
+	    			minesToPlace--;
+	    			
+	    			// if we run out of mines to place, break out of both loops
+	    			if (minesToPlace == 0) {
+	    				break bucketloop;
+	    			}
+    			}
+    		}
+    	}
+    	
         performMinefieldDeployment(deployedMinefields);
     }
 
@@ -1432,65 +1530,10 @@ public abstract class BotClient extends Client {
      * Reset the minefield counters for the bot and push the updated player info to the server
      */
     private void resetMinefieldCounters() {
-        getLocalPlayer().setNbrMFActive(0);
-        getLocalPlayer().setNbrMFCommand(0);
-        getLocalPlayer().setNbrMFConventional(0);
-        getLocalPlayer().setNbrMFInferno(0);
-        getLocalPlayer().setNbrMFVibra(0);
-        getLocalPlayer().setNbrMFEMP(0);
+    	for (int minefieldIndex = 0; minefieldIndex < Minefield.TYPE_SIZE; minefieldIndex++) {
+    		getLocalPlayer().setMinefieldCount(minefieldIndex, 0);
+    	}
         sendPlayerInfo();
-    }
-
-    /**
-     * Deploy the specified number of minefields of the specified type
-     *
-     * @param minefieldNumber    the number of minefields to deploy and the type of minefield to deploy
-     * @param coordsSet          the set of coordinates to deploy the minefields to
-     * @param deployedMinefields the vector to add the deployed minefields to
-     */
-    private void deployMinefields(MinefieldNumbers minefieldNumber, Deque<Coords> coordsSet,
-          Vector<Minefield> deployedMinefields) {
-        int minesToDeploy = minefieldNumber.number();
-        while (!coordsSet.isEmpty() && minesToDeploy > 0) {
-            Coords coords = coordsSet.poll();
-            int density = Compute.randomIntInclusive(30) + 5;
-            Minefield minefield = Minefield.createMinefield(coords,
-                  getLocalPlayer().getId(),
-                  minefieldNumber.type(),
-                  density);
-            deployedMinefields.add(minefield);
-            minesToDeploy--;
-        }
-    }
-
-    /**
-     * Get the number of minefields of each type that the bot should deploy
-     *
-     * @return an array of MinefieldNumbers, each representing the number of a specific type of minefield to deploy
-     */
-    private MinefieldNumbers[] getMinefieldNumbers() {
-        return new MinefieldNumbers[] { new MinefieldNumbers(getLocalPlayer().getNbrMFActive(), Minefield.TYPE_ACTIVE),
-                                        new MinefieldNumbers(getLocalPlayer().getNbrMFInferno(),
-                                              Minefield.TYPE_INFERNO),
-                                        new MinefieldNumbers(getLocalPlayer().getNbrMFConventional(),
-                                              Minefield.TYPE_CONVENTIONAL),
-                                        new MinefieldNumbers(getLocalPlayer().getNbrMFVibra(),
-                                              Minefield.TYPE_VIBRABOMB),
-                                        new MinefieldNumbers(getLocalPlayer().getNbrMFEMP(),
-                                              Minefield.TYPE_EMP),
-                                        // the following are added for completeness, but are not used by the bot
-                                        new MinefieldNumbers(0, Minefield.TYPE_COMMAND_DETONATED),
-                                        // no command detonated mines
-        };
-    }
-
-    /**
-     * Get the minefield deployment planner to use for this bot
-     *
-     * @return the minefield deployment planner
-     */
-    protected MinefieldDeploymentPlanner getMinefieldDeploymentPlanner() {
-        return new RandomMinefieldDeploymentPlanner(getBoard());
     }
 
     /**
@@ -1501,7 +1544,28 @@ public abstract class BotClient extends Client {
     public String receiveReport(List<Report> reports) {
         return "";
     }
-
+    
+    /**
+     * In addition to handling the entity update normally, the bot needs to decide
+     * if it should activate its hidden units
+     */
+    @Override
+    protected void receiveEntityUpdate(Packet packet) throws InvalidPacketDataException {
+    	super.receiveEntityUpdate(packet);
+    	
+    	if (this.getGame().getPhase() == GamePhase.MOVEMENT) {
+    		int entityIndex = packet.getIntValue(0);
+    		revealEntities(entityIndex);
+    	}
+    }
+    
+    /**
+     * Given an entity that just moved, decide if I should reveal any entities in response
+     */
+    protected void revealEntities(int movedEntityID) {
+    	// default does nothing
+    }
+    
     /**
      * Let the bot decide whether to reroll initiative based on report info
      *

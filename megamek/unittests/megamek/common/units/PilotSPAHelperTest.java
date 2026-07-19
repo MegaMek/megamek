@@ -34,6 +34,7 @@
 package megamek.common.units;
 
 import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import megamek.common.equipment.EquipmentType;
@@ -207,5 +208,43 @@ class PilotSPAHelperTest {
         spaceStation.setCrew(new Crew(CrewType.SINGLE));
 
         assertTrue(PilotSPAHelper.isWindWalkerValid(spaceStation), "Wind Walker should be valid for Space Stations");
+    }
+
+    @Test
+    void testSandblasterValidForSilverBulletGauss() {
+        EquipmentType silverBulletGauss = EquipmentType.get("ISSBGR");
+        assertNotNull(silverBulletGauss,
+              "Test setup: Silver Bullet Gauss Rifle (ISSBGR) missing from the equipment registry");
+
+        assertTrue(PilotSPAHelper.isSandblasterValid(silverBulletGauss, null),
+              "Sandblaster should be valid for the Silver Bullet Gauss Rifle (fires on the cluster hit table)");
+    }
+
+    @Test
+    void testSandblasterValidForLBXAutocannon() {
+        EquipmentType lb10x = EquipmentType.get("ISLBXAC10");
+        assertNotNull(lb10x, "Test setup: LB 10-X AC (ISLBXAC10) missing from the equipment registry");
+
+        assertTrue(PilotSPAHelper.isSandblasterValid(lb10x, null),
+              "Sandblaster should be valid for LB-X autocannons");
+    }
+
+    @Test
+    void testSandblasterInvalidForStandardGauss() {
+        EquipmentType standardGauss = EquipmentType.get("ISGaussRifle");
+        assertNotNull(standardGauss,
+              "Test setup: standard Gauss Rifle (ISGaussRifle) missing from the equipment registry");
+
+        assertFalse(PilotSPAHelper.isSandblasterValid(standardGauss, null),
+              "Sandblaster should NOT be valid for the standard Gauss Rifle (single-slug, direct fire)");
+    }
+
+    @Test
+    void testSandblasterInvalidForMediumLaser() {
+        EquipmentType mediumLaser = EquipmentType.get("ISMediumLaser");
+        assertNotNull(mediumLaser, "Test setup: Medium Laser (ISMediumLaser) missing from the equipment registry");
+
+        assertFalse(PilotSPAHelper.isSandblasterValid(mediumLaser, null),
+              "Sandblaster should NOT be valid for the Medium Laser");
     }
 }

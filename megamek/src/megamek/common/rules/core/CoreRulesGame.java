@@ -64,4 +64,9 @@ public class CoreRulesGame extends RulesGame {
     public int getInitiativeOrder(int[] num_turns, int index, int min, boolean frontLoadOption) {
         return ((int) Math.ceil(((double) num_turns[index]) / (double) min));
     }
+    
+    // No BV boost for semi-guided or Arrow IV homing (Not present in core)
+    public boolean tagBVBump() {
+        return false;
+    }
 }

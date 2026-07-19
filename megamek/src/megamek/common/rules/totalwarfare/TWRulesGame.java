@@ -60,4 +60,9 @@ public class TWRulesGame extends CoreRulesGame {
         return frontLoadOption ? super.getInitiativeOrder(num_turns, index, min, true) :
               (num_turns[index] / min);
     }
+    
+    // TAG can increase BV when Semi-guided or homing arrow IV is present
+    public boolean tagBVBump() {
+        return true;
+    }
 }

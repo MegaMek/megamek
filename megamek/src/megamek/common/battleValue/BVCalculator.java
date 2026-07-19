@@ -52,6 +52,7 @@ import megamek.common.equipment.*;
 import megamek.common.equipment.AmmoType.AmmoTypeEnum;
 import megamek.common.equipment.enums.BombType;
 import megamek.common.equipment.enums.BombType.BombTypeEnum;
+import megamek.common.game.Game;
 import megamek.common.options.OptionsConstants;
 import megamek.common.units.*;
 import megamek.common.weapons.bayWeapons.BayWeapon;
@@ -1394,7 +1395,7 @@ public abstract class BVCalculator {
      */
     public void processTagBonus() {
         long tagCount = workingTAGCount(entity);
-        if ((tagCount == 0) || (entity.getGame() == null)) {
+        if ((tagCount == 0) || (entity.getGame() == null) || !Game.rulesManager.getRulesGame().tagBVBump()) {
             return;
         }
 

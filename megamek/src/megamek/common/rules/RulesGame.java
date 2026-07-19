@@ -47,4 +47,7 @@ public abstract class RulesGame {
 
     // Return the number of units to move
     public abstract int getInitiativeOrder(int[] num_normal_turns, int index, int min, boolean frontLoadOption);
+
+    // Does tag increase BV?
+    public abstract boolean tagBVBump();
 }

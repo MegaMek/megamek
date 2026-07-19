@@ -137,6 +137,37 @@ class BLKFileTest {
     }
 
     @Test
+    void allTechbaseArmorUsesStrictUnitTechbase() {
+        BuildingBlock blk = new BuildingBlock();
+        blk.writeBlockData("armor_tech_level", TechConstants.T_IS_ADVANCED);
+        BLKFile loader = new BLKFile();
+        loader.dataFile = blk;
+        Tank tank = new Tank();
+        tank.setTechLevel(TechConstants.T_CLAN_ADVANCED);
+        tank.setArmorType(EquipmentType.T_ARMOR_STANDARD);
+
+        loader.setArmorTechLevelFromDataFile(tank);
+
+        assertEquals(TechConstants.T_CLAN_ADVANCED, tank.getArmorTechLevel(tank.firstArmorIndex()));
+    }
+
+    @Test
+    void allTechbaseArmorPreservesExplicitTechbaseForMixedUnit() {
+        BuildingBlock blk = new BuildingBlock();
+        blk.writeBlockData("armor_tech_level", TechConstants.T_IS_ADVANCED);
+        BLKFile loader = new BLKFile();
+        loader.dataFile = blk;
+        Tank tank = new Tank();
+        tank.setTechLevel(TechConstants.T_CLAN_ADVANCED);
+        tank.setMixedTech(true);
+        tank.setArmorType(EquipmentType.T_ARMOR_STANDARD);
+
+        loader.setArmorTechLevelFromDataFile(tank);
+
+        assertEquals(TechConstants.T_IS_ADVANCED, tank.getArmorTechLevel(tank.firstArmorIndex()));
+    }
+
+    @Test
     void unitFileUUIDIsCanonicalizedOnLoad() throws Exception {
         Tank tank = new Tank();
         String unitFileUUID = tank.getUnitFileUUID();

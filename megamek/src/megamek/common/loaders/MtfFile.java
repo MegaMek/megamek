@@ -61,6 +61,7 @@ import megamek.common.equipment.EquipmentTypeLookup;
 import megamek.common.equipment.LiftHoist;
 import megamek.common.equipment.MiscType;
 import megamek.common.equipment.Mounted;
+import megamek.common.equipment.StructureType;
 import megamek.common.equipment.WeaponType;
 import megamek.common.exceptions.LocationFullException;
 import megamek.common.units.BipedMek;
@@ -400,7 +401,13 @@ public class MtfFile implements IMekLoader {
             String thisStructureType = internalType.substring(internalType.indexOf(':') + 1).trim();
             if (!thisStructureType.isBlank()
                   && !thisStructureType.equalsIgnoreCase(Mek.FRANKEN_MEK_STRUCTURE_HYBRID)) {
-                mek.setStructureType(thisStructureType);
+                StructureType structure = EquipmentType.getStructureFromName(thisStructureType);
+                if (!mek.isMixedTech() && (structure != null)
+                      && (structure.getTechAdvancement().getTechBase() == TechBase.ALL)) {
+                    mek.setStructureType(EquipmentType.getStructureType(structure));
+                } else {
+                    mek.setStructureType(thisStructureType);
+                }
             } else {
                 mek.setStructureType(EquipmentType.T_STRUCTURE_STANDARD);
             }
@@ -415,7 +422,12 @@ public class MtfFile implements IMekLoader {
 
             String thisArmorType = armorType.substring(armorType.indexOf(':') + 1);
             if (thisArmorType.indexOf('(') != -1) {
-                boolean clan = thisArmorType.toLowerCase().contains("clan");
+                String armorName = thisArmorType.substring(0, thisArmorType.indexOf('(')).trim();
+                ArmorType armor = EquipmentType.getArmorFromName(armorName);
+                boolean clan = (!mek.isMixedTech() && (armor != null)
+                      && (armor.getTechAdvancement().getTechBase() == TechBase.ALL))
+                      ? mek.isClan()
+                      : thisArmorType.toLowerCase().contains("clan");
                 if (clan) {
                     switch (Integer.parseInt(rulesLevel.substring(12).trim())) {
                         case 2:
@@ -456,7 +468,7 @@ public class MtfFile implements IMekLoader {
                                   "Unsupported tech level: " + rulesLevel.substring(12).trim());
                     }
                 }
-                thisArmorType = thisArmorType.substring(0, thisArmorType.indexOf('(')).trim();
+                thisArmorType = armorName;
                 mek.setArmorType(thisArmorType);
             } else if (!thisArmorType.equals(EquipmentType.getArmorTypeName(EquipmentType.T_ARMOR_PATCHWORK))) {
                 mek.setArmorTechLevel(mek.getTechLevel());

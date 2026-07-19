@@ -40,6 +40,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.io.ByteArrayInputStream;
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.InputStream;
 import java.nio.charset.StandardCharsets;
 import java.util.List;
@@ -203,6 +204,19 @@ class MtfFileTest {
         assertTrue(found.isRearMounted());
         assertTrue(found.isMekTurretMounted());
         assertTrue(found.isArmored());
+    }
+
+    @Test
+    void allTechbaseComponentsUseStrictUnitTechbase() throws Exception {
+        Entity loaded;
+        try (InputStream inputStream = new FileInputStream("testresources/data/mekfiles/Boreas C.mtf")) {
+            loaded = new MtfFile(inputStream).getEntity();
+        }
+
+        assertEquals(EquipmentType.T_ARMOR_STANDARD, loaded.getArmorType(Mek.LOC_HEAD));
+        assertEquals(TechConstants.T_CLAN_ADVANCED, loaded.getArmorTechLevel(Mek.LOC_HEAD));
+        assertEquals(EquipmentType.T_STRUCTURE_STANDARD, loaded.getStructureType());
+        assertEquals(TechConstants.T_CLAN_ADVANCED, loaded.getStructureTechLevel());
     }
 
     @Test

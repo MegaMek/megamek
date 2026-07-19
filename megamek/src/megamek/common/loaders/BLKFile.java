@@ -523,6 +523,7 @@ public class BLKFile {
             if (dataFile.exists("armor_tech_rating")) {
                 sv.setArmorTechRating(dataFile.getDataAsInt("armor_tech_rating")[0]);
             }
+            normalizeAllTechBaseArmor(sv);
         }
     }
 
@@ -1929,6 +1930,15 @@ public class BLKFile {
             entity.setArmorTechLevel(dataFile.getDataAsInt("armor_tech")[0]);
         } else {
             entity.setArmorTechLevel(entity.getStaticTechLevel().getCompoundTechLevel(entity.isClan()));
+        }
+        normalizeAllTechBaseArmor(entity);
+    }
+
+    private void normalizeAllTechBaseArmor(Entity entity) {
+        ArmorType armor = ArmorType.forEntity(entity);
+        if (!entity.isMixedTech() && !entity.hasPatchworkArmor() && (armor != null)
+              && (armor.getTechAdvancement().getTechBase() == TechBase.ALL)) {
+            entity.setArmorTechLevel(entity.getTechLevel());
         }
     }
 

@@ -53,6 +53,7 @@ import megamek.common.actions.SearchlightAttackAction;
 import megamek.common.actions.SpotAction;
 import megamek.common.actions.UnjamTurretAction;
 import megamek.common.actions.WeaponAttackAction;
+import megamek.common.actions.compute.ComputeEnvironmentalToHitMods;
 import megamek.common.annotations.Nullable;
 import megamek.common.annotations.StaticWrapper;
 import megamek.common.battleArmor.BattleArmor;
@@ -126,6 +127,7 @@ public class FireControl {
     static final String TH_HEAT = "heat";
     static final String TH_WEAPON_MOD = "weapon to-hit";
     static final String TH_AMMO_MOD = "ammunition to-hit modifier";
+    static final String TH_TAR_EVADING = "target evading";
     static final TargetRollModifier TH_ATT_PRONE = new TargetRollModifier(2, "attacker prone");
     static final TargetRollModifier TH_TAR_IMMOBILE = new TargetRollModifier(-4, "target immobile");
     static final TargetRollModifier TH_TAR_SKID = new TargetRollModifier(2, "target skidded");
@@ -196,7 +198,11 @@ public class FireControl {
           "prone leg weapon");
     static final TargetRollModifier TH_WEAPON_ADA = new TargetRollModifier(-2,
           "Air-Defense Arrow IV vs airborne target");
-    static final TargetRollModifier TH_WEAPON_FLAK = new TargetRollModifier(-1, "Flak vs airborne target");
+    static final TargetRollModifier TH_WEAPON_FLAK = new TargetRollModifier(-2, "Flak vs airborne target");
+    static final TargetRollModifier TH_WEAPON_FLAK_HAG = new TargetRollModifier(-3,
+          "HAG Flak vs airborne target");
+    static final TargetRollModifier TH_APOLLO = new TargetRollModifier(-1, "Apollo FCS");
+    static final TargetRollModifier TH_AP_AMMO = new TargetRollModifier(1, "armor-piercing ammo");
     static final TargetRollModifier TH_WEAPON_NO_ARC = new TargetRollModifier(TargetRoll.IMPOSSIBLE, "not in arc");
     static final TargetRollModifier TH_INF_ZERO_RNG = new TargetRollModifier(TargetRoll.AUTOMATIC_FAIL,
           "non-infantry shooting with zero range");
@@ -469,6 +475,12 @@ public class FireControl {
 
         if ((target instanceof Dropship) && !target.isAirborne()) {
             toHitData.addModifier(TH_TAR_GROUND_DS);
+        }
+
+        // Evading targets are harder to hit (TW p.111). Evasion is a property of the target, so it
+        // is independent of where the shooter moves.
+        if ((target instanceof Entity targetEntity) && targetEntity.isEvading()) {
+            toHitData.addModifier(targetEntity.getEvasionBonus(), TH_TAR_EVADING);
         }
 
         return toHitData;
@@ -988,6 +1000,28 @@ public class FireControl {
             if (0 != ammoType.getToHitModifier()) {
                 toHit.addModifier(ammoType.getToHitModifier(), TH_AMMO_MOD);
             }
+            // Apollo FCS gives MRMs -1 to-hit (TO:AR). Apollo is not negated by ECM.
+            Mounted<?> ammoLinker = weapon.getLinkedBy();
+            boolean hasApolloFcs = (ammoLinker != null)
+                  && (ammoLinker.getType() instanceof MiscType)
+                  && !ammoLinker.isDestroyed() && !ammoLinker.isMissing() && !ammoLinker.isBreached()
+                  && ammoLinker.getType().hasFlag(MiscType.F_APOLLO)
+                  && (ammoType.getAmmoType() == AmmoType.AmmoTypeEnum.MRM);
+            if (hasApolloFcs) {
+                toHit.addModifier(TH_APOLLO);
+            }
+            // Armor-piercing autocannon ammo is a flat +1 to-hit (removed under PLAYTEST 3 rules).
+            boolean isArmorPiercingAutocannon =
+                  ((ammoType.getAmmoType() == AmmoType.AmmoTypeEnum.AC)
+                        || (ammoType.getAmmoType() == AmmoType.AmmoTypeEnum.LAC)
+                        || (ammoType.getAmmoType() == AmmoType.AmmoTypeEnum.AC_IMP)
+                        || (ammoType.getAmmoType() == AmmoType.AmmoTypeEnum.PAC))
+                        && (ammoType.getMunitionType().contains(AmmoType.Munitions.M_ARMOR_PIERCING)
+                        || ammoType.getMunitionType().contains(AmmoType.Munitions.M_ARMOR_PIERCING_PLAYTEST));
+            if (isArmorPiercingAutocannon
+                  && !game.getOptions().booleanOption(OptionsConstants.PLAYTEST_3)) {
+                toHit.addModifier(TH_AP_AMMO);
+            }
             // Air-defense Arrow IV handling; can only fire at airborne targets
             if (ammoType.getMunitionType().contains(AmmoType.Munitions.M_ADA)) {
                 if (target.isAirborne() || target.isAirborneVTOLorWIGE()) {
@@ -1000,7 +1034,11 @@ public class FireControl {
             if (target.isAirborne() || target.isAirborneVTOLorWIGE()) {
                 if (ammoType.getMunitionType().stream().anyMatch(aaMunitions::contains)
                       || ammoType.countsAsFlak()) {
-                    toHit.addModifier(TH_WEAPON_FLAK);
+                    if (ammoType.getAmmoType() == AmmoType.AmmoTypeEnum.HAG) {
+                        toHit.addModifier(TH_WEAPON_FLAK_HAG);
+                    } else {
+                        toHit.addModifier(TH_WEAPON_FLAK);
+                    }
                 } else if (ammoType.getMunitionType().stream().anyMatch(ArtyOnlyMunitions::contains)) {
                     toHit.addModifier(TH_WEAPON_CANNOT_FIRE);
                 }
@@ -1118,6 +1156,16 @@ public class FireControl {
               && (EntityMovementType.MOVE_RUN == shooter.moved)) {
             toHit.addModifier(TH_STABLE_WEAPON);
         }
+
+        // Board-global environmental effects: weather, wind, gravity, fog, blowing sand, and
+        // night/illumination. These apply equally at every candidate position, but folding them in
+        // keeps the guessed to-hit honest so Princess does not over-value shots taken in poor
+        // conditions. The committed firing plan already accounts for these via the real engine
+        // calculation; this brings the movement-ranking estimate in line with it.
+        final AmmoType environmentalAmmoType =
+              (ammo != null && ammo.getType() instanceof AmmoType firedAmmoType) ? firedAmmoType : null;
+        toHit.append(ComputeEnvironmentalToHitMods.compileEnvironmentalToHitMods(
+              game, shooter, target, weaponType, environmentalAmmoType, null, false));
 
         return toHit;
     }

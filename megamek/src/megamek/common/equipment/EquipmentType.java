@@ -979,6 +979,9 @@ public class EquipmentType implements ITechnology {
         if (null == EquipmentType.allTypes) {
             EquipmentType.initializeTypes();
         }
+        if (EquipmentType.allTypes.contains(type)) {
+            return;
+        }
         EquipmentType.allTypes.addElement(type);
         type.registerLookupNames();
     }

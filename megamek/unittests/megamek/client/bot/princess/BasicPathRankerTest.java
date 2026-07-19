@@ -98,10 +98,7 @@ class BasicPathRankerTest {
     void beforeEach() {
 
         // We now need to make sure all armor types are initialized or mockito will
-        // complain.
-        if (!ArmorType.getAllTypes().hasMoreElements()) {
-            ArmorType.initializeTypes();
-        }
+        EquipmentType.initializeTypes();
 
         final BehaviorSettings mockBehavior = mock(BehaviorSettings.class);
         when(mockBehavior.getFallShameValue()).thenReturn(BehaviorSettings.FALL_SHAME_VALUES[5]);

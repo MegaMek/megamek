@@ -233,7 +233,7 @@ public class BLKFixedWingSupportFile extends BLKFile implements IMekLoader {
                           .trim();
                 }
 
-                EquipmentType etype = EquipmentType.get(equipName);
+                EquipmentType etype = getEquipmentType(t, equipName);
 
                 if (etype == null) {
                     // try w/ prefix

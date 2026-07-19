@@ -12176,7 +12176,9 @@ public abstract class Entity extends TurnOrdered
             setArmorType(EquipmentType.T_ARMOR_UNKNOWN);
         } else {
             setArmorType(newArmorType.getArmorType());
-            setArmorTechLevel(newArmorType.getStaticTechLevel().getCompoundTechLevel(newArmorType.isClan()));
+            if (!newArmorType.isMixedTech()) {
+                setArmorTechLevel(newArmorType.getStaticTechLevel().getCompoundTechLevel(newArmorType.isClan()));
+            }
             // TODO: Is this needed? WTF is the point of it?
             if (newArmorType.getNumCriticalSlots(this) == 0) {
                 try {
@@ -12213,8 +12215,13 @@ public abstract class Entity extends TurnOrdered
     }
 
     public void setStructureType(String structureType) {
-        if (!(structureType.startsWith("Clan ") || structureType.startsWith("IS "))) {
-            structureType = (isClan() ? "Clan " : "IS ") + structureType;
+        boolean clanStructure = isClan();
+        if (structureType.startsWith("Clan ")) {
+            clanStructure = true;
+        } else if (structureType.startsWith("IS ")) {
+            clanStructure = false;
+        } else {
+            structureType = (clanStructure ? "Clan " : "IS ") + structureType;
         }
         if (!(structureType.endsWith("Structure"))) {
             structureType += " Structure";
@@ -12224,7 +12231,9 @@ public abstract class Entity extends TurnOrdered
         if (structure == null) {
             structureTechLevel = TechConstants.T_TECH_UNKNOWN;
         } else {
-            structureTechLevel = structure.getTechLevel(year);
+            structureTechLevel = structure.isMixedTech()
+                  ? structure.getTechLevel(year, clanStructure)
+                  : structure.getTechLevel(year);
             // TODO: Is this needed? WTF is the point of it?
             if (structure.getNumCriticalSlots(this) == 0) {
                 try {

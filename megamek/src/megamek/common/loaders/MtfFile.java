@@ -1040,18 +1040,13 @@ public class MtfFile implements IMekLoader {
             EquipmentType etype2 = null;
             if (critName.contains("|")) {
                 String critName2 = critName.substring(critName.indexOf("|") + 1);
-                etype2 = EquipmentType.get(critName2);
-                if (etype2 == null) {
-                    etype2 = EquipmentType.get(mek.isClan() ? "Clan " + critName2 : "IS " + critName2);
-                }
+                etype2 = EquipmentType.get(critName2, mek.isClan() ? TechBase.CLAN : TechBase.IS);
                 critName = critName.substring(0, critName.indexOf("|"));
             }
 
             try {
-                EquipmentType etype = EquipmentType.get(critName);
-                if (etype == null) {
-                    etype = EquipmentType.get(mek.isClan() ? "Clan " + critName : "IS " + critName);
-                }
+                EquipmentType etype = EquipmentType.get(critName,
+                      mek.isClan() ? TechBase.CLAN : TechBase.IS);
                 if (etype != null) {
                     if (etype.isSpreadable()) {
                         // do we already have one of these? Key on Type

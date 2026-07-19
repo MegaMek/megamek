@@ -184,7 +184,7 @@ public class BLKBattleArmorFile extends BLKFile implements IMekLoader {
                   .anyMatch(m -> movementEquipName.equals(m.getType().getInternalName()));
             if (!alreadyPresent) {
                 try {
-                    t.addEquipment(EquipmentType.get(movementEquipName), Entity.LOC_NONE);
+                    t.addEquipment(getEquipmentType(t, movementEquipName), Entity.LOC_NONE);
                 } catch (LocationFullException ignore) {
                     // Adding to LOC_NONE
                 }
@@ -254,7 +254,7 @@ public class BLKBattleArmorFile extends BLKFile implements IMekLoader {
                 }
 
                 String equipName = saEquip[x].trim();
-                EquipmentType etype = EquipmentType.get(equipName);
+                EquipmentType etype = getEquipmentType(t, equipName);
 
                 if (etype == null) {
                     // try w/ prefix

@@ -811,21 +811,55 @@ public class EquipmentType implements ITechnology {
      * @return The EquipmentType with the given internal name or lookup name
      */
     public static @Nullable EquipmentType get(String key) {
+        return get(key, null);
+    }
+
+    /**
+     * Returns an equipment type by lookup name, preferring the requested tech base when an unqualified display name is
+     * shared by multiple equipment types.
+     *
+     * @param key      The internal name, lookup name, or display name
+     * @param techBase The preferred tech base for an ambiguous display name
+     * @return The matching equipment type, or null if there is none
+     */
+    public static @Nullable EquipmentType get(String key, @Nullable TechBase techBase) {
+        if (key == null) {
+            return null;
+        }
         if (null == EquipmentType.lookupHash) {
             EquipmentType.initializeTypes();
         }
         String normalizedKey = key.toLowerCase(Locale.ROOT);
-        EquipmentType equipmentType = EquipmentType.lookupHash.get(normalizedKey);
-        if (equipmentType != null) {
-            return equipmentType;
-        }
-        // Fallback to display name
-        for (EquipmentType type : allTypes) {
-            if (type.getName().toLowerCase().equals(normalizedKey)) {
-                return type;
+        if (techBase != null && !normalizedKey.startsWith("clan ") && !normalizedKey.startsWith("is ")) {
+            String qualifiedKey = (techBase == TechBase.CLAN ? "clan " : "is ") + normalizedKey;
+            EquipmentType qualifiedType = EquipmentType.lookupHash.get(qualifiedKey);
+            if (qualifiedType != null) {
+                return qualifiedType;
             }
         }
-        return null;
+        EquipmentType equipmentType = EquipmentType.lookupHash.get(normalizedKey);
+        if (equipmentType == null) {
+            // Display names are not lookup identities. This fallback is only needed when the caller supplied one.
+            for (EquipmentType type : allTypes) {
+                if (type.getName().toLowerCase().equals(normalizedKey)) {
+                    equipmentType = type;
+                    break;
+                }
+            }
+        }
+        if ((equipmentType == null) || (techBase == null)
+              || equipmentType.isMixedTech() || equipmentType.getTechBase() == techBase) {
+            return equipmentType;
+        }
+        Set<EquipmentType> collisions = lookupCollisions.get(normalizedKey);
+        if (collisions != null) {
+            for (EquipmentType type : collisions) {
+                if (type.isMixedTech() || type.getTechBase() == techBase) {
+                    return type;
+                }
+            }
+        }
+        return equipmentType;
     }
 
     /**

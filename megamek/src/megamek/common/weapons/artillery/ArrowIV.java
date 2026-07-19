@@ -72,7 +72,6 @@ public abstract class ArrowIV extends ArtilleryWeapon {
         setInternalName("ArrowIV");
         addLookupName("ArrowIVSystem");
         addLookupName("Arrow IV System");
-        addLookupName("Arrow IV Missile System");
         heat = 10;
         rackSize = 20;
         ammoType = AmmoType.AmmoTypeEnum.ARROW_IV;

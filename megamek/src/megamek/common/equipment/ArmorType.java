@@ -673,12 +673,13 @@ public class ArmorType extends MiscType {
     private static ArmorType createIndustrialArmor() {
         ArmorType armor = new ArmorType();
 
-        armor.name = "Industrial "; // extra space at the end on purpose
-        armor.setInternalName(armor.name);
-        armor.addLookupName("IS Industrial");
-        armor.addLookupName("IS Industrial ");
-        armor.addLookupName("Clan Industrial");
-        armor.addLookupName("Clan Industrial ");
+        armor.name = "Industrial";
+        armor.setInternalName("Industrial Armor");
+        armor.addLookupName("Industrial  Armor"); // double space is on purpose
+        armor.addLookupName("IS Industrial Armor");
+        armor.addLookupName("IS Industrial  Armor"); // double space is on purpose
+        armor.addLookupName("Clan Industrial Armor");
+        armor.addLookupName("Clan Industrial  Armor"); // double space is on purpose
         armor.addLookupName("IS Industrial Armor");
         armor.addLookupName("Clan Industrial Armor");
         armor.cost = 5000.0;

@@ -48,7 +48,7 @@ import java.util.List;
 public class TWRulesPSR extends CoreRulesPSR {
 
     public void checkRunningWithDamage(Entity entity, PilotingRollData roll, int gyroDamage,
-          EntityMovementType overallMoveType) {
+          EntityMovementType overallMoveType, int distance) {
         if (entity.getGyroType() == Mek.GYRO_HEAVY_DUTY) {
             gyroDamage--; // HD gyro ignores 1st damage
         }

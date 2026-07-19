@@ -1090,7 +1090,7 @@ class MovePathHandler extends AbstractTWRuleHandler {
         }
 
         // if we ran with destroyed hip or gyro, we need a psr
-        rollTarget = entity.checkRunningWithDamage(overallMoveType);
+        rollTarget = entity.checkRunningWithDamage(overallMoveType, md.getLastStep().getDistance());
         if (rollTarget.getValue() != TargetRoll.CHECK_FALSE && entity.canFall()) {
             gameManager.doSkillCheckInPlace(entity, rollTarget);
         }

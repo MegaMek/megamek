@@ -597,7 +597,7 @@ public class SharedUtility {
         }
 
         // running with destroyed hip or gyro needs a check
-        rollTarget = entity.checkRunningWithDamage(overallMoveType);
+        rollTarget = entity.checkRunningWithDamage(overallMoveType, md.getLastStep().getDistance());
         checkNag(rollTarget, nagReport, psrList);
 
         // if we sprinted with MASC or a supercharger, then we need a PSR

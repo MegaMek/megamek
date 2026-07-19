@@ -8581,12 +8581,12 @@ public abstract class Entity extends TurnOrdered
      * Checks if the entity is attempting to run with damage that would force a PSR. If so, returns the target roll for
      * the piloting skill check.
      */
-    public PilotingRollData checkRunningWithDamage(EntityMovementType overallMoveType) {
+    public PilotingRollData checkRunningWithDamage(EntityMovementType overallMoveType, int distance) {
         PilotingRollData roll = getBasePilotingRoll(overallMoveType);
 
         int gyroDamage = getBadCriticalSlots(CriticalSlot.TYPE_SYSTEM, Mek.SYSTEM_GYRO, Mek.LOC_CENTER_TORSO);
         
-        Game.rulesManager.getRulesPSR().checkRunningWithDamage(this, roll, gyroDamage, overallMoveType);
+        Game.rulesManager.getRulesPSR().checkRunningWithDamage(this, roll, gyroDamage, overallMoveType, distance);
         
         addPilotingModifierForTerrain(roll);
         return roll;

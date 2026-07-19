@@ -48,7 +48,7 @@ public abstract class RulesPSR {
     
     // Entity calls this when trying to run with damage
     public abstract void checkRunningWithDamage(Entity entity, PilotingRollData roll, int gyroDamage,
-          EntityMovementType overallMoveType);
+          EntityMovementType overallMoveType, int distance);
 
     // Any modifier for standing
     public abstract void standing(PilotingRollData roll);

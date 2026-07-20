@@ -1473,10 +1473,18 @@ public class ForceGeneratorOptionsView extends JPanel implements FocusListener, 
         @Override
         protected void done() {
             try {
-                forceDesc = get();
-                updateSummaryTable(forceDesc);
+                // Do NOT alias the input descriptor (forceDesc) to the generated root: forceDesc is
+                // mutated by the Unit Type / Formation dropdowns, so aliasing it would let a later
+                // roll's dropdown changes rewrite an already-generated (and possibly accumulated) root.
+                // Keep the generated force independent.
+                ForceDescriptor generated = get();
+                logger.info("[ForceGen] generated root id={} name='{}' unitType={} echelon={} weight={} subForces={}",
+                      System.identityHashCode(generated), generated.getName(), generated.getUnitType(),
+                      generated.getEchelon(), generated.getWeightClass(),
+                      generated.getSubForces() == null ? 0 : generated.getSubForces().size());
+                updateSummaryTable(generated);
                 if (onGenerate != null) {
-                    onGenerate.accept(forceDesc);
+                    onGenerate.accept(generated);
                 }
             } catch (InterruptedException ignored) {
 

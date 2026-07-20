@@ -516,6 +516,9 @@ public class ForceGeneratorViewUi implements ActionListener {
                 modelRoot = new ForceDescriptor();
                 modelRoot.setName("Command Model");
             }
+            // A rolled command carries no name of its own, so its formation would commit under the bare
+            // echelon name ("Battalion"); stamp the unit type in so it reads "Battle Armor Battalion".
+            ensureDescriptiveName(fd);
             modelTop = accumulateIntoModel(modelTop, fd);
             // Keep the wrapper holding exactly the current top command.
             modelRoot.getSubForces().clear();
@@ -616,9 +619,37 @@ public class ForceGeneratorViewUi implements ActionListener {
         parent.setFaction(child.getFaction());
         parent.setUnitType(child.getUnitType());
         parent.setYear(child.getYear());
-        String echelonName = Ruleset.findRuleset(parent).getEschelonName(parent);
-        parent.setName((echelonName == null || echelonName.isBlank()) ? "Command" : echelonName);
+        ensureDescriptiveName(parent);
+        if (parent.getName() == null || parent.getName().isBlank()) {
+            // The ruleset has no echelon name at this level; fall back to a generic label.
+            parent.setName("Command");
+        }
         return parent;
+    }
+
+    /**
+     * Stamps a unit-type-qualified name onto a command that has none of its own, so the model tree and
+     * committed TOE read "Battle Armor Battalion" instead of the bare echelon name "Battalion". A
+     * command that already carries a name (for example a ratgen-positioned "{alpha} Company") is left
+     * untouched, as is one whose ruleset yields no echelon name.
+     *
+     * @param descriptor the command to name in place
+     */
+    private void ensureDescriptiveName(ForceDescriptor descriptor) {
+        String currentName = descriptor.getName();
+        if (currentName != null && !currentName.isBlank()) {
+            return;
+        }
+        String echelonName = Ruleset.findRuleset(descriptor).getEschelonName(descriptor);
+        if (echelonName == null || echelonName.isBlank()) {
+            return;
+        }
+        Integer unitType = descriptor.getUnitType();
+        if (unitType == null) {
+            descriptor.setName(echelonName);
+        } else {
+            descriptor.setName(UnitType.getTypeDisplayableName(unitType) + " " + echelonName);
+        }
     }
 
     /**

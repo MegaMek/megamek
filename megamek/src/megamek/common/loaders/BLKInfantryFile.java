@@ -333,14 +333,15 @@ public class BLKInfantryFile extends BLKFile implements IMekLoader {
      *
      * @param infantry the platoon being loaded
      *
-     * @throws EntityLoadingException if the named weapon is missing, not an infantry weapon, or not a Disposable
-     *                                Weapon
+     * @throws EntityLoadingException if the tech level is not Advanced or greater, the named weapon is missing, not an
+     * infantry weapon, or not a Disposable Weapon
      */
     private void loadDisposableWeapon(ConvInfantry infantry) throws EntityLoadingException {
         if (dataFile.exists("disposableWeapon")) {
-            if (SimpleTechLevel.convertCompoundToSimple(infantry.getTechLevel()).ordinal() < SimpleTechLevel.ADVANCED.ordinal()) {
-                throw new EntityLoadingException("Only Advanced or greater Tech Level infantry can have a Disposable "
-                      + "Weapon");
+            SimpleTechLevel techLevel = SimpleTechLevel.convertCompoundToSimple(infantry.getTechLevel());
+            if (techLevel.ordinal() < SimpleTechLevel.ADVANCED.ordinal()) {
+                throw new EntityLoadingException("Disposable Weapon requires Advanced or greater Tech Level (found: "
+                      + techLevel + ")");
             }
             String disposableWeaponName = dataFile.getDataAsString("disposableWeapon")[0];
             EquipmentType disposableWeaponType = EquipmentType.get(disposableWeaponName);

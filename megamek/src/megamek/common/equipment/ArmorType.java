@@ -38,6 +38,7 @@ import java.util.Collections;
 import java.util.EnumMap;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 import java.util.stream.Collectors;
 
@@ -77,6 +78,14 @@ public class ArmorType extends MiscType {
         }
 
         return armor;
+    }
+
+    @Override
+    public void addLookupName(String s, boolean includeInNames) {
+        super.addLookupName(s, includeInNames);
+        if (!s.toLowerCase(Locale.ROOT).endsWith(" armor")) {
+            super.addLookupName(s + " armor", includeInNames);
+        }
     }
 
     public static ArmorType svArmor(int bar) {
@@ -347,11 +356,9 @@ public class ArmorType extends MiscType {
 
         armor.name = "Standard";
         armor.setInternalName("Standard Armor");
-        armor.addLookupName("IS Standard");
-        armor.addLookupName("Clan Standard");
-        armor.addLookupName("Regular");
         armor.addLookupName("IS Standard Armor");
         armor.addLookupName("Clan Standard Armor");
+        armor.addLookupName("Regular Armor");
         armor.flags = armor.flags.or(F_MEK_EQUIPMENT)
               .or(F_TANK_EQUIPMENT)
               .or(F_SUPPORT_TANK_EQUIPMENT)
@@ -666,12 +673,14 @@ public class ArmorType extends MiscType {
     private static ArmorType createIndustrialArmor() {
         ArmorType armor = new ArmorType();
 
-        armor.name = "Industrial "; // extra space at the end on purpose
-        armor.setInternalName(armor.name);
-        armor.addLookupName("IS Industrial");
-        armor.addLookupName("IS Industrial ");
-        armor.addLookupName("Clan Industrial");
-        armor.addLookupName("Clan Industrial ");
+        armor.name = "Industrial";
+        armor.setInternalName("Industrial Armor");
+        armor.addLookupName("Industrial  Armor"); // double space is on purpose
+        armor.addLookupName("IS Industrial Armor");
+        armor.addLookupName("IS Industrial  Armor"); // double space is on purpose
+        armor.addLookupName("Clan Industrial Armor");
+        armor.addLookupName("Clan Industrial  Armor"); // double space is on purpose
+        armor.addLookupName("IS Industrial Armor");
         armor.addLookupName("Clan Industrial Armor");
         armor.cost = 5000.0;
         armor.industrial = true;

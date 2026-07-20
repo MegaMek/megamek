@@ -61,7 +61,7 @@ public class CLStreakSRM6IOS extends StreakSRMWeapon {
 
         name = "Streak SRM 6 (I-OS)";
         setInternalName("CLStreakSRM6 (IOS)");
-        addLookupName("Clan Improved OS Streak SRM-6");
+        addLookupName("Clan Improved OS Streak SRM-6 (IOS)");
         addLookupName("Clan Streak SRM 6 (IOS)");
         heat = 4;
         rackSize = 6;

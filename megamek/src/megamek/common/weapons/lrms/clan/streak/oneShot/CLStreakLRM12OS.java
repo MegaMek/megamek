@@ -61,8 +61,8 @@ public class CLStreakLRM12OS extends StreakLRMWeapon {
         super();
         name = "Streak LRM 12 (OS)";
         setInternalName("CLStreakLRM12 (OS)");
-        addLookupName("Clan Streak LRM-12");
-        addLookupName("Clan Streak LRM 12");
+        addLookupName("Clan Streak LRM-12 (OS)");
+        addLookupName("Clan Streak LRM 12 (OS)");
         heat = 0;
         rackSize = 12;
         shortRange = 7;

@@ -2115,8 +2115,8 @@ public abstract class Aero extends Entity implements IAero, IBomber {
         super.setArmorType(armType);
         if ((armType == EquipmentType.T_ARMOR_STEALTH_VEHICLE) && addMount) {
             try {
-                this.addEquipment(EquipmentType.get(EquipmentType.getArmorTypeName(EquipmentType.T_ARMOR_STEALTH_VEHICLE,
-                      false)), LOC_AFT);
+                this.addEquipment(EquipmentType.getArmorFromName(EquipmentType.getArmorTypeName(
+                    EquipmentType.T_ARMOR_STEALTH_VEHICLE, false)), LOC_AFT);
             } catch (LocationFullException e) {
                 // this should never happen
             }

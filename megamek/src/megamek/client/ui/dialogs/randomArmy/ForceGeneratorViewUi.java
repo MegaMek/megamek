@@ -125,7 +125,18 @@ public class ForceGeneratorViewUi implements ActionListener {
     // accumulating Model root rather than replacing the tree, so the player can mix-and-match several
     // rolls into one command before committing. modelRoot holds the accumulated command.
     private boolean accumulateModel = false;
+    // Thin wrapper root that always holds exactly one child: the current top command (modelTop). The
+    // wrapper exists so the commit walker (which merges the passed root into the campaign's own
+    // formation and flattens its children) preserves modelTop as a distinct formation - so a rolled
+    // regiment keeps its "regiment" tag rather than dissolving into the campaign's top formation.
     private ForceDescriptor modelRoot;
+    // The current top of the accumulated command; new rolls nest under it, replace it, or get a
+    // synthesized parent, all by echelon (see accumulateIntoModel).
+    private ForceDescriptor modelTop;
+    // Number of generated commands the player has accumulated into the model, regardless of how they
+    // nest. Reported in the status line; a plain counter because the model has no flat command list
+    // once commands nest by echelon.
+    private int modelCommandCount = 0;
 
     // Design-stage status line under the tree in accumulate mode: reassures the player the model is a
     // draft ("... - not yet committed.") and reports its running size. Hidden in standalone mode.
@@ -342,13 +353,12 @@ public class ForceGeneratorViewUi implements ActionListener {
         }
         paneForceTree.setBorder(BorderFactory.createTitledBorder(
               Messages.getString("ForceGeneratorDialog.commandModel.title")));
-        if (modelRoot == null || modelRoot.getSubForces().isEmpty()) {
+        if (modelRoot == null) {
             lblModelStatus.setText(Messages.getString("ForceGeneratorDialog.commandModel.empty"));
         } else {
             int unitCount = countModelUnits(modelRoot);
-            int commandCount = modelRoot.getSubForces().size();
             lblModelStatus.setText(Messages.getString("ForceGeneratorDialog.commandModel.status",
-                  unitCount, commandCount));
+                  unitCount, modelCommandCount));
         }
         lblModelStatus.setVisible(true);
     }
@@ -506,16 +516,16 @@ public class ForceGeneratorViewUi implements ActionListener {
                 modelRoot = new ForceDescriptor();
                 modelRoot.setName("Command Model");
             }
-            modelRoot.addSubForce(fd);
+            modelTop = accumulateIntoModel(modelTop, fd);
+            // Keep the wrapper holding exactly the current top command.
+            modelRoot.getSubForces().clear();
+            modelRoot.addSubForce(modelTop);
+            modelCommandCount++;
             displayRoot = modelRoot;
-            logger.info("[ForceGen] accumulated roll id={} into Model; model now holds {} command(s)",
-                  System.identityHashCode(fd), modelRoot.getSubForces().size());
-            int commandIndex = 0;
-            for (ForceDescriptor command : modelRoot.getSubForces()) {
-                logger.info("[ForceGen]   model[{}] id={} name='{}' unitType={} echelon={} desc='{}'",
-                      commandIndex++, System.identityHashCode(command), command.getName(),
-                      command.getUnitType(), command.getEchelon(), command.getDescription());
-            }
+            logger.info("[ForceGen] accumulated roll id={} (echelon={}) into Model; model top='{}' echelon={}, {} command(s) total",
+                  System.identityHashCode(fd), fd.getEchelon(), modelTop.parseName(),
+                  modelTop.getEchelon(), modelCommandCount);
+            logModelTree(modelTop, 0);
         } else {
             logger.info("[ForceGen] setGeneratedForce (accumulate={}, fd={}) - replacing tree",
                   accumulateModel, fd != null);
@@ -542,6 +552,92 @@ public class ForceGeneratorViewUi implements ActionListener {
 
         // Update the design-stage status line for the model's new size.
         refreshCommandModelChrome();
+    }
+
+    /**
+     * Folds a freshly rolled command into the running model by echelon, so the model reads as one
+     * command structure rather than a flat pile of rolls:
+     *
+     * <ul>
+     *   <li><b>Smaller than the current top</b> (lower echelon) - tucked under the current top command
+     *       (for example a Battle Armor company generated after a regiment nests inside that
+     *       regiment).</li>
+     *   <li><b>Larger than the current top</b> (higher echelon) - becomes the new top and the previous
+     *       top nests inside it.</li>
+     *   <li><b>Same echelon</b> - a synthetic parent one echelon up is created and both peers nest
+     *       inside it (for example two regiments end up under a synthesized brigade).</li>
+     * </ul>
+     *
+     * @param currentTop the current model top, or {@code null} if this is the first roll
+     * @param fd         the newly rolled command
+     *
+     * @return the model top after folding {@code fd} in
+     */
+    private ForceDescriptor accumulateIntoModel(ForceDescriptor currentTop, ForceDescriptor fd) {
+        if (currentTop == null) {
+            return fd;
+        }
+        int topEchelon = echelonOf(currentTop);
+        int newEchelon = echelonOf(fd);
+        if (newEchelon < topEchelon) {
+            currentTop.addSubForce(fd);
+            return currentTop;
+        }
+        if (newEchelon > topEchelon) {
+            fd.addSubForce(currentTop);
+            return fd;
+        }
+        ForceDescriptor parent = synthesizeParentCommand(currentTop, topEchelon + 1);
+        parent.addSubForce(currentTop);
+        parent.addSubForce(fd);
+        return parent;
+    }
+
+    /** The descriptor's echelon, treating a {@code null} echelon as 0 (the smallest) for comparison. */
+    private int echelonOf(ForceDescriptor descriptor) {
+        Integer echelon = descriptor.getEchelon();
+        return (echelon == null) ? 0 : echelon;
+    }
+
+    /**
+     * Builds an empty container command one echelon above two same-sized peers (for example a brigade
+     * over two regiments). The container borrows the child's faction, unit type, and year so the
+     * ruleset can resolve the correct echelon name for the campaign's faction; if the ruleset has no
+     * name for that echelon, a generic "Command" label is used.
+     *
+     * @param child   a command being placed under the new container, used for faction/context
+     * @param echelon the echelon for the new container (one above the peers)
+     *
+     * @return the synthesized parent command
+     */
+    private ForceDescriptor synthesizeParentCommand(ForceDescriptor child, int echelon) {
+        ForceDescriptor parent = new ForceDescriptor();
+        parent.setEchelon(echelon);
+        parent.setFaction(child.getFaction());
+        parent.setUnitType(child.getUnitType());
+        parent.setYear(child.getYear());
+        String echelonName = Ruleset.findRuleset(parent).getEschelonName(parent);
+        parent.setName((echelonName == null || echelonName.isBlank()) ? "Command" : echelonName);
+        return parent;
+    }
+
+    /**
+     * Logs the model's command structure to depth 1 (the top command and its direct children) for
+     * diagnostics. Bounded on purpose so a large model does not flood the log with every leaf unit.
+     *
+     * @param node  the model node to log
+     * @param depth the current depth; recursion stops after depth 1
+     */
+    private void logModelTree(ForceDescriptor node, int depth) {
+        logger.info("[ForceGen]   {}id={} name='{}' echelon={} unitType={} desc='{}'",
+              "  ".repeat(depth), System.identityHashCode(node), node.parseName(),
+              node.getEchelon(), node.getUnitType(), node.getDescription());
+        if (depth >= 1) {
+            return;
+        }
+        for (ForceDescriptor child : node.getSubForces()) {
+            logModelTree(child, depth + 1);
+        }
     }
 
     /**

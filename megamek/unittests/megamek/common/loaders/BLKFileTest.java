@@ -153,6 +153,21 @@ class BLKFileTest {
     }
 
     @Test
+    void allTechbaseArmorPreservesCompatibleStrictTechLevel() {
+        BuildingBlock blk = new BuildingBlock();
+        blk.writeBlockData("armor_tech_level", TechConstants.T_IS_TW_ALL);
+        BLKFile loader = new BLKFile();
+        loader.dataFile = blk;
+        Tank tank = new Tank();
+        tank.setTechLevel(TechConstants.T_IS_TW_NON_BOX);
+        tank.setArmorType(EquipmentType.T_ARMOR_STANDARD);
+
+        loader.setArmorTechLevelFromDataFile(tank);
+
+        assertEquals(TechConstants.T_IS_TW_ALL, tank.getArmorTechLevel(tank.firstArmorIndex()));
+    }
+
+    @Test
     void allTechbaseArmorPreservesExplicitTechbaseForMixedUnit() {
         BuildingBlock blk = new BuildingBlock();
         blk.writeBlockData("armor_tech_level", TechConstants.T_IS_ADVANCED);
@@ -590,6 +605,25 @@ class BLKFileTest {
         String resaved = String.join("\n", BLKFile.getBlock(loaded).getAllDataAsString());
         assertTrue(resaved.contains("LRM 20"));
         assertFalse(resaved.contains("CLLRM20"));
+    }
+
+    @Test
+    void battleArmorRoundTripPreservesCompatibleArmorTechLevel() throws Exception {
+        BattleArmor original = loadBattleArmor("Afreet Med BA (HH) (Sqd4).blk");
+        String[] blockData = BLKFile.getBlock(original).getAllDataAsString();
+        for (int index = 0; index < blockData.length - 1; index++) {
+            if (blockData[index].equalsIgnoreCase("<type>")) {
+                blockData[index + 1] = "IS Level 2";
+            } else if (blockData[index].equalsIgnoreCase("<armor_tech>")) {
+                blockData[index + 1] = Integer.toString(TechConstants.T_IS_TW_ALL);
+            }
+        }
+
+        BattleArmor loaded = (BattleArmor) new BLKBattleArmorFile(new BuildingBlock(blockData)).getEntity();
+        BuildingBlock resaved = BLKFile.getBlock(loaded);
+
+        assertEquals(TechConstants.T_IS_TW_ALL, loaded.getArmorTechLevel(BattleArmor.LOC_SQUAD));
+        assertEquals(TechConstants.T_IS_TW_ALL, resaved.getDataAsInt("armor_tech")[0]);
     }
 
     /**

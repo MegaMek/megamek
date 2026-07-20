@@ -34,6 +34,7 @@
 
 package megamek.common.loaders;
 
+import megamek.common.SimpleTechLevel;
 import megamek.common.enums.ProstheticEnhancementType;
 import megamek.common.enums.TechBase;
 import megamek.common.equipment.EquipmentType;
@@ -337,22 +338,26 @@ public class BLKInfantryFile extends BLKFile implements IMekLoader {
      *
      * @param infantry the platoon being loaded
      *
-     * @throws EntityLoadingException if the named weapon is missing, not an infantry weapon, or not a Disposable
-     *                                Weapon
+     * @throws EntityLoadingException if the tech level is not Advanced or greater, the named weapon is missing, not an
+     * infantry weapon, or not a Disposable Weapon
      */
     private void loadDisposableWeapon(ConvInfantry infantry) throws EntityLoadingException {
-        if (!dataFile.exists("disposableWeapon")) {
-            return;
-        }
-        String disposableWeaponName = dataFile.getDataAsString("disposableWeapon")[0];
-          EquipmentType disposableWeaponType = EquipmentType.get(disposableWeaponName,
+        if (dataFile.exists("disposableWeapon")) {
+            SimpleTechLevel techLevel = SimpleTechLevel.convertCompoundToSimple(infantry.getTechLevel());
+            if (techLevel.ordinal() < SimpleTechLevel.ADVANCED.ordinal()) {
+                throw new EntityLoadingException("Disposable Weapon requires Advanced or greater Tech Level (found: "
+                      + techLevel + ")");
+            }
+            String disposableWeaponName = dataFile.getDataAsString("disposableWeapon")[0];
+            EquipmentType disposableWeaponType = EquipmentType.get(disposableWeaponName,
               infantry.isClan() ? TechBase.CLAN : TechBase.IS);
-        if (!(disposableWeaponType instanceof InfantryWeapon disposableWeapon)) {
-            throw new EntityLoadingException(disposableWeaponName + " is not an infantry weapon");
+            if (!(disposableWeaponType instanceof InfantryWeapon disposableWeapon)) {
+                throw new EntityLoadingException(disposableWeaponName + " is not an infantry weapon");
+            }
+            if (!disposableWeapon.hasFlag(WeaponType.F_INF_DISPOSABLE)) {
+                throw new EntityLoadingException(disposableWeaponName + " is not a Disposable Weapon");
+            }
+            infantry.equipDisposableWeapon(disposableWeapon);
         }
-        if (!disposableWeapon.hasFlag(WeaponType.F_INF_DISPOSABLE)) {
-            throw new EntityLoadingException(disposableWeaponName + " is not a Disposable Weapon");
-        }
-        infantry.equipDisposableWeapon(disposableWeapon);
     }
 }

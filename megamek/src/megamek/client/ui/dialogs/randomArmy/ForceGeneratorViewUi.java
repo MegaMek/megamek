@@ -628,28 +628,37 @@ public class ForceGeneratorViewUi implements ActionListener {
     }
 
     /**
-     * Stamps a unit-type-qualified name onto a command that has none of its own, so the model tree and
-     * committed TOE read "Battle Armor Battalion" instead of the bare echelon name "Battalion". A
-     * command that already carries a name (for example a ratgen-positioned "{alpha} Company") is left
-     * untouched, as is one whose ruleset yields no echelon name.
+     * Stamps a unit-type-qualified name onto a command whose displayed name is just the bare echelon,
+     * so the model tree and committed TOE read "Battle Armor Battalion" instead of "Battalion". This
+     * looks at the *resolved* display name ({@link ForceDescriptor#parseName()}), not the raw name,
+     * because a rolled command often carries a template like {@code "{ordinal} Battalion"} that resolves
+     * to just "Battalion"; a name that already includes the unit type (or a descriptor with no unit
+     * type / no echelon name) is left untouched.
      *
      * @param descriptor the command to name in place
      */
     private void ensureDescriptiveName(ForceDescriptor descriptor) {
-        String currentName = descriptor.getName();
-        if (currentName != null && !currentName.isBlank()) {
-            return;
-        }
         String echelonName = Ruleset.findRuleset(descriptor).getEschelonName(descriptor);
         if (echelonName == null || echelonName.isBlank()) {
+            logger.info("[ForceGen] ensureDescriptiveName: no echelon name for id={} echelon={}; leaving name='{}'",
+                  System.identityHashCode(descriptor), descriptor.getEchelon(), descriptor.parseName());
             return;
         }
         Integer unitType = descriptor.getUnitType();
         if (unitType == null) {
-            descriptor.setName(echelonName);
-        } else {
-            descriptor.setName(UnitType.getTypeDisplayableName(unitType) + " " + echelonName);
+            // No unit type to prepend; the bare echelon name is the best available.
+            return;
         }
+        String unitTypeName = UnitType.getTypeDisplayableName(unitType);
+        String displayName = descriptor.parseName();
+        if (displayName != null && displayName.contains(unitTypeName)) {
+            // The resolved name already carries the unit type (or a meaningful name), so keep it.
+            return;
+        }
+        String descriptiveName = unitTypeName + " " + echelonName;
+        logger.info("[ForceGen] ensureDescriptiveName: id={} '{}' -> '{}'",
+              System.identityHashCode(descriptor), displayName, descriptiveName);
+        descriptor.setName(descriptiveName);
     }
 
     /**

@@ -1934,11 +1934,36 @@ public class BLKFile {
         normalizeAllTechBaseArmor(entity);
     }
 
+    /**
+     * Fixes the wrongly assigned armor_tech, for example a Clan armor_tech to an IS unit
+     */
     private void normalizeAllTechBaseArmor(Entity entity) {
         ArmorType armor = ArmorType.forEntity(entity);
         if (!entity.isMixedTech() && !entity.hasPatchworkArmor() && (armor != null)
               && (armor.getTechAdvancement().getTechBase() == TechBase.ALL)) {
-            entity.setArmorTechLevel(entity.getTechLevel());
+            int armorTechLevel = entity.getArmorTechLevel(entity.firstArmorIndex());
+            int normalizedTechLevel = switch (armorTechLevel) {
+                case TechConstants.T_INTRO_BOX_SET, TechConstants.T_IS_TW_NON_BOX, TechConstants.T_IS_TW_ALL ->
+                    entity.isClan() ? TechConstants.T_CLAN_TW : armorTechLevel;
+                case TechConstants.T_IS_ADVANCED ->
+                    entity.isClan() ? TechConstants.T_CLAN_ADVANCED : armorTechLevel;
+                case TechConstants.T_IS_EXPERIMENTAL ->
+                    entity.isClan() ? TechConstants.T_CLAN_EXPERIMENTAL : armorTechLevel;
+                case TechConstants.T_IS_UNOFFICIAL ->
+                    entity.isClan() ? TechConstants.T_CLAN_UNOFFICIAL : armorTechLevel;
+                case TechConstants.T_ALL_IS -> entity.isClan() ? TechConstants.T_ALL_CLAN : armorTechLevel;
+                case TechConstants.T_CLAN_TW ->
+                    entity.isClan() ? armorTechLevel : TechConstants.T_IS_TW_NON_BOX;
+                case TechConstants.T_CLAN_ADVANCED ->
+                    entity.isClan() ? armorTechLevel : TechConstants.T_IS_ADVANCED;
+                case TechConstants.T_CLAN_EXPERIMENTAL ->
+                    entity.isClan() ? armorTechLevel : TechConstants.T_IS_EXPERIMENTAL;
+                case TechConstants.T_CLAN_UNOFFICIAL ->
+                    entity.isClan() ? armorTechLevel : TechConstants.T_IS_UNOFFICIAL;
+                case TechConstants.T_ALL_CLAN -> entity.isClan() ? armorTechLevel : TechConstants.T_ALL_IS;
+                default -> armorTechLevel;
+            };
+            entity.setArmorTechLevel(normalizedTechLevel);
         }
     }
 

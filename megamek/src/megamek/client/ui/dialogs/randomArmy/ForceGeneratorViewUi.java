@@ -121,6 +121,12 @@ public class ForceGeneratorViewUi implements ActionListener {
     // menu offers Include/Exclude instead of "Add to game", and excluded nodes render struck out.
     private boolean toeExclusionMode = false;
 
+    // When set by a host (e.g. MekHQ's Command Designer), each Generate appends its rolled force to an
+    // accumulating Model root rather than replacing the tree, so the player can mix-and-match several
+    // rolls into one command before committing. modelRoot holds the accumulated command.
+    private boolean accumulateModel = false;
+    private ForceDescriptor modelRoot;
+
     protected TableRowSorter<ChosenEntityModel> sorterChosen;
 
     static final String FGV_BV = "FGV_BV";
@@ -293,6 +299,24 @@ public class ForceGeneratorViewUi implements ActionListener {
     }
 
     /**
+     * Enables Model-accumulation mode: each Generate appends its rolled force to an in-dialog Model
+     * root rather than replacing the tree, so a host (e.g. MekHQ's Command Designer) can let the player
+     * build one command from several rolls before committing. Defaults to {@code false} (standalone
+     * Random Army replaces the tree on each Generate).
+     *
+     * @param enabled {@code true} to accumulate rolls into a Model
+     */
+    public void setAccumulateModel(boolean enabled) {
+        this.accumulateModel = enabled;
+        logger.info("[ForceGen] setAccumulateModel({})", enabled);
+    }
+
+    /** The accumulated Model root in accumulate mode, or {@code null} if nothing has been rolled yet. */
+    public ForceDescriptor getModelRoot() {
+        return modelRoot;
+    }
+
+    /**
      * The force rolled by the most recent Generate, or {@code null} if nothing has been generated yet.
      * The tree root holds the rolled {@link ForceDescriptor}; hosts can commit exactly what the player
      * previewed.
@@ -408,7 +432,29 @@ public class ForceGeneratorViewUi implements ActionListener {
     }
 
     private void setGeneratedForce(ForceDescriptor fd) {
-        forceTree.setModel(new ForceTreeModel(fd));
+        // In accumulate mode each roll is appended to the Model root and the tree shows the whole
+        // accumulating command; otherwise the roll replaces the tree (standalone behavior).
+        ForceDescriptor displayRoot = fd;
+        if (accumulateModel && fd != null) {
+            if (modelRoot == null) {
+                modelRoot = new ForceDescriptor();
+                modelRoot.setName("Command Model");
+            }
+            modelRoot.addSubForce(fd);
+            displayRoot = modelRoot;
+            logger.info("[ForceGen] accumulated roll id={} into Model; model now holds {} command(s)",
+                  System.identityHashCode(fd), modelRoot.getSubForces().size());
+            int commandIndex = 0;
+            for (ForceDescriptor command : modelRoot.getSubForces()) {
+                logger.info("[ForceGen]   model[{}] id={} name='{}' unitType={} echelon={} desc='{}'",
+                      commandIndex++, System.identityHashCode(command), command.getName(),
+                      command.getUnitType(), command.getEchelon(), command.getDescription());
+            }
+        } else {
+            logger.info("[ForceGen] setGeneratedForce (accumulate={}, fd={}) - replacing tree",
+                  accumulateModel, fd != null);
+        }
+        forceTree.setModel(new ForceTreeModel(displayRoot));
         // A new force invalidates the previous search; clearing the field re-runs the (now empty)
         // search via the document listener, resetting the match list and status.
         if (txtSearch != null) {

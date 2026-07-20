@@ -1861,7 +1861,6 @@ public class WeaponType extends EquipmentType {
         EquipmentType.addType(new InfantryArchaicBladeArchaicSwordWeapon());
         EquipmentType.addType(new InfantryArchaicBladeZweihanderSwordWeapon());
         EquipmentType.addType(new InfantryArchaicBladeJoustingLanceWeapon());
-        EquipmentType.addType(new InfantryArchaicWhipWeapon());
         EquipmentType.addType(new InfantryArchaicShockStaffWeapon());
 
         // Clan Archaic - Commented out can be considered Obsolete

@@ -12171,16 +12171,18 @@ public abstract class Entity extends TurnOrdered
         if (!(armType.startsWith("Clan ") || armType.startsWith("IS "))) {
             armType = (TechConstants.isClan(getArmorTechLevel(0)) ? "Clan " : "IS ") + armType;
         }
-        EquipmentType et = EquipmentType.get(armType);
-        if (!(et instanceof ArmorType newArmorType)) {
+        ArmorType newArmorType = EquipmentType.getArmorFromName(armType);
+        if (newArmorType == null) {
             setArmorType(EquipmentType.T_ARMOR_UNKNOWN);
         } else {
             setArmorType(newArmorType.getArmorType());
-            setArmorTechLevel(newArmorType.getStaticTechLevel().getCompoundTechLevel(newArmorType.isClan()));
+            if (!newArmorType.isMixedTech()) {
+                setArmorTechLevel(newArmorType.getStaticTechLevel().getCompoundTechLevel(newArmorType.isClan()));
+            }
             // TODO: Is this needed? WTF is the point of it?
-            if (et.getNumCriticalSlots(this) == 0) {
+            if (newArmorType.getNumCriticalSlots(this) == 0) {
                 try {
-                    addEquipment(et, LOC_NONE);
+                    addEquipment(newArmorType, LOC_NONE);
                 } catch (Exception e) {
                     // can't happen
                     LOGGER.error("", e);
@@ -12194,15 +12196,15 @@ public abstract class Entity extends TurnOrdered
         if (!(armType.startsWith("Clan ") || armType.startsWith("IS "))) {
             armType = (TechConstants.isClan(getArmorTechLevel(0)) ? "Clan " : "IS ") + armType;
         }
-        EquipmentType et = EquipmentType.get(armType);
-        if (et == null) {
+        ArmorType armorType = EquipmentType.getArmorFromName(armType);
+        if (armorType == null) {
             setArmorType(EquipmentType.T_ARMOR_UNKNOWN, loc);
         } else {
-            setArmorType(EquipmentType.getArmorType(et), loc);
+            setArmorType(armorType.getArmorType(), loc);
             // TODO: Is this needed? WTF is the point of it?
-            if (et.getNumCriticalSlots(this) == 0) {
+            if (armorType.getNumCriticalSlots(this) == 0) {
                 try {
-                    addEquipment(et, LOC_NONE);
+                    addEquipment(armorType, LOC_NONE);
                 } catch (Exception e) {
                     // can't happen
                     LOGGER.error("", e);
@@ -12213,22 +12215,29 @@ public abstract class Entity extends TurnOrdered
     }
 
     public void setStructureType(String structureType) {
-        if (!(structureType.startsWith("Clan ") || structureType.startsWith("IS "))) {
-            structureType = (isClan() ? "Clan " : "IS ") + structureType;
+        boolean clanStructure = isClan();
+        if (structureType.startsWith("Clan ")) {
+            clanStructure = true;
+        } else if (structureType.startsWith("IS ")) {
+            clanStructure = false;
+        } else {
+            structureType = (clanStructure ? "Clan " : "IS ") + structureType;
         }
         if (!(structureType.endsWith("Structure"))) {
             structureType += " Structure";
         }
-        EquipmentType et = EquipmentType.get(structureType);
-        setStructureType(EquipmentType.getStructureType(et));
-        if (et == null) {
+        StructureType structure = EquipmentType.getStructureFromName(structureType);
+        setStructureType(EquipmentType.getStructureType(structure));
+        if (structure == null) {
             structureTechLevel = TechConstants.T_TECH_UNKNOWN;
         } else {
-            structureTechLevel = et.getTechLevel(year);
+            structureTechLevel = structure.isMixedTech()
+                  ? structure.getTechLevel(year, clanStructure)
+                  : structure.getTechLevel(year);
             // TODO: Is this needed? WTF is the point of it?
-            if (et.getNumCriticalSlots(this) == 0) {
+            if (structure.getNumCriticalSlots(this) == 0) {
                 try {
-                    addEquipment(et, LOC_NONE);
+                    addEquipment(structure, LOC_NONE);
                 } catch (Exception e) {
                     // can't happen
                     LOGGER.error("", e);

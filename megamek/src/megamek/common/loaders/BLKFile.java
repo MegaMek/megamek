@@ -56,6 +56,7 @@ import megamek.common.battleArmor.BattleArmor;
 import megamek.common.bays.*;
 import megamek.common.board.CubeCoords;
 import megamek.common.enums.Faction;
+import megamek.common.enums.TechBase;
 import megamek.common.equipment.*;
 import megamek.common.exceptions.LocationFullException;
 import megamek.common.options.IOption;
@@ -240,6 +241,10 @@ public class BLKFile {
         };
     }
 
+    protected EquipmentType getEquipmentType(Entity entity, String equipmentName) {
+        return EquipmentType.get(equipmentName, entity.isMixedTech() ? null : entity.getTechBase());
+    }
+
     protected void loadEquipment(Entity t, String sName, int nLoc) throws EntityLoadingException {
         String[] saEquip = dataFile.getDataAsString(sName + " Equipment");
         if (saEquip == null || saEquip.length == 0 || saEquip[0].isEmpty()) {
@@ -316,7 +321,7 @@ public class BLKFile {
                     equipName = equipName.substring(0, equipName.length() - 4).trim();
                 }
 
-                EquipmentType etype = EquipmentType.get(equipName);
+                EquipmentType etype = getEquipmentType(t, equipName);
 
                 if (etype == null) {
                     // try w/ prefix
@@ -441,7 +446,7 @@ public class BLKFile {
             equipName = equipName.replace(":Body", "").replace(":LA", "")
                   .replace(":RA", "").replace(":TU", "").replace(":OMNI", "");
 
-            EquipmentType etype = EquipmentType.get(equipName);
+            EquipmentType etype = getEquipmentType(t, equipName);
             if (etype == null) {
                 etype = EquipmentType.get(prefix + equipName);
             }
@@ -518,6 +523,7 @@ public class BLKFile {
             if (dataFile.exists("armor_tech_rating")) {
                 sv.setArmorTechRating(dataFile.getDataAsInt("armor_tech_rating")[0]);
             }
+            normalizeAllTechBaseArmor(sv);
         }
     }
 
@@ -1924,6 +1930,15 @@ public class BLKFile {
             entity.setArmorTechLevel(dataFile.getDataAsInt("armor_tech")[0]);
         } else {
             entity.setArmorTechLevel(entity.getStaticTechLevel().getCompoundTechLevel(entity.isClan()));
+        }
+        normalizeAllTechBaseArmor(entity);
+    }
+
+    private void normalizeAllTechBaseArmor(Entity entity) {
+        ArmorType armor = ArmorType.forEntity(entity);
+        if (!entity.isMixedTech() && !entity.hasPatchworkArmor() && (armor != null)
+              && (armor.getTechAdvancement().getTechBase() == TechBase.ALL)) {
+            entity.setArmorTechLevel(entity.getTechLevel());
         }
     }
 

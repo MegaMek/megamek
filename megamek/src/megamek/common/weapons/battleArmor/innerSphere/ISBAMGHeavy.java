@@ -56,6 +56,7 @@ public class ISBAMGHeavy extends BAMGWeapon {
         name = "Machine Gun (Heavy)";
         setInternalName("ISBAHeavyMachineGun");
         addLookupName("IS BA Heavy Machine Gun");
+        addLookupName("ISBAHeavyMachineGun");
         addLookupName("ISBAHeavyMG");
         sortingName = "MG D";
         heat = 0;

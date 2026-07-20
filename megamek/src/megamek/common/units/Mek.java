@@ -795,7 +795,7 @@ public abstract class Mek extends Entity implements Fortifiable, RubbleClearer {
     public EquipmentType getFrankenMekStructureEquipment(int location) {
         String structureName = EquipmentType.getStructureTypeName(getFrankenMekStructureType(location),
               TechConstants.isClan(getFrankenMekStructureTechLevel(location)));
-        return EquipmentType.get(structureName);
+        return EquipmentType.getStructureFromName(structureName);
     }
 
     /**

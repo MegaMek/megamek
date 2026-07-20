@@ -1,0 +1,196 @@
+# MegaMek Data (C) 2026 by The MegaMek Team is licensed under CC BY-NC-SA 4.0.
+# To view a copy of this license, visit https://creativecommons.org/licenses/by-nc-sa/4.0/
+#
+# NOTICE: The MegaMek organization is a non-profit group of volunteers
+# creating free software for the BattleTech community.
+#
+# MechWarrior, BattleMech, `Mech and AeroTech are registered trademarks
+# of The Topps Company, Inc. All Rights Reserved.
+#
+# Catalyst Game Labs and the Catalyst Game Labs logo are trademarks of
+# InMediaRes Productions, LLC.
+#
+# MechWarrior Copyright Microsoft Corporation. MegaMek Data was created under
+# Microsoft's "Game Content Usage Rules"
+# <https://www.xbox.com/en-US/developers/rules> and it is not endorsed by or
+# affiliated with Microsoft.
+
+uuid:019f583e-d6ef-7345-abda-b5a4a0df1e58
+generator:MegaMek Suite 0.51.01 on 2026-07-12
+chassis:Pulverizer
+model:PUL-2V
+mul id:2590
+
+Config:Biped
+techbase:Mixed (Clan Chassis)
+era:2823
+source:JSBD,TR:GC
+published:JSBD
+rules level:3
+role:Brawler
+
+quirk:easy_maintain
+quirk:bad_rep_clan
+quirk:pro_actuator
+
+mass:90
+engine:360 Fusion Engine(IS)
+structure:IS Endo Steel
+myomer:Standard
+
+heat sinks:15 IS Double
+walk mp:4
+jump mp:0
+
+armor:Ferro-Fibrous(Inner Sphere)
+LA armor:30
+RA armor:30
+LT armor:30
+RT armor:30
+CT armor:44
+HD armor:9
+LL armor:38
+RL armor:38
+RTL armor:8
+RTR armor:8
+RTC armor:12
+
+Weapons:4
+Large Laser, Left Arm
+Large Laser, Right Arm
+LRM 10, Left Torso
+Enhanced PPC, Right Torso
+
+Left Arm:
+Shoulder
+Upper Arm Actuator
+Lower Arm Actuator
+Hand Actuator
+Large Laser
+Large Laser
+IS Ferro-Fibrous
+IS Ferro-Fibrous
+IS Ferro-Fibrous
+IS Endo Steel
+IS Endo Steel
+IS Endo Steel
+
+Right Arm:
+Shoulder
+Upper Arm Actuator
+Lower Arm Actuator
+Hand Actuator
+Large Laser
+Large Laser
+IS Ferro-Fibrous
+IS Ferro-Fibrous
+IS Endo Steel
+IS Endo Steel
+IS Endo Steel
+IS Endo Steel
+
+Left Torso:
+ISDoubleHeatSink
+ISDoubleHeatSink
+ISDoubleHeatSink
+LRM 10
+LRM 10
+IS Ammo LRM-10
+ISCASE
+IS Ferro-Fibrous
+IS Ferro-Fibrous
+IS Endo Steel
+IS Endo Steel
+IS Endo Steel
+
+Right Torso:
+CLWERPPC
+CLWERPPC
+CLWERPPC
+IS Ferro-Fibrous
+IS Ferro-Fibrous
+IS Endo Steel
+IS Endo Steel
+IS Endo Steel
+IS Endo Steel
+-Empty-
+-Empty-
+-Empty-
+
+Center Torso:
+Fusion Engine
+Fusion Engine
+Fusion Engine
+Gyro
+Gyro
+Gyro
+Gyro
+Fusion Engine
+Fusion Engine
+Fusion Engine
+ISGuardianECMSuite
+ISGuardianECMSuite
+
+Head:
+Life Support
+Sensors
+Cockpit
+IS Ferro-Fibrous
+Sensors
+Life Support
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Left Leg:
+Hip
+Upper Leg Actuator
+Lower Leg Actuator
+Foot Actuator
+IS Ferro-Fibrous
+IS Ferro-Fibrous
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Right Leg:
+Hip
+Upper Leg Actuator
+Lower Leg Actuator
+Foot Actuator
+IS Ferro-Fibrous
+IS Ferro-Fibrous
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+overview:<p>The Pulverizer is a 90-ton assault BattleMech introduced in 2823 as the signature command platform of Clan Wolverine. Designed as a completely original chassis rather than a refit of existing Star League designs, the Pulverizer married proven construction technology with enhanced prototype weapons, creating a platform defined by extreme durability and long-range striking power.</p><p>After the Wolverine Annihilation, Clan Snow Raven recognized the design's merits and adopted the Pulverizer for their own touman. Despite enduring decades of controversy over its tainted origins, the Snow Ravens operated the design throughout the Golden Century until the rise of the OmniMech rendered it obsolete. The Pulverizer's legacy endured through the Kingfisher assault OmniMech, which drew heavily on the older design's proven chassis.</p>
+
+capabilities:<p>Built as a command platform, the Pulverizer prioritizes long-range engagement and survivability over speed. At 90 tons, the design moves at a modest 64 km/h on a standard fusion engine, relying on weapons reach and thick protection rather than maneuverability. Over fifteen tons of ferro-fibrous armor combined with CASE protection and the standard engine make the Pulverizer extraordinarily difficult to destroy, a quality that served it well in the brutal engagements of the early Clan era.</p><p>The weapons suite centers on a Shredder-II Enhanced ER PPC, a transitional weapon more powerful than standard Star League particle projectors but lacking the devastating output of later Clan-standard ER PPCs. Twin large lasers provide secondary firepower at closer ranges, while a Type III "Great Bow" LRM-10 rack adds sustained indirect fire capability. A Guardian ECM Suite disrupts enemy targeting and sensor networks, reinforcing the Pulverizer's role as a command platform.</p><p>The use of Star League-era endo steel construction saves critical weight, enabling the heavy armor and weapons loadout without sacrificing structural integrity. Fifteen double heat sinks manage the considerable heat output adequately, though sustained alpha strikes can push the design's thermal limits.</p>
+
+deployment:<p>The original Pulverizer configuration, this variant represents the pinnacle of Clan Wolverine's independent 'Mech design capability. Armed with a Shredder-II Enhanced ER PPC, two standard large lasers, and a Type III "Great Bow" LRM-10, the design emphasizes sustained long-range firepower from a heavily protected platform. A Guardian ECM Suite reflects its intended role as a command 'Mech, disrupting enemy sensor networks while coordinating Wolverine forces. Fifteen double heat sinks manage the considerable weapons load. The PUL-2V served as the signature assault BattleMech of Clan Wolverine during their final years, and all subsequent Pulverizer variants trace their lineage to this original configuration.</p>
+
+history:<p>The Pulverizer's history is inseparable from the tragic fate of Clan Wolverine. Following Operation KLONDIKE, Khan Sarah McEvedy recognized that mere refits of SLDF designs could not sustain her Clan's ambitions. While the Mercury II and Stag had already pushed beyond simple Star League re-engineering, the Pulverizer represented a fundamentally new design philosophy, a purpose-built command 'Mech tailored to Wolverine doctrine. Introduced in 2823, the Pulverizer entered service just as tensions between the Wolverines and the rest of the Clans reached their breaking point.</p><p>The design saw its first major combat during the Trials leading to the Wolverine Annihilation and throughout Operation SWITCHBACK, the coordinated campaign that destroyed Clan Wolverine. Wolverine saKhan Franklin Hallis reportedly piloted a Pulverizer during the final stand at Barbados. Ironically, the design's effectiveness during these engagements caught the attention of Clan Snow Raven, who salvaged Pulverizers and began their own production at Industrial Complex Raven Alpha on Lum in 2824.</p><p>The Snow Ravens' continued use of a design created by the Not-Named Clan proved deeply controversial throughout the Golden Century. The Grand Council entertained numerous censure motions against the Ravens, and rival Clans (particularly the Ghost Bears) treated victories achieved with Pulverizers as dishonorable. A notable engagement on Brim in 2835 saw a Snow Raven officer use his Pulverizer to devastating effect against a Ghost Bear garrison defending an Eagle factory, destroying a Shogun in brutal close-quarters fighting. The Ghost Bears petitioned the Grand Council, insisting that the use of dezgra BattleMechs could only produce dezgra MechWarriors. The Council ruled against the Bears, but the stigma surrounding the Pulverizer never fully dissipated.</p><p>The rise of the OmniMech ultimately ended active Pulverizer production. Rather than discard the design entirely, Snow Raven scientists used the proven chassis as the foundation for the Kingfisher, an assault OmniMech that debuted in 2887 and carried forward the Pulverizer's emphasis on durability while shedding the tainted Wolverine association.</p><p>Though out of production for centuries, a handful of Pulverizers survived in Snow Raven stores. During the Dark Age, several of these venerable machines reappeared in Raven Alliance formations operating along the Federated Suns border, their mere presence sufficient to alarm militia units unfamiliar with the rare design. Persistent but unverified reports from intelligence sources within the reunified Free Worlds League also claimed sightings of a single iridescent green Pulverizer attacking worlds with Interstellar Expeditions presence near the Periphery border, though such claims remain dubious at best.</p>
+
+manufacturer:Unknown
+
+primaryfactory:Unknown
+
+fluffdate:2026-02-21 18:24:59
+
+systemmanufacturer:CHASSIS:Unknown
+systemmanufacturer:ENGINE:Unknown
+systemmode:ENGINE:Standard 360
+systemmanufacturer:ARMOR:Unknown
+systemmode:ARMOR:Ferro-Fibrous with CASE
+systemmanufacturer:COMMUNICATIONS:Unknown
+systemmanufacturer:TARGETING:Unknown

@@ -251,7 +251,7 @@ public class TWDamageManager implements IDamageManager {
 
         // TACs from the hit location table
         int crits;
-        if ((hit.getEffect() & HitData.EFFECT_CRITICAL) == HitData.EFFECT_CRITICAL); {
+        if ((hit.getEffect() & HitData.EFFECT_CRITICAL) == HitData.EFFECT_CRITICAL) {
             if (Game.rulesManager.getRulesArmor().blockTAC(entity.getArmorType(hit.getLocation()))) {
                 crits = 0;
                 Report tacBlockedReport = new Report(6266);
@@ -3351,10 +3351,11 @@ public class TWDamageManager implements IDamageManager {
                 report.indent(3);
                 report.add(damage);
                 reportVec.addElement(report);
-            } else if (impactArmor && (hit.getGeneralDamageType() == HitData.DAMAGE_PHYSICAL)) {
-                damage = Game.rulesManager.getRulesArmor().reduceImpactDamage(entityId, hit, damage, reportVec);
+            } else if (impactArmor && (hit.getGeneralDamageType() == HitData.DAMAGE_PHYSICAL || hit.getGeneralDamageType() == HitData.DAMAGE_PHYSICAL_NONATTACK)) {
+                damage = Game.rulesManager.getRulesArmor().reduceImpactDamage(entityId, hit, damage, reportVec,
+                      hit.getGeneralDamageType());
             } else if (reflectiveArmor &&
-                  (hit.getGeneralDamageType() == HitData.DAMAGE_PHYSICAL) &&
+                  (hit.getGeneralDamageType() == HitData.DAMAGE_PHYSICAL || hit.getGeneralDamageType() == HitData.DAMAGE_PHYSICAL_NONATTACK) &&
                   !isBattleArmor) { // BA reflect does not receive extra physical damage
                 tmpDamageHold = damage;
                 int currArmor = entity.getArmor(hit);
@@ -3530,7 +3531,8 @@ public class TWDamageManager implements IDamageManager {
                       (hit.getGeneralDamageType() != HitData.DAMAGE_ARMOR_PIERCING_MISSILE)) {
                     absorbed = (absorbed * 2) - ((entity.isHardenedArmorDamaged(hit)) ? 1 : 0);
                 }
-                if (reflectiveArmor && (hit.getGeneralDamageType() == HitData.DAMAGE_PHYSICAL) && !isBattleArmor) {
+                if (reflectiveArmor && (hit.getGeneralDamageType() == HitData.DAMAGE_PHYSICAL || hit.getGeneralDamageType() == HitData.DAMAGE_PHYSICAL_NONATTACK)
+                      && !isBattleArmor) {
                     absorbed = (int) Math.ceil(absorbed / 2.0);
                     damage = tmpDamageHold;
                     tmpDamageHold = 0;

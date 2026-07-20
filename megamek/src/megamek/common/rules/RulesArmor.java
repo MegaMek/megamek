@@ -65,5 +65,6 @@ public abstract class RulesArmor {
     public abstract boolean blockTAC(int armorType);
 
     // How does impact armor reduce damage
-    public abstract int reduceImpactDamage(int entityId, HitData hit, int damage, Vector<Report> reportVec);
+    public abstract int reduceImpactDamage(int entityId, HitData hit, int damage, Vector<Report> reportVec,
+          int damageType);
 }

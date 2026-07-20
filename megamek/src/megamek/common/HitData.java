@@ -56,6 +56,7 @@ public class HitData {
     public static final int DAMAGE_ARMOR_PIERCING_MISSILE = -7;
     public static final int DAMAGE_IGNORES_DMG_REDUCTION = -8;
     public static final int DAMAGE_AX = -9;
+    public static final int DAMAGE_PHYSICAL_NONATTACK = -9;
 
     private int location;
     private final boolean rear;

@@ -64,7 +64,7 @@ public class TWRulesArmor extends CoreRulesArmor {
     public int impactArmorMod() {return 1;}
 
     // Impact Resistant Armor breach
-    public int impactArmorBreach(Entity entity, Vector<Report> vDesc) {
+    public int impactArmorBreach(Entity entity, Vector<Report> vDesc, int damageType) {
         Report r;
         r = new Report(6344);
         r.subject = entity.getId();
@@ -101,7 +101,7 @@ public class TWRulesArmor extends CoreRulesArmor {
     }
 
     @Override
-    public int reduceImpactDamage(int entityId,HitData hit, int damage, Vector<Report> reportVec) {
+    public int reduceImpactDamage(int entityId,HitData hit, int damage, Vector<Report> reportVec, int damageType) {
         // As long as there is even 1 point of armor in this location, reduce _all_ damage
         // to 2 points for every whole 3 points applied (IntOps pg 88).
         damage = Math.max(1, (2 * (damage / 3)) + (damage % 3));

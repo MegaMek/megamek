@@ -4901,7 +4901,7 @@ public class TWGameManager extends AbstractGameManager {
                     // Apply damage to the attacker.
                     int toAttacker = ChargeAttackAction.getDamageTakenBy(entity, bldg, nextPos);
                     HitData hit = entity.rollHitLocation(ToHitData.HIT_NORMAL, entity.sideTable(nextPos));
-                    hit.setGeneralDamageType(HitData.DAMAGE_PHYSICAL);
+                    hit.setGeneralDamageType(HitData.DAMAGE_PHYSICAL_NONATTACK);
                     addReport(damageEntity(entity, hit, toAttacker));
                     addNewLines();
 
@@ -9238,7 +9238,7 @@ public class TWGameManager extends AbstractGameManager {
                     while (damage > 0) {
                         int cluster = Math.min(5, damage);
                         HitData hit = affaTarget.rollHitLocation(ToHitData.HIT_PUNCH, ToHitData.SIDE_FRONT);
-                        hit.setGeneralDamageType(HitData.DAMAGE_PHYSICAL);
+                        hit.setGeneralDamageType(HitData.DAMAGE_PHYSICAL_NONATTACK);
                         vPhaseReport.addAll(damageEntity(affaTarget, hit, cluster));
                         damage -= cluster;
                     }
@@ -28344,7 +28344,7 @@ public class TWGameManager extends AbstractGameManager {
                         side = ToHitData.SIDE_REAR;
                     }
                     HitData hit = entity.rollHitLocation(ToHitData.HIT_NORMAL, side);
-                    hit.setGeneralDamageType(HitData.DAMAGE_PHYSICAL);
+                    hit.setGeneralDamageType(HitData.DAMAGE_PHYSICAL_NONATTACK);
                     buildingReport.addAll(damageEntity(entity, hit, damage));
                 }
             }

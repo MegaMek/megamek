@@ -68,7 +68,7 @@ public class CoreRulesArmor extends RulesArmor {
 
     // Does a lance penetrate on hit? Not if it is ABA, but all others yes. Core p.201
     public boolean checkLancePenetration(int armorType) {
-        return (armorType == EquipmentType.T_ARMOR_ANTI_PENETRATIVE_ABLATION) ? true : false;
+        return (armorType == EquipmentType.T_ARMOR_ANTI_PENETRATIVE_ABLATION);
     }
 
     // Does armor reduce heat? Core p.202
@@ -81,13 +81,13 @@ public class CoreRulesArmor extends RulesArmor {
 
     // ABA armor stops TACs from generating a crit. Core p.201
     public boolean blockTAC(int armorType) {
-        return (armorType == ArmorType.T_ARMOR_ANTI_PENETRATIVE_ABLATION) ? true : false;
+        return (armorType == ArmorType.T_ARMOR_ANTI_PENETRATIVE_ABLATION);
     }
 
     // Impact armor reduces damage from falls, collisions, and buildings by half. 1/3 for physical
-    public int reduceImpactDamage(int entityId, HitData hit, int damage, Vector<Report> reportVec) {
+    public int reduceImpactDamage(int entityId, HitData hit, int damage, Vector<Report> reportVec, int damageType) {
         Report report;
-        if (hit.isFallDamage()) {
+        if (hit.isFallDamage() || damageType == HitData.DAMAGE_PHYSICAL_NONATTACK) {
             damage = Math.max(1, damage / 2);
             report = new Report(6099);
             report.subject = entityId;

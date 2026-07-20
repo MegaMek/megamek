@@ -66,7 +66,6 @@ public class BombISRLP10 extends MissileWeapon {
 
         this.name = "Rocket Launcher (Prototype) Pod";
         this.setInternalName(BombTypeEnum.RLP.getWeaponName());
-        addLookupName("RL-P 10 (Bomb)");
         this.heat = 0;
         this.rackSize = 10;
         this.shortRange = 5;

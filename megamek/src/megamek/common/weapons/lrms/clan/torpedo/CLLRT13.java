@@ -53,8 +53,8 @@ public class CLLRT13 extends LRTWeapon {
         super();
 
         this.name = "LRT 13";
-        this.setInternalName("CLLRTorpedo13");
         this.setInternalName("CLLRT13");
+        this.addLookupName("CLLRTorpedo13");
         this.heat = 0;
         this.rackSize = 13;
         this.minimumRange = WEAPON_NA;

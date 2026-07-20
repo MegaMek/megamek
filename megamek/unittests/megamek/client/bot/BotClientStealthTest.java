@@ -30,47 +30,44 @@
  * <https://www.xbox.com/en-US/developers/rules> and it is not endorsed by or
  * affiliated with Microsoft.
  */
+package megamek.client.bot;
 
-package megamek.common.equipment;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
 
-import java.util.LinkedHashMap;
-import java.util.Locale;
-import java.util.Map;
+import megamek.common.units.BipedMek;
+import megamek.common.units.Entity;
+import megamek.common.units.Tank;
+import org.junit.jupiter.api.Test;
 
 /**
- * Equipment definition for an internal structure system.
+ * Tests the {@link BotClient#wantsStealthHeatForTsm(Entity)} predicate that keeps stealth armor active on
+ * a heat-activated Triple-Strength Myomer Mek so its heat feeds TSM instead of being shed to free heat
+ * sinks.
+ *
+ * @author The MegaMek Team
  */
-public class StructureType extends MiscType {
+class BotClientStealthTest {
 
-    private final int structureTypeId;
-
-    public StructureType(int structureTypeId) {
-        this.structureTypeId = structureTypeId;
+    @Test
+    void heatActivatedTsmMekWantsStealthHeat() {
+        BipedMek mek = mock(BipedMek.class);
+        when(mek.hasTSM(false)).thenReturn(true);
+        assertTrue(BotClient.wantsStealthHeatForTsm(mek));
     }
 
-    public int getStructureTypeId() {
-        return structureTypeId;
+    @Test
+    void nonTsmMekDoesNotWantStealthHeat() {
+        BipedMek mek = mock(BipedMek.class);
+        when(mek.hasTSM(false)).thenReturn(false);
+        assertFalse(BotClient.wantsStealthHeatForTsm(mek));
     }
 
-    @Override
-    protected String getYamlTypeName() {
-        return "structure";
-    }
-
-    @Override
-    public Map<String, Object> getYamlData() {
-        Map<String, Object> data = super.getYamlData();
-        Map<String, Object> structureDetails = new LinkedHashMap<>();
-        structureDetails.put("typeId", structureTypeId);
-        data.put("structure", structureDetails);
-        return data;
-    }
-
-    @Override
-    public void addLookupName(String s, boolean includeInNames) {
-        super.addLookupName(s, includeInNames);
-        if (!s.toLowerCase(Locale.ROOT).endsWith(" structure")) {
-            super.addLookupName(s + " structure", includeInNames);
-        }
+    @Test
+    void nonMekDoesNotWantStealthHeat() {
+        Tank tank = mock(Tank.class);
+        assertFalse(BotClient.wantsStealthHeatForTsm(tank));
     }
 }

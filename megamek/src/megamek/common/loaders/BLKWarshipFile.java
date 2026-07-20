@@ -351,7 +351,7 @@ public class BLKWarshipFile extends BLKFile implements IMekLoader {
                     }
                 }
 
-                EquipmentType etype = EquipmentType.get(equipName);
+                EquipmentType etype = getEquipmentType(a, equipName);
 
                 if (etype == null) {
                     // try w/ prefix

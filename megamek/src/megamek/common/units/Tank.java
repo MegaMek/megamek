@@ -2634,8 +2634,8 @@ public class Tank extends Entity implements Fortifiable, RubbleClearer {
         super.setArmorType(armType);
         if ((armType == EquipmentType.T_ARMOR_STEALTH_VEHICLE) && addMount) {
             try {
-                this.addEquipment(EquipmentType.get(EquipmentType.getArmorTypeName(EquipmentType.T_ARMOR_STEALTH_VEHICLE,
-                      false)), LOC_BODY);
+                this.addEquipment(EquipmentType.getArmorFromName(EquipmentType.getArmorTypeName(
+                    EquipmentType.T_ARMOR_STEALTH_VEHICLE, false)), LOC_BODY);
             } catch (LocationFullException e) {
                 // this should never happen
             }

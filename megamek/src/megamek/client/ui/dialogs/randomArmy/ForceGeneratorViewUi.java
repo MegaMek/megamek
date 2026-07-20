@@ -532,15 +532,19 @@ public class ForceGeneratorViewUi implements ActionListener {
                 if (node instanceof ForceDescriptor fd) {
                     JPopupMenu menu = new JPopupMenu();
 
-                    if (toeExclusionMode) {
-                        // Host (e.g. MekHQ) commits the tree into a TOE; let the user exclude nodes.
-                        JMenuItem toggleItem = new JMenuItem(fd.isIncluded() ? "Exclude from TOE" : "Include in TOE");
-                        toggleItem.addActionListener(ev -> {
-                            fd.setIncludedRecursively(!fd.isIncluded());
-                            forceTree.repaint();
-                        });
-                        menu.add(toggleItem);
-                    } else {
+                    // Include/exclude is available in both hosts. MekHQ skips excluded nodes when it
+                    // commits the tree into a TOE; standalone Random Army skips them in "Add to game"
+                    // (see ChosenEntityModel.addEntities). The wording follows the host.
+                    String target = toeExclusionMode ? "TOE" : "force";
+                    String toggleText = fd.isIncluded() ? "Exclude from " + target : "Include in " + target;
+                    JMenuItem toggleItem = new JMenuItem(toggleText);
+                    toggleItem.addActionListener(ev -> {
+                        fd.setIncludedRecursively(!fd.isIncluded());
+                        forceTree.repaint();
+                    });
+                    menu.add(toggleItem);
+
+                    if (!toeExclusionMode) {
                         JMenuItem addItem = new JMenuItem("Add to game");
                         addItem.addActionListener(ev -> modelChosen.addEntities(fd));
                         menu.add(addItem);
@@ -902,6 +906,11 @@ public class ForceGeneratorViewUi implements ActionListener {
         }
 
         public void addEntities(ForceDescriptor fd) {
+            // Skip nodes the user excluded in the tree (and their subtree), so "Add to game" adds only
+            // the included units.
+            if (!fd.isIncluded()) {
+                return;
+            }
             if (fd.isElement()) {
                 if (fd.getEntity() != null) {
                     addEntity(fd.getEntity());

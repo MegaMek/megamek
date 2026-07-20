@@ -1163,7 +1163,7 @@ public class FireControl {
         // conditions. The committed firing plan already accounts for these via the real engine
         // calculation; this brings the movement-ranking estimate in line with it.
         final AmmoType environmentalAmmoType =
-              (ammo != null && ammo.getType() instanceof AmmoType firedAmmoType) ? firedAmmoType : null;
+              (firingAmmo != null && firingAmmo.getType() instanceof AmmoType firedAmmoType) ? firedAmmoType : null;
         toHit.append(ComputeEnvironmentalToHitMods.compileEnvironmentalToHitMods(
               game, shooter, target, weaponType, environmentalAmmoType, null, false));
 

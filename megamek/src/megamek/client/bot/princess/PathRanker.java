@@ -560,15 +560,16 @@ public abstract class PathRanker implements IPathRanker {
             // High-gravity jump: half the walk MP lost to gravity (TO:AR gravity rules).
             overspeedMP = (movingEntity.getWalkMP(MPCalculationSetting.NO_GRAVITY) - movingEntity.getWalkMP()) / 2;
         } else if (path.isJumping()) {
-            // Low-gravity jump overspeed: MP used beyond the 1G jump rating.
-            overspeedMP = lastStep.getMpUsed() - movingEntity.getJumpMP(MPCalculationSetting.NO_GRAVITY);
+            // Low-gravity jump overspeed: MP used beyond the 1G jump rating. A mechanical jump booster uses
+            // its own no-gravity rating, matching the server extreme-gravity damage calculation.
+            int noGravityJumpMP = lastStep.isUsingMekJumpBooster()
+                  ? movingEntity.getMechanicalJumpBoosterMP(MPCalculationSetting.NO_GRAVITY)
+                  : movingEntity.getJumpMP(MPCalculationSetting.NO_GRAVITY);
+            overspeedMP = lastStep.getMpUsed() - noGravityJumpMP;
         } else {
-            // Low-gravity ground overspeed: MP used beyond the 1G running limit (+1 for a pavement/road bonus).
-            int gravityLimit = movingEntity.getRunningGravityLimit();
-            if (lastStep.isOnlyPavementOrRoad() && movingEntity.isEligibleForPavementOrRoadBonus()) {
-                gravityLimit++;
-            }
-            overspeedMP = lastStep.getMpUsed() - gravityLimit;
+            // Low-gravity ground overspeed: MP used beyond the 1G running limit. The server's extreme-gravity
+            // damage uses getRunningGravityLimit() directly (no pavement/road adjustment), so mirror it.
+            overspeedMP = lastStep.getMpUsed() - movingEntity.getRunningGravityLimit();
         }
 
         if (overspeedMP <= 0) {

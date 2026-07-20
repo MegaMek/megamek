@@ -216,7 +216,6 @@ class BasicPathRankerTest {
 
         final MoveStep mockLastStep = mock(MoveStep.class);
         when(mockLastStep.getMpUsed()).thenReturn(8); // 2 MP beyond the 1G run limit of 6
-        when(mockLastStep.isOnlyPavementOrRoad()).thenReturn(false);
         when(mockPath.getLastStep()).thenReturn(mockLastStep);
 
         final TargetRoll gravityRoll = MockGenerators.mockTargetRoll(8);
@@ -226,6 +225,31 @@ class BasicPathRankerTest {
         doReturn(List.of(gravityRoll)).when(testRanker).getPSRList(eq(mockPath));
 
         // 2 excess MP -> 2 points of leg internal structure, weighted by the chance of failing the roll.
+        final double failureProbability = 1.0 - (Compute.oddsAbove(8, false) / 100.0);
+        final double expected = 2 * failureProbability;
+
+        assertEquals(expected, testRanker.calculateMovePathPSRDamage(mockMek, mockPath), TOLERANCE);
+    }
+
+    @Test
+    void testCalculateMovePathPSRDamageLowGravityJumpOverspeed() {
+        final Entity mockMek = MockGenerators.generateMockBipedMek(0, 0);
+        when(mockMek.getJumpMP(MPCalculationSetting.NO_GRAVITY)).thenReturn(5);
+
+        final MovePath mockPath = MockGenerators.generateMockPath(0, 0, mockMek);
+        when(mockPath.isJumping()).thenReturn(true);
+
+        final MoveStep mockLastStep = mock(MoveStep.class);
+        when(mockLastStep.getMpUsed()).thenReturn(7); // 2 MP beyond the 1G jump rating of 5
+        when(mockLastStep.isUsingMekJumpBooster()).thenReturn(false);
+        when(mockPath.getLastStep()).thenReturn(mockLastStep);
+
+        final TargetRoll gravityRoll = MockGenerators.mockTargetRoll(8);
+        when(gravityRoll.getLastPlainDesc()).thenReturn("used more MPs than at 1G possible");
+
+        final BasicPathRanker testRanker = spy(new BasicPathRanker(mockPrincess));
+        doReturn(List.of(gravityRoll)).when(testRanker).getPSRList(eq(mockPath));
+
         final double failureProbability = 1.0 - (Compute.oddsAbove(8, false) / 100.0);
         final double expected = 2 * failureProbability;
 

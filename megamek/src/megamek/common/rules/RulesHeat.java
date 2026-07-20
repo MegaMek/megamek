@@ -33,6 +33,9 @@ package megamek.common.rules;
  */
 
 
+import megamek.common.CriticalSlot;
+import megamek.common.annotations.Nullable;
+
 import java.util.ArrayList;
 
 public abstract class RulesHeat {
@@ -45,4 +48,8 @@ public abstract class RulesHeat {
                                         int damageHeat,
                                         boolean torsoMountedCockpit,
                                         boolean mtHeat, boolean bPainShunt);
+
+    // Which ammo goes boom
+    @Nullable
+    public abstract CriticalSlot explodeAmmo(ArrayList<CriticalSlot> ammoCriticals);
 }

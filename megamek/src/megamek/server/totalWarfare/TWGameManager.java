@@ -24834,10 +24834,13 @@ public class TWGameManager extends AbstractGameManager {
         int boomLoc = -1;
         int boomSlot = -1;
         Vector<Report> vDesc = new Vector<>();
+        ArrayList<CriticalSlot> ammoCriticals = new ArrayList<>();
+        ArrayList<Integer> locationArray = new ArrayList<>();
+        ArrayList<Integer> slotNumberArray = new ArrayList<>();
 
-        for (int j = 0; j < entity.locations(); j++) {
-            for (int k = 0; k < entity.getNumberOfCriticalSlots(j); k++) {
-                CriticalSlot cs = entity.getCritical(j, k);
+        for (int loc = 0; loc < entity.locations(); loc++) {
+            for (int slotNumber = 0; slotNumber < entity.getNumberOfCriticalSlots(loc); slotNumber++) {
+                CriticalSlot cs = entity.getCritical(loc, slotNumber);
                 if ((cs == null) || cs.isDestroyed() || cs.isHit() || (cs.getType() != CriticalSlot.TYPE_EQUIPMENT)) {
                     continue;
                 }
@@ -24848,6 +24851,7 @@ public class TWGameManager extends AbstractGameManager {
                 if (!ammoType.isExplosive(mounted)) {
                     continue;
                 }
+
                 // coolant pods and flamer coolant ammo don't explode from heat
                 if ((ammoType.getAmmoType() == AmmoType.AmmoTypeEnum.COOLANT_POD) ||
                       (((ammoType.getAmmoType() == AmmoType.AmmoTypeEnum.VEHICLE_FLAMER) ||
@@ -24859,33 +24863,23 @@ public class TWGameManager extends AbstractGameManager {
                 if (mounted.getHittableShotsLeft() == 0) {
                     continue;
                 }
-                // TW page 160, compare one rack's
-                // damage. Ties go to most rounds.
-                int newRack = ammoType.getDamagePerShot() * ammoType.getRackSize();
-                int newDamage = mounted.getExplosionDamage();
-                Mounted<?> mount2 = cs.getMount2();
-                if ((mount2 != null) && (mount2.getType() instanceof AmmoType) && (mount2.getHittableShotsLeft() > 0)) {
-                    // must be for same weaponType, so rackSize stays
-                    ammoType = (AmmoType) mount2.getType();
-                    newRack += ammoType.getDamagePerShot() * ammoType.getRackSize();
-                    newDamage += mount2.getExplosionDamage();
-                }
-                if (!mounted.isHit() && ((rack < newRack) || ((rack == newRack) && (damage < newDamage)))) {
-                    rack = newRack;
-                    damage = newDamage;
-                    boomLoc = j;
-                    boomSlot = k;
-                }
+                ammoCriticals.add(cs);
+                locationArray.add(loc);
+                slotNumberArray.add(slotNumber);
             }
         }
-        if ((boomLoc != -1) && (boomSlot != -1)) {
-            CriticalSlot slot = entity.getCritical(boomLoc, boomSlot);
-            slot.setHit(true);
-            slot.getMount().setHit(true);
-            if (slot.getMount2() != null) {
-                slot.getMount2().setHit(true);
+
+        CriticalSlot slotExplode = Game.rulesManager.getRulesHeat().explodeAmmo(ammoCriticals);
+
+        int criticalIndex = ammoCriticals.indexOf(slotExplode);
+        if (slotExplode != null) {
+            slotExplode.setHit(true);
+            slotExplode.getMount().setHit(true);
+            if (slotExplode.getMount2() != null) {
+                slotExplode.getMount2().setHit(true);
             }
-            vDesc.addAll(explodeEquipment(entity, boomLoc, boomSlot));
+            vDesc.addAll(explodeEquipment(entity, locationArray.get(criticalIndex).intValue(),
+                  slotNumberArray.get(criticalIndex).intValue()));
         } else {
             // Luckily, there is no ammo to explode.
             Report r = new Report(5105);

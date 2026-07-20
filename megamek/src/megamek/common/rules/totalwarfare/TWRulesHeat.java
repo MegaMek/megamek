@@ -33,6 +33,9 @@ package megamek.common.rules.totalwarfare;
  */
 
 
+import megamek.common.CriticalSlot;
+import megamek.common.equipment.AmmoType;
+import megamek.common.equipment.Mounted;
 import megamek.common.options.OptionsConstants;
 import megamek.common.rules.core.CoreRulesHeat;
 import megamek.common.units.Mek;

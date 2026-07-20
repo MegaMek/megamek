@@ -33,11 +33,16 @@ package megamek.common.rules;
  * affiliated with Microsoft.
  */
 
+import megamek.common.CriticalSlot;
+import megamek.common.Report;
 import megamek.common.board.Coords;
 import megamek.common.equipment.MiscType;
 import megamek.common.units.Entity;
 
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Vector;
 
 public abstract class RulesEquipment {
     // Does AMS allow for multiple shots
@@ -75,4 +80,11 @@ public abstract class RulesEquipment {
 
     // Is there an init bonus for the command console or tripod tech officer?
     public abstract int getCommandConsoleBonus();
+
+    // Check for how many hits and how we deal with them
+    public abstract int getMascSuperChargerFailureHits(int entityId, Vector<Report> vDesc, boolean isSupercharger);
+
+    // Do masc critical hits
+    public abstract void doMascFailureCrits(Entity entity, HashMap<Integer, List<CriticalSlot>> vCriticalSlots,
+          int hits);
 }

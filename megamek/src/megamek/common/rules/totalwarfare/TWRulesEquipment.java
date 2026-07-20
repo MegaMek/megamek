@@ -33,16 +33,24 @@ package megamek.common.rules.totalwarfare;
  * affiliated with Microsoft.
  */
 
+import megamek.common.CriticalSlot;
+import megamek.common.Report;
 import megamek.common.board.Coords;
+import megamek.common.compute.Compute;
 import megamek.common.compute.ComputeECM;
 import megamek.common.equipment.MiscType;
 import megamek.common.equipment.Sensor;
+import megamek.common.rolls.Roll;
 import megamek.common.rolls.TargetRoll;
 import megamek.common.rules.core.CoreRulesEquipment;
 import megamek.common.units.Entity;
 import megamek.common.units.Mek;
 
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Vector;
 
 public class TWRulesEquipment extends CoreRulesEquipment {
     // AMS can shoot once
@@ -165,5 +173,55 @@ public class TWRulesEquipment extends CoreRulesEquipment {
     @Override
     public int getCommandConsoleBonus() {
         return 2;
+    }
+
+    @Override
+    // What is the masc or supercharger failure hits. Core p.204
+    public int getMascSuperChargerFailureHits(int entityId, Vector<Report> vDesc, boolean isSupercharger) {
+        int hits = 0;
+        int reportId = 6310;
+        Roll diceRoll2 = Compute.rollD6(2);
+        Report r = new Report(reportId);
+        r.subject = entityId;
+        r.add(diceRoll2);
+        r.newlines = 0;
+        vDesc.addElement(r);
+        if (diceRoll2.getIntValue() <= 7) {
+            // no effect
+            reportId = 6005;
+        } else if ((diceRoll2.getIntValue() == 8) || (diceRoll2.getIntValue() == 9)) {
+            hits = 1;
+            reportId = 6315;
+        } else if ((diceRoll2.getIntValue() == 10) || (diceRoll2.getIntValue() == 11)) {
+            hits = 2;
+            reportId = 6320;
+        } else if (diceRoll2.getIntValue() == 12) {
+            hits = 3;
+            reportId = 6325;
+        }
+
+        r = new Report(reportId);
+        r.subject = entityId;
+        r.newlines = 0;
+        vDesc.addElement(r);
+
+        return hits;
+    }
+
+    // Masc crits
+    @Override
+    public void doMascFailureCrits(Entity entity, HashMap<Integer, List<CriticalSlot>> vCriticalSlots, int hits) {
+        // do the damage. random critical slot on each leg, but MASC is not destroyed
+        for (int loc = 0; loc < entity.locations(); loc++) {
+            if (entity.locationIsLeg(loc) && (entity.getHittableCriticalSlots(loc) > 0)) {
+                CriticalSlot slot;
+                do {
+                    int slotIndex = Compute.randomInt(entity.getNumberOfCriticalSlots(loc));
+                    slot = entity.getCritical(loc, slotIndex);
+                } while ((slot == null) || !slot.isHittable());
+                vCriticalSlots.put(loc, new LinkedList<>());
+                vCriticalSlots.get(loc).add(slot);
+            }
+        }
     }
 }

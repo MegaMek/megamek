@@ -15557,40 +15557,11 @@ public abstract class Entity extends TurnOrdered
                 r.choose(false);
                 vDesc.addElement(r);
 
-                if (isSupercharger) {
+                int hits = Game.rulesManager.getRulesEquipment().getMascSuperChargerFailureHits(getId(), vDesc,
+                      isSupercharger);
+
+                if (isSupercharger && hits > 0) {
                     // do the damage - engine critical slots
-                    int hits = 0;
-                    Roll diceRoll2 = Compute.rollD6(2);
-                    r = new Report(6310);
-                    r.subject = getId();
-                    r.add(diceRoll2);
-                    r.newlines = 0;
-                    vDesc.addElement(r);
-                    if (diceRoll2.getIntValue() <= 7) {
-                        // no effect
-                        r = new Report(6005);
-                        r.subject = getId();
-                        r.newlines = 0;
-                        vDesc.addElement(r);
-                    } else if ((diceRoll2.getIntValue() == 8) || (diceRoll2.getIntValue() == 9)) {
-                        hits = 1;
-                        r = new Report(6315);
-                        r.subject = getId();
-                        r.newlines = 0;
-                        vDesc.addElement(r);
-                    } else if ((diceRoll2.getIntValue() == 10) || (diceRoll2.getIntValue() == 11)) {
-                        hits = 2;
-                        r = new Report(6320);
-                        r.subject = getId();
-                        r.newlines = 0;
-                        vDesc.addElement(r);
-                    } else if (diceRoll2.getIntValue() == 12) {
-                        hits = 3;
-                        r = new Report(6325);
-                        r.subject = getId();
-                        r.newlines = 0;
-                        vDesc.addElement(r);
-                    }
                     if (this instanceof Mek) {
                         vCriticalSlots.put(Mek.LOC_CENTER_TORSO, new LinkedList<>());
                         for (int i = 0; (i < 12) && (hits > 0); i++) {
@@ -15649,18 +15620,7 @@ public abstract class Entity extends TurnOrdered
                     }
 
                 } else {
-                    // do the damage. random critical slot on each leg, but MASC is not destroyed
-                    for (int loc = 0; loc < locations(); loc++) {
-                        if (locationIsLeg(loc) && (getHittableCriticalSlots(loc) > 0)) {
-                            CriticalSlot slot;
-                            do {
-                                int slotIndex = Compute.randomInt(getNumberOfCriticalSlots(loc));
-                                slot = getCritical(loc, slotIndex);
-                            } while ((slot == null) || !slot.isHittable());
-                            vCriticalSlots.put(loc, new LinkedList<>());
-                            vCriticalSlots.get(loc).add(slot);
-                        }
-                    }
+                    Game.rulesManager.getRulesEquipment().doMascFailureCrits(this, vCriticalSlots, hits);
                 }
                 // failed a PSR, check for stalling
                 doCheckEngineStallRoll(vDesc);

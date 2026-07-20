@@ -127,6 +127,10 @@ public class ForceGeneratorViewUi implements ActionListener {
     private boolean accumulateModel = false;
     private ForceDescriptor modelRoot;
 
+    // Design-stage status line under the tree in accumulate mode: reassures the player the model is a
+    // draft ("... - not yet committed.") and reports its running size. Hidden in standalone mode.
+    private JLabel lblModelStatus;
+
     protected TableRowSorter<ChosenEntityModel> sorterChosen;
 
     static final String FGV_BV = "FGV_BV";
@@ -252,6 +256,15 @@ public class ForceGeneratorViewUi implements ActionListener {
         paneForceTree.setMinimumSize(new Dimension(600, 800));
         rightPanel.add(paneForceTree, gbc);
 
+        // Design-stage status line beneath the tree. Present in every host but only made visible in
+        // accumulate mode (see refreshCommandModelChrome); it stays hidden for standalone Random Army.
+        gbc.gridy = 5;
+        gbc.weighty = 0.0;
+        lblModelStatus = new JLabel();
+        lblModelStatus.setBorder(BorderFactory.createEmptyBorder(4, 2, 0, 2));
+        lblModelStatus.setVisible(false);
+        rightPanel.add(lblModelStatus, gbc);
+
         modelChosen = new ChosenEntityModel();
         tblChosen = new JTable(modelChosen);
         sorterChosen = new TableRowSorter<>(modelChosen);
@@ -309,6 +322,59 @@ public class ForceGeneratorViewUi implements ActionListener {
     public void setAccumulateModel(boolean enabled) {
         this.accumulateModel = enabled;
         logger.info("[ForceGen] setAccumulateModel({})", enabled);
+        refreshCommandModelChrome();
+    }
+
+    /**
+     * Applies (or clears) the Command Designer's design-stage chrome around the tree. In accumulate
+     * mode the tree gets a "Command Model (Design)" titled border - so it never reads as the live TOE -
+     * and the status line under it shows either the empty-state hint or the running model size with a
+     * "not yet committed" reminder. In standalone mode the border and status line are removed.
+     */
+    private void refreshCommandModelChrome() {
+        if (paneForceTree == null || lblModelStatus == null) {
+            return;
+        }
+        if (!accumulateModel) {
+            paneForceTree.setBorder(null);
+            lblModelStatus.setVisible(false);
+            return;
+        }
+        paneForceTree.setBorder(BorderFactory.createTitledBorder(
+              Messages.getString("ForceGeneratorDialog.commandModel.title")));
+        if (modelRoot == null || modelRoot.getSubForces().isEmpty()) {
+            lblModelStatus.setText(Messages.getString("ForceGeneratorDialog.commandModel.empty"));
+        } else {
+            int unitCount = countModelUnits(modelRoot);
+            int commandCount = modelRoot.getSubForces().size();
+            lblModelStatus.setText(Messages.getString("ForceGeneratorDialog.commandModel.status",
+                  unitCount, commandCount));
+        }
+        lblModelStatus.setVisible(true);
+    }
+
+    /**
+     * Counts the included combat-unit leaves under {@code descriptor} - the units that will actually be
+     * committed. A leaf counts only when it is {@link ForceDescriptor#isIncluded() included} and has an
+     * {@link ForceDescriptor#getEntity() entity}, so struck-out (excluded) units are not tallied.
+     *
+     * @param descriptor the model (or subtree) to count
+     *
+     * @return the number of included combat-unit leaves
+     */
+    private int countModelUnits(ForceDescriptor descriptor) {
+        boolean hasChildren = !descriptor.getSubForces().isEmpty() || !descriptor.getAttached().isEmpty();
+        if (!hasChildren) {
+            return (descriptor.isIncluded() && descriptor.getEntity() != null) ? 1 : 0;
+        }
+        int count = 0;
+        for (ForceDescriptor child : descriptor.getSubForces()) {
+            count += countModelUnits(child);
+        }
+        for (ForceDescriptor child : descriptor.getAttached()) {
+            count += countModelUnits(child);
+        }
+        return count;
     }
 
     /** The accumulated Model root in accumulate mode, or {@code null} if nothing has been rolled yet. */
@@ -473,6 +539,9 @@ public class ForceGeneratorViewUi implements ActionListener {
             lblFaction.setText("");
             lblRating.setText("");
         }
+
+        // Update the design-stage status line for the model's new size.
+        refreshCommandModelChrome();
     }
 
     /**
@@ -587,6 +656,8 @@ public class ForceGeneratorViewUi implements ActionListener {
                     toggleItem.addActionListener(ev -> {
                         fd.setIncludedRecursively(!fd.isIncluded());
                         forceTree.repaint();
+                        // The status line counts included units, so re-tally after a toggle.
+                        refreshCommandModelChrome();
                     });
                     menu.add(toggleItem);
 

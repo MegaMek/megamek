@@ -1935,8 +1935,9 @@ public class BLKFile {
     }
 
     /**
-     * Fixes the wrongly assigned armor_tech, for example a Clan armor_tech to an IS unit
-     */
+     * Normalizes ALL-tech-base armor tech levels when the file specifies an IS/Clan tech base that
+     * doesn't match the unit, while preserving the underlying rules level (e.g., IS Advanced -> Clan Advanced).
+    */
     private void normalizeAllTechBaseArmor(Entity entity) {
         ArmorType armor = ArmorType.forEntity(entity);
         if (!entity.isMixedTech() && !entity.hasPatchworkArmor() && (armor != null)

@@ -150,6 +150,10 @@ class ComputeToHitIsImpossible {
             return null;
         }
 
+        if (los.isShotBlockedByWater()) {
+            return Messages.getString("WeaponAttackAction.WaterBlocksShot");
+        }
+
         // got ammo?
         if (usesAmmo && ((ammo == null) || (ammo.getUsableShotsLeft() == 0))) {
             return Messages.getString("WeaponAttackAction.OutOfAmmo");

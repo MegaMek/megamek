@@ -39,4 +39,9 @@ public class CoreRulesUnderwater extends RulesUnderwater {
     public int getBreachTarget() {
         return 4;
     }
+
+    // Underwater does not break LOS. Core p.58, 62
+    public boolean waterBlocksLOS() {
+        return false;
+    }
 }

@@ -166,6 +166,7 @@ public class LosEffects {
     int buildingLevelsOrHexes = 0;
     boolean blockedByHill = false;
     boolean blockedByWater = false;
+    boolean shotBlockedByWater = false;
     int targetCover = COVER_NONE; // that means partial cover
     int attackerCover = COVER_NONE; // ditto
     IBuilding thruBldg = null;
@@ -259,6 +260,7 @@ public class LosEffects {
         hardBuildings += other.hardBuildings;
         blockedByHill |= other.blockedByHill;
         blockedByWater |= other.blockedByWater;
+        shotBlockedByWater |= other.shotBlockedByWater;
         targetCover |= other.targetCover;
         attackerCover |= other.attackerCover;
         if ((null != thruBldg) && !thruBldg.equals(other.thruBldg)) {
@@ -325,6 +327,8 @@ public class LosEffects {
     public boolean isBlockedByWater() {
         return blockedByWater;
     }
+
+    public boolean isShotBlockedByWater() { return shotBlockedByWater;}
 
     /**
      * Getter for property targetCover.
@@ -827,26 +831,26 @@ public class LosEffects {
             los.targetLoc = ai.targetPos;
             return los;
         }
-        if ((ai.attOnLand && ai.targetUnderWater) || (ai.attUnderWater && ai.targetOnLand)) {
+        if (Game.rulesManager.getRulesUnderwater().waterBlocksLOS() && ((ai.attOnLand && ai.targetUnderWater) || (ai.attUnderWater && ai.targetOnLand))) {
             LosEffects los = new LosEffects();
             los.blocked = true;
             los.hasLoS = false;
             los.blockedByWater = true;
+            los.shotBlockedByWater = true;
             los.targetLoc = ai.targetPos;
             return los;
         }
 
-        if (game.getOptions().booleanOption(OptionsConstants.ADVANCED_COMBAT_TAC_OPS_DEAD_ZONES) && isDeadZone(game,
+            if (game.getOptions().booleanOption(OptionsConstants.ADVANCED_COMBAT_TAC_OPS_DEAD_ZONES) && isDeadZone(game,
               ai)) {
-            LosEffects los = new LosEffects();
-            los.blocked = true;
-            los.blockedByHill = true;
-            los.deadZone = true;
-            los.hasLoS = false;
-            los.targetLoc = ai.targetPos;
-            return los;
-        }
-
+                LosEffects los = new LosEffects();
+                los.blocked = true;
+                los.blockedByHill = true;
+                los.deadZone = true;
+                los.hasLoS = false;
+                los.targetLoc = ai.targetPos;
+                return los;
+            }
         boolean diagramLos = game.getOptions().booleanOption(OptionsConstants.ADVANCED_COMBAT_TAC_OPS_LOS1);
         boolean partialCover = game.getOptions().booleanOption(OptionsConstants.ADVANCED_COMBAT_TAC_OPS_PARTIAL_COVER);
         double degree = ai.attackPos.degree(ai.targetPos);
@@ -1125,6 +1129,10 @@ public class LosEffects {
             los.blocked = true;
         }
 
+        if (!Game.rulesManager.getRulesUnderwater().waterBlocksLOS() && ((ai.attOnLand && ai.targetUnderWater) || (ai.attUnderWater && ai.targetOnLand))) {
+            los.shotBlockedByWater = true;
+        }
+
         // Infantry inside a building can only be
         // targeted by units in the same building.
         if (ai.targetInfantry && targetInBuilding && (null == los.getThruBldg())) {
@@ -1174,6 +1182,10 @@ public class LosEffects {
         // add non-divided line segments
         for (int i = 3; i < in.size() - 2; i += 3) {
             los.add(losForCoords(game, ai, in.get(i), los.getThruBldg(), diagramLoS, partialCover));
+        }
+
+        if (!Game.rulesManager.getRulesUnderwater().waterBlocksLOS() && ((ai.attOnLand && ai.targetUnderWater) || (ai.attUnderWater && ai.targetOnLand))) {
+            los.shotBlockedByWater = true;
         }
 
         if ((ai.minimumWaterDepth < 1) && ai.underWaterCombat) {

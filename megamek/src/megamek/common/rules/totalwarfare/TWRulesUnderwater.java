@@ -40,4 +40,10 @@ public class TWRulesUnderwater extends CoreRulesUnderwater {
     public int getBreachTarget() {
         return 10;
     }
+
+    // Underwater breaks LOS
+    @Override
+    public boolean waterBlocksLOS() {
+        return true;
+    }
 }

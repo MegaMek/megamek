@@ -220,6 +220,21 @@ class MtfFileTest {
     }
 
     @Test
+    void mixedTechMtfPreservesCanonicalInnerSphereWeaponNames() throws Exception {
+        File file = new File("testresources/megamek/common/units/Pulverizer PUL-2V.mtf");
+        Mek loaded = (Mek) new MekFileParser(file).getEntity();
+
+        assertTrue(loaded.getWeaponList().stream()
+              .anyMatch(mounted -> mounted.getType().getInternalName().equals("LRM 10")));
+        assertFalse(loaded.getWeaponList().stream()
+              .anyMatch(mounted -> mounted.getType().getInternalName().equals("CLLRM10")));
+
+        String resaved = loaded.getMtf();
+        assertTrue(resaved.contains("\nLRM 10\n"));
+        assertFalse(resaved.contains("CLLRM10"));
+    }
+
+    @Test
     void setVGLFacing() throws Exception {
         Mek mek = new BipedMek();
         EquipmentType vgl = EquipmentType.get("ISVehicularGrenadeLauncher");

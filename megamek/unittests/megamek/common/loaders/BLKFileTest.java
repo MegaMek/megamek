@@ -58,6 +58,7 @@ import megamek.common.equipment.EquipmentType;
 import megamek.common.equipment.Mounted;
 import megamek.common.loaders.BLKFile.ParsedBayInfo;
 import megamek.common.units.DropShuttleBay;
+import megamek.common.units.Dropship;
 import megamek.common.units.Entity;
 import megamek.common.units.EntityMovementMode;
 import megamek.common.units.ForceGeneratorAvailability;
@@ -574,6 +575,21 @@ class BLKFileTest {
         assertNotNull(entity, "Failed to load entity from " + filename);
         assertInstanceOf(BattleArmor.class, entity, "Entity should be BattleArmor");
         return (BattleArmor) entity;
+    }
+
+    @Test
+    void mixedTechBlkPreservesCanonicalInnerSphereWeaponNames() throws Exception {
+        File file = new File("testresources/megamek/common/units/Lion (3005) (WD).blk");
+        Dropship loaded = assertInstanceOf(Dropship.class, new MekFileParser(file).getEntity());
+
+          assertTrue(loaded.getEquipment().stream()
+              .anyMatch(mounted -> mounted.getType().getInternalName().equals("LRM 20")));
+          assertFalse(loaded.getEquipment().stream()
+              .anyMatch(mounted -> mounted.getType().getInternalName().equals("CLLRM20")));
+
+        String resaved = String.join("\n", BLKFile.getBlock(loaded).getAllDataAsString());
+        assertTrue(resaved.contains("LRM 20"));
+        assertFalse(resaved.contains("CLLRM20"));
     }
 
     /**

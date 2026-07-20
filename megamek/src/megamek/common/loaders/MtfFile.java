@@ -1052,13 +1052,12 @@ public class MtfFile implements IMekLoader {
             EquipmentType etype2 = null;
             if (critName.contains("|")) {
                 String critName2 = critName.substring(critName.indexOf("|") + 1);
-                etype2 = EquipmentType.get(critName2, mek.isClan() ? TechBase.CLAN : TechBase.IS);
+                etype2 = getEquipmentType(mek, critName2);
                 critName = critName.substring(0, critName.indexOf("|"));
             }
 
             try {
-                EquipmentType etype = EquipmentType.get(critName,
-                      mek.isClan() ? TechBase.CLAN : TechBase.IS);
+                EquipmentType etype = getEquipmentType(mek, critName);
                 if (etype != null) {
                     if (etype.isSpreadable()) {
                         // do we already have one of these? Key on Type
@@ -1214,6 +1213,10 @@ public class MtfFile implements IMekLoader {
                 throw new EntityLoadingException(ex.getMessage());
             }
         }
+    }
+
+    private EquipmentType getEquipmentType(Mek mek, String equipmentName) {
+        return EquipmentType.get(equipmentName, mek.isMixedTech() ? null : mek.getTechBase());
     }
 
     private void clearSystemCriticalIfAbsent(Mek mek, int loc, int slot, String expectedCritical) {

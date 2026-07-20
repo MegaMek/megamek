@@ -242,7 +242,7 @@ public class BLKFile {
     }
 
     protected EquipmentType getEquipmentType(Entity entity, String equipmentName) {
-        return EquipmentType.get(equipmentName, entity.isClan() ? TechBase.CLAN : TechBase.IS);
+        return EquipmentType.get(equipmentName, entity.isMixedTech() ? null : entity.getTechBase());
     }
 
     protected void loadEquipment(Entity t, String sName, int nLoc) throws EntityLoadingException {

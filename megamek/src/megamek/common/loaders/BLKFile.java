@@ -1964,7 +1964,9 @@ public class BLKFile {
                 case TechConstants.T_ALL_CLAN -> entity.isClan() ? armorTechLevel : TechConstants.T_ALL_IS;
                 default -> armorTechLevel;
             };
-            entity.setArmorTechLevel(normalizedTechLevel);
+            if (normalizedTechLevel != armorTechLevel) {
+                entity.setArmorTechLevel(normalizedTechLevel);
+            }
         }
     }
 

@@ -713,8 +713,10 @@ public class BasicPathRanker extends PathRanker {
      * @return the closing incentive to add to the path's utility (never negative)
      */
     protected double calculateCloseRangeIncentive(Entity movingUnit, double distToEnemy) {
-        if ((distToEnemy <= 1) || (distToEnemy >= CLOSE_RANGE_BAND)) {
-            // Already at contact (aggression/bravery take over), or too far out for the pull to apply yet.
+        if ((distToEnemy < 1) || (distToEnemy >= CLOSE_RANGE_BAND)) {
+            // Too far out for the pull to apply yet (or a degenerate zero distance). The incentive is left to
+            // peak at contact (distToEnemy == 1) so that taking the final hex into melee is rewarded rather
+            // than penalized - zeroing it at contact would stall a brawler one hex short of its target.
             return 0;
         }
         int currentRange = (int) Math.ceil(distToEnemy);

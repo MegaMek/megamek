@@ -285,6 +285,23 @@ class BasicPathRankerTest {
     }
 
     @Test
+    void testCloseRangeIncentivePeaksAtMeleeContact() {
+        final BasicPathRanker testRanker = spy(new BasicPathRanker(mockPrincess));
+        final Entity mockBrawler = MockGenerators.generateMockBipedMek(0, 0); // 50 tons -> melee proxy 10
+        when(mockBrawler.getWalkMP()).thenReturn(4);
+        // Melee-only unit: no ranged damage at any range, so the premium is just the melee proxy (10).
+        doReturn(0.0).when(testRanker).getMaxDamageAtRange(eq(mockBrawler), anyInt(), anyBoolean(), anyBoolean());
+
+        // The incentive must be maximal at melee contact (distance 1) so closing the final hex is rewarded, not
+        // penalized (issue #7627: it previously cliffed to 0 at distance <= 1 and stalled the brawler one hex
+        // short). proximity at distance 1 = (12 - 1) / (12 - 1) = 1.0 -> full premium 10.
+        double atContact = testRanker.calculateCloseRangeIncentive(mockBrawler, 1);
+        double atRangeTwo = testRanker.calculateCloseRangeIncentive(mockBrawler, 2);
+        assertEquals(10.0, atContact, 0.01);
+        assertTrue(atContact > atRangeTwo);
+    }
+
+    @Test
     void testEvaluateUnmovedAeroEnemy() {
         final BasicPathRanker testRanker = spy(new BasicPathRanker(mockPrincess));
         doReturn(mockPrincess).when(testRanker).getOwner();

@@ -73,10 +73,43 @@ record FacingDiffCalculator(int allowFacingTolerance) {
      */
     int getFacingDiff(final Entity unit, final MovePath path, final Coords secondaryTargetPosition,
           @Nullable final Coords enemyMedianPosition, @Nullable final Coords closestEnemyPosition) {
-        Coords toFace = selectOneCoordsToFace(path, secondaryTargetPosition, enemyMedianPosition, closestEnemyPosition);
-        int desiredFacing = getDesiredFacing(unit, path, toFace);
+        return getFacingDiff(unit, path, secondaryTargetPosition, enemyMedianPosition, closestEnemyPosition, false);
+    }
+
+    /**
+     * As {@link #getFacingDiff(Entity, MovePath, Coords, Coords, Coords)}, but with the option to square up
+     * precisely on the closest enemy. A unit closing to melee must end the turn facing its target - a hatchet,
+     * sword or kick cannot be delivered through a torso twist - so when {@code squareUpOnClosestEnemy} is
+     * {@code true} the unit faces the closest enemy directly, with no armor-angling bias and no facing
+     * tolerance, instead of settling for any facing within a hex side of the enemy cluster (issue #7627).
+     *
+     * @param unit                    The entity making the movement
+     * @param path                    The movement path being evaluated
+     * @param secondaryTargetPosition Fallback position to face if no enemies are present (typically board center)
+     * @param enemyMedianPosition     The median position of nearby enemies (maybe {@code null} if no enemies)
+     * @param closestEnemyPosition    The position of the closest enemy (maybe {@code null} if no enemies)
+     * @param squareUpOnClosestEnemy  {@code true} to face the closest enemy exactly (for a unit closing to melee)
+     *
+     * @return The facing difference, from 0 (optimal) to 3 (opposite direction)
+     */
+    int getFacingDiff(final Entity unit, final MovePath path, final Coords secondaryTargetPosition,
+          @Nullable final Coords enemyMedianPosition, @Nullable final Coords closestEnemyPosition,
+          final boolean squareUpOnClosestEnemy) {
+        Coords toFace;
+        int bias;
+        int tolerance;
+        if (squareUpOnClosestEnemy && (closestEnemyPosition != null)) {
+            toFace = closestEnemyPosition;
+            bias = 0;
+            tolerance = 0;
+        } else {
+            toFace = selectOneCoordsToFace(path, secondaryTargetPosition, enemyMedianPosition, closestEnemyPosition);
+            bias = getBiasTowardsFacing(unit);
+            tolerance = allowFacingTolerance;
+        }
+        int desiredFacing = getDesiredFacing(path, toFace, bias);
         int currentFacing = path.getFinalFacing();
-        return getFacingDiff(currentFacing, desiredFacing);
+        return getFacingDiff(currentFacing, desiredFacing, tolerance);
     }
 
     /**
@@ -86,17 +119,17 @@ record FacingDiffCalculator(int allowFacingTolerance) {
      * the target.
      * </p>
      *
-     * @param unit   The entity making the movement
-     * @param path   The movement path being evaluated
+     * @param path The movement path being evaluated
      * @param toFace The target coordinates to face toward
+     * @param bias The armor-angling bias to apply ({@code -1} right, {@code 1} left, {@code 0} none)
      *
      * @return The desired facing direction (0-5)
      */
-    private int getDesiredFacing(Entity unit, MovePath path, Coords toFace) {
+    private int getDesiredFacing(MovePath path, Coords toFace, int bias) {
         int desiredFacing = path.getFinalCoords().direction(toFace);
 
         // -1 is bias towards facing left, 1 is bias towards facing right
-        desiredFacing += getBiasTowardsFacing(unit);
+        desiredFacing += bias;
         if (desiredFacing < 0) {
             desiredFacing += 6;
         }
@@ -148,10 +181,11 @@ record FacingDiffCalculator(int allowFacingTolerance) {
      *
      * @param currentFacing The unit's current facing (0-5)
      * @param desiredFacing The desired facing direction (0-5)
+     * @param tolerance     The number of hex sides of deviation forgiven with no penalty
      *
-     * @return The facing difference (0-2) (there is a built-in tolerance for 1 turn click)
+     * @return The facing difference after tolerance (0 to 3)
      */
-    private int getFacingDiff(int currentFacing, int desiredFacing) {
+    private int getFacingDiff(int currentFacing, int desiredFacing, int tolerance) {
         int facingDiff;
         if (currentFacing == desiredFacing) {
             facingDiff = 0;
@@ -162,7 +196,7 @@ record FacingDiffCalculator(int allowFacingTolerance) {
         } else {
             facingDiff = 3;
         }
-        return Math.max(0, facingDiff - allowFacingTolerance);
+        return Math.max(0, facingDiff - tolerance);
     }
 
     /**

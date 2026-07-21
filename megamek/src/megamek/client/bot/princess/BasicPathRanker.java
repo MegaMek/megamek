@@ -1323,12 +1323,14 @@ public class BasicPathRanker extends PathRanker {
      * @return A facing modifier value (higher is worse) to be used in path ranking
      */
     protected double calculateFacingMod(Entity movingUnit, Game game, final MovePath path,
-          @Nullable Coords enemyMedianPosition, @Nullable Coords closestEnemyPosition) {
+          @Nullable Coords enemyMedianPosition, @Nullable Coords closestEnemyPosition,
+          boolean squareUpOnClosestEnemy) {
         int facingDiff = facingDiffCalculator.getFacingDiff(movingUnit,
               path,
               game.getBoard(movingUnit).getCenter(),
               enemyMedianPosition,
-              closestEnemyPosition);
+              closestEnemyPosition,
+              squareUpOnClosestEnemy);
         double facingMod = FACING_MOD_MULTIPLIER * facingDiff;
 
         logger.trace("facing mod [(-){} = {} * {}]", facingMod, FACING_MOD_MULTIPLIER, facingDiff);
@@ -1682,11 +1684,17 @@ public class BasicPathRanker extends PathRanker {
         Coords facingTarget = (standoffArtillery && (highValueClusterPosition != null))
               ? highValueClusterPosition
               : null;
+        // A melee unit that is closing to contact must square up on its target so it can strike next turn (a
+        // hatchet/kick cannot be delivered through a torso twist); it faces the closest enemy exactly rather
+        // than settling for any facing within the usual tolerance (issue #7627).
+        boolean squareUpOnClosestEnemy = (facingTarget == null) && (closeRangeIncentive > 0)
+              && (estimatedMeleeDamage(movingUnit) > 0);
         double facingMod = calculateFacingMod(movingUnit,
               game,
               pathCopy,
               (facingTarget != null) ? facingTarget : medianEnemyPosition,
-              (facingTarget != null) ? facingTarget : closestEnemyPositionNotZeroDistance);
+              (facingTarget != null) ? facingTarget : closestEnemyPositionNotZeroDistance,
+              squareUpOnClosestEnemy);
         scores.put("finalFacing", (double) pathCopy.getFinalFacing());
         scores.put("facingDiff", facingMod / FACING_MOD_MULTIPLIER);
         scores.put("facingMod", facingMod);

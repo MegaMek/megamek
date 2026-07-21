@@ -1683,7 +1683,7 @@ class MovePathHandler extends AbstractTWRuleHandler {
             // let everyone know about what just happened
             // Skip if we already sent an EMP popup this move (avoid duplicate popups)
             if ((gameManager.getMainPhaseReport().size() > 1) && !sentEMPPopupThisMove) {
-                gameManager.send(entity.getOwner().getId(), gameManager.createSpecialReportPacket());
+                gameManager.sendNewSpecialReportsTo(entity.getOwner().getId());
             }
         } else {
             if (entity.getMovementMode() == EntityMovementMode.WIGE) {
@@ -2091,8 +2091,8 @@ class MovePathHandler extends AbstractTWRuleHandler {
 
                         // If we aren't at the end, send a special report
                         if ((getGame().getTurnIndex() + 1) < getGame().getTurnsList().size()) {
-                            gameManager.send(hiddenEntity.getOwner().getId(), gameManager.createSpecialReportPacket());
-                            gameManager.send(this.entity.getOwner().getId(), gameManager.createSpecialReportPacket());
+                            gameManager.sendNewSpecialReportsTo(hiddenEntity.getOwner().getId());
+                            gameManager.sendNewSpecialReportsTo(this.entity.getOwner().getId());
                         }
 
                         // End this entity's turn _without_ updating its position to the current step, because the
@@ -2129,8 +2129,8 @@ class MovePathHandler extends AbstractTWRuleHandler {
 
                         // If we aren't at the end, send a special report
                         if ((getGame().getTurnIndex() + 1) < getGame().getTurnsList().size()) {
-                            gameManager.send(hiddenEntity.getOwner().getId(), gameManager.createSpecialReportPacket());
-                            gameManager.send(this.entity.getOwner().getId(), gameManager.createSpecialReportPacket());
+                            gameManager.sendNewSpecialReportsTo(hiddenEntity.getOwner().getId());
+                            gameManager.sendNewSpecialReportsTo(this.entity.getOwner().getId());
                         }
 
                         curFacing = this.entity.getFacing();

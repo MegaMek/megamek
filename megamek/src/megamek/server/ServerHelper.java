@@ -390,11 +390,9 @@ public class ServerHelper {
             }
         }
 
-        if (!vPhaseReport.isEmpty() && game.getPhase().isMovement()
+        if (hiddenUnitFound && game.getPhase().isMovement()
               && ((game.getTurnIndex() + 1) < game.getTurnsList().size())) {
-            for (Integer playerId : reportPlayers) {
-                gameManager.send(playerId, gameManager.createSpecialReportPacket());
-            }
+            gameManager.sendNewSpecialReportsTo(reportPlayers);
         }
 
         return hiddenUnitFound;

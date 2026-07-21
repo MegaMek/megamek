@@ -155,8 +155,29 @@ public class TWGameManager extends AbstractGameManager {
 
     private final Vector<Report> mainPhaseReport = new Vector<>();
 
+    private final SpecialReportDispatcher specialReportDispatcher = new SpecialReportDispatcher(this);
+
     public Vector<Report> getMainPhaseReport() {
         return mainPhaseReport;
+    }
+
+    /**
+     * Sends the given player the phase reports added since they last received a mid-phase special report, so an
+     * interruption shows only what is new rather than replaying the phase so far.
+     *
+     * @param playerId the player to bring up to date
+     */
+    public void sendNewSpecialReportsTo(int playerId) {
+        specialReportDispatcher.sendNewReportsTo(playerId);
+    }
+
+    /**
+     * Sends each of the given players the phase reports they have not received yet.
+     *
+     * @param playerIds the player ids to bring up to date; repeats are harmless
+     */
+    public void sendNewSpecialReportsTo(Iterable<Integer> playerIds) {
+        specialReportDispatcher.sendNewReportsTo(playerIds);
     }
 
     // Track buildings that are affected by an entity's movement.
@@ -27893,7 +27914,12 @@ public class TWGameManager extends AbstractGameManager {
     /**
      * Creates a packet containing a Vector of special Reports which needs to be sent during a phase that is not a
      * report phase.
+     *
+     * @deprecated this sends the whole phase report accumulated so far, so a second mid-phase interruption re-sends
+     *       everything the first one already delivered. Use {@link #sendNewSpecialReportsTo(int)} to send a player
+     *       only what is new, or {@link #createSpecialReportPacket(Vector)} to send an explicit set of reports.
      */
+    @Deprecated(since = "0.51.1", forRemoval = true)
     public Packet createSpecialReportPacket() {
         return new Packet(PacketCommand.SENDING_REPORTS_SPECIAL, mainPhaseReport.clone());
     }
@@ -31618,6 +31644,7 @@ public class TWGameManager extends AbstractGameManager {
      */
     void clearReports() {
         mainPhaseReport.removeAllElements();
+        specialReportDispatcher.reset();
     }
 
     /**

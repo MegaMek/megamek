@@ -542,7 +542,13 @@ public abstract class PathRanker implements IPathRanker {
     private static int waterEntryDepth(String rollDescription) {
         Matcher matcher = WATER_ENTRY_DEPTH_PATTERN.matcher(rollDescription);
         if (matcher.find()) {
-            return Integer.parseInt(matcher.group(1));
+            try {
+                return Integer.parseInt(matcher.group(1));
+            } catch (NumberFormatException numberFormatException) {
+                // The capture is all digits, so this only happens on an implausibly large value that overflows
+                // an int; treat it as the shallowest depth rather than failing.
+                return 1;
+            }
         }
         return 1;
     }

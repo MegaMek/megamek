@@ -2425,9 +2425,6 @@ public class BasicPathRanker extends PathRanker {
                 continue;
             }
             double breachWeight = breachConsequence(movingUnit, location);
-            if (breachWeight == 0) {
-                continue;
-            }
             if (fallProbability < 0) {
                 fallProbability = waterEntryFallProbability(movingUnit, hex, movePath);
             }
@@ -2498,7 +2495,14 @@ public class BasicPathRanker extends PathRanker {
      *       elevation-gated check would skip the roll
      */
     private double waterEntryFallProbability(Entity movingUnit, Hex hex, MovePath movePath) {
-        PilotingRollData waterRoll = movingUnit.checkWaterMove(hex.depth(), movePath.getLastStepMovementType());
+        // The RAW water-entry roll keys off the intended movement mode (walk/run/jump), not end-position
+        // legality; getLastStepMovementType() can report MOVE_ILLEGAL for a path that is illegal only at its
+        // end (e.g. a leveling candidate), which would skew the roll, so fall back to a plain walk in that case.
+        EntityMovementType movementType = movePath.getLastStepMovementType();
+        if (movementType == EntityMovementType.MOVE_ILLEGAL) {
+            movementType = EntityMovementType.MOVE_WALK;
+        }
+        PilotingRollData waterRoll = movingUnit.checkWaterMove(hex.depth(), movementType);
         if (waterRoll.getValue() == TargetRoll.CHECK_FALSE) {
             return 0.0;
         }

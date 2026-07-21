@@ -1762,8 +1762,10 @@ public class CommonSettingsDialog extends AbstractButtonDialog
 
         addLineSpacer(comps);
 
-        comps.add(checkboxEntry(toastEnabled, Messages.getString("CommonSettingsDialog.toastEnabled.tooltip")));
+        // Set the state before checkboxEntry() attaches the item listener: the listener drives the dependent
+        // controls, which are not built until further down this method.
         toastEnabled.setSelected(GUIP.getToastEnabled());
+        comps.add(checkboxEntry(toastEnabled, Messages.getString("CommonSettingsDialog.toastEnabled.tooltip")));
 
         // The warning stays visible whether or not toasts are on: a player deciding whether to switch them off needs
         // to read it before clicking, not after.
@@ -1808,12 +1810,12 @@ public class CommonSettingsDialog extends AbstractButtonDialog
         row.add(toastDripLabel);
         comps.add(row);
 
+        toastReportEvents.setSelected(GUIP.getToastReportEvents());
         row = new ArrayList<>();
         row.add(Box.createRigidArea(DEPENDENT_INSET));
         row.addAll(checkboxEntry(toastReportEvents,
               Messages.getString("CommonSettingsDialog.toastReportEvents.tooltip")));
         comps.add(row);
-        toastReportEvents.setSelected(GUIP.getToastReportEvents());
 
         setToastControlsEnabled(toastEnabled.isSelected());
 

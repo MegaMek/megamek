@@ -136,7 +136,7 @@ public final class ReportToastFormatter {
      * <p>This overload keeps no history, so every call treats the report as unseen. Callers that receive overlapping
      * reports should use {@link #formatReport(String, String, Set)} instead.</p>
      *
-     * @return ordered list of toast bodies; empty if the report is null/empty or fully filtered out
+     * @return ordered list of toast bodies; empty if the report is {@code null}/empty or fully filtered out
      */
     public static List<String> formatReport(String defaultPrefix, String report) {
         return formatReport(defaultPrefix, report, new HashSet<>());
@@ -162,7 +162,7 @@ public final class ReportToastFormatter {
      * @param alreadyToasted  plain-text bodies already shown; accepted entries are added to it. The caller owns this
      *                        set and should clear it when the reports stop overlapping, i.e. on a phase change.
      *
-     * @return ordered list of toast bodies; empty if the report is null/empty or fully filtered out
+     * @return ordered list of toast bodies; empty if the report is {@code null}/empty or fully filtered out
      */
     public static List<String> formatReport(String defaultPrefix, String report, Set<String> alreadyToasted) {
         List<String> toasts = new ArrayList<>();

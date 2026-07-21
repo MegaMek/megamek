@@ -27919,7 +27919,7 @@ public class TWGameManager extends AbstractGameManager {
      *       everything the first one already delivered. Use {@link #sendNewSpecialReportsTo(int)} to send a player
      *       only what is new, or {@link #createSpecialReportPacket(Vector)} to send an explicit set of reports.
      */
-    @Deprecated(since = "0.51.1", forRemoval = true)
+    @Deprecated(since = "0.51.01", forRemoval = true)
     public Packet createSpecialReportPacket() {
         return new Packet(PacketCommand.SENDING_REPORTS_SPECIAL, mainPhaseReport.clone());
     }

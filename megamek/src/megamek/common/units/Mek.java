@@ -83,6 +83,12 @@ public abstract class Mek extends Entity implements Fortifiable, RubbleClearer {
     private static final long serialVersionUID = -1929593228891136561L;
     private static final MMLogger LOGGER = MMLogger.create(Mek.class);
 
+    /** A MekWarrior can always eject while alive and aboard. */
+    @Override
+    public boolean canEjectCrew() {
+        return crewCanLeave();
+    }
+
     private static final class FrankenMekLocationSourceSnapshot implements Serializable {
         @Serial
         private static final long serialVersionUID = 2955102329477149771L;
@@ -325,8 +331,8 @@ public abstract class Mek extends Entity implements Fortifiable, RubbleClearer {
     public static final String FRANKEN_MEK_STRUCTURE_HYBRID = "Hybrid";
 
     private static final TechAdvancement TA_FRANKENMEK = new TechAdvancement(TechBase.ALL)
-        .setAdvancement(ITechnology.DATE_PS)
-        .setStaticTechLevel(SimpleTechLevel.EXPERIMENTAL);
+          .setAdvancement(ITechnology.DATE_PS)
+          .setStaticTechLevel(SimpleTechLevel.EXPERIMENTAL);
 
     private boolean frankenMek = false;
 
@@ -595,7 +601,7 @@ public abstract class Mek extends Entity implements Fortifiable, RubbleClearer {
         boolean needsNewSourceSnapshots = (frankenMekLocationSources == null)
               || (frankenMekLocationSources.length != locations);
         if (frankenMekStructureInitialized && !needsNewTonnage && !needsNewStructureType
-            && !needsNewStructureTechLevel && !needsNewSourceSnapshots) {
+              && !needsNewStructureTechLevel && !needsNewSourceSnapshots) {
             return;
         }
 
@@ -789,7 +795,7 @@ public abstract class Mek extends Entity implements Fortifiable, RubbleClearer {
     public EquipmentType getFrankenMekStructureEquipment(int location) {
         String structureName = EquipmentType.getStructureTypeName(getFrankenMekStructureType(location),
               TechConstants.isClan(getFrankenMekStructureTechLevel(location)));
-        return EquipmentType.get(structureName);
+        return EquipmentType.getStructureFromName(structureName);
     }
 
     /**
@@ -985,7 +991,8 @@ public abstract class Mek extends Entity implements Fortifiable, RubbleClearer {
 
     public String getFrankenMekStructureDisplayName() {
         if (!isFrankenMek()) {
-            return EquipmentType.getStructureTypeName(getStructureType(), TechConstants.isClan(getStructureTechLevel()));
+            return EquipmentType.getStructureTypeName(getStructureType(),
+                  TechConstants.isClan(getStructureTechLevel()));
         }
         if (hasHybridFrankenMekStructure()) {
             return FRANKEN_MEK_STRUCTURE_HYBRID;
@@ -1028,9 +1035,9 @@ public abstract class Mek extends Entity implements Fortifiable, RubbleClearer {
               && (frankenMekStructureType[firstLeg] == frankenMekStructureType[otherLeg])
               && (frankenMekStructureTechLevel[firstLeg] == frankenMekStructureTechLevel[otherLeg])
               && sanitizeFrankenMekSourceValue(firstLegSource.getDisplayName()).equals(
-                    sanitizeFrankenMekSourceValue(otherLegSource.getDisplayName()))
+              sanitizeFrankenMekSourceValue(otherLegSource.getDisplayName()))
               && sanitizeFrankenMekSourceValue(firstLegSource.getType()).equals(
-                    sanitizeFrankenMekSourceValue(otherLegSource.getType()));
+              sanitizeFrankenMekSourceValue(otherLegSource.getType()));
     }
 
     private static String sanitizeFrankenMekSourceValue(String value) {
@@ -2681,7 +2688,8 @@ public abstract class Mek extends Entity implements Fortifiable, RubbleClearer {
      *
      * @param mounted the weapon being checked
      *
-     * @return {@code ARC_FORWARD} if this weapon is in a Directional Torso Mount, otherwise an empty {@link OptionalInt}
+     * @return {@code ARC_FORWARD} if this weapon is in a Directional Torso Mount, otherwise an empty
+     *       {@link OptionalInt}
      */
     protected OptionalInt getDirectionalTorsoMountArc(Mounted<?> mounted) {
         if (mounted.hasDirectionalTorsoMount()) {
@@ -4035,29 +4043,33 @@ public abstract class Mek extends Entity implements Fortifiable, RubbleClearer {
     }
 
     @Override
-    protected void addSystemTechAdvancement(CompositeTechLevel ctl) {
-        super.addSystemTechAdvancement(ctl);
+    protected void addSystemTechAdvancement(CompositeTechLevel techLevel) {
+        super.addSystemTechAdvancement(techLevel);
         // Meks with non-fusion engines are experimental
         if (hasEngine() && !isIndustrial() && !getEngine().isFusion()) {
-            ctl.addComponent(new TechAdvancement().setStaticTechLevel(SimpleTechLevel.EXPERIMENTAL));
+            techLevel.addComponent(new TechAdvancement().setStaticTechLevel(SimpleTechLevel.EXPERIMENTAL),
+                  Messages.getString("CompositeTechLevel.component.nonFusionEngineBattleMek"));
         }
         if (isFrankenMek()) {
-            ctl.addComponent(TA_FRANKENMEK);
+            techLevel.addComponent(TA_FRANKENMEK, Messages.getString("CompositeTechLevel.component.frankenMek"));
         }
         if (getGyroTechAdvancement() != null) {
-            ctl.addComponent(getGyroTechAdvancement());
+            techLevel.addComponent(getGyroTechAdvancement(), getGyroTypeString());
         }
         if (getCockpitTechAdvancement() != null) {
-            ctl.addComponent(getCockpitTechAdvancement());
+            techLevel.addComponent(getCockpitTechAdvancement(), getCockpitTypeString());
         }
         if (isIndustrial() && hasAdvancedFireControl()) {
-            ctl.addComponent(getIndustrialAdvFireConTA());
+            techLevel.addComponent(getIndustrialAdvFireConTA(),
+                  Messages.getString("CompositeTechLevel.component.advancedFireControl"));
         }
         if (hasFullHeadEject()) {
-            ctl.addComponent(getFullHeadEjectAdvancement());
+            techLevel.addComponent(getFullHeadEjectAdvancement(),
+                  Messages.getString("CompositeTechLevel.component.fullHeadEjection"));
         }
         if (hasRiscHeatSinkOverrideKit()) {
-            ctl.addComponent(getRiscHeatSinkOverrideKitAdvancement());
+            techLevel.addComponent(getRiscHeatSinkOverrideKitAdvancement(),
+                  Messages.getString("CompositeTechLevel.component.riscHeatSinkOverrideKit"));
         }
     }
 
@@ -4193,8 +4205,7 @@ public abstract class Mek extends Entity implements Fortifiable, RubbleClearer {
         if (this.isFrankenMek()) {
             if (this.hasMismatchedTonnageFrankenMekLegs()) {
                 roll.addModifier(2, "Mismatched Legs with different tonnages");
-            } else
-            if (this.hasMismatchedFrankenMekLegs()) {
+            } else if (this.hasMismatchedFrankenMekLegs()) {
                 roll.addModifier(1, "Mismatched Legs from different Meks");
             }
         }
@@ -5201,6 +5212,14 @@ public abstract class Mek extends Entity implements Fortifiable, RubbleClearer {
         sb.append(newLine);
         if (hasRole()) {
             sb.append(MtfFile.ROLE).append(getRole().toString());
+            sb.append(newLine);
+        }
+        for (ForceGeneratorAvailability availability : getForceGeneratorAvailability()) {
+            sb.append(MtfFile.AVAILABILITY).append(availability.toFileFormat());
+            sb.append(newLine);
+        }
+        if (!getMissionRoles().isBlank()) {
+            sb.append(MtfFile.MISSION_ROLES).append(getMissionRoles());
             sb.append(newLine);
         }
         if (techFaction != null && techFaction != Faction.NONE) {
@@ -7225,6 +7244,8 @@ public abstract class Mek extends Entity implements Fortifiable, RubbleClearer {
             bUsedCoolantSystem = true;
             vDesc.addElement(Report.subjectReport(2365, getId()).addDesc(this).add(coolantSystem.getName()));
             int requiredRoll = EMERGENCY_COOLANT_SYSTEM_FAILURE[nCoolantSystemLevel];
+            // Edge may reroll a failed RISC coolant system check once (part of the shared RISC Edge trigger).
+            diceRoll = rerollRiscCoolantWithEdge(this, requiredRoll, diceRoll, vDesc);
             Report r = Report.subjectReport(2370, getId()).indent().add(requiredRoll).add(diceRoll);
 
             if (diceRoll.getIntValue() < requiredRoll) {
@@ -7272,6 +7293,37 @@ public abstract class Mek extends Entity implements Fortifiable, RubbleClearer {
             return bFailure;
         }
         return false;
+    }
+
+    /**
+     * Applies Edge to a RISC Emergency Coolant System failure check: if the initial roll failed and the crew has the
+     * RISC Edge trigger enabled with Edge remaining, spends one Edge point and rerolls the check once. This rolls the
+     * coolant system into the same Edge trigger as the RISC laser malfunctions.
+     *
+     * @param entity       the Mek making the check
+     * @param requiredRoll the target number the roll must meet to succeed
+     * @param initialRoll  the roll that was made
+     * @param reportVector the report vector to append the Edge-use report to
+     *
+     * @return the roll to use - the reroll if Edge was spent, otherwise the original roll
+     */
+    // package-private static for testing
+    static Roll rerollRiscCoolantWithEdge(Entity entity, int requiredRoll, Roll initialRoll,
+          Vector<Report> reportVector) {
+        boolean isFailedCheck = initialRoll.getIntValue() < requiredRoll;
+        boolean shouldUseEdge = entity.shouldUseEdge(OptionsConstants.EDGE_WHEN_RISC_FAIL);
+
+        if (isFailedCheck && shouldUseEdge) {
+            entity.getCrew().decreaseEdge();
+
+            reportVector.addElement(Report.subjectReport(3168, entity.getId())
+                  .indent()
+                  .add(entity.getCrew().getOptions().intOption(OptionsConstants.EDGE)));
+
+            return Compute.rollD6(2);
+        }
+
+        return initialRoll;
     }
 
     public boolean hasDamagedCoolantSystem() {

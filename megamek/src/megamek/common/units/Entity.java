@@ -1053,6 +1053,18 @@ public abstract class Entity extends TurnOrdered
     private UnitRole role = UnitRole.UNDETERMINED;
 
     /**
+     * Force Generator availability declared in this unit's file, used to let custom units appear in generated forces.
+     * This is NOT the tech availability rating from {@link megamek.common.interfaces.ITechnology}.
+     */
+    private List<ForceGeneratorAvailability> forceGeneratorAvailability = new ArrayList<>();
+
+    /**
+     * Comma-separated Force Generator mission roles declared in this unit's file, e.g. "fire_support,urban". Left as
+     * raw text here because the MissionRole enum lives in the client package; the Force Generator parses it.
+     */
+    private String missionRoles = "";
+
+    /**
      * Vector storing references to friendly weapon attack actions this entity may need to support; Primarily used by
      * Princess to speed up TAG utility calculations.
      */
@@ -1589,21 +1601,48 @@ public abstract class Entity extends TurnOrdered
      */
     public void recalculateTechAdvancement() {
         initTechAdvancement();
-        for (Mounted<?> m : getEquipment()) {
+        addEquipmentTechAdvancement(compositeTechLevel);
+    }
+
+    /**
+     * Folds every mounted item on this unit into the given composite tech level.
+     *
+     * @param techLevel The composite tech level to add this unit's equipment to
+     */
+    private void addEquipmentTechAdvancement(CompositeTechLevel techLevel) {
+        for (Mounted<?> mounted : getEquipment()) {
             // ProtoMek EI is built-in per IO:AE p.69 -- only count toward tech level
             // in Full Tracking mode (Off and Pilot Only = Standard tech)
             if (isProtoMek()
-                  && (m.getType() instanceof MiscType)
-                  && m.getType().hasFlag(MiscType.F_EI_INTERFACE)
+                  && (mounted.getType() instanceof MiscType)
+                  && mounted.getType().hasFlag(MiscType.F_EI_INTERFACE)
                   && !isNeuralInterfaceFullTracking()) {
                 continue;
             }
 
-            compositeTechLevel.addComponent(m.getType());
-            if (m.isArmored()) {
-                compositeTechLevel.addComponent(TA_ARMORED_COMPONENT);
+            techLevel.addComponent(mounted.getType());
+            if (mounted.isArmored()) {
+                techLevel.addComponent(TA_ARMORED_COMPONENT,
+                      Messages.getString("CompositeTechLevel.component.armoredComponent"));
             }
         }
+    }
+
+    /**
+     * Rebuilds this unit's composite tech level, recording each component as it is folded in so that a report can show
+     * where the unit's tech level comes from. The result is calculated exactly as {@link #recalculateTechAdvancement()}
+     * calculates the unit's real tech level, so it always agrees with it.
+     *
+     * @param techFaction    The faction to evaluate faction-specific dates for
+     * @param evaluationYear The year to evaluate each component's variable tech level in
+     *
+     * @return A composite tech level that knows every component that went into it
+     */
+    public RecordingCompositeTechLevel recordedTechLevel(Faction techFaction, int evaluationYear) {
+        RecordingCompositeTechLevel recorded = new RecordingCompositeTechLevel(this, techFaction, evaluationYear);
+        addSystemTechAdvancement(recorded);
+        addEquipmentTechAdvancement(recorded);
+        return recorded;
     }
 
     protected static final TechAdvancement TA_OMNI = new TechAdvancement(TechBase.ALL).setISAdvancement(DATE_NONE,
@@ -1706,27 +1745,38 @@ public abstract class Entity extends TurnOrdered
     /**
      * Incorporate dates for components that are not in the equipment list, such as engines and structure.
      */
-    protected void addSystemTechAdvancement(CompositeTechLevel ctl) {
+    protected void addSystemTechAdvancement(CompositeTechLevel techLevel) {
         if (hasEngine()) {
-            ctl.addComponent(getEngine());
+            techLevel.addComponent(getEngine());
         }
         if (isOmni()) {
-            ctl.addComponent(TA_OMNI);
+            techLevel.addComponent(TA_OMNI, Messages.getString("CompositeTechLevel.component.omniConfiguration"));
         }
         if (hasPatchworkArmor()) {
-            ctl.addComponent(TA_PATCHWORK_ARMOR);
+            techLevel.addComponent(TA_PATCHWORK_ARMOR,
+                  Messages.getString("CompositeTechLevel.component.patchworkArmor"));
             for (int loc = 0; loc < locations(); loc++) {
-                ctl.addComponent(ArmorType.forEntity(this, loc).getTechAdvancement());
+                ArmorType locationArmor = ArmorType.forEntity(this, loc);
+                techLevel.addComponent(locationArmor.getTechAdvancement(),
+                      Messages.getString("CompositeTechLevel.component.armorInLocation",
+                            getLocationAbbr(loc), locationArmor.getName()));
             }
         } else {
             ArmorType armor = ArmorType.forEntity(this);
-            ctl.addComponent(armor.getTechAdvancement());
+            techLevel.addComponent(armor.getTechAdvancement(),
+                  Messages.getString("CompositeTechLevel.component.armorNamed", armor.getName()));
         }
         if (isMixedTech()) {
-            ctl.addComponent(TA_MIXED_TECH);
+            techLevel.addComponent(TA_MIXED_TECH, Messages.getString("CompositeTechLevel.component.mixedTech"));
         }
-        ctl.addComponent(EquipmentType.getStructureTechAdvancement(structureType,
-              TechConstants.isClan(structureTechLevel)));
+        boolean isClanStructure = TechConstants.isClan(structureTechLevel);
+        // Unit types that have no internal structure type (battle armor, infantry) still contribute a blank
+        // advancement here, so name it generically rather than let the lookup report "UNKNOWN".
+        String structureName = (structureType == EquipmentType.T_STRUCTURE_UNKNOWN)
+              ? Messages.getString("CompositeTechLevel.component.internalStructure")
+              : Messages.getString("CompositeTechLevel.component.internalStructureNamed",
+                    EquipmentType.getStructureTypeName(structureType, isClanStructure));
+        techLevel.addComponent(EquipmentType.getStructureTechAdvancement(structureType, isClanStructure), structureName);
     }
 
     public int getRecoveryTurn() {
@@ -5065,7 +5115,9 @@ public abstract class Entity extends TurnOrdered
             // Make sure this ammo is in the chain, then move it to the head.
             for (Mounted<?> current = mounted; current != null; current = current.getLinked()) {
                 if (current == mountedAmmo) {
-                    current.getLinkedBy().setLinked(current.getLinked());
+                    if (current.getLinkedBy() != null) {
+                        current.getLinkedBy().setLinked(current.getLinked());
+                    }
                     current.setLinked(mounted.getLinked());
                     mounted.setLinked(current);
                     return true;
@@ -7674,6 +7726,11 @@ public abstract class Entity extends TurnOrdered
             crew.incrementFatigueCount();
         }
 
+        // count down any temporary gamemaster skill modifiers, which clear themselves when their time runs out
+        if (null != crew) {
+            crew.getSkillModifiers().newRound();
+        }
+
         // Update the inferno tracker.
         infernos.newRound(roundNumber);
         if (taserShutdownRounds > 0) {
@@ -8341,10 +8398,15 @@ public abstract class Entity extends TurnOrdered
                   "Reactor shut down");
         }
 
-        // okay, let's figure out the stuff then
+        // okay, let's figure out the stuff then. A gamemaster's temporary modifier is taken back out of the skill
+        // and shown as a line of its own, so a shifted target can be traced to the gamemaster's intervention.
+        int gamemasterModifier = getCrew().appliedPilotingModifier(moveType);
         roll = new PilotingRollData(entityId,
-              getCrew().getPiloting(moveType),
+              getCrew().getPiloting(moveType) - gamemasterModifier,
               (this instanceof Infantry) ? "Anti-Mek skill" : "Base piloting skill");
+        if (gamemasterModifier != 0) {
+            roll.addModifier(gamemasterModifier, "GM Modifier");
+        }
 
         // Let's see if we have a modifier to our piloting skill roll. We'll pass in the roll object and adjust as necessary
         roll = addEntityBonuses(roll);
@@ -10823,33 +10885,56 @@ public abstract class Entity extends TurnOrdered
     }
 
     /**
-     * Returns true when this unit can flee from its current position. This requires the unit to have mobility and be in
-     * control as well as its position being eligible for fleeing. When no special flee area is set by a scenario, the
-     * latter will typically be true when the unit is at the edge of its board. The position of units with a null
-     * position as well as offboard units are considered to be eligible for fleeing.
+     * Returns true when this unit can flee from its current position in its current state. 
+     * This requires the unit to have mobility and be in control as well as the position being eligible for fleeing.
+     * When no special flee area is set by a scenario, the latter will typically be true when the position is at the edge of its board.
+     * A null position as well as offboard units are considered to be eligible for fleeing.
      *
-     * @return True when the unit can flee given its position and status
+     * @return True when the unit can flee from the given position, given its current status
      */
-    public final boolean canFlee() {
-        return canFlee(position);
+
+    public boolean canFlee() {
+        return (canFleeInState() && canFleeFrom(position));
     }
 
     /**
-     * Returns true when this unit can flee from the given position. This requires the unit to have mobility and be in
-     * control as well as the position being eligible for fleeing. When no special flee area is set by a scenario, the
-     * latter will typically be true when the position is at the edge of its board. A null position as well as offboard
-     * units are considered to be eligible for fleeing.
+     * Returns true when this unit can flee from the given position in its current state. 
+     * This requires the unit to have mobility and be in control as well as the position being eligible for fleeing.
+     * When no special flee area is set by a scenario, the latter will typically be true when the position is at the edge of its board.
+     * A null position as well as offboard units are considered to be eligible for fleeing.
      *
      * @return True when the unit can flee from the given position, given its current status
      */
     public boolean canFlee(@Nullable Coords position) {
-        return ((getWalkMP() > 0) || (this instanceof Infantry)) &&
-              !isProne() &&
+        return (canFleeInState() && canFleeFrom(position));
+    }
+
+    /**
+     * Returns true when this unit can flee in its current state.
+     * This requires the unit to have mobility and be in control
+     *
+     * @return True when the unit can flee given its status
+     */
+    public final boolean canFleeInState() {
+        return (((getWalkMP() > 0) || (this instanceof Infantry)) &&
+              !isProne()  &&
               !isStuck() &&
               !isShutDown() &&
               !getCrew().isUnconscious() &&
-              (getSwarmTargetId() == NONE) &&
-              (isOffBoard() || (position == null) || game.canFleeFrom(this, position));
+              (getSwarmTargetId() == NONE));
+    }
+
+    /**
+     * Returns true when this unit can flee from the given position. 
+     * This requires the position be eligible for fleeing. 
+     * When no special flee area is set by a scenario, the latter will typically be true when the position is at the edge of its board.
+     * A null position as well as offboard units are considered to be eligible for fleeing.
+     *
+     * @return True when the unit can flee from the given position
+     */
+
+    public boolean canFleeFrom(@Nullable Coords position) {
+        return (isOffBoard() || (position == null) || game.canFleeFrom(this, position));
     }
 
     public void setEverSeenByEnemy(boolean b) {
@@ -12088,16 +12173,18 @@ public abstract class Entity extends TurnOrdered
         if (!(armType.startsWith("Clan ") || armType.startsWith("IS "))) {
             armType = (TechConstants.isClan(getArmorTechLevel(0)) ? "Clan " : "IS ") + armType;
         }
-        EquipmentType et = EquipmentType.get(armType);
-        if (!(et instanceof ArmorType newArmorType)) {
+        ArmorType newArmorType = EquipmentType.getArmorFromName(armType);
+        if (newArmorType == null) {
             setArmorType(EquipmentType.T_ARMOR_UNKNOWN);
         } else {
             setArmorType(newArmorType.getArmorType());
-            setArmorTechLevel(newArmorType.getStaticTechLevel().getCompoundTechLevel(newArmorType.isClan()));
+            if (!newArmorType.isMixedTech()) {
+                setArmorTechLevel(newArmorType.getStaticTechLevel().getCompoundTechLevel(newArmorType.isClan()));
+            }
             // TODO: Is this needed? WTF is the point of it?
-            if (et.getNumCriticalSlots(this) == 0) {
+            if (newArmorType.getNumCriticalSlots(this) == 0) {
                 try {
-                    addEquipment(et, LOC_NONE);
+                    addEquipment(newArmorType, LOC_NONE);
                 } catch (Exception e) {
                     // can't happen
                     LOGGER.error("", e);
@@ -12111,15 +12198,15 @@ public abstract class Entity extends TurnOrdered
         if (!(armType.startsWith("Clan ") || armType.startsWith("IS "))) {
             armType = (TechConstants.isClan(getArmorTechLevel(0)) ? "Clan " : "IS ") + armType;
         }
-        EquipmentType et = EquipmentType.get(armType);
-        if (et == null) {
+        ArmorType armorType = EquipmentType.getArmorFromName(armType);
+        if (armorType == null) {
             setArmorType(EquipmentType.T_ARMOR_UNKNOWN, loc);
         } else {
-            setArmorType(EquipmentType.getArmorType(et), loc);
+            setArmorType(armorType.getArmorType(), loc);
             // TODO: Is this needed? WTF is the point of it?
-            if (et.getNumCriticalSlots(this) == 0) {
+            if (armorType.getNumCriticalSlots(this) == 0) {
                 try {
-                    addEquipment(et, LOC_NONE);
+                    addEquipment(armorType, LOC_NONE);
                 } catch (Exception e) {
                     // can't happen
                     LOGGER.error("", e);
@@ -12130,22 +12217,29 @@ public abstract class Entity extends TurnOrdered
     }
 
     public void setStructureType(String structureType) {
-        if (!(structureType.startsWith("Clan ") || structureType.startsWith("IS "))) {
-            structureType = (isClan() ? "Clan " : "IS ") + structureType;
+        boolean clanStructure = isClan();
+        if (structureType.startsWith("Clan ")) {
+            clanStructure = true;
+        } else if (structureType.startsWith("IS ")) {
+            clanStructure = false;
+        } else {
+            structureType = (clanStructure ? "Clan " : "IS ") + structureType;
         }
         if (!(structureType.endsWith("Structure"))) {
             structureType += " Structure";
         }
-        EquipmentType et = EquipmentType.get(structureType);
-        setStructureType(EquipmentType.getStructureType(et));
-        if (et == null) {
+        StructureType structure = EquipmentType.getStructureFromName(structureType);
+        setStructureType(EquipmentType.getStructureType(structure));
+        if (structure == null) {
             structureTechLevel = TechConstants.T_TECH_UNKNOWN;
         } else {
-            structureTechLevel = et.getTechLevel(year);
+            structureTechLevel = structure.isMixedTech()
+                  ? structure.getTechLevel(year, clanStructure)
+                  : structure.getTechLevel(year);
             // TODO: Is this needed? WTF is the point of it?
-            if (et.getNumCriticalSlots(this) == 0) {
+            if (structure.getNumCriticalSlots(this) == 0) {
                 try {
-                    addEquipment(et, LOC_NONE);
+                    addEquipment(structure, LOC_NONE);
                 } catch (Exception e) {
                     // can't happen
                     LOGGER.error("", e);
@@ -12987,6 +13081,28 @@ public abstract class Entity extends TurnOrdered
     /** Returns true if this unit is currently hidden (hidden units, TW pg 259). */
     public boolean isHidden() {
         return isHidden;
+    }
+
+    /**
+     * Returns whether this unit can be hidden at all (hidden units, TW pg 259): a unit in the air cannot, and unit
+     * types that can never hide override this. Whether it is currently hidden is {@link #isHidden()}.
+     */
+    public boolean canHide() {
+        return !isAirborne() && !isAirborneVTOLorWIGE();
+    }
+
+    /**
+     * Returns whether this unit's crew could leave it now: eject or abandon, the way the server's abandonEntity
+     * resolves it. False here; the unit types whose crews can leave override it, each with its own conditions on
+     * top of the shared {@link #crewCanLeave()}.
+     */
+    public boolean canEjectCrew() {
+        return false;
+    }
+
+    /** Shared by the {@link #canEjectCrew()} overrides: a crew can only leave while it is aboard and alive. */
+    protected boolean crewCanLeave() {
+        return (getCrew() != null) && !getCrew().isEjected() && !getCrew().isDead();
     }
 
     /**
@@ -17899,6 +18015,40 @@ public abstract class Entity extends TurnOrdered
     @Override
     public UnitRole getRole() {
         return (role == null) ? UnitRole.UNDETERMINED : role;
+    }
+
+    /**
+     * Returns the Force Generator availability entries declared in this unit's file. Empty for units that do not
+     * declare any, which is every canon unit; those get their availability from data/forcegenerator instead.
+     *
+     * @return the availability entries, never {@code null}
+     */
+    public List<ForceGeneratorAvailability> getForceGeneratorAvailability() {
+        // Empty rather than a fresh ArrayList: the Force Generator calls this for every unit in every era, so
+        // allocating here would churn. Null only happens for an Entity deserialized from a stream written before
+        // this field existed. Use the setter to change the entries; the returned list is not for mutating.
+        return (forceGeneratorAvailability == null) ? List.of() : forceGeneratorAvailability;
+    }
+
+    public void setForceGeneratorAvailability(List<ForceGeneratorAvailability> forceGeneratorAvailability) {
+        this.forceGeneratorAvailability = (forceGeneratorAvailability == null)
+              ? new ArrayList<>()
+              : new ArrayList<>(forceGeneratorAvailability);
+    }
+
+    /**
+     * Returns the Force Generator mission roles declared in this unit's file as raw comma-separated text, e.g.
+     * "fire_support,urban". Blank when the file declares none, in which case the Force Generator derives roles from
+     * the unit itself.
+     *
+     * @return the mission role text, never {@code null}
+     */
+    public String getMissionRoles() {
+        return (missionRoles == null) ? "" : missionRoles;
+    }
+
+    public void setMissionRoles(String missionRoles) {
+        this.missionRoles = (missionRoles == null) ? "" : missionRoles.trim();
     }
 
     /**

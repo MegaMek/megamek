@@ -59,7 +59,7 @@ public class ISLAAMissileWeapon extends ThunderboltWeapon {
         super();
 
         this.name = "Light Air-to-Air (LAA) Missiles";
-        this.setInternalName(BombTypeEnum.LAA.getWeaponName());
+        this.setInternalName("IS " + BombTypeEnum.LAA.getWeaponName());
         this.heat = 0;
         this.damage = 6;
         this.rackSize = 1;

@@ -80,7 +80,7 @@ public class ElevatorProcessor extends DynamicTerrainProcessor {
 
         for (BoardLocation c : elevators[roll].positions) {
             Hex hex = gameManager.getGame().getHex(c);
-            Terrain terr = hex.getTerrain(Terrains.ELEVATOR);
+            Terrain terr = hex.getTerrain(Terrains.SOLARIS_ELEVATOR);
             // Swap the elevator and hex elevations
             // Entity elevations are not adjusted. This makes sense for
             // everything except possibly
@@ -88,8 +88,8 @@ public class ElevatorProcessor extends DynamicTerrainProcessor {
             // height relative to the hex
             int elevation = hex.getLevel();
             hex.setLevel(terr.getLevel());
-            hex.removeTerrain(Terrains.ELEVATOR);
-            hex.addTerrain(new Terrain(Terrains.ELEVATOR, elevation, true, terr.getExits()));
+            hex.removeTerrain(Terrains.SOLARIS_ELEVATOR);
+            hex.addTerrain(new Terrain(Terrains.SOLARIS_ELEVATOR, elevation, true, terr.getExits()));
             markHexUpdate(c.coords(), c.boardId());
         }
     }
@@ -104,8 +104,8 @@ public class ElevatorProcessor extends DynamicTerrainProcessor {
             int exits;
             for (int x = 0; x < width; x++) {
                 for (int y = 0; y < height; y++) {
-                    if (b.getHex(x, y).containsTerrain(Terrains.ELEVATOR)) {
-                        exits = b.getHex(x, y).getTerrain(Terrains.ELEVATOR).getExits();
+                    if (b.getHex(x, y).containsTerrain(Terrains.SOLARIS_ELEVATOR)) {
+                        exits = b.getHex(x, y).getTerrain(Terrains.SOLARIS_ELEVATOR).getExits();
                         // add the elevator to each list it belongs in.
                         // exits are abused to hold which d6 roll(s) move this
                         // elevator

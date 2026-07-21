@@ -65,6 +65,7 @@ import megamek.common.battleArmor.BattleArmor;
 import megamek.common.board.Board;
 import megamek.common.board.Coords;
 import megamek.common.equipment.ArmorType;
+import megamek.common.equipment.EquipmentType;
 import megamek.common.game.Game;
 import megamek.common.moves.Key;
 import megamek.common.moves.MovePath;
@@ -77,6 +78,7 @@ import megamek.common.planetaryConditions.Weather;
 import megamek.common.rolls.TargetRoll;
 import megamek.common.units.*;
 import megamek.utils.MockGenerators;
+import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
@@ -94,15 +96,13 @@ class BasicPathRankerTest {
     private Princess mockPrincess;
     private FireControl mockFireControl;
 
+    @BeforeAll
+    static void beforeAll() {
+        EquipmentType.initializeTypes();
+    }
+
     @BeforeEach
     void beforeEach() {
-
-        // We now need to make sure all armor types are initialized or mockito will
-        // complain.
-        if (!ArmorType.getAllTypes().hasMoreElements()) {
-            ArmorType.initializeTypes();
-        }
-
         final BehaviorSettings mockBehavior = mock(BehaviorSettings.class);
         when(mockBehavior.getFallShameValue()).thenReturn(BehaviorSettings.FALL_SHAME_VALUES[5]);
         when(mockBehavior.getBraveryValue()).thenReturn(BehaviorSettings.BRAVERY[5]);

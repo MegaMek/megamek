@@ -248,7 +248,6 @@ public class LobbyActions {
             LobbyErrors.showCannotEditDamage(frame());
             return;
         }
-
         // An asset has no armor/structure/criticals; its only persistent damage is a lowered Destroy Check.
         if (entity instanceof BattlefieldSupportAsset asset) {
             BattlefieldSupportAssetDamageDialog dialog = new BattlefieldSupportAssetDamageDialog(frame(), asset);
@@ -259,7 +258,9 @@ public class LobbyActions {
             return;
         }
 
-        UnitEditorDialog med = new UnitEditorDialog(frame(), entity, localPlayer().isGameMaster());
+        // Reaching here means the local player may edit this unit: the gamemaster, or the owner when no gamemaster
+        // is present. Either way the dialog offers the full editing tools without re-checking the gamemaster role.
+        UnitEditorDialog med = new UnitEditorDialog(frame(), entity, true);
         med.setVisible(true);
         med.dispose();
         sendUpdates(entities);
@@ -277,13 +278,15 @@ public class LobbyActions {
      */
     static boolean canEditDamage(Client client, Entity entity) {
         Player localPlayer = client.getLocalPlayer();
+        boolean ownUnit = (entity.getOwnerId() == localPlayer.getId())
+              || client.getBots().containsKey(entity.getOwner().getName());
         for (Player player : client.getGame().getPlayersList()) {
             if (player.isGameMaster()) {
+                // when a gamemaster is present, only the gamemaster may edit damage; everyone else loses access
                 return localPlayer.isGameMaster();
             }
         }
-        return (entity.getOwnerId() == localPlayer.getId())
-              || client.getBots().containsKey(entity.getOwner().getName());
+        return ownUnit;
     }
 
     /**

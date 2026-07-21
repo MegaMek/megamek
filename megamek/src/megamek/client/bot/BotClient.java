@@ -85,6 +85,7 @@ import megamek.common.event.player.GamePlayerChatEvent;
 import megamek.common.game.Game;
 import megamek.common.game.InitiativeRoll;
 import megamek.common.moves.MovePath;
+import megamek.common.net.packets.InvalidPacketDataException;
 import megamek.common.net.packets.Packet;
 import megamek.common.options.OptionsConstants;
 import megamek.common.pathfinder.BoardClusterTracker;
@@ -1284,6 +1285,19 @@ public abstract class BotClient extends Client {
                                     // before they come back on-board.
                                     new_stealth = 1;
 
+                                } else if (wantsStealthHeatForTsm(check_ent)) {
+                                    // A Mek with heat-activated Triple-Strength Myomer uses stealth armor's
+                                    // heat to reach the TSM activation threshold while it closes, and stays
+                                    // cloaked during the approach. Once it is adjacent to an enemy, though, it
+                                    // drops stealth: at melee it needs its heat sinks free to fire weapons
+                                    // (keeping its own heat up for TSM) while it makes doubled physical
+                                    // attacks, and stealth's defensive value against an adjacent foe is small.
+                                    boolean adjacentToEnemy = isAdjacentToEnemy(check_ent);
+                                    new_stealth = adjacentToEnemy ? 0 : 1;
+                                    LOGGER.debug("[HeatTSM] {}: stealth armor {} for TSM ({})",
+                                          check_ent.getShortName(), (new_stealth == 1) ? "on" : "off",
+                                          adjacentToEnemy ? "adjacent - firing/melee" : "closing");
+
                                 } else {
 
                                     // Mek is not in danger of shutting down soon;
@@ -1335,6 +1349,40 @@ public abstract class BotClient extends Client {
                 }
             }
         }
+    }
+
+    /**
+     * Reports whether keeping stealth armor active benefits this unit's Triple-Strength Myomer. A Mek with
+     * heat-activated standard TSM (which switches on at elevated heat) wants the extra heat stealth armor
+     * generates to reach and hold the activation threshold, so it should not shed stealth to free heat
+     * sinks. Prototype and industrial TSM are always on and do not use the heat threshold, so they gain
+     * nothing here.
+     *
+     * @param entity the unit whose stealth armor is being toggled
+     *
+     * @return {@code true} if the unit has heat-activated standard TSM, otherwise {@code false}
+     */
+    static boolean wantsStealthHeatForTsm(Entity entity) {
+        return (entity instanceof Mek mek) && mek.hasTSM(false);
+    }
+
+    /**
+     * @param entity the unit whose surroundings are being checked
+     *
+     * @return {@code true} if any enemy of {@code entity} occupies a hex adjacent to it (melee range),
+     *       otherwise {@code false}
+     */
+    private boolean isAdjacentToEnemy(Entity entity) {
+        if (entity.getPosition() == null) {
+            return false;
+        }
+        for (Entity other : game.getEntitiesVector()) {
+            if (entity.isEnemyOf(other) && (other.getPosition() != null)
+                  && (Compute.effectiveDistance(game, entity, other) <= 1)) {
+                return true;
+            }
+        }
+        return false;
     }
 
     private @Nullable String getRandomBotMessage() {
@@ -1418,23 +1466,16 @@ public abstract class BotClient extends Client {
     		// avoid unnecessary loops and evaluations
     		if (minesToPlace <= 0) {
     			continue;
-    		}    		
+    		}
     		
     		Map<Double, List<Coords>> potentialCoords = 
-    				mdp.getBucketedCandidateCoords(minefieldType, getBoard());
-    		
-    		// this operation takes the buckets and sorts them in descending order
-    		List<Double> sortedBuckets = new ArrayList<>();
-    		sortedBuckets.addAll(potentialCoords.keySet());
-    		Collections.sort(sortedBuckets);
-    		sortedBuckets = sortedBuckets.reversed();
-    		    		
+    				mdp.getBucketedCandidateCoords(minefieldType, getBoard());    		    		
     		
     		// complicated loop:
     		// while we have mines to place (minesToPlace > 0)
     		// AND we have buckets left with coordinates in them, place mines.    		
     		bucketloop:
-    		for (double bucket : sortedBuckets) {
+    		for (double bucket : potentialCoords.keySet()) {
     			for (Coords coords : potentialCoords.get(bucket)) {
     				// it's always more advantageous to put in higher density minefields
 	    			// but hardly fair when players may be bound by scenario restrictions
@@ -1460,6 +1501,7 @@ public abstract class BotClient extends Client {
 	    			}
 	    			
 	    			deployedMinefields.add(minefield);
+	    			mdp.markMinePlacement(coords);
 	    			
 	    			minesToPlace--;
 	    			
@@ -1502,7 +1544,28 @@ public abstract class BotClient extends Client {
     public String receiveReport(List<Report> reports) {
         return "";
     }
-
+    
+    /**
+     * In addition to handling the entity update normally, the bot needs to decide
+     * if it should activate its hidden units
+     */
+    @Override
+    protected void receiveEntityUpdate(Packet packet) throws InvalidPacketDataException {
+    	super.receiveEntityUpdate(packet);
+    	
+    	if (this.getGame().getPhase() == GamePhase.MOVEMENT) {
+    		int entityIndex = packet.getIntValue(0);
+    		revealEntities(entityIndex);
+    	}
+    }
+    
+    /**
+     * Given an entity that just moved, decide if I should reveal any entities in response
+     */
+    protected void revealEntities(int movedEntityID) {
+    	// default does nothing
+    }
+    
     /**
      * Let the bot decide whether to reroll initiative based on report info
      *

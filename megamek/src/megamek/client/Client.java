@@ -67,6 +67,7 @@ import megamek.client.ui.clientGUI.tooltip.PilotToolTip;
 import megamek.client.ui.tileset.TilesetManager;
 import megamek.client.ui.util.UIUtil;
 import megamek.common.Hex;
+import megamek.common.IndustrialElevator;
 import megamek.common.Player;
 import megamek.common.Report;
 import megamek.common.SpecialHexDisplay;
@@ -91,6 +92,7 @@ import megamek.common.equipment.ICarryable;
 import megamek.common.equipment.Minefield;
 import megamek.common.equipment.Mounted;
 import megamek.common.event.GameCFREvent;
+import megamek.common.event.GamePollEvent;
 import megamek.common.event.GameReportEvent;
 import megamek.common.event.GameSettingsChangeEvent;
 import megamek.common.event.GameVictoryEvent;
@@ -115,6 +117,7 @@ import megamek.common.preference.PreferenceManager;
 import megamek.common.turns.UnloadStrandedTurn;
 import megamek.common.units.Crew;
 import megamek.common.units.DemolitionCharge;
+import megamek.common.units.DamageEditSpec;
 import megamek.common.units.Entity;
 import megamek.common.units.EntitySelector;
 import megamek.common.units.FighterSquadron;
@@ -122,6 +125,7 @@ import megamek.common.units.IBuilding;
 import megamek.common.units.UnitLocation;
 import megamek.common.util.C3Util;
 import megamek.common.util.ImageUtil;
+import megamek.common.voting.Poll;
 import megamek.common.util.SerializationHelper;
 import megamek.common.util.StringUtil;
 import megamek.logging.MMLogger;
@@ -479,6 +483,11 @@ public class Client extends AbstractClient {
      * Sends an "update entity" packet
      */
     public void sendUpdateEntity(Entity entity) {
+        LOGGER.debug("Sending update for {} (id {}): heat {}, destroyed {}",
+              entity.getDisplayName(),
+              entity.getId(),
+              entity.heat,
+              entity.isDestroyed());
         send(new Packet(PacketCommand.ENTITY_UPDATE, entity));
     }
 
@@ -487,6 +496,16 @@ public class Client extends AbstractClient {
      */
     public void sendUpdateEntity(Collection<Entity> entities) {
         send(new Packet(PacketCommand.ENTITY_MULTI_UPDATE, entities));
+    }
+
+    /**
+     * Sends a gamemaster's damage editor edits for the server to apply to its own copy of the unit. Unlike
+     * {@link #sendUpdateEntity(Entity)} this carries only the edited values, so the server's unit keeps every
+     * piece of state the editor does not touch.
+     */
+    public void sendDamageEdit(DamageEditSpec spec) {
+        LOGGER.debug("Sending damage edits for unit id {}", spec.entityId);
+        send(new Packet(PacketCommand.ENTITY_DAMAGE_EDIT, spec));
     }
 
     /**
@@ -691,6 +710,15 @@ public class Client extends AbstractClient {
     protected void receiveUpdateGroundObjects(Packet packet) throws InvalidPacketDataException {
         game.setGroundObjects(packet.getCoordsWithGroundObjectListMap(0));
         game.processGameEvent(new GameBoardChangeEvent(this));
+    }
+
+    @SuppressWarnings("unchecked")
+    protected void receiveUpdateIndustrialElevators(Packet packet) {
+        Object data = packet.getObject(0);
+        if (data instanceof Collection) {
+            Collection<IndustrialElevator> elevators = (Collection<IndustrialElevator>) data;
+            game.setIndustrialElevators(elevators);
+        }
     }
 
     protected void receiveDeployMinefields(Packet packet) throws InvalidPacketDataException {
@@ -1059,6 +1087,9 @@ public class Client extends AbstractClient {
                 case UPDATE_GROUND_OBJECTS:
                     receiveUpdateGroundObjects(packet);
                     break;
+                case UPDATE_INDUSTRIAL_ELEVATORS:
+                    receiveUpdateIndustrialElevators(packet);
+                    break;
                 case ADD_SMOKE_CLOUD:
                     SmokeCloud cloud = packet.getSmokeCloud(0);
 
@@ -1168,6 +1199,11 @@ public class Client extends AbstractClient {
                         game.setOptions(options);
                     }
 
+                    break;
+                case GAME_MASTER_POLL:
+                    if (packet.getObject(0) instanceof Poll poll) {
+                        game.processGameEvent(new GamePollEvent(this, poll));
+                    }
                     break;
                 case SENDING_MAP_SETTINGS:
                     MapSettings mapSettings = packet.getMapSettings(0);

@@ -519,6 +519,11 @@ public class GameOptionsDialog extends AbstractButtonDialog implements ActionLis
             optionComp.addValue(OptionsConstants.NEURAL_INTERFACE_MODE_FULL_TRACKING);
             optionComp.setSelected(option.stringValue());
             optionComp.setEditable(editable);
+        } else if (option.getName().equals(OptionsConstants.GAME_MASTER_VOTE_THRESHOLD)) {
+            optionComp.addValue(OptionsConstants.GAME_MASTER_VOTE_UNANIMOUS);
+            optionComp.addValue(OptionsConstants.GAME_MASTER_VOTE_MAJORITY);
+            optionComp.setSelected(option.stringValue());
+            optionComp.setEditable(editable);
         } else if (option.getName().equals(OptionsConstants.ADVANCED_GHOST_TARGET_MODE)) {
             optionComp.addValue(OptionsConstants.GHOST_TARGET_MODE_LEGACY);
             optionComp.addValue(OptionsConstants.GHOST_TARGET_MODE_STANDARD);

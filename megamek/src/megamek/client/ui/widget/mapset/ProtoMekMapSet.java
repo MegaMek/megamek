@@ -1,7 +1,7 @@
 /*
  * Copyright (c) 2004 - Ben Mazur (bmazur@sev.org).
  * Copyright (c) 2013 - Edward Cullen (eddy@obsessedcomputers.co.uk).
- * Copyright (C) 2004-2025 The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2004-2026 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -40,12 +40,13 @@ import java.awt.Font;
 import java.awt.FontMetrics;
 import java.awt.Image;
 import java.awt.Polygon;
+import java.util.Set;
 import java.util.Vector;
 import javax.swing.JComponent;
 
 import megamek.MMConstants;
 import megamek.client.ui.clientGUI.GUIPreferences;
-import megamek.client.ui.dialogs.unitDisplay.UnitDisplayPanel;
+import megamek.client.ui.widget.picmap.LocationSelectListener;
 import megamek.client.ui.widget.BackGroundDrawer;
 import megamek.client.ui.widget.SkinXMLHandler;
 import megamek.client.ui.widget.UnitDisplaySkinSpecification;
@@ -63,7 +64,7 @@ import megamek.common.util.fileUtils.MegaMekFile;
  */
 public class ProtoMekMapSet implements DisplayMapSet {
 
-    private final UnitDisplayPanel unitDisplayPanel;
+    private final LocationSelectListener locationSelectListener;
 
     // Boring list of labels.
     private final PMValueLabel[] sectionLabels = new PMValueLabel[ProtoMek.NUM_PROTOMEK_LOCATIONS];
@@ -106,8 +107,8 @@ public class ProtoMekMapSet implements DisplayMapSet {
     /**
      * This constructor can only be called from the addNotify method
      */
-    public ProtoMekMapSet(JComponent c, UnitDisplayPanel unitDisplayPanel) {
-        this.unitDisplayPanel = unitDisplayPanel;
+    public ProtoMekMapSet(JComponent c, LocationSelectListener locationSelectListener) {
+        this.locationSelectListener = locationSelectListener;
         jComponent = c;
         setAreas();
         setBackGround();
@@ -117,12 +118,12 @@ public class ProtoMekMapSet implements DisplayMapSet {
      * Set the armor diagram on the map set.
      */
     private void setAreas() {
-        areas[ProtoMek.LOC_HEAD] = new PMSimplePolygonArea(head, unitDisplayPanel, ProtoMek.LOC_HEAD);
-        areas[ProtoMek.LOC_LEG] = new PMSimplePolygonArea(legs, unitDisplayPanel, ProtoMek.LOC_LEG);
-        areas[ProtoMek.LOC_LEFT_ARM] = new PMSimplePolygonArea(leftArm, unitDisplayPanel, ProtoMek.LOC_LEFT_ARM);
-        areas[ProtoMek.LOC_RIGHT_ARM] = new PMSimplePolygonArea(rightArm, unitDisplayPanel, ProtoMek.LOC_RIGHT_ARM);
-        areas[ProtoMek.LOC_TORSO] = new PMSimplePolygonArea(torso, unitDisplayPanel, ProtoMek.LOC_TORSO);
-        areas[ProtoMek.LOC_MAIN_GUN] = new PMSimplePolygonArea(mainGun, unitDisplayPanel, ProtoMek.LOC_MAIN_GUN);
+        areas[ProtoMek.LOC_HEAD] = new PMSimplePolygonArea(head, locationSelectListener, ProtoMek.LOC_HEAD);
+        areas[ProtoMek.LOC_LEG] = new PMSimplePolygonArea(legs, locationSelectListener, ProtoMek.LOC_LEG);
+        areas[ProtoMek.LOC_LEFT_ARM] = new PMSimplePolygonArea(leftArm, locationSelectListener, ProtoMek.LOC_LEFT_ARM);
+        areas[ProtoMek.LOC_RIGHT_ARM] = new PMSimplePolygonArea(rightArm, locationSelectListener, ProtoMek.LOC_RIGHT_ARM);
+        areas[ProtoMek.LOC_TORSO] = new PMSimplePolygonArea(torso, locationSelectListener, ProtoMek.LOC_TORSO);
+        areas[ProtoMek.LOC_MAIN_GUN] = new PMSimplePolygonArea(mainGun, locationSelectListener, ProtoMek.LOC_MAIN_GUN);
 
         for (int i = 0; i <= 5; i++) {
             content.addArea(areas[i]);
@@ -254,5 +255,22 @@ public class ProtoMekMapSet implements DisplayMapSet {
               new MegaMekFile(Configuration.widgetsDir(), udSpec.getBottomRightCorner()).toString());
         PMUtil.setImage(tile, jComponent);
         bgDrawers.addElement(new BackGroundDrawer(tile, b));
+    }
+
+    @Override
+    public void setCriticalLocations(Set<Integer> criticalLocations) {
+        // setEntity is what colors the areas by damage, and it runs again on every redraw, so the stripes are
+        // cleared and reapplied here rather than left to accumulate.
+        for (PMSimplePolygonArea area : areas) {
+            if (area != null) {
+                area.setCriticalHatch(false);
+            }
+        }
+        for (int location : criticalLocations) {
+            int area = location;
+            if ((area >= 0) && (area < areas.length) && (areas[area] != null)) {
+                areas[area].setCriticalHatch(true);
+            }
+        }
     }
 }

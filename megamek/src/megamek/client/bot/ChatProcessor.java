@@ -46,7 +46,6 @@ import megamek.common.game.Game;
 import megamek.logging.MMLogger;
 import megamek.server.Server;
 import megamek.server.commands.DefeatCommand;
-import megamek.server.commands.GameMasterCommand;
 import megamek.server.commands.arguments.Arguments;
 import megamek.server.commands.arguments.ArgumentsParser;
 
@@ -132,10 +131,8 @@ public class ChatProcessor {
         }
 
         if (name.equals(Server.ORIGIN)) {
-            String msg = st.nextToken();
-            if (msg.contains(GameMasterCommand.SERVER_VOTE_PROMPT_MSG)) {
-                bot.sendChat("/allowGM");
-            }
+            // Server announcements need no reply. Bots are not voters in a gamemaster vote, so the old habit of
+            // answering the vote prompt with /allowGM is gone with it.
             return;
         } else if (player == null) {
             return;

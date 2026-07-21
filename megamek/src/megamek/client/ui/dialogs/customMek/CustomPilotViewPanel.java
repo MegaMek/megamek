@@ -80,7 +80,6 @@ public class CustomPilotViewPanel extends JPanel {
     private final JCheckBox chkMissing = new JCheckBox(Messages.getString("CustomMekDialog.chkMissing"));
     private final JTextField fldName = new JTextField(20);
     private final JTextField fldNick = new JTextField(20);
-    private final JTextField fldHits = new JTextField(5);
     private final JCheckBox chkClanPilot = new JCheckBox(Messages.getString("CustomMekDialog.chkClanPilot"));
     private final JTextField fldGunnery = new JTextField(3);
     private final JTextField fldGunneryL = new JTextField(3);
@@ -172,10 +171,6 @@ public class CustomPilotViewPanel extends JPanel {
         add(fldNick, GBC.eol());
         fldNick.setText(entity.getCrew().getNickname(slot));
 
-        label = new JLabel(Messages.getString("CustomMekDialog.labHits"), SwingConstants.RIGHT);
-        add(label, GBC.std());
-        add(fldHits, GBC.eop());
-        fldHits.setText(String.valueOf(entity.getCrew().getHits()));
 
         if (parent.getClient().getGame().getOptions().booleanOption(OptionsConstants.RPG_RPG_GUNNERY)) {
             label = new JLabel(Messages.getString("CustomMekDialog.labGunneryL"), SwingConstants.RIGHT);
@@ -338,7 +333,6 @@ public class CustomPilotViewPanel extends JPanel {
             fldName.setEnabled(false);
             fldNick.setEnabled(false);
             chkClanPilot.setEnabled(false);
-            fldHits.setEnabled(false);
             fldGunnery.setEnabled(false);
             fldGunneryL.setEnabled(false);
             fldGunneryM.setEnabled(false);
@@ -396,23 +390,6 @@ public class CustomPilotViewPanel extends JPanel {
 
     public String getNickname() {
         return fldNick.getText();
-    }
-
-    public String getHits() {
-        int hits;
-        try {
-            hits = Integer.parseInt(fldHits.getText());
-            if (hits < 0) {
-                hits = 0;
-            } else if (hits > 5) {
-                hits = 6;
-            }
-        } catch (NumberFormatException e) {
-            hits = 0;
-        }
-        // Update field then return
-        fldHits.setText(String.valueOf(hits));
-        return fldHits.getText();
     }
 
     public Gender getGender() {

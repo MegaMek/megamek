@@ -64,8 +64,8 @@ public class CLLightMGA extends AmmoWeapon {
     public CLLightMGA() {
         super();
         name = "Light Machine Gun Array";
-        addLookupName("Clan Light Machine Gun Array");
         setInternalName("CLLMGA");
+        addLookupName("Clan Light Machine Gun Array");
         sortingName = "MGA B";
         heat = 0;
         damage = 1;

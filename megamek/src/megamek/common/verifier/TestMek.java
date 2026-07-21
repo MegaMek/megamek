@@ -1263,8 +1263,8 @@ public class TestMek extends TestEntity {
                 buff.append("LAMs cannot be larger than 55 tons.\n");
                 illegal = true;
             }
-            EquipmentType structure = EquipmentType.get(EquipmentType.getStructureTypeName(mek.getStructureType(),
-                  mek.isClan()));
+            EquipmentType structure = EquipmentType.getStructureFromName(EquipmentType.getStructureTypeName(
+                mek.getStructureType(), mek.isClan()));
             if (structure.getNumCriticalSlots(mek) > 0) {
                 buff.append("LAMs may not use ").append(structure.getName()).append("\n");
                 illegal = true;
@@ -1279,7 +1279,8 @@ public class TestMek extends TestEntity {
                     buff.append("LAMs cannot use hardened armor.\n");
                     illegal = true;
                 } else {
-                    final EquipmentType eq = EquipmentType.get(EquipmentType.getArmorTypeName(at, mek.isClan()));
+                      final EquipmentType eq = EquipmentType.getArmorFromName(EquipmentType.getArmorTypeName(at,
+                          mek.isClan()));
                     if (eq != null && eq.getNumCriticalSlots(mek) > 0) {
                         buff.append("LAMs cannot use ").append(eq.getName()).append("\n");
                         illegal = true;
@@ -1561,7 +1562,7 @@ public class TestMek extends TestEntity {
         } else {
             String structureName = EquipmentType.getStructureTypeName(mek.getStructureType(),
                   TechConstants.isClan(mek.getStructureTechLevel()));
-            EquipmentType structure = EquipmentType.get(structureName);
+            EquipmentType structure = EquipmentType.getStructureFromName(structureName);
             int requiredStructureCrits = structure.getNumCriticalSlots(mek);
             if (mek.getNumberOfCriticalSlots(structure) != requiredStructureCrits) {
                 buff.append("The internal structure of this mek is not using the correct number of crit slots\n");

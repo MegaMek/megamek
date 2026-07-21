@@ -822,7 +822,6 @@ public class WeaponHandler implements AttackHandler, Serializable {
                     }
                 } else {
                     bSalvo = false;
-                    nDamPerHit = attackValue;
                     nCluster = 1;
                 }
             }
@@ -2133,7 +2132,7 @@ public class WeaponHandler implements AttackHandler, Serializable {
         if (typeName == null) {
             typeName = weaponType.getInternalName();
         }
-        weaponType = (WeaponType) EquipmentType.getWithFallbackToDisplayName(typeName);
+        weaponType = (WeaponType) EquipmentType.get(typeName);
 
         if (weaponType == null) {
             LOGGER.error("Could not restore equipment type \"{}\"", typeName);

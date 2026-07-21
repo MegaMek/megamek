@@ -82,6 +82,15 @@ public class Tank extends Entity implements Fortifiable, RubbleClearer {
 
     @Serial
     private static final long serialVersionUID = -857210851169206264L;
+
+    /** A vehicle crew can abandon where the game's options allow vehicle crews to leave at all. */
+    @Override
+    public boolean canEjectCrew() {
+        return crewCanLeave()
+              && (getGame() != null)
+              && getGame().getOptions()
+              .booleanOption(OptionsConstants.ADVANCED_GROUND_MOVEMENT_VEHICLES_CAN_EJECT);
+    }
     protected boolean m_bHasNoTurret = false;
     protected boolean m_bTurretLocked = false;
     protected boolean m_bTurretJammed = false;
@@ -360,13 +369,14 @@ public class Tank extends Entity implements Fortifiable, RubbleClearer {
     }
 
     @Override
-    protected void addSystemTechAdvancement(CompositeTechLevel ctl) {
-        super.addSystemTechAdvancement(ctl);
+    protected void addSystemTechAdvancement(CompositeTechLevel techLevel) {
+        super.addSystemTechAdvancement(techLevel);
         if (!hasNoDualTurret()) {
-            ctl.addComponent(getDualTurretTA());
+            techLevel.addComponent(getDualTurretTA(), Messages.getString("CompositeTechLevel.component.dualTurret"));
         }
         if (hasSponsons) {
-            ctl.addComponent(EquipmentType.get(EquipmentTypeLookup.SPONSON_TURRET).getTechAdvancement());
+            EquipmentType sponsonTurret = EquipmentType.get(EquipmentTypeLookup.SPONSON_TURRET);
+            techLevel.addComponent(sponsonTurret.getTechAdvancement(), sponsonTurret.getName());
         }
     }
 
@@ -2624,8 +2634,8 @@ public class Tank extends Entity implements Fortifiable, RubbleClearer {
         super.setArmorType(armType);
         if ((armType == EquipmentType.T_ARMOR_STEALTH_VEHICLE) && addMount) {
             try {
-                this.addEquipment(EquipmentType.get(EquipmentType.getArmorTypeName(EquipmentType.T_ARMOR_STEALTH_VEHICLE,
-                      false)), LOC_BODY);
+                this.addEquipment(EquipmentType.getArmorFromName(EquipmentType.getArmorTypeName(
+                    EquipmentType.T_ARMOR_STEALTH_VEHICLE, false)), LOC_BODY);
             } catch (LocationFullException e) {
                 // this should never happen
             }

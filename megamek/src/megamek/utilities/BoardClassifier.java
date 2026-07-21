@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2021-2025 The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2021-2026 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -56,8 +56,16 @@ import megamek.utilities.BoardsTagger.Tags;
 public class BoardClassifier {
     private static BoardClassifier instance;
 
+    /**
+     * Manual tag marking Solaris-style arena boards. These are opt-in only: excluded from normal random board selection
+     * and returned only when explicitly requested.
+     */
+    public static final String ARENA_TAG = "Arena";
+
     // boards, grouped by tag
     private Map<Tags, List<String>> boardsByTag = new EnumMap<>(Tags.class);
+    // boards, grouped by manual (non-auto) tag, e.g. "Arena"; keyed by the raw tag string
+    private final Map<String, List<String>> boardsByManualTag = new HashMap<>();
     // boards, grouped by height
     private Map<Integer, List<String>> boardsByHeight = new HashMap<>();
     // boards, grouped by width
@@ -71,6 +79,14 @@ public class BoardClassifier {
 
     public Map<Tags, List<String>> getBoardsByTag() {
         return boardsByTag;
+    }
+
+    /**
+     * @return boards grouped by manual (non-auto) tag, keyed by the raw tag string (e.g. "Arena"). Unlike
+     *       {@link #getBoardsByTag()}, this covers tags that are not part of the {@link Tags} auto-tag enum.
+     */
+    public Map<String, List<String>> getBoardsByManualTag() {
+        return boardsByManualTag;
     }
 
     @Deprecated(since = "0.51.0", forRemoval = true)
@@ -178,6 +194,10 @@ public class BoardClassifier {
                                 if (tag != null) {
                                     getBoardsByTag().putIfAbsent(tag, new ArrayList<>());
                                     getBoardsByTag().get(tag).add(filePath.getPath());
+                                } else {
+                                    // Not an auto-tag; index it as a manual tag (e.g. "Arena")
+                                    getBoardsByManualTag().putIfAbsent(tagString, new ArrayList<>());
+                                    getBoardsByManualTag().get(tagString).add(filePath.getPath());
                                 }
                             }
 
@@ -193,10 +213,24 @@ public class BoardClassifier {
     }
 
     /**
-     * Gets a list of all the boards that are within xVariance of width and yVariance of height
+     * Gets a list of all the boards that are within xVariance of width and yVariance of height. Solaris-style arena
+     * boards (tagged {@link #ARENA_TAG}) are excluded; use
+     * {@link #getMatchingBoards(int, int, int, int, List, boolean)} to opt in to them.
      */
     public List<String> getMatchingBoards(int width, int height, int xVariance, int yVariance,
           List<Tags> tags) {
+        return getMatchingBoards(width, height, xVariance, yVariance, tags, false);
+    }
+
+    /**
+     * Gets a list of all the boards that are within xVariance of width and yVariance of height.
+     *
+     * @param arenasOnly when {@code false}, Solaris-style arena boards (tagged {@link #ARENA_TAG}) are excluded from
+     *                   the result; when {@code true}, the result contains only arena boards. Arenas are opt-in only,
+     *                   so normal random selection should pass {@code false}.
+     */
+    public List<String> getMatchingBoards(int width, int height, int xVariance, int yVariance,
+          List<Tags> tags, boolean arenasOnly) {
         List<String> xBoards = new ArrayList<>();
         List<String> yBoards = new ArrayList<>();
         List<String> tagBoards = new ArrayList<>();
@@ -221,13 +255,23 @@ public class BoardClassifier {
             }
         }
 
+        List<String> result;
         if (tagBoards.isEmpty()) {
-            return xBoards.stream().distinct().filter(yBoards::contains).collect(Collectors.toList());
+            result = xBoards.stream().distinct().filter(yBoards::contains).collect(Collectors.toList());
         } else {
-            return xBoards.stream().distinct()
+            result = xBoards.stream().distinct()
                   .filter(yBoards::contains)
                   .filter(tagBoards::contains)
                   .collect(Collectors.toList());
         }
+
+        // Arena boards are opt-in only: excluded from normal selection, and the sole result when requested.
+        List<String> arenaBoards = getBoardsByManualTag().getOrDefault(ARENA_TAG, List.of());
+        if (arenasOnly) {
+            result.retainAll(arenaBoards);
+        } else {
+            result.removeAll(arenaBoards);
+        }
+        return result;
     }
 }

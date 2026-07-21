@@ -71,6 +71,12 @@ import org.apache.logging.log4j.Level;
 public abstract class PathRanker implements IPathRanker {
     private final static MMLogger logger = MMLogger.create(PathRanker.class);
     private static final BotLogger botLogger = new BotLogger();
+
+    // Fraction of a failed water-entry piloting roll treated as an acceptable (non-damaging) outcome: falling
+    // when wading into water just drops the unit prone in the water (minor damage, stand next turn) rather
+    // than a real fall. Softens the fall penalty so Princess will ford deep water instead of pacing at the
+    // bank when there is no shallower crossing (issue #7627).
+    private static final double WATER_FALL_FORGIVENESS = 0.75;
     // TODO: Introduce PathRankerCacheHelper class that contains "global" path
     // ranker state
     // TODO: Introduce FireControlCacheHelper class that contains "global" Fire
@@ -465,6 +471,12 @@ public abstract class PathRanker implements IPathRanker {
             }
 
             double odds = Compute.oddsAbove(roll.getValue(), naturalAptPilot) / 100d;
+            // A failed water-entry roll only drops the unit prone in the water rather than causing a damaging
+            // fall, so treat most of that chance as an acceptable outcome. Otherwise an 8% wet-fall reads as a
+            // catastrophe (fall chance x fallShame) and Princess refuses to ford deep water (issue #7627).
+            if (roll.getDesc().toLowerCase().contains("entering depth")) {
+                odds += (1.0 - odds) * WATER_FALL_FORGIVENESS;
+            }
             logger.trace("Odds above {} = {}", roll.getValue(), odds);
             successProbability *= odds;
         }

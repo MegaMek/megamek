@@ -75,6 +75,7 @@ import megamek.common.options.OptionsConstants;
 import megamek.common.options.PilotOptions;
 import megamek.common.planetaryConditions.PlanetaryConditions;
 import megamek.common.planetaryConditions.Weather;
+import megamek.common.rolls.PilotingRollData;
 import megamek.common.rolls.TargetRoll;
 import megamek.common.units.*;
 import megamek.utils.MockGenerators;
@@ -202,6 +203,27 @@ class BasicPathRankerTest {
 
         double actual = testRanker.getMovePathSuccessProbability(mockPath);
         assertEquals(0.346, actual, TOLERANCE);
+    }
+
+    @Test
+    void testWaterEntryFallIsForgivenInSuccessProbability() {
+        final Entity mockMek = MockGenerators.generateMockBipedMek(0, 0);
+        final MovePath mockPath = MockGenerators.generateMockPath(0, 0, mockMek);
+        when(mockPath.hasActiveMASC()).thenReturn(false);
+
+        final TargetRoll waterRoll = mock(TargetRoll.class);
+        when(waterRoll.getValue()).thenReturn(4);
+        when(waterRoll.getDesc()).thenReturn("entering Depth 1 Water");
+        final List<TargetRoll> testRollList = List.of(waterRoll);
+
+        final BasicPathRanker testRanker = spy(new BasicPathRanker(mockPrincess));
+        doReturn(testRollList).when(testRanker).getPSRList(eq(mockPath));
+
+        // oddsAbove(4) = 33/36 = ~0.917 pass. A failed water entry is 75% forgiven, so the effective success
+        // probability is 0.917 + (1 - 0.917) * 0.75 = ~0.979, not the raw 0.917 - keeping Princess willing to
+        // ford deep water instead of treating an ~8% wet-fall as catastrophic (issue #7627).
+        double actual = testRanker.getMovePathSuccessProbability(mockPath);
+        assertEquals(0.979, actual, TOLERANCE);
     }
 
     @Test
@@ -1721,6 +1743,12 @@ class BasicPathRankerTest {
         when(mockHexThree.getTerrainTypesSet()).thenReturn(new HashSet<>(Set.of(Terrains.BUILDING)));
         assertEquals(1.285, testRanker.checkPathForHazards(mockPath, mockUnit, mockGame), TOLERANCE);
         when(mockHexThree.getTerrainTypes()).thenReturn(new int[0]);
+
+        // The water-breach hazard looks up the water-entry piloting roll; stub it to a check-false roll so the
+        // fall-probability path does not touch real board state (the water hazard is discarded on ice hexes).
+        final PilotingRollData mockWaterRoll = mock(PilotingRollData.class);
+        when(mockWaterRoll.getValue()).thenReturn(TargetRoll.CHECK_FALSE);
+        when(mockUnit.checkWaterMove(anyInt(), any())).thenReturn(mockWaterRoll);
 
         // Test walking over 3 hexes of ice.
         when(mockPath.isJumping()).thenReturn(false);

@@ -70,6 +70,7 @@ import megamek.common.moves.MovePath;
 import megamek.common.moves.MoveStep;
 import megamek.common.options.OptionsConstants;
 import megamek.common.planetaryConditions.PlanetaryConditions;
+import megamek.common.rolls.PilotingRollData;
 import megamek.common.rolls.TargetRoll;
 import megamek.common.units.*;
 import megamek.common.util.HazardousLiquidPoolUtil;
@@ -2311,55 +2312,114 @@ public class BasicPathRanker extends PathRanker {
 
         // TODO: implement crush depth calcs (TO:AR pg. 40)
 
-        // Find the submerged locations.
-        Set<Integer> submergedLocations = new HashSet<>();
-        for (int loc = 0; loc < movingUnit.locations(); loc++) {
-            if (Mek.LOC_CENTER_LEG == loc && !(movingUnit instanceof TripodMek)) {
-                continue;
-            }
+        // Breach risk. A submerged location with no armor breaches automatically once it is underwater
+        // (TW p.65). Armored locations are treated as safe for a unit that is merely crossing (they would only
+        // breach on a hull-breach check if the fall's damage happened to hit them, which is negligible).
+        // Locations that submerge only when the unit is prone - notably the head and center torso in Depth 1
+        // water - drown it only if it falls, so that catastrophic risk is weighted by the chance of failing
+        // the water-entry piloting roll.
+        Set<Integer> submergedWhileUpright = submergedLocations(movingUnit, hex, step.isProne());
+        Set<Integer> submergedWhileProne = submergedLocations(movingUnit, hex, true);
 
-            if ((hex.depth() >= 2) || step.isProne() || !(movingUnit instanceof Mek)) {
-                submergedLocations.add(loc);
-                continue;
-            }
-
-            if (Mek.LOC_RIGHT_LEG == loc || Mek.LOC_LEFT_LEG == loc || Mek.LOC_CENTER_LEG == loc) {
-                submergedLocations.add(loc);
-                continue;
-            }
-
-            if ((movingUnit instanceof QuadMek) && (Mek.LOC_RIGHT_ARM == loc || Mek.LOC_LEFT_ARM == loc)) {
-                submergedLocations.add(loc);
-            }
-        }
-        logger.trace("Submerged locations: {}", submergedLocations);
-
-        int hazardValue = 0;
-        for (int loc : submergedLocations) {
-            // Only locations without armor can breach in the movement phase.
+        double hazardValue = 0;
+        // Certain breaches: unarmored locations already submerged in the unit's current pose.
+        for (int loc : submergedWhileUpright) {
             if (movingUnit.getArmor(loc) > 0) {
-                logger.trace("Location {} is not breached (0).", loc);
                 continue;
             }
-
-            // Meks or ProtoMeks having a head or torso breach is deadly.
-            // For other units, any breach is deadly.
-            // noinspection ConstantConditions
-            if ((Mek.LOC_HEAD == loc) ||
-                  (Mek.LOC_CENTER_TORSO == loc) ||
-                  (ProtoMek.LOC_HEAD == loc) ||
-                  (ProtoMek.LOC_TORSO == loc) ||
-                  (!movingUnit.isMek() && !movingUnit.isProtoMek())) {
-                logger.trace("Location {} breached and critical (1000).", loc);
+            double breachConsequence = breachConsequence(movingUnit, loc);
+            if (breachConsequence == UNIT_DESTRUCTION_FACTOR) {
+                logger.trace("Location {} breached and critical (destruction).", loc);
                 return UNIT_DESTRUCTION_FACTOR;
             }
-
-            // Add 50 points per potential breach location.
-            logger.trace("Location {} breached (50).", loc);
-            hazardValue += 50;
+            hazardValue += breachConsequence;
         }
 
+        // Fall-contingent breaches: unarmored locations that submerge only if the unit falls prone. Compute
+        // the fall probability lazily so a fully-armored unit never triggers it.
+        double fallProbability = -1;
+        for (int loc : submergedWhileProne) {
+            if (submergedWhileUpright.contains(loc) || (movingUnit.getArmor(loc) > 0)) {
+                continue;
+            }
+            double breachConsequence = breachConsequence(movingUnit, loc);
+            if (breachConsequence == 0) {
+                continue;
+            }
+            if (fallProbability < 0) {
+                fallProbability = waterEntryFallProbability(movingUnit, hex, movePath);
+            }
+            hazardValue += fallProbability * breachConsequence;
+        }
+
+        logger.trace("Water breach hazard {}.", hazardValue);
         return hazardValue;
+    }
+
+    /**
+     * @param movingUnit the wading unit
+     * @param hex        the water hex
+     * @param prone      {@code true} to report the locations submerged when the unit is prone, {@code false}
+     *                   for its standing pose
+     *
+     * @return the set of location indices submerged for the given pose in this water hex
+     */
+    private static Set<Integer> submergedLocations(Entity movingUnit, Hex hex, boolean prone) {
+        Set<Integer> submerged = new HashSet<>();
+        for (int loc = 0; loc < movingUnit.locations(); loc++) {
+            if ((Mek.LOC_CENTER_LEG == loc) && !(movingUnit instanceof TripodMek)) {
+                continue;
+            }
+            if ((hex.depth() >= 2) || prone || !(movingUnit instanceof Mek)) {
+                submerged.add(loc);
+                continue;
+            }
+            if ((Mek.LOC_RIGHT_LEG == loc) || (Mek.LOC_LEFT_LEG == loc) || (Mek.LOC_CENTER_LEG == loc)) {
+                submerged.add(loc);
+                continue;
+            }
+            if ((movingUnit instanceof QuadMek) && ((Mek.LOC_RIGHT_ARM == loc) || (Mek.LOC_LEFT_ARM == loc))) {
+                submerged.add(loc);
+            }
+        }
+        return submerged;
+    }
+
+    /**
+     * @param movingUnit the wading unit
+     * @param loc        the location index
+     *
+     * @return the hazard weight of breaching {@code loc}: {@link #UNIT_DESTRUCTION_FACTOR} for a head or
+     *       center-torso breach (or any breach on a non-Mek/ProtoMek, which drowns), otherwise a fixed
+     *       per-location cost
+     */
+    private double breachConsequence(Entity movingUnit, int loc) {
+        if ((Mek.LOC_HEAD == loc) ||
+              (Mek.LOC_CENTER_TORSO == loc) ||
+              (ProtoMek.LOC_HEAD == loc) ||
+              (ProtoMek.LOC_TORSO == loc) ||
+              (!movingUnit.isMek() && !movingUnit.isProtoMek())) {
+            return UNIT_DESTRUCTION_FACTOR;
+        }
+        return 50;
+    }
+
+    /**
+     * @param movingUnit the wading unit
+     * @param hex        the water hex being entered
+     * @param movePath   the path being evaluated
+     *
+     * @return the probability (0.0 - 1.0) that {@code movingUnit} fails the water-entry piloting roll (and so
+     *       falls). Uses the RAW depth-based roll (TW p.49) so the estimate holds even where the engine's
+     *       elevation-gated check would skip the roll
+     */
+    private double waterEntryFallProbability(Entity movingUnit, Hex hex, MovePath movePath) {
+        PilotingRollData waterRoll = movingUnit.checkWaterMove(hex.depth(), movePath.getLastStepMovementType());
+        if (waterRoll.getValue() == TargetRoll.CHECK_FALSE) {
+            return 0.0;
+        }
+        boolean naturalAptPilot = movingUnit.hasAbility(OptionsConstants.PILOT_APTITUDE_PILOTING);
+        return 1.0 - (Compute.oddsAbove(waterRoll.getValue(), naturalAptPilot) / 100.0);
     }
 
     private double calcFireHazard(Entity movingUnit, boolean endHex) {

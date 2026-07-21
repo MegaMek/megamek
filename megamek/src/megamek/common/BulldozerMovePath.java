@@ -42,13 +42,11 @@ import java.util.List;
 import java.util.Map;
 
 import megamek.client.bot.princess.FireControl;
-import megamek.client.bot.princess.MinefieldUtil;
 import megamek.common.board.Board;
 import megamek.common.board.Coords;
 import megamek.common.enums.MoveStepType;
 import megamek.common.game.Game;
 import megamek.common.moves.MovePath;
-import megamek.common.pathfinder.MovementType;
 import megamek.common.units.Entity;
 import megamek.common.units.EntityMovementMode;
 import megamek.common.units.Terrains;
@@ -103,69 +101,23 @@ public class BulldozerMovePath extends MovePath {
     }
 
     /**
-     * Override of the MovePath.addStep method, calculates leveling and other extra costs associated with this bulldozer
-     * move path
+     * Override of the MovePath.addStep method that records the leveling and other extra costs associated with
+     * this bulldozer move path. The cost computation itself lives in {@link MovePathTerrainCost}.
      */
     @Override
     public MovePath addStep(final MoveStepType type) {
-        BulldozerMovePath mp = (BulldozerMovePath) super.addStep(type);
-        Hex hex = mp.getGame().getBoard(mp.getFinalBoardId()).getHex(mp.getFinalCoords());
-        int hexWaterDepth = ((hex != null) && hex.containsTerrain(Terrains.WATER)) ? hex.depth() : Integer.MIN_VALUE;
+        BulldozerMovePath bulldozerMovePath = (BulldozerMovePath) super.addStep(type);
 
-        if (!mp.isMoveLegal() && !mp.isJumping()) {
-            // here, we will check if the step is illegal because the unit in question
-            // is attempting to move through illegal terrain for its movement type, but
-            // would be able to get through if the terrain was "reduced"
-            // don't bother to do this for jumping paths
-            int levelingCost = calculateLevelingCost(mp.getFinalCoords(), getEntity());
-            if (levelingCost > CANNOT_LEVEL) {
-                coordLevelingCosts.put(mp.getFinalCoords(), levelingCost);
-                coordsToLevel.add(mp.getFinalCoords());
-            }
-
-            // we want to make note of when we're going into water (if we are capable of it)
-            // it may look cheaper, but it slows you down to max walking speed or worse,
-            // and we should flag it as costing extra, that extra being the difference
-            // between walking and running speed
-            if (hexWaterDepth > 0) {
-                MovementType mType = MovementType.getMovementType(mp.getEntity());
-                if (mType == MovementType.Walker || mType == MovementType.WheeledAmphibious
-                      || mType == MovementType.TrackedAmphibious) {
-                    additionalCosts.put(mp.getFinalCoords(), 1);
-                }
-            }
+        MovePathTerrainCost stepCost = MovePathTerrainCost.forFinalStep(bulldozerMovePath);
+        if (stepCost.requiresLeveling()) {
+            bulldozerMovePath.coordLevelingCosts.put(bulldozerMovePath.getFinalCoords(), stepCost.levelingCost());
+            bulldozerMovePath.coordsToLevel.add(bulldozerMovePath.getFinalCoords());
+        }
+        if (stepCost.additionalCost() > 0) {
+            bulldozerMovePath.additionalCosts.put(bulldozerMovePath.getFinalCoords(), stepCost.additionalCost());
         }
 
-        if (mp.isJumping()) {
-            // if we are jumping, but not on top of a bridge (because jumping always goes to
-            // the top of a bridge)
-            // and are jumping into terrain that would impede jump jet functionality (aka
-            // water)
-            // then we are impeding future jump movement and should add an extra cost to
-            // this step
-            if ((hex != null) && !hex.containsTerrain(Terrains.BRIDGE)) {
-                // special case - mek jumping into depth 1 water might not be all that bad, jump
-                // mp cost wise
-                if (hexWaterDepth == 1) {
-                    additionalCosts.put(mp.getFinalCoords(),
-                          mp.getCachedEntityState().getJumpMP() - mp.getCachedEntityState().getTorsoJumpJets());
-                    // jumping into water that submerges you entirely pretty much ruins jump MP for
-                    // at least a turn while you clamber out
-                } else if (hexWaterDepth > 1) {
-                    additionalCosts.put(mp.getFinalCoords(), mp.getCachedEntityState().getJumpMP());
-                }
-            }
-        }
-
-        // we want to discourage running over minefields
-        double minefieldFactor = MinefieldUtil.calcMinefieldHazardForHex(mp.getLastStep(), mp.getEntity(),
-              mp.isJumping(), false);
-
-        if (minefieldFactor > 0) {
-            additionalCosts.put(mp.getFinalCoords(), (int) Math.ceil(minefieldFactor));
-        }
-
-        return mp;
+        return bulldozerMovePath;
     }
 
     /**

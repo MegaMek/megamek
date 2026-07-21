@@ -113,6 +113,14 @@ public class BasicPathRanker extends PathRanker {
     // so this must outweigh the aggression/bravery incentives that would otherwise favor closing distance
     private final int SPRINT_INTO_THREAT_PENALTY = 250;
 
+    // Closing incentive (issue #7627): a unit whose damage is higher at point-blank range than at its current
+    // range - short-range gunners and, above all, melee brawlers whose hatchet/kick damage is invisible to the
+    // ranged damage estimate until they are adjacent - gets a reward for advancing that grows as it nears
+    // contact. CLOSE_RANGE_BAND is how far out (hexes) the pull begins; CLOSE_RANGE_INCENTIVE_WEIGHT scales its
+    // magnitude against the other rank terms.
+    private static final double CLOSE_RANGE_BAND = 12.0;
+    private static final double CLOSE_RANGE_INCENTIVE_WEIGHT = 1.0;
+
     private final FacingDiffCalculator facingDiffCalculator;
     private final UnitsMedianCoordinateCalculator unitsMedianCoordinateCalculator;
     protected final DecimalFormat LOG_DECIMAL = new DecimalFormat("0.00", new DecimalFormatSymbols(Locale.US));
@@ -688,6 +696,59 @@ public class BasicPathRanker extends PathRanker {
         double aggressionMod = distToEnemy * aggression;
         logger.trace("aggression mod [ -{} = {} * {}]", aggressionMod, distToEnemy, aggression);
         return aggressionMod;
+    }
+
+    /**
+     * A reward for advancing toward point-blank range, for units that do more damage up close than they do at
+     * their current range - short-range gunners and, most importantly, melee brawlers. The ranged damage
+     * estimate credits a unit's hatchet, sword or kick only on the turn it ends adjacent to an enemy, so a
+     * brawler otherwise sees no reason to close and will pace at range (issue #7627: an Axman would not wade a
+     * river to reach hatchet range). This incentive is the unit's point-blank damage premium scaled by how far
+     * it has closed toward contact, so it grows smoothly as the unit advances and is zero for units that
+     * already deliver their best damage at range.
+     *
+     * @param movingUnit  the unit being moved
+     * @param distToEnemy the path's ending distance to the closest enemy
+     *
+     * @return the closing incentive to add to the path's utility (never negative)
+     */
+    protected double calculateCloseRangeIncentive(Entity movingUnit, double distToEnemy) {
+        if ((distToEnemy <= 1) || (distToEnemy >= CLOSE_RANGE_BAND)) {
+            // Already at contact (aggression/bravery take over), or too far out for the pull to apply yet.
+            return 0;
+        }
+        int currentRange = (int) Math.ceil(distToEnemy);
+        double pointBlankDamage = getMaxDamageAtRange(movingUnit, 1, false, false)
+              + estimatedMeleeDamage(movingUnit);
+        double currentRangeDamage = getMaxDamageAtRange(movingUnit, currentRange, false, false);
+        double pointBlankPremium = pointBlankDamage - currentRangeDamage;
+        if (pointBlankPremium <= 0) {
+            // This unit does not gain by closing - it already does its best damage at the current range.
+            return 0;
+        }
+        // Fraction of the way from the engagement band in to contact: 0 at CLOSE_RANGE_BAND, ~1 at range 1.
+        double proximity = (CLOSE_RANGE_BAND - distToEnemy) / (CLOSE_RANGE_BAND - 1);
+        double incentive = pointBlankPremium * proximity * CLOSE_RANGE_INCENTIVE_WEIGHT;
+        logger.trace("close range incentive [ +{} = premium {} * proximity {} * weight {}]",
+              incentive, pointBlankPremium, proximity, CLOSE_RANGE_INCENTIVE_WEIGHT);
+        return incentive;
+    }
+
+    /**
+     * A cheap, distance-independent estimate of a unit's best physical (melee) attack damage, used only to
+     * value closing to contact. Every upright walking Mek can kick for roughly {@code tonnage / 5}, which also
+     * approximates a hatchet or sword on the same chassis; units that cannot make a meaningful physical attack
+     * contribute nothing.
+     *
+     * @param movingUnit the unit being moved
+     *
+     * @return the estimated melee damage, or {@code 0} for units without a useful physical attack
+     */
+    private static double estimatedMeleeDamage(Entity movingUnit) {
+        if (!(movingUnit instanceof Mek) || movingUnit.isProne() || (movingUnit.getWalkMP() <= 0)) {
+            return 0;
+        }
+        return Math.floor(movingUnit.getWeight() / 5.0);
     }
 
     // Indirect artillery (targeting phase) is impossible at one mapsheet or closer - TooShortForIndirectArty,
@@ -1573,6 +1634,13 @@ public class BasicPathRanker extends PathRanker {
         scores.put("aggressionIndex", (double) getOwner().getBehaviorSettings().getHyperAggressionIndex());
         scores.put("aggressionMod", aggressionMod);
 
+        // Pull short-range gunners and melee brawlers toward contact. Standoff units (artillery tubes, TAG
+        // spotters) want to keep their distance, and a unit told to ignore its damage output has no reason to
+        // close, so neither gets the incentive.
+        boolean wantsToClose = (standoffDistance == 0) && !getOwner().getBehaviorSettings().isIgnoreDamageOutput();
+        double closeRangeIncentive = wantsToClose ? calculateCloseRangeIncentive(movingUnit, distToEnemy) : 0;
+        scores.put("closeRangeIncentive", closeRangeIncentive);
+
         // The further I am from my teammates, the lower this path
         // ranks (weighted by Herd Mentality).
         // Standoff artillery (whether holding at range or falling back when the enemy breaches its standoff) ignores the
@@ -1640,6 +1708,7 @@ public class BasicPathRanker extends PathRanker {
         double utility = -fallMod;
         utility += braveryMod;
         utility -= aggressionMod;
+        utility += closeRangeIncentive;
         utility -= herdingMod;
         utility += movementMod;
         utility -= crowdingTolerance;
@@ -1693,6 +1762,9 @@ public class BasicPathRanker extends PathRanker {
             formula.append("0 no friends");
         }
         formula.append("]");
+        if (closeRangeIncentive != 0.0) {
+            formula.append(" + closeRangeIncentive [").append(LOG_DECIMAL.format(closeRangeIncentive)).append("]");
+        }
         if (movementMod != 0.0) {
             formula.append(" + ").append(movementModFormula);
         }

@@ -248,6 +248,43 @@ class BasicPathRankerTest {
     }
 
     @Test
+    void testCloseRangeIncentiveRewardsMeleeBrawlerForClosing() {
+        final BasicPathRanker testRanker = spy(new BasicPathRanker(mockPrincess));
+        final Entity mockBrawler = MockGenerators.generateMockBipedMek(0, 0); // 50 tons -> kick proxy 10
+        when(mockBrawler.getWalkMP()).thenReturn(4);
+        when(mockBrawler.isProne()).thenReturn(false);
+        // Point-blank ranged damage 6 (+ melee 10 = 16); at range 7 only 4 -> premium 12.
+        doReturn(6.0).when(testRanker).getMaxDamageAtRange(eq(mockBrawler), eq(1), anyBoolean(), anyBoolean());
+        doReturn(4.0).when(testRanker).getMaxDamageAtRange(eq(mockBrawler), eq(7), anyBoolean(), anyBoolean());
+
+        // proximity = (12 - 7) / (12 - 1) = 0.4545; incentive = 12 * 0.4545 * 1.0 = ~5.45.
+        assertEquals(5.45, testRanker.calculateCloseRangeIncentive(mockBrawler, 7), 0.01);
+    }
+
+    @Test
+    void testCloseRangeIncentiveIsZeroBeyondTheBand() {
+        final BasicPathRanker testRanker = spy(new BasicPathRanker(mockPrincess));
+        final Entity mockBrawler = MockGenerators.generateMockBipedMek(0, 0);
+        when(mockBrawler.getWalkMP()).thenReturn(4);
+
+        // At or beyond CLOSE_RANGE_BAND (12) the pull has not engaged yet - no incentive, no damage lookups.
+        assertEquals(0.0, testRanker.calculateCloseRangeIncentive(mockBrawler, 12), TOLERANCE);
+    }
+
+    @Test
+    void testCloseRangeIncentiveIsZeroWithoutAPointBlankPremium() {
+        final BasicPathRanker testRanker = spy(new BasicPathRanker(mockPrincess));
+        final Entity mockGunner = MockGenerators.generateMockBipedMek(0, 0);
+        when(mockGunner.getWalkMP()).thenReturn(4);
+        // A unit that already does more damage at range than it would up close (even counting the melee proxy)
+        // gets no closing incentive.
+        doReturn(2.0).when(testRanker).getMaxDamageAtRange(eq(mockGunner), eq(1), anyBoolean(), anyBoolean());
+        doReturn(20.0).when(testRanker).getMaxDamageAtRange(eq(mockGunner), eq(5), anyBoolean(), anyBoolean());
+
+        assertEquals(0.0, testRanker.calculateCloseRangeIncentive(mockGunner, 5), TOLERANCE);
+    }
+
+    @Test
     void testEvaluateUnmovedAeroEnemy() {
         final BasicPathRanker testRanker = spy(new BasicPathRanker(mockPrincess));
         doReturn(mockPrincess).when(testRanker).getOwner();

@@ -206,7 +206,7 @@ class BasicPathRankerTest {
     }
 
     @Test
-    void testWaterEntryFallIsForgivenInSuccessProbability() {
+    void testShallowWaterEntryFallIsForgivenInSuccessProbability() {
         final Entity mockMek = MockGenerators.generateMockBipedMek(0, 0);
         final MovePath mockPath = MockGenerators.generateMockPath(0, 0, mockMek);
         when(mockPath.hasActiveMASC()).thenReturn(false);
@@ -219,11 +219,32 @@ class BasicPathRankerTest {
         final BasicPathRanker testRanker = spy(new BasicPathRanker(mockPrincess));
         doReturn(testRollList).when(testRanker).getPSRList(eq(mockPath));
 
-        // oddsAbove(4) = 33/36 = ~0.917 pass. A failed water entry is 75% forgiven, so the effective success
-        // probability is 0.917 + (1 - 0.917) * 0.75 = ~0.979, not the raw 0.917 - keeping Princess willing to
-        // ford deep water instead of treating an ~8% wet-fall as catastrophic (issue #7627).
+        // oddsAbove(4) = 33/36 = ~0.917 pass. A failed Depth 1 water entry is 95% forgiven (a shallow-ford fall
+        // is nearly harmless), so the effective success probability is 0.917 + (1 - 0.917) * 0.95 = ~0.996, not
+        // the raw 0.917 - keeping Princess willing to wade a shallow river instead of pacing at the bank
+        // (issue #7627).
         double actual = testRanker.getMovePathSuccessProbability(mockPath);
-        assertEquals(0.979, actual, TOLERANCE);
+        assertEquals(0.996, actual, TOLERANCE);
+    }
+
+    @Test
+    void testDeepWaterEntryFallIsForgivenLessThanShallow() {
+        final Entity mockMek = MockGenerators.generateMockBipedMek(0, 0);
+        final MovePath mockPath = MockGenerators.generateMockPath(0, 0, mockMek);
+        when(mockPath.hasActiveMASC()).thenReturn(false);
+
+        final TargetRoll waterRoll = mock(TargetRoll.class);
+        when(waterRoll.getValue()).thenReturn(4);
+        when(waterRoll.getDesc()).thenReturn("entering Depth 3 Water");
+        final List<TargetRoll> testRollList = List.of(waterRoll);
+
+        final BasicPathRanker testRanker = spy(new BasicPathRanker(mockPrincess));
+        doReturn(testRollList).when(testRanker).getPSRList(eq(mockPath));
+
+        // Depth 3 forgiveness = 0.95 - 2 * 0.20 = 0.55 (a fall in deep water is worse than in a shallow ford),
+        // so 0.917 + (1 - 0.917) * 0.55 = ~0.962 - forgiven, but less than the Depth 1 case above.
+        double actual = testRanker.getMovePathSuccessProbability(mockPath);
+        assertEquals(0.962, actual, TOLERANCE);
     }
 
     @Test

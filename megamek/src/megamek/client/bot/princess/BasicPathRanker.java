@@ -2405,33 +2405,33 @@ public class BasicPathRanker extends PathRanker {
 
         double hazardValue = 0;
         // Certain breaches: unarmored locations already submerged in the unit's current pose.
-        for (int loc : submergedWhileUpright) {
-            if (movingUnit.getArmor(loc) > 0) {
+        for (int location : submergedWhileUpright) {
+            if (movingUnit.getArmor(location) > 0) {
                 continue;
             }
-            double breachConsequence = breachConsequence(movingUnit, loc);
-            if (breachConsequence == UNIT_DESTRUCTION_FACTOR) {
-                logger.trace("Location {} breached and critical (destruction).", loc);
+            double breachWeight = breachConsequence(movingUnit, location);
+            if (breachWeight == UNIT_DESTRUCTION_FACTOR) {
+                logger.trace("Location {} breached and critical (destruction).", location);
                 return UNIT_DESTRUCTION_FACTOR;
             }
-            hazardValue += breachConsequence;
+            hazardValue += breachWeight;
         }
 
         // Fall-contingent breaches: unarmored locations that submerge only if the unit falls prone. Compute
         // the fall probability lazily so a fully-armored unit never triggers it.
         double fallProbability = -1;
-        for (int loc : submergedWhileProne) {
-            if (submergedWhileUpright.contains(loc) || (movingUnit.getArmor(loc) > 0)) {
+        for (int location : submergedWhileProne) {
+            if (submergedWhileUpright.contains(location) || (movingUnit.getArmor(location) > 0)) {
                 continue;
             }
-            double breachConsequence = breachConsequence(movingUnit, loc);
-            if (breachConsequence == 0) {
+            double breachWeight = breachConsequence(movingUnit, location);
+            if (breachWeight == 0) {
                 continue;
             }
             if (fallProbability < 0) {
                 fallProbability = waterEntryFallProbability(movingUnit, hex, movePath);
             }
-            hazardValue += fallProbability * breachConsequence;
+            hazardValue += fallProbability * breachWeight;
         }
 
         logger.trace("Water breach hazard {}.", hazardValue);
@@ -2448,20 +2448,22 @@ public class BasicPathRanker extends PathRanker {
      */
     private static Set<Integer> submergedLocations(Entity movingUnit, Hex hex, boolean prone) {
         Set<Integer> submerged = new HashSet<>();
-        for (int loc = 0; loc < movingUnit.locations(); loc++) {
-            if ((Mek.LOC_CENTER_LEG == loc) && !(movingUnit instanceof TripodMek)) {
+        for (int location = 0; location < movingUnit.locations(); location++) {
+            if ((Mek.LOC_CENTER_LEG == location) && !(movingUnit instanceof TripodMek)) {
                 continue;
             }
             if ((hex.depth() >= 2) || prone || !(movingUnit instanceof Mek)) {
-                submerged.add(loc);
+                submerged.add(location);
                 continue;
             }
-            if ((Mek.LOC_RIGHT_LEG == loc) || (Mek.LOC_LEFT_LEG == loc) || (Mek.LOC_CENTER_LEG == loc)) {
-                submerged.add(loc);
+            if ((Mek.LOC_RIGHT_LEG == location) || (Mek.LOC_LEFT_LEG == location)
+                  || (Mek.LOC_CENTER_LEG == location)) {
+                submerged.add(location);
                 continue;
             }
-            if ((movingUnit instanceof QuadMek) && ((Mek.LOC_RIGHT_ARM == loc) || (Mek.LOC_LEFT_ARM == loc))) {
-                submerged.add(loc);
+            if ((movingUnit instanceof QuadMek)
+                  && ((Mek.LOC_RIGHT_ARM == location) || (Mek.LOC_LEFT_ARM == location))) {
+                submerged.add(location);
             }
         }
         return submerged;
@@ -2469,17 +2471,17 @@ public class BasicPathRanker extends PathRanker {
 
     /**
      * @param movingUnit the wading unit
-     * @param loc        the location index
+     * @param location   the location index
      *
-     * @return the hazard weight of breaching {@code loc}: {@link #UNIT_DESTRUCTION_FACTOR} for a head or
+     * @return the hazard weight of breaching {@code location}: {@link #UNIT_DESTRUCTION_FACTOR} for a head or
      *       center-torso breach (or any breach on a non-Mek/ProtoMek, which drowns), otherwise a fixed
      *       per-location cost
      */
-    private double breachConsequence(Entity movingUnit, int loc) {
-        if ((Mek.LOC_HEAD == loc) ||
-              (Mek.LOC_CENTER_TORSO == loc) ||
-              (ProtoMek.LOC_HEAD == loc) ||
-              (ProtoMek.LOC_TORSO == loc) ||
+    private double breachConsequence(Entity movingUnit, int location) {
+        if ((Mek.LOC_HEAD == location) ||
+              (Mek.LOC_CENTER_TORSO == location) ||
+              (ProtoMek.LOC_HEAD == location) ||
+              (ProtoMek.LOC_TORSO == location) ||
               (!movingUnit.isMek() && !movingUnit.isProtoMek())) {
             return UNIT_DESTRUCTION_FACTOR;
         }

@@ -148,8 +148,9 @@ public final class ReportToastFormatter {
      * <p>This matters because the server's special-report packet carries the <em>entire</em> phase report accumulated
      * so far, not just what is new. Several of those packets go out during a single movement phase (a hidden unit
      * being revealed, a point-blank shot, an interrupted turn), so without a history every one of them would replay
-     * every event already shown - piloting-roll lines and all. Entries are matched on their plain-text content and
-     * recorded in {@code alreadyToasted} as they are accepted.</p>
+     * every event already shown - piloting-roll lines and all. Entries are matched on their normalized text, as
+     * produced by {@link #normalizeToastText}, so the history keys on the line the player actually saw rather than
+     * on its markup; they are recorded in {@code alreadyToasted} as they are accepted.</p>
      *
      * <p>Filtering happens <em>before</em> the {@link #MAX_TOASTS_PER_BURST} cap is applied, so a report full of
      * already-seen entries does not exhaust the burst budget or inflate the overflow count.</p>
@@ -159,7 +160,7 @@ public final class ReportToastFormatter {
      *
      * @param defaultPrefix   label for the first toast when the report carries no phase header
      * @param report          the raw report HTML from the server
-     * @param alreadyToasted  plain-text bodies already shown; accepted entries are added to it. The caller owns this
+     * @param alreadyToasted  normalized bodies already shown; accepted entries are added to it. The caller owns this
      *                        set and should clear it when the reports stop overlapping, i.e. on a phase change.
      *
      * @return ordered list of toast bodies; empty if the report is {@code null}/empty or fully filtered out
@@ -214,8 +215,11 @@ public final class ReportToastFormatter {
                 continue;
             }
             // Drop entries this client has already toasted. The server re-sends the whole accumulated phase report
-            // with each special-report packet, so without this every packet replays the events before it.
-            if (!alreadyToasted.add(preview)) {
+            // with each special-report packet, so without this every packet replays the events before it. The key is
+            // the fully normalized text rather than the coarser preview above, so that it matches the line the player
+            // actually saw: preview leaves entities encoded, keeps runs of whitespace, and drops <br> instead of
+            // turning it into a space, so two entries that render identically can have different previews.
+            if (!alreadyToasted.add(normalizeToastText(entry))) {
                 continue;
             }
             // Cap toasts per burst. Once full, count remaining qualifying entries so we can summarize them in a single

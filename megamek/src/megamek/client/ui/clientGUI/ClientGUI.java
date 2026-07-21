@@ -395,7 +395,7 @@ public class ClientGUI extends AbstractClientGUI
 
     private final ConcurrentLinkedQueue<Runnable> toastDripQueue = new ConcurrentLinkedQueue<>();
     private javax.swing.Timer toastDripTimer;
-    /** Plain-text report entries already shown as toasts this phase; see {@link ReportToastFormatter#formatReport}. */
+    /** Normalized report entries already shown as toasts this phase; see {@link ReportToastFormatter#formatReport}. */
     private final Set<String> toastedReportEntries = new HashSet<>();
 
 
@@ -666,8 +666,20 @@ public class ClientGUI extends AbstractClientGUI
      * events that an earlier packet already delivered. Does nothing at all when the player has switched
      * {@link GUIPreferences#TOAST_REPORT_EVENTS} off; toasts that carry information the report log does not hold are
      * unaffected by that setting.</p>
+     *
+     * <p>Every reason to skip is checked before the report is formatted, because formatting is what records entries
+     * as already toasted. Recording an entry that was never shown would suppress it later, when the player turns
+     * toasts back on part way through the same phase.</p>
      */
     private void showReportAsToasts(String defaultPrefix, String report) {
+        if (toastOverlay == null) {
+            logger.debug("[Toast] report burst suppressed - overlay not initialized yet");
+            return;
+        }
+        if (!GUIP.getToastEnabled()) {
+            logger.debug("[Toast] report burst suppressed - toasts are switched off in client settings");
+            return;
+        }
         if (!GUIP.getToastReportEvents()) {
             logger.debug("[Toast] report burst suppressed - round report events are switched off in client settings");
             return;

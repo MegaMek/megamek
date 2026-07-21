@@ -149,6 +149,22 @@ class ReportToastFormatterTest {
     }
 
     @Test
+    @DisplayName("Entries that render identically are deduplicated despite differing markup")
+    void deduplicatesOnRenderedTextNotMarkup() {
+        Set<String> alreadyToasted = new HashSet<>();
+        // Same sentence, different markup: a line break versus a space, an encoded ampersand versus a bare one,
+        // and a doubled space. All three render as the same toast, so the player must only see it once.
+        ReportToastFormatter.formatReport(DEFAULT_PREFIX,
+              reportOf("Fenrir FNR-4 falls<br>&amp; takes damage"), alreadyToasted);
+
+        List<String> secondBurst = ReportToastFormatter.formatReport(DEFAULT_PREFIX,
+              reportOf("Fenrir FNR-4 falls &amp;  takes damage"), alreadyToasted);
+
+        assertTrue(secondBurst.isEmpty(),
+              "an entry that renders the same should not toast twice, was: " + secondBurst);
+    }
+
+    @Test
     @DisplayName("The two-argument overload keeps no history between calls")
     void historyFreeOverloadRepeatsEveryCall() {
         String report = reportOf("Fenrir FNR-4 must make a piloting skill roll.");

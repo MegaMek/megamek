@@ -50,6 +50,8 @@ public enum ToastLevel {
     GAMEMASTER(new Color(106, 61, 154), 1);
 
     private static final int MILLIS_PER_SECOND = 1000;
+    /** Floor for the stored base duration, in case the preferences file holds a zero or negative value. */
+    private static final int MIN_BASE_DURATION_SECONDS = 1;
 
     private final Color backgroundColor;
     private final int durationOffsetSeconds;
@@ -68,10 +70,14 @@ public enum ToastLevel {
      * offset. At the default base of 3 seconds this yields the long-standing 3s INFO/SUCCESS, 4s WARNING/GAMEMASTER
      * and 5s ERROR timings.
      *
+     * <p>The settings spinner cannot go below {@link #MIN_BASE_DURATION_SECONDS}, but the stored value is clamped
+     * here as well so a hand-edited or corrupted preferences file cannot produce toasts that fade instantly.</p>
+     *
      * @return the display time in milliseconds
      */
     public int getDefaultDurationMs() {
-        int baseSeconds = GUIPreferences.getInstance().getToastDurationSeconds();
+        int baseSeconds = Math.max(MIN_BASE_DURATION_SECONDS,
+              GUIPreferences.getInstance().getToastDurationSeconds());
         return (baseSeconds + durationOffsetSeconds) * MILLIS_PER_SECOND;
     }
 }

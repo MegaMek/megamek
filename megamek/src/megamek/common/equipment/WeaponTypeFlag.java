@@ -74,6 +74,8 @@ public enum WeaponTypeFlag implements EquipmentFlag {
 
     // families
     F_AC,
+    F_LRM,
+    F_SRM,
     F_HAG,
     F_MML,
     F_MRM,

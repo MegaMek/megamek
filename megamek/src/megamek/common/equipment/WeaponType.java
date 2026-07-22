@@ -571,6 +571,8 @@ public class WeaponType extends EquipmentType {
 
     // families
     public static final WeaponTypeFlag F_AC = WeaponTypeFlag.F_AC;
+    public static final WeaponTypeFlag F_SRM = WeaponTypeFlag.F_SRM;
+    public static final WeaponTypeFlag F_LRM = WeaponTypeFlag.F_LRM;
     public static final WeaponTypeFlag F_HAG = WeaponTypeFlag.F_HAG;
     public static final WeaponTypeFlag F_MML = WeaponTypeFlag.F_MML;
     public static final WeaponTypeFlag F_MRM = WeaponTypeFlag.F_MRM;

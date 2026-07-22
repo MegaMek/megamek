@@ -68,6 +68,8 @@ public class ISC3M extends TAGWeapon {
         cost = 1500000;
         bv = 0;
         flags = flags.or(F_C3M).or(F_MEK_WEAPON).or(F_TANK_WEAPON).andNot(F_AERO_WEAPON);
+        setModes("On", "Off");
+        setInstantModeSwitch(false);
         heat = 0;
         damage = 0;
         shortRange = 5;

@@ -6934,8 +6934,8 @@ public abstract class Entity extends TurnOrdered
     }
 
     /**
-     * @return True if this unit has an active Nova CEWS that can communicate. Returns false if the unit is shutdown,
-     *       off board, or the Nova CEWS is inoperable/offline.
+     * @return True if this unit has an active Nova CEWS that can communicate. Returns {@code false} if the unit is
+     *       shutdown, off board, or the Nova CEWS is inoperable or switched to "Off" by the player.
      */
     public boolean hasActiveNovaCEWS() {
         if (isShutDown() || isOffBoard()) {
@@ -6943,13 +6943,16 @@ public abstract class Entity extends TurnOrdered
         } else {
             return getMisc().stream()
                   .filter(Mounted::isOperable)
+                  .filter(m -> !m.isModeTurnedOff())
                   .anyMatch(m -> m.getType().hasFlag(MiscType.F_NOVA));
         }
     }
 
     /**
      * @return True if this unit has a Nova CEWS that can network (not destroyed/breached, not shutdown, not offboard).
-     *       Does NOT check ECM mode - networking works regardless of Off/ECM mode setting.
+     *       Does NOT check the "Off" mode - network membership (net id, partner UUIDs) survives deactivation so the
+     *       previous network is restored when the CEWS is switched back on; use {@link #hasActiveNovaCEWS()} for
+     *       whether the system currently functions.
      */
     public boolean hasNovaCEWS() {
         if (isShutDown() || isOffBoard()) {
@@ -7019,13 +7022,45 @@ public abstract class Entity extends TurnOrdered
         return hasC3() || hasNhC3();
     }
 
+    /**
+     * Returns whether the player has deactivated this unit's C3 network gear (C3 slave/master, C3i, Naval C3 or Nova
+     * CEWS). A switched-off unit provides and receives no network benefit, but its network membership
+     * ({@code c3NetIdString}, master link, partner UUIDs) is preserved, so reactivating the equipment automatically
+     * restores the previous network.
+     *
+     * @return {@code true} if this unit mounts operable C3 network equipment and all of it is currently set to "Off"
+     */
+    public boolean isC3SwitchedOff() {
+        boolean hasOperableC3Equipment = false;
+        for (Mounted<?> mounted : getEquipment()) {
+            boolean isC3Equipment;
+            if (mounted.getType() instanceof MiscType miscType) {
+                isC3Equipment = miscType.hasFlag(MiscType.F_C3S) || miscType.hasFlag(MiscType.F_C3SBS)
+                      || miscType.hasFlag(MiscType.F_C3I) || miscType.hasFlag(MiscType.F_NAVAL_C3)
+                      || miscType.hasFlag(MiscType.F_NOVA);
+            } else if (mounted.getType() instanceof WeaponType weaponType) {
+                isC3Equipment = weaponType.hasFlag(WeaponType.F_C3M) || weaponType.hasFlag(WeaponType.F_C3MBS);
+            } else {
+                isC3Equipment = false;
+            }
+            if (isC3Equipment && !mounted.isInoperable()) {
+                hasOperableC3Equipment = true;
+                if (!mounted.isModeTurnedOff()) {
+                    return false;
+                }
+            }
+        }
+        return hasOperableC3Equipment;
+    }
+
     public @Nullable String getC3NetId() {
         if (c3NetIdString == null) {
             if (hasC3()) {
                 c3NetIdString = "C3" + C3_NETWORK_ID_SEPARATOR + getId();
             } else if (hasC3i()) {
                 c3NetIdString = "C3i" + C3_NETWORK_ID_SEPARATOR + getId();
-            } else if (hasActiveNovaCEWS()) {
+            } else if (hasNovaCEWS()) {
+                // presence-based so a Nova switched to "Off" still establishes its network identity
                 c3NetIdString = "C3Nova" + C3_NETWORK_ID_SEPARATOR + getId();
             } else if (hasNavalC3()) {
                 c3NetIdString = "NC3" + C3_NETWORK_ID_SEPARATOR + getId();
@@ -7489,6 +7524,13 @@ public abstract class Entity extends TurnOrdered
             return false;
         }
 
+        // A unit whose C3 gear is switched off provides and receives no network benefit. The ignoreECM path is
+        // deliberately NOT gated: it is used to record network membership (save files, network wiring), which must
+        // survive deactivation so the previous network is restored when the gear is switched back on.
+        if (!ignoreECM && (isC3SwitchedOff() || e.isC3SwitchedOff())) {
+            return false;
+        }
+
         // C3i is easy - if they both have C3i, and their net ID's match,
         // they're on the same network!
         if (hasC3i() && e.hasC3i() && getC3NetId().equals(e.getC3NetId())) {
@@ -7519,8 +7561,9 @@ public abstract class Entity extends TurnOrdered
         }
 
         // Nova is easy - if they both have Nova, and their net ID's match, they're on the same network! At least I
-        // hope that's how it works.
-        if (hasActiveNovaCEWS() && e.hasActiveNovaCEWS() && getC3NetId().equals(e.getC3NetId())) {
+        // hope that's how it works. Membership is presence-based (hasNovaCEWS): a switched-off Nova stays a network
+        // member for serialization/wiring purposes, while the benefit cut-off is handled by the gate above.
+        if (hasNovaCEWS() && e.hasNovaCEWS() && getC3NetId().equals(e.getC3NetId())) {
             if (ignoreECM) {
                 return true;
             }

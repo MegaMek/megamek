@@ -210,6 +210,11 @@ public class ComputeC3Spotter {
               || !attacker.hasC3() && !attacker.hasC3i() && !attacker.hasActiveNovaCEWS() && !attacker.hasNavalC3()) {
             return false;
         }
+
+        // C3 gear the player has switched off provides no targeting data (it rejoins its network when reactivated)
+        if (attacker.isC3SwitchedOff()) {
+            return false;
+        }
         
         // PLAYTEST3 Stealth kills C3. Now that ECM halves bonuses, we need to exit early.
         if (game.getOptions().booleanOption(OptionsConstants.PLAYTEST_3)) {
@@ -243,6 +248,7 @@ public class ComputeC3Spotter {
               && other.isDeployed()
               && !other.isStealthActive()
               && !other.isShutDown()
+              && !other.isC3SwitchedOff()
               && !other.isOffBoard()
               && !other.isTransported()
               && game.hasBoardLocationOf(other)

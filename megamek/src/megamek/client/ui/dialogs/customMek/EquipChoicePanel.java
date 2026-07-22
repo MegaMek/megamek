@@ -1186,9 +1186,11 @@ public class EquipChoicePanel extends JPanel {
             } else if (hasGhostTargetOption && type.hasFlag(MiscType.F_COMMAND_CONSOLE)) {
                 modes.add("Default");
                 modes.add("Ghost Targets");
-            } else if (type.hasFlag(MiscType.F_BAP) && (type.getModesCount() > 1)) {
-                // Active probes (and Nova CEWS, which carries F_BAP but is excluded from the ECM branch above) can
-                // be activated/deactivated at game start; offer the modes defined on the equipment type itself
+            } else if ((type.hasFlag(MiscType.F_BAP) || type.hasFlag(MiscTypeFlag.ANY_C3))
+                  && (type.getModesCount() > 1)) {
+                // Active probes, Nova CEWS (which carries F_BAP but is excluded from the ECM branch above) and C3
+                // computers can be activated/deactivated at game start; offer the modes defined on the equipment
+                // type itself
                 for (int modeIndex = 0; modeIndex < type.getModesCount(); modeIndex++) {
                     modes.add(type.getMode(modeIndex).getName());
                 }

@@ -72,15 +72,6 @@ public enum WeaponTypeFlag implements EquipmentFlag {
     F_INFERNO, // Inferno weapon
     F_PLASMA, // fires
 
-    // families
-    F_AC,
-    F_LRM,
-    F_SRM,
-    F_HAG,
-    F_MML,
-    F_MRM,
-    F_ATM,
-
     // Special behaviors
     F_TAG,
     F_C3M, // C3 Master with Target Acquisition gear
@@ -154,5 +145,14 @@ public enum WeaponTypeFlag implements EquipmentFlag {
     /**
      * Denotes Clan Heavy Lasers (S, M, L)
      */
-    HEAVY_LASER
+    HEAVY_LASER,
+
+    // families
+    F_AC,
+    F_LRM,
+    F_SRM,
+    F_HAG,
+    F_MML,
+    F_MRM,
+    F_ATM,
 }

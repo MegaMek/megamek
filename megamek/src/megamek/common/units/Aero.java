@@ -210,11 +210,12 @@ public abstract class Aero extends Entity implements IAero, IBomber, ActiveHeatS
 
     /**
      * Aerospace heat sinks are a bare count with no individual equipment mounts, so heat sink activation
-     * (activation/deactivation rules) is tracked as a count of active sinks rather than per-mount modes. A value of
-     * -1 means all operational heat sinks are active.
+     * (activation/deactivation rules) is tracked as a count of deactivated sinks rather than per-mount modes. The
+     * counts default to 0 (all operational heat sinks active) so that save games from before this field existed load
+     * with every sink active - a field absent from an old save deserializes as 0.
      */
-    private int sinksOn = -1;
-    private int sinksOnNextRound = -1;
+    private int inactiveSinks = 0;
+    private int inactiveSinksNextRound = 0;
 
     // Track how many heat sinks are pod-mounted for OmniFighters; these are included in the total. This is provided
     // for campaign use; MM does not distribute damage between fixed and pod-mounted.
@@ -1162,9 +1163,7 @@ public abstract class Aero extends Entity implements IAero, IBomber, ActiveHeatS
         setCurrentVelocity(getNextVelocity());
 
         // apply the pending heat sink activation change (declared any time, takes effect in the End Phase)
-        if (sinksOnNextRound >= 0) {
-            sinksOn = sinksOnNextRound;
-        }
+        inactiveSinks = inactiveSinksNextRound;
 
         // if using variable damage thresholds then auto set them
         if (gameOptions().booleanOption(OptionsConstants.ADVANCED_AERO_RULES_VARIABLE_DAMAGE_THRESH)) {
@@ -1676,17 +1675,18 @@ public abstract class Aero extends Entity implements IAero, IBomber, ActiveHeatS
 
     @Override
     public int getActiveSinks() {
-        return (sinksOn < 0) ? getHeatSinks() : Math.min(sinksOn, getHeatSinks());
+        return Math.max(0, getHeatSinks() - inactiveSinks);
     }
 
     @Override
     public int getActiveSinksNextRound() {
-        return (sinksOnNextRound < 0) ? getActiveSinks() : Math.min(sinksOnNextRound, getHeatSinks());
+        return Math.max(0, getHeatSinks() - inactiveSinksNextRound);
     }
 
     @Override
     public void setActiveSinksNextRound(int sinks) {
-        sinksOnNextRound = Math.max(0, Math.min(sinks, getHeatSinks()));
+        int operationalSinks = getHeatSinks();
+        inactiveSinksNextRound = operationalSinks - Math.max(0, Math.min(sinks, operationalSinks));
     }
 
     @Override

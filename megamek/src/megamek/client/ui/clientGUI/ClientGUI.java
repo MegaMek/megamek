@@ -1984,7 +1984,21 @@ public class ClientGUI extends AbstractClientGUI
         }
         // BOT_COMMANDS_ENABLED is the persistent user choice (Off/Float/Dock); honor it here, never overwrite it,
         // so the chosen mode is remembered across phases and across sessions.
-        setBotCommandsLocation(GUIP.getBotCommandsEnabled() && phaseAllowsPanel);
+        setBotCommandsLocation(GUIP.getBotCommandsEnabled() && phaseAllowsPanel && gameHasBots());
+    }
+
+    /**
+     * @return {@code true} if any player in the game is a bot. Without one there is nobody the bot commands panel
+     *       could give orders to, so it stays hidden - leaving the command bar with only the Commands button - until
+     *       a bot joins (e.g. when a player is replaced by one).
+     */
+    private boolean gameHasBots() {
+        for (Player player : getClient().getGame().getPlayersList()) {
+            if (player.isBot()) {
+                return true;
+            }
+        }
+        return false;
     }
 
     /** Shows or hides the minimap based on the current menu setting. */
@@ -3014,6 +3028,9 @@ public class ClientGUI extends AbstractClientGUI
                     currPhaseDisplay.setStatusBarWithNotDonePlayers();
                 }
             }
+            // The bot commands panel is hidden while the game has no bots; a player change can be a bot joining
+            // (e.g. replacing a dropped player) or the last bot leaving, so re-evaluate the panel.
+            maybeShowBotCommands();
         }
 
         @Override

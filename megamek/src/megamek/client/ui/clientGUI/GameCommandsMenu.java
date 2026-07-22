@@ -45,8 +45,8 @@ import megamek.logging.MMLogger;
 
 /**
  * Builds the popup menu of the Commands button in the game commands strip: the game-level commands every player may
- * issue (declaring victory, conceding, skipping a stuck turn, rolling dice) and, below them, the Game Master role and
- * its tools.
+ * issue (declaring victory, conceding, skipping a stuck turn, rolling dice, checking remaining battle value) and,
+ * below them, the Game Master role and its tools.
  *
  * <p>Every entry is a server chat command, the same one a player could type into the chat box, so the server keeps
  * deciding what is allowed. The menu is rebuilt on every click, because who holds the Game Master role can change from
@@ -59,6 +59,8 @@ public class GameCommandsMenu {
     private static final String COMMAND_DEFEAT = "/defeat";
     private static final String COMMAND_SKIP = "/skip";
     private static final String COMMAND_ROLL = "/roll 2d6";
+    private static final String COMMAND_CHECK_BV = "/checkbv";
+    private static final String COMMAND_CHECK_BV_TEAM = "/checkbvTeam";
     private static final String COMMAND_GAME_MASTER = "/gm";
     private static final String COMMAND_ALLOW_GAME_MASTER = "/allowGM";
 
@@ -93,8 +95,11 @@ public class GameCommandsMenu {
     private void addGameCommands(JPopupMenu popup) {
         popup.add(createConfirmedCommandItem("RequestVictory", COMMAND_VICTORY));
         popup.add(createConfirmedCommandItem("AdmitDefeat", COMMAND_DEFEAT));
-        popup.add(createCommandItem("SkipTurn", COMMAND_SKIP));
+        popup.add(createConfirmedCommandItem("SkipTurn", COMMAND_SKIP));
         popup.add(createCommandItem("RollDice", COMMAND_ROLL));
+        popup.addSeparator();
+        popup.add(createCommandItem("CheckBvPlayers", COMMAND_CHECK_BV));
+        popup.add(createCommandItem("CheckBvTeams", COMMAND_CHECK_BV_TEAM));
     }
 
     /**

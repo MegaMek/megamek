@@ -78,7 +78,7 @@ import megamek.logging.MMLogger;
 /**
  * You know what Meks are, silly.
  */
-public abstract class Mek extends Entity implements Fortifiable, RubbleClearer {
+public abstract class Mek extends Entity implements Fortifiable, RubbleClearer, ActiveHeatSinkController {
     @Serial
     private static final long serialVersionUID = -1929593228891136561L;
     private static final MMLogger LOGGER = MMLogger.create(Mek.class);
@@ -274,8 +274,15 @@ public abstract class Mek extends Entity implements Fortifiable, RubbleClearer {
     // for Harjel II/III
     private final boolean[] armorDamagedThisTurn;
 
+    /**
+     * No longer used: heat sink activation is tracked per mount via equipment modes. The two fields are retained only
+     * so that pre-existing save games (which contain them) still deserialize; XStream rejects unknown elements.
+     */
+    @SuppressWarnings("unused")
     private int sinksOn = -1;
 
+    /** @see #sinksOn */
+    @SuppressWarnings("unused")
     private int sinksOnNextRound = -1;
 
     private boolean autoEject = true;
@@ -1258,9 +1265,6 @@ public abstract class Mek extends Entity implements Fortifiable, RubbleClearer {
         bUsedCoolantSystem = false;
 
         setSecondaryFacing(getFacing());
-
-        // set heat sinks
-        sinksOn = sinksOnNextRound;
 
         // update cockpit status
         cockpitStatus = cockpitStatusNextRound;
@@ -2363,24 +2367,17 @@ public abstract class Mek extends Entity implements Fortifiable, RubbleClearer {
 
     public int getHeatCapacity(boolean includePartialWing, boolean includeRadicalHeatSink) {
         int capacity = 0;
-        int activeCount = getActiveSinks();
         boolean isDoubleHeatSink = false;
 
         for (Mounted<?> mounted : getMisc()) {
-            if (mounted.isDestroyed() || mounted.isBreached()) {
+            // A heat sink the player has switched off dissipates nothing until it is switched back on
+            if (mounted.isDestroyed() || mounted.isBreached() || mounted.isModeTurnedOff()) {
                 continue;
             }
-            if ((activeCount > 0)
-                  && mounted.getType().hasFlag(MiscType.F_HEAT_SINK)) {
+            if (mounted.getType().hasFlag(MiscType.F_HEAT_SINK)) {
                 capacity++;
-                activeCount--;
-            } else if ((activeCount > 0)
-                  && mounted.getType().hasFlag(MiscType.F_DOUBLE_HEAT_SINK)) {
-                activeCount--;
-                capacity += 2;
-                isDoubleHeatSink = true;
-            } else if (mounted.getType().hasFlag(
-                  MiscType.F_IS_DOUBLE_HEAT_SINK_PROTOTYPE)) {
+            } else if (mounted.getType().hasFlag(MiscType.F_DOUBLE_HEAT_SINK)
+                  || mounted.getType().hasFlag(MiscType.F_IS_DOUBLE_HEAT_SINK_PROTOTYPE)) {
                 capacity += 2;
                 isDoubleHeatSink = true;
             } else if (includePartialWing
@@ -2442,7 +2439,7 @@ public abstract class Mek extends Entity implements Fortifiable, RubbleClearer {
         // okay, count leg sinks
         int sinksUnderwater = 0;
         for (Mounted<?> mounted : getMisc()) {
-            if (mounted.isDestroyed() || mounted.isBreached()
+            if (mounted.isDestroyed() || mounted.isBreached() || mounted.isModeTurnedOff()
                   || !locationIsLeg(mounted.getLocation())) {
                 continue;
             }
@@ -4682,27 +4679,93 @@ public abstract class Mek extends Entity implements Fortifiable, RubbleClearer {
         return hasLaserHeatSinks == HAS_TRUE;
     }
 
+    /**
+     * Bulk control for heat sink activation: switches individual heat sink mounts On or Off so that the given number
+     * of sinks remains active. Like all activation/deactivation, the change is declared now and takes effect in the
+     * End Phase (the mounts' pending modes apply at the round rollover). Prototype double heat sinks and Freezers are
+     * not part of this counter (matching {@link #getNumberOfSinks()}); they can be switched individually via their
+     * equipment mode.
+     *
+     * @param sinks the number of heat sinks that should be active next round
+     */
     public void setActiveSinksNextRound(int sinks) {
-        sinksOnNextRound = sinks;
+        int remainingActive = sinks;
+        for (MiscMounted mounted : getMisc()) {
+            if (!isCountedHeatSink(mounted) || mounted.isDestroyed() || mounted.isBreached()) {
+                continue;
+            }
+            if (remainingActive > 0) {
+                mounted.setMode("On");
+                remainingActive--;
+            } else {
+                mounted.setMode("Off");
+            }
+        }
     }
 
+    /**
+     * @return the number of operable heat sinks that are currently switched on (prototype double heat sinks and
+     *       Freezers excluded, matching {@link #getNumberOfSinks()})
+     */
     public int getActiveSinks() {
-        if (sinksOn < 0) {
-            sinksOn = getNumberOfSinks();
-            sinksOnNextRound = sinksOn;
+        int activeSinks = 0;
+        for (MiscMounted mounted : getMisc()) {
+            if (isCountedHeatSink(mounted) && !mounted.isDestroyed() && !mounted.isBreached()
+                  && !mounted.isModeTurnedOff()) {
+                activeSinks++;
+            }
         }
-        return sinksOn;
+        return activeSinks;
     }
 
+    /** Switches every heat sink mount (including prototype double heat sinks and Freezers) back on. */
     public void resetSinks() {
-        sinksOn = getNumberOfSinks();
+        for (MiscMounted mounted : getMisc()) {
+            boolean isPrototypeSink = mounted.getType().hasFlag(MiscType.F_IS_DOUBLE_HEAT_SINK_PROTOTYPE);
+            if (isCountedHeatSink(mounted) || isPrototypeSink) {
+                mounted.setMode("On");
+            }
+        }
     }
 
+    /**
+     * @return the number of operable heat sinks that will be switched on next round, taking pending mode changes
+     *       into account (prototype double heat sinks and Freezers excluded)
+     */
     public int getActiveSinksNextRound() {
-        if (sinksOnNextRound < 0) {
-            return getActiveSinks();
+        int activeSinks = 0;
+        for (MiscMounted mounted : getMisc()) {
+            if (isCountedHeatSink(mounted) && !mounted.isDestroyed() && !mounted.isBreached()
+                  && !isModeOffNextRound(mounted)) {
+                activeSinks++;
+            }
         }
-        return sinksOnNextRound;
+        return activeSinks;
+    }
+
+    /**
+     * @param mounted the equipment to check
+     *
+     * @return {@code true} if the mount is a heat sink counted by the classic active-sinks counter (single, double,
+     *       compact or laser heat sinks; prototype double heat sinks and Freezers are excluded, matching
+     *       {@link #getNumberOfSinks()})
+     */
+    private static boolean isCountedHeatSink(Mounted<?> mounted) {
+        return mounted.getType().hasFlag(MiscType.F_HEAT_SINK)
+              || mounted.getType().hasFlag(MiscType.F_DOUBLE_HEAT_SINK);
+    }
+
+    /**
+     * @param mounted the equipment to check
+     *
+     * @return {@code true} if the mount will be in the "Off" mode next round - either a pending switch to Off, or
+     *       already Off with no pending switch away from it
+     */
+    private static boolean isModeOffNextRound(Mounted<?> mounted) {
+        if (mounted.pendingMode().equals("None")) {
+            return mounted.isModeTurnedOff();
+        }
+        return mounted.pendingMode().equals("Off");
     }
 
     /**

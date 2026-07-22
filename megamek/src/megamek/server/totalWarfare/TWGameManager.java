@@ -27333,8 +27333,8 @@ public class TWGameManager extends AbstractGameManager {
         int entityId = c.getIntValue(0);
         int numSinks = c.getIntValue(1);
         Entity e = game.getEntity(entityId);
-        if ((e instanceof Mek) && (connIndex == e.getOwnerId())) {
-            ((Mek) e).setActiveSinksNextRound(numSinks);
+        if ((e instanceof ActiveHeatSinkController heatSinkController) && (connIndex == e.getOwnerId())) {
+            heatSinkController.setActiveSinksNextRound(numSinks);
         }
     }
 

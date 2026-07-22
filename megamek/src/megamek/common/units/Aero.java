@@ -70,7 +70,7 @@ import megamek.logging.MMLogger;
 /**
  * Taharqa's attempt at creating an Aerospace entity
  */
-public abstract class Aero extends Entity implements IAero, IBomber {
+public abstract class Aero extends Entity implements IAero, IBomber, ActiveHeatSinkController {
     private static final MMLogger LOGGER = MMLogger.create(Aero.class);
 
     @Serial
@@ -207,6 +207,14 @@ public abstract class Aero extends Entity implements IAero, IBomber {
     private int heatSinksOriginal;
     private int heatSinks;
     private int heatType = HEAT_SINGLE;
+
+    /**
+     * Aerospace heat sinks are a bare count with no individual equipment mounts, so heat sink activation
+     * (activation/deactivation rules) is tracked as a count of active sinks rather than per-mount modes. A value of
+     * -1 means all operational heat sinks are active.
+     */
+    private int sinksOn = -1;
+    private int sinksOnNextRound = -1;
 
     // Track how many heat sinks are pod-mounted for OmniFighters; these are included in the total. This is provided
     // for campaign use; MM does not distribute damage between fixed and pod-mounted.
@@ -1153,6 +1161,11 @@ public abstract class Aero extends Entity implements IAero, IBomber {
         // update velocity
         setCurrentVelocity(getNextVelocity());
 
+        // apply the pending heat sink activation change (declared any time, takes effect in the End Phase)
+        if (sinksOnNextRound >= 0) {
+            sinksOn = sinksOnNextRound;
+        }
+
         // if using variable damage thresholds then auto set them
         if (gameOptions().booleanOption(OptionsConstants.ADVANCED_AERO_RULES_VARIABLE_DAMAGE_THRESH)) {
             autoSetThresh();
@@ -1654,11 +1667,26 @@ public abstract class Aero extends Entity implements IAero, IBomber {
 
     @Override
     public int getHeatCapacity(boolean includeRadicalHeatSink) {
-        int capacity = (getHeatSinks() * (getHeatType() + 1));
+        int capacity = (getActiveSinks() * (getHeatType() + 1));
         if (includeRadicalHeatSink && hasWorkingMisc(MiscType.F_RADICAL_HEATSINK)) {
-            capacity += (int) Math.ceil(getHeatSinks() * 0.4);
+            capacity += (int) Math.ceil(getActiveSinks() * 0.4);
         }
         return capacity;
+    }
+
+    @Override
+    public int getActiveSinks() {
+        return (sinksOn < 0) ? getHeatSinks() : Math.min(sinksOn, getHeatSinks());
+    }
+
+    @Override
+    public int getActiveSinksNextRound() {
+        return (sinksOnNextRound < 0) ? getActiveSinks() : Math.min(sinksOnNextRound, getHeatSinks());
+    }
+
+    @Override
+    public void setActiveSinksNextRound(int sinks) {
+        sinksOnNextRound = Math.max(0, Math.min(sinks, getHeatSinks()));
     }
 
     @Override

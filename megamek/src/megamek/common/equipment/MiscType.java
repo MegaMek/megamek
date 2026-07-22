@@ -6583,6 +6583,8 @@ public class MiscType extends EquipmentType {
         misc.tankSlots = 0;
         misc.flags = misc.flags.or(F_HEAT_SINK);
         misc.bv = 0;
+        misc.setModes("On", "Off");
+        misc.setInstantModeSwitch(false);
         misc.rulesRefs = "221, TM";
         misc.techAdvancement.setTechBase(TechBase.ALL)
               .setISAdvancement(DATE_ES, DATE_ES, DATE_ES, DATE_NONE, DATE_NONE)
@@ -6610,6 +6612,8 @@ public class MiscType extends EquipmentType {
         misc.flags = misc.flags.or(F_HEAT_SINK, F_COMPACT_HEAT_SINK);
         misc.bv = 0;
         misc.cost = 3000;
+        misc.setModes("On", "Off");
+        misc.setInstantModeSwitch(false);
         misc.rulesRefs = "128, TO:AUE";
         // Tech Progression tweaked to combine IntOps with TRO Prototypes/3145 NTNU RS
         misc.techAdvancement.setTechBase(TechBase.IS)
@@ -6634,6 +6638,8 @@ public class MiscType extends EquipmentType {
         misc.cost = 6000;
         misc.flags = misc.flags.or(F_DOUBLE_HEAT_SINK, F_COMPACT_HEAT_SINK);
         misc.bv = 0;
+        misc.setModes("On", "Off");
+        misc.setInstantModeSwitch(false);
         misc.rulesRefs = "128, TO:AUE";
         // Tech Progression tweaked to combine IntOps with TRO Prototypes/3145 NTNU RS
         misc.techAdvancement.setTechBase(TechBase.IS)
@@ -6659,6 +6665,8 @@ public class MiscType extends EquipmentType {
         misc.cost = 18000; // Using Cost
         misc.flags = misc.flags.or(F_IS_DOUBLE_HEAT_SINK_PROTOTYPE);
         misc.bv = 0;
+        misc.setModes("On", "Off");
+        misc.setInstantModeSwitch(false);
         misc.rulesRefs = "65, IO:AE";
         misc.techAdvancement.setTechBase(TechBase.IS)
               .setISAdvancement(2559, DATE_NONE, DATE_NONE, 2567, DATE_NONE)
@@ -6681,6 +6689,8 @@ public class MiscType extends EquipmentType {
         misc.cost = 30000; // Using Cost
         misc.flags = misc.flags.or(F_IS_DOUBLE_HEAT_SINK_PROTOTYPE);
         misc.bv = 0;
+        misc.setModes("On", "Off");
+        misc.setInstantModeSwitch(false);
         misc.rulesRefs = "96, IO:AE";
         misc.techAdvancement.setTechBase(TechBase.IS)
               .setISAdvancement(3022, DATE_NONE, DATE_NONE, 3040, DATE_NONE)
@@ -6703,6 +6713,8 @@ public class MiscType extends EquipmentType {
         misc.criticalSlots = 3;
         misc.flags = misc.flags.or(F_DOUBLE_HEAT_SINK);
         misc.bv = 0;
+        misc.setModes("On", "Off");
+        misc.setInstantModeSwitch(false);
         misc.rulesRefs = "221, TM";
         misc.techAdvancement.setTechBase(TechBase.IS)
               .setTechRating(TechRating.E)
@@ -6725,6 +6737,8 @@ public class MiscType extends EquipmentType {
         misc.criticalSlots = 2;
         misc.flags = misc.flags.or(F_DOUBLE_HEAT_SINK);
         misc.bv = 0;
+        misc.setModes("On", "Off");
+        misc.setInstantModeSwitch(false);
         misc.rulesRefs = "221, TM";
         misc.techAdvancement.setTechBase(TechBase.CLAN)
               .setClanAdvancement(2825, 2827, 2829, DATE_NONE, DATE_NONE)
@@ -6747,6 +6761,8 @@ public class MiscType extends EquipmentType {
         misc.criticalSlots = 2;
         misc.flags = misc.flags.or(F_DOUBLE_HEAT_SINK, F_LASER_HEAT_SINK, F_MEK_EQUIPMENT);
         misc.bv = 0;
+        misc.setModes("On", "Off");
+        misc.setInstantModeSwitch(false);
         misc.rulesRefs = "129, TO:AUE";
         misc.techAdvancement.setTechBase(TechBase.CLAN)
               .setClanAdvancement(3040, 3051, 3060, DATE_NONE, DATE_NONE)

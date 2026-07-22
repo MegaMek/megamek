@@ -10676,6 +10676,9 @@ public class TWGameManager extends AbstractGameManager {
             return;
         }
 
+        LOGGER.debug("[HiddenUnits] full-board probe sweep (phase {}, round {})",
+              game.getPhase(), game.getRoundCount());
+
         // See if any unit with a probe, detects any hidden units
         for (Entity detector : game.getEntitiesVector()) {
             ServerHelper.detectHiddenUnits(game, detector, detector.getPosition(), mainPhaseReport, this);

@@ -57,6 +57,7 @@ import megamek.common.units.Infantry;
 import megamek.common.units.Mek;
 import megamek.common.units.Terrain;
 import megamek.common.units.Terrains;
+import megamek.logging.MMLogger;
 import megamek.server.totalWarfare.TWGameManager;
 
 /**
@@ -66,6 +67,9 @@ import megamek.server.totalWarfare.TWGameManager;
  * @author NickAragua
  */
 public class ServerHelper {
+
+    private static final MMLogger LOGGER = MMLogger.create(ServerHelper.class);
+
     private ServerHelper() {
     }
 
@@ -313,6 +317,12 @@ public class ServerHelper {
 
         // if no probe, save ourselves a few loops
         if (probeRange < 0) {
+            boolean hasProbeEquipment = detector.getMisc().stream()
+                  .anyMatch(mounted -> mounted.getType().hasFlag(MiscType.F_BAP));
+            if (hasProbeEquipment) {
+                LOGGER.debug("[HiddenUnits] {}: probe equipment present but not functioning "
+                      + "(switched off, shut down or EMI) - no hidden unit detection", detector.getShortName());
+            }
             return false;
         }
 
@@ -337,6 +347,9 @@ public class ServerHelper {
         if (hiddenUnits.isEmpty()) {
             return false;
         }
+
+        LOGGER.debug("[HiddenUnits] {} probing from {} (range {}): {} hidden enemy unit(s) in range",
+              detector.getShortName(), detectorCoords, probeRange, hiddenUnits.size());
 
         Set<Integer> reportPlayers = new HashSet<>();
 
@@ -374,6 +387,10 @@ public class ServerHelper {
 
             LosEffects los = LosEffects.calculateLOS(game, detector, detected, detectorCoords, detected.getPosition(),
                   false);
+            if (!los.canSee() && beyondPointBlankRange) {
+                LOGGER.debug("[HiddenUnits] {}: hidden unit at {} in probe range but no line of sight - not revealed",
+                      detector.getShortName(), detected.getPosition());
+            }
             if (los.canSee() || !beyondPointBlankRange) {
                 detected.setHidden(false);
                 gameManager.entityUpdate(detected.getId());

@@ -35,11 +35,8 @@ package megamek.client.ui.tileset;
 
 import java.awt.Component;
 import java.awt.Graphics;
-import java.awt.GraphicsConfiguration;
-import java.awt.GraphicsEnvironment;
 import java.awt.Image;
 import java.awt.Toolkit;
-import java.awt.Transparency;
 import java.awt.geom.AffineTransform;
 import java.awt.image.AffineTransformOp;
 import java.awt.image.BufferedImage;
@@ -116,9 +113,6 @@ public class EntityImage {
           new float[] { 0, 0, 0, 1 - SHADOW_INTENSITY }, null);
 
     private static final GUIPreferences GUIP = GUIPreferences.getInstance();
-
-    private static final GraphicsConfiguration GRAPHICS_CONFIGURATION = GraphicsEnvironment
-          .getLocalGraphicsEnvironment().getDefaultScreenDevice().getDefaultConfiguration();
 
     /** Facing-dependent camo overlays (add shadows and highlighting) */
     private static final int[][] pOverlays = new int[6][IMG_SIZE];
@@ -761,16 +755,15 @@ public class EntityImage {
         ConvolveOp op = new ConvolveOp(ImageUtil.getGaussKernel(2 * radius + 1, sigma), ConvolveOp.EDGE_NO_OP, null);
 
         // blurring requires a slightly bigger image
-        BufferedImage temp = GRAPHICS_CONFIGURATION.createCompatibleImage(
-              IMG_WIDTH + radius * 2, IMG_HEIGHT + radius * 2, Transparency.TRANSLUCENT);
+        BufferedImage temp = ImageUtil.createAcceleratedImage(
+              IMG_WIDTH + radius * 2, IMG_HEIGHT + radius * 2);
         Graphics g = temp.getGraphics();
         g.drawImage(blackedOut, radius, radius, null);
         g.dispose();
         BufferedImage shadow = op.filter(temp, null);
 
         // reduce back to the correct image size
-        BufferedImage result = GRAPHICS_CONFIGURATION.createCompatibleImage(IMG_WIDTH, IMG_HEIGHT,
-              Transparency.TRANSLUCENT);
+        BufferedImage result = ImageUtil.createAcceleratedImage(IMG_WIDTH, IMG_HEIGHT);
         Graphics gResult = result.getGraphics();
         int xOffset = 0;
         if (unitElevation == 0) {

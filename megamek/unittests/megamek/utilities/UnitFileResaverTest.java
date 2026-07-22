@@ -97,6 +97,18 @@ class UnitFileResaverTest {
     }
 
     @Test
+    void archiveSourceGetsCurrentYearWithoutBeingRead() throws IOException {
+        // A unit stored in an archive reports the archive as its source file. Even when the archive's bytes happen to
+        // contain something that looks like a header, it must not be scanned as text.
+        int earlierYear = CURRENT_YEAR - 1;
+        Path archiveFile = tempDir.resolve("units.zip");
+        Files.writeString(archiveFile, "# MegaMek Data (C) " + earlierYear + " by The MegaMek Team is licensed"
+              + " under CC BY-NC-SA 4.0.\n", StandardCharsets.UTF_8);
+
+        assertEquals(String.valueOf(CURRENT_YEAR), UnitFileResaver.copyrightYears(archiveFile.toFile()));
+    }
+
+    @Test
     void missingSourceGetsCurrentYear() {
         assertEquals(String.valueOf(CURRENT_YEAR), UnitFileResaver.copyrightYears(null));
         assertEquals(String.valueOf(CURRENT_YEAR),

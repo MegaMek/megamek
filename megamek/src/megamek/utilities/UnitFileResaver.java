@@ -44,10 +44,12 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.time.Year;
 import java.util.Comparator;
+import java.util.Locale;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import megamek.codeUtilities.MathUtility;
 import megamek.common.Configuration;
 import megamek.common.annotations.Nullable;
 import megamek.common.loaders.BLKFile;
@@ -255,12 +257,15 @@ public class UnitFileResaver {
     /**
      * Reads the first copyright year out of a source file's existing license header.
      *
+     * <p>Only the plain-text unit formats are opened. A unit stored in an archive reports the archive as its source
+     * file, and reading that as text would scan a large binary file for a header it cannot contain.</p>
+     *
      * @param sourceFile The file to read, or {@code null} when the source is unknown
      *
      * @return The first copyright year in the header, or 0 if the file has no readable header
      */
     private static int readCopyrightStartYear(@Nullable File sourceFile) {
-        if ((sourceFile == null) || !sourceFile.isFile()) {
+        if ((sourceFile == null) || !sourceFile.isFile() || !hasPlainTextUnitExtension(sourceFile)) {
             return 0;
         }
 
@@ -272,7 +277,7 @@ public class UnitFileResaver {
                 }
                 Matcher matcher = COPYRIGHT_YEARS_PATTERN.matcher(line);
                 if (matcher.find()) {
-                    return Integer.parseInt(matcher.group(1));
+                    return MathUtility.parseInt(matcher.group(1), 0);
                 }
             }
         } catch (IOException exception) {
@@ -281,6 +286,18 @@ public class UnitFileResaver {
         }
 
         return 0;
+    }
+
+    /**
+     * Checks whether a file is one of the plain-text unit formats that carry a license header.
+     *
+     * @param sourceFile The file to check
+     *
+     * @return {@code true} if the file is a format whose header can be read as text
+     */
+    private static boolean hasPlainTextUnitExtension(File sourceFile) {
+        String fileName = sourceFile.getName().toLowerCase(Locale.ROOT);
+        return fileName.endsWith(".mtf") || fileName.endsWith(".blk");
     }
 
     /**

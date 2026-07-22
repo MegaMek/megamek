@@ -893,6 +893,15 @@ class SystemPanel extends PicMap
                           && mounted.isModeSwitchable()) {
                         m_chMode.setEnabled(true);
                     }
+                    // Heat sinks can be activated or deactivated even while the unit is shut down (TW,
+                    // Deactivating Heat Sinks)
+                    boolean isHeatSinkMount = (mounted.getType() instanceof MiscType)
+                          && (mounted.getType().hasFlag(MiscType.F_HEAT_SINK)
+                          || mounted.getType().hasFlag(MiscType.F_DOUBLE_HEAT_SINK)
+                          || mounted.getType().hasFlag(MiscType.F_IS_DOUBLE_HEAT_SINK_PROTOTYPE));
+                    if (!mounted.isInoperable() && isHeatSinkMount && mounted.isModeSwitchable()) {
+                        m_chMode.setEnabled(true);
+                    }
                     // Every ECM suite now carries at least the "ECM"/"Off" pair (activation/deactivation
                     // rules), so the mode switcher is always offered - the ECCM and Ghost Target game
                     // options merely add further modes.

@@ -1,6 +1,6 @@
 /*
  * Copyright (C) 2002-2004 Ben Mazur (bmazur@sev.org)
- * Copyright (C) 2020-2025 The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2020-2026 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -58,14 +58,14 @@ import megamek.client.ui.clientGUI.GUIPreferences;
 import megamek.client.ui.util.PlayerColour;
 import megamek.codeUtilities.MathUtility;
 import megamek.common.Configuration;
+import megamek.common.annotations.Nullable;
+import megamek.common.equipment.GunEmplacement;
+import megamek.common.icons.Camouflage;
 import megamek.common.units.Entity;
 import megamek.common.units.FighterSquadron;
-import megamek.common.equipment.GunEmplacement;
 import megamek.common.units.Infantry;
 import megamek.common.units.Tank;
 import megamek.common.units.VTOL;
-import megamek.common.annotations.Nullable;
-import megamek.common.icons.Camouflage;
 import megamek.common.util.ImageUtil;
 import megamek.common.util.fileUtils.AbstractDirectory;
 import megamek.common.util.fileUtils.DirectoryItems;
@@ -149,6 +149,11 @@ public class EntityImage {
 
     /** The base (unit) image used for this icon. */
     protected Image base;
+    /**
+     * The unmodified tileset image this icon was created from. Unlike {@link #base}, this is never replaced by a
+     * processed (camouflaged/composited) image, so it can serve as a stable identity for image caching.
+     */
+    private final Image tilesetBase;
     /** The wreck base image used for this icon. */
     private Image wreck;
     /** The damage decal image used for this icon. */
@@ -223,6 +228,7 @@ public class EntityImage {
     public EntityImage(Image base, Image wreck, Camouflage camouflage, Component comp, Entity entity, int secondaryPos,
           boolean preview, boolean withShadows) {
         this.base = base;
+        this.tilesetBase = base;
         setCamouflage(camouflage);
         this.wreck = wreck;
         this.withShadows = withShadows;
@@ -247,7 +253,7 @@ public class EntityImage {
      * Worker function that calculates the entity's damage level for the purposes of displaying damage to avoid
      * particularly dumb-looking situations
      */
-    private int calculateDamageLevel(Entity entity) {
+    public static int calculateDamageLevel(Entity entity) {
         // gun emplacements don't show up as crippled when destroyed, which leads to
         // them looking pristine
         if ((entity.isBuildingEntityOrGunEmplacement()) && entity.isDestroyed()) {
@@ -376,6 +382,14 @@ public class EntityImage {
 
     public Image getBase() {
         return base;
+    }
+
+    /**
+     * @return The unmodified tileset image this icon was created from. Stable across {@link #loadFacings()}, unlike
+     *       {@link #getBase()}, and therefore usable as a cache identity.
+     */
+    public @Nullable Image getTilesetBase() {
+        return tilesetBase;
     }
 
     public Image getIcon() {

@@ -16,9 +16,9 @@
 	<b>Mass:</b> ${mass} ${weightStandard}<br/>
 	<b>Battle Value:</b> ${battleValue}<br/>
 	</p>
-
+	<br/>
 	<table>
-	<tr><th>Equipment</th><th/><th>Mass (${weightStandard})</th></tr>
+	<tr><th align="left">Equipment</th><th/><th>Mass (${weightStandard})</th></tr>
 	<tr><td>Chassis/Controls</td><td></td><td align="center">${chassisControlMass}</td></tr>
 	<tr><td>Engine/Trans.</td><td align="center">${engineName}</td><td align="center">${engineMass}</td></tr>
 	<tr><td>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Cruise MP:</td><td align="center">${walkMP}</td><td></td></tr>
@@ -34,10 +34,11 @@
 <#elseif hasTurret>
 	<tr><td>Turret:</td><td></td><td align="center">${turretMass}</td</tr>
 </#if>
-	<tr><td>Armor Factor (${barRating}):</td><td>${armorFactor}</td><td align="center">${armorMass}</td></tr>
+	<tr><td>Armor Factor (${barRating}):</td><td align="center">${armorFactor}</td><td
+	align="center">${armorMass}</td></tr>
 	</table>
 
-	<table width="80%">
+	<table>
 		<tr><th></th><th>Internal<br/>Structure</th><th>Armor<br/>Value</th></tr>
 		<tr>
 			<td>Front</td>
@@ -102,23 +103,18 @@
 		</tr>
 </#if>
 	</table>
-
-	<#if isOmni>
-	<b>Fixed Equipment</b><br/>
-		<#if fixedTonnage gt 0>
-			<table>
-			<tr><td><i>Location</i></td><td align="center"><i>Fixed</i></td><td align="center"><i>Mass (${weightStandard})</i></td></tr>
-			<#list fixedEquipment as row>
-				<#if row.equipment != "None">
-			<tr><td>${row.location}</td><td align="center">${row.equipment}</td><td align="center">${row.tonnage}</td></tr>
-				</#if>
-			</#list>
-			</table>
-		<#else>
-			None
-		</#if>
-	</#if>
-
+<#if isOmni && fixedTonnage gt 0>
+    <br/>
+    <table>
+        <tr><th align="left">Fixed Equipment</th><th>Location</th><th>Tonnage</th>
+        <#list fixedEquipment as row>
+            <#if row.equipment != "None">
+        <tr><td>${row.equipment}</td><td align="center">${row.location}</td><td align="center">${row.tonnage}</td></tr>
+            </#if>
+        </#list>
+    </table>
+</#if>
+	<br/>
 	<table>
 		<tr><th align="left">Weapons<br/>and Ammo</th><th>Location</th><th>Critical</th><th>Mass (${weightStandard})</th></tr>
 		<#list weaponList as eq>

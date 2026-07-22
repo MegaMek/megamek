@@ -41,13 +41,13 @@ import megamek.common.enums.AvailabilityValue;
 import megamek.common.enums.Faction;
 import megamek.common.enums.TechBase;
 import megamek.common.enums.TechRating;
-import megamek.common.weapons.lasers.LaserWeapon;
+import megamek.common.weapons.lasers.ImprovedHeavyLaserWeapon;
 
 /**
  * @author Jason Tighe
  * @since Sep 12, 2004
  */
-public class CLImprovedHeavyLaserSmall extends LaserWeapon {
+public class CLImprovedHeavyLaserSmall extends ImprovedHeavyLaserWeapon {
     @Serial
     private static final long serialVersionUID = 4467522144065588079L;
 

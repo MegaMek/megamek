@@ -305,6 +305,17 @@ public class Mounted<T extends EquipmentType> implements Serializable, RoundUpda
     }
 
     /**
+     * Returns whether the player has deactivated this equipment. Equipment that can be switched off (active probes,
+     * ECM suites, C3 computers, heat sinks, and similar items with an "Off" mode per the activation/deactivation
+     * rules) provides none of its game effects while deactivated, but is otherwise undamaged and can be reactivated.
+     *
+     * @return {@code true} if this equipment has modes and its current mode is "Off"
+     */
+    public boolean isModeTurnedOff() {
+        return hasModes() && curMode().equals("Off");
+    }
+
+    /**
      * @return the pending mode of the equipment.
      */
     public EquipmentMode pendingMode() {

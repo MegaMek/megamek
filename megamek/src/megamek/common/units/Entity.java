@@ -6496,7 +6496,9 @@ public abstract class Entity extends TurnOrdered
         for (MiscMounted m : getMisc()) {
             if (m.getType().hasFlag(MiscType.F_BAP)) {
 
-                if (!m.isInoperable()) {
+                // A probe the player has switched off provides no sensing (activation/deactivation rules); for a
+                // Watchdog/Nova CEWS the shared "Off" mode silences the probe half along with the rest of the suite.
+                if (!m.isInoperable() && !m.isModeTurnedOff()) {
                     // Beagle Isn't affected by normal ECM
                     if (m.getType().getName().equals("Beagle Active Probe")) {
                         return (game == null) ||
@@ -6594,7 +6596,7 @@ public abstract class Entity extends TurnOrdered
 
         for (MiscMounted m : getMisc()) {
             MiscType type = m.getType();
-            if (type.hasFlag(MiscType.F_BAP) && !m.isInoperable()) {
+            if (type.hasFlag(MiscType.F_BAP) && !m.isInoperable() && !m.isModeTurnedOff()) {
                 // Quirk bonus is only 2 if equipped with BAP
                 if (quirkBonus > 0) {
                     quirkBonus = 2;
@@ -13797,6 +13799,7 @@ public abstract class Entity extends TurnOrdered
                 String[] stringArray = {};
                 modes.add("Short");
                 modes.add("Medium");
+                modes.add("Off");
                 misc.getType().setModes(modes.toArray(stringArray));
                 misc.getType().setInstantModeSwitch(false);
             }

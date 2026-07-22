@@ -5364,6 +5364,8 @@ public class MiscType extends EquipmentType {
               .andNot(F_JS_EQUIPMENT)
               .andNot(F_SS_EQUIPMENT);
         misc.bv = 10;
+        misc.setModes("On", "Off");
+        misc.setInstantModeSwitch(false);
         misc.rulesRefs = "204, TM";
         misc.techAdvancement.setTechBase(TechBase.IS)
               .setIntroLevel(false)
@@ -5401,6 +5403,8 @@ public class MiscType extends EquipmentType {
               .andNot(F_JS_EQUIPMENT)
               .andNot(F_SS_EQUIPMENT);
         misc.bv = 10;
+        misc.setModes("On", "Off");
+        misc.setInstantModeSwitch(false);
         misc.rulesRefs = "65, IO:AE";
         misc.techAdvancement.setTechBase(TechBase.IS)
               .setIntroLevel(false)
@@ -5439,6 +5443,8 @@ public class MiscType extends EquipmentType {
               .andNot(F_JS_EQUIPMENT)
               .andNot(F_SS_EQUIPMENT);
         misc.bv = 25;
+        misc.setModes("On", "Off");
+        misc.setInstantModeSwitch(false);
         misc.rulesRefs = "90, TO:AUE";
         // Tech Progression tweaked to combine IntOps with TRO Prototypes/3145 NTNU RS
         misc.techAdvancement.setTechBase(TechBase.IS)
@@ -5478,6 +5484,8 @@ public class MiscType extends EquipmentType {
               .andNot(F_JS_EQUIPMENT)
               .andNot(F_SS_EQUIPMENT);
         misc.bv = 25;
+        misc.setModes("On", "Off");
+        misc.setInstantModeSwitch(false);
         // Since its Tactical Handbook Using TO Values
         misc.rulesRefs = "Unofficial";
         misc.techAdvancement.setTechBase(TechBase.IS)
@@ -5515,6 +5523,8 @@ public class MiscType extends EquipmentType {
               F_DS_EQUIPMENT,
               F_HEAVY_EQUIPMENT);
         misc.bv = 12;
+        misc.setModes("On", "Off");
+        misc.setInstantModeSwitch(false);
         misc.rulesRefs = "204, TM";
         misc.techAdvancement.setTechBase(TechBase.CLAN)
               .setIntroLevel(false)
@@ -5554,6 +5564,8 @@ public class MiscType extends EquipmentType {
               F_DS_EQUIPMENT,
               F_HEAVY_EQUIPMENT);
         misc.bv = 7;
+        misc.setModes("On", "Off");
+        misc.setInstantModeSwitch(false);
         misc.rulesRefs = "204, TM";
         misc.techAdvancement.setTechBase(TechBase.CLAN)
               .setIntroLevel(false)
@@ -10251,6 +10263,8 @@ public class MiscType extends EquipmentType {
               .andNot(F_TANK_EQUIPMENT)
               .andNot(F_FIGHTER_EQUIPMENT);
         misc.bv = 0;
+        misc.setModes("On", "Off");
+        misc.setInstantModeSwitch(false);
         misc.rulesRefs = "252, TM";
         misc.techAdvancement.setTechBase(TechBase.IS)
               .setIntroLevel(false)
@@ -10278,6 +10292,8 @@ public class MiscType extends EquipmentType {
               .andNot(F_TANK_EQUIPMENT)
               .andNot(F_FIGHTER_EQUIPMENT);
         misc.bv = 0;
+        misc.setModes("On", "Off");
+        misc.setInstantModeSwitch(false);
         misc.rulesRefs = "348, TM";
         misc.techAdvancement.setTechBase(TechBase.CLAN)
               .setIntroLevel(false)

@@ -6453,7 +6453,7 @@ public abstract class Entity extends TurnOrdered
         if (!isShutDown()) {
             for (MiscMounted m : getMisc()) {
                 MiscType type = m.getType();
-                if (type.hasFlag(MiscType.F_ECM) && !m.isInoperable()) {
+                if (type.hasFlag(MiscType.F_ECM) && !m.isInoperable() && !m.isModeTurnedOff()) {
                     if (type.hasFlag(MiscType.F_SINGLE_HEX_ECM)) {
                         return 0;
                     }
@@ -13832,6 +13832,10 @@ public abstract class Entity extends TurnOrdered
                         modes.add("Ghost Targets");
                     }
                 }
+
+                // ECM suites can be deactivated (activation/deactivation rules); the switch is
+                // registered as an end-turn mode on the type, so it takes effect in the End Phase
+                modes.add("Off");
 
                 misc.getType().setModes(modes.toArray(stringArray));
             }

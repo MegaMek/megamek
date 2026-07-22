@@ -27223,6 +27223,14 @@ public class TWGameManager extends AbstractGameManager {
             return;
         }
 
+        if (isEcmDeactivationBlockedByStealth(e, m, mode)) {
+            String message = e.getShortName() + ": " + m.getName()
+                  + " cannot be deactivated while the stealth armor system is engaged";
+            LOGGER.debug("[EquipOff] {}: rejected mode change - linked stealth armor is On", e.getShortName());
+            sendServerChat(connIndex, message);
+            return;
+        }
+
         try {
             if ((m.getType() instanceof MiscType miscType) && miscType.isBoobyTrap() && mode != 0 && e.hasBoobyTrap()) {
                 sendServerChat("There is no turning back now...");
@@ -27276,6 +27284,28 @@ public class TWGameManager extends AbstractGameManager {
         } catch (Exception ex) {
             LOGGER.error("", ex);
         }
+    }
+
+    /**
+     * Checks whether a requested equipment mode change must be rejected because it would deactivate an ECM suite
+     * while the unit's stealth armor system is engaged. Stealth armor requires an operating ECM, so the player has
+     * to switch the stealth armor off first.
+     *
+     * @param entity  the entity whose equipment is being switched
+     * @param mounted the equipment being switched
+     * @param newMode the requested mode index
+     *
+     * @return {@code true} if the mode change would switch an ECM suite to "Off" while stealth armor is on
+     */
+    private static boolean isEcmDeactivationBlockedByStealth(Entity entity, Mounted<?> mounted, int newMode) {
+        if (!(mounted.getType() instanceof MiscType miscType) || !miscType.hasFlag(MiscType.F_ECM)) {
+            return false;
+        }
+        if ((newMode < 0) || (newMode >= miscType.getModesCount())) {
+            return false;
+        }
+        boolean isSwitchingOff = miscType.getMode(newMode).getName().equals("Off");
+        return isSwitchingOff && entity.isStealthOn();
     }
 
     /**

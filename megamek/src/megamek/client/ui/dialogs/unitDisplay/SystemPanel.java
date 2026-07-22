@@ -893,16 +893,9 @@ class SystemPanel extends PicMap
                           && mounted.isModeSwitchable()) {
                         m_chMode.setEnabled(true);
                     }
-                    // if the max tech eccm option is not set then the ECM
-                    // should not show anything.
-                    // Exception: Nova CEWS has built-in "ECM"/"Off" modes and should always be switchable
-                    if ((mounted.getType() instanceof MiscType) && mounted.getType().hasFlag(MiscType.F_ECM)
-                          && !mounted.getType().hasFlag(MiscType.F_NOVA)
-                          && !(client.getGame().getOptions().booleanOption(OptionsConstants.ADVANCED_TAC_OPS_ECCM)
-                          || client.getGame().getOptions()
-                          .booleanOption(OptionsConstants.ADVANCED_TAC_OPS_GHOST_TARGET))) {
-                        return;
-                    }
+                    // Every ECM suite now carries at least the "ECM"/"Off" pair (activation/deactivation
+                    // rules), so the mode switcher is always offered - the ECCM and Ghost Target game
+                    // options merely add further modes.
                     for (Enumeration<EquipmentMode> modeEnumeration = mounted.getType()
                           .getModes(); modeEnumeration.hasMoreElements(); ) {
                         EquipmentMode equipmentMode = modeEnumeration.nextElement();

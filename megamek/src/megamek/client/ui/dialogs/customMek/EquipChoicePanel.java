@@ -1174,6 +1174,7 @@ public class EquipChoicePanel extends JPanel {
                         modes.add("Ghost Targets");
                     }
                 }
+                modes.add("Off");
             } else if (hasGhostTargetOption
                   && type.hasFlag(MiscType.F_COMMUNICATIONS)
                   && (entity.getTotalCommGearTons() >= 7)) {

@@ -17,7 +17,7 @@
 	<b>Manufacturer: </b> <#if manufacturerDesc??>${manufacturerDesc}<#else>Unknown</#if><br/>
 	<b>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Primary Factory: </b> <#if factoryDesc??>${factoryDesc}<#else>Unknown</#if><br/>
         </#if>
-	</p>ƒ
+	</p>
 </#if>
 
 	<p>

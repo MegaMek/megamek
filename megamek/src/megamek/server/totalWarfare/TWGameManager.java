@@ -226,7 +226,8 @@ public class TWGameManager extends AbstractGameManager {
     /**
      * Special packet queue for client feedback requests.
      */
-    private final ConcurrentLinkedQueue<Server.ReceivedPacket> cfrPacketQueue = new ConcurrentLinkedQueue<>();
+    /** Package-private for test access; see TWGameManagerCFRPacketQueueTest. */
+    final ConcurrentLinkedQueue<Server.ReceivedPacket> cfrPacketQueue = new ConcurrentLinkedQueue<>();
 
     public TWGameManager() {
         EquipmentType.initializeTypes();
@@ -6444,17 +6445,27 @@ public class TWGameManager extends AbstractGameManager {
     /**
      * Waits on the CFR packet queue until a packet matching the given filter arrives and removes and returns it.
      * Packets meant for other handlers are left in the queue untouched and in their original order. Only waits when no
-     * matching packet is present, so a leftover packet for another handler cannot cause a busy spin.
+     * matching packet is present, so a leftover packet for another handler cannot cause a busy spin. Malformed packets
+     * (those without a recognizable CFR type) can never match any handler and are discarded with a warning.
      *
      * @param isExpectedResponse filters for the packet this handler is waiting for
      *
      * @return the first matching packet, or null if interrupted while waiting
      */
-    private @Nullable Server.ReceivedPacket pollCFRPacket(Predicate<Server.ReceivedPacket> isExpectedResponse) {
+    @Nullable
+    Server.ReceivedPacket pollCFRPacket(Predicate<Server.ReceivedPacket> isExpectedResponse) {
         synchronized (cfrPacketQueue) {
             while (true) {
                 for (Iterator<Server.ReceivedPacket> iterator = cfrPacketQueue.iterator(); iterator.hasNext(); ) {
                     Server.ReceivedPacket rp = iterator.next();
+                    if (rp.getPacket().getPacketCommand(0) == null) {
+                        // All CFR responses carry their CFR type as the first data element, so no handler can ever
+                        // consume this packet; keep the sender visible in the log rather than accumulating silently
+                        LOGGER.warn("Discarding CFR packet without a recognizable CFR type from connection {}",
+                              rp.getConnectionId());
+                        iterator.remove();
+                        continue;
+                    }
                     if (isExpectedResponse.test(rp)) {
                         iterator.remove();
                         return rp;
@@ -6464,6 +6475,7 @@ public class TWGameManager extends AbstractGameManager {
                 try {
                     cfrPacketQueue.wait();
                 } catch (InterruptedException e) {
+                    Thread.currentThread().interrupt();
                     return null;
                 }
             }
@@ -6481,7 +6493,7 @@ public class TWGameManager extends AbstractGameManager {
         sendPointBlankShotCFR(hidden, target);
         Predicate<Server.ReceivedPacket> isExpectedResponse = rp -> {
             final PacketCommand cfrType = rp.getPacket().getPacketCommand(0);
-            return ((cfrType == null) || cfrType.isCFRHiddenPBS())
+            return (cfrType != null) && cfrType.isCFRHiddenPBS()
                   && (rp.getConnectionId() == hidden.getOwnerId());
         };
 
@@ -6581,7 +6593,7 @@ public class TWGameManager extends AbstractGameManager {
         sendTeleguidedMissileCFR(playerId, targetIds, toHitValues);
         Server.ReceivedPacket rp = pollCFRPacket(p -> {
             final PacketCommand cfrType = p.getPacket().getPacketCommand(0);
-            return ((cfrType == null) || cfrType.isCFRTeleguidedTarget()) && (p.getConnectionId() == playerId);
+            return (cfrType != null) && cfrType.isCFRTeleguidedTarget() && (p.getConnectionId() == playerId);
         });
         if (rp == null) {
             LOGGER.debug("processTeleguidedMissileCFR: interrupted while waiting for response");
@@ -6598,7 +6610,7 @@ public class TWGameManager extends AbstractGameManager {
         sendTAGTargetCFR(playerId, targetIds, targetTypes);
         Server.ReceivedPacket rp = pollCFRPacket(p -> {
             final PacketCommand cfrType = p.getPacket().getPacketCommand(0);
-            return ((cfrType == null) || cfrType.isCFRTagTarget()) && (p.getConnectionId() == playerId);
+            return (cfrType != null) && cfrType.isCFRTagTarget() && (p.getConnectionId() == playerId);
         });
         if (rp == null) {
             LOGGER.debug("processTAGTargetCFR: interrupted while waiting for response");

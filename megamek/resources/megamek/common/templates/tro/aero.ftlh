@@ -56,7 +56,7 @@
 <#if isOmni && fixedTonnage gt 0>
     <br/>
     <table>
-        <tr><th align="left">Fixed Equipment</th><th>Location</th><th>Tonnage</th>
+        <tr><th align="left">Fixed Equipment</th><th>Location</th><th>Tonnage</th></tr>
         <#list fixedEquipment as row>
             <#if row.equipment != "None">
         <tr><td>${row.equipment}</td><td align="center">${row.location}</td><td align="center">${row.tonnage}</td></tr>

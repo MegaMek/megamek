@@ -45,8 +45,10 @@ import megamek.common.Report;
 import megamek.common.battleArmor.BattleArmor;
 import megamek.common.board.Coords;
 import megamek.common.compute.Compute;
+import megamek.common.equipment.EquipmentActivation;
 import megamek.common.equipment.Minefield;
 import megamek.common.equipment.MiscType;
+import megamek.common.equipment.Mounted;
 import megamek.common.game.Game;
 import megamek.common.options.OptionsConstants;
 import megamek.common.rolls.Roll;
@@ -57,6 +59,7 @@ import megamek.common.units.Infantry;
 import megamek.common.units.Mek;
 import megamek.common.units.Terrain;
 import megamek.common.units.Terrains;
+import megamek.logging.MMLogger;
 import megamek.server.totalWarfare.TWGameManager;
 
 /**
@@ -66,6 +69,15 @@ import megamek.server.totalWarfare.TWGameManager;
  * @author NickAragua
  */
 public class ServerHelper {
+
+    /**
+     * Dedicated logger name for hidden-unit probe detection diagnostics ([HiddenUnits] tag). A feature logger
+     * rather than a host-class logger so it can be enabled in log4j2.xml without the host classes' debug noise.
+     */
+    public static final String HIDDEN_UNITS_DIAGNOSTIC_LOGGER = "megamek.feature.HiddenUnits";
+
+    private static final MMLogger LOGGER = MMLogger.create(HIDDEN_UNITS_DIAGNOSTIC_LOGGER);
+
     private ServerHelper() {
     }
 
@@ -313,6 +325,13 @@ public class ServerHelper {
 
         // if no probe, save ourselves a few loops
         if (probeRange < 0) {
+            detector.getMisc().stream()
+                  .filter(mounted -> mounted.getType().hasFlag(MiscType.F_BAP))
+                  .forEach(mounted -> LOGGER.debug(
+                        "[HiddenUnits] {}: probe {} not functioning (mode '{}', pending '{}', shutdown {}) "
+                              + "- no hidden unit detection",
+                        detector.getShortName(), mounted.getName(), mounted.curMode().getName(),
+                        mounted.pendingMode().getName(), detector.isShutDown()));
             return false;
         }
 
@@ -337,6 +356,9 @@ public class ServerHelper {
         if (hiddenUnits.isEmpty()) {
             return false;
         }
+
+        LOGGER.debug("[HiddenUnits] {} probing from {} (range {}): {} hidden enemy unit(s) in range",
+              detector.getShortName(), detectorCoords, probeRange, hiddenUnits.size());
 
         Set<Integer> reportPlayers = new HashSet<>();
 
@@ -374,6 +396,10 @@ public class ServerHelper {
 
             LosEffects los = LosEffects.calculateLOS(game, detector, detected, detectorCoords, detected.getPosition(),
                   false);
+            if (!los.canSee() && beyondPointBlankRange) {
+                LOGGER.debug("[HiddenUnits] {}: hidden unit at {} in probe range but no line of sight - not revealed",
+                      detector.getShortName(), detected.getPosition());
+            }
             if (los.canSee() || !beyondPointBlankRange) {
                 detected.setHidden(false);
                 gameManager.entityUpdate(detected.getId());
@@ -396,6 +422,54 @@ public class ServerHelper {
         }
 
         return hiddenUnitFound;
+    }
+
+    /**
+     * Checks whether a requested equipment mode change must be rejected because it would deactivate an ECM suite
+     * while the unit's stealth armor system is engaged - or queued to engage this round. Stealth armor requires an
+     * operating ECM, so the player has to switch the stealth armor off first; checking the pending stealth mode
+     * closes the loophole of queueing "stealth On" and "ECM Off" in the same round.
+     *
+     * @param entity  the entity whose equipment is being switched
+     * @param mounted the equipment being switched
+     * @param newMode the requested mode index
+     *
+     * @return {@code true} if the mode change would switch an ECM suite to {@code "Off"} while stealth armor is on
+     *       or switching on
+     */
+    public static boolean isEcmDeactivationBlockedByStealth(Entity entity, Mounted<?> mounted, int newMode) {
+        if (!(mounted.getType() instanceof MiscType miscType) || !miscType.hasFlag(MiscType.F_ECM)) {
+            return false;
+        }
+        if ((newMode < 0) || (newMode >= miscType.getModesCount())) {
+            return false;
+        }
+        boolean isSwitchingOff = miscType.getMode(newMode).getName().equals("Off");
+        return isSwitchingOff && EquipmentActivation.isStealthOnOrActivating(entity);
+    }
+
+    /**
+     * Checks whether a requested equipment mode change must be rejected because it would engage the stealth armor
+     * system while no ECM suite will be operating next round (all deactivated or switching to {@code "Off"}). This
+     * is the mirror of {@link #isEcmDeactivationBlockedByStealth(Entity, Mounted, int)} and closes the other
+     * ordering of the same-round loophole: first queueing "ECM Off", then "stealth On".
+     *
+     * @param entity  the entity whose equipment is being switched
+     * @param mounted the equipment being switched
+     * @param newMode the requested mode index
+     *
+     * @return {@code true} if the mode change would switch stealth armor to {@code "On"} while no ECM suite will
+     *       be operating next round
+     */
+    public static boolean isStealthActivationBlockedByEcmShutdown(Entity entity, Mounted<?> mounted, int newMode) {
+        if (!(mounted.getType() instanceof MiscType miscType) || !miscType.hasFlag(MiscType.F_STEALTH)) {
+            return false;
+        }
+        if ((newMode < 0) || (newMode >= miscType.getModesCount())) {
+            return false;
+        }
+        boolean isSwitchingOn = miscType.getMode(newMode).getName().equals("On");
+        return isSwitchingOn && !EquipmentActivation.hasEcmAvailableForStealth(entity);
     }
 
     /**

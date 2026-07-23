@@ -55,6 +55,7 @@ import megamek.common.util.YamlEncDec;
 import megamek.common.weapons.autoCannons.HVACWeapon;
 import megamek.common.weapons.defensivePods.BPodWeapon;
 import megamek.common.weapons.defensivePods.MPodWeapon;
+import megamek.common.weapons.lasers.ImprovedHeavyLaserWeapon;
 import megamek.common.weapons.ppc.PPCWeapon;
 import megamek.logging.MMLogger;
 
@@ -463,6 +464,11 @@ public class EquipmentType implements ITechnology {
         // switched on
         if ((mounted.getType() instanceof MiscType) &&
               (mounted.getType().hasFlag(MiscType.F_BLUE_SHIELD) && mounted.curMode().equals("Off"))) {
+            return false;
+        }
+
+        // special case. A deactivated Improved Heavy Laser is not explosive (activation/deactivation rules)
+        if ((mounted.getType() instanceof ImprovedHeavyLaserWeapon) && mounted.curMode().equals("Off")) {
             return false;
         }
 

@@ -1135,9 +1135,10 @@ public class EquipChoicePanel extends JPanel {
     }
 
     /**
-     * Sets up mode dropdowns for ECM equipment. Covers plain ECM/ECCM mode selection as well as Ghost Targets modes
-     * (TO:AR p.100) when that game option is enabled. Also includes Communications Equipment (7+ tons) and Cockpit
-     * Command Console when they can be set to Ghost Targets mode.
+     * Sets up mode dropdowns for electronic warfare equipment. Covers plain ECM/ECCM mode selection as well as Ghost
+     * Targets modes (TO:AR p.100) when that game option is enabled, active probes and Nova CEWS with their
+     * activation/deactivation ("Off") modes, Communications Equipment (7+ tons) and Cockpit Command Console when they
+     * can be set to Ghost Targets mode.
      */
     private void setupEcmModes(Game game, GBC2 gbc) {
         boolean hasEccmOption = game.getOptions().booleanOption(OptionsConstants.ADVANCED_TAC_OPS_ECCM);
@@ -1173,6 +1174,10 @@ public class EquipChoicePanel extends JPanel {
                         modes.add("Ghost Targets");
                     }
                 }
+                // An ECM suite cannot start deactivated while the stealth armor system is engaged or engaging
+                if (!EquipmentActivation.isStealthOnOrActivating(entity)) {
+                    modes.add("Off");
+                }
             } else if (hasGhostTargetOption
                   && type.hasFlag(MiscType.F_COMMUNICATIONS)
                   && (entity.getTotalCommGearTons() >= 7)) {
@@ -1184,6 +1189,14 @@ public class EquipChoicePanel extends JPanel {
             } else if (hasGhostTargetOption && type.hasFlag(MiscType.F_COMMAND_CONSOLE)) {
                 modes.add("Default");
                 modes.add("Ghost Targets");
+            } else if ((type.hasFlag(MiscType.F_BAP) || type.hasFlag(MiscTypeFlag.ANY_C3))
+                  && (type.getModesCount() > 1)) {
+                // Active probes, Nova CEWS (which carries F_BAP but is excluded from the ECM branch above) and C3
+                // computers can be activated/deactivated at game start; offer the modes defined on the equipment
+                // type itself
+                for (int modeIndex = 0; modeIndex < type.getModesCount(); modeIndex++) {
+                    modes.add(type.getMode(modeIndex).getName());
+                }
             }
 
             if (modes.size() > 1) {

@@ -4208,6 +4208,8 @@ public class MiscType extends EquipmentType {
                     F_TANK_EQUIPMENT, F_SUPPORT_TANK_EQUIPMENT, F_HEAVY_EQUIPMENT)
               .andNot(F_FIGHTER_EQUIPMENT);
         misc.bv = 0;
+        misc.setModes("On", "Off");
+        misc.setInstantModeSwitch(false);
         misc.rulesRefs = "209, TM";
         misc.techAdvancement.setTechBase(TechBase.IS)
               .setIntroLevel(false)
@@ -4241,6 +4243,8 @@ public class MiscType extends EquipmentType {
                     F_SUPPORT_TANK_EQUIPMENT, F_HEAVY_EQUIPMENT)
               .andNot(F_FIGHTER_EQUIPMENT);
         misc.bv = 0;
+        misc.setModes("On", "Off");
+        misc.setInstantModeSwitch(false);
         misc.techAdvancement.setTechBase(TechBase.IS)
               .setIntroLevel(false)
               .setUnofficial(false)
@@ -4272,6 +4276,8 @@ public class MiscType extends EquipmentType {
                     F_HEAVY_EQUIPMENT)
               .andNot(F_FIGHTER_EQUIPMENT);
         misc.bv = 0;
+        misc.setModes("On", "Off");
+        misc.setInstantModeSwitch(false);
         misc.rulesRefs = "110, TO:AUE";
         // Tech Progression tweaked to combine IntOps with TRO Prototypes/3145 NTNU RS
         misc.techAdvancement.setTechBase(TechBase.IS)
@@ -4346,6 +4352,8 @@ public class MiscType extends EquipmentType {
               .andNot(F_TANK_EQUIPMENT)
               .andNot(F_FIGHTER_EQUIPMENT);
         misc.bv = 0;
+        misc.setModes("On", "Off");
+        misc.setInstantModeSwitch(false);
         misc.rulesRefs = "109, TO:AUE";
         // Tech Progression tweaked to combine IntOps with TRO Prototypes/3145 NTNU RS
         misc.techAdvancement.setTechBase(TechBase.IS)
@@ -4379,6 +4387,8 @@ public class MiscType extends EquipmentType {
               .andNot(F_TANK_EQUIPMENT)
               .andNot(F_FIGHTER_EQUIPMENT);
         misc.bv = 0;
+        misc.setModes("On", "Off");
+        misc.setInstantModeSwitch(false);
         misc.rulesRefs = "109, TO:AUE";
         // Tech Progression tweaked to combine IntOps with TRO Prototypes/3145 NTNU RS
         misc.techAdvancement.setTechBase(TechBase.IS)
@@ -5364,6 +5374,8 @@ public class MiscType extends EquipmentType {
               .andNot(F_JS_EQUIPMENT)
               .andNot(F_SS_EQUIPMENT);
         misc.bv = 10;
+        misc.setModes("On", "Off");
+        misc.setInstantModeSwitch(false);
         misc.rulesRefs = "204, TM";
         misc.techAdvancement.setTechBase(TechBase.IS)
               .setIntroLevel(false)
@@ -5401,6 +5413,8 @@ public class MiscType extends EquipmentType {
               .andNot(F_JS_EQUIPMENT)
               .andNot(F_SS_EQUIPMENT);
         misc.bv = 10;
+        misc.setModes("On", "Off");
+        misc.setInstantModeSwitch(false);
         misc.rulesRefs = "65, IO:AE";
         misc.techAdvancement.setTechBase(TechBase.IS)
               .setIntroLevel(false)
@@ -5439,6 +5453,8 @@ public class MiscType extends EquipmentType {
               .andNot(F_JS_EQUIPMENT)
               .andNot(F_SS_EQUIPMENT);
         misc.bv = 25;
+        misc.setModes("On", "Off");
+        misc.setInstantModeSwitch(false);
         misc.rulesRefs = "90, TO:AUE";
         // Tech Progression tweaked to combine IntOps with TRO Prototypes/3145 NTNU RS
         misc.techAdvancement.setTechBase(TechBase.IS)
@@ -5478,6 +5494,8 @@ public class MiscType extends EquipmentType {
               .andNot(F_JS_EQUIPMENT)
               .andNot(F_SS_EQUIPMENT);
         misc.bv = 25;
+        misc.setModes("On", "Off");
+        misc.setInstantModeSwitch(false);
         // Since its Tactical Handbook Using TO Values
         misc.rulesRefs = "Unofficial";
         misc.techAdvancement.setTechBase(TechBase.IS)
@@ -5515,6 +5533,8 @@ public class MiscType extends EquipmentType {
               F_DS_EQUIPMENT,
               F_HEAVY_EQUIPMENT);
         misc.bv = 12;
+        misc.setModes("On", "Off");
+        misc.setInstantModeSwitch(false);
         misc.rulesRefs = "204, TM";
         misc.techAdvancement.setTechBase(TechBase.CLAN)
               .setIntroLevel(false)
@@ -5554,6 +5574,8 @@ public class MiscType extends EquipmentType {
               F_DS_EQUIPMENT,
               F_HEAVY_EQUIPMENT);
         misc.bv = 7;
+        misc.setModes("On", "Off");
+        misc.setInstantModeSwitch(false);
         misc.rulesRefs = "204, TM";
         misc.techAdvancement.setTechBase(TechBase.CLAN)
               .setIntroLevel(false)
@@ -5590,7 +5612,10 @@ public class MiscType extends EquipmentType {
               .andNot(F_JS_EQUIPMENT)
               .andNot(F_SS_EQUIPMENT);
         misc.bv = 61;
-        misc.setModes("ECM");
+        misc.setModes("ECM", "Off");
+        // Deactivation is declared at any time but takes effect in the End Phase; other mode
+        // switches (ECM/ECCM/Ghost Targets) remain instant
+        misc.addEndTurnMode("Off");
         misc.setInstantModeSwitch(false);
         misc.rulesRefs = "213, TM";
         misc.techAdvancement.setTechBase(TechBase.IS)
@@ -5629,7 +5654,10 @@ public class MiscType extends EquipmentType {
               .andNot(F_JS_EQUIPMENT)
               .andNot(F_SS_EQUIPMENT);
         misc.bv = 61;
-        misc.setModes("ECM");
+        misc.setModes("ECM", "Off");
+        // Deactivation is declared at any time but takes effect in the End Phase; other mode
+        // switches (ECM/ECCM/Ghost Targets) remain instant
+        misc.addEndTurnMode("Off");
         misc.setInstantModeSwitch(false);
         misc.rulesRefs = "66, IO:AE";
         misc.techAdvancement.setTechBase(TechBase.IS)
@@ -5666,7 +5694,10 @@ public class MiscType extends EquipmentType {
               .andNot(F_JS_EQUIPMENT)
               .andNot(F_SS_EQUIPMENT);
         misc.bv = 61;
-        misc.setModes("ECM");
+        misc.setModes("ECM", "Off");
+        // Deactivation is declared at any time but takes effect in the End Phase; other mode
+        // switches (ECM/ECCM/Ghost Targets) remain instant
+        misc.addEndTurnMode("Off");
         misc.setInstantModeSwitch(false);
         misc.rulesRefs = "213, TM";
         misc.techAdvancement.setTechBase(TechBase.CLAN)
@@ -5710,7 +5741,10 @@ public class MiscType extends EquipmentType {
               .andNot(F_JS_EQUIPMENT)
               .andNot(F_SS_EQUIPMENT);
         misc.bv = 100;
-        misc.setModes("ECM");
+        misc.setModes("ECM", "Off");
+        // Deactivation is declared at any time but takes effect in the End Phase; other mode
+        // switches (ECM/ECCM/Ghost Targets) remain instant
+        misc.addEndTurnMode("Off");
         misc.setInstantModeSwitch(false);
         misc.rulesRefs = "91, TO:AUE";
         // Tech Progression tweaked to combine IntOps with TRO Prototypes/3145 NTNU RS
@@ -5753,7 +5787,10 @@ public class MiscType extends EquipmentType {
               .andNot(F_JS_EQUIPMENT)
               .andNot(F_SS_EQUIPMENT);
         misc.bv = 100;
-        misc.setModes("ECM");
+        misc.setModes("ECM", "Off");
+        // Deactivation is declared at any time but takes effect in the End Phase; other mode
+        // switches (ECM/ECCM/Ghost Targets) remain instant
+        misc.addEndTurnMode("Off");
         misc.setInstantModeSwitch(false);
         misc.rulesRefs = "Unofficial";
         misc.techAdvancement.setTechBase(TechBase.ALL)
@@ -5831,7 +5868,10 @@ public class MiscType extends EquipmentType {
               .andNot(F_JS_EQUIPMENT)
               .andNot(F_SS_EQUIPMENT);
         misc.bv = 68;
-        misc.setModes("ECM");
+        misc.setModes("ECM", "Off");
+        // Deactivation is declared at any time but takes effect in the End Phase; other mode
+        // switches (ECM/ECCM/Ghost Targets) remain instant
+        misc.addEndTurnMode("Off");
         misc.setInstantModeSwitch(false);
         misc.rulesRefs = "90, TO:AUE";
         // Tech Progression tweaked to combine IntOps with TRO Prototypes/3145 NTNU RS
@@ -6543,6 +6583,8 @@ public class MiscType extends EquipmentType {
         misc.tankSlots = 0;
         misc.flags = misc.flags.or(F_HEAT_SINK);
         misc.bv = 0;
+        misc.setModes("On", "Off");
+        misc.setInstantModeSwitch(false);
         misc.rulesRefs = "221, TM";
         misc.techAdvancement.setTechBase(TechBase.ALL)
               .setISAdvancement(DATE_ES, DATE_ES, DATE_ES, DATE_NONE, DATE_NONE)
@@ -6570,6 +6612,8 @@ public class MiscType extends EquipmentType {
         misc.flags = misc.flags.or(F_HEAT_SINK, F_COMPACT_HEAT_SINK);
         misc.bv = 0;
         misc.cost = 3000;
+        misc.setModes("On", "Off");
+        misc.setInstantModeSwitch(false);
         misc.rulesRefs = "128, TO:AUE";
         // Tech Progression tweaked to combine IntOps with TRO Prototypes/3145 NTNU RS
         misc.techAdvancement.setTechBase(TechBase.IS)
@@ -6594,6 +6638,8 @@ public class MiscType extends EquipmentType {
         misc.cost = 6000;
         misc.flags = misc.flags.or(F_DOUBLE_HEAT_SINK, F_COMPACT_HEAT_SINK);
         misc.bv = 0;
+        misc.setModes("On", "Off");
+        misc.setInstantModeSwitch(false);
         misc.rulesRefs = "128, TO:AUE";
         // Tech Progression tweaked to combine IntOps with TRO Prototypes/3145 NTNU RS
         misc.techAdvancement.setTechBase(TechBase.IS)
@@ -6619,6 +6665,8 @@ public class MiscType extends EquipmentType {
         misc.cost = 18000; // Using Cost
         misc.flags = misc.flags.or(F_IS_DOUBLE_HEAT_SINK_PROTOTYPE);
         misc.bv = 0;
+        misc.setModes("On", "Off");
+        misc.setInstantModeSwitch(false);
         misc.rulesRefs = "65, IO:AE";
         misc.techAdvancement.setTechBase(TechBase.IS)
               .setISAdvancement(2559, DATE_NONE, DATE_NONE, 2567, DATE_NONE)
@@ -6641,6 +6689,8 @@ public class MiscType extends EquipmentType {
         misc.cost = 30000; // Using Cost
         misc.flags = misc.flags.or(F_IS_DOUBLE_HEAT_SINK_PROTOTYPE);
         misc.bv = 0;
+        misc.setModes("On", "Off");
+        misc.setInstantModeSwitch(false);
         misc.rulesRefs = "96, IO:AE";
         misc.techAdvancement.setTechBase(TechBase.IS)
               .setISAdvancement(3022, DATE_NONE, DATE_NONE, 3040, DATE_NONE)
@@ -6663,6 +6713,8 @@ public class MiscType extends EquipmentType {
         misc.criticalSlots = 3;
         misc.flags = misc.flags.or(F_DOUBLE_HEAT_SINK);
         misc.bv = 0;
+        misc.setModes("On", "Off");
+        misc.setInstantModeSwitch(false);
         misc.rulesRefs = "221, TM";
         misc.techAdvancement.setTechBase(TechBase.IS)
               .setTechRating(TechRating.E)
@@ -6685,6 +6737,8 @@ public class MiscType extends EquipmentType {
         misc.criticalSlots = 2;
         misc.flags = misc.flags.or(F_DOUBLE_HEAT_SINK);
         misc.bv = 0;
+        misc.setModes("On", "Off");
+        misc.setInstantModeSwitch(false);
         misc.rulesRefs = "221, TM";
         misc.techAdvancement.setTechBase(TechBase.CLAN)
               .setClanAdvancement(2825, 2827, 2829, DATE_NONE, DATE_NONE)
@@ -6707,6 +6761,8 @@ public class MiscType extends EquipmentType {
         misc.criticalSlots = 2;
         misc.flags = misc.flags.or(F_DOUBLE_HEAT_SINK, F_LASER_HEAT_SINK, F_MEK_EQUIPMENT);
         misc.bv = 0;
+        misc.setModes("On", "Off");
+        misc.setInstantModeSwitch(false);
         misc.rulesRefs = "129, TO:AUE";
         misc.techAdvancement.setTechBase(TechBase.CLAN)
               .setClanAdvancement(3040, 3051, 3060, DATE_NONE, DATE_NONE)
@@ -7594,6 +7650,8 @@ public class MiscType extends EquipmentType {
               F_WS_EQUIPMENT,
               F_SS_EQUIPMENT);
         misc.bv = 0;
+        misc.setModes("On", "Off");
+        misc.setInstantModeSwitch(false);
         misc.rulesRefs = "144, TO:AUE";
         misc.techAdvancement.setTechBase(TechBase.IS)
               .setTechRating(TechRating.F)
@@ -10248,6 +10306,8 @@ public class MiscType extends EquipmentType {
               .andNot(F_TANK_EQUIPMENT)
               .andNot(F_FIGHTER_EQUIPMENT);
         misc.bv = 0;
+        misc.setModes("On", "Off");
+        misc.setInstantModeSwitch(false);
         misc.rulesRefs = "252, TM";
         misc.techAdvancement.setTechBase(TechBase.IS)
               .setIntroLevel(false)
@@ -10275,6 +10335,8 @@ public class MiscType extends EquipmentType {
               .andNot(F_TANK_EQUIPMENT)
               .andNot(F_FIGHTER_EQUIPMENT);
         misc.bv = 0;
+        misc.setModes("On", "Off");
+        misc.setInstantModeSwitch(false);
         misc.rulesRefs = "348, TM";
         misc.techAdvancement.setTechBase(TechBase.CLAN)
               .setIntroLevel(false)
@@ -10302,7 +10364,10 @@ public class MiscType extends EquipmentType {
         misc.cost = 750000;
         misc.flags = misc.flags.or(F_ECM, F_ANGEL_ECM, F_BA_EQUIPMENT);
         misc.bv = 100;
-        misc.setModes("ECM");
+        misc.setModes("ECM", "Off");
+        // Deactivation is declared at any time but takes effect in the End Phase; other mode
+        // switches (ECM/ECCM/Ghost Targets) remain instant
+        misc.addEndTurnMode("Off");
         misc.setInstantModeSwitch(false);
         misc.rulesRefs = "91, TO:AUE";
         // Tech Progression tweaked to combine IntOps with TRO Prototypes/3145 NTNU RS
@@ -10334,7 +10399,10 @@ public class MiscType extends EquipmentType {
         misc.cost = 750000;
         misc.flags = misc.flags.or(F_ECM, F_ANGEL_ECM, F_BA_EQUIPMENT);
         misc.bv = 100;
-        misc.setModes("ECM");
+        misc.setModes("ECM", "Off");
+        // Deactivation is declared at any time but takes effect in the End Phase; other mode
+        // switches (ECM/ECCM/Ghost Targets) remain instant
+        misc.addEndTurnMode("Off");
         misc.setInstantModeSwitch(false);
         misc.rulesRefs = "91, TO:AUE";
         // Tech Progression tweaked to combine IntOps with TRO Prototypes/3145 NTNU RS
@@ -10421,7 +10489,10 @@ public class MiscType extends EquipmentType {
               .andNot(F_TANK_EQUIPMENT)
               .andNot(F_FIGHTER_EQUIPMENT);
         misc.bv = 0;
-        misc.setModes("ECM");
+        misc.setModes("ECM", "Off");
+        // Deactivation is declared at any time but takes effect in the End Phase; other mode
+        // switches (ECM/ECCM/Ghost Targets) remain instant
+        misc.addEndTurnMode("Off");
         misc.setInstantModeSwitch(false);
         misc.rulesRefs = "254, TM";
         misc.techAdvancement.setTechBase(TechBase.IS)
@@ -10453,7 +10524,10 @@ public class MiscType extends EquipmentType {
               .andNot(F_TANK_EQUIPMENT)
               .andNot(F_FIGHTER_EQUIPMENT);
         misc.bv = 0;
-        misc.setModes("ECM");
+        misc.setModes("ECM", "Off");
+        // Deactivation is declared at any time but takes effect in the End Phase; other mode
+        // switches (ECM/ECCM/Ghost Targets) remain instant
+        misc.addEndTurnMode("Off");
         misc.setInstantModeSwitch(false);
         misc.rulesRefs = "254, TM";
         misc.techAdvancement.setTechBase(TechBase.CLAN)

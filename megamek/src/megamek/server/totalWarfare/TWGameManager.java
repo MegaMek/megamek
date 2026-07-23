@@ -148,6 +148,12 @@ import megamek.server.victory.VictoryResult;
  */
 public class TWGameManager extends AbstractGameManager {
     private static final MMLogger LOGGER = MMLogger.create(TWGameManager.class);
+
+    /** Hidden-unit probe detection diagnostics ([HiddenUnits] tag; shared feature logger, see ServerHelper). */
+    private static final MMLogger HIDDEN_UNITS_LOGGER = MMLogger.create(ServerHelper.HIDDEN_UNITS_DIAGNOSTIC_LOGGER);
+
+    /** Equipment activation/deactivation diagnostics ([EquipOff] tag; shared feature logger, see Mounted). */
+    private static final MMLogger EQUIP_OFF_LOGGER = MMLogger.create(Mounted.EQUIP_OFF_DIAGNOSTIC_LOGGER);
     static final GameDatasetLogger datasetLogger = new GameDatasetLogger("game_actions");
     static final String DEFAULT_BOARD = MapSettings.BOARD_GENERATED;
 
@@ -10696,6 +10702,9 @@ public class TWGameManager extends AbstractGameManager {
         if (!game.getOptions().booleanOption(OptionsConstants.ADVANCED_HIDDEN_UNITS)) {
             return;
         }
+
+        HIDDEN_UNITS_LOGGER.debug("[HiddenUnits] full-board probe sweep (phase {}, round {})",
+              game.getPhase(), game.getRoundCount());
 
         // See if any unit with a probe, detects any hidden units
         for (Entity detector : game.getEntitiesVector()) {
@@ -27228,65 +27237,89 @@ public class TWGameManager extends AbstractGameManager {
      * @param c         the packet to be processed
      * @param connIndex the id for connection that received the packet.
      */
-    private void receiveEntityModeChange(Packet c, int connIndex) throws InvalidPacketDataException {
-        int entityId = c.getIntValue(0);
-        int equipId = c.getIntValue(1);
-        int mode = c.getIntValue(2);
-        Entity e = game.getEntity(entityId);
+    private void receiveEntityModeChange(Packet packet, int connIndex) throws InvalidPacketDataException {
+        int entityId = packet.getIntValue(0);
+        int equipId = packet.getIntValue(1);
+        int mode = packet.getIntValue(2);
+        Entity entity = game.getEntity(entityId);
 
-        if (e == null || e.getOwner() != game.getPlayer(connIndex)) {
+        if (entity == null || entity.getOwner() != game.getPlayer(connIndex)) {
             return;
         }
 
-        Mounted<?> m = e.getEquipment(equipId);
+        Mounted<?> mounted = entity.getEquipment(equipId);
 
-        if (m == null) {
+        if (mounted == null) {
+            return;
+        }
+
+        if (ServerHelper.isEcmDeactivationBlockedByStealth(entity, mounted, mode)) {
+            String message = entity.getShortName() + ": " + mounted.getName()
+                  + " cannot be deactivated while the stealth armor system is engaged or engaging";
+            EQUIP_OFF_LOGGER.debug("[EquipOff] {}: rejected mode change - stealth armor is on or switching on",
+                  entity.getShortName());
+            sendServerChat(connIndex, message);
+            return;
+        }
+
+        if (ServerHelper.isStealthActivationBlockedByEcmShutdown(entity, mounted, mode)) {
+            String message = entity.getShortName() + ": " + mounted.getName()
+                  + " cannot be engaged while the ECM suite is deactivated or deactivating";
+            EQUIP_OFF_LOGGER.debug("[EquipOff] {}: rejected mode change - no ECM suite will be operating next round",
+                  entity.getShortName());
+            sendServerChat(connIndex, message);
             return;
         }
 
         try {
-            if ((m.getType() instanceof MiscType miscType) && miscType.isBoobyTrap() && mode != 0 && e.hasBoobyTrap()) {
+            if ((mounted.getType() instanceof MiscType miscType) && miscType.isBoobyTrap() && mode != 0
+                  && entity.hasBoobyTrap()) {
                 sendServerChat("There is no turning back now...");
-                e.setBoobyTrapInitiated(true);
-                m.setMode(mode);
-                m.setModeSwitchable(false);
-                entityUpdate(e.getId());
+                entity.setBoobyTrapInitiated(true);
+                mounted.setMode(mode);
+                mounted.setModeSwitchable(false);
+                entityUpdate(entity.getId());
             }
 
             // Check for BA dumping body mounted missile launchers
-            if ((e instanceof BattleArmor) &&
-                  (!m.isMissing()) &&
-                  m.isBodyMounted() &&
-                  m.getType().hasFlag(WeaponType.F_MISSILE) &&
-                  (m.getLinked() != null) &&
-                  (m.getLinked().getUsableShotsLeft() > 0) &&
+            if ((entity instanceof BattleArmor) &&
+                  (!mounted.isMissing()) &&
+                  mounted.isBodyMounted() &&
+                  mounted.getType().hasFlag(WeaponType.F_MISSILE) &&
+                  (mounted.getLinked() != null) &&
+                  (mounted.getLinked().getUsableShotsLeft() > 0) &&
                   (mode <= 0)) {
-                m.setPendingDump(mode == -1);
+                mounted.setPendingDump(mode == -1);
                 // a mode change for ammo means dumping or hot loading
-            } else if ((m.getType() instanceof AmmoType) &&
-                  !m.getType().hasInstantModeSwitch() &&
-                  (mode < 0 || mode == 0 && m.isPendingDump())) {
-                m.setPendingDump(mode == -1);
-            } else if ((m.getType() instanceof WeaponType) && m.isDWPMounted() && (mode <= 0)) {
-                m.setPendingDump(mode == -1);
+            } else if ((mounted.getType() instanceof AmmoType) &&
+                  !mounted.getType().hasInstantModeSwitch() &&
+                  (mode < 0 || mode == 0 && mounted.isPendingDump())) {
+                mounted.setPendingDump(mode == -1);
+            } else if ((mounted.getType() instanceof WeaponType) && mounted.isDWPMounted() && (mode <= 0)) {
+                mounted.setPendingDump(mode == -1);
             } else {
-                if (!m.setMode(mode)) {
-                    String message = e.getShortName() +
+                if (mounted.setMode(mode)) {
+                    EQUIP_OFF_LOGGER.debug("[EquipOff] {}: {} mode change to index {} received - "
+                                + "current mode now '{}', pending mode '{}'",
+                          entity.getShortName(), mounted.getName(), mode, mounted.curMode().getName(),
+                          mounted.pendingMode().getName());
+                } else {
+                    String message = entity.getShortName() +
                           ": " +
-                          m.getName() +
+                          mounted.getName() +
                           ": " +
-                          e.getLocationName(m.getLocation()) +
+                          entity.getLocationName(mounted.getLocation()) +
                           " trying to compensate";
                     LOGGER.error(message);
                     sendServerChat(message);
-                    e.setGameOptions();
+                    entity.setGameOptions();
 
-                    if (!m.setMode(mode)) {
-                        message = e.getShortName() +
+                    if (!mounted.setMode(mode)) {
+                        message = entity.getShortName() +
                               ": " +
-                              m.getName() +
+                              mounted.getName() +
                               ": " +
-                              e.getLocationName(m.getLocation()) +
+                              entity.getLocationName(mounted.getLocation()) +
                               " unable to compensate";
                         LOGGER.error(message);
                         sendServerChat(message);
@@ -27294,8 +27327,8 @@ public class TWGameManager extends AbstractGameManager {
                 }
             }
 
-        } catch (Exception ex) {
-            LOGGER.error("", ex);
+        } catch (Exception exception) {
+            LOGGER.error("", exception);
         }
     }
 
@@ -27320,12 +27353,12 @@ public class TWGameManager extends AbstractGameManager {
      * @param c         the packet to be processed
      * @param connIndex the id for connection that received the packet.
      */
-    private void receiveEntitySinksChange(Packet c, int connIndex) throws InvalidPacketDataException {
-        int entityId = c.getIntValue(0);
-        int numSinks = c.getIntValue(1);
-        Entity e = game.getEntity(entityId);
-        if ((e instanceof Mek) && (connIndex == e.getOwnerId())) {
-            ((Mek) e).setActiveSinksNextRound(numSinks);
+    private void receiveEntitySinksChange(Packet packet, int connIndex) throws InvalidPacketDataException {
+        int entityId = packet.getIntValue(0);
+        int numSinks = packet.getIntValue(1);
+        Entity entity = game.getEntity(entityId);
+        if ((entity instanceof ActiveHeatSinkController heatSinkController) && (connIndex == entity.getOwnerId())) {
+            heatSinkController.setActiveSinksNextRound(numSinks);
         }
     }
 

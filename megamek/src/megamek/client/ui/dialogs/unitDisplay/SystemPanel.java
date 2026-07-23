@@ -45,7 +45,6 @@ import java.awt.event.ActionListener;
 import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
 import java.io.Serial;
-import java.util.Enumeration;
 import java.util.Vector;
 import javax.swing.*;
 import javax.swing.event.ListSelectionEvent;
@@ -66,6 +65,7 @@ import megamek.common.CriticalSlot;
 import megamek.common.battleArmor.BattleArmor;
 import megamek.common.equipment.AmmoType;
 import megamek.common.equipment.BridgeLayerState;
+import megamek.common.equipment.EquipmentActivation;
 import megamek.common.equipment.EquipmentMode;
 import megamek.common.equipment.GunEmplacement;
 import megamek.common.equipment.MiscMounted;
@@ -893,24 +893,50 @@ class SystemPanel extends PicMap
                           && mounted.isModeSwitchable()) {
                         m_chMode.setEnabled(true);
                     }
-                    // if the max tech eccm option is not set then the ECM
-                    // should not show anything.
-                    // Exception: Nova CEWS has built-in "ECM"/"Off" modes and should always be switchable
-                    if ((mounted.getType() instanceof MiscType) && mounted.getType().hasFlag(MiscType.F_ECM)
-                          && !mounted.getType().hasFlag(MiscType.F_NOVA)
-                          && !(client.getGame().getOptions().booleanOption(OptionsConstants.ADVANCED_TAC_OPS_ECCM)
-                          || client.getGame().getOptions()
-                          .booleanOption(OptionsConstants.ADVANCED_TAC_OPS_GHOST_TARGET))) {
-                        return;
+                    // Heat sinks can be activated or deactivated even while the unit is shut down (TW,
+                    // Deactivating Heat Sinks)
+                    boolean isHeatSinkMount = (mounted.getType() instanceof MiscType)
+                          && (mounted.getType().hasFlag(MiscType.F_HEAT_SINK)
+                          || mounted.getType().hasFlag(MiscType.F_DOUBLE_HEAT_SINK)
+                          || mounted.getType().hasFlag(MiscType.F_IS_DOUBLE_HEAT_SINK_PROTOTYPE));
+                    if (!mounted.isInoperable() && isHeatSinkMount && mounted.isModeSwitchable()) {
+                        m_chMode.setEnabled(true);
                     }
-                    for (Enumeration<EquipmentMode> modeEnumeration = mounted.getType()
-                          .getModes(); modeEnumeration.hasMoreElements(); ) {
-                        EquipmentMode equipmentMode = modeEnumeration.nextElement();
+                    // Every ECM suite now carries at least the "ECM"/"Off" pair (activation/deactivation
+                    // rules), so the mode switcher is always offered - the ECCM and Ghost Target game
+                    // options merely add further modes.
+                    // Iterate the PER-MOUNT mode count rather than the raw type mode list: it filters
+                    // modes that need linked equipment to be available, such as the "Pulse ..." laser
+                    // modes that require a RISC Laser Pulse Module (LaserWeapon keeps them last and
+                    // reduces the count when no module is linked).
+                    int visibleModeCount = mounted.getModesCount();
+                    for (int modeIndex = 0; modeIndex < visibleModeCount; modeIndex++) {
+                        EquipmentMode equipmentMode = mounted.getType().getMode(modeIndex);
                         // Hack to prevent showing an option that is disabled by the server, but would
                         // be overwritten by every entity update if made also in the client
                         if (equipmentMode.equals("HotLoad") && en instanceof Mek
                               && !client.getGame().getOptions()
                               .booleanOption(OptionsConstants.ADVANCED_COMBAT_HOT_LOAD_IN_GAME)) {
+                            continue;
+                        }
+                        // Hide the Off mode for ECM suites while the stealth armor system is engaged or
+                        // queued to engage this round - the server rejects that switch (stealth armor
+                        // requires an operating ECM). Off is always the LAST mode in every ECM mode list, so
+                        // skipping it keeps the combo indices aligned with the equipment type's mode indices
+                        // (the selection is applied by index).
+                        if (equipmentMode.equals("Off")
+                              && (mounted.getType() instanceof MiscType)
+                              && mounted.getType().hasFlag(MiscType.F_ECM)
+                              && EquipmentActivation.isStealthOnOrActivating(en)) {
+                            continue;
+                        }
+                        // Mirror case: hide the On mode for stealth armor while no ECM suite will be
+                        // operating next round (deactivated or deactivating). On is the LAST stealth mode,
+                        // so the combo indices stay aligned.
+                        if (equipmentMode.equals("On")
+                              && (mounted.getType() instanceof MiscType)
+                              && mounted.getType().hasFlag(MiscType.F_STEALTH)
+                              && !EquipmentActivation.hasEcmAvailableForStealth(en)) {
                             continue;
                         }
                         m_chMode.addItem(equipmentMode.getDisplayableName());

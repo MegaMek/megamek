@@ -653,13 +653,24 @@ public class PreEndDeclarationsDisplay extends AttackPhaseDisplay {
     }
 
     /**
-     * Checks if the local player has any Nova CEWS units.
+     * Checks if the local player has any Nova CEWS units whose CEWS is currently functioning. A Nova the player has
+     * switched to "Off" cannot be reconfigured (the button grays out), though it keeps its network membership and
+     * rejoins when switched back on.
      */
     private boolean hasNovaUnits() {
         int localPlayerId = localPlayerId();
-        return game.getEntitiesVector().stream()
+        boolean hasActiveNova = game.getEntitiesVector().stream()
               .filter(entity -> entity.getOwnerId() == localPlayerId)
-              .anyMatch(Entity::hasNovaCEWS);
+              .anyMatch(Entity::hasActiveNovaCEWS);
+        if (!hasActiveNova) {
+            boolean hasSwitchedOffNova = game.getEntitiesVector().stream()
+                  .filter(entity -> entity.getOwnerId() == localPlayerId)
+                  .anyMatch(Entity::hasNovaCEWS);
+            if (hasSwitchedOffNova) {
+                LOGGER.debug("[PreEnd] Nova network button disabled - all of the player's Nova CEWS are switched off");
+            }
+        }
+        return hasActiveNova;
     }
 
     private void setNovaNetworkEnabled(boolean enabled) {

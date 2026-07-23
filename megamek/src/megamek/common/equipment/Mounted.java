@@ -305,6 +305,43 @@ public class Mounted<T extends EquipmentType> implements Serializable, RoundUpda
     }
 
     /**
+     * Dedicated logger name for equipment activation/deactivation diagnostics ([EquipOff] tag): mode-change
+     * reception and application, and rejected deactivations. A feature logger rather than a host-class logger so it
+     * can be enabled in log4j2.xml without the host classes' debug noise.
+     */
+    public static final String EQUIP_OFF_DIAGNOSTIC_LOGGER = "megamek.feature.EquipOff";
+
+    /**
+     * Returns whether the player has deactivated this equipment. Equipment that can be switched off (active probes,
+     * ECM suites, C3 computers, heat sinks, and similar items with an "Off" mode per the activation/deactivation
+     * rules) provides none of its game effects while deactivated, but is otherwise undamaged and can be reactivated.
+     *
+     * @return {@code true} if this equipment has modes and its current mode is "Off"
+     */
+    public boolean isModeTurnedOff() {
+        return hasModes() && curMode().equals("Off");
+    }
+
+    /**
+     * @return the mode this equipment will be in next round: the pending mode if a switch is queued, otherwise the
+     *       current mode
+     */
+    public EquipmentMode modeNextRound() {
+        return pendingMode().equals("None") ? curMode() : pendingMode();
+    }
+
+    /**
+     * Returns whether this equipment will be deactivated next round - either a pending switch to "Off", or already
+     * "Off" with no pending switch away from it. Used to validate declarations that depend on other equipment
+     * operating next round (e.g. engaging stealth armor requires an ECM suite that will be running).
+     *
+     * @return {@code true} if this equipment has modes and its next-round mode is "Off"
+     */
+    public boolean isModeTurnedOffNextRound() {
+        return hasModes() && modeNextRound().equals("Off");
+    }
+
+    /**
      * @return the pending mode of the equipment.
      */
     public EquipmentMode pendingMode() {

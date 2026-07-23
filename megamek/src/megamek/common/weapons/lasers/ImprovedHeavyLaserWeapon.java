@@ -1,6 +1,5 @@
 /*
- * Copyright (C) 2004 Ben Mazur (bmazur@sev.org)
- * Copyright (C) 2007-2025 The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2026 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -32,44 +31,32 @@
  * affiliated with Microsoft.
  */
 
-package megamek.common.weapons.gaussRifles;
+package megamek.common.weapons.lasers;
 
 import java.io.Serial;
 
 import megamek.common.options.IGameOptions;
-import megamek.common.weapons.AmmoWeapon;
 
 /**
- * @author Andrew Hunter Created on Oct 19, 2004
+ * Base class for the Clan Improved Heavy Lasers (TO:AUE p.133). Improved Heavy Lasers are explosive and can be
+ * deactivated per the activation/deactivation rules: a laser switched to {@code "Off"} cannot fire and does not
+ * explode when critically hit. The switch may be declared at any time but only takes effect in the End Phase.
  */
-public abstract class GaussWeapon extends AmmoWeapon {
+public abstract class ImprovedHeavyLaserWeapon extends LaserWeapon {
     @Serial
-    private static final long serialVersionUID = 8640523093316267351L;
+    private static final long serialVersionUID = 4142894635724116817L;
 
-    public GaussWeapon() {
+    protected ImprovedHeavyLaserWeapon() {
         super();
-        flags = flags.or(F_MEK_WEAPON)
-              .or(F_TANK_WEAPON)
-              .or(F_AERO_WEAPON)
-              .or(F_PROTO_WEAPON)
-              .or(F_BALLISTIC)
-              .or(F_DIRECT_FIRE)
-              .or(F_NO_FIRES);
-        explosive = true;
-        atClass = CLASS_AC;
+        setModes("On", "Off");
+        setInstantModeSwitch(false);
     }
 
     @Override
     public void adaptToGameOptions(IGameOptions gameOptions) {
         super.adaptToGameOptions(gameOptions);
-
-        // Gauss rifles can always be powered down and back up per the activation/deactivation rules
-        // (formerly gated behind the TacOps gauss weapons option, TacOps p.102). A powered-down gauss
-        // rifle cannot fire and does not explode on a critical hit; the switch takes effect in the
-        // End Phase.
-        addMode("Powered Up");
-        addMode("Powered Down");
-        setInstantModeSwitch(false);
+        // LaserWeapon adds a "Pulse <mode>" variant of every non-pulse mode for the RISC Laser Pulse
+        // Module; a deactivated laser cannot fire in pulse mode, so drop that combination
+        removeMode("Pulse Off");
     }
-
 }

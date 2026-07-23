@@ -16262,6 +16262,11 @@ public class AmmoType extends EquipmentType {
                 case LRM_IMP:
                 case MML:
                 case NLRM:
+                case EXLRM:
+                case TBOLT_5:
+                case TBOLT_10:
+                case TBOLT_15:
+                case TBOLT_20:
                 case SRM_TORPEDO:
                 case LRM_TORPEDO:
                 case NLRM_TORPEDO:

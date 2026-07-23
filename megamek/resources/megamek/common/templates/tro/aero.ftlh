@@ -15,9 +15,9 @@
 	<b>Tonnage:</b> ${tonnage}<br/>
 	<b>Battle Value:</b> ${battleValue}<br/>
 	</p>
-
+	<br/>
 	<table>
-	<tr><th>Equipment</th><th/><th>Mass</th></tr>
+	<tr><th align="left">Equipment</th><th/><th>Mass</th></tr>
 	<#if !isFighterSquadron>
 	<tr><td>Engine</td><td align="center">${engineName!'(None)'}</td><td align="center">${engineMass!''}</td></tr>
 	</#if>
@@ -35,7 +35,7 @@
 	<tr><td>Armor Factor${armorType}:</td><td align="center">${armorFactor}</td><td align="center">${armorMass}</td></tr>
 	</table>
 
-	<table width="80%">
+	<table>
 		<tr><th></th><th>Armor<br/>Value</th></tr>
 		<tr>
 			<td>Nose</td>
@@ -53,23 +53,18 @@
 			<#if patchworkByLoc??><td>${patchworkByLoc.AFT}</td></#if>
 		</tr>
 	</table>
-
-	<#if isOmni>
-	<b>Fixed Equipment</b><br/>
-		<#if fixedTonnage gt 0>
-			<table>
-			<tr><td><i>Location</i></td><td align="center"><i>Fixed</i></td><td align="center"><i>Tonnage</i></td><td><i>Heat</i></i></td><th>SRV</i></td><td><i>MRV</i></td><td><i>LRV</th><td><i>ERV</i></td></td></tr>
-			<#list fixedEquipment as row>
-				<#if row.equipment != "None">
-	        		<tr><td>${row.location}</td><td align="center">${row.equipment}</td><td align="center">${row.tonnage}</td><td>${row.heat}</td><td>${row.srv}</td><td>${row.mrv}</td><td>${row.lrv}</td><td>${row.erv}</td></tr>
-				</#if>
-			</#list>
-			</table>
-		<#else>
-			None
-		</#if>
-	</#if>
-
+<#if isOmni && fixedTonnage gt 0>
+    <br/>
+    <table>
+        <tr><th align="left">Fixed Equipment</th><th>Location</th><th>Tonnage</th></tr>
+        <#list fixedEquipment as row>
+            <#if row.equipment != "None">
+        <tr><td>${row.equipment}</td><td align="center">${row.location}</td><td align="center">${row.tonnage}</td></tr>
+            </#if>
+        </#list>
+    </table>
+</#if>
+	<br/>
 	<table>
 		<tr><th align="left">Weapons<br/>and Ammo</th><th>Location</th><th>Tonnage</th><th>Heat</th><th>SRV</th><th>MRV</th><th>LRV</th><th>ERV</th></tr>
 		<#list equipment as eq>

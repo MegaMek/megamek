@@ -33,6 +33,7 @@
 
 package megamek.common.templates;
 
+import java.text.NumberFormat;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -88,7 +89,8 @@ public class CapitalShipTROView extends AeroTROView {
         addFluff();
         final TestAdvancedAerospace testAero = new TestAdvancedAerospace(aero, verifier.aeroOption, null);
 
-        setModelData("massDesc", aero.getWeight());
+        setModelData("massDesc", NumberFormat.getInstance().format(aero.getWeight())
+              + Messages.getString(aero.getWeight() == 1.0 ? "TROView.ton" : "TROView.tons"));
         setModelData("fuelMass", aero.getFuelTonnage());
         setModelData("fuelPoints", aero.getFuel());
         setModelData("safeThrust", aero.getWalkMP());

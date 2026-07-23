@@ -577,6 +577,7 @@ public class WeaponType extends EquipmentType {
     public static final WeaponTypeFlag F_MML = WeaponTypeFlag.F_MML;
     public static final WeaponTypeFlag F_MRM = WeaponTypeFlag.F_MRM;
     public static final WeaponTypeFlag F_ATM = WeaponTypeFlag.F_ATM;
+    public static final WeaponTypeFlag F_NARC = WeaponTypeFlag.F_NARC;
     
 
     // War of 3039 prototypes
@@ -752,6 +753,7 @@ public class WeaponType extends EquipmentType {
 
     // protected RangeType rangeL;
     protected int heat;
+    protected int heatAdjustmentForBvCalculation = 0; // This is added/subtracted to the heat calculation for BV (used by Prototype IS Pulse Lasers)
     protected int damage;
     protected int damageShort;
     protected int damageMedium;
@@ -832,6 +834,11 @@ public class WeaponType extends EquipmentType {
     public int getHeat() {
         return heat;
     }
+
+    /**
+     * Returns the adjustement of heat used for BV calculation
+     */
+    public int getHeatAdjustmentForBvCalculation() { return  heatAdjustmentForBvCalculation; }
 
     @Override
     public boolean hasFlag(EquipmentFlag flag) {
@@ -2559,6 +2566,7 @@ public class WeaponType extends EquipmentType {
         Map<String, Object> data = super.getYamlData();
         Map<String, Object> weapon = new LinkedHashMap<>();
 
+
         weapon.put("damage", formatDamage());
         if (explosionDamage > 0) {
             weapon.put("explosionDamage", explosionDamage);
@@ -2570,6 +2578,9 @@ public class WeaponType extends EquipmentType {
         weapon.put("ammoType", ammoType.name());
         if (heat > 0) {
             weapon.put("heat", this.heat);
+        }
+        if (heatAdjustmentForBvCalculation != 0) {
+            weapon.put("heatAdjustmentForBvCalculation", this.heatAdjustmentForBvCalculation);
         }
 
         // Export ranges (trimmed of trailing zeros)

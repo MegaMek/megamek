@@ -47,10 +47,12 @@ public class DropShipCostCalculator {
 
         // Docking Collar
         if (dropShip.getCollarType() == Dropship.COLLAR_STANDARD) {
-            costs[idx++] = 10000;
+            costs[idx] = 10000;
         } else if (dropShip.getCollarType() == Dropship.COLLAR_PROTOTYPE) {
-            costs[idx++] = 1010000;
+            costs[idx] = 1010000;
         }
+        // Keep the fixed report columns aligned when no docking collar is installed.
+        idx++;
 
         // Transport Bays
         int bayDoors = 0;
@@ -80,7 +82,8 @@ public class DropShipCostCalculator {
                                  "Engine", "Drive Unit", "Fuel Tanks", "Armor", "Heat Sinks", "Weapons/Equipment",
                                  "Docking Collar",
                                  "Bays", "Quarters", "Life Boats/Escape Pods", "Final Multiplier" };
-        CostCalculator.fillInReport(costReport, dropShip, ignoreAmmo, systemNames, 14, cost, costs);
-        return Math.round(cost);
+        long roundedCost = Math.round(cost);
+        CostCalculator.fillInReport(costReport, dropShip, ignoreAmmo, systemNames, 14, roundedCost, costs);
+        return roundedCost;
     }
 }

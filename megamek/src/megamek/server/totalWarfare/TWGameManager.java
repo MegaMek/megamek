@@ -27234,8 +27234,17 @@ public class TWGameManager extends AbstractGameManager {
 
         if (isEcmDeactivationBlockedByStealth(e, m, mode)) {
             String message = e.getShortName() + ": " + m.getName()
-                  + " cannot be deactivated while the stealth armor system is engaged";
-            EQUIP_OFF_LOGGER.debug("[EquipOff] {}: rejected mode change - linked stealth armor is On",
+                  + " cannot be deactivated while the stealth armor system is engaged or engaging";
+            EQUIP_OFF_LOGGER.debug("[EquipOff] {}: rejected mode change - stealth armor is on or switching on",
+                  e.getShortName());
+            sendServerChat(connIndex, message);
+            return;
+        }
+
+        if (isStealthActivationBlockedByEcmShutdown(e, m, mode)) {
+            String message = e.getShortName() + ": " + m.getName()
+                  + " cannot be engaged while the ECM suite is deactivated or deactivating";
+            EQUIP_OFF_LOGGER.debug("[EquipOff] {}: rejected mode change - no ECM suite will be operating next round",
                   e.getShortName());
             sendServerChat(connIndex, message);
             return;
@@ -27302,14 +27311,16 @@ public class TWGameManager extends AbstractGameManager {
 
     /**
      * Checks whether a requested equipment mode change must be rejected because it would deactivate an ECM suite
-     * while the unit's stealth armor system is engaged. Stealth armor requires an operating ECM, so the player has
-     * to switch the stealth armor off first.
+     * while the unit's stealth armor system is engaged - or queued to engage this round. Stealth armor requires an
+     * operating ECM, so the player has to switch the stealth armor off first; checking the pending stealth mode
+     * closes the loophole of queueing "stealth On" and "ECM Off" in the same round.
      *
      * @param entity  the entity whose equipment is being switched
      * @param mounted the equipment being switched
      * @param newMode the requested mode index
      *
-     * @return {@code true} if the mode change would switch an ECM suite to "Off" while stealth armor is on
+     * @return {@code true} if the mode change would switch an ECM suite to "Off" while stealth armor is on or
+     *       switching on
      */
     private static boolean isEcmDeactivationBlockedByStealth(Entity entity, Mounted<?> mounted, int newMode) {
         if (!(mounted.getType() instanceof MiscType miscType) || !miscType.hasFlag(MiscType.F_ECM)) {
@@ -27319,7 +27330,31 @@ public class TWGameManager extends AbstractGameManager {
             return false;
         }
         boolean isSwitchingOff = miscType.getMode(newMode).getName().equals("Off");
-        return isSwitchingOff && entity.isStealthOn();
+        return isSwitchingOff && entity.isStealthOnOrActivating();
+    }
+
+    /**
+     * Checks whether a requested equipment mode change must be rejected because it would engage the stealth armor
+     * system while no ECM suite will be operating next round (all deactivated or switching to "Off"). This is the
+     * mirror of {@link #isEcmDeactivationBlockedByStealth(Entity, Mounted, int)} and closes the other ordering of
+     * the same-round loophole: first queueing "ECM Off", then "stealth On".
+     *
+     * @param entity  the entity whose equipment is being switched
+     * @param mounted the equipment being switched
+     * @param newMode the requested mode index
+     *
+     * @return {@code true} if the mode change would switch stealth armor to "On" while no ECM suite will be
+     *       operating next round
+     */
+    private static boolean isStealthActivationBlockedByEcmShutdown(Entity entity, Mounted<?> mounted, int newMode) {
+        if (!(mounted.getType() instanceof MiscType miscType) || !miscType.hasFlag(MiscType.F_STEALTH)) {
+            return false;
+        }
+        if ((newMode < 0) || (newMode >= miscType.getModesCount())) {
+            return false;
+        }
+        boolean isSwitchingOn = miscType.getMode(newMode).getName().equals("On");
+        return isSwitchingOn && !entity.hasEcmAvailableForStealth();
     }
 
     /**

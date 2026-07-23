@@ -1174,8 +1174,8 @@ public class EquipChoicePanel extends JPanel {
                         modes.add("Ghost Targets");
                     }
                 }
-                // An ECM suite cannot start deactivated while the stealth armor system is engaged
-                if (!entity.isStealthOn()) {
+                // An ECM suite cannot start deactivated while the stealth armor system is engaged or engaging
+                if (!entity.isStealthOnOrActivating()) {
                     modes.add("Off");
                 }
             } else if (hasGhostTargetOption

@@ -323,6 +323,25 @@ public class Mounted<T extends EquipmentType> implements Serializable, RoundUpda
     }
 
     /**
+     * @return the mode this equipment will be in next round: the pending mode if a switch is queued, otherwise the
+     *       current mode
+     */
+    public EquipmentMode modeNextRound() {
+        return pendingMode().equals("None") ? curMode() : pendingMode();
+    }
+
+    /**
+     * Returns whether this equipment will be deactivated next round - either a pending switch to "Off", or already
+     * "Off" with no pending switch away from it. Used to validate declarations that depend on other equipment
+     * operating next round (e.g. engaging stealth armor requires an ECM suite that will be running).
+     *
+     * @return {@code true} if this equipment has modes and its next-round mode is "Off"
+     */
+    public boolean isModeTurnedOffNextRound() {
+        return hasModes() && modeNextRound().equals("Off");
+    }
+
+    /**
      * @return the pending mode of the equipment.
      */
     public EquipmentMode pendingMode() {

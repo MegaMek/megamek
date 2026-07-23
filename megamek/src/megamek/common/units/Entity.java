@@ -10324,6 +10324,40 @@ public abstract class Entity extends TurnOrdered
     }
 
     /**
+     * Returns whether this unit's stealth armor system is engaged now or will be engaged next round (a pending
+     * switch to "On"). Used to validate that the ECM suite stealth armor depends on is not deactivated in the same
+     * round the stealth system is being engaged.
+     *
+     * @return {@code true} if an operable stealth armor system is in the "On" mode now or as its next-round mode
+     */
+    public boolean isStealthOnOrActivating() {
+        for (MiscMounted mounted : getMisc()) {
+            if (mounted.getType().hasFlag(MiscType.F_STEALTH) && !mounted.isInoperable()
+                  && (mounted.curMode().equals("On") || mounted.modeNextRound().equals("On"))) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    /**
+     * Returns whether this unit will have an ECM suite operating next round, i.e. one that is operable and not
+     * deactivated or switching to "Off". Stealth armor requires such a suite, so engaging stealth is refused while
+     * this returns {@code false}.
+     *
+     * @return {@code true} if an operable ECM suite will not be in the "Off" mode next round
+     */
+    public boolean hasEcmAvailableForStealth() {
+        for (MiscMounted mounted : getMisc()) {
+            if (mounted.getType().hasFlag(MiscType.F_ECM) && !mounted.isInoperable()
+                  && !mounted.isModeTurnedOffNextRound()) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    /**
      * Determine if this unit has an active null-signature system.
      * <p>
      * Subclasses are encouraged to override this method.

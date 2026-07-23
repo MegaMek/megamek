@@ -4736,7 +4736,7 @@ public abstract class Mek extends Entity implements Fortifiable, RubbleClearer, 
         int activeSinks = 0;
         for (MiscMounted mounted : getMisc()) {
             if (isCountedHeatSink(mounted) && !mounted.isDestroyed() && !mounted.isBreached()
-                  && !isModeOffNextRound(mounted)) {
+                  && !mounted.isModeTurnedOffNextRound()) {
                 activeSinks++;
             }
         }
@@ -4753,19 +4753,6 @@ public abstract class Mek extends Entity implements Fortifiable, RubbleClearer, 
     private static boolean isCountedHeatSink(Mounted<?> mounted) {
         return mounted.getType().hasFlag(MiscType.F_HEAT_SINK)
               || mounted.getType().hasFlag(MiscType.F_DOUBLE_HEAT_SINK);
-    }
-
-    /**
-     * @param mounted the equipment to check
-     *
-     * @return {@code true} if the mount will be in the "Off" mode next round - either a pending switch to Off, or
-     *       already Off with no pending switch away from it
-     */
-    private static boolean isModeOffNextRound(Mounted<?> mounted) {
-        if (mounted.pendingMode().equals("None")) {
-            return mounted.isModeTurnedOff();
-        }
-        return mounted.pendingMode().equals("Off");
     }
 
     /**

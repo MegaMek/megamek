@@ -155,6 +155,9 @@ public class GUIPreferences extends PreferenceStoreProxy {
     public static final String TRACE_OVERLAY_ORIGIN_Y = "TraceOverlayOriginY";
     public static final String TRACE_OVERLAY_IMAGE_FILE = "TraceOverlayImageFile";
 
+    public static final String TOAST_ENABLED = "ToastEnabled";
+    public static final String TOAST_DURATION_SECONDS = "ToastDurationSeconds";
+    public static final String TOAST_REPORT_EVENTS = "ToastReportEvents";
     public static final String TOAST_DRIP_SECONDS = "ToastDripSeconds";
 
     public static final String PLAYERS_REMAINING_TO_SHOW = "PlayersRemainingToShow";
@@ -574,6 +577,9 @@ public class GUIPreferences extends PreferenceStoreProxy {
         setDefault(TRACE_OVERLAY_ORIGIN_Y, 0);
         setDefault(TRACE_OVERLAY_IMAGE_FILE, "");
 
+        setDefault(TOAST_ENABLED, true);
+        setDefault(TOAST_DURATION_SECONDS, 3);
+        setDefault(TOAST_REPORT_EVENTS, true);
         setDefault(TOAST_DRIP_SECONDS, 2);
 
         setDefault(WARNING_COLOR, DEFAULT_RED);
@@ -3439,6 +3445,43 @@ public class GUIPreferences extends PreferenceStoreProxy {
 
     public void setTraceOverlayScale(int i) {
         store.setValue(TRACE_OVERLAY_SCALE, i);
+    }
+
+    /**
+     * @return {@code true} if board toast notifications are shown at all. When {@code false}, every toast is
+     *       suppressed, including those whose content never reaches the report or chat log (Game Master actions,
+     *       artillery fire missions, effects wearing off, and the reasons an action was refused).
+     */
+    public boolean getToastEnabled() {
+        return getBoolean(TOAST_ENABLED);
+    }
+
+    public void setToastEnabled(boolean state) {
+        store.setValue(TOAST_ENABLED, state);
+    }
+
+    /**
+     * @return the base display time in seconds for a board toast. Each {@code ToastLevel} adds its own offset on top
+     *       of this, so more urgent levels always linger longer than the base.
+     */
+    public int getToastDurationSeconds() {
+        return getInt(TOAST_DURATION_SECONDS);
+    }
+
+    public void setToastDurationSeconds(int seconds) {
+        store.setValue(TOAST_DURATION_SECONDS, seconds);
+    }
+
+    /**
+     * @return {@code true} if round-report events are echoed as toasts. When {@code false}, only toasts that carry
+     *       information the report log does not already hold are shown.
+     */
+    public boolean getToastReportEvents() {
+        return getBoolean(TOAST_REPORT_EVENTS);
+    }
+
+    public void setToastReportEvents(boolean state) {
+        store.setValue(TOAST_REPORT_EVENTS, state);
     }
 
     public int getToastDripSeconds() {

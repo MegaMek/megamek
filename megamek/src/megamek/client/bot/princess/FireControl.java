@@ -1171,8 +1171,11 @@ public class FireControl {
         // calculation; this brings the movement-ranking estimate in line with it.
         final AmmoType environmentalAmmoType =
               (firingAmmo != null && firingAmmo.getType() instanceof AmmoType firedAmmoType) ? firedAmmoType : null;
-        toHit.append(ComputeEnvironmentalToHitMods.compileEnvironmentalToHitMods(
-              game, shooter, target, weaponType, environmentalAmmoType, null, false));
+        // Pass the running toHit as the accumulator so the environmental mods are appended in place,
+        // avoiding a throwaway ToHitData allocation on this movement-ranking hot path. The method
+        // mutates and returns the same instance when the accumulator is non-null.
+        ComputeEnvironmentalToHitMods.compileEnvironmentalToHitMods(
+              game, shooter, target, weaponType, environmentalAmmoType, toHit, false);
 
         return toHit;
     }

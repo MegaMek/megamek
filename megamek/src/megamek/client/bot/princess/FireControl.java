@@ -997,29 +997,36 @@ public class FireControl {
                   AmmoType.Munitions.M_FAE);
             EnumSet<AmmoType.Munitions> homingMunitions = EnumSet.of(
                   AmmoType.Munitions.M_HOMING);
+            // Autocannon families that take armor-piercing ammunition
+            EnumSet<AmmoType.AmmoTypeEnum> autocannonAmmoTypes = EnumSet.of(
+                  AmmoType.AmmoTypeEnum.AC,
+                  AmmoType.AmmoTypeEnum.LAC,
+                  AmmoType.AmmoTypeEnum.AC_IMP,
+                  AmmoType.AmmoTypeEnum.PAC);
             if (0 != ammoType.getToHitModifier()) {
                 toHit.addModifier(ammoType.getToHitModifier(), TH_AMMO_MOD);
             }
             // Apollo FCS gives MRMs -1 to-hit (TO:AR). Apollo is not negated by ECM.
             Mounted<?> ammoLinker = weapon.getLinkedBy();
-            boolean hasApolloFcs = (ammoLinker != null)
+            boolean isApolloFcs = (ammoLinker != null)
                   && (ammoLinker.getType() instanceof MiscType)
-                  && !ammoLinker.isDestroyed() && !ammoLinker.isMissing() && !ammoLinker.isBreached()
-                  && ammoLinker.getType().hasFlag(MiscType.F_APOLLO)
-                  && (ammoType.getAmmoType() == AmmoType.AmmoTypeEnum.MRM);
-            if (hasApolloFcs) {
+                  && ammoLinker.getType().hasFlag(MiscType.F_APOLLO);
+            boolean isApolloFcsOperational = isApolloFcs
+                  && !ammoLinker.isDestroyed()
+                  && !ammoLinker.isMissing()
+                  && !ammoLinker.isBreached();
+            boolean isMrmAmmo = (ammoType.getAmmoType() == AmmoType.AmmoTypeEnum.MRM);
+            if (isApolloFcsOperational && isMrmAmmo) {
                 toHit.addModifier(TH_APOLLO);
             }
             // Armor-piercing autocannon ammo is a flat +1 to-hit (removed under PLAYTEST 3 rules).
-            boolean isArmorPiercingAutocannon =
-                  ((ammoType.getAmmoType() == AmmoType.AmmoTypeEnum.AC)
-                        || (ammoType.getAmmoType() == AmmoType.AmmoTypeEnum.LAC)
-                        || (ammoType.getAmmoType() == AmmoType.AmmoTypeEnum.AC_IMP)
-                        || (ammoType.getAmmoType() == AmmoType.AmmoTypeEnum.PAC))
-                        && (ammoType.getMunitionType().contains(AmmoType.Munitions.M_ARMOR_PIERCING)
-                        || ammoType.getMunitionType().contains(AmmoType.Munitions.M_ARMOR_PIERCING_PLAYTEST));
-            if (isArmorPiercingAutocannon
-                  && !game.getOptions().booleanOption(OptionsConstants.PLAYTEST_3)) {
+            boolean isAutocannonAmmo = autocannonAmmoTypes.contains(ammoType.getAmmoType());
+            boolean isArmorPiercingMunition =
+                  ammoType.getMunitionType().contains(AmmoType.Munitions.M_ARMOR_PIERCING)
+                        || ammoType.getMunitionType().contains(AmmoType.Munitions.M_ARMOR_PIERCING_PLAYTEST);
+            boolean isArmorPiercingPenaltyInEffect =
+                  !game.getOptions().booleanOption(OptionsConstants.PLAYTEST_3);
+            if (isAutocannonAmmo && isArmorPiercingMunition && isArmorPiercingPenaltyInEffect) {
                 toHit.addModifier(TH_AP_AMMO);
             }
             // Air-defense Arrow IV handling; can only fire at airborne targets

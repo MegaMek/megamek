@@ -14,9 +14,9 @@
 	<b>Tonnage:</b> ${tonnage}<br/>
 	<b>Battle Value:</b> ${battleValue}<br/>
 	</p>
-
+	<br/>
 	<table>
-	<tr><th>Equipment</th><th/><th>Mass</th></tr>
+	<tr><th align="left">Equipment</th><th/><th>Mass</th></tr>
 	<tr><td>Internal Structure</td><td align="center">${structureName}</td><td align="center">${isMass}</td></tr>
 	<#if lamConversionMass??>
 	<tr><td>LAM Conversion Equipment</td><td></td><td align="center">${lamConversionMass}</td></tr>
@@ -39,10 +39,10 @@
 	<tr><td>${hsType}:</td><td align="center">${hsCount}</td><td align="center">${hsMass}</td><#if riscKit??><td>w/ RISC Heat Sink Override Kit</td></#if></tr>
 	<tr><td>${gyroType}:</td><td></td><td align="center">${gyroMass}</td></tr>
 	<tr><td>${cockpitType}:</td><td></td><td align="center">${cockpitMass}</td></tr>
-	<tr><td>Armor Factor${armorType}:</td><td>${armorFactor}</td><td align="center">${armorMass}</td></tr>
+	<tr><td>Armor Factor${armorType}:</td><td align="center">${armorFactor}</td><td align="center">${armorMass}</td></tr>
 	</table>
 
-	<table width="80%">
+	<table>
 		<tr><th></th><th>Internal<br/>Structure</th><th>Armor<br/>Value</th></tr>
 		<tr>
 			<td>Head</td>
@@ -112,7 +112,7 @@
 	</table>
 
 	<#if isOmni>
-	<b>Weight and Space Allocation</b>
+	<p><b>Weight and Space Allocation</b></p>
 	<table>
 	<tr><td><i>Location</i></td><td align="center"><i>Fixed</i></td><td align="center"><i>Space Remaining</i></td></tr>
 	<#list fixedEquipment as row>
@@ -120,7 +120,7 @@
 	</#list>
 	</table>
 	</#if>
-
+	<br/>
 	<table>
 		<tr><th align="left">Weapons<br/>and Ammo</th><th>Location</th><th>Critical</th><th>Tonnage</th></tr>
 		<#list equipment as eq>

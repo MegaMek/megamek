@@ -915,6 +915,16 @@ class SystemPanel extends PicMap
                               .booleanOption(OptionsConstants.ADVANCED_COMBAT_HOT_LOAD_IN_GAME)) {
                             continue;
                         }
+                        // Hide the Off mode for ECM suites while the stealth armor system is engaged - the
+                        // server rejects that switch (stealth armor requires an operating ECM). Off is always
+                        // the LAST mode in every ECM mode list, so skipping it keeps the combo indices
+                        // aligned with the equipment type's mode indices (the selection is applied by index).
+                        if (equipmentMode.equals("Off")
+                              && (mounted.getType() instanceof MiscType)
+                              && mounted.getType().hasFlag(MiscType.F_ECM)
+                              && en.isStealthOn()) {
+                            continue;
+                        }
                         m_chMode.addItem(equipmentMode.getDisplayableName());
                     }
                     if (m_chMode.getModel().getSize() <= 1) {

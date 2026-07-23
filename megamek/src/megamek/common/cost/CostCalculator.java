@@ -47,6 +47,7 @@ import megamek.common.equipment.ArmorType;
 import megamek.common.equipment.MiscType;
 import megamek.common.equipment.Mounted;
 import megamek.common.units.Entity;
+import megamek.common.units.Tank;
 import megamek.common.weapons.infantry.InfantryWeapon;
 
 public class CostCalculator {
@@ -208,10 +209,15 @@ public class CostCalculator {
     static void fillInReport(CalculationReport costReport, Entity entity, boolean ignoreAmmo,
           String[] systemNames, int equipIndex, double cost, double[] costs) {
         NumberFormat commaFormatter = NumberFormat.getInstance();
+        commaFormatter.setMaximumFractionDigits(10);
         costReport.addHeader("Cost Calculations For " + entity.getChassis() + " " + entity.getModel());
         for (int l = 0; l < systemNames.length; l++) {
             if (l == equipIndex) {
                 CostCalculator.getWeaponsAndEquipmentCost(entity, costReport, ignoreAmmo);
+                if ((entity instanceof Tank tank) && (tank.getExtraCrewSeats() > 0)) {
+                    costReport.addLine("Extra Crew Seats", "",
+                          commaFormatter.format(tank.getExtraCrewSeats() * 100L));
+                }
             } else {
                 String result = commaFormatter.format(costs[l]);
                 if (costs[l] == 0) {

@@ -33,6 +33,8 @@
 
 package megamek.common.cost;
 
+import java.util.ArrayList;
+
 import megamek.client.ui.clientGUI.calculationReport.CalculationReport;
 import megamek.common.equipment.Engine;
 import megamek.common.units.EntityWeightClass;
@@ -143,10 +145,25 @@ public class FixedWingSupportCostCalculator {
         cost *= fixedWingSupport.getPriceMultiplier();
         costs[i] = -fixedWingSupport.getPriceMultiplier();
 
-        String[] systemNames = { "Chassis", "Engine", "Armor", "Final Structural Cost", "Power Amplifiers",
-                                 "Heat Sinks", "Equipment", "Omni Multiplier", "Tonnage Multiplier" };
+        ArrayList<String> systemNames = new ArrayList<>();
+        systemNames.add("Chassis");
+        systemNames.add("Engine");
+        if (fixedWingSupport.hasPatchworkArmor()) {
+            for (int location = 0; location < fixedWingSupport.locations(); location++) {
+                systemNames.add("Armor (" + fixedWingSupport.getLocationAbbr(location) + ")");
+            }
+        } else {
+            systemNames.add("Armor");
+        }
+        systemNames.add("Final Structural Cost");
+        systemNames.add("Power Amplifiers");
+        systemNames.add("Heat Sinks");
+        systemNames.add("Equipment");
+        systemNames.add("Omni Multiplier");
+        systemNames.add("Tonnage Multiplier");
         long roundedCost = Math.round(cost);
-        CostCalculator.fillInReport(costReport, fixedWingSupport, ignoreAmmo, systemNames, 6, roundedCost, costs);
+        CostCalculator.fillInReport(costReport, fixedWingSupport, ignoreAmmo,
+              systemNames.toArray(new String[0]), structCostIdx + 3, roundedCost, costs);
         return roundedCost;
     }
 }

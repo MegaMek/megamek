@@ -13,7 +13,6 @@ package megamek.common.cost;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertInstanceOf;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertNull;
 
 import java.io.File;
 import java.text.NumberFormat;
@@ -23,9 +22,12 @@ import java.util.Map;
 import megamek.client.ui.clientGUI.calculationReport.CalculationReport;
 import megamek.client.ui.clientGUI.calculationReport.DummyCalculationReport;
 import megamek.common.equipment.EquipmentType;
+import megamek.common.equipment.MiscType;
+import megamek.common.equipment.Mounted;
 import megamek.common.loaders.MekFileParser;
 import megamek.common.units.Dropship;
 import megamek.common.units.Entity;
+import megamek.common.units.Mek;
 import megamek.common.units.Tank;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
@@ -50,6 +52,46 @@ class CostCalculatorReportTest {
         assertNotNull(report.result("Engine"));
         assertNotNull(report.result("Armor"));
         assertEquals(NumberFormat.getInstance().format(returnedCost), report.total());
+    }
+
+    @Test
+    void combatVehicleReportKeepsOffRoadMultiplierInItsOwnColumn() throws Exception {
+        Tank tank = assertInstanceOf(Tank.class, loadUnit("Bulldog Medium Tank.blk"));
+        tank.addEquipment(EquipmentType.get("ISOffRoadChassis"), Tank.LOC_BODY);
+        RecordingCalculationReport report = new RecordingCalculationReport();
+
+        double returnedCost = CombatVehicleCostCalculator.calculateCost(tank, report, true);
+
+        assertEquals("N/A", report.result("Flotation Hull/Environmental Sealing multiplier"));
+        assertEquals("x 1.2", report.result("Off-Road Multiplier"));
+        assertReportTotalMatchesReturnedCost(returnedCost, report);
+    }
+
+    @Test
+    void combatVehicleReportExplainsExtraCrewSeatCost() throws Exception {
+        Tank tank = assertInstanceOf(Tank.class, loadUnit("Bulldog Medium Tank.blk"));
+        tank.setExtraCrewSeats(3);
+        RecordingCalculationReport report = new RecordingCalculationReport();
+
+        double returnedCost = CombatVehicleCostCalculator.calculateCost(tank, report, true);
+
+        assertEquals("300", report.result("Extra Crew Seats"));
+        assertReportTotalMatchesReturnedCost(returnedCost, report);
+    }
+
+    @Test
+    void variableTurretCostUsesTheMountedLocation() throws Exception {
+        Mek mek = assertInstanceOf(Mek.class, loadUnit("Quickdraw QKD-8X.mtf"));
+        RecordingCalculationReport report = new RecordingCalculationReport();
+
+        double returnedCost = MekCostCalculator.calculateCost(mek, report, true);
+
+        Mounted<?> headTurret = mek.getMisc().stream()
+              .filter(mount -> mount.getType().hasFlag(MiscType.F_HEAD_TURRET))
+              .findFirst()
+              .orElseThrow();
+        assertEquals(10000, headTurret.getCost());
+        assertReportTotalMatchesReturnedCost(returnedCost, report);
     }
 
     @Test
@@ -85,6 +127,10 @@ class CostCalculatorReportTest {
 
     private static void assertReportTotalMatchesReturnedCost(CostRun run) {
         assertEquals(NumberFormat.getInstance().format(run.cost()), run.report().total());
+    }
+
+    private static void assertReportTotalMatchesReturnedCost(double cost, RecordingCalculationReport report) {
+        assertEquals(NumberFormat.getInstance().format(cost), report.total());
     }
 
     private static Entity loadUnit(String filename) throws Exception {

@@ -374,22 +374,23 @@ public class LobbyActions {
             LobbyErrors.showSingleOwnerRequired(frame());
             return;
         }
-        Entity oneSelected = CollectionUtil.anyOneElement(entities);
+        // Assets use their own minimal crew dialog. A mixed selection must run both configuration flows rather than
+        // choosing one based on an arbitrary element from the collection.
+        List<Entity> assets = entities.stream().filter(BattlefieldSupportAsset.class::isInstance).toList();
+        assets.forEach(this::customizeBattlefieldSupportAsset);
 
-        // Assets use their own minimal crew dialog; configure any selected assets one at a time.
-        if (oneSelected instanceof BattlefieldSupportAsset) {
-            for (Entity entity : entities) {
-                if (entity instanceof BattlefieldSupportAsset) {
-                    customizeBattlefieldSupportAsset(entity);
-                }
-            }
+        List<Entity> standardUnits = entities.stream()
+              .filter(entity -> !(entity instanceof BattlefieldSupportAsset))
+              .toList();
+        if (standardUnits.isEmpty()) {
             return;
         }
 
+        Entity oneSelected = CollectionUtil.anyOneElement(standardUnits);
         Client client = clientForCustomization(oneSelected);
         boolean editable = allowCustomization(oneSelected);
 
-        CustomMekDialog cmd = new CustomMekDialog(lobby.getClientGUI(), client, new ArrayList<>(entities), editable);
+        CustomMekDialog cmd = new CustomMekDialog(lobby.getClientGUI(), client, new ArrayList<>(standardUnits), editable);
         cmd.setSize(new Dimension(GUIPreferences.getInstance().getCustomUnitWidth(),
               GUIPreferences.getInstance().getCustomUnitHeight()));
         cmd.setTitle(Messages.getString("ChatLounge.CustomizeUnits"));
@@ -398,7 +399,7 @@ public class LobbyActions {
         GUIPreferences.getInstance().setCustomUnitWidth(cmd.getSize().width);
 
         if (editable && cmd.isOkay()) {
-            sendCustomizationUpdate(entities);
+            sendCustomizationUpdate(standardUnits);
         }
 
         if (cmd.isOkay() && (cmd.getStatus() != CustomMekDialog.DONE)) {

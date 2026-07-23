@@ -17117,7 +17117,8 @@ public class TWGameManager extends AbstractGameManager {
         addReport(doEntityDisplacement(ae,
               dest,
               dest,
-              new PilotingRollData(ae.getId(), 4, "executed death from above")));
+              new PilotingRollData(ae.getId(), Game.rulesManager.getRulesPSR().getSuccessfulDFAModifier(),
+                    "executed death from above")));
 
         // entity isn't DFA-ing anymore
         ae.setDisplacementAttack(null);

@@ -153,7 +153,14 @@ public class TWRulesPSR extends CoreRulesPSR {
     }
 
     // Entering water causes a PSR
+    @Override
     public boolean psrForWaterEntry(EntityMovementType overallMoveType) {
         return true;
+    }
+    
+    // Successful DFA PSR is +4
+    @Override
+    public int getSuccessfulDFAModifier() {
+        return 4;
     }
 }

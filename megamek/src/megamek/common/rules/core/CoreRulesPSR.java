@@ -243,4 +243,9 @@ public class CoreRulesPSR extends RulesPSR {
     public boolean psrForWaterEntry(EntityMovementType overallMoveType) {
         return (overallMoveType == EntityMovementType.MOVE_WALK) ? false : true;
     }
+    
+    // Successful DFA is PSR+2 Core p.80
+    public int getSuccessfulDFAModifier() {
+        return 4;
+    }
 }

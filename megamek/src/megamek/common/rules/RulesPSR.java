@@ -86,4 +86,7 @@ public abstract class RulesPSR {
 
     // When entering water, do we trigger a PSR
     public abstract boolean psrForWaterEntry(EntityMovementType overallMoveType);
+
+    // What is the PSR mod for a successful DFA
+    public abstract int getSuccessfulDFAModifier();
 }

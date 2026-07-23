@@ -409,7 +409,7 @@ class GeneralEntityReadout implements EntityReadout {
     private String sourceBookDisplayText(String sourceName, SourceBook sourceBook) {
         String displaySource = Objects.requireNonNullElse(sourceBook.getTitle(), sourceName);
         if (!sourceBook.isCanon()) {
-            displaySource += " (non-canon)";
+            displaySource += " (Non-Canon)";
         }
         return displaySource;
     }

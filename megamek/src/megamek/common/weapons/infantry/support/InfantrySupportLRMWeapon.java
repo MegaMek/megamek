@@ -72,7 +72,7 @@ public class InfantrySupportLRMWeapon extends InfantryWeapon {
         cost = 2000;
         bv = 3.44;
         tonnage = .03;
-        flags = flags.or(F_NO_FIRES).or(F_DIRECT_FIRE).or(F_MISSILE).or(F_INF_ENCUMBER).or(F_INF_SUPPORT);
+        flags = flags.or(F_NO_FIRES).or(F_DIRECT_FIRE).or(F_MISSILE).or(F_INF_ENCUMBER).or(F_INF_SUPPORT).or(F_LRM);
         infantryDamage = 0.48;
         infantryRange = 3;
         ammoWeight = 0.0083;

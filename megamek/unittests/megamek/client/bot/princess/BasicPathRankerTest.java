@@ -61,9 +61,11 @@ import megamek.client.bot.princess.UnitBehavior.BehaviorType;
 import megamek.client.bot.princess.geometry.HexLine;
 import megamek.codeUtilities.StringUtility;
 import megamek.common.Hex;
+import megamek.common.MPCalculationSetting;
 import megamek.common.battleArmor.BattleArmor;
 import megamek.common.board.Board;
 import megamek.common.board.Coords;
+import megamek.common.compute.Compute;
 import megamek.common.equipment.ArmorType;
 import megamek.common.equipment.EquipmentType;
 import megamek.common.game.Game;
@@ -299,6 +301,122 @@ class BasicPathRankerTest {
         double atRangeTwo = testRanker.calculateCloseRangeIncentive(mockBrawler, 2);
         assertEquals(10.0, atContact, 0.01);
         assertTrue(atContact > atRangeTwo);
+    }
+
+    @Test
+    void testCalculateMovePathPSRDamageLowGravityGroundOverspeed() {
+        final Entity mockMek = MockGenerators.generateMockBipedMek(0, 0);
+        when(mockMek.getRunningGravityLimit()).thenReturn(6);
+
+        final MovePath mockPath = MockGenerators.generateMockPath(0, 0, mockMek);
+        when(mockPath.isJumping()).thenReturn(false);
+
+        final MoveStep mockLastStep = mock(MoveStep.class);
+        when(mockLastStep.getMpUsed()).thenReturn(8); // 2 MP beyond the 1G run limit of 6
+        when(mockPath.getLastStep()).thenReturn(mockLastStep);
+
+        final TargetRoll gravityRoll = MockGenerators.mockTargetRoll(8);
+        when(gravityRoll.getLastPlainDesc()).thenReturn("used more MPs than at 1G possible");
+
+        final BasicPathRanker testRanker = spy(new BasicPathRanker(mockPrincess));
+        doReturn(List.of(gravityRoll)).when(testRanker).getPSRList(eq(mockPath));
+
+        // 2 excess MP -> 2 points of leg internal structure, weighted by the chance of failing the roll.
+        final double failureProbability = 1.0 - (Compute.oddsAbove(8, false) / 100.0);
+        final double expected = 2 * failureProbability;
+
+        assertEquals(expected, testRanker.calculateMovePathPSRDamage(mockMek, mockPath), TOLERANCE);
+    }
+
+    @Test
+    void testCalculateMovePathPSRDamageLowGravityJumpOverspeed() {
+        final Entity mockMek = MockGenerators.generateMockBipedMek(0, 0);
+        when(mockMek.getJumpMP(MPCalculationSetting.NO_GRAVITY)).thenReturn(5);
+
+        final MovePath mockPath = MockGenerators.generateMockPath(0, 0, mockMek);
+        when(mockPath.isJumping()).thenReturn(true);
+
+        final MoveStep mockLastStep = mock(MoveStep.class);
+        when(mockLastStep.getMpUsed()).thenReturn(7); // 2 MP beyond the 1G jump rating of 5
+        when(mockLastStep.isUsingMekJumpBooster()).thenReturn(false);
+        when(mockPath.getLastStep()).thenReturn(mockLastStep);
+
+        final TargetRoll gravityRoll = MockGenerators.mockTargetRoll(8);
+        when(gravityRoll.getLastPlainDesc()).thenReturn("used more MPs than at 1G possible");
+
+        final BasicPathRanker testRanker = spy(new BasicPathRanker(mockPrincess));
+        doReturn(List.of(gravityRoll)).when(testRanker).getPSRList(eq(mockPath));
+
+        final double failureProbability = 1.0 - (Compute.oddsAbove(8, false) / 100.0);
+        final double expected = 2 * failureProbability;
+
+        assertEquals(expected, testRanker.calculateMovePathPSRDamage(mockMek, mockPath), TOLERANCE);
+    }
+
+    @Test
+    void testCalculateMovePathPSRDamageLowGravityJumpOverspeedWithBooster() {
+        final Entity mockMek = MockGenerators.generateMockBipedMek(0, 0);
+        // The plain jump rating is deliberately different from the booster rating so the test fails if the
+        // wrong branch (getJumpMP instead of getMechanicalJumpBoosterMP) is taken.
+        when(mockMek.getJumpMP(MPCalculationSetting.NO_GRAVITY)).thenReturn(3);
+        when(mockMek.getMechanicalJumpBoosterMP(MPCalculationSetting.NO_GRAVITY)).thenReturn(5);
+
+        final MovePath mockPath = MockGenerators.generateMockPath(0, 0, mockMek);
+        when(mockPath.isJumping()).thenReturn(true);
+
+        final MoveStep mockLastStep = mock(MoveStep.class);
+        when(mockLastStep.getMpUsed()).thenReturn(7); // 2 MP beyond the 1G booster rating of 5
+        when(mockLastStep.isUsingMekJumpBooster()).thenReturn(true);
+        when(mockPath.getLastStep()).thenReturn(mockLastStep);
+
+        final TargetRoll gravityRoll = MockGenerators.mockTargetRoll(8);
+        when(gravityRoll.getLastPlainDesc()).thenReturn("used more MPs than at 1G possible");
+
+        final BasicPathRanker testRanker = spy(new BasicPathRanker(mockPrincess));
+        doReturn(List.of(gravityRoll)).when(testRanker).getPSRList(eq(mockPath));
+
+        // Overspeed is measured against the booster's no-gravity rating: 7 - 5 = 2 excess MP.
+        final double failureProbability = 1.0 - (Compute.oddsAbove(8, false) / 100.0);
+        final double expected = 2 * failureProbability;
+
+        assertEquals(expected, testRanker.calculateMovePathPSRDamage(mockMek, mockPath), TOLERANCE);
+    }
+
+    @Test
+    void testCalculateMovePathPSRDamageHighGravityJump() {
+        final Entity mockMek = MockGenerators.generateMockBipedMek(0, 0);
+        when(mockMek.getWalkMP(MPCalculationSetting.NO_GRAVITY)).thenReturn(6);
+        when(mockMek.getWalkMP()).thenReturn(4); // lost 2 walk MP to high gravity -> (6 - 4) / 2 = 1 point
+
+        final MovePath mockPath = MockGenerators.generateMockPath(0, 0, mockMek);
+        when(mockPath.isJumping()).thenReturn(true);
+        when(mockPath.getLastStep()).thenReturn(mock(MoveStep.class));
+
+        final TargetRoll gravityRoll = MockGenerators.mockTargetRoll(9);
+        when(gravityRoll.getLastPlainDesc()).thenReturn("jumped in high gravity");
+
+        final BasicPathRanker testRanker = spy(new BasicPathRanker(mockPrincess));
+        doReturn(List.of(gravityRoll)).when(testRanker).getPSRList(eq(mockPath));
+
+        final double failureProbability = 1.0 - (Compute.oddsAbove(9, false) / 100.0);
+        final double expected = 1 * failureProbability;
+
+        assertEquals(expected, testRanker.calculateMovePathPSRDamage(mockMek, mockPath), TOLERANCE);
+    }
+
+    @Test
+    void testCalculateMovePathPSRDamageIgnoresNonGravityRolls() {
+        // A normal (non-gravity, non-leaping) piloting roll must contribute no self-damage, so behavior on
+        // 1G worlds is unchanged.
+        final Entity mockMek = MockGenerators.generateMockBipedMek(0, 0);
+        final MovePath mockPath = MockGenerators.generateMockPath(0, 0, mockMek);
+
+        final TargetRoll unrelatedRoll = MockGenerators.mockTargetRoll(8); // getLastPlainDesc() == "mock"
+
+        final BasicPathRanker testRanker = spy(new BasicPathRanker(mockPrincess));
+        doReturn(List.of(unrelatedRoll)).when(testRanker).getPSRList(eq(mockPath));
+
+        assertEquals(0.0, testRanker.calculateMovePathPSRDamage(mockMek, mockPath), TOLERANCE);
     }
 
     @Test

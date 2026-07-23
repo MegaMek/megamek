@@ -356,7 +356,8 @@ public class DfaAttackAction extends DisplacementAttackAction {
 
         // piloting skill differential
         if ((ae.getCrew().getPiloting() != te.getCrew().getPiloting())) {
-            toHit.addModifier(ae.getCrew().getPiloting() - te.getCrew().getPiloting(), "piloting skill differential");
+            toHit.addModifier(Game.rulesManager.getRulesPhysical().getPilotDiffModifier(ae.getCrew().getPiloting(),
+                  te.getCrew().getPiloting(), te.isImmobile()), "piloting skill differential");
         }
 
         // attacker is spotting (no penalty with second pilot in command console)

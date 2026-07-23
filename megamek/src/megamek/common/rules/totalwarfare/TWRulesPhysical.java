@@ -233,4 +233,20 @@ public class TWRulesPhysical extends CoreRulesPhysical {
             return src;
         }
     }
+
+    // Prone 'Mechs can only be clubbed if they are one level higher than the attacker
+    // See BMM 7th Printing, Physical Attacks and Prone 'Mechs
+    @Override
+    public boolean cannotClubProne(int targetElevation, int attackerElevation) {
+        if (targetElevation - 1 == attackerElevation) {
+            return false;
+        }
+        return true;
+    }
+
+    // Charges and DFAs get pilot difference, and ignore immobile
+    @Override
+    public int getPilotDiffModifier(int attackerPiloting, int targetPiloting, boolean immobile) {
+        return super.getPilotDiffModifier(attackerPiloting, targetPiloting, false);
+    }
 }

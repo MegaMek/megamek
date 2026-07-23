@@ -304,7 +304,8 @@ public class ChargeAttackAction extends DisplacementAttackAction {
         }
         // piloting skill differential
         if (attackingEntity.getCrew().getPiloting() != te.getCrew().getPiloting()) {
-            toHit.addModifier(attackingEntity.getCrew().getPiloting() - te.getCrew().getPiloting(),
+            toHit.addModifier(Game.rulesManager.getRulesPhysical().getPilotDiffModifier(attackingEntity.getCrew().getPiloting(),
+                  te.getCrew().getPiloting(), te.isImmobile()),
                   "piloting skill differential");
         }
 

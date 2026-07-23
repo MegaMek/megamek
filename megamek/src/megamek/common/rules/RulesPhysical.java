@@ -95,4 +95,10 @@ public abstract class RulesPhysical {
 
     // Missed charges, where does the attacker end up?
     public abstract Coords getMissedChargeDisplacement(Game game, int entityId, Coords src, int direction);
+
+    // Can you club a prone target?
+    public abstract boolean cannotClubProne(int targetElevation, int attackerElevation);
+
+    // For Charge/DFA, get the pilot difference modifier
+    public abstract int getPilotDiffModifier(int piloting, int piloting1, boolean immobile);
 }

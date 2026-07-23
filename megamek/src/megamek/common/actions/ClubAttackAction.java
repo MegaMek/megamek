@@ -495,10 +495,9 @@ public class ClubAttackAction extends PhysicalAttackAction {
             return new ToHitData(TargetRoll.IMPOSSIBLE, "Attacker is prone");
         }
 
-        // Prone 'Mechs can only be clubbed if they are one level higher than the attacker
-        // See BMM 7th Printing, Physical Attacks and Prone 'Mechs
+        // Can we club the prone mek?
         if ((target instanceof Entity) && ((Entity) target).isProne()) {
-            if (targetElevation != attackerElevation + 1) {
+            if(Game.rulesManager.getRulesPhysical().cannotClubProne(targetElevation, attackerElevation)) {
                 return new ToHitData(TargetRoll.IMPOSSIBLE,
                       Messages.getString("PhysicalAttackAction.ProneMekClub"));
             }

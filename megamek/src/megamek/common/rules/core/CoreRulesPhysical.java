@@ -225,4 +225,20 @@ public class CoreRulesPhysical extends RulesPhysical {
     public Coords getMissedChargeDisplacement(Game game, int entityId, Coords src, int direction) {
         return src;
     }
+
+    // Can club prone enemies that are elevated or at your feet. Core p.77
+    public boolean cannotClubProne(int targetElevation, int attackerElevation) {
+        if (attackerElevation == targetElevation || attackerElevation == targetElevation - 1) {
+            return false;
+        }
+        return true;
+    }
+    
+    // Charges and DFAs when attacking an immobile unit use a value of 4 for their piloting. Core p.77
+    public int getPilotDiffModifier(int attackerPiloting, int targetPiloting, boolean immobile) {
+        if (immobile) {
+            return attackerPiloting - 4;
+        }
+        return attackerPiloting - targetPiloting;
+    }
 }

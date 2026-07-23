@@ -9624,10 +9624,7 @@ public class MiscType extends EquipmentType {
         misc.criticalSlots = 0;
         misc.cost = 0; // Cost accounted as part of unit cost
         misc.tankSlots = 0;
-        misc.flags = misc.flags.or(F_ARMORED_CHASSIS,
-              F_CHASSIS_MODIFICATION,
-              F_SUPPORT_TANK_EQUIPMENT,
-              F_FIGHTER_EQUIPMENT);
+        misc.flags = misc.flags.or(F_ARMORED_CHASSIS, F_SUPPORT_TANK_EQUIPMENT, F_CHASSIS_MODIFICATION);
         misc.omniFixedOnly = true;
         misc.bv = 0;
         misc.rulesRefs = "122, TM";

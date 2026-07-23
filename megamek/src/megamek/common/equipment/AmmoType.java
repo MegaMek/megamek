@@ -2607,6 +2607,8 @@ public class AmmoType extends EquipmentType {
         ArrayList<AmmoType> lrmAmmos = new ArrayList<>(26);
         ArrayList<AmmoType> clanLrmAmmos = new ArrayList<>();
         ArrayList<AmmoType> enhancedLRMAmmos = new ArrayList<>(26);
+        ArrayList<AmmoType> tboltAmmos = new ArrayList<>();
+        ArrayList<AmmoType> extendedLRMAmmos = new ArrayList<>();
         ArrayList<AmmoType> acAmmos = new ArrayList<>(4);
         ArrayList<AmmoType> racAmmos = new ArrayList<>(4);
         ArrayList<AmmoType> arrowAmmos = new ArrayList<>(4);
@@ -2813,14 +2815,6 @@ public class AmmoType extends EquipmentType {
         EquipmentType.addType(AmmoType.createISiNarcExplosiveAmmo());
         EquipmentType.addType(AmmoType.createISiNarcHaywireAmmo());
         EquipmentType.addType(AmmoType.createISiNarcNemesisAmmo());
-        EquipmentType.addType(AmmoType.createISExtendedLRM5Ammo());
-        EquipmentType.addType(AmmoType.createISExtendedLRM10Ammo());
-        EquipmentType.addType(AmmoType.createISExtendedLRM15Ammo());
-        EquipmentType.addType(AmmoType.createISExtendedLRM20Ammo());
-        EquipmentType.addType(AmmoType.createISThunderbolt5Ammo());
-        EquipmentType.addType(AmmoType.createISThunderbolt10Ammo());
-        EquipmentType.addType(AmmoType.createISThunderbolt15Ammo());
-        EquipmentType.addType(AmmoType.createISThunderbolt20Ammo());
         EquipmentType.addType(AmmoType.createISMagshotGRAmmo());
 
         /*
@@ -3178,6 +3172,35 @@ public class AmmoType extends EquipmentType {
         base = AmmoType.createCLLRM20Ammo();
         clanLrmAmmos.add(base);
         EquipmentType.addType(base);
+
+        // Add thunderbolt ammos
+        base = AmmoType.createISThunderbolt5Ammo();
+        tboltAmmos.add(base);
+        EquipmentType.addType(base);
+        base = AmmoType.createISThunderbolt10Ammo();
+        tboltAmmos.add(base);
+        EquipmentType.addType(base);
+        base = AmmoType.createISThunderbolt15Ammo();
+        tboltAmmos.add(base);
+        EquipmentType.addType(base);
+        base = AmmoType.createISThunderbolt20Ammo();
+        tboltAmmos.add(base);
+        EquipmentType.addType(base);
+
+        // Add extended LRM ammo for Artemis IV
+        base = AmmoType.createISExtendedLRM5Ammo();
+        extendedLRMAmmos.add(base);
+        EquipmentType.addType(base);
+        base = AmmoType.createISExtendedLRM10Ammo();
+        extendedLRMAmmos.add(base);
+        EquipmentType.addType(base);
+        base = AmmoType.createISExtendedLRM15Ammo();
+        extendedLRMAmmos.add(base);
+        EquipmentType.addType(base);
+        base = AmmoType.createISExtendedLRM20Ammo();
+        extendedLRMAmmos.add(base);
+        EquipmentType.addType(base);
+
 
         // Start of BattleArmor ammo
         EquipmentType.addType(AmmoType.createBAMicroBombAmmo());
@@ -3588,6 +3611,18 @@ public class AmmoType extends EquipmentType {
         munitions.add(CLAN_NARC_CAPABLE_MUNITION_MUTATOR_FOR_MISSILE);
         AmmoType.createMunitions(clanLrmAmmos, munitions);
         AmmoType.createMunitions(clanImprovedLRMsAmmo, munitions);
+
+        // Create the munition types for Thunderbolt launchers
+        munitions.clear();
+        munitions.add(SEMI_GUIDED_MUNITION_MUTATOR);
+        munitions.add(NARC_CAPABLE_MUNITION_MUTATOR);
+        munitions.add(THUNDER_MUNITION_MUTATOR);
+        AmmoType.createMunitions(tboltAmmos, munitions);
+
+        // Create munitions types for Extended LRMs
+        munitions.clear();
+        munitions.add(ARTEMIS_CAPABLE_MUNITION_MUTATOR);
+        AmmoType.createMunitions(extendedLRMAmmos, munitions);
 
         // Create the munition types for AC rounds.
         munitions.clear();
@@ -16437,7 +16472,11 @@ public class AmmoType extends EquipmentType {
             if (((munition.getAmmoType() == AmmoTypeEnum.LRM) ||
                   (munition.getAmmoType() == AmmoTypeEnum.LRM_IMP) ||
                   (munition.getAmmoType() == AmmoTypeEnum.MML) ||
-                  (munition.getAmmoType() == AmmoTypeEnum.NLRM)) &&
+                  (munition.getAmmoType() == AmmoTypeEnum.NLRM) ||
+                  (munition.getAmmoType() == AmmoTypeEnum.TBOLT_5) ||
+                  (munition.getAmmoType() == AmmoTypeEnum.TBOLT_10) ||
+                  (munition.getAmmoType() == AmmoTypeEnum.TBOLT_15) ||
+                  (munition.getAmmoType() == AmmoTypeEnum.TBOLT_20)) &&
                   (munition.getMunitionType().contains(Munitions.M_SEMIGUIDED))) {
                 cost *= 3;
                 bv *= 1;
@@ -16464,7 +16503,11 @@ public class AmmoType extends EquipmentType {
             if (((munition.getAmmoType() == AmmoTypeEnum.LRM) ||
                   (munition.getAmmoType() == AmmoTypeEnum.LRM_IMP) ||
                   (munition.getAmmoType() == AmmoTypeEnum.MML) ||
-                  (munition.getAmmoType() == AmmoTypeEnum.NLRM)) &&
+                  (munition.getAmmoType() == AmmoTypeEnum.NLRM)||
+                  (munition.getAmmoType() == AmmoTypeEnum.TBOLT_5) ||
+                  (munition.getAmmoType() == AmmoTypeEnum.TBOLT_10) ||
+                  (munition.getAmmoType() == AmmoTypeEnum.TBOLT_15) ||
+                  (munition.getAmmoType() == AmmoTypeEnum.TBOLT_20)) &&
                   (munition.getMunitionType().contains(Munitions.M_THUNDER))) {
                 cost *= 2;
                 // TO:AUE, pp.185,197,198: Half the rack size on 7 hexes; standard mines
@@ -16551,7 +16594,11 @@ public class AmmoType extends EquipmentType {
                   (munition.getAmmoType() == AmmoTypeEnum.MML) ||
                   (munition.getAmmoType() == AmmoTypeEnum.SRM) ||
                   (munition.getAmmoType() == AmmoTypeEnum.SRM_IMP) ||
-                  (munition.getAmmoType() == AmmoTypeEnum.NLRM)) &&
+                  (munition.getAmmoType() == AmmoTypeEnum.NLRM) ||
+                  (munition.getAmmoType() == AmmoTypeEnum.TBOLT_5) ||
+                  (munition.getAmmoType() == AmmoTypeEnum.TBOLT_10) ||
+                  (munition.getAmmoType() == AmmoTypeEnum.TBOLT_15) ||
+                  (munition.getAmmoType() == AmmoTypeEnum.TBOLT_20)) &&
                   (munition.getMunitionType().contains(Munitions.M_NARC_CAPABLE))) {
                 cost *= 2;
             }
@@ -16560,7 +16607,8 @@ public class AmmoType extends EquipmentType {
                   (munition.getAmmoType() == AmmoTypeEnum.MML) ||
                   (munition.getAmmoType() == AmmoTypeEnum.SRM) ||
                   (munition.getAmmoType() == AmmoTypeEnum.SRM_IMP) ||
-                  (munition.getAmmoType() == AmmoTypeEnum.NLRM)) &&
+                  (munition.getAmmoType() == AmmoTypeEnum.NLRM) ||
+                  (munition.getAmmoType() == AmmoTypeEnum.EXLRM)) &&
                   (munition.getMunitionType().contains(Munitions.M_ARTEMIS_CAPABLE))) {
                 cost *= 2;
             }

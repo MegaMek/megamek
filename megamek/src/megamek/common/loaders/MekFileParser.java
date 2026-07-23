@@ -479,12 +479,8 @@ public class MekFileParser {
                     if (mWeapon.getLocation() == m.getLocation()) {
 
                         // Only Legal IS PPC's are allowed.
-                        if ((mWeapon.getType() instanceof ISPPC) ||
-                              (mWeapon.getType() instanceof ISLightPPC) ||
-                              (mWeapon.getType() instanceof ISHeavyPPC) ||
-                              (mWeapon.getType() instanceof ISERPPC) ||
-                              (mWeapon.getType() instanceof ISSnubNosePPC) ||
-                              (mWeapon.getType() instanceof CLERPPC && ent.getYear() >= 3101)) {
+                        if ((mWeapon.getType().hasFlag(F_PPC_CAPACITOR_COMPATIBLE) &&
+                            (!(mWeapon.getType() instanceof CLERPPC) && ent.getYear() < 3101))) {
                             m.setLinked(mWeapon);
                             break;
                         }
@@ -630,12 +626,8 @@ public class MekFileParser {
                             // check location
                             if (bayMountedWeapon.getLocation() == m.getLocation()) {
                                 // Only Legal IS PPC's are allowed.
-                                if ((bayWeaponType instanceof ISPPC) ||
-                                      (bayWeaponType instanceof ISLightPPC) ||
-                                      (bayWeaponType instanceof ISHeavyPPC) ||
-                                      (bayWeaponType instanceof ISERPPC) ||
-                                      (bayWeaponType instanceof ISSnubNosePPC) ||
-                                      (bayWeaponType instanceof CLERPPC && ent.getYear() >= 3101)) {
+                            if ((mWeapon.getType().hasFlag(F_PPC_CAPACITOR_COMPATIBLE) &&
+                                (!(mWeapon.getType() instanceof CLERPPC) && ent.getYear() < 3101))) {
 
                                     m.setCrossLinked(bayMountedWeapon);
                                     break;
@@ -653,15 +645,8 @@ public class MekFileParser {
                     if (mWeapon.getLocation() == m.getLocation()) {
 
                         // Only Legal IS PPC's are allowed.
-                        if ((mWeapon.getType() instanceof ISPPC) ||
-                              (mWeapon.getType() instanceof ISLightPPC) ||
-                              (mWeapon.getType() instanceof ISHeavyPPC) ||
-                              (mWeapon.getType() instanceof ISERPPC) ||
-                              (mWeapon.getType() instanceof ISSnubNosePPC) ||
-                              (mWeapon.getType() instanceof CLEnhancedPPC) ||
-                              (mWeapon.getType() instanceof CLImprovedPPC) ||
-                              (mWeapon.getType() instanceof ISKinsSlaughterPPC) ||
-                              (mWeapon.getType() instanceof CLERPPC && ent.getYear() >= 3101)) {
+                        if ((mWeapon.getType().hasFlag(F_PPC_CAPACITOR_COMPATIBLE) &&
+                            (!(mWeapon.getType() instanceof CLERPPC) && ent.getYear() < 3101))) {
 
                             m.setCrossLinked(mWeapon);
                             break;

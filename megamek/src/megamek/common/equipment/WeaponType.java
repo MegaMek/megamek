@@ -669,6 +669,7 @@ public class WeaponType extends EquipmentType {
     public static final WeaponTypeFlag F_ER_FLAMER = WeaponTypeFlag.F_ER_FLAMER;
     /** Missile weapon that can be linked to an Artemis fire control system */
     public static final WeaponTypeFlag F_ARTEMIS_COMPATIBLE = WeaponTypeFlag.F_ARTEMIS_COMPATIBLE;
+    public static final WeaponTypeFlag F_PPC_CAPACITOR_COMPATIBLE = WeaponTypeFlag.F_ARTEMIS_COMPATIBLE;
 
     /**
      * This flag is used by mortar-type weapons that allow indirect fire without a spotter and/or with LOS.

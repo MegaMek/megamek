@@ -155,5 +155,7 @@ public enum WeaponTypeFlag implements EquipmentFlag {
     F_MML,
     F_MRM,
     F_ATM,
-    F_NARC
+    F_NARC,
+
+    F_PPC_CAPACITOR_COMPATIBLE
 }

@@ -578,6 +578,20 @@ public class CommonSettingsDialog extends AbstractButtonDialog
     /** Wrap width for the multi-line warning under the toast on/off checkbox, before GUI scaling. */
     private static final int TOAST_WARNING_WIDTH_PX = 480;
 
+    /**
+     * Clamps a persisted toast-timing value into the range the toast spinners allow. Guards against a
+     * hand-edited or corrupted preferences file: {@link SpinnerNumberModel}'s constructor throws an
+     * {@link IllegalArgumentException} when its initial value falls outside {@code [minimum, maximum]},
+     * which would crash the Overlays tab as it is built.
+     *
+     * @param seconds the stored timing value in seconds, possibly out of range
+     *
+     * @return the value clamped to {@code [MIN_TOAST_SECONDS, MAX_TOAST_SECONDS]}
+     */
+    private static int clampToastSeconds(int seconds) {
+        return Math.min(MAX_TOAST_SECONDS, Math.max(MIN_TOAST_SECONDS, seconds));
+    }
+
     // Save some values to restore them when the dialog is canceled
     private boolean savedFovHighlight;
     private boolean savedFovDarken;
@@ -1780,7 +1794,8 @@ public class CommonSettingsDialog extends AbstractButtonDialog
 
         addSpacer(comps, 3);
 
-        SpinnerNumberModel toastDurationModel = new SpinnerNumberModel(GUIP.getToastDurationSeconds(),
+        SpinnerNumberModel toastDurationModel = new SpinnerNumberModel(
+              clampToastSeconds(GUIP.getToastDurationSeconds()),
               MIN_TOAST_SECONDS,
               MAX_TOAST_SECONDS,
               1);
@@ -1795,7 +1810,8 @@ public class CommonSettingsDialog extends AbstractButtonDialog
         row.add(toastDurationLabel);
         comps.add(row);
 
-        SpinnerNumberModel toastDripModel = new SpinnerNumberModel(GUIP.getToastDripSeconds(),
+        SpinnerNumberModel toastDripModel = new SpinnerNumberModel(
+              clampToastSeconds(GUIP.getToastDripSeconds()),
               MIN_TOAST_SECONDS,
               MAX_TOAST_SECONDS,
               1);
@@ -2766,8 +2782,8 @@ public class CommonSettingsDialog extends AbstractButtonDialog
         planetaryConditionsBackgroundTransparency.setValue(GUIP.getPlanetaryConditionsBackgroundTransparency());
 
         toastEnabled.setSelected(GUIP.getToastEnabled());
-        toastDurationSpinner.setValue(GUIP.getToastDurationSeconds());
-        toastDripSpinner.setValue(GUIP.getToastDripSeconds());
+        toastDurationSpinner.setValue(clampToastSeconds(GUIP.getToastDurationSeconds()));
+        toastDripSpinner.setValue(clampToastSeconds(GUIP.getToastDripSeconds()));
         toastReportEvents.setSelected(GUIP.getToastReportEvents());
         setToastControlsEnabled(toastEnabled.isSelected());
 

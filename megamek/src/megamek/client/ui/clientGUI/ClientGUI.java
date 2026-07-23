@@ -591,22 +591,25 @@ public class ClientGUI extends AbstractClientGUI
      * @param entity the entity whose icon to show, or {@code null} for text-only
      */
     public void addToast(ToastLevel level, String text, @Nullable Entity entity) {
-        String normalized = ReportToastFormatter.normalizeToastText(text);
         String entityLabel = (entity != null) ?
               entity.getShortName() + " [" + entity.getId() + "]" :
               "no entity";
+        // Gate before normalizing: normalizeToastText is regex-heavy and only the shown path needs the
+        // cleaned text. On the suppressed paths log the raw text so switching toasts off does not pay the
+        // normalization cost for every would-be toast.
         if (toastOverlay == null) {
             logger.debug("[Toast] suppressed [{}] ({}) - overlay not initialized yet: {}",
-                  level, entityLabel, normalized);
+                  level, entityLabel, text);
             return;
         }
         if (!GUIP.getToastEnabled()) {
             logger.debug("[Toast] suppressed [{}] ({}) - toasts switched off in client settings: {}",
-                  level, entityLabel, normalized);
+                  level, entityLabel, text);
             return;
         }
-        logger.debug("[Toast] shown [{}] ({}): {}", level, entityLabel, normalized);
-        toastOverlay.show(level, normalized, entity);
+        String normalizedText = ReportToastFormatter.normalizeToastText(text);
+        logger.debug("[Toast] shown [{}] ({}): {}", level, entityLabel, normalizedText);
+        toastOverlay.show(level, normalizedText, entity);
     }
 
     /**

@@ -52,6 +52,7 @@ import megamek.client.bot.BotLogger;
 import megamek.client.bot.princess.UnitBehavior.BehaviorType;
 import megamek.client.ui.Messages;
 import megamek.client.ui.SharedUtility;
+import megamek.common.MPCalculationSetting;
 import megamek.common.annotations.Nullable;
 import megamek.common.board.Board;
 import megamek.common.board.Coords;
@@ -71,6 +72,12 @@ import org.apache.logging.log4j.Level;
 public abstract class PathRanker implements IPathRanker {
     private final static MMLogger logger = MMLogger.create(PathRanker.class);
     private static final BotLogger botLogger = new BotLogger();
+
+    // Piloting-roll descriptions emitted for gravity overspeed (see Entity.checkMovedTooFast and
+    // SharedUtility.getPSRList). Matched lower-cased to add the self-inflicted leg damage into a path's
+    // expected damage taken. Kept as literals because the engine emits them as raw strings, not i18n keys.
+    private static final String PSR_DESC_GRAVITY_TOO_FAST = "used more mps than at 1g possible";
+    private static final String PSR_DESC_GRAVITY_HIGH_JUMP = "jumped in high gravity";
     // TODO: Introduce PathRankerCacheHelper class that contains "global" path
     // ranker state
     // TODO: Introduce FireControlCacheHelper class that contains "global" Fire
@@ -495,7 +502,8 @@ public abstract class PathRanker implements IPathRanker {
      * Estimates the most expected damage that a path could cause, given the pilot skill of the path ranker and various
      * conditions.
      * <p>
-     * XXX Sleet01: add fall pilot damage, skid damage, and low-gravity overspeed damage calcs
+     * XXX Sleet01: add fall pilot damage and skid damage calcs (low-/high-gravity overspeed leg damage is
+     * handled below via {@link #predictGravityOverspeedDamage}).
      */
     protected double calculateMovePathPSRDamage(Entity movingEntity, MovePath path) {
         double damage = 0.0;
@@ -512,10 +520,65 @@ public abstract class PathRanker implements IPathRanker {
                   description.contains(Messages.getString("TacOps.leaping.fall_damage"))
             ) {
                 damage += predictLeapFallDamage(movingEntity, roll);
+            } else if (
+                  description.contains(PSR_DESC_GRAVITY_TOO_FAST)
+                        || description.contains(PSR_DESC_GRAVITY_HIGH_JUMP)
+            ) {
+                damage += predictGravityOverspeedDamage(movingEntity, path, roll);
             }
         }
 
         return damage;
+    }
+
+    /**
+     * Predicts the self-inflicted leg internal-structure damage Princess would take if she failed the gravity
+     * "overspeed" piloting roll on this path. On low-gravity worlds a unit can run or jump farther than its 1G
+     * rating allows, and on high-gravity worlds a jump that costs it walk MP triggers a roll; failing either
+     * deals extreme-gravity damage to the legs (1 point per MP over the 1G limit for ground or low-gravity
+     * jumps, or {@code (1G walk MP - gravity walk MP) / 2} for a high-gravity jump).
+     *
+     * <p>Unlike the leaping rolls, the gravity roll does not encode the damage magnitude in its value (see
+     * {@link Entity#checkMovedTooFast}), so it is recomputed from the path's final step. The result is
+     * weighted by the chance of failing the roll, matching {@code predictLeapDamage}.</p>
+     *
+     * @param movingEntity the unit whose path is being ranked
+     * @param path         the candidate path
+     * @param roll         the gravity overspeed piloting roll from {@link #getPSRList(MovePath)}
+     *
+     * @return the odds-weighted expected leg damage, or {@code 0} if the path does not actually overspeed
+     */
+    private double predictGravityOverspeedDamage(Entity movingEntity, MovePath path, TargetRoll roll) {
+        MoveStep lastStep = path.getLastStep();
+        if (lastStep == null) {
+            return 0.0;
+        }
+
+        String description = roll.getLastPlainDesc().toLowerCase();
+        int overspeedMP;
+        if (description.contains(PSR_DESC_GRAVITY_HIGH_JUMP)) {
+            // High-gravity jump: half the walk MP lost to gravity (TO:AR gravity rules).
+            overspeedMP = (movingEntity.getWalkMP(MPCalculationSetting.NO_GRAVITY) - movingEntity.getWalkMP()) / 2;
+        } else if (path.isJumping()) {
+            // Low-gravity jump overspeed: MP used beyond the 1G jump rating. A mechanical jump booster uses
+            // its own no-gravity rating, matching the server extreme-gravity damage calculation.
+            int noGravityJumpMP = lastStep.isUsingMekJumpBooster()
+                  ? movingEntity.getMechanicalJumpBoosterMP(MPCalculationSetting.NO_GRAVITY)
+                  : movingEntity.getJumpMP(MPCalculationSetting.NO_GRAVITY);
+            overspeedMP = lastStep.getMpUsed() - noGravityJumpMP;
+        } else {
+            // Low-gravity ground overspeed: MP used beyond the 1G running limit. The server's extreme-gravity
+            // damage uses getRunningGravityLimit() directly (no pavement/road adjustment), so mirror it.
+            overspeedMP = lastStep.getMpUsed() - movingEntity.getRunningGravityLimit();
+        }
+
+        if (overspeedMP <= 0) {
+            return 0.0;
+        }
+
+        // Each excess MP costs 1 point of leg internal structure on a failed roll; weight by failure chance.
+        double failureProbability = 1.0 - (Compute.oddsAbove(roll.getValue(), false) / 100.0);
+        return overspeedMP * failureProbability;
     }
 
     protected List<TargetRoll> getPSRList(MovePath path) {

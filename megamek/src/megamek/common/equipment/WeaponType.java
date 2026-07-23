@@ -577,6 +577,7 @@ public class WeaponType extends EquipmentType {
     public static final WeaponTypeFlag F_MML = WeaponTypeFlag.F_MML;
     public static final WeaponTypeFlag F_MRM = WeaponTypeFlag.F_MRM;
     public static final WeaponTypeFlag F_ATM = WeaponTypeFlag.F_ATM;
+    public static final WeaponTypeFlag F_NARC = WeaponTypeFlag.F_NARC;
     
 
     // War of 3039 prototypes

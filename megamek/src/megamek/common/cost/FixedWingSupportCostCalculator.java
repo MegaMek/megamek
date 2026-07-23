@@ -145,7 +145,8 @@ public class FixedWingSupportCostCalculator {
 
         String[] systemNames = { "Chassis", "Engine", "Armor", "Final Structural Cost", "Power Amplifiers",
                                  "Heat Sinks", "Equipment", "Omni Multiplier", "Tonnage Multiplier" };
-        CostCalculator.fillInReport(costReport, fixedWingSupport, ignoreAmmo, systemNames, 6, cost, costs);
-        return Math.round(cost);
+        long roundedCost = Math.round(cost);
+        CostCalculator.fillInReport(costReport, fixedWingSupport, ignoreAmmo, systemNames, 6, roundedCost, costs);
+        return roundedCost;
     }
 }

@@ -49,9 +49,6 @@ class CostCalculatorReportTest {
         assertNotNull(report.result("Chassis"));
         assertNotNull(report.result("Engine"));
         assertNotNull(report.result("Armor"));
-        assertNull(report.result("Chassis"));
-        assertNull(report.result("Engine"));
-        assertNull(report.result("Armor"));
         assertEquals(NumberFormat.getInstance().format(returnedCost), report.total());
     }
 

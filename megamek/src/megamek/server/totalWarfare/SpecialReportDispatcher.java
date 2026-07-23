@@ -75,9 +75,13 @@ class SpecialReportDispatcher extends AbstractTWRuleHandler {
         int alreadySent = sentReportCountByPlayer.getOrDefault(playerId, 0);
         if (alreadySent > phaseReport.size()) {
             // The phase report was cleared since this player's last send, so the mark no longer means anything.
+            // Correct the stored mark now (not just the local copy) so that if we bail out at the "nothing new"
+            // check below - which happens when the report is currently empty - a later call self-heals instead
+            // of re-detecting and re-logging the same stale mark every time.
             LOGGER.debug("[SpecialReport] player {}: mark {} exceeds report size {}, resending from the start",
                   playerId, alreadySent, phaseReport.size());
             alreadySent = 0;
+            sentReportCountByPlayer.put(playerId, 0);
         }
         if (alreadySent == phaseReport.size()) {
             LOGGER.debug("[SpecialReport] player {}: nothing new since last send, skipping packet", playerId);

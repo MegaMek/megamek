@@ -41,6 +41,7 @@ import java.util.Map;
 import megamek.common.ECMInfo;
 import megamek.common.LosEffects;
 import megamek.common.annotations.Nullable;
+import megamek.common.equipment.EquipmentActivation;
 import megamek.common.game.Game;
 import megamek.common.options.OptionsConstants;
 import megamek.common.units.Entity;
@@ -212,7 +213,7 @@ public class ComputeC3Spotter {
         }
 
         // C3 gear the player has switched off provides no targeting data (it rejoins its network when reactivated)
-        if (attacker.isC3SwitchedOff()) {
+        if (EquipmentActivation.isC3SwitchedOff(attacker)) {
             return false;
         }
         
@@ -248,7 +249,7 @@ public class ComputeC3Spotter {
               && other.isDeployed()
               && !other.isStealthActive()
               && !other.isShutDown()
-              && !other.isC3SwitchedOff()
+              && !EquipmentActivation.isC3SwitchedOff(other)
               && !other.isOffBoard()
               && !other.isTransported()
               && game.hasBoardLocationOf(other)

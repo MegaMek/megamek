@@ -65,6 +65,7 @@ import megamek.common.CriticalSlot;
 import megamek.common.battleArmor.BattleArmor;
 import megamek.common.equipment.AmmoType;
 import megamek.common.equipment.BridgeLayerState;
+import megamek.common.equipment.EquipmentActivation;
 import megamek.common.equipment.EquipmentMode;
 import megamek.common.equipment.GunEmplacement;
 import megamek.common.equipment.MiscMounted;
@@ -926,7 +927,7 @@ class SystemPanel extends PicMap
                         if (equipmentMode.equals("Off")
                               && (mounted.getType() instanceof MiscType)
                               && mounted.getType().hasFlag(MiscType.F_ECM)
-                              && en.isStealthOnOrActivating()) {
+                              && EquipmentActivation.isStealthOnOrActivating(en)) {
                             continue;
                         }
                         // Mirror case: hide the On mode for stealth armor while no ECM suite will be
@@ -935,7 +936,7 @@ class SystemPanel extends PicMap
                         if (equipmentMode.equals("On")
                               && (mounted.getType() instanceof MiscType)
                               && mounted.getType().hasFlag(MiscType.F_STEALTH)
-                              && !en.hasEcmAvailableForStealth()) {
+                              && !EquipmentActivation.hasEcmAvailableForStealth(en)) {
                             continue;
                         }
                         m_chMode.addItem(equipmentMode.getDisplayableName());

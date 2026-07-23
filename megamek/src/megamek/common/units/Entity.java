@@ -7022,37 +7022,6 @@ public abstract class Entity extends TurnOrdered
         return hasC3() || hasNhC3();
     }
 
-    /**
-     * Returns whether the player has deactivated this unit's C3 network gear (C3 slave/master, C3i, Naval C3 or Nova
-     * CEWS). A switched-off unit provides and receives no network benefit, but its network membership
-     * ({@code c3NetIdString}, master link, partner UUIDs) is preserved, so reactivating the equipment automatically
-     * restores the previous network.
-     *
-     * @return {@code true} if this unit mounts operable C3 network equipment and all of it is currently set to "Off"
-     */
-    public boolean isC3SwitchedOff() {
-        boolean hasOperableC3Equipment = false;
-        for (Mounted<?> mounted : getEquipment()) {
-            boolean isC3Equipment;
-            if (mounted.getType() instanceof MiscType miscType) {
-                isC3Equipment = miscType.hasFlag(MiscType.F_C3S) || miscType.hasFlag(MiscType.F_C3SBS)
-                      || miscType.hasFlag(MiscType.F_C3I) || miscType.hasFlag(MiscType.F_NAVAL_C3)
-                      || miscType.hasFlag(MiscType.F_NOVA);
-            } else if (mounted.getType() instanceof WeaponType weaponType) {
-                isC3Equipment = weaponType.hasFlag(WeaponType.F_C3M) || weaponType.hasFlag(WeaponType.F_C3MBS);
-            } else {
-                isC3Equipment = false;
-            }
-            if (isC3Equipment && !mounted.isInoperable()) {
-                hasOperableC3Equipment = true;
-                if (!mounted.isModeTurnedOff()) {
-                    return false;
-                }
-            }
-        }
-        return hasOperableC3Equipment;
-    }
-
     public @Nullable String getC3NetId() {
         if (c3NetIdString == null) {
             if (hasC3()) {
@@ -7527,7 +7496,7 @@ public abstract class Entity extends TurnOrdered
         // A unit whose C3 gear is switched off provides and receives no network benefit. The ignoreECM path is
         // deliberately NOT gated: it is used to record network membership (save files, network wiring), which must
         // survive deactivation so the previous network is restored when the gear is switched back on.
-        if (!ignoreECM && (isC3SwitchedOff() || e.isC3SwitchedOff())) {
+        if (!ignoreECM && (EquipmentActivation.isC3SwitchedOff(this) || EquipmentActivation.isC3SwitchedOff(e))) {
             return false;
         }
 
@@ -10320,40 +10289,6 @@ public abstract class Entity extends TurnOrdered
      *       inactive.
      */
     public boolean isStealthOn() {
-        return false;
-    }
-
-    /**
-     * Returns whether this unit's stealth armor system is engaged now or will be engaged next round (a pending
-     * switch to "On"). Used to validate that the ECM suite stealth armor depends on is not deactivated in the same
-     * round the stealth system is being engaged.
-     *
-     * @return {@code true} if an operable stealth armor system is in the "On" mode now or as its next-round mode
-     */
-    public boolean isStealthOnOrActivating() {
-        for (MiscMounted mounted : getMisc()) {
-            if (mounted.getType().hasFlag(MiscType.F_STEALTH) && !mounted.isInoperable()
-                  && (mounted.curMode().equals("On") || mounted.modeNextRound().equals("On"))) {
-                return true;
-            }
-        }
-        return false;
-    }
-
-    /**
-     * Returns whether this unit will have an ECM suite operating next round, i.e. one that is operable and not
-     * deactivated or switching to "Off". Stealth armor requires such a suite, so engaging stealth is refused while
-     * this returns {@code false}.
-     *
-     * @return {@code true} if an operable ECM suite will not be in the "Off" mode next round
-     */
-    public boolean hasEcmAvailableForStealth() {
-        for (MiscMounted mounted : getMisc()) {
-            if (mounted.getType().hasFlag(MiscType.F_ECM) && !mounted.isInoperable()
-                  && !mounted.isModeTurnedOffNextRound()) {
-                return true;
-            }
-        }
         return false;
     }
 

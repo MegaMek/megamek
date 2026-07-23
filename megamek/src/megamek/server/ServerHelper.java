@@ -45,6 +45,7 @@ import megamek.common.Report;
 import megamek.common.battleArmor.BattleArmor;
 import megamek.common.board.Coords;
 import megamek.common.compute.Compute;
+import megamek.common.equipment.EquipmentActivation;
 import megamek.common.equipment.Minefield;
 import megamek.common.equipment.MiscType;
 import megamek.common.equipment.Mounted;
@@ -446,7 +447,7 @@ public class ServerHelper {
             return false;
         }
         boolean isSwitchingOff = miscType.getMode(newMode).getName().equals("Off");
-        return isSwitchingOff && entity.isStealthOnOrActivating();
+        return isSwitchingOff && EquipmentActivation.isStealthOnOrActivating(entity);
     }
 
     /**
@@ -470,7 +471,7 @@ public class ServerHelper {
             return false;
         }
         boolean isSwitchingOn = miscType.getMode(newMode).getName().equals("On");
-        return isSwitchingOn && !entity.hasEcmAvailableForStealth();
+        return isSwitchingOn && !EquipmentActivation.hasEcmAvailableForStealth(entity);
     }
 
     /**

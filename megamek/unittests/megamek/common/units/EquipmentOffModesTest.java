@@ -38,6 +38,7 @@ import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
+import megamek.common.equipment.EquipmentActivation;
 import megamek.common.equipment.EquipmentType;
 import megamek.common.equipment.EquipmentTypeLookup;
 import megamek.common.equipment.Mounted;
@@ -114,17 +115,17 @@ class EquipmentOffModesTest {
         Mounted<?> c3i = addEquipment(mek, "ISC3iUnit", Mek.LOC_RIGHT_TORSO);
         mek.setC3NetId("C3i.42");
 
-        assertFalse(mek.isC3SwitchedOff(), "A freshly mounted C3i defaults to On");
+        assertFalse(EquipmentActivation.isC3SwitchedOff(mek), "A freshly mounted C3i defaults to On");
 
         c3i.setMode("Off");
         applyPendingMode(c3i);
-        assertTrue(mek.isC3SwitchedOff(), "Switched-off C3 gear provides no network benefit");
+        assertTrue(EquipmentActivation.isC3SwitchedOff(mek), "Switched-off C3 gear provides no network benefit");
         assertEquals("C3i.42", mek.getC3NetId(), "Network membership survives deactivation");
         assertTrue(mek.hasC3i(), "Capability stays presence-based so wiring/serialization keep the membership");
 
         c3i.setMode("On");
         applyPendingMode(c3i);
-        assertFalse(mek.isC3SwitchedOff(), "Reactivated C3 gear rejoins its previous network");
+        assertFalse(EquipmentActivation.isC3SwitchedOff(mek), "Reactivated C3 gear rejoins its previous network");
         assertEquals("C3i.42", mek.getC3NetId(), "The previous network is restored on reactivation");
     }
 
@@ -134,14 +135,14 @@ class EquipmentOffModesTest {
         Mounted<?> nova = addEquipment(mek, Sensor.NOVA, Mek.LOC_RIGHT_TORSO);
 
         assertTrue(mek.hasActiveNovaCEWS(), "A freshly mounted Nova CEWS defaults to functioning");
-        assertFalse(mek.isC3SwitchedOff());
+        assertFalse(EquipmentActivation.isC3SwitchedOff(mek));
 
         nova.setMode("Off");
         applyPendingMode(nova);
         assertFalse(mek.hasActiveNovaCEWS(), "A deactivated Nova CEWS does not function");
         assertFalse(mek.hasBAP(false), "The Off mode also silences the Nova's probe half");
         assertTrue(mek.hasNovaCEWS(), "Presence-based networking capability survives for membership purposes");
-        assertTrue(mek.isC3SwitchedOff(), "The Off mode also cuts the Nova's C3 benefit");
+        assertTrue(EquipmentActivation.isC3SwitchedOff(mek), "The Off mode also cuts the Nova's C3 benefit");
     }
 
     @Test

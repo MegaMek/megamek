@@ -97,7 +97,8 @@ public class ForceGenerationOptionsPanel extends JPanel implements ActionListene
     private static final int[] UNIT_TYPES = { UnitType.MEK, UnitType.TANK, UnitType.BATTLE_ARMOR, UnitType.INFANTRY,
                                               UnitType.PROTOMEK, UnitType.VTOL, UnitType.NAVAL, UnitType.CONV_FIGHTER,
                                               UnitType.AEROSPACE_FIGHTER, UnitType.SMALL_CRAFT, UnitType.DROPSHIP,
-                                              UnitType.JUMPSHIP, UnitType.WARSHIP, UnitType.SPACE_STATION };
+                                              UnitType.JUMPSHIP, UnitType.WARSHIP, UnitType.SPACE_STATION,
+                                              UnitType.ADVANCED_BUILDING };
     private static final int EARLIEST_YEAR = 2398;
     private static final int LATEST_YEAR = 3160;
     // endregion Variable Declarations

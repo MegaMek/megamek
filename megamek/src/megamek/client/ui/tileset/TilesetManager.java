@@ -1,6 +1,6 @@
 /*
  * Copyright (C) 2002-2004 Ben Mazur (bmazur@sev.org)
- * Copyright (C) 2018-2025 The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2018-2026 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -556,11 +556,13 @@ public class TilesetManager implements IPreferenceChangeListener {
 
         EntityImage entityImage = null;
 
-        // check if we have a duplicate image already loaded
+        // check if we have a duplicate image already loaded; compare the unmodified tileset image, as the base
+        // image gets replaced with a processed version when the facings are loaded (see EntityImage.loadFacings),
+        // and compare the damage level with the same calculation used when the EntityImage was created
         for (EntityImage onList : mekImageList) {
-            if ((onList.getBase() != null) && onList.getBase().equals(base)
+            if ((onList.getTilesetBase() != null) && onList.getTilesetBase().equals(base)
                   && onList.getCamouflage().equals(camouflage)
-                  && (onList.getDmgLvl() == entity.getDamageLevel(false))) {
+                  && (onList.getDmgLvl() == EntityImage.calculateDamageLevel(entity))) {
                 entityImage = onList;
                 break;
             }

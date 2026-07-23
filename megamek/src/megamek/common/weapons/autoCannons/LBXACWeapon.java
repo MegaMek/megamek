@@ -99,7 +99,8 @@ public abstract class LBXACWeapon extends AmmoWeapon {
               .or(F_AERO_WEAPON)
               .or(F_PROTO_WEAPON)
               .or(F_BALLISTIC)
-              .or(F_DIRECT_FIRE);
+              .or(F_DIRECT_FIRE)
+              .or(F_AC);
 
         ammoType = AmmoType.AmmoTypeEnum.AC_LBX;
         atClass = CLASS_LBX_AC;

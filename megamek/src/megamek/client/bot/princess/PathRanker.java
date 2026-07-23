@@ -47,6 +47,8 @@ import java.util.ListIterator;
 import java.util.Map;
 import java.util.Optional;
 import java.util.TreeSet;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import megamek.client.bot.BotLogger;
 import megamek.client.bot.princess.UnitBehavior.BehaviorType;
@@ -73,6 +75,17 @@ public abstract class PathRanker implements IPathRanker {
     private final static MMLogger logger = MMLogger.create(PathRanker.class);
     private static final BotLogger botLogger = new BotLogger();
 
+    // Fraction of a failed water-entry piloting roll treated as an acceptable (non-damaging) outcome: falling
+    // when wading only drops the unit prone in the water (minor damage, stand next turn) rather than a real
+    // fall. The forgiveness is scaled by water depth - a fall in a shallow ford is nearly harmless, but is
+    // progressively worse in deeper water (where the separately-scored submerged-location breach hazard also
+    // applies). This keeps Princess willing to wade a shallow river to engage instead of pacing at the bank
+    // (issue #7627) without making her reckless in deep water.
+    private static final double WATER_FALL_FORGIVENESS_DEPTH_1 = 0.95;
+    private static final double WATER_FALL_FORGIVENESS_PER_DEPTH = 0.20;
+    private static final double WATER_FALL_FORGIVENESS_FLOOR = 0.30;
+    // Matches the "entering Depth N Water" piloting-roll description built in Entity.checkWaterMove.
+    private static final Pattern WATER_ENTRY_DEPTH_PATTERN = Pattern.compile("entering depth (\\d+)");
     // Piloting-roll descriptions emitted for gravity overspeed (see Entity.checkMovedTooFast and
     // SharedUtility.getPSRList). Matched lower-cased to add the self-inflicted leg damage into a path's
     // expected damage taken. Kept as literals because the engine emits them as raw strings, not i18n keys.
@@ -460,10 +473,11 @@ public abstract class PathRanker implements IPathRanker {
         logger.trace("Calculating Move Path Success for {}", pathCopy);
 
         for (TargetRoll roll : pilotingRolls) {
+            String rollDescription = roll.getDesc().toLowerCase();
             // Skip the getting up check. That's handled when checking for being immobile.
-            if (roll.getDesc().toLowerCase().contains("getting up")) {
+            if (rollDescription.contains("getting up")) {
                 continue;
-            } else if (roll.getDesc().toLowerCase().contains("careful stand")) {
+            } else if (rollDescription.contains("careful stand")) {
                 continue;
             }
             boolean naturalAptPilot = movePath.getEntity().hasAbility(OptionsConstants.PILOT_APTITUDE_PILOTING);
@@ -472,6 +486,14 @@ public abstract class PathRanker implements IPathRanker {
             }
 
             double odds = Compute.oddsAbove(roll.getValue(), naturalAptPilot) / 100d;
+            // A failed water-entry roll only drops the unit prone in the water rather than causing a damaging
+            // fall, so treat most of that chance as an acceptable outcome - more so the shallower the water.
+            // Otherwise an 8% wet-fall reads as a catastrophe (fall chance x fallShame) and Princess refuses to
+            // wade even a shallow river (issue #7627).
+            if (rollDescription.contains("entering depth")) {
+                double forgiveness = waterFallForgiveness(waterEntryDepth(rollDescription));
+                odds += (1.0 - odds) * forgiveness;
+            }
             logger.trace("Odds above {} = {}", roll.getValue(), odds);
             successProbability *= odds;
         }
@@ -496,6 +518,45 @@ public abstract class PathRanker implements IPathRanker {
         getPathRankerState().getPathSuccessProbabilities().put(movePath.getKey(), successProbability);
 
         return successProbability;
+    }
+
+    /**
+     * The fraction of a failed water-entry piloting roll treated as an acceptable (non-damaging) outcome,
+     * scaled by water depth. A fall while wading only drops the unit prone in the water, which is nearly
+     * harmless in a shallow ford but progressively worse in deeper water; the forgiveness therefore shrinks
+     * as depth grows and never drops below {@link #WATER_FALL_FORGIVENESS_FLOOR}.
+     *
+     * @param waterDepth the depth (in levels) of the water being entered
+     *
+     * @return the forgiveness fraction, between {@link #WATER_FALL_FORGIVENESS_FLOOR} and
+     *       {@link #WATER_FALL_FORGIVENESS_DEPTH_1}
+     */
+    private static double waterFallForgiveness(int waterDepth) {
+        int depthBeyondFirst = Math.max(0, waterDepth - 1);
+        double forgiveness = WATER_FALL_FORGIVENESS_DEPTH_1 - (depthBeyondFirst * WATER_FALL_FORGIVENESS_PER_DEPTH);
+        return Math.max(WATER_FALL_FORGIVENESS_FLOOR, forgiveness);
+    }
+
+    /**
+     * Extracts the water depth from a water-entry piloting-roll description of the form
+     * {@code "entering Depth N Water"} (see {@code Entity.checkWaterMove}).
+     *
+     * @param rollDescription the lower-cased roll description
+     *
+     * @return the parsed depth, or {@code 1} (shallowest) if the description cannot be parsed
+     */
+    private static int waterEntryDepth(String rollDescription) {
+        Matcher matcher = WATER_ENTRY_DEPTH_PATTERN.matcher(rollDescription);
+        if (matcher.find()) {
+            try {
+                return Integer.parseInt(matcher.group(1));
+            } catch (NumberFormatException numberFormatException) {
+                // The capture is all digits, so this only happens on an implausibly large value that overflows
+                // an int; treat it as the shallowest depth rather than failing.
+                return 1;
+            }
+        }
+        return 1;
     }
 
     /**

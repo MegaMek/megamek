@@ -76,6 +76,7 @@ import megamek.common.rolls.TargetRoll;
 import megamek.common.units.*;
 import megamek.common.weapons.Weapon;
 import megamek.common.weapons.attacks.StopSwarmAttack;
+import megamek.common.weapons.capitalWeapons.CapitalMissileWeapon;
 import megamek.common.weapons.infantry.InfantryWeapon;
 import megamek.common.weapons.missiles.MMLWeapon;
 import megamek.logging.MMLogger;
@@ -1171,11 +1172,20 @@ public class FireControl {
         // calculation; this brings the movement-ranking estimate in line with it.
         final AmmoType environmentalAmmoType =
               (firingAmmo != null && firingAmmo.getType() instanceof AmmoType firedAmmoType) ? firedAmmoType : null;
+        // Indirect artillery (Targeting/Offboard phases) intentionally skips the night modifiers in
+        // the real engine calculation, so mirror the engine's own isArtilleryIndirect determination
+        // here rather than hardcoding false; otherwise the guessed to-hit for planned indirect
+        // artillery fire would diverge from the real to-hit under night/illumination rules.
+        boolean isGroundToGroundCapitalMissile =
+              (weaponType instanceof CapitalMissileWeapon) && Compute.isGroundToGround(shooter, target);
+        boolean isArtilleryWeapon = weaponType.hasFlag(WeaponType.F_ARTILLERY) || isGroundToGroundCapitalMissile;
+        boolean isArtilleryIndirect = isArtilleryWeapon
+              && (game.getPhase().isTargeting() || game.getPhase().isOffboard());
         // Pass the running toHit as the accumulator so the environmental mods are appended in place,
         // avoiding a throwaway ToHitData allocation on this movement-ranking hot path. The method
         // mutates and returns the same instance when the accumulator is non-null.
         ComputeEnvironmentalToHitMods.compileEnvironmentalToHitMods(
-              game, shooter, target, weaponType, environmentalAmmoType, toHit, false);
+              game, shooter, target, weaponType, environmentalAmmoType, toHit, isArtilleryIndirect);
 
         return toHit;
     }

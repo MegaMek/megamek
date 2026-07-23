@@ -1127,43 +1127,7 @@ public class Compute {
      * returns the base hex if they're impassible.
      */
     public static Coords getMissedChargeDisplacement(Game game, int entityId, Coords src, int direction) {
-        Coords first = src.translated((direction + 1) % 6);
-        Coords second = src.translated((direction + 5) % 6);
-        Hex firstHex = game.getBoard().getHex(first);
-        Hex secondHex = game.getBoard().getHex(second);
-        Entity entity = game.getEntity(entityId);
-
-        if (entity == null) {
-            return null;
-        }
-
-        if ((firstHex == null) || (secondHex == null)) {
-            // leave it, will be handled
-        } else if (entity.elevationOccupied(firstHex) > entity.elevationOccupied(secondHex)) {
-            // leave it
-        } else if (entity.elevationOccupied(firstHex) < entity.elevationOccupied(secondHex)) {
-            // switch
-            Coords temp = first;
-            first = second;
-            second = temp;
-        } else if (Compute.d6() > 3) {
-            // switch randomly
-            Coords temp = first;
-            first = second;
-            second = temp;
-        }
-
-        if (Compute.isValidDisplacement(game, entityId, src,
-              src.direction(first))
-              && game.getBoard().contains(first)) {
-            return first;
-        } else if (Compute.isValidDisplacement(game, entityId, src,
-              src.direction(second))
-              && game.getBoard().contains(second)) {
-            return second;
-        } else {
-            return src;
-        }
+        return Game.rulesManager.getRulesPhysical().getMissedChargeDisplacement(game, entityId, src, direction);
     }
 
     /**

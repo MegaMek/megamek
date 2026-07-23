@@ -37,12 +37,14 @@ import megamek.common.HitData;
 import megamek.common.Report;
 import megamek.common.ToHitData;
 import megamek.common.annotations.Nullable;
+import megamek.common.board.Coords;
 import megamek.common.compute.Compute;
 import megamek.common.equipment.EquipmentType;
 import megamek.common.equipment.MiscMounted;
 import megamek.common.equipment.MiscType;
 import megamek.common.equipment.Mounted;
 import megamek.common.equipment.enums.MiscTypeFlag;
+import megamek.common.game.Game;
 import megamek.common.interfaces.ILocationExposureStatus;
 import megamek.common.rolls.Roll;
 import megamek.common.rules.RulesPhysical;
@@ -217,5 +219,10 @@ public class CoreRulesPhysical extends RulesPhysical {
         return (int) Math
                   .ceil((effectiveTargetWeight / 10.0)
                         * (entity.getLocationStatus(1) == ILocationExposureStatus.WET ? 0.5 : 1));
+    }
+
+    // Missed charges the attacker remains in place. Core p.78
+    public Coords getMissedChargeDisplacement(Game game, int entityId, Coords src, int direction) {
+        return src;
     }
 }

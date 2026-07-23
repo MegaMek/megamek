@@ -33,12 +33,15 @@ package megamek.common.rules.totalwarfare;
  */
 
 import megamek.client.ui.Messages;
+import megamek.common.Hex;
 import megamek.common.HitData;
 import megamek.common.Report;
 import megamek.common.ToHitData;
+import megamek.common.board.Coords;
 import megamek.common.compute.Compute;
 import megamek.common.equipment.MiscType;
 import megamek.common.equipment.Mounted;
+import megamek.common.game.Game;
 import megamek.common.interfaces.ILocationExposureStatus;
 import megamek.common.rolls.Roll;
 import megamek.common.rules.core.CoreRulesPhysical;
@@ -186,6 +189,48 @@ public class TWRulesPhysical extends CoreRulesPhysical {
             return (int) Math
                   .floor((((effectiveTargetWeight * entity.getWeight()) * distance)
                         / (effectiveTargetWeight + entity.getWeight())) / 10);
+        }
+    }
+    
+    // missed charges displace attacker to one side or the other
+    @Override
+    public Coords getMissedChargeDisplacement(Game game, int entityId, Coords src, int direction) {
+        Coords first = src.translated((direction + 1) % 6);
+        Coords second = src.translated((direction + 5) % 6);
+        Hex firstHex = game.getBoard().getHex(first);
+        Hex secondHex = game.getBoard().getHex(second);
+        Entity entity = game.getEntity(entityId);
+
+        if (entity == null) {
+            return null;
+        }
+
+        if ((firstHex == null) || (secondHex == null)) {
+            // leave it, will be handled
+        } else if (entity.elevationOccupied(firstHex) > entity.elevationOccupied(secondHex)) {
+            // leave it
+        } else if (entity.elevationOccupied(firstHex) < entity.elevationOccupied(secondHex)) {
+            // switch
+            Coords temp = first;
+            first = second;
+            second = temp;
+        } else if (Compute.d6() > 3) {
+            // switch randomly
+            Coords temp = first;
+            first = second;
+            second = temp;
+        }
+
+        if (Compute.isValidDisplacement(game, entityId, src,
+              src.direction(first))
+              && game.getBoard().contains(first)) {
+            return first;
+        } else if (Compute.isValidDisplacement(game, entityId, src,
+              src.direction(second))
+              && game.getBoard().contains(second)) {
+            return second;
+        } else {
+            return src;
         }
     }
 }

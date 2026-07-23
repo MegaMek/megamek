@@ -36,7 +36,9 @@ import megamek.common.HitData;
 import megamek.common.Report;
 import megamek.common.ToHitData;
 import megamek.common.annotations.Nullable;
+import megamek.common.board.Coords;
 import megamek.common.equipment.Mounted;
+import megamek.common.game.Game;
 import megamek.common.units.Entity;
 
 public abstract class RulesPhysical {
@@ -90,4 +92,7 @@ public abstract class RulesPhysical {
     // How much damage does the charge attacker take
     public abstract int getChargeDamageTakenBy(Entity entity, double effectiveTargetWeight, boolean tacOps,
           int distance);
+
+    // Missed charges, where does the attacker end up?
+    public abstract Coords getMissedChargeDisplacement(Game game, int entityId, Coords src, int direction);
 }

@@ -68,7 +68,13 @@ import megamek.server.totalWarfare.TWGameManager;
  */
 public class ServerHelper {
 
-    private static final MMLogger LOGGER = MMLogger.create(ServerHelper.class);
+    /**
+     * Dedicated logger name for hidden-unit probe detection diagnostics ([HiddenUnits] tag). A feature logger
+     * rather than a host-class logger so it can be enabled in log4j2.xml without the host classes' debug noise.
+     */
+    public static final String HIDDEN_UNITS_DIAGNOSTIC_LOGGER = "megamek.feature.HiddenUnits";
+
+    private static final MMLogger LOGGER = MMLogger.create(HIDDEN_UNITS_DIAGNOSTIC_LOGGER);
 
     private ServerHelper() {
     }

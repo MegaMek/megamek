@@ -148,6 +148,9 @@ import megamek.server.victory.VictoryResult;
  */
 public class TWGameManager extends AbstractGameManager {
     private static final MMLogger LOGGER = MMLogger.create(TWGameManager.class);
+
+    /** Hidden-unit probe detection diagnostics ([HiddenUnits] tag; shared feature logger, see ServerHelper). */
+    private static final MMLogger HIDDEN_UNITS_LOGGER = MMLogger.create(ServerHelper.HIDDEN_UNITS_DIAGNOSTIC_LOGGER);
     static final GameDatasetLogger datasetLogger = new GameDatasetLogger("game_actions");
     static final String DEFAULT_BOARD = MapSettings.BOARD_GENERATED;
 
@@ -10676,7 +10679,7 @@ public class TWGameManager extends AbstractGameManager {
             return;
         }
 
-        LOGGER.debug("[HiddenUnits] full-board probe sweep (phase {}, round {})",
+        HIDDEN_UNITS_LOGGER.debug("[HiddenUnits] full-board probe sweep (phase {}, round {})",
               game.getPhase(), game.getRoundCount());
 
         // See if any unit with a probe, detects any hidden units

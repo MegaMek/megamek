@@ -243,6 +243,18 @@
               <AppenderRef ref="MegaMekLog" />
           </Logger>
         -->
+        <!--
+          Hidden-unit probe detection diagnostics. All messages are tagged [HiddenUnits]; grep logs/megamek.log
+          for that tag. Logs each full-board probe sweep (phase/round), probes that are present but not
+          functioning (switched off, shut down, EMI), hidden enemies found in probe range, and reveals blocked
+          by line of sight. Active while diagnosing the stationary-probe detection issue; comment out for
+          normal play once resolved.
+        -->
+        <Logger name="megamek.feature.HiddenUnits" level="debug" additivity="false">
+            <AppenderRef ref="${env:mm.profile:-null}" />
+            <AppenderRef ref="UnifiedLog" />
+            <AppenderRef ref="MegaMekLog" />
+        </Logger>
         <Logger name="megamek" level="info" additivity="false">
             <AppenderRef ref="${env:mm.profile:-null}" />
             <AppenderRef ref="UnifiedLog" />

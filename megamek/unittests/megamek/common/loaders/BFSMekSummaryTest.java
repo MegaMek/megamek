@@ -59,6 +59,11 @@ class BFSMekSummaryTest {
     }
 
     @Test
+    void uninitializedSummaryIsNotAnAsset() {
+        assertFalse(new MekSummary().isBattlefieldSupportAsset());
+    }
+
+    @Test
     void buildsSummaryFromBfsFileWithoutThrowing() {
         MekSummary summary = MekSummaryCache.getSummaryFromFile(
               new File("testresources/data/mekfiles/Maxim Heavy Hover Transport.bfs"));

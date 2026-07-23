@@ -725,8 +725,8 @@ public class MULParser {
                 }
             } else {
                 // Not in this cache (for example a different data version); the name lookup below usually still finds
-                // the right unit, so this is informational rather than a user-facing warning.
-                LOGGER.info("No unit with UUID {} in the cache; falling back to chassis/model lookup.", unitFileUUID);
+                // the right unit, so this is diagnostic rather than user-facing information.
+                LOGGER.debug("No unit with UUID {} in the cache; falling back to chassis/model lookup.", unitFileUUID);
             }
         }
 

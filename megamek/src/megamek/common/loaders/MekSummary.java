@@ -380,7 +380,7 @@ public class MekSummary implements Serializable, ASCardDisplayable {
     /** @return true if this summary represents a Battlefield Support Asset (a {@code .bfs} unit). */
     @Override
     public boolean isBattlefieldSupportAsset() {
-        return (entityType & Entity.ETYPE_BATTLEFIELD_SUPPORT_ASSET) != 0;
+        return (entityType != null) && ((entityType & Entity.ETYPE_BATTLEFIELD_SUPPORT_ASSET) != 0);
     }
 
     /** @return this unit's own unit-file UUID, or {@code null} if the file carries none */

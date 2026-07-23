@@ -257,6 +257,35 @@ class BasicPathRankerTest {
     }
 
     @Test
+    void testCalculateMovePathPSRDamageLowGravityJumpOverspeedWithBooster() {
+        final Entity mockMek = MockGenerators.generateMockBipedMek(0, 0);
+        // The plain jump rating is deliberately different from the booster rating so the test fails if the
+        // wrong branch (getJumpMP instead of getMechanicalJumpBoosterMP) is taken.
+        when(mockMek.getJumpMP(MPCalculationSetting.NO_GRAVITY)).thenReturn(3);
+        when(mockMek.getMechanicalJumpBoosterMP(MPCalculationSetting.NO_GRAVITY)).thenReturn(5);
+
+        final MovePath mockPath = MockGenerators.generateMockPath(0, 0, mockMek);
+        when(mockPath.isJumping()).thenReturn(true);
+
+        final MoveStep mockLastStep = mock(MoveStep.class);
+        when(mockLastStep.getMpUsed()).thenReturn(7); // 2 MP beyond the 1G booster rating of 5
+        when(mockLastStep.isUsingMekJumpBooster()).thenReturn(true);
+        when(mockPath.getLastStep()).thenReturn(mockLastStep);
+
+        final TargetRoll gravityRoll = MockGenerators.mockTargetRoll(8);
+        when(gravityRoll.getLastPlainDesc()).thenReturn("used more MPs than at 1G possible");
+
+        final BasicPathRanker testRanker = spy(new BasicPathRanker(mockPrincess));
+        doReturn(List.of(gravityRoll)).when(testRanker).getPSRList(eq(mockPath));
+
+        // Overspeed is measured against the booster's no-gravity rating: 7 - 5 = 2 excess MP.
+        final double failureProbability = 1.0 - (Compute.oddsAbove(8, false) / 100.0);
+        final double expected = 2 * failureProbability;
+
+        assertEquals(expected, testRanker.calculateMovePathPSRDamage(mockMek, mockPath), TOLERANCE);
+    }
+
+    @Test
     void testCalculateMovePathPSRDamageHighGravityJump() {
         final Entity mockMek = MockGenerators.generateMockBipedMek(0, 0);
         when(mockMek.getWalkMP(MPCalculationSetting.NO_GRAVITY)).thenReturn(6);

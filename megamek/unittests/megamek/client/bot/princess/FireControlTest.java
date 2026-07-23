@@ -73,6 +73,7 @@ import megamek.common.equipment.AmmoMounted;
 import megamek.common.equipment.AmmoType;
 import megamek.common.equipment.EquipmentFlag;
 import megamek.common.equipment.EquipmentType;
+import megamek.common.equipment.MiscType;
 import megamek.common.equipment.Mounted;
 import megamek.common.equipment.WeaponMounted;
 import megamek.common.equipment.WeaponType;
@@ -2749,6 +2750,179 @@ class FireControlTest {
         ToHitData expectedNoPenalty = new ToHitData(mockShooter.getCrew().getGunnery(), FireControl.TH_GUNNERY);
         expectedNoPenalty.addModifier(FireControl.TH_MEDIUM_RANGE);
         assertToHitDataEquals(expectedNoPenalty,
+              testFireControl.guessToHitModifierForWeapon(mockShooter,
+                    mockShooterState,
+                    mockTarget,
+                    mockTargetState,
+                    mockWeapon,
+                    mockAmmo,
+                    mockGame));
+    }
+
+    @Test
+    void testGuessToHitApolloFcsForMrm() {
+        when(mockGameOptions.booleanOption(OptionsConstants.ADVANCED_COMBAT_TAC_OPS_RANGE)).thenReturn(false);
+        when(mockTarget.hasQuirk(eq(OptionsConstants.QUIRK_POS_LOW_PROFILE))).thenReturn(false);
+        when(mockShooterState.getFacing()).thenReturn(1);
+        doReturn(true).when(testFireControl).isInArc(any(Coords.class), anyInt(), any(Coords.class), anyInt());
+        doReturn(new ToHitData()).when(testFireControl)
+              .guessToHitModifierHelperForAnyAttack(any(Entity.class),
+                    any(EntityState.class),
+                    any(Targetable.class),
+                    any(EntityState.class),
+                    anyInt(),
+                    any(Game.class));
+        final LosEffects spyLosEffects = spy(new LosEffects());
+        doReturn(spyLosEffects).when(testFireControl)
+              .getLosEffects(any(Game.class),
+                    any(Entity.class),
+                    any(Targetable.class),
+                    any(Coords.class),
+                    any(Coords.class),
+                    anyBoolean());
+        doReturn(new ToHitData()).when(spyLosEffects).losModifiers(eq(mockGame));
+
+        final Hex mockTargetHex = mock(Hex.class);
+        when(mockBoard.getHex(eq(mockTargetCoords))).thenReturn(mockTargetHex);
+        when(mockTargetHex.containsTerrain(Terrains.WATER)).thenReturn(false);
+        when(mockTargetState.getPosition()).thenReturn(mockTargetCoords);
+        when(mockTarget.isAirborne()).thenReturn(false);
+        when(mockTarget.isAirborneVTOLorWIGE()).thenReturn(false);
+
+        final int mockWeaponId = 1;
+        final WeaponMounted mockWeapon = mock(WeaponMounted.class);
+        when(mockWeapon.canFire()).thenReturn(true);
+        when(mockWeapon.getLocation()).thenReturn(Mek.LOC_RIGHT_ARM);
+        when(mockShooter.getEquipmentNum(eq(mockWeapon))).thenReturn(mockWeaponId);
+        when(mockShooter.isSecondaryArcWeapon(mockWeaponId)).thenReturn(false);
+
+        final WeaponType mockWeaponType = mock(WeaponType.class);
+        when(mockWeapon.getType()).thenReturn(mockWeaponType);
+        when(mockWeaponType.getAmmoType()).thenReturn(AmmoType.AmmoTypeEnum.MRM);
+        when(mockWeaponType.getRanges(eq(mockWeapon), any(Mounted.class))).thenReturn(new int[] { 3, 6, 12, 18, 24 });
+        when(mockWeaponType.getMinimumRange()).thenReturn(3);
+        when(mockWeaponType.hasFlag(eq(WeaponType.F_DIRECT_FIRE))).thenReturn(true);
+
+        final AmmoMounted mockAmmo = mock(AmmoMounted.class);
+        when(mockWeapon.getLinked()).thenReturn((Mounted) mockAmmo);
+        when(mockAmmo.getUsableShotsLeft()).thenReturn(10);
+        final AmmoType mockAmmoType = mock(AmmoType.class);
+        when(mockAmmo.getType()).thenReturn(mockAmmoType);
+        when(mockAmmoType.getAmmoType()).thenReturn(AmmoType.AmmoTypeEnum.MRM);
+        when(mockAmmoType.getToHitModifier()).thenReturn(0);
+        when(mockAmmoType.countsAsFlak()).thenReturn(false);
+        when(mockAmmoType.getMunitionType()).thenReturn(EnumSet.of(AmmoType.Munitions.M_STANDARD));
+
+        // An operational Apollo FCS linked to the MRM launcher gives -1 to-hit.
+        final MiscType mockApolloType = mock(MiscType.class);
+        when(mockApolloType.hasFlag(MiscType.F_APOLLO)).thenReturn(true);
+        final Mounted<?> mockApollo = mock(Mounted.class);
+        when(mockApollo.getType()).thenReturn(mockApolloType);
+        when(mockApollo.isDestroyed()).thenReturn(false);
+        when(mockApollo.isMissing()).thenReturn(false);
+        when(mockApollo.isBreached()).thenReturn(false);
+        doReturn(mockApollo).when(mockWeapon).getLinkedBy();
+
+        ToHitData expected = new ToHitData(mockShooter.getCrew().getGunnery(), FireControl.TH_GUNNERY);
+        expected.addModifier(FireControl.TH_MEDIUM_RANGE);
+        expected.addModifier(FireControl.TH_APOLLO);
+        assertToHitDataEquals(expected,
+              testFireControl.guessToHitModifierForWeapon(mockShooter,
+                    mockShooterState,
+                    mockTarget,
+                    mockTargetState,
+                    mockWeapon,
+                    mockAmmo,
+                    mockGame));
+
+        // A non-operational Apollo (destroyed) contributes no modifier.
+        when(mockApollo.isDestroyed()).thenReturn(true);
+        ToHitData expectedNoApollo = new ToHitData(mockShooter.getCrew().getGunnery(), FireControl.TH_GUNNERY);
+        expectedNoApollo.addModifier(FireControl.TH_MEDIUM_RANGE);
+        assertToHitDataEquals(expectedNoApollo,
+              testFireControl.guessToHitModifierForWeapon(mockShooter,
+                    mockShooterState,
+                    mockTarget,
+                    mockTargetState,
+                    mockWeapon,
+                    mockAmmo,
+                    mockGame));
+    }
+
+    @Test
+    void testGuessToHitFlakVsAirborneHagVersusOther() {
+        when(mockGameOptions.booleanOption(OptionsConstants.ADVANCED_COMBAT_TAC_OPS_RANGE)).thenReturn(false);
+        when(mockTarget.hasQuirk(eq(OptionsConstants.QUIRK_POS_LOW_PROFILE))).thenReturn(false);
+        when(mockShooterState.getFacing()).thenReturn(1);
+        doReturn(true).when(testFireControl).isInArc(any(Coords.class), anyInt(), any(Coords.class), anyInt());
+        doReturn(new ToHitData()).when(testFireControl)
+              .guessToHitModifierHelperForAnyAttack(any(Entity.class),
+                    any(EntityState.class),
+                    any(Targetable.class),
+                    any(EntityState.class),
+                    anyInt(),
+                    any(Game.class));
+        final LosEffects spyLosEffects = spy(new LosEffects());
+        doReturn(spyLosEffects).when(testFireControl)
+              .getLosEffects(any(Game.class),
+                    any(Entity.class),
+                    any(Targetable.class),
+                    any(Coords.class),
+                    any(Coords.class),
+                    anyBoolean());
+        doReturn(new ToHitData()).when(spyLosEffects).losModifiers(eq(mockGame));
+
+        final Hex mockTargetHex = mock(Hex.class);
+        when(mockBoard.getHex(eq(mockTargetCoords))).thenReturn(mockTargetHex);
+        when(mockTargetHex.containsTerrain(Terrains.WATER)).thenReturn(false);
+        when(mockTargetState.getPosition()).thenReturn(mockTargetCoords);
+        // Flak modifiers only apply against airborne targets.
+        when(mockTarget.isAirborne()).thenReturn(true);
+        when(mockTarget.isAirborneVTOLorWIGE()).thenReturn(false);
+
+        final int mockWeaponId = 1;
+        final WeaponMounted mockWeapon = mock(WeaponMounted.class);
+        when(mockWeapon.canFire()).thenReturn(true);
+        when(mockWeapon.getLocation()).thenReturn(Mek.LOC_RIGHT_ARM);
+        when(mockShooter.getEquipmentNum(eq(mockWeapon))).thenReturn(mockWeaponId);
+        when(mockShooter.isSecondaryArcWeapon(mockWeaponId)).thenReturn(false);
+
+        final WeaponType mockWeaponType = mock(WeaponType.class);
+        when(mockWeapon.getType()).thenReturn(mockWeaponType);
+        when(mockWeaponType.getAmmoType()).thenReturn(AmmoType.AmmoTypeEnum.HAG);
+        when(mockWeaponType.getRanges(eq(mockWeapon), any(Mounted.class))).thenReturn(new int[] { 3, 6, 12, 18, 24 });
+        when(mockWeaponType.getMinimumRange()).thenReturn(3);
+        when(mockWeaponType.hasFlag(eq(WeaponType.F_DIRECT_FIRE))).thenReturn(true);
+
+        final AmmoMounted mockAmmo = mock(AmmoMounted.class);
+        when(mockWeapon.getLinked()).thenReturn((Mounted) mockAmmo);
+        when(mockAmmo.getUsableShotsLeft()).thenReturn(10);
+        final AmmoType mockAmmoType = mock(AmmoType.class);
+        when(mockAmmo.getType()).thenReturn(mockAmmoType);
+        when(mockAmmoType.getToHitModifier()).thenReturn(0);
+        when(mockAmmoType.countsAsFlak()).thenReturn(false);
+        when(mockAmmoType.getMunitionType()).thenReturn(EnumSet.of(AmmoType.Munitions.M_FLAK));
+
+        // HAG flak against an airborne target is -3.
+        when(mockAmmoType.getAmmoType()).thenReturn(AmmoType.AmmoTypeEnum.HAG);
+        ToHitData expectedHag = new ToHitData(mockShooter.getCrew().getGunnery(), FireControl.TH_GUNNERY);
+        expectedHag.addModifier(FireControl.TH_MEDIUM_RANGE);
+        expectedHag.addModifier(FireControl.TH_WEAPON_FLAK_HAG);
+        assertToHitDataEquals(expectedHag,
+              testFireControl.guessToHitModifierForWeapon(mockShooter,
+                    mockShooterState,
+                    mockTarget,
+                    mockTargetState,
+                    mockWeapon,
+                    mockAmmo,
+                    mockGame));
+
+        // Non-HAG flak against an airborne target is -2.
+        when(mockAmmoType.getAmmoType()).thenReturn(AmmoType.AmmoTypeEnum.AC);
+        ToHitData expectedFlak = new ToHitData(mockShooter.getCrew().getGunnery(), FireControl.TH_GUNNERY);
+        expectedFlak.addModifier(FireControl.TH_MEDIUM_RANGE);
+        expectedFlak.addModifier(FireControl.TH_WEAPON_FLAK);
+        assertToHitDataEquals(expectedFlak,
               testFireControl.guessToHitModifierForWeapon(mockShooter,
                     mockShooterState,
                     mockTarget,

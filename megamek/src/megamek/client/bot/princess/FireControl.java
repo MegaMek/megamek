@@ -998,6 +998,9 @@ public class FireControl {
                   AmmoType.Munitions.M_FAE);
             EnumSet<AmmoType.Munitions> homingMunitions = EnumSet.of(
                   AmmoType.Munitions.M_HOMING);
+            // getMunitionType() returns a fresh EnumSet copy on every call; cache it once and reuse
+            // it for the membership checks below to avoid repeated allocations on this hot path.
+            EnumSet<AmmoType.Munitions> munitionTypes = ammoType.getMunitionType();
             if (0 != ammoType.getToHitModifier()) {
                 toHit.addModifier(ammoType.getToHitModifier(), TH_AMMO_MOD);
             }
@@ -1020,15 +1023,15 @@ public class FireControl {
                 case null, default -> false;
             };
             boolean isArmorPiercingMunition =
-                  ammoType.getMunitionType().contains(AmmoType.Munitions.M_ARMOR_PIERCING)
-                        || ammoType.getMunitionType().contains(AmmoType.Munitions.M_ARMOR_PIERCING_PLAYTEST);
+                  munitionTypes.contains(AmmoType.Munitions.M_ARMOR_PIERCING)
+                        || munitionTypes.contains(AmmoType.Munitions.M_ARMOR_PIERCING_PLAYTEST);
             boolean isArmorPiercingPenaltyInEffect =
                   !game.getOptions().booleanOption(OptionsConstants.PLAYTEST_3);
             if (isAutocannonAmmo && isArmorPiercingMunition && isArmorPiercingPenaltyInEffect) {
                 toHit.addModifier(TH_AP_AMMO);
             }
             // Air-defense Arrow IV handling; can only fire at airborne targets
-            if (ammoType.getMunitionType().contains(AmmoType.Munitions.M_ADA)) {
+            if (munitionTypes.contains(AmmoType.Munitions.M_ADA)) {
                 if (target.isAirborne() || target.isAirborneVTOLorWIGE()) {
                     toHit.addModifier(TH_WEAPON_ADA);
                 } else {
@@ -1037,19 +1040,19 @@ public class FireControl {
             }
             // Handle cluster, flak, AAA vs Airborne, Arty-only vs Airborne
             if (target.isAirborne() || target.isAirborneVTOLorWIGE()) {
-                if (ammoType.getMunitionType().stream().anyMatch(aaMunitions::contains)
+                if (munitionTypes.stream().anyMatch(aaMunitions::contains)
                       || ammoType.countsAsFlak()) {
                     if (ammoType.getAmmoType() == AmmoType.AmmoTypeEnum.HAG) {
                         toHit.addModifier(TH_WEAPON_FLAK_HAG);
                     } else {
                         toHit.addModifier(TH_WEAPON_FLAK);
                     }
-                } else if (ammoType.getMunitionType().stream().anyMatch(ArtyOnlyMunitions::contains)) {
+                } else if (munitionTypes.stream().anyMatch(ArtyOnlyMunitions::contains)) {
                     toHit.addModifier(TH_WEAPON_CANNOT_FIRE);
                 }
             }
             // Handle homing munitions
-            if (ammoType.getMunitionType().stream().anyMatch(homingMunitions::contains)) {
+            if (munitionTypes.stream().anyMatch(homingMunitions::contains)) {
                 if (game.getPhase().isOffboard()) {
                     final StringBuilder msg = new StringBuilder("Estimating to-hit for Homing artillery fire by ")
                           .append(shooter.getDisplayName());
@@ -1074,7 +1077,7 @@ public class FireControl {
             }
 
             // Guesstimate Heat-Seeking Ammo mods
-            if (ammoType.getMunitionType().contains(AmmoType.Munitions.M_HEAT_SEEKING)) {
+            if (munitionTypes.contains(AmmoType.Munitions.M_HEAT_SEEKING)) {
                 if (targetState.getHeat() > 0) {
                     // Hot target good
                     toHit.addModifier(-targetState.getHeat() / 5, TH_AMMO_MOD);

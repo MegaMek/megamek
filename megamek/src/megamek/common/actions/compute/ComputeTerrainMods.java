@@ -192,8 +192,9 @@ public class ComputeTerrainMods {
 
         // Does Semi-guided direct reduce the terrain modifier
         if (semiGuidedDirectVsTaggedTarget) {
+            int terrainMod = terrainModifier.getValue() + losMods.getValue();
             int semiGuidedTerrain =
-                  Game.rulesManager.getRulesAmmo().getSemiGuidedAdjustment(terrainModifier.getValue(), false, true);
+                  Game.rulesManager.getRulesAmmo().getSemiGuidedAdjustment(terrainMod, false, true);
             if (semiGuidedTerrain > 0) {
                 toHit.append(new ToHitData(-semiGuidedTerrain, Messages.getString("WeaponAttackAction.SemiGuidedTag")));
             }

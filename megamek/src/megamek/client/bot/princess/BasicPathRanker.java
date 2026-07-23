@@ -2400,12 +2400,12 @@ public class BasicPathRanker extends PathRanker {
         // Locations that submerge only when the unit is prone - notably the head and center torso in Depth 1
         // water - drown it only if it falls, so that catastrophic risk is weighted by the chance of failing
         // the water-entry piloting roll.
-        Set<Integer> submergedWhileUpright = submergedLocations(movingUnit, hex, step.isProne());
+        Set<Integer> submergedInCurrentPose = submergedLocations(movingUnit, hex, step.isProne());
         Set<Integer> submergedWhileProne = submergedLocations(movingUnit, hex, true);
 
         double hazardValue = 0;
         // Certain breaches: unarmored locations already submerged in the unit's current pose.
-        for (int location : submergedWhileUpright) {
+        for (int location : submergedInCurrentPose) {
             if (movingUnit.getArmor(location) > 0) {
                 continue;
             }
@@ -2421,7 +2421,7 @@ public class BasicPathRanker extends PathRanker {
         // the fall probability lazily so a fully-armored unit never triggers it.
         double fallProbability = -1;
         for (int location : submergedWhileProne) {
-            if (submergedWhileUpright.contains(location) || (movingUnit.getArmor(location) > 0)) {
+            if (submergedInCurrentPose.contains(location) || (movingUnit.getArmor(location) > 0)) {
                 continue;
             }
             double breachWeight = breachConsequence(movingUnit, location);
@@ -2470,19 +2470,24 @@ public class BasicPathRanker extends PathRanker {
      * @param movingUnit the wading unit
      * @param location   the location index
      *
-     * @return the hazard weight of breaching {@code location}: {@link #UNIT_DESTRUCTION_FACTOR} for a head or
-     *       center-torso breach (or any breach on a non-Mek/ProtoMek, which drowns), otherwise a fixed
-     *       per-location cost
+     * @return the hazard weight of breaching {@code location}: {@link #UNIT_DESTRUCTION_FACTOR} for a
+     *       life-critical breach (head or center torso on a Mek, head or torso on a ProtoMek, or any breach on
+     *       a non-Mek/ProtoMek, which drowns), otherwise a fixed per-location cost
      */
     private double breachConsequence(Entity movingUnit, int location) {
-        if ((Mek.LOC_HEAD == location) ||
-              (Mek.LOC_CENTER_TORSO == location) ||
-              (ProtoMek.LOC_HEAD == location) ||
-              (ProtoMek.LOC_TORSO == location) ||
-              (!movingUnit.isMek() && !movingUnit.isProtoMek())) {
-            return UNIT_DESTRUCTION_FACTOR;
+        // The Mek and ProtoMek location numbering overlaps (e.g. Mek right torso and ProtoMek torso are both
+        // index 2), so the critical-location test must be chosen by the unit's actual type rather than testing
+        // all four constants against one index.
+        if (movingUnit.isProtoMek()) {
+            boolean isCriticalProtoMekLocation = (ProtoMek.LOC_HEAD == location) || (ProtoMek.LOC_TORSO == location);
+            return isCriticalProtoMekLocation ? UNIT_DESTRUCTION_FACTOR : 50;
         }
-        return 50;
+        if (movingUnit.isMek()) {
+            boolean isCriticalMekLocation = (Mek.LOC_HEAD == location) || (Mek.LOC_CENTER_TORSO == location);
+            return isCriticalMekLocation ? UNIT_DESTRUCTION_FACTOR : 50;
+        }
+        // Anything else that submerges a location while wading simply drowns.
+        return UNIT_DESTRUCTION_FACTOR;
     }
 
     /**

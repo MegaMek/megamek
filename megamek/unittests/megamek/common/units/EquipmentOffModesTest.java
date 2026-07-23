@@ -190,6 +190,23 @@ class EquipmentOffModesTest {
     }
 
     @Test
+    void bulkActiveSinkControlClampsOutOfRangeRequests() throws LocationFullException {
+        BipedMek mek = new BipedMek();
+        for (int sinkNumber = 0; sinkNumber < 10; sinkNumber++) {
+            addEquipment(mek, EquipmentTypeLookup.SINGLE_HS, Entity.LOC_NONE);
+        }
+
+        // The count arrives from a client packet: negative requests deactivate every sink...
+        mek.setActiveSinksNextRound(-5);
+        assertEquals(0, mek.getActiveSinksNextRound(), "A negative request is clamped to zero active sinks");
+
+        // ...and requests above the number of operable sinks activate every sink
+        mek.setActiveSinksNextRound(99);
+        assertEquals(10, mek.getActiveSinksNextRound(),
+              "A request above the operable sink count activates every sink");
+    }
+
+    @Test
     void prototypeDoubleHeatSinkIsSwitchable() throws LocationFullException {
         BipedMek mek = new BipedMek();
         Mounted<?> prototypeSink = addEquipment(mek, EquipmentTypeLookup.IS_DOUBLE_HS_PROTOTYPE, Entity.LOC_NONE);

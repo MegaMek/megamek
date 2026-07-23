@@ -4684,12 +4684,14 @@ public abstract class Mek extends Entity implements Fortifiable, RubbleClearer, 
      * of sinks remains active. Like all activation/deactivation, the change is declared now and takes effect in the
      * End Phase (the mounts' pending modes apply at the round rollover). Prototype double heat sinks and Freezers are
      * not part of this counter (matching {@link #getNumberOfSinks()}); they can be switched individually via their
-     * equipment mode.
+     * equipment mode. The value arrives from a client packet, so out-of-range requests are clamped (mirroring
+     * {@link Aero#setActiveSinksNextRound(int)}): a negative count deactivates every sink, a count above the number
+     * of operable sinks activates every sink.
      *
      * @param sinks the number of heat sinks that should be active next round
      */
     public void setActiveSinksNextRound(int sinks) {
-        int remainingActive = sinks;
+        int remainingActive = Math.max(0, sinks);
         for (MiscMounted mounted : getMisc()) {
             if (!isCountedHeatSink(mounted) || mounted.isDestroyed() || mounted.isBreached()) {
                 continue;

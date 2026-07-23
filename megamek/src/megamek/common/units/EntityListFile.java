@@ -1537,13 +1537,13 @@ public class EntityListFile {
                     try {
                         data = BattlefieldSupportAssetYaml.toYaml(asset.toAssetData());
                     } catch (IOException e) {
-                        logger.error(e, "Error writing asset: " + entity);
+                        logger.error(e, "Error writing asset: {}", entity);
                     }
                 } else {
                     try {
                         data = String.join("\n", BLKFile.getBlock(entity).getAllDataAsString());
                     } catch (EntitySavingException e) {
-                        logger.error(e, "Error writing unit: " + entity);
+                        logger.error(e, "Error writing unit: {}", entity);
                     }
                 }
             }

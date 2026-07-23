@@ -86,9 +86,13 @@ dependencies {
     runtimeOnly 'org.glassfish.jaxb:jaxb-runtime:4.0.7'
 
     testRuntimeOnly 'org.junit.platform:junit-platform-launcher:6.0.3'
+    testRuntimeOnly('org.apache.xmlgraphics:batik-codec:1.19') {
+        exclude group: 'xml-apis', module: 'xml-apis'
+    }
 
     testImplementation 'org.junit.jupiter:junit-jupiter:6.0.3'
     testImplementation 'org.mockito:mockito-core:5.23.0'
+    testImplementation 'org.apache.xmlgraphics:batik-svggen:1.19'
 }
 
 application {

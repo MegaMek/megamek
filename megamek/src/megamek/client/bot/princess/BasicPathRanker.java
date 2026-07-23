@@ -1686,9 +1686,12 @@ public class BasicPathRanker extends PathRanker {
         Coords facingTarget = (standoffArtillery && (highValueClusterPosition != null))
               ? highValueClusterPosition
               : null;
-        // A melee unit that is closing to contact must square up on its target so it can strike next turn (a
-        // hatchet/kick cannot be delivered through a torso twist); it faces the closest enemy exactly rather
-        // than settling for any facing within the usual tolerance (issue #7627).
+        // Square up exactly on the closest enemy (facing it dead-on rather than settling for any facing within
+        // the usual tolerance) when the unit both benefits from closing (closeRangeIncentive > 0) and can still
+        // deliver a point-blank physical attack this move (estimatedMeleeDamage > 0). The latter is true for any
+        // upright, mobile Mek, not only dedicated hatchet units - that breadth is deliberate ("damage peaks at
+        // close range"): a kick or hatchet cannot be thrown through a torso twist, and facing dead-on also keeps
+        // the strongest forward arc on the target it is charging (issue #7627).
         boolean squareUpOnClosestEnemy = (facingTarget == null) && (closeRangeIncentive > 0)
               && (estimatedMeleeDamage(movingUnit) > 0);
         double facingMod = calculateFacingMod(movingUnit,

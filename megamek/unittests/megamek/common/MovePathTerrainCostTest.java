@@ -42,9 +42,10 @@ class MovePathTerrainCostTest {
     @Test
     void wadingCostIsZeroForAFordAndDryLand() {
         // Depth 0 (a ford) and hexes with no water carry no wading cost, so the A* treats a ford like clear
-        // terrain instead of pacing at the bank (issue #7627).
+        // terrain instead of pacing at the bank (issue #7627). Any non-positive depth is the "no deep water"
+        // case per the wadingCost contract.
         assertEquals(0, MovePathTerrainCost.wadingCost(MovementType.Walker, 0, 6, 4));
-        assertEquals(0, MovePathTerrainCost.wadingCost(MovementType.Walker, Integer.MIN_VALUE, 6, 4));
+        assertEquals(0, MovePathTerrainCost.wadingCost(MovementType.Walker, -1, 6, 4));
     }
 
     @Test
@@ -73,5 +74,30 @@ class MovePathTerrainCostTest {
     void unitsNotSlowedByWadingAreNotCharged() {
         // Hover units skim the surface, so they take no wading cost regardless of depth.
         assertEquals(0, MovePathTerrainCost.wadingCost(MovementType.Hover, 2, 6, 4));
+    }
+
+    @Test
+    void jumpIntoDepthOneWaterCostsTheJumpMpNotProvidedByTorsoJets() {
+        // Depth 1: 4 jump MP total, 1 torso jet -> 3 MP of leg/other jets are impeded.
+        assertEquals(3, MovePathTerrainCost.jumpIntoWaterCost(1, 4, 1, false));
+    }
+
+    @Test
+    void jumpIntoDepthOneWaterCostNeverGoesNegative() {
+        // Heat or jump-jet damage can drop current jump MP below the torso-jet count; the extra cost must
+        // clamp at 0 rather than making a jump into water look cheaper than staying on dry land.
+        assertEquals(0, MovePathTerrainCost.jumpIntoWaterCost(1, 2, 4, false));
+    }
+
+    @Test
+    void jumpIntoDeepWaterCostsAFullJumpAllotment() {
+        // Depth 2+ (full submersion) costs a turn's worth of jump MP while the unit clambers out.
+        assertEquals(5, MovePathTerrainCost.jumpIntoWaterCost(2, 5, 2, false));
+    }
+
+    @Test
+    void jumpOntoABridgeOverWaterIsFree() {
+        // Landing on a bridge keeps the unit out of the water, so no jump cost applies.
+        assertEquals(0, MovePathTerrainCost.jumpIntoWaterCost(2, 5, 2, true));
     }
 }

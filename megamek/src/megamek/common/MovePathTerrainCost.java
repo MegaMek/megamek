@@ -117,18 +117,38 @@ public record MovePathTerrainCost(int levelingCost, int additionalCost) {
     }
 
     /**
+     * Extracts the jump-cost inputs from the path's cached entity state and delegates to
+     * {@link #jumpIntoWaterCost(int, int, int, boolean)}.
+     */
+    private static int jumpIntoWaterCost(@Nullable Hex hex, int waterDepth, BulldozerMovePath path) {
+        boolean landingOnBridge = (hex != null) && hex.containsTerrain(Terrains.BRIDGE);
+        return jumpIntoWaterCost(waterDepth, path.getCachedEntityState().getJumpMP(),
+              path.getCachedEntityState().getTorsoJumpJets(), landingOnBridge);
+    }
+
+    /**
      * Cost of jumping into a water hex: jump jets are impeded, so future jump movement suffers. Depth 1 costs
      * the jump MP not provided by torso jets; Depth 2 or deeper (full submersion) effectively costs a turn's
      * worth of jump MP while the unit clambers out. Landing on a bridge is free.
+     *
+     * @param waterDepth      the destination hex's water depth ({@code <= 0} means no deep water)
+     * @param jumpMP          the unit's current jump MP (already reduced by heat or damage)
+     * @param torsoJumpJets   the number of the unit's jump jets mounted in the torso
+     * @param landingOnBridge {@code true} if the step lands on a bridge, which negates the water cost
+     *
+     * @return the extra cost, never negative
      */
-    private static int jumpIntoWaterCost(@Nullable Hex hex, int waterDepth, BulldozerMovePath path) {
-        if ((hex == null) || hex.containsTerrain(Terrains.BRIDGE)) {
+    static int jumpIntoWaterCost(int waterDepth, int jumpMP, int torsoJumpJets, boolean landingOnBridge) {
+        if (landingOnBridge) {
             return 0;
         }
         if (waterDepth == 1) {
-            return path.getCachedEntityState().getJumpMP() - path.getCachedEntityState().getTorsoJumpJets();
-        } else if (waterDepth > 1) {
-            return path.getCachedEntityState().getJumpMP();
+            // Clamp at 0: heat or jump-jet damage can pull current jump MP below the torso-jet count, and a
+            // negative "additional cost" would wrongly make jumping into water look cheaper than staying dry.
+            return Math.max(0, jumpMP - torsoJumpJets);
+        }
+        if (waterDepth > 1) {
+            return jumpMP;
         }
         return 0;
     }

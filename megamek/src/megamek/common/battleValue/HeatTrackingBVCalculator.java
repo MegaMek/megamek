@@ -188,14 +188,7 @@ public abstract class HeatTrackingBVCalculator extends BVCalculator {
         }
 
         // 1d6 extra heat; add half for heat calculations (1d3/+2 for small pulse)
-        if ((wType instanceof ISERLaserLargePrototype)
-              || (wType instanceof ISPulseLaserLargePrototype)
-              || (wType instanceof ISPulseLaserMediumPrototype)
-              || (wType instanceof ISPulseLaserMediumRecovered)) {
-            weaponHeat += 3;
-        } else if (wType instanceof ISPulseLaserSmallPrototype) {
-            weaponHeat += 2;
-        }
+        weaponHeat += wType.getHeatAdjustmentForBvCalculation();
 
         // RISC laser pulse module adds 2 heat
         if ((wType.hasFlag(WeaponType.F_LASER)) && (weapon.getLinkedBy() != null)

@@ -70,6 +70,7 @@ public class ISPulseLaserLargePrototype extends PulseLaserWeapon {
         shortName = "Large Pulse Laser (P)";
         flags = flags.or(F_PROTOTYPE);
         heat = 10;
+        heatAdjustmentForBvCalculation = 3;
         damage = 9;
         toHitModifier = -1;
         shortRange = 3;

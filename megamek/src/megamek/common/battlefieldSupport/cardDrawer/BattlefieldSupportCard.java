@@ -59,6 +59,7 @@ import megamek.client.ui.util.StringDrawer;
 import megamek.client.ui.util.UIUtil;
 import megamek.common.Configuration;
 import megamek.common.annotations.Nullable;
+import megamek.common.battlefieldSupport.BFSDamage;
 import megamek.common.battlefieldSupport.BattlefieldSupportAsset;
 import megamek.common.util.ImageUtil;
 import megamek.common.util.fileUtils.MegaMekFile;
@@ -481,6 +482,7 @@ public class BattlefieldSupportCard {
         int valueY = 552;
         int checkColumn = labels.length - 1;
         int skillColumn = 1;
+        int damageColumn = 2;
 
         for (int i = 0; i < labels.length; i++) {
             text(labels[i]).at(columnCenterX[i], labelY).center().font(labelFont)
@@ -491,6 +493,11 @@ public class BattlefieldSupportCard {
             if ((i == skillColumn) && (veteranSkill != null)) {
                 drawActivePair(g, columnCenterX[i], valueY, Integer.toString(asset.getSkill()),
                       Integer.toString(veteranSkill), asset.isVeteranCrew(), valueFont, true);
+                continue;
+            }
+
+            if (i == damageColumn) {
+                drawDamageValue(g, columnCenterX[i], valueY);
                 continue;
             }
 
@@ -508,6 +515,50 @@ public class BattlefieldSupportCard {
         // Threshold, centered beneath the CHECK column.
         text("THRESHOLD: " + asset.getThreshold()).at(columnCenterX[checkColumn], valueY + 50)
               .center().font(thresholdFont).color(Color.BLACK).draw(g);
+    }
+
+    /**
+     * Draws damage as {@code perHit DX hits}, with the {@code D} and {@code X} reduced like small capitals. Assets that
+     * deal no damage retain the em dash display.
+     */
+    private void drawDamageValue(Graphics2D g, int centerX, int y) {
+        BFSDamage damage = asset.getDamage();
+        if (!damage.hasDamage()) {
+            text(damage.displayString()).at(centerX, y).center().font(valueFont)
+                  .maxWidth(210).color(Color.BLACK).draw(g);
+            return;
+        }
+
+        String perHit = Integer.toString(damage.perHit());
+        String hits = Integer.toString(damage.hits());
+        String smallCaps = "DX";
+        Font numberFont = valueFont;
+        Font smallCapsFont = valueFont.deriveFont(valueFont.getSize2D() * 0.58f);
+        int totalWidth = damageValueWidth(g, perHit, hits, smallCaps, numberFont, smallCapsFont);
+        if (totalWidth > 210) {
+            float scale = 210f / totalWidth;
+            numberFont = numberFont.deriveFont(numberFont.getSize2D() * scale);
+            smallCapsFont = smallCapsFont.deriveFont(smallCapsFont.getSize2D() * scale);
+            totalWidth = damageValueWidth(g, perHit, hits, smallCaps, numberFont, smallCapsFont);
+        }
+
+        int perHitWidth = g.getFontMetrics(numberFont).stringWidth(perHit);
+        int smallCapsWidth = g.getFontMetrics(smallCapsFont).stringWidth(smallCaps);
+        int startX = centerX - totalWidth / 2;
+        int smallCapsDrop = Math.round((numberFont.getSize2D() - smallCapsFont.getSize2D()) * 0.34f);
+
+        text(perHit).at(startX, y).centerY().font(numberFont).color(Color.BLACK).draw(g);
+        text(smallCaps).at(startX + perHitWidth, y + smallCapsDrop).centerY().font(smallCapsFont)
+              .color(Color.BLACK).draw(g);
+        text(hits).at(startX + perHitWidth + smallCapsWidth, y).centerY().font(numberFont)
+              .color(Color.BLACK).draw(g);
+    }
+
+    private static int damageValueWidth(Graphics2D g, String perHit, String hits, String smallCaps, Font numberFont,
+          Font smallCapsFont) {
+        return g.getFontMetrics(numberFont).stringWidth(perHit)
+              + g.getFontMetrics(smallCapsFont).stringWidth(smallCaps)
+              + g.getFontMetrics(numberFont).stringWidth(hits);
     }
 
     /**

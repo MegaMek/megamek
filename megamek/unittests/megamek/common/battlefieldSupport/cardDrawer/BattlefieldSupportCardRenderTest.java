@@ -29,14 +29,22 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.nio.file.Path;
+import java.util.ArrayList;
+import java.util.List;
 import javax.imageio.ImageIO;
 
 import megamek.common.battlefieldSupport.BattlefieldSupportAsset;
 import megamek.common.equipment.EquipmentType;
 import megamek.common.loaders.MekFileParser;
+import org.apache.batik.anim.dom.SVGDOMImplementation;
+import org.apache.batik.svggen.SVGGraphics2D;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.io.TempDir;
+import org.w3c.dom.DOMImplementation;
+import org.w3c.dom.Document;
+import org.w3c.dom.Element;
+import org.w3c.dom.NodeList;
 
 /**
  * Smoke tests for {@link BattlefieldSupportCard}. Renders every {@code .bfs} test fixture to a temporary PNG and
@@ -141,6 +149,42 @@ class BattlefieldSupportCardRenderTest {
 
         // The damaged card must differ from the undamaged one (original + current values and the strikethrough).
         assertFalse(imagesEqual(undamaged, bwDamaged));
+    }
+
+    @Test
+    void rendersDamageWithSmallCapsDxMarker() throws Exception {
+        BattlefieldSupportAsset asset = (BattlefieldSupportAsset) new MekFileParser(
+              new File("testresources/data/mekfiles/Maxim Heavy Hover Transport.bfs")).getEntity();
+
+        List<String> textElements = svgTextElements(new BattlefieldSupportCard(asset));
+
+        assertTrue(textElements.contains("DX"));
+        assertFalse(textElements.contains(asset.getDamageDisplay()));
+    }
+
+    @Test
+    void zeroDamageStillRendersAsAnEmDash() throws Exception {
+        BattlefieldSupportAsset asset = (BattlefieldSupportAsset) new MekFileParser(
+              new File("testresources/data/mekfiles/Mobile Long Tom LT-MOB-25.bfs")).getEntity();
+
+        List<String> textElements = svgTextElements(new BattlefieldSupportCard(asset));
+
+        assertTrue(textElements.contains("\u2014"));
+        assertFalse(textElements.contains("DX"));
+    }
+
+    private static List<String> svgTextElements(BattlefieldSupportCard card) {
+        DOMImplementation implementation = SVGDOMImplementation.getDOMImplementation();
+        Document document = implementation.createDocument(SVGDOMImplementation.SVG_NAMESPACE_URI, "svg", null);
+        SVGGraphics2D graphics = new SVGGraphics2D(document);
+        card.drawCard(graphics);
+        Element group = graphics.getTopLevelGroup(true);
+        NodeList textNodes = group.getElementsByTagName("text");
+        List<String> textElements = new ArrayList<>();
+        for (int i = 0; i < textNodes.getLength(); i++) {
+            textElements.add(textNodes.item(i).getTextContent());
+        }
+        return textElements;
     }
 
     private static boolean imagesEqual(BufferedImage a, BufferedImage b) {

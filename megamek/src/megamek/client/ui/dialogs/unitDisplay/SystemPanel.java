@@ -45,7 +45,6 @@ import java.awt.event.ActionListener;
 import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
 import java.io.Serial;
-import java.util.Enumeration;
 import java.util.Vector;
 import javax.swing.*;
 import javax.swing.event.ListSelectionEvent;
@@ -905,9 +904,13 @@ class SystemPanel extends PicMap
                     // Every ECM suite now carries at least the "ECM"/"Off" pair (activation/deactivation
                     // rules), so the mode switcher is always offered - the ECCM and Ghost Target game
                     // options merely add further modes.
-                    for (Enumeration<EquipmentMode> modeEnumeration = mounted.getType()
-                          .getModes(); modeEnumeration.hasMoreElements(); ) {
-                        EquipmentMode equipmentMode = modeEnumeration.nextElement();
+                    // Iterate the PER-MOUNT mode count rather than the raw type mode list: it filters
+                    // modes that need linked equipment to be available, such as the "Pulse ..." laser
+                    // modes that require a RISC Laser Pulse Module (LaserWeapon keeps them last and
+                    // reduces the count when no module is linked).
+                    int visibleModeCount = mounted.getModesCount();
+                    for (int modeIndex = 0; modeIndex < visibleModeCount; modeIndex++) {
+                        EquipmentMode equipmentMode = mounted.getType().getMode(modeIndex);
                         // Hack to prevent showing an option that is disabled by the server, but would
                         // be overwritten by every entity update if made also in the client
                         if (equipmentMode.equals("HotLoad") && en instanceof Mek

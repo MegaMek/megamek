@@ -255,6 +255,17 @@
             <AppenderRef ref="UnifiedLog" />
             <AppenderRef ref="MegaMekLog" />
         </Logger>
+        <!--
+          Equipment activation/deactivation diagnostics. All messages are tagged [EquipOff]; grep
+          logs/megamek.log for that tag. Logs every equipment mode change the server receives (with the
+          resulting current and pending mode) and rejected deactivations (e.g. switching an ECM off while
+          stealth armor is engaged). Active during the Off-modes playtest; comment out for normal play.
+        -->
+        <Logger name="megamek.feature.EquipOff" level="debug" additivity="false">
+            <AppenderRef ref="${env:mm.profile:-null}" />
+            <AppenderRef ref="UnifiedLog" />
+            <AppenderRef ref="MegaMekLog" />
+        </Logger>
         <Logger name="megamek" level="info" additivity="false">
             <AppenderRef ref="${env:mm.profile:-null}" />
             <AppenderRef ref="UnifiedLog" />

@@ -323,12 +323,13 @@ public class ServerHelper {
 
         // if no probe, save ourselves a few loops
         if (probeRange < 0) {
-            boolean hasProbeEquipment = detector.getMisc().stream()
-                  .anyMatch(mounted -> mounted.getType().hasFlag(MiscType.F_BAP));
-            if (hasProbeEquipment) {
-                LOGGER.debug("[HiddenUnits] {}: probe equipment present but not functioning "
-                      + "(switched off, shut down or EMI) - no hidden unit detection", detector.getShortName());
-            }
+            detector.getMisc().stream()
+                  .filter(mounted -> mounted.getType().hasFlag(MiscType.F_BAP))
+                  .forEach(mounted -> LOGGER.debug(
+                        "[HiddenUnits] {}: probe {} not functioning (mode '{}', pending '{}', shutdown {}) "
+                              + "- no hidden unit detection",
+                        detector.getShortName(), mounted.getName(), mounted.curMode().getName(),
+                        mounted.pendingMode().getName(), detector.isShutDown()));
             return false;
         }
 

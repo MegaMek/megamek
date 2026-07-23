@@ -151,6 +151,9 @@ public class TWGameManager extends AbstractGameManager {
 
     /** Hidden-unit probe detection diagnostics ([HiddenUnits] tag; shared feature logger, see ServerHelper). */
     private static final MMLogger HIDDEN_UNITS_LOGGER = MMLogger.create(ServerHelper.HIDDEN_UNITS_DIAGNOSTIC_LOGGER);
+
+    /** Equipment activation/deactivation diagnostics ([EquipOff] tag; shared feature logger, see Mounted). */
+    private static final MMLogger EQUIP_OFF_LOGGER = MMLogger.create(Mounted.EQUIP_OFF_DIAGNOSTIC_LOGGER);
     static final GameDatasetLogger datasetLogger = new GameDatasetLogger("game_actions");
     static final String DEFAULT_BOARD = MapSettings.BOARD_GENERATED;
 
@@ -27232,7 +27235,8 @@ public class TWGameManager extends AbstractGameManager {
         if (isEcmDeactivationBlockedByStealth(e, m, mode)) {
             String message = e.getShortName() + ": " + m.getName()
                   + " cannot be deactivated while the stealth armor system is engaged";
-            LOGGER.debug("[EquipOff] {}: rejected mode change - linked stealth armor is On", e.getShortName());
+            EQUIP_OFF_LOGGER.debug("[EquipOff] {}: rejected mode change - linked stealth armor is On",
+                  e.getShortName());
             sendServerChat(connIndex, message);
             return;
         }
@@ -27263,7 +27267,11 @@ public class TWGameManager extends AbstractGameManager {
             } else if ((m.getType() instanceof WeaponType) && m.isDWPMounted() && (mode <= 0)) {
                 m.setPendingDump(mode == -1);
             } else {
-                if (!m.setMode(mode)) {
+                if (m.setMode(mode)) {
+                    EQUIP_OFF_LOGGER.debug("[EquipOff] {}: {} mode change to index {} received - "
+                                + "current mode now '{}', pending mode '{}'",
+                          e.getShortName(), m.getName(), mode, m.curMode().getName(), m.pendingMode().getName());
+                } else {
                     String message = e.getShortName() +
                           ": " +
                           m.getName() +

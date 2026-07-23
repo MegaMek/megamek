@@ -998,12 +998,6 @@ public class FireControl {
                   AmmoType.Munitions.M_FAE);
             EnumSet<AmmoType.Munitions> homingMunitions = EnumSet.of(
                   AmmoType.Munitions.M_HOMING);
-            // Autocannon families that take armor-piercing ammunition
-            EnumSet<AmmoType.AmmoTypeEnum> autocannonAmmoTypes = EnumSet.of(
-                  AmmoType.AmmoTypeEnum.AC,
-                  AmmoType.AmmoTypeEnum.LAC,
-                  AmmoType.AmmoTypeEnum.AC_IMP,
-                  AmmoType.AmmoTypeEnum.PAC);
             if (0 != ammoType.getToHitModifier()) {
                 toHit.addModifier(ammoType.getToHitModifier(), TH_AMMO_MOD);
             }
@@ -1021,7 +1015,10 @@ public class FireControl {
                 toHit.addModifier(TH_APOLLO);
             }
             // Armor-piercing autocannon ammo is a flat +1 to-hit (removed under PLAYTEST 3 rules).
-            boolean isAutocannonAmmo = autocannonAmmoTypes.contains(ammoType.getAmmoType());
+            boolean isAutocannonAmmo = switch (ammoType.getAmmoType()) {
+                case AC, LAC, AC_IMP, PAC -> true;
+                case null, default -> false;
+            };
             boolean isArmorPiercingMunition =
                   ammoType.getMunitionType().contains(AmmoType.Munitions.M_ARMOR_PIERCING)
                         || ammoType.getMunitionType().contains(AmmoType.Munitions.M_ARMOR_PIERCING_PLAYTEST);

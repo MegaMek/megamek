@@ -268,7 +268,8 @@ public class CombatVehicleCostCalculator {
         ArrayList<String> left = getLeft(tank);
         String[] systemNames = left.toArray(new String[0]);
         long roundedCost = Math.round(cost);
-        CostCalculator.fillInReport(costReport, tank, ignoreAmmo, systemNames, equipmentIndex, roundedCost, costs);
+          CostCalculator.fillInReport(costReport, tank, ignoreAmmo, systemNames, equipmentIndex, structCostIdx,
+              roundedCost, costs);
         return roundedCost;
     }
 

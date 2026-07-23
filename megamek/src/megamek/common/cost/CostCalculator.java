@@ -208,6 +208,17 @@ public class CostCalculator {
      */
     static void fillInReport(CalculationReport costReport, Entity entity, boolean ignoreAmmo,
           String[] systemNames, int equipIndex, double cost, double[] costs) {
+          fillInReport(costReport, entity, ignoreAmmo, systemNames, equipIndex, 0, cost, costs);
+        }
+
+        /**
+         * Fills in a cost report while identifying leading rows that are inputs to a later rolled-up cost rather than
+         * independently additive costs.
+         *
+         * @param costStartIndex the first system-cost index included directly in the unit's running total
+         */
+        static void fillInReport(CalculationReport costReport, Entity entity, boolean ignoreAmmo,
+            String[] systemNames, int equipIndex, int costStartIndex, double cost, double[] costs) {
         NumberFormat commaFormatter = NumberFormat.getInstance();
         commaFormatter.setMaximumFractionDigits(10);
         costReport.addHeader("Cost Calculations For " + entity.getChassis() + " " + entity.getModel());
@@ -225,7 +236,11 @@ public class CostCalculator {
                 } else if (costs[l] < 0) {
                     result = "x " + commaFormatter.format(-costs[l]);
                 }
-                costReport.addLine(systemNames[l], "", result);
+                if (l < costStartIndex) {
+                    costReport.addInformationalLine(systemNames[l], "", result);
+                } else {
+                    costReport.addLine(systemNames[l], "", result);
+                }
             }
         }
         costReport.addResultLine("Total Cost:", "", commaFormatter.format(cost));

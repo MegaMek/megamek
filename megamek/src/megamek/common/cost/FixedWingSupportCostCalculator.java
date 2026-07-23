@@ -129,6 +129,7 @@ public class FixedWingSupportCostCalculator {
         costs[i++] = 20000 * paWeight;
         costs[i++] = 2000 * Math.max(0, sinks - freeHeatSinks);
 
+        int equipmentIndex = i;
         costs[i++] = CostCalculator.getWeaponsAndEquipmentCost(fixedWingSupport, ignoreAmmo);
 
         double cost = 0; // calculate the total
@@ -163,7 +164,7 @@ public class FixedWingSupportCostCalculator {
         systemNames.add("Tonnage Multiplier");
         long roundedCost = Math.round(cost);
         CostCalculator.fillInReport(costReport, fixedWingSupport, ignoreAmmo,
-              systemNames.toArray(new String[0]), structCostIdx + 3, roundedCost, costs);
+              systemNames.toArray(new String[0]), equipmentIndex, structCostIdx, roundedCost, costs);
         return roundedCost;
     }
 }

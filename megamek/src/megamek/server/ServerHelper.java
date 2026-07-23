@@ -47,6 +47,7 @@ import megamek.common.board.Coords;
 import megamek.common.compute.Compute;
 import megamek.common.equipment.Minefield;
 import megamek.common.equipment.MiscType;
+import megamek.common.equipment.Mounted;
 import megamek.common.game.Game;
 import megamek.common.options.OptionsConstants;
 import megamek.common.rolls.Roll;
@@ -422,6 +423,54 @@ public class ServerHelper {
         }
 
         return hiddenUnitFound;
+    }
+
+    /**
+     * Checks whether a requested equipment mode change must be rejected because it would deactivate an ECM suite
+     * while the unit's stealth armor system is engaged - or queued to engage this round. Stealth armor requires an
+     * operating ECM, so the player has to switch the stealth armor off first; checking the pending stealth mode
+     * closes the loophole of queueing "stealth On" and "ECM Off" in the same round.
+     *
+     * @param entity  the entity whose equipment is being switched
+     * @param mounted the equipment being switched
+     * @param newMode the requested mode index
+     *
+     * @return {@code true} if the mode change would switch an ECM suite to {@code "Off"} while stealth armor is on
+     *       or switching on
+     */
+    public static boolean isEcmDeactivationBlockedByStealth(Entity entity, Mounted<?> mounted, int newMode) {
+        if (!(mounted.getType() instanceof MiscType miscType) || !miscType.hasFlag(MiscType.F_ECM)) {
+            return false;
+        }
+        if ((newMode < 0) || (newMode >= miscType.getModesCount())) {
+            return false;
+        }
+        boolean isSwitchingOff = miscType.getMode(newMode).getName().equals("Off");
+        return isSwitchingOff && entity.isStealthOnOrActivating();
+    }
+
+    /**
+     * Checks whether a requested equipment mode change must be rejected because it would engage the stealth armor
+     * system while no ECM suite will be operating next round (all deactivated or switching to {@code "Off"}). This
+     * is the mirror of {@link #isEcmDeactivationBlockedByStealth(Entity, Mounted, int)} and closes the other
+     * ordering of the same-round loophole: first queueing "ECM Off", then "stealth On".
+     *
+     * @param entity  the entity whose equipment is being switched
+     * @param mounted the equipment being switched
+     * @param newMode the requested mode index
+     *
+     * @return {@code true} if the mode change would switch stealth armor to {@code "On"} while no ECM suite will
+     *       be operating next round
+     */
+    public static boolean isStealthActivationBlockedByEcmShutdown(Entity entity, Mounted<?> mounted, int newMode) {
+        if (!(mounted.getType() instanceof MiscType miscType) || !miscType.hasFlag(MiscType.F_STEALTH)) {
+            return false;
+        }
+        if ((newMode < 0) || (newMode >= miscType.getModesCount())) {
+            return false;
+        }
+        boolean isSwitchingOn = miscType.getMode(newMode).getName().equals("On");
+        return isSwitchingOn && !entity.hasEcmAvailableForStealth();
     }
 
     /**

@@ -27216,87 +27216,89 @@ public class TWGameManager extends AbstractGameManager {
      * @param c         the packet to be processed
      * @param connIndex the id for connection that received the packet.
      */
-    private void receiveEntityModeChange(Packet c, int connIndex) throws InvalidPacketDataException {
-        int entityId = c.getIntValue(0);
-        int equipId = c.getIntValue(1);
-        int mode = c.getIntValue(2);
-        Entity e = game.getEntity(entityId);
+    private void receiveEntityModeChange(Packet packet, int connIndex) throws InvalidPacketDataException {
+        int entityId = packet.getIntValue(0);
+        int equipId = packet.getIntValue(1);
+        int mode = packet.getIntValue(2);
+        Entity entity = game.getEntity(entityId);
 
-        if (e == null || e.getOwner() != game.getPlayer(connIndex)) {
+        if (entity == null || entity.getOwner() != game.getPlayer(connIndex)) {
             return;
         }
 
-        Mounted<?> m = e.getEquipment(equipId);
+        Mounted<?> mounted = entity.getEquipment(equipId);
 
-        if (m == null) {
+        if (mounted == null) {
             return;
         }
 
-        if (isEcmDeactivationBlockedByStealth(e, m, mode)) {
-            String message = e.getShortName() + ": " + m.getName()
+        if (ServerHelper.isEcmDeactivationBlockedByStealth(entity, mounted, mode)) {
+            String message = entity.getShortName() + ": " + mounted.getName()
                   + " cannot be deactivated while the stealth armor system is engaged or engaging";
             EQUIP_OFF_LOGGER.debug("[EquipOff] {}: rejected mode change - stealth armor is on or switching on",
-                  e.getShortName());
+                  entity.getShortName());
             sendServerChat(connIndex, message);
             return;
         }
 
-        if (isStealthActivationBlockedByEcmShutdown(e, m, mode)) {
-            String message = e.getShortName() + ": " + m.getName()
+        if (ServerHelper.isStealthActivationBlockedByEcmShutdown(entity, mounted, mode)) {
+            String message = entity.getShortName() + ": " + mounted.getName()
                   + " cannot be engaged while the ECM suite is deactivated or deactivating";
             EQUIP_OFF_LOGGER.debug("[EquipOff] {}: rejected mode change - no ECM suite will be operating next round",
-                  e.getShortName());
+                  entity.getShortName());
             sendServerChat(connIndex, message);
             return;
         }
 
         try {
-            if ((m.getType() instanceof MiscType miscType) && miscType.isBoobyTrap() && mode != 0 && e.hasBoobyTrap()) {
+            if ((mounted.getType() instanceof MiscType miscType) && miscType.isBoobyTrap() && mode != 0
+                  && entity.hasBoobyTrap()) {
                 sendServerChat("There is no turning back now...");
-                e.setBoobyTrapInitiated(true);
-                m.setMode(mode);
-                m.setModeSwitchable(false);
-                entityUpdate(e.getId());
+                entity.setBoobyTrapInitiated(true);
+                mounted.setMode(mode);
+                mounted.setModeSwitchable(false);
+                entityUpdate(entity.getId());
             }
 
             // Check for BA dumping body mounted missile launchers
-            if ((e instanceof BattleArmor) &&
-                  (!m.isMissing()) &&
-                  m.isBodyMounted() &&
-                  m.getType().hasFlag(WeaponType.F_MISSILE) &&
-                  (m.getLinked() != null) &&
-                  (m.getLinked().getUsableShotsLeft() > 0) &&
+            if ((entity instanceof BattleArmor) &&
+                  (!mounted.isMissing()) &&
+                  mounted.isBodyMounted() &&
+                  mounted.getType().hasFlag(WeaponType.F_MISSILE) &&
+                  (mounted.getLinked() != null) &&
+                  (mounted.getLinked().getUsableShotsLeft() > 0) &&
                   (mode <= 0)) {
-                m.setPendingDump(mode == -1);
+                mounted.setPendingDump(mode == -1);
                 // a mode change for ammo means dumping or hot loading
-            } else if ((m.getType() instanceof AmmoType) &&
-                  !m.getType().hasInstantModeSwitch() &&
-                  (mode < 0 || mode == 0 && m.isPendingDump())) {
-                m.setPendingDump(mode == -1);
-            } else if ((m.getType() instanceof WeaponType) && m.isDWPMounted() && (mode <= 0)) {
-                m.setPendingDump(mode == -1);
+            } else if ((mounted.getType() instanceof AmmoType) &&
+                  !mounted.getType().hasInstantModeSwitch() &&
+                  (mode < 0 || mode == 0 && mounted.isPendingDump())) {
+                mounted.setPendingDump(mode == -1);
+            } else if ((mounted.getType() instanceof WeaponType) && mounted.isDWPMounted() && (mode <= 0)) {
+                mounted.setPendingDump(mode == -1);
             } else {
-                if (m.setMode(mode)) {
+                if (mounted.setMode(mode)) {
                     EQUIP_OFF_LOGGER.debug("[EquipOff] {}: {} mode change to index {} received - "
                                 + "current mode now '{}', pending mode '{}'",
-                          e.getShortName(), m.getName(), mode, m.curMode().getName(), m.pendingMode().getName());
+                          entity.getShortName(), mounted.getName(), mode, mounted.curMode().getName(),
+                          mounted.pendingMode().getName());
                 } else {
-                    String message = e.getShortName() +
+                    String message = entity.getShortName() +
                           ": " +
-                          m.getName() +
+                          mounted.getName() +
                           ": " +
-                          e.getLocationName(m.getLocation()) +
+                          entity.getLocationName(mounted.getLocation()) +
                           " trying to compensate";
                     LOGGER.error(message);
                     sendServerChat(message);
-                    e.setGameOptions();
+                    entity.setGameOptions();
 
-                    if (!m.setMode(mode)) {
-                        message = e.getShortName() +
+                    if (!mounted.setMode(mode)) {
+                        message = entity.getShortName() +
                               ": " +
-                              m.getName() +
+                              mounted.getName() +
                               ": " +
-                              e.getLocationName(m.getLocation()) +
+                              entity.getLocationName(mounted.getLocation()) +
                               " unable to compensate";
                         LOGGER.error(message);
                         sendServerChat(message);
@@ -27304,57 +27306,9 @@ public class TWGameManager extends AbstractGameManager {
                 }
             }
 
-        } catch (Exception ex) {
-            LOGGER.error("", ex);
+        } catch (Exception exception) {
+            LOGGER.error("", exception);
         }
-    }
-
-    /**
-     * Checks whether a requested equipment mode change must be rejected because it would deactivate an ECM suite
-     * while the unit's stealth armor system is engaged - or queued to engage this round. Stealth armor requires an
-     * operating ECM, so the player has to switch the stealth armor off first; checking the pending stealth mode
-     * closes the loophole of queueing "stealth On" and "ECM Off" in the same round.
-     *
-     * @param entity  the entity whose equipment is being switched
-     * @param mounted the equipment being switched
-     * @param newMode the requested mode index
-     *
-     * @return {@code true} if the mode change would switch an ECM suite to "Off" while stealth armor is on or
-     *       switching on
-     */
-    private static boolean isEcmDeactivationBlockedByStealth(Entity entity, Mounted<?> mounted, int newMode) {
-        if (!(mounted.getType() instanceof MiscType miscType) || !miscType.hasFlag(MiscType.F_ECM)) {
-            return false;
-        }
-        if ((newMode < 0) || (newMode >= miscType.getModesCount())) {
-            return false;
-        }
-        boolean isSwitchingOff = miscType.getMode(newMode).getName().equals("Off");
-        return isSwitchingOff && entity.isStealthOnOrActivating();
-    }
-
-    /**
-     * Checks whether a requested equipment mode change must be rejected because it would engage the stealth armor
-     * system while no ECM suite will be operating next round (all deactivated or switching to "Off"). This is the
-     * mirror of {@link #isEcmDeactivationBlockedByStealth(Entity, Mounted, int)} and closes the other ordering of
-     * the same-round loophole: first queueing "ECM Off", then "stealth On".
-     *
-     * @param entity  the entity whose equipment is being switched
-     * @param mounted the equipment being switched
-     * @param newMode the requested mode index
-     *
-     * @return {@code true} if the mode change would switch stealth armor to "On" while no ECM suite will be
-     *       operating next round
-     */
-    private static boolean isStealthActivationBlockedByEcmShutdown(Entity entity, Mounted<?> mounted, int newMode) {
-        if (!(mounted.getType() instanceof MiscType miscType) || !miscType.hasFlag(MiscType.F_STEALTH)) {
-            return false;
-        }
-        if ((newMode < 0) || (newMode >= miscType.getModesCount())) {
-            return false;
-        }
-        boolean isSwitchingOn = miscType.getMode(newMode).getName().equals("On");
-        return isSwitchingOn && !entity.hasEcmAvailableForStealth();
     }
 
     /**
@@ -27378,11 +27332,11 @@ public class TWGameManager extends AbstractGameManager {
      * @param c         the packet to be processed
      * @param connIndex the id for connection that received the packet.
      */
-    private void receiveEntitySinksChange(Packet c, int connIndex) throws InvalidPacketDataException {
-        int entityId = c.getIntValue(0);
-        int numSinks = c.getIntValue(1);
-        Entity e = game.getEntity(entityId);
-        if ((e instanceof ActiveHeatSinkController heatSinkController) && (connIndex == e.getOwnerId())) {
+    private void receiveEntitySinksChange(Packet packet, int connIndex) throws InvalidPacketDataException {
+        int entityId = packet.getIntValue(0);
+        int numSinks = packet.getIntValue(1);
+        Entity entity = game.getEntity(entityId);
+        if ((entity instanceof ActiveHeatSinkController heatSinkController) && (connIndex == entity.getOwnerId())) {
             heatSinkController.setActiveSinksNextRound(numSinks);
         }
     }

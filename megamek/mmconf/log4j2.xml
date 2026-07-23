@@ -244,28 +244,31 @@
           </Logger>
         -->
         <!--
-          Hidden-unit probe detection diagnostics. All messages are tagged [HiddenUnits]; grep logs/megamek.log
-          for that tag. Logs each full-board probe sweep (phase/round), probes that are present but not
-          functioning (switched off, shut down, EMI), hidden enemies found in probe range, and reveals blocked
-          by line of sight. Active while diagnosing the stationary-probe detection issue; comment out for
-          normal play once resolved.
+          Hidden-unit probe detection diagnostics, silent by default (parent "megamek" logger at info). All
+          messages are tagged [HiddenUnits]; grep logs/megamek.log for that tag. Logs each full-board probe
+          sweep (phase/round), probes that are present but not functioning (switched off, shut down, EMI),
+          hidden enemies found in probe range, and reveals blocked by line of sight. Uncomment to diagnose
+          "why didn't my probe reveal that unit"; leave commented for normal play.
+
+          <Logger name="megamek.feature.HiddenUnits" level="debug" additivity="false">
+              <AppenderRef ref="${env:mm.profile:-null}" />
+              <AppenderRef ref="UnifiedLog" />
+              <AppenderRef ref="MegaMekLog" />
+          </Logger>
         -->
-        <Logger name="megamek.feature.HiddenUnits" level="debug" additivity="false">
-            <AppenderRef ref="${env:mm.profile:-null}" />
-            <AppenderRef ref="UnifiedLog" />
-            <AppenderRef ref="MegaMekLog" />
-        </Logger>
         <!--
-          Equipment activation/deactivation diagnostics. All messages are tagged [EquipOff]; grep
-          logs/megamek.log for that tag. Logs every equipment mode change the server receives (with the
-          resulting current and pending mode) and rejected deactivations (e.g. switching an ECM off while
-          stealth armor is engaged). Active during the Off-modes playtest; comment out for normal play.
+          Equipment activation/deactivation diagnostics, silent by default (parent "megamek" logger at info).
+          All messages are tagged [EquipOff]; grep logs/megamek.log for that tag. Logs every equipment mode
+          change the server receives (with the resulting current and pending mode) and rejected deactivations
+          (e.g. switching an ECM off while stealth armor is engaged). Uncomment to diagnose "why didn't my
+          mode switch take effect"; leave commented for normal play.
+
+          <Logger name="megamek.feature.EquipOff" level="debug" additivity="false">
+              <AppenderRef ref="${env:mm.profile:-null}" />
+              <AppenderRef ref="UnifiedLog" />
+              <AppenderRef ref="MegaMekLog" />
+          </Logger>
         -->
-        <Logger name="megamek.feature.EquipOff" level="debug" additivity="false">
-            <AppenderRef ref="${env:mm.profile:-null}" />
-            <AppenderRef ref="UnifiedLog" />
-            <AppenderRef ref="MegaMekLog" />
-        </Logger>
         <Logger name="megamek" level="info" additivity="false">
             <AppenderRef ref="${env:mm.profile:-null}" />
             <AppenderRef ref="UnifiedLog" />

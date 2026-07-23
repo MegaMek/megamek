@@ -1526,7 +1526,7 @@ public class ConvInfantry extends Infantry {
     }
 
     private static @Nullable InfantryWeapon restoreInfantryWeapon(String weaponName) {
-        if (EquipmentType.getWithFallbackToDisplayName(weaponName) instanceof InfantryWeapon infantryWeapon) {
+        if (EquipmentType.get(weaponName) instanceof InfantryWeapon infantryWeapon) {
             return infantryWeapon;
         }
         return null;

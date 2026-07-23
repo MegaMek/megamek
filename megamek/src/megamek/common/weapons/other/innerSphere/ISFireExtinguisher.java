@@ -67,11 +67,11 @@ public class ISFireExtinguisher extends Weapon {
     public ISFireExtinguisher() {
         super();
         name = "Fire Extinguisher";
+        setInternalName(name);
         addLookupName("IS Fire Extinguisher");
         // The IS and Clan fire extinguishers are mechanically identical, so they are merged into this single
         // TechBase.ALL weapon. Keep the Clan lookup name so existing units/saves still resolve to it.
         addLookupName("Clan Fire Extinguisher");
-        setInternalName(name);
         heat = 0;
         damage = 0;
         shortRange = 1;

@@ -40,6 +40,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.io.ByteArrayInputStream;
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.InputStream;
 import java.nio.charset.StandardCharsets;
 import java.util.List;
@@ -203,6 +204,34 @@ class MtfFileTest {
         assertTrue(found.isRearMounted());
         assertTrue(found.isMekTurretMounted());
         assertTrue(found.isArmored());
+    }
+
+    @Test
+    void allTechbaseComponentsUseStrictUnitTechbase() throws Exception {
+        Entity loaded;
+        try (InputStream inputStream = new FileInputStream("testresources/data/mekfiles/Boreas C.mtf")) {
+            loaded = new MtfFile(inputStream).getEntity();
+        }
+
+        assertEquals(EquipmentType.T_ARMOR_STANDARD, loaded.getArmorType(Mek.LOC_HEAD));
+        assertEquals(TechConstants.T_CLAN_ADVANCED, loaded.getArmorTechLevel(Mek.LOC_HEAD));
+        assertEquals(EquipmentType.T_STRUCTURE_STANDARD, loaded.getStructureType());
+        assertEquals(TechConstants.T_CLAN_ADVANCED, loaded.getStructureTechLevel());
+    }
+
+    @Test
+    void mixedTechMtfPreservesCanonicalInnerSphereWeaponNames() throws Exception {
+        File file = new File("testresources/megamek/common/units/Pulverizer PUL-2V.mtf");
+        Mek loaded = (Mek) new MekFileParser(file).getEntity();
+
+        assertTrue(loaded.getWeaponList().stream()
+              .anyMatch(mounted -> mounted.getType().getInternalName().equals("LRM 10")));
+        assertFalse(loaded.getWeaponList().stream()
+              .anyMatch(mounted -> mounted.getType().getInternalName().equals("CLLRM10")));
+
+        String resaved = loaded.getMtf();
+        assertTrue(resaved.contains("\nLRM 10\n"));
+        assertFalse(resaved.contains("CLLRM10"));
     }
 
     @Test

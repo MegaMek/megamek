@@ -724,7 +724,7 @@ public class GUIPreferences extends PreferenceStoreProxy {
         store.setDefault(UNIT_DISPLAY_AUTO_DISPLAY_NON_REPORT_PHASE, 1);
         store.setDefault(UNIT_DISPLAY_ENABLED, true);
         store.setDefault(UNIT_DISPLAY_LOCATION, 0);
-        store.setDefault(BOT_COMMANDS_LOCATION, 0);
+        store.setDefault(BOT_COMMANDS_LOCATION, ClientGUI.BOT_COMMANDS_LOCATION_DOCKED);
         // -1 is the "no saved position yet" sentinel so the floating dialog centers on first use; a real saved
         // position (including a legitimate top-left 0,0) is restored instead.
         store.setDefault(BOT_COMMANDS_POS_X, -1);

@@ -252,7 +252,7 @@ public class Mounted<T extends EquipmentType> implements Serializable, RoundUpda
         if (typeName == null) {
             typeName = type.getInternalName();
         }
-        type = (T) EquipmentType.getWithFallbackToDisplayName(typeName);
+        type = (T) EquipmentType.get(typeName);
 
         if (type == null) {
             String message = String.format("Could not restore equipment type \"%s\"", typeName);

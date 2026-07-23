@@ -68,7 +68,7 @@ public class CLASEWMissileWeapon extends ThunderboltWeapon {
         super();
 
         this.name = "Anti-Ship Electronic Warfare (ASEW) Missiles";
-        this.setInternalName(BombTypeEnum.ASEW.getWeaponName());
+        this.setInternalName("Clan " + BombTypeEnum.ASEW.getWeaponName());
         this.heat = 0;
         this.damage = 0;
         this.rackSize = 1;

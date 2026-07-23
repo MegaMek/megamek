@@ -69,7 +69,7 @@ public abstract class LRMWeapon extends MissileWeapon {
         longRange = 21;
         extremeRange = 28;
         atClass = CLASS_LRM;
-        flags = flags.or(F_PROTO_WEAPON).or(F_ARTEMIS_COMPATIBLE);
+        flags = flags.or(F_PROTO_WEAPON).or(F_ARTEMIS_COMPATIBLE).or(F_LRM);
     }
 
 

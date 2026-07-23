@@ -56,9 +56,7 @@ public class CLBAMGHeavy extends BAMGWeapon {
         name = "Machine Gun (Heavy)";
         setInternalName("CLBAHeavyMG");
         addLookupName("Clan BA Heavy Machine Gun");
-        addLookupName("ISBAHeavyMachineGun");
-        addLookupName("IS BA Heavy Machine Gun");
-        addLookupName("ISBAHeavyMG");
+        addLookupName("CLBAHeavyMachineGun");
         sortingName = "MG D";
         heat = 0;
         damage = 3;

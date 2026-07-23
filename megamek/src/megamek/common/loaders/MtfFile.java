@@ -54,12 +54,14 @@ import megamek.common.battleArmor.BattleArmor;
 import megamek.common.enums.Faction;
 import megamek.common.enums.TechBase;
 import megamek.common.equipment.AmmoType;
+import megamek.common.equipment.ArmorType;
 import megamek.common.equipment.Engine;
 import megamek.common.equipment.EquipmentType;
 import megamek.common.equipment.EquipmentTypeLookup;
 import megamek.common.equipment.LiftHoist;
 import megamek.common.equipment.MiscType;
 import megamek.common.equipment.Mounted;
+import megamek.common.equipment.StructureType;
 import megamek.common.equipment.WeaponType;
 import megamek.common.exceptions.LocationFullException;
 import megamek.common.units.BipedMek;
@@ -399,7 +401,13 @@ public class MtfFile implements IMekLoader {
             String thisStructureType = internalType.substring(internalType.indexOf(':') + 1).trim();
             if (!thisStructureType.isBlank()
                   && !thisStructureType.equalsIgnoreCase(Mek.FRANKEN_MEK_STRUCTURE_HYBRID)) {
-                mek.setStructureType(thisStructureType);
+                StructureType structure = EquipmentType.getStructureFromName(thisStructureType);
+                if (!mek.isMixedTech() && (structure != null)
+                      && (structure.getTechAdvancement().getTechBase() == TechBase.ALL)) {
+                    mek.setStructureType(EquipmentType.getStructureType(structure));
+                } else {
+                    mek.setStructureType(thisStructureType);
+                }
             } else {
                 mek.setStructureType(EquipmentType.T_STRUCTURE_STANDARD);
             }
@@ -414,7 +422,12 @@ public class MtfFile implements IMekLoader {
 
             String thisArmorType = armorType.substring(armorType.indexOf(':') + 1);
             if (thisArmorType.indexOf('(') != -1) {
-                boolean clan = thisArmorType.toLowerCase().contains("clan");
+                String armorName = thisArmorType.substring(0, thisArmorType.indexOf('(')).trim();
+                ArmorType armor = EquipmentType.getArmorFromName(armorName);
+                boolean clan = (!mek.isMixedTech() && (armor != null)
+                      && (armor.getTechAdvancement().getTechBase() == TechBase.ALL))
+                      ? mek.isClan()
+                      : thisArmorType.toLowerCase().contains("clan");
                 if (clan) {
                     switch (Integer.parseInt(rulesLevel.substring(12).trim())) {
                         case 2:
@@ -455,7 +468,7 @@ public class MtfFile implements IMekLoader {
                                   "Unsupported tech level: " + rulesLevel.substring(12).trim());
                     }
                 }
-                thisArmorType = thisArmorType.substring(0, thisArmorType.indexOf('(')).trim();
+                thisArmorType = armorName;
                 mek.setArmorType(thisArmorType);
             } else if (!thisArmorType.equals(EquipmentType.getArmorTypeName(EquipmentType.T_ARMOR_PATCHWORK))) {
                 mek.setArmorTechLevel(mek.getTechLevel());
@@ -475,7 +488,8 @@ public class MtfFile implements IMekLoader {
                       locationOrder[x]);
                 if (thisArmorType.equals(EquipmentType.getArmorTypeName(EquipmentType.T_ARMOR_PATCHWORK))) {
                     String armorName = isClan(x);
-                    mek.setArmorType(EquipmentType.getArmorType(EquipmentType.get(armorName)), locationOrder[x]);
+                    ArmorType armor = EquipmentType.getArmorFromName(armorName);
+                    mek.setArmorType(armor == null ? EquipmentType.T_ARMOR_UNKNOWN : armor.getArmorType(), locationOrder[x]);
 
                     String armorValue = armorValues[x].toLowerCase();
                     if (armorValue.contains("clan")) {
@@ -704,7 +718,7 @@ public class MtfFile implements IMekLoader {
         if (!lookupName.endsWith("Structure")) {
             lookupName += " Structure";
         }
-        EquipmentType structure = EquipmentType.get(lookupName);
+        EquipmentType structure = EquipmentType.getStructureFromName(lookupName);
         if (structure == null) {
             throw new EntityLoadingException("Unknown structure type: " + structureName);
         }
@@ -1038,18 +1052,12 @@ public class MtfFile implements IMekLoader {
             EquipmentType etype2 = null;
             if (critName.contains("|")) {
                 String critName2 = critName.substring(critName.indexOf("|") + 1);
-                etype2 = EquipmentType.get(critName2);
-                if (etype2 == null) {
-                    etype2 = EquipmentType.get(mek.isClan() ? "Clan " + critName2 : "IS " + critName2);
-                }
+                etype2 = getEquipmentType(mek, critName2);
                 critName = critName.substring(0, critName.indexOf("|"));
             }
 
             try {
-                EquipmentType etype = EquipmentType.get(critName);
-                if (etype == null) {
-                    etype = EquipmentType.get(mek.isClan() ? "Clan " + critName : "IS " + critName);
-                }
+                EquipmentType etype = getEquipmentType(mek, critName);
                 if (etype != null) {
                     if (etype.isSpreadable()) {
                         // do we already have one of these? Key on Type
@@ -1205,6 +1213,10 @@ public class MtfFile implements IMekLoader {
                 throw new EntityLoadingException(ex.getMessage());
             }
         }
+    }
+
+    private EquipmentType getEquipmentType(Mek mek, String equipmentName) {
+        return EquipmentType.get(equipmentName, mek.isMixedTech() ? null : mek.getTechBase());
     }
 
     private void clearSystemCriticalIfAbsent(Mek mek, int loc, int slot, String expectedCritical) {

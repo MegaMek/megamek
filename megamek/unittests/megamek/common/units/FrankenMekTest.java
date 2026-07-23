@@ -103,11 +103,12 @@ class FrankenMekTest {
         Mek mek = newFrankenMek();
 
         mek.setFrankenMekStructureType(Mek.LOC_HEAD,
-              EquipmentType.get(EquipmentType.getStructureTypeName(EquipmentType.T_STRUCTURE_ENDO_STEEL, false)));
+              EquipmentType.getStructureFromName(
+                  EquipmentType.getStructureTypeName(EquipmentType.T_STRUCTURE_ENDO_STEEL, false)));
         assertTrue(mek.hasHybridFrankenMekStructure());
 
         mek.setFrankenMekStructureType(Mek.LOC_HEAD,
-              EquipmentType.get(EquipmentType.getStructureTypeName(EquipmentType.T_STRUCTURE_STANDARD)));
+              EquipmentType.getStructureFromName(EquipmentType.getStructureTypeName(EquipmentType.T_STRUCTURE_STANDARD)));
 
         assertFalse(mek.hasHybridFrankenMekStructure());
         assertEquals(EquipmentType.getStructureTypeName(EquipmentType.T_STRUCTURE_STANDARD),

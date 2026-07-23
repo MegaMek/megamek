@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2020-2025 The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2026 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -47,10 +47,12 @@ import megamek.common.weapons.infantry.InfantryWeapon;
 public class SmallWeaponAmmoType extends AmmoType {
 
     private final int bursts;
+    private final String weaponFamilyName;
 
     public SmallWeaponAmmoType(InfantryWeapon weapon) {
         ammoType = AmmoType.AmmoTypeEnum.INFANTRY;
-        setInternalName(generateInternalName(weapon));
+        weaponFamilyName = getWeaponFamilyName(weapon.getInternalName());
+        setInternalName(weapon.getInternalName() + " Ammo");
         name = weapon.name + " Ammo";
         if (weapon.getInternalName().endsWith("Inferno")) {
             munitionType = EnumSet.of(AmmoType.Munitions.M_INFERNO);
@@ -66,8 +68,11 @@ public class SmallWeaponAmmoType extends AmmoType {
         rulesRefs = weapon.rulesRefs;
     }
 
-    private String generateInternalName(EquipmentType weapon) {
-        return weapon.getInternalName().replace("Inferno", "") + " Ammo";
+    private static String getWeaponFamilyName(String internalName) {
+        String infernoSuffix = "Inferno";
+        return internalName.endsWith(infernoSuffix)
+              ? internalName.substring(0, internalName.length() - infernoSuffix.length())
+              : internalName;
     }
 
     public int getBursts() {
@@ -80,7 +85,7 @@ public class SmallWeaponAmmoType extends AmmoType {
      * @return Whether this is the ammo type for the weapon
      */
     public boolean isAmmoFor(EquipmentType weapon) {
-        return getInternalName().equals(generateInternalName(weapon));
+        return weaponFamilyName.equals(getWeaponFamilyName(weapon.getInternalName()));
     }
 
     /**

@@ -571,6 +571,16 @@ public class WeaponType extends EquipmentType {
     public static final WeaponTypeFlag F_PLASMA = WeaponTypeFlag.F_PLASMA;
     public static final WeaponTypeFlag F_INCENDIARY_NEEDLES = WeaponTypeFlag.F_INCENDIARY_NEEDLES;
 
+    // families
+    public static final WeaponTypeFlag F_AC = WeaponTypeFlag.F_AC;
+    public static final WeaponTypeFlag F_SRM = WeaponTypeFlag.F_SRM;
+    public static final WeaponTypeFlag F_LRM = WeaponTypeFlag.F_LRM;
+    public static final WeaponTypeFlag F_HAG = WeaponTypeFlag.F_HAG;
+    public static final WeaponTypeFlag F_MML = WeaponTypeFlag.F_MML;
+    public static final WeaponTypeFlag F_MRM = WeaponTypeFlag.F_MRM;
+    public static final WeaponTypeFlag F_ATM = WeaponTypeFlag.F_ATM;
+    
+
     // War of 3039 prototypes
     public static final WeaponTypeFlag F_PROTOTYPE = WeaponTypeFlag.F_PROTOTYPE;
     // Variable heat, heat is listed in dice, not points
@@ -1863,7 +1873,6 @@ public class WeaponType extends EquipmentType {
         EquipmentType.addType(new InfantryArchaicBladeArchaicSwordWeapon());
         EquipmentType.addType(new InfantryArchaicBladeZweihanderSwordWeapon());
         EquipmentType.addType(new InfantryArchaicBladeJoustingLanceWeapon());
-        EquipmentType.addType(new InfantryArchaicWhipWeapon());
         EquipmentType.addType(new InfantryArchaicShockStaffWeapon());
 
         // Clan Archaic - Commented out can be considered Obsolete

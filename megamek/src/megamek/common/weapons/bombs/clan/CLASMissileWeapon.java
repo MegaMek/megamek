@@ -58,7 +58,7 @@ public class CLASMissileWeapon extends ThunderboltWeapon {
     public CLASMissileWeapon() {
         super();
         name = "AS Missile";
-        setInternalName(BombTypeEnum.AS.getWeaponName());
+        setInternalName("Clan " + BombTypeEnum.AS.getWeaponName());
         heat = 0;
         damage = 30;
         rackSize = 1;

@@ -45,15 +45,7 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.HashSet;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-import java.util.TreeSet;
-import java.util.Vector;
+import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
@@ -116,8 +108,8 @@ import megamek.common.planetaryConditions.PlanetaryConditions;
 import megamek.common.preference.PreferenceManager;
 import megamek.common.turns.UnloadStrandedTurn;
 import megamek.common.units.Crew;
-import megamek.common.units.DemolitionCharge;
 import megamek.common.units.DamageEditSpec;
+import megamek.common.units.DemolitionCharge;
 import megamek.common.units.Entity;
 import megamek.common.units.EntitySelector;
 import megamek.common.units.FighterSquadron;
@@ -125,9 +117,9 @@ import megamek.common.units.IBuilding;
 import megamek.common.units.UnitLocation;
 import megamek.common.util.C3Util;
 import megamek.common.util.ImageUtil;
-import megamek.common.voting.Poll;
 import megamek.common.util.SerializationHelper;
 import megamek.common.util.StringUtil;
+import megamek.common.voting.Poll;
 import megamek.logging.MMLogger;
 import megamek.server.SmokeCloud;
 
@@ -500,8 +492,8 @@ public class Client extends AbstractClient {
 
     /**
      * Sends a gamemaster's damage editor edits for the server to apply to its own copy of the unit. Unlike
-     * {@link #sendUpdateEntity(Entity)} this carries only the edited values, so the server's unit keeps every
-     * piece of state the editor does not touch.
+     * {@link #sendUpdateEntity(Entity)} this carries only the edited values, so the server's unit keeps every piece of
+     * state the editor does not touch.
      */
     public void sendDamageEdit(DamageEditSpec spec) {
         LOGGER.debug("Sending damage edits for unit id {}", spec.entityId);
@@ -696,14 +688,32 @@ public class Client extends AbstractClient {
         Entity entity = game.getEntity(packet.getIntValue(0));
 
         if (entity != null) { // we may not have this entity due to double-blind
+            // Capture the observable state; the isVisibleToEnemy/isDetectedByEnemy getters are not plain field
+            // reads (without double-blind they always report true), so compare them before and after applying
+            // the packet rather than against the raw packet values
+            boolean oldEverSeenByEnemy = entity.isEverSeenByEnemy();
+            boolean oldVisibleToEnemy = entity.isVisibleToEnemy();
+            boolean oldDetectedByEnemy = entity.isDetectedByEnemy();
+            Vector<Player> oldWhoCanSee = entity.getWhoCanSee();
+            Vector<Player> oldWhoCanDetect = entity.getWhoCanDetect();
+
             entity.setEverSeenByEnemy(packet.getBooleanValue(1));
             entity.setVisibleToEnemy(packet.getBooleanValue(2));
             entity.setDetectedByEnemy(packet.getBooleanValue(3));
             entity.setWhoCanSee(packet.getPlayerVector(4));
             entity.setWhoCanDetect(packet.getPlayerVector(5));
 
-            // this next call is only needed sometimes, but we'll just call it everytime
-            game.processGameEvent(new GameEntityChangeEvent(this, entity));
+            // The server also sends indicators that carry no change; only notify listeners when the visibility
+            // state in fact changed, as each change event makes the UI redo entity sprites and images
+            boolean changed = (entity.isEverSeenByEnemy() != oldEverSeenByEnemy)
+                  || (entity.isVisibleToEnemy() != oldVisibleToEnemy)
+                  || (entity.isDetectedByEnemy() != oldDetectedByEnemy)
+                  || !Objects.equals(entity.getWhoCanSee(), oldWhoCanSee)
+                  || !Objects.equals(entity.getWhoCanDetect(), oldWhoCanDetect);
+
+            if (changed) {
+                game.processGameEvent(new GameEntityChangeEvent(this, entity));
+            }
         }
     }
 

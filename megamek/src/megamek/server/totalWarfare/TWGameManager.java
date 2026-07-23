@@ -43,6 +43,7 @@ import java.io.File;
 import java.time.LocalDateTime;
 import java.util.*;
 import java.util.concurrent.ConcurrentLinkedQueue;
+import java.util.function.Predicate;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -99,8 +100,6 @@ import megamek.common.net.packets.Packet;
 import megamek.common.options.IBasicOption;
 import megamek.common.options.IOption;
 import megamek.common.options.OptionsConstants;
-import megamek.common.voting.Poll;
-import megamek.common.voting.VoteThreshold;
 import megamek.common.planetaryConditions.Atmosphere;
 import megamek.common.planetaryConditions.PlanetaryConditions;
 import megamek.common.planetaryConditions.Wind;
@@ -122,6 +121,8 @@ import megamek.common.util.EmailService;
 import megamek.common.util.HazardousLiquidPoolUtil;
 import megamek.common.util.fileUtils.MegaMekFile;
 import megamek.common.verifier.TestEntity;
+import megamek.common.voting.Poll;
+import megamek.common.voting.VoteThreshold;
 import megamek.common.weapons.DamageType;
 import megamek.common.weapons.TeleMissile;
 import megamek.common.weapons.Weapon;
@@ -225,7 +226,8 @@ public class TWGameManager extends AbstractGameManager {
     /**
      * Special packet queue for client feedback requests.
      */
-    private final ConcurrentLinkedQueue<Server.ReceivedPacket> cfrPacketQueue = new ConcurrentLinkedQueue<>();
+    /** Package-private for test access; see TWGameManagerCFRPacketQueueTest. */
+    final ConcurrentLinkedQueue<Server.ReceivedPacket> cfrPacketQueue = new ConcurrentLinkedQueue<>();
 
     public TWGameManager() {
         EquipmentType.initializeTypes();
@@ -433,9 +435,9 @@ public class TWGameManager extends AbstractGameManager {
     }
 
     /**
-     * Opens a vote on granting the requester the gamemaster role, one request at a time. Every human player with a
-     * team may vote; the requester starts having voted yes, so a player alone in the game passes at once. There is
-     * no time limit: the vote stands until it is decided or the requester cancels it.
+     * Opens a vote on granting the requester the gamemaster role, one request at a time. Every human player with a team
+     * may vote; the requester starts having voted yes, so a player alone in the game passes at once. There is no time
+     * limit: the vote stands until it is decided or the requester cancels it.
      *
      * @param requester the player asking for the gamemaster role
      */
@@ -515,8 +517,8 @@ public class TWGameManager extends AbstractGameManager {
     }
 
     /**
-     * Brings the running vote's voters in line with who may vote now: players who joined since the vote was called
-     * are added with their ballot pending, and players who lost their eligibility are dropped from the tally.
+     * Brings the running vote's voters in line with who may vote now: players who joined since the vote was called are
+     * added with their ballot pending, and players who lost their eligibility are dropped from the tally.
      */
     private void syncGameMasterPollVoters() {
         if (gameMasterPoll == null) {
@@ -6441,6 +6443,46 @@ public class TWGameManager extends AbstractGameManager {
     }
 
     /**
+     * Waits on the CFR packet queue until a packet matching the given filter arrives and removes and returns it.
+     * Packets meant for other handlers are left in the queue untouched and in their original order. Only waits when no
+     * matching packet is present, so a leftover packet for another handler cannot cause a busy spin. Malformed packets
+     * (those without a recognizable CFR type) can never match any handler and are discarded with a warning.
+     *
+     * @param isExpectedResponse filters for the packet this handler is waiting for
+     *
+     * @return the first matching packet, or null if interrupted while waiting
+     */
+    @Nullable
+    Server.ReceivedPacket pollCFRPacket(Predicate<Server.ReceivedPacket> isExpectedResponse) {
+        synchronized (cfrPacketQueue) {
+            while (true) {
+                for (Iterator<Server.ReceivedPacket> iterator = cfrPacketQueue.iterator(); iterator.hasNext(); ) {
+                    Server.ReceivedPacket rp = iterator.next();
+                    if (rp.getPacket().getPacketCommand(0) == null) {
+                        // All CFR responses carry their CFR type as the first data element, so no handler can ever
+                        // consume this packet; keep the sender visible in the log rather than accumulating silently
+                        LOGGER.warn("Discarding CFR packet without a recognizable CFR type from connection {}",
+                              rp.getConnectionId());
+                        iterator.remove();
+                        continue;
+                    }
+                    if (isExpectedResponse.test(rp)) {
+                        iterator.remove();
+                        return rp;
+                    }
+                }
+                // No packet for this handler yet; wait for a new arrival rather than re-scanning the same packets
+                try {
+                    cfrPacketQueue.wait();
+                } catch (InterruptedException e) {
+                    Thread.currentThread().interrupt();
+                    return null;
+                }
+            }
+        }
+    }
+
+    /**
      * Handles a pointblank shot for hidden units, which must request feedback from the client of the player who owns
      * the hidden unit.
      *
@@ -6449,117 +6491,87 @@ public class TWGameManager extends AbstractGameManager {
     Vector<Report> processPointblankShotCFR(Entity hidden, Entity target) throws InvalidPacketDataException {
         Vector<Report> reports = new Vector<>();
         sendPointBlankShotCFR(hidden, target);
-        boolean firstPacket = true;
-        // Keep processing until we get a response
-        while (true) {
-            synchronized (cfrPacketQueue) {
-                try {
-                    while (cfrPacketQueue.isEmpty()) {
-                        cfrPacketQueue.wait();
-                    }
-                } catch (InterruptedException e) {
-                    return null;
-                }
-                // Get the packet, if there's something to get
-                Server.ReceivedPacket rp;
-                rp = cfrPacketQueue.poll();
-                final PacketCommand cfrType = rp.getPacket().getPacketCommand(0);
-                if (cfrType != null) {
-                    // Make sure we got the right type of response
-                    if (!cfrType.isCFRHiddenPBS()) {
-                        // Re-queue packet for other handlers - don't discard it
-                        cfrPacketQueue.add(rp);
-                        continue;
-                    }
-                }
-                // Check packet came from right ID
-                if (rp.getConnectionId() != hidden.getOwnerId()) {
-                    // Re-queue packet for other handlers - don't discard it
-                    cfrPacketQueue.add(rp);
-                    continue;
-                }
-                // First packet indicates whether the PBS is taken or declined
-                if (firstPacket) {
-                    // Check to see if the client declined the PBS
-                    if (rp.getPacket().getObject(1) == null) {
-                        return null;
-                    } else {
-                        firstPacket = false;
-                        // Notify other clients, so they can display a message
-                        for (Player p : game.getPlayersList()) {
-                            if (p.getId() == hidden.getOwnerId()) {
-                                continue;
-                            }
-                            send(p.getId(),
-                                  new Packet(PacketCommand.CLIENT_FEEDBACK_REQUEST,
-                                        PacketCommand.CFR_HIDDEN_PBS,
-                                        Entity.NONE,
-                                        Entity.NONE));
-                        }
-                        // Update all clients with the position of the PBS
-                        entityUpdate(target.getId());
-                        continue;
-                    }
-                }
+        Predicate<Server.ReceivedPacket> isExpectedResponse = rp -> {
+            final PacketCommand cfrType = rp.getPacket().getPacketCommand(0);
+            return (cfrType != null) && cfrType.isCFRHiddenPBS()
+                  && (rp.getConnectionId() == hidden.getOwnerId());
+        };
 
-                // The second packet contains the attacks to process _or_ signals not firing
-                if (rp.getPacket().getObject(1) == null) {
-                    return null;
-                } else {
-                    List<EntityAction> attacks = rp.getPacket().getEntityActionList(1);
-                    // Mark the hidden unit as having taken a PBS
-                    hidden.setMadePointblankShot(true);
-                    // Process the Actions
-                    for (EntityAction entityAction : attacks) {
-                        Entity entity = game.getEntity(entityAction.getEntityId());
-                        if (entity == null) {
-                            continue;
-                        }
+        // First packet indicates whether the PBS is taken or declined
+        Server.ReceivedPacket receivedPacket = pollCFRPacket(isExpectedResponse);
+        if ((receivedPacket == null) || (receivedPacket.getPacket().getObject(1) == null)) {
+            // Interrupted, or the client declined the PBS
+            return null;
+        }
+        // Notify other clients, so they can display a message
+        for (Player p : game.getPlayersList()) {
+            if (p.getId() == hidden.getOwnerId()) {
+                continue;
+            }
+            send(p.getId(),
+                  new Packet(PacketCommand.CLIENT_FEEDBACK_REQUEST,
+                        PacketCommand.CFR_HIDDEN_PBS,
+                        Entity.NONE,
+                        Entity.NONE));
+        }
+        // Update all clients with the position of the PBS
+        entityUpdate(target.getId());
 
-                        switch (entityAction) {
-                            case TorsoTwistAction tta -> {
-                                if (entity.canChangeSecondaryFacing()) {
-                                    entity.setSecondaryFacing(tta.getFacing());
-                                }
-                            }
-                            case DirectionalMountFacingAction mountFacingAction -> {
-                                if (entity instanceof Mek directionalMek) {
-                                    DirectionalTorsoMountRules.applyMountFacing(directionalMek,
-                                          mountFacingAction.getWeaponNumber(), mountFacingAction.getFacing());
-                                }
-                            }
-                            case FlipArmsAction faa -> entity.setArmsFlipped(faa.getIsFlipped());
-                            case SearchlightAttackAction saa -> {
-                                boolean hexesAdded = saa.setHexesIlluminated(game);
-                                // If we added new hexes, send them to all players.
-                                // These are spotlights at night, you know they're there.
-                                if (hexesAdded) {
-                                    send(createIlluminatedHexesPacket());
-                                }
-                                reports.addAll(saa.resolveAction(game));
-                            }
-                            case WeaponAttackAction waa -> {
-                                Entity ae = game.getEntity(waa.getEntityId());
-                                if (ae != null) {
-                                    Mounted<?> m = ae.getEquipment(waa.getWeaponId());
-                                    Weapon w = (Weapon) m.getType();
-                                    // Track attacks original target, for things like swarm LRMs
-                                    waa.setOriginalTargetId(waa.getTargetId());
-                                    waa.setOriginalTargetType(waa.getTargetType());
-                                    AttackHandler ah = w.fire(waa, game, this);
-                                    if (ah != null) {
-                                        ah.setStrafing(waa.isStrafing());
-                                        ah.setStrafingFirstShot(waa.isStrafingFirstShot());
-                                        game.addAttack(ah);
-                                    }
+        // The second packet contains the attacks to process _or_ signals not firing
+        receivedPacket = pollCFRPacket(isExpectedResponse);
+        if ((receivedPacket == null) || (receivedPacket.getPacket().getObject(1) == null)) {
+            return null;
+        }
+        List<EntityAction> attacks = receivedPacket.getPacket().getEntityActionList(1);
+        // Mark the hidden unit as having taken a PBS
+        hidden.setMadePointblankShot(true);
+        // Process the Actions
+        for (EntityAction entityAction : attacks) {
+            Entity entity = game.getEntity(entityAction.getEntityId());
+            if (entity == null) {
+                continue;
+            }
 
-                                }
-                            }
-                            default -> {
-                            }
-                        }
+            switch (entityAction) {
+                case TorsoTwistAction tta -> {
+                    if (entity.canChangeSecondaryFacing()) {
+                        entity.setSecondaryFacing(tta.getFacing());
                     }
-                    break;
+                }
+                case DirectionalMountFacingAction mountFacingAction -> {
+                    if (entity instanceof Mek directionalMek) {
+                        DirectionalTorsoMountRules.applyMountFacing(directionalMek,
+                              mountFacingAction.getWeaponNumber(), mountFacingAction.getFacing());
+                    }
+                }
+                case FlipArmsAction faa -> entity.setArmsFlipped(faa.getIsFlipped());
+                case SearchlightAttackAction saa -> {
+                    boolean hexesAdded = saa.setHexesIlluminated(game);
+                    // If we added new hexes, send them to all players.
+                    // These are spotlights at night, you know they're there.
+                    if (hexesAdded) {
+                        send(createIlluminatedHexesPacket());
+                    }
+                    reports.addAll(saa.resolveAction(game));
+                }
+                case WeaponAttackAction waa -> {
+                    Entity ae = game.getEntity(waa.getEntityId());
+                    if (ae != null) {
+                        Mounted<?> m = ae.getEquipment(waa.getWeaponId());
+                        Weapon w = (Weapon) m.getType();
+                        // Track attacks original target, for things like swarm LRMs
+                        waa.setOriginalTargetId(waa.getTargetId());
+                        waa.setOriginalTargetType(waa.getTargetType());
+                        AttackHandler ah = w.fire(waa, game, this);
+                        if (ah != null) {
+                            ah.setStrafing(waa.isStrafing());
+                            ah.setStrafingFirstShot(waa.isStrafingFirstShot());
+                            game.addAttack(ah);
+                        }
+
+                    }
+                }
+                default -> {
                 }
             }
         }
@@ -6579,78 +6591,34 @@ public class TWGameManager extends AbstractGameManager {
           throws InvalidPacketDataException {
         LOGGER.debug("processTeleguidedMissileCFR: playerId={}, targetCount={}", playerId, targetIds.size());
         sendTeleguidedMissileCFR(playerId, targetIds, toHitValues);
-        while (true) {
-            synchronized (cfrPacketQueue) {
-                try {
-                    while (cfrPacketQueue.isEmpty()) {
-                        cfrPacketQueue.wait();
-                    }
-                } catch (InterruptedException e) {
-                    LOGGER.debug("processTeleguidedMissileCFR: interrupted while waiting for response");
-                    return 0;
-                }
-
-                // Get the packet, if there's something to get
-                Server.ReceivedPacket rp = cfrPacketQueue.poll();
-                final PacketCommand cfrType = rp.getPacket().getPacketCommand(0);
-                // Make sure we got the right type of response
-                if (cfrType != null && !cfrType.isCFRTeleguidedTarget()) {
-                    // Re-queue packet for other handlers - don't discard it
-                    LOGGER.trace("processTeleguidedMissileCFR: re-queuing mismatched packet type {}", cfrType);
-                    cfrPacketQueue.add(rp);
-                    continue;
-                }
-                // Check packet came from right ID
-                if (rp.getConnectionId() != playerId) {
-                    // Re-queue packet for other handlers - don't discard it
-                    LOGGER.trace("processTeleguidedMissileCFR: re-queuing packet from wrong player {}",
-                          rp.getConnectionId());
-                    cfrPacketQueue.add(rp);
-                    continue;
-                }
-                int result = (int) rp.getPacket().data()[1];
-                LOGGER.debug("processTeleguidedMissileCFR: received response, selected target index {}", result);
-                return result;
-            }
+        Server.ReceivedPacket rp = pollCFRPacket(p -> {
+            final PacketCommand cfrType = p.getPacket().getPacketCommand(0);
+            return (cfrType != null) && cfrType.isCFRTeleguidedTarget() && (p.getConnectionId() == playerId);
+        });
+        if (rp == null) {
+            LOGGER.debug("processTeleguidedMissileCFR: interrupted while waiting for response");
+            return 0;
         }
+        int result = (int) rp.getPacket().data()[1];
+        LOGGER.debug("processTeleguidedMissileCFR: received response, selected target index {}", result);
+        return result;
     }
 
     public int processTAGTargetCFR(int playerId, List<Integer> targetIds, List<Integer> targetTypes)
           throws InvalidPacketDataException {
         LOGGER.debug("processTAGTargetCFR: playerId={}, targetCount={}", playerId, targetIds.size());
         sendTAGTargetCFR(playerId, targetIds, targetTypes);
-        while (true) {
-            synchronized (cfrPacketQueue) {
-                try {
-                    while (cfrPacketQueue.isEmpty()) {
-                        cfrPacketQueue.wait();
-                    }
-                } catch (InterruptedException e) {
-                    LOGGER.debug("processTAGTargetCFR: interrupted while waiting for response");
-                    return 0;
-                }
-                // Get the packet, if there's something to get
-                Server.ReceivedPacket rp = cfrPacketQueue.poll();
-                final PacketCommand cfrType = rp.getPacket().getPacketCommand(0);
-                // Make sure we got the right type of response
-                if (cfrType != null && !cfrType.isCFRTagTarget()) {
-                    // Re-queue packet for other handlers - don't discard it
-                    LOGGER.trace("processTAGTargetCFR: re-queuing mismatched packet type {}", cfrType);
-                    cfrPacketQueue.add(rp);
-                    continue;
-                }
-                // Check packet came from right ID
-                if (rp.getConnectionId() != playerId) {
-                    // Re-queue packet for other handlers - don't discard it
-                    LOGGER.trace("processTAGTargetCFR: re-queuing packet from wrong player {}", rp.getConnectionId());
-                    cfrPacketQueue.add(rp);
-                    continue;
-                }
-                int result = (int) rp.getPacket().data()[1];
-                LOGGER.debug("processTAGTargetCFR: received response, selected target index {}", result);
-                return result;
-            }
+        Server.ReceivedPacket rp = pollCFRPacket(p -> {
+            final PacketCommand cfrType = p.getPacket().getPacketCommand(0);
+            return (cfrType != null) && cfrType.isCFRTagTarget() && (p.getConnectionId() == playerId);
+        });
+        if (rp == null) {
+            LOGGER.debug("processTAGTargetCFR: interrupted while waiting for response");
+            return 0;
         }
+        int result = (int) rp.getPacket().data()[1];
+        LOGGER.debug("processTAGTargetCFR: received response, selected target index {}", result);
+        return result;
     }
 
     /**
@@ -26927,7 +26895,7 @@ public class TWGameManager extends AbstractGameManager {
             // does, and wins here) must not erase the pending one while it waits for the END phase.
             if ((entity.getTraitorId() == -1) && (oldEntity.getTraitorId() != -1)) {
                 LOGGER.info("[Traitor] Update for {} (unit id {}) from {} would have erased pending traitorId {}; "
-                      + "keeping it", entity.getDisplayName(), entity.getId(), sender.getName(),
+                            + "keeping it", entity.getDisplayName(), entity.getId(), sender.getName(),
                       oldEntity.getTraitorId());
                 entity.setTraitorId(oldEntity.getTraitorId());
             }
@@ -26961,9 +26929,9 @@ public class TWGameManager extends AbstractGameManager {
 
     /**
      * Applies a gamemaster's damage editor edits to the server's own copy of the unit. The edits arrive as a
-     * {@link DamageEditSpec} of plain values rather than an edited unit, so everything the editor did not touch -
-     * turn state, a pending traitor switch, anything that changed since the editor opened - keeps the server's
-     * authoritative value without having to be preserved field by field.
+     * {@link DamageEditSpec} of plain values rather than an edited unit, so everything the editor did not touch - turn
+     * state, a pending traitor switch, anything that changed since the editor opened - keeps the server's authoritative
+     * value without having to be preserved field by field.
      */
     private void receiveDamageEdit(Packet packet, int connIndex) {
         if (!(packet.getObject(0) instanceof DamageEditSpec spec)) {
@@ -27812,9 +27780,9 @@ public class TWGameManager extends AbstractGameManager {
     }
 
     /**
-     * Revokes the Game Master role when the game no longer allows one, so that turning off Allow Game Master takes
-     * the role and its tools away from whoever holds it. The player update is sent to every client, so their view of
-     * who is Game Master stays in step with the server.
+     * Revokes the Game Master role when the game no longer allows one, so that turning off Allow Game Master takes the
+     * role and its tools away from whoever holds it. The player update is sent to every client, so their view of who is
+     * Game Master stays in step with the server.
      */
     private void revokeGameMasterIfDisallowed() {
         if (game.getOptions().booleanOption(OptionsConstants.GAME_MASTER_ALLOW)) {

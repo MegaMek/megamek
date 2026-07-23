@@ -81,6 +81,8 @@ import megamek.common.weapons.ppc.innerSphere.ISPPC;
 import megamek.common.weapons.ppc.innerSphere.ISSnubNosePPC;
 import megamek.logging.MMLogger;
 
+import static megamek.common.equipment.WeaponType.F_PPC_CAPACITOR_COMPATIBLE;
+
 /**
  * Switches between the various type-specific parsers depending on suffix
  */

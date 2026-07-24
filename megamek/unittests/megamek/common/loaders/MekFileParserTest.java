@@ -42,6 +42,10 @@ import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
+import megamek.common.weapons.ppc.clan.CLERPPC;
+import megamek.common.weapons.ppc.innerSphere.ISERPPC;
+import megamek.common.weapons.ppc.innerSphere.ISPPC;
+
 class MekFileParserTest {
 
     @BeforeEach
@@ -82,5 +86,21 @@ class MekFileParserTest {
     void unknownNameIsNotCanon() {
         assertFalse(MekFileParser.isCanonUnitName(""));
         assertFalse(MekFileParser.isCanonUnitName("Zzzz ZZZ-1"));
+    }
+
+    @Test
+    void clanErPpcCannotUseACapacitorBefore3101() {
+        assertFalse(MekFileParser.canLinkPpcCapacitor(new CLERPPC(), 3100));
+    }
+
+    @Test
+    void clanErPpcCanUseACapacitorFrom3101() {
+        assertTrue(MekFileParser.canLinkPpcCapacitor(new CLERPPC(), 3101));
+    }
+
+    @Test
+    void compatibleInnerSpherePpcsCanUseACapacitorRegardlessOfYear() {
+        assertTrue(MekFileParser.canLinkPpcCapacitor(new ISPPC(), 3100));
+        assertTrue(MekFileParser.canLinkPpcCapacitor(new ISERPPC(), 3101));
     }
 }

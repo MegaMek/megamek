@@ -93,6 +93,11 @@ public class MekFileParser {
     private static Vector<String> canonUnitNames = null;
     public static final String FILENAME_OFFICIAL_UNITS = "OfficialUnitList.txt"; // TODO : Remove inline filename
 
+    static boolean canLinkPpcCapacitor(WeaponType weaponType, int year) {
+        return weaponType.hasFlag(F_PPC_CAPACITOR_COMPATIBLE)
+              && (!(weaponType instanceof CLERPPC) || year >= 3101);
+    }
+
     public MekFileParser(File f) throws EntityLoadingException {
         this(f, null);
     }
@@ -480,9 +485,7 @@ public class MekFileParser {
                     // check location
                     if (mWeapon.getLocation() == m.getLocation()) {
 
-                        // Only Legal IS PPC's are allowed.
-                        if ((mWeapon.getType().hasFlag(F_PPC_CAPACITOR_COMPATIBLE) &&
-                            (!(mWeapon.getType() instanceof CLERPPC) && ent.getYear() < 3101))) {
+                        if (canLinkPpcCapacitor(weaponType, ent.getYear())) {
                             m.setLinked(mWeapon);
                             break;
                         }
@@ -627,9 +630,7 @@ public class MekFileParser {
 
                             // check location
                             if (bayMountedWeapon.getLocation() == m.getLocation()) {
-                                // Only Legal IS PPC's are allowed.
-                            if ((mWeapon.getType().hasFlag(F_PPC_CAPACITOR_COMPATIBLE) &&
-                                (!(mWeapon.getType() instanceof CLERPPC) && ent.getYear() < 3101))) {
+                                if (canLinkPpcCapacitor(bayWeaponType, ent.getYear())) {
 
                                     m.setCrossLinked(bayMountedWeapon);
                                     break;
@@ -646,9 +647,7 @@ public class MekFileParser {
                     // check location
                     if (mWeapon.getLocation() == m.getLocation()) {
 
-                        // Only Legal IS PPC's are allowed.
-                        if ((mWeapon.getType().hasFlag(F_PPC_CAPACITOR_COMPATIBLE) &&
-                            (!(mWeapon.getType() instanceof CLERPPC) && ent.getYear() < 3101))) {
+                        if (canLinkPpcCapacitor(weaponType, ent.getYear())) {
 
                             m.setCrossLinked(mWeapon);
                             break;

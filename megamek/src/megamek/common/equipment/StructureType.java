@@ -34,6 +34,7 @@
 package megamek.common.equipment;
 
 import java.util.LinkedHashMap;
+import java.util.Locale;
 import java.util.Map;
 
 /**
@@ -45,6 +46,10 @@ public class StructureType extends MiscType {
 
     public StructureType(int structureTypeId) {
         this.structureTypeId = structureTypeId;
+    }
+
+    public int getStructureTypeId() {
+        return structureTypeId;
     }
 
     @Override
@@ -59,5 +64,13 @@ public class StructureType extends MiscType {
         structureDetails.put("typeId", structureTypeId);
         data.put("structure", structureDetails);
         return data;
+    }
+
+    @Override
+    public void addLookupName(String s, boolean includeInNames) {
+        super.addLookupName(s, includeInNames);
+        if (!s.toLowerCase(Locale.ROOT).endsWith(" structure")) {
+            super.addLookupName(s + " structure", includeInNames);
+        }
     }
 }

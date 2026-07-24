@@ -145,5 +145,15 @@ public enum WeaponTypeFlag implements EquipmentFlag {
     /**
      * Denotes Clan Heavy Lasers (S, M, L)
      */
-    HEAVY_LASER
+    HEAVY_LASER,
+
+    // families
+    F_AC,
+    F_LRM,
+    F_SRM,
+    F_HAG,
+    F_MML,
+    F_MRM,
+    F_ATM,
+    F_NARC
 }

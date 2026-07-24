@@ -126,11 +126,22 @@ public class CapitalFighterMapSet implements DisplayMapSet {
     public void setEntity(Entity e) {
         Aero t = (Aero) e;
 
+        boolean aeroSanity = (t.getGame() != null)
+              && t.getGame().getOptions().booleanOption(OptionsConstants.ADVANCED_AERO_RULES_AERO_SANITY);
+
         int armor = t.getCapArmor();
         int armorO = t.getCap0Armor();
+        // A fighter shown as a capital fighter may not have gone through the capital-scale setup that fills in its
+        // capital armor, which would leave the grid blank. Derive it from the unit's own armor when it is missing,
+        // the same way the game does, so it matches a fighter that was set up as capital.
+        if (armorO <= 0) {
+            double divisor = aeroSanity ? 1.0 : 10.0;
+            armor = (int) Math.round(t.getTotalArmor() / divisor);
+            armorO = (int) Math.round(t.getTotalOArmor() / divisor);
+        }
         armorVLabel.setValue(Integer.toString(armor));
 
-        if (t.getGame().getOptions().booleanOption(OptionsConstants.ADVANCED_AERO_RULES_AERO_SANITY)) {
+        if (aeroSanity) {
             armor = (int) Math.ceil(armor / 10.0);
             armorO = (int) Math.ceil(armorO / 10.0);
         }
@@ -140,7 +151,7 @@ public class CapitalFighterMapSet implements DisplayMapSet {
         drawCrits(engineCritImage, t.getEngineHits());
         drawCrits(fcsCritImage, t.getFCSHits());
         drawCrits(sensorCritImage, t.getSensorHits());
-        drawCrits(pilotCritImage, t.getCrew().getHits());
+        drawCrits(pilotCritImage, (t.getCrew() != null) ? t.getCrew().getHits() : 0);
     }
 
     private void setContent() {

@@ -1,6 +1,6 @@
 /*
  * Copyright (c) 2004 - Ben Mazur (bmazur@sev.org).
- * Copyright (C) 2007-2025 The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2007-2026 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -164,23 +164,28 @@ public class UltraWeaponHandler extends AmmoWeaponHandler {
 
         if (!game.getOptions().booleanOption(OptionsConstants.PLAYTEST_3)) {
             if ((roll.getIntValue() == 2) && (howManyShots == 2) && !weaponEntity.isConventionalInfantry()) {
-                Report r = new Report();
-                r.subject = subjectId;
-                weapon.setJammed(true);
-                isJammed = true;
-                if ((weaponType.getAmmoType() == AmmoType.AmmoTypeEnum.AC_ULTRA)
-                      || (weaponType.getAmmoType() == AmmoType.AmmoTypeEnum.AC_ULTRA_THB)) {
-                    r.messageId = 3160;
-                } else {
-                    r.messageId = 3170;
+                // Ultra ACs jam on a 2. Edge may reroll the jam check; if Edge wasn't used the jam stands, otherwise
+                // the reroll decides (an Ultra AC still jams only on another 2).
+                int edgeReroll = rerollJamCheckWithEdge(attackingEntity, subjectId, vPhaseReport);
+                if (acStillJams(edgeReroll, 2)) {
+                    Report r = new Report();
+                    r.subject = subjectId;
+                    weapon.setJammed(true);
+                    isJammed = true;
+                    if ((weaponType.getAmmoType() == AmmoType.AmmoTypeEnum.AC_ULTRA)
+                          || (weaponType.getAmmoType() == AmmoType.AmmoTypeEnum.AC_ULTRA_THB)) {
+                        r.messageId = 3160;
+                    } else {
+                        r.messageId = 3170;
+                    }
+                    vPhaseReport.addElement(r);
                 }
-                vPhaseReport.addElement(r);
             }
         } else {
             // PLAYTEST3 Caseless ammo support for RAC
             // Will potentially explode when rolling a 2. Can still jam if not blowing up.
             // The check above will only get to this if playtest3 is enabled
-            if ((roll.getIntValue() <= 2) && !attackingEntity.isConventionalInfantry() 
+            if ((roll.getIntValue() <= 2) && !attackingEntity.isConventionalInfantry()
                   && ammoType.getMunitionType().contains(AmmoType.Munitions.M_CASELESS)) {
                 Roll diceRoll = Compute.rollD6(2);
 
@@ -201,6 +206,51 @@ public class UltraWeaponHandler extends AmmoWeaponHandler {
             }
         }
         return false;
+    }
+
+    /**
+     * Applies Edge to an autocannon jam check (Ultra, Rotary, or rapid-fire modes): if the attacker has the UAC-jam
+     * Edge trigger enabled with Edge remaining, spends one Edge point and rerolls the jam check once. The caller
+     * re-evaluates its own jam threshold against the returned value.
+     *
+     * @param attacker     the firing unit
+     * @param subjectId    the report subject id
+     * @param reportVector the report vector to append the Edge reports to
+     *
+     * @return the rerolled 2d6 value if Edge was spent, or -1 if Edge was not used
+     */
+    // package-private static for testing
+    static int rerollJamCheckWithEdge(Entity attacker, int subjectId, Vector<Report> reportVector) {
+        if (!attacker.shouldUseEdge(OptionsConstants.EDGE_WHEN_AC_JAMS_OR_MALFUNCTIONS)) {
+            return -1;
+        }
+        attacker.getCrew().decreaseEdge();
+        Report report = new Report(3166);
+        report.subject = subjectId;
+        report.add(attacker.getCrew().getOptions().intOption(OptionsConstants.EDGE));
+        reportVector.addElement(report);
+
+        Roll jamReroll = Compute.rollD6(2);
+        report = new Report(3167);
+        report.subject = subjectId;
+        report.add(jamReroll);
+        reportVector.addElement(report);
+        return jamReroll.getIntValue();
+    }
+
+    /**
+     * Decides whether an autocannon still jams after an Edge reroll. The weapon jams unless Edge was used
+     * ({@code edgeReroll >= 0}) and the rerolled value is above the jam threshold for the current fire mode.
+     *
+     * @param edgeReroll   the rerolled value from {@link #rerollJamCheckWithEdge}, or -1 if Edge was not used
+     * @param jamThreshold the value at or below which the weapon jams
+     *
+     * @return true if the weapon jams
+     */
+    // package-private static for testing
+    static boolean acStillJams(int edgeReroll, int jamThreshold) {
+        // A negative reroll means Edge was not used, so the original jam stands.
+        return (edgeReroll < 0) || (edgeReroll <= jamThreshold);
     }
 
     @Override

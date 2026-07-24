@@ -100,6 +100,8 @@ import megamek.client.ui.dialogs.ChoiceDialog;
 import megamek.client.ui.dialogs.ConfirmDialog;
 import megamek.client.ui.dialogs.InformDialog;
 import megamek.client.ui.dialogs.MMAboutDialog;
+import megamek.client.ui.dialogs.GameMasterAppointedDialog;
+import megamek.client.ui.dialogs.GameMasterVoteDialog;
 import megamek.client.ui.dialogs.PlayerListDialog;
 import megamek.client.ui.dialogs.RandomNameDialog;
 import megamek.client.ui.dialogs.RoundsInAirDialog;
@@ -181,6 +183,8 @@ import megamek.common.units.Targetable;
 import megamek.common.util.AddBotUtil;
 import megamek.common.util.Distractable;
 import megamek.common.util.StringUtil;
+import megamek.common.voting.Poll;
+import megamek.common.voting.PollStatus;
 import megamek.common.weapons.handlers.WeaponOrderHandler;
 import megamek.logging.MMLogger;
 
@@ -276,6 +280,12 @@ public class ClientGUI extends AbstractClientGUI
     public static final String VIEW_CHANGE_THEME = "viewChangeTheme";
     public static final String VIEW_ROUND_REPORT = "viewRoundReport";
     public static final String VIEW_GAME_OPTIONS = "viewGameOptions";
+    public static final String GAME_GIVE_UP_GAME_MASTER = "gameGiveUpGameMaster";
+    public static final String GAME_REQUEST_GAME_MASTER = "gameRequestGameMaster";
+    public static final String GAME_ALL_MG_BURST_ON = "gameAllMgBurstOn";
+    public static final String GAME_ALL_MG_BURST_OFF = "gameAllMgBurstOff";
+    public static final String GAME_ALL_HOT_LOAD_ON = "gameAllHotLoadOn";
+    public static final String GAME_ALL_HOT_LOAD_OFF = "gameAllHotLoadOff";
     public static final String VIEW_NETWORK_INFORMATION = "viewNetworkInformation";
     public static final String VIEW_CLIENT_SETTINGS = "viewClientSettings";
     public static final String VIEW_LOS_SETTING = "viewLOSSetting";
@@ -385,6 +395,8 @@ public class ClientGUI extends AbstractClientGUI
 
     private final ConcurrentLinkedQueue<Runnable> toastDripQueue = new ConcurrentLinkedQueue<>();
     private javax.swing.Timer toastDripTimer;
+    /** Normalized report entries already shown as toasts this phase; see {@link ReportToastFormatter#formatReport}. */
+    private final Set<String> toastedReportEntries = new HashSet<>();
 
 
     // some dialogs...
@@ -394,6 +406,8 @@ public class ClientGUI extends AbstractClientGUI
     private PlayerListDialog playerListDialog;
     private RoundsInAirDialog roundsInAirDialog;
     private RandomArmyDialog randomArmyDialog;
+    /** The poll a running Game Master vote is taken in; open only while a vote runs. */
+    private GameMasterVoteDialog gameMasterVoteDialog;
     /**
      * Save and Open dialogs for MegaMek Unit List (mul) files.
      */
@@ -563,29 +577,39 @@ public class ClientGUI extends AbstractClientGUI
      * @param text  the message text to display
      */
     public void addToast(ToastLevel level, String text) {
-        if (toastOverlay != null) {
-            String normalized = ReportToastFormatter.normalizeToastText(text);
-            logger.debug("Toast [{}] (no entity): {}", level, normalized);
-            toastOverlay.show(level, normalized);
-        }
+        addToast(level, text, null);
     }
 
     /**
      * Shows a toast notification with the given entity's sprite icon on the board view.
      *
+     * <p>This is the single entry point for every toast in the client, server-raised ones included, so the player's
+     * {@link GUIPreferences#TOAST_ENABLED} setting is enforced here and nowhere else.</p>
+     *
      * @param level  the severity level determining color and default duration
      * @param text   the message text to display
-     * @param entity the entity whose icon to show, or null for text-only
+     * @param entity the entity whose icon to show, or {@code null} for text-only
      */
     public void addToast(ToastLevel level, String text, @Nullable Entity entity) {
-        if (toastOverlay != null) {
-            String normalized = ReportToastFormatter.normalizeToastText(text);
-            String entityLabel = (entity != null) ?
-                  entity.getShortName() + " [" + entity.getId() + "]" :
-                  "no entity";
-            logger.debug("Toast [{}] ({}): {}", level, entityLabel, normalized);
-            toastOverlay.show(level, normalized, entity);
+        String entityLabel = (entity != null) ?
+              entity.getShortName() + " [" + entity.getId() + "]" :
+              "no entity";
+        // Gate before normalizing: normalizeToastText is regex-heavy and only the shown path needs the
+        // cleaned text. On the suppressed paths log the raw text so switching toasts off does not pay the
+        // normalization cost for every would-be toast.
+        if (toastOverlay == null) {
+            logger.debug("[Toast] suppressed [{}] ({}) - overlay not initialized yet: {}",
+                  level, entityLabel, text);
+            return;
         }
+        if (!GUIP.getToastEnabled()) {
+            logger.debug("[Toast] suppressed [{}] ({}) - toasts switched off in client settings: {}",
+                  level, entityLabel, text);
+            return;
+        }
+        String normalizedText = ReportToastFormatter.normalizeToastText(text);
+        logger.debug("[Toast] shown [{}] ({}): {}", level, entityLabel, normalizedText);
+        toastOverlay.show(level, normalizedText, entity);
     }
 
     /**
@@ -601,6 +625,7 @@ public class ClientGUI extends AbstractClientGUI
             case WARNING -> ToastLevel.WARNING;
             case ERROR -> ToastLevel.ERROR;
             case INFO -> ToastLevel.INFO;
+            case GAMEMASTER -> ToastLevel.GAMEMASTER;
         };
     }
 
@@ -639,9 +664,33 @@ public class ClientGUI extends AbstractClientGUI
      * Splits a server-side report HTML stream into per-event toasts via {@link ReportToastFormatter} and drip-feeds
      * them to the overlay on the {@link GUIPreferences#TOAST_DRIP_SECONDS} cadence so each one has time to scroll past
      * before the next appears.
+     *
+     * <p>Entries already toasted earlier in the same phase are skipped, because a mid-phase report packet can carry
+     * events that an earlier packet already delivered. Does nothing at all when the player has switched
+     * {@link GUIPreferences#TOAST_REPORT_EVENTS} off; toasts that carry information the report log does not hold are
+     * unaffected by that setting.</p>
+     *
+     * <p>Every reason to skip is checked before the report is formatted, because formatting is what records entries
+     * as already toasted. Recording an entry that was never shown would suppress it later, when the player turns
+     * toasts back on part way through the same phase.</p>
      */
     private void showReportAsToasts(String defaultPrefix, String report) {
-        for (String body : ReportToastFormatter.formatReport(defaultPrefix, report)) {
+        if (toastOverlay == null) {
+            logger.debug("[Toast] report burst suppressed - overlay not initialized yet");
+            return;
+        }
+        if (!GUIP.getToastEnabled()) {
+            logger.debug("[Toast] report burst suppressed - toasts are switched off in client settings");
+            return;
+        }
+        if (!GUIP.getToastReportEvents()) {
+            logger.debug("[Toast] report burst suppressed - round report events are switched off in client settings");
+            return;
+        }
+        List<String> bodies = ReportToastFormatter.formatReport(defaultPrefix, report, toastedReportEntries);
+        logger.debug("[Toast] report burst queued {} new event(s); {} entries seen this phase",
+              bodies.size(), toastedReportEntries.size());
+        for (String body : bodies) {
             toastDripQueue.offer(() -> addToast(ToastLevel.INFO, body));
         }
         startToastDripIfIdle();
@@ -801,8 +850,97 @@ public class ClientGUI extends AbstractClientGUI
      * X - Phase phase - MegaMek" For phases before the game starts (lobby, selection, etc.), only shows: "PlayerName -
      * MegaMek"
      */
+    /**
+     * Opens, follows and closes the Game Master vote dialog as the server shares the vote's state: the dialog opens
+     * when a vote is called, follows the ballots as they come in, and closes when the vote resolves. The outcome
+     * itself is announced in the chat.
+     */
+    private void updateGameMasterVoteDialog(Poll poll) {
+        if (poll.getStatus().isResolved()) {
+            if (gameMasterVoteDialog != null) {
+                gameMasterVoteDialog.dispose();
+                gameMasterVoteDialog = null;
+            }
+            if (poll.getStatus() == PollStatus.PASSED) {
+                announceNewGameMaster(poll.getRequesterId());
+            }
+            return;
+        }
+        if (gameMasterVoteDialog == null) {
+            gameMasterVoteDialog = new GameMasterVoteDialog(frame, client);
+        }
+        gameMasterVoteDialog.update(poll);
+        gameMasterVoteDialog.setVisible(true);
+    }
+
+    /**
+     * Keeps the Game menu's Game Master entries in step with who holds the role and whether the game allows one:
+     * Give Up while the local player holds it, Become while the role is free, neither while another player has it.
+     */
+    private void updateGameMasterMenuItems() {
+        Player localPlayer = client.getLocalPlayer();
+        if (localPlayer == null) {
+            return;
+        }
+        boolean gameAllowsGameMaster = client.getGame().getOptions()
+              .booleanOption(OptionsConstants.GAME_MASTER_ALLOW);
+        boolean anyoneHoldsRole = false;
+        for (Player player : client.getGame().getPlayersList()) {
+            if (player.isGameMaster()) {
+                anyoneHoldsRole = true;
+                break;
+            }
+        }
+        menuBar.setGameMasterState(localPlayer.isGameMaster(), gameAllowsGameMaster && !anyoneHoldsRole);
+    }
+
+    /** Keeps the lobby's all-units equipment shortcuts in step with the game options that allow them. */
+    private void updateLobbyEquipmentMenuItems() {
+        menuBar.setLobbyEquipmentOptions(
+              client.getGame().getOptions().booleanOption(OptionsConstants.ADVANCED_COMBAT_TAC_OPS_BURST),
+              client.getGame().getOptions().booleanOption(OptionsConstants.ADVANCED_COMBAT_TAC_OPS_HOT_LOAD));
+    }
+
+    /**
+     * Asks first, then gives up the Game Master role through the same /gm command that takes it, so the rules stay
+     * with the server. The menu entry that leads here is only shown while the local player holds the role.
+     */
+    private void giveUpGameMaster() {
+        int choice = JOptionPane.showConfirmDialog(frame,
+              Messages.getString("ClientGUI.giveUpGameMaster.message"),
+              Messages.getString("ClientGUI.giveUpGameMaster.title"),
+              JOptionPane.YES_NO_OPTION,
+              JOptionPane.QUESTION_MESSAGE);
+        if (choice == JOptionPane.YES_OPTION) {
+            client.sendChat("/gm");
+        }
+    }
+
+    /**
+     * Tells every player who won a passed Game Master vote and how the role is taken away again: the Game Master
+     * gives it up (the lobby's GM Mode button or the Game menu's Give Up Game Master entry), or the host turns off
+     * Allow Game Master in the game options. Shown after the vote dialog closes, so the outcome is not just a line
+     * of chat that scrolls away. Queued on the event thread so it does not block the game event that brought the
+     * result.
+     *
+     * @param gameMasterId the id of the player the vote made Game Master
+     */
+    private void announceNewGameMaster(int gameMasterId) {
+        Player gameMaster = client.getGame().getPlayer(gameMasterId);
+        String gameMasterName = (gameMaster != null)
+              ? gameMaster.getName()
+              : Messages.getString("GameMasterVoteDialog.unknownPlayer");
+        SwingUtilities.invokeLater(() -> new GameMasterAppointedDialog(frame,
+              Messages.getString("GameMasterVoteDialog.passed.message", gameMasterName)).setVisible(true));
+    }
+
     private void updateFrameTitle() {
         StringBuilder title = new StringBuilder(client.getName());
+
+        // mark the local player as the Game Master right after their name, so it is clear who holds the role
+        if ((client.getLocalPlayer() != null) && client.getLocalPlayer().isGameMaster()) {
+            title.append(Messages.getString("ClientGUI.titleGameMaster"));
+        }
 
         GamePhase phase = client.getGame().getPhase();
         int round = client.getGame().getCurrentRound();
@@ -892,6 +1030,10 @@ public class ClientGUI extends AbstractClientGUI
 
         layoutFrame();
         menuBar.addActionListener(this);
+        // the Game Master role may already be settled, taken in the lobby before this window opened, and the
+        // options behind the lobby's all-units equipment shortcuts are set before it opens too
+        updateGameMasterMenuItems();
+        updateLobbyEquipmentMenuItems();
 
         aw = new AccessibilityDialog(this);
         aw.setLocation(0, 0);
@@ -1286,6 +1428,26 @@ public class ClientGUI extends AbstractClientGUI
                 break;
             case VIEW_GAME_OPTIONS:
                 showOptions();
+                break;
+            case GAME_GIVE_UP_GAME_MASTER:
+                giveUpGameMaster();
+                break;
+            case GAME_REQUEST_GAME_MASTER:
+                // the same /gm command the lobby button uses: it puts the role to a vote, and the vote dialog is
+                // where the request is followed and can be withdrawn, so there is nothing to confirm here first
+                client.sendChat("/gm");
+                break;
+            case GAME_ALL_MG_BURST_ON:
+            case GAME_ALL_MG_BURST_OFF:
+                if (curPanel instanceof ChatLounge lounge) {
+                    lounge.setAllBurstMg(event.getActionCommand().equals(GAME_ALL_MG_BURST_ON));
+                }
+                break;
+            case GAME_ALL_HOT_LOAD_ON:
+            case GAME_ALL_HOT_LOAD_OFF:
+                if (curPanel instanceof ChatLounge lounge) {
+                    lounge.setAllHotLoad(event.getActionCommand().equals(GAME_ALL_HOT_LOAD_ON));
+                }
                 break;
             case VIEW_NETWORK_INFORMATION:
                 showNetworkInformation();
@@ -2921,6 +3083,11 @@ public class ClientGUI extends AbstractClientGUI
     private final GameListener gameListener = new GameListenerAdapter() {
 
         @Override
+        public void gamePollChange(GamePollEvent evt) {
+            updateGameMasterVoteDialog(evt.getPoll());
+        }
+
+        @Override
         public void gameBoardChanged(GameBoardChangeEvent e) {
             // Keep the Rounds in the Air window current the moment in-flight artillery changes. The artillery packet
             // arrives after the phase-change event, so a phase-change-only refresh would lag a phase (and miss
@@ -2989,6 +3156,10 @@ public class ClientGUI extends AbstractClientGUI
                     currPhaseDisplay.setStatusBarWithNotDonePlayers();
                 }
             }
+            // the Game Master role may have changed hands, so keep the title's marker and the Game menu's
+            // Game Master entries in step
+            updateFrameTitle();
+            updateGameMasterMenuItems();
         }
 
         @Override
@@ -3033,6 +3204,11 @@ public class ClientGUI extends AbstractClientGUI
             if (roundsInAirDialog != null) {
                 roundsInAirDialog.refresh();
             }
+
+            // Special-report packets replay the whole phase report each time they are sent, so the "already toasted"
+            // history only has to span a single phase. Clearing it here also lets a line that genuinely recurs in a
+            // later phase toast again.
+            toastedReportEntries.clear();
 
             // Once per round, remind the player of own platoons busy raising bridges (TO:AUE); building
             // platoons are ineligible for all phases, so no phase display ever selects them
@@ -3178,6 +3354,11 @@ public class ClientGUI extends AbstractClientGUI
             if (curPanel instanceof ChatLounge cl) {
                 cl.updateMapSettings(getClient().getMapSettings());
             }
+
+            // the host may have turned Allow Game Master on or off, which offers or takes away the Become entry,
+            // or the burst fire and hot-loading options behind the lobby's all-units equipment shortcuts
+            updateGameMasterMenuItems();
+            updateLobbyEquipmentMenuItems();
         }
 
         @Override

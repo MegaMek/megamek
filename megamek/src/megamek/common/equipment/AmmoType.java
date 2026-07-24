@@ -3053,31 +3053,45 @@ public class AmmoType extends EquipmentType {
         EquipmentType.addType(AmmoType.createCLStreakLRM19Ammo());
         EquipmentType.addType(AmmoType.createCLStreakLRM20Ammo());
         EquipmentType.addType(AmmoType.createCLSRT1Ammo());
-        EquipmentType.addType(AmmoType.createCLSRT2Ammo());
+        base = AmmoType.createCLSRT2Ammo();
+        clanSrtAmmos.add(base);
+        EquipmentType.addType(base);
         EquipmentType.addType(AmmoType.createCLSRT3Ammo());
-        EquipmentType.addType(AmmoType.createCLSRT4Ammo());
+        base = AmmoType.createCLSRT4Ammo();
+        clanSrtAmmos.add(base);
+        EquipmentType.addType(base);
         EquipmentType.addType(AmmoType.createCLSRT5Ammo());
-        EquipmentType.addType(AmmoType.createCLSRT6Ammo());
+        base = AmmoType.createCLSRT6Ammo();
+        clanSrtAmmos.add(base);
+        EquipmentType.addType(base);
         EquipmentType.addType(AmmoType.createCLLRT1Ammo());
         EquipmentType.addType(AmmoType.createCLLRT2Ammo());
         EquipmentType.addType(AmmoType.createCLLRT3Ammo());
         EquipmentType.addType(AmmoType.createCLLRT4Ammo());
-        EquipmentType.addType(AmmoType.createCLLRT5Ammo());
+        base = AmmoType.createCLLRT5Ammo();
+        clanLrtAmmos.add(base);
+        EquipmentType.addType(base);
         EquipmentType.addType(AmmoType.createCLLRT6Ammo());
         EquipmentType.addType(AmmoType.createCLLRT7Ammo());
         EquipmentType.addType(AmmoType.createCLLRT8Ammo());
         EquipmentType.addType(AmmoType.createCLLRT9Ammo());
-        EquipmentType.addType(AmmoType.createCLLRT10Ammo());
+        base = AmmoType.createCLLRT10Ammo();
+        clanLrtAmmos.add(base);
+        EquipmentType.addType(base);
         EquipmentType.addType(AmmoType.createCLLRT11Ammo());
         EquipmentType.addType(AmmoType.createCLLRT12Ammo());
         EquipmentType.addType(AmmoType.createCLLRT13Ammo());
         EquipmentType.addType(AmmoType.createCLLRT14Ammo());
-        EquipmentType.addType(AmmoType.createCLLRT15Ammo());
+        base = AmmoType.createCLLRT15Ammo();
+        clanLrtAmmos.add(base);
+        EquipmentType.addType(base);
         EquipmentType.addType(AmmoType.createCLLRT16Ammo());
         EquipmentType.addType(AmmoType.createCLLRT17Ammo());
         EquipmentType.addType(AmmoType.createCLLRT18Ammo());
         EquipmentType.addType(AmmoType.createCLLRT19Ammo());
-        EquipmentType.addType(AmmoType.createCLLRT20Ammo());
+        base = AmmoType.createCLLRT20Ammo();
+        clanLrtAmmos.add(base);
+        EquipmentType.addType(base);
         EquipmentType.addType(AmmoType.createCLMPodAmmo());
 
         EquipmentType.addType(AmmoType.createCLHAG20Ammo());
@@ -3336,23 +3350,31 @@ public class AmmoType extends EquipmentType {
         EquipmentType.addType(AmmoType.createInfantryAmmo());
         EquipmentType.addType(AmmoType.createInfantryInfernoAmmo());
 
-        base = AmmoType.createISAPMortar1Ammo();
+            base = AmmoType.createISAPMortar1Ammo();
         mortarAmmos.add(base);
+            EquipmentType.addType(base);
         base = AmmoType.createISAPMortar2Ammo();
         mortarAmmos.add(base);
+            EquipmentType.addType(base);
         base = AmmoType.createISAPMortar4Ammo();
         mortarAmmos.add(base);
+            EquipmentType.addType(base);
         base = AmmoType.createISAPMortar8Ammo();
         mortarAmmos.add(base);
+            EquipmentType.addType(base);
 
         base = AmmoType.createCLAPMortar1Ammo();
         clanMortarAmmos.add(base);
+            EquipmentType.addType(base);
         base = AmmoType.createCLAPMortar2Ammo();
         clanMortarAmmos.add(base);
+            EquipmentType.addType(base);
         base = AmmoType.createCLAPMortar4Ammo();
         clanMortarAmmos.add(base);
+            EquipmentType.addType(base);
         base = AmmoType.createCLAPMortar8Ammo();
         clanMortarAmmos.add(base);
+            EquipmentType.addType(base);
 
         // Create the munition types for IS Mek mortars
         munitions.add(AIRBURST_MORTAR_MUNITION_MUTATOR);
@@ -3376,17 +3398,16 @@ public class AmmoType extends EquipmentType {
         // Long range Torpedo
         base = AmmoType.createISLRT5Ammo();
         lrtAmmos.add(base);
+            EquipmentType.addType(base);
         base = AmmoType.createISLRT10Ammo();
         lrtAmmos.add(base);
+            EquipmentType.addType(base);
         base = AmmoType.createISLRT15Ammo();
         lrtAmmos.add(base);
+            EquipmentType.addType(base);
         base = AmmoType.createISLRT20Ammo();
         lrtAmmos.add(base);
-
-        EquipmentType.addType(AmmoType.createISLRT5Ammo());
-        EquipmentType.addType(AmmoType.createISLRT10Ammo());
-        EquipmentType.addType(AmmoType.createISLRT15Ammo());
-        EquipmentType.addType(AmmoType.createISLRT20Ammo());
+            EquipmentType.addType(base);
 
         base = AmmoType.createISEnhancedLRT5Ammo();
         enhancedLrtAmmos.add(base);
@@ -3403,23 +3424,13 @@ public class AmmoType extends EquipmentType {
 
         base = AmmoType.createISSRT2Ammo();
         srtAmmos.add(base);
+        EquipmentType.addType(base);
         base = AmmoType.createISSRT4Ammo();
         srtAmmos.add(base);
+        EquipmentType.addType(base);
         base = AmmoType.createISSRT6Ammo();
         srtAmmos.add(base);
-
-        EquipmentType.addType(AmmoType.createISSRT2Ammo());
-        EquipmentType.addType(AmmoType.createISSRT4Ammo());
-        EquipmentType.addType(AmmoType.createISSRT6Ammo());
-
-        EquipmentType.addType(AmmoType.createISAPMortar1Ammo());
-        EquipmentType.addType(AmmoType.createISAPMortar2Ammo());
-        EquipmentType.addType(AmmoType.createISAPMortar4Ammo());
-        EquipmentType.addType(AmmoType.createISAPMortar8Ammo());
-        EquipmentType.addType(AmmoType.createCLAPMortar1Ammo());
-        EquipmentType.addType(AmmoType.createCLAPMortar2Ammo());
-        EquipmentType.addType(AmmoType.createCLAPMortar4Ammo());
-        EquipmentType.addType(AmmoType.createCLAPMortar8Ammo());
+        EquipmentType.addType(base);
 
         EquipmentType.addType(AmmoType.createISCruiseMissile50Ammo());
         EquipmentType.addType(AmmoType.createISCruiseMissile70Ammo());
@@ -3439,22 +3450,6 @@ public class AmmoType extends EquipmentType {
         EquipmentType.addType(AmmoType.createISHeavyRifleAmmo());
 
         EquipmentType.addType(AmmoType.createISAPDSAmmo());
-
-        base = AmmoType.createCLLRT5Ammo();
-        clanLrtAmmos.add(base);
-        base = AmmoType.createCLLRT10Ammo();
-        clanLrtAmmos.add(base);
-        base = AmmoType.createCLLRT15Ammo();
-        clanLrtAmmos.add(base);
-        base = AmmoType.createCLLRT20Ammo();
-        clanLrtAmmos.add(base);
-
-        base = AmmoType.createCLSRT2Ammo();
-        clanSrtAmmos.add(base);
-        base = AmmoType.createCLSRT4Ammo();
-        clanSrtAmmos.add(base);
-        base = AmmoType.createCLSRT6Ammo();
-        clanSrtAmmos.add(base);
 
         base = AmmoType.createISVGLAmmo();
         EquipmentType.addType(base);
@@ -6379,8 +6374,6 @@ public class AmmoType extends EquipmentType {
         ammo.shortName = "VGL Fragmentation";
         ammo.setInternalName("IS Ammo VGL");
         ammo.addLookupName("ISVehicularGrenadeLauncherAmmo");
-        ammo.addLookupName("CL Ammo VGL");
-        ammo.addLookupName("CLVehicularGrenadeLauncherAmmo");
         ammo.damagePerShot = 0;
         ammo.rackSize = 1;
         ammo.ammoType = AmmoTypeEnum.VGL;
@@ -6530,7 +6523,6 @@ public class AmmoType extends EquipmentType {
         ammo.addLookupName("Clan Ammo MG - Half");
         ammo.addLookupName("CLMG Ammo (100)");
         ammo.addLookupName("Clan Machine Gun Ammo (1/2 ton)");
-        ammo.addLookupName("Half Machine Gun Ammo");
         ammo.damagePerShot = 1;
         ammo.rackSize = 2;
         ammo.ammoType = AmmoTypeEnum.MG;
@@ -14089,7 +14081,6 @@ public class AmmoType extends EquipmentType {
         ammo.shortName = "Heavy Machine Gun";
         ammo.setInternalName("Clan Heavy Machine Gun Ammo - Proto");
         ammo.addLookupName("CLHeavyMG Ammo");
-        ammo.addLookupName("Clan Heavy Machine Gun Ammo");
         ammo.damagePerShot = 1;
         ammo.rackSize = 3;
         ammo.ammoType = AmmoTypeEnum.MG_HEAVY;
@@ -14146,7 +14137,6 @@ public class AmmoType extends EquipmentType {
         ammo.shortName = "Light Machine Gun";
         ammo.setInternalName("Clan Light Machine Gun Ammo - Proto");
         ammo.addLookupName("CLLightMG Ammo");
-        ammo.addLookupName("Clan Light Machine Gun Ammo");
         ammo.damagePerShot = 1;
         ammo.rackSize = 1;
         ammo.ammoType = AmmoTypeEnum.MG_LIGHT;

@@ -37,8 +37,6 @@ import java.awt.Component;
 import java.awt.event.ActionEvent;
 import java.awt.event.InputEvent;
 import java.awt.event.MouseEvent;
-import java.util.Arrays;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -66,7 +64,6 @@ import megamek.client.ui.dialogs.ClientCommandDialog;
 import megamek.client.ui.dialogs.NoteDialog;
 import megamek.client.ui.dialogs.TurretFacingDialog;
 import megamek.client.ui.dialogs.UnitEditorDialog;
-import megamek.client.ui.dialogs.customMek.CustomMekDialog;
 import megamek.client.ui.entityreadout.LiveReadoutDialog;
 import megamek.client.ui.panels.phaseDisplay.FiringDisplay;
 import megamek.client.ui.panels.phaseDisplay.MovementDisplay;
@@ -414,7 +411,7 @@ public class MapMenu extends JPopupMenu {
      */
     private JMenu createPleaToRoyaltyMenu() {
         JMenu menu = new JMenu(Messages.getString("Bot.commands.title"));
-        var isGM = client.getLocalPlayer().isGameMaster();
+        var isGM = isGameMasterEnabled();
         for (var player : client.getGame().getPlayersList()) {
             var isEnemy = player.isEnemyOf(client.getLocalPlayer());
             var playerIsBot = player.isBot();
@@ -714,42 +711,35 @@ public class MapMenu extends JPopupMenu {
     }
 
     /**
+     * Whether the gamemaster tools are offered: the player must hold the role, and the game must allow a gamemaster
+     * at all. The host controls that through the Allow Game Master game option; turning it off strips the role.
+     */
+    private boolean isGameMasterEnabled() {
+        return client.getGame().getOptions().booleanOption(OptionsConstants.GAME_MASTER_ALLOW)
+              && client.getLocalPlayer().isGameMaster();
+    }
+
+    /**
      * Create various menus related to GameMaster (GM) mode
      */
     private JMenu createGameMasterMenu() {
         JMenu menu = new JMenu(Messages.getString("Gamemaster.Gamemaster"));
-        if (client.getLocalPlayer().isGameMaster()) {
+        if (isGameMasterEnabled()) {
+            // Configure is not offered here any more: it is a lobby dialog, about how a unit is built, crewed and
+            // deployed, and in play a gamemaster wants the unit's condition, which Edit Damage now covers.
+            // A gamemaster acts on a single unit from its Edit Damage dialog, which now holds destroy, withdraw and
+            // owner change. So the map menu only opens that dialog per unit, and otherwise offers the hex and board
+            // tools; the old per-unit destroy, rescue and traitor submenus have moved into the dialog.
             JMenu dmgMenu = new JMenu(Messages.getString("Gamemaster.EditDamage"));
-            JMenu cfgMenu = new JMenu(Messages.getString("Gamemaster.Configure"));
-            JMenu traitorMenu = new JMenu(Messages.getString("Gamemaster.Traitor"));
-            JMenu rescueMenu = new JMenu(Messages.getString("Gamemaster.Rescue"));
-            JMenu killMenu = new JMenu(Messages.getString("Gamemaster.KillUnit"));
             JMenu specialCommandsMenu = createGMSpecialCommandsMenu();
 
             var entities = client.getGame().getEntitiesVector(coords);
 
             for (Entity entity : entities) {
                 dmgMenu.add(createUnitEditorMenuItem(entity));
-                cfgMenu.add(createCustomMekMenuItem(entity));
-                traitorMenu.add(createTraitorMenuItem(entity));
-                rescueMenu.add(createRescueMenuItem(entity));
-                killMenu.add(createKillMenuItem(entity));
             }
             if (dmgMenu.getItemCount() != 0) {
                 menu.add(dmgMenu);
-            }
-            if (cfgMenu.getItemCount() != 0) {
-                menu.add(cfgMenu);
-                menu.addSeparator();
-            }
-            if (traitorMenu.getItemCount() != 0) {
-                menu.add(traitorMenu);
-            }
-            if (rescueMenu.getItemCount() != 0) {
-                menu.add(rescueMenu);
-            }
-            if (killMenu.getItemCount() != 0) {
-                menu.add(killMenu);
                 menu.addSeparator();
             }
             menu.add(specialCommandsMenu);
@@ -764,17 +754,17 @@ public class MapMenu extends JPopupMenu {
      */
     private JMenu createGMSpecialCommandsMenu() {
         JMenu menu = new JMenu(Messages.getString("Gamemaster.SpecialCommands"));
-        List.of(new ChangeOwnershipCommand(null, null),
-              new ChangeWeatherCommand(null, null),
+        // Change Unit Ownership, Destroy Unit and Rescue Unit live in the Edit Damage dialog now, not here. What is
+        // left is the hex and board tools, which act on the map rather than a single unit.
+        List.of(new ChangeWeatherCommand(null, null),
               new DisasterCommand(null, null),
-              new KillCommand(null, null),
               new FirefightCommand(null, null),
               new FirestarterCommand(null, null),
               new FirestormCommand(null, null),
               new NoFiresCommand(null, null),
               new OrbitalBombardmentCommand(null, null),
               new RemoveSmokeCommand(null, null),
-              new RescueCommand(null, null)).forEach(cmd -> {
+              new SkillModifierCommand(null, null)).forEach(cmd -> {
             JMenuItem item = new JMenuItem(cmd.getLongName());
             item.addActionListener(evt -> new ClientCommandDialog(gui.getFrame(), gui, cmd, coords).setVisible(true));
             menu.add(item);
@@ -783,150 +773,20 @@ public class MapMenu extends JPopupMenu {
         return menu;
     }
 
-    JMenuItem createCustomMekMenuItem(Entity entity) {
-        JMenuItem item = new JMenuItem(entity.getDisplayName());
-        item.addActionListener(evt -> {
-            CustomMekDialog med = new CustomMekDialog(gui, client, Collections.singletonList(entity), true, false);
-            med.refreshOptions();
-            gui.getBoardView().setShouldIgnoreKeys(true);
-            med.setVisible(true);
-            med.dispose();
-            client.sendUpdateEntity(entity);
-            gui.getBoardView().setShouldIgnoreKeys(false);
-        });
-        return item;
-    }
 
     JMenuItem createUnitEditorMenuItem(Entity entity) {
         JMenuItem item = new JMenuItem(entity.getDisplayName());
         item.addActionListener(evt -> {
+            // This menu item is only built for a gamemaster, so the dialog offers the full editing tools directly.
+            // The dialog commits its edits to the server itself, so there is nothing to send here when it closes.
             UnitEditorDialog med = new UnitEditorDialog(gui.getFrame(),
                   entity,
-                  client.getLocalPlayer().isGameMaster());
+                  true,
+                  client);
             gui.getBoardView().setShouldIgnoreKeys(true);
             med.setVisible(true);
             med.dispose();
-            client.sendUpdateEntity(entity);
             gui.getBoardView().setShouldIgnoreKeys(false);
-        });
-        return item;
-    }
-
-    /**
-     * Create traitor menu for game master options
-     *
-     * @param entity the entity to create the traitor menu for
-     *
-     * @return JMenu    the traitor menu
-     */
-    private JMenuItem createTraitorMenuItem(Entity entity) {
-        // Traitor Command
-        JMenuItem item = new JMenuItem(Messages.getString("Gamemaster.Traitor.text", entity.getDisplayName()));
-        item.addActionListener(evt -> {
-            gui.getBoardView().setShouldIgnoreKeys(false);
-            var players = client.getGame().getPlayersList();
-            Integer[] playerIds = new Integer[players.size() - 1];
-            String[] playerNames = new String[players.size() - 1];
-            String[] options = new String[players.size() - 1];
-
-            Player currentOwner = entity.getOwner();
-            // Loop through the players vector and fill in the arrays
-            int idx = 0;
-            for (var player : players) {
-                if (player.getName().equals(currentOwner.getName()) || (player.getTeam() == Player.TEAM_UNASSIGNED)) {
-                    continue;
-                }
-                playerIds[idx] = player.getId();
-                playerNames[idx] = player.getName();
-                options[idx] = player.getName() + " (ID: " + player.getId() + ")";
-                idx++;
-            }
-
-            // No players available?
-            if (idx == 0) {
-                JOptionPane.showMessageDialog(gui.getFrame(), Messages.getString("Gamemaster.Traitor.text.noplayers"));
-                return;
-            }
-
-            // Dialog for choosing which player to transfer to
-            String option = (String) JOptionPane.showInputDialog(gui.getFrame(),
-                  Messages.getString("Gamemaster.Traitor.text.selectplayer", entity.getDisplayName()),
-                  Messages.getString("Gamemaster.Traitor.title"),
-                  JOptionPane.QUESTION_MESSAGE,
-                  null,
-                  options,
-                  options[0]);
-
-            // Verify that we have a valid option...
-            if (option != null) {
-                // Now that we've selected a player, correctly associate the ID and name
-                int id = playerIds[Arrays.asList(options).indexOf(option)];
-                String name = playerNames[Arrays.asList(options).indexOf(option)];
-
-                // And now we perform the actual transfer
-                int confirm = JOptionPane.showConfirmDialog(gui.getFrame(),
-                      Messages.getString("Gamemaster.Traitor.confirmation", entity.getDisplayName(), name),
-                      Messages.getString("Gamemaster.Traitor.confirm"),
-                      JOptionPane.YES_NO_OPTION);
-
-                if (confirm == JOptionPane.YES_OPTION) {
-                    client.sendChat(String.format("/changeOwner %d %d", entity.getId(), id));
-                }
-            }
-        });
-
-        return item;
-    }
-
-    /**
-     * Create a menu for killing a specific entity
-     *
-     * @param entity the entity to create the kill menu for
-     *
-     * @return JMenuItem    the kill menu item
-     */
-    private JMenuItem createKillMenuItem(Entity entity) {
-        return createEntityCommandMenuItem(entity,
-              "Gamemaster.KillUnit.text",
-              "Gamemaster.KillUnit.confirmation",
-              String.format("/kill %d", entity.getId()));
-    }
-
-    /**
-     * Create a menu for rescuing a specific entity
-     *
-     * @param entity the entity to create the rescue menu for
-     *
-     * @return the rescue menu item
-     */
-    private JMenuItem createRescueMenuItem(Entity entity) {
-        return createEntityCommandMenuItem(entity,
-              "Gamemaster.Rescue.text",
-              "Gamemaster.Rescue.confirmation",
-              String.format("/rescue %d", entity.getId()));
-    }
-
-    /**
-     * Create a menu for a specific GM command
-     *
-     * @param entity          the entity to create the menu for
-     * @param messageKey      the menu item message key for the menu item
-     * @param confirmationKey the confirmation message key
-     * @param command         the command that will be sent to the server
-     *
-     * @return the menu item
-     */
-    private JMenuItem createEntityCommandMenuItem(Entity entity, String messageKey, String confirmationKey,
-          String command) {
-        JMenuItem item = new JMenuItem(Messages.getString(messageKey, entity.getDisplayName()));
-        item.addActionListener(evt -> {
-            int confirm = JOptionPane.showConfirmDialog(gui.getFrame(),
-                  Messages.getString(confirmationKey, entity.getDisplayName()),
-                  Messages.getString("Gamemaster.dialog.confirm"),
-                  JOptionPane.YES_NO_OPTION);
-            if (confirm == JOptionPane.YES_OPTION) {
-                client.sendChat(command);
-            }
         });
         return item;
     }

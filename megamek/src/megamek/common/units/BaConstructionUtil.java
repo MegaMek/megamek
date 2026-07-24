@@ -111,7 +111,6 @@ public class BaConstructionUtil {
         }
         if (mount.getLinked() != null) {
             Mounted<?> attachedEquipment = mount.getLinked();
-            attachedEquipment.setLinkedBy(null);
             attachedEquipment.setDWPMounted(false);
             attachedEquipment.setAPMMounted(false);
             mount.setLinked(null);
@@ -137,7 +136,6 @@ public class BaConstructionUtil {
         }
         emptyDwpApm(apm);
         apm.setLinked(weapon);
-        weapon.setLinkedBy(apm);
         weapon.setAPMMounted(true);
         // A Disposable Weapon (TO:AuE p.116, Corrected Sixth Printing) mounted in an AP mount / armored glove is
         // marked so it resolves with the disposable rules. Marking is a construction property; in-game behavior is

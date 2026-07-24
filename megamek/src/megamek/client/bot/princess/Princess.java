@@ -1552,9 +1552,12 @@ public class Princess extends BotClient {
                     }
 
                     EntityAction spotAction = getFireControl(shooter).getSpotAction(plan, shooter, fireControlState);
-                    // If the unit's own shot is too trivial to be worth the spotting penalty, spot instead of firing.
+                    // If the unit's own shot is too trivial to be worth the spotting penalty, spot instead of firing -
+                    // unless the shot is what switches Triple-Strength Myomer on this turn, in which case the heat it
+                    // builds is worth more than the trivial damage suggests.
                     boolean spotInsteadOfTrivialFire = (spotAction != null)
-                          && (plan.getExpectedDamage() < FireControl.MIN_USEFUL_FIRING_DAMAGE);
+                          && (plan.getExpectedDamage() < FireControl.MIN_USEFUL_FIRING_DAMAGE)
+                          && !getFireControl(shooter).firingActivatesTsm(shooter, plan);
                     if (!spotInsteadOfTrivialFire) {
                         actions.addAll(plan.getEntityActionVector());
                     }
@@ -3981,8 +3984,16 @@ public class Princess extends BotClient {
     private void evadeIfNotFiring(MovePath path, boolean possibleToInflictDamage) {
         Entity pathEntity = path.getEntity();
 
+        // Only aerospace units (IAero) can take an EVADE step. An ejected pilot descending by
+        // parachute is a MekWarrior that reports isAirborne() (altitude > 0) but is not an IAero;
+        // without this guard the isAirborne()-only check below would throw a ClassCastException on
+        // the cast to IAero and hang the bot's entire turn (issue #8542).
+        if (!(pathEntity instanceof IAero aero)) {
+            return;
+        }
+
         // we cannot evade if we are out of control
-        if (pathEntity.isAero() && pathEntity.isAirborne() && ((IAero) pathEntity).isOutControlTotal()) {
+        if (pathEntity.isAero() && pathEntity.isAirborne() && aero.isOutControlTotal()) {
             return;
         }
 
@@ -3992,7 +4003,7 @@ public class Princess extends BotClient {
         // then evade
         if (pathEntity.isAirborne() &&
               !possibleToInflictDamage &&
-              (path.getMpUsed() <= AeroPathUtil.calculateMaxSafeThrust((IAero) path.getEntity()) - 2)) {
+              (path.getMpUsed() <= AeroPathUtil.calculateMaxSafeThrust(aero) - 2)) {
             path.addStep(MoveStepType.EVADE);
         }
     }

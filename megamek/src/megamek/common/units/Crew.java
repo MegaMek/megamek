@@ -1,6 +1,6 @@
 /*
  * Copyright (C) 2000-2004 Ben Mazur (bmazur@sev.org)
- * Copyright (C) 2002-2025 The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2002-2026 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -44,7 +44,6 @@ import java.util.UUID;
 import java.util.Vector;
 
 import megamek.client.ui.clientGUI.tooltip.PilotToolTip;
-import megamek.codeUtilities.MathUtility;
 import megamek.common.Report;
 import megamek.common.annotations.Nullable;
 import megamek.common.compute.Compute;
@@ -101,6 +100,10 @@ public class Crew implements Serializable {
     // also need to track turns for fatigue by pilot because some may have later
     // deployment
     private int fatigueTurnCount;
+
+    // A gamemaster-set temporary change to the crew's effective skills; applied in the effective-skill
+    // getters and never written into the skill arrays, so it reverses itself completely when it expires.
+    private TemporarySkillModifiers skillModifiers = new TemporarySkillModifiers();
 
     // region RPG Skills
     // MW3e uses 3 different gunnery skills
@@ -423,8 +426,100 @@ public class Crew implements Serializable {
         return crewType.getCrewSlots();
     }
 
+    /**
+     * The gamemaster-set temporary change to this crew's effective skills. Always present; when no change is
+     * active it leaves every skill untouched.
+     *
+     * @return the crew's temporary skill modifiers, never {@code null}
+     */
+    public TemporarySkillModifiers getSkillModifiers() {
+        // Saves from before the modifiers existed load with the field null, so it is filled in lazily.
+        if (skillModifiers == null) {
+            skillModifiers = new TemporarySkillModifiers();
+        }
+        return skillModifiers;
+    }
+
+    // The positionless skill getters below return the EFFECTIVE skill - the stored skill with any temporary
+    // gamemaster modifier applied - and are what combat, PSRs and the bot read. The per-slot (pos) getters
+    // return the raw stored skill and are what unit-list export and lobby customization read.
+
     public int getGunnery() {
+        return getSkillModifiers().adjustGunnery(gunnery[gunnerPos]);
+    }
+
+    /**
+     * The part of the effective gunnery that comes from the gamemaster's temporary modifier: effective minus
+     * stored, zero while no modifier is active. Lets a to-hit breakdown show the gamemaster's intervention as a
+     * line of its own instead of silently folding it into the skill number. Each gunnery variant has an applied
+     * modifier of its own, because the clamp to the skill range can eat a different part of the delta for each.
+     */
+    public int appliedGunneryModifier() {
+        return getGunnery() - rawGunnery();
+    }
+
+    /** @see #appliedGunneryModifier() */
+    public int appliedGunneryLModifier() {
+        return getGunneryL() - rawGunneryL();
+    }
+
+    /** @see #appliedGunneryModifier() */
+    public int appliedGunneryMModifier() {
+        return getGunneryM() - rawGunneryM();
+    }
+
+    /** @see #appliedGunneryModifier() */
+    public int appliedGunneryBModifier() {
+        return getGunneryB() - rawGunneryB();
+    }
+
+    /** @see #appliedGunneryModifier() */
+    public int appliedArtilleryModifier() {
+        return getArtillery() - rawArtillery();
+    }
+
+    /** @see #appliedGunneryModifier() */
+    public int appliedPilotingModifier() {
+        return getPiloting() - rawPiloting();
+    }
+
+    /** @see #appliedGunneryModifier() */
+    public int appliedPilotingModifier(EntityMovementType moveType) {
+        return getPiloting(moveType) - rawPiloting(moveType);
+    }
+
+    /*
+     * The stored skill each effective getter adjusts. LAMPilot overrides the effective getters with its own
+     * mode-dependent skills, so it overrides these to match; without that, the applied-modifier math above would
+     * subtract the wrong base.
+     */
+
+    protected int rawGunnery() {
         return gunnery[gunnerPos];
+    }
+
+    protected int rawGunneryL() {
+        return gunneryL[gunnerPos];
+    }
+
+    protected int rawGunneryM() {
+        return gunneryM[gunnerPos];
+    }
+
+    protected int rawGunneryB() {
+        return gunneryB[gunnerPos];
+    }
+
+    protected int rawArtillery() {
+        return artillery[gunnerPos];
+    }
+
+    protected int rawPiloting() {
+        return piloting[pilotPos];
+    }
+
+    protected int rawPiloting(EntityMovementType moveType) {
+        return piloting[pilotPos];
     }
 
     public int getGunnery(int pos) {
@@ -432,7 +527,7 @@ public class Crew implements Serializable {
     }
 
     public int getGunneryL() {
-        return gunneryL[gunnerPos];
+        return getSkillModifiers().adjustGunnery(gunneryL[gunnerPos]);
     }
 
     public int getGunneryL(int pos) {
@@ -440,7 +535,7 @@ public class Crew implements Serializable {
     }
 
     public int getGunneryM() {
-        return gunneryM[gunnerPos];
+        return getSkillModifiers().adjustGunnery(gunneryM[gunnerPos]);
     }
 
     public int getGunneryM(int pos) {
@@ -448,7 +543,7 @@ public class Crew implements Serializable {
     }
 
     public int getGunneryB() {
-        return gunneryB[gunnerPos];
+        return getSkillModifiers().adjustGunnery(gunneryB[gunnerPos]);
     }
 
     public int getGunneryB(int pos) {
@@ -456,7 +551,7 @@ public class Crew implements Serializable {
     }
 
     public int getArtillery() {
-        return artillery[gunnerPos];
+        return getSkillModifiers().adjustGunnery(artillery[gunnerPos]);
     }
 
     public int getArtillery(int pos) {
@@ -464,7 +559,7 @@ public class Crew implements Serializable {
     }
 
     public int getPiloting() {
-        return piloting[pilotPos];
+        return getSkillModifiers().adjustPiloting(piloting[pilotPos]);
     }
 
     public int getPiloting(int pos) {
@@ -475,7 +570,7 @@ public class Crew implements Serializable {
      * LAMs use a different skill in AirMEK mode depending on whether they are grounded or airborne.
      */
     public int getPiloting(EntityMovementType moveType) {
-        return piloting[pilotPos];
+        return getSkillModifiers().adjustPiloting(piloting[pilotPos]);
     }
 
     /**
@@ -1070,7 +1165,7 @@ public class Crew implements Serializable {
         int fatigueModifier = 0;
 
         for (int i = 0; i < getSlotCount(); i++) {
-            fatigueModifier = MathUtility.clamp((fatigue[i] - 1) / 4, 0, 4);
+            fatigueModifier = Math.clamp((fatigue[i] - 1) / 4, 0, 4);
         }
 
         return -(fatigueModifier / getSlotCount());

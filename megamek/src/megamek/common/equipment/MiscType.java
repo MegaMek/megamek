@@ -908,24 +908,24 @@ public class MiscType extends EquipmentType {
             } else if (hasFlag(F_FLOTATION_HULL) || hasFlag(F_ENVIRONMENTAL_SEALING) || hasFlag(F_OFF_ROAD)) {
                 costValue = 0;
             } else if (hasFlag(F_LIMITED_AMPHIBIOUS) || hasFlag((F_FULLY_AMPHIBIOUS))) {
-                costValue = getTonnage(entity, loc) * 10000;
+                costValue = getTonnage(entity, loc, size) * 10000;
             } else if (hasFlag(F_DUNE_BUGGY)) {
-                double totalTons = getTonnage(entity, loc);
+                double totalTons = getTonnage(entity, loc, size);
                 costValue = 10 * totalTons * totalTons;
             } else if (hasFlag(F_MASC) && hasFlag(F_BA_EQUIPMENT)) {
                 costValue = entity.getRunMP() * 75000;
             } else if (hasFlag(F_HEAD_TURRET) || hasFlag(F_SHOULDER_TURRET) || hasFlag(F_QUAD_TURRET)) {
-                costValue = getTonnage(entity, loc) * 10000;
+                costValue = getTonnage(entity, loc, size) * 10000;
             } else if (hasFlag(F_SPONSON_TURRET)) {
-                costValue = getTonnage(entity, loc) * 4000;
+                costValue = getTonnage(entity, loc, size) * 4000;
             } else if (hasFlag(F_PINTLE_TURRET)) {
-                costValue = getTonnage(entity, loc) * 1000;
+                costValue = getTonnage(entity, loc, size) * 1000;
             } else if (hasFlag(F_ARMORED_MOTIVE_SYSTEM)) {
-                costValue = getTonnage(entity, loc) * 100000;
+                costValue = getTonnage(entity, loc, size) * 100000;
             } else if (is(EquipmentTypeLookup.BA_MANIPULATOR_CARGO_LIFTER)) {
                 return 250 * Math.ceil(size * 2);
             } else if (hasFlag(F_DRONE_OPERATING_SYSTEM)) {
-                costValue = (getTonnage(entity, loc) * 10000) + 5000;
+                costValue = (getTonnage(entity, loc, size) * 10000) + 5000;
             } else if (hasFlag(MiscType.F_MASC)) {
                 if (entity instanceof ProtoMek) {
                     costValue = Math.round((entity.hasEngine() ? entity.getEngine().getRating() : 0) *
@@ -984,30 +984,30 @@ public class MiscType extends EquipmentType {
                       (entity.hasEngine() ? entity.getEngine().getRating() : 0) *
                       entity.getWeight()) / 75);
             } else if (hasFlag(MiscType.F_TALON)) {
-                costValue = (int) Math.ceil(getTonnage(entity, loc) * 300);
+                costValue = (int) Math.ceil(getTonnage(entity, loc, size) * 300);
             } else if (hasFlag(MiscType.F_SPIKES)) {
                 costValue = (int) Math.ceil(entity.getWeight() * 50);
             } else if (hasFlag(MiscType.F_PARTIAL_WING)) {
-                costValue = (int) Math.ceil(getTonnage(entity, loc) * 50000);
+                costValue = (int) Math.ceil(getTonnage(entity, loc, size) * 50000);
             } else if (hasFlag(MiscType.F_ACTUATOR_ENHANCEMENT_SYSTEM)) {
                 int multiplier = entity.locationIsLeg(loc) ? 700 : 500;
                 costValue = (int) Math.ceil(entity.getWeight() * multiplier);
             } else if (hasFlag(MiscType.F_HAND_WEAPON) && (hasFlag(MiscTypeFlag.S_CLAW))) {
                 costValue = (int) Math.ceil(entity.getWeight() * 200);
             } else if (hasFlag(F_LIGHT_SAIL)) {
-                costValue = getTonnage(entity, loc) * 10000;
+                costValue = getTonnage(entity, loc, size) * 10000;
             } else if (hasFlag(F_NAVAL_C3)) {
-                costValue = getTonnage(entity, loc) * 100000;
+                costValue = getTonnage(entity, loc, size) * 100000;
 
                 // TODO NEO- Not sure how to add in the base control weights see IO pg 187
             } else if (hasFlag(MiscType.F_SRCS)) {
-                costValue = (getTonnage(entity, loc) * 10000) + 5000;
+                costValue = (getTonnage(entity, loc, size) * 10000) + 5000;
             } else if (hasFlag(MiscType.F_SASRCS)) {
-                costValue = (getTonnage(entity, loc) * 12500) + 6250;
+                costValue = (getTonnage(entity, loc, size) * 12500) + 6250;
             } else if (hasFlag(MiscType.F_CASPAR)) {
-                costValue = (getTonnage(entity, loc) * 50000) + 500000;
+                costValue = (getTonnage(entity, loc, size) * 50000) + 500000;
             } else if (hasFlag(MiscType.F_CASPAR_II)) {
-                costValue = (getTonnage(entity, loc) * 20000) + 50000;
+                costValue = (getTonnage(entity, loc, size) * 20000) + 50000;
             } else if (hasFlag(MiscType.F_ATAC)) {
                 costValue = (getTonnage(entity, loc, size) * 100000);
             } else if (hasFlag(MiscType.F_DTAC)) {
@@ -1041,7 +1041,7 @@ public class MiscType extends EquipmentType {
             } else if (hasFlag(F_COMMUNICATIONS)) {
                 costValue = size * 10000;
             } else if (hasFlag(F_RAM_PLATE)) {
-                costValue = getTonnage(entity, loc) * 10000;
+                costValue = getTonnage(entity, loc, size) * 10000;
             } else if (hasFlag(F_DAMAGE_INTERRUPT_CIRCUIT)) {
                 // DIC costs 150 C-bills per pilot seat (IO p.39)
                 if (entity.getCrew() != null) {
@@ -1455,7 +1455,7 @@ public class MiscType extends EquipmentType {
         EquipmentType.addType(MiscType.createGirderClub());
         EquipmentType.addType(MiscType.createLimbClub());
         EquipmentType.addType(MiscType.createHatchet());
-        EquipmentType.addType(MiscType.createStandard());
+        EquipmentType.addType(MiscType.createStandardStructure());
 
         // Start of Level2 stuff
         EquipmentType.addType(MiscType.createISDoubleHeatSink());
@@ -1680,7 +1680,6 @@ public class MiscType extends EquipmentType {
         EquipmentType.addType(MiscType.createISBAMineDispenser());
         EquipmentType.addType(MiscType.createBAMissionEquipStorage());
         EquipmentType.addType(MiscType.createISBADropChuteCamo());
-        EquipmentType.addType(MiscType.createISBADropChuteCamo());
         EquipmentType.addType(MiscType.createISBADropChuteStd());
         EquipmentType.addType(MiscType.createISBADropChuteStealth());
         EquipmentType.addType(MiscType.createVeeDropChuteCamo());
@@ -1692,7 +1691,6 @@ public class MiscType extends EquipmentType {
          * Included for completeness.
          * EquipmentType.addType(MiscType.createCLBAHarjel());
          * EquipmentType.addType(MiscType.createBACLUMU());
-         * EquipmentType.addType(MiscType.createBAJumpJet());
          */
 
         // Support Vee Chassis stuff
@@ -2399,19 +2397,15 @@ public class MiscType extends EquipmentType {
     // TODO - At some point the "Standard" below needs to be broken out as they
     // all have Separate Tech Advancement information.
 
-    public static StructureType createStandard() {
-        // This is not really a single piece of equipment, it is used to
-        // identify "standard" internal structure, armor, whatever.
-
+    public static StructureType createStandardStructure() {
         StructureType misc = new StructureType(T_STRUCTURE_STANDARD);
 
         misc.name = EquipmentType.getStructureTypeName(T_STRUCTURE_STANDARD);
         misc.setInternalName(EquipmentType.getStructureTypeName(T_STRUCTURE_STANDARD));
-        misc.addLookupName(EquipmentType.getStructureTypeName(T_STRUCTURE_STANDARD, false));
-        misc.addLookupName(EquipmentType.getStructureTypeName(T_STRUCTURE_STANDARD, true));
-        misc.addLookupName("Regular");
+        misc.addLookupName(misc.internalName + " Structure");
         misc.addLookupName("IS Standard Structure");
         misc.addLookupName("Clan Standard Structure");
+        misc.addLookupName("Regular Structure");
         misc.flags = misc.flags.or(F_MEK_EQUIPMENT,
               F_TANK_EQUIPMENT,
               F_SUPPORT_TANK_EQUIPMENT,
@@ -9065,7 +9059,7 @@ public class MiscType extends EquipmentType {
         misc.addLookupName("IS Endo-Steel");
         misc.addLookupName("IS Endo Steel Structure");
         misc.addLookupName("IS EndoSteel Structure");
-        misc.addLookupName("IS Endo-Steel Structure");
+        misc.addLookupName(misc.internalName + " Structure");
         misc.tonnage = TONNAGE_VARIABLE;
         misc.criticalSlots = CRITICAL_SLOTS_VARIABLE;
         misc.hittable = false;
@@ -9095,7 +9089,7 @@ public class MiscType extends EquipmentType {
         misc.addLookupName("IS Endo Steel Prototype");
         misc.addLookupName("IS Endo-Steel Prototype");
         misc.addLookupName("IS Endo Steel Prototype Structure");
-        misc.addLookupName("IS Endo-Steel Prototype Structure");
+        misc.addLookupName(misc.internalName + " Structure");
         misc.tonnage = TONNAGE_VARIABLE;
         misc.criticalSlots = CRITICAL_SLOTS_VARIABLE;
         misc.hittable = false;
@@ -9122,9 +9116,9 @@ public class MiscType extends EquipmentType {
         misc.setInternalName(EquipmentType.getStructureTypeName(T_STRUCTURE_ENDO_STEEL, true));
         misc.addLookupName("Clan Endo-Steel");
         misc.addLookupName("Clan EndoSteel");
-        misc.addLookupName("Clan Endo-Steel Structure");
         misc.addLookupName("Clan EndoSteel Structure");
         misc.addLookupName("Clan Endo Steel Structure");
+        misc.addLookupName(misc.internalName + " Structure");
         misc.tonnage = TONNAGE_VARIABLE;
         misc.criticalSlots = CRITICAL_SLOTS_VARIABLE;
         misc.hittable = false;
@@ -9630,10 +9624,7 @@ public class MiscType extends EquipmentType {
         misc.criticalSlots = 0;
         misc.cost = 0; // Cost accounted as part of unit cost
         misc.tankSlots = 0;
-        misc.flags = misc.flags.or(F_ARMORED_CHASSIS,
-              F_CHASSIS_MODIFICATION,
-              F_SUPPORT_TANK_EQUIPMENT,
-              F_FIGHTER_EQUIPMENT);
+        misc.flags = misc.flags.or(F_ARMORED_CHASSIS, F_SUPPORT_TANK_EQUIPMENT, F_CHASSIS_MODIFICATION);
         misc.omniFixedOnly = true;
         misc.bv = 0;
         misc.rulesRefs = "122, TM";
@@ -11615,10 +11606,10 @@ public class MiscType extends EquipmentType {
         MiscType misc = new MiscType();
         // Not Covered in IO so using the old stats from TO.
         misc.name = "Mission Equipment Storage";
+        misc.setInternalName(EquipmentTypeLookup.BA_MISSION_EQUIPMENT);
         misc.addLookupName("Mission Equipment Storage (20 kg)");
         misc.addLookupName("Mission Equipment Storage (5kg)");
         misc.addLookupName("Mission Equipment Storage (200 kg)");
-        misc.setInternalName(EquipmentTypeLookup.BA_MISSION_EQUIPMENT);
         misc.tonnage = TONNAGE_VARIABLE;
         misc.criticalSlots = 1;
         misc.flags = misc.flags.or(F_VARIABLE_SIZE, F_BA_EQUIPMENT, F_BA_MISSION_EQUIPMENT)

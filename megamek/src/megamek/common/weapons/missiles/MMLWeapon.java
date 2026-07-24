@@ -58,7 +58,7 @@ public abstract class MMLWeapon extends MissileWeapon {
         super();
         ammoType = AmmoType.AmmoTypeEnum.MML;
         atClass = CLASS_MML;
-        flags = flags.or(F_ARTEMIS_COMPATIBLE);
+        flags = flags.or(F_ARTEMIS_COMPATIBLE).or(F_MML);
     }
 
     @Override

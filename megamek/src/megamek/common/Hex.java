@@ -796,9 +796,9 @@ public class Hex implements Serializable {
     public boolean canPlaceMinefield(int minefieldType) {
     	switch (minefieldType) {
     	case Minefield.TYPE_TRIPWIRE:
-    		return containsAnyTerrainOf(Terrains.INVALID_TRIPWIRE_TERRAIN);
+    		return !containsAnyTerrainOf(Terrains.INVALID_TRIPWIRE_TERRAIN);
     	case Minefield.TYPE_PITFALL:
-    		return containsAnyTerrainOf(Terrains.INVALID_PITFALL_TERRAIN);
+    		return !containsAnyTerrainOf(Terrains.INVALID_PITFALL_TERRAIN);
     	}
     	
     	return true;

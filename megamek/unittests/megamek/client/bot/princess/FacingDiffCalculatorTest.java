@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2025 The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2025-2026 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -157,6 +157,45 @@ class FacingDiffCalculatorTest {
         facingDiff = facingDiffCalculator.getFacingDiff(mek, path, new Coords(10, 10),
               null, null);
         assertEquals(0, facingDiff);
+    }
+
+    @Test
+    void testSquareUpOnClosestEnemyIgnoresBiasAndTolerance() {
+        Mek mek = mock(BipedMek.class);
+        // Right side more heavily armored than the left, so the normal armor bias is -1 (angle to show the
+        // stronger right side). This is what makes a closing unit end up facing off-target.
+        when(mek.getArmor(Mek.LOC_LEFT_ARM)).thenReturn(2);
+        when(mek.getArmor(Mek.LOC_LEFT_LEG)).thenReturn(2);
+        when(mek.getArmor(Mek.LOC_LEFT_TORSO)).thenReturn(2);
+        when(mek.getArmor(Mek.LOC_RIGHT_ARM)).thenReturn(10);
+        when(mek.getArmor(Mek.LOC_RIGHT_LEG)).thenReturn(10);
+        when(mek.getArmor(Mek.LOC_RIGHT_TORSO)).thenReturn(10);
+        when(mek.isMek()).thenReturn(true);
+        // Tolerance 1, matching Princess's default.
+        FacingDiffCalculator facingDiffCalculator = new FacingDiffCalculator(1);
+        MovePath path = mock(MovePath.class);
+        when(path.getFinalCoords()).thenReturn(new Coords(5, 5));
+
+        // Direction from 0606 (5,5) to the closest enemy 1111 (10,10) is 2 (SE). The unit is facing NE (1).
+        when(path.getFinalFacing()).thenReturn(1);
+
+        // Normal mode: the -1 armor bias makes NE the "desired" facing, so facing NE reads as optimal (diff 0).
+        // This is why a closing brawler ends up angled off the enemy instead of squared on it.
+        int tolerant = facingDiffCalculator.getFacingDiff(mek, path, new Coords(0, 0),
+              new Coords(10, 10), new Coords(10, 10), false);
+        assertEquals(0, tolerant);
+
+        // Square-up mode: no bias and no tolerance, so facing NE while the target is SE is a real one-hex-side
+        // miss (diff 1) - the unit is pushed to turn toward the enemy.
+        int squaredOff = facingDiffCalculator.getFacingDiff(mek, path, new Coords(0, 0),
+              new Coords(10, 10), new Coords(10, 10), true);
+        assertEquals(1, squaredOff);
+
+        // Facing the target exactly (SE = 2) is optimal in square-up mode.
+        when(path.getFinalFacing()).thenReturn(2);
+        int squaredOn = facingDiffCalculator.getFacingDiff(mek, path, new Coords(0, 0),
+              new Coords(10, 10), new Coords(10, 10), true);
+        assertEquals(0, squaredOn);
     }
 
 }

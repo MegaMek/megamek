@@ -41,7 +41,7 @@ sourceSets {
 }
 
 dependencies {
-    implementation 'com.fasterxml.jackson.core:jackson-core:2.21.2'
+    implementation 'com.fasterxml.jackson.core:jackson-core:2.21.4'
     implementation 'com.fasterxml.jackson.dataformat:jackson-dataformat-yaml:2.21.2'
     implementation 'com.fasterxml.jackson.datatype:jackson-datatype-jsr310:2.21.2'
 
@@ -367,6 +367,11 @@ test {
 
     minHeapSize = "1024m"
     maxHeapSize = "8192m"
+
+    // Match the runtime add-opens (see application/mmJvmOptions) so tests can exercise the XStream
+    // save-game path, which reflects over java.util.concurrent collections such as CopyOnWriteArrayList.
+    jvmArgs '--add-opens', 'java.base/java.util=ALL-UNNAMED',
+            '--add-opens', 'java.base/java.util.concurrent=ALL-UNNAMED'
 
     finalizedBy jacocoTestReport
 }

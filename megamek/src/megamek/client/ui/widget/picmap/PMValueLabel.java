@@ -75,8 +75,7 @@ public class PMValueLabel extends PMSimpleLabel {
             return;
         }
         Color temp = graphics.getColor();
-        graphics.setColor(color);
-        graphics.drawString(string, x - width / 2, y - fm.getMaxDescent());
+        drawOutlinedString(graphics, string, x - width / 2, y - fm.getMaxDescent());
         graphics.setColor(temp);
     }
 

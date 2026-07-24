@@ -1,6 +1,6 @@
 /*
  * Copyright (C) 2000-2011 Ben Mazur (bmazur@sev.org)
- * Copyright (C) 2011-2025 The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2011-2026 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -70,6 +70,7 @@ import megamek.common.moves.MovePath;
 import megamek.common.moves.MoveStep;
 import megamek.common.options.OptionsConstants;
 import megamek.common.planetaryConditions.PlanetaryConditions;
+import megamek.common.rolls.PilotingRollData;
 import megamek.common.rolls.TargetRoll;
 import megamek.common.units.*;
 import megamek.common.util.HazardousLiquidPoolUtil;
@@ -111,6 +112,14 @@ public class BasicPathRanker extends PathRanker {
     // penalty for ending a sprint inside enemy weapon range; a sprinting unit forfeits all of its attacks,
     // so this must outweigh the aggression/bravery incentives that would otherwise favor closing distance
     private final int SPRINT_INTO_THREAT_PENALTY = 250;
+
+    // Closing incentive (issue #7627): a unit whose damage is higher at point-blank range than at its current
+    // range - short-range gunners and, above all, melee brawlers whose hatchet/kick damage is invisible to the
+    // ranged damage estimate until they are adjacent - gets a reward for advancing that grows as it nears
+    // contact. CLOSE_RANGE_BAND is how far out (hexes) the pull begins; CLOSE_RANGE_INCENTIVE_WEIGHT scales its
+    // magnitude against the other rank terms.
+    private static final double CLOSE_RANGE_BAND = 12.0;
+    private static final double CLOSE_RANGE_INCENTIVE_WEIGHT = 1.0;
 
     private final FacingDiffCalculator facingDiffCalculator;
     private final UnitsMedianCoordinateCalculator unitsMedianCoordinateCalculator;
@@ -411,11 +420,15 @@ public class BasicPathRanker extends PathRanker {
                   game,
                   false);
         } else {
+            EntityState shooterState = new EntityState(path);
+            // Heat this path would add (walk/run/jump) is not yet committed to the unit, so pass it
+            // explicitly; calcHeatTolerance lowers the firing budget by it so a hot move throttles fire.
+            int predictedMovementHeat = shooterState.getHeat() - me.getHeat();
             FiringPlanCalculationParameters guess = new Builder().buildGuess(path.getEntity(),
-                  new EntityState(path),
+                  shooterState,
                   enemy,
                   null,
-                  getFireControl(me).calcHeatTolerance(me, me.isAero()),
+                  getFireControl(me).calcHeatTolerance(me, me.isAero(), predictedMovementHeat),
                   null);
             myFiringPlan = getFireControl(me).determineBestFiringPlan(guess);
         }
@@ -683,6 +696,61 @@ public class BasicPathRanker extends PathRanker {
         double aggressionMod = distToEnemy * aggression;
         logger.trace("aggression mod [ -{} = {} * {}]", aggressionMod, distToEnemy, aggression);
         return aggressionMod;
+    }
+
+    /**
+     * A reward for advancing toward point-blank range, for units that do more damage up close than they do at
+     * their current range - short-range gunners and, most importantly, melee brawlers. The ranged damage
+     * estimate credits a unit's hatchet, sword or kick only on the turn it ends adjacent to an enemy, so a
+     * brawler otherwise sees no reason to close and will pace at range (issue #7627: an Axman would not wade a
+     * river to reach hatchet range). This incentive is the unit's point-blank damage premium scaled by how far
+     * it has closed toward contact, so it grows smoothly as the unit advances and is zero for units that
+     * already deliver their best damage at range.
+     *
+     * @param movingUnit  the unit being moved
+     * @param distToEnemy the path's ending distance to the closest enemy
+     *
+     * @return the closing incentive to add to the path's utility (never negative)
+     */
+    protected double calculateCloseRangeIncentive(Entity movingUnit, double distToEnemy) {
+        if ((distToEnemy < 1) || (distToEnemy >= CLOSE_RANGE_BAND)) {
+            // Too far out for the pull to apply yet (or a degenerate zero distance). The incentive is left to
+            // peak at contact (distToEnemy == 1) so that taking the final hex into melee is rewarded rather
+            // than penalized - zeroing it at contact would stall a brawler one hex short of its target.
+            return 0;
+        }
+        int currentRange = (int) Math.ceil(distToEnemy);
+        double pointBlankDamage = getMaxDamageAtRange(movingUnit, 1, false, false)
+              + estimatedMeleeDamage(movingUnit);
+        double currentRangeDamage = getMaxDamageAtRange(movingUnit, currentRange, false, false);
+        double pointBlankPremium = pointBlankDamage - currentRangeDamage;
+        if (pointBlankPremium <= 0) {
+            // This unit does not gain by closing - it already does its best damage at the current range.
+            return 0;
+        }
+        // Fraction of the way from the engagement band in to contact: 0 at CLOSE_RANGE_BAND, ~1 at range 1.
+        double proximity = (CLOSE_RANGE_BAND - distToEnemy) / (CLOSE_RANGE_BAND - 1);
+        double incentive = pointBlankPremium * proximity * CLOSE_RANGE_INCENTIVE_WEIGHT;
+        logger.trace("close range incentive [ +{} = premium {} * proximity {} * weight {}]",
+              incentive, pointBlankPremium, proximity, CLOSE_RANGE_INCENTIVE_WEIGHT);
+        return incentive;
+    }
+
+    /**
+     * A cheap, distance-independent estimate of a unit's best physical (melee) attack damage, used only to
+     * value closing to contact. Every upright walking Mek can kick for roughly {@code tonnage / 5}, which also
+     * approximates a hatchet or sword on the same chassis; units that cannot make a meaningful physical attack
+     * contribute nothing.
+     *
+     * @param movingUnit the unit being moved
+     *
+     * @return the estimated melee damage, or {@code 0} for units without a useful physical attack
+     */
+    private static double estimatedMeleeDamage(Entity movingUnit) {
+        if (!(movingUnit instanceof Mek) || movingUnit.isProne() || (movingUnit.getWalkMP() <= 0)) {
+            return 0;
+        }
+        return Math.floor(movingUnit.getWeight() / 5.0);
     }
 
     // Indirect artillery (targeting phase) is impossible at one mapsheet or closer - TooShortForIndirectArty,
@@ -1257,12 +1325,14 @@ public class BasicPathRanker extends PathRanker {
      * @return A facing modifier value (higher is worse) to be used in path ranking
      */
     protected double calculateFacingMod(Entity movingUnit, Game game, final MovePath path,
-          @Nullable Coords enemyMedianPosition, @Nullable Coords closestEnemyPosition) {
+          @Nullable Coords enemyMedianPosition, @Nullable Coords closestEnemyPosition,
+          boolean squareUpOnClosestEnemy) {
         int facingDiff = facingDiffCalculator.getFacingDiff(movingUnit,
               path,
               game.getBoard(movingUnit).getCenter(),
               enemyMedianPosition,
-              closestEnemyPosition);
+              closestEnemyPosition,
+              squareUpOnClosestEnemy);
         double facingMod = FACING_MOD_MULTIPLIER * facingDiff;
 
         logger.trace("facing mod [(-){} = {} * {}]", facingMod, FACING_MOD_MULTIPLIER, facingDiff);
@@ -1568,6 +1638,13 @@ public class BasicPathRanker extends PathRanker {
         scores.put("aggressionIndex", (double) getOwner().getBehaviorSettings().getHyperAggressionIndex());
         scores.put("aggressionMod", aggressionMod);
 
+        // Pull short-range gunners and melee brawlers toward contact. Standoff units (artillery tubes, TAG
+        // spotters) want to keep their distance, and a unit told to ignore its damage output has no reason to
+        // close, so neither gets the incentive.
+        boolean wantsToClose = (standoffDistance == 0) && !getOwner().getBehaviorSettings().isIgnoreDamageOutput();
+        double closeRangeIncentive = wantsToClose ? calculateCloseRangeIncentive(movingUnit, distToEnemy) : 0;
+        scores.put("closeRangeIncentive", closeRangeIncentive);
+
         // The further I am from my teammates, the lower this path
         // ranks (weighted by Herd Mentality).
         // Standoff artillery (whether holding at range or falling back when the enemy breaches its standoff) ignores the
@@ -1609,11 +1686,20 @@ public class BasicPathRanker extends PathRanker {
         Coords facingTarget = (standoffArtillery && (highValueClusterPosition != null))
               ? highValueClusterPosition
               : null;
+        // Square up exactly on the closest enemy (facing it dead-on rather than settling for any facing within
+        // the usual tolerance) when the unit both benefits from closing (closeRangeIncentive > 0) and can still
+        // deliver a point-blank physical attack this move (estimatedMeleeDamage > 0). The latter is true for any
+        // upright, mobile Mek, not only dedicated hatchet units - that breadth is deliberate ("damage peaks at
+        // close range"): a kick or hatchet cannot be thrown through a torso twist, and facing dead-on also keeps
+        // the strongest forward arc on the target it is charging (issue #7627).
+        boolean squareUpOnClosestEnemy = (facingTarget == null) && (closeRangeIncentive > 0)
+              && (estimatedMeleeDamage(movingUnit) > 0);
         double facingMod = calculateFacingMod(movingUnit,
               game,
               pathCopy,
               (facingTarget != null) ? facingTarget : medianEnemyPosition,
-              (facingTarget != null) ? facingTarget : closestEnemyPositionNotZeroDistance);
+              (facingTarget != null) ? facingTarget : closestEnemyPositionNotZeroDistance,
+              squareUpOnClosestEnemy);
         scores.put("finalFacing", (double) pathCopy.getFinalFacing());
         scores.put("facingDiff", facingMod / FACING_MOD_MULTIPLIER);
         scores.put("facingMod", facingMod);
@@ -1635,6 +1721,7 @@ public class BasicPathRanker extends PathRanker {
         double utility = -fallMod;
         utility += braveryMod;
         utility -= aggressionMod;
+        utility += closeRangeIncentive;
         utility -= herdingMod;
         utility += movementMod;
         utility -= crowdingTolerance;
@@ -1688,6 +1775,9 @@ public class BasicPathRanker extends PathRanker {
             formula.append("0 no friends");
         }
         formula.append("]");
+        if (closeRangeIncentive != 0.0) {
+            formula.append(" + closeRangeIncentive [").append(LOG_DECIMAL.format(closeRangeIncentive)).append("]");
+        }
         if (movementMod != 0.0) {
             formula.append(" + ").append(movementModFormula);
         }
@@ -2307,55 +2397,125 @@ public class BasicPathRanker extends PathRanker {
 
         // TODO: implement crush depth calcs (TO:AR pg. 40)
 
-        // Find the submerged locations.
-        Set<Integer> submergedLocations = new HashSet<>();
-        for (int loc = 0; loc < movingUnit.locations(); loc++) {
-            if (Mek.LOC_CENTER_LEG == loc && !(movingUnit instanceof TripodMek)) {
+        // Breach risk. A submerged location with no armor breaches automatically once it is underwater
+        // (TW p.65). Armored locations are treated as safe for a unit that is merely crossing (they would only
+        // breach on a hull-breach check if the fall's damage happened to hit them, which is negligible).
+        // Locations that submerge only when the unit is prone - notably the head and center torso in Depth 1
+        // water - drown it only if it falls, so that catastrophic risk is weighted by the chance of failing
+        // the water-entry piloting roll.
+        Set<Integer> submergedInCurrentPose = submergedLocations(movingUnit, hex, step.isProne());
+        Set<Integer> submergedWhileProne = submergedLocations(movingUnit, hex, true);
+
+        double hazardValue = 0;
+        // Certain breaches: unarmored locations already submerged in the unit's current pose.
+        for (int location : submergedInCurrentPose) {
+            if (movingUnit.getArmor(location) > 0) {
                 continue;
             }
-
-            if ((hex.depth() >= 2) || step.isProne() || !(movingUnit instanceof Mek)) {
-                submergedLocations.add(loc);
-                continue;
-            }
-
-            if (Mek.LOC_RIGHT_LEG == loc || Mek.LOC_LEFT_LEG == loc || Mek.LOC_CENTER_LEG == loc) {
-                submergedLocations.add(loc);
-                continue;
-            }
-
-            if ((movingUnit instanceof QuadMek) && (Mek.LOC_RIGHT_ARM == loc || Mek.LOC_LEFT_ARM == loc)) {
-                submergedLocations.add(loc);
-            }
-        }
-        logger.trace("Submerged locations: {}", submergedLocations);
-
-        int hazardValue = 0;
-        for (int loc : submergedLocations) {
-            // Only locations without armor can breach in the movement phase.
-            if (movingUnit.getArmor(loc) > 0) {
-                logger.trace("Location {} is not breached (0).", loc);
-                continue;
-            }
-
-            // Meks or ProtoMeks having a head or torso breach is deadly.
-            // For other units, any breach is deadly.
-            // noinspection ConstantConditions
-            if ((Mek.LOC_HEAD == loc) ||
-                  (Mek.LOC_CENTER_TORSO == loc) ||
-                  (ProtoMek.LOC_HEAD == loc) ||
-                  (ProtoMek.LOC_TORSO == loc) ||
-                  (!movingUnit.isMek() && !movingUnit.isProtoMek())) {
-                logger.trace("Location {} breached and critical (1000).", loc);
+            double breachWeight = breachConsequence(movingUnit, location);
+            if (breachWeight == UNIT_DESTRUCTION_FACTOR) {
+                logger.trace("Location {} breached and critical (destruction).", location);
                 return UNIT_DESTRUCTION_FACTOR;
             }
-
-            // Add 50 points per potential breach location.
-            logger.trace("Location {} breached (50).", loc);
-            hazardValue += 50;
+            hazardValue += breachWeight;
         }
 
+        // Fall-contingent breaches: unarmored locations that submerge only if the unit falls prone. Compute
+        // the fall probability lazily so a fully-armored unit never triggers it.
+        double fallProbability = -1;
+        for (int location : submergedWhileProne) {
+            if (submergedInCurrentPose.contains(location) || (movingUnit.getArmor(location) > 0)) {
+                continue;
+            }
+            double breachWeight = breachConsequence(movingUnit, location);
+            if (fallProbability < 0) {
+                fallProbability = waterEntryFallProbability(movingUnit, hex, movePath);
+            }
+            hazardValue += fallProbability * breachWeight;
+        }
+
+        logger.trace("Water breach hazard {}.", hazardValue);
         return hazardValue;
+    }
+
+    /**
+     * @param movingUnit the wading unit
+     * @param hex        the water hex
+     * @param prone      {@code true} to report the locations submerged when the unit is prone, {@code false}
+     *                   for its standing pose
+     *
+     * @return the set of location indices submerged for the given pose in this water hex
+     */
+    private static Set<Integer> submergedLocations(Entity movingUnit, Hex hex, boolean prone) {
+        Set<Integer> submerged = new HashSet<>();
+        for (int location = 0; location < movingUnit.locations(); location++) {
+            if ((Mek.LOC_CENTER_LEG == location) && !(movingUnit instanceof TripodMek)) {
+                continue;
+            }
+            if ((hex.depth() >= 2) || prone || !(movingUnit instanceof Mek)) {
+                submerged.add(location);
+                continue;
+            }
+            if ((Mek.LOC_RIGHT_LEG == location) || (Mek.LOC_LEFT_LEG == location)
+                  || (Mek.LOC_CENTER_LEG == location)) {
+                submerged.add(location);
+                continue;
+            }
+            if ((movingUnit instanceof QuadMek)
+                  && ((Mek.LOC_RIGHT_ARM == location) || (Mek.LOC_LEFT_ARM == location))) {
+                submerged.add(location);
+            }
+        }
+        return submerged;
+    }
+
+    /**
+     * @param movingUnit the wading unit
+     * @param location   the location index
+     *
+     * @return the hazard weight of breaching {@code location}: {@link #UNIT_DESTRUCTION_FACTOR} for a
+     *       life-critical breach (head or center torso on a Mek, head or torso on a ProtoMek, or any breach on
+     *       a non-Mek/ProtoMek, which drowns), otherwise a fixed per-location cost
+     */
+    private double breachConsequence(Entity movingUnit, int location) {
+        // The Mek and ProtoMek location numbering overlaps (e.g. Mek right torso and ProtoMek torso are both
+        // index 2), so the critical-location test must be chosen by the unit's actual type rather than testing
+        // all four constants against one index.
+        if (movingUnit.isProtoMek()) {
+            boolean isCriticalProtoMekLocation = (ProtoMek.LOC_HEAD == location) || (ProtoMek.LOC_TORSO == location);
+            return isCriticalProtoMekLocation ? UNIT_DESTRUCTION_FACTOR : 50;
+        }
+        if (movingUnit.isMek()) {
+            boolean isCriticalMekLocation = (Mek.LOC_HEAD == location) || (Mek.LOC_CENTER_TORSO == location);
+            return isCriticalMekLocation ? UNIT_DESTRUCTION_FACTOR : 50;
+        }
+        // Anything else that submerges a location while wading simply drowns.
+        return UNIT_DESTRUCTION_FACTOR;
+    }
+
+    /**
+     * @param movingUnit the wading unit
+     * @param hex        the water hex being entered
+     * @param movePath   the path being evaluated
+     *
+     * @return the probability (0.0 - 1.0) that {@code movingUnit} fails the water-entry piloting roll (and so
+     *       falls). Uses the RAW depth-based roll (TW p.49) so the estimate holds even where the engine's
+     *       elevation-gated check would skip the roll
+     */
+    private double waterEntryFallProbability(Entity movingUnit, Hex hex, MovePath movePath) {
+        // The RAW water-entry roll keys off the intended movement mode (walk/run/jump), not end-position
+        // legality; getLastStepMovementType() can report MOVE_ILLEGAL for a path that is illegal only at its
+        // end (e.g. a leveling candidate), which would skew the roll, so fall back to a plain walk in that case.
+        EntityMovementType movementType = movePath.getLastStepMovementType();
+        if (movementType == EntityMovementType.MOVE_ILLEGAL) {
+            movementType = EntityMovementType.MOVE_WALK;
+        }
+        PilotingRollData waterRoll = movingUnit.checkWaterMove(hex.depth(), movementType);
+        if (waterRoll.getValue() == TargetRoll.CHECK_FALSE) {
+            return 0.0;
+        }
+        boolean naturalAptPilot = movingUnit.hasAbility(OptionsConstants.PILOT_APTITUDE_PILOTING);
+        return 1.0 - (Compute.oddsAbove(waterRoll.getValue(), naturalAptPilot) / 100.0);
     }
 
     private double calcFireHazard(Entity movingUnit, boolean endHex) {

@@ -1,7 +1,7 @@
 /*
  * Copyright (C) 2000-2004 Ben Mazur (bmazur@sev.org)
  * Copyright (C) 2013 Edward Cullen (eddy@obsessedcomputers.co.uk)
- * Copyright (C) 2008-2025 The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2008-2026 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -45,7 +45,7 @@ import javax.swing.JComponent;
 
 import megamek.MMConstants;
 import megamek.client.ui.clientGUI.GUIPreferences;
-import megamek.client.ui.dialogs.unitDisplay.UnitDisplayPanel;
+import megamek.client.ui.widget.picmap.LocationSelectListener;
 import megamek.client.ui.widget.BackGroundDrawer;
 import megamek.client.ui.widget.SkinXMLHandler;
 import megamek.client.ui.widget.UnitDisplaySkinSpecification;
@@ -67,7 +67,7 @@ import megamek.common.util.fileUtils.MegaMekFile;
  */
 public class SpheroidMapSet implements DisplayMapSet {
 
-    private final UnitDisplayPanel unitDisplayPanel;
+    private final LocationSelectListener locationSelectListener;
 
     private final JComponent jComponent;
     private final PMSimplePolygonArea[] areas = new PMSimplePolygonArea[5];
@@ -106,8 +106,8 @@ public class SpheroidMapSet implements DisplayMapSet {
     private static final Font FONT_VALUE = new Font(MMConstants.FONT_SANS_SERIF, Font.PLAIN,
           GUIP.getUnitDisplayMekArmorLargeFontSize());
 
-    public SpheroidMapSet(JComponent c, UnitDisplayPanel unitDisplayPanel) {
-        this.unitDisplayPanel = unitDisplayPanel;
+    public SpheroidMapSet(JComponent c, LocationSelectListener locationSelectListener) {
+        this.locationSelectListener = locationSelectListener;
         jComponent = c;
         setAreas();
         setLabels();
@@ -205,11 +205,11 @@ public class SpheroidMapSet implements DisplayMapSet {
     }
 
     private void setAreas() {
-        areas[Aero.LOC_NOSE] = new PMSimplePolygonArea(noseArmor, unitDisplayPanel, Aero.LOC_NOSE);
-        areas[Aero.LOC_RIGHT_WING] = new PMSimplePolygonArea(rightWingArmor, unitDisplayPanel, Aero.LOC_RIGHT_WING);
-        areas[Aero.LOC_LEFT_WING] = new PMSimplePolygonArea(leftWingArmor, unitDisplayPanel, Aero.LOC_LEFT_WING);
-        areas[Aero.LOC_AFT] = new PMSimplePolygonArea(aftArmor, unitDisplayPanel, Aero.LOC_AFT);
-        areas[4] = new PMSimplePolygonArea(structure, unitDisplayPanel, Aero.LOC_NOSE);
+        areas[Aero.LOC_NOSE] = new PMSimplePolygonArea(noseArmor, locationSelectListener, Aero.LOC_NOSE);
+        areas[Aero.LOC_RIGHT_WING] = new PMSimplePolygonArea(rightWingArmor, locationSelectListener, Aero.LOC_RIGHT_WING);
+        areas[Aero.LOC_LEFT_WING] = new PMSimplePolygonArea(leftWingArmor, locationSelectListener, Aero.LOC_LEFT_WING);
+        areas[Aero.LOC_AFT] = new PMSimplePolygonArea(aftArmor, locationSelectListener, Aero.LOC_AFT);
+        areas[4] = new PMSimplePolygonArea(structure, locationSelectListener, Aero.LOC_NOSE);
     }
 
     private void setLabels() {

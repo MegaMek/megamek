@@ -68,8 +68,8 @@ public final class LobbyErrors {
           "A converted force must conform to the rules given in Interstellar Operations. Conversion " +
           "will typically work with companies created in the Force Generator.";
     private static final String NO_DUAL_TOW = "Both units must have an open appropriate tow hitch.";
-    private static final String EDIT_DAMAGE = "When a Game Master is present, only the Game Master may edit damage. "
-          + "Without a Game Master, you may edit damage only on your own units.";
+    private static final String EDIT_DAMAGE = "The Game Master edits the damage of every unit. "
+          + "When there is no Game Master, you may edit the damage of your own units.";
 
     public static void showOnlyOwnBot(JFrame owner) {
         JOptionPane.showMessageDialog(owner, ONLY_OWN_BOT);

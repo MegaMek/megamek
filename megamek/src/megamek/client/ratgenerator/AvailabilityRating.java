@@ -431,10 +431,30 @@ public class AvailabilityRating {
         return getFactionCode() + (hasMultipleRatings() ? "" : ":") + getAvailabilityCode();
     }
 
+    /**
+     * Creates a copy of this rating for another faction.
+     * <p>
+     * The copy is rebuilt from {@link #getAvailabilityCode()}, which does not carry the start year, so the year has to
+     * be reapplied by hand. Without this the copy would silently revert to the start of the era, and a unit gated to a
+     * later year would become available early.
+     * </p>
+     * <p>
+     * Note the copy does not carry {@link #ratingByNumericLevel}. Those indexes are resolved against a specific
+     * faction's equipment rating system, so a caller copying to a different faction must call
+     * {@link #setRatingByNumericLevel(FactionRecord)} with the new faction.
+     * </p>
+     *
+     * @param newFaction the faction code the copy is for
+     *
+     * @return the copy
+     */
     public AvailabilityRating makeCopy(String newFaction) {
-        return new AvailabilityRating(unitName,
+        AvailabilityRating copy = new AvailabilityRating(unitName,
               era,
               newFaction + (hasMultipleRatings() ? "" : ":") + getAvailabilityCode());
+        copy.setStartYear(startYear);
+
+        return copy;
     }
 
     public double getWeight() {

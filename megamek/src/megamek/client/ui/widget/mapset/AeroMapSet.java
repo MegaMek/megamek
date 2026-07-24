@@ -1,7 +1,7 @@
 /*
  * Copyright (C) 2000-2004 Ben Mazur (bmazur@sev.org)
  * Copyright (C) 2013 Edward Cullen (eddy@obsessedcomputers.co.uk)
- * Copyright (C) 2008-2025 The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2008-2026 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -41,12 +41,13 @@ import java.awt.Font;
 import java.awt.FontMetrics;
 import java.awt.Image;
 import java.awt.Polygon;
+import java.util.Set;
 import java.util.Vector;
 import javax.swing.JComponent;
 
 import megamek.MMConstants;
 import megamek.client.ui.clientGUI.GUIPreferences;
-import megamek.client.ui.dialogs.unitDisplay.UnitDisplayPanel;
+import megamek.client.ui.widget.picmap.LocationSelectListener;
 import megamek.client.ui.widget.BackGroundDrawer;
 import megamek.client.ui.widget.SkinXMLHandler;
 import megamek.client.ui.widget.UnitDisplaySkinSpecification;
@@ -75,7 +76,7 @@ public class AeroMapSet implements DisplayMapSet {
     private final Vector<BackGroundDrawer> bgDrawers = new Vector<>();
     private final PMAreasGroup content = new PMAreasGroup();
 
-    private final UnitDisplayPanel unitDisplayPanel;
+    private final LocationSelectListener locationSelectListener;
 
     // private static final int INT_STR_OFFSET = 4;
     // Polygons for all areas
@@ -105,8 +106,8 @@ public class AeroMapSet implements DisplayMapSet {
     private static final Font FONT_VALUE = new Font(MMConstants.FONT_SANS_SERIF, Font.PLAIN,
           GUIP.getUnitDisplayMekArmorLargeFontSize());
 
-    public AeroMapSet(JComponent c, UnitDisplayPanel unitDisplayPanel) {
-        this.unitDisplayPanel = unitDisplayPanel;
+    public AeroMapSet(JComponent c, LocationSelectListener locationSelectListener) {
+        this.locationSelectListener = locationSelectListener;
         jComponent = c;
         setAreas();
         setLabels();
@@ -210,11 +211,11 @@ public class AeroMapSet implements DisplayMapSet {
     }
 
     private void setAreas() {
-        areas[Aero.LOC_NOSE] = new PMSimplePolygonArea(noseArmor, unitDisplayPanel, Aero.LOC_NOSE);
-        areas[Aero.LOC_RIGHT_WING] = new PMSimplePolygonArea(rightWingArmor, unitDisplayPanel, Aero.LOC_RIGHT_WING);
-        areas[Aero.LOC_LEFT_WING] = new PMSimplePolygonArea(leftWingArmor, unitDisplayPanel, Aero.LOC_LEFT_WING);
-        areas[Aero.LOC_AFT] = new PMSimplePolygonArea(aftArmor, unitDisplayPanel, Aero.LOC_AFT);
-        areas[4] = new PMSimplePolygonArea(Structure, unitDisplayPanel, Aero.LOC_NOSE);
+        areas[Aero.LOC_NOSE] = new PMSimplePolygonArea(noseArmor, locationSelectListener, Aero.LOC_NOSE);
+        areas[Aero.LOC_RIGHT_WING] = new PMSimplePolygonArea(rightWingArmor, locationSelectListener, Aero.LOC_RIGHT_WING);
+        areas[Aero.LOC_LEFT_WING] = new PMSimplePolygonArea(leftWingArmor, locationSelectListener, Aero.LOC_LEFT_WING);
+        areas[Aero.LOC_AFT] = new PMSimplePolygonArea(aftArmor, locationSelectListener, Aero.LOC_AFT);
+        areas[4] = new PMSimplePolygonArea(Structure, locationSelectListener, Aero.LOC_NOSE);
     }
 
     private void setLabels() {
@@ -351,5 +352,31 @@ public class AeroMapSet implements DisplayMapSet {
         }
 
         return marks.toString();
+    }
+
+    @Override
+    public void setCriticalLocations(Set<Integer> criticalLocations) {
+        // setEntity is what colors the areas by damage, and it runs again on every redraw, so the stripes are
+        // cleared and reapplied here rather than left to accumulate.
+        for (PMSimplePolygonArea area : areas) {
+            if (area != null) {
+                area.setCriticalHatch(false);
+            }
+        }
+        for (PMValueLabel label : vLabels) {
+            if (label != null) {
+                label.setOutlined(false);
+            }
+        }
+        for (int location : criticalLocations) {
+            int area = location;
+            if ((area >= 0) && (area < areas.length) && (areas[area] != null)) {
+                areas[area].setCriticalHatch(true);
+            }
+            // the value sits on top of the stripes, so it is outlined to stay readable
+            if ((area >= 0) && (area < vLabels.length) && (vLabels[area] != null)) {
+                vLabels[area].setOutlined(true);
+            }
+        }
     }
 }

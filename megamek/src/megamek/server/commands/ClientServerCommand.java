@@ -108,6 +108,7 @@ public abstract class ClientServerCommand extends ServerCommand {
         try {
             var parsedArguments = new Arguments(parseArguments(args, defineArguments()));
             runCommand(connId, parsedArguments);
+            postRunCommand(connId);
         } catch (IllegalArgumentException e) {
             server.sendServerChat(connId, "Invalid arguments: " + e.getMessage() + "\nUsage: " + this.getHelp());
         } catch (Exception e) {
@@ -115,6 +116,16 @@ public abstract class ClientServerCommand extends ServerCommand {
                   "An error occurred while executing the command. Check the log for more information");
             logger.error(errorMsg, e);
         }
+    }
+
+    /**
+     * Runs after the command has run without an error, and not when its arguments failed to parse or it threw.
+     * Override for follow-up that belongs to every use of a command, such as announcing that it was used.
+     *
+     * @param connId the connection that ran the command
+     */
+    protected void postRunCommand(int connId) {
+        // Override to add post-run follow-up
     }
 
     // Method to parse arguments, to be implemented by the specific command class

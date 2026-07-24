@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2016-2025 The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2016-2026 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -1950,6 +1950,11 @@ public class ForceDescriptor {
             String parentName = getParent().getName().replaceAll(".*\\[", "").replaceAll("].*", "");
             retVal = retVal.replace("{name:parent}", parentName);
         }
+        // Parent tokens that could not be resolved above (the node is the root of the generated
+        // force, or its parent carries no name index) are dropped together with a directly attached
+        // "/" or "-" separator, so a template like "{cardinal:parent}/{alpha} Company" degrades to
+        // "A Company" for a bare company instead of "/A Company".
+        retVal = retVal.replaceAll("\\{[^}]*:parent}[/-]?", "");
         if (nameIndex < 0) {
             retVal = retVal.replaceAll("\\{.*?}\\s?", "");
         } else {

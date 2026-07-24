@@ -103,6 +103,53 @@ class ForceDescriptorTest {
     }
 
     @Test
+    void parseNameResolvesParentTokensThroughTheTree() {
+        ForceDescriptor regiment = new ForceDescriptor();
+        regiment.setName("Regiment");
+        ForceDescriptor battalion = new ForceDescriptor();
+        battalion.setName("{ordinal} Battalion");
+        ForceDescriptor company = new ForceDescriptor();
+        company.setName("{cardinal:parent}/{alpha} Company");
+        ForceDescriptor firstLance = new ForceDescriptor();
+        firstLance.setName("{alpha:parent}-{cardinal} Lance");
+        ForceDescriptor secondLance = new ForceDescriptor();
+        secondLance.setName("{alpha:parent}-{cardinal} Lance");
+
+        company.addSubForce(firstLance);
+        company.addSubForce(secondLance);
+        battalion.addSubForce(company);
+        regiment.addSubForce(battalion);
+        regiment.assignPositions();
+
+        assertEquals("First Battalion", battalion.parseName());
+        assertEquals("1/A Company", company.parseName());
+        assertEquals("A-1 Lance", firstLance.parseName());
+        assertEquals("A-2 Lance", secondLance.parseName());
+    }
+
+    /**
+     * A root node (or a child of an unnumbered parent) cannot resolve {@code :parent} tokens; the
+     * token must vanish together with its attached separator instead of leaving "/A Company".
+     */
+    @Test
+    void parseNameDropsUnresolvedParentTokensWithTheirSeparator() {
+        ForceDescriptor rootCompany = new ForceDescriptor();
+        rootCompany.setName("{cardinal:parent}/{alpha} Company");
+        assertEquals("Company", rootCompany.parseName(),
+              "a bare company keeps a clean name when generated as the root");
+
+        ForceDescriptor rootBattalion = new ForceDescriptor();
+        rootBattalion.setName("Battalion");
+        ForceDescriptor company = new ForceDescriptor();
+        company.setName("{cardinal:parent}/{alpha} Company");
+        rootBattalion.addSubForce(company);
+        rootBattalion.assignPositions();
+
+        assertEquals("A Company", company.parseName(),
+              "a company under an unnumbered root battalion drops only the parent token");
+    }
+
+    @Test
     void includedDefaultsToTrue() {
         assertTrue(new ForceDescriptor().isIncluded(), "a new descriptor should be included by default");
     }

@@ -1055,7 +1055,6 @@ public class ForceGeneratorOptionsView extends JPanel implements FocusListener, 
         if (tocNode != null) {
             ValueNode n = tocNode.findRatings(forceDesc);
             if (n != null && n.getContent() != null) {
-                cbRating.addItem(null);
                 for (String rating : n.getContent().split(",")) {
                     // Display every entry as "<Brief Description> (CODE)". Clan/RotS entries carry
                     // their display name in the data ("FL:Front Line"); bare letter codes (A-F,
@@ -1083,7 +1082,11 @@ public class ForceGeneratorOptionsView extends JPanel implements FocusListener, 
         Ruleset rs = Ruleset.findRuleset(forceDesc.getFaction());
         String rating = rs.getDefaultRating(forceDesc);
         if (rating == null && cbRating.getItemCount() > 0) {
+            // Every shipped ruleset with TOC ratings declares a default; falling back to the first
+            // entry keeps a data gap visible instead of leaving the picker and descriptor split.
             rating = cbRating.getItemAt(0);
+            logger.warn("Ruleset for {} offers ratings but declares no default; selecting {}",
+                  forceDesc.getFaction(), rating);
         }
         if (rating != null) {
             cbRating.setSelectedItem(rating);

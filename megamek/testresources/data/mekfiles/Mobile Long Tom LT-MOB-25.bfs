@@ -1,0 +1,27 @@
+uuid: "019f5efd-5a93-787d-97da-498515a8b986"
+linkedUnitId: "019f583e-e2d3-70be-af0d-5de4c64bcc99"
+chassis: "Mobile Long Tom Artillery"
+model: "LT-MOB-25"
+assetType: "Vehicle"
+cardTitle: "Mobile Long Tom"
+cardSubtitle: "LT-MOB-25"
+movement:
+  mp: 2
+  mode: "TRACKED"
+tmm: 0
+range:
+- -1
+- -1
+- -1
+skill:
+  standard: 8
+damage:
+  perHit: 0
+  hits: 0
+destroyCheck: 7
+threshold: 5
+cost:
+  standard: 66
+specials:
+- "Artillery (LT)"
+- "No Turret"

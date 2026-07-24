@@ -1,0 +1,31 @@
+uuid: "019f5efd-5a92-7832-a39b-88c90827517b"
+linkedUnitId: "019f583e-a1e8-772f-bcc1-d572636440eb"
+chassis: "Elemental Battle Armor"
+model: "[MG](Sqd5)"
+assetType: "BattleArmor"
+cardTitle: "Elemental"
+cardSubtitle: "Battle Armor"
+movement:
+  mp: 3
+  mode: "INF_JUMP"
+tmm: 2
+range:
+- 1
+- 2
+- 3
+skill:
+  standard: 5
+  veteran: 4
+damage:
+  perHit: 6
+  hits: 2
+destroyCheck: 9
+threshold: 5
+cost:
+  standard: 17
+  veteran: 20
+specials:
+- "Mechanized"
+- "Nimble"
+- "Spotter"
+- "Swarm"

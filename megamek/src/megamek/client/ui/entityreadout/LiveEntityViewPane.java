@@ -41,8 +41,10 @@ import megamek.client.ui.clientGUI.calculationReport.FlexibleCalculationReport;
 import megamek.client.ui.dialogs.unitSelectorDialogs.AvailabilityPanel;
 import megamek.client.ui.dialogs.unitSelectorDialogs.EntityReadoutPanel;
 import megamek.client.ui.panels.alphaStrike.ConfigurableASCardPanel;
+import megamek.client.ui.panels.battlefieldSupport.ConfigurableBFSCardPanel;
 import megamek.client.ui.util.ViewFormatting;
 import megamek.common.alphaStrike.conversion.ASConverter;
+import megamek.common.battlefieldSupport.BattlefieldSupportAsset;
 import megamek.common.game.Game;
 import megamek.common.templates.TROView;
 import megamek.common.ui.EnhancedTabbedPane;
@@ -56,6 +58,7 @@ class LiveEntityViewPane extends EnhancedTabbedPane {
     private final LiveEntityReadoutPanel readoutPanel;
     private final EntityReadoutPanel troPanel = new EntityReadoutPanel();
     private final ConfigurableASCardPanel alphaStrikeCardPanel;
+    private final ConfigurableBFSCardPanel bfsCardPanel = new ConfigurableBFSCardPanel();
     private final AvailabilityPanel factionPanel = new AvailabilityPanel();
     private boolean menuVisible = true;
 
@@ -87,10 +90,20 @@ class LiveEntityViewPane extends EnhancedTabbedPane {
 
         addTab(Messages.getString("Summary.title"), readoutPanel);
         addTab(Messages.getString("TRO.title"), troPanel);
-        addTab(Messages.getString("ASCard.title"), alphaStrikeCardPanel);
-        addTab(Messages.getString("FactionAvailability.title"), factionPanel.getPanel());
+        // An asset has no meaningful Alpha Strike card, so show its BFS card in that slot instead.
+        if (isAssetEntity()) {
+            addTab(Messages.getString("BFSCard.title"), bfsCardPanel);
+        } else {
+            addTab(Messages.getString("ASCard.title"), alphaStrikeCardPanel);
+            addTab(Messages.getString("FactionAvailability.title"), factionPanel.getPanel());
+        }
 
         updateDisplayedEntity();
+    }
+
+    /** @return true if the viewed entity is a Battlefield Support Asset (so the BFS card replaces the AS card). */
+    private boolean isAssetEntity() {
+        return game.getEntityFromAllSources(entityId) instanceof BattlefieldSupportAsset;
     }
 
     /**
@@ -102,11 +115,17 @@ class LiveEntityViewPane extends EnhancedTabbedPane {
             troPanel.reset();
             factionPanel.reset();
             alphaStrikeCardPanel.setASElement(null);
+            bfsCardPanel.setAsset(null);
         } else {
             troPanel.showEntity(entity, TROView.createView(entity, ViewFormatting.HTML));
-            factionPanel.setUnit(entity.getModel(), entity.getFullChassis());
-            if (ASConverter.canConvert(entity)) {
-                alphaStrikeCardPanel.setASElement(ASConverter.convert(entity, new FlexibleCalculationReport()));
+            if (entity instanceof BattlefieldSupportAsset asset) {
+                factionPanel.reset();
+                bfsCardPanel.setAsset(asset);
+            } else {
+                factionPanel.setUnit(entity.getModel(), entity.getFullChassis());
+                if (ASConverter.canConvert(entity)) {
+                    alphaStrikeCardPanel.setASElement(ASConverter.convert(entity, new FlexibleCalculationReport()));
+                }
             }
         }
     }
@@ -115,6 +134,7 @@ class LiveEntityViewPane extends EnhancedTabbedPane {
         menuVisible = !menuVisible;
         readoutPanel.toggleMenu(menuVisible);
         alphaStrikeCardPanel.toggleMenu(menuVisible);
+        bfsCardPanel.toggleMenu(menuVisible);
     }
 
     @Override

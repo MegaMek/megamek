@@ -54,6 +54,7 @@ import megamek.client.ui.dialogs.UnitLoadingDialog;
 import megamek.common.Player;
 import megamek.common.TechConstants;
 import megamek.common.annotations.Nullable;
+import megamek.common.battlefieldSupport.BattlefieldSupportAsset;
 import megamek.common.enums.Gender;
 import megamek.common.loaders.MekSummaryCache;
 import megamek.common.options.OptionsConstants;
@@ -70,6 +71,7 @@ public class MegaMekUnitSelectorDialog extends AbstractUnitSelectorDialog {
     //region Variable Declarations
     private final ClientGUI clientGUI;
     private final JComboBox<String> comboPlayer = new JComboBox<>();
+    private JButton buttonSelectAsset;
     //endregion Variable Declarations
 
     public MegaMekUnitSelectorDialog(ClientGUI clientGUI, UnitLoadingDialog unitLoadingDialog) {
@@ -98,13 +100,19 @@ public class MegaMekUnitSelectorDialog extends AbstractUnitSelectorDialog {
         GridBagConstraints gbc = new GridBagConstraints();
         JPanel panelButtons = new JPanel(new GridBagLayout());
 
-        buttonSelect = new JButton(Messages.getString("MekSelectorDialog.m_bPick"));
+        buttonSelect = new JButton(Messages.getString("MekSelectorDialog.SelectAsUnit"));
+        buttonSelect.setToolTipText(Messages.getString("MekSelectorDialog.SelectAsUnit.ToolTip"));
         buttonSelect.addActionListener(this);
         panelButtons.add(buttonSelect, gbc);
 
         buttonSelectClose = new JButton(Messages.getString("MekSelectorDialog.m_bPickClose"));
         buttonSelectClose.addActionListener(this);
         panelButtons.add(buttonSelectClose, gbc);
+
+        buttonSelectAsset = new JButton(Messages.getString("MekSelectorDialog.SelectAsAsset"));
+        buttonSelectAsset.setToolTipText(Messages.getString("MekSelectorDialog.SelectAsAsset.ToolTip"));
+        buttonSelectAsset.addActionListener(e -> selectAsAsset());
+        panelButtons.add(buttonSelectAsset, gbc);
 
         buttonClose = new JButton(Messages.getString("Close"));
         buttonClose.addActionListener(this);
@@ -125,35 +133,51 @@ public class MegaMekUnitSelectorDialog extends AbstractUnitSelectorDialog {
 
     @Override
     protected void select(boolean close) {
-        ArrayList<Entity> entities = getSelectedEntities();
-        if (!entities.isEmpty()) {
-            Client client = null;
-            String name = (String) comboPlayer.getSelectedItem();
-
-            if (comboPlayer.getSelectedIndex() > 0) {
-                client = (Client) clientGUI.getLocalBots().get(name);
-            }
-
-            if (client == null) {
-                client = clientGUI.getClient();
-            }
-
-
-            for (var e : entities) {
-                autoSetSkillsAndName(e, client.getLocalPlayer());
-                e.setOwner(client.getLocalPlayer());
-            }
-            client.sendAddEntity(entities);
-
-            String msg = clientGUI.getClient().getLocalPlayer() + " selected " + (entities.size() == 1 ?
-                  "a unit" :
-                  entities.size() + " units") + " for player: " + name;
-            clientGUI.getClient().sendServerChat(Player.PLAYER_NONE, msg);
-        }
-
+        addToGame(getSelectedEntities());
         if (close) {
             setVisible(false);
         }
+    }
+
+    /**
+     * Adds the Battlefield Support Asset form of the current selection to the game (the "Select as Asset" action). Every
+     * selected row that has an asset form contributes its asset; the dialog stays open so more can be added.
+     */
+    private void selectAsAsset() {
+        addToGame(getSelectedAssetEntities());
+    }
+
+    /**
+     * Adds the given entities to the game for the player currently chosen in the player combo, setting their owner and
+     * (for non-asset units) auto-generating skills/names, then announcing the addition in chat.
+     *
+     * @param entities the entities to add (may be empty, in which case nothing happens)
+     */
+    private void addToGame(ArrayList<Entity> entities) {
+        if (entities.isEmpty()) {
+            return;
+        }
+        Client client = null;
+        String name = (String) comboPlayer.getSelectedItem();
+
+        if (comboPlayer.getSelectedIndex() > 0) {
+            client = (Client) clientGUI.getLocalBots().get(name);
+        }
+
+        if (client == null) {
+            client = clientGUI.getClient();
+        }
+
+        for (var e : entities) {
+            autoSetSkillsAndName(e, client.getLocalPlayer());
+            e.setOwner(client.getLocalPlayer());
+        }
+        client.sendAddEntity(entities);
+
+        String msg = clientGUI.getClient().getLocalPlayer() + " selected " + (entities.size() == 1 ?
+              "a unit" :
+              entities.size() + " units") + " for player: " + name;
+        clientGUI.getClient().sendServerChat(Player.PLAYER_NONE, msg);
     }
 
     private void autoSetSkillsAndName(Entity e, Player player) {
@@ -161,7 +185,17 @@ public class MegaMekUnitSelectorDialog extends AbstractUnitSelectorDialog {
 
         Arrays.fill(e.getCrew().getClanPilots(), e.isClan());
         if (cs.useAverageSkills()) {
-            clientGUI.getClient().getSkillGenerator().setRandomSkills(e);
+            if (e instanceof BattlefieldSupportAsset asset) {
+                // Assets have only two crew grades (Regular/Veteran), carried by the crew Gunnery. Their grade is a
+                // constant taken from the player's skill-rolling method LEVEL - not a dice roll - with Veteran-and-above
+                // giving a Veteran asset and everything below giving Regular. Only assets that define a Veteran variant
+                // can be Veteran.
+                boolean veteran = clientGUI.getClient().getSkillGenerator().getLevel().isVeteranOrGreater()
+                      && asset.hasVeteranProfile();
+                asset.setVeteranCrew(veteran);
+            } else {
+                clientGUI.getClient().getSkillGenerator().setRandomSkills(e);
+            }
         }
 
         for (int i = 0; i < e.getCrew().getSlotCount(); i++) {
@@ -225,7 +259,26 @@ public class MegaMekUnitSelectorDialog extends AbstractUnitSelectorDialog {
         if (selectedEntity != null) {
             clientGUI.loadPreviewImage(labelImage, selectedEntity);
         }
+        updateSelectButtons();
         return selectedEntity;
+    }
+
+    /**
+     * Enables the add buttons for the current selection: "Select as Unit"/"Select &amp; Close" require every selected
+     * row to have a standard (TW) unit form (no standalone asset); "Select as Asset" requires every selected row to have
+     * an asset form.
+     */
+    private void updateSelectButtons() {
+        boolean canSelectAsUnit = selectionCanSelectAsUnit();
+        if (buttonSelect != null) {
+            buttonSelect.setEnabled(canSelectAsUnit);
+        }
+        if (buttonSelectClose != null) {
+            buttonSelectClose.setEnabled(canSelectAsUnit);
+        }
+        if (buttonSelectAsset != null) {
+            buttonSelectAsset.setEnabled(selectionCanSelectAsAsset());
+        }
     }
 
     @Override

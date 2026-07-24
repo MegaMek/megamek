@@ -59,6 +59,7 @@ import megamek.common.CriticalSlot;
 import megamek.common.Messages;
 import megamek.common.annotations.Nullable;
 import megamek.common.battleArmor.BattleArmor;
+import megamek.common.battlefieldSupport.BattlefieldSupportAsset;
 import megamek.common.bays.Bay;
 import megamek.common.equipment.AmmoType;
 import megamek.common.equipment.EquipmentType;
@@ -95,7 +96,9 @@ public class TROView {
 
     public static TROView createView(Entity entity, ViewFormatting formatting) {
         TROView view;
-        if (entity.hasETypeFlag(Entity.ETYPE_MEK)) {
+        if (entity instanceof BattlefieldSupportAsset asset) {
+            view = new BattlefieldSupportAssetTROView(asset);
+        } else if (entity.hasETypeFlag(Entity.ETYPE_MEK)) {
             view = new MekTROView((Mek) entity);
         } else if (entity.hasETypeFlag(Entity.ETYPE_PROTOMEK)) {
             view = new ProtoMekTROView((ProtoMek) entity);

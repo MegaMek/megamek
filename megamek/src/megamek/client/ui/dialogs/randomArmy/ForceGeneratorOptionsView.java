@@ -65,6 +65,7 @@ import megamek.client.ui.Messages;
 import megamek.client.ui.util.UIUtil;
 import megamek.codeUtilities.MathUtility;
 import megamek.common.Player;
+import megamek.common.annotations.Nullable;
 import megamek.common.battleArmor.BattleArmor;
 import megamek.common.game.Game;
 import megamek.common.options.GameOptions;
@@ -1056,14 +1057,23 @@ public class ForceGeneratorOptionsView extends JPanel implements FocusListener, 
             if (n != null && n.getContent() != null) {
                 cbRating.addItem(null);
                 for (String rating : n.getContent().split(",")) {
+                    // Display every entry as "<Brief Description> (CODE)". Clan/RotS entries carry
+                    // their display name in the data ("FL:Front Line"); bare letter codes (A-F,
+                    // Keshik) get theirs from the ForceGeneratorDialog.rating.* message keys. A code
+                    // with no description anywhere falls back to the raw code.
+                    final String code;
+                    String description;
                     if (rating.contains(":")) {
                         String[] fields = rating.split(":");
-                        cbRating.addItem(fields[0]);
-                        ratingDisplayNames.put(fields[0], fields[1]);
+                        code = fields[0];
+                        description = fields[1];
                     } else {
-                        cbRating.addItem(rating);
-                        ratingDisplayNames.put(rating, rating);
+                        code = rating;
+                        description = ratingDescription(code);
                     }
+                    cbRating.addItem(code);
+                    ratingDisplayNames.put(code,
+                          (description == null) ? code : description + " (" + code + ")");
                 }
             } else {
                 logger.warn("No rating found.");
@@ -1081,6 +1091,21 @@ public class ForceGeneratorOptionsView extends JPanel implements FocusListener, 
         }
         refreshFlags();
         cbRating.addActionListener(this);
+    }
+
+    /**
+     * The brief description for a bare rating code (for example {@code C} - "Standard"), read from
+     * the {@code ForceGeneratorDialog.rating.<code>} message keys so it localizes with the rest of
+     * the dialog.
+     *
+     * @param code the rating code as it appears in the ruleset TOC
+     *
+     * @return the description, or {@code null} when no key is defined for the code
+     */
+    private static @Nullable String ratingDescription(String code) {
+        String text = Messages.getString("ForceGeneratorDialog.rating." + code);
+        // Messages.getString returns !key! when the key is missing.
+        return text.startsWith("!") ? null : text;
     }
 
     private void refreshFlags() {

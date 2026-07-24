@@ -7,7 +7,7 @@ Usage
 The RAT Generator is available as a tab in the Random Army dialog, accessed by the "Create Random Army..." button in MegaMek. Set the parameters for the type of units you wish to generate and click the "Generate" button. You can then use the "Roll" button in the panel on the right to select units at random from the table, at which point they can be reviewed and added to the player's force. You can also select a row on the generated table and add it directly to the force by selecting the "Add to Force" button. If no table appears, there are no units available to the selected faction that meet the criteria.
 
 Description of Controls
-Year: The game year for which to generate units. The initial value is filled in from the game options, but can be changed here without having to go back to the game options dialog and without changing the value set in the game options. This can be any value between 2398 and 3150.
+Year: The game year for which to generate units. The initial value is filled in from the game options, but can be changed here without having to go back to the game options dialog and without changing the value set in the game options. This can be any value between 2398 and 3160 (the bounds are EARLIEST_YEAR and LATEST_YEAR in ForceGenerationOptionsPanel, and match the range of era files present in data/forcegenerator).
 
 Units: How many units to generate from the table when the "Roll" button is clicked.
 
@@ -17,7 +17,7 @@ Show Minor Factions: Some very small factions do not show up in the list by defa
 
 Command: For major factions you have the option of selecting a specific command within that faction's military. Most factions also have the option of planetary militia, which generates a force poorer in quality than the lowest rating for standard military. For the mercenary faction this is called security forces. Setting a specific command affects equipment quality and can also affect availability of certain variants which the TRO states are more common, less common, or exclusive to that command.
 
-Unit Type: The RAT generator currently has data for all unit types supported by MegaMek except gun turrets and space stations. Players wishing to mix ground vehicles and VTOLs into a single table as in traditional RATs can do so by selecting Tank as the unit type and selecting VTOL as an allowable motive type.
+Unit Type: The RAT generator has data for most unit types supported by MegaMek, including space stations and the advanced buildings that the old gun emplacements were migrated to. Players wishing to mix ground vehicles and VTOLs into a single table as in traditional RATs can do so by selecting Tank as the unit type and selecting VTOL as an allowable motive type.
 
 Rating: Most Inner Sphere and Periphery forces can select a rating level A-F, with A being the best equipment and F being the poorest. Options for Clan factions extend beyond Keshik, FL, and SL in canon RATs to include separate ratings for Solahma and Provisional Garrison forces. Ratings are only available for the general faction. If a specific command is chosen, it is used to determine equipment quality that conforms more closely to what is shown in the Field Manual series than the general rating does.
 
@@ -37,11 +37,12 @@ Add to Force: Though intended for random generation, the RAT Generator can also 
 
 Implementation Details - Overview
 (Note: the availability code mechanic is based on the RAT work of BT community member Xotl, but the implementation has some significant changes.)
-The core of the generation system is the availability rating. This is at a minimum a value in the range 1-10 that indicates how likely it is to find that unit in a given faction's military in a given year:
-1-2: Very rare
+The core of the generation system is the availability rating. This is at a minimum a value in the range 1-10 that indicates how likely it is to find that unit in a given faction's military in a given year. These are the labels the UI displays for each value (AvailabilityRating.getAvailabilityText):
+0: - (not available)
+1-2: Very Rare
 3-4: Rare
-5-6: Common
-7-8: Very Common
+5-6: Uncommon
+7-8: Common
 9-10: Ubiquitous
 
 The context for the availability is other units of the same general type: a very common assault Mek is more likely than a common one, but may be less common overall than a rare medium Mek.
@@ -57,35 +58,52 @@ Factions are arranged in a hierarchy. Availability is determined by checking for
 Besides unit availability, the faction also determines the approximate percentage of SL/Upgraded, Clan, and omni technology in certain eras. For IS factions this begins with the reintroduction of lostech beginning just before the Clan invasion. For Clans this begins with the first introduction of new Clan technology. For general forces (no specific command chosen), the ratios depend on the equipment rating. Specific commands have their own ratios. These numbers are taken from the field manuals.
 
 Implementation Details - File Format
-The data used for the RAT generator is in the data/forcegenerator directory in the MegaMek distribution. All are xml files. A graphic editing tool is available by running MegaMek from the command line with the argument "-editratgen" but a working knowledge of the file format is strongly recommended when using it. The graphical editor allows selecting an alternate directory for loading and saving the data files. Custom files can also be installed in "userdata/data/forcegenerator" and this will take precedence over the distribution files without having to replace them.
+The era data used for the RAT generator is in the data/forcegenerator directory (Configuration.forceGeneratorDir(); the whole data directory can be relocated with the -data_dir command line argument). All are xml files. A graphic editing tool is available by running MegaMek from the command line with the argument "-edit_rat_gen" but a working knowledge of the file format is strongly recommended when using it. The graphical editor allows selecting an alternate directory for loading and saving the data files, passed as the first argument after the flag.
 
-factions.xml:
-This file holds faction data that is not tied to a specific year. There is one node for each faction; subcommands are considered factions. Here is the entry for Clan Ghost Bear for reference:
+There is no longer a "userdata/data/forcegenerator" override. To add your own units to force generation without editing canon data, declare the availability inside the unit's own .mtf or .blk file; see custom-unit-availability.txt in this folder. Canon data always wins over unit-file availability, so this cannot change how canon forces generate.
 
-	<faction key='CGB' name='Clan Ghost Bear' minor='false' clan='true' periphery='false'>
-		<nameChange year='3060'>Ghost Bear Dominion</nameChange>
-		<years>2807-3103</years>
-		<ratingLevels>Provisional Garrison,Solahma,Second Line,Front Line,Keshik</ratingLevels>
-		<parentFaction>CLAN.IS</parentFaction>
-	</faction>
+Faction data (data/universe/factions and data/universe/commands):
+Faction data that is not tied to a specific year no longer lives in the RAT generator's own factions.xml. It comes from the unified faction list shared with MekHQ: one YAML file per faction in data/universe/factions, plus one per subcommand in data/universe/commands. RATGenerator.loadFactions() builds its FactionRecords from that list (via Factions2), then drops any faction whose rating level system resolves empty, since those cannot produce units.
 
-'key' attribute: a code that uniquely identifies this faction. For MekHQ interoperability, any factions appearing in both should have the same key. Though not necessary for functionality, subcommands should have the form "parentKey.commandKey" for clarity. For example, the Sword of Light is DC.SL.
+NOTE: a file named data/forcegenerator/factions.xml may still be present. It is legacy and is not read by any code path. Editing it has no effect.
 
-'name' attribute: the official name of the faction. For factions that have a name change, the earliest name goes here.
+Here are the relevant fields, from the entry for Clan Ghost Bear (data/universe/factions/CGB.yml):
 
-'minor' attribute: if true, this faction is not shown in the Faction combobox by default.
+	key: CGB
+	name: Clan Ghost Bear
+	nameChanges:
+	  3060: Ghost Bear Dominion
+	yearsActive:
+	  - start: 2807
+	    end: 3103
+	tags:
+	  - PLAYABLE
+	  - MAJOR
+	  - CLAN
+	ratingLevels:
+	  - Provisional Garrison
+	  - Solahma
+	  - Second Line
+	  - Front Line
+	  - Keshik
+	fallBackFactions:
+	  - CLAN.IS
 
-'clan' attribute: true if this faction is considered Clan. This is a technological distinction, so abjured Clans would be marked true. This is used to determine whether meeting the percentage of Clan equipment indicated for the faction and rating should involve adjusting amount of salvage from Clan sources.
+'key': a code that uniquely identifies this faction, and the value used in availability codes. Because the list is shared with MekHQ the keys are the same in both. Though not necessary for functionality, subcommands should have the form "parentKey.commandKey" for clarity. For example, the Sword of Light is DC.SL.
 
-'periphery' attribute: true if this is a periphery faction.
+'name': the official name of the faction. For factions that have a name change, the earliest name goes here.
 
-'nameChange' node (optional): if the name of the faction changes at some point, the year of the change goes in the 'year' attribute and the text content is the new name. This element can be repeated for factions that change names multiple times (such as Clan Sea Fox -> Clan Diamond Shark -> Clan Sea Fox).
+'tags': replaces the old minor/clan/periphery attributes. MINOR marks a faction that is not shown in the Faction combobox by default. CLAN marks a faction as Clan for technology purposes, so abjured Clans are still tagged CLAN; this determines whether meeting the percentage of Clan equipment indicated for the faction and rating should involve adjusting the amount of salvage from Clan sources. PERIPHERY marks a periphery faction.
 
-'years': the range of years this faction is active. A faction is in existence in the current universe timeline, the end date can be left off. Most pseudo-factions used as categories (e.g. IS or Periphery) have neither start or end and are represented as '-'. A faction that disappears and is later reappears can have multiple ranges separated by commas (no spaces). Duchy of Andurien: <years>3030-3040,3079-</years>
+'nameChanges' (optional): a map of year to new name, for factions whose name changes. It can hold several entries for factions that change names multiple times (such as Clan Sea Fox -> Clan Diamond Shark -> Clan Sea Fox).
 
-'ratingLevels': a comma-separated list of all ratings available to this faction, from lowest to highest. These are the values that will appear in the ratings combobox. If empty or missing, the faction will inherit the same system as the parent. If exactly one value is given, it is treated as a special case. It is not shown in the ratings combobox, and its position in the parent faction's ratings is used in calculating any availability adjustments due to rating (+/- in the av code). This is used to set the rating of subcommands.
+'yearsActive': the range(s) of years this faction is active. If the faction exists in the current universe timeline the end can be left off. Most pseudo-factions used as categories (e.g. IS or Periphery) have neither start nor end. A faction that disappears and later reappears can have several ranges.
 
-'parentFaction': the faction key of any parent faction(s). If there is more than one, they are separated by commas. If none is given, 'General' is implied.
+'ratingLevels': all ratings available to this faction, from lowest to highest. These are the values that will appear in the ratings combobox. If empty or missing, the faction inherits the parent's system (FactionRecord.getRatingLevelSystem walks fallBackFactions). If exactly one value is given, it is treated as a special case: it is not shown in the ratings combobox, and its position in the parent faction's ratings is used in calculating any availability adjustments due to rating (+/- in the av code). This is used to set the rating of subcommands. A faction whose rating system resolves to nothing at all is dropped from the RAT generator entirely.
+
+'fallBackFactions': the faction key of any parent faction(s). This is what the old 'parentFaction' element became. If none is given, 'General' is implied.
+
+'aliases' (optional): a map of year to a retired faction code that this faction absorbed, so availability codes written against the old code still resolve. For example CGS.yml carries "3080: CEI" and "3141: SE" after the Escorpion Imperio and Scorpion Empire were consolidated into Clan Goliath Scorpion. Note that this alias map is applied by RATGenerator.getFaction(), which is used for availability lookups, but NOT by the era-file <faction> node loader, which matches on the canonical key only.
 
 Year data files
 Data specific to given years is stored in files named with the four-digit year followed by .xml. These years are chosen as some of the most significant in the timeline. In periods of rapid technological change the years are closer together, sometimes only a few years apart. When generating a table for a year between those provided, the values are interpolated.
@@ -105,20 +123,22 @@ Example of faction node (Republic of the Sphere, 3100):
 		<salvage pct='6'>CC:9,LA:10,MSC:3,FS:10,DC:6,</salvage>
 		<weightDistribution era='3100' unitType='Mek'>3,4,2,1</weightDistribution>
 		<weightDistribution era='3100' unitType='Tank'>3,4,3,1</weightDistribution>
-		<weightDistribution era='3100' unitType='Aero'>1,1,1</weightDistribution>
+		<weightDistribution era='3100' unitType='AeroSpaceFighter'>1,1,1</weightDistribution>
 	</faction>
 
-'key' attribute: must match a faction key in factions.xml.
+'key' attribute: must match a faction key in data/universe/factions or data/universe/commands. This lookup is by canonical key only and does NOT resolve the alias map, so a node keyed to a retired code is discarded with an error logged to megamek.log ("Faction X not found in ..."). If a faction has been consolidated into another, retag its era nodes to the surviving key.
 
-'pctOmni' element: the target percentage of OmniMeks and OmniFighters in the generated table. There should be one value for each of the faction's available rating levels, from lowest to highest. An alternate value can be provided for OmniFighters by adding the "type='aero'" attribute. Raven Alliance example:
-    <pctOmni unitType='Aero'>0,0,15,90,100</pctOmni>
+'pctOmni' element: the target percentage of OmniMeks and OmniFighters in the generated table. There should be one value for each of the faction's available rating levels, from lowest to highest. An alternate value can be provided for OmniFighters by adding the attribute unitType='AeroSpaceFighter'. Raven Alliance example:
+    <pctOmni unitType='AeroSpaceFighter'>0,0,15,90,100</pctOmni>
 OmniVehicles are uncommon enough to rely on faction availability to set their values.
 
-'pctClan' element: the target percentage of Clan equipment in the generated table. Alternate values can be provided by adding either "type='Aero'" or "type='Vehicle'".
+'pctClan' element: the target percentage of Clan equipment in the generated table. Alternate values can be provided by adding either unitType='AeroSpaceFighter' or unitType='Vehicle'.
 Hell's Horses example:
 		<pctClan unitType='Vehicle'>10,10,40,50,60</pctClan>
 
 'pctSL' element: the target percentage of Star League or upgraded IS equipment. Alternate values can be provided for ASFs or vehicles as with pctClan.
+
+NOTE on the qualifier: the attribute is 'unitType' (not 'type'), and only the exact values 'AeroSpaceFighter' and 'Vehicle' are recognised, matched case-insensitively (FactionRecord.loadEra). Any other value, including 'Aero', silently falls through to the general category.
 
 'omniMargin' element: amount of tolerance for pctOmni value.
 
@@ -128,7 +148,7 @@ Hell's Horses example:
 
 'salvage' element: the 'pct' attribute indicates what percentage of the generated table should be taken up by the salvage section. This is normally 5% for IS factions during times of relative peace, going up to 6-7% in times of more intense war. Pirates and bandit kingdoms are somewhat higher. For Clan factions it normally stays at 10%, though Clans Wolf and Jade Falcon go up to 20% in the latter have of the 3050s due to the Harvest Trials and level out. The text content is a comma-separated list of factions and proportions in the format FKEY:WT. Example: if the text content is "LA:1,FS:2" the salvage section will be split between the Lyran Alliance/Commonwealth and the Federated Suns, with FedSuns salvage twice as likely.
 
-'weightDistribution' element: determines the proportion of weight classes when generating a mixed weight table. Values are listed from lowest to highest. Ultra-lights and superheavies are so rare that they are grouped with light and assault, respectively. If not given, this value is inherited from the parent faction(s). The nodes shown in this example were copied from the generic IS node for purposes of illustration.
+'weightDistribution' element: determines the proportion of weight classes when generating a mixed weight table. Values are listed from lowest to highest. Ultra-lights and superheavies are so rare that they are grouped with light and assault, respectively. If not given, this value is inherited from the parent faction(s). The 'unitType' attribute takes any of the unit type names listed below; use 'AeroSpaceFighter' for fighters, not 'Aero'. The nodes shown in this example were copied from the generic IS node for purposes of illustration.
 
 The units section has a chassis element for each unit available in that year. Variants are listed inside the chassis node.
 
@@ -152,7 +172,7 @@ Example: Shadow Cat from 3055
 
 'name' attribute: the chassis name as used by MegaMek
 
-'unitType' attribute: Can be one of the following values:
+'unitType' attribute: Can be one of the following values (the full set accepted by AbstractUnitRecord.parseUnitType; anything else is rejected):
 Mek
 Tank
 BattleArmor
@@ -160,15 +180,22 @@ Infantry
 ProtoMek
 VTOL
 Naval
+Gun Emplacement
 Conventional Fighter
 AeroSpaceFighter
+Aero
 Small Craft
 Dropship
 Jumpship
 Warship
 Space Station
+Handheld Weapon
+Mobile Structure
+Advanced Building
 
 This is required to distinguish between different unit types that have the same name, such as Centurion or Eagle (both of which can apply to either a Mek or an ASF).
+
+'Advanced Building' covers the BuildingEntity unit type, which is what the migrated gun emplacements use; a unit file declaring <UnitType>BuildingEntity</UnitType> is an Advanced Building, not a Gun Emplacement. 'Aero' is the non-differentiated aerospace type used for escape pods and lifeboats.
 
 'omni' attribute: can be either 'Clan' or 'IS'. For non-omnis it is absent. Needed to distinguish between omni and fixed-configuration variants, since omnis taken as salvage/isorla use the operating faction to determine which configuration is used. Clan and IS must be stated to distinguish between the Clan Battle Cobra and the ComStar copy.
 
@@ -183,25 +210,29 @@ This is required to distinguish between different unit types that have the same 
 
     'name' attribute: the name of the variant/model. The full unit name is chassis name + model name, separated by a space.
 
-    'role' element: comma-separated list of roles the variant was designed for, or nothing for general use. Supported values are:
+    'role' element: comma-separated list of roles the variant was designed for, or nothing for general use. Role names are matched case-insensitively and underscores are interchangeable with spaces, so "fire_support" and "fire support" are the same role (MissionRole.parseRole). An unrecognised role name is an error and the role is dropped. The "Unit types" line for each role below is the authoritative list from MissionRole.fitsUnitType. Supported values are:
 
         fire_support
         Use: combat unit with long range weapons
-        Unit types: Mek, Tank, BattleArmor, Infantry, ProtoMek, VTOL, Naval
+        Unit types: Mek, Tank, BattleArmor, Infantry, ProtoMek, VTOL, Naval, Gun Emplacement,
+                    Advanced Building, Handheld Weapon
         Notes: may also be applied to units with quirks such as Improved Targeting (Long)
 
         sr_fire_support
         Use: combat unit with short range weapons
-        Unit types: Mek, Tank, BattleArmor, Infantry, ProtoMek, VTOL, Naval
+        Unit types: Mek, Tank, BattleArmor, Infantry, ProtoMek, VTOL, Naval, Gun Emplacement,
+                    Advanced Building, Handheld Weapon
         Notes: may also be applied to units with quirks such as Improved Targeting (Short)
 
         ew_support
         Use: combat unit with ECM, active probe, or other electronic warfare equipment
-        Unit types: Mek, Tank, ProtoMek, VTOL, Naval, Small Craft
+        Unit types: Mek, Tank, ProtoMek, VTOL, Naval, Gun Emplacement, Small Craft,
+                    Advanced Building, Handheld Weapon
 
         spotter - carries TAG or equivalent, such as C3 master
         Use: combat unit with TAG, or suitable for spotting for indirect fire
-        Unit types: Mek, Tank, BattleArmor, Infantry, ProtoMek, VTOL, Naval, ConventionalFighter
+        Unit types: Mek, Tank, BattleArmor, Infantry, ProtoMek, VTOL, Naval, Gun Emplacement,
+                    ConventionalFighter, AeroSpaceFighter, Advanced Building, Handheld Weapon
 
         incendiary
         Use: combat unit with weapons that can easily start fires
@@ -209,27 +240,28 @@ This is required to distinguish between different unit types that have the same 
 
         artillery
         Use: combat support unit with non-missile artillery, and infantry with field artillery
-        Unit types: Mek, Tank, BattleArmor, Infantry, VTOL, Naval, ConventionalFighter, Small Craft, Dropship
+        Unit types: Mek, Tank, BattleArmor, Infantry, VTOL, Naval, Gun Emplacement, ConventionalFighter,
+                    Small Craft, Dropship, Advanced Building, Mobile Structure
         Notes: when this is the only role, the unit is only generated when the ARTILLERY role is specifically
-                called for.
+                called for. ProtoMeks cannot carry any existing artillery weapon and are excluded.
 
         missile_artillery
         Use: combat support unit with missile artillery, frequently loaded with homing rounds
-        Unit Types: Mek, Tank, BattleArmor, Infantry, VTOL, Naval, ConventionalFighter, Small Craft, Dropship
+        Unit Types: as artillery
         Notes: when this is the only role, the unit is only generated when the ARTILLERY or MISSILE_ARTILLERY
                 roles are specifically used.
 
         mixed_artillery
         Use: combat unit with either tube or missile artillery
-        Unit types: Mek, Tank, BattleArmor, Infantry, VTOL, Naval, ConventionalFighter, Small Craft, Dropship
+        Unit types: as artillery
         Notes: use in place of artillery or missile_artillery roles for units which carry artillery but may
                 also be deployed as combat units
 
         anti_aircraft
         Use: combat unit with weapons suitable for shooting airborne VTOL and fixed wing targets
-        Unit types: Mek, Tank, Infantry, Naval
+        Unit types: Mek, Tank, Infantry, Naval, Gun Emplacement, Advanced Building, Mobile Structure
         Notes: may be applied to conventional infantry equipped with field guns, and units with the
-                Anti-Aircraft Targeting quirk
+                Anti-Aircraft Targeting quirk. Battle armor and ProtoMeks are excluded.
 
         apc
         Use: combat unit with infantry bay
@@ -259,8 +291,8 @@ This is required to distinguish between different unit types that have the same 
 
         recon
         Use: combat unit optimized for speed over firepower
-        Unit types: Mek, Tank, BattleArmor, Infantry, ProtoMek, VTOL, Naval, ConventionalFighter,
-                    AeroSpaceFighter, Small Craft, Dropship
+        Unit types: all types EXCEPT Gun Emplacement, Jumpship, Space Station, Aero, Advanced Building,
+                    Mobile Structure, and Handheld Weapon
         Notes: typically applied to units with active probe or similar detection equipment, and
                 units with faster than normal speed for their class
 
@@ -324,10 +356,12 @@ This is required to distinguish between different unit types that have the same 
 
         command
         Use: combat or combat support command unit
-        Unit types: Mek, Tank, VTOL, Naval, ConventionalFighter, Small Craft
+        Unit types: Mek, Tank, VTOL, Naval, ConventionalFighter, Small Craft, Advanced Building,
+                    Mobile Structure
         Notes: typically applied to command and control units, such as those equipped with C3 master
                 equipment, command console cockpits, communications gear, or have the Command Mek
-                quirk
+                quirk. Conventional infantry, battle armor, ProtoMeks, gun emplacements, and large
+                space vessels are excluded.
 
         training
         Use: combat or combat support unit frequently used for cadets/trainees
@@ -339,6 +373,16 @@ This is required to distinguish between different unit types that have the same 
         Unit types: Mek, Tank, Infantry
         Notes: units with this role will be generated along with regular combat units unless the
                 support role is added
+
+        bridge_layer (also accepted as: bridge)
+        demolition
+        firefighter (also accepted as: firefighting)
+        fieldworks (also accepted as: trench)
+        Use: combat engineer specializations
+        Unit types: Mek, Tank, Infantry
+        Notes: these are additive facets layered on top of engineer, not replacements for it. A unit
+                that carries the capability keeps the umbrella engineer role and gains the matching
+                facet, in the same way minesweeper and minelayer already coexist with engineer.
 
         minesweeper
         Use: unit is equipped to clear mines
@@ -354,23 +398,22 @@ This is required to distinguish between different unit types that have the same 
 
         support
         Use: non-combat military unit used to provide support rather than weapons
-        Unit types: Mek, Tank, BattleArmor, Infantry, VTOL, Naval, ConventionalFighter, AeroSpaceFighter,
-                    Small Craft, Dropship, Jumpship, Space Station
+        Unit types: all types EXCEPT ProtoMek, Gun Emplacement, Warship, and Handheld Weapon
         Notes: units with this role are excluded when generating general combat forces. Typically
                 used for military non-combat units rather than civilian.
 
         cargo
         Use: civilian or non-combat military units with more than token cargo space
         Unit types: Tank, VTOL, Naval, ConventionalFighter, Small Craft, Dropship, Jumpship, Warship,
-                    Space Station
+                    Space Station, Advanced Building, Mobile Structure
         Notes: units with this role will generate along with regular combat units unless the support
                 or civilian roles are added. Units with specific unit bays should use the various
                 *_carrier roles.
 
         civilian
         Use: non-military vehicles
-        Unit types: Mek, Tank, BattleArmor, Infantry, VTOL, Naval, ConventionalFighter, AeroSpaceFighter,
-                    Small Craft, Dropship, Jumpship, Space Station
+        Unit types: all types EXCEPT ProtoMek, Gun Emplacement, AeroSpaceFighter, Warship, and
+                    Handheld Weapon
         Notes: units with this role are excluded when generating general combat forces, and only generated
                 when specifically generating units with the role. Typically used for civilian/non-military
                 vehicles.
@@ -454,6 +497,19 @@ This is required to distinguish between different unit types that have the same 
         Unit types: Warship
         Notes: WarShip hull classes are not strictly defined so these are based more on lore/source
                 material than displacement
+
+        omni
+        Use: unit is capable of mounting pod equipment
+        Unit types: Mek, Tank, AeroSpaceFighter
+        Notes: primarily used to determine suitability for carrying mechanized battle armor
+
+        generator
+        Use: advanced building which powers other advanced buildings
+        Unit types: Advanced Building
+
+        control
+        Use: advanced building representing a basic control centre
+        Unit types: Advanced Building
 
     'deployedWith' element: not used by RAT Generator, but provided for utilities that might want to use RAT Generator as a back end to build larger forces. Lists other units this one is frequently deployed with. Prefixing the other unit name with "req:" indicates that it is required (e.g. LongTom and its trailers). Units that are deployed independently can indicate this by using "solo" instead of another unit name.
 

@@ -36,7 +36,9 @@ Unit Type: The type of force to generate. The special value "Combined" is used f
            are considered an augmentation with a second unit type (such as a Nova or a Capellan augmented
            lance) and are found under the primary unit type rather than combined.
 Formation: The echelon level to generate. Options such as augmented, reinforced, or nova/supernova are
-           found here as distinct options.
+           found here as distinct options. The suffix codes shown in the list are ^ for augmented
+           (Clan Nova/Supernova, Blakist Choir, Capellan augmented lance), + for reinforced, and
+           - for understrength.
 Rating: The unit equipment rating. Most IS factions use A-F with A being the best. Clan factions have descriptive
         names, with Keshik being better than standard front line and provisional garrison and solahma
         below standard second line. Not all Clans formally designate distinct provisional garrison forces,
@@ -55,13 +57,24 @@ Include Support Forces: If checked, additional support detachments may be genera
                         including engineers. Higher level eschelons are more likely to have support units.
 Mission role (varies by unit type): Designates a special role for the force, which will affect the types
                                     of formations and units generated.
-Transport: The percentage of dropship and jumpship capacity to generate along with primary formation. The
-           dropship percentage attempts to fulfill the transport needs of the given percentage of units by type.
+Target Weight: A target weight class for the force (Light/Medium/Heavy/Assault). This propagates through the
+           subforces to drive the desired weight distribution. Because unit selection is random the actual
+           force average may fall in an adjacent band, especially for small formations.
+
+Transport: A group of settings controlling how much lift is generated along with the primary formation.
+           Dropship Percentage attempts to fulfill the transport needs of the given percentage of units by type.
            For example, 50% will attempt to generate enough dropships to carry half the Meks, half the vees,
            half the infantry, etc. It continues to generate dropships until it meets or exceeds the requirement
-           for that unit type, or it cannot find any dropships to carry that unit type. The jumpship percentage
-           sets how many of the generated dropships have docking collars to use. Either value can exceed 100%
-           to generate excess capacity.
+           for that unit type, or it cannot find any dropships to carry that unit type. Jumpship Percentage
+           sets how many of the generated dropships have docking collars to use. WarShip Percentage does the
+           same for WarShip transport capacity. Any of these can exceed 100% to generate excess capacity.
+           Cargo Tonnage adds a flat cargo requirement on top of the percentages; setting a non-zero value
+           forces transport assignment to run even when all percentages are zero, which is how a standalone
+           supply lift is generated.
+
+Carried Fighter Complement: If checked, for each WarShip, DropShip, JumpShip, and Space Station in the force,
+           generate the aerospace fighters it carries (filled to the ship's fighter bays) and nest them under
+           the ship. Off by default.
 Generate: Generate a force based on the parameters.
 Export to MUL: Writes the entire generated force to a MUL file. A portion of the force can be exported
                independently by right-clicking on a node on the force tree and selecting export. This will
@@ -109,9 +122,17 @@ IV. Customizing the Formation Rules
 This section documents the xml-based language used to define the force generation rules for each faction. This
 is provided for anyone who wants to create custom formation building rules, but is made with no promise of
 support if your file produces unexpected results. When troubleshooting a problem with generation, it can
-be helpful to edit the logging configuration file (mmconf/log4j.xml) and uncomment the two sections pertaining
-to force generator logging by removing the <!-- at the beginning of the line and the --> at the end. This
-will enable debugging output and log messages from force generation to a separate file.
+be helpful to raise the log level for the force generator. The logging configuration file is mmconf/log4j2.xml;
+add the following inside the <Loggers> element, then read the output in logs/megamek.log:
+
+	<Logger name="megamek.client.ratgenerator" level="debug" additivity="false">
+	    <AppenderRef ref="MegaMekLog" />
+	</Logger>
+
+Note that a number of ruleset problems are reported without any change to the logging configuration, because
+they are logged at warn or error level. Malformed predicates, unparsable roles and formation types, and
+missing faction records all fall into this category, so it is worth checking logs/megamek.log before
+enabling debug output.
 
 A. Overview
 The ruleset files are found in data/forcegenerator/faction_rules. Each faction which has anything distinct about
@@ -232,9 +253,20 @@ unit type and echelon for the attached forces. Interactions with properties take
 used to set, clear, or change values of properties. Predicates are used to check the values of properties
 to determine whether to apply a rule or an option.
 
+IMPORTANT: assertions and predicates are not symmetrical. Several properties can be set but cannot be tested,
+and a few predicates have no matching assertion (those are listed separately after the table). A cell reading
+"(none)" below means that half of the pair does not exist. An attribute beginning with "if" that is not in the
+predicate column is treated as an unknown predicate: RulesetNode logs a warning and the node is treated as
+NON-MATCHING, so a rule using one will silently never fire. In particular ifChassis, ifModel, ifVariant, and
+ifFormation do NOT exist, despite chassis, model, variant, and formation all being settable. (ifFormation also
+still appears in formationRulesetSchema.xsd; it is not implemented.)
+
 Assertion	Predicate		Possible values
-unitType	ifUnitType		One of the following values: Mek, Tank, BattleArmor, Infantry, ProtoMek, VTOL,
-                        	Conventional Fighter, Aero, Small Craft, Dropship, Jumpship, Warship, Space Station
+unitType	ifUnitType		Any of the unit type names listed in rat-generator.txt, e.g. Mek, Tank,
+                        	BattleArmor, Infantry, ProtoMek, VTOL, Naval, Gun Emplacement,
+                        	Conventional Fighter, AeroSpaceFighter, Aero, Small Craft, Dropship,
+                        	Jumpship, Warship, Space Station, Handheld Weapon, Mobile Structure,
+                        	Advanced Building
 weightClass	ifWeightClass	L, M, H, A. This value is used to indicate a target weight class for each node
 							of the force tree, but when it comes to generating the actual units, the formation
 							bulder does not use individual unit weights. If using the formation property,
@@ -244,39 +276,55 @@ weightClass	ifWeightClass	L, M, H, A. This value is used to indicate a target we
 							to generate units individually using the weightClass property.
 rating		ifRating		varies by faction
 role		ifRole			This value is passed to the RAT Generator to affect the types of units
-                            generated. Unknown values will be ignored, so this could be used for arbitrary
-                            values but the flags property is preferred for that purpose (Set).
-formation	ifFormation		The lance formation (see Campaign Operations) used to generate units. When
+                            generated. The legal values are the role names listed in rat-generator.txt.
+                            An unrecognised name is logged as an error and dropped, so this cannot be used
+                            for arbitrary values; use the flags property for that purpose (Set).
+formation	(none)			The lance formation (see Campaign Operations) used to generate units. When
                             formations are used, the generated lance weights may not always match up with
-                            the weightClass property.
-motive		ifMotive		A motive type constant, typically used for vehicles and infantry (Set).
+                            the weightClass property. An unparsable formation name is logged as a warning
+                            and ignored. There is no ifFormation predicate.
+motive		ifMotive		A motive type constant, typically used for vehicles and infantry (Set). The
+                            values are EntityMovementMode names.
 augmented	ifAugmented		A boolean value that has no defined effect, but indicates that the echelon is
                             varied in some way. Clans use it to indicate a Nova or Supernova, Blakist
                             Shadow Divisions use it for a choir, and Capellan units use it for an augmented
                             formation.
-chassis		ifChassis		All units of this node and any child nodes will have this chassis (Set).
-model		ifModel			Assigns the exact unit (chassis and variant) to this node and all subforces (Set).
-variant		ifVariant		Assigns the variant (but not the chassis) to this node and all subforces. This
+chassis		(none)			All units of this node and any child nodes will have this chassis (Set).
+model		(none)			Assigns the exact unit (chassis and variant) to this node and all subforces (Set).
+variant		(none)			Assigns the variant (but not the chassis) to this node and all subforces. This
                             has little use apart from conventional infantry to assign a particular weapon (Set).
-name		ifName			Sets the name of the node. Overrides the echelon default name.
-fluffName	fluffName		Has no effect on the way the unit is generated, but assignes the name to a particular
+name		ifName			Sets the name of the node. Overrides the echelon default name. The predicate
+                            supports a leading ! to negate the whole expression.
+fluffName	(none)			Has no effect on the way the unit is generated, but assigns the name to a particular
                             unit. This is used in the provided rulesets to assign canonical names to WarShips
                             when generating a Clan Touman in the post-Invasion era, when such information
                             is documented.
 faction		ifFaction		A faction key. As an assertion it can be used to switch the rules used for the
 							subforces, such as generating each Kindraa of the Clan Fire Mandrill Touman. The
 							predicate can be used to provide an alternate organization for a subcommand,
-							such as DC Sword of Light regiments, which have four battalions.
+							such as DC Sword of Light regiments, which have four battalions. Setting the
+							faction also clears the rank system and marks the node as top level.
 flags		ifFlags			Can be anything. Used for arbitrary user-defined data (Set).
+echelon		ifEschelon		The echelon level. Note the inconsistent spelling: the assertion is "echelon" and
+                            the predicate is "ifEschelon". ifEschelon is widely used in the shipped rulesets
+                            but is missing from formationRulesetSchema.xsd, so files using it will not
+                            validate against that schema even though they work correctly.
+rankSystem	(none)			The rank system index used for MekHQ integration. Normally set in <defaults>
+                            rather than on an individual force rule.
 
 The following are available only as predicates:
 ifTopLevel		Boolean value that is true if this is the toplevel node.
 ifIndex			Used to test the current node's position within its sibling nodes. The first index position
                 is 0.
-ifDateBetween	A set of date ranges. The ranges are expressed two dates separated by a comma. An open-ended
+ifDateBetween	A set of date ranges. Each range is two dates separated by a comma. An open-ended
                 range leaves the corresponding value blank: ifDateBetween="3050,3055" will match any
                 year from 3050-3055 (inclusive), while ifDateBetween=",3050" will match any year up to
-                and including 3050 and ifDateBetween="3050," will match any year from 3050 on. (Set)
+                and including 3050 and ifDateBetween="3050," will match any year from 3050 on. Several
+                ranges can be combined: | is OR and + is AND, so ifDateBetween="3050,3055|3060,3065"
+                matches a year in either range. Note that this differs from the other predicates, which
+                use a comma for AND; here the comma is already the range separator. (Set)
+ifYearBetween	Deprecated historical alias for ifDateBetween. It still works but logs a warning naming
+                the offending element. Use ifDateBetween instead.
 
 augmented, topLevel, and index are boolean properties and can have the value 0 or 1. Properties that are
 identified as a set in the description above can have multiple values. All others have a single value.
@@ -313,8 +361,20 @@ applied to the current node's properties unless found within the <subforces> or 
 of a force node, in which case they are applied to the newly created node.
 
 F. Ruleset file format
-The formal definition of the force generator language is found in formationRulesetSchema.xsd in the ruleset
+A schema for the force generator language is provided as formationRulesetSchema.xsd in the ruleset
 directory (data/forcegenerator/faction_rules).
+
+CAVEAT: the schema is advisory documentation only. It is not applied when MegaMek loads the rulesets, and it
+has drifted from the loader, so it should not be treated as the definitive reference. Most of the shipped
+faction rulesets do not validate against it. The known differences are:
+  - The schema omits the ifEschelon predicate, which the loader supports and the shipped rulesets use.
+  - The schema lists an ifFormation predicate, which the loader does not implement.
+  - The schema's echelon pattern does not tolerate surrounding whitespace, so an element written across
+    several lines fails to validate even though the loader trims it.
+  - The schema declares <weightTarget> before <co>, while the rulesets place it after; the loader does not
+    care about child element order.
+  - The schema's generate attribute allows a value of "unit", which no code path implements.
+Where the schema and this document disagree, this document describes the loader's actual behaviour.
 
 1. The root element is <ruleset>, which can have the following attributes:
 	a. faction: the faction key. This should have a corresponding entry in the RAT Generator. If not provided,
@@ -323,9 +383,12 @@ directory (data/forcegenerator/faction_rules).
 	           the default value is IS, Periphery, or CLAN, depending on how the faction is defined
 	           by the RAT Generator.
 	c. ratingSystem: This provides the values used for the rating property. It can be any of the values
-					 [ IS | SL | CLAN | ROS ]. IS uses A,B,C,D,F. SL is a subset that only includes A-C.
-	                 CLAN uses Keshik, FL, SL, Sol, PG. ROS uses SB, HS, PG, TP. If not provided, defaults
-	                 to IS.
+					 [ IS | SL | CLAN | ROS ]. Internally each system is ordered worst to best:
+	                 IS is F,D,C,B,A. SL is a subset that only includes C,B,A. CLAN is PG,Sol,SL,FL,Keshik.
+	                 ROS is TP,PG,HS,SB. If the attribute is not provided, it defaults to IS. If it is
+	                 provided but does not match one of the four names, the system is set to NONE, which
+	                 has no rating levels at all - so a typo here silently disables rating handling for
+	                 the whole file rather than falling back to IS.
 	                 ***FIXME: This really shouldn't be hard-coded.
 
 2. The <ruleset> element contains the following child elements:
@@ -389,15 +452,20 @@ directory (data/forcegenerator/faction_rules).
    The <force> element has the following child elements. Only the <co> element is required, and all may
    occur multiple times:
        <name>: Provides a name for the unit represented by the current force tree node.
+       <weightTarget>: Declares a target weight class distribution for the units generated under this node.
        <co>: The rank level of the commanding officer, and optionally the location
 			of the commander's unit in the force tree.
        <xo>: The rank of the executive officer, if any, as well as the location
             of the XO's unit in the force tree.
        property rules [various]: Provides an opportunity to change the properties of this node.
+       <ruleGroup>: Groups property rules so that one group is fully evaluated before the next.
        <subforces>: Generates child nodes which inherit the current node's properties.
        <attachedForces>: Generates child nodes in the force tree, but is only processed if the user has
             support force generation enabled.
 
+   The loader dispatches on the child element name and does not enforce any ordering, so these may appear
+   in any order within the <force> element. Note that formationRulesetSchema.xsd declares them as an
+   xs:sequence and so is stricter than the code; see the caveat at the start of this section.
 
 	a. The <name> node can have any of the predicate attributes. Where multiple matches can occur the
 	   first match is used. The name can be simple text, but can also contain values that are evaluated
@@ -406,14 +474,16 @@ directory (data/forcegenerator/faction_rules).
 	   or "Second Battalion" and so on, depending on its position in the regiment. The available expression
 	   are as follows:
 	   {cardinal}: A cardinal numeral (1, 2, 3, etc.)
+	   {cardinalOrdinal}: A numeric ordinal (1st, 2nd, 3rd, etc.)
 	   {ordinal}: An ordinal number (First, Second, Third, etc.)
 	   {roman}: Roman numerals (I, II, III, etc.)
 	   {alpha}: Letters of the Latin alphabet (A, B, C, etc.)
 	   {phonetic}: The phonetic alphabet (Alpha, Bravo, Charlie, etc.)
 	   {greek}: Names of Greek letters (Alpha, Beta, Gamma, etc.)
 	   {latin}: Latin numbers (Prima, Secunda, Tertia, etc.)
-	   {parent}: The name of the parent formation.
-	   {formation}: A display-friendly name of the node's formation property.
+	   {name:parent}: A portion of the parent formation's name (see below).
+	   {formation}: A display-friendly name of the node's formation property. This one has no
+	                :parent form.
 
 	   To use the position of the parent node among its siblings, you can append ":parent" to the expression.
 	   A portion of the parent name can be used by surrounding that portion with square brackets and using
@@ -537,6 +607,11 @@ directory (data/forcegenerator/faction_rules).
 		generate: Functions as the generate attribute of the <subforces> element, but is applied independently
 		          to each subforce node using that node's properties.
 
+		Note that eschName is NOT one of the attributes a <subforce> accepts. It is read only from the
+		<force> element, and a child node's echelon display name comes from the <force> rule that matches
+		it. An eschName written on a <subforce> is silently ignored. Use the name assertion, or an
+		eschName on the matching <force> rule, instead.
+
 		A <subforceOption> element can take any of the standard predicate attributes, as well as the
 		generate attribute. If present, the generate attribute is applied to the selected <option> in the
 		same way that it is applied to a <subforce> element. The <option> child elements use the same
@@ -547,3 +622,19 @@ directory (data/forcegenerator/faction_rules).
 	   <subforces> element, and they function in the same way. The difference is that <attachedForces>
 	   nodes are ignored if the user has disabled generation of support forces, and if generated the
 	   CO and XO (if present) are never assigned to attached forces.
+
+	f. The <weightTarget> element declares a target distribution of element weight classes for one unit
+	   type under this node. It is used on CLUSTER-level nodes. The content is a comma-separated list of
+	   WEIGHTCLASS:PERCENT pairs, and the following attributes are available in addition to the standard
+	   predicates:
+	   unitType: the unit type this target governs. Defaults to Mek if omitted.
+	   spread: the +/- percentage-point soft variation allowed per cluster around the target. Defaults to 8.
+
+	   Example, from a Clan cluster:
+	   		<weightTarget unitType="Mek" spread="8">A:50,H:42,M:8,L:0</weightTarget>
+
+	   The targets are resolved after the node's own weight class has been rolled, and are applied by the
+	   weight budget allocator once the force tree is built. It reshapes the cluster's element weights to
+	   match the target on average, placing heavier units in the heavier-role stars. Pairs whose weight
+	   class code cannot be decoded are skipped, and a block with no valid pairs is ignored entirely. This
+	   is a build-time value only and is never written to a saved game.

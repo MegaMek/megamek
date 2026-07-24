@@ -579,6 +579,7 @@ public class WeaponType extends EquipmentType {
     public static final WeaponTypeFlag F_ATM = WeaponTypeFlag.F_ATM;
     public static final WeaponTypeFlag F_NARC = WeaponTypeFlag.F_NARC;
     public static final WeaponTypeFlag F_GAUSS = WeaponTypeFlag.F_GAUSS;
+    public static final WeaponTypeFlag F_HVAC = WeaponTypeFlag.F_HVAC;
     
 
     // War of 3039 prototypes
@@ -671,6 +672,8 @@ public class WeaponType extends EquipmentType {
     /** Missile weapon that can be linked to an Artemis fire control system */
     public static final WeaponTypeFlag F_ARTEMIS_COMPATIBLE = WeaponTypeFlag.F_ARTEMIS_COMPATIBLE;
     public static final WeaponTypeFlag F_PPC_CAPACITOR_COMPATIBLE = WeaponTypeFlag.F_PPC_CAPACITOR_COMPATIBLE;
+
+    public static final WeaponTypeFlag S_IMPROVED = WeaponTypeFlag.S_IMPROVED;
 
     /**
      * This flag is used by mortar-type weapons that allow indirect fire without a spotter and/or with LOS.

@@ -211,21 +211,21 @@ public class MekBVCalculator extends HeatTrackingBVCalculator {
             int toSubtract = 15;
 
             // Logic for Weapons with Reduced Penalty
-            if ((etype instanceof GaussWeapon) ||
-                  (etype instanceof HVACWeapon) ||
-                  (etype instanceof CLImprovedHeavyLaserLarge) ||
-                  (etype instanceof CLImprovedHeavyLaserMedium) ||
-                  (etype instanceof CLImprovedHeavyLaserSmall) ||
-                  (etype instanceof ISRISCHyperLaser) ||
-                  (etype instanceof TSEMPWeapon) ||
-                  (etype instanceof ISMekTaser) ||
-                  (etype instanceof WeaponType &&
-                        (etype.hasFlag(WeaponType.F_B_POD) || etype.hasFlag(WeaponType.F_M_POD)))) {
+            if (etype instanceof WeaponType weaponType
+                && (weaponType.hasFlag(WeaponType.F_GAUSS)
+                || weaponType.hasFlag(WeaponType.F_HVAC)
+                || weaponType.hasFlag(WeaponType.F_HYPER)
+                || weaponType.hasFlag(WeaponType.F_TSEMP)
+                || weaponType.hasFlag(WeaponType.F_TASER)
+                || weaponType.hasFlag(WeaponType.F_B_POD)
+                || weaponType.hasFlag(WeaponType.F_M_POD)
+                || (weaponType.hasFlag(WeaponType.F_LASER) && weaponType.hasFlag(WeaponType.S_IMPROVED)))) {
                 toSubtract = 1;
             }
 
             // PPC Weapons with Capacitors
-            if (etype instanceof PPCWeapon) {
+            if (etype instanceof WeaponType weaponType
+                && weaponType.hasFlag(WeaponTypeFlag.F_PPC)) {
                 toSubtract = 1;
             }
 
@@ -258,7 +258,7 @@ public class MekBVCalculator extends HeatTrackingBVCalculator {
                     }
                     criticalSlots += criticalSlotsCopy.size();
                 }
-            } else if (mounted.getType() instanceof HVACWeapon) {
+            } else if (mounted.getType() instanceof WeaponType weaponType && weaponType.hasFlag(WeaponType.F_HVAC)) {
                 criticalSlots = 1; // HVAC weapons are -1 total regardless of slot count
             } else {
                 criticalSlots = mounted.getNumCriticalSlots();

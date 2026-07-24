@@ -157,6 +157,8 @@ public enum WeaponTypeFlag implements EquipmentFlag {
     F_ATM,
     F_NARC,
     F_GAUSS,
+    F_HVAC,
 
-    F_PPC_CAPACITOR_COMPATIBLE
+    F_PPC_CAPACITOR_COMPATIBLE,
+    S_IMPROVED,
 }

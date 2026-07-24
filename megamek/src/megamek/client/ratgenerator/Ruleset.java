@@ -46,6 +46,7 @@ import java.util.regex.Pattern;
 import javax.xml.parsers.DocumentBuilder;
 
 import megamek.client.generator.RandomNameGenerator;
+import megamek.common.Configuration;
 import megamek.common.annotations.Nullable;
 import megamek.common.units.EntityWeightClass;
 import megamek.logging.MMLogger;
@@ -86,7 +87,10 @@ public class Ruleset {
         }
     }
 
-    private static final String directory = "data/forcegenerator/faction_rules";
+    // Subdirectory of Configuration.forceGeneratorDir() holding the faction ruleset files. Resolved
+    // through the configured data directory (not a hardcoded relative path) so -data_dir and the RAT
+    // editor's alternate-directory option relocate the rulesets together with the era files.
+    private static final String FACTION_RULES_SUBDIR = "faction_rules";
     private static final String CONSTANTS_FILE = "constants.txt";
 
     // Progress-bar weights for the phases of processRoot(), as fractions of the force-generation
@@ -561,9 +565,9 @@ public class Ruleset {
         initializing = true;
         rulesets = new HashMap<>();
 
-        File dir = new File(directory);
+        File dir = new File(Configuration.forceGeneratorDir(), FACTION_RULES_SUBDIR);
         if (!dir.exists()) {
-            logger.error("Could not locate force generator faction rules.");
+            logger.error("Could not locate force generator faction rules at {}.", dir.getPath());
             initializing = false;
             return;
         }
@@ -649,8 +653,9 @@ public class Ruleset {
                 }
             }
         }
-        // Rating system defaults to IS if not present. If present but cannot be parsed,
-        // is set to NONE.
+        // Rating system defaults to IS if not present. An unrecognized value (for example a typo'd
+        // case like "Clan") also falls back to IS - matching the missing-attribute default - and is
+        // logged, rather than silently setting NONE and stripping rating handling from the file.
         if (!elem.getAttribute("ratingSystem").isBlank()) {
             switch (elem.getAttribute("ratingSystem")) {
                 case "IS":
@@ -666,7 +671,10 @@ public class Ruleset {
                     retVal.ratingSystem = RatingSystem.ROS;
                     break;
                 default:
-                    retVal.ratingSystem = RatingSystem.NONE;
+                    logger.warn("Ruleset for faction {} has unrecognized ratingSystem \"{}\"; expected "
+                                + "IS, SL, CLAN, or ROS. Falling back to IS.",
+                          retVal.faction, elem.getAttribute("ratingSystem"));
+                    retVal.ratingSystem = RatingSystem.IS;
                     break;
             }
         } else {

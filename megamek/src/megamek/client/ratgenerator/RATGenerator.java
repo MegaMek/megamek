@@ -1644,7 +1644,11 @@ public class RATGenerator {
                     if (wn.getNodeName().equalsIgnoreCase("faction")) {
                         String fKey = wn.getAttributes().getNamedItem("key").getTextContent();
                         if (fKey != null) {
-                            FactionRecord rec = factions.get(fKey);
+                            // Resolve through getFaction so retired faction codes fall back to the
+                            // alias map, exactly like availability codes do. Without this, era nodes
+                            // keyed by a consolidated faction's old code (e.g. CEI/SE -> CGS) are
+                            // silently dropped and their tech-mix tuning never loads (mm-data #489).
+                            FactionRecord rec = getFaction(fKey);
                             if (rec != null) {
                                 rec.loadEra(wn, era);
                             } else {

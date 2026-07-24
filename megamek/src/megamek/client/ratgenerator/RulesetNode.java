@@ -35,6 +35,7 @@ package megamek.client.ratgenerator;
 import java.util.Collection;
 import java.util.Objects;
 import java.util.Properties;
+import java.util.StringJoiner;
 import java.util.stream.Collectors;
 
 import megamek.common.units.EntityMovementMode;
@@ -120,10 +121,15 @@ public class RulesetNode {
                     }
                     break;
                 case "ifMotive":
-                    // FIXME: EntityMovementType::toString does not match the property from the file
+                    // Compare enum names on both sides: the descriptor side supplies name() values and
+                    // the file-side tokens ("Leg", "Jump", ...) are normalized through parseFromString.
+                    // Comparing toString() here would test against the localized display string
+                    // ("Foot Infantry", or "Infanteria a Pie" under a Spanish locale), which never
+                    // matches the file tokens - the predicate would be permanently false.
                     if (!collectionMatchesProperty(fd.getMovementModes().stream()
-                          .map(EntityMovementMode::toString)
-                          .collect(Collectors.toList()), predicates.getProperty((String) key))) {
+                          .map(EntityMovementMode::name)
+                          .collect(Collectors.toList()),
+                          normalizeMotiveProperty(predicates.getProperty((String) key)))) {
                         return false;
                     }
                     break;
@@ -239,6 +245,40 @@ public class RulesetNode {
      * Each csv field of property must be contained in the list for a match.
      *
      */
+    /**
+     * Normalizes an {@code ifMotive} predicate for locale-independent matching: every motive token in
+     * the property (e.g. {@code Leg}, {@code Jump}, {@code Tracked}) is resolved through
+     * {@link EntityMovementMode#parseFromString(String)} to its enum constant name, matching the
+     * {@code name()} values the descriptor side supplies. The property grammar (leading {@code !}
+     * negation, {@code ,} for AND, {@code |} for OR) is preserved; a token that does not parse to a
+     * movement mode passes through unchanged.
+     *
+     * @param property the raw {@code ifMotive} predicate value
+     *
+     * @return the property with each motive token replaced by its enum constant name
+     */
+    static String normalizeMotiveProperty(String property) {
+        boolean negated = property.startsWith("!");
+        String body = negated ? property.substring(1) : property;
+        if (body.isBlank()) {
+            return property;
+        }
+        StringJoiner andJoiner = new StringJoiner(",");
+        for (String andToken : body.split(",", -1)) {
+            StringJoiner orJoiner = new StringJoiner("|");
+            for (String orToken : andToken.split("\\|", -1)) {
+                EntityMovementMode mode = EntityMovementMode.parseFromString(orToken.trim());
+                // parseFromString returns NONE for unparsable text; keep the original token in that
+                // case so garbage does not silently match a NONE movement mode.
+                boolean parsed = (mode != EntityMovementMode.NONE)
+                      || "none".equalsIgnoreCase(orToken.trim());
+                orJoiner.add(parsed ? mode.name() : orToken);
+            }
+            andJoiner.add(orJoiner.toString());
+        }
+        return (negated ? "!" : "") + andJoiner;
+    }
+
     public boolean collectionMatchesProperty(Collection<String> list, String property) {
         if (property.isBlank()) {
             return list.isEmpty();

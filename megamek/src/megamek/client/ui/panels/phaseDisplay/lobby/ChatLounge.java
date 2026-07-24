@@ -1415,18 +1415,27 @@ public class ChatLounge extends AbstractPhaseDisplay
     }
 
     /**
-     * Enables the Generate Battlefield button only while it can actually be used: building the board in the lobby
-     * with a Surprise board selected would reveal the surprise, so the server refuses it and the button is
-     * disabled with an explanatory tooltip instead.
+     * Enables the Generate Battlefield button only while it can actually be used, mirroring the server's checks:
+     * building the board with a Surprise board selected would reveal the surprise, and an incomplete board
+     * selection (unset slots right after a map size change) cannot be built. In both cases the server refuses
+     * the request, so the button is disabled with an explanatory tooltip instead of allowing a silent no-op.
      */
     private void refreshGenerateBattlefieldButton() {
         // Board slots may be null right after a map size change, before the server fills them in
         boolean hasSurpriseBoard = mapSettings.getBoardsSelectedVector().stream()
               .anyMatch(boardName -> (boardName != null) && boardName.startsWith(MapSettings.BOARD_SURPRISE));
-        butGenerateBattlefield.setEnabled(!hasSurpriseBoard);
-        butGenerateBattlefield.setToolTipText(Messages.getString(hasSurpriseBoard
-              ? "ChatLounge.GenerateBattlefieldTooltipSurprise"
-              : "ChatLounge.GenerateBattlefieldTooltip"));
+        boolean hasUnsetBoard = mapSettings.getBoardsSelectedVector().stream().anyMatch(Objects::isNull);
+        butGenerateBattlefield.setEnabled(!hasSurpriseBoard && !hasUnsetBoard);
+
+        String tooltipKey;
+        if (hasSurpriseBoard) {
+            tooltipKey = "ChatLounge.GenerateBattlefieldTooltipSurprise";
+        } else if (hasUnsetBoard) {
+            tooltipKey = "ChatLounge.GenerateBattlefieldTooltipIncomplete";
+        } else {
+            tooltipKey = "ChatLounge.GenerateBattlefieldTooltip";
+        }
+        butGenerateBattlefield.setToolTipText(Messages.getString(tooltipKey));
     }
 
     /**

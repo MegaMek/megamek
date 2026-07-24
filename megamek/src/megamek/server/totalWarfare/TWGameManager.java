@@ -2199,6 +2199,9 @@ public class TWGameManager extends AbstractGameManager {
                 game.setupTeams();
                 if (lobbyBoardHandler().hasBoardFromLounge()) {
                     LOGGER.info("[LobbyBoard] game start reuses the battlefield built in the lounge");
+                    // The board build is skipped, but the non-build part of applyBoardSettings() must still
+                    // run for the reused board
+                    initializeIndustrialElevators();
                 } else {
                     applyBoardSettings();
                 }

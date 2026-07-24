@@ -3247,17 +3247,30 @@ public class ChatLounge extends AbstractPhaseDisplay
         }
 
         @Override
+        public void mousePressed(MouseEvent e) {
+            maybeShowPopup(e);
+        }
+
+        @Override
         public void mouseReleased(MouseEvent e) {
-            if (lisBoardsAvailable.isEnabled() && (e.getClickCount() == 1)) {
-                // If a mouse button is pressed over a map,
-                // show the board selection popup
-                int index = lisBoardsAvailable.locationToIndex(e.getPoint());
-                if (index != -1 && lisBoardsAvailable.getCellBounds(index, index).contains(e.getPoint())) {
-                    if (!lisBoardsAvailable.isSelectedIndex(index)) {
-                        lisBoardsAvailable.setSelectedIndex(index);
-                    }
-                    showPopup(e);
+            maybeShowPopup(e);
+        }
+
+        /**
+         * Shows the board selection popup on a right-click (checked on both press and release, as the popup
+         * trigger is platform-dependent). Left clicks are left alone so that they select boards and can form
+         * a double-click, which opens the board preview instead.
+         */
+        private void maybeShowPopup(MouseEvent e) {
+            if (!e.isPopupTrigger() || !lisBoardsAvailable.isEnabled()) {
+                return;
+            }
+            int index = lisBoardsAvailable.locationToIndex(e.getPoint());
+            if ((index != -1) && lisBoardsAvailable.getCellBounds(index, index).contains(e.getPoint())) {
+                if (!lisBoardsAvailable.isSelectedIndex(index)) {
+                    lisBoardsAvailable.setSelectedIndex(index);
                 }
+                showPopup(e);
             }
         }
 

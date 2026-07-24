@@ -52,6 +52,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.StringTokenizer;
+import java.util.function.Function;
 import java.util.stream.Collectors;
 import javax.swing.*;
 import javax.swing.event.DocumentEvent;
@@ -120,6 +121,15 @@ public class ForceGeneratorViewUi implements ActionListener {
     // When set by a host (e.g. MekHQ) that commits the preview tree into a TOE, the tree's right-click
     // menu offers Include/Exclude instead of "Add to game", and excluded nodes render struck out.
     private boolean toeExclusionMode = false;
+
+    // Optional host-supplied display names for formation (non-unit) tree nodes, so the preview can show
+    // the names the committed TOE will actually use. Null (or a null/blank result for a node) falls back
+    // to the descriptor's own parseName().
+    private Function<ForceDescriptor, String> formationNameProvider = null;
+
+    // Notified after anything that changes what a commit would produce: a Generate (including an
+    // accumulated roll) and an Include/Exclude toggle. Hosts use this to invalidate cached previews.
+    private Runnable toeChangeListener = null;
 
     // When set by a host (e.g. MekHQ's Command Designer), each Generate appends its rolled force to an
     // accumulating Model root rather than replacing the tree, so the player can mix-and-match several
@@ -320,6 +330,64 @@ public class ForceGeneratorViewUi implements ActionListener {
      */
     public void setToeExclusionMode(boolean enabled) {
         this.toeExclusionMode = enabled;
+    }
+
+    /**
+     * Supplies display names for the formation (non-unit) nodes of the preview tree, overriding each
+     * descriptor's own {@link ForceDescriptor#parseName()}. Hosts that rename formations on commit (for
+     * example MekHQ's Command Designer callsigns) use this so the preview shows the final TOE names. A
+     * {@code null} provider — or a {@code null}/blank result for a node — falls back to
+     * {@code parseName()}.
+     *
+     * @param provider maps a formation descriptor to its display name, or {@code null} to disable
+     */
+    public void setFormationNameProvider(@Nullable Function<ForceDescriptor, String> provider) {
+        this.formationNameProvider = provider;
+        if (forceTree != null) {
+            forceTree.repaint();
+        }
+    }
+
+    /**
+     * Registers a listener notified after anything that changes what a commit would produce: each
+     * Generate (including rolls accumulated into the Model) and each Include/Exclude toggle. Hosts use
+     * this to invalidate caches backing {@link #setFormationNameProvider}.
+     *
+     * @param listener the callback, or {@code null} to clear
+     */
+    public void setToeChangeListener(@Nullable Runnable listener) {
+        this.toeChangeListener = listener;
+    }
+
+    /**
+     * Repaints the force tree so display-affecting host state (for example a changed
+     * {@link #setFormationNameProvider} backing) is re-rendered without a structural change.
+     */
+    public void repaintForceTree() {
+        if (forceTree != null) {
+            forceTree.repaint();
+        }
+    }
+
+    /** Fires the TOE-change listener, if any. */
+    private void fireToeChanged() {
+        if (toeChangeListener != null) {
+            toeChangeListener.run();
+        }
+    }
+
+    /**
+     * The display name for a formation node: the host-supplied provider's answer when one is set and
+     * returns a usable name, otherwise the descriptor's own {@link ForceDescriptor#parseName()}.
+     */
+    private String resolveFormationName(ForceDescriptor descriptor) {
+        if (formationNameProvider != null) {
+            String provided = formationNameProvider.apply(descriptor);
+            if (provided != null && !provided.isBlank()) {
+                return provided;
+            }
+        }
+        return descriptor.parseName();
     }
 
     /**
@@ -555,6 +623,7 @@ public class ForceGeneratorViewUi implements ActionListener {
 
         // Update the design-stage status line for the model's new size.
         refreshCommandModelChrome();
+        fireToeChanged();
     }
 
     /**
@@ -791,6 +860,9 @@ public class ForceGeneratorViewUi implements ActionListener {
                     JMenuItem toggleItem = new JMenuItem(toggleText);
                     toggleItem.addActionListener(ev -> {
                         fd.setIncludedRecursively(!fd.isIncluded());
+                        // Exclusions change what a commit produces (dropped formations, shifted
+                        // callsigns), so let the host refresh before the repaint renders names.
+                        fireToeChanged();
                         forceTree.repaint();
                         // The status line counts included units, so re-tally after a toggle.
                         refreshCommandModelChrome();
@@ -969,7 +1041,8 @@ public class ForceGeneratorViewUi implements ActionListener {
         }
     }
 
-    private static class UnitRenderer extends DefaultTreeCellRenderer {
+    // Non-static so the formation branch can consult the host-supplied formationNameProvider.
+    private class UnitRenderer extends DefaultTreeCellRenderer {
         // HTML color for nodes the user has excluded from the TOE (rendered struck out).
         private static final String EXCLUDED_COLOR_HTML = "#C84B4B";
 
@@ -1077,7 +1150,7 @@ public class ForceGeneratorViewUi implements ActionListener {
                 }
             } else {
                 StringBuilder desc = new StringBuilder("<html>");
-                String parsedName = fd.parseName();
+                String parsedName = resolveFormationName(fd);
                 String description = fd.getDescription();
                 boolean hasName = parsedName != null && !parsedName.isBlank();
                 boolean hasDescription = description != null && !description.isBlank();

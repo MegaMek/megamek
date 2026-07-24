@@ -54,6 +54,7 @@ public abstract class GaussWeapon extends AmmoWeapon {
               .or(F_AERO_WEAPON)
               .or(F_PROTO_WEAPON)
               .or(F_BALLISTIC)
+              .or(F_GAUSS)
               .or(F_DIRECT_FIRE)
               .or(F_NO_FIRES);
         explosive = true;

@@ -74,6 +74,7 @@ public class ISKinsSlaughterPPC extends PPCWeapon {
         // This weapons was actually blended into IO's Enhanced PPC and should be considered non-canon
         // for IS factions
         rulesRefs = "Unofficial";
+        flags = flags.or(F_PPC_CAPACITOR_COMPATIBLE);
         techAdvancement.setTechBase(TechBase.ALL)
               .setIntroLevel(false)
               .setUnofficial(true)

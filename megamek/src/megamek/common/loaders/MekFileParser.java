@@ -71,15 +71,8 @@ import megamek.common.util.fileUtils.MegaMekFile;
 import megamek.common.verifier.TestInfantry;
 import megamek.common.weapons.lasers.clan.CLChemicalLaserWeapon;
 import megamek.common.weapons.ppc.clan.CLERPPC;
-import megamek.common.weapons.ppc.clan.CLEnhancedPPC;
-import megamek.common.weapons.ppc.clan.CLImprovedPPC;
-import megamek.common.weapons.ppc.innerSphere.ISERPPC;
-import megamek.common.weapons.ppc.innerSphere.ISHeavyPPC;
-import megamek.common.weapons.ppc.innerSphere.ISKinsSlaughterPPC;
-import megamek.common.weapons.ppc.innerSphere.ISLightPPC;
-import megamek.common.weapons.ppc.innerSphere.ISPPC;
-import megamek.common.weapons.ppc.innerSphere.ISSnubNosePPC;
 import megamek.logging.MMLogger;
+import static megamek.common.equipment.WeaponType.F_PPC_CAPACITOR_COMPATIBLE;
 
 /**
  * Switches between the various type-specific parsers depending on suffix
@@ -90,6 +83,11 @@ public class MekFileParser {
     private Entity m_entity = null;
     private static Vector<String> canonUnitNames = null;
     public static final String FILENAME_OFFICIAL_UNITS = "OfficialUnitList.txt"; // TODO : Remove inline filename
+
+    static boolean canLinkPpcCapacitor(WeaponType weaponType, int year) {
+        return weaponType.hasFlag(F_PPC_CAPACITOR_COMPATIBLE)
+              && (!(weaponType instanceof CLERPPC) || year >= 3101);
+    }
 
     public MekFileParser(File f) throws EntityLoadingException {
         this(f, null);
@@ -478,13 +476,7 @@ public class MekFileParser {
                     // check location
                     if (mWeapon.getLocation() == m.getLocation()) {
 
-                        // Only Legal IS PPC's are allowed.
-                        if ((mWeapon.getType() instanceof ISPPC) ||
-                              (mWeapon.getType() instanceof ISLightPPC) ||
-                              (mWeapon.getType() instanceof ISHeavyPPC) ||
-                              (mWeapon.getType() instanceof ISERPPC) ||
-                              (mWeapon.getType() instanceof ISSnubNosePPC) ||
-                              (mWeapon.getType() instanceof CLERPPC && ent.getYear() >= 3101)) {
+                        if (canLinkPpcCapacitor(weaponType, ent.getYear())) {
                             m.setLinked(mWeapon);
                             break;
                         }
@@ -629,13 +621,7 @@ public class MekFileParser {
 
                             // check location
                             if (bayMountedWeapon.getLocation() == m.getLocation()) {
-                                // Only Legal IS PPC's are allowed.
-                                if ((bayWeaponType instanceof ISPPC) ||
-                                      (bayWeaponType instanceof ISLightPPC) ||
-                                      (bayWeaponType instanceof ISHeavyPPC) ||
-                                      (bayWeaponType instanceof ISERPPC) ||
-                                      (bayWeaponType instanceof ISSnubNosePPC) ||
-                                      (bayWeaponType instanceof CLERPPC && ent.getYear() >= 3101)) {
+                                if (canLinkPpcCapacitor(bayWeaponType, ent.getYear())) {
 
                                     m.setCrossLinked(bayMountedWeapon);
                                     break;
@@ -652,16 +638,7 @@ public class MekFileParser {
                     // check location
                     if (mWeapon.getLocation() == m.getLocation()) {
 
-                        // Only Legal IS PPC's are allowed.
-                        if ((mWeapon.getType() instanceof ISPPC) ||
-                              (mWeapon.getType() instanceof ISLightPPC) ||
-                              (mWeapon.getType() instanceof ISHeavyPPC) ||
-                              (mWeapon.getType() instanceof ISERPPC) ||
-                              (mWeapon.getType() instanceof ISSnubNosePPC) ||
-                              (mWeapon.getType() instanceof CLEnhancedPPC) ||
-                              (mWeapon.getType() instanceof CLImprovedPPC) ||
-                              (mWeapon.getType() instanceof ISKinsSlaughterPPC) ||
-                              (mWeapon.getType() instanceof CLERPPC && ent.getYear() >= 3101)) {
+                        if (canLinkPpcCapacitor(weaponType, ent.getYear())) {
 
                             m.setCrossLinked(mWeapon);
                             break;

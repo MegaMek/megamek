@@ -75,6 +75,7 @@ public class CLERPPC extends PPCWeapon {
         this.longAV = 15;
         this.maxRange = RANGE_LONG;
         rulesRefs = "233, TM";
+        flags = flags.or(F_PPC_CAPACITOR_COMPATIBLE);
         techAdvancement.setTechBase(TechBase.CLAN)
               .setIntroLevel(false)
               .setUnofficial(false)

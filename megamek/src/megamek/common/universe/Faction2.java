@@ -479,6 +479,11 @@ public class Faction2 {
         return is(FactionTag.MINOR);
     }
 
+    @JsonIgnore
+    public boolean isMilitia() {
+        return is(FactionTag.MILITIA);
+    }
+
     public boolean is(FactionTag tag) {
         return tags.contains(tag);
     }

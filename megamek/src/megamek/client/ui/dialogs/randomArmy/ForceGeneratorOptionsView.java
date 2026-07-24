@@ -1070,15 +1070,11 @@ public class ForceGeneratorOptionsView extends JPanel implements FocusListener, 
             }
         }
 
-        Ruleset rs = Ruleset.findRuleset(forceDesc.getFaction());
-        String rating = rs.getDefaultRating(forceDesc);
-        if (rating == null && cbRating.getItemCount() > 0) {
-            rating = cbRating.getItemAt(0);
-        }
-        if (rating != null) {
-            cbRating.setSelectedItem(rating);
-            forceDesc.setRating(rating);
-        }
+        // Default to Random (the null item) rather than pre-selecting the ruleset's fixed default
+        // rating: with no rating specified, the engine rolls one of these ratings per generation
+        // (Ruleset.processRoot).
+        cbRating.setSelectedItem(null);
+        forceDesc.setRating(null);
         refreshFlags();
         cbRating.addActionListener(this);
     }

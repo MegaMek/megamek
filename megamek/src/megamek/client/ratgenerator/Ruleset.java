@@ -48,6 +48,7 @@ import javax.xml.parsers.DocumentBuilder;
 import megamek.client.generator.RandomNameGenerator;
 import megamek.common.Configuration;
 import megamek.common.annotations.Nullable;
+import megamek.common.compute.Compute;
 import megamek.common.units.EntityWeightClass;
 import megamek.logging.MMLogger;
 import megamek.utilities.xml.MMXMLUtility;
@@ -203,6 +204,17 @@ public class Ruleset {
               fd.getFaction(), fd.getEchelon(), fd.getUnitType(), fd.getRating(),
               fd.getWeightClass(),
               fd.getWeightClassCode().isEmpty() ? "RANDOM - ruleset will roll one" : fd.getWeightClassCode());
+        // A null rating is the picker's "Random" option: roll one of the ratings the TOC offers this
+        // force (the same list the Equipment Rating picker shows) instead of letting defaults.apply()
+        // pin the ruleset's fixed default. Factions with no TOC ratings keep the plain default path.
+        if (fd.getRating() == null) {
+            String rolledRating = rollRandomRating(fd);
+            if (rolledRating != null) {
+                fd.setRating(rolledRating);
+                logger.info("[ForceGen] Equipment rating 'Random' rolled '{}' for faction {}",
+                      rolledRating, fd.getFaction());
+            }
+        }
         defaults.apply(fd);
         // save the setting so it can be restored after assigning names
         String rngFaction = RandomNameGenerator.getInstance().getChosenFaction();
@@ -464,6 +476,52 @@ public class Ruleset {
 
     public String getDefaultRating(ForceDescriptor fd) {
         return defaults.getRating(fd);
+    }
+
+    /**
+     * Rolls a random equipment rating for the descriptor from the ratings this ruleset's TOC offers
+     * it - the same list the Force Generator's Equipment Rating picker shows. Used when the user
+     * leaves the rating on Random (a {@code null} rating at generation time).
+     *
+     * @param fd the descriptor being rolled
+     *
+     * @return a uniformly rolled rating code, or {@code null} when the TOC declares no ratings for
+     *       this force (for example rating-less factions), in which case normal default application
+     *       proceeds
+     */
+    private @Nullable String rollRandomRating(ForceDescriptor fd) {
+        if (toc == null) {
+            return null;
+        }
+        ValueNode node = toc.findRatings(fd);
+        if ((node == null) || (node.getContent() == null) || node.getContent().isBlank()) {
+            return null;
+        }
+        List<String> codes = parseRatingCodes(node.getContent());
+        if (codes.isEmpty()) {
+            return null;
+        }
+        return codes.get(Compute.randomInt(codes.size()));
+    }
+
+    /**
+     * Parses a TOC ratings content string into its rating codes. Entries are comma-separated and may
+     * carry a display name after a colon (for example {@code "A,B,C"} or
+     * {@code "FL:Front Line,SL:Second Line"}); only the code before the colon is returned.
+     *
+     * @param content the TOC ratings content string
+     *
+     * @return the rating codes in declaration order; empty if the string holds none
+     */
+    static List<String> parseRatingCodes(String content) {
+        List<String> codes = new ArrayList<>();
+        for (String token : content.split(",")) {
+            String code = token.contains(":") ? token.substring(0, token.indexOf(':')) : token;
+            if (!code.isBlank()) {
+                codes.add(code.trim());
+            }
+        }
+        return codes;
     }
 
     public TOCNode getTOCNode() {

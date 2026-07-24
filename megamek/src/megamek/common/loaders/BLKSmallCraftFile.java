@@ -35,6 +35,10 @@
 package megamek.common.loaders;
 
 import megamek.common.TechConstants;
+import megamek.common.bays.Bay;
+import megamek.common.bays.CrewQuartersCargoBay;
+import megamek.common.bays.FirstClassQuartersCargoBay;
+import megamek.common.bays.SecondClassQuartersCargoBay;
 import megamek.common.equipment.EquipmentType;
 import megamek.common.equipment.IArmorState;
 import megamek.common.equipment.Mounted;
@@ -44,7 +48,9 @@ import megamek.common.units.Entity;
 import megamek.common.units.EntityMovementMode;
 import megamek.common.units.SmallCraft;
 import megamek.common.util.BuildingBlock;
+import megamek.common.verifier.TestAero;
 import megamek.common.verifier.TestEntity;
+import megamek.common.verifier.TestSmallCraft;
 import megamek.logging.MMLogger;
 
 /**
@@ -193,6 +199,7 @@ public class BLKSmallCraftFile extends BLKFile implements IMekLoader {
         }
 
         addTransports(a);
+        normalizeCrewAndQuarters(a);
 
         // how many bombs can it carry; depends on transport bays
         a.autoSetMaxBombPoints();
@@ -204,6 +211,31 @@ public class BLKSmallCraftFile extends BLKFile implements IMekLoader {
         }
         loadQuirks(a);
         return a;
+    }
+
+    /**
+     * Repairs legacy Small Craft BLK files that omit the crew and passenger
+     * accommodations required by their declared personnel.
+     */
+    private void normalizeCrewAndQuarters(SmallCraft smallCraft) {
+        smallCraft.setNGunners(Math.max(smallCraft.getNGunners(), TestAero.requiredGunners(smallCraft)));
+        smallCraft.setNCrew(Math.max(smallCraft.getNCrew(),
+              smallCraft.getNGunners() + smallCraft.getBayPersonnel()
+                    + TestSmallCraft.minimumBaseCrew(smallCraft)));
+        if (smallCraft.getNOfficers() == 0) {
+            smallCraft.setNOfficers((int) Math.ceil((smallCraft.getNCrew() - smallCraft.getBayPersonnel()) / 5.0));
+        }
+        if (smallCraft.getTransportBays().stream().anyMatch(Bay::isQuarters)) {
+            return;
+        }
+
+        smallCraft.addTransporter(new FirstClassQuartersCargoBay(smallCraft.getNOfficers()));
+        smallCraft.addTransporter(new SecondClassQuartersCargoBay(smallCraft.getNPassenger()));
+        int standardQuarters = smallCraft.getNCrew() - smallCraft.getBayPersonnel() - smallCraft.getNOfficers()
+              + smallCraft.getNMarines() + smallCraft.getNBattleArmor();
+        if (standardQuarters > 0) {
+            smallCraft.addTransporter(new CrewQuartersCargoBay(standardQuarters));
+        }
     }
 
     @Override

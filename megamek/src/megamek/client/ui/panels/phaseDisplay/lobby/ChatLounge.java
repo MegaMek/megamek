@@ -311,6 +311,7 @@ public class ChatLounge extends AbstractPhaseDisplay
     boolean resetAvailBoardSelection = false;
     boolean resetSelectedBoards = true;
     private ClientDialog boardPreviewW;
+    private BoardQuickPreviewDialog boardQuickPreviewDialog;
     private final Game boardPreviewGame = new Game();
     private transient BoardView previewBV;
     Dimension currentMapButtonSize = new Dimension(0, 0);
@@ -1885,6 +1886,69 @@ public class ChatLounge extends AbstractPhaseDisplay
         clientgui.getClient().sendServerChat(Player.PLAYER_NONE, msg);
     }
 
+    /**
+     * Opens (or updates) the quick board preview dialog for the double-clicked entry of the available-boards
+     * list. The preview renders the board file locally; boards that only exist on the server and the generated
+     * boards entry show an explanatory message instead, but can still be selected from the dialog.
+     *
+     * @param listIndex the index of the double-clicked entry in the available-boards list
+     */
+    private void previewBoardFromList(int listIndex) {
+        String boardName = lisBoardsAvailable.getModel().getElementAt(listIndex);
+        BufferedImage boardImage = null;
+        String noPreviewMessage = null;
+
+        if (boardName.startsWith(MapSettings.BOARD_GENERATED)) {
+            noPreviewMessage = Messages.getString("ChatLounge.BoardPreview.generatedNoPreview");
+            LOGGER.debug("[BoardPreview] {}: generated boards are rolled at generation - no preview", boardName);
+        } else {
+            File boardFile = new MegaMekFile(Configuration.boardsDir(),
+                  boardName + MMConstants.CL_KEY_FILE_EXTENSION_BOARD).getFile();
+            if (boardFile.exists()) {
+                Board board = new Board(16, 17);
+                try (InputStream boardStream = new FileInputStream(boardFile)) {
+                    board.load(boardStream, null, true);
+                    boardImage = MinimapPanel.getMinimapImageMaxZoom(board);
+                } catch (IOException exception) {
+                    LOGGER.warn("[BoardPreview] {}: could not load the board file for previewing: {}",
+                          boardName, exception.getMessage());
+                    noPreviewMessage = Messages.getString("ChatLounge.BoardPreview.serverOnlyNoPreview");
+                }
+            } else {
+                noPreviewMessage = Messages.getString("ChatLounge.BoardPreview.serverOnlyNoPreview");
+                LOGGER.debug("[BoardPreview] {}: board file not present on this client - preview unavailable",
+                      boardName);
+            }
+        }
+
+        if (boardQuickPreviewDialog == null) {
+            boardQuickPreviewDialog = new BoardQuickPreviewDialog(clientgui.getFrame(), this);
+        }
+        int slotCount = mapSettings.getMapWidth() * mapSettings.getMapHeight();
+        boolean isRotationAllowed = (mapSettings.getBoardWidth() % 2) == 0;
+        boardQuickPreviewDialog.showBoard(boardName, boardImage, noPreviewMessage, slotCount, isRotationAllowed);
+    }
+
+    /**
+     * Assigns a board chosen in the quick board preview dialog to the given board slot, as if it had been
+     * dragged onto the corresponding map preview button.
+     *
+     * @param boardName the board's path name as listed in the available-boards list
+     * @param slotIndex the map board slot to place the board on
+     * @param isRotated whether to place the board rotated by 180 degrees
+     */
+    void selectBoardFromPreview(String boardName, int slotIndex, boolean isRotated) {
+        int slotCount = mapSettings.getMapWidth() * mapSettings.getMapHeight();
+        if ((slotIndex < 0) || (slotIndex >= slotCount) || (slotIndex >= mapButtons.size())) {
+            LOGGER.warn("[BoardPreview] cannot assign {} - board slot {} does not exist (map has {} slots)",
+                  boardName, slotIndex, slotCount);
+            return;
+        }
+        String selectedName = isRotated ? Board.BOARD_REQUEST_ROTATION + boardName : boardName;
+        LOGGER.debug("[BoardPreview] assigning {} to board slot {}", selectedName, slotIndex);
+        changeMapDnD(selectedName, mapButtons.get(slotIndex));
+    }
+
     //
     // GameListener
     //
@@ -2647,6 +2711,10 @@ public class ChatLounge extends AbstractPhaseDisplay
             boardPreviewW.dispose();
         }
 
+        if (boardQuickPreviewDialog != null) {
+            boardQuickPreviewDialog.dispose();
+        }
+
         boolean done = !localPlayer().isDone();
 
         // Ask up front (once) whether to record the combat-summary GIF, so recording never has to interrupt play
@@ -3180,7 +3248,7 @@ public class ChatLounge extends AbstractPhaseDisplay
 
         @Override
         public void mouseReleased(MouseEvent e) {
-            if (lisBoardsAvailable.isEnabled()) {
+            if (lisBoardsAvailable.isEnabled() && (e.getClickCount() == 1)) {
                 // If a mouse button is pressed over a map,
                 // show the board selection popup
                 int index = lisBoardsAvailable.locationToIndex(e.getPoint());
@@ -3190,6 +3258,19 @@ public class ChatLounge extends AbstractPhaseDisplay
                     }
                     showPopup(e);
                 }
+            }
+        }
+
+        @Override
+        public void mouseClicked(MouseEvent e) {
+            boolean isDoubleClick = SwingUtilities.isLeftMouseButton(e) && (e.getClickCount() == 2);
+            if (!lisBoardsAvailable.isEnabled() || !isDoubleClick) {
+                return;
+            }
+            int index = lisBoardsAvailable.locationToIndex(e.getPoint());
+            if ((index != -1) && lisBoardsAvailable.getCellBounds(index, index).contains(e.getPoint())) {
+                closePopup();
+                previewBoardFromList(index);
             }
         }
 

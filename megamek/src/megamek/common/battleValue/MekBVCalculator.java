@@ -225,7 +225,7 @@ public class MekBVCalculator extends HeatTrackingBVCalculator {
 
             // PPC Weapons with Capacitors
             if (etype instanceof WeaponType weaponType
-                && weaponType.hasFlag(WeaponTypeFlag.F_PPC)) {
+                && weaponType.hasFlag(WeaponType.F_PPC)) {
                 toSubtract = 1;
             }
 

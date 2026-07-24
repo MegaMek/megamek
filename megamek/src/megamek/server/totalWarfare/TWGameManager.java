@@ -875,9 +875,11 @@ public class TWGameManager extends AbstractGameManager {
             if (getGame().getPhase().isLounge()) {
                 send(connId, createMapSettingsPacket());
                 send(createMapSizesPacket());
-                lobbyBoardHandler().sendBoardToNewConnection(connId);
                 // Send Entities *after* the Lounge Phase Change
                 send(connId, packetHelper.createPhaseChangePacket());
+                // The lounge-built board (if any) must arrive after the phase change, so the joining client
+                // already knows it is in the lounge when the board event fires (keeps the minimap closed)
+                lobbyBoardHandler().sendBoardToNewConnection(connId);
                 if (doBlind()) {
                     send(connId, createFilteredFullEntitiesPacket(player, null));
                 } else {

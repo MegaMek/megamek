@@ -71,16 +71,7 @@ import megamek.common.util.fileUtils.MegaMekFile;
 import megamek.common.verifier.TestInfantry;
 import megamek.common.weapons.lasers.clan.CLChemicalLaserWeapon;
 import megamek.common.weapons.ppc.clan.CLERPPC;
-import megamek.common.weapons.ppc.clan.CLEnhancedPPC;
-import megamek.common.weapons.ppc.clan.CLImprovedPPC;
-import megamek.common.weapons.ppc.innerSphere.ISERPPC;
-import megamek.common.weapons.ppc.innerSphere.ISHeavyPPC;
-import megamek.common.weapons.ppc.innerSphere.ISKinsSlaughterPPC;
-import megamek.common.weapons.ppc.innerSphere.ISLightPPC;
-import megamek.common.weapons.ppc.innerSphere.ISPPC;
-import megamek.common.weapons.ppc.innerSphere.ISSnubNosePPC;
 import megamek.logging.MMLogger;
-
 import static megamek.common.equipment.WeaponType.F_PPC_CAPACITOR_COMPATIBLE;
 
 /**

@@ -282,7 +282,7 @@ public class MekTableModel extends AbstractTableModel {
         result.append(UIUtil.fontHTML(owner.getColour().getColour())).append(owner.getName())
               .append("</FONT>").append(fontHTML()).append(sep).append("</FONT>")
               .append(UIUtil.fontHTML(isEnemy ? Color.RED : uiGreen()))
-              .append(Player.TEAM_NAMES[owner.getTeam()]);
+              .append(owner.getTeamName());
         return result.toString();
     }
 

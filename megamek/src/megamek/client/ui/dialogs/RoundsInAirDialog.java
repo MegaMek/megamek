@@ -129,6 +129,10 @@ public class RoundsInAirDialog extends JDialog {
      * landing time, with the target hex and warhead listed as "Unknown". Safe to call repeatedly (e.g. on phase change).
      */
     public void refresh() {
+        // if we're not actually showing this control, there's no need to actually do a refresh
+        if (!isVisible()) {
+            return;
+        }
         tableModel.setRowCount(0);
         Game game = client.getGame();
         List<RoundRow> rows = new ArrayList<>();
@@ -181,8 +185,8 @@ public class RoundsInAirDialog extends JDialog {
         if (player == null) {
             return Messages.getString("RoundsInAirDialog.unknownPlayer");
         }
-        int team = player.getTeam();
-        return ((team >= 0) && (team < Player.TEAM_NAMES.length)) ? Player.TEAM_NAMES[team] : String.valueOf(team);
+        
+        return player.getTeamName();
     }
 
     private static String firingUnitName(Game game, int firingEntityId) {

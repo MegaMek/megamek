@@ -423,7 +423,7 @@ public class MapMenu extends JPopupMenu {
     }
 
     private JMenu createBotCommands(Player bot) {
-        JMenu menu = new JMenu(bot.getName() + " (" + Player.TEAM_NAMES[bot.getTeam()] + ")");
+        JMenu menu = new JMenu(bot.getName() + " (" + bot.getTeamName() + ")");
 
         JMenu prioritizeTargetUnitMenu = new JMenu(Messages.getString("Bot.commands.priority"));
         JMenu ignoreTargetMenu = new JMenu(Messages.getString("Bot.commands.ignore"));

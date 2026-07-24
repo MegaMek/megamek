@@ -52,11 +52,15 @@ import java.awt.image.BufferedImage;
 import java.io.Serial;
 import javax.swing.BorderFactory;
 import javax.swing.JButton;
+import javax.swing.JCheckBoxMenuItem;
 import javax.swing.JComponent;
 import javax.swing.TransferHandler;
 
 import megamek.MMConstants;
+import megamek.client.ui.Messages;
+import megamek.client.ui.util.ScalingPopup;
 import megamek.client.ui.util.UIUtil;
+import megamek.common.board.Board;
 import megamek.common.loaders.MapSettings;
 import megamek.common.util.ImageUtil;
 import megamek.logging.MMLogger;
@@ -93,7 +97,52 @@ public class MapPreviewButton extends JButton {
                 handle.exportAsDrag(button, e, TransferHandler.COPY);
             }
         });
+        addMouseListener(new MouseAdapter() {
+            @Override
+            public void mousePressed(MouseEvent e) {
+                maybeShowPopup(e);
+            }
+
+            @Override
+            public void mouseReleased(MouseEvent e) {
+                maybeShowPopup(e);
+            }
+        });
         currentPreviewSize = lobby.maxMapButtonSize();
+    }
+
+    /**
+     * Shows the button's right-click menu (checked on both press and release, as the popup trigger is
+     * platform-dependent). It offers rotating the board on this slot by 180 degrees.
+     */
+    private void maybeShowPopup(MouseEvent event) {
+        if (!event.isPopupTrigger()) {
+            return;
+        }
+        boolean isRotated = boardName.startsWith(Board.BOARD_REQUEST_ROTATION);
+        boolean isFixedBoard = !boardName.isBlank()
+              && !boardName.startsWith(MapSettings.BOARD_GENERATED)
+              && !boardName.startsWith(MapSettings.BOARD_SURPRISE);
+        boolean hasEvenWidth = (lobby.mapSettings.getBoardWidth() % 2) == 0;
+
+        JCheckBoxMenuItem rotateItem = new JCheckBoxMenuItem(
+              Messages.getString("ChatLounge.MapPreviewButton.rotate"), isRotated);
+        rotateItem.setToolTipText(Messages.getString("ChatLounge.MapPreviewButton.rotateTooltip"));
+        rotateItem.setEnabled(isFixedBoard && hasEvenWidth);
+        rotateItem.addActionListener(actionEvent -> toggleRotation());
+
+        ScalingPopup popup = new ScalingPopup();
+        popup.add(rotateItem);
+        popup.show(this, event.getX(), event.getY());
+    }
+
+    /** Replaces the board on this slot with its 180 degree rotated (or un-rotated) counterpart. */
+    private void toggleRotation() {
+        String newBoardName = boardName.startsWith(Board.BOARD_REQUEST_ROTATION)
+              ? boardName.substring(Board.BOARD_REQUEST_ROTATION.length())
+              : Board.BOARD_REQUEST_ROTATION + boardName;
+        logger.debug("[LobbyBoard] board slot {}: rotation toggled to {}", index, newBoardName);
+        lobby.changeMapDnD(newBoardName, this);
     }
 
     /** A specialized JButton for the map preview panel of the Lobby. */

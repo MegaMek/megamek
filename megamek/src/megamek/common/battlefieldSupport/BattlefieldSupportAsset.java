@@ -35,6 +35,7 @@ package megamek.common.battlefieldSupport;
 import java.io.Serial;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
 import java.util.Vector;
 import java.util.stream.Collectors;
@@ -156,7 +157,7 @@ public class BattlefieldSupportAsset extends Entity {
      * @param data the stat block to build this asset from
      */
     public BattlefieldSupportAsset(BattlefieldSupportAssetData data) {
-        super();
+        this();
         setFromData(data);
     }
 
@@ -180,7 +181,7 @@ public class BattlefieldSupportAsset extends Entity {
         setYear(data.getYear());
         setSource(data.getSource());
         setAssetTechBase(data.getTechBase());
-        assetType = data.getAssetType();
+        setAssetType(data.getAssetType());
         cardTitle = data.getCardTitle();
         cardSubtitle = data.getCardSubtitle();
         setMovementMode(data.getMovementMode());
@@ -338,7 +339,7 @@ public class BattlefieldSupportAsset extends Entity {
     }
 
     public void setAssetType(BFSAssetType assetType) {
-        this.assetType = assetType;
+        this.assetType = Objects.requireNonNull(assetType, "assetType");
     }
 
     public @Nullable String getCardTitle() {

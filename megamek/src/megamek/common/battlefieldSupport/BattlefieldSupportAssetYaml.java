@@ -248,10 +248,7 @@ public final class BattlefieldSupportAssetYaml {
         asset.setChassis(text(node, CHASSIS, ""));
         asset.setModel(text(node, MODEL, ""));
 
-        BFSAssetType assetType = BFSAssetType.fromString(text(node, ASSET_TYPE, null));
-        if (assetType != null) {
-            asset.setAssetType(assetType);
-        }
+        asset.setAssetType(BFSAssetType.fromString(text(node, ASSET_TYPE, null)));
 
         asset.setCardTitle(text(node, CARD_TITLE, null));
         asset.setCardSubtitle(text(node, CARD_SUBTITLE, null));

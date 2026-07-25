@@ -35,6 +35,7 @@ package megamek.common.battlefieldSupport;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 import megamek.common.annotations.Nullable;
 import megamek.common.units.EntityMovementMode;
@@ -142,7 +143,7 @@ public class BattlefieldSupportAssetData implements Serializable {
     }
 
     public void setAssetType(BFSAssetType assetType) {
-        this.assetType = assetType;
+        this.assetType = Objects.requireNonNull(assetType, "assetType");
     }
 
     public @Nullable String getCardTitle() {

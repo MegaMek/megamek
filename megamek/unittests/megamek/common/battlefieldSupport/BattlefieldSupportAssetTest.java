@@ -35,6 +35,7 @@ package megamek.common.battlefieldSupport;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.util.List;
@@ -90,6 +91,19 @@ class BattlefieldSupportAssetTest {
         assertTrue(asset.isBattlefieldSupportAsset());
         assertEquals(UnitType.BATTLEFIELD_SUPPORT_ASSET, asset.getUnitType());
         assertEquals(Entity.ETYPE_BATTLEFIELD_SUPPORT_ASSET, asset.getEntityType());
+        assertEquals(BFSAssetType.VEHICLE, asset.getAssetType());
+    }
+
+    @Test
+    void assetTypeCannotBecomeNull() {
+        BattlefieldSupportAsset asset = new BattlefieldSupportAsset();
+        BattlefieldSupportAssetData data = new BattlefieldSupportAssetData();
+
+        assertEquals(BFSAssetType.VEHICLE, data.getAssetType());
+        assertThrows(NullPointerException.class, () -> asset.setAssetType(null));
+        assertThrows(NullPointerException.class, () -> data.setAssetType(null));
+        assertEquals(BFSAssetType.VEHICLE, asset.getAssetType());
+        assertEquals(BFSAssetType.VEHICLE, data.getAssetType());
     }
 
     @Test

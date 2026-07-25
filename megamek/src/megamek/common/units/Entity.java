@@ -13845,8 +13845,9 @@ public abstract class Entity extends TurnOrdered
                     }
                 }
 
-                // ECM suites can be deactivated (activation/deactivation rules); the switch is
-                // registered as an end-turn mode on the type, so it takes effect in the End Phase
+                // ECM suites can be deactivated (activation/deactivation rules). These types are built
+                // with setInstantModeSwitch(false), so every mode switch here -- deactivation included --
+                // is declared now and takes effect in the End Phase. Nothing registers an end-turn mode.
                 modes.add("Off");
 
                 misc.getType().setModes(modes.toArray(stringArray));

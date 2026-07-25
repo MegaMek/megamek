@@ -47,6 +47,7 @@ import megamek.common.equipment.ArmorType;
 import megamek.common.equipment.MiscType;
 import megamek.common.equipment.Mounted;
 import megamek.common.units.Entity;
+import megamek.common.units.Tank;
 import megamek.common.weapons.infantry.InfantryWeapon;
 
 public class CostCalculator {
@@ -207,11 +208,27 @@ public class CostCalculator {
      */
     static void fillInReport(CalculationReport costReport, Entity entity, boolean ignoreAmmo,
           String[] systemNames, int equipIndex, double cost, double[] costs) {
+          fillInReport(costReport, entity, ignoreAmmo, systemNames, equipIndex, 0, cost, costs);
+        }
+
+        /**
+         * Fills in a cost report while identifying leading rows that are inputs to a later rolled-up cost rather than
+         * independently additive costs.
+         *
+         * @param costStartIndex the first system-cost index included directly in the unit's running total
+         */
+        static void fillInReport(CalculationReport costReport, Entity entity, boolean ignoreAmmo,
+            String[] systemNames, int equipIndex, int costStartIndex, double cost, double[] costs) {
         NumberFormat commaFormatter = NumberFormat.getInstance();
+        commaFormatter.setMaximumFractionDigits(10);
         costReport.addHeader("Cost Calculations For " + entity.getChassis() + " " + entity.getModel());
         for (int l = 0; l < systemNames.length; l++) {
             if (l == equipIndex) {
                 CostCalculator.getWeaponsAndEquipmentCost(entity, costReport, ignoreAmmo);
+                if ((entity instanceof Tank tank) && (tank.getExtraCrewSeats() > 0)) {
+                    costReport.addLine("Extra Crew Seats", "",
+                          commaFormatter.format(tank.getExtraCrewSeats() * 100L));
+                }
             } else {
                 String result = commaFormatter.format(costs[l]);
                 if (costs[l] == 0) {
@@ -219,7 +236,11 @@ public class CostCalculator {
                 } else if (costs[l] < 0) {
                     result = "x " + commaFormatter.format(-costs[l]);
                 }
-                costReport.addLine(systemNames[l], "", result);
+                if (l < costStartIndex) {
+                    costReport.addInformationalLine(systemNames[l], "", result);
+                } else {
+                    costReport.addLine(systemNames[l], "", result);
+                }
             }
         }
         costReport.addResultLine("Total Cost:", "", commaFormatter.format(cost));

@@ -218,7 +218,7 @@ class ComputeToHitIsImpossible {
             }
 
             // These ammo types can only target hexes for minefield delivery
-            if (ammoType.getAmmoType().isAnyOf(LRM, LRM_IMP, MML, MEK_MORTAR) &&
+            if (ammoType.getAmmoType().isAnyOf(LRM, LRM_IMP, MML, MEK_MORTAR, TBOLT_10, TBOLT_15, TBOLT_20) &&
                   ((ammoType.getMunitionType().contains(AmmoType.Munitions.M_THUNDER)) ||
                         (ammoType.getMunitionType().contains(AmmoType.Munitions.M_THUNDER_ACTIVE)) ||
                         (ammoType.getMunitionType().contains(AmmoType.Munitions.M_THUNDER_INFERNO)) ||

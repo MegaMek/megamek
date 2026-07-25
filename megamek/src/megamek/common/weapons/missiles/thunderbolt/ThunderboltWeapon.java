@@ -46,12 +46,15 @@ import megamek.common.enums.AvailabilityValue;
 import megamek.common.enums.Faction;
 import megamek.common.enums.TechBase;
 import megamek.common.enums.TechRating;
+import megamek.common.equipment.AmmoType;
 import megamek.common.game.Game;
 import megamek.common.loaders.EntityLoadingException;
 import megamek.common.options.IGameOptions;
 import megamek.common.options.OptionsConstants;
 import megamek.common.weapons.handlers.AttackHandler;
 import megamek.common.weapons.handlers.ThunderBoltWeaponHandler;
+import megamek.common.weapons.handlers.ThunderboltScatterableHandler;
+import megamek.common.weapons.handlers.lrm.LRMScatterableHandler;
 import megamek.common.weapons.missiles.MissileWeapon;
 import megamek.server.totalWarfare.TWGameManager;
 
@@ -90,6 +93,19 @@ public abstract class ThunderboltWeapon extends MissileWeapon {
     @Nullable
     public AttackHandler getCorrectHandler(ToHitData toHit, WeaponAttackAction waa, Game game, TWGameManager manager) {
         try {
+            AmmoType atype = (AmmoType) game.getEntity(waa.getEntityId())
+                  .getEquipment(waa.getWeaponId())
+                  .getLinked()
+                  .getType();
+
+            if ((atype.getMunitionType().contains(AmmoType.Munitions.M_THUNDER))
+                  || (atype.getMunitionType().contains(AmmoType.Munitions.M_THUNDER_ACTIVE))
+                  || (atype.getMunitionType().contains(AmmoType.Munitions.M_THUNDER_AUGMENTED))
+                  || (atype.getMunitionType().contains(AmmoType.Munitions.M_THUNDER_INFERNO))
+                  || (atype.getMunitionType().contains(AmmoType.Munitions.M_THUNDER_VIBRABOMB))) {
+                return new ThunderboltScatterableHandler(toHit, waa, game, manager);
+            }
+
             return new ThunderBoltWeaponHandler(toHit, waa, game, manager);
         } catch (EntityLoadingException ignored) {
             LOGGER.warn("Get Correct Handler - Attach Handler Received Null Entity.");

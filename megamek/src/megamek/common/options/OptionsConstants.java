@@ -583,7 +583,9 @@ public class OptionsConstants {
     public static final String RPG_CONDITIONAL_EJECTION = "conditional_ejection";
     public static final String RPG_BEGIN_SHUTDOWN = "begin_shutdown";
     public static final String SEARCHLIGHTS_ON = "searchlights_on";
-    public static final String TWRULES = "twrules";
+    public static final String RULES_TW = "Total Warfare";
+    public static final String RULES_SYSTEM = "rules_system";
+    public static final String RULES_CORE = "Core Rules";
 
     private OptionsConstants() {
     }

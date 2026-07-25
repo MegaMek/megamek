@@ -41,6 +41,8 @@ public abstract class BasicGameOptions extends AbstractOptions {
     @Override
     public synchronized void initialize() {
         IBasicOptionGroup base = addGroup("basic");
+        addOption(base, OptionsConstants.RULES_SYSTEM, IOption.CHOICE,
+              OptionsConstants.RULES_CORE);
         addOption(base, OptionsConstants.BASE_FRIENDLY_FIRE, false);
         addOption(base, OptionsConstants.BASE_SKIP_INELIGIBLE_MOVEMENT, false);
         addOption(base, OptionsConstants.BASE_SKIP_INELIGIBLE_FIRING, false);

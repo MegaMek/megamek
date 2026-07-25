@@ -78,8 +78,7 @@ public class GameOptions extends BasicGameOptions {
         super.initialize();
 
         IBasicOptionGroup base = addGroup("basic");
-        // Change this to false for normal release
-        addOption(base, OptionsConstants.TWRULES, false);
+        
         addOption(base, OptionsConstants.SEARCHLIGHTS_ON, true);
         addOption(base, OptionsConstants.BASE_PUSH_OFF_BOARD, true);
         addOption(base, OptionsConstants.BASE_DUMPING_FROM_ROUND, 1);

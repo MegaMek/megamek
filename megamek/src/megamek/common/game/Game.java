@@ -93,6 +93,7 @@ import megamek.common.interfaces.ReportEntry;
 import megamek.common.loaders.MapSettings;
 import megamek.common.options.GameOptions;
 import megamek.common.options.IGameOptions;
+import megamek.common.options.IOption;
 import megamek.common.options.OptionsConstants;
 import megamek.common.planetaryConditions.PlanetaryConditions;
 import megamek.common.planetaryConditions.Wind;
@@ -308,7 +309,14 @@ public final class Game extends AbstractGame implements Serializable, PlanetaryC
     }
 
     public void initializeRulesManager() {
-        if (getOptions().booleanOption(OptionsConstants.TWRULES)) {
+        boolean bTWRules = false;
+        IOption rules_system = getOptions().getOption(OptionsConstants.RULES_SYSTEM);
+        String rules_selected = (rules_system == null) ? OptionsConstants.RULES_CORE :
+              rules_system.stringValue();
+        if (OptionsConstants.RULES_TW.equals(rules_selected)) {
+            bTWRules = true;
+        }
+        if (bTWRules) {
             rulesManager = new megamek.common.rules.totalwarfare.TWRulesManager();
         } 
         rulesManager = new CoreRulesManager();

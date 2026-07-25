@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2015-2025 The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2015-2026 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -905,11 +905,15 @@ class SystemPanel extends PicMap
                     // Every ECM suite now carries at least the "ECM"/"Off" pair (activation/deactivation
                     // rules), so the mode switcher is always offered - the ECCM and Ghost Target game
                     // options merely add further modes.
-                    // Iterate the PER-MOUNT mode count rather than the raw type mode list: it filters
+                    // Iterate the type's per-mount mode count rather than its raw mode count: it filters
                     // modes that need linked equipment to be available, such as the "Pulse ..." laser
                     // modes that require a RISC Laser Pulse Module (LaserWeapon keeps them last and
                     // reduces the count when no module is linked).
-                    int visibleModeCount = mounted.getModesCount();
+                    // This must come from the TYPE, not from Mounted#getModesCount(), because the loop
+                    // below indexes into the type's mode list. InfantryWeaponMounted overrides
+                    // getModesCount() to report a merged primary+secondary list that can be longer than
+                    // the type's, which would index past the end.
+                    int visibleModeCount = mounted.getType().getModesCount(mounted);
                     for (int modeIndex = 0; modeIndex < visibleModeCount; modeIndex++) {
                         EquipmentMode equipmentMode = mounted.getType().getMode(modeIndex);
                         // Hack to prevent showing an option that is disabled by the server, but would

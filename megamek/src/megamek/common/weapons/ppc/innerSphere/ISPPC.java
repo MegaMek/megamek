@@ -79,6 +79,7 @@ public class ISPPC extends PPCWeapon {
         // with a capacitor
         explosive = true;
         rulesRefs = "234, TM";
+        flags = flags.or(F_PPC_CAPACITOR_COMPATIBLE);
         techAdvancement.setTechBase(TechBase.ALL)
               .setIntroLevel(true)
               .setUnofficial(false)

@@ -5613,9 +5613,8 @@ public class MiscType extends EquipmentType {
               .andNot(F_SS_EQUIPMENT);
         misc.bv = 61;
         misc.setModes("ECM", "Off");
-        // Deactivation is declared at any time but takes effect in the End Phase; other mode
-        // switches (ECM/ECCM/Ghost Targets) remain instant
-        misc.addEndTurnMode("Off");
+        // Every mode switch here is declared now and takes effect in the End Phase, deactivation
+        // included; that is what setInstantModeSwitch(false) does.
         misc.setInstantModeSwitch(false);
         misc.rulesRefs = "213, TM";
         misc.techAdvancement.setTechBase(TechBase.IS)
@@ -5655,9 +5654,8 @@ public class MiscType extends EquipmentType {
               .andNot(F_SS_EQUIPMENT);
         misc.bv = 61;
         misc.setModes("ECM", "Off");
-        // Deactivation is declared at any time but takes effect in the End Phase; other mode
-        // switches (ECM/ECCM/Ghost Targets) remain instant
-        misc.addEndTurnMode("Off");
+        // Every mode switch here is declared now and takes effect in the End Phase, deactivation
+        // included; that is what setInstantModeSwitch(false) does.
         misc.setInstantModeSwitch(false);
         misc.rulesRefs = "66, IO:AE";
         misc.techAdvancement.setTechBase(TechBase.IS)
@@ -5695,9 +5693,8 @@ public class MiscType extends EquipmentType {
               .andNot(F_SS_EQUIPMENT);
         misc.bv = 61;
         misc.setModes("ECM", "Off");
-        // Deactivation is declared at any time but takes effect in the End Phase; other mode
-        // switches (ECM/ECCM/Ghost Targets) remain instant
-        misc.addEndTurnMode("Off");
+        // Every mode switch here is declared now and takes effect in the End Phase, deactivation
+        // included; that is what setInstantModeSwitch(false) does.
         misc.setInstantModeSwitch(false);
         misc.rulesRefs = "213, TM";
         misc.techAdvancement.setTechBase(TechBase.CLAN)
@@ -5742,9 +5739,8 @@ public class MiscType extends EquipmentType {
               .andNot(F_SS_EQUIPMENT);
         misc.bv = 100;
         misc.setModes("ECM", "Off");
-        // Deactivation is declared at any time but takes effect in the End Phase; other mode
-        // switches (ECM/ECCM/Ghost Targets) remain instant
-        misc.addEndTurnMode("Off");
+        // Every mode switch here is declared now and takes effect in the End Phase, deactivation
+        // included; that is what setInstantModeSwitch(false) does.
         misc.setInstantModeSwitch(false);
         misc.rulesRefs = "91, TO:AUE";
         // Tech Progression tweaked to combine IntOps with TRO Prototypes/3145 NTNU RS
@@ -5788,9 +5784,8 @@ public class MiscType extends EquipmentType {
               .andNot(F_SS_EQUIPMENT);
         misc.bv = 100;
         misc.setModes("ECM", "Off");
-        // Deactivation is declared at any time but takes effect in the End Phase; other mode
-        // switches (ECM/ECCM/Ghost Targets) remain instant
-        misc.addEndTurnMode("Off");
+        // Every mode switch here is declared now and takes effect in the End Phase, deactivation
+        // included; that is what setInstantModeSwitch(false) does.
         misc.setInstantModeSwitch(false);
         misc.rulesRefs = "Unofficial";
         misc.techAdvancement.setTechBase(TechBase.ALL)
@@ -5869,9 +5864,8 @@ public class MiscType extends EquipmentType {
               .andNot(F_SS_EQUIPMENT);
         misc.bv = 68;
         misc.setModes("ECM", "Off");
-        // Deactivation is declared at any time but takes effect in the End Phase; other mode
-        // switches (ECM/ECCM/Ghost Targets) remain instant
-        misc.addEndTurnMode("Off");
+        // Every mode switch here is declared now and takes effect in the End Phase, deactivation
+        // included; that is what setInstantModeSwitch(false) does.
         misc.setInstantModeSwitch(false);
         misc.rulesRefs = "90, TO:AUE";
         // Tech Progression tweaked to combine IntOps with TRO Prototypes/3145 NTNU RS
@@ -10368,9 +10362,8 @@ public class MiscType extends EquipmentType {
         misc.flags = misc.flags.or(F_ECM, F_ANGEL_ECM, F_BA_EQUIPMENT);
         misc.bv = 100;
         misc.setModes("ECM", "Off");
-        // Deactivation is declared at any time but takes effect in the End Phase; other mode
-        // switches (ECM/ECCM/Ghost Targets) remain instant
-        misc.addEndTurnMode("Off");
+        // Every mode switch here is declared now and takes effect in the End Phase, deactivation
+        // included; that is what setInstantModeSwitch(false) does.
         misc.setInstantModeSwitch(false);
         misc.rulesRefs = "91, TO:AUE";
         // Tech Progression tweaked to combine IntOps with TRO Prototypes/3145 NTNU RS
@@ -10403,9 +10396,8 @@ public class MiscType extends EquipmentType {
         misc.flags = misc.flags.or(F_ECM, F_ANGEL_ECM, F_BA_EQUIPMENT);
         misc.bv = 100;
         misc.setModes("ECM", "Off");
-        // Deactivation is declared at any time but takes effect in the End Phase; other mode
-        // switches (ECM/ECCM/Ghost Targets) remain instant
-        misc.addEndTurnMode("Off");
+        // Every mode switch here is declared now and takes effect in the End Phase, deactivation
+        // included; that is what setInstantModeSwitch(false) does.
         misc.setInstantModeSwitch(false);
         misc.rulesRefs = "91, TO:AUE";
         // Tech Progression tweaked to combine IntOps with TRO Prototypes/3145 NTNU RS
@@ -10493,9 +10485,8 @@ public class MiscType extends EquipmentType {
               .andNot(F_FIGHTER_EQUIPMENT);
         misc.bv = 0;
         misc.setModes("ECM", "Off");
-        // Deactivation is declared at any time but takes effect in the End Phase; other mode
-        // switches (ECM/ECCM/Ghost Targets) remain instant
-        misc.addEndTurnMode("Off");
+        // Every mode switch here is declared now and takes effect in the End Phase, deactivation
+        // included; that is what setInstantModeSwitch(false) does.
         misc.setInstantModeSwitch(false);
         misc.rulesRefs = "254, TM";
         misc.techAdvancement.setTechBase(TechBase.IS)
@@ -10528,9 +10519,8 @@ public class MiscType extends EquipmentType {
               .andNot(F_FIGHTER_EQUIPMENT);
         misc.bv = 0;
         misc.setModes("ECM", "Off");
-        // Deactivation is declared at any time but takes effect in the End Phase; other mode
-        // switches (ECM/ECCM/Ghost Targets) remain instant
-        misc.addEndTurnMode("Off");
+        // Every mode switch here is declared now and takes effect in the End Phase, deactivation
+        // included; that is what setInstantModeSwitch(false) does.
         misc.setInstantModeSwitch(false);
         misc.rulesRefs = "254, TM";
         misc.techAdvancement.setTechBase(TechBase.CLAN)

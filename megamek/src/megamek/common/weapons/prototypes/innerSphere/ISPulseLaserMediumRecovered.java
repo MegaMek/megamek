@@ -78,6 +78,7 @@ public class ISPulseLaserMediumRecovered extends PulseLaserWeapon {
         shortName = "Medium Pulse Laser (P)";
         flags = flags.or(F_PROTOTYPE);
         heat = 4;
+        heatAdjustmentForBvCalculation = 3;
         damage = 6;
         toHitModifier = -2;
         shortRange = 2;

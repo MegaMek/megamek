@@ -2,13 +2,12 @@ ${fullName}
 <#if typeDesc??>
 Type: ${typeDesc}
 </#if>
-Mass: ${massDesc} tons
 <#if use??>
 Use: ${use}
 </#if>
 Technology Base: ${techBase}
 Introduced: ${year}
-Mass: ${tonnage}
+Mass: ${massDesc}
 Battle Value: ${battleValue}
 Tech Rating/Availability: ${techRating}
 Cost: ${cost} C-bills

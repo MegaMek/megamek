@@ -34,7 +34,9 @@ package megamek.client.ui.clientGUI;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -131,9 +133,39 @@ public final class ReportToastFormatter {
      *       final overflow toast like {@code "+N more events - see report panel"}.</li>
      * </ul>
      *
-     * @return ordered list of toast bodies; empty if the report is null/empty or fully filtered out
+     * <p>This overload keeps no history, so every call treats the report as unseen. Callers that receive overlapping
+     * reports should use {@link #formatReport(String, String, Set)} instead.</p>
+     *
+     * @return ordered list of toast bodies; empty if the report is {@code null}/empty or fully filtered out
      */
     public static List<String> formatReport(String defaultPrefix, String report) {
+        return formatReport(defaultPrefix, report, new HashSet<>());
+    }
+
+    /**
+     * As {@link #formatReport(String, String)}, but skips entries that have already been turned into toasts.
+     *
+     * <p>This matters because the server's special-report packet carries the <em>entire</em> phase report accumulated
+     * so far, not just what is new. Several of those packets go out during a single movement phase (a hidden unit
+     * being revealed, a point-blank shot, an interrupted turn), so without a history every one of them would replay
+     * every event already shown - piloting-roll lines and all. Entries are matched on their normalized text, as
+     * produced by {@link #normalizeToastText}, so the history keys on the line the player actually saw rather than
+     * on its markup; they are recorded in {@code alreadyToasted} as they are accepted.</p>
+     *
+     * <p>Filtering happens <em>before</em> the {@link #MAX_TOASTS_PER_BURST} cap is applied, so a report full of
+     * already-seen entries does not exhaust the burst budget or inflate the overflow count.</p>
+     *
+     * <p>Two genuinely distinct events with byte-identical report text within the same history window collapse into
+     * one toast. Report text names the acting unit, so this is rare, and the report panel still lists both.</p>
+     *
+     * @param defaultPrefix   label for the first toast when the report carries no phase header
+     * @param report          the raw report HTML from the server
+     * @param alreadyToasted  normalized bodies already shown; accepted entries are added to it. The caller owns this
+     *                        set and should clear it when the reports stop overlapping, i.e. on a phase change.
+     *
+     * @return ordered list of toast bodies; empty if the report is {@code null}/empty or fully filtered out
+     */
+    public static List<String> formatReport(String defaultPrefix, String report, Set<String> alreadyToasted) {
         List<String> toasts = new ArrayList<>();
         if (report == null || report.isEmpty()) {
             return toasts;
@@ -180,6 +212,14 @@ public final class ReportToastFormatter {
             // Drop empty "Team N:" / "Player (Team N):" labels - they precede BV detail lines that we already filter,
             // so the label on its own conveys nothing.
             if (TEAM_SUMMARY_LABEL.matcher(preview).matches()) {
+                continue;
+            }
+            // Drop entries this client has already toasted. The server re-sends the whole accumulated phase report
+            // with each special-report packet, so without this every packet replays the events before it. The key is
+            // the fully normalized text rather than the coarser preview above, so that it matches the line the player
+            // actually saw: preview leaves entities encoded, keeps runs of whitespace, and drops <br> instead of
+            // turning it into a space, so two entries that render identically can have different previews.
+            if (!alreadyToasted.add(normalizeToastText(entry))) {
                 continue;
             }
             // Cap toasts per burst. Once full, count remaining qualifying entries so we can summarize them in a single

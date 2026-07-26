@@ -112,7 +112,7 @@ public class UnitLoadingDialog extends JDialog {
             return;
         }
 
-        startMonitoring();
+        startMonitoring(waitForUpcomingLoad);
     }
 
     @Override
@@ -130,15 +130,19 @@ public class UnitLoadingDialog extends JDialog {
         super.dispose();
     }
 
-    private void startMonitoring() {
+    private void startMonitoring(boolean waitForUpcomingLoad) {
         updateCounts();
 
-        mekSummaryCacheListener = () -> {
-            loadingDone = true;
-            unregisterListener();
-            SwingUtilities.invokeLater(() -> setVisible(false));
-        };
+        mekSummaryCacheListener = this::finishMonitoring;
         mekSummaryCache.addListener(mekSummaryCacheListener);
+
+        // A normal load may finish after the constructor's initial isInitialized() check but before the listener is
+        // registered. Its only completion event would then already be gone, leaving this indeterminate dialog open.
+        // Do not apply this recheck to a dialog created before an explicit Refresh/Rebuild request: that cache can
+        // legitimately still be initialized until the upcoming operation starts.
+        if (shouldFinishMonitoringAfterRegistration(waitForUpcomingLoad, mekSummaryCache.isInitialized())) {
+            finishMonitoring();
+        }
 
         Runnable r = () -> {
             while (!loadingDone) {
@@ -154,6 +158,16 @@ public class UnitLoadingDialog extends JDialog {
         Thread t = new Thread(r, "Unit Loader Dialog");
         t.setDaemon(true);
         t.start();
+    }
+
+    static boolean shouldFinishMonitoringAfterRegistration(boolean waitForUpcomingLoad, boolean cacheInitialized) {
+        return !waitForUpcomingLoad && cacheInitialized;
+    }
+
+    private void finishMonitoring() {
+        loadingDone = true;
+        unregisterListener();
+        SwingUtilities.invokeLater(() -> setVisible(false));
     }
 
     private void unregisterListener() {

@@ -978,14 +978,14 @@ public abstract class AbstractUnitSelectorDialog extends JDialog implements Runn
               .collect(Collectors.toCollection(ArrayList::new));
     }
 
-    /**
-     * @return true if the current selection is non-empty and every selected row has a standard (TW) unit form, i.e. no
-     *       row is a standalone Battlefield Support Asset. Callers use this to enable a "Select as Unit" action.
-     */
-    public boolean selectionCanSelectAsUnit() {
-        List<MekSummary> summaries = getSelectedMekSummaries();
-        long assetOnly = summaries.stream().filter(MekSummary::isBattlefieldSupportAsset).count();
-        return canSelectSelectionAsUnit(summaries.size(), (int) assetOnly);
+    /** @return true when at least one row is selected for the standard selection actions. */
+    public boolean hasSelectedRows() {
+        return canSelectSelection(getSelectedMekSummaries().size());
+    }
+
+    /** Pure decision for standard selection actions, which accept every selectable entity form. */
+    static boolean canSelectSelection(int selectedCount) {
+        return selectedCount > 0;
     }
 
     /**
@@ -996,19 +996,6 @@ public abstract class AbstractUnitSelectorDialog extends JDialog implements Runn
         List<MekSummary> summaries = getSelectedMekSummaries();
         long withoutAssetForm = summaries.stream().filter(ms -> assetSummaryFor(ms) == null).count();
         return canSelectSelectionAsAsset(summaries.size(), (int) withoutAssetForm);
-    }
-
-    /**
-     * Pure decision: a selection may be added in standard (TW) unit form when it is non-empty and none of its rows is a
-     * standalone (asset-only) Battlefield Support Asset.
-     *
-     * @param selectedCount  number of selected rows
-     * @param assetOnlyCount number of selected rows that are standalone assets (no unit form)
-     *
-     * @return true if the selection can be added as units
-     */
-    static boolean canSelectSelectionAsUnit(int selectedCount, int assetOnlyCount) {
-        return (selectedCount > 0) && (assetOnlyCount == 0);
     }
 
     /**

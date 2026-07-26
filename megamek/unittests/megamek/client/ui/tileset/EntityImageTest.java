@@ -33,12 +33,18 @@
 package megamek.client.ui.tileset;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertSame;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
+import java.awt.Color;
 import java.awt.image.BufferedImage;
 
+import megamek.common.battlefieldSupport.BattlefieldSupportAsset;
+import megamek.common.battlefieldSupport.OverlayStyle;
+import megamek.common.battlefieldSupport.StripeDirection;
 import megamek.common.icons.Camouflage;
 import megamek.common.units.Crew;
 import megamek.common.units.Entity;
@@ -129,5 +135,43 @@ class EntityImageTest {
         when(entity.getInternalRemainingPercent()).thenReturn(1.0);
 
         assertEquals(Entity.DMG_MODERATE, EntityImage.calculateDamageLevel(entity));
+    }
+
+    @Test
+    void processedImageCacheSeparatesAssetFromBaseUnit() {
+        Infantry baseUnit = mock(Infantry.class);
+        BattlefieldSupportAsset asset = mock(BattlefieldSupportAsset.class);
+        BufferedImage base = new BufferedImage(ICON_WIDTH, ICON_HEIGHT, BufferedImage.TYPE_INT_ARGB);
+        Camouflage camouflage = new Camouflage();
+        EntityImage cachedBase = EntityImage.createIcon(base, null, camouflage, baseUnit, -1, true, false);
+        EntityImage cachedAsset = EntityImage.createIcon(base, null, camouflage, asset, -1, true, false);
+
+        assertTrue(TilesetManager.hasSameImageCacheIdentity(cachedBase, base, camouflage, baseUnit));
+        assertTrue(TilesetManager.hasSameImageCacheIdentity(cachedAsset, base, camouflage, asset));
+        assertFalse(TilesetManager.hasSameImageCacheIdentity(cachedBase, base, camouflage, asset));
+        assertFalse(TilesetManager.hasSameImageCacheIdentity(cachedAsset, base, camouflage, baseUnit));
+    }
+
+    @Test
+    void processedImageCacheIncludesEveryAssetOverlaySetting() {
+        BattlefieldSupportAsset asset = mock(BattlefieldSupportAsset.class);
+        BufferedImage base = new BufferedImage(ICON_WIDTH, ICON_HEIGHT, BufferedImage.TYPE_INT_ARGB);
+        Camouflage defaultCamouflage = new Camouflage();
+        EntityImage cachedAsset = EntityImage.createIcon(base, null, defaultCamouflage, asset, -1, true, false);
+
+        Camouflage differentStyle = defaultCamouflage.clone();
+        differentStyle.setOverlayStyle(OverlayStyle.HAZARD);
+        Camouflage differentDirection = defaultCamouflage.clone();
+        differentDirection.setOverlayDirection(StripeDirection.HORIZONTAL);
+        Camouflage differentColor = defaultCamouflage.clone();
+        differentColor.setOverlayColor(Color.MAGENTA);
+
+        assertTrue(TilesetManager.hasSameImageCacheIdentity(cachedAsset, base, defaultCamouflage, asset));
+        assertFalse(TilesetManager.hasSameImageCacheIdentity(cachedAsset, base, differentStyle, asset),
+              "Overlay style must participate in processed-image cache identity");
+        assertFalse(TilesetManager.hasSameImageCacheIdentity(cachedAsset, base, differentDirection, asset),
+              "Overlay direction must participate in processed-image cache identity");
+        assertFalse(TilesetManager.hasSameImageCacheIdentity(cachedAsset, base, differentColor, asset),
+              "Overlay color must participate in processed-image cache identity");
     }
 }

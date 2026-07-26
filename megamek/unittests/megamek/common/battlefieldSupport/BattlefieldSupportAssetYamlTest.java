@@ -34,6 +34,7 @@ package megamek.common.battlefieldSupport;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.util.List;
@@ -171,5 +172,49 @@ class BattlefieldSupportAssetYamlTest {
         String yaml = BattlefieldSupportAssetYaml.toYaml(maxim());
         assertTrue(!yaml.contains("linkedUnitId"));
         assertNull(BattlefieldSupportAssetYaml.fromYaml(yaml).getLinkedUnitId());
+    }
+
+    @Test
+    void integerBoundariesAreAccepted() throws Exception {
+        BattlefieldSupportAssetData parsed = BattlefieldSupportAssetYaml.fromYaml("""
+              assetType: Vehicle
+              year: -2147483648
+              tmm: 2147483647
+              """);
+
+        assertEquals(Integer.MIN_VALUE, parsed.getYear());
+        assertEquals(Integer.MAX_VALUE, parsed.getTmm());
+    }
+
+    @Test
+    void coercedAndNonIntegralNumbersAreRejected() {
+        assertInvalid("year: \"2689\"", "year");
+        assertInvalid("tmm: true", "tmm");
+        assertInvalid("destroyCheck: 7.0", "destroyCheck");
+        assertInvalid("cost: { standard: 2147483648 }", "standard");
+    }
+
+    @Test
+    void malformedStructuredFieldsAreRejected() {
+        assertInvalid("movement: 3", "movement");
+        assertInvalid("skill: [6, 5]", "skill");
+        assertInvalid("damage: damage", "damage");
+        assertInvalid("cost: 23", "cost");
+        assertInvalid("range: [1, 2]", "range");
+        assertInvalid("range: [1, two, 3]", "range[1]");
+        assertInvalid("specials: APC1", "specials");
+        assertInvalid("specials: [APC1, 2]", "specials[1]");
+    }
+
+    @Test
+    void nonObjectRootAndNonStringFieldsAreRejected() {
+        assertThrows(Exception.class, () -> BattlefieldSupportAssetYaml.fromYaml("[asset]"));
+        assertInvalid("chassis: [Maxim]", "chassis");
+    }
+
+    private static void assertInvalid(String field, String expectedPath) {
+        Exception exception = assertThrows(Exception.class,
+              () -> BattlefieldSupportAssetYaml.fromYaml("assetType: Vehicle\n" + field + "\n"));
+        assertTrue(exception.getMessage().contains(expectedPath), exception.getMessage());
     }
 }

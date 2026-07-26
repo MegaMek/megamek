@@ -104,6 +104,8 @@ class EntityListFileUnitUuidTest {
 
         assertTrue(xml.contains(MULParser.ATTR_UNIT_FILE_UUID + "=\"" + UNIT_UUID + "\""),
               "MUL should include the unit-file UUID for a non-asset unit: " + xml);
+          assertFalse(xml.contains(MULParser.ATTR_ENTITY_FORM),
+              "Ordinary units must not be marked as Battlefield Support Assets: " + xml);
     }
 
     @Test

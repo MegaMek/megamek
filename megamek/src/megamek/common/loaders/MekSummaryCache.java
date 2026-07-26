@@ -118,6 +118,7 @@ public class MekSummaryCache {
     private final List<Listener> listeners = new ArrayList<>();
 
     private StringBuffer loadReport = new StringBuffer();
+    private StringBuffer cacheCollisionReport = new StringBuffer();
     private volatile Thread loader;
 
     private LoadOperation queuedLoadOperation;
@@ -525,7 +526,6 @@ public class MekSummaryCache {
         Map<String, MekSummary> updatedAssetNameMap = new HashMap<>();
         Map<String, MekSummary> updatedUuidMap = new HashMap<>();
         Map<String, MekSummary> updatedAssetByLinkedUnitId = new HashMap<>();
-
         // store map references
         for (MekSummary element : updatedData) {
             if (shouldStopLoading()) {
@@ -534,17 +534,20 @@ public class MekSummaryCache {
             if (element.isBattlefieldSupportAsset()) {
                 // Assets share a name with their base unit; keep them in a dedicated map so both remain retrievable
                 // and the plain-name lookup keeps returning the base unit (what MUL/other name lookups expect).
-                updatedAssetNameMap.put(element.getName(), element);
+                putFirst(updatedAssetNameMap, element.getName(), element,
+                      "Battlefield Support Asset name", cacheCollisionReport);
                 String linkedUnitId = element.getLinkedUnitId();
                 if ((linkedUnitId != null) && !linkedUnitId.isBlank()) {
-                    updatedAssetByLinkedUnitId.put(linkedUnitId, element);
+                    putFirst(updatedAssetByLinkedUnitId, linkedUnitId, element,
+                          "Battlefield Support Asset linked-unit UUID", cacheCollisionReport);
                 }
             } else {
                 updatedNameMap.put(element.getName(), element);
             }
             String unitFileUUID = element.getUnitFileUUID();
             if ((unitFileUUID != null) && !unitFileUUID.isBlank()) {
-                updatedUuidMap.put(unitFileUUID, element);
+                putFirst(updatedUuidMap, unitFileUUID, element, "unit-file UUID",
+                      cacheCollisionReport);
             }
             String entryName = element.getEntryName();
             if (entryName == null) {
@@ -578,6 +581,26 @@ public class MekSummaryCache {
         return true;
     }
 
+    /**
+     * Adds a cache lookup entry unless its key is already assigned. Duplicate keys retain the first loaded summary so
+     * name-only legacy callers continue to receive a deterministic result; the conflicting source is reported.
+     */
+    static void putFirst(Map<String, MekSummary> index, String key, MekSummary summary, String keyType,
+          StringBuffer report) {
+        MekSummary previous = index.putIfAbsent(key, summary);
+        if (previous != null) {
+            report.append("  Ambiguous ").append(keyType).append(" '").append(key).append("' for ")
+                  .append(summarySource(previous)).append(" and ").append(summarySource(summary)).append("; ")
+                  .append("retaining the first-loaded lookup result.\n");
+        }
+    }
+
+    private static String summarySource(MekSummary summary) {
+        String entryName = summary.getEntryName();
+        return (entryName == null) ? summary.getSourceFile().toString()
+              : summary.getSourceFile() + "!" + entryName;
+    }
+
     private void logReport() {
         loadReport.append(data.length).append(" units loaded.\n");
 
@@ -586,11 +609,16 @@ public class MekSummaryCache {
                   .append(" units failed to load...\n");
         }
 
+        if (!cacheCollisionReport.isEmpty()) {
+            loadReport.append(cacheCollisionReport);
+            logger.warn("Unit cache lookup collisions; first-loaded results are retained:\n{}", cacheCollisionReport);
+        }
         logger.debug(loadReport.toString());
     }
 
     private void resetLoadStats() {
         loadReport = new StringBuffer();
+        cacheCollisionReport = new StringBuffer();
         failedFiles = new HashMap<>();
         cacheCount = 0;
         fileCount = 0;

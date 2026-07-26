@@ -184,18 +184,10 @@ public class MegaMekUnitSelectorDialog extends AbstractUnitSelectorDialog {
         ClientPreferences cs = PreferenceManager.getClientPreferences();
 
         Arrays.fill(e.getCrew().getClanPilots(), e.isClan());
-        if (cs.useAverageSkills()) {
-            if (e instanceof BattlefieldSupportAsset asset) {
-                // Assets have only two crew grades (Regular/Veteran), carried by the crew Gunnery. Their grade is a
-                // constant taken from the player's skill-rolling method LEVEL - not a dice roll - with Veteran-and-above
-                // giving a Veteran asset and everything below giving Regular. Only assets that define a Veteran variant
-                // can be Veteran.
-                boolean veteran = clientGUI.getClient().getSkillGenerator().getLevel().isVeteranOrGreater()
-                      && asset.hasVeteranProfile();
-                asset.setVeteranCrew(veteran);
-            } else {
-                clientGUI.getClient().getSkillGenerator().setRandomSkills(e);
-            }
+        if (e instanceof BattlefieldSupportAsset asset) {
+            applyExplicitAssetSkill(asset, isVeteranAssetSkillSelected());
+        } else if (cs.useAverageSkills()) {
+            clientGUI.getClient().getSkillGenerator().setRandomSkills(e);
         }
 
         for (int i = 0; i < e.getCrew().getSlotCount(); i++) {
@@ -207,6 +199,10 @@ public class MegaMekUnitSelectorDialog extends AbstractUnitSelectorDialog {
                       : RandomNameGenerator.getInstance().generate(gender, e.getCrew().isClanPilot(i)), i);
             }
         }
+    }
+
+    static void applyExplicitAssetSkill(BattlefieldSupportAsset asset, boolean veteranSelected) {
+        asset.setVeteranCrew(veteranSelected && asset.hasVeteranProfile());
     }
 
     private void updatePlayerChoice(String selectionName) {
@@ -269,12 +265,12 @@ public class MegaMekUnitSelectorDialog extends AbstractUnitSelectorDialog {
      * an asset form.
      */
     private void updateSelectButtons() {
-        boolean canSelectAsUnit = selectionCanSelectAsUnit();
+        boolean hasSelection = hasSelectedRows();
         if (buttonSelect != null) {
-            buttonSelect.setEnabled(canSelectAsUnit);
+            buttonSelect.setEnabled(hasSelection);
         }
         if (buttonSelectClose != null) {
-            buttonSelectClose.setEnabled(canSelectAsUnit);
+            buttonSelectClose.setEnabled(hasSelection);
         }
         if (buttonSelectAsset != null) {
             buttonSelectAsset.setEnabled(selectionCanSelectAsAsset());

@@ -38,7 +38,11 @@ import static org.junit.jupiter.api.Assertions.assertInstanceOf;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.io.ByteArrayInputStream;
+import java.io.File;
 import java.io.StringWriter;
+import java.lang.reflect.Constructor;
+import java.lang.reflect.Field;
+import java.lang.reflect.Method;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Vector;
@@ -52,6 +56,9 @@ import megamek.common.battlefieldSupport.StripeDirection;
 import megamek.common.equipment.EquipmentType;
 import megamek.common.game.Game;
 import megamek.common.loaders.MULParser;
+import megamek.common.loaders.MekFileParser;
+import megamek.common.loaders.MekSummary;
+import megamek.common.loaders.MekSummaryCache;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -111,6 +118,9 @@ class EntityListFileBattlefieldSupportAssetTest {
 
         assertTrue(xml.contains(MULParser.ATTR_UNIT_FILE_UUID + "=\"" + ASSET_UUID + "\""),
               "MUL should include the asset's unit-file UUID: " + xml);
+        assertTrue(xml.contains(MULParser.ATTR_ENTITY_FORM + "=\""
+                    + MULParser.VALUE_BATTLEFIELD_SUPPORT_ASSET + "\""),
+              "MUL should explicitly preserve the Battlefield Support Asset form: " + xml);
         assertTrue(xml.contains(MULParser.ATTR_DESTROY_CHECK + "=\"5\""),
               "MUL should include the current Destroy Check: " + xml);
         assertTrue(xml.contains(MULParser.ATTR_GUNNERY + "=\"3\""),
@@ -144,6 +154,101 @@ class EntityListFileBattlefieldSupportAssetTest {
         assertEquals(5, asset.getDestroyCheck(), "The current Destroy Check (damage) is restored from the MUL");
         assertTrue(asset.isVeteranCrew(), "The Veteran crew grade is restored from the MUL pilot gunnery");
     }
+
+      @Test
+      void staleBaseUuidFallsBackToSameNameAssetThroughMulParser() throws Exception {
+            File assetFile = new File("testresources/data/mekfiles/Maxim Heavy Hover Transport.bfs");
+            BattlefieldSupportAsset source = assertInstanceOf(BattlefieldSupportAsset.class,
+                    new MekFileParser(assetFile).getEntity());
+            source.setGame(game);
+            source.setId(game.getNextEntityId());
+            source.setOwner(game.getPlayer(0));
+
+            MekSummary assetSummary = MekSummaryCache.getSummaryFromFile(assetFile);
+            MekSummary sameNameBase = MekSummaryCache.getSummaryFromFile(
+                    new File("testresources/data/mekfiles/Bulldog Medium Tank.blk"));
+            assertTrue((assetSummary != null) && (sameNameBase != null));
+            sameNameBase.setName(source.getShortNameRaw());
+            sameNameBase.setChassis(source.getChassis());
+            sameNameBase.setModel(source.getModel());
+            sameNameBase.setUnitFileUUID("stale-base-uuid");
+
+            MekSummaryCache testCache = newCache(assetSummary, sameNameBase);
+            Field instanceField = MekSummaryCache.class.getDeclaredField("instance");
+            instanceField.setAccessible(true);
+            Object originalCache = instanceField.get(null);
+            instanceField.set(null, testCache);
+            try {
+                  String xml = toMul(source, false).replace(source.getUnitFileUUID(), "stale-base-uuid");
+                  MULParser parser = new MULParser(
+                          new ByteArrayInputStream(xml.getBytes(StandardCharsets.UTF_8)), null);
+
+                  BattlefieldSupportAsset loaded = assertInstanceOf(BattlefieldSupportAsset.class,
+                          parser.getEntities().getFirst());
+                  assertEquals(source.getChassis(), loaded.getChassis());
+                  assertEquals(source.getUnitFileUUID(), loaded.getUnitFileUUID());
+                  assertTrue(parser.getWarningMessage().contains("does not identify a Battlefield Support Asset"));
+            } finally {
+                  instanceField.set(null, originalCache);
+            }
+      }
+
+      private static MekSummaryCache newCache(MekSummary... summaries) throws Exception {
+            Constructor<MekSummaryCache> constructor = MekSummaryCache.class.getDeclaredConstructor();
+            constructor.setAccessible(true);
+            MekSummaryCache cache = constructor.newInstance();
+
+            Method updateData = MekSummaryCache.class.getDeclaredMethod("updateData", Vector.class);
+            updateData.setAccessible(true);
+            assertTrue((boolean) updateData.invoke(cache, new Vector<>(java.util.List.of(summaries))));
+
+            Field initialized = MekSummaryCache.class.getDeclaredField("initialized");
+            initialized.setAccessible(true);
+            initialized.set(cache, true);
+            return cache;
+      }
+
+      @Test
+      void destroyCheckBoundsAreAccepted() throws Exception {
+            assertEquals(0, parseWithDestroyCheck(0).getDestroyCheck());
+            assertEquals(7, parseWithDestroyCheck(7).getDestroyCheck());
+      }
+
+      @Test
+      void destroyCheckBelowZeroIsRejected() throws Exception {
+            ParseResult result = parseWithInvalidDestroyCheck(-1);
+
+            assertEquals(7, result.asset().getDestroyCheck());
+            assertTrue(result.warning().contains("expected 0..7"));
+      }
+
+      @Test
+      void destroyCheckAboveOriginalIsRejected() throws Exception {
+            ParseResult result = parseWithInvalidDestroyCheck(8);
+
+            assertEquals(7, result.asset().getDestroyCheck());
+            assertTrue(result.warning().contains("expected 0..7"));
+      }
+
+      private BattlefieldSupportAsset parseWithDestroyCheck(int destroyCheck) throws Exception {
+            return parseMul(toMul(damagedVeteranAsset(destroyCheck), true)).asset();
+      }
+
+      private ParseResult parseWithInvalidDestroyCheck(int destroyCheck) throws Exception {
+            String xml = toMul(damagedVeteranAsset(7), true).replace(
+                    MULParser.ATTR_ENTITY_FORM + "=\"" + MULParser.VALUE_BATTLEFIELD_SUPPORT_ASSET + "\"",
+                    MULParser.ATTR_ENTITY_FORM + "=\"" + MULParser.VALUE_BATTLEFIELD_SUPPORT_ASSET + "\" "
+                              + MULParser.ATTR_DESTROY_CHECK + "=\"" + destroyCheck + "\"");
+            return parseMul(xml);
+      }
+
+      private ParseResult parseMul(String xml) throws Exception {
+            MULParser parser = new MULParser(new ByteArrayInputStream(xml.getBytes(StandardCharsets.UTF_8)), null);
+            BattlefieldSupportAsset asset = assertInstanceOf(BattlefieldSupportAsset.class, parser.getEntities().get(0));
+            return new ParseResult(asset, parser.hasWarningMessage() ? parser.getWarningMessage() : "");
+      }
+
+      private record ParseResult(BattlefieldSupportAsset asset, String warning) { }
 
     @Test
     @DisplayName("a non-default asset marker overlay is written to the MUL")

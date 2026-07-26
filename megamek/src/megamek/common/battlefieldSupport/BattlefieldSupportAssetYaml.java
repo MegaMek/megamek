@@ -241,6 +241,9 @@ public final class BattlefieldSupportAssetYaml {
         if (node == null || node.isNull()) {
             throw new IOException("Empty or invalid .bfs document");
         }
+        if (!node.isObject()) {
+            throw new IOException("The .bfs document root must be an object");
+        }
         BattlefieldSupportAssetData asset = new BattlefieldSupportAssetData();
 
         asset.setUuid(text(node, UUID, null));
@@ -262,6 +265,7 @@ public final class BattlefieldSupportAssetYaml {
 
         JsonNode movement = node.get(MOVEMENT);
         if (movement != null) {
+            requireObject(movement, MOVEMENT);
             asset.setMp(intValue(movement, MP, 0));
             String modeText = text(movement, MODE, null);
             if (modeText != null) {
@@ -272,18 +276,24 @@ public final class BattlefieldSupportAssetYaml {
         asset.setTmm(intValue(node, TMM, 0));
 
         JsonNode range = node.get(RANGE);
-        if (range != null && range.isArray() && range.size() == 3) {
-            asset.setRange(new BFSRange(range.get(0).asInt(), range.get(1).asInt(), range.get(2).asInt()));
+        if (range != null) {
+            if (!range.isArray() || (range.size() != 3)) {
+                throw new IOException("Field 'range' must be an array of exactly three integers");
+            }
+            asset.setRange(new BFSRange(requiredInt(range.get(0), "range[0]"),
+                  requiredInt(range.get(1), "range[1]"), requiredInt(range.get(2), "range[2]")));
         }
 
         JsonNode skill = node.get(SKILL);
         if (skill != null) {
+            requireObject(skill, SKILL);
             asset.setSkill(intValue(skill, STANDARD, asset.getSkill()));
             asset.setVeteranSkill(optionalInt(skill, VETERAN));
         }
 
         JsonNode damage = node.get(DAMAGE);
         if (damage != null) {
+            requireObject(damage, DAMAGE);
             asset.setDamage(new BFSDamage(intValue(damage, PER_HIT, 0), intValue(damage, HITS, 0)));
         }
 
@@ -292,14 +302,22 @@ public final class BattlefieldSupportAssetYaml {
 
         JsonNode cost = node.get(COST);
         if (cost != null) {
+            requireObject(cost, COST);
             asset.setCost(intValue(cost, STANDARD, 0));
             asset.setVeteranCost(optionalInt(cost, VETERAN));
         }
 
         JsonNode specials = node.get(SPECIALS);
-        if (specials != null && specials.isArray()) {
+        if (specials != null) {
+            if (!specials.isArray()) {
+                throw new IOException("Field 'specials' must be an array of strings");
+            }
             List<BFSSpecial> parsed = new ArrayList<>();
-            for (JsonNode entry : specials) {
+            for (int i = 0; i < specials.size(); i++) {
+                JsonNode entry = specials.get(i);
+                if (!entry.isTextual()) {
+                    throw new IOException("Field 'specials[" + i + "]' must be a string");
+                }
                 BFSSpecial special = BFSSpecial.parse(entry.asText());
                 if (special != null) {
                     parsed.add(special);
@@ -318,19 +336,38 @@ public final class BattlefieldSupportAssetYaml {
         return asset;
     }
 
-    private static @Nullable String text(JsonNode node, String key, @Nullable String defaultValue) {
+    private static @Nullable String text(JsonNode node, String key, @Nullable String defaultValue) throws IOException {
         JsonNode child = node.get(key);
-        return (child == null || child.isNull()) ? defaultValue : child.asText();
+        if (child == null || child.isNull()) {
+            return defaultValue;
+        }
+        if (!child.isTextual()) {
+            throw new IOException("Field '" + key + "' must be a string");
+        }
+        return child.textValue();
     }
 
-    private static int intValue(JsonNode node, String key, int defaultValue) {
+    private static int intValue(JsonNode node, String key, int defaultValue) throws IOException {
         JsonNode child = node.get(key);
-        return (child == null || child.isNull()) ? defaultValue : child.asInt(defaultValue);
+        return (child == null || child.isNull()) ? defaultValue : requiredInt(child, key);
     }
 
-    private static @Nullable Integer optionalInt(JsonNode node, String key) {
+    private static @Nullable Integer optionalInt(JsonNode node, String key) throws IOException {
         JsonNode child = node.get(key);
-        return (child == null || child.isNull()) ? null : child.asInt();
+        return (child == null || child.isNull()) ? null : requiredInt(child, key);
+    }
+
+    private static int requiredInt(JsonNode node, String path) throws IOException {
+        if (!node.isIntegralNumber() || !node.canConvertToInt()) {
+            throw new IOException("Field '" + path + "' must be a 32-bit integer");
+        }
+        return node.intValue();
+    }
+
+    private static void requireObject(JsonNode node, String path) throws IOException {
+        if (!node.isObject()) {
+            throw new IOException("Field '" + path + "' must be an object");
+        }
     }
 
     // endregion

@@ -5,6 +5,10 @@ model: ""
 assetType: "Vehicle"
 cardTitle: "Mobile HQ"
 cardSubtitle: "(Browning)"
+year: 2625
+techBase: "IS"
+source: "RG29"
+role: "SCOUT"
 movement:
   mp: 7
   mode: "WHEELED"

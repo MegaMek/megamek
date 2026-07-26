@@ -198,7 +198,8 @@ public class TransportCalculator {
             }
 
             while (unitCounts.get(unitType) * ratio > (double) (currentCapacity.getOrDefault(unitType, 0))) {
-                MekSummary dropship = table.generateUnit(ms -> hasBayFor(ms, unitType));
+                MekSummary dropship = table.generateUnit(ms -> hasBayFor(ms, unitType)
+                      && !isPredominantlyTanker(ms));
 
                 if (null == dropship) {
                     break; // Could not find any transport for the unit type; skip
@@ -301,6 +302,25 @@ public class TransportCalculator {
      *
      * @return True if the unit can be carried by the transporting unit.
      */
+    /**
+     * Whether a craft is a liquid tanker rather than a transport that happens to carry some liquid.
+     *
+     * <p>A tanker can qualify on a stray unit bay and then be drawn over and over, because each one
+     * contributes almost nothing toward the unit count being covered - a run that needed lift for a
+     * regiment produced sixteen Aqueducts and twenty-six thousand tons of liquid tankage nobody asked
+     * for. A hull whose holds are mostly liquid is not a troop transport, so it is kept out of the
+     * unit-transport draw; the cargo lift selects it separately when liquid capacity is what is
+     * wanted.</p>
+     *
+     * @param mekSummary the craft to test
+     *
+     * @return {@code true} when the craft's liquid capacity exceeds its dry capacity
+     */
+    private static boolean isPredominantlyTanker(MekSummary mekSummary) {
+        CargoCapacity capacity = cargoCapacity(mekSummary);
+        return capacity.liquidTons() > capacity.solidTons();
+    }
+
     private boolean hasBayFor(MekSummary ms, int unitType) {
         if (getBayCount(ms, unitType) > 0) {
             return true;

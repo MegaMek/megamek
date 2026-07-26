@@ -1602,11 +1602,15 @@ public class ForceDescriptor {
         if (isClan) {
             addClanCategory(transports, warships, "WarShip Stars");
             addClanCategory(transports, jumpships, "JumpShip Stars");
-            addClanCategory(transports, dropships, "DropShip Stars");
+            // Named for what they are for: these hulls are generated to carry the command's
+            // combat units, and are kept distinct from the cargo hulls a consumer adds later to
+            // haul supplies.
+            addClanCategory(transports, dropships, "Troopship Stars");
         } else {
             addISCategory(transports, warships, "WarShips");
             addISCategory(transports, jumpships, "JumpShips");
-            addISCategory(transports, dropships, "DropShips");
+            // See the Clan branch above: these carry units, not cargo.
+            addISCategory(transports, dropships, "Troopships");
         }
 
         transports.assignCommanders();
@@ -1692,7 +1696,7 @@ public class ForceDescriptor {
      * by the consumer's naming convention, so naval formations follow the same scheme as the rest of
      * the force instead of a hardcoded one of their own.</p>
      *
-     * @param parent The category node ("WarShips" / "JumpShips" / "DropShips") that receives the hierarchy
+     * @param parent The category node ("WarShips" / "JumpShips" / "Troopships") that receives the hierarchy
      * @param ships  The ships to add (must be non-empty; callers should pre-filter)
      */
     private void addNavalHierarchy(ForceDescriptor parent, List<MekSummary> ships) {

@@ -58,8 +58,68 @@ public class TransportCalculator {
     // bays and docking hard points. Since this is a relatively expensive operation we will cache the results.
     private static final Map<MekSummary, Map<Integer, Integer>> bayTypeCache = new HashMap<>();
 
+    /** Cargo capacity is kept out of {@link #bayTypeCache} because it is tonnage, not a unit count. */
+    private static final Map<MekSummary, CargoCapacity> cargoCapacityCache = new HashMap<>();
+
     public static void dispose() {
         bayTypeCache.clear();
+        cargoCapacityCache.clear();
+    }
+
+    /**
+     * The cargo a craft can haul, split the same way MekHQ tracks it: liquid bays are counted
+     * separately because liquid cargo cannot be stowed in a dry hold and vice versa, so a hull with
+     * plenty of one is no help to a command that needs the other.
+     *
+     * @param solidTons  dry cargo tonnage - general, insulated, refrigerated and livestock holds
+     * @param liquidTons liquid cargo tonnage
+     */
+    public record CargoCapacity(double solidTons, double liquidTons) {
+
+        public static final CargoCapacity NONE = new CargoCapacity(0, 0);
+
+        /** @return the combined capacity of this and {@code other} */
+        public CargoCapacity plus(CargoCapacity other) {
+            return new CargoCapacity(solidTons + other.solidTons, liquidTons + other.liquidTons);
+        }
+
+        /** @return {@code true} when this craft can haul no cargo of either kind */
+        public boolean isEmpty() {
+            return (solidTons <= 0) && (liquidTons <= 0);
+        }
+    }
+
+    /**
+     * Reads the cargo holds of a craft. Quarters and seating are deliberately excluded: they are
+     * separate {@link Bay} types rather than subclasses of {@link CargoBay}, so berths for the crew
+     * are never mistaken for space to stow spares.
+     *
+     * @param mekSummary the craft to measure
+     *
+     * @return its cargo capacity, or {@link CargoCapacity#NONE} when it has none or cannot be loaded
+     */
+    public static CargoCapacity cargoCapacity(MekSummary mekSummary) {
+        return cargoCapacityCache.computeIfAbsent(mekSummary, summary -> {
+            try {
+                Entity entity = new MekFileParser(summary.getSourceFile(), summary.getEntryName()).getEntity();
+                double solid = 0;
+                double liquid = 0;
+                for (Bay bay : entity.getTransportBays()) {
+                    if (bay instanceof LiquidCargoBay) {
+                        liquid += bay.getCapacity();
+                    } else if ((bay instanceof CargoBay)
+                          || (bay instanceof InsulatedCargoBay)
+                          || (bay instanceof RefrigeratedCargoBay)
+                          || (bay instanceof LivestockCargoBay)) {
+                        solid += bay.getCapacity();
+                    }
+                }
+                return new CargoCapacity(solid, liquid);
+            } catch (EntityLoadingException exception) {
+                // Cache the failure so a unit that cannot be loaded is not re-parsed on every call.
+                return CargoCapacity.NONE;
+            }
+        });
     }
 
     private final ForceDescriptor fd;

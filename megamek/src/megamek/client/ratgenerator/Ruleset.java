@@ -100,6 +100,13 @@ public class Ruleset {
     private static final double PROGRESS_LOAD_ENTITIES = 0.4;
     private static final double PROGRESS_FINALIZE = 0.05;
 
+    /**
+     * Upper bound on ruleset parent links followed when resolving an inherited value. The shipped data
+     * is at most three deep (for example {@code CFM.MiKrKl -> CFM -> CLAN}); this only exists to stop
+     * a mis-authored cycle from hanging generation.
+     */
+    private static final int MAX_PARENT_CHAIN_DEPTH = 16;
+
     private static HashMap<String, String> constants;
     private static final Pattern constantPattern = Pattern.compile("%(.*?)%");
     private static HashMap<String, Ruleset> rulesets;
@@ -114,6 +121,7 @@ public class Ruleset {
     private final HashMap<Integer, String> customRanks;
     private final ArrayList<ForceNode> forceNodes;
     private String parent;
+    private FormationNamingConvention formationNaming;
 
     private Ruleset() {
         faction = FactionRecord.IS_GENERAL_KEY;
@@ -123,6 +131,7 @@ public class Ruleset {
         customRanks = new HashMap<>();
         forceNodes = new ArrayList<>();
         parent = null;
+        formationNaming = new FormationNamingConvention();
     }
 
     public static String substituteConstants(String str) {
@@ -227,6 +236,10 @@ public class Ruleset {
         // Optional: fill each large craft's ASF bays with its carried fighter complement and nest the
         // fighters under the ship. Run before commander/id/entity assignment so the normal passes handle
         // the new fighters. Off unless the user ticks the option.
+        //
+        // This pass only sees large craft that are part of the force itself (a DropShip or WarShip
+        // force generated directly). Carriers produced by the transport stage do not exist yet; they
+        // get their complement further down, right after assignTransport attaches them.
         if (fd.isFighterComplement()) {
             fd.addFighterComplement();
         }
@@ -247,6 +260,14 @@ public class Ruleset {
             // Attach first so the transports' parent is set, then number and load them; their force
             // strings then correctly nest the transport force under the force it carries.
             fd.addAttached(transports);
+            // The transport DropShips are created here, long after the fighter-complement pass above
+            // ran, so they must be filled now or the option silently does nothing for any carrier the
+            // player got from the Dropship Percentage setting - which is where nearly all of them come
+            // from. This has to happen before assignForceIds/loadEntities below so the new fighters
+            // still receive ids and entities from those passes.
+            if (fd.isFighterComplement()) {
+                transports.addFighterComplement();
+            }
             transports.assignForceIds(nextForceId);
             transports.loadEntities(l, 0);
         }
@@ -537,6 +558,48 @@ public class Ruleset {
         return parent;
     }
 
+    /**
+     * The naming convention declared directly by this ruleset, without consulting its parents. Use
+     * {@link #findNamingTier(int)} for the inherited view that consumers want.
+     *
+     * @return this file's own {@code <formationNaming>} content, empty when it declares none
+     */
+    public FormationNamingConvention getFormationNaming() {
+        return formationNaming;
+    }
+
+    /**
+     * Resolves the naming rule for one echelon, walking the parent chain the same way force-node
+     * lookup does. Resolution is per echelon rather than per file, so a faction that declares a rule
+     * for a single echelon still inherits its parent's rules for all the others.
+     *
+     * @param echelon the echelon to resolve, as stored on the force node (constants already
+     *                substituted)
+     *
+     * @return the nearest declared rule for {@code echelon}, or {@code null} when neither this
+     *       ruleset nor any of its ancestors declares one - in which case the consumer should keep
+     *       whatever name the ruleset's {@code <name>} elements produced
+     */
+    public @Nullable FormationNamingConvention.Tier findNamingTier(int echelon) {
+        Ruleset current = this;
+        // Parent links come from data and are not validated for cycles at load time; cap the walk so a
+        // mis-authored parent="..." pair cannot hang force generation.
+        for (int depth = 0; (current != null) && (depth <= MAX_PARENT_CHAIN_DEPTH); depth++) {
+            FormationNamingConvention.Tier tier = current.formationNaming.getTier(echelon);
+            if (tier != null) {
+                return tier;
+            }
+            String parentFaction = current.getParent();
+            current = (parentFaction == null) ? null : rulesets.get(parentFaction);
+        }
+        if (current != null) {
+            logger.error("[ForceGen][Naming] parent chain for faction {} exceeded {} links while resolving"
+                        + " echelon {}; check the ruleset files for a parent cycle",
+                  faction, MAX_PARENT_CHAIN_DEPTH, echelon);
+        }
+        return null;
+    }
+
     public static void loadConstants(File f) {
         constants = new HashMap<>();
         InputStream is;
@@ -691,6 +754,9 @@ public class Ruleset {
                     break;
                 case "toc":
                     retVal.toc = TOCNode.createFromXml(wn);
+                    break;
+                case "formationNaming":
+                    retVal.formationNaming = FormationNamingConvention.createFromXml(wn, retVal.faction);
                     break;
                 case "customRanks":
                     for (int y = 0; y < wn.getChildNodes().getLength(); y++) {

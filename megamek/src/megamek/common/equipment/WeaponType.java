@@ -2648,7 +2648,7 @@ public class WeaponType extends EquipmentType {
         return data;
     }
 
-    /** Exports resolved Alpha Strike values that cannot be reconstructed from weapon data or flags. */
+    /** Exports Alpha Strike values declared by weapon-specific conversion behavior. */
     private Map<String, Object> getAlphaStrikeYamlData() {
         Map<String, Object> alphaStrike = new LinkedHashMap<>();
         if (getBattleForceClass() != BF_CLASS_STANDARD) {
@@ -2657,9 +2657,8 @@ public class WeaponType extends EquipmentType {
         if (isAlphaStrikePointDefense()) {
             alphaStrike.put("pointDefense", true);
         }
-        double[] damage = getAlphaStrikeDamage();
-        if (!java.util.Arrays.equals(damage, getDefaultAlphaStrikeDamage())) {
-            alphaStrike.put("damage", damage);
+        if (hasAlphaStrikeDamageOverride()) {
+            alphaStrike.put("damage", getAlphaStrikeDamage());
         }
         if (getAlphaStrikeHeat() != getHeat()) {
             alphaStrike.put("heat", getAlphaStrikeHeat());
@@ -2669,6 +2668,16 @@ public class WeaponType extends EquipmentType {
             alphaStrike.put("heatDamage", heatDamage);
         }
         return alphaStrike;
+    }
+
+    private boolean hasAlphaStrikeDamageOverride() {
+        try {
+            return getClass().getMethod("getBattleForceDamage", int.class).getDeclaringClass() != WeaponType.class
+                  || getClass().getMethod("getBattleForceDamage", int.class, Mounted.class).getDeclaringClass()
+                        != WeaponType.class;
+        } catch (NoSuchMethodException exception) {
+            throw new IllegalStateException("WeaponType BattleForce damage API is unavailable", exception);
+        }
     }
 
     private String battleForceClassToString(int battleForceClass) {
@@ -2700,16 +2709,6 @@ public class WeaponType extends EquipmentType {
 
     private double roundAlphaStrikeDamage(double damage) {
         return Math.round(damage * 20.0) / 20.0;
-    }
-
-    private double[] getDefaultAlphaStrikeDamage() {
-        int[] ranges = { AlphaStrikeElement.SHORT_RANGE, AlphaStrikeElement.MEDIUM_RANGE,
-            AlphaStrikeElement.LONG_RANGE, AlphaStrikeElement.EXTREME_RANGE };
-        double[] damage = new double[ranges.length];
-        for (int index = 0; index < ranges.length; index++) {
-            damage[index] = roundAlphaStrikeDamage(getDefaultBattleForceDamage(ranges[index]));
-        }
-        return damage;
     }
 
     private int[] getAlphaStrikeHeatDamage() {

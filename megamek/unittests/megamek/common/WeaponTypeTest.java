@@ -132,12 +132,14 @@ class WeaponTypeTest {
         WeaponType fusillade = (WeaponType) EquipmentType.get("Fusillade");
         WeaponType mediumLaser = (WeaponType) EquipmentType.get("Medium Laser");
         WeaponType lrm = (WeaponType) EquipmentType.get("ISLRM5");
+        WeaponType streakLrm = (WeaponType) EquipmentType.get("CLStreakLRM5");
 
         assertNotNull(erMicroLaser);
         assertNotNull(smallLaser);
         assertNotNull(fusillade);
         assertNotNull(mediumLaser);
         assertNotNull(lrm);
+        assertNotNull(streakLrm);
 
         Map<String, Object> erMicroLaserProfile = alphaStrikeYamlData(weaponYamlData(erMicroLaser));
         assertArrayEquals(new double[] { 0.2, 0, 0, 0 }, (double[]) erMicroLaserProfile.get("damage"));
@@ -150,10 +152,14 @@ class WeaponTypeTest {
 
         Map<String, Object> fusilladeProfile = alphaStrikeYamlData(weaponYamlData(fusillade));
         assertArrayEquals(new double[] { 0.45, 0.3, 0, 0 }, (double[]) fusilladeProfile.get("damage"));
-        assertEquals(1, fusilladeProfile.size());
+        assertEquals("REL", fusilladeProfile.get("battleForceClass"));
+        assertEquals(2, fusilladeProfile.size());
 
         assertEquals(null, weaponYamlData(mediumLaser).get("alphaStrike"));
         assertEquals("LRM", alphaStrikeYamlData(weaponYamlData(lrm)).get("battleForceClass"));
+
+        Map<String, Object> streakLrmProfile = alphaStrikeYamlData(weaponYamlData(streakLrm));
+        assertArrayEquals(new double[] { 0.5, 0.5, 0.5, 0 }, (double[]) streakLrmProfile.get("damage"));
     }
 
     @SuppressWarnings("unchecked")

@@ -6171,10 +6171,7 @@ public class MiscType extends EquipmentType {
         misc.criticalSlots = 0;
         misc.tankSlots = 0;
         misc.cost = EquipmentType.COST_VARIABLE;
-        misc.flags = misc.flags.or(MiscType.F_BASIC_FIRE_CONTROL,
-              MiscType.F_SUPPORT_TANK_EQUIPMENT,
-              MiscType.F_TANK_EQUIPMENT,
-              F_FIGHTER_EQUIPMENT);
+        misc.flags = misc.flags.or(MiscType.F_BASIC_FIRE_CONTROL, MiscType.F_SUPPORT_TANK_EQUIPMENT);
         misc.omniFixedOnly = true;
         misc.industrial = true;
         misc.rulesRefs = "217, TM";
@@ -6198,10 +6195,7 @@ public class MiscType extends EquipmentType {
         misc.criticalSlots = 0;
         misc.tankSlots = 0;
         misc.cost = EquipmentType.COST_VARIABLE;
-        misc.flags = misc.flags.or(MiscType.F_ADVANCED_FIRE_CONTROL,
-              MiscType.F_SUPPORT_TANK_EQUIPMENT,
-              MiscType.F_TANK_EQUIPMENT,
-              MiscType.F_FIGHTER_EQUIPMENT);
+        misc.flags = misc.flags.or(MiscType.F_ADVANCED_FIRE_CONTROL, MiscType.F_SUPPORT_TANK_EQUIPMENT);
         misc.omniFixedOnly = true;
         misc.rulesRefs = "217, TM";
         misc.techAdvancement.setTechBase(TechBase.ALL)
@@ -6220,7 +6214,6 @@ public class MiscType extends EquipmentType {
 
     public static MiscType createISArtemis() {
         MiscType misc = new MiscType();
-
         misc.name = "Artemis IV FCS";
         misc.setInternalName("ISArtemisIV");
         misc.addLookupName("IS Artemis IV FCS");
@@ -6256,7 +6249,6 @@ public class MiscType extends EquipmentType {
 
     public static MiscType createISProtoArtemis() {
         MiscType misc = new MiscType();
-
         misc.name = "Prototype Artemis IV FCS";
         misc.setInternalName("ISArtemisIVProto");
         misc.addLookupName("IS Proto type Artemis IV FCS");
@@ -6294,7 +6286,6 @@ public class MiscType extends EquipmentType {
 
     public static MiscType createCLArtemis() {
         MiscType misc = new MiscType();
-
         misc.name = "Artemis IV FCS";
         misc.setInternalName("CLArtemisIV");
         misc.addLookupName("Clan Artemis IV FCS");
@@ -9408,7 +9399,6 @@ public class MiscType extends EquipmentType {
         MiscType misc = new MiscType();
         // CHECKSTYLE IGNORE ForbiddenWords FOR 1 LINES
         misc.name = "Environmental Sealing (Mech)";
-
         misc.shortName = "Environmental Sealing";
         misc.setInternalName(misc.name);
         misc.tonnage = TONNAGE_VARIABLE;
@@ -9441,15 +9431,15 @@ public class MiscType extends EquipmentType {
     public static MiscType createISFlotationHull() {
         MiscType misc = new MiscType();
         misc.name = "Combat Vehicle Chassis Mod (Flotation Hull)";
-        misc.setInternalName("ISFlotationHull");
         misc.shortName = "Flotation Hull";
+        misc.setInternalName("ISFlotationHull");
         misc.addLookupName("ClanFlotationHull");
         misc.addLookupName("Combat Vehicle Chassis Mod [Flotation Hull]");
         misc.tonnage = 0;
         misc.criticalSlots = 0;
         misc.tankSlots = 0;
         misc.cost = EquipmentType.COST_VARIABLE;
-        misc.flags = misc.flags.or(F_FLOTATION_HULL, F_TANK_EQUIPMENT, F_VTOL_EQUIPMENT)
+        misc.flags = misc.flags.or(F_FLOTATION_HULL, F_TANK_EQUIPMENT, F_VTOL_EQUIPMENT, F_CHASSIS_MODIFICATION)
               .andNot(F_FIGHTER_EQUIPMENT);
         misc.bv = 0;
         misc.rulesRefs = "114, TO:AUE";
@@ -9471,6 +9461,7 @@ public class MiscType extends EquipmentType {
     public static MiscType createISLimitedAmphibiousChassis() {
         MiscType misc = new MiscType();
         misc.name = "Combat Vehicle Chassis Mod [Limited Amphibious]";
+        misc.shortName = "Limited Amphibious";
         misc.setInternalName("ISLimitedAmphibiousChassis");
         misc.addLookupName("ISLimitedAmphibious");
         misc.addLookupName("ClanLimitedAmphibiousChassis");
@@ -9501,6 +9492,7 @@ public class MiscType extends EquipmentType {
     public static MiscType createISFullyAmphibiousChassis() {
         MiscType misc = new MiscType();
         misc.name = "Combat Vehicle Chassis Mod [Fully Amphibious]";
+        misc.shortName = "Fully Amphibious";
         misc.setInternalName("ISFullyAmphibiousChassis");
         misc.addLookupName("ISFullyAmphibious");
         misc.addLookupName("ClanFullyAmphibiousChassis");
@@ -9531,6 +9523,7 @@ public class MiscType extends EquipmentType {
     public static MiscType createISCVDuneBuggyChassis() {
         MiscType misc = new MiscType();
         misc.name = "Combat Vehicle Chassis Mod [Dune Buggy]";
+        misc.shortName = "Dune Buggy";
         misc.setInternalName("ISCVDuneBuggyChassis");
         misc.addLookupName("ISCVDuneBuggy");
         misc.addLookupName("ClanCVDuneBuggyChassis");
@@ -9560,7 +9553,6 @@ public class MiscType extends EquipmentType {
 
     public static MiscType createCVEnvironmentalSealedChassis() {
         MiscType misc = new MiscType();
-
         misc.name = "Combat Vehicle Chassis Mod [Environmental Sealing]";
         misc.shortName = "Environmental Sealing";
         misc.setInternalName("Environmental Sealed Chassis");

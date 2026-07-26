@@ -265,12 +265,12 @@ public class MegaMekUnitSelectorDialog extends AbstractUnitSelectorDialog {
      * an asset form.
      */
     private void updateSelectButtons() {
-        boolean canSelectAsUnit = selectionCanSelectAsUnit();
+        boolean hasSelection = hasSelectedRows();
         if (buttonSelect != null) {
-            buttonSelect.setEnabled(canSelectAsUnit);
+            buttonSelect.setEnabled(hasSelection);
         }
         if (buttonSelectClose != null) {
-            buttonSelectClose.setEnabled(canSelectAsUnit);
+            buttonSelectClose.setEnabled(hasSelection);
         }
         if (buttonSelectAsset != null) {
             buttonSelectAsset.setEnabled(selectionCanSelectAsAsset());

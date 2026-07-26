@@ -33,8 +33,11 @@
 package megamek.client.ui.dialogs.unitSelectorDialogs;
 
 import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
+import megamek.common.battlefieldSupport.BattlefieldSupportAsset;
+import megamek.common.units.Crew;
 import megamek.common.units.UnitType;
 import org.junit.jupiter.api.Test;
 
@@ -94,20 +97,10 @@ class AbstractUnitSelectorDialogFilterTest {
     }
 
     @Test
-    void selectAsUnitRequiresNonEmptySelection() {
-        assertFalse(AbstractUnitSelectorDialog.canSelectSelectionAsUnit(0, 0));
-    }
-
-    @Test
-    void selectAsUnitAllowedWhenNoAssetOnlyRows() {
-        // Two plain/linked base units, none of them asset-only.
-        assertTrue(AbstractUnitSelectorDialog.canSelectSelectionAsUnit(2, 0));
-    }
-
-    @Test
-    void selectAsUnitDisabledWhenAnyAssetOnlyRow() {
-        // Mixed selection with one standalone asset disables selecting as unit.
-        assertFalse(AbstractUnitSelectorDialog.canSelectSelectionAsUnit(3, 1));
+    void standardSelectionAcceptsStandaloneAssetRows() {
+        assertFalse(AbstractUnitSelectorDialog.canSelectSelection(0));
+        assertTrue(AbstractUnitSelectorDialog.canSelectSelection(1));
+        assertTrue(AbstractUnitSelectorDialog.canSelectSelection(3));
     }
 
     @Test
@@ -124,5 +117,41 @@ class AbstractUnitSelectorDialogFilterTest {
     void selectAsAssetDisabledWhenAnyRowLacksAssetForm() {
         // Any TW-only row (no asset form) disables selecting as asset.
         assertFalse(AbstractUnitSelectorDialog.canSelectSelectionAsAsset(3, 1));
+    }
+
+    @Test
+    void explicitVeteranAssetChoiceIsApplied() {
+        BattlefieldSupportAsset asset = veteranCapableAsset();
+
+        MegaMekUnitSelectorDialog.applyExplicitAssetSkill(asset, true);
+
+        assertTrue(asset.isVeteranCrew());
+    }
+
+    @Test
+    void explicitRegularAssetChoiceOverridesExistingVeteranCrew() {
+        BattlefieldSupportAsset asset = veteranCapableAsset();
+        asset.setVeteranCrew(true);
+
+        MegaMekUnitSelectorDialog.applyExplicitAssetSkill(asset, false);
+
+        assertFalse(asset.isVeteranCrew());
+    }
+
+    @Test
+    void veteranChoiceFallsBackForRegularOnlyAsset() {
+        BattlefieldSupportAsset asset = new BattlefieldSupportAsset();
+        asset.setCrew(new Crew(asset.defaultCrewType()));
+
+        MegaMekUnitSelectorDialog.applyExplicitAssetSkill(asset, true);
+
+        assertFalse(asset.isVeteranCrew());
+    }
+
+    private static BattlefieldSupportAsset veteranCapableAsset() {
+        BattlefieldSupportAsset asset = new BattlefieldSupportAsset();
+        asset.setCrew(new Crew(asset.defaultCrewType()));
+        asset.setVeteranCost(1);
+        return asset;
     }
 }

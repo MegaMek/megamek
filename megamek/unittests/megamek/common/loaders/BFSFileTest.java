@@ -54,6 +54,7 @@ import megamek.common.equipment.EquipmentType;
 import megamek.common.interfaces.ITechnology;
 import megamek.common.units.Entity;
 import megamek.common.units.EntityMovementMode;
+import megamek.common.units.UnitRole;
 import megamek.common.units.UnitType;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
@@ -79,8 +80,9 @@ class BFSFileTest {
         assertEquals("019f583e-e2c6-7b99-a188-ba0759db128e", asset.getLinkedUnitId());
         assertEquals("Maxim Heavy Hover Transport", asset.getChassis());
         assertEquals(BFSAssetType.VEHICLE, asset.getAssetType());
-        assertEquals(3151, asset.getYear());
-        assertEquals("BattleTech: Mercenaries", asset.getSource());
+        assertEquals(2689, asset.getYear());
+        assertEquals("TR:3039", asset.getSource());
+        assertEquals(UnitRole.STRIKER, asset.getRole());
         // Tech base "IS" round-trips as a non-Clan asset (assets are always tech level Standard).
         assertFalse(asset.isClan());
         assertEquals(8, asset.getMp());
@@ -101,6 +103,10 @@ class BFSFileTest {
         assertEquals("Mobile Long Tom Artillery", asset.getChassis());
         assertEquals("LT-MOB-25", asset.getModel());
         assertEquals(BFSAssetType.VEHICLE, asset.getAssetType());
+        assertEquals(2602, asset.getYear());
+        assertEquals("TR:3039", asset.getSource());
+        assertEquals(UnitRole.MISSILE_BOAT, asset.getRole());
+        assertFalse(asset.isClan());
         assertEquals("2T", asset.getMovementDisplay());
         // Keyword range renders the artillery type derived from the Artillery (LT) special.
         assertEquals("Long Tom", asset.getRangeDisplay());
@@ -147,6 +153,10 @@ class BFSFileTest {
         assertEquals("Foot Platoon", asset.getChassis());
         assertEquals("(Rifle)", asset.getModel());
         assertEquals(BFSAssetType.CONV_INFANTRY, asset.getAssetType());
+        assertEquals(1900, asset.getYear());
+        assertEquals("TW,TM", asset.getSource());
+        assertEquals(UnitRole.AMBUSHER, asset.getRole());
+        assertFalse(asset.isClan());
         assertEquals(EntityMovementMode.INF_LEG, asset.getMovementMode());
         assertEquals("1F", asset.getMovementDisplay());
         assertEquals("+0", asset.getTmmDisplay());
@@ -164,6 +174,10 @@ class BFSFileTest {
         assertEquals("Elemental Battle Armor", asset.getChassis());
         assertEquals("[MG](Sqd5)", asset.getModel());
         assertEquals(BFSAssetType.BATTLE_ARMOR, asset.getAssetType());
+        assertEquals(2868, asset.getYear());
+        assertEquals("TR:3058U", asset.getSource());
+        assertEquals(UnitRole.AMBUSHER, asset.getRole());
+        assertTrue(asset.isClan());
         assertEquals(EntityMovementMode.INF_JUMP, asset.getMovementMode());
         assertEquals("3J", asset.getMovementDisplay());
         assertEquals("+2", asset.getTmmDisplay());
@@ -178,6 +192,10 @@ class BFSFileTest {
               new File("testresources/data/mekfiles/Browning Mobile HQ.bfs")).getEntity());
 
         assertEquals("Browning Mobile HQ", asset.getChassis());
+        assertEquals(2625, asset.getYear());
+        assertEquals("RG29", asset.getSource());
+        assertEquals(UnitRole.SCOUT, asset.getRole());
+        assertFalse(asset.isClan());
         assertEquals("7W", asset.getMovementDisplay());
         assertEquals("+3", asset.getTmmDisplay());
         // No ranged attack and no relevant keyword special -> em dash.

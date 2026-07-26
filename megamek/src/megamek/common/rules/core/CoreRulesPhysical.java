@@ -233,4 +233,9 @@ public class CoreRulesPhysical extends RulesPhysical {
         }
         return attackerPiloting - targetPiloting;
     }
+    
+    // Can charge cancel under some circumstances. Core p.78
+    public boolean canChargeCancel() {
+        return true;
+    }
 }

@@ -101,4 +101,7 @@ public abstract class RulesPhysical {
 
     // For Charge/DFA, get the pilot difference modifier
     public abstract int getPilotDiffModifier(int piloting, int piloting1, boolean immobile);
+
+    // Can a charge be cancelled
+    public abstract boolean canChargeCancel();
 }

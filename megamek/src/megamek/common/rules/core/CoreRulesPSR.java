@@ -248,4 +248,10 @@ public class CoreRulesPSR extends RulesPSR {
     public int getSuccessfulDFAModifier() {
         return 4;
     }
+    
+    // Successful club causes PSR . Core p.79
+    public void clubImpact(final Game game,
+          final Entity entity) {
+        game.addPSR(new PilotingRollData(entity.getId(), 0, "was clubbed"));
+    }
 }

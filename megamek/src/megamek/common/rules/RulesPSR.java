@@ -89,4 +89,7 @@ public abstract class RulesPSR {
 
     // What is the PSR mod for a successful DFA
     public abstract int getSuccessfulDFAModifier();
+
+    // Does a club impact cause a PSR?
+    public abstract void clubImpact(Game game, Entity entity);
 }

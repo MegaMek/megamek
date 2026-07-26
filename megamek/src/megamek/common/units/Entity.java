@@ -11205,7 +11205,17 @@ public abstract class Entity extends TurnOrdered
         }
 
         if (isCharging() || isMakingDfa() || isRamming() || isOffBoard()) {
-            return false;
+            if (isCharging() && Game.rulesManager.getRulesPhysical().canChargeCancel()) {
+                ChargeAttackAction caa = (ChargeAttackAction) displacementAttack;
+                Entity target = (Entity) caa.getTarget(game);
+                if (target.isDestroyed() || target.isProne() || caa.toHit(game).getValue() >= 13) {
+                    displacementAttack = null;
+                } else {
+                    return false;
+                }
+            } else {
+                return false;
+            }
         }
 
         // must be active
@@ -11368,7 +11378,17 @@ public abstract class Entity extends TurnOrdered
               isAssaultDropInProgress() ||
               isDropping() ||
               isBracing()) {
-            return false;
+            if (isCharging() && Game.rulesManager.getRulesPhysical().canChargeCancel()) {
+                   ChargeAttackAction caa = (ChargeAttackAction) displacementAttack;
+                    Entity target = (Entity) caa.getTarget(game);
+                    if (target.isDestroyed() || target.isProne() || caa.toHit(game).getValue() >= 13) {
+                        displacementAttack = null;
+                    } else {
+                        return false;
+                    }
+                } else {
+                    return false;
+                }
         }
 
         // check game options

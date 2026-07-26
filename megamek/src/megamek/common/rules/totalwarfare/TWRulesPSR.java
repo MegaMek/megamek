@@ -163,4 +163,8 @@ public class TWRulesPSR extends CoreRulesPSR {
     public int getSuccessfulDFAModifier() {
         return 4;
     }
+    
+    // Clubs don't do anything extra
+    @Override
+    public void clubImpact(Game game, Entity entity) {}
 }

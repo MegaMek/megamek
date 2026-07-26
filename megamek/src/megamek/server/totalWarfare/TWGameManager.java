@@ -16855,7 +16855,8 @@ public class TWGameManager extends AbstractGameManager {
                 addReport(doEntityDisplacement(ae,
                       ae.getPosition(),
                       daa.getTargetPos(),
-                      new PilotingRollData(ae.getId(), 4, "executed death from above")));
+                      new PilotingRollData(ae.getId(), Game.rulesManager.getRulesPSR().getSuccessfulDFAModifier(),
+                            "executed death from above")));
             }
             // entity isn't DFA-ing anymore
             ae.setDisplacementAttack(null);
@@ -29298,6 +29299,11 @@ public class TWGameManager extends AbstractGameManager {
                     } else if (clubType.hasFlag(MiscTypeFlag.S_WRECKING_BALL)) {
                         damage += Compute.d6(4);
                     }
+                }
+                if (caa.getTargetType() == Targetable.TYPE_ENTITY &&
+                      ((Entity) caa.getTarget(game)).canFall() && 
+                      caa.getClub().getType().hasFlag(MiscTypeFlag.S_CLUB)) {
+                    Game.rulesManager.getRulesPSR().clubImpact(game, ae);
                 }
             }
             case DfaAttackAction daa -> {

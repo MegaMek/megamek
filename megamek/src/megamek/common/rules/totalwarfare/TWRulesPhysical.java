@@ -249,4 +249,8 @@ public class TWRulesPhysical extends CoreRulesPhysical {
     public int getPilotDiffModifier(int attackerPiloting, int targetPiloting, boolean immobile) {
         return super.getPilotDiffModifier(attackerPiloting, targetPiloting, false);
     }
+    
+    // Once a charge is declared, you are in for the ride
+    @Override
+    public boolean canChargeCancel() { return false; }
 }

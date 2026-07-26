@@ -42,6 +42,7 @@ import java.io.File;
 import megamek.common.battlefieldSupport.BFSAssetType;
 import megamek.common.battlefieldSupport.BFSSpecialType;
 import megamek.common.equipment.EquipmentType;
+import megamek.common.units.Entity;
 import megamek.common.units.EntityMovementMode;
 import megamek.common.units.UnitType;
 import org.junit.jupiter.api.BeforeAll;
@@ -134,5 +135,20 @@ class BFSMekSummaryTest {
         assertTrue(summary.getBfsRange().isKeyword());
         assertTrue(summary.getBfsSpecials().contains(BFSSpecialType.ARTILLERY));
         assertTrue(summary.getBfsSpecials().contains(BFSSpecialType.NO_TURRET));
+    }
+
+    @Test
+    void mulAssetFormUsesDiscriminatorToAvoidRestoringBaseAsAsset() {
+        MekSummary asset = new MekSummary();
+        asset.setUnitType(UnitType.getTypeName(UnitType.BATTLEFIELD_SUPPORT_ASSET));
+        asset.setEntityType(Entity.ETYPE_BATTLEFIELD_SUPPORT_ASSET);
+        MekSummary base = new MekSummary();
+        base.setUnitType(UnitType.getTypeName(UnitType.TANK));
+
+        assertTrue(MULParser.summaryMatchesEntityForm(asset, true));
+        assertFalse(MULParser.summaryMatchesEntityForm(base, true));
+        assertTrue(MULParser.summaryMatchesEntityForm(asset, false),
+              "An older MUL without the discriminator must still resolve an asset by its UUID");
+        assertTrue(MULParser.summaryMatchesEntityForm(base, false));
     }
 }

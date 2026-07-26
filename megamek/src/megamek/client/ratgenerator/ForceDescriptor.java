@@ -62,6 +62,12 @@ public class ForceDescriptor {
     public static final int EXP_GREEN = 0;
     public static final int EXP_REGULAR = 1;
     public static final int EXP_VETERAN = 2;
+    /**
+     * Elite. Declared for completeness: the value was already produced by the Experience Target picker
+     * and indexed the elite row of the skill tables, but had no constant, so the range these values
+     * cover could only be discovered by reading {@link CrewDescriptor}'s tables.
+     */
+    public static final int EXP_ELITE = 3;
 
     // Mapped to Dragoon Rating in MHQ
     public static final int RATING_0 = 0;

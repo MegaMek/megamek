@@ -51,6 +51,14 @@ public class CrewDescriptor {
     public static final int SKILL_VETERAN = 2;
     public static final int SKILL_ELITE = 3;
 
+    // Skill values for the two levels above elite, matching megamek.common.enums.SkillLevel's
+    // gunnery/piloting pairs. Kept here rather than derived so the escalation below cannot drift from
+    // the thresholds the rest of the codebase reports against.
+    private static final int HEROIC_GUNNERY = 1;
+    private static final int HEROIC_PILOTING = 2;
+    private static final int LEGENDARY_GUNNERY = 0;
+    private static final int LEGENDARY_PILOTING = 1;
+
     private String name;
     private String bloodname;
     private Gender gender;
@@ -157,12 +165,58 @@ public class CrewDescriptor {
         }
 
         gunnery = randomSkillRating(GUNNERY_SKILL_TABLE, experience, bonus);
-        if (assignment.getUnitType() != null && assignment.getUnitType().equals(UnitType.INFANTRY)
-              && !assignment.getRoles().contains(MissionRole.ANTI_MEK)) {
-            piloting = 8;
-        } else {
+        boolean hasPilotingSkill = (assignment.getUnitType() == null)
+              || !assignment.getUnitType().equals(UnitType.INFANTRY)
+              || assignment.getRoles().contains(MissionRole.ANTI_MEK);
+        if (hasPilotingSkill) {
             piloting = randomSkillRating(PILOTING_SKILL_TABLE, experience, bonus);
+        } else {
+            piloting = 8;
         }
+
+        int[] escalated = escalateExceptionalCrew(experience, gunnery, piloting, hasPilotingSkill);
+        gunnery = escalated[0];
+        piloting = escalated[1];
+    }
+
+    /**
+     * Gives an elite crew a rare chance of being genuinely exceptional.
+     *
+     * <p>The skill tables stop at the elite row, and a plain 1d6 into that row reaches Heroic at best -
+     * Legendary needs the highest columns, which only a force with the top equipment rating can roll
+     * into. That made Legendary crews unreachable for most commands and guaranteed-ish for a few,
+     * rather than rare everywhere.</p>
+     *
+     * <p>An elite crew therefore rolls once to escalate to Heroic, and again to reach Legendary, giving
+     * roughly one Heroic in six elite crews and one Legendary in thirty-six. This mirrors how MekHQ
+     * already produces exceptional support staff, so a standout MekWarrior is as plausible as a
+     * standout technician.</p>
+     *
+     * <p>Skills are only ever improved: a crew that already rolled into the top columns keeps what it
+     * earned.</p>
+     *
+     * @param experience       the crew's experience row
+     * @param gunnery          the gunnery skill rolled from the tables
+     * @param piloting         the piloting skill rolled from the tables
+     * @param hasPilotingSkill whether this crew has a real piloting skill; foot infantry carry a fixed
+     *                         value that must not be improved
+     *
+     * @return the possibly improved {@code { gunnery, piloting }} pair
+     */
+    static int[] escalateExceptionalCrew(int experience, int gunnery, int piloting,
+          boolean hasPilotingSkill) {
+        if ((experience < SKILL_ELITE) || (Compute.d6() < 6)) {
+            return new int[] { gunnery, piloting };
+        }
+        int escalatedGunnery = Math.min(gunnery, HEROIC_GUNNERY);
+        int escalatedPiloting = hasPilotingSkill ? Math.min(piloting, HEROIC_PILOTING) : piloting;
+
+        if (Compute.d6() < 6) {
+            return new int[] { escalatedGunnery, escalatedPiloting };
+        }
+        return new int[] { Math.min(escalatedGunnery, LEGENDARY_GUNNERY),
+                           hasPilotingSkill ? Math.min(escalatedPiloting, LEGENDARY_PILOTING)
+                                            : escalatedPiloting };
     }
 
     /**

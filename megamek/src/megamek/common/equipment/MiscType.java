@@ -9439,7 +9439,7 @@ public class MiscType extends EquipmentType {
         misc.criticalSlots = 0;
         misc.tankSlots = 0;
         misc.cost = EquipmentType.COST_VARIABLE;
-        misc.flags = misc.flags.or(F_FLOTATION_HULL, F_TANK_EQUIPMENT, F_VTOL_EQUIPMENT)
+        misc.flags = misc.flags.or(F_FLOTATION_HULL, F_TANK_EQUIPMENT, F_VTOL_EQUIPMENT, F_CHASSIS_MODIFICATION)
               .andNot(F_FIGHTER_EQUIPMENT);
         misc.bv = 0;
         misc.rulesRefs = "114, TO:AUE";

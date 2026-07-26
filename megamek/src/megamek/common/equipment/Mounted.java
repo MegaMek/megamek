@@ -438,7 +438,8 @@ public class Mounted<T extends EquipmentType> implements Serializable, RoundUpda
 
         jammed = jammedThisPhase;
         
-        if ((type instanceof MiscType) && ((MiscType) type).isShield() && Game.rulesManager.getRulesPhysical().phaseChangeShield()) {
+        if ((type instanceof MiscType) && ((MiscType) type).isShield() && Game.rulesManager.getRulesPhysical().phaseChangeShield() &&
+        !this.curMode().equals(MiscType.S_NO_SHIELD)) {
             if (!this.getEntity().isCharging() || phase.isEnd())
             {
                 this.setMode(MiscType.S_NO_SHIELD);

@@ -584,6 +584,7 @@ class SystemPanel extends PicMap
 
                         if ((m.getType() instanceof MiscType)
                               && ((MiscType) m.getType()).isShield()
+                              && !Game.rulesManager.getRulesPhysical().phaseChangeShield()
                               && !clientgui.getClient().getGame().getPhase().isFiring()) {
                             clientgui.systemMessage(Messages.getString("MekDisplay.ShieldModePhase"));
                             return;

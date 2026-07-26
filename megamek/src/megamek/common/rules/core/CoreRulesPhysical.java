@@ -132,22 +132,14 @@ public class CoreRulesPhysical extends RulesPhysical {
         HitData hit;
 
         for (int armLoc : armLocations) {
-            for (int slot = 0; slot < attackingEntity.getNumberOfCriticalSlots(armLoc); slot++) {
-                CriticalSlot cs = attackingEntity.getCritical(armLoc, slot);
-                if (cs == null) {
-                    continue;
-                }
-                if (cs.getType() != CriticalSlot.TYPE_EQUIPMENT) {
-                    continue;
-                }
-                Mounted<?> m = cs.getMount();
-                EquipmentType type = m.getType();
-                if ((type instanceof MiscType) && ((MiscType) type).isShield()) {
-                    if ((((MiscMounted) m).getDamageAbsorption(attackingEntity, armLoc) > 0)
-                          && (((MiscMounted) m).getCurrentDamageCapacity(attackingEntity, armLoc) > 0)
-                          && attackingEntity.hasRaisedShield(armLoc)) {
-                        return new HitData(armLoc);
-                    }
+            for (MiscMounted m : attackingEntity.getMisc()) {
+                MiscType type = m.getType();
+                if (m.getLocation() == armLoc
+                      && type.isShield()
+                      && !m.isInoperable()
+                && m.getCurrentDamageCapacity(attackingEntity, armLoc) > 0
+                && attackingEntity.hasRaisedShield(armLoc)) {
+                    return new HitData(armLoc);
                 }
             }
         }

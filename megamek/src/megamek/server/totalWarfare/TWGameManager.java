@@ -15666,6 +15666,10 @@ public class TWGameManager extends AbstractGameManager {
             if (ae.hasShield()) {
                 HitData hitShield = Game.rulesManager.getRulesPhysical().shieldChargeDamage(ae);
                 if (hitShield != null) {
+                    r = new Report(4247);
+                    r.subject = ae.getId();
+                    r.indent();
+                    addReport(r);
                     hit = hitShield;
                 }
             }

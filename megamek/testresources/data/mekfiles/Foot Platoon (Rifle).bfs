@@ -5,6 +5,10 @@ model: "(Rifle)"
 assetType: "ConvInfantry"
 cardTitle: "Foot"
 cardSubtitle: "Conv. Infantry"
+year: 1900
+techBase: "IS"
+source: "TW,TM"
+role: "AMBUSHER"
 movement:
   mp: 1
   mode: "INF_LEG"

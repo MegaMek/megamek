@@ -5,9 +5,10 @@ model: ""
 assetType: "Vehicle"
 cardTitle: "Maxim"
 cardSubtitle: "Hover Transport"
-year: 3151
+year: 2689
 techBase: "IS"
-source: "BattleTech: Mercenaries"
+source: "TR:3039"
+role: "STRIKER"
 movement:
   mp: 8
   mode: "HOVER"

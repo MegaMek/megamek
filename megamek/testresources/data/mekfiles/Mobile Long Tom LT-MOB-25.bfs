@@ -5,6 +5,10 @@ model: "LT-MOB-25"
 assetType: "Vehicle"
 cardTitle: "Mobile Long Tom"
 cardSubtitle: "LT-MOB-25"
+year: 2602
+techBase: "IS"
+source: "TR:3039"
+role: "MISSILE_BOAT"
 movement:
   mp: 2
   mode: "TRACKED"

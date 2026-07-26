@@ -576,6 +576,12 @@ public class ForceGeneratorViewUi implements ActionListener {
     }
 
     private void setGeneratedForce(ForceDescriptor fd) {
+        // A null descriptor means Clear Force. The accumulated Command Model has to go with the tree:
+        // leaving it behind lets the next Generate fold the new roll into the command the player just
+        // cleared, so the cleared units reappear alongside the newly generated ones.
+        if (fd == null) {
+            clearAccumulatedModel();
+        }
         // In accumulate mode each roll is appended to the Model root and the tree shows the whole
         // accumulating command; otherwise the roll replaces the tree (standalone behavior).
         ForceDescriptor displayRoot = fd;
@@ -624,6 +630,22 @@ public class ForceGeneratorViewUi implements ActionListener {
         // Update the design-stage status line for the model's new size.
         refreshCommandModelChrome();
         fireToeChanged();
+    }
+
+    /**
+     * Discards the accumulated Command Model so the next Generate starts a fresh command. Called when
+     * the force is cleared; without it the next roll is folded into the model that was just cleared
+     * and the discarded units reappear in the tree beside the newly generated ones.
+     */
+    private void clearAccumulatedModel() {
+        if (modelRoot == null && modelTop == null && modelCommandCount == 0) {
+            return;
+        }
+        logger.debug("[ForceGen] Clear Force: discarding accumulated Command Model ({} command(s))",
+              modelCommandCount);
+        modelRoot = null;
+        modelTop = null;
+        modelCommandCount = 0;
     }
 
     /**

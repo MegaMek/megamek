@@ -34,6 +34,7 @@ package megamek.client.ui.dialogs.randomArmy;
 
 import java.awt.BorderLayout;
 import java.awt.Component;
+import java.awt.FlowLayout;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.GridLayout;
@@ -104,7 +105,8 @@ public class ForceGeneratorOptionsView extends JPanel implements FocusListener, 
 
     private JComboBox<String> cbExperience;
     private JComboBox<Integer> cbWeightClass;
-    private JCheckBox chkAttachments;
+    private JCheckBox chkDetachments;
+    private JPanel panGenerateOptions;
 
     private final DefaultListCellRenderer factionRenderer = new CBRenderer<FactionRecord>(Messages.getString(
           "ForceGeneratorDialog.general"), fRec -> fRec.getName(currentYear));
@@ -149,7 +151,7 @@ public class ForceGeneratorOptionsView extends JPanel implements FocusListener, 
     private JTextField txtDropshipPct;
     private JTextField txtJumpshipPct;
     private JTextField txtWarshipPct;
-    private JTextField txtCargo;
+    private JTextField txtCargoPct;
     private JCheckBox chkFighterComplement;
 
     /** Post-generation summary: unit type rows, Light/Medium/Heavy/Assault columns. */
@@ -308,14 +310,6 @@ public class ForceGeneratorOptionsView extends JPanel implements FocusListener, 
         cbExperience.setToolTipText(Messages.getString("ForceGeneratorDialog.experience.tooltip"));
         cbExperience.addActionListener(this);
 
-        gbc.gridx = 0;
-        gbc.gridy = y++;
-        gbc.gridwidth = 2;
-        chkAttachments = new JCheckBox(Messages.getString("ForceGeneratorDialog.includeSupportForces"));
-        chkAttachments.setToolTipText(Messages.getString("ForceGeneratorDialog.includeSupportForces.tooltip"));
-        chkAttachments.setSelected(true);
-        add(chkAttachments, gbc);
-
         gbc.gridwidth = 4;
         panGroundRole = new JPanel(new GridBagLayout());
         gbc.gridx = 0;
@@ -344,16 +338,18 @@ public class ForceGeneratorOptionsView extends JPanel implements FocusListener, 
         txtJumpshipPct.setToolTipText(Messages.getString("ForceGeneratorDialog.jumpshipPercentage.tooltip"));
         txtWarshipPct = new JTextField("0");
         txtWarshipPct.setToolTipText(Messages.getString("ForceGeneratorDialog.warshipPercentage.tooltip"));
-        txtCargo = new JTextField("0");
-        txtCargo.setToolTipText(Messages.getString("ForceGeneratorDialog.cargo.tooltip"));
+        // Default 100: provision cargo holds for everything the command has to haul. Above 100
+        // buys headroom for cargo it picks up later.
+        txtCargoPct = new JTextField("100");
+        txtCargoPct.setToolTipText(Messages.getString("ForceGeneratorDialog.cargoPct.tooltip"));
         panTransport.add(new JLabel(Messages.getString("ForceGeneratorDialog.dropshipPercentage")));
         panTransport.add(txtDropshipPct, gbc);
         panTransport.add(new JLabel(Messages.getString("ForceGeneratorDialog.jumpshipPercentage")));
         panTransport.add(txtJumpshipPct, gbc);
         panTransport.add(new JLabel(Messages.getString("ForceGeneratorDialog.warshipPercentage")));
         panTransport.add(txtWarshipPct, gbc);
-        panTransport.add(new JLabel(Messages.getString("ForceGeneratorDialog.cargo")));
-        panTransport.add(txtCargo, gbc);
+        panTransport.add(new JLabel(Messages.getString("ForceGeneratorDialog.cargoPct")));
+        panTransport.add(txtCargoPct, gbc);
         chkFighterComplement = new JCheckBox(Messages.getString("ForceGeneratorDialog.fighterComplement"));
         chkFighterComplement.setToolTipText(Messages.getString("ForceGeneratorDialog.fighterComplement.tooltip"));
         panTransport.add(chkFighterComplement);
@@ -390,9 +386,24 @@ public class ForceGeneratorOptionsView extends JPanel implements FocusListener, 
         add(btnGenerate, gbc);
         btnGenerate.addActionListener(this);
 
+        // Options that modify the Generate action sit directly beside it rather than among the
+        // standalone settings above. They live in their own panel so a host (MekHQ's Command Designer)
+        // can append its own toggles via addGenerateOption without disturbing the button columns.
+        panGenerateOptions = new JPanel(new FlowLayout(FlowLayout.LEFT, 8, 0));
+        // Transparent so the row reads as part of the button strip; an opaque nested panel paints its
+        // own theme background and shows up as a coloured box against the surrounding container.
+        panGenerateOptions.setOpaque(false);
+        chkDetachments = new JCheckBox(Messages.getString("ForceGeneratorDialog.generateDetachments"));
+        chkDetachments.setToolTipText(Messages.getString("ForceGeneratorDialog.generateDetachments.tooltip"));
+        chkDetachments.setSelected(true);
+        panGenerateOptions.add(chkDetachments);
+        gbc.gridx = 1;
+        gbc.gridy = y;
+        add(panGenerateOptions, gbc);
+
         btnExportMUL = new JButton(Messages.getString("ForceGeneratorDialog.exportMUL"));
         btnExportMUL.setToolTipText(Messages.getString("ForceGeneratorDialog.exportMUL.tooltip"));
-        gbc.gridx = 1;
+        gbc.gridx = 2;
         gbc.gridy = y;
         add(btnExportMUL, gbc);
         btnExportMUL.addActionListener(this);
@@ -400,7 +411,7 @@ public class ForceGeneratorOptionsView extends JPanel implements FocusListener, 
 
         btnClear = new JButton(Messages.getString("ForceGeneratorDialog.clear"));
         btnClear.setToolTipText(Messages.getString("ForceGeneratorDialog.clear.tooltip"));
-        gbc.gridx = 2;
+        gbc.gridx = 3;
         gbc.gridy = y;
         gbc.weighty = 1.0;
         add(btnClear, gbc);
@@ -593,7 +604,7 @@ public class ForceGeneratorOptionsView extends JPanel implements FocusListener, 
         // away from the user's UI selection across consecutive runs.
         Object selectedWeight = cbWeightClass.getSelectedItem();
         fd.setWeightClass(selectedWeight instanceof Integer ? (Integer) selectedWeight : null);
-        fd.setAttachments(chkAttachments.isSelected());
+        fd.setAttachments(chkDetachments.isSelected());
         if (forceDesc.getUnitType() != null) {
             switch (forceDesc.getUnitType()) {
                 case UnitType.MEK:
@@ -700,9 +711,9 @@ public class ForceGeneratorOptionsView extends JPanel implements FocusListener, 
         fd.setWarshipPct(warShipPct * 0.01);
         txtWarshipPct.setText(String.valueOf(warShipPct));
 
-        double cargo = MathUtility.parseDouble(txtCargo.getText(), 0.0);
-        fd.setCargo(cargo);
-        txtCargo.setText(String.valueOf(cargo));
+        double cargoPct = Math.max(0.0, MathUtility.parseDouble(txtCargoPct.getText(), 100.0));
+        fd.setCargoPct(cargoPct);
+        txtCargoPct.setText(String.valueOf(cargoPct));
 
         fd.setFighterComplement(chkFighterComplement.isSelected());
 
@@ -1259,6 +1270,24 @@ public class ForceGeneratorOptionsView extends JPanel implements FocusListener, 
      * Makes the year text field read-only. Use this when an embedder anchors the year to an external value
      * (e.g. MekHQ's campaign year) and doesn't want the user editing it on this panel.
      */
+    /**
+     * Appends a host-supplied toggle to the row of options beside the Generate button, so a host's own
+     * generation options read as part of that action rather than as a separate setting elsewhere.
+     *
+     * <p>Used by MekHQ's Command Designer for options that belong to the campaign layer (for example
+     * "Generate Company Command Lance") and therefore cannot live in this view.</p>
+     *
+     * @param option the control to append; ignored when {@code null}
+     */
+    public void addGenerateOption(@Nullable JComponent option) {
+        if ((option == null) || (panGenerateOptions == null)) {
+            return;
+        }
+        panGenerateOptions.add(option);
+        panGenerateOptions.revalidate();
+        panGenerateOptions.repaint();
+    }
+
     public void setYearFieldEditable(boolean editable) {
         txtYear.setEditable(editable);
     }
@@ -1514,10 +1543,16 @@ public class ForceGeneratorOptionsView extends JPanel implements FocusListener, 
                 if (onGenerate != null) {
                     onGenerate.accept(generated);
                 }
-            } catch (InterruptedException ignored) {
-
+            } catch (InterruptedException interrupted) {
+                Thread.currentThread().interrupt();
+                logger.warn("[ForceGen] generation was interrupted; no force was produced");
             } catch (ExecutionException ex) {
-                logger.error(ex, "");
+                // Generation runs on a worker, so a failure here is invisible to the player - the
+                // button simply appears to do nothing. Log the cause with enough context to identify
+                // it, and say plainly that no force was produced.
+                logger.error(ex, "[ForceGen] generation FAILED for faction={} year={} unitType={}"
+                            + " echelon={}; no force was produced",
+                      fd.getFaction(), fd.getYear(), fd.getUnitType(), fd.getEchelon());
             } finally {
                 btnGenerate.setEnabled(true);
             }

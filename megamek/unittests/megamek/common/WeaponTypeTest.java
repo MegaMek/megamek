@@ -124,4 +124,42 @@ class WeaponTypeTest {
         assertEquals(-3, equipmentType.getToHitModifier(null));
         assertArrayEquals(new int[] { -3, -2, -1 }, (int[]) stats.get("toHitModifier"));
     }
+
+    @Test
+    void testYamlExportsSparseAlphaStrikeWeaponProfile() {
+        WeaponType erMicroLaser = (WeaponType) EquipmentType.get("CLBAERMicroLaser");
+        WeaponType smallLaser = (WeaponType) EquipmentType.get("Small Laser");
+        WeaponType fusillade = (WeaponType) EquipmentType.get("Fusillade");
+        WeaponType mediumLaser = (WeaponType) EquipmentType.get("Medium Laser");
+
+        assertNotNull(erMicroLaser);
+        assertNotNull(smallLaser);
+        assertNotNull(fusillade);
+        assertNotNull(mediumLaser);
+
+        Map<String, Object> erMicroLaserProfile = alphaStrikeYamlData(weaponYamlData(erMicroLaser));
+        assertArrayEquals(new double[] { 0.2, 0, 0, 0 }, (double[]) erMicroLaserProfile.get("damage"));
+        assertEquals(1, erMicroLaserProfile.size());
+
+        Map<String, Object> smallLaserWeapon = weaponYamlData(smallLaser);
+        Map<String, Object> smallLaserProfile = alphaStrikeYamlData(smallLaserWeapon);
+        assertEquals(true, smallLaserProfile.get("pointDefense"));
+        assertEquals(1, smallLaserProfile.size());
+
+        Map<String, Object> fusilladeProfile = alphaStrikeYamlData(weaponYamlData(fusillade));
+        assertArrayEquals(new double[] { 0.45, 0.3, 0, 0 }, (double[]) fusilladeProfile.get("damage"));
+        assertEquals(1, fusilladeProfile.size());
+
+        assertEquals(null, weaponYamlData(mediumLaser).get("alphaStrike"));
+    }
+
+    @SuppressWarnings("unchecked")
+    private Map<String, Object> weaponYamlData(WeaponType weaponType) {
+        return (Map<String, Object>) weaponType.getYamlData().get("weapon");
+    }
+
+    @SuppressWarnings("unchecked")
+    private Map<String, Object> alphaStrikeYamlData(Map<String, Object> weaponYamlData) {
+        return (Map<String, Object>) weaponYamlData.get("alphaStrike");
+    }
 }

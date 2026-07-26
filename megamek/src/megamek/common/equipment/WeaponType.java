@@ -1221,6 +1221,10 @@ public class WeaponType extends EquipmentType {
     // TODO : the calculations are superseded by the ASC table but correct most of
     // the time, ideally should be replaced
     public double getBattleForceDamage(int range) {
+        return getDefaultBattleForceDamage(range);
+    }
+
+    private double getDefaultBattleForceDamage(int range) {
         double damage = 0;
         if (range <= getLongRange()) {
             // Variable damage weapons that cannot reach into the BF long range band use LR
@@ -2636,8 +2640,64 @@ public class WeaponType extends EquipmentType {
         if (this.subCapital) {
             weapon.put("subCapital", this.subCapital);
         }
+        Map<String, Object> alphaStrike = getAlphaStrikeYamlData();
+        if (!alphaStrike.isEmpty()) {
+            weapon.put("alphaStrike", alphaStrike);
+        }
         data.put("weapon", weapon);
         return data;
+    }
+
+    /** Exports resolved Alpha Strike values that cannot be reconstructed from weapon data or flags. */
+    private Map<String, Object> getAlphaStrikeYamlData() {
+        Map<String, Object> alphaStrike = new LinkedHashMap<>();
+        if (getBattleForceClass() != BF_CLASS_STANDARD) {
+            alphaStrike.put("battleForceClass", getBattleForceClass());
+        }
+        if (isAlphaStrikePointDefense()) {
+            alphaStrike.put("pointDefense", true);
+        }
+        double[] damage = getAlphaStrikeDamage();
+        if (!java.util.Arrays.equals(damage, getDefaultAlphaStrikeDamage())) {
+            alphaStrike.put("damage", damage);
+        }
+        if (getAlphaStrikeHeat() != getHeat()) {
+            alphaStrike.put("heat", getAlphaStrikeHeat());
+        }
+        int[] heatDamage = getAlphaStrikeHeatDamage();
+        if (!java.util.Arrays.equals(heatDamage, new int[heatDamage.length])) {
+            alphaStrike.put("heatDamage", heatDamage);
+        }
+        return alphaStrike;
+    }
+
+    private double[] getAlphaStrikeDamage() {
+        int[] ranges = { AlphaStrikeElement.SHORT_RANGE, AlphaStrikeElement.MEDIUM_RANGE,
+            AlphaStrikeElement.LONG_RANGE, AlphaStrikeElement.EXTREME_RANGE };
+        double[] damage = new double[ranges.length];
+        for (int index = 0; index < ranges.length; index++) {
+            damage[index] = getBattleForceDamage(ranges[index], null);
+        }
+        return damage;
+    }
+
+    private double[] getDefaultAlphaStrikeDamage() {
+        int[] ranges = { AlphaStrikeElement.SHORT_RANGE, AlphaStrikeElement.MEDIUM_RANGE,
+            AlphaStrikeElement.LONG_RANGE, AlphaStrikeElement.EXTREME_RANGE };
+        double[] damage = new double[ranges.length];
+        for (int index = 0; index < ranges.length; index++) {
+            damage[index] = getDefaultBattleForceDamage(ranges[index]);
+        }
+        return damage;
+    }
+
+    private int[] getAlphaStrikeHeatDamage() {
+        return new int[] {
+            getAlphaStrikeHeatDamage(AlphaStrikeElement.SHORT_RANGE),
+            getAlphaStrikeHeatDamage(AlphaStrikeElement.MEDIUM_RANGE),
+            getAlphaStrikeHeatDamage(AlphaStrikeElement.LONG_RANGE),
+            getAlphaStrikeHeatDamage(AlphaStrikeElement.EXTREME_RANGE)
+        };
     }
 
     /**

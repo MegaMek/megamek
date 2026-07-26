@@ -215,6 +215,8 @@ public class MULParser {
      * model remain for backwards-compatibility and readability). It is essential for Battlefield Support Assets, which
      * share a name with their base unit. */
     public static final String ATTR_UNIT_FILE_UUID = "unitFileUUID";
+    /** Distinguishes alternate entity forms that can share the same chassis/model name. */
+    public static final String ATTR_ENTITY_FORM = "entityForm";
     /** The current (damage-lowered) Destroy Check of a Battlefield Support Asset. */
     public static final String ATTR_DESTROY_CHECK = "destroyCheck";
     public static final String ATTR_VELOCITY = "velocity";
@@ -312,6 +314,7 @@ public class MULParser {
     public static final String VALUE_HIT = "hit";
     public static final String VALUE_CONSOLE = "console";
     public static final String VALUE_SQUADRON = "Squadron";
+    public static final String VALUE_BATTLEFIELD_SUPPORT_ASSET = "BattlefieldSupportAsset";
 
     /**
      * Stores all the Entity's read in. This is for general use saving and loading to the chat lounge
@@ -579,6 +582,7 @@ public class MULParser {
         String chassis = entityNode.getAttribute(ATTR_CHASSIS);
         String model = entityNode.getAttribute(ATTR_MODEL);
         String unitFileUUID = entityNode.getAttribute(ATTR_UNIT_FILE_UUID);
+        boolean assetForm = VALUE_BATTLEFIELD_SUPPORT_ASSET.equals(entityNode.getAttribute(ATTR_ENTITY_FORM));
 
         Entity entity = null;
 
@@ -608,8 +612,13 @@ public class MULParser {
         }
 
         // Look for the entity in the unit cache if it couldn't be loaded.
+        if (assetForm && (entity != null) && !(entity instanceof BattlefieldSupportAsset)) {
+            warning.append("Embedded unit is not the saved Battlefield Support Asset form.\n");
+            entity = null;
+        }
+
         if (entity == null) {
-            entity = getEntity(chassis, model, unitFileUUID);
+            entity = getEntity(chassis, model, unitFileUUID, assetForm);
         }
 
         // Make sure we've got an Entity
@@ -698,30 +707,35 @@ public class MULParser {
 
     /**
      * Loads a unit from the cache. When a unit-file UUID is given it is the primary lookup - it pins the exact saved
-     * unit file - and the chassis/model name is the fallback. The UUID is also the only way to resolve a Battlefield
-     * Support Asset, which shares its name with its base unit (the plain name lookup deliberately returns the base unit,
-     * and standalone assets are not in the name map at all). Old UUID-less MULs, and any UUID not in this cache, resolve
-     * by name.
+    * unit file - and the chassis/model name is the fallback. A MUL entity-form discriminator makes that fallback use
+    * the separate Battlefield Support Asset name index, preventing a same-name base unit from being substituted.
      *
      * @param chassis      the unit chassis
      * @param model        the unit model, or {@code null}
-     * @param unitFileUUID the unit-file UUID to resolve first, or {@code null}/blank to look up by name only
+        * @param unitFileUUID the unit-file UUID to resolve first, or {@code null}/blank to look up by name only
+        * @param assetForm    whether the MUL explicitly identifies the entity as its Battlefield Support Asset form
      *
      * @return the loaded entity, or {@code null} if it could not be found or loaded
      */
-    private Entity getEntity(String chassis, @Nullable String model, @Nullable String unitFileUUID) {
+        private Entity getEntity(String chassis, @Nullable String model, @Nullable String unitFileUUID,
+                    boolean assetForm) {
         // The unit-file UUID is the primary lookup: it pins the exact saved unit file (and is the only way to resolve a
         // Battlefield Support Asset, which shares its name with its base unit). Old UUID-less MULs, and any UUID not in
         // this cache, fall through to the chassis/model name lookup below.
         if (!StringUtility.isNullOrBlank(unitFileUUID)) {
             MekSummary ms = MekSummaryCache.getInstance().getByUnitFileUUID(unitFileUUID);
             if (ms != null) {
-                try {
-                    return new MekFileParser(ms.getSourceFile(), ms.getEntryName()).getEntity();
-                } catch (Exception ex) {
-                    LOGGER.error("", ex);
-                    warning.append("Unable to load unit by UUID ").append(unitFileUUID).append(": ")
-                          .append(ex.getMessage()).append("\n");
+                if (!summaryMatchesEntityForm(ms, assetForm)) {
+                    warning.append("Unit UUID ").append(unitFileUUID)
+                          .append(" does not identify a Battlefield Support Asset.\n");
+                } else {
+                    try {
+                        return new MekFileParser(ms.getSourceFile(), ms.getEntryName()).getEntity();
+                    } catch (Exception ex) {
+                        LOGGER.error("", ex);
+                        warning.append("Unable to load unit by UUID ").append(unitFileUUID).append(": ")
+                              .append(ex.getMessage()).append("\n");
+                    }
                 }
             } else {
                 // Not in this cache (for example a different data version); the name lookup below usually still finds
@@ -752,15 +766,18 @@ public class MULParser {
         } else {
             // Try to find the entity.
             StringBuilder key = new StringBuilder(chassis);
-            MekSummary ms = MekSummaryCache.getInstance().getMek(key.toString());
+            MekSummary ms = assetForm ? MekSummaryCache.getInstance().getAsset(key.toString())
+                  : MekSummaryCache.getInstance().getMek(key.toString());
             if (!StringUtility.isNullOrBlank(model)) {
                 key.append(" ").append(model);
-                ms = MekSummaryCache.getInstance().getMek(key.toString());
+                ms = assetForm ? MekSummaryCache.getInstance().getAsset(key.toString())
+                      : MekSummaryCache.getInstance().getMek(key.toString());
                 // That didn't work. Try swapping model and chassis.
                 if (ms == null) {
                     key = new StringBuilder(model);
                     key.append(" ").append(chassis);
-                    ms = MekSummaryCache.getInstance().getMek(key.toString());
+                    ms = assetForm ? MekSummaryCache.getInstance().getAsset(key.toString())
+                          : MekSummaryCache.getInstance().getMek(key.toString());
                 }
             }
             // We should have found the mek.
@@ -786,6 +803,10 @@ public class MULParser {
         return newEntity;
     }
 
+    static boolean summaryMatchesEntityForm(MekSummary summary, boolean assetForm) {
+        return !assetForm || summary.isBattlefieldSupportAsset();
+    }
+
     /**
      * An Entity tag can define numerous attributes for the <code>Entity</code>, check and set all the relevant
      * attributes.
@@ -804,7 +825,13 @@ public class MULParser {
             String destroyCheck = entityTag.getAttribute(ATTR_DESTROY_CHECK);
             if (!StringUtility.isNullOrBlank(destroyCheck)) {
                 try {
-                    asset.setDestroyCheck(Integer.parseInt(destroyCheck));
+                    int parsedDestroyCheck = Integer.parseInt(destroyCheck);
+                    if ((parsedDestroyCheck < 0) || (parsedDestroyCheck > asset.getODestroyCheck())) {
+                        warning.append("Invalid destroyCheck value: ").append(destroyCheck)
+                              .append(" (expected 0..").append(asset.getODestroyCheck()).append(")\n");
+                    } else {
+                        asset.setDestroyCheck(parsedDestroyCheck);
+                    }
                 } catch (NumberFormatException e) {
                     warning.append("Invalid destroyCheck value: ").append(destroyCheck).append("\n");
                 }

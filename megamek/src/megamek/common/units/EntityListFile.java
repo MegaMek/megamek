@@ -1069,6 +1069,10 @@ public class EntityListFile {
                 output.write("\" " + MULParser.ATTR_UNIT_FILE_UUID + "=\"");
                 output.write(entity.getUnitFileUUID());
             }
+            if (entity instanceof BattlefieldSupportAsset) {
+                output.write("\" " + MULParser.ATTR_ENTITY_FORM + "=\"");
+                output.write(MULParser.VALUE_BATTLEFIELD_SUPPORT_ASSET);
+            }
             // A Battlefield Support Asset also persists its current Destroy Check when damage has lowered it.
             if ((entity instanceof BattlefieldSupportAsset asset)
                   && (asset.getDestroyCheck() != asset.getODestroyCheck())) {

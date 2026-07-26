@@ -307,6 +307,11 @@ public class EntityImage {
         return dmgLevel;
     }
 
+    /** @return whether this processed image was created for a Battlefield Support Asset. */
+    public boolean isAssetImage() {
+        return isAsset;
+    }
+
     /** Creates images applying damage decals, rotating and scaling. */
     public void loadFacings() {
         if (base == null) {

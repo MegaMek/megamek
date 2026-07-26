@@ -342,13 +342,16 @@ public class ForceGeneratorOptionsView extends JPanel implements FocusListener, 
         // buys headroom for cargo it picks up later.
         txtCargoPct = new JTextField("100");
         txtCargoPct.setToolTipText(Messages.getString("ForceGeneratorDialog.cargoPct.tooltip"));
-        panTransport.add(new JLabel(Messages.getString("ForceGeneratorDialog.dropshipPercentage")));
+        // The label is what a player reads and points at, so it carries the same explanation as the
+        // field. With the tooltip on the input box alone, hovering the thing that names the setting
+        // explained nothing.
+        panTransport.add(describedLabel("ForceGeneratorDialog.dropshipPercentage"));
         panTransport.add(txtDropshipPct, gbc);
-        panTransport.add(new JLabel(Messages.getString("ForceGeneratorDialog.jumpshipPercentage")));
+        panTransport.add(describedLabel("ForceGeneratorDialog.jumpshipPercentage"));
         panTransport.add(txtJumpshipPct, gbc);
-        panTransport.add(new JLabel(Messages.getString("ForceGeneratorDialog.warshipPercentage")));
+        panTransport.add(describedLabel("ForceGeneratorDialog.warshipPercentage"));
         panTransport.add(txtWarshipPct, gbc);
-        panTransport.add(new JLabel(Messages.getString("ForceGeneratorDialog.cargoPct")));
+        panTransport.add(describedLabel("ForceGeneratorDialog.cargoPct"));
         panTransport.add(txtCargoPct, gbc);
         chkFighterComplement = new JCheckBox(Messages.getString("ForceGeneratorDialog.fighterComplement"));
         chkFighterComplement.setToolTipText(Messages.getString("ForceGeneratorDialog.fighterComplement.tooltip"));
@@ -1286,6 +1289,20 @@ public class ForceGeneratorOptionsView extends JPanel implements FocusListener, 
         panGenerateOptions.add(option);
         panGenerateOptions.revalidate();
         panGenerateOptions.repaint();
+    }
+
+    /**
+     * A label that carries its setting's explanation, so hovering the name of a control describes it
+     * rather than only hovering the input box beside it.
+     *
+     * @param messageKey the label's message key; its tooltip is the same key suffixed {@code .tooltip}
+     *
+     * @return the label, with tooltip attached when one is defined
+     */
+    private static JLabel describedLabel(String messageKey) {
+        JLabel label = new JLabel(Messages.getString(messageKey));
+        label.setToolTipText(Messages.getString(messageKey + ".tooltip"));
+        return label;
     }
 
     public void setYearFieldEditable(boolean editable) {

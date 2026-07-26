@@ -2652,7 +2652,7 @@ public class WeaponType extends EquipmentType {
     private Map<String, Object> getAlphaStrikeYamlData() {
         Map<String, Object> alphaStrike = new LinkedHashMap<>();
         if (getBattleForceClass() != BF_CLASS_STANDARD) {
-            alphaStrike.put("battleForceClass", getBattleForceClass());
+            alphaStrike.put("battleForceClass", battleForceClassToString(getBattleForceClass()));
         }
         if (isAlphaStrikePointDefense()) {
             alphaStrike.put("pointDefense", true);
@@ -2671,14 +2671,35 @@ public class WeaponType extends EquipmentType {
         return alphaStrike;
     }
 
+    private String battleForceClassToString(int battleForceClass) {
+        return switch (battleForceClass) {
+            case BF_CLASS_LRM -> "LRM";
+            case BF_CLASS_SRM -> "SRM";
+            case BF_CLASS_MML -> "MML";
+            case BF_CLASS_TORPEDO -> "TORPEDO";
+            case BF_CLASS_AC -> "AC";
+            case BF_CLASS_FLAK -> "FLAK";
+            case BF_CLASS_IATM -> "IATM";
+            case BF_CLASS_REL -> "REL";
+            case BF_CLASS_CAPITAL -> "CAPITAL";
+            case BF_CLASS_SUBCAPITAL -> "SUBCAPITAL";
+            case BF_CLASS_CAPITAL_MISSILE -> "CAPITAL_MISSILE";
+            default -> throw new IllegalArgumentException("Unknown BattleForce class: " + battleForceClass);
+        };
+    }
+
     private double[] getAlphaStrikeDamage() {
         int[] ranges = { AlphaStrikeElement.SHORT_RANGE, AlphaStrikeElement.MEDIUM_RANGE,
             AlphaStrikeElement.LONG_RANGE, AlphaStrikeElement.EXTREME_RANGE };
         double[] damage = new double[ranges.length];
         for (int index = 0; index < ranges.length; index++) {
-            damage[index] = getBattleForceDamage(ranges[index], null);
+            damage[index] = roundAlphaStrikeDamage(getBattleForceDamage(ranges[index], null));
         }
         return damage;
+    }
+
+    private double roundAlphaStrikeDamage(double damage) {
+        return Math.round(damage * 20.0) / 20.0;
     }
 
     private double[] getDefaultAlphaStrikeDamage() {

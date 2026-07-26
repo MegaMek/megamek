@@ -131,11 +131,13 @@ class WeaponTypeTest {
         WeaponType smallLaser = (WeaponType) EquipmentType.get("Small Laser");
         WeaponType fusillade = (WeaponType) EquipmentType.get("Fusillade");
         WeaponType mediumLaser = (WeaponType) EquipmentType.get("Medium Laser");
+        WeaponType lrm = (WeaponType) EquipmentType.get("ISLRM5");
 
         assertNotNull(erMicroLaser);
         assertNotNull(smallLaser);
         assertNotNull(fusillade);
         assertNotNull(mediumLaser);
+        assertNotNull(lrm);
 
         Map<String, Object> erMicroLaserProfile = alphaStrikeYamlData(weaponYamlData(erMicroLaser));
         assertArrayEquals(new double[] { 0.2, 0, 0, 0 }, (double[]) erMicroLaserProfile.get("damage"));
@@ -151,6 +153,7 @@ class WeaponTypeTest {
         assertEquals(1, fusilladeProfile.size());
 
         assertEquals(null, weaponYamlData(mediumLaser).get("alphaStrike"));
+        assertEquals("LRM", alphaStrikeYamlData(weaponYamlData(lrm)).get("battleForceClass"));
     }
 
     @SuppressWarnings("unchecked")

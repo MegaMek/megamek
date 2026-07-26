@@ -27589,8 +27589,9 @@ public class TWGameManager extends AbstractGameManager {
             return;
         }
 
-        // Make sure that the entity has the given equipment.
-        WeaponMounted weaponMounted = (WeaponMounted) shooter.getEquipment(weaponId);
+        // Make sure that the entity has the given equipment. Both indices come from the client, so resolve them
+        // through the type-checked accessors rather than casting whatever equipment sits at that index.
+        WeaponMounted weaponMounted = shooter.getWeapon(weaponId);
         AmmoMounted selectedAmmo = ammoCarrier.getAmmo(ammoId);
         AmmoMounted oldAmmo = (weaponMounted == null) ? null : weaponMounted.getLinkedAmmo();
         if (null == selectedAmmo) {

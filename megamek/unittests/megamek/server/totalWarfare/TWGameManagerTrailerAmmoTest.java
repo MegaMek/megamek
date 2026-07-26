@@ -236,6 +236,26 @@ class TWGameManagerTrailerAmmoTest {
     }
 
     @Test
+    void nonWeaponEquipmentIndexIsRejectedWithoutThrowing() {
+        WeaponMounted launcher = multiBinWeapon(tractor);
+        AmmoMounted originalAmmo = launcher.getLinkedAmmo();
+        // Point the weapon index at an ammo bin. Both indices come from the client, so a bad one must be
+        // rejected rather than escaping as a ClassCastException - nothing between here and the packet pump
+        // catches RuntimeException, so a throw would kill the server's packet thread.
+        int ammoBinIndex = tractor.getEquipmentNum(compatibleBins(tractor, launcher).get(0));
+
+        gameManager.handlePacket(OWNER_CONNECTION_ID, new Packet(PacketCommand.ENTITY_AMMO_CHANGE,
+              tractor.getId(),
+              ammoBinIndex,
+              ammoBinIndex,
+              tractor.getId(),
+              NO_REPORT));
+
+        assertSame(originalAmmo, launcher.getLinkedAmmo(),
+              "A non-weapon equipment index must leave the link alone");
+    }
+
+    @Test
     void trailerAmmoSurvivesRelinkOnTheTractor() {
         WeaponMounted launcher = multiBinWeapon(tractor);
         AmmoMounted trailerAmmo = compatibleBins(trailer, launcher).get(0);

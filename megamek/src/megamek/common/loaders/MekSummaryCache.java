@@ -118,6 +118,7 @@ public class MekSummaryCache {
     private final List<Listener> listeners = new ArrayList<>();
 
     private StringBuffer loadReport = new StringBuffer();
+    private StringBuffer cacheCollisionReport = new StringBuffer();
     private volatile Thread loader;
 
     private LoadOperation queuedLoadOperation;
@@ -525,6 +526,9 @@ public class MekSummaryCache {
         Map<String, MekSummary> updatedAssetNameMap = new HashMap<>();
         Map<String, MekSummary> updatedUuidMap = new HashMap<>();
         Map<String, MekSummary> updatedAssetByLinkedUnitId = new HashMap<>();
+        Set<String> ambiguousAssetNames = new HashSet<>();
+        Set<String> ambiguousUnitFileUUIDs = new HashSet<>();
+        Set<String> ambiguousLinkedUnitIds = new HashSet<>();
 
         // store map references
         for (MekSummary element : updatedData) {
@@ -534,17 +538,20 @@ public class MekSummaryCache {
             if (element.isBattlefieldSupportAsset()) {
                 // Assets share a name with their base unit; keep them in a dedicated map so both remain retrievable
                 // and the plain-name lookup keeps returning the base unit (what MUL/other name lookups expect).
-                updatedAssetNameMap.put(element.getName(), element);
+                putUnique(updatedAssetNameMap, ambiguousAssetNames, element.getName(), element,
+                      "Battlefield Support Asset name", cacheCollisionReport);
                 String linkedUnitId = element.getLinkedUnitId();
                 if ((linkedUnitId != null) && !linkedUnitId.isBlank()) {
-                    updatedAssetByLinkedUnitId.put(linkedUnitId, element);
+                    putUnique(updatedAssetByLinkedUnitId, ambiguousLinkedUnitIds, linkedUnitId, element,
+                          "Battlefield Support Asset linked-unit UUID", cacheCollisionReport);
                 }
             } else {
                 updatedNameMap.put(element.getName(), element);
             }
             String unitFileUUID = element.getUnitFileUUID();
             if ((unitFileUUID != null) && !unitFileUUID.isBlank()) {
-                updatedUuidMap.put(unitFileUUID, element);
+                putUnique(updatedUuidMap, ambiguousUnitFileUUIDs, unitFileUUID, element, "unit-file UUID",
+                      cacheCollisionReport);
             }
             String entryName = element.getEntryName();
             if (entryName == null) {
@@ -578,6 +585,29 @@ public class MekSummaryCache {
         return true;
     }
 
+        static void putUnique(Map<String, MekSummary> index, Set<String> ambiguousKeys, String key,
+                    MekSummary summary, String keyType, StringBuffer report) {
+        if (ambiguousKeys.contains(key)) {
+                        report.append("  Additional ambiguous ").append(keyType).append(" '").append(key).append("' from ")
+                                    .append(summarySource(summary)).append("; lookup remains disabled.\n");
+            return;
+        }
+        MekSummary previous = index.putIfAbsent(key, summary);
+        if (previous != null) {
+            index.remove(key);
+            ambiguousKeys.add(key);
+            report.append("  Ambiguous ").append(keyType).append(" '").append(key).append("' for ")
+                  .append(summarySource(previous)).append(" and ").append(summarySource(summary)).append("; ")
+                  .append("lookup disabled.\n");
+        }
+    }
+
+    private static String summarySource(MekSummary summary) {
+        String entryName = summary.getEntryName();
+        return (entryName == null) ? summary.getSourceFile().toString()
+              : summary.getSourceFile() + "!" + entryName;
+    }
+
     private void logReport() {
         loadReport.append(data.length).append(" units loaded.\n");
 
@@ -586,11 +616,16 @@ public class MekSummaryCache {
                   .append(" units failed to load...\n");
         }
 
+        if (!cacheCollisionReport.isEmpty()) {
+            loadReport.append(cacheCollisionReport);
+            logger.warn("Unit cache lookup collisions; ambiguous lookups are disabled:\n{}", cacheCollisionReport);
+        }
         logger.debug(loadReport.toString());
     }
 
     private void resetLoadStats() {
         loadReport = new StringBuffer();
+        cacheCollisionReport = new StringBuffer();
         failedFiles = new HashMap<>();
         cacheCount = 0;
         fileCount = 0;

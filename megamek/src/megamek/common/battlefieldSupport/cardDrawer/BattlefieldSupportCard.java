@@ -42,6 +42,7 @@ import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.Image;
 import java.awt.Rectangle;
+import java.awt.font.TextAttribute;
 import java.awt.geom.AffineTransform;
 import java.awt.geom.Rectangle2D;
 import java.awt.image.BufferedImage;
@@ -49,6 +50,7 @@ import java.io.InputStream;
 import java.nio.file.Files;
 import java.time.LocalDate;
 import java.util.Locale;
+import java.util.Map;
 import javax.swing.ImageIcon;
 
 import megamek.MMConstants;
@@ -72,6 +74,8 @@ import org.apache.batik.dom.util.SAXDocumentFactory;
 import org.apache.batik.gvt.GraphicsNode;
 import org.apache.batik.util.XMLResourceDescriptor;
 import org.w3c.dom.Document;
+import org.w3c.dom.Element;
+import org.w3c.dom.NodeList;
 
 /**
  * Renders a printable Battlefield Support (BFS) Asset card, mirroring the physical asset cards from the
@@ -90,6 +94,7 @@ public class BattlefieldSupportCard {
 
     public static final int WIDTH = 1050;
     public static final int HEIGHT = 750;
+    public static final int STAT_LABEL_LETTER_SPACING_PX = 2;
     /** Printed at 3.5" wide (1/72 dots per inch), matching the Alpha Strike card scale. */
     public static final double PRINT_SCALE = 3.5 * 72 / WIDTH;
 
@@ -270,6 +275,8 @@ public class BattlefieldSupportCard {
         titleFont = bold.deriveFont(84f);
         subtitleFont = plain.deriveFont(40f);
         labelFont = bold.deriveFont(42f);
+        labelFont = labelFont.deriveFont(Map.of(
+              TextAttribute.TRACKING, STAT_LABEL_LETTER_SPACING_PX / labelFont.getSize2D()));
         valueFont = bold.deriveFont(62f);
         movementFont = bold.deriveFont(58f);
         specialsFont = plain.deriveFont(30f);
@@ -479,14 +486,13 @@ public class BattlefieldSupportCard {
         // Evenly spaced column centers; labels sit at these centers and each value is centered beneath its label.
         int[] columnCenterX = { 170, 410, 650, 890 };
         int labelY = 504;
-        int valueY = 552;
+        int valueY = 557;
         int checkColumn = labels.length - 1;
         int skillColumn = 1;
         int damageColumn = 2;
 
         for (int i = 0; i < labels.length; i++) {
-            text(labels[i]).at(columnCenterX[i], labelY).center().font(labelFont)
-                  .color(accentColor()).draw(g);
+            drawStatLabel(g, labels[i], columnCenterX[i], labelY);
 
             // The SKILL value bolds the Regular or Veteran number matching the crew's current level.
             Integer veteranSkill = asset.getVeteranSkill();
@@ -515,6 +521,28 @@ public class BattlefieldSupportCard {
         // Threshold, centered beneath the CHECK column.
         text("THRESHOLD: " + asset.getThreshold()).at(columnCenterX[checkColumn], valueY + 50)
               .center().font(thresholdFont).color(Color.BLACK).draw(g);
+    }
+
+    private void drawStatLabel(Graphics2D g, String label, int centerX, int y) {
+        text(label).at(centerX, y).center().font(labelFont).color(accentColor()).draw(g);
+    }
+
+    /**
+     * Applies card-specific attributes that Java2D does not preserve in SVG output. Call this after drawing the card and
+     * obtaining the completed SVG group.
+     */
+    public static void applySvgStyles(Element cardGroup) {
+        NodeList textNodes = cardGroup.getElementsByTagName("text");
+        for (int i = 0; i < textNodes.getLength(); i++) {
+            Element textElement = (Element) textNodes.item(i);
+            switch (textElement.getTextContent()) {
+                case "RANGE", "SKILL", "DMG", "CHECK" ->
+                      textElement.setAttribute("letter-spacing", STAT_LABEL_LETTER_SPACING_PX + "px");
+                default -> {
+                    // No card-specific SVG style.
+                }
+            }
+        }
     }
 
     /**
@@ -562,60 +590,59 @@ public class BattlefieldSupportCard {
     }
 
     /**
-     * Draws the CHECK value (centered at {@code centerX}) followed by the play write-in box. When the asset is damaged
-     * (its current Destroy Check differs from the as-constructed one), the as-constructed value is shown struck through
-     * in grey next to the current value; otherwise the single current value is shown in black.
+     * Draws the CHECK value from a fixed left edge and the play write-in box against a fixed right edge. When the asset
+     * is damaged (its current Destroy Check differs from the as-constructed one), the as-constructed value is shown
+     * struck through in grey next to the current value; otherwise the single current value is shown in black.
      */
     private void paintCheckColumn(Graphics2D g, int centerX, int valueY) {
         int original = asset.getODestroyCheck();
         int current = asset.getDestroyCheck();
+        int writeBoxW = 100;
+        int writeBoxH = 60;
+        int writeBoxRightX = centerX + 100;
+        int writeBoxX = writeBoxRightX - writeBoxW;
+        int maximumValueWidth = g.getFontMetrics(valueFont).stringWidth("15");
+        int valueX = writeBoxX - maximumValueWidth - 16;
 
-        Rectangle valueBounds;
         if (current != original) {
-            valueBounds = drawDamagedCheck(g, centerX, valueY, Integer.toString(original), Integer.toString(current));
+            drawDamagedCheck(g, valueX, valueY, Integer.toString(original), Integer.toString(current));
         } else {
-            valueBounds = text(Integer.toString(current)).at(centerX, valueY).center().font(valueFont)
+            text(Integer.toString(current)).at(valueX, valueY).centerY().font(valueFont)
                   .maxWidth(210).color(Color.BLACK).draw(g);
         }
 
-        // Degradation write-in box, to the right of the value(s), for play use.
-        int writeBoxW = 64;
-        int writeBoxH = 50;
-        int writeBoxX = valueBounds.x + valueBounds.width + 22;
+        // Degradation write-in box, right-aligned in the CHECK column for play use.
         int writeBoxY = valueY - writeBoxH / 2;
+        int chamfer = 10;
+        int[] writeBoxXs = { writeBoxX + chamfer, writeBoxRightX, writeBoxRightX, writeBoxX, writeBoxX };
+        int[] writeBoxYs = { writeBoxY, writeBoxY, writeBoxY + writeBoxH, writeBoxY + writeBoxH, writeBoxY + chamfer };
         g.setColor(WHITE);
-        g.fillRect(writeBoxX, writeBoxY, writeBoxW, writeBoxH);
+        g.fillPolygon(writeBoxXs, writeBoxYs, writeBoxXs.length);
         g.setColor(Color.BLACK);
         g.setStroke(new BasicStroke(2.4f));
-        g.drawRect(writeBoxX, writeBoxY, writeBoxW, writeBoxH);
+        g.drawPolygon(writeBoxXs, writeBoxYs, writeBoxXs.length);
     }
 
     /**
      * Draws a damaged Destroy Check as {@code original current}: the as-constructed value struck through in grey, then
      * the current value in black (in {@link ColorMode#NONE}) or the damage color (in a color mode). The pair is centered
-     * on {@code centerX}.
-     *
-     * @return the bounding box of the whole pair, so the caller can position the write-in box after it
+     * immediately to the left of the current value, which remains fixed at {@code currentX}.
      */
-    private Rectangle drawDamagedCheck(Graphics2D g, int centerX, int y, String original, String current) {
+    private void drawDamagedCheck(Graphics2D g, int currentX, int y, String original, String current) {
         int gap = 14;
         int wOriginal = g.getFontMetrics(valueFont).stringWidth(original);
-        int wCurrent = g.getFontMetrics(valueFont).stringWidth(current);
-        int totalWidth = wOriginal + gap + wCurrent;
-        int leftX = centerX - totalWidth / 2;
+        int originalX = currentX - wOriginal - gap;
 
         // Original: grey, struck through.
-        Rectangle originalBounds = text(original).at(leftX, y).centerY().font(valueFont)
+        text(original).at(originalX, y).centerY().font(valueFont)
               .color(INACTIVE_GRAY).draw(g);
         g.setColor(INACTIVE_GRAY);
         g.setStroke(new BasicStroke(2.4f));
-        g.drawLine(leftX, y, leftX + wOriginal, y);
+        g.drawLine(originalX, y, originalX + wOriginal, y);
 
         // Current: black in black-and-white, the damage color in a color mode.
         Color currentColor = (colorMode == ColorMode.NONE) ? Color.BLACK : damageColor;
-        text(current).at(leftX + wOriginal + gap, y).centerY().font(valueFont).color(currentColor).draw(g);
-
-        return new Rectangle(leftX, y - originalBounds.height / 2, totalWidth, originalBounds.height);
+        text(current).at(currentX, y).centerY().font(valueFont).color(currentColor).draw(g);
     }
 
     private void paintSpecials(Graphics2D g) {

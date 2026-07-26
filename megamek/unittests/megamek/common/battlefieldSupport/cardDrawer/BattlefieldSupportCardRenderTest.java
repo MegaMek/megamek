@@ -22,6 +22,7 @@
 
 package megamek.common.battlefieldSupport.cardDrawer;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
@@ -30,6 +31,7 @@ import java.awt.image.BufferedImage;
 import java.io.File;
 import java.nio.file.Path;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import javax.imageio.ImageIO;
 
@@ -173,18 +175,115 @@ class BattlefieldSupportCardRenderTest {
         assertFalse(textElements.contains("DX"));
     }
 
+    @Test
+    void checkValueAndWriteInBoxUseFixedAnchors() throws Exception {
+        BattlefieldSupportAsset asset = (BattlefieldSupportAsset) new MekFileParser(
+              new File("testresources/data/mekfiles/Maxim Heavy Hover Transport.bfs")).getEntity();
+        Element singleDigitCard = svgGroup(new BattlefieldSupportCard(asset));
+
+        asset.setODestroyCheck(10);
+        Element doubleDigitCard = svgGroup(new BattlefieldSupportCard(asset));
+
+        asset.setODestroyCheck(7);
+        asset.setDestroyCheck(5);
+        Element damagedCard = svgGroup(new BattlefieldSupportCard(asset));
+
+        Element singleDigit = textElement(singleDigitCard, "7");
+        Element doubleDigit = textElement(doubleDigitCard, "10");
+        assertEquals(attribute(singleDigit, "x"), attribute(doubleDigit, "x"), 0.01);
+        assertEquals(attribute(singleDigit, "x"), attribute(rightmostTextElement(damagedCard, "5"), "x"), 0.01);
+        assertEquals(attribute(textElement(singleDigitCard, "3/6/9"), "y"), attribute(singleDigit, "y"), 0.01);
+
+        Element singleDigitBox = writeInBox(singleDigitCard);
+        Element doubleDigitBox = writeInBox(doubleDigitCard);
+        assertEquals(points(singleDigitBox), points(doubleDigitBox));
+        assertEquals(points(singleDigitBox), points(writeInBox(damagedCard)));
+        assertEquals(List.of(900d, 527d, 990d, 527d, 990d, 587d, 890d, 587d, 890d, 537d),
+              points(singleDigitBox));
+    }
+
+    @Test
+    void statLabelsUseTwoPixelLetterSpacing() throws Exception {
+        BattlefieldSupportAsset asset = (BattlefieldSupportAsset) new MekFileParser(
+              new File("testresources/data/mekfiles/Maxim Heavy Hover Transport.bfs")).getEntity();
+        Element card = svgGroup(new BattlefieldSupportCard(asset));
+
+        for (String label : List.of("RANGE", "SKILL", "DMG", "CHECK")) {
+            Element labelElement = textElement(card, label);
+            assertEquals(BattlefieldSupportCard.STAT_LABEL_LETTER_SPACING_PX + "px",
+                  labelElement.getAttribute("letter-spacing"));
+        }
+        Element value = textElement(card, "3/6/9");
+        assertTrue(value.getAttribute("letter-spacing").isBlank());
+        assertFalse(value.getAttribute("style").contains("letter-spacing"));
+    }
+
     private static List<String> svgTextElements(BattlefieldSupportCard card) {
-        DOMImplementation implementation = SVGDOMImplementation.getDOMImplementation();
-        Document document = implementation.createDocument(SVGDOMImplementation.SVG_NAMESPACE_URI, "svg", null);
-        SVGGraphics2D graphics = new SVGGraphics2D(document);
-        card.drawCard(graphics);
-        Element group = graphics.getTopLevelGroup(true);
+        Element group = svgGroup(card);
         NodeList textNodes = group.getElementsByTagName("text");
         List<String> textElements = new ArrayList<>();
         for (int i = 0; i < textNodes.getLength(); i++) {
             textElements.add(textNodes.item(i).getTextContent());
         }
         return textElements;
+    }
+
+    private static Element svgGroup(BattlefieldSupportCard card) {
+        DOMImplementation implementation = SVGDOMImplementation.getDOMImplementation();
+        Document document = implementation.createDocument(SVGDOMImplementation.SVG_NAMESPACE_URI, "svg", null);
+        SVGGraphics2D graphics = new SVGGraphics2D(document);
+        card.drawCard(graphics);
+        Element group = graphics.getTopLevelGroup(true);
+        BattlefieldSupportCard.applySvgStyles(group);
+        return group;
+    }
+
+    private static Element textElement(Element group, String value) {
+        NodeList textNodes = group.getElementsByTagName("text");
+        for (int i = 0; i < textNodes.getLength(); i++) {
+            if (value.equals(textNodes.item(i).getTextContent())) {
+                return (Element) textNodes.item(i);
+            }
+        }
+        throw new AssertionError("No SVG text element found for " + value);
+    }
+
+    private static Element rightmostTextElement(Element group, String value) {
+        NodeList textNodes = group.getElementsByTagName("text");
+        Element rightmost = null;
+        for (int i = 0; i < textNodes.getLength(); i++) {
+            Element textElement = (Element) textNodes.item(i);
+            if (value.equals(textElement.getTextContent())
+                  && ((rightmost == null) || (attribute(textElement, "x") > attribute(rightmost, "x")))) {
+                rightmost = textElement;
+            }
+        }
+        if (rightmost == null) {
+            throw new AssertionError("No SVG text element found for " + value);
+        }
+        return rightmost;
+    }
+
+    private static Element writeInBox(Element group) {
+        NodeList polygons = group.getElementsByTagName("polygon");
+        for (int i = 0; i < polygons.getLength(); i++) {
+            Element polygon = (Element) polygons.item(i);
+            List<Double> points = points(polygon);
+            if (points.contains(990d) && points.contains(587d) && (points.size() == 10)) {
+                return polygon;
+            }
+        }
+        throw new AssertionError("No CHECK write-in box found");
+    }
+
+    private static List<Double> points(Element element) {
+        return Arrays.stream(element.getAttribute("points").strip().split("[,\\s]+"))
+              .map(Double::parseDouble)
+              .toList();
+    }
+
+    private static double attribute(Element element, String name) {
+        return Double.parseDouble(element.getAttribute(name));
     }
 
     private static boolean imagesEqual(BufferedImage a, BufferedImage b) {

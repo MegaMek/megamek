@@ -5,7 +5,7 @@ model: ""
 assetType: "Vehicle"
 cardTitle: "Maxim"
 cardSubtitle: "Hover Transport"
-year: 3151
+year: 2689
 techBase: "IS"
 source: "BattleTech: Mercenaries"
 movement:

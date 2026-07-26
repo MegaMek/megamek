@@ -2707,7 +2707,7 @@ public class WeaponType extends EquipmentType {
             AlphaStrikeElement.LONG_RANGE, AlphaStrikeElement.EXTREME_RANGE };
         double[] damage = new double[ranges.length];
         for (int index = 0; index < ranges.length; index++) {
-            damage[index] = getDefaultBattleForceDamage(ranges[index]);
+            damage[index] = roundAlphaStrikeDamage(getDefaultBattleForceDamage(ranges[index]));
         }
         return damage;
     }

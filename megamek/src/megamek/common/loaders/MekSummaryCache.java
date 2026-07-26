@@ -526,10 +526,6 @@ public class MekSummaryCache {
         Map<String, MekSummary> updatedAssetNameMap = new HashMap<>();
         Map<String, MekSummary> updatedUuidMap = new HashMap<>();
         Map<String, MekSummary> updatedAssetByLinkedUnitId = new HashMap<>();
-        Set<String> ambiguousAssetNames = new HashSet<>();
-        Set<String> ambiguousUnitFileUUIDs = new HashSet<>();
-        Set<String> ambiguousLinkedUnitIds = new HashSet<>();
-
         // store map references
         for (MekSummary element : updatedData) {
             if (shouldStopLoading()) {
@@ -538,11 +534,11 @@ public class MekSummaryCache {
             if (element.isBattlefieldSupportAsset()) {
                 // Assets share a name with their base unit; keep them in a dedicated map so both remain retrievable
                 // and the plain-name lookup keeps returning the base unit (what MUL/other name lookups expect).
-                putUnique(updatedAssetNameMap, ambiguousAssetNames, element.getName(), element,
+                putFirst(updatedAssetNameMap, element.getName(), element,
                       "Battlefield Support Asset name", cacheCollisionReport);
                 String linkedUnitId = element.getLinkedUnitId();
                 if ((linkedUnitId != null) && !linkedUnitId.isBlank()) {
-                    putUnique(updatedAssetByLinkedUnitId, ambiguousLinkedUnitIds, linkedUnitId, element,
+                    putFirst(updatedAssetByLinkedUnitId, linkedUnitId, element,
                           "Battlefield Support Asset linked-unit UUID", cacheCollisionReport);
                 }
             } else {
@@ -550,7 +546,7 @@ public class MekSummaryCache {
             }
             String unitFileUUID = element.getUnitFileUUID();
             if ((unitFileUUID != null) && !unitFileUUID.isBlank()) {
-                putUnique(updatedUuidMap, ambiguousUnitFileUUIDs, unitFileUUID, element, "unit-file UUID",
+                putFirst(updatedUuidMap, unitFileUUID, element, "unit-file UUID",
                       cacheCollisionReport);
             }
             String entryName = element.getEntryName();
@@ -585,20 +581,17 @@ public class MekSummaryCache {
         return true;
     }
 
-        static void putUnique(Map<String, MekSummary> index, Set<String> ambiguousKeys, String key,
-                    MekSummary summary, String keyType, StringBuffer report) {
-        if (ambiguousKeys.contains(key)) {
-                        report.append("  Additional ambiguous ").append(keyType).append(" '").append(key).append("' from ")
-                                    .append(summarySource(summary)).append("; lookup remains disabled.\n");
-            return;
-        }
+    /**
+     * Adds a cache lookup entry unless its key is already assigned. Duplicate keys retain the first loaded summary so
+     * name-only legacy callers continue to receive a deterministic result; the conflicting source is reported.
+     */
+    static void putFirst(Map<String, MekSummary> index, String key, MekSummary summary, String keyType,
+          StringBuffer report) {
         MekSummary previous = index.putIfAbsent(key, summary);
         if (previous != null) {
-            index.remove(key);
-            ambiguousKeys.add(key);
             report.append("  Ambiguous ").append(keyType).append(" '").append(key).append("' for ")
                   .append(summarySource(previous)).append(" and ").append(summarySource(summary)).append("; ")
-                  .append("lookup disabled.\n");
+                  .append("retaining the first-loaded lookup result.\n");
         }
     }
 
@@ -618,7 +611,7 @@ public class MekSummaryCache {
 
         if (!cacheCollisionReport.isEmpty()) {
             loadReport.append(cacheCollisionReport);
-            logger.warn("Unit cache lookup collisions; ambiguous lookups are disabled:\n{}", cacheCollisionReport);
+            logger.warn("Unit cache lookup collisions; first-loaded results are retained:\n{}", cacheCollisionReport);
         }
         logger.debug(loadReport.toString());
     }

@@ -81,7 +81,7 @@ class BFSFileTest {
         assertEquals("Maxim Heavy Hover Transport", asset.getChassis());
         assertEquals(BFSAssetType.VEHICLE, asset.getAssetType());
         assertEquals(2689, asset.getYear());
-        assertEquals("TR:3039", asset.getSource());
+        assertEquals("BattleTech: Mercenaries", asset.getSource());
         assertEquals(UnitRole.STRIKER, asset.getRole());
         // Tech base "IS" round-trips as a non-Clan asset (assets are always tech level Standard).
         assertFalse(asset.isClan());

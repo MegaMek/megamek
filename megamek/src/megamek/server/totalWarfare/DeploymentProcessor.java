@@ -38,6 +38,7 @@ import java.util.List;
 import java.util.Vector;
 
 import megamek.common.Hex;
+import megamek.common.OffBoardDirection;
 import megamek.common.board.Board;
 import megamek.common.board.Coords;
 import megamek.common.compute.Compute;
@@ -406,8 +407,26 @@ public class DeploymentProcessor extends AbstractTWRuleHandler {
             trainFacings.add(tractor.getFacing());
         }
 
-        List<TrainLayout.TrainPlacement> placements = TrainLayout.computeLayout(getGame(), tractor,
+        List<TrainLayout.TrainPlacement> allPlacements = TrainLayout.computeLayout(getGame(), tractor,
               tractor.getPosition(), tractor.getFacing(), trainPath, trainFacings);
+
+        // A train deploys as a whole. A trailer still flagged for off board deployment behind a tractor that is
+        // deploying onto the board comes with it, rather than the convoy being split between the board and the map
+        // edge. The reverse case, a tractor going off board, is handled in deployOffBoardEntities.
+        List<String> trailersBroughtOnBoard = new ArrayList<>();
+        for (TrainLayout.TrainPlacement placement : allPlacements) {
+            Entity trailer = getGame().getEntity(placement.entityId());
+            if ((trailer != null) && trailer.isOffBoard()) {
+                trailer.setOffBoard(0, OffBoardDirection.NONE);
+                trailersBroughtOnBoard.add(trailer.getDisplayName());
+            }
+        }
+        if (!trailersBroughtOnBoard.isEmpty()) {
+            LOGGER.info("[Train] {} trailer(s) were set to deploy off board but follow {} onto the board: {}",
+                  trailersBroughtOnBoard.size(), tractor.getDisplayName(),
+                  String.join(", ", trailersBroughtOnBoard));
+        }
+        List<TrainLayout.TrainPlacement> placements = allPlacements;
 
         // The client refuses a placement whose whole footprint is not legal, so an illegal hex here means either a
         // crafted packet or a client that skipped the check. Log it rather than silently dropping the trailer.

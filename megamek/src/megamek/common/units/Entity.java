@@ -10853,7 +10853,24 @@ public abstract class Entity extends TurnOrdered
      * </p>
      */
     public boolean shouldDeploy(int round) {
-        return !isDeployed() && (getDeployRound() <= round) && !isOffBoard() && (getTractor() == Entity.NONE);
+        return !isDeployed() && (getDeployRound() <= round) && !isOffBoard() && !deploysWithTractor();
+    }
+
+    /**
+     * Whether this unit is placed by the tractor towing it rather than deploying on its own.
+     * <p>
+     * Only true when that tractor is itself deploying onto the board. A tractor that starts off board never takes a
+     * deployment turn, so its trailers have to deploy themselves or they would never reach the game at all.
+     * </p>
+     *
+     * @return true when a tractor will place this unit during its own deployment
+     */
+    private boolean deploysWithTractor() {
+        if ((getTractor() == Entity.NONE) || (game == null)) {
+            return false;
+        }
+        Entity tractor = game.getEntity(getTractor());
+        return (tractor != null) && !tractor.isOffBoard();
     }
 
     /**

@@ -48,6 +48,7 @@ import megamek.common.Player;
 import megamek.common.game.Game;
 import megamek.common.interfaces.IEntityRemovalConditions;
 import megamek.common.units.Entity;
+import megamek.common.units.Tank;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
@@ -71,28 +72,36 @@ class TrainAmmoSharingTest {
     private Entity unconnected;
 
     @BeforeEach
-    void setUp() {
+    void setUp() throws Exception {
         Player owner = new Player(0, "Owner");
 
         game = new Game();
         game.addPlayer(0, owner);
 
-        tractor = loadBulldog(TRACTOR_ID, owner);
-        canonicalTrailer = loadBulldog(TRAILER_ID, owner);
-        unconnected = loadBulldog(UNCONNECTED_ID, owner);
-        tractor.setTowing(TRAILER_ID);
-        canonicalTrailer.setTowedBy(TRACTOR_ID);
+        tractor = loadBulldog(TRACTOR_ID, owner, false);
+        canonicalTrailer = loadBulldog(TRAILER_ID, owner, true);
+        unconnected = loadBulldog(UNCONNECTED_ID, owner, true);
 
         game.addEntity(tractor);
         game.addEntity(canonicalTrailer);
         game.addEntity(unconnected);
+
+        // Hitch through towUnit rather than setting the neighbour links by hand, so the train membership the sharing
+        // rule reads is populated the same way a game populates it.
+        tractor.towUnit(canonicalTrailer.getId());
     }
 
-    private Entity loadBulldog(int id, Player owner) {
+    /** A Bulldog fitted with a trailer hitch, so it can take part in a train. */
+    private Entity loadBulldog(int id, Player owner, boolean isTrailer) throws Exception {
         Entity entity = getEntityForUnitTesting("Bulldog Medium Tank", true);
         assertNotNull(entity, "Bulldog Medium Tank not found");
         entity.setId(id);
         entity.setOwner(owner);
+        if (entity instanceof Tank vehicle) {
+            vehicle.setTrailer(isTrailer);
+            vehicle.addEquipment(EquipmentType.get(EquipmentTypeLookup.HITCH), Tank.LOC_BODY);
+            vehicle.setTrailerHitches();
+        }
         return entity;
     }
 
@@ -106,8 +115,8 @@ class TrainAmmoSharingTest {
     }
 
     /** A second instance of the trailer with the same id, standing in for one that arrived inside a packet. */
-    private Entity duplicateTrailer() {
-        Entity duplicate = loadBulldog(TRAILER_ID, game.getPlayer(0));
+    private Entity duplicateTrailer() throws Exception {
+        Entity duplicate = loadBulldog(TRAILER_ID, game.getPlayer(0), true);
         assertNotSame(canonicalTrailer, duplicate);
         return duplicate;
     }
@@ -147,6 +156,43 @@ class TrainAmmoSharingTest {
     }
 
     @Test
+    void theWholeTrainSharesNotJustNeighbours() throws Exception {
+        // Gun, then three ammunition carriages, as a Mobile Long Tom convoy is built. The gun has to reach past the
+        // first carriage or the other two carry rounds nothing can fire.
+        Entity secondCarriage = loadBulldog(4, game.getPlayer(0), true);
+        Entity thirdCarriage = loadBulldog(5, game.getPlayer(0), true);
+        game.addEntity(secondCarriage);
+        game.addEntity(thirdCarriage);
+        tractor.towUnit(secondCarriage.getId());
+        tractor.towUnit(thirdCarriage.getId());
+
+        assertTrue(TrainAmmoSharing.canShareAmmoWith(tractor, secondCarriage),
+              "The gun reaches the second carriage, two hops back");
+        assertTrue(TrainAmmoSharing.canShareAmmoWith(tractor, thirdCarriage),
+              "The gun reaches the third carriage, three hops back");
+        assertTrue(TrainAmmoSharing.canShareAmmoWith(thirdCarriage, tractor),
+              "Sharing works in both directions along the train");
+
+        List<AmmoMounted> shared = TrainAmmoSharing.getSharedAmmo(tractor);
+        int expectedBins = tractor.getAmmo().size() + canonicalTrailer.getAmmo().size()
+              + secondCarriage.getAmmo().size() + thirdCarriage.getAmmo().size();
+        assertEquals(expectedBins, shared.size(), "Every bin in the train is offered");
+    }
+
+    @Test
+    void aUnitInAnotherTrainIsStillOutOfReach() throws Exception {
+        Entity otherTractor = loadBulldog(6, game.getPlayer(0), false);
+        Entity otherTrailer = loadBulldog(7, game.getPlayer(0), true);
+        game.addEntity(otherTractor);
+        game.addEntity(otherTrailer);
+        otherTractor.towUnit(otherTrailer.getId());
+
+        assertFalse(TrainAmmoSharing.canShareAmmoWith(tractor, otherTractor),
+              "A separate train is not a shared supply");
+        assertFalse(TrainAmmoSharing.canShareAmmoWith(tractor, otherTrailer));
+    }
+
+    @Test
     void sharedAmmoOfALoneUnitIsJustItsOwn() {
         List<AmmoMounted> shared = TrainAmmoSharing.getSharedAmmo(unconnected);
 
@@ -156,7 +202,7 @@ class TrainAmmoSharingTest {
     // --- repairing links that crossed a packet boundary ---
 
     @Test
-    void linkToDuplicateCarrierIsRepointedAtTheCanonicalBin() {
+    void linkToDuplicateCarrierIsRepointedAtTheCanonicalBin() throws Exception {
         Entity duplicate = duplicateTrailer();
         WeaponMounted launcher = ammoUsingWeapon(tractor);
         AmmoMounted staleBin = duplicate.getAmmo().get(0);
@@ -184,7 +230,7 @@ class TrainAmmoSharingTest {
     }
 
     @Test
-    void linkToDepartedCarrierIsCleared() {
+    void linkToDepartedCarrierIsCleared() throws Exception {
         Entity duplicate = duplicateTrailer();
         WeaponMounted launcher = ammoUsingWeapon(tractor);
         launcher.setLinked(duplicate.getAmmo().get(0));

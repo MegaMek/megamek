@@ -51,11 +51,14 @@ import megamek.common.Player;
 import megamek.common.enums.GamePhase;
 import megamek.common.equipment.AmmoMounted;
 import megamek.common.equipment.AmmoType;
+import megamek.common.equipment.EquipmentType;
+import megamek.common.equipment.EquipmentTypeLookup;
 import megamek.common.equipment.WeaponMounted;
 import megamek.common.game.Game;
 import megamek.common.net.enums.PacketCommand;
 import megamek.common.net.packets.Packet;
 import megamek.common.units.Entity;
+import megamek.common.units.Tank;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
@@ -85,7 +88,7 @@ class TWGameManagerTrailerAmmoTest {
     private Entity unconnected;
 
     @BeforeEach
-    void setUp() {
+    void setUp() throws Exception {
         Player owner = new Player(OWNER_CONNECTION_ID, "Owner");
         owner.setTeam(1);
 
@@ -93,17 +96,16 @@ class TWGameManagerTrailerAmmoTest {
         game.setPhase(GamePhase.FIRING);
         game.addPlayer(OWNER_CONNECTION_ID, owner);
 
-        tractor = loadBulldog(TRACTOR_ID, owner);
-        trailer = loadBulldog(TRAILER_ID, owner);
-        unconnected = loadBulldog(UNCONNECTED_ID, owner);
-
-        // Hook the trailer up behind the tractor.
-        tractor.setTowing(TRAILER_ID);
-        trailer.setTowedBy(TRACTOR_ID);
+        tractor = loadBulldog(TRACTOR_ID, owner, false);
+        trailer = loadBulldog(TRAILER_ID, owner, true);
+        unconnected = loadBulldog(UNCONNECTED_ID, owner, true);
 
         game.addEntity(tractor);
         game.addEntity(trailer);
         game.addEntity(unconnected);
+
+        // Hook the trailer up the way a game does, so train membership is populated as well as the neighbour links.
+        tractor.towUnit(trailer.getId());
 
         gameManager = mock(TWGameManager.class);
         doNothing().when(gameManager).entityUpdate(anyInt());
@@ -113,11 +115,16 @@ class TWGameManagerTrailerAmmoTest {
         gameManager.setGame(game);
     }
 
-    private Entity loadBulldog(int id, Player owner) {
+    private Entity loadBulldog(int id, Player owner, boolean isTrailer) throws Exception {
         Entity entity = getEntityForUnitTesting("Bulldog Medium Tank", true);
         assertNotNull(entity, "Bulldog Medium Tank not found");
         entity.setId(id);
         entity.setOwner(owner);
+        if (entity instanceof Tank vehicle) {
+            vehicle.setTrailer(isTrailer);
+            vehicle.addEquipment(EquipmentType.get(EquipmentTypeLookup.HITCH), Tank.LOC_BODY);
+            vehicle.setTrailerHitches();
+        }
         return entity;
     }
 

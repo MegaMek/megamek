@@ -5069,26 +5069,11 @@ public abstract class Entity extends TurnOrdered
                 return;
             }
         }
-        // Check the unit towing this one for ammo
-        if (getTowedBy() != Entity.NONE) {
-            Entity ahead = game.getEntity(getTowedBy());
-            if (ahead != null) {
-                for (AmmoMounted towedByAmmo : ahead.getAmmo()) {
-                    if (loadWeaponWithSameAmmo(mounted, towedByAmmo)) {
-                        return;
-                    }
-                }
-            }
-        }
-        // Then check the unit towed by this one for ammo
-        if (getTowing() != Entity.NONE) {
-            Entity behind = game.getEntity(getTowing());
-            if (behind != null) {
-                for (AmmoMounted towingAmmo : behind.getAmmo()) {
-                    if (loadWeaponWithSameAmmo(mounted, towingAmmo)) {
-                        return;
-                    }
-                }
+        // Then the rest of the train. Uses the same rule as the ammo dropdown and the server's validation, so the
+        // automatic reload cannot reach bins the player is not offered, or miss ones they are.
+        for (AmmoMounted trainAmmo : TrainAmmoSharing.getSharedAmmo(this)) {
+            if (loadWeaponWithSameAmmo(mounted, trainAmmo)) {
+                return;
             }
         }
         // fall back to use any ammo

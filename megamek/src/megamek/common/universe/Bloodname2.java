@@ -46,11 +46,25 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 @SuppressWarnings("unused") // Fields are assigned when factions are loaded from YAML
 public class Bloodname2 {
 
+    @JsonProperty("clan")
+    private String clan;
+
     @JsonProperty("name")
     private String name;
 
     @JsonProperty("houses")
     private List<BloodnameHouse> houses = new ArrayList<>();
+
+    /**
+     * The Clan that founded this Bloodname, which is not necessarily the only Clan whose warriors may
+     * hold it - a name that is not exclusive can be granted elsewhere, and the Wars of Reaving moved
+     * many legacies between Clans.
+     *
+     * @return the founding Clan's faction key
+     */
+    public String getClan() {
+        return clan;
+    }
 
     /**
      * @return the Bloodname itself, as a warrior would carry it
@@ -68,6 +82,6 @@ public class Bloodname2 {
 
     @Override
     public String toString() {
-        return "[Bloodname2] " + name + " (" + houses.size() + " house(s))";
+        return "[Bloodname2] " + name + " of " + clan + " (" + houses.size() + " house(s))";
     }
 }

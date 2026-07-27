@@ -1,0 +1,28 @@
+clan: CW
+name: "Kerensky"
+houses:
+  - founder: "Andery"
+    founderFullName: "Andery Kerensky"
+    founderRank: "Khan"
+    founderAffiliation: "Clan Wolf"
+    phenotype: "GENERAL"
+    exclusive: true
+    limited: true
+    abjured: true
+    shared: true
+    dormant: 3062
+    reaved: 3075
+    reactivated: 3080
+    created: 2807
+    postReaving: [CW, CWIE]
+    absorbed: { clan: CSA, date: 3059 }
+    acquired: { clan: CCC, date: 2868 }
+    summary: "A Clan Wolf founding legacy."
+    notableHolders:
+      - { name: "Natasha Kerensky", rank: "Khan", affiliation: "Clan Wolf" }
+      - { name: "Nicholas Kerensky" }
+    sources:
+      - { title: "Historical: Operation Klondike", abbrev: "His:OK" }
+      - { title: "Field Manual: Warden Clans" }
+    history: ~
+  - founder: "Nicholas"

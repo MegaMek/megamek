@@ -74,7 +74,7 @@ import megamek.common.annotations.Nullable;
                      "tags", "color", "logo", "logoChanges", "background", "backgroundChanges", "camos", "camosChanges", "nameGenerator", "eraMods",
                      "ratingLevels", "fallBackFactions", "preInvasionHonorRating", "postInvasionHonorRating",
                      "formationBaseSize", "formationGrouping", "rankSystem", "factionLeaders", "usesMercenaries",
-                     "aresConventionsSignatory", "bloodnames" })
+                     "aresConventionsSignatory" })
 public class Faction2 {
     private static final int UNKNOWN = -1;
     private static final String DEFAULT_RANK_SYSTEM_INNER_SPHERE = "SLDF";
@@ -113,9 +113,6 @@ public class Faction2 {
     private List<FactionLeaderData> factionLeaders = new ArrayList<>();
     private final NavigableMap<Integer, Boolean> usesMercenaries = new TreeMap<>();
     private final NavigableMap<Integer, Boolean> aresConventionsSignatory = new TreeMap<>();
-    // Bloodnames founded by this Clan. Empty for every faction that is not a Clan, and for Clans whose
-    // legacies have not been recorded yet.
-    private List<Bloodname2> bloodnames = new ArrayList<>();
 
     public List<String> getRatingLevels() {
         return ratingLevels;
@@ -337,19 +334,6 @@ public class Faction2 {
 
     public NavigableMap<Integer, Boolean> getAresConventionsSignatory() {
         return aresConventionsSignatory;
-    }
-
-    /**
-     * The Bloodnames this Clan founded, each with the Houses descending from it.
-     *
-     * <p>A Bloodname is listed under the Clan that originated it, which is not necessarily the only
-     * Clan whose warriors may hold it - a name that is not exclusive can be granted elsewhere, and the
-     * Wars of Reaving moved many legacies between Clans. Consult the House's own fields for that.</p>
-     *
-     * @return the Bloodnames founded by this faction; empty for non-Clan factions
-     */
-    public List<Bloodname2> getBloodnames() {
-        return bloodnames;
     }
 
     public Set<String> getFallBackFactions() {

@@ -572,7 +572,7 @@ public class MtfFile implements IMekLoader {
                 ((LandAirMek) mek).autoSetCapArmor();
                 ((LandAirMek) mek).autoSetFatalThresh();
                 int fuelTankCount = (int) mek.getEquipment().stream()
-                      .filter(e -> e.hasFlag(MiscType.F_LAM_FUEL_TANK)).count();
+                      .filter(e -> e.getType().hasFlag(MiscType.F_LAM_FUEL_TANK)).count();
                 ((LandAirMek) mek).setFuel(80 * (1 + fuelTankCount));
             }
 

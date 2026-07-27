@@ -69,6 +69,22 @@ public interface CalculationReport {
      */
     CalculationReport addLine(@Nullable String type, @Nullable String calculation, @Nullable String result);
 
+        /**
+         * Adds a line that provides inputs or context but is not itself part of a report's running total.
+         * Display-oriented reports render this exactly like a regular line; structured report implementations may retain
+         * the semantic distinction.
+         *
+         * @param type        The first element of this line
+         * @param calculation A calculation or other info
+         * @param result      A result or other info displayed on the right side
+         *
+         * @return The CalculationReport itself
+         */
+        default CalculationReport addInformationalLine(@Nullable String type, @Nullable String calculation,
+                    @Nullable String result) {
+                return addLine(type, calculation, result);
+        }
+
     /**
      * Adds a single line to the CalculationReport. This method performs rounding to a single decimal digit on the
      * result and writes resultPrefix in front of it.

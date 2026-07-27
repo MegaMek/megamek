@@ -253,4 +253,11 @@ public class TWRulesPhysical extends CoreRulesPhysical {
     // Once a charge is declared, you are in for the ride
     @Override
     public boolean canChargeCancel() { return false; }
+
+    // Falls from above always hit the punch table
+    @Override
+    public HitData getFallFromAboveTable(Entity affaTarget) {
+        return affaTarget.rollHitLocation(ToHitData.HIT_PUNCH,
+              ToHitData.SIDE_FRONT);
+    }
 }

@@ -9207,7 +9207,7 @@ public class TWGameManager extends AbstractGameManager {
                     vPhaseReport.add(r);
                     while (damage > 0) {
                         int cluster = Math.min(5, damage);
-                        HitData hit = affaTarget.rollHitLocation(ToHitData.HIT_PUNCH, ToHitData.SIDE_FRONT);
+                        HitData hit = Game.rulesManager.getRulesPhysical().getFallFromAboveTable(affaTarget);
                         hit.setGeneralDamageType(HitData.DAMAGE_PHYSICAL_NONATTACK);
                         vPhaseReport.addAll(damageEntity(affaTarget, hit, cluster));
                         damage -= cluster;

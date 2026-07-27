@@ -238,4 +238,14 @@ public class CoreRulesPhysical extends RulesPhysical {
     public boolean canChargeCancel() {
         return true;
     }
+
+    // Falls from above if the target is prone changes table. Core p.115
+    public HitData getFallFromAboveTable(Entity affaTarget) {
+        if (affaTarget.isProne()) {
+            return affaTarget.rollHitLocation(ToHitData.HIT_NORMAL,
+                  ToHitData.SIDE_FRONT);
+        }
+        return affaTarget.rollHitLocation(ToHitData.HIT_PUNCH,
+              ToHitData.SIDE_FRONT);
+    }
 }

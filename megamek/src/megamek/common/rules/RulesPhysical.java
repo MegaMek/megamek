@@ -104,4 +104,7 @@ public abstract class RulesPhysical {
 
     // Can a charge be cancelled
     public abstract boolean canChargeCancel();
+
+    // Get the right table for falls from above
+    public abstract HitData getFallFromAboveTable(Entity affaTarget);
 }

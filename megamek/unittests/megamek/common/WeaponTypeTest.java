@@ -246,6 +246,24 @@ class WeaponTypeTest {
         assertEquals(Double.doubleToLongBits(0.0), Double.doubleToLongBits(damage[0]));
     }
 
+    @Test
+    void testYamlExportsAlphaStrikeHeatDamageByRangeBand() {
+        WeaponType plasmaRifle = (WeaponType) EquipmentType.get("ISPlasmaRifle");
+        WeaponType battleArmorPlasmaRifle = (WeaponType) EquipmentType.get("ISBAPlasmaRifle");
+        WeaponType plasmaCannon = (WeaponType) EquipmentType.get("CLPlasmaCannon");
+
+        assertNotNull(plasmaRifle);
+        assertNotNull(battleArmorPlasmaRifle);
+        assertNotNull(plasmaCannon);
+        assertArrayEquals(new int[] { 3, 3, 0, 0 }, heatDamage(plasmaRifle));
+        assertArrayEquals(new int[] { 2, 2, 0, 0 }, heatDamage(battleArmorPlasmaRifle));
+        assertArrayEquals(new int[] { 7, 7, 7, 0 }, heatDamage(plasmaCannon));
+    }
+
+    private int[] heatDamage(WeaponType weaponType) {
+        return (int[]) alphaStrikeYamlData(weaponYamlData(weaponType)).get("heatDamage");
+    }
+
     @SuppressWarnings("unchecked")
     private Map<String, Object> weaponYamlData(WeaponType weaponType) {
         return (Map<String, Object>) weaponType.getYamlData().get("weapon");

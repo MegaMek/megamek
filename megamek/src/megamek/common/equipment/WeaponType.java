@@ -34,6 +34,8 @@
 
 package megamek.common.equipment;
 
+import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -2747,9 +2749,13 @@ public class WeaponType extends EquipmentType {
             AlphaStrikeElement.LONG_RANGE, AlphaStrikeElement.EXTREME_RANGE };
         double[] damage = new double[ranges.length];
         for (int index = 0; index < ranges.length; index++) {
-            damage[index] = getBattleForceDamage(ranges[index], null);
+            damage[index] = roundAlphaStrikeDamage(getBattleForceDamage(ranges[index], null));
         }
         return damage;
+    }
+
+    private double roundAlphaStrikeDamage(double damage) {
+        return BigDecimal.valueOf(damage).setScale(3, RoundingMode.HALF_UP).doubleValue();
     }
 
     private int[] getAlphaStrikeHeatDamage() {

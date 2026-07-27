@@ -2516,13 +2516,11 @@ public class Princess extends BotClient {
                     offset = 2;
                 }
 
-                // If the target number is considered viable, step through the options until
-                // it gets to the desired setting
+                // If the target number is considered viable, set the called shot directly
                 if ((shot.getToHit().getValue() + CALLED_SHOT_MODIFIER) <= (maximumTN + offset)) {
-                    // TODO: adjust send/receive method to transmit new called shot rather than stepping through
-                    for (int i = 0; i < calledShotDirection; i++) {
-                        sendCalledShotChange(shooter.getId(), shot.getWeaponAttackAction().getWeaponId());
-                    }
+                    sendCalledShotChange(shooter.getId(),
+                          shot.getWeaponAttackAction().getWeaponId(),
+                          calledShotDirection);
                 }
 
             }

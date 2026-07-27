@@ -71,7 +71,7 @@ public abstract class ThunderboltWeapon extends MissileWeapon {
         longRange = 18;
         extremeRange = 24;
         maxRange = RANGE_MED;
-        flags = flags.or(F_LARGE_MISSILE);
+        flags = flags.or(F_LARGE_MISSILE).or(F_INDIRECT_FIRE);
         atClass = CLASS_THUNDERBOLT;
         rulesRefs = "159, TO:AUE";
         techAdvancement.setTechBase(TechBase.IS)
@@ -95,11 +95,6 @@ public abstract class ThunderboltWeapon extends MissileWeapon {
             LOGGER.warn("Get Correct Handler - Attach Handler Received Null Entity.");
         }
         return null;
-    }
-
-    @Override
-    public boolean hasIndirectFire() {
-        return true;
     }
 
     @Override

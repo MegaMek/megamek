@@ -69,7 +69,7 @@ public abstract class LRMWeapon extends MissileWeapon {
         longRange = 21;
         extremeRange = 28;
         atClass = CLASS_LRM;
-        flags = flags.or(F_PROTO_WEAPON).or(F_ARTEMIS_COMPATIBLE).or(F_LRM);
+        flags = flags.or(F_PROTO_WEAPON).or(F_ARTEMIS_COMPATIBLE).or(F_LRM).or(F_INDIRECT_FIRE);
     }
 
 
@@ -91,11 +91,6 @@ public abstract class LRMWeapon extends MissileWeapon {
     @Override
     public int getBattleForceClass() {
         return BF_CLASS_LRM;
-    }
-
-    @Override
-    public boolean hasIndirectFire() {
-        return true;
     }
 
     @Override

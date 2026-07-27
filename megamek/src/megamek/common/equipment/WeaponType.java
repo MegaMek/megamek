@@ -34,6 +34,8 @@
 
 package megamek.common.equipment;
 
+import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -535,6 +537,7 @@ public class WeaponType extends EquipmentType {
 
     // marks any weapon affected by a targeting computer
     public static final WeaponTypeFlag F_DIRECT_FIRE = WeaponTypeFlag.F_DIRECT_FIRE;
+    public static final WeaponTypeFlag F_INDIRECT_FIRE = WeaponTypeFlag.F_INDIRECT_FIRE;
 
     public static final WeaponTypeFlag F_FLAMER = WeaponTypeFlag.F_FLAMER;
     // Glaze armor
@@ -1221,6 +1224,10 @@ public class WeaponType extends EquipmentType {
     // TODO : the calculations are superseded by the ASC table but correct most of
     // the time, ideally should be replaced
     public double getBattleForceDamage(int range) {
+        return getDefaultBattleForceDamage(range);
+    }
+
+    private double getDefaultBattleForceDamage(int range) {
         double damage = 0;
         if (range <= getLongRange()) {
             // Variable damage weapons that cannot reach into the BF long range band use LR
@@ -1299,7 +1306,7 @@ public class WeaponType extends EquipmentType {
      * Returns true if this weapon type can be used for Total War LRM-type indirect fire.
      */
     public boolean hasIndirectFire() {
-        return false;
+        return hasFlag(F_INDIRECT_FIRE);
     }
 
     /**
@@ -2636,8 +2643,128 @@ public class WeaponType extends EquipmentType {
         if (this.subCapital) {
             weapon.put("subCapital", this.subCapital);
         }
+        if (this.missileArmor > 0) {
+            weapon.put("missileArmor", this.missileArmor);
+        }
+        if (this.atClass != CLASS_NONE) {
+            weapon.put("atClass", atClassToString(this.atClass));
+        }
+        Map<String, Object> alphaStrike = getAlphaStrikeYamlData();
+        if (!alphaStrike.isEmpty()) {
+            weapon.put("alphaStrike", alphaStrike);
+        }
         data.put("weapon", weapon);
         return data;
+    }
+
+    /** Exports Alpha Strike values declared by weapon-specific conversion behavior. */
+    private Map<String, Object> getAlphaStrikeYamlData() {
+        Map<String, Object> alphaStrike = new LinkedHashMap<>();
+        if (getBattleForceClass() != BF_CLASS_STANDARD) {
+            alphaStrike.put("battleForceClass", battleForceClassToString(getBattleForceClass()));
+        }
+        if (isAlphaStrikePointDefense()) {
+            alphaStrike.put("pointDefense", true);
+        }
+        if (isAlphaStrikeIndirectFire() != hasIndirectFire()) {
+            alphaStrike.put("indirectFire", isAlphaStrikeIndirectFire());
+        }
+        if (hasAlphaStrikeDamageOverride()) {
+            alphaStrike.put("damage", getAlphaStrikeDamage());
+        }
+        if (getAlphaStrikeHeat() != getHeat()) {
+            alphaStrike.put("heat", getAlphaStrikeHeat());
+        }
+        int[] heatDamage = getAlphaStrikeHeatDamage();
+        if (!java.util.Arrays.equals(heatDamage, new int[heatDamage.length])) {
+            alphaStrike.put("heatDamage", heatDamage);
+        }
+        return alphaStrike;
+    }
+
+    private boolean hasAlphaStrikeDamageOverride() {
+        try {
+            return getClass().getMethod("getBattleForceDamage", int.class).getDeclaringClass() != WeaponType.class
+                  || getClass().getMethod("getBattleForceDamage", int.class, Mounted.class).getDeclaringClass()
+                        != WeaponType.class;
+        } catch (NoSuchMethodException exception) {
+            throw new IllegalStateException("WeaponType BattleForce damage API is unavailable", exception);
+        }
+    }
+
+    private String battleForceClassToString(int battleForceClass) {
+        return switch (battleForceClass) {
+            case BF_CLASS_LRM -> "LRM";
+            case BF_CLASS_SRM -> "SRM";
+            case BF_CLASS_MML -> "MML";
+            case BF_CLASS_TORPEDO -> "TORPEDO";
+            case BF_CLASS_AC -> "AC";
+            case BF_CLASS_FLAK -> "FLAK";
+            case BF_CLASS_IATM -> "IATM";
+            case BF_CLASS_REL -> "REL";
+            case BF_CLASS_CAPITAL -> "CAPITAL";
+            case BF_CLASS_SUBCAPITAL -> "SUBCAPITAL";
+            case BF_CLASS_CAPITAL_MISSILE -> "CAPITAL_MISSILE";
+            default -> throw new IllegalArgumentException("Unknown BattleForce class: " + battleForceClass);
+        };
+    }
+
+    private String atClassToString(int atClass) {
+        return switch (atClass) {
+            case CLASS_NONE -> "NONE";
+            case CLASS_LASER -> "LASER";
+            case CLASS_POINT_DEFENSE -> "POINT_DEFENSE";
+            case CLASS_PPC -> "PPC";
+            case CLASS_PULSE_LASER -> "PULSE_LASER";
+            case CLASS_ARTILLERY -> "ARTILLERY";
+            case CLASS_PLASMA -> "PLASMA";
+            case CLASS_AC -> "AC";
+            case CLASS_LBX_AC -> "LBX_AC";
+            case CLASS_LRM -> "LRM";
+            case CLASS_SRM -> "SRM";
+            case CLASS_MRM -> "MRM";
+            case CLASS_MML -> "MML";
+            case CLASS_ATM -> "ATM";
+            case CLASS_ROCKET_LAUNCHER -> "ROCKET_LAUNCHER";
+            case CLASS_CAPITAL_LASER -> "CAPITAL_LASER";
+            case CLASS_CAPITAL_PPC -> "CAPITAL_PPC";
+            case CLASS_CAPITAL_AC -> "CAPITAL_AC";
+            case CLASS_CAPITAL_GAUSS -> "CAPITAL_GAUSS";
+            case CLASS_CAPITAL_MISSILE -> "CAPITAL_MISSILE";
+            case CLASS_AR10 -> "AR10";
+            case CLASS_SCREEN -> "SCREEN";
+            case CLASS_SUB_CAPITAL_CANNON -> "SUB_CAPITAL_CANNON";
+            case CLASS_CAPITAL_MD -> "CAPITAL_MD";
+            case CLASS_AMS -> "AMS";
+            case CLASS_TELE_MISSILE -> "TELE_MISSILE";
+            case CLASS_GAUSS -> "GAUSS";
+            case CLASS_THUNDERBOLT -> "THUNDERBOLT";
+            case CLASS_MORTAR -> "MORTAR";
+            default -> throw new IllegalArgumentException("Unknown AT class: " + atClass);
+        };
+    }
+
+    private double[] getAlphaStrikeDamage() {
+        int[] ranges = { AlphaStrikeElement.SHORT_RANGE, AlphaStrikeElement.MEDIUM_RANGE,
+            AlphaStrikeElement.LONG_RANGE, AlphaStrikeElement.EXTREME_RANGE };
+        double[] damage = new double[ranges.length];
+        for (int index = 0; index < ranges.length; index++) {
+            damage[index] = roundAlphaStrikeDamage(getBattleForceDamage(ranges[index], null));
+        }
+        return damage;
+    }
+
+    private double roundAlphaStrikeDamage(double damage) {
+        return BigDecimal.valueOf(damage).setScale(3, RoundingMode.HALF_UP).doubleValue();
+    }
+
+    private int[] getAlphaStrikeHeatDamage() {
+        return new int[] {
+            getAlphaStrikeHeatDamage(AlphaStrikeElement.SHORT_RANGE),
+            getAlphaStrikeHeatDamage(AlphaStrikeElement.MEDIUM_RANGE),
+            getAlphaStrikeHeatDamage(AlphaStrikeElement.LONG_RANGE),
+            getAlphaStrikeHeatDamage(AlphaStrikeElement.EXTREME_RANGE)
+        };
     }
 
     /**

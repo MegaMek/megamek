@@ -112,7 +112,6 @@ class Bloodnames2Test {
         assertTrue(house.isExclusive());
         assertTrue(house.isLimited());
         assertTrue(house.isAbjured());
-        assertTrue(house.isShared());
         assertEquals(3062, house.getDormant());
         assertEquals(3075, house.getReaved());
         assertEquals(3080, house.getReactivated());
@@ -122,9 +121,15 @@ class Bloodnames2Test {
         assertNotNull(house.getAbsorbed());
         assertEquals("CSA", house.getAbsorbed().getClan());
         assertEquals(3059, house.getAbsorbed().getDate());
-        assertNotNull(house.getAcquired());
-        assertEquals("CCC", house.getAcquired().getClan());
-        assertEquals(2868, house.getAcquired().getDate());
+        assertEquals(1, house.getAcquired().size());
+        assertEquals("CCC", house.getAcquired().get(0).getClan());
+        assertEquals(2868, house.getAcquired().get(0).getDate());
+        // A single shared record can name several Clans; each must arrive separately, or a Clan that
+        // shares the legacy is never offered the name.
+        assertEquals(2, house.getShared().size(), "CHH and CCO share this legacy");
+        assertEquals("CHH", house.getShared().get(0).getClan());
+        assertEquals("CCO", house.getShared().get(1).getClan());
+        assertEquals(2872, house.getShared().get(1).getDate());
     }
 
     @Test
@@ -158,6 +163,8 @@ class Bloodnames2Test {
         assertFalse(house.isExclusive());
         assertNull(house.getDormant());
         assertNull(house.getAbsorbed());
+        assertTrue(house.getAcquired().isEmpty());
+        assertTrue(house.getShared().isEmpty());
         assertTrue(house.getPostReaving().isEmpty());
         assertTrue(house.getNotableHolders().isEmpty());
         assertTrue(house.getSources().isEmpty());

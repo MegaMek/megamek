@@ -9,14 +9,17 @@ houses:
     exclusive: true
     limited: true
     abjured: true
-    shared: true
     dormant: 3062
     reaved: 3075
     reactivated: 3080
     created: 2807
     postReaving: [CW, CWIE]
     absorbed: { clan: CSA, date: 3059 }
-    acquired: { clan: CCC, date: 2868 }
+    acquired:
+      - { clan: CCC, date: 2868 }
+    shared:
+      - { clan: CHH, date: 2872 }
+      - { clan: CCO, date: 2872 }
     summary: "A Clan Wolf founding legacy."
     notableHolders:
       - { name: "Natasha Kerensky", rank: "Khan", affiliation: "Clan Wolf" }

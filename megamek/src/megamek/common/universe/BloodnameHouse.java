@@ -82,9 +82,6 @@ public class BloodnameHouse {
     @JsonProperty("abjured")
     private boolean abjured;
 
-    @JsonProperty("shared")
-    private boolean shared;
-
     /** Year the legacy fell dormant, or {@code null} if it never did. */
     @JsonProperty("dormant")
     private Integer dormant;
@@ -104,11 +101,23 @@ public class BloodnameHouse {
     @JsonProperty("postReaving")
     private List<String> postReaving = new ArrayList<>();
 
+    /** The Clan that took this legacy over, if one did. */
     @JsonProperty("absorbed")
     private BloodnameTransfer absorbed;
 
+    /**
+     * Clans that took the legacy on, and when.
+     *
+     * <p>A list because a single record can name several Clans at once, and because a legacy can be
+     * taken on more than once. Both of these weight the draw, so a Clan lost here is a Clan that never
+     * gets offered the name.</p>
+     */
     @JsonProperty("acquired")
-    private BloodnameTransfer acquired;
+    private List<BloodnameTransfer> acquired = new ArrayList<>();
+
+    /** Clans the legacy is shared with, and when. As {@link #acquired}, but granted rather than taken. */
+    @JsonProperty("shared")
+    private List<BloodnameTransfer> shared = new ArrayList<>();
     // endregion
 
     // region Descriptive - shown to the player, never consulted by the rules
@@ -164,10 +173,6 @@ public class BloodnameHouse {
         return abjured;
     }
 
-    public boolean isShared() {
-        return shared;
-    }
-
     public @Nullable Integer getDormant() {
         return dormant;
     }
@@ -192,8 +197,12 @@ public class BloodnameHouse {
         return absorbed;
     }
 
-    public @Nullable BloodnameTransfer getAcquired() {
+    public List<BloodnameTransfer> getAcquired() {
         return acquired;
+    }
+
+    public List<BloodnameTransfer> getShared() {
+        return shared;
     }
 
     public @Nullable String getSummary() {

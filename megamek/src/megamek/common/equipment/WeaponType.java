@@ -2658,8 +2658,8 @@ public class WeaponType extends EquipmentType {
         if (isAlphaStrikePointDefense()) {
             alphaStrike.put("pointDefense", true);
         }
-        if (isAlphaStrikeIndirectFire()) {
-            alphaStrike.put("indirectFire", true);
+        if (isAlphaStrikeIndirectFire() != hasIndirectFire()) {
+            alphaStrike.put("indirectFire", isAlphaStrikeIndirectFire());
         }
         if (hasAlphaStrikeDamageOverride()) {
             alphaStrike.put("damage", getAlphaStrikeDamage());

@@ -391,6 +391,14 @@ public class Client extends AbstractClient {
     }
 
     /**
+     * Asks the server to build the game board from the current map settings and broadcast it to all clients while
+     * still in the lobby, so that all players can see the battlefield that will actually be played.
+     */
+    public void sendLobbyBoardGenerationRequest() {
+        send(new Packet(PacketCommand.LOBBY_GENERATE_BOARD));
+    }
+
+    /**
      * Sends a "reroll initiative" message to the server.
      */
     public void sendRerollInitiativeRequest() {
@@ -1551,10 +1559,14 @@ public class Client extends AbstractClient {
     }
 
     /**
-     * Send called shot change data to the server
+     * Send called shot change data to the server.
+     *
+     * @param entityId     the id of the entity whose weapon is changing
+     * @param equipmentNum the equipment number of the weapon
+     * @param calledShot   the new called shot, one of the {@link megamek.common.CalledShot} CALLED_ constants
      */
-    public void sendCalledShotChange(int nEntity, int nEquip) {
-        send(new Packet(PacketCommand.ENTITY_CALLED_SHOT_CHANGE, nEntity, nEquip));
+    public void sendCalledShotChange(int entityId, int equipmentNum, int calledShot) {
+        send(new Packet(PacketCommand.ENTITY_CALLED_SHOT_CHANGE, entityId, equipmentNum, calledShot));
     }
 
     /**

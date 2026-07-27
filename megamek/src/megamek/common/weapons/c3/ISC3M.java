@@ -41,6 +41,7 @@ import megamek.common.enums.AvailabilityValue;
 import megamek.common.enums.Faction;
 import megamek.common.enums.TechBase;
 import megamek.common.enums.TechRating;
+import megamek.common.equipment.Mounted;
 import megamek.common.weapons.tag.TAGWeapon;
 
 /**
@@ -68,6 +69,8 @@ public class ISC3M extends TAGWeapon {
         cost = 1500000;
         bv = 0;
         flags = flags.or(F_C3M).or(F_MEK_WEAPON).or(F_TANK_WEAPON).andNot(F_AERO_WEAPON);
+        setModes(Mounted.MODE_ON, Mounted.MODE_OFF);
+        setInstantModeSwitch(false);
         heat = 0;
         damage = 0;
         shortRange = 5;

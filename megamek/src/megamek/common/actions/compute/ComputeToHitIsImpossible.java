@@ -1587,11 +1587,17 @@ class ComputeToHitIsImpossible {
                 }
             }
 
-            // Gauss weapons using the TacOps powered down rule can't fire
+            // Gauss weapons using the powered down rule can't fire
             if ((weaponType instanceof GaussWeapon)
                   && weapon.hasModes()
                   && weapon.curMode().equals(Weapon.MODE_GAUSS_POWERED_DOWN)) {
                 return Messages.getString("WeaponAttackAction.WeaponNotReady");
+            }
+
+            // Weapons the player has deactivated can't fire (activation/deactivation rules); Machine
+            // Gun Arrays are excluded here so their own check below reports the array-specific message
+            if (!weaponType.hasFlag(WeaponType.F_MGA) && weapon.isModeTurnedOff()) {
+                return Messages.getString("WeaponAttackAction.WeaponOff");
             }
 
             // Ground-to-air attacks

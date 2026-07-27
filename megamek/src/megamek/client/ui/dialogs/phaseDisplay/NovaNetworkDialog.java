@@ -125,7 +125,9 @@ public class NovaNetworkDialog extends JDialog implements ActionListener {
         alliedNovaUnits = new ArrayList<>();
 
         for (Entity entity : game.getEntitiesVector()) {
-            if (!entity.hasNovaCEWS()) {
+            // A Nova switched to "Off" cannot be reconfigured, so it is not offered for selection (it keeps its
+            // network membership and rejoins when switched back on)
+            if (!entity.hasActiveNovaCEWS()) {
                 continue;
             }
 

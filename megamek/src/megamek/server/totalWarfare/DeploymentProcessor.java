@@ -390,6 +390,41 @@ public class DeploymentProcessor extends AbstractTWRuleHandler {
     }
 
     /**
+     * Gives every trailer the off board edge and distance of the tractor towing it, so a train goes off board as a
+     * whole rather than being split between the board and the map edge.
+     * <p>
+     * Runs before deployment turns are generated. Without it a trailer behind an off board tractor would never be
+     * placed at all: an off board tractor takes no deployment turn, so nothing would run to position its trailers,
+     * and the trailer no longer deploys itself. See RFE #8506.
+     * </p>
+     */
+    void followTractorsOffBoard() {
+        List<String> trailersFollowingOffBoard = new ArrayList<>();
+
+        for (Entity tractor : getGame().getEntitiesVector()) {
+            if (!tractor.isOffBoard()
+                  || tractor.getAllTowedUnits().isEmpty()
+                  || (tractor.getOffBoardDistance() <= 0)
+                  || (tractor.getOffBoardDirection() == OffBoardDirection.NONE)) {
+                continue;
+            }
+            for (int towedId : tractor.getAllTowedUnits()) {
+                Entity trailer = getGame().getEntity(towedId);
+                if ((trailer == null) || trailer.isOffBoard() || trailer.isDeployed()) {
+                    continue;
+                }
+                trailer.setOffBoard(tractor.getOffBoardDistance(), tractor.getOffBoardDirection());
+                trailersFollowingOffBoard.add(trailer.getDisplayName());
+            }
+        }
+
+        if (!trailersFollowingOffBoard.isEmpty()) {
+            LOGGER.info("[Train] {} trailer(s) follow their tractor off board: {}",
+                  trailersFollowingOffBoard.size(), String.join(", ", trailersFollowingOffBoard));
+        }
+    }
+
+    /**
      * Places the trailers of a train when its tractor deploys. Trailers get no deployment turn of their own, so this
      * is the only chance they have to reach the board.
      *

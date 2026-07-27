@@ -1302,30 +1302,7 @@ public class TWGameManager extends AbstractGameManager {
      * Deploys eligible offboard entities.
      */
     void deployOffBoardEntities() {
-        // A train goes off board as a whole. Trailers take the tractor's edge and distance, so a convoy is never
-        // split between the board and the map edge, and a trailer behind an off board tractor is never left with
-        // nothing to place it. The connection itself is made in the lobby. See RFE #8506.
-        List<String> trailersFollowingOffBoard = new ArrayList<>();
-        for (Entity entity : game.getEntitiesVector()) {
-            if (!entity.isOffBoard()
-                  || entity.getAllTowedUnits().isEmpty()
-                  || (entity.getOffBoardDistance() <= 0)
-                  || (entity.getOffBoardDirection() == OffBoardDirection.NONE)) {
-                continue;
-            }
-            for (int towedId : entity.getAllTowedUnits()) {
-                Entity trailer = game.getEntity(towedId);
-                if ((trailer == null) || trailer.isOffBoard() || trailer.isDeployed()) {
-                    continue;
-                }
-                trailer.setOffBoard(entity.getOffBoardDistance(), entity.getOffBoardDirection());
-                trailersFollowingOffBoard.add(trailer.getDisplayName());
-            }
-        }
-        if (!trailersFollowingOffBoard.isEmpty()) {
-            LOGGER.info("[Train] {} trailer(s) follow their tractor off board: {}",
-                  trailersFollowingOffBoard.size(), String.join(", ", trailersFollowingOffBoard));
-        }
+        deploymentProcessor.followTractorsOffBoard();
 
         // place off board entities actually off-board
         for (Entity entity : game.getEntitiesVector()) {

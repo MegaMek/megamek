@@ -10859,11 +10859,11 @@ public abstract class Entity extends TurnOrdered
     /**
      * Whether this unit is placed by the tractor towing it rather than deploying on its own.
      * <p>
-     * Only true when that tractor is itself deploying onto the board. A tractor that starts off board never takes a
-     * deployment turn, so its trailers have to deploy themselves or they would never reach the game at all.
+     * Only {@code true} when that tractor is itself deploying onto the board. A tractor that starts off board never
+     * takes a deployment turn, so its trailers have to deploy themselves or they would never reach the game at all.
      * </p>
      *
-     * @return true when a tractor will place this unit during its own deployment
+     * @return {@code true} when a tractor will place this unit during its own deployment
      */
     private boolean deploysWithTractor() {
         if ((getTractor() == Entity.NONE) || (game == null)) {
@@ -17242,8 +17242,8 @@ public abstract class Entity extends TurnOrdered
         double tractorWeight = poweredTractor.getWeight();
         double trailerWeight = 0;
         // Add up what the tractor's already towing
-        for (int id : poweredTractor.getAllTowedUnits()) {
-            Entity towedUnit = game.getEntity(id);
+        for (int towedId : poweredTractor.getAllTowedUnits()) {
+            Entity towedUnit = game.getEntity(towedId);
 
             if (towedUnit == null) {
                 continue;

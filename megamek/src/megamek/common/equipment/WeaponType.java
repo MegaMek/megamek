@@ -535,6 +535,7 @@ public class WeaponType extends EquipmentType {
 
     // marks any weapon affected by a targeting computer
     public static final WeaponTypeFlag F_DIRECT_FIRE = WeaponTypeFlag.F_DIRECT_FIRE;
+    public static final WeaponTypeFlag F_INDIRECT_FIRE = WeaponTypeFlag.F_INDIRECT_FIRE;
 
     public static final WeaponTypeFlag F_FLAMER = WeaponTypeFlag.F_FLAMER;
     // Glaze armor
@@ -1303,7 +1304,7 @@ public class WeaponType extends EquipmentType {
      * Returns true if this weapon type can be used for Total War LRM-type indirect fire.
      */
     public boolean hasIndirectFire() {
-        return false;
+        return hasFlag(F_INDIRECT_FIRE);
     }
 
     /**
@@ -2657,6 +2658,9 @@ public class WeaponType extends EquipmentType {
         if (isAlphaStrikePointDefense()) {
             alphaStrike.put("pointDefense", true);
         }
+        if (isAlphaStrikeIndirectFire()) {
+            alphaStrike.put("indirectFire", true);
+        }
         if (hasAlphaStrikeDamageOverride()) {
             alphaStrike.put("damage", getAlphaStrikeDamage());
         }
@@ -2702,13 +2706,9 @@ public class WeaponType extends EquipmentType {
             AlphaStrikeElement.LONG_RANGE, AlphaStrikeElement.EXTREME_RANGE };
         double[] damage = new double[ranges.length];
         for (int index = 0; index < ranges.length; index++) {
-            damage[index] = roundAlphaStrikeDamage(getBattleForceDamage(ranges[index], null));
+            damage[index] = getBattleForceDamage(ranges[index], null);
         }
         return damage;
-    }
-
-    private double roundAlphaStrikeDamage(double damage) {
-        return Math.round(damage * 20.0) / 20.0;
     }
 
     private int[] getAlphaStrikeHeatDamage() {

@@ -63,7 +63,7 @@ public abstract class ArtilleryWeapon extends AmmoWeapon {
 
     public ArtilleryWeapon() {
         super();
-        flags = flags.or(F_ARTILLERY).or(F_MEK_WEAPON).or(F_TANK_WEAPON).or(F_AERO_WEAPON);
+        flags = flags.or(F_ARTILLERY).or(F_MEK_WEAPON).or(F_TANK_WEAPON).or(F_AERO_WEAPON).or(F_INDIRECT_FIRE);
         damage = DAMAGE_ARTILLERY;
         atClass = CLASS_ARTILLERY;
     }
@@ -71,11 +71,6 @@ public abstract class ArtilleryWeapon extends AmmoWeapon {
     @Override
     public boolean isAlphaStrikeIndirectFire() {
         return false;
-    }
-
-    @Override
-    public boolean hasIndirectFire() {
-        return true;
     }
 
     /*

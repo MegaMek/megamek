@@ -75,8 +75,28 @@ public class BloodnameHouse {
     @JsonProperty("exclusive")
     private boolean exclusive;
 
+    /**
+     * Year exclusivity ended, or {@code null} while it still holds.
+     *
+     * <p>Exclusivity is not permanent. The Council of Six Clans fought Trials in 3084 that turned
+     * several exclusive names into shared ones, and a Trial of Possession can end it at any time.</p>
+     */
+    @JsonProperty("exclusiveUntil")
+    private Integer exclusiveUntil;
+
+    /** Held by only a handful of warriors; a Bloodcount of five or fewer active Bloodheritages. */
     @JsonProperty("limited")
     private boolean limited;
+
+    /**
+     * Year the name became Limited, or {@code null} when the data does not say.
+     *
+     * <p>A name is not Limited from its founding - it becomes so as its Bloodcount falls. Without a
+     * year the restriction reads as having always applied, which puts a thirty-second-century state
+     * of affairs in front of a campaign centuries earlier.</p>
+     */
+    @JsonProperty("limitedSince")
+    private Integer limitedSince;
 
     /** Year the founding Clan was abjured, after which only that Clan grants the name. */
     @JsonProperty("abjured")
@@ -118,6 +138,15 @@ public class BloodnameHouse {
     /** Clans the legacy is shared with, and when. As {@link #acquired}, but granted rather than taken. */
     @JsonProperty("shared")
     private List<BloodnameTransfer> shared = new ArrayList<>();
+
+    /**
+     * Things recorded about this House that only became true in a given year.
+     *
+     * <p>Kept apart from {@link #summary}, which describes the House as it has always been, so a
+     * campaign is not told about events still in its future.</p>
+     */
+    @JsonProperty("datedNotes")
+    private List<BloodnameNote> datedNotes = new ArrayList<>();
     // endregion
 
     // region Descriptive - shown to the player, never consulted by the rules
@@ -165,8 +194,65 @@ public class BloodnameHouse {
         return exclusive;
     }
 
+    /**
+     * Whether the name is still exclusive to its origin Clan in the given year.
+     *
+     * @param year the year to judge it in
+     *
+     * @return {@code true} if exclusivity is recorded and has not yet ended
+     */
+    public boolean isExclusive(int year) {
+        return exclusive && ((exclusiveUntil == null) || (year < exclusiveUntil));
+    }
+
+    /**
+     * @return the year exclusivity ended, or {@code null} while it still holds
+     */
+    public @Nullable Integer getExclusiveUntil() {
+        return exclusiveUntil;
+    }
+
     public boolean isLimited() {
         return limited;
+    }
+
+    /**
+     * Whether the name counts as Limited in the given year.
+     *
+     * <p>A name with no recorded year is treated as having always been Limited, which is the older
+     * behaviour and the safer reading when the data does not say.</p>
+     *
+     * @param year the year to judge it in
+     *
+     * @return {@code true} if the name is Limited and the campaign has reached the year it became so
+     */
+    public boolean isLimited(int year) {
+        return limited && ((limitedSince == null) || (year >= limitedSince));
+    }
+
+    /**
+     * @return the year the name became Limited, or {@code null} when the data does not say
+     */
+    public @Nullable Integer getLimitedSince() {
+        return limitedSince;
+    }
+
+    /**
+     * @return everything recorded about this House that carries a date; never {@code null}
+     */
+    public List<BloodnameNote> getDatedNotes() {
+        return datedNotes;
+    }
+
+    /**
+     * The dated notes a campaign has reached, in the order the data records them.
+     *
+     * @param year the year the campaign has reached
+     *
+     * @return the notes describing events that have already happened
+     */
+    public List<BloodnameNote> getDatedNotesBy(int year) {
+        return datedNotes.stream().filter(note -> note.hasHappenedBy(year)).toList();
     }
 
     public @Nullable Integer getAbjured() {

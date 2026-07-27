@@ -334,6 +334,7 @@ public class MiscType extends EquipmentType {
     public static final MiscTypeFlag F_CHAIN_DRAPE_PONCHO = MiscTypeFlag.F_CHAIN_DRAPE_PONCHO;
 
     public static final MiscTypeFlag F_WEAPON_ENHANCEMENT = MiscTypeFlag.F_WEAPON_ENHANCEMENT;
+    public static final MiscTypeFlag F_LAM_FUEL_TANK = MiscTypeFlag.F_LAM_FUEL_TANK;
 
     public static final String S_ACTIVE_SHIELD = "Active";
     public static final String S_PASSIVE_SHIELD = "Passive";

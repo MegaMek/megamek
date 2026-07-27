@@ -185,6 +185,13 @@ public enum PacketCommand {
     SENDING_AVAILABLE_MAP_SIZES,
     ENTITY_LOAD,
     ENTITY_TOW,
+
+    /**
+     * Client to Server: connect a tractor and an ordered list of trailers into a train in one operation. Carries the
+     * tractor id and the trailer ids, ordered front to back. The server validates the whole chain and applies it in
+     * full or not at all.
+     */
+    ENTITY_BUILD_TRAIN,
     ENTITY_NOVA_NETWORK_CHANGE,
     ENTITY_VARIABLE_RANGE_MODE_CHANGE,
     ENTITY_ABANDON_ANNOUNCE,

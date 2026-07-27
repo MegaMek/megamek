@@ -1043,6 +1043,10 @@ public class TWGameManager extends AbstractGameManager {
                     receiveEntityTow(packet, connId);
                     resetPlayersDone();
                     break;
+                case ENTITY_BUILD_TRAIN:
+                    receiveBuildTrain(packet, connId);
+                    resetPlayersDone();
+                    break;
                 case ENTITY_MODE_CHANGE:
                     receiveEntityModeChange(packet, connId);
                     break;
@@ -27153,6 +27157,18 @@ public class TWGameManager extends AbstractGameManager {
                 }
             }
         }
+    }
+
+    /**
+     * Parses a build-train request and hands validation and application to {@link TrainBuildHandler}.
+     *
+     * @param packet    the packet to be processed
+     * @param connIndex the id for connection that received the packet.
+     */
+    private void receiveBuildTrain(Packet packet, int connIndex) throws InvalidPacketDataException {
+        int tractorId = packet.getIntValue(0);
+        List<Integer> trailerIds = packet.getIntList(1);
+        new TrainBuildHandler(this).buildTrain(tractorId, trailerIds, game.getPlayer(connIndex));
     }
 
     /**

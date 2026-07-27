@@ -543,6 +543,17 @@ public class Client extends AbstractClient {
         send(new Packet(PacketCommand.ENTITY_TOW, id, tractorId));
     }
 
+    /**
+     * Sends a "build train" packet, connecting a tractor and several trailers in one operation. The server validates
+     * the whole chain and applies it in full or not at all, so a rejected request leaves every unit unattached.
+     *
+     * @param tractorId  the powered tractor that will head the train
+     * @param trailerIds the trailers to hitch behind it, ordered front to back
+     */
+    public void sendBuildTrain(int tractorId, List<Integer> trailerIds) {
+        send(new Packet(PacketCommand.ENTITY_BUILD_TRAIN, tractorId, new ArrayList<>(trailerIds)));
+    }
+
     public void sendExplodeBuilding(DemolitionCharge charge) {
         send(new Packet(PacketCommand.BLDG_EXPLODE, charge));
     }

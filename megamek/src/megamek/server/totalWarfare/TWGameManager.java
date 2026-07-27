@@ -1351,6 +1351,11 @@ public class TWGameManager extends AbstractGameManager {
             // reset done to false
             if (phase.isDeployment()) {
                 entity.setDone(!entity.shouldDeploy(game.getRoundCount()));
+            } else if (phase.isMovement() && (entity.getTractor() != Entity.NONE)) {
+                // "A Trailer cannot move under its own power; it must be towed by a Tractor or be part of a series
+                // towed by a Tractor" (TM, Trailers). It is repositioned when its tractor moves, so it takes no
+                // movement turn of its own; offering one only produces a unit that cannot be moved.
+                entity.setDone(true);
             } else {
                 entity.setDone(false);
             }

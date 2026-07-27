@@ -78,34 +78,19 @@ public class CoreRulesMovement extends RulesMovement {
 
     // Backwards elevation changes are enabled. Core p.46
     public boolean enableBackwardsElevationChange(final boolean toBackwardsElevation, Entity entity) {
-        ArrayList<Integer> legs = new ArrayList<>();
-        if (entity instanceof BipedMek) {
-            legs.add(Mek.LOC_RIGHT_LEG);
-            legs.add(Mek.LOC_LEFT_LEG);
-        } else if (entity instanceof QuadMek) {
-            legs.add(Mek.LOC_RIGHT_LEG);
-            legs.add(Mek.LOC_LEFT_LEG);
-            legs.add(Mek.LOC_RIGHT_ARM);
-            legs.add(Mek.LOC_LEFT_ARM);
-        } else if (entity instanceof TripodMek) {
-            legs.add(Mek.LOC_RIGHT_LEG);
-            legs.add(Mek.LOC_LEFT_LEG);
-            legs.add(Mek.LOC_CENTER_LEG);
-        }
-        int legsDestroyed = 0;
-        for (int leg : legs) {
-            if (entity.isLocationBad(leg)) {
-                legsDestroyed++;
+        if (entity instanceof Mek) {
+            int legsDestroyed = ((Mek) entity).countBadLegs();
+            if (legsDestroyed >= 1 && !(entity instanceof QuadMek)) {
+                // No backwards elevation with a bad leg
+                return false;
+            } else if (legsDestroyed >= 3) {
+                // Quads run into this with 3 legs gone
+                return false;
             }
+            return true;
         }
-        if (legsDestroyed >=1 && !(entity instanceof QuadMek)) {
-            // No backwards elevation with a bad leg
-            return false;
-        } else if (legsDestroyed >= 3) {
-            // Quads run into this with 3 legs gone
-            return false;
-        }
-        return true;
+        // Not a Mek
+        return false;
     }
 
     // Do we add leg damage together, yes. Core p.98
@@ -116,5 +101,20 @@ public class CoreRulesMovement extends RulesMovement {
     // Run is still allowed with a broken leg. Core p.90
     public int getMekRunMP(int badLegs, int walkMP, int runMP) {
         return runMP;
+    }
+    
+    // meks can only change 1 elevation level when leg destroyed. Core p.90, p.238
+    public boolean reduceMaxElevation(Mek mek) {
+        if (mek.atLeastOneBadLeg()) {
+            if (mek instanceof QuadMek) { 
+                 if (mek.countBadLegs() >= 3) {
+                    return true;
+                 } else {
+                     return false;
+                 }
+            } 
+            return false;
+        }
+        return false;
     }
 }

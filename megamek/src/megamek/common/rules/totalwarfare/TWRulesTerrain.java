@@ -32,7 +32,19 @@ package megamek.common.rules.totalwarfare;
  * affiliated with Microsoft.
  */
 
+import megamek.common.Hex;
 import megamek.common.rules.core.CoreRulesTerrain;
+import megamek.common.units.Terrains;
 
 public class TWRulesTerrain extends CoreRulesTerrain {
+    
+    // No change on roads
+    @Override
+    public int getRoadElevationCostDifference(Hex srcHex, Hex destHex, int deltaElevation) { return 0; }
+    
+    // No difference
+    @Override
+    public int getMaxElevationChangeAllowed(Hex srcHex, Hex destHex, int maxElevationChange) {
+        return maxElevationChange;
+    }
 }

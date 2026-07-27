@@ -34,11 +34,9 @@ package megamek.common.rules;
  */
 
 
-import megamek.common.MPCalculationSetting;
 import megamek.common.units.EntityMovementMode;
 import megamek.common.units.Entity;
 import megamek.common.units.Mek;
-import megamek.common.units.MekWithArms;
 
 public abstract class RulesMovement {
     // Can units skid?
@@ -64,4 +62,7 @@ public abstract class RulesMovement {
 
     // What is our Running MP?
     public abstract int getMekRunMP(int badLegs, int walkMP, int runMP);
+
+    // Can it change more than 1 level when missing a leg?
+    public abstract boolean reduceMaxElevation(Mek mek);
 }

@@ -4222,7 +4222,9 @@ public abstract class Mek extends Entity implements Fortifiable, RubbleClearer {
 
     @Override
     public int getMaxElevationChange() {
-        return (movementMode.isTracked() || movementMode.isWiGE()) ? 1 : 2;
+        return (movementMode.isTracked() || movementMode.isWiGE() || Game.rulesManager.getRulesMovement().reduceMaxElevation(this))  
+              ? 1 
+              : 2;
     }
 
     @Override

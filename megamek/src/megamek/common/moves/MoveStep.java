@@ -69,6 +69,7 @@ import megamek.common.options.OptionsConstants;
 import megamek.common.pathfinder.CachedEntityState;
 import megamek.common.planetaryConditions.Atmosphere;
 import megamek.common.planetaryConditions.PlanetaryConditions;
+import megamek.common.rules.core.CoreRulesManager;
 import megamek.common.units.*;
 import megamek.logging.MMLogger;
 
@@ -3322,7 +3323,8 @@ public class MoveStep implements Serializable {
         // non-WIGEs pay for elevation differences
         if ((nSrcEl != nDestEl) && (moveMode != EntityMovementMode.WIGE)) {
             int deltaElevation = Math.abs(nSrcEl - nDestEl);
-            if (isMek && (deltaElevation > 2)) {
+            if (isMek && (deltaElevation > Game.rulesManager.getRulesTerrain().getMaxElevationChangeAllowed(srcHex,
+                  destHex, getEntity().getMaxElevationChange()))) {
                 LOGGER.debug("calcMovementCostFor elevation: prevEl={}, elevation={}, " +
                             "srcHex.level={}, destHex.level={}, nSrcEl={}, nDestEl={}, deltaElevation={}",
                       prevEl, elevation, srcHex.getLevel(), destHex.getLevel(),
@@ -3330,7 +3332,8 @@ public class MoveStep implements Serializable {
             }
             if (game.getOptions().booleanOption(OptionsConstants.ADVANCED_GROUND_MOVEMENT_TAC_OPS_LEAPING) &&
                   isMek &&
-                  (deltaElevation > 2) &&
+                  (deltaElevation > Game.rulesManager.getRulesTerrain().getMaxElevationChangeAllowed(srcHex,
+                        destHex, getEntity().getMaxElevationChange())) &&
                   (nDestEl < nSrcEl)) {
                 // leaping (moving down more than 2 hexes) always costs 4 mp
                 // regardless of anything else
@@ -3391,12 +3394,12 @@ public class MoveStep implements Serializable {
                 // non-flying Infantry and ground vehicles are charged double.
                 deltaElevation *= 2;
             }
+            int elevationCost = Game.rulesManager.getRulesTerrain().getRoadElevationCostDifference(srcHex, destHex,
+                  deltaElevation);
             if (entity.hasAbility(OptionsConstants.PILOT_TM_MOUNTAINEER)) {
-                // CORE reduce this by -1 if it is pavementstep
-                mp += deltaElevation - 1;
+                mp += Math.max(0, deltaElevation - 1 - elevationCost);
             } else {
-                // CORE reduce this by -1 if it is pavementstep
-                mp += deltaElevation;
+                mp += Math.max(0, deltaElevation - elevationCost);
             }
         }
 
@@ -3722,10 +3725,13 @@ public class MoveStep implements Serializable {
               (movementType == EntityMovementType.MOVE_VTOL_WALK) ||
               (movementType == EntityMovementType.MOVE_VTOL_RUN) ||
               (movementType == EntityMovementType.MOVE_VTOL_SPRINT);
-
+        
         if ((movementType != EntityMovementType.MOVE_JUMP) && !isVTOLFlight) {
-            // CORE change the max elevation if on pavement
             int maxDown = entity.getMaxElevationDown(srcAlt);
+            if (srcHex.containsTerrain(Terrains.ROAD) && destHex.containsTerrain(Terrains.ROAD) && Game.rulesManager instanceof CoreRulesManager) {
+                // Road to road increases ability to go up/down by 1. Core p.53
+                maxDown += 1;
+            }
             if (movementMode == EntityMovementMode.WIGE &&
                   (srcEl == 0 ||
                         (srcHex.containsTerrain(Terrains.BLDG_ELEV) &&
@@ -3751,7 +3757,6 @@ public class MoveStep implements Serializable {
             int elevationUp = (destAlt - srcAlt);
             int elevationDown = (srcAlt - destAlt);
 
-            // CORE check for pacement on the max up
             if (((elevationDown > 0) && (elevationDown > maxDown)) ||
                   ((elevationUp > 0) && (elevationUp > entity.getMaxElevationChange()))) {
                 // Allow climbing UP if the option is enabled and entity can climb;

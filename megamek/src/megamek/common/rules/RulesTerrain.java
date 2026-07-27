@@ -32,5 +32,13 @@ package megamek.common.rules;
  * affiliated with Microsoft.
  */
 
+import megamek.common.Hex;
+
 public abstract class RulesTerrain {
+
+    // Do we change the road elevation cost
+    public abstract int getRoadElevationCostDifference(Hex srcHex, Hex destHex, int deltaElevation);
+
+    // Can we change more levels than normally allowed?
+    public abstract int getMaxElevationChangeAllowed(Hex srcHex, Hex destHex, int maxElevationChange);
 }

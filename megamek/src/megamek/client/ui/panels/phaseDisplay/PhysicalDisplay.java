@@ -79,6 +79,7 @@ import megamek.common.equipment.INarcPod;
 import megamek.common.equipment.MiscMounted;
 import megamek.common.equipment.MiscType;
 import megamek.common.equipment.Mounted;
+import megamek.common.equipment.WeaponMounted;
 import megamek.common.equipment.enums.MiscTypeFlag;
 import megamek.common.event.GamePhaseChangeEvent;
 import megamek.common.event.GameTurnChangeEvent;
@@ -105,9 +106,12 @@ public class PhysicalDisplay extends AttackPhaseDisplay {
 
     // HACK : track when we want to show the target choice dialog.
     protected boolean showTargetChoice = true;
+    protected boolean twisting;
     protected Entity[] visibleTargets = null;
     protected int lastTargetID = -1;
     protected boolean isStrafing = false;
+
+    private boolean shiftHeld = false;
 
     /** When true, the next hex click selects the target for a woods clearing action. */
     private boolean selectingClearWoodsHex = false;
@@ -137,7 +141,8 @@ public class PhysicalDisplay extends AttackPhaseDisplay {
         PHYSICAL_PHEROMONE("pheromone"),
         PHYSICAL_TOXIN("toxin"),
         PHYSICAL_CLEAR_WOODS("clearWoods"),
-        PHYSICAL_MORE("more");
+        PHYSICAL_MORE("more"),
+        PHYSICAL_TWIST("physicaltwist");
 
         final String cmd;
 
@@ -178,6 +183,9 @@ public class PhysicalDisplay extends AttackPhaseDisplay {
                 case PHYSICAL_PUNCH -> "<BR>&nbsp;&nbsp;" + KeyCommandBind.getDesc(KeyCommandBind.PHYS_PUNCH);
                 case PHYSICAL_KICK -> "<BR>&nbsp;&nbsp;" + KeyCommandBind.getDesc(KeyCommandBind.PHYS_KICK);
                 case PHYSICAL_PUSH -> "<BR>&nbsp;&nbsp;" + KeyCommandBind.getDesc(KeyCommandBind.PHYS_PUSH);
+                case PHYSICAL_TWIST ->
+                    "<BR>&nbsp;&nbsp;" + Messages.getString("Left") + ": " + KeyCommandBind.getDesc(KeyCommandBind.TWIST_LEFT)
+                    + "&nbsp;&nbsp;" + Messages.getString("Right") + ": " + KeyCommandBind.getDesc(KeyCommandBind.TWIST_RIGHT);
                 default -> "";
             };
         }
@@ -197,6 +205,7 @@ public class PhysicalDisplay extends AttackPhaseDisplay {
     public PhysicalDisplay(ClientGUI clientgui) {
         super(clientgui);
         game.addGameListener(this);
+        shiftHeld = false;
         setupStatusBar(Messages.getString("PhysicalDisplay.waitingForPhysicalAttackPhase"));
         setButtons();
         setButtonsTooltips();
@@ -449,6 +458,8 @@ public class PhysicalDisplay extends AttackPhaseDisplay {
         target(null);
         if (entity instanceof Mek) {
             int grapple = entity.getGrappled();
+            setTwistEnabled(entity.canChangeSecondaryFacing() && entity.getCrew().isActive());
+
             if (grapple != Entity.NONE) {
                 Entity t = game.getEntity(grapple);
                 if (t != null) {
@@ -1897,6 +1908,73 @@ public class PhysicalDisplay extends AttackPhaseDisplay {
         setSearchlightEnabled((currentEntity() != null) && (target != null) && currentEntity().isUsingSearchlight());
     }
 
+    /**
+     * Torso twist in the proper direction.
+     */
+    void torsoTwist(Coords twistTarget) {
+        int direction = currentEntity().getFacing();
+
+        if (twistTarget != null) {
+            direction = currentEntity().clipSecondaryFacing(currentEntity().getPosition().direction(twistTarget));
+        }
+
+        if (direction != currentEntity().getSecondaryFacing()) {
+            applyTorsoTwist(direction);
+        }
+    }
+
+    /**
+     * Torso twist to the left or right
+     *
+     * @param twistDir An <code>int</code> specifying whether we're twisting left or right, 0 if we're twisting to the
+     *                 left, 1 if to the right.
+     */
+
+    void torsoTwist(int twistDir) {
+        int direction = currentEntity().getSecondaryFacing();
+        if (twistDir == 0) {
+            applyTorsoTwist(currentEntity().clipSecondaryFacing((direction + 5) % 6));
+        } else if (twistDir == 1) {
+            applyTorsoTwist(currentEntity().clipSecondaryFacing((direction + 7) % 6));
+        }
+    }
+
+    /**
+     * Declares a torso twist to the given secondary facing, preserving state that is declared independently of the
+     * twist. {@link #clearAttacks()} drops every pending action and reselects the first weapon, so this keeps the
+     * player's selected weapon selected and re-adds any pending Directional Torso Mount arc (BMM p.83) - matching the
+     * firing phase, so a Flip Mount and a torso twist can be declared together in either order.
+     *
+     * @param direction the secondary facing to twist to
+     */
+    private void applyTorsoTwist(int direction) {
+        WeaponMounted selectedWeapon = clientgui.getUnitDisplay().wPan.getSelectedWeapon();
+        List<DirectionalMountFacingAction> mountFacings = pendingDirectionalMountFacings(NO_EXCLUDED_LOCATION);
+        clearAttacks();
+        addAttack(new TorsoTwistAction(currentEntity, direction));
+        currentEntity().setSecondaryFacing(direction);
+        for (DirectionalMountFacingAction mountFacing : mountFacings) {
+            addAttack(mountFacing);
+        }
+        refreshAll();
+        if (selectedWeapon != null) {
+            clientgui.getUnitDisplay().wPan.selectWeapon(selectedWeapon);
+        }
+    }
+
+    /**
+     * Refreshes all displays.
+     */
+    private void refreshAll() {
+        if (currentEntity() == null) {
+            return;
+        }
+        clientgui.boardViews().forEach(bv -> ((BoardView) bv).redrawEntity(currentEntity()));
+        clientgui.getUnitDisplay().displayEntity(currentEntity());
+        updateTarget();
+        clientgui.updateFiringArc(currentEntity());
+    }
+
     //
     // BoardListener
     //
@@ -1911,6 +1989,23 @@ public class PhysicalDisplay extends AttackPhaseDisplay {
         // control pressed means a line of sight check.
         if ((event.getModifiers() & InputEvent.CTRL_DOWN_MASK) != 0) {
             return;
+        }
+        // check for shifty goodness
+        if (shiftHeld == ((event.getModifiers() & InputEvent.SHIFT_DOWN_MASK) == 0)) {
+            shiftHeld = (event.getModifiers() & InputEvent.SHIFT_DOWN_MASK) != 0;
+        }
+        if (event.getType() == BoardViewEvent.BOARD_HEX_DRAGGED) {
+            if (shiftHeld || twisting) {
+                if ((currentEntity() != null) && !currentEntity().getAlreadyTwisted()) {
+                    torsoTwist(event.getCoords());
+                }
+            }
+            event.getBoardView().cursor(event.getCoords());
+        } else if (event.getType() == BoardViewEvent.BOARD_HEX_CLICKED) {
+            twisting = false;
+            if (!shiftHeld) {
+                event.getBoardView().select(event.getCoords());
+            }
         }
         if (clientgui.getClient().isMyTurn()
               && (event.getButton() == MouseEvent.BUTTON1)) {
@@ -2126,6 +2221,10 @@ public class PhysicalDisplay extends AttackPhaseDisplay {
             selectEntity(clientgui.getClient().getNextEntityNum(currentEntity));
         } else if (ev.getActionCommand().equals(PhysicalCommand.PHYSICAL_SEARCHLIGHT.getCmd())) {
             doSearchlight();
+        } else if (ev.getActionCommand().equals(PhysicalCommand.PHYSICAL_TWIST.getCmd())) {
+            if (currentEntity().getSecondaryFacing() == currentEntity().getFacing()) {
+                twisting = true;
+            }
         } else if (ev.getActionCommand().equals(PhysicalCommand.PHYSICAL_MORE.getCmd())) {
             currentButtonGroup++;
             currentButtonGroup %= numButtonGroups;
@@ -2245,6 +2344,11 @@ public class PhysicalDisplay extends AttackPhaseDisplay {
     private void setSearchlightEnabled(boolean enabled) {
         buttons.get(PhysicalCommand.PHYSICAL_SEARCHLIGHT).setEnabled(enabled);
         clientgui.getMenuBar().setEnabled(PhysicalCommand.PHYSICAL_SEARCHLIGHT.getCmd(), enabled);
+    }
+
+    protected void setTwistEnabled(boolean enabled) {
+        buttons.get(PhysicalCommand.PHYSICAL_TWIST).setEnabled(enabled);
+        clientgui.getMenuBar().setEnabled(PhysicalCommand.PHYSICAL_TWIST.getCmd(), enabled);
     }
 
     private class AimedShotHandler implements ActionListener, ItemListener {

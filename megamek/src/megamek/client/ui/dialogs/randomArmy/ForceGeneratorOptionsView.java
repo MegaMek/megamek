@@ -92,6 +92,7 @@ public class ForceGeneratorOptionsView extends JPanel implements FocusListener, 
      * call so embedders can route the descriptor through their own export path. Null means use the default.
      */
     private Consumer<ForceDescriptor> onExportMUL;
+    private Consumer<FactionRecord> onFactionChanged;
 
     private ForceDescriptor forceDesc = new ForceDescriptor();
 
@@ -1181,10 +1182,12 @@ public class ForceGeneratorOptionsView extends JPanel implements FocusListener, 
                 forceDesc.setFaction(((FactionRecord) cbFaction.getSelectedItem()).getKey());
             }
             refreshSubFactions();
+            notifyFactionChanged();
         } else if (ev.getSource() == cbSubFaction) {
             logger.debug("cbSubFaction action: selected={}", cbSubFaction.getSelectedItem());
             if (cbSubFaction.getSelectedItem() != null) {
                 forceDesc.setFaction(((FactionRecord) cbSubFaction.getSelectedItem()).getKey());
+                notifyFactionChanged();
             } else {
                 forceDesc.setFaction(((FactionRecord) Objects.requireNonNull(cbFaction.getSelectedItem())).getKey());
             }
@@ -1267,6 +1270,36 @@ public class ForceGeneratorOptionsView extends JPanel implements FocusListener, 
      */
     public void setOnExportMUL(Consumer<ForceDescriptor> handler) {
         this.onExportMUL = handler;
+    }
+
+    /**
+     * Sets a handler notified whenever the selected faction changes, so an embedder can adjust its own
+     * settings to suit - MekHQ's Command Designer uses it to switch formation naming to the Greek
+     * alphabet when a Clan is picked.
+     *
+     * <p>Fires for both the faction and sub-faction selectors, since either can change which faction a
+     * force is generated for.</p>
+     *
+     * @param handler the handler to notify, or {@code null} to stop notifying
+     */
+    public void setOnFactionChanged(@Nullable Consumer<FactionRecord> handler) {
+        this.onFactionChanged = handler;
+    }
+
+    /**
+     * Tells the embedder which faction is now selected, preferring the sub-faction where one is chosen
+     * because that is the faction the force is actually generated for.
+     */
+    private void notifyFactionChanged() {
+        if (onFactionChanged == null) {
+            return;
+        }
+        Object selected = (cbSubFaction.getSelectedItem() != null)
+              ? cbSubFaction.getSelectedItem()
+              : cbFaction.getSelectedItem();
+        if (selected instanceof FactionRecord factionRecord) {
+            onFactionChanged.accept(factionRecord);
+        }
     }
 
     /**

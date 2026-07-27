@@ -115,10 +115,10 @@ class TWGameManagerTrailerAmmoTest {
         gameManager.setGame(game);
     }
 
-    private Entity loadBulldog(int id, Player owner, boolean isTrailer) throws Exception {
+    private Entity loadBulldog(int entityId, Player owner, boolean isTrailer) throws Exception {
         Entity entity = getEntityForUnitTesting("Bulldog Medium Tank", true);
         assertNotNull(entity, "Bulldog Medium Tank not found");
-        entity.setId(id);
+        entity.setId(entityId);
         entity.setOwner(owner);
         if (entity instanceof Tank vehicle) {
             vehicle.setTrailer(isTrailer);

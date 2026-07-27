@@ -2641,6 +2641,12 @@ public class WeaponType extends EquipmentType {
         if (this.subCapital) {
             weapon.put("subCapital", this.subCapital);
         }
+        if (this.missileArmor > 0) {
+            weapon.put("missileArmor", this.missileArmor);
+        }
+        if (this.atClass != CLASS_NONE) {
+            weapon.put("atClass", atClassToString(this.atClass));
+        }
         Map<String, Object> alphaStrike = getAlphaStrikeYamlData();
         if (!alphaStrike.isEmpty()) {
             weapon.put("alphaStrike", alphaStrike);
@@ -2698,6 +2704,41 @@ public class WeaponType extends EquipmentType {
             case BF_CLASS_SUBCAPITAL -> "SUBCAPITAL";
             case BF_CLASS_CAPITAL_MISSILE -> "CAPITAL_MISSILE";
             default -> throw new IllegalArgumentException("Unknown BattleForce class: " + battleForceClass);
+        };
+    }
+
+    private String atClassToString(int atClass) {
+        return switch (atClass) {
+            case CLASS_NONE -> "NONE";
+            case CLASS_LASER -> "LASER";
+            case CLASS_POINT_DEFENSE -> "POINT_DEFENSE";
+            case CLASS_PPC -> "PPC";
+            case CLASS_PULSE_LASER -> "PULSE_LASER";
+            case CLASS_ARTILLERY -> "ARTILLERY";
+            case CLASS_PLASMA -> "PLASMA";
+            case CLASS_AC -> "AC";
+            case CLASS_LBX_AC -> "LBX_AC";
+            case CLASS_LRM -> "LRM";
+            case CLASS_SRM -> "SRM";
+            case CLASS_MRM -> "MRM";
+            case CLASS_MML -> "MML";
+            case CLASS_ATM -> "ATM";
+            case CLASS_ROCKET_LAUNCHER -> "ROCKET_LAUNCHER";
+            case CLASS_CAPITAL_LASER -> "CAPITAL_LASER";
+            case CLASS_CAPITAL_PPC -> "CAPITAL_PPC";
+            case CLASS_CAPITAL_AC -> "CAPITAL_AC";
+            case CLASS_CAPITAL_GAUSS -> "CAPITAL_GAUSS";
+            case CLASS_CAPITAL_MISSILE -> "CAPITAL_MISSILE";
+            case CLASS_AR10 -> "AR10";
+            case CLASS_SCREEN -> "SCREEN";
+            case CLASS_SUB_CAPITAL_CANNON -> "SUB_CAPITAL_CANNON";
+            case CLASS_CAPITAL_MD -> "CAPITAL_MD";
+            case CLASS_AMS -> "AMS";
+            case CLASS_TELE_MISSILE -> "TELE_MISSILE";
+            case CLASS_GAUSS -> "GAUSS";
+            case CLASS_THUNDERBOLT -> "THUNDERBOLT";
+            case CLASS_MORTAR -> "MORTAR";
+            default -> throw new IllegalArgumentException("Unknown AT class: " + atClass);
         };
     }
 

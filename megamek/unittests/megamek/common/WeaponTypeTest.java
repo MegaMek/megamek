@@ -36,6 +36,7 @@ import static org.junit.jupiter.api.Assertions.assertArrayEquals;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.anyInt;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
@@ -185,6 +186,45 @@ class WeaponTypeTest {
         }
     }
 
+    @Test
+    void testYamlExportsAerospaceClassAsStringAndMissileArmor() {
+        WeaponType mediumLaser = (WeaponType) EquipmentType.get("Medium Laser");
+        WeaponType lbx = (WeaponType) EquipmentType.get("ISLBXAC10");
+        WeaponType barracuda = (WeaponType) EquipmentType.get("Barracuda");
+
+        assertNotNull(mediumLaser);
+        assertNotNull(lbx);
+        assertNotNull(barracuda);
+
+        Map<String, Object> mediumLaserData = weaponYamlData(mediumLaser);
+        assertEquals("LASER", mediumLaserData.get("atClass"));
+        assertFalse(mediumLaserData.containsKey("missileArmor"));
+
+        Map<String, Object> lbxData = weaponYamlData(lbx);
+        assertEquals("LBX_AC", lbxData.get("atClass"));
+        assertFalse(lbxData.get("atClass") instanceof Number);
+
+        Map<String, Object> barracudaData = weaponYamlData(barracuda);
+        assertEquals("CAPITAL_MISSILE", barracudaData.get("atClass"));
+        assertEquals(20, barracudaData.get("missileArmor"));
+    }
+
+    @Test
+    void testYamlOmitsDefaultAerospaceValues() {
+        Map<String, Object> weaponData = weaponYamlData(new TestWeaponType(WeaponType.CLASS_NONE, 0));
+
+        assertFalse(weaponData.containsKey("atClass"));
+        assertFalse(weaponData.containsKey("missileArmor"));
+    }
+
+    @Test
+    void testYamlRejectsUnknownAerospaceClass() {
+        WeaponType weaponType = new TestWeaponType(Integer.MAX_VALUE, 0);
+
+        IllegalArgumentException exception = assertThrows(IllegalArgumentException.class, weaponType::getYamlData);
+        assertEquals("Unknown AT class: " + Integer.MAX_VALUE, exception.getMessage());
+    }
+
     @SuppressWarnings("unchecked")
     private Map<String, Object> weaponYamlData(WeaponType weaponType) {
         return (Map<String, Object>) weaponType.getYamlData().get("weapon");
@@ -193,5 +233,15 @@ class WeaponTypeTest {
     @SuppressWarnings("unchecked")
     private Map<String, Object> alphaStrikeYamlData(Map<String, Object> weaponYamlData) {
         return (Map<String, Object>) weaponYamlData.get("alphaStrike");
+    }
+
+    private static class TestWeaponType extends WeaponType {
+
+        TestWeaponType(int atClass, int missileArmor) {
+            setName("Test Weapon");
+            ammoType = AmmoTypeEnum.NA;
+            this.atClass = atClass;
+            this.missileArmor = missileArmor;
+        }
     }
 }

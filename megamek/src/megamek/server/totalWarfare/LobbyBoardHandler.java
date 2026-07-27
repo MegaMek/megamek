@@ -79,6 +79,9 @@ class LobbyBoardHandler extends AbstractTWRuleHandler {
      * outside the lounge phase and while a surprise board is selected (building it would reveal the surprise).
      * Requesting again re-rolls: a fresh board is built and broadcast each time.
      *
+     * <p>A failure to assemble the board never escapes this method: the requester is told, the reason is
+     * logged, and the previously built board (if any) is left in place.</p>
+     *
      * @param connId the connection that sent the request
      */
     void handleGenerationRequest(int connId) {
@@ -103,8 +106,23 @@ class LobbyBoardHandler extends AbstractTWRuleHandler {
             return;
         }
 
-        Board newBoard = TWBoardTransformer.instantiateBoard(getGame().getMapSettings(),
-              getGame().getPlanetaryConditions(), getGame().getOptions());
+        Board newBoard;
+        try {
+            newBoard = TWBoardTransformer.instantiateBoard(getGame().getMapSettings(),
+                  getGame().getPlanetaryConditions(), getGame().getOptions());
+        } catch (RuntimeException buildFailure) {
+            // Board assembly rejects settings it cannot build from: a selected board file that is missing or
+            // the wrong size makes BoardUtilities.combine() throw, and out-of-range random map generator
+            // parameters make the generator throw. The request must fail on its own instead of escaping into
+            // the packet handler, which would take the server's packet thread down with it.
+            LOGGER.error(buildFailure,
+                  "[LobbyBoard] {}: building the battlefield failed - the current map settings could not be "
+                        + "assembled into a board; the previous lounge board (if any) is kept", playerName);
+            gameManager.sendServerChat(connId,
+                  "The battlefield could not be built from the current map settings. See the server log for "
+                        + "details.");
+            return;
+        }
         getGame().setBoard(newBoard);
         boardGeneratedInLounge = true;
         LOGGER.info("[LobbyBoard] {} built the battlefield ({}x{} hexes)",

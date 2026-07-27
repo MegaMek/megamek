@@ -391,6 +391,14 @@ public class Client extends AbstractClient {
     }
 
     /**
+     * Asks the server to build the game board from the current map settings and broadcast it to all clients while
+     * still in the lobby, so that all players can see the battlefield that will actually be played.
+     */
+    public void sendLobbyBoardGenerationRequest() {
+        send(new Packet(PacketCommand.LOBBY_GENERATE_BOARD));
+    }
+
+    /**
      * Sends a "reroll initiative" message to the server.
      */
     public void sendRerollInitiativeRequest() {

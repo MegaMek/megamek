@@ -248,7 +248,14 @@ public enum PacketCommand {
      * A Server to Client packet carrying the current state of all player-controlled industrial elevators
      * (platform levels, call queues) so clients can render platforms and validate elevator moves.
      */
-    UPDATE_INDUSTRIAL_ELEVATORS;
+    UPDATE_INDUSTRIAL_ELEVATORS,
+
+    /**
+     * A Client to Server packet requesting that the server build the game board from the current map settings
+     * during the lobby and broadcast it to all clients, so that everyone sees the battlefield that will actually
+     * be played before the game starts.
+     */
+    LOBBY_GENERATE_BOARD;
     //endregion Enum Declarations
 
     //region Boolean Comparison Methods

@@ -148,6 +148,7 @@ import megamek.common.equipment.BombLoadout;
 import megamek.common.event.GameCFREvent;
 import megamek.common.event.GamePhaseChangeEvent;
 import megamek.common.event.GameSettingsChangeEvent;
+import megamek.common.event.board.GameBoardNewEvent;
 import megamek.common.event.entity.GameEntityChangeEvent;
 import megamek.common.event.entity.GameEntityNewEvent;
 import megamek.common.event.player.GamePlayerChangeEvent;
@@ -302,6 +303,7 @@ public class ChatLounge extends AbstractPhaseDisplay
 
     private JComboBox<Comparable<?>> comMapSizes;
     private final JButton butBoardPreview = new JButton(Messages.getString("BoardSelectionDialog.ViewGameBoard"));
+    private final JButton butGenerateBattlefield = new JButton(Messages.getString("ChatLounge.GenerateBattlefield"));
     private final JPanel panMapButtons = new JPanel();
     private final JLabel lblBoardsAvailable = new JLabel();
     private JList<String> lisBoardsAvailable;
@@ -448,6 +450,7 @@ public class ChatLounge extends AbstractPhaseDisplay
         butAddBot.addActionListener(lobbyListener);
         butArmy.addActionListener(lobbyListener);
         butBoardPreview.addActionListener(lobbyListener);
+        butGenerateBattlefield.addActionListener(lobbyListener);
         butBotSettings.addActionListener(lobbyListener);
         butCompact.addActionListener(lobbyListener);
         butConditions.addActionListener(lobbyListener);
@@ -913,11 +916,13 @@ public class ChatLounge extends AbstractPhaseDisplay
 
         FixedYPanel bottomPanel = new FixedYPanel();
         bottomPanel.setBorder(new EmptyBorder(10, 0, 0, 0));
+        bottomPanel.add(butGenerateBattlefield);
         bottomPanel.add(butBoardPreview);
         bottomPanel.add(butSaveMapSetup);
         bottomPanel.add(butLoadMapSetup);
 
         butBoardPreview.setToolTipText(Messages.getString("BoardSelectionDialog.ViewGameBoardTooltip"));
+        butGenerateBattlefield.setToolTipText(Messages.getString("ChatLounge.GenerateBattlefieldTooltip"));
 
         // The left side panel including the game map preview
         JPanel panMapPreview = new JPanel();
@@ -1174,6 +1179,7 @@ public class ChatLounge extends AbstractPhaseDisplay
         butLoadMapSetup.setEnabled(!inSpace);
         butMapShrinkW.setEnabled(mapSettings.getMapWidth() > 1);
         butMapShrinkH.setEnabled(mapSettings.getMapHeight() > 1);
+        refreshGenerateBattlefieldButton();
         butAdvancedSearchMap.setEnabled(!inSpace &&
               (mapSettings.getMapWidth() == 1) &&
               (mapSettings.getMapHeight() == 1));
@@ -1408,8 +1414,48 @@ public class ChatLounge extends AbstractPhaseDisplay
         g.dispose();
     }
 
+    /**
+     * Enables the Generate Battlefield button only while it can actually be used, mirroring the server's checks:
+     * building the board with a Surprise board selected would reveal the surprise, and an incomplete board
+     * selection (unset slots right after a map size change) cannot be built. In both cases the server refuses
+     * the request, so the button is disabled with an explanatory tooltip instead of allowing a silent no-op.
+     */
+    private void refreshGenerateBattlefieldButton() {
+        // Board slots may be null right after a map size change, before the server fills them in
+        boolean hasSurpriseBoard = mapSettings.getBoardsSelectedVector().stream()
+              .anyMatch(boardName -> (boardName != null) && boardName.startsWith(MapSettings.BOARD_SURPRISE));
+        boolean hasUnsetBoard = mapSettings.getBoardsSelectedVector().stream().anyMatch(Objects::isNull);
+        butGenerateBattlefield.setEnabled(!hasSurpriseBoard && !hasUnsetBoard);
+
+        String tooltipKey;
+        if (hasSurpriseBoard) {
+            tooltipKey = "ChatLounge.GenerateBattlefieldTooltipSurprise";
+        } else if (hasUnsetBoard) {
+            tooltipKey = "ChatLounge.GenerateBattlefieldTooltipIncomplete";
+        } else {
+            tooltipKey = "ChatLounge.GenerateBattlefieldTooltip";
+        }
+        butGenerateBattlefield.setToolTipText(Messages.getString(tooltipKey));
+    }
+
+    /**
+     * @return the battlefield built by the server in the lobby, or {@code null} if none was built (or it was
+     *       discarded after a settings change), in which case the preview falls back to a local roll
+     */
+    private @Nullable Board serverGeneratedBoard() {
+        Board board = client().getGame().getBoard();
+        boolean hasServerBoard = (board != null) && (board.getWidth() > 0) && (board.getHeight() > 0);
+        return hasServerBoard ? board : null;
+    }
+
     public void previewGameBoard() {
-        Board newBoard = ServerBoardHelper.getPossibleGameBoard(mapSettings, false);
+        Board serverBoard = serverGeneratedBoard();
+        if (serverBoard == null) {
+            LOGGER.debug("[LobbyBoard] no server-built battlefield - preview uses a local roll of the map settings");
+        }
+        Board newBoard = (serverBoard != null)
+              ? serverBoard
+              : ServerBoardHelper.getPossibleGameBoard(mapSettings, false);
         boardPreviewGame.setBoard(newBoard);
         previewBV.setLocalPlayer(client().getLocalPlayer());
         final var gOpts = game().getOptions();
@@ -1848,9 +1894,37 @@ public class ChatLounge extends AbstractPhaseDisplay
         clientgui.getClient().sendServerChat(Player.PLAYER_NONE, msg);
     }
 
+    /**
+     * Assigns the double-clicked entry of the available-boards list to the first board slot, as if it had been
+     * dragged onto the map preview button. The map preview then shows the board through the usual refresh.
+     *
+     * @param listIndex the index of the double-clicked entry in the available-boards list
+     */
+    private void selectBoardFromList(int listIndex) {
+        String boardName = lisBoardsAvailable.getModel().getElementAt(listIndex);
+        LOGGER.debug("[LobbyBoard] double-click assigns {} to the first board slot", boardName);
+        changeMapDnD(boardName, mapButtons.getFirst());
+    }
+
     //
     // GameListener
     //
+    @Override
+    public void gameBoardNew(GameBoardNewEvent e) {
+        if (isIgnoringEvents()) {
+            return;
+        }
+        // The server built (or discarded) the lobby battlefield - update an open preview to match.
+        // This event arrives on the network thread; the preview is Swing, so hop onto the EDT.
+        LOGGER.debug("[LobbyBoard] board {} received from the server ({}x{})", e.getBoardId(),
+              e.getNewBoard().getWidth(), e.getNewBoard().getHeight());
+        SwingUtilities.invokeLater(() -> {
+            if ((boardPreviewW != null) && boardPreviewW.isVisible()) {
+                previewGameBoard();
+            }
+        });
+    }
+
     @Override
     public void gamePlayerChange(GamePlayerChangeEvent e) {
         if (isIgnoringEvents()) {
@@ -2042,6 +2116,10 @@ public class ChatLounge extends AbstractPhaseDisplay
 
             } else if (ev.getSource().equals(butBoardPreview)) {
                 previewGameBoard();
+
+            } else if (ev.getSource().equals(butGenerateBattlefield)) {
+                LOGGER.debug("[LobbyBoard] requesting battlefield generation from the server");
+                client().sendLobbyBoardGenerationRequest();
 
             } else if (ev.getSource().equals(comMapSizes)) {
                 if (Messages.getString("ChatLounge.CustomMapSize").equals(comMapSizes.getSelectedItem())) {
@@ -2660,6 +2738,7 @@ public class ChatLounge extends AbstractPhaseDisplay
         butAddBot.removeActionListener(lobbyListener);
         butArmy.removeActionListener(lobbyListener);
         butBoardPreview.removeActionListener(lobbyListener);
+        butGenerateBattlefield.removeActionListener(lobbyListener);
         butBotSettings.removeActionListener(lobbyListener);
         butCompact.removeActionListener(lobbyListener);
         butConditions.removeActionListener(lobbyListener);
@@ -3121,17 +3200,43 @@ public class ChatLounge extends AbstractPhaseDisplay
         }
 
         @Override
+        public void mousePressed(MouseEvent e) {
+            maybeShowPopup(e);
+        }
+
+        @Override
         public void mouseReleased(MouseEvent e) {
-            if (lisBoardsAvailable.isEnabled()) {
-                // If a mouse button is pressed over a map,
-                // show the board selection popup
-                int index = lisBoardsAvailable.locationToIndex(e.getPoint());
-                if (index != -1 && lisBoardsAvailable.getCellBounds(index, index).contains(e.getPoint())) {
-                    if (!lisBoardsAvailable.isSelectedIndex(index)) {
-                        lisBoardsAvailable.setSelectedIndex(index);
-                    }
-                    showPopup(e);
+            maybeShowPopup(e);
+        }
+
+        /**
+         * Shows the board selection popup on a right-click (checked on both press and release, as the popup
+         * trigger is platform-dependent). Left clicks are left alone so that they select boards and can form
+         * a double-click, which opens the board preview instead.
+         */
+        private void maybeShowPopup(MouseEvent e) {
+            if (!e.isPopupTrigger() || !lisBoardsAvailable.isEnabled()) {
+                return;
+            }
+            int index = lisBoardsAvailable.locationToIndex(e.getPoint());
+            if ((index != -1) && lisBoardsAvailable.getCellBounds(index, index).contains(e.getPoint())) {
+                if (!lisBoardsAvailable.isSelectedIndex(index)) {
+                    lisBoardsAvailable.setSelectedIndex(index);
                 }
+                showPopup(e);
+            }
+        }
+
+        @Override
+        public void mouseClicked(MouseEvent e) {
+            boolean isDoubleClick = SwingUtilities.isLeftMouseButton(e) && (e.getClickCount() == 2);
+            if (!lisBoardsAvailable.isEnabled() || !isDoubleClick) {
+                return;
+            }
+            int index = lisBoardsAvailable.locationToIndex(e.getPoint());
+            if ((index != -1) && lisBoardsAvailable.getCellBounds(index, index).contains(e.getPoint())) {
+                closePopup();
+                selectBoardFromList(index);
             }
         }
 

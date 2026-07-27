@@ -97,14 +97,15 @@ public final class TrainLayout {
           List<Coords> trainPath, List<Integer> trainFacings) {
         List<TrainPlacement> placements = new ArrayList<>();
 
-        for (int towedId : tractor.getAllTowedUnits()) {
-            Entity trailer = game.getEntity(towedId);
+        List<Integer> towedUnits = tractor.getAllTowedUnits();
+        for (int trailerNumber = 0; trailerNumber < towedUnits.size(); trailerNumber++) {
+            Entity trailer = game.getEntity(towedUnits.get(trailerNumber));
 
             if (trailer == null) {
                 continue;
             }
 
-            int trailerNumber = tractor.getAllTowedUnits().indexOf(towedId);
+            int towedId = towedUnits.get(trailerNumber);
             // Offset so we get the right position index
             double trailerPositionOffset = (trailerNumber + 1);
 

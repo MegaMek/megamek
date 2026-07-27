@@ -17205,12 +17205,15 @@ public abstract class Entity extends TurnOrdered
         // If none of the above happen, assume that we can't tow the trailer...
         boolean result = false;
 
-        // First, set up a list of all the entities in this train
+        // First, set up a list of all the entities in this train. A towed id can fail to resolve when the unit has
+        // been destroyed and removed, so skip those rather than carrying nulls through the checks below.
         ArrayList<Entity> thisTrain = new ArrayList<>();
         thisTrain.add(this);
-        for (int id : getAllTowedUnits()) {
-            Entity towedUnit = game.getEntity(id);
-            thisTrain.add(towedUnit);
+        for (int towedId : getAllTowedUnits()) {
+            Entity towedUnit = game.getEntity(towedId);
+            if (towedUnit != null) {
+                thisTrain.add(towedUnit);
+            }
         }
 
         // The towing limit belongs to the powered tractor at the head of the train, not to whichever unit the new

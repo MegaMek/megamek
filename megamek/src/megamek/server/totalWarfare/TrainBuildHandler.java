@@ -47,9 +47,10 @@ import megamek.server.ServerLobbyHelper;
  * Connects a tractor and an ordered list of trailers into a train in one operation.
  * <p>
  * The whole chain is validated before anything is attached, and any failure part way through is rolled back, so a
- * rejected request always leaves every unit unattached rather than producing a half-built train. Ordering matters and
- * is taken from the client verbatim: trailers are hitched front to back in the order given, and a unit can only draw
- * ammunition from its immediate neighbours.
+ * rejected request always leaves every unit unattached rather than producing a half-built train. Ordering is taken
+ * from the client verbatim: trailers are hitched front to back in the order given, which fixes the hitch chain and
+ * therefore where each unit sits on the board, since the first trailer shares the tractor's hex and the rest pack
+ * behind it.
  * </p>
  * Every rejection logs its own reason under the {@code [Train]} tag so a playtest can be diagnosed from megamek.log
  * without a debugger.
@@ -179,6 +180,16 @@ class TrainBuildHandler extends AbstractTWRuleHandler {
             }
 
             tractor.towUnit(trailer.getId());
+
+            // canTow checks the same hitch towUnit uses, so this should not fail. Confirm rather than assume, since
+            // a trailer that is not actually hitched would otherwise be reported as part of a completed train.
+            if (trailer.getTowedBy() == Entity.NONE) {
+                LOGGER.warn("{} rejected: {} could not be hitched behind {} - rolling back {} link(s)",
+                      LOG_TAG, trailer.getDisplayName(), attachPoint.getDisplayName(), attached.size());
+                rollBack(tractor, attached);
+                return;
+            }
+
             attached.add(trailer);
             LOGGER.info("{} hitched {} behind {}",
                   LOG_TAG, trailer.getDisplayName(), attachPoint.getDisplayName());

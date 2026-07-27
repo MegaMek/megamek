@@ -112,7 +112,8 @@ public class DeploymentProcessor extends AbstractTWRuleHandler {
         }
 
         boolean isLegalLocation = getGame().hasBoardLocation(coords, boardId)
-              && getGame().getBoard(boardId).isLegalDeployment(coords, entity);
+              && getGame().getBoard(boardId).isLegalDeployment(coords, entity)
+              && isLegalTrainFootprint(entity, coords, boardId, nFacing);
 
         if ((turn == null) || !turn.isValid(connId, entity, getGame())
               // FIXME: The combination with assault drop and the assault drop check dont look right:
@@ -390,6 +391,36 @@ public class DeploymentProcessor extends AbstractTWRuleHandler {
     }
 
     /**
+     * Whether every hex a train would occupy is a legal deployment hex, not just the tractor's own.
+     * <p>
+     * The client refuses such a placement before sending it, but the placement arrives from the client, so the server
+     * has to decide for itself rather than trust it. A unit towing nothing is always its own footprint.
+     * </p>
+     *
+     * @param tractor the unit being deployed
+     * @param coords  the hex it is being placed in
+     * @param boardId the board it is being placed on
+     * @param facing  the facing it is being placed with
+     *
+     * @return true when the whole train fits in the deployment zone
+     */
+    private boolean isLegalTrainFootprint(Entity tractor, Coords coords, int boardId, int facing) {
+        if (tractor.getAllTowedUnits().isEmpty()) {
+            return true;
+        }
+
+        Board board = getGame().getBoard(boardId);
+        for (Coords trainHex : TrainLayout.deploymentFootprint(getGame(), tractor, coords, facing)) {
+            if (!getGame().hasBoardLocation(trainHex, boardId) || !board.isLegalDeployment(trainHex, tractor)) {
+                LOGGER.warn("[Train] rejected deployment of {} at {} facing {}: trailer hex {} is not a legal "
+                      + "deployment hex", tractor.getDisplayName(), coords, facing, trainHex);
+                return false;
+            }
+        }
+        return true;
+    }
+
+    /**
      * Gives every trailer the off board edge and distance of the tractor towing it, so a train goes off board as a
      * whole rather than being split between the board and the map edge.
      * <p>
@@ -463,16 +494,7 @@ public class DeploymentProcessor extends AbstractTWRuleHandler {
         }
         List<TrainLayout.TrainPlacement> placements = allPlacements;
 
-        // The client refuses a placement whose whole footprint is not legal, so an illegal hex here means either a
-        // crafted packet or a client that skipped the check. Log it rather than silently dropping the trailer.
-        Board board = getGame().getBoard(tractor.getBoardId());
-        for (TrainLayout.TrainPlacement placement : placements) {
-            Entity trailer = getGame().getEntity(placement.entityId());
-            if ((trailer != null) && !board.isLegalDeployment(placement.position(), trailer)) {
-                LOGGER.warn("[Train] {} deployed with trailer {} landing on {}, which is not a legal deployment hex",
-                      tractor.getDisplayName(), trailer.getDisplayName(), placement.position());
-            }
-        }
+        // The footprint was checked against the deployment zone in receiveDeployment, before the tractor was placed.
 
         TrainLayout.applyLayout(getGame(), placements);
 

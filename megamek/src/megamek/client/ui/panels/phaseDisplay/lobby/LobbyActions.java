@@ -802,6 +802,13 @@ public class LobbyActions {
             if (entity.isTrailer()) {
                 trailers.add(entity);
             } else if (entity.isTractor()) {
+                if (entity.getTowing() != Entity.NONE) {
+                    // The server builds a train from an unattached tractor. Catch it here so the player gets a
+                    // message instead of a dialog that quietly does nothing.
+                    logger.info("[Train] cannot connect: {} already tows a trailer", entity.getShortName());
+                    LobbyErrors.showSingleTractorRequired(frame());
+                    return;
+                }
                 candidateHeads.add(entity);
             } else {
                 logger.info("[Train] cannot connect: {} is neither a tractor nor a trailer", entity.getShortName());

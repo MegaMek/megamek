@@ -60,8 +60,8 @@ import org.junit.jupiter.api.Test;
  * Tests the all-or-nothing build-train request.
  *
  * <p>A rejected request must leave every unit unattached rather than producing a partially built train, and trailers
- * must end up in the order the client asked for, because a unit can only draw ammunition from its immediate
- * neighbours.</p>
+ * must end up in the order the client asked for, because that order fixes the hitch chain and so where each unit
+ * sits on the board.</p>
  */
 class TrainBuildHandlerTest {
 

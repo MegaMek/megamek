@@ -1341,6 +1341,8 @@ public abstract class Entity extends TurnOrdered
                 }
             }
         }
+        // Weapons may be linked to a connected trailer's ammo bin, which arrives here as a detached copy.
+        TrainAmmoSharing.relinkExternalAmmo(this, game);
     }
 
     /**

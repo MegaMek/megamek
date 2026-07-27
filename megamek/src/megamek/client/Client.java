@@ -1578,10 +1578,17 @@ public class Client extends AbstractClient {
     }
 
     /**
-     * Send mode-change data to the server
+     * Send ammo-change data to the server.
+     *
+     * @param entityId      the unit that owns the weapon being reloaded
+     * @param weaponId      the equipment number of the weapon on that unit
+     * @param ammoId        the equipment number of the ammo bin on the carrying unit
+     * @param ammoCarrierId the unit that owns the ammo bin. This is the same as entityId unless the bin belongs to a
+     *                      directly connected trailer sharing ammo with this unit.
+     * @param reason        the report message id explaining the change, or 0 for no report
      */
-    public void sendAmmoChange(int nEntity, int nWeapon, int nAmmo, int reason) {
-        send(new Packet(PacketCommand.ENTITY_AMMO_CHANGE, nEntity, nWeapon, nAmmo, reason));
+    public void sendAmmoChange(int entityId, int weaponId, int ammoId, int ammoCarrierId, int reason) {
+        send(new Packet(PacketCommand.ENTITY_AMMO_CHANGE, entityId, weaponId, ammoId, ammoCarrierId, reason));
     }
 
     /**

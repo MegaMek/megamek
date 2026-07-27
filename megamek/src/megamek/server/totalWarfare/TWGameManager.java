@@ -27558,36 +27558,52 @@ public class TWGameManager extends AbstractGameManager {
         int entityId = packet.getIntValue(0);
         int weaponId = packet.getIntValue(1);
         int ammoId = packet.getIntValue(2);
-        int reason = packet.getIntValue(3);
-        Entity e = game.getEntity(entityId);
+        int ammoCarrierId = packet.getIntValue(3);
+        int reason = packet.getIntValue(4);
+        Entity shooter = game.getEntity(entityId);
 
         // Did we receive a request for a valid Entity?
-        if (null == e) {
+        if (null == shooter) {
             LOGGER.error("Could not find entity# {}", entityId);
             return;
         }
         Player player = game.getPlayer(connIndex);
-        if ((null != player) && (e.getOwner() != player)) {
-            LOGGER.error("Player {} does not own the entity {}", player.getName(), e.getDisplayName());
+        if ((null != player) && (shooter.getOwner() != player)) {
+            LOGGER.error("Player {} does not own the entity {}", player.getName(), shooter.getDisplayName());
             return;
         }
 
-        // Make sure that the entity has the given equipment.
-        WeaponMounted weaponMounted = (WeaponMounted) e.getEquipment(weaponId);
-        AmmoMounted mAmmo = (AmmoMounted) e.getEquipment(ammoId);
+        // The ammo may be carried by a directly connected trailer rather than by the firing unit itself. Resolve
+        // the bin against its own carrier, but never trust the client about which unit that is allowed to be.
+        Entity ammoCarrier = (ammoCarrierId == entityId) ? shooter : game.getEntity(ammoCarrierId);
+        if (null == ammoCarrier) {
+            LOGGER.error("Could not find ammo carrier# {}", ammoCarrierId);
+            return;
+        }
+        if (!TrainAmmoSharing.canShareAmmoWith(shooter, ammoCarrier)) {
+            LOGGER.error("Entity {} may not draw ammo from {}",
+                  shooter.getDisplayName(),
+                  ammoCarrier.getDisplayName());
+            return;
+        }
+
+        // Make sure that the entity has the given equipment. Both indices come from the client, so resolve them
+        // through the type-checked accessors rather than casting whatever equipment sits at that index.
+        WeaponMounted weaponMounted = shooter.getWeapon(weaponId);
+        AmmoMounted selectedAmmo = ammoCarrier.getAmmo(ammoId);
         AmmoMounted oldAmmo = (weaponMounted == null) ? null : weaponMounted.getLinkedAmmo();
-        if (null == mAmmo) {
-            LOGGER.error("Entity {} does not have ammo #{}", e.getDisplayName(), ammoId);
+        if (null == selectedAmmo) {
+            LOGGER.error("Entity {} does not have ammo #{}", ammoCarrier.getDisplayName(), ammoId);
             return;
         }
         if (null == weaponMounted) {
-            LOGGER.error("Entity {} does not have weapon #{}", e.getDisplayName(), weaponId);
+            LOGGER.error("Entity {} does not have weapon #{}", shooter.getDisplayName(), weaponId);
             return;
         }
         if (weaponMounted.getType().getAmmoType() == AmmoType.AmmoTypeEnum.NA) {
             LOGGER.error("Item #{} of entity {} is a {} and does not use ammo.",
                   weaponId,
-                  e.getDisplayName(),
+                  shooter.getDisplayName(),
                   weaponMounted.getName());
             return;
         }
@@ -27595,22 +27611,22 @@ public class TWGameManager extends AbstractGameManager {
               .hasFlag(WeaponType.F_DOUBLE_ONE_SHOT)) {
             LOGGER.error("Item #{} of entity {} is a {} and cannot use external ammo.",
                   weaponId,
-                  e.getDisplayName(),
+                  shooter.getDisplayName(),
                   weaponMounted.getName());
             return;
         }
 
         // Load the weapon.
-        e.loadWeapon(weaponMounted, mAmmo);
+        shooter.loadWeapon(weaponMounted, selectedAmmo);
 
         // Report the change, if reason is provided and it's not already being used.
-        if (reason != 0 && oldAmmo != mAmmo) {
-            Report r = new Report(1500);
-            r.subject = entityId;
-            r.addDesc(e);
-            r.add(mAmmo.getShortName());
-            r.add(ReportMessages.getString(String.valueOf(reason)));
-            addReport(r);
+        if (reason != 0 && oldAmmo != selectedAmmo) {
+            Report ammoChangeReport = new Report(1500);
+            ammoChangeReport.subject = entityId;
+            ammoChangeReport.addDesc(shooter);
+            ammoChangeReport.add(selectedAmmo.getShortName());
+            ammoChangeReport.add(ReportMessages.getString(String.valueOf(reason)));
+            addReport(ammoChangeReport);
         }
     }
 

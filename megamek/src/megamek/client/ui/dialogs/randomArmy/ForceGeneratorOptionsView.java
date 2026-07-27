@@ -1292,13 +1292,26 @@ public class ForceGeneratorOptionsView extends JPanel implements FocusListener, 
      */
     private void notifyFactionChanged() {
         if (onFactionChanged == null) {
+            logger.debug("[FactionChanged] faction changed but no host handler is registered");
             return;
         }
-        Object selected = (cbSubFaction.getSelectedItem() != null)
-              ? cbSubFaction.getSelectedItem()
-              : cbFaction.getSelectedItem();
+        // The sub-faction is the more specific choice, but Clan-ness belongs to the parent - a sub
+        // faction of a Clan is still a Clan, and its own record does not always say so. Report
+        // whichever of the two actually identifies as a Clan so an embedder keying off that is not
+        // misled by the refinement.
+        Object subFaction = cbSubFaction.getSelectedItem();
+        Object parentFaction = cbFaction.getSelectedItem();
+        Object selected = (subFaction != null) ? subFaction : parentFaction;
+        if ((parentFaction instanceof FactionRecord parentRecord) && parentRecord.isClan()
+                  && !(selected instanceof FactionRecord chosen && chosen.isClan())) {
+            selected = parentFaction;
+        }
         if (selected instanceof FactionRecord factionRecord) {
+            logger.debug("[FactionChanged] notifying host: faction={} isClan={}",
+                  factionRecord.getKey(), factionRecord.isClan());
             onFactionChanged.accept(factionRecord);
+        } else {
+            logger.debug("[FactionChanged] no FactionRecord selected; nothing to notify");
         }
     }
 

@@ -34,6 +34,7 @@ package megamek.common;
 
 import static org.junit.jupiter.api.Assertions.assertArrayEquals;
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.mockito.ArgumentMatchers.anyInt;
 import static org.mockito.Mockito.mock;
@@ -153,13 +154,35 @@ class WeaponTypeTest {
         assertEquals(null, weaponYamlData(mediumLaser).get("alphaStrike"));
         Map<String, Object> lrmProfile = alphaStrikeYamlData(weaponYamlData(lrm));
         assertEquals("LRM", lrmProfile.get("battleForceClass"));
-        assertEquals(true, lrmProfile.get("indirectFire"));
+        assertFalse(lrmProfile.containsKey("indirectFire"));
         Map<String, Object> iatmProfile = alphaStrikeYamlData(weaponYamlData(iatm));
         assertEquals("IATM", iatmProfile.get("battleForceClass"));
-        assertEquals(null, iatmProfile.get("indirectFire"));
+        assertEquals(false, iatmProfile.get("indirectFire"));
 
         Map<String, Object> streakLrmProfile = alphaStrikeYamlData(weaponYamlData(streakLrm));
         assertArrayEquals(new double[] { 0.5, 0.5, 0.5, 0 }, (double[]) streakLrmProfile.get("damage"));
+    }
+
+    @Test
+    void testYamlExportsOnlyAlphaStrikeIndirectFireDifferences() {
+        for (Enumeration<EquipmentType> types = EquipmentType.getAllTypes(); types.hasMoreElements(); ) {
+            EquipmentType equipmentType = types.nextElement();
+            if (!(equipmentType instanceof WeaponType weaponType)) {
+                continue;
+            }
+
+            assertEquals(weaponType.hasFlag(WeaponType.F_INDIRECT_FIRE), weaponType.hasIndirectFire(),
+                  weaponType.getInternalName());
+
+            Map<String, Object> alphaStrike = alphaStrikeYamlData(weaponYamlData(weaponType));
+            boolean differs = weaponType.isAlphaStrikeIndirectFire() != weaponType.hasIndirectFire();
+            assertEquals(differs, alphaStrike != null && alphaStrike.containsKey("indirectFire"),
+                  weaponType.getInternalName());
+            if (differs) {
+                assertEquals(weaponType.isAlphaStrikeIndirectFire(), alphaStrike.get("indirectFire"),
+                      weaponType.getInternalName());
+            }
+        }
     }
 
     @SuppressWarnings("unchecked")

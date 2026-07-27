@@ -1284,6 +1284,11 @@ public class ForceGeneratorOptionsView extends JPanel implements FocusListener, 
      */
     public void setOnFactionChanged(@Nullable Consumer<FactionRecord> handler) {
         this.onFactionChanged = handler;
+        // Report the current selection straight away. The faction is seeded before an embedder gets
+        // the chance to register, so a handler that only ever heard about changes would never learn
+        // the faction the panel opened on - which is the usual case, since most users generate for
+        // the faction it starts on without touching the selector.
+        notifyFactionChanged();
     }
 
     /**

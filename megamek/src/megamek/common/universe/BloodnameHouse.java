@@ -34,6 +34,7 @@ package megamek.common.universe;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Stream;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import megamek.common.annotations.Nullable;
@@ -225,19 +226,51 @@ public class BloodnameHouse {
      * both "exclusive to its origin Clan" and "held by three Clans after the Reaving" at once, which
      * is how forty-two of them were recorded.</p>
      *
+     * <p>A legacy can also stop being exclusive long before the Reaving. Clan Wolf shared fourteen of
+     * its names with the Wolves-in-Exile at the schism in 3057, and Clan Wolf took the Hawker legacy
+     * from the Diamond Sharks in 3060. Where a dated transfer is on record, exclusivity ends there
+     * rather than waiting for the Reaving.</p>
+     *
      * <p>An explicit {@link #exclusiveUntil} always wins, so a better-sourced date can be written into
      * the data at any time.</p>
      *
-     * @return the year exclusivity ends, or {@code null} while it still holds
+     * @return the earliest year exclusivity is known to end, or {@code null} while it still holds
      */
     public @Nullable Integer getEffectiveExclusiveUntil() {
         if (exclusiveUntil != null) {
             return exclusiveUntil;
         }
-        if (!exclusive || (postReaving.size() <= 1)) {
+        if (!exclusive) {
             return null;
         }
-        return (reaved != null) ? reaved : WARS_OF_REAVING_END;
+
+        Integer earliest = earliestTransferYear();
+        if (postReaving.size() > 1) {
+            int sharedOutByTheReaving = (reaved != null) ? reaved : WARS_OF_REAVING_END;
+            if ((earliest == null) || (sharedOutByTheReaving < earliest)) {
+                earliest = sharedOutByTheReaving;
+            }
+        }
+        return earliest;
+    }
+
+    /**
+     * The first year another Clan is recorded as taking the legacy on.
+     *
+     * <p>Absorption is deliberately not counted: it moves the whole legacy to the absorbing Clan,
+     * which may hold it just as exclusively as the Clan it came from.</p>
+     *
+     * @return the earliest dated share or acquisition, or {@code null} if none carries a date
+     */
+    private @Nullable Integer earliestTransferYear() {
+        Integer earliest = null;
+        for (BloodnameTransfer transfer : Stream.concat(shared.stream(), acquired.stream()).toList()) {
+            Integer date = transfer.getDate();
+            if ((date != null) && ((earliest == null) || (date < earliest))) {
+                earliest = date;
+            }
+        }
+        return earliest;
     }
 
     public boolean isLimited() {

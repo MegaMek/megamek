@@ -32,7 +32,7 @@
  * affiliated with Microsoft.
  */
 
-package megamek.common.weapons.handlers;
+package megamek.common.weapons.handlers.mrm;
 
 import java.io.Serial;
 import java.util.ArrayList;
@@ -53,7 +53,7 @@ import megamek.server.totalWarfare.TWGameManager;
 /**
  * @author Sebastian Brocks
  */
-public class MRMHandler extends MissileWeaponHandler {
+public class MRMHandler extends megamek.common.weapons.handlers.MissileWeaponHandler {
 
     /**
      *

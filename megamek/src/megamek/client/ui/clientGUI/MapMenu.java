@@ -97,6 +97,7 @@ import megamek.common.equipment.WeaponType;
 import megamek.common.game.Game;
 import megamek.common.options.OptionsConstants;
 import megamek.common.rolls.TargetRoll;
+import megamek.common.rules.core.CoreRulesManager;
 import megamek.common.units.*;
 import megamek.logging.MMLogger;
 import megamek.server.commands.*;
@@ -1490,6 +1491,10 @@ public class MapMenu extends JPopupMenu {
                 if (hasAmmoType(AmmoType.AmmoTypeEnum.BA_MICRO_BOMB)) {
                     menu.add(targetMenuItem(new HexTarget(coords, board, Targetable.TYPE_HEX_BOMB)));
                 }
+                
+                if (hasWeaponFlag(WeaponType.F_MRM) && hasMiscFlag(MiscType.F_APOLLO) && Game.rulesManager instanceof CoreRulesManager) {
+                    menu.add(targetMenuItem(new HexTarget(coords, board, Targetable.TYPE_SATURATION)));
+                }
 
                 if (hasWeaponFlag(WeaponType.F_DIVE_BOMB)
                       || hasWeaponFlag(WeaponType.F_ALT_BOMB)) {
@@ -1605,6 +1610,18 @@ public class MapMenu extends JPopupMenu {
             }
         }
 
+        return false;
+    }
+    
+    private boolean hasMiscFlag(EquipmentFlag miscFlag) {
+        if (myEntity.getEquipment().isEmpty()) {
+            return false;
+        }
+        for (Mounted<?> equip : myEntity.getMisc()) {
+            if (equip.getType().hasFlag(miscFlag)) {
+                return true;
+            }
+        }
         return false;
     }
 

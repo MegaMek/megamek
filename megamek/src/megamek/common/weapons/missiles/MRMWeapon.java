@@ -47,9 +47,10 @@ import megamek.common.equipment.MiscType;
 import megamek.common.equipment.Mounted;
 import megamek.common.game.Game;
 import megamek.common.loaders.EntityLoadingException;
-import megamek.common.options.OptionsConstants;
+import megamek.common.units.Targetable;
 import megamek.common.weapons.handlers.AttackHandler;
-import megamek.common.weapons.handlers.MRMHandler;
+import megamek.common.weapons.handlers.mrm.MRMHandler;
+import megamek.common.weapons.handlers.mrm.MRMSaturationHandler;
 import megamek.server.totalWarfare.TWGameManager;
 
 /**
@@ -77,6 +78,14 @@ public abstract class MRMWeapon extends MissileWeapon {
     @Nullable
     public AttackHandler getCorrectHandler(ToHitData toHit, WeaponAttackAction waa, Game game, TWGameManager manager) {
         try {
+            Mounted<?> mLinker = game.getEntity(waa.getEntityId()).getEquipment(waa.getWeaponId()).getLinkedBy();
+            if ((mLinker != null)
+                  && (mLinker.getType() instanceof MiscType)
+                  && !mLinker.isDestroyed() && !mLinker.isMissing()
+                  && !mLinker.isBreached() && mLinker.getType().hasFlag(MiscType.F_APOLLO)
+                && (waa.getTarget(game).getTargetType() == Targetable.TYPE_SATURATION)) {
+                return new MRMSaturationHandler(toHit, waa, game, manager);
+            }
             return new MRMHandler(toHit, waa, game, manager);
         } catch (EntityLoadingException ignored) {
             LOGGER.warn("Get Correct Handler - Attach Handler Received Null Entity.");

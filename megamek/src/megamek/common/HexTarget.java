@@ -144,6 +144,7 @@ public class HexTarget implements Targetable {
         final String typeString = switch (type) {
             case Targetable.TYPE_FLARE_DELIVER -> Messages.getString("HexTarget.DeliverFlare");
             case Targetable.TYPE_MINEFIELD_DELIVER -> Messages.getString("HexTarget.DeliverMinefield");
+            case Targetable.TYPE_SATURATION -> Messages.getString("HexTarget.DeliverSaturation");
             case Targetable.TYPE_HEX_BOMB, Targetable.TYPE_HEX_AERO_BOMB -> Messages.getString("HexTarget.Bomb");
             case Targetable.TYPE_HEX_CLEAR -> Messages.getString("HexTarget.Clear");
             case Targetable.TYPE_HEX_IGNITE -> Messages.getString("HexTarget.Ignite");

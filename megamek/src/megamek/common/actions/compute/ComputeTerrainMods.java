@@ -183,7 +183,8 @@ public class ComputeTerrainMods {
         ToHitData terrainModifier = Compute.getTargetTerrainModifier(game, target, eiPilotStatus, inSameBuilding,
               underWater);
 
-        if ((targetType != Targetable.TYPE_MINEFIELD_DELIVER)
+        if (targetType != Targetable.TYPE_MINEFIELD_DELIVER
+              && targetType != Targetable.TYPE_SATURATION
               && !isPointBlankShot
               && !semiGuidedIndirectVsTaggedTarget
               && !indirectMortarWithoutSpotter) {

@@ -47,10 +47,8 @@ public interface Targetable extends InGameObject, Serializable {
     int TYPE_ENTITY = 0;
     int TYPE_HEX_CLEAR = 1;
     int TYPE_HEX_IGNITE = 2;
-    int TYPE_HEX_TAG = 19;
     int TYPE_BUILDING = 3;
     int TYPE_BLDG_IGNITE = 4;
-    int TYPE_BLDG_TAG = 20;
     int TYPE_MINEFIELD_CLEAR = 5;
     int TYPE_MINEFIELD_DELIVER = 6;
     int TYPE_HEX_ARTILLERY = 7;
@@ -63,6 +61,9 @@ public interface Targetable extends InGameObject, Serializable {
     int TYPE_FUEL_TANK_IGNITE = 16;
     int TYPE_HEX_SCREEN = 17;
     int TYPE_HEX_AERO_BOMB = 18;
+    int TYPE_HEX_TAG = 19;
+    int TYPE_BLDG_TAG = 20;
+    int TYPE_SATURATION = 21;
 
     int getTargetType();
 

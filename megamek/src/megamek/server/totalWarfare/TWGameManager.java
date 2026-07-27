@@ -7056,8 +7056,17 @@ public class TWGameManager extends AbstractGameManager {
     public Vector<Report> deliverInfernoMissiles(Entity ae, Targetable t, int missiles, int called) {
         return deliverInfernoMissiles(ae, t, missiles, called, false);
     }
-
-    /**
+    
+    public void deliverSaturationMRM(Coords coords, int OwnerId, int damageValue, int attackerEntityId) {
+        // CORE This is experimental and needs damage calls
+        Hex hex = game.getBoard().getHex(coords);
+        Report r;
+        Vector<Report> vPhaseReport = new Vector<>();
+        for (Entity e : game.getEntitiesVector(coords)) {
+        }
+    }
+    
+        /**
      * deliver inferno missiles
      *
      * @param ae         the <code>Entity</code> that fired the missiles

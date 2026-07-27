@@ -44,6 +44,7 @@ import static org.mockito.Mockito.when;
 import java.util.Enumeration;
 import java.util.Map;
 
+import megamek.common.alphaStrike.AlphaStrikeElement;
 import megamek.common.equipment.AmmoType.AmmoTypeEnum;
 import megamek.common.equipment.EquipmentType;
 import megamek.common.equipment.Mounted;

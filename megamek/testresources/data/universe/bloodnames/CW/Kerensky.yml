@@ -8,7 +8,7 @@ houses:
     phenotype: "GENERAL"
     exclusive: true
     limited: true
-    abjured: true
+    abjured: 3060
     dormant: 3062
     reaved: 3075
     reactivated: 3080

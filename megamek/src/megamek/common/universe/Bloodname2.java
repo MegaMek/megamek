@@ -40,8 +40,8 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 /**
  * A Bloodname, together with the Houses that descend from it.
  *
- * <p>Named Bloodname2 to sit alongside MekHQ's older Bloodname class while the two coexist; that one
- * loads from bloodnames.xml, this one from the Clan faction files.</p>
+ * <p>Named Bloodname2 to sit alongside MekHQ's Bloodname class, which is the game-facing view of the
+ * same legacy; this is the data as it is stored.</p>
  */
 @SuppressWarnings("unused") // Fields are assigned when factions are loaded from YAML
 public class Bloodname2 {

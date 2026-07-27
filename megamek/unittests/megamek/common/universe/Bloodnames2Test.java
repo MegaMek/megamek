@@ -111,7 +111,7 @@ class Bloodnames2Test {
         assertEquals("GENERAL", house.getPhenotype());
         assertTrue(house.isExclusive());
         assertTrue(house.isLimited());
-        assertTrue(house.isAbjured());
+        assertEquals(3060, house.getAbjured());
         assertEquals(3062, house.getDormant());
         assertEquals(3075, house.getReaved());
         assertEquals(3080, house.getReactivated());
@@ -162,6 +162,7 @@ class Bloodnames2Test {
         assertNull(house.getPhenotype());
         assertFalse(house.isExclusive());
         assertNull(house.getDormant());
+        assertNull(house.getAbjured());
         assertNull(house.getAbsorbed());
         assertTrue(house.getAcquired().isEmpty());
         assertTrue(house.getShared().isEmpty());

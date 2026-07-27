@@ -78,9 +78,9 @@ public class BloodnameHouse {
     @JsonProperty("limited")
     private boolean limited;
 
-    /** Held only by its own Clan after that Clan was abjured. */
+    /** Year the founding Clan was abjured, after which only that Clan grants the name. */
     @JsonProperty("abjured")
-    private boolean abjured;
+    private Integer abjured;
 
     /** Year the legacy fell dormant, or {@code null} if it never did. */
     @JsonProperty("dormant")
@@ -169,7 +169,7 @@ public class BloodnameHouse {
         return limited;
     }
 
-    public boolean isAbjured() {
+    public @Nullable Integer getAbjured() {
         return abjured;
     }
 

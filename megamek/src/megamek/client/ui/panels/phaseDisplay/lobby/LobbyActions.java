@@ -60,6 +60,7 @@ import megamek.client.ui.dialogs.SBFStats.SBFStatsDialog;
 import megamek.client.ui.dialogs.UnitEditorDialog;
 import megamek.client.ui.dialogs.abstractDialogs.ASStatsDialog;
 import megamek.client.ui.dialogs.customMek.CustomMekDialog;
+import megamek.client.ui.dialogs.lobby.TrainOrderDialog;
 import megamek.client.ui.dialogs.iconChooser.CamoChooserDialog;
 import megamek.common.Player;
 import megamek.common.bays.Bay;
@@ -771,6 +772,70 @@ public class LobbyActions {
         }
 
         lobby.towBy(trailer, tractorId);
+    }
+
+    /**
+     * Connects a multi-unit selection into a tractor-and-trailer train in one operation, after asking the player what
+     * order the trailers should sit in.
+     * <p>
+     * Order is load-bearing rather than cosmetic: a unit draws ammunition only from its immediate neighbours, so the
+     * carriage placed directly behind the gun is the only one that can feed it. The server validates and applies the
+     * whole chain, so a rejected request leaves every unit unattached.
+     * </p>
+     */
+    public void connectTrain(Collection<Entity> entities) {
+        List<Entity> editable = new ArrayList<>(entities);
+        editable.removeIf(this::isNotEditable);
+        if (editable.size() != entities.size()) {
+            logger.info("[Train] ignoring {} unit(s) in the selection that this player cannot edit",
+                  entities.size() - editable.size());
+        }
+
+        List<Entity> candidateHeads = new ArrayList<>();
+        List<Entity> trailers = new ArrayList<>();
+        for (Entity entity : editable) {
+            if (entity.getTractor() != Entity.NONE) {
+                logger.info("[Train] cannot connect: {} is already part of a train", entity.getShortName());
+                LobbyErrors.showOnlyTrainMembers(frame());
+                return;
+            }
+            if (entity.isTrailer()) {
+                trailers.add(entity);
+            } else if (entity.isTractor()) {
+                candidateHeads.add(entity);
+            } else {
+                logger.info("[Train] cannot connect: {} is neither a tractor nor a trailer", entity.getShortName());
+                LobbyErrors.showOnlyTrainMembers(frame());
+                return;
+            }
+        }
+
+        if (candidateHeads.size() != 1) {
+            logger.info("[Train] cannot connect: found {} possible tractors, need exactly one",
+                  candidateHeads.size());
+            LobbyErrors.showSingleTractorRequired(frame());
+            return;
+        }
+        if (trailers.isEmpty()) {
+            logger.info("[Train] cannot connect: no trailers in the selection");
+            LobbyErrors.showOnlyTrainMembers(frame());
+            return;
+        }
+
+        Entity head = candidateHeads.get(0);
+        TrainOrderDialog dialog = new TrainOrderDialog(frame(), head, trailers);
+        dialog.setVisible(true);
+        if (!dialog.wasConfirmed()) {
+            logger.info("[Train] connect cancelled by the player");
+            return;
+        }
+
+        List<Integer> orderedTrailerIds = new ArrayList<>();
+        for (Entity trailer : dialog.getOrderedTrailers()) {
+            orderedTrailerIds.add(trailer.getId());
+        }
+        logger.info("[Train] requesting train: {} + {} trailer(s)", head.getShortName(), orderedTrailerIds.size());
+        lobby.getLocalClient(head).sendBuildTrain(head.getId(), orderedTrailerIds);
     }
 
     /** Asks for a new name for the provided forceId and applies it. */

@@ -68,6 +68,10 @@ public final class LobbyErrors {
           "A converted force must conform to the rules given in Interstellar Operations. Conversion " +
           "will typically work with companies created in the Force Generator.";
     private static final String NO_DUAL_TOW = "Both units must have an open appropriate tow hitch.";
+    private static final String ONLY_TRAIN_MEMBERS = "Select one tractor and the trailers to hitch behind it. "
+          + "Units that are already part of a train must be detached first.";
+    private static final String SINGLE_TRACTOR_REQUIRED = "Select exactly one tractor to head the train. "
+          + "Every other selected unit must be a trailer.";
     private static final String EDIT_DAMAGE = "The Game Master edits the damage of every unit. "
           + "When there is no Game Master, you may edit the damage of your own units.";
 
@@ -101,6 +105,14 @@ public final class LobbyErrors {
 
     public static void showNoDualTow(JFrame owner) {
         JOptionPane.showMessageDialog(owner, NO_DUAL_TOW);
+    }
+
+    public static void showOnlyTrainMembers(JFrame owner) {
+        JOptionPane.showMessageDialog(owner, ONLY_TRAIN_MEMBERS);
+    }
+
+    public static void showSingleTractorRequired(JFrame owner) {
+        JOptionPane.showMessageDialog(owner, SINGLE_TRACTOR_REQUIRED);
     }
 
     public static void showNoSuchBay(JFrame owner) {

@@ -132,6 +132,7 @@ public record LobbyMekPopupActions(ChatLounge lobby) implements ActionListener {
             case LMP_UNLOAD_ALL:
             case LMP_DETACH_TRAILER:
             case LMP_DETACH_FROM_TRACTOR:
+            case LMP_CONNECT_TRAIN:
             case LMP_DEPLOY:
             case LMP_ASSIGN:
             case LMP_HEAT:
@@ -315,6 +316,10 @@ public record LobbyMekPopupActions(ChatLounge lobby) implements ActionListener {
                     updateCandidates = new HashSet<>();
                     lobby.detachTrailers(entities, updateCandidates);
                     lobby.sendUpdate(updateCandidates);
+                    break;
+
+                case LMP_CONNECT_TRAIN:
+                    lobby.lobbyActions.connectTrain(entities);
                     break;
 
                 case LMP_DETACH_FROM_TRACTOR:

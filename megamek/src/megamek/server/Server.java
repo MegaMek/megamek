@@ -1416,8 +1416,16 @@ public class Server implements Runnable {
                         GAME_LOCK.unlock();
                     }
             }
-        } catch (InvalidPacketDataException e) {
-            LOGGER.error("Invalid packet data:", e);
+        } catch (InvalidPacketDataException invalidPacketData) {
+            LOGGER.error("Invalid packet data:", invalidPacketData);
+        } catch (RuntimeException handlerFailure) {
+            // A packet handler that throws must not take the thread down with it. Both callers of this method
+            // run on threads the server cannot lose: the packet pump, whose loop would end and leave the server
+            // silently ignoring every further packet from every client, and the connection receive thread that
+            // dispatches immediate packets. Logging and dropping the offending packet keeps the game running
+            // and leaves a stack trace to diagnose from.
+            LOGGER.error(handlerFailure, "Uncaught exception handling {} packet from connection {} - the packet "
+                  + "was dropped", packet.command(), connId);
         }
     }
 

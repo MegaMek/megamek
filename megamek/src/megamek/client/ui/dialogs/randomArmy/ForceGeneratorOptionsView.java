@@ -191,7 +191,7 @@ public class ForceGeneratorOptionsView extends JPanel implements FocusListener, 
 
         gbc.gridx = 0;
         gbc.gridy = y;
-        add(new JLabel(Messages.getString("ForceGeneratorDialog.year")), gbc);
+        add(describedLabel("ForceGeneratorDialog.year"), gbc);
         txtYear = new JTextField();
         txtYear.setEditable(true);
         txtYear.setText(Integer.toString(currentYear));
@@ -202,7 +202,7 @@ public class ForceGeneratorOptionsView extends JPanel implements FocusListener, 
         txtYear.addFocusListener(this);
         gbc.gridx = 0;
         gbc.gridy = y;
-        add(new JLabel(Messages.getString("ForceGeneratorDialog.faction")), gbc);
+        add(describedLabel("ForceGeneratorDialog.faction"), gbc);
         cbFaction = new JComboBox<>();
         cbFaction.setRenderer(factionRenderer);
         gbc.gridx = 1;
@@ -213,7 +213,7 @@ public class ForceGeneratorOptionsView extends JPanel implements FocusListener, 
 
         gbc.gridx = 2;
         gbc.gridy = y;
-        add(new JLabel(Messages.getString("ForceGeneratorDialog.subfaction")), gbc);
+        add(describedLabel("ForceGeneratorDialog.subfaction"), gbc);
         cbSubFaction = new JComboBox<>();
         cbSubFaction.setRenderer(factionRenderer);
         gbc.gridx = 3;
@@ -234,7 +234,7 @@ public class ForceGeneratorOptionsView extends JPanel implements FocusListener, 
 
         gbc.gridx = 0;
         gbc.gridy = y;
-        add(new JLabel(Messages.getString("ForceGeneratorDialog.unitType")), gbc);
+        add(describedLabel("ForceGeneratorDialog.unitType"), gbc);
         cbUnitType = new JComboBox<>();
         cbUnitType.setRenderer(new CBRenderer<>(Messages.getString("ForceGeneratorDialog.combined"),
               UnitType::getTypeName));
@@ -246,7 +246,7 @@ public class ForceGeneratorOptionsView extends JPanel implements FocusListener, 
 
         gbc.gridx = 2;
         gbc.gridy = y;
-        add(new JLabel(Messages.getString("ForceGeneratorDialog.formation")), gbc);
+        add(describedLabel("ForceGeneratorDialog.formation"), gbc);
         cbFormation = new JComboBox<>();
         cbFormation.setRenderer(new CBRenderer<String>(Messages.getString("ForceGeneratorDialog.random"),
               formationDisplayNames::get));
@@ -258,7 +258,7 @@ public class ForceGeneratorOptionsView extends JPanel implements FocusListener, 
 
         gbc.gridx = 0;
         gbc.gridy = y;
-        add(new JLabel(Messages.getString("ForceGeneratorDialog.rating")), gbc);
+        add(describedLabel("ForceGeneratorDialog.rating"), gbc);
         cbRating = new JComboBox<>();
         cbRating.setRenderer(new CBRenderer<String>(Messages.getString("ForceGeneratorDialog.random"),
               ratingDisplayNames::get));
@@ -270,7 +270,7 @@ public class ForceGeneratorOptionsView extends JPanel implements FocusListener, 
 
         gbc.gridx = 2;
         gbc.gridy = y;
-        add(new JLabel(Messages.getString("ForceGeneratorDialog.weight")), gbc);
+        add(describedLabel("ForceGeneratorDialog.weight"), gbc);
         cbWeightClass = new JComboBox<>();
         cbWeightClass.setRenderer(new CBRenderer<Integer>(Messages.getString("ForceGeneratorDialog.random"),
               EntityWeightClass::getClassName));
@@ -287,7 +287,7 @@ public class ForceGeneratorOptionsView extends JPanel implements FocusListener, 
 
         gbc.gridx = 0;
         gbc.gridy = y;
-        add(new JLabel(Messages.getString("ForceGeneratorDialog.other")), gbc);
+        add(describedLabel("ForceGeneratorDialog.other"), gbc);
         cbFlags = new JComboBox<>();
         cbFlags.setRenderer(new CBRenderer<String>("---", flagDisplayNames::get));
         gbc.gridx = 1;
@@ -298,7 +298,7 @@ public class ForceGeneratorOptionsView extends JPanel implements FocusListener, 
 
         gbc.gridx = 2;
         gbc.gridy = y;
-        add(new JLabel(Messages.getString("ForceGeneratorDialog.experience")), gbc);
+        add(describedLabel("ForceGeneratorDialog.experience"), gbc);
         cbExperience = new JComboBox<>();
         cbExperience.addItem(Messages.getString("ForceGeneratorDialog.random"));
         cbExperience.addItem(Messages.getString("ForceGeneratorDialog.green"));

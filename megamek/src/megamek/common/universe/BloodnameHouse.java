@@ -53,6 +53,9 @@ import megamek.common.annotations.Nullable;
 @SuppressWarnings("unused") // Fields are assigned when factions are loaded from YAML
 public class BloodnameHouse {
 
+    /** The Wars of Reaving ended in 3075; used when a legacy does not record its own reaving year. */
+    private static final int WARS_OF_REAVING_END = 3075;
+
     // region Identity
     @JsonProperty("founder")
     private String founder;
@@ -202,14 +205,39 @@ public class BloodnameHouse {
      * @return {@code true} if exclusivity is recorded and has not yet ended
      */
     public boolean isExclusive(int year) {
-        return exclusive && ((exclusiveUntil == null) || (year < exclusiveUntil));
+        Integer until = getEffectiveExclusiveUntil();
+        return exclusive && ((until == null) || (year < until));
     }
 
     /**
-     * @return the year exclusivity ended, or {@code null} while it still holds
+     * @return the year exclusivity ended as the data states it, or {@code null} if the data does not
+     *       say; see {@link #getEffectiveExclusiveUntil()} for the year actually applied
      */
     public @Nullable Integer getExclusiveUntil() {
         return exclusiveUntil;
+    }
+
+    /**
+     * The year exclusivity ends, taking the post-Reaving roster into account.
+     *
+     * <p>A legacy held by more than one Clan after the Wars of Reaving is by definition no longer
+     * exclusive, so {@link #postReaving} names the Clans that ended it. Without this a House reads as
+     * both "exclusive to its origin Clan" and "held by three Clans after the Reaving" at once, which
+     * is how forty-two of them were recorded.</p>
+     *
+     * <p>An explicit {@link #exclusiveUntil} always wins, so a better-sourced date can be written into
+     * the data at any time.</p>
+     *
+     * @return the year exclusivity ends, or {@code null} while it still holds
+     */
+    public @Nullable Integer getEffectiveExclusiveUntil() {
+        if (exclusiveUntil != null) {
+            return exclusiveUntil;
+        }
+        if (!exclusive || (postReaving.size() <= 1)) {
+            return null;
+        }
+        return (reaved != null) ? reaved : WARS_OF_REAVING_END;
     }
 
     public boolean isLimited() {

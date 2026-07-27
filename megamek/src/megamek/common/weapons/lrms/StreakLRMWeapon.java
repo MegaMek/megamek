@@ -68,7 +68,7 @@ public abstract class StreakLRMWeapon extends LRMWeapon {
     public StreakLRMWeapon() {
         super();
         this.ammoType = AmmoType.AmmoTypeEnum.LRM_STREAK;
-        flags = flags.or(F_PROTO_WEAPON).andNot(F_ARTEMIS_COMPATIBLE);
+        flags = flags.or(F_PROTO_WEAPON).andNot(F_ARTEMIS_COMPATIBLE).andNot(F_INDIRECT_FIRE);
         clearModes();
         // Tech Progression tweaked to combine IntOps with TRO Prototypes/3145 NTNU RS
         techAdvancement.setTechBase(TechBase.CLAN).setTechRating(TechRating.F)
@@ -127,10 +127,5 @@ public abstract class StreakLRMWeapon extends LRMWeapon {
             oneShotTag = "OSI ";
         }
         return "LRM STREAK " + oneShotTag + ((rackSize < 10) ? "0" + rackSize : rackSize);
-    }
-
-    @Override
-    public boolean hasIndirectFire() {
-        return false;
     }
 }

@@ -80,7 +80,7 @@ public class CLBAMortarLight extends Weapon {
         tonnage = 0.3;
         cost = 2100;
         criticalSlots = 2;
-        flags = flags.or(F_BALLISTIC).or(F_BURST_FIRE).or(F_BA_WEAPON).or(F_MORTAR_TYPE_INDIRECT)
+        flags = flags.or(F_BALLISTIC).or(F_BURST_FIRE).or(F_BA_WEAPON).or(F_MORTAR_TYPE_INDIRECT).or(F_INDIRECT_FIRE)
               .andNot(F_MEK_WEAPON).andNot(F_TANK_WEAPON).andNot(F_AERO_WEAPON).andNot(F_PROTO_WEAPON);
         rulesRefs = "263, TM";
         techAdvancement.setTechBase(TechBase.ALL)
@@ -94,11 +94,6 @@ public class CLBAMortarLight extends Weapon {
               .setClanApproximate(false, false, true, false, false)
               .setPrototypeFactions(Faction.FS, Faction.LC)
               .setProductionFactions(Faction.LC);
-    }
-
-    @Override
-    public boolean hasIndirectFire() {
-        return true;
     }
 
     @Override

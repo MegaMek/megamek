@@ -71,7 +71,7 @@ public class InfantrySupportMortarLightInfernoWeapon extends InfantryWeapon {
         cost = 1400;
         bv = 0.79;
         tonnage = .050;
-        flags = flags.or(F_INFERNO).or(F_BALLISTIC).or(F_INF_SUPPORT).or(F_MORTAR_TYPE_INDIRECT);
+        flags = flags.or(F_INFERNO).or(F_BALLISTIC).or(F_INF_SUPPORT).or(F_MORTAR_TYPE_INDIRECT).or(F_INDIRECT_FIRE);
         String[] modeStrings = { "Damage", "Heat" };
         setModes(modeStrings);
         infantryDamage = 0.26;
@@ -101,14 +101,6 @@ public class InfantrySupportMortarLightInfernoWeapon extends InfantryWeapon {
             removeMode(MODE_MISSILE_INDIRECT);
             removeMode(MODE_INDIRECT_HEAT);
         }
-    }
-
-    @Override
-    public boolean hasIndirectFire() {
-        // TO:AUE - conventional infantry whose Light/Heavy Mortar defines their final range value may
-        // use indirect fire like Mek Mortars. The F_MORTAR_TYPE_INDIRECT flag is only consulted on the
-        // platoon's range-defining weapon, so this capability applies only when the mortar sets the range.
-        return true;
     }
 
     @Override

@@ -84,9 +84,9 @@
 <#if hasTurret2>
 		<tr>
 			<td>Rear Turret</td>
-			<td align="center">${structureValues.TU}</td>
-			<td align="center">${armorValues.TU}</td>
-			<#if patchworkByLoc??><td>${patchworkByLoc.TU}</td></#if>
+			<td align="center">${structureValues.RT}</td>
+			<td align="center">${armorValues.RT}</td>
+			<#if patchworkByLoc??><td>${patchworkByLoc.RT}</td></#if>
 		</tr>
 		<tr>
 			<td>Front Turret</td>

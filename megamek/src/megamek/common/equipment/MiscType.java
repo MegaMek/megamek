@@ -11779,7 +11779,7 @@ public class MiscType extends EquipmentType {
         misc.tonnage = 1;
         misc.criticalSlots = 1;
         misc.cost = 200;
-        misc.flags = misc.flags.or(F_MEK_EQUIPMENT);
+        misc.flags = misc.flags.or(F_MEK_EQUIPMENT, F_LAM_FUEL_TANK);
         misc.explosive = true; // Assumed. Game effects not implemented. Might follow rules for Bomb Bay Fuel,
         // IO p.111
         misc.rulesRefs = "108, IO:AE";

@@ -17200,24 +17200,36 @@ public abstract class Entity extends TurnOrdered
         ArrayList<Entity> thisTrain = new ArrayList<>();
         thisTrain.add(this);
         for (int id : getAllTowedUnits()) {
-            Entity tr = game.getEntity(id);
-            thisTrain.add(tr);
+            Entity towedUnit = game.getEntity(id);
+            thisTrain.add(towedUnit);
+        }
+
+        // The towing limit belongs to the powered tractor at the head of the train, not to whichever unit the new
+        // trailer is being hitched to: "Tractors may pull one or more Trailers whose combined weight is less than or
+        // equal to the Tractor's own weight" (TM, Tractors). When a trailer is the attach point, its own tonnage is
+        // irrelevant - what matters is what the tractor pulling the whole train can handle.
+        Entity poweredTractor = this;
+        if (getTractor() != Entity.NONE) {
+            Entity trainTractor = game.getEntity(getTractor());
+            if (trainTractor != null) {
+                poweredTractor = trainTractor;
+            }
         }
 
         // Add up the weight of all carried trailers. A tractor can tow a total tonnage equal to its own.
-        double tractorWeight = getWeight();
+        double tractorWeight = poweredTractor.getWeight();
         double trailerWeight = 0;
         // Add up what the tractor's already towing
-        for (int id : getAllTowedUnits()) {
-            Entity tr = game.getEntity(id);
+        for (int id : poweredTractor.getAllTowedUnits()) {
+            Entity towedUnit = game.getEntity(id);
 
-            if (tr == null) {
+            if (towedUnit == null) {
                 continue;
             }
 
-            trailerWeight += tr.getWeight();
+            trailerWeight += towedUnit.getWeight();
         }
-        if (trailerWeight + trailer.getWeight() > tractorWeight) {
+        if ((trailerWeight + trailer.getWeight()) > tractorWeight) {
             return false;
         }
 

@@ -1290,6 +1290,10 @@ public class TWGameManager extends AbstractGameManager {
         // first, mark doomed entities as destroyed and flag them
         Vector<Entity> toRemove = new Vector<>(0, 10);
 
+        // Collected rather than logged per unit, so a long train produces one line a phase instead of one per
+        // trailer. See the movement branch below.
+        List<String> trailersSkippingMovement = new ArrayList<>();
+
         for (Entity entity : game.getEntitiesVector()) {
             entity.newPhase(phase);
             if (entity.isDoomed()) {
@@ -1356,6 +1360,7 @@ public class TWGameManager extends AbstractGameManager {
                 // towed by a Tractor" (TM, Trailers). It is repositioned when its tractor moves, so it takes no
                 // movement turn of its own; offering one only produces a unit that cannot be moved.
                 entity.setDone(true);
+                trailersSkippingMovement.add(entity.getDisplayName());
             } else {
                 entity.setDone(false);
             }
@@ -1395,6 +1400,11 @@ public class TWGameManager extends AbstractGameManager {
             if (entity instanceof MekWarrior mekWarrior) {
                 mekWarrior.setLanded(true);
             }
+        }
+
+        if (!trailersSkippingMovement.isEmpty()) {
+            LOGGER.info("[Train] {} trailer(s) take no movement turn, they move with their tractor: {}",
+                  trailersSkippingMovement.size(), String.join(", ", trailersSkippingMovement));
         }
 
         // flag deployed and doomed, but not destroyed out of game entities

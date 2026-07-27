@@ -1559,10 +1559,14 @@ public class Client extends AbstractClient {
     }
 
     /**
-     * Send called shot change data to the server
+     * Send called shot change data to the server.
+     *
+     * @param entityId     the id of the entity whose weapon is changing
+     * @param equipmentNum the equipment number of the weapon
+     * @param calledShot   the new called shot, one of the {@link megamek.common.CalledShot} CALLED_ constants
      */
-    public void sendCalledShotChange(int nEntity, int nEquip) {
-        send(new Packet(PacketCommand.ENTITY_CALLED_SHOT_CHANGE, nEntity, nEquip));
+    public void sendCalledShotChange(int entityId, int equipmentNum, int calledShot) {
+        send(new Packet(PacketCommand.ENTITY_CALLED_SHOT_CHANGE, entityId, equipmentNum, calledShot));
     }
 
     /**

@@ -27508,24 +27508,25 @@ public class TWGameManager extends AbstractGameManager {
     }
 
     /**
-     * receive and process an entity mode change packet
+     * receive and process an entity called shot change packet
      *
-     * @param c         the packet to be processed
+     * @param packet    the packet to be processed
      * @param connIndex the id for connection that received the packet.
      */
-    private void receiveEntityCalledShotChange(Packet c, int connIndex) throws InvalidPacketDataException {
-        int entityId = c.getIntValue(0);
-        int equipId = c.getIntValue(1);
-        Entity e = game.getEntity(entityId);
-        if (e == null || e.getOwner() != game.getPlayer(connIndex)) {
+    private void receiveEntityCalledShotChange(Packet packet, int connIndex) throws InvalidPacketDataException {
+        int entityId = packet.getIntValue(0);
+        int equipId = packet.getIntValue(1);
+        int calledShot = packet.getIntValue(2);
+        Entity entity = game.getEntity(entityId);
+        if ((entity == null) || (entity.getOwner() != game.getPlayer(connIndex))) {
             return;
         }
-        Mounted<?> m = e.getEquipment(equipId);
+        Mounted<?> mounted = entity.getEquipment(equipId);
 
-        if (m == null) {
+        if (mounted == null) {
             return;
         }
-        m.getCalledShot().switchCalledShot();
+        mounted.getCalledShot().setCall(calledShot);
     }
 
     /**

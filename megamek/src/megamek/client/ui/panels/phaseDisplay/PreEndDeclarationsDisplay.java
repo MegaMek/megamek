@@ -659,18 +659,22 @@ public class PreEndDeclarationsDisplay extends AttackPhaseDisplay {
      */
     private boolean hasNovaUnits() {
         int localPlayerId = localPlayerId();
-        boolean hasActiveNova = game.getEntitiesVector().stream()
-              .filter(entity -> entity.getOwnerId() == localPlayerId)
-              .anyMatch(Entity::hasActiveNovaCEWS);
-        if (!hasActiveNova) {
-            boolean hasSwitchedOffNova = game.getEntitiesVector().stream()
-                  .filter(entity -> entity.getOwnerId() == localPlayerId)
-                  .anyMatch(Entity::hasNovaCEWS);
-            if (hasSwitchedOffNova) {
-                LOGGER.debug("[PreEnd] Nova network button disabled - all of the player's Nova CEWS are switched off");
+        boolean hasSwitchedOffNova = false;
+        for (Entity entity : game.getEntitiesVector()) {
+            if (entity.getOwnerId() != localPlayerId) {
+                continue;
+            }
+            if (entity.hasActiveNovaCEWS()) {
+                return true;
+            }
+            if (entity.hasNovaCEWS()) {
+                hasSwitchedOffNova = true;
             }
         }
-        return hasActiveNova;
+        if (hasSwitchedOffNova) {
+            LOGGER.debug("[PreEnd] Nova network button disabled - all of the player's Nova CEWS are switched off");
+        }
+        return false;
     }
 
     private void setNovaNetworkEnabled(boolean enabled) {

@@ -274,17 +274,6 @@ public abstract class Mek extends Entity implements Fortifiable, RubbleClearer, 
     // for Harjel II/III
     private final boolean[] armorDamagedThisTurn;
 
-    /**
-     * No longer used: heat sink activation is tracked per mount via equipment modes. The two fields are retained only
-     * so that pre-existing save games (which contain them) still deserialize; XStream rejects unknown elements.
-     */
-    @SuppressWarnings("unused")
-    private int sinksOn = -1;
-
-    /** @see #sinksOn */
-    @SuppressWarnings("unused")
-    private int sinksOnNextRound = -1;
-
     private boolean autoEject = true;
 
     private boolean condEjectAmmo = true;
@@ -2369,19 +2358,20 @@ public abstract class Mek extends Entity implements Fortifiable, RubbleClearer, 
         int capacity = 0;
         boolean isDoubleHeatSink = false;
 
-        for (Mounted<?> mounted : getMisc()) {
+        for (MiscMounted mounted : getMisc()) {
+            MiscType miscType = mounted.getType();
             // A heat sink the player has switched off dissipates nothing until it is switched back on
-            if (mounted.isDestroyed() || mounted.isBreached() || mounted.isModeTurnedOff()) {
+            if ((miscType == null) || mounted.isDestroyed() || mounted.isBreached() || mounted.isModeTurnedOff()) {
                 continue;
             }
-            if (mounted.getType().hasFlag(MiscType.F_HEAT_SINK)) {
+            if (miscType.hasFlag(MiscType.F_HEAT_SINK)) {
                 capacity++;
-            } else if (mounted.getType().hasFlag(MiscType.F_DOUBLE_HEAT_SINK)
-                  || mounted.getType().hasFlag(MiscType.F_IS_DOUBLE_HEAT_SINK_PROTOTYPE)) {
+            } else if (miscType.hasFlag(MiscType.F_DOUBLE_HEAT_SINK)
+                  || miscType.hasFlag(MiscType.F_IS_DOUBLE_HEAT_SINK_PROTOTYPE)) {
                 capacity += 2;
                 isDoubleHeatSink = true;
             } else if (includePartialWing
-                  && mounted.getType().hasFlag(MiscType.F_PARTIAL_WING)
+                  && miscType.hasFlag(MiscType.F_PARTIAL_WING)
                   && // unless all crits are destroyed, we get the bonus
                   ((getGoodCriticalSlots(CriticalSlot.TYPE_EQUIPMENT,
                         getEquipmentNum(mounted), Mek.LOC_RIGHT_TORSO) > 0)
@@ -2438,16 +2428,17 @@ public abstract class Mek extends Entity implements Fortifiable, RubbleClearer, 
 
         // okay, count leg sinks
         int sinksUnderwater = 0;
-        for (Mounted<?> mounted : getMisc()) {
-            if (mounted.isDestroyed() || mounted.isBreached() || mounted.isModeTurnedOff()
+        for (MiscMounted mounted : getMisc()) {
+            MiscType miscType = mounted.getType();
+            if ((miscType == null) || mounted.isDestroyed() || mounted.isBreached() || mounted.isModeTurnedOff()
                   || !locationIsLeg(mounted.getLocation())) {
                 continue;
             }
-            if (mounted.getType().hasFlag(MiscType.F_HEAT_SINK)) {
+            if (miscType.hasFlag(MiscType.F_HEAT_SINK)) {
                 sinksUnderwater++;
-            } else if (mounted.getType().hasFlag(MiscType.F_DOUBLE_HEAT_SINK)
-                  || mounted.getType().hasFlag(MiscType.F_IS_DOUBLE_HEAT_SINK_PROTOTYPE)
-                  || mounted.getType().hasFlag(MiscType.F_LASER_HEAT_SINK)) {
+            } else if (miscType.hasFlag(MiscType.F_DOUBLE_HEAT_SINK)
+                  || miscType.hasFlag(MiscType.F_IS_DOUBLE_HEAT_SINK_PROTOTYPE)
+                  || miscType.hasFlag(MiscType.F_LASER_HEAT_SINK)) {
                 sinksUnderwater += 2;
             }
         }
@@ -4697,10 +4688,10 @@ public abstract class Mek extends Entity implements Fortifiable, RubbleClearer, 
                 continue;
             }
             if (remainingActive > 0) {
-                mounted.setMode("On");
+                mounted.setMode(Mounted.MODE_ON);
                 remainingActive--;
             } else {
-                mounted.setMode("Off");
+                mounted.setMode(Mounted.MODE_OFF);
             }
         }
     }
@@ -4723,9 +4714,13 @@ public abstract class Mek extends Entity implements Fortifiable, RubbleClearer, 
     /** Switches every heat sink mount (including prototype double heat sinks and Freezers) back on. */
     public void resetSinks() {
         for (MiscMounted mounted : getMisc()) {
-            boolean isPrototypeSink = mounted.getType().hasFlag(MiscType.F_IS_DOUBLE_HEAT_SINK_PROTOTYPE);
+            MiscType miscType = mounted.getType();
+            if (miscType == null) {
+                continue;
+            }
+            boolean isPrototypeSink = miscType.hasFlag(MiscType.F_IS_DOUBLE_HEAT_SINK_PROTOTYPE);
             if (isCountedHeatSink(mounted) || isPrototypeSink) {
-                mounted.setMode("On");
+                mounted.setMode(Mounted.MODE_ON);
             }
         }
     }
@@ -4752,9 +4747,10 @@ public abstract class Mek extends Entity implements Fortifiable, RubbleClearer, 
      *       compact or laser heat sinks; prototype double heat sinks and Freezers are excluded, matching
      *       {@link #getNumberOfSinks()})
      */
-    private static boolean isCountedHeatSink(Mounted<?> mounted) {
-        return mounted.getType().hasFlag(MiscType.F_HEAT_SINK)
-              || mounted.getType().hasFlag(MiscType.F_DOUBLE_HEAT_SINK);
+    private static boolean isCountedHeatSink(MiscMounted mounted) {
+        MiscType miscType = mounted.getType();
+        return (miscType != null)
+              && (miscType.hasFlag(MiscType.F_HEAT_SINK) || miscType.hasFlag(MiscType.F_DOUBLE_HEAT_SINK));
     }
 
     /**

@@ -47,6 +47,7 @@ import megamek.common.board.Coords;
 import megamek.common.compute.Compute;
 import megamek.common.equipment.EquipmentActivation;
 import megamek.common.equipment.Minefield;
+import megamek.common.equipment.MiscMounted;
 import megamek.common.equipment.MiscType;
 import megamek.common.equipment.Mounted;
 import megamek.common.game.Game;
@@ -325,13 +326,17 @@ public class ServerHelper {
 
         // if no probe, save ourselves a few loops
         if (probeRange < 0) {
-            detector.getMisc().stream()
-                  .filter(mounted -> mounted.getType().hasFlag(MiscType.F_BAP))
-                  .forEach(mounted -> LOGGER.debug(
-                        "[HiddenUnits] {}: probe {} not functioning (mode '{}', pending '{}', shutdown {}) "
-                              + "- no hidden unit detection",
-                        detector.getShortName(), mounted.getName(), mounted.curMode().getName(),
-                        mounted.pendingMode().getName(), detector.isShutDown()));
+            for (MiscMounted mounted : detector.getMisc()) {
+                MiscType miscType = mounted.getType();
+                if ((miscType == null) || !miscType.hasFlag(MiscType.F_BAP)) {
+                    continue;
+                }
+                LOGGER.debug(
+                      "[HiddenUnits] {}: probe {} not functioning (mode '{}', pending '{}', shutdown {}) "
+                            + "- no hidden unit detection",
+                      detector.getShortName(), mounted.getName(), mounted.curMode().getName(),
+                      mounted.pendingMode().getName(), detector.isShutDown());
+            }
             return false;
         }
 
@@ -444,7 +449,7 @@ public class ServerHelper {
         if ((newMode < 0) || (newMode >= miscType.getModesCount())) {
             return false;
         }
-        boolean isSwitchingOff = miscType.getMode(newMode).getName().equals("Off");
+        boolean isSwitchingOff = miscType.getMode(newMode).getName().equals(Mounted.MODE_OFF);
         return isSwitchingOff && EquipmentActivation.isStealthOnOrActivating(entity);
     }
 
@@ -468,7 +473,7 @@ public class ServerHelper {
         if ((newMode < 0) || (newMode >= miscType.getModesCount())) {
             return false;
         }
-        boolean isSwitchingOn = miscType.getMode(newMode).getName().equals("On");
+        boolean isSwitchingOn = miscType.getMode(newMode).getName().equals(Mounted.MODE_ON);
         return isSwitchingOn && !EquipmentActivation.hasEcmAvailableForStealth(entity);
     }
 

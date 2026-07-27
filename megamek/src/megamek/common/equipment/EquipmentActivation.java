@@ -60,12 +60,13 @@ public final class EquipmentActivation {
     public static boolean isC3SwitchedOff(Entity entity) {
         boolean hasOperableC3Equipment = false;
         for (Mounted<?> mounted : entity.getEquipment()) {
+            EquipmentType equipmentType = mounted.getType();
             boolean isC3Equipment;
-            if (mounted.getType() instanceof MiscType miscType) {
+            if (equipmentType instanceof MiscType miscType) {
                 isC3Equipment = miscType.hasFlag(MiscType.F_C3S) || miscType.hasFlag(MiscType.F_C3SBS)
                       || miscType.hasFlag(MiscType.F_C3I) || miscType.hasFlag(MiscType.F_NAVAL_C3)
                       || miscType.hasFlag(MiscType.F_NOVA);
-            } else if (mounted.getType() instanceof WeaponType weaponType) {
+            } else if (equipmentType instanceof WeaponType weaponType) {
                 isC3Equipment = weaponType.hasFlag(WeaponType.F_C3M) || weaponType.hasFlag(WeaponType.F_C3MBS);
             } else {
                 isC3Equipment = false;
@@ -92,8 +93,13 @@ public final class EquipmentActivation {
      */
     public static boolean isStealthOnOrActivating(Entity entity) {
         for (MiscMounted mounted : entity.getMisc()) {
-            if (mounted.getType().hasFlag(MiscType.F_STEALTH) && !mounted.isInoperable()
-                  && (mounted.curMode().equals("On") || mounted.modeNextRound().equals("On"))) {
+            MiscType miscType = mounted.getType();
+            if (miscType == null) {
+                continue;
+            }
+            boolean isEngagedOrEngaging = mounted.curMode().equals(Mounted.MODE_ON)
+                  || mounted.modeNextRound().equals(Mounted.MODE_ON);
+            if (miscType.hasFlag(MiscType.F_STEALTH) && !mounted.isInoperable() && isEngagedOrEngaging) {
                 return true;
             }
         }
@@ -111,7 +117,11 @@ public final class EquipmentActivation {
      */
     public static boolean hasEcmAvailableForStealth(Entity entity) {
         for (MiscMounted mounted : entity.getMisc()) {
-            if (mounted.getType().hasFlag(MiscType.F_ECM) && !mounted.isInoperable()
+            MiscType miscType = mounted.getType();
+            if (miscType == null) {
+                continue;
+            }
+            if (miscType.hasFlag(MiscType.F_ECM) && !mounted.isInoperable()
                   && !mounted.isModeTurnedOffNextRound()) {
                 return true;
             }

@@ -27253,6 +27253,13 @@ public class TWGameManager extends AbstractGameManager {
             return;
         }
 
+        EquipmentType equipmentType = mounted.getType();
+        if (equipmentType == null) {
+            EQUIP_OFF_LOGGER.debug("[EquipOff] {}: ignored mode change for equipment {} - its type cannot be resolved",
+                  entity.getShortName(), equipId);
+            return;
+        }
+
         if (ServerHelper.isEcmDeactivationBlockedByStealth(entity, mounted, mode)) {
             String message = entity.getShortName() + ": " + mounted.getName()
                   + " cannot be deactivated while the stealth armor system is engaged or engaging";
@@ -27272,7 +27279,7 @@ public class TWGameManager extends AbstractGameManager {
         }
 
         try {
-            if ((mounted.getType() instanceof MiscType miscType) && miscType.isBoobyTrap() && mode != 0
+            if ((equipmentType instanceof MiscType miscType) && miscType.isBoobyTrap() && mode != 0
                   && entity.hasBoobyTrap()) {
                 sendServerChat("There is no turning back now...");
                 entity.setBoobyTrapInitiated(true);
@@ -27285,17 +27292,18 @@ public class TWGameManager extends AbstractGameManager {
             if ((entity instanceof BattleArmor) &&
                   (!mounted.isMissing()) &&
                   mounted.isBodyMounted() &&
-                  mounted.getType().hasFlag(WeaponType.F_MISSILE) &&
+                  (equipmentType instanceof WeaponType weaponType) &&
+                  weaponType.hasFlag(WeaponType.F_MISSILE) &&
                   (mounted.getLinked() != null) &&
                   (mounted.getLinked().getUsableShotsLeft() > 0) &&
                   (mode <= 0)) {
                 mounted.setPendingDump(mode == -1);
                 // a mode change for ammo means dumping or hot loading
-            } else if ((mounted.getType() instanceof AmmoType) &&
-                  !mounted.getType().hasInstantModeSwitch() &&
+            } else if ((equipmentType instanceof AmmoType) &&
+                  !equipmentType.hasInstantModeSwitch() &&
                   (mode < 0 || mode == 0 && mounted.isPendingDump())) {
                 mounted.setPendingDump(mode == -1);
-            } else if ((mounted.getType() instanceof WeaponType) && mounted.isDWPMounted() && (mode <= 0)) {
+            } else if ((equipmentType instanceof WeaponType) && mounted.isDWPMounted() && (mode <= 0)) {
                 mounted.setPendingDump(mode == -1);
             } else {
                 if (mounted.setMode(mode)) {

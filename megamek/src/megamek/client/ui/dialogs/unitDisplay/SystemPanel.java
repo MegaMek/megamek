@@ -67,6 +67,7 @@ import megamek.common.equipment.AmmoType;
 import megamek.common.equipment.BridgeLayerState;
 import megamek.common.equipment.EquipmentActivation;
 import megamek.common.equipment.EquipmentMode;
+import megamek.common.equipment.EquipmentType;
 import megamek.common.equipment.GunEmplacement;
 import megamek.common.equipment.MiscMounted;
 import megamek.common.equipment.MiscType;
@@ -867,38 +868,41 @@ class SystemPanel extends PicMap
                 }
                 int round = client.getGame().getRoundCount();
                 boolean inSquadron = en.isPartOfFighterSquadron();
-                if ((mounted != null) && bOwner && mounted.hasModes()) {
+                EquipmentType mountedType = (mounted != null) ? mounted.getType() : null;
+                if ((mountedType != null) && bOwner && mounted.hasModes()) {
+                    boolean isMiscEquipment = mountedType instanceof MiscType;
                     if (!mounted.isInoperable() && !mounted.isDumping()
                           && (en.isActive() || en.isActive(round) || inSquadron)
                           && mounted.isModeSwitchable()) {
                         m_chMode.setEnabled(true);
                     }
                     if (!mounted.isInoperable()
-                          && (mounted.getType() instanceof MiscType)
-                          && mounted.getType().hasFlag(MiscType.F_STEALTH)
+                          && isMiscEquipment
+                          && mountedType.hasFlag(MiscType.F_STEALTH)
                           && mounted.isModeSwitchable()) {
                         m_chMode.setEnabled(true);
                     }
                     // Nova CEWS has built-in "ECM"/"Off" modes and should always be switchable
                     if (!mounted.isInoperable()
-                          && (mounted.getType() instanceof MiscType)
-                          && mounted.getType().hasFlag(MiscType.F_NOVA)
+                          && isMiscEquipment
+                          && mountedType.hasFlag(MiscType.F_NOVA)
                           && mounted.isModeSwitchable()) {
                         m_chMode.setEnabled(true);
                     }
                     // EI Interface modes should be switchable even when not deployed (IO p.69)
                     if (!mounted.isInoperable()
-                          && (mounted.getType() instanceof MiscType)
-                          && mounted.getType().hasFlag(MiscType.F_EI_INTERFACE)
+                          && isMiscEquipment
+                          && mountedType.hasFlag(MiscType.F_EI_INTERFACE)
                           && mounted.isModeSwitchable()) {
                         m_chMode.setEnabled(true);
                     }
                     // Heat sinks can be activated or deactivated even while the unit is shut down (TW,
                     // Deactivating Heat Sinks)
-                    boolean isHeatSinkMount = (mounted.getType() instanceof MiscType)
-                          && (mounted.getType().hasFlag(MiscType.F_HEAT_SINK)
-                          || mounted.getType().hasFlag(MiscType.F_DOUBLE_HEAT_SINK)
-                          || mounted.getType().hasFlag(MiscType.F_IS_DOUBLE_HEAT_SINK_PROTOTYPE));
+                    boolean isSingleHeatSink = isMiscEquipment && mountedType.hasFlag(MiscType.F_HEAT_SINK);
+                    boolean isDoubleHeatSink = isMiscEquipment && mountedType.hasFlag(MiscType.F_DOUBLE_HEAT_SINK);
+                    boolean isPrototypeDoubleHeatSink = isMiscEquipment
+                          && mountedType.hasFlag(MiscType.F_IS_DOUBLE_HEAT_SINK_PROTOTYPE);
+                    boolean isHeatSinkMount = isSingleHeatSink || isDoubleHeatSink || isPrototypeDoubleHeatSink;
                     if (!mounted.isInoperable() && isHeatSinkMount && mounted.isModeSwitchable()) {
                         m_chMode.setEnabled(true);
                     }
@@ -913,9 +917,9 @@ class SystemPanel extends PicMap
                     // below indexes into the type's mode list. InfantryWeaponMounted overrides
                     // getModesCount() to report a merged primary+secondary list that can be longer than
                     // the type's, which would index past the end.
-                    int visibleModeCount = mounted.getType().getModesCount(mounted);
+                    int visibleModeCount = mountedType.getModesCount(mounted);
                     for (int modeIndex = 0; modeIndex < visibleModeCount; modeIndex++) {
-                        EquipmentMode equipmentMode = mounted.getType().getMode(modeIndex);
+                        EquipmentMode equipmentMode = mountedType.getMode(modeIndex);
                         // Hack to prevent showing an option that is disabled by the server, but would
                         // be overwritten by every entity update if made also in the client
                         if (equipmentMode.equals("HotLoad") && en instanceof Mek
@@ -928,18 +932,18 @@ class SystemPanel extends PicMap
                         // requires an operating ECM). Off is always the LAST mode in every ECM mode list, so
                         // skipping it keeps the combo indices aligned with the equipment type's mode indices
                         // (the selection is applied by index).
-                        if (equipmentMode.equals("Off")
-                              && (mounted.getType() instanceof MiscType)
-                              && mounted.getType().hasFlag(MiscType.F_ECM)
+                        if (equipmentMode.equals(Mounted.MODE_OFF)
+                              && isMiscEquipment
+                              && mountedType.hasFlag(MiscType.F_ECM)
                               && EquipmentActivation.isStealthOnOrActivating(en)) {
                             continue;
                         }
                         // Mirror case: hide the On mode for stealth armor while no ECM suite will be
                         // operating next round (deactivated or deactivating). On is the LAST stealth mode,
                         // so the combo indices stay aligned.
-                        if (equipmentMode.equals("On")
-                              && (mounted.getType() instanceof MiscType)
-                              && mounted.getType().hasFlag(MiscType.F_STEALTH)
+                        if (equipmentMode.equals(Mounted.MODE_ON)
+                              && isMiscEquipment
+                              && mountedType.hasFlag(MiscType.F_STEALTH)
                               && !EquipmentActivation.hasEcmAvailableForStealth(en)) {
                             continue;
                         }

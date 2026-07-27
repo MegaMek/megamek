@@ -468,7 +468,7 @@ public class EquipmentType implements ITechnology {
         }
 
         // special case. A deactivated Improved Heavy Laser is not explosive (activation/deactivation rules)
-        if ((mounted.getType() instanceof ImprovedHeavyLaserWeapon) && mounted.curMode().equals("Off")) {
+        if ((mounted.getType() instanceof ImprovedHeavyLaserWeapon) && mounted.isModeTurnedOff()) {
             return false;
         }
 

@@ -6453,6 +6453,9 @@ public abstract class Entity extends TurnOrdered
         if (!isShutDown()) {
             for (MiscMounted m : getMisc()) {
                 MiscType type = m.getType();
+                if (type == null) {
+                    continue;
+                }
                 if (type.hasFlag(MiscType.F_ECM) && !m.isInoperable() && !m.isModeTurnedOff()) {
                     if (type.hasFlag(MiscType.F_SINGLE_HEX_ECM)) {
                         return 0;
@@ -6494,13 +6497,14 @@ public abstract class Entity extends TurnOrdered
             return false;
         }
         for (MiscMounted m : getMisc()) {
-            if (m.getType().hasFlag(MiscType.F_BAP)) {
+            MiscType type = m.getType();
+            if ((type != null) && type.hasFlag(MiscType.F_BAP)) {
 
                 // A probe the player has switched off provides no sensing (activation/deactivation rules); for a
                 // Watchdog/Nova CEWS the shared "Off" mode silences the probe half along with the rest of the suite.
                 if (!m.isInoperable() && !m.isModeTurnedOff()) {
                     // Beagle Isn't affected by normal ECM
-                    if (m.getType().getName().equals("Beagle Active Probe")) {
+                    if (type.getName().equals("Beagle Active Probe")) {
                         return (game == null) ||
                               !checkECM ||
                               !ComputeECM.isAffectedByAngelECM(this, getPosition(), getPosition());
@@ -6596,6 +6600,9 @@ public abstract class Entity extends TurnOrdered
 
         for (MiscMounted m : getMisc()) {
             MiscType type = m.getType();
+            if (type == null) {
+                continue;
+            }
             if (type.hasFlag(MiscType.F_BAP) && !m.isInoperable() && !m.isModeTurnedOff()) {
                 // Quirk bonus is only 2 if equipped with BAP
                 if (quirkBonus > 0) {
@@ -6610,20 +6617,20 @@ public abstract class Entity extends TurnOrdered
                 if (m.getName().equals("Bloodhound Active Probe (THB)") || m.getName().equals(Sensor.BAP)) {
                     return 8 + cyberProbeBonus + quirkBonus + spaBonus;
                 }
-                if ((m.getType()).getInternalName().equals(Sensor.CLAN_AP) ||
-                      (m.getType()).getInternalName().equals(Sensor.WATCHDOG) ||
-                      (m.getType()).getInternalName().equals(Sensor.NOVA) ||
-                      (m.getType()).getInternalName().equals(Sensor.CL_BA_LIGHT_AP)) {
+                String internalName = type.getInternalName();
+                if (internalName.equals(Sensor.CLAN_AP) ||
+                      internalName.equals(Sensor.WATCHDOG) ||
+                      internalName.equals(Sensor.NOVA) ||
+                      internalName.equals(Sensor.CL_BA_LIGHT_AP)) {
                     return 5 + cyberProbeBonus + quirkBonus + spaBonus;
                 }
-                if ((m.getType()).getInternalName().equals(Sensor.LIGHT_AP)) {
+                if (internalName.equals(Sensor.LIGHT_AP)) {
                     return 3 + cyberProbeBonus + quirkBonus + spaBonus;
                 }
-                if ((m.getType()).getInternalName().equals(Sensor.IS_BA_LIGHT_AP)) {
+                if (internalName.equals(Sensor.IS_BA_LIGHT_AP)) {
                     return 4 + cyberProbeBonus + quirkBonus + spaBonus;
                 }
-                if (m.getType().getInternalName().equals(Sensor.IS_IMPROVED) ||
-                      (m.getType().getInternalName().equals(Sensor.CL_IMPROVED))) {
+                if (internalName.equals(Sensor.IS_IMPROVED) || internalName.equals(Sensor.CL_IMPROVED)) {
                     return 2 + cyberProbeBonus + quirkBonus + spaBonus;
                 }
                 return 4 + cyberProbeBonus + quirkBonus + spaBonus;// everything else should be
@@ -6940,12 +6947,15 @@ public abstract class Entity extends TurnOrdered
     public boolean hasActiveNovaCEWS() {
         if (isShutDown() || isOffBoard()) {
             return false;
-        } else {
-            return getMisc().stream()
-                  .filter(Mounted::isOperable)
-                  .filter(m -> !m.isModeTurnedOff())
-                  .anyMatch(m -> m.getType().hasFlag(MiscType.F_NOVA));
         }
+        for (MiscMounted mounted : getMisc()) {
+            MiscType miscType = mounted.getType();
+            if ((miscType != null) && miscType.hasFlag(MiscType.F_NOVA)
+                  && mounted.isOperable() && !mounted.isModeTurnedOff()) {
+                return true;
+            }
+        }
+        return false;
     }
 
     /**
@@ -13811,7 +13821,7 @@ public abstract class Entity extends TurnOrdered
                 String[] stringArray = {};
                 modes.add("Short");
                 modes.add("Medium");
-                modes.add("Off");
+                modes.add(Mounted.MODE_OFF);
                 misc.getType().setModes(modes.toArray(stringArray));
                 misc.getType().setInstantModeSwitch(false);
             }
@@ -13819,7 +13829,7 @@ public abstract class Entity extends TurnOrdered
             // Nova CEWS has built-in "ECM"/"Off" modes - don't override them with dynamic modes
             if (misc.getType().hasFlag(MiscType.F_ECM) && !misc.getType().hasFlag(MiscType.F_NOVA)) {
                 ArrayList<String> modes = new ArrayList<>();
-                modes.add("ECM");
+                modes.add(MiscType.MODE_ECM);
                 String[] stringArray = {};
                 if (gameOpts.booleanOption(OptionsConstants.ADVANCED_TAC_OPS_ECCM)) {
                     modes.add("ECCM");
@@ -13848,7 +13858,7 @@ public abstract class Entity extends TurnOrdered
                 // ECM suites can be deactivated (activation/deactivation rules). These types are built
                 // with setInstantModeSwitch(false), so every mode switch here -- deactivation included --
                 // is declared now and takes effect in the End Phase. Nothing registers an end-turn mode.
-                modes.add("Off");
+                modes.add(Mounted.MODE_OFF);
 
                 misc.getType().setModes(modes.toArray(stringArray));
             }

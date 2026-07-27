@@ -1153,11 +1153,14 @@ public class EquipChoicePanel extends JPanel {
                 continue;
             }
             MiscType type = equipment.getType();
+            if (type == null) {
+                continue;
+            }
             List<String> modes = new ArrayList<>();
 
             if (type.hasFlag(MiscType.F_ECM) && !type.hasFlag(MiscType.F_NOVA)) {
                 // ECM / Angel ECM
-                modes.add("ECM");
+                modes.add(MiscType.MODE_ECM);
                 if (hasEccmOption) {
                     modes.add("ECCM");
                     if (type.hasFlag(MiscType.F_ANGEL_ECM)) {
@@ -1176,7 +1179,7 @@ public class EquipChoicePanel extends JPanel {
                 }
                 // An ECM suite cannot start deactivated while the stealth armor system is engaged or engaging
                 if (!EquipmentActivation.isStealthOnOrActivating(entity)) {
-                    modes.add("Off");
+                    modes.add(Mounted.MODE_OFF);
                 }
             } else if (hasGhostTargetOption
                   && type.hasFlag(MiscType.F_COMMUNICATIONS)

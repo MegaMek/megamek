@@ -68,8 +68,8 @@ public abstract class GaussWeapon extends AmmoWeapon {
         // (formerly gated behind the TacOps gauss weapons option, TacOps p.102). A powered-down gauss
         // rifle cannot fire and does not explode on a critical hit; the switch takes effect in the
         // End Phase.
-        addMode("Powered Up");
-        addMode("Powered Down");
+        addMode(MODE_GAUSS_POWERED_UP);
+        addMode(MODE_GAUSS_POWERED_DOWN);
         setInstantModeSwitch(false);
     }
 

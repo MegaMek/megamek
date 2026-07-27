@@ -35,16 +35,19 @@ package megamek.common.units;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertInstanceOf;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import megamek.common.equipment.EquipmentActivation;
 import megamek.common.equipment.EquipmentType;
 import megamek.common.equipment.EquipmentTypeLookup;
+import megamek.common.equipment.MiscType;
 import megamek.common.equipment.Mounted;
 import megamek.common.equipment.Sensor;
 import megamek.common.exceptions.LocationFullException;
 import megamek.common.options.GameOptions;
+import megamek.common.util.SerializationHelper;
 import megamek.common.weapons.Weapon;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
@@ -82,13 +85,13 @@ class EquipmentOffModesTest {
 
         assertTrue(mek.hasBAP(false), "A freshly mounted probe defaults to On");
 
-        probe.setMode("Off");
+        probe.setMode(Mounted.MODE_OFF);
         assertTrue(mek.hasBAP(false), "The switch is only declared - no effect before the End Phase");
 
         applyPendingMode(probe);
         assertFalse(mek.hasBAP(false), "A deactivated probe senses nothing");
 
-        probe.setMode("On");
+        probe.setMode(Mounted.MODE_ON);
         applyPendingMode(probe);
         assertTrue(mek.hasBAP(false), "Reactivating the probe restores its function");
     }
@@ -100,11 +103,11 @@ class EquipmentOffModesTest {
 
         assertTrue(mek.hasActiveECM(), "A freshly mounted Guardian ECM defaults to projecting ECM");
 
-        ecm.setMode("Off");
+        ecm.setMode(Mounted.MODE_OFF);
         applyPendingMode(ecm);
         assertFalse(mek.hasActiveECM(), "A deactivated ECM suite projects no field");
 
-        ecm.setMode("ECM");
+        ecm.setMode(MiscType.MODE_ECM);
         applyPendingMode(ecm);
         assertTrue(mek.hasActiveECM(), "Reactivating the suite restores the field");
     }
@@ -117,13 +120,13 @@ class EquipmentOffModesTest {
 
         assertFalse(EquipmentActivation.isC3SwitchedOff(mek), "A freshly mounted C3i defaults to On");
 
-        c3i.setMode("Off");
+        c3i.setMode(Mounted.MODE_OFF);
         applyPendingMode(c3i);
         assertTrue(EquipmentActivation.isC3SwitchedOff(mek), "Switched-off C3 gear provides no network benefit");
         assertEquals("C3i.42", mek.getC3NetId(), "Network membership survives deactivation");
         assertTrue(mek.hasC3i(), "Capability stays presence-based so wiring/serialization keep the membership");
 
-        c3i.setMode("On");
+        c3i.setMode(Mounted.MODE_ON);
         applyPendingMode(c3i);
         assertFalse(EquipmentActivation.isC3SwitchedOff(mek), "Reactivated C3 gear rejoins its previous network");
         assertEquals("C3i.42", mek.getC3NetId(), "The previous network is restored on reactivation");
@@ -137,7 +140,7 @@ class EquipmentOffModesTest {
         assertTrue(mek.hasActiveNovaCEWS(), "A freshly mounted Nova CEWS defaults to functioning");
         assertFalse(EquipmentActivation.isC3SwitchedOff(mek));
 
-        nova.setMode("Off");
+        nova.setMode(Mounted.MODE_OFF);
         applyPendingMode(nova);
         assertFalse(mek.hasActiveNovaCEWS(), "A deactivated Nova CEWS does not function");
         assertFalse(mek.hasBAP(false), "The Off mode also silences the Nova's probe half");
@@ -156,7 +159,7 @@ class EquipmentOffModesTest {
 
         // switch off one specific sink
         Mounted<?> firstSink = mek.getMisc().get(0);
-        firstSink.setMode("Off");
+        firstSink.setMode(Mounted.MODE_OFF);
         assertEquals(10, mek.getHeatCapacity(false, false), "No effect before the End Phase");
         assertEquals(9, mek.getActiveSinksNextRound(), "The pending change is visible as next round's count");
 
@@ -213,7 +216,7 @@ class EquipmentOffModesTest {
 
         assertEquals(2, mek.getHeatCapacity(false, false), "A prototype double heat sink dissipates 2");
 
-        prototypeSink.setMode("Off");
+        prototypeSink.setMode(Mounted.MODE_OFF);
         applyPendingMode(prototypeSink);
         assertEquals(0, mek.getHeatCapacity(false, false),
               "Prototype double heat sinks are switchable like all other sink types");
@@ -227,11 +230,27 @@ class EquipmentOffModesTest {
         assertTrue(laser.getType().isExplosive(laser, false),
               "An activated Improved Heavy Laser explodes on a critical hit");
 
-        laser.setMode("Off");
+        laser.setMode(Mounted.MODE_OFF);
         applyPendingMode(laser);
         assertTrue(laser.isModeTurnedOff());
         assertFalse(laser.getType().isExplosive(laser, false),
               "A deactivated Improved Heavy Laser cannot explode");
+    }
+
+    @Test
+    void legacyHeatSinkCounterElementsInSaveGamesAreIgnored() {
+        // Meks used to track heat sink activation in two counter fields; they are gone now (per-mount modes),
+        // but save games written before the change still contain the elements. The load XStream omits them, so
+        // those saves must keep loading instead of failing on an unknown element.
+        BipedMek mek = new BipedMek();
+        String currentXml = SerializationHelper.getSaveGameXStream().toXML(mek);
+        String legacyXml = currentXml.replaceFirst("<autoEject>",
+              "<sinksOn>5</sinksOn><sinksOnNextRound>5</sinksOnNextRound><autoEject>");
+
+        Object restored = SerializationHelper.getLoadSaveGameXStream().fromXML(legacyXml);
+
+        assertInstanceOf(BipedMek.class, restored,
+              "A save game containing the legacy heat sink counter elements must still load");
     }
 
     @Test
@@ -241,8 +260,8 @@ class EquipmentOffModesTest {
 
         // Without any game option, adapting to default options must offer the power modes
         gaussRifle.adaptToGameOptions(new GameOptions());
-        assertTrue(gaussRifle.hasModeType("Powered Down"),
+        assertTrue(gaussRifle.hasModeType(Weapon.MODE_GAUSS_POWERED_DOWN),
               "Powering down a gauss rifle no longer requires the TacOps game option");
-        assertTrue(gaussRifle.hasModeType("Powered Up"));
+        assertTrue(gaussRifle.hasModeType(Weapon.MODE_GAUSS_POWERED_UP));
     }
 }

@@ -35,6 +35,7 @@ package megamek.common.weapons.lasers;
 
 import java.io.Serial;
 
+import megamek.common.equipment.Mounted;
 import megamek.common.options.IGameOptions;
 
 /**
@@ -48,7 +49,7 @@ public abstract class ImprovedHeavyLaserWeapon extends LaserWeapon {
 
     protected ImprovedHeavyLaserWeapon() {
         super();
-        setModes("On", "Off");
+        setModes(Mounted.MODE_ON, Mounted.MODE_OFF);
         setInstantModeSwitch(false);
     }
 
@@ -57,6 +58,6 @@ public abstract class ImprovedHeavyLaserWeapon extends LaserWeapon {
         super.adaptToGameOptions(gameOptions);
         // LaserWeapon adds a "Pulse <mode>" variant of every non-pulse mode for the RISC Laser Pulse
         // Module; a deactivated laser cannot fire in pulse mode, so drop that combination
-        removeMode("Pulse Off");
+        removeMode("Pulse " + Mounted.MODE_OFF);
     }
 }

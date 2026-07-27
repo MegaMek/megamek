@@ -33,12 +33,15 @@
 
 package megamek.common.units;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import megamek.common.Player;
 import megamek.common.equipment.EquipmentType;
 import megamek.common.equipment.EquipmentTypeLookup;
+import megamek.common.equipment.TankTrailerHitch;
+import megamek.common.equipment.Transporter;
 import megamek.common.game.Game;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -113,6 +116,62 @@ class EntityCanTowTest {
 
         assertTrue(carriage.canTow(secondTrailer.getId()),
               "Remaining capacity comes from the tractor, not from the trailer being hitched to");
+    }
+
+    /** A trailer with no hitch of its own: it can be towed, but nothing can be hitched behind it. */
+    private Tank buildHitchlessTrailer(double tonnage) throws Exception {
+        Tank vehicle = new Tank();
+        vehicle.setId(nextId++);
+        vehicle.setOwner(owner);
+        vehicle.setWeight(tonnage);
+        vehicle.setMovementMode(EntityMovementMode.TRACKED);
+        vehicle.setTrailer(true);
+        game.addEntity(vehicle);
+        return vehicle;
+    }
+
+    @Test
+    void aTrainEndingInAHitchlessTrailerCannotTakeAnother() throws Exception {
+        Tank tractor = buildVehicle(TRACTOR_TONS, false);
+        Tank hitchless = buildHitchlessTrailer(CARRIAGE_TONS);
+        tractor.towUnit(hitchless.getId());
+
+        Tank another = buildVehicle(CARRIAGE_TONS, true);
+
+        // A free hitch elsewhere in the train is not one this trailer could use, because towUnit appends at the tail.
+        assertFalse(tractor.canTow(another.getId()),
+              "Nothing at the back of the train can hold another trailer");
+    }
+
+    @Test
+    void aTrailerThatCannotBeHitchedIsNotLeftInTheTrain() throws Exception {
+        Tank tractor = buildVehicle(TRACTOR_TONS, false);
+        Tank hitchless = buildHitchlessTrailer(CARRIAGE_TONS);
+        tractor.towUnit(hitchless.getId());
+
+        Tank another = buildVehicle(CARRIAGE_TONS, true);
+        tractor.towUnit(another.getId());
+
+        assertFalse(tractor.getAllTowedUnits().contains(another.getId()),
+              "A trailer with no hitch holding it must not count as part of the train");
+        assertEquals(Entity.NONE, another.getTractor(), "and must not think it has a tractor");
+        assertEquals(Entity.NONE, another.getTowedBy(), "and must not think it is hitched");
+    }
+
+    @Test
+    void aTrailerIsHeldByOneHitchOnly() throws Exception {
+        Tank tractor = buildVehicle(TRACTOR_TONS, false);
+        Tank carriage = buildVehicle(CARRIAGE_TONS, true);
+
+        tractor.towUnit(carriage.getId());
+
+        int holdingHitches = 0;
+        for (Transporter transporter : tractor.getTransports()) {
+            if ((transporter instanceof TankTrailerHitch hitch) && !hitch.getLoadedUnits().isEmpty()) {
+                holdingHitches++;
+            }
+        }
+        assertEquals(1, holdingHitches, "The trailer occupies a single hitch, not every hitch on the tractor");
     }
 
     @Test

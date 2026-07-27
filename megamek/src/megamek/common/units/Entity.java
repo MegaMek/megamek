@@ -17242,23 +17242,34 @@ public abstract class Entity extends TurnOrdered
             return false;
         }
 
-        // Next, look for an empty hitch somewhere in the train
-        boolean hitchFound = false;
-        for (Entity e : thisTrain) {
-            // Quit looking if we've already found a valid hitch
-            if (hitchFound) {
+        // Look for an empty hitch on the unit that will actually take the trailer. towUnit always appends at the
+        // tail, so a free hitch anywhere else in the train is not one this trailer could use, and reporting it as
+        // usable would let a tow be offered that then cannot be made.
+        Entity attachPoint = findTrainTail(thisTrain);
+        for (Transporter transporter : attachPoint.getTransports()) {
+            if (transporter.canTow(trailer)) {
+                result = true;
                 break;
-            }
-            for (Transporter t : e.getTransports()) {
-                if (t.canTow(trailer)) {
-                    result = true;
-                    hitchFound = true;
-                    // stop looking
-                    break;
-                }
             }
         }
         return result;
+    }
+
+    /**
+     * The unit at the back of a train, which is where a new trailer is hitched.
+     *
+     * @param trainMembers the tractor followed by the units it tows
+     *
+     * @return the member with nothing behind it, or the first member when the train is not linked up
+     */
+    private static Entity findTrainTail(List<Entity> trainMembers) {
+        Entity tail = trainMembers.get(0);
+        for (Entity member : trainMembers) {
+            if ((member != null) && (member.getTowing() == Entity.NONE)) {
+                tail = member;
+            }
+        }
+        return tail;
     }
 
     /**
@@ -17376,13 +17387,31 @@ public abstract class Entity extends TurnOrdered
             }
         }
 
+        // Use the first hitch that can actually take the trailer, and only that one. Loading every hitch registered
+        // the same trailer twice on a unit with both a front and a rear hitch, and calling load() unguarded would
+        // throw IllegalArgumentException on an occupied one.
+        boolean hitched = false;
         if (towingEnt != null) {
             for (Transporter transporter : towingEnt.getTransports()) {
-                if (transporter instanceof TankTrailerHitch hitch) {
+                if ((transporter instanceof TankTrailerHitch hitch) && hitch.canTow(towed)) {
                     hitch.load(towed);
                     towingEnt.setTowing(id);
                     towed.setTowedBy(towingEnt.getId());
+                    hitched = true;
+                    break;
                 }
+            }
+        }
+
+        if (!hitched) {
+            // Nothing at the back of the train can take it. Undo the membership rather than leaving a unit that
+            // counts as part of the train but has no hitch holding it.
+            LOGGER.warn("[Train] {} has no free hitch for {}; the trailer was not attached",
+                  (towingEnt == null) ? getDisplayName() : towingEnt.getDisplayName(), towed.getDisplayName());
+            removeTowedUnit(id);
+            towed.setTractor(Entity.NONE);
+            for (Entity otherTrailer : otherTrailers) {
+                otherTrailer.connectedUnits.remove(Integer.valueOf(id));
             }
         }
     }

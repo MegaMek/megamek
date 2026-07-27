@@ -496,12 +496,13 @@ public class DeploymentDisplayTest {
             BoardValidationResult[] values = BoardValidationResult.values();
 
             // Assert
-            assertEquals(5, values.length, "Should have exactly 5 validation results");
+            assertEquals(6, values.length, "Should have exactly 6 validation results");
             assertNotNull(BoardValidationResult.valueOf("VALID"));
             assertNotNull(BoardValidationResult.valueOf("WRONG_BOARD_TYPE"));
             assertNotNull(BoardValidationResult.valueOf("OUTSIDE_DEPLOYMENT_AREA"));
             assertNotNull(BoardValidationResult.valueOf("HIDDEN_IN_FORTIFIED"));
             assertNotNull(BoardValidationResult.valueOf("HULL_DOWN_NEEDS_FORTIFIED"));
+            assertNotNull(BoardValidationResult.valueOf("TRAIN_DOES_NOT_FIT"));
         }
     }
 

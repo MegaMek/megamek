@@ -33,9 +33,12 @@
 
 package megamek.server.totalWarfare;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Vector;
 
 import megamek.common.Hex;
+import megamek.common.board.Board;
 import megamek.common.board.Coords;
 import megamek.common.compute.Compute;
 import megamek.common.enums.BuildingType;
@@ -53,6 +56,7 @@ import megamek.common.units.IBuilding;
 import megamek.common.units.Infantry;
 import megamek.common.units.Tank;
 import megamek.common.units.Terrains;
+import megamek.common.units.TrainLayout;
 import megamek.common.units.VTOL;
 import megamek.logging.MMLogger;
 
@@ -380,6 +384,59 @@ public class DeploymentProcessor extends AbstractTWRuleHandler {
         entity.setDeployed(true);
         gameManager.entityUpdate(entity.getId());
         addReport(gameManager.doSetLocationsExposure(entity, hex, false, entity.getElevation()));
+
+        deployTowedTrailers(entity);
+    }
+
+    /**
+     * Places the trailers of a train when its tractor deploys. Trailers get no deployment turn of their own, so this
+     * is the only chance they have to reach the board.
+     *
+     * @param tractor the unit that has just been deployed
+     */
+    private void deployTowedTrailers(Entity tractor) {
+        if (tractor.getAllTowedUnits().isEmpty()) {
+            return;
+        }
+
+        int trailerCount = tractor.getAllTowedUnits().size();
+        List<Coords> trainPath = TrainLayout.deploymentPath(tractor.getPosition(), tractor.getFacing(), trailerCount);
+        List<Integer> trainFacings = new ArrayList<>();
+        for (int step = 0; step < trainPath.size(); step++) {
+            trainFacings.add(tractor.getFacing());
+        }
+
+        List<TrainLayout.TrainPlacement> placements = TrainLayout.computeLayout(getGame(), tractor,
+              tractor.getPosition(), tractor.getFacing(), trainPath, trainFacings);
+
+        // The client refuses a placement whose whole footprint is not legal, so an illegal hex here means either a
+        // crafted packet or a client that skipped the check. Log it rather than silently dropping the trailer.
+        Board board = getGame().getBoard(tractor.getBoardId());
+        for (TrainLayout.TrainPlacement placement : placements) {
+            Entity trailer = getGame().getEntity(placement.entityId());
+            if ((trailer != null) && !board.isLegalDeployment(placement.position(), trailer)) {
+                LOGGER.warn("[Train] {} deployed with trailer {} landing on {}, which is not a legal deployment hex",
+                      tractor.getDisplayName(), trailer.getDisplayName(), placement.position());
+            }
+        }
+
+        TrainLayout.applyLayout(getGame(), placements);
+
+        for (TrainLayout.TrainPlacement placement : placements) {
+            Entity trailer = getGame().getEntity(placement.entityId());
+            if (trailer == null) {
+                continue;
+            }
+            trailer.setBoardId(tractor.getBoardId());
+            trailer.setElevation(tractor.getElevation());
+            trailer.setSecondaryFacing(trailer.getFacing());
+            trailer.setDone(true);
+            trailer.setDeployed(true);
+            gameManager.entityUpdate(trailer.getId());
+        }
+
+        LOGGER.info("[Train] {} deployed at {} with {} trailer(s) placed behind it",
+              tractor.getDisplayName(), tractor.getPosition(), trailerCount);
     }
 
 

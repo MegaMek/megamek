@@ -37,6 +37,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
 
 import megamek.common.Player;
 import megamek.common.board.Coords;
@@ -148,6 +149,38 @@ class TrainLayoutTest {
         assertEquals(HEX_BEHIND, trailerAt(tractor, 2).getPosition());
         assertEquals(SECOND_HEX_BACK, trailerAt(tractor, 3).getPosition(),
               "The fourth trailer moves one hex further back");
+    }
+
+    @Test
+    void deploymentPathRunsBackwardsFromTheTractorHex() {
+        // Facing 0 is north, so the train trails away to the south.
+        List<Coords> path = TrainLayout.deploymentPath(TRACTOR_HEX, FACING_NORTH, 3);
+
+        assertEquals(4, path.size(), "One hex per trailer plus the tractor's own");
+        assertEquals(TRACTOR_HEX, path.get(path.size() - 1), "The tractor's hex is last");
+        assertEquals(HEX_BEHIND, path.get(path.size() - 2), "Earlier entries run backwards along the train");
+        assertEquals(SECOND_HEX_BACK, path.get(path.size() - 3));
+    }
+
+    @Test
+    void deploymentFootprintCoversEveryOccupiedHex() throws Exception {
+        Tank tractor = buildTrain(3);
+
+        Set<Coords> footprint = TrainLayout.deploymentFootprint(game, tractor, TRACTOR_HEX, FACING_NORTH);
+
+        // Trailer 0 rides in the tractor's hex, trailers 1 and 2 share the hex behind it.
+        assertEquals(Set.of(TRACTOR_HEX, HEX_BEHIND), footprint);
+    }
+
+    @Test
+    void aLoneTractorFootprintIsJustItsOwnHex() throws Exception {
+        Tank tractor = buildVehicle(TRACTOR_TONS, false);
+        tractor.setPosition(TRACTOR_HEX);
+        tractor.setFacing(FACING_NORTH);
+
+        Set<Coords> footprint = TrainLayout.deploymentFootprint(game, tractor, TRACTOR_HEX, FACING_NORTH);
+
+        assertEquals(Set.of(TRACTOR_HEX), footprint);
     }
 
     @Test

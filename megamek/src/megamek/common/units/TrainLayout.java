@@ -33,10 +33,15 @@
 
 package megamek.common.units;
 
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.LinkedHashSet;
 import java.util.List;
+import java.util.Set;
 
 import megamek.common.board.Coords;
 import megamek.common.game.Game;
+import megamek.logging.MMLogger;
 
 /**
  * Stateless helper that lays a tractor's trailers out along a path of hexes.
@@ -56,21 +61,42 @@ import megamek.common.game.Game;
  */
 public final class TrainLayout {
 
+    private static final MMLogger LOGGER = MMLogger.create(TrainLayout.class);
+
+    private static final String LOG_TAG = "[Train]";
+
     private TrainLayout() {
     }
 
     /**
-     * Sets the position and facing of every trailer towed by the given tractor. Movement state and any server-side
-     * notification are the caller's business; this only places the units.
+     * Where a single trailer ends up.
      *
-     * @param game        the game holding the towed units
-     * @param tractor     the powered tractor at the head of the train
-     * @param trainPath   hexes the train occupies, ordered so that the last entry is the tractor's own hex and earlier
-     *                    entries lie progressively further back along the train
-     * @param trainFacings facings matching {@code trainPath}, ordered the same way. A trailer keeps its current facing
-     *                    when the list is too short to cover its position.
+     * @param entityId the trailer
+     * @param position the hex it occupies
+     * @param facing   the facing it takes, or {@code null} to keep its current facing
      */
-    public static void layOutTrain(Game game, Entity tractor, List<Coords> trainPath, List<Integer> trainFacings) {
+    public record TrainPlacement(int entityId, Coords position, Integer facing) {
+    }
+
+    /**
+     * Works out where every trailer towed by the given tractor would sit, without moving anything. Callers that want
+     * to know whether a placement is legal before committing to it use this; {@link #layOutTrain} applies the result.
+     *
+     * @param game          the game holding the towed units
+     * @param tractor       the powered tractor at the head of the train
+     * @param tractorHex    the hex the tractor occupies, passed in so a placement can be tested before the tractor is
+     *                      actually there
+     * @param tractorFacing the facing the tractor has in that hex
+     * @param trainPath     hexes the train occupies, ordered so that the last entry is the tractor's hex and earlier
+     *                      entries lie progressively further back along the train
+     * @param trainFacings  facings matching {@code trainPath}, ordered the same way
+     *
+     * @return one placement per towed unit, in train order
+     */
+    public static List<TrainPlacement> computeLayout(Game game, Entity tractor, Coords tractorHex, int tractorFacing,
+          List<Coords> trainPath, List<Integer> trainFacings) {
+        List<TrainPlacement> placements = new ArrayList<>();
+
         for (int towedId : tractor.getAllTowedUnits()) {
             Entity trailer = game.getEntity(towedId);
 
@@ -86,8 +112,7 @@ public final class TrainLayout {
             // Technically this would be true for a superheavy trailer too, but only a
             // superheavy tractor can tow one.
             if ((trailerNumber == 0) && !tractor.isSuperHeavy()) {
-                trailer.setPosition(tractor.getPosition());
-                trailer.setFacing(tractor.getFacing());
+                placements.add(new TrainPlacement(towedId, tractorHex, tractorFacing));
                 continue;
             }
 
@@ -106,10 +131,103 @@ public final class TrainLayout {
             }
 
             int stepNumber = (trainPath.size() - (int) trailerPositionOffset);
-            trailer.setPosition(trainPath.get(stepNumber));
+            if (stepNumber < 0) {
+                // The path is shorter than the train. Movement always supplies a path at least as long as the train,
+                // and deployment builds one to fit, so this means a caller got the path wrong.
+                LOGGER.warn("{} train path of {} hex(es) is too short for trailer {} of {}; keeping its position",
+                      LOG_TAG, trainPath.size(), trailerNumber + 1, tractor.getDisplayName());
+                continue;
+            }
+
+            Integer facing = null;
             if ((trainFacings.size() - trailerPositionOffset) >= 0) {
-                trailer.setFacing(trainFacings.get(trainFacings.size() - (int) trailerPositionOffset));
+                facing = trainFacings.get(trainFacings.size() - (int) trailerPositionOffset);
+            }
+            placements.add(new TrainPlacement(towedId, trainPath.get(stepNumber), facing));
+        }
+
+        return placements;
+    }
+
+    /**
+     * Sets the position and facing of every trailer towed by the given tractor. Movement state and any server-side
+     * notification are the caller's business; this only places the units.
+     *
+     * @param game         the game holding the towed units
+     * @param tractor      the powered tractor at the head of the train
+     * @param trainPath    hexes the train occupies, last entry first
+     * @param trainFacings facings matching {@code trainPath}
+     */
+    public static void layOutTrain(Game game, Entity tractor, List<Coords> trainPath, List<Integer> trainFacings) {
+        applyLayout(game, computeLayout(game, tractor, tractor.getPosition(), tractor.getFacing(),
+              trainPath, trainFacings));
+    }
+
+    /** Moves each trailer to its computed placement. */
+    public static void applyLayout(Game game, List<TrainPlacement> placements) {
+        for (TrainPlacement placement : placements) {
+            Entity trailer = game.getEntity(placement.entityId());
+            if (trailer == null) {
+                continue;
+            }
+            trailer.setPosition(placement.position());
+            if (placement.facing() != null) {
+                trailer.setFacing(placement.facing());
             }
         }
+    }
+
+    /**
+     * Builds the run of hexes a train occupies when its tractor is placed in a given hex, running backwards from that
+     * hex against the tractor's facing. Long enough to hold the whole train however it packs.
+     *
+     * @param tractorHex   the hex the tractor occupies
+     * @param facing       the tractor's facing
+     * @param trailerCount how many trailers the tractor tows
+     *
+     * @return hexes ordered so that the last entry is the tractor's hex
+     */
+    public static List<Coords> deploymentPath(Coords tractorHex, int facing, int trailerCount) {
+        int rearDirection = (facing + 3) % 6;
+        List<Coords> path = new ArrayList<>();
+        Coords current = tractorHex;
+        // One hex per trailer plus the tractor's own covers even the worst packing, where every trailer takes a hex
+        // to itself.
+        for (int step = 0; step <= trailerCount; step++) {
+            path.add(current);
+            current = current.translated(rearDirection);
+        }
+        Collections.reverse(path);
+        return path;
+    }
+
+    /**
+     * Every hex a train would occupy if its tractor were placed in the given hex, including the tractor's own.
+     * <p>
+     * Used to check a placement before committing to it: under the strict reading of the deployment rules the whole
+     * train has to land in a legal deployment zone, not just the tractor.
+     * </p>
+     *
+     * @return the distinct occupied hexes; just the tractor's hex when it tows nothing
+     */
+    public static Set<Coords> deploymentFootprint(Game game, Entity tractor, Coords tractorHex, int facing) {
+        Set<Coords> footprint = new LinkedHashSet<>();
+        footprint.add(tractorHex);
+
+        int trailerCount = tractor.getAllTowedUnits().size();
+        if (trailerCount == 0) {
+            return footprint;
+        }
+
+        List<Coords> path = deploymentPath(tractorHex, facing, trailerCount);
+        List<Integer> facings = new ArrayList<>();
+        for (int index = 0; index < path.size(); index++) {
+            facings.add(facing);
+        }
+
+        for (TrainPlacement placement : computeLayout(game, tractor, tractorHex, facing, path, facings)) {
+            footprint.add(placement.position());
+        }
+        return footprint;
     }
 }

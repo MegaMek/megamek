@@ -10846,9 +10846,14 @@ public abstract class Entity extends TurnOrdered
 
     /**
      * Returns true if the entity should be deployed
+     * <p>
+     * A trailer that is part of a train does not deploy on its own. It is placed with the rest of the train when its
+     * tractor deploys, in the same way a carried unit is placed with its transport. An unattached trailer still
+     * deploys normally.
+     * </p>
      */
     public boolean shouldDeploy(int round) {
-        return !isDeployed() && (getDeployRound() <= round) && !isOffBoard();
+        return !isDeployed() && (getDeployRound() <= round) && !isOffBoard() && (getTractor() == Entity.NONE);
     }
 
     /**

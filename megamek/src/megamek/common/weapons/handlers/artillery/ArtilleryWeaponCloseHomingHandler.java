@@ -47,14 +47,14 @@ import megamek.server.totalWarfare.TWGameManager;
  * @author Sebastian Brocks
  * @since Sep 24, 2004
  */
-public class ArtilleryWeaponDirectHomingHandler extends ArtilleryWeaponIndirectHomingHandler {
+public class ArtilleryWeaponCloseHomingHandler extends ArtilleryWeaponDistantHomingHandler {
     @Serial
     private static final long serialVersionUID = 7543333005465757983L;
 
     /**
      *
      */
-    public ArtilleryWeaponDirectHomingHandler(ToHitData t, WeaponAttackAction w, Game g, TWGameManager m)
+    public ArtilleryWeaponCloseHomingHandler(ToHitData t, WeaponAttackAction w, Game g, TWGameManager m)
           throws EntityLoadingException {
         super(t, w, g, m);
 

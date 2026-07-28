@@ -65,8 +65,8 @@ import megamek.common.weapons.handlers.AreaEffectHelper;
 import megamek.logging.MMLogger;
 import megamek.server.totalWarfare.TWGameManager;
 
-public class ArtilleryWeaponIndirectHomingHandler extends ArtilleryWeaponIndirectFireHandler {
-    private static final MMLogger LOGGER = MMLogger.create(ArtilleryWeaponIndirectHomingHandler.class);
+public class ArtilleryWeaponDistantHomingHandler extends ArtilleryWeaponDistantFireHandler {
+    private static final MMLogger LOGGER = MMLogger.create(ArtilleryWeaponDistantHomingHandler.class);
 
     @Serial
     private static final long serialVersionUID = -7243477723032010917L;
@@ -76,8 +76,8 @@ public class ArtilleryWeaponIndirectHomingHandler extends ArtilleryWeaponIndirec
     /**
      *
      */
-    public ArtilleryWeaponIndirectHomingHandler(ToHitData toHitData, WeaponAttackAction weaponAttackAction, Game game,
-          TWGameManager gameManager) throws EntityLoadingException {
+    public ArtilleryWeaponDistantHomingHandler(ToHitData toHitData, WeaponAttackAction weaponAttackAction, Game game,
+                                               TWGameManager gameManager) throws EntityLoadingException {
         super(toHitData, weaponAttackAction, game, gameManager);
         advancedAMS =
               Game.rulesManager.getRulesEquipment().getAMSReduction(game.getOptions().booleanOption(OptionsConstants.ADVANCED_COMBAT_TAC_OPS_AMS));

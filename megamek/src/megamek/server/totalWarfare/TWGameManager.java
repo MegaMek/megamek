@@ -124,8 +124,6 @@ import megamek.common.util.EmailService;
 import megamek.common.util.HazardousLiquidPoolUtil;
 import megamek.common.util.fileUtils.MegaMekFile;
 import megamek.common.verifier.TestEntity;
-import megamek.common.voting.Poll;
-import megamek.common.voting.VoteThreshold;
 import megamek.common.weapons.DamageType;
 import megamek.common.weapons.TeleMissile;
 import megamek.common.weapons.Weapon;
@@ -136,8 +134,7 @@ import megamek.common.weapons.handlers.DamageFalloff;
 import megamek.common.weapons.handlers.NukeStats;
 import megamek.common.weapons.handlers.TAGHandler;
 import megamek.common.weapons.handlers.WeaponHandler;
-import megamek.common.weapons.handlers.artillery.ArtilleryBayWeaponIndirectHomingHandler;
-import megamek.common.weapons.handlers.artillery.ArtilleryWeaponIndirectHomingHandler;
+import megamek.common.weapons.handlers.artillery.ArtilleryBayWeaponDistantHomingHandler;
 import megamek.common.weapons.handlers.capitalMissile.CapitalMissileBearingsOnlyHandler;
 import megamek.common.weapons.infantry.InfantryWeapon;
 import megamek.logging.MMLogger;
@@ -10269,8 +10266,8 @@ public class TWGameManager extends AbstractGameManager {
             // Can only use AMS versus missiles. Artillery Bays might be firing Arrow IV
             // homing missiles, but lack the flag
             boolean isHomingMissile = false;
-            if (wh instanceof ArtilleryWeaponIndirectHomingHandler ||
-                  wh instanceof ArtilleryBayWeaponIndirectHomingHandler) {
+            if (wh instanceof megamek.common.weapons.handlers.artillery.ArtilleryWeaponDistantHomingHandler ||
+                wh instanceof ArtilleryBayWeaponDistantHomingHandler) {
                 AmmoMounted ammoUsed = artilleryFirer.getAmmo(waa.getAmmoId());
                 AmmoType ammoType = ammoUsed == null ? null : ammoUsed.getType();
                 // TODO: this logic seems to be a bit off, rules need to be checked.

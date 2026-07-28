@@ -67,7 +67,6 @@ import megamek.common.options.OptionsConstants;
 import megamek.common.options.PilotOptions;
 import megamek.common.units.*;
 import megamek.common.weapons.handlers.TAGHandler;
-import megamek.common.weapons.handlers.artillery.ArtilleryWeaponIndirectHomingHandler;
 import megamek.common.weapons.infantry.InfantryWeapon;
 import megamek.server.Server;
 import megamek.server.totalWarfare.TWGameManager;
@@ -293,10 +292,10 @@ class ArtilleryWeaponIndirectHomingHandlerTest {
 
         // Create Artillery WAA and handler
         ArtilleryAttackAction artilleryAttackAction = makeArtilleryWAA(attacker, defender, attacker.getWeapon(0));
-        ArtilleryWeaponIndirectHomingHandler artie = new ArtilleryWeaponIndirectHomingHandler(makeAutoHitHomingTHD(),
-              artilleryAttackAction,
-              game,
-              gameManager);
+        megamek.common.weapons.handlers.artillery.ArtilleryWeaponDistantHomingHandler artie = new megamek.common.weapons.handlers.artillery.ArtilleryWeaponDistantHomingHandler(makeAutoHitHomingTHD(),
+                                                                                                                                                                                artilleryAttackAction,
+                                                                                                                                                                                game,
+                                                                                                                                                                                gameManager);
 
         // Set game phase and run handler to simulate initial firing
         game.setPhase(GamePhase.TARGETING);
@@ -344,10 +343,10 @@ class ArtilleryWeaponIndirectHomingHandlerTest {
 
         // Create Artillery WAA and handler
         ArtilleryAttackAction artilleryAttackAction = makeArtilleryWAA(attacker, defender, attacker.getWeapon(0));
-        ArtilleryWeaponIndirectHomingHandler artie = new ArtilleryWeaponIndirectHomingHandler(makeAutoHitHomingTHD(),
-              artilleryAttackAction,
-              game,
-              gameManager);
+        megamek.common.weapons.handlers.artillery.ArtilleryWeaponDistantHomingHandler artie = new megamek.common.weapons.handlers.artillery.ArtilleryWeaponDistantHomingHandler(makeAutoHitHomingTHD(),
+                                                                                                                                                                                artilleryAttackAction,
+                                                                                                                                                                                game,
+                                                                                                                                                                                gameManager);
 
         // Set game phase and run handler to simulate initial firing
         game.setPhase(GamePhase.TARGETING);

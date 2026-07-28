@@ -77,8 +77,8 @@ import megamek.server.totalWarfare.TWGameManager;
 /**
  * @author Sebastian Brocks
  */
-public class ArtilleryBayWeaponIndirectFireHandler extends AmmoBayWeaponHandler {
-    private static final MMLogger LOGGER = MMLogger.create(ArtilleryBayWeaponIndirectFireHandler.class);
+public class ArtilleryBayWeaponDistantFireHandler extends AmmoBayWeaponHandler {
+    private static final MMLogger LOGGER = MMLogger.create(ArtilleryBayWeaponDistantFireHandler.class);
 
     @Serial
     private static final long serialVersionUID = -1277649123562229298L;
@@ -88,11 +88,11 @@ public class ArtilleryBayWeaponIndirectFireHandler extends AmmoBayWeaponHandler 
      * This constructor can only be used for deserialization.
      */
     @Deprecated(since = "0.51.0", forRemoval = true)
-    protected ArtilleryBayWeaponIndirectFireHandler() {
+    protected ArtilleryBayWeaponDistantFireHandler() {
         super();
     }
 
-    public ArtilleryBayWeaponIndirectFireHandler(ToHitData t, WeaponAttackAction w, Game g, TWGameManager m)
+    public ArtilleryBayWeaponDistantFireHandler(ToHitData t, WeaponAttackAction w, Game g, TWGameManager m)
           throws EntityLoadingException {
         super(t, w, g, m);
     }

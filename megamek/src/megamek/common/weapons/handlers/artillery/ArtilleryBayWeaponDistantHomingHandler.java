@@ -68,8 +68,8 @@ import megamek.common.weapons.DamageType;
 import megamek.logging.MMLogger;
 import megamek.server.totalWarfare.TWGameManager;
 
-public class ArtilleryBayWeaponIndirectHomingHandler extends ArtilleryBayWeaponIndirectFireHandler {
-    private static final MMLogger LOGGER = MMLogger.create(ArtilleryBayWeaponIndirectHomingHandler.class);
+public class ArtilleryBayWeaponDistantHomingHandler extends ArtilleryBayWeaponDistantFireHandler {
+    private static final MMLogger LOGGER = MMLogger.create(ArtilleryBayWeaponDistantHomingHandler.class);
     @Serial
     private static final long serialVersionUID = -7243477723032010917L;
     boolean advancedPD;
@@ -79,7 +79,7 @@ public class ArtilleryBayWeaponIndirectHomingHandler extends ArtilleryBayWeaponI
     /**
      *
      */
-    public ArtilleryBayWeaponIndirectHomingHandler(ToHitData t, WeaponAttackAction w, Game g, TWGameManager m)
+    public ArtilleryBayWeaponDistantHomingHandler(ToHitData t, WeaponAttackAction w, Game g, TWGameManager m)
           throws EntityLoadingException {
         super(t, w, g, m);
         advancedPD = g.getOptions().booleanOption(OptionsConstants.ADVANCED_AERO_RULES_STRATOPS_ADV_POINT_DEFENSE);

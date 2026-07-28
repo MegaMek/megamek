@@ -6440,7 +6440,10 @@ public abstract class Entity extends TurnOrdered
         if (!isShutDown()) {
             for (MiscMounted m : getMisc()) {
                 MiscType type = m.getType();
-                if (type.hasFlag(MiscType.F_ECM) && !m.isInoperable()) {
+                if (type == null) {
+                    continue;
+                }
+                if (type.hasFlag(MiscType.F_ECM) && !m.isInoperable() && !m.isModeTurnedOff()) {
                     if (type.hasFlag(MiscType.F_SINGLE_HEX_ECM)) {
                         return 0;
                     }
@@ -6481,11 +6484,14 @@ public abstract class Entity extends TurnOrdered
             return false;
         }
         for (MiscMounted m : getMisc()) {
-            if (m.getType().hasFlag(MiscType.F_BAP)) {
+            MiscType type = m.getType();
+            if ((type != null) && type.hasFlag(MiscType.F_BAP)) {
 
-                if (!m.isInoperable()) {
+                // A probe the player has switched off provides no sensing (activation/deactivation rules); for a
+                // Watchdog/Nova CEWS the shared "Off" mode silences the probe half along with the rest of the suite.
+                if (!m.isInoperable() && !m.isModeTurnedOff()) {
                     // Beagle Isn't affected by normal ECM
-                    if (m.getType().getName().equals("Beagle Active Probe")) {
+                    if (type.getName().equals("Beagle Active Probe")) {
                         return (game == null) ||
                               !checkECM ||
                               !ComputeECM.isAffectedByAngelECM(this, getPosition(), getPosition());
@@ -6581,7 +6587,10 @@ public abstract class Entity extends TurnOrdered
 
         for (MiscMounted m : getMisc()) {
             MiscType type = m.getType();
-            if (type.hasFlag(MiscType.F_BAP) && !m.isInoperable()) {
+            if (type == null) {
+                continue;
+            }
+            if (type.hasFlag(MiscType.F_BAP) && !m.isInoperable() && !m.isModeTurnedOff()) {
                 // Quirk bonus is only 2 if equipped with BAP
                 if (quirkBonus > 0) {
                     quirkBonus = 2;
@@ -6595,20 +6604,20 @@ public abstract class Entity extends TurnOrdered
                 if (m.getName().equals("Bloodhound Active Probe (THB)") || m.getName().equals(Sensor.BAP)) {
                     return 8 + cyberProbeBonus + quirkBonus + spaBonus;
                 }
-                if ((m.getType()).getInternalName().equals(Sensor.CLAN_AP) ||
-                      (m.getType()).getInternalName().equals(Sensor.WATCHDOG) ||
-                      (m.getType()).getInternalName().equals(Sensor.NOVA) ||
-                      (m.getType()).getInternalName().equals(Sensor.CL_BA_LIGHT_AP)) {
+                String internalName = type.getInternalName();
+                if (internalName.equals(Sensor.CLAN_AP) ||
+                      internalName.equals(Sensor.WATCHDOG) ||
+                      internalName.equals(Sensor.NOVA) ||
+                      internalName.equals(Sensor.CL_BA_LIGHT_AP)) {
                     return 5 + cyberProbeBonus + quirkBonus + spaBonus;
                 }
-                if ((m.getType()).getInternalName().equals(Sensor.LIGHT_AP)) {
+                if (internalName.equals(Sensor.LIGHT_AP)) {
                     return 3 + cyberProbeBonus + quirkBonus + spaBonus;
                 }
-                if ((m.getType()).getInternalName().equals(Sensor.IS_BA_LIGHT_AP)) {
+                if (internalName.equals(Sensor.IS_BA_LIGHT_AP)) {
                     return 4 + cyberProbeBonus + quirkBonus + spaBonus;
                 }
-                if (m.getType().getInternalName().equals(Sensor.IS_IMPROVED) ||
-                      (m.getType().getInternalName().equals(Sensor.CL_IMPROVED))) {
+                if (internalName.equals(Sensor.IS_IMPROVED) || internalName.equals(Sensor.CL_IMPROVED)) {
                     return 2 + cyberProbeBonus + quirkBonus + spaBonus;
                 }
                 return 4 + cyberProbeBonus + quirkBonus + spaBonus;// everything else should be
@@ -6919,22 +6928,28 @@ public abstract class Entity extends TurnOrdered
     }
 
     /**
-     * @return True if this unit has an active Nova CEWS that can communicate. Returns false if the unit is shutdown,
-     *       off board, or the Nova CEWS is inoperable/offline.
+     * @return True if this unit has an active Nova CEWS that can communicate. Returns {@code false} if the unit is
+     *       shutdown, off board, or the Nova CEWS is inoperable or switched to "Off" by the player.
      */
     public boolean hasActiveNovaCEWS() {
         if (isShutDown() || isOffBoard()) {
             return false;
-        } else {
-            return getMisc().stream()
-                  .filter(Mounted::isOperable)
-                  .anyMatch(m -> m.getType().hasFlag(MiscType.F_NOVA));
         }
+        for (MiscMounted mounted : getMisc()) {
+            MiscType miscType = mounted.getType();
+            if ((miscType != null) && miscType.hasFlag(MiscType.F_NOVA)
+                  && mounted.isOperable() && !mounted.isModeTurnedOff()) {
+                return true;
+            }
+        }
+        return false;
     }
 
     /**
      * @return True if this unit has a Nova CEWS that can network (not destroyed/breached, not shutdown, not offboard).
-     *       Does NOT check ECM mode - networking works regardless of Off/ECM mode setting.
+     *       Does NOT check the "Off" mode - network membership (net id, partner UUIDs) survives deactivation so the
+     *       previous network is restored when the CEWS is switched back on; use {@link #hasActiveNovaCEWS()} for
+     *       whether the system currently functions.
      */
     public boolean hasNovaCEWS() {
         if (isShutDown() || isOffBoard()) {
@@ -7010,7 +7025,8 @@ public abstract class Entity extends TurnOrdered
                 c3NetIdString = "C3" + C3_NETWORK_ID_SEPARATOR + getId();
             } else if (hasC3i()) {
                 c3NetIdString = "C3i" + C3_NETWORK_ID_SEPARATOR + getId();
-            } else if (hasActiveNovaCEWS()) {
+            } else if (hasNovaCEWS()) {
+                // presence-based so a Nova switched to "Off" still establishes its network identity
                 c3NetIdString = "C3Nova" + C3_NETWORK_ID_SEPARATOR + getId();
             } else if (hasNavalC3()) {
                 c3NetIdString = "NC3" + C3_NETWORK_ID_SEPARATOR + getId();
@@ -7474,6 +7490,13 @@ public abstract class Entity extends TurnOrdered
             return false;
         }
 
+        // A unit whose C3 gear is switched off provides and receives no network benefit. The ignoreECM path is
+        // deliberately NOT gated: it is used to record network membership (save files, network wiring), which must
+        // survive deactivation so the previous network is restored when the gear is switched back on.
+        if (!ignoreECM && (EquipmentActivation.isC3SwitchedOff(this) || EquipmentActivation.isC3SwitchedOff(e))) {
+            return false;
+        }
+
         // C3i is easy - if they both have C3i, and their net ID's match,
         // they're on the same network!
         if (hasC3i() && e.hasC3i() && getC3NetId().equals(e.getC3NetId())) {
@@ -7504,8 +7527,9 @@ public abstract class Entity extends TurnOrdered
         }
 
         // Nova is easy - if they both have Nova, and their net ID's match, they're on the same network! At least I
-        // hope that's how it works.
-        if (hasActiveNovaCEWS() && e.hasActiveNovaCEWS() && getC3NetId().equals(e.getC3NetId())) {
+        // hope that's how it works. Membership is presence-based (hasNovaCEWS): a switched-off Nova stays a network
+        // member for serialization/wiring purposes, while the benefit cut-off is handled by the gate above.
+        if (hasNovaCEWS() && e.hasNovaCEWS() && getC3NetId().equals(e.getC3NetId())) {
             if (ignoreECM) {
                 return true;
             }
@@ -13806,6 +13830,7 @@ public abstract class Entity extends TurnOrdered
                 String[] stringArray = {};
                 modes.add("Short");
                 modes.add("Medium");
+                modes.add(Mounted.MODE_OFF);
                 misc.getType().setModes(modes.toArray(stringArray));
                 misc.getType().setInstantModeSwitch(false);
             }
@@ -13813,7 +13838,7 @@ public abstract class Entity extends TurnOrdered
             // Nova CEWS has built-in "ECM"/"Off" modes - don't override them with dynamic modes
             if (misc.getType().hasFlag(MiscType.F_ECM) && !misc.getType().hasFlag(MiscType.F_NOVA)) {
                 ArrayList<String> modes = new ArrayList<>();
-                modes.add("ECM");
+                modes.add(MiscType.MODE_ECM);
                 String[] stringArray = {};
                 if (gameOpts.booleanOption(OptionsConstants.ADVANCED_TAC_OPS_ECCM)) {
                     modes.add("ECCM");
@@ -13838,6 +13863,11 @@ public abstract class Entity extends TurnOrdered
                         modes.add("Ghost Targets");
                     }
                 }
+
+                // ECM suites can be deactivated (activation/deactivation rules). These types are built
+                // with setInstantModeSwitch(false), so every mode switch here -- deactivation included --
+                // is declared now and takes effect in the End Phase. Nothing registers an end-turn mode.
+                modes.add(Mounted.MODE_OFF);
 
                 misc.getType().setModes(modes.toArray(stringArray));
             }

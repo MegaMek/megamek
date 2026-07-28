@@ -61,6 +61,7 @@ import megamek.common.units.EntityMovementMode;
 import megamek.common.units.HeatBreakdown;
 import megamek.common.units.IBuilding;
 import megamek.common.units.InfantryMount;
+import megamek.common.units.Mek;
 import megamek.common.weapons.handlers.AttackHandler;
 import megamek.server.victory.VictoryCondition;
 
@@ -109,6 +110,13 @@ public class SerializationHelper {
      */
     public static XStream getLoadSaveGameXStream() {
         XStream xStream = getSaveGameXStream();
+
+        // Mek heat sink activation used to be a pair of counter fields; it is now tracked per mount via
+        // equipment modes (activation/deactivation rules), and the fields no longer exist. Save games written
+        // before that change still contain the elements, and this XStream setup rejects unknown elements, so
+        // they are explicitly omitted to keep those saves loading.
+        xStream.omitField(Mek.class, "sinksOn");
+        xStream.omitField(Mek.class, "sinksOnNextRound");
 
         xStream.registerConverter(new Converter() {
             @Override

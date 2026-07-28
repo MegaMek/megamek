@@ -22634,6 +22634,9 @@ public class TWGameManager extends AbstractGameManager {
                     tank.immobilize();
                     reports.addAll(forceLandVTOLorWiGE(tank));
                 }
+                if (!(tank.isAirborneVTOLorWIGE()) && !(tank.isDestroyed())) {
+                    reports.addAll(vehicleMotiveDamage(tank, 0, true, 3, false));
+                }
                 break;
             case Tank.CRIT_FUEL_TANK:
                 r = new Report(6215);

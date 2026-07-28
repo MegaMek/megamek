@@ -63,14 +63,15 @@ public class CoreRulesPSR extends RulesPSR {
         boolean bRunningAndCanFall =
               (((overallMoveType == EntityMovementType.MOVE_RUN) || (overallMoveType == EntityMovementType.MOVE_SPRINT)) &&
               entity.canFall());
-        if (bRunningAndCanFall && ((gyroDamage > 0) || entity.hasHipCrit())) {
-            // append the reason modifier
-            roll.append(new PilotingRollData(entity.getId(), 0, "running with damaged hip actuator or gyro"));
-        } else if (((entity instanceof MekWithArms && ((Mek) entity).countBadLegs() > 0) ||
-              (entity instanceof QuadMek && ((QuadMek) entity).countBadLegs() > 2)) &&
-        distance > 0 && bRunningAndCanFall) {
-            // Running with a leg destroyed
-            roll.append(new PilotingRollData(entity.getId(), 0, "running with destroyed leg"));
+        if (bRunningAndCanFall && distance > 0) {
+            if (((entity instanceof MekWithArms && ((Mek) entity).countBadLegs() > 0) ||
+                  (entity instanceof QuadMek && ((QuadMek) entity).countBadLegs() > 2))) {
+                // Running with a leg destroyed
+                roll.append(new PilotingRollData(entity.getId(), 0, "running with destroyed leg"));
+            } else if ((gyroDamage > 0) || entity.hasHipCrit()) {
+                // append the reason modifier
+                roll.append(new PilotingRollData(entity.getId(), 0, "running with damaged hip actuator or gyro"));
+            }
         } else {
             roll.addModifier(TargetRoll.CHECK_FALSE, "Check false: Entity is not attempting to run with damage");
         }

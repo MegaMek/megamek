@@ -203,4 +203,15 @@ public class TWRulesMovement extends CoreRulesMovement {
        }
        return false;
     }
+
+    /**
+     * Do we change the accidental fall elevation?
+     * No.
+     *
+     * @param fallElevation height of the fall
+     * @param hitHeight height of the unit hit
+     * @return the modified height for damage
+     */
+    @Override
+    public int getAccidentalFallElevation(final int fallElevation, final int hitHeight) { return fallElevation; }
 }

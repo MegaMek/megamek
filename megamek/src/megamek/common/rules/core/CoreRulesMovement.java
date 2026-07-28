@@ -163,4 +163,10 @@ public class CoreRulesMovement extends RulesMovement {
      * No MP cost for domino displacement. Core p.114
      */
     public boolean getDominoDisplacementCostsMP() { return false; }
+
+    /**
+     * {@inheritDoc}
+     * Height is minus the height of the unit landed on, Core rules p.116
+     */
+    public int getAccidentalFallElevation(final int fallElevation, final int hitHeight) { return fallElevation - hitHeight; }
 }

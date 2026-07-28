@@ -149,4 +149,13 @@ public abstract class RulesMovement {
      */
     public abstract boolean isDominoMoveLegal(final int direction, final Entity entity, final MovePath movePath,
           boolean forwards);
+
+    /**
+     * Do we change the accidental fall elevation?
+     * 
+     * @param fallElevation height of the fall
+     * @param hitHeight height of the unit hit
+     * @return the modified height for damage
+     */
+    public abstract int getAccidentalFallElevation(final int fallElevation, final int hitHeight);
 }

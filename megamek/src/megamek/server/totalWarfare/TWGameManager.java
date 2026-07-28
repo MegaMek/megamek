@@ -9205,7 +9205,9 @@ public class TWGameManager extends AbstractGameManager {
 
                 if (diceRoll.getIntValue() >= toHit.getValue()) {
                     // deal damage to target
-                    int damage = Compute.getAccidentalFallFromAboveDamageFor(entity, fallElevation);
+                    int damage = Compute.getAccidentalFallFromAboveDamageFor(entity,
+                          Game.rulesManager.getRulesMovement().getAccidentalFallElevation(fallElevation,
+                                affaTarget.getHeight()));
                     r = new Report(2220);
                     r.subject = affaTarget.getId();
                     r.addDesc(affaTarget);
@@ -9224,7 +9226,9 @@ public class TWGameManager extends AbstractGameManager {
                     // roll
                     PilotingRollData pilotRoll = entity.getBasePilotingRoll();
                     pilotRoll.append(roll);
-                    vPhaseReport.addAll(doEntityFall(entity, dest, fallElevation, 3, pilotRoll, false, false));
+                    vPhaseReport.addAll(doEntityFall(entity, dest,
+                          Game.rulesManager.getRulesMovement().getAccidentalFallElevation(fallElevation,
+                                affaTarget.getHeight()), 3, pilotRoll, false, false));
                     vPhaseReport.addAll(doEntityDisplacementMinefieldCheck(entity, src, dest, entity.getElevation()));
 
                     // defender pushed away, or destroyed, if there is a

@@ -3120,7 +3120,10 @@ public class ClientGUI extends AbstractClientGUI
                           ClientGUI.this,
                           null,
                           boardId));
-                    newMinimap.setVisible(true);
+                    // A board arriving during the lounge (lobby-built battlefield) must not pop up the minimap;
+                    // the boards are re-sent at game start (EXCHANGE), which shows it as usual.
+                    boolean isInLounge = client.getGame().getPhase().isLounge();
+                    newMinimap.setVisible(!isInLounge);
                     miniMaps.put(boardId, newMinimap);
                     boardViews.put(boardId, boardView);
                     boardView.getPanel().setPreferredSize(clientGuiPanel.getSize());

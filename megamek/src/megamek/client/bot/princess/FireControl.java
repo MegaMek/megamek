@@ -3290,7 +3290,7 @@ public class FireControl {
 
             // If the selected ammo would cause the shot to miss, skip loading it.
             final WeaponAttackAction cloneWAA = new WeaponAttackAction(info.getAction());
-            cloneWAA.setAmmoId(shooter.getEquipmentNum(mountedAmmo));
+            cloneWAA.setAmmoId(mountedAmmo.getEntity().getEquipmentNum(mountedAmmo));
             cloneWAA.setAmmoMunitionType(mountedAmmo.getType().getMunitionType());
             cloneWAA.setAmmoCarrier(mountedAmmo.getEntity().getId());
             if (cloneWAA.toHit(owner.getGame(), owner.getPrecognition().getECMInfo()).getValue() > 12) {
@@ -3327,8 +3327,10 @@ public class FireControl {
             info.getAction().setAmmoMunitionType(cloneWAA.getAmmoMunitionType());
             info.getAction().setAmmoCarrier(cloneWAA.getAmmoCarrier());
 
+            Entity ammoCarrier = mountedAmmo.getEntity();
             owner.sendAmmoChange(info.getShooter().getId(), shooter.getEquipmentNum(currentWeapon),
-                  shooter.getEquipmentNum(mountedAmmo), mountedAmmo.getSwitchedReason());
+                  ammoCarrier.getEquipmentNum(mountedAmmo), ammoCarrier.getId(),
+                  mountedAmmo.getSwitchedReason());
         }
     }
 

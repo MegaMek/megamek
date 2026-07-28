@@ -33,9 +33,9 @@ package megamek.common.rules.core;
  */
 
 import megamek.common.game.Game;
-import megamek.common.options.OptionsConstants;
 import megamek.common.rolls.PilotingRollData;
 import megamek.common.rules.RulesUnits;
+import megamek.common.units.Entity;
 import megamek.common.units.Mek;
 import megamek.common.units.QuadMek;
 
@@ -111,5 +111,10 @@ public class CoreRulesUnits extends RulesUnits {
     // MP cannot be reduced below 1 by actuator damage. only by leg destruction Core p.99
     public int getMinimumMP(int mp) {
         return 1;
+    }
+
+    // Does it have what counts as bad legs? 1 for bipeds/tripods, 3 for quads
+    public boolean hasBadLegs(Entity entity) {
+        return entity.hasBadLegs();
     }
 }

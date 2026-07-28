@@ -119,6 +119,7 @@ import megamek.common.preference.PreferenceManager;
 import megamek.common.rolls.PilotingRollData;
 import megamek.common.rolls.Roll;
 import megamek.common.rolls.TargetRoll;
+import megamek.common.rules.totalwarfare.TWRulesManager;
 import megamek.common.turns.TurnOrdered;
 import megamek.common.util.UUIDUtil;
 import megamek.common.util.RoundWeight;
@@ -6138,6 +6139,7 @@ public abstract class Entity extends TurnOrdered
                 }
             }
         }
+        
         return hasCritical;
     }
 
@@ -8730,6 +8732,23 @@ public abstract class Entity extends TurnOrdered
 
         return roll;
     }
+    
+    public boolean hasBadLegs() {
+        int badLegs = 0;
+        int legLocations = 0;
+        for (int loc = 0; loc < locations(); loc++) {
+            if (locationIsLeg(loc) ) {
+                if (isLocationBad(loc)) {
+                    badLegs++;
+                    }
+                legLocations++;
+            }
+        }
+        if (legLocations == 4) {
+            return (badLegs >= 3) ? true : false;
+        }
+        return (badLegs >= 1) ? true : false;
+    }
 
     /**
      * Checks if the entity is landing (from a jump) with damage that would force a PSR. If so, returns the target roll
@@ -8739,17 +8758,26 @@ public abstract class Entity extends TurnOrdered
         PilotingRollData roll = getBasePilotingRoll(overallMoveType);
 
         int gyroHits = getBadCriticalSlots(CriticalSlot.TYPE_SYSTEM, Mek.SYSTEM_GYRO, Mek.LOC_CENTER_TORSO);
-        // Heavy-duty gyro does not force PSR until second hit
-        if (getGyroType() == Mek.GYRO_HEAVY_DUTY || getGyroType() == Mek.GYRO_SUPERHEAVY) {
+        // Compensate for values in critical damage if needed
+        int gyroModifier = Game.rulesManager.getRulesPSR().getGyroJumpModifier(gyroHits, getGyroType());
+        
+        // Heavy-duty gyro does not force PSR until second hit (Only under Total Warfare)
+        if ((getGyroType() == Mek.GYRO_HEAVY_DUTY || getGyroType() == Mek.GYRO_SUPERHEAVY) && Game.rulesManager instanceof TWRulesManager) {
             gyroHits--;
         }
-        if (gyroHits > 0 || hasLegActuatorCrit()) {
+            
+        if (gyroHits > 0 || hasLegActuatorCrit() || Game.rulesManager.getRulesUnits().hasBadLegs(this)) {
             // append the reason modifier
-            roll.append(new PilotingRollData(getId(), 0, "landing with damaged leg actuator or gyro"));
+            if (getGyroType() == Mek.GYRO_HEAVY_DUTY || getGyroType() == Mek.GYRO_SUPERHEAVY) {
+                roll.append(new PilotingRollData(getId(), gyroModifier, "landing with damaged leg or heavy-duty gyro"));
+            } else {
+                roll.append(new PilotingRollData(getId(), 0, "landing with damaged leg or gyro"));
+            }
+            roll.append(new PilotingRollData(getId(), gyroModifier, "landing with damaged leg or gyro"));
             addPilotingModifierForTerrain(roll);
         } else {
             roll.addModifier(TargetRoll.CHECK_FALSE,
-                  "Entity does not have gyro or leg actuator damage -- checking for purposes of determining PSR " +
+                  "Entity does not have gyro or leg damage -- checking for purposes of determining PSR " +
                         "after jump.");
         }
         return roll;
@@ -9040,7 +9068,7 @@ public abstract class Entity extends TurnOrdered
             mod = 1;
         }
         
-        if (waterLevel >=1 && overallMoveType == EntityMovementType.MOVE_RUN && !Game.rulesManager.getRulesMovement().cannotRunInWater(movementMode, false)) {
+        if (waterLevel >=1 && overallMoveType == EntityMovementType.MOVE_RUN && !Game.rulesManager.getRulesMovement().cannnotRunInWater(movementMode, false)) {
             roll.append(new PilotingRollData(getId(), 0, "entering Depth " + waterLevel + " Water"));
         } 
         

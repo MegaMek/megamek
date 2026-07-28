@@ -35,7 +35,6 @@ package megamek.common.rules.totalwarfare;
  */
 
 import megamek.common.CriticalSlot;
-import megamek.common.annotations.Nullable;
 import megamek.common.game.Game;
 import megamek.common.rolls.PilotingRollData;
 import megamek.common.rolls.TargetRoll;
@@ -65,10 +64,10 @@ public class TWRulesPSR extends CoreRulesPSR {
 
     // No modifier to stand
     @Override
-    public void standing(PilotingRollData roll) { }
+    public void standing(PilotingRollData roll) {}
 
     @Override
-    public void facingChangeAfterFall(Entity entity, int facing){
+    public void facingChangeAfterFall(Entity entity, int facing) {
         entity.setFacing((entity.getFacing() + (facing)) % 6);
         entity.setSecondaryFacing(entity.getFacing());
     }
@@ -100,7 +99,9 @@ public class TWRulesPSR extends CoreRulesPSR {
 
     // We do not reduce leg actuator rolls in TW
     @Override
-    public void checkLegActuatorPsrRolls(Game game, Entity entity) {};
+    public void checkLegActuatorPsrRolls(Game game, Entity entity) {}
+
+    ;
 
     @Override
     public boolean getFootActuatorPsr() {
@@ -123,7 +124,7 @@ public class TWRulesPSR extends CoreRulesPSR {
 
     // Leg destroyed in +5.
     @Override
-    public int getLegDestroyedModifier() { return 5; }
+    public int getLegDestroyedModifier() {return 5;}
 
     // HD Gyro hits cause issues
     @Override
@@ -157,14 +158,30 @@ public class TWRulesPSR extends CoreRulesPSR {
     public boolean psrForWaterEntry(EntityMovementType overallMoveType) {
         return true;
     }
-    
+
     // Successful DFA PSR is +4
     @Override
     public int getSuccessfulDFAModifier() {
         return 4;
     }
-    
+
     // Clubs don't do anything extra
     @Override
     public void clubImpact(Game game, Entity entity) {}
+
+    // No change for jumping
+    @Override
+    public int getGyroJumpModifier(final int gyroHits, final int gyroType) {
+        return 0;
+    }
+    
+    // We don't care about walking meks with legs destroyed
+    @Override
+    public PilotingRollData checkWalkWithLegDestroyed(Entity entity, EntityMovementType overallMoveType,
+          int hexesMoved) {
+        PilotingRollData roll = entity.getBasePilotingRoll(overallMoveType);
+        roll.addModifier(TargetRoll.CHECK_FALSE, "Check false: does not apply");
+        entity.addPilotingModifierForTerrain(roll);
+        return roll;
+    }
 }

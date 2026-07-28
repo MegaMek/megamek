@@ -34,15 +34,12 @@ package megamek.common.rules.core;
  */
 
 
-import megamek.common.MPCalculationSetting;
-import megamek.common.equipment.MiscType;
 import megamek.common.rules.RulesMovement;
-import megamek.common.units.BipedMek;
 import megamek.common.units.Entity;
 import megamek.common.units.EntityMovementMode;
+import megamek.common.units.EntityMovementType;
 import megamek.common.units.Mek;
 import megamek.common.units.QuadMek;
-import megamek.common.units.TripodMek;
 
 import java.util.ArrayList;
 
@@ -53,7 +50,7 @@ public class CoreRulesMovement extends RulesMovement {
     }
 
     // Can you run / flank in water? Core p.51
-    public boolean cannotRunInWater(EntityMovementMode movementMode,
+    public boolean cannnotRunInWater(EntityMovementMode movementMode,
           boolean amphibious) {
         if ((movementMode != EntityMovementMode.HOVER) &&
               (movementMode != EntityMovementMode.NAVAL) &&
@@ -116,6 +113,15 @@ public class CoreRulesMovement extends RulesMovement {
             return false;
         }
         if (mek.hasHipCrit()) {
+            return true;
+        }
+        return false;
+    }
+
+    // Moving into water only triggers danger when running and you can run in water. Core p.45
+    public boolean isMoveIntoWaterDangerous(EntityMovementType movementType, EntityMovementMode movementMode) {
+        if ((movementType == EntityMovementType.MOVE_RUN || movementType == EntityMovementType.MOVE_SPRINT) 
+              && !cannnotRunInWater(movementMode,false)) {
             return true;
         }
         return false;

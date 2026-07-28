@@ -33,9 +33,9 @@ package megamek.common.rules.totalwarfare;
  */
 
 import megamek.common.game.Game;
-import megamek.common.options.OptionsConstants;
 import megamek.common.rolls.PilotingRollData;
 import megamek.common.rules.core.CoreRulesUnits;
+import megamek.common.units.Entity;
 import megamek.common.units.Mek;
 
 public class TWRulesUnits extends CoreRulesUnits {
@@ -103,5 +103,11 @@ public class TWRulesUnits extends CoreRulesUnits {
     @Override
     public int getMinimumMP(int mp) {
         return mp;
+    }
+
+    // No need to check this in TW
+    @Override
+    public boolean hasBadLegs(Entity entity) {
+        return false;
     }
 }

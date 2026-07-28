@@ -705,7 +705,7 @@ public class MoveStep implements Serializable {
             calcMovementCostFor(game, prev, cachedEntityState);
         }
         // check for water
-        if (Game.rulesManager.getRulesMovement().cannotRunInWater(entity.getMovementMode(),
+        if (Game.rulesManager.getRulesMovement().cannnotRunInWater(entity.getMovementMode(),
               cachedEntityState.hasWorkingMisc(MiscType.F_FULLY_AMPHIBIOUS))
               && !isPavementStep()
               && !(destHex.containsTerrain(Terrains.ICE) && (elevation >= 0))
@@ -1073,7 +1073,7 @@ public class MoveStep implements Serializable {
                   (nMove != EntityMovementMode.HYDROFOIL) &&
                   (nMove != EntityMovementMode.SUBMARINE) &&
                   (nMove != EntityMovementMode.INF_UMU)) {
-                if (Game.rulesManager.getRulesMovement().cannotRunInWater(nMove, false)) {
+                if (Game.rulesManager.getRulesMovement().cannnotRunInWater(nMove, false)) {
                     isRunProhibited = true;
                 }
             }
@@ -3860,7 +3860,7 @@ public class MoveStep implements Serializable {
               (movementType == EntityMovementType.MOVE_SPRINT) ||
               (movementType == EntityMovementType.MOVE_VTOL_RUN) ||
               (movementType == EntityMovementType.MOVE_VTOL_SPRINT)) &&
-              Game.rulesManager.getRulesMovement().cannotRunInWater(nMove,
+              Game.rulesManager.getRulesMovement().cannnotRunInWater(nMove,
                     cachedEntityState.hasWorkingMisc(MiscType.F_FULLY_AMPHIBIOUS)) &&
               (destHex.terrainLevel(Terrains.WATER) > 0) &&
               !(destHex.containsTerrain(Terrains.ICE) && (elevation >= 0)) &&

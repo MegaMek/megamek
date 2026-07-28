@@ -33,7 +33,6 @@ package megamek.common.rules;
  * affiliated with Microsoft.
  */
 
-import megamek.common.annotations.Nullable;
 import megamek.common.game.Game;
 import megamek.common.rolls.PilotingRollData;
 import megamek.common.units.Entity;
@@ -92,4 +91,11 @@ public abstract class RulesPSR {
 
     // Does a club impact cause a PSR?
     public abstract void clubImpact(Game game, Entity entity);
+
+    // Special gyro jump modifier
+    public abstract int getGyroJumpModifier(final int gyroHits, final int gyroType);
+
+    // do you need a PSR for walking with a leg destroyed
+    public abstract PilotingRollData checkWalkWithLegDestroyed(Entity entity, EntityMovementType overallMoveType,
+          int hexesMoved);
 }

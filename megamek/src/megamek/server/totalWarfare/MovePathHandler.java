@@ -1094,6 +1094,13 @@ class MovePathHandler extends AbstractTWRuleHandler {
         if (rollTarget.getValue() != TargetRoll.CHECK_FALSE && entity.canFall()) {
             gameManager.doSkillCheckInPlace(entity, rollTarget);
         }
+        
+        // if we moved a hex with a destroyed leg, but it was not a run
+        rollTarget = Game.rulesManager.getRulesPSR().checkWalkWithLegDestroyed(entity,
+              overallMoveType, md.getHexesMoved());
+        if (rollTarget.getValue() != TargetRoll.CHECK_FALSE && entity.canFall()) {
+            gameManager.doSkillCheckInPlace(entity, rollTarget);
+        }
 
         // if we sprinted with MASC or a supercharger, then we need a PSR
         rollTarget = entity.checkSprintingWithMASCXorSupercharger(overallMoveType,

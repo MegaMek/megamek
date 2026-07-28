@@ -33,6 +33,7 @@ package megamek.common.rules;
  */
 
 import megamek.common.rolls.PilotingRollData;
+import megamek.common.units.Entity;
 import megamek.common.units.Mek;
 
 public abstract class RulesUnits {
@@ -54,4 +55,7 @@ public abstract class RulesUnits {
 
     // Is there a limit to how much we can reduce MP?
     public abstract int getMinimumMP(int mp);
+
+    // Does the unit have bad legs?
+    public abstract boolean hasBadLegs(Entity entity);
 }

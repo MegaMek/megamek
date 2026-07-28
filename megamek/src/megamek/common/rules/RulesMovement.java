@@ -36,6 +36,7 @@ package megamek.common.rules;
 
 import megamek.common.units.EntityMovementMode;
 import megamek.common.units.Entity;
+import megamek.common.units.EntityMovementType;
 import megamek.common.units.Mek;
 
 public abstract class RulesMovement {
@@ -43,7 +44,7 @@ public abstract class RulesMovement {
     public abstract boolean skidEnabled();
 
     // Can a unit use run / flank MP in water
-    public abstract boolean cannotRunInWater(EntityMovementMode movementMode,
+    public abstract boolean cannnotRunInWater(EntityMovementMode movementMode,
                                     boolean amphibious);
 
     // What is the MP cost of moving into a water hex that is fully submerged
@@ -57,7 +58,7 @@ public abstract class RulesMovement {
 
     // Does 0 MP cause immobile? yes. Core p.49
     public boolean checkMPZeroCauseImmobile(int walkMP) {
-        return (walkMP == 0) ? true : false; 
+        return (walkMP == 0); 
     }
 
     // What is our Running MP?
@@ -65,4 +66,7 @@ public abstract class RulesMovement {
 
     // Can it change more than 1 level when missing a leg?
     public abstract boolean reduceMaxElevation(Mek mek);
+
+    // Is running into water considered dangerous
+    public abstract boolean isMoveIntoWaterDangerous(EntityMovementType movementType, EntityMovementMode movementMode);
 }

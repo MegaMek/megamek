@@ -841,7 +841,8 @@ public class Compute {
               || (entity.getMovementMode() == EntityMovementMode.WIGE)
               || (entity instanceof QuadVee && entity.getConversionMode() == QuadVee.CONV_MODE_VEHICLE))
               && (destHex.terrainLevel(Terrains.WATER) > 0)
-              && !isPavementStep) {
+              && !isPavementStep
+              && Game.rulesManager.getRulesMovement().isMoveIntoWaterDangerous(movementType, entity.getMovementMode())) {
             return true;
         }
 
@@ -895,7 +896,8 @@ public class Compute {
               && (movementType != EntityMovementType.MOVE_JUMP)))
               && (entity.getMovementMode() != EntityMovementMode.HOVER)
               && (entity.getMovementMode() != EntityMovementMode.WIGE)
-              && isTurning && !isInfantry) {
+              && isTurning && !isInfantry
+              && Game.rulesManager.getRulesMovement().skidEnabled()) {
             return true;
         }
 

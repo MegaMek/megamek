@@ -600,6 +600,11 @@ public class SharedUtility {
         rollTarget = entity.checkRunningWithDamage(overallMoveType, md.getHexesMoved());
         checkNag(rollTarget, nagReport, psrList);
 
+        // if we moved a hex with a destroyed leg, but it was not a run
+        rollTarget = Game.rulesManager.getRulesPSR().checkWalkWithLegDestroyed(entity,
+              overallMoveType, md.getHexesMoved());
+        checkNag(rollTarget, nagReport, psrList);
+
         // if we sprinted with MASC or a supercharger, then we need a PSR
         rollTarget = entity.checkSprintingWithMASCXorSupercharger(overallMoveType, md.getMpUsed());
         checkNag(rollTarget, nagReport, psrList);

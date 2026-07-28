@@ -37,7 +37,6 @@ package megamek.common.rules.core;
 
 import megamek.common.CriticalSlot;
 import megamek.common.Messages;
-import megamek.common.annotations.Nullable;
 import megamek.common.game.Game;
 import megamek.common.rolls.PilotingRollData;
 import megamek.common.rolls.TargetRoll;
@@ -254,5 +253,30 @@ public class CoreRulesPSR extends RulesPSR {
     public void clubImpact(final Game game,
           final Entity entity) {
         game.addPSR(new PilotingRollData(entity.getId(), 0, "was clubbed"));
+    }
+
+    // Special gyro jump modifier. Core p.98
+    public int getGyroJumpModifier(final int gyroHits, final int gyroType) {
+        if (gyroType == Mek.GYRO_HEAVY_DUTY || gyroType == Mek.GYRO_SUPERHEAVY) {
+            return switch (gyroHits) {
+                case 1 -> 1;
+                case 3 -> -1;
+                default -> 0;
+            };
+        }
+        return 0;
+    }
+
+    // do you need a PSR for walking with a leg destroyed? Yes. Core p.90
+    public PilotingRollData checkWalkWithLegDestroyed(Entity entity, EntityMovementType overallMoveType,
+          int hexesMoved) {
+        PilotingRollData roll = entity.getBasePilotingRoll(overallMoveType);
+        if (entity.hasBadLegs() && overallMoveType == EntityMovementType.MOVE_WALK && hexesMoved > 0) {
+            roll.append(new PilotingRollData(entity.getId(), 0, "walking with destroyed leg and moved at least 1 hex"));
+        } else {
+            roll.addModifier(TargetRoll.CHECK_FALSE, "Check false: does not apply");
+        }
+        entity.addPilotingModifierForTerrain(roll);
+        return roll;
     }
 }

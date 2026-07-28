@@ -34,11 +34,10 @@ package megamek.common.rules.totalwarfare;
  */
 
 
-import megamek.common.MPCalculationSetting;
 import megamek.common.rules.core.CoreRulesMovement;
 import megamek.common.units.Entity;
 import megamek.common.units.EntityMovementMode;
-import megamek.common.units.Mek;
+import megamek.common.units.EntityMovementType;
 
 public class TWRulesMovement extends CoreRulesMovement {
 
@@ -50,7 +49,7 @@ public class TWRulesMovement extends CoreRulesMovement {
 
     // Can you run / flank in water? Vehicles and mechs cannot
     @Override
-    public boolean cannotRunInWater(EntityMovementMode movementMode,
+    public boolean cannnotRunInWater(EntityMovementMode movementMode,
           boolean amphibious) {
         if  ((movementMode != EntityMovementMode.HOVER) &&
               (movementMode!= EntityMovementMode.NAVAL) &&
@@ -93,5 +92,11 @@ public class TWRulesMovement extends CoreRulesMovement {
         } else {
             return walkMP;
         }
+    }
+
+    // Moving into water always triggers PSR danger
+    @Override
+    public boolean isMoveIntoWaterDangerous(EntityMovementType movementType, EntityMovementMode movementMode) {
+        return true;
     }
 }

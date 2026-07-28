@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2014-2025 The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2014-2026 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -32,8 +32,10 @@
  */
 package megamek.common.util;
 
+import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
+import megamek.common.board.Board;
 import org.junit.jupiter.api.Test;
 
 /**
@@ -82,5 +84,35 @@ class BoardUtilitiesTest {
         distanceFromCenter = 8;
         expected = 0;
         assertEquals(expected, BoardUtilities.craterProfile(distanceFromCenter, craterRadius, maxDepth));
+    }
+
+    /**
+     * Crater radius bounds come from unvalidated client-supplied map settings. An inverted range
+     * (max below min) must not reach {@link megamek.common.compute.Compute#randomInt(int)}, which rejects a
+     * bound of zero or less, nor the crater-profile array sizing.
+     */
+    @Test
+    void addCratersToleratesAnInvertedRadiusRange() {
+        Board board = emptyBoard();
+
+        assertDoesNotThrow(() -> BoardUtilities.addCraters(board, 6, 2, 1, 1));
+    }
+
+    /** A negative minimum radius must not produce a negative crater-profile array size either. */
+    @Test
+    void addCratersToleratesANegativeRadiusRange() {
+        Board board = emptyBoard();
+
+        assertDoesNotThrow(() -> BoardUtilities.addCraters(board, -5, -2, 1, 1));
+    }
+
+    /** @return a small blank board that craters can be placed on */
+    private static Board emptyBoard() {
+        Board board = new Board();
+        board.load("""
+              size 5 5
+              hex 0101 0 "" ""
+              end""", null);
+        return board;
     }
 }

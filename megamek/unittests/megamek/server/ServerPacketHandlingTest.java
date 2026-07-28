@@ -38,6 +38,8 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyInt;
 import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.spy;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
 
 import java.io.IOException;
 
@@ -102,5 +104,9 @@ class ServerPacketHandlingTest {
         // The dispatching thread survived the first packet, so the next one is still processed
         assertDoesNotThrow(() -> server.handle(TEST_CONNECTION_ID,
               new Packet(PacketCommand.LOBBY_GENERATE_BOARD)));
+
+        // Not throwing is not enough on its own: an early return inside handle() would be just as silent.
+        // Assert the second packet actually reached the handler.
+        verify(gameManager, times(2)).handlePacket(anyInt(), any());
     }
 }

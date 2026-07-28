@@ -35,6 +35,7 @@ package megamek.server.totalWarfare;
 
 import java.util.Objects;
 
+import megamek.client.ui.Messages;
 import megamek.common.Player;
 import megamek.common.board.Board;
 import megamek.common.board.postprocess.TWBoardTransformer;
@@ -101,8 +102,7 @@ class LobbyBoardHandler extends AbstractTWRuleHandler {
         if (hasSurpriseBoardSelection()) {
             LOGGER.debug("[LobbyBoard] {}: generation request refused - a surprise board is selected",
                   playerName);
-            gameManager.sendServerChat(connId,
-                  "The battlefield cannot be built in the lobby while a Surprise board is selected.");
+            gameManager.sendServerChat(connId, Messages.getString("LobbyBoard.chat.surpriseRefusal"));
             return;
         }
 
@@ -118,16 +118,14 @@ class LobbyBoardHandler extends AbstractTWRuleHandler {
             LOGGER.error(buildFailure,
                   "[LobbyBoard] {}: building the battlefield failed - the current map settings could not be "
                         + "assembled into a board; the previous lounge board (if any) is kept", playerName);
-            gameManager.sendServerChat(connId,
-                  "The battlefield could not be built from the current map settings. See the server log for "
-                        + "details.");
+            gameManager.sendServerChat(connId, Messages.getString("LobbyBoard.chat.buildFailed"));
             return;
         }
         getGame().setBoard(newBoard);
         boardGeneratedInLounge = true;
         LOGGER.info("[LobbyBoard] {} built the battlefield ({}x{} hexes)",
               playerName, newBoard.getWidth(), newBoard.getHeight());
-        gameManager.sendServerChat(playerName + " built the battlefield");
+        gameManager.sendServerChat(Messages.getString("LobbyBoard.chat.built", playerName));
         gameManager.resetPlayersDone();
         gameManager.send(gameManager.getPacketHelper().createBoardsPacket());
     }

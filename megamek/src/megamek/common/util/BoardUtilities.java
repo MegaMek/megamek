@@ -1,6 +1,6 @@
 /*
  * Copyright (c) 2005 Ben Mazur (bmazur@sev.org)
- * Copyright (C) 2005-2025 The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2005-2026 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -797,7 +797,9 @@ public class BoardUtilities {
     private static int pickTerrainDensity(int terrainType, int probHeavy, int probUltra) {
         int heavyThreshold = 100 - probHeavy;
         int ultraThreshold = 100;
-        int sum = 100 + probUltra;
+        // probUltra is an unvalidated client-supplied percentage; keep the roll bound positive so a wildly
+        // out-of-range value cannot make Compute.randomInt throw.
+        int sum = Math.max(1, 100 + probUltra);
 
         int roll = Compute.randomInt(sum);
 
@@ -953,8 +955,14 @@ public class BoardUtilities {
             // Locate the center of the crater.
             Point center = new Point(Compute.randomInt(width), Compute.randomInt(height));
 
-            // What is the diameter of this crater?
-            int radius = Compute.randomInt(maxRadius - minRadius + 1) + minRadius;
+            // What is the diameter of this crater? The radius bounds come straight from client-supplied map
+            // settings and are not validated anywhere, so an inverted or negative range must not reach
+            // Compute.randomInt (which rejects a bound of zero or less) or the array sizing below. Guarded the
+            // same way as the crater count above: an unusable range degrades to a fixed minimum radius.
+            int radius = Math.max(0, minRadius);
+            if (maxRadius > radius) {
+                radius += Compute.randomInt(maxRadius - radius + 1);
+            }
 
             // Terrestrial crater depth to radius ratio is typically 1:5 to 1:7.
             // Hexes are 30m across and levels are 6m high.

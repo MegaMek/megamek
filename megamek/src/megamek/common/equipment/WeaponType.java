@@ -2760,10 +2760,10 @@ public class WeaponType extends EquipmentType {
 
     private int[] getAlphaStrikeHeatDamage() {
         return new int[] {
-            getAlphaStrikeHeatDamage(AlphaStrikeElement.SHORT_RANGE),
-            getAlphaStrikeHeatDamage(AlphaStrikeElement.MEDIUM_RANGE),
-            getAlphaStrikeHeatDamage(AlphaStrikeElement.LONG_RANGE),
-            getAlphaStrikeHeatDamage(AlphaStrikeElement.EXTREME_RANGE)
+            getAlphaStrikeHeatDamage(AlphaStrikeElement.RANGE_BAND_SHORT),
+            getAlphaStrikeHeatDamage(AlphaStrikeElement.RANGE_BAND_MEDIUM),
+            getAlphaStrikeHeatDamage(AlphaStrikeElement.RANGE_BAND_LONG),
+            getAlphaStrikeHeatDamage(AlphaStrikeElement.RANGE_BAND_EXTREME)
         };
     }
 

@@ -1321,6 +1321,7 @@ public class Client extends AbstractClient {
                         switch (cfrType) {
                             case CFR_DOMINO_EFFECT:
                                 cfrEvt.setEntityId(packet.getIntValue(1));
+                                cfrEvt.setDirection(packet.getIntValue(2));
                                 break;
                             case CFR_AMS_ASSIGN:
                                 cfrEvt.setEntityId(packet.getIntValue(1));

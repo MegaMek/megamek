@@ -34,6 +34,7 @@ package megamek.common.rules.totalwarfare;
  */
 
 
+import megamek.common.moves.MovePath;
 import megamek.common.rules.core.CoreRulesMovement;
 import megamek.common.units.Entity;
 import megamek.common.units.EntityMovementMode;
@@ -159,5 +160,47 @@ public class TWRulesMovement extends CoreRulesMovement {
     @Override
     public boolean reduceMaxElevation(Mek mek) {
         return false;
+    }
+
+    /**
+     * What are the criteria to allow for domino effect changes
+     * BMM p 56
+     *
+     * @param direction The direction the violation is coming from
+     * @param entity the entity causing the domino effect
+     * @param stepForward potential step forwards
+     * @param stepBackwards potential step backwards
+     * @param violation entity being displaced
+     * @return True if it can possibly step out of the way
+     */
+    @Override
+    public boolean dominoEffectMovementCriteria(final int direction, final Entity entity, final MovePath stepForward, final MovePath stepBackwards,
+          final Entity violation) {
+        // if the direction comes from a side, Entity didn't jump, and it
+        // has MP left to use, it can try to move.
+        if (direction != violation.getFacing() &&
+              (direction != ((violation.getFacing() + 3) % 6)) &&
+              !entity.getIsJumpingNow() &&
+              (stepForward.isMoveLegal() || stepBackwards.isMoveLegal())) {
+            return true;
+        }
+        return false;
+    }
+
+    /**
+     * Domino displacement costs MP, so return true
+     * 
+     * @return false if there is no cost, true if there is
+     */
+    @Override
+    public boolean getDominoDisplacementCostsMP() { return true; }
+
+    @Override
+    public boolean isDominoMoveLegal(final int direction, final Entity entity, final MovePath movePath,
+          boolean forwards) {
+       if (movePath.isMoveLegal()) {
+           return true;
+       }
+       return false;
     }
 }

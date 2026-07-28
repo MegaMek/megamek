@@ -9488,18 +9488,15 @@ public class TWGameManager extends AbstractGameManager {
 
         if (violation != null) {
             // Can the violating unit move out of the way?
-            // if the direction comes from a side, Entity didn't jump, and it
-            // has MP left to use, it can try to move.
             MovePath stepForward = new MovePath(game, violation);
             MovePath stepBackwards = new MovePath(game, violation);
-            stepForward.addStep(MoveStepType.FORWARDS);
-            stepBackwards.addStep(MoveStepType.BACKWARDS);
+            boolean bNoCost = !Game.rulesManager.getRulesMovement().getDominoDisplacementCostsMP();
+            stepForward.addStep(MoveStepType.FORWARDS, bNoCost);            
+            stepBackwards.addStep(MoveStepType.BACKWARDS, bNoCost);
             stepForward.compile(getGame(), violation, false);
             stepBackwards.compile(getGame(), violation, false);
-            if ((direction != violation.getFacing()) &&
-                  (direction != ((violation.getFacing() + 3) % 6)) &&
-                  !entity.getIsJumpingNow() &&
-                  (stepForward.isMoveLegal() || stepBackwards.isMoveLegal())) {
+            if (Game.rulesManager.getRulesMovement().dominoEffectMovementCriteria(direction, entity, stepForward,
+                  stepBackwards, violation) && !violation.isProne() && !violation.isImmobile()) {
                 // First, we need to make a PSR to see if we can step out
                 Roll diceRoll = Compute.rollD6(2);
                 if (roll == null) {
@@ -9528,7 +9525,7 @@ public class TWGameManager extends AbstractGameManager {
                     displacementReport.addAll(newReports);
                 } else {
                     r.choose(true);
-                    sendDominoEffectCFR(violation);
+                    sendDominoEffectCFR(violation, direction);
                     synchronized (cfrPacketQueue) {
                         try {
                             cfrPacketQueue.wait();
@@ -9602,9 +9599,9 @@ public class TWGameManager extends AbstractGameManager {
         return displacementReport;
     }
 
-    private void sendDominoEffectCFR(Entity e) {
+    private void sendDominoEffectCFR(Entity e, int direction) {
         send(e.getOwnerId(),
-              new Packet(PacketCommand.CLIENT_FEEDBACK_REQUEST, PacketCommand.CFR_DOMINO_EFFECT, e.getId()));
+              new Packet(PacketCommand.CLIENT_FEEDBACK_REQUEST, PacketCommand.CFR_DOMINO_EFFECT, e.getId(), direction));
     }
 
     private void sendAMSAssignCFR(Entity entity, Mounted<?> ams, List<WeaponAttackAction> weaponAttackActions) {

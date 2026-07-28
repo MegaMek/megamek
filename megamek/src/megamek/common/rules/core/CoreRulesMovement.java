@@ -34,6 +34,7 @@ package megamek.common.rules.core;
  */
 
 
+import megamek.common.moves.MovePath;
 import megamek.common.rules.RulesMovement;
 import megamek.common.units.Entity;
 import megamek.common.units.EntityMovementMode;
@@ -124,4 +125,42 @@ public class CoreRulesMovement extends RulesMovement {
         }
         return false;
     }
+
+    /**
+     * {@inheritDoc}
+     * Core rules p.114
+     */
+    public boolean dominoEffectMovementCriteria(final int direction, final Entity entity, final MovePath stepForward, final MovePath stepBackwards,
+          final Entity violation) {
+        if (isDominoMoveLegal(direction, violation, stepForward, true) || isDominoMoveLegal(direction, violation,
+              stepBackwards, false)) {
+            return true;
+        }
+        return false;
+    }
+
+    /**
+     * {@inheritDoc}
+     * 
+     * Core rules p.114
+     */
+    public boolean isDominoMoveLegal(final int direction, final Entity entity, final MovePath step,
+          boolean forwards) {
+        if (forwards) {
+            if ((step.isMoveLegal() && direction != entity.getFacing())) {
+                return true;
+            }
+        } else {
+            if ((step.isMoveLegal() && direction != ((entity.getFacing()+3) % 6) && entity.moved == EntityMovementType.MOVE_WALK)) {
+                return true;
+            }
+        }
+        return false;
+    }
+    
+    /**
+     * {@inheritDoc}
+     * No MP cost for domino displacement. Core p.114
+     */
+    public boolean getDominoDisplacementCostsMP() { return false; }
 }

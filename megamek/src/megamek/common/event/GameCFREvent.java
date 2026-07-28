@@ -88,6 +88,11 @@ public class GameCFREvent extends GameEvent {
     private List<Integer> tagTargets;
 
     /**
+     * Direction of displacing entity
+     */
+    private int direction;
+
+    /**
      * List of Targetable object types for tagged targets within range.
      */
     private List<Integer> tagTargetTypes;
@@ -220,4 +225,8 @@ public class GameCFREvent extends GameEvent {
     public void setTAGTargetTypes(List<Integer> targetTypes) {
         tagTargetTypes = new ArrayList<>(targetTypes);
     }
+    
+    public void setDirection(int direction) { this.direction = direction;}
+    
+    public int getDirection() { return direction; }
 }

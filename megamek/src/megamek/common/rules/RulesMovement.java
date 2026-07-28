@@ -34,6 +34,7 @@ package megamek.common.rules;
  */
 
 
+import megamek.common.moves.MovePath;
 import megamek.common.units.EntityMovementMode;
 import megamek.common.units.Entity;
 import megamek.common.units.EntityMovementType;
@@ -117,4 +118,35 @@ public abstract class RulesMovement {
      * @return true if moving into water is dangerous
      */
     public abstract boolean isMoveIntoWaterDangerous(EntityMovementType movementType, EntityMovementMode movementMode);
+
+    /**
+     * What are the criteria to allow for domino effect changes
+     * 
+     * @param direction The direction the violation is coming from
+     * @param entity the entity causing the domino effect
+     * @param stepForward potential step forwards
+     * @param stepBackwards potential step backwards
+     * @param violation entity being displaced
+     * @return True if it can possibly step out of the way
+     */
+    public abstract boolean dominoEffectMovementCriteria(final int direction, final Entity entity, final MovePath stepForward, final MovePath stepBackwards,
+          final Entity violation);
+
+    /**
+     * This returns if a domino displacement should cost MP
+     * @return true if there is a cost, false if no cost
+     */
+    public abstract boolean getDominoDisplacementCostsMP();
+
+    /**
+     * This is a helper for dominoEffectMovementCriteria. It returns true if you can move in that direction
+     * 
+     * @param direction direction of source of domino 
+     * @param entity entity being displaced
+     * @param movePath the movePath of the step
+     * @param forwards is it forwards or backwards
+     * @return
+     */
+    public abstract boolean isDominoMoveLegal(final int direction, final Entity entity, final MovePath movePath,
+          boolean forwards);
 }

@@ -34,6 +34,7 @@
 package megamek.server.totalWarfare;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.util.ArrayList;
@@ -155,6 +156,28 @@ class TrainMulRestoreTest {
 
         assertTrue(tractor.getAllTowedUnits().isEmpty(),
               "An unmapped saved id is dropped even when it looks like a real entity id");
+    }
+
+    @Test
+    void aTrailerThatCannotBeHitchedIsLeftLoose() throws Exception {
+        // A tractor with no hitch at all, which is what a file describing a train the data no longer supports
+        // amounts to. towUnit has nothing to load the trailer into.
+        Tank tractor = new Tank();
+        tractor.setId(game.getNextEntityId());
+        tractor.setOwner(owner);
+        tractor.setWeight(TRACTOR_TONS);
+        tractor.setMovementMode(EntityMovementMode.TRACKED);
+        game.addEntity(tractor);
+
+        Tank trailer = addVehicle(CARRIAGE_TONS, true);
+
+        tractor.addTowedUnit(51);
+        gameManager.restoreTrains(List.of(tractor, trailer), Map.of(51, trailer.getId()));
+
+        assertEquals(Entity.NONE, trailer.getTractor(),
+              "A trailer nothing can hold is loaded loose rather than listed as towed");
+        assertFalse(tractor.getAllTowedUnits().contains(trailer.getId()),
+              "and the tractor does not report it as part of the train");
     }
 
     @Test

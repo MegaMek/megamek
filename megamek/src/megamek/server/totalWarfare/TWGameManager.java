@@ -26874,6 +26874,16 @@ public class TWGameManager extends AbstractGameManager {
                 }
 
                 tractor.towUnit(trailer.getId());
+
+                // towUnit records the trailer as part of the train before it looks for a hitch to hold it, and does
+                // not undo that when nothing can. A trailer left listed but unhitched would be reported as restored
+                // and then behave as neither loose nor towed, so drop it back out of the train instead.
+                if (trailer.getTowedBy() == Entity.NONE) {
+                    LOGGER.warn("[Train] {} has no free hitch for {}; the trailer was loaded loose",
+                          tractor.getDisplayName(), trailer.getDisplayName());
+                    tractor.removeTowedUnit(trailer.getId());
+                    trailer.setTractor(Entity.NONE);
+                }
             }
 
             LOGGER.info("[Train] restored {} towing {} trailer(s) from file",

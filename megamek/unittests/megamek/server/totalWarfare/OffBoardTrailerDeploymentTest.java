@@ -70,6 +70,7 @@ class OffBoardTrailerDeploymentTest {
     private static final double TRACTOR_TONS = 75.0;
     private static final double CARRIAGE_TONS = 10.0;
     private static final int OFF_BOARD_DISTANCE = 17;
+    private static final int FIRST_ROUND = 0;
 
     private Game game;
     private Player owner;
@@ -191,6 +192,32 @@ class OffBoardTrailerDeploymentTest {
         deploymentProcessor.dropOffBoardTrailers(tractor);
 
         assertEquals(before, tractor.getAllTowedUnits(), "Nothing changes when no trailer is going off board");
+    }
+
+    @Test
+    void aTrailerWithNoTractorDeploysOffBoardOnItsOwn() throws Exception {
+        // The simplest way to field a towed gun: emplace it off board and never hitch it to anything. It has no
+        // engine, but an emplaced artillery piece does not need one.
+        Tank looseTrailer = buildVehicle(CARRIAGE_TONS, true);
+        setOffBoard(looseTrailer);
+
+        assertFalse(looseTrailer.shouldDeploy(FIRST_ROUND),
+              "Off board units never take a deployment turn");
+        assertTrue(looseTrailer.shouldOffBoardDeploy(FIRST_ROUND),
+              "but it does deploy itself off board, with no tractor involved");
+    }
+
+    @Test
+    void aLoneOffBoardTrailerIsUntouchedByTheTrainCode() throws Exception {
+        Tank tractor = buildTrain(1);
+        Tank looseTrailer = buildVehicle(CARRIAGE_TONS, true);
+        setOffBoard(looseTrailer);
+
+        deploymentProcessor.dropOffBoardTrailers(tractor);
+
+        assertEquals(Entity.NONE, looseTrailer.getTractor(), "It was never part of anyone's train");
+        assertTrue(looseTrailer.isOffBoard(), "and its off board setting is left alone");
+        assertEquals(1, tractor.getAllTowedUnits().size(), "The unrelated train is unaffected");
     }
 
     @Test

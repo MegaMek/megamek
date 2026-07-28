@@ -1352,6 +1352,8 @@ public class TestAero extends TestEntity {
 
     /**
      * One gunner is required for each capital weapon and each six standard scale weapons, rounding up
+     * Each Mass Driver requires 10 gunners (TO: AU&E 6th ed, p 134)
+     * Each Screen Launcher requires 1 gunner (TM 6th ed, p 237)
      *
      * @return The vessel's minimum gunner requirements.
      */

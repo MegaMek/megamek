@@ -78,6 +78,8 @@ import megamek.common.equipment.WeaponMounted;
 import megamek.common.equipment.WeaponType;
 import megamek.common.event.GameCFREvent;
 import megamek.common.event.GameListenerAdapter;
+import megamek.common.event.entity.GameEntityChangeEvent;
+import megamek.common.event.entity.GameEntityNewEvent;
 import megamek.common.event.GamePhaseChangeEvent;
 import megamek.common.event.GameReportEvent;
 import megamek.common.event.GameTurnChangeEvent;
@@ -124,6 +126,13 @@ public abstract class BotClient extends Client {
 
     // Let bots remember whether they've rerolled an initiative roll this round
     protected boolean rerolledInitiative = false;
+
+    /**
+     * Tractors this bot has already asked the server to build a train for. Lobby updates arrive one unit at a time,
+     * so without this a batch of units would send the same build request several times over before the first reply
+     * came back. Cleared when the lobby is left.
+     */
+    private final Set<Integer> requestedTrains = new HashSet<>();
 
     /**
      * The bot's personality/configuration state. Held on {@link BotClient} because it is generic bot-personality state
@@ -189,9 +198,22 @@ public abstract class BotClient extends Client {
             }
 
             @Override
+            public void gameEntityNew(GameEntityNewEvent e) {
+                connectOwnTrains();
+            }
+
+            @Override
+            public void gameEntityChange(GameEntityChangeEvent e) {
+                connectOwnTrains();
+            }
+
+            @Override
             public void gamePhaseChange(GamePhaseChangeEvent e) {
                 calculatedTurnThisPhase = false;
                 rerolledInitiative = false;
+                if (!getGame().getPhase().isLounge()) {
+                    requestedTrains.clear();
+                }
                 if (e.getOldPhase().isSimultaneous(getGame())) {
                     LOGGER.info("{}: Calculated {} / {} turns for phase {}",
                           getName(),
@@ -551,6 +573,41 @@ public abstract class BotClient extends Client {
         }
 
         return currentTurnFriendlyEntities;
+    }
+
+    /**
+     * Hitches up any trailers this bot owns that are not part of a train yet.
+     * <p>
+     * A bot cannot use the lobby's "Connect as Train" action, so a trailer handed to one would otherwise sit there
+     * with no engine and no tractor, unable to move for the whole game. Runs whenever the lobby tells us a unit was
+     * added or changed, so it does not matter how the units arrived: assigned one at a time, assigned as a force, or
+     * loaded from a file straight onto this bot.
+     * </p>
+     * <p>
+     * The request sent is the same one a human client sends, so the server validates it exactly as it would a
+     * player's, and a train that cannot legally be built is refused rather than half-applied.
+     * </p>
+     */
+    protected void connectOwnTrains() {
+        if (!getGame().getPhase().isLounge()) {
+            return;
+        }
+
+        Map<Integer, List<Integer>> plannedTrains = BotTrainPlanner.planTrains(getGame(), localPlayerNumber);
+
+        for (Map.Entry<Integer, List<Integer>> plannedTrain : plannedTrains.entrySet()) {
+            // Only ask once per tractor. The reply arrives as another lobby update, which calls this again.
+            if (!requestedTrains.add(plannedTrain.getKey())) {
+                continue;
+            }
+
+            Entity tractor = getGame().getEntity(plannedTrain.getKey());
+            LOGGER.info("[Train] {} connecting {} + {} trailer(s)",
+                  getName(),
+                  (tractor == null) ? plannedTrain.getKey() : tractor.getDisplayName(),
+                  plannedTrain.getValue().size());
+            sendBuildTrain(plannedTrain.getKey(), plannedTrain.getValue());
+        }
     }
 
     // TODO: move initMovement to be called on phase end

@@ -115,6 +115,9 @@ public class CoreRulesMovement extends RulesMovement {
             } 
             return false;
         }
+        if (mek.hasHipCrit()) {
+            return true;
+        }
         return false;
     }
 }

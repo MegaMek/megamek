@@ -33,6 +33,7 @@
 
 package megamek.server.totalWarfare;
 
+import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
@@ -164,6 +165,31 @@ class LobbyBoardHandlerTest {
         lobbyBoardHandler.handleGenerationRequest(0);
 
         assertFalse(lobbyBoardHandler.hasBoardFromLounge());
+    }
+
+    @Test
+    void generationRequestSurvivesABoardThatCannotBeAssembled() {
+        // A selected board whose file is missing loads as an empty board, which BoardUtilities.combine()
+        // rejects as the wrong size. The failure must not escape into the packet handler.
+        game.setMapSettings(createMapSettingsFor(List.of("thisBoardFileDoesNotExist")));
+
+        assertDoesNotThrow(() -> lobbyBoardHandler.handleGenerationRequest(0));
+
+        assertFalse(lobbyBoardHandler.hasBoardFromLounge());
+        assertEquals(0, game.getBoard().getWidth());
+    }
+
+    @Test
+    void aFailedGenerationKeepsThePreviouslyBuiltBoard() {
+        lobbyBoardHandler.handleGenerationRequest(0);
+        assertTrue(lobbyBoardHandler.hasBoardFromLounge());
+
+        game.setMapSettings(createMapSettingsFor(List.of("thisBoardFileDoesNotExist")));
+        assertDoesNotThrow(() -> lobbyBoardHandler.handleGenerationRequest(0));
+
+        // The board everyone is already previewing must not be torn down by a failed re-roll
+        assertTrue(lobbyBoardHandler.hasBoardFromLounge());
+        assertEquals(2, game.getBoard().getWidth());
     }
 
     @Test

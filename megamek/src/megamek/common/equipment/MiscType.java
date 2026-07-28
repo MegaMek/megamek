@@ -340,6 +340,7 @@ public class MiscType extends EquipmentType {
     public static final MiscTypeFlag F_CHAIN_DRAPE_PONCHO = MiscTypeFlag.F_CHAIN_DRAPE_PONCHO;
 
     public static final MiscTypeFlag F_WEAPON_ENHANCEMENT = MiscTypeFlag.F_WEAPON_ENHANCEMENT;
+    public static final MiscTypeFlag F_LAM_FUEL_TANK = MiscTypeFlag.F_LAM_FUEL_TANK;
 
     public static final String S_ACTIVE_SHIELD = "Active";
     public static final String S_PASSIVE_SHIELD = "Passive";
@@ -11849,7 +11850,7 @@ public class MiscType extends EquipmentType {
         misc.tonnage = 1;
         misc.criticalSlots = 1;
         misc.cost = 200;
-        misc.flags = misc.flags.or(F_MEK_EQUIPMENT);
+        misc.flags = misc.flags.or(F_MEK_EQUIPMENT, F_LAM_FUEL_TANK);
         misc.explosive = true; // Assumed. Game effects not implemented. Might follow rules for Bomb Bay Fuel,
         // IO p.111
         misc.rulesRefs = "108, IO:AE";

@@ -1698,7 +1698,9 @@ public class ChatLounge extends AbstractPhaseDisplay
         if (trailer.getTowedBy() == Entity.NONE) {
             return;
         }
-        Entity tractor = game().getEntity(trailer.getTowedBy());
+        // Detaching mid-train affects the whole train, so work from the tractor heading it rather than from the
+        // trailer immediately in front, which would leave the rest of the train out of the update.
+        Entity tractor = game().getEntity(trailer.getTractor());
         disconnectTrain(tractor, trailer, updateCandidates);
     }
 
@@ -1726,7 +1728,9 @@ public class ChatLounge extends AbstractPhaseDisplay
 
     private void disconnectTrain(Entity tractor, Entity trailer, Collection<Entity> updateCandidates) {
         if (tractor != null && trailer != null) {
-            List<Integer> otherTowedUnitIds = tractor.getAllTowedUnits();
+            // Copy the ids: disconnectUnit drops the detached trailers from this list as it works, and walking
+            // the live view afterwards fails with a ConcurrentModificationException.
+            List<Integer> otherTowedUnitIds = new ArrayList<>(tractor.getAllTowedUnits());
             tractor.disconnectUnit(trailer.getId());
             updateCandidates.add(trailer);
             updateCandidates.add(tractor);

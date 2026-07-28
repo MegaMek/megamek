@@ -43,19 +43,36 @@ import megamek.common.units.Entity;
 import java.util.Vector;
 
 public class TWRulesPilot extends CoreRulesPilot {
-    
-    // How many pilot hits for an explosion
+
+    /**
+     * Two pilot hits for an explosion
+     *
+     * @return the number of pilot hits caused by an explosion
+     */
     @Override
     public int getExplosionPilotHits() {
         return 2;
     }
 
-    // Seatbelt check for gyro is +6
+    /**
+     * Gyro destroyed seatbelt check is +6
+     *
+     * @param piloting the piloting skill
+     * @return the seatbelt gyro modifier
+     */
     @Override
     public int getSeatbeltGyroModifier(int piloting) {
         return piloting + 6;
     }
 
+    /**
+     * Do we modify seatbelt by legs destroyed?
+     * Yes, increasing difficulties
+     *
+     * @param piloting the piloting skill
+     * @param legsDestroyed the number of legs destroyed
+     * @return the seatbelt leg modifier
+     */
     @Override
     public int getSeatbeltLegModifier(int piloting, int legsDestroyed) {
         if (legsDestroyed == 2) {
@@ -67,7 +84,13 @@ public class TWRulesPilot extends CoreRulesPilot {
         return piloting;
     }
 
-    // What is the seatbelt check modifier for shutdown reactor
+    /**
+     * What is the seatbelt check on shutdown.
+     * Reactor shutdown is harder on the check
+     *
+     * @param piloting the piloting skill
+     * @return the seatbelt shutdown target number
+     */
     @Override
     public int getSeatbeltShutdown(int piloting) {
         return piloting + 3;

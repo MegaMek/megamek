@@ -35,21 +35,58 @@ package megamek.common.rules;
 
 
 public abstract class RulesCharts {
-    // Escalating failures charts
+    /**
+     * Escalating failures charts.
+     *
+     * @param round the current round
+     * @return the escalating failure value
+     */
     public abstract int escalatingFailure(int round);
 
-    // Get facing for a fall
+    /**
+     * Get facing for a fall.
+     *
+     * @return the facing direction for a fall
+     */
     public abstract int getFacingForFall();
     
-    // Get location names
+    /**
+     * Get location names.
+     *
+     * @param loc the location code
+     * @param quad whether the unit is quadrupedal
+     * @return the name of the location
+     */
     public abstract String getLocationName(int loc, boolean quad);
 
-    // Mek Punch hit chart
+    /**
+     * Mek Punch hit chart.
+     *
+     * @param roll the dice roll
+     * @param side the side being hit
+     * @param quad whether the unit is quadrupedal
+     * @return the hit location
+     */
     public abstract int getPunchHitLocation(int roll, int side, boolean quad);
+    
+    /**
+     * Mek Punch hit chart.
+     *
+     * @param roll the dice roll
+     * @param side the side being hit
+     * @return the hit location
+     */
     public int getPunchHitLocation(int roll, int side) {
         return getPunchHitLocation(roll, side, false);
     }
 
-    // Mek punch hit chart side
+    /**
+     * Mek punch hit chart side.
+     *
+     * @param roll the dice roll
+     * @param side the side being hit
+     * @param quad whether the unit is quadrupedal
+     * @return the hit location side
+     */
     public abstract int getPunchHitLocationSide(int roll, int side, boolean quad);
 }

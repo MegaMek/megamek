@@ -38,18 +38,30 @@ import megamek.common.rules.core.CoreRulesMovement;
 import megamek.common.units.Entity;
 import megamek.common.units.EntityMovementMode;
 import megamek.common.units.EntityMovementType;
+import megamek.common.units.Mek;
 
 public class TWRulesMovement extends CoreRulesMovement {
 
-    // TW has skidding
+    /**
+     * Units can skid
+     *
+     * @return true if skidding is enabled
+     */
     @Override
     public boolean skidEnabled() {
         return true;
     }
 
-    // Can you run / flank in water? Vehicles and mechs cannot
+    /**
+     * Can a unit use run / flank MP in water.
+     * Vehicles and mechs cannot
+     * 
+     * @param movementMode the movement mode of the unit
+     * @param amphibious true if the unit is amphibious
+     * @return true if the unit cannot run in water
+     */
     @Override
-    public boolean cannnotRunInWater(EntityMovementMode movementMode,
+    public boolean cannotRunInWater(EntityMovementMode movementMode,
           boolean amphibious) {
         if  ((movementMode != EntityMovementMode.HOVER) &&
               (movementMode!= EntityMovementMode.NAVAL) &&
@@ -64,27 +76,58 @@ public class TWRulesMovement extends CoreRulesMovement {
         return false;
     }
 
-    // Fully underwater hexes cost 3MP
+    /**
+     * What is the MP cost of moving into a water hex that is fully submerged.
+     * The cost is 3MP
+     *
+     * @return the MP cost for underwater movement
+     */
     public int getUnderwaterMPCost() {
         return 3;
     }
     
-    // Backwards elevation changes only if tacops rule
+    /**
+     * Can you move backwards up elevation?
+     * Backwards elevation changes only if tacops rule
+     *
+     * @param toBackwardsElevation true if moving backwards up elevation
+     * @param entity the entity attempting to move
+     * @return true if backwards elevation change is allowed
+     */
     @Override
     public boolean enableBackwardsElevationChange(final boolean toBackwardsElevation, Entity entity) {
         return toBackwardsElevation;
     }
 
-    // Do we add leg damage together, no unless TO.
+    /**
+     * Do we add leg damage together, no unless TO.
+     *
+     * @param bTOLegDamage true if TO leg damage is enabled
+     * @return true if leg damage is cumulative
+     */
     @Override
     public boolean cumulativeLegDamage(boolean bTOLegDamage) {
         return bTOLegDamage;
     }
     
-    // Only unconscious, shut down, or leg destruction causes immobile
+    /**
+     * Does 0 MP cause immobile? 
+     * Only unconscious, shut down, or leg destruction causes immobile
+     *
+     * @param walkMP the walking movement points
+     * @return true if 0 MP causes immobile status
+     */
     @Override
     public boolean checkMPZeroCauseImmobile(int walkMP) { return false; }
-    
+
+    /**
+     * What is our Running MP?
+     *
+     * @param badLegs the number of damaged legs
+     * @param walkMP the walking movement points
+     * @param runMP the running movement points
+     * @return the effective running movement points
+     */
     @Override
     public int getMekRunMP(int badLegs, int walkMP, int runMP) {
         if (badLegs == 0) {
@@ -94,9 +137,27 @@ public class TWRulesMovement extends CoreRulesMovement {
         }
     }
 
-    // Moving into water always triggers PSR danger
+    /**
+     * Moving into water always triggers PSR danger
+     *
+     * @param movementType the type of movement
+     * @param movementMode the movement mode of the unit
+     * @return true if moving into water is dangerous
+     */
     @Override
     public boolean isMoveIntoWaterDangerous(EntityMovementType movementType, EntityMovementMode movementMode) {
         return true;
+    }
+
+    /**
+     * Can it change more than 1 level when missing a leg?
+     * TW doesn't care
+     *
+     * @param mek the Mek to check
+     * @return true if maximum elevation can be reduced
+     */
+    @Override
+    public boolean reduceMaxElevation(Mek mek) {
+        return false;
     }
 }

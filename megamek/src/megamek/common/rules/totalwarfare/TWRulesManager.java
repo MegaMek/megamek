@@ -39,89 +39,138 @@ import megamek.common.rules.RulesTarget;
 import megamek.common.rules.*;
 
 public class TWRulesManager implements RulesManager {
-        private TWRulesTarget twRulesTarget = new TWRulesTarget();
-        private TWRulesAmmo twRulesAmmo = new TWRulesAmmo();
-        private TWRulesC3 twRulesC3 = new TWRulesC3();
-        private TWRulesArtillery twRulesArtillery = new TWRulesArtillery();
-        private TWRulesArmor twRulesArmor = new TWRulesArmor();
-        private TWRulesCharts twRulesCharts = new TWRulesCharts();
-        private TWRulesEnvironment twRulesEnvironment = new TWRulesEnvironment();
-        private TWRulesEquipment twRulesEquipment = new TWRulesEquipment();
-        private TWRulesExplosions twRulesExplosions = new TWRulesExplosions();
-        private TWRulesGame twRulesGame = new TWRulesGame();
-        private TWRulesMovement twRulesMovement = new TWRulesMovement();
-        private TWRulesHeat twRulesHeat = new TWRulesHeat();
-        private TWRulesPhysical twRulesPhysical = new TWRulesPhysical();
-        private TWRulesPilot twRulesPilot = new TWRulesPilot();
-        private TWRulesPSR twRulesPsr = new TWRulesPSR();
-        private TWRulesTerrain twRulesTerrain = new TWRulesTerrain();
-        private TWRulesUnderwater twRulesUnderwater = new TWRulesUnderwater();
-        private TWRulesUnits twRulesUnits = new TWRulesUnits();
-        private TWRulesWeapons twRulesWeapons = new TWRulesWeapons();
-        
-        public RulesTarget getRulesTarget() { return twRulesTarget;}
+    private TWRulesTarget twRulesTarget = new TWRulesTarget();
+    private TWRulesAmmo twRulesAmmo = new TWRulesAmmo();
+    private TWRulesC3 twRulesC3 = new TWRulesC3();
+    private TWRulesArtillery twRulesArtillery = new TWRulesArtillery();
+    private TWRulesArmor twRulesArmor = new TWRulesArmor();
+    private TWRulesCharts twRulesCharts = new TWRulesCharts();
+    private TWRulesEnvironment twRulesEnvironment = new TWRulesEnvironment();
+    private TWRulesEquipment twRulesEquipment = new TWRulesEquipment();
+    private TWRulesExplosions twRulesExplosions = new TWRulesExplosions();
+    private TWRulesGame twRulesGame = new TWRulesGame();
+    private TWRulesMovement twRulesMovement = new TWRulesMovement();
+    private TWRulesHeat twRulesHeat = new TWRulesHeat();
+    private TWRulesPhysical twRulesPhysical = new TWRulesPhysical();
+    private TWRulesPilot twRulesPilot = new TWRulesPilot();
+    private TWRulesPSR twRulesPsr = new TWRulesPSR();
+    private TWRulesTerrain twRulesTerrain = new TWRulesTerrain();
+    private TWRulesUnderwater twRulesUnderwater = new TWRulesUnderwater();
+    private TWRulesUnits twRulesUnits = new TWRulesUnits();
+    private TWRulesWeapons twRulesWeapons = new TWRulesWeapons();
 
-    public RulesAmmo getRulesAmmo() {
-        return twRulesAmmo;
-    }
-    
-    public RulesArtillery getRulesArtillery() {
-        return twRulesArtillery;
-    }
-    
-    public RulesArmor getRulesArmor() {
-        return twRulesArmor;
-    }
-    
-    public RulesCharts getRulesCharts() {
-        return twRulesCharts;
-    }
-    public RulesEnvironment getRulesEnvironment() { return twRulesEnvironment;}
-    
-    public RulesEquipment getRulesEquipment() { return twRulesEquipment;}
+    /**
+     * {@inheritDoc}
+     * Returns the Total Warfare implementation for targeting.
+     */
+    public RulesTarget getRulesTarget() { return twRulesTarget; }
 
-    public RulesC3 getRulesC3() {
-        return twRulesC3;
-    }
+    /**
+     * {@inheritDoc}
+     * Returns the Total Warfare implementation for ammunition handling.
+     */
+    public RulesAmmo getRulesAmmo() { return twRulesAmmo; }
 
-    public RulesExplosions getRulesExplosions() {
-        return twRulesExplosions;
-    }
+    /**
+     * {@inheritDoc}
+     * Returns the Total Warfare implementation for artillery.
+     */
+    public RulesArtillery getRulesArtillery() { return twRulesArtillery; }
 
-    public RulesGame getRulesGame() {
-        return twRulesGame;
-    }
+    /**
+     * {@inheritDoc}
+     * Returns the Total Warfare implementation for armor interactions.
+     */
+    public RulesArmor getRulesArmor() { return twRulesArmor; }
 
-    public RulesHeat getRulesHeat() {
-        return twRulesHeat;
-    }
+    /**
+     * {@inheritDoc}
+     * Returns the Total Warfare implementation for charts and lookup tables.
+     */
+    public RulesCharts getRulesCharts() { return twRulesCharts; }
 
-    public RulesMovement getRulesMovement() {
-        return twRulesMovement;
-    }
+    /**
+     * {@inheritDoc}
+     * Returns the Total Warfare implementation for environmental effects.
+     */
+    public RulesEnvironment getRulesEnvironment() { return twRulesEnvironment; }
 
-    public RulesPhysical getRulesPhysical() {
-        return twRulesPhysical;
-    }
+    /**
+     * {@inheritDoc}
+     * Returns the Total Warfare implementation for equipment behavior.
+     */
+    public RulesEquipment getRulesEquipment() { return twRulesEquipment; }
 
-    public RulesPilot getRulesPilot() {
-        return twRulesPilot;
-    }
+    /**
+     * {@inheritDoc}
+     * Returns the Total Warfare implementation for C3 systems.
+     */
+    public RulesC3 getRulesC3() { return twRulesC3; }
 
-    public RulesPSR getRulesPSR() {
-        return twRulesPsr;
-    }
+    /**
+     * {@inheritDoc}
+     * Returns the Total Warfare implementation for explosions and blast effects.
+     */
+    public RulesExplosions getRulesExplosions() { return twRulesExplosions; }
 
-    public RulesTerrain getRulesTerrain() {
-        return twRulesTerrain;
-    }
-    public RulesUnderwater getRulesUnderwater() {
-        return twRulesUnderwater;
-    }
-    
-    public RulesUnits getRulesUnits() {return twRulesUnits;}
-    
-    public RulesWeapons getRulesWeapons() {return twRulesWeapons;}
-    
+    /**
+     * {@inheritDoc}
+     * Returns the Total Warfare implementation for core game mechanics.
+     */
+    public RulesGame getRulesGame() { return twRulesGame; }
+
+    /**
+     * {@inheritDoc}
+     * Returns the Total Warfare implementation for heat management.
+     */
+    public RulesHeat getRulesHeat() { return twRulesHeat; }
+
+    /**
+     * {@inheritDoc}
+     * Returns the Total Warfare implementation for movement.
+     */
+    public RulesMovement getRulesMovement() { return twRulesMovement; }
+
+    /**
+     * {@inheritDoc}
+     * Returns the Total Warfare implementation for physical attacks.
+     */
+    public RulesPhysical getRulesPhysical() { return twRulesPhysical; }
+
+    /**
+     * {@inheritDoc}
+     * Returns the Total Warfare implementation for pilot‑related mechanics.
+     */
+    public RulesPilot getRulesPilot() { return twRulesPilot; }
+
+    /**
+     * {@inheritDoc}
+     * Returns the Total Warfare implementation for Piloting Skill Rolls (PSRs).
+     */
+    public RulesPSR getRulesPSR() { return twRulesPsr; }
+
+    /**
+     * {@inheritDoc}
+     * Returns the Total Warfare implementation for terrain interactions.
+     */
+    public RulesTerrain getRulesTerrain() { return twRulesTerrain; }
+
+    /**
+     * {@inheritDoc}
+     * Returns the Total Warfare implementation for underwater rules.
+     */
+    public RulesUnderwater getRulesUnderwater() { return twRulesUnderwater; }
+
+    /**
+     * {@inheritDoc}
+     * Returns the Total Warfare implementation for unit‑specific rules.
+     */
+    public RulesUnits getRulesUnits() { return twRulesUnits; }
+
+    /**
+     * {@inheritDoc}
+     * Returns the Total Warfare implementation for weapons.
+     */
+    public RulesWeapons getRulesWeapons() { return twRulesWeapons; }
 }
 

@@ -40,10 +40,16 @@ import megamek.common.units.Mek;
 import megamek.common.units.QuadMek;
 
 public class CoreRulesUnits extends RulesUnits {
-    // Mule kicks have no additional modifier Core p.238
+    /**
+     * {@inheritDoc}
+     * Mule kicks have no additional modifier Core p.238
+     */
     public int getMuleKickModifier() { return 0; }
 
-    // Is it immobile due to leg destruction? Core p.237 (tripod), p.239 (quad), p.90
+    /**
+     * {@inheritDoc}
+     * Is it immobile due to leg destruction? Core p.237 (tripod), p.239 (quad), p.90
+     */
     public boolean getDoesLegDestructionCauseImmobile(Mek mek) {
         int legsDestroyed = 0;
         for (int i = 0; i < mek.locations(); i++) {
@@ -61,7 +67,10 @@ public class CoreRulesUnits extends RulesUnits {
         return false;
     }
 
-    // reduce a quad's walk MP for legs destroyed, hip hits, and actuator hits. Core p.90, 238
+    /**
+     * {@inheritDoc}
+     * reduce a quad's walk MP for legs destroyed, hip hits, and actuator hits. Core p.90, 238
+     */
     public int reduceQuadWalkMP(int mp, int legsDestroyed, int hipHits, int actuatorHits,
           boolean bTOLegDamage) {
         if (legsDestroyed > 0) {
@@ -87,7 +96,10 @@ public class CoreRulesUnits extends RulesUnits {
         return 0;
     }
 
-    // Quads modify PSR rolls for legs as per Core p.238
+    /**
+     * {@inheritDoc}
+     * Quads modify PSR rolls for legs as per Core p.238
+     */
     public void quadPilotModForLegsDestroyed(int destroyedLegs, PilotingRollData roll) {
         switch (destroyedLegs) {
             case 1:
@@ -102,18 +114,28 @@ public class CoreRulesUnits extends RulesUnits {
         }
     }
 
-    // Reduce MP for a mek with hip hits. Core p.99
+    /**
+     * {@inheritDoc}
+     * Reduce MP for a mek with hip hits. Core p.99
+     */
     public int getMekMPReduction(int hipHits, boolean bTOLegDamage, int mp) {
         mp -= hipHits;
         return mp;
     }
 
-    // MP cannot be reduced below 1 by actuator damage. only by leg destruction Core p.99
+    /**
+     * {@inheritDoc}
+     * MP cannot be reduced below 1 by actuator damage. only by leg destruction Core p.99
+     */
     public int getMinimumMP(int mp) {
         return 1;
     }
 
-    // Does it have what counts as bad legs? 1 for bipeds/tripods, 3 for quads
+    /**
+     * {@inheritDoc}
+     * Does it have what counts as bad legs? 1 for bipeds/tripods, 3 for quads
+     * Gets the value from the entity
+     */
     public boolean hasBadLegs(Entity entity) {
         return entity.hasBadLegs();
     }

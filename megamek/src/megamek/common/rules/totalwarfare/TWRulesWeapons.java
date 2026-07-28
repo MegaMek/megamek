@@ -46,33 +46,70 @@ import java.util.Vector;
 
 public class TWRulesWeapons extends CoreRulesWeapons {
 
-    // RAC is restricted in what it can do in weapons phase
+    /**
+     * Does a RAC unjamming cause issues?
+     * Yes, it is restricted in what it can do in the weapons phase
+     *
+     * @return true if RAC unjamming has restrictions
+     */
     @Override
     public boolean getRACUnjamRestriction() {
         return true;
     }
 
-    // ATMs cluster in 5s
+    /**
+     * What size do ATMs cluster in? 5s
+     *
+     * @return the ATM cluster size
+     */
     @Override
     public int getATMClusterSize() { return 5; }
 
-    // UACs jam
+    /**
+     * Can ultra autocannons jam? Yes.
+     *
+     * @return true if ultra autocannons can jam
+     */
     @Override
     public boolean canUACsJam() { return true; }
 
-    // ACs get hit normally
+    /**
+     * What happens when an AC is hit? nothing extra
+     * This function does nothing
+     *
+     * @param cs the critical slot being hit
+     * @param mounted the mounted weapon
+     * @param reports vector of reports describing the hit
+     * @param entityId the ID of the entity being hit
+     */
     @Override
     public void setACHit(CriticalSlot cs, Mounted<?> mounted, Vector<Report> reports, int entityId) {}
 
-    // ELRMs get half missiles hit under minimum
+    /**
+     * Extended LRMs halve the rack size under minimum
+     *
+     * @param rackSize the rack size
+     * @return the minimum ELRM rack size
+     */
     @Override
     public int getELRMMinimumRackSize(int rackSize) { return (rackSize / 2 + rackSize % 2); }
 
-    // MRMs are +1 to hit
+    /**
+     * MRMs are +1 to hit
+     *
+     * @param modifier the base modifier
+     * @return the MRM modifier
+     */
     @Override
     public int getMRMModifier(int modifier) { return (modifier + 1); }
 
-    // MRMs have no cluster modifier, but with Apollo they do
+    /**
+     * What is the cluster modifier for MRMs?
+     * MRMs have no cluster modifier, but with Apollo they do
+     * 
+     * @param apollo true if Apollo fire control is used
+     * @return the MRM cluster modifier
+     */
     @Override
     public int getMRMClusterModifier(boolean apollo) {
         if (apollo) {
@@ -81,15 +118,34 @@ public class TWRulesWeapons extends CoreRulesWeapons {
         return 0;
     }
 
-    // Apollo is -1 to hit
+    /**
+     * Apollos is -1 to hit
+     *
+     * @return the Apollo to-hit modifier
+     */
     @Override
     public int getApolloToHit() { return -1; }
 
+    /**
+     * Do flamers do damage and heat?
+     * Only if BMM Flamers is enabled
+     *
+     * @param bmmFlamers true if using alternate flamer rules
+     * @return true if flamers do both damage and heat
+     */
     @Override
     public boolean flamerHeatAndDamage(boolean bmmFlamers) {
         return bmmFlamers ? true : false;
     }
 
+    /**
+     * PPC Capacitor check.
+     *
+     * @param roll the dice roll result
+     * @param attackingEntity the entity firing the PPC
+     * @param weapon the PPC weapon being fired
+     * @return a report of the capacitor check result
+     */
     @Override
     @Nullable
     public Report checkPPCCapacitor(int roll, Entity attackingEntity, WeaponMounted
@@ -119,13 +175,23 @@ public class TWRulesWeapons extends CoreRulesWeapons {
         return null;
     }
 
-    // No MGA cluster bonus
+    /**
+     * No MGA cluster bonus
+     *
+     * @return the MGA bonus
+     */
     @Override
     public int getMGABonus() {
         return 0;
     }
 
-    // HGR can cause PSR
+    /**
+     * Does the HGR trigger a PSR? Only if they moved and it isn't an assault mek
+     *
+     * @param mpUsed the movement points used
+     * @param weightClass the weight class of the unit
+     * @return true if HGR can trigger a piloting skill roll
+     */
     @Override
     public boolean canHGRTriggerPSR(int mpUsed, int weightClass) {
         if (mpUsed > 0 && weightClass <= EntityWeightClass.WEIGHT_ASSAULT) {

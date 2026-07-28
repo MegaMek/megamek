@@ -41,8 +41,6 @@ import megamek.common.units.EntityMovementType;
 import megamek.common.units.Mek;
 import megamek.common.units.QuadMek;
 
-import java.util.ArrayList;
-
 public class CoreRulesMovement extends RulesMovement {
     // No skidding in Core Rules
     public boolean skidEnabled() {
@@ -50,7 +48,7 @@ public class CoreRulesMovement extends RulesMovement {
     }
 
     // Can you run / flank in water? Core p.51
-    public boolean cannnotRunInWater(EntityMovementMode movementMode,
+    public boolean cannotRunInWater(EntityMovementMode movementMode,
           boolean amphibious) {
         if ((movementMode != EntityMovementMode.HOVER) &&
               (movementMode != EntityMovementMode.NAVAL) &&
@@ -121,7 +119,7 @@ public class CoreRulesMovement extends RulesMovement {
     // Moving into water only triggers danger when running and you can run in water. Core p.45
     public boolean isMoveIntoWaterDangerous(EntityMovementType movementType, EntityMovementMode movementMode) {
         if ((movementType == EntityMovementType.MOVE_RUN || movementType == EntityMovementType.MOVE_SPRINT) 
-              && !cannnotRunInWater(movementMode,false)) {
+              && !cannotRunInWater(movementMode,false)) {
             return true;
         }
         return false;

@@ -44,13 +44,25 @@ import megamek.server.totalWarfare.TWDamageManager;
 import java.util.Vector;
 
 public class TWRulesArmor extends CoreRulesArmor {
-    // TW does not need to know about heat weapons for armor
+    /**
+     * Allow heat weapons for heat armor.
+     * TW does not need to know about heat weapons for armor.
+     *
+     * @param heat_weapon true if the weapon is a heat weapon
+     * @return true if heat weapons are allowed
+     */
     @Override
     public boolean allowHeatWeapon(boolean heat_weapon) {
         return false;
     }
 
-    // Hardened, FerroLam, and Reactive prevent AP ammo
+    /**
+     * Does armor allow armor piercing.
+     * Hardened, FerroLam, and Reactive prevent AP ammo.
+     *
+     * @param mods the modifications info
+     * @return true if armor piercing is allowed
+     */
     @Override
     public boolean allowArmorPiercing(TWDamageManager.ModsInfo mods) {
         if (mods.hardenedArmor || mods.ferroLamellorArmor || mods.reactiveArmor) {
@@ -59,11 +71,23 @@ public class TWRulesArmor extends CoreRulesArmor {
         return true;
     }
 
-    // Impact armor reduces crit rolls
+    /**
+     * Impact resistant armor.
+     * Impact armor reduces crit rolls.
+     *
+     * @return the impact armor modifier
+     */
     @Override
     public int impactArmorMod() {return 1;}
 
-    // Impact Resistant Armor breach
+    /**
+     * Impact Resistant Armor breach.
+     * Impact Resistant Armor breach.
+     *
+     * @param entity the entity with impact armor
+     * @param vDesc vector of reports describing the breach
+     * @return the breach value
+     */
     public int impactArmorBreach(Entity entity, Vector<Report> vDesc, int damageType) {
         Report r;
         r = new Report(6344);
@@ -73,12 +97,25 @@ public class TWRulesArmor extends CoreRulesArmor {
         return 1;
     }
 
-    // Hardened and ferro lam prevent penetration
+    /**
+     * Does a lance penetrate the armor.
+     * Hardened and ferro lam prevent penetration.
+     *
+     * @param armorType the type of armor
+     * @return true if a lance penetrates the armor
+     */
     @Override
     public boolean checkLancePenetration(int armorType) {
         return false;
     }
 
+    /**
+     * Does the armor reduce heat?
+     *
+     * @param armorType the type of armor
+     * @param heatDamage the amount of heat damage
+     * @return the reduced heat damage amount
+     */
     @Override
     public int reduceHeatDamageByArmor(int armorType, int heatDamage) {
         if (armorType == EquipmentType.T_ARMOR_HEAT_DISSIPATING) {
@@ -90,16 +127,38 @@ public class TWRulesArmor extends CoreRulesArmor {
         return heatDamage;
     }
 
-    // In TW, reflective armor will cause AP crit chance changes
+    /**
+     * Does reflective armor cause modifiers for AP?
+     * In TW, reflective armor will cause AP crit chance changes.
+     *
+     * @param reflectiveArmor true if the armor is reflective
+     * @return true if reflective armor affects AP modifiers
+     */
     @Override
     public boolean reflectiveAP(boolean reflectiveArmor) {
         return reflectiveArmor;
     }
 
+    /**
+     * Block TAC (Targeting Auto-Correlator).
+     *
+     * @param armorType the type of armor
+     * @return true if TAC is blocked
+     */
     public boolean blockTAC(int armorType) {
         return false;
     }
 
+    /**
+     * How does impact armor reduce damage.
+     *
+     * @param entityId the entity ID
+     * @param hit the hit data
+     * @param damage the damage amount
+     * @param reportVec vector of reports describing the damage reduction
+     * @param damageType the type of damage
+     * @return the reduced damage amount
+     */
     @Override
     public int reduceImpactDamage(int entityId,HitData hit, int damage, Vector<Report> reportVec, int damageType) {
         // As long as there is even 1 point of armor in this location, reduce _all_ damage

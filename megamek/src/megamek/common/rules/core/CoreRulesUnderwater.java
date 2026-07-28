@@ -35,12 +35,18 @@ package megamek.common.rules.core;
 import megamek.common.rules.RulesUnderwater;
 
 public class CoreRulesUnderwater extends RulesUnderwater {
-    // Underwater target number is 5+ to avoid
+    /**
+     * {@inheritDoc}
+     * Underwater target number is 5+ to avoid
+     */
     public int getBreachTarget() {
         return 4;
     }
 
-    // Underwater does not break LOS. Core p.58, 62
+    /**
+     * {@inheritDoc}
+     * Underwater does not break LOS. Core p.58, 62
+     */
     public boolean waterBlocksLOS() {
         return false;
     }

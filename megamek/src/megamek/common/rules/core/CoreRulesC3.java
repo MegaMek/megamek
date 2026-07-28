@@ -40,7 +40,10 @@ import megamek.common.units.Entity;
 
 public class CoreRulesC3 extends RulesC3 {
 
-    // C3 can be used with ECM affecting it. Core p.198
+    /**
+     * {@inheritDoc}
+     * C3 can be used with ECM affecting it. Core p.198
+     */
     public int getC3RangeToUse(int range, int c3range, int c3ecmRange) {
         if ((c3range > c3ecmRange) && (range > c3ecmRange)) {
             return c3ecmRange;
@@ -50,7 +53,10 @@ public class CoreRulesC3 extends RulesC3 {
         return RangeType.RANGE_OUT;
     }
     
-    // C3 and ECM can interact to lower values. Core p.198
+    /**
+     * {@inheritDoc}
+     * C3 and ECM can interact to lower values. Core p.198
+     */
     public void getC3RangeModifier(ToHitData mods, int range, int usingRange, int c3ecmRange, int c3range,
           boolean ecmAffected, Entity attacker) {
         if (usingRange == c3ecmRange && usingRange != c3range && ecmAffected) {
@@ -85,9 +91,15 @@ public class CoreRulesC3 extends RulesC3 {
         }
     }
     
-    // C3 spotters require LOS to target. Core p.198
+    /**
+     * {@inheritDoc}
+     * C3 spotters require LOS to target. Core p.198
+     */
     public boolean c3SpotterLOSRequired() { return true; }
     
-    // C3 can work with ECM, it is just reduced. Core p.198
+    /**
+     * {@inheritDoc}
+     * C3 can work with ECM, it is just reduced. Core p.198
+     */
     public boolean c3AllowedWithECM() { return true; }
 }

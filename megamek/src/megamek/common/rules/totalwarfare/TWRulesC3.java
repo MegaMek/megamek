@@ -39,7 +39,15 @@ import megamek.common.rules.core.CoreRulesC3;
 import megamek.common.units.Entity;
 
 public class TWRulesC3 extends CoreRulesC3 {
-    // ECM disrupts C3, so c3ecmRange is not used
+    /**
+     * What range should C3 use.
+     * ECM disrupts C3, so c3ecmRange is not used.
+     *
+     * @param range the base range
+     * @param c3range the C3 range
+     * @param c3ecmRange the C3 ECM range
+     * @return the range to use for C3
+     */
     @Override
     public int getC3RangeToUse(int range, int c3range, int c3ecmRange) {
         if (range > c3range) {
@@ -48,7 +56,18 @@ public class TWRulesC3 extends CoreRulesC3 {
         return RangeType.RANGE_OUT;
     }
 
-    // C3 disrupted by ECM is ignored. Return the unaffected ECM range
+    /**
+     * What C3 range modifier to use.
+     * C3 disrupted by ECM is ignored. Return the unaffected ECM range.
+     *
+     * @param mods the hit data modifications
+     * @param range the base range
+     * @param usingRange the range being used
+     * @param c3ecmRange the C3 ECM range
+     * @param c3range the C3 range
+     * @param ecmAffected whether ECM is affecting the shot
+     * @param attacker the attacking entity
+     */
     @Override
     public void getC3RangeModifier(ToHitData mods, int range, int usingRange, int c3ecmRange, int c3range,
           boolean ecmAffected, Entity attacker) {
@@ -62,11 +81,21 @@ public class TWRulesC3 extends CoreRulesC3 {
         }
     }
 
-    // C3 spotters don't require LOS to target
+    /**
+     * Do C3 spotters require LOS?
+     * C3 spotters don't require LOS to target.
+     *
+     * @return true if C3 spotters require line of sight
+     */
     @Override
     public boolean c3SpotterLOSRequired() { return false; }
 
-    // ECM disrupts C3.
+    /**
+     * Can C3 work with ECM.
+     * ECM disrupts C3.
+     *
+     * @return true if C3 is allowed with ECM
+     */
     @Override
     public boolean c3AllowedWithECM() { return false; }
 }

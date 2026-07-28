@@ -35,13 +35,21 @@ package megamek.common.rules.totalwarfare;
 import megamek.common.rules.core.CoreRulesUnderwater;
 
 public class TWRulesUnderwater extends CoreRulesUnderwater {
-    // get the breach number
+    /**
+     * What is the target number for the breach?
+     *
+     * @return the breach target number is 10
+     */
     @Override
     public int getBreachTarget() {
         return 10;
     }
 
-    // Underwater breaks LOS
+    /**
+     * Crossing the waterline blocks LOS
+     *
+     * @return true if water blocks line of sight
+     */
     @Override
     public boolean waterBlocksLOS() {
         return true;

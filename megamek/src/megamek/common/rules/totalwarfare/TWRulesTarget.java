@@ -42,7 +42,13 @@ import megamek.common.units.Mek;
 
 public class TWRulesTarget extends CoreRulesTarget {
 
-    // Check return if the target is considered large. Not used in TW.
+    /**
+     * Check if the target is large and if there is a modifier.
+     *
+     * @param weightclass the weight class of the target
+     * @param markedLarge true if the target is marked as large
+     * @return the large target modifier
+     */
     @Override
     public int largeTargetModifier(int weightclass, boolean markedLarge) {
         if (weightclass == EntityWeightClass.WEIGHT_SUPER_HEAVY || weightclass == EntityWeightClass.WEIGHT_LARGE_SUPPORT) {
@@ -51,7 +57,12 @@ public class TWRulesTarget extends CoreRulesTarget {
         return 0;
     }
 
-    // Aimed shots hit if you roll 6-8
+    /**
+     * Do we hit the aimed location?
+     * Aimed shots hit if you roll 6-8
+     *
+     * @return true if the aimed location is hit
+     */
     @Override
     public boolean checkAimedLocation() {
         int roll = Compute.d6(2);
@@ -62,19 +73,36 @@ public class TWRulesTarget extends CoreRulesTarget {
         return false;
     }
 
-    // Secondary Arc modifier is 2
+    /**
+     * What is the secondary arc modifier? 2
+     *
+     * @return the secondary arc modifier
+     */
     @Override
     public int getSecondaryArcModifier(){
         return 2;
     }
 
-    // Can only shoot with one arm while prone with TacOps Prone Fire
+    /**
+     * Can you shoot with one arm while prone
+     * Only with TacOps Prone firing enabled
+     *
+     * @param toProneFire true if checking prone fire capability
+     * @return true if you can shoot with one arm while prone
+     */
     @Override
     public boolean proneFireWithOneArm(final boolean toProneFire) {
         return toProneFire;
     }
 
-    // Both arm actuators increase the to hit for shooting.
+    /**
+     * What is the arm actuator hit mod for shooting.
+     * Both arm actuators increase the to hit for shooting.
+     *
+     * @param attacker the attacking entity
+     * @param location the arm location being used
+     * @return the arm actuator hit modifier
+     */
     @Override
     public int getArmActuatorHitMod(Entity attacker, int location) {
         int actuatorHits = 0;
@@ -87,7 +115,12 @@ public class TWRulesTarget extends CoreRulesTarget {
         return actuatorHits;
     }
 
-    // BAP does not reduce smoke
+    /**
+     * Do we reduce smoke? No
+     *
+     * @param los the line of sight effects
+     * @return the BAP smoke reduction amount. Always is 0
+     */
     @Override
     public int getBAPSmokeReduction(LosEffects los) {
         return 0;

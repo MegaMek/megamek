@@ -9068,7 +9068,7 @@ public abstract class Entity extends TurnOrdered
             mod = 1;
         }
         
-        if (waterLevel >=1 && overallMoveType == EntityMovementType.MOVE_RUN && !Game.rulesManager.getRulesMovement().cannnotRunInWater(movementMode, false)) {
+        if (waterLevel >=1 && overallMoveType == EntityMovementType.MOVE_RUN && !Game.rulesManager.getRulesMovement().cannotRunInWater(movementMode, false)) {
             roll.append(new PilotingRollData(getId(), 0, "entering Depth " + waterLevel + " Water"));
         } 
         

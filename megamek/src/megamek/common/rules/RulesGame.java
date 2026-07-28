@@ -38,16 +38,40 @@ import megamek.common.enums.GamePhase;
 
 public abstract class RulesGame {
 
-    // Allow ammo dumping
+    /**
+     * Allow ammo dumping.
+     *
+     * @return true if ammo dumping is allowed
+     */
     public abstract boolean ammoDumping();
 
-    // Is the unit eligible for the phase
+    /**
+     * Is the unit eligible for the phase.
+     *
+     * @param unjammingRAC true if the unit is unjamming a RAC
+     * @param findingClub true if the unit is finding a club
+     * @param immobile true if the unit is immobile
+     * @param phase the game phase to check
+     * @return true if the unit is eligible for the phase
+     */
     public abstract boolean eligibleForPhase(boolean unjammingRAC, boolean findingClub,
           boolean immobile, @Nullable GamePhase phase);
 
-    // Return the number of units to move
+    /**
+     * Return the number of units to move.
+     *
+     * @param num_normal_turns array of normal turns
+     * @param index the current index
+     * @param min the minimum value
+     * @param frontLoadOption true if front load option is enabled
+     * @return the initiative order
+     */
     public abstract int getInitiativeOrder(int[] num_normal_turns, int index, int min, boolean frontLoadOption);
 
-    // Does tag increase BV?
+    /**
+     * Does tag increase BV?
+     *
+     * @return true if TAG increases battle value
+     */
     public abstract boolean tagBVBump();
 }

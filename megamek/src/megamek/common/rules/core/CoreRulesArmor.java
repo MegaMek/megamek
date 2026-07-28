@@ -44,47 +44,71 @@ import megamek.server.totalWarfare.TWDamageManager;
 import java.util.Vector;
 
 public class CoreRulesArmor extends RulesArmor {
-    // Core rules heat armor halves heat weapon damage. This allows for weapons to be marked for heat.
-    // Core rules p.202
+    /**
+     * {@inheritDoc}
+     * Core rules heat armor halves heat weapon damage. This allows for weapons to be marked for heat.
+     * Core rules p.202
+     */
     public boolean allowHeatWeapon(boolean heat_weapon) {
         return heat_weapon;
     }
 
-    // Hardened and ABA armor prevent AP. Core p.201
+    /**
+     * {@inheritDoc}
+     * Hardened and ABA armor prevent AP. Core p.201
+     */
     public boolean allowArmorPiercing(TWDamageManager.ModsInfo mods) {
-        if (mods.hardenedArmor || mods.abaArmor) {
-            return false;
-        }
-        return true;
+        return (mods.hardenedArmor || mods.abaArmor) ? false : true;
     }
 
-    // Impact armor does not reduce anything. Core p.201
+    /**
+     * {@inheritDoc}
+     * Impact armor does not reduce anything. Core p.201
+     */
     public int impactArmorMod() {return 0;}
 
-    // Impact Resistant Armor breach. Does not apply in Core. p.201
+    /**
+     * {@inheritDoc}
+     * Impact Resistant Armor breach. Does not apply in Core. p.201
+     */
     public int impactArmorBreach(Entity entity, Vector<Report> vDesc) {
         return 0;
     }
 
-    // Does a lance penetrate on hit? Not if it is ABA, but all others yes. Core p.201
+    /**
+     * {@inheritDoc}
+     * Does a lance penetrate on hit? Not if it is ABA, but all others yes. Core p.201
+     */
     public boolean checkLancePenetration(int armorType) {
         return (armorType == EquipmentType.T_ARMOR_ANTI_PENETRATIVE_ABLATION);
     }
 
-    // Does armor reduce heat? Core p.202
+    /**
+     * {@inheritDoc}
+     * Does armor reduce heat? Core p.202
+     */
     public int reduceHeatDamageByArmor(int armorType, int heatDamage) {
         return (armorType == EquipmentType.T_ARMOR_HEAT_DISSIPATING) ? 0 : heatDamage;
     }
 
-    // Reflective armor does not have a modifier on AP rounds
+    /**
+     * {@inheritDoc}
+     * Reflective armor does not have a modifier on AP rounds
+     */
     public boolean reflectiveAP(boolean reflectiveArmor) {return false;}
 
-    // ABA armor stops TACs from generating a crit. Core p.201
+    /**
+     * {@inheritDoc}
+     * ABA armor stops TACs from generating a crit. Core p.201
+     */
     public boolean blockTAC(int armorType) {
         return (armorType == ArmorType.T_ARMOR_ANTI_PENETRATIVE_ABLATION);
     }
 
-    // Impact armor reduces damage from falls, collisions, and buildings by half. 1/3 for physical
+    /**
+     * {@inheritDoc}
+     * Impact armor reduces damage from falls, collisions, and buildings by half. 1/3 for physical
+     */
     public int reduceImpactDamage(int entityId, HitData hit, int damage, Vector<Report> reportVec, int damageType) {
         Report report;
         if (hit.isFallDamage() || damageType == HitData.DAMAGE_PHYSICAL_NONATTACK) {

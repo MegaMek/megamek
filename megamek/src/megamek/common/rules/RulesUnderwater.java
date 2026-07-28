@@ -34,9 +34,17 @@ package megamek.common.rules;
 
 public abstract class RulesUnderwater {
 
-    // what is the target number for the breach
+    /**
+     * What is the target number for the breach.
+     *
+     * @return the breach target number
+     */
     public abstract int getBreachTarget();
 
-    // Does water break LOS?
+    /**
+     * Does water block LOS?
+     *
+     * @return true if water blocks line of sight
+     */
     public abstract boolean waterBlocksLOS();
 }

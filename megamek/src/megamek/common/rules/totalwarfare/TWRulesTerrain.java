@@ -34,15 +34,28 @@ package megamek.common.rules.totalwarfare;
 
 import megamek.common.Hex;
 import megamek.common.rules.core.CoreRulesTerrain;
-import megamek.common.units.Terrains;
 
 public class TWRulesTerrain extends CoreRulesTerrain {
     
-    // No change on roads
+    /**
+     * Do we change the road elevation cost? No
+     *
+     * @param srcHex the source hexagon
+     * @param destHex the destination hexagon
+     * @param deltaElevation the change in elevation
+     * @return the road elevation cost difference
+     */
     @Override
     public int getRoadElevationCostDifference(Hex srcHex, Hex destHex, int deltaElevation) { return 0; }
-    
-    // No difference
+
+    /**
+     * Can we change more levels than normally allowed? No
+     *
+     * @param srcHex the source hexagon
+     * @param destHex the destination hexagon
+     * @param maxElevationChange the maximum elevation change normally allowed
+     * @return the adjusted maximum elevation change allowed
+     */
     @Override
     public int getMaxElevationChangeAllowed(Hex srcHex, Hex destHex, int maxElevationChange) {
         return maxElevationChange;

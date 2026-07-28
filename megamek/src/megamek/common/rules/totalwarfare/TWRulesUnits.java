@@ -39,17 +39,35 @@ import megamek.common.units.Entity;
 import megamek.common.units.Mek;
 
 public class TWRulesUnits extends CoreRulesUnits {
-    // Mule kicks have a +1 modifier
+    /**
+     * Mule kicks are +1 to hit
+     *
+     * @return the mule kick modifier
+     */
     @Override
     public int getMuleKickModifier() { return 1; }
     
-    // Leg destruction does not cause immobile
+    /**
+     * Does removing legs cause it to be immobile? No
+     *
+     * @param mek the MEK to check
+     * @return always returns false
+     */
     @Override
     public boolean getDoesLegDestructionCauseImmobile(Mek mek) {
         return false;
     }
 
-    // reduce a quad's walk MP for legs destroyed, hip hits, and actuator hits. Core p.90, 238
+    /**
+     * Reduce a quad's walk MP for legs destroyed, hip hits, and actuator hits.
+     *
+     * @param mp the base movement points
+     * @param legsDestroyed the number of legs destroyed
+     * @param hipHits the number of hip hits
+     * @param actuatorHits the number of actuator hits
+     * @param bTOLegDamage true if using tactical operations leg damage rules
+     * @return the reduced movement points
+     */
     @Override
     public int reduceQuadWalkMP(int mp, int legsDestroyed, int hipHits, int actuatorHits,
           boolean bTOLegDamage) {
@@ -80,7 +98,12 @@ public class TWRulesUnits extends CoreRulesUnits {
         return 0;
     }
 
-    // Quads modify PSR rolls for legs
+    /**
+     * What modifiers to we add for legs destroyed on a quad.
+     *
+     * @param destroyedLegs the number of destroyed legs
+     * @param roll the piloting roll data to modify
+     */
     @Override
     public void quadPilotModForLegsDestroyed(int destroyedLegs, PilotingRollData roll) {
         if (destroyedLegs == 2) {
@@ -88,7 +111,14 @@ public class TWRulesUnits extends CoreRulesUnits {
         }
     }
 
-    // Reduce MP for a mek with hip hits.
+    /**
+     * Reduce MP for a mek with hip hits.
+     *
+     * @param hipHits the number of hip hits
+     * @param bTOLegDamage true if using tactical operations leg damage rules
+     * @param mp the base movement points
+     * @return the reduced movement points
+     */
     @Override
     public int getMekMPReduction(int hipHits, boolean bTOLegDamage, int mp) {
         if (bTOLegDamage) {
@@ -99,13 +129,23 @@ public class TWRulesUnits extends CoreRulesUnits {
         return mp;
     }
 
-    // MP can be reduced to 0 by actuators
+    /**
+     * Is there a limit to how much we can reduce MP? 0
+     *
+     * @param mp the movement points
+     * @return returns the input parameter with no change
+     */
     @Override
     public int getMinimumMP(int mp) {
         return mp;
     }
 
-    // No need to check this in TW
+    /**
+     * Bad legs check always returns false
+     *
+     * @param entity the entity to check
+     * @return always returns false
+     */
     @Override
     public boolean hasBadLegs(Entity entity) {
         return false;

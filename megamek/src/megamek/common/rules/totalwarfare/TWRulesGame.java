@@ -40,11 +40,25 @@ import megamek.common.rules.core.CoreRulesGame;
 
 public class TWRulesGame extends CoreRulesGame {
 
-    // Ammo dumping is allowed
+    /**
+     * Ammo dumping is allowed
+     *
+     * @return true if ammo dumping is allowed
+     */
     @Override
     public boolean ammoDumping() { return true; }
 
-    // In RW, unjamming the RAC or finding a club makes you ineligible for the phase
+    
+    /**
+     * Is the unit eligible for the phase.
+     * In TW, unjamming the RAC or finding a club makes you ineligible for the phase
+     *
+     * @param unjammingRAC true if the unit is unjamming a RAC
+     * @param findingClub true if the unit is finding a club
+     * @param immobile true if the unit is immobile
+     * @param phase the game phase to check
+     * @return true if the unit is eligible for the phase
+     */
     @Override
     public boolean eligibleForPhase(boolean unjammingRAC, boolean findingClub, boolean immobile,
           @Nullable GamePhase phase) {
@@ -54,14 +68,27 @@ public class TWRulesGame extends CoreRulesGame {
         return true;
     }
 
-    // Only do front-loaded init if the option is selected
+    /**
+     * Return the number of units to move.
+     * Only do front-loaded init if the option is selected
+     *
+     * @param num_turns array of normal turns
+     * @param index the current index
+     * @param min the minimum value
+     * @param frontLoadOption true if front load option is enabled
+     * @return the initiative order
+     */
     @Override
     public int getInitiativeOrder(int[] num_turns, int index, int min, boolean frontLoadOption) {
         return frontLoadOption ? super.getInitiativeOrder(num_turns, index, min, true) :
               (num_turns[index] / min);
     }
-    
-    // TAG can increase BV when Semi-guided or homing arrow IV is present
+
+    /**
+     * TAG can increase BV when Semi-guided or homing arrow IV is present
+     *
+     * @return true if TAG increases battle value
+     */
     public boolean tagBVBump() {
         return true;
     }

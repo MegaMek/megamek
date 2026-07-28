@@ -33,18 +33,17 @@ package megamek.common.rules.core;
  * affiliated with Microsoft.
  */
 
-import megamek.common.HitData;
 import megamek.common.Messages;
 import megamek.common.ToHitData;
 import megamek.common.compute.Compute;
 import megamek.common.rules.RulesCharts;
-import megamek.common.units.Entity;
 import megamek.common.units.Mek;
-import megamek.common.units.QuadMek;
-import megamek.common.units.TripodMek;
 
 public class CoreRulesCharts extends RulesCharts {
-    // Escalating failure rules. Same as pilot numbers. Core p.111, 180
+    /**
+     * {@inheritDoc}
+     * Escalating failure rules. Same as pilot numbers. Core p.111, 180
+     */
     public int escalatingFailure(int count) {
         // For each count after 5, the number is 11+
         return switch (count) {
@@ -53,11 +52,14 @@ public class CoreRulesCharts extends RulesCharts {
             case 2 -> 5;
             case 3 -> 7;
             case 4 -> 10;
-            case 5 -> 11;
             default -> 11;
         };
     }
 
+    /**
+     * {@inheritDoc}
+     * Falls are always forwards unless you land on your back. Core p.115
+     */
     public int getFacingForFall() {
         if (Compute.d6(1) == 1) {
             return 3;
@@ -65,7 +67,10 @@ public class CoreRulesCharts extends RulesCharts {
         return 0;
     }
 
-    // Return the names for locations
+    /**
+     * {@inheritDoc}
+     * Return the names for locations
+     */
     public String getLocationName(int loc, boolean quad) {
         switch (loc) {
             case Mek.LOC_LEFT_LEG:
@@ -101,6 +106,10 @@ public class CoreRulesCharts extends RulesCharts {
         return "";
     }
 
+    /**
+     * {@inheritDoc}
+     * Core p.81
+     */
     public int getPunchHitLocation(int roll, int side, boolean quad) {
         // front punch hits
         if (side == ToHitData.SIDE_FRONT) {
@@ -152,6 +161,10 @@ public class CoreRulesCharts extends RulesCharts {
         return getPunchHitLocationSide(roll, side, quad);
     }
 
+    /**
+     * {@inheritDoc}
+     * Core p.81
+     */
     public int getPunchHitLocationSide(int roll, int side, boolean quad) {
         if (side == ToHitData.SIDE_LEFT) {
             // left side punch hits

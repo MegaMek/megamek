@@ -51,11 +51,24 @@ import megamek.common.units.Mek;
 
 public class TWRulesPhysical extends CoreRulesPhysical {
 
-    // Shields do not provide punch damage bonus
+    /**
+     * Do shields boost punch damage? No.
+     *
+     * @param entity the entity attacking
+     * @param armLoc the arm location with the shield
+     * @return the damage boost from the shield
+     */
     @Override
     public int getShieldDamageBoost(Entity entity, int armLoc) { return 0; }
 
-    // Shields make it harder to shoot
+    /**
+     * What is the to-hit modifier for attacking when there is a shield on the arm.
+     * Shields make it harder to shoot
+     *
+     * @param toHit the to-hit data to modify
+     * @param attacker the attacking entity
+     * @param weapon the mounted weapon being used
+     */
     @Override
     public void getShieldToHitModifier(ToHitData toHit, Entity attacker, Mounted<?> weapon) {
         // time to check passive defense and no defense
@@ -66,46 +79,89 @@ public class TWRulesPhysical extends CoreRulesPhysical {
         }
     }
 
-    // Do claws modify the to-hit number
+    /**
+     * Return the claw to-hit modifier.
+     *
+     * @return the claw to-hit modifier
+     */
     @Override
     public int getClawToHitModifier() { return 1; }
     
-    // Shields stay for round
+    /**
+     * Should the shield reset with phase change. No
+     *
+     * @return true if the shield resets with phase change
+     */
     @Override
     public boolean phaseChangeShield() { return false; }
 
-    // Retractable blades are only used if TO option is enabled
+    /**
+     * Can retractable blades be used during punch attacks?
+     * Only if the TO option is enabled
+     *
+     * @param toRetractableBlade true if checking for retractable blade use
+     * @return true if retractable blades can be used
+     */
     @Override
     public boolean retractableBladeArmCheck(boolean toRetractableBlade) {
         if (toRetractableBlade) { return true; }
         return false;
     }
 
-    // Retractable blades in punch break on a 2d6 roll of 9+
+    /**
+     * Does a retractable blade break when used during the punch attack.
+     * Retractable blades in punch break on a 2d6 roll of 9+
+     *
+     * @return true if the retractable blade breaks
+     */
     @Override
     public boolean checkRetractableBladeBroke() {
         return (Compute.d6(2) > 9);
     }
 
-    // Missed mace attacks cause a PSR
+    /**
+     * Missed mace attack triggers a PSR
+     *
+     * @return true if a missed mace causes a piloting skill roll
+     */
     @Override
     public boolean getMaceMissedPSR() { return true; }
 
-    // Lance does internal damage on 10+
+    /**
+     * What is the target number for a lance to do internal damage? 10+
+     *
+     * @return the target number
+     */
     @Override
     public int getLanceTarget() { return 10; }
 
-    // Lance doesn't do anything special on a charge
+    /**
+     * Lance doesn't do anything special on a charge
+     *
+     * @return true if the lance has special charge effects
+     */
     @Override
     public boolean isLanceCharging() { return false; }
 
-    // Shields do nothing in a charge
+    /**
+     * Does a shield do anything in a charge? No.
+     *
+     * @param attackingEntity the entity performing the charge
+     * @return the hit data from shield charge damage, or null if no shield damage
+     */
     @Override
     public HitData shieldChargeDamage(Entity attackingEntity) {
         return null;
     }
 
-    // Spikes break on a 2d6 roll of 9+
+    /**
+     * Do the spikes break?
+     * Spikes break on a 2d6 roll of 9+
+     *
+     * @param entity the entity with spikes
+     * @param loc the location being checked
+     * @return a report of whether spikes broke
+     */
     @Override
     public Report checkBreakSpikes(Entity entity, int loc) {
         Report r;
@@ -130,7 +186,12 @@ public class TWRulesPhysical extends CoreRulesPhysical {
         return r;
     }
 
-    // Any talons create a damage boost on dfa
+    /**
+     * Any talons create a damage boost on dfa
+     *
+     * @param entity the entity to check
+     * @return true if the entity has talons
+     */
     @Override
     public boolean hasTalons(Entity entity) {
         if (entity instanceof BipedMek) {
@@ -149,14 +210,34 @@ public class TWRulesPhysical extends CoreRulesPhysical {
                                 entity.hasWorkingSystem(Mek.ACTUATOR_FOOT, Mek.LOC_LEFT_ARM))));
     }
 
-    // Kick is -2 to hit
+    /**
+     * What is the kick modifier?
+     * -2 to hit
+     *
+     * @return the kick modifier
+     */
     @Override
     public int getKickModifier() { return -2; }
 
-    // Punches are 0 to hit
+    /**
+     * Do we have a modifier for punching?
+     * No, 0 modifier
+     *
+     * @return the punch modifier
+     */
     @Override
     public int getPunchModifier() { return 0;}
 
+    /**
+     * What is the damage of the charge?
+     *
+     * @param entity the attacking entity
+     * @param target the target entity
+     * @param tacOps true if using tactical operations rules
+     * @param mos the margin of success
+     * @param hexesMoved the number of hexes moved in the charge
+     * @return the charge damage
+     */
     @Override
     public int getChargeDamage(Entity entity, Entity target, boolean tacOps, int mos, int hexesMoved) {
         if (!tacOps) {
@@ -178,7 +259,15 @@ public class TWRulesPhysical extends CoreRulesPhysical {
                     mos);
     }
 
-    // Charge damage for the attacker
+    /**
+     * How much damage does the charge attacker take.
+     *
+     * @param entity the attacking entity
+     * @param effectiveTargetWeight the effective weight of the target
+     * @param tacOps true if using tactical operations rules
+     * @param distance the distance traveled in the charge
+     * @return the damage taken by the attacker
+     */
     @Override
     public int getChargeDamageTakenBy(Entity entity, double effectiveTargetWeight, boolean tacOps, int distance) {
         if (!tacOps) {
@@ -192,7 +281,15 @@ public class TWRulesPhysical extends CoreRulesPhysical {
         }
     }
     
-    // missed charges displace attacker to one side or the other
+    /**
+     * Missed charges, the attacker ends up on one side or the other of the target
+     *
+     * @param game the game instance
+     * @param entityId the ID of the charging entity
+     * @param src the source coordinates
+     * @param direction the direction of the charge
+     * @return the final coordinates after a missed charge
+     */
     @Override
     public Coords getMissedChargeDisplacement(Game game, int entityId, Coords src, int direction) {
         Coords first = src.translated((direction + 1) % 6);
@@ -234,8 +331,15 @@ public class TWRulesPhysical extends CoreRulesPhysical {
         }
     }
 
-    // Prone 'Mechs can only be clubbed if they are one level higher than the attacker
-    // See BMM 7th Printing, Physical Attacks and Prone 'Mechs
+    /**
+     * Can you club a prone target?
+     * Prone 'Mechs can only be clubbed if they are one level higher than the attacker
+     * See BMM 7th Printing, Physical Attacks and Prone 'Mechs
+     *
+     * @param targetElevation the elevation of the target
+     * @param attackerElevation the elevation of the attacker
+     * @return true if the target cannot be clubbed while prone
+     */
     @Override
     public boolean cannotClubProne(int targetElevation, int attackerElevation) {
         if (targetElevation - 1 == attackerElevation) {
@@ -244,17 +348,34 @@ public class TWRulesPhysical extends CoreRulesPhysical {
         return true;
     }
 
-    // Charges and DFAs get pilot difference, and ignore immobile
+    /**
+     * For Charge/DFA, get the pilot difference modifier and ignore immobile.
+     *
+     * @param attackerPiloting the piloting skill of the attacking pilot
+     * @param targetPiloting the piloting skill of the defending pilot
+     * @param immobile true if one of the entities is immobile
+     * @return the pilot difference modifier
+     */
     @Override
     public int getPilotDiffModifier(int attackerPiloting, int targetPiloting, boolean immobile) {
         return super.getPilotDiffModifier(attackerPiloting, targetPiloting, false);
     }
-    
-    // Once a charge is declared, you are in for the ride
+
+    /**
+     * Charges cannot be cancelled
+     *
+     * @return always returns false
+     */
     @Override
     public boolean canChargeCancel() { return false; }
 
-    // Falls from above always hit the punch table
+    /**
+     * Get the right table for falls from above.
+     * They always hit the punch table
+     *
+     * @param affaTarget the entity that is the target of a fall from above
+     * @return the hit data for fall from above
+     */
     @Override
     public HitData getFallFromAboveTable(Entity affaTarget) {
         return affaTarget.rollHitLocation(ToHitData.HIT_PUNCH,

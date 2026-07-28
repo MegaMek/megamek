@@ -44,18 +44,30 @@ import megamek.common.weapons.handlers.WeaponHandler;
 import java.util.Vector;
 
 public class CoreRulesWeapons extends RulesWeapons {
-    // RAC unjamming does not limit other actions outside of movement Core p.183
+    /**
+     * {@inheritDoc}
+     * RAC unjamming does not limit other actions outside of movement Core p.183
+     */
     public boolean getRACUnjamRestriction() {
         return false;
     }
 
-    // ATM cluster size Core p.186
+    /**
+     * {@inheritDoc}
+     * ATM cluster size Core p.186
+     */
     public int getATMClusterSize() { return 6; }
 
-    // UACs cannot jam Core p.183
+    /**
+     * {@inheritDoc}
+     * UACs cannot jam Core p.183
+     */
     public boolean canUACsJam() { return false; }
 
-    // ACs can get hit one time. Core p.183
+    /**
+     * {@inheritDoc}
+     * ACs can get hit one time. Core p.183
+     */
     public void setACHit(CriticalSlot cs, Mounted<?> mounted, Vector<Report> reports, int entityId) {
         if (!mounted.isAutocannonHit()) {
             cs.setHit(false);
@@ -70,13 +82,22 @@ public class CoreRulesWeapons extends RulesWeapons {
         }
     }
 
-    // ELRMS under minimum do not reduce missiles that hit. Core p.186
+    /**
+     * {@inheritDoc}
+     * ELRMS under minimum do not reduce missiles that hit. Core p.186
+     */
     public int getELRMMinimumRackSize(int rackSize) { return rackSize; }
 
-    // MRMs have no additional modifier Core p.186
+    /**
+     * {@inheritDoc}
+     * MRMs have no additional modifier Core p.186
+     */
     public int getMRMModifier(int modifier) { return modifier; }
 
-    // MRMs are -1 on the cluster hit Core p.186. With apollo they are 0. Core p.197
+    /**
+     * {@inheritDoc}
+     * MRMs are -1 on the cluster hit Core p.186. With apollo they are 0. Core p.197
+     */
     public int getMRMClusterModifier(boolean apollo) {
         if (apollo) {
             return 0;
@@ -84,23 +105,38 @@ public class CoreRulesWeapons extends RulesWeapons {
         return -1;
     }
 
-    // Apollo does not change the to-hit Core p.197
+    /**
+     * {@inheritDoc}
+     * Apollo does not change the to-hit Core p.197
+     */
     public int getApolloToHit() { return 0; }
 
-    // Flamers do heat and damage Core p.183
+    /**
+     * {@inheritDoc}
+     * Flamers do heat and damage Core p.183
+     */
     public boolean flamerHeatAndDamage(boolean bmmFlamers) { return true; }
 
-    // PPC Capacitors don't break on roll. Core p.188
+    /**
+     * {@inheritDoc}
+     * PPC Capacitors don't break on roll. Core p.188
+     */
     @Nullable
     public Report checkPPCCapacitor(int roll, Entity attackingEntity, WeaponMounted
           weapon) { return null; }
 
-    // MGA gives +2 to cluster roll. Core p.185
+    /**
+     * {@inheritDoc}
+     * MGA gives +2 to cluster roll. Core p.185
+     */
     public int getMGABonus() {
         return 2;
     }
 
-    // HGR does not cause PSRs
+    /**
+     * {@inheritDoc}
+     * HGR does not cause PSRs
+     */
     public boolean canHGRTriggerPSR(int mpUsed, int weightClass) {
         return false;
     }

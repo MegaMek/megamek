@@ -45,28 +45,67 @@ import java.util.Vector;
 
 public abstract class RulesPilot {
 
-    // Handle pilot hits
+    /**
+     * Handle pilot hits.
+     *
+     * @param e the entity taking pilot hits
+     * @param totalHits the total number of hits
+     * @param damage the damage amount
+     * @param crewPos the crew position
+     * @param toughness true if the pilot has toughness
+     * @return vector of reports describing the pilot hits
+     */
     public abstract Vector<Report> pilotHits(Entity e, int totalHits, int damage, int crewPos, boolean toughness);
 
-    // How many pilot hits for an explosion
+    /**
+     * How many pilot hits for an explosion.
+     *
+     * @return the number of pilot hits caused by an explosion
+     */
     public abstract int getExplosionPilotHits();
 
-    // Crew takeover report. required by damage
+    /**
+     * Crew takeover report. Required by damage.
+     *
+     * @param e the entity with the crew
+     * @param slot the crew slot being taken over
+     * @param wasPilot true if the crew member was the pilot
+     * @param wasGunner true if the crew member was the gunner
+     * @return a report of the crew takeover
+     */
     public abstract Report createCrewTakeoverReport(Entity e, int slot, boolean wasPilot, boolean wasGunner);
 
-    // Is there a modifier for the gyro being destroyed
+    /**
+     * Is there a modifier for the gyro being destroyed.
+     *
+     * @param piloting the piloting skill
+     * @return the seatbelt gyro modifier
+     */
     public abstract int getSeatbeltGyroModifier(int piloting);
 
-    // Do we modify seatbelt by legs destroyed
+    /**
+     * Do we modify seatbelt by legs destroyed.
+     *
+     * @param piloting the piloting skill
+     * @param legsDestroyed the number of legs destroyed
+     * @return the seatbelt leg modifier
+     */
     public abstract int getSeatbeltLegModifier(int piloting, int legsDestroyed);
 
-    // What is the seatbelt check on shutdown
+    /**
+     * What is the seatbelt check on shutdown.
+     *
+     * @param piloting the piloting skill
+     * @return the seatbelt shutdown target number
+     */
     public abstract int getSeatbeltShutdown(int piloting);
 
     /**
-     * Returns the result of a sensor roll, and adds to a report
-     * @param entity The entity rolling
+     * Returns the result of a sensor roll, and adds to a report.
+     *
+     * @param entity the entity rolling
      * @param modifier any external modifiers
+     * @param vDesc vector to add report to
      * @return the margin of success or failure. negative is a failure, 0 or higher is a success.
      */
     public int rollSensorCheck(Entity entity, int modifier, Vector<Report> vDesc) {
@@ -92,7 +131,7 @@ public abstract class RulesPilot {
         r.add(targetNumber);
         r.add(rollValue);
         vDesc.addElement(r);
-        
+
         // Return the MoS/Failure
         return targetNumber - rollValue;
     }

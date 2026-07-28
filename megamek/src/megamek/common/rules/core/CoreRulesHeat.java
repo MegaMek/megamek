@@ -37,21 +37,25 @@ import megamek.common.CriticalSlot;
 import megamek.common.annotations.Nullable;
 import megamek.common.equipment.AmmoType;
 import megamek.common.equipment.Mounted;
-import megamek.common.options.OptionsConstants;
 import megamek.common.rules.RulesHeat;
-import megamek.common.units.Mek;
 
 import java.util.ArrayList;
 
 public class CoreRulesHeat extends RulesHeat {
 
-    // Attempts to stand do not generate heat Core p.100
+    /**
+     * {@inheritDoc}
+     * Attempts to stand do not generate heat Core p.100
+     */
     public int standingHeat() {
         return 0;
     }
 
-    // Life support crit hits affect heat and pilot damage. Core p.98
-    // heatLimitDamage holds the description heat in the first element, and the pilot hits in the 2nd
+    /**
+     * {@inheritDoc}
+     * Life support crit hits affect heat and pilot damage. Core p.98
+     * heatLimitDamage holds the description heat in the first element, and the pilot hits in the 2nd
+     */
     public void checkLifeSupportHeat(ArrayList<Integer> heatLimitDamage,
           int damageHeat,
           boolean torsoMountedCockpit,
@@ -88,7 +92,10 @@ public class CoreRulesHeat extends RulesHeat {
         }
     }
 
-    // Ammo explosions from heat Core p.107
+    /**
+     * {@inheritDoc}
+     * Ammo explosions from heat Core p.107
+     */
     @Nullable
     public CriticalSlot explodeAmmo(ArrayList<CriticalSlot> ammoCriticals) {
         CriticalSlot returnSlot = null;

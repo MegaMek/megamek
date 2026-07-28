@@ -41,13 +41,26 @@ import megamek.common.units.Mek;
 
 public class TWRulesCharts extends CoreRulesCharts {
 
-    // When falling, roll to see the new facing
+    /**
+     * Get facing for a fall.
+     * When falling, roll to see the new facing.
+     *
+     * @return the facing direction for a fall
+     */
     @Override
     public int getFacingForFall() {
         return Compute.d6(1) - 1;
     }
 
-    // Punch hit location chart
+    /**
+     * Mek Punch hit chart.
+     * Punch hit location chart.
+     *
+     * @param roll the dice roll
+     * @param side the side being hit
+     * @param quad whether the unit is quadrupedal
+     * @return the hit location
+     */
     @Override
     public int getPunchHitLocation(int roll, int side, boolean quad) {
         // front punch hits

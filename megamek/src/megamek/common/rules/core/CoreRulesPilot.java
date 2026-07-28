@@ -44,7 +44,10 @@ import java.util.Vector;
 
 public class CoreRulesPilot extends RulesPilot {
 
-    // Handle pilot hits. Core p.117
+    /**
+     * {@inheritDoc}
+     * Handle pilot hits. Core p.117
+     */
     public Vector<Report> pilotHits(Entity e, int totalHits, int damage, int crewPos, boolean toughness) {
         Vector<Report> vDesc = new Vector<>();
 
@@ -119,15 +122,9 @@ public class CoreRulesPilot extends RulesPilot {
     }
 
     /**
+     * {@inheritDoc}
      * Convenience method that fills in a report showing that a crew member of a multicrew cockpit has taken over for
      * another incapacitated crew member.
-     *
-     * @param e         The <code>Entity</code> for the crew.
-     * @param slot      The slot index of the crew member that was incapacitated.
-     * @param wasPilot  Whether the crew member was the pilot before becoming incapacitated.
-     * @param wasGunner Whether the crew member was the gunner before becoming incapacitated.
-     *
-     * @return A completed <code>Report</code> if the position was assumed by another crew members, otherwise null.
      */
     public Report createCrewTakeoverReport(Entity e, int slot, boolean wasPilot, boolean wasGunner) {
         if (wasPilot && e.getCrew().getCurrentPilotIndex() != slot) {
@@ -151,22 +148,34 @@ public class CoreRulesPilot extends RulesPilot {
         return null;
     }
     
-    // How many pilot hits for an explosion Core p.117
+    /**
+     * {@inheritDoc}
+     * How many pilot hits for an explosion Core p.117
+     */
     public int getExplosionPilotHits() {
         return 1;
     }
 
-    // Seatbelt check for gyro has no modifier Core p.117
+    /**
+     * {@inheritDoc}
+     * Seatbelt check for gyro has no modifier Core p.117
+     */
     public int getSeatbeltGyroModifier(int piloting) {
         return piloting;
     }
 
-    // Seatbelt check for legs destroyed has no modifier Core p.117
+    /**
+     * {@inheritDoc}
+     * Seatbelt check for legs destroyed has no modifier Core p.117
+     */
     public int getSeatbeltLegModifier(int piloting, int legsDestroyed) {
         return piloting;
     }
 
-    // Seatbelt check for shutdown has no modifier Core p.117
+    /**
+     * {@inheritDoc}
+     * Seatbelt check for shutdown has no modifier Core p.117
+     */
     public int getSeatbeltShutdown(int piloting) {
         return piloting;
     }

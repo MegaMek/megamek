@@ -34,9 +34,7 @@ package megamek.common.rules.core;
  */
 
 import megamek.common.CriticalSlot;
-import megamek.common.HitData;
 import megamek.common.Report;
-import megamek.common.ToHitData;
 import megamek.common.board.Coords;
 import megamek.common.compute.Compute;
 import megamek.common.compute.ComputeECM;
@@ -55,21 +53,36 @@ import java.util.List;
 import java.util.Vector;
 
 public class CoreRulesEquipment extends RulesEquipment {
-    // AMS can shoot twice. Core P.206
+    /**
+     * {@inheritDoc}
+     * AMS can shoot twice. Core P.206
+     */
     public boolean getAMSMultiShot() {return true;}
 
-    // AMS can reduce to 0. Core P.206
+    /**
+     * {@inheritDoc}
+     * AMS can reduce to 0. Core P.206
+     */
     public boolean getAMSReduction(boolean toAdvancedAMS) { return true; }
 
-    // AMS destroys a single missile on 4+. Core p.206
+    /**
+     * {@inheritDoc}
+     * AMS destroys a single missile on 4+. Core p.206
+     */
     public boolean checkAMSSingleMissile(int roll) {
         return roll >= 4 ? true : false;
     }
 
-    // Shields are reset at end of phase, unless you are charging. Core p.195
+    /**
+     * {@inheritDoc}
+     * Shields are reset at end of phase, unless you are charging. Core p.195
+     */
     public boolean phaseChangeShield() {return true;}
 
-    // HD Gyros take 4 hits to destroy. Core p.98
+    /**
+     * {@inheritDoc}
+     * HD Gyros take 4 hits to destroy. Core p.98
+     */
     public int hitsToDestroyGyro(int gyroType) {
         if (gyroType == Mek.GYRO_HEAVY_DUTY) {
             return 4;
@@ -77,22 +90,34 @@ public class CoreRulesEquipment extends RulesEquipment {
         return 2;
     }
 
-    // get the masc failure roll from the escalating chart
+    /**
+     * {@inheritDoc}
+     * Get the masc failure roll from the escalating chart
+     */
     public int getMascFailure(int nLevel) {
         return Game.rulesManager.getRulesCharts().escalatingFailure(nLevel);
     }
 
-    // Blue Shield uses escalating failure for rounds after 6. Core p.207
+    /**
+     * {@inheritDoc}
+     * Blue Shield uses escalating failure for rounds after 6. Core p.207
+     */
     public int getBlueShieldTarget(int blueShieldRounds) {
         return Game.rulesManager.getRulesCharts().escalatingFailure(blueShieldRounds - 6);
     }
 
-    // get the radical heat sink
+    /**
+     * {@inheritDoc}
+     * Get the radical heat sink
+     */
     public int radicalHeatSinkSuccessTarget(int consecutiveRounds) {
         return Game.rulesManager.getRulesCharts().escalatingFailure(consecutiveRounds);
     }
     
-    // ECM only affects if the target or source is under the bubble. Not intervening. Core p.200
+    /**
+     * {@inheritDoc}
+     * ECM only affects if the target or source is under the bubble. Not intervening. Core p.200
+     */
     public ArrayList<Coords> getECMCoordsAffected(Coords a, Coords b) {
         ArrayList<Coords> coords = new ArrayList<>();
         coords.add(a);
@@ -101,7 +126,10 @@ public class CoreRulesEquipment extends RulesEquipment {
         return coords;
     }
 
-    // ECM ranges. Watchdog is the same as clan ECM. Core p.197, 200, 201
+    /**
+     * {@inheritDoc}
+     * ECM ranges. Watchdog is the same as clan ECM. Core p.197, 200, 201
+     */
     public int getECMRanges(MiscType type) {
         if (type.hasFlag(MiscType.F_SINGLE_HEX_ECM)) {
             return 0;
@@ -112,7 +140,10 @@ public class CoreRulesEquipment extends RulesEquipment {
         return 6;
     }
     
-    // Sensor ranges for probes. Core p.197 and 201 provide guidance due to how Watchdog is changed
+    /**
+     * {@inheritDoc}
+     * Sensor ranges for probes. Core p.197 and 201 provide guidance due to how Watchdog is changed
+     */
     public int getSensorRanges(int type) {
         return switch (type) {
             case Sensor.TYPE_BAP, Sensor.TYPE_BAPP -> 12;
@@ -137,7 +168,10 @@ public class CoreRulesEquipment extends RulesEquipment {
         };
     }
     
-    // Active probes are affected by ECM other than bloodhound. Core p.200
+    /**
+     * {@inheritDoc}
+     * Active probes are affected by ECM other than bloodhound. Core p.200
+     */
     public boolean isBAPActive(boolean checkECM,
           final MiscType type,
           final Entity entity,
@@ -151,12 +185,18 @@ public class CoreRulesEquipment extends RulesEquipment {
               !ComputeECM.isAffectedByECM(entity, position, position);
     }
     
-    // No init bonus for command console or tech officer Core p.203, 236
+    /**
+     * {@inheritDoc}
+     * No init bonus for command console or tech officer Core p.203, 236
+     */
     public int getCommandConsoleBonus() {
         return 0;
     }
 
-    // What is the masc or supercharger failure hits. Core p.204
+    /**
+     * {@inheritDoc}
+     * What is the masc or supercharger failure hits. Core p.204
+     */
     public int getMascSuperChargerFailureHits(int entityId, Vector<Report> vDesc, boolean isSupercharger) {
         int hits = 0;
         int reportId = 6310;
@@ -188,7 +228,10 @@ public class CoreRulesEquipment extends RulesEquipment {
         return hits;
     }
 
-    // Masc failure critical. Core p.204
+    /**
+     * {@inheritDoc}
+     * Masc failure critical. Core p.204
+     */
     public void doMascFailureCrits(Entity entity, HashMap<Integer, List<CriticalSlot>> vCriticalSlots, int hits) {
         // No hits, early return
         if (hits == 0) {

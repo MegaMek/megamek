@@ -53,7 +53,10 @@ import java.util.List;
 /* This class is for Core Rules that involve PSR checks and modifiers
  */
 public class CoreRulesPSR extends RulesPSR {
-    // Called from Entity
+    /**
+     * {@inheritDoc}
+     * Called from Entity
+     */
     public void checkRunningWithDamage(Entity entity, PilotingRollData roll, int gyroDamage,
           EntityMovementType overallMoveType, int distance) {
         if (entity.getGyroType() == Mek.GYRO_HEAVY_DUTY) {
@@ -76,15 +79,24 @@ public class CoreRulesPSR extends RulesPSR {
         }
     }
 
-    // Trying to stand is a -1 modifier Core p.111
+    /**
+     * {@inheritDoc}
+     * Trying to stand is a -1 modifier Core p.111
+     */
     public void standing(PilotingRollData roll) {
         roll.addModifier(-1, "trying to stand");
     }
 
-    // No change of facing after a fall in Core p.115
-    public void facingChangeAfterFall(Entity entity, int facing) {};
+    /**
+     * {@inheritDoc}
+     * No change of facing after a fall in Core p.115
+     */
+    public void facingChangeAfterFall(Entity entity, int facing) {}
     
-    // Leg PSR numbers changed. Core p.90, 93
+    /**
+     * {@inheritDoc}
+     * Leg PSR numbers changed. Core p.90, 93
+     */
     public void legDamageModifiers(MekWithArms unit, final PilotingRollData roll, final boolean toLegDamage) {
         for (int loc : List.of(Mek.LOC_RIGHT_LEG, Mek.LOC_LEFT_LEG)) {
             if (unit.isLocationBad(loc)) {
@@ -107,7 +119,10 @@ public class CoreRulesPSR extends RulesPSR {
         }
     }
 
-    // Reduce PSR rolls for actuator hits to the highest per leg in a turn. Core p.93
+    /**
+     * {@inheritDoc}
+     * Reduce PSR rolls for actuator hits to the highest per leg in a turn. Core p.93
+     */
     public void checkLegActuatorPsrRolls(Game game, Entity entity) {
         ArrayList<PilotingRollData> pilotRolls = game.getPSRsForEntity(entity);
         ArrayList<PilotingRollData> rollsToRemove = new ArrayList<>();
@@ -166,7 +181,10 @@ public class CoreRulesPSR extends RulesPSR {
         }
     }
     
-    // Remove the highest roll from the list
+    /**
+     * {@inheritDoc}
+     * Remove the highest roll from the list
+     */
     public void rollRemoveHighest(ArrayList<PilotingRollData> rollList) {
         // If there is only one roll, remove it and early exit
         if (rollList.size() == 1) {
@@ -187,6 +205,9 @@ public class CoreRulesPSR extends RulesPSR {
         rollList.remove(highest);
     }
     
+    /**
+     * {@inheritDoc}
+     */
     public void hitActuator(final Game game, Entity entity, int loc, int hitPart) {
         String psrText = Game.rulesManager.getRulesCharts().getLocationName(loc,(entity instanceof QuadMek));
         if (hitPart == Mek.ACTUATOR_FOOT) {
@@ -210,17 +231,26 @@ public class CoreRulesPSR extends RulesPSR {
         }
     }
     
-    // Do we do Foot Actuator PSRs? No, not in core.
+    /**
+     * {@inheritDoc}
+     * Do we do Foot Actuator PSRs? No, not in core.
+     */
     public boolean getFootActuatorPsr() {
         return false;
     }
     
-    // What is the hip hit penalty? Core p.99
+    /**
+     * {@inheritDoc}
+     * What is the hip hit penalty? Core p.99
+     */
     public int getHipPenalty() {
         return 1;
     }
     
-    // Gyro hit modifiers
+    /**
+     * {@inheritDoc}
+     * Gyro hit modifiers
+     */
     public int getGyroModifier(int gyroHits, int gyroType) {
         if (gyroType == Mek.GYRO_HEAVY_DUTY && gyroHits <4) {
             return gyroHits;
@@ -228,10 +258,16 @@ public class CoreRulesPSR extends RulesPSR {
         return 2;
     }
 
-    // Leg destroyed is +4. Core p.90
+    /**
+     * {@inheritDoc}
+     * Leg destroyed is +4. Core p.90
+     */
     public int getLegDestroyedModifier() { return 4; }
 
-    // HD Gyro hits. Core p.98
+    /**
+     * {@inheritDoc}
+     * HD Gyro hits. Core p.98
+     */
     public void handleHDGyroHits(Game game, Entity en, int actualGyroHits) {
         if (actualGyroHits == 4) {
             game.addPSR(new PilotingRollData(en.getId(),TargetRoll.AUTOMATIC_FAIL, 1, "Gyro Destroyed"));
@@ -239,23 +275,35 @@ public class CoreRulesPSR extends RulesPSR {
         }
     }
 
-    // Walking into water does not cause a PSR. Core p.45, 51
+    /**
+     * {@inheritDoc}
+     * Walking into water does not cause a PSR. Core p.45, 51
+     */
     public boolean psrForWaterEntry(EntityMovementType overallMoveType) {
         return (overallMoveType == EntityMovementType.MOVE_WALK) ? false : true;
     }
     
-    // Successful DFA is PSR+2 Core p.80
+    /**
+     * {@inheritDoc}
+     * Successful DFA is PSR+2 Core p.80
+     */
     public int getSuccessfulDFAModifier() {
         return 4;
     }
     
-    // Successful club causes PSR . Core p.79
+    /**
+     * {@inheritDoc}
+     * Successful club causes PSR . Core p.79
+     */
     public void clubImpact(final Game game,
           final Entity entity) {
         game.addPSR(new PilotingRollData(entity.getId(), 0, "was clubbed"));
     }
 
-    // Special gyro jump modifier. Core p.98
+    /**
+     * {@inheritDoc}
+     * Special gyro jump modifier. Core p.98
+     */
     public int getGyroJumpModifier(final int gyroHits, final int gyroType) {
         if (gyroType == Mek.GYRO_HEAVY_DUTY || gyroType == Mek.GYRO_SUPERHEAVY) {
             return switch (gyroHits) {
@@ -267,7 +315,10 @@ public class CoreRulesPSR extends RulesPSR {
         return 0;
     }
 
-    // do you need a PSR for walking with a leg destroyed? Yes. Core p.90
+    /**
+     * {@inheritDoc}
+     * do you need a PSR for walking with a leg destroyed? Yes. Core p.90
+     */
     public PilotingRollData checkWalkWithLegDestroyed(Entity entity, EntityMovementType overallMoveType,
           int hexesMoved) {
         PilotingRollData roll = entity.getBasePilotingRoll(overallMoveType);

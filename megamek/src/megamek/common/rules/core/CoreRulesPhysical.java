@@ -54,7 +54,10 @@ import megamek.common.units.Mek;
 
 public class CoreRulesPhysical extends RulesPhysical {
 
-    // Shield rules for damage while punching. Core p.195
+    /**
+     * {@inheritDoc}
+     * Shield rules for damage while punching. Core p.195
+     */
     public int getShieldDamageBoost(Entity entity, int armLoc) {
         if (entity.hasShield()) {
             for (int slot = 0; slot < entity.getNumberOfCriticalSlots(armLoc); slot++) {
@@ -92,40 +95,67 @@ public class CoreRulesPhysical extends RulesPhysical {
         return 0;
     }
 
-    // Core rules shield no longer modifies shooting out
+    /**
+     * {@inheritDoc}
+     * Core rules shield no longer modifies shooting out
+     */
     public void getShieldToHitModifier(ToHitData toHit, Entity attacker, Mounted<?> weapon) {}
 
 
-    // Claws now have a TN modifier of 0. Core p.194
+    /**
+     * {@inheritDoc}
+     * Claws now have a TN modifier of 0. Core p.194
+     */
     public int getClawToHitModifier() { return 0; }
 
-    // Shields reset their state at the end of the phase
+    /**
+     * {@inheritDoc}
+     * Shields reset their state at the end of the phase
+     */
     public boolean phaseChangeShield() {
         return true;
     }
 
-    // Retractable blades can be extended for punches. Core p.194
-    public boolean retractableBladeArmCheck(boolean toRetractableBlake) {
+    /**
+     * {@inheritDoc}
+     * Retractable blades can be extended for punches. Core p.194
+     */
+    public boolean retractableBladeArmCheck(boolean toRetractableBlade) {
         return true;
     }
 
-    // Restractable blade breaks if it is used in a punch. Core p.195
+    /**
+     * {@inheritDoc}
+     * Restractable blade breaks if it is used in a punch. Core p.195
+     */
     public boolean checkRetractableBladeBroke() {
         return (Compute.d6(1) == 1);
     }
 
-    // Missed mace attacks do not cause PSR Core p.194
+    /**
+     * {@inheritDoc}
+     * Missed mace attacks do not cause PSR Core p.194
+     */
     public boolean getMaceMissedPSR() {
         return false;
     }
 
-    // Lance does internal damage on 9+ Core p.194
+    /**
+     * {@inheritDoc}
+     * Lance does internal damage on 9+ Core p.194
+     */
     public int getLanceTarget() { return 9; }
 
-    // Lance can penetrate on a charge. Core p.194
+    /**
+     * {@inheritDoc}
+     * Lance can penetrate on a charge. Core p.194
+     */
     public boolean isLanceCharging() { return true; }
 
-    // Charge with shield allocated damage to shield. Core p.195
+    /**
+     * {@inheritDoc}
+     * Charge with shield allocated damage to shield. Core p.195
+     */
     @Nullable
     public HitData shieldChargeDamage(Entity attackingEntity) {
         int[] armLocations = { Mek.LOC_LEFT_ARM, Mek.LOC_RIGHT_ARM };
@@ -146,7 +176,10 @@ public class CoreRulesPhysical extends RulesPhysical {
         return null;
     }
 
-    // Check if the spikes break on a 1. Core p.196
+    /**
+     * {@inheritDoc}
+     * Check if the spikes break on a 1. Core p.196
+     */
     public Report checkBreakSpikes(Entity entity, int loc) {
         Report r;
         Roll diceRoll = Compute.rollD6(1);
@@ -170,7 +203,10 @@ public class CoreRulesPhysical extends RulesPhysical {
         return r;
     }
 
-    // Require all limbs to have talons for a DFA damage boost. Core p.196
+    /**
+     * {@inheritDoc}
+     * Require all limbs to have talons for a DFA damage boost. Core p.196
+     */
     public boolean hasTalons(Entity entity) {
         if (entity instanceof BipedMek) {
             return (entity.hasWorkingMisc(MiscType.F_TALON, null, Mek.LOC_RIGHT_LEG) &&
@@ -192,13 +228,22 @@ public class CoreRulesPhysical extends RulesPhysical {
         return false;
     }
 
-    // Kicks are -1 to hit. Core p.81
+    /**
+     * {@inheritDoc}
+     * Kicks are -1 to hit. Core p.81
+     */
     public int getKickModifier() { return -1; }
     
-    // Punches are -1 to hit. Core p.82
+    /**
+     * {@inheritDoc}
+     * Punches are -1 to hit. Core p.82
+     */
     public int getPunchModifier() { return -1;}
 
-    // Charges deal different damage Core p.78
+    /**
+     * {@inheritDoc}
+     * Charges deal different damage Core p.78
+     */
     public int getChargeDamage(Entity entity, Entity target, boolean tacOps, int mos, int hexesMoved) {
         return (int) Math
                   .ceil((entity.getWeight() / 5.0)
@@ -206,19 +251,28 @@ public class CoreRulesPhysical extends RulesPhysical {
                   * (entity.getLocationStatus(1) == ILocationExposureStatus.WET ? 0.5 : 1));
     }
 
-    // Attacker damage from a charge. Core p.78
+    /**
+     * {@inheritDoc}
+     * Attacker damage from a charge. Core p.78
+     */
     public int getChargeDamageTakenBy(Entity entity, double effectiveTargetWeight, boolean tacOps, int distance) {
         return (int) Math
                   .ceil((effectiveTargetWeight / 10.0)
                         * (entity.getLocationStatus(1) == ILocationExposureStatus.WET ? 0.5 : 1));
     }
 
-    // Missed charges the attacker remains in place. Core p.78
+    /**
+     * {@inheritDoc}
+     * Missed charges the attacker remains in place. Core p.78
+     */
     public Coords getMissedChargeDisplacement(Game game, int entityId, Coords src, int direction) {
         return src;
     }
 
-    // Can club prone enemies that are elevated or at your feet. Core p.77
+    /**
+     * {@inheritDoc}
+     * Can club prone enemies that are elevated or at your feet. Core p.77
+     */
     public boolean cannotClubProne(int targetElevation, int attackerElevation) {
         if (attackerElevation == targetElevation || attackerElevation == targetElevation - 1) {
             return false;
@@ -226,7 +280,10 @@ public class CoreRulesPhysical extends RulesPhysical {
         return true;
     }
     
-    // Charges and DFAs when attacking an immobile unit use a value of 4 for their piloting. Core p.77
+    /**
+     * {@inheritDoc}
+     * Charges and DFAs when attacking an immobile unit use a value of 4 for their piloting. Core p.77
+     */
     public int getPilotDiffModifier(int attackerPiloting, int targetPiloting, boolean immobile) {
         if (immobile) {
             return attackerPiloting - 4;
@@ -234,12 +291,18 @@ public class CoreRulesPhysical extends RulesPhysical {
         return attackerPiloting - targetPiloting;
     }
     
-    // Can charge cancel under some circumstances. Core p.78
+    /**
+     * {@inheritDoc}
+     * Can charge cancel under some circumstances. Core p.78
+     */
     public boolean canChargeCancel() {
         return true;
     }
 
-    // Falls from above if the target is prone changes table. Core p.115
+    /**
+     * {@inheritDoc}
+     * Falls from above if the target is prone changes table. Core p.115
+     */
     public HitData getFallFromAboveTable(Entity affaTarget) {
         if (affaTarget.isProne()) {
             return affaTarget.rollHitLocation(ToHitData.HIT_NORMAL,

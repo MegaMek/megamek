@@ -132,13 +132,27 @@ public class TWRulesExplosions extends CoreRulesExplosions {
         return damage;
     }
 
-    // CASE II handles this in the CASEII Damage Reduction
+    /**
+     * CASE II check crit chance for explosions.
+     * CASE II handles this in the CASEII Damage Reduction
+     *
+     * @param hasCaseII true if the entity has CASE II
+     * @param ammoExplosion true if this is an ammo explosion
+     * @return the critical hit modifier
+     */
     @Override
     public int explosionCASEIImod(boolean hasCaseII, boolean ammoExplosion) {
         return 0;
     }
 
-    // How much damage to equipment explosions do
+
+    /**
+     * How much damage to equipment explosions do.
+     *
+     * @param mounted the mounted equipment
+     * @param weaponType the weapon type
+     * @return the damage amount
+     */
     @Override
     public int equipmentDamage(Mounted<?> mounted, WeaponType weaponType) {
         if (weaponType.hasFlag(WeaponType.F_PPC) && (mounted.hasChargedCapacitor() != 0)) {

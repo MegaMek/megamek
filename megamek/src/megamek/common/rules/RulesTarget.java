@@ -40,23 +40,65 @@ import megamek.common.units.Targetable;
 import java.util.ArrayList;
 
 public abstract class RulesTarget {
-    // Check if the target is large and if there is a modifier
+    /**
+     * Check if the target is large and if there is a modifier.
+     *
+     * @param weightclass the weight class of the target
+     * @param markedLarge true if the target is marked as large
+     * @return the large target modifier
+     */
     public abstract int largeTargetModifier(int weightclass, boolean markedLarge);
+
+    /**
+     * Alternate call for largeTargetModifier(int weightclass, boolean markedLarge) with default markedLarge = false.
+     * @param weightclass the weight class of the target
+     * @return the large target modifier
+     */
     public int largeTargetModifier(int weightclass) { return largeTargetModifier(weightclass, false); };
+
+    /**
+     * Alternate call for largeTargetModifier(int weightclass, boolean markedLarge) with default weightclass = 0.
+     * @param markedLarge the large target flag
+     * @return the large target modifier
+     */
     public int largeTargetModifier(boolean markedLarge) {return largeTargetModifier(0,markedLarge);};
 
-    // Do we hit the aimed location?
+    /**
+     * Do we hit the aimed location?
+     *
+     * @return true if the aimed location is hit
+     */
     public abstract boolean checkAimedLocation();
 
-    // What is the secondary arc modifier
+    /**
+     * What is the secondary arc modifier.
+     *
+     * @return the secondary arc modifier
+     */
     public abstract int getSecondaryArcModifier();
 
-    // Can you shoot with one arm while prone
+    /**
+     * Can you shoot with one arm while prone.
+     *
+     * @param toProneFire true if checking prone fire capability
+     * @return true if you can shoot with one arm while prone
+     */
     public abstract boolean proneFireWithOneArm(boolean toProneFire);
 
-    // What is the arm actuator hit mod for shooting
+    /**
+     * What is the arm actuator hit mod for shooting.
+     *
+     * @param attacker the attacking entity
+     * @param location the arm location being used
+     * @return the arm actuator hit modifier
+     */
     public abstract int getArmActuatorHitMod(Entity attacker, int location);
 
-    // Do we reduce smoke?
+    /**
+     * Do we reduce smoke?
+     *
+     * @param los the line of sight effects
+     * @return the BAP smoke reduction amount
+     */
     public abstract int getBAPSmokeReduction(LosEffects los);
 }

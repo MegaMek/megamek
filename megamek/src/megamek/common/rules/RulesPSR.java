@@ -46,56 +46,146 @@ This abstract class is to handle rules that are in relation to PSRs.
  */
 public abstract class RulesPSR {
     
-    // Entity calls this when trying to run with damage
+    /**
+     * Entity calls this when trying to run with damage.
+     *
+     * @param entity the entity attempting to run with damage
+     * @param roll the piloting roll data
+     * @param gyroDamage the amount of gyro damage
+     * @param overallMoveType the type of overall movement
+     * @param distance the distance traveled
+     */
     public abstract void checkRunningWithDamage(Entity entity, PilotingRollData roll, int gyroDamage,
           EntityMovementType overallMoveType, int distance);
 
-    // Any modifier for standing
+    /**
+     * Any modifier for standing.
+     *
+     * @param roll the piloting roll data to modify
+     */
     public abstract void standing(PilotingRollData roll);
 
-    // Do we need to change facing when we fall?
+    /**
+     * Do we need to change facing when we fall?
+     *
+     * @param entity the entity that fell
+     * @param facing the new facing direction
+     */
     public abstract void facingChangeAfterFall(Entity entity, int facing);
     
-    // Apply leg damage modifiers to PSR
+    /**
+     * Apply leg damage modifiers to PSR.
+     *
+     * @param unit the unit with arms to check
+     * @param roll the piloting roll data to modify
+     * @param toLegDamage true if applying leg damage
+     */
     public abstract void legDamageModifiers(MekWithArms unit, PilotingRollData roll, boolean toLegDamage);
 
-    // Do we need to reduce potential PSR rolls
+    /**
+     * Do we need to reduce potential PSR rolls.
+     *
+     * @param game the game instance
+     * @param entity the entity to check
+     */
     public abstract void checkLegActuatorPsrRolls(Game game, Entity entity);
 
-    // Remove the highest roll from the roll list
+    /**
+     * Remove the highest roll from the roll list.
+     *
+     * @param rollList the list of piloting rolls
+     */
     public abstract void rollRemoveHighest(ArrayList<PilotingRollData> rollList);
     
-    // PSRs for hit actuators
+    /**
+     * PSRs for hit actuators.
+     *
+     * @param game the game instance
+     * @param entity the entity with hit actuators
+     * @param loc the location of the hit
+     * @param hitPart the part that was hit
+     */
     public abstract void hitActuator(Game game, Entity entity, int loc, int hitPart);
     
-    // Hip Penalties
+    /**
+     * Hip Penalties.
+     *
+     * @return the hip penalty modifier
+     */
     public abstract int getHipPenalty();
     
-    // Foot Actuator PSR?
+    /**
+     * Foot Actuator PSR?
+     *
+     * @return true if foot actuator damage causes PSR
+     */
     public abstract boolean getFootActuatorPsr();
 
-    // What is the penalty got the gyro
+    /**
+     * What is the penalty for the gyro.
+     *
+     * @param gyroHits the number of gyro hits
+     * @param gyroType the type of gyro
+     * @return the gyro modifier
+     */
     public abstract int getGyroModifier(int gyroHits, int gyroType);
 
-    // What is the penalty for leg destroyed
+    /**
+     * What is the penalty for leg destroyed.
+     *
+     * @return the leg destroyed modifier
+     */
     public abstract int getLegDestroyedModifier();
 
-    // Handle HD Gyro Hits
+    /**
+     * Handle HD Gyro Hits.
+     *
+     * @param game the game instance
+     * @param en the entity with HD gyro
+     * @param actualGyroHits the actual number of gyro hits
+     */
     public abstract void handleHDGyroHits(Game game, Entity en, int actualGyroHits);
 
-    // When entering water, do we trigger a PSR
+    /**
+     * When entering water, do we trigger a PSR.
+     *
+     * @param overallMoveType the type of overall movement
+     * @return true if a PSR is triggered when entering water
+     */
     public abstract boolean psrForWaterEntry(EntityMovementType overallMoveType);
 
-    // What is the PSR mod for a successful DFA
+    /**
+     * What is the PSR mod for a successful DFA.
+     *
+     * @return the modifier for successful Death from Above
+     */
     public abstract int getSuccessfulDFAModifier();
 
-    // Does a club impact cause a PSR?
+    /**
+     * Does a club impact cause a PSR?
+     *
+     * @param game the game instance
+     * @param entity the entity being impacted by a club
+     */
     public abstract void clubImpact(Game game, Entity entity);
 
-    // Special gyro jump modifier
+    /**
+     * Special gyro jump modifier.
+     *
+     * @param gyroHits the number of gyro hits
+     * @param gyroType the type of gyro
+     * @return the gyro jump modifier
+     */
     public abstract int getGyroJumpModifier(final int gyroHits, final int gyroType);
 
-    // do you need a PSR for walking with a leg destroyed
+    /**
+     * Do you need a PSR for walking with a leg destroyed.
+     *
+     * @param entity the entity attempting to walk
+     * @param overallMoveType the type of overall movement
+     * @param hexesMoved the number of hexes moved
+     * @return the piloting roll data for the PSR, or null if no PSR required
+     */
     public abstract PilotingRollData checkWalkWithLegDestroyed(Entity entity, EntityMovementType overallMoveType,
           int hexesMoved);
 }

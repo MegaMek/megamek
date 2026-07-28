@@ -38,7 +38,10 @@ import megamek.common.units.Terrains;
 
 public class CoreRulesTerrain extends RulesTerrain {
     
-    // Road to road elevation change is -1 MP
+    /**
+     * {@inheritDoc}
+     * Road to road elevation change is -1 MP
+     */
     public int getRoadElevationCostDifference(Hex srcHex, Hex destHex, int deltaElevation) {
         if (srcHex.containsTerrain(Terrains.ROAD) && destHex.containsTerrain(Terrains.ROAD) && deltaElevation > 0) {
             return -1;
@@ -46,7 +49,10 @@ public class CoreRulesTerrain extends RulesTerrain {
         return 0;
     }
 
-    // Using roads can increase the max elevation change by 1. Core p.53
+    /**
+     * {@inheritDoc}
+     * Using roads can increase the max elevation change by 1. Core p.53
+     */
     public int getMaxElevationChangeAllowed(Hex srcHex, Hex destHex, int maxElevationChange) {
         if (srcHex.containsTerrain(Terrains.ROAD) && destHex.containsTerrain(Terrains.ROAD)) {
             return maxElevationChange + 1;

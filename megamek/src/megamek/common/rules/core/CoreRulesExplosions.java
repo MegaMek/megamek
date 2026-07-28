@@ -49,17 +49,9 @@ import java.util.Vector;
 
 public class CoreRulesExplosions extends RulesExplosions {
     /**
-     * Determine how much damage will be reduced on to internal explosion.
-     *
-     * @param mek           Mek entity that we are damaging
-     * @param hit           HitData recording aspects of the incoming damage
-     * @param damage        Actual amount of incoming damage
-     * @param ammoExplosion Whether damage was caused by an ammo explosion
-     * @param reportVec     Vector of Reports containing prior reports; usually modded and returned
-     *
-     * @return int          total of damage remaining after reduction
+     * {@inheritDoc}
+     * Damage reduction for CASE, CASE II, explosions
      */
-    // Damage reduction for CASE, CASE II, explosions
     public int explosionDamageReduction(Mek mek, HitData hit, int damage, boolean ammoExplosion,
           Vector<Report> reportVec) {
             if (!ammoExplosion) {
@@ -113,15 +105,8 @@ public class CoreRulesExplosions extends RulesExplosions {
     }
 
     /**
+     * {@inheritDoc}
      * Determine how much damage will be reduced by CASE II equipment
-     *
-     * @param entity        Entity that we are damaging
-     * @param hit           HitData recording aspects of the incoming damage
-     * @param damage        Actual amount of incoming damage
-     * @param ammoExplosion Whether damage was caused by an ammo explosion
-     * @param reportVec     Vector of Reports containing prior reports; usually modded and returned
-     *
-     * @return int          total of damage remaining after reduction by CASE II
      */
     public int applyCASEIIDamageReduction(Entity entity, HitData hit, int damage, boolean ammoExplosion,
           Vector<Report> reportVec) {
@@ -191,7 +176,10 @@ public class CoreRulesExplosions extends RulesExplosions {
         return damage;
     }
 
-    // CASE II reduces the crit chance for ammo explosions
+    /**
+     * {@inheritDoc}
+     * CASE II reduces the crit chance for ammo explosions
+     */
     public int explosionCASEIImod(boolean hasCaseII, boolean ammoExplosion) {
         if (hasCaseII && ammoExplosion) {
             return -1;
@@ -199,7 +187,10 @@ public class CoreRulesExplosions extends RulesExplosions {
         return 0;
     }
 
-    // How much damage to equipment explosions do
+    /**
+     * {@inheritDoc}
+     * How much damage to equipment explosions do
+     */
     public int equipmentDamage(Mounted<?> mounted, WeaponType weaponType) {
         // Charged PPC capacitors when hit can cause an explosion.
         if (weaponType.hasFlag(WeaponType.F_PPC) && (mounted.hasChargedCapacitor() != 0)) {

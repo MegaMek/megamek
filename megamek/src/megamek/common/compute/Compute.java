@@ -7453,7 +7453,7 @@ public class Compute {
     }
 
     /**
-     * Returns the number of required gunners for a vehicle
+     * Returns the number of required gunners for a vehicle.
      * @param entity The vehicle
      * @return The number of required gunners
      */
@@ -7482,7 +7482,7 @@ public class Compute {
     /**
      * Returns the number of required gunners for a small craft/jumpship.
      * One gunner is required for each capital weapon and each six standard scale weapons, rounding up.
-     * Each Mass Driver requires 10 gunners (TO: AU&E 6th ed, p 134).
+     * Each Mass Driver requires 10 gunners (TO: AU&amp;E 6th ed, p 134).
      * Each Screen Launcher requires 1 gunner (TM 6th ed, p 237).
      * @param entity The small craft/jumpship
      * @return The number of required gunners

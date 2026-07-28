@@ -5373,11 +5373,6 @@ public class MovementDisplay extends ActionPhaseDisplay {
             if (currentTransporter instanceof InfantryTransporter infantryTransporter) {
                 isInfantryTransporter = true;
 
-                // Can't drop infantry from above 8 Altitude
-                if (cmd.getFinalAltitude() > 8) {
-                    continue;
-                }
-
                 for (Entity entity : infantryTransporter.getDroppableUnits()) {
                     if (!alreadyDropped.contains(entity.getId())) {
                         currentUnits.add(entity);

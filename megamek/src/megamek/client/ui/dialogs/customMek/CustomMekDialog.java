@@ -1815,6 +1815,18 @@ public class CustomMekDialog extends AbstractButtonDialog
                           JOptionPane.ERROR_MESSAGE);
                     return;
                 }
+                // A trailer can be dropped off the back of a train and emplaced off board on its own, but one in the
+                // middle cannot: detaching it would take every trailer behind it out of the train as well. Say so
+                // rather than accepting a setting that deployment would have to override.
+                if ((entity.getTractor() != Entity.NONE) && !entity.isLastTrailerInTrain()) {
+                    msg = Messages.getString("CustomMekDialog.OffboardMidTrain", entity.getShortName());
+                    title = Messages.getString("CustomMekDialog.OffboardMidTrainTitle");
+                    JOptionPane.showMessageDialog(clientGUI == null ? this : clientGUI.getFrame(),
+                          msg,
+                          title,
+                          JOptionPane.ERROR_MESSAGE);
+                    return;
+                }
                 entity.setOffBoard(offBoardDistance,
                       OffBoardDirection.getDirection(choOffBoardDirection.getSelectedIndex()));
             } else {

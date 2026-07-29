@@ -33,6 +33,7 @@ package megamek.common.rules.core;
  * affiliated with Microsoft.
  */
 
+import megamek.common.CriticalSlot;
 import megamek.common.HitData;
 import megamek.common.Report;
 import megamek.common.compute.Compute;
@@ -43,6 +44,7 @@ import megamek.common.equipment.WeaponType;
 import megamek.common.rolls.Roll;
 import megamek.common.rules.RulesExplosions;
 import megamek.common.units.Entity;
+import megamek.common.units.EntityWeightClass;
 import megamek.common.units.Mek;
 
 import java.util.Vector;
@@ -204,6 +206,33 @@ public class CoreRulesExplosions extends RulesExplosions {
             case AmmoType.AmmoTypeEnum.BPOD:
                 return 0;
         }
+
+        if (mounted.getEntity().getWeightClass() == EntityWeightClass.WEIGHT_SUPER_HEAVY) {
+            // Superheavies have compressed criticals. They only explode based on the number of Crit Slots they take
+            // up, not the base amount of crits they need. Core p.240
+            int critSlots = 0;
+            // Only do this if the weapon can cross locations
+            if (weaponType.isSpreadable()) {
+                for (int loc = 0; loc < mounted.getEntity().locations(); loc++) {
+                    for (int slot = 0; slot < mounted.getEntity().getNumberOfCriticalSlots(loc); slot++) {
+                        final CriticalSlot crit = mounted.getEntity().getCritical(loc, slot);
+                        if ((crit != null) && ((crit.getMount() == mounted) || (crit.getMount2() == mounted))) {
+                            critSlots++;
+                        }
+                    }
+                }
+            } else {
+                // We skip a bunch of extra work by doing this
+                for (int slot = 0; slot < mounted.getEntity().getNumberOfCriticalSlots(mounted.getLocation()); slot++) {
+                    final CriticalSlot crit = mounted.getEntity().getCritical(mounted.getLocation(), slot);
+                    if ((crit != null) && ((crit.getMount() == mounted) || (crit.getMount2() == mounted))) {
+                        critSlots++;
+                    }
+                }
+            }
+            return (critSlots * 2);
+        }
+
         return mounted.getNumCriticalSlots() * 2;
     }
 }

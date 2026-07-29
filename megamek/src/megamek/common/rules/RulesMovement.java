@@ -38,6 +38,7 @@ import megamek.common.annotations.Nullable;
 import megamek.common.board.Coords;
 import megamek.common.game.Game;
 import megamek.common.moves.MovePath;
+import megamek.common.moves.MoveStep;
 import megamek.common.units.EntityMovementMode;
 import megamek.common.units.Entity;
 import megamek.common.units.EntityMovementType;
@@ -176,4 +177,15 @@ public abstract class RulesMovement {
     @Nullable
     public abstract Coords getAccidentalFallDisplacement(Game game, int entityId, Coords src, int direction,
           int range);
+
+    /**
+     * When performing a DFA, and we move closer to the target, what elevation is the attacker at?
+     *
+     * @param game the game object
+     * @param attackerId entityId of the attacker
+     * @param targetId entityId of the defender
+     * @param step the movement step as accepted.
+     * @return int, the elevation above the underlying terrain the attacker should be at
+     */
+    public abstract int getDFAElevation(Game game, int attackerId, int targetId, MoveStep step);
 }

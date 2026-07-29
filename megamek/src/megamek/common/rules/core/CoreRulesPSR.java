@@ -288,7 +288,7 @@ public class CoreRulesPSR extends RulesPSR {
      * Successful DFA is PSR+2 Core p.80
      */
     public int getSuccessfulDFAModifier() {
-        return 4;
+        return 2;
     }
     
     /**

@@ -40,6 +40,7 @@ import megamek.common.board.Coords;
 import megamek.common.compute.Compute;
 import megamek.common.game.Game;
 import megamek.common.moves.MovePath;
+import megamek.common.moves.MoveStep;
 import megamek.common.rules.RulesMovement;
 import megamek.common.units.Entity;
 import megamek.common.units.EntityMovementMode;
@@ -214,5 +215,33 @@ public class CoreRulesMovement extends RulesMovement {
         }
         // Uh oh, no valid hexes to go into, this is bad
         return null;
+    }
+
+    /**
+     * {@inheritDoc}
+     *
+     * Returns the higher of the current hex the attacker is in, or the defender hex
+     * Core p.79
+     */
+    public int getDFAElevation(Game game, int attackerId, int targetId, MoveStep step) {
+        int elevation;
+
+        int dfaTargetElevation = game.getEntity(targetId).getElevation();
+        int dfaTargetHexElevation =
+              game.getBoard(game.getEntity(attackerId).getBoardId()).getHex(game.getEntity(targetId).getPosition()).getLevel();
+        dfaTargetElevation += dfaTargetHexElevation + game.getEntity(targetId).getHeight();
+        // step includes +1 elevation for jumping
+        int dfaEntityElevation = step.getElevation();
+        int dfaEntityHexElevation =
+              game.getBoard(game.getEntity(attackerId).getBoardId()).getHex(game.getEntity(attackerId).getPosition()).getLevel();
+        dfaEntityElevation += dfaEntityHexElevation;
+
+        if (dfaEntityElevation <= dfaTargetElevation) {
+            // The target elevation total is higher than the attacker. Use the higher value, modified for terrain
+            return (dfaTargetElevation - dfaEntityHexElevation);
+        } else {
+            // The attacking entity elevation is higher than the target needs to be
+            return (dfaEntityElevation - dfaEntityHexElevation);
+        }
     }
 }

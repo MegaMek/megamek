@@ -2882,7 +2882,8 @@ class MovePathHandler extends AbstractTWRuleHandler {
                           targetType, targetID,
                           step.getPosition());
                     entity.setDisplacementAttack(daa);
-                    entity.setElevation(step.getElevation());
+                    entity.setElevation(Game.rulesManager.getRulesMovement().getDFAElevation(entity.getGame(),
+                                entity.getId(), targetID, step));
                     getGame().addCharge(daa);
                     charge = daa;
 

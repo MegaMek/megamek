@@ -243,4 +243,67 @@ class TrainAmmoSharingTest {
         assertNull(ammoUsingWeapon(tractor).getLinkedAmmo(),
               "A link to a unit that has left the game must be dropped");
     }
+
+    // --- links left behind when the train uncouples ---
+
+    @Test
+    void aLinkToATrailersAmmoIsDroppedWhenTheTrainUncouples() {
+        WeaponMounted launcher = ammoUsingWeapon(tractor);
+        AmmoMounted trailerBin = canonicalTrailer.getAmmo(launcher).get(0);
+        launcher.setLinked(trailerBin);
+
+        tractor.disconnectUnit(canonicalTrailer.getId());
+
+        assertNotSame(trailerBin, launcher.getLinkedAmmo(),
+              "An uncoupled trailer's ammo must not stay loaded");
+        assertSame(tractor, launcher.getLinkedAmmo().getEntity(),
+              "The weapon falls back to a bin this unit still owns");
+        assertEquals(trailerBin.getType(), launcher.getLinkedAmmo().getType(),
+              "The replacement bin holds the munition that was loaded");
+    }
+
+    @Test
+    void aTrailerLosesItsLinkToTheTractorsAmmoToo() {
+        WeaponMounted launcher = ammoUsingWeapon(canonicalTrailer);
+        AmmoMounted tractorBin = tractor.getAmmo(launcher).get(0);
+        launcher.setLinked(tractorBin);
+
+        tractor.disconnectUnit(canonicalTrailer.getId());
+
+        assertNotSame(tractorBin, launcher.getLinkedAmmo(),
+              "The split is checked from both sides, not just the tractor's");
+    }
+
+    @Test
+    void aLinkIsClearedWhenNothingLegalIsLeftToFire() {
+        WeaponMounted launcher = ammoUsingWeapon(tractor);
+        launcher.setLinked(canonicalTrailer.getAmmo(launcher).get(0));
+        // The tractor is a gun carriage with no rounds of its own, so nothing can replace the trailer's bin.
+        for (AmmoMounted ownBin : tractor.getAmmo()) {
+            ownBin.setShotsLeft(0);
+        }
+
+        tractor.disconnectUnit(canonicalTrailer.getId());
+
+        assertNull(launcher.getLinkedAmmo(),
+              "With no legal bin the weapon is left unloaded rather than firing a unit that has gone");
+    }
+
+    /** A guard against over-reaching: this one passes with the drop removed, the other three do not. */
+    @Test
+    void aLinkWithinTheRemainingTrainSurvivesTheSplit() throws Exception {
+        Entity secondCarriage = loadBulldog(4, game.getPlayer(0), true);
+        game.addEntity(secondCarriage);
+        tractor.towUnit(secondCarriage.getId());
+
+        WeaponMounted launcher = ammoUsingWeapon(tractor);
+        AmmoMounted stillCoupledBin = canonicalTrailer.getAmmo(launcher).get(0);
+        launcher.setLinked(stillCoupledBin);
+
+        // Drop only the rear carriage. The first trailer stays hitched.
+        tractor.disconnectUnit(secondCarriage.getId());
+
+        assertSame(stillCoupledBin, launcher.getLinkedAmmo(),
+              "Ammo on a unit that is still coupled must stay loaded");
+    }
 }

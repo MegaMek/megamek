@@ -134,6 +134,38 @@ public final class TrainAmmoSharing {
     }
 
     /**
+     * Drops any weapon link pointing at ammo the unit may no longer fire, and reloads the weapon from a bin it may
+     * still use.
+     * <p>
+     * A weapon linked to a trailer's ammo bin keeps that link when the train uncouples, and the firing path never
+     * re-checks the coupling: {@code AmmoWeaponHandler.checkAmmo} takes whatever {@code getLinked} returns, and the
+     * server only consults {@link #canShareAmmoWith} when the player changes ammo. Left alone, a tractor goes on
+     * firing a detached trailer's ammo from any distance. Call this on every unit whose train membership changed.
+     * </p>
+     * The replacement is chosen before the stale link is cleared, so a unit that carries the same munition itself
+     * keeps firing that munition rather than falling back to whatever sits in its first bin.
+     *
+     * @param entity the unit whose weapon links should be re-checked
+     */
+    public static void dropUncoupledAmmoLinks(Entity entity) {
+        for (WeaponMounted weapon : entity.getTotalWeaponList()) {
+            if (!(weapon.getLinked() instanceof AmmoMounted linkedAmmo)) {
+                continue;
+            }
+            Entity ammoCarrier = linkedAmmo.getEntity();
+            if ((ammoCarrier == null) || canShareAmmoWith(entity, ammoCarrier)) {
+                continue;
+            }
+            entity.loadWeaponWithSameAmmo(weapon);
+            if (weapon.getLinked() == linkedAmmo) {
+                // Nothing legal to fall back on. Leaving the weapon unlinked is safe: the handler reloads it from
+                // this unit's own bins when it next fires.
+                weapon.setLinked(null);
+            }
+        }
+    }
+
+    /**
      * Reconnects weapons linked to another unit's ammo bin after the owning unit has been transferred.
      * <p>
      * Packets are Java-serialized object graphs and a {@link Mounted} holds a hard reference to its owning entity, so a

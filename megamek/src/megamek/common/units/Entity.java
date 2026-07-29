@@ -17531,6 +17531,25 @@ public abstract class Entity extends TurnOrdered
                 remaining.connectedUnits.removeAll(detachedIds);
             }
         }
+
+        // Weapons on either side of the split may be linked to ammo bins on the other side. Those links survive the
+        // uncoupling on their own and the firing path never re-checks them, so drop them here. This runs only after
+        // every tow field above has settled, because the check reads them to decide what is still legal.
+        TrainAmmoSharing.dropUncoupledAmmoLinks(tractor);
+        for (int remainingId : tractor.getAllTowedUnits()) {
+            Entity remaining = game.getEntity(remainingId);
+
+            if (remaining != null) {
+                TrainAmmoSharing.dropUncoupledAmmoLinks(remaining);
+            }
+        }
+        for (int detachedId : detachedIds) {
+            Entity detached = game.getEntity(detachedId);
+
+            if (detached != null) {
+                TrainAmmoSharing.dropUncoupledAmmoLinks(detached);
+            }
+        }
     }
 
     /**

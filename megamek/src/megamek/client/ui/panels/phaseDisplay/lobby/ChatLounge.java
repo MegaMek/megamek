@@ -1499,7 +1499,9 @@ public class ChatLounge extends AbstractPhaseDisplay
         java.util.List<Integer> enIds = getSelectedEntities().stream().map(Entity::getId).toList();
         mekModel.clearData();
         ArrayList<Entity> allEntities = new ArrayList<>(clientgui.getClient().getEntitiesVector());
-        allEntities.sort(activeSorter);
+        // Whatever the player is sorting by, a train stays together: the choice is applied to the tractor and its
+        // trailers follow it. Sorting by tonnage would otherwise strand a 10 ton carriage far from its tractor.
+        allEntities.sort(MekTableSorter.keepingCarriedUnitsTogether(activeSorter));
 
         boolean localUnits = false;
         var opts = clientgui.getClient().getGame().getOptions();

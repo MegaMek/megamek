@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2020-2025 The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2020-2026 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -68,6 +68,12 @@ class LobbyMekCellFormatter {
 
     private static final GUIPreferences GUIP = GUIPreferences.getInstance();
 
+    /**
+     * Box-drawing branch drawn in front of a unit that is carried or towed by another, so the load reads as hanging
+     * off the unit above it. Written as escapes rather than literal characters to keep the source plain ASCII.
+     */
+    private static final String CARRIED_BRANCH = "&nbsp;\u2514\u2500&nbsp;";
+
     private LobbyMekCellFormatter() {
     }
 
@@ -93,6 +99,21 @@ class LobbyMekCellFormatter {
         } else {
             return "This type of object has currently no table entry.";
         }
+    }
+
+    /**
+     * Returns the tractor heading the train this unit is towed by, or {@code null} when it is not towed.
+     * <p>
+     * Deployment belongs to that tractor: a train goes where it goes. A trailer only gets a setting of its own once
+     * the game starts and the tractor's is copied onto it, so the lobby has to read it from the head of the train.
+     * </p>
+     */
+    private static Entity trainHeadOf(Entity entity) {
+        if ((entity == null) || (entity.getGame() == null) || (entity.getTractor() == Entity.NONE)) {
+            return null;
+        }
+
+        return entity.getGame().getEntity(entity.getTractor());
     }
 
     /**
@@ -141,6 +162,12 @@ class LobbyMekCellFormatter {
         int mapType = lobby.mapSettings.getMedium();
 
         // First line
+        // Draw a branch on anything riding on another unit, carried or towed, so a carrier and its load read as one
+        // block in the list rather than as unrelated rows that happen to sit next to each other.
+        if (isCarried || isTowed) {
+            result.append(UIUtil.fontHTML(uiGray())).append(CARRIED_BRANCH).append("</FONT>");
+        }
+
         if (LobbyUtility.hasYellowWarning(entity)) {
             result.append(UIUtil.fontHTML(uiYellow()));
             result.append(WARNING_SIGN + "</FONT>");
@@ -455,6 +482,22 @@ class LobbyMekCellFormatter {
                       .append(Messages.getString("ChatLounge.towedBy"))
                       .append(" ")
                       .append(tractor.getChassis());
+
+                // Say where in the train it sits. A convoy can carry several identical carriages, so the name alone
+                // does not say which is which, and the order decides which hex each one ends up in.
+                String trainPosition = TrainLayout.trainPositionLabel(entity);
+                if (!trainPosition.isEmpty()) {
+                    result.append(" (").append(trainPosition).append(')');
+                }
+
+                // A train deploys wherever its tractor does, so show the tractor's off board setting here too. The
+                // trailer does not carry one of its own until the game starts and the tractor's is copied onto it.
+                Entity trainHead = trainHeadOf(entity);
+                if ((trainHead != null) && trainHead.isOffBoard()) {
+                    result.append(", ").append(getString("ChatLounge.deploysOffBoard"));
+                    result.append(",  ").append(trainHead.getOffBoardDirection());
+                    result.append(", ").append(trainHead.getOffBoardDistance());
+                }
             }
 
             if (PreferenceManager.getClientPreferences().getShowUnitId()) {
@@ -646,7 +689,12 @@ class LobbyMekCellFormatter {
             result.append(WARNING_SIGN + "</FONT>");
         }
 
-        // Loaded unit
+        // Loaded unit. Towed units get the same treatment: both are riding on another unit in the list.
+        boolean isTowed = entity.getTowedBy() != Entity.NONE;
+        if (isCarried || isTowed) {
+            result.append(UIUtil.fontHTML(uiGray())).append(CARRIED_BRANCH).append("</FONT>");
+        }
+
         if (isCarried) {
             result.append(UIUtil.fontHTML(uiGreen())).append(LOADED_SIGN).append("</FONT>");
         }
@@ -812,8 +860,10 @@ class LobbyMekCellFormatter {
             result.append("Partial Repairs</FONT>");
         }
 
-        // Offboard deployment
-        if (entity.isOffBoard()) {
+        // Offboard deployment. A towed unit shows its tractor's setting, since the train deploys as one and the
+        // trailer does not carry a setting of its own until the game starts.
+        Entity offBoardSource = entity.isOffBoard() ? entity : trainHeadOf(entity);
+        if ((offBoardSource != null) && offBoardSource.isOffBoard()) {
             result.append(MekTableModel.DOT_SPACER).append(UIUtil.fontHTML(uiGreen())).append("<I>");
             result.append(Messages.getString("ChatLounge.compact.deploysOffBoard")).append("</I></FONT>");
         } else if (entity.getDeployRound() > 0) {

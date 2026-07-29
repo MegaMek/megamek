@@ -34,6 +34,9 @@ package megamek.common.rules;
  */
 
 
+import megamek.common.annotations.Nullable;
+import megamek.common.board.Coords;
+import megamek.common.game.Game;
 import megamek.common.moves.MovePath;
 import megamek.common.units.EntityMovementMode;
 import megamek.common.units.Entity;
@@ -158,4 +161,19 @@ public abstract class RulesMovement {
      * @return the modified height for damage
      */
     public abstract int getAccidentalFallElevation(final int fallElevation, final int hitHeight);
+
+    /**
+     * How should we displace a unit that had another fall on it accidentally?
+     * If null is returned, no valid displacement could be found
+     *
+     * @param game the game
+     * @param entityId the entity being displaced
+     * @param src the source hex
+     * @param direction the direction that it is coming from
+     * @param range how far to displace (used for Dropships)
+     * @return the destination Coords.
+     */
+    @Nullable
+    public abstract Coords getAccidentalFallDisplacement(Game game, int entityId, Coords src, int direction,
+          int range);
 }

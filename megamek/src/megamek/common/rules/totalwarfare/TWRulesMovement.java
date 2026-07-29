@@ -34,6 +34,10 @@ package megamek.common.rules.totalwarfare;
  */
 
 
+import megamek.common.annotations.Nullable;
+import megamek.common.board.Coords;
+import megamek.common.compute.Compute;
+import megamek.common.game.Game;
 import megamek.common.moves.MovePath;
 import megamek.common.rules.core.CoreRulesMovement;
 import megamek.common.units.Entity;
@@ -214,4 +218,37 @@ public class TWRulesMovement extends CoreRulesMovement {
      */
     @Override
     public int getAccidentalFallElevation(final int fallElevation, final int hitHeight) { return fallElevation; }
+
+
+    /**
+     * How should we displace a unit that had another fall on it accidentally?
+     * Use a distribution and find the first valid hex we can displace into
+     *
+     * @param game the game
+     * @param entityId the entity being displaced
+     * @param src the source hex
+     * @param direction the direction that it is coming from
+     * @param range how far to displace (used for Dropships)
+     * @return the destination Coords
+     */
+    @Override
+    @Nullable
+    public Coords getAccidentalFallDisplacement(Game game, int entityId, Coords src, int direction,
+          int range) {
+        int[] offsets = { 0, 1, 5, 2, 4, 3 };
+        for (int offset : offsets) {
+            Coords dest = src.translated((direction + offset) % 6, range);
+            if (Compute.isValidDisplacement(game, entityId, src, dest)) {
+                return dest;
+            }
+            // code here borrowed from Compute.coordsAtRange
+            for (int count = 1; count < range; count++) {
+                dest = dest.translated((direction + offset + 2) % 6);
+                if (Compute.isValidDisplacement(game, entityId, src, dest)) {
+                    return dest;
+                }
+            }
+        }
+        return null;
+    }
 }

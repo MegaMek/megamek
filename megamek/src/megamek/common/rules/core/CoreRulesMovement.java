@@ -34,6 +34,11 @@ package megamek.common.rules.core;
  */
 
 
+import megamek.common.Hex;
+import megamek.common.annotations.Nullable;
+import megamek.common.board.Coords;
+import megamek.common.compute.Compute;
+import megamek.common.game.Game;
 import megamek.common.moves.MovePath;
 import megamek.common.rules.RulesMovement;
 import megamek.common.units.Entity;
@@ -41,6 +46,9 @@ import megamek.common.units.EntityMovementMode;
 import megamek.common.units.EntityMovementType;
 import megamek.common.units.Mek;
 import megamek.common.units.QuadMek;
+import megamek.common.units.Terrains;
+
+import java.util.ArrayList;
 
 public class CoreRulesMovement extends RulesMovement {
     // No skidding in Core Rules
@@ -169,4 +177,42 @@ public class CoreRulesMovement extends RulesMovement {
      * Height is minus the height of the unit landed on, Core rules p.116
      */
     public int getAccidentalFallElevation(final int fallElevation, final int hitHeight) { return fallElevation - hitHeight; }
+
+    /**
+     * {@inheritDoc}
+     *
+     * Clear hexes first, then randomly choose. Core p.116, 114
+     */
+    @Nullable
+    public Coords getAccidentalFallDisplacement(Game game, int entityId, Coords src, int direction,
+          int range) {
+        ArrayList<Coords> hexCoordsArray = new ArrayList<>();
+        ArrayList<Coords> hexAlternateArray = new ArrayList<>();
+        for (int checkDirection = 0; checkDirection < 6; checkDirection++) {
+            Coords dest = src.translated(checkDirection, range);
+            if (Compute.isValidDisplacement(game, entityId, src, dest) && (Compute.stackingViolation(game, game.getEntity(entityId), dest, null,
+                  game.getEntity(entityId).climbMode(), false) == null)) {
+                // No other units there and a valid displacement
+                hexCoordsArray.add(dest);
+            }
+            if (Compute.isValidDisplacement(game, entityId, src, dest)
+                  && (Compute.stackingViolation(game, game.getEntity(entityId), dest, null,
+                  game.getEntity(entityId).climbMode(), false) != null)) {
+                // Valid displacement, but other units present
+                hexAlternateArray.add(dest);
+            }
+        }
+        // If we have a hex without something in it, randomly pick one
+        if (!hexCoordsArray.isEmpty()) {
+            int randomHex = Compute.randomInt(hexCoordsArray.size());
+            return hexAlternateArray.get(randomHex);
+        }
+        // I guess no valid hexes without units in them. Ok, pick one with something in it
+        if (!hexAlternateArray.isEmpty()) {
+            int randomHex = Compute.randomInt(hexAlternateArray.size());
+            return hexAlternateArray.get(randomHex);
+        }
+        // Uh oh, no valid hexes to go into, this is bad
+        return null;
+    }
 }

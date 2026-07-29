@@ -75,7 +75,11 @@ final class EntityReadoutUnitType {
             result += Messages.getString("MekView.unitType.motorized") + " ";
         }
         if (entity.isSuperHeavy()) {
-            result += Messages.getString("MekView.unitType.superHeavy") + " ";
+            if (entity.isSupportVehicle()) {
+                result += Messages.getString("MekView.unitType.large") + " ";
+            } else {
+                result += Messages.getString("MekView.unitType.superHeavy") + " ";
+            }
         }
         if (entity.isTripodMek()) {
             result += Messages.getString("MekView.unitType.tripod") + " ";

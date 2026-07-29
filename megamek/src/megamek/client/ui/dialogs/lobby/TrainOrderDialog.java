@@ -49,6 +49,7 @@ import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.ListSelectionModel;
 
+import megamek.client.ui.Messages;
 import megamek.client.ui.util.UIUtil;
 import megamek.common.units.Entity;
 
@@ -74,7 +75,7 @@ public class TrainOrderDialog extends JDialog {
      * @param trailers the trailers to hitch behind it, in their initial suggested order
      */
     public TrainOrderDialog(JFrame frame, Entity head, List<Entity> trailers) {
-        super(frame, "Connect as Train", true);
+        super(frame, Messages.getString("TrainOrderDialog.title"), true);
 
         for (Entity trailer : trailers) {
             trainModel.addElement(trailer);
@@ -96,28 +97,29 @@ public class TrainOrderDialog extends JDialog {
         }
 
         JPanel headPanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
-        headPanel.add(new JLabel("1. " + head.getShortName() + "   (tractor)"));
+        headPanel.add(new JLabel("1. " + head.getShortName() + "   "
+              + Messages.getString("TrainOrderDialog.tractor")));
 
-        JButton moveUpButton = new JButton("Move Up");
+        JButton moveUpButton = new JButton(Messages.getString("TrainOrderDialog.moveUp"));
         moveUpButton.addActionListener(event -> moveSelected(-1));
-        JButton moveDownButton = new JButton("Move Down");
+        JButton moveDownButton = new JButton(Messages.getString("TrainOrderDialog.moveDown"));
         moveDownButton.addActionListener(event -> moveSelected(1));
         JPanel reorderPanel = new JPanel();
         reorderPanel.add(moveUpButton);
         reorderPanel.add(moveDownButton);
 
         JPanel orderPanel = new JPanel(new BorderLayout());
-        orderPanel.setBorder(BorderFactory.createTitledBorder("Order, front to back"));
+        orderPanel.setBorder(BorderFactory.createTitledBorder(Messages.getString("TrainOrderDialog.order")));
         orderPanel.add(headPanel, BorderLayout.NORTH);
         orderPanel.add(new JScrollPane(trainList), BorderLayout.CENTER);
         orderPanel.add(reorderPanel, BorderLayout.SOUTH);
 
-        JButton connectButton = new JButton("Connect");
+        JButton connectButton = new JButton(Messages.getString("TrainOrderDialog.connect"));
         connectButton.addActionListener(event -> {
             confirmed = true;
             setVisible(false);
         });
-        JButton cancelButton = new JButton("Cancel");
+        JButton cancelButton = new JButton(Messages.getString("TrainOrderDialog.cancel"));
         cancelButton.addActionListener(event -> setVisible(false));
         JPanel buttonPanel = new JPanel();
         buttonPanel.add(connectButton);

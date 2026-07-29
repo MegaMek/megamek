@@ -132,7 +132,8 @@ public abstract class BotClient extends Client {
      * so without this a batch of units would send the same build request several times over before the first reply
      * came back. Cleared when the lobby is left.
      */
-    private final Set<Integer> requestedTrains = new HashSet<>();
+    /** The trailer list last requested for each tractor, so an unchanged plan is not asked for twice. */
+    private final Map<Integer, List<Integer>> requestedTrains = new HashMap<>();
 
     /**
      * The bot's personality/configuration state. Held on {@link BotClient} because it is generic bot-personality state
@@ -588,6 +589,30 @@ public abstract class BotClient extends Client {
      * player's, and a train that cannot legally be built is refused rather than half-applied.
      * </p>
      */
+    /**
+     * Decides whether a planned train still needs to be requested, and records it when it does.
+     * <p>
+     * The server's reply to a build request arrives as another lobby update, which asks for the plans again, so
+     * repeating an identical request would loop. The guard is the trailer list rather than the tractor id: a tractor
+     * handed more trailers after its first request produces a different list, so it is asked again with the longer
+     * plan instead of being suppressed for the rest of the lobby.
+     * </p>
+     *
+     * @param requestedTrains  the trailer list last requested for each tractor, updated in place
+     * @param tractorId        the tractor heading the planned train
+     * @param plannedTrailers  the trailers to hitch behind it, in order
+     *
+     * @return {@code true} when this plan has not been requested yet and the caller should send it
+     */
+    static boolean recordTrainRequest(Map<Integer, List<Integer>> requestedTrains, int tractorId,
+          List<Integer> plannedTrailers) {
+        if (plannedTrailers.equals(requestedTrains.get(tractorId))) {
+            return false;
+        }
+        requestedTrains.put(tractorId, List.copyOf(plannedTrailers));
+        return true;
+    }
+
     protected void connectOwnTrains() {
         if (!getGame().getPhase().isLounge()) {
             return;
@@ -596,8 +621,7 @@ public abstract class BotClient extends Client {
         Map<Integer, List<Integer>> plannedTrains = BotTrainPlanner.planTrains(getGame(), localPlayerNumber);
 
         for (Map.Entry<Integer, List<Integer>> plannedTrain : plannedTrains.entrySet()) {
-            // Only ask once per tractor. The reply arrives as another lobby update, which calls this again.
-            if (!requestedTrains.add(plannedTrain.getKey())) {
+            if (!recordTrainRequest(requestedTrains, plannedTrain.getKey(), plannedTrain.getValue())) {
                 continue;
             }
 

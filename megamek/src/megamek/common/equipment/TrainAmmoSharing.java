@@ -91,14 +91,14 @@ public final class TrainAmmoSharing {
      * change packet arrives from the client.
      * <p>
      * Only the units on either side of a coupling share, not the whole train. Xotl ruled on this in the official
-     * rules Q&A (battletech.com forums, topic 74296): "Only vehicles directly coupled can share ammo", and in a
+     * rules Q&amp;A (battletech.com forums, topic 74296): "Only vehicles directly coupled can share ammo", and in a
      * trailer-tractor-trailer arrangement "the tractor may pull from either trailer, but one trailer may not pull
      * from the other".
      * </p>
      * This makes a Mobile Long Tom convoy weaker than its fluff: three carriages hold about 75 rounds between them,
      * but the gun only ever reaches the 25 in the carriage hitched to it. That is the ruling, not an oversight. Do
      * not widen this to the whole train on the strength of the convoy description or of TM's "Trailers act as part
-     * of the Tractor for movement, stacking and firing" - the Q&A was asked about exactly this case.
+     * of the Tractor for movement, stacking and firing" - the Q&amp;A was asked about exactly this case.
      *
      * @param shooter     the unit firing the weapon
      * @param ammoCarrier the unit that owns the ammo bin

@@ -252,8 +252,10 @@ public class TWGameManager extends AbstractGameManager {
 
     /**
      * Special packet queue for client feedback requests.
+     * <p>
+     * Package-private for test access; see TWGameManagerCFRPacketQueueTest.
+     * </p>
      */
-    /** Package-private for test access; see TWGameManagerCFRPacketQueueTest. */
     final ConcurrentLinkedQueue<Server.ReceivedPacket> cfrPacketQueue = new ConcurrentLinkedQueue<>();
 
     public TWGameManager() {

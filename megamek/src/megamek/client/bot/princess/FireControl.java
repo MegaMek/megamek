@@ -2751,13 +2751,6 @@ public class FireControl {
     }
 
     /**
-     * Figures out the best firing plan
-     *
-     * @param params - the appropriate firing plan calculation parameters
-     *
-     * @return the 'best' firing plan - uses heat as disutility and includes the possibility of twisting
-     */
-    /**
      * @param shooter the unit to check
      *
      * @return {@code true} if the shooter has at least one weapon in a Directional Torso Mount whose arc can still be
@@ -2846,6 +2839,13 @@ public class FireControl {
         return flips;
     }
 
+    /**
+     * Figures out the best firing plan
+     *
+     * @param params - the appropriate firing plan calculation parameters
+     *
+     * @return the 'best' firing plan - uses heat as disutility and includes the possibility of twisting
+     */
     FiringPlan determineBestFiringPlan(final FiringPlanCalculationParameters params) {
         // unpack parameters for easier reference
         final Entity shooter = params.getShooter();

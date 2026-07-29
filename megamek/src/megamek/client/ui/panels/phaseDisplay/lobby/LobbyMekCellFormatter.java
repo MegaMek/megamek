@@ -68,11 +68,14 @@ class LobbyMekCellFormatter {
 
     private static final GUIPreferences GUIP = GUIPreferences.getInstance();
 
-    /**
-     * Box-drawing branch drawn in front of a unit that is carried or towed by another, so the load reads as hanging
-     * off the unit above it. Written as escapes rather than literal characters to keep the source plain ASCII.
-     */
-    private static final String CARRIED_BRANCH = "&nbsp;\u2514\u2500&nbsp;";
+    /** Corner of the branch drawn before a carried or towed unit. Escaped to keep the source plain ASCII. */
+    private static final String BRANCH_CORNER = "\u2514";
+
+    /** One length of branch. Repeated once per level, so a deeper load reads as a longer arm. */
+    private static final String BRANCH_ARM = "\u2500";
+
+    /** Stops a malformed load loop from spinning while counting how deep a unit sits. */
+    private static final int MAX_CARRIER_DEPTH = 16;
 
     private LobbyMekCellFormatter() {
     }
@@ -99,6 +102,55 @@ class LobbyMekCellFormatter {
         } else {
             return "This type of object has currently no table entry.";
         }
+    }
+
+    /**
+     * Returns the branch drawn in front of a unit that rides on another, indented and lengthened by how deeply it
+     * sits. A Mek inside a DropShip inside a JumpShip is drawn further in than the DropShip carrying it, so a stack
+     * reads as a tree rather than a flat run of identical marks.
+     */
+    static String carriedBranch(Entity entity) {
+        int depth = carriedDepth(entity);
+
+        if (depth <= 0) {
+            return "";
+        }
+
+        return "&nbsp;".repeat(depth) + BRANCH_CORNER + BRANCH_ARM.repeat(depth) + "&nbsp;";
+    }
+
+    /** How many carriers sit above this unit: 1 for a DropShip in a JumpShip, 2 for a Mek inside that DropShip. */
+    private static int carriedDepth(Entity entity) {
+        int depth = 0;
+        Entity current = entity;
+
+        while ((current != null) && (depth < MAX_CARRIER_DEPTH)) {
+            Entity carrier = carrierOf(current);
+
+            if ((carrier == null) || (carrier.getId() == current.getId())) {
+                break;
+            }
+            depth++;
+            current = carrier;
+        }
+
+        return depth;
+    }
+
+    /** The unit this one rides on, carried in a bay or towed behind, or {@code null} when neither. */
+    private static Entity carrierOf(Entity entity) {
+        if (entity.getGame() == null) {
+            return null;
+        }
+
+        if (entity.getTransportId() != Entity.NONE) {
+            return entity.getGame().getEntity(entity.getTransportId());
+        }
+        if (entity.getTractor() != Entity.NONE) {
+            return entity.getGame().getEntity(entity.getTractor());
+        }
+
+        return null;
     }
 
     /**
@@ -165,7 +217,7 @@ class LobbyMekCellFormatter {
         // Draw a branch on anything riding on another unit, carried or towed, so a carrier and its load read as one
         // block in the list rather than as unrelated rows that happen to sit next to each other.
         if (isCarried || isTowed) {
-            result.append(UIUtil.fontHTML(uiGray())).append(CARRIED_BRANCH).append("</FONT>");
+            result.append(UIUtil.fontHTML(uiGray())).append(carriedBranch(entity)).append("</FONT>");
         }
 
         if (LobbyUtility.hasYellowWarning(entity)) {
@@ -692,7 +744,7 @@ class LobbyMekCellFormatter {
         // Loaded unit. Towed units get the same treatment: both are riding on another unit in the list.
         boolean isTowed = entity.getTowedBy() != Entity.NONE;
         if (isCarried || isTowed) {
-            result.append(UIUtil.fontHTML(uiGray())).append(CARRIED_BRANCH).append("</FONT>");
+            result.append(UIUtil.fontHTML(uiGray())).append(carriedBranch(entity)).append("</FONT>");
         }
 
         if (isCarried) {

@@ -17555,29 +17555,6 @@ public abstract class Entity extends TurnOrdered
     }
 
     /**
-     * Returns true when this unit is a trailer at the very back of its train, with nothing hitched behind it.
-     * <p>
-     * Only the last trailer can be dropped without breaking the chain, which is what lets it deploy off board on its
-     * own while the rest of the train deploys onto the board.
-     * </p>
-     *
-     * @return {@code true} if this unit is towed and is the last unit in its train
-     */
-    public boolean isLastTrailerInTrain() {
-        if ((game == null) || (getTractor() == Entity.NONE)) {
-            return false;
-        }
-
-        Entity tractor = game.getEntity(getTractor());
-        if (tractor == null) {
-            return false;
-        }
-
-        List<Integer> train = tractor.getAllTowedUnits();
-        return !train.isEmpty() && (train.get(train.size() - 1) == getId());
-    }
-
-    /**
      * Removes an entity from this tractor's train
      */
     public void removeTowedUnit(int id) {

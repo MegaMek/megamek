@@ -47,6 +47,8 @@ public final class LobbyErrors {
     private static final String SINGLE_UNIT = "Cannot {0} for more than one unit at a time.";
     private static final String SINGLE_UNIT_OR_FORCE = "Please select a single unit or a single force.";
     private static final String TEN_UNITS = "Please select fewer than 10 units.";
+    private static final String NO_DETACH_OFF_BOARD = "An off board train cannot be uncoupled. "
+          + "There is no board position to leave a trailer at.";
     private static final String HEAT_TRACKING = "Cannot apply a heat setting to units that do not track heat.";
     private static final String ONLY_MEKS = "This setting can only be applied to Meks.";
     private static final String ONLY_C3M = "Only units with a C3M can be set to be Company Masters.";
@@ -89,6 +91,10 @@ public final class LobbyErrors {
 
     public static void showForceNoAttachSubForce(JFrame owner) {
         JOptionPane.showMessageDialog(owner, FORCE_ATTACH_TO_SUB_FORCE);
+    }
+
+    public static void showNoDetachOffBoard(JFrame owner) {
+        JOptionPane.showMessageDialog(owner, NO_DETACH_OFF_BOARD);
     }
 
     public static void showOnlyTeam(JFrame owner) {

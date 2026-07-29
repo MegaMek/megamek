@@ -466,17 +466,10 @@ public class DeploymentProcessor extends AbstractTWRuleHandler {
             return;
         }
 
-        // A trailer flagged for off board deployment is emplaced there on its own: the tow gets it into position and
-        // then it is dropped, which is how towed gun trailers are used. A train cannot straddle the map edge, so the
-        // trailer leaves the train rather than being dragged onto the board with its tractor. This runs before the
-        // layout is worked out, so the hexes are packed for the train that is actually deploying.
-        dropOffBoardTrailers(tractor);
-
-        if (tractor.getAllTowedUnits().isEmpty()) {
-            LOGGER.info("[Train] {} deployed at {}; every trailer went off board on its own",
-                  tractor.getDisplayName(), tractor.getPosition());
-            return;
-        }
+        // A hitched train deploys wherever its tractor does, so a trailer keeps no off board setting of its own. The
+        // lobby does not let one be set on a hitched trailer, but it can be set before the trailer is hitched, so
+        // clear it here rather than leaving the trailer thinking it belongs somewhere else.
+        clearTrailerOffBoardSettings(tractor);
 
         int trailerCount = tractor.getAllTowedUnits().size();
         List<Coords> trainPath = TrainLayout.deploymentPath(tractor.getPosition(), tractor.getFacing(), trailerCount);
@@ -510,65 +503,31 @@ public class DeploymentProcessor extends AbstractTWRuleHandler {
     }
 
     /**
-     * Unhitches any trailers at the back of a train that are set to deploy off board, so they can be emplaced there
-     * while the rest of the train deploys onto the board.
+     * Clears any off board setting left on the trailers of a train that is deploying.
      * <p>
-     * Only a run of trailers at the very back can leave. Dropping one from the middle takes every trailer behind it
-     * out of the train as well, which would strand units that were meant to deploy with the tractor, so a trailer
-     * further forward keeps its place and is logged. The lobby refuses that arrangement when it is set up, this is
-     * the safety net for a train reordered afterwards.
+     * A hitched train goes wherever its tractor goes, so a trailer never carries a deployment of its own. The lobby
+     * refuses to set one on a hitched trailer, but the setting can survive from before the trailer was hitched, so
+     * it is cleared here and logged rather than quietly changing where the unit ends up.
      * </p>
      *
      * @param tractor the unit that has just been deployed
      */
-    void dropOffBoardTrailers(Entity tractor) {
-        List<Integer> train = new ArrayList<>(tractor.getAllTowedUnits());
+    void clearTrailerOffBoardSettings(Entity tractor) {
+        List<String> clearedTrailers = new ArrayList<>();
 
-        // Walk from the back and stop at the first trailer that is staying. Everything before it is mid-train.
-        int firstLeavingIndex = train.size();
-        while (firstLeavingIndex > 0) {
-            Entity trailer = getGame().getEntity(train.get(firstLeavingIndex - 1));
-
-            if ((trailer == null) || !trailer.isOffBoard()) {
-                break;
-            }
-            firstLeavingIndex--;
-        }
-
-        for (int index = 0; index < firstLeavingIndex; index++) {
-            Entity trailer = getGame().getEntity(train.get(index));
+        for (int towedId : tractor.getAllTowedUnits()) {
+            Entity trailer = getGame().getEntity(towedId);
 
             if ((trailer != null) && trailer.isOffBoard()) {
-                LOGGER.warn("[Train] {} is set to deploy off board but is towed mid-train behind {}; it deploys with "
-                            + "the train instead, since dropping it would take the trailers behind it out too",
-                      trailer.getDisplayName(), tractor.getDisplayName());
                 trailer.setOffBoard(0, OffBoardDirection.NONE);
+                clearedTrailers.add(trailer.getDisplayName());
             }
         }
 
-        if (firstLeavingIndex >= train.size()) {
-            return;
+        if (!clearedTrailers.isEmpty()) {
+            LOGGER.info("[Train] {} trailer(s) had an off board setting of their own; a train deploys with {}: {}",
+                  clearedTrailers.size(), tractor.getDisplayName(), String.join(", ", clearedTrailers));
         }
-
-        // Disconnecting the frontmost leaver cascades to every trailer behind it, which is the whole leaving run.
-        List<String> trailersLeaving = new ArrayList<>();
-        for (int index = firstLeavingIndex; index < train.size(); index++) {
-            Entity trailer = getGame().getEntity(train.get(index));
-
-            if (trailer != null) {
-                trailersLeaving.add(trailer.getDisplayName());
-            }
-        }
-        tractor.disconnectUnit(train.get(firstLeavingIndex));
-
-        for (int index = firstLeavingIndex; index < train.size(); index++) {
-            gameManager.entityUpdate(train.get(index));
-        }
-        gameManager.entityUpdate(tractor.getId());
-
-        LOGGER.info("[Train] {} trailer(s) left {} to deploy off board on their own: {}",
-              trailersLeaving.size(), tractor.getDisplayName(), String.join(", ", trailersLeaving));
     }
-
 
 }

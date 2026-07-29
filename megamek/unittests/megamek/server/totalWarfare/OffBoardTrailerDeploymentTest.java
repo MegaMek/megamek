@@ -127,74 +127,6 @@ class OffBoardTrailerDeploymentTest {
     }
 
     @Test
-    void theLastTrailerLeavesTheTrainToDeployOffBoard() throws Exception {
-        Tank tractor = buildTrain(2);
-        Entity leadTrailer = trailerAt(tractor, 0);
-        Entity gunTrailer = trailerAt(tractor, 1);
-        setOffBoard(gunTrailer);
-
-        deploymentProcessor.dropOffBoardTrailers(tractor);
-
-        assertEquals(List.of(leadTrailer.getId()), tractor.getAllTowedUnits(),
-              "The train keeps the trailer that is deploying on board");
-        assertEquals(Entity.NONE, gunTrailer.getTractor(), "The gun trailer is no longer part of the train");
-        assertTrue(gunTrailer.isOffBoard(), "and keeps its off board setting");
-    }
-
-    @Test
-    void aWholeRunAtTheBackCanLeaveTogether() throws Exception {
-        Tank tractor = buildTrain(3);
-        Entity leadTrailer = trailerAt(tractor, 0);
-        Entity secondGun = trailerAt(tractor, 1);
-        Entity thirdGun = trailerAt(tractor, 2);
-        setOffBoard(secondGun);
-        setOffBoard(thirdGun);
-
-        deploymentProcessor.dropOffBoardTrailers(tractor);
-
-        assertEquals(List.of(leadTrailer.getId()), tractor.getAllTowedUnits(),
-              "Both trailers at the back leave together");
-        assertTrue(secondGun.isOffBoard());
-        assertTrue(thirdGun.isOffBoard());
-    }
-
-    @Test
-    void aTrailerInTheMiddleStaysWithTheTrain() throws Exception {
-        Tank tractor = buildTrain(3);
-        Entity midTrailer = trailerAt(tractor, 1);
-        Entity lastTrailer = trailerAt(tractor, 2);
-        setOffBoard(midTrailer);
-
-        deploymentProcessor.dropOffBoardTrailers(tractor);
-
-        assertEquals(3, tractor.getAllTowedUnits().size(),
-              "Dropping a mid-train trailer would strand the one behind it, so the train is left whole");
-        assertFalse(midTrailer.isOffBoard(), "Its off board setting is cleared rather than half-applied");
-        assertEquals(tractor.getId(), lastTrailer.getTractor(), "The trailer behind it stays in the train");
-    }
-
-    @Test
-    void everyTrailerCanLeaveAndTheTractorDeploysAlone() throws Exception {
-        Tank tractor = buildTrain(2);
-        setOffBoard(trailerAt(tractor, 0));
-        setOffBoard(trailerAt(tractor, 1));
-
-        deploymentProcessor.dropOffBoardTrailers(tractor);
-
-        assertTrue(tractor.getAllTowedUnits().isEmpty(), "The tractor deploys with nothing behind it");
-    }
-
-    @Test
-    void aTrainWithNoOffBoardTrailersIsUntouched() throws Exception {
-        Tank tractor = buildTrain(2);
-        List<Integer> before = List.copyOf(tractor.getAllTowedUnits());
-
-        deploymentProcessor.dropOffBoardTrailers(tractor);
-
-        assertEquals(before, tractor.getAllTowedUnits(), "Nothing changes when no trailer is going off board");
-    }
-
-    @Test
     void aTrailerWithNoTractorDeploysOffBoardOnItsOwn() throws Exception {
         // The simplest way to field a towed gun: emplace it off board and never hitch it to anything. It has no
         // engine, but an emplaced artillery piece does not need one.
@@ -213,7 +145,7 @@ class OffBoardTrailerDeploymentTest {
         Tank looseTrailer = buildVehicle(CARRIAGE_TONS, true);
         setOffBoard(looseTrailer);
 
-        deploymentProcessor.dropOffBoardTrailers(tractor);
+        deploymentProcessor.clearTrailerOffBoardSettings(tractor);
 
         assertEquals(Entity.NONE, looseTrailer.getTractor(), "It was never part of anyone's train");
         assertTrue(looseTrailer.isOffBoard(), "and its off board setting is left alone");
@@ -221,19 +153,17 @@ class OffBoardTrailerDeploymentTest {
     }
 
     @Test
-    void onlyTheLastTrailerReportsItselfAsSuch() throws Exception {
+    void aHitchedTrailersOwnOffBoardSettingIsCleared() throws Exception {
         Tank tractor = buildTrain(2);
+        Entity leadTrailer = trailerAt(tractor, 0);
+        Entity gunTrailer = trailerAt(tractor, 1);
+        setOffBoard(gunTrailer);
 
-        assertFalse(trailerAt(tractor, 0).isLastTrailerInTrain(), "The lead trailer has one behind it");
-        assertTrue(trailerAt(tractor, 1).isLastTrailerInTrain(), "The second is at the back");
-        assertFalse(tractor.isLastTrailerInTrain(), "A tractor is not a trailer in anyone's train");
-    }
+        deploymentProcessor.clearTrailerOffBoardSettings(tractor);
 
-    @Test
-    void anUnhitchedTrailerIsNotPartOfAnyTrain() throws Exception {
-        Tank looseTrailer = buildVehicle(CARRIAGE_TONS, true);
-
-        assertFalse(looseTrailer.isLastTrailerInTrain(),
-              "A trailer with no tractor is free to deploy off board on its own terms");
+        assertFalse(gunTrailer.isOffBoard(),
+              "A train deploys where its tractor does, so a trailer keeps no deployment of its own");
+        assertEquals(2, tractor.getAllTowedUnits().size(), "and the train stays whole");
+        assertEquals(tractor.getId(), leadTrailer.getTractor());
     }
 }

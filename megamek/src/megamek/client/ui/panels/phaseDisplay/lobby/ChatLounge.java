@@ -1728,6 +1728,12 @@ public class ChatLounge extends AbstractPhaseDisplay
 
     private void disconnectTrain(Entity tractor, Entity trailer, Collection<Entity> updateCandidates) {
         if (tractor != null && trailer != null) {
+            // An off board train stays hooked up. There is no board position to drop a trailer at, and the train is
+            // the only thing holding the trailer's place off the map edge.
+            if (tractor.isOffBoard() || trailer.isOffBoard()) {
+                LobbyErrors.showNoDetachOffBoard(clientgui.getFrame());
+                return;
+            }
             // Copy the ids: disconnectUnit drops the detached trailers from this list as it works, and walking
             // the live view afterwards fails with a ConcurrentModificationException.
             List<Integer> otherTowedUnitIds = new ArrayList<>(tractor.getAllTowedUnits());

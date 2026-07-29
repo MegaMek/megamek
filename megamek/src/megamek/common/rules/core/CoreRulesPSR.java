@@ -330,4 +330,19 @@ public class CoreRulesPSR extends RulesPSR {
         entity.addPilotingModifierForTerrain(roll);
         return roll;
     }
+
+    /**
+     * {@inheritDoc}
+     *
+     * Falls into and in water get half damage. Core p.115
+     * */
+    public ArrayList<Integer> reduceFallDamageIntoWater(int damage, int waterDepth, int fallHeight, double weight) {
+        ArrayList<Integer> damageValues = new ArrayList<>();
+        int waterDamage = (int) (((int) Math.round(weight / 10.0) * (fallHeight + 1)) / 2.0);
+        int newDamage = 0;
+
+        damageValues.add(newDamage);
+        damageValues.add(waterDamage);
+        return damageValues;
+    }
 }

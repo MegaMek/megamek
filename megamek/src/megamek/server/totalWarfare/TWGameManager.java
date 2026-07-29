@@ -25092,20 +25092,19 @@ public class TWGameManager extends AbstractGameManager {
             // Ends up being the regular damage: weight / 10 * (height + 1)
             // And this was already computed
         }
+
         // calculate damage for hitting the ground, but only if we actually fell
         // into water
         // if we fell onto the water surface, that damage is halved.
         int waterDamage = 0;
+        ArrayList<Integer> damageList = new ArrayList<>();
         if (waterDepth > 0) {
-            damage /= 2;
-            waterDamage = ((int) Math.round(entity.getWeight() / 10.0) * (waterDepth + 1)) / 2;
+            damageList = Game.rulesManager.getRulesPSR().reduceFallDamageIntoWater(damage, waterDepth, fallHeight,
+                  entity.getWeight());
+            damage = damageList.get(0);
+            waterDamage = damageList.get(1);
         }
 
-        // If the waterDepth is larger than the fall height, we fell underwater
-        if ((waterDepth >= fallHeight) && ((waterDepth != 0) || (fallHeight != 0))) {
-            damage = 0;
-            waterDamage = ((int) Math.round(entity.getWeight() / 10.0) * (fallHeight + 1)) / 2;
-        }
         // adjust damage for gravity
         damage = Math.round(damage * game.getPlanetaryConditions().getGravity());
         waterDamage = Math.round(waterDamage * game.getPlanetaryConditions().getGravity());

@@ -43,6 +43,8 @@ import megamek.common.units.Entity;
 import megamek.common.units.EntityMovementType;
 import megamek.common.units.Mek;
 import megamek.common.units.MekWithArms;
+
+import java.util.ArrayList;
 import java.util.List;
 
 public class TWRulesPSR extends CoreRulesPSR {
@@ -266,5 +268,30 @@ public class TWRulesPSR extends CoreRulesPSR {
         roll.addModifier(TargetRoll.CHECK_FALSE, "Check false: does not apply");
         entity.addPilotingModifierForTerrain(roll);
         return roll;
+    }
+
+    /**
+     * Calculate the damage a falling unit in water receives
+     *
+     * @param damage how much damage is it supposed to take
+     * @param waterDepth the depth of the water
+     * @param fallHeight how big was the fall
+     * @param weight how much does the unit weigh
+     * @return the modified damage
+     */
+    @Override
+    public ArrayList<Integer> reduceFallDamageIntoWater(int damage, int waterDepth, int fallHeight, double weight) {
+        ArrayList<Integer> damageValues = new ArrayList<>();
+        damage /= 2;
+        int waterDamage = ((int) Math.round(weight / 10.0) * (waterDepth + 1)) / 2;
+
+        if ((waterDepth >= fallHeight) && ((waterDepth != 0) || (fallHeight != 0))) {
+            damage = 0;
+            waterDamage = ((int) Math.round(weight / 10.0) * (fallHeight + 1)) / 2;
+        }
+
+        damageValues.add(damage);
+        damageValues.add(waterDamage);
+        return damageValues;
     }
 }

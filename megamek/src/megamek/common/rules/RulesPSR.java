@@ -188,4 +188,16 @@ public abstract class RulesPSR {
      */
     public abstract PilotingRollData checkWalkWithLegDestroyed(Entity entity, EntityMovementType overallMoveType,
           int hexesMoved);
+
+    /**
+     * Calculate the damage a falling unit in water receives
+     *
+     * @param damage how much damage is it supposed to take
+     * @param waterDepth the depth of the water
+     * @param fallHeight how big was the fall
+     * @param weight how much does the unit weigh
+     * @return the modified damage
+     */
+    public abstract ArrayList<Integer> reduceFallDamageIntoWater(int damage, int waterDepth, int fallHeight,
+          double weight);
 }

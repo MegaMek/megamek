@@ -180,16 +180,6 @@ public final class TrainLayout {
     }
 
     /**
-     * Builds the run of hexes a train occupies when its tractor is placed in a given hex, running backwards from that
-     * hex against the tractor's facing. Long enough to hold the whole train however it packs.
-     *
-     * @param tractorHex   the hex the tractor occupies
-     * @param facing       the tractor's facing
-     * @param trailerCount how many trailers the tractor tows
-     *
-     * @return hexes ordered so that the last entry is the tractor's hex
-     */
-    /**
      * Returns a short label for where a unit sits in its train: {@code TR} for the tractor heading it, then
      * {@code TL1}, {@code TL2} and so on back along the trailers.
      * <p>
@@ -220,6 +210,16 @@ public final class TrainLayout {
         return (trailerIndex < 0) ? "" : "TL" + (trailerIndex + 1);
     }
 
+    /**
+     * Builds the run of hexes a train occupies when its tractor is placed in a given hex, running backwards from that
+     * hex against the tractor's facing. Long enough to hold the whole train however it packs.
+     *
+     * @param tractorHex   the hex the tractor occupies
+     * @param facing       the tractor's facing
+     * @param trailerCount how many trailers the tractor tows
+     *
+     * @return hexes ordered so that the last entry is the tractor's hex
+     */
     public static List<Coords> deploymentPath(Coords tractorHex, int facing, int trailerCount) {
         int rearDirection = (facing + 3) % 6;
         List<Coords> path = new ArrayList<>();

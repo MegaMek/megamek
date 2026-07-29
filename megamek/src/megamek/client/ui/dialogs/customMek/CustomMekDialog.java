@@ -1261,9 +1261,6 @@ public class CustomMekDialog extends AbstractButtonDialog
     }
 
     /**
-     * Checks if entity is valid for Proto DNI (BattleMek only, not IndustrialMek).
-     */
-    /**
      * Returns true when this unit, or anything it tows, carries a weapon that can be fired from off board.
      * <p>
      * A train acts as one unit for firing (TM, Trailers), so a tractor with no artillery of its own still belongs off
@@ -1300,6 +1297,9 @@ public class CustomMekDialog extends AbstractButtonDialog
         return false;
     }
 
+    /**
+     * Checks if entity is valid for Proto DNI (BattleMek only, not IndustrialMek).
+     */
     private boolean isValidForProtoDni(Entity entity) {
         return entity.isMek() && !entity.isIndustrialMek();
     }

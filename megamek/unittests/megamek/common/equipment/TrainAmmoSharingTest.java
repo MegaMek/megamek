@@ -156,9 +156,10 @@ class TrainAmmoSharingTest {
     }
 
     @Test
-    void theWholeTrainSharesNotJustNeighbours() throws Exception {
-        // Gun, then three ammunition carriages, as a Mobile Long Tom convoy is built. The gun has to reach past the
-        // first carriage or the other two carry rounds nothing can fire.
+    void sharingReachesOneCouplingAndNoFurther() throws Exception {
+        // Gun, then three ammunition carriages, as a Mobile Long Tom convoy is built. Only the carriage hitched to
+        // the gun can feed it: "Only vehicles directly coupled can share ammo" (Xotl, forum topic 74296). The other
+        // two carry rounds the gun cannot reach, which is the ruling rather than a defect.
         Entity secondCarriage = loadBulldog(4, game.getPlayer(0), true);
         Entity thirdCarriage = loadBulldog(5, game.getPlayer(0), true);
         game.addEntity(secondCarriage);
@@ -166,17 +167,21 @@ class TrainAmmoSharingTest {
         tractor.towUnit(secondCarriage.getId());
         tractor.towUnit(thirdCarriage.getId());
 
-        assertTrue(TrainAmmoSharing.canShareAmmoWith(tractor, secondCarriage),
-              "The gun reaches the second carriage, two hops back");
-        assertTrue(TrainAmmoSharing.canShareAmmoWith(tractor, thirdCarriage),
-              "The gun reaches the third carriage, three hops back");
-        assertTrue(TrainAmmoSharing.canShareAmmoWith(thirdCarriage, tractor),
-              "Sharing works in both directions along the train");
+        assertFalse(TrainAmmoSharing.canShareAmmoWith(tractor, secondCarriage),
+              "The gun does not reach the second carriage, two hops back");
+        assertFalse(TrainAmmoSharing.canShareAmmoWith(tractor, thirdCarriage),
+              "The gun does not reach the third carriage, three hops back");
+        assertFalse(TrainAmmoSharing.canShareAmmoWith(thirdCarriage, tractor),
+              "Nor does the far carriage reach the gun");
+        assertFalse(TrainAmmoSharing.canShareAmmoWith(canonicalTrailer, thirdCarriage),
+              "One trailer may not pull from another it is not hitched to");
+
+        assertTrue(TrainAmmoSharing.canShareAmmoWith(canonicalTrailer, secondCarriage),
+              "Carriages hitched to each other still share");
 
         List<AmmoMounted> shared = TrainAmmoSharing.getSharedAmmo(tractor);
-        int expectedBins = tractor.getAmmo().size() + canonicalTrailer.getAmmo().size()
-              + secondCarriage.getAmmo().size() + thirdCarriage.getAmmo().size();
-        assertEquals(expectedBins, shared.size(), "Every bin in the train is offered");
+        assertEquals(tractor.getAmmo().size() + canonicalTrailer.getAmmo().size(), shared.size(),
+              "Only the first carriage's bins are offered to the gun");
     }
 
     @Test

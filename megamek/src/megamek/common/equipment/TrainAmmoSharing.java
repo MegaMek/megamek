@@ -43,6 +43,7 @@ import megamek.common.units.Entity;
 /**
  * Stateless rules helper for ammunition shared along a tractor-and-trailer train. A unit may feed its weapons from the
  * ammo bins of the unit it tows and the unit towing it, so an ammo bin is not necessarily owned by the unit firing it.
+ * Sharing reaches one coupling in each direction and no further; see {@link #canShareAmmoWith} for the ruling.
  * <p>
  * This is the single definition of which units may supply each other. The client offers exactly this set in the ammo
  * dropdown and the server validates against it, so the two cannot drift apart.
@@ -59,52 +60,27 @@ public final class TrainAmmoSharing {
     }
 
     /**
-     * Every unit in the train the given unit belongs to, tractor first and then its trailers in train order.
-     * <p>
-     * The train is resolved from the powered tractor at its head, so any member sees the same set. A unit that is not
-     * part of a train is the only member of its own.
-     * </p>
-     *
-     * @param unit any member of the train
-     *
-     * @return the train's units, tractor first
-     */
-    public static List<Entity> getTrainMembers(Entity unit) {
-        Game game = unit.getGame();
-        if (game == null) {
-            return List.of(unit);
-        }
-
-        Entity tractor = unit;
-        if (unit.getTractor() != Entity.NONE) {
-            Entity poweredTractor = game.getEntity(unit.getTractor());
-            if (poweredTractor != null) {
-                tractor = poweredTractor;
-            }
-        }
-
-        List<Entity> trainMembers = new ArrayList<>();
-        trainMembers.add(tractor);
-        for (int towedId : tractor.getAllTowedUnits()) {
-            Entity trailer = game.getEntity(towedId);
-            if (trailer != null) {
-                trainMembers.add(trailer);
-            }
-        }
-        return trainMembers;
-    }
-
-    /**
      * @param shooter the unit whose weapons are being loaded
      *
-     * @return every ammo bin the unit may draw from, in display order: its own bins first, then those of the rest of
-     *       the train in train order. Units not in a train return only their own bins.
+     * @return every ammo bin the unit may draw from, in display order: its own bins first, then those of the unit
+     *       towing it, then those of the unit it tows. Units not in a train return only their own bins.
      */
     public static List<AmmoMounted> getSharedAmmo(Entity shooter) {
         List<AmmoMounted> sharedAmmo = new ArrayList<>(shooter.getAmmo());
-        for (Entity trainMember : getTrainMembers(shooter)) {
-            if (!trainMember.equals(shooter)) {
-                sharedAmmo.addAll(trainMember.getAmmo());
+        Game game = shooter.getGame();
+        if (game == null) {
+            return sharedAmmo;
+        }
+        if (shooter.getTowedBy() != Entity.NONE) {
+            Entity ahead = game.getEntity(shooter.getTowedBy());
+            if (ahead != null) {
+                sharedAmmo.addAll(ahead.getAmmo());
+            }
+        }
+        if (shooter.getTowing() != Entity.NONE) {
+            Entity behind = game.getEntity(shooter.getTowing());
+            if (behind != null) {
+                sharedAmmo.addAll(behind.getAmmo());
             }
         }
         return sharedAmmo;
@@ -114,23 +90,28 @@ public final class TrainAmmoSharing {
      * Whether one unit may fire another's ammo. The server must check this because the ammo bin named in an ammo
      * change packet arrives from the client.
      * <p>
-     * The whole train shares. "Small and medium Trailers act as part of the Tractor Support Vehicle for purposes of
-     * movement, stacking and firing" (TM, Trailers), and a convoy is built around several ammunition carriages
-     * feeding one gun: a Mobile Long Tom's three carriages hold about 75 rounds between them, which only works if the
-     * gun can reach past the first.
+     * Only the units on either side of a coupling share, not the whole train. Xotl ruled on this in the official
+     * rules Q&A (battletech.com forums, topic 74296): "Only vehicles directly coupled can share ammo", and in a
+     * trailer-tractor-trailer arrangement "the tractor may pull from either trailer, but one trailer may not pull
+     * from the other".
      * </p>
+     * This makes a Mobile Long Tom convoy weaker than its fluff: three carriages hold about 75 rounds between them,
+     * but the gun only ever reaches the 25 in the carriage hitched to it. That is the ruling, not an oversight. Do
+     * not widen this to the whole train on the strength of the convoy description or of TM's "Trailers act as part
+     * of the Tractor for movement, stacking and firing" - the Q&A was asked about exactly this case.
      *
      * @param shooter     the unit firing the weapon
      * @param ammoCarrier the unit that owns the ammo bin
      *
-     * @return {@code true} when the carrier is the shooter itself or another unit in the same train, {@code false}
-     *       otherwise
+     * @return {@code true} when the carrier is the shooter itself or a unit directly connected to it in the same
+     *       train, {@code false} otherwise
      */
     public static boolean canShareAmmoWith(Entity shooter, Entity ammoCarrier) {
         if (shooter.equals(ammoCarrier)) {
             return true;
         }
-        return getTrainMembers(shooter).contains(ammoCarrier);
+        int carrierId = ammoCarrier.getId();
+        return (shooter.getTowedBy() == carrierId) || (shooter.getTowing() == carrierId);
     }
 
     /**

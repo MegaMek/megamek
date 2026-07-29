@@ -5069,8 +5069,8 @@ public abstract class Entity extends TurnOrdered
                 return;
             }
         }
-        // Then the rest of the train. Uses the same rule as the ammo dropdown and the server's validation, so the
-        // automatic reload cannot reach bins the player is not offered, or miss ones they are.
+        // Then the units coupled to this one. Uses the same rule as the ammo dropdown and the server's validation,
+        // so the automatic reload cannot reach bins the player is not offered, or miss ones they are.
         for (AmmoMounted trainAmmo : TrainAmmoSharing.getSharedAmmo(this)) {
             if (loadWeaponWithSameAmmo(mounted, trainAmmo)) {
                 return;

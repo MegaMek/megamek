@@ -395,6 +395,8 @@ public class ClientGUI extends AbstractClientGUI
 
     private final ConcurrentLinkedQueue<Runnable> toastDripQueue = new ConcurrentLinkedQueue<>();
     private javax.swing.Timer toastDripTimer;
+    /** Normalized report entries already shown as toasts this phase; see {@link ReportToastFormatter#formatReport}. */
+    private final Set<String> toastedReportEntries = new HashSet<>();
 
 
     // some dialogs...
@@ -575,29 +577,39 @@ public class ClientGUI extends AbstractClientGUI
      * @param text  the message text to display
      */
     public void addToast(ToastLevel level, String text) {
-        if (toastOverlay != null) {
-            String normalized = ReportToastFormatter.normalizeToastText(text);
-            logger.debug("Toast [{}] (no entity): {}", level, normalized);
-            toastOverlay.show(level, normalized);
-        }
+        addToast(level, text, null);
     }
 
     /**
      * Shows a toast notification with the given entity's sprite icon on the board view.
      *
+     * <p>This is the single entry point for every toast in the client, server-raised ones included, so the player's
+     * {@link GUIPreferences#TOAST_ENABLED} setting is enforced here and nowhere else.</p>
+     *
      * @param level  the severity level determining color and default duration
      * @param text   the message text to display
-     * @param entity the entity whose icon to show, or null for text-only
+     * @param entity the entity whose icon to show, or {@code null} for text-only
      */
     public void addToast(ToastLevel level, String text, @Nullable Entity entity) {
-        if (toastOverlay != null) {
-            String normalized = ReportToastFormatter.normalizeToastText(text);
-            String entityLabel = (entity != null) ?
-                  entity.getShortName() + " [" + entity.getId() + "]" :
-                  "no entity";
-            logger.debug("Toast [{}] ({}): {}", level, entityLabel, normalized);
-            toastOverlay.show(level, normalized, entity);
+        String entityLabel = (entity != null) ?
+              entity.getShortName() + " [" + entity.getId() + "]" :
+              "no entity";
+        // Gate before normalizing: normalizeToastText is regex-heavy and only the shown path needs the
+        // cleaned text. On the suppressed paths log the raw text so switching toasts off does not pay the
+        // normalization cost for every would-be toast.
+        if (toastOverlay == null) {
+            logger.debug("[Toast] suppressed [{}] ({}) - overlay not initialized yet: {}",
+                  level, entityLabel, text);
+            return;
         }
+        if (!GUIP.getToastEnabled()) {
+            logger.debug("[Toast] suppressed [{}] ({}) - toasts switched off in client settings: {}",
+                  level, entityLabel, text);
+            return;
+        }
+        String normalizedText = ReportToastFormatter.normalizeToastText(text);
+        logger.debug("[Toast] shown [{}] ({}): {}", level, entityLabel, normalizedText);
+        toastOverlay.show(level, normalizedText, entity);
     }
 
     /**
@@ -652,9 +664,33 @@ public class ClientGUI extends AbstractClientGUI
      * Splits a server-side report HTML stream into per-event toasts via {@link ReportToastFormatter} and drip-feeds
      * them to the overlay on the {@link GUIPreferences#TOAST_DRIP_SECONDS} cadence so each one has time to scroll past
      * before the next appears.
+     *
+     * <p>Entries already toasted earlier in the same phase are skipped, because a mid-phase report packet can carry
+     * events that an earlier packet already delivered. Does nothing at all when the player has switched
+     * {@link GUIPreferences#TOAST_REPORT_EVENTS} off; toasts that carry information the report log does not hold are
+     * unaffected by that setting.</p>
+     *
+     * <p>Every reason to skip is checked before the report is formatted, because formatting is what records entries
+     * as already toasted. Recording an entry that was never shown would suppress it later, when the player turns
+     * toasts back on part way through the same phase.</p>
      */
     private void showReportAsToasts(String defaultPrefix, String report) {
-        for (String body : ReportToastFormatter.formatReport(defaultPrefix, report)) {
+        if (toastOverlay == null) {
+            logger.debug("[Toast] report burst suppressed - overlay not initialized yet");
+            return;
+        }
+        if (!GUIP.getToastEnabled()) {
+            logger.debug("[Toast] report burst suppressed - toasts are switched off in client settings");
+            return;
+        }
+        if (!GUIP.getToastReportEvents()) {
+            logger.debug("[Toast] report burst suppressed - round report events are switched off in client settings");
+            return;
+        }
+        List<String> bodies = ReportToastFormatter.formatReport(defaultPrefix, report, toastedReportEntries);
+        logger.debug("[Toast] report burst queued {} new event(s); {} entries seen this phase",
+              bodies.size(), toastedReportEntries.size());
+        for (String body : bodies) {
             toastDripQueue.offer(() -> addToast(ToastLevel.INFO, body));
         }
         startToastDripIfIdle();
@@ -810,11 +846,6 @@ public class ClientGUI extends AbstractClientGUI
     }
 
     /**
-     * Updates the frame title to show the current round and phase information. The title format is: "PlayerName - Round
-     * X - Phase phase - MegaMek" For phases before the game starts (lobby, selection, etc.), only shows: "PlayerName -
-     * MegaMek"
-     */
-    /**
      * Opens, follows and closes the Game Master vote dialog as the server shares the vote's state: the dialog opens
      * when a vote is called, follows the ballots as they come in, and closes when the vote resolves. The outcome
      * itself is announced in the chat.
@@ -898,6 +929,11 @@ public class ClientGUI extends AbstractClientGUI
               Messages.getString("GameMasterVoteDialog.passed.message", gameMasterName)).setVisible(true));
     }
 
+    /**
+     * Updates the frame title to show the current round and phase information. The title format is: "PlayerName - Round
+     * X - Phase phase - MegaMek" For phases before the game starts (lobby, selection, etc.), only shows: "PlayerName -
+     * MegaMek"
+     */
     private void updateFrameTitle() {
         StringBuilder title = new StringBuilder(client.getName());
 
@@ -3084,7 +3120,10 @@ public class ClientGUI extends AbstractClientGUI
                           ClientGUI.this,
                           null,
                           boardId));
-                    newMinimap.setVisible(true);
+                    // A board arriving during the lounge (lobby-built battlefield) must not pop up the minimap;
+                    // the boards are re-sent at game start (EXCHANGE), which shows it as usual.
+                    boolean isInLounge = client.getGame().getPhase().isLounge();
+                    newMinimap.setVisible(!isInLounge);
                     miniMaps.put(boardId, newMinimap);
                     boardViews.put(boardId, boardView);
                     boardView.getPanel().setPreferredSize(clientGuiPanel.getSize());
@@ -3168,6 +3207,11 @@ public class ClientGUI extends AbstractClientGUI
             if (roundsInAirDialog != null) {
                 roundsInAirDialog.refresh();
             }
+
+            // Special-report packets replay the whole phase report each time they are sent, so the "already toasted"
+            // history only has to span a single phase. Clearing it here also lets a line that genuinely recurs in a
+            // later phase toast again.
+            toastedReportEntries.clear();
 
             // Once per round, remind the player of own platoons busy raising bridges (TO:AUE); building
             // platoons are ineligible for all phases, so no phase display ever selects them

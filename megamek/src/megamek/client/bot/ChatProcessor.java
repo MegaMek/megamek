@@ -221,8 +221,8 @@ public class ChatProcessor {
 
     private static void processChatCommand(Princess princess, String command, String[] arguments) {
         for (ChatCommands cmd : ChatCommands.values()) {
-            if (command.toLowerCase().equalsIgnoreCase(cmd.getAbbreviation()) ||
-                  command.toLowerCase().equalsIgnoreCase(cmd.getCommand())) {
+            if (command.equalsIgnoreCase(cmd.getAbbreviation()) ||
+                  command.equalsIgnoreCase(cmd.getCommand())) {
                 try {
                     Arguments args = ArgumentsParser.parse(arguments, cmd.getChatCommand().defineArguments());
                     LOGGER.info("{}: executing chat command {} with arguments {}",

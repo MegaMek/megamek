@@ -43,7 +43,7 @@ ${formatBasicDataRow("Armor Factor" + armorType, armorFactor, armorMass)}
 </#if>
      ${formatArmorRow("Rear", structureValues.RR, armorValues.RR)}<#if patchworkByLoc??> ${patchworkByLoc.RR}</#if>
 <#if hasTurret2>
-     ${formatArmorRow("Rear Turret", structureValues.TU, armorValues.TU)}<#if patchworkByLoc??> ${patchworkByLoc.TU}</#if>
+     ${formatArmorRow("Rear Turret", structureValues.RT, armorValues.RT)}<#if patchworkByLoc??> ${patchworkByLoc.RT}</#if>
      ${formatArmorRow("Front Turret", structureValues.FT, armorValues.FT)}<#if patchworkByLoc??> ${patchworkByLoc.FT}</#if>
 <#elseif hasTurret>
      ${formatArmorRow("Turret", structureValues.TU, armorValues.TU)}<#if patchworkByLoc??> ${patchworkByLoc.TU}</#if>
@@ -52,18 +52,13 @@ ${formatBasicDataRow("Armor Factor" + armorType, armorFactor, armorMass)}
      ${formatArmorRow("Rotor", structureValues.RO, armorValues.RO)}<#if patchworkByLoc??> ${patchworkByLoc.RO}</#if>
 </#if>
 
-<#if isOmni>
-Fixed Equipment
-	<#if fixedTonnage gt 0>
-${formatBasicDataRow("Location", "Fixed", "Tonnage")}
+<#if isOmni && fixedTonnage gt 0>
+${formatBasicDataRow("Fixed Equipment", "Location", "Tonnage")}
 	<#list fixedEquipment as row>
 		<#if row.equipment != "None">
-${formatBasicDataRow(row.location, row.equipment, row.tonnage)}
+${formatBasicDataRow(row.equipment, row.location, row.tonnage)}
 		</#if>
 	</#list>
-	<#else>
-None
-	</#if>
 </#if>
 
 Weapons

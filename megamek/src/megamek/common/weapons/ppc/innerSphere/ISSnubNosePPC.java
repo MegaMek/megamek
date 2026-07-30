@@ -83,6 +83,7 @@ public class ISSnubNosePPC extends PPCWeapon {
         // with a capacitor
         explosive = true;
         rulesRefs = "234, TM";
+        flags = flags.or(F_PPC_CAPACITOR_COMPATIBLE);
         techAdvancement.setTechBase(TechBase.IS)
               .setIntroLevel(false)
               .setUnofficial(false)

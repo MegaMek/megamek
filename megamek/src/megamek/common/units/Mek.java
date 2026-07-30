@@ -78,7 +78,7 @@ import megamek.logging.MMLogger;
 /**
  * You know what Meks are, silly.
  */
-public abstract class Mek extends Entity implements Fortifiable, RubbleClearer {
+public abstract class Mek extends Entity implements Fortifiable, RubbleClearer, ActiveHeatSinkController {
     @Serial
     private static final long serialVersionUID = -1929593228891136561L;
     private static final MMLogger LOGGER = MMLogger.create(Mek.class);
@@ -273,10 +273,6 @@ public abstract class Mek extends Entity implements Fortifiable, RubbleClearer {
 
     // for Harjel II/III
     private final boolean[] armorDamagedThisTurn;
-
-    private int sinksOn = -1;
-
-    private int sinksOnNextRound = -1;
 
     private boolean autoEject = true;
 
@@ -1258,9 +1254,6 @@ public abstract class Mek extends Entity implements Fortifiable, RubbleClearer {
         bUsedCoolantSystem = false;
 
         setSecondaryFacing(getFacing());
-
-        // set heat sinks
-        sinksOn = sinksOnNextRound;
 
         // update cockpit status
         cockpitStatus = cockpitStatusNextRound;
@@ -2363,28 +2356,22 @@ public abstract class Mek extends Entity implements Fortifiable, RubbleClearer {
 
     public int getHeatCapacity(boolean includePartialWing, boolean includeRadicalHeatSink) {
         int capacity = 0;
-        int activeCount = getActiveSinks();
         boolean isDoubleHeatSink = false;
 
-        for (Mounted<?> mounted : getMisc()) {
-            if (mounted.isDestroyed() || mounted.isBreached()) {
+        for (MiscMounted mounted : getMisc()) {
+            MiscType miscType = mounted.getType();
+            // A heat sink the player has switched off dissipates nothing until it is switched back on
+            if ((miscType == null) || mounted.isDestroyed() || mounted.isBreached() || mounted.isModeTurnedOff()) {
                 continue;
             }
-            if ((activeCount > 0)
-                  && mounted.getType().hasFlag(MiscType.F_HEAT_SINK)) {
+            if (miscType.hasFlag(MiscType.F_HEAT_SINK)) {
                 capacity++;
-                activeCount--;
-            } else if ((activeCount > 0)
-                  && mounted.getType().hasFlag(MiscType.F_DOUBLE_HEAT_SINK)) {
-                activeCount--;
-                capacity += 2;
-                isDoubleHeatSink = true;
-            } else if (mounted.getType().hasFlag(
-                  MiscType.F_IS_DOUBLE_HEAT_SINK_PROTOTYPE)) {
+            } else if (miscType.hasFlag(MiscType.F_DOUBLE_HEAT_SINK)
+                  || miscType.hasFlag(MiscType.F_IS_DOUBLE_HEAT_SINK_PROTOTYPE)) {
                 capacity += 2;
                 isDoubleHeatSink = true;
             } else if (includePartialWing
-                  && mounted.getType().hasFlag(MiscType.F_PARTIAL_WING)
+                  && miscType.hasFlag(MiscType.F_PARTIAL_WING)
                   && // unless all crits are destroyed, we get the bonus
                   ((getGoodCriticalSlots(CriticalSlot.TYPE_EQUIPMENT,
                         getEquipmentNum(mounted), Mek.LOC_RIGHT_TORSO) > 0)
@@ -2441,16 +2428,17 @@ public abstract class Mek extends Entity implements Fortifiable, RubbleClearer {
 
         // okay, count leg sinks
         int sinksUnderwater = 0;
-        for (Mounted<?> mounted : getMisc()) {
-            if (mounted.isDestroyed() || mounted.isBreached()
+        for (MiscMounted mounted : getMisc()) {
+            MiscType miscType = mounted.getType();
+            if ((miscType == null) || mounted.isDestroyed() || mounted.isBreached() || mounted.isModeTurnedOff()
                   || !locationIsLeg(mounted.getLocation())) {
                 continue;
             }
-            if (mounted.getType().hasFlag(MiscType.F_HEAT_SINK)) {
+            if (miscType.hasFlag(MiscType.F_HEAT_SINK)) {
                 sinksUnderwater++;
-            } else if (mounted.getType().hasFlag(MiscType.F_DOUBLE_HEAT_SINK)
-                  || mounted.getType().hasFlag(MiscType.F_IS_DOUBLE_HEAT_SINK_PROTOTYPE)
-                  || mounted.getType().hasFlag(MiscType.F_LASER_HEAT_SINK)) {
+            } else if (miscType.hasFlag(MiscType.F_DOUBLE_HEAT_SINK)
+                  || miscType.hasFlag(MiscType.F_IS_DOUBLE_HEAT_SINK_PROTOTYPE)
+                  || miscType.hasFlag(MiscType.F_LASER_HEAT_SINK)) {
                 sinksUnderwater += 2;
             }
         }
@@ -4682,27 +4670,87 @@ public abstract class Mek extends Entity implements Fortifiable, RubbleClearer {
         return hasLaserHeatSinks == HAS_TRUE;
     }
 
+    /**
+     * Bulk control for heat sink activation: switches individual heat sink mounts On or Off so that the given number
+     * of sinks remains active. Like all activation/deactivation, the change is declared now and takes effect in the
+     * End Phase (the mounts' pending modes apply at the round rollover). Prototype double heat sinks and Freezers are
+     * not part of this counter (matching {@link #getNumberOfSinks()}); they can be switched individually via their
+     * equipment mode. The value arrives from a client packet, so out-of-range requests are clamped (mirroring
+     * {@link Aero#setActiveSinksNextRound(int)}): a negative count deactivates every sink, a count above the number
+     * of operable sinks activates every sink.
+     *
+     * @param sinks the number of heat sinks that should be active next round
+     */
     public void setActiveSinksNextRound(int sinks) {
-        sinksOnNextRound = sinks;
+        int remainingActive = Math.max(0, sinks);
+        for (MiscMounted mounted : getMisc()) {
+            if (!isCountedHeatSink(mounted) || mounted.isDestroyed() || mounted.isBreached()) {
+                continue;
+            }
+            if (remainingActive > 0) {
+                mounted.setMode(Mounted.MODE_ON);
+                remainingActive--;
+            } else {
+                mounted.setMode(Mounted.MODE_OFF);
+            }
+        }
     }
 
+    /**
+     * @return the number of operable heat sinks that are currently switched on (prototype double heat sinks and
+     *       Freezers excluded, matching {@link #getNumberOfSinks()})
+     */
     public int getActiveSinks() {
-        if (sinksOn < 0) {
-            sinksOn = getNumberOfSinks();
-            sinksOnNextRound = sinksOn;
+        int activeSinks = 0;
+        for (MiscMounted mounted : getMisc()) {
+            if (isCountedHeatSink(mounted) && !mounted.isDestroyed() && !mounted.isBreached()
+                  && !mounted.isModeTurnedOff()) {
+                activeSinks++;
+            }
         }
-        return sinksOn;
+        return activeSinks;
     }
 
+    /** Switches every heat sink mount (including prototype double heat sinks and Freezers) back on. */
     public void resetSinks() {
-        sinksOn = getNumberOfSinks();
+        for (MiscMounted mounted : getMisc()) {
+            MiscType miscType = mounted.getType();
+            if (miscType == null) {
+                continue;
+            }
+            boolean isPrototypeSink = miscType.hasFlag(MiscType.F_IS_DOUBLE_HEAT_SINK_PROTOTYPE);
+            if (isCountedHeatSink(mounted) || isPrototypeSink) {
+                mounted.setMode(Mounted.MODE_ON);
+            }
+        }
     }
 
+    /**
+     * @return the number of operable heat sinks that will be switched on next round, taking pending mode changes
+     *       into account (prototype double heat sinks and Freezers excluded)
+     */
     public int getActiveSinksNextRound() {
-        if (sinksOnNextRound < 0) {
-            return getActiveSinks();
+        int activeSinks = 0;
+        for (MiscMounted mounted : getMisc()) {
+            if (isCountedHeatSink(mounted) && !mounted.isDestroyed() && !mounted.isBreached()
+                  && !mounted.isModeTurnedOffNextRound()) {
+                activeSinks++;
+            }
         }
-        return sinksOnNextRound;
+        return activeSinks;
+    }
+
+    /**
+     * @param mounted the equipment to check
+     *
+     * @return {@code true} if the mount is a heat sink counted by the classic active-sinks counter (single, double,
+     *       compact or laser heat sinks; prototype double heat sinks and Freezers are excluded, matching
+     *       {@link #getNumberOfSinks()})
+     */
+    private static boolean isCountedHeatSink(MiscMounted mounted) {
+        MiscType miscType = mounted.getType();
+        return (miscType != null)
+              && (miscType.hasFlag(MiscType.F_HEAT_SINK) || miscType.hasFlag(MiscType.F_DOUBLE_HEAT_SINK));
     }
 
     /**

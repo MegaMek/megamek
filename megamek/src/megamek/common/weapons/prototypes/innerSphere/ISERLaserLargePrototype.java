@@ -70,6 +70,7 @@ public class ISERLaserLargePrototype extends LaserWeapon {
         toHitModifier = 1;
         flags = flags.or(F_PROTOTYPE);
         heat = 12;
+        heatAdjustmentForBvCalculation = 3;
         damage = 8;
         shortRange = 7;
         mediumRange = 14;

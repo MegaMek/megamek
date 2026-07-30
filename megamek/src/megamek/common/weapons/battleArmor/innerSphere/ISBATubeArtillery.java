@@ -69,7 +69,11 @@ public class ISBATubeArtillery extends ArtilleryWeapon {
         bv = 27;
         cost = 200000;
         rulesRefs = "96, TO:AUE";
-        flags = flags.or(F_BA_WEAPON, F_MEK_MORTAR, F_MISSILE).andNot(F_MEK_WEAPON).andNot(F_TANK_WEAPON);
+        flags = flags.or(F_BA_WEAPON, F_MEK_MORTAR, F_MISSILE)
+              .andNot(F_MEK_WEAPON)
+              .andNot(F_TANK_WEAPON)
+              .andNot(F_AERO_WEAPON)
+              .andNot(F_PROTO_WEAPON);
         damage = DAMAGE_BY_CLUSTER_TABLE;
         atClass = CLASS_ARTILLERY;
         infDamageClass = WEAPON_CLUSTER_MISSILE;

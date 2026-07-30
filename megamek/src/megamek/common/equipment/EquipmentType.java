@@ -55,6 +55,7 @@ import megamek.common.util.YamlEncDec;
 import megamek.common.weapons.autoCannons.HVACWeapon;
 import megamek.common.weapons.defensivePods.BPodWeapon;
 import megamek.common.weapons.defensivePods.MPodWeapon;
+import megamek.common.weapons.lasers.ImprovedHeavyLaserWeapon;
 import megamek.common.weapons.ppc.PPCWeapon;
 import megamek.logging.MMLogger;
 
@@ -466,6 +467,11 @@ public class EquipmentType implements ITechnology {
             return false;
         }
 
+        // special case. A deactivated Improved Heavy Laser is not explosive (activation/deactivation rules)
+        if ((mounted.getType() instanceof ImprovedHeavyLaserWeapon) && mounted.isModeTurnedOff()) {
+            return false;
+        }
+
         // special case. PPC with Capacitor only explodes when charged
         if (ignoreCharge) {
             // for BV purposes, we need to ignore the charged-ness and check only
@@ -772,8 +778,8 @@ public class EquipmentType implements ITechnology {
     }
 
     /**
-     * Clears lookup identity inherited from a superclass constructor. 
-     * This must only be used before the equipment type is registered.
+     * Clears lookup identity inherited from a superclass constructor. This must only be used before the equipment type
+     * is registered.
      */
     protected void clearLookupNames() {
         if (registered) {
@@ -820,6 +826,7 @@ public class EquipmentType implements ITechnology {
      *
      * @param key      The internal name, lookup name, or display name
      * @param techBase The preferred tech base for an ambiguous display name
+     *
      * @return The matching equipment type, or null if there is none
      */
     public static @Nullable EquipmentType get(String key, @Nullable TechBase techBase) {
@@ -841,7 +848,7 @@ public class EquipmentType implements ITechnology {
         if (equipmentType == null) {
             // Display names are not lookup identities. This fallback is only needed when the caller supplied one.
             for (EquipmentType type : allTypes) {
-                if (type.getName().toLowerCase().equals(normalizedKey)) {
+                if (type.getName().equalsIgnoreCase(normalizedKey)) {
                     equipmentType = type;
                     break;
                 }
@@ -864,9 +871,10 @@ public class EquipmentType implements ITechnology {
 
     /**
      * Explicit structure lookup by name
-     * 
-     * @param key   String name
-     * @return      The matching Structure-specific Equipment Type.
+     *
+     * @param key String name
+     *
+     * @return The matching Structure-specific Equipment Type.
      */
     public static @Nullable StructureType getStructureFromName(String key) {
         if (key == null) {
@@ -883,7 +891,7 @@ public class EquipmentType implements ITechnology {
         // Fallback fullscan for display name
         for (EquipmentType type : allTypes) {
             if (type instanceof StructureType structureType) {
-                if (structureType.getName().toLowerCase().equals(normalizedKey)) {
+                if (structureType.getName().equalsIgnoreCase(normalizedKey)) {
                     return structureType;
                 }
             }
@@ -895,6 +903,7 @@ public class EquipmentType implements ITechnology {
      * Explicit armor lookup by name
      *
      * @param key String name
+     *
      * @return The matching Armor-specific Equipment Type, or null when the name is unknown
      */
     public static @Nullable ArmorType getArmorFromName(String key) {
@@ -912,7 +921,7 @@ public class EquipmentType implements ITechnology {
         // Fallback fullscan for display name
         for (EquipmentType type : allTypes) {
             if (type instanceof ArmorType armorType) {
-                if (armorType.getName().toLowerCase().equals(normalizedKey)) {
+                if (armorType.getName().equalsIgnoreCase(normalizedKey)) {
                     return armorType;
                 }
             }
@@ -1398,9 +1407,9 @@ public class EquipmentType implements ITechnology {
             stats.put("explosive", true);
         }
         if (hasHitModifiersByRange()) {
-            int[] toHitModifiersByRange = {getToHitModifierAtRange(null, RangeType.RANGE_SHORT),
-                getToHitModifierAtRange(null, RangeType.RANGE_MEDIUM),
-                getToHitModifierAtRange(null, RangeType.RANGE_LONG)
+            int[] toHitModifiersByRange = { getToHitModifierAtRange(null, RangeType.RANGE_SHORT),
+                                            getToHitModifierAtRange(null, RangeType.RANGE_MEDIUM),
+                                            getToHitModifierAtRange(null, RangeType.RANGE_LONG)
             };
             stats.put("toHitModifier", toHitModifiersByRange);
         } else if (toHitModifier != 0) {
@@ -1706,7 +1715,7 @@ public class EquipmentType implements ITechnology {
 
     /**
      * @return True if this equipment counts for the size and weight of a Targeting Computer, and benefits from it in
-     * the case of weapons. TM p.238, TO:AUE p.157
+     *       the case of weapons. TM p.238, TO:AUE p.157
      */
     public boolean relevantToTargetingComputer() {
         return false;

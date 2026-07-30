@@ -66,6 +66,8 @@ import megamek.common.util.StringUtil;
  */
 public class TestSmallCraft extends TestAero {
 
+    public static final double MINIMUM_CREW_AND_QUARTERS_THRESHOLD_TONS = 25.0;
+
     // Indices used to specify firing arcs with aliases for AeroDyne and spheroid
     public static final int ARC_NOSE = SmallCraft.LOC_NOSE;
     public static final int ARC_LEFT_WING = SmallCraft.LOC_LEFT_WING;
@@ -318,6 +320,16 @@ public class TestSmallCraft extends TestAero {
             crew += equipmentCrewRequirements(m);
         }
         return crew;
+    }
+
+    /**
+     * Emergency-scale Small Craft do not use the standard vessel crew and quarters requirements.
+     *
+     * @param smallCraft the Small Craft to check
+     * @return {@code true} when standard minimum crew and quarters requirements apply
+     */
+    public static boolean requiresMinimumCrewAndQuarters(SmallCraft smallCraft) {
+        return smallCraft.getWeight() > MINIMUM_CREW_AND_QUARTERS_THRESHOLD_TONS;
     }
 
     public TestSmallCraft(SmallCraft sc, TestEntityOption option, String fs) {
@@ -752,6 +764,10 @@ public class TestSmallCraft extends TestAero {
      * @return true if the crew data is valid.
      */
     public boolean correctCrew(StringBuffer buffer) {
+        if (!requiresMinimumCrewAndQuarters(getSmallCraft())) {
+            return true;
+        }
+
         boolean illegal = false;
         int crewSize = getSmallCraft().getNCrew() - getSmallCraft().getBayPersonnel();
         int reqCrew = minimumBaseCrew(getSmallCraft()) + requiredGunners(getSmallCraft());

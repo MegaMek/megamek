@@ -936,7 +936,7 @@ public class ForceDescriptor {
         // let the normal ladder field a non-artillery unit of the original type as a last resort.
         // Skipped when a model is already pinned (battery uniformity), so the pinned gun wins and
         // every element resolves to the same unit instead of re-picking its own.
-        if (models.isEmpty() && ((unitType == UnitType.MEK) || (unitType == UnitType.TANK))
+        if (models.isEmpty() && (isUnitType(UnitType.MEK) || isUnitType(UnitType.TANK))
               && roles.contains(MissionRole.ARTILLERY)) {
             ModelRecord artilleryUnitRecord = generateArtilleryPreferred();
             if (artilleryUnitRecord != null) {
@@ -1031,7 +1031,7 @@ public class ForceDescriptor {
     private @Nullable ModelRecord generateArtilleryPreferred() {
         // Front-line (Mek) prefers an artillery Mek, then an artillery vehicle. Second-line (Tank)
         // stays vehicle, honoring the "front line = Mek, otherwise = vehicle" rule.
-        int[] preferredTypes = (unitType == UnitType.TANK)
+        int[] preferredTypes = isUnitType(UnitType.TANK)
               ? new int[] { UnitType.TANK }
               : new int[] { UnitType.MEK, UnitType.TANK };
         for (int candidateType : preferredTypes) {
@@ -2191,6 +2191,22 @@ public class ForceDescriptor {
 
     public void setUnitType(Integer unitType) {
         this.unitType = unitType;
+    }
+
+    /**
+     * Null-safe test of this descriptor's unit type. {@code unitType} is a boxed {@link Integer} and
+     * is legitimately {@code null} whenever the ruleset places no restriction on unit type - the
+     * ComStar and Word of Blake tables of contents both declare {@code <unitType>null</unitType>}.
+     * Comparing the field to a {@link UnitType} constant directly unboxes it, so an unrestricted
+     * descriptor throws a {@link NullPointerException} rather than simply failing the test.
+     *
+     * @param candidateUnitType the {@link UnitType} constant to test against
+     *
+     * @return {@code true} if this descriptor has a unit type and it is the given one; {@code false}
+     *       when the descriptor carries no unit type at all
+     */
+    private boolean isUnitType(int candidateUnitType) {
+        return (unitType != null) && (unitType == candidateUnitType);
     }
 
     public String getUnitTypeName() {

@@ -140,7 +140,10 @@ tasks.withType(Checkstyle).configureEach {
 // binary trees (images, boards, fonts) each own a disjoint subtree of data/, so editing
 // loose data (units, scenarios) only re-copies the small text payload and leaves the
 // image/board assets untouched (UP-TO-DATE). stageDataFiles aggregates them.
-def mmDataDir = "../../mm-data"
+// Derived from rootDir (the megamek build root) rather than a build-file-relative path,
+// so it survives project-layout changes. mm-data is a sibling of this build root
+// (settings.gradle includes it as ../mm-data).
+def mmDataDir = "${rootDir}/../mm-data"
 def mmDataOut = "${layout.projectDirectory.asFile}/data"
 
 // Never stage macOS/Windows directory-metadata junk, regardless of what a developer's
@@ -230,7 +233,7 @@ tasks.register('stageData', Sync) {
 }
 
 tasks.register('stageDataFiles') {
-    description = "Syncs Data Files from MM Data"
+    description = "Aggregates the split Sync tasks that stage MegaMek's data/ directory from mm-data."
     group = 'build'
     dependsOn stageDataImages
     dependsOn stageDataBoards

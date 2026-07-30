@@ -37,6 +37,7 @@ import java.io.IOException;
 import java.io.PrintWriter;
 import java.text.ParseException;
 import java.util.*;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.stream.Collectors;
 
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
@@ -83,6 +84,13 @@ public class FactionRecord {
     private final ArrayList<String> ratingLevels;
     private final HashMap<Integer, Integer> pctSalvage;
     private final HashMap<TechCategory, HashMap<Integer, ArrayList<Integer>>> pctTech;
+    /**
+     * Partly-filled tech percentage lists already reported, so the warning in
+     * {@link #getPctTech(TechCategory, int, int)} is emitted once per category and era rather than on
+     * every lookup. Concurrent because era data is read on the RAT Generator's populator thread while
+     * the UI may be querying the same record.
+     */
+    private final Set<String> reportedPartialPctTechLists = ConcurrentHashMap.newKeySet();
     private final HashMap<Integer, HashMap<String, Integer>> salvage;
     /*
      * FM:Updates gives percentage values for omni, Clan, and SL tech. Later manuals
@@ -429,13 +437,96 @@ public class FactionRecord {
         salvage.get(era).remove(faction);
     }
 
-    public Integer getPctTech(TechCategory category, int era, int rating) {
-        if (!pctTech.containsKey(category) || !pctTech.get(category).containsKey(era)
-              || pctTech.get(category).get(era).isEmpty()
-              || pctTech.get(category).get(era).size() <= rating) {
+    /**
+     * The tech percentage this faction declares for one equipment rating, with a single declared value
+     * taken to describe every rating.
+     *
+     * <p>Era files index these lists worst rating first - index 0 is F, index 4 is A - and the great
+     * majority of sub-factions declare a single value, meaning "this is our profile" rather than "this
+     * is our profile at rating F only". Reading such a list positionally answered only for F and
+     * returned {@code null} for every better rating, so the faction silently inherited its parent's
+     * numbers. Because the rulesets default most commands to rating A, an authored one-value profile
+     * almost never applied.</p>
+     *
+     * <p>A list that is longer than one but still shorter than the rating being asked for is a
+     * different case: it is ambiguous rather than shorthand, since there is no way to tell which of
+     * the missing ratings the author meant to leave to the parent. Those keep the old behaviour and
+     * are reported once so the data can be corrected.</p>
+     *
+     * @param category which of the tech categories to look up
+     * @param era      the year of the era table to read
+     * @param rating   equipment rating index, typically F (0) to A (4)
+     *
+     * @return the percentage (0 - 100), or {@code null} if this faction declares nothing usable for
+     *       that rating, in which case the caller should fall back to the parent factions
+     */
+    public @Nullable Integer getPctTech(TechCategory category, int era, int rating) {
+        List<Integer> declaredPercentages = declaredPctTechList(category, era);
+        if (declaredPercentages == null) {
             return null;
         }
-        return pctTech.get(category).get(era).get(rating);
+        if (rating < declaredPercentages.size()) {
+            return declaredPercentages.get(rating);
+        }
+        // A lone value describes the faction as a whole, so it answers for every rating.
+        if (declaredPercentages.size() == 1) {
+            return declaredPercentages.getFirst();
+        }
+        reportPartialPctTechList(category, era, declaredPercentages.size(), rating);
+        return null;
+    }
+
+    /**
+     * The tech percentage exactly as the era file declares it, without a single value being taken to
+     * describe every rating.
+     *
+     * <p>This is what an editor should show: {@link #getPctTech(TechCategory, int, int)} would report
+     * the same number against all five ratings for a faction whose file holds one, making a one-value
+     * entry look like a five-value one and inviting an edit that writes back five.</p>
+     *
+     * @param category which of the tech categories to look up
+     * @param era      the year of the era table to read
+     * @param rating   equipment rating index, typically F (0) to A (4)
+     *
+     * @return the declared percentage (0 - 100), or {@code null} if the era file declares no value at
+     *       that position
+     */
+    public @Nullable Integer getDeclaredPctTech(TechCategory category, int era, int rating) {
+        List<Integer> declaredPercentages = declaredPctTechList(category, era);
+        if ((declaredPercentages == null) || (rating >= declaredPercentages.size())) {
+            return null;
+        }
+        return declaredPercentages.get(rating);
+    }
+
+    /**
+     * @return the declared percentages for this category and era, or {@code null} when the era file
+     *       declares none at all
+     */
+    private @Nullable List<Integer> declaredPctTechList(TechCategory category, int era) {
+        HashMap<Integer, ArrayList<Integer>> percentagesByEra = pctTech.get(category);
+        if (percentagesByEra == null) {
+            return null;
+        }
+        ArrayList<Integer> declaredPercentages = percentagesByEra.get(era);
+        if ((declaredPercentages == null) || declaredPercentages.isEmpty()) {
+            return null;
+        }
+        return declaredPercentages;
+    }
+
+    /**
+     * Reports a list that declares some ratings but not the one asked for, once per category and era.
+     * Left to the parent factions rather than guessed at, because the author's intent for the missing
+     * ratings cannot be recovered from the file.
+     */
+    private void reportPartialPctTechList(TechCategory category, int era, int declaredCount, int rating) {
+        if (reportedPartialPctTechLists.add(category + "/" + era)) {
+            logger.warn("Faction {} declares {} {} percentages for era {} but rating {} was requested;"
+                        + " falling back to the parent faction. A single value would apply to every"
+                        + " rating - list all {} to differentiate them.",
+                  key, declaredCount, category, era, rating, ratingLevels.size());
+        }
     }
 
     /**
@@ -494,9 +585,15 @@ public class FactionRecord {
     /**
      * Sets the target percentage for a tech category.
      *
+     * <p>The list runs from the <em>lowest</em> unit rating to the highest - index 0 is F and index 4
+     * is A - matching the order of {@code ratingLevels}. A list of one value describes the faction as
+     * a whole and applies to every rating; see {@link #getPctTech(TechCategory, int, int)}. A list
+     * that declares some ratings but not all is reported and left to the parent factions.</p>
+     *
      * @param category    The category (Clan, SL/advanced IS, Omni)
      * @param era         The year for which to set the tech percentage
-     * @param percentages A comma-separated list of percentages from the highest unit rating to the lowest.
+     * @param percentages A comma-separated list of percentages, lowest unit rating first, or
+     *                    {@code null} to declare none
      */
     public void setPctTech(TechCategory category, int era, String percentages) {
         if (!pctTech.containsKey(category)) {

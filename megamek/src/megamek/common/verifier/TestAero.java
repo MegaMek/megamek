@@ -58,7 +58,6 @@ import megamek.common.units.Aero;
 import megamek.common.units.Entity;
 import megamek.common.units.FixedWingSupport;
 import megamek.common.units.Jumpship;
-import megamek.common.units.Mek;
 import megamek.common.units.SmallCraft;
 import megamek.common.util.StringUtil;
 import megamek.common.weapons.bayWeapons.BayWeapon;

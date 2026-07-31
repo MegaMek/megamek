@@ -67,6 +67,7 @@ import javax.swing.tree.TreeModel;
 import javax.swing.tree.TreePath;
 
 import megamek.client.Client;
+import megamek.client.ratgenerator.C3NetworkConfigurator;
 import megamek.client.ratgenerator.CrewDescriptor;
 import megamek.client.ratgenerator.ForceDescriptor;
 import megamek.client.ratgenerator.RATGenerator;
@@ -484,7 +485,10 @@ public class ForceGeneratorViewUi implements ActionListener {
     public void addChosenUnits(String playerName, ClientGUI clientGui) {
         if ((null != forceTree.getModel().getRoot())
               && (forceTree.getModel().getRoot() instanceof ForceDescriptor)) {
-            configureNetworks((ForceDescriptor) forceTree.getModel().getRoot());
+            // Only the units the user actually took are wired; the rest of the model is not going
+            // into the game.
+            C3NetworkConfigurator.configure((ForceDescriptor) forceTree.getModel().getRoot(),
+                  modelChosen::hasEntity);
         }
 
         List<Entity> entities = new ArrayList<>(modelChosen.allEntities().size());
@@ -523,57 +527,6 @@ public class ForceGeneratorViewUi implements ActionListener {
         modelChosen.clearData();
     }
 
-    private void configureNetworks(ForceDescriptor fd) {
-        if (fd.getFlags().contains("c3")) {
-            Entity master = fd.getSubForces().stream().map(ForceDescriptor::getEntity)
-                  .filter(en -> modelChosen.hasEntity(en)
-                        && (en.hasC3M() || en.hasC3MM()))
-                  .findFirst().orElse(null);
-            if (null != master) {
-                master.setC3UUID();
-                int c3s = 0;
-                for (ForceDescriptor sf : fd.getSubForces()) {
-                    if (modelChosen.hasEntity(sf.getEntity())
-                          && !sf.getEntity().getExternalIdAsString().equals(master.getExternalIdAsString())
-                          && sf.getEntity().hasC3S()) {
-                        sf.getEntity().setC3UUID();
-                        sf.getEntity().setC3MasterIsUUIDAsString(master.getC3UUIDAsString());
-                        c3s++;
-                        if (c3s == 3) {
-                            break;
-                        }
-                    }
-                }
-            }
-        } else {
-            // Even if we haven't reworked this into a full C3i network, we can still
-            // connect
-            // any C3i units that happen to be present.
-            String netId = null;
-            int nodes = 0;
-            for (ForceDescriptor sf : fd.getSubForces()) {
-                if (modelChosen.hasEntity(sf.getEntity())
-                      && sf.getEntity().hasC3i()) {
-                    sf.getEntity().setC3UUID();
-                    if (null == netId) {
-                        netId = sf.getEntity().getC3UUIDAsString();
-                        nodes++;
-                    } else {
-                        int pos = sf.getEntity().getFreeC3iUUID();
-                        if (pos >= 0) {
-                            sf.getEntity().setC3iNextUUIDAsString(pos, netId);
-                            nodes++;
-                        }
-                    }
-                }
-                if (nodes >= Entity.MAX_C3i_NODES) {
-                    break;
-                }
-            }
-        }
-        fd.getSubForces().forEach(this::configureNetworks);
-        fd.getAttached().forEach(this::configureNetworks);
-    }
 
     private void setGeneratedForce(ForceDescriptor fd) {
         // A null descriptor means Clear Force. The accumulated Command Model has to go with the tree:

@@ -770,6 +770,31 @@ public class TestTank extends TestEntity {
     public boolean hasIllegalEquipmentCombinations(StringBuffer buff) {
         boolean illegal = super.hasIllegalEquipmentCombinations(buff);
 
+        if (tank.countWorkingMisc(MiscType.F_ENVIRONMENTAL_SEALING) > 1) {
+            illegal = true;
+            buff.append("Max of 1 environmental sealing chassis mod\n");
+        }
+
+        if (tank.countWorkingMisc(MiscType.F_DUNE_BUGGY) > 1) {
+            illegal = true;
+            buff.append("Max of 1 dune buggy chassis mod\n");
+        }
+
+        if (tank.countWorkingMisc(MiscType.F_FLOTATION_HULL) > 1) {
+            illegal = true;
+            buff.append("Max of 1 flotation hull chassis mod\n");
+        }
+
+        if (tank.countWorkingMisc(MiscType.F_FULLY_AMPHIBIOUS) > 1) {
+            illegal = true;
+            buff.append("Max of 1 fully amphibious chassis mod\n");
+        }
+
+        if (tank.countWorkingMisc(MiscType.F_LIMITED_AMPHIBIOUS) > 1) {
+            illegal = true;
+            buff.append("Max of 1 limited amphibious chassis mod\n");
+        }
+
         boolean hasSponsonTurret = false;
 
         for (Mounted<?> m : getEntity().getMisc()) {

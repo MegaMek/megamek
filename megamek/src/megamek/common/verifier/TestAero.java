@@ -58,6 +58,7 @@ import megamek.common.units.Aero;
 import megamek.common.units.Entity;
 import megamek.common.units.FixedWingSupport;
 import megamek.common.units.Jumpship;
+import megamek.common.units.Mek;
 import megamek.common.units.SmallCraft;
 import megamek.common.util.StringUtil;
 import megamek.common.weapons.bayWeapons.BayWeapon;
@@ -839,6 +840,25 @@ public class TestAero extends TestEntity {
             correct = true;
         }
         return correct;
+    }
+
+    /**
+     * Check if the unit has combinations of equipment which are not allowed in the construction rules.
+     *
+     * @param buff diagnostics are appended to this
+     *
+     * @return true if the entity is illegal
+     */
+    @Override
+    public boolean hasIllegalEquipmentCombinations(StringBuffer buff) {
+        boolean illegal = super.hasIllegalEquipmentCombinations(buff);
+
+        if (aero.countWorkingMisc(MiscType.F_FLOTATION_HULL) > 1) {
+            illegal = true;
+            buff.append("Max of 1 flotation hull chassis mod\n");
+        }
+
+        return illegal;
     }
 
     /**

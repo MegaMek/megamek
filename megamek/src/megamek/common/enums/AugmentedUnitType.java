@@ -62,7 +62,9 @@ public enum AugmentedUnitType {
     AEROSPACE_FIGHTER,
     /** CF - conventional fighter. */
     CONVENTIONAL_FIGHTER,
-    /** Anything the categories above do not name, such as a ProtoMek or a large craft. */
+    /** ProtoMek, which the Clan enhanced imaging rules name alongside battle armour and Meks. */
+    PROTOMEK,
+    /** Anything the categories above do not name, such as a large craft. */
     OTHER;
 
     /**
@@ -84,6 +86,9 @@ public enum AugmentedUnitType {
             // difference decides real cases - a battle armour trooper may carry a neural interface
             // where a foot trooper may not.
             return infantry.isBattleArmor() ? BATTLE_ARMOR : CONVENTIONAL_INFANTRY;
+        }
+        if (entity.isProtoMek()) {
+            return PROTOMEK;
         }
         if (entity.isSupportVehicle()) {
             return SUPPORT_VEHICLE;

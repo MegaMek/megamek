@@ -1561,6 +1561,12 @@ public class ForceGeneratorOptionsView extends JPanel implements FocusListener, 
             // carry their implants everywhere the generated force goes - the preview, an exported MUL
             // and the lobby alike.
             ManeiDominiCrewAugmentor.augment(fd, gameOptions);
+            // The Clans' own augmentation, unrelated to the Manei Domini and gated on its own
+            // rule. Clan-ness comes from the faction record rather than the key, sub-factions
+            // of a Clan being Clans.
+            FactionRecord factionRecord = RATGenerator.getInstance().getFaction(fd.getFaction());
+            ClanEnhancedImagingAugmentor.augment(fd,
+                  (factionRecord != null) && factionRecord.isClan(), gameOptions);
             return fd;
         }
 

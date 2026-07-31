@@ -322,6 +322,15 @@ public class ForceGeneratorViewUi implements ActionListener {
     }
 
     /**
+     * Points the generator at the options of the game the force is being generated for.
+     *
+     * @param gameOptions the options of the game being generated for
+     */
+    public void setGameOptions(GameOptions gameOptions) {
+        panControls.setGameOptions(gameOptions);
+    }
+
+    /**
      * Enables TOE exclusion mode for hosts that commit the preview tree into a table of organization.
      * In this mode the tree's right-click menu offers Include/Exclude (instead of "Add to game") and
      * excluded nodes are struck out in red. Defaults to {@code false} (the standalone Random Army

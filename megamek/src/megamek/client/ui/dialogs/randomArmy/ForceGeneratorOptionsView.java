@@ -163,7 +163,11 @@ public class ForceGeneratorOptionsView extends JPanel implements FocusListener, 
     private JButton btnExportMUL;
     private JButton btnClear;
 
-    private final GameOptions gameOptions;
+    /**
+     * The options the generated force is built for. Not final: the hosting dialog is created before the
+     * game it belongs to is known, so it starts on defaults and is handed the real options later.
+     */
+    private GameOptions gameOptions;
 
     public ForceGeneratorOptionsView(Consumer<ForceDescriptor> onGenerate, GameOptions gameOptions) {
         this.onGenerate = onGenerate;
@@ -172,6 +176,19 @@ public class ForceGeneratorOptionsView extends JPanel implements FocusListener, 
             Ruleset.loadData();
         }
         initUi();
+    }
+
+    /**
+     * Points this panel at the options of the game the force is actually being generated for.
+     *
+     * <p>The dialog is built before the game is known, so it starts on a default set. Until this was
+     * propagated the generator kept reading those defaults, and a rule the player had switched on -
+     * Manei Domini, say - was invisible to generation while being plainly on in the lobby.</p>
+     *
+     * @param gameOptions the options of the game being generated for
+     */
+    public void setGameOptions(GameOptions gameOptions) {
+        this.gameOptions = gameOptions;
     }
 
     private void initUi() {

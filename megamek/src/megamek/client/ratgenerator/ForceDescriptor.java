@@ -59,6 +59,12 @@ public class ForceDescriptor {
     public static final int REINFORCED = 1;
     public static final int UNDERSTRENGTH = -1;
 
+    /**
+     * The {@code generate} rules that ask for one unit across a whole {@code <subforces>} block rather
+     * than a unit chosen for each child, which is what makes a matched pair or a uniform company.
+     */
+    private static final Set<String> SHARED_UNIT_RULES = Set.of("model", "chassis");
+
     public static final int EXP_GREEN = 0;
     public static final int EXP_REGULAR = 1;
     public static final int EXP_VETERAN = 2;
@@ -290,40 +296,7 @@ public class ForceDescriptor {
             }
         } else {
             if (null != formationType) {
-                // Simple leaf node (Lance, Star, etc.
-                if (null != generationRule) {
-                    // In cases like Novas and air lances the formation rules only apply to some of
-                    // the units
-                    if (!generateAndAssignFormation(subForces, generationRule.equals("chassis"), 0)) {
-                        generateLance(subForces);
-                        formationType = null;
-                    }
-                } else {
-                    // If group generation is not set, then either this is a compound formation (e.g. squadron,
-                    // aero/vehicle Point) or we are generating uniform sub forces such as companies in SL line units
-                    try {
-                        Map<String, List<ForceDescriptor>> byGenRule = subForces.stream()
-                              .collect(Collectors.groupingBy(
-                                    ForceDescriptor::getGenerationRule));
-                        if (byGenRule.containsKey("group")) {
-                            if (!generateAndAssignFormation(byGenRule.get("group")
-                                        .stream()
-                                        .map(ForceDescriptor::getSubForces)
-                                        .flatMap(Collection::stream)
-                                        .collect(Collectors.toList()),
-                                  false,
-                                  byGenRule.get("group").size())) {
-                                formationType = null;
-                            }
-                        } else if (byGenRule.containsKey("model")) {
-                            generateAndAssignFormation(byGenRule.get("model"), false, 0);
-                        } else if (byGenRule.containsKey("chassis")) {
-                            generateAndAssignFormation(byGenRule.get("chassis"), true, 0);
-                        }
-                    } catch (NullPointerException ex) {
-                        LOGGER.error(ex, "Found null generation rule in force node with formation set.");
-                    }
-                }
+                generateFormationByBlock();
             } else {
                 // Each <subforces> block tagged the children it produced with its own generate rule,
                 // so a node holding several of them honours each in turn. A node with one block yields
@@ -917,6 +890,91 @@ public class ForceDescriptor {
      * @param rule    the block's generate rule
      * @param members the children that block produced
      */
+    /**
+     * Generates a node that has been given a formation type, letting each {@code <subforces>} block
+     * that asked for a shared unit be built by its own rule.
+     *
+     * <p>A formation is by nature a set of different units chosen to work together, so its members are
+     * picked individually. A block asking for {@code model} or {@code chassis} is asking for the
+     * opposite - one unit across the block - and is therefore built separately and left out of the
+     * formation, which is what lets a Level II field a Mek formation and a matched fighter pair at
+     * once. Blocks asking for {@code group}, and blocks asking for nothing, are the formation.</p>
+     *
+     * <p>Where every block asks for a shared unit there is no formation left to build. That is a node
+     * whose single block carries the rule, which has always meant "build the formation and pin its
+     * pick to each child", so it goes on meaning that.</p>
+     */
+    private void generateFormationByBlock() {
+        FormationSplit split = splitForFormation(subForces);
+        if (split.formationMembers().isEmpty()) {
+            buildFormation(subForces, "chassis".equals(generationRule));
+            return;
+        }
+        split.sharedUnitBlocks().forEach((rule, members) -> {
+            LOGGER.debug("[ForceGen][GenRule] '{}': {} child(ren) generate by '{}', outside the {}"
+                        + " formation", parseName(), members.size(), rule, formationType);
+            shareOneUnitAcross(rule, members);
+        });
+        buildFormation(split.formationMembers(), false);
+    }
+
+    /**
+     * How a formation-typed node's children divide between the formation and the blocks generated
+     * apart from it.
+     *
+     * @param sharedUnitBlocks the children of each block asking for one unit across the block, keyed by
+     *                         that block's rule
+     * @param formationMembers the children the formation itself is built from
+     */
+    record FormationSplit(Map<String, List<ForceDescriptor>> sharedUnitBlocks,
+                          List<ForceDescriptor> formationMembers) {
+    }
+
+    /**
+     * Divides a formation-typed node's children by what their {@code <subforces>} block asked for.
+     *
+     * <p>Package-private so the split can be tested on its own: which child goes where is the whole of
+     * the decision, and testing it through generation would need the unit tables and a die roll.</p>
+     *
+     * @param subs the node's children, each tagged with its block's rule or with none
+     *
+     * @return the division of those children
+     */
+    static FormationSplit splitForFormation(List<ForceDescriptor> subs) {
+        Map<String, List<ForceDescriptor>> sharedUnitBlocks = new LinkedHashMap<>();
+        List<ForceDescriptor> formationMembers = new ArrayList<>();
+        for (ForceDescriptor sub : subs) {
+            String rule = sub.getGenerationRule();
+            // A block declaring no rule leaves its children with a null one, and an immutable Set
+            // throws rather than answering contains(null), so the null case is settled first.
+            boolean sharesOneUnit = (rule != null) && SHARED_UNIT_RULES.contains(rule);
+            if (sharesOneUnit) {
+                sharedUnitBlocks.computeIfAbsent(rule, key -> new ArrayList<>()).add(sub);
+            } else {
+                formationMembers.add(sub);
+            }
+        }
+        return new FormationSplit(sharedUnitBlocks, formationMembers);
+    }
+
+    /**
+     * Builds the node's formation from the given members, falling back to an ordinary lance when the
+     * formation's requirements cannot be met.
+     *
+     * @param members    the children the formation is to be made of
+     * @param pinChassis whether a non-leaf child is pinned to the chassis rather than the exact model
+     */
+    private void buildFormation(List<ForceDescriptor> members, boolean pinChassis) {
+        // In cases like Novas and air lances the formation rules only apply to some of the units.
+        if (!generateAndAssignFormation(members, pinChassis, 0)) {
+            LOGGER.debug("[ForceGen][GenRule] '{}': {} could not be fulfilled by {} child(ren);"
+                        + " generating them as an ordinary lance", parseName(), formationType,
+                  members.size());
+            generateLance(members);
+            formationType = null;
+        }
+    }
+
     private void generateByRule(String rule, List<ForceDescriptor> members) {
         if (members.isEmpty()) {
             return;
@@ -940,28 +998,33 @@ public class ForceDescriptor {
      * @param members the children to make uniform
      */
     private void shareOneUnitAcross(String rule, List<ForceDescriptor> members) {
-        boolean alreadyPicked = members.stream()
-                                      .allMatch(member -> rule.equals("chassis")
-                                            ? !member.getChassis().isEmpty()
-                                            : !member.getModels().isEmpty());
-        if (alreadyPicked) {
+        boolean shareChassis = rule.equals("chassis");
+        // Only the members without a pick are given one. Testing that they all lack one would let a
+        // partly-picked block through and add a second model to those that already had theirs, which
+        // an ancestor had set deliberately.
+        List<ForceDescriptor> unpicked = members.stream()
+                                              .filter(member -> shareChassis
+                                                    ? member.getChassis().isEmpty()
+                                                    : member.getModels().isEmpty())
+                                              .toList();
+        if (unpicked.isEmpty()) {
             return;
         }
-        ModelRecord shared = members.getFirst().generate();
+        ModelRecord shared = unpicked.getFirst().generate();
         if (shared == null) {
             LOGGER.debug("[ForceGen][GenRule] '{}': no unit available to share across {} child(ren)",
-                  parseName(), members.size());
+                  parseName(), unpicked.size());
             return;
         }
-        for (ForceDescriptor member : members) {
-            if (rule.equals("chassis")) {
+        for (ForceDescriptor member : unpicked) {
+            if (shareChassis) {
                 member.getChassis().add(shared.getChassis());
             } else {
                 member.getModels().add(shared.getKey());
             }
         }
-        LOGGER.debug("[ForceGen][GenRule] '{}': {} child(ren) share {} '{}'",
-              parseName(), members.size(), rule, shared.getKey());
+        LOGGER.debug("[ForceGen][GenRule] '{}': {} of {} child(ren) share {} '{}'",
+              parseName(), unpicked.size(), members.size(), rule, shared.getKey());
     }
 
     public void generate(String level) {

@@ -34,6 +34,7 @@ package megamek.client.ratgenerator;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.io.ByteArrayInputStream;
 import java.nio.charset.StandardCharsets;
@@ -131,5 +132,69 @@ class SubForcesNodeGenerationRuleTest {
 
         attached.forEach(child -> assertNull(child.getGenerationRule()));
         assertNull(parent.getGenerationRule(), "an attached block must not claim the parent's rule");
+    }
+
+    /**
+     * A formation-typed node with one {@code group} block and one {@code model} block: the model block
+     * is built apart from the formation so it comes out uniform, and the group block is the formation.
+     *
+     * <p>This is the case that failed silently. The formation branch read a single rule off the node -
+     * whichever block declared one first - so the second block's rule was discarded, and a matched
+     * fighter pair asked for alongside a Mek formation came out as two unrelated fighters.</p>
+     */
+    @Test
+    void aFormationNodeSplitsItsSharedUnitBlocksOutOfTheFormation() throws Exception {
+        ForceDescriptor parent = new ForceDescriptor();
+        List<ForceDescriptor> meks = blockFromXml("""
+              <subforces generate="group"><subforce num="4">1</subforce></subforces>""")
+              .generateSubForces(parent, false);
+        List<ForceDescriptor> fighters = blockFromXml("""
+              <subforces generate="model"><subforce num="2">1</subforce></subforces>""")
+              .generateSubForces(parent, false);
+        List<ForceDescriptor> children = new ArrayList<>(meks);
+        children.addAll(fighters);
+
+        ForceDescriptor.FormationSplit split = ForceDescriptor.splitForFormation(children);
+
+        assertEquals(meks, split.formationMembers(),
+              "the group block is what the formation is built from");
+        assertEquals(List.of("model"), List.copyOf(split.sharedUnitBlocks().keySet()));
+        assertEquals(fighters, split.sharedUnitBlocks().get("model"),
+              "the model block is generated apart from the formation, so it comes out uniform");
+    }
+
+    /** A block asking for a shared chassis is treated the same way as one asking for a model. */
+    @Test
+    void aChassisBlockIsAlsoSplitOut() throws Exception {
+        ForceDescriptor parent = new ForceDescriptor();
+        List<ForceDescriptor> children = new ArrayList<>(blockFromXml("""
+              <subforces generate="chassis"><subforce num="2">1</subforce></subforces>""")
+              .generateSubForces(parent, false));
+        children.addAll(blockFromXml("""
+              <subforces><subforce num="3">1</subforce></subforces>""")
+              .generateSubForces(parent, false));
+
+        ForceDescriptor.FormationSplit split = ForceDescriptor.splitForFormation(children);
+
+        assertEquals(List.of("chassis"), List.copyOf(split.sharedUnitBlocks().keySet()));
+        assertEquals(3, split.formationMembers().size(),
+              "a block declaring no rule is part of the formation, as it has always been");
+    }
+
+    /**
+     * Where every block asks for a shared unit there is nothing left to make a formation from. That is
+     * a node whose one block carries the rule, which has always meant "build the formation and pin its
+     * pick", so the split reports no members and the caller keeps doing that.
+     */
+    @Test
+    void aNodeWhoseEveryBlockSharesAUnitLeavesTheFormationEmpty() throws Exception {
+        ForceDescriptor parent = new ForceDescriptor();
+        List<ForceDescriptor> children = blockFromXml("""
+              <subforces generate="model"><subforce num="4">1</subforce></subforces>""")
+              .generateSubForces(parent, false);
+
+        ForceDescriptor.FormationSplit split = ForceDescriptor.splitForFormation(children);
+
+        assertTrue(split.formationMembers().isEmpty());
     }
 }

@@ -9489,11 +9489,10 @@ public class MiscType extends EquipmentType {
 
     public static MiscType createISFlotationHull() {
         MiscType misc = new MiscType();
-        misc.name = "Combat Vehicle Chassis Mod (Flotation Hull)";
+        misc.name = "Combat Vehicle Chassis Mod [Flotation Hull]";
         misc.shortName = "Flotation Hull";
         misc.setInternalName("ISFlotationHull");
         misc.addLookupName("ClanFlotationHull");
-        misc.addLookupName("Combat Vehicle Chassis Mod [Flotation Hull]");
         misc.tonnage = 0;
         misc.criticalSlots = 0;
         misc.tankSlots = 0;

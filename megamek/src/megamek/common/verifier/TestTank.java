@@ -1,6 +1,6 @@
 /*
  * Copyright (C) 2000-2005 Ben Mazur (bmazur@sev.org)
- * Copyright (C) 2005-2025 The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2005-2026 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -374,8 +374,10 @@ public class TestTank extends TestEntity {
         }
         for (Mounted<?> m : tank.getEquipment()) {
             if (!legalForMotiveType(m.getType(), tank.getMovementMode(), false)) {
-                buff.append(m.getType().getName()).append(" is incompatible with ")
-                      .append(tank.getMovementModeAsString());
+                buff.append(m.getType().getName())
+                      .append(" is incompatible with ")
+                      .append(tank.getMovementModeAsString())
+                      .append(".\n");
                 correct = false;
             }
         }
@@ -769,6 +771,31 @@ public class TestTank extends TestEntity {
     @Override
     public boolean hasIllegalEquipmentCombinations(StringBuffer buff) {
         boolean illegal = super.hasIllegalEquipmentCombinations(buff);
+
+        if (tank.countWorkingMisc(MiscType.F_ENVIRONMENTAL_SEALING) > 1) {
+            illegal = true;
+            buff.append("Max of 1 environmental sealing chassis mod\n");
+        }
+
+        if (tank.countWorkingMisc(MiscType.F_DUNE_BUGGY) > 1) {
+            illegal = true;
+            buff.append("Max of 1 dune buggy chassis mod\n");
+        }
+
+        if (tank.countWorkingMisc(MiscType.F_FLOTATION_HULL) > 1) {
+            illegal = true;
+            buff.append("Max of 1 flotation hull chassis mod\n");
+        }
+
+        if (tank.countWorkingMisc(MiscType.F_FULLY_AMPHIBIOUS) > 1) {
+            illegal = true;
+            buff.append("Max of 1 fully amphibious chassis mod\n");
+        }
+
+        if (tank.countWorkingMisc(MiscType.F_LIMITED_AMPHIBIOUS) > 1) {
+            illegal = true;
+            buff.append("Max of 1 limited amphibious chassis mod\n");
+        }
 
         boolean hasSponsonTurret = false;
 

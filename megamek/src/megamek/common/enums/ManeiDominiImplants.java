@@ -95,12 +95,19 @@ public final class ManeiDominiImplants {
         ANYONE;
 
         /**
-         * @param warriorFightsOnFoot whether the warrior fights with their own body rather than a unit
+         * @param unitType the kind of unit the warrior serves in
          *
          * @return {@code true} if an implant for this audience does something for such a warrior
          */
-        public boolean servesA(boolean warriorFightsOnFoot) {
-            return (this == ANYONE) || (warriorFightsOnFoot ? (this == ON_FOOT) : (this == PILOTING));
+        public boolean servesA(AugmentedUnitType unitType) {
+            return switch (this) {
+                case ANYONE -> true;
+                case ON_FOOT -> unitType.fightsOnFoot();
+                // Anyone who operates a machine, which a battle armour trooper does in their suit -
+                // the construction rules put battle armour on every neural interface's unit list and
+                // leave only conventional infantry off it.
+                case PILOTING -> unitType != AugmentedUnitType.CONVENTIONAL_INFANTRY;
+            };
         }
     }
 
@@ -250,21 +257,21 @@ public final class ManeiDominiImplants {
      * stated minimum of three at Beta.</p>
      *
      * @param rank                the rank whose allowance governs the selection
-     * @param warriorFightsOnFoot whether the warrior fights with their own body rather than a unit
+     * @param unitType            the kind of unit the warrior serves in
      *
      * @return the game options to fit, excluding the explosive charge every Manei Domini receives
      */
-    public static List<String> selectFor(ManeiDominiAugmentationRank rank, boolean warriorFightsOnFoot,
+    public static List<String> selectFor(ManeiDominiAugmentationRank rank, AugmentedUnitType unitType,
           @Nullable String factionCode) {
         List<ImplantEntry> withinLevel = CATALOGUE.stream()
                                                .filter(entry -> entry.level() <= rank.getMaximumImplantLevel())
                                                .filter(entry -> entry.isFieldedBy(factionCode))
                                                .toList();
         List<ImplantEntry> useful = new ArrayList<>(withinLevel.stream()
-              .filter(entry -> entry.audience().servesA(warriorFightsOnFoot))
+              .filter(entry -> entry.audience().servesA(unitType))
               .toList());
         List<ImplantEntry> remainder = new ArrayList<>(withinLevel.stream()
-              .filter(entry -> !entry.audience().servesA(warriorFightsOnFoot))
+              .filter(entry -> !entry.audience().servesA(unitType))
               .toList());
 
         int target = randomBetween(rank.getMinimumImplants(), rank.getMaximumImplants());
@@ -275,7 +282,7 @@ public final class ManeiDominiImplants {
         drawInto(issued, useful, target);
         drawInto(issued, remainder, target);
 
-        ensureNeuralInterface(issued, rank, warriorFightsOnFoot);
+        ensureNeuralInterface(issued, rank, unitType);
         return issued;
     }
 
@@ -292,14 +299,14 @@ public final class ManeiDominiImplants {
      *
      * @param options             the warrior's options, which this sets
      * @param rank                the rank whose allowance governs the selection
-     * @param warriorFightsOnFoot whether the warrior fights with their own body rather than a unit
+     * @param unitType            the kind of unit the warrior serves in
      *
      * @return the implants fitted, excluding the explosive charge
      */
     public static List<String> fitTo(PilotOptions options, ManeiDominiAugmentationRank rank,
-          boolean warriorFightsOnFoot, @Nullable String factionCode) {
+          AugmentedUnitType unitType, @Nullable String factionCode) {
         setOption(options, getExplosiveCharge());
-        List<String> issued = selectFor(rank, warriorFightsOnFoot, factionCode);
+        List<String> issued = selectFor(rank, unitType, factionCode);
         for (String implant : issued) {
             setOption(options, implant);
         }
@@ -324,14 +331,14 @@ public final class ManeiDominiImplants {
 
     /**
      * @param option              a game option from the catalogue
-     * @param warriorFightsOnFoot whether the warrior fights with their own body rather than a unit
+     * @param unitType            the kind of unit the warrior serves in
      *
      * @return {@code true} if this implant does something for such a warrior
      */
-    public static boolean servesWarrior(String option, boolean warriorFightsOnFoot) {
+    public static boolean servesWarrior(String option, AugmentedUnitType unitType) {
         return CATALOGUE.stream()
                      .filter(entry -> entry.optionChoices().contains(option))
-                     .anyMatch(entry -> entry.audience().servesA(warriorFightsOnFoot));
+                     .anyMatch(entry -> entry.audience().servesA(unitType));
     }
 
     /**
@@ -388,8 +395,8 @@ public final class ManeiDominiImplants {
      * chart does not.</p>
      */
     private static void ensureNeuralInterface(List<String> issued, ManeiDominiAugmentationRank rank,
-          boolean warriorFightsOnFoot) {
-        if (warriorFightsOnFoot) {
+          AugmentedUnitType unitType) {
+        if (unitType == AugmentedUnitType.CONVENTIONAL_INFANTRY) {
             return;
         }
         boolean needsInterface = issued.stream().anyMatch(REQUIRE_NEURAL_INTERFACE::contains);

@@ -35,6 +35,7 @@ package megamek.client.ratgenerator;
 import java.util.List;
 
 import megamek.common.annotations.Nullable;
+import megamek.common.enums.AugmentedUnitType;
 import megamek.common.enums.ManeiDominiAugmentationRank;
 import megamek.common.enums.ManeiDominiImplants;
 import megamek.common.options.IGameOptions;
@@ -129,14 +130,14 @@ public final class ManeiDominiCrewAugmentor {
         int rankIndex = (commander == null) ? 0 : commander.getRank();
         ManeiDominiAugmentationRank rank =
               ManeiDominiAugmentationRank.forRankIndex(rankIndex, highestRankIndexFor(formation));
-        // Implants act on a trooper's own body or through the unit they sit in, and which do anything
-        // depends on that. Infantry and BattleArmor fight as themselves.
-        boolean fightsOnFoot = entity.isInfantry();
+        // The construction rules are written against unit types, and the difference matters: a
+        // battle armour trooper may carry a neural interface where a foot trooper may not.
+        AugmentedUnitType unitType = AugmentedUnitType.forEntity(entity);
 
-        List<String> fitted = ManeiDominiImplants.fitTo(entity.getCrew().getOptions(), rank, fightsOnFoot, factionCode);
-        LOGGER.info("[ManeiDomini]   '{}' ({}): rank index {} -> {}, fights {} -> {} implant(s) {}",
+        List<String> fitted = ManeiDominiImplants.fitTo(entity.getCrew().getOptions(), rank, unitType, factionCode);
+        LOGGER.info("[ManeiDomini]   '{}' ({}): rank index {} -> {}, unit type {} -> {} implant(s) {}",
               entity.getCrew().getName(), entity.getShortName(), rankIndex, rank,
-              fightsOnFoot ? "on foot" : "from a cockpit", fitted.size(), fitted);
+              unitType, fitted.size(), fitted);
         return true;
     }
 

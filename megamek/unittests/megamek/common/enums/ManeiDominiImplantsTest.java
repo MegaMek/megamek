@@ -58,7 +58,8 @@ class ManeiDominiImplantsTest {
     private static final int DRAWS = 400;
 
     /** Both kinds of warrior: {@code true} fights on foot, {@code false} fights from a cockpit. */
-    private static final boolean[] BOTH_AUDIENCES = { true, false };
+    private static final AugmentedUnitType[] BOTH_AUDIENCES = {
+          AugmentedUnitType.CONVENTIONAL_INFANTRY, AugmentedUnitType.BATTLE_MEK };
 
     /** The faction these rules are generated for unless a case says otherwise. */
     private static final String WORD_OF_BLAKE = "WOB.SD";
@@ -73,7 +74,7 @@ class ManeiDominiImplantsTest {
         int minimum = maneiDominiRank.getMinimumImplants();
         int maximum = maneiDominiRank.getMaximumImplants();
 
-        for (boolean fightsOnFoot : BOTH_AUDIENCES) {
+        for (AugmentedUnitType fightsOnFoot : BOTH_AUDIENCES) {
             for (int draw = 0; draw < DRAWS; draw++) {
                 List<String> issued = ManeiDominiImplants.selectFor(maneiDominiRank, fightsOnFoot, WORD_OF_BLAKE);
                 assertTrue(issued.size() >= minimum,
@@ -91,7 +92,7 @@ class ManeiDominiImplantsTest {
     void noImplantExceedsTheRanksLevelCeiling(ManeiDominiAugmentationRank maneiDominiRank) {
         int maximumLevel = maneiDominiRank.getMaximumImplantLevel();
 
-        for (boolean fightsOnFoot : BOTH_AUDIENCES) {
+        for (AugmentedUnitType fightsOnFoot : BOTH_AUDIENCES) {
             for (int draw = 0; draw < DRAWS; draw++) {
                 for (String option : ManeiDominiImplants.selectFor(maneiDominiRank, fightsOnFoot, WORD_OF_BLAKE)) {
                     assertTrue(ManeiDominiImplants.levelOf(option) <= maximumLevel,
@@ -106,7 +107,7 @@ class ManeiDominiImplantsTest {
     @ParameterizedTest
     @EnumSource(ManeiDominiAugmentationRank.class)
     void anImplantIsNeverIssuedTwice(ManeiDominiAugmentationRank maneiDominiRank) {
-        for (boolean fightsOnFoot : BOTH_AUDIENCES) {
+        for (AugmentedUnitType fightsOnFoot : BOTH_AUDIENCES) {
             for (int draw = 0; draw < DRAWS; draw++) {
                 List<String> issued = ManeiDominiImplants.selectFor(maneiDominiRank, fightsOnFoot, WORD_OF_BLAKE);
                 assertTrue(issued.stream().distinct().count() == issued.size(),
@@ -123,14 +124,14 @@ class ManeiDominiImplantsTest {
     @ParameterizedTest
     @EnumSource(ManeiDominiAugmentationRank.class)
     void everyWarriorGetsAtLeastOneImplantThatServesThem(ManeiDominiAugmentationRank maneiDominiRank) {
-        for (boolean fightsOnFoot : BOTH_AUDIENCES) {
+        for (AugmentedUnitType fightsOnFoot : BOTH_AUDIENCES) {
             for (int draw = 0; draw < DRAWS; draw++) {
                 List<String> issued = ManeiDominiImplants.selectFor(maneiDominiRank, fightsOnFoot, WORD_OF_BLAKE);
                 boolean anyUseful = issued.stream()
                                           .anyMatch(option ->
                                                 ManeiDominiImplants.servesWarrior(option, fightsOnFoot));
                 assertTrue(anyUseful,
-                      maneiDominiRank + " fighting " + describe(fightsOnFoot)
+                      maneiDominiRank + " fighting " + fightsOnFoot
                             + " got nothing useful: " + issued);
             }
         }
@@ -142,7 +143,7 @@ class ManeiDominiImplantsTest {
      */
     @Test
     void betaCanStillFillItsAllowanceForEitherKindOfWarrior() {
-        for (boolean fightsOnFoot : BOTH_AUDIENCES) {
+        for (AugmentedUnitType fightsOnFoot : BOTH_AUDIENCES) {
             boolean everFilledToMaximum = false;
             for (int draw = 0; draw < DRAWS; draw++) {
                 List<String> issued =
@@ -151,14 +152,14 @@ class ManeiDominiImplantsTest {
                 everFilledToMaximum |= (issued.size() >= 4);
             }
             assertTrue(everFilledToMaximum,
-                  "Beta must be able to reach its maximum of 4 fighting " + describe(fightsOnFoot));
+                  "Beta must be able to reach its maximum of 4 fighting " + fightsOnFoot);
         }
     }
 
     @ParameterizedTest
     @EnumSource(ManeiDominiAugmentationRank.class)
     void anImprovedImplantIsNeverHeldAlongsideTheOneItSupersedes(ManeiDominiAugmentationRank maneiDominiRank) {
-        for (boolean fightsOnFoot : BOTH_AUDIENCES) {
+        for (AugmentedUnitType fightsOnFoot : BOTH_AUDIENCES) {
             for (int draw = 0; draw < DRAWS; draw++) {
                 List<String> issued = ManeiDominiImplants.selectFor(maneiDominiRank, fightsOnFoot, WORD_OF_BLAKE);
                 assertFalse(issued.contains(OptionsConstants.MD_PL_ENHANCED)
@@ -184,14 +185,14 @@ class ManeiDominiImplantsTest {
     @ParameterizedTest
     @EnumSource(ManeiDominiAugmentationRank.class)
     void multiModalImplantsAlwaysComeWithANeuralInterface(ManeiDominiAugmentationRank maneiDominiRank) {
-        for (boolean fightsOnFoot : BOTH_AUDIENCES) {
+        for (AugmentedUnitType fightsOnFoot : BOTH_AUDIENCES) {
             for (int draw = 0; draw < DRAWS; draw++) {
                 List<String> issued = ManeiDominiImplants.selectFor(maneiDominiRank, fightsOnFoot, WORD_OF_BLAKE);
                 boolean hasMultiModal = issued.contains(OptionsConstants.MD_MM_IMPLANTS)
                                               || issued.contains(OptionsConstants.MD_ENH_MM_IMPLANTS);
                 // A warrior on foot carries the sensors themselves and needs nothing to sync them to,
                 // so the requirement is only on those fighting from a cockpit.
-                if (!hasMultiModal || fightsOnFoot) {
+                if (!hasMultiModal || (fightsOnFoot == AugmentedUnitType.CONVENTIONAL_INFANTRY)) {
                     continue;
                 }
                 boolean hasInterface = issued.contains(OptionsConstants.MD_VDNI)
@@ -209,7 +210,7 @@ class ManeiDominiImplantsTest {
     @ParameterizedTest
     @EnumSource(ManeiDominiAugmentationRank.class)
     void theExplosiveChargeIsNotDrawnFromTheAllowance(ManeiDominiAugmentationRank maneiDominiRank) {
-        for (boolean fightsOnFoot : BOTH_AUDIENCES) {
+        for (AugmentedUnitType fightsOnFoot : BOTH_AUDIENCES) {
             for (int draw = 0; draw < DRAWS; draw++) {
                 assertFalse(ManeiDominiImplants.selectFor(maneiDominiRank, fightsOnFoot, WORD_OF_BLAKE)
                                   .contains(OptionsConstants.MD_SUICIDE_IMPLANTS),
@@ -222,19 +223,19 @@ class ManeiDominiImplantsTest {
     /** The audience split, taken from the effects MegaMek actually gives these implants. */
     @Test
     void implantsAreMatchedToHowTheWarriorFights() {
-        assertTrue(ManeiDominiImplants.servesWarrior(OptionsConstants.MD_VDNI, false),
+        assertTrue(ManeiDominiImplants.servesWarrior(OptionsConstants.MD_VDNI, AugmentedUnitType.BATTLE_MEK),
               "a neural interface is what lets a warrior drive the unit they sit in");
-        assertFalse(ManeiDominiImplants.servesWarrior(OptionsConstants.MD_VDNI, true));
+        assertFalse(ManeiDominiImplants.servesWarrior(OptionsConstants.MD_VDNI, AugmentedUnitType.CONVENTIONAL_INFANTRY));
 
-        assertTrue(ManeiDominiImplants.servesWarrior(OptionsConstants.MD_DERMAL_ARMOR, true),
+        assertTrue(ManeiDominiImplants.servesWarrior(OptionsConstants.MD_DERMAL_ARMOR, AugmentedUnitType.CONVENTIONAL_INFANTRY),
               "dermal armour is read only by the infantry and BattleArmor calculators");
-        assertFalse(ManeiDominiImplants.servesWarrior(OptionsConstants.MD_DERMAL_ARMOR, false));
+        assertFalse(ManeiDominiImplants.servesWarrior(OptionsConstants.MD_DERMAL_ARMOR, AugmentedUnitType.BATTLE_MEK));
 
-        assertTrue(ManeiDominiImplants.servesWarrior(OptionsConstants.MD_GAS_EFFUSER_TOXIN, true),
+        assertTrue(ManeiDominiImplants.servesWarrior(OptionsConstants.MD_GAS_EFFUSER_TOXIN, AugmentedUnitType.CONVENTIONAL_INFANTRY),
               "the effusers are conventional infantry only");
-        assertFalse(ManeiDominiImplants.servesWarrior(OptionsConstants.MD_GAS_EFFUSER_TOXIN, false));
+        assertFalse(ManeiDominiImplants.servesWarrior(OptionsConstants.MD_GAS_EFFUSER_TOXIN, AugmentedUnitType.BATTLE_MEK));
 
-        for (boolean fightsOnFoot : BOTH_AUDIENCES) {
+        for (AugmentedUnitType fightsOnFoot : BOTH_AUDIENCES) {
             assertTrue(ManeiDominiImplants.servesWarrior(OptionsConstants.MD_PAIN_SHUNT, fightsOnFoot),
                   "a pain shunt serves whoever carries it");
         }
@@ -247,7 +248,7 @@ class ManeiDominiImplantsTest {
     @ParameterizedTest
     @EnumSource(ManeiDominiAugmentationRank.class)
     void gliderAndPoweredFlightWingsAreNeverBothIssued(ManeiDominiAugmentationRank maneiDominiRank) {
-        for (boolean fightsOnFoot : BOTH_AUDIENCES) {
+        for (AugmentedUnitType fightsOnFoot : BOTH_AUDIENCES) {
             for (int draw = 0; draw < DRAWS; draw++) {
                 List<String> issued = ManeiDominiImplants.selectFor(maneiDominiRank, fightsOnFoot, WORD_OF_BLAKE);
                 assertFalse(issued.contains(OptionsConstants.MD_PL_GLIDER)
@@ -267,8 +268,8 @@ class ManeiDominiImplantsTest {
               OptionsConstants.MD_PL_TAIL, OptionsConstants.MD_PL_GLIDER,
               OptionsConstants.MD_PL_FLIGHT)) {
             assertEquals(3, ManeiDominiImplants.levelOf(prosthetic), prosthetic + " sits at level 3");
-            assertTrue(ManeiDominiImplants.servesWarrior(prosthetic, true), prosthetic + " serves infantry");
-            assertFalse(ManeiDominiImplants.servesWarrior(prosthetic, false),
+            assertTrue(ManeiDominiImplants.servesWarrior(prosthetic, AugmentedUnitType.CONVENTIONAL_INFANTRY), prosthetic + " serves infantry");
+            assertFalse(ManeiDominiImplants.servesWarrior(prosthetic, AugmentedUnitType.BATTLE_MEK),
                   prosthetic + " does nothing for a warrior in a cockpit");
         }
     }
@@ -282,7 +283,7 @@ class ManeiDominiImplantsTest {
     void theTripleCoreProcessorAlwaysComesWithANeuralInterface(
           ManeiDominiAugmentationRank maneiDominiRank) {
         for (int draw = 0; draw < DRAWS; draw++) {
-            List<String> issued = ManeiDominiImplants.selectFor(maneiDominiRank, false, WORD_OF_BLAKE);
+            List<String> issued = ManeiDominiImplants.selectFor(maneiDominiRank, AugmentedUnitType.BATTLE_MEK, WORD_OF_BLAKE);
             if (!issued.contains(OptionsConstants.MD_TRIPLE_CORE_PROCESSOR)) {
                 continue;
             }
@@ -301,14 +302,14 @@ class ManeiDominiImplantsTest {
     @Test
     void theInferredLevelFourEntriesServeWhoTheyShould() {
         assertEquals(4, ManeiDominiImplants.levelOf(OptionsConstants.MD_TRIPLE_CORE_PROCESSOR));
-        assertTrue(ManeiDominiImplants.servesWarrior(OptionsConstants.MD_TRIPLE_CORE_PROCESSOR, false),
+        assertTrue(ManeiDominiImplants.servesWarrior(OptionsConstants.MD_TRIPLE_CORE_PROCESSOR, AugmentedUnitType.BATTLE_MEK),
               "the processor serves a warrior in a cockpit");
-        assertFalse(ManeiDominiImplants.servesWarrior(OptionsConstants.MD_TRIPLE_CORE_PROCESSOR, true));
+        assertFalse(ManeiDominiImplants.servesWarrior(OptionsConstants.MD_TRIPLE_CORE_PROCESSOR, AugmentedUnitType.CONVENTIONAL_INFANTRY));
 
         assertEquals(4, ManeiDominiImplants.levelOf(OptionsConstants.MD_DERMAL_CAMO_ARMOR));
-        assertTrue(ManeiDominiImplants.servesWarrior(OptionsConstants.MD_DERMAL_CAMO_ARMOR, true),
+        assertTrue(ManeiDominiImplants.servesWarrior(OptionsConstants.MD_DERMAL_CAMO_ARMOR, AugmentedUnitType.CONVENTIONAL_INFANTRY),
               "the camouflage serves a foot trooper");
-        assertFalse(ManeiDominiImplants.servesWarrior(OptionsConstants.MD_DERMAL_CAMO_ARMOR, false));
+        assertFalse(ManeiDominiImplants.servesWarrior(OptionsConstants.MD_DERMAL_CAMO_ARMOR, AugmentedUnitType.BATTLE_MEK));
     }
 
     /**
@@ -320,7 +321,7 @@ class ManeiDominiImplantsTest {
     @EnumSource(ManeiDominiAugmentationRank.class)
     void theCapellanProstheticsNeverReachTheWordOfBlake(ManeiDominiAugmentationRank maneiDominiRank) {
         for (int draw = 0; draw < DRAWS; draw++) {
-            List<String> issued = ManeiDominiImplants.selectFor(maneiDominiRank, true, WORD_OF_BLAKE);
+            List<String> issued = ManeiDominiImplants.selectFor(maneiDominiRank, AugmentedUnitType.CONVENTIONAL_INFANTRY, WORD_OF_BLAKE);
             for (String capellanOnly : List.of(OptionsConstants.MD_PL_EXTRA_LIMBS,
                   OptionsConstants.MD_PL_TAIL, OptionsConstants.MD_PL_GLIDER,
                   OptionsConstants.MD_PL_FLIGHT)) {
@@ -336,7 +337,7 @@ class ManeiDominiImplantsTest {
         boolean everIssued = false;
         for (int draw = 0; draw < DRAWS; draw++) {
             List<String> issued =
-                  ManeiDominiImplants.selectFor(ManeiDominiAugmentationRank.OMICRON, true, "CC");
+                  ManeiDominiImplants.selectFor(ManeiDominiAugmentationRank.OMICRON, AugmentedUnitType.CONVENTIONAL_INFANTRY, "CC");
             everIssued |= issued.contains(OptionsConstants.MD_PL_TAIL)
                               || issued.contains(OptionsConstants.MD_PL_EXTRA_LIMBS)
                               || issued.contains(OptionsConstants.MD_PL_GLIDER)
@@ -352,10 +353,44 @@ class ManeiDominiImplantsTest {
             boolean everIssued = false;
             for (int draw = 0; draw < DRAWS; draw++) {
                 everIssued |= ManeiDominiImplants
-                                    .selectFor(ManeiDominiAugmentationRank.OMICRON, false, faction)
+                                    .selectFor(ManeiDominiAugmentationRank.OMICRON, AugmentedUnitType.BATTLE_MEK, faction)
                                     .contains(OptionsConstants.MD_PAIN_SHUNT);
             }
             assertTrue(everIssued, "the pain shunt is unrestricted and must reach " + faction);
         }
+    }
+
+    /**
+     * The construction rules put battle armour on the neural interface's unit list and leave
+     * conventional infantry off it - a suit is a machine to interface with, a foot trooper has none.
+     * Reading both as simply "on foot" denied battle armour the interface, and with it the multi-modal
+     * implants and the processor that need one.
+     */
+    @Test
+    void battleArmourMayCarryANeuralInterfaceAndFootInfantryMayNot() {
+        assertTrue(ManeiDominiImplants.servesWarrior(OptionsConstants.MD_VDNI,
+                    AugmentedUnitType.BATTLE_ARMOR),
+              "a battle armour trooper interfaces with their suit");
+        assertFalse(ManeiDominiImplants.servesWarrior(OptionsConstants.MD_VDNI,
+                    AugmentedUnitType.CONVENTIONAL_INFANTRY),
+              "a foot trooper has no machine to interface with");
+
+        boolean everIssued = false;
+        for (int draw = 0; draw < DRAWS; draw++) {
+            List<String> issued = ManeiDominiImplants.selectFor(ManeiDominiAugmentationRank.OMICRON,
+                  AugmentedUnitType.BATTLE_ARMOR, WORD_OF_BLAKE);
+            assertFalse(issued.isEmpty());
+            everIssued |= issued.contains(OptionsConstants.MD_VDNI)
+                              || issued.contains(OptionsConstants.MD_BVDNI);
+        }
+        assertTrue(everIssued, "battle armour must actually be issued an interface");
+    }
+
+    /** Battle armour keeps the implants that act on the trooper's own body as well. */
+    @Test
+    void battleArmourStillGetsTheImplantsThatActOnTheBody() {
+        assertTrue(ManeiDominiImplants.servesWarrior(OptionsConstants.MD_DERMAL_ARMOR,
+                    AugmentedUnitType.BATTLE_ARMOR),
+              "the infantry calculators read dermal armour for battle armour too");
     }
 }

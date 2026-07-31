@@ -34,7 +34,7 @@ package megamek.client.ui.settings;
 
 import java.awt.BorderLayout;
 import java.awt.Component;
-import java.util.ArrayList;
+import java.awt.Container;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -63,6 +63,7 @@ public class SettingsPane extends JPanel {
     private final Map<String, Component> pageCache = new HashMap<>();
     private final SettingsContentHost contentHost;
     private final SettingsNavigationPanel navigationPanel;
+    private SettingsRoute currentRoute;
     private boolean searchIndexInProgress;
     private boolean searchIndexComplete;
     private int searchIndexGeneration;
@@ -76,10 +77,12 @@ public class SettingsPane extends JPanel {
         validateConfiguration();
 
         SettingsRoute initialRoute = firstPageRoute();
+        currentRoute = initialRoute;
         Component initialContent = getPage(initialRoute);
         contentHost = new SettingsContentHost(initialContent, helpTitle, initialRoute.shouldShowDetailsPanel());
         navigationPanel = new SettingsNavigationPanel(this.routes, this::selectedNavigationTarget, navigationText);
         navigationPanel.setSearchIndexInitializer(this::ensureSearchIndexBuilt);
+        navigationPanel.setFilterChangeListener(this::activeFilterChanged);
 
         int margin = UIUtil.scaleForGUI(CONTENT_MARGIN);
         setBorder(BorderFactory.createEmptyBorder(margin, margin, 0, margin));
@@ -109,6 +112,11 @@ public class SettingsPane extends JPanel {
         return navigationPanel.getActiveFilter();
     }
 
+    /** Reapplies the current navigation filter after a page's searchable content changes. */
+    public void refreshFilter() {
+        navigationPanel.refreshFilter();
+    }
+
     private void selectedNavigationTarget(SettingsRoute route) {
         showRoute(route);
         contentHost.resetScrollPosition();
@@ -120,9 +128,29 @@ public class SettingsPane extends JPanel {
         if (page == null) {
             return false;
         }
+        currentRoute = effectiveRoute;
+        applySettingsFilter(page, navigationPanel.getActiveFilter());
         contentHost.setContent(page, effectiveRoute.shouldShowDetailsPanel());
         expandSectionsForActiveFilter(effectiveRoute, page);
         return true;
+    }
+
+    private void activeFilterChanged(String normalizedFilter) {
+        Component page = pageCache.get(currentRoute.getId());
+        if (page != null) {
+            applySettingsFilter(page, normalizedFilter);
+        }
+    }
+
+    private static void applySettingsFilter(Component component, String normalizedFilter) {
+        if (component instanceof SettingsFilterable filterable) {
+            filterable.applySettingsFilter(normalizedFilter);
+        }
+        if (component instanceof Container container) {
+            for (Component child : container.getComponents()) {
+                applySettingsFilter(child, normalizedFilter);
+            }
+        }
     }
 
     private void expandSectionsForActiveFilter(SettingsRoute route, Component page) {

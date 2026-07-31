@@ -34,23 +34,20 @@
 package megamek.client.ui.dialogs.buttonDialogs;
 
 import static megamek.client.ui.Messages.getString;
-import static megamek.client.ui.util.UIUtil.FixedYPanel;
 import static megamek.client.ui.util.UIUtil.WrappingButtonPanel;
 
+import java.awt.BorderLayout;
 import java.awt.Container;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.File;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Vector;
 import javax.swing.*;
-import javax.swing.event.DocumentEvent;
-import javax.swing.event.DocumentListener;
 import javax.swing.filechooser.FileFilter;
 import javax.xml.parsers.DocumentBuilder;
 
@@ -60,6 +57,7 @@ import megamek.client.ui.clientGUI.ClientGUI;
 import megamek.client.ui.clientGUI.DialogOptionListener;
 import megamek.client.ui.dialogs.MMDialogs.MMConfirmDialog;
 import megamek.client.ui.panels.DialogOptionComponentYPanel;
+import megamek.client.ui.panels.GameOptionsPane;
 import megamek.client.ui.panels.phaseDisplay.lobby.VictoryConditionsDialog;
 import megamek.common.TechConstants;
 import megamek.common.options.GameOptions;
@@ -88,21 +86,8 @@ public class GameOptionsDialog extends AbstractButtonDialog implements ActionLis
      */
     private Map<String, List<DialogOptionComponentYPanel>> optionComps = new HashMap<>();
 
-    /**
-     * Keeps track of the DialogOptionComponents that have been added to the search panel. This is used to remove those
-     * components from optionComps when they get removed.
-     */
-    private final ArrayList<DialogOptionComponentYPanel> searchComps = new ArrayList<>();
-
-    private int maxOptionWidth;
-
-    private final JTabbedPane panOptions = new JTabbedPane();
-
-    /** Panel that holds all the options found via search */
-    private final JPanel panSearchOptions = new JPanel();
-
-    /** Text field that contains text to search on */
-    private final JTextField txtSearch = new JTextField("");
+    private final JPanel panOptions = new JPanel(new BorderLayout());
+    private GameOptionsPane gameOptionsPane;
 
     private final WrappingButtonPanel panPassword = new WrappingButtonPanel();
     private final JLabel labPass = new JLabel(Messages.getString("GameOptionsDialog.Password"));
@@ -240,23 +225,33 @@ public class GameOptionsDialog extends AbstractButtonDialog implements ActionLis
     }
 
     public void refreshOptions() {
+        String activeFilter = gameOptionsPane == null ? "" : gameOptionsPane.getActiveFilter();
         panOptions.removeAll();
         optionComps = new HashMap<>();
+        List<GameOptionsPane.OptionGroup> groups = new ArrayList<>();
 
         for (Enumeration<IOptionGroup> i = options.getGroups(); i.hasMoreElements(); ) {
             IOptionGroup group = i.nextElement();
             if (isVictoryGroupHiddenForLobby(group)) {
                 continue;
             }
-            JPanel groupPanel = addGroup(group);
+            List<DialogOptionComponentYPanel> groupComponents = new ArrayList<>();
             for (Enumeration<IOption> j = group.getOptions(); j.hasMoreElements(); ) {
                 IOption option = j.nextElement();
-                addOption(groupPanel, option);
+                DialogOptionComponentYPanel component = createOptionComponent(option);
+                if (component != null) {
+                    groupComponents.add(component);
+                }
             }
+            groups.add(new GameOptionsPane.OptionGroup(group.getName(), group.getDisplayableName(), groupComponents));
         }
+        gameOptionsPane = new GameOptionsPane(groups, this::shouldShow);
+        panOptions.add(gameOptionsPane, BorderLayout.CENTER);
         butUnofficial.setSelected(!(Boolean) options.getOption(OptionsConstants.BASE_HIDE_UNOFFICIAL).getValue());
         toggleOptions();
-        addSearchPanel();
+        gameOptionsPane.setFilterText(activeFilter);
+        panOptions.revalidate();
+        panOptions.repaint();
         validate();
     }
 
@@ -281,21 +276,17 @@ public class GameOptionsDialog extends AbstractButtonDialog implements ActionLis
             // Each option in the list should have the same value, so picking the first is fine
             if (!comps.isEmpty()) {
                 DialogOptionComponentYPanel comp = comps.getFirst();
-                if (isUnofficialOption(comp)) {
-                    comp.setVisible(shouldShow(comp));
-                    if (!shouldShow(comp)) {
+                if (isUnofficialOption(comp.getOption())) {
+                    if (!shouldShow(comp.getOption())) {
                         // Disable hidden unofficial options
                         if (comp.getOption().getType() == IOption.BOOLEAN) {
                             comp.setSelected(false);
                         }
                     }
                 }
-                if (isHiddenOption(comp)) {
-                    comp.setVisible(false);
-                }
-
             }
         }
+        gameOptionsPane.refreshVisibility();
 
         // Initialize dependent options: Climb Out requires Return Flyover
         boolean returnFlyoverEnabled = options.getOption(OptionsConstants.ADVANCED_AERO_RULES_RETURN_FLYOVER)
@@ -312,109 +303,25 @@ public class GameOptionsDialog extends AbstractButtonDialog implements ActionLis
     }
 
     /** Returns true when the given Option should never show in the dialog. */
-    private boolean isHiddenOption(DialogOptionComponentYPanel comp) {
-        return comp.getOption().getName().equals(OptionsConstants.BASE_HIDE_UNOFFICIAL);
+    private boolean isHiddenOption(IOption option) {
+        return option.getName().equals(OptionsConstants.BASE_HIDE_UNOFFICIAL);
     }
 
-    private boolean isUnofficialOption(DialogOptionComponentYPanel comp) {
-        return comp.getOption().getDisplayableName().contains(UNOFFICIAL);
+    private boolean isUnofficialOption(IOption option) {
+        return option.getDisplayableName().contains(UNOFFICIAL);
     }
 
     /** Returns true when the given Option should be visible in the dialog. */
-    private boolean shouldShow(DialogOptionComponentYPanel comp) {
-        boolean isHiddenUnofficial = !butUnofficial.isSelected() && isUnofficialOption(comp);
-        return !(isHiddenUnofficial || isHiddenOption(comp));
+    private boolean shouldShow(IOption option) {
+        boolean isHiddenUnofficial = !butUnofficial.isSelected() && isUnofficialOption(option);
+        return !(isHiddenUnofficial || isHiddenOption(option));
     }
 
-    private void refreshSearchPanel() {
-        panSearchOptions.removeAll();
-        searchComps.clear();
-
-        // Add new DialogOptionComponents for all matching Options
-        final String searchText = txtSearch.getText().toLowerCase();
-        if (!searchText.isBlank()) {
-            ArrayList<DialogOptionComponentYPanel> allNewComps = new ArrayList<>();
-            for (List<DialogOptionComponentYPanel> comps : optionComps.values()) {
-                for (DialogOptionComponentYPanel comp : comps) {
-                    String optName = comp.getOption().getDisplayableName().toLowerCase();
-                    String optDesc = comp.getOption().getDescription().toLowerCase();
-                    if ((optName.contains(searchText) || optDesc.contains(searchText)) && shouldShow(comp)) {
-                        allNewComps.add(comp);
-                    }
-                }
-            }
-            Collections.sort(allNewComps);
-            for (DialogOptionComponentYPanel comp : allNewComps) {
-                searchComps.add(comp);
-                panSearchOptions.add(comp);
-            }
-        }
-        panSearchOptions.revalidate();
-        panOptions.repaint();
-    }
-
-    private JPanel addGroup(IOptionGroup group) {
-        JPanel groupPanel = new JPanel();
-        JScrollPane scrOptions = new JScrollPane(groupPanel);
-        scrOptions.getVerticalScrollBar().setUnitIncrement(16);
-        groupPanel.setLayout(new BoxLayout(groupPanel, BoxLayout.Y_AXIS));
-        scrOptions.setAutoscrolls(true);
-        scrOptions.setVerticalScrollBarPolicy(ScrollPaneConstants.VERTICAL_SCROLLBAR_ALWAYS);
-        scrOptions.setHorizontalScrollBarPolicy(ScrollPaneConstants.HORIZONTAL_SCROLLBAR_AS_NEEDED);
-        panOptions.addTab(group.getDisplayableName(), scrOptions);
-        return groupPanel;
-    }
-
-    private void addSearchPanel() {
-        JPanel panSearch = new JPanel();
-        JScrollPane scrOptions = new JScrollPane(panSearch);
-        scrOptions.getVerticalScrollBar().setUnitIncrement(16);
-        panSearch.setLayout(new BoxLayout(panSearch, BoxLayout.PAGE_AXIS));
-        scrOptions.setAutoscrolls(true);
-        scrOptions.setVerticalScrollBarPolicy(ScrollPaneConstants.VERTICAL_SCROLLBAR_ALWAYS);
-        scrOptions.setHorizontalScrollBarPolicy(ScrollPaneConstants.HORIZONTAL_SCROLLBAR_AS_NEEDED);
-
-        // Panel for holding the label and text field for searching
-        var panSearchBar = new FixedYPanel();
-        JLabel lblSearch = new JLabel(Messages.getString("GameOptionsDialog.Search") + ":");
-        lblSearch.setLabelFor(txtSearch);
-        lblSearch.setToolTipText(Messages.getString("GameOptionsDialog.SearchToolTip"));
-        txtSearch.setToolTipText(Messages.getString("GameOptionsDialog.SearchToolTip"));
-        txtSearch.setColumns(20);
-        txtSearch.getDocument().addDocumentListener(new DocumentListener() {
-            @Override
-            public void changedUpdate(DocumentEvent e) {
-                refreshSearchPanel();
-            }
-
-            @Override
-            public void insertUpdate(DocumentEvent e) {
-                refreshSearchPanel();
-            }
-
-            @Override
-            public void removeUpdate(DocumentEvent e) {
-                refreshSearchPanel();
-            }
-        });
-
-        panSearchOptions.setLayout(new BoxLayout(panSearchOptions, BoxLayout.PAGE_AXIS));
-        panSearchBar.add(lblSearch);
-        panSearchBar.add(txtSearch);
-        panSearch.add(panSearchBar);
-        panSearch.add(panSearchOptions);
-        panOptions.addTab(Messages.getString("GameOptionsDialog.Search"), scrOptions);
-        refreshSearchPanel();
-    }
-
-    private void addOption(JPanel groupPanel, IOption option) {
+    private DialogOptionComponentYPanel createOptionComponent(IOption option) {
         if (option == null) {
-            return;
+            return null;
         }
         DialogOptionComponentYPanel optionComp = new DialogOptionComponentYPanel(this, option, true, true);
-
-        groupPanel.add(optionComp);
-        maxOptionWidth = Math.max(maxOptionWidth, optionComp.getPreferredSize().width);
 
         if (OptionsConstants.INIT_INF_DEPLOY_EVEN.equals(option.getName())) {
             if ((options.getOption(OptionsConstants.RPG_INDIVIDUAL_INITIATIVE)).booleanValue() ||
@@ -567,6 +474,7 @@ public class GameOptionsDialog extends AbstractButtonDialog implements ActionLis
         }
         List<DialogOptionComponentYPanel> comps = optionComps.computeIfAbsent(option.getName(), k -> new ArrayList<>());
         comps.add(optionComp);
+        return optionComp;
     }
 
     // Gets called when one of the option checkboxes is clicked.
@@ -854,7 +762,6 @@ public class GameOptionsDialog extends AbstractButtonDialog implements ActionLis
             }
             optionComps.get(OptionsConstants.BASE_HIDE_UNOFFICIAL).getFirst().setSelected(!butUnofficial.isSelected());
             toggleOptions();
-            refreshSearchPanel();
 
         }
     }

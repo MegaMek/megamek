@@ -36,7 +36,10 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
+import megamek.common.options.IOption;
 import megamek.common.options.OptionsConstants;
+import megamek.common.options.PilotOptions;
+import megamek.logging.MMLogger;
 
 /**
  * Chooses the cybernetics a Manei Domini warrior of a given rank receives.
@@ -60,6 +63,8 @@ import megamek.common.options.OptionsConstants;
  * @see ManeiDominiAugmentationRank
  */
 public final class ManeiDominiImplants {
+
+    private static final MMLogger LOGGER = MMLogger.create(ManeiDominiImplants.class);
 
     /**
      * Who an implant actually does something for, according to the effect MegaMek gives it.
@@ -199,6 +204,49 @@ public final class ManeiDominiImplants {
 
         ensureNeuralInterface(issued, rank, warriorFightsOnFoot);
         return issued;
+    }
+
+    /**
+     * Selects a warrior's implants and fits them.
+     *
+     * <p>Takes {@link PilotOptions} rather than anything more specific so that both generators can
+     * call it: MekHQ's {@code PersonnelOptions} extends it, and MegaMek's crews carry it directly. A
+     * Shadow Division raised in either therefore ends up augmented the same way.</p>
+     *
+     * <p>The explosive charge every Manei Domini implant carries is fitted here too, and is not
+     * counted against the allowance - the source describes it as a property of their augmentation
+     * rather than an implant issued in place of another.</p>
+     *
+     * @param options             the warrior's options, which this sets
+     * @param rank                the rank whose allowance governs the selection
+     * @param warriorFightsOnFoot whether the warrior fights with their own body rather than a unit
+     *
+     * @return the implants fitted, excluding the explosive charge
+     */
+    public static List<String> fitTo(PilotOptions options, ManeiDominiAugmentationRank rank,
+          boolean warriorFightsOnFoot) {
+        setOption(options, getExplosiveCharge());
+        List<String> issued = selectFor(rank, warriorFightsOnFoot);
+        for (String implant : issued) {
+            setOption(options, implant);
+        }
+        return issued;
+    }
+
+    /**
+     * Switches one option on, if the warrior's options carry it at all.
+     *
+     * @return {@code true} if the option was found and set
+     */
+    private static boolean setOption(PilotOptions options, String optionName) {
+        IOption option = options.getOption(optionName);
+        if (option == null) {
+            LOGGER.warn("[ManeiDomini] '{}' is not an option these warriors carry; not fitted",
+                  optionName);
+            return false;
+        }
+        option.setValue(true);
+        return true;
     }
 
     /**

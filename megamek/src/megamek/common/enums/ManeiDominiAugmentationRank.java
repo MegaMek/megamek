@@ -88,6 +88,29 @@ public enum ManeiDominiAugmentationRank {
     }
 
     /**
+     * Derives the Manei Domini rank a warrior carries from the military rank they already hold.
+     *
+     * <p>Derived rather than rolled so that a commander is never out-augmented by the warriors under
+     * them, which rolling independently of their standing would allow. Both generators call this, so a
+     * Shadow Division raised in either comes out the same.</p>
+     *
+     * @param rankIndex        the warrior's rank within their rank table, zero being the lowest
+     * @param highestRankIndex the highest index that table holds; the caller supplies it because the
+     *                         tables differ in length and a warrior's standing is their position
+     *                         within their own, not an absolute number
+     *
+     * @return the matching Manei Domini rank, Alpha for the most junior and Omicron for the most
+     *       senior
+     */
+    public static ManeiDominiAugmentationRank forRankIndex(int rankIndex, int highestRankIndex) {
+        ManeiDominiAugmentationRank[] byStanding = values();
+        int standing = Math.max(0, rankIndex);
+        int ceiling = Math.max(1, highestRankIndex);
+        int band = (standing * byStanding.length) / ceiling;
+        return byStanding[Math.min(band, byStanding.length - 1)];
+    }
+
+    /**
      * Matches a rank by name, for a consumer bridging its own Manei Domini rank type to this one.
      *
      * @param name the rank name, matched without regard to case

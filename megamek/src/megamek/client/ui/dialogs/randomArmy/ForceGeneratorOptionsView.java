@@ -1540,6 +1540,10 @@ public class ForceGeneratorOptionsView extends JPanel implements FocusListener, 
         protected ForceDescriptor doInBackground() {
             btnGenerate.setEnabled(false);
             Ruleset.findRuleset(fd).processRoot(fd, this);
+            // Fitted as the force is generated rather than when it is added to a game, so the crews
+            // carry their implants everywhere the generated force goes - the preview, an exported MUL
+            // and the lobby alike.
+            ManeiDominiCrewAugmentor.augment(fd, gameOptions);
             return fd;
         }
 

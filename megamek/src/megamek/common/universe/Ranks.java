@@ -42,8 +42,8 @@ import java.util.Map;
 import java.util.Optional;
 
 import megamek.MMConstants;
+import megamek.common.Configuration;
 import megamek.common.annotations.Nullable;
-import megamek.common.util.fileUtils.MegaMekFile;
 import megamek.logging.MMLogger;
 import megamek.utilities.xml.MMXMLUtility;
 import org.w3c.dom.Document;
@@ -151,12 +151,37 @@ public final class Ranks {
         return getByRatgenIndex(ratgenIndex).map(system -> system.nameAt(rankInt));
     }
 
+    /**
+     * Loads the shipped rank systems, then overlays any the user has defined.
+     *
+     * <p>Deliberately not {@code MegaMekFile}, which substitutes a userdata copy for the shipped file
+     * rather than merging the two. A user file holding one custom system - or, as MekHQ ships it, none
+     * at all - would then be the only thing loaded, and every faction rank in the game would resolve to
+     * nothing. Loading both and letting the user's win by code keeps a custom system authoritative
+     * without discarding the rest.</p>
+     */
     private void loadFromXml() throws Exception {
-        File file = new MegaMekFile(MMConstants.RANKS_FILE_PATH).getFile();
-        if (file == null || !file.exists()) {
-            LOGGER.info("Ranks file {} not present; rank lookups will return empty.",
-                  MMConstants.RANKS_FILE_PATH);
-            return;
+        int shipped = loadRankSystemsFrom(new File(MMConstants.RANKS_FILE_PATH), "shipped");
+        int userDefined = loadRankSystemsFrom(
+              new File(Configuration.userDataDir(), MMConstants.RANKS_FILE_PATH), "user");
+        LOGGER.info("Loaded {} rank system(s): {} shipped, {} from user data (user systems override"
+                    + " shipped ones of the same code)", byCode.size(), shipped, userDefined);
+    }
+
+    /**
+     * Reads one rank-system file into {@link #byCode}, replacing any system already held under the same
+     * code.
+     *
+     * @param file        the file to read; absent files are not an error, since neither location is
+     *                    required to exist
+     * @param description how to describe this file in the log
+     *
+     * @return how many systems this file contributed
+     */
+    private int loadRankSystemsFrom(File file, String description) throws Exception {
+        if (!file.exists()) {
+            LOGGER.info("No {} ranks file at {}; skipping it.", description, file.getPath());
+            return 0;
         }
 
         Document xmlDoc;
@@ -166,6 +191,7 @@ public final class Ranks {
         Element root = xmlDoc.getDocumentElement();
         root.normalize();
         NodeList systems = root.getElementsByTagName("rankSystem");
+        int loaded = 0;
         for (int i = 0; i < systems.getLength(); i++) {
             Node systemNode = systems.item(i);
             if (systemNode.getNodeType() != Node.ELEMENT_NODE) {
@@ -174,9 +200,11 @@ public final class Ranks {
             RankSystem system = parseRankSystem((Element) systemNode);
             if (system != null) {
                 byCode.put(system.code(), system);
+                loaded++;
             }
         }
-        LOGGER.info("Loaded {} rank system(s) from {}", byCode.size(), MMConstants.RANKS_FILE_PATH);
+        LOGGER.info("Loaded {} rank system(s) from the {} file {}", loaded, description, file.getPath());
+        return loaded;
     }
 
     private static @Nullable RankSystem parseRankSystem(Element systemElement) {

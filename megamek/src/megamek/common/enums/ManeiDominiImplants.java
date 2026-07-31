@@ -60,12 +60,21 @@ import megamek.logging.MMLogger;
  * triple-strength myomer implant are read only by the infantry and BattleArmor calculators. The neural
  * interfaces are the reverse, being what lets a warrior drive the unit they sit in.</p>
  *
- * <p><b>One departure from the chart.</b> Extraneous limbs, the prosthetic tail and both sets of
- * prosthetic wings (<i>Interstellar Operations</i>, pp. 84-85) are Manei Domini augmentations the game
- * implements and restricts to conventional infantry, but the availability chart does not list them and
- * so gives them no level. They are placed at level 3, with the other limb work, as a deliberate
- * inference rather than something the source states - which matters if the chart is ever revisited,
- * because every other entry here can be pointed at a line in it and these four cannot.</p>
+ * <p><b>Six entries are placed by inference, not by the chart.</b> They are Manei Domini
+ * augmentations the game implements and the availability chart does not list, so it gives them no
+ * level and one had to be chosen. This matters if the chart is ever revisited: every other entry here
+ * can be pointed at a line in it, and these cannot.</p>
+ *
+ * <ul>
+ *   <li>Level 3 - extraneous limbs, the prosthetic tail and both sets of prosthetic wings
+ *       (<i>Interstellar Operations</i>, pp. 84-85), placed with the other limb work.</li>
+ *   <li>Level 4 - the dermal armour camouflage (IO p. 80), placed with the dermal armour it varies,
+ *       and the triple-core processor (IO p. 81), placed with the other significant augmentations.</li>
+ * </ul>
+ *
+ * <p>Deliberately left out: the prototype direct neural interface, being the crude forerunner of the
+ * interface these warriors already carry, and the filtration implants, which the game declares
+ * unimplemented.</p>
  *
  * @see ManeiDominiAugmentationRank
  */
@@ -141,6 +150,11 @@ public final class ManeiDominiImplants {
           new ImplantEntry(4, ImplantAudience.ON_FOOT, OptionsConstants.MD_GAS_EFFUSER_TOXIN),
           new ImplantEntry(4, ImplantAudience.ON_FOOT, OptionsConstants.MD_DERMAL_ARMOR),
           new ImplantEntry(4, ImplantAudience.ON_FOOT, OptionsConstants.MD_TSM_IMPLANT),
+          // Also placed by inference - see the class comment. The camouflage belongs with the dermal
+          // armour it varies; the processor's work is all done through the unit, which is why it
+          // serves a warrior in a cockpit and needs a neural interface to reach one.
+          new ImplantEntry(4, ImplantAudience.ON_FOOT, OptionsConstants.MD_DERMAL_CAMO_ARMOR),
+          new ImplantEntry(4, ImplantAudience.PILOTING, OptionsConstants.MD_TRIPLE_CORE_PROCESSOR),
           new ImplantEntry(5, ImplantAudience.ANYONE, OptionsConstants.MD_ENH_MM_IMPLANTS),
           new ImplantEntry(5, ImplantAudience.PILOTING, OptionsConstants.MD_BVDNI));
 
@@ -157,9 +171,14 @@ public final class ManeiDominiImplants {
           // so a warrior is issued one or the other.
           OptionsConstants.MD_PL_GLIDER, OptionsConstants.MD_PL_FLIGHT);
 
-    /** Multi-modal sensory implants that a non-infantry warrior cannot use without a neural interface. */
+    /**
+     * Implants that reach the unit through a neural interface and do nothing without one. The
+     * multi-modal sensory implants need it to sync with the unit's sensors; the triple-core processor
+     * says outright that it requires a VDNI or a buffered VDNI.
+     */
     private static final List<String> REQUIRE_NEURAL_INTERFACE = List.of(
-          OptionsConstants.MD_MM_IMPLANTS, OptionsConstants.MD_ENH_MM_IMPLANTS);
+          OptionsConstants.MD_MM_IMPLANTS, OptionsConstants.MD_ENH_MM_IMPLANTS,
+          OptionsConstants.MD_TRIPLE_CORE_PROCESSOR);
 
     /** The neural interfaces that satisfy that requirement. */
     private static final List<String> NEURAL_INTERFACES = List.of(

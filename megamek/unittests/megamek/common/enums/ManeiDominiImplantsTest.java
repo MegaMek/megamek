@@ -269,4 +269,42 @@ class ManeiDominiImplantsTest {
                   prosthetic + " does nothing for a warrior in a cockpit");
         }
     }
+
+    /**
+     * The triple-core processor states outright that it requires a VDNI or a buffered VDNI, so it is
+     * never issued alone - the same rule the multi-modal implants follow.
+     */
+    @ParameterizedTest
+    @EnumSource(ManeiDominiAugmentationRank.class)
+    void theTripleCoreProcessorAlwaysComesWithANeuralInterface(
+          ManeiDominiAugmentationRank maneiDominiRank) {
+        for (int draw = 0; draw < DRAWS; draw++) {
+            List<String> issued = ManeiDominiImplants.selectFor(maneiDominiRank, false);
+            if (!issued.contains(OptionsConstants.MD_TRIPLE_CORE_PROCESSOR)) {
+                continue;
+            }
+            assertTrue(issued.contains(OptionsConstants.MD_VDNI)
+                        || issued.contains(OptionsConstants.MD_BVDNI),
+                  maneiDominiRank + " got a triple-core processor with nothing to run it through: "
+                        + issued);
+        }
+    }
+
+    /**
+     * The processor's work - initiative, aimed shots, shutdown avoidance - is all done through the
+     * unit, so it serves a warrior in a cockpit. The camouflage varies the dermal armour and is read
+     * only for infantry.
+     */
+    @Test
+    void theInferredLevelFourEntriesServeWhoTheyShould() {
+        assertEquals(4, ManeiDominiImplants.levelOf(OptionsConstants.MD_TRIPLE_CORE_PROCESSOR));
+        assertTrue(ManeiDominiImplants.servesWarrior(OptionsConstants.MD_TRIPLE_CORE_PROCESSOR, false),
+              "the processor serves a warrior in a cockpit");
+        assertFalse(ManeiDominiImplants.servesWarrior(OptionsConstants.MD_TRIPLE_CORE_PROCESSOR, true));
+
+        assertEquals(4, ManeiDominiImplants.levelOf(OptionsConstants.MD_DERMAL_CAMO_ARMOR));
+        assertTrue(ManeiDominiImplants.servesWarrior(OptionsConstants.MD_DERMAL_CAMO_ARMOR, true),
+              "the camouflage serves a foot trooper");
+        assertFalse(ManeiDominiImplants.servesWarrior(OptionsConstants.MD_DERMAL_CAMO_ARMOR, false));
+    }
 }

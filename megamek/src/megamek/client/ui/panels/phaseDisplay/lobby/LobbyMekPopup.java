@@ -287,7 +287,8 @@ class LobbyMekPopup {
               .anyMatch(entity -> entity.isTractor() && (entity.getTractor() == Entity.NONE)
                     && (entity.getTowing() == Entity.NONE));
         if ((joinedEntities.size() > 1) && anyFreeTrailerSelected && anyFreeTractorSelected) {
-            popup.add(menuItem("Connect as Train...", LMP_CONNECT_TRAIN + NO_INFO + seIds, true, listener));
+            popup.add(menuItem(Messages.getString("ChatLounge.ConnectAsTrain"),
+                  LMP_CONNECT_TRAIN + NO_INFO + seIds, true, listener));
         }
 
         if (accessibleCarriers) {

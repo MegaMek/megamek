@@ -43,13 +43,13 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 /**
- * Covers the short label naming where a unit sits in its train.
+ * Covers working out where a unit sits in its train.
  *
  * <p>A convoy can carry several identical carriages, so the unit name alone does not say which is which, and the
  * order decides which hex each one occupies. The label is used in the lobby unit list and in the weapon panel's
  * ammo dropdown, where ammo can come from any unit in the train.</p>
  */
-class TrainPositionLabelTest {
+class TrainPositionTest {
 
     private static final double TRACTOR_TONS = 75.0;
     private static final double CARRIAGE_TONS = 10.0;
@@ -96,16 +96,16 @@ class TrainPositionLabelTest {
     void theTractorIsLabelledTR() throws Exception {
         Tank tractor = buildTrain(2);
 
-        assertEquals("TR", TrainLayout.trainPositionLabel(tractor));
+        assertEquals(TrainLayout.TRACTOR_POSITION, TrainLayout.trainPosition(tractor));
     }
 
     @Test
     void trailersAreNumberedFromTheFront() throws Exception {
         Tank tractor = buildTrain(3);
 
-        assertEquals("TL1", TrainLayout.trainPositionLabel(trailerAt(tractor, 0)));
-        assertEquals("TL2", TrainLayout.trainPositionLabel(trailerAt(tractor, 1)));
-        assertEquals("TL3", TrainLayout.trainPositionLabel(trailerAt(tractor, 2)));
+        assertEquals(1, TrainLayout.trainPosition(trailerAt(tractor, 0)));
+        assertEquals(2, TrainLayout.trainPosition(trailerAt(tractor, 1)));
+        assertEquals(3, TrainLayout.trainPosition(trailerAt(tractor, 2)));
     }
 
     @Test
@@ -113,15 +113,15 @@ class TrainPositionLabelTest {
         Tank loneVehicle = buildVehicle(TRACTOR_TONS, false);
         Tank looseTrailer = buildVehicle(CARRIAGE_TONS, true);
 
-        assertEquals("", TrainLayout.trainPositionLabel(loneVehicle),
+        assertEquals(TrainLayout.NOT_IN_TRAIN, TrainLayout.trainPosition(loneVehicle),
               "A unit towing nothing and towed by nothing is not in a train");
-        assertEquals("", TrainLayout.trainPositionLabel(looseTrailer),
+        assertEquals(TrainLayout.NOT_IN_TRAIN, TrainLayout.trainPosition(looseTrailer),
               "An unhitched trailer has no place in a train yet");
     }
 
     @Test
     void nullIsHandled() {
-        assertEquals("", TrainLayout.trainPositionLabel(null));
+        assertEquals(TrainLayout.NOT_IN_TRAIN, TrainLayout.trainPosition(null));
     }
 
     @Test
@@ -132,7 +132,7 @@ class TrainPositionLabelTest {
         // Dropping the lead trailer takes the two behind it out of the train as well.
         tractor.disconnectUnit(leadTrailer.getId());
 
-        assertEquals("", TrainLayout.trainPositionLabel(leadTrailer), "It is no longer in a train");
-        assertEquals("", TrainLayout.trainPositionLabel(tractor), "and the tractor tows nothing now");
+        assertEquals(TrainLayout.NOT_IN_TRAIN, TrainLayout.trainPosition(leadTrailer), "It is no longer in a train");
+        assertEquals(TrainLayout.NOT_IN_TRAIN, TrainLayout.trainPosition(tractor), "and the tractor tows nothing now");
     }
 }

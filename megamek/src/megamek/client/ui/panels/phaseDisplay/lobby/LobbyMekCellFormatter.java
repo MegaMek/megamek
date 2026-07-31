@@ -537,7 +537,7 @@ class LobbyMekCellFormatter {
 
                 // Say where in the train it sits. A convoy can carry several identical carriages, so the name alone
                 // does not say which is which, and the order decides which hex each one ends up in.
-                String trainPosition = TrainLayout.trainPositionLabel(entity);
+                String trainPosition = UIUtil.trainPositionLabel(entity);
                 if (!trainPosition.isEmpty()) {
                     result.append(" (").append(trainPosition).append(')');
                 }

@@ -179,47 +179,44 @@ public final class TrainLayout {
         }
     }
 
+    /** Returned by {@link #trainPosition(Entity)} when the unit is not part of a train. */
+    public static final int NOT_IN_TRAIN = -1;
+
+    /** Returned by {@link #trainPosition(Entity)} for the tractor heading a train. */
+    public static final int TRACTOR_POSITION = 0;
+
     /**
-     * Returns a short label for where a unit sits in its train: {@code TR} for the tractor heading it, then
-     * {@code TL1}, {@code TL2} and so on back along the trailers.
+     * Returns where a unit sits in its train: {@link #TRACTOR_POSITION} for the tractor heading it, then 1, 2 and so
+     * on back along the trailers, or {@link #NOT_IN_TRAIN} when the unit is not part of one.
      * <p>
-     * The position is what a player actually needs to know. Ordering fixes the hitch chain and so which hex each
-     * unit occupies, and with several identical carriages the name alone does not say which is which.
+     * The position is what a player needs to know. Ordering fixes the hitch chain and so which hex each unit
+     * occupies, and with several identical carriages the name alone does not say which is which. The wording is left
+     * to the caller, since this is common code and the labels a player reads belong in the UI's resource bundle.
      * </p>
      *
-     * @param unit the unit to label
+     * @param unit the unit to locate
      *
-     * @return the label, or an empty string when the unit is not part of a train
+     * @return the position in the train, or {@link #NOT_IN_TRAIN}
      */
-    public static String trainPositionLabel(@Nullable Entity unit) {
+    public static int trainPosition(@Nullable Entity unit) {
         if ((unit == null) || (unit.getGame() == null)) {
-            return "";
+            return NOT_IN_TRAIN;
         }
 
         // A tractor heads its own train: it tows units but is not towed itself.
         if (unit.getTractor() == Entity.NONE) {
-            return unit.getAllTowedUnits().isEmpty() ? "" : "TR";
+            return unit.getAllTowedUnits().isEmpty() ? NOT_IN_TRAIN : TRACTOR_POSITION;
         }
 
         Entity tractor = unit.getGame().getEntity(unit.getTractor());
         if (tractor == null) {
-            return "";
+            return NOT_IN_TRAIN;
         }
 
         int trailerIndex = tractor.getAllTowedUnits().indexOf(unit.getId());
-        return (trailerIndex < 0) ? "" : "TL" + (trailerIndex + 1);
+        return (trailerIndex < 0) ? NOT_IN_TRAIN : (trailerIndex + 1);
     }
 
-    /**
-     * Builds the run of hexes a train occupies when its tractor is placed in a given hex, running backwards from that
-     * hex against the tractor's facing. Long enough to hold the whole train however it packs.
-     *
-     * @param tractorHex   the hex the tractor occupies
-     * @param facing       the tractor's facing
-     * @param trailerCount how many trailers the tractor tows
-     *
-     * @return hexes ordered so that the last entry is the tractor's hex
-     */
     public static List<Coords> deploymentPath(Coords tractorHex, int facing, int trailerCount) {
         int rearDirection = (facing + 3) % 6;
         List<Coords> path = new ArrayList<>();

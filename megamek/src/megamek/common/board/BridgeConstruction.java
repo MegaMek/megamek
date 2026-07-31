@@ -169,16 +169,6 @@ public final class BridgeConstruction {
     }
 
     /**
-     * @param bank      a hex adjacent to a bridge site
-     * @param targetHex the bridge site hex
-     *
-     * @return {@code true} if the bank can anchor a bridge - a unit can get on or off the span there. Over water this
-     *       means the bank is dry land (or shallow water) or holds a bridge; over a dry canyon it means the bank is a
-     *       rim higher than the canyon floor, or holds a bridge. A deep-water bank, or a canyon-floor bank no higher
-     *       than the site, cannot anchor; a span may still point that way to be continued by a further span (wide
-     *       rivers/canyons). Flat ground anchors nothing, so a flat site is never valid.
-     */
-    /**
      * @param bank      a hex adjacent to a bridge site (e.g. the bridgelayer's own hex)
      * @param targetHex the hex a bridge would be placed in
      *
@@ -191,6 +181,16 @@ public final class BridgeConstruction {
         return anchorsBridge(bank, targetHex);
     }
 
+    /**
+     * @param bank      a hex adjacent to a bridge site
+     * @param targetHex the bridge site hex
+     *
+     * @return {@code true} if the bank can anchor a bridge - a unit can get on or off the span there. Over water this
+     *       means the bank is dry land (or shallow water) or holds a bridge; over a dry canyon it means the bank is a
+     *       rim higher than the canyon floor, or holds a bridge. A deep-water bank, or a canyon-floor bank no higher
+     *       than the site, cannot anchor; a span may still point that way to be continued by a further span (wide
+     *       rivers/canyons). Flat ground anchors nothing, so a flat site is never valid.
+     */
     private static boolean anchorsBridge(Hex bank, Hex targetHex) {
         if (bank.containsTerrain(Terrains.BRIDGE)) {
             return true;

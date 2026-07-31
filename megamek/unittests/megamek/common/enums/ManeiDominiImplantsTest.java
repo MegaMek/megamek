@@ -32,6 +32,7 @@
  */
 package megamek.common.enums;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
@@ -233,6 +234,39 @@ class ManeiDominiImplantsTest {
         for (boolean fightsOnFoot : BOTH_AUDIENCES) {
             assertTrue(ManeiDominiImplants.servesWarrior(OptionsConstants.MD_PAIN_SHUNT, fightsOnFoot),
                   "a pain shunt serves whoever carries it");
+        }
+    }
+
+    /**
+     * Powered flight wings carry every glider benefit and the game forbids the pair outright, so a
+     * warrior gets one or the other.
+     */
+    @ParameterizedTest
+    @EnumSource(ManeiDominiAugmentationRank.class)
+    void gliderAndPoweredFlightWingsAreNeverBothIssued(ManeiDominiAugmentationRank maneiDominiRank) {
+        for (boolean fightsOnFoot : BOTH_AUDIENCES) {
+            for (int draw = 0; draw < DRAWS; draw++) {
+                List<String> issued = ManeiDominiImplants.selectFor(maneiDominiRank, fightsOnFoot);
+                assertFalse(issued.contains(OptionsConstants.MD_PL_GLIDER)
+                            && issued.contains(OptionsConstants.MD_PL_FLIGHT),
+                      "both sets of wings issued: " + issued);
+            }
+        }
+    }
+
+    /**
+     * The limb prosthetics the chart does not list are placed at level 3 by inference, and serve only
+     * a warrior fighting on foot.
+     */
+    @Test
+    void theExtraLimbProstheticsServeOnlyFootTroopers() {
+        for (String prosthetic : List.of(OptionsConstants.MD_PL_EXTRA_LIMBS,
+              OptionsConstants.MD_PL_TAIL, OptionsConstants.MD_PL_GLIDER,
+              OptionsConstants.MD_PL_FLIGHT)) {
+            assertEquals(3, ManeiDominiImplants.levelOf(prosthetic), prosthetic + " sits at level 3");
+            assertTrue(ManeiDominiImplants.servesWarrior(prosthetic, true), prosthetic + " serves infantry");
+            assertFalse(ManeiDominiImplants.servesWarrior(prosthetic, false),
+                  prosthetic + " does nothing for a warrior in a cockpit");
         }
     }
 }

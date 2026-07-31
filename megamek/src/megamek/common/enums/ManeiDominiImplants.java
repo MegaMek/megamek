@@ -60,6 +60,13 @@ import megamek.logging.MMLogger;
  * triple-strength myomer implant are read only by the infantry and BattleArmor calculators. The neural
  * interfaces are the reverse, being what lets a warrior drive the unit they sit in.</p>
  *
+ * <p><b>One departure from the chart.</b> Extraneous limbs, the prosthetic tail and both sets of
+ * prosthetic wings (<i>Interstellar Operations</i>, pp. 84-85) are Manei Domini augmentations the game
+ * implements and restricts to conventional infantry, but the availability chart does not list them and
+ * so gives them no level. They are placed at level 3, with the other limb work, as a deliberate
+ * inference rather than something the source states - which matters if the chart is ever revisited,
+ * because every other entry here can be pointed at a line in it and these four cannot.</p>
+ *
  * @see ManeiDominiAugmentationRank
  */
 public final class ManeiDominiImplants {
@@ -122,6 +129,12 @@ public final class ManeiDominiImplants {
           new ImplantEntry(3, ImplantAudience.ON_FOOT, OptionsConstants.MD_PL_I_ENHANCED),
           new ImplantEntry(3, ImplantAudience.ON_FOOT, OptionsConstants.MD_PL_MASC),
           new ImplantEntry(3, ImplantAudience.ON_FOOT, OptionsConstants.MD_GAS_EFFUSER_PHEROMONE),
+          // The four below are placed at level 3 by inference, not by the chart - see the note in the
+          // class comment. They sit with the other limb work, which is what level 3 otherwise holds.
+          new ImplantEntry(3, ImplantAudience.ON_FOOT, OptionsConstants.MD_PL_EXTRA_LIMBS),
+          new ImplantEntry(3, ImplantAudience.ON_FOOT, OptionsConstants.MD_PL_TAIL),
+          new ImplantEntry(3, ImplantAudience.ON_FOOT, OptionsConstants.MD_PL_GLIDER),
+          new ImplantEntry(3, ImplantAudience.ON_FOOT, OptionsConstants.MD_PL_FLIGHT),
           new ImplantEntry(3, ImplantAudience.PILOTING, OptionsConstants.MD_VDNI),
           new ImplantEntry(3, ImplantAudience.ANYONE, OptionsConstants.MD_BOOST_COMM_IMPLANT),
           new ImplantEntry(3, ImplantAudience.ANYONE, OptionsConstants.MD_MM_IMPLANTS),
@@ -139,7 +152,10 @@ public final class ManeiDominiImplants {
           OptionsConstants.MD_PL_ENHANCED, OptionsConstants.MD_PL_I_ENHANCED,
           OptionsConstants.MD_COMM_IMPLANT, OptionsConstants.MD_BOOST_COMM_IMPLANT,
           OptionsConstants.MD_MM_IMPLANTS, OptionsConstants.MD_ENH_MM_IMPLANTS,
-          OptionsConstants.MD_VDNI, OptionsConstants.MD_BVDNI);
+          OptionsConstants.MD_VDNI, OptionsConstants.MD_BVDNI,
+          // Powered flight wings carry every glider benefit and the game forbids the pair outright,
+          // so a warrior is issued one or the other.
+          OptionsConstants.MD_PL_GLIDER, OptionsConstants.MD_PL_FLIGHT);
 
     /** Multi-modal sensory implants that a non-infantry warrior cannot use without a neural interface. */
     private static final List<String> REQUIRE_NEURAL_INTERFACE = List.of(

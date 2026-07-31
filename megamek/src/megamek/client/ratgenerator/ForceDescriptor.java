@@ -325,22 +325,18 @@ public class ForceDescriptor {
                     }
                 }
             } else {
-                if (null != generationRule) {
-                    switch (generationRule) {
-                        case "chassis":
-                            if (getChassis().isEmpty()) {
-                                generate(generationRule);
-                            }
-                            break;
-                        case "model":
-                            if (getModels().isEmpty()) {
-                                generate(generationRule);
-                            }
-                            break;
-                        case "group":
-                            generateLance(subForces);
-                            break;
-                    }
+                // Each <subforces> block tagged the children it produced with its own generate rule,
+                // so a node holding several of them honours each in turn. A node with one block yields
+                // one group and behaves exactly as it did when the rule was read off the node itself.
+                Map<String, List<ForceDescriptor>> byBlockRule = subForces.stream()
+                      .filter(sub -> null != sub.getGenerationRule())
+                      .collect(Collectors.groupingBy(ForceDescriptor::getGenerationRule));
+                if (!byBlockRule.isEmpty()) {
+                    byBlockRule.forEach(this::generateByRule);
+                } else if (null != generationRule) {
+                    // No child carries a rule, so fall back to the node's own - an older shape, and
+                    // what an attached force still looks like.
+                    generateByRule(generationRule, subForces);
                 }
             }
         }
@@ -909,6 +905,63 @@ public class ForceDescriptor {
                 roles.add(MissionRole.FIELD_GUN);
             }
         }
+    }
+
+    /**
+     * Generates one group of children under the rule their {@code <subforces>} block declared.
+     *
+     * <p>Applied per block rather than per node so a mixed formation can build its groups by different
+     * rules - a Level II generating its Meks as a group while its aerospace pair share one model, which
+     * is what makes the two fighters identical.</p>
+     *
+     * @param rule    the block's generate rule
+     * @param members the children that block produced
+     */
+    private void generateByRule(String rule, List<ForceDescriptor> members) {
+        if (members.isEmpty()) {
+            return;
+        }
+        LOGGER.debug("[ForceGen][GenRule] '{}': generating {} child(ren) by '{}'",
+              parseName(), members.size(), rule);
+        switch (rule) {
+            case "group" -> generateLance(members);
+            // One unit picked for the whole block and pinned to every member, so the block comes out
+            // uniform. Members that already carry a pick are left alone, an ancestor having set it.
+            case "model", "chassis" -> shareOneUnitAcross(rule, members);
+            default -> LOGGER.warn("[ForceGen][GenRule] '{}': unknown generate rule '{}'; ignored",
+                  parseName(), rule);
+        }
+    }
+
+    /**
+     * Picks a single unit for the group and pins it to every member.
+     *
+     * @param rule    {@code chassis} to share only the chassis, otherwise the exact model
+     * @param members the children to make uniform
+     */
+    private void shareOneUnitAcross(String rule, List<ForceDescriptor> members) {
+        boolean alreadyPicked = members.stream()
+                                      .allMatch(member -> rule.equals("chassis")
+                                            ? !member.getChassis().isEmpty()
+                                            : !member.getModels().isEmpty());
+        if (alreadyPicked) {
+            return;
+        }
+        ModelRecord shared = members.getFirst().generate();
+        if (shared == null) {
+            LOGGER.debug("[ForceGen][GenRule] '{}': no unit available to share across {} child(ren)",
+                  parseName(), members.size());
+            return;
+        }
+        for (ForceDescriptor member : members) {
+            if (rule.equals("chassis")) {
+                member.getChassis().add(shared.getChassis());
+            } else {
+                member.getModels().add(shared.getKey());
+            }
+        }
+        LOGGER.debug("[ForceGen][GenRule] '{}': {} child(ren) share {} '{}'",
+              parseName(), members.size(), rule, shared.getKey());
     }
 
     public void generate(String level) {

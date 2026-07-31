@@ -1,6 +1,6 @@
 /*
  * Copyright (C) 2000-2005 Ben Mazur (bmazur@sev.org)
- * Copyright (C) 2005-2025 The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2005-2026 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -374,8 +374,10 @@ public class TestTank extends TestEntity {
         }
         for (Mounted<?> m : tank.getEquipment()) {
             if (!legalForMotiveType(m.getType(), tank.getMovementMode(), false)) {
-                buff.append(m.getType().getName()).append(" is incompatible with ")
-                      .append(tank.getMovementModeAsString());
+                buff.append(m.getType().getName())
+                      .append(" is incompatible with ")
+                      .append(tank.getMovementModeAsString())
+                      .append(".\n");
                 correct = false;
             }
         }

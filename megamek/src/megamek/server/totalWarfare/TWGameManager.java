@@ -26813,6 +26813,10 @@ public class TWGameManager extends AbstractGameManager {
             }
         }
 
+        // Re-hitch tractor-trailer trains. Like the transport ids above, a MUL stores the ids the saving game used,
+        // so the train can only be rebuilt now that every unit has its server-given id.
+        restoreTrains(entities, idMap);
+
         // Set the "loaded keepers" which is apparently used for deployment unloading to
         // differentiate between units loaded in the lobby and other carried units
         // When entering a game from the lobby, this list is generated again, but not
@@ -26833,6 +26837,73 @@ public class TWGameManager extends AbstractGameManager {
         List<Integer> changedForces = new ArrayList<>(forceMapping.values());
 
         send(createAddEntityPacket(entityIds, changedForces));
+    }
+
+    /**
+     * Re-hitches the trains a MUL describes, once the units in it have real ids.
+     * <p>
+     * A tractor read from a file carries the trailer ids the saving game used, which mean nothing here. Each one is
+     * translated through {@code idMap} and the train is built again from the front, which restores every trailer's
+     * tractor, hitch and place in the chain. Building it through {@code towUnit} rather than setting the fields
+     * directly is what loads the hitches, so the train behaves exactly as one connected in the lobby.
+     * </p>
+     *
+     * @param entities the units that were just added
+     * @param idMap    saved id to server-given id, covering only the units in this batch
+     */
+    void restoreTrains(List<Entity> entities, Map<Integer, Integer> idMap) {
+        for (final Entity tractor : entities) {
+            List<Integer> savedTrailerIds = new ArrayList<>(tractor.getAllTowedUnits());
+
+            if (savedTrailerIds.isEmpty()) {
+                continue;
+            }
+
+            // Drop the saved ids before re-hitching. They are file ids, not entity ids, and one of them may well
+            // collide with a real id in this game, so none of them may be left in the list.
+            for (int savedTrailerId : savedTrailerIds) {
+                tractor.removeTowedUnit(savedTrailerId);
+            }
+
+            for (int savedTrailerId : savedTrailerIds) {
+                Integer realTrailerId = idMap.get(savedTrailerId);
+                Entity trailer = (realTrailerId == null) ? null : game.getEntity(realTrailerId);
+
+                if (trailer == null) {
+                    LOGGER.warn("[Train] {} was saved towing unit #{}, which is not in this file; the rest of the "
+                                + "train is still hitched", tractor.getDisplayName(), savedTrailerId);
+                    continue;
+                }
+
+                // A file describes a train the current data may no longer support, so treat towUnit as able to fail.
+                // TankTrailerHitch.load throws when a hitch cannot take the trailer, and towUnit calls it without
+                // checking first. Letting that escape would abort receiveEntityAdd and lose every unit in the file,
+                // not just this train, so a bad tow costs the player one trailer rather than the whole force.
+                boolean hitched;
+                try {
+                    tractor.towUnit(trailer.getId());
+                    // towUnit records the trailer as part of the train before it looks for a hitch to hold it, and
+                    // does not undo that when nothing can, so a silent failure looks the same as a thrown one here.
+                    hitched = trailer.getTowedBy() != Entity.NONE;
+                } catch (RuntimeException towFailure) {
+                    LOGGER.warn("[Train] {} could not tow {} from file: {}",
+                          tractor.getDisplayName(), trailer.getDisplayName(), towFailure.getMessage());
+                    hitched = false;
+                }
+
+                if (!hitched) {
+                    // Leave it loose rather than listed in a train nothing is holding it to.
+                    LOGGER.warn("[Train] {} has no free hitch for {}; the trailer was loaded loose",
+                          tractor.getDisplayName(), trailer.getDisplayName());
+                    tractor.removeTowedUnit(trailer.getId());
+                    trailer.setTractor(Entity.NONE);
+                    trailer.setTowedBy(Entity.NONE);
+                }
+            }
+
+            LOGGER.info("[Train] restored {} towing {} trailer(s) from file",
+                  tractor.getDisplayName(), tractor.getAllTowedUnits().size());
+        }
     }
 
     /**

@@ -36,6 +36,7 @@ import java.util.List;
 
 import megamek.common.annotations.Nullable;
 import megamek.common.enums.AugmentedUnitType;
+import megamek.common.enums.NeuralInterfaceMode;
 import megamek.common.options.IGameOptions;
 import megamek.common.options.IOption;
 import megamek.common.options.OptionsConstants;
@@ -195,11 +196,6 @@ public final class ClanEnhancedImagingAugmentor {
      *       inert without them
      */
     private static boolean neuralInterfaceRulesAreOn(@Nullable IGameOptions gameOptions) {
-        if (gameOptions == null) {
-            return false;
-        }
-        IOption mode = gameOptions.getOption(OptionsConstants.ADVANCED_NEURAL_INTERFACE_MODE);
-        return (mode != null)
-              && !OptionsConstants.NEURAL_INTERFACE_MODE_OFF.equals(mode.stringValue());
+        return NeuralInterfaceMode.from(gameOptions).isOn();
     }
 }

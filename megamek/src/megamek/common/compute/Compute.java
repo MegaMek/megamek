@@ -3653,7 +3653,9 @@ public class Compute {
                       && !lnk_guide.isDestroyed() && !lnk_guide.isMissing()
                       && !lnk_guide.isBreached()
                       && lnk_guide.getType().hasFlag(MiscType.F_APOLLO)) {
-                    fHits *= .9f;
+                    // 90% damage expected with Apollo, but instead divide by 3 if Saturation mode
+                    boolean saturation = weaponAttackAction.getTargetType() == Targetable.TYPE_SATURATION;
+                    fHits *= (saturation) ? .333f : .9f;
                 }
             }
 

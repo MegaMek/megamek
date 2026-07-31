@@ -7453,8 +7453,8 @@ public class Compute {
     }
 
     /**
-     * Returns the number of required gunners for a vehicle.
-     * @param entity The vehicle
+     * Returns the number of required gunners for an entity.
+     * @param entity The entity
      * @return The number of required gunners
      */
     public static int getTotalGunnerNeeds(Entity entity) {

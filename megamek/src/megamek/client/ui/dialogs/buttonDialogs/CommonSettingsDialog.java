@@ -80,6 +80,7 @@ import megamek.client.ui.dialogs.helpDialogs.HelpDialog;
 import megamek.client.ui.dialogs.minimap.MinimapPanel;
 import megamek.client.ui.dialogs.unitDisplay.UnitDisplayPanel;
 import megamek.client.ui.models.FileNameComboBoxModel;
+import megamek.client.ui.panels.CommonSettingsPane;
 import megamek.client.ui.panels.phaseDisplay.DeploymentDisplay;
 import megamek.client.ui.panels.phaseDisplay.FiringDisplay;
 import megamek.client.ui.panels.phaseDisplay.PhysicalDisplay;
@@ -640,7 +641,6 @@ public class CommonSettingsDialog extends AbstractButtonDialog
 
     @Override
     protected Container createCenterPane() {
-        JTabbedPane panTabs = new JTabbedPane();
         addWindowListener(new WindowAdapter() {
             @Override
             public void windowClosing(WindowEvent e) {
@@ -648,44 +648,24 @@ public class CommonSettingsDialog extends AbstractButtonDialog
             }
         });
 
-        JScrollPane settingsPane = new JScrollPane(getSettingsPanel());
-        settingsPane.getVerticalScrollBar().setUnitIncrement(16);
-        JScrollPane audioPane = new JScrollPane(getAudioPanel());
-        audioPane.getVerticalScrollBar().setUnitIncrement(16);
-        JScrollPane keyBindPane = new JScrollPane(getKeyBindPanel());
-        keyBindPane.getVerticalScrollBar().setUnitIncrement(16);
-        JScrollPane advancedSettingsPane = new JScrollPane(getAdvancedSettingsPanel());
-        advancedSettingsPane.getVerticalScrollBar().setUnitIncrement(16);
-        JScrollPane gameBoardPane = new JScrollPane(getGameBoardPanel());
-        gameBoardPane.getVerticalScrollBar().setUnitIncrement(16);
-        JScrollPane unitDisplayPane = new JScrollPane(getUnitDisplayPanel());
-        unitDisplayPane.getVerticalScrollBar().setUnitIncrement(16);
-        JScrollPane miniMapPane = new JScrollPane(getMiniMapPanel());
-        miniMapPane.getVerticalScrollBar().setUnitIncrement(16);
-        JScrollPane reportPane = new JScrollPane(getReportPanel());
-        reportPane.getVerticalScrollBar().setUnitIncrement(16);
-        JScrollPane overlaysPane = new JScrollPane(getOverlaysPanel());
-        overlaysPane.getVerticalScrollBar().setUnitIncrement(16);
-        JScrollPane autoDisplayPane = new JScrollPane(getPhasePanel());
-        autoDisplayPane.getVerticalScrollBar().setUnitIncrement(16);
-        JScrollPane aiDisplayPane = new JScrollPane(aiDisplayPanel());
-        aiDisplayPane.getVerticalScrollBar().setUnitIncrement(16);
-
-        panTabs.add(Messages.getString("CommonSettingsDialog.main"), settingsPane);
-        panTabs.add(Messages.getString("CommonSettingsDialog.audio"), audioPane);
-        panTabs.add(Messages.getString("CommonSettingsDialog.keyBinds"), keyBindPane);
-        panTabs.add(Messages.getString("CommonSettingsDialog.gameBoard"), gameBoardPane);
-        panTabs.add(Messages.getString("CommonSettingsDialog.unitDisplay"), unitDisplayPane);
-        panTabs.add(Messages.getString("CommonSettingsDialog.miniMap"), miniMapPane);
-        panTabs.add(Messages.getString("CommonSettingsDialog.report"), reportPane);
-        panTabs.add(Messages.getString("CommonSettingsDialog.overlays"), overlaysPane);
-        panTabs.add(Messages.getString("CommonSettingsDialog.buttonOrder"), getButtonOrderPanel());
-        panTabs.add(Messages.getString("CommonSettingsDialog.autoDisplay"), autoDisplayPane);
-        panTabs.add(Messages.getString("CommonSettingsDialog.aiDisplay"), aiDisplayPane);
-        panTabs.add(Messages.getString("CommonSettingsDialog.advanced"), advancedSettingsPane);
-
-        return panTabs;
+            return new CommonSettingsPane(List.of(
+                    optionPage("main", getSettingsPanel()),
+                    optionPage("audio", getAudioPanel()),
+                    optionPage("keyBinds", getKeyBindPanel()),
+                    optionPage("gameBoard", getGameBoardPanel()),
+                    optionPage("unitDisplay", getUnitDisplayPanel()),
+                    optionPage("miniMap", getMiniMapPanel()),
+                    optionPage("report", getReportPanel()),
+                    optionPage("overlays", getOverlaysPanel()),
+                    optionPage("buttonOrder", getButtonOrderPanel()),
+                    optionPage("autoDisplay", getPhasePanel()),
+                    optionPage("aiDisplay", aiDisplayPanel()),
+                    optionPage("advanced", getAdvancedSettingsPanel())));
     }
+
+      private CommonSettingsPane.OptionPage optionPage(String id, JComponent content) {
+            return new CommonSettingsPane.OptionPage(id, Messages.getString("CommonSettingsDialog." + id), content);
+      }
 
     private JPanel getAudioPanel() {
         List<List<Component>> comps = new ArrayList<>();

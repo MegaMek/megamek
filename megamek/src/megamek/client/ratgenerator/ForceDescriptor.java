@@ -2488,7 +2488,7 @@ public class ForceDescriptor {
             UnitTable table = UnitTable.findTable(carrier.getFactionRec(),
                   UnitType.AEROSPACE_FIGHTER,
                   carrier.getYear(),
-                  carrier.getRating(),
+                  carrier.ratGeneratorRating(),
                   null,
                   ModelRecord.NETWORK_NONE,
                   EnumSet.noneOf(EntityMovementMode.class),

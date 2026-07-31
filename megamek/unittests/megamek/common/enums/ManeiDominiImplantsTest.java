@@ -60,6 +60,9 @@ class ManeiDominiImplantsTest {
     /** Both kinds of warrior: {@code true} fights on foot, {@code false} fights from a cockpit. */
     private static final boolean[] BOTH_AUDIENCES = { true, false };
 
+    /** The faction these rules are generated for unless a case says otherwise. */
+    private static final String WORD_OF_BLAKE = "WOB.SD";
+
     private static String describe(boolean fightsOnFoot) {
         return fightsOnFoot ? "on foot" : "from a cockpit";
     }
@@ -72,7 +75,7 @@ class ManeiDominiImplantsTest {
 
         for (boolean fightsOnFoot : BOTH_AUDIENCES) {
             for (int draw = 0; draw < DRAWS; draw++) {
-                List<String> issued = ManeiDominiImplants.selectFor(maneiDominiRank, fightsOnFoot);
+                List<String> issued = ManeiDominiImplants.selectFor(maneiDominiRank, fightsOnFoot, WORD_OF_BLAKE);
                 assertTrue(issued.size() >= minimum,
                       maneiDominiRank + " drew " + issued.size() + ", fewer than the minimum " + minimum);
                 // The chart's maximum is a hard ceiling. A neural interface needed by a multi-modal
@@ -90,7 +93,7 @@ class ManeiDominiImplantsTest {
 
         for (boolean fightsOnFoot : BOTH_AUDIENCES) {
             for (int draw = 0; draw < DRAWS; draw++) {
-                for (String option : ManeiDominiImplants.selectFor(maneiDominiRank, fightsOnFoot)) {
+                for (String option : ManeiDominiImplants.selectFor(maneiDominiRank, fightsOnFoot, WORD_OF_BLAKE)) {
                     assertTrue(ManeiDominiImplants.levelOf(option) <= maximumLevel,
                           maneiDominiRank + " was issued " + option + " at level "
                                 + ManeiDominiImplants.levelOf(option)
@@ -105,7 +108,7 @@ class ManeiDominiImplantsTest {
     void anImplantIsNeverIssuedTwice(ManeiDominiAugmentationRank maneiDominiRank) {
         for (boolean fightsOnFoot : BOTH_AUDIENCES) {
             for (int draw = 0; draw < DRAWS; draw++) {
-                List<String> issued = ManeiDominiImplants.selectFor(maneiDominiRank, fightsOnFoot);
+                List<String> issued = ManeiDominiImplants.selectFor(maneiDominiRank, fightsOnFoot, WORD_OF_BLAKE);
                 assertTrue(issued.stream().distinct().count() == issued.size(),
                       maneiDominiRank + " was issued a duplicate implant: " + issued);
             }
@@ -122,7 +125,7 @@ class ManeiDominiImplantsTest {
     void everyWarriorGetsAtLeastOneImplantThatServesThem(ManeiDominiAugmentationRank maneiDominiRank) {
         for (boolean fightsOnFoot : BOTH_AUDIENCES) {
             for (int draw = 0; draw < DRAWS; draw++) {
-                List<String> issued = ManeiDominiImplants.selectFor(maneiDominiRank, fightsOnFoot);
+                List<String> issued = ManeiDominiImplants.selectFor(maneiDominiRank, fightsOnFoot, WORD_OF_BLAKE);
                 boolean anyUseful = issued.stream()
                                           .anyMatch(option ->
                                                 ManeiDominiImplants.servesWarrior(option, fightsOnFoot));
@@ -143,7 +146,7 @@ class ManeiDominiImplantsTest {
             boolean everFilledToMaximum = false;
             for (int draw = 0; draw < DRAWS; draw++) {
                 List<String> issued =
-                      ManeiDominiImplants.selectFor(ManeiDominiAugmentationRank.BETA, fightsOnFoot);
+                      ManeiDominiImplants.selectFor(ManeiDominiAugmentationRank.BETA, fightsOnFoot, WORD_OF_BLAKE);
                 assertTrue(issued.size() >= 3, "Beta must always reach its minimum of 3, drew " + issued);
                 everFilledToMaximum |= (issued.size() >= 4);
             }
@@ -157,7 +160,7 @@ class ManeiDominiImplantsTest {
     void anImprovedImplantIsNeverHeldAlongsideTheOneItSupersedes(ManeiDominiAugmentationRank maneiDominiRank) {
         for (boolean fightsOnFoot : BOTH_AUDIENCES) {
             for (int draw = 0; draw < DRAWS; draw++) {
-                List<String> issued = ManeiDominiImplants.selectFor(maneiDominiRank, fightsOnFoot);
+                List<String> issued = ManeiDominiImplants.selectFor(maneiDominiRank, fightsOnFoot, WORD_OF_BLAKE);
                 assertFalse(issued.contains(OptionsConstants.MD_PL_ENHANCED)
                             && issued.contains(OptionsConstants.MD_PL_I_ENHANCED),
                       "both basic and improved prosthetics issued: " + issued);
@@ -183,7 +186,7 @@ class ManeiDominiImplantsTest {
     void multiModalImplantsAlwaysComeWithANeuralInterface(ManeiDominiAugmentationRank maneiDominiRank) {
         for (boolean fightsOnFoot : BOTH_AUDIENCES) {
             for (int draw = 0; draw < DRAWS; draw++) {
-                List<String> issued = ManeiDominiImplants.selectFor(maneiDominiRank, fightsOnFoot);
+                List<String> issued = ManeiDominiImplants.selectFor(maneiDominiRank, fightsOnFoot, WORD_OF_BLAKE);
                 boolean hasMultiModal = issued.contains(OptionsConstants.MD_MM_IMPLANTS)
                                               || issued.contains(OptionsConstants.MD_ENH_MM_IMPLANTS);
                 // A warrior on foot carries the sensors themselves and needs nothing to sync them to,
@@ -208,7 +211,7 @@ class ManeiDominiImplantsTest {
     void theExplosiveChargeIsNotDrawnFromTheAllowance(ManeiDominiAugmentationRank maneiDominiRank) {
         for (boolean fightsOnFoot : BOTH_AUDIENCES) {
             for (int draw = 0; draw < DRAWS; draw++) {
-                assertFalse(ManeiDominiImplants.selectFor(maneiDominiRank, fightsOnFoot)
+                assertFalse(ManeiDominiImplants.selectFor(maneiDominiRank, fightsOnFoot, WORD_OF_BLAKE)
                                   .contains(OptionsConstants.MD_SUICIDE_IMPLANTS),
                       "the suicide charge must be fitted separately, not drawn as an implant");
             }
@@ -246,7 +249,7 @@ class ManeiDominiImplantsTest {
     void gliderAndPoweredFlightWingsAreNeverBothIssued(ManeiDominiAugmentationRank maneiDominiRank) {
         for (boolean fightsOnFoot : BOTH_AUDIENCES) {
             for (int draw = 0; draw < DRAWS; draw++) {
-                List<String> issued = ManeiDominiImplants.selectFor(maneiDominiRank, fightsOnFoot);
+                List<String> issued = ManeiDominiImplants.selectFor(maneiDominiRank, fightsOnFoot, WORD_OF_BLAKE);
                 assertFalse(issued.contains(OptionsConstants.MD_PL_GLIDER)
                             && issued.contains(OptionsConstants.MD_PL_FLIGHT),
                       "both sets of wings issued: " + issued);
@@ -279,7 +282,7 @@ class ManeiDominiImplantsTest {
     void theTripleCoreProcessorAlwaysComesWithANeuralInterface(
           ManeiDominiAugmentationRank maneiDominiRank) {
         for (int draw = 0; draw < DRAWS; draw++) {
-            List<String> issued = ManeiDominiImplants.selectFor(maneiDominiRank, false);
+            List<String> issued = ManeiDominiImplants.selectFor(maneiDominiRank, false, WORD_OF_BLAKE);
             if (!issued.contains(OptionsConstants.MD_TRIPLE_CORE_PROCESSOR)) {
                 continue;
             }
@@ -306,5 +309,53 @@ class ManeiDominiImplantsTest {
         assertTrue(ManeiDominiImplants.servesWarrior(OptionsConstants.MD_DERMAL_CAMO_ARMOR, true),
               "the camouflage serves a foot trooper");
         assertFalse(ManeiDominiImplants.servesWarrior(OptionsConstants.MD_DERMAL_CAMO_ARMOR, false));
+    }
+
+    /**
+     * The construction rules give the extraneous limbs, the tail and both sets of wings to the
+     * Capellan Confederation alone - they are Thuggee Phansigar kit, not Manei Domini. A Word of Blake
+     * warrior must never be issued them.
+     */
+    @ParameterizedTest
+    @EnumSource(ManeiDominiAugmentationRank.class)
+    void theCapellanProstheticsNeverReachTheWordOfBlake(ManeiDominiAugmentationRank maneiDominiRank) {
+        for (int draw = 0; draw < DRAWS; draw++) {
+            List<String> issued = ManeiDominiImplants.selectFor(maneiDominiRank, true, WORD_OF_BLAKE);
+            for (String capellanOnly : List.of(OptionsConstants.MD_PL_EXTRA_LIMBS,
+                  OptionsConstants.MD_PL_TAIL, OptionsConstants.MD_PL_GLIDER,
+                  OptionsConstants.MD_PL_FLIGHT)) {
+                assertFalse(issued.contains(capellanOnly),
+                      "the Word of Blake was issued Capellan kit: " + capellanOnly);
+            }
+        }
+    }
+
+    /** A Capellan force does field them, which is the point of restricting rather than removing them. */
+    @Test
+    void theCapellanProstheticsReachACapellanForce() {
+        boolean everIssued = false;
+        for (int draw = 0; draw < DRAWS; draw++) {
+            List<String> issued =
+                  ManeiDominiImplants.selectFor(ManeiDominiAugmentationRank.OMICRON, true, "CC");
+            everIssued |= issued.contains(OptionsConstants.MD_PL_TAIL)
+                              || issued.contains(OptionsConstants.MD_PL_EXTRA_LIMBS)
+                              || issued.contains(OptionsConstants.MD_PL_GLIDER)
+                              || issued.contains(OptionsConstants.MD_PL_FLIGHT);
+        }
+        assertTrue(everIssued, "a Capellan force must be able to draw its own prosthetics");
+    }
+
+    /** Unrestricted entries are issued whatever the faction, including when none is known. */
+    @Test
+    void unrestrictedImplantsAreIssuedToAnyone() {
+        for (String faction : new String[] { "WOB.SD", "CC", "FS", null }) {
+            boolean everIssued = false;
+            for (int draw = 0; draw < DRAWS; draw++) {
+                everIssued |= ManeiDominiImplants
+                                    .selectFor(ManeiDominiAugmentationRank.OMICRON, false, faction)
+                                    .contains(OptionsConstants.MD_PAIN_SHUNT);
+            }
+            assertTrue(everIssued, "the pain shunt is unrestricted and must reach " + faction);
+        }
     }
 }

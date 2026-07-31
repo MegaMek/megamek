@@ -108,7 +108,7 @@ public final class ManeiDominiCrewAugmentor {
         int augmented = 0;
         Entity entity = formation.getEntity();
         if ((entity != null) && (entity.getCrew() != null)) {
-            augmented += augmentCrew(formation, entity) ? 1 : 0;
+            augmented += augmentCrew(formation, entity, formation.getFaction()) ? 1 : 0;
         }
         for (ForceDescriptor subFormation : formation.getSubForces()) {
             augmented += augmentTree(subFormation, depth + 1);
@@ -124,7 +124,7 @@ public final class ManeiDominiCrewAugmentor {
      *
      * @return {@code true} if implants were fitted
      */
-    private static boolean augmentCrew(ForceDescriptor formation, Entity entity) {
+    private static boolean augmentCrew(ForceDescriptor formation, Entity entity, String factionCode) {
         CrewDescriptor commander = formation.getCo();
         int rankIndex = (commander == null) ? 0 : commander.getRank();
         ManeiDominiAugmentationRank rank =
@@ -133,7 +133,7 @@ public final class ManeiDominiCrewAugmentor {
         // depends on that. Infantry and BattleArmor fight as themselves.
         boolean fightsOnFoot = entity.isInfantry();
 
-        List<String> fitted = ManeiDominiImplants.fitTo(entity.getCrew().getOptions(), rank, fightsOnFoot);
+        List<String> fitted = ManeiDominiImplants.fitTo(entity.getCrew().getOptions(), rank, fightsOnFoot, factionCode);
         LOGGER.info("[ManeiDomini]   '{}' ({}): rank index {} -> {}, fights {} -> {} implant(s) {}",
               entity.getCrew().getName(), entity.getShortName(), rankIndex, rank,
               fightsOnFoot ? "on foot" : "from a cockpit", fitted.size(), fitted);

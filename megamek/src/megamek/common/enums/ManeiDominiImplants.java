@@ -36,6 +36,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
+import megamek.common.annotations.Nullable;
 import megamek.common.options.IOption;
 import megamek.common.options.OptionsConstants;
 import megamek.common.options.PilotOptions;
@@ -113,14 +114,48 @@ public final class ManeiDominiImplants {
      *
      * @param level         the implant level, which the warrior's rank caps
      * @param audience      who this implant actually does something for
+     * @param factionCodes  the factions the construction rules give it to, empty for any
      * @param optionChoices the game options this entry may be satisfied by; one is chosen at random
      */
-    public record ImplantEntry(int level, ImplantAudience audience, List<String> optionChoices) {
+    public record ImplantEntry(int level, ImplantAudience audience, List<String> factionCodes,
+                               List<String> optionChoices) {
 
         private ImplantEntry(int level, ImplantAudience audience, String singleOption) {
-            this(level, audience, List.of(singleOption));
+            this(level, audience, ANY_FACTION, List.of(singleOption));
+        }
+
+        private ImplantEntry(int level, ImplantAudience audience, List<String> optionChoices) {
+            this(level, audience, ANY_FACTION, optionChoices);
+        }
+
+        private ImplantEntry(int level, ImplantAudience audience, List<String> factionCodes,
+              String singleOption) {
+            this(level, audience, factionCodes, List.of(singleOption));
+        }
+
+        /**
+         * @param factionCode the faction the force is being generated for
+         *
+         * @return {@code true} if that faction fields this augmentation
+         */
+        boolean isFieldedBy(@Nullable String factionCode) {
+            if (factionCodes.isEmpty()) {
+                return true;
+            }
+            if (factionCode == null) {
+                return false;
+            }
+            // A sub-command carries its parent's key followed by a dot, as in WOB.SD.
+            String primary = factionCode.split("\\.")[0];
+            return factionCodes.stream().anyMatch(primary::equalsIgnoreCase);
         }
     }
+
+    /** Used by an entry the construction rules place with no faction restriction. */
+    private static final List<String> ANY_FACTION = List.of();
+
+    /** The Capellan Confederation, whose Thuggee Phansigars field the limb prosthetics. */
+    private static final List<String> CAPELLAN_ONLY = List.of("CC");
 
     /**
      * The issuable catalogue, in source order. Level 0 contributes nothing: both of its entries
@@ -138,12 +173,13 @@ public final class ManeiDominiImplants {
           new ImplantEntry(3, ImplantAudience.ON_FOOT, OptionsConstants.MD_PL_I_ENHANCED),
           new ImplantEntry(3, ImplantAudience.ON_FOOT, OptionsConstants.MD_PL_MASC),
           new ImplantEntry(3, ImplantAudience.ON_FOOT, OptionsConstants.MD_GAS_EFFUSER_PHEROMONE),
-          // The four below are placed at level 3 by inference, not by the chart - see the note in the
-          // class comment. They sit with the other limb work, which is what level 3 otherwise holds.
-          new ImplantEntry(3, ImplantAudience.ON_FOOT, OptionsConstants.MD_PL_EXTRA_LIMBS),
-          new ImplantEntry(3, ImplantAudience.ON_FOOT, OptionsConstants.MD_PL_TAIL),
-          new ImplantEntry(3, ImplantAudience.ON_FOOT, OptionsConstants.MD_PL_GLIDER),
-          new ImplantEntry(3, ImplantAudience.ON_FOOT, OptionsConstants.MD_PL_FLIGHT),
+          // Capellan, not Word of Blake: the construction rules give all four to the Confederation
+          // alone, whose Thuggee Phansigars field them. Their level is still inferred - see the class
+          // comment - but the faction is the source's.
+          new ImplantEntry(3, ImplantAudience.ON_FOOT, CAPELLAN_ONLY, OptionsConstants.MD_PL_EXTRA_LIMBS),
+          new ImplantEntry(3, ImplantAudience.ON_FOOT, CAPELLAN_ONLY, OptionsConstants.MD_PL_TAIL),
+          new ImplantEntry(3, ImplantAudience.ON_FOOT, CAPELLAN_ONLY, OptionsConstants.MD_PL_GLIDER),
+          new ImplantEntry(3, ImplantAudience.ON_FOOT, CAPELLAN_ONLY, OptionsConstants.MD_PL_FLIGHT),
           new ImplantEntry(3, ImplantAudience.PILOTING, OptionsConstants.MD_VDNI),
           new ImplantEntry(3, ImplantAudience.ANYONE, OptionsConstants.MD_BOOST_COMM_IMPLANT),
           new ImplantEntry(3, ImplantAudience.ANYONE, OptionsConstants.MD_MM_IMPLANTS),
@@ -218,9 +254,11 @@ public final class ManeiDominiImplants {
      *
      * @return the game options to fit, excluding the explosive charge every Manei Domini receives
      */
-    public static List<String> selectFor(ManeiDominiAugmentationRank rank, boolean warriorFightsOnFoot) {
+    public static List<String> selectFor(ManeiDominiAugmentationRank rank, boolean warriorFightsOnFoot,
+          @Nullable String factionCode) {
         List<ImplantEntry> withinLevel = CATALOGUE.stream()
                                                .filter(entry -> entry.level() <= rank.getMaximumImplantLevel())
+                                               .filter(entry -> entry.isFieldedBy(factionCode))
                                                .toList();
         List<ImplantEntry> useful = new ArrayList<>(withinLevel.stream()
               .filter(entry -> entry.audience().servesA(warriorFightsOnFoot))
@@ -259,9 +297,9 @@ public final class ManeiDominiImplants {
      * @return the implants fitted, excluding the explosive charge
      */
     public static List<String> fitTo(PilotOptions options, ManeiDominiAugmentationRank rank,
-          boolean warriorFightsOnFoot) {
+          boolean warriorFightsOnFoot, @Nullable String factionCode) {
         setOption(options, getExplosiveCharge());
-        List<String> issued = selectFor(rank, warriorFightsOnFoot);
+        List<String> issued = selectFor(rank, warriorFightsOnFoot, factionCode);
         for (String implant : issued) {
             setOption(options, implant);
         }

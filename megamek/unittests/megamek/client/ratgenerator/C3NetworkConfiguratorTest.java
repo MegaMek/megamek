@@ -246,4 +246,45 @@ class C3NetworkConfiguratorTest {
         assertNotNull(first.netId, "a network nested one level down is still wired");
         assertEquals("joined", second.netId);
     }
+
+    /**
+     * A generated force has not been added to a game when the lobby wires it, and setC3Master walks
+     * the game's entities to update everyone already on the master's network - so calling it then
+     * throws. The live link waits for a game; the UUID, which is what survives a save, is written
+     * either way.
+     */
+    @Test
+    void theLiveC3LinkWaitsUntilTheUnitIsInAGame() {
+        NetworkState masterState = new NetworkState();
+        NetworkState slaveState = new NetworkState();
+        Entity master = networkUnit(0, false, true, false, masterState);
+        Entity slave = networkUnit(1, false, false, true, slaveState);
+        when(slave.getGame()).thenReturn(null);
+
+        ForceDescriptor formation = formationOf(List.of(master, slave));
+        formation.getFlags().add("c3");
+        C3NetworkConfigurator.configure(formation);
+
+        org.mockito.Mockito.verify(slave, org.mockito.Mockito.never())
+              .setC3Master(org.mockito.ArgumentMatchers.any(Entity.class),
+                    org.mockito.ArgumentMatchers.anyBoolean());
+        assertEquals("uuid-0", slaveState.masterUuid,
+              "the UUID is written whether or not there is a game");
+    }
+
+    @Test
+    void theLiveC3LinkIsMadeOnceTheUnitIsInAGame() {
+        NetworkState slaveState = new NetworkState();
+        Entity master = networkUnit(0, false, true, false, new NetworkState());
+        Entity slave = networkUnit(1, false, false, true, slaveState);
+        when(slave.getGame()).thenReturn(mock(megamek.common.game.Game.class));
+
+        ForceDescriptor formation = formationOf(List.of(master, slave));
+        formation.getFlags().add("c3");
+        C3NetworkConfigurator.configure(formation);
+
+        org.mockito.Mockito.verify(slave)
+              .setC3Master(org.mockito.ArgumentMatchers.any(Entity.class),
+                    org.mockito.ArgumentMatchers.anyBoolean());
+    }
 }

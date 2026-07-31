@@ -160,9 +160,15 @@ public final class C3NetworkConfigurator {
                 continue;
             }
             member.setC3UUID();
-            // The id the running game reads, and the UUID that survives a save.
-            member.setC3Master(master, false);
+            // The UUID always: it is what survives a save and what a campaign rebuilds from.
             member.setC3MasterIsUUIDAsString(master.getC3UUIDAsString());
+            // The live link only once the unit is in a game. setC3Master walks the game's entities to
+            // update everyone already on the master's network, so calling it on a force that has not
+            // been added to one yet throws. Generation runs before that for the lobby, and after it
+            // for a MUL export, so both orders reach here.
+            if (member.getGame() != null) {
+                member.setC3Master(master, false);
+            }
             slaves++;
         }
         LOGGER.debug("[C3Network] '{}': C3 master '{}' with {} slave(s)",

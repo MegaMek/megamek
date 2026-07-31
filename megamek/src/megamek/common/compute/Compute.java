@@ -7491,7 +7491,10 @@ public class Compute {
         int standardWeapons = 0;
         int capitalWeapons = 0;
         for (Mounted<?> m : entity.getTotalWeaponList()) {
-            if ((m.getType() instanceof BayWeapon) || (((WeaponType) m.getType()).getLongRange() <= 1)) {
+            if ((m.getType() instanceof BayWeapon) ||
+                  ((((WeaponType) m.getType()).getLongRange() <= 1) &&
+                        // MML range depends on ammo
+                        (((WeaponType) m.getType()).getAmmoType() != AmmoTypeEnum.MML))) {
                 continue;
             }
             if (m.getType().hasFlag(WeaponType.F_MASS_DRIVER)) {

@@ -4344,7 +4344,10 @@ public class MovementDisplay extends ActionPhaseDisplay {
         final Hex hex = game.getBoard(currentEntity).getHex(cmd.getFinalCoords());
         final int unloadEl = cmd.getFinalElevation();
         final boolean canDropTrailerHere = towedUnits.stream().anyMatch(en -> en.isElevationValid(unloadEl, hex));
-        setDisconnectEnabled(legalGear && isFinalPositionOnBoard() && canDropTrailerHere);
+        // An off board train stays hooked up. There is no board hex to leave a trailer in, and the train is the only
+        // thing holding the trailer's place off the map edge.
+        setDisconnectEnabled(legalGear && isFinalPositionOnBoard() && canDropTrailerHere
+              && !currentEntity.isOffBoard());
 
         final boolean canTow = currentEntity.getHitchLocations()
               .stream()

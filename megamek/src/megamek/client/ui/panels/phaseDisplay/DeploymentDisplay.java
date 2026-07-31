@@ -90,6 +90,7 @@ import megamek.common.units.IAero;
 import megamek.common.units.Infantry;
 import megamek.common.units.Tank;
 import megamek.common.units.Terrains;
+import megamek.common.units.TrainLayout;
 import megamek.logging.MMLogger;
 
 public class DeploymentDisplay extends StatusBarPhaseDisplay {
@@ -193,7 +194,9 @@ public class DeploymentDisplay extends StatusBarPhaseDisplay {
         /** A hidden unit cannot deploy onto a fortified hex (the fortification would reveal the position) */
         HIDDEN_IN_FORTIFIED,
         /** A vehicle set to deploy hull-down must start in a fortified hex and must not be a Large Vehicle */
-        HULL_DOWN_NEEDS_FORTIFIED
+        HULL_DOWN_NEEDS_FORTIFIED,
+        /** A tractor's trailers would land outside the deployment area; the whole train has to fit */
+        TRAIN_DOES_NOT_FIT
     }
 
     /**
@@ -604,6 +607,16 @@ public class DeploymentDisplay extends StatusBarPhaseDisplay {
         if (!(board.isLegalDeployment(coords, entity) || assaultDropPreference)) {
             return BoardValidationResult.OUTSIDE_DEPLOYMENT_AREA;
         }
+        // A train deploys as one piece, so every hex it would occupy has to be legal, not just the tractor's.
+        if (!entity.getAllTowedUnits().isEmpty() && !assaultDropPreference) {
+            for (Coords trainHex : TrainLayout.deploymentFootprint(game, entity, coords, entity.getFacing())) {
+                if (!board.isLegalDeployment(trainHex, entity)) {
+                    logger.info("[Train] {} cannot deploy at {} facing {}: trailer hex {} is outside the "
+                          + "deployment area", entity.getShortName(), coords, entity.getFacing(), trainHex);
+                    return BoardValidationResult.TRAIN_DOES_NOT_FIT;
+                }
+            }
+        }
         // A hidden unit cannot start in a fortified hex - the fortification is visible terrain that would give
         // the position away. (A unit may, however, deploy both dug in and hidden in concealing terrain.)
         Hex deployHex = board.getHex(coords);
@@ -752,6 +765,9 @@ public class DeploymentDisplay extends StatusBarPhaseDisplay {
             } else if (validationResult == BoardValidationResult.HULL_DOWN_NEEDS_FORTIFIED) {
                 showHullDownNeedsFortifiedMessage();
                 return;
+            } else if (validationResult == BoardValidationResult.TRAIN_DOES_NOT_FIT) {
+                showTrainDoesNotFitMessage();
+                return;
             }
 
             if (!board.isSpace()) {
@@ -856,6 +872,11 @@ public class DeploymentDisplay extends StatusBarPhaseDisplay {
 
     private void showHiddenInFortifiedMessage() {
         String msg = Messages.getString("DeploymentDisplay.hiddenInFortified");
+        clientgui.addToast(ToastLevel.WARNING, msg);
+    }
+
+    private void showTrainDoesNotFitMessage() {
+        String msg = Messages.getString("DeploymentDisplay.trainDoesNotFit");
         clientgui.addToast(ToastLevel.WARNING, msg);
     }
 

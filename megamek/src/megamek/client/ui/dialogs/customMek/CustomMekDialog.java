@@ -1261,6 +1261,43 @@ public class CustomMekDialog extends AbstractButtonDialog
     }
 
     /**
+     * Returns true when this unit, or anything it tows, carries a weapon that can be fired from off board.
+     * <p>
+     * A train acts as one unit for firing (TM, Trailers), so a tractor with no artillery of its own still belongs off
+     * board when it is pulling a gun trailer. Without this a Prime Mover towing a Gun Trailer could never put that
+     * gun off board, because the tractor alone would not qualify.
+     * </p>
+     */
+    private boolean trainCarriesArtillery(Entity entity) {
+        if (carriesOffBoardWeapon(entity)) {
+            return true;
+        }
+
+        for (int towedId : entity.getAllTowedUnits()) {
+            Entity trailer = (entity.getGame() == null) ? null : entity.getGame().getEntity(towedId);
+
+            if ((trailer != null) && carriesOffBoardWeapon(trailer)) {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    /** Returns true when the unit mounts artillery or a capital missile bay, the weapons that can fire off board. */
+    private boolean carriesOffBoardWeapon(Entity entity) {
+        for (WeaponMounted weapon : entity.getWeaponList()) {
+            WeaponType weaponType = weapon.getType();
+
+            if (weaponType.hasFlag(WeaponType.F_ARTILLERY) || (weaponType instanceof CapitalMissileBayWeapon)) {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    /**
      * Checks if entity is valid for Proto DNI (BattleMek only, not IndustrialMek).
      */
     private boolean isValidForProtoDni(Entity entity) {
@@ -2138,14 +2175,15 @@ public class CustomMekDialog extends AbstractButtonDialog
             //  lob offboard missiles and we could use it in space for extreme range bearings-only fights, plus
             //  Ortillery. Further, this should be revisited with a rules query when it comes to handling offboard
             //  gun emplacements, especially if they are allowed
+            // A hitched train deploys wherever its tractor does, so the setting belongs to the tractor and a trailer
+            // must not offer one of its own. Unhitched, a trailer is free to deploy off board on its own terms.
+            final boolean deploysWithItsTractor = e.getTractor() != Entity.NONE;
+
             final boolean entityEligibleForOffBoard = !space &&
                   (e.getAltitude() == 0) &&
                   !(e.isBuildingEntityOrGunEmplacement()) &&
-                  e.getWeaponList()
-                        .stream()
-                        .map(Mounted::getType)
-                        .anyMatch(weaponType -> weaponType.hasFlag(WeaponType.F_ARTILLERY) ||
-                              (weaponType instanceof CapitalMissileBayWeapon));
+                  !deploysWithItsTractor &&
+                  trainCarriesArtillery(e);
             eligibleForOffBoard &= entityEligibleForOffBoard;
         }
         // set up the panels

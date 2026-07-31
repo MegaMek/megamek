@@ -5069,26 +5069,11 @@ public abstract class Entity extends TurnOrdered
                 return;
             }
         }
-        // Check the unit towing this one for ammo
-        if (getTowedBy() != Entity.NONE) {
-            Entity ahead = game.getEntity(getTowedBy());
-            if (ahead != null) {
-                for (AmmoMounted towedByAmmo : ahead.getAmmo()) {
-                    if (loadWeaponWithSameAmmo(mounted, towedByAmmo)) {
-                        return;
-                    }
-                }
-            }
-        }
-        // Then check the unit towed by this one for ammo
-        if (getTowing() != Entity.NONE) {
-            Entity behind = game.getEntity(getTowing());
-            if (behind != null) {
-                for (AmmoMounted towingAmmo : behind.getAmmo()) {
-                    if (loadWeaponWithSameAmmo(mounted, towingAmmo)) {
-                        return;
-                    }
-                }
+        // Then the units coupled to this one. Uses the same rule as the ammo dropdown and the server's validation,
+        // so the automatic reload cannot reach bins the player is not offered, or miss ones they are.
+        for (AmmoMounted trainAmmo : TrainAmmoSharing.getSharedAmmo(this)) {
+            if (loadWeaponWithSameAmmo(mounted, trainAmmo)) {
+                return;
             }
         }
         // fall back to use any ammo
@@ -10872,9 +10857,31 @@ public abstract class Entity extends TurnOrdered
 
     /**
      * Returns true if the entity should be deployed
+     * <p>
+     * A trailer that is part of a train does not deploy on its own. It is placed with the rest of the train when its
+     * tractor deploys, in the same way a carried unit is placed with its transport. An unattached trailer still
+     * deploys normally.
+     * </p>
      */
     public boolean shouldDeploy(int round) {
-        return !isDeployed() && (getDeployRound() <= round) && !isOffBoard();
+        return !isDeployed() && (getDeployRound() <= round) && !isOffBoard() && !deploysWithTractor();
+    }
+
+    /**
+     * Whether this unit is placed by the tractor towing it rather than deploying on its own.
+     * <p>
+     * Only {@code true} when that tractor is itself deploying onto the board. A tractor that starts off board never
+     * takes a deployment turn, so its trailers have to deploy themselves or they would never reach the game at all.
+     * </p>
+     *
+     * @return {@code true} when a tractor will place this unit during its own deployment
+     */
+    private boolean deploysWithTractor() {
+        if ((getTractor() == Entity.NONE) || (game == null)) {
+            return false;
+        }
+        Entity tractor = game.getEntity(getTractor());
+        return (tractor != null) && !tractor.isOffBoard();
     }
 
     /**
@@ -17228,48 +17235,74 @@ public abstract class Entity extends TurnOrdered
         // If none of the above happen, assume that we can't tow the trailer...
         boolean result = false;
 
-        // First, set up a list of all the entities in this train
+        // First, set up a list of all the entities in this train. A towed id can fail to resolve when the unit has
+        // been destroyed and removed, so skip those rather than carrying nulls through the checks below.
         ArrayList<Entity> thisTrain = new ArrayList<>();
         thisTrain.add(this);
-        for (int id : getAllTowedUnits()) {
-            Entity tr = game.getEntity(id);
-            thisTrain.add(tr);
+        for (int towedId : getAllTowedUnits()) {
+            Entity towedUnit = game.getEntity(towedId);
+            if (towedUnit != null) {
+                thisTrain.add(towedUnit);
+            }
+        }
+
+        // The towing limit belongs to the powered tractor at the head of the train, not to whichever unit the new
+        // trailer is being hitched to: "Tractors may pull one or more Trailers whose combined weight is less than or
+        // equal to the Tractor's own weight" (TM, Tractors). When a trailer is the attach point, its own tonnage is
+        // irrelevant - what matters is what the tractor pulling the whole train can handle.
+        Entity poweredTractor = this;
+        if (getTractor() != Entity.NONE) {
+            Entity trainTractor = game.getEntity(getTractor());
+            if (trainTractor != null) {
+                poweredTractor = trainTractor;
+            }
         }
 
         // Add up the weight of all carried trailers. A tractor can tow a total tonnage equal to its own.
-        double tractorWeight = getWeight();
+        double tractorWeight = poweredTractor.getWeight();
         double trailerWeight = 0;
         // Add up what the tractor's already towing
-        for (int id : getAllTowedUnits()) {
-            Entity tr = game.getEntity(id);
+        for (int towedId : poweredTractor.getAllTowedUnits()) {
+            Entity towedUnit = game.getEntity(towedId);
 
-            if (tr == null) {
+            if (towedUnit == null) {
                 continue;
             }
 
-            trailerWeight += tr.getWeight();
+            trailerWeight += towedUnit.getWeight();
         }
-        if (trailerWeight + trailer.getWeight() > tractorWeight) {
+        if ((trailerWeight + trailer.getWeight()) > tractorWeight) {
             return false;
         }
 
-        // Next, look for an empty hitch somewhere in the train
-        boolean hitchFound = false;
-        for (Entity e : thisTrain) {
-            // Quit looking if we've already found a valid hitch
-            if (hitchFound) {
+        // Look for an empty hitch on the unit that will actually take the trailer. towUnit always appends at the
+        // tail, so a free hitch anywhere else in the train is not one this trailer could use, and reporting it as
+        // usable would let a tow be offered that then cannot be made.
+        Entity attachPoint = findTrainTail(thisTrain);
+        for (Transporter transporter : attachPoint.getTransports()) {
+            if (transporter.canTow(trailer)) {
+                result = true;
                 break;
-            }
-            for (Transporter t : e.getTransports()) {
-                if (t.canTow(trailer)) {
-                    result = true;
-                    hitchFound = true;
-                    // stop looking
-                    break;
-                }
             }
         }
         return result;
+    }
+
+    /**
+     * The unit at the back of a train, which is where a new trailer is hitched.
+     *
+     * @param trainMembers the tractor followed by the units it tows
+     *
+     * @return the member with nothing behind it, or the first member when the train is not linked up
+     */
+    private static Entity findTrainTail(List<Entity> trainMembers) {
+        Entity tail = trainMembers.get(0);
+        for (Entity member : trainMembers) {
+            if ((member != null) && (member.getTowing() == Entity.NONE)) {
+                tail = member;
+            }
+        }
+        return tail;
     }
 
     /**
@@ -17355,14 +17388,28 @@ public abstract class Entity extends TurnOrdered
             return;
         }
 
+        if (id == getId()) {
+            LOGGER.warn("[Train] {} cannot tow itself", getDisplayName());
+            return;
+        }
+
+        // A trailer that is somehow still listed as part of this train must not be hitched a second time: the
+        // loop below would then record it as a unit trailing itself, and disconnecting it later walks a list it
+        // is clearing as it goes.
+        if (getAllTowedUnits().contains(id)) {
+            LOGGER.warn("[Train] {} already lists {} as part of its train; the trailer was not attached again",
+                  getDisplayName(), towed.getDisplayName());
+            return;
+        }
+
         // Add this trailer to the connected list for all trailers already in this train
-        List<Integer> otherTrailerIds = getAllTowedUnits();
+        List<Integer> otherTrailerIds = new ArrayList<>(getAllTowedUnits());
         List<Entity> otherTrailers = new ArrayList<>();
 
-        for (int tr : otherTrailerIds) {
-            Entity trailer = game.getEntity(tr);
+        for (int otherTrailerId : otherTrailerIds) {
+            Entity trailer = game.getEntity(otherTrailerId);
 
-            if (trailer == null) {
+            if ((trailer == null) || (trailer == towed) || (trailer == this)) {
                 continue;
             }
 
@@ -17387,13 +17434,31 @@ public abstract class Entity extends TurnOrdered
             }
         }
 
+        // Use the first hitch that can actually take the trailer, and only that one. Loading every hitch registered
+        // the same trailer twice on a unit with both a front and a rear hitch, and calling load() unguarded would
+        // throw IllegalArgumentException on an occupied one.
+        boolean hitched = false;
         if (towingEnt != null) {
             for (Transporter transporter : towingEnt.getTransports()) {
-                if (transporter instanceof TankTrailerHitch hitch) {
+                if ((transporter instanceof TankTrailerHitch hitch) && hitch.canTow(towed)) {
                     hitch.load(towed);
                     towingEnt.setTowing(id);
                     towed.setTowedBy(towingEnt.getId());
+                    hitched = true;
+                    break;
                 }
+            }
+        }
+
+        if (!hitched) {
+            // Nothing at the back of the train can take it. Undo the membership rather than leaving a unit that
+            // counts as part of the train but has no hitch holding it.
+            LOGGER.warn("[Train] {} has no free hitch for {}; the trailer was not attached",
+                  (towingEnt == null) ? getDisplayName() : towingEnt.getDisplayName(), towed.getDisplayName());
+            removeTowedUnit(id);
+            towed.setTractor(Entity.NONE);
+            for (Entity otherTrailer : otherTrailers) {
+                otherTrailer.connectedUnits.remove(Integer.valueOf(id));
             }
         }
     }
@@ -17417,45 +17482,74 @@ public abstract class Entity extends TurnOrdered
             return;
         }
 
-        // Remove the designated trailer from the tractor's carried units
-        removeTowedUnit(id);
-        // Now, find and empty the transporter on the actual towing entity (trailer or tractor)
-        Entity towingEnt = game.getEntity(towed.getTowedBy());
-        if (towingEnt != null) {
-            towingEnt.connectedUnits.clear();
-            Transporter hitch = towingEnt.getHitchCarrying(id);
-            if (hitch != null) {
-                hitch.unload(towed);
+        // The dropped trailer and everything behind it leave the train together. Snapshot those ids before
+        // anything is detached: the bookkeeping lists are emptied as the units come off, and one of them is the
+        // list being walked.
+        List<Integer> detachedIds = new ArrayList<>();
+        detachedIds.add(id);
+        for (int trailingId : towed.getConnectedUnits()) {
+            if ((trailingId != tractor.getId()) && !detachedIds.contains(trailingId)) {
+                detachedIds.add(trailingId);
             }
         }
-        // If there are other trailers behind the one being dropped, disconnect all of them from the tractor and from
-        // each other, so they can be picked up again later
-        for (int i : towed.getConnectedUnits()) {
-            Entity trailer = game.getEntity(i);
 
-            if (trailer == null) {
+        for (int detachedId : detachedIds) {
+            // Train membership is held by the tractor heading the train, not by this entity. disconnectUnit is
+            // also called on a mid-train trailer, and dropping the membership here would leave the tractor still
+            // listing trailers it no longer tows.
+            tractor.removeTowedUnit(detachedId);
+
+            Entity detached = game.getEntity(detachedId);
+            if (detached == null) {
                 continue;
             }
 
-            trailer.setTractor(Entity.NONE);
-            tractor.removeTowedUnit(i);
-            towingEnt = game.getEntity(trailer.getTowedBy());
-
-            if (towingEnt != null) {
-                Transporter hitch = towingEnt.getHitchCarrying(i);
+            // Free the hitch this unit sits on. The unit ahead of it may be staying with the train, so clear its
+            // towing link too rather than leaving it pointing at a trailer that has gone.
+            Entity towingEntity = game.getEntity(detached.getTowedBy());
+            if (towingEntity != null) {
+                Transporter hitch = towingEntity.getHitchCarrying(detachedId);
                 if (hitch != null) {
-                    hitch.unload(trailer);
+                    hitch.unload(detached);
                 }
+                towingEntity.setTowing(Entity.NONE);
             }
 
-            trailer.setTowedBy(Entity.NONE);
-            trailer.connectedUnits.clear();
+            detached.setTractor(Entity.NONE);
+            detached.setTowedBy(Entity.NONE);
+            detached.setTowing(Entity.NONE);
+            detached.connectedUnits.clear();
         }
-        // Update these last, or we get concurrency issues
-        towed.setTractor(Entity.NONE);
-        towed.setTowedBy(Entity.NONE);
-        towed.setTowing(Entity.NONE);
-        towed.connectedUnits.clear();
+
+        // Whatever is still in the train has to forget the units that just left, or a later tow reads them back
+        // as members and hitches them a second time.
+        tractor.connectedUnits.removeAll(detachedIds);
+        for (int remainingId : tractor.getAllTowedUnits()) {
+            Entity remaining = game.getEntity(remainingId);
+
+            if (remaining != null) {
+                remaining.connectedUnits.removeAll(detachedIds);
+            }
+        }
+
+        // Weapons on either side of the split may be linked to ammo bins on the other side. Those links survive the
+        // uncoupling on their own and the firing path never re-checks them, so drop them here. This runs only after
+        // every tow field above has settled, because the check reads them to decide what is still legal.
+        TrainAmmoSharing.dropUncoupledAmmoLinks(tractor);
+        for (int remainingId : tractor.getAllTowedUnits()) {
+            Entity remaining = game.getEntity(remainingId);
+
+            if (remaining != null) {
+                TrainAmmoSharing.dropUncoupledAmmoLinks(remaining);
+            }
+        }
+        for (int detachedId : detachedIds) {
+            Entity detached = game.getEntity(detachedId);
+
+            if (detached != null) {
+                TrainAmmoSharing.dropUncoupledAmmoLinks(detached);
+            }
+        }
     }
 
     /**

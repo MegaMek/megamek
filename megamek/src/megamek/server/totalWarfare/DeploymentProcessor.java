@@ -33,9 +33,13 @@
 
 package megamek.server.totalWarfare;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Vector;
 
 import megamek.common.Hex;
+import megamek.common.OffBoardDirection;
+import megamek.common.board.Board;
 import megamek.common.board.Coords;
 import megamek.common.compute.Compute;
 import megamek.common.enums.BuildingType;
@@ -53,6 +57,7 @@ import megamek.common.units.IBuilding;
 import megamek.common.units.Infantry;
 import megamek.common.units.Tank;
 import megamek.common.units.Terrains;
+import megamek.common.units.TrainLayout;
 import megamek.common.units.VTOL;
 import megamek.logging.MMLogger;
 
@@ -107,7 +112,8 @@ public class DeploymentProcessor extends AbstractTWRuleHandler {
         }
 
         boolean isLegalLocation = getGame().hasBoardLocation(coords, boardId)
-              && getGame().getBoard(boardId).isLegalDeployment(coords, entity);
+              && getGame().getBoard(boardId).isLegalDeployment(coords, entity)
+              && isLegalTrainFootprint(entity, coords, boardId, nFacing);
 
         if ((turn == null) || !turn.isValid(connId, entity, getGame())
               // FIXME: The combination with assault drop and the assault drop check dont look right:
@@ -380,7 +386,148 @@ public class DeploymentProcessor extends AbstractTWRuleHandler {
         entity.setDeployed(true);
         gameManager.entityUpdate(entity.getId());
         addReport(gameManager.doSetLocationsExposure(entity, hex, false, entity.getElevation()));
+
+        deployTowedTrailers(entity);
     }
 
+    /**
+     * Whether every hex a train would occupy is a legal deployment hex, not just the tractor's own.
+     * <p>
+     * The client refuses such a placement before sending it, but the placement arrives from the client, so the server
+     * has to decide for itself rather than trust it. A unit towing nothing is always its own footprint.
+     * </p>
+     *
+     * @param tractor the unit being deployed
+     * @param coords  the hex it is being placed in
+     * @param boardId the board it is being placed on
+     * @param facing  the facing it is being placed with
+     *
+     * @return true when the whole train fits in the deployment zone
+     */
+    private boolean isLegalTrainFootprint(Entity tractor, Coords coords, int boardId, int facing) {
+        if (tractor.getAllTowedUnits().isEmpty()) {
+            return true;
+        }
+
+        Board board = getGame().getBoard(boardId);
+        for (Coords trainHex : TrainLayout.deploymentFootprint(getGame(), tractor, coords, facing)) {
+            if (!getGame().hasBoardLocation(trainHex, boardId) || !board.isLegalDeployment(trainHex, tractor)) {
+                LOGGER.warn("[Train] rejected deployment of {} at {} facing {}: trailer hex {} is not a legal "
+                      + "deployment hex", tractor.getDisplayName(), coords, facing, trainHex);
+                return false;
+            }
+        }
+        return true;
+    }
+
+    /**
+     * Gives every trailer the off board edge and distance of the tractor towing it, so a train goes off board as a
+     * whole rather than being split between the board and the map edge.
+     * <p>
+     * Runs before deployment turns are generated. Without it a trailer behind an off board tractor would never be
+     * placed at all: an off board tractor takes no deployment turn, so nothing would run to position its trailers,
+     * and the trailer no longer deploys itself. See RFE #8506.
+     * </p>
+     */
+    void followTractorsOffBoard() {
+        List<String> trailersFollowingOffBoard = new ArrayList<>();
+
+        for (Entity tractor : getGame().getEntitiesVector()) {
+            if (!tractor.isOffBoard()
+                  || tractor.getAllTowedUnits().isEmpty()
+                  || (tractor.getOffBoardDistance() <= 0)
+                  || (tractor.getOffBoardDirection() == OffBoardDirection.NONE)) {
+                continue;
+            }
+            for (int towedId : tractor.getAllTowedUnits()) {
+                Entity trailer = getGame().getEntity(towedId);
+                if ((trailer == null) || trailer.isOffBoard() || trailer.isDeployed()) {
+                    continue;
+                }
+                trailer.setOffBoard(tractor.getOffBoardDistance(), tractor.getOffBoardDirection());
+                trailersFollowingOffBoard.add(trailer.getDisplayName());
+            }
+        }
+
+        if (!trailersFollowingOffBoard.isEmpty()) {
+            LOGGER.info("[Train] {} trailer(s) follow their tractor off board: {}",
+                  trailersFollowingOffBoard.size(), String.join(", ", trailersFollowingOffBoard));
+        }
+    }
+
+    /**
+     * Places the trailers of a train when its tractor deploys. Trailers get no deployment turn of their own, so this
+     * is the only chance they have to reach the board.
+     *
+     * @param tractor the unit that has just been deployed
+     */
+    private void deployTowedTrailers(Entity tractor) {
+        if (tractor.getAllTowedUnits().isEmpty()) {
+            return;
+        }
+
+        // A hitched train deploys wherever its tractor does, so a trailer keeps no off board setting of its own. The
+        // lobby does not let one be set on a hitched trailer, but it can be set before the trailer is hitched, so
+        // clear it here rather than leaving the trailer thinking it belongs somewhere else.
+        clearTrailerOffBoardSettings(tractor);
+
+        int trailerCount = tractor.getAllTowedUnits().size();
+        List<Coords> trainPath = TrainLayout.deploymentPath(tractor.getPosition(), tractor.getFacing(), trailerCount);
+        List<Integer> trainFacings = new ArrayList<>();
+        for (int step = 0; step < trainPath.size(); step++) {
+            trainFacings.add(tractor.getFacing());
+        }
+
+        List<TrainLayout.TrainPlacement> placements = TrainLayout.computeLayout(getGame(), tractor,
+              tractor.getPosition(), tractor.getFacing(), trainPath, trainFacings);
+
+        // The footprint was checked against the deployment zone in receiveDeployment, before the tractor was placed.
+
+        TrainLayout.applyLayout(getGame(), placements);
+
+        for (TrainLayout.TrainPlacement placement : placements) {
+            Entity trailer = getGame().getEntity(placement.entityId());
+            if (trailer == null) {
+                continue;
+            }
+            trailer.setBoardId(tractor.getBoardId());
+            trailer.setElevation(tractor.getElevation());
+            trailer.setSecondaryFacing(trailer.getFacing());
+            trailer.setDone(true);
+            trailer.setDeployed(true);
+            gameManager.entityUpdate(trailer.getId());
+        }
+
+        LOGGER.info("[Train] {} deployed at {} with {} trailer(s) placed behind it",
+              tractor.getDisplayName(), tractor.getPosition(), trailerCount);
+    }
+
+    /**
+     * Clears any off board setting left on the trailers of a train that is deploying.
+     * <p>
+     * A hitched train goes wherever its tractor goes, so a trailer never carries a deployment of its own. The lobby
+     * refuses to set one on a hitched trailer, but the setting can survive from before the trailer was hitched, so
+     * it is cleared here and logged rather than quietly changing where the unit ends up.
+     * </p>
+     *
+     * @param tractor the unit that has just been deployed
+     */
+    void clearTrailerOffBoardSettings(Entity tractor) {
+        List<String> clearedTrailers = new ArrayList<>();
+
+        for (int towedId : tractor.getAllTowedUnits()) {
+            Entity trailer = getGame().getEntity(towedId);
+
+            if ((trailer != null) && trailer.isOffBoard()) {
+                trailer.setOffBoard(0, OffBoardDirection.NONE);
+                clearedTrailers.add(trailer.getDisplayName());
+            }
+        }
+
+        if (!clearedTrailers.isEmpty()) {
+            LOGGER.info("[Train] {} trailer(s) had an off board setting of their own; a train deploys with {}: {}",
+                  clearedTrailers.size(), tractor.getDisplayName(), String.join(", ", clearedTrailers));
+        }
+    }
 
 }

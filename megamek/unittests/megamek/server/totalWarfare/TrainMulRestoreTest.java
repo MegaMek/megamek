@@ -33,6 +33,7 @@
 
 package megamek.server.totalWarfare;
 
+import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
@@ -178,6 +179,25 @@ class TrainMulRestoreTest {
               "A trailer nothing can hold is loaded loose rather than listed as towed");
         assertFalse(tractor.getAllTowedUnits().contains(trailer.getId()),
               "and the tractor does not report it as part of the train");
+    }
+
+    @Test
+    void aTowThatThrowsDoesNotAbortTheLoad() throws Exception {
+        // TankTrailerHitch.load throws when a hitch cannot take the trailer, and towUnit calls it without checking
+        // first. Escaping here would abort receiveEntityAdd and lose every unit in the file. Occupy the tractor's
+        // only hitch with a trailer that is not part of the restore, so the saved one has nothing to hang off.
+        Tank tractor = addVehicle(TRACTOR_TONS, false);
+        Tank blockingTrailer = addVehicle(CARRIAGE_TONS, true);
+        tractor.towUnit(blockingTrailer.getId());
+
+        Tank savedTrailer = addVehicle(CARRIAGE_TONS, true);
+        tractor.addTowedUnit(51);
+
+        assertDoesNotThrow(() -> gameManager.restoreTrains(List.of(tractor, savedTrailer),
+                    Map.of(51, savedTrailer.getId())),
+              "A train the data can no longer build must not take the rest of the file down with it");
+        assertEquals(Entity.NONE, savedTrailer.getTractor(),
+              "and the trailer it could not hitch is loaded loose");
     }
 
     @Test

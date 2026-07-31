@@ -26875,16 +26875,29 @@ public class TWGameManager extends AbstractGameManager {
                     continue;
                 }
 
-                tractor.towUnit(trailer.getId());
+                // A file describes a train the current data may no longer support, so treat towUnit as able to fail.
+                // TankTrailerHitch.load throws when a hitch cannot take the trailer, and towUnit calls it without
+                // checking first. Letting that escape would abort receiveEntityAdd and lose every unit in the file,
+                // not just this train, so a bad tow costs the player one trailer rather than the whole force.
+                boolean hitched;
+                try {
+                    tractor.towUnit(trailer.getId());
+                    // towUnit records the trailer as part of the train before it looks for a hitch to hold it, and
+                    // does not undo that when nothing can, so a silent failure looks the same as a thrown one here.
+                    hitched = trailer.getTowedBy() != Entity.NONE;
+                } catch (RuntimeException towFailure) {
+                    LOGGER.warn("[Train] {} could not tow {} from file: {}",
+                          tractor.getDisplayName(), trailer.getDisplayName(), towFailure.getMessage());
+                    hitched = false;
+                }
 
-                // towUnit records the trailer as part of the train before it looks for a hitch to hold it, and does
-                // not undo that when nothing can. A trailer left listed but unhitched would be reported as restored
-                // and then behave as neither loose nor towed, so drop it back out of the train instead.
-                if (trailer.getTowedBy() == Entity.NONE) {
+                if (!hitched) {
+                    // Leave it loose rather than listed in a train nothing is holding it to.
                     LOGGER.warn("[Train] {} has no free hitch for {}; the trailer was loaded loose",
                           tractor.getDisplayName(), trailer.getDisplayName());
                     tractor.removeTowedUnit(trailer.getId());
                     trailer.setTractor(Entity.NONE);
+                    trailer.setTowedBy(Entity.NONE);
                 }
             }
 

@@ -120,8 +120,8 @@ import megamek.common.rolls.PilotingRollData;
 import megamek.common.rolls.Roll;
 import megamek.common.rolls.TargetRoll;
 import megamek.common.turns.TurnOrdered;
-import megamek.common.util.UUIDUtil;
 import megamek.common.util.RoundWeight;
+import megamek.common.util.UUIDUtil;
 import megamek.common.weapons.AlamoMissileWeapon;
 import megamek.common.weapons.TeleMissileTracker;
 import megamek.common.weapons.Weapon;
@@ -1775,8 +1775,9 @@ public abstract class Entity extends TurnOrdered
         String structureName = (structureType == EquipmentType.T_STRUCTURE_UNKNOWN)
               ? Messages.getString("CompositeTechLevel.component.internalStructure")
               : Messages.getString("CompositeTechLevel.component.internalStructureNamed",
-                    EquipmentType.getStructureTypeName(structureType, isClanStructure));
-        techLevel.addComponent(EquipmentType.getStructureTechAdvancement(structureType, isClanStructure), structureName);
+              EquipmentType.getStructureTypeName(structureType, isClanStructure));
+        techLevel.addComponent(EquipmentType.getStructureTechAdvancement(structureType, isClanStructure),
+              structureName);
     }
 
     public int getRecoveryTurn() {
@@ -2231,9 +2232,9 @@ public abstract class Entity extends TurnOrdered
     }
 
     /**
-     * Returns true if this entity is currently climbing or dangling from a cliff face (TO:AR p.20).
-     * Both climbing and dangling entities have the same combat restrictions
-     * (rear weapons only, no physical attacks, -2 to-hit target modifier).
+     * Returns true if this entity is currently climbing or dangling from a cliff face (TO:AR p.20). Both climbing and
+     * dangling entities have the same combat restrictions (rear weapons only, no physical attacks, -2 to-hit target
+     * modifier).
      */
     public boolean isClimbing() {
         return climbing || dangling;
@@ -7991,12 +7992,12 @@ public abstract class Entity extends TurnOrdered
                               (weaponHandler instanceof CapitalMissileBearingsOnlyHandler) ?
                                     getGame().getTarget(
                                           weaponHandler.getWeaponAttackAction()
-                                          .getOriginalTargetType(),
+                                                .getOriginalTargetType(),
                                           weaponHandler.getWeaponAttackAction()
-                                          .getOriginalTargetId()) :
+                                                .getOriginalTargetId()) :
                                     getGame().getEntity(
                                           weaponHandler.getWeaponAttackAction()
-                                          .getEntityId())))
+                                                .getEntityId())))
                   .map(WeaponHandler::getWeaponAttackAction)
                   .collect(Collectors.toList());
 
@@ -10859,8 +10860,8 @@ public abstract class Entity extends TurnOrdered
      * Returns true if the entity should be deployed
      * <p>
      * A trailer that is part of a train does not deploy on its own. It is placed with the rest of the train when its
-     * tractor deploys, in the same way a carried unit is placed with its transport. An unattached trailer still
-     * deploys normally.
+     * tractor deploys, in the same way a carried unit is placed with its transport. An unattached trailer still deploys
+     * normally.
      * </p>
      */
     public boolean shouldDeploy(int round) {
@@ -10916,10 +10917,10 @@ public abstract class Entity extends TurnOrdered
     }
 
     /**
-     * Returns true when this unit can flee from its current position in its current state. 
-     * This requires the unit to have mobility and be in control as well as the position being eligible for fleeing.
-     * When no special flee area is set by a scenario, the latter will typically be true when the position is at the edge of its board.
-     * A null position as well as offboard units are considered to be eligible for fleeing.
+     * Returns true when this unit can flee from its current position in its current state. This requires the unit to
+     * have mobility and be in control as well as the position being eligible for fleeing. When no special flee area is
+     * set by a scenario, the latter will typically be true when the position is at the edge of its board. A null
+     * position as well as offboard units are considered to be eligible for fleeing.
      *
      * @return True when the unit can flee from the given position, given its current status
      */
@@ -10929,10 +10930,10 @@ public abstract class Entity extends TurnOrdered
     }
 
     /**
-     * Returns true when this unit can flee from the given position in its current state. 
-     * This requires the unit to have mobility and be in control as well as the position being eligible for fleeing.
-     * When no special flee area is set by a scenario, the latter will typically be true when the position is at the edge of its board.
-     * A null position as well as offboard units are considered to be eligible for fleeing.
+     * Returns true when this unit can flee from the given position in its current state. This requires the unit to have
+     * mobility and be in control as well as the position being eligible for fleeing. When no special flee area is set
+     * by a scenario, the latter will typically be true when the position is at the edge of its board. A null position
+     * as well as offboard units are considered to be eligible for fleeing.
      *
      * @return True when the unit can flee from the given position, given its current status
      */
@@ -10941,14 +10942,14 @@ public abstract class Entity extends TurnOrdered
     }
 
     /**
-     * Returns true when this unit can flee in its current state.
-     * This requires the unit to have mobility and be in control
+     * Returns true when this unit can flee in its current state. This requires the unit to have mobility and be in
+     * control
      *
      * @return True when the unit can flee given its status
      */
     public final boolean canFleeInState() {
         return (((getWalkMP() > 0) || (this instanceof Infantry)) &&
-              !isProne()  &&
+              !isProne() &&
               !isStuck() &&
               !isShutDown() &&
               !getCrew().isUnconscious() &&
@@ -10956,10 +10957,9 @@ public abstract class Entity extends TurnOrdered
     }
 
     /**
-     * Returns true when this unit can flee from the given position. 
-     * This requires the position be eligible for fleeing. 
-     * When no special flee area is set by a scenario, the latter will typically be true when the position is at the edge of its board.
-     * A null position as well as offboard units are considered to be eligible for fleeing.
+     * Returns true when this unit can flee from the given position. This requires the position be eligible for fleeing.
+     * When no special flee area is set by a scenario, the latter will typically be true when the position is at the
+     * edge of its board. A null position as well as offboard units are considered to be eligible for fleeing.
      *
      * @return True when the unit can flee from the given position
      */
@@ -11662,8 +11662,8 @@ public abstract class Entity extends TurnOrdered
     /**
      * Returns {@code true} if this unit's pre-end declaration is made per unit (it needs its own turn), as opposed to
      * the player-wide declarations (Nova networks, Variable Range Targeting, crew abandonment, minesweeper) that a
-     * player makes once for all their units through a single dialog. Used to collapse the player-wide turns to one
-     * per player while keeping the per-unit turns.
+     * player makes once for all their units through a single dialog. Used to collapse the player-wide turns to one per
+     * player while keeping the per-unit turns.
      */
     public boolean hasEntityScopedPreEndDeclaration() {
         // Infantry-vs-infantry combat and Bridge-Layer (AVLB) deployment are both declared per unit (TM p.242 / TW).
@@ -13124,8 +13124,8 @@ public abstract class Entity extends TurnOrdered
 
     /**
      * Returns whether this unit's crew could leave it now: eject or abandon, the way the server's abandonEntity
-     * resolves it. False here; the unit types whose crews can leave override it, each with its own conditions on
-     * top of the shared {@link #crewCanLeave()}.
+     * resolves it. False here; the unit types whose crews can leave override it, each with its own conditions on top of
+     * the shared {@link #crewCanLeave()}.
      */
     public boolean canEjectCrew() {
         return false;
@@ -14449,10 +14449,10 @@ public abstract class Entity extends TurnOrdered
     }
 
     /**
-     * Records Improved Magnetic Pulse (iATM IMP) missile hits on this unit (IO IMP rules). The hit
-     * count drives the to-hit, movement and hostile-ECM effects (see {@link #getImpToHitModifier()},
-     * {@link #getImpMpReduction()}). Only fusion-powered units also take outside heat, at +1 per 3
-     * warheads that hit (rounded down, with the remainder carried across the turn's salvos).
+     * Records Improved Magnetic Pulse (iATM IMP) missile hits on this unit (IO IMP rules). The hit count drives the
+     * to-hit, movement and hostile-ECM effects (see {@link #getImpToHitModifier()}, {@link #getImpMpReduction()}). Only
+     * fusion-powered units also take outside heat, at +1 per 3 warheads that hit (rounded down, with the remainder
+     * carried across the turn's salvos).
      *
      * @param missiles number of IMP warheads that hit this unit
      */
@@ -18162,8 +18162,8 @@ public abstract class Entity extends TurnOrdered
 
     /**
      * Returns the Force Generator mission roles declared in this unit's file as raw comma-separated text, e.g.
-     * "fire_support,urban". Blank when the file declares none, in which case the Force Generator derives roles from
-     * the unit itself.
+     * "fire_support,urban". Blank when the file declares none, in which case the Force Generator derives roles from the
+     * unit itself.
      *
      * @return the mission role text, never {@code null}
      */
@@ -18507,6 +18507,15 @@ public abstract class Entity extends TurnOrdered
      * @since 0.50.10
      */
     public boolean canPerformSpaceSalvageOperations() {
+        return false;
+    }
+
+    /**
+     * Returns whether this unit is a chassis-familiarity-eligible type for MekHQ's Familiarity system
+     *
+     * @return {@code true} if familiarity is tracked for this unit
+     */
+    public boolean isChassisFamiliarityEligible() {
         return false;
     }
 }

@@ -1771,11 +1771,11 @@ public abstract class Mek extends Entity implements Fortifiable, RubbleClearer, 
                 MPBoosters armed = getArmedMPBoosters();
 
                 str += (mpBoosters.hasMASC() ? " MASC:" + getMASCTurns()
-                                               + (armed.hasMASC() ? "(" + getMASCTarget() + "+)" : "(NA)") : "")
+                      + (armed.hasMASC() ? "(" + getMASCTarget() + "+)" : "(NA)") : "")
                       + (mpBoosters.hasSupercharger() ? " Supercharger:" + getSuperchargerTurns()
-                                                        + (armed.hasSupercharger() ?
-                                                           "(" + getSuperchargerTarget() + "+)" :
-                                                           "(NA)") : "");
+                      + (armed.hasSupercharger() ?
+                      "(" + getSuperchargerTarget() + "+)" :
+                      "(NA)") : "");
             }
             return str;
         }
@@ -4671,13 +4671,13 @@ public abstract class Mek extends Entity implements Fortifiable, RubbleClearer, 
     }
 
     /**
-     * Bulk control for heat sink activation: switches individual heat sink mounts On or Off so that the given number
-     * of sinks remains active. Like all activation/deactivation, the change is declared now and takes effect in the
-     * End Phase (the mounts' pending modes apply at the round rollover). Prototype double heat sinks and Freezers are
-     * not part of this counter (matching {@link #getNumberOfSinks()}); they can be switched individually via their
+     * Bulk control for heat sink activation: switches individual heat sink mounts On or Off so that the given number of
+     * sinks remains active. Like all activation/deactivation, the change is declared now and takes effect in the End
+     * Phase (the mounts' pending modes apply at the round rollover). Prototype double heat sinks and Freezers are not
+     * part of this counter (matching {@link #getNumberOfSinks()}); they can be switched individually via their
      * equipment mode. The value arrives from a client packet, so out-of-range requests are clamped (mirroring
-     * {@link Aero#setActiveSinksNextRound(int)}): a negative count deactivates every sink, a count above the number
-     * of operable sinks activates every sink.
+     * {@link Aero#setActiveSinksNextRound(int)}): a negative count deactivates every sink, a count above the number of
+     * operable sinks activates every sink.
      *
      * @param sinks the number of heat sinks that should be active next round
      */
@@ -4726,8 +4726,8 @@ public abstract class Mek extends Entity implements Fortifiable, RubbleClearer, 
     }
 
     /**
-     * @return the number of operable heat sinks that will be switched on next round, taking pending mode changes
-     *       into account (prototype double heat sinks and Freezers excluded)
+     * @return the number of operable heat sinks that will be switched on next round, taking pending mode changes into
+     *       account (prototype double heat sinks and Freezers excluded)
      */
     public int getActiveSinksNextRound() {
         int activeSinks = 0;
@@ -7523,5 +7523,10 @@ public abstract class Mek extends Entity implements Fortifiable, RubbleClearer, 
             return false;
         }
         return getCrew().isEjected() && !isDestroyed();
+    }
+
+    @Override
+    public boolean isChassisFamiliarityEligible() {
+        return true;
     }
 }

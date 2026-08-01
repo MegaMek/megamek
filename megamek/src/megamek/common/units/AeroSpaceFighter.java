@@ -144,4 +144,9 @@ public class AeroSpaceFighter extends Aero {
     public int getRecoveryTime() {
         return 60;
     }
+
+    @Override
+    public boolean isChassisFamiliarityEligible() {
+        return true;
+    }
 }

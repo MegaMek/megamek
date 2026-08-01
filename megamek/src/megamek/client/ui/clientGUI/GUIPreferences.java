@@ -187,6 +187,7 @@ public class GUIPreferences extends PreferenceStoreProxy {
 
     public static final String CUSTOM_UNIT_HEIGHT = "CustomUnitDialogSizeHeight";
     public static final String CUSTOM_UNIT_WIDTH = "CustomUnitDialogSizeWidth";
+    public static final String SHOW_UNIMPLEMENTED_SPAS = "ShowUnimplementedSpas";
 
     public static final String FORCE_DISPLAY_POS_X = "ForceDisplayPosX";
     public static final String FORCE_DISPLAY_POS_Y = "ForceDisplayPosY";
@@ -690,6 +691,7 @@ public class GUIPreferences extends PreferenceStoreProxy {
         store.setDefault(AUTO_DECLARE_SEARCHLIGHT, true);
         store.setDefault(CUSTOM_UNIT_HEIGHT, 400);
         store.setDefault(CUSTOM_UNIT_WIDTH, 600);
+        store.setDefault(SHOW_UNIMPLEMENTED_SPAS, false);
 
         store.setDefault(FORCE_DISPLAY_AUTO_DISPLAY_REPORT_PHASE, 2);
         store.setDefault(FORCE_DISPLAY_AUTO_DISPLAY_NON_REPORT_PHASE, 2);
@@ -1034,6 +1036,11 @@ public class GUIPreferences extends PreferenceStoreProxy {
 
     public int getCustomUnitWidth() {
         return store.getInt(CUSTOM_UNIT_WIDTH);
+    }
+
+    /** @return whether the pilot options list also shows the CamOps SPAs MegaMek does not implement */
+    public boolean getShowUnimplementedSpas() {
+        return store.getBoolean(SHOW_UNIMPLEMENTED_SPAS);
     }
 
     public int getForceDisplayPosX() {
@@ -1935,6 +1942,10 @@ public class GUIPreferences extends PreferenceStoreProxy {
 
     public void setCustomUnitWidth(int state) {
         store.setValue(CUSTOM_UNIT_WIDTH, state);
+    }
+
+    public void setShowUnimplementedSpas(boolean state) {
+        store.setValue(SHOW_UNIMPLEMENTED_SPAS, state);
     }
 
     public void setForceDisplayPosX(int i) {

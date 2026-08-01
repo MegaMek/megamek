@@ -1250,6 +1250,10 @@ public class Compute {
               || (target.getTargetType() == Targetable.TYPE_HEX_AERO_BOMB)) {
             return null;
         }
+        // Likewise, MRM Saturation attacks never get the target immobile mod
+        if (target.getTargetType() == Targetable.TYPE_SATURATION) {
+            return null;
+        }
 
         if (target.isImmobile() || target.isBracing()) {
             if ((target instanceof Mek) && (aimingAt == Mek.LOC_HEAD) && aimingMode.isImmobile()) {
@@ -3653,7 +3657,9 @@ public class Compute {
                       && !lnk_guide.isDestroyed() && !lnk_guide.isMissing()
                       && !lnk_guide.isBreached()
                       && lnk_guide.getType().hasFlag(MiscType.F_APOLLO)) {
-                    fHits *= .9f;
+                    // 90% damage expected with Apollo, but instead divide by 3 if Saturation mode
+                    boolean saturation = weaponAttackAction.getTargetType() == Targetable.TYPE_SATURATION;
+                    fHits *= (saturation) ? .333f : .9f;
                 }
             }
 

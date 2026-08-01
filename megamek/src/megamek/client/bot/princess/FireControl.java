@@ -386,7 +386,7 @@ public class FireControl {
         if (shooterState.isProne()) {
             toHitData.addModifier(TH_ATT_PRONE);
         }
-        if (targetState.isImmobile() && !target.isHexBeingBombed()) {
+        if (targetState.isImmobile() && !(target.isHexBeingBombed() || target.getTargetType() == Targetable.TYPE_SATURATION)) {
             toHitData.addModifier(TH_TAR_IMMOBILE);
         }
         if (game.getOptions().booleanOption(OptionsConstants.ADVANCED_GROUND_MOVEMENT_TAC_OPS_STANDING_STILL)

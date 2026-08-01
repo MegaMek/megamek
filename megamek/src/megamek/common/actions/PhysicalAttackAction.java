@@ -215,7 +215,7 @@ public class PhysicalAttackAction extends AbstractAttackAction {
         toHit.append(Compute.getTargetTerrainModifier(game, target, 0, inSameBuilding));
 
         // RULES large targets check
-        int largeTarget =
+        int largeTarget = (game.getEntity(target.getId()) == null) ? 0 :
               Game.rulesManager.getRulesTarget().largeTargetModifier(game.getEntity(target.getId()).getWeightClass());
         // RULESFUTURE Call this with the the 2nd parameter when objectives that are large are added
         if (largeTarget != 0) {

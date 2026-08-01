@@ -7962,6 +7962,7 @@ public abstract class Entity extends TurnOrdered
         final Set<WeaponAttackAction> targets = new HashSet<>();
         getActiveAMS().stream().filter(ams -> !ams.isAPDS()).forEach(ams -> {
             // make a new list of only incoming attacks in arc
+            // TODO: determine if adjustments for MRM Saturation attacks are necessary.
             final List<WeaponAttackAction> attacksInArc = attacks.stream()
                   .filter(weaponHandler -> (weaponHandler.getWeaponAttackAction() !=
                         null) &&

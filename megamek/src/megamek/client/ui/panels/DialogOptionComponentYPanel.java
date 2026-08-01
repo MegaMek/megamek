@@ -34,6 +34,7 @@
 
 package megamek.client.ui.panels;
 
+import java.awt.Component;
 import java.awt.FlowLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -268,20 +269,36 @@ public class DialogOptionComponentYPanel extends FixedYPanel
     }
 
     /**
-     * Makes the option's name label wrap when it is wider than the given width, by switching the label to
-     * width-constrained HTML; a name that fits reverts to plain text. Multi-column containers call this when they
-     * lay out, so long option names (e.g. Edge triggers) wrap inside their column instead of being clipped.
+     * Makes the option's name label wrap when the whole row is wider than the given width, by switching the label
+     * to width-constrained HTML; a name that fits reverts to plain text. The label's share is the row width minus
+     * this row's other visible components (checkbox, combo box, inline controls), so a row with a wide control
+     * (e.g. the Sandblaster weapon choice) narrows its label instead of pushing the control onto a clipped second
+     * line. Multi-column containers call this when they lay out.
      *
-     * @param availableWidth the width in pixels the label may use, or 0 or less to always use plain text
+     * @param availableRowWidth the width in pixels the whole row may use, or 0 or less to always use plain text
      */
-    public void setNameLabelWrapWidth(int availableWidth) {
+    public void setNameLabelWrapWidth(int availableRowWidth) {
         if (nameLabel == null) {
             return;
         }
         String plainName = option.getDisplayableName() + nameSuffix;
-        boolean fits = (availableWidth <= 0)
-              || (nameLabel.getFontMetrics(nameLabel.getFont()).stringWidth(plainName) <= availableWidth);
-        String wantedText = fits ? plainName : "<html><div width=" + availableWidth + ">" + plainName + "</div></html>";
+        int availableLabelWidth = availableRowWidth;
+        if (availableRowWidth > 0) {
+            FlowLayout flowLayout = (FlowLayout) getLayout();
+            availableLabelWidth -= flowLayout.getHgap();
+            for (Component child : getComponents()) {
+                if ((child != nameLabel) && child.isVisible()) {
+                    availableLabelWidth -= child.getPreferredSize().width + flowLayout.getHgap();
+                }
+            }
+        }
+        // When the controls alone exceed the row (availableLabelWidth <= 0) wrapping cannot help; keep the plain
+        // text and let the row clip at its right edge, which stays usable.
+        boolean fits = (availableRowWidth <= 0) || (availableLabelWidth <= 0)
+              || (nameLabel.getFontMetrics(nameLabel.getFont()).stringWidth(plainName) <= availableLabelWidth);
+        String wantedText = fits
+              ? plainName
+              : "<html><div width=" + availableLabelWidth + ">" + plainName + "</div></html>";
         if (!wantedText.equals(nameLabel.getText())) {
             nameLabel.setText(wantedText);
         }

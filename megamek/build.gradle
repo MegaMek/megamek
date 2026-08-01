@@ -706,7 +706,9 @@ tasks.register('aiMatch', JavaExec) {
     group = 'utility'
     classpath = sourceSets.main.runtimeClasspath
     mainClass = 'megamek.utilities.AIMatchRunner'
-    args(project.hasProperty("aiMatchArgs") ? project.property("aiMatchArgs").split(' ') : "")
+    // no property -> no args, so AIMatchRunner prints its usage message; split on runs of
+    // whitespace so accidental double spaces do not become empty arguments
+    args(project.hasProperty("aiMatchArgs") ? project.property("aiMatchArgs").trim().split('\\s+') : [])
 
     jvmArgs = mmJvmOptions
 }

@@ -40,6 +40,7 @@ import java.awt.Component;
 import java.awt.Container;
 import java.awt.Dimension;
 import java.awt.Font;
+import java.awt.FlowLayout;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Insets;
@@ -81,6 +82,8 @@ import megamek.client.ui.dialogs.minimap.MinimapPanel;
 import megamek.client.ui.dialogs.unitDisplay.UnitDisplayPanel;
 import megamek.client.ui.models.FileNameComboBoxModel;
 import megamek.client.ui.panels.CommonSettingsPane;
+import megamek.client.ui.settings.SettingsFormPanel;
+import megamek.client.ui.settings.SettingsIconLegend;
 import megamek.client.ui.panels.phaseDisplay.DeploymentDisplay;
 import megamek.client.ui.panels.phaseDisplay.FiringDisplay;
 import megamek.client.ui.panels.phaseDisplay.PhysicalDisplay;
@@ -570,12 +573,12 @@ public class CommonSettingsDialog extends AbstractButtonDialog
 
     private static final String[] LOCALE_CHOICES = { "en", "de", "ru", "es" };
 
-    private static final Dimension LABEL_SPACER = new Dimension(5, 0);
     private static final Dimension DEPENDENT_INSET = new Dimension(25, 0);
 
     /** Shortest and longest display/spacing time the toast spinners allow, in seconds. */
     private static final int MIN_TOAST_SECONDS = 1;
     private static final int MAX_TOAST_SECONDS = 10;
+      private static final int BUTTON_GAP = 8;
     /** Wrap width for the multi-line warning under the toast on/off checkbox, before GUI scaling. */
     private static final int TOAST_WARNING_WIDTH_PX = 480;
 
@@ -648,24 +651,149 @@ public class CommonSettingsDialog extends AbstractButtonDialog
             }
         });
 
-            return new CommonSettingsPane(List.of(
-                    optionPage("main", getSettingsPanel()),
-                    optionPage("audio", getAudioPanel()),
-                    optionPage("keyBinds", getKeyBindPanel()),
-                    optionPage("gameBoard", getGameBoardPanel()),
-                    optionPage("unitDisplay", getUnitDisplayPanel()),
-                    optionPage("miniMap", getMiniMapPanel()),
-                    optionPage("report", getReportPanel()),
-                    optionPage("overlays", getOverlaysPanel()),
-                    optionPage("buttonOrder", getButtonOrderPanel()),
-                    optionPage("autoDisplay", getPhasePanel()),
-                    optionPage("aiDisplay", aiDisplayPanel()),
-                    optionPage("advanced", getAdvancedSettingsPanel())));
+        List<CommonSettingsPane.OptionPage> pages = new ArrayList<>();
+
+        CommonSettingsPane.SectionedContent main = sectionedContent(getSettingsPanel(), "main");
+        pages.add(optionPage("main.application", path("main", "main.application"), main,
+              section("main.locale", 0), section("main.scale", 1), section("main.userFiles", 2),
+              section("main.mml", 3), section("main.theme", 4)));
+        pages.add(optionPage("main.colours", path("main", "main.colours"), main,
+              section("main.statusColours", 5), section("main.unitColours", 6), section("main.playerColours", 7)));
+        pages.add(optionPage("main.behavior", path("main", "main.behavior"), main,
+              section("main.interface", 8), section("main.units", 9), section("main.logging", 10),
+              section("main.privacy", 11)));
+
+        pages.add(optionPage("audio", path("audio"), sectionedContent(getAudioPanel(), "audio"),
+              section("audio.volume", 0), section("audio.chat", 1), section("audio.myTurn", 2),
+              section("audio.otherTurns", 3)));
+        pages.add(optionPage("keyBinds", path("keyBinds"), getKeyBindSections()));
+
+        CommonSettingsPane.SectionedContent gameBoard = sectionedContent(getGameBoardPanel(), "gameBoard");
+        pages.add(optionPage("gameBoard.general", path("gameBoard", "gameBoard.general"), gameBoard,
+              section("gameBoard.tileset", 0), section("gameBoard.nags", 1), section("gameBoard.actions", 2),
+              section("gameBoard.controls", 3), section("gameBoard.pathfinder", 4),
+              section("gameBoard.units", 5)));
+        pages.add(optionPage("gameBoard.appearance", path("gameBoard", "gameBoard.appearance"), gameBoard,
+              section("gameBoard.rendering", 6), section("gameBoard.indicators", 7),
+              section("gameBoard.movement", 8), section("gameBoard.fire", 9)));
+        pages.add(optionPage("gameBoard.fov", path("gameBoard", "gameBoard.fov"), gameBoard,
+              section("gameBoard.fovInside", 10), section("gameBoard.fovOutside", 11)));
+
+        CommonSettingsPane.SectionedContent unitDisplay = sectionedContent(getUnitDisplayPanel(), "unitDisplay");
+        pages.add(optionPage("unitDisplay.tooltips", path("unitDisplay", "unitDisplay.tooltips"), unitDisplay,
+              section("unitDisplay.tooltip", 0), section("unitDisplay.armor", 1)));
+        pages.add(optionPage("unitDisplay.interface", path("unitDisplay", "unitDisplay.interface"), unitDisplay,
+              section("unitDisplay.heat", 2), section("unitDisplay.order", 3),
+              section("unitDisplay.weapons", 4), section("unitDisplay.fonts", 5)));
+
+        pages.add(optionPage("miniMap", path("miniMap"), sectionedContent(getMiniMapPanel(), "miniMap"),
+              section("miniMap.theme", 0), section("miniMap.display", 1)));
+        pages.add(optionPage("report", path("report"), sectionedContent(getReportPanel(), "report"),
+              section("report.appearance", 0), section("report.content", 1), section("report.filter", 2)));
+        pages.add(optionPage("overlays", path("overlays"), sectionedContent(getOverlaysPanel(), "overlays"),
+              section("overlays.overview", 0), section("overlays.planetary", 1), section("overlays.toasts", 2),
+              section("overlays.trace", 3)));
+        pages.add(optionPage("buttonOrder", path("buttonOrder"), getButtonOrderSections()));
+        pages.add(optionPage("autoDisplay", path("autoDisplay"), sectionedContent(getPhasePanel(), "autoDisplay"),
+              section("autoDisplay.unit", 0), section("autoDisplay.minimap", 1), section("autoDisplay.report", 2),
+              section("autoDisplay.players", 3), section("autoDisplay.force", 4), section("autoDisplay.bots", 5),
+              section("autoDisplay.tabs", 6)));
+        pages.add(optionPage("aiDisplay", path("aiDisplay"), sectionedContent(aiDisplayPanel(), "aiDisplay"),
+              section("aiDisplay.resolve", 0), section("aiDisplay.bot", 1)));
+        pages.add(optionPage("advanced", path("advanced"), List.of(
+              optionSection("advanced.settings", getAdvancedSettingsPanel(), true))));
+
+        return new CommonSettingsPane(pages);
     }
 
-      private CommonSettingsPane.OptionPage optionPage(String id, JComponent content) {
-            return new CommonSettingsPane.OptionPage(id, Messages.getString("CommonSettingsDialog." + id), content);
-      }
+    private List<String> path(String... ids) {
+        return Arrays.stream(ids).map(id -> Messages.getString("CommonSettingsDialog.page." + id)).toList();
+    }
+
+    private CommonSettingsPane.OptionPage optionPage(String id, List<String> path,
+          CommonSettingsPane.SectionedContent content, SectionReference... references) {
+        List<CommonSettingsPane.OptionSection> sections = new ArrayList<>();
+        for (SectionReference reference : references) {
+            if (reference.index() >= content.groups().size()) {
+                throw new IllegalArgumentException("No section " + reference.index() + " for " + id);
+            }
+            sections.add(optionSection(reference.id(), content.groups().get(reference.index()), false));
+        }
+        return optionPage(id, path, sections);
+    }
+
+    private CommonSettingsPane.OptionPage optionPage(String id, List<String> path,
+          List<CommonSettingsPane.OptionSection> sections) {
+        return new CommonSettingsPane.OptionPage(id, path, id.replace(".", ""), sections);
+    }
+
+    private CommonSettingsPane.OptionSection optionSection(String id, JComponent content, boolean advanced) {
+        return new CommonSettingsPane.OptionSection(id,
+              Messages.getString("CommonSettingsDialog.section." + id + ".title"),
+              Messages.getString("CommonSettingsDialog.section." + id + ".summary"), content, advanced);
+    }
+
+    private CommonSettingsPane.SectionedContent sectionedContent(JComponent content, String id) {
+        if (content instanceof CommonSettingsPane.SectionedContent sectionedContent) {
+            return sectionedContent;
+        }
+        throw new IllegalArgumentException("Sectioned page content required for " + id);
+    }
+
+    private static SectionReference section(String id, int index) {
+        return new SectionReference(id, index);
+    }
+
+    private record SectionReference(String id, int index) {
+    }
+
+    @Override
+    protected JPanel createButtonPanel() {
+        int gap = UIUtil.scaleForGUI(BUTTON_GAP);
+        JButton okButton = new JButton(resources.getString("Ok.text"));
+        okButton.setName("okButton");
+        okButton.setToolTipText(resources.getString("Ok.toolTipText"));
+        okButton.putClientProperty("FlatLaf.style",
+              "background: $Button.default.background; foreground: $Button.default.foreground");
+        okButton.addActionListener(this::okButtonActionPerformed);
+
+        JButton cancelButton = new JButton(resources.getString("Cancel.text"));
+        cancelButton.setName("cancelButton");
+        cancelButton.setToolTipText(resources.getString("Cancel.toolTipText"));
+        cancelButton.addActionListener(this::cancelActionPerformed);
+        setUniformButtonSize(okButton, cancelButton);
+
+        JPanel actionButtons = new JPanel(new FlowLayout(FlowLayout.CENTER, gap, gap));
+        actionButtons.add(okButton);
+        actionButtons.add(cancelButton);
+
+        JButton legendButton = SettingsIconLegend.createLegendButton(
+              Messages.getString("CommonSettingsDialog.legend.button"),
+              Messages.getString("CommonSettingsDialog.legend.tooltip"),
+              CommonSettingsPane.legendEntries());
+        JPanel legendPanel = new JPanel(new FlowLayout(FlowLayout.LEFT, gap, gap));
+        legendPanel.add(legendButton);
+
+        JPanel rightSpacer = new JPanel();
+        rightSpacer.setOpaque(false);
+        rightSpacer.setPreferredSize(new Dimension(legendPanel.getPreferredSize().width, 0));
+
+        JPanel footer = new JPanel(new BorderLayout());
+        footer.add(legendPanel, BorderLayout.WEST);
+        footer.add(actionButtons, BorderLayout.CENTER);
+        footer.add(rightSpacer, BorderLayout.EAST);
+        return footer;
+    }
+
+    private static void setUniformButtonSize(JButton... buttons) {
+        int width = Arrays.stream(buttons).mapToInt(button -> button.getPreferredSize().width).max().orElse(0);
+        int height = Arrays.stream(buttons).mapToInt(button -> button.getPreferredSize().height).max().orElse(0);
+        Dimension size = new Dimension(width, height);
+        for (JButton button : buttons) {
+            button.setPreferredSize(size);
+            button.setMinimumSize(size);
+        }
+    }
 
     private JPanel getAudioPanel() {
         List<List<Component>> comps = new ArrayList<>();
@@ -2318,19 +2446,9 @@ public class CommonSettingsDialog extends AbstractButtonDialog
 
     private void addLineSpacer(List<List<Component>> comps) {
         List<Component> row = new ArrayList<>();
-        row.add(Box.createRigidArea(new Dimension(0, 10)));
-        comps.add(row);
-
-        JSeparator Sep = new JSeparator(SwingConstants.HORIZONTAL);
-        row = new ArrayList<>();
-        row.add(Sep);
-        comps.add(row);
-
-        row = new ArrayList<>();
-        row.add(Box.createRigidArea(new Dimension(0, 5)));
+        row.add(new SettingsSectionBreak());
         comps.add(row);
     }
-
     private void addSpacer(List<List<Component>> comps, int height) {
         List<Component> row = new ArrayList<>();
         row.add(Box.createVerticalStrut(height));
@@ -3359,17 +3477,19 @@ public class CommonSettingsDialog extends AbstractButtonDialog
         String option = "Advanced" + advancedKeys.getModel().getElementAt(advancedKeyIndex).option;
         savedAdvancedOpt.put(option, guip.getString(option));
         guip.setValue(option, advancedValue.getText());
+      }
+
+      private List<CommonSettingsPane.OptionSection> getKeyBindSections() {
+        List<JComponent> content = getKeyBindSectionContent();
+        return List.of(
+              optionSection("keyBinds.defaults", content.get(0), false),
+              optionSection("keyBinds.navigation", content.get(1), false),
+              optionSection("keyBinds.commands", content.get(2), false));
     }
 
-    /**
-     * Creates a panel with a box for all the commands that can be bound to keys.
-     */
-    private JPanel getKeyBindPanel() {
-        JPanel outer = new JPanel();
-        outer.setLayout(new BoxLayout(outer, BoxLayout.PAGE_AXIS));
-
-        var topPanel = new JPanel();
-        topPanel.setLayout(new BoxLayout(topPanel, BoxLayout.Y_AXIS));
+    private List<JComponent> getKeyBindSectionContent() {
+            var topPanel = new JPanel();
+            topPanel.setLayout(new BoxLayout(topPanel, BoxLayout.Y_AXIS));
         topPanel.setBorder(new EmptyBorder(15, 15, 15, 15));
         defaultKeyBindButton.addActionListener(e -> updateKeybindsDefault());
         defaultKeyBindButton.setAlignmentX(Component.CENTER_ALIGNMENT);
@@ -3404,11 +3524,7 @@ public class CommonSettingsDialog extends AbstractButtonDialog
         tabChoice.add(tabChoiceLabel);
         tabChoice.setAlignmentX(Component.CENTER_ALIGNMENT);
 
-        outer.add(topPanel);
-        outer.add(tabChoice);
-
         JPanel keyBinds = new JPanel(new GridBagLayout());
-        outer.add(keyBinds);
         GridBagConstraints gbc = new GridBagConstraints();
         gbc.gridx = gbc.gridy = 0;
         gbc.insets = new Insets(0, 10, 5, 10);
@@ -3547,7 +3663,7 @@ public class CommonSettingsDialog extends AbstractButtonDialog
             key.setFocusTraversalKeysEnabled(false);
         }
         markDuplicateBinds();
-        return outer;
+      return List.of(topPanel, tabChoice, keyBinds);
     }
 
     private JComboBox<String> createHideShowComboBox(int i) {
@@ -3849,34 +3965,22 @@ public class CommonSettingsDialog extends AbstractButtonDialog
     /**
      * Creates a panel with a list boxes that allow the button order to be changed.
      */
-    private JPanel getButtonOrderPanel() {
-        JPanel buttonOrderPanel = new JPanel();
-        buttonOrderPanel.setLayout(new BoxLayout(buttonOrderPanel, BoxLayout.Y_AXIS));
-        JTabbedPane phasePane = new JTabbedPane();
-        buttonOrderPanel.add(phasePane);
-
-        // MovementPhaseDisplay
+    private List<CommonSettingsPane.OptionSection> getButtonOrderSections() {
         movePhaseCommands = new DefaultListModel<>();
-        phasePane.add("Movement", getButtonOrderPane(movePhaseCommands, MoveCommand.values()));
-
-        // DeploymentPhaseDisplay
         deployPhaseCommands = new DefaultListModel<>();
-        phasePane.add("Deployment", getButtonOrderPane(deployPhaseCommands, DeploymentDisplay.DeployCommand.values()));
-
-        // FiringPhaseDisplay
         firingPhaseCommands = new DefaultListModel<>();
-        phasePane.add("Firing", getButtonOrderPane(firingPhaseCommands, FiringDisplay.FiringCommand.values()));
-
-        // PhysicalPhaseDisplay
         physicalPhaseCommands = new DefaultListModel<>();
-        phasePane.add("Physical", getButtonOrderPane(physicalPhaseCommands, PhysicalDisplay.PhysicalCommand.values()));
-
-        // TargetingPhaseDisplay
         targetingPhaseCommands = new DefaultListModel<>();
-        phasePane.add("Targeting",
-              getButtonOrderPane(targetingPhaseCommands, TargetingPhaseDisplay.TargetingCommand.values()));
-
-        return buttonOrderPanel;
+        return List.of(
+              optionSection("buttonOrder.movement", getButtonOrderPane(movePhaseCommands, MoveCommand.values()), false),
+              optionSection("buttonOrder.deployment",
+                    getButtonOrderPane(deployPhaseCommands, DeploymentDisplay.DeployCommand.values()), false),
+              optionSection("buttonOrder.firing",
+                    getButtonOrderPane(firingPhaseCommands, FiringDisplay.FiringCommand.values()), false),
+              optionSection("buttonOrder.physical",
+                    getButtonOrderPane(physicalPhaseCommands, PhysicalDisplay.PhysicalCommand.values()), false),
+              optionSection("buttonOrder.targeting",
+                    getButtonOrderPane(targetingPhaseCommands, TargetingPhaseDisplay.TargetingCommand.values()), false));
     }
 
     /** Constructs the button ordering panel for one phase. */
@@ -3909,27 +4013,64 @@ public class CommonSettingsDialog extends AbstractButtonDialog
     }
 
     private JPanel createSettingsPanel(List<List<Component>> comps) {
-        JPanel panel = new JPanel();
-        panel.setLayout(new BorderLayout());
-        Box innerPanel = new Box(BoxLayout.PAGE_AXIS);
-        for (List<Component> cs : comps) {
-            Box subPanel = new Box(BoxLayout.LINE_AXIS);
-            for (Component c : cs) {
-                if (c instanceof JLabel) {
-                    subPanel.add(Box.createRigidArea(LABEL_SPACER));
-                    subPanel.add(c);
-                    subPanel.add(Box.createRigidArea(LABEL_SPACER));
-                } else {
-                    subPanel.add(c);
-                }
+        List<JComponent> groups = new ArrayList<>();
+        List<List<Component>> rows = new ArrayList<>();
+        for (List<Component> row : comps) {
+            if (row.size() == 1 && row.getFirst() instanceof SettingsSectionBreak) {
+                addSettingsGroup(groups, rows);
+                rows = new ArrayList<>();
+            } else {
+                rows.add(row);
             }
-            subPanel.setAlignmentX(Component.LEFT_ALIGNMENT);
-            innerPanel.add(subPanel);
         }
-        innerPanel.add(Box.createVerticalGlue());
-        innerPanel.setBorder(new EmptyBorder(10, 10, 10, 10));
-        panel.add(innerPanel, BorderLayout.PAGE_START);
+        addSettingsGroup(groups, rows);
+        return new CommonSettingsPane.SectionedContent(groups);
+    }
+
+    private void addSettingsGroup(List<JComponent> groups, List<List<Component>> rows) {
+        if (!rows.isEmpty()) {
+            groups.add(createSettingsGroup(rows));
+        }
+    }
+
+    private JPanel createSettingsGroup(List<List<Component>> rows) {
+        SettingsFormPanel panel = new SettingsFormPanel("CommonSettingsGroup",
+              SettingsFormPanel.DEFAULT_LABEL_WIDTH, SettingsFormPanel.DEFAULT_CONTROL_WIDTH);
+        for (List<Component> row : rows) {
+            addSettingsRow(panel, row);
+        }
         return panel;
+    }
+
+    private void addSettingsRow(SettingsFormPanel panel, List<Component> row) {
+        List<JComponent> components = row.stream()
+              .filter(JComponent.class::isInstance)
+              .map(JComponent.class::cast)
+              .toList();
+        if (components.isEmpty()) {
+            return;
+        }
+        if (components.size() == 1 && components.getFirst() instanceof JCheckBox checkBox) {
+            panel.addCheckBox(checkBox);
+            return;
+        }
+        if (components.getFirst() instanceof JLabel label && components.size() > 1) {
+            panel.addRow(label, rowPanel(components.subList(1, components.size())));
+            return;
+        }
+        panel.addFullWidthComponent(rowPanel(components));
+    }
+
+    private JPanel rowPanel(List<JComponent> components) {
+        JPanel row = new JPanel();
+        row.setOpaque(false);
+        row.setLayout(new BoxLayout(row, BoxLayout.LINE_AXIS));
+        components.forEach(row::add);
+        row.add(Box.createHorizontalGlue());
+        return row;
+    }
+
+    private static final class SettingsSectionBreak extends JComponent {
     }
 
     // Advanced-preference keys deliberately hidden from the Advanced settings list: testing/debug gates that must only

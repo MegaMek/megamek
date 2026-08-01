@@ -33,6 +33,8 @@
 package megamek.client.ui.panels;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.awt.Component;
 import java.awt.Container;
@@ -47,6 +49,10 @@ import javax.swing.JTree;
 import javax.swing.SwingUtilities;
 import javax.swing.tree.TreePath;
 
+import megamek.client.ui.settings.CollapsibleSectionPanel;
+import megamek.client.ui.settings.SettingsNavigationPanel;
+import megamek.client.ui.settings.SettingsPagePanel;
+import megamek.client.ui.util.UIUtil;
 import org.junit.jupiter.api.Test;
 
 class CommonSettingsPaneTest {
@@ -78,6 +84,48 @@ class CommonSettingsPaneTest {
             pane.setFilterText("pathfinder");
 
             assertEquals("Main", selectedTreeLabel(pane));
+        });
+    }
+
+    @Test
+    void nestedPageUsesCollapsedSectionsAndStandardSize() throws Exception {
+        runOnEdt(() -> {
+            JCheckBox detailed = new JCheckBox("Detailed option");
+            detailed.setToolTipText("Contextual details");
+            CommonSettingsPane pane = new CommonSettingsPane(List.of(
+                  new CommonSettingsPane.OptionPage("gameBoard.general", List.of("Game Board", "General"),
+                        "GameBoardGeneral", List.of(
+                              new CommonSettingsPane.OptionSection("display", "Display", "Board display", detailed,
+                                    false),
+                              new CommonSettingsPane.OptionSection("controls", "Controls", "Board controls",
+                                    new JPanel(), false)))));
+
+            List<CollapsibleSectionPanel> sections = findSections(pane);
+            assertEquals(2, sections.size());
+            assertFalse(sections.get(0).isExpanded());
+            assertFalse(sections.get(1).isExpanded());
+            assertTrue(pane.getPreferredSize().width >= UIUtil.scaleForGUI(
+                  SettingsNavigationPanel.DEFAULT_NAVIGATION_WIDTH + SettingsPagePanel.DEFAULT_MAXIMUM_PAGE_WIDTH));
+            assertTrue(pane.getPreferredSize().height >= UIUtil.scaleForGUI(800));
+            assertEquals(2, CommonSettingsPane.legendEntries().size());
+        });
+    }
+
+    @Test
+    void nestedSearchFindsControlTextAndKeepsParentPath() throws Exception {
+        runOnEdt(() -> {
+            JPanel content = new JPanel();
+            content.add(new JLabel("Experimental pathfinder"));
+            CommonSettingsPane pane = new CommonSettingsPane(List.of(
+                  new CommonSettingsPane.OptionPage("gameBoard.general", List.of("Game Board", "General"),
+                        "GameBoardGeneral", List.of(new CommonSettingsPane.OptionSection(
+                              "pathfinder", "Pathfinder", "Movement paths", content, false)))));
+
+            pane.setFilterText("experimental pathfinder");
+
+            JTree tree = findComponent(pane, "settingsNavigationTree", JTree.class);
+            assertEquals(2, tree.getRowCount());
+            assertEquals("General", tree.getPathForRow(1).getLastPathComponent().toString());
         });
     }
 
@@ -113,6 +161,19 @@ class CommonSettingsPaneTest {
             }
         }
         return Optional.empty();
+    }
+
+    private static List<CollapsibleSectionPanel> findSections(Container root) {
+        java.util.ArrayList<CollapsibleSectionPanel> sections = new java.util.ArrayList<>();
+        for (Component child : root.getComponents()) {
+            if (child instanceof CollapsibleSectionPanel section) {
+                sections.add(section);
+            }
+            if (child instanceof Container container) {
+                sections.addAll(findSections(container));
+            }
+        }
+        return sections;
     }
 
     private static void runOnEdt(Runnable test) throws Exception {

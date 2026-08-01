@@ -79,6 +79,16 @@ class SettingsPagePanelTest {
     }
 
     @Test
+    void sectionSearchTextIncludesHiddenAliases() {
+        SettingsPagePanel page = SettingsPagePanel.builder("Test", TEXT, "header", null)
+              .literalSection("Display", "Visible summary", new JPanel(), List.of(), List.of("tooltip needle"))
+              .build();
+
+        assertTrue(page.getSectionSearchText().contains("tooltip needle"));
+        assertTrue(page.expandSectionsMatching(text -> text.contains("tooltip needle")));
+    }
+
+    @Test
     void sectionSearchTextIsEmptyWithoutSections() {
         SettingsPagePanel page = SettingsPagePanel.builder("Test", TEXT, "header", null).build();
 

@@ -34,6 +34,7 @@ package megamek.client.ratgenerator;
 
 import megamek.client.generator.RandomGenderGenerator;
 import megamek.client.generator.RandomNameGenerator;
+import megamek.common.annotations.Nullable;
 import megamek.common.compute.Compute;
 import megamek.common.enums.Gender;
 import megamek.common.units.Crew;
@@ -50,6 +51,18 @@ public class CrewDescriptor {
     public static final int SKILL_REGULAR = 1;
     public static final int SKILL_VETERAN = 2;
     public static final int SKILL_ELITE = 3;
+
+    /**
+     * How much better a Clan warrior-caste crew is than the same rating elsewhere, which is what puts
+     * a Clan Regular Mek crew at 3/4 where an Inner Sphere one sits at 4/5.
+     *
+     * <p>Doubles as the ceiling on the whole Clan modifier: the rating scaling may pull a crew below
+     * it but not push one past it. See {@code setSkills}.</p>
+     */
+    private static final int CLAN_WARRIOR_CASTE_BONUS = 2;
+
+    /** The Word of Blake Shadow Divisions, whose crews are a cut above the rest of the faction. */
+    private static final String SHADOW_DIVISION_FACTION = "WOB.SD";
 
     // Skill values for the two levels above elite, matching megamek.common.enums.SkillLevel's
     // gunnery/piloting pairs. Kept here rather than derived so the escalation below cannot drift from
@@ -115,54 +128,14 @@ public class CrewDescriptor {
             experience = SKILL_GREEN + assignment.getExperience();
         }
 
-        int bonus = 0;
         int ratingLevel = assignment.getRatingLevel();
-        // StratOps gives a +1 for A and -1 for F. There are a few IS factions that
-        // don't have
-        // A-F ratings, so we give +1 to the best and -1 to the worst, unless there is
-        // only one.
-        // For Clan units we give a +/-1 for each rating level above or below second
-        // line. This
-        // is an expansion of the StratOps table which only included FL, SL, and
-        // Solahma.
-        int levels = assignment.getFactionRec().getRatingLevels().size();
-        if (clan) {
-            bonus = ratingLevel - levels / 2;
-        } else if (levels > 1) {
-            if (ratingLevel == 0) {
-                bonus--;
-            }
-            if (ratingLevel == levels - 1) {
-                bonus++;
-            }
-        }
-        if (clan) {
-            if (assignment.getUnitType() != null) {
-                switch (assignment.getUnitType()) {
-                    case UnitType.MEK:
-                    case UnitType.BATTLE_ARMOR:
-                        bonus += 2;
-                        break;
-                    case UnitType.TANK:
-                    case UnitType.VTOL:
-                    case UnitType.NAVAL:
-                    case UnitType.INFANTRY:
-                    case UnitType.CONV_FIGHTER:
-                        bonus--;
-                        break;
-                }
-            }
-            if (assignment.getRoles().contains(MissionRole.SUPPORT)) {
-                bonus--;
-            }
-        } else {
-            if (assignment.getRoles().contains(MissionRole.SUPPORT)) {
-                bonus--;
-            }
-            if (assignment.getFaction().equals("WOB.SD")) {
-                bonus++;
-            }
-        }
+        int ratingLevels = assignment.getFactionRec().getRatingLevels().size();
+        boolean isSupportRole = assignment.getRoles().contains(MissionRole.SUPPORT);
+        int bonus = clan
+                          ? clanSkillBonus(ratingLevel, ratingLevels, assignment.getUnitType(),
+                                isSupportRole)
+                          : innerSphereSkillBonus(ratingLevel, ratingLevels, isSupportRole,
+                                assignment.getFaction());
 
         gunnery = randomSkillRating(GUNNERY_SKILL_TABLE, experience, bonus);
         boolean hasPilotingSkill = (assignment.getUnitType() == null)
@@ -217,6 +190,85 @@ public class CrewDescriptor {
         return new int[] { Math.min(escalatedGunnery, LEGENDARY_GUNNERY),
                            hasPilotingSkill ? Math.min(escalatedPiloting, LEGENDARY_PILOTING)
                                             : escalatedPiloting };
+    }
+
+    /**
+     * The modifier added to a Clan crew's skill roll.
+     *
+     * <p>The warrior caste's advantage puts a Clan Regular Mek crew at 3/4 where an Inner Sphere one
+     * sits at 4/5, and the rating scaling moves a crew around that - Solahma below it, front-line
+     * formations towards it. That scaling is an expansion of the StratOps table, which named only
+     * front-line, second-line and Solahma.</p>
+     *
+     * <p>The caste advantage is the ceiling rather than another step to climb on top of. Left
+     * uncapped the two stacked, a front-line or Keshik formation reached +3 or +4, and that walks
+     * clean off the good end of whichever experience row was asked for: at +4 a force generated as
+     * Regular could not produce a single Regular crew, every one of them coming out Veteran or
+     * better. Capped, the ladder lands where it should - Green 4/5, Regular 3/4, Veteran 2/3,
+     * Elite 1/2 - while a poor rating still pulls a crew below it, which is the half of the scaling
+     * that was doing real work.</p>
+     *
+     * @param ratingLevel   the formation's equipment rating
+     * @param ratingLevels  how many ratings the faction has
+     * @param unitType      what the crew fights in, or {@code null} where the force has not said
+     * @param isSupportRole whether the formation is a support formation
+     *
+     * @return the modifier to add to the crew's skill roll
+     */
+    static int clanSkillBonus(int ratingLevel, int ratingLevels, @Nullable Integer unitType,
+          boolean isSupportRole) {
+        int bonus = ratingLevel - (ratingLevels / 2);
+        if (unitType != null) {
+            switch (unitType) {
+                case UnitType.MEK, UnitType.BATTLE_ARMOR -> bonus += CLAN_WARRIOR_CASTE_BONUS;
+                case UnitType.TANK, UnitType.VTOL, UnitType.NAVAL, UnitType.INFANTRY,
+                      UnitType.CONV_FIGHTER -> bonus--;
+                default -> {
+                    // Every other unit type takes the rating scaling alone.
+                }
+            }
+        }
+        // Capped before the support penalty rather than after, so that a support formation is still a
+        // step below a line one. Capping last swallowed the penalty whole for any formation already
+        // at the ceiling, which quietly crewed a front-line support star as well as the line stars.
+        bonus = Math.min(bonus, CLAN_WARRIOR_CASTE_BONUS);
+        if (isSupportRole) {
+            bonus--;
+        }
+        return bonus;
+    }
+
+    /**
+     * The modifier added to an Inner Sphere crew's skill roll.
+     *
+     * <p>StratOps gives +1 for an A rating and -1 for an F. A few factions have no A-F ratings, so
+     * the best rating takes the +1 and the worst the -1, unless there is only one rating to have.</p>
+     *
+     * @param ratingLevel   the formation's equipment rating
+     * @param ratingLevels  how many ratings the faction has
+     * @param isSupportRole whether the formation is a support formation
+     * @param faction       the faction the force is generated for
+     *
+     * @return the modifier to add to the crew's skill roll
+     */
+    static int innerSphereSkillBonus(int ratingLevel, int ratingLevels, boolean isSupportRole,
+          String faction) {
+        int bonus = 0;
+        if (ratingLevels > 1) {
+            if (ratingLevel == 0) {
+                bonus--;
+            }
+            if (ratingLevel == (ratingLevels - 1)) {
+                bonus++;
+            }
+        }
+        if (isSupportRole) {
+            bonus--;
+        }
+        if (SHADOW_DIVISION_FACTION.equals(faction)) {
+            bonus++;
+        }
+        return bonus;
     }
 
     /**

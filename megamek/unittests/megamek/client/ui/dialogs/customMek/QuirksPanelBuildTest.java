@@ -246,6 +246,22 @@ class QuirksPanelBuildTest {
     }
 
     @Test
+    @DisplayName("A placeholder is findable by its rules reference, like the real quirk rows")
+    void placeholdersAreSearchableByRulesReference() {
+        List<QuirkPlaceholder> negativePlaceholders = QuirkCatalog.getPlaceholders(Quirks.NEG_QUIRKS);
+        assumeFalse(negativePlaceholders.isEmpty(), "No negative placeholder quirks to search for");
+        QuirkPlaceholder placeholder = negativePlaceholders.getFirst();
+
+        QuirksPanel panel = buildPanelShowingUnimplemented();
+        filterFieldOf(panel).setText(placeholder.getRulesReference());
+
+        assertTrue(findAll(panel, JLabel.class).stream()
+                    .anyMatch(label -> placeholder.getDisplayableName().equals(label.getText())),
+              "Searching for '" + placeholder.getRulesReference() + "' should still list '"
+                    + placeholder.getDisplayableName() + "'");
+    }
+
+    @Test
     @DisplayName("A quirk the unit has stays listed even with the toggle off")
     void setQuirksSurviveTheToggle() {
         String marker = Messages.getString("CustomMekDialog.quirkNotImplementedSuffix").trim();

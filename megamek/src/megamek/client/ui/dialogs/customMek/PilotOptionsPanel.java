@@ -103,7 +103,6 @@ public class PilotOptionsPanel extends JPanel implements DialogOptionListener {
 
     /** The grid cell's own horizontal insets, subtracted from a cell's share before label wrapping. */
     private static final int CELL_INSET_WIDTH = 8;
-    private static final Color SELECTED_OPTION_COLOR = Color.YELLOW;
 
     /**
      * Hook for the dialog to finish building one option row: adding choice values, selection state, and inline
@@ -419,14 +418,20 @@ public class PilotOptionsPanel extends JPanel implements DialogOptionListener {
         return tooltip.append("</div></html>").toString();
     }
 
-    /** Highlights an option whose value differs from the default, matching the quirks panel treatment. */
+    /**
+     * Highlights an option whose value differs from the default, matching the quirks panel treatment: it uses
+     * {@link UIUtil#uiQuirksColor()}, the same colour the lobby uses to mark a pilot who has abilities, which
+     * stays legible on both light and dark look and feels.
+     */
     private void updateOptionFontStyle(DialogOptionComponentYPanel optionComp, boolean selected) {
+        // Read per call rather than cached in a constant, so the colour follows the current look and feel
+        Color selectedColor = UIUtil.uiQuirksColor();
         for (Component child : optionComp.getComponents()) {
             if (OptionRowLayout.STATUS_MARKER_NAME.equals(child.getName())) {
                 continue;
             }
             if (child.getFont() != null) {
-                child.setForeground(selected ? SELECTED_OPTION_COLOR : null);
+                child.setForeground(selected ? selectedColor : null);
             }
         }
         optionComp.repaint();

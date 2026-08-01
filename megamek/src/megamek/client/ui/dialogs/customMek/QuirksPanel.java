@@ -117,7 +117,6 @@ public class QuirksPanel extends JPanel implements DialogOptionListener {
     private static final long serialVersionUID = -8360885055638738148L;
     private static final MMLogger LOGGER = MMLogger.create(QuirksPanel.class);
     private static final boolean SORT_QUIRKS_ALPHABETICALLY = true;
-    private static final Color SELECTED_QUIRK_COLOR = Color.YELLOW;
     /** Fallback width used when no row has reported a preferred width yet. */
     private static final int FALLBACK_ITEM_WIDTH = 150;
 
@@ -485,8 +484,10 @@ public class QuirksPanel extends JPanel implements DialogOptionListener {
         placeholderPanel.add(nameLabel);
         placeholderPanel.add(marker);
 
+        // Rules reference included so a placeholder is findable by book and page, like the real quirk rows
+        String searchText = displayName + ' ' + description + ' ' + placeholder.getRulesReference();
         return new QuirkRow(placeholderPanel, OptionSearchFilter.normalize(displayName),
-              OptionSearchFilter.normalize(displayName + ' ' + description), true, true);
+              OptionSearchFilter.normalize(searchText), true, true);
     }
 
     /**
@@ -605,18 +606,21 @@ public class QuirksPanel extends JPanel implements DialogOptionListener {
 
     /**
      * Updates the font style and color of a quirk component based on its selection state. Selected quirks are
-     * highlighted in yellow. A quirk MegaMek ignores sits at the disabled foreground colour when it is not set,
-     * matching the grayed-out rows on the pilot tab, and still turns yellow when it is set - a quirk the unit
-     * actually has must stay visible even though the engine will not act on it.
+     * highlighted in {@link UIUtil#uiQuirksColor()}, the same colour the lobby uses to mark a unit that has quirks.
+     * A quirk MegaMek ignores sits at the disabled foreground colour when it is not set, matching the grayed-out
+     * rows on the pilot tab, and still highlights when it is set - a quirk the unit actually has must stay visible
+     * even though the engine will not act on it.
      */
     private void updateQuirkFontStyle(DialogOptionComponentYPanel optionComp, boolean selected) {
+        // Read per call rather than cached in a constant, so the colour follows the current look and feel
+        Color selectedColor = UIUtil.uiQuirksColor();
         Color unselectedColor = noGameEffectComps.contains(optionComp) ? disabledForeground() : null;
         for (Component child : optionComp.getComponents()) {
             if (OptionRowLayout.STATUS_MARKER_NAME.equals(child.getName())) {
                 continue;
             }
             if (child.getFont() != null) {
-                child.setForeground(selected ? SELECTED_QUIRK_COLOR : unselectedColor);
+                child.setForeground(selected ? selectedColor : unselectedColor);
             }
         }
         optionComp.invalidate();
@@ -735,7 +739,7 @@ public class QuirksPanel extends JPanel implements DialogOptionListener {
         IOption option;
         for (final DialogOptionComponentYPanel optionComp : quirkComps) {
             option = optionComp.getOption();
-            if ((optionComp.getValue() == Messages.getString("CustomMekDialog.None"))) {
+            if (Messages.getString("CustomMekDialog.None").equals(optionComp.getValue())) {
                 entity.getQuirks().getOption(option.getName()).setValue("None");
             } else if (option.getName().equals(OptionsConstants.QUIRK_POS_INTERNAL_BOMB)) {
                 // Need to set the quirk, and only then force re-computing bomb bay space for
@@ -758,7 +762,7 @@ public class QuirksPanel extends JPanel implements DialogOptionListener {
             Mounted<?> mounted = entity.getEquipment(equipmentNumber);
             for (final DialogOptionComponentYPanel optionComp : weaponQuirkComps.get(equipmentNumber)) {
                 option = optionComp.getOption();
-                if ((optionComp.getValue() == Messages.getString("CustomMekDialog.None"))) {
+                if (Messages.getString("CustomMekDialog.None").equals(optionComp.getValue())) {
                     mounted.getQuirks().getOption(option.getName()).setValue("None");
                 } else {
                     mounted.getQuirks().getOption(option.getName()).setValue(optionComp.getValue());

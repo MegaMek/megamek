@@ -60,6 +60,7 @@ import javax.swing.JComponent;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
+import javax.swing.SwingUtilities;
 import javax.swing.UIManager;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
@@ -161,6 +162,7 @@ public class PilotOptionsPanel extends JPanel implements DialogOptionListener {
     private final Map<JPanel, Integer> panelMaxRowWidth = new HashMap<>();
     private final Map<JPanel, List<OptionRow>> panelVisibleRows = new HashMap<>();
     private final Map<JPanel, Integer> panelLastCalculatedCols = new HashMap<>();
+    private final Map<JPanel, Integer> panelLastLayoutWidth = new HashMap<>();
 
     // Edge and the implant groups (Manei Domini, EI) share one column - Edge on top, MD and EI tucked under it -
     // so the options area reads as halves: advantages | edge with implants below
@@ -183,7 +185,7 @@ public class PilotOptionsPanel extends JPanel implements DialogOptionListener {
         addComponentListener(new ComponentAdapter() {
             @Override
             public void componentResized(ComponentEvent event) {
-                relayoutIfColumnsChanged();
+                refreshGroupLayouts();
             }
         });
     }
@@ -236,6 +238,7 @@ public class PilotOptionsPanel extends JPanel implements DialogOptionListener {
         panelMaxRowWidth.clear();
         panelVisibleRows.clear();
         panelLastCalculatedCols.clear();
+        panelLastLayoutWidth.clear();
         edgeGroupPanel = null;
         eiGroupPanel = null;
         mdGroupPanel = null;
@@ -494,6 +497,7 @@ public class PilotOptionsPanel extends JPanel implements DialogOptionListener {
             }
             int columns = calculateColumns(groupPanel);
             panelLastCalculatedCols.put(groupPanel, columns);
+            panelLastLayoutWidth.put(groupPanel, calculateAvailableWidth(groupPanel));
             relayoutGroupPanel(groupPanel, visibleRows, columns);
         }
         addEdgeColumn();
@@ -502,6 +506,10 @@ public class PilotOptionsPanel extends JPanel implements DialogOptionListener {
         matchCountLabel.setVisible(!normalizedFilter.isEmpty());
         revalidate();
         repaint();
+        // The widths used above are from BEFORE this filter pass changed which columns groupsContainer holds
+        // (e.g. a filtered-out Edge column hands its half to the advantages group). The resize listener cannot
+        // catch that - this panel's own size does not change - so recheck once the pending layout has run.
+        SwingUtilities.invokeLater(this::refreshGroupLayouts);
     }
 
     /**
@@ -528,15 +536,29 @@ public class PilotOptionsPanel extends JPanel implements DialogOptionListener {
         groupsContainer.add(edgeColumn);
     }
 
-    /** Re-lays out any group whose column count changed with the available width. */
-    private void relayoutIfColumnsChanged() {
+    /**
+     * Brings every group in line with its current width: a changed column count gets a full relayout; a changed
+     * width alone (same column count) gets its label wrap widths refreshed, so wrapped names track the width
+     * even when no column boundary is crossed.
+     */
+    private void refreshGroupLayouts() {
         for (Map.Entry<JPanel, List<OptionRow>> panelEntry : panelVisibleRows.entrySet()) {
             JPanel groupPanel = panelEntry.getKey();
             int columns = calculateColumns(groupPanel);
+            int availableWidth = calculateAvailableWidth(groupPanel);
             Integer lastColumns = panelLastCalculatedCols.get(groupPanel);
-            if ((lastColumns == null) || (columns != lastColumns)) {
-                panelLastCalculatedCols.put(groupPanel, columns);
+            Integer lastWidth = panelLastLayoutWidth.get(groupPanel);
+            boolean columnsChanged = (lastColumns == null) || (columns != lastColumns);
+            boolean widthChanged = (lastWidth == null) || (availableWidth != lastWidth);
+            if (!columnsChanged && !widthChanged) {
+                continue;
+            }
+            panelLastCalculatedCols.put(groupPanel, columns);
+            panelLastLayoutWidth.put(groupPanel, availableWidth);
+            if (columnsChanged) {
                 relayoutGroupPanel(groupPanel, panelEntry.getValue(), columns);
+            } else {
+                applyLabelWrapWidths(groupPanel, panelEntry.getValue(), columns);
             }
         }
     }
@@ -561,17 +583,27 @@ public class PilotOptionsPanel extends JPanel implements DialogOptionListener {
         return Math.max(1, availableWidth / (maxRowWidth + COLUMN_GAP));
     }
 
+    /**
+     * Wraps option names that are wider than their column (long Edge triggers) instead of clipping them.
+     * Cheap to repeat: the labels no-op when their text would not change.
+     */
+    private void applyLabelWrapWidths(JPanel groupPanel, List<OptionRow> visibleRows, int columns) {
+        if (columns <= 0) {
+            return;
+        }
+        int labelWidth = (calculateAvailableWidth(groupPanel) / columns) - UIUtil.scaleForGUI(ROW_CHROME_WIDTH);
+        for (OptionRow row : visibleRows) {
+            if (row.component() instanceof DialogOptionComponentYPanel optionComp) {
+                optionComp.setNameLabelWrapWidth(labelWidth);
+            }
+        }
+    }
+
     /** Arranges the visible rows of one group into a grid, reusing the existing row components. */
     private void relayoutGroupPanel(JPanel groupPanel, List<OptionRow> visibleRows, int columns) {
         groupPanel.removeAll();
         if (!visibleRows.isEmpty() && (columns > 0)) {
-            // Wrap option names that are wider than their column (long Edge triggers) instead of clipping them
-            int labelWidth = (calculateAvailableWidth(groupPanel) / columns) - UIUtil.scaleForGUI(ROW_CHROME_WIDTH);
-            for (OptionRow row : visibleRows) {
-                if (row.component() instanceof DialogOptionComponentYPanel optionComp) {
-                    optionComp.setNameLabelWrapWidth(labelWidth);
-                }
-            }
+            applyLabelWrapWidths(groupPanel, visibleRows, columns);
 
             GridBagConstraints constraints = new GridBagConstraints();
             constraints.gridx = 0;

@@ -52,7 +52,6 @@ import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
 import java.util.List;
-import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
 import javax.swing.BorderFactory;
@@ -63,18 +62,19 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JSplitPane;
-import javax.swing.JTextField;
 import javax.swing.JViewport;
 import javax.swing.SwingUtilities;
 import javax.swing.UIManager;
-import javax.swing.event.DocumentEvent;
-import javax.swing.event.DocumentListener;
 
 import megamek.client.ui.GBC;
 import megamek.client.ui.Messages;
 import megamek.client.ui.clientGUI.DialogOptionListener;
 import megamek.client.ui.clientGUI.GUIPreferences;
 import megamek.client.ui.panels.DialogOptionComponentYPanel;
+import megamek.client.ui.panels.OptionFilterBar;
+import megamek.client.ui.panels.OptionFilterBarLabels;
+import megamek.client.ui.panels.OptionRowLayout;
+import megamek.client.ui.panels.OptionSearchFilter;
 import megamek.client.ui.util.UIUtil;
 import megamek.client.ui.util.UIUtil.FixedYPanel;
 import megamek.common.annotations.Nullable;
@@ -117,11 +117,7 @@ public class QuirksPanel extends JPanel implements DialogOptionListener {
     private static final long serialVersionUID = -8360885055638738148L;
     private static final MMLogger LOGGER = MMLogger.create(QuirksPanel.class);
     private static final boolean SORT_QUIRKS_ALPHABETICALLY = true;
-    /** Horizontal gap between columns, added to the widest row when computing the column count. */
-    private static final int COLUMN_GAP = 8;
     private static final Color SELECTED_QUIRK_COLOR = Color.YELLOW;
-    /** Marks the status label of a placeholder row so the selection highlight leaves it alone. */
-    private static final String STATUS_MARKER_NAME = "quirkStatusMarker";
     /** Fallback width used when no row has reported a preferred width yet. */
     private static final int FALLBACK_ITEM_WIDTH = 150;
 
@@ -140,7 +136,7 @@ public class QuirksPanel extends JPanel implements DialogOptionListener {
                             boolean noGameEffect) {
 
         boolean matches(String normalizedFilter) {
-            return matchesFilter(searchText, normalizedFilter);
+            return OptionSearchFilter.matches(searchText, normalizedFilter);
         }
 
         /**
@@ -150,17 +146,6 @@ public class QuirksPanel extends JPanel implements DialogOptionListener {
         boolean isSet() {
             return (component instanceof DialogOptionComponentYPanel optionComp) && !optionComp.isDefaultValue();
         }
-    }
-
-    /**
-     * @param normalizedSearchText a row's search text, already {@link #normalize(String) normalized}
-     * @param normalizedFilter     the filter text, already normalized
-     *
-     * @return {@code true} if the row should stay visible: an empty filter matches everything, otherwise the search
-     *       text must contain the filter
-     */
-    static boolean matchesFilter(String normalizedSearchText, String normalizedFilter) {
-        return normalizedFilter.isEmpty() || normalizedSearchText.contains(normalizedFilter);
     }
 
     private final Entity entity;
@@ -173,12 +158,8 @@ public class QuirksPanel extends JPanel implements DialogOptionListener {
     private final boolean editable;
     private final DialogOptionListener parent;
 
-    private final JTextField filterField = new JTextField();
-    private final JLabel matchCountLabel = new JLabel();
-    /** Persisted in {@link GUIPreferences}; off by default. */
-    private final JCheckBox showUnimplementedCheck =
-          new JCheckBox(Messages.getString("CustomMekDialog.showUnimplementedQuirks"),
-                GUIPreferences.getInstance().getShowUnimplementedQuirks());
+    /** The search row above the columns; its "show unimplemented" state is persisted in {@link GUIPreferences}. */
+    private final OptionFilterBar filterBar;
 
     // Quirk panel -> all of its rows (visible or not), in sorted order
     private final Map<JPanel, List<QuirkRow>> panelRows = new LinkedHashMap<>();
@@ -203,9 +184,10 @@ public class QuirksPanel extends JPanel implements DialogOptionListener {
         this.editable = editable;
         this.parent = parent;
         this.weaponQuirks = weaponQuirks;
+        this.filterBar = buildFilterBar();
 
         setLayout(new GridBagLayout());
-        add(buildFilterBar(), GBC.eol().fill(GridBagConstraints.HORIZONTAL).weightX(1.0));
+        add(filterBar, GBC.eol().fill(GridBagConstraints.HORIZONTAL).weightX(1.0));
         add(quirksContainer, GBC.eol().fill().weightX(1.0).weighty(1.0));
 
         // Add resize listener for responsive column layout
@@ -321,55 +303,32 @@ public class QuirksPanel extends JPanel implements DialogOptionListener {
         for (List<QuirkRow> rows : panelRows.values()) {
             totalRows += rows.size();
             for (QuirkRow row : rows) {
-                if (isHiddenByToggle(row, showUnimplementedCheck.isSelected())) {
+                if (isHiddenByToggle(row, filterBar.isShowUnimplementedSelected())) {
                     hiddenRows++;
                 }
             }
         }
         LOGGER.debug("[QuirkSearch] {}: {} quirk rows built, {} hidden (show-unimplemented={}, filter='{}')",
-              entity.getShortName(), totalRows, hiddenRows, showUnimplementedCheck.isSelected(),
-              filterField.getText().trim());
+              entity.getShortName(), totalRows, hiddenRows, filterBar.isShowUnimplementedSelected(),
+              filterBar.getFilterText());
     }
 
-    /** Builds the search field, the placeholder toggle, and the match counter shown above the three columns. */
-    private JPanel buildFilterBar() {
-        filterField.setName("txtQuirkFilter");
-        filterField.putClientProperty("JTextField.placeholderText",
-              Messages.getString("CustomMekDialog.quirkFilterPlaceholder"));
-        filterField.setToolTipText(Messages.getString("CustomMekDialog.quirkFilterTooltip"));
-        filterField.setColumns(20);
-        filterField.getDocument().addDocumentListener(new DocumentListener() {
-            @Override
-            public void insertUpdate(DocumentEvent event) {
-                applyFilter();
-            }
-
-            @Override
-            public void removeUpdate(DocumentEvent event) {
-                applyFilter();
-            }
-
-            @Override
-            public void changedUpdate(DocumentEvent event) {
-                applyFilter();
-            }
-        });
-
-        showUnimplementedCheck.setName("chkShowUnimplementedQuirks");
-        showUnimplementedCheck.setToolTipText(Messages.getString("CustomMekDialog.showUnimplementedQuirksTooltip"));
-        showUnimplementedCheck.addActionListener(event -> {
-            GUIPreferences.getInstance().setShowUnimplementedQuirks(showUnimplementedCheck.isSelected());
-            applyFilter();
-        });
-
-        matchCountLabel.setName("lblQuirkMatchCount");
-        matchCountLabel.setVisible(false);
-
-        JPanel filterBar = new FixedYPanel(new FlowLayout(FlowLayout.LEFT, UIUtil.scaleForGUI(5), 2));
-        filterBar.add(filterField);
-        filterBar.add(showUnimplementedCheck);
-        filterBar.add(matchCountLabel);
-        return filterBar;
+    /** Builds the search row shown above the three columns. */
+    private OptionFilterBar buildFilterBar() {
+        OptionFilterBarLabels labels = new OptionFilterBarLabels("txtQuirkFilter",
+              Messages.getString("CustomMekDialog.quirkFilterPlaceholder"),
+              Messages.getString("CustomMekDialog.quirkFilterTooltip"),
+              "chkShowUnimplementedQuirks",
+              Messages.getString("CustomMekDialog.showUnimplementedQuirks"),
+              Messages.getString("CustomMekDialog.showUnimplementedQuirksTooltip"),
+              "lblQuirkMatchCount",
+              Messages.getString("CustomMekDialog.quirkMatchCount"));
+        return new OptionFilterBar(labels, GUIPreferences.getInstance().getShowUnimplementedQuirks(),
+              this::applyFilter,
+              showUnimplemented -> {
+                  GUIPreferences.getInstance().setShowUnimplementedQuirks(showUnimplemented);
+                  applyFilter();
+              });
     }
 
     /** Collects the unit's legal chassis quirks into the positive and negative row lists. */
@@ -479,8 +438,8 @@ public class QuirksPanel extends JPanel implements DialogOptionListener {
         boolean noGameEffect = QuirkCatalog.getEntry(kind, option.getName())
               .map(catalogEntry -> catalogEntry.status().hasNoGameEffect())
               .orElse(false);
-        return new QuirkRow(optionComp, normalize(option.getDisplayableName()),
-              normalize(searchText.toString()), false, noGameEffect);
+        return new QuirkRow(optionComp, OptionSearchFilter.normalize(option.getDisplayableName()),
+              OptionSearchFilter.normalize(searchText.toString()), false, noGameEffect);
     }
 
     /** Adds the grayed-out rows for the book quirks MegaMek has no option for in the given group. */
@@ -517,7 +476,7 @@ public class QuirksPanel extends JPanel implements DialogOptionListener {
         nameLabel.setToolTipText(tooltip);
 
         JLabel marker = new JLabel(Messages.getString("CustomMekDialog.quirkMarkerNotInMegaMek"));
-        marker.setName(STATUS_MARKER_NAME);
+        marker.setName(OptionRowLayout.STATUS_MARKER_NAME);
         marker.setForeground(disabledColor);
         marker.setToolTipText(tooltip);
 
@@ -526,8 +485,8 @@ public class QuirksPanel extends JPanel implements DialogOptionListener {
         placeholderPanel.add(nameLabel);
         placeholderPanel.add(marker);
 
-        return new QuirkRow(placeholderPanel, normalize(displayName),
-              normalize(displayName + ' ' + description), true, true);
+        return new QuirkRow(placeholderPanel, OptionSearchFilter.normalize(displayName),
+              OptionSearchFilter.normalize(displayName + ' ' + description), true, true);
     }
 
     /**
@@ -595,10 +554,6 @@ public class QuirksPanel extends JPanel implements DialogOptionListener {
         return tooltip.append("</div></html>").toString();
     }
 
-    static String normalize(String text) {
-        return text.toLowerCase(Locale.ROOT);
-    }
-
     /**
      * @param row               a row in one of the quirk panels
      * @param showUnimplemented whether the "show unimplemented" toggle is on
@@ -617,8 +572,8 @@ public class QuirksPanel extends JPanel implements DialogOptionListener {
 
     /** Recomputes which rows are visible under the current filter text and the toggle, then lays out. */
     private void applyFilter() {
-        String normalizedFilter = normalize(filterField.getText().trim());
-        boolean showUnimplemented = showUnimplementedCheck.isSelected();
+        String normalizedFilter = OptionSearchFilter.normalize(filterBar.getFilterText());
+        boolean showUnimplemented = filterBar.isShowUnimplementedSelected();
 
         int totalRows = 0;
         int shownRows = 0;
@@ -643,8 +598,7 @@ public class QuirksPanel extends JPanel implements DialogOptionListener {
             relayoutPanel(quirkPanel, visibleRows, columns);
         }
 
-        matchCountLabel.setText(Messages.getString("CustomMekDialog.quirkMatchCount", shownRows, totalRows));
-        matchCountLabel.setVisible(!normalizedFilter.isEmpty());
+        filterBar.setMatchCount(shownRows, totalRows);
         revalidate();
         repaint();
     }
@@ -658,7 +612,7 @@ public class QuirksPanel extends JPanel implements DialogOptionListener {
     private void updateQuirkFontStyle(DialogOptionComponentYPanel optionComp, boolean selected) {
         Color unselectedColor = noGameEffectComps.contains(optionComp) ? disabledForeground() : null;
         for (Component child : optionComp.getComponents()) {
-            if (STATUS_MARKER_NAME.equals(child.getName())) {
+            if (OptionRowLayout.STATUS_MARKER_NAME.equals(child.getName())) {
                 continue;
             }
             if (child.getFont() != null) {
@@ -705,11 +659,7 @@ public class QuirksPanel extends JPanel implements DialogOptionListener {
         if (!responsivePanels.contains(quirkPanel)) {
             return 1;
         }
-        int availableWidth = calculateAvailableWidthInPanel(quirkPanel);
-        if ((availableWidth <= 0) || (globalMaxItemWidth <= 0)) {
-            return 1;
-        }
-        return Math.max(1, availableWidth / (globalMaxItemWidth + COLUMN_GAP));
+        return OptionRowLayout.calculateColumns(calculateAvailableWidthInPanel(quirkPanel), globalMaxItemWidth);
     }
 
     /**
@@ -750,43 +700,9 @@ public class QuirksPanel extends JPanel implements DialogOptionListener {
         }
     }
 
-    /**
-     * Arranges the visible rows of one panel into a grid, reusing the existing row components.
-     */
+    /** Arranges the visible rows of one panel into a grid, reusing the existing row components. */
     private void relayoutPanel(JPanel quirkPanel, List<QuirkRow> visibleRows, int columns) {
-        quirkPanel.removeAll();
-        if (!visibleRows.isEmpty() && (columns > 0)) {
-            quirkPanel.setLayout(new GridBagLayout());
-            GridBagConstraints constraints = new GridBagConstraints();
-            constraints.gridx = 0;
-            constraints.gridy = 0;
-            constraints.fill = GridBagConstraints.HORIZONTAL;
-            constraints.anchor = GridBagConstraints.NORTHWEST;
-            constraints.weightx = 1.0;
-            constraints.insets = new Insets(0, 2, 0, 2);
-
-            int currentColumn = 0;
-            for (QuirkRow row : visibleRows) {
-                constraints.gridx = currentColumn;
-                quirkPanel.add(row.component(), constraints);
-
-                currentColumn++;
-                if (currentColumn >= columns) {
-                    currentColumn = 0;
-                    constraints.gridy++;
-                }
-            }
-
-            // Add vertical glue to push content to top
-            constraints.gridx = 0;
-            constraints.gridy++;
-            constraints.gridwidth = columns;
-            constraints.weighty = 1.0;
-            constraints.fill = GridBagConstraints.BOTH;
-            quirkPanel.add(new JPanel(), constraints);
-        }
-        quirkPanel.revalidate();
-        quirkPanel.repaint();
+        OptionRowLayout.relayout(quirkPanel, visibleRows.stream().map(QuirkRow::component).toList(), columns);
     }
 
     @Override

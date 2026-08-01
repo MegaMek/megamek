@@ -31,8 +31,9 @@
  * affiliated with Microsoft.
  */
 
-package megamek.client.ui.dialogs.customMek;
+package megamek.client.ui.panels;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
@@ -40,20 +41,21 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
 /**
- * Tests the pure filter predicate behind the SPA search box in {@link PilotOptionsPanel}.
+ * Tests the shared matching behind the search boxes on the option lists (special pilot abilities, quirks).
  */
-@DisplayName("SPA filter matching")
-class PilotOptionsPanelTest {
+@DisplayName("Option search filter")
+class OptionSearchFilterTest {
 
     private static boolean matches(String searchText, String filter) {
-        return PilotOptionsPanel.matchesFilter(PilotOptionsPanel.normalize(searchText),
-              PilotOptionsPanel.normalize(filter));
+        return OptionSearchFilter.matches(OptionSearchFilter.normalize(searchText),
+              OptionSearchFilter.normalize(filter));
     }
 
     @Test
     @DisplayName("An empty filter matches every row")
     void emptyFilterMatchesEverything() {
         assertTrue(matches("Blood Stalker (CamOps) -1 to-hit vs one designated enemy", ""));
+        assertTrue(matches("Battle Fists (LA) Punch damage is doubled", ""));
         assertTrue(matches("", ""));
     }
 
@@ -62,21 +64,40 @@ class PilotOptionsPanelTest {
     void matchingIsCaseInsensitive() {
         assertTrue(matches("Blood Stalker (CamOps)", "blood"));
         assertTrue(matches("Blood Stalker (CamOps)", "BLOOD STALKER"));
-        assertTrue(matches("terrain master (drag racer)", "Drag Racer"));
+        assertTrue(matches("Improved Targeting (Long)", "IMPROVED TARGETING"));
+        assertTrue(matches("weak head armor (3)", "Head Armor"));
     }
 
     @Test
-    @DisplayName("Effect text matches, not just the name")
+    @DisplayName("Effect and description text match, not just the name")
     void effectTextMatches() {
-        String searchText = "Sniper (CamOps) Halve range modifiers: medium +1, long +2";
-        assertTrue(matches(searchText, "range modifiers"));
-        assertFalse(matches(searchText, "cluster"));
+        String abilityText = "Sniper (CamOps) Halve range modifiers: medium +1, long +2";
+        assertTrue(matches(abilityText, "range modifiers"));
+        assertFalse(matches(abilityText, "cluster"));
+
+        String quirkText = "Poor Cooling Jacket +1 to heat (SO pg 198)";
+        assertTrue(matches(quirkText, "heat"));
+        assertFalse(matches(quirkText, "ammo"));
+    }
+
+    @Test
+    @DisplayName("A rules reference in the search text is matchable")
+    void rulesReferenceMatches() {
+        assertTrue(matches("Nimble Jumper The unit is especially nimble when jumping BMM p.85", "bmm p.85"));
     }
 
     @Test
     @DisplayName("Non-matching text hides the row")
     void nonMatchingTextHidesRow() {
         assertFalse(matches("Blood Stalker (CamOps)", "zweihander"));
+        assertFalse(matches("Battle Fists (LA)", "searchlight"));
         assertFalse(matches("", "anything"));
+    }
+
+    @Test
+    @DisplayName("Normalizing is idempotent, so pre-normalized text stays matchable")
+    void normalizeIsIdempotent() {
+        String normalizedOnce = OptionSearchFilter.normalize("Improved Targeting (Long)");
+        assertEquals(normalizedOnce, OptionSearchFilter.normalize(normalizedOnce));
     }
 }

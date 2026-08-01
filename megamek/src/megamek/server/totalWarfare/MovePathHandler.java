@@ -4132,7 +4132,13 @@ class MovePathHandler extends AbstractTWRuleHandler {
                 if (null != step.getTargetPosition()) {
                     unloadPos = step.getTargetPosition();
                 }
-                if (!gameManager.disconnectUnit(entity, unloaded, unloadPos)) {
+                // An off board train stays hooked up. There is no board hex to drop a trailer in, so letting one
+                // uncouple would leave it off board with nothing holding its place. The movement display hides the
+                // button, so reaching here means the request did not come from it.
+                if (entity.isOffBoard()) {
+                    logger.warn("[Train] refused to disconnect {} from {}: the train is off board",
+                          unloaded.getDisplayName(), entity.getDisplayName());
+                } else if (!gameManager.disconnectUnit(entity, unloaded, unloadPos)) {
                     logger.error("Server was told to disconnect {} from {} into {}",
                           unloaded.getDisplayName(),
                           entity.getDisplayName(),

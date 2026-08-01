@@ -56,6 +56,7 @@ import megamek.client.Client;
 import megamek.client.event.MekDisplayEvent;
 import megamek.client.ui.GBC;
 import megamek.client.ui.Messages;
+import megamek.client.ui.util.UIUtil;
 import megamek.client.ui.clientGUI.ClientGUI;
 import megamek.client.ui.clientGUI.GUIPreferences;
 import megamek.client.ui.clientGUI.tooltip.UnitToolTip;
@@ -1997,7 +1998,10 @@ public class WeaponPanel extends PicMap implements ListSelectionListener, Action
         int ammoIndex = m.getDesc().indexOf(Messages.getString("MekDisplay.0"));
         int loc = m.getLocation();
         if (!m.getEntity().equals(entity) && !(m.getEntity() instanceof HandheldWeapon)) {
-            sb.append("[TR] ");
+            // Name the unit's place in the train rather than just saying the ammo is elsewhere on it. A convoy can
+            // carry several identical carriages, so "TL2" is the only thing that says which one this is.
+            String trainPosition = UIUtil.trainPositionLabel(m.getEntity());
+            sb.append('[').append(trainPosition.isEmpty() ? "TR" : trainPosition).append("] ");
         } else if (loc != Entity.LOC_NONE) {
             sb.append('[').append(entity.getLocationAbbr(loc)).append("] ");
         }

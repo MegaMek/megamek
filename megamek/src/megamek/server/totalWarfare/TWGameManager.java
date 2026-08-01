@@ -1067,6 +1067,10 @@ public class TWGameManager extends AbstractGameManager {
                     receiveEntityTow(packet, connId);
                     resetPlayersDone();
                     break;
+                case ENTITY_BUILD_TRAIN:
+                    receiveBuildTrain(packet, connId);
+                    resetPlayersDone();
+                    break;
                 case ENTITY_MODE_CHANGE:
                     receiveEntityModeChange(packet, connId);
                     break;
@@ -1306,6 +1310,8 @@ public class TWGameManager extends AbstractGameManager {
      * Deploys eligible offboard entities.
      */
     void deployOffBoardEntities() {
+        deploymentProcessor.followTractorsOffBoard();
+
         // place off board entities actually off-board
         for (Entity entity : game.getEntitiesVector()) {
             if (entity.isOffBoard() && !entity.isDeployed()) {
@@ -1320,6 +1326,10 @@ public class TWGameManager extends AbstractGameManager {
     void resetEntityPhase(GamePhase phase) {
         // first, mark doomed entities as destroyed and flag them
         Vector<Entity> toRemove = new Vector<>(0, 10);
+
+        // Collected rather than logged per unit, so a long train produces one line a phase instead of one per
+        // trailer. See the movement branch below.
+        List<String> trailersSkippingMovement = new ArrayList<>();
 
         for (Entity entity : game.getEntitiesVector()) {
             entity.newPhase(phase);
@@ -1382,6 +1392,12 @@ public class TWGameManager extends AbstractGameManager {
             // reset done to false
             if (phase.isDeployment()) {
                 entity.setDone(!entity.shouldDeploy(game.getRoundCount()));
+            } else if (phase.isMovement() && (entity.getTractor() != Entity.NONE)) {
+                // "A Trailer cannot move under its own power; it must be towed by a Tractor or be part of a series
+                // towed by a Tractor" (TM, Trailers). It is repositioned when its tractor moves, so it takes no
+                // movement turn of its own; offering one only produces a unit that cannot be moved.
+                entity.setDone(true);
+                trailersSkippingMovement.add(entity.getDisplayName());
             } else {
                 entity.setDone(false);
             }
@@ -1421,6 +1437,11 @@ public class TWGameManager extends AbstractGameManager {
             if (entity instanceof MekWarrior mekWarrior) {
                 mekWarrior.setLanded(true);
             }
+        }
+
+        if (!trailersSkippingMovement.isEmpty()) {
+            LOGGER.info("[Train] {} trailer(s) take no movement turn, they move with their tractor: {}",
+                  trailersSkippingMovement.size(), String.join(", ", trailersSkippingMovement));
         }
 
         // flag deployed and doomed, but not destroyed out of game entities
@@ -6143,78 +6164,25 @@ public class TWGameManager extends AbstractGameManager {
      * @param trainPath The path all trailers are following?
      */
     void processTrailerMovement(Entity tractor, List<Coords> trainPath) {
-        for (int eId : tractor.getAllTowedUnits()) {
-            Entity trailer = game.getEntity(eId);
+        // If the tractor didn't move anywhere the trailers stay where they are; otherwise lay the train out along
+        // the hexes the tractor drove through, using the shared packing rule.
+        if (tractor.delta_distance != 0) {
+            TrainLayout.layOutTrain(game, tractor, trainPath, tractor.getPassedThroughFacing());
+        }
+
+        for (int towedId : tractor.getAllTowedUnits()) {
+            Entity trailer = game.getEntity(towedId);
 
             if (trailer == null) {
                 continue;
             }
 
-            // if the Tractor didn't move anywhere, stay where we are
-            if (tractor.delta_distance == 0) {
-                trailer.delta_distance = tractor.delta_distance;
-                trailer.moved = tractor.moved;
-                trailer.setSecondaryFacing(trailer.getFacing());
-                trailer.setDone(true);
-                entityUpdate(eId);
-                continue;
-            }
-
-            int stepNumber; // The Coords in trainPath that this trailer should move to
-            Coords trailerPos;
-            int trailerNumber = tractor.getAllTowedUnits().indexOf(eId);
-            double trailerPositionOffset = (trailerNumber + 1); // Offset so we get the right position index
-            // Unless the tractor is superheavy, put the first trailer in its hex.
-            // Technically this would be true for a superheavy trailer too, but only a
-            // superheavy tractor can tow one.
-            if (trailerNumber == 0 && !tractor.isSuperHeavy()) {
-                trailer.setPosition(tractor.getPosition());
-                trailer.setFacing(tractor.getFacing());
-            } else {
-                // If the trailer is superheavy, place it in a hex by itself
-                if (trailer.isSuperHeavy()) {
-                    trailerPositionOffset++;
-                    stepNumber = (trainPath.size() - (int) trailerPositionOffset);
-                    trailerPos = trainPath.get(stepNumber);
-                    trailer.setPosition(trailerPos);
-                    if ((tractor.getPassedThroughFacing().size() - trailerPositionOffset) >= 0) {
-                        trailer.setFacing(tractor.getPassedThroughFacing()
-                              .get(tractor.getPassedThroughFacing().size() -
-                                    (int) trailerPositionOffset));
-                    }
-                } else if (tractor.isSuperHeavy()) {
-                    // If the tractor is superheavy, we can put two trailers in each hex
-                    // starting trailer 0 in the hex behind the tractor
-                    trailerPositionOffset = (Math.ceil((trailerPositionOffset / 2.0)) + 1);
-                    stepNumber = (trainPath.size() - (int) trailerPositionOffset);
-                    trailerPos = trainPath.get(stepNumber);
-                    trailer.setPosition(trailerPos);
-                    if ((tractor.getPassedThroughFacing().size() - trailerPositionOffset) >= 0) {
-                        trailer.setFacing(tractor.getPassedThroughFacing()
-                              .get(tractor.getPassedThroughFacing().size() -
-                                    (int) trailerPositionOffset));
-                    }
-                } else {
-                    // Otherwise, we can put two trailers in each hex
-                    // starting trailer 1 in the hex behind the tractor
-                    trailerPositionOffset++;
-                    trailerPositionOffset = Math.ceil((trailerPositionOffset / 2.0));
-                    stepNumber = (trainPath.size() - (int) trailerPositionOffset);
-                    trailerPos = trainPath.get(stepNumber);
-                    trailer.setPosition(trailerPos);
-                    if ((tractor.getPassedThroughFacing().size() - trailerPositionOffset) >= 0) {
-                        trailer.setFacing(tractor.getPassedThroughFacing()
-                              .get(tractor.getPassedThroughFacing().size() -
-                                    (int) trailerPositionOffset));
-                    }
-                }
-            }
             // trailers are immobile by default. Match the tractor's movement here
             trailer.delta_distance = tractor.delta_distance;
             trailer.moved = tractor.moved;
             trailer.setSecondaryFacing(trailer.getFacing());
             trailer.setDone(true);
-            entityUpdate(eId);
+            entityUpdate(towedId);
         }
     }
 
@@ -26817,6 +26785,10 @@ public class TWGameManager extends AbstractGameManager {
             }
         }
 
+        // Re-hitch tractor-trailer trains. Like the transport ids above, a MUL stores the ids the saving game used,
+        // so the train can only be rebuilt now that every unit has its server-given id.
+        restoreTrains(entities, idMap);
+
         // Set the "loaded keepers" which is apparently used for deployment unloading to
         // differentiate between units loaded in the lobby and other carried units
         // When entering a game from the lobby, this list is generated again, but not
@@ -26837,6 +26809,73 @@ public class TWGameManager extends AbstractGameManager {
         List<Integer> changedForces = new ArrayList<>(forceMapping.values());
 
         send(createAddEntityPacket(entityIds, changedForces));
+    }
+
+    /**
+     * Re-hitches the trains a MUL describes, once the units in it have real ids.
+     * <p>
+     * A tractor read from a file carries the trailer ids the saving game used, which mean nothing here. Each one is
+     * translated through {@code idMap} and the train is built again from the front, which restores every trailer's
+     * tractor, hitch and place in the chain. Building it through {@code towUnit} rather than setting the fields
+     * directly is what loads the hitches, so the train behaves exactly as one connected in the lobby.
+     * </p>
+     *
+     * @param entities the units that were just added
+     * @param idMap    saved id to server-given id, covering only the units in this batch
+     */
+    void restoreTrains(List<Entity> entities, Map<Integer, Integer> idMap) {
+        for (final Entity tractor : entities) {
+            List<Integer> savedTrailerIds = new ArrayList<>(tractor.getAllTowedUnits());
+
+            if (savedTrailerIds.isEmpty()) {
+                continue;
+            }
+
+            // Drop the saved ids before re-hitching. They are file ids, not entity ids, and one of them may well
+            // collide with a real id in this game, so none of them may be left in the list.
+            for (int savedTrailerId : savedTrailerIds) {
+                tractor.removeTowedUnit(savedTrailerId);
+            }
+
+            for (int savedTrailerId : savedTrailerIds) {
+                Integer realTrailerId = idMap.get(savedTrailerId);
+                Entity trailer = (realTrailerId == null) ? null : game.getEntity(realTrailerId);
+
+                if (trailer == null) {
+                    LOGGER.warn("[Train] {} was saved towing unit #{}, which is not in this file; the rest of the "
+                                + "train is still hitched", tractor.getDisplayName(), savedTrailerId);
+                    continue;
+                }
+
+                // A file describes a train the current data may no longer support, so treat towUnit as able to fail.
+                // TankTrailerHitch.load throws when a hitch cannot take the trailer, and towUnit calls it without
+                // checking first. Letting that escape would abort receiveEntityAdd and lose every unit in the file,
+                // not just this train, so a bad tow costs the player one trailer rather than the whole force.
+                boolean hitched;
+                try {
+                    tractor.towUnit(trailer.getId());
+                    // towUnit records the trailer as part of the train before it looks for a hitch to hold it, and
+                    // does not undo that when nothing can, so a silent failure looks the same as a thrown one here.
+                    hitched = trailer.getTowedBy() != Entity.NONE;
+                } catch (RuntimeException towFailure) {
+                    LOGGER.warn("[Train] {} could not tow {} from file: {}",
+                          tractor.getDisplayName(), trailer.getDisplayName(), towFailure.getMessage());
+                    hitched = false;
+                }
+
+                if (!hitched) {
+                    // Leave it loose rather than listed in a train nothing is holding it to.
+                    LOGGER.warn("[Train] {} has no free hitch for {}; the trailer was loaded loose",
+                          tractor.getDisplayName(), trailer.getDisplayName());
+                    tractor.removeTowedUnit(trailer.getId());
+                    trailer.setTractor(Entity.NONE);
+                    trailer.setTowedBy(Entity.NONE);
+                }
+            }
+
+            LOGGER.info("[Train] restored {} towing {} trailer(s) from file",
+                  tractor.getDisplayName(), tractor.getAllTowedUnits().size());
+        }
     }
 
     /**
@@ -27218,6 +27257,18 @@ public class TWGameManager extends AbstractGameManager {
                 }
             }
         }
+    }
+
+    /**
+     * Parses a build-train request and hands validation and application to {@link TrainBuildHandler}.
+     *
+     * @param packet    the packet to be processed
+     * @param connIndex the id for connection that received the packet.
+     */
+    private void receiveBuildTrain(Packet packet, int connIndex) throws InvalidPacketDataException {
+        int tractorId = packet.getIntValue(0);
+        List<Integer> trailerIds = packet.getIntList(1);
+        new TrainBuildHandler(this).buildTrain(tractorId, trailerIds, game.getPlayer(connIndex));
     }
 
     /**

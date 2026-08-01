@@ -75,6 +75,7 @@ import megamek.common.weapons.autoCannons.RACWeapon;
 import megamek.common.weapons.autoCannons.UACWeapon;
 import megamek.common.weapons.battleArmor.innerSphere.ISBAPopUpMineLauncher;
 import megamek.common.weapons.bayWeapons.BayWeapon;
+import megamek.common.weapons.capitalWeapons.ScreenLauncherWeapon;
 import megamek.common.weapons.gaussRifles.HAGWeapon;
 import megamek.common.weapons.handlers.AreaEffectHelper;
 import megamek.common.weapons.handlers.DamageFalloff;
@@ -7389,49 +7390,6 @@ public class Compute {
     }
 
     // Taken from MekHQ, assumptions are whatever Taharqa made for there - Dylan
-    public static int getTotalGunnerNeeds(Entity entity) {
-        if (entity.hasDroneOs()) {
-            return 0;
-        }
-
-        if (entity instanceof SmallCraft || entity instanceof Jumpship) {
-            int nStandardW = 0;
-            int nCapitalW = 0;
-            for (Mounted<?> m : entity.getTotalWeaponList()) {
-                EquipmentType type = m.getType();
-                if (type instanceof BayWeapon) {
-                    continue;
-                }
-                if (type instanceof WeaponType) {
-                    if ((((WeaponType) m.getType()).getLongRange() <= 1)
-                          // MML range depends on ammo, and getLongRange() returns 0
-                          && (((WeaponType) m.getType()).getAmmoType() != AmmoTypeEnum.MML)) {
-                        continue;
-                    }
-                    if (((WeaponType) type).isCapital()) {
-                        nCapitalW++;
-                    } else {
-                        nStandardW++;
-                    }
-                }
-            }
-            return nCapitalW + (int) Math.ceil(nStandardW / 6.0);
-        } else if (entity.isSupportVehicle()) {
-            return getSupportVehicleGunnerNeeds(entity);
-        } else if (entity instanceof Tank) {
-            return (getFullCrewSize(entity)
-                  - getTotalDriverNeeds(entity)
-                  - getAdditionalNonGunner(entity));
-        } else if (entity instanceof Infantry) {
-            return getFullCrewSize(entity);
-        } else if (entity.getCrew().getCrewType().getGunnerPos() > 0) {
-            // Tripod, QuadVee, or dual cockpit
-            return 1;
-        }
-        return 0;
-    }
-
-    // Taken from MekHQ, assumptions are whatever Taharqa made for there - Dylan
     public static int getAeroCrewNeeds(Entity entity) {
         if (entity.hasDroneOs()) {
             return 0;
@@ -7495,17 +7453,69 @@ public class Compute {
     }
 
     /**
+     * Returns the number of required gunners for an entity.
+     * @param entity The entity
+     * @return The number of required gunners
+     */
+    public static int getTotalGunnerNeeds(Entity entity) {
+        if (entity.hasDroneOs()) {
+            return 0;
+        }
+
+        if (entity instanceof SmallCraft || entity instanceof Jumpship) {
+            return getSmallCraftJumpshipGunnerNeeds(entity);
+        } else if (entity.isSupportVehicle()) {
+            return getSupportVehicleGunnerNeeds(entity);
+        } else if (entity instanceof Tank) {
+            return (getFullCrewSize(entity)
+                  - getTotalDriverNeeds(entity)
+                  - getAdditionalNonGunner(entity));
+        } else if (entity instanceof Infantry) {
+            return getFullCrewSize(entity);
+        } else if (entity.getCrew().getCrewType().getGunnerPos() > 0) {
+            // Tripod, QuadVee, or dual cockpit
+            return 1;
+        }
+        return 0;
+    }
+
+    /**
+     * Returns the number of required gunners for a small craft/jumpship.
+     * One gunner is required for each capital weapon and each six standard scale weapons, rounding up.
+     * Each Mass Driver requires 10 gunners (TO: AU&amp;E 6th ed, p 134).
+     * Each Screen Launcher requires 1 gunner (TM 6th ed, p 237).
+     * @param entity The small craft/jumpship
+     * @return The number of required gunners
+     */
+    private static int getSmallCraftJumpshipGunnerNeeds(Entity entity) {
+        int standardWeapons = 0;
+        int capitalWeapons = 0;
+        for (Mounted<?> m : entity.getTotalWeaponList()) {
+            if ((m.getType() instanceof BayWeapon) ||
+                  ((((WeaponType) m.getType()).getLongRange() <= 1) &&
+                        // MML range depends on ammo
+                        (((WeaponType) m.getType()).getAmmoType() != AmmoTypeEnum.MML))) {
+                continue;
+            }
+            if (m.getType().hasFlag(WeaponType.F_MASS_DRIVER)) {
+                capitalWeapons += 10;
+            } else if (((WeaponType) m.getType()).isCapital() || (m.getType() instanceof ScreenLauncherWeapon)) {
+                capitalWeapons++;
+            } else {
+                standardWeapons++;
+            }
+        }
+        return capitalWeapons + (int) Math.ceil(standardWeapons / 6.0);
+    }
+
+    /**
      * Calculates number of gunners required for a support vehicle. See TM, 131.
      *
      * @param entity The support vehicle
      *
      * @return The number of gunners required.
      */
-    public static int getSupportVehicleGunnerNeeds(Entity entity) {
-        if (entity.hasDroneOs()) {
-            return 0;
-        }
-
+    private static int getSupportVehicleGunnerNeeds(Entity entity) {
         final boolean advFireCon = entity.hasMisc(MiscType.F_ADVANCED_FIRE_CONTROL);
         final boolean basicFireCon = !advFireCon && entity.hasMisc(MiscType.F_BASIC_FIRE_CONTROL);
         if (entity.getWeightClass() == EntityWeightClass.WEIGHT_SMALL_SUPPORT) {
@@ -7689,7 +7699,7 @@ public class Compute {
             return 0;
         }
         if (entity.isSupportVehicle()) {
-            int crew = getSVBaseCrewNeeds(entity) + getSupportVehicleGunnerNeeds(entity)
+            int crew = getSVBaseCrewNeeds(entity) + getTotalGunnerNeeds(entity)
                   + getAdditionalNonGunner(entity);
             if (crew < 4) {
                 return crew;

@@ -102,8 +102,8 @@ public class PilotOptionsPanel extends JPanel implements DialogOptionListener {
 
     /** Horizontal gap between columns, added to the widest row when computing the column count. */
     private static final int COLUMN_GAP = 8;
-    /** Estimated non-label width in a row (checkbox, struts, flow gaps, panel padding), for label wrapping. */
-    private static final int ROW_CHROME_WIDTH = 64;
+    /** The grid cell's own horizontal insets, subtracted from a cell's share before label wrapping. */
+    private static final int CELL_INSET_WIDTH = 8;
     private static final Color SELECTED_OPTION_COLOR = Color.YELLOW;
     private static final String STATUS_MARKER_NAME = "spaStatusMarker";
 
@@ -150,6 +150,8 @@ public class PilotOptionsPanel extends JPanel implements DialogOptionListener {
     private final JLabel matchCountLabel = new JLabel();
     private final JCheckBox showUnimplementedCheck =
           new JCheckBox(Messages.getString("CustomMekDialog.showUnimplemented"), true);
+    /** The search field row; hidden when the game options leave no ability group to search. */
+    private JPanel filterBar;
     /**
      * Holds the visible columns side by side in equal shares of the width - normally halves: the advantages group
      * and the Edge column (Edge with the implant groups tucked under it). {@link #applyFilter()} re-adds only the
@@ -219,7 +221,7 @@ public class PilotOptionsPanel extends JPanel implements DialogOptionListener {
         matchCountLabel.setName("lblSpaMatchCount");
         matchCountLabel.setVisible(false);
 
-        JPanel filterBar = new FixedYPanel(new FlowLayout(FlowLayout.LEFT, UIUtil.scaleForGUI(5), 2));
+        filterBar = new FixedYPanel(new FlowLayout(FlowLayout.LEFT, UIUtil.scaleForGUI(5), 2));
         filterField.setColumns(20);
         filterBar.add(filterField);
         filterBar.add(showUnimplementedCheck);
@@ -291,6 +293,9 @@ public class PilotOptionsPanel extends JPanel implements DialogOptionListener {
             }
             panelMaxRowWidth.put(groupPanel, Math.max(maxRowWidth, 1));
         }
+
+        // No point offering a search when the game options leave nothing to search
+        filterBar.setVisible(!panelRows.isEmpty());
 
         applyFilter();
         revalidate();
@@ -584,17 +589,18 @@ public class PilotOptionsPanel extends JPanel implements DialogOptionListener {
     }
 
     /**
-     * Wraps option names that are wider than their column (long Edge triggers) instead of clipping them.
-     * Cheap to repeat: the labels no-op when their text would not change.
+     * Wraps option names whose row is wider than its column (long Edge triggers, choice rows with wide combo
+     * boxes) instead of clipping them; each row subtracts its own controls from the budget. Cheap to repeat: the
+     * labels no-op when their text would not change.
      */
     private void applyLabelWrapWidths(JPanel groupPanel, List<OptionRow> visibleRows, int columns) {
         if (columns <= 0) {
             return;
         }
-        int labelWidth = (calculateAvailableWidth(groupPanel) / columns) - UIUtil.scaleForGUI(ROW_CHROME_WIDTH);
+        int rowWidth = (calculateAvailableWidth(groupPanel) / columns) - UIUtil.scaleForGUI(CELL_INSET_WIDTH);
         for (OptionRow row : visibleRows) {
             if (row.component() instanceof DialogOptionComponentYPanel optionComp) {
-                optionComp.setNameLabelWrapWidth(labelWidth);
+                optionComp.setNameLabelWrapWidth(rowWidth);
             }
         }
     }

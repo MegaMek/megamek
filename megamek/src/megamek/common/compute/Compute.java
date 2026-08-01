@@ -1250,6 +1250,10 @@ public class Compute {
               || (target.getTargetType() == Targetable.TYPE_HEX_AERO_BOMB)) {
             return null;
         }
+        // Likewise, MRM Saturation attacks never get the target immobile mod
+        if (target.getTargetType() == Targetable.TYPE_SATURATION) {
+            return null;
+        }
 
         if (target.isImmobile() || target.isBracing()) {
             if ((target instanceof Mek) && (aimingAt == Mek.LOC_HEAD) && aimingMode.isImmobile()) {

@@ -62,6 +62,16 @@ public class MRMSaturationHandler extends MRMHandler {
         super(t, w, g, m);
     }
 
+    /**
+     * Overridden AttackHandler to skip a lot of extraneous missile prep work, report the Saturation attack, prep
+     * AMS for this attack (Saturation mode attacks don't target entities so don't trigger AMS / APDS normally),
+     * and finally execute the AE damage allocation in the targeted hex (if a hit is rolled).
+     *
+     * @param phase         The present game phase
+     * @param vPhaseReport The reports list to add new reports to
+     *
+     * @return boolean      Does this attack need to be kept for later processing?  False in most cases.
+     */
     @Override
     public boolean handle(GamePhase phase, Vector<Report> vPhaseReport) {
         // Using handle instead of specialResolution skips a bunch of missile-related stuff that doesn't apply.
@@ -72,12 +82,19 @@ public class MRMSaturationHandler extends MRMHandler {
         Coords targetPos = target.getPosition();
         Hex targetHex = game.getHexOf(target);
 
+        Report r = new Report(9941);
+        r.subject = subjectId;
+        r.player = attackingEntity.getOwnerId();
+        r.add(attackingEntity.getShortName());
+        r.add(targetPos.getBoardNum());
+        vPhaseReport.addElement(r);
+
         // do we hit?
         bMissed = roll.getIntValue() < toHit.getValue();
         if (bMissed) {
             // Report the miss; nothing happens.
             // Also, how did you miss the ground?!
-            Report r = new Report(3196);
+            r = new Report(3196);
             r.subject = subjectId;
             r.player = attackingEntity.getOwnerId();
             r.add(targetPos.getBoardNum());
@@ -96,7 +113,7 @@ public class MRMSaturationHandler extends MRMHandler {
 
         // Note: MRM Saturation does not scatter!
         if (!bMissed) {
-            Report r = new Report(3190);
+            r = new Report(3190);
             r.subject = subjectId;
             r.player = attackingEntity.getOwnerId();
             r.add(targetPos.getBoardNum());
@@ -151,9 +168,9 @@ public class MRMSaturationHandler extends MRMHandler {
                 localAPDSMod = 0;
 
                 // Set up differences between different types of AMS
-                boolean isAMS = counter.getType().hasFlag(WeaponType.F_AMS);
-                boolean isAMSBay = counter.getType().hasFlag(WeaponType.F_AMS_BAY);
                 boolean isAPDS = counter.isAPDS();
+                boolean isAMS = counter.getType().hasFlag(WeaponType.F_AMS) && !isAPDS;
+                boolean isAMSBay = counter.getType().hasFlag(WeaponType.F_AMS_BAY);
 
                 // Check the firing arc, even though this was done when the AMS was assigned
                 Entity pdEnt = counter.getEntity();
@@ -288,24 +305,27 @@ public class MRMSaturationHandler extends MRMHandler {
         }
         return apdsMod + amsMod;
     }
-        
+
+    /**
+     * Overridden calcHits to ensure assignAMS() gets called with this as the only attack to check.
+     *
+     * @param vPhaseReport - the <code>Vector</code> containing the phase report.
+     *
+     * @return int      number of missiles that will hit (total AE damage calculated subsequently)
+     */
     @Override
     protected int calcHits(Vector<Report> vPhaseReport) {
-        /*
-        * This is very experimental. It may not be needed, and instead go into the handler.
-         */
-
-        // Saturation mode reduces by AMS before calculating AE damage.
-        // add Cluster and AMS mods
+        // add Cluster mods, depending on options
         int nMissilesModifier = getClusterModifiers(true);
 
         // Explicitly call assignAMS now to force assignments, as this attack won't be picked up normally
         gameManager.assignAMS(new Vector<>(List.of(this)), false);
+
+        // Saturation mode reduces by AMS before calculating AE damage.
         nMissilesModifier += getAMSHitsMod(vPhaseReport);
-        int missilesHit;
 
         // No need for artificial Streak calcs as this type of attack can only target a hex
-        missilesHit = Compute.missilesHit(weaponType.getRackSize(), nMissilesModifier,
+        int missilesHit = Compute.missilesHit(weaponType.getRackSize(), nMissilesModifier,
               weapon.isHotLoaded(), false, isAdvancedAMS());
 
         return missilesHit;

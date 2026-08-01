@@ -10368,12 +10368,16 @@ public class TWGameManager extends AbstractGameManager {
 
         // Let each APDS assign itself to an attack
         Set<WeaponAttackAction> targetedAttacks = new HashSet<>();
+        Targetable waaTarget;
         for (WeaponMounted apds : apdsTargets.keySet()) {
             List<WeaponHandler> potentialTargets = apdsTargets.get(apds);
             // Ensure we only target each attack once
             List<WeaponHandler> targetsToRemove = new ArrayList<>();
             for (WeaponHandler wh : potentialTargets) {
-                if (targetedAttacks.contains(wh.getWeaponAttackAction())) {
+                // But allow targeting Saturation mode attacks multiple times, per Core p. 197
+                waaTarget = (wh.getWeaponAttackAction() != null) ? wh.getWeaponAttackAction().getTarget(game) : null;
+                if (targetedAttacks.contains(wh.getWeaponAttackAction())
+                      && (waaTarget != null && waaTarget.getTargetType() != Targetable.TYPE_SATURATION)) {
                     targetsToRemove.add(wh);
                 }
             }

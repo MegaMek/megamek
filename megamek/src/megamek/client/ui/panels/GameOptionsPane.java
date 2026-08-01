@@ -33,9 +33,11 @@
 package megamek.client.ui.panels;
 
 import static megamek.client.ui.Messages.getString;
+import static megamek.client.ui.util.FontHandler.symbolIcon;
 
 import java.awt.BorderLayout;
 import java.awt.Component;
+import java.awt.Dimension;
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -43,21 +45,36 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.function.Predicate;
 import java.util.function.Supplier;
-import javax.swing.BoxLayout;
+import javax.swing.Icon;
 import javax.swing.JPanel;
+import javax.swing.UIManager;
 
+import megamek.client.ui.settings.SettingsBadge;
 import megamek.client.ui.settings.SettingsFilterable;
+import megamek.client.ui.settings.SettingsFormPanel;
 import megamek.client.ui.settings.SettingsHeaderPanel;
+import megamek.client.ui.settings.SettingsNavigationPanel;
 import megamek.client.ui.settings.SettingsNavigationText;
 import megamek.client.ui.settings.SettingsPagePanel;
 import megamek.client.ui.settings.SettingsPane;
 import megamek.client.ui.settings.SettingsRoute;
 import megamek.client.ui.settings.SettingsTextProvider;
+import megamek.client.ui.util.UIUtil;
 import megamek.common.options.IOption;
 
 /** Searchable settings-tree presentation for metadata-backed game option groups. */
 public class GameOptionsPane extends JPanel {
+    private static final int START_HEIGHT = 800;
+    private static final int DETAILS_ICON = 0xE88E;
+    private static final int ADVANCED_ICON = 0xE8B8;
+    private static final int UNOFFICIAL_ICON = 0xE002;
     private static final SettingsTextProvider TEXT = SettingsTextProvider.megaMek();
+    private static final SettingsBadge DETAILS_BADGE = new SettingsBadge(DETAILS_ICON, null,
+          getString("GameOptionsDialog.legend.details"));
+    private static final SettingsBadge ADVANCED_BADGE = new SettingsBadge(ADVANCED_ICON, null,
+          getString("GameOptionsDialog.legend.advanced"));
+    private static final SettingsBadge UNOFFICIAL_BADGE = new SettingsBadge(UNOFFICIAL_ICON, null,
+          getString("GameOptionsDialog.legend.unofficial"));
 
     private final List<GroupPage> pages = new ArrayList<>();
     private final SettingsPane settingsPane;
@@ -108,6 +125,19 @@ public class GameOptionsPane extends JPanel {
         settingsPane.refreshFilter();
     }
 
+    public static List<SettingsBadge> legendEntries() {
+        return List.of(DETAILS_BADGE, ADVANCED_BADGE, UNOFFICIAL_BADGE);
+    }
+
+    @Override
+    public Dimension getPreferredSize() {
+        Dimension preferred = super.getPreferredSize();
+        int floorWidth = UIUtil.scaleForGUI(SettingsNavigationPanel.DEFAULT_NAVIGATION_WIDTH)
+              + UIUtil.scaleForGUI(SettingsPagePanel.DEFAULT_MAXIMUM_PAGE_WIDTH);
+        int floorHeight = UIUtil.scaleForGUI(START_HEIGHT);
+        return new Dimension(Math.max(preferred.width, floorWidth), Math.max(preferred.height, floorHeight));
+    }
+
     /** One game-options navigation route and its staged editor components. */
     public record OptionGroup(String id, String displayName, List<DialogOptionComponentYPanel> components) {
         public OptionGroup {
@@ -121,6 +151,7 @@ public class GameOptionsPane extends JPanel {
         private final List<OptionRow> rows;
         private final Predicate<IOption> optionVisibility;
         private final String groupSearchableText;
+        private final SettingsPagePanel pagePanel;
         private SettingsRoute route;
 
         private GroupPage(OptionGroup group, Predicate<IOption> optionVisibility) {
@@ -129,18 +160,32 @@ public class GameOptionsPane extends JPanel {
             groupSearchableText = SettingsRoute.normalizeSearchText(group.id() + ' ' + group.displayName());
             setName("gameOptions" + group.id() + "Page");
 
-            JPanel optionList = new JPanel();
-            optionList.setName("gameOptions" + group.id() + "List");
-            optionList.setLayout(new BoxLayout(optionList, BoxLayout.PAGE_AXIS));
             rows = group.components().stream().map(OptionRow::new).toList();
-            rows.forEach(row -> optionList.add(row.component()));
+            Map<String, List<OptionRow>> sectionRows = new LinkedHashMap<>();
+            for (OptionRow row : rows) {
+                sectionRows.computeIfAbsent(sectionId(group.id(), row.option().getName()), ignored -> new ArrayList<>())
+                      .add(row);
+            }
 
-            SettingsPagePanel page = SettingsPagePanel.builder(group.id(), TEXT, "GameOptionsDialog.title", null)
-                  .header(new SettingsHeaderPanel(group.id(), group.displayName(), null))
-                  .component(optionList)
+            Icon icon = pageIcon(group.id());
+            SettingsPagePanel.Builder builder = SettingsPagePanel.builder(group.id(), TEXT,
+                        "GameOptionsDialog.title", icon)
+                  .header(new SettingsHeaderPanel(group.id(), group.displayName(), icon))
                   .showDetailsPanel(true)
-                  .build();
-            add(page, BorderLayout.CENTER);
+                  .sectionsExpandedByDefault(sectionRows.size() == 1)
+                  .standardContentWidth();
+            for (Map.Entry<String, List<OptionRow>> entry : sectionRows.entrySet()) {
+                SettingsFormPanel content = new SettingsFormPanel(group.id() + entry.getKey());
+                entry.getValue().forEach(row -> content.addFullWidthComponent(row.component()));
+                List<String> aliases = new ArrayList<>();
+                aliases.add(group.id());
+                aliases.add(group.displayName());
+                entry.getValue().forEach(row -> aliases.add(row.searchableText()));
+                builder.literalSection(sectionTitle(entry.getKey()), sectionSummary(entry.getKey()), content,
+                      sectionBadges(group.id(), entry.getValue()), aliases);
+            }
+            pagePanel = builder.build();
+            add(pagePanel, BorderLayout.CENTER);
         }
 
         private void setRoute(SettingsRoute route) {
@@ -160,6 +205,14 @@ public class GameOptionsPane extends JPanel {
             if (route != null) {
                 route.setSectionSearchText(searchableText.toString());
             }
+            if (normalizedFilter.isBlank()) {
+                pagePanel.collapseAllSections();
+            } else {
+                boolean matched = pagePanel.expandSectionsMatching(text -> sectionMatches(text, normalizedFilter));
+                if (!matched) {
+                    pagePanel.expandAllSections();
+                }
+            }
             revalidate();
             repaint();
         }
@@ -168,6 +221,184 @@ public class GameOptionsPane extends JPanel {
         public void applySettingsFilter(String normalizedFilter) {
             refreshVisibility(normalizedFilter);
         }
+    }
+
+    private static List<SettingsBadge> sectionBadges(String groupId, List<OptionRow> rows) {
+        List<SettingsBadge> badges = new ArrayList<>();
+        badges.add(DETAILS_BADGE);
+        if (groupId.startsWith("advanced")) {
+            badges.add(ADVANCED_BADGE);
+        }
+        if (rows.stream().anyMatch(row -> isUnofficial(row.option()))) {
+            badges.add(UNOFFICIAL_BADGE);
+        }
+        return badges;
+    }
+
+    private static boolean isUnofficial(IOption option) {
+        return option.getName().startsWith("unoff") || option.getDisplayableName().contains("Unofficial");
+    }
+
+    private static String sectionTitle(String sectionId) {
+        return getString("GameOptionsDialog.section." + sectionId + ".title");
+    }
+
+    private static String sectionSummary(String sectionId) {
+        return getString("GameOptionsDialog.section." + sectionId + ".summary");
+    }
+
+    private static boolean sectionMatches(String text, String normalizedFilter) {
+        String normalizedText = SettingsRoute.normalizeSearchText(text);
+        for (String token : normalizedFilter.split("\\s+")) {
+            if (!normalizedText.contains(token)) {
+                return false;
+            }
+        }
+        return true;
+    }
+
+    static String sectionId(String groupId, String optionName) {
+        return switch (groupId) {
+            case "basic" -> classifyBasic(optionName);
+            case "gameMaster" -> "gameMaster.control";
+            case "victory" -> classifyVictory(optionName);
+            case "allowedUnits" -> classifyAllowedUnits(optionName);
+            case "advancedRules" -> classifyAdvancedRules(optionName);
+            case "advancedCombat" -> classifyAdvancedCombat(optionName);
+            case "advancedGroundMovement" -> classifyGroundMovement(optionName);
+            case "advancedAeroRules" -> classifyAero(optionName);
+            case "initiative" -> classifyInitiative(optionName);
+            case "rpg" -> classifyRpg(optionName);
+            default -> groupId + ".general";
+        };
+    }
+
+    private static String classifyBasic(String name) {
+        if (containsAny(name, "playtest", "twrules")) {
+            return "basic.testing";
+        }
+        if (containsAny(name, "show_", "lobby_")) {
+            return "basic.display";
+        }
+        return "basic.rules";
+    }
+
+    private static String classifyVictory(String name) {
+        if (name.contains("bv_")) {
+            return "victory.battleValue";
+        }
+        if (containsAny(name, "turn_limit", "kill_count", "commander_killed")) {
+            return "victory.alternate";
+        }
+        return "victory.conditions";
+    }
+
+    private static String classifyAllowedUnits(String name) {
+        if (containsAny(name, "canon", "year", "techlevel", "era_based")) {
+            return "allowedUnits.availability";
+        }
+        return "allowedUnits.restrictions";
+    }
+
+    private static String classifyAdvancedRules(String name) {
+        if (containsAny(name, "sensor", "blind", "vision", "ecm", "ghost", "bap", "magscan")) {
+            return "advancedRules.sensors";
+        }
+        if (containsAny(name, "mine", "ice", "woods", "ignite", "lightning", "bridge")) {
+            return "advancedRules.terrain";
+        }
+        if (containsAny(name, "eject", "abandon")) {
+            return "advancedRules.ejection";
+        }
+        if (containsAny(name, "infantry", "ba_", "paratrooper", "assault_drop")) {
+            return "advancedRules.specialUnits";
+        }
+        return "advancedRules.general";
+    }
+
+    private static String classifyAdvancedCombat(String name) {
+        if (containsAny(name, "ammo", "ams", "rapid_ac", "uac", "ppc", "gauss", "energy_weapon", "hotload")) {
+            return "advancedCombat.weapons";
+        }
+        if (containsAny(name, "crit", "damage", "heat", "explosion", "rotor", "cluster")) {
+            return "advancedCombat.damage";
+        }
+        if (containsAny(name, "los", "range", "dead_zone", "cover", "predesignate", "scatter")) {
+            return "advancedCombat.targeting";
+        }
+        if (containsAny(name, "vehicle", "vtol", "proto", "ba_")) {
+            return "advancedCombat.units";
+        }
+        return "advancedCombat.attacks";
+    }
+
+    private static String classifyGroundMovement(String name) {
+        if (containsAny(name, "vehicle", "reverse", "hover", "premove", "immobile")) {
+            return "advancedGroundMovement.vehicles";
+        }
+        if (containsAny(name, "infantry", "physical", "leg_damage", "walk_backwards")) {
+            return "advancedGroundMovement.infantry";
+        }
+        return "advancedGroundMovement.meks";
+    }
+
+    private static String classifyAero(String name) {
+        if (containsAny(name, "sensor", "ecm", "aaa", "pointdef", "bracket", "over_penetrate", "damage_thresh")) {
+            return "advancedAeroRules.targeting";
+        }
+        if (containsAny(name, "bomb", "nuke", "dropship", "fuel", "kf_", "ammo_explosion")) {
+            return "advancedAeroRules.vessels";
+        }
+        return "advancedAeroRules.flight";
+    }
+
+    private static String classifyInitiative(String name) {
+        if (name.startsWith("inf_")) {
+            return "initiative.infantry";
+        }
+        if (name.startsWith("proto")) {
+            return "initiative.protomeks";
+        }
+        return "initiative.simultaneous";
+    }
+
+    private static String classifyRpg(String name) {
+        if (containsAny(name, "initiative", "command_init")) {
+            return "rpg.initiative";
+        }
+        if (containsAny(name, "gunnery", "artillery", "toughness")) {
+            return "rpg.skills";
+        }
+        if (containsAny(name, "shutdown", "ejection")) {
+            return "rpg.conditions";
+        }
+        return "rpg.core";
+    }
+
+    private static boolean containsAny(String value, String... fragments) {
+        for (String fragment : fragments) {
+            if (value.contains(fragment)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    private static Icon pageIcon(String groupId) {
+        int codePoint = switch (groupId) {
+            case "basic" -> 0xE8B8;
+            case "gameMaster" -> 0xE7FD;
+            case "victory" -> 0xEA23;
+            case "allowedUnits" -> 0xE146;
+            case "advancedRules" -> 0xE86F;
+            case "advancedCombat" -> 0xE91F;
+            case "advancedGroundMovement" -> 0xE531;
+            case "advancedAeroRules" -> 0xE539;
+            case "initiative" -> 0xE425;
+            case "rpg" -> 0xE84F;
+            default -> ADVANCED_ICON;
+        };
+        return symbolIcon(codePoint, UIUtil.scaleForGUI(48), UIManager.getColor("Label.foreground"));
     }
 
     private record OptionRow(DialogOptionComponentYPanel component, IOption option, String searchableText) {

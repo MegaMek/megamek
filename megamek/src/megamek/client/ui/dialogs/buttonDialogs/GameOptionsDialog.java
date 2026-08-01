@@ -38,6 +38,8 @@ import static megamek.client.ui.util.UIUtil.WrappingButtonPanel;
 
 import java.awt.BorderLayout;
 import java.awt.Container;
+import java.awt.Dimension;
+import java.awt.FlowLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.File;
@@ -59,6 +61,8 @@ import megamek.client.ui.dialogs.MMDialogs.MMConfirmDialog;
 import megamek.client.ui.panels.DialogOptionComponentYPanel;
 import megamek.client.ui.panels.GameOptionsPane;
 import megamek.client.ui.panels.phaseDisplay.lobby.VictoryConditionsDialog;
+import megamek.client.ui.settings.SettingsIconLegend;
+import megamek.client.ui.util.UIUtil;
 import megamek.common.TechConstants;
 import megamek.common.options.GameOptions;
 import megamek.common.options.IBasicOption;
@@ -75,6 +79,7 @@ import org.w3c.dom.NodeList;
 
 /** Responsible for displaying the current game options and allowing the user to change them. */
 public class GameOptionsDialog extends AbstractButtonDialog implements ActionListener, DialogOptionListener {
+    private static final int BUTTON_GAP = 8;
 
     private ClientGUI clientGui;
     private JFrame frame;
@@ -92,13 +97,12 @@ public class GameOptionsDialog extends AbstractButtonDialog implements ActionLis
     private final WrappingButtonPanel panPassword = new WrappingButtonPanel();
     private final JLabel labPass = new JLabel(Messages.getString("GameOptionsDialog.Password"));
     private final JTextField texPass = new JTextField(15);
-    private final WrappingButtonPanel panButtons = new WrappingButtonPanel();
     private final JButton butSave = new JButton(Messages.getString("GameOptionsDialog.Save"));
     private final JButton butLoad = new JButton(Messages.getString("GameOptionsDialog.Load"));
     private final JButton butDefaults = new JButton(Messages.getString("GameOptionsDialog.Defaults"));
     private final JButton butOkay = new JButton(Messages.getString("Okay"));
     private final JButton butCancel = new JButton(Messages.getString("Cancel"));
-    private final MMToggleButton butUnofficial = new MMToggleButton("Unofficial Opts");
+    private final MMToggleButton butUnofficial = new MMToggleButton(Messages.getString("GameOptionsDialog.Unofficial"));
 
     /**
      * When the OK button is pressed, the options can be saved to a file; this behavior happens by default but there are
@@ -141,18 +145,20 @@ public class GameOptionsDialog extends AbstractButtonDialog implements ActionLis
 
     @Override
     protected Container createCenterPane() {
-        var mainPanel = new JPanel();
-        mainPanel.setLayout(new BoxLayout(mainPanel, BoxLayout.PAGE_AXIS));
-        mainPanel.add(panOptions);
-        mainPanel.add(Box.createVerticalStrut(5));
-        mainPanel.add(panPassword);
-        mainPanel.add(Box.createVerticalStrut(5));
-        mainPanel.add(panButtons);
+        JPanel mainPanel = new JPanel(new BorderLayout());
+        mainPanel.add(panOptions, BorderLayout.CENTER);
+        mainPanel.add(panPassword, BorderLayout.SOUTH);
         return mainPanel;
     }
 
     @Override
     protected JPanel createButtonPanel() {
+        butOkay.setName("okButton");
+        butCancel.setName("cancelButton");
+        butDefaults.setName("defaultsButton");
+        butSave.setName("saveButton");
+        butLoad.setName("loadButton");
+        butUnofficial.setName("unofficialToggle");
         butOkay.addActionListener(this::okButtonActionPerformed);
         butCancel.addActionListener(this::cancelActionPerformed);
         butDefaults.addActionListener(this::resetToDefaults);
@@ -160,16 +166,52 @@ public class GameOptionsDialog extends AbstractButtonDialog implements ActionLis
         butLoad.addActionListener(this);
         butUnofficial.addActionListener(this);
 
-        panButtons.add(butUnofficial);
-        panButtons.add(Box.createHorizontalStrut(30));
-        panButtons.add(butOkay);
-        panButtons.add(butCancel);
-        panButtons.add(butDefaults);
-        panButtons.add(butSave);
-        panButtons.add(butLoad);
+          butOkay.putClientProperty("FlatLaf.style",
+              "background: $Button.default.background; foreground: $Button.default.foreground");
+          setUniformButtonSize(butOkay, butCancel, butDefaults, butSave, butLoad);
+          int gap = UIUtil.scaleForGUI(BUTTON_GAP);
 
-        return panButtons;
+          JPanel actionButtons = new JPanel(new FlowLayout(FlowLayout.CENTER, gap, gap));
+          actionButtons.add(butOkay);
+          actionButtons.add(butCancel);
+          actionButtons.add(butDefaults);
+          actionButtons.add(butSave);
+          actionButtons.add(butLoad);
+
+          JButton legendButton = SettingsIconLegend.createLegendButton(
+              Messages.getString("GameOptionsDialog.legend.button"),
+              Messages.getString("GameOptionsDialog.legend.tooltip"),
+              GameOptionsPane.legendEntries());
+          JPanel legendPanel = new JPanel(new FlowLayout(FlowLayout.LEFT, gap, gap));
+          legendPanel.add(legendButton);
+          legendPanel.add(butUnofficial);
+
+          JPanel rightSpacer = new JPanel();
+          rightSpacer.setOpaque(false);
+          rightSpacer.setPreferredSize(new Dimension(legendPanel.getPreferredSize().width, 0));
+
+          JPanel footer = new JPanel(new BorderLayout());
+          footer.add(legendPanel, BorderLayout.WEST);
+          footer.add(actionButtons, BorderLayout.CENTER);
+          footer.add(rightSpacer, BorderLayout.EAST);
+          return footer;
     }
+
+        private static void setUniformButtonSize(JButton... buttons) {
+          int width = java.util.Arrays.stream(buttons)
+              .mapToInt(button -> button.getPreferredSize().width)
+              .max()
+              .orElse(0);
+          int height = java.util.Arrays.stream(buttons)
+              .mapToInt(button -> button.getPreferredSize().height)
+              .max()
+              .orElse(0);
+          Dimension size = new Dimension(width, height);
+          for (JButton button : buttons) {
+            button.setPreferredSize(size);
+            button.setMinimumSize(size);
+          }
+        }
 
     /** Updates the dialog ui with the given options. */
     public void update(GameOptions options) {

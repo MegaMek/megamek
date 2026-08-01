@@ -33,16 +33,27 @@
 package megamek.client.ui.panels;
 
 import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
+import java.awt.Component;
+import java.awt.Container;
 import java.lang.reflect.InvocationTargetException;
+import java.util.ArrayList;
+import java.util.Enumeration;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicBoolean;
 import javax.swing.SwingUtilities;
 
+import megamek.client.ui.Messages;
 import megamek.client.ui.clientGUI.DialogOptionListener;
+import megamek.client.ui.settings.CollapsibleSectionPanel;
+import megamek.client.ui.settings.SettingsNavigationPanel;
+import megamek.client.ui.settings.SettingsPagePanel;
+import megamek.client.ui.util.UIUtil;
 import megamek.common.options.GameOptions;
 import megamek.common.options.IOption;
+import megamek.common.options.IOptionGroup;
 import megamek.common.options.OptionsConstants;
 import org.junit.jupiter.api.Test;
 
@@ -93,6 +104,60 @@ class GameOptionsPaneTest {
         });
     }
 
+    @Test
+    void basicOptionsUseClassifiedCollapsedSectionsAndStandardSize() throws Exception {
+        runOnEdt(() -> {
+            GameOptions options = new GameOptions();
+            DialogOptionComponentYPanel playtest = component(options.getOption(OptionsConstants.PLAYTEST_1));
+            DialogOptionComponentYPanel lobby = component(options.getOption(OptionsConstants.BASE_LOBBY_AMMO_DUMP));
+            GameOptionsPane pane = pane(List.of(playtest, lobby), option -> true);
+
+            List<CollapsibleSectionPanel> sections = findSections(pane);
+            assertEquals(2, sections.size());
+            assertFalse(sections.get(0).isExpanded());
+            assertFalse(sections.get(1).isExpanded());
+            assertEquals(3, GameOptionsPane.legendEntries().size());
+            assertTrue(pane.getPreferredSize().width >= UIUtil.scaleForGUI(
+                  SettingsNavigationPanel.DEFAULT_NAVIGATION_WIDTH + SettingsPagePanel.DEFAULT_MAXIMUM_PAGE_WIDTH));
+            assertTrue(pane.getPreferredSize().height >= UIUtil.scaleForGUI(800));
+        });
+    }
+
+    @Test
+    void searchExpandsOnlySectionContainingMatchingOption() throws Exception {
+        runOnEdt(() -> {
+            GameOptions options = new GameOptions();
+            DialogOptionComponentYPanel playtest = component(options.getOption(OptionsConstants.PLAYTEST_1));
+            DialogOptionComponentYPanel lobby = component(options.getOption(OptionsConstants.BASE_LOBBY_AMMO_DUMP));
+            GameOptionsPane pane = pane(List.of(playtest, lobby), option -> true);
+
+            pane.setFilterText(playtest.getOption().getDisplayableName());
+
+            List<CollapsibleSectionPanel> sections = findSections(pane);
+            assertTrue(sections.get(0).isExpanded());
+            assertFalse(sections.get(1).isExpanded());
+            assertTrue(playtest.isVisible());
+            assertFalse(lobby.isVisible());
+        });
+    }
+
+    @Test
+    void everyGameOptionResolvesToLocalizedSectionText() {
+        GameOptions options = new GameOptions();
+        int optionCount = 0;
+        for (Enumeration<IOptionGroup> groups = options.getGroups(); groups.hasMoreElements(); ) {
+            IOptionGroup group = groups.nextElement();
+            for (Enumeration<IOption> groupOptions = group.getOptions(); groupOptions.hasMoreElements(); ) {
+                IOption option = groupOptions.nextElement();
+                String sectionId = GameOptionsPane.sectionId(group.getName(), option.getName());
+                assertTrue(Messages.keyExists("GameOptionsDialog.section." + sectionId + ".title"), sectionId);
+                assertTrue(Messages.keyExists("GameOptionsDialog.section." + sectionId + ".summary"), sectionId);
+                optionCount++;
+            }
+        }
+        assertTrue(optionCount > 200, "Expected all game options to be classified");
+    }
+
     private static GameOptionsPane pane(List<DialogOptionComponentYPanel> components,
           java.util.function.Predicate<IOption> visibility) {
         return new GameOptionsPane(List.of(new GameOptionsPane.OptionGroup("basic", "Basic", components)),
@@ -109,6 +174,19 @@ class GameOptionsPaneTest {
             public void optionSwitched(DialogOptionComponentYPanel component, IOption changedOption, int index) {
             }
         }, option, true, true);
+    }
+
+    private static List<CollapsibleSectionPanel> findSections(Container root) {
+        List<CollapsibleSectionPanel> sections = new ArrayList<>();
+        for (Component child : root.getComponents()) {
+            if (child instanceof CollapsibleSectionPanel section) {
+                sections.add(section);
+            }
+            if (child instanceof Container container) {
+                sections.addAll(findSections(container));
+            }
+        }
+        return sections;
     }
 
     private static void runOnEdt(Runnable test) throws Exception {

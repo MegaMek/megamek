@@ -158,7 +158,19 @@ public class SettingsPagePanel extends JPanel {
     }
 
     public void expandAllSections() {
-        setExpanded(true, searchableSections.stream().map(SearchableSection::panel).toList());
+        setExpanded(true, sectionPanels());
+    }
+
+    public void collapseAllSections() {
+        setExpanded(false, sectionPanels());
+    }
+
+    private List<CollapsibleSectionPanel> sectionPanels() {
+        List<CollapsibleSectionPanel> sections = new ArrayList<>();
+        for (SearchableSection section : searchableSections) {
+            sections.add(section.panel());
+        }
+        return sections;
     }
 
     @Override
@@ -308,7 +320,7 @@ public class SettingsPagePanel extends JPanel {
     private static String sectionSearchText(SettingsTextProvider textProvider, Section definition) {
         String title = definition.literal ? definition.title : textProvider.getText(definition.title);
         String summary = sectionSummary(textProvider, definition);
-        return (title + ' ' + summary).trim();
+        return (title + ' ' + summary + ' ' + String.join(" ", definition.searchAliases)).trim();
     }
 
     private static String sectionSummary(SettingsTextProvider textProvider, Section definition) {
@@ -399,7 +411,7 @@ public class SettingsPagePanel extends JPanel {
     }
 
     private record Section(String title, @Nullable String summary, JComponent content,
-                           Collection<SettingsBadge> badges, boolean literal) {
+                           Collection<SettingsBadge> badges, Collection<String> searchAliases, boolean literal) {
     }
 
     public static final class Builder {
@@ -491,12 +503,17 @@ public class SettingsPagePanel extends JPanel {
 
         public Builder section(String titleKey, @Nullable String summaryKey, JComponent content,
               Collection<SettingsBadge> badges) {
-            bodyItems.add(new Section(titleKey, summaryKey, content, List.copyOf(badges), false));
+            bodyItems.add(new Section(titleKey, summaryKey, content, List.copyOf(badges), List.of(), false));
             return this;
         }
 
         public Builder literalSection(String title, @Nullable String summary, JComponent content) {
-            bodyItems.add(new Section(title, summary, content, List.of(), true));
+            return literalSection(title, summary, content, List.of(), List.of());
+        }
+
+        public Builder literalSection(String title, @Nullable String summary, JComponent content,
+              Collection<SettingsBadge> badges, Collection<String> searchAliases) {
+            bodyItems.add(new Section(title, summary, content, List.copyOf(badges), List.copyOf(searchAliases), true));
             return this;
         }
 

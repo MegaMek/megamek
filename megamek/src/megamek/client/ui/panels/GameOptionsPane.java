@@ -205,26 +205,12 @@ public class GameOptionsPane extends JPanel {
         }
 
         private static SettingsFormPanel createSectionContent(String name, List<OptionRow> rows) {
-            SettingsFormPanel content = new SettingsFormPanel(name);
-            List<DialogOptionComponentYPanel> booleanComponents = new ArrayList<>();
-            for (OptionRow row : rows) {
-                if (row.option().getType() == IOption.BOOLEAN) {
-                    booleanComponents.add(row.component());
-                } else {
-                    addBooleanGrid(content, booleanComponents);
-                    content.addFullWidthComponent(row.component());
-                }
-            }
-            addBooleanGrid(content, booleanComponents);
+            SettingsFormPanel content = new SettingsFormPanel(name, SettingsFormPanel.DEFAULT_LABEL_WIDTH);
+            DialogOptionComponentYPanel[] components = rows.stream()
+                  .map(OptionRow::component)
+                  .toArray(DialogOptionComponentYPanel[]::new);
+            content.addEqualWidthComponentGrid(2, components);
             return content;
-        }
-
-        private static void addBooleanGrid(SettingsFormPanel content,
-              List<DialogOptionComponentYPanel> booleanComponents) {
-            if (!booleanComponents.isEmpty()) {
-                content.addComponentGrid(2, booleanComponents.toArray(new DialogOptionComponentYPanel[0]));
-                booleanComponents.clear();
-            }
         }
 
         private void setRoute(SettingsRoute route) {

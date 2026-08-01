@@ -124,6 +124,28 @@ public class SettingsFormPanel extends JPanel {
         finishGrid(firstRow, components.length, columnCount);
     }
 
+    /** Adds components in row-major order using equal-width cells and the configured label width as their minimum. */
+    public void addEqualWidthComponentGrid(int columnCount, JComponent... components) {
+        if (columnCount > 1) {
+            setUniformPreferredWidth(components);
+        }
+        addComponentGrid(columnCount, components);
+    }
+
+    private void setUniformPreferredWidth(JComponent... components) {
+        int width = 0;
+        for (JComponent component : components) {
+            width = Math.max(width, component.getPreferredSize().width);
+        }
+        if (labelWidth > 0) {
+            width = Math.max(width, UIUtil.scaleForGUI(labelWidth));
+        }
+        for (JComponent component : components) {
+            Dimension preferredSize = component.getPreferredSize();
+            component.setPreferredSize(new Dimension(width, preferredSize.height));
+        }
+    }
+
     /** Adds left-aligned checkboxes in row-major order using {@code columnCount} columns. */
     public void addCheckBoxGrid(int columnCount, JCheckBox... checkBoxes) {
         if (columnCount <= 1) {

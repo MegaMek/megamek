@@ -52,6 +52,7 @@ import javax.swing.SwingUtilities;
 import megamek.client.ui.Messages;
 import megamek.client.ui.clientGUI.DialogOptionListener;
 import megamek.client.ui.settings.CollapsibleSectionPanel;
+import megamek.client.ui.settings.SettingsFormPanel;
 import megamek.client.ui.settings.SettingsNavigationPanel;
 import megamek.client.ui.settings.SettingsPagePanel;
 import megamek.client.ui.util.UIUtil;
@@ -164,28 +165,29 @@ class GameOptionsPaneTest {
     }
 
     @Test
-    void booleanOptionsUseTwoColumnsAndOtherTypesStayFullWidth() throws Exception {
+    void victorySectionsUseEqualTwoColumnGrids() throws Exception {
         runOnEdt(() -> {
             GameOptions options = new GameOptions();
-            DialogOptionComponentYPanel searchlights = component(options.getOption(OptionsConstants.SEARCHLIGHTS_ON));
-            DialogOptionComponentYPanel pushOffBoard = component(
-                  options.getOption(OptionsConstants.BASE_PUSH_OFF_BOARD));
-            DialogOptionComponentYPanel roundSaves = component(
-                  options.getOption(OptionsConstants.BASE_MAX_NUMBER_ROUND_SAVES));
-            DialogOptionComponentYPanel friendlyFire = component(
-                  options.getOption(OptionsConstants.BASE_FRIENDLY_FIRE));
+            DialogOptionComponentYPanel checkVictory = component(
+                  options.getOption(OptionsConstants.VICTORY_CHECK_VICTORY));
+            DialogOptionComponentYPanel skipForcedVictory = component(
+                  options.getOption(OptionsConstants.VICTORY_SKIP_FORCED_VICTORY));
+            DialogOptionComponentYPanel achieveConditions = component(
+                  options.getOption(OptionsConstants.VICTORY_ACHIEVE_CONDITIONS));
+            DialogOptionComponentYPanel useBvDestroyed = component(
+                  options.getOption(OptionsConstants.VICTORY_USE_BV_DESTROYED));
+            DialogOptionComponentYPanel bvDestroyedPercent = component(
+                  options.getOption(OptionsConstants.VICTORY_BV_DESTROYED_PERCENT));
+            DialogOptionComponentYPanel useBvRatio = component(
+                  options.getOption(OptionsConstants.VICTORY_USE_BV_RATIO));
+            DialogOptionComponentYPanel bvRatioPercent = component(
+                  options.getOption(OptionsConstants.VICTORY_BV_RATIO_PERCENT));
 
-            pane(List.of(searchlights, pushOffBoard, roundSaves, friendlyFire), option -> true);
+            pane("victory", List.of(checkVictory, skipForcedVictory, achieveConditions, useBvDestroyed,
+                  bvDestroyedPercent, useBvRatio, bvRatioPercent), option -> true);
 
-            assertSame(searchlights.getParent(), pushOffBoard.getParent());
-            assertSame(searchlights.getParent(), roundSaves.getParent());
-            assertSame(searchlights.getParent(), friendlyFire.getParent());
-            GridBagLayout layout = (GridBagLayout) searchlights.getParent().getLayout();
-            assertCell(layout, searchlights, 0, 0, 1);
-            assertCell(layout, pushOffBoard, 1, 0, 1);
-            assertCell(layout, roundSaves, 0, 1, 2);
-            assertCell(layout, friendlyFire, 0, 2, 1);
-            assertEquals(GridBagConstraints.HORIZONTAL, layout.getConstraints(roundSaves).fill);
+            assertTwoColumnGrid(checkVictory, skipForcedVictory, achieveConditions);
+            assertTwoColumnGrid(useBvDestroyed, bvDestroyedPercent, useBvRatio, bvRatioPercent);
         });
     }
 
@@ -201,7 +203,12 @@ class GameOptionsPaneTest {
 
     private static GameOptionsPane pane(List<DialogOptionComponentYPanel> components,
           java.util.function.Predicate<IOption> visibility) {
-        return new GameOptionsPane(List.of(new GameOptionsPane.OptionGroup("basic", "Basic", components)),
+        return pane("basic", components, visibility);
+    }
+
+    private static GameOptionsPane pane(String groupId, List<DialogOptionComponentYPanel> components,
+          java.util.function.Predicate<IOption> visibility) {
+        return new GameOptionsPane(List.of(new GameOptionsPane.OptionGroup(groupId, groupId, components)),
               visibility);
     }
 
@@ -222,6 +229,21 @@ class GameOptionsPaneTest {
         assertEquals(column, constraints.gridx);
         assertEquals(row, constraints.gridy);
         assertEquals(width, constraints.gridwidth);
+    }
+
+    private static void assertTwoColumnGrid(DialogOptionComponentYPanel... components) {
+        Container parent = components[0].getParent();
+        GridBagLayout layout = (GridBagLayout) parent.getLayout();
+        int expectedWidth = components[0].getPreferredSize().width;
+        parent.setSize(parent.getPreferredSize());
+        parent.doLayout();
+        assertTrue(expectedWidth >= UIUtil.scaleForGUI(SettingsFormPanel.DEFAULT_LABEL_WIDTH));
+        for (int index = 0; index < components.length; index++) {
+            assertSame(parent, components[index].getParent());
+            assertCell(layout, components[index], index % 2, index / 2, 1);
+            assertEquals(expectedWidth, components[index].getPreferredSize().width);
+            assertEquals(expectedWidth, components[index].getWidth());
+        }
     }
 
     private static List<CollapsibleSectionPanel> findSections(Container root) {

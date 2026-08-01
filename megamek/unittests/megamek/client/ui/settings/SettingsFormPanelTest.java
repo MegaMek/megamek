@@ -146,6 +146,21 @@ class SettingsFormPanelTest {
         assertEquals(2, constraintsFor(panel, 1).gridwidth);
     }
 
+    @Test
+    void equalWidthComponentGridUsesConfiguredMinimumWidth() {
+        SettingsFormPanel panel = new SettingsFormPanel("Test", 300);
+        JLabel shortComponent = new JLabel("Short");
+        JLabel longComponent = new JLabel("A much longer component");
+
+        panel.addEqualWidthComponentGrid(2, shortComponent, longComponent);
+        panel.setSize(panel.getPreferredSize());
+        panel.doLayout();
+
+        assertEquals(longComponent.getPreferredSize().width, shortComponent.getPreferredSize().width);
+        assertEquals(UIUtil.scaleForGUI(300), shortComponent.getPreferredSize().width);
+        assertEquals(longComponent.getWidth(), shortComponent.getWidth());
+    }
+
     private static GridBagConstraints constraintsFor(SettingsFormPanel panel, int index) {
         GridBagLayout layout = (GridBagLayout) panel.getLayout();
         return layout.getConstraints(panel.getComponent(index));

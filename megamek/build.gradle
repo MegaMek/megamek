@@ -701,8 +701,8 @@ tasks.register('testAi', JavaExec) {
 tasks.register('aiMatch', JavaExec) {
     dependsOn jar
     description = 'Run a scenario headlessly N times as a bot-vs-bot match and collect per-game results. ' +
-          'Args via -PaiMatchArgs="<scenarioFile> [repetitions] [roundsLimit] [timeoutMinutes]" ' +
-          '(quote the scenario path, it may not contain spaces).'
+          'Args via -PaiMatchArgs="<scenarioFile> [repetitions] [roundsLimit] [timeoutMinutes]". ' +
+          'Arguments are split on spaces, so the scenario path cannot contain spaces.'
     group = 'utility'
     classpath = sourceSets.main.runtimeClasspath
     mainClass = 'megamek.utilities.AIMatchRunner'

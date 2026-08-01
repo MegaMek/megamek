@@ -157,7 +157,8 @@ public class ScenarioGameRunner {
      * @param destroyed         units destroyed, whether salvageable, devastated, or lost with their crew
      * @param fled              units that left the board in retreat, were captured, or were pushed off
      * @param bvInitial         the team's total Battle Value at game start
-     * @param bvRemaining       the team's total Battle Value still on the board at game end
+     * @param bvRemaining       the team's total Battle Value of usable assets still in play at game end,
+     *                          per {@link Player#getBV()} (units counting toward the strength sum)
      */
     public record TeamStanding(int team, int unitsFielded, int survivors, int crippledSurvivors, int destroyed,
           int fled, int bvInitial, int bvRemaining) {}

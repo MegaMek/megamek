@@ -38,6 +38,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.awt.Component;
 import java.awt.Container;
+import java.io.File;
 import java.lang.reflect.InvocationTargetException;
 import java.util.List;
 import java.util.Optional;
@@ -53,6 +54,7 @@ import megamek.client.ui.settings.CollapsibleSectionPanel;
 import megamek.client.ui.settings.SettingsNavigationPanel;
 import megamek.client.ui.settings.SettingsPagePanel;
 import megamek.client.ui.util.UIUtil;
+import megamek.common.Configuration;
 import org.junit.jupiter.api.Test;
 
 class CommonSettingsPaneTest {
@@ -127,6 +129,16 @@ class CommonSettingsPaneTest {
             assertEquals(2, tree.getRowCount());
             assertEquals("General", tree.getPathForRow(1).getLastPathComponent().toString());
         });
+    }
+
+    @Test
+    void factionLogoMappingsResolveToSharedAssets() {
+        File factionsDir = new File(Configuration.universeImagesDir(), "factions");
+
+        assertFalse(CommonSettingsPane.factionLogos().isEmpty());
+        CommonSettingsPane.factionLogos().forEach((page, logo) ->
+              assertTrue(new File(factionsDir, logo).isFile(), page + " logo does not exist: " + logo));
+        assertTrue(new File(factionsDir, "logo_star_league.png").isFile());
     }
 
     private static CommonSettingsPane pane(JPanel main, JPanel audio) {

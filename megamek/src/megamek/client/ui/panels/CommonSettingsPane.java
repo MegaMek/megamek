@@ -33,12 +33,15 @@
 package megamek.client.ui.panels;
 
 import static megamek.client.ui.Messages.getString;
-import static megamek.client.ui.util.FontHandler.symbolIcon;
+import static megamek.utilities.ImageUtilities.addTintToImageIcon;
+import static megamek.utilities.ImageUtilities.scaleImageIcon;
 
 import java.awt.BorderLayout;
+import java.awt.Color;
 import java.awt.Component;
 import java.awt.Container;
 import java.awt.Dimension;
+import java.io.File;
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
@@ -50,12 +53,12 @@ import java.util.function.Supplier;
 import javax.swing.AbstractButton;
 import javax.swing.BoxLayout;
 import javax.swing.Icon;
+import javax.swing.ImageIcon;
 import javax.swing.JComponent;
 import javax.swing.JLabel;
 import javax.swing.JList;
 import javax.swing.JPanel;
 import javax.swing.ListModel;
-import javax.swing.UIManager;
 
 import megamek.client.ui.settings.SettingsBadge;
 import megamek.client.ui.settings.SettingsHeaderPanel;
@@ -66,10 +69,12 @@ import megamek.client.ui.settings.SettingsPane;
 import megamek.client.ui.settings.SettingsRoute;
 import megamek.client.ui.settings.SettingsTextProvider;
 import megamek.client.ui.util.UIUtil;
+import megamek.common.Configuration;
 
 /** Settings-tree presentation for the shared MegaMek client preferences. */
 public class CommonSettingsPane extends JPanel {
     private static final int START_HEIGHT = 800;
+    private static final int HEADER_IMAGE_SIZE = 80;
     private static final int DETAILS_ICON = 0xE88E;
     private static final int ADVANCED_ICON = 0xE8B8;
     private static final SettingsTextProvider TEXT = SettingsTextProvider.megaMek();
@@ -77,6 +82,20 @@ public class CommonSettingsPane extends JPanel {
           getString("CommonSettingsDialog.legend.details"));
     private static final SettingsBadge ADVANCED_BADGE = new SettingsBadge(ADVANCED_ICON, null,
           getString("CommonSettingsDialog.legend.advanced"));
+    private static final Map<String, String> PAGE_FACTION_LOGOS = Map.ofEntries(
+          Map.entry("main", "logo_federated_suns.png"),
+          Map.entry("audio", "logo_comstar.png"),
+          Map.entry("keyBinds", "logo_clan_coyote.png"),
+          Map.entry("gameBoard", "logo_clan_wolf.png"),
+          Map.entry("unitDisplay", "logo_draconis_combine.png"),
+          Map.entry("miniMap", "logo_rim_worlds_republic.png"),
+          Map.entry("report", "logo_clan_ghost_bear.png"),
+          Map.entry("overlays", "logo_clan_smoke_jaguar.png"),
+          Map.entry("buttonOrder", "logo_free_worlds_league.png"),
+          Map.entry("autoDisplay", "logo_outworld_alliance.png"),
+          Map.entry("aiDisplay", "logo_clan_nova_cat.png"),
+          Map.entry("advanced", "logo_republic_of_the_sphere.png"));
+    private static final Map<String, Icon> PAGE_HEADER_ICONS = new LinkedHashMap<>();
 
     private final SettingsPane settingsPane;
 
@@ -200,31 +219,17 @@ public class CommonSettingsPane extends JPanel {
     }
 
     private static Icon pageIcon(String id) {
-        int codePoint;
-        if (id.startsWith("main")) {
-            codePoint = 0xE8B8;
-        } else if (id.startsWith("audio")) {
-            codePoint = 0xE050;
-        } else if (id.startsWith("keyBinds")) {
-            codePoint = 0xE312;
-        } else if (id.startsWith("gameBoard") || id.startsWith("miniMap")) {
-            codePoint = 0xE55B;
-        } else if (id.startsWith("unitDisplay")) {
-            codePoint = 0xE30D;
-        } else if (id.startsWith("report")) {
-            codePoint = 0xE873;
-        } else if (id.startsWith("overlays")) {
-            codePoint = 0xE3F4;
-        } else if (id.startsWith("buttonOrder")) {
-            codePoint = 0xE8D5;
-        } else if (id.startsWith("autoDisplay")) {
-            codePoint = 0xE8F4;
-        } else if (id.startsWith("aiDisplay")) {
-            codePoint = 0xE195;
-        } else {
-            codePoint = ADVANCED_ICON;
-        }
-        return symbolIcon(codePoint, UIUtil.scaleForGUI(48), UIManager.getColor("Label.foreground"));
+        String family = id.contains(".") ? id.substring(0, id.indexOf('.')) : id;
+        return PAGE_HEADER_ICONS.computeIfAbsent(family, ignored -> {
+            File factionsDir = new File(Configuration.universeImagesDir(), "factions");
+            File logo = new File(factionsDir, PAGE_FACTION_LOGOS.getOrDefault(family, "logo_star_league.png"));
+            ImageIcon scaled = scaleImageIcon(new ImageIcon(logo.getAbsolutePath()), HEADER_IMAGE_SIZE, true);
+            return addTintToImageIcon(scaled.getImage(), Color.BLACK);
+        });
+    }
+
+    static Map<String, String> factionLogos() {
+        return PAGE_FACTION_LOGOS;
     }
 
     /** Existing row content split into logical groups before being wrapped in settings sections. */

@@ -4012,7 +4012,13 @@ public class CommonSettingsDialog extends AbstractButtonDialog
         return scrollPane;
     }
 
-    private JPanel createSettingsPanel(List<List<Component>> comps) {
+    static JPanel createSettingsPanel(List<List<Component>> comps) {
+        List<ColourSelectorButton> colourButtons = new ArrayList<>();
+        for (List<Component> row : comps) {
+            row.forEach(component -> collectColourButtons(component, colourButtons));
+        }
+        setUniformWidth(colourButtons);
+
         List<JComponent> groups = new ArrayList<>();
         List<List<Component>> rows = new ArrayList<>();
         for (List<Component> row : comps) {
@@ -4027,26 +4033,68 @@ public class CommonSettingsDialog extends AbstractButtonDialog
         return new CommonSettingsPane.SectionedContent(groups);
     }
 
-    private void addSettingsGroup(List<JComponent> groups, List<List<Component>> rows) {
+    private static void addSettingsGroup(List<JComponent> groups, List<List<Component>> rows) {
         if (!rows.isEmpty()) {
             groups.add(createSettingsGroup(rows));
         }
     }
 
-    private JPanel createSettingsGroup(List<List<Component>> rows) {
+    private static JPanel createSettingsGroup(List<List<Component>> rows) {
         SettingsFormPanel panel = new SettingsFormPanel("CommonSettingsGroup",
               SettingsFormPanel.DEFAULT_LABEL_WIDTH, SettingsFormPanel.DEFAULT_CONTROL_WIDTH);
+        List<JCheckBox> checkBoxes = new ArrayList<>();
+        List<JComponent> colourButtons = new ArrayList<>();
         for (List<Component> row : rows) {
-            addSettingsRow(panel, row);
+            List<JComponent> components = swingComponents(row);
+            if (isSingleCheckBox(components)) {
+                flushComponentGrid(panel, colourButtons);
+                checkBoxes.add((JCheckBox) components.getFirst());
+            } else if (isColourButtonRow(components)) {
+                flushCheckBoxGrid(panel, checkBoxes);
+                colourButtons.addAll(components);
+            } else {
+                flushCheckBoxGrid(panel, checkBoxes);
+                flushComponentGrid(panel, colourButtons);
+                addSettingsRow(panel, components);
+            }
         }
+        flushCheckBoxGrid(panel, checkBoxes);
+        flushComponentGrid(panel, colourButtons);
         return panel;
     }
 
-    private void addSettingsRow(SettingsFormPanel panel, List<Component> row) {
-        List<JComponent> components = row.stream()
+    private static List<JComponent> swingComponents(List<Component> row) {
+        return row.stream()
               .filter(JComponent.class::isInstance)
               .map(JComponent.class::cast)
               .toList();
+    }
+
+    private static boolean isSingleCheckBox(List<JComponent> components) {
+        return components.size() == 1 && components.getFirst() instanceof JCheckBox;
+    }
+
+    private static boolean isColourButtonRow(List<JComponent> components) {
+        return !components.isEmpty() && components.stream().allMatch(ColourSelectorButton.class::isInstance);
+    }
+
+    private static void flushCheckBoxGrid(SettingsFormPanel panel, List<JCheckBox> checkBoxes) {
+        if (!checkBoxes.isEmpty()) {
+            panel.addCheckBoxGrid(2, checkBoxes.toArray(new JCheckBox[0]));
+            checkBoxes.clear();
+        }
+    }
+
+    private static void flushComponentGrid(SettingsFormPanel panel, List<JComponent> components) {
+        if (!components.isEmpty()) {
+            SettingsFormPanel colourGrid = new SettingsFormPanel("CommonSettingsColourGrid");
+            colourGrid.addComponentGrid(2, components.toArray(new JComponent[0]));
+            panel.addFullWidthComponent(colourGrid);
+            components.clear();
+        }
+    }
+
+    private static void addSettingsRow(SettingsFormPanel panel, List<JComponent> components) {
         if (components.isEmpty()) {
             return;
         }
@@ -4061,7 +4109,31 @@ public class CommonSettingsDialog extends AbstractButtonDialog
         panel.addFullWidthComponent(rowPanel(components));
     }
 
-    private JPanel rowPanel(List<JComponent> components) {
+    private static void collectColourButtons(Component component, List<ColourSelectorButton> colourButtons) {
+        if (component instanceof ColourSelectorButton button) {
+            button.setHorizontalAlignment(SwingConstants.LEFT);
+            colourButtons.add(button);
+        }
+        if (component instanceof Container container) {
+            for (Component child : container.getComponents()) {
+                collectColourButtons(child, colourButtons);
+            }
+        }
+    }
+
+    private static void setUniformWidth(List<? extends JComponent> components) {
+        int width = components.stream()
+              .map(JComponent::getPreferredSize)
+              .mapToInt(dimension -> dimension.width)
+              .max()
+              .orElse(0);
+        for (JComponent component : components) {
+            Dimension preferred = component.getPreferredSize();
+            component.setPreferredSize(new Dimension(width, preferred.height));
+        }
+    }
+
+    private static JPanel rowPanel(List<JComponent> components) {
         JPanel row = new JPanel();
         row.setOpaque(false);
         row.setLayout(new BoxLayout(row, BoxLayout.LINE_AXIS));

@@ -33,11 +33,14 @@
 package megamek.client.ui.panels;
 
 import static megamek.client.ui.Messages.getString;
-import static megamek.client.ui.util.FontHandler.symbolIcon;
+import static megamek.utilities.ImageUtilities.addTintToImageIcon;
+import static megamek.utilities.ImageUtilities.scaleImageIcon;
 
 import java.awt.BorderLayout;
+import java.awt.Color;
 import java.awt.Component;
 import java.awt.Dimension;
+import java.io.File;
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -46,8 +49,8 @@ import java.util.Objects;
 import java.util.function.Predicate;
 import java.util.function.Supplier;
 import javax.swing.Icon;
+import javax.swing.ImageIcon;
 import javax.swing.JPanel;
-import javax.swing.UIManager;
 
 import megamek.client.ui.settings.SettingsBadge;
 import megamek.client.ui.settings.SettingsFilterable;
@@ -60,11 +63,13 @@ import megamek.client.ui.settings.SettingsPane;
 import megamek.client.ui.settings.SettingsRoute;
 import megamek.client.ui.settings.SettingsTextProvider;
 import megamek.client.ui.util.UIUtil;
+import megamek.common.Configuration;
 import megamek.common.options.IOption;
 
 /** Searchable settings-tree presentation for metadata-backed game option groups. */
 public class GameOptionsPane extends JPanel {
     private static final int START_HEIGHT = 800;
+    private static final int HEADER_IMAGE_SIZE = 80;
     private static final int DETAILS_ICON = 0xE88E;
     private static final int ADVANCED_ICON = 0xE8B8;
     private static final int UNOFFICIAL_ICON = 0xE002;
@@ -75,6 +80,18 @@ public class GameOptionsPane extends JPanel {
           getString("GameOptionsDialog.legend.advanced"));
     private static final SettingsBadge UNOFFICIAL_BADGE = new SettingsBadge(UNOFFICIAL_ICON, null,
           getString("GameOptionsDialog.legend.unofficial"));
+    private static final Map<String, String> PAGE_FACTION_LOGOS = Map.ofEntries(
+          Map.entry("basic", "logo_federated_suns.png"),
+          Map.entry("gameMaster", "logo_star_league.png"),
+          Map.entry("victory", "logo_clan_wolf.png"),
+          Map.entry("allowedUnits", "logo_comstar.png"),
+          Map.entry("advancedRules", "logo_republic_of_the_sphere.png"),
+          Map.entry("advancedCombat", "logo_draconis_combine.png"),
+          Map.entry("advancedGroundMovement", "logo_free_worlds_league.png"),
+          Map.entry("advancedAeroRules", "logo_clan_smoke_jaguar.png"),
+          Map.entry("initiative", "logo_clan_ghost_bear.png"),
+          Map.entry("rpg", "logo_outworld_alliance.png"));
+    private static final Map<String, Icon> PAGE_HEADER_ICONS = new LinkedHashMap<>();
 
     private final List<GroupPage> pages = new ArrayList<>();
     private final SettingsPane settingsPane;
@@ -175,8 +192,7 @@ public class GameOptionsPane extends JPanel {
                   .sectionsExpandedByDefault(sectionRows.size() == 1)
                   .standardContentWidth();
             for (Map.Entry<String, List<OptionRow>> entry : sectionRows.entrySet()) {
-                SettingsFormPanel content = new SettingsFormPanel(group.id() + entry.getKey());
-                entry.getValue().forEach(row -> content.addFullWidthComponent(row.component()));
+                SettingsFormPanel content = createSectionContent(group.id() + entry.getKey(), entry.getValue());
                 List<String> aliases = new ArrayList<>();
                 aliases.add(group.id());
                 aliases.add(group.displayName());
@@ -186,6 +202,29 @@ public class GameOptionsPane extends JPanel {
             }
             pagePanel = builder.build();
             add(pagePanel, BorderLayout.CENTER);
+        }
+
+        private static SettingsFormPanel createSectionContent(String name, List<OptionRow> rows) {
+            SettingsFormPanel content = new SettingsFormPanel(name);
+            List<DialogOptionComponentYPanel> booleanComponents = new ArrayList<>();
+            for (OptionRow row : rows) {
+                if (row.option().getType() == IOption.BOOLEAN) {
+                    booleanComponents.add(row.component());
+                } else {
+                    addBooleanGrid(content, booleanComponents);
+                    content.addFullWidthComponent(row.component());
+                }
+            }
+            addBooleanGrid(content, booleanComponents);
+            return content;
+        }
+
+        private static void addBooleanGrid(SettingsFormPanel content,
+              List<DialogOptionComponentYPanel> booleanComponents) {
+            if (!booleanComponents.isEmpty()) {
+                content.addComponentGrid(2, booleanComponents.toArray(new DialogOptionComponentYPanel[0]));
+                booleanComponents.clear();
+            }
         }
 
         private void setRoute(SettingsRoute route) {
@@ -385,20 +424,16 @@ public class GameOptionsPane extends JPanel {
     }
 
     private static Icon pageIcon(String groupId) {
-        int codePoint = switch (groupId) {
-            case "basic" -> 0xE8B8;
-            case "gameMaster" -> 0xE7FD;
-            case "victory" -> 0xEA23;
-            case "allowedUnits" -> 0xE146;
-            case "advancedRules" -> 0xE86F;
-            case "advancedCombat" -> 0xE91F;
-            case "advancedGroundMovement" -> 0xE531;
-            case "advancedAeroRules" -> 0xE539;
-            case "initiative" -> 0xE425;
-            case "rpg" -> 0xE84F;
-            default -> ADVANCED_ICON;
-        };
-        return symbolIcon(codePoint, UIUtil.scaleForGUI(48), UIManager.getColor("Label.foreground"));
+        return PAGE_HEADER_ICONS.computeIfAbsent(groupId, ignored -> {
+            File factionsDir = new File(Configuration.universeImagesDir(), "factions");
+            File logo = new File(factionsDir, PAGE_FACTION_LOGOS.getOrDefault(groupId, "logo_star_league.png"));
+            ImageIcon scaled = scaleImageIcon(new ImageIcon(logo.getAbsolutePath()), HEADER_IMAGE_SIZE, true);
+            return addTintToImageIcon(scaled.getImage(), Color.BLACK);
+        });
+    }
+
+    static Map<String, String> factionLogos() {
+        return PAGE_FACTION_LOGOS;
     }
 
     private record OptionRow(DialogOptionComponentYPanel component, IOption option, String searchableText) {

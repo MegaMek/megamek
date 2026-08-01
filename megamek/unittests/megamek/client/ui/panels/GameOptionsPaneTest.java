@@ -34,10 +34,14 @@ package megamek.client.ui.panels;
 
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertSame;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.awt.Component;
 import java.awt.Container;
+import java.awt.GridBagConstraints;
+import java.awt.GridBagLayout;
+import java.io.File;
 import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.Enumeration;
@@ -51,6 +55,7 @@ import megamek.client.ui.settings.CollapsibleSectionPanel;
 import megamek.client.ui.settings.SettingsNavigationPanel;
 import megamek.client.ui.settings.SettingsPagePanel;
 import megamek.client.ui.util.UIUtil;
+import megamek.common.Configuration;
 import megamek.common.options.GameOptions;
 import megamek.common.options.IOption;
 import megamek.common.options.IOptionGroup;
@@ -158,6 +163,42 @@ class GameOptionsPaneTest {
         assertTrue(optionCount > 200, "Expected all game options to be classified");
     }
 
+    @Test
+    void booleanOptionsUseTwoColumnsAndOtherTypesStayFullWidth() throws Exception {
+        runOnEdt(() -> {
+            GameOptions options = new GameOptions();
+            DialogOptionComponentYPanel searchlights = component(options.getOption(OptionsConstants.SEARCHLIGHTS_ON));
+            DialogOptionComponentYPanel pushOffBoard = component(
+                  options.getOption(OptionsConstants.BASE_PUSH_OFF_BOARD));
+            DialogOptionComponentYPanel roundSaves = component(
+                  options.getOption(OptionsConstants.BASE_MAX_NUMBER_ROUND_SAVES));
+            DialogOptionComponentYPanel friendlyFire = component(
+                  options.getOption(OptionsConstants.BASE_FRIENDLY_FIRE));
+
+            pane(List.of(searchlights, pushOffBoard, roundSaves, friendlyFire), option -> true);
+
+            assertSame(searchlights.getParent(), pushOffBoard.getParent());
+            assertSame(searchlights.getParent(), roundSaves.getParent());
+            assertSame(searchlights.getParent(), friendlyFire.getParent());
+            GridBagLayout layout = (GridBagLayout) searchlights.getParent().getLayout();
+            assertCell(layout, searchlights, 0, 0, 1);
+            assertCell(layout, pushOffBoard, 1, 0, 1);
+            assertCell(layout, roundSaves, 0, 1, 2);
+            assertCell(layout, friendlyFire, 0, 2, 1);
+            assertEquals(GridBagConstraints.HORIZONTAL, layout.getConstraints(roundSaves).fill);
+        });
+    }
+
+    @Test
+    void factionLogoMappingsResolveToSharedAssets() {
+        File factionsDir = new File(Configuration.universeImagesDir(), "factions");
+
+        assertEquals(10, GameOptionsPane.factionLogos().size());
+        GameOptionsPane.factionLogos().forEach((page, logo) ->
+              assertTrue(new File(factionsDir, logo).isFile(), page + " logo does not exist: " + logo));
+        assertTrue(new File(factionsDir, "logo_star_league.png").isFile());
+    }
+
     private static GameOptionsPane pane(List<DialogOptionComponentYPanel> components,
           java.util.function.Predicate<IOption> visibility) {
         return new GameOptionsPane(List.of(new GameOptionsPane.OptionGroup("basic", "Basic", components)),
@@ -174,6 +215,13 @@ class GameOptionsPaneTest {
             public void optionSwitched(DialogOptionComponentYPanel component, IOption changedOption, int index) {
             }
         }, option, true, true);
+    }
+
+    private static void assertCell(GridBagLayout layout, Component component, int column, int row, int width) {
+        GridBagConstraints constraints = layout.getConstraints(component);
+        assertEquals(column, constraints.gridx);
+        assertEquals(row, constraints.gridy);
+        assertEquals(width, constraints.gridwidth);
     }
 
     private static List<CollapsibleSectionPanel> findSections(Container root) {

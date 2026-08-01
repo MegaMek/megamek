@@ -120,6 +120,45 @@ public final class ClanEnhancedImagingAugmentor {
     }
 
     /**
+     * How likely one of a Clan's formations is to be an EI unit.
+     *
+     * <p>Public so MekHQ's own generator rolls the same odds against the same Clans; a campaign and a
+     * skirmish should not disagree about how common EI warriors are.</p>
+     *
+     * @param factionCode the Clan the force is generated for
+     *
+     * @return how likely one of its formations is to be an EI unit
+     */
+    public static double formationChanceFor(@Nullable String factionCode) {
+        return chanceFor(factionCode);
+    }
+
+    /**
+     * Whether the implant works with this kind of unit.
+     *
+     * <p>Public for the same reason as {@link #formationChanceFor}: the construction rules naming
+     * which units EI works with are the rules, not this class's business.</p>
+     *
+     * @param unitType the kind of unit the warrior crews
+     *
+     * @return {@code true} if EI works with it, which the rules limit to walking motive systems
+     */
+    public static boolean canUseEnhancedImaging(@Nullable AugmentedUnitType unitType) {
+        return (unitType == AugmentedUnitType.BATTLE_MEK)
+              || (unitType == AugmentedUnitType.INDUSTRIAL_MEK)
+              || (unitType == AugmentedUnitType.BATTLE_ARMOR)
+              || (unitType == AugmentedUnitType.PROTOMEK);
+    }
+
+    /**
+     * @return {@code true} if the game's neural interface rules are switched on, EI being hidden and
+     *       inert without them
+     */
+    public static boolean neuralInterfaceRulesAllowImplants(@Nullable IGameOptions gameOptions) {
+        return NeuralInterfaceMode.from(gameOptions).isOn();
+    }
+
+    /**
      * @param factionCode the Clan the force is generated for
      *
      * @return how likely one of its formations is to be an EI unit
@@ -184,11 +223,7 @@ public final class ClanEnhancedImagingAugmentor {
      *       motive system
      */
     private static boolean canUseEnhancedImaging(Entity entity) {
-        AugmentedUnitType unitType = AugmentedUnitType.forEntity(entity);
-        return (unitType == AugmentedUnitType.BATTLE_MEK)
-              || (unitType == AugmentedUnitType.INDUSTRIAL_MEK)
-              || (unitType == AugmentedUnitType.BATTLE_ARMOR)
-              || (unitType == AugmentedUnitType.PROTOMEK);
+        return canUseEnhancedImaging(AugmentedUnitType.forEntity(entity));
     }
 
     /**
@@ -196,6 +231,6 @@ public final class ClanEnhancedImagingAugmentor {
      *       inert without them
      */
     private static boolean neuralInterfaceRulesAreOn(@Nullable IGameOptions gameOptions) {
-        return NeuralInterfaceMode.from(gameOptions).isOn();
+        return neuralInterfaceRulesAllowImplants(gameOptions);
     }
 }

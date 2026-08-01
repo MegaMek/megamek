@@ -51,7 +51,6 @@ import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
-import java.util.Locale;
 import java.util.Map;
 import javax.swing.BorderFactory;
 import javax.swing.Box;
@@ -59,17 +58,18 @@ import javax.swing.JCheckBox;
 import javax.swing.JComponent;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
-import javax.swing.JTextField;
 import javax.swing.SwingUtilities;
 import javax.swing.UIManager;
-import javax.swing.event.DocumentEvent;
-import javax.swing.event.DocumentListener;
 
 import megamek.client.ui.GBC;
 import megamek.client.ui.Messages;
 import megamek.client.ui.clientGUI.DialogOptionListener;
 import megamek.client.ui.clientGUI.GUIPreferences;
 import megamek.client.ui.panels.DialogOptionComponentYPanel;
+import megamek.client.ui.panels.OptionFilterBar;
+import megamek.client.ui.panels.OptionFilterBarLabels;
+import megamek.client.ui.panels.OptionRowLayout;
+import megamek.client.ui.panels.OptionSearchFilter;
 import megamek.client.ui.util.UIUtil;
 import megamek.client.ui.util.UIUtil.FixedYPanel;
 import megamek.common.options.GameOptions;
@@ -101,12 +101,8 @@ public class PilotOptionsPanel extends JPanel implements DialogOptionListener {
     @Serial
     private static final long serialVersionUID = 4171284214461943479L;
 
-    /** Horizontal gap between columns, added to the widest row when computing the column count. */
-    private static final int COLUMN_GAP = 8;
     /** The grid cell's own horizontal insets, subtracted from a cell's share before label wrapping. */
     private static final int CELL_INSET_WIDTH = 8;
-    private static final Color SELECTED_OPTION_COLOR = Color.YELLOW;
-    private static final String STATUS_MARKER_NAME = "spaStatusMarker";
 
     /**
      * Hook for the dialog to finish building one option row: adding choice values, selection state, and inline
@@ -124,19 +120,8 @@ public class PilotOptionsPanel extends JPanel implements DialogOptionListener {
     private record OptionRow(JComponent component, String sortKey, String searchText, boolean placeholder) {
 
         boolean matches(String normalizedFilter) {
-            return matchesFilter(searchText, normalizedFilter);
+            return OptionSearchFilter.matches(searchText, normalizedFilter);
         }
-    }
-
-    /**
-     * @param normalizedSearchText a row's search text, already {@link #normalize(String) normalized}
-     * @param normalizedFilter     the filter text, already normalized
-     *
-     * @return {@code true} if the row should stay visible: an empty filter matches everything, otherwise the
-     *       search text must contain the filter
-     */
-    static boolean matchesFilter(String normalizedSearchText, String normalizedFilter) {
-        return normalizedFilter.isEmpty() || normalizedSearchText.contains(normalizedFilter);
     }
 
     private final Entity entity;
@@ -147,14 +132,11 @@ public class PilotOptionsPanel extends JPanel implements DialogOptionListener {
 
     private final List<DialogOptionComponentYPanel> optionComps = new ArrayList<>();
 
-    private final JTextField filterField = new JTextField();
-    private final JLabel matchCountLabel = new JLabel();
-    /** Persisted in {@link GUIPreferences}; off by default. */
-    private final JCheckBox showUnimplementedCheck =
-          new JCheckBox(Messages.getString("CustomMekDialog.showUnimplemented"),
-                GUIPreferences.getInstance().getShowUnimplementedSpas());
-    /** The search field row; hidden when the game options leave no ability group to search. */
-    private JPanel filterBar;
+    /**
+     * The search row above the option columns; its "show unimplemented" state is persisted in
+     * {@link GUIPreferences}. Hidden when the game options leave no ability group to search.
+     */
+    private final OptionFilterBar filterBar;
     /**
      * Holds the visible columns side by side in equal shares of the width - normally halves: the advantages group
      * and the Edge column (Edge with the implant groups tucked under it). {@link #applyFilter()} re-adds only the
@@ -182,9 +164,10 @@ public class PilotOptionsPanel extends JPanel implements DialogOptionListener {
         this.gameOptions = gameOptions;
         this.parentListener = parentListener;
         this.rowConfigurator = rowConfigurator;
+        this.filterBar = buildFilterBar();
 
         setLayout(new GridBagLayout());
-        add(buildFilterBar(), GBC.eol().fill(GridBagConstraints.HORIZONTAL).weightX(1.0));
+        add(filterBar, GBC.eol().fill(GridBagConstraints.HORIZONTAL).weightX(1.0));
         add(groupsContainer, GBC.eol().fill(GridBagConstraints.HORIZONTAL).weightX(1.0));
 
         addComponentListener(new ComponentAdapter() {
@@ -195,44 +178,21 @@ public class PilotOptionsPanel extends JPanel implements DialogOptionListener {
         });
     }
 
-    private JPanel buildFilterBar() {
-        filterField.setName("txtSpaFilter");
-        filterField.putClientProperty("JTextField.placeholderText",
-              Messages.getString("CustomMekDialog.spaFilterPlaceholder"));
-        filterField.setToolTipText(Messages.getString("CustomMekDialog.spaFilterTooltip"));
-        filterField.getDocument().addDocumentListener(new DocumentListener() {
-            @Override
-            public void insertUpdate(DocumentEvent event) {
-                applyFilter();
-            }
-
-            @Override
-            public void removeUpdate(DocumentEvent event) {
-                applyFilter();
-            }
-
-            @Override
-            public void changedUpdate(DocumentEvent event) {
-                applyFilter();
-            }
-        });
-
-        showUnimplementedCheck.setName("chkShowUnimplementedSpas");
-        showUnimplementedCheck.setToolTipText(Messages.getString("CustomMekDialog.showUnimplementedTooltip"));
-        showUnimplementedCheck.addActionListener(event -> {
-            GUIPreferences.getInstance().setShowUnimplementedSpas(showUnimplementedCheck.isSelected());
-            applyFilter();
-        });
-
-        matchCountLabel.setName("lblSpaMatchCount");
-        matchCountLabel.setVisible(false);
-
-        filterBar = new FixedYPanel(new FlowLayout(FlowLayout.LEFT, UIUtil.scaleForGUI(5), 2));
-        filterField.setColumns(20);
-        filterBar.add(filterField);
-        filterBar.add(showUnimplementedCheck);
-        filterBar.add(matchCountLabel);
-        return filterBar;
+    private OptionFilterBar buildFilterBar() {
+        OptionFilterBarLabels labels = new OptionFilterBarLabels("txtSpaFilter",
+              Messages.getString("CustomMekDialog.spaFilterPlaceholder"),
+              Messages.getString("CustomMekDialog.spaFilterTooltip"),
+              "chkShowUnimplementedSpas",
+              Messages.getString("CustomMekDialog.showUnimplemented"),
+              Messages.getString("CustomMekDialog.showUnimplementedTooltip"),
+              "lblSpaMatchCount",
+              Messages.getString("CustomMekDialog.spaMatchCount"));
+        return new OptionFilterBar(labels, GUIPreferences.getInstance().getShowUnimplementedSpas(),
+              this::applyFilter,
+              showUnimplemented -> {
+                  GUIPreferences.getInstance().setShowUnimplementedSpas(showUnimplemented);
+                  applyFilter();
+              });
     }
 
     /**
@@ -382,7 +342,7 @@ public class PilotOptionsPanel extends JPanel implements DialogOptionListener {
         }
 
         updateOptionFontStyle(optionComp, isOptionSet(optionComp, option));
-        return new OptionRow(optionComp, normalize(option.getDisplayableName()), normalize(searchText.toString()),
+        return new OptionRow(optionComp, OptionSearchFilter.normalize(option.getDisplayableName()), OptionSearchFilter.normalize(searchText.toString()),
               false);
     }
 
@@ -408,7 +368,7 @@ public class PilotOptionsPanel extends JPanel implements DialogOptionListener {
         nameLabel.setToolTipText(tooltip);
 
         JLabel marker = new JLabel(Messages.getString("CustomMekDialog.spaMarkerNotImplemented"));
-        marker.setName(STATUS_MARKER_NAME);
+        marker.setName(OptionRowLayout.STATUS_MARKER_NAME);
         marker.setForeground(disabledColor);
         marker.setToolTipText(tooltip);
 
@@ -418,7 +378,7 @@ public class PilotOptionsPanel extends JPanel implements DialogOptionListener {
         placeholderPanel.add(marker);
 
         String searchText = displayName + ' ' + catalogEntry.getAbbreviatedEffect();
-        return new OptionRow(placeholderPanel, normalize(displayName), normalize(searchText), true);
+        return new OptionRow(placeholderPanel, OptionSearchFilter.normalize(displayName), OptionSearchFilter.normalize(searchText), true);
     }
 
     /**
@@ -458,14 +418,20 @@ public class PilotOptionsPanel extends JPanel implements DialogOptionListener {
         return tooltip.append("</div></html>").toString();
     }
 
-    /** Highlights an option whose value differs from the default, matching the quirks panel treatment. */
+    /**
+     * Highlights an option whose value differs from the default, matching the quirks panel treatment: it uses
+     * {@link UIUtil#uiQuirksColor()}, the same colour the lobby uses to mark a pilot who has abilities, which
+     * stays legible on both light and dark look and feels.
+     */
     private void updateOptionFontStyle(DialogOptionComponentYPanel optionComp, boolean selected) {
+        // Read per call rather than cached in a constant, so the colour follows the current look and feel
+        Color selectedColor = UIUtil.uiQuirksColor();
         for (Component child : optionComp.getComponents()) {
-            if (STATUS_MARKER_NAME.equals(child.getName())) {
+            if (OptionRowLayout.STATUS_MARKER_NAME.equals(child.getName())) {
                 continue;
             }
             if (child.getFont() != null) {
-                child.setForeground(selected ? SELECTED_OPTION_COLOR : null);
+                child.setForeground(selected ? selectedColor : null);
             }
         }
         optionComp.repaint();
@@ -478,14 +444,10 @@ public class PilotOptionsPanel extends JPanel implements DialogOptionListener {
         return !optionComp.isDefaultValue();
     }
 
-    static String normalize(String text) {
-        return text.toLowerCase(Locale.ROOT);
-    }
-
     /** Recomputes which rows are visible under the current filter text and unimplemented toggle, then lays out. */
     private void applyFilter() {
-        String normalizedFilter = normalize(filterField.getText().trim());
-        boolean showUnimplemented = showUnimplementedCheck.isSelected();
+        String normalizedFilter = OptionSearchFilter.normalize(filterBar.getFilterText());
+        boolean showUnimplemented = filterBar.isShowUnimplementedSelected();
 
         int totalRows = 0;
         int shownRows = 0;
@@ -513,8 +475,7 @@ public class PilotOptionsPanel extends JPanel implements DialogOptionListener {
         }
         addEdgeColumn();
 
-        matchCountLabel.setText(Messages.getString("CustomMekDialog.spaMatchCount", shownRows, totalRows));
-        matchCountLabel.setVisible(!normalizedFilter.isEmpty());
+        filterBar.setMatchCount(shownRows, totalRows);
         revalidate();
         repaint();
         // The widths used above are from BEFORE this filter pass changed which columns groupsContainer holds
@@ -586,12 +547,8 @@ public class PilotOptionsPanel extends JPanel implements DialogOptionListener {
     }
 
     private int calculateColumns(JPanel groupPanel) {
-        int availableWidth = calculateAvailableWidth(groupPanel);
-        int maxRowWidth = panelMaxRowWidth.getOrDefault(groupPanel, 1);
-        if ((availableWidth <= 0) || (maxRowWidth <= 0)) {
-            return 1;
-        }
-        return Math.max(1, availableWidth / (maxRowWidth + COLUMN_GAP));
+        return OptionRowLayout.calculateColumns(calculateAvailableWidth(groupPanel),
+              panelMaxRowWidth.getOrDefault(groupPanel, 1));
     }
 
     /**
@@ -613,39 +570,9 @@ public class PilotOptionsPanel extends JPanel implements DialogOptionListener {
 
     /** Arranges the visible rows of one group into a grid, reusing the existing row components. */
     private void relayoutGroupPanel(JPanel groupPanel, List<OptionRow> visibleRows, int columns) {
-        groupPanel.removeAll();
-        if (!visibleRows.isEmpty() && (columns > 0)) {
-            applyLabelWrapWidths(groupPanel, visibleRows, columns);
-
-            GridBagConstraints constraints = new GridBagConstraints();
-            constraints.gridx = 0;
-            constraints.gridy = 0;
-            constraints.fill = GridBagConstraints.HORIZONTAL;
-            constraints.anchor = GridBagConstraints.NORTHWEST;
-            constraints.weightx = 1.0;
-            constraints.insets = new Insets(0, 2, 0, 2);
-
-            int currentColumn = 0;
-            for (OptionRow row : visibleRows) {
-                constraints.gridx = currentColumn;
-                groupPanel.add(row.component(), constraints);
-                currentColumn++;
-                if (currentColumn >= columns) {
-                    currentColumn = 0;
-                    constraints.gridy++;
-                }
-            }
-
-            // Bottom glue keeps the rows at the top when the side-by-side groups get equal heights
-            constraints.gridx = 0;
-            constraints.gridy++;
-            constraints.gridwidth = GridBagConstraints.REMAINDER;
-            constraints.weighty = 1.0;
-            constraints.fill = GridBagConstraints.BOTH;
-            groupPanel.add(new JPanel(), constraints);
-        }
-        groupPanel.revalidate();
-        groupPanel.repaint();
+        // Names are wrapped to the column width before the rows are placed, so the grid measures the wrapped size
+        applyLabelWrapWidths(groupPanel, visibleRows, columns);
+        OptionRowLayout.relayout(groupPanel, visibleRows.stream().map(OptionRow::component).toList(), columns);
     }
 
     /**

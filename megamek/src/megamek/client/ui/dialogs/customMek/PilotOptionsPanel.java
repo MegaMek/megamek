@@ -68,6 +68,7 @@ import javax.swing.event.DocumentListener;
 import megamek.client.ui.GBC;
 import megamek.client.ui.Messages;
 import megamek.client.ui.clientGUI.DialogOptionListener;
+import megamek.client.ui.clientGUI.GUIPreferences;
 import megamek.client.ui.panels.DialogOptionComponentYPanel;
 import megamek.client.ui.util.UIUtil;
 import megamek.client.ui.util.UIUtil.FixedYPanel;
@@ -148,8 +149,10 @@ public class PilotOptionsPanel extends JPanel implements DialogOptionListener {
 
     private final JTextField filterField = new JTextField();
     private final JLabel matchCountLabel = new JLabel();
+    /** Persisted in {@link GUIPreferences}; off by default. */
     private final JCheckBox showUnimplementedCheck =
-          new JCheckBox(Messages.getString("CustomMekDialog.showUnimplemented"), true);
+          new JCheckBox(Messages.getString("CustomMekDialog.showUnimplemented"),
+                GUIPreferences.getInstance().getShowUnimplementedSpas());
     /** The search field row; hidden when the game options leave no ability group to search. */
     private JPanel filterBar;
     /**
@@ -216,7 +219,10 @@ public class PilotOptionsPanel extends JPanel implements DialogOptionListener {
 
         showUnimplementedCheck.setName("chkShowUnimplementedSpas");
         showUnimplementedCheck.setToolTipText(Messages.getString("CustomMekDialog.showUnimplementedTooltip"));
-        showUnimplementedCheck.addActionListener(event -> applyFilter());
+        showUnimplementedCheck.addActionListener(event -> {
+            GUIPreferences.getInstance().setShowUnimplementedSpas(showUnimplementedCheck.isSelected());
+            applyFilter();
+        });
 
         matchCountLabel.setName("lblSpaMatchCount");
         matchCountLabel.setVisible(false);

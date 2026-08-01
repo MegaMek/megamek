@@ -1,6 +1,6 @@
 /*
  * Copyright (C) 2000-2002 Ben Mazur (bmazur@sev.org)
- * Copyright (C) 2003-2025 The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2003-2026 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -60,6 +60,7 @@ import megamek.client.ui.clientGUI.DialogOptionListener;
 import megamek.client.ui.util.UIUtil;
 import megamek.client.ui.util.UIUtil.FixedYPanel;
 import megamek.codeUtilities.MathUtility;
+import megamek.common.annotations.Nullable;
 import megamek.common.options.BasicOption;
 import megamek.common.options.IBasicOption;
 import megamek.common.options.IOption;
@@ -77,6 +78,10 @@ public class DialogOptionComponentYPanel extends FixedYPanel
     private JCheckBox checkbox;
     private JComboBox<String> choice;
     private JTextField textField;
+    /** The label showing the option's displayable name, for {@link #setNameLabelWrapWidth(int)}. */
+    private JLabel nameLabel;
+    /** Short marker appended to the displayable name (e.g. " (P)" for partially implemented SPAs). */
+    private String nameSuffix = "";
     private final DialogOptionListener dialogOptionListener;
 
     /** Value used to force a change */
@@ -115,6 +120,7 @@ public class DialogOptionComponentYPanel extends FixedYPanel
                 checkbox.setToolTipText(convertToHtml(option.getDescription()));
                 checkbox.setEnabled(editable);
                 label = new JLabel(option.getDisplayableName());
+                nameLabel = label;
                 label.setLabelFor(checkbox);
                 label.setToolTipText(convertToHtml(option.getDescription()));
                 label.addMouseListener(new MouseAdapter() {
@@ -132,6 +138,7 @@ public class DialogOptionComponentYPanel extends FixedYPanel
             case IOption.CHOICE:
                 choice = new JComboBox<>();
                 label = new JLabel(option.getDisplayableName());
+                nameLabel = label;
                 label.setLabelFor(choice);
                 label.setToolTipText(convertToHtml(option.getDescription()));
                 choice.setEnabled(editable);
@@ -149,6 +156,7 @@ public class DialogOptionComponentYPanel extends FixedYPanel
                 textField = new JTextField(option.stringValue(), option.getTextFieldLength());
                 textField.setHorizontalAlignment(JTextField.CENTER);
                 label = new JLabel(option.getDisplayableName());
+                nameLabel = label;
                 label.setToolTipText(convertToHtml(option.getDescription()));
                 label.setLabelFor(textField);
                 label.addMouseListener(new MouseAdapter() {
@@ -197,6 +205,7 @@ public class DialogOptionComponentYPanel extends FixedYPanel
     private void buildTorsoMultiSelect(boolean editable) {
         torsoMultiSelect = true;
         JLabel label = new JLabel(option.getDisplayableName());
+        nameLabel = label;
         label.setToolTipText(convertToHtml(option.getDescription()));
         add(Box.createHorizontalStrut(UIUtil.scaleForGUI(10)));
         add(label);
@@ -243,6 +252,39 @@ public class DialogOptionComponentYPanel extends FixedYPanel
             }
         }
         return result.toString();
+    }
+
+    /**
+     * Appends a short marker to the option's displayable name, kept through {@link #setNameLabelWrapWidth(int)}
+     * re-wraps (e.g. " (P)" for partially implemented SPAs).
+     *
+     * @param suffix the marker text, or {@code null} to clear it
+     */
+    public void setNameSuffix(@Nullable String suffix) {
+        nameSuffix = (suffix == null) ? "" : suffix;
+        if (nameLabel != null) {
+            nameLabel.setText(option.getDisplayableName() + nameSuffix);
+        }
+    }
+
+    /**
+     * Makes the option's name label wrap when it is wider than the given width, by switching the label to
+     * width-constrained HTML; a name that fits reverts to plain text. Multi-column containers call this when they
+     * lay out, so long option names (e.g. Edge triggers) wrap inside their column instead of being clipped.
+     *
+     * @param availableWidth the width in pixels the label may use, or 0 or less to always use plain text
+     */
+    public void setNameLabelWrapWidth(int availableWidth) {
+        if (nameLabel == null) {
+            return;
+        }
+        String plainName = option.getDisplayableName() + nameSuffix;
+        boolean fits = (availableWidth <= 0)
+              || (nameLabel.getFontMetrics(nameLabel.getFont()).stringWidth(plainName) <= availableWidth);
+        String wantedText = fits ? plainName : "<html><div width=" + availableWidth + ">" + plainName + "</div></html>";
+        if (!wantedText.equals(nameLabel.getText())) {
+            nameLabel.setText(wantedText);
+        }
     }
 
     public static String convertToHtml(String source) {

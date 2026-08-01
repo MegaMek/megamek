@@ -275,14 +275,33 @@ weightClass	ifWeightClass	L, M, H, A. This value is used to indicate a target we
 							generate a formation based on the provided parameters, the fallback behavior is
 							to generate units individually using the weightClass property.
 rating		ifRating		varies by faction
-role		ifRole			This value is passed to the RAT Generator to affect the types of units
-                            generated. The legal values are the role names listed in rat-generator.txt.
-                            An unrecognised name is logged as an error and dropped, so this cannot be used
-                            for arbitrary values; use the flags property for that purpose (Set).
+role		ifRole			A preference passed to the RAT Generator to bias the types of units generated.
+                            It is not a constraint - see "Roles are a preference, not a guarantee" below.
+                            The role names are listed in rat-generator.txt, but the property and the
+                            predicate do not accept the same spellings:
+                              role=   goes through MissionRole.parseRole, which lowercases the value and
+                                      treats underscores as spaces, so role="fire_support",
+                                      role="fire support" and role="FIRE_SUPPORT" are the same thing.
+                                      An unrecognised name is logged as an error and dropped, so this
+                                      cannot be used for arbitrary values; use flags for that purpose.
+                              ifRole= is compared against MissionRole.toString(), which is the enum name
+                                      lowercased, using an exact string match. Only lowercase with
+                                      underscores ever matches: ifRole="fire support" and
+                                      ifRole="FIRE_SUPPORT" never match anything, and fail silently
+                                      rather than being logged. Always write ifRole="fire_support".
+                            This is the same trap described for ifMotive below. Every predicate in the
+                            supplied rulesets is written lowercase-with-underscores (Set).
 formation	(none)			The lance formation (see Campaign Operations) used to generate units. When
                             formations are used, the generated lance weights may not always match up with
                             the weightClass property. An unparsable formation name is logged as a warning
                             and ignored. There is no ifFormation predicate.
+                            Note that formations are built from UnitRole - the role recorded on each unit
+                            in the unit files, such as Scout or Sniper - and not from the MissionRole
+                            values used by the role property above. The two role systems are unrelated.
+                            A formation can only be built if the available units carry the UnitRole values
+                            it requires, so a formation asking for Recon will quietly fall back to
+                            generating units individually when the pool holds no Scouts, which looks
+                            from the outside like the formation property having done nothing.
 motive		ifMotive		A motive type constant, typically used for vehicles and infantry (Set). The
                             values are EntityMovementMode names.
 augmented	ifAugmented		A boolean value that has no defined effect, but indicates that the echelon is
@@ -345,6 +364,18 @@ operator because the ampersand (&) has a special meaning in xml. The OR operator
 there are no grouping operators to override this. Use of both operators in a single statement is discouraged
 for clarity. There is also a NOT operator, which applies to the entire expression: "!val1|val2" will match
 if the property is neither val1 nor val2.
+
+An empty value is a test for emptiness, not a test that always passes. For a set property, ifPropertyName=""
+matches only if the set is empty, so ifRole="" selects nodes that have no role at all. This is used in the
+shipped rulesets, most often as ifRole="" to catch the units left over after the roled options have been
+offered. It applies to the other set predicates as well, ifFlags and ifMotive among them.
+
+Roles are a preference, not a guarantee. Setting role= on a node does not oblige the generator to return
+units with that role, and there is no complaint when it cannot. Unit selection drops any role that does not
+apply to the node's unit type, then relaxes its role requirement through four levels of strictness, and if it
+still has nothing it clears the roles entirely and generates again without them. A lance rule asking for
+role="recon" can therefore legitimately produce a force with no reconnaissance units in it, silently. Roles
+bias the draw towards what is wanted; they do not restrict it to what is wanted.
 
 E. The random element
 Variability in the force structure and composition is handled by use of a series of <option> elements. These

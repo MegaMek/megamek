@@ -210,7 +210,9 @@ This is required to distinguish between different unit types that have the same 
 
     'name' attribute: the name of the variant/model. The full unit name is chassis name + model name, separated by a space.
 
-    'role' element: comma-separated list of roles the variant was designed for, or nothing for general use. Role names are matched case-insensitively and underscores are interchangeable with spaces, so "fire_support" and "fire support" are the same role (MissionRole.parseRole). An unrecognised role name is an error and the role is dropped. The "Unit types" line for each role below is the authoritative list from MissionRole.fitsUnitType. Supported values are:
+    'roles' element: comma-separated list of roles the variant was designed for, or nothing for general use. The element is named 'roles', plural, as in the example above; the loader matches on that name alone, so a 'role' element is read by nothing and is discarded without a warning. Role names are matched case-insensitively and underscores are interchangeable with spaces, so "fire_support" and "fire support" are the same role (MissionRole.parseRole). An unrecognised role name is an error and the role is dropped. "incindiary" is accepted as a spelling of "incendiary". The "Unit types" line for each role below is the authoritative list from MissionRole.fitsUnitType. Supported values are:
+
+    Do not put a space after the commas. The list is split on the comma alone and the pieces are not trimmed, so a leading space becomes part of the role name and the role fails to parse: <roles>recon, command</roles> yields recon only, and drops command with an error in the log. Write <roles>recon,command</roles>. This differs from the unit role parser used elsewhere in MegaMek (UnitRole.parseRole), which does trim, so the habit does not carry over.
 
         fire_support
         Use: combat unit with long range weapons

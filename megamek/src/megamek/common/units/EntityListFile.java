@@ -1379,6 +1379,24 @@ public class EntityListFile {
                 output.write(indentStr(indentLvl + 1) + "</" + MULParser.ELE_NC3 + ">\n");
             }
 
+            // Record the trailers this entity tows, front to back. Only the tractor records the train: order fixes
+            // the hitch chain and therefore where each trailer sits, and each trailer's own tractor and hitch are
+            // rebuilt from this list when the units are added to a game.
+            if (!entity.getAllTowedUnits().isEmpty()) {
+                output.write(indentStr(indentLvl + 1) + '<' + MULParser.ELE_TOWED_UNITS + ">\n");
+                for (int towedId : entity.getAllTowedUnits()) {
+                    output.write(indentStr(indentLvl + 2) +
+                          '<' +
+                          MULParser.ELE_TOWED_UNIT +
+                          ' ' +
+                          MULParser.ATTR_ID +
+                          "=\"" +
+                          towedId +
+                          "\"/>\n");
+                }
+                output.write(indentStr(indentLvl + 1) + "</" + MULParser.ELE_TOWED_UNITS + ">\n");
+            }
+
             // Record if this entity is transported by another
             if (entity.getTransportId() != Entity.NONE) {
                 output.write(indentStr(indentLvl + 1) +

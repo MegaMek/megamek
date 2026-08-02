@@ -59,6 +59,7 @@ import megamek.common.board.Board;
 import megamek.common.board.BoardDimensions;
 import megamek.common.board.BoardLocation;
 import megamek.common.board.Coords;
+import megamek.common.board.postprocess.TWBoardTransformer;
 import megamek.common.comparators.WeaponComparatorBV;
 import megamek.common.compute.Compute;
 import megamek.common.compute.ComputeArc;
@@ -115,11 +116,9 @@ import megamek.common.turns.TurnOrdered;
 import megamek.common.turns.TurnVectors;
 import megamek.common.turns.UnloadStrandedTurn;
 import megamek.common.units.*;
-import megamek.common.util.BoardUtilities;
 import megamek.common.util.C3Util;
 import megamek.common.util.EmailService;
 import megamek.common.util.HazardousLiquidPoolUtil;
-import megamek.common.util.fileUtils.MegaMekFile;
 import megamek.common.verifier.TestEntity;
 import megamek.common.voting.Poll;
 import megamek.common.voting.VoteThreshold;
@@ -148,6 +147,12 @@ import megamek.server.victory.VictoryResult;
  */
 public class TWGameManager extends AbstractGameManager {
     private static final MMLogger LOGGER = MMLogger.create(TWGameManager.class);
+
+    /** Hidden-unit probe detection diagnostics ([HiddenUnits] tag; shared feature logger, see ServerHelper). */
+    private static final MMLogger HIDDEN_UNITS_LOGGER = MMLogger.create(ServerHelper.HIDDEN_UNITS_DIAGNOSTIC_LOGGER);
+
+    /** Equipment activation/deactivation diagnostics ([EquipOff] tag; shared feature logger, see Mounted). */
+    private static final MMLogger EQUIP_OFF_LOGGER = MMLogger.create(Mounted.EQUIP_OFF_DIAGNOSTIC_LOGGER);
     static final GameDatasetLogger datasetLogger = new GameDatasetLogger("game_actions");
     static final String DEFAULT_BOARD = MapSettings.BOARD_GENERATED;
 
@@ -238,6 +243,7 @@ public class TWGameManager extends AbstractGameManager {
 
     private final TWPhaseEndManager phaseEndManager = new TWPhaseEndManager(this);
     private final TWPhasePreparationManager phasePreparationManager = new TWPhasePreparationManager(this);
+    private LobbyBoardHandler lobbyBoardHandler;
     private final InfantryActionTracker infantryActionTracker = new InfantryActionTracker();
     private final BuildingCollapseHandler buildingCollapseHandler = new BuildingCollapseHandler(this);
     private final DeploymentProcessor deploymentProcessor = new DeploymentProcessor(this);
@@ -246,8 +252,10 @@ public class TWGameManager extends AbstractGameManager {
 
     /**
      * Special packet queue for client feedback requests.
+     * <p>
+     * Package-private for test access; see TWGameManagerCFRPacketQueueTest.
+     * </p>
      */
-    /** Package-private for test access; see TWGameManagerCFRPacketQueueTest. */
     final ConcurrentLinkedQueue<Server.ReceivedPacket> cfrPacketQueue = new ConcurrentLinkedQueue<>();
 
     public TWGameManager() {
@@ -351,6 +359,18 @@ public class TWGameManager extends AbstractGameManager {
         return game;
     }
 
+    /**
+     * @return the handler for lobby-built game boards, created on first use. Lazy creation (rather than a field
+     *       initializer) keeps the handler available on mock instances of this class, whose field initializers
+     *       never run; several existing tests call the real {@link #setGame(IGame)} on such mocks.
+     */
+    private LobbyBoardHandler lobbyBoardHandler() {
+        if (lobbyBoardHandler == null) {
+            lobbyBoardHandler = new LobbyBoardHandler(this);
+        }
+        return lobbyBoardHandler;
+    }
+
     @Override
     public void setGame(IGame game) {
         if (!(game instanceof Game)) {
@@ -358,6 +378,7 @@ public class TWGameManager extends AbstractGameManager {
             return;
         }
         this.game = (Game) game;
+        lobbyBoardHandler().restoreFromGame(this.game);
 
         List<Integer> orphanEntities = new ArrayList<>();
 
@@ -864,6 +885,9 @@ public class TWGameManager extends AbstractGameManager {
                 send(createMapSizesPacket());
                 // Send Entities *after* the Lounge Phase Change
                 send(connId, packetHelper.createPhaseChangePacket());
+                // The lounge-built board (if any) must arrive after the phase change, so the joining client
+                // already knows it is in the lounge when the board event fires (keeps the minimap closed)
+                lobbyBoardHandler().sendBoardToNewConnection(connId);
                 if (doBlind()) {
                     send(connId, createFilteredFullEntitiesPacket(player, null));
                 } else {
@@ -1043,6 +1067,10 @@ public class TWGameManager extends AbstractGameManager {
                     receiveEntityTow(packet, connId);
                     resetPlayersDone();
                     break;
+                case ENTITY_BUILD_TRAIN:
+                    receiveBuildTrain(packet, connId);
+                    resetPlayersDone();
+                    break;
                 case ENTITY_MODE_CHANGE:
                     receiveEntityModeChange(packet, connId);
                     break;
@@ -1100,13 +1128,18 @@ public class TWGameManager extends AbstractGameManager {
                         }
                     }
                     break;
-                case SENDING_GAME_SETTINGS:
+                case SENDING_GAME_SETTINGS: {
+                    int previousBridgeCF = game.getOptions().getOption(OptionsConstants.BASE_BRIDGE_CF).intValue();
+                    boolean previousRandomBasements = game.getOptions()
+                          .booleanOption(OptionsConstants.BASE_RANDOM_BASEMENTS);
                     if (receiveGameOptions(packet, connId)) {
                         resetPlayersDone();
                         send(packetHelper.createGameSettingsPacket());
                         receiveGameOptionsAux(packet, connId);
+                        lobbyBoardHandler().invalidateIfBoardOptionsChanged(previousBridgeCF, previousRandomBasements);
                     }
                     break;
+                }
                 case SENDING_MAP_SETTINGS:
                     if (game.getPhase().isBefore(GamePhase.DEPLOYMENT)) {
                         MapSettings newSettings = packet.getMapSettings(0);
@@ -1122,6 +1155,7 @@ public class TWGameManager extends AbstractGameManager {
                         cleanupCustomDZs();
                         resetPlayersDone();
                         send(createMapSettingsPacket());
+                        lobbyBoardHandler().invalidate("map settings changed");
                     }
                     break;
                 case SENDING_MAP_DIMENSIONS:
@@ -1138,6 +1172,7 @@ public class TWGameManager extends AbstractGameManager {
                         }
                         resetPlayersDone();
                         send(createMapSettingsPacket());
+                        lobbyBoardHandler().invalidate("map dimensions changed");
                     }
                     break;
                 case SENDING_PLANETARY_CONDITIONS:
@@ -1147,7 +1182,11 @@ public class TWGameManager extends AbstractGameManager {
                         game.setPlanetaryConditions(conditions);
                         resetPlayersDone();
                         send(packetHelper.createPlanetaryConditionsPacket());
+                        lobbyBoardHandler().invalidate("planetary conditions changed");
                     }
+                    break;
+                case LOBBY_GENERATE_BOARD:
+                    lobbyBoardHandler().handleGenerationRequest(connId);
                     break;
                 case UNLOAD_STRANDED:
                     receiveUnloadStranded(packet, connId);
@@ -1271,6 +1310,8 @@ public class TWGameManager extends AbstractGameManager {
      * Deploys eligible offboard entities.
      */
     void deployOffBoardEntities() {
+        deploymentProcessor.followTractorsOffBoard();
+
         // place off board entities actually off-board
         for (Entity entity : game.getEntitiesVector()) {
             if (entity.isOffBoard() && !entity.isDeployed()) {
@@ -1285,6 +1326,10 @@ public class TWGameManager extends AbstractGameManager {
     void resetEntityPhase(GamePhase phase) {
         // first, mark doomed entities as destroyed and flag them
         Vector<Entity> toRemove = new Vector<>(0, 10);
+
+        // Collected rather than logged per unit, so a long train produces one line a phase instead of one per
+        // trailer. See the movement branch below.
+        List<String> trailersSkippingMovement = new ArrayList<>();
 
         for (Entity entity : game.getEntitiesVector()) {
             entity.newPhase(phase);
@@ -1347,6 +1392,12 @@ public class TWGameManager extends AbstractGameManager {
             // reset done to false
             if (phase.isDeployment()) {
                 entity.setDone(!entity.shouldDeploy(game.getRoundCount()));
+            } else if (phase.isMovement() && (entity.getTractor() != Entity.NONE)) {
+                // "A Trailer cannot move under its own power; it must be towed by a Tractor or be part of a series
+                // towed by a Tractor" (TM, Trailers). It is repositioned when its tractor moves, so it takes no
+                // movement turn of its own; offering one only produces a unit that cannot be moved.
+                entity.setDone(true);
+                trailersSkippingMovement.add(entity.getDisplayName());
             } else {
                 entity.setDone(false);
             }
@@ -1386,6 +1437,11 @@ public class TWGameManager extends AbstractGameManager {
             if (entity instanceof MekWarrior mekWarrior) {
                 mekWarrior.setLanded(true);
             }
+        }
+
+        if (!trailersSkippingMovement.isEmpty()) {
+            LOGGER.info("[Train] {} trailer(s) take no movement turn, they move with their tractor: {}",
+                  trailersSkippingMovement.size(), String.join(", ", trailersSkippingMovement));
         }
 
         // flag deployed and doomed, but not destroyed out of game entities
@@ -2172,7 +2228,14 @@ public class TWGameManager extends AbstractGameManager {
                 calculatePlayerInitialCounts();
                 // Build teams vector
                 game.setupTeams();
-                applyBoardSettings();
+                if (lobbyBoardHandler().hasBoardFromLounge()) {
+                    LOGGER.info("[LobbyBoard] game start reuses the battlefield built in the lounge");
+                    // The board build is skipped, but the non-build part of applyBoardSettings() must still
+                    // run for the reused board
+                    initializeIndustrialElevators();
+                } else {
+                    applyBoardSettings();
+                }
                 game.getPlanetaryConditions().determineWind();
                 send(packetHelper.createPlanetaryConditionsPacket());
                 // transmit the board to everybody
@@ -2597,49 +2660,12 @@ public class TWGameManager extends AbstractGameManager {
 
     /**
      * Applies board settings. This loads and combines all the boards that were specified into one mega-board and sets
-     * that board as current.
+     * that board as current. Surprise board picks are resolved into the game's map settings so that the settings
+     * record the board that is actually played.
      */
     public void applyBoardSettings() {
-        MapSettings mapSettings = game.getMapSettings();
-        mapSettings.chooseSurpriseBoards();
-        Board[] sheetBoards = new Board[mapSettings.getMapWidth() * mapSettings.getMapHeight()];
-        for (int i = 0; i < (mapSettings.getMapWidth() * mapSettings.getMapHeight()); i++) {
-            sheetBoards[i] = new Board();
-            // Need to set map type prior to loading to adjust foliage height, etc.
-            sheetBoards[i].setType(mapSettings.getMedium());
-            String name = mapSettings.getBoardsSelectedVector().get(i);
-            boolean isRotated = false;
-            if (name.startsWith(Board.BOARD_REQUEST_ROTATION)) {
-                // only rotate boards with an even width
-                if ((mapSettings.getBoardWidth() % 2) == 0) {
-                    isRotated = true;
-                }
-                name = name.substring(Board.BOARD_REQUEST_ROTATION.length());
-            }
-            if (name.startsWith(MapSettings.BOARD_GENERATED) || (mapSettings.getMedium() == MapSettings.MEDIUM_SPACE)) {
-                sheetBoards[i] = BoardUtilities.generateRandom(mapSettings);
-            } else {
-                sheetBoards[i].load(new MegaMekFile(Configuration.boardsDir(), name + ".board").getFile());
-                BoardUtilities.flip(sheetBoards[i], isRotated, isRotated);
-            }
-        }
-        Board newBoard = BoardUtilities.combine(mapSettings.getBoardWidth(),
-              mapSettings.getBoardHeight(),
-              mapSettings.getMapWidth(),
-              mapSettings.getMapHeight(),
-              sheetBoards,
-              mapSettings.getMedium());
-        if (game.getOptions().getOption(OptionsConstants.BASE_BRIDGE_CF).intValue() > 0) {
-            newBoard.setBridgeCF(game.getOptions().getOption(OptionsConstants.BASE_BRIDGE_CF).intValue());
-        }
-        if (!game.getOptions().booleanOption(OptionsConstants.BASE_RANDOM_BASEMENTS)) {
-            newBoard.setRandomBasementsOff();
-        }
-        if (game.getPlanetaryConditions().isTerrainAffected()) {
-            BoardUtilities.addWeatherConditions(newBoard,
-                  game.getPlanetaryConditions().getWeather(),
-                  game.getPlanetaryConditions().getWind());
-        }
+        Board newBoard = TWBoardTransformer.instantiateBoardResolvingSettings(game.getMapSettings(),
+              game.getPlanetaryConditions(), game.getOptions());
         game.setBoard(newBoard);
 
         // Initialize industrial elevators from terrain data
@@ -6138,78 +6164,25 @@ public class TWGameManager extends AbstractGameManager {
      * @param trainPath The path all trailers are following?
      */
     void processTrailerMovement(Entity tractor, List<Coords> trainPath) {
-        for (int eId : tractor.getAllTowedUnits()) {
-            Entity trailer = game.getEntity(eId);
+        // If the tractor didn't move anywhere the trailers stay where they are; otherwise lay the train out along
+        // the hexes the tractor drove through, using the shared packing rule.
+        if (tractor.delta_distance != 0) {
+            TrainLayout.layOutTrain(game, tractor, trainPath, tractor.getPassedThroughFacing());
+        }
+
+        for (int towedId : tractor.getAllTowedUnits()) {
+            Entity trailer = game.getEntity(towedId);
 
             if (trailer == null) {
                 continue;
             }
 
-            // if the Tractor didn't move anywhere, stay where we are
-            if (tractor.delta_distance == 0) {
-                trailer.delta_distance = tractor.delta_distance;
-                trailer.moved = tractor.moved;
-                trailer.setSecondaryFacing(trailer.getFacing());
-                trailer.setDone(true);
-                entityUpdate(eId);
-                continue;
-            }
-
-            int stepNumber; // The Coords in trainPath that this trailer should move to
-            Coords trailerPos;
-            int trailerNumber = tractor.getAllTowedUnits().indexOf(eId);
-            double trailerPositionOffset = (trailerNumber + 1); // Offset so we get the right position index
-            // Unless the tractor is superheavy, put the first trailer in its hex.
-            // Technically this would be true for a superheavy trailer too, but only a
-            // superheavy tractor can tow one.
-            if (trailerNumber == 0 && !tractor.isSuperHeavy()) {
-                trailer.setPosition(tractor.getPosition());
-                trailer.setFacing(tractor.getFacing());
-            } else {
-                // If the trailer is superheavy, place it in a hex by itself
-                if (trailer.isSuperHeavy()) {
-                    trailerPositionOffset++;
-                    stepNumber = (trainPath.size() - (int) trailerPositionOffset);
-                    trailerPos = trainPath.get(stepNumber);
-                    trailer.setPosition(trailerPos);
-                    if ((tractor.getPassedThroughFacing().size() - trailerPositionOffset) >= 0) {
-                        trailer.setFacing(tractor.getPassedThroughFacing()
-                              .get(tractor.getPassedThroughFacing().size() -
-                                    (int) trailerPositionOffset));
-                    }
-                } else if (tractor.isSuperHeavy()) {
-                    // If the tractor is superheavy, we can put two trailers in each hex
-                    // starting trailer 0 in the hex behind the tractor
-                    trailerPositionOffset = (Math.ceil((trailerPositionOffset / 2.0)) + 1);
-                    stepNumber = (trainPath.size() - (int) trailerPositionOffset);
-                    trailerPos = trainPath.get(stepNumber);
-                    trailer.setPosition(trailerPos);
-                    if ((tractor.getPassedThroughFacing().size() - trailerPositionOffset) >= 0) {
-                        trailer.setFacing(tractor.getPassedThroughFacing()
-                              .get(tractor.getPassedThroughFacing().size() -
-                                    (int) trailerPositionOffset));
-                    }
-                } else {
-                    // Otherwise, we can put two trailers in each hex
-                    // starting trailer 1 in the hex behind the tractor
-                    trailerPositionOffset++;
-                    trailerPositionOffset = Math.ceil((trailerPositionOffset / 2.0));
-                    stepNumber = (trainPath.size() - (int) trailerPositionOffset);
-                    trailerPos = trainPath.get(stepNumber);
-                    trailer.setPosition(trailerPos);
-                    if ((tractor.getPassedThroughFacing().size() - trailerPositionOffset) >= 0) {
-                        trailer.setFacing(tractor.getPassedThroughFacing()
-                              .get(tractor.getPassedThroughFacing().size() -
-                                    (int) trailerPositionOffset));
-                    }
-                }
-            }
             // trailers are immobile by default. Match the tractor's movement here
             trailer.delta_distance = tractor.delta_distance;
             trailer.moved = tractor.moved;
             trailer.setSecondaryFacing(trailer.getFacing());
             trailer.setDone(true);
-            entityUpdate(eId);
+            entityUpdate(towedId);
         }
     }
 
@@ -10696,6 +10669,9 @@ public class TWGameManager extends AbstractGameManager {
         if (!game.getOptions().booleanOption(OptionsConstants.ADVANCED_HIDDEN_UNITS)) {
             return;
         }
+
+        HIDDEN_UNITS_LOGGER.debug("[HiddenUnits] full-board probe sweep (phase {}, round {})",
+              game.getPhase(), game.getRoundCount());
 
         // See if any unit with a probe, detects any hidden units
         for (Entity detector : game.getEntitiesVector()) {
@@ -26805,6 +26781,10 @@ public class TWGameManager extends AbstractGameManager {
             }
         }
 
+        // Re-hitch tractor-trailer trains. Like the transport ids above, a MUL stores the ids the saving game used,
+        // so the train can only be rebuilt now that every unit has its server-given id.
+        restoreTrains(entities, idMap);
+
         // Set the "loaded keepers" which is apparently used for deployment unloading to
         // differentiate between units loaded in the lobby and other carried units
         // When entering a game from the lobby, this list is generated again, but not
@@ -26825,6 +26805,73 @@ public class TWGameManager extends AbstractGameManager {
         List<Integer> changedForces = new ArrayList<>(forceMapping.values());
 
         send(createAddEntityPacket(entityIds, changedForces));
+    }
+
+    /**
+     * Re-hitches the trains a MUL describes, once the units in it have real ids.
+     * <p>
+     * A tractor read from a file carries the trailer ids the saving game used, which mean nothing here. Each one is
+     * translated through {@code idMap} and the train is built again from the front, which restores every trailer's
+     * tractor, hitch and place in the chain. Building it through {@code towUnit} rather than setting the fields
+     * directly is what loads the hitches, so the train behaves exactly as one connected in the lobby.
+     * </p>
+     *
+     * @param entities the units that were just added
+     * @param idMap    saved id to server-given id, covering only the units in this batch
+     */
+    void restoreTrains(List<Entity> entities, Map<Integer, Integer> idMap) {
+        for (final Entity tractor : entities) {
+            List<Integer> savedTrailerIds = new ArrayList<>(tractor.getAllTowedUnits());
+
+            if (savedTrailerIds.isEmpty()) {
+                continue;
+            }
+
+            // Drop the saved ids before re-hitching. They are file ids, not entity ids, and one of them may well
+            // collide with a real id in this game, so none of them may be left in the list.
+            for (int savedTrailerId : savedTrailerIds) {
+                tractor.removeTowedUnit(savedTrailerId);
+            }
+
+            for (int savedTrailerId : savedTrailerIds) {
+                Integer realTrailerId = idMap.get(savedTrailerId);
+                Entity trailer = (realTrailerId == null) ? null : game.getEntity(realTrailerId);
+
+                if (trailer == null) {
+                    LOGGER.warn("[Train] {} was saved towing unit #{}, which is not in this file; the rest of the "
+                                + "train is still hitched", tractor.getDisplayName(), savedTrailerId);
+                    continue;
+                }
+
+                // A file describes a train the current data may no longer support, so treat towUnit as able to fail.
+                // TankTrailerHitch.load throws when a hitch cannot take the trailer, and towUnit calls it without
+                // checking first. Letting that escape would abort receiveEntityAdd and lose every unit in the file,
+                // not just this train, so a bad tow costs the player one trailer rather than the whole force.
+                boolean hitched;
+                try {
+                    tractor.towUnit(trailer.getId());
+                    // towUnit records the trailer as part of the train before it looks for a hitch to hold it, and
+                    // does not undo that when nothing can, so a silent failure looks the same as a thrown one here.
+                    hitched = trailer.getTowedBy() != Entity.NONE;
+                } catch (RuntimeException towFailure) {
+                    LOGGER.warn("[Train] {} could not tow {} from file: {}",
+                          tractor.getDisplayName(), trailer.getDisplayName(), towFailure.getMessage());
+                    hitched = false;
+                }
+
+                if (!hitched) {
+                    // Leave it loose rather than listed in a train nothing is holding it to.
+                    LOGGER.warn("[Train] {} has no free hitch for {}; the trailer was loaded loose",
+                          tractor.getDisplayName(), trailer.getDisplayName());
+                    tractor.removeTowedUnit(trailer.getId());
+                    trailer.setTractor(Entity.NONE);
+                    trailer.setTowedBy(Entity.NONE);
+                }
+            }
+
+            LOGGER.info("[Train] restored {} towing {} trailer(s) from file",
+                  tractor.getDisplayName(), tractor.getAllTowedUnits().size());
+        }
     }
 
     /**
@@ -27209,6 +27256,18 @@ public class TWGameManager extends AbstractGameManager {
     }
 
     /**
+     * Parses a build-train request and hands validation and application to {@link TrainBuildHandler}.
+     *
+     * @param packet    the packet to be processed
+     * @param connIndex the id for connection that received the packet.
+     */
+    private void receiveBuildTrain(Packet packet, int connIndex) throws InvalidPacketDataException {
+        int tractorId = packet.getIntValue(0);
+        List<Integer> trailerIds = packet.getIntList(1);
+        new TrainBuildHandler(this).buildTrain(tractorId, trailerIds, game.getPlayer(connIndex));
+    }
+
+    /**
      * @param packet    the packet to be processed
      * @param connIndex the id for connection that received the packet.
      */
@@ -27228,65 +27287,97 @@ public class TWGameManager extends AbstractGameManager {
      * @param c         the packet to be processed
      * @param connIndex the id for connection that received the packet.
      */
-    private void receiveEntityModeChange(Packet c, int connIndex) throws InvalidPacketDataException {
-        int entityId = c.getIntValue(0);
-        int equipId = c.getIntValue(1);
-        int mode = c.getIntValue(2);
-        Entity e = game.getEntity(entityId);
+    private void receiveEntityModeChange(Packet packet, int connIndex) throws InvalidPacketDataException {
+        int entityId = packet.getIntValue(0);
+        int equipId = packet.getIntValue(1);
+        int mode = packet.getIntValue(2);
+        Entity entity = game.getEntity(entityId);
 
-        if (e == null || e.getOwner() != game.getPlayer(connIndex)) {
+        if (entity == null || entity.getOwner() != game.getPlayer(connIndex)) {
             return;
         }
 
-        Mounted<?> m = e.getEquipment(equipId);
+        Mounted<?> mounted = entity.getEquipment(equipId);
 
-        if (m == null) {
+        if (mounted == null) {
+            return;
+        }
+
+        EquipmentType equipmentType = mounted.getType();
+        if (equipmentType == null) {
+            EQUIP_OFF_LOGGER.debug("[EquipOff] {}: ignored mode change for equipment {} - its type cannot be resolved",
+                  entity.getShortName(), equipId);
+            return;
+        }
+
+        if (ServerHelper.isEcmDeactivationBlockedByStealth(entity, mounted, mode)) {
+            String message = entity.getShortName() + ": " + mounted.getName()
+                  + " cannot be deactivated while the stealth armor system is engaged or engaging";
+            EQUIP_OFF_LOGGER.debug("[EquipOff] {}: rejected mode change - stealth armor is on or switching on",
+                  entity.getShortName());
+            sendServerChat(connIndex, message);
+            return;
+        }
+
+        if (ServerHelper.isStealthActivationBlockedByEcmShutdown(entity, mounted, mode)) {
+            String message = entity.getShortName() + ": " + mounted.getName()
+                  + " cannot be engaged while the ECM suite is deactivated or deactivating";
+            EQUIP_OFF_LOGGER.debug("[EquipOff] {}: rejected mode change - no ECM suite will be operating next round",
+                  entity.getShortName());
+            sendServerChat(connIndex, message);
             return;
         }
 
         try {
-            if ((m.getType() instanceof MiscType miscType) && miscType.isBoobyTrap() && mode != 0 && e.hasBoobyTrap()) {
+            if ((equipmentType instanceof MiscType miscType) && miscType.isBoobyTrap() && mode != 0
+                  && entity.hasBoobyTrap()) {
                 sendServerChat("There is no turning back now...");
-                e.setBoobyTrapInitiated(true);
-                m.setMode(mode);
-                m.setModeSwitchable(false);
-                entityUpdate(e.getId());
+                entity.setBoobyTrapInitiated(true);
+                mounted.setMode(mode);
+                mounted.setModeSwitchable(false);
+                entityUpdate(entity.getId());
             }
 
             // Check for BA dumping body mounted missile launchers
-            if ((e instanceof BattleArmor) &&
-                  (!m.isMissing()) &&
-                  m.isBodyMounted() &&
-                  m.getType().hasFlag(WeaponType.F_MISSILE) &&
-                  (m.getLinked() != null) &&
-                  (m.getLinked().getUsableShotsLeft() > 0) &&
+            if ((entity instanceof BattleArmor) &&
+                  (!mounted.isMissing()) &&
+                  mounted.isBodyMounted() &&
+                  (equipmentType instanceof WeaponType weaponType) &&
+                  weaponType.hasFlag(WeaponType.F_MISSILE) &&
+                  (mounted.getLinked() != null) &&
+                  (mounted.getLinked().getUsableShotsLeft() > 0) &&
                   (mode <= 0)) {
-                m.setPendingDump(mode == -1);
+                mounted.setPendingDump(mode == -1);
                 // a mode change for ammo means dumping or hot loading
-            } else if ((m.getType() instanceof AmmoType) &&
-                  !m.getType().hasInstantModeSwitch() &&
-                  (mode < 0 || mode == 0 && m.isPendingDump())) {
-                m.setPendingDump(mode == -1);
-            } else if ((m.getType() instanceof WeaponType) && m.isDWPMounted() && (mode <= 0)) {
-                m.setPendingDump(mode == -1);
+            } else if ((equipmentType instanceof AmmoType) &&
+                  !equipmentType.hasInstantModeSwitch() &&
+                  (mode < 0 || mode == 0 && mounted.isPendingDump())) {
+                mounted.setPendingDump(mode == -1);
+            } else if ((equipmentType instanceof WeaponType) && mounted.isDWPMounted() && (mode <= 0)) {
+                mounted.setPendingDump(mode == -1);
             } else {
-                if (!m.setMode(mode)) {
-                    String message = e.getShortName() +
+                if (mounted.setMode(mode)) {
+                    EQUIP_OFF_LOGGER.debug("[EquipOff] {}: {} mode change to index {} received - "
+                                + "current mode now '{}', pending mode '{}'",
+                          entity.getShortName(), mounted.getName(), mode, mounted.curMode().getName(),
+                          mounted.pendingMode().getName());
+                } else {
+                    String message = entity.getShortName() +
                           ": " +
-                          m.getName() +
+                          mounted.getName() +
                           ": " +
-                          e.getLocationName(m.getLocation()) +
+                          entity.getLocationName(mounted.getLocation()) +
                           " trying to compensate";
                     LOGGER.error(message);
                     sendServerChat(message);
-                    e.setGameOptions();
+                    entity.setGameOptions();
 
-                    if (!m.setMode(mode)) {
-                        message = e.getShortName() +
+                    if (!mounted.setMode(mode)) {
+                        message = entity.getShortName() +
                               ": " +
-                              m.getName() +
+                              mounted.getName() +
                               ": " +
-                              e.getLocationName(m.getLocation()) +
+                              entity.getLocationName(mounted.getLocation()) +
                               " unable to compensate";
                         LOGGER.error(message);
                         sendServerChat(message);
@@ -27294,8 +27385,8 @@ public class TWGameManager extends AbstractGameManager {
                 }
             }
 
-        } catch (Exception ex) {
-            LOGGER.error("", ex);
+        } catch (Exception exception) {
+            LOGGER.error("", exception);
         }
     }
 
@@ -27320,12 +27411,12 @@ public class TWGameManager extends AbstractGameManager {
      * @param c         the packet to be processed
      * @param connIndex the id for connection that received the packet.
      */
-    private void receiveEntitySinksChange(Packet c, int connIndex) throws InvalidPacketDataException {
-        int entityId = c.getIntValue(0);
-        int numSinks = c.getIntValue(1);
-        Entity e = game.getEntity(entityId);
-        if ((e instanceof Mek) && (connIndex == e.getOwnerId())) {
-            ((Mek) e).setActiveSinksNextRound(numSinks);
+    private void receiveEntitySinksChange(Packet packet, int connIndex) throws InvalidPacketDataException {
+        int entityId = packet.getIntValue(0);
+        int numSinks = packet.getIntValue(1);
+        Entity entity = game.getEntity(entityId);
+        if ((entity instanceof ActiveHeatSinkController heatSinkController) && (connIndex == entity.getOwnerId())) {
+            heatSinkController.setActiveSinksNextRound(numSinks);
         }
     }
 
@@ -27511,24 +27602,25 @@ public class TWGameManager extends AbstractGameManager {
     }
 
     /**
-     * receive and process an entity mode change packet
+     * receive and process an entity called shot change packet
      *
-     * @param c         the packet to be processed
+     * @param packet    the packet to be processed
      * @param connIndex the id for connection that received the packet.
      */
-    private void receiveEntityCalledShotChange(Packet c, int connIndex) throws InvalidPacketDataException {
-        int entityId = c.getIntValue(0);
-        int equipId = c.getIntValue(1);
-        Entity e = game.getEntity(entityId);
-        if (e == null || e.getOwner() != game.getPlayer(connIndex)) {
+    private void receiveEntityCalledShotChange(Packet packet, int connIndex) throws InvalidPacketDataException {
+        int entityId = packet.getIntValue(0);
+        int equipId = packet.getIntValue(1);
+        int calledShot = packet.getIntValue(2);
+        Entity entity = game.getEntity(entityId);
+        if ((entity == null) || (entity.getOwner() != game.getPlayer(connIndex))) {
             return;
         }
-        Mounted<?> m = e.getEquipment(equipId);
+        Mounted<?> mounted = entity.getEquipment(equipId);
 
-        if (m == null) {
+        if (mounted == null) {
             return;
         }
-        m.getCalledShot().switchCalledShot();
+        mounted.getCalledShot().setCall(calledShot);
     }
 
     /**
@@ -27560,36 +27652,52 @@ public class TWGameManager extends AbstractGameManager {
         int entityId = packet.getIntValue(0);
         int weaponId = packet.getIntValue(1);
         int ammoId = packet.getIntValue(2);
-        int reason = packet.getIntValue(3);
-        Entity e = game.getEntity(entityId);
+        int ammoCarrierId = packet.getIntValue(3);
+        int reason = packet.getIntValue(4);
+        Entity shooter = game.getEntity(entityId);
 
         // Did we receive a request for a valid Entity?
-        if (null == e) {
+        if (null == shooter) {
             LOGGER.error("Could not find entity# {}", entityId);
             return;
         }
         Player player = game.getPlayer(connIndex);
-        if ((null != player) && (e.getOwner() != player)) {
-            LOGGER.error("Player {} does not own the entity {}", player.getName(), e.getDisplayName());
+        if ((null != player) && (shooter.getOwner() != player)) {
+            LOGGER.error("Player {} does not own the entity {}", player.getName(), shooter.getDisplayName());
             return;
         }
 
-        // Make sure that the entity has the given equipment.
-        WeaponMounted weaponMounted = (WeaponMounted) e.getEquipment(weaponId);
-        AmmoMounted mAmmo = (AmmoMounted) e.getEquipment(ammoId);
+        // The ammo may be carried by a directly connected trailer rather than by the firing unit itself. Resolve
+        // the bin against its own carrier, but never trust the client about which unit that is allowed to be.
+        Entity ammoCarrier = (ammoCarrierId == entityId) ? shooter : game.getEntity(ammoCarrierId);
+        if (null == ammoCarrier) {
+            LOGGER.error("Could not find ammo carrier# {}", ammoCarrierId);
+            return;
+        }
+        if (!TrainAmmoSharing.canShareAmmoWith(shooter, ammoCarrier)) {
+            LOGGER.error("Entity {} may not draw ammo from {}",
+                  shooter.getDisplayName(),
+                  ammoCarrier.getDisplayName());
+            return;
+        }
+
+        // Make sure that the entity has the given equipment. Both indices come from the client, so resolve them
+        // through the type-checked accessors rather than casting whatever equipment sits at that index.
+        WeaponMounted weaponMounted = shooter.getWeapon(weaponId);
+        AmmoMounted selectedAmmo = ammoCarrier.getAmmo(ammoId);
         AmmoMounted oldAmmo = (weaponMounted == null) ? null : weaponMounted.getLinkedAmmo();
-        if (null == mAmmo) {
-            LOGGER.error("Entity {} does not have ammo #{}", e.getDisplayName(), ammoId);
+        if (null == selectedAmmo) {
+            LOGGER.error("Entity {} does not have ammo #{}", ammoCarrier.getDisplayName(), ammoId);
             return;
         }
         if (null == weaponMounted) {
-            LOGGER.error("Entity {} does not have weapon #{}", e.getDisplayName(), weaponId);
+            LOGGER.error("Entity {} does not have weapon #{}", shooter.getDisplayName(), weaponId);
             return;
         }
         if (weaponMounted.getType().getAmmoType() == AmmoType.AmmoTypeEnum.NA) {
             LOGGER.error("Item #{} of entity {} is a {} and does not use ammo.",
                   weaponId,
-                  e.getDisplayName(),
+                  shooter.getDisplayName(),
                   weaponMounted.getName());
             return;
         }
@@ -27597,22 +27705,22 @@ public class TWGameManager extends AbstractGameManager {
               .hasFlag(WeaponType.F_DOUBLE_ONE_SHOT)) {
             LOGGER.error("Item #{} of entity {} is a {} and cannot use external ammo.",
                   weaponId,
-                  e.getDisplayName(),
+                  shooter.getDisplayName(),
                   weaponMounted.getName());
             return;
         }
 
         // Load the weapon.
-        e.loadWeapon(weaponMounted, mAmmo);
+        shooter.loadWeapon(weaponMounted, selectedAmmo);
 
         // Report the change, if reason is provided and it's not already being used.
-        if (reason != 0 && oldAmmo != mAmmo) {
-            Report r = new Report(1500);
-            r.subject = entityId;
-            r.addDesc(e);
-            r.add(mAmmo.getShortName());
-            r.add(ReportMessages.getString(String.valueOf(reason)));
-            addReport(r);
+        if (reason != 0 && oldAmmo != selectedAmmo) {
+            Report ammoChangeReport = new Report(1500);
+            ammoChangeReport.subject = entityId;
+            ammoChangeReport.addDesc(shooter);
+            ammoChangeReport.add(selectedAmmo.getShortName());
+            ammoChangeReport.add(ReportMessages.getString(String.valueOf(reason)));
+            addReport(ammoChangeReport);
         }
     }
 

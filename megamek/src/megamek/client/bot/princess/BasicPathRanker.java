@@ -1384,6 +1384,21 @@ public class BasicPathRanker extends PathRanker {
                   selfPreservation);
             return selfPreservationMod;
         }
+
+        // A withdrawing unit with no reachable retreat edge still wants out of the fight: reward opening
+        // the range to the closest enemy. Without this, NoPathToDestination units got zero retreat pull
+        // and loitered in the engagement zone.
+        if ((behaviorType == BehaviorType.NoPathToDestination) && getOwner().wantsToFallBack(movingUnit)) {
+            double distanceToEnemy = distanceToClosestEnemy(movingUnit, path.getFinalCoords(), game);
+            double selfPreservation = getOwner().getBehaviorSettings().getSelfPreservationValue();
+            double selfPreservationMod = -distanceToEnemy * selfPreservation;
+            logger.trace("self preservation mod (no retreat path) [{} = -{} * {}]",
+                  selfPreservationMod,
+                  distanceToEnemy,
+                  selfPreservation);
+            return selfPreservationMod;
+        }
+
         logger.trace("self preservation mod [0] - not moving nor forced to withdraw");
         return 0.0;
     }
@@ -1618,6 +1633,18 @@ public class BasicPathRanker extends PathRanker {
         StandoffEvaluation standoff = evaluateStandoff(movingUnit, path, pathCopy, game, enemies, isNotAirborne,
               standoffDistance, distToEnemy, distToCluster, braveryMod);
         double aggressionMod = standoff.aggressionMod();
+
+        // A withdrawing unit has no business being pulled toward the enemy: kill the aggression pull (and,
+        // below, the closing incentive and herd pull) so the self-preservation term is what actually decides
+        // its path. Includes trapped withdrawers (NoPathToDestination while wanting to fall back), whose
+        // fallback retreat pull in calculateSelfPreservationMod would otherwise fight these terms.
+        BehaviorType moverBehavior = getOwner().getUnitBehaviorTracker().getBehaviorType(movingUnit, getOwner());
+        boolean withdrawing = (moverBehavior == BehaviorType.ForcedWithdrawal)
+              || ((moverBehavior == BehaviorType.NoPathToDestination) && getOwner().wantsToFallBack(movingUnit));
+        if (withdrawing) {
+            aggressionMod = 0;
+        }
+        scores.put("withdrawing", withdrawing ? 1.0 : 0.0);
         boolean holdingArtilleryInPlace = standoff.holdingArtilleryInPlace();
         boolean standoffArtillery = standoff.standoffArtillery();
         String standoffBranch = standoff.branch();
@@ -1639,9 +1666,11 @@ public class BasicPathRanker extends PathRanker {
         scores.put("aggressionMod", aggressionMod);
 
         // Pull short-range gunners and melee brawlers toward contact. Standoff units (artillery tubes, TAG
-        // spotters) want to keep their distance, and a unit told to ignore its damage output has no reason to
-        // close, so neither gets the incentive.
-        boolean wantsToClose = (standoffDistance == 0) && !getOwner().getBehaviorSettings().isIgnoreDamageOutput();
+        // spotters) want to keep their distance, a unit told to ignore its damage output has no reason to
+        // close, and a withdrawing unit is trying to leave, so none of them get the incentive.
+        boolean wantsToClose = (standoffDistance == 0)
+              && !getOwner().getBehaviorSettings().isIgnoreDamageOutput()
+              && !withdrawing;
         double closeRangeIncentive = wantsToClose ? calculateCloseRangeIncentive(movingUnit, distToEnemy) : 0;
         scores.put("closeRangeIncentive", closeRangeIncentive);
 
@@ -1649,7 +1678,8 @@ public class BasicPathRanker extends PathRanker {
         // ranks (weighted by Herd Mentality).
         // Standoff artillery (whether holding at range or falling back when the enemy breaches its standoff) ignores the
         // herd pull, so it never gets dragged toward the advancing friendly line instead of keeping its distance.
-        double herdingMod = (isNotAirborne && !standoffArtillery)
+        // Withdrawing units ignore it too - the herd center is the still-engaged friendly line they are leaving.
+        double herdingMod = (isNotAirborne && !standoffArtillery && !withdrawing)
               ? calculateHerdingMod(friendsCoords, pathCopy)
               : 0;
 

@@ -846,11 +846,6 @@ public class ClientGUI extends AbstractClientGUI
     }
 
     /**
-     * Updates the frame title to show the current round and phase information. The title format is: "PlayerName - Round
-     * X - Phase phase - MegaMek" For phases before the game starts (lobby, selection, etc.), only shows: "PlayerName -
-     * MegaMek"
-     */
-    /**
      * Opens, follows and closes the Game Master vote dialog as the server shares the vote's state: the dialog opens
      * when a vote is called, follows the ballots as they come in, and closes when the vote resolves. The outcome
      * itself is announced in the chat.
@@ -934,6 +929,11 @@ public class ClientGUI extends AbstractClientGUI
               Messages.getString("GameMasterVoteDialog.passed.message", gameMasterName)).setVisible(true));
     }
 
+    /**
+     * Updates the frame title to show the current round and phase information. The title format is: "PlayerName - Round
+     * X - Phase phase - MegaMek" For phases before the game starts (lobby, selection, etc.), only shows: "PlayerName -
+     * MegaMek"
+     */
     private void updateFrameTitle() {
         StringBuilder title = new StringBuilder(client.getName());
 
@@ -3120,7 +3120,10 @@ public class ClientGUI extends AbstractClientGUI
                           ClientGUI.this,
                           null,
                           boardId));
-                    newMinimap.setVisible(true);
+                    // A board arriving during the lounge (lobby-built battlefield) must not pop up the minimap;
+                    // the boards are re-sent at game start (EXCHANGE), which shows it as usual.
+                    boolean isInLounge = client.getGame().getPhase().isLounge();
+                    newMinimap.setVisible(!isInLounge);
                     miniMaps.put(boardId, newMinimap);
                     boardViews.put(boardId, boardView);
                     boardView.getPanel().setPreferredSize(clientGuiPanel.getSize());

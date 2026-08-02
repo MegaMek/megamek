@@ -436,7 +436,8 @@ factions:
       # Optional: how quickly will I try to escape once damaged?
       bravery: 5
       # Optional: use forced Withdrawal, this is true by default
-      forcedwithdrawal: true
+      # (note the key is "forcedwithdraw" - unknown keys are silently ignored)
+      forcedwithdraw: true
       # Optional: the edge to retreat to, nearest by default; use south, north, west, east, nearest
       withdrawto: nearest
       # Optional: flee = true will try to reach the destination edge even when not crippled

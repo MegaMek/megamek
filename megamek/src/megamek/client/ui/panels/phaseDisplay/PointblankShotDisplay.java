@@ -1,6 +1,6 @@
 /*
  * Copyright (C) 2000-2005 Ben Mazur (bmazur@sev.org)
- * Copyright (C) 2016-2025 The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2016-2026 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -164,6 +164,9 @@ public class PointblankShotDisplay extends FiringDisplay {
                     result += "&nbsp;&nbsp;" + msg_next + ": " + KeyCommandBind.getDesc(KeyCommandBind.NEXT_MODE);
                     result += "&nbsp;&nbsp;" + msg_previous + ": " + KeyCommandBind.getDesc(KeyCommandBind.PREV_MODE);
                     break;
+                case FIRE_CALLED:
+                    result = FiringDisplay.calledShotHotKeyDesc();
+                    break;
                 case FIRE_CANCEL:
                     result = "<BR>";
                     result += "&nbsp;&nbsp;" + KeyCommandBind.getDesc(KeyCommandBind.CANCEL);
@@ -249,6 +252,17 @@ public class PointblankShotDisplay extends FiringDisplay {
     }
 
     /**
+     * The pointblank display is only active while a hidden unit is taking its pointblank shot, so the called shot binds
+     * are gated on that rather than on the normal firing turn check.
+     *
+     * @return {@code true} when a pointblank shot is being processed and the Called button is enabled
+     */
+    @Override
+    protected boolean shouldPerformCalledShotKeyCommand() {
+        return shouldPerformPointBlankKeyCommands() && buttons.get(FiringCommand.FIRE_CALLED).isEnabled();
+    }
+
+    /**
      * Register all of the <code>CommandAction</code>s for this panel display.
      */
     @Override
@@ -269,6 +283,8 @@ public class PointblankShotDisplay extends FiringDisplay {
 
         controller.registerCommandAction(KeyCommandBind.NEXT_MODE, this, () -> changeMode(true));
         controller.registerCommandAction(KeyCommandBind.PREV_MODE, this, () -> changeMode(false));
+
+        registerCalledShotKeyCommands(controller, this::shouldPerformCalledShotKeyCommand);
 
         controller.registerCommandAction(KeyCommandBind.FIRE, this::shouldPerformFireKeyCommand, this::fire);
         controller.registerCommandAction(KeyCommandBind.CANCEL, this::shouldPerformClearKeyCommand, this::clear);

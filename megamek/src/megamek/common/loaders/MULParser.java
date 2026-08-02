@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2014-2025 The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2014-2026 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -134,6 +134,8 @@ public class MULParser {
     public static final String ELE_ORIG_PODS = "ONumberOfPods";
     public static final String ELE_ORIG_MEN = "ONumberOfMen";
     public static final String ELE_CONVEYANCE = "Conveyance";
+    public static final String ELE_TOWED_UNITS = "TowedUnits";
+    public static final String ELE_TOWED_UNIT = "TowedUnit";
     public static final String ELE_GAME = "Game";
     public static final String ELE_FORCE = "Force";
     public static final String ELE_BAY = "transportBay";
@@ -693,6 +695,8 @@ public class MULParser {
                     parseOMen(currEle, entity);
                 } else if (nodeName.equalsIgnoreCase(ELE_CONVEYANCE)) {
                     parseConveyance(currEle, entity);
+                } else if (nodeName.equalsIgnoreCase(ELE_TOWED_UNITS)) {
+                    parseTowedUnits(currEle, entity);
                 } else if (nodeName.equalsIgnoreCase(ELE_GAME)) {
                     parseId(currEle, entity);
                 } else if (nodeName.equalsIgnoreCase(ELE_FORCE)) {
@@ -2728,6 +2732,37 @@ public class MULParser {
             entity.setTransportId(id);
         } catch (Exception e) {
             warning.append("Invalid transport id in conveyance tag.\n");
+        }
+    }
+
+    /**
+     * Parses the trailers a tractor tows, in order from front to back.
+     * <p>
+     * The ids read here are the ones the saving game used. They are stored as-is, exactly like the conveyance id
+     * above, and translated to real ids once the units have been added to a game and their server-side ids are known.
+     * Only the tractor records the train; each trailer's own tractor and hitch are rebuilt from this list.
+     * </p>
+     */
+    private void parseTowedUnits(Element towedUnitsTag, Entity entity) {
+        NodeList towedNodes = towedUnitsTag.getChildNodes();
+
+        for (int nodeIndex = 0; nodeIndex < towedNodes.getLength(); nodeIndex++) {
+            Node currNode = towedNodes.item(nodeIndex);
+
+            if (currNode.getParentNode() != towedUnitsTag || (currNode.getNodeType() != Node.ELEMENT_NODE)) {
+                continue;
+            }
+
+            Element currEle = (Element) currNode;
+            if (!currEle.getNodeName().equalsIgnoreCase(ELE_TOWED_UNIT)) {
+                continue;
+            }
+
+            try {
+                entity.addTowedUnit(Integer.parseInt(currEle.getAttribute(ATTR_ID)));
+            } catch (Exception ignored) {
+                warning.append("Invalid id in TowedUnit tag.\n");
+            }
         }
     }
 

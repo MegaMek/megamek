@@ -58,7 +58,7 @@ public abstract class MMLWeapon extends MissileWeapon {
         super();
         ammoType = AmmoType.AmmoTypeEnum.MML;
         atClass = CLASS_MML;
-        flags = flags.or(F_ARTEMIS_COMPATIBLE).or(F_MML);
+        flags = flags.or(F_ARTEMIS_COMPATIBLE).or(F_MML).or(F_INDIRECT_FIRE);
     }
 
     @Override
@@ -78,11 +78,6 @@ public abstract class MMLWeapon extends MissileWeapon {
     @Override
     public int getBattleForceClass() {
         return BF_CLASS_MML;
-    }
-
-    @Override
-    public boolean hasIndirectFire() {
-        return true;
     }
 
     @Override

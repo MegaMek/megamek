@@ -987,7 +987,8 @@ public class Princess extends BotClient {
 
         // if we are using forced withdrawal, and the entity being considered is crippled
         // we will opt to not re-deploy the entity
-        if (getForcedWithdrawal() && getEntity(entityNum).isCrippled()) {
+        // isCrippled(true) to match the other withdrawal predicates: crew-crippled Meks withdraw too
+        if (getForcedWithdrawal() && getEntity(entityNum).isCrippled(true)) {
             LOGGER.info("Declining to deploy crippled unit: {}. Removing unit.", getEntity(entityNum).getChassis());
             sendDeleteEntity(entityNum);
             return;
@@ -3085,7 +3086,8 @@ public class Princess extends BotClient {
                 String msg = entity.getDisplayName();
                 if (getFallBack()) {
                     msg += " is falling back.";
-                } else if (entity.isCrippled()) {
+                } else if (entity.isCrippled(true)) {
+                    // isCrippled(true) matches isFallingBack above, so a crew-crippled Mek gets a message too
                     msg += " is crippled and withdrawing.";
                 }
                 LOGGER.debug(msg);
@@ -3880,8 +3882,8 @@ public class Princess extends BotClient {
         for (final Entity ownedEntity : getEntitiesOwned()) {
             if (crippledUnits.contains(ownedEntity.getId()) && !ownedEntity.getAttackedByThisTurn().isEmpty()) {
                 if (attackedWhileFleeing.add(ownedEntity.getId())) {
-                    LOGGER.info("[ForcedWithdrawal] {} was attacked while crippled; may return fire from now on.",
-                          ownedEntity.getDisplayName());
+                    LOGGER.info("[ForcedWithdrawal] {} is crippled and was attacked this turn; may return fire "
+                          + "from now on.", ownedEntity.getDisplayName());
                 }
             }
         }

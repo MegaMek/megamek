@@ -35,6 +35,7 @@
 package megamek.client.ui.panels;
 
 import java.awt.BorderLayout;
+import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.FlowLayout;
 import java.awt.event.ActionEvent;
@@ -75,11 +76,12 @@ import megamek.common.options.OptionsConstants;
 
 /** @author Cord Awtry */
 public class DialogOptionComponentYPanel extends FixedYPanel
-    implements ItemListener, FocusListener, ActionListener, Comparable<DialogOptionComponentYPanel>,
-    SettingsHelpProvider {
+      implements ItemListener, FocusListener, ActionListener, Comparable<DialogOptionComponentYPanel>,
+      SettingsHelpProvider {
 
     @Serial
     private static final long serialVersionUID = -4190538980884459746L;
+    private static final int SETTINGS_COMPONENT_GAP = 5;
 
     IOption option;
 
@@ -91,6 +93,7 @@ public class DialogOptionComponentYPanel extends FixedYPanel
     private String settingsBadgeHtml = "";
     private int optionLabelWrapWidth;
     private final DialogOptionListener dialogOptionListener;
+    private final boolean choiceLabelFirst;
 
     /** Value used to force a change */
     private boolean hasOptionChanged = false;
@@ -114,6 +117,7 @@ public class DialogOptionComponentYPanel extends FixedYPanel
           boolean choiceLabelFirst) {
         dialogOptionListener = parent;
         this.option = option;
+        this.choiceLabelFirst = choiceLabelFirst;
         optionDisplayName = option.getDisplayableName();
 
         setLayout(new FlowLayout(FlowLayout.LEFT, 5, 2));
@@ -235,8 +239,39 @@ public class DialogOptionComponentYPanel extends FixedYPanel
         }
         removeAll();
         setLayout(new FlowLayout(FlowLayout.LEFT, 0, 2));
-        add(checkbox);
-        add(optionLabel);
+        addInlineComponents(checkbox, optionLabel);
+    }
+
+    /** Removes legacy outer insets while retaining the gap between this option's control and label. */
+    void useSettingsGridCellLayout() {
+        if (torsoMultiSelect) {
+            return;
+        }
+        removeAll();
+        setLayout(new FlowLayout(FlowLayout.LEFT, 0, 2));
+        switch (option.getType()) {
+            case IOption.BOOLEAN -> addInlineComponents(checkbox, optionLabel);
+            case IOption.CHOICE -> {
+                if (choiceLabelFirst) {
+                    addInlineComponents(choice, optionLabel);
+                } else {
+                    addInlineComponents(optionLabel, choice);
+                }
+            }
+            default -> {
+                if (option.isLabelBeforeTextField()) {
+                    addInlineComponents(optionLabel, textField);
+                } else {
+                    addInlineComponents(textField, optionLabel);
+                }
+            }
+        }
+    }
+
+    private void addInlineComponents(Component first, Component second) {
+        add(first);
+        add(Box.createHorizontalStrut(UIUtil.scaleForGUI(SETTINGS_COMPONENT_GAP)));
+        add(second);
     }
 
     private void updateOptionLabelText() {

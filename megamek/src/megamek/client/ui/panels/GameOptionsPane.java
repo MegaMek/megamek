@@ -225,6 +225,7 @@ public class GameOptionsPane extends JPanel {
                   .map(OptionRow::component)
                   .toArray(DialogOptionComponentYPanel[]::new);
             for (DialogOptionComponentYPanel component : components) {
+                component.useSettingsGridCellLayout();
                 component.fitToWidth(cellWidth);
             }
             content.addEqualWidthComponentGrid(2, components);

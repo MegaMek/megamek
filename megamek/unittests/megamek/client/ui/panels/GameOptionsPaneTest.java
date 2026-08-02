@@ -54,6 +54,7 @@ import java.util.concurrent.atomic.AtomicBoolean;
 import javax.swing.JCheckBox;
 import javax.swing.JComboBox;
 import javax.swing.JLabel;
+import javax.swing.JTextField;
 import javax.swing.SwingUtilities;
 
 import megamek.client.ui.Messages;
@@ -206,6 +207,25 @@ class GameOptionsPaneTest {
             int checkBoxX = SwingUtilities.convertPoint(checkBox.getParent(), checkBox.getX(), 0, section).x;
             int labelX = SwingUtilities.convertPoint(label.getParent(), label.getX(), 0, section).x;
             assertEquals(labelX, checkBoxX);
+        });
+    }
+
+    @Test
+    void standardOptionCellsRemoveLegacyOuterInsets() throws Exception {
+        runOnEdt(() -> {
+            GameOptions options = new GameOptions();
+            DialogOptionComponentYPanel booleanOption = component(
+                  options.getOption(OptionsConstants.SEARCHLIGHTS_ON));
+            DialogOptionComponentYPanel numericOption = component(
+                  options.getOption(OptionsConstants.BASE_TURN_TIMER_MOVEMENT));
+            DialogOptionComponentYPanel choiceOption = component(
+                  options.getOption(OptionsConstants.ALLOWED_TECH_LEVEL));
+
+            pane("basic", List.of(booleanOption, numericOption, choiceOption), option -> true);
+
+            assertFirstComponentStartsAtCellEdge(booleanOption, JCheckBox.class);
+            assertFirstComponentStartsAtCellEdge(numericOption, JTextField.class);
+            assertFirstComponentStartsAtCellEdge(choiceOption, JComboBox.class);
         });
     }
 
@@ -481,8 +501,17 @@ class GameOptionsPaneTest {
         return null;
     }
 
+    private static void assertFirstComponentStartsAtCellEdge(DialogOptionComponentYPanel option,
+          Class<? extends Component> expectedType) {
+        option.setSize(option.getPreferredSize());
+        option.doLayout();
+        Component firstComponent = option.getComponent(0);
+        assertTrue(expectedType.isInstance(firstComponent), firstComponent.getClass().getSimpleName());
+        assertEquals(0, firstComponent.getX());
+    }
+
     private static void assertOptionPresentation(DialogOptionComponentYPanel component, String label,
-                    boolean important, boolean unofficial) {
+            boolean important, boolean unofficial) {
         String text = optionLabel(component).getText();
         assertTrue(text.contains(label), text);
                 assertEquals(important, text.contains(IMPORTANT_SYMBOL), text);

@@ -114,6 +114,23 @@ public class MutualSupportPathRanker extends BasicPathRanker {
     private final Map<Integer, SupportEnvelope> envelopeCache = new HashMap<>();
     private int envelopeCacheRound = -1;
 
+    // Per-ranking-pass caches. rankPath is called once per candidate path for a single mover, and a
+    // company-scale turn evaluates thousands of paths per unit, so anything that depends only on the
+    // mover (its friends list, the gap from where it currently stands) must be computed once, not per
+    // path. Keyed by mover id and invalidated when the round changes.
+    private final Map<Integer, List<Entity>> supportingFriendsCache = new HashMap<>();
+    private final Map<Integer, Double> currentGapCache = new HashMap<>();
+    private int perMoverCacheRound = -1;
+
+    private void invalidatePerMoverCaches(Game game) {
+        int currentRound = game.getCurrentRound();
+        if (currentRound != perMoverCacheRound) {
+            supportingFriendsCache.clear();
+            currentGapCache.clear();
+            perMoverCacheRound = currentRound;
+        }
+    }
+
     public MutualSupportPathRanker(Princess owningPrincess) {
         super(owningPrincess);
     }
@@ -168,19 +185,29 @@ public class MutualSupportPathRanker extends BasicPathRanker {
      * a usable position.
      */
     private List<Entity> getSupportingFriends(Entity movingUnit, Game game) {
-        List<Entity> candidates = getOwner().getBehaviorSettings().isExclusiveHerding()
-              ? getOwner().getEntitiesOwned()
-              : getOwner().getFriendEntities();
-        List<Entity> friends = new ArrayList<>();
-        for (Entity friend : candidates) {
-            if ((friend.getId() != movingUnit.getId())
-                  && (friend.getPosition() != null)
-                  && !friend.isOffBoard()
-                  && game.onTheSameBoard(movingUnit, friend)) {
-                friends.add(friend);
+        invalidatePerMoverCaches(game);
+        return supportingFriendsCache.computeIfAbsent(movingUnit.getId(), moverId -> {
+            List<Entity> candidates = getOwner().getBehaviorSettings().isExclusiveHerding()
+                  ? getOwner().getEntitiesOwned()
+                  : getOwner().getFriendEntities();
+            List<Entity> friends = new ArrayList<>();
+            for (Entity friend : candidates) {
+                if ((friend.getId() != moverId)
+                      && (friend.getPosition() != null)
+                      && !friend.isOffBoard()
+                      && game.onTheSameBoard(movingUnit, friend)) {
+                    friends.add(friend);
+                }
             }
-        }
-        return friends;
+            return friends;
+        });
+    }
+
+    /** The mover's engagement gap from where it currently stands; constant for the whole ranking pass. */
+    private double currentEngagementGap(Entity movingUnit, Game game) {
+        invalidatePerMoverCaches(game);
+        return currentGapCache.computeIfAbsent(movingUnit.getId(),
+              moverId -> engagementGap(movingUnit, movingUnit.getPosition(), game));
     }
 
     /**
@@ -210,7 +237,7 @@ public class MutualSupportPathRanker extends BasicPathRanker {
 
         double supportPenalty = 0;
         boolean closing = engagementGap(movingUnit, path.getFinalCoords(), game)
-              < engagementGap(movingUnit, movingUnit.getPosition(), game);
+              < currentEngagementGap(movingUnit, game);
         if (!closing) {
             int hexesBeyondNearestSupport = Integer.MAX_VALUE;
             for (Entity friend : friends) {

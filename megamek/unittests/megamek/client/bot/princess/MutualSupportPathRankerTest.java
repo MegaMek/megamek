@@ -82,6 +82,9 @@ class MutualSupportPathRankerTest {
         when(mockBehavior.getHerdMentalityValue()).thenReturn(1.0);
         when(mockBehavior.getHyperAggressionValue()).thenReturn(2.5);
         when(mockBehavior.isExclusiveHerding()).thenReturn(true);
+        // consumed by the BasicPathRanker constructor; both reject non-positive values
+        when(mockBehavior.getNumberOfEnemiesToConsiderFacing()).thenReturn(3);
+        when(mockBehavior.getAllowFacingTolerance()).thenReturn(1);
 
         mockMover = mock(BipedMek.class);
         when(mockMover.getId()).thenReturn(1);

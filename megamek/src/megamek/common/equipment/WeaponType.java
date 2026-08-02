@@ -585,8 +585,6 @@ public class WeaponType extends EquipmentType {
     public static final WeaponTypeFlag F_PROTOTYPE = WeaponTypeFlag.F_PROTOTYPE;
     // Variable heat, heat is listed in dice, not points
     public static final WeaponTypeFlag F_HEAT_AS_DICE = WeaponTypeFlag.F_HEAT_AS_DICE;
-    // Variable heat, weapon mode determines heat
-    public static final WeaponTypeFlag F_HEAT_VARIABLE = WeaponTypeFlag.F_HEAT_VARIABLE;
     // AMS
     public static final WeaponTypeFlag F_AMS = WeaponTypeFlag.F_AMS;
 

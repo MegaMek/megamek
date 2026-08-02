@@ -32,15 +32,26 @@
  */
 package megamek.client.bot.caspar;
 
+import megamek.client.bot.princess.MutualSupportPathRanker;
+import megamek.client.bot.princess.PathRanker.PathRankerType;
 import megamek.client.bot.princess.Princess;
+import megamek.logging.MMLogger;
 
 /**
  * The CASPAR bot: the experimental successor to {@link Princess}. It shares Princess's entire
- * network/phase/state plumbing and, in this initial version, plays identically to Princess. Experimental
- * behavior is added by overriding Princess's wiring seams (for example {@code initializePathRankers()} and
- * {@code initializeFireControls()}) so that each divergence can be compared against Princess.
+ * network/phase/state plumbing; experimental behavior is added by overriding Princess's wiring seams (for
+ * example {@code initializePathRankers()} and {@code initializeFireControls()}) so that each divergence can
+ * be compared against Princess head-to-head.
+ *
+ * <p>Current divergences from Princess:</p>
+ * <ul>
+ *     <li><b>Mutual Support movement doctrine</b> ({@link MutualSupportPathRanker}): supporting-range
+ *     cohesion instead of center-of-mass herding, a cover bonus for advancing inside a set friend's
+ *     engagement envelope, and a uniform closing tempo so slow and fast elements commit together.</li>
+ * </ul>
  */
 public class Caspar extends Princess {
+    private static final MMLogger LOGGER = MMLogger.create(Caspar.class);
 
     /**
      * Creates a new CASPAR bot with the given display name, configured for the given host and port.
@@ -51,5 +62,15 @@ public class Caspar extends Princess {
      */
     public Caspar(final String name, final String host, final int port) {
         super(name, host, port);
+    }
+
+    @Override
+    public void initializePathRankers() {
+        super.initializePathRankers();
+        // CASPAR divergence: the Mutual Support doctrine replaces the stock ground-unit path ranker.
+        registerPathRanker(PathRankerType.Basic, new MutualSupportPathRanker(this));
+        // Info-level receipt so any headless run's logs prove which ranker this bot is actually using.
+        LOGGER.info("[MutualSupport] {}: CASPAR registered MutualSupportPathRanker for ground units",
+              getLocalPlayer() != null ? getLocalPlayer().getName() : getName());
     }
 }

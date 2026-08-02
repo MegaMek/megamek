@@ -3625,6 +3625,19 @@ public class Princess extends BotClient {
     }
 
     /**
+     * Wiring seam for subclasses (CASPAR): replaces the registered path ranker of the given type, wiring the
+     * replacement to the precognition path enumerator the same way the stock rankers are wired. Call after
+     * {@code super.initializePathRankers()}.
+     *
+     * @param rankerType the ranker slot to replace
+     * @param pathRanker the replacement ranker
+     */
+    protected void registerPathRanker(PathRankerType rankerType, BasicPathRanker pathRanker) {
+        pathRanker.setPathEnumerator(precognition.getPathEnumerator());
+        pathRankers.put(rankerType, pathRanker);
+    }
+
+    /**
      * Reduce utility of TAGging something if we're already trying.  Update the utility if it's better, otherwise try to
      * dissuade the next attacker.
      */

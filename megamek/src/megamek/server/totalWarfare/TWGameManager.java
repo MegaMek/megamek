@@ -22604,7 +22604,7 @@ public class TWGameManager extends AbstractGameManager {
                     tank.immobilize();
                     if (tank.isAirborneVTOLorWIGE()) {
                         reports.addAll(forceLandVTOLorWiGE(tank));
-                    } else if (tank.getMovementMode() == EntityMovementMode.HOVER){
+                    } else if (tank.getMovementMode() == EntityMovementMode.HOVER) {
                         reports.addAll(sinkImmobilizedHover(tank));
                     }
                 }
@@ -31505,7 +31505,7 @@ public class TWGameManager extends AbstractGameManager {
      * @param te         the Tank to damage
      * @param modifier   the modifier to the roll
      * @param noRoll     don't roll, immediately deal damage
-     * @param damageType the type to deal (1 = minor, 2 = moderate, 3 = heavy, 4 = major
+     * @param damageType the type to deal (1 = minor, 2 = moderate, 3 = heavy)
      * @param jumpDamage is this a movement damage roll from using vehicular JJs
      *
      * @return a <code>Vector<Report></code> containing what to add to the turn log
@@ -31682,9 +31682,13 @@ public class TWGameManager extends AbstractGameManager {
     }
 
     /**
-     * Sink a Hover Vehicle immobilized over water
+     * Sink a Hover Vehicle immobilized over water (non-ice)
      *
      * @param tank the Hover Vehicle to sink
+     * <p>
+     * Checks {@link Tank#isMovementHitPending()} as well as {@code getWalkMP() <= 0} since immobilization may be
+     * pending until {@link Tank#applyDamage()} is resolved.
+     * </p>
      *
      * @return a <code>Vector<Report></code> containing what to add to the turn log
      */
@@ -31692,9 +31696,7 @@ public class TWGameManager extends AbstractGameManager {
         Vector<Report> vDesc = new Vector<>();
         if (!tank.isOffBoard() &&
               (tank.getMovementMode() == EntityMovementMode.HOVER &&
-                    (tank.isMovementHitPending() || (tank.getWalkMP() <= 0))
-                    // HACK: Have to check for *pending* hit here and below.
-                    &&
+                    (tank.isMovementHitPending() || (tank.getWalkMP() <= 0)) &&
                     (game.getBoard().getHex(tank.getPosition()).terrainLevel(Terrains.WATER) > 0) &&
                     !game.getBoard().getHex(tank.getPosition()).containsTerrain(Terrains.ICE))) {
             vDesc.addAll(destroyEntity(tank, "a watery grave", false));

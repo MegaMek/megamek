@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2016-2025 The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2016-2026 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -117,6 +117,27 @@ public enum UnitRole {
     /** @return True when this role is not UNDETERMINED. (Returns true for NONE.) */
     public boolean hasRole() {
         return this != UNDETERMINED;
+    }
+
+    /**
+     * Whether this is one of the ground battlefield roles. Ground and aerospace roles are disjoint, and neither set
+     * includes the {@code UNDETERMINED} and {@code NONE} placeholders, so both this and {@link #isAerospaceRole()}
+     * return {@code false} for those.
+     *
+     * @return {@code true} when this role only applies to ground units
+     */
+    public boolean isGroundRole() {
+        return availableTo == GROUND;
+    }
+
+    /**
+     * Whether this is one of the aerospace battlefield roles. See {@link #isGroundRole()} for the placeholder
+     * handling.
+     *
+     * @return {@code true} when this role only applies to aerospace units
+     */
+    public boolean isAerospaceRole() {
+        return availableTo == AERO;
     }
 
     /**

@@ -44,7 +44,6 @@ import megamek.common.actions.WeaponAttackAction;
 import megamek.common.battleArmor.BattleArmor;
 import megamek.common.compute.Compute;
 import megamek.common.compute.ComputeArc;
-import megamek.common.enums.ChargeLevel;
 import megamek.common.game.Game;
 import megamek.common.options.OptionsConstants;
 import megamek.common.units.Entity;
@@ -107,11 +106,6 @@ public class WeaponMounted extends Mounted<WeaponType> {
             }
 
             return getType().getRackSize() * damagePerShot;
-        }
-
-        if (getType().hasFlag(WeaponType.F_BOMBAST_LASER) &&
-              !(getChargeState() == ChargeLevel.CHARGED)) {
-            return 0;
         }
 
         return Game.rulesManager.getRulesExplosions().equipmentDamage(this, getType());

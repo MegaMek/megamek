@@ -84,6 +84,7 @@ public class ISBombastLaser extends LaserWeapon {
         waterExtremeRange = 12;
         tonnage = 7.0;
         criticalSlots = 3;
+        explosive = true;
         bv = 137;
         cost = 200000;
         shortAV = 16;

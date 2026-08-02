@@ -33,16 +33,22 @@
 package megamek.common.actions;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.mockStatic;
 
+import megamek.common.LosEffects;
+import megamek.common.game.Game;
 import megamek.common.interfaces.ILocationExposureStatus;
 import megamek.common.units.Dropship;
 import megamek.common.units.Entity;
 import megamek.common.units.Mek;
+import megamek.common.units.Targetable;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
+import org.mockito.MockedStatic;
 
 /**
  * Tests for {@link ChargeAttackAction#getDamageTakenBy(Entity, Entity, boolean, int)}.
@@ -175,6 +181,8 @@ class ChargeAttackActionTest {
             // = floor(90) / 10 = 9 damage
             Entity attacker = createMockMek(50, false);
             Entity target = createMockMek(75, false);
+            Game game = new Game();
+            game.initializeRulesManager("TW");
 
             int damage = ChargeAttackAction.getDamageTakenBy(attacker, target, true, 3);
 
@@ -192,6 +200,8 @@ class ChargeAttackActionTest {
             // = floor(75) / 10 = 7 damage
             Entity attacker = createMockMek(50, false);
             Dropship target = createMockDropship(3500);
+            Game game = new Game();
+            game.initializeRulesManager("TW");
 
             int damage = ChargeAttackAction.getDamageTakenBy(attacker, target, true, 3);
 
@@ -209,6 +219,8 @@ class ChargeAttackActionTest {
             // = floor(100) / 10 = 10 damage
             Entity attacker = createMockMek(50, false);
             Entity target = createMockMek(50, false);
+            Game game = new Game();
+            game.initializeRulesManager("TW");
 
             int damage = ChargeAttackAction.getDamageTakenBy(attacker, target, true, 4);
 
@@ -224,6 +236,8 @@ class ChargeAttackActionTest {
             // = floor(50) / 10 = 5 damage
             Entity attacker = createMockMek(100, false);
             Entity target = createMockMek(100, false);
+            Game game = new Game();
+            game.initializeRulesManager("TW");
 
             int damage = ChargeAttackAction.getDamageTakenBy(attacker, target, true, 1);
 

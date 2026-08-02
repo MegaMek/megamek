@@ -101,6 +101,7 @@ import megamek.common.planetaryConditions.WindDirection;
 import megamek.common.rolls.PilotingRollData;
 import megamek.common.rules.RulesManager;
 import megamek.common.rules.core.CoreRulesManager;
+import megamek.common.rules.totalwarfare.TWRulesManager;
 import megamek.common.turns.SpecificEntityTurn;
 import megamek.common.turns.TurnOrdered;
 import megamek.common.units.*;
@@ -308,6 +309,15 @@ public final class Game extends AbstractGame implements Serializable, PlanetaryC
         return woodsClearingTracker;
     }
 
+    public void initializeRulesManager(String system) {
+        // used for testing
+        if (system.contains("TW")) {
+            rulesManager = new TWRulesManager();
+        } else if (system.contains("Core")) {
+            rulesManager = new CoreRulesManager();
+        }
+    }
+
     public void initializeRulesManager() {
         boolean bTWRules = false;
         IOption rules_system = getOptions().getOption(OptionsConstants.RULES_SYSTEM);
@@ -317,9 +327,10 @@ public final class Game extends AbstractGame implements Serializable, PlanetaryC
             bTWRules = true;
         }
         if (bTWRules) {
-            rulesManager = new megamek.common.rules.totalwarfare.TWRulesManager();
-        } 
-        rulesManager = new CoreRulesManager();
+            rulesManager = new TWRulesManager();
+        } else {
+            rulesManager = new CoreRulesManager();
+        }
     }
     
     /**

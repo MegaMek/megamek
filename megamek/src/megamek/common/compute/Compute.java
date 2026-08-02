@@ -6346,7 +6346,7 @@ public class Compute {
         }
         final Hex hex = game.getBoard(boardId).getHex(coords);
 
-        if (!hex.containsTerrain(Terrains.BLDG_ELEV)) {
+        if (!hex.containsTerrain(Terrains.BLDG_ELEV) || hex == null) {
             return false;
         }
 

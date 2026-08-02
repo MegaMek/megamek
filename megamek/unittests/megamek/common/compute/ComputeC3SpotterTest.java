@@ -38,12 +38,17 @@ import static org.mockito.ArgumentMatchers.anyInt;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.mockStatic;
+
+import megamek.common.Hex;
+import org.junit.jupiter.api.AfterEach;
+import org.mockito.MockedStatic;
 
 import java.util.ArrayList;
 import java.util.List;
 
 import megamek.common.ECMInfo;
-import megamek.common.Hex;
+import megamek.common.LosEffects;
 import megamek.common.Player;
 import megamek.common.board.Board;
 import megamek.common.board.Coords;
@@ -68,6 +73,9 @@ class ComputeC3SpotterTest {
 
     private Game mockGame;
     private List<Entity> gameEntities;
+    private LosEffects mockLosEffects;
+    private Hex mockHex;
+    private MockedStatic<LosEffects> mockStaticLosEffects;
 
     @BeforeAll
     static void beforeAll() {
@@ -78,10 +86,14 @@ class ComputeC3SpotterTest {
     void setUp() {
         Player mockPlayer = mock(Player.class);
 
+        mockHex = mock(Hex.class);
+        when(mockHex.containsTerrain(anyInt())).thenReturn(false);
+
         Board mockBoard = mock(Board.class);
         when(mockBoard.isSpace()).thenReturn(false);
         when(mockBoard.contains(any(Coords.class))).thenReturn(true);
         when(mockBoard.contains(anyInt(), anyInt())).thenReturn(true);
+        when(mockBoard.getHex(any(Coords.class))).thenReturn(mockHex);
 
         GameOptions mockOptions = mock(GameOptions.class);
         when(mockOptions.booleanOption(anyString())).thenReturn(false);
@@ -102,6 +114,20 @@ class ComputeC3SpotterTest {
         when(mockGame.onTheSameBoard(any(Entity.class), any(Entity.class))).thenReturn(true);
         when(mockGame.hasBoardLocationOf(any(Targetable.class))).thenReturn(true);
         when(mockGame.hasBoardLocation(any(Coords.class),anyInt())).thenReturn(true);
+
+        mockLosEffects = mock(LosEffects.class);
+        when(mockLosEffects.isBlocked()).thenReturn(false);
+
+        mockStaticLosEffects = mockStatic(LosEffects.class);
+        mockStaticLosEffects.when(() -> LosEffects.calculateLOS(any(Game.class), any(Entity.class),
+              any(Targetable.class))).thenReturn(mockLosEffects);
+    }
+
+    @AfterEach
+    void tearDown() {
+        if (mockStaticLosEffects != null) {
+            mockStaticLosEffects.close();
+        }
     }
 
     private Mek createMek(int id, Coords position) {

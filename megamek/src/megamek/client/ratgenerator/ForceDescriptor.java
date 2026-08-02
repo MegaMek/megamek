@@ -133,6 +133,10 @@ public class ForceDescriptor {
     // the cluster node (deliberately NOT copied to children in createChild) and consumed by
     // WeightBudgetAllocator after the tree is built. Null means no budget for this node.
     private Map<Integer, WeightTarget> weightTargets;
+    // How many of this force's unit slots a UnitRole percentage mix would be free to govern, surveyed
+    // after the tree is built and before units are picked. Set only on the root node and read by the
+    // Force Generator's Composition Summary. Null until a force has been generated.
+    private RoleCoverageReport roleCoverageReport;
     private final HashSet<EntityMovementMode> movementModes;
     private final HashSet<MissionRole> roles;
     private String rating;
@@ -2299,6 +2303,20 @@ public class ForceDescriptor {
 
     public void setWeightTargets(Map<Integer, WeightTarget> weightTargets) {
         this.weightTargets = weightTargets;
+    }
+
+    /**
+     * How many of this force's unit slots a {@link megamek.common.units.UnitRole} percentage mix would be free to
+     * govern. Set on the root node only, once the force tree has been built.
+     *
+     * @return the slot coverage survey, or {@code null} if no force has been generated yet
+     */
+    public @Nullable RoleCoverageReport getRoleCoverageReport() {
+        return roleCoverageReport;
+    }
+
+    public void setRoleCoverageReport(@Nullable RoleCoverageReport roleCoverageReport) {
+        this.roleCoverageReport = roleCoverageReport;
     }
 
     public Integer getUnitType() {

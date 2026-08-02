@@ -228,6 +228,11 @@ public class Ruleset {
         // blocks before units are picked. Data-gated -- a no-op for any cluster that declares no
         // targets, so factions without <weightTarget> generate exactly as before.
         WeightBudgetAllocator.allocate(fd);
+        // Count how many unit slots a UnitRole percentage mix would be free to govern. Runs in the same
+        // window the role budget allocator will use: the tree is built so weight classes and formation
+        // assignments are final, but no unit has been picked yet. Read-only - it changes no state on the
+        // tree, only records the split so the Composition Summary can show it.
+        fd.setRoleCoverageReport(RoleSlotSurvey.survey(fd));
         fd.generateUnits(l, PROGRESS_GENERATE_UNITS);
         if (null != l) {
             l.updateProgress(0, "Finalizing formation");

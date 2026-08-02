@@ -158,6 +158,8 @@ public class ForceGeneratorOptionsView extends JPanel implements FocusListener, 
     /** Post-generation summary: unit type rows, Light/Medium/Heavy/Assault columns. */
     private JTable tblSummary;
     private DefaultTableModel summaryModel;
+    /** Slot coverage a UnitRole percentage mix would have over the generated force. */
+    private JLabel lblRoleCoverage;
 
     private JButton btnGenerate;
     private JButton btnExportMUL;
@@ -384,8 +386,7 @@ public class ForceGeneratorOptionsView extends JPanel implements FocusListener, 
         // to occupy the full dialog row, matching how panGroundRole / panInfRole are laid out above.
         JPanel transportAndSummary = new JPanel(new BorderLayout(10, 0));
         transportAndSummary.add(panTransport, BorderLayout.WEST);
-        JScrollPane panSummary = createSummaryTable();
-        transportAndSummary.add(panSummary, BorderLayout.CENTER);
+        transportAndSummary.add(createSummaryPanel(), BorderLayout.CENTER);
 
         gbc.gridx = 0;
         gbc.gridy = y++;
@@ -810,6 +811,20 @@ public class ForceGeneratorOptionsView extends JPanel implements FocusListener, 
     }
 
     /**
+     * Builds the Composition Summary block: the per-unit-type weight breakdown table, with the role-mix slot coverage
+     * line beneath it.
+     */
+    private JPanel createSummaryPanel() {
+        JPanel summaryPanel = new JPanel(new BorderLayout(0, 2));
+        summaryPanel.setOpaque(false);
+        summaryPanel.add(createSummaryTable(), BorderLayout.CENTER);
+        lblRoleCoverage = new JLabel(" ");
+        lblRoleCoverage.setToolTipText(Messages.getString("ForceGeneratorDialog.summary.roleCoverage.tooltip"));
+        summaryPanel.add(lblRoleCoverage, BorderLayout.SOUTH);
+        return summaryPanel;
+    }
+
+    /**
      * Walks the generated force tree, buckets each entity into (unit type, weight class), and rebuilds the summary
      * table. Weight-class codes 0-1 collapse into Light and 4-5 into Assault to keep the table to a clean four
      * columns.
@@ -818,6 +833,7 @@ public class ForceGeneratorOptionsView extends JPanel implements FocusListener, 
      */
     private void updateSummaryTable(ForceDescriptor fd) {
         summaryModel.setRowCount(0);
+        updateRoleCoverageLabel(fd);
         if (fd == null) {
             return;
         }
@@ -900,10 +916,32 @@ public class ForceGeneratorOptionsView extends JPanel implements FocusListener, 
         return String.valueOf(squads);
     }
 
+    /**
+     * Shows how many of the generated force's unit slots a {@link megamek.common.units.UnitRole} percentage mix would
+     * be free to shape, and how many the Campaign Operations formation builder already owns. Without this the split is
+     * invisible, and a mix that legitimately governs only part of the force reads as though it did nothing.
+     *
+     * @param forceDescriptor the generated force, or {@code null} to blank the line
+     */
+    private void updateRoleCoverageLabel(@Nullable ForceDescriptor forceDescriptor) {
+        if (lblRoleCoverage == null) {
+            return;
+        }
+        RoleCoverageReport report = (forceDescriptor == null) ? null : forceDescriptor.getRoleCoverageReport();
+        if ((report == null) || (report.totalUnitSlots() == 0)) {
+            lblRoleCoverage.setText(" ");
+            return;
+        }
+        lblRoleCoverage.setText(Messages.getString("ForceGeneratorDialog.summary.roleCoverage",
+              report.governedSlots(), report.totalUnitSlots(), report.governedPercent(),
+              report.slotsSetByFormation()));
+    }
+
     private void clearSummaryTable() {
         if (summaryModel != null) {
             summaryModel.setRowCount(0);
         }
+        updateRoleCoverageLabel(null);
     }
 
     private void refreshFactions() {

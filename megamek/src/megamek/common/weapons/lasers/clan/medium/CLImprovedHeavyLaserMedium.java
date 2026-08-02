@@ -78,6 +78,7 @@ public class CLImprovedHeavyLaserMedium extends LaserWeapon {
         explosionDamage = 5;
         explosive = true;
         rulesRefs = "133, TO:AUE";
+        flags = flags.or(S_IMPROVED);
         // Tech Progression tweaked to combine IntOps with TRO Prototypes/3145 NTNU RS
         techAdvancement.setTechBase(TechBase.CLAN).setTechRating(TechRating.F)
               .setAvailability(AvailabilityValue.X, AvailabilityValue.X, AvailabilityValue.D, AvailabilityValue.D)

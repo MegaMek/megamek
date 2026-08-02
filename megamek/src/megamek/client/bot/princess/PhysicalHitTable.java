@@ -59,6 +59,26 @@ final class PhysicalHitTable {
     }
 
     /**
+     * Returns the height the entity would have in the given (possibly hypothetical) stance.
+     * {@link Entity#getHeight()} reads the CURRENT stance - a currently-prone Mek reports 0 even when the
+     * projected state stands it up, and a currently-standing superheavy reports 2 that a projected prone
+     * state should flatten. Only when the projected stance differs from the current one is the Mek height
+     * reconstructed (superheavies stand two levels tall); otherwise the entity's own height - including
+     * exotic overrides like LAMs in fighter mode - is trusted as-is.
+     *
+     * @param entity         the entity whose height is wanted
+     * @param projectedProne whether the projected state has the entity prone (or hull-down)
+     *
+     * @return the height above its base level the entity would have in the projected stance
+     */
+    static int projectedHeight(Entity entity, boolean projectedProne) {
+        if ((entity instanceof Mek mek) && (projectedProne != mek.isProne())) {
+            return projectedProne ? 0 : (mek.isSuperHeavy() ? 2 : 1);
+        }
+        return entity.getHeight();
+    }
+
+    /**
      * Resolves the hit-location table for the given physical attack.
      *
      * @param attackType   the punch, kick, or physical-weapon attack being evaluated
@@ -98,21 +118,17 @@ final class PhysicalHitTable {
             return fallbackTable;
         }
 
-        // Absolute levels: hex floor plus the unit's elevation above it. A prone target has height 0.
-        // As with the attacker, getHeight() reads the current stance, so a currently-prone Mek whose
-        // projected state is standing needs its standing height restored; vehicles genuinely are height 0.
-        int targetHeightAboveFloor = targetState.isProne() ? 0
-              : ((targetEntity instanceof Mek) ? Math.max(1, targetEntity.getHeight())
-                    : targetEntity.getHeight());
+        // Absolute levels: hex floor plus the unit's elevation above it, with heights taken in the
+        // PROJECTED stance (see projectedHeight).
+        int targetHeightAboveFloor = projectedHeight(targetEntity, targetState.isProne());
         int targetBase = targetState.getElevation() + targetHex.getLevel();
         int targetTop = targetBase + targetHeightAboveFloor;
 
         if (attackType.isPunch()) {
-            // Arms level: the attacker's top. Prone attackers are rejected as illegal before this matters,
-            // but Entity#getHeight() reads the CURRENT stance - a currently-prone Mek planning to stand
-            // reports height 0, so clamp to at least 1 for the projected standing height.
+            // Arms level: the attacker's top in its projected stance. Prone attackers are rejected as
+            // illegal before table selection matters.
             int attackerArms = shooterState.getElevation() + attackerHex.getLevel()
-                  + Math.max(1, shooter.getHeight());
+                  + projectedHeight(shooter, shooterState.isProne());
             if (attackerArms == targetBase) {
                 // punching at the target's feet: legs, or the full body of a height-zero target
                 return (targetHeightAboveFloor == 0) ? ToHitData.HIT_NORMAL : ToHitData.HIT_KICK;

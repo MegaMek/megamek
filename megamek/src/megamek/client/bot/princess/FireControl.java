@@ -575,14 +575,18 @@ public class FireControl {
             return new ToHitData(TH_PHY_NOT_IN_ARC);
         }
 
-        // Check elevation difference. Use the (possibly hypothetical) state elevations, not the entities'
-        // current ones: a path can end on a different level than the unit stands on now.
+        // Check elevation difference. Use the (possibly hypothetical) state elevations and stances, not the
+        // entities' current ones: a path can end on a different level, or in a different stance, than the
+        // unit is in now.
         final Hex attackerHex = game.getBoard(target).getHex(shooterState.getPosition());
         final Hex targetHex = game.getBoard(target).getHex(targetState.getPosition());
         final int attackerElevation = shooterState.getElevation() + attackerHex.getLevel();
-        final int attackerHeight = attackerElevation + (shooterState.isProne() ? 0 : shooter.getHeight());
+        final int attackerHeight = attackerElevation
+              + PhysicalHitTable.projectedHeight(shooterMek, shooterState.isProne());
         final int targetElevation = targetState.getElevation() + targetHex.getLevel();
-        final int targetHeight = targetElevation + target.getHeight();
+        final int targetHeight = targetElevation + ((target instanceof Entity targetEntity)
+              ? PhysicalHitTable.projectedHeight(targetEntity, targetState.isProne())
+              : target.getHeight());
         if (attackType.isPunch()) {
             if (shooter.hasQuirk(OptionsConstants.QUIRK_NEG_NO_ARMS)) {
                 return new ToHitData(TH_PHY_P_NO_ARMS_QUIRK);

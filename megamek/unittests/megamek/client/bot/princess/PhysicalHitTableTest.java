@@ -146,6 +146,19 @@ class PhysicalHitTableTest {
     }
 
     @Test
+    void testKickFromAboveOnStandingSuperHeavyStillHitsLegs() {
+        // A currently-prone superheavy whose projected state stands it up is two levels tall, so a kick
+        // from one level above still lands on its legs - not the punch table a normal Mek would offer.
+        when(targetMek.isSuperHeavy()).thenReturn(true);
+        when(targetMek.isProne()).thenReturn(true);
+        when(targetMek.getHeight()).thenReturn(0);
+        when(targetState.isProne()).thenReturn(false);
+        setHexLevels(1, 0);
+        assertEquals(ToHitData.HIT_KICK, PhysicalHitTable.resolve(PhysicalAttackType.RIGHT_KICK,
+              attacker, attackerState, targetMek, targetState, mockGame));
+    }
+
+    @Test
     void testMissingBoardFallsBackToAttackTypeTable() {
         Game boardlessGame = mock(Game.class);
         assertEquals(ToHitData.HIT_KICK, PhysicalHitTable.resolve(PhysicalAttackType.RIGHT_KICK,

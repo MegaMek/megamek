@@ -23780,7 +23780,7 @@ public class TWGameManager extends AbstractGameManager {
     // package-private for testing
     int applyBreachEdge(Entity entity, int loc, int target, int breachRoll, Vector<Report> reportVector,
           boolean lowFail) {
-        boolean isBreach = breachRoll >= target;
+        boolean isBreach = (lowFail) ? (breachRoll <= target) : (breachRoll >= target);
         boolean shouldUseEdge = entity.shouldUseEdge(OptionsConstants.EDGE_WHEN_BREACH);
 
         if (isBreach && shouldUseEdge) {

@@ -41,6 +41,7 @@ import static org.mockito.Mockito.when;
 import static org.mockito.Mockito.mockStatic;
 
 import megamek.common.Hex;
+import megamek.common.planetaryConditions.Light;
 import org.junit.jupiter.api.AfterEach;
 import org.mockito.MockedStatic;
 
@@ -76,6 +77,8 @@ class ComputeC3SpotterTest {
     private LosEffects mockLosEffects;
     private Hex mockHex;
     private MockedStatic<LosEffects> mockStaticLosEffects;
+    private PlanetaryConditions mockConditions;
+    private Board mockBoard;
 
     @BeforeAll
     static void beforeAll() {
@@ -89,7 +92,7 @@ class ComputeC3SpotterTest {
         mockHex = mock(Hex.class);
         when(mockHex.containsTerrain(anyInt())).thenReturn(false);
 
-        Board mockBoard = mock(Board.class);
+        mockBoard = mock(Board.class);
         when(mockBoard.isSpace()).thenReturn(false);
         when(mockBoard.contains(any(Coords.class))).thenReturn(true);
         when(mockBoard.contains(anyInt(), anyInt())).thenReturn(true);
@@ -106,7 +109,7 @@ class ComputeC3SpotterTest {
         when(mockGame.getBoard(any(Targetable.class))).thenReturn(mockBoard);
         when(mockGame.getOptions()).thenReturn(mockOptions);
         when(mockGame.getPlayer(anyInt())).thenReturn(mockPlayer);
-        when(mockGame.getPlanetaryConditions()).thenReturn(new PlanetaryConditions());
+        when(mockGame.getPlanetaryConditions()).thenReturn(mockConditions);
         when(mockGame.getSmokeCloudList()).thenReturn(new ArrayList<>());
         when(mockGame.getEntitiesVector()).thenReturn(gameEntities);
         when(mockGame.isOnGroundMap(any(Entity.class))).thenReturn(true);
@@ -114,6 +117,10 @@ class ComputeC3SpotterTest {
         when(mockGame.onTheSameBoard(any(Entity.class), any(Entity.class))).thenReturn(true);
         when(mockGame.hasBoardLocationOf(any(Targetable.class))).thenReturn(true);
         when(mockGame.hasBoardLocation(any(Coords.class),anyInt())).thenReturn(true);
+        when(mockGame.getPlanetaryConditions()).thenReturn(mockConditions);
+
+        mockConditions = mock(PlanetaryConditions.class);
+        when(mockConditions.getLight()).thenReturn(Light.DAY);
 
         mockLosEffects = mock(LosEffects.class);
         when(mockLosEffects.isBlocked()).thenReturn(false);

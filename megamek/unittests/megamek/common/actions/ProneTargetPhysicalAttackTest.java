@@ -188,6 +188,7 @@ public class ProneTargetPhysicalAttackTest {
         when(mockGame.getEntity(1)).thenReturn(mockAttacker);
         when(mockGame.getEntity(2)).thenReturn(mockTarget);
         when(mockGame.onTheSameBoard(mockAttacker, mockTarget)).thenReturn(true);
+        when(mockGame.getPlanetaryConditions()).thenReturn(mockConditions);
     }
 
     /**

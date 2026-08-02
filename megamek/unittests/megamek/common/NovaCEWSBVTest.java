@@ -71,6 +71,7 @@ public class NovaCEWSBVTest {
     @BeforeEach
     void setUp() {
         game = new Game();
+        game.initializeRulesManager("Core");
         game.addPlayer(0, new Player(0, "Test Player"));
         nextEntityId = 1;
     }

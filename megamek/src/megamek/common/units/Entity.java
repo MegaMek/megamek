@@ -15319,7 +15319,7 @@ public abstract class Entity extends TurnOrdered
             } else if (hasNovaCEWS()) { //Nova CEWS applies 5% to every mek with Nova on the team {
                 int novaMembers = 1;
                 for (Entity entity : game.getEntitiesVector()) {
-                    if (!equals(this) && entity.hasNovaCEWS() && !(entity.owner.isEnemyOf(this.owner))) {
+                    if (!entity.equals(this) && entity.hasNovaCEWS() && !(entity.owner.isEnemyOf(this.owner))) {
                         novaMembers++;
                     }
                 }

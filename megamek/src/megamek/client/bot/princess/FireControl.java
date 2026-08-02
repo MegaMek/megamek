@@ -208,7 +208,7 @@ public class FireControl {
     static final TargetRollModifier TH_WEAPON_FLAK_HAG = new TargetRollModifier(-3,
           "HAG Flak vs airborne target");
     static final TargetRollModifier TH_APOLLO = new TargetRollModifier(-1, "Apollo FCS");
-    static final TargetRollModifier TH_AP_AMMO = new TargetRollModifier(1, "armor-piercing ammo");
+    static final TargetRollModifier TH_AP_AMMO = new TargetRollModifier(0, "armor-piercing ammo");
     static final TargetRollModifier TH_WEAPON_NO_ARC = new TargetRollModifier(TargetRoll.IMPOSSIBLE, "not in arc");
     static final TargetRollModifier TH_INF_ZERO_RNG = new TargetRollModifier(TargetRoll.AUTOMATIC_FAIL,
           "non-infantry shooting with zero range");

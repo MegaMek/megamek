@@ -85,6 +85,7 @@ import megamek.common.options.OptionsConstants;
 import megamek.common.options.PilotOptions;
 import megamek.common.planetaryConditions.Atmosphere;
 import megamek.common.planetaryConditions.PlanetaryConditions;
+import megamek.common.rules.totalwarfare.TWRulesManager;
 import megamek.common.units.*;
 import megamek.common.weapons.attacks.StopSwarmAttack;
 import megamek.common.weapons.missiles.ATMWeapon;
@@ -2739,9 +2740,12 @@ class FireControlTest {
         when(mockAmmoType.getMunitionType()).thenReturn(EnumSet.of(AmmoType.Munitions.M_ARMOR_PIERCING));
 
         // Armor-piercing autocannon ammo adds +1 to-hit.
+        // In core there is no penalty.
         ToHitData expected = new ToHitData(mockShooter.getCrew().getGunnery(), FireControl.TH_GUNNERY);
         expected.addModifier(FireControl.TH_MEDIUM_RANGE);
-        expected.addModifier(FireControl.TH_AP_AMMO);
+        if (Game.rulesManager instanceof TWRulesManager) {
+            expected.addModifier(FireControl.TH_AP_AMMO);
+        }
         assertToHitDataEquals(expected,
               testFireControl.guessToHitModifierForWeapon(mockShooter,
                     mockShooterState,
@@ -2751,7 +2755,6 @@ class FireControlTest {
                     mockAmmo,
                     mockGame));
 
-        // In core there is no penalty.
         ToHitData expectedNoPenalty = new ToHitData(mockShooter.getCrew().getGunnery(), FireControl.TH_GUNNERY);
         expectedNoPenalty.addModifier(FireControl.TH_MEDIUM_RANGE);
         assertToHitDataEquals(expectedNoPenalty,

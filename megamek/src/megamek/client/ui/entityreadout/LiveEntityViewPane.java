@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2021-2025 The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2021-2026 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -39,6 +39,7 @@ import megamek.client.ui.Messages;
 import megamek.client.ui.baseComponents.MenuButton;
 import megamek.client.ui.clientGUI.calculationReport.FlexibleCalculationReport;
 import megamek.client.ui.dialogs.unitSelectorDialogs.AvailabilityPanel;
+import megamek.client.ui.dialogs.unitSelectorDialogs.DamageAnalysisPanel;
 import megamek.client.ui.dialogs.unitSelectorDialogs.EntityReadoutPanel;
 import megamek.client.ui.panels.alphaStrike.ConfigurableASCardPanel;
 import megamek.client.ui.util.ViewFormatting;
@@ -57,6 +58,7 @@ class LiveEntityViewPane extends EnhancedTabbedPane {
     private final EntityReadoutPanel troPanel = new EntityReadoutPanel();
     private final ConfigurableASCardPanel alphaStrikeCardPanel;
     private final AvailabilityPanel factionPanel = new AvailabilityPanel();
+    private final DamageAnalysisPanel analysisPanel = new DamageAnalysisPanel();
     private boolean menuVisible = true;
 
     private final int entityId;
@@ -89,6 +91,7 @@ class LiveEntityViewPane extends EnhancedTabbedPane {
         addTab(Messages.getString("TRO.title"), troPanel);
         addTab(Messages.getString("ASCard.title"), alphaStrikeCardPanel);
         addTab(Messages.getString("FactionAvailability.title"), factionPanel.getPanel());
+        addTab(Messages.getString("DamageAnalysis.title"), analysisPanel);
 
         updateDisplayedEntity();
     }
@@ -109,6 +112,8 @@ class LiveEntityViewPane extends EnhancedTabbedPane {
                 alphaStrikeCardPanel.setASElement(ASConverter.convert(entity, new FlexibleCalculationReport()));
             }
         }
+
+        analysisPanel.setEntity(entity);
     }
 
     private void toggleMenus() {

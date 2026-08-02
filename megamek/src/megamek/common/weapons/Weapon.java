@@ -107,6 +107,7 @@ public abstract class Weapon extends WeaponType implements Serializable {
     public static final String MODE_RAC_FIVE_SHOT = "5-shot";
     public static final String MODE_RAC_SIX_SHOT = "6-shot";
 
+    public static final String MODE_GAUSS_POWERED_UP = "Powered Up";
     public static final String MODE_GAUSS_POWERED_DOWN = "Powered Down";
 
     public static final String MODE_MISSILE_INDIRECT = "Indirect";

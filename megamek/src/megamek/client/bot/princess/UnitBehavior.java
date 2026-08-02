@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2020-2025 The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2020-2026 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -74,7 +74,9 @@ public class UnitBehavior {
     private BehaviorType calculateUnitBehavior(Entity entity, Princess owner) {
         BehaviorSettings botSettings = owner.getBehaviorSettings();
 
-        if (botSettings.isForcedWithdrawal() && entity.isCrippled()) {
+        // isCrippled(true) so crew-crippled Meks withdraw too, matching Princess.refreshCrippledUnits and the
+        // firing-suppression checks (isCrippled() skips crew damage for Meks)
+        if (botSettings.isForcedWithdrawal() && entity.isCrippled(true)) {
             if (owner.getClusterTracker().getDestinationCoords(entity, owner.getHomeEdge(entity), true).isEmpty()) {
                 return BehaviorType.NoPathToDestination;
             }

@@ -110,6 +110,7 @@ import megamek.common.compute.Compute;
 import megamek.common.compute.ComputeArc;
 import megamek.common.compute.ComputeECM;
 import megamek.common.enums.MoveStepType;
+import megamek.common.equipment.EquipmentActivation;
 import megamek.common.equipment.Minefield;
 import megamek.common.equipment.Mounted;
 import megamek.common.equipment.WeaponType;
@@ -4384,6 +4385,14 @@ public final class BoardView extends AbstractBoardView
         } else if (entity.getC3Master() != null) {
             Entity eMaster = entity.getC3Master();
             if (eMaster.getPosition() == null) {
+                return;
+            }
+
+            // A unit whose C3 gear is switched off is not on the network, so neither end draws a link. The
+            // non-hierarchic branches above get this from onSameC3NetworkAs(); the hierarchic branch does not
+            // consult it, so the same check is applied here. Network wiring is left intact, so the links come
+            // back when the gear is switched on again.
+            if (EquipmentActivation.isC3SwitchedOff(entity) || EquipmentActivation.isC3SwitchedOff(eMaster)) {
                 return;
             }
 

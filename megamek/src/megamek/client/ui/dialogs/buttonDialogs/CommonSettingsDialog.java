@@ -532,6 +532,15 @@ public class CommonSettingsDialog extends AbstractButtonDialog
     private final JCheckBox planetaryConditionsShowIndicators = new JCheckBox(Messages.getString(
           "CommonSettingsDialog.planetaryConditionsShowIndicators"));
     private JSpinner planetaryConditionsBackgroundTransparency;
+
+    private final JCheckBox toastEnabled = new JCheckBox(Messages.getString("CommonSettingsDialog.toastEnabled"));
+    private final JCheckBox toastReportEvents = new JCheckBox(Messages.getString(
+          "CommonSettingsDialog.toastReportEvents"));
+    private JSpinner toastDurationSpinner;
+    private JLabel toastDurationLabel;
+    private JSpinner toastDripSpinner;
+    private JLabel toastDripLabel;
+
     private JSlider traceOverlayTransparencySlider;
     private JSlider traceOverlayScaleSlider;
     private JSlider traceOverlayOriginXSlider;
@@ -562,6 +571,26 @@ public class CommonSettingsDialog extends AbstractButtonDialog
 
     private static final Dimension LABEL_SPACER = new Dimension(5, 0);
     private static final Dimension DEPENDENT_INSET = new Dimension(25, 0);
+
+    /** Shortest and longest display/spacing time the toast spinners allow, in seconds. */
+    private static final int MIN_TOAST_SECONDS = 1;
+    private static final int MAX_TOAST_SECONDS = 10;
+    /** Wrap width for the multi-line warning under the toast on/off checkbox, before GUI scaling. */
+    private static final int TOAST_WARNING_WIDTH_PX = 480;
+
+    /**
+     * Clamps a persisted toast-timing value into the range the toast spinners allow. Guards against a
+     * hand-edited or corrupted preferences file: {@link SpinnerNumberModel}'s constructor throws an
+     * {@link IllegalArgumentException} when its initial value falls outside {@code [minimum, maximum]},
+     * which would crash the Overlays tab as it is built.
+     *
+     * @param seconds the stored timing value in seconds, possibly out of range
+     *
+     * @return the value clamped to {@code [MIN_TOAST_SECONDS, MAX_TOAST_SECONDS]}
+     */
+    private static int clampToastSeconds(int seconds) {
+        return Math.min(MAX_TOAST_SECONDS, Math.max(MIN_TOAST_SECONDS, seconds));
+    }
 
     // Save some values to restore them when the dialog is canceled
     private boolean savedFovHighlight;
@@ -1747,6 +1776,67 @@ public class CommonSettingsDialog extends AbstractButtonDialog
 
         addLineSpacer(comps);
 
+        // Set the state before checkboxEntry() attaches the item listener: the listener drives the dependent
+        // controls, which are not built until further down this method.
+        toastEnabled.setSelected(GUIP.getToastEnabled());
+        comps.add(checkboxEntry(toastEnabled, Messages.getString("CommonSettingsDialog.toastEnabled.tooltip")));
+
+        // The warning stays visible whether or not toasts are on: a player deciding whether to switch them off needs
+        // to read it before clicking, not after.
+        JLabel toastDisabledWarning = new JLabel("<html><body style='width: "
+              + UIUtil.scaleForGUI(TOAST_WARNING_WIDTH_PX) + "px'>"
+              + Messages.getString("CommonSettingsDialog.toastEnabled.warning") + "</body></html>");
+        toastDisabledWarning.setToolTipText(Messages.getString("CommonSettingsDialog.toastEnabled.tooltip"));
+        row = new ArrayList<>();
+        row.add(Box.createRigidArea(DEPENDENT_INSET));
+        row.add(toastDisabledWarning);
+        comps.add(row);
+
+        addSpacer(comps, 3);
+
+        SpinnerNumberModel toastDurationModel = new SpinnerNumberModel(
+              clampToastSeconds(GUIP.getToastDurationSeconds()),
+              MIN_TOAST_SECONDS,
+              MAX_TOAST_SECONDS,
+              1);
+        toastDurationSpinner = new JSpinner(toastDurationModel);
+        toastDurationSpinner.setMaximumSize(new Dimension(150, 40));
+        toastDurationSpinner.setToolTipText(Messages.getString("CommonSettingsDialog.toastDurationSeconds.tooltip"));
+        toastDurationLabel = new JLabel(Messages.getString("CommonSettingsDialog.toastDurationSeconds"));
+        toastDurationLabel.setToolTipText(Messages.getString("CommonSettingsDialog.toastDurationSeconds.tooltip"));
+        row = new ArrayList<>();
+        row.add(Box.createRigidArea(DEPENDENT_INSET));
+        row.add(toastDurationSpinner);
+        row.add(toastDurationLabel);
+        comps.add(row);
+
+        SpinnerNumberModel toastDripModel = new SpinnerNumberModel(
+              clampToastSeconds(GUIP.getToastDripSeconds()),
+              MIN_TOAST_SECONDS,
+              MAX_TOAST_SECONDS,
+              1);
+        toastDripSpinner = new JSpinner(toastDripModel);
+        toastDripSpinner.setMaximumSize(new Dimension(150, 40));
+        toastDripSpinner.setToolTipText(Messages.getString("CommonSettingsDialog.toastDripSeconds.tooltip"));
+        toastDripLabel = new JLabel(Messages.getString("CommonSettingsDialog.toastDripSeconds"));
+        toastDripLabel.setToolTipText(Messages.getString("CommonSettingsDialog.toastDripSeconds.tooltip"));
+        row = new ArrayList<>();
+        row.add(Box.createRigidArea(DEPENDENT_INSET));
+        row.add(toastDripSpinner);
+        row.add(toastDripLabel);
+        comps.add(row);
+
+        toastReportEvents.setSelected(GUIP.getToastReportEvents());
+        row = new ArrayList<>();
+        row.add(Box.createRigidArea(DEPENDENT_INSET));
+        row.addAll(checkboxEntry(toastReportEvents,
+              Messages.getString("CommonSettingsDialog.toastReportEvents.tooltip")));
+        comps.add(row);
+
+        setToastControlsEnabled(toastEnabled.isSelected());
+
+        addLineSpacer(comps);
+
         addSpacer(comps, 1);
 
         JLabel traceOverlayTransparencyLabel = new JLabel(Messages.getString(
@@ -2232,6 +2322,20 @@ public class CommonSettingsDialog extends AbstractButtonDialog
         return row;
     }
 
+    /**
+     * Greys out the toast timing and report-echo controls when toasts are switched off entirely, since none of them
+     * have any effect in that state.
+     *
+     * @param enabled {@code true} when board toasts are switched on
+     */
+    private void setToastControlsEnabled(boolean enabled) {
+        toastDurationSpinner.setEnabled(enabled);
+        toastDurationLabel.setEnabled(enabled);
+        toastDripSpinner.setEnabled(enabled);
+        toastDripLabel.setEnabled(enabled);
+        toastReportEvents.setEnabled(enabled);
+    }
+
     private void addLineSpacer(List<List<Component>> comps) {
         List<Component> row = new ArrayList<>();
         row.add(Box.createRigidArea(new Dimension(0, 10)));
@@ -2676,6 +2780,12 @@ public class CommonSettingsDialog extends AbstractButtonDialog
         planetaryConditionsShowValues.setSelected(GUIP.getPlanetaryConditionsShowValues());
         planetaryConditionsShowIndicators.setSelected(GUIP.getPlanetaryConditionsShowIndicators());
         planetaryConditionsBackgroundTransparency.setValue(GUIP.getPlanetaryConditionsBackgroundTransparency());
+
+        toastEnabled.setSelected(GUIP.getToastEnabled());
+        toastDurationSpinner.setValue(clampToastSeconds(GUIP.getToastDurationSeconds()));
+        toastDripSpinner.setValue(clampToastSeconds(GUIP.getToastDripSeconds()));
+        toastReportEvents.setSelected(GUIP.getToastReportEvents());
+        setToastControlsEnabled(toastEnabled.isSelected());
 
         traceOverlayTransparencySlider.setValue(GUIP.getTraceOverlayTransparency());
         traceOverlayScaleSlider.setValue(GUIP.getTraceOverlayScale());
@@ -3167,6 +3277,11 @@ public class CommonSettingsDialog extends AbstractButtonDialog
         GUIP.setPlanetaryConditionsBackgroundTransparency(
               (Integer) planetaryConditionsBackgroundTransparency.getValue());
 
+        GUIP.setToastEnabled(toastEnabled.isSelected());
+        GUIP.setToastDurationSeconds((Integer) toastDurationSpinner.getValue());
+        GUIP.setToastDripSeconds((Integer) toastDripSpinner.getValue());
+        GUIP.setToastReportEvents(toastReportEvents.isSelected());
+
         GUIP.setTraceOverlayTransparency(traceOverlayTransparencySlider.getValue());
         GUIP.setTraceOverlayScale(traceOverlayScaleSlider.getValue());
         GUIP.setTraceOverlayOriginX(traceOverlayOriginXSlider.getValue());
@@ -3188,6 +3303,8 @@ public class CommonSettingsDialog extends AbstractButtonDialog
         } else if (source.equals(stampFilenames)) {
             stampFormat.setEnabled(stampFilenames.isSelected());
             stampFormatLabel.setEnabled(stampFilenames.isSelected());
+        } else if (source.equals(toastEnabled)) {
+            setToastControlsEnabled(toastEnabled.isSelected());
         } else if (source.equals(fovInsideEnabled)) {
             GUIP.setFovHighlight(fovInsideEnabled.isSelected());
             fovHighlightAlpha.setEnabled(fovInsideEnabled.isSelected());

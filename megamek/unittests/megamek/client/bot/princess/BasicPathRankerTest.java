@@ -1,6 +1,6 @@
 /*
  * Copyright (c) 2000-2011 - Ben Mazur (bmazur@sev.org)
- * Copyright (C) 2013-2025 The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2013-2026 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -61,9 +61,11 @@ import megamek.client.bot.princess.UnitBehavior.BehaviorType;
 import megamek.client.bot.princess.geometry.HexLine;
 import megamek.codeUtilities.StringUtility;
 import megamek.common.Hex;
+import megamek.common.MPCalculationSetting;
 import megamek.common.battleArmor.BattleArmor;
 import megamek.common.board.Board;
 import megamek.common.board.Coords;
+import megamek.common.compute.Compute;
 import megamek.common.equipment.ArmorType;
 import megamek.common.equipment.EquipmentType;
 import megamek.common.game.Game;
@@ -75,6 +77,7 @@ import megamek.common.options.OptionsConstants;
 import megamek.common.options.PilotOptions;
 import megamek.common.planetaryConditions.PlanetaryConditions;
 import megamek.common.planetaryConditions.Weather;
+import megamek.common.rolls.PilotingRollData;
 import megamek.common.rolls.TargetRoll;
 import megamek.common.units.*;
 import megamek.utils.MockGenerators;
@@ -202,6 +205,218 @@ class BasicPathRankerTest {
 
         double actual = testRanker.getMovePathSuccessProbability(mockPath);
         assertEquals(0.346, actual, TOLERANCE);
+    }
+
+    @Test
+    void testShallowWaterEntryFallIsForgivenInSuccessProbability() {
+        final Entity mockMek = MockGenerators.generateMockBipedMek(0, 0);
+        final MovePath mockPath = MockGenerators.generateMockPath(0, 0, mockMek);
+        when(mockPath.hasActiveMASC()).thenReturn(false);
+
+        final TargetRoll waterRoll = mock(TargetRoll.class);
+        when(waterRoll.getValue()).thenReturn(4);
+        when(waterRoll.getDesc()).thenReturn("entering Depth 1 Water");
+        final List<TargetRoll> testRollList = List.of(waterRoll);
+
+        final BasicPathRanker testRanker = spy(new BasicPathRanker(mockPrincess));
+        doReturn(testRollList).when(testRanker).getPSRList(eq(mockPath));
+
+        // oddsAbove(4) = 33/36 = ~0.917 pass. A failed Depth 1 water entry is 95% forgiven (a shallow-ford fall
+        // is nearly harmless), so the effective success probability is 0.917 + (1 - 0.917) * 0.95 = ~0.996, not
+        // the raw 0.917 - keeping Princess willing to wade a shallow river instead of pacing at the bank
+        // (issue #7627).
+        double actual = testRanker.getMovePathSuccessProbability(mockPath);
+        assertEquals(0.996, actual, TOLERANCE);
+    }
+
+    @Test
+    void testDeepWaterEntryFallIsForgivenLessThanShallow() {
+        final Entity mockMek = MockGenerators.generateMockBipedMek(0, 0);
+        final MovePath mockPath = MockGenerators.generateMockPath(0, 0, mockMek);
+        when(mockPath.hasActiveMASC()).thenReturn(false);
+
+        final TargetRoll waterRoll = mock(TargetRoll.class);
+        when(waterRoll.getValue()).thenReturn(4);
+        when(waterRoll.getDesc()).thenReturn("entering Depth 3 Water");
+        final List<TargetRoll> testRollList = List.of(waterRoll);
+
+        final BasicPathRanker testRanker = spy(new BasicPathRanker(mockPrincess));
+        doReturn(testRollList).when(testRanker).getPSRList(eq(mockPath));
+
+        // Depth 3 forgiveness = 0.95 - 2 * 0.20 = 0.55 (a fall in deep water is worse than in a shallow ford),
+        // so 0.917 + (1 - 0.917) * 0.55 = ~0.962 - forgiven, but less than the Depth 1 case above.
+        double actual = testRanker.getMovePathSuccessProbability(mockPath);
+        assertEquals(0.962, actual, TOLERANCE);
+    }
+
+    @Test
+    void testCloseRangeIncentiveRewardsMeleeBrawlerForClosing() {
+        final BasicPathRanker testRanker = spy(new BasicPathRanker(mockPrincess));
+        final Entity mockBrawler = MockGenerators.generateMockBipedMek(0, 0); // 50 tons -> kick proxy 10
+        when(mockBrawler.getWalkMP()).thenReturn(4);
+        when(mockBrawler.isProne()).thenReturn(false);
+        // Point-blank ranged damage 6 (+ melee 10 = 16); at range 7 only 4 -> premium 12.
+        doReturn(6.0).when(testRanker).getMaxDamageAtRange(eq(mockBrawler), eq(1), anyBoolean(), anyBoolean());
+        doReturn(4.0).when(testRanker).getMaxDamageAtRange(eq(mockBrawler), eq(7), anyBoolean(), anyBoolean());
+
+        // proximity = (12 - 7) / (12 - 1) = 0.4545; incentive = 12 * 0.4545 * 1.0 = ~5.45.
+        assertEquals(5.45, testRanker.calculateCloseRangeIncentive(mockBrawler, 7), 0.01);
+    }
+
+    @Test
+    void testCloseRangeIncentiveIsZeroBeyondTheBand() {
+        final BasicPathRanker testRanker = spy(new BasicPathRanker(mockPrincess));
+        final Entity mockBrawler = MockGenerators.generateMockBipedMek(0, 0);
+        when(mockBrawler.getWalkMP()).thenReturn(4);
+
+        // At or beyond CLOSE_RANGE_BAND (12) the pull has not engaged yet - no incentive, no damage lookups.
+        assertEquals(0.0, testRanker.calculateCloseRangeIncentive(mockBrawler, 12), TOLERANCE);
+    }
+
+    @Test
+    void testCloseRangeIncentiveIsZeroWithoutAPointBlankPremium() {
+        final BasicPathRanker testRanker = spy(new BasicPathRanker(mockPrincess));
+        final Entity mockGunner = MockGenerators.generateMockBipedMek(0, 0);
+        when(mockGunner.getWalkMP()).thenReturn(4);
+        // A unit that already does more damage at range than it would up close (even counting the melee proxy)
+        // gets no closing incentive.
+        doReturn(2.0).when(testRanker).getMaxDamageAtRange(eq(mockGunner), eq(1), anyBoolean(), anyBoolean());
+        doReturn(20.0).when(testRanker).getMaxDamageAtRange(eq(mockGunner), eq(5), anyBoolean(), anyBoolean());
+
+        assertEquals(0.0, testRanker.calculateCloseRangeIncentive(mockGunner, 5), TOLERANCE);
+    }
+
+    @Test
+    void testCloseRangeIncentivePeaksAtMeleeContact() {
+        final BasicPathRanker testRanker = spy(new BasicPathRanker(mockPrincess));
+        final Entity mockBrawler = MockGenerators.generateMockBipedMek(0, 0); // 50 tons -> melee proxy 10
+        when(mockBrawler.getWalkMP()).thenReturn(4);
+        // Melee-only unit: no ranged damage at any range, so the premium is just the melee proxy (10).
+        doReturn(0.0).when(testRanker).getMaxDamageAtRange(eq(mockBrawler), anyInt(), anyBoolean(), anyBoolean());
+
+        // The incentive must be maximal at melee contact (distance 1) so closing the final hex is rewarded, not
+        // penalized (issue #7627: it previously cliffed to 0 at distance <= 1 and stalled the brawler one hex
+        // short). proximity at distance 1 = (12 - 1) / (12 - 1) = 1.0 -> full premium 10.
+        double atContact = testRanker.calculateCloseRangeIncentive(mockBrawler, 1);
+        double atRangeTwo = testRanker.calculateCloseRangeIncentive(mockBrawler, 2);
+        assertEquals(10.0, atContact, 0.01);
+        assertTrue(atContact > atRangeTwo);
+    }
+
+    @Test
+    void testCalculateMovePathPSRDamageLowGravityGroundOverspeed() {
+        final Entity mockMek = MockGenerators.generateMockBipedMek(0, 0);
+        when(mockMek.getRunningGravityLimit()).thenReturn(6);
+
+        final MovePath mockPath = MockGenerators.generateMockPath(0, 0, mockMek);
+        when(mockPath.isJumping()).thenReturn(false);
+
+        final MoveStep mockLastStep = mock(MoveStep.class);
+        when(mockLastStep.getMpUsed()).thenReturn(8); // 2 MP beyond the 1G run limit of 6
+        when(mockPath.getLastStep()).thenReturn(mockLastStep);
+
+        final TargetRoll gravityRoll = MockGenerators.mockTargetRoll(8);
+        when(gravityRoll.getLastPlainDesc()).thenReturn("used more MPs than at 1G possible");
+
+        final BasicPathRanker testRanker = spy(new BasicPathRanker(mockPrincess));
+        doReturn(List.of(gravityRoll)).when(testRanker).getPSRList(eq(mockPath));
+
+        // 2 excess MP -> 2 points of leg internal structure, weighted by the chance of failing the roll.
+        final double failureProbability = 1.0 - (Compute.oddsAbove(8, false) / 100.0);
+        final double expected = 2 * failureProbability;
+
+        assertEquals(expected, testRanker.calculateMovePathPSRDamage(mockMek, mockPath), TOLERANCE);
+    }
+
+    @Test
+    void testCalculateMovePathPSRDamageLowGravityJumpOverspeed() {
+        final Entity mockMek = MockGenerators.generateMockBipedMek(0, 0);
+        when(mockMek.getJumpMP(MPCalculationSetting.NO_GRAVITY)).thenReturn(5);
+
+        final MovePath mockPath = MockGenerators.generateMockPath(0, 0, mockMek);
+        when(mockPath.isJumping()).thenReturn(true);
+
+        final MoveStep mockLastStep = mock(MoveStep.class);
+        when(mockLastStep.getMpUsed()).thenReturn(7); // 2 MP beyond the 1G jump rating of 5
+        when(mockLastStep.isUsingMekJumpBooster()).thenReturn(false);
+        when(mockPath.getLastStep()).thenReturn(mockLastStep);
+
+        final TargetRoll gravityRoll = MockGenerators.mockTargetRoll(8);
+        when(gravityRoll.getLastPlainDesc()).thenReturn("used more MPs than at 1G possible");
+
+        final BasicPathRanker testRanker = spy(new BasicPathRanker(mockPrincess));
+        doReturn(List.of(gravityRoll)).when(testRanker).getPSRList(eq(mockPath));
+
+        final double failureProbability = 1.0 - (Compute.oddsAbove(8, false) / 100.0);
+        final double expected = 2 * failureProbability;
+
+        assertEquals(expected, testRanker.calculateMovePathPSRDamage(mockMek, mockPath), TOLERANCE);
+    }
+
+    @Test
+    void testCalculateMovePathPSRDamageLowGravityJumpOverspeedWithBooster() {
+        final Entity mockMek = MockGenerators.generateMockBipedMek(0, 0);
+        // The plain jump rating is deliberately different from the booster rating so the test fails if the
+        // wrong branch (getJumpMP instead of getMechanicalJumpBoosterMP) is taken.
+        when(mockMek.getJumpMP(MPCalculationSetting.NO_GRAVITY)).thenReturn(3);
+        when(mockMek.getMechanicalJumpBoosterMP(MPCalculationSetting.NO_GRAVITY)).thenReturn(5);
+
+        final MovePath mockPath = MockGenerators.generateMockPath(0, 0, mockMek);
+        when(mockPath.isJumping()).thenReturn(true);
+
+        final MoveStep mockLastStep = mock(MoveStep.class);
+        when(mockLastStep.getMpUsed()).thenReturn(7); // 2 MP beyond the 1G booster rating of 5
+        when(mockLastStep.isUsingMekJumpBooster()).thenReturn(true);
+        when(mockPath.getLastStep()).thenReturn(mockLastStep);
+
+        final TargetRoll gravityRoll = MockGenerators.mockTargetRoll(8);
+        when(gravityRoll.getLastPlainDesc()).thenReturn("used more MPs than at 1G possible");
+
+        final BasicPathRanker testRanker = spy(new BasicPathRanker(mockPrincess));
+        doReturn(List.of(gravityRoll)).when(testRanker).getPSRList(eq(mockPath));
+
+        // Overspeed is measured against the booster's no-gravity rating: 7 - 5 = 2 excess MP.
+        final double failureProbability = 1.0 - (Compute.oddsAbove(8, false) / 100.0);
+        final double expected = 2 * failureProbability;
+
+        assertEquals(expected, testRanker.calculateMovePathPSRDamage(mockMek, mockPath), TOLERANCE);
+    }
+
+    @Test
+    void testCalculateMovePathPSRDamageHighGravityJump() {
+        final Entity mockMek = MockGenerators.generateMockBipedMek(0, 0);
+        when(mockMek.getWalkMP(MPCalculationSetting.NO_GRAVITY)).thenReturn(6);
+        when(mockMek.getWalkMP()).thenReturn(4); // lost 2 walk MP to high gravity -> (6 - 4) / 2 = 1 point
+
+        final MovePath mockPath = MockGenerators.generateMockPath(0, 0, mockMek);
+        when(mockPath.isJumping()).thenReturn(true);
+        when(mockPath.getLastStep()).thenReturn(mock(MoveStep.class));
+
+        final TargetRoll gravityRoll = MockGenerators.mockTargetRoll(9);
+        when(gravityRoll.getLastPlainDesc()).thenReturn("jumped in high gravity");
+
+        final BasicPathRanker testRanker = spy(new BasicPathRanker(mockPrincess));
+        doReturn(List.of(gravityRoll)).when(testRanker).getPSRList(eq(mockPath));
+
+        final double failureProbability = 1.0 - (Compute.oddsAbove(9, false) / 100.0);
+        final double expected = 1 * failureProbability;
+
+        assertEquals(expected, testRanker.calculateMovePathPSRDamage(mockMek, mockPath), TOLERANCE);
+    }
+
+    @Test
+    void testCalculateMovePathPSRDamageIgnoresNonGravityRolls() {
+        // A normal (non-gravity, non-leaping) piloting roll must contribute no self-damage, so behavior on
+        // 1G worlds is unchanged.
+        final Entity mockMek = MockGenerators.generateMockBipedMek(0, 0);
+        final MovePath mockPath = MockGenerators.generateMockPath(0, 0, mockMek);
+
+        final TargetRoll unrelatedRoll = MockGenerators.mockTargetRoll(8); // getLastPlainDesc() == "mock"
+
+        final BasicPathRanker testRanker = spy(new BasicPathRanker(mockPrincess));
+        doReturn(List.of(unrelatedRoll)).when(testRanker).getPSRList(eq(mockPath));
+
+        assertEquals(0.0, testRanker.calculateMovePathPSRDamage(mockMek, mockPath), TOLERANCE);
     }
 
     @Test
@@ -360,11 +575,11 @@ class BasicPathRankerTest {
                     anyInt(),
                     any(Game.class));
         doReturn(10.0).when(testRanker)
-              .calculateKickDamagePotential(eq(mockEnemyMek), any(MovePath.class), any(Game.class));
+              .calculateEnemyPhysicalThreat(eq(mockEnemyMek), any(MovePath.class), any(Game.class));
         doReturn(14.5).when(testRanker)
               .calculateMyDamagePotential(any(MovePath.class), eq(mockEnemyMek), anyInt(), any(Game.class));
         doReturn(8.0).when(testRanker)
-              .calculateMyKickDamagePotential(any(MovePath.class), eq(mockEnemyMek), any(Game.class));
+              .calculateMyPhysicalDamagePotential(any(MovePath.class), eq(mockEnemyMek), any(Game.class));
         final Map<Integer, Double> testBestDamageByEnemies = new TreeMap<>();
         testBestDamageByEnemies.put(mockEnemyMekId, 0.0);
         doReturn(testBestDamageByEnemies).when(testRanker).getBestDamageByEnemies();
@@ -452,11 +667,11 @@ class BasicPathRankerTest {
                     anyInt(),
                     any(Game.class));
         doReturn(10.0).when(testRanker)
-              .calculateKickDamagePotential(eq(mockEnemyMek), any(MovePath.class), any(Game.class));
+              .calculateEnemyPhysicalThreat(eq(mockEnemyMek), any(MovePath.class), any(Game.class));
         doReturn(14.5).when(testRanker)
               .calculateMyDamagePotential(any(MovePath.class), eq(mockEnemyMek), anyInt(), any(Game.class));
         doReturn(8.0).when(testRanker)
-              .calculateMyKickDamagePotential(any(MovePath.class), eq(mockEnemyMek), any(Game.class));
+              .calculateMyPhysicalDamagePotential(any(MovePath.class), eq(mockEnemyMek), any(Game.class));
         final Map<Integer, Double> testBestDamageByEnemies = new TreeMap<>();
         testBestDamageByEnemies.put(mockEnemyMekId, 0.0);
         doReturn(testBestDamageByEnemies).when(testRanker).getBestDamageByEnemies();
@@ -585,6 +800,37 @@ class BasicPathRankerTest {
               testRanker.calculateSprintExposurePenalty(mockPath, enemies, mockGame, scores, sprintFormula),
               TOLERANCE);
         assertFalse(sprintFormula.isEmpty());
+    }
+
+    @Test
+    void testCalculateSelfPreservationModWithNoRetreatPath() {
+        Entity mockMover = mock(BipedMek.class);
+        MovePath mockPath = mock(MovePath.class);
+        when(mockPath.getFinalCoords()).thenReturn(new Coords(10, 10));
+        Game mockGame = mock(Game.class);
+
+        BasicPathRanker testRanker = spy(new BasicPathRanker(mockPrincess));
+        doReturn(12.0).when(testRanker)
+              .distanceToClosestEnemy(any(Entity.class), any(Coords.class), any(Game.class));
+
+        // A withdrawing unit with no path to its retreat edge is rewarded for opening the range
+        // (negative mod raises utility, scaled like the normal retreat pull).
+        when(mockPrincess.getUnitBehaviorTracker().getBehaviorType(any(Entity.class), any(Princess.class)))
+              .thenReturn(BehaviorType.NoPathToDestination);
+        when(mockPrincess.wantsToFallBack(any(Entity.class))).thenReturn(true);
+        double expectedPull = -12.0 * BehaviorSettings.SELF_PRESERVATION_VALUES[5];
+        assertEquals(expectedPull,
+              testRanker.calculateSelfPreservationMod(mockMover, mockPath, mockGame),
+              TOLERANCE);
+
+        // NoPathToDestination for any other reason (e.g. a blocked waypoint): no retreat pull.
+        when(mockPrincess.wantsToFallBack(any(Entity.class))).thenReturn(false);
+        assertEquals(0.0, testRanker.calculateSelfPreservationMod(mockMover, mockPath, mockGame), TOLERANCE);
+
+        // An engaged unit is unchanged: no pull either way.
+        when(mockPrincess.getUnitBehaviorTracker().getBehaviorType(any(Entity.class), any(Princess.class)))
+              .thenReturn(BehaviorType.Engaged);
+        assertEquals(0.0, testRanker.calculateSelfPreservationMod(mockMover, mockPath, mockGame), TOLERANCE);
     }
 
     private void assertEntityEvaluationResponseEquals(final EntityEvaluationResponse expected,
@@ -1721,6 +1967,12 @@ class BasicPathRankerTest {
         when(mockHexThree.getTerrainTypesSet()).thenReturn(new HashSet<>(Set.of(Terrains.BUILDING)));
         assertEquals(1.285, testRanker.checkPathForHazards(mockPath, mockUnit, mockGame), TOLERANCE);
         when(mockHexThree.getTerrainTypes()).thenReturn(new int[0]);
+
+        // The water-breach hazard looks up the water-entry piloting roll; stub it to a check-false roll so the
+        // fall-probability path does not touch real board state (the water hazard is discarded on ice hexes).
+        final PilotingRollData mockWaterRoll = mock(PilotingRollData.class);
+        when(mockWaterRoll.getValue()).thenReturn(TargetRoll.CHECK_FALSE);
+        when(mockUnit.checkWaterMove(anyInt(), any())).thenReturn(mockWaterRoll);
 
         // Test walking over 3 hexes of ice.
         when(mockPath.isJumping()).thenReturn(false);

@@ -33,8 +33,14 @@
 package megamek.utilities;
 
 import java.io.File;
+import java.io.IOException;
+import java.io.PrintWriter;
+import java.nio.charset.StandardCharsets;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.Map;
 import java.util.Set;
+import java.util.StringJoiner;
 import java.util.TreeMap;
 
 import megamek.client.bot.AIType;
@@ -56,6 +62,10 @@ public final class AIMatchRunner {
     private static final int DEFAULT_REPETITIONS = 10;
     private static final int DEFAULT_ROUNDS_LIMIT = 12;
     private static final int DEFAULT_TIMEOUT_MINUTES = 10;
+
+    private static final String RESULTS_FILE_STAMP_FORMAT = "_yyyy-MM-dd_HH-mm-ss";
+    private static final String RESULTS_CSV_HEADER = "game,scenario,finished,rounds,winning_team,team,ai_types,"
+          + "units_fielded,survivors,crippled_survivors,destroyed,fled,bv_initial,bv_remaining";
 
     private AIMatchRunner() {}
 
@@ -79,36 +89,90 @@ public final class AIMatchRunner {
         int draws = 0;
         int unfinished = 0;
 
-        for (int gameNumber = 1; gameNumber <= repetitions; gameNumber++) {
-            ScenarioGameRunner runner = null;
-            try {
-                runner = new ScenarioGameRunner(scenarioFile);
-                if (teamAITypes.isEmpty()) {
-                    teamAITypes = runner.getBotTeamAITypes();
-                }
-                ScenarioGameRunner.GameResult result = runner.runGame(roundsLimit, timeoutMinutes);
-                if (!result.finished()) {
-                    unfinished++;
-                    logger.warn("Game {}/{} did not finish within the timeout", gameNumber, repetitions);
-                } else if (result.winningTeam() == Player.TEAM_NONE) {
-                    draws++;
-                    logger.info("Game {}/{}: draw (no sole surviving team)", gameNumber, repetitions);
-                } else {
-                    teamWins.merge(result.winningTeam(), 1, Integer::sum);
-                    logger.info("Game {}/{}: team {} {} wins", gameNumber, repetitions, result.winningTeam(),
-                          teamAITypes.getOrDefault(result.winningTeam(), Set.of()));
-                }
-            } catch (Exception exception) {
-                logger.error(exception, "Game " + gameNumber + "/" + repetitions + " failed to run");
-            } finally {
-                if (runner != null) {
-                    runner.shutdown();
+        File resultsFile = resultsFile();
+        try (PrintWriter resultsWriter = new PrintWriter(resultsFile, StandardCharsets.UTF_8)) {
+            resultsWriter.println(RESULTS_CSV_HEADER);
+
+            for (int gameNumber = 1; gameNumber <= repetitions; gameNumber++) {
+                ScenarioGameRunner runner = null;
+                try {
+                    runner = new ScenarioGameRunner(scenarioFile);
+                    if (teamAITypes.isEmpty()) {
+                        teamAITypes = runner.getBotTeamAITypes();
+                    }
+                    ScenarioGameRunner.GameResult result = runner.runGame(roundsLimit, timeoutMinutes);
+                    if (!result.finished()) {
+                        unfinished++;
+                        logger.warn("Game {}/{} did not finish within the timeout", gameNumber, repetitions);
+                    } else if (result.winningTeam() == Player.TEAM_NONE) {
+                        draws++;
+                        logger.info("Game {}/{}: draw (no sole surviving team)", gameNumber, repetitions);
+                    } else {
+                        teamWins.merge(result.winningTeam(), 1, Integer::sum);
+                        logger.info("Game {}/{}: team {} {} wins", gameNumber, repetitions, result.winningTeam(),
+                              teamAITypes.getOrDefault(result.winningTeam(), Set.of()));
+                    }
+                    writeResultRows(resultsWriter, gameNumber, scenarioFile.getName(), result, teamAITypes);
+                } catch (Exception exception) {
+                    logger.error(exception, "Game " + gameNumber + "/" + repetitions + " failed to run");
+                } finally {
+                    if (runner != null) {
+                        runner.shutdown();
+                    }
                 }
             }
+        } catch (IOException ioException) {
+            logger.error(ioException, "Could not write the results file " + resultsFile);
         }
 
         logger.info(formatSummary(repetitions, teamWins, teamAITypes, draws, unfinished));
+        logger.info("Per-game results written to {}", resultsFile.getAbsolutePath());
         System.exit(0);
+    }
+
+    /**
+     * Returns the timestamped CSV file the per-game results are written to, in the standard log directory.
+     */
+    private static File resultsFile() {
+        File logDirectory = new File(PreferenceManager.getClientPreferences().getLogDirectory());
+        if (!logDirectory.exists() && !logDirectory.mkdirs()) {
+            logger.warn("Could not create log directory {}; writing results to the working directory",
+                  logDirectory.getAbsolutePath());
+            logDirectory = new File(".");
+        }
+        String stamp = LocalDateTime.now().format(DateTimeFormatter.ofPattern(RESULTS_FILE_STAMP_FORMAT));
+        return new File(logDirectory, "ai_match_results" + stamp + ".csv");
+    }
+
+    /**
+     * Writes one CSV row per combatant team for the given game, so the batch can be analyzed as long-format
+     * data (each row keyed by game number and team). Rows are flushed immediately so a crashed or aborted
+     * batch still leaves the completed games' results on disk.
+     */
+    private static void writeResultRows(PrintWriter resultsWriter, int gameNumber, String scenarioName,
+          ScenarioGameRunner.GameResult result, Map<Integer, Set<AIType>> teamAITypes) {
+        for (ScenarioGameRunner.TeamStanding standing : result.teamStandings()) {
+            StringJoiner aiTypes = new StringJoiner("+");
+            for (AIType aiType : teamAITypes.getOrDefault(standing.team(), Set.of())) {
+                aiTypes.add(aiType.name());
+            }
+            resultsWriter.println(String.join(",",
+                  Integer.toString(gameNumber),
+                  scenarioName.replace(',', ' '),
+                  Boolean.toString(result.finished()),
+                  Integer.toString(result.rounds()),
+                  Integer.toString(result.winningTeam()),
+                  Integer.toString(standing.team()),
+                  aiTypes.toString(),
+                  Integer.toString(standing.unitsFielded()),
+                  Integer.toString(standing.survivors()),
+                  Integer.toString(standing.crippledSurvivors()),
+                  Integer.toString(standing.destroyed()),
+                  Integer.toString(standing.fled()),
+                  Integer.toString(standing.bvInitial()),
+                  Integer.toString(standing.bvRemaining())));
+        }
+        resultsWriter.flush();
     }
 
     /**

@@ -1326,12 +1326,16 @@ public class BattleArmor extends Infantry {
      *
      */
     public boolean hasActiveProbe() {
-        for (Mounted<?> equip : getMisc()) {
-            if (equip.getType().hasFlag(MiscType.F_BAP)
-                  && !(equip.getType().getInternalName()
-                  .equals(Sensor.IS_IMPROVED)
-                  || equip.getType()
-                  .getInternalName().equals(Sensor.CL_IMPROVED))) {
+        for (MiscMounted equip : getMisc()) {
+            MiscType miscType = equip.getType();
+            if ((miscType == null) || !miscType.hasFlag(MiscType.F_BAP)) {
+                continue;
+            }
+            String internalName = miscType.getInternalName();
+            boolean isImprovedSensors = internalName.equals(Sensor.IS_IMPROVED)
+                  || internalName.equals(Sensor.CL_IMPROVED);
+            // A probe switched to "Off" is not an active probe (activation/deactivation rules)
+            if (!isImprovedSensors && !equip.isModeTurnedOff()) {
                 return true;
             }
         }

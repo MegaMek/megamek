@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2024-2025 The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2024-2026 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -1696,7 +1696,7 @@ class MovePathHandler extends AbstractTWRuleHandler {
             // let everyone know about what just happened
             // Skip if we already sent an EMP popup this move (avoid duplicate popups)
             if ((gameManager.getMainPhaseReport().size() > 1) && !sentEMPPopupThisMove) {
-                gameManager.send(entity.getOwner().getId(), gameManager.createSpecialReportPacket());
+                gameManager.sendNewSpecialReportsTo(entity.getOwner().getId());
             }
         } else {
             if (entity.getMovementMode() == EntityMovementMode.WIGE) {
@@ -2104,8 +2104,8 @@ class MovePathHandler extends AbstractTWRuleHandler {
 
                         // If we aren't at the end, send a special report
                         if ((getGame().getTurnIndex() + 1) < getGame().getTurnsList().size()) {
-                            gameManager.send(hiddenEntity.getOwner().getId(), gameManager.createSpecialReportPacket());
-                            gameManager.send(this.entity.getOwner().getId(), gameManager.createSpecialReportPacket());
+                            gameManager.sendNewSpecialReportsTo(hiddenEntity.getOwner().getId());
+                            gameManager.sendNewSpecialReportsTo(this.entity.getOwner().getId());
                         }
 
                         // End this entity's turn _without_ updating its position to the current step, because the
@@ -2142,8 +2142,8 @@ class MovePathHandler extends AbstractTWRuleHandler {
 
                         // If we aren't at the end, send a special report
                         if ((getGame().getTurnIndex() + 1) < getGame().getTurnsList().size()) {
-                            gameManager.send(hiddenEntity.getOwner().getId(), gameManager.createSpecialReportPacket());
-                            gameManager.send(this.entity.getOwner().getId(), gameManager.createSpecialReportPacket());
+                            gameManager.sendNewSpecialReportsTo(hiddenEntity.getOwner().getId());
+                            gameManager.sendNewSpecialReportsTo(this.entity.getOwner().getId());
                         }
 
                         curFacing = this.entity.getFacing();
@@ -4146,7 +4146,13 @@ class MovePathHandler extends AbstractTWRuleHandler {
                 if (null != step.getTargetPosition()) {
                     unloadPos = step.getTargetPosition();
                 }
-                if (!gameManager.disconnectUnit(entity, unloaded, unloadPos)) {
+                // An off board train stays hooked up. There is no board hex to drop a trailer in, so letting one
+                // uncouple would leave it off board with nothing holding its place. The movement display hides the
+                // button, so reaching here means the request did not come from it.
+                if (entity.isOffBoard()) {
+                    logger.warn("[Train] refused to disconnect {} from {}: the train is off board",
+                          unloaded.getDisplayName(), entity.getDisplayName());
+                } else if (!gameManager.disconnectUnit(entity, unloaded, unloadPos)) {
                     logger.error("Server was told to disconnect {} from {} into {}",
                           unloaded.getDisplayName(),
                           entity.getDisplayName(),

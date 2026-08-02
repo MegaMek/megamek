@@ -310,6 +310,14 @@ public final class Player extends TurnOrdered {
     public void setTeam(int team) {
         this.team = team;
     }
+    
+    public String getTeamName() {
+        if (getTeam() <= TEAM_NONE) {
+            return "No Team";
+        }
+        
+        return "Team " + getTeam();
+    }
 
     public boolean isDone() {
         return done;
@@ -1008,15 +1016,12 @@ public final class Player extends TurnOrdered {
     }
 
     public String getColoredPlayerNameWithTeam() {
-        if (team == -1) {
-            team = 0;
-        }
         return "<B><font color='" +
               getColour().getHexString(0x00F0F0F0) +
               "'>" +
               getName() +
               " (" +
-              TEAM_NAMES[team] +
+              getTeamName() +
               ")</font></B>";
     }
 

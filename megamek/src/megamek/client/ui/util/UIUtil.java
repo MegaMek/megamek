@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2020-2025 The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2020-2026 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -53,6 +53,8 @@ import javax.swing.*;
 import javax.swing.event.HyperlinkEvent;
 
 import megamek.MMConstants;
+import megamek.common.units.Entity;
+import megamek.common.units.TrainLayout;
 import megamek.client.ui.Messages;
 import megamek.client.ui.buttons.MMToggleButton;
 import megamek.client.ui.clientGUI.GUIPreferences;
@@ -63,6 +65,31 @@ import megamek.common.annotations.Nullable;
 import megamek.logging.MMLogger;
 
 public final class UIUtil {
+
+    /**
+     * Returns the label for where a unit sits in its train: the tractor heading it, then numbered trailers behind.
+     * <p>
+     * {@link TrainLayout#trainPosition(Entity)} decides the position; the wording lives here because it is shown to
+     * the player. Returns an empty string when the unit is not part of a train.
+     * </p>
+     *
+     * @param unit the unit to label
+     *
+     * @return the label, or an empty string when the unit is not in a train
+     */
+    public static String trainPositionLabel(Entity unit) {
+        int position = TrainLayout.trainPosition(unit);
+
+        if (position == TrainLayout.NOT_IN_TRAIN) {
+            return "";
+        }
+        if (position == TrainLayout.TRACTOR_POSITION) {
+            return Messages.getString("ChatLounge.trainPositionTractor");
+        }
+
+        return Messages.getString("ChatLounge.trainPositionTrailer", position);
+    }
+
     private static final MMLogger logger = MMLogger.create(UIUtil.class);
 
     // The standard pixels-per-inch to compare against for display scaling

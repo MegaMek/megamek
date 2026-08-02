@@ -46,6 +46,7 @@ import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -205,6 +206,9 @@ public final class UnitToolTip {
 
         // Weapon List
         result += weaponList(entity).toString();
+
+        // Ammo carried for weapons this unit does not have, such as an ammunition trailer's load
+        result += carriedAmmo(entity).toString();
 
         // ECM Info
         result += ecmInfo(entity).toString();
@@ -2553,6 +2557,83 @@ public final class UnitToolTip {
         }
 
         return new StringBuilder().append(result);
+    }
+
+    /**
+     * Returns the ammo a unit carries that none of its own weapons can fire.
+     * <p>
+     * An ammunition carriage in a Mobile Long Tom battery is nothing but ammo bins and hitches, so the per-weapon
+     * ammo lines never run for it and its tooltip shows no ammunition at all. Ammo that feeds a weapon on this unit
+     * is left out here, because it is already listed under that weapon.
+     * </p>
+     */
+    private static StringBuilder carriedAmmo(Entity entity) {
+        StringBuilder sb = new StringBuilder();
+        Map<String, Integer> shotsByAmmoName = carriedAmmoShots(entity);
+
+        if (shotsByAmmoName.isEmpty()) {
+            return sb;
+        }
+
+        String msgShots = Messages.getString("BoardView1.Tooltip.Shots");
+        StringBuilder carriedAmmo = new StringBuilder(Messages.getString("BoardView1.Tooltip.CarriedAmmo"));
+        carriedAmmo.append(":<br/>&nbsp;&nbsp;");
+
+        for (Entry<String, Integer> ammo : shotsByAmmoName.entrySet()) {
+            carriedAmmo.append(ammo.getKey()).append(": ").append(ammo.getValue()).append(' ').append(msgShots);
+            carriedAmmo.append("<br/>&nbsp;&nbsp;");
+        }
+
+        String attr = String.format("FACE=Dialog COLOR=%s", UIUtil.toColorHexString(GUIP.getCautionColor()));
+        String col = UIUtil.tag("FONT", attr, carriedAmmo.toString());
+        col = UIUtil.tag("TD", "", col);
+        String row = UIUtil.tag("TR", "", col);
+        String tbody = UIUtil.tag("TBODY", "", row);
+
+        return sb.append(UIUtil.tag("TABLE", "CELLSPACING=0 CELLPADDING=0", tbody));
+    }
+
+    /**
+     * Returns the shots this unit carries for weapons it does not have, keyed by ammo name and totalled across bins.
+     * Kept separate from the tooltip markup so the selection rule can be tested on its own.
+     */
+    static Map<String, Integer> carriedAmmoShots(Entity entity) {
+        Map<String, Integer> shotsByAmmoName = new LinkedHashMap<>();
+
+        String msgISBracket = Messages.getString("BoardView1.Tooltip.ISBracket");
+        String msgClanBrackets = Messages.getString("BoardView1.Tooltip.ClanBrackets");
+        String msgClanParens = Messages.getString("BoardView1.Tooltip.ClanParens");
+
+        for (AmmoMounted ammoBin : entity.getAmmo()) {
+            if (ammoBin.isDumping() || feedsAWeaponOnThisUnit(entity, ammoBin)) {
+                continue;
+            }
+
+            String ammoName = ammoBin.getName()
+                  .replace(msgISBracket, "")
+                  .replace(msgClanBrackets, "")
+                  .replace(msgClanParens, "")
+                  .trim();
+
+            shotsByAmmoName.merge(ammoName, ammoBin.getUsableShotsLeft(), Integer::sum);
+        }
+
+        return shotsByAmmoName;
+    }
+
+    /**
+     * Returns true when any weapon on this unit can draw from the given ammo bin. This matches on ammo type and rack
+     * size rather than on the bin a weapon happens to be linked to, so ammo for a weapon whose own bin is empty or
+     * destroyed is still recognised as belonging to that weapon.
+     */
+    private static boolean feedsAWeaponOnThisUnit(Entity entity, AmmoMounted ammoBin) {
+        for (WeaponMounted weapon : entity.getWeaponList()) {
+            if (AmmoType.isAmmoValid(ammoBin.getType(), weapon.getType())) {
+                return true;
+            }
+        }
+
+        return false;
     }
 
     private static StringBuilder carriedCargo(Entity entity) {

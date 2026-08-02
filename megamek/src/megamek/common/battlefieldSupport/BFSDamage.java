@@ -78,14 +78,12 @@ public record BFSDamage(int perHit, int hits) implements Serializable {
 
     /**
      * Parses a card display form such as {@code 5x4}, {@code 5}, {@code -} or an em dash into a {@link BFSDamage}.
-     * Whitespace is ignored and the {@code x} separator is case-insensitive. A {@code null}, blank, {@code -} or em
-     * dash value yields {@link #NONE}.
+     * Whitespace is ignored and the {@code x} separator is case-insensitive. A {@code null}, blank, malformed,
+     * out-of-range, {@code -} or em dash value yields {@link #NONE}.
      *
      * @param text the card display form to parse
      *
      * @return the parsed damage, never {@code null}
-     *
-     * @throws NumberFormatException if a non-blank value cannot be parsed
      */
     public static BFSDamage parse(@Nullable String text) {
         if (text == null) {
@@ -95,10 +93,14 @@ public record BFSDamage(int perHit, int hits) implements Serializable {
         if (stripped.isEmpty() || stripped.equals("-") || stripped.equals(NA_DISPLAY)) {
             return NONE;
         }
-        String[] parts = stripped.toLowerCase().split("x");
-        if (parts.length == 1) {
-            return new BFSDamage(Integer.parseInt(parts[0].strip()), 1);
+        String[] parts = stripped.toLowerCase().split("x", -1);
+        try {
+            if (parts.length == 1) {
+                return new BFSDamage(Integer.parseInt(parts[0].strip()), 1);
+            }
+            return new BFSDamage(Integer.parseInt(parts[0].strip()), Integer.parseInt(parts[1].strip()));
+        } catch (NumberFormatException ignored) {
+            return NONE;
         }
-        return new BFSDamage(Integer.parseInt(parts[0].strip()), Integer.parseInt(parts[1].strip()));
     }
 }

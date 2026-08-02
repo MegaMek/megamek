@@ -315,10 +315,16 @@ class BattlefieldSupportCardRenderTest {
     private static List<Double> outerBorder(Element group) {
         NodeList paths = group.getElementsByTagName("path");
         for (int i = 0; i < paths.getLength(); i++) {
-            List<Double> points = Arrays.stream(((Element) paths.item(i)).getAttribute("d").split("[A-Za-z,\\s]+"))
-                  .filter(value -> !value.isBlank())
-                  .map(Double::parseDouble)
-                  .toList();
+            String pathData = ((Element) paths.item(i)).getAttribute("d");
+            List<Double> points;
+            try {
+                points = Arrays.stream(pathData.split("[A-Za-z,\\s]+"))
+                      .filter(value -> !value.isBlank())
+                      .map(Double::parseDouble)
+                      .toList();
+            } catch (NumberFormatException exception) {
+                throw new AssertionError("Invalid SVG path data: " + pathData, exception);
+            }
             if ((points.size() == 20) && points.contains((double) BattlefieldSupportCard.WIDTH - 12)) {
                 return points;
             }
@@ -342,7 +348,7 @@ class BattlefieldSupportCardRenderTest {
         try {
             return Double.parseDouble(value);
         } catch (NumberFormatException exception) {
-            throw new AssertionError("SVG attribute '%s' is not numeric: '%s'".formatted(name, value), exception);
+            throw new AssertionError("Invalid numeric SVG attribute '%s': %s".formatted(name, value), exception);
         }
     }
 

@@ -80,7 +80,8 @@ public class MissileWeaponHandler extends AmmoWeaponHandler {
     @Serial
     private static final long serialVersionUID = -4801130911083653548L;
     boolean advancedAMS;
-    boolean multiAMS;
+    // Protected so child handlers can do their own checks
+    protected boolean multiAMS;
 
     public MissileWeaponHandler(ToHitData t, WeaponAttackAction w, Game g, TWGameManager m)
           throws EntityLoadingException {

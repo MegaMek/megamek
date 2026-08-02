@@ -1090,9 +1090,15 @@ class MovePathHandler extends AbstractTWRuleHandler {
         }
 
         // if we ran with destroyed hip or gyro, we need a psr
-        rollTarget = entity.checkRunningWithDamage(overallMoveType, md.getLastStep().getDistance());
-        if (rollTarget.getValue() != TargetRoll.CHECK_FALSE && entity.canFall()) {
-            gameManager.doSkillCheckInPlace(entity, rollTarget);
+        MoveStep lastStep = md.getLastStep();
+        if (lastStep != null) {
+            rollTarget = entity.checkRunningWithDamage(overallMoveType, lastStep.getDistance());
+            if (rollTarget.getValue() != TargetRoll.CHECK_FALSE && entity.canFall()) {
+                gameManager.doSkillCheckInPlace(entity, rollTarget);
+            }
+        } else {
+            logger.error("Unexpected null last step! Entity: {}; MoveType: {}; md: {}", entity.getId(),
+                  overallMoveType, md);
         }
         
         // if we moved a hex with a destroyed leg, but it was not a run

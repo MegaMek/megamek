@@ -10231,6 +10231,10 @@ public class TWGameManager extends AbstractGameManager {
      * Determine which missile attack actions could be affected by AMS, and assign AMS (and APDS) to those attacks.
      */
     public void assignAMS() {
+        assignAMS(game.getAttacksVector(), true);
+    }
+
+    public void assignAMS(Vector<AttackHandler> attacksVector, boolean handleArtillery) {
         // Get all of the coords that would be protected by APDS
         Hashtable<Coords, List<WeaponMounted>> apdsCoords = getAPDSProtectedCoords();
         // Map target to a list of missile attacks directed at it
@@ -10238,81 +10242,115 @@ public class TWGameManager extends AbstractGameManager {
         // Keep track of each APDS, and which attacks it could affect
         Hashtable<WeaponMounted, Vector<WeaponHandler>> apdsTargets = new Hashtable<>();
 
-        for (AttackHandler ah : game.getAttacksVector()) {
+        for (AttackHandler ah : attacksVector) {
             WeaponHandler wh = (WeaponHandler) ah;
             WeaponAttackAction waa = wh.weaponAttackAction;
+            Targetable target = waa.getTarget(game);
+            Entity targetEntity;
 
-            Entity artilleryFirer = game.getEntityFromAllSources(waa.getEntityId());
+            if (handleArtillery) {
+                Entity artilleryFirer = game.getEntityFromAllSources(waa.getEntityId());
 
-            // for artillery attacks, the attacking entity might no longer be in the game.
-            // TODO : Yeah, I know there's an exploit here, but better able to shoot some ArrowIVs than none, right?
-            if (artilleryFirer == null) {
-                LOGGER.info("Can't Assign AMS: Artillery firer is null!");
-                continue;
-            }
-
-            Mounted<?> weapon = artilleryFirer.getEquipment(waa.getWeaponId());
-
-            // Only entities can have AMS. Arrow IV doesn't target an entity until later, so
-            // we have to ignore them
-            if (!(waa instanceof ArtilleryAttackAction) && (Targetable.TYPE_ENTITY != waa.getTargetType())) {
-                continue;
-            }
-
-            // AMS is only used against attacks that hit (TW p129)
-            if (wh.roll.getIntValue() < wh.toHit.getValue()) {
-                continue;
-            }
-
-            // Can only use AMS versus missiles. Artillery Bays might be firing Arrow IV
-            // homing missiles, but lack the flag
-            boolean isHomingMissile = false;
-            if (wh instanceof megamek.common.weapons.handlers.artillery.ArtilleryWeaponDistantHomingHandler ||
-                wh instanceof ArtilleryBayWeaponDistantHomingHandler) {
-                AmmoMounted ammoUsed = artilleryFirer.getAmmo(waa.getAmmoId());
-                AmmoType ammoType = ammoUsed == null ? null : ammoUsed.getType();
-                // TODO: this logic seems to be a bit off, rules need to be checked.
-                if (ammoType != null &&
-                      (ammoType.getAmmoType() == AmmoTypeEnum.ARROW_IV
-                            || ammoUsed.isHomingAmmoInHomingMode())) {
-                    isHomingMissile = true;
-                }
-            }
-            if ((!weapon.getType().hasFlag(WeaponType.F_MISSILE) && !isHomingMissile) ||
-                  weapon.getType().hasFlag(WeaponType.F_MEK_MORTAR)) {
-                continue;
-            }
-
-            // For Bearings-only Capital Missiles, don't assign during the offboard phase
-            if (wh instanceof CapitalMissileBearingsOnlyHandler && waa instanceof ArtilleryAttackAction aaa) {
-                if ((aaa.getTurnsTilHit() > 0) || !getGame().getPhase().isFiring()) {
+                // for artillery attacks, the attacking entity might no longer be in the game.
+                // TODO : Yeah, I know there's an exploit here, but better able to shoot some ArrowIVs than none, right?
+                if (artilleryFirer == null) {
+                    LOGGER.info("Can't Assign AMS: Artillery firer is null!");
                     continue;
                 }
-            }
 
-            // For Arrow IV homing artillery
-            Entity target;
-            if (waa instanceof ArtilleryAttackAction) {
-                target = (waa.getTargetType() == Targetable.TYPE_ENTITY) ? (Entity) waa.getTarget(game) : null;
+                Mounted<?> weapon = artilleryFirer.getEquipment(waa.getWeaponId());
 
-                // In case our target really is null.
-                if (target == null) {
+                // Only entities can have AMS. Arrow IV doesn't target an entity until later, so
+                // we have to ignore them
+                if (!(waa instanceof ArtilleryAttackAction) && (Targetable.TYPE_ENTITY != waa.getTargetType())) {
                     continue;
                 }
-            } else {
-                target = game.getEntity(waa.getTargetId());
-            }
-            Vector<WeaponHandler> v = htAttacks.computeIfAbsent(target, k -> new Vector<>());
-            v.addElement(wh);
-            // Keep track of what weapon attacks could be affected by APDS
-            if (target != null && apdsCoords.containsKey(target.getPosition())) {
-                for (WeaponMounted apds : apdsCoords.get(target.getPosition())) {
-                    // APDS only affects attacks against friendly units
-                    if (target.isEnemyOf(apds.getEntity())) {
+
+                // AMS is only used against attacks that hit (TW p129)
+                if (wh.roll.getIntValue() < wh.toHit.getValue()) {
+                    continue;
+                }
+
+                // Can only use AMS versus missiles. Artillery Bays might be firing Arrow IV
+                // homing missiles, but lack the flag
+                boolean isHomingMissile = false;
+                if (wh instanceof megamek.common.weapons.handlers.artillery.ArtilleryWeaponDistantHomingHandler ||
+                      wh instanceof ArtilleryBayWeaponDistantHomingHandler) {
+                    AmmoMounted ammoUsed = artilleryFirer.getAmmo(waa.getAmmoId());
+                    AmmoType ammoType = ammoUsed == null ? null : ammoUsed.getType();
+                    // TODO: this logic seems to be a bit off, rules need to be checked.
+                    if (ammoType != null &&
+                          (ammoType.getAmmoType() == AmmoTypeEnum.ARROW_IV
+                                || ammoUsed.isHomingAmmoInHomingMode())) {
+                        isHomingMissile = true;
+                    }
+                }
+                if ((!weapon.getType().hasFlag(WeaponType.F_MISSILE) && !isHomingMissile) ||
+                      weapon.getType().hasFlag(WeaponType.F_MEK_MORTAR)) {
+                    continue;
+                }
+
+                // For Bearings-only Capital Missiles, don't assign during the offboard phase
+                if (wh instanceof CapitalMissileBearingsOnlyHandler && waa instanceof ArtilleryAttackAction aaa) {
+                    if ((aaa.getTurnsTilHit() > 0) || !getGame().getPhase().isFiring()) {
                         continue;
                     }
-                    Vector<WeaponHandler> handlerList = apdsTargets.computeIfAbsent(apds, k -> new Vector<>());
-                    handlerList.add(wh);
+                }
+
+                // For Arrow IV homing artillery
+                if (waa instanceof ArtilleryAttackAction) {
+                    targetEntity = (waa.getTargetType() == Targetable.TYPE_ENTITY) ? (Entity) waa.getTarget(game) : null;
+
+                    // In case our target really is null.
+                    if (targetEntity == null) {
+                        continue;
+                    }
+                } else {
+                    targetEntity = game.getEntity(waa.getTargetId());
+                }
+            } else {
+                // Could be null here
+                targetEntity = game.getEntity(waa.getTargetId());
+            }
+
+            if (target.getTargetType() != Targetable.TYPE_SATURATION && targetEntity != null) {
+                // Most attack types; map targetEntity to wh instance
+                Vector<WeaponHandler> weaponHandlerVector = htAttacks.computeIfAbsent(targetEntity,
+                      k -> new Vector<>());
+                weaponHandlerVector.addElement(wh);
+                // Keep track of what weapon attacks could be affected by APDS
+                if (apdsCoords.containsKey(targetEntity.getPosition())) {
+                    for (WeaponMounted apds : apdsCoords.get(targetEntity.getPosition())) {
+                        // APDS only affects attacks against friendly units
+                        if (targetEntity.isEnemyOf(apds.getEntity())) {
+                            continue;
+                        }
+                        Vector<WeaponHandler> handlerList = apdsTargets.computeIfAbsent(apds, k -> new Vector<>());
+                        handlerList.add(wh);
+                    }
+                }
+            } else {
+                // Saturation attack; get all enemy entities / APDS installations and add them to htAttacks
+                Entity saturator = game.getEntityFromAllSources(waa.getEntityId());
+                List<Entity> entities = game.getEntitiesVector(target.getPosition(), target.getBoardId(), true);
+                for (Entity candidate: entities) {
+                    // Only let enemies use AMS against a saturation attack, although Core p. 197 is ambiguous
+                    if (candidate.isEnemyOf(saturator)) {
+                        Vector<WeaponHandler> weaponHandlerVector = htAttacks.computeIfAbsent(candidate,
+                              k -> new Vector<>());
+                        weaponHandlerVector.addElement(wh);
+                        // Keep track of what weapon attacks could be affected by APDS
+                        if (apdsCoords.containsKey(candidate.getPosition())) {
+                            for (WeaponMounted apds : apdsCoords.get(candidate.getPosition())) {
+                                // APDS only affects attacks against friendly units
+                                if (candidate.isEnemyOf(apds.getEntity())) {
+                                    continue;
+                                }
+                                Vector<WeaponHandler> handlerList = apdsTargets.computeIfAbsent(apds, k -> new Vector<>());
+                                handlerList.add(wh);
+                            }
+                        }
+                    }
                 }
             }
         }
@@ -10330,12 +10368,16 @@ public class TWGameManager extends AbstractGameManager {
 
         // Let each APDS assign itself to an attack
         Set<WeaponAttackAction> targetedAttacks = new HashSet<>();
+        Targetable waaTarget;
         for (WeaponMounted apds : apdsTargets.keySet()) {
             List<WeaponHandler> potentialTargets = apdsTargets.get(apds);
             // Ensure we only target each attack once
             List<WeaponHandler> targetsToRemove = new ArrayList<>();
             for (WeaponHandler wh : potentialTargets) {
-                if (targetedAttacks.contains(wh.getWeaponAttackAction())) {
+                // But allow targeting Saturation mode attacks multiple times, per Core p. 197
+                waaTarget = (wh.getWeaponAttackAction() != null) ? wh.getWeaponAttackAction().getTarget(game) : null;
+                if (targetedAttacks.contains(wh.getWeaponAttackAction())
+                      && (waaTarget != null && waaTarget.getTargetType() != Targetable.TYPE_SATURATION)) {
                     targetsToRemove.add(wh);
                 }
             }

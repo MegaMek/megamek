@@ -218,10 +218,16 @@ class ComputeToHitIsImpossible {
                 return Messages.getString("WeaponAttackAction.NoMinefields");
             }
             if (target.getTargetType() == Targetable.TYPE_SATURATION 
-            && !weaponType.hasFlag(WeaponType.F_MRM)
-            && !weapon.getLinkedBy().getType().hasFlag(MiscType.F_APOLLO)
-            && !weapon.getLinkedBy().isDestroyed() && !weapon.getLinkedBy().isMissing()
-                  && !weapon.getLinkedBy().isBreached()) {
+            && !(
+                  weaponType.hasFlag(WeaponType.F_MRM)
+                        && weapon.getLinkedBy() != null
+                        && weapon.getLinkedBy().getType().hasFlag(MiscType.F_APOLLO)
+                        && !(
+                              weapon.getLinkedBy().isDestroyed() || weapon.getLinkedBy().isMissing()
+                                    || weapon.getLinkedBy().isBreached()
+                            )
+                )
+            ) {
                 return Messages.getString("WeaponAttackAction.NoSaturation");
             }
 

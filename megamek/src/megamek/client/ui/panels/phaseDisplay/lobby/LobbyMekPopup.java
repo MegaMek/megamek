@@ -141,6 +141,7 @@ class LobbyMekPopup {
     static final String LMP_UNLOAD = "UNLOAD";
     static final String LMP_DETACH_FROM_TRACTOR = "DETACHFROMTRACTOR";
     static final String LMP_DETACH_TRAILER = "DETACHTRAILER";
+    static final String LMP_CONNECT_TRAIN = "CONNECTTRAIN";
     static final String LMP_MOVE_DOWN = "MOVE_DOWN";
     static final String LMP_INDI_CAMO = "INDI_CAMO";
     static final String LMP_DAMAGE = "DAMAGE";
@@ -276,6 +277,18 @@ class LobbyMekPopup {
         popup.add(loadMenu(clientGui, true, listener, joinedEntities));
         if (entities.size() == 1) {
             popup.add(towMenu(clientGui, true, listener, entities.getFirst()));
+        }
+
+        // Connecting several units at once. Offered whenever the selection could plausibly form a train; the exact
+        // ordering is chosen in the dialog and the server has the final say on legality.
+        boolean anyFreeTrailerSelected = joinedEntities.stream()
+              .anyMatch(entity -> entity.isTrailer() && (entity.getTractor() == Entity.NONE));
+        boolean anyFreeTractorSelected = joinedEntities.stream()
+              .anyMatch(entity -> entity.isTractor() && (entity.getTractor() == Entity.NONE)
+                    && (entity.getTowing() == Entity.NONE));
+        if ((joinedEntities.size() > 1) && anyFreeTrailerSelected && anyFreeTractorSelected) {
+            popup.add(menuItem(Messages.getString("ChatLounge.ConnectAsTrain"),
+                  LMP_CONNECT_TRAIN + NO_INFO + seIds, true, listener));
         }
 
         if (accessibleCarriers) {

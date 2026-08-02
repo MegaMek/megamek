@@ -48,6 +48,7 @@ import megamek.common.Player;
 import megamek.common.game.Game;
 import megamek.common.interfaces.IEntityRemovalConditions;
 import megamek.common.units.Entity;
+import megamek.common.units.Tank;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
@@ -71,28 +72,36 @@ class TrainAmmoSharingTest {
     private Entity unconnected;
 
     @BeforeEach
-    void setUp() {
+    void setUp() throws Exception {
         Player owner = new Player(0, "Owner");
 
         game = new Game();
         game.addPlayer(0, owner);
 
-        tractor = loadBulldog(TRACTOR_ID, owner);
-        canonicalTrailer = loadBulldog(TRAILER_ID, owner);
-        unconnected = loadBulldog(UNCONNECTED_ID, owner);
-        tractor.setTowing(TRAILER_ID);
-        canonicalTrailer.setTowedBy(TRACTOR_ID);
+        tractor = loadBulldog(TRACTOR_ID, owner, false);
+        canonicalTrailer = loadBulldog(TRAILER_ID, owner, true);
+        unconnected = loadBulldog(UNCONNECTED_ID, owner, true);
 
         game.addEntity(tractor);
         game.addEntity(canonicalTrailer);
         game.addEntity(unconnected);
+
+        // Hitch through towUnit rather than setting the neighbour links by hand, so the train membership the sharing
+        // rule reads is populated the same way a game populates it.
+        tractor.towUnit(canonicalTrailer.getId());
     }
 
-    private Entity loadBulldog(int id, Player owner) {
+    /** A Bulldog fitted with a trailer hitch, so it can take part in a train. */
+    private Entity loadBulldog(int entityId, Player owner, boolean isTrailer) throws Exception {
         Entity entity = getEntityForUnitTesting("Bulldog Medium Tank", true);
         assertNotNull(entity, "Bulldog Medium Tank not found");
-        entity.setId(id);
+        entity.setId(entityId);
         entity.setOwner(owner);
+        if (entity instanceof Tank vehicle) {
+            vehicle.setTrailer(isTrailer);
+            vehicle.addEquipment(EquipmentType.get(EquipmentTypeLookup.HITCH), Tank.LOC_BODY);
+            vehicle.setTrailerHitches();
+        }
         return entity;
     }
 
@@ -106,8 +115,8 @@ class TrainAmmoSharingTest {
     }
 
     /** A second instance of the trailer with the same id, standing in for one that arrived inside a packet. */
-    private Entity duplicateTrailer() {
-        Entity duplicate = loadBulldog(TRAILER_ID, game.getPlayer(0));
+    private Entity duplicateTrailer() throws Exception {
+        Entity duplicate = loadBulldog(TRAILER_ID, game.getPlayer(0), true);
         assertNotSame(canonicalTrailer, duplicate);
         return duplicate;
     }
@@ -147,6 +156,48 @@ class TrainAmmoSharingTest {
     }
 
     @Test
+    void sharingReachesOneCouplingAndNoFurther() throws Exception {
+        // Gun, then three ammunition carriages, as a Mobile Long Tom convoy is built. Only the carriage hitched to
+        // the gun can feed it: "Only vehicles directly coupled can share ammo" (Xotl, forum topic 74296). The other
+        // two carry rounds the gun cannot reach, which is the ruling rather than a defect.
+        Entity secondCarriage = loadBulldog(4, game.getPlayer(0), true);
+        Entity thirdCarriage = loadBulldog(5, game.getPlayer(0), true);
+        game.addEntity(secondCarriage);
+        game.addEntity(thirdCarriage);
+        tractor.towUnit(secondCarriage.getId());
+        tractor.towUnit(thirdCarriage.getId());
+
+        assertFalse(TrainAmmoSharing.canShareAmmoWith(tractor, secondCarriage),
+              "The gun does not reach the second carriage, two hops back");
+        assertFalse(TrainAmmoSharing.canShareAmmoWith(tractor, thirdCarriage),
+              "The gun does not reach the third carriage, three hops back");
+        assertFalse(TrainAmmoSharing.canShareAmmoWith(thirdCarriage, tractor),
+              "Nor does the far carriage reach the gun");
+        assertFalse(TrainAmmoSharing.canShareAmmoWith(canonicalTrailer, thirdCarriage),
+              "One trailer may not pull from another it is not hitched to");
+
+        assertTrue(TrainAmmoSharing.canShareAmmoWith(canonicalTrailer, secondCarriage),
+              "Carriages hitched to each other still share");
+
+        List<AmmoMounted> shared = TrainAmmoSharing.getSharedAmmo(tractor);
+        assertEquals(tractor.getAmmo().size() + canonicalTrailer.getAmmo().size(), shared.size(),
+              "Only the first carriage's bins are offered to the gun");
+    }
+
+    @Test
+    void aUnitInAnotherTrainIsStillOutOfReach() throws Exception {
+        Entity otherTractor = loadBulldog(6, game.getPlayer(0), false);
+        Entity otherTrailer = loadBulldog(7, game.getPlayer(0), true);
+        game.addEntity(otherTractor);
+        game.addEntity(otherTrailer);
+        otherTractor.towUnit(otherTrailer.getId());
+
+        assertFalse(TrainAmmoSharing.canShareAmmoWith(tractor, otherTractor),
+              "A separate train is not a shared supply");
+        assertFalse(TrainAmmoSharing.canShareAmmoWith(tractor, otherTrailer));
+    }
+
+    @Test
     void sharedAmmoOfALoneUnitIsJustItsOwn() {
         List<AmmoMounted> shared = TrainAmmoSharing.getSharedAmmo(unconnected);
 
@@ -156,7 +207,7 @@ class TrainAmmoSharingTest {
     // --- repairing links that crossed a packet boundary ---
 
     @Test
-    void linkToDuplicateCarrierIsRepointedAtTheCanonicalBin() {
+    void linkToDuplicateCarrierIsRepointedAtTheCanonicalBin() throws Exception {
         Entity duplicate = duplicateTrailer();
         WeaponMounted launcher = ammoUsingWeapon(tractor);
         AmmoMounted staleBin = duplicate.getAmmo().get(0);
@@ -184,7 +235,7 @@ class TrainAmmoSharingTest {
     }
 
     @Test
-    void linkToDepartedCarrierIsCleared() {
+    void linkToDepartedCarrierIsCleared() throws Exception {
         Entity duplicate = duplicateTrailer();
         WeaponMounted launcher = ammoUsingWeapon(tractor);
         launcher.setLinked(duplicate.getAmmo().get(0));
@@ -196,5 +247,68 @@ class TrainAmmoSharingTest {
 
         assertNull(ammoUsingWeapon(tractor).getLinkedAmmo(),
               "A link to a unit that has left the game must be dropped");
+    }
+
+    // --- links left behind when the train uncouples ---
+
+    @Test
+    void aLinkToATrailersAmmoIsDroppedWhenTheTrainUncouples() {
+        WeaponMounted launcher = ammoUsingWeapon(tractor);
+        AmmoMounted trailerBin = canonicalTrailer.getAmmo(launcher).get(0);
+        launcher.setLinked(trailerBin);
+
+        tractor.disconnectUnit(canonicalTrailer.getId());
+
+        assertNotSame(trailerBin, launcher.getLinkedAmmo(),
+              "An uncoupled trailer's ammo must not stay loaded");
+        assertSame(tractor, launcher.getLinkedAmmo().getEntity(),
+              "The weapon falls back to a bin this unit still owns");
+        assertEquals(trailerBin.getType(), launcher.getLinkedAmmo().getType(),
+              "The replacement bin holds the munition that was loaded");
+    }
+
+    @Test
+    void aTrailerLosesItsLinkToTheTractorsAmmoToo() {
+        WeaponMounted launcher = ammoUsingWeapon(canonicalTrailer);
+        AmmoMounted tractorBin = tractor.getAmmo(launcher).get(0);
+        launcher.setLinked(tractorBin);
+
+        tractor.disconnectUnit(canonicalTrailer.getId());
+
+        assertNotSame(tractorBin, launcher.getLinkedAmmo(),
+              "The split is checked from both sides, not just the tractor's");
+    }
+
+    @Test
+    void aLinkIsClearedWhenNothingLegalIsLeftToFire() {
+        WeaponMounted launcher = ammoUsingWeapon(tractor);
+        launcher.setLinked(canonicalTrailer.getAmmo(launcher).get(0));
+        // The tractor is a gun carriage with no rounds of its own, so nothing can replace the trailer's bin.
+        for (AmmoMounted ownBin : tractor.getAmmo()) {
+            ownBin.setShotsLeft(0);
+        }
+
+        tractor.disconnectUnit(canonicalTrailer.getId());
+
+        assertNull(launcher.getLinkedAmmo(),
+              "With no legal bin the weapon is left unloaded rather than firing a unit that has gone");
+    }
+
+    /** A guard against over-reaching: this one passes with the drop removed, the other three do not. */
+    @Test
+    void aLinkWithinTheRemainingTrainSurvivesTheSplit() throws Exception {
+        Entity secondCarriage = loadBulldog(4, game.getPlayer(0), true);
+        game.addEntity(secondCarriage);
+        tractor.towUnit(secondCarriage.getId());
+
+        WeaponMounted launcher = ammoUsingWeapon(tractor);
+        AmmoMounted stillCoupledBin = canonicalTrailer.getAmmo(launcher).get(0);
+        launcher.setLinked(stillCoupledBin);
+
+        // Drop only the rear carriage. The first trailer stays hitched.
+        tractor.disconnectUnit(secondCarriage.getId());
+
+        assertSame(stillCoupledBin, launcher.getLinkedAmmo(),
+              "Ammo on a unit that is still coupled must stay loaded");
     }
 }

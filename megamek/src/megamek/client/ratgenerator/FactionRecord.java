@@ -438,37 +438,47 @@ public class FactionRecord {
     }
 
     /**
-     * The tech percentage this faction declares for one equipment rating, with a single declared value
-     * taken to describe every rating.
+     * The tech percentage this faction declares for one equipment rating, consulting only this faction.
      *
-     * <p>Era files index these lists worst rating first - index 0 is F, index 4 is A - and the great
-     * majority of sub-factions declare a single value, meaning "this is our profile" rather than "this
-     * is our profile at rating F only". Reading such a list positionally answered only for F and
-     * returned {@code null} for every better rating, so the faction silently inherited its parent's
-     * numbers. Because the rulesets default most commands to rating A, an authored one-value profile
-     * almost never applied.</p>
+     * <p>Era files index these lists worst rating first - index 0 is F, index 4 is A. Two shapes are read
+     * as shorthand rather than as a positional list:</p>
+     * <ul>
+     *     <li>A faction declaring a single <em>rating level</em> is a subcommand locked to one rating within
+     *         its parent's system, so the caller's rating is a position in the parent's larger system.
+     *         {@link #pctTechIndex(int)} reads position 0 for it.</li>
+     *     <li>A faction declaring a single <em>percentage</em> means "this is our profile" rather than "this
+     *         is our profile at rating F only", so that lone value answers for every rating. Read
+     *         positionally it answered only for F and the faction silently inherited its parent's numbers
+     *         for every better rating - and because the rulesets default most commands to rating A, an
+     *         authored one-value profile almost never applied.</li>
+     * </ul>
      *
-     * <p>A list that is longer than one but still shorter than the rating being asked for is a
-     * different case: it is ambiguous rather than shorthand, since there is no way to tell which of
-     * the missing ratings the author meant to leave to the parent. Those keep the old behaviour and
-     * are reported once so the data can be corrected.</p>
+     * <p>A list longer than one but still shorter than the rating being asked for is neither: it is
+     * ambiguous, since there is no way to tell which of the missing ratings the author meant to leave to
+     * the parent. Those defer to the parent factions and are reported once so the data can be corrected.</p>
      *
      * @param category which of the tech categories to look up
      * @param era      the year of the era table to read
      * @param rating   equipment rating index, typically F (0) to A (4)
      *
-     * @return the percentage (0 - 100), or {@code null} if this faction declares nothing usable for
-     *       that rating, in which case the caller should fall back to the parent factions
+     * @return the percentage (0 - 100), or {@code null} if this faction declares nothing usable for that
+     *       rating, in which case the caller should fall back to the parent factions
      */
     public @Nullable Integer getPctTech(TechCategory category, int era, int rating) {
         List<Integer> declaredPercentages = declaredPctTechList(category, era);
         if (declaredPercentages == null) {
             return null;
         }
-        if (rating < declaredPercentages.size()) {
-            return declaredPercentages.get(rating);
+        int percentageIndex = pctTechIndex(rating);
+        if (percentageIndex < 0) {
+            // A caller passing -1 means no rating adjustment applies. A faction with a real rating system
+            // has no single value to answer with, so this reads as absent rather than as position 0.
+            return null;
         }
-        // A lone value describes the faction as a whole, so it answers for every rating.
+        if (percentageIndex < declaredPercentages.size()) {
+            return declaredPercentages.get(percentageIndex);
+        }
+        // A lone declared value describes the faction as a whole, so it answers for every rating.
         if (declaredPercentages.size() == 1) {
             return declaredPercentages.getFirst();
         }
@@ -477,31 +487,30 @@ public class FactionRecord {
     }
 
     /**
-     * The tech percentage exactly as the era file declares it, without a single value being taken to
-     * describe every rating.
+     * The tech percentage exactly as the era file declares it, with neither shorthand above applied.
      *
-     * <p>This is what an editor should show: {@link #getPctTech(TechCategory, int, int)} would report
-     * the same number against all five ratings for a faction whose file holds one, making a one-value
-     * entry look like a five-value one and inviting an edit that writes back five.</p>
+     * <p>This is what an editor should show: {@link #getPctTech(TechCategory, int, int)} would report the
+     * same number against all five ratings for a faction whose file holds one, making a one-value entry
+     * look like a five-value one and inviting an edit that writes back five.</p>
      *
      * @param category which of the tech categories to look up
      * @param era      the year of the era table to read
      * @param rating   equipment rating index, typically F (0) to A (4)
      *
-     * @return the declared percentage (0 - 100), or {@code null} if the era file declares no value at
-     *       that position
+     * @return the declared percentage (0 - 100), or {@code null} if the era file declares no value at that
+     *       position
      */
     public @Nullable Integer getDeclaredPctTech(TechCategory category, int era, int rating) {
         List<Integer> declaredPercentages = declaredPctTechList(category, era);
-        if ((declaredPercentages == null) || (rating >= declaredPercentages.size())) {
+        if ((declaredPercentages == null) || (rating < 0) || (rating >= declaredPercentages.size())) {
             return null;
         }
         return declaredPercentages.get(rating);
     }
 
     /**
-     * @return the declared percentages for this category and era, or {@code null} when the era file
-     *       declares none at all
+     * @return the declared percentages for this category and era, or {@code null} when the era file declares
+     *       none at all
      */
     private @Nullable List<Integer> declaredPctTechList(TechCategory category, int era) {
         HashMap<Integer, ArrayList<Integer>> percentagesByEra = pctTech.get(category);
@@ -516,9 +525,9 @@ public class FactionRecord {
     }
 
     /**
-     * Reports a list that declares some ratings but not the one asked for, once per category and era.
-     * Left to the parent factions rather than guessed at, because the author's intent for the missing
-     * ratings cannot be recovered from the file.
+     * Reports a list that declares some ratings but not the one asked for, once per category and era. Left
+     * to the parent factions rather than guessed at, because the author's intent for the missing ratings
+     * cannot be recovered from the file.
      */
     private void reportPartialPctTechList(TechCategory category, int era, int declaredCount, int rating) {
         if (reportedPartialPctTechLists.add(category + "/" + era)) {
@@ -527,6 +536,29 @@ public class FactionRecord {
                         + " rating - list all {} to differentiate them.",
                   key, declaredCount, category, era, rating, ratingLevels.size());
         }
+    }
+
+    /**
+     * Translates an equipment rating into a position within this faction's C/SL/O percentage lists.
+     *
+     * <p>Those lists hold one value per rating level the faction itself declares, so the position is
+     * normally the rating itself. A faction that declares exactly one rating level is the documented
+     * special case: it is a subcommand locked to that one rating within its parent's system, and the
+     * caller's rating is a position in the <em>parent's</em> larger system rather than in this faction's
+     * single-entry lists. Indexing the lists with it would miss every time and silently hand the lookup off
+     * to the parent faction, discarding the subcommand's own declared percentages.</p>
+     *
+     * <p>That one declared value is the faction's percentage whatever rating is asked about, so the
+     * single-level case deliberately also covers the {@code -1} a caller passes to mean "this faction
+     * applies no rating adjustments". Returning nothing for {@code -1} instead would send the lookup to the
+     * parent faction, which is the very substitution this translation exists to prevent.</p>
+     *
+     * @param rating equipment rating as supplied by the caller
+     *
+     * @return the index to read from this faction's percentage lists
+     */
+    private int pctTechIndex(int rating) {
+        return (ratingLevels.size() == 1) ? 0 : rating;
     }
 
     /**

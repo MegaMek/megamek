@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2021-2025 The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2021-2026 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -380,6 +380,33 @@ public class ServerLobbyHelper {
             lobbyDisembarkEnemy(game, entity);
             for (Entity carriedUnit : entity.getLoadedUnits()) {
                 lobbyDisembarkEnemy(game, carriedUnit);
+            }
+        }
+        correctTowLinks(game);
+    }
+
+    /**
+     * For all game units, unhitches trailers whose train has ended up split between opposing players.
+     * <p>
+     * This is the tow counterpart of the disembarking done above. Reassigning one unit of a train to an enemy would
+     * otherwise leave the two hitched together, moving as one train across opposing sides.
+     * </p>
+     * <p>
+     * NOTE: This is intended for use in the lobby phase!
+     * </p>
+     */
+    public static void correctTowLinks(Game game) {
+        // Copy the list: disconnecting a trailer drops every trailer behind it, changing the train as we walk it.
+        for (Entity entity : new ArrayList<>(game.getEntitiesVector())) {
+            if (entity.getTractor() == Entity.NONE) {
+                continue;
+            }
+
+            Entity tractor = game.getEntity(entity.getTractor());
+            if ((tractor != null) && tractor.getOwner().isEnemyOf(entity.getOwner())) {
+                LOGGER.info("[Train] {} and {} are no longer on the same side; unhitching",
+                      tractor.getDisplayName(), entity.getDisplayName());
+                tractor.disconnectUnit(entity.getId());
             }
         }
     }

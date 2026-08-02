@@ -62,6 +62,7 @@ import megamek.common.board.Board;
 import megamek.common.board.Coords;
 import megamek.common.compute.Compute;
 import megamek.common.equipment.Engine;
+import megamek.common.equipment.MiscMounted;
 import megamek.common.equipment.MiscType;
 import megamek.common.equipment.WeaponMounted;
 import megamek.common.equipment.WeaponType;
@@ -108,6 +109,12 @@ public class BasicPathRanker extends PathRanker {
 
     // this is a value used to indicate how much we dis-value the unit being destroyed as a result of what it's doing
     private final int UNIT_DESTRUCTION_FACTOR = 1000;
+
+    // Utility weights for the non-damage consequences of physical attacks: an expected head hit also wounds
+    // the pilot (consciousness roll, cumulative death at six hits), and an expected critical can cripple out
+    // of proportion to its raw damage. Scaled against UNIT_DESTRUCTION_FACTOR (1000 = certain death).
+    private static final double PHYSICAL_PILOT_HIT_WEIGHT = 100.0;
+    private static final double PHYSICAL_CRIT_WEIGHT = 30.0;
 
     // penalty for ending a sprint inside enemy weapon range; a sprinting unit forfeits all of its attacks,
     // so this must outweigh the aggression/bravery incentives that would otherwise favor closing distance
@@ -355,26 +362,58 @@ public class BasicPathRanker extends PathRanker {
         return getFireControl(path.getEntity()).determineBestFiringPlan(guess).getUtility();
     }
 
-    double calculateKickDamagePotential(Entity enemy, MovePath path, Game game) {
+    /**
+     * Estimates the physical-attack threat an adjacent enemy Mek poses to the moving unit at the given path's
+     * end state: the better of its kick or its two-armed punch, valued as expected damage plus the expected
+     * cost of criticals, pilot hits, and outright kills. Which attack is better - and whether the head is even
+     * reachable - depends on the relative elevation: an enemy one level above resolves its kick on the punch
+     * table (head at 1 in 6), which is why standing below an adjacent enemy is far more dangerous than
+     * standing level with it.
+     *
+     * @param enemy the adjacent enemy Mek
+     * @param path  the path being evaluated for the moving unit
+     * @param game  the current game
+     *
+     * @return the expected utility cost of the enemy's best physical attack against the path's end position
+     */
+    double calculateEnemyPhysicalThreat(Entity enemy, MovePath path, Game game) {
         if (!(enemy instanceof Mek)) {
             return 0.0;
         }
 
-        // if they can kick me, and probably hit, they probably will.
-        PhysicalInfo theirKick = new PhysicalInfo(enemy,
-              null,
-              path.getEntity(),
-              new EntityState(path),
-              PhysicalAttackType.RIGHT_KICK,
-              game,
-              getOwner(),
-              true);
+        double kickThreat = physicalThreatValue(enemy, path, PhysicalAttackType.RIGHT_KICK, null, game);
+        double punchThreat = physicalThreatValue(enemy, path, PhysicalAttackType.LEFT_PUNCH, null, game)
+              + physicalThreatValue(enemy, path, PhysicalAttackType.RIGHT_PUNCH, null, game);
 
-        if (theirKick.getProbabilityToHit() <= 0.5) {
-            return 0.0;
+        // A physical weapon (hatchet, sword, club) replaces the punches or the kick in the physical phase;
+        // a Hatchetman's threat profile is its hatchet, not its fists.
+        double weaponThreat = 0.0;
+        for (MiscMounted club : enemy.getClubs()) {
+            weaponThreat = Math.max(weaponThreat,
+                  physicalThreatValue(enemy, path, PhysicalAttackType.WEAPON, club, game));
         }
 
-        return theirKick.getExpectedDamageOnHit() * theirKick.getProbabilityToHit();
+        // One physical attack per phase; assume the enemy picks its best option.
+        return Math.max(weaponThreat, Math.max(kickThreat, punchThreat));
+    }
+
+    /**
+     * Values one enemy physical attack against the moving unit's projected end state: expected damage plus
+     * weighted expected criticals, pilot hits, and kill probability. Unlike raw damage, this makes a
+     * head-capable attack (punch table) cost what it is actually worth - a 3-point head kick that risks
+     * knocking out or killing the pilot is not "3 damage".
+     */
+    private double physicalThreatValue(Entity enemy, MovePath path, PhysicalAttackType attackType,
+          @Nullable MiscMounted club, Game game) {
+        PhysicalInfo theirAttack = (club != null)
+              ? new PhysicalInfo(enemy, null, path.getEntity(), new EntityState(path), club, game, getOwner(), true)
+              : new PhysicalInfo(enemy, null, path.getEntity(), new EntityState(path), attackType, game,
+                    getOwner(), true);
+
+        return theirAttack.getExpectedDamage()
+              + (theirAttack.getExpectedCriticals() * PHYSICAL_CRIT_WEIGHT)
+              + (theirAttack.getExpectedPilotHits() * PHYSICAL_PILOT_HIT_WEIGHT)
+              + (theirAttack.getKillProbability() * UNIT_DESTRUCTION_FACTOR);
     }
 
     double calculateMyDamagePotential(MovePath path, Entity enemy, int distance, Game game) {
@@ -435,25 +474,49 @@ public class BasicPathRanker extends PathRanker {
         return myFiringPlan.getUtility();
     }
 
-    double calculateMyKickDamagePotential(MovePath path, Entity enemy, Game game) {
-        if (!(path.getEntity() instanceof Mek)) {
+    /**
+     * Estimates the physical damage the moving unit can deal from the given path's end state: the better of
+     * its kick or its two-armed punch, valued at plain expected damage. Deliberate asymmetry with
+     * {@link #calculateEnemyPhysicalThreat}: the crit, pilot-hit, and kill weightings apply only to physicals
+     * we might RECEIVE - they push units away from dangerous adjacency. Crediting our own attacks with those
+     * bonuses would inflate the bravery term and the close-range incentive and pull units toward point-blank
+     * range, where physicals are already strong.
+     *
+     * @param path  the path being evaluated
+     * @param enemy the adjacent enemy
+     * @param game  the current game
+     *
+     * @return the expected damage of the moving unit's best physical attack from the path's end position
+     */
+    double calculateMyPhysicalDamagePotential(MovePath path, Entity enemy, Game game) {
+        if (!(path.getEntity() instanceof Mek movingMek)) {
             return 0.0;
         }
 
-        PhysicalInfo myKick = new PhysicalInfo(path.getEntity(),
-              new EntityState(path),
-              enemy,
-              null,
-              PhysicalAttackType.RIGHT_KICK,
-              game,
-              getOwner(),
-              true);
+        double kickDamage = myPhysicalExpectedDamage(path, enemy, PhysicalAttackType.RIGHT_KICK, null, game);
+        double punchDamage = myPhysicalExpectedDamage(path, enemy, PhysicalAttackType.LEFT_PUNCH, null, game)
+              + myPhysicalExpectedDamage(path, enemy, PhysicalAttackType.RIGHT_PUNCH, null, game);
 
-        if (myKick.getProbabilityToHit() <= 0.5) {
-            return 0.0;
+        // A physical weapon replaces the punches or the kick; count our best single option.
+        double weaponDamage = 0.0;
+        for (MiscMounted club : movingMek.getClubs()) {
+            weaponDamage = Math.max(weaponDamage,
+                  myPhysicalExpectedDamage(path, enemy, PhysicalAttackType.WEAPON, club, game));
         }
 
-        return myKick.getExpectedDamageOnHit() * myKick.getProbabilityToHit();
+        return Math.max(weaponDamage, Math.max(kickDamage, punchDamage));
+    }
+
+    /** Expected damage of one of the moving unit's own physical attacks; see
+     * {@link #calculateMyPhysicalDamagePotential}. */
+    private double myPhysicalExpectedDamage(MovePath path, Entity enemy, PhysicalAttackType attackType,
+          @Nullable MiscMounted club, Game game) {
+        PhysicalInfo myAttack = (club != null)
+              ? new PhysicalInfo(path.getEntity(), new EntityState(path), enemy, null, club, game, getOwner(), true)
+              : new PhysicalInfo(path.getEntity(), new EntityState(path), enemy, null, attackType, game,
+                    getOwner(), true);
+
+        return myAttack.getExpectedDamage();
     }
 
     EntityEvaluationResponse evaluateMovedEnemy(Entity enemy, MovePath path, Game game) {
@@ -469,9 +532,9 @@ public class BasicPathRanker extends PathRanker {
               distance,
               game);
 
-        // if they can kick me, and probably hit, they probably will.
+        // if they can reach me with a physical attack, assume they will use their best one.
         if (distance <= 1) {
-            theirDamagePotential += calculateKickDamagePotential(enemy, path, game);
+            theirDamagePotential += calculateEnemyPhysicalThreat(enemy, path, game);
         }
 
         returnResponse.setEstimatedEnemyDamage(theirDamagePotential);
@@ -484,7 +547,7 @@ public class BasicPathRanker extends PathRanker {
 
             // How much physical damage can I do to them?
             if (distance <= 1) {
-                returnResponse.setMyEstimatedPhysicalDamage(calculateMyKickDamagePotential(path, enemy, game));
+                returnResponse.setMyEstimatedPhysicalDamage(calculateMyPhysicalDamagePotential(path, enemy, game));
             }
         }
 
@@ -1384,6 +1447,21 @@ public class BasicPathRanker extends PathRanker {
                   selfPreservation);
             return selfPreservationMod;
         }
+
+        // A withdrawing unit with no reachable retreat edge still wants out of the fight: reward opening
+        // the range to the closest enemy. Without this, NoPathToDestination units got zero retreat pull
+        // and loitered in the engagement zone.
+        if ((behaviorType == BehaviorType.NoPathToDestination) && getOwner().wantsToFallBack(movingUnit)) {
+            double distanceToEnemy = distanceToClosestEnemy(movingUnit, path.getFinalCoords(), game);
+            double selfPreservation = getOwner().getBehaviorSettings().getSelfPreservationValue();
+            double selfPreservationMod = -distanceToEnemy * selfPreservation;
+            logger.trace("self preservation mod (no retreat path) [{} = -{} * {}]",
+                  selfPreservationMod,
+                  distanceToEnemy,
+                  selfPreservation);
+            return selfPreservationMod;
+        }
+
         logger.trace("self preservation mod [0] - not moving nor forced to withdraw");
         return 0.0;
     }
@@ -1618,6 +1696,18 @@ public class BasicPathRanker extends PathRanker {
         StandoffEvaluation standoff = evaluateStandoff(movingUnit, path, pathCopy, game, enemies, isNotAirborne,
               standoffDistance, distToEnemy, distToCluster, braveryMod);
         double aggressionMod = standoff.aggressionMod();
+
+        // A withdrawing unit has no business being pulled toward the enemy: kill the aggression pull (and,
+        // below, the closing incentive and herd pull) so the self-preservation term is what actually decides
+        // its path. Includes trapped withdrawers (NoPathToDestination while wanting to fall back), whose
+        // fallback retreat pull in calculateSelfPreservationMod would otherwise fight these terms.
+        BehaviorType moverBehavior = getOwner().getUnitBehaviorTracker().getBehaviorType(movingUnit, getOwner());
+        boolean withdrawing = (moverBehavior == BehaviorType.ForcedWithdrawal)
+              || ((moverBehavior == BehaviorType.NoPathToDestination) && getOwner().wantsToFallBack(movingUnit));
+        if (withdrawing) {
+            aggressionMod = 0;
+        }
+        scores.put("withdrawing", withdrawing ? 1.0 : 0.0);
         boolean holdingArtilleryInPlace = standoff.holdingArtilleryInPlace();
         boolean standoffArtillery = standoff.standoffArtillery();
         String standoffBranch = standoff.branch();
@@ -1639,9 +1729,11 @@ public class BasicPathRanker extends PathRanker {
         scores.put("aggressionMod", aggressionMod);
 
         // Pull short-range gunners and melee brawlers toward contact. Standoff units (artillery tubes, TAG
-        // spotters) want to keep their distance, and a unit told to ignore its damage output has no reason to
-        // close, so neither gets the incentive.
-        boolean wantsToClose = (standoffDistance == 0) && !getOwner().getBehaviorSettings().isIgnoreDamageOutput();
+        // spotters) want to keep their distance, a unit told to ignore its damage output has no reason to
+        // close, and a withdrawing unit is trying to leave, so none of them get the incentive.
+        boolean wantsToClose = (standoffDistance == 0)
+              && !getOwner().getBehaviorSettings().isIgnoreDamageOutput()
+              && !withdrawing;
         double closeRangeIncentive = wantsToClose ? calculateCloseRangeIncentive(movingUnit, distToEnemy) : 0;
         scores.put("closeRangeIncentive", closeRangeIncentive);
 
@@ -1649,7 +1741,8 @@ public class BasicPathRanker extends PathRanker {
         // ranks (weighted by Herd Mentality).
         // Standoff artillery (whether holding at range or falling back when the enemy breaches its standoff) ignores the
         // herd pull, so it never gets dragged toward the advancing friendly line instead of keeping its distance.
-        double herdingMod = (isNotAirborne && !standoffArtillery)
+        // Withdrawing units ignore it too - the herd center is the still-engaged friendly line they are leaving.
+        double herdingMod = (isNotAirborne && !standoffArtillery && !withdrawing)
               ? calculateHerdingMod(friendsCoords, pathCopy)
               : 0;
 

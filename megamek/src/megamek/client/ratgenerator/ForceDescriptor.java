@@ -1056,8 +1056,10 @@ public class ForceDescriptor {
         // let the normal ladder field a non-artillery unit of the original type as a last resort.
         // Skipped when a model is already pinned (battery uniformity), so the pinned gun wins and
         // every element resolves to the same unit instead of re-picking its own.
-        if (models.isEmpty() && (isUnitType(UnitType.MEK) || isUnitType(UnitType.TANK))
-              && roles.contains(MissionRole.ARTILLERY)) {
+        boolean hasNoPinnedModel = models.isEmpty();
+        boolean carriesArtillery = roles.contains(MissionRole.ARTILLERY);
+        boolean canMountArtillery = isUnitType(UnitType.MEK) || isUnitType(UnitType.TANK);
+        if (hasNoPinnedModel && carriesArtillery && canMountArtillery) {
             ModelRecord artilleryUnitRecord = generateArtilleryPreferred();
             if (artilleryUnitRecord != null) {
                 return artilleryUnitRecord;

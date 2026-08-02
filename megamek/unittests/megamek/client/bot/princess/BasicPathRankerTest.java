@@ -575,11 +575,11 @@ class BasicPathRankerTest {
                     anyInt(),
                     any(Game.class));
         doReturn(10.0).when(testRanker)
-              .calculateKickDamagePotential(eq(mockEnemyMek), any(MovePath.class), any(Game.class));
+              .calculateEnemyPhysicalThreat(eq(mockEnemyMek), any(MovePath.class), any(Game.class));
         doReturn(14.5).when(testRanker)
               .calculateMyDamagePotential(any(MovePath.class), eq(mockEnemyMek), anyInt(), any(Game.class));
         doReturn(8.0).when(testRanker)
-              .calculateMyKickDamagePotential(any(MovePath.class), eq(mockEnemyMek), any(Game.class));
+              .calculateMyPhysicalDamagePotential(any(MovePath.class), eq(mockEnemyMek), any(Game.class));
         final Map<Integer, Double> testBestDamageByEnemies = new TreeMap<>();
         testBestDamageByEnemies.put(mockEnemyMekId, 0.0);
         doReturn(testBestDamageByEnemies).when(testRanker).getBestDamageByEnemies();
@@ -667,11 +667,11 @@ class BasicPathRankerTest {
                     anyInt(),
                     any(Game.class));
         doReturn(10.0).when(testRanker)
-              .calculateKickDamagePotential(eq(mockEnemyMek), any(MovePath.class), any(Game.class));
+              .calculateEnemyPhysicalThreat(eq(mockEnemyMek), any(MovePath.class), any(Game.class));
         doReturn(14.5).when(testRanker)
               .calculateMyDamagePotential(any(MovePath.class), eq(mockEnemyMek), anyInt(), any(Game.class));
         doReturn(8.0).when(testRanker)
-              .calculateMyKickDamagePotential(any(MovePath.class), eq(mockEnemyMek), any(Game.class));
+              .calculateMyPhysicalDamagePotential(any(MovePath.class), eq(mockEnemyMek), any(Game.class));
         final Map<Integer, Double> testBestDamageByEnemies = new TreeMap<>();
         testBestDamageByEnemies.put(mockEnemyMekId, 0.0);
         doReturn(testBestDamageByEnemies).when(testRanker).getBestDamageByEnemies();
@@ -800,6 +800,37 @@ class BasicPathRankerTest {
               testRanker.calculateSprintExposurePenalty(mockPath, enemies, mockGame, scores, sprintFormula),
               TOLERANCE);
         assertFalse(sprintFormula.isEmpty());
+    }
+
+    @Test
+    void testCalculateSelfPreservationModWithNoRetreatPath() {
+        Entity mockMover = mock(BipedMek.class);
+        MovePath mockPath = mock(MovePath.class);
+        when(mockPath.getFinalCoords()).thenReturn(new Coords(10, 10));
+        Game mockGame = mock(Game.class);
+
+        BasicPathRanker testRanker = spy(new BasicPathRanker(mockPrincess));
+        doReturn(12.0).when(testRanker)
+              .distanceToClosestEnemy(any(Entity.class), any(Coords.class), any(Game.class));
+
+        // A withdrawing unit with no path to its retreat edge is rewarded for opening the range
+        // (negative mod raises utility, scaled like the normal retreat pull).
+        when(mockPrincess.getUnitBehaviorTracker().getBehaviorType(any(Entity.class), any(Princess.class)))
+              .thenReturn(BehaviorType.NoPathToDestination);
+        when(mockPrincess.wantsToFallBack(any(Entity.class))).thenReturn(true);
+        double expectedPull = -12.0 * BehaviorSettings.SELF_PRESERVATION_VALUES[5];
+        assertEquals(expectedPull,
+              testRanker.calculateSelfPreservationMod(mockMover, mockPath, mockGame),
+              TOLERANCE);
+
+        // NoPathToDestination for any other reason (e.g. a blocked waypoint): no retreat pull.
+        when(mockPrincess.wantsToFallBack(any(Entity.class))).thenReturn(false);
+        assertEquals(0.0, testRanker.calculateSelfPreservationMod(mockMover, mockPath, mockGame), TOLERANCE);
+
+        // An engaged unit is unchanged: no pull either way.
+        when(mockPrincess.getUnitBehaviorTracker().getBehaviorType(any(Entity.class), any(Princess.class)))
+              .thenReturn(BehaviorType.Engaged);
+        assertEquals(0.0, testRanker.calculateSelfPreservationMod(mockMover, mockPath, mockGame), TOLERANCE);
     }
 
     private void assertEntityEvaluationResponseEquals(final EntityEvaluationResponse expected,

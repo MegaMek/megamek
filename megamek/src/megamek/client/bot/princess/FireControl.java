@@ -46,6 +46,7 @@ import megamek.common.Player;
 import megamek.common.RangeType;
 import megamek.common.TargetRollModifier;
 import megamek.common.ToHitData;
+import megamek.common.actions.ClubAttackAction;
 import megamek.common.actions.EntityAction;
 import megamek.common.actions.FindClubAction;
 import megamek.common.actions.RepairWeaponMalfunctionAction;
@@ -505,8 +506,33 @@ public class FireControl {
           @Nullable EntityState targetState,
           final PhysicalAttackType attackType,
           final Game game) {
+        return guessToHitModifierPhysical(shooter, shooterState, target, targetState, attackType, null, game);
+    }
 
-        // todo weapons, frenzy (pg 144) & vehicle charges.
+    /**
+     * Makes a rather poor guess as to what the to hit modifier will be with a physical attack. This overload
+     * also covers physical-weapon (club/hatchet/sword) attacks, for which the mounted weapon must be given.
+     *
+     * @param shooter      The unit doing the attacking.
+     * @param shooterState The state of the unit doing the attacking.
+     * @param target       Who is being attacked.
+     * @param targetState  The state of the target.
+     * @param attackType   The type of physical attack being made.
+     * @param club         The physical weapon being swung; required for {@link PhysicalAttackType#WEAPON},
+     *                     ignored otherwise.
+     * @param game         The current {@link Game}
+     *
+     * @return The estimated to hit modifiers.
+     */
+    ToHitData guessToHitModifierPhysical(final Entity shooter,
+          @Nullable EntityState shooterState,
+          final Targetable target,
+          @Nullable EntityState targetState,
+          final PhysicalAttackType attackType,
+          @Nullable final MiscMounted club,
+          final Game game) {
+
+        // todo frenzy (pg 144) & vehicle charges.
         // todo heat mods to piloting?
 
         if (!(shooter instanceof Mek shooterMek)) {
@@ -547,12 +573,13 @@ public class FireControl {
             return new ToHitData(TH_PHY_NOT_IN_ARC);
         }
 
-        // Check elevation difference.
+        // Check elevation difference. Use the (possibly hypothetical) state elevations, not the entities'
+        // current ones: a path can end on a different level than the unit stands on now.
         final Hex attackerHex = game.getBoard(target).getHex(shooterState.getPosition());
         final Hex targetHex = game.getBoard(target).getHex(targetState.getPosition());
-        final int attackerElevation = shooter.getElevation() + attackerHex.getLevel();
-        final int attackerHeight = shooter.relHeight() + attackerHex.getLevel();
-        final int targetElevation = target.getElevation() + targetHex.getLevel();
+        final int attackerElevation = shooterState.getElevation() + attackerHex.getLevel();
+        final int attackerHeight = attackerElevation + (shooterState.isProne() ? 0 : shooter.getHeight());
+        final int targetElevation = targetState.getElevation() + targetHex.getLevel();
         final int targetHeight = targetElevation + target.getHeight();
         if (attackType.isPunch()) {
             if (shooter.hasQuirk(OptionsConstants.QUIRK_NEG_NO_ARMS)) {
@@ -587,6 +614,30 @@ public class FireControl {
             }
             if (!shooter.hasWorkingSystem(Mek.ACTUATOR_HAND, armLocation)) {
                 toHitData.addModifier(TH_PHY_P_HAND);
+            }
+        } else if (PhysicalAttackType.WEAPON == attackType) {
+            if (club == null) {
+                return new ToHitData(TH_PHY_NOT_MEK);
+            }
+            // Reach approximated like a punch: the weapon is swung by the arms.
+            if ((attackerHeight < targetElevation) || (attackerHeight > targetHeight)) {
+                return new ToHitData(TH_PHY_TOO_MUCH_ELEVATION);
+            }
+            if (shooterState.isProne()) {
+                return new ToHitData(TH_PHY_P_TAR_PRONE);
+            }
+
+            toHitData.addModifier(shooter.getCrew().getPiloting(), TH_PHY_BASE);
+            toHitData.addModifier(ClubAttackAction.getHitModFor(club.getType()), club.getName());
+            // Damaged arm actuators penalize the swing when the weapon is arm-mounted.
+            int clubLocation = club.getLocation();
+            if ((Mek.LOC_LEFT_ARM == clubLocation) || (Mek.LOC_RIGHT_ARM == clubLocation)) {
+                if (!shooter.hasWorkingSystem(Mek.ACTUATOR_UPPER_ARM, clubLocation)) {
+                    toHitData.addModifier(TH_PHY_P_UPPER_ARM);
+                }
+                if (!shooter.hasWorkingSystem(Mek.ACTUATOR_LOWER_ARM, clubLocation)) {
+                    toHitData.addModifier(TH_PHY_P_LOWER_ARM);
+                }
             }
         } else { // assuming kick
 

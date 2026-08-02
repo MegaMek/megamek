@@ -1,6 +1,6 @@
 /*
  * Copyright (C) 2000-2011 Ben Mazur (bmazur@sev.org)
- * Copyright (C) 2013-2025 The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2013-2026 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -38,9 +38,11 @@ import java.text.NumberFormat;
 
 import megamek.client.bot.PhysicalOption;
 import megamek.common.ToHitData;
+import megamek.common.actions.ClubAttackAction;
 import megamek.common.actions.KickAttackAction;
 import megamek.common.actions.PhysicalAttackAction;
 import megamek.common.actions.PunchAttackAction;
+import megamek.common.equipment.MiscMounted;
 import megamek.common.board.Coords;
 import megamek.common.compute.Compute;
 import megamek.common.game.Game;
@@ -72,7 +74,9 @@ public class PhysicalInfo {
     private int damageDirection; // direction damage is coming from relative to target
     private double expectedCriticals;
     private double killProbability; // probability to destroy CT or HEAD (ignores criticalSlots)
+    private double expectedPilotHits; // expected crew hits: any head hit wounds the pilot, armor or not
     private double utility; // filled out externally
+    private MiscMounted club; // the physical weapon swung, for PhysicalAttackType.WEAPON attacks only
     private final Princess owner;
 
     /**
@@ -111,6 +115,30 @@ public class PhysicalInfo {
     }
 
     /**
+     * Constructor for a physical-weapon (club/hatchet/sword) attack.
+     *
+     * @param shooter      The {@link megamek.common.units.Entity} doing the attacking.
+     * @param shooterState The current {@link megamek.client.bot.princess.EntityState} of the attacker.
+     * @param target       The {@link megamek.common.units.Targetable} of the attack.
+     * @param targetState  The current {@link megamek.client.bot.princess.EntityState} of the target.
+     * @param club         The physical weapon being swung.
+     * @param game         The current {@link Game}
+     * @param owner        The owning {@link Princess} bot.
+     * @param guess        Set TRUE to estimate the chance to hit rather than doing the full calculation.
+     */
+    PhysicalInfo(Entity shooter, EntityState shooterState, Targetable target, EntityState targetState,
+          MiscMounted club, Game game, Princess owner, boolean guess) {
+
+        this.owner = owner;
+
+        setShooter(shooter);
+        setTarget(target);
+        setAttackType(PhysicalAttackType.WEAPON);
+        this.club = club;
+        initDamage(PhysicalAttackType.WEAPON, shooterState, targetState, guess, game);
+    }
+
+    /**
      * Builds a new {@link PhysicalAttackAction} from the given parameters.
      *
      * @param attackType The {@link PhysicalAttackType} of the attack.
@@ -126,8 +154,11 @@ public class PhysicalInfo {
         } else if (attackType.isKick()) {
             int legId = PhysicalAttackType.RIGHT_KICK == attackType ? KickAttackAction.RIGHT : KickAttackAction.LEFT;
             return new KickAttackAction(shooterId, target.getTargetType(), target.getId(), legId);
+        } else if ((PhysicalAttackType.WEAPON == attackType) && (club != null)) {
+            return new ClubAttackAction(shooterId, target.getTargetType(), target.getId(), club,
+                  ToHitData.HIT_NORMAL, false);
         } else {
-            // todo handle other physical attack types.
+            // todo handle other physical attack types (charge, DFA).
             return null;
         }
     }
@@ -164,6 +195,7 @@ public class PhysicalInfo {
             setMaxDamage(0);
             setExpectedCriticals(0);
             setKillProbability(0);
+            setExpectedPilotHits(0);
             setExpectedDamageOnHit(0);
             return;
         }
@@ -179,12 +211,24 @@ public class PhysicalInfo {
         if (guess) {
             setHitData(owner.getFireControl(getShooter()).guessToHitModifierPhysical(getShooter(), shooterState,
                   getTarget(),
-                  targetState, getAttackType(), game));
+                  targetState, getAttackType(), club, game));
+            // The guess path never resolves which hit-location table the attack lands on, so resolve it the
+            // way the rules engine would: elevation decides whether a kick reaches the legs or the head.
+            getHitData().setHitTable(PhysicalHitTable.resolve(getAttackType(), getShooter(), shooterState,
+                  getTarget(), targetState, game));
         } else {
+            // The real toHit() already resolved the correct hit-location table into the ToHitData.
             PhysicalAttackAction action = buildAction(physicalAttackType, getShooter().getId(), getTarget());
             setAction(action);
-            setHitData(physicalAttackType.isPunch() ? ((PunchAttackAction) action).toHit(game)
-                  : ((KickAttackAction) action).toHit(game));
+            if (action instanceof PunchAttackAction punchAction) {
+                setHitData(punchAction.toHit(game));
+            } else if (action instanceof KickAttackAction kickAction) {
+                setHitData(kickAction.toHit(game));
+            } else if (action instanceof ClubAttackAction clubAction) {
+                setHitData(clubAction.toHit(game));
+            } else {
+                setHitData(new ToHitData(ToHitData.IMPOSSIBLE, "unsupported physical attack type"));
+            }
         }
 
         // Get the attack direction.
@@ -198,6 +242,7 @@ public class PhysicalInfo {
             setMaxDamage(0);
             setExpectedCriticals(0);
             setKillProbability(0);
+            setExpectedPilotHits(0);
             setExpectedDamageOnHit(0);
             return;
         }
@@ -213,9 +258,24 @@ public class PhysicalInfo {
                 setMaxDamage(0);
                 setExpectedCriticals(0);
                 setKillProbability(0);
+                setExpectedPilotHits(0);
                 setExpectedDamageOnHit(0);
                 return;
             }
+        } else if (PhysicalAttackType.WEAPON == physicalAttackType) {
+            if (club == null) {
+                logger.warn(msg.append("\n\tweapon attack without a club!").toString());
+                setProbabilityToHit(0);
+                setMaxDamage(0);
+                setExpectedCriticals(0);
+                setKillProbability(0);
+                setExpectedPilotHits(0);
+                setExpectedDamageOnHit(0);
+                return;
+            }
+            boolean targetIsConventionalInfantry = (getTarget() instanceof Entity targetEntity)
+                  && targetEntity.isConventionalInfantry();
+            setMaxDamage(ClubAttackAction.getDamageFor(getShooter(), club, targetIsConventionalInfantry, false));
         } else { // assuming kick
             setMaxDamage((int) Math.floor(getShooter().getWeight() / 5.0));
         }
@@ -241,10 +301,17 @@ public class PhysicalInfo {
         final double ROLL_TWO = 0.028;
         setExpectedCriticals(ROLL_TWO * expectedCriticalHitCount * getProbabilityToHit());
         setKillProbability(0);
+        setExpectedPilotHits(0);
 
         if (!(getTarget() instanceof Mek targetMek)) {
             return;
         }
+
+        // Any hit on the head wounds the pilot regardless of armor, so the expected crew damage is simply
+        // the head's share of the resolved hit-location table. On the kick table that share is zero; a kick
+        // delivered from above resolves on the punch table and puts the head in play.
+        setExpectedPilotHits(ProbabilityCalculator.getHitProbability(getHitData().getHitTable(),
+              getDamageDirection(), Mek.LOC_HEAD) * getProbabilityToHit());
 
         // now guess how many critical hits will be done
         for (int i = 0; i <= 7; i++) {
@@ -258,12 +325,10 @@ public class PhysicalInfo {
                 }
                 hitLoc = Mek.getInnerLocation(hitLoc);
             }
-            double hitLocationProbability;
-            if (getAttackType().isPunch()) {
-                hitLocationProbability = ProbabilityCalculator.getHitProbability_Punch(getDamageDirection(), hitLoc);
-            } else { // assume kick
-                hitLocationProbability = ProbabilityCalculator.getHitProbability_Kick(getDamageDirection(), hitLoc);
-            }
+            // Use the hit-location table the attack actually resolves on (punch, kick, or full-body by
+            // relative elevation) rather than assuming the table from the attack type.
+            double hitLocationProbability = ProbabilityCalculator.getHitProbability(getHitData().getHitTable(),
+                  getDamageDirection(), hitLoc);
             int targetArmor = targetMek.getArmor(hitLoc, (getDamageDirection() == 3));
             int targetInternals = targetMek.getInternal(hitLoc);
             if (targetArmor < 0) {
@@ -402,6 +467,21 @@ public class PhysicalInfo {
 
     public void setKillProbability(double killProbability) {
         this.killProbability = killProbability;
+    }
+
+    /**
+     * Returns the expected number of crew hits this attack inflicts: the head's share of the resolved
+     * hit-location table times the probability to hit. Any head hit wounds the pilot regardless of armor,
+     * so this is nonzero exactly when the attack resolves on a table that can reach the head.
+     *
+     * @return the expected crew hits from this attack
+     */
+    public double getExpectedPilotHits() {
+        return expectedPilotHits;
+    }
+
+    public void setExpectedPilotHits(double expectedPilotHits) {
+        this.expectedPilotHits = expectedPilotHits;
     }
 
     public double getUtility() {

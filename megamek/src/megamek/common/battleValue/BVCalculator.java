@@ -47,6 +47,7 @@ import megamek.client.ui.clientGUI.calculationReport.CalculationReport;
 import megamek.client.ui.clientGUI.calculationReport.DummyCalculationReport;
 import megamek.common.MPCalculationSetting;
 import megamek.common.battleArmor.BattleArmor;
+import megamek.common.battlefieldSupport.BattlefieldSupportAsset;
 import megamek.common.compute.Compute;
 import megamek.common.equipment.*;
 import megamek.common.equipment.AmmoType.AmmoTypeEnum;
@@ -111,6 +112,7 @@ public abstract class BVCalculator {
             case GunEmplacement ignored -> new GunEmplacementBVCalculator(entity);
             case HandheldWeapon ignored -> new HandheldWeaponBVCalculator(entity);
             case AbstractBuildingEntity ignored -> new AbstractBuildingEntityBVCalculator(entity);
+            case BattlefieldSupportAsset ignored -> new BattlefieldSupportAssetBVCalculator(entity);
             case null, default ->  // Tank
                   new CombatVehicleBVCalculator(entity);
         };

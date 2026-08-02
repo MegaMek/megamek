@@ -68,6 +68,9 @@ public class SanityInputFilter implements ObjectInputFilter {
           // Java Net
           Pattern.compile("java\\.net\\.URI"),
 
+          // Java AWT
+          Pattern.compile("java\\.awt\\.Color"),
+
           // Java Util
           Pattern.compile("java\\.util\\.AbstractMap"),
           Pattern.compile("java\\.util\\.ArrayList"),

@@ -53,6 +53,8 @@ class FactionRecordPctTechRatingTest {
     /** The Inner Sphere rating system is F, D, C, B, A, so A sits at index 4. */
     private static final int RATING_INDEX_A = 4;
     private static final int RATING_INDEX_F = 0;
+    /** What a caller passes when the faction applies no rating adjustments at all. */
+    private static final int NO_RATING_ADJUSTMENT = -1;
 
     /**
      * A subcommand locked to one rating within its parent's system, as CGB.FRR is locked to A within the Free
@@ -115,10 +117,19 @@ class FactionRecordPctTechRatingTest {
     }
 
     @Test
-    void aNegativeRatingIsAbsentRatherThanAnError() {
+    void aNegativeRatingIsAbsentRatherThanAnErrorForAFullRatingSystem() {
         FactionRecord faction = factionWithFullRatingSystem();
 
-        assertNull(faction.getPctTech(TechCategory.IS_ADVANCED, ERA, -1),
+        assertNull(faction.getPctTech(TechCategory.IS_ADVANCED, ERA, NO_RATING_ADJUSTMENT),
               "A faction that applies no rating adjustments is asked with -1, which must not reach into the list");
+    }
+
+    @Test
+    void singleRatingSubcommandStillReadsItsValueWhenNoRatingAdjustmentApplies() {
+        FactionRecord subcommand = subcommandLockedToRatingA();
+
+        assertEquals(76, subcommand.getPctTech(TechCategory.IS_ADVANCED, ERA, NO_RATING_ADJUSTMENT),
+              "A subcommand declares one value that holds whatever rating is asked about, so -1 must read it rather"
+                    + " than report nothing and send the lookup to the parent faction");
     }
 }

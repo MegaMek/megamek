@@ -464,6 +464,12 @@ public class FactionRecord {
      * would miss every time and silently hand the lookup off to the parent faction, discarding the subcommand's own
      * declared percentages.</p>
      *
+     * <p>That one declared value is the faction's percentage whatever rating is asked about, so the single-level case
+     * deliberately also covers the {@code -1} a caller passes to mean "this faction applies no rating adjustments".
+     * Returning nothing for {@code -1} instead would send the lookup to the parent faction, which is the very
+     * substitution this translation exists to prevent. A faction with a full rating system has no single value to
+     * fall back on, so {@code -1} stays out of range for it and reads as absent.</p>
+     *
      * @param rating equipment rating as supplied by the caller
      *
      * @return the index to read from this faction's percentage lists

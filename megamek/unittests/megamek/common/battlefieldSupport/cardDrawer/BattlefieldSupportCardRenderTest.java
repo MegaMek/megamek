@@ -316,15 +316,10 @@ class BattlefieldSupportCardRenderTest {
         NodeList paths = group.getElementsByTagName("path");
         for (int i = 0; i < paths.getLength(); i++) {
             String pathData = ((Element) paths.item(i)).getAttribute("d");
-            List<Double> points;
-            try {
-                points = Arrays.stream(pathData.split("[A-Za-z,\\s]+"))
-                      .filter(value -> !value.isBlank())
-                      .map(Double::parseDouble)
-                      .toList();
-            } catch (NumberFormatException exception) {
-                throw new AssertionError("Invalid SVG path data: " + pathData, exception);
-            }
+            List<Double> points = Arrays.stream(pathData.split("[A-Za-z,\\s]+"))
+                  .filter(value -> !value.isBlank())
+                  .map(value -> parseSvgDouble(value, "path data"))
+                  .toList();
             if ((points.size() == 20) && points.contains((double) BattlefieldSupportCard.WIDTH - 12)) {
                 return points;
             }
@@ -334,21 +329,21 @@ class BattlefieldSupportCardRenderTest {
 
     private static List<Double> points(Element element) {
         String pointsAttribute = element.getAttribute("points").strip();
-        try {
-            return Arrays.stream(pointsAttribute.split("[,\\s]+"))
-                  .map(Double::parseDouble)
-                  .toList();
-        } catch (NumberFormatException exception) {
-            throw new AssertionError("Invalid SVG points attribute: " + pointsAttribute, exception);
-        }
+        return Arrays.stream(pointsAttribute.split("[,\\s]+"))
+              .map(value -> parseSvgDouble(value, "points attribute"))
+              .toList();
     }
 
     private static double attribute(Element element, String name) {
         String value = element.getAttribute(name);
+        return parseSvgDouble(value, "attribute '" + name + "'");
+    }
+
+    private static double parseSvgDouble(String value, String context) {
         try {
             return Double.parseDouble(value);
         } catch (NumberFormatException exception) {
-            throw new AssertionError("Invalid numeric SVG attribute '%s': %s".formatted(name, value), exception);
+            throw new AssertionError("Invalid numeric SVG %s: %s".formatted(context, value), exception);
         }
     }
 

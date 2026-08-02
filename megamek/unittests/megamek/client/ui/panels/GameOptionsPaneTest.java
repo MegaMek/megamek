@@ -45,7 +45,9 @@ import java.io.File;
 import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.Enumeration;
+import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 import java.util.concurrent.atomic.AtomicBoolean;
 import javax.swing.JLabel;
@@ -127,7 +129,7 @@ class GameOptionsPaneTest {
             assertEquals(2, sections.size());
             assertFalse(sections.get(0).isExpanded());
             assertFalse(sections.get(1).isExpanded());
-            assertEquals(2, GameOptionsPane.legendEntries().size());
+            assertEquals(3, GameOptionsPane.legendEntries().size());
             assertTrue(pane.getPreferredSize().width >= UIUtil.scaleForGUI(
                   SettingsNavigationPanel.DEFAULT_NAVIGATION_WIDTH + SettingsPagePanel.DEFAULT_MAXIMUM_PAGE_WIDTH));
             assertTrue(pane.getPreferredSize().height >= UIUtil.scaleForGUI(800));
@@ -161,6 +163,51 @@ class GameOptionsPaneTest {
                   <= UIUtil.scaleForGUI(SettingsFormPanel.DEFAULT_LABEL_WIDTH));
             assertTrue(optionLabel(wideCoreOption).getPreferredSize().height
                   > optionLabel(coreFirst).getPreferredSize().height);
+        });
+    }
+
+    @Test
+    void coreRulesUseSelectiveConciseLabelsAndDetailsBadges() throws Exception {
+        runOnEdt(() -> {
+            GameOptions options = new GameOptions();
+            Map<String, String> conciseLabels = Map.ofEntries(
+                  Map.entry(OptionsConstants.BASE_DISABLE_LOCAL_SAVE, "Disable Double Blind Local Saves"),
+                  Map.entry(OptionsConstants.BASE_EXCLUSIVE_DB_DEPLOYMENT, "Exclusive Double Blind Deployment"),
+                  Map.entry(OptionsConstants.BASE_GM_CONTROLS_DONE_REPORT_PHASE, "GM Controls Report Completion"),
+                  Map.entry(OptionsConstants.BASE_INFANTRY_DAMAGE_HEAT, "Infantry Flame Weapons Deal Heat"),
+                  Map.entry(OptionsConstants.BASE_RESTRICT_GAME_COMMANDS, "Restrict Observer Commands"),
+                  Map.entry(OptionsConstants.BASE_SET_ARTY_PLAYER_HOME_EDGE, "Set Artillery Home Edge"),
+                  Map.entry(OptionsConstants.BASE_SET_DEFAULT_TEAM_1, "Default Players to Team 1"),
+                  Map.entry(OptionsConstants.BASE_SET_PLAYER_DEPLOYMENT_TO_PLAYER_0,
+                        "Use Player 0 Deployment Settings"),
+                  Map.entry(OptionsConstants.BASE_SUPPRESS_UNIT_TOOLTIP_IN_REPORT_LOG, "Hide Report Log Tooltips"),
+                  Map.entry(OptionsConstants.BASE_TURN_TIMER_FIRING, "Firing Phase Turn Timer"),
+                  Map.entry(OptionsConstants.BASE_TURN_TIMER_MOVEMENT, "Movement Phase Turn Timer"),
+                  Map.entry(OptionsConstants.BASE_TURN_TIMER_PHYSICAL, "Physical Phase Turn Timer"),
+                  Map.entry(OptionsConstants.BASE_TURN_TIMER_TARGETING, "Targeting Phase Turn Timer"));
+            Map<String, DialogOptionComponentYPanel> conciseComponents = new LinkedHashMap<>();
+            conciseLabels.keySet().forEach(optionName ->
+                  conciseComponents.put(optionName, component(options.getOption(optionName))));
+            DialogOptionComponentYPanel searchlights = component(
+                  options.getOption(OptionsConstants.SEARCHLIGHTS_ON));
+            List<DialogOptionComponentYPanel> components = new ArrayList<>(conciseComponents.values());
+            components.add(searchlights);
+            GameOptionsPane pane = pane(components, option -> true);
+
+            conciseLabels.forEach((optionName, label) -> {
+                DialogOptionComponentYPanel optionComponent = conciseComponents.get(optionName);
+                assertOptionPresentation(optionComponent, label, true,
+                      optionName.equals(OptionsConstants.BASE_INFANTRY_DAMAGE_HEAT));
+                assertFalse(optionLabel(optionComponent).getText().contains("<div width="),
+                      optionLabel(optionComponent).getText());
+            });
+            assertOptionPresentation(searchlights, searchlights.getOption().getDisplayableName(), false, false);
+
+            DialogOptionComponentYPanel deployment = conciseComponents.get(
+                  OptionsConstants.BASE_SET_PLAYER_DEPLOYMENT_TO_PLAYER_0);
+            pane.setFilterText(deployment.getOption().getDisplayableName());
+            assertTrue(deployment.isVisible());
+            assertFalse(searchlights.isVisible());
         });
     }
 
@@ -336,6 +383,14 @@ class GameOptionsPaneTest {
             }
         }
         throw new AssertionError("Option has no label: " + component.getOption().getName());
+    }
+
+    private static void assertOptionPresentation(DialogOptionComponentYPanel component, String label,
+          boolean details, boolean unofficial) {
+        String text = optionLabel(component).getText();
+        assertTrue(text.contains(label), text);
+        assertEquals(details, text.contains(DETAILS_SYMBOL), text);
+        assertEquals(unofficial, text.contains(UNOFFICIAL_SYMBOL), text);
     }
 
     private static String sectionTitle(Container root, String title) {

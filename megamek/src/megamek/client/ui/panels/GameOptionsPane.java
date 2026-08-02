@@ -70,9 +70,12 @@ import megamek.common.options.IOption;
 public class GameOptionsPane extends JPanel {
     private static final int START_HEIGHT = 800;
     private static final int HEADER_IMAGE_SIZE = 80;
+    private static final int DETAILS_ICON = 0xE88E;
     private static final int ADVANCED_ICON = 0xE8B8;
     private static final int UNOFFICIAL_ICON = 0xE002;
     private static final SettingsTextProvider TEXT = SettingsTextProvider.megaMek();
+    private static final SettingsBadge DETAILS_BADGE = new SettingsBadge(DETAILS_ICON, null,
+          getString("GameOptionsDialog.legend.details"));
     private static final SettingsBadge ADVANCED_BADGE = new SettingsBadge(ADVANCED_ICON, null,
           getString("GameOptionsDialog.legend.advanced"));
     private static final SettingsBadge UNOFFICIAL_BADGE = new SettingsBadge(UNOFFICIAL_ICON, null,
@@ -140,7 +143,7 @@ public class GameOptionsPane extends JPanel {
     }
 
     public static List<SettingsBadge> legendEntries() {
-        return List.of(ADVANCED_BADGE, UNOFFICIAL_BADGE);
+        return List.of(DETAILS_BADGE, ADVANCED_BADGE, UNOFFICIAL_BADGE);
     }
 
     @Override
@@ -254,7 +257,26 @@ public class GameOptionsPane extends JPanel {
     }
 
     private static List<SettingsBadge> optionBadges(IOption option) {
-        return isUnofficial(option) ? List.of(UNOFFICIAL_BADGE) : List.of();
+        List<SettingsBadge> badges = new ArrayList<>();
+        if (hasShortLabel(option)) {
+            badges.add(DETAILS_BADGE);
+        }
+        if (isUnofficial(option)) {
+            badges.add(UNOFFICIAL_BADGE);
+        }
+        return badges;
+    }
+
+    private static boolean hasShortLabel(IOption option) {
+        return TEXT.containsKey(shortLabelKey(option));
+    }
+
+    private static String optionDisplayName(IOption option) {
+        return hasShortLabel(option) ? TEXT.getText(shortLabelKey(option)) : option.getDisplayableName();
+    }
+
+    private static String shortLabelKey(IOption option) {
+        return "GameOptionsDialog.option." + option.getName() + ".shortName";
     }
 
     private static boolean isUnofficial(IOption option) {
@@ -422,9 +444,11 @@ public class GameOptionsPane extends JPanel {
     private record OptionRow(DialogOptionComponentYPanel component, IOption option, String searchableText) {
         private static OptionRow create(DialogOptionComponentYPanel component) {
             IOption option = component.getOption();
-            component.setSettingsBadges(optionBadges(option));
+            String displayName = optionDisplayName(option);
+            component.setSettingsPresentation(displayName, optionBadges(option));
             return new OptionRow(component, option, SettingsRoute.normalizeSearchText(
-                  option.getName() + ' ' + option.getDisplayableName() + ' ' + option.getDescription()));
+                  option.getName() + ' ' + option.getDisplayableName() + ' ' + displayName + ' '
+                        + option.getDescription()));
         }
 
         private boolean matches(String normalizedFilter, String groupSearchableText) {

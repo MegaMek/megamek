@@ -83,6 +83,7 @@ public class DialogOptionComponentYPanel extends FixedYPanel
     private JComboBox<String> choice;
     private JTextField textField;
     private JLabel optionLabel;
+    private String optionDisplayName;
     private String settingsBadgeHtml = "";
     private int optionLabelWrapWidth;
     private final DialogOptionListener dialogOptionListener;
@@ -109,6 +110,7 @@ public class DialogOptionComponentYPanel extends FixedYPanel
           boolean choiceLabelFirst) {
         dialogOptionListener = parent;
         this.option = option;
+        optionDisplayName = option.getDisplayableName();
 
         setLayout(new FlowLayout(FlowLayout.LEFT, 5, 2));
         if (isTorsoMountQuirk(option)) {
@@ -183,11 +185,13 @@ public class DialogOptionComponentYPanel extends FixedYPanel
     }
 
     /**
-     * Adds metadata markers to this option's visible label, matching the shared settings controls.
+     * Applies page-specific display text and metadata markers to this option's visible label.
      *
-     * @param badges markers that apply specifically to this option
+     * @param displayName concise text to show in this presentation
+     * @param badges      markers that apply specifically to this option
      */
-    void setSettingsBadges(Collection<SettingsBadge> badges) {
+    void setSettingsPresentation(String displayName, Collection<SettingsBadge> badges) {
+        optionDisplayName = displayName;
         settingsBadgeHtml = SettingsBadge.formatHtml(badges);
         updateOptionLabelText();
     }
@@ -208,14 +212,14 @@ public class DialogOptionComponentYPanel extends FixedYPanel
     }
 
     private void updateOptionLabelText() {
-        String displayName = StringEscapeUtils.escapeHtml4(option.getDisplayableName());
+        String displayName = StringEscapeUtils.escapeHtml4(optionDisplayName);
         if (optionLabelWrapWidth > 0) {
             optionLabel.setText("<html><div width=" + optionLabelWrapWidth + '>'
                   + displayName + settingsBadgeHtml + "</div></html>");
         } else if (!settingsBadgeHtml.isBlank()) {
             optionLabel.setText("<html><nobr>" + displayName + settingsBadgeHtml + "</nobr></html>");
         } else {
-            optionLabel.setText(option.getDisplayableName());
+            optionLabel.setText(optionDisplayName);
         }
     }
 

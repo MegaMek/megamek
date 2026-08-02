@@ -137,6 +137,45 @@ final class RoleBudgetAllocator {
     }
 
     /**
+     * Assigns role targets to the members of a lance whose Campaign Operations formation could not be built.
+     *
+     * <p>Formations own the unit choices of the nodes that carry them, so the allocator skips their slots. When a
+     * formation cannot be met the node falls back to an ordinary lance and those slots become governable after all -
+     * but by then the allocator has long finished, so the fallback path calls back in here.</p>
+     *
+     * <p>This is not a rare corner. A Light Battle Lance needs three of Brawler, Sniper or Skirmisher, and there are
+     * faction and era combinations whose Light tables hold none of the three, so the formation cannot be built at
+     * all. Every one of those slots would otherwise be lost to the mix.</p>
+     *
+     * @param lance   the node whose formation failed, holding the force-wide mix
+     * @param members the children that will now be generated as an ordinary lance
+     */
+    static void allocateFallbackLance(ForceDescriptor lance, List<ForceDescriptor> members) {
+        RoleMix mix = lance.getRoleMix();
+        if (mix.isEmpty()) {
+            return;
+        }
+        List<ForceDescriptor> slots = members.stream()
+              .filter(member -> member.getTargetUnitRole() == null)
+              .filter(member -> member.getUnitType() != null)
+              .filter(RoleSlotSurvey::canCarryRoleTarget)
+              .toList();
+        if (slots.isEmpty()) {
+            return;
+        }
+        Map<BucketKey, Bucket> buckets = bucketSlots(slots);
+        buckets.forEach(RoleBudgetAllocator::histogram);
+        Map<UnitRole, Integer> requested = integerQuotas(mix, slots.size());
+        int assigned = 0;
+        for (UnitRole role : scarcestFirst(buckets.values(), requested.keySet())) {
+            assigned += assignRole(buckets.values(), role, requested.get(role));
+        }
+        LOGGER.debug("[ForceGen][RoleTarget] '{}': formation could not be built, so its {} slot(s) rejoin the mix;"
+                    + " {} assigned a role",
+              lance.parseName(), slots.size(), assigned);
+    }
+
+    /**
      * Groups slots that share a unit table.
      *
      * @param governedSlots the slots the mix may shape

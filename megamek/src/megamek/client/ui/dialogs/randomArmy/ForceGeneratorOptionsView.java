@@ -49,6 +49,7 @@ import java.io.Serial;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.HashMap;
+import java.util.EnumMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
@@ -74,6 +75,7 @@ import megamek.common.options.OptionsConstants;
 import megamek.common.units.Entity;
 import megamek.common.units.EntityListFile;
 import megamek.common.units.EntityWeightClass;
+import megamek.common.units.UnitRole;
 import megamek.common.units.UnitType;
 import megamek.logging.MMLogger;
 
@@ -120,15 +122,22 @@ public class ForceGeneratorOptionsView extends JPanel implements FocusListener, 
     private JPanel panInfRole;
     private JPanel panAirRole;
 
-    private JCheckBox chkRoleRecon;
-    private JCheckBox chkRoleFireSupport;
-    private JCheckBox chkRoleUrban;
-    private JCheckBox chkRoleInfantrySupport;
-    private JCheckBox chkRoleCavalry;
-    private JCheckBox chkRoleRaider;
-    private JCheckBox chkRoleIncendiary;
-    private JCheckBox chkRoleAntiAircraft;
-    private JCheckBox chkRoleAntiInfantry;
+    /** The ground roles offered in the mix, in the order they read best on screen. */
+    private static final List<UnitRole> GROUND_MIX_ROLES = List.of(UnitRole.BRAWLER, UnitRole.JUGGERNAUT,
+          UnitRole.SKIRMISHER, UnitRole.STRIKER, UnitRole.SNIPER, UnitRole.MISSILE_BOAT,
+          UnitRole.SCOUT, UnitRole.AMBUSHER);
+
+    /**
+     * The aerospace roles offered in the mix. Transport is deliberately absent: it names a class of unit rather than
+     * a battlefield posture, only five units in the shipped data carry it, and the Transport percentages above
+     * already generate lift properly.
+     */
+    private static final List<UnitRole> AEROSPACE_MIX_ROLES = List.of(UnitRole.INTERCEPTOR, UnitRole.FAST_DOGFIGHTER,
+          UnitRole.DOGFIGHTER, UnitRole.ATTACK_FIGHTER, UnitRole.FIRE_SUPPORT);
+
+    /** Percentage spinner per offered role, covering both the ground and the aerospace grids. */
+    private final Map<UnitRole, JSpinner> roleMixSpinners = new EnumMap<>(UnitRole.class);
+
     private JCheckBox chkRoleArtillery;
     private JCheckBox chkRoleMissileArtillery;
     private JCheckBox chkRoleTransport;
@@ -443,70 +452,43 @@ public class ForceGeneratorOptionsView extends JPanel implements FocusListener, 
         gbc = new GridBagConstraints();
         gbc.anchor = GridBagConstraints.NORTHWEST;
 
-        chkRoleRecon = createMissionRoleCheck(MissionRole.RECON);
-        gbc.gridx = 0;
-        gbc.gridy = 0;
-        panGroundRole.add(chkRoleRecon, gbc);
-
-        chkRoleFireSupport = createMissionRoleCheck(MissionRole.FIRE_SUPPORT);
-        gbc.gridx = 1;
-        gbc.gridy = 0;
-        panGroundRole.add(chkRoleFireSupport, gbc);
-
-        chkRoleUrban = createMissionRoleCheck(MissionRole.URBAN);
-        gbc.gridx = 2;
-        gbc.gridy = 0;
-        panGroundRole.add(chkRoleUrban, gbc);
-
-        chkRoleCavalry = createMissionRoleCheck(MissionRole.CAVALRY);
-        gbc.gridx = 3;
-        gbc.gridy = 0;
-        panGroundRole.add(chkRoleCavalry, gbc);
-
-        chkRoleRaider = createMissionRoleCheck(MissionRole.RAIDER);
-        gbc.gridx = 0;
-        gbc.gridy = 1;
-        panGroundRole.add(chkRoleRaider, gbc);
-
-        chkRoleIncendiary = createMissionRoleCheck(MissionRole.INCENDIARY);
-        gbc.gridx = 1;
-        gbc.gridy = 1;
-        panGroundRole.add(chkRoleIncendiary, gbc);
-
-        chkRoleAntiAircraft = createMissionRoleCheck(MissionRole.ANTI_AIRCRAFT);
-        gbc.gridx = 2;
-        gbc.gridy = 1;
-        panGroundRole.add(chkRoleAntiAircraft, gbc);
-
-        chkRoleAntiInfantry = createMissionRoleCheck(MissionRole.ANTI_INFANTRY);
-        gbc.gridx = 3;
-        gbc.gridy = 1;
-        panGroundRole.add(chkRoleAntiInfantry, gbc);
-
+        // The four mission roles that genuinely filter the unit table. The nine dropped alongside them - Recon,
+        // Fire Support, Urban, Cavalry, Raider, Incendiary, Anti-Aircraft, Anti-Infantry and Infantry Support -
+        // only nudged availability weights, which on a table of a few dozen entries was close to noise. Battlefield
+        // shape is expressed by the unit role mix below instead.
         chkRoleArtillery = createMissionRoleCheck(MissionRole.ARTILLERY);
         gbc.gridx = 0;
-        gbc.gridy = 2;
+        gbc.gridy = 0;
         panGroundRole.add(chkRoleArtillery, gbc);
 
         chkRoleMissileArtillery = createMissionRoleCheck(MissionRole.MISSILE_ARTILLERY);
         gbc.gridx = 1;
-        gbc.gridy = 2;
+        gbc.gridy = 0;
         panGroundRole.add(chkRoleMissileArtillery, gbc);
 
-        chkRoleInfantrySupport = createMissionRoleCheck(MissionRole.INF_SUPPORT);
-        gbc.gridx = 2;
-        gbc.gridy = 2;
-        panGroundRole.add(chkRoleInfantrySupport, gbc);
-
         chkRoleTransport = createMissionRoleCheck(MissionRole.CARGO);
-        gbc.gridx = 0;
-        gbc.gridy = 3;
+        gbc.gridx = 2;
+        gbc.gridy = 0;
         panGroundRole.add(chkRoleTransport, gbc);
 
         chkRoleEngineer = createMissionRoleCheck(MissionRole.ENGINEER);
-        gbc.gridx = 1;
-        gbc.gridy = 3;
+        gbc.gridx = 3;
+        gbc.gridy = 0;
         panGroundRole.add(chkRoleEngineer, gbc);
+
+        gbc.gridx = 0;
+        gbc.gridy = 1;
+        gbc.gridwidth = 4;
+        gbc.fill = GridBagConstraints.HORIZONTAL;
+        panGroundRole.add(createRoleMixPanel(GROUND_MIX_ROLES, "ForceGeneratorDialog.roleMix.ground"), gbc);
+        gbc.gridwidth = 1;
+        gbc.fill = GridBagConstraints.NONE;
+
+        // Artillery switches weight-class handling off for the node entirely, so there are no weight bands left for
+        // the role mix to route between. Grey it out rather than let it silently do nothing.
+        ActionListener artilleryInterlock = event -> refreshRoleMixEnablement();
+        chkRoleArtillery.addActionListener(artilleryInterlock);
+        chkRoleMissileArtillery.addActionListener(artilleryInterlock);
 
         gbc = new GridBagConstraints();
         gbc.anchor = GridBagConstraints.NORTHWEST;
@@ -589,7 +571,99 @@ public class ForceGeneratorOptionsView extends JPanel implements FocusListener, 
         gbc.gridy = 2;
         panAirRole.add(chkRoleAirTransport, gbc);
 
+        gbc.gridx = 0;
+        gbc.gridy = 3;
+        gbc.gridwidth = 4;
+        gbc.fill = GridBagConstraints.HORIZONTAL;
+        panAirRole.add(createRoleMixPanel(AEROSPACE_MIX_ROLES, "ForceGeneratorDialog.roleMix.aerospace"), gbc);
+        gbc.gridwidth = 1;
+        gbc.fill = GridBagConstraints.NONE;
+
         refreshFactions();
+    }
+
+    /**
+     * Builds a labelled grid of percentage spinners, one per role.
+     *
+     * <p>The percentages are a floor rather than a partition: they need not reach 100, and whatever is left over is
+     * rolled by the normal weighted table with no role constraint. Leaving every spinner at zero therefore generates
+     * exactly as the Force Generator did before role targeting existed.</p>
+     *
+     * @param roles    the roles to offer, in display order
+     * @param titleKey resource key for the grid's titled border
+     *
+     * @return the assembled panel
+     */
+    private JPanel createRoleMixPanel(List<UnitRole> roles, String titleKey) {
+        JPanel panel = new JPanel(new GridBagLayout());
+        panel.setBorder(BorderFactory.createTitledBorder(Messages.getString(titleKey)));
+        GridBagConstraints constraints = new GridBagConstraints();
+        constraints.anchor = GridBagConstraints.WEST;
+        constraints.insets = new Insets(1, 4, 1, 4);
+        int column = 0;
+        int row = 0;
+        for (UnitRole role : roles) {
+            JLabel label = new JLabel(role.toString());
+            JSpinner spinner = new JSpinner(new SpinnerNumberModel(0, 0, 100, 5));
+            spinner.setName("spnRoleMix" + role.name());
+            spinner.setToolTipText(Messages.getString("ForceGeneratorDialog.roleMix.spinner.tooltip", role));
+            label.setLabelFor(spinner);
+            roleMixSpinners.put(role, spinner);
+
+            constraints.gridx = column * 2;
+            constraints.gridy = row;
+            panel.add(label, constraints);
+            constraints.gridx = (column * 2) + 1;
+            panel.add(spinner, constraints);
+
+            column++;
+            if (column == ROLE_MIX_COLUMNS) {
+                column = 0;
+                row++;
+            }
+        }
+        return panel;
+    }
+
+    /** How many role/percentage pairs sit on one row of a mix grid. */
+    private static final int ROLE_MIX_COLUMNS = 4;
+
+    /**
+     * Greys out the ground role mix while an artillery mission role is selected.
+     *
+     * <p>{@code ForceDescriptor.useWeightClass} returns {@code false} when either artillery role is present, which
+     * leaves the node with no weight bands - and the allocator routes role quotas between exactly those bands. The
+     * mix could not be honoured, so it is disabled rather than left looking active.</p>
+     */
+    private void refreshRoleMixEnablement() {
+        boolean artillerySelected = chkRoleArtillery.isSelected() || chkRoleMissileArtillery.isSelected();
+        for (UnitRole role : GROUND_MIX_ROLES) {
+            JSpinner spinner = roleMixSpinners.get(role);
+            if (spinner != null) {
+                spinner.setEnabled(!artillerySelected);
+                spinner.setToolTipText(artillerySelected
+                      ? Messages.getString("ForceGeneratorDialog.roleMix.disabledByArtillery.tooltip")
+                      : Messages.getString("ForceGeneratorDialog.roleMix.spinner.tooltip", role));
+            }
+        }
+    }
+
+    /**
+     * Reads the spinner grids into a {@link RoleMix}.
+     *
+     * <p>A disabled grid contributes nothing, so selecting artillery cannot smuggle in a mix the node has no weight
+     * bands to honour.</p>
+     *
+     * @return the requested distribution, empty when nothing was asked for
+     */
+    private RoleMix readRoleMix() {
+        Map<UnitRole, Integer> percentages = new EnumMap<>(UnitRole.class);
+        roleMixSpinners.forEach((role, spinner) -> {
+            if (spinner.isEnabled()) {
+                percentages.put(role, (Integer) spinner.getValue());
+            }
+        });
+        return new RoleMix(percentages);
     }
 
     private JCheckBox createMissionRoleCheck(MissionRole role) {
@@ -627,37 +701,13 @@ public class ForceGeneratorOptionsView extends JPanel implements FocusListener, 
         Object selectedWeight = cbWeightClass.getSelectedItem();
         fd.setWeightClass(selectedWeight instanceof Integer ? (Integer) selectedWeight : null);
         fd.setAttachments(chkDetachments.isSelected());
+        // The requested UnitRole distribution. Empty unless the user moved a spinner, in which case the allocator
+        // returns immediately and the force generates exactly as it did before role targeting existed.
+        fd.setRoleMix(readRoleMix());
         if (forceDesc.getUnitType() != null) {
             switch (forceDesc.getUnitType()) {
                 case UnitType.MEK:
                 case UnitType.TANK:
-                    if (chkRoleRecon.isSelected()) {
-                        fd.getRoles().add(MissionRole.RECON);
-                    }
-                    if (chkRoleFireSupport.isSelected()) {
-                        fd.getRoles().add(MissionRole.FIRE_SUPPORT);
-                    }
-                    if (chkRoleUrban.isSelected()) {
-                        fd.getRoles().add(MissionRole.URBAN);
-                    }
-                    if (chkRoleInfantrySupport.isSelected()) {
-                        fd.getRoles().add(MissionRole.INF_SUPPORT);
-                    }
-                    if (chkRoleCavalry.isSelected()) {
-                        fd.getRoles().add(MissionRole.CAVALRY);
-                    }
-                    if (chkRoleRaider.isSelected()) {
-                        fd.getRoles().add(MissionRole.RAIDER);
-                    }
-                    if (chkRoleIncendiary.isSelected()) {
-                        fd.getRoles().add(MissionRole.INCENDIARY);
-                    }
-                    if (chkRoleAntiAircraft.isSelected()) {
-                        fd.getRoles().add(MissionRole.ANTI_AIRCRAFT);
-                    }
-                    if (chkRoleAntiInfantry.isSelected()) {
-                        fd.getRoles().add(MissionRole.ANTI_INFANTRY);
-                    }
                     if (chkRoleArtillery.isSelected()) {
                         fd.getRoles().add(MissionRole.ARTILLERY);
                     }

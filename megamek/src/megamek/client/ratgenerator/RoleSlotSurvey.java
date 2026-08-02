@@ -131,6 +131,21 @@ final class RoleSlotSurvey {
         }
     }
 
+    /**
+     * Whether a unit slot can carry a role target at all, ignoring where it sits in the force.
+     *
+     * <p>Covers the two reasons intrinsic to the slot itself: a unit type with no weight class has no bands to route
+     * quotas between, and an artillery mission role switches weight-class handling off entirely. The positional
+     * reasons - sitting under a formation or inside a support detachment - are decided by the walk instead.</p>
+     *
+     * @param leaf the unit slot to test
+     *
+     * @return {@code true} when a role target could apply to this slot
+     */
+    static boolean canCarryRoleTarget(ForceDescriptor leaf) {
+        return leaf.useWeightClass();
+    }
+
     /** Mutable counters assembled into an immutable {@link RoleCoverageReport}. */
     private static final class SlotTally {
         private final List<ForceDescriptor> governedLeaves = new ArrayList<>();
@@ -146,7 +161,7 @@ final class RoleSlotSurvey {
                 byFormation++;
             } else if (withinAttached) {
                 attached++;
-            } else if (!leaf.useWeightClass()) {
+            } else if (!canCarryRoleTarget(leaf)) {
                 // useWeightClass() covers both the unit-type restriction and the artillery override, so the
                 // artillery case is separated out first to keep the two reasons distinct in the report.
                 if (carriesArtilleryRole(leaf)) {

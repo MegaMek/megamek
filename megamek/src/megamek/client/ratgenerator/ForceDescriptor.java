@@ -983,8 +983,11 @@ public class ForceDescriptor {
             LOGGER.debug("[ForceGen][GenRule] '{}': {} could not be fulfilled by {} child(ren);"
                         + " generating them as an ordinary lance", parseName(), formationType,
                   members.size());
-            generateLance(members);
             formationType = null;
+            // These slots were skipped by the allocator because a formation owned them. It does not any more, so
+            // they rejoin the role mix before the ordinary lance is generated.
+            RoleBudgetAllocator.allocateFallbackLance(this, members);
+            generateLance(members);
         }
     }
 
@@ -1228,6 +1231,105 @@ public class ForceDescriptor {
      */
     static final int STRICTEST_ROLE_WEIGHTING = 3;
 
+    /**
+     * Tries to fill this element with the role the budget allocator asked of it, without giving up its weight class.
+     *
+     * <p>The ladder runs entirely inside the element's own weight class: the exact role first, then each substitute
+     * from its {@link UnitRoleFallbackChains fallback chain}, then any other role the force's mix asked for. Only
+     * when all of those come up empty does the caller fall through to the ordinary generation ladder, which drops the
+     * role constraint before it starts relaxing weight.</p>
+     *
+     * <p>That ordering is the point. Weight relaxation exists for a table that is empty at a given weight, not as a
+     * way to satisfy a role: trading tonnage away to find a Juggernaut is how a Light lance quietly fills with Assault
+     * units, which is the failure {@code FormationType.tryIdealRole} was fixed to prevent.</p>
+     *
+     * @param workingCopy  the copy the caller is generating from, already narrowed to this element's parameters
+     * @param ratGenRating the equipment rating being tried
+     * @param failureTrace collects one line per attempt for the diagnostic dump
+     *
+     * @return the unit found for the target role or one of its substitutes, or {@code null} to fall through
+     */
+    private @Nullable ModelRecord tryRoleTargetLadder(ForceDescriptor workingCopy, String ratGenRating,
+          List<String> failureTrace) {
+        if (targetUnitRole == null) {
+            return null;
+        }
+        for (UnitRole candidate : roleTargetCandidates()) {
+            ModelRecord found = generateForRole(workingCopy, ratGenRating, candidate, failureTrace);
+            if (found != null) {
+                if (candidate != targetUnitRole) {
+                    LOGGER.debug("[ForceGen][RoleTarget] '{}': no {} available at {}; substituted {} ({})",
+                          parseName(), targetUnitRole, getWeightClassCode(), candidate, found.getKey());
+                }
+                return found;
+            }
+        }
+        LOGGER.debug("[ForceGen][RoleTarget] '{}': neither {} nor any substitute is available at {};"
+                    + " rolling without a role constraint",
+              parseName(), targetUnitRole, getWeightClassCode());
+        return null;
+    }
+
+    /**
+     * The roles to try for this element, best first: the one asked for, then its ranked substitutes, then anything
+     * else the force's mix wanted. Duplicates are dropped so a role already tried is not tried again.
+     *
+     * @return the ordered candidates, never empty when a target role is set
+     */
+    private List<UnitRole> roleTargetCandidates() {
+        List<UnitRole> candidates = new ArrayList<>();
+        candidates.add(targetUnitRole);
+        UnitRoleFallbackChains.chainFor(targetUnitRole)
+              .stream()
+              .filter(role -> !candidates.contains(role))
+              .forEach(candidates::add);
+        getRoleMix().requestedRoles()
+              .stream()
+              .filter(role -> !candidates.contains(role))
+              .forEach(candidates::add);
+        return candidates;
+    }
+
+    /**
+     * Draws a unit of one specific role at this element's own weight class, walking only the mission-role strictness
+     * ladder. Weight class is deliberately held fixed.
+     *
+     * @return the unit found, or {@code null} if the table holds none of that role
+     */
+    private @Nullable ModelRecord generateForRole(ForceDescriptor workingCopy, String ratGenRating, UnitRole role,
+          List<String> failureTrace) {
+        List<Integer> weightClasses = new ArrayList<>();
+        if (useWeightClass() && (workingCopy.getWeightClass() != null)
+              && (workingCopy.getWeightClass() >= EntityWeightClass.WEIGHT_ULTRA_LIGHT)) {
+            weightClasses.add(workingCopy.getWeightClass());
+        }
+        for (int roleStrictness = STRICTEST_ROLE_WEIGHTING; roleStrictness >= 0; roleStrictness--) {
+            UnitTable table = UnitTable.findTable(workingCopy.getFactionRec(),
+                  workingCopy.getUnitType(),
+                  workingCopy.getYear(),
+                  ratGenRating,
+                  weightClasses,
+                  ModelRecord.NETWORK_NONE,
+                  workingCopy.getMovementModes(),
+                  workingCopy.getRoles(),
+                  roleStrictness);
+            MekSummary mekSummary = table.generateUnit(unit -> unit.getRole() == role);
+            if (LOGGER.isDebugEnabled()) {
+                failureTrace.add(String.format("targetRole=%s rating=%s weightClass=%s roleStrictness=%d"
+                            + " tableEntries=%d unit=%s",
+                      role, ratGenRating, workingCopy.getWeightClass(), roleStrictness,
+                      table.getNumEntries(), (mekSummary == null) ? "null" : mekSummary.getName()));
+            }
+            if (mekSummary != null) {
+                ModelRecord selectedModel = RATGenerator.getInstance().getModelRecord(mekSummary.getName());
+                if (selectedModel != null) {
+                    return selectedModel;
+                }
+            }
+        }
+        return null;
+    }
+
     private @Nullable ModelRecord generateAtRating(String ratGenRating, List<String> failureTrace) {
         final int[][] alternateWeights = { { 1, 2, 3, 4, 5 }, // UL
                                            { 2, 0, 3, 4, 5 }, // L
@@ -1248,6 +1350,14 @@ public class ForceDescriptor {
         // as a generation failure rather than letting UnitTable.findTable NPE on the unboxed int.
         if (workingCopy.getUnitType() == null) {
             return null;
+        }
+
+        // Honour the allocator's role target first, and only within this element's own weight class. Returns null
+        // when no role it would accept is available, at which point the ladder below proceeds exactly as it always
+        // has - unconstrained by role, relaxing weight only because the table is empty rather than to chase a role.
+        ModelRecord forTargetRole = tryRoleTargetLadder(workingCopy, ratGenRating, failureTrace);
+        if (forTargetRole != null) {
+            return forTargetRole;
         }
 
         int weightTierIndex = (useWeightClass() && weightClass != null && weightClass != -1) ? 0 : 4;
@@ -2942,6 +3052,10 @@ public class ForceDescriptor {
         retVal.topLevel = false;
         retVal.rankSystem = rankSystem;
         retVal.generateAttachments = generateAttachments;
+        // A force-wide setting, inherited like faction and year: a leaf consults it for the last rung of its role
+        // ladder, where anything else the mix asked for beats rolling with no role at all. targetUnitRole is
+        // deliberately NOT copied - the allocator assigns that per slot.
+        retVal.roleMix = roleMix;
 
         return retVal;
     }

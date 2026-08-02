@@ -1,0 +1,729 @@
+<!DOCTYPE html>
+<!--
+  MegaMek AI benchmark report template.
+
+  A complete standalone page: open it straight in a browser, no build step and nothing external
+  to fetch. Format and methodology are explained in ai-benchmark-report-guide.md - read that
+  first, especially the rules about control arms and pooling side-swapped variants.
+
+  To fill it in:
+    1. Replace every [bracketed placeholder] in the body.
+    2. Paste the three JSON blobs where the script says to:
+         board.json        from  extract_board.py         (the map terrain)
+         trace-base.json   from  extract_battle_trace.py  (left-hand arm)
+         trace-after.json  from  extract_battle_trace.py  (right-hand arm)
+    3. Set the round slider's max to the number of rounds in the shorter trace.
+    4. Delete any section that does not apply - but think twice before deleting
+       Methodology notes, which is what makes the rest believable.
+-->
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>[Subject] &mdash; Benchmark Results</title>
+<style>
+  :root {
+    --ground: #f2f4f7;
+    --surface: #ffffff;
+    --surface-sunk: #e9edf2;
+    --ink: #10151b;
+    --ink-soft: #47535f;
+    --ink-faint: #7b8794;
+    --rule: #d3dae2;
+    --accent: #3f6d95;
+    --accent-soft: #e3ecf4;
+    --ok: #2f7d6b;
+    --ok-soft: #e0efea;
+    --partial: #9a6a1c;
+    --partial-soft: #f6ecd9;
+    --unmet: #a8503f;
+    --unmet-soft: #f6e6e2;
+    --force-red: #c0392b;
+    --force-blue: #2f6fb0;
+    --mono: ui-monospace, "SFMono-Regular", "Cascadia Mono", "Segoe UI Mono", Menlo, Consolas, monospace;
+    --sans: ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --ground: #0e1319;
+      --surface: #161d25;
+      --surface-sunk: #1c242e;
+      --ink: #e6ecf2;
+      --ink-soft: #a3b1bf;
+      --ink-faint: #71808f;
+      --rule: #28323d;
+      --accent: #6ea3cd;
+      --accent-soft: #1a2836;
+      --ok: #5cbfa5;
+      --ok-soft: #142a26;
+      --partial: #d3a24d;
+      --partial-soft: #2b2418;
+      --unmet: #d97f6b;
+      --unmet-soft: #2c1d1a;
+      --force-red: #e8705f;
+      --force-blue: #62a8e0;
+    }
+  }
+  :root[data-theme="dark"] {
+    --ground: #0e1319; --surface: #161d25; --surface-sunk: #1c242e;
+    --ink: #e6ecf2; --ink-soft: #a3b1bf; --ink-faint: #71808f; --rule: #28323d;
+    --accent: #6ea3cd; --accent-soft: #1a2836;
+    --ok: #5cbfa5; --ok-soft: #142a26;
+    --partial: #d3a24d; --partial-soft: #2b2418;
+    --unmet: #d97f6b; --unmet-soft: #2c1d1a;
+    --force-red: #e8705f; --force-blue: #62a8e0;
+  }
+  :root[data-theme="light"] {
+    --ground: #f2f4f7; --surface: #ffffff; --surface-sunk: #e9edf2;
+    --ink: #10151b; --ink-soft: #47535f; --ink-faint: #7b8794; --rule: #d3dae2;
+    --accent: #3f6d95; --accent-soft: #e3ecf4;
+    --ok: #2f7d6b; --ok-soft: #e0efea;
+    --partial: #9a6a1c; --partial-soft: #f6ecd9;
+    --unmet: #a8503f; --unmet-soft: #f6e6e2;
+    --force-red: #c0392b; --force-blue: #2f6fb0;
+  }
+
+  body {
+    margin: 0; padding: 0;
+    background: var(--ground); color: var(--ink);
+    font-family: var(--sans); font-size: 16px; line-height: 1.6;
+    -webkit-font-smoothing: antialiased;
+  }
+  .wrap { max-width: 60rem; margin: 0 auto; padding: 3rem 1.5rem 5rem; }
+  @media (max-width: 40rem) { .wrap { padding: 2rem 1rem 3rem; } }
+
+  .eyebrow {
+    font-family: var(--mono); font-size: 0.7rem; letter-spacing: 0.14em;
+    text-transform: uppercase; color: var(--ink-faint); margin: 0 0 0.75rem;
+  }
+  h1 { font-size: clamp(1.8rem, 4vw, 2.6rem); line-height: 1.15; letter-spacing: -0.02em;
+       margin: 0 0 0.75rem; text-wrap: balance; }
+  h2 { font-size: 1.35rem; letter-spacing: -0.01em; margin: 0 0 0.5rem; text-wrap: balance; }
+  h3 { font-size: 1rem; margin: 0 0 0.4rem; }
+  p { margin: 0 0 1rem; color: var(--ink-soft); }
+  p strong, li strong { color: var(--ink); font-weight: 650; }
+  a { color: var(--accent); }
+
+  header.masthead { border-bottom: 2px solid var(--ink); padding-bottom: 1.5rem; margin-bottom: 2.5rem; }
+  .meta { display: flex; flex-wrap: wrap; gap: 0.4rem 1.5rem; font-family: var(--mono);
+          font-size: 0.75rem; color: var(--ink-faint); }
+  .meta span { white-space: nowrap; }
+
+  section { margin: 0 0 3rem; }
+  .sec-head { display: flex; align-items: baseline; gap: 0.75rem; border-bottom: 1px solid var(--rule);
+              padding-bottom: 0.5rem; margin-bottom: 1.25rem; }
+  .sec-head .num { font-family: var(--mono); font-size: 0.75rem; color: var(--accent); }
+
+  .verdict { background: var(--surface); border: 1px solid var(--rule);
+             border-left: 4px solid var(--accent); border-radius: 3px;
+             padding: 1.5rem 1.75rem; margin-bottom: 2rem; }
+  .verdict p:last-child { margin-bottom: 0; }
+  .verdict .lede { font-size: 1.15rem; color: var(--ink); font-weight: 600; }
+
+  .scorecard { display: grid; gap: 0.75rem; margin-bottom: 1.5rem; }
+  .row { display: grid; grid-template-columns: 7.5rem 1fr auto; gap: 1rem; align-items: start;
+         background: var(--surface); border: 1px solid var(--rule); border-radius: 3px;
+         padding: 0.9rem 1.1rem; }
+  @media (max-width: 40rem) { .row { grid-template-columns: 1fr; gap: 0.4rem; } }
+  .chip { font-family: var(--mono); font-size: 0.68rem; letter-spacing: 0.08em; text-transform: uppercase;
+          padding: 0.28rem 0.5rem; border-radius: 2px; text-align: center; font-weight: 700; white-space: nowrap; }
+  .chip.ok { background: var(--ok-soft); color: var(--ok); }
+  .chip.partial { background: var(--partial-soft); color: var(--partial); }
+  .chip.unmet { background: var(--unmet-soft); color: var(--unmet); }
+  .row .goal { font-weight: 600; color: var(--ink); }
+  .row .detail { font-size: 0.9rem; color: var(--ink-soft); margin: 0.15rem 0 0; }
+  .row .figure { font-family: var(--mono); font-size: 0.95rem; font-variant-numeric: tabular-nums;
+                 color: var(--ink); white-space: nowrap; }
+
+  .scroller { overflow-x: auto; border: 1px solid var(--rule); border-radius: 3px; background: var(--surface); }
+  table { border-collapse: collapse; width: 100%; font-size: 0.9rem; }
+  caption { text-align: left; font-family: var(--mono); font-size: 0.72rem; letter-spacing: 0.1em;
+            text-transform: uppercase; color: var(--ink-faint); padding: 0.85rem 1rem 0.5rem; }
+  th, td { padding: 0.6rem 1rem; text-align: left; border-bottom: 1px solid var(--rule); }
+  thead th { font-family: var(--mono); font-size: 0.7rem; letter-spacing: 0.06em; text-transform: uppercase;
+             color: var(--ink-faint); font-weight: 600; background: var(--surface-sunk); white-space: nowrap; }
+  tbody tr:last-child td { border-bottom: none; }
+  td.num { font-family: var(--mono); font-variant-numeric: tabular-nums; white-space: nowrap; }
+  td.delta { font-family: var(--mono); font-variant-numeric: tabular-nums; font-weight: 700; white-space: nowrap; }
+  .up { color: var(--ok); } .down { color: var(--ok); } .flat { color: var(--ink-faint); }
+  .metric-name { font-family: var(--mono); font-size: 0.85rem; }
+
+  .bars { display: grid; gap: 0.9rem; margin: 1.25rem 0 0; }
+  .bar-row { display: grid; grid-template-columns: 11rem 1fr; gap: 1rem; align-items: center; }
+  @media (max-width: 40rem) { .bar-row { grid-template-columns: 1fr; gap: 0.3rem; } }
+  .bar-label { font-family: var(--mono); font-size: 0.78rem; color: var(--ink-soft); }
+  .bar-track { position: relative; height: 1.6rem; }
+  .bar { position: absolute; top: 0; height: 0.62rem; border-radius: 2px; }
+  .bar.before { background: var(--ink-faint); opacity: 0.45; }
+  .bar.after { top: 0.85rem; background: var(--accent); }
+  .bar-val { position: absolute; right: -0.3rem; transform: translateX(100%); font-family: var(--mono);
+             font-size: 0.7rem; color: var(--ink-faint); line-height: 0.62rem; }
+
+  .legend { display: flex; gap: 1.25rem; font-family: var(--mono); font-size: 0.72rem;
+            color: var(--ink-faint); margin-top: 1rem; }
+  .legend i { display: inline-block; width: 1.4rem; height: 0.5rem; border-radius: 2px;
+              margin-right: 0.35rem; vertical-align: middle; font-style: normal; }
+
+  .note { background: var(--surface-sunk); border-radius: 3px; padding: 1.1rem 1.35rem; margin: 1.25rem 0; }
+  .note h3 { font-family: var(--mono); font-size: 0.75rem; letter-spacing: 0.08em;
+             text-transform: uppercase; color: var(--accent); margin-bottom: 0.5rem; }
+  .note p:last-child, .note ul:last-child { margin-bottom: 0; }
+
+  ul { margin: 0 0 1rem; padding-left: 1.1rem; color: var(--ink-soft); }
+  li { margin-bottom: 0.4rem; }
+  code { font-family: var(--mono); font-size: 0.88em; background: var(--surface-sunk);
+         padding: 0.1em 0.35em; border-radius: 2px; color: var(--ink); }
+
+  .action { border: 1px solid var(--rule); border-radius: 3px; background: var(--surface);
+            padding: 1.25rem 1.5rem; margin-bottom: 1rem; }
+  .action .change { font-family: var(--mono); font-size: 0.88rem; color: var(--ink);
+                    background: var(--surface-sunk); padding: 0.5rem 0.7rem; border-radius: 2px;
+                    display: inline-block; margin-bottom: 0.65rem; }
+  .action .test { font-size: 0.9rem; }
+  .action .test b { color: var(--ink); }
+
+  footer { border-top: 1px solid var(--rule); margin-top: 3rem; padding-top: 1.25rem;
+           font-family: var(--mono); font-size: 0.75rem; color: var(--ink-faint); }
+
+  .map-controls { display: flex; align-items: center; gap: 1rem; flex-wrap: wrap;
+                  margin: 1.25rem 0 1rem; font-family: var(--mono); font-size: 0.8rem; }
+  .map-controls button { font-family: var(--mono); font-size: 0.8rem; cursor: pointer;
+                         background: var(--accent); color: var(--surface); border: none;
+                         padding: 0.45rem 0.9rem; border-radius: 2px; font-weight: 700; }
+  .map-controls button:hover { filter: brightness(1.1); }
+  .map-controls button:focus-visible, .map-controls input:focus-visible { outline: 2px solid var(--accent);
+                                                                          outline-offset: 2px; }
+  .map-controls label { color: var(--ink-soft); display: flex; gap: 0.4rem; align-items: center; }
+  .map-controls output { color: var(--ink); font-weight: 700; font-variant-numeric: tabular-nums;
+                         min-width: 1.5rem; display: inline-block; }
+  .map-controls input[type="range"] { flex: 1; min-width: 10rem; accent-color: var(--accent); }
+  .map-controls .toggle { gap: 0.35rem; cursor: pointer; user-select: none; white-space: nowrap; }
+  .map-controls .toggle input { accent-color: var(--accent); cursor: pointer; }
+
+  .maps { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; }
+  @media (max-width: 46rem) { .maps { grid-template-columns: 1fr; } }
+  .map-fig { margin: 0; background: var(--surface); border: 1px solid var(--rule);
+             border-radius: 3px; padding: 0.75rem; }
+  .map-fig figcaption { display: flex; justify-content: space-between; align-items: baseline;
+                        gap: 0.75rem; margin-bottom: 0.5rem; }
+  .map-title { font-weight: 650; font-size: 0.9rem; color: var(--ink); }
+  .map-stat { font-family: var(--mono); font-size: 0.72rem; color: var(--ink-faint);
+              font-variant-numeric: tabular-nums; }
+  .map-fig canvas { width: 100%; height: auto; display: block; }
+
+  .glossary { background: var(--surface-sunk); border-radius: 3px; padding: 1.25rem 1.5rem;
+              margin: 1.25rem 0 1.5rem; display: grid; gap: 1rem; }
+  .glossary-head { font-family: var(--mono); font-size: 0.75rem; letter-spacing: 0.08em;
+                   text-transform: uppercase; color: var(--accent); margin: 0; }
+  .term p { margin: 0; font-size: 0.92rem; }
+  .term-name { font-family: var(--mono); font-size: 0.85rem; font-weight: 700; color: var(--ink);
+               margin-bottom: 0.2rem; display: flex; align-items: baseline; gap: 0.6rem;
+               flex-wrap: wrap; }
+  .dir { font-weight: 400; font-size: 0.72rem; letter-spacing: 0.04em; color: var(--ink-faint);
+         text-transform: none; }
+  .metric-name[title] { border-bottom: 1px dotted var(--ink-faint); cursor: help; }
+
+  .terrain-legend i { border: 1px solid rgba(0,0,0,0.12); }
+  .swatch-elev { background: linear-gradient(90deg, #eae7de, #c2baa2); }
+  .swatch-woods { background: #a9c096; }
+  .swatch-water { background: #a8c2d2; }
+  .swatch-rough { background: #cfc2a8; }
+  @media (prefers-color-scheme: dark) {
+    .terrain-legend i { border-color: rgba(255,255,255,0.12); }
+    .swatch-elev { background: linear-gradient(90deg, #171d24, #2d3842); }
+    .swatch-woods { background: #26382c; }
+    .swatch-water { background: #22384c; }
+    .swatch-rough { background: #332f27; }
+  }
+  :root[data-theme="dark"] .terrain-legend i { border-color: rgba(255,255,255,0.12); }
+  :root[data-theme="dark"] .swatch-elev { background: linear-gradient(90deg, #171d24, #2d3842); }
+  :root[data-theme="dark"] .swatch-woods { background: #26382c; }
+  :root[data-theme="dark"] .swatch-water { background: #22384c; }
+  :root[data-theme="dark"] .swatch-rough { background: #332f27; }
+  :root[data-theme="light"] .terrain-legend i { border-color: rgba(0,0,0,0.12); }
+  :root[data-theme="light"] .swatch-elev { background: linear-gradient(90deg, #eae7de, #c2baa2); }
+  :root[data-theme="light"] .swatch-woods { background: #a9c096; }
+  :root[data-theme="light"] .swatch-water { background: #a8c2d2; }
+  :root[data-theme="light"] .swatch-rough { background: #cfc2a8; }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <!-- ============================================================ MASTHEAD -->
+  <header class="masthead">
+    <p class="eyebrow">MegaMek &middot; [BOT / SUBSYSTEM] &middot; After-action report</p>
+    <h1>[One-line verdict — say what happened, including what did not work]</h1>
+    <div class="meta">
+      <span>[N] games</span>
+      <span>[N] arms &middot; side-swapped</span>
+      <span>[force composition]</span>
+      <span>[map]</span>
+      <span>[date]</span>
+    </div>
+  </header>
+
+  <!-- ==================================================== 1. SUMMARY -->
+  <section>
+    <div class="verdict">
+      <p class="lede">[The verdict in one or two sentences. Lead with the honest headline, not the
+        best number.]</p>
+      <p>[Why, in one sentence. If something failed, name the cause here.]</p>
+      <p style="margin-bottom:0"><strong>Recommendation: [do X].</strong> [One line on cost and
+        next step.]</p>
+    </div>
+  </section>
+
+  <!-- ==================================================== 2. SCORECARD -->
+  <section>
+    <div class="sec-head"><span class="num">01</span><h2>Scorecard</h2></div>
+    <div class="scorecard">
+
+      <!-- Repeat one .row per goal. Chip class: ok | partial | unmet -->
+      <div class="row">
+        <span class="chip ok">Confirmed</span>
+        <div>
+          <div class="goal">[Goal the change was meant to achieve]</div>
+          <p class="detail">[One line of interpretation — what the figure means, not what it is.]</p>
+        </div>
+        <div class="figure">[before] &rarr; [after]<br><span style="color:var(--ok)">[+N%]</span></div>
+      </div>
+
+      <div class="row">
+        <span class="chip partial">Partial</span>
+        <div>
+          <div class="goal">[Goal]</div>
+          <p class="detail">[Interpretation]</p>
+        </div>
+        <div class="figure">[before] &rarr; [after]<br><span style="color:var(--ok)">[-N%]</span></div>
+      </div>
+
+      <div class="row">
+        <span class="chip unmet">Not met</span>
+        <div>
+          <div class="goal">[Goal that failed — keep these as visible as the wins]</div>
+          <p class="detail">[Interpretation]</p>
+        </div>
+        <div class="figure">[before] &rarr; [after]<br><span class="flat">unchanged</span></div>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- ==================================================== 3. HEAD TO HEAD -->
+  <section>
+    <div class="sec-head"><span class="num">02</span><h2>Head to head</h2></div>
+    <p>[Which bot carries the change and which is untouched. State that arms are pooled across
+      side-swapped deployments and why.]</p>
+    <div class="scroller">
+      <table>
+        <caption>Pooled win rate</caption>
+        <thead>
+          <tr><th>Arm</th><th>Wins</th><th>Share</th><th>95% CI</th><th>Valid games</th></tr>
+        </thead>
+        <tbody>
+          <tr><td>Control &mdash; both sides identical code</td><td class="num">[n]</td>
+              <td class="num">[x%]</td><td class="num">[lo &ndash; hi]</td><td class="num">[n]</td></tr>
+          <tr><td>[Change under test]</td><td class="num">[n]</td>
+              <td class="num">[x%]</td><td class="num">[lo &ndash; hi]</td><td class="num">[n]</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <p style="margin-top:1rem">[Read the intervals honestly. Overlapping intervals mean no
+      demonstrated effect — say so plainly.]</p>
+  </section>
+
+  <!-- ==================================================== 4. BEHAVIOUR -->
+  <section>
+    <div class="sec-head"><span class="num">03</span><h2>Behaviour</h2></div>
+    <p>[Name the changed bot and the control bot. Explain that a metric moving for one but not the
+      other in the same games is the attribution.]</p>
+
+    <!-- Plain-language definitions. Keep these next to the numbers, never in an appendix.
+         For each: what it measures, what question it asks, which direction is good. -->
+    <div class="glossary">
+      <h3 class="glossary-head">What each number means</h3>
+
+      <div class="term">
+        <div class="term-name">[metric name] <span class="dir">[higher|lower] is better</span></div>
+        <p>[What it measures, in plain words.] <b>It asks: [the question].</b> [What a good value
+          and a bad value look like.]</p>
+      </div>
+
+      <div class="term">
+        <div class="term-name">[metric name] <span class="dir">[direction]</span></div>
+        <p>[Definition]</p>
+      </div>
+
+      <div class="term">
+        <div class="term-name">the control <span class="dir">context</span></div>
+        <p>In the baseline games both bots run <em>identical code</em>. Any difference between them
+          there is measurement noise, not skill. <b>It is the yardstick</b> for how big a gap can
+          appear from luck and map alone.</p>
+      </div>
+    </div>
+
+    <div class="scroller">
+      <table>
+        <caption>Behaviour metrics, pooled both variants</caption>
+        <thead>
+          <tr><th>Metric</th><th>Before</th><th>After</th><th>Change</th><th>Control</th></tr>
+        </thead>
+        <tbody>
+          <!-- delta classes: up | down | flat  (up/down are both "good"; flat is grey) -->
+          <tr><td class="metric-name" title="[Plain-language tooltip repeating the definition]">[metric]</td>
+              <td class="num">[x]</td><td class="num">[y]</td>
+              <td class="delta up">[+N%]</td><td class="num">[control before &rarr; after]</td></tr>
+          <tr><td class="metric-name" title="[tooltip]">[metric]</td>
+              <td class="num">[x]</td><td class="num">[y]</td>
+              <td class="delta flat">[+N%]</td><td class="num">[control]</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <!-- Optional before/after bars. Width is a percentage of the row's largest value;
+         keep the largest at 80% so the value label has room on the right. -->
+    <div class="bars">
+      <div class="bar-row">
+        <span class="bar-label">[metric (unit)]</span>
+        <div class="bar-track">
+          <div class="bar before" style="width:70%"><span class="bar-val">[x]</span></div>
+          <div class="bar after" style="width:80%"><span class="bar-val">[y]</span></div>
+        </div>
+      </div>
+    </div>
+    <div class="legend">
+      <span><i style="background:var(--ink-faint);opacity:0.45"></i>before</span>
+      <span><i style="background:var(--accent)"></i>after</span>
+    </div>
+
+    <div class="note">
+      <h3>[Why a metric failed to move]</h3>
+      <p>[If something did not work, explain the mechanism here rather than glossing over it.]</p>
+    </div>
+  </section>
+
+  <!-- ==================================================== 5. BATTLE MAP -->
+  <section>
+    <div class="sec-head"><span class="num">04</span><h2>What it looks like</h2></div>
+    <p>One representative game from each arm &mdash; picked as the median for [key metric], so this
+      is a typical battle rather than a flattering one. Each dot is a Mek; each thin line joins a
+      unit to its <em>nearest team-mate</em>, so cohesion is drawn rather than tabulated.</p>
+    <p><strong>What to watch for:</strong> [tell the reader what the animation demonstrates.]</p>
+
+    <div class="map-controls">
+      <button id="playBtn" type="button">&#9654; Play</button>
+      <label for="roundSlider">Round <output id="roundOut">1</output></label>
+      <input id="roundSlider" type="range" min="1" max="18" value="1" step="1" />
+      <label class="toggle"><input id="labelToggle" type="checkbox" checked /> unit labels</label>
+    </div>
+
+    <div class="maps">
+      <figure class="map-fig">
+        <figcaption><span class="map-title">[Left arm label]</span>
+          <span class="map-stat" id="statBase">&mdash;</span></figcaption>
+        <canvas id="mapBase" width="440" height="470" role="img"
+                aria-label="Battle map trace, [left arm]"></canvas>
+      </figure>
+      <figure class="map-fig">
+        <figcaption><span class="map-title">[Right arm label]</span>
+          <span class="map-stat" id="statAfter">&mdash;</span></figcaption>
+        <canvas id="mapAfter" width="440" height="470" role="img"
+                aria-label="Battle map trace, [right arm]"></canvas>
+      </figure>
+    </div>
+
+    <div class="legend">
+      <span><i style="background:var(--force-red)"></i>[north / first force]</span>
+      <span><i style="background:var(--force-blue)"></i>[south / second force]</span>
+      <span>&#10005; = destroyed, in its own side's colour</span>
+      <span>thin line = link to nearest team-mate</span>
+      <span>label = model code (AS7 = Atlas AS7-D)</span>
+    </div>
+    <div class="legend terrain-legend">
+      <span><i class="swatch-elev"></i>ground, shaded by elevation</span>
+      <span><i class="swatch-woods"></i>woods</span>
+      <span><i class="swatch-water"></i>water</span>
+      <span><i class="swatch-rough"></i>rough</span>
+    </div>
+  </section>
+
+  <!-- ==================================================== 6. RECOMMENDATION -->
+  <section>
+    <div class="sec-head"><span class="num">05</span><h2>Recommendation</h2></div>
+    <p>[What to do next and why.]</p>
+
+    <!-- One .action per proposed change. Always give a success test AND a failure sign. -->
+    <div class="action">
+      <h3>[What this change fixes]</h3>
+      <div class="change">[CONSTANT_OR_SETTING] &nbsp;[old] &rarr; [new]</div>
+      <p class="test"><b>Success:</b> [metric crosses threshold]. <b>Failure sign:</b> [what would
+        show the change backfired, and the fallback value].</p>
+    </div>
+
+    <p><strong>Then decide.</strong> [Enumerate the outcomes and what each one means for shipping.]</p>
+
+    <div class="note">
+      <h3>What not to do</h3>
+      <p>[Guardrails — what the evidence does not yet justify.]</p>
+    </div>
+  </section>
+
+  <!-- ==================================================== 7. METHODOLOGY -->
+  <section>
+    <div class="sec-head"><span class="num">06</span><h2>Methodology notes</h2></div>
+    <p>[Measurement problems hit during the run. This section is what makes the rest credible.]</p>
+    <ul>
+      <li><strong>[Trap]</strong> &mdash; [what it was and how it was handled].</li>
+    </ul>
+    <div class="note">
+      <h3>Verification</h3>
+      <p>[Proof the code under test actually ran — the wiring receipt in the change arm and its
+        absence in the control. Plus test/checkstyle status.]</p>
+    </div>
+  </section>
+
+  <footer>
+    [Branch] &middot; [commit status] &middot; Full detail: <code>[path to notes]</code>
+  </footer>
+
+</div>
+
+<script>
+(function () {
+  "use strict";
+  const TRACE_BASE = /* PASTE trace-base.json HERE (extract_battle_trace.py) */ null;
+  const TRACE_AFTER = /* PASTE trace-after.json HERE (extract_battle_trace.py) */ null;
+  if (!TRACE_BASE || !TRACE_AFTER) { return; }
+
+  const BOARD = /* PASTE board.json HERE (extract_board.py) */ null;
+  const BOARD_W = BOARD ? BOARD.w : 32, BOARD_H = BOARD ? BOARD.h : 34, PAD = 8;
+  const SQRT3 = Math.sqrt(3);
+  const F_WOODS = 1, F_WATER = 2, F_ROUGH = 4, F_BUILDING = 8, F_ROAD = 16;
+
+  function cssVar(name) {
+    return getComputedStyle(document.documentElement).getPropertyValue(name).trim();
+  }
+
+  function isDark() {
+    const stamped = document.documentElement.getAttribute("data-theme");
+    if (stamped) { return stamped === "dark"; }
+    return window.matchMedia("(prefers-color-scheme: dark)").matches;
+  }
+
+  /** Flat-top hexes in offset columns, matching MegaMek's own layout: odd columns sit half a hex
+   *  lower than even ones. Size is fitted so the whole board clears the canvas in both axes. */
+  function hexMetrics(canvas) {
+    const size = Math.min(
+      (canvas.width - PAD * 2) / (1.5 * BOARD_W + 0.5),
+      (canvas.height - PAD * 2) / (SQRT3 * (BOARD_H + 0.5))
+    );
+    const usedW = size * (1.5 * BOARD_W + 0.5);
+    const usedH = size * SQRT3 * (BOARD_H + 0.5);
+    return {
+      size,
+      offsetX: PAD + (canvas.width - PAD * 2 - usedW) / 2,
+      offsetY: PAD + (canvas.height - PAD * 2 - usedH) / 2
+    };
+  }
+
+  function hexToPixel(x, y, m) {
+    return {
+      px: m.offsetX + m.size * (1 + 1.5 * x),
+      py: m.offsetY + m.size * SQRT3 * (y + 0.5 * (x & 1) + 0.5)
+    };
+  }
+
+  function hexPath(ctx, cx, cy, size) {
+    ctx.beginPath();
+    for (let corner = 0; corner < 6; corner++) {
+      const angle = Math.PI / 3 * corner;
+      const px = cx + size * Math.cos(angle);
+      const py = cy + size * Math.sin(angle);
+      if (corner === 0) { ctx.moveTo(px, py); } else { ctx.lineTo(px, py); }
+    }
+    ctx.closePath();
+  }
+
+  /** Terrain palette. Kept deliberately desaturated so the red and blue unit markers stay dominant;
+   *  elevation is a lightness ramp rather than a second hue, so height reads without competing. */
+  function terrainFill(elevation, flags, dark) {
+    if (flags & F_WATER) { return dark ? "#22384c" : "#a8c2d2"; }
+    if (flags & F_WOODS) { return dark ? "#26382c" : "#a9c096"; }
+    if (flags & F_ROUGH) { return dark ? "#332f27" : "#cfc2a8"; }
+    if (flags & F_BUILDING) { return dark ? "#3a3a42" : "#c2bfc4"; }
+    const step = Math.max(0, Math.min(5, elevation));
+    return dark
+      ? ["#171d24", "#1b2229", "#1f272f", "#232c35", "#28323b", "#2d3842"][step]
+      : ["#eae7de", "#e2ded2", "#dad5c6", "#d2ccba", "#cac3ae", "#c2baa2"][step];
+  }
+
+  function drawTerrain(ctx, m, dark) {
+    if (!BOARD) { return; }
+    ctx.lineWidth = 0.5;
+    ctx.strokeStyle = dark ? "rgba(255,255,255,0.05)" : "rgba(0,0,0,0.06)";
+    for (let y = 0; y < BOARD_H; y++) {
+      for (let x = 0; x < BOARD_W; x++) {
+        const cell = BOARD.hex[y * BOARD_W + x];
+        if (!cell) { continue; }
+        const p = hexToPixel(x, y, m);
+        hexPath(ctx, p.px, p.py, m.size);
+        ctx.fillStyle = terrainFill(cell[0], cell[1], dark);
+        ctx.fill();
+        ctx.stroke();
+        if (cell[1] & F_ROAD) {
+          ctx.fillStyle = dark ? "rgba(220,210,190,0.18)" : "rgba(90,80,60,0.18)";
+          ctx.fill();
+        }
+      }
+    }
+  }
+
+  function hexDistance(a, b) {
+    const aq = a.x, ar = a.y - ((a.x + (a.x & 1)) >> 1);
+    const bq = b.x, br = b.y - ((b.x + (b.x & 1)) >> 1);
+    return Math.max(Math.abs(aq - bq), Math.abs(ar - br), Math.abs((-aq - ar) - (-bq - br)));
+  }
+
+  function draw(canvas, trace, roundIndex) {
+    const ctx = canvas.getContext("2d");
+    const frame = trace.frames[Math.min(roundIndex, trace.frames.length - 1)];
+    const m = hexMetrics(canvas);
+    const dark = isDark();
+
+    const forceRed = cssVar("--force-red"), forceBlue = cssVar("--force-blue");
+
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+    drawTerrain(ctx, m, dark);
+
+    // Team ids are stable across every game and arm: 2 is the north company, 3 the south, so the
+    // sides keep the same colour whichever map you are looking at.
+    const live = frame.units.filter(u => !u.d);
+    const teams = [...new Set(frame.units.map(u => u.t))].sort();
+    const colourFor = t => (t === teams[0] ? forceRed : forceBlue);
+
+    // nearest-team-mate links: cohesion drawn rather than tabulated
+    ctx.lineWidth = 1;
+    teams.forEach(team => {
+      const members = live.filter(u => u.t === team);
+      ctx.strokeStyle = colourFor(team);
+      ctx.globalAlpha = 0.45;
+      members.forEach(unit => {
+        let best = null, bestDist = Infinity;
+        members.forEach(other => {
+          if (other === unit) { return; }
+          const d = hexDistance(unit, other);
+          if (d < bestDist) { bestDist = d; best = other; }
+        });
+        if (!best) { return; }
+        const a = hexToPixel(unit.x, unit.y, m);
+        const b = hexToPixel(best.x, best.y, m);
+        ctx.beginPath();
+        ctx.moveTo(a.px, a.py);
+        ctx.lineTo(b.px, b.py);
+        ctx.stroke();
+      });
+    });
+    ctx.globalAlpha = 1;
+
+    const showLabels = document.getElementById("labelToggle").checked;
+    ctx.font = "9px " + cssVar("--mono").split(",")[0];
+    ctx.textBaseline = "middle";
+
+    frame.units.forEach(unit => {
+      const p = hexToPixel(unit.x, unit.y, m);
+      if (unit.d) {
+        // wreck keeps its side's colour, so you can read which company is losing units
+        ctx.strokeStyle = colourFor(unit.t);
+        ctx.globalAlpha = 0.45;
+        ctx.lineWidth = 1.5;
+        ctx.beginPath();
+        ctx.moveTo(p.px - 3.5, p.py - 3.5); ctx.lineTo(p.px + 3.5, p.py + 3.5);
+        ctx.moveTo(p.px + 3.5, p.py - 3.5); ctx.lineTo(p.px - 3.5, p.py + 3.5);
+        ctx.stroke();
+        ctx.globalAlpha = 1;
+      } else {
+        ctx.fillStyle = colourFor(unit.t);
+        ctx.globalAlpha = 0.35 + 0.65 * Math.max(0, Math.min(1, unit.a));
+        ctx.beginPath();
+        ctx.arc(p.px, p.py, 4, 0, Math.PI * 2);
+        ctx.fill();
+        ctx.globalAlpha = 1;
+      }
+
+      if (showLabels) {
+        // The code before the dash of the model designation - AS7, BLR, TDR - is what a player
+        // reads off a record sheet, so it identifies the Mek faster than the chassis name would.
+        const code = (unit.m || unit.c || "").split("-")[0].slice(0, 4).toUpperCase();
+        if (code) {
+          ctx.globalAlpha = unit.d ? 0.4 : 0.85;
+          ctx.fillStyle = colourFor(unit.t);
+          ctx.fillText(code, p.px + 6, p.py);
+          ctx.globalAlpha = 1;
+        }
+      }
+    });
+
+    return frame;
+  }
+
+  const slider = document.getElementById("roundSlider");
+  const output = document.getElementById("roundOut");
+  const playBtn = document.getElementById("playBtn");
+  const canvasBase = document.getElementById("mapBase");
+  const canvasAfter = document.getElementById("mapAfter");
+  const statBase = document.getElementById("statBase");
+  const statAfter = document.getElementById("statAfter");
+
+  const maxRounds = Math.min(TRACE_BASE.frames.length, TRACE_AFTER.frames.length);
+  slider.max = String(maxRounds);
+
+  function describe(frame) {
+    if (!frame) { return "—"; }
+    const spacings = Object.values(frame.spacing || {});
+    const mean = spacings.length
+      ? (spacings.reduce((a, b) => a + b, 0) / spacings.length).toFixed(2) : "—";
+    const alive = frame.units.filter(u => !u.d).length;
+    return `spacing ${mean} · ${alive} active`;
+  }
+
+  function render(index) {
+    output.value = String(index + 1);
+    statBase.textContent = describe(draw(canvasBase, TRACE_BASE, index));
+    statAfter.textContent = describe(draw(canvasAfter, TRACE_AFTER, index));
+  }
+
+  slider.addEventListener("input", () => render(Number(slider.value) - 1));
+  document.getElementById("labelToggle")
+          .addEventListener("change", () => render(Number(slider.value) - 1));
+
+  let timer = null;
+  const reduceMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+  playBtn.addEventListener("click", () => {
+    if (timer) {
+      clearInterval(timer); timer = null; playBtn.textContent = "▶ Play"; return;
+    }
+    playBtn.textContent = "❚❚ Pause";
+    let index = Number(slider.value) - 1;
+    if (index >= maxRounds - 1) { index = 0; }
+    timer = setInterval(() => {
+      index += 1;
+      if (index >= maxRounds) {
+        clearInterval(timer); timer = null; playBtn.textContent = "▶ Play"; return;
+      }
+      slider.value = String(index + 1);
+      render(index);
+    }, reduceMotion ? 1400 : 650);
+  });
+
+  const themeWatcher = new MutationObserver(() => render(Number(slider.value) - 1));
+  themeWatcher.observe(document.documentElement, { attributes: true, attributeFilter: ["data-theme"] });
+  window.matchMedia("(prefers-color-scheme: dark)")
+        .addEventListener("change", () => render(Number(slider.value) - 1));
+
+  render(0);
+})();
+</script>
+
+</body>
+</html>

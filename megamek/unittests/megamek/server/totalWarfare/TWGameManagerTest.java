@@ -48,7 +48,6 @@ import java.util.Vector;
 
 import megamek.common.CriticalSlot;
 import megamek.common.GameBoardTestCase;
-import megamek.common.actions.WeaponAttackAction;
 import megamek.common.compute.Compute;
 import megamek.common.Hex;
 import megamek.common.Player;
@@ -1095,9 +1094,9 @@ class TWGameManagerTest {
         assertTrue(waterMotive.isDestroyed());
 
         // Hover vehicles engine crit over land should not be destroyed
-        assertFalse(landEngine.isDestroyed());
+        assertFalse(landEngine.isDoomed());
 
         // Hover vehicles immobilized over land should not be destroyed
-        assertFalse(landMotive.isDestroyed());
+        assertFalse(landMotive.isDoomed());
     }
 }

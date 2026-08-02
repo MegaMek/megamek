@@ -27,9 +27,14 @@ import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
+import java.awt.Font;
+import java.awt.Rectangle;
+import java.awt.font.FontRenderContext;
+import java.awt.geom.AffineTransform;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.nio.file.Path;
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -218,6 +223,37 @@ class BattlefieldSupportCardRenderTest {
         assertFalse(value.getAttribute("style").contains("letter-spacing"));
     }
 
+    @Test
+    void footerBorderFollowsSelectedFontWidth() throws Exception {
+        BattlefieldSupportAsset asset = (BattlefieldSupportAsset) new MekFileParser(
+              new File("testresources/data/mekfiles/Maxim Heavy Hover Transport.bfs")).getEntity();
+        Font standardFont = new Font(Font.SANS_SERIF, Font.PLAIN, 14);
+        Font wideFont = standardFont.deriveFont(AffineTransform.getScaleInstance(1.4, 1));
+
+        BattlefieldSupportCard standardCard = new BattlefieldSupportCard(asset);
+        standardCard.setFont(standardFont);
+        List<Double> standardBorder = outerBorder(svgGroup(standardCard));
+        FontRenderContext context = new FontRenderContext(null, true, true);
+        Font brandFont = standardFont.deriveFont(Font.BOLD).deriveFont(26f);
+        Rectangle supportBounds = brandFont.createGlyphVector(context, "SUPPORT").getPixelBounds(null, 0, 0);
+        Font copyrightFont = standardFont.deriveFont(Font.PLAIN).deriveFont(13f);
+        String copyright = "\u00A9 " + LocalDate.now().getYear() + " The Topps Company. All rights reserved.";
+        Rectangle copyrightBounds = copyrightFont.createGlyphVector(context, copyright).getPixelBounds(null, 0, 0);
+        int copyrightLeft = BattlefieldSupportCard.WIDTH - 40 - copyrightBounds.width;
+
+        assertEquals(420 + supportBounds.x + supportBounds.width + 6, standardBorder.get(0), 0.01);
+        assertEquals(copyrightLeft, standardBorder.get(4), 0.01);
+
+        BattlefieldSupportCard wideCard = new BattlefieldSupportCard(asset);
+        wideCard.setFont(wideFont);
+        List<Double> wideBorder = outerBorder(svgGroup(wideCard));
+
+        assertTrue(wideBorder.get(0) > standardBorder.get(0),
+              "the border must resume farther right when SUPPORT is wider");
+        assertTrue(wideBorder.get(2) < standardBorder.get(2),
+              "the shelf rise must move left when the copyright is wider");
+    }
+
     private static List<String> svgTextElements(BattlefieldSupportCard card) {
         Element group = svgGroup(card);
         NodeList textNodes = group.getElementsByTagName("text");
@@ -274,6 +310,20 @@ class BattlefieldSupportCardRenderTest {
             }
         }
         throw new AssertionError("No CHECK write-in box found");
+    }
+
+    private static List<Double> outerBorder(Element group) {
+        NodeList paths = group.getElementsByTagName("path");
+        for (int i = 0; i < paths.getLength(); i++) {
+            List<Double> points = Arrays.stream(((Element) paths.item(i)).getAttribute("d").split("[A-Za-z,\\s]+"))
+                  .filter(value -> !value.isBlank())
+                  .map(Double::parseDouble)
+                  .toList();
+            if ((points.size() == 20) && points.contains((double) BattlefieldSupportCard.WIDTH - 12)) {
+                return points;
+            }
+        }
+        throw new AssertionError("No outer card border found");
     }
 
     private static List<Double> points(Element element) {

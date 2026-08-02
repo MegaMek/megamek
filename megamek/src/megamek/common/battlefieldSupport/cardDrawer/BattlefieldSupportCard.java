@@ -42,6 +42,7 @@ import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.Image;
 import java.awt.Rectangle;
+import java.awt.font.FontRenderContext;
 import java.awt.font.TextAttribute;
 import java.awt.geom.AffineTransform;
 import java.awt.geom.Rectangle2D;
@@ -105,8 +106,12 @@ public class BattlefieldSupportCard {
     // the copyright at the bottom-right. Every bend is a 45-degree chamfer.
     private static final int BORDER_SHELF = 30;
     private static final int FOOTER_GAP_LEFT = 64;
-    private static final int FOOTER_GAP_RIGHT = 560;
-    private static final int SHELF_KNEE_X = 640;
+    private static final int BRAND_BORDER_GAP = 6;
+    private static final int COPYRIGHT_BORDER_GAP = 0;
+    private static final int BRAND_TEXT_X = 420;
+    private static final int COPYRIGHT_RIGHT_X = WIDTH - 40;
+    private static final String SUPPORT_TEXT = "SUPPORT";
+    private static final FontRenderContext TEXT_RENDER_CONTEXT = new FontRenderContext(null, true, true);
     /** The outer border line's inset and corner chamfer; the shelf knee offset is derived relative to these. */
     private static final int OUTER_BORDER_INSET = 12;
     private static final int OUTER_BORDER_CHAMFER = 50;
@@ -292,9 +297,19 @@ public class BattlefieldSupportCard {
         g.setColor(WHITE);
         g.fillRect(0, 0, WIDTH, HEIGHT);
 
+        Rectangle supportBounds = textPixelBounds(brandFont, SUPPORT_TEXT);
+        int footerGapRight = BRAND_TEXT_X + supportBounds.x + supportBounds.width + BRAND_BORDER_GAP;
+        int copyrightLeft = COPYRIGHT_RIGHT_X - textPixelBounds(copyrightFont, copyrightText()).width;
+        int shelfKneeX = copyrightLeft - COPYRIGHT_BORDER_GAP - BORDER_SHELF;
+
         g.setColor(accentColor());
-        drawBorderLine(g, OUTER_BORDER_INSET, OUTER_BORDER_CHAMFER, 5f);
-        drawBorderLine(g, 25, 40, 2.6f);
+        drawBorderLine(g, OUTER_BORDER_INSET, OUTER_BORDER_CHAMFER, 5f, footerGapRight, shelfKneeX);
+        drawBorderLine(g, 25, 40, 2.6f, footerGapRight, shelfKneeX);
+    }
+
+    private static Rectangle textPixelBounds(Font font, String value) {
+        // Match StringDrawer's rendering context so the border follows the visible glyph edges it draws.
+        return font.createGlyphVector(TEXT_RENDER_CONTEXT, value).getPixelBounds(null, 0, 0);
     }
 
     /**
@@ -302,7 +317,8 @@ public class BattlefieldSupportCard {
      * corners chamfered at 45 degrees and the right portion of the bottom edge raised into a shelf around the
      * copyright.
      */
-    private void drawBorderLine(Graphics2D g, int inset, int chamfer, float stroke) {
+    private void drawBorderLine(Graphics2D g, int inset, int chamfer, float stroke, int footerGapRight,
+          int outerShelfKneeX) {
         int l = inset;
         int t = inset;
         int r = WIDTH - inset;
@@ -314,11 +330,12 @@ public class BattlefieldSupportCard {
         // through the diagonal. A tighter (more-inset) line's corner chamfer shrinks; the part of the inset growth not
         // absorbed by that shrink is horizontal drift the shelf must also apply, or the inner knee sits too far right
         // and pinches the gap. Shift the knee left by that leftover.
-        int shelfKneeX = SHELF_KNEE_X - ((inset - OUTER_BORDER_INSET) - (OUTER_BORDER_CHAMFER - chamfer));
+        int shelfKneeX = outerShelfKneeX
+              - ((inset - OUTER_BORDER_INSET) - (OUTER_BORDER_CHAMFER - chamfer));
 
         // The right-edge corners (top-right and the raised bottom-right shelf) are square 90-degree corners; the
         // left-edge corners and the shelf bump are 45-degree chamfers.
-        int[] xs = { FOOTER_GAP_RIGHT, shelfKneeX, shelfKneeX + sh, r, r, l + c, l, l, l + c, FOOTER_GAP_LEFT };
+        int[] xs = { footerGapRight, shelfKneeX, shelfKneeX + sh, r, r, l + c, l, l, l + c, FOOTER_GAP_LEFT };
         int[] ys = { b, b, b - sh, b - sh, t, t, t + c, b - c, b, b };
         g.setStroke(new BasicStroke(stroke, BasicStroke.CAP_BUTT, BasicStroke.JOIN_MITER));
         g.drawPolyline(xs, ys, xs.length);
@@ -676,12 +693,16 @@ public class BattlefieldSupportCard {
         }
 
         // BATTLEFIELD / SUPPORT on two lines beside the logo, spanning the same vertical space as the logo.
-        text("BATTLEFIELD").at(420, 702).centerY().font(brandFont).color(Color.BLACK).draw(g);
-        text("SUPPORT").at(420, 734).centerY().font(brandFont).color(Color.BLACK).draw(g);
+        text("BATTLEFIELD").at(BRAND_TEXT_X, 702).centerY().font(brandFont).color(Color.BLACK).draw(g);
+        text(SUPPORT_TEXT).at(BRAND_TEXT_X, 734).centerY().font(brandFont).color(Color.BLACK).draw(g);
 
         // Copyright, nestled in the raised border shelf at the bottom-right.
-        text("\u00A9 " + LocalDate.now().getYear() + " The Topps Company. All rights reserved.")
-              .at(WIDTH - 40, HEIGHT - 24).rightAlign().centerY().font(copyrightFont).color(Color.BLACK).draw(g);
+        text(copyrightText()).at(COPYRIGHT_RIGHT_X, HEIGHT - 24).rightAlign().centerY()
+              .font(copyrightFont).color(Color.BLACK).draw(g);
+    }
+
+    private static String copyrightText() {
+        return "\u00A9 " + LocalDate.now().getYear() + " The Topps Company. All rights reserved.";
     }
 
     private static GraphicsNode bwLogoNode() {

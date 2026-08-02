@@ -29,7 +29,10 @@
     </factions>
     <units>
         <chassis name='Archer' unitType='Mek'>
-            <availability>LA:6</availability>
+            <!-- MRG:0 marks the Archer as one the Merged Test Faction does not field. The next era bucket rates it
+                 MRG:6, so a year between the two buckets is where a zero that is not honoured gets interpolated
+                 back into the table. See ChassisZeroAvailabilityTest. -->
+            <availability>LA:6,MRG:0</availability>
             <model name='ARC-2R'>
                 <roles>fire_support</roles>
                 <availability>General:6</availability>

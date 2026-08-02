@@ -70,12 +70,12 @@ import megamek.common.options.IOption;
 public class GameOptionsPane extends JPanel {
     private static final int START_HEIGHT = 800;
     private static final int HEADER_IMAGE_SIZE = 80;
-    private static final int DETAILS_ICON = 0xE88E;
+    private static final int IMPORTANT_ICON = 0xE002;
     private static final int ADVANCED_ICON = 0xE8B8;
-    private static final int UNOFFICIAL_ICON = 0xE002;
+    private static final int UNOFFICIAL_ICON = 0xEA4B;
     private static final SettingsTextProvider TEXT = SettingsTextProvider.megaMek();
-    private static final SettingsBadge DETAILS_BADGE = new SettingsBadge(DETAILS_ICON, null,
-          getString("GameOptionsDialog.legend.details"));
+    private static final SettingsBadge IMPORTANT_BADGE = new SettingsBadge(IMPORTANT_ICON, null,
+          getString("GameOptionsDialog.legend.important"));
     private static final SettingsBadge ADVANCED_BADGE = new SettingsBadge(ADVANCED_ICON, null,
           getString("GameOptionsDialog.legend.advanced"));
     private static final SettingsBadge UNOFFICIAL_BADGE = new SettingsBadge(UNOFFICIAL_ICON, null,
@@ -143,7 +143,7 @@ public class GameOptionsPane extends JPanel {
     }
 
     public static List<SettingsBadge> legendEntries() {
-        return List.of(DETAILS_BADGE, ADVANCED_BADGE, UNOFFICIAL_BADGE);
+        return List.of(IMPORTANT_BADGE, ADVANCED_BADGE, UNOFFICIAL_BADGE);
     }
 
     @Override
@@ -259,7 +259,7 @@ public class GameOptionsPane extends JPanel {
     private static List<SettingsBadge> optionBadges(IOption option) {
         List<SettingsBadge> badges = new ArrayList<>();
         if (hasShortLabel(option)) {
-            badges.add(DETAILS_BADGE);
+            badges.add(IMPORTANT_BADGE);
         }
         if (isUnofficial(option)) {
             badges.add(UNOFFICIAL_BADGE);

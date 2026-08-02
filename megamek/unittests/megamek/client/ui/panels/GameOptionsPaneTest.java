@@ -47,6 +47,7 @@ import java.util.ArrayList;
 import java.util.Enumeration;
 import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 import java.util.Optional;
 import java.util.concurrent.atomic.AtomicBoolean;
@@ -68,9 +69,9 @@ import megamek.common.options.OptionsConstants;
 import org.junit.jupiter.api.Test;
 
 class GameOptionsPaneTest {
-    private static final String DETAILS_SYMBOL = Character.toString(0xE88E);
+    private static final String IMPORTANT_SYMBOL = Character.toString(0xE002);
     private static final String ADVANCED_SYMBOL = Character.toString(0xE8B8);
-    private static final String UNOFFICIAL_SYMBOL = Character.toString(0xE002);
+    private static final String UNOFFICIAL_SYMBOL = Character.toString(0xEA4B);
 
     @Test
     void searchFiltersRowsByOptionNameAndDescription() throws Exception {
@@ -130,6 +131,8 @@ class GameOptionsPaneTest {
             assertFalse(sections.get(0).isExpanded());
             assertFalse(sections.get(1).isExpanded());
             assertEquals(3, GameOptionsPane.legendEntries().size());
+            assertEquals("Tooltip contains important information.",
+                  GameOptionsPane.legendEntries().getFirst().description());
             assertTrue(pane.getPreferredSize().width >= UIUtil.scaleForGUI(
                   SettingsNavigationPanel.DEFAULT_NAVIGATION_WIDTH + SettingsPagePanel.DEFAULT_MAXIMUM_PAGE_WIDTH));
             assertTrue(pane.getPreferredSize().height >= UIUtil.scaleForGUI(800));
@@ -209,6 +212,29 @@ class GameOptionsPaneTest {
             assertTrue(deployment.isVisible());
             assertFalse(searchlights.isVisible());
         });
+    }
+
+    @Test
+    void coreRulesDetailsUseNaturalParagraphsWithoutDefaultStateNarration() {
+        GameOptions options = new GameOptions();
+        for (Enumeration<IOptionGroup> groups = options.getGroups(); groups.hasMoreElements(); ) {
+            IOptionGroup group = groups.nextElement();
+            if (!group.getName().equals("basic")) {
+                continue;
+            }
+            for (Enumeration<IOption> groupOptions = group.getOptions(); groupOptions.hasMoreElements(); ) {
+                IOption option = groupOptions.nextElement();
+                if (!GameOptionsPane.sectionId(group.getName(), option.getName()).equals("basic.rules")) {
+                    continue;
+                }
+                String description = option.getDescription();
+                String lowerCaseDescription = description.toLowerCase(Locale.ROOT);
+                assertFalse(description.contains("\n"), option.getName());
+                assertFalse(lowerCaseDescription.contains("checked by default"), option.getName());
+                assertFalse(lowerCaseDescription.contains("unchecked by default"), option.getName());
+                assertFalse(lowerCaseDescription.contains("defaults to"), option.getName());
+            }
+        }
     }
 
     @Test
@@ -295,19 +321,19 @@ class GameOptionsPaneTest {
             GameOptionsPane advancedPane = pane("advancedRules", List.of(unofficialOption), option -> true);
 
             String normalOptionText = optionLabel(normalOption).getText();
-            assertFalse(normalOptionText.contains(DETAILS_SYMBOL));
+            assertFalse(normalOptionText.contains(IMPORTANT_SYMBOL));
             assertFalse(normalOptionText.contains(UNOFFICIAL_SYMBOL));
             String unofficialOptionText = optionLabel(unofficialOption).getText();
-            assertFalse(unofficialOptionText.contains(DETAILS_SYMBOL));
+            assertFalse(unofficialOptionText.contains(IMPORTANT_SYMBOL));
             assertTrue(unofficialOptionText.contains(UNOFFICIAL_SYMBOL));
 
             String basicTitle = sectionTitle(basicPane, "Core Rules");
-            assertFalse(basicTitle.contains(DETAILS_SYMBOL));
+            assertFalse(basicTitle.contains(IMPORTANT_SYMBOL));
             assertFalse(basicTitle.contains(ADVANCED_SYMBOL));
             assertFalse(basicTitle.contains(UNOFFICIAL_SYMBOL));
 
             String advancedTitle = sectionTitle(advancedPane, "Terrain and Environment");
-            assertFalse(advancedTitle.contains(DETAILS_SYMBOL));
+            assertFalse(advancedTitle.contains(IMPORTANT_SYMBOL));
             assertTrue(advancedTitle.contains(ADVANCED_SYMBOL));
             assertFalse(advancedTitle.contains(UNOFFICIAL_SYMBOL));
         });
@@ -386,10 +412,10 @@ class GameOptionsPaneTest {
     }
 
     private static void assertOptionPresentation(DialogOptionComponentYPanel component, String label,
-          boolean details, boolean unofficial) {
+                    boolean important, boolean unofficial) {
         String text = optionLabel(component).getText();
         assertTrue(text.contains(label), text);
-        assertEquals(details, text.contains(DETAILS_SYMBOL), text);
+                assertEquals(important, text.contains(IMPORTANT_SYMBOL), text);
         assertEquals(unofficial, text.contains(UNOFFICIAL_SYMBOL), text);
     }
 

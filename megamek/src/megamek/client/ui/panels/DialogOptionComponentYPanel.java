@@ -62,6 +62,7 @@ import org.apache.commons.text.StringEscapeUtils;
 import megamek.client.ui.Messages;
 import megamek.client.ui.clientGUI.DialogOptionListener;
 import megamek.client.ui.settings.SettingsBadge;
+import megamek.client.ui.settings.SettingsHelpProvider;
 import megamek.client.ui.util.UIUtil;
 import megamek.client.ui.util.UIUtil.FixedYPanel;
 import megamek.codeUtilities.MathUtility;
@@ -72,7 +73,8 @@ import megamek.common.options.OptionsConstants;
 
 /** @author Cord Awtry */
 public class DialogOptionComponentYPanel extends FixedYPanel
-      implements ItemListener, FocusListener, ActionListener, Comparable<DialogOptionComponentYPanel> {
+    implements ItemListener, FocusListener, ActionListener, Comparable<DialogOptionComponentYPanel>,
+    SettingsHelpProvider {
 
     @Serial
     private static final long serialVersionUID = -4190538980884459746L;
@@ -221,6 +223,11 @@ public class DialogOptionComponentYPanel extends FixedYPanel
         } else {
             optionLabel.setText(optionDisplayName);
         }
+    }
+
+    @Override
+    public String getSettingsHelpText() {
+        return option.getDescription();
     }
 
     /**

@@ -33,10 +33,10 @@
 package megamek.client.ui.settings;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertSame;
-import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.awt.Component;
@@ -200,6 +200,23 @@ class SettingsContentHostTest {
         assertTrue(helpPane.getText().contains("Raw field help"), helpPane.getText());
     }
 
+    @Test
+    void inheritedRawHelpOverridesWrappedDescendantTooltip() {
+        String rawHelp = "The details panel should wrap this text to its available width.";
+        HelpContainer content = new HelpContainer(rawHelp);
+        JLabel child = new JLabel("Option");
+        child.setToolTipText("<html><div width=500>" + rawHelp + "</div></html>");
+        content.add(child);
+
+        SettingsContentHost host = new SettingsContentHost(content, "Details", true);
+        fireMouseEntered(child);
+        JEditorPane helpPane = findComponent(host, "settingsHelpText", JEditorPane.class);
+
+        assertTrue(helpPane.getText().contains(rawHelp), helpPane.getText());
+        assertFalse(helpPane.getText().contains("width=500"), helpPane.getText());
+        assertNull(child.getToolTipText());
+    }
+
     private static void fireMouseEntered(Component component) {
         MouseEvent event = new MouseEvent(component, MouseEvent.MOUSE_ENTERED, 0, 0, 0, 0, 0, false);
         for (MouseListener listener : component.getMouseListeners()) {
@@ -242,5 +259,18 @@ class SettingsContentHostTest {
             }
         }
         return null;
+    }
+
+    private static class HelpContainer extends JPanel implements SettingsHelpProvider {
+        private final String helpText;
+
+        private HelpContainer(String helpText) {
+            this.helpText = helpText;
+        }
+
+        @Override
+        public String getSettingsHelpText() {
+            return helpText;
+        }
     }
 }

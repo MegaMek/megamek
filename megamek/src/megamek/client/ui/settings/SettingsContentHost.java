@@ -159,7 +159,7 @@ public class SettingsContentHost extends JPanel {
         if (component instanceof JComponent swingComponent && !(component instanceof JButton)) {
             String ownHelpText = component instanceof SettingsHelpProvider provider
                   ? provider.getSettingsHelpText()
-                  : swingComponent.getToolTipText();
+                  : inheritedHelpText == null ? swingComponent.getToolTipText() : null;
             if (ownHelpText != null && !ownHelpText.isBlank()) {
                 descendantHelpText = ownHelpText;
             }
@@ -177,8 +177,7 @@ public class SettingsContentHost extends JPanel {
                         setHelpText(helpText);
                     }
                 };
-                boolean suppressTooltip = ownHelpText != null && !ownHelpText.isBlank()
-                      && swingComponent.getToolTipText() != null;
+                boolean suppressTooltip = swingComponent.getToolTipText() != null;
                 HelpBinding binding = new HelpBinding(swingComponent, swingComponent.getToolTipText(),
                       suppressTooltip, mouseListener, focusListener);
                 swingComponent.addMouseListener(binding.mouseListener());

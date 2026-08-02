@@ -575,11 +575,11 @@ class BasicPathRankerTest {
                     anyInt(),
                     any(Game.class));
         doReturn(10.0).when(testRanker)
-              .calculateKickDamagePotential(eq(mockEnemyMek), any(MovePath.class), any(Game.class));
+              .calculateEnemyPhysicalThreat(eq(mockEnemyMek), any(MovePath.class), any(Game.class));
         doReturn(14.5).when(testRanker)
               .calculateMyDamagePotential(any(MovePath.class), eq(mockEnemyMek), anyInt(), any(Game.class));
         doReturn(8.0).when(testRanker)
-              .calculateMyKickDamagePotential(any(MovePath.class), eq(mockEnemyMek), any(Game.class));
+              .calculateMyPhysicalDamagePotential(any(MovePath.class), eq(mockEnemyMek), any(Game.class));
         final Map<Integer, Double> testBestDamageByEnemies = new TreeMap<>();
         testBestDamageByEnemies.put(mockEnemyMekId, 0.0);
         doReturn(testBestDamageByEnemies).when(testRanker).getBestDamageByEnemies();
@@ -667,11 +667,11 @@ class BasicPathRankerTest {
                     anyInt(),
                     any(Game.class));
         doReturn(10.0).when(testRanker)
-              .calculateKickDamagePotential(eq(mockEnemyMek), any(MovePath.class), any(Game.class));
+              .calculateEnemyPhysicalThreat(eq(mockEnemyMek), any(MovePath.class), any(Game.class));
         doReturn(14.5).when(testRanker)
               .calculateMyDamagePotential(any(MovePath.class), eq(mockEnemyMek), anyInt(), any(Game.class));
         doReturn(8.0).when(testRanker)
-              .calculateMyKickDamagePotential(any(MovePath.class), eq(mockEnemyMek), any(Game.class));
+              .calculateMyPhysicalDamagePotential(any(MovePath.class), eq(mockEnemyMek), any(Game.class));
         final Map<Integer, Double> testBestDamageByEnemies = new TreeMap<>();
         testBestDamageByEnemies.put(mockEnemyMekId, 0.0);
         doReturn(testBestDamageByEnemies).when(testRanker).getBestDamageByEnemies();

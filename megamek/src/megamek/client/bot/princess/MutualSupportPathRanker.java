@@ -84,8 +84,15 @@ public class MutualSupportPathRanker extends BasicPathRanker {
      */
     private static final double COHESION_WEIGHT_CAP_FACTOR = 0.8;
 
-    /** Utility bonus per set (already moved) friend whose envelope covers the destination. */
-    private static final double COVER_BONUS = 2.0;
+    /**
+     * Utility bonus per set (already moved) friend whose envelope covers the destination. Sized to decide
+     * between two otherwise comparable advances without ever outranking a genuine fall risk: the competing
+     * rank terms run about 50 for a single risky piloting roll and 250 for sprinting into threat, so the
+     * first benchmark's value of 2.0 (4.0 for two friends) was inside the noise and shaped nothing - units
+     * still broke off and advanced uncovered. Twelve, doubled for a second covering friend, is decisive
+     * between advances and still well under the fall-risk terms.
+     */
+    private static final double COVER_BONUS = 12.0;
 
     /** At most this many covering friends earn the bonus; a whole company stacking adds nothing. */
     private static final int COVER_BONUS_MAX_FRIENDS = 2;
@@ -97,10 +104,18 @@ public class MutualSupportPathRanker extends BasicPathRanker {
     private static final int THREAT_CONTACT_RANGE = 15;
 
     /**
-     * Reference movement rate used to scale the turns-to-close tempo term back to the magnitude the raw-hex
-     * aggression term had for an average Mek, keeping the slider's feel comparable.
+     * Reference movement rate used to scale the turns-to-close tempo term: a full move's advance is worth
+     * {@code TEMPO_REFERENCE_MP * hyperAggressionValue} to every unit regardless of its speed, which is what
+     * puts a 3/5 assault and a 6/9 medium on one commit tempo.
+     *
+     * <p>Sized against the noise floor rather than for slider parity. The mechanism study measured the
+     * competing rank terms at roughly 50 for one risky piloting roll, up to 100 for facing and 250 for
+     * sprint exposure, while stock aggression gave a slow assault a whole-turn commit signal of about 7.5 -
+     * which is why heavy companies dithered instead of committing. The first benchmark used 6.0 (15 points
+     * per move at default aggression), still under that floor, and arrival stagger only improved 12%.
+     * Fifteen gives 37.5 per move, above the single-roll term and below the sprint penalty.</p>
      */
-    private static final double TEMPO_REFERENCE_MP = 6.0;
+    private static final double TEMPO_REFERENCE_MP = 15.0;
 
     /**
      * A friendly element's engagement envelope, derived from its damage profile once per round.

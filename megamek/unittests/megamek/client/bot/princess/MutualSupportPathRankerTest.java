@@ -148,7 +148,7 @@ class MutualSupportPathRankerTest {
         when(mockFriend.getPosition()).thenReturn(new Coords(5, 15)); // 5 hexes from destination
         when(mockFriend.isDone()).thenReturn(true);
         setEnemyDistances(14.0, 9.0, CLOSING_DESTINATION);
-        assertEquals(-2.0, testRanker.calculateHerdingMod(null, mockPath), TOLERANCE);
+        assertEquals(-12.0, testRanker.calculateHerdingMod(null, mockPath), TOLERANCE);
     }
 
     @Test

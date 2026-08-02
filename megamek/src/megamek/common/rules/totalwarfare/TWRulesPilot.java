@@ -95,4 +95,11 @@ public class TWRulesPilot extends CoreRulesPilot {
     public int getSeatbeltShutdown(int piloting) {
         return piloting + 3;
     }
+
+    /**
+     * {@inheritDoc}
+     * In TW this is fall height - 1
+     * */
+    @Override
+    public int getSeatbeltHeightModifier(int fallHeight) { return fallHeight - 1; }
 }

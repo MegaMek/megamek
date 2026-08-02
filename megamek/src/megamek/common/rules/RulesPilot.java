@@ -135,4 +135,12 @@ public abstract class RulesPilot {
         // Return the MoS/Failure
         return targetNumber - rollValue;
     }
+
+    /**
+     * Get the height modifier for pilot hit checks
+     *
+     * @param fallHeight the height of the fall
+     * @return return the fall height, unmodified
+     */
+    public int getSeatbeltHeightModifier(int fallHeight) { return fallHeight; }
 }

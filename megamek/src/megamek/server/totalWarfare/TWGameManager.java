@@ -25342,7 +25342,8 @@ public class TWGameManager extends AbstractGameManager {
         roll.removeAutos();
 
         if (fallHeight > 1) {
-            roll.addModifier(fallHeight - 1, "height of fall");
+            roll.addModifier(Game.rulesManager.getRulesPilot().getSeatbeltHeightModifier(fallHeight), "height of "
+                  + "fall");
         }
 
         if (entity.getCrew().getSlotCount() > 1) {

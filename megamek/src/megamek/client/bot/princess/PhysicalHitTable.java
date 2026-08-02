@@ -42,11 +42,12 @@ import megamek.common.units.Targetable;
 /**
  * Resolves which hit-location table a physical attack lands on, from the attacker's and target's (possibly
  * hypothetical) positions and elevations. This mirrors the rules-engine logic in
- * {@link megamek.common.actions.KickAttackAction#toHit} and {@link megamek.common.actions.PunchAttackAction#toHit}
- * so Princess's damage estimates use the same table the attack would actually resolve on: a kick delivered
- * from one level above a standing Mek lands on the punch table (head reachable), a punch delivered at the
- * target's base level lands on the kick table (legs), and physicals against height-zero targets use the full
- * body table. Keep this in sync with those two action classes when their elevation rules change.
+ * {@link megamek.common.actions.KickAttackAction#toHit}, {@link megamek.common.actions.PunchAttackAction#toHit},
+ * and {@link megamek.common.actions.ClubAttackAction#toHit} so Princess's damage estimates use the same table
+ * the attack would actually resolve on: a kick delivered from one level above a standing Mek lands on the
+ * punch table (head reachable), a punch delivered at the target's base level lands on the kick table (legs),
+ * and physicals against height-zero targets use the full body table. Keep this in sync with those three
+ * action classes when their elevation rules change.
  *
  * <p>Special cases the rules engine handles that this estimate deliberately does not: converted QuadVees,
  * grounded DropShips, and hull-down attackers (prone and hull-down attackers are rejected as illegal by the
@@ -60,7 +61,7 @@ final class PhysicalHitTable {
     /**
      * Resolves the hit-location table for the given physical attack.
      *
-     * @param attackType   the punch or kick being evaluated
+     * @param attackType   the punch, kick, or physical-weapon attack being evaluated
      * @param shooter      the attacking entity
      * @param shooterState the attacker's (possibly hypothetical) position and elevation
      * @param target       the target of the attack

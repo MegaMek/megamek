@@ -37,6 +37,7 @@ import java.text.DecimalFormat;
 import java.text.NumberFormat;
 
 import megamek.client.bot.PhysicalOption;
+import megamek.common.TargetRollModifier;
 import megamek.common.ToHitData;
 import megamek.common.actions.ClubAttackAction;
 import megamek.common.actions.KickAttackAction;
@@ -46,6 +47,7 @@ import megamek.common.equipment.MiscMounted;
 import megamek.common.board.Coords;
 import megamek.common.compute.Compute;
 import megamek.common.game.Game;
+import megamek.common.rolls.TargetRoll;
 import megamek.common.units.BipedMek;
 import megamek.common.units.Entity;
 import megamek.common.units.Mek;
@@ -62,6 +64,9 @@ public class PhysicalInfo {
 
     private static final NumberFormat LOG_PER = NumberFormat.getPercentInstance();
     private static final NumberFormat LOG_DEC = DecimalFormat.getInstance();
+
+    private static final TargetRollModifier TH_UNSUPPORTED_ATTACK_TYPE = new TargetRollModifier(
+          TargetRoll.IMPOSSIBLE, "unsupported physical attack type");
 
     private Entity shooter;
     private Targetable target;
@@ -227,7 +232,7 @@ public class PhysicalInfo {
             } else if (action instanceof ClubAttackAction clubAction) {
                 setHitData(clubAction.toHit(game));
             } else {
-                setHitData(new ToHitData(ToHitData.IMPOSSIBLE, "unsupported physical attack type"));
+                setHitData(new ToHitData(TH_UNSUPPORTED_ATTACK_TYPE));
             }
         }
 

@@ -164,6 +164,8 @@ public class FireControl {
           "target elevation not in range");
     static final TargetRollModifier TH_PHY_P_TAR_PRONE = new TargetRollModifier(TargetRoll.IMPOSSIBLE,
           "can't punch while prone");
+    static final TargetRollModifier TH_PHY_NO_CLUB = new TargetRollModifier(TargetRoll.IMPOSSIBLE,
+          "no physical weapon given");
     static final TargetRollModifier TH_PHY_P_TAR_INF = new TargetRollModifier(TargetRoll.IMPOSSIBLE,
           "can't punch infantry");
     static final TargetRollModifier TH_PHY_P_NO_ARM = new TargetRollModifier(TargetRoll.IMPOSSIBLE, "Your arm's off!");
@@ -617,7 +619,7 @@ public class FireControl {
             }
         } else if (PhysicalAttackType.WEAPON == attackType) {
             if (club == null) {
-                return new ToHitData(TH_PHY_NOT_MEK);
+                return new ToHitData(TH_PHY_NO_CLUB);
             }
             // Reach approximated like a punch: the weapon is swung by the arms.
             if ((attackerHeight < targetElevation) || (attackerHeight > targetHeight)) {

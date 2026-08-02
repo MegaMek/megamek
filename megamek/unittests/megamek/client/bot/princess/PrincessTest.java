@@ -52,6 +52,7 @@ import static org.mockito.Mockito.when;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.UUID;
 
 import megamek.client.bot.princess.PathRanker.PathRankerType;
@@ -404,7 +405,8 @@ class PrincessTest {
     @Test
     void testWantsToFallBack() {
         Entity mockMek = mock(BipedMek.class);
-        when(mockMek.isCrippled()).thenReturn(false);
+        // wantsToFallBack checks isCrippled(true), so crew-crippled Meks withdraw too
+        when(mockMek.isCrippled(true)).thenReturn(false);
 
         when(mockPrincess.wantsToFallBack(any(Entity.class))).thenCallRealMethod();
         when(mockPrincess.getForcedWithdrawal()).thenReturn(true);
@@ -427,7 +429,7 @@ class PrincessTest {
         assertFalse(mockPrincess.wantsToFallBack(mockMek));
 
         when(mockPrincess.getFleeBoard()).thenReturn(false);
-        when(mockMek.isCrippled()).thenReturn(true);
+        when(mockMek.isCrippled(true)).thenReturn(true);
         // Fall Back and Flee Board Disabled, Mek Crippled, Forced Withdrawal Enabled
         // Should Fall Back
         assertTrue(mockPrincess.wantsToFallBack(mockMek));
@@ -436,6 +438,49 @@ class PrincessTest {
         // Fall Back and Flee Board Disabled, Mek Crippled, Forced Withdrawal Disabled
         // Should Not Fall Back
         assertFalse(mockPrincess.wantsToFallBack(mockMek));
+    }
+
+    @Test
+    void testUpdateReturnFirePermissionGrantsFireAfterSameTurnAttack() {
+        Princess princess = spy(new Princess("TestPrincess", UUID.randomUUID().toString(), 1));
+        princess.getBehaviorSettings().setForcedWithdrawal(true);
+
+        // Crippled this turn AND attacked this turn: gains permission to return fire.
+        BipedMek crippledMek = mock(BipedMek.class);
+        when(crippledMek.getId()).thenReturn(10);
+        when(crippledMek.isCrippled(true)).thenReturn(true);
+        when(crippledMek.getAttackedByThisTurn()).thenReturn(Set.of(99));
+        when(crippledMek.getDisplayName()).thenReturn("Crippled Mek");
+
+        // Attacked but not crippled: no withdrawal, so no permission needed or granted.
+        BipedMek healthyMek = mock(BipedMek.class);
+        when(healthyMek.getId()).thenReturn(11);
+        when(healthyMek.isCrippled(true)).thenReturn(false);
+        when(healthyMek.getAttackedByThisTurn()).thenReturn(Set.of(99));
+
+        // Crippled but left alone: keeps holding fire.
+        BipedMek ignoredCrippledMek = mock(BipedMek.class);
+        when(ignoredCrippledMek.getId()).thenReturn(12);
+        when(ignoredCrippledMek.isCrippled(true)).thenReturn(true);
+        when(ignoredCrippledMek.getAttackedByThisTurn()).thenReturn(Set.of());
+
+        doReturn(List.of(crippledMek, healthyMek, ignoredCrippledMek)).when(princess).getEntitiesOwned();
+
+        // End-of-turn order: refresh the crippled set, then grant return-fire permission from it.
+        princess.refreshCrippledUnits();
+        try {
+            java.lang.reflect.Method method = Princess.class.getDeclaredMethod("updateReturnFirePermission");
+            method.setAccessible(true);
+            method.invoke(princess);
+        } catch (Exception exception) {
+            throw new RuntimeException("Failed to invoke updateReturnFirePermission", exception);
+        }
+
+        assertTrue(princess.canShootWhileFallingBack(crippledMek),
+              "a unit crippled and attacked in the same turn must be allowed to return fire");
+        assertFalse(princess.canShootWhileFallingBack(healthyMek));
+        assertFalse(princess.canShootWhileFallingBack(ignoredCrippledMek),
+              "a crippled unit no one attacks keeps holding its fire");
     }
 
     @Test
@@ -501,8 +546,8 @@ class PrincessTest {
         assertFalse(mockPrincess.mustFleeBoard(mockMek));
 
         // Even a crippled mek should not fall back unless fleeBoard or forcedWithdrawal
-        // is enabled
-        when(mockMek.isCrippled()).thenReturn(true);
+        // is enabled (mustFleeBoard checks isCrippled(true), so crew-crippled Meks count too)
+        when(mockMek.isCrippled(true)).thenReturn(true);
         assertFalse(mockPrincess.mustFleeBoard(mockMek));
 
         // Enabling forcedWithdrawal should cause fleeing, because mek is crippled
@@ -510,7 +555,7 @@ class PrincessTest {
         assertTrue(mockPrincess.mustFleeBoard(mockMek));
 
         // But forcedWithdrawal without a crippled mek should not flee
-        when(mockMek.isCrippled()).thenReturn(false);
+        when(mockMek.isCrippled(true)).thenReturn(false);
         assertFalse(mockPrincess.mustFleeBoard(mockMek));
 
         // If fleeBoard is true, all units falling back should flee

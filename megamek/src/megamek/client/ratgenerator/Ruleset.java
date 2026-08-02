@@ -233,6 +233,10 @@ public class Ruleset {
         // assignments are final, but no unit has been picked yet. Read-only - it changes no state on the
         // tree, only records the split so the Composition Summary can show it.
         fd.setRoleCoverageReport(RoleSlotSurvey.survey(fd));
+        // Hand each governable slot the role the user's mix asked of it, routing each role to the weight bands whose
+        // tables can actually supply it. A no-op for an empty mix, so a force generated without role targeting comes
+        // out exactly as it did before.
+        fd.setRoleAssignmentReport(RoleBudgetAllocator.allocate(fd));
         fd.generateUnits(l, PROGRESS_GENERATE_UNITS);
         if (null != l) {
             l.updateProgress(0, "Finalizing formation");

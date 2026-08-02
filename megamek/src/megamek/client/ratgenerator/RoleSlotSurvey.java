@@ -32,6 +32,9 @@
  */
 package megamek.client.ratgenerator;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import megamek.logging.MMLogger;
 
 /**
@@ -57,6 +60,14 @@ final class RoleSlotSurvey {
     private RoleSlotSurvey() {}
 
     /**
+     * The governed leaves of a force tree together with the coverage they represent.
+     *
+     * @param governedLeaves the unit slots a role mix is free to assign a role to, in tree order
+     * @param report         the coverage those leaves represent, including why the rest were excluded
+     */
+    record SurveyResult(List<ForceDescriptor> governedLeaves, RoleCoverageReport report) {}
+
+    /**
      * Surveys the force tree rooted at the given descriptor.
      *
      * @param root the root of a built force tree
@@ -64,8 +75,22 @@ final class RoleSlotSurvey {
      * @return the slot coverage a role mix would have over this force, never {@code null}
      */
     static RoleCoverageReport survey(ForceDescriptor root) {
+        return collect(root).report();
+    }
+
+    /**
+     * Surveys the force tree and returns the governed leaves alongside the coverage.
+     *
+     * <p>The role budget allocator works from the same list this produces, so the definition of a governed slot lives
+     * here only and the two features cannot drift apart.</p>
+     *
+     * @param root the root of a built force tree
+     *
+     * @return the governed leaves and their coverage, never {@code null}
+     */
+    static SurveyResult collect(ForceDescriptor root) {
         if (root == null) {
-            return RoleCoverageReport.EMPTY;
+            return new SurveyResult(List.of(), RoleCoverageReport.EMPTY);
         }
         SlotTally tally = new SlotTally();
         walk(root, false, false, tally);
@@ -75,7 +100,7 @@ final class RoleSlotSurvey {
               report.totalUnitSlots(), report.governedSlots(), report.governedPercent(),
               report.slotsSetByFormation(), report.slotsInAttachedForces(),
               report.slotsExcludedByUnitType(), report.slotsExcludedByArtillery());
-        return report;
+        return new SurveyResult(tally.governedLeaves, report);
     }
 
     /**
@@ -108,8 +133,8 @@ final class RoleSlotSurvey {
 
     /** Mutable counters assembled into an immutable {@link RoleCoverageReport}. */
     private static final class SlotTally {
+        private final List<ForceDescriptor> governedLeaves = new ArrayList<>();
         private int total;
-        private int governed;
         private int byFormation;
         private int attached;
         private int byUnitType;
@@ -130,7 +155,7 @@ final class RoleSlotSurvey {
                     byUnitType++;
                 }
             } else {
-                governed++;
+                governedLeaves.add(leaf);
             }
         }
 
@@ -140,7 +165,8 @@ final class RoleSlotSurvey {
         }
 
         private RoleCoverageReport toReport() {
-            return new RoleCoverageReport(total, governed, byFormation, attached, byUnitType, byArtillery);
+            return new RoleCoverageReport(total, governedLeaves.size(), byFormation, attached, byUnitType,
+                  byArtillery);
         }
     }
 }

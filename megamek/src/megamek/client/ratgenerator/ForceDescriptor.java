@@ -45,6 +45,7 @@ import megamek.common.loaders.MekSummaryCache;
 import megamek.common.units.Entity;
 import megamek.common.units.EntityMovementMode;
 import megamek.common.units.EntityWeightClass;
+import megamek.common.units.UnitRole;
 import megamek.common.units.UnitType;
 import megamek.logging.MMLogger;
 
@@ -137,6 +138,14 @@ public class ForceDescriptor {
     // after the tree is built and before units are picked. Set only on the root node and read by the
     // Force Generator's Composition Summary. Null until a force has been generated.
     private RoleCoverageReport roleCoverageReport;
+    // The requested UnitRole distribution, set on the root node from the Force Generator's controls.
+    // Empty means no role targeting, which reproduces generation exactly as it was before the feature.
+    private RoleMix roleMix = RoleMix.EMPTY;
+    // What the role budget allocator asked this element to be, or null when it is free to roll normally.
+    // Set on leaf nodes only (deliberately NOT copied to children in createChild).
+    private UnitRole targetUnitRole;
+    // What the role mix actually achieved, set on the root node by the allocator. Null when no mix ran.
+    private RoleAssignmentReport roleAssignmentReport;
     private final HashSet<EntityMovementMode> movementModes;
     private final HashSet<MissionRole> roles;
     private String rating;
@@ -1114,7 +1123,7 @@ public class ForceDescriptor {
      * @return the displayable name of the unit type, or {@code "unspecified"} when {@code unitType} is
      *       {@code null}
      */
-    private static String describeUnitType(@Nullable Integer unitType) {
+    static String describeUnitType(@Nullable Integer unitType) {
         return (unitType == null) ? "unspecified" : UnitType.getTypeDisplayableName(unitType);
     }
 
@@ -1213,6 +1222,12 @@ public class ForceDescriptor {
      * types, then the remaining weight classes. Returns {@code null} if no unit could be generated at the given
      * rating.
      */
+    /**
+     * How strictly {@link MissionRole} weighting is applied on the first attempt. The ladder in
+     * {@link #generateAtRating(String, List)} relaxes from here down to zero.
+     */
+    static final int STRICTEST_ROLE_WEIGHTING = 3;
+
     private @Nullable ModelRecord generateAtRating(String ratGenRating, List<String> failureTrace) {
         final int[][] alternateWeights = { { 1, 2, 3, 4, 5 }, // UL
                                            { 2, 0, 3, 4, 5 }, // L
@@ -1238,7 +1253,7 @@ public class ForceDescriptor {
         int weightTierIndex = (useWeightClass() && weightClass != null && weightClass != -1) ? 0 : 4;
 
         while (weightTierIndex < 5) {
-            for (int roleStrictness = 3; roleStrictness >= 0; roleStrictness--) {
+            for (int roleStrictness = STRICTEST_ROLE_WEIGHTING; roleStrictness >= 0; roleStrictness--) {
                 List<Integer> weightClasses = new ArrayList<>();
                 if (useWeightClass() && null != workingCopy.getWeightClass()
                       && workingCopy.getWeightClass() >= EntityWeightClass.WEIGHT_ULTRA_LIGHT) {
@@ -2319,6 +2334,70 @@ public class ForceDescriptor {
 
     public void setRoleCoverageReport(@Nullable RoleCoverageReport roleCoverageReport) {
         this.roleCoverageReport = roleCoverageReport;
+    }
+
+    /** @return the requested {@link UnitRole} distribution for this force, never {@code null} */
+    public RoleMix getRoleMix() {
+        return (roleMix == null) ? RoleMix.EMPTY : roleMix;
+    }
+
+    public void setRoleMix(@Nullable RoleMix roleMix) {
+        this.roleMix = (roleMix == null) ? RoleMix.EMPTY : roleMix;
+    }
+
+    /**
+     * The role the budget allocator asked this element to fill.
+     *
+     * @return the target role, or {@code null} when this element rolls without a role constraint
+     */
+    public @Nullable UnitRole getTargetUnitRole() {
+        return targetUnitRole;
+    }
+
+    public void setTargetUnitRole(@Nullable UnitRole targetUnitRole) {
+        this.targetUnitRole = targetUnitRole;
+    }
+
+    /**
+     * What the role mix achieved on this force, requested against delivered.
+     *
+     * @return the assignment report, or {@code null} when no role mix was applied
+     */
+    public @Nullable RoleAssignmentReport getRoleAssignmentReport() {
+        return roleAssignmentReport;
+    }
+
+    public void setRoleAssignmentReport(@Nullable RoleAssignmentReport roleAssignmentReport) {
+        this.roleAssignmentReport = roleAssignmentReport;
+    }
+
+    /**
+     * The unit table this element draws from on the first rung of its generation ladder: its own equipment rating,
+     * its own weight class, and the strictest role weighting.
+     *
+     * <p>The role budget allocator histograms this to learn which {@link UnitRole}s a slot can actually supply before
+     * it assigns one. It mirrors the first iteration of {@link #generateAtRating(String, List)} deliberately - the
+     * ladder relaxes from here, so this is the table the element is most likely to be filled from.</p>
+     *
+     * @return the table, or {@code null} when this element has no unit type and so no table at all
+     */
+    @Nullable UnitTable primaryUnitTable() {
+        if (unitType == null) {
+            return null;
+        }
+        List<Integer> weightClasses = new ArrayList<>();
+        if (useWeightClass() && (weightClass != null) && (weightClass >= EntityWeightClass.WEIGHT_ULTRA_LIGHT)) {
+            weightClasses.add(weightClass);
+        }
+        return UnitTable.findTable(getFactionRec(),
+              unitType,
+              year,
+              ratGeneratorRating(),
+              weightClasses,
+              ModelRecord.NETWORK_NONE,
+              movementModes,
+              roles.stream().filter(role -> role.fitsUnitType(unitType)).toList(),
+              STRICTEST_ROLE_WEIGHTING);
     }
 
     public Integer getUnitType() {

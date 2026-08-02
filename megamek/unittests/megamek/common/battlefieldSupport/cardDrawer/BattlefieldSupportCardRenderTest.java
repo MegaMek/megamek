@@ -327,13 +327,23 @@ class BattlefieldSupportCardRenderTest {
     }
 
     private static List<Double> points(Element element) {
-        return Arrays.stream(element.getAttribute("points").strip().split("[,\\s]+"))
-              .map(Double::parseDouble)
-              .toList();
+        String pointsAttribute = element.getAttribute("points").strip();
+        try {
+            return Arrays.stream(pointsAttribute.split("[,\\s]+"))
+                  .map(Double::parseDouble)
+                  .toList();
+        } catch (NumberFormatException exception) {
+            throw new AssertionError("Invalid SVG points attribute: " + pointsAttribute, exception);
+        }
     }
 
     private static double attribute(Element element, String name) {
-        return Double.parseDouble(element.getAttribute(name));
+        String value = element.getAttribute(name);
+        try {
+            return Double.parseDouble(value);
+        } catch (NumberFormatException exception) {
+            throw new AssertionError("SVG attribute '%s' is not numeric: '%s'".formatted(name, value), exception);
+        }
     }
 
     private static boolean imagesEqual(BufferedImage a, BufferedImage b) {

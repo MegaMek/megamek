@@ -34,6 +34,7 @@
 
 package megamek.client.ui.panels;
 
+import java.awt.Dimension;
 import java.awt.FlowLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -55,6 +56,8 @@ import javax.swing.JCheckBox;
 import javax.swing.JComboBox;
 import javax.swing.JLabel;
 import javax.swing.JTextField;
+
+import org.apache.commons.text.StringEscapeUtils;
 
 import megamek.client.ui.Messages;
 import megamek.client.ui.clientGUI.DialogOptionListener;
@@ -80,6 +83,8 @@ public class DialogOptionComponentYPanel extends FixedYPanel
     private JComboBox<String> choice;
     private JTextField textField;
     private JLabel optionLabel;
+    private String settingsBadgeHtml = "";
+    private int optionLabelWrapWidth;
     private final DialogOptionListener dialogOptionListener;
 
     /** Value used to force a change */
@@ -183,10 +188,35 @@ public class DialogOptionComponentYPanel extends FixedYPanel
      * @param badges markers that apply specifically to this option
      */
     void setSettingsBadges(Collection<SettingsBadge> badges) {
-        String badgeHtml = SettingsBadge.formatHtml(badges);
-        optionLabel.setText(badgeHtml.isBlank()
-              ? option.getDisplayableName()
-              : "<html><nobr>" + option.getDisplayableName() + badgeHtml + "</nobr></html>");
+        settingsBadgeHtml = SettingsBadge.formatHtml(badges);
+        updateOptionLabelText();
+    }
+
+    /**
+     * Wraps this option's label when its complete panel cannot fit within {@code width}.
+     *
+     * @param width maximum preferred width for the complete option panel
+     */
+    void fitToWidth(int width) {
+        Dimension preferredSize = getPreferredSize();
+        if (preferredSize.width <= width) {
+            return;
+        }
+        int nonLabelWidth = preferredSize.width - optionLabel.getPreferredSize().width;
+        optionLabelWrapWidth = Math.max(1, width - nonLabelWidth);
+        updateOptionLabelText();
+    }
+
+    private void updateOptionLabelText() {
+        String displayName = StringEscapeUtils.escapeHtml4(option.getDisplayableName());
+        if (optionLabelWrapWidth > 0) {
+            optionLabel.setText("<html><div width=" + optionLabelWrapWidth + '>'
+                  + displayName + settingsBadgeHtml + "</div></html>");
+        } else if (!settingsBadgeHtml.isBlank()) {
+            optionLabel.setText("<html><nobr>" + displayName + settingsBadgeHtml + "</nobr></html>");
+        } else {
+            optionLabel.setText(option.getDisplayableName());
+        }
     }
 
     /**

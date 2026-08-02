@@ -135,6 +135,36 @@ class GameOptionsPaneTest {
     }
 
     @Test
+    void basicSectionsShareTwoColumnAlignment() throws Exception {
+        runOnEdt(() -> {
+            GameOptions options = new GameOptions();
+            DialogOptionComponentYPanel wideCoreOption = component(
+                  options.getOption(OptionsConstants.BASE_SET_PLAYER_DEPLOYMENT_TO_PLAYER_0));
+            DialogOptionComponentYPanel coreFirst = component(
+                  options.getOption(OptionsConstants.SEARCHLIGHTS_ON));
+            DialogOptionComponentYPanel testingFirst = component(options.getOption(OptionsConstants.PLAYTEST_1));
+            DialogOptionComponentYPanel testingSecond = component(options.getOption(OptionsConstants.PLAYTEST_2));
+            DialogOptionComponentYPanel displayFirst = component(
+                  options.getOption(OptionsConstants.BASE_LOBBY_AMMO_DUMP));
+            DialogOptionComponentYPanel displaySecond = component(
+                  options.getOption(OptionsConstants.BASE_SHOW_BAY_DETAIL));
+
+            pane(List.of(wideCoreOption, coreFirst, testingFirst, testingSecond, displayFirst, displaySecond),
+                  option -> true);
+
+            assertSectionAlignment(wideCoreOption, coreFirst, testingFirst, testingSecond, displayFirst, displaySecond);
+            GridBagConstraints wideLayout = ((GridBagLayout) wideCoreOption.getParent().getLayout())
+                  .getConstraints(wideCoreOption);
+            assertEquals(1, wideLayout.gridwidth);
+            assertEquals(GridBagConstraints.HORIZONTAL, wideLayout.fill);
+            assertTrue(wideCoreOption.getPreferredSize().width
+                  <= UIUtil.scaleForGUI(SettingsFormPanel.DEFAULT_LABEL_WIDTH));
+            assertTrue(optionLabel(wideCoreOption).getPreferredSize().height
+                  > optionLabel(coreFirst).getPreferredSize().height);
+        });
+    }
+
+    @Test
     void searchExpandsOnlySectionContainingMatchingOption() throws Exception {
         runOnEdt(() -> {
             GameOptions options = new GameOptions();
@@ -279,6 +309,24 @@ class GameOptionsPaneTest {
             assertEquals(expectedWidth, components[index].getPreferredSize().width);
             assertEquals(expectedWidth, components[index].getWidth());
         }
+    }
+
+    private static void assertSectionAlignment(DialogOptionComponentYPanel... components) {
+        List<Container> sections = List.of(components[0].getParent(), components[2].getParent(),
+              components[4].getParent());
+        int sharedWidth = UIUtil.scaleForGUI(900);
+        for (Container section : sections) {
+            section.setSize(sharedWidth, section.getPreferredSize().height);
+            section.doLayout();
+        }
+
+        assertSame(sections.get(0), components[1].getParent());
+        assertSame(sections.get(1), components[3].getParent());
+        assertSame(sections.get(2), components[5].getParent());
+        assertEquals(sections.get(0).getPreferredSize().width, sections.get(1).getPreferredSize().width);
+        assertEquals(sections.get(0).getPreferredSize().width, sections.get(2).getPreferredSize().width);
+        assertEquals(components[1].getX(), components[3].getX());
+        assertEquals(components[1].getX(), components[5].getX());
     }
 
     private static JLabel optionLabel(DialogOptionComponentYPanel component) {

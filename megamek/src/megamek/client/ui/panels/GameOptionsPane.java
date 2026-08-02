@@ -203,9 +203,13 @@ public class GameOptionsPane extends JPanel {
 
         private static SettingsFormPanel createSectionContent(String name, List<OptionRow> rows) {
             SettingsFormPanel content = new SettingsFormPanel(name, SettingsFormPanel.DEFAULT_LABEL_WIDTH);
+            int cellWidth = UIUtil.scaleForGUI(SettingsFormPanel.DEFAULT_LABEL_WIDTH);
             DialogOptionComponentYPanel[] components = rows.stream()
                   .map(OptionRow::component)
                   .toArray(DialogOptionComponentYPanel[]::new);
+            for (DialogOptionComponentYPanel component : components) {
+                component.fitToWidth(cellWidth);
+            }
             content.addEqualWidthComponentGrid(2, components);
             return content;
         }

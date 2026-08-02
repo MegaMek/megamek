@@ -179,32 +179,57 @@ public class SettingsFormPanel extends JPanel {
      * Adds arbitrary components in row-major order after assigning every component the same preferred width.
      *
      * <p>Use this when each component is one complete setting or composite option panel and the visual columns must be
-     * equal. The widest component determines the shared width; a configured label width acts as a lower bound. This
-     * method changes the supplied components' preferred widths. For separate label/control pairs, use
-     * {@link #addRowGrid(int, JComponent...)} instead.</p>
+     * equal. A configured label width becomes the shared preferred cell width, allowing grids in separate sections to
+     * align without a long option widening only its own section. Without a configured label width, the widest component
+     * determines the shared width. Every column receives equal layout weight and divides any extra available width.
+     * This method changes the supplied components' preferred widths. Callers must wrap or otherwise adapt content that
+     * is naturally wider than one configured cell. For separate label/control pairs, use
+     * {@link #addRowGrid(int, JComponent...)}.</p>
      *
      * @param columnCount number of equal-width components per row
      * @param components  complete settings or composite panels to place in row-major order
      */
     public void addEqualWidthComponentGrid(int columnCount, JComponent... components) {
-        if (columnCount > 1) {
-            setUniformPreferredWidth(components);
+        if (columnCount <= 1) {
+            addComponentGrid(columnCount, components);
+            return;
         }
-        addComponentGrid(columnCount, components);
+
+        int cellWidth = setUniformPreferredWidth(components);
+        int rowCount = (components.length + columnCount - 1) / columnCount;
+        int firstRow = row;
+        for (int index = 0; index < rowCount * columnCount; index++) {
+            int column = index % columnCount;
+            JComponent component = index < components.length
+                  ? components[index]
+                  : equalWidthFiller(cellWidth);
+            GridBagConstraints layout = gridCellConstraints(firstRow + index / columnCount, column, columnCount);
+            layout.weightx = 1.0;
+            layout.fill = GridBagConstraints.HORIZONTAL;
+            add(component, layout);
+        }
+        row += rowCount;
     }
 
-    private void setUniformPreferredWidth(JComponent... components) {
-        int width = 0;
-        for (JComponent component : components) {
-            width = Math.max(width, component.getPreferredSize().width);
-        }
-        if (labelWidth > 0) {
-            width = Math.max(width, UIUtil.scaleForGUI(labelWidth));
+    private int setUniformPreferredWidth(JComponent... components) {
+        int width = UIUtil.scaleForGUI(labelWidth);
+        if (width == 0) {
+            for (JComponent component : components) {
+                width = Math.max(width, component.getPreferredSize().width);
+            }
         }
         for (JComponent component : components) {
             Dimension preferredSize = component.getPreferredSize();
             component.setPreferredSize(new Dimension(width, preferredSize.height));
         }
+        return width;
+    }
+
+    private JPanel equalWidthFiller(int width) {
+        JPanel filler = new JPanel();
+        filler.setOpaque(false);
+        filler.setPreferredSize(new Dimension(width, 0));
+        return filler;
     }
 
     /**

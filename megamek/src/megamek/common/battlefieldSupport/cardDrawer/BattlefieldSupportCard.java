@@ -440,13 +440,15 @@ public class BattlefieldSupportCard {
     private void paintTitle(Graphics2D g) {
         int rightX = WIDTH - 60;
         text(asset.getEffectiveCardTitle().toUpperCase(Locale.ROOT))
-              .at(rightX, 104).rightAlign().centerY().font(titleFont).maxWidth(660).scaleX(0.95f)
+              .at(rightX, 104).useConfig(new StringDrawer.StringDrawerConfig().rightAlign())
+              .centerY().font(titleFont).maxWidth(660).scaleX(0.95f)
               .color(Color.BLACK).draw(g);
 
         String subtitle = asset.getEffectiveCardSubtitle();
         if (subtitle != null && !subtitle.isBlank()) {
             text(subtitle.toUpperCase(Locale.ROOT))
-                  .at(rightX, 172).rightAlign().centerY().font(subtitleFont).maxWidth(660)
+                  .at(rightX, 172).useConfig(new StringDrawer.StringDrawerConfig().rightAlign())
+                  .centerY().font(subtitleFont).maxWidth(660)
                   .color(Color.BLACK).draw(g);
         }
     }
@@ -462,7 +464,8 @@ public class BattlefieldSupportCard {
         drawMovementValue(g, valueRightX, mpY, asset.getMovementDisplay());
 
         text("TMM").at(labelX, tmmY).centerY().font(movementFont).color(accentColor()).draw(g);
-        text(asset.getTmmDisplay()).at(valueRightX, tmmY).rightAlign().centerY()
+                text(asset.getTmmDisplay()).at(valueRightX, tmmY)
+              .useConfig(new StringDrawer.StringDrawerConfig().rightAlign()).centerY()
               .font(movementFont).maxWidth(240).color(Color.BLACK).draw(g);
     }
 

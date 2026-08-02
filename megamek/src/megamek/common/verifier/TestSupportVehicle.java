@@ -906,7 +906,8 @@ public class TestSupportVehicle extends TestEntity {
     protected boolean includeMiscEquip(MiscType eq) {
         // fire control is counted with control system weight and chassis mods are part
         // of the structure weight
-        return !eq.hasAllFlag(MiscType.F_BASIC_FIRE_CONTROL,  MiscType.F_ADVANCED_FIRE_CONTROL, MiscType.F_CHASSIS_MODIFICATION);
+        return !eq.hasAnyFlag(MiscType.F_BASIC_FIRE_CONTROL,  MiscType.F_ADVANCED_FIRE_CONTROL,
+              MiscType.F_CHASSIS_MODIFICATION);
     }
 
     @Override

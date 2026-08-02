@@ -228,6 +228,17 @@ public class DialogOptionComponentYPanel extends FixedYPanel
         add(row, BorderLayout.CENTER);
     }
 
+    /** Presents a boolean option without the legacy leading inset used by compact option grids. */
+    void useStandaloneCheckBoxRowLayout() {
+        if (checkbox == null) {
+            throw new IllegalStateException("Standalone checkbox rows require a boolean option");
+        }
+        removeAll();
+        setLayout(new FlowLayout(FlowLayout.LEFT, 0, 2));
+        add(checkbox);
+        add(optionLabel);
+    }
+
     private void updateOptionLabelText() {
         String displayName = StringEscapeUtils.escapeHtml4(optionDisplayName);
         if (optionLabelWrapWidth > 0) {

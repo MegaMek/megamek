@@ -51,6 +51,7 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.Optional;
 import java.util.concurrent.atomic.AtomicBoolean;
+import javax.swing.JCheckBox;
 import javax.swing.JComboBox;
 import javax.swing.JLabel;
 import javax.swing.SwingUtilities;
@@ -193,6 +194,18 @@ class GameOptionsPaneTest {
             assertEquals(0, choiceLayout.getConstraints(label).gridx);
             assertEquals(1, choiceLayout.getConstraints(choice).gridx);
             assertSame(choice, label.getLabelFor());
+
+            Container section = allowGameMaster.getParent();
+            section.setSize(UIUtil.scaleForGUI(900), section.getPreferredSize().height);
+            section.doLayout();
+            allowGameMaster.doLayout();
+            voteThreshold.doLayout();
+            choiceRow.setSize(voteThreshold.getSize());
+            choiceRow.doLayout();
+            JCheckBox checkBox = findComponent(allowGameMaster, JCheckBox.class);
+            int checkBoxX = SwingUtilities.convertPoint(checkBox.getParent(), checkBox.getX(), 0, section).x;
+            int labelX = SwingUtilities.convertPoint(label.getParent(), label.getX(), 0, section).x;
+            assertEquals(labelX, checkBoxX);
         });
     }
 

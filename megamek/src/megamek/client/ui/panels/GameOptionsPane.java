@@ -210,7 +210,9 @@ public class GameOptionsPane extends JPanel {
             SettingsFormPanel content = new SettingsFormPanel(name, SettingsFormPanel.DEFAULT_LABEL_WIDTH);
             if (groupId.equals("gameMaster")) {
                 for (OptionRow row : rows) {
-                    if (row.option().getName().equals(OptionsConstants.GAME_MASTER_VOTE_THRESHOLD)) {
+                    if (row.option().getName().equals(OptionsConstants.GAME_MASTER_ALLOW)) {
+                        row.component().useStandaloneCheckBoxRowLayout();
+                    } else if (row.option().getName().equals(OptionsConstants.GAME_MASTER_VOTE_THRESHOLD)) {
                         row.component().useLabeledControlRowLayout();
                     }
                     content.addFullWidthComponent(row.component());

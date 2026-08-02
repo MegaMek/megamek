@@ -46,7 +46,9 @@ import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.Enumeration;
 import java.util.List;
+import java.util.Optional;
 import java.util.concurrent.atomic.AtomicBoolean;
+import javax.swing.JLabel;
 import javax.swing.SwingUtilities;
 
 import megamek.client.ui.Messages;
@@ -64,6 +66,9 @@ import megamek.common.options.OptionsConstants;
 import org.junit.jupiter.api.Test;
 
 class GameOptionsPaneTest {
+    private static final String DETAILS_SYMBOL = Character.toString(0xE88E);
+    private static final String ADVANCED_SYMBOL = Character.toString(0xE8B8);
+    private static final String UNOFFICIAL_SYMBOL = Character.toString(0xE002);
 
     @Test
     void searchFiltersRowsByOptionNameAndDescription() throws Exception {
@@ -122,7 +127,7 @@ class GameOptionsPaneTest {
             assertEquals(2, sections.size());
             assertFalse(sections.get(0).isExpanded());
             assertFalse(sections.get(1).isExpanded());
-            assertEquals(3, GameOptionsPane.legendEntries().size());
+            assertEquals(2, GameOptionsPane.legendEntries().size());
             assertTrue(pane.getPreferredSize().width >= UIUtil.scaleForGUI(
                   SettingsNavigationPanel.DEFAULT_NAVIGATION_WIDTH + SettingsPagePanel.DEFAULT_MAXIMUM_PAGE_WIDTH));
             assertTrue(pane.getPreferredSize().height >= UIUtil.scaleForGUI(800));
@@ -201,6 +206,36 @@ class GameOptionsPaneTest {
         assertTrue(new File(factionsDir, "logo_star_league.png").isFile());
     }
 
+    @Test
+    void badgesUseSectionAndOptionMetadataOwnership() throws Exception {
+        runOnEdt(() -> {
+            GameOptions options = new GameOptions();
+            DialogOptionComponentYPanel normalOption = component(
+                  options.getOption(OptionsConstants.SEARCHLIGHTS_ON));
+            GameOptionsPane basicPane = pane("basic", List.of(normalOption), option -> true);
+            DialogOptionComponentYPanel unofficialOption = component(
+                  options.getOption(OptionsConstants.UNOFFICIAL_BRIDGE_REPAIR_ENGINEERS));
+            GameOptionsPane advancedPane = pane("advancedRules", List.of(unofficialOption), option -> true);
+
+            String normalOptionText = optionLabel(normalOption).getText();
+            assertFalse(normalOptionText.contains(DETAILS_SYMBOL));
+            assertFalse(normalOptionText.contains(UNOFFICIAL_SYMBOL));
+            String unofficialOptionText = optionLabel(unofficialOption).getText();
+            assertFalse(unofficialOptionText.contains(DETAILS_SYMBOL));
+            assertTrue(unofficialOptionText.contains(UNOFFICIAL_SYMBOL));
+
+            String basicTitle = sectionTitle(basicPane, "Core Rules");
+            assertFalse(basicTitle.contains(DETAILS_SYMBOL));
+            assertFalse(basicTitle.contains(ADVANCED_SYMBOL));
+            assertFalse(basicTitle.contains(UNOFFICIAL_SYMBOL));
+
+            String advancedTitle = sectionTitle(advancedPane, "Terrain and Environment");
+            assertFalse(advancedTitle.contains(DETAILS_SYMBOL));
+            assertTrue(advancedTitle.contains(ADVANCED_SYMBOL));
+            assertFalse(advancedTitle.contains(UNOFFICIAL_SYMBOL));
+        });
+    }
+
     private static GameOptionsPane pane(List<DialogOptionComponentYPanel> components,
           java.util.function.Predicate<IOption> visibility) {
         return pane("basic", components, visibility);
@@ -244,6 +279,36 @@ class GameOptionsPaneTest {
             assertEquals(expectedWidth, components[index].getPreferredSize().width);
             assertEquals(expectedWidth, components[index].getWidth());
         }
+    }
+
+    private static JLabel optionLabel(DialogOptionComponentYPanel component) {
+        for (Component child : component.getComponents()) {
+            if (child instanceof JLabel label) {
+                return label;
+            }
+        }
+        throw new AssertionError("Option has no label: " + component.getOption().getName());
+    }
+
+    private static String sectionTitle(Container root, String title) {
+        return findLabelContaining(root, title)
+              .map(JLabel::getText)
+              .orElseThrow(() -> new AssertionError("No section title containing: " + title));
+    }
+
+    private static Optional<JLabel> findLabelContaining(Container root, String text) {
+        for (Component child : root.getComponents()) {
+            if (child instanceof JLabel label && label.getText() != null && label.getText().contains(text)) {
+                return Optional.of(label);
+            }
+            if (child instanceof Container container) {
+                Optional<JLabel> result = findLabelContaining(container, text);
+                if (result.isPresent()) {
+                    return result;
+                }
+            }
+        }
+        return Optional.empty();
     }
 
     private static List<CollapsibleSectionPanel> findSections(Container root) {

@@ -70,12 +70,9 @@ import megamek.common.options.IOption;
 public class GameOptionsPane extends JPanel {
     private static final int START_HEIGHT = 800;
     private static final int HEADER_IMAGE_SIZE = 80;
-    private static final int DETAILS_ICON = 0xE88E;
     private static final int ADVANCED_ICON = 0xE8B8;
     private static final int UNOFFICIAL_ICON = 0xE002;
     private static final SettingsTextProvider TEXT = SettingsTextProvider.megaMek();
-    private static final SettingsBadge DETAILS_BADGE = new SettingsBadge(DETAILS_ICON, null,
-          getString("GameOptionsDialog.legend.details"));
     private static final SettingsBadge ADVANCED_BADGE = new SettingsBadge(ADVANCED_ICON, null,
           getString("GameOptionsDialog.legend.advanced"));
     private static final SettingsBadge UNOFFICIAL_BADGE = new SettingsBadge(UNOFFICIAL_ICON, null,
@@ -143,7 +140,7 @@ public class GameOptionsPane extends JPanel {
     }
 
     public static List<SettingsBadge> legendEntries() {
-        return List.of(DETAILS_BADGE, ADVANCED_BADGE, UNOFFICIAL_BADGE);
+        return List.of(ADVANCED_BADGE, UNOFFICIAL_BADGE);
     }
 
     @Override
@@ -177,7 +174,7 @@ public class GameOptionsPane extends JPanel {
             groupSearchableText = SettingsRoute.normalizeSearchText(group.id() + ' ' + group.displayName());
             setName("gameOptions" + group.id() + "Page");
 
-            rows = group.components().stream().map(OptionRow::new).toList();
+            rows = group.components().stream().map(OptionRow::create).toList();
             Map<String, List<OptionRow>> sectionRows = new LinkedHashMap<>();
             for (OptionRow row : rows) {
                 sectionRows.computeIfAbsent(sectionId(group.id(), row.option().getName()), ignored -> new ArrayList<>())
@@ -198,7 +195,7 @@ public class GameOptionsPane extends JPanel {
                 aliases.add(group.displayName());
                 entry.getValue().forEach(row -> aliases.add(row.searchableText()));
                 builder.literalSection(sectionTitle(entry.getKey()), sectionSummary(entry.getKey()), content,
-                      sectionBadges(group.id(), entry.getValue()), aliases);
+                        sectionBadges(group.id()), aliases);
             }
             pagePanel = builder.build();
             add(pagePanel, BorderLayout.CENTER);
@@ -248,16 +245,12 @@ public class GameOptionsPane extends JPanel {
         }
     }
 
-    private static List<SettingsBadge> sectionBadges(String groupId, List<OptionRow> rows) {
-        List<SettingsBadge> badges = new ArrayList<>();
-        badges.add(DETAILS_BADGE);
-        if (groupId.startsWith("advanced")) {
-            badges.add(ADVANCED_BADGE);
-        }
-        if (rows.stream().anyMatch(row -> isUnofficial(row.option()))) {
-            badges.add(UNOFFICIAL_BADGE);
-        }
-        return badges;
+    private static List<SettingsBadge> sectionBadges(String groupId) {
+        return groupId.startsWith("advanced") ? List.of(ADVANCED_BADGE) : List.of();
+    }
+
+    private static List<SettingsBadge> optionBadges(IOption option) {
+        return isUnofficial(option) ? List.of(UNOFFICIAL_BADGE) : List.of();
     }
 
     private static boolean isUnofficial(IOption option) {
@@ -423,11 +416,11 @@ public class GameOptionsPane extends JPanel {
     }
 
     private record OptionRow(DialogOptionComponentYPanel component, IOption option, String searchableText) {
-        private OptionRow(DialogOptionComponentYPanel component) {
-            this(component, component.getOption(), SettingsRoute.normalizeSearchText(
-                  component.getOption().getName() + ' '
-                        + component.getOption().getDisplayableName() + ' '
-                        + component.getOption().getDescription()));
+        private static OptionRow create(DialogOptionComponentYPanel component) {
+            IOption option = component.getOption();
+            component.setSettingsBadges(optionBadges(option));
+            return new OptionRow(component, option, SettingsRoute.normalizeSearchText(
+                  option.getName() + ' ' + option.getDisplayableName() + ' ' + option.getDescription()));
         }
 
         private boolean matches(String normalizedFilter, String groupSearchableText) {

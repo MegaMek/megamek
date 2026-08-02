@@ -44,6 +44,7 @@ import java.awt.event.ItemListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.io.Serial;
+import java.util.Collection;
 import java.util.HashSet;
 import java.util.LinkedHashMap;
 import java.util.Map;
@@ -57,6 +58,7 @@ import javax.swing.JTextField;
 
 import megamek.client.ui.Messages;
 import megamek.client.ui.clientGUI.DialogOptionListener;
+import megamek.client.ui.settings.SettingsBadge;
 import megamek.client.ui.util.UIUtil;
 import megamek.client.ui.util.UIUtil.FixedYPanel;
 import megamek.codeUtilities.MathUtility;
@@ -77,6 +79,7 @@ public class DialogOptionComponentYPanel extends FixedYPanel
     private JCheckBox checkbox;
     private JComboBox<String> choice;
     private JTextField textField;
+    private JLabel optionLabel;
     private final DialogOptionListener dialogOptionListener;
 
     /** Value used to force a change */
@@ -101,7 +104,6 @@ public class DialogOptionComponentYPanel extends FixedYPanel
           boolean choiceLabelFirst) {
         dialogOptionListener = parent;
         this.option = option;
-        JLabel label;
 
         setLayout(new FlowLayout(FlowLayout.LEFT, 5, 2));
         if (isTorsoMountQuirk(option)) {
@@ -114,10 +116,10 @@ public class DialogOptionComponentYPanel extends FixedYPanel
                 checkbox.addItemListener(this);
                 checkbox.setToolTipText(convertToHtml(option.getDescription()));
                 checkbox.setEnabled(editable);
-                label = new JLabel(option.getDisplayableName());
-                label.setLabelFor(checkbox);
-                label.setToolTipText(convertToHtml(option.getDescription()));
-                label.addMouseListener(new MouseAdapter() {
+                optionLabel = new JLabel(option.getDisplayableName());
+                optionLabel.setLabelFor(checkbox);
+                optionLabel.setToolTipText(convertToHtml(option.getDescription()));
+                optionLabel.addMouseListener(new MouseAdapter() {
                     @Override
                     public void mouseClicked(MouseEvent evt) {
                         if (checkbox.isEnabled()) {
@@ -127,20 +129,20 @@ public class DialogOptionComponentYPanel extends FixedYPanel
                 });
                 add(Box.createHorizontalStrut(UIUtil.scaleForGUI(10)));
                 add(checkbox);
-                add(label);
+                add(optionLabel);
                 break;
             case IOption.CHOICE:
                 choice = new JComboBox<>();
-                label = new JLabel(option.getDisplayableName());
-                label.setLabelFor(choice);
-                label.setToolTipText(convertToHtml(option.getDescription()));
+                optionLabel = new JLabel(option.getDisplayableName());
+                optionLabel.setLabelFor(choice);
+                optionLabel.setToolTipText(convertToHtml(option.getDescription()));
                 choice.setEnabled(editable);
                 choice.addActionListener(this);
                 if (choiceLabelFirst) {
                     add(choice);
-                    add(label);
+                    add(optionLabel);
                 } else {
-                    add(label);
+                    add(optionLabel);
                     add(choice);
                 }
 
@@ -148,10 +150,10 @@ public class DialogOptionComponentYPanel extends FixedYPanel
             default:
                 textField = new JTextField(option.stringValue(), option.getTextFieldLength());
                 textField.setHorizontalAlignment(JTextField.CENTER);
-                label = new JLabel(option.getDisplayableName());
-                label.setToolTipText(convertToHtml(option.getDescription()));
-                label.setLabelFor(textField);
-                label.addMouseListener(new MouseAdapter() {
+                optionLabel = new JLabel(option.getDisplayableName());
+                optionLabel.setToolTipText(convertToHtml(option.getDescription()));
+                optionLabel.setLabelFor(textField);
+                optionLabel.addMouseListener(new MouseAdapter() {
                     @Override
                     public void mouseClicked(MouseEvent evt) {
                         if (textField.isEnabled()) {
@@ -164,15 +166,27 @@ public class DialogOptionComponentYPanel extends FixedYPanel
                 textField.setEnabled(editable);
                 if (option.isLabelBeforeTextField()) {
                     add(Box.createHorizontalStrut(UIUtil.scaleForGUI(10)));
-                    add(label);
+                    add(optionLabel);
                     add(textField);
                 } else {
                     add(Box.createHorizontalStrut(UIUtil.scaleForGUI(2)));
                     add(textField);
-                    add(label);
+                    add(optionLabel);
                 }
                 break;
         }
+    }
+
+    /**
+     * Adds metadata markers to this option's visible label, matching the shared settings controls.
+     *
+     * @param badges markers that apply specifically to this option
+     */
+    void setSettingsBadges(Collection<SettingsBadge> badges) {
+        String badgeHtml = SettingsBadge.formatHtml(badges);
+        optionLabel.setText(badgeHtml.isBlank()
+              ? option.getDisplayableName()
+              : "<html><nobr>" + option.getDisplayableName() + badgeHtml + "</nobr></html>");
     }
 
     /**
@@ -196,10 +210,10 @@ public class DialogOptionComponentYPanel extends FixedYPanel
      */
     private void buildTorsoMultiSelect(boolean editable) {
         torsoMultiSelect = true;
-        JLabel label = new JLabel(option.getDisplayableName());
-        label.setToolTipText(convertToHtml(option.getDescription()));
+        optionLabel = new JLabel(option.getDisplayableName());
+        optionLabel.setToolTipText(convertToHtml(option.getDescription()));
         add(Box.createHorizontalStrut(UIUtil.scaleForGUI(10)));
-        add(label);
+        add(optionLabel);
         Set<String> selected = parseTorsoValue(option.stringValue());
         for (String locationCode : TORSO_MOUNT_LOCATION_CODES) {
             JCheckBox box = new JCheckBox(locationCode, selected.contains(locationCode));

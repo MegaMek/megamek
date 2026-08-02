@@ -697,8 +697,9 @@ public class BattlefieldSupportCard {
         text(SUPPORT_TEXT).at(BRAND_TEXT_X, 734).centerY().font(brandFont).color(Color.BLACK).draw(g);
 
         // Copyright, nestled in the raised border shelf at the bottom-right.
-        text(copyrightText()).at(COPYRIGHT_RIGHT_X, HEIGHT - 24).rightAlign().centerY()
-              .font(copyrightFont).color(Color.BLACK).draw(g);
+        text(copyrightText()).at(COPYRIGHT_RIGHT_X, HEIGHT - 24)
+            .useConfig(new StringDrawer.StringDrawerConfig().rightAlign()).centerY()
+            .font(copyrightFont).color(Color.BLACK).draw(g);
     }
 
     private static String copyrightText() {

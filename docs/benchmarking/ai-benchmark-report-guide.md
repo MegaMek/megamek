@@ -116,6 +116,14 @@ for what counts as a real effect. Without it you cannot distinguish skill from m
 changes. Run variant A and variant B with the sides exchanged, and only ever report the pooled
 figure. Measured bias on `32x34 Requiem for a Blue Star`: **76/24 from identical code**.
 
+**Measure the shape, not just the nearest neighbour.** A metric built on distance to the *nearest*
+friendly unit cannot tell a tight blob from a company strung right across the board — in both, every
+unit has a close neighbour. Measured on the Requiem board: nearest-friend read 2.6 hexes ("tight")
+while the same company was **22–27 hexes wide**, which is a picket line, not a formation. Always
+report **force diameter** (furthest pair) and **radius from the centroid** alongside it. Getting this
+wrong does not just mislabel the behaviour; it hides the fact that the starting position, not the
+movement code, is setting the outcome.
+
 **Filter degenerate games.** Roughly 4% of games have a side that fails to deploy — zero units, zero
 Battle Value. Unfiltered they hand the opponent a free win and produce NaN in percentage maths.
 Exclude them and *report the count*.
@@ -181,6 +189,7 @@ the other MegaMek scripts:
 | `analyze_ai_benchmark.py` | win rates with confidence intervals; filters degenerate games |
 | `analyze_doctrine_metrics.py` | behaviour metrics mined from the game TSVs |
 | `extract_battle_trace.py` | per-round unit positions for the map |
+| `force_width.py` | force diameter, radius from centroid and nearest-friend, per round |
 | `extract_board.py` | board terrain for the map |
 
 If benchmarking becomes routine they are worth moving into the repo so the report and its inputs

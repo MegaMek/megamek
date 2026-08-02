@@ -65,6 +65,7 @@ import megamek.client.ui.settings.SettingsTextProvider;
 import megamek.client.ui.util.UIUtil;
 import megamek.common.Configuration;
 import megamek.common.options.IOption;
+import megamek.common.options.OptionsConstants;
 
 /** Searchable settings-tree presentation for metadata-backed game option groups. */
 public class GameOptionsPane extends JPanel {
@@ -192,7 +193,8 @@ public class GameOptionsPane extends JPanel {
                   .sectionsExpandedByDefault(sectionRows.size() == 1)
                   .standardContentWidth();
             for (Map.Entry<String, List<OptionRow>> entry : sectionRows.entrySet()) {
-                SettingsFormPanel content = createSectionContent(group.id() + entry.getKey(), entry.getValue());
+                SettingsFormPanel content = createSectionContent(group.id(), group.id() + entry.getKey(),
+                      entry.getValue());
                 List<String> aliases = new ArrayList<>();
                 aliases.add(group.id());
                 aliases.add(group.displayName());
@@ -204,8 +206,18 @@ public class GameOptionsPane extends JPanel {
             add(pagePanel, BorderLayout.CENTER);
         }
 
-        private static SettingsFormPanel createSectionContent(String name, List<OptionRow> rows) {
+        private static SettingsFormPanel createSectionContent(String groupId, String name, List<OptionRow> rows) {
             SettingsFormPanel content = new SettingsFormPanel(name, SettingsFormPanel.DEFAULT_LABEL_WIDTH);
+            if (groupId.equals("gameMaster")) {
+                for (OptionRow row : rows) {
+                    if (row.option().getName().equals(OptionsConstants.GAME_MASTER_VOTE_THRESHOLD)) {
+                        row.component().useLabeledControlRowLayout();
+                    }
+                    content.addFullWidthComponent(row.component());
+                }
+                return content;
+            }
+
             int cellWidth = UIUtil.scaleForGUI(SettingsFormPanel.DEFAULT_LABEL_WIDTH);
             DialogOptionComponentYPanel[] components = rows.stream()
                   .map(OptionRow::component)

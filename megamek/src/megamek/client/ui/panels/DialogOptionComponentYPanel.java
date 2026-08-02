@@ -34,6 +34,7 @@
 
 package megamek.client.ui.panels;
 
+import java.awt.BorderLayout;
 import java.awt.Dimension;
 import java.awt.FlowLayout;
 import java.awt.event.ActionEvent;
@@ -62,6 +63,7 @@ import org.apache.commons.text.StringEscapeUtils;
 import megamek.client.ui.Messages;
 import megamek.client.ui.clientGUI.DialogOptionListener;
 import megamek.client.ui.settings.SettingsBadge;
+import megamek.client.ui.settings.SettingsFormPanel;
 import megamek.client.ui.settings.SettingsHelpProvider;
 import megamek.client.ui.util.UIUtil;
 import megamek.client.ui.util.UIUtil.FixedYPanel;
@@ -211,6 +213,19 @@ public class DialogOptionComponentYPanel extends FixedYPanel
         int nonLabelWidth = preferredSize.width - optionLabel.getPreferredSize().width;
         optionLabelWrapWidth = Math.max(1, width - nonLabelWidth);
         updateOptionLabelText();
+    }
+
+    /** Presents a choice option as a standard full-width {@code label | control} form row. */
+    void useLabeledControlRowLayout() {
+        if (choice == null) {
+            throw new IllegalStateException("Labeled control rows require a choice option");
+        }
+        removeAll();
+        setLayout(new BorderLayout());
+        SettingsFormPanel row = new SettingsFormPanel("GameOption" + option.getName(),
+              SettingsFormPanel.DEFAULT_LABEL_WIDTH, SettingsFormPanel.DEFAULT_CONTROL_WIDTH);
+        row.addRow(optionLabel, choice);
+        add(row, BorderLayout.CENTER);
     }
 
     private void updateOptionLabelText() {

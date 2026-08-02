@@ -51,6 +51,7 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.Optional;
 import java.util.concurrent.atomic.AtomicBoolean;
+import javax.swing.JComboBox;
 import javax.swing.JLabel;
 import javax.swing.SwingUtilities;
 
@@ -166,6 +167,32 @@ class GameOptionsPaneTest {
                   <= UIUtil.scaleForGUI(SettingsFormPanel.DEFAULT_LABEL_WIDTH));
             assertTrue(optionLabel(wideCoreOption).getPreferredSize().height
                   > optionLabel(coreFirst).getPreferredSize().height);
+        });
+    }
+
+    @Test
+    void gameMasterUsesCheckboxThenLabeledChoiceRow() throws Exception {
+        runOnEdt(() -> {
+            GameOptions options = new GameOptions();
+            DialogOptionComponentYPanel allowGameMaster = component(
+                  options.getOption(OptionsConstants.GAME_MASTER_ALLOW));
+            DialogOptionComponentYPanel voteThreshold = component(
+                  options.getOption(OptionsConstants.GAME_MASTER_VOTE_THRESHOLD));
+
+            pane("gameMaster", List.of(allowGameMaster, voteThreshold), option -> true);
+
+            assertSame(allowGameMaster.getParent(), voteThreshold.getParent());
+            GridBagLayout sectionLayout = (GridBagLayout) allowGameMaster.getParent().getLayout();
+            assertCell(sectionLayout, allowGameMaster, 0, 0, 2);
+            assertCell(sectionLayout, voteThreshold, 0, 1, 2);
+
+            SettingsFormPanel choiceRow = findComponent(voteThreshold, SettingsFormPanel.class);
+            JLabel label = findComponent(choiceRow, JLabel.class);
+            JComboBox<?> choice = findComponent(choiceRow, JComboBox.class);
+            GridBagLayout choiceLayout = (GridBagLayout) choiceRow.getLayout();
+            assertEquals(0, choiceLayout.getConstraints(label).gridx);
+            assertEquals(1, choiceLayout.getConstraints(choice).gridx);
+            assertSame(choice, label.getLabelFor());
         });
     }
 
@@ -409,6 +436,36 @@ class GameOptionsPaneTest {
             }
         }
         throw new AssertionError("Option has no label: " + component.getOption().getName());
+    }
+
+    private static <T extends Component> T findComponent(Container root, Class<T> type) {
+        for (Component child : root.getComponents()) {
+            if (type.isInstance(child)) {
+                return type.cast(child);
+            }
+            if (child instanceof Container container) {
+                T result = findComponentOrNull(container, type);
+                if (result != null) {
+                    return result;
+                }
+            }
+        }
+        throw new AssertionError("No " + type.getSimpleName() + " found");
+    }
+
+    private static <T extends Component> T findComponentOrNull(Container root, Class<T> type) {
+        for (Component child : root.getComponents()) {
+            if (type.isInstance(child)) {
+                return type.cast(child);
+            }
+            if (child instanceof Container container) {
+                T result = findComponentOrNull(container, type);
+                if (result != null) {
+                    return result;
+                }
+            }
+        }
+        return null;
     }
 
     private static void assertOptionPresentation(DialogOptionComponentYPanel component, String label,

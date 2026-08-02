@@ -2751,8 +2751,7 @@ class FireControlTest {
                     mockAmmo,
                     mockGame));
 
-        // Under PLAYTEST 3 rules the AP penalty is removed.
-        when(mockGameOptions.booleanOption(OptionsConstants.PLAYTEST_3)).thenReturn(true);
+        // In core there is no penalty.
         ToHitData expectedNoPenalty = new ToHitData(mockShooter.getCrew().getGunnery(), FireControl.TH_GUNNERY);
         expectedNoPenalty.addModifier(FireControl.TH_MEDIUM_RANGE);
         assertToHitDataEquals(expectedNoPenalty,

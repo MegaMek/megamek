@@ -74,6 +74,8 @@ import megamek.common.pathfinder.AeroGroundPathFinder;
 import megamek.common.planetaryConditions.IlluminationLevel;
 import megamek.common.planetaryConditions.PlanetaryConditions;
 import megamek.common.rolls.TargetRoll;
+import megamek.common.rules.core.CoreRulesManager;
+import megamek.common.rules.totalwarfare.TWRulesManager;
 import megamek.common.units.*;
 import megamek.common.weapons.Weapon;
 import megamek.common.weapons.attacks.StopSwarmAttack;
@@ -1080,10 +1082,8 @@ public class FireControl {
                 case null, default -> false;
             };
             boolean isArmorPiercingMunition =
-                  munitionTypes.contains(AmmoType.Munitions.M_ARMOR_PIERCING)
-                        || munitionTypes.contains(AmmoType.Munitions.M_ARMOR_PIERCING_PLAYTEST);
-            boolean isArmorPiercingPenaltyInEffect =
-                  !game.getOptions().booleanOption(OptionsConstants.PLAYTEST_3);
+                  munitionTypes.contains(AmmoType.Munitions.M_ARMOR_PIERCING);
+            boolean isArmorPiercingPenaltyInEffect = (Game.rulesManager instanceof TWRulesManager);
             if (isAutocannonAmmo && isArmorPiercingMunition && isArmorPiercingPenaltyInEffect) {
                 toHit.addModifier(TH_AP_AMMO);
             }

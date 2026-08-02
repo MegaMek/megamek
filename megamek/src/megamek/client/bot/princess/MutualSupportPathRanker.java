@@ -241,14 +241,20 @@ public class MutualSupportPathRanker extends BasicPathRanker {
         if (!closing) {
             int hexesBeyondNearestSupport = Integer.MAX_VALUE;
             for (Entity friend : friends) {
-                int distanceToFriend = friend.getPosition().distance(path.getFinalCoords());
+                // The friends list is cached for the ranking pass, but a unit can be destroyed during the
+                // movement phase (falls, charges, minefields), which clears its position.
+                Coords friendPosition = friend.getPosition();
+                if (friendPosition == null) {
+                    continue;
+                }
+                int distanceToFriend = friendPosition.distance(path.getFinalCoords());
                 int beyondThisFriend = distanceToFriend - getSupportEnvelope(friend).effectiveRange();
                 hexesBeyondNearestSupport = Math.min(hexesBeyondNearestSupport, beyondThisFriend);
                 if (hexesBeyondNearestSupport <= 0) {
                     break;
                 }
             }
-            if (hexesBeyondNearestSupport > 0) {
+            if ((hexesBeyondNearestSupport > 0) && (hexesBeyondNearestSupport != Integer.MAX_VALUE)) {
                 double cohesionWeight = Math.min(getOwner().getBehaviorSettings().getHerdMentalityValue(),
                       getOwner().getBehaviorSettings().getHyperAggressionValue() * COHESION_WEIGHT_CAP_FACTOR);
                 supportPenalty = hexesBeyondNearestSupport * cohesionWeight;
@@ -269,17 +275,20 @@ public class MutualSupportPathRanker extends BasicPathRanker {
      * force travels loose and fast.
      */
     private double calculateCoverBonus(Entity movingUnit, MovePath path, List<Entity> friends, Game game) {
+        // distanceToClosestEnemy returns -1 when no enemy is on the board; with no one to fight there is
+        // nothing to take cover from, so no shaping applies.
         double distanceToEnemy = distanceToClosestEnemy(movingUnit, path.getFinalCoords(), game);
-        if (distanceToEnemy > THREAT_CONTACT_RANGE) {
+        if ((distanceToEnemy < 0) || (distanceToEnemy > THREAT_CONTACT_RANGE)) {
             return 0;
         }
 
         int coveringFriends = 0;
         for (Entity friend : friends) {
-            if (!friend.isDone()) {
+            Coords friendPosition = friend.getPosition();
+            if (!friend.isDone() || (friendPosition == null)) {
                 continue;
             }
-            int distanceToFriend = friend.getPosition().distance(path.getFinalCoords());
+            int distanceToFriend = friendPosition.distance(path.getFinalCoords());
             if (distanceToFriend <= getSupportEnvelope(friend).effectiveRange()) {
                 coveringFriends++;
                 if (coveringFriends >= COVER_BONUS_MAX_FRIENDS) {

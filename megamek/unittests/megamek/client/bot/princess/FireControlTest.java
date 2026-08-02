@@ -1720,6 +1720,9 @@ class FireControlTest {
         when(mockBoard.getHex(eq(mockShooterState.getPosition()))).thenReturn(mockShooterHex);
         when(mockShooter.getElevation()).thenReturn(0);
         when(mockShooter.relHeight()).thenReturn(2);
+        // the guess now derives the arms level from the projected state plus getHeight(), not relHeight()
+        when(mockShooter.getHeight()).thenReturn(2);
+        when(mockShooterState.getElevation()).thenReturn(0);
         when(mockShooter.getWeightClass()).thenReturn(EntityWeightClass.WEIGHT_LIGHT);
         when(mockShooter.isLocationBad(Mek.LOC_LEFT_ARM)).thenReturn(false);
         when(mockShooter.hasWorkingSystem(Mek.ACTUATOR_SHOULDER, Mek.LOC_LEFT_ARM)).thenReturn(true);
@@ -1990,10 +1993,11 @@ class FireControlTest {
                     PhysicalAttackType.RIGHT_PUNCH,
                     mockGame));
 
-        // Test trying to punch an infantry target.
+        // Test trying to punch an infantry target (standing one level up, in punch reach).
         infantryTarget = mock(Infantry.class);
         when(infantryTarget.getElevation()).thenReturn(1);
         when(infantryTarget.getHeight()).thenReturn(1);
+        when(mockTargetState.getElevation()).thenReturn(1);
         expected = new ToHitData(FireControl.TH_PHY_P_TAR_INF);
         assertToHitDataEquals(expected,
               testFireControl.guessToHitModifierPhysical(mockShooter,
@@ -2002,6 +2006,7 @@ class FireControlTest {
                     mockTargetState,
                     PhysicalAttackType.LEFT_PUNCH,
                     mockGame));
+        when(mockTargetState.getElevation()).thenReturn(0);
 
         // Test trying to punch while prone.
         when(mockShooterState.isProne()).thenReturn(true);
@@ -2013,6 +2018,7 @@ class FireControlTest {
                     mockTargetState,
                     PhysicalAttackType.LEFT_PUNCH,
                     mockGame));
+        when(mockShooterState.isProne()).thenReturn(false);
 
         // Test the target being at the wrong elevation for a punch.
         when(mockShooterHex.getLevel()).thenReturn(1);

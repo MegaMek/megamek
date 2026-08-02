@@ -77,6 +77,7 @@ import megamek.common.weapons.battleArmor.innerSphere.ISBAPopUpMineLauncher;
 import megamek.common.weapons.bayWeapons.BayWeapon;
 import megamek.common.weapons.gaussRifles.HAGWeapon;
 import megamek.common.weapons.handlers.AreaEffectHelper;
+import megamek.common.weapons.handlers.BombastLaserWeaponHandler;
 import megamek.common.weapons.handlers.DamageFalloff;
 import megamek.common.weapons.infantry.InfantryWeapon;
 import megamek.common.weapons.mgs.MGWeapon;
@@ -6935,6 +6936,11 @@ public class Compute {
         int damage = weaponType.getDamage(range);
         int newDamage = Compute.dialDownDamage(weapon, weaponType, range);
 
+        if (weaponType.hasFlag(WeaponType.F_HEAT_VARIABLE)) {
+            if (weaponType.hasFlag(WeaponType.F_BOMBAST_LASER)) {
+                return BombastLaserWeaponHandler.getHeat(weapon);
+            }
+        }
         toReturn = max(1,
               weaponType.getHeat() - max(0, damage - newDamage));
         return toReturn;

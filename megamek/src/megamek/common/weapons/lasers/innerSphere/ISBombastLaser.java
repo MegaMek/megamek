@@ -1,6 +1,6 @@
 /*
  * Copyright (C) 2004, 2005 Ben Mazur (bmazur@sev.org)
- * Copyright (C) 2008-2025 The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2008-2026 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -63,17 +63,17 @@ public class ISBombastLaser extends LaserWeapon {
     @Serial
     private static final long serialVersionUID = 3379805005243042138L;
 
+
     public ISBombastLaser() {
         super();
         name = "Bombast Laser";
         setInternalName(name);
         addLookupName("IS Bombast Laser");
         addLookupName("ISBombastLaser");
-        String[] modeStrings = { "Damage 12", "Damage 11", "Damage 10",
-                                 "Damage 9", "Damage 8", "Damage 7" };
+        String[] modeStrings = { "Damage 16", "Damage 12", "Damage 8"};
         setModes(modeStrings);
         heat = 12;
-        damage = 12;
+        damage = 16;
         shortRange = 5;
         mediumRange = 10;
         longRange = 15;
@@ -86,10 +86,10 @@ public class ISBombastLaser extends LaserWeapon {
         criticalSlots = 3;
         bv = 137;
         cost = 200000;
-        shortAV = 12;
-        medAV = 12;
+        shortAV = 16;
+        medAV = 16;
         maxRange = RANGE_MED;
-        flags = flags.or(F_BOMBAST_LASER).andNot(F_PROTO_WEAPON);
+        flags = flags.or(F_BOMBAST_LASER).or(F_ENERGY).or(F_HEAT_VARIABLE).andNot(F_PROTO_WEAPON);
         rulesRefs = "132, TO:AUE";
         // Tech Progression tweaked to combine IntOps with TRO Prototypes/3145 NTNU RS
         techAdvancement.setTechBase(TechBase.IS).setTechRating(TechRating.D)

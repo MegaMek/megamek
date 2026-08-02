@@ -55,6 +55,7 @@ import megamek.common.board.Coords;
 import megamek.common.board.CrossBoardAttackHelper;
 import megamek.common.compute.Compute;
 import megamek.common.compute.ComputeArc;
+import megamek.common.enums.ChargeLevel;
 import megamek.common.equipment.*;
 import megamek.common.game.Game;
 import megamek.common.options.OptionsConstants;
@@ -1811,6 +1812,12 @@ class ComputeToHitIsImpossible {
                   weapon.getLinkedBy().getType().hasFlag(MiscType.F_PPC_CAPACITOR) &&
                   weapon.getLinkedBy().pendingMode().equals(Weapon.MODE_PPC_CHARGE)) {
                 return Messages.getString("WeaponAttackAction.PPCCharging");
+            }
+
+            // Bombast lasers charging cannot fire while charging
+            if (weapon.getType().hasFlag(WeaponType.F_BOMBAST_LASER) &&
+                 weapon.getChargeState() == ChargeLevel.CHARGING) {
+                return Messages.getString("WeaponAttackAction.BombastCharging");
             }
 
             // Some weapons can only be fired by themselves

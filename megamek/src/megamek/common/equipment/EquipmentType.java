@@ -553,22 +553,14 @@ public class EquipmentType implements ITechnology {
     }
 
     /**
-     * @return True when the equipment has at least one of the given flags.
+     * Checks if the equipment has all the specified flags.
+     *
+     * @param flags The flags to check
+     *
+     * @return True if the equipment has all the specified flags
      */
-    public boolean hasAnyFlag(EquipmentFlag... flags) {
-        for (EquipmentFlag flag : flags) {
-            if (this.flags.get(flag)) {
-                return true;
-            }
-        }
-        return false;
-    }
-
-    /**
-     * @return True when the equipment has at least one of the given flags.
-     */
-    public boolean hasAnyFlag(EquipmentBitSet mask) {
-        return flags.intersects(mask);
+    public boolean hasAllFlag(EquipmentFlag... flags) {
+        return this.flags.contains(new EquipmentBitSet().or(flags));
     }
 
     /**
@@ -578,8 +570,22 @@ public class EquipmentType implements ITechnology {
      *
      * @return True if the equipment has all the specified flags
      */
-    public boolean hasFlag(EquipmentBitSet flag) {
+    public boolean hasAllFlag(EquipmentBitSet flag) {
         return flags.contains(flag);
+    }
+
+    /**
+     * @return True when the equipment has at least one of the given flags.
+     */
+    public boolean hasAnyFlag(EquipmentFlag... flags) {
+        return this.flags.intersects(new EquipmentBitSet().or(flags));
+    }
+
+    /**
+     * @return True when the equipment has at least one of the given flags.
+     */
+    public boolean hasAnyFlag(EquipmentBitSet mask) {
+        return flags.intersects(mask);
     }
 
     public double getBV(Entity entity) {

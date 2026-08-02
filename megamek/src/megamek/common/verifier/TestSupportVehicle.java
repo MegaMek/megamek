@@ -1,6 +1,6 @@
 /*
  * Copyright (C) 2000-2005 Ben Mazur (bmazur@sev.org)
- * Copyright (C) 2015-2025 The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2015-2026 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -902,15 +902,11 @@ public class TestSupportVehicle extends TestEntity {
         return 0;
     }
 
-    private static final EquipmentBitSet EXCLUDE = MiscType.F_BASIC_FIRE_CONTROL.asEquipmentBitSet()
-          .or(MiscType.F_ADVANCED_FIRE_CONTROL)
-          .or(MiscType.F_CHASSIS_MODIFICATION);
-
     @Override
     protected boolean includeMiscEquip(MiscType eq) {
         // fire control is counted with control system weight and chassis mods are part
         // of the structure weight
-        return !eq.hasFlag(EXCLUDE);
+        return !eq.hasAllFlag(MiscType.F_BASIC_FIRE_CONTROL,  MiscType.F_ADVANCED_FIRE_CONTROL, MiscType.F_CHASSIS_MODIFICATION);
     }
 
     @Override
@@ -1107,8 +1103,7 @@ public class TestSupportVehicle extends TestEntity {
                   && (getEntity() instanceof Aero || getEntity() instanceof VTOL)) {
                 buff.append("Armored Motive system and incompatible movement mode!\n\n");
                 correct = false;
-            } else if (mounted.getType().hasFlag(MiscType.F_LIFEBOAT)
-                  && mounted.getType().hasAnyFlag(MiscTypeFlag.S_MARITIME_ESCAPE_POD, MiscTypeFlag.S_MARITIME_LIFEBOAT)
+            } else if (mounted.getType().hasAllFlag(MiscType.F_LIFEBOAT, MiscType.S_MARITIME)
                   && !SVType.NAVAL.equals(SVType.getVehicleType(supportVee))
                   && !supportVee.hasWorkingMisc(MiscType.F_AMPHIBIOUS)) {
                 buff.append(mounted.getName())

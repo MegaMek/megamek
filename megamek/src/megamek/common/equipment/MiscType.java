@@ -274,6 +274,8 @@ public class MiscType extends EquipmentType {
     public static final MiscTypeFlag F_SNOWMOBILE = MiscTypeFlag.F_SNOWMOBILE;
     public static final MiscTypeFlag F_LADDER = MiscTypeFlag.F_LADDER;
     public static final MiscTypeFlag F_LIFEBOAT = MiscTypeFlag.F_LIFEBOAT;
+    public static final MiscTypeFlag S_ATMOSPHERIC = MiscTypeFlag.S_ATMOSPHERIC;
+    public static final MiscTypeFlag S_MARITIME = MiscTypeFlag.S_MARITIME;
     public static final MiscTypeFlag F_FLUID_SUCTION_SYSTEM = MiscTypeFlag.F_FLUID_SUCTION_SYSTEM;
     public static final MiscTypeFlag F_HYDROFOIL = MiscTypeFlag.F_HYDROFOIL;
     public static final MiscTypeFlag F_SUBMERSIBLE = MiscTypeFlag.F_SUBMERSIBLE;
@@ -5281,15 +5283,40 @@ public class MiscType extends EquipmentType {
     // Down the road it might be better to make this into a separate Small
     // Support Vee,
     // But for now leaving it as equipment.
+    public static MiscType createAtmosphericLifeboat() {
+        MiscType misc = new MiscType();
+        misc.name = "Lifeboat (Atmospheric)";
+        misc.setInternalName(misc.name);
+        misc.tankSlots = 0;
+        misc.tonnage = 1;
+        misc.cost = 6000;
+        misc.bv = 0;
+        misc.industrial = true;
+        misc.flags = misc.flags.or(F_LIFEBOAT, S_ATMOSPHERIC, F_SUPPORT_TANK_EQUIPMENT);
+        misc.rulesRefs = "227, TM";
+        misc.techAdvancement.setTechBase(TechBase.ALL)
+              .setIntroLevel(false)
+              .setUnofficial(false)
+              .setTechRating(TechRating.A)
+              .setAvailability(AvailabilityValue.C, AvailabilityValue.C, AvailabilityValue.C, AvailabilityValue.C)
+              .setISAdvancement(DATE_PS, DATE_PS, DATE_PS, DATE_NONE, DATE_NONE)
+              .setISApproximate(false, false, false, false, false)
+              .setClanAdvancement(DATE_PS, DATE_PS, DATE_PS, DATE_NONE, DATE_NONE)
+              .setClanApproximate(false, false, false, false, false);
+        return misc;
+    }
+
+    // Down the road it might be better to make this into a separate Small
+    // Support Vee,
+    // But for now leaving it as equipment.
     public static MiscType createMaritimeEscapePod() {
         MiscType misc = new MiscType();
-
         misc.name = "Escape Pod (Maritime)";
         misc.setInternalName(misc.name);
         misc.tonnage = 7.0;
         misc.tankSlots = 0;
         misc.cost = 5000;
-        misc.flags = misc.flags.or(F_SUPPORT_TANK_EQUIPMENT, F_LIFEBOAT, MiscTypeFlag.S_MARITIME_ESCAPE_POD);
+        misc.flags = misc.flags.or(F_LIFEBOAT, S_MARITIME, F_SUPPORT_TANK_EQUIPMENT);
         misc.bv = 0;
         misc.industrial = true;
         misc.rulesRefs = "216, TM";
@@ -5314,36 +5341,7 @@ public class MiscType extends EquipmentType {
         misc.cost = 5000;
         misc.bv = 0;
         misc.industrial = true;
-        misc.flags = misc.flags.or(F_TANK_EQUIPMENT,
-              F_SUPPORT_TANK_EQUIPMENT,
-              F_LIFEBOAT,
-              MiscTypeFlag.S_MARITIME_LIFEBOAT);
-        misc.rulesRefs = "227, TM";
-        misc.techAdvancement.setTechBase(TechBase.ALL)
-              .setIntroLevel(false)
-              .setUnofficial(false)
-              .setTechRating(TechRating.A)
-              .setAvailability(AvailabilityValue.C, AvailabilityValue.C, AvailabilityValue.C, AvailabilityValue.C)
-              .setISAdvancement(DATE_PS, DATE_PS, DATE_PS, DATE_NONE, DATE_NONE)
-              .setISApproximate(false, false, false, false, false)
-              .setClanAdvancement(DATE_PS, DATE_PS, DATE_PS, DATE_NONE, DATE_NONE)
-              .setClanApproximate(false, false, false, false, false);
-        return misc;
-    }
-
-    // Down the road it might be better to make this into a separate Small
-    // Support Vee,
-    // But for now leaving it as equipment.
-    public static MiscType createAtmosphericLifeboat() {
-        MiscType misc = new MiscType();
-        misc.name = "Lifeboat (Atmospheric)";
-        misc.setInternalName(misc.name);
-        misc.tankSlots = 0;
-        misc.tonnage = 1;
-        misc.cost = 6000;
-        misc.bv = 0;
-        misc.industrial = true;
-        misc.flags = misc.flags.or(F_SUPPORT_TANK_EQUIPMENT, F_LIFEBOAT, MiscTypeFlag.S_ATMOSPHERIC_LIFEBOAT);
+        misc.flags = misc.flags.or(F_LIFEBOAT, S_MARITIME, F_TANK_EQUIPMENT, F_SUPPORT_TANK_EQUIPMENT);
         misc.rulesRefs = "227, TM";
         misc.techAdvancement.setTechBase(TechBase.ALL)
               .setIntroLevel(false)

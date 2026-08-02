@@ -425,9 +425,8 @@ public enum MiscTypeFlag implements EquipmentFlag {
     S_QUADVEE_WHEELS,
 
     // Secondary flags for escape pods and lifeboats
-    S_MARITIME_LIFEBOAT,
-    S_MARITIME_ESCAPE_POD,
-    S_ATMOSPHERIC_LIFEBOAT,
+    S_ATMOSPHERIC,
+    S_MARITIME,
 
     // Flag for LAM fuel tanks
     F_LAM_FUEL_TANK,

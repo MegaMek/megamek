@@ -481,7 +481,7 @@ public class TestTank extends TestEntity {
                 return mode.isTrackedOrWheeled() || mode.isTrain();
             }
             if (eq.hasFlag(MiscType.F_LIFEBOAT)) {
-                if (eq.hasAnyFlag(MiscTypeFlag.S_MARITIME_ESCAPE_POD, MiscTypeFlag.S_MARITIME_LIFEBOAT)) {
+                if (eq.hasFlag(MiscType.S_MARITIME)) {
                     // Allowed for all naval units and support vehicles with an amphibious chassis
                     // mod
                     return supportVehicle ? !mode.isHover() : mode.isMarine();

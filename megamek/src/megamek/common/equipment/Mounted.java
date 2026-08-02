@@ -48,6 +48,7 @@ import jakarta.annotation.Nullable;
 import megamek.common.CalledShot;
 import megamek.common.CriticalSlot;
 import megamek.common.battleArmor.BattleArmor;
+import megamek.common.enums.ChargeLevel;
 import megamek.common.enums.GamePhase;
 import megamek.common.equipment.enums.BombType;
 import megamek.common.equipment.enums.MiscTypeFlag;
@@ -112,6 +113,7 @@ public class Mounted<T extends EquipmentType> implements Serializable, RoundUpda
     // facing may be adjusted freely within that phase, but not again in a later phase of the same turn.
     // Cleared each round in newRound(int).
     private GamePhase directionalMountFlippedPhase = null;
+    private ChargeLevel chargeState = ChargeLevel.CHARGE_NONE;
 
     private int mode; // Equipment's current state. On or Off. Six shot or
     // Four shot, etc
@@ -379,7 +381,6 @@ public class Mounted<T extends EquipmentType> implements Serializable, RoundUpda
         }
         return type.getMode(pendingMode);
     }
-
     /**
      * Switches the equipment mode to the next or previous available.
      *
@@ -2142,4 +2143,19 @@ public class Mounted<T extends EquipmentType> implements Serializable, RoundUpda
     public boolean relevantToTargetingComputer() {
         return type.relevantToTargetingComputer();
     }
+
+    /**
+     * Gets the charge state of the weapon. This only currently applies to Bombast Lasers
+     * @return
+     */
+    public ChargeLevel getChargeState() { return chargeState; }
+
+    /**
+     * Set the charge state of the weapon. This only currently applies to the Bombast Laser
+     * @param setLevel
+     */
+    public void setChargeState(ChargeLevel setLevel) {
+        chargeState = setLevel;
+    }
+
 }

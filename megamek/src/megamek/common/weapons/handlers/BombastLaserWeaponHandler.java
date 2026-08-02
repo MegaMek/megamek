@@ -39,6 +39,8 @@ import java.io.Serial;
 import megamek.common.HitData;
 import megamek.common.ToHitData;
 import megamek.common.actions.WeaponAttackAction;
+import megamek.common.enums.ChargeLevel;
+import megamek.common.equipment.Mounted;
 import megamek.common.game.Game;
 import megamek.common.loaders.EntityLoadingException;
 import megamek.server.totalWarfare.TWGameManager;
@@ -54,5 +56,36 @@ public class BombastLaserWeaponHandler extends EnergyWeaponHandler {
           throws EntityLoadingException {
         super(toHit, waa, g, m);
         generalDamageType = HitData.DAMAGE_ENERGY;
+    }
+
+    public static int getDamageValue(Mounted<?> weapon) {
+        int damageValue = 16;
+        String damage = weapon.curMode().getName().toLowerCase();
+        if ((damage.trim().length() > 6) && damage.contains("damage")) {
+            return damageValue = Integer.parseInt(damage.substring(damage.indexOf("damage") + 6).trim());
+        }
+        return damageValue;
+    }
+
+    public int getToHitModifier(ChargeLevel chargeState, int damageValue) {
+        if (chargeState == ChargeLevel.CHARGE_NONE) {
+            switch (damageValue) {
+                case 16: return 2;
+                case 12: return 1;
+            }
+        } else if (chargeState == ChargeLevel.CHARGING) {
+            return ToHitData.IMPOSSIBLE;
+        }
+        return 0;
+    }
+
+    public static int getHeat(Mounted<?> mounted) {
+        int damage = getDamageValue(mounted);
+        return switch (damage) {
+            case 16 -> 12;
+            case 12 -> 8;
+            case 8 -> 6;
+            default -> 12;
+        };
     }
 }

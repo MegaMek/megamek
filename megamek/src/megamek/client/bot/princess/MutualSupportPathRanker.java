@@ -38,6 +38,7 @@ import java.util.List;
 import java.util.Map;
 
 import megamek.common.analysis.DamageProfile;
+import megamek.client.bot.princess.UnitBehavior.BehaviorType;
 import megamek.common.annotations.Nullable;
 import megamek.common.board.Coords;
 import megamek.common.game.Game;
@@ -278,6 +279,9 @@ public class MutualSupportPathRanker extends BasicPathRanker {
         return formationCentreCache.computeIfAbsent(movingUnit.getId(), moverId -> {
             List<Coords> positions = new ArrayList<>(friends.size());
             for (Entity friend : friends) {
+                if (!holdsTheFormation(friend)) {
+                    continue;
+                }
                 // Cached for the ranking pass, but a unit can die mid-phase (falls, charges, minefields).
                 Coords friendPosition = friend.getPosition();
                 if (friendPosition != null) {
@@ -286,6 +290,29 @@ public class MutualSupportPathRanker extends BasicPathRanker {
             }
             return MutualSupportDeployment.centroid(positions);
         });
+    }
+
+    /**
+     * Whether a unit is part of the formation, and so gets a say in where its centre is.
+     *
+     * <p>Deliberately the same set of units that {@code BasicPathRanker} holds to the formation: a unit exempt from
+     * the pull must not define what everyone else is pulled toward. Three kinds are exempt, and each would otherwise
+     * drag the centre somewhere the fighting line is not:</p>
+     *
+     * <ul>
+     *     <li><b>Withdrawing units</b> are running for their home edge. Counting them pulls the centre rearward and
+     *     charges the units still advancing for being out of position - a healthy force dragged back toward its own
+     *     retreating wounded.</li>
+     *     <li><b>Standoff artillery</b> holds at range on purpose, and is exempt so it is never dragged into the
+     *     line. It should not drag the line out to it either.</li>
+     *     <li><b>Airborne aerospace</b> covers ground it is not holding, so it makes a misleading anchor.</li>
+     * </ul>
+     */
+    private boolean holdsTheFormation(Entity friend) {
+        return !getOwner().isFallingBack(friend)
+              && !friend.isAirborneAeroOnGroundMap()
+              && !getOwner().getUnitBehaviorTracker()
+                    .getBehaviorType(friend, getOwner()).equals(BehaviorType.ForcedWithdrawal);
     }
 
     /**

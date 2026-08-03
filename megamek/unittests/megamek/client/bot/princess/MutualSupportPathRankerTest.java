@@ -42,6 +42,7 @@ import static org.mockito.Mockito.when;
 
 import java.util.List;
 
+import megamek.client.bot.princess.UnitBehavior.BehaviorType;
 import megamek.common.board.Coords;
 import megamek.common.game.Game;
 import megamek.common.moves.MovePath;
@@ -68,6 +69,7 @@ class MutualSupportPathRankerTest {
     private Game mockGame;
     private Entity mockMover;
     private Entity mockFriend;
+    private UnitBehavior mockBehaviorTracker;
     private MovePath mockPath;
     private MutualSupportPathRanker testRanker;
 
@@ -93,6 +95,13 @@ class MutualSupportPathRankerTest {
         mockFriend = mock(BipedMek.class);
         when(mockFriend.getId()).thenReturn(2);
         when(mockFriend.isOffBoard()).thenReturn(false);
+
+        // Formation membership: by default the friend is in the line, so it anchors the formation.
+        mockBehaviorTracker = mock(UnitBehavior.class);
+        when(mockBehaviorTracker.getBehaviorType(any(Entity.class), any(Princess.class)))
+              .thenReturn(BehaviorType.Engaged);
+        when(mockPrincess.getUnitBehaviorTracker()).thenReturn(mockBehaviorTracker);
+        when(mockPrincess.isFallingBack(any(Entity.class))).thenReturn(false);
         when(mockPrincess.getEntitiesOwned()).thenReturn(List.of(mockMover, mockFriend));
         when(mockGame.onTheSameBoard(any(Entity.class), any(Entity.class))).thenReturn(true);
 
@@ -151,6 +160,21 @@ class MutualSupportPathRankerTest {
         when(mockFriend.getPosition()).thenReturn(new Coords(0, 26)); // 15 hexes from destination
         setEnemyDistances(20.0, 20.0, HOLDING_DESTINATION);
         assertEquals(6 * 2.0 * 5.0, testRanker.calculateHerdingMod(null, mockPath), TOLERANCE);
+    }
+
+    /**
+     * A unit running for its home edge has left the line. If it still counted toward the centre of mass it would
+     * drag the formation rearward and charge the units still advancing for not following their own wounded, so a
+     * unit the ranker exempts from the pull must not define what everyone else is pulled toward.
+     */
+    @Test
+    void aWithdrawingFriendDoesNotAnchorTheFormation() {
+        when(mockPrincess.isFallingBack(mockFriend)).thenReturn(true);
+        when(mockFriend.getPosition()).thenReturn(new Coords(0, 26)); // far behind the destination
+        setEnemyDistances(20.0, 20.0, HOLDING_DESTINATION);
+
+        assertEquals(0.0, testRanker.calculateHerdingMod(null, mockPath), TOLERANCE,
+              "with its only friend withdrawing there is no formation left to be out of");
     }
 
     @Test

@@ -32,11 +32,12 @@
  */
 package megamek.client.ui.dialogs.randomArmy;
 
+import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
-import java.awt.GridLayout;
 import java.awt.Insets;
+import java.awt.Rectangle;
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -49,7 +50,9 @@ import javax.swing.Box;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JSpinner;
+import javax.swing.Scrollable;
 import javax.swing.SpinnerNumberModel;
+import javax.swing.SwingConstants;
 
 import megamek.client.ratgenerator.FormationMix;
 import megamek.client.ratgenerator.FormationMixPreview;
@@ -68,13 +71,22 @@ import megamek.common.annotations.Nullable;
  * odds rather than guessing against an abstraction. Leaving every spinner at zero requests nothing and generates
  * exactly as the ruleset would.</p>
  */
-public class FormationMixEditorPanel extends JPanel {
+public class FormationMixEditorPanel extends JPanel implements Scrollable {
 
     /** How many formation families sit side by side before wrapping to a new column. */
     private static final int CATEGORY_COLUMNS = 3;
 
     /** Left inset on a formation row, so members sit under their family heading rather than beside it. */
     private static final int MEMBER_INDENT = 16;
+
+    /** How narrow a formation name may be squeezed before the column stops giving ground. */
+    private static final int NAME_MINIMUM_WIDTH = 40;
+
+    /** Horizontal gap between two neighbouring columns. */
+    private static final int COLUMN_GAP = 8;
+
+    /** Pixels scrolled per mouse-wheel notch, about one formation row. */
+    private static final int SCROLL_UNIT_INCREMENT = 16;
 
     private final Map<String, JSpinner> spinners = new TreeMap<>();
     private final FormationMixPreview preview;
@@ -140,8 +152,33 @@ public class FormationMixEditorPanel extends JPanel {
         }
         columns.add(closeColumn(currentColumn, row));
 
-        setLayout(new GridLayout(1, columns.size(), 8, 0));
-        columns.forEach(this::add);
+        layOutColumns(columns);
+    }
+
+    /**
+     * Places the finished columns side by side, each given room in proportion to what it holds.
+     *
+     * <p>Equal columns waste width on the short ground names ("Fire", "Hunter") while truncating the long aerospace
+     * ones ("Aerospace Superiority Squadron"), so the share each column gets follows the width it actually wants.</p>
+     *
+     * @param columns the finished column panels, in display order
+     */
+    private void layOutColumns(List<JPanel> columns) {
+        setLayout(new GridBagLayout());
+        GridBagConstraints constraints = new GridBagConstraints();
+        constraints.gridy = 0;
+        constraints.fill = GridBagConstraints.BOTH;
+        constraints.weighty = 1.0;
+        constraints.insets = new Insets(0, 0, 0, COLUMN_GAP);
+        for (int index = 0; index < columns.size(); index++) {
+            JPanel column = columns.get(index);
+            constraints.gridx = index;
+            constraints.weightx = Math.max(1, column.getPreferredSize().width);
+            if (index == (columns.size() - 1)) {
+                constraints.insets = new Insets(0, 0, 0, 0);
+            }
+            add(column, constraints);
+        }
     }
 
     /** A column of the grid, bordered so it reads as its own list, with the shared header row already in place. */
@@ -149,8 +186,10 @@ public class FormationMixEditorPanel extends JPanel {
         JPanel column = new JPanel(new GridBagLayout());
         column.setBorder(BorderFactory.createEtchedBorder());
         GridBagConstraints constraints = new GridBagConstraints();
-        constraints.anchor = GridBagConstraints.WEST;
-        constraints.insets = new Insets(2, 4, 4, 4);
+        // The current-share header wraps to two lines, so the headers hang from a common top edge rather than
+        // centring on each other, and the row closes up tight against the first formation beneath it.
+        constraints.anchor = GridBagConstraints.SOUTHWEST;
+        constraints.insets = new Insets(2, 4, 0, 4);
         constraints.gridy = 0;
 
         constraints.gridx = 0;
@@ -162,6 +201,44 @@ public class FormationMixEditorPanel extends JPanel {
         constraints.gridx = 2;
         column.add(headerLabel("ForceGeneratorDialog.formationMix.header.current"), constraints);
         return column;
+    }
+
+    @Override
+    public Dimension getPreferredScrollableViewportSize() {
+        return getPreferredSize();
+    }
+
+    @Override
+    public int getScrollableUnitIncrement(Rectangle visibleRect, int orientation, int direction) {
+        return SCROLL_UNIT_INCREMENT;
+    }
+
+    @Override
+    public int getScrollableBlockIncrement(Rectangle visibleRect, int orientation, int direction) {
+        return (orientation == SwingConstants.VERTICAL) ? visibleRect.height : visibleRect.width;
+    }
+
+    /**
+     * Keeps the editor as wide as its viewport and no wider, so it never asks for a horizontal scrollbar.
+     *
+     * <p>The columns absorb the difference by squeezing the formation names, which is why those carry a minimum
+     * width and a tooltip.</p>
+     *
+     * @return always {@code true}
+     */
+    @Override
+    public boolean getScrollableTracksViewportWidth() {
+        return true;
+    }
+
+    /**
+     * Lets the editor grow past its viewport vertically, so the list scrolls up and down as before.
+     *
+     * @return always {@code false}
+     */
+    @Override
+    public boolean getScrollableTracksViewportHeight() {
+        return false;
     }
 
     /**
@@ -242,7 +319,13 @@ public class FormationMixEditorPanel extends JPanel {
             constraints.gridy = row++;
             constraints.weightx = 1.0;
             constraints.insets = new Insets(1, hasOwnHeading ? (4 + MEMBER_INDENT) : 4, 1, 4);
+            // The name is the only part of the row that can give ground. Letting it shrink below its natural width
+            // is what lets the three columns fit the dialog instead of forcing a horizontal scrollbar; the full name
+            // stays available in the tooltip, and Swing elides what will not fit.
+            constraints.fill = GridBagConstraints.HORIZONTAL;
+            label.setMinimumSize(new Dimension(NAME_MINIMUM_WIDTH, label.getPreferredSize().height));
             column.add(label, constraints);
+            constraints.fill = GridBagConstraints.NONE;
 
             // The spinner and the share it is adjusting sit together, with only a hair between them, so the pair
             // reads as one control rather than two columns to scan between.

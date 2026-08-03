@@ -624,6 +624,8 @@ public class ForceGeneratorOptionsView extends JPanel implements FocusListener, 
         editor.setMix(formationMix);
 
         JScrollPane scroll = new JScrollPane(editor);
+        // The editor sizes itself to the viewport width, so a horizontal bar would never have anything to scroll.
+        scroll.setHorizontalScrollBarPolicy(ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER);
         scroll.setPreferredSize(UIUtil.scaleForGUI(760, 420));
         int choice = JOptionPane.showConfirmDialog(this, scroll,
               Messages.getString("ForceGeneratorDialog.formationMix.title"),
@@ -725,6 +727,8 @@ public class ForceGeneratorOptionsView extends JPanel implements FocusListener, 
         // No OK button inline, so the request is read back on every change.
         editor.addMixChangeListener(() -> formationMix = editor.getMix());
         JScrollPane scroll = new JScrollPane(editor);
+        // The editor sizes itself to the viewport width, so a horizontal bar would never have anything to scroll.
+        scroll.setHorizontalScrollBarPolicy(ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER);
         // Without a size the scroll pane grows to the editor's full height and never scrolls, pushing everything
         // below it off the dialog.
         scroll.setPreferredSize(UIUtil.scaleForGUI(720, INLINE_MIX_HEIGHT));

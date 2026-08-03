@@ -32,9 +32,14 @@
  */
 package megamek.client.bot.caspar;
 
+import java.util.List;
+
+import megamek.client.bot.princess.MutualSupportDeployment;
 import megamek.client.bot.princess.MutualSupportPathRanker;
 import megamek.client.bot.princess.PathRanker.PathRankerType;
 import megamek.client.bot.princess.Princess;
+import megamek.common.board.Coords;
+import megamek.common.units.Entity;
 import megamek.logging.MMLogger;
 
 /**
@@ -48,6 +53,8 @@ import megamek.logging.MMLogger;
  *     <li><b>Mutual Support movement doctrine</b> ({@link MutualSupportPathRanker}): supporting-range
  *     cohesion instead of center-of-mass herding, a cover bonus for advancing inside a set friend's
  *     engagement envelope, and a uniform closing tempo so slow and fast elements commit together.</li>
+ *     <li><b>Mutual Support deployment</b> ({@link MutualSupportDeployment}): a force comes onto the board
+ *     as a formation instead of scattering across its whole deployment zone.</li>
  * </ul>
  */
 public class Caspar extends Princess {
@@ -72,5 +79,11 @@ public class Caspar extends Princess {
         // Info-level receipt so any headless run's logs prove which ranker this bot is actually using.
         LOGGER.info("[MutualSupport] {}: CASPAR registered MutualSupportPathRanker for ground units",
               getLocalPlayer() != null ? getLocalPlayer().getName() : getName());
+    }
+
+    @Override
+    protected List<Coords> prioritizeDeploymentCoords(Entity deployedUnit, List<Coords> possibleDeployCoords) {
+        // CASPAR divergence: deploy as a formation rather than scattering across the whole zone.
+        return MutualSupportDeployment.prioritize(deployedUnit, possibleDeployCoords, getFriendEntities(), getGame());
     }
 }

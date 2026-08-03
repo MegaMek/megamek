@@ -98,6 +98,12 @@ import megamek.logging.MMLogger;
  * @author Neoancient
  */
 public class ForceGeneratorViewUi implements ActionListener {
+
+    /** Unscaled height the chosen-units table asks for, leaving the rest of the column to the controls. */
+    private static final int CHOSEN_UNITS_PREFERRED_HEIGHT = 140;
+
+    /** Unscaled height beyond which the chosen-units table stops absorbing the column's spare space. */
+    private static final int CHOSEN_UNITS_MAXIMUM_HEIGHT = 260;
     private final static MMLogger logger = MMLogger.create(ForceGeneratorViewUi.class);
 
     private final JFrame parentFrame;
@@ -295,6 +301,12 @@ public class ForceGeneratorViewUi implements ActionListener {
         tblChosen.setSelectionMode(ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);
         JScrollPane scroll = new JScrollPane(tblChosen);
         scroll.setBorder(BorderFactory.createTitledBorder(Messages.getString("RandomArmyDialog.Army")));
+        // Cap the chosen-units table so the controls above it get the vertical room instead. Without a maximum the
+        // BoxLayout hands this scroll pane most of the slack, which pushed the controls into a tighter column than
+        // they needed to be. It still scrolls, so a long list is not lost.
+        scroll.setPreferredSize(UIUtil.scaleForGUI(600, CHOSEN_UNITS_PREFERRED_HEIGHT));
+        scroll.setMaximumSize(new Dimension(Integer.MAX_VALUE,
+              UIUtil.scaleForGUI(0, CHOSEN_UNITS_MAXIMUM_HEIGHT).height));
         tblChosen.addMouseListener(tableMouseListener);
         tblChosen.addKeyListener(tableKeyListener);
 

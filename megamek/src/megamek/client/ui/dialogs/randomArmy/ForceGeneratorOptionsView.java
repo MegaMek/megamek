@@ -339,7 +339,11 @@ public class ForceGeneratorOptionsView extends JPanel implements FocusListener, 
         cbExperience.setToolTipText(Messages.getString("ForceGeneratorDialog.experience.tooltip"));
         cbExperience.addActionListener(this);
 
+        // The role panels carry the widest content on the dialog, so let them take the full row rather than
+        // shrinking to their preferred width and leaving the mix grid cramped against the left edge.
         gbc.gridwidth = 4;
+        gbc.fill = GridBagConstraints.HORIZONTAL;
+        gbc.weightx = 1.0;
         panGroundRole = new JPanel(new GridBagLayout());
         gbc.gridx = 0;
         gbc.gridy = y++;
@@ -356,6 +360,8 @@ public class ForceGeneratorOptionsView extends JPanel implements FocusListener, 
         gbc.gridy = y++;
         add(panAirRole, gbc);
         panAirRole.setVisible(false);
+        gbc.fill = GridBagConstraints.NONE;
+        gbc.weightx = 0.0;
 
         gbc.gridx = 0;
         gbc.gridy = y++;
@@ -456,33 +462,36 @@ public class ForceGeneratorOptionsView extends JPanel implements FocusListener, 
         // Fire Support, Urban, Cavalry, Raider, Incendiary, Anti-Aircraft, Anti-Infantry and Infantry Support -
         // only nudged availability weights, which on a table of a few dozen entries was close to noise. Battlefield
         // shape is expressed by the unit role mix below instead.
-        chkRoleArtillery = createMissionRoleCheck(MissionRole.ARTILLERY);
+        // The mix leads, since it is what shapes the force; the mission-role filters sit under it as qualifiers.
         gbc.gridx = 0;
         gbc.gridy = 0;
+        gbc.gridwidth = 4;
+        gbc.fill = GridBagConstraints.HORIZONTAL;
+        gbc.weightx = 1.0;
+        panGroundRole.add(createRoleMixPanel(GROUND_MIX_ROLES, "ForceGeneratorDialog.roleMix.ground"), gbc);
+        gbc.gridwidth = 1;
+        gbc.fill = GridBagConstraints.NONE;
+        gbc.weightx = 0.0;
+
+        chkRoleArtillery = createMissionRoleCheck(MissionRole.ARTILLERY);
+        gbc.gridx = 0;
+        gbc.gridy = 1;
         panGroundRole.add(chkRoleArtillery, gbc);
 
         chkRoleMissileArtillery = createMissionRoleCheck(MissionRole.MISSILE_ARTILLERY);
         gbc.gridx = 1;
-        gbc.gridy = 0;
+        gbc.gridy = 1;
         panGroundRole.add(chkRoleMissileArtillery, gbc);
 
         chkRoleTransport = createMissionRoleCheck(MissionRole.CARGO);
         gbc.gridx = 2;
-        gbc.gridy = 0;
+        gbc.gridy = 1;
         panGroundRole.add(chkRoleTransport, gbc);
 
         chkRoleEngineer = createMissionRoleCheck(MissionRole.ENGINEER);
         gbc.gridx = 3;
-        gbc.gridy = 0;
-        panGroundRole.add(chkRoleEngineer, gbc);
-
-        gbc.gridx = 0;
         gbc.gridy = 1;
-        gbc.gridwidth = 4;
-        gbc.fill = GridBagConstraints.HORIZONTAL;
-        panGroundRole.add(createRoleMixPanel(GROUND_MIX_ROLES, "ForceGeneratorDialog.roleMix.ground"), gbc);
-        gbc.gridwidth = 1;
-        gbc.fill = GridBagConstraints.NONE;
+        panGroundRole.add(chkRoleEngineer, gbc);
 
         // Artillery switches weight-class handling off for the node entirely, so there are no weight bands left for
         // the role mix to route between. Grey it out rather than let it silently do nothing.
@@ -575,9 +584,11 @@ public class ForceGeneratorOptionsView extends JPanel implements FocusListener, 
         gbc.gridy = 3;
         gbc.gridwidth = 4;
         gbc.fill = GridBagConstraints.HORIZONTAL;
+        gbc.weightx = 1.0;
         panAirRole.add(createRoleMixPanel(AEROSPACE_MIX_ROLES, "ForceGeneratorDialog.roleMix.aerospace"), gbc);
         gbc.gridwidth = 1;
         gbc.fill = GridBagConstraints.NONE;
+        gbc.weightx = 0.0;
 
         refreshFactions();
     }
@@ -612,8 +623,12 @@ public class ForceGeneratorOptionsView extends JPanel implements FocusListener, 
 
             constraints.gridx = column * 2;
             constraints.gridy = row;
+            constraints.weightx = 0.0;
             panel.add(label, constraints);
+            // The spinner column absorbs the slack, so the pairs spread evenly across the widened panel instead of
+            // bunching against the left edge.
             constraints.gridx = (column * 2) + 1;
+            constraints.weightx = 1.0;
             panel.add(spinner, constraints);
 
             column++;

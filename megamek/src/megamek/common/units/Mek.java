@@ -2499,7 +2499,7 @@ public abstract class Mek extends Entity implements Fortifiable, RubbleClearer, 
         if (hasQuirk(OptionsConstants.QUIRK_NEG_NO_TWIST)) {
             return false;
         }
-        return !(isProne() || isBracing() || getAlreadyTwisted());
+        return !(isProne() || isBracing() || getAlreadyTwisted() || isCharging() || isMakingDfa());
     }
 
     /**

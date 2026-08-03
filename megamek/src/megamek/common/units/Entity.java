@@ -11264,8 +11264,7 @@ public abstract class Entity extends TurnOrdered
             return false;
         }
 
-        if (!Game.rulesManager.getRulesGame().eligibleForPhase(isUnjammingRAC(), isFindingClub(),
-              isImmobile(), phase)) {
+        if (!Game.rulesManager.getRulesGame().eligibleForPhase(this, phase)) {
             return false;
         }
 
@@ -11374,7 +11373,7 @@ public abstract class Entity extends TurnOrdered
         }
 
         // if you're charging, no shooting
-        if (!Game.rulesManager.getRulesGame().eligibleForPhase(isUnjammingRAC(), false, false, null)) {
+        if (!Game.rulesManager.getRulesGame().eligibleForPhase(this, GamePhase.OFFBOARD)) {
             return false;
         }
         if (isCharging() || isMakingDfa()) {
@@ -11431,11 +11430,6 @@ public abstract class Entity extends TurnOrdered
             return false;
         }
 
-        // if you're charging or finding a club, it's already declared
-        if (!Game.rulesManager.getRulesGame().eligibleForPhase(isUnjammingRAC(), isFindingClub(), isImmobile(), null)) {
-            return false;
-        }
-
         if (isCharging() ||
               isMakingDfa() ||
               isRamming() ||
@@ -11455,6 +11449,11 @@ public abstract class Entity extends TurnOrdered
                     return false;
                 }
         }
+        // if you're finding a club or unjamming a RAC, it's already declared
+        if (!Game.rulesManager.getRulesGame().eligibleForPhase(this, GamePhase.PHYSICAL)) {
+            return false;
+        }
+
 
         // check game options
         if (gameOptions().booleanOption(OptionsConstants.ALLOWED_NO_CLAN_PHYSICAL) &&

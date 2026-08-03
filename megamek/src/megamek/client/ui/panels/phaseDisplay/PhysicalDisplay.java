@@ -142,7 +142,7 @@ public class PhysicalDisplay extends AttackPhaseDisplay {
         PHYSICAL_TOXIN("toxin"),
         PHYSICAL_CLEAR_WOODS("clearWoods"),
         PHYSICAL_MORE("more"),
-        PHYSICAL_TWIST("physicaltwist");
+        PHYSICAL_TWIST("physicalTwist");
 
         final String cmd;
 
@@ -458,7 +458,8 @@ public class PhysicalDisplay extends AttackPhaseDisplay {
         target(null);
         if (entity instanceof Mek) {
             int grapple = entity.getGrappled();
-            setTwistEnabled(entity.canChangeSecondaryFacing() && entity.getCrew().isActive());
+            setTwistEnabled(entity.canChangeSecondaryFacing()
+                  && entity.getCrew().isActive());
 
             if (grapple != Entity.NONE) {
                 Entity t = game.getEntity(grapple);

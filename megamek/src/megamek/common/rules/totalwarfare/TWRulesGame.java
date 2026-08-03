@@ -37,6 +37,7 @@ package megamek.common.rules.totalwarfare;
 import megamek.common.annotations.Nullable;
 import megamek.common.enums.GamePhase;
 import megamek.common.rules.core.CoreRulesGame;
+import megamek.common.units.Entity;
 
 public class TWRulesGame extends CoreRulesGame {
 
@@ -48,21 +49,16 @@ public class TWRulesGame extends CoreRulesGame {
     @Override
     public boolean ammoDumping() { return true; }
 
-    
+
     /**
-     * Is the unit eligible for the phase.
-     * In TW, unjamming the RAC or finding a club makes you ineligible for the phase
-     *
-     * @param unjammingRAC true if the unit is unjamming a RAC
-     * @param findingClub true if the unit is finding a club
-     * @param immobile true if the unit is immobile
-     * @param phase the game phase to check
-     * @return true if the unit is eligible for the phase
+     * Is an entity eligible for a phase
+     * @param entity the unit being considered
+     * @param phase what phase it is in
+     * @return is it eligible
      */
     @Override
-    public boolean eligibleForPhase(boolean unjammingRAC, boolean findingClub, boolean immobile,
-          @Nullable GamePhase phase) {
-        if (unjammingRAC || findingClub) {
+    public boolean eligibleForPhase(Entity entity, @Nullable GamePhase phase) {
+        if (entity.isUnjammingRAC() || entity.isFindingClub()) {
             return false;
         }
         return true;

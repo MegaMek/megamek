@@ -86,9 +86,12 @@ final class FormationBudgetAllocator {
 
         // Requests this force can never supply are dropped before the arithmetic, so the formations that can be
         // placed get the share they were promised rather than losing part of it to one that was never achievable.
-        Set<String> unavailable = requestedMix.unavailableIn(preview);
-        unavailable.forEach(formationName -> warnings.add(unavailableWarning(formationName)));
-        FormationMix mix = requestedMix.restrictedTo(preview);
+        FormationMix mix = requestedMix;
+        if (!requestedMix.allowUnofferedFormations()) {
+            Set<String> unavailable = requestedMix.unavailableIn(preview);
+            unavailable.forEach(formationName -> warnings.add(unavailableWarning(formationName)));
+            mix = requestedMix.restrictedTo(preview);
+        }
 
         List<ForceDescriptor> tweakable = tweakableNodes(root);
         if (mix.isEmpty() || tweakable.isEmpty()) {
@@ -102,7 +105,8 @@ final class FormationBudgetAllocator {
         Map<ForceDescriptor, String> claimed = new HashMap<>();
 
         for (String formationName : rarestFirst(tweakable, requested.keySet())) {
-            int placed = assignFormation(tweakable, claimed, formationName, requested.get(formationName));
+            int placed = assignFormation(tweakable, claimed, formationName, requested.get(formationName),
+                  mix.allowUnofferedFormations());
             if (placed > 0) {
                 assigned.put(formationName, placed);
             }
@@ -221,10 +225,32 @@ final class FormationBudgetAllocator {
      */
     static int assignFormation(List<ForceDescriptor> tweakable, Map<ForceDescriptor, String> claimed,
           String formationName, int quota) {
+        return assignFormation(tweakable, claimed, formationName, quota, false);
+    }
+
+    /**
+     * Claims up to {@code quota} nodes for one formation.
+     *
+     * @param tweakable              every node the mix may reassign
+     * @param claimed                nodes already claimed this pass, added to here
+     * @param formationName          the formation to place
+     * @param quota                  how many nodes to claim
+     * @param allowUnofferedFormations {@code true} to use any free node rather than only those offered this formation
+     *
+     * @return how many nodes were claimed
+     */
+    static int assignFormation(List<ForceDescriptor> tweakable, Map<ForceDescriptor, String> claimed,
+          String formationName, int quota, boolean allowUnofferedFormations) {
         List<ForceDescriptor> candidates = tweakable.stream()
               .filter(node -> !claimed.containsKey(node))
-              .filter(node -> node.getEligibleFormations().containsKey(formationName))
-              .sorted(Comparator.comparingInt(node -> node.getEligibleFormations().size()))
+              .filter(node -> allowUnofferedFormations
+                    || node.getEligibleFormations().containsKey(formationName))
+              // Nodes the ruleset already offered this formation are used before ones being overridden onto it, so
+              // an override departs from the ruleset only as far as the request actually requires.
+              .sorted(Comparator
+                    .comparing((ForceDescriptor node) ->
+                          node.getEligibleFormations().containsKey(formationName) ? 0 : 1)
+                    .thenComparingInt(node -> node.getEligibleFormations().size()))
               .toList();
         int placed = 0;
         for (ForceDescriptor node : candidates) {

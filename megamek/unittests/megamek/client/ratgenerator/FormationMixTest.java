@@ -57,13 +57,15 @@ class FormationMixTest {
         return new FormationMix(percentages);
     }
 
-    /** A preview offering the named formations, each an even share of one tweakable node. */
+    /** A preview offering the named formations, each an even share of one tweakable node, placeable everywhere. */
     private static FormationMixPreview previewOffering(int tweakableNodes, String... formationNames) {
         Map<String, Double> shares = new LinkedHashMap<>();
+        Map<String, Integer> placeable = new LinkedHashMap<>();
         for (String formationName : formationNames) {
             shares.put(formationName, 100.0 / formationNames.length);
+            placeable.put(formationName, tweakableNodes);
         }
-        return new FormationMixPreview(tweakableNodes, tweakableNodes, shares);
+        return new FormationMixPreview(tweakableNodes, tweakableNodes, shares, placeable);
     }
 
     // ===== FormationMix =====
@@ -207,4 +209,48 @@ class FormationMixTest {
         assertEquals(0.0, report.achievedSharePercent("Battle"), 0.01);
         assertEquals(0, report.assignedFor(null));
     }
+
+    // ===== ceilings and the restrictions override =====
+
+    /**
+     * The ceiling is what stops the editor offering a share the force cannot deliver. A formation only a quarter of
+     * the lances are offered can never be more than a quarter of them.
+     */
+    @Test
+    void aCeilingIsTheShareOfLancesThatCouldTakeTheFormation() {
+        Map<String, Double> shares = new LinkedHashMap<>();
+        shares.put("Recon", 50.0);
+        shares.put("Battle", 50.0);
+        Map<String, Integer> placeable = new LinkedHashMap<>();
+        placeable.put("Recon", 5);
+        placeable.put("Battle", 20);
+        FormationMixPreview preview = new FormationMixPreview(20, 20, shares, placeable);
+
+        assertEquals(25, preview.ceilingPercentFor("Recon"));
+        assertEquals(100, preview.ceilingPercentFor("Battle"));
+    }
+
+    @Test
+    void aFormationNoLanceIsOfferedHasNoCeiling() {
+        FormationMixPreview preview = previewOffering(10, "Battle");
+        assertEquals(0, preview.ceilingPercentFor("Recon"));
+        assertEquals(0, preview.ceilingPercentFor(null));
+    }
+
+    /** Restrictions are on unless the player turns them off, so the default mix never departs from the ruleset. */
+    @Test
+    void restrictionsAreOnByDefault() {
+        assertFalse(mixOf("Recon", 50).allowUnofferedFormations());
+        assertFalse(FormationMix.EMPTY.allowUnofferedFormations());
+    }
+
+    @Test
+    void theOverrideSurvivesBeingNarrowedToWhatTheForceOffers() {
+        FormationMix mix = new FormationMix(Map.of("Recon", 50, "Battle", 20), true);
+        FormationMix narrowed = mix.restrictedTo(previewOffering(10, "Battle"));
+
+        assertTrue(narrowed.allowUnofferedFormations(),
+              "narrowing must not quietly put the ruleset restrictions back on");
+    }
+
 }

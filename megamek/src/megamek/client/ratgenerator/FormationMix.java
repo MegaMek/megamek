@@ -55,12 +55,23 @@ import java.util.TreeMap;
  *
  * <p>This is a transient build-time value; it is never serialized into a saved game.</p>
  *
- * @param percentages requested share per formation type name; only positive entries are retained
+ * @param percentages              requested share per formation type name; only positive entries are retained
+ * @param allowUnofferedFormations  {@code true} to place a formation on any lance that can hold it, rather than only
+ *                                  on lances the ruleset offered it to
  */
-public record FormationMix(Map<String, Integer> percentages) {
+public record FormationMix(Map<String, Integer> percentages, boolean allowUnofferedFormations) {
 
     /** A mix that requests nothing, leaving every formation to the ruleset's own weighted pick. */
-    public static final FormationMix EMPTY = new FormationMix(Map.of());
+    public static final FormationMix EMPTY = new FormationMix(Map.of(), false);
+
+    /**
+     * A mix held to what the ruleset offers, which is the default.
+     *
+     * @param percentages requested share per formation type name
+     */
+    public FormationMix(Map<String, Integer> percentages) {
+        this(percentages, false);
+    }
 
     /**
      * Canonical constructor. Trims names, drops non-positive entries so an untouched control is indistinguishable
@@ -157,6 +168,8 @@ public record FormationMix(Map<String, Integer> percentages) {
                 retained.put(entry.getKey(), entry.getValue());
             }
         }
-        return (retained.size() == percentages.size()) ? this : new FormationMix(retained);
+        return (retained.size() == percentages.size())
+              ? this
+              : new FormationMix(retained, allowUnofferedFormations);
     }
 }

@@ -55,17 +55,40 @@ import java.util.TreeMap;
  * @param tweakableNodes       nodes that were offered more than one formation, and so could be assigned differently
  * @param defaultSharePercent  each offered formation against the share of tweakable nodes the ruleset expects it to
  *                             take, as a percentage
+ * @param placeableNodes       each offered formation against how many tweakable nodes could actually be given it,
+ *                             which is the most a request for that formation can ever deliver
  */
 public record FormationMixPreview(int formationNodes,
       int tweakableNodes,
-      Map<String, Double> defaultSharePercent) {
+      Map<String, Double> defaultSharePercent,
+      Map<String, Integer> placeableNodes) {
 
     /** A preview of nothing, for a force that has not been built or holds no formations. */
-    public static final FormationMixPreview EMPTY = new FormationMixPreview(0, 0, Map.of());
+    public static final FormationMixPreview EMPTY = new FormationMixPreview(0, 0, Map.of(), Map.of());
 
     /** Canonical constructor, taking a defensive immutable copy ordered by formation name. */
     public FormationMixPreview {
         defaultSharePercent = Collections.unmodifiableMap(new TreeMap<>(defaultSharePercent));
+        placeableNodes = Collections.unmodifiableMap(new TreeMap<>(placeableNodes));
+    }
+
+    /**
+     * The most of this force a formation can ever be, as a percentage of the lances that can be reassigned.
+     *
+     * <p>A lance is only ever given a formation its own ruleset offered it, so a formation no lance is offered
+     * cannot be placed at all, and one offered to a third of them tops out at a third. This is the number the
+     * player's request has to be measured against; asking beyond it is asking for something no roll can produce.</p>
+     *
+     * @param formationName the formation type to look up
+     *
+     * @return the ceiling as a whole percentage, {@code 0} when the force never offers it
+     */
+    public int ceilingPercentFor(String formationName) {
+        if ((formationName == null) || (tweakableNodes <= 0)) {
+            return 0;
+        }
+        int placeable = placeableNodes.getOrDefault(formationName.trim(), 0);
+        return (int) Math.floor((100.0 * placeable) / tweakableNodes);
     }
 
     /**
@@ -106,16 +129,22 @@ public record FormationMixPreview(int formationNodes,
         int formationNodeTotal = 0;
         int tweakableTotal = 0;
         Map<String, Double> shareTotals = new TreeMap<>();
+        Map<String, Integer> placeableTotals = new TreeMap<>();
         for (FormationMixPreview sample : samples) {
             formationNodeTotal += sample.formationNodes();
             tweakableTotal += sample.tweakableNodes();
             sample.defaultSharePercent().forEach((formationName, share) ->
                   shareTotals.merge(formationName, share, Double::sum));
+            sample.placeableNodes().forEach((formationName, placeable) ->
+                  placeableTotals.merge(formationName, placeable, Integer::sum));
         }
         Map<String, Double> averaged = new TreeMap<>();
         shareTotals.forEach((formationName, total) -> averaged.put(formationName, total / samples.size()));
+        Map<String, Integer> averagedPlaceable = new TreeMap<>();
+        placeableTotals.forEach((formationName, total) ->
+              averagedPlaceable.put(formationName, Math.round((float) total / samples.size())));
         return new FormationMixPreview(Math.round((float) formationNodeTotal / samples.size()),
-              Math.round((float) tweakableTotal / samples.size()), averaged);
+              Math.round((float) tweakableTotal / samples.size()), averaged, averagedPlaceable);
     }
 
     /**
@@ -152,6 +181,7 @@ public record FormationMixPreview(int formationNodes,
     /** Running counts, assembled into an immutable {@link FormationMixPreview}. */
     private static final class Tally {
         private final Map<String, Double> expectedNodes = new TreeMap<>();
+        private final Map<String, Integer> placeableNodes = new TreeMap<>();
         private int formationNodes;
         private int tweakableNodes;
 
@@ -167,6 +197,9 @@ public record FormationMixPreview(int formationNodes,
                 return;
             }
             tweakableNodes++;
+            // Every formation this node was offered is one more node that could be given it, which is what sets
+            // the ceiling on a request for that formation.
+            offered.keySet().forEach(formationName -> placeableNodes.merge(formationName, 1, Integer::sum));
             int totalWeight = offered.values().stream().mapToInt(Integer::intValue).sum();
             if (totalWeight <= 0) {
                 return;
@@ -183,7 +216,7 @@ public record FormationMixPreview(int formationNodes,
                 expectedNodes.forEach((formationName, expected) ->
                       shares.put(formationName, 100.0 * expected / tweakableNodes));
             }
-            return new FormationMixPreview(formationNodes, tweakableNodes, shares);
+            return new FormationMixPreview(formationNodes, tweakableNodes, shares, placeableNodes);
         }
     }
 }

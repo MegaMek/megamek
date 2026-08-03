@@ -226,4 +226,53 @@ class FormationBudgetAllocatorTest {
         assertTrue(report.warnings().getFirst().contains("Hunter"));
         assertEquals(0, report.totalAssigned());
     }
+
+    /**
+     * With restrictions on, a formation can only be placed where it was offered. This is the rule the ceiling
+     * describes, and the reason a request beyond the ceiling cannot be filled.
+     */
+    @Test
+    void withRestrictionsOnOnlyOfferedLancesArePlaced() {
+        List<ForceDescriptor> lances = new ArrayList<>();
+        lances.add(node("Battle", "Recon"));
+        lances.add(node("Battle", "Fire"));
+        lances.add(node("Battle", "Fire"));
+
+        Map<ForceDescriptor, String> claimed = new HashMap<>();
+        int placed = FormationBudgetAllocator.assignFormation(lances, claimed, "Recon", 3, false);
+
+        assertEquals(1, placed, "only the one lance offered Recon may take it");
+    }
+
+    /** With restrictions off, any lance can take it - which is what makes an all-Recon force possible. */
+    @Test
+    void withRestrictionsOffAnyLanceCanBePlaced() {
+        List<ForceDescriptor> lances = new ArrayList<>();
+        lances.add(node("Battle", "Recon"));
+        lances.add(node("Battle", "Fire"));
+        lances.add(node("Battle", "Fire"));
+
+        Map<ForceDescriptor, String> claimed = new HashMap<>();
+        int placed = FormationBudgetAllocator.assignFormation(lances, claimed, "Recon", 3, true);
+
+        assertEquals(3, placed, "with restrictions off every lance may take it");
+    }
+
+    /**
+     * An override should depart from the ruleset only as far as it has to, so the lances that were already offered
+     * the formation are used before ones being overridden onto it.
+     */
+    @Test
+    void anOverrideUsesTheOfferedLancesFirst() {
+        ForceDescriptor notOffered = node("Battle", "Fire");
+        ForceDescriptor offered = node("Battle", "Recon");
+        List<ForceDescriptor> lances = new ArrayList<>(List.of(notOffered, offered));
+
+        Map<ForceDescriptor, String> claimed = new HashMap<>();
+        FormationBudgetAllocator.assignFormation(lances, claimed, "Recon", 1, true);
+
+        assertEquals("Recon", claimed.get(offered),
+              "the lance the ruleset already offered Recon must be used before one being overridden");
+        assertNull(claimed.get(notOffered));
+    }
 }

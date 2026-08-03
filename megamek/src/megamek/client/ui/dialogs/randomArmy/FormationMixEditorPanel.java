@@ -90,14 +90,27 @@ public class FormationMixEditorPanel extends JPanel implements Scrollable {
 
     private final Map<String, JSpinner> spinners = new TreeMap<>();
     private final FormationMixPreview preview;
+    private final boolean allowUnofferedFormations;
 
     /**
-     * Builds an editor for the formations a force offers.
+     * Builds an editor for the formations a force offers, held to what the ruleset allows.
      *
      * @param preview what the force offers, from a structure-only build
      */
     public FormationMixEditorPanel(FormationMixPreview preview) {
+        this(preview, false);
+    }
+
+    /**
+     * Builds an editor for the formations a force offers.
+     *
+     * @param preview                  what the force offers, from a structure-only build
+     * @param allowUnofferedFormations {@code true} to let each request run to the whole force rather than stopping
+     *                                 at what the ruleset offers
+     */
+    public FormationMixEditorPanel(FormationMixPreview preview, boolean allowUnofferedFormations) {
         this.preview = (preview == null) ? FormationMixPreview.EMPTY : preview;
+        this.allowUnofferedFormations = allowUnofferedFormations;
         setLayout(new GridBagLayout());
         build();
     }
@@ -307,9 +320,13 @@ public class FormationMixEditorPanel extends JPanel implements Scrollable {
             String displayName = (formationType == null) ? formationName : formationType.getNameWithFaction();
 
             JLabel label = new JLabel(displayName);
-            JSpinner spinner = new JSpinner(new SpinnerNumberModel(0, 0, 100, 5));
+            // The spinner stops at the most this force could actually deliver, so a number the player can dial in
+            // is always a number they can get. Overriding lifts it to the whole force.
+            int ceiling = allowUnofferedFormations ? 100 : preview.ceilingPercentFor(formationName);
+            JSpinner spinner = new JSpinner(new SpinnerNumberModel(0, 0, Math.max(0, ceiling), 5));
             spinner.setName("spnFormationMix" + formationName.replace(" ", ""));
-            String tooltip = describeFormation(formationType, displayName, preview.defaultShareFor(formationName));
+            String tooltip = describeFormation(formationType, displayName, preview.defaultShareFor(formationName),
+                  ceilingExplanation(formationName));
             spinner.setToolTipText(tooltip);
             label.setToolTipText(tooltip);
             label.setLabelFor(spinner);
@@ -449,8 +466,24 @@ public class FormationMixEditorPanel extends JPanel implements Scrollable {
      */
     private static @Nullable String describeFormation(@Nullable FormationType formationType, String displayName,
           double defaultShare) {
+        return describeFormation(formationType, displayName, defaultShare, null);
+    }
+
+    /**
+     * The hover text for one formation: what it is, what the ruleset would give it, and how much of it this force
+     * can hold.
+     *
+     * @param formationType      the formation to describe, may be {@code null} for an unregistered name
+     * @param displayName        the name to head the text with
+     * @param defaultShare       the ruleset's own share, or negative to leave it out
+     * @param ceilingExplanation why the request stops where it does, or {@code null} to leave it out
+     *
+     * @return the hover text, or {@code null} when there is nothing to say
+     */
+    private static @Nullable String describeFormation(@Nullable FormationType formationType, String displayName,
+          double defaultShare, @Nullable String ceilingExplanation) {
         String description = tooltipFor(formationType);
-        if ((description == null) && (defaultShare < 0)) {
+        if ((description == null) && (defaultShare < 0) && (ceilingExplanation == null)) {
             return null;
         }
         StringBuilder text = new StringBuilder("<html><body style='width:")
@@ -467,7 +500,30 @@ public class FormationMixEditorPanel extends JPanel implements Scrollable {
                         Math.round(defaultShare)))
                   .append("</i>");
         }
+        if (ceilingExplanation != null) {
+            text.append("<br><br>").append(ceilingExplanation);
+        }
         return text.append("</body></html>").toString();
+    }
+
+    /**
+     * Says in plain terms how much of this force one formation can be, and why.
+     *
+     * @param formationName the formation to explain
+     *
+     * @return the explanation for the hover text
+     */
+    private String ceilingExplanation(String formationName) {
+        int placeable = preview.placeableNodes().getOrDefault(formationName, 0);
+        if (allowUnofferedFormations) {
+            return Messages.getString("ForceGeneratorDialog.formationMix.ceiling.override",
+                  placeable, preview.tweakableNodes());
+        }
+        if (placeable <= 0) {
+            return Messages.getString("ForceGeneratorDialog.formationMix.ceiling.none");
+        }
+        return Messages.getString("ForceGeneratorDialog.formationMix.ceiling",
+              preview.ceilingPercentFor(formationName), placeable, preview.tweakableNodes());
     }
 
     /** Width the hover text wraps at. The Campaign Operations descriptions are a full sentence plus a citation. */
@@ -479,7 +535,7 @@ public class FormationMixEditorPanel extends JPanel implements Scrollable {
     public FormationMix getMix() {
         Map<String, Integer> percentages = new LinkedHashMap<>();
         spinners.forEach((formationName, spinner) -> percentages.put(formationName, (Integer) spinner.getValue()));
-        return new FormationMix(percentages);
+        return new FormationMix(percentages, allowUnofferedFormations);
     }
 
     /**
@@ -489,7 +545,22 @@ public class FormationMixEditorPanel extends JPanel implements Scrollable {
      */
     public void setMix(@Nullable FormationMix mix) {
         FormationMix toShow = (mix == null) ? FormationMix.EMPTY : mix;
-        spinners.forEach((formationName, spinner) -> spinner.setValue(toShow.percentFor(formationName)));
+        spinners.forEach((formationName, spinner) -> {
+            // A request carried over from an earlier force can exceed what this one can deliver - changing faction,
+            // year or weight reshapes every ceiling - so it is brought down to what is achievable now rather than
+            // being silently kept as a number the force cannot reach.
+            int ceiling = ((SpinnerNumberModel) spinner.getModel()).getMaximum() instanceof Integer maximum
+                  ? maximum
+                  : 100;
+            spinner.setValue(Math.min(toShow.percentFor(formationName), ceiling));
+        });
+    }
+
+    /**
+     * @return {@code true} when the request may place formations on lances the ruleset did not offer them to
+     */
+    public boolean isAllowingUnofferedFormations() {
+        return allowUnofferedFormations;
     }
 
     /** Clears every request. */

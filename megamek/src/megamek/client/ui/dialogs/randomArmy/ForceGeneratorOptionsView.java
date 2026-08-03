@@ -540,19 +540,38 @@ public class ForceGeneratorOptionsView extends JPanel implements FocusListener, 
                   Messages.getString("ForceGeneratorDialog.formationMix.title"), JOptionPane.WARNING_MESSAGE);
             return;
         }
-        FormationMixEditorPanel editor = new FormationMixEditorPanel(sampleFormationOffer(ruleset));
+        FormationMixPreview offer = sampleFormationOffer(ruleset);
+        FormationMixEditorPanel editor =
+              new FormationMixEditorPanel(offer, formationMix.allowUnofferedFormations());
         editor.setMix(formationMix);
 
         JScrollPane scroll = new JScrollPane(editor);
         // The editor sizes itself to the viewport width, so a horizontal bar would never have anything to scroll.
         scroll.setHorizontalScrollBarPolicy(ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER);
         scroll.setPreferredSize(UIUtil.scaleForGUI(760, 420));
-        int choice = JOptionPane.showConfirmDialog(this, scroll,
+
+        // The explanation and the restrictions toggle sit above the list, where they cannot be scrolled away from.
+        JPanel content = new JPanel(new BorderLayout(0, 4));
+        JLabel explanation = wrappedExplanation(formationMix.allowUnofferedFormations());
+        JCheckBox allowUnoffered =
+              new JCheckBox(Messages.getString("ForceGeneratorDialog.formationMix.allowUnoffered"));
+        allowUnoffered.setToolTipText(Messages.getString("ForceGeneratorDialog.formationMix.allowUnoffered.tooltip"));
+        allowUnoffered.setSelected(formationMix.allowUnofferedFormations());
+        content.add(explanation, BorderLayout.NORTH);
+        content.add(scroll, BorderLayout.CENTER);
+        content.add(allowUnoffered, BorderLayout.SOUTH);
+
+        int choice = JOptionPane.showConfirmDialog(this, content,
               Messages.getString("ForceGeneratorDialog.formationMix.title"),
               JOptionPane.OK_CANCEL_OPTION, JOptionPane.PLAIN_MESSAGE);
         if (choice == JOptionPane.OK_OPTION) {
-            formationMix = editor.getMix();
+            formationMix = new FormationMix(editor.getMix().percentages(), allowUnoffered.isSelected());
             refreshFormationMixSummary();
+            // Ticking the toggle inside the dialog raises every limit, so the request is re-read against the
+            // new limits by reopening rather than being applied against the ones that were on screen.
+            if (allowUnoffered.isSelected() != editor.isAllowingUnofferedFormations()) {
+                showFormationMixDialog();
+            }
         }
     }
 
@@ -642,8 +661,12 @@ public class ForceGeneratorOptionsView extends JPanel implements FocusListener, 
         }
         Ruleset ruleset = Ruleset.findRuleset(buildForceDescriptor());
         FormationMixEditorPanel editor = new FormationMixEditorPanel(
-              (ruleset == null) ? FormationMixPreview.EMPTY : sampleFormationOffer(ruleset));
+              (ruleset == null) ? FormationMixPreview.EMPTY : sampleFormationOffer(ruleset),
+              formationMix.allowUnofferedFormations());
         editor.setMix(formationMix);
+        // The editor clamps a carried-over request to what this force can reach, so read it straight back rather
+        // than leaving the stored mix promising a share the new selections cannot deliver.
+        formationMix = editor.getMix();
         // No OK button inline, so the request is read back on every change.
         editor.addMixChangeListener(() -> formationMix = editor.getMix());
         JScrollPane scroll = new JScrollPane(editor);
@@ -653,10 +676,60 @@ public class ForceGeneratorOptionsView extends JPanel implements FocusListener, 
         // below it off the dialog.
         scroll.setPreferredSize(UIUtil.scaleForGUI(720, INLINE_MIX_HEIGHT));
         panFormationMixInline.removeAll();
+        panFormationMixInline.add(buildFormationMixHeader(), BorderLayout.NORTH);
         panFormationMixInline.add(scroll, BorderLayout.CENTER);
         panFormationMixInline.revalidate();
         panFormationMixInline.repaint();
     }
+
+    /**
+     * The explanation and the restrictions toggle that sit above the mix editor.
+     *
+     * <p>Above the scroll pane rather than inside it: the explanation is the thing that stops a player reading the
+     * spinners as shares of the whole force, so it must not be something they can scroll away from.</p>
+     *
+     * @return the header panel
+     */
+    private JPanel buildFormationMixHeader() {
+        JPanel header = new JPanel(new BorderLayout(0, 2));
+        header.setOpaque(false);
+
+        boolean overriding = formationMix.allowUnofferedFormations();
+        header.add(wrappedExplanation(overriding), BorderLayout.CENTER);
+
+        JCheckBox allowUnoffered =
+              new JCheckBox(Messages.getString("ForceGeneratorDialog.formationMix.allowUnoffered"));
+        allowUnoffered.setToolTipText(Messages.getString("ForceGeneratorDialog.formationMix.allowUnoffered.tooltip"));
+        allowUnoffered.setSelected(overriding);
+        allowUnoffered.setOpaque(false);
+        // Turning restrictions off changes every spinner's limit, so the editor is rebuilt rather than adjusted.
+        allowUnoffered.addActionListener(event -> {
+            formationMix = new FormationMix(formationMix.percentages(), allowUnoffered.isSelected());
+            refreshInlineFormationMixEditor();
+        });
+        header.add(allowUnoffered, BorderLayout.SOUTH);
+        return header;
+    }
+
+    /**
+     * The paragraph explaining what the spinners mean, wrapped so it does not stretch the dialog.
+     *
+     * <p>The width lives here rather than in the resource so a translator writes plain prose rather than markup.</p>
+     *
+     * @param overriding {@code true} when the faction restrictions have been turned off
+     *
+     * @return the explanation label
+     */
+    private static JLabel wrappedExplanation(boolean overriding) {
+        String text = Messages.getString(overriding
+              ? "ForceGeneratorDialog.formationMix.explain.override"
+              : "ForceGeneratorDialog.formationMix.explain");
+        return new JLabel("<html><body style='width:" + UIUtil.scaleForGUI(EXPLANATION_WIDTH_PIXELS) + "px'>"
+              + text + "</body></html>");
+    }
+
+    /** Width the mix explanation wraps at, so a long paragraph cannot stretch the dialog. */
+    private static final int EXPLANATION_WIDTH_PIXELS = 700;
 
     /** Unscaled height of the inline mix editor, past which it scrolls rather than growing. */
     private static final int INLINE_MIX_HEIGHT = 260;

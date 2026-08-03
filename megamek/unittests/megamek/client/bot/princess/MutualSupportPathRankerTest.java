@@ -104,6 +104,8 @@ class MutualSupportPathRankerTest {
         // every unit's band: peak range 6, supports friends out to 9
         doReturn(new SupportEnvelope(6, 9)).when(testRanker)
               .getSupportEnvelope(any(Entity.class));
+        // the force forms up within 9 hexes of its centre of mass
+        doReturn(9).when(testRanker).formationRadius(any(Game.class));
     }
 
     private void setEnemyDistances(double fromCurrent, double fromDestination, Coords destination) {
@@ -114,28 +116,46 @@ class MutualSupportPathRankerTest {
         when(mockPath.getFinalCoords()).thenReturn(destination);
     }
 
+    /**
+     * The invariant, in its current form: ending inside the formation costs nothing. The formation's centre travels
+     * with the force, so a company advancing together is never charged however fast it advances.
+     */
     @Test
-    void testClosingPathPaysNoCohesionPenalty() {
-        // The invariant: far beyond every friend's supporting range, but the path closes toward the
-        // engagement band - no penalty of any kind.
-        when(mockFriend.getPosition()).thenReturn(new Coords(0, 40));
+    void advancingWithTheForceIsFree() {
+        when(mockFriend.getPosition()).thenReturn(new Coords(0, 14)); // 4 hexes from the destination
         setEnemyDistances(20.0, 15.0, CLOSING_DESTINATION);
         assertEquals(0.0, testRanker.calculateHerdingMod(null, mockPath), TOLERANCE);
     }
 
+    /**
+     * The behaviour this replaced an exemption with. Previously any closing path was exempt from cohesion entirely,
+     * which meant it switched off for the whole approach - the phase where formation actually matters - and a
+     * company gave back a formation it had been handed within a few rounds. Closing no longer buys immunity from
+     * leaving your own force behind.
+     */
+    @Test
+    void leavingTheForceBehindIsPenalisedEvenWhileClosing() {
+        when(mockBehavior.getHerdMentalityValue()).thenReturn(25.0);
+        when(mockFriend.getPosition()).thenReturn(new Coords(0, 25)); // 17 hexes from the destination
+        setEnemyDistances(20.0, 15.0, CLOSING_DESTINATION);
+
+        // 8 hexes outside the 9-hex formation, at the capped weight of aggression * 0.8 = 2.0, held at 5.0
+        assertEquals(8 * 2.0 * 5.0, testRanker.calculateHerdingMod(null, mockPath), TOLERANCE);
+    }
+
     @Test
     void testHoldingPathBeyondSupportIsPenalizedAtCappedWeight() {
-        // Not closing, and 6 hexes beyond the friend's 9-hex envelope. Herd slider is cranked to 10x the
-        // aggression weight, but the invariant caps the cohesion weight at aggression * 0.8 = 2.0.
+        // Not closing, and 6 hexes outside the formation. The setting is cranked to 10x the aggression weight,
+        // but the invariant caps the cohesion weight at aggression * 0.8 = 2.0.
         when(mockBehavior.getHerdMentalityValue()).thenReturn(25.0);
         when(mockFriend.getPosition()).thenReturn(new Coords(0, 26)); // 15 hexes from destination
         setEnemyDistances(20.0, 20.0, HOLDING_DESTINATION);
-        assertEquals(6 * 2.0, testRanker.calculateHerdingMod(null, mockPath), TOLERANCE);
+        assertEquals(6 * 2.0 * 5.0, testRanker.calculateHerdingMod(null, mockPath), TOLERANCE);
     }
 
     @Test
     void testHoldingInsideSupportIsFree() {
-        // Inside the friend's envelope, spacing costs nothing - the blob attractor is gone.
+        // Inside the formation, spacing costs nothing - the blob attractor is gone.
         when(mockFriend.getPosition()).thenReturn(new Coords(0, 18)); // 7 hexes from destination
         setEnemyDistances(20.0, 20.0, HOLDING_DESTINATION);
         assertEquals(0.0, testRanker.calculateHerdingMod(null, mockPath), TOLERANCE);

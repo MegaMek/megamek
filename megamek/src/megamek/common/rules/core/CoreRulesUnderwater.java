@@ -32,6 +32,7 @@ package megamek.common.rules.core;
  * affiliated with Microsoft.
  */
 
+import megamek.common.equipment.WeaponType;
 import megamek.common.rules.RulesUnderwater;
 
 public class CoreRulesUnderwater extends RulesUnderwater {
@@ -49,5 +50,57 @@ public class CoreRulesUnderwater extends RulesUnderwater {
      */
     public boolean waterBlocksLOS() {
         return false;
+    }
+
+    /**
+     * Get the short range of the weapon in water
+     * @param weaponType
+     * @return short range
+     */
+    public int getShortRange(WeaponType weaponType) {
+        if (weaponType.hasFlag(WeaponType.F_ENERGY)) {
+            return 0;
+        } else {
+            return weaponType.getWShortRange();
+        }
+    }
+
+    /**
+     * Get the medium range of the weapon in water
+     * @param weaponType
+     * @return medium range
+     */
+    public int getMediumRange(WeaponType weaponType) {
+        if (weaponType.hasFlag(WeaponType.F_ENERGY)) {
+            return weaponType.getShortRange();
+        } else {
+            return weaponType.getWMediumRange();
+        }
+    }
+
+    /**
+     * Get the long range of the weapon in water
+     * @param weaponType
+     * @return long range
+     */
+    public int getLongRange(WeaponType weaponType) {
+        if (weaponType.hasFlag(WeaponType.F_ENERGY)) {
+            return weaponType.getMediumRange();
+        } else {
+            return weaponType.getWLongRange();
+        }
+    }
+
+    /**
+     * Get the extreme range of the weapon in water
+     * @param weaponType
+     * @return extreme range
+     */
+    public int getExtremeRange(WeaponType weaponType) {
+        if (weaponType.hasFlag(WeaponType.F_ENERGY)) {
+            return weaponType.getLongRange();
+        } else {
+            return weaponType.getWExtremeRange();
+        }
     }
 }

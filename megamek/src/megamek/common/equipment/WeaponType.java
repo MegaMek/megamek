@@ -44,6 +44,7 @@ import megamek.common.RangeType;
 import megamek.common.alphaStrike.AlphaStrikeElement;
 import megamek.common.compute.Compute;
 import megamek.common.equipment.AmmoType.AmmoTypeEnum;
+import megamek.common.game.Game;
 import megamek.common.rolls.TargetRoll;
 import megamek.common.units.Entity;
 import megamek.common.weapons.AlamoMissileWeapon;
@@ -1039,10 +1040,10 @@ public class WeaponType extends EquipmentType {
     public int[] getWRanges() {
         return new int[] {
               minimumRange,
-              waterShortRange,
-              waterMediumRange,
-              waterLongRange,
-              waterExtremeRange
+              Game.rulesManager.getRulesUnderwater().getShortRange(this),
+              Game.rulesManager.getRulesUnderwater().getMediumRange(this),
+              Game.rulesManager.getRulesUnderwater().getLongRange(this),
+              Game.rulesManager.getRulesUnderwater().getExtremeRange(this),
         };
     }
 

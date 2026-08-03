@@ -153,6 +153,12 @@ public class ForceDescriptor {
     // when the formation rule fires, before the weighted pick, so it describes the choice rather than its outcome.
     // A node with one entry had no choice to make (a command lance, say); a node with none was never offered one.
     private Map<String, Integer> eligibleFormations = Map.of();
+    // The requested distribution of formation types, set on the root from the Force Generator's controls. Empty means
+    // no override, which reproduces generation exactly as it was before the mix existed. Deliberately not copied to
+    // children: the allocator reads it once from the root and works down from there.
+    private FormationMix formationMix = FormationMix.EMPTY;
+    // What the mix actually achieved, set on the root by the allocator. Null when no mix was applied.
+    private FormationMixReport formationMixReport;
     private String generationRule;
     private boolean topLevel;
     private boolean element;
@@ -2401,6 +2407,32 @@ public class ForceDescriptor {
 
     public void setEligibleFormations(Map<String, Integer> eligibleFormations) {
         this.eligibleFormations = (eligibleFormations == null) ? Map.of() : eligibleFormations;
+    }
+
+    /**
+     * The requested distribution of formation types across this force, set on the root node only.
+     *
+     * @return the requested mix, never {@code null}
+     */
+    public FormationMix getFormationMix() {
+        return (formationMix == null) ? FormationMix.EMPTY : formationMix;
+    }
+
+    public void setFormationMix(@Nullable FormationMix formationMix) {
+        this.formationMix = (formationMix == null) ? FormationMix.EMPTY : formationMix;
+    }
+
+    /**
+     * What the formation mix achieved on this force, requested against placed.
+     *
+     * @return the report, or {@code null} when no mix was applied
+     */
+    public @Nullable FormationMixReport getFormationMixReport() {
+        return formationMixReport;
+    }
+
+    public void setFormationMixReport(@Nullable FormationMixReport formationMixReport) {
+        this.formationMixReport = formationMixReport;
     }
 
     public String getGenerationRule() {

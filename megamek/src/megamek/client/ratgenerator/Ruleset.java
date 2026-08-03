@@ -259,6 +259,10 @@ public class Ruleset {
         // blocks before units are picked. Data-gated -- a no-op for any cluster that declares no
         // targets, so factions without <weightTarget> generate exactly as before.
         WeightBudgetAllocator.allocate(fd);
+        // Reshape which formation each node gets to match the requested mix, before those formations pick their
+        // units. Only formations the node's own rule offered are ever assigned, and a node the mix does not claim
+        // keeps what the ruleset rolled for it. A no-op for an empty mix.
+        fd.setFormationMixReport(FormationBudgetAllocator.allocate(fd));
         fd.generateUnits(l, PROGRESS_GENERATE_UNITS);
         if (null != l) {
             l.updateProgress(0, "Finalizing formation");

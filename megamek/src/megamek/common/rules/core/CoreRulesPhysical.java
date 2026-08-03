@@ -168,8 +168,8 @@ public class CoreRulesPhysical extends RulesPhysical {
                 if (m.getLocation() == armLoc
                       && type.isShield()
                       && !m.isInoperable()
-                && m.getCurrentDamageCapacity(attackingEntity, armLoc) > 0
-                && attackingEntity.hasRaisedShield(armLoc)) {
+                      && m.getCurrentDamageCapacity(attackingEntity, armLoc) > 0
+                      && m.curMode().equals(MiscType.S_ACTIVE_SHIELD)) {
                     return new HitData(armLoc);
                 }
             }

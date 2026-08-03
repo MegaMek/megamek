@@ -2350,6 +2350,9 @@ public abstract class Entity extends TurnOrdered
         return getCrew() == null || (getCrew().isCrewTypeNone());
     }
 
+    /**
+     * When the elements the game has don't match the entity, re-add them
+     */
     private void renumerateDisplacementAttacks() {
         Enumeration<AttackAction> attackActions = game.getDisplacementAttacks();
         while (attackActions.hasMoreElements()) {
@@ -11287,17 +11290,7 @@ public abstract class Entity extends TurnOrdered
         }
 
         if (isCharging() || isMakingDfa() || isRamming() || isOffBoard()) {
-            if (isCharging() && Game.rulesManager.getRulesPhysical().canChargeCancel()) {
-                ChargeAttackAction caa = (ChargeAttackAction) displacementAttack;
-                Entity target = (Entity) caa.getTarget(game);
-                if (target.isDestroyed() || target.isProne() || caa.toHit(game).getValue() >= 13) {
-                    displacementAttack = null;
-                } else {
-                    return false;
-                }
-            } else {
-                return false;
-            }
+            return false;
         }
 
         // must be active
@@ -11458,8 +11451,9 @@ public abstract class Entity extends TurnOrdered
             if (isCharging() && Game.rulesManager.getRulesPhysical().canChargeCancel()) {
                    ChargeAttackAction caa = (ChargeAttackAction) getDisplacementAttack();
                     Entity target = (Entity) caa.getTarget(game);
-                    if (target.isDestroyed() || target.isProne() || caa.toHit(game).getValue() >= 13) {
-                        setDisplacementAttack(null);
+                    if (target.isDestroyed() || target.isProne()) {
+                        game.removeDisplacementAttack(displacementAttack);
+                        displacementAttack = null;
                     } else {
                         return false;
                     }

@@ -2643,6 +2643,14 @@ public final class Game extends AbstractGame implements Serializable, PlanetaryC
     }
 
     /**
+     * Remove displacement attacks that were added previously
+     * @param ea
+     */
+    public void removeDisplacementAttack(AttackAction ea) {
+        pendingDisplacementAttacks.removeElement(ea);
+    }
+
+    /**
      * @return Enumeration of displacement attacks scheduled for the end of the physical phase.
      */
     public Enumeration<AttackAction> getDisplacementAttacks() {

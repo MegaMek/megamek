@@ -58,6 +58,7 @@ import megamek.common.Configuration;
 import megamek.common.Hex;
 import megamek.common.Player;
 import megamek.common.annotations.Nullable;
+import megamek.common.battlefieldSupport.BattlefieldSupportAsset;
 import megamek.common.equipment.Minefield;
 import megamek.common.game.Game;
 import megamek.common.game.IGame;
@@ -560,9 +561,7 @@ public class TilesetManager implements IPreferenceChangeListener {
         // image gets replaced with a processed version when the facings are loaded (see EntityImage.loadFacings),
         // and compare the damage level with the same calculation used when the EntityImage was created
         for (EntityImage onList : mekImageList) {
-            if ((onList.getTilesetBase() != null) && onList.getTilesetBase().equals(base)
-                  && onList.getCamouflage().equals(camouflage)
-                  && (onList.getDmgLvl() == EntityImage.calculateDamageLevel(entity))) {
+            if (hasSameImageCacheIdentity(onList, base, camouflage, entity)) {
                 entityImage = onList;
                 break;
             }
@@ -580,6 +579,13 @@ public class TilesetManager implements IPreferenceChangeListener {
         temp.add(entity.getId());
         temp.add(secondaryPos);
         mekImages.put(temp, entityImage);
+    }
+
+    static boolean hasSameImageCacheIdentity(EntityImage cached, Image base, Camouflage camouflage, Entity entity) {
+        return (cached.getTilesetBase() != null) && cached.getTilesetBase().equals(base)
+              && cached.getCamouflage().equals(camouflage)
+              && (cached.getDmgLvl() == EntityImage.calculateDamageLevel(entity))
+              && (cached.isAssetImage() == (entity instanceof BattlefieldSupportAsset));
     }
 
     /**

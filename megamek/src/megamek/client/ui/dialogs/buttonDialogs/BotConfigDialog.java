@@ -128,8 +128,8 @@ public class BotConfigDialog extends AbstractButtonDialog
           new TipMMToggleButton(Messages.getString("BotConfigDialog.iAmAPirateCheck"));
     private final MMToggleButton ignoreDamageOutputCheck =
           new TipMMToggleButton(Messages.getString("BotConfigDialog.ignoreDamageOutput"));
-    private final MMToggleButton exclusiveHerdingCheck =
-          new TipMMToggleButton(Messages.getString("BotConfigDialog.exclusiveHerdingCheck"));
+    private final MMToggleButton exclusiveMutualSupportCheck =
+          new TipMMToggleButton(Messages.getString("BotConfigDialog.exclusiveMutualSupportCheck"));
     private final MMToggleButton experimentalCheck =
           new TipMMToggleButton(Messages.getString("BotConfigDialog.experimentalCheck"));
 
@@ -142,7 +142,7 @@ public class BotConfigDialog extends AbstractButtonDialog
 
     private final TipSlider aggressionSlidebar = new TipSlider(SwingConstants.HORIZONTAL, 0, 10, 5);
     private final TipSlider fallShameSlidebar = new TipSlider(SwingConstants.HORIZONTAL, 0, 10, 5);
-    private final TipSlider herdingSlidebar = new TipSlider(SwingConstants.HORIZONTAL, 0, 10, 5);
+    private final TipSlider mutualSupportSlidebar = new TipSlider(SwingConstants.HORIZONTAL, 0, 10, 5);
     private final TipSlider selfPreservationSlidebar = new TipSlider(SwingConstants.HORIZONTAL, 0, 10, 5);
     private final TipSlider braverySlidebar = new TipSlider(SwingConstants.HORIZONTAL, 0, 10, 5);
     private final TipSlider antiCrowdingSlidebar = new TipSlider(SwingConstants.HORIZONTAL, 0, 10, 0);
@@ -397,11 +397,11 @@ public class BotConfigDialog extends AbstractButtonDialog
               "BotConfigDialog.aggressionSliderTitle"));
         panContent.add(Box.createVerticalStrut(7));
 
-        panContent.add(buildSliderWithDynamicTitle(herdingSlidebar,
-              Messages.getString("BotConfigDialog.herdingSliderMin"),
-              Messages.getString("BotConfigDialog.herdingSliderMax"),
-              Messages.getString("BotConfigDialog.herdingToolTip"),
-              "BotConfigDialog.herdingSliderTitle"));
+        panContent.add(buildSliderWithDynamicTitle(mutualSupportSlidebar,
+              Messages.getString("BotConfigDialog.mutualSupportSliderMin"),
+              Messages.getString("BotConfigDialog.mutualSupportSliderMax"),
+              Messages.getString("BotConfigDialog.mutualSupportToolTip"),
+              "BotConfigDialog.mutualSupportSliderTitle"));
         panContent.add(Box.createVerticalStrut(7));
 
         panContent.add(buildSliderWithDynamicTitle(fallShameSlidebar,
@@ -443,9 +443,9 @@ public class BotConfigDialog extends AbstractButtonDialog
             panContent.add(Box.createVerticalStrut(7));
         }
 
-        exclusiveHerdingCheck.setToolTipText(Messages.getString("BotConfigDialog.exclusiveHerdingCheckToolTip"));
-        exclusiveHerdingCheck.addActionListener(this);
-        panContent.add(exclusiveHerdingCheck);
+        exclusiveMutualSupportCheck.setToolTipText(Messages.getString("BotConfigDialog.exclusiveMutualSupportCheckToolTip"));
+        exclusiveMutualSupportCheck.addActionListener(this);
+        panContent.add(exclusiveMutualSupportCheck);
 
         iAmAPirateCheck.setToolTipText(Messages.getString("BotConfigDialog.iAmAPirateCheckToolTip"));
         iAmAPirateCheck.addActionListener(this);
@@ -575,11 +575,11 @@ public class BotConfigDialog extends AbstractButtonDialog
         selfPreservationSlidebar.setValue(princessBehavior.getSelfPreservationIndex());
         aggressionSlidebar.setValue(princessBehavior.getHyperAggressionIndex());
         fallShameSlidebar.setValue(princessBehavior.getFallShameIndex());
-        herdingSlidebar.setValue(princessBehavior.getHerdMentalityIndex());
+        mutualSupportSlidebar.setValue(princessBehavior.getMutualSupportIndex());
         braverySlidebar.setValue(princessBehavior.getBraveryIndex());
         antiCrowdingSlidebar.setValue(princessBehavior.getAntiCrowding());
         favorHigherTMMSlidebar.setValue(princessBehavior.getFavorHigherTMM());
-        exclusiveHerdingCheck.setSelected(princessBehavior.isExclusiveHerding());
+        exclusiveMutualSupportCheck.setSelected(princessBehavior.isExclusiveMutualSupport());
         iAmAPirateCheck.setSelected(princessBehavior.iAmAPirate());
         experimentalCheck.setSelected(princessBehavior.isExperimental());
         numberOfEnemiesToConsiderFacingSlidebar.setValue(princessBehavior.getNumberOfEnemiesToConsiderFacing());
@@ -633,12 +633,12 @@ public class BotConfigDialog extends AbstractButtonDialog
               (chosenPreset.getSelfPreservationIndex() != selfPreservationSlidebar.getValue() ||
                     chosenPreset.getHyperAggressionIndex() != aggressionSlidebar.getValue() ||
                     chosenPreset.getFallShameIndex() != fallShameSlidebar.getValue() ||
-                    chosenPreset.getHerdMentalityIndex() != herdingSlidebar.getValue() ||
+                    chosenPreset.getMutualSupportIndex() != mutualSupportSlidebar.getValue() ||
                     chosenPreset.getBraveryIndex() != braverySlidebar.getValue() ||
                     chosenPreset.getAntiCrowding() != antiCrowdingSlidebar.getValue() ||
                     chosenPreset.getFavorHigherTMM() != favorHigherTMMSlidebar.getValue() ||
                     chosenPreset.iAmAPirate() != iAmAPirateCheck.isSelected() ||
-                    chosenPreset.isExclusiveHerding() != exclusiveHerdingCheck.isSelected() ||
+                    chosenPreset.isExclusiveMutualSupport() != exclusiveMutualSupportCheck.isSelected() ||
                     chosenPreset.getNumberOfEnemiesToConsiderFacing()
                           != numberOfEnemiesToConsiderFacingSlidebar.getValue() ||
                     chosenPreset.getAllowFacingTolerance() != allowFacingToleranceSlidebar.getValue() ||
@@ -819,14 +819,14 @@ public class BotConfigDialog extends AbstractButtonDialog
         newBehavior.setFallShameIndex(fallShameSlidebar.getValue());
         newBehavior.setHyperAggressionIndex(aggressionSlidebar.getValue());
         newBehavior.setSelfPreservationIndex(selfPreservationSlidebar.getValue());
-        newBehavior.setHerdMentalityIndex(herdingSlidebar.getValue());
+        newBehavior.setMutualSupportIndex(mutualSupportSlidebar.getValue());
         newBehavior.setBraveryIndex(braverySlidebar.getValue());
         newBehavior.setFavorHigherTMM(favorHigherTMMSlidebar.getValue());
         newBehavior.setAntiCrowding(antiCrowdingSlidebar.getValue());
         newBehavior.setNumberOfEnemiesToConsiderFacing(numberOfEnemiesToConsiderFacingSlidebar.getValue());
         newBehavior.setAllowFacingTolerance(allowFacingToleranceSlidebar.getValue());
         newBehavior.setIAmAPirate(iAmAPirateCheck.isSelected());
-        newBehavior.setExclusiveHerding(exclusiveHerdingCheck.isSelected());
+        newBehavior.setExclusiveMutualSupport(exclusiveMutualSupportCheck.isSelected());
         newBehavior.setExperimental(experimentalCheck.isSelected());
         newBehavior.setIgnoreDamageOutput(ignoreDamageOutputCheck.isSelected());
 
@@ -868,14 +868,14 @@ public class BotConfigDialog extends AbstractButtonDialog
         tempBehavior.setRetreatEdge(withdrawEdgeCombo.getSelectedItem());
         tempBehavior.setHyperAggressionIndex(aggressionSlidebar.getValue());
         tempBehavior.setSelfPreservationIndex(selfPreservationSlidebar.getValue());
-        tempBehavior.setHerdMentalityIndex(herdingSlidebar.getValue());
+        tempBehavior.setMutualSupportIndex(mutualSupportSlidebar.getValue());
         tempBehavior.setBraveryIndex(braverySlidebar.getValue());
         tempBehavior.setAntiCrowding(antiCrowdingSlidebar.getValue());
         tempBehavior.setFavorHigherTMM(favorHigherTMMSlidebar.getValue());
         tempBehavior.setNumberOfEnemiesToConsiderFacing(numberOfEnemiesToConsiderFacingSlidebar.getValue());
         tempBehavior.setAllowFacingTolerance(allowFacingToleranceSlidebar.getValue());
         tempBehavior.setIAmAPirate(iAmAPirateCheck.isSelected());
-        tempBehavior.setExclusiveHerding(exclusiveHerdingCheck.isSelected());
+        tempBehavior.setExclusiveMutualSupport(exclusiveMutualSupportCheck.isSelected());
         tempBehavior.setExperimental(experimentalCheck.isSelected());
         tempBehavior.setIgnoreDamageOutput(ignoreDamageOutputCheck.isSelected());
 

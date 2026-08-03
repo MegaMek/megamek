@@ -49,7 +49,7 @@ import megamek.logging.MMLogger;
 /**
  * This class is a builder for settings for a Princess bot (BehaviorSettings) and also supports parsing such settings
  * from a yaml MM scenario definition. The difference to BehaviorSettings itself is that this builder can work with
- * incomplete settings, such as only a change to herd mentality or only a change to auto-flee. When building the final
+ * incomplete settings, such as only a change to mutual support or only a change to auto-flee. When building the final
  * BehaviorSettings, either default values or the values of a given other BehaviorSettings are used where the builder
  * has no value.
  *
@@ -66,7 +66,9 @@ public class PrincessSettingsBuilder {
     private static final String PRINCESS_SELF_PRESERVATION = "selfpreservation";
     private static final String PRINCESS_FALL_SHAME = "fallshame";
     private static final String PRINCESS_AGGRESSION = "hyperaggression";
-    private static final String PRINCESS_HERDING = "herdmentality";
+    private static final String PRINCESS_MUTUAL_SUPPORT = "mutualsupport";
+    /** Scenario key this setting used before it was renamed; still accepted so existing scenarios load. */
+    private static final String LEGACY_PRINCESS_HERDING = "herdmentality";
     private static final String PRINCESS_DESTINATION = "fleeto";
     private static final String PRINCESS_RETREAT = "withdrawto";
     private static final String PRINCESS_FLEE = "flee";
@@ -81,8 +83,8 @@ public class PrincessSettingsBuilder {
     @JsonAlias(PRINCESS_AGGRESSION)
     private int hyperAggression = -1;
 
-    @JsonAlias(PRINCESS_HERDING)
-    private int herdMentality = -1;
+    @JsonAlias({ PRINCESS_MUTUAL_SUPPORT, LEGACY_PRINCESS_HERDING })
+    private int mutualSupport = -1;
 
     private int bravery = -1;
 
@@ -123,8 +125,8 @@ public class PrincessSettingsBuilder {
     }
 
     @SuppressWarnings("unused")
-    public PrincessSettingsBuilder herdMentality(int herdMentality) {
-        this.herdMentality = herdMentality;
+    public PrincessSettingsBuilder mutualSupport(int mutualSupport) {
+        this.mutualSupport = mutualSupport;
         return this;
     }
 
@@ -194,8 +196,8 @@ public class PrincessSettingsBuilder {
         if (hyperAggression != -1) {
             settings.setHyperAggressionIndex(hyperAggression);
         }
-        if (herdMentality != -1) {
-            settings.setHerdMentalityIndex(herdMentality);
+        if (mutualSupport != -1) {
+            settings.setMutualSupportIndex(mutualSupport);
         }
         if (bravery != -1) {
             settings.setBraveryIndex(bravery);

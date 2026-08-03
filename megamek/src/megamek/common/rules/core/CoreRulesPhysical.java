@@ -39,6 +39,7 @@ import megamek.common.ToHitData;
 import megamek.common.annotations.Nullable;
 import megamek.common.board.Coords;
 import megamek.common.compute.Compute;
+import megamek.common.enums.BuildingType;
 import megamek.common.equipment.EquipmentType;
 import megamek.common.equipment.MiscMounted;
 import megamek.common.equipment.MiscType;
@@ -310,5 +311,13 @@ public class CoreRulesPhysical extends RulesPhysical {
         }
         return affaTarget.rollHitLocation(ToHitData.HIT_PUNCH,
               ToHitData.SIDE_FRONT);
+    }
+
+    /**
+     * {@inheritDoc}
+     * We can find clubs in any rubble. Core p.79
+     */
+    public int getClubFindInRubble() {
+        return 1;
     }
 }

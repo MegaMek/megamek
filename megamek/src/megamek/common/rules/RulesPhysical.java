@@ -219,4 +219,10 @@ public abstract class RulesPhysical {
      * @return the hit data for fall from above
      */
     public abstract HitData getFallFromAboveTable(Entity affaTarget);
+
+    /**
+     * What kind of rubble can you find a club in?
+     * @return the level of the rubble needed
+     */
+    public abstract int getClubFindInRubble();
 }

@@ -39,6 +39,7 @@ import megamek.common.Report;
 import megamek.common.ToHitData;
 import megamek.common.board.Coords;
 import megamek.common.compute.Compute;
+import megamek.common.enums.BuildingType;
 import megamek.common.equipment.MiscType;
 import megamek.common.equipment.Mounted;
 import megamek.common.game.Game;
@@ -380,5 +381,14 @@ public class TWRulesPhysical extends CoreRulesPhysical {
     public HitData getFallFromAboveTable(Entity affaTarget) {
         return affaTarget.rollHitLocation(ToHitData.HIT_PUNCH,
               ToHitData.SIDE_FRONT);
+    }
+
+    /**
+     * We can only find clubs in the rubble of medium buildings or higher
+     * @return building medium type value
+     */
+    @Override
+    public int getClubFindInRubble() {
+        return BuildingType.MEDIUM.getTypeValue();
     }
 }

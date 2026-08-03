@@ -87,4 +87,11 @@ public abstract class RulesExplosions {
      * @return the damage amount
      */
     public abstract int equipmentDamage(Mounted<?> mounted, WeaponType weaponType);
+
+    /**
+     * Are M and B pods explosive?
+     * @param mounted the mounted weapon
+     * @return true if they are
+     */
+    public abstract boolean arePodsExplosive(Mounted<?> mounted);
 }

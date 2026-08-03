@@ -39,8 +39,11 @@ import megamek.common.Report;
 import megamek.common.compute.Compute;
 import megamek.common.equipment.AmmoType;
 import megamek.common.equipment.IArmorState;
+import megamek.common.equipment.MiscType;
 import megamek.common.equipment.Mounted;
 import megamek.common.equipment.WeaponType;
+import megamek.common.equipment.WeaponTypeFlag;
+import megamek.common.equipment.enums.MiscTypeFlag;
 import megamek.common.rolls.Roll;
 import megamek.common.rules.RulesExplosions;
 import megamek.common.units.Entity;
@@ -201,12 +204,6 @@ public class CoreRulesExplosions extends RulesExplosions {
             }
         }
 
-        switch (weaponType.getAmmoType()) {
-            case AmmoType.AmmoTypeEnum.MPOD:
-            case AmmoType.AmmoTypeEnum.BPOD:
-                return 0;
-        }
-
         if (mounted.getEntity().getWeightClass() == EntityWeightClass.WEIGHT_SUPER_HEAVY) {
             // Superheavies have compressed criticals. They only explode based on the number of Crit Slots they take
             // up, not the base amount of crits they need. Core p.240
@@ -234,5 +231,13 @@ public class CoreRulesExplosions extends RulesExplosions {
         }
 
         return mounted.getNumCriticalSlots() * 2;
+    }
+
+    /**
+     * {@inheritDoc}
+     * These are not explosive in core. return false.
+     */
+    public boolean arePodsExplosive(Mounted<?> mounted) {
+        return false;
     }
 }

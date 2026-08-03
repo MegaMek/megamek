@@ -175,4 +175,15 @@ public class TWRulesExplosions extends CoreRulesExplosions {
         return weaponType.getExplosionDamage();
     }
 
+    /**
+     * Pods are explosive if they have not shot yet
+     * @param mounted the mounted weapon
+     * @return false if it has already shot, otherwise true
+     */
+    public boolean arePodsExplosive(Mounted<?> mounted) {
+        if (mounted.getLinked() == null || mounted.getLinked().getUsableShotsLeft() == 0) {
+            return false;
+        }
+        return true;
+    }
 }

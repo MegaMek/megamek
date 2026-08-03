@@ -33,6 +33,7 @@
 package megamek.client.ratgenerator;
 
 import java.util.Collections;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.TreeMap;
@@ -81,6 +82,40 @@ public record FormationMixPreview(int formationNodes,
         Tally tally = new Tally();
         walk(root, tally);
         return tally.toPreview();
+    }
+
+    /**
+     * Combines several samples of the same force into one stable picture.
+     *
+     * <p>A single build is not representative. Weight class is rolled per node while the tree is being built, and
+     * seven out of ten formation options are gated on it, so two builds of the same regiment offer noticeably
+     * different formations - one sample of a Draconis Combine regiment offered 27 types and the next 18. Showing the
+     * player a list that changes every time they open the editor would be worse than useless.</p>
+     *
+     * <p>Averaging over samples answers the question they are actually asking: what could this force contain, and
+     * how often. Sampling is affordable because a structure-only build costs a twentieth of a generation.</p>
+     *
+     * @param samples previews of the same force parameters, each from its own build
+     *
+     * @return the combined picture, or {@link #EMPTY} when there are no samples
+     */
+    public static FormationMixPreview merged(List<FormationMixPreview> samples) {
+        if ((samples == null) || samples.isEmpty()) {
+            return EMPTY;
+        }
+        int formationNodeTotal = 0;
+        int tweakableTotal = 0;
+        Map<String, Double> shareTotals = new TreeMap<>();
+        for (FormationMixPreview sample : samples) {
+            formationNodeTotal += sample.formationNodes();
+            tweakableTotal += sample.tweakableNodes();
+            sample.defaultSharePercent().forEach((formationName, share) ->
+                  shareTotals.merge(formationName, share, Double::sum));
+        }
+        Map<String, Double> averaged = new TreeMap<>();
+        shareTotals.forEach((formationName, total) -> averaged.put(formationName, total / samples.size()));
+        return new FormationMixPreview(Math.round((float) formationNodeTotal / samples.size()),
+              Math.round((float) tweakableTotal / samples.size()), averaged);
     }
 
     /**

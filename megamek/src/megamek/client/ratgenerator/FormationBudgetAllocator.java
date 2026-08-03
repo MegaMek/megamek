@@ -106,14 +106,58 @@ final class FormationBudgetAllocator {
             if (placed > 0) {
                 assigned.put(formationName, placed);
             }
-            if (placed < requested.get(formationName)) {
-                warnings.add(shortfallWarning(formationName, requested.get(formationName), placed));
-            }
         }
+        // Deliberately no shortfall warning here. A formation assigned now can still fail its own Campaign
+        // Operations requirements once units are drawn, at which point buildFormation drops it back to an ordinary
+        // lance - so what was placed is not yet what will be delivered. Shortfalls are worked out in
+        // tallyAchieved, after generation, against what the player will actually see.
 
         applyClaims(claimed);
         logOutcome(tweakable.size(), requested, assigned);
         return new FormationMixReport(preview, requested, assigned, warnings);
+    }
+
+    /**
+     * Recounts what the force actually ended up with, once its units have been drawn.
+     *
+     * <p>Assignment is not delivery. A formation the ruleset offered can still fail its own Campaign Operations
+     * requirements when the units are picked - a Battle Lance needs three of Brawler, Sniper or Skirmisher and half
+     * its units Heavy or better, which a Light lance cannot supply - and
+     * {@code ForceDescriptor.buildFormation} then drops it back to an ordinary lance. Counting at assignment time
+     * would report those as delivered and read as a mix that quietly under-performed.</p>
+     *
+     * @param root             the generated force
+     * @param assignmentReport what the allocator asked for, or {@code null} if no mix was applied
+     *
+     * @return the report with real achieved counts and the shortfalls that actually occurred
+     */
+    static FormationMixReport tallyAchieved(ForceDescriptor root, FormationMixReport assignmentReport) {
+        if ((root == null) || (assignmentReport == null)) {
+            return assignmentReport;
+        }
+        Map<String, Integer> achieved = new TreeMap<>();
+        countSurviving(root, achieved);
+
+        List<String> warnings = new ArrayList<>(assignmentReport.warnings());
+        assignmentReport.requestedNodes().forEach((formationName, requested) -> {
+            int delivered = achieved.getOrDefault(formationName, 0);
+            if (delivered < requested) {
+                warnings.add(shortfallWarning(formationName, requested, delivered));
+            }
+        });
+        LOGGER.info("[ForceGen][FormationMix] delivered {} against requested {}",
+              achieved, assignmentReport.requestedNodes());
+        return new FormationMixReport(assignmentReport.preview(), assignmentReport.requestedNodes(), achieved,
+              warnings);
+    }
+
+    /** Counts the formation each tweakable node actually kept once its units were drawn. */
+    private static void countSurviving(ForceDescriptor node, Map<String, Integer> achieved) {
+        if ((node.getEligibleFormations().size() > 1) && (node.getFormation() != null)) {
+            achieved.merge(node.getFormation().getName(), 1, Integer::sum);
+        }
+        node.getSubForces().forEach(subForce -> countSurviving(subForce, achieved));
+        node.getAttached().forEach(attachedForce -> countSurviving(attachedForce, achieved));
     }
 
     /**

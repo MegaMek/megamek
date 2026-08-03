@@ -51,6 +51,7 @@ import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 import java.util.Objects;
 import java.util.TreeMap;
 import java.util.concurrent.ExecutionException;
@@ -158,6 +159,13 @@ public class ForceGeneratorOptionsView extends JPanel implements FocusListener, 
     /** Post-generation summary: unit type rows, Light/Medium/Heavy/Assault columns. */
     private JTable tblSummary;
     private DefaultTableModel summaryModel;
+    /** What the formation mix delivered against what it asked for. */
+    private JLabel lblFormationMixResult;
+    /** Opens the formation mix editor; the label beside it shows any request in force. */
+    private JButton btnFormationMix;
+    private JLabel lblFormationMixSummary;
+    /** The requested distribution of formation types, empty until the player asks for one. */
+    private FormationMix formationMix = FormationMix.EMPTY;
 
     private JButton btnGenerate;
     private JButton btnExportMUL;
@@ -384,8 +392,12 @@ public class ForceGeneratorOptionsView extends JPanel implements FocusListener, 
         // to occupy the full dialog row, matching how panGroundRole / panInfRole are laid out above.
         JPanel transportAndSummary = new JPanel(new BorderLayout(10, 0));
         transportAndSummary.add(panTransport, BorderLayout.WEST);
-        JScrollPane panSummary = createSummaryTable();
-        transportAndSummary.add(panSummary, BorderLayout.CENTER);
+        JPanel summaryWithMix = new JPanel(new BorderLayout(0, 2));
+        summaryWithMix.setOpaque(false);
+        summaryWithMix.add(createSummaryTable(), BorderLayout.CENTER);
+        lblFormationMixResult = new JLabel(" ");
+        summaryWithMix.add(lblFormationMixResult, BorderLayout.SOUTH);
+        transportAndSummary.add(summaryWithMix, BorderLayout.CENTER);
 
         gbc.gridx = 0;
         gbc.gridy = y++;
@@ -418,6 +430,14 @@ public class ForceGeneratorOptionsView extends JPanel implements FocusListener, 
         chkDetachments.setToolTipText(Messages.getString("ForceGeneratorDialog.generateDetachments.tooltip"));
         chkDetachments.setSelected(true);
         panGenerateOptions.add(chkDetachments);
+        // Behind a button rather than inline: which formations a force offers depends on the selections above, so
+        // the list is a couple of dozen rows that would crowd out everything else on an already dense panel.
+        btnFormationMix = new JButton(Messages.getString("ForceGeneratorDialog.formationMix.button"));
+        btnFormationMix.setToolTipText(Messages.getString("ForceGeneratorDialog.formationMix.button.tooltip"));
+        btnFormationMix.addActionListener(event -> showFormationMixDialog());
+        panGenerateOptions.add(btnFormationMix);
+        lblFormationMixSummary = new JLabel(" ");
+        panGenerateOptions.add(lblFormationMixSummary);
         gbc.gridx = 1;
         gbc.gridy = y;
         add(panGenerateOptions, gbc);
@@ -603,6 +623,114 @@ public class ForceGeneratorOptionsView extends JPanel implements FocusListener, 
      * (e.g. MekHQ's company-generation dialog) can reuse the same input mapping without going through
      * {@link #generateForce()}'s SwingWorker plumbing. Does not run {@link Ruleset#processRoot} or any IO.
      */
+    /**
+     * Opens the formation mix editor for the force the current selections describe.
+     *
+     * <p>The offered formations are discovered by building that force's structure and stopping before any unit is
+     * drawn - a twentieth of the cost of generating it - because which formations a lance is offered depends on
+     * state that only exists once the tree is being built.</p>
+     */
+    private void showFormationMixDialog() {
+        Ruleset ruleset = Ruleset.findRuleset(buildForceDescriptor());
+        if (ruleset == null) {
+            JOptionPane.showMessageDialog(this,
+                  Messages.getString("ForceGeneratorDialog.formationMix.noRuleset"),
+                  Messages.getString("ForceGeneratorDialog.formationMix.title"), JOptionPane.WARNING_MESSAGE);
+            return;
+        }
+        FormationMixEditorPanel editor = new FormationMixEditorPanel(sampleFormationOffer(ruleset));
+        editor.setMix(formationMix);
+
+        JScrollPane scroll = new JScrollPane(editor);
+        scroll.setPreferredSize(UIUtil.scaleForGUI(760, 420));
+        int choice = JOptionPane.showConfirmDialog(this, scroll,
+              Messages.getString("ForceGeneratorDialog.formationMix.title"),
+              JOptionPane.OK_CANCEL_OPTION, JOptionPane.PLAIN_MESSAGE);
+        if (choice == JOptionPane.OK_OPTION) {
+            formationMix = editor.getMix();
+            refreshFormationMixSummary();
+        }
+    }
+
+    /**
+     * Samples what the currently described force offers, over several structure-only builds.
+     *
+     * <p>One build is not representative: weight class is rolled per node and most formation options are gated on
+     * it, so consecutive builds of the same regiment offer noticeably different formations. Sampling gives the
+     * player a list that does not change under them every time they open the editor.</p>
+     *
+     * @param ruleset the ruleset for the described force
+     *
+     * @return the combined picture of what the force offers
+     */
+    public FormationMixPreview sampleFormationOffer(Ruleset ruleset) {
+        List<FormationMixPreview> samples = new ArrayList<>();
+        for (int sample = 0; sample < FORMATION_OFFER_SAMPLES; sample++) {
+            ForceDescriptor probe = buildForceDescriptor();
+            ruleset.buildStructureOnly(probe);
+            samples.add(FormationMixPreview.of(probe));
+        }
+        return FormationMixPreview.merged(samples);
+    }
+
+    /**
+     * How many structure-only builds to average when working out what a force offers. A build costs about a
+     * twentieth of a generation, so this is still a fraction of one roll.
+     */
+    private static final int FORMATION_OFFER_SAMPLES = 15;
+
+    /** Shows on the main panel which formations the mix is asking for, or nothing at all when it asks for none. */
+    private void refreshFormationMixSummary() {
+        if (lblFormationMixSummary == null) {
+            return;
+        }
+        if (formationMix.isEmpty()) {
+            lblFormationMixSummary.setText(" ");
+            lblFormationMixSummary.setToolTipText(null);
+            return;
+        }
+        String requested = formationMix.percentages()
+              .entrySet()
+              .stream()
+              .map(entry -> entry.getKey() + " " + entry.getValue() + "%")
+              .collect(Collectors.joining(", "));
+        lblFormationMixSummary.setText(Messages.getString("ForceGeneratorDialog.formationMix.summary", requested));
+        lblFormationMixSummary.setToolTipText(requested);
+    }
+
+    /**
+     * Hides the button that opens the mix in a dialog, for a host showing the editor inline instead.
+     *
+     * @param visible {@code false} to hide the button and its summary
+     */
+    public void setFormationMixButtonVisible(boolean visible) {
+        if (btnFormationMix != null) {
+            btnFormationMix.setVisible(visible);
+        }
+        if (lblFormationMixSummary != null) {
+            lblFormationMixSummary.setVisible(visible);
+        }
+    }
+
+    /**
+     * The formation mix the player has asked for.
+     *
+     * @return the requested mix, never {@code null}
+     */
+    public FormationMix getFormationMix() {
+        return formationMix;
+    }
+
+    /**
+     * Sets the formation mix, for a host restoring saved options.
+     *
+     * @param formationMix the mix to apply, or {@code null} to clear
+     */
+    public void setFormationMix(@Nullable FormationMix formationMix) {
+        this.formationMix = (formationMix == null) ? FormationMix.EMPTY : formationMix;
+        refreshFormationMixSummary();
+    }
+
     public ForceDescriptor buildForceDescriptor() {
         ForceDescriptor fd = new ForceDescriptor();
         fd.setTopLevel(true);
@@ -626,6 +754,9 @@ public class ForceGeneratorOptionsView extends JPanel implements FocusListener, 
         Object selectedWeight = cbWeightClass.getSelectedItem();
         fd.setWeightClass(selectedWeight instanceof Integer ? (Integer) selectedWeight : null);
         fd.setAttachments(chkDetachments.isSelected());
+        // Empty unless the player opened the mix editor and asked for something, in which case the allocator
+        // returns immediately and the force generates exactly as it did before.
+        fd.setFormationMix(formationMix);
         if (forceDesc.getUnitType() != null) {
             switch (forceDesc.getUnitType()) {
                 case UnitType.MEK:
@@ -818,6 +949,7 @@ public class ForceGeneratorOptionsView extends JPanel implements FocusListener, 
      */
     private void updateSummaryTable(ForceDescriptor fd) {
         summaryModel.setRowCount(0);
+        updateFormationMixResult(fd);
         if (fd == null) {
             return;
         }
@@ -900,10 +1032,38 @@ public class ForceGeneratorOptionsView extends JPanel implements FocusListener, 
         return String.valueOf(squads);
     }
 
+    /**
+     * Reports what the formation mix delivered against what it asked for, and names anything it could not place.
+     *
+     * <p>Shown because the two often differ for reasons the player cannot see: a formation only a few of the force's
+     * lances are ever offered cannot take a large share however much is requested, and one that is assigned can
+     * still fail its own requirements when its units are drawn. A mix that silently delivers less than it was asked
+     * for reads as a mix that did nothing.</p>
+     *
+     * @param forceDescriptor the generated force, or {@code null} to blank the line
+     */
+    private void updateFormationMixResult(@Nullable ForceDescriptor forceDescriptor) {
+        if (lblFormationMixResult == null) {
+            return;
+        }
+        FormationMixReport report = (forceDescriptor == null) ? null : forceDescriptor.getFormationMixReport();
+        if ((report == null) || (report.totalRequested() == 0)) {
+            lblFormationMixResult.setText(" ");
+            lblFormationMixResult.setToolTipText(null);
+            return;
+        }
+        lblFormationMixResult.setText(Messages.getString("ForceGeneratorDialog.formationMix.result",
+              report.totalAssigned(), report.totalRequested(), report.preview().tweakableNodes()));
+        lblFormationMixResult.setToolTipText(report.warnings().isEmpty()
+              ? null
+              : "<html>" + String.join("<br>", report.warnings()) + "</html>");
+    }
+
     private void clearSummaryTable() {
         if (summaryModel != null) {
             summaryModel.setRowCount(0);
         }
+        updateFormationMixResult(null);
     }
 
     private void refreshFactions() {

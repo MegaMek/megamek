@@ -117,29 +117,7 @@ public class ForceGeneratorOptionsView extends JPanel implements FocusListener, 
     private final HashMap<String, String> formationDisplayNames = new HashMap<>();
     private final HashMap<String, String> flagDisplayNames = new HashMap<>();
 
-    private JPanel panGroundRole;
-    private JPanel panInfRole;
-    private JPanel panAirRole;
-
-    private JCheckBox chkRoleArtillery;
-    private JCheckBox chkRoleMissileArtillery;
-    private JCheckBox chkRoleTransport;
-    private JCheckBox chkRoleEngineer;
-
-    private JCheckBox chkRoleFieldGun;
-    private JCheckBox chkRoleFieldArtillery;
-    private JCheckBox chkRoleFieldMissileArtillery;
-    private JCheckBox chkRoleInfEngineer;
-    private JCheckBox chkRoleInfFieldworks;
-    private JCheckBox chkRoleInfBridgeLayer;
-    private JCheckBox chkRoleInfDemolition;
-    private JCheckBox chkRoleInfFirefighter;
-
-    private JCheckBox chkRoleAirRecon;
-    private JCheckBox chkRoleGroundSupport;
-    private JCheckBox chkRoleInterceptor;
-    private JCheckBox chkRoleAssault;
-    private JCheckBox chkRoleAirTransport;
+    private MissionRoleFilterPanel panMissionRoleFilters;
 
     private JTextField txtDropshipPct;
     private JTextField txtJumpshipPct;
@@ -193,51 +171,76 @@ public class ForceGeneratorOptionsView extends JPanel implements FocusListener, 
         this.gameOptions = gameOptions;
     }
 
+    /**
+     * Assembles the panel from its sections, in the order they appear on screen.
+     *
+     * <p>Each section adds its own rows and hands back the next free one, so the running row index stays the single
+     * thing they share.</p>
+     */
     private void initUi() {
         currentYear = gameOptions.intOption(OptionsConstants.ALLOWED_YEAR);
         forceDesc.setYear(currentYear);
-        RATGenerator rg = RATGenerator.getInstance();
-        rg.loadYear(currentYear);
+        RATGenerator.getInstance().loadYear(currentYear);
 
         setLayout(new GridBagLayout());
-        GridBagConstraints gbc = new GridBagConstraints();
-        gbc.anchor = GridBagConstraints.NORTHWEST;
-        gbc.fill = GridBagConstraints.HORIZONTAL;
+        GridBagConstraints constraints = new GridBagConstraints();
+        constraints.anchor = GridBagConstraints.NORTHWEST;
+        constraints.fill = GridBagConstraints.HORIZONTAL;
         int inset = UIUtil.scaleForGUI(5);
-        gbc.insets = new Insets(inset, inset, inset, inset);
+        constraints.insets = new Insets(inset, inset, inset, inset);
 
-        int y = 0;
+        int row = 0;
+        row = addForceDescriptionFields(constraints, row);
+        JPanel transportPanel = buildTransportPanel(constraints);
+        row = addFormationMixPanel(constraints, row);
+        row = addMissionRoleFilters(constraints, row);
+        row = addTransportAndSummary(constraints, row, transportPanel);
+        addGenerateControls(constraints, row);
 
-        gbc.gridx = 0;
-        gbc.gridy = y;
-        add(describedLabel("ForceGeneratorDialog.year"), gbc);
+        refreshFactions();
+    }
+
+    /**
+     * Adds the fields that describe the force: year, faction, unit type, formation, rating, weight and experience.
+     *
+     * @param constraints the shared constraints
+     * @param startRow the first free grid row
+     *
+     * @return the next free grid row
+     */
+    private int addForceDescriptionFields(GridBagConstraints constraints, int startRow) {
+        int row = startRow;
+
+        constraints.gridx = 0;
+        constraints.gridy = row;
+        add(describedLabel("ForceGeneratorDialog.year"), constraints);
         txtYear = new JTextField();
         txtYear.setEditable(true);
         txtYear.setText(Integer.toString(currentYear));
         txtYear.setToolTipText(Messages.getString("ForceGeneratorDialog.year.tooltip"));
-        gbc.gridx = 1;
-        gbc.gridy = y++;
-        add(txtYear, gbc);
+        constraints.gridx = 1;
+        constraints.gridy = row++;
+        add(txtYear, constraints);
         txtYear.addFocusListener(this);
-        gbc.gridx = 0;
-        gbc.gridy = y;
-        add(describedLabel("ForceGeneratorDialog.faction"), gbc);
+        constraints.gridx = 0;
+        constraints.gridy = row;
+        add(describedLabel("ForceGeneratorDialog.faction"), constraints);
         cbFaction = new JComboBox<>();
         cbFaction.setRenderer(factionRenderer);
-        gbc.gridx = 1;
-        gbc.gridy = y;
-        add(cbFaction, gbc);
+        constraints.gridx = 1;
+        constraints.gridy = row;
+        add(cbFaction, constraints);
         cbFaction.setToolTipText(Messages.getString("ForceGeneratorDialog.faction.tooltip"));
         cbFaction.addActionListener(this);
 
-        gbc.gridx = 2;
-        gbc.gridy = y;
-        add(describedLabel("ForceGeneratorDialog.subfaction"), gbc);
+        constraints.gridx = 2;
+        constraints.gridy = row;
+        add(describedLabel("ForceGeneratorDialog.subfaction"), constraints);
         cbSubFaction = new JComboBox<>();
         cbSubFaction.setRenderer(factionRenderer);
-        gbc.gridx = 3;
-        gbc.gridy = y++;
-        add(cbSubFaction, gbc);
+        constraints.gridx = 3;
+        constraints.gridy = row++;
+        add(cbSubFaction, constraints);
         cbSubFaction.setToolTipText(Messages.getString("ForceGeneratorDialog.subfaction.tooltip"));
         cbSubFaction.addActionListener(this);
 
@@ -251,45 +254,45 @@ public class ForceGeneratorOptionsView extends JPanel implements FocusListener, 
         // field already set drives this; no era picker is needed). Only `name` is mandatory in the
         // per-unit schema. See data/universe/commands/DC.SL.yml for the pilot data and schema notes.
 
-        gbc.gridx = 0;
-        gbc.gridy = y;
-        add(describedLabel("ForceGeneratorDialog.unitType"), gbc);
+        constraints.gridx = 0;
+        constraints.gridy = row;
+        add(describedLabel("ForceGeneratorDialog.unitType"), constraints);
         cbUnitType = new JComboBox<>();
         cbUnitType.setRenderer(new CBRenderer<>(Messages.getString("ForceGeneratorDialog.combined"),
               UnitType::getTypeName));
-        gbc.gridx = 1;
-        gbc.gridy = y;
-        add(cbUnitType, gbc);
+        constraints.gridx = 1;
+        constraints.gridy = row;
+        add(cbUnitType, constraints);
         cbUnitType.setToolTipText(Messages.getString("ForceGeneratorDialog.unitType.tooltip"));
         cbUnitType.addActionListener(this);
 
-        gbc.gridx = 2;
-        gbc.gridy = y;
-        add(describedLabel("ForceGeneratorDialog.formation"), gbc);
+        constraints.gridx = 2;
+        constraints.gridy = row;
+        add(describedLabel("ForceGeneratorDialog.formation"), constraints);
         cbFormation = new JComboBox<>();
         cbFormation.setRenderer(new CBRenderer<String>(Messages.getString("ForceGeneratorDialog.random"),
               formationDisplayNames::get));
-        gbc.gridx = 3;
-        gbc.gridy = y++;
-        add(cbFormation, gbc);
+        constraints.gridx = 3;
+        constraints.gridy = row++;
+        add(cbFormation, constraints);
         cbFormation.setToolTipText(Messages.getString("ForceGeneratorDialog.formation.tooltip"));
         cbFormation.addActionListener(this);
 
-        gbc.gridx = 0;
-        gbc.gridy = y;
-        add(describedLabel("ForceGeneratorDialog.rating"), gbc);
+        constraints.gridx = 0;
+        constraints.gridy = row;
+        add(describedLabel("ForceGeneratorDialog.rating"), constraints);
         cbRating = new JComboBox<>();
         cbRating.setRenderer(new CBRenderer<String>(Messages.getString("ForceGeneratorDialog.random"),
               ratingDisplayNames::get));
-        gbc.gridx = 1;
-        gbc.gridy = y;
-        add(cbRating, gbc);
+        constraints.gridx = 1;
+        constraints.gridy = row;
+        add(cbRating, constraints);
         cbRating.setToolTipText(Messages.getString("ForceGeneratorDialog.rating.tooltip"));
         cbRating.addActionListener(this);
 
-        gbc.gridx = 2;
-        gbc.gridy = y;
-        add(describedLabel("ForceGeneratorDialog.weight"), gbc);
+        constraints.gridx = 2;
+        constraints.gridy = row;
+        add(describedLabel("ForceGeneratorDialog.weight"), constraints);
         cbWeightClass = new JComboBox<>();
         cbWeightClass.setRenderer(new CBRenderer<Integer>(Messages.getString("ForceGeneratorDialog.random"),
               EntityWeightClass::getClassName));
@@ -298,56 +301,53 @@ public class ForceGeneratorOptionsView extends JPanel implements FocusListener, 
         cbWeightClass.addItem(EntityWeightClass.WEIGHT_MEDIUM);
         cbWeightClass.addItem(EntityWeightClass.WEIGHT_HEAVY);
         cbWeightClass.addItem(EntityWeightClass.WEIGHT_ASSAULT);
-        gbc.gridx = 3;
-        gbc.gridy = y++;
-        add(cbWeightClass, gbc);
+        constraints.gridx = 3;
+        constraints.gridy = row++;
+        add(cbWeightClass, constraints);
         cbWeightClass.setToolTipText(Messages.getString("ForceGeneratorDialog.weight.tooltip"));
         cbWeightClass.addActionListener(this);
 
-        gbc.gridx = 0;
-        gbc.gridy = y;
-        add(describedLabel("ForceGeneratorDialog.other"), gbc);
+        constraints.gridx = 0;
+        constraints.gridy = row;
+        add(describedLabel("ForceGeneratorDialog.other"), constraints);
         cbFlags = new JComboBox<>();
         cbFlags.setRenderer(new CBRenderer<String>("---", flagDisplayNames::get));
-        gbc.gridx = 1;
-        gbc.gridy = y;
-        add(cbFlags, gbc);
+        constraints.gridx = 1;
+        constraints.gridy = row;
+        add(cbFlags, constraints);
         cbFlags.setToolTipText(Messages.getString("ForceGeneratorDialog.other.tooltip"));
         cbFlags.addActionListener(this);
 
-        gbc.gridx = 2;
-        gbc.gridy = y;
-        add(describedLabel("ForceGeneratorDialog.experience"), gbc);
+        constraints.gridx = 2;
+        constraints.gridy = row;
+        add(describedLabel("ForceGeneratorDialog.experience"), constraints);
         cbExperience = new JComboBox<>();
         cbExperience.addItem(Messages.getString("ForceGeneratorDialog.random"));
         cbExperience.addItem(Messages.getString("ForceGeneratorDialog.green"));
         cbExperience.addItem(Messages.getString("ForceGeneratorDialog.regular"));
         cbExperience.addItem(Messages.getString("ForceGeneratorDialog.veteran"));
         cbExperience.addItem(Messages.getString("ForceGeneratorDialog.elite"));
-        gbc.gridx = 3;
-        gbc.gridy = y++;
-        add(cbExperience, gbc);
+        constraints.gridx = 3;
+        constraints.gridy = row++;
+        add(cbExperience, constraints);
         cbExperience.setToolTipText(Messages.getString("ForceGeneratorDialog.experience.tooltip"));
         cbExperience.addActionListener(this);
 
-        // The mission-role panels are created here but added to the layout after the formation mix, so the mix -
-        // which shapes the force - leads and these qualify it. See below.
-        gbc.gridwidth = 4;
-        panGroundRole = new JPanel(new GridBagLayout());
-        panGroundRole.setBorder(BorderFactory.createTitledBorder(
-              Messages.getString("ForceGeneratorDialog.missionRoles.title")));
-        panInfRole = new JPanel(new GridBagLayout());
-        panInfRole.setBorder(BorderFactory.createTitledBorder(
-              Messages.getString("ForceGeneratorDialog.missionRoles.title")));
-        panInfRole.setVisible(false);
-        panAirRole = new JPanel(new GridBagLayout());
-        panAirRole.setBorder(BorderFactory.createTitledBorder(
-              Messages.getString("ForceGeneratorDialog.missionRoles.title")));
-        panAirRole.setVisible(false);
+        // The sections below span the full dialog width rather than sitting in the four field columns.
+        constraints.gridwidth = 4;
+        constraints.gridx = 0;
+        constraints.gridy = row++;
+        return row;
+    }
 
-        gbc.gridx = 0;
-        gbc.gridy = y++;
-
+    /**
+     * Builds the transport panel: the DropShip, JumpShip, WarShip and cargo percentages, plus fighter complement.
+     *
+     * @param constraints the shared constraints
+     *
+     * @return the transport panel, for the caller to place beside the composition summary
+     */
+    private JPanel buildTransportPanel(GridBagConstraints constraints) {
         JPanel panTransport = new JPanel(new GridLayout(5, 2));
         txtDropshipPct = new JTextField("0");
         txtDropshipPct.setToolTipText(Messages.getString("ForceGeneratorDialog.dropshipPercentage.tooltip"));
@@ -363,54 +363,85 @@ public class ForceGeneratorOptionsView extends JPanel implements FocusListener, 
         // field. With the tooltip on the input box alone, hovering the thing that names the setting
         // explained nothing.
         panTransport.add(describedLabel("ForceGeneratorDialog.dropshipPercentage"));
-        panTransport.add(txtDropshipPct, gbc);
+        panTransport.add(txtDropshipPct, constraints);
         panTransport.add(describedLabel("ForceGeneratorDialog.jumpshipPercentage"));
-        panTransport.add(txtJumpshipPct, gbc);
+        panTransport.add(txtJumpshipPct, constraints);
         panTransport.add(describedLabel("ForceGeneratorDialog.warshipPercentage"));
-        panTransport.add(txtWarshipPct, gbc);
+        panTransport.add(txtWarshipPct, constraints);
         panTransport.add(describedLabel("ForceGeneratorDialog.cargoPct"));
-        panTransport.add(txtCargoPct, gbc);
+        panTransport.add(txtCargoPct, constraints);
         chkFighterComplement = new JCheckBox(Messages.getString("ForceGeneratorDialog.fighterComplement"));
         chkFighterComplement.setToolTipText(Messages.getString("ForceGeneratorDialog.fighterComplement.tooltip"));
         panTransport.add(chkFighterComplement);
         panTransport.add(new JLabel(""));
         panTransport.setBorder(BorderFactory.createTitledBorder(Messages.getString("ForceGeneratorDialog.transport")));
+        return panTransport;
+    }
 
-        // Pair the Transport panel with the post-generation Composition Summary table inside a single
-        // BorderLayout container so the summary absorbs whatever horizontal slack the GridBag's
-        // column-driven layout would otherwise leave between them. Transport sits at its preferred
-        // width on the WEST; the summary fills the rest of the row in the CENTER. Spans gridwidth=4
-        // to occupy the full dialog row, matching how panGroundRole / panInfRole are laid out above.
-        // The mix sits above Transport and the Composition Summary: it shapes the force, while those describe and
-        // carry it. Hidden unless a host asks for it inline; MegaMek opens the same editor from a button instead.
+    /**
+     * Adds the inline formation mix panel, which shapes the force and so leads the sections that describe it.
+     *
+     * <p>Hidden unless a host asks for it inline; MegaMek opens the same editor from a button instead.</p>
+     *
+     * @param constraints the shared constraints
+     * @param startRow the first free grid row
+     *
+     * @return the next free grid row
+     */
+    private int addFormationMixPanel(GridBagConstraints constraints, int startRow) {
+        int row = startRow;
         panFormationMixInline = new JPanel(new BorderLayout());
         panFormationMixInline.setBorder(BorderFactory.createTitledBorder(
               Messages.getString("ForceGeneratorDialog.formationMix.title")));
         panFormationMixInline.setVisible(false);
-        gbc.gridx = 0;
-        gbc.gridy = y++;
-        gbc.gridwidth = 4;
-        gbc.fill = GridBagConstraints.BOTH;
-        gbc.weightx = 1.0;
-        gbc.weighty = 1.0;
-        add(panFormationMixInline, gbc);
-        gbc.fill = GridBagConstraints.NONE;
-        gbc.weightx = 0.0;
-        gbc.weighty = 0.0;
+        constraints.gridx = 0;
+        constraints.gridy = row++;
+        constraints.gridwidth = 4;
+        constraints.fill = GridBagConstraints.BOTH;
+        constraints.weightx = 1.0;
+        constraints.weighty = 1.0;
+        add(panFormationMixInline, constraints);
+        constraints.fill = GridBagConstraints.NONE;
+        constraints.weightx = 0.0;
+        constraints.weighty = 0.0;
 
-        // The mission-role filters sit between the mix and the panels that describe and carry the force: they
-        // qualify what the mix produces rather than shaping it.
-        gbc.gridx = 0;
-        gbc.gridy = y++;
-        add(panGroundRole, gbc);
-        gbc.gridx = 0;
-        gbc.gridy = y++;
-        add(panInfRole, gbc);
-        gbc.gridx = 0;
-        gbc.gridy = y++;
-        add(panAirRole, gbc);
-        gbc.gridwidth = 1;
+        return row;
+    }
 
+    /**
+     * Adds the mission-role filters, which sit between the mix and the panels that describe and carry the force:
+     * they qualify what the mix produces rather than shaping it.
+     *
+     * @param constraints the shared constraints
+     * @param startRow the first free grid row
+     *
+     * @return the next free grid row
+     */
+    private int addMissionRoleFilters(GridBagConstraints constraints, int startRow) {
+        int row = startRow;
+        panMissionRoleFilters = new MissionRoleFilterPanel();
+        constraints.gridx = 0;
+        constraints.gridy = row++;
+        add(panMissionRoleFilters, constraints);
+        constraints.gridwidth = 1;
+        return row;
+    }
+
+    /**
+     * Adds the transport panel and the post-generation composition summary as one row.
+     *
+     * <p>They share a {@link BorderLayout} container so the summary absorbs whatever horizontal slack the
+     * column-driven outer layout would otherwise leave between them: transport sits at its preferred width on the
+     * WEST, the summary fills the rest in the CENTER.</p>
+     *
+     * @param constraints the shared constraints
+     * @param startRow the first free grid row
+     * @param panTransport the transport panel built earlier
+     *
+     * @return the next free grid row
+     */
+    private int addTransportAndSummary(GridBagConstraints constraints, int startRow, JPanel panTransport) {
+        int row = startRow;
         JPanel transportAndSummary = new JPanel(new BorderLayout(10, 0));
         transportAndSummary.add(panTransport, BorderLayout.WEST);
         JPanel summaryWithMix = new JPanel(new BorderLayout(0, 2));
@@ -420,24 +451,34 @@ public class ForceGeneratorOptionsView extends JPanel implements FocusListener, 
         summaryWithMix.add(lblFormationMixResult, BorderLayout.SOUTH);
         transportAndSummary.add(summaryWithMix, BorderLayout.CENTER);
 
-        gbc.gridx = 0;
-        gbc.gridy = y++;
-        gbc.gridwidth = 4;
-        gbc.fill = GridBagConstraints.HORIZONTAL;
-        gbc.weighty = 1.0;
-        add(transportAndSummary, gbc);
-        gbc.gridx = 0;
-        gbc.gridwidth = 1;
-        gbc.fill = GridBagConstraints.NONE;
-        gbc.weighty = 0;
+        constraints.gridx = 0;
+        constraints.gridy = row++;
+        constraints.gridwidth = 4;
+        constraints.fill = GridBagConstraints.HORIZONTAL;
+        constraints.weighty = 1.0;
+        add(transportAndSummary, constraints);
+        constraints.gridx = 0;
+        constraints.gridwidth = 1;
+        constraints.fill = GridBagConstraints.NONE;
+        constraints.weighty = 0;
+        return row;
+    }
 
+    /**
+     * Adds the button strip that drives generation: Generate and its options, Export MUL and Clear Force.
+     *
+     * @param constraints the shared constraints
+     * @param startRow the first free grid row
+     */
+    private void addGenerateControls(GridBagConstraints constraints, int startRow) {
+        int row = startRow;
         btnGenerate = new JButton(Messages.getString("ForceGeneratorDialog.generate"));
         btnGenerate.setToolTipText(Messages.getString("ForceGeneratorDialog.generate.tooltip"));
-        gbc.gridx = 0;
-        gbc.gridy = y;
-        gbc.gridwidth = 1;
-        gbc.weighty = 1.0;
-        add(btnGenerate, gbc);
+        constraints.gridx = 0;
+        constraints.gridy = row;
+        constraints.gridwidth = 1;
+        constraints.weighty = 1.0;
+        add(btnGenerate, constraints);
         btnGenerate.addActionListener(this);
 
         // Options that modify the Generate action sit directly beside it rather than among the
@@ -461,150 +502,29 @@ public class ForceGeneratorOptionsView extends JPanel implements FocusListener, 
         panGenerateOptions.add(btnFormationMix);
         lblFormationMixSummary = new JLabel(" ");
         panGenerateOptions.add(lblFormationMixSummary);
-        gbc.gridx = 1;
-        gbc.gridy = y;
-        add(panGenerateOptions, gbc);
+        constraints.gridx = 1;
+        constraints.gridy = row;
+        add(panGenerateOptions, constraints);
 
         btnExportMUL = new JButton(Messages.getString("ForceGeneratorDialog.exportMUL"));
         btnExportMUL.setToolTipText(Messages.getString("ForceGeneratorDialog.exportMUL.tooltip"));
-        gbc.gridx = 2;
-        gbc.gridy = y;
-        add(btnExportMUL, gbc);
+        constraints.gridx = 2;
+        constraints.gridy = row;
+        add(btnExportMUL, constraints);
         btnExportMUL.addActionListener(this);
         btnExportMUL.setEnabled(false);
 
         btnClear = new JButton(Messages.getString("ForceGeneratorDialog.clear"));
         btnClear.setToolTipText(Messages.getString("ForceGeneratorDialog.clear.tooltip"));
-        gbc.gridx = 3;
-        gbc.gridy = y;
-        gbc.weighty = 1.0;
-        add(btnClear, gbc);
+        constraints.gridx = 3;
+        constraints.gridy = row;
+        constraints.weighty = 1.0;
+        add(btnClear, constraints);
         btnClear.addActionListener(this);
         btnClear.setEnabled(false);
 
-        gbc = new GridBagConstraints();
-        gbc.anchor = GridBagConstraints.NORTHWEST;
-
-        // Only the mission roles that genuinely filter the unit table remain. Recon, Fire Support, Urban, Cavalry,
-        // Raider, Incendiary, Anti-Aircraft, Anti-Infantry and Infantry Support only nudged availability weights,
-        // which on a table of a few dozen entries was close to noise - and battlefield shape, which is what they
-        // were reached for, is what the formation mix below expresses directly.
-        chkRoleArtillery = createMissionRoleCheck(MissionRole.ARTILLERY);
-        gbc.gridx = 0;
-        gbc.gridy = 0;
-        panGroundRole.add(chkRoleArtillery, gbc);
-
-        chkRoleMissileArtillery = createMissionRoleCheck(MissionRole.MISSILE_ARTILLERY);
-        gbc.gridx = 1;
-        gbc.gridy = 0;
-        panGroundRole.add(chkRoleMissileArtillery, gbc);
-
-        chkRoleTransport = createMissionRoleCheck(MissionRole.CARGO);
-        gbc.gridx = 2;
-        gbc.gridy = 0;
-        panGroundRole.add(chkRoleTransport, gbc);
-
-        chkRoleEngineer = createMissionRoleCheck(MissionRole.ENGINEER);
-        gbc.gridx = 3;
-        gbc.gridy = 0;
-        panGroundRole.add(chkRoleEngineer, gbc);
-
-        gbc = new GridBagConstraints();
-        gbc.anchor = GridBagConstraints.NORTHWEST;
-
-        chkRoleFieldGun = createMissionRoleCheck(MissionRole.FIELD_GUN);
-        gbc.gridx = 0;
-        gbc.gridy = 0;
-        panInfRole.add(chkRoleFieldGun, gbc);
-
-        chkRoleFieldArtillery = createMissionRoleCheck(MissionRole.ARTILLERY);
-        gbc.gridx = 1;
-        gbc.gridy = 0;
-        panInfRole.add(chkRoleFieldArtillery, gbc);
-
-        chkRoleFieldMissileArtillery = createMissionRoleCheck(MissionRole.MISSILE_ARTILLERY);
-        gbc.gridx = 2;
-        gbc.gridy = 0;
-        panInfRole.add(chkRoleFieldMissileArtillery, gbc);
-
-        chkRoleInfEngineer = createMissionRoleCheck(MissionRole.ENGINEER);
-        gbc.gridx = 0;
-        gbc.gridy = 1;
-        panInfRole.add(chkRoleInfEngineer, gbc);
-
-        chkRoleInfFieldworks = createMissionRoleCheck(MissionRole.FIELDWORKS);
-        gbc.gridx = 1;
-        gbc.gridy = 1;
-        panInfRole.add(chkRoleInfFieldworks, gbc);
-
-        chkRoleInfBridgeLayer = createMissionRoleCheck(MissionRole.BRIDGE_LAYER);
-        gbc.gridx = 2;
-        gbc.gridy = 1;
-        panInfRole.add(chkRoleInfBridgeLayer, gbc);
-
-        chkRoleInfDemolition = createMissionRoleCheck(MissionRole.DEMOLITION);
-        gbc.gridx = 0;
-        gbc.gridy = 2;
-        panInfRole.add(chkRoleInfDemolition, gbc);
-
-        chkRoleInfFirefighter = createMissionRoleCheck(MissionRole.FIREFIGHTER);
-        gbc.gridx = 1;
-        gbc.gridy = 2;
-        panInfRole.add(chkRoleInfFirefighter, gbc);
-
-        gbc = new GridBagConstraints();
-        gbc.anchor = GridBagConstraints.NORTHWEST;
-
-        chkRoleAirRecon = createMissionRoleCheck(MissionRole.RECON);
-        gbc.gridx = 0;
-        gbc.gridy = 0;
-        panAirRole.add(chkRoleAirRecon, gbc);
-
-        chkRoleGroundSupport = createMissionRoleCheck(MissionRole.GROUND_SUPPORT);
-        gbc.gridx = 1;
-        gbc.gridy = 0;
-        panAirRole.add(chkRoleGroundSupport, gbc);
-
-        chkRoleInterceptor = createMissionRoleCheck(MissionRole.INTERCEPTOR);
-        gbc.gridx = 2;
-        gbc.gridy = 0;
-        panAirRole.add(chkRoleInterceptor, gbc);
-
-        JCheckBox chkRoleEscort = createMissionRoleCheck(MissionRole.ESCORT);
-        gbc.gridx = 0;
-        gbc.gridy = 1;
-        panAirRole.add(chkRoleEscort, gbc);
-
-        JCheckBox chkRoleBomber = createMissionRoleCheck(MissionRole.BOMBER);
-        gbc.gridx = 1;
-        gbc.gridy = 1;
-        panAirRole.add(chkRoleBomber, gbc);
-
-        chkRoleAssault = createMissionRoleCheck(MissionRole.ASSAULT);
-        gbc.gridx = 0;
-        gbc.gridy = 2;
-        panAirRole.add(chkRoleAssault, gbc);
-
-        chkRoleAirTransport = createMissionRoleCheck(MissionRole.CARGO);
-        gbc.gridx = 1;
-        gbc.gridy = 2;
-        panAirRole.add(chkRoleAirTransport, gbc);
-
-        refreshFactions();
     }
 
-    private JCheckBox createMissionRoleCheck(MissionRole role) {
-        String key = "MissionRole." + role.toString().toLowerCase();
-        JCheckBox chk = new JCheckBox(Messages.getString(key));
-        chk.setToolTipText(Messages.getString(key + ".tooltip"));
-        return chk;
-    }
-
-    /**
-     * Builds a {@link ForceDescriptor} from the current state of this options view's controls. Public so embedders
-     * (e.g. MekHQ's company-generation dialog) can reuse the same input mapping without going through
-     * {@link #generateForce()}'s SwingWorker plumbing. Does not run {@link Ruleset#processRoot} or any IO.
-     */
     /**
      * Opens the formation mix editor for the force the current selections describe.
      *
@@ -798,70 +718,7 @@ public class ForceGeneratorOptionsView extends JPanel implements FocusListener, 
         // Empty unless the player opened the mix editor and asked for something, in which case the allocator
         // returns immediately and the force generates exactly as it did before.
         fd.setFormationMix(formationMix);
-        if (forceDesc.getUnitType() != null) {
-            switch (forceDesc.getUnitType()) {
-                case UnitType.MEK:
-                case UnitType.TANK:
-                    if (chkRoleArtillery.isSelected()) {
-                        fd.getRoles().add(MissionRole.ARTILLERY);
-                    }
-                    if (chkRoleMissileArtillery.isSelected()) {
-                        fd.getRoles().add(MissionRole.MISSILE_ARTILLERY);
-                    }
-                    if (chkRoleTransport.isSelected()) {
-                        fd.getRoles().add(MissionRole.CARGO);
-                    }
-                    if (chkRoleEngineer.isSelected()) {
-                        fd.getRoles().add(MissionRole.ENGINEER);
-                    }
-                    break;
-                case UnitType.INFANTRY:
-                case UnitType.BATTLE_ARMOR:
-                    if (chkRoleFieldGun.isSelected()) {
-                        fd.getRoles().add(MissionRole.FIELD_GUN);
-                    }
-                    if (chkRoleFieldArtillery.isSelected()) {
-                        fd.getRoles().add(MissionRole.ARTILLERY);
-                    }
-                    if (chkRoleFieldMissileArtillery.isSelected()) {
-                        fd.getRoles().add(MissionRole.MISSILE_ARTILLERY);
-                    }
-                    if (chkRoleInfEngineer.isSelected()) {
-                        fd.getRoles().add(MissionRole.ENGINEER);
-                    }
-                    if (chkRoleInfFieldworks.isSelected()) {
-                        fd.getRoles().add(MissionRole.FIELDWORKS);
-                    }
-                    if (chkRoleInfBridgeLayer.isSelected()) {
-                        fd.getRoles().add(MissionRole.BRIDGE_LAYER);
-                    }
-                    if (chkRoleInfDemolition.isSelected()) {
-                        fd.getRoles().add(MissionRole.DEMOLITION);
-                    }
-                    if (chkRoleInfFirefighter.isSelected()) {
-                        fd.getRoles().add(MissionRole.FIREFIGHTER);
-                    }
-                    break;
-                case UnitType.AERO:
-                case UnitType.AEROSPACE_FIGHTER:
-                    if (chkRoleAirRecon.isSelected()) {
-                        fd.getRoles().add(MissionRole.RECON);
-                    }
-                    if (chkRoleGroundSupport.isSelected()) {
-                        fd.getRoles().add(MissionRole.GROUND_SUPPORT);
-                    }
-                    if (chkRoleInterceptor.isSelected()) {
-                        fd.getRoles().add(MissionRole.INTERCEPTOR);
-                    }
-                    if (chkRoleAssault.isSelected()) {
-                        fd.getRoles().add(MissionRole.ASSAULT);
-                    }
-                    if (chkRoleAirTransport.isSelected()) {
-                        fd.getRoles().add(MissionRole.CARGO);
-                    }
-                    break;
-            }
-        }
+        panMissionRoleFilters.applyTo(fd, forceDesc.getUnitType());
 
         // Internal storage uses fraction (0.0–N.0+); the textbox shows percentage (0–N00).
         // Preserve the user's input form in the textbox so it doesn't reset to "1.0" after Generate.
@@ -1184,9 +1041,7 @@ public class ForceGeneratorOptionsView extends JPanel implements FocusListener, 
         if (cbUnitType.getSelectedItem() != null) {
             Integer unitType = (Integer) cbUnitType.getSelectedItem();
             if (unitType != null) {
-                panGroundRole.setVisible(unitType == UnitType.MEK || unitType == UnitType.TANK);
-                panInfRole.setVisible(unitType == UnitType.INFANTRY || unitType == UnitType.BATTLE_ARMOR);
-                panAirRole.setVisible(unitType == UnitType.AEROSPACE_FIGHTER || unitType == UnitType.CONV_FIGHTER);
+                panMissionRoleFilters.showFor(unitType);
             }
         }
 

@@ -65,7 +65,10 @@ import megamek.common.annotations.Nullable;
 public class FormationMixEditorPanel extends JPanel {
 
     /** How many formation families sit side by side before wrapping to a new column. */
-    private static final int CATEGORY_COLUMNS = 2;
+    private static final int CATEGORY_COLUMNS = 3;
+
+    /** Left inset on a formation row, so members sit under their family heading rather than beside it. */
+    private static final int MEMBER_INDENT = 16;
 
     private final Map<String, JSpinner> spinners = new TreeMap<>();
     private final FormationMixPreview preview;
@@ -100,13 +103,23 @@ public class FormationMixEditorPanel extends JPanel {
         int column = 0;
         int row = 0;
         for (Map.Entry<String, Set<String>> family : families.entrySet()) {
-            constraints.gridx = column * 3;
-            constraints.gridy = row++;
-            constraints.gridwidth = 3;
-            JLabel familyLabel = new JLabel(family.getKey());
-            familyLabel.setFont(familyLabel.getFont().deriveFont(java.awt.Font.BOLD));
-            add(familyLabel, constraints);
-            constraints.gridwidth = 1;
+            // A family whose only member shares its name - Urban, Ranger, and every aerospace squadron - would
+            // otherwise print that name twice, once as a heading and once as the row beneath it. Show one row.
+            boolean hasOwnHeading = !(family.getValue().size() == 1
+                  && family.getValue().contains(family.getKey()));
+            if (hasOwnHeading) {
+                constraints.gridx = column * 3;
+                constraints.gridy = row++;
+                constraints.gridwidth = 3;
+                constraints.insets = new Insets(1, 4, 1, 4);
+                JLabel familyLabel = new JLabel(family.getKey());
+                familyLabel.setFont(familyLabel.getFont().deriveFont(java.awt.Font.BOLD));
+                add(familyLabel, constraints);
+                constraints.gridwidth = 1;
+            }
+            // Members sit under their heading rather than level with it, so the families read as blocks. A family
+            // shown as a single row has no heading to sit under, so it keeps the outer margin.
+            constraints.insets = new Insets(1, hasOwnHeading ? (4 + MEMBER_INDENT) : 4, 1, 4);
 
             for (String formationName : family.getValue()) {
                 FormationType formationType = FormationType.getFormationType(formationName);
@@ -127,6 +140,8 @@ public class FormationMixEditorPanel extends JPanel {
                 constraints.gridy = row;
                 constraints.weightx = 0.0;
                 add(label, constraints);
+                // Only the label carries the indent; the spinner and its default share line up across families.
+                constraints.insets = new Insets(1, 4, 1, 4);
                 constraints.gridx = (column * 3) + 1;
                 constraints.weightx = 1.0;
                 add(spinner, constraints);
@@ -134,6 +149,7 @@ public class FormationMixEditorPanel extends JPanel {
                 constraints.weightx = 0.0;
                 add(new JLabel(String.format("(%d%%)", Math.round(preview.defaultShareFor(formationName)))),
                       constraints);
+                constraints.insets = new Insets(1, hasOwnHeading ? (4 + MEMBER_INDENT) : 4, 1, 4);
                 row++;
             }
 
@@ -147,18 +163,32 @@ public class FormationMixEditorPanel extends JPanel {
     /**
      * Groups the offered formations under their family, so variants sit beneath the formation they vary.
      *
+     * <p>Ground families come first and aerospace families after, each alphabetically within its own block. A
+     * combined-arms force offers both, and interleaving them alphabetically put Aerospace Superiority Squadron above
+     * Assault and Interceptor Squadron between Fire and Pursuit, which reads as noise rather than structure.</p>
+     *
      * @param offered the formations this force offers
      *
-     * @return family name to the formations in it, both in name order
+     * @return family name to the formations in it, ground families first
      */
     private static Map<String, Set<String>> groupByFamily(Set<String> offered) {
-        Map<String, Set<String>> families = new TreeMap<>();
+        Map<String, Set<String>> ground = new TreeMap<>();
+        Map<String, Set<String>> aerospace = new TreeMap<>();
         for (String formationName : offered) {
             FormationType formationType = FormationType.getFormationType(formationName);
             String family = (formationType == null) ? formationName : formationType.getCategory();
-            families.computeIfAbsent(family, ignored -> new TreeSet<>()).add(formationName);
+            // A family is ground or aerospace as a whole; ask the family itself where it can be resolved, and fall
+            // back to the member when the family name is not a registered formation in its own right.
+            FormationType familyType = FormationType.getFormationType(family);
+            boolean isGround = (familyType != null)
+                  ? familyType.isGround()
+                  : ((formationType == null) || formationType.isGround());
+            Map<String, Set<String>> target = isGround ? ground : aerospace;
+            target.computeIfAbsent(family, ignored -> new TreeSet<>()).add(formationName);
         }
-        return families;
+        Map<String, Set<String>> ordered = new LinkedHashMap<>(ground);
+        ordered.putAll(aerospace);
+        return ordered;
     }
 
     /** Rows to fill before starting a new column, so the families spread evenly rather than running down one side. */

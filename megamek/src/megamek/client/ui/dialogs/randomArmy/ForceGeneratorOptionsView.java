@@ -330,22 +330,19 @@ public class ForceGeneratorOptionsView extends JPanel implements FocusListener, 
         cbExperience.setToolTipText(Messages.getString("ForceGeneratorDialog.experience.tooltip"));
         cbExperience.addActionListener(this);
 
+        // The mission-role panels are created here but added to the layout after the formation mix, so the mix -
+        // which shapes the force - leads and these qualify it. See below.
         gbc.gridwidth = 4;
         panGroundRole = new JPanel(new GridBagLayout());
-        gbc.gridx = 0;
-        gbc.gridy = y++;
-        add(panGroundRole, gbc);
-
+        panGroundRole.setBorder(BorderFactory.createTitledBorder(
+              Messages.getString("ForceGeneratorDialog.missionRoles.title")));
         panInfRole = new JPanel(new GridBagLayout());
-        gbc.gridx = 0;
-        gbc.gridy = y++;
-        add(panInfRole, gbc);
+        panInfRole.setBorder(BorderFactory.createTitledBorder(
+              Messages.getString("ForceGeneratorDialog.missionRoles.title")));
         panInfRole.setVisible(false);
-
         panAirRole = new JPanel(new GridBagLayout());
-        gbc.gridx = 0;
-        gbc.gridy = y++;
-        add(panAirRole, gbc);
+        panAirRole.setBorder(BorderFactory.createTitledBorder(
+              Messages.getString("ForceGeneratorDialog.missionRoles.title")));
         panAirRole.setVisible(false);
 
         gbc.gridx = 0;
@@ -397,10 +394,22 @@ public class ForceGeneratorOptionsView extends JPanel implements FocusListener, 
         gbc.weightx = 1.0;
         gbc.weighty = 1.0;
         add(panFormationMixInline, gbc);
-        gbc.gridwidth = 1;
         gbc.fill = GridBagConstraints.NONE;
         gbc.weightx = 0.0;
         gbc.weighty = 0.0;
+
+        // The mission-role filters sit between the mix and the panels that describe and carry the force: they
+        // qualify what the mix produces rather than shaping it.
+        gbc.gridx = 0;
+        gbc.gridy = y++;
+        add(panGroundRole, gbc);
+        gbc.gridx = 0;
+        gbc.gridy = y++;
+        add(panInfRole, gbc);
+        gbc.gridx = 0;
+        gbc.gridy = y++;
+        add(panAirRole, gbc);
+        gbc.gridwidth = 1;
 
         JPanel transportAndSummary = new JPanel(new BorderLayout(10, 0));
         transportAndSummary.add(panTransport, BorderLayout.WEST);

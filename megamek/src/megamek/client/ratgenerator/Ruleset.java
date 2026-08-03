@@ -206,6 +206,37 @@ public class Ruleset {
         void updateProgress(double progress, String message);
     }
 
+    /**
+     * Builds the force's structure without generating any units.
+     *
+     * <p>Produces the same tree {@link #processRoot} would - the same echelons, weight classes and formation
+     * assignments, and so the same {@link ForceDescriptor#getEligibleFormations() eligible formation sets} - but stops
+     * before a single unit is drawn. It exists so a caller can ask what a force <em>would</em> look like without
+     * paying for it: the progress weights in this class put building the tree at a twentieth of a full generation,
+     * against half for picking units and most of the rest for loading entities.</p>
+     *
+     * <p>Asking the generator rather than re-deriving rule matching by hand is the point. Which formations a node is
+     * offered depends on properties that only exist once the tree is being built - the weight class it rolled, its
+     * index among its siblings, the flags it inherited - so any prediction made from the ruleset XML alone would be
+     * an approximation that drifts from what generation actually does.</p>
+     *
+     * <p>The descriptor is modified in place, exactly as {@code processRoot} modifies it. Callers previewing a force
+     * they intend to generate later should pass a throwaway copy.</p>
+     *
+     * @param fd the force to build the structure of, modified in place
+     */
+    public void buildStructureOnly(ForceDescriptor fd) {
+        defaults.apply(fd);
+        // Bracket the shared name-generator faction the same way processRoot does, so a preview run cannot leave
+        // global state changed behind it. A preview may run on every change to the options panel.
+        String rngFaction = RandomNameGenerator.getInstance().getChosenFaction();
+        try {
+            buildForceTree(fd, null, 0);
+        } finally {
+            RandomNameGenerator.getInstance().setChosenFaction(rngFaction);
+        }
+    }
+
     public void processRoot(ForceDescriptor fd, ProgressListener l) {
         logger.debug("[ForceGen][Weight] processRoot ENTER: faction={} echelon={} unitType={} rating={} " +
                     "weightClass={} ({})",

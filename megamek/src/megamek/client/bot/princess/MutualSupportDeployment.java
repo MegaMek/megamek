@@ -42,8 +42,10 @@ import megamek.common.game.Game;
 import megamek.common.units.Entity;
 
 /**
- * Deployment half of the Mutual Support doctrine: get a company onto the board as a formation rather than as twelve
+ * Deployment half of the Mutual Support doctrine: get a force onto the board as a formation rather than as a set of
  * unrelated units.
+ *
+ * <h2>What stock deployment does</h2>
  *
  * <p>Stock deployment ranks a hex on terrain hazard and on how much open ground surrounds it, and never once looks at
  * where the rest of the force went. Worse, the candidate list arrives shuffled ({@code BotClient.getStartingCoordsArray}
@@ -53,31 +55,50 @@ import megamek.common.units.Entity;
  * independent uniform draw per unit. Measured on a 32-wide board, a twelve-unit company lands about 26 hexes wide and
  * never closes up.</p>
  *
- * <p>The fix is an ordering, not a score. Candidates are sorted by how far outside the formation they sit, so the capped
- * scan sees hexes near the force instead of a random spread. Everything already inside {@link #FORMATION_RADIUS_HEXES}
- * of the anchor ties at zero and keeps its shuffled order, which leaves the existing hazard and open-ground ranking free
- * to pick among them exactly as before. Cohesion decides <em>which part of the zone</em> to consider; terrain still
- * decides the hex.</p>
+ * <h2>The rule</h2>
+ *
+ * <p>A hex is in position when it satisfies both halves of a band:</p>
+ *
+ * <ul>
+ *     <li><b>At least {@link #MINIMUM_SPACING_HEXES} from the nearest friend</b>, so a force does not stack itself into
+ *     one artillery template or block its own movement lanes. Measured against the nearest friend, because crowding is
+ *     a local problem. This end of the band is best effort: it yields to support when a zone is too small to hold both
+ *     (see {@link #isInPosition}), which a shallow deployment strip routinely is.</li>
+ *     <li><b>Within its own optimum weapon range of the force's centre of mass</b>, so every unit can contribute fire
+ *     where the force is fighting. The range comes from {@link SupportEnvelope}, the same figure the movement half of
+ *     the doctrine uses, so a long-range unit is allowed to sit further out than a brawler exactly as it is allowed to
+ *     during the advance.</li>
+ * </ul>
+ *
+ * <p><b>The upper bound is measured against the centre of mass, never against the nearest friend.</b> This is the whole
+ * point. "Stay within supporting range of somebody" is satisfied by a chain, where each unit is close to one neighbour
+ * and the force as a whole is strung across the map - which is precisely the picket line this rule exists to break. A
+ * nearest-friend rule would rebuild it. Measuring against the centre forces the force to be compact rather than merely
+ * connected.</p>
+ *
+ * <h2>How it is applied</h2>
+ *
+ * <p>The fix is an ordering, not a score. Candidates are sorted by how badly they miss the band, so the capped scan
+ * sees hexes that keep the force together instead of a random spread. Everything already in position ties at zero and
+ * keeps its shuffled order, which leaves the existing hazard and open-ground ranking free to pick among them exactly as
+ * before. Cohesion decides <em>which part of the zone</em> to consider; terrain still decides the hex.</p>
  *
  * <p>This cannot slow the advance, which is the standing constraint on the whole doctrine: it changes where a unit
- * starts, never where it may move afterwards, and a concentrated company starts closer to its own centre of mass than a
- * dispersed one does.</p>
+ * starts, never where it may move afterwards, and every legal hex remains reachable.</p>
  *
  * @see MutualSupportPathRanker the movement half of the same doctrine
+ * @see SupportEnvelope the shared definition of supporting range
  */
 public final class MutualSupportDeployment {
 
     /**
-     * How far from the formation anchor a unit may deploy before it is treated as out of position, in hexes.
+     * Closest a unit will willingly deploy to a friend, in hexes.
      *
-     * <p>This is an upper bound on the formation, not a target frontage, and the two can differ a lot. The caller scans
-     * only about twenty candidates, so when more than that many hexes tie at zero the tie set is truncated and the
-     * force ends up tighter than the radius alone implies. On a shallow deployment strip a radius of 6 covers roughly
-     * 26 hexes, more than the scan will reach, and the measured company frontage came out near 7 hexes rather than the
-     * 13 the geometry suggests. Lower this only to tighten the force further; to loosen it, the scan limit in
-     * {@link Princess#rankDeploymentCoords(Entity, List)} is the binding constraint.</p>
+     * <p>Dispersion insurance. A force packed hex-to-hex fits inside a single artillery or bombing template and gets in
+     * its own way moving off the start line, so units keep a hex of clear ground between them even though cohesion
+     * would happily stack them.</p>
      */
-    static final int FORMATION_RADIUS_HEXES = 6;
+    static final int MINIMUM_SPACING_HEXES = 2;
 
     private MutualSupportDeployment() {
     }
@@ -97,64 +118,99 @@ public final class MutualSupportDeployment {
         if (candidates.size() < 2) {
             return candidates;
         }
-        return orderByFormation(candidates, formationAnchor(deployedUnit, candidates, friends, game));
+        List<Coords> friendlyPositions = anchorPositions(deployedUnit, friends, game);
+        Coords anchor = centroid(friendlyPositions.isEmpty() ? candidates : friendlyPositions);
+        return orderByFormation(candidates, anchor, friendlyPositions, supportRadius(deployedUnit));
     }
 
     /**
-     * Picks the point the formation should gather on.
-     *
-     * <p>The anchor is the centre of mass of the units already on the board. The first unit of a force has no such
-     * centre, so it anchors on the middle of its own deployment zone: that seeds the formation on the force's axis of
-     * advance instead of wherever the shuffle happened to look first, and stops one unlucky corner placement from
-     * dragging the whole company into it.</p>
+     * How far from the force's centre this unit may deploy, in hexes: its own optimum weapon range, floored at the
+     * minimum spacing so a weaponless or point-blank unit still gets a usable band rather than a zero-width one.
      */
-    static @Nullable Coords formationAnchor(Entity deployedUnit, List<Coords> candidates, List<Entity> friends,
-          Game game) {
-        List<Coords> anchorPoints = new ArrayList<>();
+    static int supportRadius(Entity deployedUnit) {
+        return Math.max(MINIMUM_SPACING_HEXES, SupportEnvelope.of(deployedUnit).peakRange());
+    }
+
+    /**
+     * Positions of the friendly units that get a vote on where the formation is.
+     *
+     * <p>A friend counts only if it is genuinely on the board beside us: same board, actually deployed, and not flying
+     * over the top of the fight. Airborne units cover ground they are not holding, so gathering a company on a
+     * fighter's shadow would be misleading.</p>
+     */
+    static List<Coords> anchorPositions(Entity deployedUnit, List<Entity> friends, Game game) {
+        List<Coords> positions = new ArrayList<>();
         for (Entity friend : friends) {
-            if (isEligibleAnchor(deployedUnit, friend, game)) {
-                anchorPoints.add(friend.getPosition());
+            if ((friend.getId() != deployedUnit.getId())
+                  && friend.isDeployed()
+                  && !friend.isOffBoard()
+                  && (friend.getPosition() != null)
+                  && !friend.isAirborne()
+                  && game.onTheSameBoard(deployedUnit, friend)) {
+                positions.add(friend.getPosition());
             }
         }
-        return centroid(anchorPoints.isEmpty() ? candidates : anchorPoints);
+        return positions;
     }
 
     /**
-     * A friend anchors the formation only if it is genuinely on the board next to us: same board, actually deployed,
-     * and not flying over the top of the fight. Airborne units cover ground they are not holding, so gathering the
-     * company on a fighter's shadow would be misleading.
-     */
-    private static boolean isEligibleAnchor(Entity deployedUnit, Entity friend, Game game) {
-        return (friend.getId() != deployedUnit.getId())
-              && friend.isDeployed()
-              && !friend.isOffBoard()
-              && (friend.getPosition() != null)
-              && !friend.isAirborne()
-              && game.onTheSameBoard(deployedUnit, friend);
-    }
-
-    /**
-     * Sorts candidates by how far outside the formation radius they lie.
+     * Sorts candidates by how badly they miss the formation band.
      *
-     * <p>The sort is deliberately stable and the key is deliberately blunt. Every hex inside the radius scores zero, so
-     * the whole in-formation set keeps the caller's original (shuffled) order and the terrain ranking downstream picks
-     * among them untouched. Only genuinely out-of-position hexes are pushed back, and they keep their relative order
-     * too, so a force that cannot fit inside the radius still degrades smoothly outwards.</p>
+     * <p>The sort is deliberately stable and the key is deliberately blunt. Every hex in position scores zero, so the
+     * whole in-position set keeps the caller's original (shuffled) order and the terrain ranking downstream picks among
+     * them untouched. Only hexes that are out of position are pushed back, and they keep their relative order too, so a
+     * force that cannot satisfy the band still degrades smoothly.</p>
      */
-    static List<Coords> orderByFormation(List<Coords> candidates, @Nullable Coords anchor) {
+    static List<Coords> orderByFormation(List<Coords> candidates, @Nullable Coords anchor,
+          List<Coords> friendlyPositions, int supportRadius) {
         if (anchor == null) {
             return candidates;
         }
-        List<Coords> ordered = new ArrayList<>(candidates);
-        ordered.sort(Comparator.comparingInt(candidate -> distanceOutsideFormation(anchor, candidate)));
+        // Score once per hex rather than once per comparison: a large deployment zone against a full company is
+        // tens of thousands of distance calls, and a comparator would repeat them for every comparison.
+        record ScoredHex(Coords hex, int outOfSupport, int crowding) {}
+
+        List<ScoredHex> scored = new ArrayList<>(candidates.size());
+        for (Coords candidate : candidates) {
+            scored.add(new ScoredHex(candidate,
+                  outOfSupport(candidate, anchor, supportRadius),
+                  crowding(candidate, friendlyPositions)));
+        }
+        scored.sort(Comparator.comparingInt(ScoredHex::outOfSupport).thenComparingInt(ScoredHex::crowding));
+
+        List<Coords> ordered = new ArrayList<>(candidates.size());
+        for (ScoredHex entry : scored) {
+            ordered.add(entry.hex());
+        }
         return ordered;
     }
 
     /**
-     * Hexes inside the formation radius are all equally good; beyond it, closer is better.
+     * Whether a candidate satisfies both ends of the band.
+     *
+     * <p>The two penalties are ranked, not added. Support comes first and spacing breaks ties within it, so the force
+     * never trades away being concentrated in order to spread out. That ordering matters because the two constraints
+     * genuinely conflict: a shallow deployment strip has nowhere near enough room for a full company to hold both a
+     * tight radius and a clear hex between every pair, so one of them has to yield, and concentration is the thing this
+     * rule exists to buy. Spacing then does the most it can within that - among hexes equally in support, the least
+     * crowded is scanned first.</p>
      */
-    static int distanceOutsideFormation(Coords anchor, Coords candidate) {
-        return Math.max(0, anchor.distance(candidate) - FORMATION_RADIUS_HEXES);
+    static boolean isInPosition(Coords candidate, Coords anchor, List<Coords> friendlyPositions, int supportRadius) {
+        return (outOfSupport(candidate, anchor, supportRadius) == 0) && (crowding(candidate, friendlyPositions) == 0);
+    }
+
+    /** How far beyond its supporting range of the force's centre a candidate sits; zero inside it. */
+    static int outOfSupport(Coords candidate, Coords anchor, int supportRadius) {
+        return Math.max(0, anchor.distance(candidate) - supportRadius);
+    }
+
+    /** How far inside the minimum spacing the nearest friend is; zero once there is room. */
+    static int crowding(Coords candidate, List<Coords> friendlyPositions) {
+        int worst = 0;
+        for (Coords friend : friendlyPositions) {
+            worst = Math.max(worst, MINIMUM_SPACING_HEXES - candidate.distance(friend));
+        }
+        return worst;
     }
 
     /**

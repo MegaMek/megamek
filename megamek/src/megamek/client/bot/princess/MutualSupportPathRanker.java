@@ -75,9 +75,6 @@ import megamek.logging.MMLogger;
 public class MutualSupportPathRanker extends BasicPathRanker {
     private final static MMLogger logger = MMLogger.create(MutualSupportPathRanker.class);
 
-    /** A friend supports out to the range where it still deals this share of its peak expected damage. */
-    private static final double SUPPORT_ENVELOPE_FRACTION = 0.5;
-
     /**
      * Invariant cap: the cohesion weight never exceeds this fraction of the aggression weight, so being
      * out of support can shade a choice between comparably aggressive paths but can never outbid closing.
@@ -117,15 +114,6 @@ public class MutualSupportPathRanker extends BasicPathRanker {
      */
     private static final double TEMPO_REFERENCE_MP = 15.0;
 
-    /**
-     * A friendly element's engagement envelope, derived from its damage profile once per round.
-     *
-     * @param peakRange      the range of the profile's peak expected damage - the range the unit closes to
-     * @param effectiveRange the longest range at which the unit still deals a meaningful share of its peak -
-     *                       the range out to which it supports a friend
-     */
-    record SupportEnvelope(int peakRange, int effectiveRange) {}
-
     private final Map<Integer, SupportEnvelope> envelopeCache = new HashMap<>();
     private int envelopeCacheRound = -1;
 
@@ -151,8 +139,8 @@ public class MutualSupportPathRanker extends BasicPathRanker {
     }
 
     /**
-     * Returns the engagement envelope for the given unit, computed from its {@link DamageProfile} (with its
-     * own pilot's gunnery) and cached for the round. Overridable for tests.
+     * Returns the given unit's {@link SupportEnvelope}, cached for the round because computing one walks the
+     * unit's whole weapon list and a company turn asks about every unit repeatedly. Overridable for tests.
      *
      * @param entity the unit whose envelope is wanted
      *
@@ -164,25 +152,7 @@ public class MutualSupportPathRanker extends BasicPathRanker {
             envelopeCache.clear();
             envelopeCacheRound = currentRound;
         }
-        return envelopeCache.computeIfAbsent(entity.getId(), unitId -> computeSupportEnvelope(entity));
-    }
-
-    private SupportEnvelope computeSupportEnvelope(Entity entity) {
-        int gunnery = (entity.getCrew() != null) ? entity.getCrew().getGunnery() : 4;
-        DamageProfile profile = DamageProfile.of(entity, false, gunnery);
-        if (!profile.hasWeapons()) {
-            return new SupportEnvelope(0, 0);
-        }
-        int peakRange = profile.peakExpectedRange();
-        double supportThreshold = profile.peakExpectedDamage() * SUPPORT_ENVELOPE_FRACTION;
-        int effectiveRange = peakRange;
-        for (int range = profile.maxRange(); range > peakRange; range--) {
-            if (profile.expectedDamage(range) >= supportThreshold) {
-                effectiveRange = range;
-                break;
-            }
-        }
-        return new SupportEnvelope(peakRange, effectiveRange);
+        return envelopeCache.computeIfAbsent(entity.getId(), unitId -> SupportEnvelope.of(entity));
     }
 
     /**

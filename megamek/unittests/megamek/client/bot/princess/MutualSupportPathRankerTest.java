@@ -102,7 +102,7 @@ class MutualSupportPathRankerTest {
         testRanker = spy(new MutualSupportPathRanker(mockPrincess));
         doReturn(mockPrincess).when(testRanker).getOwner();
         // every unit's band: peak range 6, supports friends out to 9
-        doReturn(new MutualSupportPathRanker.SupportEnvelope(6, 9)).when(testRanker)
+        doReturn(new SupportEnvelope(6, 9)).when(testRanker)
               .getSupportEnvelope(any(Entity.class));
     }
 

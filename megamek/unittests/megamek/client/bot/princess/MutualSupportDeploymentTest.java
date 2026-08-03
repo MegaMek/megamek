@@ -32,7 +32,7 @@
  */
 package megamek.client.bot.princess;
 
-import static megamek.client.bot.princess.MutualSupportDeployment.FORMATION_RADIUS_HEXES;
+import static megamek.client.bot.princess.MutualSupportDeployment.MINIMUM_SPACING_HEXES;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
@@ -53,12 +53,16 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 /**
- * Verifies the Mutual Support deployment rule: a force gathers on its centre of mass, terrain still chooses the hex
- * inside the formation, and only units genuinely on the board get a vote on where the formation is.
+ * Verifies the Mutual Support deployment band: a unit forms up no closer than the minimum spacing and no further than
+ * its own optimum weapon range from the force's centre of mass, terrain still chooses the hex inside that band, and
+ * only units genuinely on the board get a vote on where the formation is.
  */
 class MutualSupportDeploymentTest {
 
     private static final Coords ANCHOR = new Coords(16, 2);
+
+    /** A typical short-range brawler's optimum range, used where the exact figure does not matter. */
+    private static final int BRAWLER_RANGE = 4;
 
     private Game mockGame;
     private Entity deployingUnit;
@@ -91,41 +95,122 @@ class MutualSupportDeploymentTest {
         return strip;
     }
 
+    private static int forceDiameter(List<Coords> positions) {
+        int widest = 0;
+        for (Coords first : positions) {
+            for (Coords second : positions) {
+                widest = Math.max(widest, first.distance(second));
+            }
+        }
+        return widest;
+    }
+
+    // ---------------------------------------------------------------- the band
+
     @Test
-    void hexesInsideTheFormationCostNothing() {
-        assertEquals(0, MutualSupportDeployment.distanceOutsideFormation(ANCHOR, ANCHOR));
-        Coords onTheEdge = new Coords(ANCHOR.getX() + FORMATION_RADIUS_HEXES, ANCHOR.getY());
-        assertEquals(0, MutualSupportDeployment.distanceOutsideFormation(ANCHOR, onTheEdge));
+    void aHexInsideSupportingRangeCostsNothing() {
+        assertEquals(0, MutualSupportDeployment.outOfSupport(ANCHOR, ANCHOR, BRAWLER_RANGE));
+        Coords onTheEdge = new Coords(ANCHOR.getX() + BRAWLER_RANGE, ANCHOR.getY());
+        assertEquals(0, MutualSupportDeployment.outOfSupport(onTheEdge, ANCHOR, BRAWLER_RANGE));
     }
 
     @Test
-    void hexesOutsideTheFormationCostTheirOverrun() {
-        Coords wayOut = new Coords(ANCHOR.getX() + FORMATION_RADIUS_HEXES + 4, ANCHOR.getY());
-        assertEquals(4, MutualSupportDeployment.distanceOutsideFormation(ANCHOR, wayOut));
+    void aHexBeyondSupportingRangeCostsItsOverrun() {
+        Coords wayOut = new Coords(ANCHOR.getX() + BRAWLER_RANGE + 3, ANCHOR.getY());
+        assertEquals(3, MutualSupportDeployment.outOfSupport(wayOut, ANCHOR, BRAWLER_RANGE));
     }
+
+    @Test
+    void aHexCrowdingAFriendCostsTheSpacingItSteals() {
+        List<Coords> friend = List.of(new Coords(10, 1));
+
+        assertEquals(MINIMUM_SPACING_HEXES, MutualSupportDeployment.crowding(new Coords(10, 1), friend));
+        assertEquals(1, MutualSupportDeployment.crowding(new Coords(11, 1), friend));
+        assertEquals(0, MutualSupportDeployment.crowding(new Coords(12, 1), friend));
+        assertEquals(0, MutualSupportDeployment.crowding(new Coords(20, 1), friend));
+    }
+
+    @Test
+    void crowdingIsJudgedAgainstTheNearestFriendOnly() {
+        List<Coords> friends = List.of(new Coords(0, 1), new Coords(10, 1), new Coords(31, 1));
+
+        assertEquals(1,
+              MutualSupportDeployment.crowding(new Coords(11, 1), friends),
+              "distant friends must not add to a crowding penalty owed to the near one");
+    }
+
+    /** A unit with no friends yet cannot be crowded by anybody. */
+    @Test
+    void theFirstUnitIsNeverCrowded() {
+        assertEquals(0, MutualSupportDeployment.crowding(new Coords(5, 1), List.of()));
+    }
+
+    // ------------------------------------------------------- optimum range drives the band
+
+    @Test
+    void aLongRangedUnitMayFormUpFurtherOutThanABrawler() {
+        Coords wayOut = new Coords(ANCHOR.getX() + 9, ANCHOR.getY());
+
+        assertEquals(5, MutualSupportDeployment.outOfSupport(wayOut, ANCHOR, BRAWLER_RANGE));
+        assertEquals(0,
+              MutualSupportDeployment.outOfSupport(wayOut, ANCHOR, 12),
+              "a missile boat supports the centre from further out, so the same hex is in position for it");
+    }
+
+    // ---------------------------------------------------------------- ordering
 
     /**
-     * The load-bearing property: everything inside the formation ties, so the caller's original order survives and the
-     * downstream terrain ranking still gets a free choice among in-formation hexes.
+     * The load-bearing property: everything in position ties, so the caller's original order survives and the
+     * downstream terrain ranking still gets a free choice among in-position hexes.
      */
     @Test
-    void inFormationHexesKeepTheirOriginalOrder() {
+    void inPositionHexesKeepTheirOriginalOrder() {
         List<Coords> candidates = List.of(new Coords(19, 2), new Coords(14, 1), new Coords(16, 2));
-        List<Coords> ordered = MutualSupportDeployment.orderByFormation(candidates, ANCHOR);
 
-        assertEquals(candidates, ordered, "all three are within the radius, so nothing should be reordered");
+        List<Coords> ordered = MutualSupportDeployment.orderByFormation(candidates, ANCHOR, List.of(), 6);
+
+        assertEquals(candidates, ordered, "all three are in position, so nothing should be reordered");
     }
 
     @Test
-    void outOfPositionHexesArePushedBehindInFormationOnes() {
+    void outOfPositionHexesArePushedBehindInPositionOnes() {
         Coords nearAnchor = new Coords(16, 1);
         Coords farLeft = new Coords(0, 1);
         Coords farRight = new Coords(31, 1);
-        List<Coords> ordered = MutualSupportDeployment.orderByFormation(List.of(farLeft, farRight, nearAnchor), ANCHOR);
 
-        assertEquals(nearAnchor, ordered.getFirst(), "the in-formation hex must be scanned first");
+        List<Coords> ordered = MutualSupportDeployment.orderByFormation(List.of(farLeft, farRight, nearAnchor),
+              ANCHOR,
+              List.of(),
+              BRAWLER_RANGE);
+
+        assertEquals(nearAnchor, ordered.getFirst(), "the in-position hex must be scanned first");
         assertTrue(ordered.indexOf(farRight) < ordered.indexOf(farLeft),
               "of two out-of-position hexes, the nearer one should be scanned first");
+    }
+
+    /**
+     * The two ends of the band are ranked, not added. A shallow deployment strip has nowhere near enough room for a
+     * company to hold both a tight radius and a clear hex between every pair, so when they conflict concentration wins
+     * and spacing does the most it can within it. Adding the two penalties instead let spacing be traded away, and a
+     * measured company came out with its units standing shoulder to shoulder.
+     */
+    @Test
+    void spacingBreaksTiesButNeverOutranksSupport() {
+        List<Coords> friend = List.of(new Coords(16, 2));
+        Coords crowdedButSupported = new Coords(17, 2);
+        Coords roomyButUnsupported = new Coords(16 + BRAWLER_RANGE + 1, 2);
+        Coords roomyAndSupported = new Coords(16 + BRAWLER_RANGE, 2);
+
+        List<Coords> ordered = MutualSupportDeployment.orderByFormation(
+              List.of(crowdedButSupported, roomyButUnsupported, roomyAndSupported),
+              ANCHOR,
+              friend,
+              BRAWLER_RANGE);
+
+        assertEquals(roomyAndSupported, ordered.getFirst(), "in support and uncrowded is the best hex available");
+        assertEquals(crowdedButSupported,
+              ordered.get(1),
+              "a crowded hex inside support still beats a roomy one outside it");
     }
 
     /**
@@ -133,28 +218,65 @@ class MutualSupportDeploymentTest {
      * shuffled zone-wide list means each unit effectively draws at random from the whole zone.
      */
     @Test
-    void theScannedPrefixLandsInsideTheFormation() {
-        List<Coords> ordered = MutualSupportDeployment.orderByFormation(zoneStrip(), ANCHOR);
+    void theScannedPrefixLandsInsideTheBand() {
+        List<Coords> friends = List.of(new Coords(16, 1));
+
+        List<Coords> ordered = MutualSupportDeployment.orderByFormation(zoneStrip(), ANCHOR, friends, 6);
 
         for (Coords candidate : ordered.subList(0, 20)) {
-            assertEquals(0, MutualSupportDeployment.distanceOutsideFormation(ANCHOR, candidate),
-                  candidate + " was inside the scanned prefix but outside the formation");
+            assertTrue(MutualSupportDeployment.isInPosition(candidate, ANCHOR, friends, 6),
+                  candidate + " was inside the scanned prefix but out of position");
         }
     }
+
+    /**
+     * The reason the upper bound is measured against the centre of mass and never against the nearest friend.
+     *
+     * <p>Deploying a full company one unit at a time, "stay within supporting range of <em>somebody</em>" is satisfied
+     * by a chain that walks right across the map - which is the picket line this rule exists to break. Gathering on the
+     * centre keeps the force compact instead of merely connected.</p>
+     */
+    @Test
+    void aWholeCompanyFormsUpCompactRatherThanInAChain() {
+        List<Coords> zone = zoneStrip();
+        List<Coords> placed = new ArrayList<>();
+
+        for (int unit = 0; unit < 12; unit++) {
+            Coords anchor = MutualSupportDeployment.centroid(placed.isEmpty() ? zone : placed);
+            List<Coords> ordered = MutualSupportDeployment.orderByFormation(zone, anchor, placed, BRAWLER_RANGE);
+            for (Coords candidate : ordered) {
+                if (!placed.contains(candidate)) {
+                    placed.add(candidate);
+                    break;
+                }
+            }
+        }
+
+        assertEquals(12, placed.size());
+        assertTrue(forceDiameter(placed) <= 14,
+              "a twelve-unit company should form up compact, was " + forceDiameter(placed) + " hexes wide");
+        assertTrue(forceDiameter(placed) >= MINIMUM_SPACING_HEXES,
+              "the company must not stack itself into a single hex");
+    }
+
+    // ---------------------------------------------------------------- the anchor
 
     @Test
     void theForceGathersOnItsOwnCentreOfMass() {
         List<Entity> friends = List.of(friendAt(2, new Coords(4, 1)), friendAt(3, new Coords(8, 1)));
 
-        Coords anchor = MutualSupportDeployment.formationAnchor(deployingUnit, zoneStrip(), friends, mockGame);
+        List<Coords> positions = MutualSupportDeployment.anchorPositions(deployingUnit, friends, mockGame);
 
-        assertEquals(new Coords(6, 1), anchor);
+        assertEquals(new Coords(6, 1), MutualSupportDeployment.centroid(positions));
     }
 
     /** With nothing on the board yet, the first unit seeds the formation on the middle of its own zone. */
     @Test
     void theFirstUnitAnchorsOnTheZoneCentre() {
-        Coords anchor = MutualSupportDeployment.formationAnchor(deployingUnit, zoneStrip(), List.of(), mockGame);
+        List<Coords> positions = MutualSupportDeployment.anchorPositions(deployingUnit, List.of(), mockGame);
+        assertTrue(positions.isEmpty());
+
+        Coords anchor = MutualSupportDeployment.centroid(zoneStrip());
 
         assertNotNull(anchor);
         assertEquals(16, anchor.getX(), "a 0-31 strip should anchor near its middle");
@@ -170,21 +292,18 @@ class MutualSupportDeploymentTest {
         when(offBoard.isOffBoard()).thenReturn(true);
         Entity onTheGround = friendAt(5, new Coords(20, 1));
 
-        Coords anchor = MutualSupportDeployment.formationAnchor(deployingUnit,
-              zoneStrip(),
+        List<Coords> positions = MutualSupportDeployment.anchorPositions(deployingUnit,
               List.of(notYetDeployed, airborne, offBoard, onTheGround),
               mockGame);
 
-        assertEquals(new Coords(20, 1), anchor, "only the deployed ground unit should count");
+        assertEquals(List.of(new Coords(20, 1)), positions, "only the deployed ground unit should count");
     }
 
     @Test
     void aUnitDoesNotAnchorOnItself() {
         Entity self = friendAt(1, new Coords(30, 1));
 
-        Coords anchor = MutualSupportDeployment.formationAnchor(deployingUnit, zoneStrip(), List.of(self), mockGame);
-
-        assertEquals(16, anchor.getX(), "with itself excluded there are no friends, so the zone centre anchors");
+        assertTrue(MutualSupportDeployment.anchorPositions(deployingUnit, List.of(self), mockGame).isEmpty());
     }
 
     @Test
@@ -192,25 +311,33 @@ class MutualSupportDeploymentTest {
         when(mockGame.onTheSameBoard(any(), any())).thenReturn(false);
         List<Entity> friends = List.of(friendAt(2, new Coords(0, 1)));
 
-        Coords anchor = MutualSupportDeployment.formationAnchor(deployingUnit, zoneStrip(), friends, mockGame);
-
-        assertEquals(16, anchor.getX(), "an off-board-map friend should fall back to the zone centre");
+        assertTrue(MutualSupportDeployment.anchorPositions(deployingUnit, friends, mockGame).isEmpty());
     }
 
+    @Test
+    void anEmptyPositionSetHasNoCentre() {
+        assertNull(MutualSupportDeployment.centroid(List.of()));
+    }
+
+    // ---------------------------------------------------------------- zone shapes
+
     /**
-     * The formation radius is a doctrine figure, not a map figure, so it does not grow with the zone. When the zone is
-     * already tighter than a formation there is nothing to gather and the rule must get out of the way entirely.
+     * The band is a doctrine figure, not a map figure, so it does not grow with the zone. When the zone is already
+     * tighter than a formation there is nothing to gather and the rule must get out of the way entirely.
      */
     @Test
-    void aZoneSmallerThanTheFormationIsLeftExactlyAsItWas() {
+    void aZoneSmallerThanTheBandIsLeftExactlyAsItWas() {
         List<Coords> tinyZone = new ArrayList<>();
         for (int x = 14; x < 19; x++) {
             tinyZone.add(new Coords(x, 1));
         }
 
-        List<Coords> ordered = MutualSupportDeployment.prioritize(deployingUnit, tinyZone, List.of(), mockGame);
+        List<Coords> ordered = MutualSupportDeployment.orderByFormation(tinyZone,
+              MutualSupportDeployment.centroid(tinyZone),
+              List.of(),
+              BRAWLER_RANGE);
 
-        assertEquals(tinyZone, ordered, "every hex ties at zero, so the shuffled order must survive untouched");
+        assertEquals(tinyZone, ordered, "every hex is in position, so the shuffled order must survive untouched");
     }
 
     /** The anchor is derived from the candidates themselves, so it tracks whatever zone the scenario hands out. */
@@ -223,7 +350,7 @@ class MutualSupportDeploymentTest {
             }
         }
 
-        Coords anchor = MutualSupportDeployment.formationAnchor(deployingUnit, cornerZone, List.of(), mockGame);
+        Coords anchor = MutualSupportDeployment.centroid(cornerZone);
 
         assertNotNull(anchor);
         assertTrue(cornerZone.contains(anchor), "a corner zone must anchor inside itself, not at the board centre");
@@ -231,8 +358,8 @@ class MutualSupportDeploymentTest {
 
     /**
      * A split zone puts the notional centre between the two halves, where nothing can deploy. Only the first unit ever
-     * uses that point; it picks whichever real hex is nearest, and every unit after it gathers on that unit, so the
-     * force still ends up in one place rather than split down the middle.
+     * uses that point; every unit after it gathers on that unit, so the force still ends up in one place rather than
+     * split down the middle.
      */
     @Test
     void aSplitZoneStillGathersTheForceInOnePlace() {
@@ -244,30 +371,27 @@ class MutualSupportDeploymentTest {
             splitZone.add(new Coords(x, 1));
         }
 
-        Coords seedAnchor = MutualSupportDeployment.formationAnchor(deployingUnit, splitZone, List.of(), mockGame);
+        Coords seedAnchor = MutualSupportDeployment.centroid(splitZone);
         assertFalse(splitZone.contains(seedAnchor), "the notional centre of a split zone falls in the gap");
 
-        Entity firstDeployed = friendAt(2, new Coords(30, 1));
-        List<Coords> ordered = MutualSupportDeployment.prioritize(deployingUnit,
-              splitZone,
-              List.of(firstDeployed),
-              mockGame);
+        List<Coords> firstDeployed = List.of(new Coords(30, 1));
+        List<Coords> ordered = MutualSupportDeployment.orderByFormation(splitZone,
+              MutualSupportDeployment.centroid(firstDeployed),
+              firstDeployed,
+              BRAWLER_RANGE);
 
         assertEquals(new Coords(28, 1),
               ordered.getFirst(),
               "once one unit is down, the rest must gather on it rather than on the empty midpoint");
     }
 
+    // ---------------------------------------------------------------- guardrails
+
     @Test
     void aSingleCandidateIsHandedBackUntouched() {
         List<Coords> onlyOption = List.of(new Coords(3, 1));
 
         assertSame(onlyOption, MutualSupportDeployment.prioritize(deployingUnit, onlyOption, List.of(), mockGame));
-    }
-
-    @Test
-    void anEmptyPositionSetHasNoCentre() {
-        assertNull(MutualSupportDeployment.centroid(List.of()));
     }
 
     /**
@@ -277,12 +401,13 @@ class MutualSupportDeploymentTest {
     @Test
     void everyLegalHexSurvivesTheReordering() {
         List<Coords> zone = zoneStrip();
-        List<Entity> friends = List.of(friendAt(2, new Coords(4, 1)));
 
-        List<Coords> ordered = MutualSupportDeployment.prioritize(deployingUnit, zone, friends, mockGame);
+        List<Coords> ordered = MutualSupportDeployment.orderByFormation(zone,
+              ANCHOR,
+              List.of(new Coords(16, 1)),
+              BRAWLER_RANGE);
 
         assertEquals(zone.size(), ordered.size());
         assertTrue(ordered.containsAll(zone));
-        assertFalse(ordered.isEmpty());
     }
 }

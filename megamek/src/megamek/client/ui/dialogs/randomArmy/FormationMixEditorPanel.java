@@ -198,7 +198,9 @@ public class FormationMixEditorPanel extends JPanel implements Scrollable {
         constraints.weightx = 0.0;
         constraints.gridx = 1;
         column.add(headerLabel("ForceGeneratorDialog.formationMix.header.requested"), constraints);
+        // The share heading spans its column so its centred text lines up with the centred shares beneath it.
         constraints.gridx = 2;
+        constraints.fill = GridBagConstraints.HORIZONTAL;
         column.add(headerLabel("ForceGeneratorDialog.formationMix.header.current"), constraints);
         return column;
     }
@@ -333,10 +335,15 @@ public class FormationMixEditorPanel extends JPanel implements Scrollable {
             constraints.gridx = 1;
             constraints.insets = new Insets(1, 4, 1, 1);
             column.add(spinner, constraints);
+            // The share sits centred in its column so the numbers line up under the heading that names them,
+            // rather than ragging left off the end of the spinner.
+            JLabel shareLabel = new JLabel(String.format("%d%%", Math.round(preview.defaultShareFor(formationName))),
+                  SwingConstants.CENTER);
             constraints.gridx = 2;
             constraints.insets = new Insets(1, 1, 1, 4);
-            column.add(new JLabel(String.format("%d%%", Math.round(preview.defaultShareFor(formationName)))),
-                  constraints);
+            constraints.fill = GridBagConstraints.HORIZONTAL;
+            column.add(shareLabel, constraints);
+            constraints.fill = GridBagConstraints.NONE;
         }
         return row;
     }

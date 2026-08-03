@@ -14935,9 +14935,6 @@ public class TWGameManager extends AbstractGameManager {
 
         final int direction = ae.getFacing();
 
-        // entity isn't charging anymore
-        ae.setDisplacementAttack(null);
-
         if (lastEntityId != caa.getEntityId()) {
             // who is making the attack
             r = new Report(4005);
@@ -14968,6 +14965,8 @@ public class TWGameManager extends AbstractGameManager {
             r.subject = ae.getId();
             r.indent();
             addReport(r);
+            // entity isn't charging anymore
+            ae.setDisplacementAttack(null);
             return;
         }
 
@@ -14977,6 +14976,8 @@ public class TWGameManager extends AbstractGameManager {
             r.subject = ae.getId();
             r.indent();
             addReport(r);
+            // entity isn't charging anymore
+            ae.setDisplacementAttack(null);
             return;
         }
 
@@ -14986,6 +14987,8 @@ public class TWGameManager extends AbstractGameManager {
             r.subject = ae.getId();
             r.indent();
             addReport(r);
+            // entity isn't charging anymore
+            ae.setDisplacementAttack(null);
             return;
         }
 
@@ -15002,6 +15005,8 @@ public class TWGameManager extends AbstractGameManager {
             r.subject = ae.getId();
             addReport(r);
             addReport(doEntityDisplacement(ae, ae.getPosition(), caa.getTargetPos(), null));
+            // entity isn't charging anymore
+            ae.setDisplacementAttack(null);
             return;
         }
 
@@ -15083,6 +15088,8 @@ public class TWGameManager extends AbstractGameManager {
             // Resolve the damage.
             resolveChargeDamage(ae, te, toHit, direction, glancing, throughFront, false);
         }
+        // entity isn't charging anymore
+        ae.setDisplacementAttack(null);
     }
 
     /**

@@ -11438,10 +11438,10 @@ public abstract class Entity extends TurnOrdered
               isDropping() ||
               isBracing()) {
             if (isCharging() && Game.rulesManager.getRulesPhysical().canChargeCancel()) {
-                   ChargeAttackAction caa = (ChargeAttackAction) displacementAttack;
+                   ChargeAttackAction caa = (ChargeAttackAction) getDisplacementAttack();
                     Entity target = (Entity) caa.getTarget(game);
                     if (target.isDestroyed() || target.isProne() || caa.toHit(game).getValue() >= 13) {
-                        displacementAttack = null;
+                        setDisplacementAttack(null);
                     } else {
                         return false;
                     }

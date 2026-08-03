@@ -73,9 +73,11 @@ public class CoreRulesPSR extends RulesPSR {
             } else if ((gyroDamage > 0) || entity.hasHipCrit()) {
                 // append the reason modifier
                 roll.append(new PilotingRollData(entity.getId(), 0, "running with damaged hip actuator or gyro"));
+            } else {
+                roll.addModifier(TargetRoll.CHECK_FALSE, "Check false: Entity is not attempting to run with damage");
             }
         } else {
-            roll.addModifier(TargetRoll.CHECK_FALSE, "Check false: Entity is not attempting to run with damage");
+            roll.addModifier(TargetRoll.CHECK_FALSE, "Check false: Entity cannot fall or did not move at least 1 hex");
         }
     }
 

@@ -450,6 +450,8 @@ public class ForceGeneratorOptionsView extends JPanel implements FocusListener, 
         chkDetachments = new JCheckBox(Messages.getString("ForceGeneratorDialog.generateDetachments"));
         chkDetachments.setToolTipText(Messages.getString("ForceGeneratorDialog.generateDetachments.tooltip"));
         chkDetachments.setSelected(true);
+        // Turning detachments off withdraws the aerospace and infantry formations, so the editor has to be rebuilt.
+        chkDetachments.addActionListener(this);
         panGenerateOptions.add(chkDetachments);
         // Behind a button rather than inline: which formations a force offers depends on the selections above, so
         // the list is a couple of dozen rows that would crowd out everything else on an already dense panel.
@@ -1424,6 +1426,33 @@ public class ForceGeneratorOptionsView extends JPanel implements FocusListener, 
             btnExportMUL.setEnabled(false);
             btnClear.setEnabled(false);
         }
+
+        if (changesFormationOffer(ev.getSource())) {
+            refreshInlineFormationMixEditor();
+        }
+    }
+
+    /**
+     * Whether changing this control changes the formations the force offers.
+     *
+     * <p>The offer is read out of the ruleset for the force the selections describe, so every selection that feeds
+     * that description invalidates it. Detachments are in the list because the aerospace and infantry formations are
+     * only offered when the force generates detachments to put them in.</p>
+     *
+     * @param source the control that fired
+     *
+     * @return {@code true} when the inline editor needs rebuilding
+     */
+    private boolean changesFormationOffer(Object source) {
+        return (source == cbFaction)
+              || (source == cbSubFaction)
+              || (source == cbUnitType)
+              || (source == cbFormation)
+              || (source == cbRating)
+              || (source == cbFlags)
+              || (source == cbExperience)
+              || (source == cbWeightClass)
+              || (source == chkDetachments);
     }
 
     /**
@@ -1667,6 +1696,7 @@ public class ForceGeneratorOptionsView extends JPanel implements FocusListener, 
         RATGenerator.getInstance().loadYear(currentYear);
         forceDesc.setYear(currentYear);
         refreshFactions();
+        refreshInlineFormationMixEditor();
     }
 
     @Override

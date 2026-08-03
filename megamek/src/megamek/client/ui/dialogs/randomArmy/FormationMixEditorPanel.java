@@ -32,14 +32,20 @@
  */
 package megamek.client.ui.dialogs.randomArmy;
 
+import java.awt.Font;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
+import java.awt.GridLayout;
 import java.awt.Insets;
+import java.util.ArrayList;
 import java.util.LinkedHashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.TreeMap;
 import java.util.TreeSet;
+import javax.swing.BorderFactory;
+import javax.swing.Box;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JSpinner;
@@ -93,71 +99,163 @@ public class FormationMixEditorPanel extends JPanel {
             return;
         }
 
-        GridBagConstraints constraints = new GridBagConstraints();
-        constraints.anchor = GridBagConstraints.WEST;
-        constraints.insets = new Insets(1, 4, 1, 4);
-        Map<String, Set<String>> families = groupByFamily(offered);
+        FamilyGrouping grouping = groupByFamily(offered);
+        Map<String, Set<String>> families = grouping.families();
+        Set<String> aerospaceFamilies = grouping.aerospaceFamilies();
+
+        // The aerospace block takes a column to itself, so the ground families have one fewer to spread across.
+        int groundColumns = aerospaceFamilies.isEmpty() ? CATEGORY_COLUMNS : (CATEGORY_COLUMNS - 1);
+        int groundFamilies = families.size() - aerospaceFamilies.size();
+        int groundFormations = offered.size() - aerospaceFamilies.stream()
+              .mapToInt(family -> families.get(family).size())
+              .sum();
         // Count the family headings as rows too, or the columns come out lopsided - a couple of dozen formations in
         // ten families is nearly forty rows, not twenty-seven.
-        int rowsPerColumn = rowsPerColumn(offered.size() + families.size());
-        int column = 0;
-        int row = 0;
+        int rowsPerColumn = rowsPerColumn(groundFormations + groundFamilies, groundColumns);
+
+        // Each column is a panel of its own rather than a slice of one big grid, so the three read as separate
+        // lists. In a single grid the eye tracks across the gap and pairs a formation in one column with the
+        // spinner of the next.
+        List<JPanel> columns = new ArrayList<>();
+        JPanel currentColumn = newColumnPanel();
+        int row = 1;
+        boolean inAerospace = false;
         for (Map.Entry<String, Set<String>> family : families.entrySet()) {
-            // A family whose only member shares its name - Urban, Ranger, and every aerospace squadron - would
-            // otherwise print that name twice, once as a heading and once as the row beneath it. Show one row.
-            boolean hasOwnHeading = !(family.getValue().size() == 1
-                  && family.getValue().contains(family.getKey()));
-            if (hasOwnHeading) {
-                constraints.gridx = column * 3;
-                constraints.gridy = row++;
-                constraints.gridwidth = 3;
-                constraints.insets = new Insets(1, 4, 1, 4);
-                JLabel familyLabel = new JLabel(family.getKey());
-                familyLabel.setFont(familyLabel.getFont().deriveFont(java.awt.Font.BOLD));
-                add(familyLabel, constraints);
-                constraints.gridwidth = 1;
+            boolean familyIsAerospace = aerospaceFamilies.contains(family.getKey());
+            // The aerospace formations start a column of their own under their own heading. They answer a different
+            // question from the ground ones, and a combined-arms force offers both, so running them on from the end
+            // of the ground list gives no clue where one ends and the other begins.
+            boolean startsAerospaceBlock = familyIsAerospace && !inAerospace;
+            boolean columnIsFull = (row > 1) && (row >= rowsPerColumn) && (columns.size() < groundColumns - 1);
+            if (startsAerospaceBlock || columnIsFull) {
+                columns.add(closeColumn(currentColumn, row));
+                currentColumn = newColumnPanel();
+                row = 1;
             }
+            if (startsAerospaceBlock) {
+                row = addDomainHeading(currentColumn, "ForceGeneratorDialog.formationMix.domain.aerospace", row);
+                inAerospace = true;
+            }
+            row = addFamily(currentColumn, family.getKey(), family.getValue(), row);
+        }
+        columns.add(closeColumn(currentColumn, row));
+
+        setLayout(new GridLayout(1, columns.size(), 8, 0));
+        columns.forEach(this::add);
+    }
+
+    /** A column of the grid, bordered so it reads as its own list, with the shared header row already in place. */
+    private JPanel newColumnPanel() {
+        JPanel column = new JPanel(new GridBagLayout());
+        column.setBorder(BorderFactory.createEtchedBorder());
+        GridBagConstraints constraints = new GridBagConstraints();
+        constraints.anchor = GridBagConstraints.WEST;
+        constraints.insets = new Insets(2, 4, 4, 4);
+        constraints.gridy = 0;
+
+        constraints.gridx = 0;
+        constraints.weightx = 1.0;
+        column.add(headerLabel("ForceGeneratorDialog.formationMix.header.formation"), constraints);
+        constraints.weightx = 0.0;
+        constraints.gridx = 1;
+        column.add(headerLabel("ForceGeneratorDialog.formationMix.header.requested"), constraints);
+        constraints.gridx = 2;
+        column.add(headerLabel("ForceGeneratorDialog.formationMix.header.current"), constraints);
+        return column;
+    }
+
+    /**
+     * Pushes a column's rows to the top of the panel.
+     *
+     * <p>The columns rarely come out the same length, and without this the shorter ones float in the middle of their
+     * border with their heading level with the middle of the neighbouring list.</p>
+     *
+     * @param column  the finished column
+     * @param nextRow the first free grid row
+     *
+     * @return the same column, for chaining
+     */
+    private static JPanel closeColumn(JPanel column, int nextRow) {
+        GridBagConstraints constraints = new GridBagConstraints();
+        constraints.gridx = 0;
+        constraints.gridy = nextRow;
+        constraints.weighty = 1.0;
+        constraints.fill = GridBagConstraints.VERTICAL;
+        column.add(Box.createVerticalGlue(), constraints);
+        return column;
+    }
+
+    private static JLabel headerLabel(String messageKey) {
+        JLabel header = new JLabel(Messages.getString(messageKey));
+        header.setFont(header.getFont().deriveFont(Font.BOLD));
+        return header;
+    }
+
+    /**
+     * Adds one family and its formations to a column.
+     *
+     * @param column     the column panel to add to
+     * @param familyName the family heading
+     * @param members    the formations in the family
+     * @param startRow   the grid row to start at
+     *
+     * @return the next free grid row
+     */
+    private int addFamily(JPanel column, String familyName, Set<String> members, int startRow) {
+        GridBagConstraints constraints = new GridBagConstraints();
+        constraints.anchor = GridBagConstraints.WEST;
+        int row = startRow;
+
+        // A family whose only member shares its name - Urban, Ranger, and every aerospace squadron - would
+        // otherwise print that name twice, once as a heading and once as the row beneath it. Show one row.
+        boolean hasOwnHeading = !((members.size() == 1) && members.contains(familyName));
+        if (hasOwnHeading) {
+            constraints.gridx = 0;
+            constraints.gridy = row++;
+            constraints.gridwidth = 3;
+            constraints.insets = new Insets(3, 4, 1, 4);
+            JLabel familyLabel = new JLabel(familyName);
+            familyLabel.setFont(familyLabel.getFont().deriveFont(Font.BOLD));
+            // The family is itself a Campaign Operations formation in most cases, so its own description belongs on
+            // the heading - a reader hovering "Battle" should learn what a Battle Lance is.
+            familyLabel.setToolTipText(describeFormation(FormationType.getFormationType(familyName), familyName, -1));
+            column.add(familyLabel, constraints);
+            constraints.gridwidth = 1;
+        }
+
+        for (String formationName : members) {
+            FormationType formationType = FormationType.getFormationType(formationName);
+            String displayName = (formationType == null) ? formationName : formationType.getNameWithFaction();
+
+            JLabel label = new JLabel(displayName);
+            JSpinner spinner = new JSpinner(new SpinnerNumberModel(0, 0, 100, 5));
+            spinner.setName("spnFormationMix" + formationName.replace(" ", ""));
+            String tooltip = describeFormation(formationType, displayName, preview.defaultShareFor(formationName));
+            spinner.setToolTipText(tooltip);
+            label.setToolTipText(tooltip);
+            label.setLabelFor(spinner);
+            spinners.put(formationName, spinner);
+
             // Members sit under their heading rather than level with it, so the families read as blocks. A family
             // shown as a single row has no heading to sit under, so it keeps the outer margin.
+            constraints.gridx = 0;
+            constraints.gridy = row++;
+            constraints.weightx = 1.0;
             constraints.insets = new Insets(1, hasOwnHeading ? (4 + MEMBER_INDENT) : 4, 1, 4);
+            column.add(label, constraints);
 
-            for (String formationName : family.getValue()) {
-                FormationType formationType = FormationType.getFormationType(formationName);
-                String displayName = (formationType == null) ? formationName : formationType.getNameWithFaction();
-
-                JLabel label = new JLabel(displayName);
-                JSpinner spinner = new JSpinner(new SpinnerNumberModel(0, 0, 100, 5));
-                spinner.setName("spnFormationMix" + formationName.replace(" ", ""));
-                String tooltip = tooltipFor(formationType);
-                String defaultShare = Messages.getString("ForceGeneratorDialog.formationMix.defaultShare",
-                      Math.round(preview.defaultShareFor(formationName)));
-                spinner.setToolTipText((tooltip == null) ? defaultShare : defaultShare + " " + tooltip);
-                label.setToolTipText(spinner.getToolTipText());
-                label.setLabelFor(spinner);
-                spinners.put(formationName, spinner);
-
-                constraints.gridx = column * 3;
-                constraints.gridy = row;
-                constraints.weightx = 0.0;
-                add(label, constraints);
-                // Only the label carries the indent; the spinner and its default share line up across families.
-                constraints.insets = new Insets(1, 4, 1, 4);
-                constraints.gridx = (column * 3) + 1;
-                constraints.weightx = 1.0;
-                add(spinner, constraints);
-                constraints.gridx = (column * 3) + 2;
-                constraints.weightx = 0.0;
-                add(new JLabel(String.format("(%d%%)", Math.round(preview.defaultShareFor(formationName)))),
-                      constraints);
-                constraints.insets = new Insets(1, hasOwnHeading ? (4 + MEMBER_INDENT) : 4, 1, 4);
-                row++;
-            }
-
-            if (row >= rowsPerColumn) {
-                column++;
-                row = 0;
-            }
+            // The spinner and the share it is adjusting sit together, with only a hair between them, so the pair
+            // reads as one control rather than two columns to scan between.
+            constraints.weightx = 0.0;
+            constraints.gridx = 1;
+            constraints.insets = new Insets(1, 4, 1, 1);
+            column.add(spinner, constraints);
+            constraints.gridx = 2;
+            constraints.insets = new Insets(1, 1, 1, 4);
+            column.add(new JLabel(String.format("%d%%", Math.round(preview.defaultShareFor(formationName)))),
+                  constraints);
         }
+        return row;
     }
 
     /**
@@ -169,9 +267,9 @@ public class FormationMixEditorPanel extends JPanel {
      *
      * @param offered the formations this force offers
      *
-     * @return family name to the formations in it, ground families first
+     * @return the families in display order, and which of them are aerospace
      */
-    private static Map<String, Set<String>> groupByFamily(Set<String> offered) {
+    private static FamilyGrouping groupByFamily(Set<String> offered) {
         Map<String, Set<String>> ground = new TreeMap<>();
         Map<String, Set<String>> aerospace = new TreeMap<>();
         for (String formationName : offered) {
@@ -188,12 +286,47 @@ public class FormationMixEditorPanel extends JPanel {
         }
         Map<String, Set<String>> ordered = new LinkedHashMap<>(ground);
         ordered.putAll(aerospace);
-        return ordered;
+        return new FamilyGrouping(ordered, aerospace.keySet());
     }
 
-    /** Rows to fill before starting a new column, so the families spread evenly rather than running down one side. */
-    private static int rowsPerColumn(int totalRows) {
-        return Math.max(1, (totalRows + CATEGORY_COLUMNS - 1) / CATEGORY_COLUMNS);
+    /**
+     * The offered formations grouped into families, with the ground/aerospace split recorded.
+     *
+     * @param families         family name to the formations in it, ground families first
+     * @param aerospaceFamilies the families in {@code families} that are aerospace rather than ground
+     */
+    private record FamilyGrouping(Map<String, Set<String>> families, Set<String> aerospaceFamilies) {}
+
+    /**
+     * Rows to fill before starting a new column, so the families spread evenly rather than running down one side.
+     *
+     * @param totalRows the rows to distribute
+     * @param columns   the columns to distribute them across
+     *
+     * @return the rows each column should hold
+     */
+    private static int rowsPerColumn(int totalRows, int columns) {
+        return Math.max(1, (totalRows + columns - 1) / Math.max(1, columns));
+    }
+
+    /**
+     * Adds a heading naming the domain the formations beneath it belong to.
+     *
+     * @param column     the column panel to add to
+     * @param messageKey the resource key of the heading text
+     * @param startRow   the grid row to start at
+     *
+     * @return the next free grid row
+     */
+    private static int addDomainHeading(JPanel column, String messageKey, int startRow) {
+        GridBagConstraints constraints = new GridBagConstraints();
+        constraints.anchor = GridBagConstraints.WEST;
+        constraints.gridx = 0;
+        constraints.gridy = startRow;
+        constraints.gridwidth = 3;
+        constraints.insets = new Insets(4, 4, 2, 4);
+        column.add(headerLabel(messageKey), constraints);
+        return startRow + 1;
     }
 
     /**
@@ -210,6 +343,45 @@ public class FormationMixEditorPanel extends JPanel {
         String key = formationType.getTooltipKey();
         return Messages.keyExists(key) ? Messages.getString(key) : null;
     }
+
+    /**
+     * Builds the hover text for a formation: its name, what Campaign Operations says it is, and what share the
+     * ruleset gives it here.
+     *
+     * <p>Laid out over several lines and wrapped to a fixed width. The descriptions run to a full sentence with a
+     * rules citation, and as one unbroken line they render as a tooltip wider than the dialog.</p>
+     *
+     * @param formationType the formation, or {@code null} for a name with no registered type
+     * @param displayName   the name to head the tooltip with
+     * @param defaultShare  the ruleset's share of this force for the formation, or negative to omit it
+     *
+     * @return the hover text, or {@code null} when there is nothing to say
+     */
+    private static @Nullable String describeFormation(@Nullable FormationType formationType, String displayName,
+          double defaultShare) {
+        String description = tooltipFor(formationType);
+        if ((description == null) && (defaultShare < 0)) {
+            return null;
+        }
+        StringBuilder text = new StringBuilder("<html><body style='width:")
+              .append(TOOLTIP_WIDTH_PIXELS)
+              .append("px'><b>")
+              .append(displayName)
+              .append("</b>");
+        if (description != null) {
+            text.append("<br>").append(description);
+        }
+        if (defaultShare >= 0) {
+            text.append("<br><i>")
+                  .append(Messages.getString("ForceGeneratorDialog.formationMix.defaultShare",
+                        Math.round(defaultShare)))
+                  .append("</i>");
+        }
+        return text.append("</body></html>").toString();
+    }
+
+    /** Width the hover text wraps at. The Campaign Operations descriptions are a full sentence plus a citation. */
+    private static final int TOOLTIP_WIDTH_PIXELS = 280;
 
     /**
      * @return the requested mix, empty when every spinner is left at zero

@@ -265,6 +265,9 @@ public class Princess extends BotClient {
         // and it will stay up-to date.
         precognition = new Precognition(this);
         precognitionThread = new Thread(precognition, "Princess-precognition (" + getName() + ")");
+        // Precognition is a pure look-ahead cache with no state worth preserving, so it must never be the reason a
+        // process stays alive. die() interrupts it in the normal case; this covers a bot that was dropped without one.
+        precognitionThread.setDaemon(true);
     }
 
     /**

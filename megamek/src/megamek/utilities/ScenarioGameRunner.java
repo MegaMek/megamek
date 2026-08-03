@@ -49,6 +49,7 @@ import java.util.concurrent.TimeUnit;
 import java.util.function.BooleanSupplier;
 
 import megamek.MMConstants;
+import megamek.client.AbstractClient;
 import megamek.client.HeadlessClient;
 import megamek.client.bot.AIType;
 import megamek.client.bot.BotClient;
@@ -104,6 +105,17 @@ public class ScenarioGameRunner {
     private final Server server;
     private final Scenario scenario;
     private final Game game;
+
+    /**
+     * Every client this runner has connected, so they can be disconnected when the game ends.
+     *
+     * <p>This matters far more than it looks when many games run in one JVM. Each client holds its own copy of the
+     * {@link Game} - every entity, the board, and for a bot its path caches and precognition thread. Leaving them
+     * connected leaks all of that per game, and a batch runner plays hundreds. The symptom is not a crash: the heap
+     * fills, the JVM spends its time collecting garbage instead of playing, and a later game slows to a stop while
+     * still technically running.</p>
+     */
+    private final List<AbstractClient> connectedClients = new ArrayList<>();
 
     public ScenarioGameRunner(File scenarioFile) throws Exception {
         TWGameManager gameManager = new TWGameManager();
@@ -215,6 +227,7 @@ public class ScenarioGameRunner {
             }
         });
 
+        connectedClients.add(watcher);
         if (!watcher.connect()) {
             throw new IllegalStateException("Watcher client failed to connect to the local server");
         }
@@ -226,6 +239,7 @@ public class ScenarioGameRunner {
                   LOCALHOST_IP,
                   server.getPort(),
                   behaviorFor(botSlot.getName()));
+            connectedClients.add(botClient);
             if (!botClient.connect()) {
                 throw new IllegalStateException("Bot failed to connect for player " + botSlot.getName());
             }
@@ -339,10 +353,22 @@ public class ScenarioGameRunner {
     }
 
     /**
-     * Shuts down this runner's server, releasing its port and connections. Call between games when running many
-     * in one process.
+     * Disconnects every client this runner connected, then shuts down its server, releasing the port. Call between
+     * games when running many in one process.
+     *
+     * <p>Clients are disconnected before the server dies so each one closes its socket and, for a bot, stops its
+     * precognition thread. Skipping this is what makes a long batch degrade: see {@link #connectedClients}.</p>
      */
     public void shutdown() {
+        for (AbstractClient client : connectedClients) {
+            try {
+                client.die();
+            } catch (Exception exception) {
+                // A client that fails to shut down cleanly must not stop the others being released.
+                logger.warn(exception, "Failed to disconnect client " + client.getName());
+            }
+        }
+        connectedClients.clear();
         server.die();
     }
 

@@ -383,7 +383,7 @@ public class ForceGeneratorViewUi implements ActionListener {
      * Supplies display names for the formation (non-unit) nodes of the preview tree, overriding each
      * descriptor's own {@link ForceDescriptor#parseName()}. Hosts that rename formations on commit (for
      * example MekHQ's Command Designer callsigns) use this so the preview shows the final TOE names. A
-     * {@code null} provider — or a {@code null}/blank result for a node — falls back to
+     * {@code null} provider - or a {@code null}/blank result for a node - falls back to
      * {@code parseName()}.
      *
      * @param provider maps a formation descriptor to its display name, or {@code null} to disable

@@ -38,7 +38,9 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
+import java.io.ByteArrayInputStream;
 import java.io.File;
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -258,7 +260,7 @@ class FormationNamingConventionTest {
     private static FormationNamingConvention parseConventionFromXml(String xml) throws Exception {
         DocumentBuilder documentBuilder = MMXMLUtility.newSafeDocumentBuilder();
         Document document = documentBuilder.parse(
-              new java.io.ByteArrayInputStream(xml.getBytes(java.nio.charset.StandardCharsets.UTF_8)));
+              new ByteArrayInputStream(xml.getBytes(StandardCharsets.UTF_8)));
         Element root = document.getDocumentElement();
         return FormationNamingConvention.createFromXml(root, "test");
     }

@@ -43,6 +43,7 @@ import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 
+import megamek.common.game.Game;
 import megamek.common.units.Entity;
 import org.junit.jupiter.api.Test;
 
@@ -277,7 +278,7 @@ class C3NetworkConfiguratorTest {
         NetworkState slaveState = new NetworkState();
         Entity master = networkUnit(0, false, true, false, new NetworkState());
         Entity slave = networkUnit(1, false, false, true, slaveState);
-        when(slave.getGame()).thenReturn(mock(megamek.common.game.Game.class));
+        when(slave.getGame()).thenReturn(mock(Game.class));
 
         ForceDescriptor formation = formationOf(List.of(master, slave));
         formation.getFlags().add("c3");

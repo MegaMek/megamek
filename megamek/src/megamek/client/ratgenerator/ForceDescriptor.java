@@ -149,6 +149,10 @@ public class ForceDescriptor {
     private final HashSet<String> flags;
 
     private FormationType formationType;
+    // The formation types this node's rule actually offered, mapped to the weight the ruleset gave each. Recorded
+    // when the formation rule fires, before the weighted pick, so it describes the choice rather than its outcome.
+    // A node with one entry had no choice to make (a command lance, say); a node with none was never offered one.
+    private Map<String, Integer> eligibleFormations = Map.of();
     private String generationRule;
     private boolean topLevel;
     private boolean element;
@@ -2379,6 +2383,24 @@ public class ForceDescriptor {
 
     public void setFormationType(FormationType ft) {
         formationType = ft;
+    }
+
+    /**
+     * The formation types this node's rule offered, mapped to the weight the ruleset gave each.
+     *
+     * <p>Recorded before the weighted pick is made, so it describes what could have been chosen rather than what
+     * was. Size tells the caller what kind of node this is: more than one entry means a genuine choice was made and
+     * could be made differently, exactly one means the rule narrowed to a single formation - a command lance, say -
+     * and none means the node was never offered a formation at all.</p>
+     *
+     * @return the offered formations and their weights, never {@code null}
+     */
+    public Map<String, Integer> getEligibleFormations() {
+        return (eligibleFormations == null) ? Map.of() : eligibleFormations;
+    }
+
+    public void setEligibleFormations(Map<String, Integer> eligibleFormations) {
+        this.eligibleFormations = (eligibleFormations == null) ? Map.of() : eligibleFormations;
     }
 
     public String getGenerationRule() {

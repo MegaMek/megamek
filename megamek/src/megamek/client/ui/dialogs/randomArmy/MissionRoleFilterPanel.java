@@ -60,6 +60,10 @@ import megamek.common.units.UnitType;
  * Incendiary, Anti-Aircraft, Anti-Infantry and Infantry Support merely nudged availability weights, which on a table
  * of a few dozen entries was close to noise, and the battlefield shape they were reached for is what the formation
  * mix expresses directly.</p>
+ *
+ * <p>Every filter shown here is read back, so a ticked box always has an effect. Escort and Bomber used to be drawn
+ * on the aerospace group without ever being read, and were removed rather than switched on: making them live would
+ * have changed which units an aerospace force draws.</p>
  */
 public class MissionRoleFilterPanel extends JPanel {
 
@@ -101,13 +105,8 @@ public class MissionRoleFilterPanel extends JPanel {
         addFilter(airPanel, airFilters, MissionRole.RECON, 0, 0);
         addFilter(airPanel, airFilters, MissionRole.GROUND_SUPPORT, 1, 0);
         addFilter(airPanel, airFilters, MissionRole.INTERCEPTOR, 2, 0);
-        // Escort and Bomber are shown but deliberately left out of the applied list, because that is what the code
-        // this panel replaces did - it created them as locals and never read them back. Adding them to the list
-        // would change which units the generator draws, which does not belong in an extraction.
-        addFilter(airPanel, new ArrayList<>(), MissionRole.ESCORT, 0, 1);
-        addFilter(airPanel, new ArrayList<>(), MissionRole.BOMBER, 1, 1);
-        addFilter(airPanel, airFilters, MissionRole.ASSAULT, 0, 2);
-        addFilter(airPanel, airFilters, MissionRole.CARGO, 1, 2);
+        addFilter(airPanel, airFilters, MissionRole.ASSAULT, 0, 1);
+        addFilter(airPanel, airFilters, MissionRole.CARGO, 1, 1);
 
         // Only one group is ever visible, so they stack in the same cell and the parent's insets apply once.
         GridBagConstraints constraints = new GridBagConstraints();

@@ -84,6 +84,29 @@ public class Caspar extends Princess {
     @Override
     protected List<Coords> prioritizeDeploymentCoords(Entity deployedUnit, List<Coords> possibleDeployCoords) {
         // CASPAR divergence: deploy as a formation rather than scattering across the whole zone.
-        return MutualSupportDeployment.prioritize(deployedUnit, possibleDeployCoords, getFriendEntities(), getGame());
+        int formationRadius = MutualSupportDeployment.formationRadius(getEntitiesOwned(), mutualSupportMultiplier());
+        LOGGER.info("[MutualSupport] {}: forming up {} within {} hexes of the force centre",
+              getLocalPlayer() != null ? getLocalPlayer().getName() : getName(),
+              deployedUnit.getChassis(),
+              formationRadius);
+        return MutualSupportDeployment.prioritize(deployedUnit,
+              possibleDeployCoords,
+              getFriendEntities(),
+              getGame(),
+              formationRadius);
+    }
+
+    /**
+     * The player's mutual support setting: how tightly this bot keeps its force together, as a multiplier around 1.0.
+     *
+     * <p>The doctrine's single read of the underlying behavior setting, so no other Mutual Support code has to know
+     * what it is currently called. The setting is still stored under its original name because that name is a
+     * serialized element in saved behavior presets and appears in Princess's own path rankers and configuration UI;
+     * renaming it is a separate change that cannot land while Princess is serving as the benchmark control.</p>
+     *
+     * @return the multiplier, where higher means a tighter formation
+     */
+    private double mutualSupportMultiplier() {
+        return getBehaviorSettings().getHerdMentalityValue();
     }
 }

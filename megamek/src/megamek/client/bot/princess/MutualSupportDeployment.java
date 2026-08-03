@@ -64,10 +64,8 @@ import megamek.common.units.Entity;
  *     one artillery template or block its own movement lanes. Measured against the nearest friend, because crowding is
  *     a local problem. This end of the band is best effort: it yields to support when a zone is too small to hold both
  *     (see {@link #isInPosition}), which a shallow deployment strip routinely is.</li>
- *     <li><b>Within its own optimum weapon range of the force's centre of mass</b>, so every unit can contribute fire
- *     where the force is fighting. The range comes from {@link SupportEnvelope}, the same figure the movement half of
- *     the doctrine uses, so a long-range unit is allowed to sit further out than a brawler exactly as it is allowed to
- *     during the advance.</li>
+ *     <li><b>Within the formation radius of the force's centre of mass</b>, so every unit can contribute fire where the
+ *     force is fighting. See {@link #formationRadius(List, double)}.</li>
  * </ul>
  *
  * <p><b>The upper bound is measured against the centre of mass, never against the nearest friend.</b> This is the whole
@@ -106,29 +104,76 @@ public final class MutualSupportDeployment {
     /**
      * Reorders candidate deployment hexes so the ones that keep the force together are scanned first.
      *
-     * @param deployedUnit the unit being placed
-     * @param candidates   legal deployment hexes, in the order the caller would otherwise scan them
-     * @param friends      friendly units, deployed or not, from {@code BotClient.getFriendEntities()}
-     * @param game         the game, used to keep the anchor to units sharing a board with the deploying unit
+     * @param deployedUnit    the unit being placed
+     * @param candidates      legal deployment hexes, in the order the caller would otherwise scan them
+     * @param friends         friendly units, deployed or not, from {@code BotClient.getFriendEntities()}
+     * @param game            the game, used to keep the anchor to units sharing a board with the deploying unit
+     * @param formationRadius how far from the force's centre a unit may form up, from
+     *                        {@link #formationRadius(List, double)}
      *
      * @return the candidates, reordered; the same list instance when there is nothing to reorder
      */
     public static List<Coords> prioritize(Entity deployedUnit, List<Coords> candidates, List<Entity> friends,
-          Game game) {
+          Game game, int formationRadius) {
         if (candidates.size() < 2) {
             return candidates;
         }
         List<Coords> friendlyPositions = anchorPositions(deployedUnit, friends, game);
         Coords anchor = centroid(friendlyPositions.isEmpty() ? candidates : friendlyPositions);
-        return orderByFormation(candidates, anchor, friendlyPositions, supportRadius(deployedUnit));
+        return orderByFormation(candidates, anchor, friendlyPositions, formationRadius);
     }
 
     /**
-     * How far from the force's centre this unit may deploy, in hexes: its own optimum weapon range, floored at the
-     * minimum spacing so a weaponless or point-blank unit still gets a usable band rather than a zero-width one.
+     * How far from its centre of mass a force may spread when forming up, in hexes.
+     *
+     * <p>One figure for the whole force, so the formation is a single shape rather than a set of nested per-unit discs.
+     * It is sized from the force's own guns: the mean {@link SupportEnvelope#effectiveRange()} of every unit that has
+     * any, <b>halved</b>, so that at the default setting the formation's <em>diameter</em> comes out at the average
+     * effective range. That is mutual support in the literal sense - any two units in the formation are within
+     * supporting range of <em>each other</em>, not merely of the centre. Taking the radius as the full average instead
+     * would let a company spread to twice its own supporting range, which is the dispersion this rule exists to fix.
+     * </p>
+     *
+     * <p>The multiplier is the player's mutual support setting, and it divides rather than multiplies: asking for more
+     * mutual support pulls the formation in. At the lowest setting the radius grows past any real deployment zone and
+     * the rule stops constraining anything, which reproduces stock scattered deployment.</p>
+     *
+     * @param force                   the units forming up, deployed or not; a whole command, so the figure is stable
+     *                                across the deployment phase instead of drifting as units land
+     * @param mutualSupportMultiplier the player's mutual support setting; higher means a tighter formation
+     *
+     * @return the formation radius in hexes, never below {@link #MINIMUM_SPACING_HEXES}
      */
-    static int supportRadius(Entity deployedUnit) {
-        return Math.max(MINIMUM_SPACING_HEXES, SupportEnvelope.of(deployedUnit).peakRange());
+    public static int formationRadius(List<Entity> force, double mutualSupportMultiplier) {
+        List<Integer> effectiveRanges = new ArrayList<>(force.size());
+        for (Entity unit : force) {
+            int effectiveRange = SupportEnvelope.of(unit).effectiveRange();
+            if (effectiveRange > 0) {
+                effectiveRanges.add(effectiveRange);
+            }
+        }
+        return formationRadiusFor(effectiveRanges, mutualSupportMultiplier);
+    }
+
+    /**
+     * The formation radius arithmetic, split out from reading the force so it can be exercised directly.
+     *
+     * @param effectiveRanges the supporting range of every armed unit in the force
+     * @param mutualSupportMultiplier the player's mutual support setting
+     *
+     * @return the formation radius in hexes
+     */
+    static int formationRadiusFor(List<Integer> effectiveRanges, double mutualSupportMultiplier) {
+        if (effectiveRanges.isEmpty() || (mutualSupportMultiplier <= 0)) {
+            return MINIMUM_SPACING_HEXES;
+        }
+        long totalEffectiveRange = 0;
+        for (int effectiveRange : effectiveRanges) {
+            totalEffectiveRange += effectiveRange;
+        }
+        double averageEffectiveRange = (double) totalEffectiveRange / effectiveRanges.size();
+        return Math.max(MINIMUM_SPACING_HEXES,
+              (int) Math.round(averageEffectiveRange / 2.0 / mutualSupportMultiplier));
     }
 
     /**
@@ -162,7 +207,7 @@ public final class MutualSupportDeployment {
      * force that cannot satisfy the band still degrades smoothly.</p>
      */
     static List<Coords> orderByFormation(List<Coords> candidates, @Nullable Coords anchor,
-          List<Coords> friendlyPositions, int supportRadius) {
+          List<Coords> friendlyPositions, int formationRadius) {
         if (anchor == null) {
             return candidates;
         }
@@ -173,7 +218,7 @@ public final class MutualSupportDeployment {
         List<ScoredHex> scored = new ArrayList<>(candidates.size());
         for (Coords candidate : candidates) {
             scored.add(new ScoredHex(candidate,
-                  outOfSupport(candidate, anchor, supportRadius),
+                  outOfSupport(candidate, anchor, formationRadius),
                   crowding(candidate, friendlyPositions)));
         }
         scored.sort(Comparator.comparingInt(ScoredHex::outOfSupport).thenComparingInt(ScoredHex::crowding));
@@ -195,13 +240,13 @@ public final class MutualSupportDeployment {
      * rule exists to buy. Spacing then does the most it can within that - among hexes equally in support, the least
      * crowded is scanned first.</p>
      */
-    static boolean isInPosition(Coords candidate, Coords anchor, List<Coords> friendlyPositions, int supportRadius) {
-        return (outOfSupport(candidate, anchor, supportRadius) == 0) && (crowding(candidate, friendlyPositions) == 0);
+    static boolean isInPosition(Coords candidate, Coords anchor, List<Coords> friendlyPositions, int formationRadius) {
+        return (outOfSupport(candidate, anchor, formationRadius) == 0) && (crowding(candidate, friendlyPositions) == 0);
     }
 
     /** How far beyond its supporting range of the force's centre a candidate sits; zero inside it. */
-    static int outOfSupport(Coords candidate, Coords anchor, int supportRadius) {
-        return Math.max(0, anchor.distance(candidate) - supportRadius);
+    static int outOfSupport(Coords candidate, Coords anchor, int formationRadius) {
+        return Math.max(0, anchor.distance(candidate) - formationRadius);
     }
 
     /** How far inside the minimum spacing the nearest friend is; zero once there is room. */

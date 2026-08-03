@@ -53,9 +53,9 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 /**
- * Verifies the Mutual Support deployment band: a unit forms up no closer than the minimum spacing and no further than
- * its own optimum weapon range from the force's centre of mass, terrain still chooses the hex inside that band, and
- * only units genuinely on the board get a vote on where the formation is.
+ * Verifies the Mutual Support deployment band: a force forms up inside a radius sized from its own average supporting
+ * range and tuned by the mutual support setting, no unit stands closer than the minimum spacing, terrain still chooses
+ * the hex inside that band, and only units genuinely on the board get a vote on where the formation is.
  */
 class MutualSupportDeploymentTest {
 
@@ -145,7 +145,56 @@ class MutualSupportDeploymentTest {
         assertEquals(0, MutualSupportDeployment.crowding(new Coords(5, 1), List.of()));
     }
 
-    // ------------------------------------------------------- optimum range drives the band
+    // ------------------------------------------------------- the formation radius
+
+    /**
+     * The radius is half the force's average supporting range, so the formation's <em>diameter</em> comes out at that
+     * average: any two units in it are within supporting range of each other, which is what mutual support means.
+     */
+    @Test
+    void theFormationIsSizedSoAnyTwoUnitsCanSupportEachOther() {
+        List<Integer> company = List.of(8, 10, 12, 14);
+
+        assertEquals(6, MutualSupportDeployment.formationRadiusFor(company, 1.0), "mean 11, halved and rounded");
+    }
+
+    /** Higher setting, tighter formation: the multiplier divides, so asking for more support pulls the force in. */
+    @Test
+    void moreMutualSupportMeansATighterFormation() {
+        List<Integer> company = List.of(12);
+
+        int loose = MutualSupportDeployment.formationRadiusFor(company, 0.6);
+        int standard = MutualSupportDeployment.formationRadiusFor(company, 1.0);
+        int tight = MutualSupportDeployment.formationRadiusFor(company, 2.0);
+
+        assertTrue(loose > standard, "a lower setting must spread the force out");
+        assertTrue(tight < standard, "a higher setting must pull the force in");
+        assertEquals(6, standard);
+        assertEquals(3, tight);
+    }
+
+    /**
+     * At the bottom of the slider the radius outgrows any real deployment zone, so the rule stops constraining
+     * anything and deployment falls back to stock scatter.
+     */
+    @Test
+    void theLowestSettingStopsConstrainingDeploymentAtAll() {
+        int radius = MutualSupportDeployment.formationRadiusFor(List.of(12), 0.1);
+
+        assertTrue(radius > 32, "at the lowest setting the radius should exceed a whole board, was " + radius);
+    }
+
+    @Test
+    void aForceWithNothingToShootFallsBackToMinimumSpacing() {
+        assertEquals(MINIMUM_SPACING_HEXES, MutualSupportDeployment.formationRadiusFor(List.of(), 1.0));
+    }
+
+    @Test
+    void theRadiusNeverCollapsesBelowTheMinimumSpacing() {
+        assertEquals(MINIMUM_SPACING_HEXES,
+              MutualSupportDeployment.formationRadiusFor(List.of(2), 2.0),
+              "a point-blank force still needs a band wide enough to stand in");
+    }
 
     @Test
     void aLongRangedUnitMayFormUpFurtherOutThanABrawler() {
@@ -391,7 +440,8 @@ class MutualSupportDeploymentTest {
     void aSingleCandidateIsHandedBackUntouched() {
         List<Coords> onlyOption = List.of(new Coords(3, 1));
 
-        assertSame(onlyOption, MutualSupportDeployment.prioritize(deployingUnit, onlyOption, List.of(), mockGame));
+        assertSame(onlyOption,
+              MutualSupportDeployment.prioritize(deployingUnit, onlyOption, List.of(), mockGame, BRAWLER_RANGE));
     }
 
     /**

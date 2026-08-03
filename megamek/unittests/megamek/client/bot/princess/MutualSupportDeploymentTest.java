@@ -197,6 +197,67 @@ class MutualSupportDeploymentTest {
         assertEquals(16, anchor.getX(), "an off-board-map friend should fall back to the zone centre");
     }
 
+    /**
+     * The formation radius is a doctrine figure, not a map figure, so it does not grow with the zone. When the zone is
+     * already tighter than a formation there is nothing to gather and the rule must get out of the way entirely.
+     */
+    @Test
+    void aZoneSmallerThanTheFormationIsLeftExactlyAsItWas() {
+        List<Coords> tinyZone = new ArrayList<>();
+        for (int x = 14; x < 19; x++) {
+            tinyZone.add(new Coords(x, 1));
+        }
+
+        List<Coords> ordered = MutualSupportDeployment.prioritize(deployingUnit, tinyZone, List.of(), mockGame);
+
+        assertEquals(tinyZone, ordered, "every hex ties at zero, so the shuffled order must survive untouched");
+    }
+
+    /** The anchor is derived from the candidates themselves, so it tracks whatever zone the scenario hands out. */
+    @Test
+    void theAnchorFollowsTheZoneItIsGiven() {
+        List<Coords> cornerZone = new ArrayList<>();
+        for (int x = 24; x < 32; x++) {
+            for (int y = 28; y < 34; y++) {
+                cornerZone.add(new Coords(x, y));
+            }
+        }
+
+        Coords anchor = MutualSupportDeployment.formationAnchor(deployingUnit, cornerZone, List.of(), mockGame);
+
+        assertNotNull(anchor);
+        assertTrue(cornerZone.contains(anchor), "a corner zone must anchor inside itself, not at the board centre");
+    }
+
+    /**
+     * A split zone puts the notional centre between the two halves, where nothing can deploy. Only the first unit ever
+     * uses that point; it picks whichever real hex is nearest, and every unit after it gathers on that unit, so the
+     * force still ends up in one place rather than split down the middle.
+     */
+    @Test
+    void aSplitZoneStillGathersTheForceInOnePlace() {
+        List<Coords> splitZone = new ArrayList<>();
+        for (int x = 0; x < 4; x++) {
+            splitZone.add(new Coords(x, 1));
+        }
+        for (int x = 28; x < 32; x++) {
+            splitZone.add(new Coords(x, 1));
+        }
+
+        Coords seedAnchor = MutualSupportDeployment.formationAnchor(deployingUnit, splitZone, List.of(), mockGame);
+        assertFalse(splitZone.contains(seedAnchor), "the notional centre of a split zone falls in the gap");
+
+        Entity firstDeployed = friendAt(2, new Coords(30, 1));
+        List<Coords> ordered = MutualSupportDeployment.prioritize(deployingUnit,
+              splitZone,
+              List.of(firstDeployed),
+              mockGame);
+
+        assertEquals(new Coords(28, 1),
+              ordered.getFirst(),
+              "once one unit is down, the rest must gather on it rather than on the empty midpoint");
+    }
+
     @Test
     void aSingleCandidateIsHandedBackUntouched() {
         List<Coords> onlyOption = List.of(new Coords(3, 1));

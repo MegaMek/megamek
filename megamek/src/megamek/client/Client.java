@@ -145,11 +145,28 @@ public class Client extends AbstractClient {
     public Client(String name, String host, int port) {
         super(name, host, port);
         setSkillGenerator(new ModifiedTotalWarfareSkillGenerator());
-        try {
-            tilesetManager = new TilesetManager(game);
-        } catch (IOException e) {
-            LOGGER.error(e, "Unknown Exception");
+    }
+
+    /**
+     * The tile set, built on first use rather than with the client.
+     *
+     * <p>Building one parses the whole hex tile set into thousands of template hexes and their terrain, which a
+     * client that never draws anything has no use for. Every client used to pay that at construction: headless
+     * runners, and every bot, since {@code BotClient} is a {@code Client} too. A batch playing many games in one
+     * process paid it once per client per game and kept the result alive, which is tens of megabytes a game
+     * retained for images nobody would ever ask for.</p>
+     *
+     * @return the tile set manager, or {@code null} if it cannot be built
+     */
+    private @Nullable TilesetManager tilesetManager() {
+        if (tilesetManager == null) {
+            try {
+                tilesetManager = new TilesetManager(game);
+            } catch (IOException exception) {
+                LOGGER.error(exception, "Could not load the tile set");
+            }
         }
+        return tilesetManager;
     }
 
     @Override
@@ -244,7 +261,9 @@ public class Client extends AbstractClient {
         super.changePhase(phase);
         switch (phase) {
             case LOUNGE:
-                tilesetManager.reset();
+                if (tilesetManager != null) {
+                    tilesetManager.reset();
+                }
             case DEPLOYMENT:
             case TARGETING:
             case MOVEMENT:
@@ -984,12 +1003,13 @@ public class Client extends AbstractClient {
      * Gets the current mek image
      */
     private Image getTargetImage(Entity e) {
-        if (tilesetManager == null) {
+        TilesetManager tileset = tilesetManager();
+        if (tileset == null) {
             return null;
         } else if (e.isDestroyed()) {
-            return tilesetManager.wreckMarkerFor(e, -1);
+            return tileset.wreckMarkerFor(e, -1);
         } else {
-            return tilesetManager.imageFor(e);
+            return tileset.imageFor(e);
         }
     }
 

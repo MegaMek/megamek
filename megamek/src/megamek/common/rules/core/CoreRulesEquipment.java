@@ -268,4 +268,10 @@ public class CoreRulesEquipment extends RulesEquipment {
             vCriticalSlots.get(selectedLeg).add(slot);
         }
     }
+
+    /**
+     * {@inheritDoc}
+     * Blue shield blocks stealth. Core p.207
+     */
+    public boolean blueShieldStealth(boolean activeBlueShield) { return activeBlueShield; }
 }

@@ -162,4 +162,19 @@ public abstract class RulesEquipment {
      */
     public abstract void doMascFailureCrits(Entity entity, HashMap<Integer, List<CriticalSlot>> vCriticalSlots,
           int hits);
+
+    /**
+     * Should blue shield limit stealth?
+     * @param activeBlueShield Is the blue shield system active
+     * @return true if it blocks stealth
+     */
+    public abstract boolean blueShieldStealth(boolean activeBlueShield);
+
+    /**
+     * Asks is blue shield blocks stealth when active. It assumes it is active
+     * @return calls blueShieldStealth(true)
+     */
+    public boolean blueShieldStealth() {
+        return blueShieldStealth(true);
+    }
 }

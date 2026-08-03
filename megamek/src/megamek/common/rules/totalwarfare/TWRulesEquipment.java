@@ -307,4 +307,12 @@ public class TWRulesEquipment extends CoreRulesEquipment {
             }
         }
     }
+
+    /**
+     * This always returns false.
+     * @param activeBlueShield Is the blue shield system active
+     * @return false;
+     */
+    @Override
+    public boolean blueShieldStealth(boolean activeBlueShield) { return false; }
 }

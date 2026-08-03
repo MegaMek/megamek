@@ -77,6 +77,7 @@ import megamek.common.equipment.enums.MiscTypeFlag;
 import megamek.common.game.Game;
 import megamek.common.interfaces.ILocationExposureStatus;
 import megamek.common.options.OptionsConstants;
+import megamek.common.rules.core.CoreRulesManager;
 import megamek.common.units.ConvInfantry;
 import megamek.common.units.Entity;
 import megamek.common.units.Mek;
@@ -947,6 +948,27 @@ class SystemPanel extends PicMap
                               && isMiscEquipment
                               && mountedType.hasFlag(MiscType.F_STEALTH)
                               && !EquipmentActivation.hasEcmAvailableForStealth(en)) {
+                            continue;
+                        }
+                        // Blue shield prevents stealth systems from being activated.
+                        if (equipmentMode.equals(Mounted.MODE_ON)
+                              && isMiscEquipment
+                              && (mountedType.hasFlag(MiscType.F_STEALTH)
+                              || mountedType.hasFlag(MiscType.F_CHAMELEON_SHIELD)
+                              || mountedType.hasFlag(MiscType.F_VOID_SIG)
+                              || mountedType.hasFlag(MiscType.F_NULL_SIG))
+                              && Game.rulesManager.getRulesEquipment().blueShieldStealth(mounted.getEntity().hasActiveBlueShield())) {
+                            continue;
+                        }
+                        // Mirror case. If Stealth is active, Blue Shield can't be turned on.
+                        if (equipmentMode.equals(Mounted.MODE_ON)
+                              && isMiscEquipment
+                              && mountedType.hasFlag(MiscType.F_BLUE_SHIELD)
+                              && (EquipmentActivation.isStealthOnOrActivating(en)
+                              || en.isNullSigOn()
+                              || en.isVoidSigOn()
+                              || en.isChameleonShieldOn())
+                              && Game.rulesManager.getRulesEquipment().blueShieldStealth()) {
                             continue;
                         }
                         m_chMode.addItem(equipmentMode.getDisplayableName());

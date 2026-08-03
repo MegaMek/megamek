@@ -122,11 +122,9 @@ public class ForceGeneratorViewUi implements ActionListener {
     private JTable tblChosen;
     private ChosenEntityModel modelChosen;
 
-    // The lower slot of the left column. Standalone Random Army shows the chosen-units table; a host that commits
-    // the tree shows the formation mix editor there instead, since it never reads that table.
+    // The chosen-units table below the controls. Standalone Random Army collects units to add to a running game
+    // here; a host that commits the preview tree never reads it, so it is hidden for them.
     private JScrollPane chosenUnitsPane;
-    private JPanel formationMixHost;
-    private boolean formationMixEditorInline = false;
 
     // When set by a host (e.g. MekHQ) that commits the preview tree into a TOE, the tree's right-click
     // menu offers Include/Exclude instead of "Add to game", and excluded nodes render struck out.
@@ -313,12 +311,7 @@ public class ForceGeneratorViewUi implements ActionListener {
         // The lower slot holds the chosen-units table for standalone Random Army, and the formation mix editor for a
         // host that commits the tree instead and so never reads that table. Both live in the panel; one is shown.
         chosenUnitsPane = scroll;
-        formationMixHost = new JPanel(new BorderLayout());
-        formationMixHost.setBorder(BorderFactory.createTitledBorder(
-              Messages.getString("ForceGeneratorDialog.formationMix.title")));
-        formationMixHost.setVisible(false);
         leftPanel.add(chosenUnitsPane);
-        leftPanel.add(formationMixHost);
     }
 
     /**
@@ -331,14 +324,10 @@ public class ForceGeneratorViewUi implements ActionListener {
      * @param visible {@code true} to show the mix editor in place of the chosen-units table
      */
     public void setFormationMixEditorVisible(boolean visible) {
-        formationMixEditorInline = visible;
         chosenUnitsPane.setVisible(!visible);
-        formationMixHost.setVisible(visible);
-        // The dialog button would open a second copy of what is already on screen.
-        panControls.setFormationMixButtonVisible(!visible);
-        if (visible) {
-            refreshFormationMixEditor();
-        }
+        // The editor lives in the options panel itself, above Transport and the Composition Summary, so it sits with
+        // the settings that shape the force rather than below the ones that describe it.
+        panControls.setFormationMixInline(visible);
         leftPanel.revalidate();
         leftPanel.repaint();
     }
@@ -349,23 +338,7 @@ public class ForceGeneratorViewUi implements ActionListener {
      * stops before drawing a unit.
      */
     public void refreshFormationMixEditor() {
-        if (!formationMixEditorInline) {
-            return;
-        }
-        FormationMix current = panControls.getFormationMix();
-        Ruleset ruleset = Ruleset.findRuleset(panControls.buildForceDescriptor());
-        FormationMixPreview preview = (ruleset == null)
-              ? FormationMixPreview.EMPTY
-              : panControls.sampleFormationOffer(ruleset);
-        FormationMixEditorPanel editor = new FormationMixEditorPanel(preview);
-        editor.setMix(current);
-        // Read back on every change rather than on an OK button: the inline editor has none, and the host reads the
-        // mix off the options view when it generates.
-        editor.addMixChangeListener(() -> panControls.setFormationMix(editor.getMix()));
-        formationMixHost.removeAll();
-        formationMixHost.add(new JScrollPane(editor), BorderLayout.CENTER);
-        formationMixHost.revalidate();
-        formationMixHost.repaint();
+        panControls.refreshInlineFormationMixEditor();
     }
 
     public Component getLeftPanel() {

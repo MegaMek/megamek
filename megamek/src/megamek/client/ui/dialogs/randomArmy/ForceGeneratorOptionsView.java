@@ -121,15 +121,6 @@ public class ForceGeneratorOptionsView extends JPanel implements FocusListener, 
     private JPanel panInfRole;
     private JPanel panAirRole;
 
-    private JCheckBox chkRoleRecon;
-    private JCheckBox chkRoleFireSupport;
-    private JCheckBox chkRoleUrban;
-    private JCheckBox chkRoleInfantrySupport;
-    private JCheckBox chkRoleCavalry;
-    private JCheckBox chkRoleRaider;
-    private JCheckBox chkRoleIncendiary;
-    private JCheckBox chkRoleAntiAircraft;
-    private JCheckBox chkRoleAntiInfantry;
     private JCheckBox chkRoleArtillery;
     private JCheckBox chkRoleMissileArtillery;
     private JCheckBox chkRoleTransport;
@@ -166,6 +157,9 @@ public class ForceGeneratorOptionsView extends JPanel implements FocusListener, 
     private JLabel lblFormationMixSummary;
     /** The requested distribution of formation types, empty until the player asks for one. */
     private FormationMix formationMix = FormationMix.EMPTY;
+    /** Holds the mix editor when a host shows it inline rather than opening it from the button. */
+    private JPanel panFormationMixInline;
+    private boolean formationMixInline = false;
 
     private JButton btnGenerate;
     private JButton btnExportMUL;
@@ -390,6 +384,24 @@ public class ForceGeneratorOptionsView extends JPanel implements FocusListener, 
         // column-driven layout would otherwise leave between them. Transport sits at its preferred
         // width on the WEST; the summary fills the rest of the row in the CENTER. Spans gridwidth=4
         // to occupy the full dialog row, matching how panGroundRole / panInfRole are laid out above.
+        // The mix sits above Transport and the Composition Summary: it shapes the force, while those describe and
+        // carry it. Hidden unless a host asks for it inline; MegaMek opens the same editor from a button instead.
+        panFormationMixInline = new JPanel(new BorderLayout());
+        panFormationMixInline.setBorder(BorderFactory.createTitledBorder(
+              Messages.getString("ForceGeneratorDialog.formationMix.title")));
+        panFormationMixInline.setVisible(false);
+        gbc.gridx = 0;
+        gbc.gridy = y++;
+        gbc.gridwidth = 4;
+        gbc.fill = GridBagConstraints.BOTH;
+        gbc.weightx = 1.0;
+        gbc.weighty = 1.0;
+        add(panFormationMixInline, gbc);
+        gbc.gridwidth = 1;
+        gbc.fill = GridBagConstraints.NONE;
+        gbc.weightx = 0.0;
+        gbc.weighty = 0.0;
+
         JPanel transportAndSummary = new JPanel(new BorderLayout(10, 0));
         transportAndSummary.add(panTransport, BorderLayout.WEST);
         JPanel summaryWithMix = new JPanel(new BorderLayout(0, 2));
@@ -462,69 +474,28 @@ public class ForceGeneratorOptionsView extends JPanel implements FocusListener, 
         gbc = new GridBagConstraints();
         gbc.anchor = GridBagConstraints.NORTHWEST;
 
-        chkRoleRecon = createMissionRoleCheck(MissionRole.RECON);
-        gbc.gridx = 0;
-        gbc.gridy = 0;
-        panGroundRole.add(chkRoleRecon, gbc);
-
-        chkRoleFireSupport = createMissionRoleCheck(MissionRole.FIRE_SUPPORT);
-        gbc.gridx = 1;
-        gbc.gridy = 0;
-        panGroundRole.add(chkRoleFireSupport, gbc);
-
-        chkRoleUrban = createMissionRoleCheck(MissionRole.URBAN);
-        gbc.gridx = 2;
-        gbc.gridy = 0;
-        panGroundRole.add(chkRoleUrban, gbc);
-
-        chkRoleCavalry = createMissionRoleCheck(MissionRole.CAVALRY);
-        gbc.gridx = 3;
-        gbc.gridy = 0;
-        panGroundRole.add(chkRoleCavalry, gbc);
-
-        chkRoleRaider = createMissionRoleCheck(MissionRole.RAIDER);
-        gbc.gridx = 0;
-        gbc.gridy = 1;
-        panGroundRole.add(chkRoleRaider, gbc);
-
-        chkRoleIncendiary = createMissionRoleCheck(MissionRole.INCENDIARY);
-        gbc.gridx = 1;
-        gbc.gridy = 1;
-        panGroundRole.add(chkRoleIncendiary, gbc);
-
-        chkRoleAntiAircraft = createMissionRoleCheck(MissionRole.ANTI_AIRCRAFT);
-        gbc.gridx = 2;
-        gbc.gridy = 1;
-        panGroundRole.add(chkRoleAntiAircraft, gbc);
-
-        chkRoleAntiInfantry = createMissionRoleCheck(MissionRole.ANTI_INFANTRY);
-        gbc.gridx = 3;
-        gbc.gridy = 1;
-        panGroundRole.add(chkRoleAntiInfantry, gbc);
-
+        // Only the mission roles that genuinely filter the unit table remain. Recon, Fire Support, Urban, Cavalry,
+        // Raider, Incendiary, Anti-Aircraft, Anti-Infantry and Infantry Support only nudged availability weights,
+        // which on a table of a few dozen entries was close to noise - and battlefield shape, which is what they
+        // were reached for, is what the formation mix below expresses directly.
         chkRoleArtillery = createMissionRoleCheck(MissionRole.ARTILLERY);
         gbc.gridx = 0;
-        gbc.gridy = 2;
+        gbc.gridy = 0;
         panGroundRole.add(chkRoleArtillery, gbc);
 
         chkRoleMissileArtillery = createMissionRoleCheck(MissionRole.MISSILE_ARTILLERY);
         gbc.gridx = 1;
-        gbc.gridy = 2;
+        gbc.gridy = 0;
         panGroundRole.add(chkRoleMissileArtillery, gbc);
 
-        chkRoleInfantrySupport = createMissionRoleCheck(MissionRole.INF_SUPPORT);
-        gbc.gridx = 2;
-        gbc.gridy = 2;
-        panGroundRole.add(chkRoleInfantrySupport, gbc);
-
         chkRoleTransport = createMissionRoleCheck(MissionRole.CARGO);
-        gbc.gridx = 0;
-        gbc.gridy = 3;
+        gbc.gridx = 2;
+        gbc.gridy = 0;
         panGroundRole.add(chkRoleTransport, gbc);
 
         chkRoleEngineer = createMissionRoleCheck(MissionRole.ENGINEER);
-        gbc.gridx = 1;
-        gbc.gridy = 3;
+        gbc.gridx = 3;
+        gbc.gridy = 0;
         panGroundRole.add(chkRoleEngineer, gbc);
 
         gbc = new GridBagConstraints();
@@ -713,6 +684,61 @@ public class ForceGeneratorOptionsView extends JPanel implements FocusListener, 
     }
 
     /**
+     * Shows the mix editor inline, above Transport and the Composition Summary, in place of the dialog button.
+     *
+     * <p>For a host with the room to keep it on screen. The editor is rebuilt from the current selections, so call
+     * this again whenever those change.</p>
+     *
+     * @param visible {@code true} to show the editor inline
+     */
+    public void setFormationMixInline(boolean visible) {
+        formationMixInline = visible;
+        panFormationMixInline.setVisible(visible);
+        setFormationMixButtonVisible(!visible);
+        if (visible) {
+            refreshInlineFormationMixEditor();
+        }
+        revalidate();
+        repaint();
+    }
+
+    /** Rebuilds the inline editor for the force the current selections describe, keeping any request already made. */
+    public void refreshInlineFormationMixEditor() {
+        if (!formationMixInline) {
+            return;
+        }
+        Ruleset ruleset = Ruleset.findRuleset(buildForceDescriptor());
+        FormationMixEditorPanel editor = new FormationMixEditorPanel(
+              (ruleset == null) ? FormationMixPreview.EMPTY : sampleFormationOffer(ruleset));
+        editor.setMix(formationMix);
+        // No OK button inline, so the request is read back on every change.
+        editor.addMixChangeListener(() -> formationMix = editor.getMix());
+        JScrollPane scroll = new JScrollPane(editor);
+        // Without a size the scroll pane grows to the editor's full height and never scrolls, pushing everything
+        // below it off the dialog.
+        scroll.setPreferredSize(UIUtil.scaleForGUI(720, INLINE_MIX_HEIGHT));
+        panFormationMixInline.removeAll();
+        panFormationMixInline.add(scroll, BorderLayout.CENTER);
+        panFormationMixInline.revalidate();
+        panFormationMixInline.repaint();
+    }
+
+    /** Unscaled height of the inline mix editor, past which it scrolls rather than growing. */
+    private static final int INLINE_MIX_HEIGHT = 260;
+
+    /**
+     * The controls that drive Generate, so a host can move them into its own button bar.
+     *
+     * <p>Re-parenting them removes them from this panel, which is the intent: a host with a toolbar of its own
+     * should not also show a second set of buttons mid-panel.</p>
+     *
+     * @return the Generate button, its options panel and the Clear Force button, in that order
+     */
+    public List<JComponent> getGenerateControls() {
+        return List.of(btnGenerate, panGenerateOptions, btnClear);
+    }
+
+    /**
      * The formation mix the player has asked for.
      *
      * @return the requested mix, never {@code null}
@@ -761,33 +787,6 @@ public class ForceGeneratorOptionsView extends JPanel implements FocusListener, 
             switch (forceDesc.getUnitType()) {
                 case UnitType.MEK:
                 case UnitType.TANK:
-                    if (chkRoleRecon.isSelected()) {
-                        fd.getRoles().add(MissionRole.RECON);
-                    }
-                    if (chkRoleFireSupport.isSelected()) {
-                        fd.getRoles().add(MissionRole.FIRE_SUPPORT);
-                    }
-                    if (chkRoleUrban.isSelected()) {
-                        fd.getRoles().add(MissionRole.URBAN);
-                    }
-                    if (chkRoleInfantrySupport.isSelected()) {
-                        fd.getRoles().add(MissionRole.INF_SUPPORT);
-                    }
-                    if (chkRoleCavalry.isSelected()) {
-                        fd.getRoles().add(MissionRole.CAVALRY);
-                    }
-                    if (chkRoleRaider.isSelected()) {
-                        fd.getRoles().add(MissionRole.RAIDER);
-                    }
-                    if (chkRoleIncendiary.isSelected()) {
-                        fd.getRoles().add(MissionRole.INCENDIARY);
-                    }
-                    if (chkRoleAntiAircraft.isSelected()) {
-                        fd.getRoles().add(MissionRole.ANTI_AIRCRAFT);
-                    }
-                    if (chkRoleAntiInfantry.isSelected()) {
-                        fd.getRoles().add(MissionRole.ANTI_INFANTRY);
-                    }
                     if (chkRoleArtillery.isSelected()) {
                         fd.getRoles().add(MissionRole.ARTILLERY);
                     }

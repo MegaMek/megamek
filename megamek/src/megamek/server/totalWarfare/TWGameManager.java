@@ -10003,7 +10003,7 @@ public class TWGameManager extends AbstractGameManager {
                 case PushAttackAction paa -> {
                     // push attacks go the end of the displacement attacks
                     entity.setDisplacementAttack(paa);
-                    game.addCharge(paa);
+                    game.addDisplacementAttack(paa);
                 }
                 case DodgeAction ignored -> entity.dodging = true;
                 case SpotAction spotAction -> {
@@ -11754,7 +11754,7 @@ public class TWGameManager extends AbstractGameManager {
         addReport(new Report(4000, Report.PUBLIC));
 
         // add any pending charges
-        for (Enumeration<AttackAction> i = game.getCharges(); i.hasMoreElements(); ) {
+        for (Enumeration<AttackAction> i = game.getDisplacementAttacks(); i.hasMoreElements(); ) {
             game.addAction(i.nextElement());
         }
         game.resetCharges();
@@ -26890,6 +26890,9 @@ public class TWGameManager extends AbstractGameManager {
         newEntity.movedLastRound = oldEntity.movedLastRound;
         newEntity.delta_distance = oldEntity.delta_distance;
         newEntity.mpUsed = oldEntity.mpUsed;
+        if (oldEntity.getDisplacementAttack() != null) {
+            newEntity.setDisplacementAttack(oldEntity.getDisplacementAttack());
+        }
     }
 
     /**
@@ -27128,7 +27131,7 @@ public class TWGameManager extends AbstractGameManager {
     /**
      * receive and process an entity mode change packet
      *
-     * @param c         the packet to be processed
+     * @param packet the packet to be processed
      * @param connIndex the id for connection that received the packet.
      */
     private void receiveEntityModeChange(Packet packet, int connIndex) throws InvalidPacketDataException {
@@ -27252,7 +27255,7 @@ public class TWGameManager extends AbstractGameManager {
     /**
      * Receive and process an Entity Heat Sinks Change Packet
      *
-     * @param c         the packet to be processed
+     * @param packet the packet to be processed
      * @param connIndex the id for connection that received the packet.
      */
     private void receiveEntitySinksChange(Packet packet, int connIndex) throws InvalidPacketDataException {

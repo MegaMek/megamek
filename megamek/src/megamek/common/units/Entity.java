@@ -56,15 +56,7 @@ import megamek.client.ui.util.PlayerColour;
 import megamek.client.ui.util.ViewFormatting;
 import megamek.codeUtilities.StringUtility;
 import megamek.common.*;
-import megamek.common.actions.AbstractAttackAction;
-import megamek.common.actions.ChargeAttackAction;
-import megamek.common.actions.DfaAttackAction;
-import megamek.common.actions.DisplacementAttackAction;
-import megamek.common.actions.EntityAction;
-import megamek.common.actions.PushAttackAction;
-import megamek.common.actions.TeleMissileAttackAction;
-import megamek.common.actions.WeaponAttackAction;
-import megamek.common.actions.WoodsClearingAttackAction;
+import megamek.common.actions.*;
 import megamek.common.annotations.Nullable;
 import megamek.common.battleArmor.BattleArmor;
 import megamek.common.battleArmor.BattleArmorHandles;
@@ -2358,23 +2350,49 @@ public abstract class Entity extends TurnOrdered
         return getCrew() == null || (getCrew().isCrewTypeNone());
     }
 
+    private void renumerateDisplacementAttacks() {
+        Enumeration<AttackAction> attackActions = game.getDisplacementAttacks();
+        while (attackActions.hasMoreElements()) {
+            AttackAction attack = attackActions.nextElement();
+            if (attack instanceof DisplacementAttackAction && attack.getEntityId() == id) {
+                displacementAttack = (DisplacementAttackAction) attack;
+                break;
+            }
+        }
+    }
+
     public boolean isCharging() {
+        if (displacementAttack == null) {
+            renumerateDisplacementAttacks();
+        }
         return displacementAttack instanceof ChargeAttackAction;
     }
 
     public boolean isPushing() {
+        if (displacementAttack == null) {
+            renumerateDisplacementAttacks();
+        }
         return displacementAttack instanceof PushAttackAction;
     }
 
     public boolean isMakingDfa() {
+        if (displacementAttack == null) {
+            renumerateDisplacementAttacks();
+        }
         return displacementAttack instanceof DfaAttackAction;
     }
 
     public boolean hasDisplacementAttack() {
+        if (displacementAttack == null) {
+            renumerateDisplacementAttacks();
+        }
         return displacementAttack != null;
     }
 
     public DisplacementAttackAction getDisplacementAttack() {
+        if (displacementAttack == null) {
+            renumerateDisplacementAttacks();
+        }
         return displacementAttack;
     }
 

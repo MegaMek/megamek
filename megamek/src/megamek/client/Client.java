@@ -67,7 +67,9 @@ import megamek.common.TagInfo;
 import megamek.common.TemporaryECMField;
 import megamek.common.actions.ArtilleryAttackAction;
 import megamek.common.actions.AttackAction;
+import megamek.common.actions.ChargeAttackAction;
 import megamek.common.actions.ClubAttackAction;
+import megamek.common.actions.DisplacementAttackAction;
 import megamek.common.actions.DodgeAction;
 import megamek.common.actions.EntityAction;
 import megamek.common.actions.FlipArmsAction;
@@ -855,7 +857,14 @@ public class Client extends AbstractClient {
                 if (!isCharge) {
                     game.addAction(entityAction);
                 } else {
-                    game.addCharge((AttackAction) entityAction);
+                    // This should work for Charge, DFA, and RAM attacks.
+                    if (entityAction instanceof DisplacementAttackAction) {
+                        Entity chargingUnit = game.getEntity(entityAction.getEntityId());
+                        if (chargingUnit != null) {
+                            chargingUnit.setDisplacementAttack((DisplacementAttackAction) entityAction);
+                        }
+                        game.addDisplacementAttack((AttackAction) entityAction);
+                    }
                 }
             }
         }

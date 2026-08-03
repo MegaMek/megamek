@@ -2813,7 +2813,7 @@ class MovePathHandler extends AbstractTWRuleHandler {
                               entity.getId(), target.getTargetType(),
                               target.getId(), target.getPosition());
                         entity.setDisplacementAttack(caa);
-                        getGame().addCharge(caa);
+                        getGame().addDisplacementAttack(caa);
                         charge = caa;
                     } else {
                         String message = "Illegal charge!! " + entity.getDisplayName() +
@@ -2832,7 +2832,7 @@ class MovePathHandler extends AbstractTWRuleHandler {
                               target.getId(), target.getPosition());
                         entity.setDisplacementAttack(raa);
                         entity.setRamming(true);
-                        getGame().addCharge(raa);
+                        getGame().addDisplacementAttack(raa);
                         charge = raa;
                     } else {
                         String message = "Illegal charge!! " + entity.getDisplayName()
@@ -2890,7 +2890,7 @@ class MovePathHandler extends AbstractTWRuleHandler {
                     entity.setDisplacementAttack(daa);
                     entity.setElevation(Game.rulesManager.getRulesMovement().getDFAElevation(entity.getGame(),
                                 entity.getId(), targetID, step));
-                    getGame().addCharge(daa);
+                    getGame().addDisplacementAttack(daa);
                     charge = daa;
 
                 } else {

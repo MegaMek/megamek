@@ -175,7 +175,7 @@ public final class Game extends AbstractGame implements Serializable, PlanetaryC
     private GamePhase lastPhase = GamePhase.UNKNOWN;
 
     // phase state
-    private final Vector<AttackAction> pendingCharges = new Vector<>();
+    private final Vector<AttackAction> pendingDisplacementAttacks = new Vector<>();
     private final Vector<AttackAction> pendingRams = new Vector<>();
     private final Vector<AttackAction> pendingTeleMissileAttacks = new Vector<>();
     private final ArrayList<PilotingRollData> pilotRolls = new ArrayList<>();
@@ -2637,30 +2637,30 @@ public final class Game extends AbstractGame implements Serializable, PlanetaryC
     /**
      * Adds a pending displacement attack to the list for this phase.
      */
-    public void addCharge(AttackAction ea) {
-        pendingCharges.addElement(ea);
+    public void addDisplacementAttack(AttackAction ea) {
+        pendingDisplacementAttacks.addElement(ea);
         processGameEvent(new GameNewActionEvent(this, ea));
     }
 
     /**
      * @return Enumeration of displacement attacks scheduled for the end of the physical phase.
      */
-    public Enumeration<AttackAction> getCharges() {
-        return pendingCharges.elements();
+    public Enumeration<AttackAction> getDisplacementAttacks() {
+        return pendingDisplacementAttacks.elements();
     }
 
     /**
      * Resets the pending charges list.
      */
     public void resetCharges() {
-        pendingCharges.removeAllElements();
+        pendingDisplacementAttacks.removeAllElements();
     }
 
     /**
      * @return the charges vector. Do not modify. Used for sending all charges to the client.
      */
     public List<AttackAction> getChargesVector() {
-        return Collections.unmodifiableList(pendingCharges);
+        return Collections.unmodifiableList(pendingDisplacementAttacks);
     }
 
     /**

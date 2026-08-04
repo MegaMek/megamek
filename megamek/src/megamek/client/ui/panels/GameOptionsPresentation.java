@@ -59,9 +59,10 @@ final class GameOptionsPresentation {
           "general.matchSetup", "general", BASIC, false, 10);
     private static final PageDefinition GENERAL_MATCH_FLOW = nestedPage(
           "general.matchFlow", "general", BASIC, false, 20);
-    private static final PageDefinition GAME_MASTER_PAGE = topLevelPage(GAME_MASTER, GAME_MASTER, false, 30);
-    private static final PageDefinition VICTORY_PAGE = topLevelPage(VICTORY, VICTORY, false, 40);
-    private static final PageDefinition ALLOWED_UNITS_PAGE = topLevelPage(ALLOWED_UNITS, ALLOWED_UNITS, false, 50);
+    private static final PageDefinition GENERAL_VICTORY_AND_GAME_MASTER = nestedPageWithSingleSourceFallback(
+          "general.victoryAndGameMaster", "general", VICTORY, GAME_MASTER, false, 30);
+    private static final PageDefinition GENERAL_UNITS_AND_TECHNOLOGY = nestedPage(
+          "general.unitsAndTechnology", "general", ALLOWED_UNITS, false, 40);
     private static final PageDefinition RULES_CORE = nestedPage("rules.core", "rules", BASIC, false, 60);
     private static final PageDefinition RULES_SENSORS = nestedPage(
           "rules.sensors", "rules", ADVANCED_RULES, true, 70);
@@ -91,11 +92,13 @@ final class GameOptionsPresentation {
           "aerospace.targeting", "aerospace", AEROSPACE, true, 190);
     private static final PageDefinition AEROSPACE_VESSELS = nestedPage(
           "aerospace.vessels", "aerospace", AEROSPACE, true, 200);
-    private static final PageDefinition INITIATIVE_PAGE = topLevelPage(INITIATIVE, INITIATIVE, false, 210);
-    private static final PageDefinition RPG_PAGE = topLevelPage(RPG, RPG, false, 220);
+    private static final PageDefinition INITIATIVE_AND_PILOTS_PHASES = nestedPage(
+          "initiativeAndPilots.phases", "initiativeAndPilots", INITIATIVE, false, 210);
+    private static final PageDefinition INITIATIVE_AND_PILOTS_ABILITIES = nestedPage(
+          "initiativeAndPilots.abilities", "initiativeAndPilots", RPG, false, 220);
 
     private static final Map<String, Location> LOCATIONS = new LinkedHashMap<>();
-      private static final Map<PageDefinition, Map<String, Integer>> SECTION_ORDERS = new LinkedHashMap<>();
+    private static final Map<PageDefinition, Map<String, Integer>> SECTION_ORDERS = new LinkedHashMap<>();
 
     static {
         registerBasicOptions();
@@ -184,32 +187,32 @@ final class GameOptionsPresentation {
     }
 
     private static void registerGameManagementOptions() {
-        register(GAME_MASTER, GAME_MASTER_PAGE, "gameMaster.control",
+        register(GAME_MASTER, GENERAL_VICTORY_AND_GAME_MASTER, "gameMaster.control",
               OptionsConstants.GAME_MASTER_ALLOW,
               OptionsConstants.GAME_MASTER_VOTE_THRESHOLD);
 
-        register(VICTORY, VICTORY_PAGE, "victory.conditions",
+        register(VICTORY, GENERAL_VICTORY_AND_GAME_MASTER, "victory.conditions",
               OptionsConstants.VICTORY_CHECK_VICTORY,
               OptionsConstants.VICTORY_SKIP_FORCED_VICTORY,
               OptionsConstants.VICTORY_ACHIEVE_CONDITIONS);
-        register(VICTORY, VICTORY_PAGE, "victory.battleValue",
+        register(VICTORY, GENERAL_VICTORY_AND_GAME_MASTER, "victory.battleValue",
               OptionsConstants.VICTORY_USE_BV_DESTROYED,
               OptionsConstants.VICTORY_BV_DESTROYED_PERCENT,
               OptionsConstants.VICTORY_USE_BV_RATIO,
               OptionsConstants.VICTORY_BV_RATIO_PERCENT);
-        register(VICTORY, VICTORY_PAGE, "victory.alternate",
+        register(VICTORY, GENERAL_VICTORY_AND_GAME_MASTER, "victory.alternate",
               OptionsConstants.VICTORY_USE_GAME_TURN_LIMIT,
               OptionsConstants.VICTORY_GAME_TURN_LIMIT,
               OptionsConstants.VICTORY_USE_KILL_COUNT,
               OptionsConstants.VICTORY_GAME_KILL_COUNT,
               OptionsConstants.VICTORY_COMMANDER_KILLED);
 
-        register(ALLOWED_UNITS, ALLOWED_UNITS_PAGE, "allowedUnits.availability",
+        register(ALLOWED_UNITS, GENERAL_UNITS_AND_TECHNOLOGY, "allowedUnits.availability",
               OptionsConstants.ALLOWED_CANON_ONLY,
               OptionsConstants.ALLOWED_YEAR,
               OptionsConstants.ALLOWED_TECH_LEVEL,
               OptionsConstants.ALLOWED_ERA_BASED);
-        register(ALLOWED_UNITS, ALLOWED_UNITS_PAGE, "allowedUnits.restrictions",
+        register(ALLOWED_UNITS, GENERAL_UNITS_AND_TECHNOLOGY, "allowedUnits.restrictions",
               OptionsConstants.ALLOWED_ALLOW_ILLEGAL_UNITS,
               OptionsConstants.ALLOWED_SHOW_EXTINCT,
               OptionsConstants.ALLOWED_ALL_AMMO_MIXED_TECH,
@@ -463,17 +466,17 @@ final class GameOptionsPresentation {
     }
 
     private static void registerInitiativeAndRpgOptions() {
-        register(INITIATIVE, INITIATIVE_PAGE, "initiative.infantry",
+      register(INITIATIVE, INITIATIVE_AND_PILOTS_PHASES, "initiative.infantry",
               OptionsConstants.INIT_INF_MOVE_EVEN,
               OptionsConstants.INIT_INF_DEPLOY_EVEN,
               OptionsConstants.INIT_INF_MOVE_LATER,
               OptionsConstants.INIT_INF_MOVE_MULTI,
               OptionsConstants.INIT_INF_PROTO_MOVE_MULTI);
-        register(INITIATIVE, INITIATIVE_PAGE, "initiative.protomeks",
+                        register(INITIATIVE, INITIATIVE_AND_PILOTS_PHASES, "initiative.protomeks",
               OptionsConstants.INIT_PROTOMEKS_MOVE_EVEN,
               OptionsConstants.INIT_PROTOMEKS_MOVE_LATER,
               OptionsConstants.INIT_PROTOMEKS_MOVE_MULTI);
-        register(INITIATIVE, INITIATIVE_PAGE, "initiative.simultaneous",
+                        register(INITIATIVE, INITIATIVE_AND_PILOTS_PHASES, "initiative.simultaneous",
               OptionsConstants.INIT_SIMULTANEOUS_DEPLOYMENT,
               OptionsConstants.INIT_SIMULTANEOUS_TARGETING,
               OptionsConstants.INIT_SIMULTANEOUS_FIRING,
@@ -481,27 +484,28 @@ final class GameOptionsPresentation {
               OptionsConstants.INIT_FRONT_LOAD_INITIATIVE,
               OptionsConstants.INIT_INITIATIVE_STREAK_COMPENSATION);
 
-        register(RPG, RPG_PAGE, "rpg.core",
+                        register(RPG, INITIATIVE_AND_PILOTS_ABILITIES, "rpg.core",
               OptionsConstants.RPG_PILOT_ADVANTAGES,
               OptionsConstants.EDGE,
               OptionsConstants.RPG_MANEI_DOMINI);
-        register(RPG, RPG_PAGE, "rpg.initiative",
+                        register(RPG, INITIATIVE_AND_PILOTS_ABILITIES, "rpg.initiative",
               OptionsConstants.RPG_INDIVIDUAL_INITIATIVE,
               OptionsConstants.RPG_COMMAND_INIT);
-        register(RPG, RPG_PAGE, "rpg.skills",
+                        register(RPG, INITIATIVE_AND_PILOTS_ABILITIES, "rpg.skills",
               OptionsConstants.RPG_RPG_GUNNERY,
               OptionsConstants.RPG_ARTILLERY_SKILL,
               OptionsConstants.RPG_TOUGHNESS);
-        register(RPG, RPG_PAGE, "rpg.conditions", OptionsConstants.RPG_BEGIN_SHUTDOWN);
+                        register(RPG, INITIATIVE_AND_PILOTS_ABILITIES, "rpg.conditions", OptionsConstants.RPG_BEGIN_SHUTDOWN);
     }
 
     private static void register(String sourceGroupId, PageDefinition page, String sectionId,
           String... optionNames) {
-                        Map<String, Integer> pageSectionOrders = SECTION_ORDERS.computeIfAbsent(page, ignored -> new LinkedHashMap<>());
-                        int sectionOrder = pageSectionOrders.computeIfAbsent(sectionId, ignored -> pageSectionOrders.size());
+        Map<String, Integer> pageSectionOrders = SECTION_ORDERS.computeIfAbsent(page,
+              ignored -> new LinkedHashMap<>());
+        int sectionOrder = pageSectionOrders.computeIfAbsent(sectionId, ignored -> pageSectionOrders.size());
         for (String optionName : optionNames) {
-                                    Location existing = LOCATIONS.putIfAbsent(optionName,
-                                                      new Location(sourceGroupId, page, sectionId, sectionOrder));
+            Location existing = LOCATIONS.putIfAbsent(optionName,
+                  new Location(sourceGroupId, page, sectionId, sectionOrder));
             if (existing != null) {
                 throw new IllegalStateException("Duplicate Game Options presentation location for " + optionName);
             }
@@ -510,37 +514,44 @@ final class GameOptionsPresentation {
 
     private static PageDefinition nestedPage(String id, String categoryId, String iconGroupId, boolean advanced,
           int order) {
-        return new PageDefinition(id, categoryId, iconGroupId, advanced, order);
+            return new PageDefinition(id, categoryId, iconGroupId, "", advanced, order);
     }
 
-    private static PageDefinition topLevelPage(String id, String iconGroupId, boolean advanced, int order) {
-        return new PageDefinition(id, null, iconGroupId, advanced, order);
+      private static PageDefinition nestedPageWithSingleSourceFallback(String id, String categoryId, String iconGroupId,
+              String fallbackSourceGroupId, boolean advanced, int order) {
+            return new PageDefinition(id, categoryId, iconGroupId, fallbackSourceGroupId, advanced, order);
     }
 
       record Location(String sourceGroupId, PageDefinition page, String sectionId, int sectionOrder) {
-    }
+      }
 
-    record PageDefinition(String id, String categoryId, String iconGroupId, boolean advanced, int order) {
-        String title(String sourceGroupDisplayName) {
-            return categoryId == null ? sourceGroupDisplayName : getString("GameOptionsDialog.page." + id + ".title");
+      record PageDefinition(String id, String categoryId, String iconGroupId, String fallbackSourceGroupId,
+              boolean advanced, int order) {
+            String title(Map<String, String> sourceGroups) {
+                  return usesSingleSourceFallback(sourceGroups)
+                          ? sourceGroups.get(fallbackSourceGroupId)
+                          : getString("GameOptionsDialog.page." + id + ".title");
         }
 
-        List<String> path(String sourceGroupDisplayName) {
-            if (categoryId == null) {
-                return List.of(sourceGroupDisplayName);
-            }
-            return List.of(getString("GameOptionsDialog.category." + categoryId), title(sourceGroupDisplayName));
+            List<String> path(Map<String, String> sourceGroups) {
+                  return List.of(getString("GameOptionsDialog.category." + categoryId), title(sourceGroups));
         }
 
         List<String> pathIds() {
-            String routeId = routeId();
-            return categoryId == null
-                  ? List.of(routeId)
-                  : List.of("gameOptions." + categoryId, routeId);
+                  return List.of("gameOptions." + categoryId, routeId());
+            }
+
+            String effectiveIconGroupId(Map<String, String> sourceGroups) {
+                  return usesSingleSourceFallback(sourceGroups) ? fallbackSourceGroupId : iconGroupId;
         }
 
         String routeId() {
             return "gameOptions." + id;
         }
+
+            private boolean usesSingleSourceFallback(Map<String, String> sourceGroups) {
+                  return !fallbackSourceGroupId.isBlank() && sourceGroups.size() == 1
+                          && sourceGroups.containsKey(fallbackSourceGroupId);
+            }
     }
 }

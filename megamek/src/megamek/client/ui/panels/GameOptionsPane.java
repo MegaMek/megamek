@@ -117,10 +117,10 @@ public class GameOptionsPane extends JPanel {
         List<SettingsRoute> routes = new ArrayList<>();
         Map<String, Supplier<Component>> pageFactories = new LinkedHashMap<>();
         for (PageSeed pageSeed : orderedPageSeeds) {
-            String pageTitle = pageSeed.definition().title(pageSeed.primarySourceGroupDisplayName());
+                        String pageTitle = pageSeed.title();
             GroupPage page = new GroupPage(pageSeed, pageTitle, optionVisibility);
             SettingsRoute route = new SettingsRoute(pageSeed.definition().routeId(),
-                  pageSeed.definition().path(pageSeed.primarySourceGroupDisplayName()),
+                                    pageSeed.path(),
                   pageSeed.definition().pathIds(), pageSeed.searchAliases(), true);
             page.setRoute(route);
             pages.add(page);
@@ -202,8 +202,16 @@ public class GameOptionsPane extends JPanel {
             return definition;
         }
 
-        private String primarySourceGroupDisplayName() {
-            return sourceGroups.values().iterator().next();
+        private String title() {
+            return definition.title(sourceGroups);
+        }
+
+        private List<String> path() {
+            return definition.path(sourceGroups);
+        }
+
+        private String effectiveIconGroupId() {
+            return definition.effectiveIconGroupId(sourceGroups);
         }
 
         private List<String> searchAliases() {
@@ -250,7 +258,7 @@ public class GameOptionsPane extends JPanel {
                 section.rows.add(rows.get(index));
             }
 
-            Icon icon = pageIcon(pageSeed.definition().iconGroupId());
+            Icon icon = pageIcon(pageSeed.effectiveIconGroupId());
             SettingsPagePanel.Builder builder = SettingsPagePanel.builder(pageSeed.definition().id(), TEXT,
                         "GameOptionsDialog.title", icon)
                 .header(new SettingsHeaderPanel(pageSeed.definition().id(), pageTitle, icon))
@@ -260,7 +268,7 @@ public class GameOptionsPane extends JPanel {
             List<Map.Entry<String, SectionRows>> orderedSections = new ArrayList<>(sectionRows.entrySet());
             orderedSections.sort(Comparator.comparingInt(entry -> entry.getValue().order));
             for (Map.Entry<String, SectionRows> entry : orderedSections) {
-                SettingsFormPanel content = createSectionContent(pageSeed.definition().id(),
+                SettingsFormPanel content = createSectionContent(entry.getKey(),
                     pageSeed.definition().id() + entry.getKey(), entry.getValue().rows);
                 List<String> aliases = new ArrayList<>();
                 aliases.addAll(pageSeed.searchAliases());
@@ -272,10 +280,10 @@ public class GameOptionsPane extends JPanel {
             add(pagePanel, BorderLayout.CENTER);
         }
 
-        private static SettingsFormPanel createSectionContent(String pageId, String name, List<OptionRow> rows) {
+        private static SettingsFormPanel createSectionContent(String sectionId, String name, List<OptionRow> rows) {
             SettingsFormPanel content = new SettingsFormPanel(name,
                   DialogOptionComponentYPanel.SETTINGS_GRID_CELL_WIDTH);
-            if (pageId.equals("gameMaster")) {
+            if (sectionId.equals("gameMaster.control")) {
                 for (OptionRow row : rows) {
                     if (row.option().getName().equals(OptionsConstants.GAME_MASTER_ALLOW)) {
                         row.component().useStandaloneCheckBoxRowLayout();

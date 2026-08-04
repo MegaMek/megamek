@@ -216,6 +216,43 @@ class GameOptionsPaneTest {
     }
 
     @Test
+    void victoryAndGameMasterShareOneLeafPage() throws Exception {
+        runOnEdt(() -> {
+            GameOptions options = new GameOptions();
+            DialogOptionComponentYPanel allowGameMaster = component(
+                  options.getOption(OptionsConstants.GAME_MASTER_ALLOW));
+            DialogOptionComponentYPanel checkVictory = component(
+                  options.getOption(OptionsConstants.VICTORY_CHECK_VICTORY));
+
+            new GameOptionsPane(List.of(
+                  new GameOptionsPane.OptionGroup("gameMaster", "Game Master", List.of(allowGameMaster)),
+                  new GameOptionsPane.OptionGroup("victory", "Victory Conditions", List.of(checkVictory))),
+                  option -> true);
+
+            assertSame(SwingUtilities.getAncestorOfClass(SettingsPagePanel.class, allowGameMaster),
+                  SwingUtilities.getAncestorOfClass(SettingsPagePanel.class, checkVictory));
+        });
+    }
+
+    @Test
+    void gameMasterOnlyPageUsesLobbyFallbackTitleAndIcon() throws Exception {
+        runOnEdt(() -> {
+            GameOptions options = new GameOptions();
+            DialogOptionComponentYPanel allowGameMaster = component(
+                  options.getOption(OptionsConstants.GAME_MASTER_ALLOW));
+            GameOptionsPane pane = new GameOptionsPane(List.of(new GameOptionsPane.OptionGroup(
+                  "gameMaster", "Game Master", List.of(allowGameMaster))), option -> true);
+            JTree tree = findComponent(pane, JTree.class);
+
+            assertTreePathExists(tree, "General", "Game Master");
+            assertTreePathDoesNotExist(tree, "General", "Victory and Game Master");
+            GameOptionsPresentation.PageDefinition page = GameOptionsPresentation.location(
+                  "gameMaster", OptionsConstants.GAME_MASTER_ALLOW).page();
+            assertEquals("gameMaster", page.effectiveIconGroupId(Map.of("gameMaster", "Game Master")));
+        });
+    }
+
+    @Test
     void standardOptionCellsUseConsistentControlOrderAndInsets() throws Exception {
         runOnEdt(() -> {
             GameOptions options = new GameOptions();
@@ -227,8 +264,8 @@ class GameOptionsPaneTest {
                   options.getOption(OptionsConstants.ALLOWED_TECH_LEVEL));
 
             GameOptionsPane pane = new GameOptionsPane(List.of(
-                new GameOptionsPane.OptionGroup("basic", "basic", List.of(booleanOption, numericOption)),
-                new GameOptionsPane.OptionGroup("allowedUnits", "allowedUnits", List.of(choiceOption))),
+                                    new GameOptionsPane.OptionGroup("basic", "basic", List.of(booleanOption, numericOption)),
+                                    new GameOptionsPane.OptionGroup("allowedUnits", "allowedUnits", List.of(choiceOption))),
                 option -> true);
 
             assertFirstComponentStartsAtCellEdge(booleanOption, JCheckBox.class);
@@ -421,6 +458,7 @@ class GameOptionsPaneTest {
         GameOptions options = new GameOptions();
         Set<String> registeredOptionNames = new LinkedHashSet<>();
         Map<String, Integer> sectionSizes = new LinkedHashMap<>();
+        Map<String, Set<String>> pageSections = new LinkedHashMap<>();
 
         for (Enumeration<IOptionGroup> groups = options.getGroups(); groups.hasMoreElements(); ) {
             IOptionGroup group = groups.nextElement();
@@ -429,27 +467,29 @@ class GameOptionsPaneTest {
                 assertTrue(registeredOptionNames.add(option.getName()), "Duplicate registered option " + option.getName());
                 GameOptionsPresentation.Location location = GameOptionsPresentation.location(
                       group.getName(), option.getName());
-                    if (location.page().categoryId() != null) {
-                      assertTrue(Messages.keyExists(
-                          "GameOptionsDialog.category." + location.page().categoryId()), location.page().categoryId());
-                      assertTrue(Messages.keyExists(
-                          "GameOptionsDialog.page." + location.page().id() + ".title"), location.page().id());
-                    }
+                    assertTrue(Messages.keyExists(
+                        "GameOptionsDialog.category." + location.page().categoryId()), location.page().categoryId());
+                    assertTrue(Messages.keyExists(
+                        "GameOptionsDialog.page." + location.page().id() + ".title"), location.page().id());
                     assertTrue(Messages.keyExists(
                         "GameOptionsDialog.section." + location.sectionId() + ".title"), location.sectionId());
                     assertTrue(Messages.keyExists(
                         "GameOptionsDialog.section." + location.sectionId() + ".summary"), location.sectionId());
                 String sectionKey = location.page().id() + ':' + location.sectionId();
                 sectionSizes.merge(sectionKey, 1, Integer::sum);
+                    pageSections.computeIfAbsent(location.page().id(), ignored -> new LinkedHashSet<>())
+                        .add(location.sectionId());
             }
         }
 
         assertEquals(registeredOptionNames, GameOptionsPresentation.mappedOptionNames());
         sectionSizes.forEach((section, count) -> assertTrue(count <= 12, section + " contains " + count + " options"));
+                pageSections.forEach((page, sections) -> assertTrue(sections.size() >= 2 && sections.size() <= 4,
+              page + " contains " + sections.size() + " sections"));
     }
 
     @Test
-    void overloadedGroupsUseTaskBasedNestedNavigationPaths() throws Exception {
+    void gameOptionsUseTaskBasedNestedNavigationPaths() throws Exception {
         runOnEdt(() -> {
             GameOptions options = new GameOptions();
             GameOptionsPane pane = new GameOptionsPane(allOptionGroups(options), option -> true);
@@ -457,11 +497,20 @@ class GameOptionsPaneTest {
 
             assertTreePathExists(tree, "General", "Match Setup");
             assertTreePathExists(tree, "General", "Match Flow, Timers, and Saves");
+            assertTreePathExists(tree, "General", "Victory and Game Master");
+            assertTreePathExists(tree, "General", "Units and Technology");
             assertTreePathExists(tree, "Rules", "Core Rules");
             assertTreePathExists(tree, "Rules", "Sensors and Visibility");
             assertTreePathExists(tree, "Combat", "Targeting, LOS, and Artillery");
             assertTreePathExists(tree, "Movement", "Vehicle Movement");
             assertTreePathExists(tree, "Aerospace", "Vessels, Fuel, and Ordnance");
+            assertTreePathExists(tree, "Initiative and Pilots", "Initiative and Simultaneous Phases");
+            assertTreePathExists(tree, "Initiative and Pilots", "Pilot Abilities, Edge, and Skills");
+            assertTreePathDoesNotExist(tree, "Game Master");
+            assertTreePathDoesNotExist(tree, "Victory Conditions");
+            assertTreePathDoesNotExist(tree, "Allowed Units and Equipment");
+            assertTreePathDoesNotExist(tree, "Initiative Rules");
+            assertTreePathDoesNotExist(tree, "RPG Related");
         });
     }
 
@@ -557,6 +606,18 @@ class GameOptionsPaneTest {
     }
 
     private static void assertTreePathExists(JTree tree, String... expectedPath) {
+        if (!treePathExists(tree, expectedPath)) {
+            throw new AssertionError("No navigation path " + String.join(" > ", expectedPath));
+        }
+    }
+
+    private static void assertTreePathDoesNotExist(JTree tree, String... unexpectedPath) {
+        if (treePathExists(tree, unexpectedPath)) {
+            throw new AssertionError("Unexpected navigation path " + String.join(" > ", unexpectedPath));
+        }
+    }
+
+    private static boolean treePathExists(JTree tree, String... expectedPath) {
         for (int row = 0; row < tree.getRowCount(); row++) {
             TreePath treePath = tree.getPathForRow(row);
             if (treePath.getPathCount() != expectedPath.length + 1) {
@@ -567,10 +628,10 @@ class GameOptionsPaneTest {
                 matches &= expectedPath[index].equals(treePath.getPathComponent(index + 1).toString());
             }
             if (matches) {
-                return;
+                return true;
             }
         }
-        throw new AssertionError("No navigation path " + String.join(" > ", expectedPath));
+        return false;
     }
 
     private static DialogOptionComponentYPanel component(IOption option) {

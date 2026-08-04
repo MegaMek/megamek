@@ -574,6 +574,99 @@ public class GameOptionsDialog extends AbstractButtonDialog implements ActionLis
         comps.add(optionComp);
     }
 
+    /**
+     * If the rules system is changed, enable or disable certain options from being changed
+     * Core will disable them, but does not change the selection mark.
+     * @param core Is it core rules or not
+     */
+    private void rulesSystemPrevention(boolean core) {
+        // Change the following
+        // Flamers per BattleMech Manual
+        List<DialogOptionComponentYPanel> comps = optionComps.get(OptionsConstants.BASE_FLAMER_HEAT);
+        if (comps != null) {
+            for (DialogOptionComponentYPanel comp_i : comps) {
+                comp_i.setEditable(!core);
+            }
+        }
+        // TacOps Enhanced Missile Defense
+        comps = optionComps.get(OptionsConstants.ADVANCED_COMBAT_TAC_OPS_AMS);
+        if (comps != null) {
+            for (DialogOptionComponentYPanel comp_i : comps) {
+                comp_i.setEditable(!core);
+            }
+        }
+        // TacOps Charge Damage
+        comps = optionComps.get(OptionsConstants.ADVANCED_COMBAT_TAC_OPS_CHARGE_DAMAGE);
+        if (comps != null) {
+            for (DialogOptionComponentYPanel comp_i : comps) {
+                comp_i.setEditable(!core);
+            }
+        }
+        // TacOps Backward Movement (Expanded)
+        comps = optionComps.get(OptionsConstants.ADVANCED_GROUND_MOVEMENT_TAC_OPS_WALK_BACKWARDS);
+        if (comps != null) {
+            for (DialogOptionComponentYPanel comp_i : comps) {
+                comp_i.setEditable(!core);
+            }
+        }
+        // (Unofficial) CASE/CASEII reduces pilot damage on ammo explosion
+        comps = optionComps.get(OptionsConstants.ADVANCED_COMBAT_CASE_PILOT_DAMAGE);
+        if (comps != null) {
+            for (DialogOptionComponentYPanel comp_i : comps) {
+                comp_i.setEditable(!core);
+            }
+        }
+        // TacOps Retractable Blades
+        comps = optionComps.get(OptionsConstants.ADVANCED_COMBAT_TAC_OPS_RETRACTABLE_BLADES);
+        if (comps != null) {
+            for (DialogOptionComponentYPanel comp_i : comps) {
+                comp_i.setEditable(!core);
+            }
+        }
+        // (Unofficial) Unjam Ultra Autocannons
+        comps = optionComps.get(OptionsConstants.ADVANCED_COMBAT_UNJAM_UAC);
+        if (comps != null) {
+            for (DialogOptionComponentYPanel comp_i : comps) {
+                comp_i.setEditable(!core);
+            }
+        }
+        // From Load Initiative
+        comps = optionComps.get(OptionsConstants.INIT_FRONT_LOAD_INITIATIVE);
+        if (comps != null) {
+            for (DialogOptionComponentYPanel comp_i : comps) {
+                comp_i.setEditable(!core);
+            }
+        }
+        // TacOps Minefields / BMM Minefield Support
+        comps = optionComps.get(OptionsConstants.ADVANCED_MINEFIELDS);
+        if (comps != null) {
+            for (DialogOptionComponentYPanel comp_i : comps) {
+                comp_i.setEditable(!core);
+            }
+        }
+        // (Unofficial) Alternate "Better" MASC/Supercharger
+        comps = optionComps.get(OptionsConstants.ADVANCED_ALTERNATE_MASC);
+        if (comps != null) {
+            for (DialogOptionComponentYPanel comp_i : comps) {
+                comp_i.setEditable(!core);
+            }
+        }
+        // (Unofficial) Alternate "Better" MASC/Supercharger
+        comps = optionComps.get(OptionsConstants.ADVANCED_ALTERNATE_MASC_ENHANCED);
+        if (comps != null) {
+            for (DialogOptionComponentYPanel comp_i : comps) {
+                comp_i.setEditable(!core);
+            }
+        }
+        // (Unofficial) Alternate "Better" MASC/Supercharger - Enhanced
+        comps = optionComps.get(OptionsConstants.ADVANCED_MINEFIELDS);
+        if (comps != null) {
+            for (DialogOptionComponentYPanel comp_i : comps) {
+                comp_i.setEditable(!core);
+            }
+        }
+    }
+
     // Gets called when one of the option checkboxes is clicked.
     // Arguments are the GameOption object and the true/false
     // state of the checkbox.
@@ -800,6 +893,14 @@ public class GameOptionsDialog extends AbstractButtonDialog implements ActionLis
                 for (DialogOptionComponentYPanel maxComp : maxComps) {
                     maxComp.setEditable(editable && isLegacyMode);
                 }
+            }
+        }
+        if (option.getName().equals(OptionsConstants.RULES_SYSTEM)) {
+            if (clickedComp.getValue().equals(OptionsConstants.RULES_CORE)) {
+                rulesSystemPrevention(true);
+            }
+            if (clickedComp.getValue().equals(OptionsConstants.RULES_TW)) {
+                rulesSystemPrevention(false);
             }
         }
     }

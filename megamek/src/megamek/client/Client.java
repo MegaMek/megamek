@@ -141,6 +141,8 @@ public class Client extends AbstractClient {
 
     // FIXME: Should ideally be located elsewhere; the client should handle data, not gfx or UI-related stuff:
     private TilesetManager tilesetManager;
+    /** Set once the tile set has failed to build, so it is not attempted again on every call. */
+    private boolean tilesetLoadFailed;
 
     public Client(String name, String host, int port) {
         super(name, host, port);
@@ -159,11 +161,15 @@ public class Client extends AbstractClient {
      * @return the tile set manager, or {@code null} if it cannot be built
      */
     private @Nullable TilesetManager tilesetManager() {
-        if (tilesetManager == null) {
+        if ((tilesetManager == null) && !tilesetLoadFailed) {
             try {
                 tilesetManager = new TilesetManager(game);
             } catch (IOException exception) {
-                LOGGER.error(exception, "Could not load the tile set");
+                // Remember the failure. Building this used to be attempted once, in the constructor; retrying on
+                // every call would repeat expensive work and flood the log wherever the tile set is missing or
+                // corrupt, which is exactly where the client is least able to afford it.
+                tilesetLoadFailed = true;
+                LOGGER.error(exception, "Could not load the tile set; continuing without unit images");
             }
         }
         return tilesetManager;

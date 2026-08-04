@@ -1895,7 +1895,7 @@ public class BasicPathRanker extends PathRanker {
 
         logger.trace("{}", formula);
 
-        recordDoctrineScores(scores);
+        scores.putAll(doctrineScores());
 
         RankedPath rankedPath = new RankedPath(utility, pathCopy, formula.toString());
         rankedPath.setExpectedDamage(damageEstimate.getMaximumDamageEstimate());
@@ -1904,7 +1904,7 @@ public class BasicPathRanker extends PathRanker {
     }
 
     /**
-     * Lets a subclass record the reasoning behind its own modifiers, which become extra columns in the
+     * The reasoning behind a subclass's own modifiers, which becomes extra columns in the
      * {@link megamek.client.bot.BotLogger} TSV.
      *
      * <p>The modifier values themselves are already recorded, but a number on its own only says how much a term
@@ -1913,10 +1913,11 @@ public class BasicPathRanker extends PathRanker {
      * logging is effectively unavailable: it is off by default and rotates away within a minute of a company-scale
      * game.</p>
      *
-     * @param scores the score map for the path just ranked; add named values to it
+     * @return named values to record alongside the path's modifiers; empty by default
      */
-    protected void recordDoctrineScores(Map<String, Double> scores) {
+    protected Map<String, Double> doctrineScores() {
         // Base ranker: the modifier values already recorded tell the whole story.
+        return Map.of();
     }
 
     protected boolean isLosRange(Game game) {

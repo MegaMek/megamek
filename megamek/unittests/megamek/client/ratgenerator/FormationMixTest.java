@@ -50,11 +50,11 @@ import org.junit.jupiter.api.Test;
 class FormationMixTest {
 
     private static FormationMix mixOf(Object... namesAndPercents) {
-        Map<String, Integer> percentages = new LinkedHashMap<>();
+        Map<String, Integer> lanceCounts = new LinkedHashMap<>();
         for (int index = 0; index < namesAndPercents.length; index += 2) {
-            percentages.put((String) namesAndPercents[index], (Integer) namesAndPercents[index + 1]);
+            lanceCounts.put((String) namesAndPercents[index], (Integer) namesAndPercents[index + 1]);
         }
-        return new FormationMix(percentages);
+        return new FormationMix(lanceCounts);
     }
 
     /** A preview offering the named formations, each an even share of one tweakable node, placeable everywhere. */
@@ -73,7 +73,7 @@ class FormationMixTest {
     @Test
     void emptyMixRequestsNothing() {
         assertTrue(FormationMix.EMPTY.isEmpty());
-        assertEquals(0, FormationMix.EMPTY.totalPercent());
+        assertEquals(0, FormationMix.EMPTY.totalLances());
         assertTrue(FormationMix.EMPTY.requestedFormations().isEmpty());
     }
 
@@ -83,7 +83,7 @@ class FormationMixTest {
         FormationMix allZero = mixOf("Battle", 0, "Recon", 0);
 
         assertTrue(allZero.isEmpty());
-        assertEquals(0, allZero.totalPercent());
+        assertEquals(0, allZero.totalLances());
     }
 
     @Test
@@ -91,41 +91,37 @@ class FormationMixTest {
         FormationMix mix = mixOf("Battle", 30, "Fire", 20);
 
         assertFalse(mix.isEmpty());
-        assertEquals(50, mix.totalPercent());
-        assertEquals(30, mix.percentFor("Battle"));
-        assertEquals(20, mix.percentFor("Fire"));
+        assertEquals(50, mix.totalLances());
+        assertEquals(30, mix.lancesFor("Battle"));
+        assertEquals(20, mix.lancesFor("Fire"));
     }
 
     @Test
     void formationNamesAreTrimmed() {
         FormationMix mix = mixOf("  Light Battle  ", 40);
 
-        assertEquals(40, mix.percentFor("Light Battle"));
+        assertEquals(40, mix.lancesFor("Light Battle"));
         assertTrue(mix.requestedFormations().contains("Light Battle"));
     }
 
     @Test
     void unrequestedFormationReportsZero() {
-        assertEquals(0, mixOf("Battle", 30).percentFor("Recon"));
-        assertEquals(0, mixOf("Battle", 30).percentFor(null));
+        assertEquals(0, mixOf("Battle", 30).lancesFor("Recon"));
+        assertEquals(0, mixOf("Battle", 30).lancesFor(null));
     }
 
     @Test
     void blankNamesAreDropped() {
-        Map<String, Integer> percentages = new LinkedHashMap<>();
-        percentages.put("  ", 40);
-        percentages.put("Battle", 30);
+        Map<String, Integer> lanceCounts = new LinkedHashMap<>();
+        lanceCounts.put("  ", 4);
+        lanceCounts.put("Battle", 3);
 
-        FormationMix mix = new FormationMix(percentages);
+        FormationMix mix = new FormationMix(lanceCounts);
 
         assertEquals(1, mix.requestedFormations().size());
-        assertEquals(30, mix.totalPercent());
+        assertEquals(3, mix.totalLances());
     }
 
-    @Test
-    void percentageAbove100IsRejected() {
-        assertThrows(IllegalArgumentException.class, () -> mixOf("Battle", 101));
-    }
 
     @Test
     void percentagesAreImmutableAfterConstruction() {
@@ -156,8 +152,8 @@ class FormationMixTest {
         FormationMix restricted = mix.restrictedTo(preview);
 
         assertEquals(1, restricted.requestedFormations().size());
-        assertEquals(30, restricted.percentFor("Battle"));
-        assertEquals(0, restricted.percentFor("Hunter"));
+        assertEquals(30, restricted.lancesFor("Battle"));
+        assertEquals(0, restricted.lancesFor("Hunter"));
     }
 
     @Test

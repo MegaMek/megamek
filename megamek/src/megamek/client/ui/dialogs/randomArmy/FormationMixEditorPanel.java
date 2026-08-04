@@ -89,6 +89,15 @@ public class FormationMixEditorPanel extends JPanel implements Scrollable {
     private static final int SCROLL_UNIT_INCREMENT = 16;
 
     private final Map<String, JSpinner> spinners = new TreeMap<>();
+
+    /**
+     * What each spinner started at, being the lances the ruleset builds on its own.
+     *
+     * <p>A spinner still sitting on its starting number is not a request. That is what keeps an untouched editor
+     * generating exactly as the ruleset would, variance and all, while still showing the player the number they are
+     * adjusting away from rather than a bare zero.</p>
+     */
+    private final Map<String, Integer> startingLances = new TreeMap<>();
     private final FormationMixPreview preview;
     private final boolean allowUnofferedFormations;
 
@@ -320,13 +329,18 @@ public class FormationMixEditorPanel extends JPanel implements Scrollable {
             String displayName = (formationType == null) ? formationName : formationType.getNameWithFaction();
 
             JLabel label = new JLabel(displayName);
-            // The spinner stops at the most this force could actually deliver, so a number the player can dial in
-            // is always a number they can get. Overriding lifts it to the whole force.
-            int ceiling = allowUnofferedFormations ? 100 : preview.ceilingPercentFor(formationName);
-            JSpinner spinner = new JSpinner(new SpinnerNumberModel(0, 0, Math.max(0, ceiling), 5));
+            // The player types lances, and the spinner stops at the most this force could actually give this
+            // formation, so a number they can dial in is always a number they can get. Overriding lifts the cap to
+            // every adjustable lance in the force.
+            int maximum = allowUnofferedFormations
+                  ? preview.tweakableNodes()
+                  : preview.maximumLancesFor(formationName);
+            int typical = Math.min(preview.typicalLancesFor(formationName), Math.max(0, maximum));
+            JSpinner spinner = new JSpinner(new SpinnerNumberModel(typical, 0, Math.max(0, maximum), 1));
+            startingLances.put(formationName, typical);
             spinner.setName("spnFormationMix" + formationName.replace(" ", ""));
-            String tooltip = describeFormation(formationType, displayName, preview.defaultShareFor(formationName),
-                  ceilingExplanation(formationName));
+            String tooltip = describeFormation(formationType, displayName,
+                  preview.typicalLancesFor(formationName), ceilingExplanation(formationName));
             spinner.setToolTipText(tooltip);
             label.setToolTipText(tooltip);
             label.setLabelFor(spinner);
@@ -354,7 +368,7 @@ public class FormationMixEditorPanel extends JPanel implements Scrollable {
             column.add(spinner, constraints);
             // The share sits centred in its column so the numbers line up under the heading that names them,
             // rather than ragging left off the end of the spinner.
-            JLabel shareLabel = new JLabel(String.format("%d%%", Math.round(preview.defaultShareFor(formationName))),
+            JLabel shareLabel = new JLabel(Integer.toString(preview.typicalLancesFor(formationName)),
                   SwingConstants.CENTER);
             constraints.gridx = 2;
             constraints.insets = new Insets(1, 1, 1, 4);
@@ -460,13 +474,13 @@ public class FormationMixEditorPanel extends JPanel implements Scrollable {
      *
      * @param formationType the formation, or {@code null} for a name with no registered type
      * @param displayName   the name to head the tooltip with
-     * @param defaultShare  the ruleset's share of this force for the formation, or negative to omit it
+     * @param typicalLances the lances the ruleset gives this formation on its own, or negative to omit it
      *
      * @return the hover text, or {@code null} when there is nothing to say
      */
     private static @Nullable String describeFormation(@Nullable FormationType formationType, String displayName,
-          double defaultShare) {
-        return describeFormation(formationType, displayName, defaultShare, null);
+          int typicalLances) {
+        return describeFormation(formationType, displayName, typicalLances, null);
     }
 
     /**
@@ -475,15 +489,15 @@ public class FormationMixEditorPanel extends JPanel implements Scrollable {
      *
      * @param formationType      the formation to describe, may be {@code null} for an unregistered name
      * @param displayName        the name to head the text with
-     * @param defaultShare       the ruleset's own share, or negative to leave it out
+     * @param typicalLances      the lances the ruleset gives it on its own, or negative to leave it out
      * @param ceilingExplanation why the request stops where it does, or {@code null} to leave it out
      *
      * @return the hover text, or {@code null} when there is nothing to say
      */
     private static @Nullable String describeFormation(@Nullable FormationType formationType, String displayName,
-          double defaultShare, @Nullable String ceilingExplanation) {
+          int typicalLances, @Nullable String ceilingExplanation) {
         String description = tooltipFor(formationType);
-        if ((description == null) && (defaultShare < 0) && (ceilingExplanation == null)) {
+        if ((description == null) && (typicalLances < 0) && (ceilingExplanation == null)) {
             return null;
         }
         StringBuilder text = new StringBuilder("<html><body style='width:")
@@ -494,10 +508,9 @@ public class FormationMixEditorPanel extends JPanel implements Scrollable {
         if (description != null) {
             text.append("<br>").append(description);
         }
-        if (defaultShare >= 0) {
+        if (typicalLances >= 0) {
             text.append("<br><i>")
-                  .append(Messages.getString("ForceGeneratorDialog.formationMix.defaultShare",
-                        Math.round(defaultShare)))
+                  .append(Messages.getString("ForceGeneratorDialog.formationMix.defaultShare", typicalLances))
                   .append("</i>");
         }
         if (ceilingExplanation != null) {
@@ -514,16 +527,16 @@ public class FormationMixEditorPanel extends JPanel implements Scrollable {
      * @return the explanation for the hover text
      */
     private String ceilingExplanation(String formationName) {
-        int placeable = preview.placeableNodes().getOrDefault(formationName, 0);
+        int placeable = preview.maximumLancesFor(formationName);
         if (allowUnofferedFormations) {
             return Messages.getString("ForceGeneratorDialog.formationMix.ceiling.override",
-                  placeable, preview.tweakableNodes());
+                  preview.tweakableNodes(), placeable);
         }
         if (placeable <= 0) {
             return Messages.getString("ForceGeneratorDialog.formationMix.ceiling.none");
         }
         return Messages.getString("ForceGeneratorDialog.formationMix.ceiling",
-              preview.ceilingPercentFor(formationName), placeable, preview.tweakableNodes());
+              placeable, preview.tweakableNodes());
     }
 
     /** Width the hover text wraps at. The Campaign Operations descriptions are a full sentence plus a citation. */
@@ -533,9 +546,16 @@ public class FormationMixEditorPanel extends JPanel implements Scrollable {
      * @return the requested mix, empty when every spinner is left at zero
      */
     public FormationMix getMix() {
-        Map<String, Integer> percentages = new LinkedHashMap<>();
-        spinners.forEach((formationName, spinner) -> percentages.put(formationName, (Integer) spinner.getValue()));
-        return new FormationMix(percentages, allowUnofferedFormations);
+        Map<String, Integer> lanceCounts = new LinkedHashMap<>();
+        spinners.forEach((formationName, spinner) -> {
+            int requested = (Integer) spinner.getValue();
+            // Only a number the player actually moved is a request. Reading every spinner back would pin the whole
+            // force to one sample of the ruleset's own averages and quietly remove its variance.
+            if (requested != startingLances.getOrDefault(formationName, 0)) {
+                lanceCounts.put(formationName, requested);
+            }
+        });
+        return new FormationMix(lanceCounts, allowUnofferedFormations);
     }
 
     /**
@@ -546,13 +566,18 @@ public class FormationMixEditorPanel extends JPanel implements Scrollable {
     public void setMix(@Nullable FormationMix mix) {
         FormationMix toShow = (mix == null) ? FormationMix.EMPTY : mix;
         spinners.forEach((formationName, spinner) -> {
+            if (!toShow.requestedFormations().contains(formationName)) {
+                // Not asked for, so it goes back to showing what the ruleset builds on its own.
+                spinner.setValue(startingLances.getOrDefault(formationName, 0));
+                return;
+            }
             // A request carried over from an earlier force can exceed what this one can deliver - changing faction,
             // year or weight reshapes every ceiling - so it is brought down to what is achievable now rather than
             // being silently kept as a number the force cannot reach.
-            int ceiling = ((SpinnerNumberModel) spinner.getModel()).getMaximum() instanceof Integer maximum
-                  ? maximum
-                  : 100;
-            spinner.setValue(Math.min(toShow.percentFor(formationName), ceiling));
+            int maximum = ((SpinnerNumberModel) spinner.getModel()).getMaximum() instanceof Integer cap
+                  ? cap
+                  : preview.tweakableNodes();
+            spinner.setValue(Math.min(toShow.lancesFor(formationName), maximum));
         });
     }
 
@@ -563,9 +588,10 @@ public class FormationMixEditorPanel extends JPanel implements Scrollable {
         return allowUnofferedFormations;
     }
 
-    /** Clears every request. */
+    /** Clears every request, putting each spinner back to the lances the ruleset builds on its own. */
     public void reset() {
-        spinners.values().forEach(spinner -> spinner.setValue(0));
+        spinners.forEach((formationName, spinner) ->
+              spinner.setValue(startingLances.getOrDefault(formationName, 0)));
     }
 
     /**

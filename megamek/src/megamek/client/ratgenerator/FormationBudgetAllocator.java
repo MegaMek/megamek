@@ -40,6 +40,7 @@ import java.util.Map;
 import java.util.Set;
 import java.util.TreeMap;
 
+import megamek.common.annotations.Nullable;
 import megamek.logging.MMLogger;
 
 /**
@@ -105,12 +106,17 @@ final class FormationBudgetAllocator {
         Map<ForceDescriptor, String> claimed = new HashMap<>();
 
         for (String formationName : rarestFirst(tweakable, requested.keySet())) {
-            int placed = assignFormation(tweakable, claimed, formationName, requested.get(formationName),
+            int quota = requested.get(formationName);
+            // Lances the ruleset already rolled into this formation count towards the request before any are
+            // moved. Asking for six Recon when the roll produced four should move two lances, not six.
+            int placed = claimAlreadyMatching(tweakable, claimed, formationName, quota);
+            placed += assignFormation(tweakable, claimed, formationName, quota - placed,
                   mix.allowUnofferedFormations());
             if (placed > 0) {
                 assigned.put(formationName, placed);
             }
         }
+        displaceSurplus(tweakable, claimed, requested.keySet());
         // Deliberately no shortfall warning here. A formation assigned now can still fail its own Campaign
         // Operations requirements once units are drawn, at which point buildFormation drops it back to an ordinary
         // lance - so what was placed is not yet what will be delivered. Shortfalls are worked out in
@@ -203,6 +209,82 @@ final class FormationBudgetAllocator {
         return ordered;
     }
 
+    /**
+     * Claims lances that already hold the requested formation, up to the quota.
+     *
+     * <p>Run before any lance is moved, so a request is measured against what the roll already produced. Without
+     * this a request for six Recon lances is six <em>more</em> Recon lances, on top of however many came up on
+     * their own - the number the player typed would not be the number they got.</p>
+     *
+     * @param tweakable     every lance the mix may reassign
+     * @param claimed       lances already claimed this pass, added to here
+     * @param formationName the formation being requested
+     * @param quota         how many lances are wanted in total
+     *
+     * @return how many were already in place and have now been claimed
+     */
+    private static int claimAlreadyMatching(List<ForceDescriptor> tweakable, Map<ForceDescriptor, String> claimed,
+          String formationName, int quota) {
+        int claimedHere = 0;
+        for (ForceDescriptor node : tweakable) {
+            if (claimedHere >= quota) {
+                break;
+            }
+            if (claimed.containsKey(node) || !holdsFormation(node, formationName)) {
+                continue;
+            }
+            claimed.put(node, formationName);
+            claimedHere++;
+        }
+        return claimedHere;
+    }
+
+    /**
+     * Moves lances off a requested formation once that request is full.
+     *
+     * <p>The other half of counting what the roll already produced. If seven lances rolled Recon and the player
+     * asked for four, three have to be moved off it or the force delivers seven and the number means nothing. Each
+     * is given the likeliest of the other formations its own rule offered, so it stays a lance the ruleset would
+     * have allowed.</p>
+     *
+     * @param tweakable every lance the mix may reassign
+     * @param claimed   lances claimed so far, added to here
+     * @param targeted  the formations the player asked for by name
+     */
+    private static void displaceSurplus(List<ForceDescriptor> tweakable, Map<ForceDescriptor, String> claimed,
+          Set<String> targeted) {
+        for (ForceDescriptor node : tweakable) {
+            if (claimed.containsKey(node)) {
+                continue;
+            }
+            String current = currentFormationName(node);
+            if ((current == null) || !targeted.contains(current)) {
+                continue;
+            }
+            String replacement = node.getEligibleFormations()
+                  .entrySet()
+                  .stream()
+                  .filter(offer -> !targeted.contains(offer.getKey()))
+                  .max(Map.Entry.comparingByValue())
+                  .map(Map.Entry::getKey)
+                  .orElse(null);
+            if (replacement == null) {
+                LOGGER.debug("[ForceGen][FormationMix] {} rolled {} and the request for it is full, but its rule"
+                            + " offers nothing else; leaving it", node.parseName(), current);
+                continue;
+            }
+            claimed.put(node, replacement);
+        }
+    }
+
+    private static @Nullable String currentFormationName(ForceDescriptor node) {
+        return (node.getFormation() == null) ? null : node.getFormation().getName();
+    }
+
+    private static boolean holdsFormation(ForceDescriptor node, String formationName) {
+        return formationName.equals(currentFormationName(node));
+    }
+
     private static int eligibleNodeCount(List<ForceDescriptor> tweakable, String formationName) {
         return (int) tweakable.stream()
               .filter(node -> node.getEligibleFormations().containsKey(formationName))
@@ -280,40 +362,46 @@ final class FormationBudgetAllocator {
     }
 
     /**
-     * Converts requested percentages into whole nodes by the largest-remainder method, so a three-way even split
-     * across ten nodes comes out 4/3/3 rather than 3/3/3 with a node silently lost.
+     * Trims the requested lance counts to what the force can actually hold.
      *
-     * <p>Percentages need not total 100; the remainder is left to the ruleset's own roll. A mix that totals more
-     * than 100 is scaled back proportionally rather than letting whichever formation is processed first take
-     * everything - 80/80 becomes 40/40, which is the ratio that was expressed even though the totals were not
-     * achievable.</p>
+     * <p>The player types lances directly, so there is nothing to convert. All this has to settle is a request that
+     * asks for more lances than the force has: rather than letting whichever formation is processed first take
+     * everything, every request is scaled back in proportion, so asking for 30 Recon and 10 Fire from a 20 lance
+     * force yields 15 and 5 - the ratio that was expressed, at the size that fits.</p>
+     *
+     * <p>Scaling back uses the largest-remainder method so the trimmed counts still add up to the force: a
+     * three-way even split of ten lances comes out 4/3/3 rather than 3/3/3 with a lance silently lost.</p>
      *
      * @param mix       the requested distribution, already restricted to what the force offers
-     * @param nodeCount how many nodes the mix may reassign
+     * @param nodeCount how many lances the mix may reassign
      *
-     * @return nodes per formation, omitting those that round down to nothing
+     * @return lances per formation, omitting any that scale down to nothing
      */
     static Map<String, Integer> integerQuotas(FormationMix mix, int nodeCount) {
         Map<String, Integer> quotas = new TreeMap<>();
+        int totalRequested = mix.totalLances();
+        if (totalRequested <= nodeCount) {
+            for (String formationName : mix.requestedFormations()) {
+                quotas.put(formationName, mix.lancesFor(formationName));
+            }
+            return quotas;
+        }
+
         Map<String, Double> remainders = new HashMap<>();
-        double oversubscriptionScale = Math.min(1.0, 100.0 / Math.max(1, mix.totalPercent()));
+        double scale = (double) nodeCount / totalRequested;
         int allocated = 0;
         for (String formationName : mix.requestedFormations()) {
-            double exact = nodeCount * mix.percentFor(formationName) * oversubscriptionScale / 100.0;
+            double exact = mix.lancesFor(formationName) * scale;
             int whole = (int) Math.floor(exact);
             quotas.put(formationName, whole);
             remainders.put(formationName, exact - whole);
             allocated += whole;
         }
-        // Hand out the nodes lost to flooring, largest fractional part first. The target is rounded rather than
-        // floored so a mix totalling 99% over ten nodes claims all ten instead of surrendering one to a rounding
-        // artefact.
-        long requestedTotal = Math.round(nodeCount * Math.min(100, mix.totalPercent()) / 100.0);
         List<String> byRemainder = new ArrayList<>(remainders.keySet());
         byRemainder.sort(Comparator.comparingDouble((String formationName) -> remainders.get(formationName))
               .reversed());
         for (String formationName : byRemainder) {
-            if (allocated >= Math.min(requestedTotal, nodeCount)) {
+            if (allocated >= nodeCount) {
                 break;
             }
             quotas.merge(formationName, 1, Integer::sum);

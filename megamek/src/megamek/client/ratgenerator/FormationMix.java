@@ -42,9 +42,11 @@ import java.util.TreeMap;
  * A requested distribution of Campaign Operations formation types across the formations of a generated force - more
  * Battle lances, fewer Recon.
  *
- * <p>Percentages are a floor rather than a partition. They need not reach 100, and every formation not claimed keeps
- * whatever the ruleset's own weighted pick gave it. A mix in which every entry is zero is therefore indistinguishable
- * from no mix at all, which is what keeps an untouched control generating exactly as before.</p>
+ * <p>Counted in lances rather than shares: a player asking for four Recon lances is asking something the force can
+ * be checked against, where "40%" needed a denominator nobody agreed on. The counts are a floor rather than a
+ * partition - they need not use up the force, and every lance not claimed keeps whatever the ruleset's own weighted
+ * pick gave it. A mix in which every entry is zero is therefore indistinguishable from no mix at all, which is what
+ * keeps an untouched control generating exactly as before.</p>
  *
  * <p>Formations are named rather than enumerated because that is how the rulesets and the {@link FormationType}
  * registry already identify them; there is no enum to key on and inventing one would duplicate the registry.</p>
@@ -55,11 +57,12 @@ import java.util.TreeMap;
  *
  * <p>This is a transient build-time value; it is never serialized into a saved game.</p>
  *
- * @param percentages              requested share per formation type name; only positive entries are retained
- * @param allowUnofferedFormations  {@code true} to place a formation on any lance that can hold it, rather than only
- *                                  on lances the ruleset offered it to
+ * @param lances                   requested number of lances per formation type name; only positive entries are
+ *                                 retained
+ * @param allowUnofferedFormations {@code true} to place a formation on any lance that can hold it, rather than only
+ *                                 on lances the ruleset offered it to
  */
-public record FormationMix(Map<String, Integer> percentages, boolean allowUnofferedFormations) {
+public record FormationMix(Map<String, Integer> lances, boolean allowUnofferedFormations) {
 
     /** A mix that requests nothing, leaving every formation to the ruleset's own weighted pick. */
     public static final FormationMix EMPTY = new FormationMix(Map.of(), false);
@@ -67,67 +70,61 @@ public record FormationMix(Map<String, Integer> percentages, boolean allowUnoffe
     /**
      * A mix held to what the ruleset offers, which is the default.
      *
-     * @param percentages requested share per formation type name
+     * @param lances requested number of lances per formation type name
      */
-    public FormationMix(Map<String, Integer> percentages) {
-        this(percentages, false);
+    public FormationMix(Map<String, Integer> lances) {
+        this(lances, false);
     }
 
     /**
      * Canonical constructor. Trims names, drops non-positive entries so an untouched control is indistinguishable
      * from an empty mix, and takes an immutable copy ordered by name.
-     *
-     * @throws IllegalArgumentException if any percentage exceeds 100
      */
     public FormationMix {
         Map<String, Integer> retained = new TreeMap<>();
-        for (Map.Entry<String, Integer> entry : percentages.entrySet()) {
+        for (Map.Entry<String, Integer> entry : lances.entrySet()) {
             if ((entry.getKey() == null) || entry.getKey().isBlank()) {
                 continue;
             }
-            int percent = (entry.getValue() == null) ? 0 : entry.getValue();
-            if (percent > 100) {
-                throw new IllegalArgumentException(
-                      "Formation percentage for " + entry.getKey() + " exceeds 100: " + percent);
-            }
-            if (percent > 0) {
-                retained.put(entry.getKey().trim(), percent);
+            int requested = (entry.getValue() == null) ? 0 : entry.getValue();
+            if (requested > 0) {
+                retained.put(entry.getKey().trim(), requested);
             }
         }
-        percentages = Collections.unmodifiableMap(retained);
+        lances = Collections.unmodifiableMap(retained);
     }
 
     /**
      * @return {@code true} when nothing is requested, so the allocator should leave the force alone entirely
      */
     public boolean isEmpty() {
-        return percentages.isEmpty();
+        return lances.isEmpty();
     }
 
     /**
-     * The share of a force's tweakable formations this mix accounts for. Below 100 leaves the remainder to the
-     * ruleset; above 100 over-subscribes, and the allocator scales the request back proportionally.
+     * How many of a force's adjustable lances this mix asks for in total. Short of the force leaves the remainder to
+     * the ruleset; beyond it over-subscribes, and the allocator scales the request back proportionally.
      *
-     * @return the sum of all requested percentages
+     * @return the sum of all requested lance counts
      */
-    public int totalPercent() {
-        return percentages.values().stream().mapToInt(Integer::intValue).sum();
+    public int totalLances() {
+        return lances.values().stream().mapToInt(Integer::intValue).sum();
     }
 
     /**
      * @param formationName the formation type to look up
      *
-     * @return the requested percentage, or {@code 0} if this formation was not asked for
+     * @return the number of lances asked for, or {@code 0} if this formation was not asked for
      */
-    public int percentFor(String formationName) {
-        return (formationName == null) ? 0 : percentages.getOrDefault(formationName.trim(), 0);
+    public int lancesFor(String formationName) {
+        return (formationName == null) ? 0 : lances.getOrDefault(formationName.trim(), 0);
     }
 
     /**
      * @return the formation types this mix asks for, in name order
      */
     public Set<String> requestedFormations() {
-        return percentages.keySet();
+        return lances.keySet();
     }
 
     /**
@@ -142,7 +139,7 @@ public record FormationMix(Map<String, Integer> percentages, boolean allowUnoffe
      */
     public Set<String> unavailableIn(FormationMixPreview preview) {
         Set<String> unavailable = new LinkedHashSet<>();
-        for (String formationName : percentages.keySet()) {
+        for (String formationName : lances.keySet()) {
             if (!preview.offeredFormations().contains(formationName)) {
                 unavailable.add(formationName);
             }
@@ -163,12 +160,12 @@ public record FormationMix(Map<String, Integer> percentages, boolean allowUnoffe
      */
     public FormationMix restrictedTo(FormationMixPreview preview) {
         Map<String, Integer> retained = new TreeMap<>();
-        for (Map.Entry<String, Integer> entry : percentages.entrySet()) {
+        for (Map.Entry<String, Integer> entry : lances.entrySet()) {
             if (preview.offeredFormations().contains(entry.getKey())) {
                 retained.put(entry.getKey(), entry.getValue());
             }
         }
-        return (retained.size() == percentages.size())
+        return (retained.size() == lances.size())
               ? this
               : new FormationMix(retained, allowUnofferedFormations);
     }

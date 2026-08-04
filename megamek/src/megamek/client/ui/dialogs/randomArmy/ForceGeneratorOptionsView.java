@@ -565,7 +565,7 @@ public class ForceGeneratorOptionsView extends JPanel implements FocusListener, 
               Messages.getString("ForceGeneratorDialog.formationMix.title"),
               JOptionPane.OK_CANCEL_OPTION, JOptionPane.PLAIN_MESSAGE);
         if (choice == JOptionPane.OK_OPTION) {
-            formationMix = new FormationMix(editor.getMix().percentages(), allowUnoffered.isSelected());
+            formationMix = new FormationMix(editor.getMix().lances(), allowUnoffered.isSelected());
             refreshFormationMixSummary();
             // Ticking the toggle inside the dialog raises every limit, so the request is re-read against the
             // new limits by reopening rather than being applied against the ones that were on screen.
@@ -612,10 +612,10 @@ public class ForceGeneratorOptionsView extends JPanel implements FocusListener, 
             lblFormationMixSummary.setToolTipText(null);
             return;
         }
-        String requested = formationMix.percentages()
+        String requested = formationMix.lances()
               .entrySet()
               .stream()
-              .map(entry -> entry.getKey() + " " + entry.getValue() + "%")
+              .map(entry -> entry.getValue() + " " + entry.getKey())
               .collect(Collectors.joining(", "));
         lblFormationMixSummary.setText(Messages.getString("ForceGeneratorDialog.formationMix.summary", requested));
         lblFormationMixSummary.setToolTipText(requested);
@@ -704,7 +704,7 @@ public class ForceGeneratorOptionsView extends JPanel implements FocusListener, 
         allowUnoffered.setOpaque(false);
         // Turning restrictions off changes every spinner's limit, so the editor is rebuilt rather than adjusted.
         allowUnoffered.addActionListener(event -> {
-            formationMix = new FormationMix(formationMix.percentages(), allowUnoffered.isSelected());
+            formationMix = new FormationMix(formationMix.lances(), allowUnoffered.isSelected());
             refreshInlineFormationMixEditor();
         });
         header.add(allowUnoffered, BorderLayout.SOUTH);

@@ -73,11 +73,37 @@ public record FormationMixPreview(int formationNodes,
     }
 
     /**
-     * The most of this force a formation can ever be, as a percentage of the lances that can be reassigned.
+     * The most lances of this force that could ever be given one formation.
      *
      * <p>A lance is only ever given a formation its own ruleset offered it, so a formation no lance is offered
      * cannot be placed at all, and one offered to a third of them tops out at a third. This is the number the
-     * player's request has to be measured against; asking beyond it is asking for something no roll can produce.</p>
+     * player's request is capped at; asking beyond it is asking for something no roll can produce.</p>
+     *
+     * @param formationName the formation type to look up
+     *
+     * @return the greatest number of lances that could take it, {@code 0} when the force never offers it
+     */
+    public int maximumLancesFor(String formationName) {
+        if (formationName == null) {
+            return 0;
+        }
+        return placeableNodes.getOrDefault(formationName.trim(), 0);
+    }
+
+    /**
+     * How many lances the ruleset would give this formation on its own, which is the number the player is adjusting
+     * away from.
+     *
+     * @param formationName the formation type to look up
+     *
+     * @return the expected lance count, rounded to the nearest whole lance
+     */
+    public int typicalLancesFor(String formationName) {
+        return (int) Math.round((defaultShareFor(formationName) * tweakableNodes) / 100.0);
+    }
+
+    /**
+     * The most of this force a formation can ever be, as a percentage of the lances that can be reassigned.
      *
      * @param formationName the formation type to look up
      *

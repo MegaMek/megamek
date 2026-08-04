@@ -47,11 +47,12 @@ import java.util.TreeMap;
 import java.util.TreeSet;
 import javax.swing.BorderFactory;
 import javax.swing.Box;
+import javax.swing.ButtonGroup;
+import javax.swing.UIManager;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
-import javax.swing.JSpinner;
+import javax.swing.JRadioButton;
 import javax.swing.Scrollable;
-import javax.swing.SpinnerListModel;
 import javax.swing.SwingConstants;
 
 import megamek.client.ratgenerator.FormationMix;
@@ -88,16 +89,11 @@ public class FormationMixEditorPanel extends JPanel implements Scrollable {
     /** Pixels scrolled per mouse-wheel notch, about one formation row. */
     private static final int SCROLL_UNIT_INCREMENT = 16;
 
-    private final Map<String, JSpinner> spinners = new TreeMap<>();
+    private final Map<String, JRadioButton> choices = new TreeMap<>();
+    private final ButtonGroup selection = new ButtonGroup();
+    private final List<Runnable> selectionListeners = new ArrayList<>();
+    private String selectedFormation;
 
-    /**
-     * The value a box shows when the player has not spoken for that formation.
-     *
-     * <p>Its own entry in the list rather than a number, because zero has to stay available to mean "none of these".
-     * A box reading this is not a request at all, which is what keeps an untouched editor generating exactly as the
-     * ruleset would, variance and all.</p>
-     */
-    private static final String LEAVE_TO_RULES = Messages.getString("ForceGeneratorDialog.formationMix.auto");
     private final FormationMixPreview preview;
     private final boolean allowUnofferedFormations;
 
@@ -328,54 +324,29 @@ public class FormationMixEditorPanel extends JPanel implements Scrollable {
             FormationType formationType = FormationType.getFormationType(formationName);
             String displayName = (formationType == null) ? formationName : formationType.getNameWithFaction();
 
-            JLabel label = new JLabel(displayName);
-            // The player types lances, and the spinner stops at the most this force could actually give this
-            // formation, so a number they can dial in is always a number they can get. Overriding lifts the cap to
-            // every adjustable lance in the force.
-            int maximum = allowUnofferedFormations
-                  ? preview.tweakableNodes()
-                  : preview.maximumLancesFor(formationName);
-            JSpinner spinner = new JSpinner(reserveModel(Math.max(0, maximum)));
-            // A box left to the rules and a box the player has claimed look identical otherwise, which makes it
-            // impossible to see at a glance which formations are actually being asked for.
-            spinner.addChangeListener(event -> markWhetherSet(spinner, label));
-            spinner.setName("spnFormationMix" + formationName.replace(" ", ""));
-            String tooltip = describeFormation(formationType, displayName,
-                  preview.typicalLancesFor(formationName), ceilingExplanation(formationName));
-            spinner.setToolTipText(tooltip);
-            label.setToolTipText(tooltip);
-            label.setLabelFor(spinner);
-            spinners.put(formationName, spinner);
+            // One formation is chosen at a time and then applied to whichever node the player right-clicks, so the
+            // control is a choice between formations rather than a quantity per formation.
+            JRadioButton choice = new JRadioButton(displayName);
+            choice.setName("rdoFormation" + formationName.replace(" ", ""));
+            choice.setOpaque(false);
+            choice.setToolTipText(describeFormation(formationType, displayName,
+                  preview.typicalLancesFor(formationName), placementNote(formationName)));
+            choice.addActionListener(event -> selectFormation(formationName));
+            selection.add(choice);
+            choices.put(formationName, choice);
 
             // Members sit under their heading rather than level with it, so the families read as blocks. A family
             // shown as a single row has no heading to sit under, so it keeps the outer margin.
             constraints.gridx = 0;
             constraints.gridy = row++;
             constraints.weightx = 1.0;
+            constraints.gridwidth = 3;
             constraints.insets = new Insets(1, hasOwnHeading ? (4 + MEMBER_INDENT) : 4, 1, 4);
-            // The name is the only part of the row that can give ground. Letting it shrink below its natural width
-            // is what lets the three columns fit the dialog instead of forcing a horizontal scrollbar; the full name
-            // stays available in the tooltip, and Swing elides what will not fit.
             constraints.fill = GridBagConstraints.HORIZONTAL;
-            label.setMinimumSize(new Dimension(NAME_MINIMUM_WIDTH, label.getPreferredSize().height));
-            column.add(label, constraints);
+            choice.setMinimumSize(new Dimension(NAME_MINIMUM_WIDTH, choice.getPreferredSize().height));
+            column.add(choice, constraints);
             constraints.fill = GridBagConstraints.NONE;
-
-            // The spinner and the share it is adjusting sit together, with only a hair between them, so the pair
-            // reads as one control rather than two columns to scan between.
-            constraints.weightx = 0.0;
-            constraints.gridx = 1;
-            constraints.insets = new Insets(1, 4, 1, 1);
-            column.add(spinner, constraints);
-            // The share sits centred in its column so the numbers line up under the heading that names them,
-            // rather than ragging left off the end of the spinner.
-            JLabel shareLabel = new JLabel(Integer.toString(preview.typicalLancesFor(formationName)),
-                  SwingConstants.CENTER);
-            constraints.gridx = 2;
-            constraints.insets = new Insets(1, 1, 1, 4);
-            constraints.fill = GridBagConstraints.HORIZONTAL;
-            column.add(shareLabel, constraints);
-            constraints.fill = GridBagConstraints.NONE;
+            constraints.gridwidth = 1;
         }
         return row;
     }
@@ -544,143 +515,74 @@ public class FormationMixEditorPanel extends JPanel implements Scrollable {
     private static final int TOOLTIP_WIDTH_PIXELS = 280;
 
     /**
-     * @return the requested mix, empty when every spinner is left at zero
+     * The formation the player has picked to work with.
+     *
+     * <p>This is a brush rather than a request: nothing happens to the force until it is applied to a node in the
+     * organisation tree.</p>
+     *
+     * @return the selected formation's name, or {@code null} when nothing is selected
      */
-    public FormationMix getMix() {
-        Map<String, Integer> lanceCounts = new LinkedHashMap<>();
-        spinners.forEach((formationName, spinner) -> {
-            Integer reserved = reservedIn(spinner);
-            // A box left to the rules is not a request and must stay out of the map entirely; zero is a request for
-            // none of that formation and belongs in it.
-            if (reserved != null) {
-                lanceCounts.put(formationName, reserved);
+    public @Nullable String getSelectedFormation() {
+        return selectedFormation;
+    }
+
+    /**
+     * Picks a formation, greying the rest so the choice is visible at a glance.
+     *
+     * @param formationName the formation to select, or {@code null} to select nothing
+     */
+    public void selectFormation(@Nullable String formationName) {
+        selectedFormation = formationName;
+        if (formationName == null) {
+            selection.clearSelection();
+        } else {
+            JRadioButton chosen = choices.get(formationName);
+            if (chosen != null) {
+                chosen.setSelected(true);
             }
-        });
-        return new FormationMix(lanceCounts, allowUnofferedFormations);
-    }
-
-    /**
-     * Restores a previously entered mix. Formations this force does not offer are ignored.
-     *
-     * @param mix the mix to show, or {@code null} to clear
-     */
-    public void setMix(@Nullable FormationMix mix) {
-        FormationMix toShow = (mix == null) ? FormationMix.EMPTY : mix;
-        spinners.forEach((formationName, spinner) -> {
-            if (!toShow.requestedFormations().contains(formationName)) {
-                spinner.setValue(LEAVE_TO_RULES);
-                return;
-            }
-            // A request carried over from an earlier force can exceed what this one can deliver - changing faction,
-            // year or weight reshapes every limit - so it is brought down to what is achievable now rather than
-            // being silently kept as a number the force cannot reach.
-            List<?> choices = ((SpinnerListModel) spinner.getModel()).getList();
-            int maximum = choices.size() - 2;
-            spinner.setValue(Math.min(toShow.lancesFor(formationName), Math.max(0, maximum)));
-        });
-    }
-
-    /**
-     * @return {@code true} when the request may place formations on lances the ruleset did not offer them to
-     */
-    public boolean isAllowingUnofferedFormations() {
-        return allowUnofferedFormations;
-    }
-
-    /**
-     * The values one formation's box can take: leave it to the rules, none at all, or a number up to the most this
-     * force could give it.
-     *
-     * @param maximum the most lances this formation could be given
-     *
-     * @return the spinner model
-     */
-    private static SpinnerListModel reserveModel(int maximum) {
-        List<Object> choices = new ArrayList<>();
-        choices.add(LEAVE_TO_RULES);
-        for (int reserved = 0; reserved <= maximum; reserved++) {
-            choices.add(reserved);
         }
-        SpinnerListModel model = new SpinnerListModel(choices);
-        model.setValue(LEAVE_TO_RULES);
-        return model;
+        // Everything not chosen is dimmed rather than disabled: it still has to be clickable to become the next
+        // choice, but it should not compete with the one in force.
+        choices.forEach((name, button) -> button.setForeground(
+              ((selectedFormation == null) || selectedFormation.equals(name))
+                    ? UIManager.getColor("Label.foreground")
+                    : UIManager.getColor("Label.disabledForeground")));
+        selectionListeners.forEach(Runnable::run);
     }
 
-    /**
-     * Marks a formation as one the player has spoken for, or as one still left to the rules.
-     *
-     * @param spinner the box for that formation
-     * @param label   the formation's name label
-     */
-    private static void markWhetherSet(JSpinner spinner, JLabel label) {
-        boolean isSet = !LEAVE_TO_RULES.equals(spinner.getValue());
-        label.setFont(label.getFont().deriveFont(isSet ? Font.BOLD : Font.PLAIN));
-    }
-
-    /**
-     * The lances reserved for one formation.
-     *
-     * @param spinner the box to read
-     *
-     * @return the reserved count, or {@code null} when the formation is left to the rules
-     */
-    private static @Nullable Integer reservedIn(JSpinner spinner) {
-        Object value = spinner.getValue();
-        return (value instanceof Integer reserved) ? reserved : null;
-    }
-
-    /** Clears every request, handing every formation back to the rules. */
+    /** Clears the choice, so nothing is selected. */
     public void reset() {
-        spinners.values().forEach(spinner -> spinner.setValue(LEAVE_TO_RULES));
+        selectFormation(null);
     }
 
     /**
-     * Registers a listener notified whenever the requested mix changes.
+     * Registers a listener notified whenever the chosen formation changes.
      *
-     * <p>For a host showing the editor inline, where there is no OK button to read the mix on.</p>
-     *
-     * @param listener run after any change
+     * @param listener run after each change
      */
-    public void addMixChangeListener(Runnable listener) {
-        spinners.values().forEach(spinner -> spinner.addChangeListener(event -> listener.run()));
+    public void addSelectionListener(Runnable listener) {
+        selectionListeners.add(listener);
     }
 
     /**
-     * How many lances the player has actually asked for, being the boxes they have moved off their starting number.
+     * How much of this force the selected formation could be placed on, for the hover text.
      *
-     * <p>Boxes left alone are not counted, because they are not requests - the ruleset still rolls those lances as
-     * it likes. This is the number that has to fit inside {@link #adjustableLanceTotal()}.</p>
+     * @param formationName the formation to describe
      *
-     * @return the total lances requested
+     * @return the note, or {@code null} when there is nothing to say
      */
-    public int requestedLanceTotal() {
-        return getMix().totalLances();
-    }
-
-    /**
-     * How many formations this force holds in total.
-     *
-     * <p>This is the number a reservation is made against, and unlike the count that can be reassigned it is a
-     * property of the force rather than of one roll: the same regiment built ten times held thirty-one formations
-     * every time, while the number with a choice to make swung between twenty-one and thirty-one.</p>
-     *
-     * @return the formations in this force
-     */
-    public int formationTotal() {
-        return preview.formationNodes();
-    }
-
-    /**
-     * @return how many formations this force could reassign, which is what the allocator actually has to work with
-     */
-    public int adjustableLanceTotal() {
-        return preview.tweakableNodes();
+    private @Nullable String placementNote(String formationName) {
+        int placeable = preview.maximumLancesFor(formationName);
+        return (placeable <= 0)
+              ? Messages.getString("ForceGeneratorDialog.formationMix.ceiling.none")
+              : Messages.getString("ForceGeneratorDialog.formationMix.ceiling", placeable,
+                    preview.tweakableNodes());
     }
 
     /**
      * @return {@code true} when this force offers nothing that could be adjusted
      */
     public boolean isEmpty() {
-        return spinners.isEmpty();
+        return choices.isEmpty();
     }
 }

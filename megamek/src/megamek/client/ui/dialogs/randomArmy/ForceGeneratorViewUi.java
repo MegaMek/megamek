@@ -893,6 +893,7 @@ public class ForceGeneratorViewUi implements ActionListener {
                     menu.add(toggleItem);
 
                     menu.add(buildChangeFormationMenu(fd));
+                    menu.add(buildAddSubForceMenu(fd));
 
                     if (!toeExclusionMode) {
                         JMenuItem addItem = new JMenuItem("Add to game");
@@ -920,38 +921,168 @@ public class ForceGeneratorViewUi implements ActionListener {
      * @return the submenu, or a disabled item explaining why this node has nothing to choose between
      */
     private JMenuItem buildChangeFormationMenu(ForceDescriptor formation) {
+        String selected = panControls.getSelectedFormation();
         Map<String, Integer> offered = formation.getEligibleFormations();
         String current = (formation.getFormation() == null) ? null : formation.getFormation().getName();
-        logger.debug("[ChangeFormation] '{}' echelon={} formation={} offers {} alternative(s): {}",
-              formation.parseName(), formation.getEchelon(), current, offered.size(), offered.keySet());
+        logger.debug("[ChangeFormation] '{}' echelon={} formation={} offers {}; palette selection is '{}'",
+              formation.parseName(), formation.getEchelon(), current, offered.keySet(), selected);
 
+        JMenuItem item = new JMenuItem(Messages.getString("ForceGeneratorDialog.changeFormation"));
         // Shown even when it cannot be used, with the reason, rather than vanishing: a menu item that appears on
         // some nodes and not others reads as a broken feature, and the player cannot tell which it is.
-        if (offered.size() < 2) {
-            JMenuItem unavailable = new JMenuItem(Messages.getString("ForceGeneratorDialog.changeFormation"));
-            unavailable.setEnabled(false);
-            unavailable.setToolTipText(offered.isEmpty()
-                  ? Messages.getString("ForceGeneratorDialog.changeFormation.notAFormation")
-                  : Messages.getString("ForceGeneratorDialog.changeFormation.onlyOne", current));
-            logger.debug("[ChangeFormation] '{}': menu disabled - {} formation(s) offered, at least two are needed",
-                  formation.parseName(), offered.size());
-            return unavailable;
+        if (selected == null) {
+            item.setEnabled(false);
+            item.setToolTipText(Messages.getString("ForceGeneratorDialog.changeFormation.noSelection"));
+            logger.debug("[ChangeFormation] '{}': disabled - no formation picked in the palette",
+                  formation.parseName());
+            return item;
+        }
+        if (offered.isEmpty()) {
+            item.setEnabled(false);
+            item.setToolTipText(Messages.getString("ForceGeneratorDialog.changeFormation.notAFormation"));
+            logger.debug("[ChangeFormation] '{}': disabled - not a formation node", formation.parseName());
+            return item;
+        }
+        FormationType formationType = FormationType.getFormationType(selected);
+        if (formationType == null) {
+            item.setEnabled(false);
+            logger.warn("[ChangeFormation] palette holds '{}', which is not a registered formation type", selected);
+            return item;
         }
 
-        JMenu menu = new JMenu(Messages.getString("ForceGeneratorDialog.changeFormation"));
-        for (String formationName : new TreeSet<>(offered.keySet())) {
-            FormationType formationType = FormationType.getFormationType(formationName);
-            if (formationType == null) {
-                logger.warn("[ChangeFormation] '{}' offers '{}', which is not a registered formation type;"
-                      + " leaving it off the menu", formation.parseName(), formationName);
-                continue;
-            }
-            JMenuItem item = new JMenuItem(formationType.getNameWithFaction());
-            item.setEnabled(!formationName.equals(current));
-            item.addActionListener(ev -> changeFormation(formation, formationType));
-            menu.add(item);
+        item.setText(Messages.getString("ForceGeneratorDialog.changeFormation.to", formationType.getName()));
+        boolean offersIt = offered.containsKey(selected);
+        item.setToolTipText(offersIt
+              ? null
+              : Messages.getString("ForceGeneratorDialog.changeFormation.notOffered", formationType.getName()));
+        item.addActionListener(ev -> confirmAndChangeFormation(formation, formationType, offersIt));
+        return item;
+    }
+
+    /**
+     * Offers to add another formation of the picked type under this one.
+     *
+     * <p>The new formation copies the shape of a sibling - its echelon, how many units it holds and the rule it
+     * generates by - so it is legal by construction rather than assembled from guesses about what the ruleset
+     * would have allowed here.</p>
+     *
+     * @param parent the node right-clicked
+     *
+     * @return the menu item, disabled with a reason when nothing can be added
+     */
+    private JMenuItem buildAddSubForceMenu(ForceDescriptor parent) {
+        String selected = panControls.getSelectedFormation();
+        JMenuItem item = new JMenuItem(Messages.getString("ForceGeneratorDialog.addFormation"));
+        ForceDescriptor template = subForceTemplate(parent);
+        logger.debug("[AddFormation] '{}' echelon={} holds {} subforce(s); template={}; palette selection '{}'",
+              parent.parseName(), parent.getEchelon(), parent.getSubForces().size(),
+              (template == null) ? "none" : template.parseName(), selected);
+
+        if (selected == null) {
+            item.setEnabled(false);
+            item.setToolTipText(Messages.getString("ForceGeneratorDialog.changeFormation.noSelection"));
+            return item;
         }
-        return menu;
+        if (template == null) {
+            item.setEnabled(false);
+            item.setToolTipText(Messages.getString("ForceGeneratorDialog.addFormation.noTemplate"));
+            logger.debug("[AddFormation] '{}': disabled - no sibling formation whose shape could be copied",
+                  parent.parseName());
+            return item;
+        }
+        FormationType formationType = FormationType.getFormationType(selected);
+        if (formationType == null) {
+            item.setEnabled(false);
+            return item;
+        }
+        item.setText(Messages.getString("ForceGeneratorDialog.addFormation.of", formationType.getName()));
+        item.addActionListener(ev -> confirmAndAddSubForce(parent, template, formationType));
+        return item;
+    }
+
+    /**
+     * A child of this node whose shape a new one can copy.
+     *
+     * <p>Formation-bearing children only: the units inside a lance are children too, and copying one of those
+     * would add a single unit rather than a formation.</p>
+     *
+     * @param parent the node to add under
+     *
+     * @return a child to copy, or {@code null} when this node holds no formations
+     */
+    private static @Nullable ForceDescriptor subForceTemplate(ForceDescriptor parent) {
+        for (ForceDescriptor child : parent.getSubForces()) {
+            if (!child.getEligibleFormations().isEmpty() || (child.getFormation() != null)) {
+                return child;
+            }
+        }
+        return null;
+    }
+
+    /**
+     * Asks before adding a formation, then adds and generates it.
+     *
+     * @param parent        the node to add under
+     * @param template      the sibling whose shape the new formation copies
+     * @param formationType the formation to give it
+     */
+    private void confirmAndAddSubForce(ForceDescriptor parent, ForceDescriptor template,
+          FormationType formationType) {
+        int answer = JOptionPane.showConfirmDialog(parentFrame,
+              Messages.getString("ForceGeneratorDialog.addFormation.confirm", formationType.getName(),
+                    parent.parseName()),
+              Messages.getString("ForceGeneratorDialog.addFormation"), JOptionPane.OK_CANCEL_OPTION,
+              JOptionPane.QUESTION_MESSAGE);
+        if (answer != JOptionPane.OK_OPTION) {
+            logger.debug("[AddFormation] '{}': cancelled at the confirmation", parent.parseName());
+            return;
+        }
+
+        ForceDescriptor added = parent.createChild(parent.getSubForces().size());
+        added.setEchelon(template.getEchelon());
+        // The sibling's name pattern, not its parsed name: the pattern is what turns into "C-4 Recon Lance" once
+        // the new formation has a position among its siblings.
+        added.setName(template.getName());
+        added.setEligibleFormations(template.getEligibleFormations());
+        added.setGenerationRule(template.getGenerationRule());
+        added.setFormationType(formationType);
+        // As many unit slots as its sibling holds, so a lance comes out a lance and a Clan star a star.
+        for (int slot = 0; slot < template.getSubForces().size(); slot++) {
+            added.addSubForce(added.createChild(slot));
+        }
+        parent.addSubForce(added);
+        // Renumber the siblings so the new formation is given a position and the others still read correctly.
+        parent.assignPositions();
+        logger.info("[AddFormation] added a {} under '{}' with {} unit slot(s)", formationType.getName(),
+              parent.parseName(), template.getSubForces().size());
+
+        added.generateUnits(null, 0);
+        added.assignCommanders();
+        added.loadEntities(null, 0);
+        refreshTreeAfterEdit();
+    }
+
+    /**
+     * Asks before re-rolling a formation, because the units it holds are replaced.
+     *
+     * @param formation     the node to change
+     * @param formationType the formation to give it
+     * @param offeredByRules {@code true} when the node's own rule already allowed this formation
+     */
+    private void confirmAndChangeFormation(ForceDescriptor formation, FormationType formationType,
+          boolean offeredByRules) {
+        String question = Messages.getString(offeredByRules
+                    ? "ForceGeneratorDialog.changeFormation.confirm"
+                    : "ForceGeneratorDialog.changeFormation.confirmUnoffered",
+              formation.parseName(), formationType.getName());
+        int answer = JOptionPane.showConfirmDialog(parentFrame, question,
+              Messages.getString("ForceGeneratorDialog.changeFormation"), JOptionPane.OK_CANCEL_OPTION,
+              JOptionPane.QUESTION_MESSAGE);
+        if (answer != JOptionPane.OK_OPTION) {
+            logger.debug("[ChangeFormation] '{}': cancelled at the confirmation", formation.parseName());
+            return;
+        }
+        changeFormation(formation, formationType);
     }
 
     /**
@@ -973,6 +1104,11 @@ public class ForceGeneratorViewUi implements ActionListener {
         formation.assignCommanders();
         formation.loadEntities(null, 0);
 
+        refreshTreeAfterEdit();
+    }
+
+    /** Rebuilds the tree after an edit and tells the host what it would now commit. */
+    private void refreshTreeAfterEdit() {
         Object root = forceTree.getModel().getRoot();
         if (root instanceof ForceDescriptor displayRoot) {
             forceTree.setModel(new ForceTreeModel(displayRoot));

@@ -135,6 +135,9 @@ public class ForceGeneratorOptionsView extends JPanel implements FocusListener, 
     private JLabel lblFormationMixSummary;
     /** The requested distribution of formation types, empty until the player asks for one. */
     private FormationMix formationMix = FormationMix.EMPTY;
+
+    /** The formation the player has picked in the palette, applied to a node from the tree's right-click menu. */
+    private String selectedFormation;
     /** Holds the mix editor when a host shows it inline rather than opening it from the button. */
     private JPanel panFormationMixInline;
     private boolean formationMixInline = false;
@@ -540,45 +543,21 @@ public class ForceGeneratorOptionsView extends JPanel implements FocusListener, 
                   Messages.getString("ForceGeneratorDialog.formationMix.title"), JOptionPane.WARNING_MESSAGE);
             return;
         }
-        FormationMixPreview offer = sampleFormationOffer(ruleset);
-        FormationMixEditorPanel editor =
-              new FormationMixEditorPanel(offer, formationMix.allowUnofferedFormations());
-        editor.setMix(formationMix);
+        FormationMixEditorPanel palette = new FormationMixEditorPanel(sampleFormationOffer(ruleset));
+        palette.selectFormation(selectedFormation);
 
-        JScrollPane scroll = new JScrollPane(editor);
-        // The editor sizes itself to the viewport width, so a horizontal bar would never have anything to scroll.
+        JScrollPane scroll = new JScrollPane(palette);
         scroll.setHorizontalScrollBarPolicy(ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER);
         scroll.setPreferredSize(UIUtil.scaleForGUI(760, 420));
-
-        // The explanation and the restrictions toggle sit above the list, where they cannot be scrolled away from.
         JPanel content = new JPanel(new BorderLayout(0, 4));
-        JLabel explanation = wrappedExplanation(formationMix.allowUnofferedFormations());
-        JCheckBox allowUnoffered =
-              new JCheckBox(Messages.getString("ForceGeneratorDialog.formationMix.allowUnoffered"));
-        allowUnoffered.setToolTipText(Messages.getString("ForceGeneratorDialog.formationMix.allowUnoffered.tooltip"));
-        allowUnoffered.setSelected(formationMix.allowUnofferedFormations());
-        JLabel total = new JLabel(" ");
-        updateFormationMixTotal(total, editor);
-        editor.addMixChangeListener(() -> updateFormationMixTotal(total, editor));
-        JPanel footer = new JPanel(new BorderLayout(0, 2));
-        footer.add(total, BorderLayout.NORTH);
-        footer.add(allowUnoffered, BorderLayout.SOUTH);
-
-        content.add(explanation, BorderLayout.NORTH);
+        content.add(wrappedExplanation(false), BorderLayout.NORTH);
         content.add(scroll, BorderLayout.CENTER);
-        content.add(footer, BorderLayout.SOUTH);
 
         int choice = JOptionPane.showConfirmDialog(this, content,
               Messages.getString("ForceGeneratorDialog.formationMix.title"),
               JOptionPane.OK_CANCEL_OPTION, JOptionPane.PLAIN_MESSAGE);
         if (choice == JOptionPane.OK_OPTION) {
-            formationMix = new FormationMix(editor.getMix().lances(), allowUnoffered.isSelected());
-            refreshFormationMixSummary();
-            // Ticking the toggle inside the dialog raises every limit, so the request is re-read against the
-            // new limits by reopening rather than being applied against the ones that were on screen.
-            if (allowUnoffered.isSelected() != editor.isAllowingUnofferedFormations()) {
-                showFormationMixDialog();
-            }
+            setSelectedFormation(palette.getSelectedFormation());
         }
     }
 
@@ -614,18 +593,15 @@ public class ForceGeneratorOptionsView extends JPanel implements FocusListener, 
         if (lblFormationMixSummary == null) {
             return;
         }
-        if (formationMix.isEmpty()) {
+        if (selectedFormation == null) {
             lblFormationMixSummary.setText(" ");
             lblFormationMixSummary.setToolTipText(null);
             return;
         }
-        String requested = formationMix.lances()
-              .entrySet()
-              .stream()
-              .map(entry -> entry.getValue() + " " + entry.getKey())
-              .collect(Collectors.joining(", "));
-        lblFormationMixSummary.setText(Messages.getString("ForceGeneratorDialog.formationMix.summary", requested));
-        lblFormationMixSummary.setToolTipText(requested);
+        lblFormationMixSummary.setText(
+              Messages.getString("ForceGeneratorDialog.formationMix.summary", selectedFormation));
+        lblFormationMixSummary.setToolTipText(
+              Messages.getString("ForceGeneratorDialog.formationMix.summary.tooltip", selectedFormation));
     }
 
     /**
@@ -667,31 +643,40 @@ public class ForceGeneratorOptionsView extends JPanel implements FocusListener, 
             return;
         }
         Ruleset ruleset = Ruleset.findRuleset(buildForceDescriptor());
-        FormationMixEditorPanel editor = new FormationMixEditorPanel(
-              (ruleset == null) ? FormationMixPreview.EMPTY : sampleFormationOffer(ruleset),
-              formationMix.allowUnofferedFormations());
-        editor.setMix(formationMix);
-        // The editor clamps a carried-over request to what this force can reach, so read it straight back rather
-        // than leaving the stored mix promising a share the new selections cannot deliver.
-        formationMix = editor.getMix();
-        // No OK button inline, so the request is read back on every change.
-        editor.addMixChangeListener(() -> formationMix = editor.getMix());
-        JScrollPane scroll = new JScrollPane(editor);
-        // The editor sizes itself to the viewport width, so a horizontal bar would never have anything to scroll.
+        FormationMixEditorPanel palette = new FormationMixEditorPanel(
+              (ruleset == null) ? FormationMixPreview.EMPTY : sampleFormationOffer(ruleset));
+        palette.selectFormation(selectedFormation);
+        palette.addSelectionListener(() -> setSelectedFormation(palette.getSelectedFormation()));
+
+        JScrollPane scroll = new JScrollPane(palette);
         scroll.setHorizontalScrollBarPolicy(ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER);
-        // Without a size the scroll pane grows to the editor's full height and never scrolls, pushing everything
-        // below it off the dialog.
         scroll.setPreferredSize(UIUtil.scaleForGUI(720, INLINE_MIX_HEIGHT));
-        JLabel total = new JLabel(" ");
-        updateFormationMixTotal(total, editor);
-        editor.addMixChangeListener(() -> updateFormationMixTotal(total, editor));
 
         panFormationMixInline.removeAll();
-        panFormationMixInline.add(buildFormationMixHeader(), BorderLayout.NORTH);
+        panFormationMixInline.add(wrappedExplanation(false), BorderLayout.NORTH);
         panFormationMixInline.add(scroll, BorderLayout.CENTER);
-        panFormationMixInline.add(total, BorderLayout.SOUTH);
         panFormationMixInline.revalidate();
         panFormationMixInline.repaint();
+    }
+
+    /**
+     * The formation the player has picked to apply to nodes in the organisation tree.
+     *
+     * @return the selected formation's name, or {@code null} when none is picked
+     */
+    public @Nullable String getSelectedFormation() {
+        return selectedFormation;
+    }
+
+    /**
+     * Records the picked formation and tells anyone listening, so the tree can offer it.
+     *
+     * @param formationName the formation picked, or {@code null} for none
+     */
+    private void setSelectedFormation(@Nullable String formationName) {
+        selectedFormation = formationName;
+        logger.debug("[ChangeFormation] palette selection is now '{}'", formationName);
+        refreshFormationMixSummary();
     }
 
     /**
@@ -722,64 +707,6 @@ public class ForceGeneratorOptionsView extends JPanel implements FocusListener, 
         header.add(allowUnoffered, BorderLayout.SOUTH);
         return header;
     }
-
-    /**
-     * Sets the running total line from the editor's current state.
-     *
-     * <p>The per-formation caps stop any one formation overreaching, but nothing stops the sum, and a request that
-     * asks for more lances than the force has is quietly scaled back. Saying so while the player is still typing is
-     * the difference between a limit they can work with and one they discover afterwards.</p>
-     *
-     * @param total  the label to write to
-     * @param editor the editor being summarised
-     */
-    private static void updateFormationMixTotal(JLabel total, FormationMixEditorPanel editor) {
-        int requested = editor.requestedLanceTotal();
-        int adjustable = editor.formationTotal();
-        if (editor.getMix().isEmpty()) {
-            total.setText(Messages.getString("ForceGeneratorDialog.formationMix.total.none", adjustable));
-            total.setForeground(UIManager.getColor("Label.foreground"));
-            return;
-        }
-        boolean overSubscribed = requested > adjustable;
-        total.setText(overSubscribed
-              ? Messages.getString("ForceGeneratorDialog.formationMix.total.over", requested, adjustable,
-                    describeScaledBack(editor.getMix(), adjustable))
-              : Messages.getString("ForceGeneratorDialog.formationMix.total", requested, adjustable,
-                    Math.max(0, adjustable - requested)));
-        total.setForeground(overSubscribed
-              ? UIUtil.uiLightRed()
-              : UIManager.getColor("Label.foreground"));
-    }
-
-    /**
-     * Spells out what an over-subscribed request will actually be cut down to.
-     *
-     * <p>Uses {@link FormationMix#scaledTo(int)}, which is the same call the allocator makes, so what the player is
-     * shown here is what they will get rather than a second implementation that happens to agree.</p>
-     *
-     * @param mix        the request as it stands
-     * @param adjustable how many lances the force has to give
-     *
-     * @return the trimmed request as readable text, longest first
-     */
-    private static String describeScaledBack(FormationMix mix, int adjustable) {
-        Map<String, Integer> scaled = mix.scaledTo(adjustable).lances();
-        List<Map.Entry<String, Integer>> byCount = new ArrayList<>(scaled.entrySet());
-        byCount.sort(Map.Entry.<String, Integer>comparingByValue().reversed());
-        List<String> shown = byCount.stream()
-              .limit(SCALED_PREVIEW_ENTRIES)
-              .map(entry -> entry.getValue() + " " + entry.getKey())
-              .collect(Collectors.toList());
-        int remaining = byCount.size() - shown.size();
-        String text = String.join(", ", shown);
-        return (remaining > 0)
-              ? Messages.getString("ForceGeneratorDialog.formationMix.total.overMore", text, remaining)
-              : text;
-    }
-
-    /** How many formations the scaled-back preview names before it summarises the rest. */
-    private static final int SCALED_PREVIEW_ENTRIES = 6;
 
     /**
      * The paragraph explaining what the spinners mean, wrapped so it does not stretch the dialog.

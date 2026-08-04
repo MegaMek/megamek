@@ -22600,9 +22600,13 @@ public class TWGameManager extends AbstractGameManager {
                     tank.setSelfDestructing(false);
                     tank.setSelfDestructInitiated(false);
                 }
-                if (tank.isAirborneVTOLorWIGE() && !(tank.isDestroyed() || tank.isDoomed())) {
+                if (!(tank.isDestroyed() || tank.isDoomed())) {
                     tank.immobilize();
-                    reports.addAll(forceLandVTOLorWiGE(tank));
+                    if (tank.isAirborneVTOLorWIGE()) {
+                        reports.addAll(forceLandVTOLorWiGE(tank));
+                    } else if (tank.getMovementMode() == EntityMovementMode.HOVER) {
+                        reports.addAll(sinkImmobilizedHover(tank));
+                    }
                 }
                 break;
             case Tank.CRIT_FUEL_TANK:
@@ -31501,7 +31505,7 @@ public class TWGameManager extends AbstractGameManager {
      * @param te         the Tank to damage
      * @param modifier   the modifier to the roll
      * @param noRoll     don't roll, immediately deal damage
-     * @param damageType the type to deal (1 = minor, 2 = moderate, 3 = heavy
+     * @param damageType the type to deal (1 = minor, 2 = moderate, 3 = heavy)
      * @param jumpDamage is this a movement damage roll from using vehicular JJs
      *
      * @return a <code>Vector<Report></code> containing what to add to the turn log
@@ -31665,26 +31669,37 @@ public class TWGameManager extends AbstractGameManager {
             vDesc.add(r);
             te.addMovementDamage(4);
         }
-        // These checks should perhaps be moved to Tank.applyDamage(), but I'm
-        // unsure how to *report* any outcomes from there. Note that these treat
-        // being reduced to 0 MP and being actually immobilized as the same thing,
-        // which for these particular purposes may or may not be the intent of
-        // the rules in all cases (for instance, motive-immobilized CVs can still jump).
-        // Immobile hovercraft on water sink...
-        if (!te.isOffBoard() &&
-              (te.getMovementMode() == EntityMovementMode.HOVER &&
-                    (te.isMovementHitPending() || (te.getWalkMP() <= 0))
-                    // HACK: Have to check for *pending* hit here and below.
-                    &&
-                    (game.getBoard().getHex(te.getPosition()).terrainLevel(Terrains.WATER) > 0) &&
-                    !game.getBoard().getHex(te.getPosition()).containsTerrain(Terrains.ICE))) {
-            vDesc.addAll(destroyEntity(te, "a watery grave", false));
+        if (te.getMovementMode() == EntityMovementMode.HOVER) {
+            vDesc.addAll(sinkImmobilizedHover(te));
         }
         // ...while immobile WiGEs crash.
         if (((te.getMovementMode() == EntityMovementMode.WIGE) && (te.isAirborneVTOLorWIGE())) &&
               (te.isMovementHitPending() || (te.getWalkMP() <= 0))) {
             // report problem: add tab
             vDesc.addAll(crashVTOLorWiGE(te));
+        }
+        return vDesc;
+    }
+
+    /**
+     * Sink a Hover Vehicle immobilized over water (non-ice)
+     *
+     * @param tank the Hover Vehicle to sink
+     * <p>
+     * Checks {@link Tank#isMovementHitPending()} as well as {@code getWalkMP() <= 0} since immobilization may be
+     * pending until {@link Tank#applyDamage()} is resolved.
+     * </p>
+     *
+     * @return a <code>Vector<Report></code> containing what to add to the turn log
+     */
+    Vector<Report> sinkImmobilizedHover(Tank tank) {
+        Vector<Report> vDesc = new Vector<>();
+        if (!tank.isOffBoard() &&
+              (tank.getMovementMode() == EntityMovementMode.HOVER &&
+                    (tank.isMovementHitPending() || (tank.getWalkMP() <= 0)) &&
+                    (game.getBoard().getHex(tank.getPosition()).terrainLevel(Terrains.WATER) > 0) &&
+                    !game.getBoard().getHex(tank.getPosition()).containsTerrain(Terrains.ICE))) {
+            vDesc.addAll(destroyEntity(tank, "a watery grave", false));
         }
         return vDesc;
     }

@@ -244,7 +244,7 @@ public class BotLogger {
             // row which follows can be read against the header above it.
             if ((index == 0) || !scoreHeaders.equals(currentScoreHeaders)) {
                 currentScoreHeaders = List.copyOf(scoreHeaders);
-                append(String.join("	", header));
+                append(String.join("\t", header));
             }
 
             var values = new ArrayList<>(List.of(PATH_RANK_RECORD,

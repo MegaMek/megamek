@@ -96,17 +96,17 @@ public class DeploymentProcessorTest extends GameBoardTestCase {
         // Create a fresh board for each test (boards are reused from static cache, so we need a fresh copy)
         // Re-initialize the board each time to avoid terrain contamination between tests
         initializeBoard("EMPTY_3x3", """
-              size 3 3
-              hex 0101 0 "" ""
-              hex 0201 0 "" ""
-              hex 0301 0 "" ""
-              hex 0102 0 "" ""
-              hex 0202 0 "" ""
-              hex 0302 0 "" ""
-              hex 0103 0 "" ""
-              hex 0203 0 "" ""
-              hex 0303 0 "" ""
-              end"""
+            size 3 3
+            hex 0101 0 "" ""
+            hex 0201 0 "" ""
+            hex 0301 0 "" ""
+            hex 0102 0 "" ""
+            hex 0202 0 "" ""
+            hex 0302 0 "" ""
+            hex 0103 0 "" ""
+            hex 0203 0 "" ""
+            hex 0303 0 "" ""
+            end"""
         );
         board = getBoard("EMPTY_3x3");
         game.setBoard(0, board);
@@ -129,20 +129,20 @@ public class DeploymentProcessorTest extends GameBoardTestCase {
     /**
      * Helper method to call the private processDeployment method via reflection
      */
-    private void callProcessDeployment(megamek.common.units.Entity entity, Coords coords) throws Exception {
+      private void callProcessDeployment(megamek.common.units.Entity entity, Coords coords) throws Exception {
             callProcessDeployment(entity, coords, new Vector<>());
       }
 
       private boolean callProcessDeployment(Entity entity, Coords coords, Vector<Entity> loads) throws Exception {
         Method processDeployment = DeploymentProcessor.class.getDeclaredMethod(
-              "processDeployment",
-                    Entity.class,
-              Coords.class,
-              int.class,
-              int.class,
-              int.class,
-              Vector.class,
-              boolean.class
+            "processDeployment",
+            Entity.class,
+            Coords.class,
+            int.class,
+            int.class,
+            int.class,
+            Vector.class,
+            boolean.class
         );
         processDeployment.setAccessible(true);
             return (boolean) processDeployment.invoke(deploymentProcessor, entity, coords, 0, 0, 0, loads, false);
@@ -151,17 +151,17 @@ public class DeploymentProcessorTest extends GameBoardTestCase {
     static {
         // Empty 3x3 board for BuildingEntity deployment tests
         initializeBoard("EMPTY_3x3", """
-              size 3 3
-              hex 0101 0 "" ""
-              hex 0201 0 "" ""
-              hex 0301 0 "" ""
-              hex 0102 0 "" ""
-              hex 0202 0 "" ""
-              hex 0302 0 "" ""
-              hex 0103 0 "" ""
-              hex 0203 0 "" ""
-              hex 0303 0 "" ""
-              end"""
+            size 3 3
+            hex 0101 0 "" ""
+            hex 0201 0 "" ""
+            hex 0301 0 "" ""
+            hex 0102 0 "" ""
+            hex 0202 0 "" ""
+            hex 0302 0 "" ""
+            hex 0103 0 "" ""
+            hex 0203 0 "" ""
+            hex 0303 0 "" ""
+            end"""
         );
     }
 
@@ -169,10 +169,10 @@ public class DeploymentProcessorTest extends GameBoardTestCase {
 
     static Stream<Arguments> buildingTypeAndClass() {
         return Stream.of(
-              Arguments.of(BuildingType.LIGHT, IBuilding.STANDARD, 1),
-              Arguments.of(BuildingType.MEDIUM, IBuilding.HANGAR, 2),
-              Arguments.of(BuildingType.HEAVY, IBuilding.FORTRESS, 3),
-              Arguments.of(BuildingType.HARDENED, IBuilding.GUN_EMPLACEMENT, 4)
+            Arguments.of(BuildingType.LIGHT, IBuilding.STANDARD, 1),
+            Arguments.of(BuildingType.MEDIUM, IBuilding.HANGAR, 2),
+            Arguments.of(BuildingType.HEAVY, IBuilding.FORTRESS, 3),
+            Arguments.of(BuildingType.HARDENED, IBuilding.GUN_EMPLACEMENT, 4)
         );
     }
 

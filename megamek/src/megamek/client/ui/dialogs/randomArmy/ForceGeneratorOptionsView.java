@@ -33,6 +33,7 @@
 package megamek.client.ui.dialogs.randomArmy;
 
 import java.awt.BorderLayout;
+import java.awt.Dimension;
 import java.awt.Component;
 import java.awt.FlowLayout;
 import java.awt.GridBagConstraints;
@@ -171,6 +172,22 @@ public class ForceGeneratorOptionsView extends JPanel implements FocusListener, 
      */
     public void setGameOptions(GameOptions gameOptions) {
         this.gameOptions = gameOptions;
+    }
+
+    /**
+     * Caps this panel's height at what it actually needs.
+     *
+     * <p>Hosts stack this panel in a {@link BoxLayout}, which stretches a component up to its maximum size, and a
+     * plain panel reports no maximum at all. In a tall window that handed the panel far more height than its
+     * contents use, and the formation list - the only row with any vertical weight - swallowed the difference as
+     * grey inside its own border. Reporting the preferred height as the maximum leaves the spare space below the
+     * panel, where it belongs.</p>
+     *
+     * @return the preferred size, with width left free to stretch
+     */
+    @Override
+    public Dimension getMaximumSize() {
+        return new Dimension(super.getMaximumSize().width, getPreferredSize().height);
     }
 
     /**

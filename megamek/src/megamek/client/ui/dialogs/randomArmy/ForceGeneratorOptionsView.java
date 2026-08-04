@@ -743,13 +743,43 @@ public class ForceGeneratorOptionsView extends JPanel implements FocusListener, 
         }
         boolean overSubscribed = requested > adjustable;
         total.setText(overSubscribed
-              ? Messages.getString("ForceGeneratorDialog.formationMix.total.over", requested, adjustable)
+              ? Messages.getString("ForceGeneratorDialog.formationMix.total.over", requested, adjustable,
+                    describeScaledBack(editor.getMix(), adjustable))
               : Messages.getString("ForceGeneratorDialog.formationMix.total", requested, adjustable,
                     adjustable - requested));
         total.setForeground(overSubscribed
               ? UIUtil.uiLightRed()
               : UIManager.getColor("Label.foreground"));
     }
+
+    /**
+     * Spells out what an over-subscribed request will actually be cut down to.
+     *
+     * <p>Uses {@link FormationMix#scaledTo(int)}, which is the same call the allocator makes, so what the player is
+     * shown here is what they will get rather than a second implementation that happens to agree.</p>
+     *
+     * @param mix        the request as it stands
+     * @param adjustable how many lances the force has to give
+     *
+     * @return the trimmed request as readable text, longest first
+     */
+    private static String describeScaledBack(FormationMix mix, int adjustable) {
+        Map<String, Integer> scaled = mix.scaledTo(adjustable).lances();
+        List<Map.Entry<String, Integer>> byCount = new ArrayList<>(scaled.entrySet());
+        byCount.sort(Map.Entry.<String, Integer>comparingByValue().reversed());
+        List<String> shown = byCount.stream()
+              .limit(SCALED_PREVIEW_ENTRIES)
+              .map(entry -> entry.getValue() + " " + entry.getKey())
+              .collect(Collectors.toList());
+        int remaining = byCount.size() - shown.size();
+        String text = String.join(", ", shown);
+        return (remaining > 0)
+              ? Messages.getString("ForceGeneratorDialog.formationMix.total.overMore", text, remaining)
+              : text;
+    }
+
+    /** How many formations the scaled-back preview names before it summarises the rest. */
+    private static final int SCALED_PREVIEW_ENTRIES = 6;
 
     /**
      * The paragraph explaining what the spinners mean, wrapped so it does not stretch the dialog.
@@ -1036,8 +1066,14 @@ public class ForceGeneratorOptionsView extends JPanel implements FocusListener, 
             lblFormationMixResult.setToolTipText(null);
             return;
         }
-        lblFormationMixResult.setText(Messages.getString("ForceGeneratorDialog.formationMix.result",
-              report.totalAssigned(), report.totalRequested(), report.preview().tweakableNodes()));
+        boolean deliveredInFull = report.totalAssigned() >= report.totalRequested();
+        lblFormationMixResult.setText(deliveredInFull
+              ? Messages.getString("ForceGeneratorDialog.formationMix.result", report.totalAssigned())
+              : Messages.getString("ForceGeneratorDialog.formationMix.result.short",
+                    report.totalAssigned(), report.totalRequested()));
+        lblFormationMixResult.setForeground(deliveredInFull
+              ? UIManager.getColor("Label.foreground")
+              : UIUtil.uiLightRed());
         lblFormationMixResult.setToolTipText(report.warnings().isEmpty()
               ? null
               : "<html>" + String.join("<br>", report.warnings()) + "</html>");

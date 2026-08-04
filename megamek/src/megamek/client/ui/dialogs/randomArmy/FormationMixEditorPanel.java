@@ -338,6 +338,9 @@ public class FormationMixEditorPanel extends JPanel implements Scrollable {
             int typical = Math.min(preview.typicalLancesFor(formationName), Math.max(0, maximum));
             JSpinner spinner = new JSpinner(new SpinnerNumberModel(typical, 0, Math.max(0, maximum), 1));
             startingLances.put(formationName, typical);
+            // A box showing the ruleset's own number and a box the player has fixed look identical otherwise, which
+            // makes it impossible to see at a glance which formations are actually being asked for.
+            spinner.addChangeListener(event -> markWhetherSet(formationName, spinner, label));
             spinner.setName("spnFormationMix" + formationName.replace(" ", ""));
             String tooltip = describeFormation(formationType, displayName,
                   preview.typicalLancesFor(formationName), ceilingExplanation(formationName));
@@ -586,6 +589,21 @@ public class FormationMixEditorPanel extends JPanel implements Scrollable {
      */
     public boolean isAllowingUnofferedFormations() {
         return allowUnofferedFormations;
+    }
+
+    /**
+     * Marks a formation as one the player has fixed, or as one still left to the rules.
+     *
+     * <p>The name goes bold once its box is moved off the number the ruleset builds on its own, so the formations
+     * being asked for are visible without reading every row against the column beside it.</p>
+     *
+     * @param formationName the formation the row is for
+     * @param spinner       the box for that formation
+     * @param label         the formation's name label
+     */
+    private void markWhetherSet(String formationName, JSpinner spinner, JLabel label) {
+        boolean isSet = !spinner.getValue().equals(startingLances.getOrDefault(formationName, 0));
+        label.setFont(label.getFont().deriveFont(isSet ? Font.BOLD : Font.PLAIN));
     }
 
     /** Clears every request, putting each spinner back to the lances the ruleset builds on its own. */

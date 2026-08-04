@@ -32,7 +32,10 @@
  */
 package megamek.client.ratgenerator;
 
+import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Comparator;
+import java.util.List;
 import java.util.LinkedHashSet;
 import java.util.Map;
 import java.util.Set;
@@ -168,5 +171,51 @@ public record FormationMix(Map<String, Integer> lances, boolean allowUnofferedFo
         return (retained.size() == lances.size())
               ? this
               : new FormationMix(retained, allowUnofferedFormations);
+    }
+
+    /**
+     * This request trimmed to fit a force of the given size.
+     *
+     * <p>A request that asks for more lances than the force has cannot be met as written. Rather than letting
+     * whichever formation is dealt with first take everything, every entry is scaled back in proportion, so asking
+     * for 30 Recon and 10 Fire from 20 lances yields 15 and 5 - the balance that was expressed, at the size that
+     * fits. The largest-remainder method shares out the lances lost to flooring, so the trimmed counts still add up
+     * to the force rather than surrendering one to a rounding artefact.</p>
+     *
+     * <p>Public because the editor shows the player this same result before they generate; it must be the very
+     * arithmetic the allocator will use, not a second implementation that agrees with it today.</p>
+     *
+     * @param adjustableLances how many lances the force has that can be reassigned
+     *
+     * @return the trimmed request, dropping any entry that scales down to nothing; {@code this} when it already fits
+     */
+    public FormationMix scaledTo(int adjustableLances) {
+        int totalRequested = totalLances();
+        if ((totalRequested <= adjustableLances) || (adjustableLances <= 0)) {
+            return this;
+        }
+        Map<String, Integer> trimmed = new TreeMap<>();
+        Map<String, Double> remainders = new TreeMap<>();
+        double scale = (double) adjustableLances / totalRequested;
+        int allocated = 0;
+        for (String formationName : requestedFormations()) {
+            double exact = lancesFor(formationName) * scale;
+            int whole = (int) Math.floor(exact);
+            trimmed.put(formationName, whole);
+            remainders.put(formationName, exact - whole);
+            allocated += whole;
+        }
+        List<String> byRemainder = new ArrayList<>(remainders.keySet());
+        byRemainder.sort(Comparator.comparingDouble((String formationName) -> remainders.get(formationName))
+              .reversed());
+        for (String formationName : byRemainder) {
+            if (allocated >= adjustableLances) {
+                break;
+            }
+            trimmed.merge(formationName, 1, Integer::sum);
+            allocated++;
+        }
+        trimmed.values().removeIf(count -> count == 0);
+        return new FormationMix(trimmed, allowUnofferedFormations);
     }
 }

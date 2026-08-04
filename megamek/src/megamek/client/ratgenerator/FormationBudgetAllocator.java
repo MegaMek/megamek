@@ -378,37 +378,7 @@ final class FormationBudgetAllocator {
      * @return lances per formation, omitting any that scale down to nothing
      */
     static Map<String, Integer> integerQuotas(FormationMix mix, int nodeCount) {
-        Map<String, Integer> quotas = new TreeMap<>();
-        int totalRequested = mix.totalLances();
-        if (totalRequested <= nodeCount) {
-            for (String formationName : mix.requestedFormations()) {
-                quotas.put(formationName, mix.lancesFor(formationName));
-            }
-            return quotas;
-        }
-
-        Map<String, Double> remainders = new HashMap<>();
-        double scale = (double) nodeCount / totalRequested;
-        int allocated = 0;
-        for (String formationName : mix.requestedFormations()) {
-            double exact = mix.lancesFor(formationName) * scale;
-            int whole = (int) Math.floor(exact);
-            quotas.put(formationName, whole);
-            remainders.put(formationName, exact - whole);
-            allocated += whole;
-        }
-        List<String> byRemainder = new ArrayList<>(remainders.keySet());
-        byRemainder.sort(Comparator.comparingDouble((String formationName) -> remainders.get(formationName))
-              .reversed());
-        for (String formationName : byRemainder) {
-            if (allocated >= nodeCount) {
-                break;
-            }
-            quotas.merge(formationName, 1, Integer::sum);
-            allocated++;
-        }
-        quotas.values().removeIf(count -> count == 0);
-        return quotas;
+        return new TreeMap<>(mix.scaledTo(nodeCount).lances());
     }
 
     private static String unavailableWarning(String formationName) {

@@ -53,6 +53,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.StringTokenizer;
+import java.util.TreeSet;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 import javax.swing.*;
@@ -73,6 +74,7 @@ import megamek.client.ratgenerator.CrewDescriptor;
 import megamek.client.ratgenerator.ForceDescriptor;
 import megamek.client.ratgenerator.FormationMix;
 import megamek.client.ratgenerator.FormationMixPreview;
+import megamek.client.ratgenerator.FormationType;
 import megamek.client.ratgenerator.RATGenerator;
 import megamek.client.ratgenerator.Ruleset;
 import megamek.client.ui.Messages;
@@ -890,6 +892,11 @@ public class ForceGeneratorViewUi implements ActionListener {
                     });
                     menu.add(toggleItem);
 
+                    JMenu changeFormation = buildChangeFormationMenu(fd);
+                    if (changeFormation != null) {
+                        menu.add(changeFormation);
+                    }
+
                     if (!toeExclusionMode) {
                         JMenuItem addItem = new JMenuItem("Add to game");
                         addItem.addActionListener(ev -> modelChosen.addEntities(fd));
@@ -904,6 +911,63 @@ public class ForceGeneratorViewUi implements ActionListener {
             }
         }
     };
+
+    /**
+     * The formations this node could be given instead of the one it has.
+     *
+     * <p>Offered from the node's own rule, so nothing here is a formation the ruleset would have refused it. A node
+     * whose rule allowed only one formation - command lances, mostly - has no choice to offer and gets no menu.</p>
+     *
+     * @param formation the node the player right-clicked
+     *
+     * @return the submenu, or {@code null} when this node has nothing to choose between
+     */
+    private @Nullable JMenu buildChangeFormationMenu(ForceDescriptor formation) {
+        Map<String, Integer> offered = formation.getEligibleFormations();
+        if (offered.size() < 2) {
+            return null;
+        }
+        JMenu menu = new JMenu(Messages.getString("ForceGeneratorDialog.changeFormation"));
+        String current = (formation.getFormation() == null) ? null : formation.getFormation().getName();
+        for (String formationName : new TreeSet<>(offered.keySet())) {
+            FormationType formationType = FormationType.getFormationType(formationName);
+            if (formationType == null) {
+                continue;
+            }
+            JMenuItem item = new JMenuItem(formationType.getNameWithFaction());
+            item.setEnabled(!formationName.equals(current));
+            item.addActionListener(ev -> changeFormation(formation, formationType));
+            menu.add(item);
+        }
+        return menu;
+    }
+
+    /**
+     * Gives one formation a different type and draws it again.
+     *
+     * <p>Only this branch of the tree is redrawn. Regenerating the whole force would replace every other unit the
+     * player has, which is not what changing one lance asks for.</p>
+     *
+     * @param formation     the node to change
+     * @param formationType the formation to give it
+     */
+    private void changeFormation(ForceDescriptor formation, FormationType formationType) {
+        logger.info("[ForceGen][ChangeFormation] '{}' {} -> {}", formation.parseName(),
+              (formation.getFormation() == null) ? "(none)" : formation.getFormation().getName(),
+              formationType.getName());
+        formation.setFormationType(formationType);
+        formation.clearGeneratedUnits();
+        formation.generateUnits(null, 0);
+        formation.assignCommanders();
+        formation.loadEntities(null, 0);
+
+        Object root = forceTree.getModel().getRoot();
+        if (root instanceof ForceDescriptor displayRoot) {
+            forceTree.setModel(new ForceTreeModel(displayRoot));
+        }
+        fireToeChanged();
+        refreshCommandModelChrome();
+    }
 
     private final MouseListener tableMouseListener = new MouseAdapter() {
         @Override

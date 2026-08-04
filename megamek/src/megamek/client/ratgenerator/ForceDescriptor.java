@@ -2387,6 +2387,26 @@ public class ForceDescriptor {
         return formationType;
     }
 
+    /**
+     * Discards the units drawn for this force and everything under it, leaving the structure intact.
+     *
+     * <p>The tree survives - the lances, their positions and their rules are all untouched - so the same node can be
+     * generated again against a different formation. Without this, a second pass through
+     * {@link #generateUnits(Ruleset.ProgressListener, double)} inherits the chassis and models left behind by the
+     * first and picks against a list already narrowed by units the player has just discarded.</p>
+     *
+     * <p>The element flag is deliberately kept: a leaf is still a leaf, and clearing it would tell the next pass that
+     * this node has units to distribute among children it does not have.</p>
+     */
+    public void clearGeneratedUnits() {
+        entity = null;
+        chassis.clear();
+        models.clear();
+        variants.clear();
+        subForces.forEach(ForceDescriptor::clearGeneratedUnits);
+        attached.forEach(ForceDescriptor::clearGeneratedUnits);
+    }
+
     public void setFormationType(FormationType ft) {
         formationType = ft;
     }

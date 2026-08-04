@@ -104,10 +104,21 @@ class SettingsContentHostTest {
     void plainHelpTextIsEscapedBeforeRenderingAsHtml() {
         SettingsContentHost host = new SettingsContentHost(new JLabel("Source"), "Details", true);
 
-        host.setHelpText("Use A < B & C > D");
+        host.setHelpText("Use A < B & C > D or <value>");
 
         JEditorPane helpPane = findComponent(host, "settingsHelpText", JEditorPane.class);
-        assertTrue(helpPane.getText().contains("A &lt; B &amp; C &gt; D"), helpPane.getText());
+        assertTrue(helpPane.getText().contains("A &lt; B &amp; C &gt; D or &lt;value&gt;"), helpPane.getText());
+    }
+
+    @Test
+    void htmlFragmentHelpTextIsPreservedAsMarkup() {
+        SettingsContentHost host = new SettingsContentHost(new JLabel("Source"), "Details", true);
+
+        host.setHelpText("First line.<br><br><b>Warning:</b> Second line.");
+
+        JEditorPane helpPane = findComponent(host, "settingsHelpText", JEditorPane.class);
+        assertTrue(helpPane.getText().contains("<b>Warning:</b>"), helpPane.getText());
+        assertFalse(helpPane.getText().contains("&lt;br&gt;"), helpPane.getText());
     }
 
     @Test

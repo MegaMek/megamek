@@ -46,10 +46,12 @@ import java.util.TreeMap;
  * Battle lances, fewer Recon.
  *
  * <p>Counted in lances rather than shares: a player asking for four Recon lances is asking something the force can
- * be checked against, where "40%" needed a denominator nobody agreed on. The counts are a floor rather than a
- * partition - they need not use up the force, and every lance not claimed keeps whatever the ruleset's own weighted
- * pick gave it. A mix in which every entry is zero is therefore indistinguishable from no mix at all, which is what
- * keeps an untouched control generating exactly as before.</p>
+ * be checked against, where "40%" needed a denominator nobody agreed on. Formations the player has not spoken for
+ * are absent from the map entirely and keep whatever the ruleset's own weighted pick gave them, which is what keeps
+ * an untouched editor indistinguishable from no mix at all.</p>
+ *
+ * <p>A formation mapped to zero is a request rather than an absence: none of this formation, please. That is why
+ * "not asked for" has to be absence from the map and cannot be represented as zero.</p>
  *
  * <p>Formations are named rather than enumerated because that is how the rulesets and the {@link FormationType}
  * registry already identify them; there is no enum to key on and inventing one would duplicate the registry.</p>
@@ -90,7 +92,9 @@ public record FormationMix(Map<String, Integer> lances, boolean allowUnofferedFo
                 continue;
             }
             int requested = (entry.getValue() == null) ? 0 : entry.getValue();
-            if (requested > 0) {
+            // Zero is kept, because it is a request: none of this formation. A formation the player has left to the
+            // rules is not in the map at all, which is what keeps an untouched editor indistinguishable from no mix.
+            if (requested >= 0) {
                 retained.put(entry.getKey().trim(), requested);
             }
         }
@@ -199,6 +203,12 @@ public record FormationMix(Map<String, Integer> lances, boolean allowUnofferedFo
         double scale = (double) adjustableLances / totalRequested;
         int allocated = 0;
         for (String formationName : requestedFormations()) {
+            // A request for none of a formation costs nothing and survives scaling untouched; there is nothing to
+            // trim, and dropping it would quietly turn "none of these" back into "as the rules like".
+            if (lancesFor(formationName) == 0) {
+                trimmed.put(formationName, 0);
+                continue;
+            }
             double exact = lancesFor(formationName) * scale;
             int whole = (int) Math.floor(exact);
             trimmed.put(formationName, whole);
@@ -215,7 +225,8 @@ public record FormationMix(Map<String, Integer> lances, boolean allowUnofferedFo
             trimmed.merge(formationName, 1, Integer::sum);
             allocated++;
         }
-        trimmed.values().removeIf(count -> count == 0);
+        // Only the ones that scaled away are dropped; an explicit request for none stays.
+        trimmed.entrySet().removeIf(entry -> (entry.getValue() == 0) && (lancesFor(entry.getKey()) > 0));
         return new FormationMix(trimmed, allowUnofferedFormations);
     }
 }

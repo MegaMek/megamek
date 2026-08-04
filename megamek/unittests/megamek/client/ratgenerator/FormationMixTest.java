@@ -77,13 +77,36 @@ class FormationMixTest {
         assertTrue(FormationMix.EMPTY.requestedFormations().isEmpty());
     }
 
+    /**
+     * Zero is a request for none of a formation, not the absence of a request. Absence is what an untouched editor
+     * produces, and it is the regression guarantee: nothing asked for must leave generation exactly as it was.
+     */
     @Test
-    void allZeroMixIsIndistinguishableFromEmpty() {
-        // The regression guarantee: untouched controls must leave generation exactly as it was.
-        FormationMix allZero = mixOf("Battle", 0, "Recon", 0);
+    void zeroIsARequestForNoneRatherThanNoRequest() {
+        FormationMix noneOfThose = mixOf("Battle", 0, "Recon", 0);
 
-        assertTrue(allZero.isEmpty());
-        assertEquals(0, allZero.totalLances());
+        assertFalse(noneOfThose.isEmpty(), "asking for none of two formations is still asking for something");
+        assertEquals(0, noneOfThose.totalLances(), "asking for none of them reserves no formations");
+        assertTrue(noneOfThose.requestedFormations().contains("Battle"));
+    }
+
+    @Test
+    void aMixWithNoEntriesIsEmpty() {
+        // The regression guarantee: an untouched editor names no formation at all.
+        assertTrue(new FormationMix(new LinkedHashMap<>()).isEmpty());
+        assertTrue(FormationMix.EMPTY.isEmpty());
+    }
+
+    /** An explicit request for none must survive being trimmed, or it silently reverts to "as the rules like". */
+    @Test
+    void aRequestForNoneSurvivesScaling() {
+        FormationMix mix = mixOf("Recon", 30, "Fire", 10, "Battle", 0);
+
+        FormationMix scaled = mix.scaledTo(20);
+
+        assertTrue(scaled.requestedFormations().contains("Battle"), "a request for no Battle must not be dropped");
+        assertEquals(0, scaled.lancesFor("Battle"));
+        assertEquals(20, scaled.totalLances(), "the positive requests still fill the force");
     }
 
     @Test

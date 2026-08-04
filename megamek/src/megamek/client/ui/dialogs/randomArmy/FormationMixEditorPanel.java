@@ -51,7 +51,7 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JSpinner;
 import javax.swing.Scrollable;
-import javax.swing.SpinnerNumberModel;
+import javax.swing.SpinnerListModel;
 import javax.swing.SwingConstants;
 
 import megamek.client.ratgenerator.FormationMix;
@@ -91,13 +91,13 @@ public class FormationMixEditorPanel extends JPanel implements Scrollable {
     private final Map<String, JSpinner> spinners = new TreeMap<>();
 
     /**
-     * What each spinner started at, being the lances the ruleset builds on its own.
+     * The value a box shows when the player has not spoken for that formation.
      *
-     * <p>A spinner still sitting on its starting number is not a request. That is what keeps an untouched editor
-     * generating exactly as the ruleset would, variance and all, while still showing the player the number they are
-     * adjusting away from rather than a bare zero.</p>
+     * <p>Its own entry in the list rather than a number, because zero has to stay available to mean "none of these".
+     * A box reading this is not a request at all, which is what keeps an untouched editor generating exactly as the
+     * ruleset would, variance and all.</p>
      */
-    private final Map<String, Integer> startingLances = new TreeMap<>();
+    private static final String LEAVE_TO_RULES = Messages.getString("ForceGeneratorDialog.formationMix.auto");
     private final FormationMixPreview preview;
     private final boolean allowUnofferedFormations;
 
@@ -335,12 +335,10 @@ public class FormationMixEditorPanel extends JPanel implements Scrollable {
             int maximum = allowUnofferedFormations
                   ? preview.tweakableNodes()
                   : preview.maximumLancesFor(formationName);
-            int typical = Math.min(preview.typicalLancesFor(formationName), Math.max(0, maximum));
-            JSpinner spinner = new JSpinner(new SpinnerNumberModel(typical, 0, Math.max(0, maximum), 1));
-            startingLances.put(formationName, typical);
-            // A box showing the ruleset's own number and a box the player has fixed look identical otherwise, which
-            // makes it impossible to see at a glance which formations are actually being asked for.
-            spinner.addChangeListener(event -> markWhetherSet(formationName, spinner, label));
+            JSpinner spinner = new JSpinner(reserveModel(Math.max(0, maximum)));
+            // A box left to the rules and a box the player has claimed look identical otherwise, which makes it
+            // impossible to see at a glance which formations are actually being asked for.
+            spinner.addChangeListener(event -> markWhetherSet(spinner, label));
             spinner.setName("spnFormationMix" + formationName.replace(" ", ""));
             String tooltip = describeFormation(formationType, displayName,
                   preview.typicalLancesFor(formationName), ceilingExplanation(formationName));
@@ -551,11 +549,11 @@ public class FormationMixEditorPanel extends JPanel implements Scrollable {
     public FormationMix getMix() {
         Map<String, Integer> lanceCounts = new LinkedHashMap<>();
         spinners.forEach((formationName, spinner) -> {
-            int requested = (Integer) spinner.getValue();
-            // Only a number the player actually moved is a request. Reading every spinner back would pin the whole
-            // force to one sample of the ruleset's own averages and quietly remove its variance.
-            if (requested != startingLances.getOrDefault(formationName, 0)) {
-                lanceCounts.put(formationName, requested);
+            Integer reserved = reservedIn(spinner);
+            // A box left to the rules is not a request and must stay out of the map entirely; zero is a request for
+            // none of that formation and belongs in it.
+            if (reserved != null) {
+                lanceCounts.put(formationName, reserved);
             }
         });
         return new FormationMix(lanceCounts, allowUnofferedFormations);
@@ -570,17 +568,15 @@ public class FormationMixEditorPanel extends JPanel implements Scrollable {
         FormationMix toShow = (mix == null) ? FormationMix.EMPTY : mix;
         spinners.forEach((formationName, spinner) -> {
             if (!toShow.requestedFormations().contains(formationName)) {
-                // Not asked for, so it goes back to showing what the ruleset builds on its own.
-                spinner.setValue(startingLances.getOrDefault(formationName, 0));
+                spinner.setValue(LEAVE_TO_RULES);
                 return;
             }
             // A request carried over from an earlier force can exceed what this one can deliver - changing faction,
-            // year or weight reshapes every ceiling - so it is brought down to what is achievable now rather than
+            // year or weight reshapes every limit - so it is brought down to what is achievable now rather than
             // being silently kept as a number the force cannot reach.
-            int maximum = ((SpinnerNumberModel) spinner.getModel()).getMaximum() instanceof Integer cap
-                  ? cap
-                  : preview.tweakableNodes();
-            spinner.setValue(Math.min(toShow.lancesFor(formationName), maximum));
+            List<?> choices = ((SpinnerListModel) spinner.getModel()).getList();
+            int maximum = choices.size() - 2;
+            spinner.setValue(Math.min(toShow.lancesFor(formationName), Math.max(0, maximum)));
         });
     }
 
@@ -592,24 +588,50 @@ public class FormationMixEditorPanel extends JPanel implements Scrollable {
     }
 
     /**
-     * Marks a formation as one the player has fixed, or as one still left to the rules.
+     * The values one formation's box can take: leave it to the rules, none at all, or a number up to the most this
+     * force could give it.
      *
-     * <p>The name goes bold once its box is moved off the number the ruleset builds on its own, so the formations
-     * being asked for are visible without reading every row against the column beside it.</p>
+     * @param maximum the most lances this formation could be given
      *
-     * @param formationName the formation the row is for
-     * @param spinner       the box for that formation
-     * @param label         the formation's name label
+     * @return the spinner model
      */
-    private void markWhetherSet(String formationName, JSpinner spinner, JLabel label) {
-        boolean isSet = !spinner.getValue().equals(startingLances.getOrDefault(formationName, 0));
+    private static SpinnerListModel reserveModel(int maximum) {
+        List<Object> choices = new ArrayList<>();
+        choices.add(LEAVE_TO_RULES);
+        for (int reserved = 0; reserved <= maximum; reserved++) {
+            choices.add(reserved);
+        }
+        SpinnerListModel model = new SpinnerListModel(choices);
+        model.setValue(LEAVE_TO_RULES);
+        return model;
+    }
+
+    /**
+     * Marks a formation as one the player has spoken for, or as one still left to the rules.
+     *
+     * @param spinner the box for that formation
+     * @param label   the formation's name label
+     */
+    private static void markWhetherSet(JSpinner spinner, JLabel label) {
+        boolean isSet = !LEAVE_TO_RULES.equals(spinner.getValue());
         label.setFont(label.getFont().deriveFont(isSet ? Font.BOLD : Font.PLAIN));
     }
 
-    /** Clears every request, putting each spinner back to the lances the ruleset builds on its own. */
+    /**
+     * The lances reserved for one formation.
+     *
+     * @param spinner the box to read
+     *
+     * @return the reserved count, or {@code null} when the formation is left to the rules
+     */
+    private static @Nullable Integer reservedIn(JSpinner spinner) {
+        Object value = spinner.getValue();
+        return (value instanceof Integer reserved) ? reserved : null;
+    }
+
+    /** Clears every request, handing every formation back to the rules. */
     public void reset() {
-        spinners.forEach((formationName, spinner) ->
-              spinner.setValue(startingLances.getOrDefault(formationName, 0)));
+        spinners.values().forEach(spinner -> spinner.setValue(LEAVE_TO_RULES));
     }
 
     /**
@@ -636,7 +658,20 @@ public class FormationMixEditorPanel extends JPanel implements Scrollable {
     }
 
     /**
-     * @return how many lances in this force could be reassigned at all, which is what a request has to fit inside
+     * How many formations this force holds in total.
+     *
+     * <p>This is the number a reservation is made against, and unlike the count that can be reassigned it is a
+     * property of the force rather than of one roll: the same regiment built ten times held thirty-one formations
+     * every time, while the number with a choice to make swung between twenty-one and thirty-one.</p>
+     *
+     * @return the formations in this force
+     */
+    public int formationTotal() {
+        return preview.formationNodes();
+    }
+
+    /**
+     * @return how many formations this force could reassign, which is what the allocator actually has to work with
      */
     public int adjustableLanceTotal() {
         return preview.tweakableNodes();

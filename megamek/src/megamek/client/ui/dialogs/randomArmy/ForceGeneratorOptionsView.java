@@ -735,9 +735,9 @@ public class ForceGeneratorOptionsView extends JPanel implements FocusListener, 
      */
     private static void updateFormationMixTotal(JLabel total, FormationMixEditorPanel editor) {
         int requested = editor.requestedLanceTotal();
-        int adjustable = editor.adjustableLanceTotal();
-        if (requested == 0) {
-            total.setText(Messages.getString("ForceGeneratorDialog.formationMix.total.none"));
+        int adjustable = editor.formationTotal();
+        if (editor.getMix().isEmpty()) {
+            total.setText(Messages.getString("ForceGeneratorDialog.formationMix.total.none", adjustable));
             total.setForeground(UIManager.getColor("Label.foreground"));
             return;
         }
@@ -746,7 +746,7 @@ public class ForceGeneratorOptionsView extends JPanel implements FocusListener, 
               ? Messages.getString("ForceGeneratorDialog.formationMix.total.over", requested, adjustable,
                     describeScaledBack(editor.getMix(), adjustable))
               : Messages.getString("ForceGeneratorDialog.formationMix.total", requested, adjustable,
-                    adjustable - requested));
+                    Math.max(0, adjustable - requested)));
         total.setForeground(overSubscribed
               ? UIUtil.uiLightRed()
               : UIManager.getColor("Label.foreground"));

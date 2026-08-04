@@ -63,9 +63,10 @@ import javax.swing.text.Position;
 
 /** Paints settings search matches without changing component text or layout. */
 final class SettingsSearchHighlightLayerUI extends LayerUI<JScrollPane> {
-    private static final int HIGHLIGHT_ALPHA = 96;
-    private static final int OUTLINE_ALPHA = 180;
-    private static final int HORIZONTAL_PADDING = 2;
+    static final String HIGHLIGHT_COLOR_KEY = "Settings.searchHighlight";
+    private static final Color DEFAULT_HIGHLIGHT_COLOR = new Color(0x7F, 0xCF, 0x43);
+    private static final int HIGHLIGHT_ALPHA = 160;
+    private static final int OUTLINE_ALPHA = 255;
     private static final int ARC_SIZE = 4;
 
     private List<String> tokens = List.of();
@@ -158,7 +159,6 @@ final class SettingsSearchHighlightLayerUI extends LayerUI<JScrollPane> {
                   ? htmlRangeBounds(source, range, allocation)
                   : plainRangeBounds(component, source.text(), range, allocation);
             if (bounds != null && !bounds.isEmpty()) {
-                bounds.grow(HORIZONTAL_PADDING, 0);
                 highlights.add(bounds);
             }
         }
@@ -181,7 +181,6 @@ final class SettingsSearchHighlightLayerUI extends LayerUI<JScrollPane> {
                 } else {
                     bounds.width = Math.max(1, editorPane.getWidth() - bounds.x - editorPane.getInsets().right);
                 }
-                bounds.grow(HORIZONTAL_PADDING, 0);
                 highlights.add(bounds);
             } catch (BadLocationException exception) {
                 // Ignore a stale document position; a later repaint recalculates from the current document.
@@ -277,9 +276,9 @@ final class SettingsSearchHighlightLayerUI extends LayerUI<JScrollPane> {
         if (highlights.isEmpty()) {
             return;
         }
-        Color baseColor = UIManager.getColor("TextField.selectionBackground");
+        Color baseColor = UIManager.getColor(HIGHLIGHT_COLOR_KEY);
         if (baseColor == null) {
-            baseColor = new Color(255, 193, 7);
+            baseColor = DEFAULT_HIGHLIGHT_COLOR;
         }
         Color fillColor = new Color(baseColor.getRed(), baseColor.getGreen(), baseColor.getBlue(), HIGHLIGHT_ALPHA);
         Color outlineColor = new Color(baseColor.getRed(), baseColor.getGreen(), baseColor.getBlue(), OUTLINE_ALPHA);

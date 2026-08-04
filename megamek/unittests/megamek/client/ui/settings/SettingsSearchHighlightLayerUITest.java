@@ -37,6 +37,7 @@ import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.awt.BorderLayout;
+import java.awt.Color;
 import java.awt.Component;
 import java.awt.Container;
 import java.awt.Dimension;
@@ -53,6 +54,7 @@ import javax.swing.JLayer;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.SwingUtilities;
+import javax.swing.UIManager;
 
 import org.junit.jupiter.api.Test;
 
@@ -76,6 +78,32 @@ class SettingsSearchHighlightLayerUITest {
     }
 
     @Test
+    void highlightUsesStrongThemeOverrideColor() throws Exception {
+        runOnEdt(() -> {
+            Object previous = UIManager.get(SettingsSearchHighlightLayerUI.HIGHLIGHT_COLOR_KEY);
+            Color override = new Color(240, 80, 20);
+            try {
+                UIManager.put(SettingsSearchHighlightLayerUI.HIGHLIGHT_COLOR_KEY, override);
+                JLabel label = new JLabel("Visible Match");
+                HighlightFixture fixture = fixture(label);
+                BufferedImage baseline = fixture.paint("");
+
+                BufferedImage highlighted = fixture.paint("visible");
+
+                Rectangle bounds = fixture.bounds().getFirst();
+                Color baselineColor = new Color(baseline.getRGB(bounds.x + bounds.width / 2,
+                      bounds.y + 1), true);
+                Color highlightedColor = new Color(highlighted.getRGB(bounds.x + bounds.width / 2,
+                      bounds.y + 1), true);
+                assertTrue(colorDistance(baselineColor, highlightedColor) > 100,
+                      baselineColor + " -> " + highlightedColor);
+            } finally {
+                UIManager.put(SettingsSearchHighlightLayerUI.HIGHLIGHT_COLOR_KEY, previous);
+            }
+        });
+    }
+
+    @Test
     void paintsMatchesInSwingHtmlText() throws Exception {
         runOnEdt(() -> {
             JLabel label = new JLabel("<html><b>Heat &amp; Fire</b><br>Rules</html>");
@@ -85,6 +113,27 @@ class SettingsSearchHighlightLayerUITest {
 
             assertEquals(2, fixture.bounds().size());
             assertEquals("<html><b>Heat &amp; Fire</b><br>Rules</html>", label.getText());
+        });
+    }
+
+    @Test
+    void htmlHighlightFitsExactXpGlyphsInsideExperience() throws Exception {
+        runOnEdt(() -> {
+            List<String> labels = List.of(
+                  "Negotiation skill generation and administrator experience-level handling.",
+                  "Negotiation Factored into Experience Level");
+            for (String text : labels) {
+                JLabel label = new JLabel("<html><nobr>" + text + "</nobr></html>");
+                HighlightFixture fixture = fixture(label);
+
+                fixture.paint("XP");
+
+                assertEquals(1, fixture.bounds().size(), text);
+                int expectedWidth = label.getFontMetrics(label.getFont()).stringWidth("xp");
+                assertTrue(fixture.bounds().getFirst().width <= expectedWidth + 1,
+                      text + ": expected at most " + (expectedWidth + 1)
+                            + "px but was " + fixture.bounds().getFirst().width + "px");
+            }
         });
     }
 
@@ -192,6 +241,12 @@ class SettingsSearchHighlightLayerUITest {
             }
         }
         return differences;
+    }
+
+    private static int colorDistance(Color first, Color second) {
+        return Math.abs(first.getRed() - second.getRed())
+              + Math.abs(first.getGreen() - second.getGreen())
+              + Math.abs(first.getBlue() - second.getBlue());
     }
 
     private static void layoutTree(Container root) {

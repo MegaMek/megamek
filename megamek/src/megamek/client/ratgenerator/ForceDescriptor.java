@@ -2403,6 +2403,11 @@ public class ForceDescriptor {
         chassis.clear();
         models.clear();
         variants.clear();
+        // The weight class goes with them. Generation overwrites it with the weight of the units it drew, so
+        // leaving it behind makes the next pass pick against the weight of the units just discarded: a Heavy Recon
+        // formation asked for inside a medium company was refused outright and fell back to an ordinary lance.
+        // Cleared, the formation's own requirements decide the weight, which is what asking for it meant.
+        weightClass = null;
         subForces.forEach(ForceDescriptor::clearGeneratedUnits);
         attached.forEach(ForceDescriptor::clearGeneratedUnits);
     }

@@ -1039,6 +1039,10 @@ public class ForceGeneratorViewUi implements ActionListener {
         }
 
         ForceDescriptor added = parent.createChild(parent.getSubForces().size());
+        // createChild inherits the parent's weight class, which is the weight of the units the parent already
+        // holds. Keeping it refuses any formation that needs different units - a Heavy Recon lance asked for
+        // inside a medium company came out an ordinary lance. The formation's own requirements decide instead.
+        added.setWeightClass(null);
         added.setEchelon(template.getEchelon());
         // The sibling's name pattern, not its parsed name: the pattern is what turns into "C-4 Recon Lance" once
         // the new formation has a position among its siblings.
@@ -1107,12 +1111,47 @@ public class ForceGeneratorViewUi implements ActionListener {
         refreshTreeAfterEdit();
     }
 
-    /** Rebuilds the tree after an edit and tells the host what it would now commit. */
+    /**
+     * Rebuilds the tree after an edit, leaving it looking as it did.
+     *
+     * <p>The model has to be replaced for the tree to see the change, and that alone would collapse everything back
+     * to the root - so an edit three levels down would cost the player the whole view they were working in. The
+     * open branches and the selection are taken before and put back after.</p>
+     *
+     * <p>Branches inside the part that changed cannot come back, because their nodes no longer exist; a re-rolled
+     * lance holds different units than the ones that were on screen. Everything outside it is the same object it
+     * was, so its path still matches.</p>
+     */
     private void refreshTreeAfterEdit() {
+        List<TreePath> expanded = new ArrayList<>();
+        for (int row = 0; row < forceTree.getRowCount(); row++) {
+            TreePath path = forceTree.getPathForRow(row);
+            if ((path != null) && forceTree.isExpanded(path)) {
+                expanded.add(path);
+            }
+        }
+        TreePath selected = forceTree.getSelectionPath();
+
         Object root = forceTree.getModel().getRoot();
         if (root instanceof ForceDescriptor displayRoot) {
             forceTree.setModel(new ForceTreeModel(displayRoot));
         }
+
+        // Collected in row order, so a parent is always restored before the children hanging off it.
+        int restored = 0;
+        for (TreePath path : expanded) {
+            forceTree.expandPath(path);
+            if (forceTree.isExpanded(path)) {
+                restored++;
+            }
+        }
+        if (selected != null) {
+            forceTree.setSelectionPath(selected);
+            forceTree.scrollPathToVisible(selected);
+        }
+        logger.debug("[ForceGen][Tree] rebuilt after an edit; reopened {} of {} branch(es)",
+              restored, expanded.size());
+
         fireToeChanged();
         refreshCommandModelChrome();
     }

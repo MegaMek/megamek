@@ -46,16 +46,20 @@ import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.Enumeration;
 import java.util.LinkedHashMap;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Optional;
+import java.util.Set;
 import java.util.concurrent.atomic.AtomicBoolean;
 import javax.swing.JCheckBox;
 import javax.swing.JComboBox;
 import javax.swing.JLabel;
+import javax.swing.JTree;
 import javax.swing.JTextField;
 import javax.swing.SwingUtilities;
+import javax.swing.tree.TreePath;
 
 import megamek.client.ui.Messages;
 import megamek.client.ui.clientGUI.DialogOptionListener;
@@ -122,12 +126,13 @@ class GameOptionsPaneTest {
     }
 
     @Test
-    void basicOptionsUseClassifiedCollapsedSectionsAndStandardSize() throws Exception {
+    void matchSetupUsesClassifiedCollapsedSectionsAndStandardSize() throws Exception {
         runOnEdt(() -> {
             GameOptions options = new GameOptions();
-            DialogOptionComponentYPanel playtest = component(options.getOption(OptionsConstants.PLAYTEST_1));
+            DialogOptionComponentYPanel deployment = component(
+                  options.getOption(OptionsConstants.BASE_EXCLUSIVE_DB_DEPLOYMENT));
             DialogOptionComponentYPanel lobby = component(options.getOption(OptionsConstants.BASE_LOBBY_AMMO_DUMP));
-            GameOptionsPane pane = pane(List.of(playtest, lobby), option -> true);
+            GameOptionsPane pane = pane(List.of(deployment, lobby), option -> true);
 
             List<CollapsibleSectionPanel> sections = findSections(pane);
             assertEquals(2, sections.size());
@@ -143,15 +148,17 @@ class GameOptionsPaneTest {
     }
 
     @Test
-    void basicSectionsShareTwoColumnAlignment() throws Exception {
+        void matchSetupSectionsShareTwoColumnAlignment() throws Exception {
         runOnEdt(() -> {
             GameOptions options = new GameOptions();
             DialogOptionComponentYPanel wideCoreOption = component(
                   options.getOption(OptionsConstants.BASE_SET_PLAYER_DEPLOYMENT_TO_PLAYER_0));
             DialogOptionComponentYPanel coreFirst = component(
-                  options.getOption(OptionsConstants.SEARCHLIGHTS_ON));
-            DialogOptionComponentYPanel testingFirst = component(options.getOption(OptionsConstants.PLAYTEST_1));
-            DialogOptionComponentYPanel testingSecond = component(options.getOption(OptionsConstants.PLAYTEST_2));
+                options.getOption(OptionsConstants.BASE_EXCLUSIVE_DB_DEPLOYMENT));
+            DialogOptionComponentYPanel testingFirst = component(
+                options.getOption(OptionsConstants.BASE_TEAM_INITIATIVE));
+            DialogOptionComponentYPanel testingSecond = component(
+                options.getOption(OptionsConstants.BASE_SET_DEFAULT_TEAM_1));
             DialogOptionComponentYPanel displayFirst = component(
                   options.getOption(OptionsConstants.BASE_LOBBY_AMMO_DUMP));
             DialogOptionComponentYPanel displaySecond = component(
@@ -219,7 +226,10 @@ class GameOptionsPaneTest {
             DialogOptionComponentYPanel choiceOption = component(
                   options.getOption(OptionsConstants.ALLOWED_TECH_LEVEL));
 
-            pane("basic", List.of(booleanOption, numericOption, choiceOption), option -> true);
+            GameOptionsPane pane = new GameOptionsPane(List.of(
+                new GameOptionsPane.OptionGroup("basic", "basic", List.of(booleanOption, numericOption)),
+                new GameOptionsPane.OptionGroup("allowedUnits", "allowedUnits", List.of(choiceOption))),
+                option -> true);
 
             assertFirstComponentStartsAtCellEdge(booleanOption, JCheckBox.class);
             int numericControlX = assertLabelControlCell(numericOption, JTextField.class);
@@ -249,7 +259,7 @@ class GameOptionsPaneTest {
                 populatedWidths.put(component, findDirectComponent(component, JComboBox.class).getPreferredSize().width);
             }
 
-            pane("advanced", components, option -> true);
+            pane("advancedRules", components, option -> true);
 
             for (DialogOptionComponentYPanel component : components) {
                 int controlWidth = findDirectComponent(component, JComboBox.class).getPreferredSize().width;
@@ -273,7 +283,7 @@ class GameOptionsPaneTest {
                     IOption option = groupOptions.nextElement();
                     DialogOptionComponentYPanel component = component(option);
                     components.add(component);
-                                        if (option.getType() != IOption.BOOLEAN
+                    if (option.getType() != IOption.BOOLEAN
                           && !option.getName().equals(OptionsConstants.GAME_MASTER_VOTE_THRESHOLD)) {
                         nonBooleanComponents.add(component);
                     }
@@ -355,7 +365,9 @@ class GameOptionsPaneTest {
             }
             for (Enumeration<IOption> groupOptions = group.getOptions(); groupOptions.hasMoreElements(); ) {
                 IOption option = groupOptions.nextElement();
-                if (!GameOptionsPane.sectionId(group.getName(), option.getName()).equals("basic.rules")) {
+                if (Set.of(OptionsConstants.TWRULES, OptionsConstants.PLAYTEST_1, OptionsConstants.PLAYTEST_2,
+                      OptionsConstants.PLAYTEST_3, OptionsConstants.BASE_LOBBY_AMMO_DUMP,
+                      OptionsConstants.BASE_SHOW_BAY_DETAIL).contains(option.getName())) {
                     continue;
                 }
                 String description = option.getDescription();
@@ -372,16 +384,17 @@ class GameOptionsPaneTest {
     void searchExpandsOnlySectionContainingMatchingOption() throws Exception {
         runOnEdt(() -> {
             GameOptions options = new GameOptions();
-            DialogOptionComponentYPanel playtest = component(options.getOption(OptionsConstants.PLAYTEST_1));
+            DialogOptionComponentYPanel deployment = component(
+                  options.getOption(OptionsConstants.BASE_EXCLUSIVE_DB_DEPLOYMENT));
             DialogOptionComponentYPanel lobby = component(options.getOption(OptionsConstants.BASE_LOBBY_AMMO_DUMP));
-            GameOptionsPane pane = pane(List.of(playtest, lobby), option -> true);
+            GameOptionsPane pane = pane(List.of(deployment, lobby), option -> true);
 
-            pane.setFilterText(playtest.getOption().getDisplayableName());
+            pane.setFilterText(deployment.getOption().getDisplayableName());
 
             List<CollapsibleSectionPanel> sections = findSections(pane);
             assertTrue(sections.get(0).isExpanded());
             assertFalse(sections.get(1).isExpanded());
-            assertTrue(playtest.isVisible());
+            assertTrue(deployment.isVisible());
             assertFalse(lobby.isVisible());
         });
     }
@@ -401,6 +414,55 @@ class GameOptionsPaneTest {
             }
         }
         assertTrue(optionCount > 200, "Expected all game options to be classified");
+    }
+
+    @Test
+    void everyRegisteredGameOptionHasExactlyOneExplicitPresentationLocation() {
+        GameOptions options = new GameOptions();
+        Set<String> registeredOptionNames = new LinkedHashSet<>();
+        Map<String, Integer> sectionSizes = new LinkedHashMap<>();
+
+        for (Enumeration<IOptionGroup> groups = options.getGroups(); groups.hasMoreElements(); ) {
+            IOptionGroup group = groups.nextElement();
+            for (Enumeration<IOption> groupOptions = group.getOptions(); groupOptions.hasMoreElements(); ) {
+                IOption option = groupOptions.nextElement();
+                assertTrue(registeredOptionNames.add(option.getName()), "Duplicate registered option " + option.getName());
+                GameOptionsPresentation.Location location = GameOptionsPresentation.location(
+                      group.getName(), option.getName());
+                    if (location.page().categoryId() != null) {
+                      assertTrue(Messages.keyExists(
+                          "GameOptionsDialog.category." + location.page().categoryId()), location.page().categoryId());
+                      assertTrue(Messages.keyExists(
+                          "GameOptionsDialog.page." + location.page().id() + ".title"), location.page().id());
+                    }
+                    assertTrue(Messages.keyExists(
+                        "GameOptionsDialog.section." + location.sectionId() + ".title"), location.sectionId());
+                    assertTrue(Messages.keyExists(
+                        "GameOptionsDialog.section." + location.sectionId() + ".summary"), location.sectionId());
+                String sectionKey = location.page().id() + ':' + location.sectionId();
+                sectionSizes.merge(sectionKey, 1, Integer::sum);
+            }
+        }
+
+        assertEquals(registeredOptionNames, GameOptionsPresentation.mappedOptionNames());
+        sectionSizes.forEach((section, count) -> assertTrue(count <= 12, section + " contains " + count + " options"));
+    }
+
+    @Test
+    void overloadedGroupsUseTaskBasedNestedNavigationPaths() throws Exception {
+        runOnEdt(() -> {
+            GameOptions options = new GameOptions();
+            GameOptionsPane pane = new GameOptionsPane(allOptionGroups(options), option -> true);
+            JTree tree = findComponent(pane, JTree.class);
+
+            assertTreePathExists(tree, "General", "Match Setup");
+            assertTreePathExists(tree, "General", "Match Flow, Timers, and Saves");
+            assertTreePathExists(tree, "Rules", "Core Rules");
+            assertTreePathExists(tree, "Rules", "Sensors and Visibility");
+            assertTreePathExists(tree, "Combat", "Targeting, LOS, and Artillery");
+            assertTreePathExists(tree, "Movement", "Vehicle Movement");
+            assertTreePathExists(tree, "Aerospace", "Vessels, Fuel, and Ordnance");
+        });
     }
 
     @Test
@@ -458,12 +520,12 @@ class GameOptionsPaneTest {
             assertFalse(unofficialOptionText.contains(IMPORTANT_SYMBOL));
             assertTrue(unofficialOptionText.contains(UNOFFICIAL_SYMBOL));
 
-            String basicTitle = sectionTitle(basicPane, "Core Rules");
+            String basicTitle = sectionTitle(basicPane, "Battlefield Rules");
             assertFalse(basicTitle.contains(IMPORTANT_SYMBOL));
             assertFalse(basicTitle.contains(ADVANCED_SYMBOL));
             assertFalse(basicTitle.contains(UNOFFICIAL_SYMBOL));
 
-            String advancedTitle = sectionTitle(advancedPane, "Terrain and Environment");
+            String advancedTitle = sectionTitle(advancedPane, "Battlefield Engineering");
             assertFalse(advancedTitle.contains(IMPORTANT_SYMBOL));
             assertTrue(advancedTitle.contains(ADVANCED_SYMBOL));
             assertFalse(advancedTitle.contains(UNOFFICIAL_SYMBOL));
@@ -479,6 +541,36 @@ class GameOptionsPaneTest {
           java.util.function.Predicate<IOption> visibility) {
         return new GameOptionsPane(List.of(new GameOptionsPane.OptionGroup(groupId, groupId, components)),
               visibility);
+    }
+
+    private static List<GameOptionsPane.OptionGroup> allOptionGroups(GameOptions options) {
+        List<GameOptionsPane.OptionGroup> groups = new ArrayList<>();
+        for (Enumeration<IOptionGroup> optionGroups = options.getGroups(); optionGroups.hasMoreElements(); ) {
+            IOptionGroup group = optionGroups.nextElement();
+            List<DialogOptionComponentYPanel> components = new ArrayList<>();
+            for (Enumeration<IOption> groupOptions = group.getOptions(); groupOptions.hasMoreElements(); ) {
+                components.add(component(groupOptions.nextElement()));
+            }
+            groups.add(new GameOptionsPane.OptionGroup(group.getName(), group.getDisplayableName(), components));
+        }
+        return groups;
+    }
+
+    private static void assertTreePathExists(JTree tree, String... expectedPath) {
+        for (int row = 0; row < tree.getRowCount(); row++) {
+            TreePath treePath = tree.getPathForRow(row);
+            if (treePath.getPathCount() != expectedPath.length + 1) {
+                continue;
+            }
+            boolean matches = true;
+            for (int index = 0; index < expectedPath.length; index++) {
+                matches &= expectedPath[index].equals(treePath.getPathComponent(index + 1).toString());
+            }
+            if (matches) {
+                return;
+            }
+        }
+        throw new AssertionError("No navigation path " + String.join(" > ", expectedPath));
     }
 
     private static DialogOptionComponentYPanel component(IOption option) {

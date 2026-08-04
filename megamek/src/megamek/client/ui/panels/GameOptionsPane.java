@@ -42,6 +42,7 @@ import java.awt.Component;
 import java.awt.Dimension;
 import java.io.File;
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -102,12 +103,25 @@ public class GameOptionsPane extends JPanel {
         setName("gameOptionsPane");
         Objects.requireNonNull(optionVisibility);
 
+        Map<GameOptionsPresentation.PageDefinition, PageSeed> pageSeeds = new LinkedHashMap<>();
+        for (OptionGroup group : groups) {
+            for (DialogOptionComponentYPanel component : group.components()) {
+                GameOptionsPresentation.Location location = GameOptionsPresentation.location(
+                      group.id(), component.getOption().getName());
+                pageSeeds.computeIfAbsent(location.page(), PageSeed::new).add(group, component, location);
+            }
+        }
+        List<PageSeed> orderedPageSeeds = new ArrayList<>(pageSeeds.values());
+        orderedPageSeeds.sort(Comparator.comparingInt(page -> page.definition().order()));
+
         List<SettingsRoute> routes = new ArrayList<>();
         Map<String, Supplier<Component>> pageFactories = new LinkedHashMap<>();
-        for (OptionGroup group : groups) {
-            GroupPage page = new GroupPage(group, optionVisibility);
-            SettingsRoute route = new SettingsRoute("gameOptions." + group.id(), List.of(group.displayName()),
-                  List.of(group.id()), true);
+        for (PageSeed pageSeed : orderedPageSeeds) {
+            String pageTitle = pageSeed.definition().title(pageSeed.primarySourceGroupDisplayName());
+            GroupPage page = new GroupPage(pageSeed, pageTitle, optionVisibility);
+            SettingsRoute route = new SettingsRoute(pageSeed.definition().routeId(),
+                  pageSeed.definition().path(pageSeed.primarySourceGroupDisplayName()),
+                  pageSeed.definition().pathIds(), pageSeed.searchAliases(), true);
             page.setRoute(route);
             pages.add(page);
             routes.add(route);
@@ -132,6 +146,10 @@ public class GameOptionsPane extends JPanel {
 
     public void setFilterText(String filterText) {
         settingsPane.setFilterText(filterText);
+        String normalizedFilter = SettingsRoute.normalizeSearchText(Objects.requireNonNullElse(filterText, ""));
+        for (GroupPage page : pages) {
+            page.refreshVisibility(normalizedFilter);
+        }
     }
 
     /** Re-evaluates option visibility after the unofficial-options setting changes. */
@@ -165,6 +183,51 @@ public class GameOptionsPane extends JPanel {
         }
     }
 
+    private static final class PageSeed {
+        private final GameOptionsPresentation.PageDefinition definition;
+        private final Map<String, String> sourceGroups = new LinkedHashMap<>();
+        private final List<OptionPlacement> placements = new ArrayList<>();
+
+        private PageSeed(GameOptionsPresentation.PageDefinition definition) {
+            this.definition = definition;
+        }
+
+        private void add(OptionGroup group, DialogOptionComponentYPanel component,
+              GameOptionsPresentation.Location location) {
+            sourceGroups.put(group.id(), group.displayName());
+            placements.add(new OptionPlacement(component, location.sectionId(), location.sectionOrder()));
+        }
+
+        private GameOptionsPresentation.PageDefinition definition() {
+            return definition;
+        }
+
+        private String primarySourceGroupDisplayName() {
+            return sourceGroups.values().iterator().next();
+        }
+
+        private List<String> searchAliases() {
+            List<String> aliases = new ArrayList<>();
+            sourceGroups.forEach((id, displayName) -> {
+                aliases.add(id);
+                aliases.add(displayName);
+            });
+            return aliases;
+        }
+    }
+
+    private record OptionPlacement(DialogOptionComponentYPanel component, String sectionId, int sectionOrder) {
+    }
+
+    private static final class SectionRows {
+        private final int order;
+        private final List<OptionRow> rows = new ArrayList<>();
+
+        private SectionRows(int order) {
+            this.order = order;
+        }
+    }
+
     private static class GroupPage extends JPanel implements SettingsFilterable {
         private final List<OptionRow> rows;
         private final Predicate<IOption> optionVisibility;
@@ -172,44 +235,47 @@ public class GameOptionsPane extends JPanel {
         private final SettingsPagePanel pagePanel;
         private SettingsRoute route;
 
-        private GroupPage(OptionGroup group, Predicate<IOption> optionVisibility) {
+          private GroupPage(PageSeed pageSeed, String pageTitle, Predicate<IOption> optionVisibility) {
             super(new BorderLayout());
             this.optionVisibility = optionVisibility;
-            groupSearchableText = SettingsRoute.normalizeSearchText(group.id() + ' ' + group.displayName());
-            setName("gameOptions" + group.id() + "Page");
+            groupSearchableText = SettingsRoute.normalizeSearchText(String.join(" ", pageSeed.searchAliases()));
+            setName("gameOptions" + pageSeed.definition().id() + "Page");
 
-            rows = group.components().stream().map(OptionRow::create).toList();
-            Map<String, List<OptionRow>> sectionRows = new LinkedHashMap<>();
-            for (OptionRow row : rows) {
-                sectionRows.computeIfAbsent(sectionId(group.id(), row.option().getName()), ignored -> new ArrayList<>())
-                      .add(row);
+            rows = pageSeed.placements.stream().map(placement -> OptionRow.create(placement.component())).toList();
+            Map<String, SectionRows> sectionRows = new LinkedHashMap<>();
+            for (int index = 0; index < rows.size(); index++) {
+                OptionPlacement placement = pageSeed.placements.get(index);
+                SectionRows section = sectionRows.computeIfAbsent(placement.sectionId(),
+                    ignored -> new SectionRows(placement.sectionOrder()));
+                section.rows.add(rows.get(index));
             }
 
-            Icon icon = pageIcon(group.id());
-            SettingsPagePanel.Builder builder = SettingsPagePanel.builder(group.id(), TEXT,
+            Icon icon = pageIcon(pageSeed.definition().iconGroupId());
+            SettingsPagePanel.Builder builder = SettingsPagePanel.builder(pageSeed.definition().id(), TEXT,
                         "GameOptionsDialog.title", icon)
-                  .header(new SettingsHeaderPanel(group.id(), group.displayName(), icon))
+                .header(new SettingsHeaderPanel(pageSeed.definition().id(), pageTitle, icon))
                   .showDetailsPanel(true)
                   .sectionsExpandedByDefault(sectionRows.size() == 1)
                   .standardContentWidth();
-            for (Map.Entry<String, List<OptionRow>> entry : sectionRows.entrySet()) {
-                SettingsFormPanel content = createSectionContent(group.id(), group.id() + entry.getKey(),
-                      entry.getValue());
+            List<Map.Entry<String, SectionRows>> orderedSections = new ArrayList<>(sectionRows.entrySet());
+            orderedSections.sort(Comparator.comparingInt(entry -> entry.getValue().order));
+            for (Map.Entry<String, SectionRows> entry : orderedSections) {
+                SettingsFormPanel content = createSectionContent(pageSeed.definition().id(),
+                    pageSeed.definition().id() + entry.getKey(), entry.getValue().rows);
                 List<String> aliases = new ArrayList<>();
-                aliases.add(group.id());
-                aliases.add(group.displayName());
-                entry.getValue().forEach(row -> aliases.add(row.searchableText()));
+                aliases.addAll(pageSeed.searchAliases());
+                entry.getValue().rows.forEach(row -> aliases.add(row.searchableText()));
                 builder.literalSection(sectionTitle(entry.getKey()), sectionSummary(entry.getKey()), content,
-                        sectionBadges(group.id()), aliases);
+                    sectionBadges(pageSeed.definition().advanced()), aliases);
             }
             pagePanel = builder.build();
             add(pagePanel, BorderLayout.CENTER);
         }
 
-        private static SettingsFormPanel createSectionContent(String groupId, String name, List<OptionRow> rows) {
+        private static SettingsFormPanel createSectionContent(String pageId, String name, List<OptionRow> rows) {
             SettingsFormPanel content = new SettingsFormPanel(name,
                   DialogOptionComponentYPanel.SETTINGS_GRID_CELL_WIDTH);
-            if (groupId.equals("gameMaster")) {
+            if (pageId.equals("gameMaster")) {
                 for (OptionRow row : rows) {
                     if (row.option().getName().equals(OptionsConstants.GAME_MASTER_ALLOW)) {
                         row.component().useStandaloneCheckBoxRowLayout();
@@ -271,8 +337,8 @@ public class GameOptionsPane extends JPanel {
         }
     }
 
-    private static List<SettingsBadge> sectionBadges(String groupId) {
-        return groupId.startsWith("advanced") ? List.of(ADVANCED_BADGE) : List.of();
+    private static List<SettingsBadge> sectionBadges(boolean advanced) {
+        return advanced ? List.of(ADVANCED_BADGE) : List.of();
     }
 
     private static List<SettingsBadge> optionBadges(IOption option) {
@@ -321,130 +387,7 @@ public class GameOptionsPane extends JPanel {
     }
 
     static String sectionId(String groupId, String optionName) {
-        return switch (groupId) {
-            case "basic" -> classifyBasic(optionName);
-            case "gameMaster" -> "gameMaster.control";
-            case "victory" -> classifyVictory(optionName);
-            case "allowedUnits" -> classifyAllowedUnits(optionName);
-            case "advancedRules" -> classifyAdvancedRules(optionName);
-            case "advancedCombat" -> classifyAdvancedCombat(optionName);
-            case "advancedGroundMovement" -> classifyGroundMovement(optionName);
-            case "advancedAeroRules" -> classifyAero(optionName);
-            case "initiative" -> classifyInitiative(optionName);
-            case "rpg" -> classifyRpg(optionName);
-            default -> groupId + ".general";
-        };
-    }
-
-    private static String classifyBasic(String name) {
-        if (containsAny(name, "playtest", "twrules")) {
-            return "basic.testing";
-        }
-        if (containsAny(name, "show_", "lobby_")) {
-            return "basic.display";
-        }
-        return "basic.rules";
-    }
-
-    private static String classifyVictory(String name) {
-        if (name.contains("bv_")) {
-            return "victory.battleValue";
-        }
-        if (containsAny(name, "turn_limit", "kill_count", "commander_killed")) {
-            return "victory.alternate";
-        }
-        return "victory.conditions";
-    }
-
-    private static String classifyAllowedUnits(String name) {
-        if (containsAny(name, "canon", "year", "techlevel", "era_based")) {
-            return "allowedUnits.availability";
-        }
-        return "allowedUnits.restrictions";
-    }
-
-    private static String classifyAdvancedRules(String name) {
-        if (containsAny(name, "sensor", "blind", "vision", "ecm", "ghost", "bap", "magscan")) {
-            return "advancedRules.sensors";
-        }
-        if (containsAny(name, "mine", "ice", "woods", "ignite", "lightning", "bridge")) {
-            return "advancedRules.terrain";
-        }
-        if (containsAny(name, "eject", "abandon")) {
-            return "advancedRules.ejection";
-        }
-        if (containsAny(name, "infantry", "ba_", "paratrooper", "assault_drop")) {
-            return "advancedRules.specialUnits";
-        }
-        return "advancedRules.general";
-    }
-
-    private static String classifyAdvancedCombat(String name) {
-        if (containsAny(name, "ammo", "ams", "rapid_ac", "uac", "ppc", "gauss", "energy_weapon", "hotload")) {
-            return "advancedCombat.weapons";
-        }
-        if (containsAny(name, "crit", "damage", "heat", "explosion", "rotor", "cluster")) {
-            return "advancedCombat.damage";
-        }
-        if (containsAny(name, "los", "range", "dead_zone", "cover", "predesignate", "scatter")) {
-            return "advancedCombat.targeting";
-        }
-        if (containsAny(name, "vehicle", "vtol", "proto", "ba_")) {
-            return "advancedCombat.units";
-        }
-        return "advancedCombat.attacks";
-    }
-
-    private static String classifyGroundMovement(String name) {
-        if (containsAny(name, "vehicle", "reverse", "hover", "premove", "immobile")) {
-            return "advancedGroundMovement.vehicles";
-        }
-        if (containsAny(name, "infantry", "physical", "leg_damage", "walk_backwards")) {
-            return "advancedGroundMovement.infantry";
-        }
-        return "advancedGroundMovement.meks";
-    }
-
-    private static String classifyAero(String name) {
-        if (containsAny(name, "sensor", "ecm", "aaa", "pointdef", "bracket", "over_penetrate", "damage_thresh")) {
-            return "advancedAeroRules.targeting";
-        }
-        if (containsAny(name, "bomb", "nuke", "dropship", "fuel", "kf_", "ammo_explosion")) {
-            return "advancedAeroRules.vessels";
-        }
-        return "advancedAeroRules.flight";
-    }
-
-    private static String classifyInitiative(String name) {
-        if (name.startsWith("inf_")) {
-            return "initiative.infantry";
-        }
-        if (name.startsWith("proto")) {
-            return "initiative.protomeks";
-        }
-        return "initiative.simultaneous";
-    }
-
-    private static String classifyRpg(String name) {
-        if (containsAny(name, "initiative", "command_init")) {
-            return "rpg.initiative";
-        }
-        if (containsAny(name, "gunnery", "artillery", "toughness")) {
-            return "rpg.skills";
-        }
-        if (containsAny(name, "shutdown", "ejection")) {
-            return "rpg.conditions";
-        }
-        return "rpg.core";
-    }
-
-    private static boolean containsAny(String value, String... fragments) {
-        for (String fragment : fragments) {
-            if (value.contains(fragment)) {
-                return true;
-            }
-        }
-        return false;
+        return GameOptionsPresentation.location(groupId, optionName).sectionId();
     }
 
     private static Icon pageIcon(String groupId) {

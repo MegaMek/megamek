@@ -39,12 +39,16 @@ import java.awt.FontMetrics;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.Insets;
+import java.awt.Point;
 import java.awt.Rectangle;
 import java.awt.Shape;
 import java.awt.geom.Area;
 import java.awt.geom.Rectangle2D;
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.IdentityHashMap;
 import java.util.List;
+import java.util.Set;
 import javax.swing.AbstractButton;
 import javax.swing.Icon;
 import javax.swing.JComponent;
@@ -54,12 +58,16 @@ import javax.swing.JLabel;
 import javax.swing.JLayer;
 import javax.swing.JRadioButton;
 import javax.swing.JScrollPane;
+import javax.swing.JTable;
 import javax.swing.JViewport;
 import javax.swing.SwingUtilities;
 import javax.swing.UIManager;
 import javax.swing.plaf.LayerUI;
 import javax.swing.text.BadLocationException;
 import javax.swing.text.Position;
+import javax.swing.table.JTableHeader;
+import javax.swing.table.TableCellRenderer;
+import javax.swing.table.TableColumn;
 
 /** Paints settings search matches without changing component text or layout. */
 final class SettingsSearchHighlightLayerUI extends LayerUI<JScrollPane> {
@@ -92,7 +100,8 @@ final class SettingsSearchHighlightLayerUI extends LayerUI<JScrollPane> {
         Rectangle viewportBounds = SwingUtilities.convertRectangle(viewport,
               new Rectangle(0, 0, viewport.getWidth(), viewport.getHeight()), layer);
         List<Rectangle> highlights = new ArrayList<>();
-        collectHighlights(root, layer, viewportBounds, highlights);
+          collectHighlights(root, layer, viewportBounds, highlights,
+              Collections.newSetFromMap(new IdentityHashMap<>()));
         paintHighlights((Graphics2D) graphics, highlights);
     }
 
@@ -109,13 +118,32 @@ final class SettingsSearchHighlightLayerUI extends LayerUI<JScrollPane> {
         Rectangle viewportBounds = SwingUtilities.convertRectangle(viewport,
               new Rectangle(0, 0, viewport.getWidth(), viewport.getHeight()), layer);
         List<Rectangle> highlights = new ArrayList<>();
-        collectHighlights(root, layer, viewportBounds, highlights);
+        collectHighlights(root, layer, viewportBounds, highlights,
+              Collections.newSetFromMap(new IdentityHashMap<>()));
         return List.copyOf(highlights);
     }
 
     private void collectHighlights(Component component, JLayer<?> layer, Rectangle viewportBounds,
-          List<Rectangle> highlights) {
-        if (!component.isVisible()) {
+          List<Rectangle> highlights, Set<Component> visited) {
+        if (!component.isVisible() || !visited.add(component)) {
+            return;
+        }
+        if (component instanceof JTable table) {
+            if (intersectsViewport(table, layer, viewportBounds)) {
+                collectTableHighlights(table, layer, viewportBounds, highlights);
+            }
+            JTableHeader header = table.getTableHeader();
+            if (header != null && header.isVisible() && SwingUtilities.isDescendingFrom(header, layer)
+                && visited.add(header)
+                  && intersectsViewport(header, layer, viewportBounds)) {
+                collectTableHeaderHighlights(header, layer, viewportBounds, highlights);
+            }
+            return;
+        }
+        if (component instanceof JTableHeader header) {
+            if (intersectsViewport(header, layer, viewportBounds)) {
+                collectTableHeaderHighlights(header, layer, viewportBounds, highlights);
+            }
             return;
         }
         if (component instanceof JComponent textComponent) {
@@ -125,8 +153,7 @@ final class SettingsSearchHighlightLayerUI extends LayerUI<JScrollPane> {
                 return;
             }
             for (Rectangle textBounds : textHighlightBounds(textComponent)) {
-                Rectangle layerBounds = SwingUtilities.convertRectangle(textComponent, textBounds, layer);
-                Rectangle visibleBounds = layerBounds.intersection(viewportBounds);
+                Rectangle visibleBounds = clipToVisibleViewports(textComponent, textBounds, layer, viewportBounds);
                 if (!visibleBounds.isEmpty()) {
                     highlights.add(visibleBounds);
                 }
@@ -134,9 +161,152 @@ final class SettingsSearchHighlightLayerUI extends LayerUI<JScrollPane> {
         }
         if (component instanceof Container container) {
             for (Component child : container.getComponents()) {
-                collectHighlights(child, layer, viewportBounds, highlights);
+                collectHighlights(child, layer, viewportBounds, highlights, visited);
             }
         }
+    }
+
+    private static boolean intersectsViewport(JComponent component, JLayer<?> layer, Rectangle viewportBounds) {
+        Rectangle componentBounds = SwingUtilities.convertRectangle(component,
+              new Rectangle(0, 0, component.getWidth(), component.getHeight()), layer);
+        return componentBounds.intersects(viewportBounds);
+    }
+
+    private void collectTableHighlights(JTable table, JLayer<?> layer, Rectangle outerViewportBounds,
+          List<Rectangle> highlights) {
+        if (table.getRowCount() == 0 || table.getColumnCount() == 0) {
+            return;
+        }
+        Rectangle tableViewport = table.getVisibleRect();
+        if (tableViewport.isEmpty()) {
+            return;
+        }
+        int firstRow = visibleRowAt(table, new Point(tableViewport.x, tableViewport.y), 0);
+        int lastRow = visibleRowAt(table,
+              new Point(tableViewport.x, tableViewport.y + Math.max(0, tableViewport.height - 1)),
+              table.getRowCount() - 1);
+        int firstColumn = visibleColumnAt(table, new Point(tableViewport.x, tableViewport.y), 0);
+        int lastColumn = visibleColumnAt(table,
+              new Point(tableViewport.x + Math.max(0, tableViewport.width - 1), tableViewport.y),
+              table.getColumnCount() - 1);
+        for (int row = firstRow; row <= lastRow; row++) {
+            for (int column = firstColumn; column <= lastColumn; column++) {
+                Rectangle cellBounds = table.getCellRect(row, column, false);
+                if (!cellBounds.intersects(tableViewport)) {
+                    continue;
+                }
+                TableCellRenderer renderer = table.getCellRenderer(row, column);
+                Component rendererComponent = table.prepareRenderer(renderer, row, column);
+                collectRendererHighlights(rendererComponent, cellBounds, table, tableViewport,
+                      layer, outerViewportBounds, highlights);
+            }
+        }
+    }
+
+    private void collectTableHeaderHighlights(JTableHeader header, JLayer<?> layer, Rectangle outerViewportBounds,
+          List<Rectangle> highlights) {
+        JTable table = header.getTable();
+        if (table == null || table.getColumnCount() == 0) {
+            return;
+        }
+        Rectangle headerViewport = header.getVisibleRect();
+        if (headerViewport.isEmpty()) {
+            return;
+        }
+        for (int column = 0; column < table.getColumnCount(); column++) {
+            Rectangle headerBounds = header.getHeaderRect(column);
+            if (!headerBounds.intersects(headerViewport)) {
+                continue;
+            }
+            TableColumn tableColumn = table.getColumnModel().getColumn(column);
+            TableCellRenderer renderer = tableColumn.getHeaderRenderer();
+            if (renderer == null) {
+                renderer = header.getDefaultRenderer();
+            }
+            Component rendererComponent = renderer.getTableCellRendererComponent(table,
+                  tableColumn.getHeaderValue(), false, false, -1, column);
+            collectRendererHighlights(rendererComponent, headerBounds, header, headerViewport,
+                  layer, outerViewportBounds, highlights);
+        }
+    }
+
+    private void collectRendererHighlights(Component rendererComponent, Rectangle cellBounds,
+          JComponent tableComponent, Rectangle tableViewport, JLayer<?> layer, Rectangle outerViewportBounds,
+          List<Rectangle> highlights) {
+        if (!(rendererComponent instanceof JComponent rendererRoot)) {
+            return;
+        }
+        rendererRoot.setBounds(0, 0, cellBounds.width, cellBounds.height);
+        layoutRendererTree(rendererRoot);
+        List<Rectangle> rendererHighlights = new ArrayList<>();
+        collectRendererTextHighlights(rendererRoot, rendererRoot, rendererHighlights);
+        for (Rectangle rendererHighlight : rendererHighlights) {
+            rendererHighlight.translate(cellBounds.x, cellBounds.y);
+            Rectangle clippedToTable = rendererHighlight.intersection(cellBounds).intersection(tableViewport);
+            if (clippedToTable.isEmpty()) {
+                continue;
+            }
+            Rectangle layerBounds = clipToVisibleViewports(tableComponent, clippedToTable,
+                  layer, outerViewportBounds);
+            if (!layerBounds.isEmpty()) {
+                highlights.add(layerBounds);
+            }
+        }
+    }
+
+    private static Rectangle clipToVisibleViewports(JComponent source, Rectangle sourceBounds,
+          JLayer<?> layer, Rectangle outerViewportBounds) {
+        Rectangle result = SwingUtilities.convertRectangle(source, sourceBounds, layer)
+              .intersection(outerViewportBounds);
+        Component ancestor = source.getParent();
+        while (!result.isEmpty() && ancestor != null && ancestor != layer) {
+            if (ancestor instanceof JViewport viewport) {
+                Rectangle viewportBounds = SwingUtilities.convertRectangle(viewport,
+                      new Rectangle(0, 0, viewport.getWidth(), viewport.getHeight()), layer);
+                result = result.intersection(viewportBounds);
+            }
+            ancestor = ancestor.getParent();
+        }
+        return result;
+    }
+
+    private void collectRendererTextHighlights(Component component, JComponent rendererRoot,
+          List<Rectangle> highlights) {
+        if (!component.isVisible()) {
+            return;
+        }
+        if (component instanceof JComponent textComponent) {
+            for (Rectangle bounds : textHighlightBounds(textComponent)) {
+                Rectangle rendererBounds = textComponent == rendererRoot
+                      ? bounds
+                      : SwingUtilities.convertRectangle(textComponent, bounds, rendererRoot);
+                highlights.add(rendererBounds);
+            }
+        }
+        if (component instanceof Container container) {
+            for (Component child : container.getComponents()) {
+                collectRendererTextHighlights(child, rendererRoot, highlights);
+            }
+        }
+    }
+
+    private static void layoutRendererTree(Container root) {
+        root.doLayout();
+        for (Component child : root.getComponents()) {
+            if (child instanceof Container container) {
+                layoutRendererTree(container);
+            }
+        }
+    }
+
+    private static int visibleRowAt(JTable table, Point point, int fallback) {
+        int row = table.rowAtPoint(point);
+        return row < 0 ? fallback : row;
+    }
+
+    private static int visibleColumnAt(JTable table, Point point, int fallback) {
+        int column = table.columnAtPoint(point);
+        return column < 0 ? fallback : column;
     }
 
     private List<Rectangle> textHighlightBounds(JComponent component) {

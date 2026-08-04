@@ -48,7 +48,13 @@ import java.util.List;
 import java.util.ListResourceBundle;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
+import javax.swing.RowFilter;
+import javax.swing.JScrollPane;
+import javax.swing.JTable;
 import javax.swing.JTextField;
+import javax.swing.table.AbstractTableModel;
+import javax.swing.table.DefaultTableCellRenderer;
+import javax.swing.table.TableRowSorter;
 
 import megamek.client.ui.util.UIUtil;
 import org.junit.jupiter.api.Test;
@@ -127,6 +133,94 @@ class SettingsPagePanelTest {
               .build();
 
         assertTrue(page.getSectionSearchText().contains("Standalone Search Text"));
+    }
+
+        @Test
+        void tableCellAndHeaderTextAreSearchable() {
+          JTable table = new JTable(new Object[][] { { "Recruit", 3 }, { "Private", 5 } },
+              new Object[] { "Rank Name", "XP Cost" });
+          SettingsPagePanel page = SettingsPagePanel.builder("Test", TEXT, "header", null)
+              .literalSection("Ranks", null, new JScrollPane(table))
+              .build();
+
+          String searchText = page.getSectionSearchText();
+
+          assertTrue(searchText.contains("Recruit"), searchText);
+          assertTrue(searchText.contains("Private"), searchText);
+          assertTrue(searchText.contains("Rank Name"), searchText);
+          assertTrue(searchText.contains("XP Cost"), searchText);
+        }
+
+    @Test
+    void tableSearchUsesDisplayedRendererTextInsteadOfRawModelValues() {
+        JTable table = new JTable(new Object[][] { { "R1" } }, new Object[] { "Raw Header" });
+        table.setDefaultRenderer(Object.class, new DefaultTableCellRenderer() {
+            @Override
+            public Component getTableCellRendererComponent(JTable rendererTable, Object value, boolean selected,
+                  boolean focused, int row, int column) {
+                super.getTableCellRendererComponent(rendererTable, value, selected, focused, row, column);
+                setText("Recruit");
+                return this;
+            }
+        });
+        table.getTableHeader().setDefaultRenderer(new DefaultTableCellRenderer() {
+            @Override
+            public Component getTableCellRendererComponent(JTable rendererTable, Object value, boolean selected,
+                  boolean focused, int row, int column) {
+                super.getTableCellRendererComponent(rendererTable, value, selected, focused, row, column);
+                setText("Rank Name");
+                return this;
+            }
+        });
+        SettingsPagePanel page = SettingsPagePanel.builder("Test", TEXT, "header", null)
+              .literalSection("Ranks", null, new JScrollPane(table))
+              .build();
+
+        String searchText = page.getSectionSearchText();
+
+        assertTrue(searchText.contains("Recruit"), searchText);
+        assertTrue(searchText.contains("Rank Name"), searchText);
+        assertFalse(searchText.contains("R1"), searchText);
+        assertFalse(searchText.contains("Raw Header"), searchText);
+    }
+
+    @Test
+    void tableSearchIncludesRowsHiddenByItsRowFilter() {
+        AbstractTableModel model = new AbstractTableModel() {
+            private final String[] values = { "Visible Recruit", "Filtered Veteran" };
+
+            @Override
+            public int getRowCount() {
+                return values.length;
+            }
+
+            @Override
+            public int getColumnCount() {
+                return 1;
+            }
+
+            @Override
+            public Object getValueAt(int row, int column) {
+                return values[row];
+            }
+
+            @Override
+            public String getColumnName(int column) {
+                return "Rank";
+            }
+        };
+        JTable table = new JTable(model);
+        TableRowSorter<AbstractTableModel> sorter = new TableRowSorter<>(model);
+        sorter.setRowFilter(RowFilter.regexFilter("Visible"));
+        table.setRowSorter(sorter);
+        SettingsPagePanel page = SettingsPagePanel.builder("Test", TEXT, "header", null)
+              .literalSection("Ranks", null, new JScrollPane(table))
+              .build();
+
+        String searchText = page.getSectionSearchText();
+
+        assertTrue(searchText.contains("Visible Recruit"), searchText);
+        assertTrue(searchText.contains("Filtered Veteran"), searchText);
     }
 
     @Test

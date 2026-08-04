@@ -32,10 +32,12 @@
  */
 package megamek.client.ui.settings;
 
-import java.text.Normalizer;
 import java.awt.Component;
 import java.awt.Container;
+import java.text.Normalizer;
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.IdentityHashMap;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Locale;
@@ -44,10 +46,14 @@ import javax.swing.AbstractButton;
 import javax.swing.JComponent;
 import javax.swing.JEditorPane;
 import javax.swing.JLabel;
+import javax.swing.JTable;
 import javax.swing.plaf.basic.BasicHTML;
 import javax.swing.text.BadLocationException;
 import javax.swing.text.Document;
 import javax.swing.text.View;
+import javax.swing.table.JTableHeader;
+import javax.swing.table.TableCellRenderer;
+import javax.swing.table.TableColumn;
 
 /** Extracts rendered Swing text and maps normalized search matches back to source offsets. */
 final class SettingsSearchText {
@@ -80,7 +86,8 @@ final class SettingsSearchText {
 
     static String collect(Component root) {
         StringBuilder text = new StringBuilder();
-        collect(root, text);
+        Set<Component> visited = Collections.newSetFromMap(new IdentityHashMap<>());
+        collect(root, text, visited);
         return text.toString().trim();
     }
 
@@ -140,15 +147,21 @@ final class SettingsSearchText {
         return null;
     }
 
-    private static void collect(Component component, StringBuilder text) {
+    private static void collect(Component component, StringBuilder text, Set<Component> visited) {
+        if (!visited.add(component)) {
+            return;
+        }
+        if (component instanceof JTable table) {
+            collectTable(table, text, visited);
+            return;
+        }
+        if (component instanceof JTableHeader header) {
+            collectTableHeader(header, text);
+            return;
+        }
         if (component instanceof JComponent swingComponent) {
             TextSource source = from(swingComponent);
-            if (!source.text().isBlank()) {
-                if (!text.isEmpty()) {
-                    text.append(' ');
-                }
-                text.append(source.text());
-            }
+            append(text, source.text());
             if (component instanceof JLabel || component instanceof AbstractButton
                   || component instanceof JEditorPane) {
                 return;
@@ -156,9 +169,61 @@ final class SettingsSearchText {
         }
         if (component instanceof Container container) {
             for (Component child : container.getComponents()) {
-                collect(child, text);
+                collect(child, text, visited);
             }
         }
+    }
+
+    private static void collectTable(JTable table, StringBuilder text, Set<Component> visited) {
+        JTableHeader header = table.getTableHeader();
+        if (header != null && visited.add(header)) {
+            collectTableHeader(header, text);
+        }
+        Set<Integer> indexedModelRows = new LinkedHashSet<>();
+        for (int row = 0; row < table.getRowCount(); row++) {
+            indexedModelRows.add(table.convertRowIndexToModel(row));
+            for (int column = 0; column < table.getColumnCount(); column++) {
+                TableCellRenderer renderer = table.getCellRenderer(row, column);
+                Component rendererComponent = table.prepareRenderer(renderer, row, column);
+                append(text, collect(rendererComponent));
+            }
+        }
+        for (int modelRow = 0; modelRow < table.getModel().getRowCount(); modelRow++) {
+            if (indexedModelRows.contains(modelRow)) {
+                continue;
+            }
+            for (int modelColumn = 0; modelColumn < table.getModel().getColumnCount(); modelColumn++) {
+                Object value = table.getModel().getValueAt(modelRow, modelColumn);
+                append(text, value == null ? "" : renderedText(value.toString()));
+            }
+        }
+    }
+
+    private static void collectTableHeader(JTableHeader header, StringBuilder text) {
+        JTable table = header.getTable();
+        if (table == null) {
+            return;
+        }
+        for (int column = 0; column < table.getColumnCount(); column++) {
+            TableColumn tableColumn = table.getColumnModel().getColumn(column);
+            TableCellRenderer renderer = tableColumn.getHeaderRenderer();
+            if (renderer == null) {
+                renderer = header.getDefaultRenderer();
+            }
+            Component rendererComponent = renderer.getTableCellRendererComponent(table,
+                  tableColumn.getHeaderValue(), false, false, -1, column);
+            append(text, collect(rendererComponent));
+        }
+    }
+
+    private static void append(StringBuilder destination, String value) {
+        if (value == null || value.isBlank()) {
+            return;
+        }
+        if (!destination.isEmpty()) {
+            destination.append(' ');
+        }
+        destination.append(value.trim());
     }
 
     private static View htmlView(JComponent component) {

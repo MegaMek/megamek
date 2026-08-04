@@ -53,6 +53,7 @@ import javax.swing.JLabel;
 import javax.swing.JLayer;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
+import javax.swing.JTable;
 import javax.swing.SwingUtilities;
 import javax.swing.UIManager;
 
@@ -166,6 +167,62 @@ class SettingsSearchHighlightLayerUITest {
     }
 
     @Test
+    void tableCellAndHeaderHighlightsFitRendererText() throws Exception {
+        runOnEdt(() -> {
+            JTable table = new JTable(new Object[][] { { "Recruitment Bonus", 3 }, { "Private", 5 } },
+                  new Object[] { "Rank Name", "XP Cost" });
+            JScrollPane tableScrollPane = new JScrollPane(table);
+            tableScrollPane.setColumnHeaderView(table.getTableHeader());
+            tableScrollPane.setPreferredSize(new Dimension(300, 90));
+            HighlightFixture fixture = fixture(tableScrollPane);
+
+            fixture.paint("recruit");
+
+            assertEquals(1, fixture.bounds().size());
+            Rectangle cell = SwingUtilities.convertRectangle(table,
+                  table.getCellRect(0, 0, true), fixture.layer());
+            Rectangle cellHighlight = fixture.bounds().getFirst();
+            assertEquals(cellHighlight, cellHighlight.intersection(cell));
+            int expectedCellWidth = table.getFontMetrics(table.getFont()).stringWidth("Recruit");
+            assertTrue(cellHighlight.width <= expectedCellWidth + 1,
+                  "Expected at most " + (expectedCellWidth + 1) + "px but was " + cellHighlight.width + "px");
+
+            fixture.paint("rank");
+
+            assertEquals(1, fixture.bounds().size());
+            Rectangle header = SwingUtilities.convertRectangle(table.getTableHeader(),
+                  table.getTableHeader().getHeaderRect(0), fixture.layer());
+            Rectangle headerHighlight = fixture.bounds().getFirst();
+            assertEquals(headerHighlight, headerHighlight.intersection(header));
+        });
+    }
+
+    @Test
+    void tableHighlightSkipsRowsOutsideItsViewport() throws Exception {
+        runOnEdt(() -> {
+            Object[][] rows = new Object[20][1];
+            for (int row = 0; row < rows.length; row++) {
+                rows[row][0] = "Row " + row;
+            }
+            rows[0][0] = "Hidden Needle";
+            rows[10][0] = "Visible Needle";
+            JTable table = new JTable(rows, new Object[] { "Name" });
+            table.setRowHeight(20);
+            JScrollPane tableScrollPane = new JScrollPane(table);
+            tableScrollPane.setColumnHeaderView(table.getTableHeader());
+            tableScrollPane.setPreferredSize(new Dimension(300, 90));
+            HighlightFixture fixture = fixture(tableScrollPane);
+            table.scrollRectToVisible(table.getCellRect(10, 0, true));
+
+            fixture.paint("hidden");
+            assertTrue(fixture.bounds().isEmpty());
+
+            fixture.paint("visible");
+            assertEquals(1, fixture.bounds().size());
+        });
+    }
+
+    @Test
     void readsCurrentTextOnEveryPaintInsteadOfRestoringABaseline() throws Exception {
         runOnEdt(() -> {
             JLabel label = new JLabel("Original Label");
@@ -216,6 +273,30 @@ class SettingsSearchHighlightLayerUITest {
                         fixture.layer().getView().getViewport().getHeight()), fixture.layer());
             assertFalse(fixture.bounds().isEmpty());
             fixture.bounds().forEach(bounds -> assertEquals(bounds, bounds.intersection(viewport)));
+        });
+    }
+
+    @Test
+    void nestedScrollPaneHidesOffscreenLabelHighlights() throws Exception {
+        runOnEdt(() -> {
+            JPanel innerContent = new JPanel(null);
+            innerContent.setPreferredSize(new Dimension(300, 220));
+            JLabel hidden = new JLabel("Hidden Needle");
+            hidden.setBounds(0, 0, 160, 24);
+            innerContent.add(hidden);
+            JLabel visible = new JLabel("Visible Needle");
+            visible.setBounds(0, 150, 160, 24);
+            innerContent.add(visible);
+            JScrollPane innerScrollPane = new JScrollPane(innerContent);
+            innerScrollPane.setPreferredSize(new Dimension(300, 90));
+            HighlightFixture fixture = fixture(innerScrollPane);
+            innerScrollPane.getViewport().setViewPosition(new Point(0, 130));
+
+            fixture.paint("hidden");
+            assertTrue(fixture.bounds().isEmpty());
+
+            fixture.paint("visible");
+            assertEquals(1, fixture.bounds().size());
         });
     }
 

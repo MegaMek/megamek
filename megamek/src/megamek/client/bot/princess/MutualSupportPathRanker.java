@@ -147,6 +147,15 @@ public class MutualSupportPathRanker extends BasicPathRanker {
     private final Map<Integer, List<Entity>> supportingFriendsCache = new HashMap<>();
     private final Map<Integer, Double> currentGapCache = new HashMap<>();
     private final Map<Integer, Coords> formationCentreCache = new HashMap<>();
+
+    // The reasoning behind the modifiers for the path currently being judged, handed to the TSV in
+    // recordDoctrineScores. Path ranking is sequential for a given mover, so plain fields are safe.
+    private Coords lastFormationCentre;
+    private int lastFormationRadius;
+    private int lastHexesOutOfFormation;
+    private double lastCoverBonus;
+    private int lastCoveringFriends;
+    private double lastTurnsToBand;
     private int formationRadiusRound = -1;
     private int cachedFormationRadius = 0;
     private int perMoverCacheRound = -1;
@@ -249,8 +258,12 @@ public class MutualSupportPathRanker extends BasicPathRanker {
 
         double supportPenalty = 0;
         Coords formationCentre = formationCentre(movingUnit, friends);
+        lastFormationCentre = formationCentre;
+        lastFormationRadius = formationRadius(game);
+        lastHexesOutOfFormation = 0;
         if (formationCentre != null) {
             int hexesOutOfFormation = formationCentre.distance(path.getFinalCoords()) - formationRadius(game);
+            lastHexesOutOfFormation = Math.max(0, hexesOutOfFormation);
             if (hexesOutOfFormation > 0) {
                 double cohesionWeight = Math.min(mutualSupportSetting(),
                       getOwner().getBehaviorSettings().getHyperAggressionValue() * COHESION_WEIGHT_CAP_FACTOR);
@@ -259,6 +272,7 @@ public class MutualSupportPathRanker extends BasicPathRanker {
         }
 
         double coverBonus = calculateCoverBonus(movingUnit, path, friends, game);
+        lastCoverBonus = coverBonus;
 
         double mutualSupportMod = supportPenalty - coverBonus;
         logger.trace("[MutualSupport] mod [{} = out-of-formation {} - cover {}]",
@@ -290,6 +304,25 @@ public class MutualSupportPathRanker extends BasicPathRanker {
             }
             return MutualSupportDeployment.centroid(positions);
         });
+    }
+
+    /**
+     * Records why the doctrine scored this path the way it did, as extra TSV columns.
+     *
+     * <p>The modifier totals alone cannot answer "why did the bot do this". These are the inputs behind them: where
+     * the force's formation actually was, how wide it was allowed to be, how far outside it this path ended, and how
+     * many friends covered the destination. Note that the stock {@code friendsCoords} columns record the heat-map
+     * anchor, which this doctrine does not use - {@code formationCentre} is the point it actually measured against.</p>
+     */
+    @Override
+    protected void recordDoctrineScores(Map<String, Double> scores) {
+        scores.put("formationCentre_x", lastFormationCentre == null ? -1.0 : lastFormationCentre.getX());
+        scores.put("formationCentre_y", lastFormationCentre == null ? -1.0 : lastFormationCentre.getY());
+        scores.put("formationRadius", (double) lastFormationRadius);
+        scores.put("hexesOutOfFormation", (double) lastHexesOutOfFormation);
+        scores.put("coverBonus", lastCoverBonus);
+        scores.put("coveringFriends", (double) lastCoveringFriends);
+        scores.put("turnsToOwnBand", lastTurnsToBand);
     }
 
     /**
@@ -370,6 +403,7 @@ public class MutualSupportPathRanker extends BasicPathRanker {
                 }
             }
         }
+        lastCoveringFriends = coveringFriends;
         return coveringFriends * COVER_BONUS;
     }
 
@@ -391,6 +425,7 @@ public class MutualSupportPathRanker extends BasicPathRanker {
         double remainingGap = engagementGap(movingUnit, path.getFinalCoords(), game);
         int ownSpeed = Math.max(1, Math.max(movingUnit.getRunMP(), movingUnit.getAnyTypeMaxJumpMP()));
         double turnsToClose = remainingGap / ownSpeed;
+        lastTurnsToBand = turnsToClose;
 
         double aggression = getOwner().getBehaviorSettings().getHyperAggressionValue();
         double aggressionMod = turnsToClose * TEMPO_REFERENCE_MP * aggression;

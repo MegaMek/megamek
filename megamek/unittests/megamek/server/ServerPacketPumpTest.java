@@ -217,10 +217,11 @@ class ServerPacketPumpTest {
                 if (!releaseFirst.await(1, TimeUnit.SECONDS)) {
                     return null;
                 }
-            } else {
-                secondHandled.countDown();
             }
             events.add("packet-" + value);
+            if (value == 2) {
+                secondHandled.countDown();
+            }
             return null;
         }).when(gameManager).handlePacket(eq(CONNECTION_ID), any());
         Server orderingServer = new Server(null, 0, gameManager) {

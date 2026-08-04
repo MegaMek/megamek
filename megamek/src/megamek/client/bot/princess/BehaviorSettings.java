@@ -1087,7 +1087,7 @@ public class BehaviorSettings implements Serializable {
         out.append("\n\t AllowFacingTolerance: ").append(getAllowFacingTolerance());
         out.append("\n\t Mutual Support: ").append(getMutualSupportIndex()).append(":")
               .append(getMutualSupportValue(getMutualSupportIndex()));
-        out.append("\n\t Exclusive Mutual support: ").append(isExclusiveMutualSupport());
+        out.append("\n\t Exclusive Mutual Support: ").append(isExclusiveMutualSupport());
         out.append("\n\t I am a Pirate: ").append(iAmAPirate());
         out.append("\n\t I Ignore Damage Output: ").append(isIgnoreDamageOutput());
         out.append("\n\t Experimental: ").append(isExperimental());

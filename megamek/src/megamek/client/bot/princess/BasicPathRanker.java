@@ -2084,7 +2084,7 @@ public class BasicPathRanker extends PathRanker {
         }
 
         var antiCrowdingFactor = (10.0 / (11 - antiCrowding));
-        final double mutualSupportDistance = Math.ceil(antiCrowding * 1.3);
+        final double antiCrowdingDistance = Math.ceil(antiCrowding * 1.3);
         final double closingDistance = Math.ceil(Math.max(3.0, maxRange * 0.6));
 
         var crowdingFriends = getOwner().getFriendEntities()
@@ -2094,7 +2094,7 @@ public class BasicPathRanker extends PathRanker {
               .filter(Entity::isDeployed)
               .map(Entity::getPosition)
               .filter(Objects::nonNull)
-              .filter(c -> c.distance(movePath.getFinalCoords()) <= mutualSupportDistance)
+              .filter(c -> c.distance(movePath.getFinalCoords()) <= antiCrowdingDistance)
               .count();
 
         var crowdingEnemies = enemies.stream()

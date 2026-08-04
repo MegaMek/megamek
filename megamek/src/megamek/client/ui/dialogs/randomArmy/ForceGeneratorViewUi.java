@@ -892,10 +892,7 @@ public class ForceGeneratorViewUi implements ActionListener {
                     });
                     menu.add(toggleItem);
 
-                    JMenu changeFormation = buildChangeFormationMenu(fd);
-                    if (changeFormation != null) {
-                        menu.add(changeFormation);
-                    }
+                    menu.add(buildChangeFormationMenu(fd));
 
                     if (!toeExclusionMode) {
                         JMenuItem addItem = new JMenuItem("Add to game");
@@ -920,18 +917,33 @@ public class ForceGeneratorViewUi implements ActionListener {
      *
      * @param formation the node the player right-clicked
      *
-     * @return the submenu, or {@code null} when this node has nothing to choose between
+     * @return the submenu, or a disabled item explaining why this node has nothing to choose between
      */
-    private @Nullable JMenu buildChangeFormationMenu(ForceDescriptor formation) {
+    private JMenuItem buildChangeFormationMenu(ForceDescriptor formation) {
         Map<String, Integer> offered = formation.getEligibleFormations();
-        if (offered.size() < 2) {
-            return null;
-        }
-        JMenu menu = new JMenu(Messages.getString("ForceGeneratorDialog.changeFormation"));
         String current = (formation.getFormation() == null) ? null : formation.getFormation().getName();
+        logger.debug("[ChangeFormation] '{}' echelon={} formation={} offers {} alternative(s): {}",
+              formation.parseName(), formation.getEchelon(), current, offered.size(), offered.keySet());
+
+        // Shown even when it cannot be used, with the reason, rather than vanishing: a menu item that appears on
+        // some nodes and not others reads as a broken feature, and the player cannot tell which it is.
+        if (offered.size() < 2) {
+            JMenuItem unavailable = new JMenuItem(Messages.getString("ForceGeneratorDialog.changeFormation"));
+            unavailable.setEnabled(false);
+            unavailable.setToolTipText(offered.isEmpty()
+                  ? Messages.getString("ForceGeneratorDialog.changeFormation.notAFormation")
+                  : Messages.getString("ForceGeneratorDialog.changeFormation.onlyOne", current));
+            logger.debug("[ChangeFormation] '{}': menu disabled - {} formation(s) offered, at least two are needed",
+                  formation.parseName(), offered.size());
+            return unavailable;
+        }
+
+        JMenu menu = new JMenu(Messages.getString("ForceGeneratorDialog.changeFormation"));
         for (String formationName : new TreeSet<>(offered.keySet())) {
             FormationType formationType = FormationType.getFormationType(formationName);
             if (formationType == null) {
+                logger.warn("[ChangeFormation] '{}' offers '{}', which is not a registered formation type;"
+                      + " leaving it off the menu", formation.parseName(), formationName);
                 continue;
             }
             JMenuItem item = new JMenuItem(formationType.getNameWithFaction());

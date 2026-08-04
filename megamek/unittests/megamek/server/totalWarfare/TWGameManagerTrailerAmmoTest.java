@@ -205,14 +205,13 @@ class TWGameManagerTrailerAmmoTest {
 
         sendAmmoChange(tractor, launcher, unconnected, foreignAmmo);
 
-        assertSame(originalAmmo, launcher.getLinkedAmmo(),
-              "A unit not in the train must not supply ammo");
-                ArgumentCaptor<Packet> correctionCaptor = ArgumentCaptor.forClass(Packet.class);
-                verify(gameManager).send(org.mockito.ArgumentMatchers.eq(OWNER_CONNECTION_ID), correctionCaptor.capture());
-                Packet correction = correctionCaptor.getValue();
-                assertEquals(PacketCommand.ENTITY_UPDATE, correction.command());
-                assertEquals(TRACTOR_ID, correction.getObject(0));
-                assertSame(tractor, correction.getObject(1));
+        assertSame(originalAmmo, launcher.getLinkedAmmo(), "A unit not in the train must not supply ammo");
+        ArgumentCaptor<Packet> correctionCaptor = ArgumentCaptor.forClass(Packet.class);
+        verify(gameManager).send(org.mockito.ArgumentMatchers.eq(OWNER_CONNECTION_ID), correctionCaptor.capture());
+        Packet correction = correctionCaptor.getValue();
+        assertEquals(PacketCommand.ENTITY_UPDATE, correction.command());
+        assertEquals(TRACTOR_ID, correction.getObject(0));
+        assertSame(tractor, correction.getObject(1));
     }
 
     @Test
@@ -221,14 +220,13 @@ class TWGameManagerTrailerAmmoTest {
         AmmoMounted originalAmmo = launcher.getLinkedAmmo();
 
         gameManager.handlePacket(OWNER_CONNECTION_ID, new Packet(PacketCommand.ENTITY_AMMO_CHANGE,
-              tractor.getId(),
-              tractor.getEquipmentNum(launcher),
-              0,
-              99,
-              NO_REPORT));
+            tractor.getId(),
+            tractor.getEquipmentNum(launcher),
+            0,
+            99,
+            NO_REPORT));
 
-        assertSame(originalAmmo, launcher.getLinkedAmmo(),
-              "An unknown carrier id must leave the link alone");
+        assertSame(originalAmmo, launcher.getLinkedAmmo(), "An unknown carrier id must leave the link alone");
     }
 
     @Test
@@ -237,14 +235,13 @@ class TWGameManagerTrailerAmmoTest {
         AmmoMounted originalAmmo = launcher.getLinkedAmmo();
 
         gameManager.handlePacket(OWNER_CONNECTION_ID, new Packet(PacketCommand.ENTITY_AMMO_CHANGE,
-              tractor.getId(),
-              tractor.getEquipmentNum(launcher),
-              -1,
-              trailer.getId(),
-              NO_REPORT));
+            tractor.getId(),
+            tractor.getEquipmentNum(launcher),
+            -1,
+            trailer.getId(),
+            NO_REPORT));
 
-        assertSame(originalAmmo, launcher.getLinkedAmmo(),
-              "An unresolvable bin must leave the link alone");
+        assertSame(originalAmmo, launcher.getLinkedAmmo(), "An unresolvable bin must leave the link alone");
     }
 
     @Test
@@ -257,14 +254,13 @@ class TWGameManagerTrailerAmmoTest {
         int ammoBinIndex = tractor.getEquipmentNum(compatibleBins(tractor, launcher).get(0));
 
         gameManager.handlePacket(OWNER_CONNECTION_ID, new Packet(PacketCommand.ENTITY_AMMO_CHANGE,
-              tractor.getId(),
-              ammoBinIndex,
-              ammoBinIndex,
-              tractor.getId(),
-              NO_REPORT));
+            tractor.getId(),
+            ammoBinIndex,
+            ammoBinIndex,
+            tractor.getId(),
+            NO_REPORT));
 
-        assertSame(originalAmmo, launcher.getLinkedAmmo(),
-              "A non-weapon equipment index must leave the link alone");
+        assertSame(originalAmmo, launcher.getLinkedAmmo(), "A non-weapon equipment index must leave the link alone");
     }
 
     @Test

@@ -48,6 +48,7 @@ import java.util.List;
 import java.util.ListResourceBundle;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
+import javax.swing.JTextField;
 
 import megamek.client.ui.util.UIUtil;
 import org.junit.jupiter.api.Test;
@@ -58,7 +59,10 @@ class SettingsPagePanelTest {
         protected Object[][] getContents() {
             return new Object[][] {
                   { "header", "Header" },
-                  { "apostropheHeader", "Pilot's {notes}" }
+                { "apostropheHeader", "Pilot's {notes}" },
+                { "headerBody", "Header body text" },
+                { "intro", "Intro search text" },
+                { "quote", "Quote search text" }
             };
         }
     });
@@ -79,10 +83,79 @@ class SettingsPagePanelTest {
     }
 
     @Test
+    void sectionSearchTextIncludesRenderedStaticContentWithoutHtmlOrInputValues() {
+        JPanel content = new JPanel();
+        content.add(new JLabel("<html><b>Heat &amp; Fire</b></html>"));
+        content.add(new JTextField("User-entered value"));
+        SettingsPagePanel page = SettingsPagePanel.builder("Test", TEXT, "header", null)
+              .literalSection("Rules", null, content)
+              .build();
+
+        String searchText = page.getSectionSearchText();
+
+        assertTrue(searchText.contains("Heat & Fire"), searchText);
+        assertFalse(searchText.contains("<html>"), searchText);
+        assertFalse(searchText.contains("User-entered value"), searchText);
+    }
+
+    @Test
+    void sectionSearchTextUsesRenderedTitleAndSummaryText() {
+        SettingsPagePanel page = SettingsPagePanel.builder("Test", TEXT, "header", null)
+              .literalSection("<html><b>Heat &amp; Fire</b></html>",
+                    "<html><i>Advanced Rules</i></html>", new JLabel())
+              .build();
+
+        String searchText = page.getSectionSearchText();
+
+        assertTrue(searchText.contains("Heat & Fire"), searchText);
+        assertTrue(searchText.contains("Advanced Rules"), searchText);
+        assertFalse(searchText.contains("html"), searchText);
+        assertFalse(searchText.contains("amp"), searchText);
+    }
+
+    @Test
     void sectionSearchTextIsEmptyWithoutSections() {
         SettingsPagePanel page = SettingsPagePanel.builder("Test", TEXT, "header", null).build();
 
         assertEquals("", page.getSectionSearchText());
+    }
+
+    @Test
+    void standaloneStaticComponentTextIsSearchable() {
+        SettingsPagePanel page = SettingsPagePanel.builder("Test", TEXT, "header", null)
+              .component(new JLabel("Standalone Search Text"))
+              .build();
+
+        assertTrue(page.getSectionSearchText().contains("Standalone Search Text"));
+    }
+
+    @Test
+    void pageSearchTextIncludesHeaderIntroSectionsAndQuote() {
+        SettingsPagePanel page = SettingsPagePanel.builder("Test", TEXT, "header", null)
+              .headerBody("headerBody")
+              .intro("intro")
+              .literalSection("Section", null, new JLabel("Option Label"))
+              .quote("quote")
+              .build();
+
+        String searchText = page.getPageSearchText();
+
+        assertTrue(searchText.contains("Header"), searchText);
+        assertTrue(searchText.contains("Header body text"), searchText);
+        assertTrue(searchText.contains("Intro search text"), searchText);
+        assertTrue(searchText.contains("Option Label"), searchText);
+        assertTrue(searchText.contains("Quote search text"), searchText);
+    }
+
+    @Test
+    void customHeaderAndIntroComponentsAreSearchable() {
+        SettingsPagePanel page = SettingsPagePanel.builder("Test", TEXT, "header", null)
+              .header(new JLabel("Custom Header"))
+              .introComponent(new JLabel("Custom Intro"))
+              .build();
+
+        assertTrue(page.getPageSearchText().contains("Custom Header"));
+        assertTrue(page.getPageSearchText().contains("Custom Intro"));
     }
 
     @Test

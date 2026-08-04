@@ -63,6 +63,7 @@ public class SettingsPane extends JPanel {
     private final Map<String, Component> pageCache = new HashMap<>();
     private final SettingsContentHost contentHost;
     private final SettingsNavigationPanel navigationPanel;
+    private SettingsRoute currentRoute;
     private boolean searchIndexInProgress;
     private boolean searchIndexComplete;
     private int searchIndexGeneration;
@@ -76,10 +77,12 @@ public class SettingsPane extends JPanel {
         validateConfiguration();
 
         SettingsRoute initialRoute = firstPageRoute();
+        currentRoute = initialRoute;
         Component initialContent = getPage(initialRoute);
         contentHost = new SettingsContentHost(initialContent, helpTitle, initialRoute.shouldShowDetailsPanel());
         navigationPanel = new SettingsNavigationPanel(this.routes, this::selectedNavigationTarget, navigationText);
         navigationPanel.setSearchIndexInitializer(this::ensureSearchIndexBuilt);
+        navigationPanel.setFilterChangeListener(this::activeFilterChanged);
 
         int margin = UIUtil.scaleForGUI(CONTENT_MARGIN);
         setBorder(BorderFactory.createEmptyBorder(margin, margin, 0, margin));
@@ -120,9 +123,19 @@ public class SettingsPane extends JPanel {
         if (page == null) {
             return false;
         }
+        currentRoute = effectiveRoute;
         contentHost.setContent(page, effectiveRoute.shouldShowDetailsPanel());
+        contentHost.setSearchFilter(navigationPanel.getActiveFilter());
         expandSectionsForActiveFilter(effectiveRoute, page);
         return true;
+    }
+
+    private void activeFilterChanged(String normalizedFilter) {
+        contentHost.setSearchFilter(normalizedFilter);
+        Component page = pageCache.get(currentRoute.getId());
+        if (page != null) {
+            expandSectionsForActiveFilter(currentRoute, page);
+        }
     }
 
     private void expandSectionsForActiveFilter(SettingsRoute route, Component page) {
@@ -148,8 +161,8 @@ public class SettingsPane extends JPanel {
         }
         Component page = pageCache.computeIfAbsent(route.getId(), id -> Objects.requireNonNull(factory.get()));
         SettingsPagePanel pagePanel = SettingsContentHost.findPagePanel(page);
-        if (pagePanel != null && !pagePanel.getSectionSearchText().isBlank()) {
-            route.setSectionSearchText(pagePanel.getSectionSearchText());
+        if (pagePanel != null) {
+            route.setSectionSearchText(pagePanel.getPageSearchText());
         }
         return page;
     }

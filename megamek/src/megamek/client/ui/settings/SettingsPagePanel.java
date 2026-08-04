@@ -73,6 +73,7 @@ public class SettingsPagePanel extends JPanel {
     private final JPanel pageBody;
     private final boolean showDetailsPanel;
     private final String sectionSearchText;
+    private final String pageSearchText;
     private final List<SearchableSection> searchableSections;
     private final int maximumPageWidth;
 
@@ -102,10 +103,20 @@ public class SettingsPagePanel extends JPanel {
                 }
             } else if (bodyItem instanceof JComponent component) {
                 renderItems.add(component);
+                String text = SettingsSearchText.collect(component);
+                if (!text.isBlank()) {
+                    allSectionText.append(' ').append(text);
+                }
             }
         }
         searchableSections = List.copyOf(searchable);
         sectionSearchText = allSectionText.toString().trim();
+        StringBuilder allPageText = new StringBuilder();
+        appendSearchText(allPageText, headerSearchText(builder));
+        appendSearchText(allPageText, introSearchText(builder));
+        appendSearchText(allPageText, sectionSearchText);
+        appendSearchText(allPageText, quoteSearchText(builder));
+        pageSearchText = allPageText.toString();
 
         JPanel sectionControls = createSectionControls(sections);
         int minimumSectionStackWidth = sections.isEmpty() && !builder.standardContentWidth
@@ -138,6 +149,10 @@ public class SettingsPagePanel extends JPanel {
 
     public String getSectionSearchText() {
         return sectionSearchText;
+    }
+
+    public String getPageSearchText() {
+        return pageSearchText;
     }
 
     /** Expands matching sections and collapses the others, leaving the page unchanged when nothing matches. */
@@ -306,9 +321,49 @@ public class SettingsPagePanel extends JPanel {
     }
 
     private static String sectionSearchText(SettingsTextProvider textProvider, Section definition) {
-        String title = definition.literal ? definition.title : textProvider.getText(definition.title);
-        String summary = sectionSummary(textProvider, definition);
-        return (title + ' ' + summary).trim();
+        String title = SettingsSearchText.renderedText(
+              definition.literal ? definition.title : textProvider.getText(definition.title));
+        String summary = SettingsSearchText.renderedText(sectionSummary(textProvider, definition));
+        String contentText = SettingsSearchText.collect(definition.content);
+        return (title + ' ' + summary + ' ' + contentText).trim();
+    }
+
+    private static String headerSearchText(Builder builder) {
+        if (builder.headerComponent != null) {
+            return SettingsSearchText.collect(builder.headerComponent);
+        }
+        StringBuilder text = new StringBuilder(SettingsSearchText.renderedText(
+              builder.textProvider.getText(builder.headerTextKey)));
+        if (builder.headerBodyTextKey != null) {
+            appendSearchText(text, SettingsSearchText.renderedText(
+                  builder.textProvider.getText(builder.headerBodyTextKey)));
+        }
+        return text.toString();
+    }
+
+    private static String introSearchText(Builder builder) {
+        if (builder.introComponent != null) {
+            return SettingsSearchText.collect(builder.introComponent);
+        }
+        return builder.introTextKey == null
+              ? ""
+              : SettingsSearchText.renderedText(builder.textProvider.getText(builder.introTextKey));
+    }
+
+    private static String quoteSearchText(Builder builder) {
+        return builder.quoteTextKey == null || !builder.textProvider.containsKey(builder.quoteTextKey)
+              ? ""
+              : SettingsSearchText.renderedText(builder.textProvider.getText(builder.quoteTextKey));
+    }
+
+    private static void appendSearchText(StringBuilder destination, String text) {
+        if (text == null || text.isBlank()) {
+            return;
+        }
+        if (!destination.isEmpty()) {
+            destination.append(' ');
+        }
+        destination.append(text.trim());
     }
 
     private static String sectionSummary(SettingsTextProvider textProvider, Section definition) {

@@ -82,6 +82,7 @@ public class SettingsNavigationPanel extends JPanel {
     private SettingsRoute currentRoute;
     private boolean syncingSelection;
     private Runnable searchIndexInitializer;
+    private Consumer<String> filterChangeListener = filter -> { };
 
     public SettingsNavigationPanel(List<SettingsRoute> routes, Consumer<SettingsRoute> routeSelectionListener,
           SettingsNavigationText text) {
@@ -233,6 +234,10 @@ public class SettingsNavigationPanel extends JPanel {
         searchIndexInitializer = initializer;
     }
 
+    public void setFilterChangeListener(@Nullable Consumer<String> listener) {
+        filterChangeListener = listener == null ? filter -> { } : listener;
+    }
+
     public void refreshFilter() {
         buildNavigationTree(filterField.getText());
     }
@@ -255,6 +260,7 @@ public class SettingsNavigationPanel extends JPanel {
             searchIndexInitializer.run();
         }
         buildNavigationTree(filterField.getText());
+        filterChangeListener.accept(getActiveFilter());
     }
 
     private void buildNavigationTree(String filterText) {

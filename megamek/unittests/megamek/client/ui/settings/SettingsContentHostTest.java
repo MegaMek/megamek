@@ -151,6 +151,20 @@ class SettingsContentHostTest {
     }
 
     @Test
+    void searchFilterHighlightsContentWithoutChangingLabelText() {
+        JLabel label = new JLabel("Search Needle");
+        SettingsContentHost host = new SettingsContentHost(label, "Details", false);
+        host.setSize(320, 160);
+        layoutTree(host);
+        String originalText = label.getText();
+
+        host.setSearchFilter(SettingsRoute.normalizeSearchText("needle"));
+
+        assertFalse(host.getSearchHighlightBounds().isEmpty());
+        assertEquals(originalText, label.getText());
+    }
+
+    @Test
     void hostRebindsHelpAfterNotifyLifecycle() {
         SettingsLabel label = new SettingsLabel(TEXT, "field");
         SettingsContentHost host = new SettingsContentHost(label, "Details", true);
@@ -222,6 +236,15 @@ class SettingsContentHostTest {
         FocusEvent event = new FocusEvent(component, FocusEvent.FOCUS_GAINED);
         for (FocusListener listener : component.getFocusListeners()) {
             listener.focusGained(event);
+        }
+    }
+
+    private static void layoutTree(Container root) {
+        root.doLayout();
+        for (Component child : root.getComponents()) {
+            if (child instanceof Container container) {
+                layoutTree(container);
+            }
         }
     }
 

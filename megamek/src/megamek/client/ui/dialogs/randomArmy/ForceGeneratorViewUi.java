@@ -1077,6 +1077,7 @@ public class ForceGeneratorViewUi implements ActionListener {
         added.generateUnits(null, 0);
         added.assignCommanders();
         added.loadEntities(null, 0);
+        warnIfFormationWasDropped(added, formationType);
         refreshTreeAfterEdit();
     }
 
@@ -1121,8 +1122,37 @@ public class ForceGeneratorViewUi implements ActionListener {
         formation.generateUnits(null, 0);
         formation.assignCommanders();
         formation.loadEntities(null, 0);
+        warnIfFormationWasDropped(formation, formationType);
 
         refreshTreeAfterEdit();
+    }
+
+    /**
+     * Says so when a formation could not be built and quietly became an ordinary lance.
+     *
+     * <p>A formation whose requirements cannot be met from the units this faction and year can field is dropped by
+     * the generator and the lance is built normally instead. Nothing announced that: the only outward sign was the
+     * name keeping its plain form, which reads as the request having been ignored rather than as the force being
+     * unable to supply it.</p>
+     *
+     * @param formation the node that was just generated
+     * @param requested the formation that was asked for
+     */
+    private void warnIfFormationWasDropped(ForceDescriptor formation, FormationType requested) {
+        boolean kept = (formation.getFormation() != null)
+              && formation.getFormation().getName().equals(requested.getName());
+        if (kept) {
+            logger.info("[ChangeFormation] '{}' built as {}", formation.parseName(), requested.getName());
+            return;
+        }
+        logger.warn("[ChangeFormation] '{}' could not be built as {} for faction={} year={}; it was generated as"
+                    + " an ordinary formation instead", formation.parseName(), requested.getName(),
+              formation.getFaction(), formation.getYear());
+        JOptionPane.showMessageDialog(parentFrame,
+              Messages.getString("ForceGeneratorDialog.formationDropped", requested.getName(),
+                    formation.getFaction(), formation.getYear()),
+              Messages.getString("ForceGeneratorDialog.formationDropped.title"),
+              JOptionPane.WARNING_MESSAGE);
     }
 
     /**

@@ -39,10 +39,9 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertSame;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyInt;
-import static org.mockito.Mockito.doCallRealMethod;
 import static org.mockito.Mockito.doNothing;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.spy;
+import static org.mockito.Mockito.verify;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -61,6 +60,7 @@ import megamek.common.units.Entity;
 import megamek.common.units.Tank;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.mockito.ArgumentCaptor;
 
 /**
  * Regression tests for trailer ammo sharing (issue #8520).
@@ -107,11 +107,9 @@ class TWGameManagerTrailerAmmoTest {
         // Hook the trailer up the way a game does, so train membership is populated as well as the neighbour links.
         tractor.towUnit(trailer.getId());
 
-        gameManager = mock(TWGameManager.class);
+        gameManager = spy(new TWGameManager());
         doNothing().when(gameManager).entityUpdate(anyInt());
-        when(gameManager.getGame()).thenReturn(game);
-        doCallRealMethod().when(gameManager).setGame(any(Game.class));
-        doCallRealMethod().when(gameManager).handlePacket(anyInt(), any(Packet.class));
+        doNothing().when(gameManager).send(anyInt(), any(Packet.class));
         gameManager.setGame(game);
     }
 
@@ -167,6 +165,7 @@ class TWGameManagerTrailerAmmoTest {
 
         assertSame(trailerAmmo, launcher.getLinkedAmmo(),
               "Weapon should fire the selected trailer bin");
+        verify(gameManager).entityUpdate(TRACTOR_ID);
     }
 
     @Test
@@ -208,6 +207,12 @@ class TWGameManagerTrailerAmmoTest {
 
         assertSame(originalAmmo, launcher.getLinkedAmmo(),
               "A unit not in the train must not supply ammo");
+                ArgumentCaptor<Packet> correctionCaptor = ArgumentCaptor.forClass(Packet.class);
+                verify(gameManager).send(org.mockito.ArgumentMatchers.eq(OWNER_CONNECTION_ID), correctionCaptor.capture());
+                Packet correction = correctionCaptor.getValue();
+                assertEquals(PacketCommand.ENTITY_UPDATE, correction.command());
+                assertEquals(TRACTOR_ID, correction.getObject(0));
+                assertSame(tractor, correction.getObject(1));
     }
 
     @Test

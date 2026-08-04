@@ -772,6 +772,9 @@ public class FighterSquadron extends AeroSpaceFighter {
     public boolean unload(Entity unit) {
         // TODO: need to strip out ammo
         boolean success = fighters.remove((Integer) unit.getId());
+        if (!success) {
+            return false;
+        }
         if (!getGame().getPhase().isLounge()) {
             computeSquadronBombLoadout(); // this calls updateWeaponGroups() and loadAllWeapons()
         } else {
@@ -780,6 +783,33 @@ public class FighterSquadron extends AeroSpaceFighter {
         }
         updateSkills();
         unit.setTransportId(Entity.NONE);
+        return success;
+    }
+
+    @Override
+    public boolean cancelLoad(Entity unit) {
+        boolean success;
+        if (unit instanceof FighterSquadron squadron) {
+            success = true;
+            for (int i = squadron.fighters.size() - 1; i >= 0; i--) {
+                int index = fighters.lastIndexOf(squadron.fighters.get(i));
+                success &= index >= 0;
+                if (index >= 0) {
+                    fighters.remove(index);
+                }
+            }
+        } else {
+            success = fighters.remove((Integer) unit.getId());
+        }
+        if (success) {
+            if (!getGame().getPhase().isLounge()) {
+                computeSquadronBombLoadout();
+            } else {
+                updateWeaponGroups();
+                loadAllWeapons();
+            }
+            updateSkills();
+        }
         return success;
     }
 

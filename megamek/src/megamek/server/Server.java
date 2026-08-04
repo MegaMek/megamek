@@ -51,9 +51,10 @@ import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
 import java.util.*;
 import java.util.Map.Entry;
+import java.util.concurrent.BlockingDeque;
 import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.ConcurrentLinkedQueue;
 import java.util.concurrent.CopyOnWriteArrayList;
+import java.util.concurrent.LinkedBlockingDeque;
 import java.util.concurrent.locks.ReentrantLock;
 import java.util.function.Consumer;
 import java.util.zip.GZIPInputStream;
@@ -137,7 +138,7 @@ public class Server implements Runnable {
     }
 
     private class PacketPump implements Runnable {
-        boolean shouldStop;
+        private volatile boolean shouldStop;
 
         PacketPump() {
             shouldStop = false;
@@ -150,19 +151,17 @@ public class Server implements Runnable {
         @Override
         public void run() {
             while (!shouldStop) {
-                while (!packetQueue.isEmpty()) {
-                    ReceivedPacket rp = packetQueue.poll();
-                    synchronized (serverLock) {
-                        handle(rp.getConnectionId(), rp.getPacket());
-                    }
-                }
-
                 try {
-                    synchronized (packetQueue) {
-                        packetQueue.wait();
+                    ReceivedPacket receivedPacket = packetQueue.takeFirst();
+                    synchronized (serverLock) {
+                        if (!shouldStop) {
+                            dispatchQueuedPacket(receivedPacket);
+                        }
                     }
                 } catch (InterruptedException ignored) {
-                    // If we are interrupted, just keep going, generally this happens after we are signalled to stop.
+                    // Interruption is the packet pump's shutdown signal. Returning also avoids accidentally spinning
+                    // if another caller interrupts the thread.
+                    return;
                 }
             }
         }
@@ -176,7 +175,9 @@ public class Server implements Runnable {
 
     private final Map<Integer, ConnectionHandler> connectionHandlers = new ConcurrentHashMap<>();
 
-    private final ConcurrentLinkedQueue<ReceivedPacket> packetQueue = new ConcurrentLinkedQueue<>();
+    private final BlockingDeque<ReceivedPacket> packetQueue = new LinkedBlockingDeque<>();
+    private boolean isPaused = false;
+    private final List<ReceivedPacket> pausedWaitingList = new ArrayList<>();
 
     private final boolean dedicated;
 
@@ -227,10 +228,6 @@ public class Server implements Runnable {
     public static final int SERVER_CONN = Integer.MIN_VALUE;
 
     private final ConnectionListener connectionListener = new ConnectionListener() {
-
-        private boolean isPaused = false;
-        private final List<ReceivedPacket> pausedWaitingList = new ArrayList<>();
-
         /**
          * Called when it is sensed that a connection has terminated.
          */
@@ -261,51 +258,62 @@ public class Server implements Runnable {
 
         @Override
         public void packetReceived(PacketReceivedEvent e) {
-            ReceivedPacket rp = new ReceivedPacket(e.getConnection().getId(), e.getPacket());
-            switch (e.getPacket().command()) {
-                case CLIENT_FEEDBACK_REQUEST:
-                    // Handled CFR packets specially
-                    gameManager.handleCfrPacket(rp);
-                    break;
-                case CLOSE_CONNECTION:
-                case CLIENT_NAME:
-                case CLIENT_VERSIONS:
-                case CHAT:
-                    // Some packets should be handled immediately
-                    handle(rp.getConnectionId(), rp.getPacket());
-                    break;
-                case PAUSE:
-                    if (!isPaused) {
-                        LOGGER.info("Pause packet received - pausing packet handling");
-                        sendServerChat("Game is paused.");
-                    }
-                    isPaused = true;
-                    break;
-                case UNPAUSE:
-                    if (isPaused) {
-                        LOGGER.info("Unpause packet received - resuming packet handling");
-                        sendServerChat("Game is resumed.");
-                    }
-                    isPaused = false;
-                    synchronized (packetQueue) {
-                        packetQueue.addAll(pausedWaitingList);
-                        packetQueue.notifyAll();
-                    }
-                    pausedWaitingList.clear();
-                    break;
-                default:
-                    if (isPaused) {
-                        pausedWaitingList.add(rp);
-                    } else {
-                        synchronized (packetQueue) {
-                            packetQueue.add(rp);
-                            packetQueue.notifyAll();
-                        }
-                    }
-                    break;
-            }
+            Server.this.receivePacket(e.getConnection().getId(), e.getPacket());
         }
     };
+
+    /**
+     * Admits a decoded packet to its required dispatch path. Game packets and chat share the packet pump so their TCP
+     * receive order is preserved. CFR responses remain out-of-band because the game thread may be waiting for one.
+     */
+    void receivePacket(int connectionId, Packet packet) {
+        ReceivedPacket receivedPacket = new ReceivedPacket(connectionId, packet);
+        switch (packet.command()) {
+            case CLIENT_FEEDBACK_REQUEST:
+                gameManager.handleCfrPacket(receivedPacket);
+                break;
+            case CLOSE_CONNECTION:
+            case CLIENT_NAME:
+            case CLIENT_VERSIONS:
+                synchronized (serverLock) {
+                    handle(receivedPacket.getConnectionId(), receivedPacket.getPacket());
+                }
+                break;
+            default:
+                packetQueue.offerLast(receivedPacket);
+                break;
+            }
+        }
+
+    private void dispatchQueuedPacket(ReceivedPacket receivedPacket) {
+        switch (receivedPacket.getPacket().command()) {
+            case PAUSE:
+                if (!isPaused) {
+                    isPaused = true;
+                    LOGGER.info("Pause packet received - pausing packet handling");
+                    sendServerChat("Game is paused.");
+                }
+                break;
+            case UNPAUSE:
+                if (isPaused) {
+                    isPaused = false;
+                    for (int i = pausedWaitingList.size() - 1; i >= 0; i--) {
+                        packetQueue.offerFirst(pausedWaitingList.get(i));
+                    }
+                    pausedWaitingList.clear();
+                    LOGGER.info("Unpause packet received - resuming packet handling");
+                    sendServerChat("Game is resumed.");
+                }
+                break;
+            default:
+                if (isPaused) {
+                    pausedWaitingList.add(receivedPacket);
+                } else {
+                    handle(receivedPacket.getConnectionId(), receivedPacket.getPacket());
+                }
+                break;
+        }
+    }
 
     /**
      * @param serverAddress IP or Domain Name Of Server

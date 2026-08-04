@@ -103,6 +103,14 @@ public class SBFMovePath implements EntityAction, Serializable {
         return steps.stream().mapToInt(SBFMoveStep::getMpUsed).sum();
     }
 
+    /**
+     * Returns the maximum movement points available to a formation under the current game options.
+     */
+    public static int maximumMovementPoints(SBFFormation formation, SBFGame game) {
+        int movement = Math.max(0, formation.getMovement());
+        return game.usesSprintingMove() ? movement + (movement / 2) : movement;
+    }
+
     public void addStep(SBFMoveStep step) {
         steps.add(step);
         compile();
@@ -131,7 +139,7 @@ public class SBFMovePath implements EntityAction, Serializable {
         SBFFormation formation = game.getFormation(formationId).orElseThrow();
 
         isIllegal = steps.stream().anyMatch(s -> s.isIllegal);
-        isIllegal |= getMpUsed() > formation.getMovement();
+        isIllegal |= getMpUsed() > maximumMovementPoints(formation, game);
 
         // may not leave after entering hostile hex
         for (SBFMoveStep step : steps) {

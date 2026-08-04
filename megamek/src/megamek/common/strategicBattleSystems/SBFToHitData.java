@@ -34,7 +34,9 @@
 package megamek.common.strategicBattleSystems;
 
 import java.util.List;
+import java.util.Optional;
 
+import megamek.common.alphaStrike.ASRange;
 import megamek.common.TargetRollModifier;
 import megamek.common.actions.sbf.SBFAttackAction;
 import megamek.common.actions.sbf.SBFStandardUnitAttack;
@@ -72,22 +74,47 @@ public class SBFToHitData extends TargetRoll {
         //noinspection OptionalGetWithoutIsPresent
         SBFFormation target = game.getFormation(attack.getTargetId()).get();
 
-        //TODO check if position is null
-        // subclass for arty attacks, building attacks?
-        if (!attackingFormation.getPosition().isSameBoardAs(target.getPosition())) {
-            toHit.addModifier(new TargetRollModifier(TargetRoll.IMPOSSIBLE, "not on the same board"));
+        Optional<ASRange> effectiveRange = effectiveRange(attackingFormation, target, attack.getRange());
+        if (effectiveRange.isEmpty()) {
+            toHit.addModifier(new TargetRollModifier(TargetRoll.IMPOSSIBLE, "invalid or out of range"));
             return false;
         }
-        int range = attackingFormation.getPosition().coords().distance(target.getPosition().coords());
-        if (range > 2) {
-            toHit.addModifier(new TargetRollModifier(TargetRoll.IMPOSSIBLE, "out of range"));
-            return false;
-        } else if (range == 2) {
-            toHit.addModifier(new TargetRollModifier(3, "extreme range"));
-        } else if (range == 1) {
-            toHit.addModifier(new TargetRollModifier(3, "long range"));
+
+        int modifier = switch (effectiveRange.get()) {
+            case SHORT -> 0;
+            case MEDIUM -> 1;
+            case LONG -> 2;
+            case EXTREME -> 3;
+            case HORIZON -> TargetRoll.IMPOSSIBLE;
+        };
+        if (modifier != 0) {
+            toHit.addModifier(new TargetRollModifier(modifier,
+                  effectiveRange.get().name().toLowerCase() + " range"));
         }
         return true;
+    }
+
+    /**
+     * Resolves the legal SBF standard-attack range from authoritative positions. At distance zero, short, medium and
+     * long range are legal player choices. At greater distances the board position uniquely determines the range.
+     */
+    public static Optional<ASRange> effectiveRange(SBFFormation attacker, SBFFormation target,
+          ASRange selectedSameHexRange) {
+        if ((attacker == null) || (target == null) || (attacker.getPosition() == null)
+              || (target.getPosition() == null)
+              || !attacker.getPosition().isSameBoardAs(target.getPosition())) {
+            return Optional.empty();
+        }
+
+        return switch (attacker.getPosition().coords().distance(target.getPosition().coords())) {
+            case 0 -> ((selectedSameHexRange == ASRange.SHORT) || (selectedSameHexRange == ASRange.MEDIUM)
+                  || (selectedSameHexRange == ASRange.LONG))
+                  ? Optional.of(selectedSameHexRange)
+                  : Optional.empty();
+            case 1 -> Optional.of(ASRange.LONG);
+            case 2 -> Optional.of(ASRange.EXTREME);
+            default -> Optional.empty();
+        };
     }
 
     private static void processTMM(SBFToHitData toHit, SBFGame game, SBFStandardUnitAttack attack) {

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2025 The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2025-2026 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -33,13 +33,16 @@
 
 package megamek.server.totalWarfare;
 
+import static megamek.common.bays.Bay.UNSET_BAY;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyInt;
 import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 import java.lang.reflect.Method;
@@ -56,9 +59,18 @@ import megamek.common.board.Coords;
 import megamek.common.board.CubeCoords;
 import megamek.common.enums.BasementType;
 import megamek.common.enums.BuildingType;
+import megamek.common.enums.GamePhase;
 import megamek.common.game.Game;
+import megamek.common.net.enums.PacketCommand;
+import megamek.common.net.packets.Packet;
+import megamek.common.bays.MekBay;
+import megamek.common.units.AeroSpaceFighter;
+import megamek.common.units.BipedMek;
 import megamek.common.units.BuildingEntity;
+import megamek.common.units.Entity;
+import megamek.common.units.FighterSquadron;
 import megamek.common.units.IBuilding;
+import megamek.common.units.Mek;
 import megamek.common.units.Terrains;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -118,9 +130,13 @@ public class DeploymentProcessorTest extends GameBoardTestCase {
      * Helper method to call the private processDeployment method via reflection
      */
     private void callProcessDeployment(megamek.common.units.Entity entity, Coords coords) throws Exception {
+            callProcessDeployment(entity, coords, new Vector<>());
+      }
+
+      private boolean callProcessDeployment(Entity entity, Coords coords, Vector<Entity> loads) throws Exception {
         Method processDeployment = DeploymentProcessor.class.getDeclaredMethod(
               "processDeployment",
-              megamek.common.units.Entity.class,
+                    Entity.class,
               Coords.class,
               int.class,
               int.class,
@@ -129,7 +145,7 @@ public class DeploymentProcessorTest extends GameBoardTestCase {
               boolean.class
         );
         processDeployment.setAccessible(true);
-        processDeployment.invoke(deploymentProcessor, entity, coords, 0, 0, 0, new Vector<>(), false);
+            return (boolean) processDeployment.invoke(deploymentProcessor, entity, coords, 0, 0, 0, loads, false);
     }
 
     static {
@@ -159,6 +175,86 @@ public class DeploymentProcessorTest extends GameBoardTestCase {
               Arguments.of(BuildingType.HARDENED, IBuilding.GUN_EMPLACEMENT, 4)
         );
     }
+
+      @Test
+      void deploymentLoadFailureRestoresBayAndPassengerState() throws Exception {
+            Mek loader = addMek(10);
+            Mek firstPassenger = addMek(11);
+            Mek secondPassenger = addMek(12);
+            MekBay bay = new MekBay(1, 1, 0);
+            loader.addTransporter(bay);
+
+            firstPassenger.setDone(true);
+            firstPassenger.setLoadedThisTurn(true);
+            firstPassenger.setUnloaded(true);
+            firstPassenger.setTargetBay(0);
+            secondPassenger.setTargetBay(0);
+
+            boolean deployed = callProcessDeployment(loader, new Coords(0, 0),
+                    new Vector<>(java.util.List.of(firstPassenger, secondPassenger)));
+
+            assertFalse(deployed);
+            assertTrue(loader.getLoadedUnits().isEmpty());
+            assertEquals(1, bay.getUnused());
+            assertEquals(0, bay.getNumberUnloadedThisTurn());
+            assertEquals(Entity.NONE, firstPassenger.getTransportId());
+            assertTrue(firstPassenger.isDone());
+            assertTrue(firstPassenger.wasLoadedThisTurn());
+            assertTrue(firstPassenger.isUnloadedThisTurn());
+            assertEquals(0, firstPassenger.getTargetBay());
+            assertNull(loader.getPosition());
+      }
+
+      @Test
+      void deploymentLoadFailureRestoresMergedFighterSquadronState() throws Exception {
+            game.setPhase(GamePhase.LOUNGE);
+            FighterSquadron loader = addEntity(new FighterSquadron("Loader"), 20);
+            FighterSquadron passenger = addEntity(new FighterSquadron("Passenger"), 21);
+            AeroSpaceFighter fighter = addEntity(new AeroSpaceFighter(), 22);
+            Mek invalidPassenger = addMek(23);
+            passenger.load(fighter, false, UNSET_BAY);
+            int originalFighterTransportId = fighter.getTransportId();
+
+            boolean deployed = callProcessDeployment(loader, new Coords(0, 0),
+                    new Vector<>(java.util.List.of(passenger, invalidPassenger)));
+
+            assertFalse(deployed);
+            assertTrue(loader.getLoadedUnits().isEmpty());
+            assertEquals(Entity.NONE, passenger.getTransportId());
+            assertEquals(originalFighterTransportId, fighter.getTransportId());
+            assertEquals(java.util.List.of(fighter), passenger.getLoadedUnits());
+            assertNull(loader.getPosition());
+      }
+
+      @Test
+      void invalidFacingIsRejectedBeforeDeploymentLoadsAreStaged() throws Exception {
+            Mek loader = addMek(30);
+            Mek passenger = addMek(31);
+            MekBay bay = new MekBay(1, 1, 0);
+            loader.addTransporter(bay);
+            passenger.setTargetBay(0);
+            Packet packet = new Packet(PacketCommand.ENTITY_DEPLOY, loader.getId(), new Coords(0, 0), 0, 6, 0, 1,
+                    false, passenger.getId());
+
+            deploymentProcessor.receiveDeployment(packet, 0);
+
+            assertTrue(loader.getLoadedUnits().isEmpty());
+            assertEquals(1, bay.getUnused());
+            assertEquals(0, passenger.getTargetBay());
+            assertNull(loader.getPosition());
+            verify(mockTWGameManager).sendTurnSubmissionCorrection(0, loader, false);
+      }
+
+      private Mek addMek(int id) {
+            return addEntity(new BipedMek(), id);
+      }
+
+      private <T extends Entity> T addEntity(T entity, int id) {
+            entity.setId(id);
+            entity.setOwner(game.getPlayer(0));
+            game.addEntity(entity);
+            return entity;
+      }
 
     // ========== BuildingEntity Deployment Tests (Lines 340-387) ==========
 

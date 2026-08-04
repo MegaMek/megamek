@@ -1403,6 +1403,27 @@ public class ForceGeneratorViewUi implements ActionListener {
             return roleFallback + ": ";
         }
 
+        /**
+         * The unit's Campaign Operations role, for the end of its line in the tree.
+         *
+         * <p>Read from the unit summary rather than the entity, because the role is what the summary carries and
+         * what the formation criteria are tested against.</p>
+         *
+         * @param entity the unit, may be {@code null}
+         *
+         * @return the role suffix, or an empty string when the unit has no role recorded
+         */
+        private static String unitRoleSuffix(@Nullable Entity entity) {
+            if (entity == null) {
+                return "";
+            }
+            MekSummary summary = MekSummaryCache.getInstance().getMek(entity.getShortNameRaw());
+            if ((summary == null) || (summary.getRole() == null)) {
+                return "";
+            }
+            return " - " + summary.getRole();
+        }
+
         @Override
         public Component getTreeCellRendererComponent(JTree tree, Object value, boolean sel,
               boolean expanded, boolean leaf, int row,
@@ -1441,7 +1462,9 @@ public class ForceGeneratorViewUi implements ActionListener {
                     if (fd.getFluffName() != null) {
                         uname += "<br /><i>" + fd.getFluffName() + "</i>";
                     }
-                    setText("<html>" + commander + ", " + uname + "</html>");
+                    // The unit's own role is what a formation's requirements are written against, so showing it
+                    // here is what lets a glance at the tree say whether a lance really is what it claims to be.
+                    setText("<html>" + commander + ", " + uname + unitRoleSuffix(en) + "</html>");
                 }
                 if (fd.getEntity() != null) {
                     try {

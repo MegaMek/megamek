@@ -242,7 +242,8 @@ public class GameOptionsDialog extends AbstractButtonDialog implements ActionLis
     public void refreshOptions() {
         panOptions.removeAll();
         optionComps = new HashMap<>();
-
+        boolean bRulesCore = true; 
+        
         for (Enumeration<IOptionGroup> i = options.getGroups(); i.hasMoreElements(); ) {
             IOptionGroup group = i.nextElement();
             if (isVictoryGroupHiddenForLobby(group)) {
@@ -252,11 +253,15 @@ public class GameOptionsDialog extends AbstractButtonDialog implements ActionLis
             for (Enumeration<IOption> j = group.getOptions(); j.hasMoreElements(); ) {
                 IOption option = j.nextElement();
                 addOption(groupPanel, option);
+                if (option.getName().equals(OptionsConstants.RULES_SYSTEM) && option.getValue().equals(OptionsConstants.RULES_TW)) {
+                    bRulesCore = false;
+                }
             }
         }
         butUnofficial.setSelected(!(Boolean) options.getOption(OptionsConstants.BASE_HIDE_UNOFFICIAL).getValue());
         toggleOptions();
         addSearchPanel();
+        rulesSystemPrevention(bRulesCore);
         validate();
     }
 

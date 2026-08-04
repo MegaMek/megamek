@@ -706,7 +706,7 @@ public class ForceGeneratorOptionsView extends JPanel implements FocusListener, 
     private static final int EXPLANATION_WIDTH_PIXELS = 700;
 
     /** Unscaled height of the inline mix editor, past which it scrolls rather than growing. */
-    private static final int INLINE_MIX_HEIGHT = 320;
+    private static final int INLINE_MIX_HEIGHT = 260;
 
     /**
      * The controls that drive Generate, so a host can move them into its own button bar.

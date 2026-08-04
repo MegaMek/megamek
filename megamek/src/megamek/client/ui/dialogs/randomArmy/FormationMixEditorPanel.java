@@ -477,6 +477,15 @@ public class FormationMixEditorPanel extends JPanel implements Scrollable {
                   .append(Messages.getString("ForceGeneratorDialog.formationMix.usuallyBuilt", typicalLances))
                   .append("</i>");
         }
+        String requirements = requirementsOf(formationType);
+        if (requirements != null) {
+            text.append("<br><br>").append(requirements);
+        }
+        if (formationType != null) {
+            text.append("<br>")
+                  .append(Messages.getString("ForceGeneratorDialog.formationMix.idealRole",
+                        formationType.getIdealRole()));
+        }
         if (ceilingExplanation != null) {
             text.append("<br><br>").append(ceilingExplanation);
         }
@@ -500,6 +509,40 @@ public class FormationMixEditorPanel extends JPanel implements Scrollable {
               : Messages.getString("ForceGeneratorDialog.formationMix.ceiling", placeable,
                     preview.tweakableNodes());
     }
+
+    /**
+     * What Campaign Operations requires of the units in this formation.
+     *
+     * <p>Read from the formation's own criteria, the same ones the Formation Builder lists and the same ones that
+     * decide whether it can be built at all, so the hover text cannot drift from what actually gets enforced.</p>
+     *
+     * <p>The counts are quoted against a four-unit formation because most of the criteria are proportional and a
+     * bare percentage reads as arithmetic homework. The size is named so a Clan star of five is not misread.</p>
+     *
+     * @param formationType the formation to describe, may be {@code null}
+     *
+     * @return the requirements, or {@code null} when the formation asks nothing in particular
+     */
+    private static @Nullable String requirementsOf(@Nullable FormationType formationType) {
+        if (formationType == null) {
+            return null;
+        }
+        List<String> requirements = new ArrayList<>();
+        if (formationType.getMainDescription() != null) {
+            requirements.add(Messages.getString("ForceGeneratorDialog.formationMix.requirement.all",
+                  formationType.getMainDescription()));
+        }
+        formationType.getOtherCriteria().forEachRemaining(constraint ->
+              requirements.add(Messages.getString("ForceGeneratorDialog.formationMix.requirement.some",
+                    constraint.getMinimum(NOMINAL_FORMATION_SIZE), constraint.getDescription())));
+        return requirements.isEmpty()
+              ? Messages.getString("ForceGeneratorDialog.formationMix.requirement.none")
+              : Messages.getString("ForceGeneratorDialog.formationMix.requirements",
+                    NOMINAL_FORMATION_SIZE, String.join("; ", requirements));
+    }
+
+    /** The formation size the quoted requirement counts are worked out against, being a standard lance. */
+    private static final int NOMINAL_FORMATION_SIZE = 4;
 
     /** Width the hover text wraps at. The Campaign Operations descriptions are a full sentence plus a citation. */
     private static final int TOOLTIP_WIDTH_PIXELS = 280;

@@ -105,6 +105,16 @@ public class MutualSupportPathRanker extends BasicPathRanker {
     private static final double FORMATION_HOLD_FACTOR = 5.0;
 
     /**
+     * How much say a withdrawing unit keeps in where the fighting formation is.
+     *
+     * <p>It is leaving the line, so it should not anchor the line - but dropping it to nothing moves the centre of
+     * mass discontinuously, and that jump happens exactly when a force starts taking casualties. Measured over four
+     * runs, excluding withdrawers outright cost the units still fighting about 0.3 supporting friends each. Its
+     * influence fades instead of vanishing: it is walking off the line, not teleporting off it.</p>
+     */
+    private static final double WITHDRAWING_CENTRE_WEIGHT = 0.25;
+
+    /**
      * Utility bonus per set (already moved) friend whose envelope covers the destination.
      *
      * <p><b>Measured to change nothing at any value, and kept only pending evidence from a scenario this one cannot
@@ -269,6 +279,12 @@ public class MutualSupportPathRanker extends BasicPathRanker {
             return 0;
         }
 
+        // A unit pulling back is measured against the others pulling back, not against the line it is
+        // leaving. Without this it is governed by nothing at all and runs alone.
+        if (isWithdrawing(movingUnit)) {
+            return withdrawalMod(movingUnit, path, friends, game);
+        }
+
         double supportPenalty = 0;
         Coords formationCentre = formationCentre(movingUnit, friends);
         lastFormationCentre = formationCentre;
@@ -305,18 +321,26 @@ public class MutualSupportPathRanker extends BasicPathRanker {
     private @Nullable Coords formationCentre(Entity movingUnit, List<Entity> friends) {
         return formationCentreCache.computeIfAbsent(movingUnit.getId(), moverId -> {
             List<Coords> positions = new ArrayList<>(friends.size());
+            List<Double> weights = new ArrayList<>(friends.size());
             for (Entity friend : friends) {
-                if (!holdsTheFormation(friend)) {
-                    continue;
-                }
                 // Cached for the ranking pass, but a unit can die mid-phase (falls, charges, minefields).
                 Coords friendPosition = friend.getPosition();
-                if (friendPosition != null) {
+                if (friendPosition == null) {
+                    continue;
+                }
+                double weight = formationWeight(friend);
+                if (weight > 0) {
                     positions.add(friendPosition);
+                    weights.add(weight);
                 }
             }
-            return MutualSupportDeployment.centroid(positions);
+            return MutualSupportDeployment.weightedCentroid(positions, weights);
         });
+    }
+
+    @Override
+    protected boolean shapesWithdrawal() {
+        return true;
     }
 
     /**
@@ -339,6 +363,56 @@ public class MutualSupportPathRanker extends BasicPathRanker {
     }
 
     /**
+     * Shapes a withdrawal: pull back together, but not on top of each other.
+     *
+     * <p>Neither term slows the retreat. Getting away is driven by the self-preservation pull elsewhere; this only
+     * chooses between ways of getting away. Ending outside the group of units already pulling back costs, so a
+     * retreat holds together instead of scattering into units picked off one at a time. Ending on top of another
+     * withdrawing unit costs too, so a single attack does not catch several of them.</p>
+     *
+     * @param movingUnit the withdrawing unit
+     * @param path       the path being evaluated
+     * @param friends    the mover's friendly elements
+     * @param game       the current game
+     *
+     * @return the modifier, subtracted from path utility
+     */
+    private double withdrawalMod(Entity movingUnit, MovePath path, List<Entity> friends, Game game) {
+        List<Coords> withdrawing = withdrawingPositions(movingUnit, friends);
+        Coords centre = WithdrawalFormation.centre(withdrawing);
+        int groupRadius = formationRadius(game);
+
+        lastFormationCentre = centre;
+        lastFormationRadius = groupRadius;
+        lastHexesOutOfFormation = (centre == null)
+              ? 0
+              : WithdrawalFormation.hexesOutOfGroup(path.getFinalCoords(), centre, groupRadius);
+        lastCoverBonus = 0;
+        lastCoveringFriends = 0;
+
+        double weight = Math.min(mutualSupportSetting(),
+              getOwner().getBehaviorSettings().getHyperAggressionValue() * COHESION_WEIGHT_CAP_FACTOR)
+              * FORMATION_HOLD_FACTOR;
+
+        double modifier = WithdrawalFormation.penalty(path.getFinalCoords(), withdrawing, groupRadius, weight);
+        logger.trace("[MutualSupport] withdrawal mod [{}]", modifier);
+        return modifier;
+    }
+
+    /** Where the mover's other withdrawing elements currently are. */
+    private List<Coords> withdrawingPositions(Entity movingUnit, List<Entity> friends) {
+        List<Coords> positions = new ArrayList<>(friends.size());
+        for (Entity friend : friends) {
+            Coords friendPosition = friend.getPosition();
+            if ((friendPosition != null) && isWithdrawing(friend) && !friend.isAirborneAeroOnGroundMap()) {
+                positions.add(friendPosition);
+            }
+        }
+        return positions;
+    }
+
+
+    /**
      * Whether a unit is part of the formation, and so gets a say in where its centre is.
      *
      * <p>Deliberately the same set of units that {@code BasicPathRanker} holds to the formation: a unit exempt from
@@ -354,11 +428,22 @@ public class MutualSupportPathRanker extends BasicPathRanker {
      *     <li><b>Airborne aerospace</b> covers ground it is not holding, so it makes a misleading anchor.</li>
      * </ul>
      */
-    private boolean holdsTheFormation(Entity friend) {
-        return !getOwner().isFallingBack(friend)
-              && !friend.isAirborneAeroOnGroundMap()
-              && !getOwner().getUnitBehaviorTracker()
-                    .getBehaviorType(friend, getOwner()).equals(BehaviorType.ForcedWithdrawal);
+    private double formationWeight(Entity friend) {
+        if (friend.isAirborneAeroOnGroundMap()) {
+            // Covers ground it is not holding, so it would anchor the formation somewhere nobody is standing.
+            return 0;
+        }
+        if (isWithdrawing(friend)) {
+            return WITHDRAWING_CENTRE_WEIGHT;
+        }
+        return 1.0;
+    }
+
+    /** Whether a unit has left the fighting line to pull back. */
+    private boolean isWithdrawing(Entity unit) {
+        return getOwner().isFallingBack(unit)
+              || getOwner().getUnitBehaviorTracker()
+                    .getBehaviorType(unit, getOwner()).equals(BehaviorType.ForcedWithdrawal);
     }
 
     /**

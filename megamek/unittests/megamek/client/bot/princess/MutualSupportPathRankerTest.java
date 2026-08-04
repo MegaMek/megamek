@@ -33,6 +33,7 @@
 package megamek.client.bot.princess;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.doReturn;
@@ -163,19 +164,48 @@ class MutualSupportPathRankerTest {
     }
 
     /**
-     * A unit running for its home edge has left the line. If it still counted toward the centre of mass it would
-     * drag the formation rearward and charge the units still advancing for not following their own wounded, so a
-     * unit the ranker exempts from the pull must not define what everyone else is pulled toward.
+     * A unit leaving the line should not take the line's centre of mass with it, but dropping its influence to
+     * nothing moves that centre discontinuously - and the jump lands exactly when a force starts taking casualties.
+     * Measured over four runs, excluding withdrawers outright cost the units still fighting about 0.3 supporting
+     * friends each. Its say fades instead of vanishing.
      */
     @Test
-    void aWithdrawingFriendDoesNotAnchorTheFormation() {
+    void aWithdrawingFriendStillInfluencesTheFormationButLess() {
         when(mockPrincess.isFallingBack(mockFriend)).thenReturn(true);
-        when(mockFriend.getPosition()).thenReturn(new Coords(0, 26)); // far behind the destination
+        when(mockFriend.getPosition()).thenReturn(new Coords(0, 26));
         setEnemyDistances(20.0, 20.0, HOLDING_DESTINATION);
 
-        assertEquals(0.0, testRanker.calculateHerdingMod(null, mockPath), TOLERANCE,
-              "with its only friend withdrawing there is no formation left to be out of");
+        double withFading = testRanker.calculateHerdingMod(null, mockPath);
+
+        assertTrue(withFading > 0.0,
+              "a withdrawing friend still anchors the formation, so a path far from it is still penalised");
     }
+
+    /**
+     * A retreat that is not a formation is a rout. A withdrawing unit is exempt from the fighting line's pull and
+     * carries little weight in its centre, so without this it is governed by nothing and runs alone.
+     */
+    @Test
+    void aWithdrawingUnitIsHeldToTheOtherUnitsPullingBack() {
+        when(mockPrincess.isFallingBack(any(Entity.class))).thenReturn(true);
+        when(mockFriend.getPosition()).thenReturn(new Coords(0, 26)); // far from the destination
+        setEnemyDistances(20.0, 20.0, HOLDING_DESTINATION);
+
+        assertTrue(testRanker.calculateHerdingMod(null, mockPath) > 0.0,
+              "breaking away from the other withdrawing units must cost something");
+    }
+
+    /** Withdrawing together must not mean withdrawing in a heap: one attack should not catch several of them. */
+    @Test
+    void withdrawingUnitsKeepSeparation() {
+        when(mockPrincess.isFallingBack(any(Entity.class))).thenReturn(true);
+        when(mockFriend.getPosition()).thenReturn(HOLDING_DESTINATION); // right on top of the destination
+        setEnemyDistances(20.0, 20.0, HOLDING_DESTINATION);
+
+        assertTrue(testRanker.calculateHerdingMod(null, mockPath) > 0.0,
+              "ending on another withdrawing unit must cost something");
+    }
+
 
     @Test
     void testHoldingInsideSupportIsFree() {

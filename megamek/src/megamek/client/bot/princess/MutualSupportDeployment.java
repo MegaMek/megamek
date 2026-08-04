@@ -261,6 +261,37 @@ public final class MutualSupportDeployment {
     /**
      * Centre of mass of a set of hexes, rounded to the nearest hex.
      */
+    /**
+     * Centre of mass of a set of hexes with per-hex weights, rounded to the nearest hex.
+     *
+     * <p>Weights exist so a unit's influence on where its force is can fade rather than vanish. A unit that drops out
+     * of the formation entirely moves the centre discontinuously, and that jump lands exactly when a force starts
+     * taking casualties - measured, it costs the remaining units real mutual support.</p>
+     *
+     * @param positions the hexes
+     * @param weights   one weight per hex, in the same order; zero or negative weights are ignored
+     *
+     * @return the weighted centre, or {@code null} when no hex carries any weight
+     */
+    static @Nullable Coords weightedCentroid(List<Coords> positions, List<Double> weights) {
+        double totalWeight = 0;
+        double totalX = 0;
+        double totalY = 0;
+        for (int index = 0; index < positions.size(); index++) {
+            double weight = weights.get(index);
+            if (weight <= 0) {
+                continue;
+            }
+            totalWeight += weight;
+            totalX += positions.get(index).getX() * weight;
+            totalY += positions.get(index).getY() * weight;
+        }
+        if (totalWeight <= 0) {
+            return null;
+        }
+        return new Coords(Math.round((float) (totalX / totalWeight)), Math.round((float) (totalY / totalWeight)));
+    }
+
     static @Nullable Coords centroid(List<Coords> positions) {
         if (positions.isEmpty()) {
             return null;

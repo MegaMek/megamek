@@ -1742,7 +1742,7 @@ public class BasicPathRanker extends PathRanker {
         // Standoff artillery (whether holding at range or falling back when the enemy breaches its standoff) ignores the
         // herd pull, so it never gets dragged toward the advancing friendly line instead of keeping its distance.
         // Withdrawing units ignore it too - the herd center is the still-engaged friendly line they are leaving.
-        double herdingMod = (isNotAirborne && !standoffArtillery && !withdrawing)
+        double herdingMod = (isNotAirborne && !standoffArtillery && (!withdrawing || shapesWithdrawal()))
               ? calculateHerdingMod(friendsCoords, pathCopy)
               : 0;
 
@@ -1901,6 +1901,19 @@ public class BasicPathRanker extends PathRanker {
         rankedPath.setExpectedDamage(damageEstimate.getMaximumDamageEstimate());
         rankedPath.getScores().putAll(scores);
         return rankedPath;
+    }
+
+    /**
+     * Whether this ranker has something to say about how a withdrawing unit moves.
+     *
+     * <p>Withdrawing units are exempt from the cohesion term by default, and rightly so: the anchor it measures
+     * against is the fighting line they are leaving, and pulling them toward it would undo the retreat. A ranker
+     * that gives a withdrawal a shape of its own needs the term to run so it can measure against that instead.</p>
+     *
+     * @return {@code false} by default, leaving withdrawing units unshaped
+     */
+    protected boolean shapesWithdrawal() {
+        return false;
     }
 
     /**

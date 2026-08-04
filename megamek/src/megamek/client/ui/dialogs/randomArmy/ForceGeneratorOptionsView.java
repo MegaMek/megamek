@@ -557,9 +557,16 @@ public class ForceGeneratorOptionsView extends JPanel implements FocusListener, 
               new JCheckBox(Messages.getString("ForceGeneratorDialog.formationMix.allowUnoffered"));
         allowUnoffered.setToolTipText(Messages.getString("ForceGeneratorDialog.formationMix.allowUnoffered.tooltip"));
         allowUnoffered.setSelected(formationMix.allowUnofferedFormations());
+        JLabel total = new JLabel(" ");
+        updateFormationMixTotal(total, editor);
+        editor.addMixChangeListener(() -> updateFormationMixTotal(total, editor));
+        JPanel footer = new JPanel(new BorderLayout(0, 2));
+        footer.add(total, BorderLayout.NORTH);
+        footer.add(allowUnoffered, BorderLayout.SOUTH);
+
         content.add(explanation, BorderLayout.NORTH);
         content.add(scroll, BorderLayout.CENTER);
-        content.add(allowUnoffered, BorderLayout.SOUTH);
+        content.add(footer, BorderLayout.SOUTH);
 
         int choice = JOptionPane.showConfirmDialog(this, content,
               Messages.getString("ForceGeneratorDialog.formationMix.title"),
@@ -675,9 +682,14 @@ public class ForceGeneratorOptionsView extends JPanel implements FocusListener, 
         // Without a size the scroll pane grows to the editor's full height and never scrolls, pushing everything
         // below it off the dialog.
         scroll.setPreferredSize(UIUtil.scaleForGUI(720, INLINE_MIX_HEIGHT));
+        JLabel total = new JLabel(" ");
+        updateFormationMixTotal(total, editor);
+        editor.addMixChangeListener(() -> updateFormationMixTotal(total, editor));
+
         panFormationMixInline.removeAll();
         panFormationMixInline.add(buildFormationMixHeader(), BorderLayout.NORTH);
         panFormationMixInline.add(scroll, BorderLayout.CENTER);
+        panFormationMixInline.add(total, BorderLayout.SOUTH);
         panFormationMixInline.revalidate();
         panFormationMixInline.repaint();
     }
@@ -709,6 +721,34 @@ public class ForceGeneratorOptionsView extends JPanel implements FocusListener, 
         });
         header.add(allowUnoffered, BorderLayout.SOUTH);
         return header;
+    }
+
+    /**
+     * Sets the running total line from the editor's current state.
+     *
+     * <p>The per-formation caps stop any one formation overreaching, but nothing stops the sum, and a request that
+     * asks for more lances than the force has is quietly scaled back. Saying so while the player is still typing is
+     * the difference between a limit they can work with and one they discover afterwards.</p>
+     *
+     * @param total  the label to write to
+     * @param editor the editor being summarised
+     */
+    private static void updateFormationMixTotal(JLabel total, FormationMixEditorPanel editor) {
+        int requested = editor.requestedLanceTotal();
+        int adjustable = editor.adjustableLanceTotal();
+        if (requested == 0) {
+            total.setText(Messages.getString("ForceGeneratorDialog.formationMix.total.none"));
+            total.setForeground(UIManager.getColor("Label.foreground"));
+            return;
+        }
+        boolean overSubscribed = requested > adjustable;
+        total.setText(overSubscribed
+              ? Messages.getString("ForceGeneratorDialog.formationMix.total.over", requested, adjustable)
+              : Messages.getString("ForceGeneratorDialog.formationMix.total", requested, adjustable,
+                    adjustable - requested));
+        total.setForeground(overSubscribed
+              ? UIUtil.uiLightRed()
+              : UIManager.getColor("Label.foreground"));
     }
 
     /**

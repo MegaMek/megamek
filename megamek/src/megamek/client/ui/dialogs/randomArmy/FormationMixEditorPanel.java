@@ -606,6 +606,25 @@ public class FormationMixEditorPanel extends JPanel implements Scrollable {
     }
 
     /**
+     * How many lances the player has actually asked for, being the boxes they have moved off their starting number.
+     *
+     * <p>Boxes left alone are not counted, because they are not requests - the ruleset still rolls those lances as
+     * it likes. This is the number that has to fit inside {@link #adjustableLanceTotal()}.</p>
+     *
+     * @return the total lances requested
+     */
+    public int requestedLanceTotal() {
+        return getMix().totalLances();
+    }
+
+    /**
+     * @return how many lances in this force could be reassigned at all, which is what a request has to fit inside
+     */
+    public int adjustableLanceTotal() {
+        return preview.tweakableNodes();
+    }
+
+    /**
      * @return {@code true} when this force offers nothing that could be adjusted
      */
     public boolean isEmpty() {

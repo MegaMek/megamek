@@ -42,15 +42,14 @@ import megamek.common.equipment.IArmorState;
 import megamek.common.equipment.Mounted;
 import megamek.common.equipment.WeaponType;
 import megamek.common.rolls.Roll;
-import megamek.common.rules.core.CoreRulesExplosions;
+import megamek.common.rules.RulesExplosions;
 import megamek.common.units.Entity;
 import megamek.common.units.Mek;
 
 import java.util.Vector;
 
-public class TWRulesExplosions extends CoreRulesExplosions {
+public class TWRulesExplosions extends RulesExplosions {
     // Damage reduction for CASE, CASE II, explosions
-    @Override
     public int explosionDamageReduction(Mek mek, HitData hit, int damage, boolean ammoExplosion,
           Vector<Report> reportVec) {
         return applyCASEIIDamageReduction(mek, hit, damage, ammoExplosion, reportVec);
@@ -140,7 +139,6 @@ public class TWRulesExplosions extends CoreRulesExplosions {
      * @param ammoExplosion true if this is an ammo explosion
      * @return the critical hit modifier
      */
-    @Override
     public int explosionCASEIImod(boolean hasCaseII, boolean ammoExplosion) {
         return 0;
     }
@@ -153,7 +151,6 @@ public class TWRulesExplosions extends CoreRulesExplosions {
      * @param weaponType the weapon type
      * @return the damage amount
      */
-    @Override
     public int equipmentDamage(Mounted<?> mounted, WeaponType weaponType) {
         if (weaponType.hasFlag(WeaponType.F_PPC) && (mounted.hasChargedCapacitor() != 0)) {
             if (mounted.isFired()) {

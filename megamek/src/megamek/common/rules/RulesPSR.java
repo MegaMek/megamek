@@ -33,11 +33,14 @@ package megamek.common.rules;
  * affiliated with Microsoft.
  */
 
+import megamek.common.Messages;
 import megamek.common.game.Game;
 import megamek.common.rolls.PilotingRollData;
 import megamek.common.units.Entity;
 import megamek.common.units.EntityMovementType;
+import megamek.common.units.Mek;
 import megamek.common.units.MekWithArms;
+import megamek.common.units.QuadMek;
 
 import java.util.ArrayList;
 
@@ -95,7 +98,7 @@ public abstract class RulesPSR {
      *
      * @param rollList the list of piloting rolls
      */
-    public abstract void rollRemoveHighest(ArrayList<PilotingRollData> rollList);
+    public void rollRemoveHighest(ArrayList<PilotingRollData> rollList) {}
     
     /**
      * PSRs for hit actuators.
@@ -105,7 +108,28 @@ public abstract class RulesPSR {
      * @param loc the location of the hit
      * @param hitPart the part that was hit
      */
-    public abstract void hitActuator(Game game, Entity entity, int loc, int hitPart);
+    public void hitActuator(final Game game, Entity entity, int loc, int hitPart) {
+        String psrText = Game.rulesManager.getRulesCharts().getLocationName(loc,(entity instanceof QuadMek));
+        if (hitPart == Mek.ACTUATOR_FOOT) {
+            psrText += Messages.getString("ActuatorHits.Foot");
+        }
+        if (hitPart == Mek.ACTUATOR_HIP) {
+            psrText += Messages.getString("ActuatorHits.Hip");
+        }
+        psrText += Messages.getString("ActuatorHits.Actuator");
+
+        int psrPenalty = 1;
+
+        if (hitPart == Mek.ACTUATOR_HIP) {
+            psrPenalty = getHipPenalty();
+        }
+
+        if (getFootActuatorPsr() && hitPart == Mek.ACTUATOR_FOOT) {
+            game.addPSR(new PilotingRollData(entity.getId(), psrPenalty, psrText, loc));
+        } else if (hitPart != Mek.ACTUATOR_FOOT) {
+            game.addPSR(new PilotingRollData(entity.getId(), psrPenalty, psrText, loc));
+        }
+    }
     
     /**
      * Hip Penalties.

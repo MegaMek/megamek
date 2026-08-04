@@ -37,13 +37,13 @@ import megamek.common.HitData;
 import megamek.common.Report;
 import megamek.common.equipment.EquipmentType;
 import megamek.common.options.OptionsConstants;
-import megamek.common.rules.core.CoreRulesArmor;
+import megamek.common.rules.RulesArmor;
 import megamek.common.units.Entity;
 import megamek.server.totalWarfare.TWDamageManager;
 
 import java.util.Vector;
 
-public class TWRulesArmor extends CoreRulesArmor {
+public class TWRulesArmor extends RulesArmor {
     /**
      * Allow heat weapons for heat armor.
      * TW does not need to know about heat weapons for armor.
@@ -51,7 +51,6 @@ public class TWRulesArmor extends CoreRulesArmor {
      * @param heat_weapon true if the weapon is a heat weapon
      * @return true if heat weapons are allowed
      */
-    @Override
     public boolean allowHeatWeapon(boolean heat_weapon) {
         return false;
     }
@@ -63,7 +62,6 @@ public class TWRulesArmor extends CoreRulesArmor {
      * @param mods the modifications info
      * @return true if armor piercing is allowed
      */
-    @Override
     public boolean allowArmorPiercing(TWDamageManager.ModsInfo mods) {
         if (mods.hardenedArmor || mods.ferroLamellorArmor || mods.reactiveArmor) {
             return false;
@@ -72,12 +70,19 @@ public class TWRulesArmor extends CoreRulesArmor {
     }
 
     /**
+     * {@inheritDoc}
+     * Impact Resistant Armor breach. 
+     */
+    public int impactArmorBreach(Entity entity, Vector<Report> vDesc) {
+        return 1;
+    }
+    
+    /**
      * Impact resistant armor.
      * Impact armor reduces crit rolls.
      *
      * @return the impact armor modifier
      */
-    @Override
     public int impactArmorMod() {return 1;}
 
     /**
@@ -104,7 +109,6 @@ public class TWRulesArmor extends CoreRulesArmor {
      * @param armorType the type of armor
      * @return true if a lance penetrates the armor
      */
-    @Override
     public boolean checkLancePenetration(int armorType) {
         return false;
     }
@@ -116,7 +120,6 @@ public class TWRulesArmor extends CoreRulesArmor {
      * @param heatDamage the amount of heat damage
      * @return the reduced heat damage amount
      */
-    @Override
     public int reduceHeatDamageByArmor(int armorType, int heatDamage) {
         if (armorType == EquipmentType.T_ARMOR_HEAT_DISSIPATING) {
             return (int) Math.ceil(heatDamage / 2.0);
@@ -134,7 +137,6 @@ public class TWRulesArmor extends CoreRulesArmor {
      * @param reflectiveArmor true if the armor is reflective
      * @return true if reflective armor affects AP modifiers
      */
-    @Override
     public boolean reflectiveAP(boolean reflectiveArmor) {
         return reflectiveArmor;
     }
@@ -159,7 +161,6 @@ public class TWRulesArmor extends CoreRulesArmor {
      * @param damageType the type of damage
      * @return the reduced damage amount
      */
-    @Override
     public int reduceImpactDamage(int entityId,HitData hit, int damage, Vector<Report> reportVec, int damageType) {
         // As long as there is even 1 point of armor in this location, reduce _all_ damage
         // to 2 points for every whole 3 points applied (IntOps pg 88).

@@ -40,20 +40,19 @@ import megamek.common.compute.Compute;
 import megamek.common.game.Game;
 import megamek.common.moves.MovePath;
 import megamek.common.moves.MoveStep;
-import megamek.common.rules.core.CoreRulesMovement;
+import megamek.common.rules.RulesMovement;
 import megamek.common.units.Entity;
 import megamek.common.units.EntityMovementMode;
 import megamek.common.units.EntityMovementType;
 import megamek.common.units.Mek;
 
-public class TWRulesMovement extends CoreRulesMovement {
+public class TWRulesMovement extends RulesMovement {
 
     /**
      * Units can skid
      *
      * @return true if skidding is enabled
      */
-    @Override
     public boolean skidEnabled() {
         return true;
     }
@@ -66,7 +65,6 @@ public class TWRulesMovement extends CoreRulesMovement {
      *
      * @return true if the unit cannot run in water
      */
-    @Override
     public boolean cannotRunInWater(EntityMovementMode movementMode,
           boolean amphibious) {
         if ((movementMode != EntityMovementMode.HOVER) &&
@@ -99,7 +97,6 @@ public class TWRulesMovement extends CoreRulesMovement {
      *
      * @return true if backwards elevation change is allowed
      */
-    @Override
     public boolean enableBackwardsElevationChange(final boolean toBackwardsElevation, Entity entity) {
         return toBackwardsElevation;
     }
@@ -111,7 +108,6 @@ public class TWRulesMovement extends CoreRulesMovement {
      *
      * @return true if leg damage is cumulative
      */
-    @Override
     public boolean cumulativeLegDamage(boolean bTOLegDamage) {
         return bTOLegDamage;
     }
@@ -123,7 +119,6 @@ public class TWRulesMovement extends CoreRulesMovement {
      *
      * @return true if 0 MP causes immobile status
      */
-    @Override
     public boolean checkMPZeroCauseImmobile(int walkMP) {return false;}
 
     /**
@@ -135,7 +130,6 @@ public class TWRulesMovement extends CoreRulesMovement {
      *
      * @return the effective running movement points
      */
-    @Override
     public int getMekRunMP(int badLegs, int walkMP, int runMP) {
         if (badLegs == 0) {
             return runMP;
@@ -152,7 +146,6 @@ public class TWRulesMovement extends CoreRulesMovement {
      *
      * @return true if moving into water is dangerous
      */
-    @Override
     public boolean isMoveIntoWaterDangerous(EntityMovementType movementType, EntityMovementMode movementMode) {
         return true;
     }
@@ -164,7 +157,6 @@ public class TWRulesMovement extends CoreRulesMovement {
      *
      * @return true if maximum elevation can be reduced
      */
-    @Override
     public boolean reduceMaxElevation(Mek mek) {
         return false;
     }
@@ -180,7 +172,6 @@ public class TWRulesMovement extends CoreRulesMovement {
      *
      * @return True if it can possibly step out of the way
      */
-    @Override
     public boolean dominoEffectMovementCriteria(final int direction, final Entity entity, final MovePath stepForward,
           final MovePath stepBackwards,
           final Entity violation) {
@@ -200,10 +191,7 @@ public class TWRulesMovement extends CoreRulesMovement {
      *
      * @return false if there is no cost, true if there is
      */
-    @Override
     public boolean getDominoDisplacementCostsMP() {return true;}
-
-    @Override
     public boolean isDominoMoveLegal(final int direction, final Entity entity, final MovePath movePath,
           boolean forwards) {
         if (movePath.isMoveLegal()) {
@@ -220,7 +208,6 @@ public class TWRulesMovement extends CoreRulesMovement {
      *
      * @return the modified height for damage
      */
-    @Override
     public int getAccidentalFallElevation(final int fallElevation, final int hitHeight) {return fallElevation;}
 
 
@@ -236,7 +223,6 @@ public class TWRulesMovement extends CoreRulesMovement {
      *
      * @return the destination Coords
      */
-    @Override
     @Nullable
     public Coords getAccidentalFallDisplacement(Game game, int entityId, Coords src, int direction,
           int range) {

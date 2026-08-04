@@ -34,15 +34,16 @@ package megamek.common.rules.totalwarfare;
 
 
 import megamek.common.CriticalSlot;
+import megamek.common.annotations.Nullable;
 import megamek.common.equipment.AmmoType;
 import megamek.common.equipment.Mounted;
 import megamek.common.options.OptionsConstants;
-import megamek.common.rules.core.CoreRulesHeat;
+import megamek.common.rules.RulesHeat;
 import megamek.common.units.Mek;
 
 import java.util.ArrayList;
 
-public class TWRulesHeat extends CoreRulesHeat {
+public class TWRulesHeat extends RulesHeat {
 
     /**
      * Attempts to stand generates heat
@@ -62,7 +63,6 @@ public class TWRulesHeat extends CoreRulesHeat {
      * @param mtHeat true if using MT heat rules
      * @param bPainShunt true if the pilot has a pain shunt
      */
-    @Override
     public void checkLifeSupportHeat(ArrayList<Integer> heatLimitDamage,
           int damageHeat,
           boolean torsoMountedCockpit,
@@ -92,5 +92,60 @@ public class TWRulesHeat extends CoreRulesHeat {
               !bPainShunt) {
             heatLimitDamage.set(1, heatLimitDamage.get(1) + 1);
         }
+    }
+
+    /**
+     * {@inheritDoc}
+     * Ammo explosions from heat TW p.160
+     */
+    @Nullable
+    public CriticalSlot explodeAmmo(ArrayList<CriticalSlot> ammoCriticals) {
+        CriticalSlot returnSlot = null;
+        int damage = 0;
+        int rack = 0;
+
+        if (ammoCriticals.isEmpty()) {
+            return null;
+        }
+
+        for (CriticalSlot cs : ammoCriticals) {
+            Mounted<?> mounted = cs.getMount();
+            AmmoType ammoType = (AmmoType) mounted.getType();
+
+            // TW page 160, compare one rack's
+            // damage. Ties go to most rounds.
+            int newRack = ammoType.getDamagePerShot() * ammoType.getRackSize();
+            int newDamage = mounted.getExplosionDamage();
+
+            Mounted<?> mount2 = cs.getMount2();
+            if ((mount2 != null) && (mount2.getType() instanceof AmmoType) && (mount2.getHittableShotsLeft() > 0)) {
+                // must be for same weaponType, so rackSize stays
+                ammoType = (AmmoType) mount2.getType();
+                newRack += ammoType.getDamagePerShot() * ammoType.getRackSize();
+                newDamage += mount2.getExplosionDamage();
+            }
+
+            if (cs.isHit()) {
+                // If it is already hit, do nothing
+                continue;
+            }
+
+            if (newRack > rack) {
+                rack = newRack;
+                damage = newDamage;
+                returnSlot = cs;
+                continue;
+            }
+            if (newRack < rack) {
+                continue;
+            }
+            // Assume the same rack size now.
+            if (newDamage > damage) {
+                damage = newDamage;
+                returnSlot = cs;
+            }
+        }
+
+        return returnSlot;
     }
 }

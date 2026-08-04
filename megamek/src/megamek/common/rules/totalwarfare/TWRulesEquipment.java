@@ -42,7 +42,7 @@ import megamek.common.equipment.MiscType;
 import megamek.common.equipment.Sensor;
 import megamek.common.rolls.Roll;
 import megamek.common.rolls.TargetRoll;
-import megamek.common.rules.core.CoreRulesEquipment;
+import megamek.common.rules.RulesEquipment;
 import megamek.common.units.Entity;
 import megamek.common.units.Mek;
 
@@ -52,14 +52,13 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Vector;
 
-public class TWRulesEquipment extends CoreRulesEquipment {
+public class TWRulesEquipment extends RulesEquipment {
     /**
      * Does AMS allow for multiple shots.
      * AMS can shoot once.
      *
      * @return true if AMS allows multiple shots
      */
-    @Override
     public boolean getAMSMultiShot() { return false;}
 
     /**
@@ -69,7 +68,6 @@ public class TWRulesEquipment extends CoreRulesEquipment {
      * @param toAdvancedAMS true if using advanced AMS
      * @return true if AMS can reduce to 0
      */
-    @Override
     public boolean getAMSReduction(boolean toAdvancedAMS) {
         if (toAdvancedAMS) { return true; }
         return false;
@@ -82,7 +80,6 @@ public class TWRulesEquipment extends CoreRulesEquipment {
      * @param roll the dice roll
      * @return true if AMS shoots down a single missile
      */
-    @Override
     public boolean checkAMSSingleMissile(int roll) {
         return roll <= 3 ? true : false;
     }
@@ -93,7 +90,6 @@ public class TWRulesEquipment extends CoreRulesEquipment {
      * @param gyroType the type of gyro
      * @return the number of hits needed to destroy the gyro
      */
-    @Override
     public int hitsToDestroyGyro(int gyroType) {
         if (gyroType == Mek.GYRO_HEAVY_DUTY) {
             return 3;
@@ -107,7 +103,6 @@ public class TWRulesEquipment extends CoreRulesEquipment {
      * @param nLevel the MASC level
      * @return the failure target number
      */
-    @Override
     public int getMascFailure(int nLevel) {
         int[] MASC_FAILURE = { 3, 5, 7, 11, 13, 13, 13 };
         return MASC_FAILURE[nLevel];
@@ -120,7 +115,6 @@ public class TWRulesEquipment extends CoreRulesEquipment {
      * @param blueShieldRounds the number of blue shield rounds
      * @return the target number
      */
-    @Override
     public int getBlueShieldTarget(int blueShieldRounds) {
         return (3 + blueShieldRounds - 6);
     }
@@ -134,7 +128,6 @@ public class TWRulesEquipment extends CoreRulesEquipment {
      * @param consecutiveRounds the number of consecutive rounds
      * @return the target number for success
      */
-    @Override
     public int radicalHeatSinkSuccessTarget(int consecutiveRounds) {
         return switch (consecutiveRounds) {
             case 1 -> 3;
@@ -165,7 +158,6 @@ public class TWRulesEquipment extends CoreRulesEquipment {
      * @param type the miscellaneous equipment type
      * @return the ECM range
      */
-    @Override
     public int getECMRanges(MiscType type) {
         if (type.hasFlag(MiscType.F_SINGLE_HEX_ECM)) {
             return 0;
@@ -238,7 +230,6 @@ public class TWRulesEquipment extends CoreRulesEquipment {
      *
      * @return the initiative bonus
      */
-    @Override
     public int getCommandConsoleBonus() {
         return 2;
     }
@@ -252,7 +243,6 @@ public class TWRulesEquipment extends CoreRulesEquipment {
      * @param isSupercharger true if this is a supercharger failure
      * @return the number of hits
      */
-    @Override
     public int getMascSuperChargerFailureHits(int entityId, Vector<Report> vDesc, boolean isSupercharger) {
         int hits = 0;
         int reportId = 6310;
@@ -292,7 +282,6 @@ public class TWRulesEquipment extends CoreRulesEquipment {
      * @param vCriticalSlots map of critical slots being damaged
      * @param hits the number of hits
      */
-    @Override
     public void doMascFailureCrits(Entity entity, HashMap<Integer, List<CriticalSlot>> vCriticalSlots, int hits) {
         // do the damage. random critical slot on each leg, but MASC is not destroyed
         for (int loc = 0; loc < entity.locations(); loc++) {
@@ -313,6 +302,5 @@ public class TWRulesEquipment extends CoreRulesEquipment {
      * @param activeBlueShield Is the blue shield system active
      * @return false;
      */
-    @Override
     public boolean blueShieldStealth(boolean activeBlueShield) { return false; }
 }

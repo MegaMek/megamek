@@ -37,14 +37,14 @@ import megamek.common.Report;
 import megamek.common.annotations.Nullable;
 import megamek.common.equipment.Mounted;
 import megamek.common.equipment.WeaponMounted;
-import megamek.common.rules.core.CoreRulesWeapons;
+import megamek.common.rules.RulesWeapons;
 import megamek.common.units.Entity;
 import megamek.common.units.EntityWeightClass;
 import megamek.common.units.Mek;
 
 import java.util.Vector;
 
-public class TWRulesWeapons extends CoreRulesWeapons {
+public class TWRulesWeapons extends RulesWeapons {
 
     /**
      * Does a RAC unjamming cause issues?
@@ -52,7 +52,6 @@ public class TWRulesWeapons extends CoreRulesWeapons {
      *
      * @return true if RAC unjamming has restrictions
      */
-    @Override
     public boolean getRACUnjamRestriction() {
         return true;
     }
@@ -62,7 +61,6 @@ public class TWRulesWeapons extends CoreRulesWeapons {
      *
      * @return the ATM cluster size
      */
-    @Override
     public int getATMClusterSize() { return 5; }
 
     /**
@@ -70,7 +68,6 @@ public class TWRulesWeapons extends CoreRulesWeapons {
      *
      * @return true if ultra autocannons can jam
      */
-    @Override
     public boolean canUACsJam() { return true; }
 
     /**
@@ -82,7 +79,6 @@ public class TWRulesWeapons extends CoreRulesWeapons {
      * @param reports vector of reports describing the hit
      * @param entityId the ID of the entity being hit
      */
-    @Override
     public void setACHit(CriticalSlot cs, Mounted<?> mounted, Vector<Report> reports, int entityId) {}
 
     /**
@@ -91,7 +87,6 @@ public class TWRulesWeapons extends CoreRulesWeapons {
      * @param rackSize the rack size
      * @return the minimum ELRM rack size
      */
-    @Override
     public int getELRMMinimumRackSize(int rackSize) { return (rackSize / 2 + rackSize % 2); }
 
     /**
@@ -100,7 +95,6 @@ public class TWRulesWeapons extends CoreRulesWeapons {
      * @param modifier the base modifier
      * @return the MRM modifier
      */
-    @Override
     public int getMRMModifier(int modifier) { return (modifier + 1); }
 
     /**
@@ -110,7 +104,6 @@ public class TWRulesWeapons extends CoreRulesWeapons {
      * @param apollo true if Apollo fire control is used
      * @return the MRM cluster modifier
      */
-    @Override
     public int getMRMClusterModifier(boolean apollo) {
         if (apollo) {
             return -1;
@@ -123,7 +116,6 @@ public class TWRulesWeapons extends CoreRulesWeapons {
      *
      * @return the Apollo to-hit modifier
      */
-    @Override
     public int getApolloToHit() { return -1; }
 
     /**
@@ -133,7 +125,6 @@ public class TWRulesWeapons extends CoreRulesWeapons {
      * @param bmmFlamers true if using alternate flamer rules
      * @return true if flamers do both damage and heat
      */
-    @Override
     public boolean flamerHeatAndDamage(boolean bmmFlamers) {
         return bmmFlamers ? true : false;
     }
@@ -146,7 +137,6 @@ public class TWRulesWeapons extends CoreRulesWeapons {
      * @param weapon the PPC weapon being fired
      * @return a report of the capacitor check result
      */
-    @Override
     @Nullable
     public Report checkPPCCapacitor(int roll, Entity attackingEntity, WeaponMounted
           weapon) {
@@ -180,7 +170,6 @@ public class TWRulesWeapons extends CoreRulesWeapons {
      *
      * @return the MGA bonus
      */
-    @Override
     public int getMGABonus() {
         return 0;
     }
@@ -192,7 +181,6 @@ public class TWRulesWeapons extends CoreRulesWeapons {
      * @param weightClass the weight class of the unit
      * @return true if HGR can trigger a piloting skill roll
      */
-    @Override
     public boolean canHGRTriggerPSR(int mpUsed, int weightClass) {
         if (mpUsed > 0 && weightClass <= EntityWeightClass.WEIGHT_ASSAULT) {
             return true;

@@ -40,21 +40,6 @@ import megamek.common.rules.RulesCharts;
 import megamek.common.units.Mek;
 
 public class CoreRulesCharts extends RulesCharts {
-    /**
-     * {@inheritDoc}
-     * Escalating failure rules. Same as pilot numbers. Core p.111, 180
-     */
-    public int escalatingFailure(int count) {
-        // For each count after 5, the number is 11+
-        return switch (count) {
-            case 0 -> 2;
-            case 1 -> 3;
-            case 2 -> 5;
-            case 3 -> 7;
-            case 4 -> 10;
-            default -> 11;
-        };
-    }
 
     /**
      * {@inheritDoc}
@@ -67,46 +52,7 @@ public class CoreRulesCharts extends RulesCharts {
         return 0;
     }
 
-    /**
-     * {@inheritDoc}
-     * Return the names for locations
-     */
-    public String getLocationName(int loc, boolean quad) {
-        switch (loc) {
-            case Mek.LOC_LEFT_LEG:
-                if (quad) {
-                    return Messages.getString("Locations.RearLeftLeg");
-                }
-                return Messages.getString("Locations.LeftLeg");
-            case Mek.LOC_RIGHT_LEG:
-                if (quad) {
-                    return Messages.getString("Locations.RearRightLeg");
-                }
-                return Messages.getString("Locations.RightLeg");
-            case Mek.LOC_CENTER_LEG:
-                return Messages.getString("Locations.CenterLeg");
-            case Mek.LOC_LEFT_ARM:
-                if (quad) {
-                    return Messages.getString("Locations.FrontLeftLeg");
-                }
-                return Messages.getString("Locations.LeftArm");
-            case Mek.LOC_RIGHT_ARM:
-                if (quad) {
-                    return Messages.getString("Locations.FrontRightLeg");
-                }
-                return Messages.getString("Locations.RightArm");
-            case Mek.LOC_RIGHT_TORSO:
-                return Messages.getString("Locations.RightTorso");
-            case Mek.LOC_CENTER_TORSO:
-                return Messages.getString("Locations.CenterTorso");
-            case Mek.LOC_LEFT_TORSO:
-                return Messages.getString("Locations.LeftTorso");
-        }
-
-        return "";
-    }
-
-    /**
+     /**
      * {@inheritDoc}
      * Core p.81
      */
@@ -159,48 +105,5 @@ public class CoreRulesCharts extends RulesCharts {
             }
         }
         return getPunchHitLocationSide(roll, side, quad);
-    }
-
-    /**
-     * {@inheritDoc}
-     * Core p.81
-     */
-    public int getPunchHitLocationSide(int roll, int side, boolean quad) {
-        if (side == ToHitData.SIDE_LEFT) {
-            // left side punch hits
-            switch (roll) {
-                case 1:
-                case 2:
-                    return Mek.LOC_LEFT_TORSO;
-                case 3:
-                    return Mek.LOC_CENTER_TORSO;
-                case 4:
-                    if (quad) {return Mek.LOC_LEFT_ARM;}
-                case 5:
-                    if (quad) {return Mek.LOC_LEFT_TORSO;}
-                    return Mek.LOC_LEFT_ARM;
-                case 6:
-                    return Mek.LOC_HEAD;
-            }
-        }
-        if (side == ToHitData.SIDE_RIGHT) {
-            // right side punch hits
-            switch (roll) {
-                case 1:
-                case 2:
-                    return Mek.LOC_RIGHT_TORSO;
-                case 3:
-                    return Mek.LOC_CENTER_TORSO;
-                case 4:
-                    if (quad) {return Mek.LOC_RIGHT_ARM;}
-                case 5:
-                    if (quad) {return Mek.LOC_RIGHT_TORSO;}
-                    return Mek.LOC_RIGHT_ARM;
-                case 6:
-                    return Mek.LOC_HEAD;
-            }
-        }
-        // No location found. Should never occur
-        return Mek.LOC_NONE;
     }
 }

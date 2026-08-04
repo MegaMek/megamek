@@ -36,17 +36,16 @@ package megamek.common.rules.totalwarfare;
 import megamek.client.ui.Messages;
 import megamek.common.ToHitData;
 import megamek.common.equipment.AmmoType;
-import megamek.common.rules.core.CoreRulesAmmo;
+import megamek.common.rules.RulesAmmo;
 import megamek.server.totalWarfare.TWDamageManager;
 
-public class TWRulesAmmo extends CoreRulesAmmo {
+public class TWRulesAmmo extends RulesAmmo {
     /**
      * Return the modifier for armor piercing based on size.
      *
      * @param inType the ammo type to check
      * @return the armor piercing modifier
      */
-    @Override
     public int armorPiercingMod(AmmoType inType) {
         switch (inType.getRackSize()) {
             case 2:
@@ -72,7 +71,6 @@ public class TWRulesAmmo extends CoreRulesAmmo {
      * @param toHit the to-hit data to modify
      * @param AP true if armor piercing is in effect
      */
-    @Override
     public void armorPiercingAttackMod(AmmoType.AmmoTypeEnum ammoType, ToHitData toHit, boolean AP) {
         switch (ammoType) {
             case AmmoType.AmmoTypeEnum.AC:
@@ -90,7 +88,6 @@ public class TWRulesAmmo extends CoreRulesAmmo {
      *
      * @param toHit the to-hit data
      */
-    @Override
     public void narcHomingTarget(ToHitData toHit) {}
 
     /**
@@ -98,7 +95,6 @@ public class TWRulesAmmo extends CoreRulesAmmo {
      *
      * @return the AX missile cluster modifier
      */
-    @Override
     public int getAXMissileModifier() {
         return -2;
     }
@@ -111,7 +107,6 @@ public class TWRulesAmmo extends CoreRulesAmmo {
      * @param damage the damage amount
      * @return the adjusted damage for AX missiles
      */
-    @Override
     public int getAXMissileDamage(int armor, TWDamageManager.ModsInfo mods, int damage) {
         return damage;
     }
@@ -124,7 +119,6 @@ public class TWRulesAmmo extends CoreRulesAmmo {
      * @param terrainMod true if this is a terrain modifier
      * @return the adjusted modifier for semi-guided ammunition
      */
-    @Override
     public int getSemiGuidedAdjustment(int modifierValue, boolean movementMod, boolean terrainMod) {
         // Semi guided eliminates movement modifier
         if (movementMod) {
@@ -138,7 +132,6 @@ public class TWRulesAmmo extends CoreRulesAmmo {
      *
      * @return true if semi-guided ignores cover
      */
-    @Override
     public boolean semiGuidedIgnoresCover() {
         return false;
     }
@@ -150,7 +143,6 @@ public class TWRulesAmmo extends CoreRulesAmmo {
      * @param indirect true if the attack is indirect
      * @return the modification to the number of missiles for semi-guided
      */
-    @Override
     public int getSemiGuidedNMissiles(boolean taggedTarget, boolean indirect) {
         return 0;
     }

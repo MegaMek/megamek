@@ -36,17 +36,16 @@ package megamek.common.rules.totalwarfare;
 
 import megamek.common.annotations.Nullable;
 import megamek.common.enums.GamePhase;
-import megamek.common.rules.core.CoreRulesGame;
+import megamek.common.rules.RulesGame;
 import megamek.common.units.Entity;
 
-public class TWRulesGame extends CoreRulesGame {
+public class TWRulesGame extends RulesGame {
 
     /**
      * Ammo dumping is allowed
      *
      * @return true if ammo dumping is allowed
      */
-    @Override
     public boolean ammoDumping() { return true; }
 
 
@@ -56,7 +55,6 @@ public class TWRulesGame extends CoreRulesGame {
      * @param phase what phase it is in
      * @return is it eligible
      */
-    @Override
     public boolean eligibleForPhase(Entity entity, @Nullable GamePhase phase) {
         if (entity.isUnjammingRAC() || entity.isFindingClub()) {
             return false;
@@ -74,9 +72,8 @@ public class TWRulesGame extends CoreRulesGame {
      * @param frontLoadOption true if front load option is enabled
      * @return the initiative order
      */
-    @Override
     public int getInitiativeOrder(int[] num_turns, int index, int min, boolean frontLoadOption) {
-        return frontLoadOption ? super.getInitiativeOrder(num_turns, index, min, true) :
+        return frontLoadOption ? ((int) Math.ceil(((double) num_turns[index]) / (double) min)) :
               (num_turns[index] / min);
     }
 

@@ -37,19 +37,18 @@ import megamek.common.compute.Compute;
 import megamek.common.game.Game;
 import megamek.common.options.OptionsConstants;
 import megamek.common.rolls.Roll;
-import megamek.common.rules.core.CoreRulesPilot;
+import megamek.common.rules.RulesPilot;
 import megamek.common.units.Entity;
 
 import java.util.Vector;
 
-public class TWRulesPilot extends CoreRulesPilot {
+public class TWRulesPilot extends RulesPilot {
 
     /**
      * Two pilot hits for an explosion
      *
      * @return the number of pilot hits caused by an explosion
      */
-    @Override
     public int getExplosionPilotHits() {
         return 2;
     }
@@ -60,7 +59,6 @@ public class TWRulesPilot extends CoreRulesPilot {
      * @param piloting the piloting skill
      * @return the seatbelt gyro modifier
      */
-    @Override
     public int getSeatbeltGyroModifier(int piloting) {
         return piloting + 6;
     }
@@ -73,7 +71,6 @@ public class TWRulesPilot extends CoreRulesPilot {
      * @param legsDestroyed the number of legs destroyed
      * @return the seatbelt leg modifier
      */
-    @Override
     public int getSeatbeltLegModifier(int piloting, int legsDestroyed) {
         if (legsDestroyed == 2) {
             return piloting + 8;
@@ -91,7 +88,6 @@ public class TWRulesPilot extends CoreRulesPilot {
      * @param piloting the piloting skill
      * @return the seatbelt shutdown target number
      */
-    @Override
     public int getSeatbeltShutdown(int piloting) {
         return piloting + 3;
     }
@@ -100,6 +96,5 @@ public class TWRulesPilot extends CoreRulesPilot {
      * {@inheritDoc}
      * In TW this is fall height - 1
      * */
-    @Override
     public int getSeatbeltHeightModifier(int fallHeight) { return fallHeight - 1; }
 }

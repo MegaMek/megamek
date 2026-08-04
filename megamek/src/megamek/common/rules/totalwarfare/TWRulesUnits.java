@@ -34,17 +34,16 @@ package megamek.common.rules.totalwarfare;
 
 import megamek.common.game.Game;
 import megamek.common.rolls.PilotingRollData;
-import megamek.common.rules.core.CoreRulesUnits;
+import megamek.common.rules.RulesUnits;
 import megamek.common.units.Entity;
 import megamek.common.units.Mek;
 
-public class TWRulesUnits extends CoreRulesUnits {
+public class TWRulesUnits extends RulesUnits {
     /**
      * Mule kicks are +1 to hit
      *
      * @return the mule kick modifier
      */
-    @Override
     public int getMuleKickModifier() { return 1; }
     
     /**
@@ -53,7 +52,6 @@ public class TWRulesUnits extends CoreRulesUnits {
      * @param mek the MEK to check
      * @return always returns false
      */
-    @Override
     public boolean getDoesLegDestructionCauseImmobile(Mek mek) {
         return false;
     }
@@ -68,7 +66,6 @@ public class TWRulesUnits extends CoreRulesUnits {
      * @param bTOLegDamage true if using tactical operations leg damage rules
      * @return the reduced movement points
      */
-    @Override
     public int reduceQuadWalkMP(int mp, int legsDestroyed, int hipHits, int actuatorHits,
           boolean bTOLegDamage) {
         if (legsDestroyed > 0) {
@@ -104,7 +101,6 @@ public class TWRulesUnits extends CoreRulesUnits {
      * @param destroyedLegs the number of destroyed legs
      * @param roll the piloting roll data to modify
      */
-    @Override
     public void quadPilotModForLegsDestroyed(int destroyedLegs, PilotingRollData roll) {
         if (destroyedLegs == 2) {
             roll.addModifier(Game.rulesManager.getRulesPSR().getLegDestroyedModifier(), "2 legs destroyed");
@@ -119,7 +115,6 @@ public class TWRulesUnits extends CoreRulesUnits {
      * @param mp the base movement points
      * @return the reduced movement points
      */
-    @Override
     public int getMekMPReduction(int hipHits, boolean bTOLegDamage, int mp) {
         if (bTOLegDamage) {
             mp = mp - 2 * hipHits;
@@ -135,7 +130,6 @@ public class TWRulesUnits extends CoreRulesUnits {
      * @param mp the movement points
      * @return returns the input parameter with no change
      */
-    @Override
     public int getMinimumMP(int mp) {
         return mp;
     }
@@ -146,7 +140,6 @@ public class TWRulesUnits extends CoreRulesUnits {
      * @param entity the entity to check
      * @return always returns false
      */
-    @Override
     public boolean hasBadLegs(Entity entity) {
         return false;
     }

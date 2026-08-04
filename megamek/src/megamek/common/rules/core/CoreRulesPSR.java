@@ -187,6 +187,7 @@ public class CoreRulesPSR extends RulesPSR {
      * {@inheritDoc}
      * Remove the highest roll from the list
      */
+    @Override
     public void rollRemoveHighest(ArrayList<PilotingRollData> rollList) {
         // If there is only one roll, remove it and early exit
         if (rollList.size() == 1) {
@@ -205,32 +206,6 @@ public class CoreRulesPSR extends RulesPSR {
             }
         }
         rollList.remove(highest);
-    }
-    
-    /**
-     * {@inheritDoc}
-     */
-    public void hitActuator(final Game game, Entity entity, int loc, int hitPart) {
-        String psrText = Game.rulesManager.getRulesCharts().getLocationName(loc,(entity instanceof QuadMek));
-        if (hitPart == Mek.ACTUATOR_FOOT) {
-            psrText += Messages.getString("ActuatorHits.Foot");
-        }
-        if (hitPart == Mek.ACTUATOR_HIP) {
-            psrText += Messages.getString("ActuatorHits.Hip");
-        } 
-        psrText += Messages.getString("ActuatorHits.Actuator");
-        
-        int psrPenalty = 1;
-        
-        if (hitPart == Mek.ACTUATOR_HIP) {
-            psrPenalty = getHipPenalty();
-        }
-        
-        if (getFootActuatorPsr() && hitPart == Mek.ACTUATOR_FOOT) {
-            game.addPSR(new PilotingRollData(entity.getId(), psrPenalty, psrText, loc));
-        } else if (hitPart != Mek.ACTUATOR_FOOT) {
-            game.addPSR(new PilotingRollData(entity.getId(), psrPenalty, psrText, loc));
-        }
     }
     
     /**

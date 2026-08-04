@@ -36,6 +36,7 @@ import megamek.common.CriticalSlot;
 import megamek.common.Report;
 import megamek.common.compute.Compute;
 import megamek.common.game.Game;
+import megamek.common.options.OptionsConstants;
 import megamek.common.rolls.Roll;
 import megamek.common.rolls.TargetRoll;
 import megamek.common.units.Entity;
@@ -46,7 +47,7 @@ import java.util.Vector;
 public abstract class RulesPilot {
 
     /**
-     * Handle pilot hits.
+     * Handle pilot hits. Core p.117, same as TW.
      *
      * @param e the entity taking pilot hits
      * @param totalHits the total number of hits
@@ -55,8 +56,79 @@ public abstract class RulesPilot {
      * @param toughness true if the pilot has toughness
      * @return vector of reports describing the pilot hits
      */
-    public abstract Vector<Report> pilotHits(Entity e, int totalHits, int damage, int crewPos, boolean toughness);
+    public Vector<Report> pilotHits(Entity e, int totalHits, int damage, int crewPos, boolean toughness) {
+        Vector<Report> vDesc = new Vector<>();
 
+        int hit = totalHits - damage + 1;
+
+        int rollTarget = Game.rulesManager.getRulesCharts().escalatingFailure(hit);
+
+        if (toughness) {
+            rollTarget -= e.getCrew().getToughness(crewPos);
+        }
+
+        boolean rerollWithEdge = false;
+        boolean edgeAlreadyUsed = false;
+
+        do {
+            if (rerollWithEdge) {
+                e.getCrew().decreaseEdge();
+                edgeAlreadyUsed = true;
+                rerollWithEdge = false;
+            }
+            Roll diceRoll = Compute.rollD6(2);
+            int rollValue = diceRoll.getIntValue();
+            String rollCalc = String.valueOf(rollValue);
+
+            if (e.hasAbility(OptionsConstants.MISC_PAIN_RESISTANCE)) {
+                rollValue = Math.min(12, rollValue + 1);
+                rollCalc = rollValue + " [" + diceRoll.getIntValue() + " + 1] max 12";
+            }
+
+            Report r = new Report(6030);
+            r.indent(2);
+            r.subject = e.getId();
+            r.add(e.getCrew().getCrewType().getRoleName(crewPos));
+            r.addDesc(e);
+            r.add(e.getCrew().getName(crewPos));
+            r.add(rollTarget);
+            r.addDataWithTooltip(rollCalc, diceRoll.getReport());
+
+            if (rollValue >= rollTarget) {
+                e.getCrew().setKoThisRound(false, crewPos);
+                r.choose(true);
+            } else {
+                e.getCrew().setKoThisRound(true, crewPos);
+                r.choose(false);
+                if (!edgeAlreadyUsed && e.shouldUseEdge(OptionsConstants.EDGE_WHEN_KO) ||
+                      e.shouldUseEdge(OptionsConstants.EDGE_WHEN_AERO_KO)) {
+                    rerollWithEdge = true;
+                    vDesc.add(r);
+                    r = new Report(6520);
+                    r.subject = e.getId();
+                    r.addDesc(e);
+                    r.add(e.getCrew().getName(crewPos));
+                    r.add(e.getCrew().getOptions().intOption(OptionsConstants.EDGE));
+                } // if
+                // return true;
+            } // else
+            vDesc.add(r);
+        } while (rerollWithEdge);
+        // end of do-while
+        if (e.getCrew().isKoThisRound(crewPos)) {
+            boolean wasPilot = e.getCrew().getCurrentPilotIndex() == crewPos;
+            boolean wasGunner = e.getCrew().getCurrentGunnerIndex() == crewPos;
+            e.getCrew().setUnconscious(true, crewPos);
+            Report r = createCrewTakeoverReport(e, crewPos, wasPilot, wasGunner);
+            if (null != r) {
+                vDesc.add(r);
+            }
+            return vDesc;
+        }
+
+        return vDesc;
+    }
+    
     /**
      * How many pilot hits for an explosion.
      *
@@ -66,6 +138,9 @@ public abstract class RulesPilot {
 
     /**
      * Crew takeover report. Required by damage.
+     * Convenience method that fills in a report showing that a crew member of a multicrew cockpit has taken over for
+     * another incapacitated crew member.
+     *
      *
      * @param e the entity with the crew
      * @param slot the crew slot being taken over
@@ -73,8 +148,27 @@ public abstract class RulesPilot {
      * @param wasGunner true if the crew member was the gunner
      * @return a report of the crew takeover
      */
-    public abstract Report createCrewTakeoverReport(Entity e, int slot, boolean wasPilot, boolean wasGunner);
-
+    public Report createCrewTakeoverReport(Entity e, int slot, boolean wasPilot, boolean wasGunner) {
+        if (wasPilot && e.getCrew().getCurrentPilotIndex() != slot) {
+            Report r = new Report(5560);
+            r.subject = e.getId();
+            r.indent(4);
+            r.add(e.getCrew().getNameAndRole(e.getCrew().getCurrentPilotIndex()));
+            r.add(e.getCrew().getCrewType().getRoleName(e.getCrew().getCrewType().getPilotPos()));
+            r.addDesc(e);
+            return r;
+        }
+        if (wasGunner && e.getCrew().getCurrentGunnerIndex() != slot) {
+            Report r = new Report(5560);
+            r.subject = e.getId();
+            r.indent(4);
+            r.add(e.getCrew().getNameAndRole(e.getCrew().getCurrentGunnerIndex()));
+            r.add(e.getCrew().getCrewType().getRoleName(e.getCrew().getCrewType().getGunnerPos()));
+            r.addDesc(e);
+            return r;
+        }
+        return null;
+    }
     /**
      * Is there a modifier for the gyro being destroyed.
      *

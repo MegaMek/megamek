@@ -33,15 +33,14 @@ package megamek.common.rules.totalwarfare;
  */
 
 import megamek.common.equipment.WeaponType;
-import megamek.common.rules.core.CoreRulesUnderwater;
+import megamek.common.rules.RulesUnderwater;
 
-public class TWRulesUnderwater extends CoreRulesUnderwater {
+public class TWRulesUnderwater extends RulesUnderwater {
     /**
      * What is the target number for the breach?
      *
      * @return the breach target number is 10
      */
-    @Override
     public int getBreachTarget() {
         return 10;
     }
@@ -51,7 +50,6 @@ public class TWRulesUnderwater extends CoreRulesUnderwater {
      *
      * @return true if water blocks line of sight
      */
-    @Override
     public boolean waterBlocksLOS() {
         return true;
     }
@@ -61,7 +59,6 @@ public class TWRulesUnderwater extends CoreRulesUnderwater {
      * @param weaponType
      * @return short range
      */
-    @Override
     public int getShortRange(WeaponType weaponType) {
         return weaponType.getWShortRange();
     }
@@ -71,7 +68,6 @@ public class TWRulesUnderwater extends CoreRulesUnderwater {
      * @param weaponType
      * @return medium range
      */
-    @Override
     public int getMediumRange(WeaponType weaponType) {
         return weaponType.getWMediumRange();
     }
@@ -81,7 +77,6 @@ public class TWRulesUnderwater extends CoreRulesUnderwater {
      * @param weaponType
      * @return long range
      */
-    @Override
     public int getLongRange(WeaponType weaponType) {
         return weaponType.getWLongRange();
     }

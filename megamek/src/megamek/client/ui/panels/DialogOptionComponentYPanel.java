@@ -54,8 +54,10 @@ import java.util.Map;
 import java.util.Set;
 import java.util.StringTokenizer;
 import javax.swing.Box;
+import javax.swing.BoxLayout;
 import javax.swing.JCheckBox;
 import javax.swing.JComboBox;
+import javax.swing.JComponent;
 import javax.swing.JLabel;
 import javax.swing.JTextField;
 
@@ -82,6 +84,11 @@ public class DialogOptionComponentYPanel extends FixedYPanel
     @Serial
     private static final long serialVersionUID = -4190538980884459746L;
     private static final int SETTINGS_COMPONENT_GAP = 5;
+    private static final int SETTINGS_LABEL_CONTROL_GAP = 12;
+    private static final int SETTINGS_LABEL_WIDTH = 220;
+    private static final int SETTINGS_CONTROL_WIDTH = 148;
+    static final int SETTINGS_GRID_CELL_WIDTH = SETTINGS_LABEL_WIDTH + SETTINGS_LABEL_CONTROL_GAP
+          + SETTINGS_CONTROL_WIDTH;
 
     IOption option;
 
@@ -93,7 +100,6 @@ public class DialogOptionComponentYPanel extends FixedYPanel
     private String settingsBadgeHtml = "";
     private int optionLabelWrapWidth;
     private final DialogOptionListener dialogOptionListener;
-    private final boolean choiceLabelFirst;
 
     /** Value used to force a change */
     private boolean hasOptionChanged = false;
@@ -117,7 +123,6 @@ public class DialogOptionComponentYPanel extends FixedYPanel
           boolean choiceLabelFirst) {
         dialogOptionListener = parent;
         this.option = option;
-        this.choiceLabelFirst = choiceLabelFirst;
         optionDisplayName = option.getDisplayableName();
 
         setLayout(new FlowLayout(FlowLayout.LEFT, 5, 2));
@@ -242,36 +247,54 @@ public class DialogOptionComponentYPanel extends FixedYPanel
         addInlineComponents(checkbox, optionLabel);
     }
 
-    /** Removes legacy outer insets while retaining the gap between this option's control and label. */
+    /** Removes legacy outer insets and presents non-boolean settings as {@code label | control}. */
     void useSettingsGridCellLayout() {
         if (torsoMultiSelect) {
             return;
         }
         removeAll();
-        setLayout(new FlowLayout(FlowLayout.LEFT, 0, 2));
-        switch (option.getType()) {
-            case IOption.BOOLEAN -> addInlineComponents(checkbox, optionLabel);
-            case IOption.CHOICE -> {
-                if (choiceLabelFirst) {
-                    addInlineComponents(choice, optionLabel);
-                } else {
-                    addInlineComponents(optionLabel, choice);
-                }
-            }
-            default -> {
-                if (option.isLabelBeforeTextField()) {
-                    addInlineComponents(optionLabel, textField);
-                } else {
-                    addInlineComponents(textField, optionLabel);
-                }
-            }
+        if (option.getType() == IOption.BOOLEAN) {
+            setLayout(new FlowLayout(FlowLayout.LEFT, 0, 2));
+            addInlineComponents(checkbox, optionLabel);
+            return;
         }
+
+        setLayout(new BoxLayout(this, BoxLayout.LINE_AXIS));
+        JComponent control = option.getType() == IOption.CHOICE ? choice : textField;
+        setSettingsLabelWidth();
+        setSettingsControlWidth(control);
+        optionLabel.setAlignmentY(Component.CENTER_ALIGNMENT);
+        control.setAlignmentY(Component.CENTER_ALIGNMENT);
+        add(optionLabel);
+        add(Box.createHorizontalStrut(UIUtil.scaleForGUI(SETTINGS_LABEL_CONTROL_GAP)));
+        add(control);
     }
 
     private void addInlineComponents(Component first, Component second) {
         add(first);
         add(Box.createHorizontalStrut(UIUtil.scaleForGUI(SETTINGS_COMPONENT_GAP)));
         add(second);
+    }
+
+    private void setSettingsControlWidth(JComponent control) {
+        Dimension preferredSize = control.getPreferredSize();
+        Dimension size = new Dimension(UIUtil.scaleForGUI(SETTINGS_CONTROL_WIDTH), preferredSize.height);
+        control.setPreferredSize(size);
+        control.setMinimumSize(size);
+        control.setMaximumSize(size);
+    }
+
+    private void setSettingsLabelWidth() {
+        int width = UIUtil.scaleForGUI(SETTINGS_LABEL_WIDTH);
+        if (optionLabel.getPreferredSize().width > width) {
+            optionLabelWrapWidth = width;
+            updateOptionLabelText();
+        }
+        Dimension preferredSize = optionLabel.getPreferredSize();
+        Dimension size = new Dimension(width, preferredSize.height);
+        optionLabel.setPreferredSize(size);
+        optionLabel.setMinimumSize(size);
+        optionLabel.setMaximumSize(size);
     }
 
     private void updateOptionLabelText() {

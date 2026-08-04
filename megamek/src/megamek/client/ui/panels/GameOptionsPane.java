@@ -207,7 +207,8 @@ public class GameOptionsPane extends JPanel {
         }
 
         private static SettingsFormPanel createSectionContent(String groupId, String name, List<OptionRow> rows) {
-            SettingsFormPanel content = new SettingsFormPanel(name, SettingsFormPanel.DEFAULT_LABEL_WIDTH);
+            SettingsFormPanel content = new SettingsFormPanel(name,
+                  DialogOptionComponentYPanel.SETTINGS_GRID_CELL_WIDTH);
             if (groupId.equals("gameMaster")) {
                 for (OptionRow row : rows) {
                     if (row.option().getName().equals(OptionsConstants.GAME_MASTER_ALLOW)) {
@@ -220,13 +221,16 @@ public class GameOptionsPane extends JPanel {
                 return content;
             }
 
-            int cellWidth = UIUtil.scaleForGUI(SettingsFormPanel.DEFAULT_LABEL_WIDTH);
+            int cellWidth = UIUtil.scaleForGUI(DialogOptionComponentYPanel.SETTINGS_GRID_CELL_WIDTH);
             DialogOptionComponentYPanel[] components = rows.stream()
                   .map(OptionRow::component)
                   .toArray(DialogOptionComponentYPanel[]::new);
             for (DialogOptionComponentYPanel component : components) {
                 component.useSettingsGridCellLayout();
-                component.fitToWidth(cellWidth);
+                int contentWidth = component.getOption().getType() == IOption.BOOLEAN
+                      ? UIUtil.scaleForGUI(SettingsFormPanel.DEFAULT_LABEL_WIDTH)
+                      : cellWidth;
+                component.fitToWidth(contentWidth);
             }
             content.addEqualWidthComponentGrid(2, components);
             return content;

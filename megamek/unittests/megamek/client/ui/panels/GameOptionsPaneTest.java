@@ -165,10 +165,8 @@ class GameOptionsPaneTest {
                   .getConstraints(wideCoreOption);
             assertEquals(1, wideLayout.gridwidth);
             assertEquals(GridBagConstraints.HORIZONTAL, wideLayout.fill);
-            assertTrue(wideCoreOption.getPreferredSize().width
-                  <= UIUtil.scaleForGUI(SettingsFormPanel.DEFAULT_LABEL_WIDTH));
-            assertTrue(optionLabel(wideCoreOption).getPreferredSize().height
-                  > optionLabel(coreFirst).getPreferredSize().height);
+            assertEquals(UIUtil.scaleForGUI(DialogOptionComponentYPanel.SETTINGS_GRID_CELL_WIDTH),
+                wideCoreOption.getPreferredSize().width);
         });
     }
 
@@ -211,7 +209,7 @@ class GameOptionsPaneTest {
     }
 
     @Test
-    void standardOptionCellsRemoveLegacyOuterInsets() throws Exception {
+    void standardOptionCellsUseConsistentControlOrderAndInsets() throws Exception {
         runOnEdt(() -> {
             GameOptions options = new GameOptions();
             DialogOptionComponentYPanel booleanOption = component(
@@ -224,8 +222,81 @@ class GameOptionsPaneTest {
             pane("basic", List.of(booleanOption, numericOption, choiceOption), option -> true);
 
             assertFirstComponentStartsAtCellEdge(booleanOption, JCheckBox.class);
-            assertFirstComponentStartsAtCellEdge(numericOption, JTextField.class);
-            assertFirstComponentStartsAtCellEdge(choiceOption, JComboBox.class);
+            int numericControlX = assertLabelControlCell(numericOption, JTextField.class);
+            int choiceControlX = assertLabelControlCell(choiceOption, JComboBox.class);
+            assertEquals(numericControlX, choiceControlX,
+                "numeric control x=" + numericControlX + ", choice control x=" + choiceControlX);
+        });
+    }
+
+    @Test
+    void standardChoiceControlsFitTheirPopulatedValues() throws Exception {
+        runOnEdt(() -> {
+            GameOptions options = new GameOptions();
+            DialogOptionComponentYPanel neuralInterface = component(
+                  options.getOption(OptionsConstants.ADVANCED_NEURAL_INTERFACE_MODE));
+            neuralInterface.addValue(OptionsConstants.NEURAL_INTERFACE_MODE_OFF);
+            neuralInterface.addValue(OptionsConstants.NEURAL_INTERFACE_MODE_PILOT_ONLY);
+            neuralInterface.addValue(OptionsConstants.NEURAL_INTERFACE_MODE_FULL_TRACKING);
+            DialogOptionComponentYPanel ghostTarget = component(
+                  options.getOption(OptionsConstants.ADVANCED_GHOST_TARGET_MODE));
+            ghostTarget.addValue(OptionsConstants.GHOST_TARGET_MODE_LEGACY);
+            ghostTarget.addValue(OptionsConstants.GHOST_TARGET_MODE_STANDARD);
+
+            List<DialogOptionComponentYPanel> components = List.of(neuralInterface, ghostTarget);
+            Map<DialogOptionComponentYPanel, Integer> populatedWidths = new LinkedHashMap<>();
+            for (DialogOptionComponentYPanel component : components) {
+                populatedWidths.put(component, findDirectComponent(component, JComboBox.class).getPreferredSize().width);
+            }
+
+            pane("advanced", components, option -> true);
+
+            for (DialogOptionComponentYPanel component : components) {
+                int controlWidth = findDirectComponent(component, JComboBox.class).getPreferredSize().width;
+                assertTrue(controlWidth >= populatedWidths.get(component),
+                      component.getOption().getName() + ": populated width=" + populatedWidths.get(component)
+                            + ", settings width=" + controlWidth);
+            }
+        });
+    }
+
+    @Test
+    void everyStandardNonBooleanGameOptionUsesTheSharedLabelControlOrder() throws Exception {
+        runOnEdt(() -> {
+            GameOptions options = new GameOptions();
+            List<GameOptionsPane.OptionGroup> groups = new ArrayList<>();
+            List<DialogOptionComponentYPanel> nonBooleanComponents = new ArrayList<>();
+            for (Enumeration<IOptionGroup> optionGroups = options.getGroups(); optionGroups.hasMoreElements(); ) {
+                IOptionGroup optionGroup = optionGroups.nextElement();
+                List<DialogOptionComponentYPanel> components = new ArrayList<>();
+                for (Enumeration<IOption> groupOptions = optionGroup.getOptions(); groupOptions.hasMoreElements(); ) {
+                    IOption option = groupOptions.nextElement();
+                    DialogOptionComponentYPanel component = component(option);
+                    components.add(component);
+                                        if (option.getType() != IOption.BOOLEAN
+                          && !option.getName().equals(OptionsConstants.GAME_MASTER_VOTE_THRESHOLD)) {
+                        nonBooleanComponents.add(component);
+                    }
+                }
+                groups.add(new GameOptionsPane.OptionGroup(optionGroup.getName(), optionGroup.getDisplayableName(),
+                      components));
+            }
+
+            new GameOptionsPane(groups, option -> true);
+
+            Integer sharedControlX = null;
+            for (DialogOptionComponentYPanel component : nonBooleanComponents) {
+                Class<? extends Component> controlType = component.getOption().getType() == IOption.CHOICE
+                      ? JComboBox.class
+                      : JTextField.class;
+                int controlX = assertLabelControlCell(component, controlType);
+                if (sharedControlX == null) {
+                    sharedControlX = controlX;
+                } else {
+                    assertEquals(sharedControlX, controlX, component.getOption().getName());
+                }
+            }
+            assertTrue(nonBooleanComponents.size() > 20);
         });
     }
 
@@ -508,6 +579,29 @@ class GameOptionsPaneTest {
         Component firstComponent = option.getComponent(0);
         assertTrue(expectedType.isInstance(firstComponent), firstComponent.getClass().getSimpleName());
         assertEquals(0, firstComponent.getX());
+    }
+
+    private static int assertLabelControlCell(DialogOptionComponentYPanel option,
+          Class<? extends Component> controlType) {
+        option.setSize(option.getPreferredSize());
+        option.doLayout();
+        Component label = option.getComponent(0);
+        Component control = findDirectComponent(option, controlType);
+        assertTrue(label instanceof JLabel, label.getClass().getSimpleName());
+        assertTrue(controlType.isInstance(control), control.getClass().getSimpleName());
+        assertEquals(0, label.getX());
+        assertTrue(control.getX() > label.getX());
+        assertSame(control, ((JLabel) label).getLabelFor());
+        return control.getX();
+    }
+
+    private static Component findDirectComponent(Container root, Class<? extends Component> type) {
+        for (Component component : root.getComponents()) {
+            if (type.isInstance(component)) {
+                return component;
+            }
+        }
+        throw new AssertionError("No direct " + type.getSimpleName() + " found");
     }
 
     private static void assertOptionPresentation(DialogOptionComponentYPanel component, String label,

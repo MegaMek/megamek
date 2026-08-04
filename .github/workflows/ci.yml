@@ -20,10 +20,40 @@ jobs:
       fail-fast: false
 
     steps:
+      - name: Find the Right Data Branch
+        id: find_data
+        shell: bash {0}
+        env:
+          DATA_REPO_URL: ${{ github.event.pull_request.head.repo.owner.html_url }}/mm-data.git
+          DATA_REPO: ${{ github.event.pull_request.head.repo.owner.login }}/mm-data
+          DATA_BRANCH: ${{ github.event.pull_request.head.ref }}
+        run: |
+          set +e
+          git ls-remote --exit-code --heads "$DATA_REPO_URL" "refs/heads/$DATA_BRANCH" > /dev/null
+          status=$?
+          set -e
+
+          case "$status" in
+            0)
+              echo "dataRepo=$DATA_REPO" >> "$GITHUB_OUTPUT"
+              echo "dataBranch=$DATA_BRANCH" >> "$GITHUB_OUTPUT"
+              ;;
+            2)
+              echo "Matching mm-data branch not found; using MegaMek/mm-data main."
+              echo "dataRepo=MegaMek/mm-data" >> "$GITHUB_OUTPUT"
+              echo "dataBranch=main" >> "$GITHUB_OUTPUT"
+              ;;
+            *)
+              echo "Unable to query $DATA_REPO_URL (git ls-remote exited $status)." >&2
+              exit "$status"
+              ;;
+          esac
+
       - name: Checkout Data Repo
         uses: actions/checkout@v7
         with:
-          repository: megamek/mm-data
+          repository: ${{ steps.find_data.outputs.dataRepo }}
+          ref: ${{ steps.find_data.outputs.dataBranch }}
           path: mm-data
 
       - name: "Check out MegaMek"

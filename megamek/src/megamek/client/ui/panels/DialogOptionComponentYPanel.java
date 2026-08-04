@@ -1,6 +1,6 @@
 /*
  * Copyright (C) 2000-2002 Ben Mazur (bmazur@sev.org)
- * Copyright (C) 2003-2025 The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2003-2026 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -71,6 +71,7 @@ import megamek.client.ui.settings.SettingsHelpProvider;
 import megamek.client.ui.util.UIUtil;
 import megamek.client.ui.util.UIUtil.FixedYPanel;
 import megamek.codeUtilities.MathUtility;
+import megamek.common.annotations.Nullable;
 import megamek.common.options.BasicOption;
 import megamek.common.options.IBasicOption;
 import megamek.common.options.IOption;
@@ -95,10 +96,13 @@ public class DialogOptionComponentYPanel extends FixedYPanel
     private JCheckBox checkbox;
     private JComboBox<String> choice;
     private JTextField textField;
+    /** The label showing the option's displayable name and any presentation-specific markers. */
     private JLabel optionLabel;
     private String optionDisplayName;
     private String settingsBadgeHtml = "";
     private int optionLabelWrapWidth;
+    /** Short marker appended to the displayable name (e.g. " (P)" for partially implemented SPAs). */
+    private String nameSuffix = "";
     private final DialogOptionListener dialogOptionListener;
 
     /** Value used to force a change */
@@ -298,14 +302,15 @@ public class DialogOptionComponentYPanel extends FixedYPanel
     }
 
     private void updateOptionLabelText() {
-        String displayName = StringEscapeUtils.escapeHtml4(optionDisplayName);
+        String plainName = optionDisplayName + nameSuffix;
+        String displayName = StringEscapeUtils.escapeHtml4(plainName);
         if (optionLabelWrapWidth > 0) {
             optionLabel.setText("<html><div width=" + optionLabelWrapWidth + '>'
                   + displayName + settingsBadgeHtml + "</div></html>");
         } else if (!settingsBadgeHtml.isBlank()) {
             optionLabel.setText("<html><nobr>" + displayName + settingsBadgeHtml + "</nobr></html>");
         } else {
-            optionLabel.setText(optionDisplayName);
+            optionLabel.setText(plainName);
         }
     }
 
@@ -382,6 +387,51 @@ public class DialogOptionComponentYPanel extends FixedYPanel
             }
         }
         return result.toString();
+    }
+
+    /**
+     * Appends a short marker to the option's displayable name, kept through {@link #setNameLabelWrapWidth(int)}
+     * re-wraps (e.g. " (P)" for partially implemented SPAs).
+     *
+     * @param suffix the marker text, or {@code null} to clear it
+     */
+    public void setNameSuffix(@Nullable String suffix) {
+        nameSuffix = (suffix == null) ? "" : suffix;
+        if (optionLabel != null) {
+            updateOptionLabelText();
+        }
+    }
+
+    /**
+     * Makes the option's name label wrap when the whole row is wider than the given width, by switching the label
+     * to width-constrained HTML; a name that fits reverts to plain text. The label's share is the row width minus
+     * this row's other visible components (checkbox, combo box, inline controls), so a row with a wide control
+     * (e.g. the Sandblaster weapon choice) narrows its label instead of pushing the control onto a clipped second
+     * line. Multi-column containers call this when they lay out.
+     *
+     * @param availableRowWidth the width in pixels the whole row may use, or 0 or less to always use plain text
+     */
+    public void setNameLabelWrapWidth(int availableRowWidth) {
+        if (optionLabel == null) {
+            return;
+        }
+        String plainName = optionDisplayName + nameSuffix;
+        int availableLabelWidth = availableRowWidth;
+        if (availableRowWidth > 0) {
+            FlowLayout flowLayout = (FlowLayout) getLayout();
+            availableLabelWidth -= flowLayout.getHgap();
+            for (Component child : getComponents()) {
+                if ((child != optionLabel) && child.isVisible()) {
+                    availableLabelWidth -= child.getPreferredSize().width + flowLayout.getHgap();
+                }
+            }
+        }
+        // When the controls alone exceed the row (availableLabelWidth <= 0) wrapping cannot help; keep the plain
+        // text and let the row clip at its right edge, which stays usable.
+        boolean fits = (availableRowWidth <= 0) || (availableLabelWidth <= 0)
+              || (optionLabel.getFontMetrics(optionLabel.getFont()).stringWidth(plainName) <= availableLabelWidth);
+          optionLabelWrapWidth = fits ? 0 : availableLabelWidth;
+          updateOptionLabelText();
     }
 
     public static String convertToHtml(String source) {

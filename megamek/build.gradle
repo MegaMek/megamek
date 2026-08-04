@@ -66,6 +66,15 @@ dependencies {
 
     implementation 'org.apache.pdfbox:pdfbox:3.0.7'
 
+    implementation('org.apache.xmlgraphics:batik-bridge:1.19') {
+        // We don't need the python and javascript engine taking up space
+        exclude group: 'org.python', module: 'jython'
+        exclude group: 'org.mozilla', module: 'rhino'
+        // Exclude only the base xml-apis artifact (it duplicates JDK org.w3c.dom classes); keep xml-apis-ext,
+        // which provides org.w3c.dom.svg used by Batik's SVG DOM at runtime.
+        exclude group: 'xml-apis', module: 'xml-apis'
+    }
+
     implementation 'org.freemarker:freemarker:2.3.34'
 
     implementation 'org.commonmark:commonmark:0.28.0'
@@ -77,9 +86,13 @@ dependencies {
     runtimeOnly 'org.glassfish.jaxb:jaxb-runtime:4.0.7'
 
     testRuntimeOnly 'org.junit.platform:junit-platform-launcher:6.0.3'
+    testRuntimeOnly('org.apache.xmlgraphics:batik-codec:1.19') {
+        exclude group: 'xml-apis', module: 'xml-apis'
+    }
 
     testImplementation 'org.junit.jupiter:junit-jupiter:6.0.3'
     testImplementation 'org.mockito:mockito-core:5.23.0'
+    testImplementation 'org.apache.xmlgraphics:batik-svggen:1.19'
 }
 
 application {
@@ -696,6 +709,31 @@ tasks.register('testAi', JavaExec) {
     args(project.hasProperty("testAiArgs") ? project.property("testAiArgs").split(' ') : "")
 
     jvmArgs = mmJvmOptions
+}
+
+tasks.register('aiMatch', JavaExec) {
+    dependsOn jar
+    description = 'Run a scenario headlessly N times as a bot-vs-bot match and collect per-game results. ' +
+          'Args via -PaiMatchArgs="<scenarioFile> [repetitions] [roundsLimit] [timeoutMinutes]". ' +
+          'Arguments are split on spaces, so the scenario path cannot contain spaces.'
+    group = 'utility'
+    classpath = sourceSets.main.runtimeClasspath
+    mainClass = 'megamek.utilities.AIMatchRunner'
+    // no property -> no args, so AIMatchRunner prints its usage message; split on runs of
+    // whitespace so accidental double spaces do not become empty arguments
+    args(project.hasProperty("aiMatchArgs") ? project.property("aiMatchArgs").trim().split('\\s+') : [])
+
+    jvmArgs = mmJvmOptions
+}
+
+tasks.register('printAiMatchClasspath') {
+    dependsOn classes
+    description = 'Print the runtime classpath for launching AIMatchRunner directly with java, so batch ' +
+          'drivers can run several match processes in parallel without contending for the Gradle build lock.'
+    group = 'utility'
+    doLast {
+        println sourceSets.main.runtimeClasspath.asPath
+    }
 }
 
 tasks.register('roundTripSaveUnitsTest', Test) {

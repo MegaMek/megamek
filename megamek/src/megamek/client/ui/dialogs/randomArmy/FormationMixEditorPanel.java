@@ -143,7 +143,14 @@ public class FormationMixEditorPanel extends JPanel implements Scrollable {
             // question from the ground ones, and a combined-arms force offers both, so running them on from the end
             // of the ground list gives no clue where one ends and the other begins.
             boolean startsAerospaceBlock = familyIsAerospace && !inAerospace;
-            boolean columnIsFull = (row > 0) && (row >= rowsPerColumn) && (columns.size() < groundColumns - 1);
+            // Look at what this family would add before deciding, not at what the column already holds. Breaking
+            // only once the target is passed lets a family that starts just under it overshoot by its whole
+            // height: Assault, Battle and Command came to eleven against a target of twelve, so Fire's six rows
+            // went on top and the column ran to seventeen while the last one held a single formation.
+            int familyRows = familyRowCount(family.getKey(), family.getValue());
+            boolean columnIsFull = (row > 0)
+                  && ((row + familyRows) > rowsPerColumn)
+                  && (columns.size() < groundColumns - 1);
             if (startsAerospaceBlock || columnIsFull) {
                 columns.add(closeColumn(currentColumn, row));
                 currentColumn = newColumnPanel();
@@ -258,6 +265,19 @@ public class FormationMixEditorPanel extends JPanel implements Scrollable {
         JLabel header = new JLabel(Messages.getString(messageKey));
         header.setFont(header.getFont().deriveFont(Font.BOLD));
         return header;
+    }
+
+    /**
+     * How many rows a family takes: one per formation, plus its heading where it has one.
+     *
+     * @param familyName the family
+     * @param members    the formations in it
+     *
+     * @return the rows it occupies
+     */
+    private static int familyRowCount(String familyName, Set<String> members) {
+        boolean hasOwnHeading = !((members.size() == 1) && members.contains(familyName));
+        return members.size() + (hasOwnHeading ? 1 : 0);
     }
 
     /**

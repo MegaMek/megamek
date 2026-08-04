@@ -455,7 +455,9 @@ public class ForceGeneratorOptionsView extends JPanel implements FocusListener, 
         constraints.gridy = row++;
         constraints.gridwidth = 4;
         constraints.fill = GridBagConstraints.HORIZONTAL;
-        constraints.weighty = 1.0;
+        // No vertical weight: this panel wants its natural height and nothing more. Sharing the slack with the
+        // formation list left the list a third of the height it needed while this row kept grey it had no use for.
+        constraints.weighty = 0.0;
         add(transportAndSummary, constraints);
         constraints.gridx = 0;
         constraints.gridwidth = 1;
@@ -477,7 +479,7 @@ public class ForceGeneratorOptionsView extends JPanel implements FocusListener, 
         constraints.gridx = 0;
         constraints.gridy = row;
         constraints.gridwidth = 1;
-        constraints.weighty = 1.0;
+        constraints.weighty = 0.0;
         add(btnGenerate, constraints);
         btnGenerate.addActionListener(this);
 
@@ -518,7 +520,7 @@ public class ForceGeneratorOptionsView extends JPanel implements FocusListener, 
         btnClear.setToolTipText(Messages.getString("ForceGeneratorDialog.clear.tooltip"));
         constraints.gridx = 3;
         constraints.gridy = row;
-        constraints.weighty = 1.0;
+        constraints.weighty = 0.0;
         add(btnClear, constraints);
         btnClear.addActionListener(this);
         btnClear.setEnabled(false);
@@ -704,7 +706,7 @@ public class ForceGeneratorOptionsView extends JPanel implements FocusListener, 
     private static final int EXPLANATION_WIDTH_PIXELS = 700;
 
     /** Unscaled height of the inline mix editor, past which it scrolls rather than growing. */
-    private static final int INLINE_MIX_HEIGHT = 260;
+    private static final int INLINE_MIX_HEIGHT = 320;
 
     /**
      * The controls that drive Generate, so a host can move them into its own button bar.

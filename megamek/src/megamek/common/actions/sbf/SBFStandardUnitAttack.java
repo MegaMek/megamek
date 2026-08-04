@@ -51,7 +51,7 @@ public class SBFStandardUnitAttack extends AbstractSBFAttackAction {
 
     /**
      * Creates a standard attack of an SBF Unit on another formation. The unit number identifies the SBF Unit making the
-        * attack, i.e. 0 for the first of the formation's units, 1 for the second etc.
+     * attack, i.e. 0 for the first of the formation's units, 1 for the second etc.
      *
      * @param formationId The attacker's ID
      * @param unitNumber  The number of the attacking SBF Unit inside the formation

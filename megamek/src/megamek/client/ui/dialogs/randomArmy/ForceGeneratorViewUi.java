@@ -47,6 +47,7 @@ import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
@@ -54,6 +55,7 @@ import java.util.Map;
 import java.util.Set;
 import java.util.StringTokenizer;
 import java.util.TreeSet;
+import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 import javax.swing.*;
@@ -895,6 +897,18 @@ public class ForceGeneratorViewUi implements ActionListener {
                     menu.add(buildChangeFormationMenu(fd));
                     menu.add(buildAddSubForceMenu(fd));
 
+                    // A unit in the tree gets the same readouts the lobby offers, so a player can look a Mek over
+                    // where they are rather than adding it to the chosen list first.
+                    if (fd.getEntity() != null) {
+                        menu.addSeparator();
+                        menu.add(unitReadoutItem("RandomArmyDialog.View", fd.getEntity(),
+                              entities -> LobbyUtility.mekReadoutAction(entities, true, true, parentFrame)));
+                        menu.add(unitReadoutItem("RandomArmyDialog.ViewBV", fd.getEntity(),
+                              entities -> LobbyUtility.mekBVAction(entities, true, true, parentFrame)));
+                        menu.add(unitReadoutItem("RandomArmyDialog.ViewCost", fd.getEntity(),
+                              entities -> LobbyUtility.mekCostAction(entities, true, true, parentFrame)));
+                    }
+
                     if (!toeExclusionMode) {
                         JMenuItem addItem = new JMenuItem("Add to game");
                         addItem.addActionListener(ev -> modelChosen.addEntities(fd));
@@ -1109,6 +1123,22 @@ public class ForceGeneratorViewUi implements ActionListener {
         formation.loadEntities(null, 0);
 
         refreshTreeAfterEdit();
+    }
+
+    /**
+     * A menu item that opens one of the lobby's readouts for a single unit.
+     *
+     * @param messageKey the resource key for the item's text
+     * @param entity     the unit to show
+     * @param readout    the lobby action to run for it
+     *
+     * @return the menu item
+     */
+    private static JMenuItem unitReadoutItem(String messageKey, Entity entity,
+          Consumer<Collection<Entity>> readout) {
+        JMenuItem item = new JMenuItem(Messages.getString(messageKey));
+        item.addActionListener(ev -> readout.accept(Set.of(entity)));
+        return item;
     }
 
     /**

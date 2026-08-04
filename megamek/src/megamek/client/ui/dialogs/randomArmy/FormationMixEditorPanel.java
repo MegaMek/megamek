@@ -95,27 +95,14 @@ public class FormationMixEditorPanel extends JPanel implements Scrollable {
     private String selectedFormation;
 
     private final FormationMixPreview preview;
-    private final boolean allowUnofferedFormations;
 
     /**
-     * Builds an editor for the formations a force offers, held to what the ruleset allows.
+     * Builds a palette of the formations a force offers.
      *
      * @param preview what the force offers, from a structure-only build
      */
     public FormationMixEditorPanel(FormationMixPreview preview) {
-        this(preview, false);
-    }
-
-    /**
-     * Builds an editor for the formations a force offers.
-     *
-     * @param preview                  what the force offers, from a structure-only build
-     * @param allowUnofferedFormations {@code true} to let each request run to the whole force rather than stopping
-     *                                 at what the ruleset offers
-     */
-    public FormationMixEditorPanel(FormationMixPreview preview, boolean allowUnofferedFormations) {
         this.preview = (preview == null) ? FormationMixPreview.EMPTY : preview;
-        this.allowUnofferedFormations = allowUnofferedFormations;
         setLayout(new GridBagLayout());
         build();
     }
@@ -148,7 +135,7 @@ public class FormationMixEditorPanel extends JPanel implements Scrollable {
         // spinner of the next.
         List<JPanel> columns = new ArrayList<>();
         JPanel currentColumn = newColumnPanel();
-        int row = 1;
+        int row = 0;
         boolean inAerospace = false;
         for (Map.Entry<String, Set<String>> family : families.entrySet()) {
             boolean familyIsAerospace = aerospaceFamilies.contains(family.getKey());
@@ -156,11 +143,11 @@ public class FormationMixEditorPanel extends JPanel implements Scrollable {
             // question from the ground ones, and a combined-arms force offers both, so running them on from the end
             // of the ground list gives no clue where one ends and the other begins.
             boolean startsAerospaceBlock = familyIsAerospace && !inAerospace;
-            boolean columnIsFull = (row > 1) && (row >= rowsPerColumn) && (columns.size() < groundColumns - 1);
+            boolean columnIsFull = (row > 0) && (row >= rowsPerColumn) && (columns.size() < groundColumns - 1);
             if (startsAerospaceBlock || columnIsFull) {
                 columns.add(closeColumn(currentColumn, row));
                 currentColumn = newColumnPanel();
-                row = 1;
+                row = 0;
             }
             if (startsAerospaceBlock) {
                 row = addDomainHeading(currentColumn, "ForceGeneratorDialog.formationMix.domain.aerospace", row);
@@ -201,25 +188,10 @@ public class FormationMixEditorPanel extends JPanel implements Scrollable {
 
     /** A column of the grid, bordered so it reads as its own list, with the shared header row already in place. */
     private JPanel newColumnPanel() {
+        // No column headings: every row is one choice now, so there is nothing to head. The family names inside
+        // the column carry the structure that the headings used to.
         JPanel column = new JPanel(new GridBagLayout());
         column.setBorder(BorderFactory.createEtchedBorder());
-        GridBagConstraints constraints = new GridBagConstraints();
-        // The current-share header wraps to two lines, so the headers hang from a common top edge rather than
-        // centring on each other, and the row closes up tight against the first formation beneath it.
-        constraints.anchor = GridBagConstraints.SOUTHWEST;
-        constraints.insets = new Insets(2, 4, 0, 4);
-        constraints.gridy = 0;
-
-        constraints.gridx = 0;
-        constraints.weightx = 1.0;
-        column.add(headerLabel("ForceGeneratorDialog.formationMix.header.formation"), constraints);
-        constraints.weightx = 0.0;
-        constraints.gridx = 1;
-        column.add(headerLabel("ForceGeneratorDialog.formationMix.header.requested"), constraints);
-        // The share heading spans its column so its centred text lines up with the centred shares beneath it.
-        constraints.gridx = 2;
-        constraints.fill = GridBagConstraints.HORIZONTAL;
-        column.add(headerLabel("ForceGeneratorDialog.formationMix.header.current"), constraints);
         return column;
     }
 
@@ -330,7 +302,7 @@ public class FormationMixEditorPanel extends JPanel implements Scrollable {
             choice.setName("rdoFormation" + formationName.replace(" ", ""));
             choice.setOpaque(false);
             choice.setToolTipText(describeFormation(formationType, displayName,
-                  preview.typicalLancesFor(formationName), placementNote(formationName)));
+                  preview.typicalLancesFor(formationName), ceilingExplanation(formationName)));
             choice.addActionListener(event -> selectFormation(formationName));
             selection.add(choice);
             choices.put(formationName, choice);
@@ -482,7 +454,7 @@ public class FormationMixEditorPanel extends JPanel implements Scrollable {
         }
         if (typicalLances >= 0) {
             text.append("<br><i>")
-                  .append(Messages.getString("ForceGeneratorDialog.formationMix.defaultShare", typicalLances))
+                  .append(Messages.getString("ForceGeneratorDialog.formationMix.usuallyBuilt", typicalLances))
                   .append("</i>");
         }
         if (ceilingExplanation != null) {
@@ -492,23 +464,21 @@ public class FormationMixEditorPanel extends JPanel implements Scrollable {
     }
 
     /**
-     * Says in plain terms how much of this force one formation can be, and why.
+     * How often the rules would reach for this formation in a force like this one.
      *
-     * @param formationName the formation to explain
+     * <p>Context rather than a limit. Nothing stops a formation being applied to any node from the tree; this
+     * says how ordinary or unusual that choice is for this faction, era and unit type.</p>
      *
-     * @return the explanation for the hover text
+     * @param formationName the formation to describe
+     *
+     * @return the note for the hover text
      */
     private String ceilingExplanation(String formationName) {
         int placeable = preview.maximumLancesFor(formationName);
-        if (allowUnofferedFormations) {
-            return Messages.getString("ForceGeneratorDialog.formationMix.ceiling.override",
-                  preview.tweakableNodes(), placeable);
-        }
-        if (placeable <= 0) {
-            return Messages.getString("ForceGeneratorDialog.formationMix.ceiling.none");
-        }
-        return Messages.getString("ForceGeneratorDialog.formationMix.ceiling",
-              placeable, preview.tweakableNodes());
+        return (placeable <= 0)
+              ? Messages.getString("ForceGeneratorDialog.formationMix.ceiling.none")
+              : Messages.getString("ForceGeneratorDialog.formationMix.ceiling", placeable,
+                    preview.tweakableNodes());
     }
 
     /** Width the hover text wraps at. The Campaign Operations descriptions are a full sentence plus a citation. */
@@ -562,21 +532,6 @@ public class FormationMixEditorPanel extends JPanel implements Scrollable {
      */
     public void addSelectionListener(Runnable listener) {
         selectionListeners.add(listener);
-    }
-
-    /**
-     * How much of this force the selected formation could be placed on, for the hover text.
-     *
-     * @param formationName the formation to describe
-     *
-     * @return the note, or {@code null} when there is nothing to say
-     */
-    private @Nullable String placementNote(String formationName) {
-        int placeable = preview.maximumLancesFor(formationName);
-        return (placeable <= 0)
-              ? Messages.getString("ForceGeneratorDialog.formationMix.ceiling.none")
-              : Messages.getString("ForceGeneratorDialog.formationMix.ceiling", placeable,
-                    preview.tweakableNodes());
     }
 
     /**

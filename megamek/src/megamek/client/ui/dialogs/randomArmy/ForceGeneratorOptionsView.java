@@ -129,7 +129,6 @@ public class ForceGeneratorOptionsView extends JPanel implements FocusListener, 
     private JTable tblSummary;
     private DefaultTableModel summaryModel;
     /** What the formation mix delivered against what it asked for. */
-    private JLabel lblFormationMixResult;
     /** Opens the formation mix editor; the label beside it shows any request in force. */
     private JButton btnFormationMix;
     private JLabel lblFormationMixSummary;
@@ -450,8 +449,6 @@ public class ForceGeneratorOptionsView extends JPanel implements FocusListener, 
         JPanel summaryWithMix = new JPanel(new BorderLayout(0, 2));
         summaryWithMix.setOpaque(false);
         summaryWithMix.add(createSummaryTable(), BorderLayout.CENTER);
-        lblFormationMixResult = new JLabel(" ");
-        summaryWithMix.add(lblFormationMixResult, BorderLayout.SOUTH);
         transportAndSummary.add(summaryWithMix, BorderLayout.CENTER);
 
         constraints.gridx = 0;
@@ -550,7 +547,7 @@ public class ForceGeneratorOptionsView extends JPanel implements FocusListener, 
         scroll.setHorizontalScrollBarPolicy(ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER);
         scroll.setPreferredSize(UIUtil.scaleForGUI(760, 420));
         JPanel content = new JPanel(new BorderLayout(0, 4));
-        content.add(wrappedExplanation(false), BorderLayout.NORTH);
+        content.add(wrappedExplanation(), BorderLayout.NORTH);
         content.add(scroll, BorderLayout.CENTER);
 
         int choice = JOptionPane.showConfirmDialog(this, content,
@@ -653,7 +650,7 @@ public class ForceGeneratorOptionsView extends JPanel implements FocusListener, 
         scroll.setPreferredSize(UIUtil.scaleForGUI(720, INLINE_MIX_HEIGHT));
 
         panFormationMixInline.removeAll();
-        panFormationMixInline.add(wrappedExplanation(false), BorderLayout.NORTH);
+        panFormationMixInline.add(wrappedExplanation(), BorderLayout.NORTH);
         panFormationMixInline.add(scroll, BorderLayout.CENTER);
         panFormationMixInline.revalidate();
         panFormationMixInline.repaint();
@@ -691,47 +688,14 @@ public class ForceGeneratorOptionsView extends JPanel implements FocusListener, 
     }
 
     /**
-     * The explanation and the restrictions toggle that sit above the mix editor.
-     *
-     * <p>Above the scroll pane rather than inside it: the explanation is the thing that stops a player reading the
-     * spinners as shares of the whole force, so it must not be something they can scroll away from.</p>
-     *
-     * @return the header panel
-     */
-    private JPanel buildFormationMixHeader() {
-        JPanel header = new JPanel(new BorderLayout(0, 2));
-        header.setOpaque(false);
-
-        boolean overriding = formationMix.allowUnofferedFormations();
-        header.add(wrappedExplanation(overriding), BorderLayout.CENTER);
-
-        JCheckBox allowUnoffered =
-              new JCheckBox(Messages.getString("ForceGeneratorDialog.formationMix.allowUnoffered"));
-        allowUnoffered.setToolTipText(Messages.getString("ForceGeneratorDialog.formationMix.allowUnoffered.tooltip"));
-        allowUnoffered.setSelected(overriding);
-        allowUnoffered.setOpaque(false);
-        // Turning restrictions off changes every spinner's limit, so the editor is rebuilt rather than adjusted.
-        allowUnoffered.addActionListener(event -> {
-            formationMix = new FormationMix(formationMix.lances(), allowUnoffered.isSelected());
-            refreshInlineFormationMixEditor();
-        });
-        header.add(allowUnoffered, BorderLayout.SOUTH);
-        return header;
-    }
-
-    /**
      * The paragraph explaining what the spinners mean, wrapped so it does not stretch the dialog.
      *
      * <p>The width lives here rather than in the resource so a translator writes plain prose rather than markup.</p>
      *
-     * @param overriding {@code true} when the faction restrictions have been turned off
-     *
      * @return the explanation label
      */
-    private static JLabel wrappedExplanation(boolean overriding) {
-        String text = Messages.getString(overriding
-              ? "ForceGeneratorDialog.formationMix.explain.override"
-              : "ForceGeneratorDialog.formationMix.explain");
+    private static JLabel wrappedExplanation() {
+        String text = Messages.getString("ForceGeneratorDialog.formationMix.explain");
         return new JLabel("<html><body style='width:" + UIUtil.scaleForGUI(EXPLANATION_WIDTH_PIXELS) + "px'>"
               + text + "</body></html>");
     }
@@ -901,7 +865,6 @@ public class ForceGeneratorOptionsView extends JPanel implements FocusListener, 
      */
     private void updateSummaryTable(ForceDescriptor fd) {
         summaryModel.setRowCount(0);
-        updateFormationMixResult(fd);
         if (fd == null) {
             return;
         }
@@ -994,34 +957,10 @@ public class ForceGeneratorOptionsView extends JPanel implements FocusListener, 
      *
      * @param forceDescriptor the generated force, or {@code null} to blank the line
      */
-    private void updateFormationMixResult(@Nullable ForceDescriptor forceDescriptor) {
-        if (lblFormationMixResult == null) {
-            return;
-        }
-        FormationMixReport report = (forceDescriptor == null) ? null : forceDescriptor.getFormationMixReport();
-        if ((report == null) || (report.totalRequested() == 0)) {
-            lblFormationMixResult.setText(" ");
-            lblFormationMixResult.setToolTipText(null);
-            return;
-        }
-        boolean deliveredInFull = report.totalAssigned() >= report.totalRequested();
-        lblFormationMixResult.setText(deliveredInFull
-              ? Messages.getString("ForceGeneratorDialog.formationMix.result", report.totalAssigned())
-              : Messages.getString("ForceGeneratorDialog.formationMix.result.short",
-                    report.totalAssigned(), report.totalRequested()));
-        lblFormationMixResult.setForeground(deliveredInFull
-              ? UIManager.getColor("Label.foreground")
-              : UIUtil.uiLightRed());
-        lblFormationMixResult.setToolTipText(report.warnings().isEmpty()
-              ? null
-              : "<html>" + String.join("<br>", report.warnings()) + "</html>");
-    }
-
     private void clearSummaryTable() {
         if (summaryModel != null) {
             summaryModel.setRowCount(0);
         }
-        updateFormationMixResult(null);
     }
 
     private void refreshFactions() {

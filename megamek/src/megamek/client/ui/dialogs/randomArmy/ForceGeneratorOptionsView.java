@@ -660,6 +660,17 @@ public class ForceGeneratorOptionsView extends JPanel implements FocusListener, 
     }
 
     /**
+     * Clears the picked formation, so nothing is selected and the tree offers nothing to apply.
+     *
+     * <p>Called when a host resets its options: the selection lives here rather than in the host's own options, so
+     * it is not covered by reloading those.</p>
+     */
+    public void clearFormationSelection() {
+        setSelectedFormation(null);
+        refreshInlineFormationMixEditor();
+    }
+
+    /**
      * The formation the player has picked to apply to nodes in the organisation tree.
      *
      * @return the selected formation's name, or {@code null} when none is picked

@@ -2144,10 +2144,15 @@ public class ForceDescriptor {
             retVal = retVal.replace("{cardinalOrdinal}", cardinalOrdinal(getNameIndex() + 1));
             retVal = retVal.replace("{alpha}", Character.toString((char) (getNameIndex() + 'A')));
             if (retVal.contains("{formation}")) {
-                if (null != formationType && null != formationType.getCategory()) {
+                if (null != formationType && null != formationType.getName()) {
+                    // The formation itself rather than the family it belongs to. A Heavy Battle lance and a Light
+                    // Battle lance are both "Battle" by category, and an Anti-Air lance is "Fire", so naming by
+                    // category threw away the very thing the player chose - a lance built as Anti-Air read "Fire
+                    // Lance" while its own label said Anti-Air.
                     retVal = retVal.replace("{formation}",
-                          formationType.getCategory()
+                          formationType.getName()
                                 .replace("Striker/Cavalry", "Striker")
+                                .replace("Berserker/Close", "Berserker")
                                 .replace(" Squadron", ""));
                 } else {
                     retVal = retVal.replace("{formation} ", "");

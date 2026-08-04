@@ -1747,9 +1747,12 @@ public class BasicPathRanker extends PathRanker {
               : 0;
 
         // Movement is good, it gives defense and extends a player power in the game.
-        if (movingUnit.getPosition() != null && friendsCoords != null) {
-            scores.put("friendsDistance", (double) friendsCoords.distance(movingUnit.getPosition()));
-        }
+        // Always recorded, even when there is no anchor: a score that appears for some paths and not others
+        // gives the log rows different widths and makes the whole file unparseable.
+        scores.put("friendsDistance",
+              (movingUnit.getPosition() != null && friendsCoords != null)
+                    ? (double) friendsCoords.distance(movingUnit.getPosition())
+                    : -1.0);
         scores.put("herdingValue", getOwner().getBehaviorSettings().getHerdMentalityValue());
         scores.put("herdingIndex", (double) getOwner().getBehaviorSettings().getHerdMentalityIndex());
         scores.put("herdingMod", herdingMod);
@@ -1892,10 +1895,29 @@ public class BasicPathRanker extends PathRanker {
 
         logger.trace("{}", formula);
 
+        scores.putAll(doctrineScores());
+
         RankedPath rankedPath = new RankedPath(utility, pathCopy, formula.toString());
         rankedPath.setExpectedDamage(damageEstimate.getMaximumDamageEstimate());
         rankedPath.getScores().putAll(scores);
         return rankedPath;
+    }
+
+    /**
+     * The reasoning behind a subclass's own modifiers, which becomes extra columns in the
+     * {@link megamek.client.bot.BotLogger} TSV.
+     *
+     * <p>The modifier values themselves are already recorded, but a number on its own only says how much a term
+     * weighed, not why. Answering "why did the bot do this" after the fact needs the inputs that produced it, and
+     * a subclass that replaces a modifier is the only thing that knows what those are. Anything left only in trace
+     * logging is effectively unavailable: it is off by default and rotates away within a minute of a company-scale
+     * game.</p>
+     *
+     * @return named values to record alongside the path's modifiers; empty by default
+     */
+    protected Map<String, Double> doctrineScores() {
+        // Base ranker: the modifier values already recorded tell the whole story.
+        return Map.of();
     }
 
     protected boolean isLosRange(Game game) {

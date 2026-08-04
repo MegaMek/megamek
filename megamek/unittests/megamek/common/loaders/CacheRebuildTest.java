@@ -33,6 +33,7 @@
 package megamek.common.loaders;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertSame;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.io.File;
@@ -40,10 +41,19 @@ import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.util.Map;
+import java.util.Vector;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
 
 import megamek.common.Configuration;
+import megamek.common.units.Entity;
+import megamek.common.units.UnitType;
+import org.apache.logging.log4j.Level;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.core.LogEvent;
+import org.apache.logging.log4j.core.Logger;
+import org.apache.logging.log4j.core.appender.AbstractAppender;
+import org.apache.logging.log4j.core.layout.PatternLayout;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
@@ -128,6 +138,47 @@ class CacheRebuildTest {
         assertEquals(0, cache.getCacheCount());
     }
 
+    @Test
+    void duplicateCacheKeysRetainFirstPublicLookupAndLogWarning() throws Exception {
+        MekSummaryCache cache = newCacheInstance();
+        Method resetLoadStats = MekSummaryCache.class.getDeclaredMethod("resetLoadStats");
+        resetLoadStats.setAccessible(true);
+        resetLoadStats.invoke(cache);
+        MekSummary first = collidingAsset("first.bfs");
+        MekSummary second = collidingAsset("second.bfs");
+        MekSummary third = collidingAsset("third.bfs");
+        Vector<MekSummary> summaries = new Vector<>(java.util.List.of(first, second, third));
+
+        Method updateData = MekSummaryCache.class.getDeclaredMethod("updateData", Vector.class);
+        updateData.setAccessible(true);
+        assertTrue((boolean) updateData.invoke(cache, summaries));
+        setInstanceField(cache, "initialized", true);
+
+        assertSame(first, cache.getAsset("Duplicate Asset"));
+        assertSame(first, cache.getByUnitFileUUID("duplicate-unit-uuid"));
+        assertSame(first, cache.getLinkedAssetForUnitFileUUID("duplicate-linked-uuid"));
+
+        CapturingAppender appender = new CapturingAppender();
+        Logger cacheLogger = (Logger) LogManager.getLogger(MekSummaryCache.class);
+        Level originalLevel = cacheLogger.getLevel();
+        cacheLogger.addAppender(appender);
+        cacheLogger.setLevel(Level.WARN);
+        appender.start();
+        try {
+            Method logReport = MekSummaryCache.class.getDeclaredMethod("logReport");
+            logReport.setAccessible(true);
+            logReport.invoke(cache);
+        } finally {
+            cacheLogger.removeAppender(appender);
+            cacheLogger.setLevel(originalLevel);
+            appender.stop();
+        }
+
+        assertTrue(appender.message.contains("first-loaded results are retained"));
+        assertTrue(appender.message.contains("Ambiguous Battlefield Support Asset name 'Duplicate Asset'"));
+        assertTrue(appender.message.contains("retaining the first-loaded lookup result"));
+    }
+
     private void resetCacheSingleton() throws Exception {
         setStaticField("instance", null);
         setStaticField("disposeInstance", false);
@@ -171,6 +222,30 @@ class CacheRebuildTest {
         Constructor<MekSummaryCache> constructor = MekSummaryCache.class.getDeclaredConstructor();
         constructor.setAccessible(true);
         return constructor.newInstance();
+    }
+
+    private MekSummary collidingAsset(String sourceName) {
+        MekSummary summary = new MekSummary();
+        summary.setName("Duplicate Asset");
+        summary.setSourceFile(new File(sourceName));
+        summary.setUnitType(UnitType.getTypeName(UnitType.BATTLEFIELD_SUPPORT_ASSET));
+        summary.setEntityType(Entity.ETYPE_BATTLEFIELD_SUPPORT_ASSET);
+        summary.setUnitFileUUID("duplicate-unit-uuid");
+        summary.setLinkedUnitId("duplicate-linked-uuid");
+        return summary;
+    }
+
+    private static final class CapturingAppender extends AbstractAppender {
+        private String message = "";
+
+        private CapturingAppender() {
+            super("CacheCollisionTest", null, PatternLayout.createDefaultLayout(), false, null);
+        }
+
+        @Override
+        public void append(LogEvent event) {
+            message += event.getMessage().getFormattedMessage();
+        }
     }
 
     private void setStaticField(String fieldName, Object value) throws Exception {

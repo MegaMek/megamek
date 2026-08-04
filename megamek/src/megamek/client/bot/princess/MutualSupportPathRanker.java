@@ -352,7 +352,8 @@ public class MutualSupportPathRanker extends BasicPathRanker {
      * anchor, which this doctrine does not use - {@code formationCentre} is the point it actually measured against.</p>
      */
     @Override
-    protected void recordDoctrineScores(Map<String, Double> scores) {
+    protected Map<String, Double> doctrineScores() {
+        Map<String, Double> scores = new HashMap<>();
         scores.put("formationCentre_x", lastFormationCentre == null ? -1.0 : lastFormationCentre.getX());
         scores.put("formationCentre_y", lastFormationCentre == null ? -1.0 : lastFormationCentre.getY());
         scores.put("formationRadius", (double) lastFormationRadius);
@@ -360,6 +361,7 @@ public class MutualSupportPathRanker extends BasicPathRanker {
         scores.put("coverBonus", lastCoverBonus);
         scores.put("coveringFriends", (double) lastCoveringFriends);
         scores.put("turnsToOwnBand", lastTurnsToBand);
+        return scores;
     }
 
     /**

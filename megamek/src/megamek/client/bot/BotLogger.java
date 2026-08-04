@@ -60,6 +60,9 @@ public class BotLogger {
      * ranker for infantry, a doctrine recording its own reasoning, a term only recorded in some situations. Rows of
      * differing width under a header written once are not analysable, which defeats the point of logging the
      * reasoning at all. A fresh header is written whenever the set changes.</p>
+     *
+     * <p>Guarded by the lock on this logger: one instance serves every bot in the JVM, so the decision to write a
+     * header and the writing of it have to happen together.</p>
      */
     private List<String> currentScoreHeaders = List.of();
 
@@ -198,7 +201,10 @@ public class BotLogger {
      * @param rankedPath the RankedPath to append, which contains the path, rank, scores, and entity information
      * @param index      if 0 it will print header, otherwise it wil just add the index here.
      */
-    public void append(RankedPath rankedPath, int index) {
+    // Synchronized because PathRanker holds one BotLogger for the whole JVM and every bot ranks paths on its own
+    // thread. Choosing whether to write a header and then writing it is a check-then-act on shared state: without
+    // this, two bots with different score columns can interleave and leave rows with no matching header above them.
+    public synchronized void append(RankedPath rankedPath, int index) {
         try {
             var movePath = rankedPath.getPath();
             var rank = rankedPath.getRank() + "";
@@ -244,7 +250,7 @@ public class BotLogger {
             // row which follows can be read against the header above it.
             if ((index == 0) || !scoreHeaders.equals(currentScoreHeaders)) {
                 currentScoreHeaders = List.copyOf(scoreHeaders);
-                append(String.join("	", header));
+                append(String.join("\t", header));
             }
 
             var values = new ArrayList<>(List.of(PATH_RANK_RECORD,

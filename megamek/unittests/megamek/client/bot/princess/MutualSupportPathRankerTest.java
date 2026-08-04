@@ -192,7 +192,9 @@ class MutualSupportPathRankerTest {
         when(mockFriend.getPosition()).thenReturn(new Coords(5, 15)); // 5 hexes from destination
         when(mockFriend.isDone()).thenReturn(true);
         setEnemyDistances(14.0, 9.0, CLOSING_DESTINATION);
-        assertEquals(-12.0, testRanker.calculateHerdingMod(null, mockPath), TOLERANCE);
+        // One covering friend at the cover bonus. The value is small on purpose: measured over 200 games the
+        // bonus changes nothing at any size, because the formation term now does this shaping directly.
+        assertEquals(-2.0, testRanker.calculateHerdingMod(null, mockPath), TOLERANCE);
     }
 
     @Test

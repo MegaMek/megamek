@@ -105,14 +105,27 @@ public class MutualSupportPathRanker extends BasicPathRanker {
     private static final double FORMATION_HOLD_FACTOR = 5.0;
 
     /**
-     * Utility bonus per set (already moved) friend whose envelope covers the destination. Sized to decide
-     * between two otherwise comparable advances without ever outranking a genuine fall risk: the competing
-     * rank terms run about 50 for a single risky piloting roll and 250 for sprinting into threat, so the
-     * first benchmark's value of 2.0 (4.0 for two friends) was inside the noise and shaped nothing - units
-     * still broke off and advanced uncovered. Twelve, doubled for a second covering friend, is decisive
-     * between advances and still well under the fall-risk terms.
+     * Utility bonus per set (already moved) friend whose envelope covers the destination.
+     *
+     * <p><b>Measured to change nothing at any value, and kept only pending evidence from a scenario this one cannot
+     * provide.</b> Isolating it over 200 games moved neither the formation, nor fire support overlap, nor how evenly
+     * the force advanced, nor the win rate - a sixfold change in the constant was smaller than the difference between
+     * two arms of identical code.</p>
+     *
+     * <p>It is redundant because the formation term took over its job and does it directly. This was raised to 12.0
+     * when cohesion still exempted every closing path, and at 2.0 it sat under the noise floor of fall risk (about 50
+     * for one risky piloting roll) and sprint exposure (about 250), shaping nothing. At 12.0 it did shape choices, and
+     * badly: it became a second attractor and collapsed the formation back to stock spacing. Now that cohesion is
+     * charged against the formation on every path, a unit is already held in a body that is inside its friends'
+     * envelopes, so by the time this is consulted the paths it would promote are the ones cohesion has promoted
+     * already.</p>
+     *
+     * <p>Set to the smaller of the two measured values, since the larger is the one shown to distort. It is a
+     * candidate for removal: a term that does nothing is a term someone will later tune believing it does something.
+     * Removing it wants evidence from a scenario where units genuinely need covering fire, which a company meeting
+     * another company in the open does not provide.</p>
      */
-    private static final double COVER_BONUS = 12.0;
+    private static final double COVER_BONUS = 2.0;
 
     /** At most this many covering friends earn the bonus; a whole company stacking adds nothing. */
     private static final int COVER_BONUS_MAX_FRIENDS = 2;

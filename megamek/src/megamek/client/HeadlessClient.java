@@ -63,6 +63,21 @@ public class HeadlessClient extends Client {
 
     private boolean sendDoneOnVictoryAutomatically = true;
 
+    /**
+     * A client with no GUI has nothing to show an entity's picture in, so it does not cache one.
+     *
+     * <p>Building that cache is what pulls in the hex tile set, which parses thousands of template hexes and their
+     * terrain. {@code BotClient} already declines it for the same reason; a headless client wants it no more than a
+     * bot does, and anywhere clients are created repeatedly - a benchmark playing many games in one process - the
+     * cost is paid and retained once per game.</p>
+     *
+     * @param entity ignored
+     */
+    @Override
+    protected void cacheImgTag(Entity entity) {
+        // Deliberately empty: see the javadoc.
+    }
+
     public HeadlessClient(String name, String host, int port) {
         super(name, host, port);
 

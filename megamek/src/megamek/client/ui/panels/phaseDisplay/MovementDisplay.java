@@ -91,6 +91,7 @@ import megamek.common.compute.Compute;
 import megamek.common.compute.ComputeArc;
 import megamek.common.enums.MoveStepType;
 import megamek.common.equipment.DockingCollar;
+import megamek.common.equipment.EquipmentMode;
 import megamek.common.equipment.ExternalCargo;
 import megamek.common.equipment.ICarryable;
 import megamek.common.equipment.Minefield;
@@ -2764,6 +2765,17 @@ public class MovementDisplay extends ActionPhaseDisplay {
                                               && (currentlySelectedEntity.getInternal(m.getLocation()) > 0)) {
                                             // Only one shield needs to be raised
                                             m.setMode(MiscType.S_ACTIVE_SHIELD);
+                                            Enumeration<EquipmentMode> shieldModes = m.getType().getModes();
+                                            int nMode = 0;
+                                            while (shieldModes.hasMoreElements()) {
+                                                EquipmentMode shieldMode = shieldModes.nextElement();
+                                                if (shieldMode.equals(MiscType.S_ACTIVE_SHIELD)) {
+                                                    break;
+                                                }
+                                                nMode++;
+                                            }
+                                            clientgui.getClient().sendModeChange(currentlySelectedEntity.getId(),
+                                                  m.equipmentIndex(), nMode);
                                             break;
                                         }
                                     }

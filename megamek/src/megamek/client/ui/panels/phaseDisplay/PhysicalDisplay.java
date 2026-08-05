@@ -55,8 +55,9 @@ import megamek.client.ui.clientGUI.ClientGUI;
 import megamek.client.ui.clientGUI.boardview.BoardView;
 import megamek.client.ui.clientGUI.boardview.IBoardView;
 import megamek.client.ui.clientGUI.boardview.overlay.ToastLevel;
-import megamek.client.ui.dialogs.ChoiceDialog;
+import megamek.client.ui.dialogs.phaseDisplay.CalledBlowDialog;
 import megamek.client.ui.dialogs.phaseDisplay.TargetChoiceDialog;
+import megamek.client.ui.enums.DialogResult;
 import megamek.client.ui.util.KeyCommandBind;
 import megamek.client.ui.util.MegaMekController;
 import megamek.client.ui.widget.MegaMekButton;
@@ -1275,18 +1276,14 @@ public class PhysicalDisplay extends AttackPhaseDisplay {
               Messages.getString("PhysicalDisplay.CalledBlowDialog.lineLow",
                     calledLowToHit.getValueAsString()) };
 
-        ChoiceDialog calledBlowDialog = new ChoiceDialog(clientgui.getFrame(),
-              Messages.getString("PhysicalDisplay.CalledBlowDialog.title", club.getName()),
-              Messages.getString("PhysicalDisplay.CalledBlowDialog.message", club.getName()),
-              choices,
-              true);
-        calledBlowDialog.setVisible(true);
-        if (!calledBlowDialog.getAnswer()) {
+        CalledBlowDialog calledBlowDialog = new CalledBlowDialog(clientgui.getFrame(), club.getName(), choices);
+        DialogResult result = calledBlowDialog.showDialog();
+        if (!result.isConfirmed()) {
             logger.debug("[CalledBlow] {}: player cancelled the {} attack",
                   attacker.getShortName(), club.getName());
             return CALLED_BLOW_CANCELLED;
         }
-        return switch (calledBlowDialog.getChoices()[0]) {
+        return switch (calledBlowDialog.getSelectedIndex()) {
             case 1 -> ToHitData.HIT_PUNCH;
             case 2 -> ToHitData.HIT_KICK;
             default -> ToHitData.HIT_NORMAL;

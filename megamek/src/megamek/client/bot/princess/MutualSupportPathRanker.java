@@ -81,9 +81,10 @@ import megamek.logging.MMLogger;
  * pass a few units at a time - a river ford, a bridge, a city gate - makes someone go first, and going first means
  * leaving the formation. Two things keep that from stalling a crossing: the bound above, and {@link FormationSide},
  * which stops a force split by deep water being measured against a centre sitting in the river. Measured on a river
- * crossing before those changes, one turn charged 68.7 against crossing where a whole turn of advance is worth 75,
- * and companies hesitated at the bank a round at a time. This does not make a crossing free - water entry piloting
- * risk and sprint exposure still argue against it - it stops cohesion being the term that decides.</p>
+ * crossing at default settings, one turn charged 13.7 against crossing where a whole turn of advance is worth 37.5 -
+ * better than a third of a turn, given up to hold a formation - and companies hesitated at the bank a round at a
+ * time. This does not make a crossing free: water entry piloting risk and wading cost are far larger than either
+ * figure and still argue against it. It stops cohesion being the term that decides.</p>
  *
  * <p>An earlier version instead exempted any closing path from cohesion entirely. That sounded like the same
  * guarantee and was much weaker: during an approach nearly every path closes, so cohesion switched off for exactly
@@ -284,6 +285,9 @@ public class MutualSupportPathRanker extends BasicPathRanker {
 
         List<Entity> friends = getSupportingFriends(movingUnit, game);
         if (friends.isEmpty()) {
+            // Nothing to form up on, so the doctrine scores nothing - but they are recorded for every path
+            // whether or not this ran, so they have to say "nothing" rather than repeat the last path's.
+            clearDoctrineScores();
             logger.trace("[MutualSupport] mod [0: no friends]");
             return 0;
         }
@@ -326,16 +330,35 @@ public class MutualSupportPathRanker extends BasicPathRanker {
      * formation can never be worth more to a unit than a turn's advance is.</p>
      *
      * <p>It matters at a chokepoint. Where terrain lets a force through only a few hexes at a time - a river ford,
-     * a bridge, a city gate - somebody has to go first, and going first means leaving the formation. Measured on a
-     * river crossing, one turn charged 68.7 against a crossing path, against the 75 a whole turn of advance is
-     * worth: enough to make a company hesitate at the bank for a round at a time. The cap does not make crossing
-     * free, and other terms (water entry piloting risk, sprint exposure) still argue against it; it stops
-     * cohesion being the term that decides.</p>
+     * a bridge, a city gate - somebody has to go first, and going first means leaving the formation.</p>
+     *
+     * <p>At default settings the bound is 30, against the 37.5 a full turn of advance is worth. A unit pays it once
+     * it is about ten hexes outside its formation; below that the raw penalty is smaller and the bound never
+     * applies. The worst single turn measured on a river crossing charged 13.7 - real, better than a third of a
+     * turn's advance, but under the bound. <b>So the case for the bound is structural rather than that measurement:
+     * without it the penalty grows without limit, and a unit far enough out of position would refuse to advance at
+     * any price.</b> The bound is what makes the promise above true by construction.</p>
      *
      * @param aggression the bot's hyper aggression setting
      *
      * @return the ceiling on the formation penalty, in the same utility units as the rest of the ranking
      */
+    /**
+     * Resets the recorded reasoning to "nothing applied".
+     *
+     * <p>{@code BasicPathRanker} records {@link #doctrineScores()} for every path it ranks, including the ones
+     * this doctrine bows out of. The fields are per-mover state reused across paths, so a path that scores
+     * nothing must say so rather than leave the previous path's figures standing - a reader cannot tell a stale
+     * number from a real one, and these columns exist to answer why a unit moved where it did.</p>
+     */
+    private void clearDoctrineScores() {
+        lastFormationCentre = null;
+        lastFormationRadius = 0;
+        lastHexesOutOfFormation = 0;
+        lastCoverBonus = 0;
+        lastCoveringFriends = 0;
+    }
+
     private static double maximumFormationPenalty(double aggression) {
         return TEMPO_REFERENCE_MP * aggression * COHESION_WEIGHT_CAP_FACTOR;
     }
@@ -475,6 +498,7 @@ public class MutualSupportPathRanker extends BasicPathRanker {
         // nothing to take cover from, so no shaping applies.
         double distanceToEnemy = distanceToClosestEnemy(movingUnit, path.getFinalCoords(), game);
         if ((distanceToEnemy < 0) || (distanceToEnemy > THREAT_CONTACT_RANGE)) {
+            lastCoveringFriends = 0;
             return 0;
         }
 

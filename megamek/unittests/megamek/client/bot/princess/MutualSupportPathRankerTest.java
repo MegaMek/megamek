@@ -42,6 +42,7 @@ import static org.mockito.Mockito.spy;
 import static org.mockito.Mockito.when;
 
 import java.util.List;
+import java.util.Map;
 
 import megamek.client.bot.princess.UnitBehavior.BehaviorType;
 import megamek.common.board.Coords;
@@ -171,9 +172,39 @@ class MutualSupportPathRankerTest {
     }
 
     /**
+     * The recorded reasoning is written for every path, including the ones this doctrine bows out of, and the
+     * fields carrying it are reused across paths. A path that scores nothing must therefore say so: leaving the
+     * previous path's figures standing makes the log lie, and a reader cannot tell a stale number from a real one.
+     */
+    @Test
+    void aPathWithNoFriendsRecordsNothingRatherThanTheLastPathsFigures() {
+        // First rank a path with a friend present, so the doctrine fields hold real values.
+        when(mockFriend.getPosition()).thenReturn(new Coords(0, 26));
+        setEnemyDistances(20.0, 20.0, HOLDING_DESTINATION);
+        testRanker.calculateMutualSupportMod(null, mockPath);
+        assertTrue(testRanker.doctrineScores().get("hexesOutOfFormation") > 0.0,
+              "precondition: the first path must leave real figures behind");
+
+        // Now rank one with nobody to form up on. The friends list is cached per mover per round, so the round
+        // is advanced to clear it - which is also the real shape of the bug: the recorded fields are ranker
+        // state shared by every mover, so one unit's figures outlive it into the next unit's paths.
+        when(mockGame.getCurrentRound()).thenReturn(2);
+        when(mockPrincess.getEntitiesOwned()).thenReturn(List.of(mockMover));
+        testRanker.calculateMutualSupportMod(null, mockPath);
+
+        Map<String, Double> scores = testRanker.doctrineScores();
+        assertEquals(0.0, scores.get("hexesOutOfFormation"), TOLERANCE);
+        assertEquals(0.0, scores.get("formationRadius"), TOLERANCE);
+        assertEquals(0.0, scores.get("coverBonus"), TOLERANCE);
+        assertEquals(0.0, scores.get("coveringFriends"), TOLERANCE);
+        assertEquals(-1.0, scores.get("formationCentre_x"), TOLERANCE,
+              "no formation means no centre, which the log records as -1");
+    }
+
+    /**
      * However far out of position a unit is, holding formation must never be worth more to it than a turn's
-     * advance. Without this ceiling the penalty grew without limit, and at a river crossing it reached 68.7
-     * against a whole turn of advance worth 75 - enough to hold a company on the bank a round at a time.
+     * advance. Without this ceiling the penalty grew without limit: a unit far enough out of position would refuse
+     * to advance at any price. At the mocked settings here a turn's advance is worth 37.5 and the ceiling is 30.
      */
     @Test
     void theFormationPenaltyNeverExceedsATurnOfAdvance() {

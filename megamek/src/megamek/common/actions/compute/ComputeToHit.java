@@ -1914,6 +1914,7 @@ public class ComputeToHit {
         // flak attack against it
         // TN is a flat 3 + the altitude mod + the attacker's weapon skill - 2 for Flak
         // Grounded/destroyed/landed/wrecked ASF/VTOL/WiGE should be treated as normal.
+        int baseMod = 0;
         if ((isArtilleryFLAK || (ammoType.countsAsFlak())) && te != null) {
             if (te.isAirborne() || te.isAirborneVTOLorWIGE()) {
                 srt.setSpecialResolution(true);
@@ -1922,7 +1923,8 @@ public class ComputeToHit {
                     toHit.addModifier(TargetRoll.IMPOSSIBLE, Messages.getString("WeaponAttackAction.FlakIndirect"));
                     return toHit;
                 }
-                toHit.addModifier(3, Messages.getString("WeaponAttackAction.ArtyFlak"));
+                baseMod = Game.rulesManager.getRulesArtillery().computeArtilleryBaseMod(17,true,true);
+                toHit.addModifier(baseMod, Messages.getString("WeaponAttackAction.ArtyFlak"));
                 toHit.addModifier(-2, Messages.getString("WeaponAttackAction.Flak"));
                 if (te.getAltitude() > 3) {
                     if (te.getAltitude() > 9) {
@@ -1938,7 +1940,8 @@ public class ComputeToHit {
         }
 
         // All other direct fire artillery attacks (attacker movement modifier already appended above)
-        toHit.addModifier(4, Messages.getString("WeaponAttackAction.DirectArty"));
+        baseMod = Game.rulesManager.getRulesArtillery().computeArtilleryBaseMod(17,true,false);
+        toHit.addModifier(baseMod, Messages.getString("WeaponAttackAction.DirectArty"));
         // without LOS, it is a short-range indirect attack that ignores LOS modifiers, TO:AR p.153
         if (!losMods.cannotSucceed()) {
             toHit.append(losMods);
@@ -1980,7 +1983,8 @@ public class ComputeToHit {
           WeaponType weaponType, Mounted<?> weapon, SpecialResolutionTracker specialResolutionTracker) {
 
         // See MegaMek/megamek#5168
-        int mod = (ae.getPosition().distance(target.getPosition()) <= 17) ? 4 : 7;
+        int mod =
+              Game.rulesManager.getRulesArtillery().computeArtilleryBaseMod(ae.getPosition().distance(target.getPosition()), false, false);
         if (ae.hasAbility(OptionsConstants.GUNNERY_OBLIQUE_ATTACKER)) {
             mod--;
         }

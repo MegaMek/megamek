@@ -35,4 +35,12 @@ package megamek.common.rules;
 
 
 public abstract class RulesArtillery {
+
+    /**
+     * Determine correct mods for artillery fire
+     * @param distance
+     * @param direct
+     * @return
+     */
+    public abstract int computeArtilleryBaseMod(int distance, boolean direct, boolean flak);
 }

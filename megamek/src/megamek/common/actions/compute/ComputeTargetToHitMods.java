@@ -50,7 +50,6 @@ import megamek.common.equipment.WeaponType;
 import megamek.common.game.Game;
 import megamek.common.options.OptionsConstants;
 import megamek.common.units.*;
-import megamek.common.weapons.artillery.ArtilleryCannonWeapon;
 
 public class ComputeTargetToHitMods {
 
@@ -288,28 +287,9 @@ public class ComputeTargetToHitMods {
             toHit.addModifier(vMod, Messages.getString("WeaponAttackAction.TeVelocity"));
         }
 
-        // target immobile
-        boolean mekMortarMunitionsIgnoreImmobile = (weaponType != null)
-              && weaponType.hasFlag(WeaponType.F_MEK_MORTAR)
-              && (ammoType != null)
-              && munition.contains(AmmoType.Munitions.M_AIRBURST);
-        if (weaponType != null && !(weaponType instanceof ArtilleryCannonWeapon) && !mekMortarMunitionsIgnoreImmobile) {
-            ToHitData immobileMod;
-            // grounded dropships are treated as immobile as well for purpose of the mods
-            if (entityTarget instanceof Dropship && !entityTarget.isAirborne() && !entityTarget.isSpaceborne()) {
-                immobileMod = new ToHitData(-4, Messages.getString("WeaponAttackAction.ImmobileDs"));
-            } else {
-                if (Compute.allowAimedShotWith(weapon, aimingMode)) {
-                    immobileMod = Compute.getImmobileMod(target, aimingAt, aimingMode);
-                } else {
-                    immobileMod = Compute.getImmobileMod(target, aimingAt, AimingMode.NONE);
-                }
-            }
-
-            if (immobileMod != null) {
-                toHit.append(immobileMod);
-            }
-        }
+        // Add target immobile mod, if applicable
+        Game.rulesManager.getRulesTarget().addImmobileMod(target, toHit, aimingAt, weaponType,
+              weapon, ammoType, munition, entityTarget, aimingMode);
 
         // Unit-specific modifiers
 

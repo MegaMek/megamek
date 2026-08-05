@@ -32,12 +32,22 @@ package megamek.common.rules;
  * affiliated with Microsoft.
  */
 
+import megamek.client.ui.Messages;
 import megamek.common.LosEffects;
+import megamek.common.ToHitData;
 import megamek.common.board.Coords;
+import megamek.common.compute.Compute;
+import megamek.common.enums.AimingMode;
+import megamek.common.equipment.AmmoType;
+import megamek.common.equipment.WeaponMounted;
+import megamek.common.equipment.WeaponType;
+import megamek.common.units.Dropship;
 import megamek.common.units.Entity;
 import megamek.common.units.Targetable;
+import megamek.common.weapons.artillery.ArtilleryCannonWeapon;
 
 import java.util.ArrayList;
+import java.util.EnumSet;
 
 public abstract class RulesTarget {
     /**
@@ -101,4 +111,23 @@ public abstract class RulesTarget {
      * @return the BAP smoke reduction amount
      */
     public abstract int getBAPSmokeReduction(LosEffects los);
+
+    /**
+     * Compute whether this specific target will get an immobile mod, and applies the mod if necessary
+     *
+     * @param target        Targetable being attacked
+     * @param toHit         Existing ToHitData
+     * @param aimingAt      Aimed-at location, if applicable
+     * @param weaponType    Type of attacking weapon
+     * @param weapon        The weapon itself
+     * @param ammoType      Type of ammo
+     * @param munition      Collection of munition information
+     * @param entityTarget  Entity version of the target, if it's an entity, else null
+     * @param aimingMode    Aiming mode data
+     *
+     * Note: modifies the passed-in ToHitData toHit.
+     */
+    public abstract void addImmobileMod(Targetable target, ToHitData toHit, int aimingAt, WeaponType weaponType,
+          WeaponMounted weapon, AmmoType ammoType, EnumSet<AmmoType.Munitions> munition, Entity entityTarget,
+         AimingMode aimingMode);
 }

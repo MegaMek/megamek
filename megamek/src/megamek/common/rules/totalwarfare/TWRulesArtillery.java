@@ -37,4 +37,17 @@ package megamek.common.rules.totalwarfare;
 import megamek.common.rules.RulesArtillery;
 
 public class TWRulesArtillery extends RulesArtillery {
+
+    /**
+     * Determine correct mods for artillery fire
+     * @param distance
+     * @param direct
+     * @return
+     */
+    public int computeArtilleryBaseMod(int distance, boolean direct, boolean flak) {
+
+        int mod = (flak) ? 3 : (direct) ? 4 : (distance > 17) ? 4 : 7;
+        return mod;
+
+    }
 }

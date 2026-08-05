@@ -40,6 +40,7 @@ import megamek.common.annotations.Nullable;
 import megamek.common.board.Coords;
 import megamek.common.game.Game;
 import megamek.common.units.Entity;
+import megamek.logging.MMLogger;
 
 /**
  * Deployment half of the Mutual Support doctrine: get a force onto the board as a formation rather than as a set of
@@ -88,6 +89,7 @@ import megamek.common.units.Entity;
  * @see SupportEnvelope the shared definition of supporting range
  */
 public final class MutualSupportDeployment {
+    private final static MMLogger logger = MMLogger.create(MutualSupportDeployment.class);
 
     /**
      * Closest a unit will willingly deploy to a friend, in hexes.
@@ -116,10 +118,22 @@ public final class MutualSupportDeployment {
     public static List<Coords> prioritize(Entity deployedUnit, List<Coords> candidates, List<Entity> friends,
           Game game, int formationRadius) {
         if (candidates.size() < 2) {
+            logger.debug("[MutualSupport] deploy [{}]: not reordered, only {} candidate hex(es)",
+                  deployedUnit.getShortName(), candidates.size());
             return candidates;
         }
         List<Coords> friendlyPositions = anchorPositions(deployedUnit, friends, game);
-        Coords anchor = centroid(friendlyPositions.isEmpty() ? candidates : friendlyPositions);
+        boolean firstOnBoard = friendlyPositions.isEmpty();
+        Coords anchor = centroid(firstOnBoard ? candidates : friendlyPositions);
+        if (firstOnBoard) {
+            // Nothing to form up on yet, so the zone's own middle is the anchor and this unit becomes the
+            // seed everything after it gathers around.
+            logger.debug("[MutualSupport] deploy [{}]: no deployed friends, anchoring on zone centre {}",
+                  deployedUnit.getShortName(), anchor);
+        } else {
+            logger.debug("[MutualSupport] deploy [{}]: anchor {} from {} friend(s), formation radius {}",
+                  deployedUnit.getShortName(), anchor, friendlyPositions.size(), formationRadius);
+        }
         return orderByFormation(candidates, anchor, friendlyPositions, formationRadius);
     }
 
@@ -165,6 +179,10 @@ public final class MutualSupportDeployment {
      */
     static int formationRadiusFor(List<Integer> effectiveRanges, double mutualSupportMultiplier) {
         if (effectiveRanges.isEmpty() || (mutualSupportMultiplier <= 0)) {
+            // Either nothing in the force has a weapon, or the setting is off. Both leave the radius with
+            // nothing to size it from, so it collapses to bare spacing and the rule stops constraining.
+            logger.debug("[MutualSupport] formation radius [{}]: {} armed unit(s), setting {}",
+                  MINIMUM_SPACING_HEXES, effectiveRanges.size(), mutualSupportMultiplier);
             return MINIMUM_SPACING_HEXES;
         }
         long totalEffectiveRange = 0;

@@ -1055,7 +1055,7 @@ public class MULParser {
         // Load some values for conventional infantry
         if (entity instanceof ConvInfantry inf) {
             String armorName = entityTag.getAttribute(ATTR_ARMOR_NAME);
-            inf.setCustomArmorName(!armorName.isBlank() ? armorName : null);
+            inf.setCustomArmorName(armorName);
 
             String armorDiv = entityTag.getAttribute(ATTR_ARMOR_DIVISOR);
             if (!armorDiv.isBlank()) {

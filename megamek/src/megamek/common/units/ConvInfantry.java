@@ -1280,11 +1280,11 @@ public class ConvInfantry extends Infantry {
     }
 
     /**
-     * Sets the custom armor name
+     * Sets the custom armor name. Cleans blank names to null.
      * @param customArmorName Custom armor name
      */
-    public void setCustomArmorName(String customArmorName) {
-        this.customArmorName = customArmorName;
+    public void setCustomArmorName(@Nullable String customArmorName) {
+        this.customArmorName = (customArmorName == null || customArmorName.isBlank()) ? null : customArmorName;
     }
 
     /**

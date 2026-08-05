@@ -1023,7 +1023,7 @@ public class EntityListFile {
             if (entity instanceof ConvInfantry infantry) {
                 if (infantry.getCustomArmorName() != null) {
                     output.write("\" " + MULParser.ATTR_ARMOR_NAME + "=\"");
-                    output.write(infantry.getCustomArmorName());
+                    output.write(MMXMLUtility.escape(infantry.getCustomArmorName()));
                 }
                 if (infantry.getCustomArmorDamageDivisor() != 1) {
                     output.write("\" " + MULParser.ATTR_ARMOR_DIVISOR + "=\"");

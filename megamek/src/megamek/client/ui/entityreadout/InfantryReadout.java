@@ -363,7 +363,7 @@ class InfantryReadout extends GeneralEntityReadout {
             }
         } else {
             armorName = Messages.getString("MekView.None");
-            if (infantry.getArmorSpecials().isBlank()) {
+            if (!infantry.getArmorSpecials().isBlank()) {
                 armorName += " " + infantry.getArmorSpecials();
             }
         }

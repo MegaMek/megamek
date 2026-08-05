@@ -98,7 +98,7 @@ public class InfantryTROView extends TROView {
             }
         } else {
             armorName = Messages.getString("TROView.None");
-            if (inf.getArmorSpecials().isBlank()) {
+            if (!inf.getArmorSpecials().isBlank()) {
                 armorName += " " + inf.getArmorSpecials();
             }
         }

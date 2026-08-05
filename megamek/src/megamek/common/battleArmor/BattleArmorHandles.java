@@ -145,9 +145,20 @@ public class BattleArmorHandles implements Transporter {
                 case Mek.LOC_RIGHT_TORSO -> isRear ? BattleArmor.LOC_TROOPER_3 : BattleArmor.LOC_TROOPER_1;
                 default -> trooperLocation;
             };
-            return (carriedBattleArmor.locations() > trooperLocation)
-                  && (carriedBattleArmor.getInternal(trooperLocation) > 0);
+            return hasActiveTrooper(carriedBattleArmor, trooperLocation);
         }
+    }
+
+    /**
+     * @param carriedBattleArmor the battle armor unit carried by these handles
+     * @param trooperLocation    the trooper location to check
+     *
+     * @return {@code true} if the carried battle armor has the given trooper location and that trooper still has
+     *       internal structure remaining
+     */
+    protected static boolean hasActiveTrooper(Entity carriedBattleArmor, int trooperLocation) {
+        return (carriedBattleArmor.locations() > trooperLocation)
+              && (carriedBattleArmor.getInternal(trooperLocation) > 0);
     }
 
     @Override

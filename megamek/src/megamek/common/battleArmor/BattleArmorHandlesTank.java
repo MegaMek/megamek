@@ -70,10 +70,9 @@ public class BattleArmorHandlesTank extends BattleArmorHandles {
                 }
                 default -> troopLocation2;
             };
-            return ((carriedBattleArmor.locations() > troopLocation1)
-                  && (carriedBattleArmor.getInternal(troopLocation1) > 0))
-                  || ((carriedBattleArmor.locations() > troopLocation2)
-                  && (carriedBattleArmor.getInternal(troopLocation2) > 0));
+            boolean firstTrooperActive = hasActiveTrooper(carriedBattleArmor, troopLocation1);
+            boolean secondTrooperActive = hasActiveTrooper(carriedBattleArmor, troopLocation2);
+            return firstTrooperActive || secondTrooperActive;
         }
     }
 }

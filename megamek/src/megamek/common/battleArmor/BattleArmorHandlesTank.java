@@ -1,6 +1,6 @@
 /*
  * Copyright (c) 2010 - Ben Mazur (bmazur@sev.org).
- * Copyright (C) 2006-2022-2025 The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2006-2026 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -45,6 +45,10 @@ public class BattleArmorHandlesTank extends BattleArmorHandles {
 
     @Override
     public final boolean isWeaponBlockedAt(int loc, boolean isRear) {
+        if (game == null) {
+            return false;
+        }
+
         Entity carriedBA = game.getEntity(carriedUnit);
         if (carriedBA == null) {
             return false;

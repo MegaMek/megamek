@@ -1,6 +1,6 @@
 /*
   Copyright (C) 2002-2005 Ben Mazur (bmazur@sev.org)
- * Copyright (C) 2003-2025 The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2003-2026 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -82,7 +82,12 @@ public class BattleArmorHandles implements Transporter {
 
     @Override
     public final List<Entity> getLoadedUnits() {
+        // The game reference is transient and unset until setGame() is called (e.g. while the server
+        // verifies a newly added unit, issue #8638) - without it the carried unit ID cannot be resolved.
         List<Entity> units = new ArrayList<>(1);
+        if ((game == null) || (carriedUnit == Entity.NONE)) {
+            return units;
+        }
         Entity entity = game.getEntity(carriedUnit);
         if (entity != null) {
             units.add(entity);
@@ -92,6 +97,10 @@ public class BattleArmorHandles implements Transporter {
 
     @Override
     public final boolean unload(Entity unit) {
+        if (game == null) {
+            return false;
+        }
+
         // Are we carrying the unit?
         Entity trooper = game.getEntity(carriedUnit);
         if ((trooper == null) || !trooper.equals(unit)) {
@@ -121,6 +130,10 @@ public class BattleArmorHandles implements Transporter {
 
     @Override
     public boolean isWeaponBlockedAt(int loc, boolean isRear) {
+        if (game == null) {
+            return false;
+        }
+
         Entity carriedBA = game.getEntity(carriedUnit);
         if (carriedBA == null) {
             return false;

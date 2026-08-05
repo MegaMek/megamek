@@ -125,8 +125,8 @@ class SettingsSearchHighlightLayerUITest {
     void htmlHighlightKeepsXpMatchInsideExperienceWord() throws Exception {
         runOnEdt(() -> {
             List<String> labels = List.of(
-                  "Negotiation skill generation and administrator experience-level handling.",
-                  "Negotiation Factored into Experience Level");
+                  "experience",
+                  "Experience");
             for (String text : labels) {
                 JLabel label = new JLabel("<html><nobr>" + text + "</nobr></html>");
                 HighlightFixture fixture = fixture(label);

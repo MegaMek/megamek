@@ -88,8 +88,18 @@ class BehaviorSettingsTest {
         behaviorSettings.setExclusiveHerding(true);
         assertTrue(behaviorSettings.isExclusiveMutualSupport(), "the old flag setter must write the new flag");
         assertTrue(behaviorSettings.isExclusiveHerding(), "and the old flag getter must read it back");
+
+        // The other direction, which is the one that catches a deprecated getter quietly acquiring a field of
+        // its own: write through the current setter, read through the deprecated getter.
+        behaviorSettings.setExclusiveMutualSupport(false);
+        assertFalse(behaviorSettings.isExclusiveHerding(), "the old flag getter must see a new-setter write");
+        behaviorSettings.setExclusiveMutualSupport(true);
+        assertTrue(behaviorSettings.isExclusiveHerding(), "and must follow it back again");
+
         behaviorSettings.setExclusiveHerding("false");
         assertFalse(behaviorSettings.isExclusiveMutualSupport(), "the string overload must delegate too");
+        behaviorSettings.setExclusiveMutualSupport("true");
+        assertTrue(behaviorSettings.isExclusiveHerding(), "including the new string overload, read the old way");
     }
 
     @Test

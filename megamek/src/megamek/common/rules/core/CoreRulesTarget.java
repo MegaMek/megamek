@@ -35,13 +35,10 @@ package megamek.common.rules.core;
 import megamek.client.ui.Messages;
 import megamek.common.CriticalSlot;
 import megamek.common.LosEffects;
-import megamek.common.TargetRollModifier;
 import megamek.common.ToHitData;
-import megamek.common.board.Coords;
 import megamek.common.compute.Compute;
 import megamek.common.enums.AimingMode;
 import megamek.common.equipment.AmmoType;
-import megamek.common.equipment.EquipmentFlag;
 import megamek.common.equipment.WeaponMounted;
 import megamek.common.equipment.WeaponType;
 import megamek.common.rules.RulesTarget;
@@ -54,9 +51,7 @@ import megamek.common.weapons.artillery.ArtilleryCannonWeapon;
 import megamek.common.weapons.artillery.ArtilleryWeapon;
 import megamek.common.weapons.bayWeapons.ArtilleryBayWeapon;
 
-import java.util.ArrayList;
 import java.util.EnumSet;
-import java.util.List;
 
 public class CoreRulesTarget extends RulesTarget {
     /**

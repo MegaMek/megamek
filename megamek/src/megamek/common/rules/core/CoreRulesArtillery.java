@@ -39,11 +39,12 @@ import megamek.common.rules.RulesArtillery;
 public class CoreRulesArtillery extends RulesArtillery {
 
     /**
-     * Determine correct mods for artillery fire.
+     * Determine correct base mods for artillery fire.
      * Core p. 63, 68-69, etc.
-     * @param distance
-     * @param direct
-     * @return
+     * @param distance  range from attacker to target in hexes
+     * @param direct    direct fire, otherwise indirect fire
+     * @param flak      direct fire against airborne ground or ASF target if true
+     * @return base Artillery attack mod, currently always 4 for Core rules
      */
     public int computeArtilleryBaseMod(int distance, boolean direct, boolean flak) {
         return 4;

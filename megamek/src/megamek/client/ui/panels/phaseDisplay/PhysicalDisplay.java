@@ -1350,17 +1350,18 @@ public class PhysicalDisplay extends AttackPhaseDisplay {
         if (currentEntity() == null) {
             return;
         }
-        final Entity en = currentEntity();
+        final Entity attacker = currentEntity();
 
-        final boolean isAptPiloting = (en.getCrew() != null)
-              && en.hasAbility(OptionsConstants.PILOT_APTITUDE_PILOTING);
-        final boolean isMeleeMaster = (en.getCrew() != null)
-              && en.hasAbility(OptionsConstants.PILOT_MELEE_MASTER);
-        final boolean canZweihander = (en instanceof BipedMek)
-              && ((BipedMek) en).canZweihander()
-              && ComputeArc.isInArc(en.getPosition(), en.getSecondaryFacing(), target, en.getForwardArc());
+        final boolean isAptPiloting = (attacker.getCrew() != null)
+              && attacker.hasAbility(OptionsConstants.PILOT_APTITUDE_PILOTING);
+        final boolean isMeleeMaster = (attacker.getCrew() != null)
+              && attacker.hasAbility(OptionsConstants.PILOT_MELEE_MASTER);
+        final boolean canZweihander = (attacker instanceof BipedMek bipedMek)
+              && bipedMek.canZweihander()
+              && ComputeArc.isInArc(attacker.getPosition(), attacker.getSecondaryFacing(), target,
+              attacker.getForwardArc());
 
-        final int calledBlowTable = chooseCalledBlowTable(en, club);
+        final int calledBlowTable = chooseCalledBlowTable(attacker, club);
         if (calledBlowTable == CALLED_BLOW_CANCELLED) {
             return;
         }
@@ -1372,19 +1373,19 @@ public class PhysicalDisplay extends AttackPhaseDisplay {
               calledBlowTable,
               false);
         final double clubOdds = Compute.oddsAbove(toHit.getValue(), isAptPiloting);
-        final int clubDmg = ClubAttackAction.getDamageFor(en, club, target.isConventionalInfantry(), false);
+        final int clubDamage = ClubAttackAction.getDamageFor(attacker, club, target.isConventionalInfantry(), false);
         // Need to do this outside getDamageFor, as it only returns int
-        String dmgString = String.valueOf(clubDmg);
+        String damageString = String.valueOf(clubDamage);
         if ((club.getType().hasAnyFlag(MiscTypeFlag.S_COMBINE, MiscTypeFlag.S_CHAINSAW, MiscTypeFlag.S_DUAL_SAW))
               && target.isConventionalInfantry()) {
-            dmgString = "1d6";
+            damageString = "1d6";
         }
         String title = Messages.getString("PhysicalDisplay.ClubDialog.title", target.getDisplayName());
         String message = Messages.getString("PhysicalDisplay.ClubDialog.message",
               toHit.getValueAsString(),
               clubOdds,
               toHit.getDesc(),
-              dmgString,
+              damageString,
               toHit.getTableDesc());
 
         if (isMeleeMaster) {
@@ -1402,7 +1403,7 @@ public class PhysicalDisplay extends AttackPhaseDisplay {
                             toHitZwei.getValueAsString(),
                             Compute.oddsAbove(toHit.getValue(), isAptPiloting),
                             toHitZwei.getDesc(),
-                            ClubAttackAction.getDamageFor(en, club, target.isConventionalInfantry(), true),
+                            ClubAttackAction.getDamageFor(attacker, club, target.isConventionalInfantry(), true),
                             toHitZwei.getTableDesc()));
             }
 

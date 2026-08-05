@@ -34,6 +34,7 @@ package megamek.client.bot.caspar;
 
 import java.util.List;
 
+import megamek.client.bot.princess.FormationGeometry;
 import megamek.client.bot.princess.MutualSupportDeployment;
 import megamek.client.bot.princess.MutualSupportPathRanker;
 import megamek.client.bot.princess.PathRanker.PathRankerType;
@@ -84,7 +85,7 @@ public class Caspar extends Princess {
     @Override
     protected List<Coords> prioritizeDeploymentCoords(Entity deployedUnit, List<Coords> possibleDeployCoords) {
         // CASPAR divergence: deploy as a formation rather than scattering across the whole zone.
-        int formationRadius = MutualSupportDeployment.formationRadius(getEntitiesOwned(), mutualSupportMultiplier());
+        int formationRadius = FormationGeometry.formationRadius(getEntitiesOwned(), mutualSupportMultiplier());
         LOGGER.info("[MutualSupport] {}: forming up {} within {} hexes of the force centre",
               getLocalPlayer() != null ? getLocalPlayer().getName() : getName(),
               deployedUnit.getChassis(),

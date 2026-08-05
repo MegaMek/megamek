@@ -32,7 +32,7 @@
  */
 package megamek.client.bot.princess;
 
-import static megamek.client.bot.princess.MutualSupportDeployment.MINIMUM_SPACING_HEXES;
+import static megamek.client.bot.princess.FormationGeometry.MINIMUM_SPACING_HEXES;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
@@ -155,7 +155,7 @@ class MutualSupportDeploymentTest {
     void theFormationIsSizedSoAnyTwoUnitsCanSupportEachOther() {
         List<Integer> company = List.of(8, 10, 12, 14);
 
-        assertEquals(6, MutualSupportDeployment.formationRadiusFor(company, 1.0), "mean 11, halved and rounded");
+        assertEquals(6, FormationGeometry.formationRadiusFor(company, 1.0), "mean 11, halved and rounded");
     }
 
     /** Higher setting, tighter formation: the multiplier divides, so asking for more support pulls the force in. */
@@ -163,9 +163,9 @@ class MutualSupportDeploymentTest {
     void moreMutualSupportMeansATighterFormation() {
         List<Integer> company = List.of(12);
 
-        int loose = MutualSupportDeployment.formationRadiusFor(company, 0.6);
-        int standard = MutualSupportDeployment.formationRadiusFor(company, 1.0);
-        int tight = MutualSupportDeployment.formationRadiusFor(company, 2.0);
+        int loose = FormationGeometry.formationRadiusFor(company, 0.6);
+        int standard = FormationGeometry.formationRadiusFor(company, 1.0);
+        int tight = FormationGeometry.formationRadiusFor(company, 2.0);
 
         assertTrue(loose > standard, "a lower setting must spread the force out");
         assertTrue(tight < standard, "a higher setting must pull the force in");
@@ -179,20 +179,20 @@ class MutualSupportDeploymentTest {
      */
     @Test
     void theLowestSettingStopsConstrainingDeploymentAtAll() {
-        int radius = MutualSupportDeployment.formationRadiusFor(List.of(12), 0.1);
+        int radius = FormationGeometry.formationRadiusFor(List.of(12), 0.1);
 
         assertTrue(radius > 32, "at the lowest setting the radius should exceed a whole board, was " + radius);
     }
 
     @Test
     void aForceWithNothingToShootFallsBackToMinimumSpacing() {
-        assertEquals(MINIMUM_SPACING_HEXES, MutualSupportDeployment.formationRadiusFor(List.of(), 1.0));
+        assertEquals(MINIMUM_SPACING_HEXES, FormationGeometry.formationRadiusFor(List.of(), 1.0));
     }
 
     @Test
     void theRadiusNeverCollapsesBelowTheMinimumSpacing() {
         assertEquals(MINIMUM_SPACING_HEXES,
-              MutualSupportDeployment.formationRadiusFor(List.of(2), 2.0),
+              FormationGeometry.formationRadiusFor(List.of(2), 2.0),
               "a point-blank force still needs a band wide enough to stand in");
     }
 
@@ -291,7 +291,7 @@ class MutualSupportDeploymentTest {
         List<Coords> placed = new ArrayList<>();
 
         for (int unit = 0; unit < 12; unit++) {
-            Coords anchor = MutualSupportDeployment.centroid(placed.isEmpty() ? zone : placed);
+            Coords anchor = FormationGeometry.centroid(placed.isEmpty() ? zone : placed);
             List<Coords> ordered = MutualSupportDeployment.orderByFormation(zone, anchor, placed, BRAWLER_RANGE);
             for (Coords candidate : ordered) {
                 if (!placed.contains(candidate)) {
@@ -316,7 +316,7 @@ class MutualSupportDeploymentTest {
 
         List<Coords> positions = MutualSupportDeployment.anchorPositions(deployingUnit, friends, mockGame);
 
-        assertEquals(new Coords(6, 1), MutualSupportDeployment.centroid(positions));
+        assertEquals(new Coords(6, 1), FormationGeometry.centroid(positions));
     }
 
     /** With nothing on the board yet, the first unit seeds the formation on the middle of its own zone. */
@@ -325,7 +325,7 @@ class MutualSupportDeploymentTest {
         List<Coords> positions = MutualSupportDeployment.anchorPositions(deployingUnit, List.of(), mockGame);
         assertTrue(positions.isEmpty());
 
-        Coords anchor = MutualSupportDeployment.centroid(zoneStrip());
+        Coords anchor = FormationGeometry.centroid(zoneStrip());
 
         assertNotNull(anchor);
         assertEquals(16, anchor.getX(), "a 0-31 strip should anchor near its middle");
@@ -365,7 +365,7 @@ class MutualSupportDeploymentTest {
 
     @Test
     void anEmptyPositionSetHasNoCentre() {
-        assertNull(MutualSupportDeployment.centroid(List.of()));
+        assertNull(FormationGeometry.centroid(List.of()));
     }
 
     // ---------------------------------------------------------------- zone shapes
@@ -382,7 +382,7 @@ class MutualSupportDeploymentTest {
         }
 
         List<Coords> ordered = MutualSupportDeployment.orderByFormation(tinyZone,
-              MutualSupportDeployment.centroid(tinyZone),
+              FormationGeometry.centroid(tinyZone),
               List.of(),
               BRAWLER_RANGE);
 
@@ -399,7 +399,7 @@ class MutualSupportDeploymentTest {
             }
         }
 
-        Coords anchor = MutualSupportDeployment.centroid(cornerZone);
+        Coords anchor = FormationGeometry.centroid(cornerZone);
 
         assertNotNull(anchor);
         assertTrue(cornerZone.contains(anchor), "a corner zone must anchor inside itself, not at the board centre");
@@ -420,12 +420,12 @@ class MutualSupportDeploymentTest {
             splitZone.add(new Coords(x, 1));
         }
 
-        Coords seedAnchor = MutualSupportDeployment.centroid(splitZone);
+        Coords seedAnchor = FormationGeometry.centroid(splitZone);
         assertFalse(splitZone.contains(seedAnchor), "the notional centre of a split zone falls in the gap");
 
         List<Coords> firstDeployed = List.of(new Coords(30, 1));
         List<Coords> ordered = MutualSupportDeployment.orderByFormation(splitZone,
-              MutualSupportDeployment.centroid(firstDeployed),
+              FormationGeometry.centroid(firstDeployed),
               firstDeployed,
               BRAWLER_RANGE);
 

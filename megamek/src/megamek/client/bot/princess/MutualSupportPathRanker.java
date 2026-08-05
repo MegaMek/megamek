@@ -375,7 +375,7 @@ public class MutualSupportPathRanker extends BasicPathRanker {
                     weights.add(weight);
                 }
             }
-            return MutualSupportDeployment.weightedCentroid(positions, weights);
+            return FormationGeometry.weightedCentroid(positions, weights);
         });
     }
 
@@ -448,7 +448,7 @@ public class MutualSupportPathRanker extends BasicPathRanker {
         int currentRound = game.getCurrentRound();
         if (currentRound != formationRadiusRound) {
             formationRadiusRound = currentRound;
-            cachedFormationRadius = MutualSupportDeployment.formationRadius(getOwner().getEntitiesOwned(),
+            cachedFormationRadius = FormationGeometry.formationRadius(getOwner().getEntitiesOwned(),
                   mutualSupportSetting());
         }
         return cachedFormationRadius;

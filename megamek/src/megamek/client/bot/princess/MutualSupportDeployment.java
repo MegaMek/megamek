@@ -61,12 +61,12 @@ import megamek.logging.MMLogger;
  * <p>A hex is in position when it satisfies both halves of a band:</p>
  *
  * <ul>
- *     <li><b>At least {@link #MINIMUM_SPACING_HEXES} from the nearest friend</b>, so a force does not stack itself into
+ *     <li><b>At least {@link FormationGeometry#MINIMUM_SPACING_HEXES} from the nearest friend</b>, so a force does not stack itself into
  *     one artillery template or block its own movement lanes. Measured against the nearest friend, because crowding is
  *     a local problem. This end of the band is best effort: it yields to support when a zone is too small to hold both
  *     (see {@link #isInPosition}), which a shallow deployment strip routinely is.</li>
  *     <li><b>Within the formation radius of the force's centre of mass</b>, so every unit can contribute fire where the
- *     force is fighting. See {@link #formationRadius(List, double)}.</li>
+ *     force is fighting. See {@link FormationGeometry#formationRadius(List, double)}.</li>
  * </ul>
  *
  * <p><b>The upper bound is measured against the centre of mass, never against the nearest friend.</b> This is the whole
@@ -91,15 +91,6 @@ import megamek.logging.MMLogger;
 public final class MutualSupportDeployment {
     private final static MMLogger logger = MMLogger.create(MutualSupportDeployment.class);
 
-    /**
-     * Closest a unit will willingly deploy to a friend, in hexes.
-     *
-     * <p>Dispersion insurance. A force packed hex-to-hex fits inside a single artillery or bombing template and gets in
-     * its own way moving off the start line, so units keep a hex of clear ground between them even though cohesion
-     * would happily stack them.</p>
-     */
-    static final int MINIMUM_SPACING_HEXES = 2;
-
     private MutualSupportDeployment() {
     }
 
@@ -111,7 +102,7 @@ public final class MutualSupportDeployment {
      * @param friends         friendly units, deployed or not, from {@code BotClient.getFriendEntities()}
      * @param game            the game, used to keep the anchor to units sharing a board with the deploying unit
      * @param formationRadius how far from the force's centre a unit may form up, from
-     *                        {@link #formationRadius(List, double)}
+     *                        {@link FormationGeometry#formationRadius(List, double)}
      *
      * @return the candidates, reordered; the same list instance when there is nothing to reorder
      */
@@ -124,7 +115,7 @@ public final class MutualSupportDeployment {
         }
         List<Coords> friendlyPositions = anchorPositions(deployedUnit, friends, game);
         boolean firstOnBoard = friendlyPositions.isEmpty();
-        Coords anchor = centroid(firstOnBoard ? candidates : friendlyPositions);
+        Coords anchor = FormationGeometry.centroid(firstOnBoard ? candidates : friendlyPositions);
         if (firstOnBoard) {
             // Nothing to form up on yet, so the zone's own middle is the anchor and this unit becomes the
             // seed everything after it gathers around.
@@ -135,63 +126,6 @@ public final class MutualSupportDeployment {
                   deployedUnit.getShortName(), anchor, friendlyPositions.size(), formationRadius);
         }
         return orderByFormation(candidates, anchor, friendlyPositions, formationRadius);
-    }
-
-    /**
-     * How far from its centre of mass a force may spread when forming up, in hexes.
-     *
-     * <p>One figure for the whole force, so the formation is a single shape rather than a set of nested per-unit discs.
-     * It is sized from the force's own guns: the mean {@link SupportEnvelope#effectiveRange()} of every unit that has
-     * any, <b>halved</b>, so that at the default setting the formation's <em>diameter</em> comes out at the average
-     * effective range. That is mutual support in the literal sense - any two units in the formation are within
-     * supporting range of <em>each other</em>, not merely of the centre. Taking the radius as the full average instead
-     * would let a company spread to twice its own supporting range, which is the dispersion this rule exists to fix.
-     * </p>
-     *
-     * <p>The multiplier is the player's mutual support setting, and it divides rather than multiplies: asking for more
-     * mutual support pulls the formation in. At the lowest setting the radius grows past any real deployment zone and
-     * the rule stops constraining anything, which reproduces stock scattered deployment.</p>
-     *
-     * @param force                   the units forming up, deployed or not; a whole command, so the figure is stable
-     *                                across the deployment phase instead of drifting as units land
-     * @param mutualSupportMultiplier the player's mutual support setting; higher means a tighter formation
-     *
-     * @return the formation radius in hexes, never below {@link #MINIMUM_SPACING_HEXES}
-     */
-    public static int formationRadius(List<Entity> force, double mutualSupportMultiplier) {
-        List<Integer> effectiveRanges = new ArrayList<>(force.size());
-        for (Entity unit : force) {
-            int effectiveRange = SupportEnvelope.of(unit).effectiveRange();
-            if (effectiveRange > 0) {
-                effectiveRanges.add(effectiveRange);
-            }
-        }
-        return formationRadiusFor(effectiveRanges, mutualSupportMultiplier);
-    }
-
-    /**
-     * The formation radius arithmetic, split out from reading the force so it can be exercised directly.
-     *
-     * @param effectiveRanges the supporting range of every armed unit in the force
-     * @param mutualSupportMultiplier the player's mutual support setting
-     *
-     * @return the formation radius in hexes
-     */
-    static int formationRadiusFor(List<Integer> effectiveRanges, double mutualSupportMultiplier) {
-        if (effectiveRanges.isEmpty() || (mutualSupportMultiplier <= 0)) {
-            // Either nothing in the force has a weapon, or the setting is off. Both leave the radius with
-            // nothing to size it from, so it collapses to bare spacing and the rule stops constraining.
-            logger.debug("[MutualSupport] formation radius [{}]: {} armed unit(s), setting {}",
-                  MINIMUM_SPACING_HEXES, effectiveRanges.size(), mutualSupportMultiplier);
-            return MINIMUM_SPACING_HEXES;
-        }
-        long totalEffectiveRange = 0;
-        for (int effectiveRange : effectiveRanges) {
-            totalEffectiveRange += effectiveRange;
-        }
-        double averageEffectiveRange = (double) totalEffectiveRange / effectiveRanges.size();
-        return Math.max(MINIMUM_SPACING_HEXES,
-              (int) Math.round(averageEffectiveRange / 2.0 / mutualSupportMultiplier));
     }
 
     /**
@@ -271,56 +205,9 @@ public final class MutualSupportDeployment {
     static int crowding(Coords candidate, List<Coords> friendlyPositions) {
         int worst = 0;
         for (Coords friend : friendlyPositions) {
-            worst = Math.max(worst, MINIMUM_SPACING_HEXES - candidate.distance(friend));
+            worst = Math.max(worst, FormationGeometry.MINIMUM_SPACING_HEXES - candidate.distance(friend));
         }
         return worst;
     }
 
-    /**
-     * Centre of mass of a set of hexes, rounded to the nearest hex.
-     */
-    /**
-     * Centre of mass of a set of hexes with per-hex weights, rounded to the nearest hex.
-     *
-     * <p>Weights exist so a unit's influence on where its force is can fade rather than vanish. A unit that drops out
-     * of the formation entirely moves the centre discontinuously, and that jump lands exactly when a force starts
-     * taking casualties - measured, it costs the remaining units real mutual support.</p>
-     *
-     * @param positions the hexes
-     * @param weights   one weight per hex, in the same order; zero or negative weights are ignored
-     *
-     * @return the weighted centre, or {@code null} when no hex carries any weight
-     */
-    static @Nullable Coords weightedCentroid(List<Coords> positions, List<Double> weights) {
-        double totalWeight = 0;
-        double totalX = 0;
-        double totalY = 0;
-        for (int index = 0; index < positions.size(); index++) {
-            double weight = weights.get(index);
-            if (weight <= 0) {
-                continue;
-            }
-            totalWeight += weight;
-            totalX += positions.get(index).getX() * weight;
-            totalY += positions.get(index).getY() * weight;
-        }
-        if (totalWeight <= 0) {
-            return null;
-        }
-        return new Coords(Math.round((float) (totalX / totalWeight)), Math.round((float) (totalY / totalWeight)));
-    }
-
-    static @Nullable Coords centroid(List<Coords> positions) {
-        if (positions.isEmpty()) {
-            return null;
-        }
-        long totalX = 0;
-        long totalY = 0;
-        for (Coords position : positions) {
-            totalX += position.getX();
-            totalY += position.getY();
-        }
-        return new Coords(Math.round((float) totalX / positions.size()),
-              Math.round((float) totalY / positions.size()));
-    }
 }

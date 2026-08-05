@@ -115,20 +115,10 @@ public class CoreRulesTarget extends RulesTarget {
     }
 
     /**
-     * Compute whether this specific target will get an immobile mod, and applies the mod if necessary
+     * {@inheritDoc}
      *
      * Note: all Ranged attack roll calls _must_ go through addImmobileMod to get to getImmobileMod or they may
      * illegally gain the -4 Immobile Target mod.
-     *
-     * @param target        Targetable being attacked
-     * @param toHit         Existing ToHitData
-     * @param aimingAt      Aimed-at location, if applicable
-     * @param weaponType    Type of attacking weapon
-     * @param weapon        The weapon itself
-     * @param ammoType      Type of ammo
-     * @param munition      Collection of munition information
-     * @param entityTarget  Entity version of the target, if it's an entity, else null
-     * @param aimingMode    Aiming mode data
      *
      * Note: modifies the passed-in ToHitData toHit.
      */

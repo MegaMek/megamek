@@ -54,6 +54,7 @@ import javax.swing.JSeparator;
 import javax.swing.border.EmptyBorder;
 
 import megamek.client.AbstractClient;
+import megamek.client.bot.AIType;
 import megamek.client.bot.princess.BehaviorSettings;
 import megamek.client.bot.princess.Princess;
 import megamek.client.bot.princess.PrincessException;
@@ -61,6 +62,7 @@ import megamek.client.ui.Messages;
 import megamek.client.ui.clientGUI.ClientGUI;
 import megamek.client.ui.enums.DialogResult;
 import megamek.common.game.Game;
+import megamek.common.preference.PreferenceManager;
 import megamek.common.Player;
 import megamek.logging.MMLogger;
 
@@ -70,9 +72,20 @@ public class EditBotsDialog extends AbstractButtonDialog {
     // replace ghost combo box choices
     private static final int REPLACE_WITH_PRINCESS_INDEX = 1;
 
+    /**
+     * Index of the CASPAR replacement choice, present only when the experimental bot is enabled.
+     *
+     * <p>CASPAR is a hidden option: {@code UseCASPAR} defaults to off and is in no settings UI, so the choice is
+     * added to the combo box only when it is switched on. When it is off the box is exactly as it was.</p>
+     */
+    private static final int REPLACE_WITH_CASPAR_INDEX = 2;
+
     // edit existing local bot combo box choices
     private static final int KICK_INDEX = 1;
     private static final int EDIT_CONFIG_INDEX = 2;
+
+    /** Whether the experimental CASPAR bot is offered as a replacement, from the {@code UseCASPAR} client setting. */
+    private final boolean casparAvailable = PreferenceManager.getClientPreferences().getUseCASPAR();
 
     /** A ClientGUI given to the dialog. */
     private final ClientGUI clientGui;
@@ -130,6 +143,9 @@ public class EditBotsDialog extends AbstractButtonDialog {
         Vector<String> ghostOptions = new Vector<>();
         ghostOptions.add(Messages.getString("EditBotsDialog.optionDoNotReplace"));
         ghostOptions.add(Messages.getString("EditBotsDialog.optionReplace"));
+        if (casparAvailable) {
+            ghostOptions.add(Messages.getString("EditBotsDialog.optionReplaceCaspar"));
+        }
 
         Vector<String> localBotOptions = new Vector<>();
         localBotOptions.add(Messages.getString("EditBotsDialog.optionNone"));
@@ -326,8 +342,27 @@ public class EditBotsDialog extends AbstractButtonDialog {
         var result = new HashMap<String, BehaviorSettings>();
         for (Player ghost : ghostChoosers.keySet()) {
             JComboBox<String> chooser = ghostChoosers.get(ghost);
-            if (chooser.getSelectedIndex() == REPLACE_WITH_PRINCESS_INDEX) {
+            int selected = chooser.getSelectedIndex();
+            if ((selected == REPLACE_WITH_PRINCESS_INDEX) || (selected == REPLACE_WITH_CASPAR_INDEX)) {
                 result.put(ghost.getName(), botConfigs.get(ghost));
+            }
+        }
+        return result;
+    }
+
+    /**
+     * Which AI each replaced ghost was assigned, for the same players {@link #getNewBots()} returns.
+     *
+     * @return a map of ghost player name to the chosen {@link AIType}; never null, possibly empty
+     */
+    public Map<String, AIType> getNewBotTypes() {
+        var result = new HashMap<String, AIType>();
+        for (Player ghost : ghostChoosers.keySet()) {
+            int selected = ghostChoosers.get(ghost).getSelectedIndex();
+            if (selected == REPLACE_WITH_PRINCESS_INDEX) {
+                result.put(ghost.getName(), AIType.PRINCESS);
+            } else if (selected == REPLACE_WITH_CASPAR_INDEX) {
+                result.put(ghost.getName(), AIType.CASPAR);
             }
         }
         return result;

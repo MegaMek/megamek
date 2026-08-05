@@ -37,6 +37,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
 import java.util.Objects;
+import java.util.stream.Collectors;
 
 /**
  * Describes one destination in a searchable settings navigation tree. A route owns its stable identifier, resolved
@@ -102,7 +103,7 @@ public final class SettingsRoute {
         }
         String renderedPath = this.path.stream()
               .map(SettingsSearchText::renderedText)
-              .reduce("", (combined, element) -> combined + ' ' + element);
+              .collect(Collectors.joining(" "));
         searchableText = normalizeSearchText(renderedPath + ' '
               + String.join(" ", this.searchAliases));
     }

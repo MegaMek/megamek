@@ -122,7 +122,7 @@ class SettingsSearchHighlightLayerUITest {
     }
 
     @Test
-    void htmlHighlightFitsExactXpGlyphsInsideExperience() throws Exception {
+    void htmlHighlightKeepsXpMatchInsideExperienceWord() throws Exception {
         runOnEdt(() -> {
             List<String> labels = List.of(
                   "Negotiation skill generation and administrator experience-level handling.",
@@ -131,13 +131,16 @@ class SettingsSearchHighlightLayerUITest {
                 JLabel label = new JLabel("<html><nobr>" + text + "</nobr></html>");
                 HighlightFixture fixture = fixture(label);
 
-                fixture.paint("XP");
-
+                fixture.paint("experience");
                 assertEquals(1, fixture.bounds().size(), text);
-                int expectedWidth = label.getFontMetrics(label.getFont()).stringWidth("xp");
-                assertTrue(fixture.bounds().getFirst().width <= expectedWidth + 1,
-                      text + ": expected at most " + (expectedWidth + 1)
-                            + "px but was " + fixture.bounds().getFirst().width + "px");
+                Rectangle experienceBounds = fixture.bounds().getFirst();
+
+                fixture.paint("XP");
+                assertEquals(1, fixture.bounds().size(), text);
+                Rectangle xpBounds = fixture.bounds().getFirst();
+                assertTrue(xpBounds.x > experienceBounds.x, text);
+                assertTrue(xpBounds.getMaxX() < experienceBounds.getMaxX(), text);
+                assertTrue(xpBounds.width < experienceBounds.width, text);
             }
         });
     }

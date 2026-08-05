@@ -135,21 +135,21 @@ class SettingsPagePanelTest {
         assertTrue(page.getSectionSearchText().contains("Standalone Search Text"));
     }
 
-        @Test
-        void tableCellAndHeaderTextAreSearchable() {
-          JTable table = new JTable(new Object[][] { { "Recruit", 3 }, { "Private", 5 } },
+    @Test
+    void tableCellAndHeaderTextAreSearchable() {
+        JTable table = new JTable(new Object[][] { { "Recruit", 3 }, { "Private", 5 } },
               new Object[] { "Rank Name", "XP Cost" });
-          SettingsPagePanel page = SettingsPagePanel.builder("Test", TEXT, "header", null)
+        SettingsPagePanel page = SettingsPagePanel.builder("Test", TEXT, "header", null)
               .literalSection("Ranks", null, new JScrollPane(table))
               .build();
 
-          String searchText = page.getSectionSearchText();
+        String searchText = page.getSectionSearchText();
 
-          assertTrue(searchText.contains("Recruit"), searchText);
-          assertTrue(searchText.contains("Private"), searchText);
-          assertTrue(searchText.contains("Rank Name"), searchText);
-          assertTrue(searchText.contains("XP Cost"), searchText);
-        }
+        assertTrue(searchText.contains("Recruit"), searchText);
+        assertTrue(searchText.contains("Private"), searchText);
+        assertTrue(searchText.contains("Rank Name"), searchText);
+        assertTrue(searchText.contains("XP Cost"), searchText);
+    }
 
     @Test
     void tableSearchUsesDisplayedRendererTextInsteadOfRawModelValues() {

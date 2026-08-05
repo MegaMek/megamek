@@ -34,7 +34,6 @@ package megamek.client.ui.settings;
 
 import java.awt.BorderLayout;
 import java.awt.Component;
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -61,6 +60,7 @@ public class SettingsPane extends JPanel {
     private final List<SettingsRoute> routes;
     private final Map<String, Supplier<Component>> pageFactories;
     private final Map<String, Component> pageCache = new HashMap<>();
+    private final Map<String, List<Boolean>> expansionStateBeforeFilter = new HashMap<>();
     private final SettingsContentHost contentHost;
     private final SettingsNavigationPanel navigationPanel;
     private SettingsRoute currentRoute;
@@ -125,17 +125,48 @@ public class SettingsPane extends JPanel {
         }
         currentRoute = effectiveRoute;
         contentHost.setContent(page, effectiveRoute.shouldShowDetailsPanel());
-        contentHost.setSearchFilter(navigationPanel.getActiveFilter());
-        expandSectionsForActiveFilter(effectiveRoute, page);
+        String activeFilter = navigationPanel.getActiveFilter();
+        contentHost.setSearchFilter(activeFilter);
+        applyFilterExpansion(effectiveRoute, page, activeFilter);
         return true;
     }
 
     private void activeFilterChanged(String normalizedFilter) {
         contentHost.setSearchFilter(normalizedFilter);
+        if (normalizedFilter.isBlank()) {
+            restoreAllExpansionStates();
+            return;
+        }
         Component page = pageCache.get(currentRoute.getId());
         if (page != null) {
-            expandSectionsForActiveFilter(currentRoute, page);
+            applyFilterExpansion(currentRoute, page, normalizedFilter);
         }
+    }
+
+    private void applyFilterExpansion(SettingsRoute route, Component page, String normalizedFilter) {
+        if (normalizedFilter.isBlank()) {
+            return;
+        }
+        SettingsPagePanel pagePanel = SettingsContentHost.findPagePanel(page);
+        if (pagePanel == null) {
+            return;
+        }
+        expansionStateBeforeFilter.putIfAbsent(route.getId(), pagePanel.getSectionExpansionState());
+        pagePanel.restoreSectionExpansionState(expansionStateBeforeFilter.get(route.getId()));
+        if (route.matches(normalizedFilter)) {
+            expandSectionsForActiveFilter(route, page);
+        }
+    }
+
+    private void restoreAllExpansionStates() {
+        expansionStateBeforeFilter.forEach((routeId, expansionState) -> {
+            Component page = pageCache.get(routeId);
+            SettingsPagePanel pagePanel = page == null ? null : SettingsContentHost.findPagePanel(page);
+            if (pagePanel != null) {
+                pagePanel.restoreSectionExpansionState(expansionState);
+            }
+        });
+        expansionStateBeforeFilter.clear();
     }
 
     private void expandSectionsForActiveFilter(SettingsRoute route, Component page) {
@@ -159,10 +190,15 @@ public class SettingsPane extends JPanel {
         if (factory == null) {
             return null;
         }
-        Component page = pageCache.computeIfAbsent(route.getId(), id -> Objects.requireNonNull(factory.get()));
-        SettingsPagePanel pagePanel = SettingsContentHost.findPagePanel(page);
-        if (pagePanel != null) {
-            route.setSectionSearchText(pagePanel.getPageSearchText());
+        Component page = pageCache.get(route.getId());
+        if (page == null) {
+            page = Objects.requireNonNull(factory.get());
+            pageCache.put(route.getId(), page);
+            SettingsPagePanel pagePanel = SettingsContentHost.findPagePanel(page);
+            if (pagePanel != null) {
+                // Page indexes assume display text is static after construction; highlights still read live text.
+                route.setSectionSearchText(pagePanel.getPageSearchText());
+            }
         }
         return page;
     }

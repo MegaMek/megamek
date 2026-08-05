@@ -51,8 +51,10 @@ import java.util.ListResourceBundle;
 import javax.swing.JEditorPane;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
+import javax.swing.JScrollPane;
 import javax.swing.JSpinner;
 import javax.swing.JTextField;
+import javax.swing.JViewport;
 import javax.swing.Scrollable;
 
 import megamek.client.ui.util.UIUtil;
@@ -162,6 +164,14 @@ class SettingsContentHostTest {
 
         assertFalse(host.getSearchHighlightBounds().isEmpty());
         assertEquals(originalText, label.getText());
+    }
+
+    @Test
+    void contentViewportUsesSimpleScrollModeForOverlayRepainting() {
+        SettingsContentHost host = new SettingsContentHost(new JLabel("Source"), "Details", false);
+        JScrollPane scrollPane = findComponent(host, "settingsContentScrollPane", JScrollPane.class);
+
+        assertEquals(JViewport.SIMPLE_SCROLL_MODE, scrollPane.getViewport().getScrollMode());
     }
 
     @Test

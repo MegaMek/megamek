@@ -41,6 +41,7 @@ import java.awt.Color;
 import java.awt.Component;
 import java.awt.Container;
 import java.awt.Dimension;
+import java.awt.FlowLayout;
 import java.awt.Graphics2D;
 import java.awt.Point;
 import java.awt.Rectangle;
@@ -54,8 +55,11 @@ import javax.swing.JLayer;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
+import javax.swing.SwingConstants;
 import javax.swing.SwingUtilities;
 import javax.swing.UIManager;
+import javax.swing.plaf.basic.BasicHTML;
+import javax.swing.text.View;
 
 import org.junit.jupiter.api.Test;
 
@@ -135,6 +139,34 @@ class SettingsSearchHighlightLayerUITest {
                       text + ": expected at most " + (expectedWidth + 1)
                             + "px but was " + fixture.bounds().getFirst().width + "px");
             }
+        });
+    }
+
+    @Test
+    void highlightsWrappedHtmlOnItsPaintedLine() throws Exception {
+        runOnEdt(() -> {
+            JLabel label = new JLabel("<html>First line wraps Needle word</html>");
+            label.setPreferredSize(new Dimension(110, 60));
+            label.setVerticalAlignment(SwingConstants.TOP);
+            JPanel constrainedWidth = new JPanel(new FlowLayout(FlowLayout.LEFT, 0, 0));
+            constrainedWidth.add(label);
+            HighlightFixture fixture = fixture(constrainedWidth);
+
+            fixture.paint("needle");
+
+            View htmlView = (View) label.getClientProperty(BasicHTML.propertyKey);
+            int fontHeight = label.getFontMetrics(label.getFont()).getHeight();
+            assertEquals(110, label.getWidth());
+            assertTrue(htmlView.getPreferredSpan(View.X_AXIS) > label.getWidth());
+            assertTrue(htmlView.getPreferredSpan(View.Y_AXIS) > fontHeight,
+                "Test setup must wrap the HTML onto multiple lines");
+            assertEquals(1, fixture.bounds().size());
+            Rectangle labelBounds = SwingUtilities.convertRectangle(label,
+                  new Rectangle(0, 0, label.getWidth(), label.getHeight()), fixture.layer());
+            Rectangle highlight = fixture.bounds().getFirst();
+            assertEquals(highlight, highlight.intersection(labelBounds));
+            assertTrue(highlight.y >= labelBounds.y + fontHeight,
+                  "Expected second-line highlight but got " + highlight + " in " + labelBounds);
         });
     }
 

@@ -96,20 +96,19 @@ final class SettingsSearchHighlightLayerUI extends LayerUI<JScrollPane> {
         if (root == null) {
             return;
         }
-
-        Rectangle viewportBounds = SwingUtilities.convertRectangle(viewport,
-              new Rectangle(0, 0, viewport.getWidth(), viewport.getHeight()), layer);
-        List<Rectangle> highlights = new ArrayList<>();
-          collectHighlights(root, layer, viewportBounds, highlights,
-              Collections.newSetFromMap(new IdentityHashMap<>()));
-        paintHighlights((Graphics2D) graphics, highlights);
+        paintHighlights((Graphics2D) graphics,
+              collectHighlightBounds(layer, scrollPane, graphics.getClipBounds()));
     }
 
     List<Rectangle> highlightBounds(JLayer<JScrollPane> layer) {
+        return List.copyOf(collectHighlightBounds(layer, layer.getView(), null));
+    }
+
+    private List<Rectangle> collectHighlightBounds(JLayer<?> layer, JScrollPane scrollPane,
+          Rectangle paintClip) {
         if (tokens.isEmpty()) {
             return List.of();
         }
-        JScrollPane scrollPane = layer.getView();
         JViewport viewport = scrollPane.getViewport();
         Component root = viewport.getView();
         if (root == null) {
@@ -117,13 +116,19 @@ final class SettingsSearchHighlightLayerUI extends LayerUI<JScrollPane> {
         }
         Rectangle viewportBounds = SwingUtilities.convertRectangle(viewport,
               new Rectangle(0, 0, viewport.getWidth(), viewport.getHeight()), layer);
+        if (paintClip != null) {
+            viewportBounds = viewportBounds.intersection(paintClip);
+            if (viewportBounds.isEmpty()) {
+                return List.of();
+            }
+        }
         List<Rectangle> highlights = new ArrayList<>();
-        collectHighlights(root, layer, viewportBounds, highlights,
+        collectComponentHighlights(root, layer, viewportBounds, highlights,
               Collections.newSetFromMap(new IdentityHashMap<>()));
-        return List.copyOf(highlights);
+        return highlights;
     }
 
-    private void collectHighlights(Component component, JLayer<?> layer, Rectangle viewportBounds,
+    private void collectComponentHighlights(Component component, JLayer<?> layer, Rectangle viewportBounds,
           List<Rectangle> highlights, Set<Component> visited) {
         if (!component.isVisible() || !visited.add(component)) {
             return;
@@ -133,10 +138,10 @@ final class SettingsSearchHighlightLayerUI extends LayerUI<JScrollPane> {
                 collectTableHighlights(table, layer, viewportBounds, highlights);
             }
             JTableHeader header = table.getTableHeader();
-            if (header != null && header.isVisible() && SwingUtilities.isDescendingFrom(header, layer)
-                && visited.add(header)
-                  && intersectsViewport(header, layer, viewportBounds)) {
-                collectTableHeaderHighlights(header, layer, viewportBounds, highlights);
+            if (header != null && header.isVisible() && SwingUtilities.isDescendingFrom(header, layer)) {
+                if (visited.add(header) && intersectsViewport(header, layer, viewportBounds)) {
+                    collectTableHeaderHighlights(header, layer, viewportBounds, highlights);
+                }
             }
             return;
         }
@@ -161,7 +166,7 @@ final class SettingsSearchHighlightLayerUI extends LayerUI<JScrollPane> {
         }
         if (component instanceof Container container) {
             for (Component child : container.getComponents()) {
-                collectHighlights(child, layer, viewportBounds, highlights, visited);
+                collectComponentHighlights(child, layer, viewportBounds, highlights, visited);
             }
         }
     }
@@ -318,7 +323,7 @@ final class SettingsSearchHighlightLayerUI extends LayerUI<JScrollPane> {
         if (component instanceof JEditorPane editorPane && !editorPane.isEditable()) {
             return editorRangeBounds(editorPane, ranges);
         }
-        Rectangle allocation = textAllocation(component, source);
+        Rectangle allocation = textAllocation(component);
         if (allocation.isEmpty()) {
             return List.of();
         }
@@ -359,7 +364,7 @@ final class SettingsSearchHighlightLayerUI extends LayerUI<JScrollPane> {
         return highlights;
     }
 
-    private static Rectangle textAllocation(JComponent component, SettingsSearchText.TextSource source) {
+    private static Rectangle textAllocation(JComponent component) {
         String text;
         Icon icon;
         int verticalAlignment;
@@ -396,12 +401,6 @@ final class SettingsSearchHighlightLayerUI extends LayerUI<JScrollPane> {
         SwingUtilities.layoutCompoundLabel(component, component.getFontMetrics(component.getFont()), text, icon,
               verticalAlignment, horizontalAlignment, verticalTextPosition, horizontalTextPosition,
               viewBounds, iconBounds, textBounds, iconTextGap);
-        if (source.isHtml()) {
-            textBounds.width = Math.max(textBounds.width,
-                  (int) Math.ceil(source.htmlView().getPreferredSpan(javax.swing.text.View.X_AXIS)));
-            textBounds.height = Math.max(textBounds.height,
-                  (int) Math.ceil(source.htmlView().getPreferredSpan(javax.swing.text.View.Y_AXIS)));
-        }
         return textBounds;
     }
 

@@ -132,6 +132,52 @@ class SettingsPaneTest {
     }
 
     @Test
+    void filterMatchingAnotherRouteLeavesCurrentPageExpansionUnchanged() throws Exception {
+        runOnEdt(() -> {
+            SettingsRoute first = new SettingsRoute("first", List.of("First"));
+            SettingsRoute second = new SettingsRoute("second", List.of("Second"));
+            SettingsPagePanel firstPage = SettingsPagePanel.builder("First", PAGE_TEXT, "header", null)
+                  .sectionsExpandedByDefault(false)
+                  .literalSection("Alpha", null, new JLabel("Alpha option"))
+                  .literalSection("Beta", null, new JLabel("Beta option"))
+                  .build();
+            SettingsPane pane = new SettingsPane(List.of(first, second), Map.of(
+                  "first", () -> firstPage,
+                  "second", () -> page("Needle section", null)), NAVIGATION_TEXT, "Details");
+
+            pane.setFilterText("needle");
+
+            List<CollapsibleSectionPanel> sections = findSections(firstPage);
+            assertFalse(sections.get(0).isExpanded());
+            assertFalse(sections.get(1).isExpanded());
+        });
+        finishSearchIndexing();
+    }
+
+    @Test
+    void clearingFilterRestoresExpansionState() throws Exception {
+        runOnEdt(() -> {
+            SettingsRoute route = new SettingsRoute("page", List.of("Page"));
+            SettingsPagePanel page = SettingsPagePanel.builder("Test", PAGE_TEXT, "header", null)
+                  .sectionsExpandedByDefault(false)
+                  .literalSection("Alpha", null, new JLabel("Alpha option"))
+                  .literalSection("Beta", null, new JLabel("Needle option"))
+                  .build();
+            SettingsPane pane = new SettingsPane(List.of(route), Map.of("page", () -> page),
+                  NAVIGATION_TEXT, "Details");
+
+            pane.setFilterText("needle");
+            List<CollapsibleSectionPanel> sections = findSections(page);
+            assertFalse(sections.get(0).isExpanded());
+            assertTrue(sections.get(1).isExpanded());
+
+            pane.setFilterText("");
+            assertFalse(sections.get(0).isExpanded());
+            assertFalse(sections.get(1).isExpanded());
+        });
+    }
+
+    @Test
     void activeFilterHighlightsCurrentAndNewlySelectedPages() throws Exception {
         runOnEdt(() -> {
             SettingsRoute first = new SettingsRoute("first", List.of("First"));

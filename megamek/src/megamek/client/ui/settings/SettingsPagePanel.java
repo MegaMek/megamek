@@ -72,7 +72,7 @@ public class SettingsPagePanel extends JPanel {
 
     private final JPanel pageBody;
     private final boolean showDetailsPanel;
-    private final String sectionSearchText;
+    private final String bodySearchText;
     private final String pageSearchText;
     private final List<SearchableSection> searchableSections;
     private final int maximumPageWidth;
@@ -90,7 +90,7 @@ public class SettingsPagePanel extends JPanel {
         List<Object> renderItems = new ArrayList<>();
         List<CollapsibleSectionPanel> sections = new ArrayList<>();
         List<SearchableSection> searchable = new ArrayList<>();
-        StringBuilder allSectionText = new StringBuilder();
+        StringBuilder allBodyText = new StringBuilder();
         for (Object bodyItem : builder.bodyItems) {
             if (bodyItem instanceof Section definition) {
                 CollapsibleSectionPanel section = createSection(builder, definition);
@@ -99,22 +99,22 @@ public class SettingsPagePanel extends JPanel {
                 String text = sectionSearchText(builder.textProvider, definition);
                 searchable.add(new SearchableSection(section, text));
                 if (!text.isBlank()) {
-                    allSectionText.append(' ').append(text);
+                    allBodyText.append(' ').append(text);
                 }
             } else if (bodyItem instanceof JComponent component) {
                 renderItems.add(component);
                 String text = SettingsSearchText.collect(component);
                 if (!text.isBlank()) {
-                    allSectionText.append(' ').append(text);
+                    allBodyText.append(' ').append(text);
                 }
             }
         }
         searchableSections = List.copyOf(searchable);
-        sectionSearchText = allSectionText.toString().trim();
+        bodySearchText = allBodyText.toString().trim();
         StringBuilder allPageText = new StringBuilder();
         appendSearchText(allPageText, headerSearchText(builder));
         appendSearchText(allPageText, introSearchText(builder));
-        appendSearchText(allPageText, sectionSearchText);
+        appendSearchText(allPageText, bodySearchText);
         appendSearchText(allPageText, quoteSearchText(builder));
         pageSearchText = allPageText.toString();
 
@@ -148,7 +148,7 @@ public class SettingsPagePanel extends JPanel {
     }
 
     public String getSectionSearchText() {
-        return sectionSearchText;
+        return bodySearchText;
     }
 
     public String getPageSearchText() {
@@ -174,6 +174,17 @@ public class SettingsPagePanel extends JPanel {
 
     public void expandAllSections() {
         setExpanded(true, searchableSections.stream().map(SearchableSection::panel).toList());
+    }
+
+    List<Boolean> getSectionExpansionState() {
+        return searchableSections.stream().map(section -> section.panel().isExpanded()).toList();
+    }
+
+    void restoreSectionExpansionState(List<Boolean> expansionState) {
+        int count = Math.min(searchableSections.size(), expansionState.size());
+        for (int index = 0; index < count; index++) {
+            searchableSections.get(index).panel().setExpanded(expansionState.get(index));
+        }
     }
 
     @Override

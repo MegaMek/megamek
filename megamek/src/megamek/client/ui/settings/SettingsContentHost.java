@@ -84,10 +84,11 @@ public class SettingsContentHost extends JPanel {
               ScrollPaneConstants.VERTICAL_SCROLLBAR_AS_NEEDED,
               ScrollPaneConstants.HORIZONTAL_SCROLLBAR_AS_NEEDED);
         contentScrollPane.setName("settingsContentScrollPane");
-          searchHighlightLayer = new JLayer<>(contentScrollPane, searchHighlightLayerUI);
-          searchHighlightLayer.setName("settingsSearchHighlightLayer");
+        contentScrollPane.getViewport().setScrollMode(JViewport.SIMPLE_SCROLL_MODE);
+        searchHighlightLayer = new JLayer<>(contentScrollPane, searchHighlightLayerUI);
+        searchHighlightLayer.setName("settingsSearchHighlightLayer");
         helpPanel = new SettingsHelpPanel(helpTitle);
-          add(searchHighlightLayer, BorderLayout.CENTER);
+        add(searchHighlightLayer, BorderLayout.CENTER);
         add(helpPanel, BorderLayout.SOUTH);
         setContent(content, showHelpPanel);
     }
@@ -127,6 +128,7 @@ public class SettingsContentHost extends JPanel {
         searchHighlightLayerUI.setFilter(normalizedFilter, searchHighlightLayer);
     }
 
+    /** Exposes painted bounds for headless overlay tests. */
     List<Rectangle> getSearchHighlightBounds() {
         return searchHighlightLayerUI.highlightBounds(searchHighlightLayer);
     }

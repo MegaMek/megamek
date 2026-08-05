@@ -81,6 +81,9 @@ final class SettingsSearchText {
         if (text == null || text.isBlank()) {
             return "";
         }
+        if (!BasicHTML.isHTMLString(text)) {
+            return text.trim();
+        }
         return from(new JLabel(text)).text().trim();
     }
 

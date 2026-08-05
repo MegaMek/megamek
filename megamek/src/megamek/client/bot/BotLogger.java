@@ -52,6 +52,28 @@ import megamek.logging.MMLogger;
  */
 
 public class BotLogger {
+
+    /**
+     * Column names of the score block as last written, so every row can be read against a known schema.
+     *
+     * <p>Score keys are contributed by whichever path ranker ran, so the set can differ from row to row: a different
+     * ranker for infantry, a doctrine recording its own reasoning, a term only recorded in some situations. Rows of
+     * differing width under a header written once are not analysable, which defeats the point of logging the
+     * reasoning at all. A fresh header is written whenever the set changes.</p>
+     *
+     * <p>Guarded by the lock on this logger: one instance serves every bot in the JVM, so the decision to write a
+     * header and the writing of it have to happen together.</p>
+     */
+    private List<String> currentScoreHeaders = List.of();
+
+    /**
+     * Marks a path-ranking row.
+     *
+     * <p>Several kinds of record share one file, and two bots with different path rankers write different score
+     * columns into it, so rows vary in both shape and meaning. A leading record type lets a reader filter to the
+     * rows it understands before anything else, the same way the game-state log names its rows.</p>
+     */
+    private static final String PATH_RANK_RECORD = "PathRank";
     private static final MMLogger LOGGER = MMLogger.create("BotLogger");
     protected final DecimalFormat LOG_DECIMAL = new DecimalFormat("0.00", new DecimalFormatSymbols(Locale.US));
 
@@ -179,7 +201,10 @@ public class BotLogger {
      * @param rankedPath the RankedPath to append, which contains the path, rank, scores, and entity information
      * @param index      if 0 it will print header, otherwise it wil just add the index here.
      */
-    public void append(RankedPath rankedPath, int index) {
+    // Synchronized because PathRanker holds one BotLogger for the whole JVM and every bot ranks paths on its own
+    // thread. Choosing whether to write a header and then writing it is a check-then-act on shared state: without
+    // this, two bots with different score columns can interleave and leave rows with no matching header above them.
+    public synchronized void append(RankedPath rankedPath, int index) {
         try {
             var movePath = rankedPath.getPath();
             var rank = rankedPath.getRank() + "";
@@ -213,23 +238,23 @@ public class BotLogger {
             var steps = new StringBuilder();
             movePath.getStepVector().forEach(step -> steps.append(step.toString()).append(" "));
 
-            var header = new ArrayList<>(List.of("INDEX", "PLAYER_ID", "ENTITY_ID", "RANK", "CHASSIS", "MODEL",
+            var header = new ArrayList<>(List.of("RECORD", "INDEX", "PLAYER_ID", "ENTITY_ID", "RANK", "CHASSIS",
+                  "MODEL",
                   "FACING", "FROM_X", "FROM_Y", "TO_X", "TO_Y", "HEXES_MOVED", "DISTANCE", "MP_USED", "MAX_MP", "MP_P",
                   "HEAT_P", "ARMOR_P", "INTERNAL_P", "JUMPING", "PRONE", "LEGAL", "STEPS"));
             var scoreHeaders = new ArrayList<>(score.keySet());
             scoreHeaders.sort(String::compareTo);
             scoreHeaders.forEach(key -> header.add(key + "_SCORE"));
 
-            if (index == 0) {
-                append(
-                      String.join(
-                            "\t",
-                            header
-                      )
-                );
+            // Write a header whenever the schema changes, not only for the best-ranked path, so that every
+            // row which follows can be read against the header above it.
+            if ((index == 0) || !scoreHeaders.equals(currentScoreHeaders)) {
+                currentScoreHeaders = List.copyOf(scoreHeaders);
+                append(String.join("\t", header));
             }
 
-            var values = new ArrayList<>(List.of(index + "",
+            var values = new ArrayList<>(List.of(PATH_RANK_RECORD,
+                  index + "",
                   ownerID,
                   entityId,
                   rank,
@@ -253,7 +278,9 @@ public class BotLogger {
             for (var key : header) {
                 if (key.endsWith("_SCORE")) {
                     var k = key.substring(0, key.length() - 6);
-                    values.add(score.get(k) + "");
+                    Double value = score.get(k);
+                    // Empty rather than the literal "null", so a reader sees a missing value, not a parse error.
+                    values.add(value == null ? "" : value.toString());
                 }
             }
             append(

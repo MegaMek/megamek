@@ -517,7 +517,7 @@ public class BotCommandsPanel extends JPanel {
         menu.add(createBehaviorDialMenu(botPlayer, "Bot.commands.caution", ChatCommands.CAUTION));
         menu.add(createBehaviorDialMenu(botPlayer, "Bot.commands.avoid", ChatCommands.AVOID));
         menu.add(createBehaviorDialMenu(botPlayer, "Bot.commands.aggression", ChatCommands.AGGRESSION));
-        menu.add(createBehaviorDialMenu(botPlayer, "Bot.commands.herding", ChatCommands.HERDING));
+        menu.add(createBehaviorDialMenu(botPlayer, "Bot.commands.mutualSupport", ChatCommands.MUTUAL_SUPPORT));
         menu.add(createBehaviorDialMenu(botPlayer, "Bot.commands.bravery", ChatCommands.BRAVERY));
         return menu;
     }
@@ -733,7 +733,7 @@ public class BotCommandsPanel extends JPanel {
     }
 
     private void setHerdMentality(Player botPlayer, int value) {
-        sendChatCommand(botPlayer, ChatCommands.HERDING, value);
+        sendChatCommand(botPlayer, ChatCommands.MUTUAL_SUPPORT, value);
     }
 
     private void setBravery(Player botPlayer, int value) {

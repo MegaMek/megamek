@@ -179,8 +179,6 @@ public class MutualSupportPathRanker extends BasicPathRanker {
     private double lastCoverBonus;
     private int lastCoveringFriends;
     private double lastTurnsToBand;
-    private int lastCrowding;
-    private int lastWithdrawingCount;
     private int formationRadiusRound = -1;
     private int cachedFormationRadius = 0;
     private int perMoverCacheRound = -1;
@@ -233,7 +231,7 @@ public class MutualSupportPathRanker extends BasicPathRanker {
     private List<Entity> getSupportingFriends(Entity movingUnit, Game game) {
         invalidatePerMoverCaches(game);
         return supportingFriendsCache.computeIfAbsent(movingUnit.getId(), moverId -> {
-            List<Entity> candidates = getOwner().getBehaviorSettings().isExclusiveHerding()
+            List<Entity> candidates = getOwner().getBehaviorSettings().isExclusiveMutualSupport()
                   ? getOwner().getEntitiesOwned()
                   : getOwner().getFriendEntities();
             List<Entity> friends = new ArrayList<>();
@@ -271,7 +269,7 @@ public class MutualSupportPathRanker extends BasicPathRanker {
      * @return the mutual-support modifier (subtracted from utility; negative values are a bonus)
      */
     @Override
-    protected double calculateHerdingMod(Coords friendsCoords, MovePath path) {
+    protected double calculateMutualSupportMod(Coords friendsCoords, MovePath path) {
         Entity movingUnit = path.getEntity();
         Game game = getOwner().getGame();
 
@@ -281,21 +279,11 @@ public class MutualSupportPathRanker extends BasicPathRanker {
             return 0;
         }
 
-        // A unit pulling back is measured against the others pulling back, not against the line it is
-        // leaving. Without this it is governed by nothing at all and runs alone.
-        if (isWithdrawing(movingUnit)) {
-            return withdrawalMod(movingUnit, path, friends, game);
-        }
-
         double supportPenalty = 0;
         Coords formationCentre = formationCentre(movingUnit, friends);
         lastFormationCentre = formationCentre;
         lastFormationRadius = formationRadius(game);
         lastHexesOutOfFormation = 0;
-        // Retreat-only terms: cleared here so an advancing path does not report the last withdrawal's
-        // figures, and so every row carries the same columns.
-        lastCrowding = 0;
-        lastWithdrawingCount = 0;
         if (formationCentre != null) {
             int hexesOutOfFormation = formationCentre.distance(path.getFinalCoords()) - formationRadius(game);
             lastHexesOutOfFormation = Math.max(0, hexesOutOfFormation);
@@ -344,11 +332,6 @@ public class MutualSupportPathRanker extends BasicPathRanker {
         });
     }
 
-    @Override
-    protected boolean shapesWithdrawal() {
-        return true;
-    }
-
     /**
      * Records why the doctrine scored this path the way it did, as extra TSV columns.
      *
@@ -367,63 +350,10 @@ public class MutualSupportPathRanker extends BasicPathRanker {
         scores.put("coverBonus", lastCoverBonus);
         scores.put("coveringFriends", (double) lastCoveringFriends);
         scores.put("turnsToOwnBand", lastTurnsToBand);
-        scores.put("crowding", (double) lastCrowding);
-        scores.put("withdrawingCount", (double) lastWithdrawingCount);
         return scores;
     }
 
-    /**
-     * Shapes a withdrawal: pull back together, but not on top of each other.
-     *
-     * <p>Neither term slows the retreat. Getting away is driven by the self-preservation pull elsewhere; this only
-     * chooses between ways of getting away. Ending outside the group of units already pulling back costs, so a
-     * retreat holds together instead of scattering into units picked off one at a time. Ending on top of another
-     * withdrawing unit costs too, so a single attack does not catch several of them.</p>
-     *
-     * @param movingUnit the withdrawing unit
-     * @param path       the path being evaluated
-     * @param friends    the mover's friendly elements
-     * @param game       the current game
-     *
-     * @return the modifier, subtracted from path utility
-     */
-    private double withdrawalMod(Entity movingUnit, MovePath path, List<Entity> friends, Game game) {
-        List<Coords> withdrawing = withdrawingPositions(movingUnit, friends);
-        Coords centre = WithdrawalFormation.centre(withdrawing);
-        int groupRadius = formationRadius(game);
 
-        lastFormationCentre = centre;
-        lastFormationRadius = groupRadius;
-        lastHexesOutOfFormation = (centre == null)
-              ? 0
-              : WithdrawalFormation.hexesOutOfGroup(path.getFinalCoords(), centre, groupRadius);
-        lastCoverBonus = 0;
-        lastCoveringFriends = 0;
-        // The other half of the retreat penalty. Without it the log shows only the pull toward the
-        // group, so a unit that gave up ground to keep its distance has no recorded reason for it.
-        lastCrowding = WithdrawalFormation.crowding(path.getFinalCoords(), withdrawing);
-        lastWithdrawingCount = withdrawing.size();
-
-        double weight = Math.min(mutualSupportSetting(),
-              getOwner().getBehaviorSettings().getHyperAggressionValue() * COHESION_WEIGHT_CAP_FACTOR)
-              * FORMATION_HOLD_FACTOR;
-
-        double modifier = WithdrawalFormation.penalty(path.getFinalCoords(), withdrawing, groupRadius, weight);
-        logger.trace("[MutualSupport] withdrawal mod [{}]", modifier);
-        return modifier;
-    }
-
-    /** Where the mover's other withdrawing elements currently are. */
-    private List<Coords> withdrawingPositions(Entity movingUnit, List<Entity> friends) {
-        List<Coords> positions = new ArrayList<>(friends.size());
-        for (Entity friend : friends) {
-            Coords friendPosition = friend.getPosition();
-            if ((friendPosition != null) && isWithdrawing(friend) && !friend.isAirborneAeroOnGroundMap()) {
-                positions.add(friendPosition);
-            }
-        }
-        return positions;
-    }
 
 
     /**
@@ -485,7 +415,7 @@ public class MutualSupportPathRanker extends BasicPathRanker {
      * presets and appears in Princess's own rankers and configuration UI.</p>
      */
     private double mutualSupportSetting() {
-        return getOwner().getBehaviorSettings().getHerdMentalityValue();
+        return getOwner().getBehaviorSettings().getMutualSupportValue();
     }
 
     /**

@@ -100,13 +100,11 @@ public class Caspar extends Princess {
      * The player's mutual support setting: how tightly this bot keeps its force together, as a multiplier around 1.0.
      *
      * <p>The doctrine's single read of the underlying behavior setting, so no other Mutual Support code has to know
-     * what it is currently called. The setting is still stored under its original name because that name is a
-     * serialized element in saved behavior presets and appears in Princess's own path rankers and configuration UI;
-     * renaming it is a separate change that cannot land while Princess is serving as the benchmark control.</p>
+     * what it is currently called.</p>
      *
      * @return the multiplier, where higher means a tighter formation
      */
     private double mutualSupportMultiplier() {
-        return getBehaviorSettings().getHerdMentalityValue();
+        return getBehaviorSettings().getMutualSupportValue();
     }
 }

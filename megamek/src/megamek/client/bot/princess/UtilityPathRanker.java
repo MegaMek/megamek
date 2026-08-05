@@ -171,14 +171,14 @@ public class UtilityPathRanker extends BasicPathRanker {
         double braveryMod = getBraveryMod(successProbability, damageEstimate, expectedDamageTaken);
 
         var isNotAirborne = !path.getEntity().isAirborneAeroOnGroundMap();
-        // the only critters not subject to aggression and herding mods are
+        // the only critters not subject to aggression and mutual support mods are
         // airborne aeros on ground maps, as they move incredibly fast
         // The further I am from a target, the lower this path ranks
         // (weighted by Aggression slider).
         double aggressionMod = isNotAirborne ?
               calculateAggressionMod(movingUnit, pathCopy, maxRange, game) : 1.0;
         // The further I am from my teammates, the lower this path
-        // ranks (weighted by Herd Mentality).
+        // ranks (weighted by Mutual Support).
 
         double fallMod = calculateFallMod(successProbability);
 

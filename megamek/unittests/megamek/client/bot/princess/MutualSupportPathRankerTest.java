@@ -82,9 +82,9 @@ class MutualSupportPathRankerTest {
         when(mockPrincess.getBehaviorSettings()).thenReturn(mockBehavior);
         when(mockPrincess.getGame()).thenReturn(mockGame);
         when(mockGame.getCurrentRound()).thenReturn(1);
-        when(mockBehavior.getHerdMentalityValue()).thenReturn(1.0);
+        when(mockBehavior.getMutualSupportValue()).thenReturn(1.0);
         when(mockBehavior.getHyperAggressionValue()).thenReturn(2.5);
-        when(mockBehavior.isExclusiveHerding()).thenReturn(true);
+        when(mockBehavior.isExclusiveMutualSupport()).thenReturn(true);
         // consumed by the BasicPathRanker constructor; both reject non-positive values
         when(mockBehavior.getNumberOfEnemiesToConsiderFacing()).thenReturn(3);
         when(mockBehavior.getAllowFacingTolerance()).thenReturn(1);
@@ -134,7 +134,7 @@ class MutualSupportPathRankerTest {
     void advancingWithTheForceIsFree() {
         when(mockFriend.getPosition()).thenReturn(new Coords(0, 14)); // 4 hexes from the destination
         setEnemyDistances(20.0, 15.0, CLOSING_DESTINATION);
-        assertEquals(0.0, testRanker.calculateHerdingMod(null, mockPath), TOLERANCE);
+        assertEquals(0.0, testRanker.calculateMutualSupportMod(null, mockPath), TOLERANCE);
     }
 
     /**
@@ -145,22 +145,22 @@ class MutualSupportPathRankerTest {
      */
     @Test
     void leavingTheForceBehindIsPenalisedEvenWhileClosing() {
-        when(mockBehavior.getHerdMentalityValue()).thenReturn(25.0);
+        when(mockBehavior.getMutualSupportValue()).thenReturn(25.0);
         when(mockFriend.getPosition()).thenReturn(new Coords(0, 25)); // 17 hexes from the destination
         setEnemyDistances(20.0, 15.0, CLOSING_DESTINATION);
 
         // 8 hexes outside the 9-hex formation, at the capped weight of aggression * 0.8 = 2.0, held at 5.0
-        assertEquals(8 * 2.0 * 5.0, testRanker.calculateHerdingMod(null, mockPath), TOLERANCE);
+        assertEquals(8 * 2.0 * 5.0, testRanker.calculateMutualSupportMod(null, mockPath), TOLERANCE);
     }
 
     @Test
     void testHoldingPathBeyondSupportIsPenalizedAtCappedWeight() {
         // Not closing, and 6 hexes outside the formation. The setting is cranked to 10x the aggression weight,
         // but the invariant caps the cohesion weight at aggression * 0.8 = 2.0.
-        when(mockBehavior.getHerdMentalityValue()).thenReturn(25.0);
+        when(mockBehavior.getMutualSupportValue()).thenReturn(25.0);
         when(mockFriend.getPosition()).thenReturn(new Coords(0, 26)); // 15 hexes from destination
         setEnemyDistances(20.0, 20.0, HOLDING_DESTINATION);
-        assertEquals(6 * 2.0 * 5.0, testRanker.calculateHerdingMod(null, mockPath), TOLERANCE);
+        assertEquals(6 * 2.0 * 5.0, testRanker.calculateMutualSupportMod(null, mockPath), TOLERANCE);
     }
 
     /**
@@ -175,7 +175,7 @@ class MutualSupportPathRankerTest {
         when(mockFriend.getPosition()).thenReturn(new Coords(0, 26));
         setEnemyDistances(20.0, 20.0, HOLDING_DESTINATION);
 
-        double withFading = testRanker.calculateHerdingMod(null, mockPath);
+        double withFading = testRanker.calculateMutualSupportMod(null, mockPath);
 
         assertTrue(withFading > 0.0,
               "a withdrawing friend still anchors the formation, so a path far from it is still penalised");
@@ -185,34 +185,13 @@ class MutualSupportPathRankerTest {
      * A retreat that is not a formation is a rout. A withdrawing unit is exempt from the fighting line's pull and
      * carries little weight in its centre, so without this it is governed by nothing and runs alone.
      */
-    @Test
-    void aWithdrawingUnitIsHeldToTheOtherUnitsPullingBack() {
-        when(mockPrincess.isFallingBack(any(Entity.class))).thenReturn(true);
-        when(mockFriend.getPosition()).thenReturn(new Coords(0, 26)); // far from the destination
-        setEnemyDistances(20.0, 20.0, HOLDING_DESTINATION);
-
-        assertTrue(testRanker.calculateHerdingMod(null, mockPath) > 0.0,
-              "breaking away from the other withdrawing units must cost something");
-    }
-
-    /** Withdrawing together must not mean withdrawing in a heap: one attack should not catch several of them. */
-    @Test
-    void withdrawingUnitsKeepSeparation() {
-        when(mockPrincess.isFallingBack(any(Entity.class))).thenReturn(true);
-        when(mockFriend.getPosition()).thenReturn(HOLDING_DESTINATION); // right on top of the destination
-        setEnemyDistances(20.0, 20.0, HOLDING_DESTINATION);
-
-        assertTrue(testRanker.calculateHerdingMod(null, mockPath) > 0.0,
-              "ending on another withdrawing unit must cost something");
-    }
-
 
     @Test
     void testHoldingInsideSupportIsFree() {
         // Inside the formation, spacing costs nothing - the blob attractor is gone.
         when(mockFriend.getPosition()).thenReturn(new Coords(0, 18)); // 7 hexes from destination
         setEnemyDistances(20.0, 20.0, HOLDING_DESTINATION);
-        assertEquals(0.0, testRanker.calculateHerdingMod(null, mockPath), TOLERANCE);
+        assertEquals(0.0, testRanker.calculateMutualSupportMod(null, mockPath), TOLERANCE);
     }
 
     @Test
@@ -224,7 +203,7 @@ class MutualSupportPathRankerTest {
         setEnemyDistances(14.0, 9.0, CLOSING_DESTINATION);
         // One covering friend at the cover bonus. The value is small on purpose: measured over 200 games the
         // bonus changes nothing at any size, because the formation term now does this shaping directly.
-        assertEquals(-2.0, testRanker.calculateHerdingMod(null, mockPath), TOLERANCE);
+        assertEquals(-2.0, testRanker.calculateMutualSupportMod(null, mockPath), TOLERANCE);
     }
 
     @Test
@@ -233,7 +212,7 @@ class MutualSupportPathRankerTest {
         when(mockFriend.getPosition()).thenReturn(new Coords(5, 15));
         when(mockFriend.isDone()).thenReturn(true);
         setEnemyDistances(30.0, 25.0, CLOSING_DESTINATION);
-        assertEquals(0.0, testRanker.calculateHerdingMod(null, mockPath), TOLERANCE);
+        assertEquals(0.0, testRanker.calculateMutualSupportMod(null, mockPath), TOLERANCE);
     }
 
     @Test

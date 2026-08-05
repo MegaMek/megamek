@@ -2354,12 +2354,16 @@ public abstract class Entity extends TurnOrdered
      * When the elements the game has don't match the entity, re-add them
      */
     private void renumerateDisplacementAttacks() {
-        Enumeration<AttackAction> attackActions = game.getDisplacementAttacks();
-        while (attackActions.hasMoreElements()) {
-            AttackAction attack = attackActions.nextElement();
-            if (attack instanceof DisplacementAttackAction && attack.getEntityId() == id) {
-                displacementAttack = (DisplacementAttackAction) attack;
-                break;
+        if (game != null) {
+            Enumeration<AttackAction> attackActions = game.getDisplacementAttacks();
+            if (attackActions != null) {
+                while (attackActions.hasMoreElements()) {
+                    AttackAction attack = attackActions.nextElement();
+                    if (attack instanceof DisplacementAttackAction && attack.getEntityId() == id) {
+                        displacementAttack = (DisplacementAttackAction) attack;
+                        break;
+                    }
+                }
             }
         }
     }

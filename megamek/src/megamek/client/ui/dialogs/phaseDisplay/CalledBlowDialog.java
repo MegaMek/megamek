@@ -44,6 +44,7 @@ import javax.swing.border.EmptyBorder;
 
 import megamek.client.ui.Messages;
 import megamek.client.ui.dialogs.buttonDialogs.AbstractButtonDialog;
+import megamek.client.ui.util.UIUtil;
 
 /**
  * Asks the player where to aim a called blow with a physical weapon: uncalled (full body table), high
@@ -77,14 +78,17 @@ public class CalledBlowDialog extends AbstractButtonDialog {
 
     @Override
     protected Container createCenterPane() {
+        int verticalPadding = UIUtil.scaleForGUI(10);
+        int horizontalPadding = UIUtil.scaleForGUI(15);
+
         JPanel panel = new JPanel();
         panel.setLayout(new BoxLayout(panel, BoxLayout.PAGE_AXIS));
-        panel.setBorder(new EmptyBorder(10, 15, 10, 15));
+        panel.setBorder(new EmptyBorder(verticalPadding, horizontalPadding, verticalPadding, horizontalPadding));
 
         JLabel message = new JLabel(Messages.getString("PhysicalDisplay.CalledBlowDialog.message", weaponName));
         message.setAlignmentX(LEFT_ALIGNMENT);
         panel.add(message);
-        panel.add(Box.createVerticalStrut(10));
+        panel.add(Box.createVerticalStrut(verticalPadding));
 
         ButtonGroup radioGroup = new ButtonGroup();
         choiceButtons = new JRadioButton[choices.length];

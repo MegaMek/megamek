@@ -102,7 +102,10 @@ class ComputeC3SpotterTest {
         when(mockOptions.booleanOption(anyString())).thenReturn(false);
 
         gameEntities = new ArrayList<>();
-    
+
+        mockConditions = mock(PlanetaryConditions.class);
+        when(mockConditions.getLight()).thenReturn(Light.DAY);
+        
         mockGame = mock(Game.class);
         when(mockGame.getBoard()).thenReturn(mockBoard);
         when(mockGame.getBoard(anyInt())).thenReturn(mockBoard);
@@ -118,9 +121,6 @@ class ComputeC3SpotterTest {
         when(mockGame.hasBoardLocationOf(any(Targetable.class))).thenReturn(true);
         when(mockGame.hasBoardLocation(any(Coords.class),anyInt())).thenReturn(true);
         when(mockGame.getPlanetaryConditions()).thenReturn(mockConditions);
-
-        mockConditions = mock(PlanetaryConditions.class);
-        when(mockConditions.getLight()).thenReturn(Light.DAY);
 
         mockLosEffects = mock(LosEffects.class);
         when(mockLosEffects.isBlocked()).thenReturn(false);

@@ -47,10 +47,12 @@ import megamek.common.enums.Faction;
 import megamek.common.enums.TechBase;
 import megamek.common.enums.TechRating;
 import megamek.common.equipment.AmmoType;
+import megamek.common.equipment.Mounted;
 import megamek.common.game.Game;
 import megamek.common.loaders.EntityLoadingException;
 import megamek.common.options.IGameOptions;
 import megamek.common.options.OptionsConstants;
+import megamek.common.units.Entity;
 import megamek.common.weapons.handlers.AttackHandler;
 import megamek.common.weapons.handlers.ThunderBoltWeaponHandler;
 import megamek.common.weapons.handlers.ThunderboltScatterableHandler;
@@ -93,16 +95,19 @@ public abstract class ThunderboltWeapon extends MissileWeapon {
     @Nullable
     public AttackHandler getCorrectHandler(ToHitData toHit, WeaponAttackAction waa, Game game, TWGameManager manager) {
         try {
-            AmmoType atype = (AmmoType) game.getEntity(waa.getEntityId())
-                  .getEquipment(waa.getWeaponId())
-                  .getLinked()
-                  .getType();
+            Entity entity = game.getEntity(waa.getEntityId());
+            Mounted<?> weapon = (entity == null) ? null : entity.getEquipment(waa.getWeaponId());
+            Mounted<?> linked = (weapon == null) ? null : weapon.getLinked();
+            
+            AmmoType atype = (linked != null && linked.getType() instanceof AmmoType)
+                  ? (AmmoType) linked.getType()
+                  : null;
 
-            if ((atype.getMunitionType().contains(AmmoType.Munitions.M_THUNDER))
+            if (atype != null && ((atype.getMunitionType().contains(AmmoType.Munitions.M_THUNDER))
                   || (atype.getMunitionType().contains(AmmoType.Munitions.M_THUNDER_ACTIVE))
                   || (atype.getMunitionType().contains(AmmoType.Munitions.M_THUNDER_AUGMENTED))
                   || (atype.getMunitionType().contains(AmmoType.Munitions.M_THUNDER_INFERNO))
-                  || (atype.getMunitionType().contains(AmmoType.Munitions.M_THUNDER_VIBRABOMB))) {
+                  || (atype.getMunitionType().contains(AmmoType.Munitions.M_THUNDER_VIBRABOMB)))) {
                 return new ThunderboltScatterableHandler(toHit, waa, game, manager);
             }
 

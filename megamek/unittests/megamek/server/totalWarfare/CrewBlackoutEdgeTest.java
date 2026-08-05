@@ -99,9 +99,7 @@ class CrewBlackoutEdgeTest {
         try (MockedStatic<Compute> mockedCompute = mockStatic(Compute.class)) {
             // Every consciousness roll fails (2 vs. a target of 3 for a single hit)...
             mockedCompute.when(() -> Compute.rollD6(2)).thenReturn(failedRoll);
-            // ...but keep the real consciousness-number lookup.
-            // mockedCompute.when(() -> Compute.getConsciousnessNumber(1)).thenCallRealMethod();
-
+            
             gameManager.resolveCrewDamage(mek, 1, 0);
         }
 

@@ -426,12 +426,12 @@ public class MovePath implements Cloneable, Serializable {
         if (steps.size() > 1 && entity instanceof Mek && ((Mek) entity).countBadLegs() > 0 && Game.rulesManager instanceof CoreRulesManager) {
             MoveStep lastStep = steps.getLast();
             MoveStep prevStep = steps.getFirst();
-            if ((lastStep.getPosition() != prevStep.getPosition() 
+            if ((lastStep.getPosition().equals(prevStep.getPosition()) 
             || lastStep.getMovementType(true) != EntityMovementType.MOVE_WALK) 
             && !(entity instanceof QuadMek && ((QuadMek) entity).countBadLegs() < 3)) {
                 for (MoveStep s : steps) {
                    s.setDanger(true);
-                   s.setPastDanger(step.isPastDanger() || s.isDanger());
+                   s.setPastDanger(s.isPastDanger() || s.isDanger());
                 }
             }
         }

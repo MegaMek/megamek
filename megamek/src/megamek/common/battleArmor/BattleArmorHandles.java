@@ -151,8 +151,13 @@ public class BattleArmorHandles implements Transporter {
     }
 
     @Override
-    public final @Nullable Entity getExteriorUnitAt(int loc, boolean isRear) {
-        return isWeaponBlockedAt(loc, isRear) ? game.getEntity(carriedUnit) : null;
+    public final @Nullable Entity getExteriorUnitAt(int location, boolean isRear) {
+        // Guard game directly rather than relying on isWeaponBlockedAt() - subclass overrides
+        // (e.g. ProtoMekClampMount) can return true without ever reading the game field.
+        if (game == null) {
+            return null;
+        }
+        return isWeaponBlockedAt(location, isRear) ? game.getEntity(carriedUnit) : null;
     }
 
     @Override

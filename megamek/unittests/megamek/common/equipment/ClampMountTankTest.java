@@ -47,7 +47,6 @@ import megamek.common.battleArmor.BattleArmor;
 import megamek.common.game.Game;
 import megamek.common.units.Entity;
 import megamek.common.units.EntityMovementMode;
-import megamek.common.units.Mek;
 import megamek.common.units.Tank;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -96,8 +95,8 @@ class ClampMountTankTest {
         assertTrue(clampMount.getLoadedUnits().isEmpty(), "Without a game the carried unit ID cannot be resolved");
         assertEquals(0, clampMount.getCargoMpReduction(mock(Tank.class)));
         assertFalse(clampMount.unload(mockMagneticClampBattleArmor()));
-        assertFalse(clampMount.isWeaponBlockedAt(Mek.LOC_CENTER_TORSO, false));
-        assertNull(clampMount.getExteriorUnitAt(Mek.LOC_CENTER_TORSO, false));
+        assertFalse(clampMount.isWeaponBlockedAt(Tank.LOC_REAR, false));
+        assertNull(clampMount.getExteriorUnitAt(Tank.LOC_REAR, false));
     }
 
     @Test

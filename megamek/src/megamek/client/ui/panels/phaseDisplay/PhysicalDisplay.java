@@ -1815,10 +1815,11 @@ public class PhysicalDisplay extends AttackPhaseDisplay {
                     if (club != null) {
                         ToHitData clubToHit = ClubAttackAction.toHit(game,
                               currentEntity, target, club, ash.getAimTable(), false);
-                        canClub |= (clubToHit.getValue() != TargetRoll.IMPOSSIBLE);
+                        boolean isClubAttackPossible = clubToHit.getValue() != TargetRoll.IMPOSSIBLE;
+                        canClub |= isClubAttackPossible;
                         // assuming S7 vibroswords count as swords and maces
                         // count as hatchets
-                        if (club.getType().hasAnyFlag(MiscTypeFlag.S_SWORD,
+                        if (isClubAttackPossible && club.getType().hasAnyFlag(MiscTypeFlag.S_SWORD,
                               MiscTypeFlag.S_HATCHET,
                               MiscTypeFlag.S_VIBRO_SMALL,
                               MiscTypeFlag.S_VIBRO_MEDIUM,

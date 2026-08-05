@@ -712,7 +712,7 @@ class TWGameManagerTest {
                   target.getId(),
                   target.getPosition()
             );
-            getGame().addCharge(caa);
+            getGame().addDisplacementAttack(caa);
 
             // Act
             gameManager.resolvePhysicalAttacks();

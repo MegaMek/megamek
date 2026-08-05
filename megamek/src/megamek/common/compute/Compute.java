@@ -1238,6 +1238,10 @@ public class Compute {
     /**
      * Gets the ToHitData associated with firing at an immobile target. Returns null if target isn't.
      *
+     * Note: all Ranged attack calls *must* go through *.addImmobileMod() or we may get
+     * illegal -4 mods.
+     * Currently this is the case; all other attack types go through the above simplified method.
+     *
      * @param target     The target being considered for firing
      * @param aimingAt   The location of the unit being aimed at
      * @param aimingMode The aiming mode
@@ -1247,15 +1251,6 @@ public class Compute {
     @Nullable
     public static ToHitData getImmobileMod(Targetable target, int aimingAt, AimingMode aimingMode) {
         // if we are bombing hexes, they are not considered immobile.
-        if ((target.getTargetType() == Targetable.TYPE_HEX_BOMB)
-              || (target.getTargetType() == Targetable.TYPE_HEX_AERO_BOMB)) {
-            return null;
-        }
-        // Likewise, MRM Saturation attacks never get the target immobile mod
-        if (target.getTargetType() == Targetable.TYPE_SATURATION) {
-            return null;
-        }
-
         if (target.isImmobile() || target.isBracing()) {
             if ((target instanceof Mek) && (aimingAt == Mek.LOC_HEAD) && aimingMode.isImmobile()) {
                 return new ToHitData(3, "aiming at head");

@@ -108,6 +108,7 @@ public class ProneTargetPhysicalAttackTest {
         // Mock game
         mockGame = mock(Game.class);
         when(mockGame.getOptions()).thenReturn(mockOptions);
+        when(mockGame.getPlanetaryConditions()).thenReturn(mockConditions);
 
         // Mock hexes
         mockAttackerHex = mock(Hex.class);

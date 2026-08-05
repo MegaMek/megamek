@@ -1,5 +1,3 @@
-package megamek.common.rules.core;
-
 /*
  * Copyright (C) 2026 The MegaMek Team. All Rights Reserved.
  *
@@ -32,21 +30,31 @@ package megamek.common.rules.core;
  * <https://www.xbox.com/en-US/developers/rules> and it is not endorsed by or
  * affiliated with Microsoft.
  */
-
+package megamek.common.rules.totalwarfare;
 
 import megamek.common.rules.RulesArtillery;
+import megamek.common.rules.core.CoreRulesArtillery;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.CsvSource;
 
-public class CoreRulesArtillery extends RulesArtillery {
+import static org.junit.jupiter.api.Assertions.*;
 
-    /**
-     * Determine correct base mods for artillery fire.
-     * Core p. 63, 68-69, etc.
-     * @param distance  range from attacker to target in hexes
-     * @param direct    direct fire, otherwise indirect fire
-     * @param flak      direct fire against airborne ground or ASF target if true
-     * @return base Artillery attack mod, currently always 4 for Core rules
-     */
-    public int computeArtilleryBaseMod(int distance, boolean direct, boolean flak) {
-        return 4;
+class TWRulesArtilleryTest {
+
+    RulesArtillery rules = new TWRulesArtillery();
+
+    @BeforeEach
+    void setUp() {
+    }
+
+    @ParameterizedTest
+    @CsvSource({ "1, true, false, 4", "17, true, false, 4", "18, true, false, 4",   // Direct fire
+                 "17, false, false, 4", "18, false, false, 7",                      // Indirect fire
+                 "10, true, true, 3"                                                // Flak
+    })
+    void computeArtilleryBaseMod(int distance, boolean direct, boolean flak, int expected) {
+        assertEquals(expected, rules.computeArtilleryBaseMod(distance, direct, flak));
     }
 }

@@ -60,6 +60,48 @@ import org.xml.sax.SAXException;
  */
 class BehaviorSettingsTest {
 
+    /**
+     * The herding accessors were renamed to mutual support, which broke MekHQ's build: it calls them from
+     * BotForce, CustomizeBotForceDialog and Unit. They are kept as deprecated delegates so code outside MegaMek
+     * keeps working, and this pins that they really do delegate rather than drift into a second copy of the state.
+     */
+    @Test
+    @SuppressWarnings("removal")
+    void deprecatedHerdingAccessorsDelegateToMutualSupport() throws PrincessException {
+        BehaviorSettings behaviorSettings = new BehaviorSettings();
+
+        behaviorSettings.setHerdMentalityIndex(7);
+        assertEquals(7, behaviorSettings.getMutualSupportIndex(), "the old setter must write the new state");
+        assertEquals(7, behaviorSettings.getHerdMentalityIndex(), "and the old getter must read it back");
+
+        behaviorSettings.setMutualSupportIndex(2);
+        assertEquals(2, behaviorSettings.getHerdMentalityIndex(), "the old getter must see a new-setter write");
+
+        behaviorSettings.setHerdMentalityIndex("9");
+        assertEquals(9, behaviorSettings.getMutualSupportIndex(), "the string overload must delegate too");
+
+        assertEquals(behaviorSettings.getMutualSupportValue(), behaviorSettings.getHerdMentalityValue(),
+              "values must agree");
+        assertEquals(behaviorSettings.getMutualSupportValue(4), behaviorSettings.getHerdMentalityValue(4),
+              "indexed values must agree");
+
+        behaviorSettings.setExclusiveHerding(true);
+        assertTrue(behaviorSettings.isExclusiveMutualSupport(), "the old flag setter must write the new flag");
+        assertTrue(behaviorSettings.isExclusiveHerding(), "and the old flag getter must read it back");
+
+        // The other direction, which is the one that catches a deprecated getter quietly acquiring a field of
+        // its own: write through the current setter, read through the deprecated getter.
+        behaviorSettings.setExclusiveMutualSupport(false);
+        assertFalse(behaviorSettings.isExclusiveHerding(), "the old flag getter must see a new-setter write");
+        behaviorSettings.setExclusiveMutualSupport(true);
+        assertTrue(behaviorSettings.isExclusiveHerding(), "and must follow it back again");
+
+        behaviorSettings.setExclusiveHerding("false");
+        assertFalse(behaviorSettings.isExclusiveMutualSupport(), "the string overload must delegate too");
+        behaviorSettings.setExclusiveMutualSupport("true");
+        assertTrue(behaviorSettings.isExclusiveHerding(), "including the new string overload, read the old way");
+    }
+
     @Test
     void testSetDescription() throws PrincessException {
         BehaviorSettings behaviorSettings = new BehaviorSettings();
@@ -199,6 +241,52 @@ class BehaviorSettingsTest {
         assertEquals(expectedTargets, actualTargets);
     }
 
+    /**
+     * Behavior presets saved before the herding-to-mutual-support rename must still load, or every bot a player has
+     * configured silently reverts to defaults. The old element names are therefore still read, though no longer
+     * written.
+     */
+    @Test
+    void behaviorPresetsSavedBeforeTheRenameStillLoad()
+          throws ParserConfigurationException, IOException, SAXException, PrincessException {
+        String legacyXml = """
+              <behavior>
+                  <name>Legacy</name>
+                  <herdMentalityIndex>8</herdMentalityIndex>
+                  <exclusiveHerding>true</exclusiveHerding>
+              </behavior>
+              """;
+        DocumentBuilder documentBuilder = MMXMLUtility.newSafeDocumentBuilder();
+        Document document = documentBuilder.parse(new InputSource(new CharArrayReader(legacyXml.toCharArray())));
+
+        BehaviorSettings behaviorSettings = new BehaviorSettings();
+        behaviorSettings.fromXml(document.getDocumentElement());
+
+        assertEquals(8, behaviorSettings.getMutualSupportIndex(), "the pre-rename element name must still be read");
+        assertTrue(behaviorSettings.isExclusiveMutualSupport(), "the pre-rename exclusive flag must still be read");
+    }
+
+    /** A preset saved under the current name must of course also load. */
+    @Test
+    void behaviorPresetsSavedUnderTheCurrentNameLoad()
+          throws ParserConfigurationException, IOException, SAXException, PrincessException {
+        String currentXml = """
+              <behavior>
+                  <name>Current</name>
+                  <mutualSupportIndex>3</mutualSupportIndex>
+                  <exclusiveMutualSupport>true</exclusiveMutualSupport>
+              </behavior>
+              """;
+        DocumentBuilder documentBuilder = MMXMLUtility.newSafeDocumentBuilder();
+        Document document = documentBuilder.parse(new InputSource(new CharArrayReader(currentXml.toCharArray())));
+
+        BehaviorSettings behaviorSettings = new BehaviorSettings();
+        behaviorSettings.fromXml(document.getDocumentElement());
+
+        assertEquals(3, behaviorSettings.getMutualSupportIndex());
+        assertTrue(behaviorSettings.isExclusiveMutualSupport());
+    }
+
     @Test
     void testFromXml() throws ParserConfigurationException, IOException, SAXException, PrincessException {
         DocumentBuilder documentBuilder = MMXMLUtility.newSafeDocumentBuilder();
@@ -226,8 +314,8 @@ class BehaviorSettingsTest {
               behaviorSettings.getHyperAggressionIndex());
         assertEquals(BehaviorSettingsTestConstants.GOOD_SELF_PRESERVATION_INDEX,
               behaviorSettings.getSelfPreservationIndex());
-        assertEquals(BehaviorSettingsTestConstants.GOOD_HERD_MENTALITY_INDEX,
-              behaviorSettings.getHerdMentalityIndex());
+        assertEquals(BehaviorSettingsTestConstants.GOOD_MUTUAL_SUPPORT_INDEX,
+              behaviorSettings.getMutualSupportIndex());
         assertEquals(BehaviorSettingsTestConstants.GOOD_BRAVERY_INDEX, behaviorSettings.getBraveryIndex());
         assertEquals(expectedTargets, behaviorSettings.getStrategicBuildingTargets());
         assertEquals(expectedUnits, behaviorSettings.getPriorityUnitTargets());
@@ -252,8 +340,8 @@ class BehaviorSettingsTest {
               behaviorSettings.getHyperAggressionIndex());
         assertEquals(BehaviorSettingsTestConstants.GOOD_SELF_PRESERVATION_INDEX,
               behaviorSettings.getSelfPreservationIndex());
-        assertEquals(BehaviorSettingsTestConstants.GOOD_HERD_MENTALITY_INDEX,
-              behaviorSettings.getHerdMentalityIndex());
+        assertEquals(BehaviorSettingsTestConstants.GOOD_MUTUAL_SUPPORT_INDEX,
+              behaviorSettings.getMutualSupportIndex());
         assertEquals(BehaviorSettingsTestConstants.GOOD_BRAVERY_INDEX, behaviorSettings.getBraveryIndex());
         assertEquals(expectedTargets, behaviorSettings.getStrategicBuildingTargets());
         assertEquals(expectedUnits, behaviorSettings.getPriorityUnitTargets());
@@ -281,8 +369,8 @@ class BehaviorSettingsTest {
               behaviorSettings.getHyperAggressionIndex());
         assertEquals(BehaviorSettingsTestConstants.GOOD_SELF_PRESERVATION_INDEX,
               behaviorSettings.getSelfPreservationIndex());
-        assertEquals(BehaviorSettingsTestConstants.GOOD_HERD_MENTALITY_INDEX,
-              behaviorSettings.getHerdMentalityIndex());
+        assertEquals(BehaviorSettingsTestConstants.GOOD_MUTUAL_SUPPORT_INDEX,
+              behaviorSettings.getMutualSupportIndex());
         assertEquals(BehaviorSettingsTestConstants.GOOD_BRAVERY_INDEX, behaviorSettings.getBraveryIndex());
         assertEquals(expectedTargets, behaviorSettings.getStrategicBuildingTargets());
         assertEquals(expectedUnits, behaviorSettings.getPriorityUnitTargets());
@@ -340,8 +428,8 @@ class BehaviorSettingsTest {
               behaviorSettings.getHyperAggressionIndex());
         assertEquals(BehaviorSettingsTestConstants.GOOD_SELF_PRESERVATION_INDEX,
               behaviorSettings.getSelfPreservationIndex());
-        assertEquals(BehaviorSettingsTestConstants.GOOD_HERD_MENTALITY_INDEX,
-              behaviorSettings.getHerdMentalityIndex());
+        assertEquals(BehaviorSettingsTestConstants.GOOD_MUTUAL_SUPPORT_INDEX,
+              behaviorSettings.getMutualSupportIndex());
         assertEquals(BehaviorSettingsTestConstants.GOOD_BRAVERY_INDEX, behaviorSettings.getBraveryIndex());
         assertEquals(expectedTargets, behaviorSettings.getStrategicBuildingTargets());
         assertEquals(expectedUnits, behaviorSettings.getPriorityUnitTargets());
@@ -369,8 +457,8 @@ class BehaviorSettingsTest {
               behaviorSettings.getHyperAggressionIndex());
         assertEquals(BehaviorSettingsTestConstants.GOOD_SELF_PRESERVATION_INDEX,
               behaviorSettings.getSelfPreservationIndex());
-        assertEquals(BehaviorSettingsTestConstants.GOOD_HERD_MENTALITY_INDEX,
-              behaviorSettings.getHerdMentalityIndex());
+        assertEquals(BehaviorSettingsTestConstants.GOOD_MUTUAL_SUPPORT_INDEX,
+              behaviorSettings.getMutualSupportIndex());
         assertEquals(BehaviorSettingsTestConstants.GOOD_BRAVERY_INDEX, behaviorSettings.getBraveryIndex());
         assertEquals(expectedTargets, behaviorSettings.getStrategicBuildingTargets());
         assertEquals(expectedUnits, behaviorSettings.getPriorityUnitTargets());
@@ -400,8 +488,8 @@ class BehaviorSettingsTest {
               behaviorSettings.getHyperAggressionIndex());
         assertEquals(BehaviorSettingsTestConstants.GOOD_SELF_PRESERVATION_INDEX,
               behaviorSettings.getSelfPreservationIndex());
-        assertEquals(BehaviorSettingsTestConstants.GOOD_HERD_MENTALITY_INDEX,
-              behaviorSettings.getHerdMentalityIndex());
+        assertEquals(BehaviorSettingsTestConstants.GOOD_MUTUAL_SUPPORT_INDEX,
+              behaviorSettings.getMutualSupportIndex());
         assertEquals(BehaviorSettingsTestConstants.GOOD_BRAVERY_INDEX, behaviorSettings.getBraveryIndex());
         assertEquals(expectedTargets, behaviorSettings.getStrategicBuildingTargets());
         assertEquals(expectedUnits, behaviorSettings.getPriorityUnitTargets());
@@ -431,8 +519,8 @@ class BehaviorSettingsTest {
               behaviorSettings.getHyperAggressionIndex());
         assertEquals(BehaviorSettingsTestConstants.GOOD_SELF_PRESERVATION_INDEX,
               behaviorSettings.getSelfPreservationIndex());
-        assertEquals(BehaviorSettingsTestConstants.GOOD_HERD_MENTALITY_INDEX,
-              behaviorSettings.getHerdMentalityIndex());
+        assertEquals(BehaviorSettingsTestConstants.GOOD_MUTUAL_SUPPORT_INDEX,
+              behaviorSettings.getMutualSupportIndex());
         assertEquals(BehaviorSettingsTestConstants.GOOD_BRAVERY_INDEX, behaviorSettings.getBraveryIndex());
         assertEquals(expectedTargets, behaviorSettings.getStrategicBuildingTargets());
         assertEquals(expectedUnits, behaviorSettings.getPriorityUnitTargets());
@@ -459,8 +547,8 @@ class BehaviorSettingsTest {
               behaviorSettings.getHyperAggressionIndex());
         assertEquals(BehaviorSettingsTestConstants.GOOD_SELF_PRESERVATION_INDEX,
               behaviorSettings.getSelfPreservationIndex());
-        assertEquals(BehaviorSettingsTestConstants.GOOD_HERD_MENTALITY_INDEX,
-              behaviorSettings.getHerdMentalityIndex());
+        assertEquals(BehaviorSettingsTestConstants.GOOD_MUTUAL_SUPPORT_INDEX,
+              behaviorSettings.getMutualSupportIndex());
         assertEquals(BehaviorSettingsTestConstants.GOOD_BRAVERY_INDEX, behaviorSettings.getBraveryIndex());
         assertEquals(expectedTargets, behaviorSettings.getStrategicBuildingTargets());
         assertEquals(expectedUnits, behaviorSettings.getPriorityUnitTargets());
@@ -486,8 +574,8 @@ class BehaviorSettingsTest {
               behaviorSettings.getHyperAggressionIndex());
         assertEquals(BehaviorSettingsTestConstants.GOOD_SELF_PRESERVATION_INDEX,
               behaviorSettings.getSelfPreservationIndex());
-        assertEquals(BehaviorSettingsTestConstants.GOOD_HERD_MENTALITY_INDEX,
-              behaviorSettings.getHerdMentalityIndex());
+        assertEquals(BehaviorSettingsTestConstants.GOOD_MUTUAL_SUPPORT_INDEX,
+              behaviorSettings.getMutualSupportIndex());
         assertEquals(BehaviorSettingsTestConstants.GOOD_BRAVERY_INDEX, behaviorSettings.getBraveryIndex());
         assertEquals(expectedTargets, behaviorSettings.getStrategicBuildingTargets());
         assertEquals(expectedUnits, behaviorSettings.getPriorityUnitTargets());

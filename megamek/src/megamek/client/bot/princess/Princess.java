@@ -265,6 +265,9 @@ public class Princess extends BotClient {
         // and it will stay up-to date.
         precognition = new Precognition(this);
         precognitionThread = new Thread(precognition, "Princess-precognition (" + getName() + ")");
+        // Precognition is a pure look-ahead cache with no state worth preserving, so it must never be the reason a
+        // process stays alive. die() interrupts it in the normal case; this covers a bot that was dropped without one.
+        precognitionThread.setDaemon(true);
     }
 
     /**
@@ -1239,6 +1242,22 @@ public class Princess extends BotClient {
      *     </li>
      * </ol>
      */
+    /**
+     * Orders the candidate deployment hexes that {@link #rankDeploymentCoords(Entity, List)} will scan.
+     *
+     * <p>This matters more than it looks. The candidate list arrives shuffled, and the scan below stops after roughly
+     * twenty entries, so whatever sits at the front of this list is very nearly the whole choice. Princess returns it
+     * unchanged: each unit is placed on terrain merit alone, with no regard for where the rest of the force went.</p>
+     *
+     * @param deployedUnit        the unit being placed
+     * @param possibleDeployCoords legal deployment hexes
+     *
+     * @return the hexes to scan, in the order to scan them
+     */
+    protected List<Coords> prioritizeDeploymentCoords(Entity deployedUnit, List<Coords> possibleDeployCoords) {
+        return possibleDeployCoords;
+    }
+
     protected Coords rankDeploymentCoords(Entity deployedUnit, List<Coords> possibleDeployCoords) {
         StringBuilder sb = null;
         if (LOGGER.isDebugEnabled()) {
@@ -1283,6 +1302,10 @@ public class Princess extends BotClient {
                   })
                   .toList();
         }
+
+        // Order the candidates before the capped scan below only looks at the first handful of them. Princess hands
+        // them back untouched, so each unit deploys on terrain alone; subclasses may reorder to keep a force together.
+        possibleDeployCoords = prioritizeDeploymentCoords(deployedUnit, possibleDeployCoords);
 
         // Sample LIMIT number of valid starting hexes, check accessibility and hazards within RADIUS
         int LIMIT = 20;
@@ -3135,7 +3158,7 @@ public class Princess extends BotClient {
                   getMaxWeaponRange(entity),
                   fallTolerance,
                   getEnemyEntities(),
-                  getBehaviorSettings().isExclusiveHerding() ? getEntitiesOwned() : getFriendEntities());
+                  getBehaviorSettings().isExclusiveMutualSupport() ? getEntitiesOwned() : getFriendEntities());
 
             final long stop_time = java.lang.System.currentTimeMillis();
 
@@ -3622,6 +3645,19 @@ public class Princess extends BotClient {
         UtilityPathRanker utilityPathRanker = new UtilityPathRanker(this);
         utilityPathRanker.setPathEnumerator(precognition.getPathEnumerator());
         pathRankers.put(PathRankerType.Utility, utilityPathRanker);
+    }
+
+    /**
+     * Wiring seam for subclasses (CASPAR): replaces the registered path ranker of the given type, wiring the
+     * replacement to the precognition path enumerator the same way the stock rankers are wired. Call after
+     * {@code super.initializePathRankers()}.
+     *
+     * @param rankerType the ranker slot to replace
+     * @param pathRanker the replacement ranker
+     */
+    protected void registerPathRanker(PathRankerType rankerType, BasicPathRanker pathRanker) {
+        pathRanker.setPathEnumerator(precognition.getPathEnumerator());
+        pathRankers.put(rankerType, pathRanker);
     }
 
     /**

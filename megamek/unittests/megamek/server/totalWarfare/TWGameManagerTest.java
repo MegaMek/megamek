@@ -57,6 +57,7 @@ import megamek.common.bays.CargoBay;
 import megamek.common.board.Board;
 import megamek.common.board.Coords;
 import megamek.common.enums.BasementType;
+import megamek.common.enums.GamePhase;
 import megamek.common.enums.MoveStepType;
 import megamek.common.equipment.ArmorType;
 import megamek.common.equipment.EquipmentType;
@@ -1043,5 +1044,59 @@ class TWGameManagerTest {
         game.addEntity(lam);
 
         assertDoesNotThrow(() -> gameManager.resolveShutdownCrashes());
+    }
+
+    @Test
+    void testSinkImmobilizedHover() {
+        Board board = new Board(3,3);
+        Hex waterHex = new Hex(0,
+              new Terrain[] {new Terrain(Terrains.WATER, 1)}, null);
+        initializeBoard(board);
+        board.setHex(1, 1, waterHex);
+        game.setBoard(board);
+        //game.setPhase(GamePhase.FIRING);
+
+        Tank waterEngine = new Tank();
+        Tank waterMotive = new Tank();
+        Tank landEngine = new Tank();
+        Tank landMotive = new Tank();
+
+        waterEngine.setMovementMode(EntityMovementMode.HOVER);
+        waterMotive.setMovementMode(EntityMovementMode.HOVER);
+        landEngine.setMovementMode(EntityMovementMode.HOVER);
+        landMotive.setMovementMode(EntityMovementMode.HOVER);
+
+        waterEngine.setPosition(new Coords(1, 1));
+        waterMotive.setPosition(new Coords(1, 1));
+        landEngine.setPosition(new Coords(2, 2));
+        landMotive.setPosition(new Coords(2, 2));
+
+        game.addEntity(waterEngine);
+        game.addEntity(waterMotive);
+        game.addEntity(landEngine);
+        game.addEntity(landMotive);
+
+        gameManager.applyCriticalHit(waterEngine, Entity.NONE,
+              new CriticalSlot(0, Tank.CRIT_ENGINE), false, 1, false);
+
+        gameManager.applyCriticalHit(landEngine, Entity.NONE,
+              new CriticalSlot(0, Tank.CRIT_ENGINE), false, 1, false);
+
+        gameManager.vehicleMotiveDamage(waterMotive, 12);
+        gameManager.vehicleMotiveDamage(landMotive, 12);
+
+        gameManager.resetEntityPhase(GamePhase.END);
+
+        // Hover vehicle engine crit over water should be destroyed
+        assertTrue(waterEngine.isDestroyed());
+
+        // Hover vehicles immobilized over water should be destroyed
+        assertTrue(waterMotive.isDestroyed());
+
+        // Hover vehicles engine crit over land should not be destroyed
+        assertFalse(landEngine.isDoomed());
+
+        // Hover vehicles immobilized over land should not be destroyed
+        assertFalse(landMotive.isDoomed());
     }
 }

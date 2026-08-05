@@ -129,23 +129,24 @@ public class BattleArmorHandles implements Transporter {
     }
 
     @Override
-    public boolean isWeaponBlockedAt(int loc, boolean isRear) {
+    public boolean isWeaponBlockedAt(int location, boolean isRear) {
         if (game == null) {
             return false;
         }
 
-        Entity carriedBA = game.getEntity(carriedUnit);
-        if (carriedBA == null) {
+        Entity carriedBattleArmor = game.getEntity(carriedUnit);
+        if (carriedBattleArmor == null) {
             return false;
         } else {
             int trooperLocation = BattleArmor.LOC_SQUAD;
-            trooperLocation = switch (loc) {
+            trooperLocation = switch (location) {
                 case Mek.LOC_CENTER_TORSO -> isRear ? BattleArmor.LOC_TROOPER_5 : BattleArmor.LOC_TROOPER_6;
                 case Mek.LOC_LEFT_TORSO -> isRear ? BattleArmor.LOC_TROOPER_4 : BattleArmor.LOC_TROOPER_2;
                 case Mek.LOC_RIGHT_TORSO -> isRear ? BattleArmor.LOC_TROOPER_3 : BattleArmor.LOC_TROOPER_1;
                 default -> trooperLocation;
             };
-            return (carriedBA.locations() > trooperLocation) && (carriedBA.getInternal(trooperLocation) > 0);
+            return (carriedBattleArmor.locations() > trooperLocation)
+                  && (carriedBattleArmor.getInternal(trooperLocation) > 0);
         }
     }
 

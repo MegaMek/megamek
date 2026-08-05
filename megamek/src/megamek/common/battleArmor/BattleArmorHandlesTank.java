@@ -44,18 +44,18 @@ public class BattleArmorHandlesTank extends BattleArmorHandles {
     private static final long serialVersionUID = 1031947858009941399L;
 
     @Override
-    public final boolean isWeaponBlockedAt(int loc, boolean isRear) {
+    public final boolean isWeaponBlockedAt(int location, boolean isRear) {
         if (game == null) {
             return false;
         }
 
-        Entity carriedBA = game.getEntity(carriedUnit);
-        if (carriedBA == null) {
+        Entity carriedBattleArmor = game.getEntity(carriedUnit);
+        if (carriedBattleArmor == null) {
             return false;
         } else {
             int troopLocation1 = BattleArmor.LOC_SQUAD;
             int troopLocation2 = BattleArmor.LOC_SQUAD;
-            troopLocation2 = switch (loc) {
+            troopLocation2 = switch (location) {
                 case Tank.LOC_REAR -> {
                     troopLocation1 = BattleArmor.LOC_TROOPER_5;
                     yield BattleArmor.LOC_TROOPER_6;
@@ -70,8 +70,10 @@ public class BattleArmorHandlesTank extends BattleArmorHandles {
                 }
                 default -> troopLocation2;
             };
-            return ((carriedBA.locations() > troopLocation1) && (carriedBA.getInternal(troopLocation1) > 0))
-                  || ((carriedBA.locations() > troopLocation2) && (carriedBA.getInternal(troopLocation2) > 0));
+            return ((carriedBattleArmor.locations() > troopLocation1)
+                  && (carriedBattleArmor.getInternal(troopLocation1) > 0))
+                  || ((carriedBattleArmor.locations() > troopLocation2)
+                  && (carriedBattleArmor.getInternal(troopLocation2) > 0));
         }
     }
 }

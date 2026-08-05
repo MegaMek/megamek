@@ -56,7 +56,10 @@ public enum ChatCommands {
           "aggression",
           Messages.getString("Princess.command.aggression.description"),
           new AggressionCommand()),
-    HERDING("he", "herding", Messages.getString("Princess.command.herding.description"), new HerdingCommand()),
+    MUTUAL_SUPPORT("ms",
+          "mutual-support",
+          Messages.getString("Princess.command.mutualSupport.description"),
+          new MutualSupportCommand()),
     HOLD_POSITION("hp",
           "hold-position",
           Messages.getString("Princess.command.holdPosition.description"),
@@ -169,11 +172,19 @@ public enum ChatCommands {
         return chatCommand;
     }
 
+    private static final String LEGACY_HERDING_ABBREVIATION = "he";
+
     public static ChatCommands getByValue(String s) {
         for (ChatCommands cc : ChatCommands.values()) {
             if (cc.getAbbreviation().equals(s)) {
                 return cc;
             }
+        }
+
+        // Abbreviation this command answered to before it was renamed to mutual support, kept so existing
+        // player macros and muscle memory still work.
+        if (LEGACY_HERDING_ABBREVIATION.equals(s)) {
+            return MUTUAL_SUPPORT;
         }
 
         return null;

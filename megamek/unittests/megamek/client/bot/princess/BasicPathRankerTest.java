@@ -110,7 +110,7 @@ class BasicPathRankerTest {
         when(mockBehavior.getFallShameValue()).thenReturn(BehaviorSettings.FALL_SHAME_VALUES[5]);
         when(mockBehavior.getBraveryValue()).thenReturn(BehaviorSettings.BRAVERY[5]);
         when(mockBehavior.getHyperAggressionValue()).thenReturn(BehaviorSettings.HYPER_AGGRESSION_VALUES[5]);
-        when(mockBehavior.getHerdMentalityValue()).thenReturn(BehaviorSettings.HERD_MENTALITY_VALUES[5]);
+        when(mockBehavior.getMutualSupportValue()).thenReturn(BehaviorSettings.MUTUAL_SUPPORT_VALUES[5]);
         when(mockBehavior.getSelfPreservationValue()).thenReturn(BehaviorSettings.SELF_PRESERVATION_VALUES[5]);
         when(mockBehavior.getFavorHigherTMM()).thenReturn(0);
         when(mockBehavior.getAntiCrowding()).thenReturn(0);
@@ -863,9 +863,9 @@ class BasicPathRankerTest {
         private double distanceToEnemy;
         private double hyperAggressionValue;
 
-        private double herdingModValue;
+        private double mutualSupportModValue;
         private double distanceToAllies;
-        private double herdMentalityValue;
+        private double mutualSupportValue;
 
         private int facingModValue;
         private int facingModConstant;
@@ -903,11 +903,11 @@ class BasicPathRankerTest {
             return this;
         }
 
-        public RankPathResultBuilder withHerdingMod(double herdingModValue, double distanceToAllies,
-              double herdMentalityValue) {
-            this.herdingModValue = herdingModValue;
+        public RankPathResultBuilder withMutualSupportMod(double mutualSupportModValue, double distanceToAllies,
+              double mutualSupportValue) {
+            this.mutualSupportModValue = mutualSupportModValue;
             this.distanceToAllies = distanceToAllies;
-            this.herdMentalityValue = herdMentalityValue;
+            this.mutualSupportValue = mutualSupportValue;
             return this;
         }
 
@@ -956,16 +956,16 @@ class BasicPathRankerTest {
                   .append(decimalFormat.format(-1.0))
                   .append(" deficit=")
                   .append(decimalFormat.format(0.0))
-                  .append("] - herdingMod [");
+                  .append("] - mutualSupportMod [");
 
             if (noFriends) {
                 result.append("0 no friends");
             } else {
-                result.append(decimalFormat.format(herdingModValue))
+                result.append(decimalFormat.format(mutualSupportModValue))
                       .append(" = ")
                       .append(decimalFormat.format(distanceToAllies))
                       .append(" * ")
-                      .append(decimalFormat.format(herdMentalityValue));
+                      .append(decimalFormat.format(mutualSupportValue));
             }
 
             result.append("] - facingMod [")
@@ -1087,7 +1087,7 @@ class BasicPathRankerTest {
               builder.withFallMod(0, 0, 500)
                     .withBraveryMod(-6.25, 1, 22.5, 1.5, 40)
                     .withAggressionMod(30, 12, 2.5)
-                    .withHerdingMod(15, 15, 1)
+                    .withMutualSupportMod(15, 15, 1)
                     .withFacingMod(0, 50, 0)
                     .build());
 
@@ -1101,7 +1101,7 @@ class BasicPathRankerTest {
               builder.withFallMod(250, 0.5, 500)
                     .withBraveryMod(-23.12, 0.5, 22.5, 1.5, 40)
                     .withAggressionMod(30, 12, 2.5)
-                    .withHerdingMod(15, 15, 1)
+                    .withMutualSupportMod(15, 15, 1)
                     .withFacingMod(0, 50, 0)
                     .build());
         actual = testRanker.rankPath(mockPath, mockGame, 18, 0.5, testEnemies, friendsCoords);
@@ -1117,7 +1117,7 @@ class BasicPathRankerTest {
               builder.withFallMod(125, 0.25, 500)
                     .withBraveryMod(-14.69, 0.75, 22.5, 1.5, 40)
                     .withAggressionMod(30, 12, 2.5)
-                    .withHerdingMod(15, 15, 1)
+                    .withMutualSupportMod(15, 15, 1)
                     .withFacingMod(0, 50, 0)
                     .build());
         actual = testRanker.rankPath(mockPath, mockGame, 18, 0.5, testEnemies, friendsCoords);
@@ -1141,7 +1141,7 @@ class BasicPathRankerTest {
               builder.withFallMod(0, 0, 500)
                     .withBraveryMod(-6.25, 1, 22.5, 1.5, 40)
                     .withAggressionMod(30, 12, 2.5)
-                    .withHerdingMod(15, 15, 1)
+                    .withMutualSupportMod(15, 15, 1)
                     .withFacingMod(0, 50, 0)
                     .build());
         actual = testRanker.rankPath(mockPath, mockGame, 18, 0.5, testEnemies, friendsCoords);
@@ -1162,7 +1162,7 @@ class BasicPathRankerTest {
               builder.withFallMod(0, 0, 500)
                     .withBraveryMod(-16, 1, 16, 1.5, 40)
                     .withAggressionMod(30, 12, 2.5)
-                    .withHerdingMod(15, 15, 1)
+                    .withMutualSupportMod(15, 15, 1)
                     .withFacingMod(0, 50, 0)
                     .build());
         actual = testRanker.rankPath(mockPath, mockGame, 18, 0.5, testEnemies, friendsCoords);
@@ -1191,7 +1191,7 @@ class BasicPathRankerTest {
               builder.withFallMod(0, 0, 500)
                     .withBraveryMod(-16.25, 1, 22.5, 1.5, 50)
                     .withAggressionMod(30, 12, 2.5)
-                    .withHerdingMod(15, 15, 1)
+                    .withMutualSupportMod(15, 15, 1)
                     .withFacingMod(0, 50, 0)
                     .build());
         actual = testRanker.rankPath(mockPath, mockGame, 18, 0.5, testEnemies, friendsCoords);
@@ -1212,7 +1212,7 @@ class BasicPathRankerTest {
               builder.withFallMod(0, 0, 500)
                     .withBraveryMod(3.75, 1, 22.5, 1.5, 30)
                     .withAggressionMod(30, 12, 2.5)
-                    .withHerdingMod(15, 15, 1)
+                    .withMutualSupportMod(15, 15, 1)
                     .withFacingMod(0, 50, 0)
                     .build());
         actual = testRanker.rankPath(mockPath, mockGame, 18, 0.5, testEnemies, friendsCoords);
@@ -1236,7 +1236,7 @@ class BasicPathRankerTest {
               builder.withFallMod(0, 0, 500)
                     .withBraveryMod(-6.25, 1, 22.5, 1.5, 40)
                     .withAggressionMod(5, 2, 2.5)
-                    .withHerdingMod(15, 15, 1)
+                    .withMutualSupportMod(15, 15, 1)
                     .withFacingMod(0, 50, 0)
                     .build());
         actual = testRanker.rankPath(mockPath, mockGame, 18, 0.5, testEnemies, friendsCoords);
@@ -1252,7 +1252,7 @@ class BasicPathRankerTest {
               builder.withFallMod(0, 0, 500)
                     .withBraveryMod(-6.25, 1, 22.5, 1.5, 40)
                     .withAggressionMod(55, 22, 2.5)
-                    .withHerdingMod(15, 15, 1)
+                    .withMutualSupportMod(15, 15, 1)
                     .withFacingMod(0, 50, 0)
                     .build());
         actual = testRanker.rankPath(mockPath, mockGame, 18, 0.5, testEnemies, friendsCoords);
@@ -1271,7 +1271,7 @@ class BasicPathRankerTest {
               builder.withFallMod(0, 0, 500)
                     .withBraveryMod(-6.25, 1, 22.5, 1.5, 40)
                     .withAggressionMod(30, 12, 2.5)
-                    .withHerdingMod(10, 10, 1)
+                    .withMutualSupportMod(10, 10, 1)
                     .withFacingMod(0, 50, 0)
                     .build());
         actual = testRanker.rankPath(mockPath, mockGame, 18, 0.5, testEnemies, friendsCoords);
@@ -1287,7 +1287,7 @@ class BasicPathRankerTest {
               builder.withFallMod(0, 0, 500)
                     .withBraveryMod(-6.25, 1, 22.5, 1.5, 40)
                     .withAggressionMod(30, 12, 2.5)
-                    .withHerdingMod(20, 20, 1)
+                    .withMutualSupportMod(20, 20, 1)
                     .withFacingMod(0, 50, 0)
                     .build());
         actual = testRanker.rankPath(mockPath, mockGame, 18, 0.5, testEnemies, friendsCoords);
@@ -1322,7 +1322,7 @@ class BasicPathRankerTest {
               builder.withFallMod(0, 0, 500)
                     .withBraveryMod(-6.25, 1, 22.5, 1.5, 40)
                     .withAggressionMod(30, 12, 2.5)
-                    .withHerdingMod(15, 15, 1)
+                    .withMutualSupportMod(15, 15, 1)
                     .withFacingMod(0, 50, 0)
                     .build());
         actual = testRanker.rankPath(mockPath, mockGame, 18, 0.5, testEnemies, friendsCoords);
@@ -1336,7 +1336,7 @@ class BasicPathRankerTest {
               builder.withFallMod(0, 0, 500)
                     .withBraveryMod(-6.25, 1, 22.5, 1.5, 40)
                     .withAggressionMod(30, 12, 2.5)
-                    .withHerdingMod(15, 15, 1)
+                    .withMutualSupportMod(15, 15, 1)
                     .withFacingMod(0, 50, 0)
                     .build());
         actual = testRanker.rankPath(mockPath, mockGame, 18, 0.5, testEnemies, friendsCoords);
@@ -1353,7 +1353,7 @@ class BasicPathRankerTest {
               builder.withFallMod(0, 0, 500)
                     .withBraveryMod(-6.25, 1, 22.5, 1.5, 40)
                     .withAggressionMod(30, 12, 2.5)
-                    .withHerdingMod(15, 15, 1)
+                    .withMutualSupportMod(15, 15, 1)
                     .withFacingMod(0, 50, 0)
                     .build());
         actual = testRanker.rankPath(mockPath, mockGame, 18, 0.5, testEnemies, friendsCoords);
@@ -1375,7 +1375,7 @@ class BasicPathRankerTest {
               builder.withFallMod(0, 0, 500)
                     .withBraveryMod(-6.25, 1, 22.5, 1.5, 40)
                     .withAggressionMod(30, 12, 2.5)
-                    .withHerdingMod(15, 15, 1)
+                    .withMutualSupportMod(15, 15, 1)
                     .withFacingMod(0, 50, 0)
                     .build());
         actual = testRanker.rankPath(mockPath, mockGame, 18, 0.5, testEnemies, friendsCoords);
@@ -1389,7 +1389,7 @@ class BasicPathRankerTest {
               builder.withFallMod(0, 0, 500)
                     .withBraveryMod(-6.25, 1, 22.5, 1.5, 40)
                     .withAggressionMod(30, 12, 2.5)
-                    .withHerdingMod(15, 15, 1)
+                    .withMutualSupportMod(15, 15, 1)
                     .withFacingMod(50, 50, 1)
                     .build());
         actual = testRanker.rankPath(mockPath, mockGame, 18, 0.5, testEnemies, friendsCoords);
@@ -1405,7 +1405,7 @@ class BasicPathRankerTest {
               builder.withFallMod(0, 0, 500)
                     .withBraveryMod(-6.25, 1, 22.5, 1.5, 40)
                     .withAggressionMod(30, 12, 2.5)
-                    .withHerdingMod(15, 15, 1)
+                    .withMutualSupportMod(15, 15, 1)
                     .withFacingMod(0, 50, 0)
                     .build());
         actual = testRanker.rankPath(mockPath, mockGame, 18, 0.5, testEnemies, friendsCoords);
@@ -1422,7 +1422,7 @@ class BasicPathRankerTest {
               builder.withFallMod(0, 0, 500)
                     .withBraveryMod(-6.25, 1, 22.5, 1.5, 40)
                     .withAggressionMod(30, 12, 2.5)
-                    .withHerdingMod(15, 15, 1)
+                    .withMutualSupportMod(15, 15, 1)
                     .withFacingMod(50, 50, 1)
                     .build());
         actual = testRanker.rankPath(mockPath, mockGame, 18, 0.5, testEnemies, friendsCoords);

@@ -95,7 +95,7 @@ import megamek.logging.MMLogger;
  *
  * <p>The ranker implements Princess's core movement decision-making logic for most ground units, calculating a final
  * utility score where higher values represent more desirable paths. The relative importance of different factors is
- * determined by the bot's behavior settings (aggression, bravery, herd mentality, etc.).</p>
+ * determined by the bot's behavior settings (aggression, bravery, mutual support, etc.).</p>
  *
  * <p>Path evaluation also considers terrain hazards like building collapses, water, magma, ice, swamp, and other that
  * could damage or immobilize the unit.</p>
@@ -820,7 +820,7 @@ public class BasicPathRanker extends PathRanker {
     // ComputeToHitIsImpossible - so a tube must hold at least one hex beyond that (18+) to be able to fire at all.
     private static final int ARTILLERY_INDIRECT_MIN_RANGE = Board.DEFAULT_BOARD_HEIGHT + 1;
 
-    // How sharply a tube is pulled back once it is inside its minimum indirect range: steep, so it overrides the herd
+    // How sharply a tube is pulled back once it is inside its minimum indirect range: steep, so it overrides the form up
     // pull toward the advancing friendly line rather than drifting into a range from which it cannot fire.
     private static final double ARTILLERY_STANDOFF_URGENCY = 4.0;
 
@@ -830,7 +830,7 @@ public class BasicPathRanker extends PathRanker {
 
     // Per-hex penalty that keeps a safely-positioned artillery tube in its current hex instead of shuffling sideways
     // (which gains it nothing and can incur attacker-movement firing penalties). Large enough to dominate the small
-    // movement/herding pull; the tube may still turn in place to face the enemy.
+    // movement/mutual-support pull; the tube may still turn in place to face the enemy.
     private static final double ARTILLERY_HOLD_STILL_WEIGHT = 100.0;
 
     // Penalty added to a TAG spotter's path when it jumps to a hex it could otherwise designate from. Jumping piles a
@@ -1081,7 +1081,7 @@ public class BasicPathRanker extends PathRanker {
      *
      * @param aggressionMod           the standoff aggression penalty for this path
      * @param holdingArtilleryInPlace {@code true} if the tube is holding position (skip the movement-TMM reward)
-     * @param standoffArtillery       {@code true} for the artillery-tube branch (ignores the herd pull, faces the
+     * @param standoffArtillery       {@code true} for the artillery-tube branch (ignores the mutual support pull, faces the
      *                                cluster)
      * @param branch                  the branch that fired (e.g. {@code TAG_DESIGNATE}, {@code FALL_BACK},
      *                                {@code none})
@@ -1122,7 +1122,7 @@ public class BasicPathRanker extends PathRanker {
           double braveryMod) {
         boolean holdingArtilleryInPlace = false;
         // True whenever this unit is being ranked by the artillery standoff branch (whether safely holding or falling
-        // back). Such a tube ignores the herd pull entirely so it never creeps toward the advancing friendly line.
+        // back). Such a tube ignores the mutual support pull entirely so it never creeps toward the advancing friendly line.
         boolean standoffArtillery = false;
         double aggressionMod;
         // Diagnostics for the artillery/TAG standoff decision, surfaced in the [Move] breakdown so a playtest can see
@@ -1145,7 +1145,7 @@ public class BasicPathRanker extends PathRanker {
                 // Position for a TAG shot on the PRIORITY target (the highest-value enemy, held across turns), not just
                 // any enemy. Every hex with line of sight + TAG range to it is acceptable (a designation ZONE, not a
                 // single ring); within the safe-and-accurate band [MIN_TAG_STANDOFF_DISTANCE, standoffDistance] the
-                // positioning penalty is flat, so survivability/herding choose the hex. A hex that cannot designate the
+                // positioning penalty is flat, so survivability/mutual-support choose the hex. A hex that cannot designate the
                 // priority target is penalized and pulled toward regaining line of sight on it.
                 int tagRange = maxOperationalTagRange(movingUnit);
                 double hyperAggression = getOwner().getBehaviorSettings().getHyperAggressionValue();
@@ -1320,17 +1320,17 @@ public class BasicPathRanker extends PathRanker {
     }
 
     /**
-     * Calculates a herding modifier that penalizes paths taking the unit away from friendly forces.
+     * Calculates a mutual support modifier that penalizes paths taking the unit away from friendly forces.
      *
      * <p>This method implements the tactical preference for maintaining formation with friendly units based on:
      * <ul>
      *   <li>The distance from the path's final position to the center of friendly forces</li>
-     *   <li>The AI's configured herd mentality value</li>
+     *   <li>The AI's configured mutual support value</li>
      * </ul>
      *
-     * <p>The herding modifier follows this formula:
+     * <p>The mutual support modifier follows this formula:
      * <pre>
-     * herdingMod = distanceToFriends * herdMentalityValue
+     * mutualSupportMod = distanceToFriends * mutualSupportValue
      * </pre>
      *
      * <p>Since this value is subtracted in the final utility calculation, higher values represent
@@ -1340,20 +1340,20 @@ public class BasicPathRanker extends PathRanker {
      * @param friendsCoords The coordinate representing the center of friendly forces, or null if no friends
      * @param path          The movement path being evaluated
      *
-     * @return A herding modifier value (higher is worse) to be used in path ranking
+     * @return A mutual support modifier value (higher is worse) to be used in path ranking
      */
-    protected double calculateHerdingMod(Coords friendsCoords, MovePath path) {
+    protected double calculateMutualSupportMod(Coords friendsCoords, MovePath path) {
         if (friendsCoords == null) {
-            logger.trace(" herdingMod [-0 no friends]");
+            logger.trace(" mutualSupportMod [-0 no friends]");
             return 0;
         }
 
         double finalDistance = friendsCoords.distance(path.getFinalCoords());
-        double herding = getOwner().getBehaviorSettings().getHerdMentalityValue();
-        double herdingMod = finalDistance * herding;
+        double mutualSupportValue = getOwner().getBehaviorSettings().getMutualSupportValue();
+        double mutualSupportMod = finalDistance * mutualSupportValue;
 
-        logger.trace("herding mod [-{} = {} * {}]", herdingMod, finalDistance, herding);
-        return herdingMod;
+        logger.trace("mutual support mod [-{} = {} * {}]", mutualSupportMod, finalDistance, mutualSupportValue);
+        return mutualSupportMod;
     }
 
     /**
@@ -1503,7 +1503,7 @@ public class BasicPathRanker extends PathRanker {
      *
      * <p>The utility score calculation combines several weighted factors:</p>
      * <pre>
-     *   utility = -fallMod + braveryMod - aggressionMod - herdingMod + movementMod
+     *   utility = -fallMod + braveryMod - aggressionMod - mutualSupportMod + movementMod
      *             - crowdingTolerance - facingMod - selfPreservationMod - (utility * offBoardMod)
      * </pre>
      *
@@ -1521,8 +1521,8 @@ public class BasicPathRanker extends PathRanker {
      *     <ul><li>Calculated as {@code distanceToEnemy * aggressionValue}</li>
      *         <li>Higher values = worse paths (too far from enemies when aggression is high)</li></ul>
      *   </li>
-     *   <li><strong>herdingMod</strong>: Penalty for moving away from friendly units
-     *     <ul><li>Calculated as {@code distanceToFriends * herdingValue}</li>
+     *   <li><strong>mutualSupportMod</strong>: Penalty for moving away from friendly units
+     *     <ul><li>Calculated as {@code distanceToFriends * mutualSupportValue}</li>
      *         <li>Higher values = worse paths (isolated from allies)</li></ul>
      *   </li>
      *   <li><strong>facingMod</strong>: Penalty for not facing toward enemies
@@ -1547,7 +1547,7 @@ public class BasicPathRanker extends PathRanker {
      *   </li>
      * </ul>
      *
-     * <p>The function uses behavior settings like bravery, aggression, and herd mentality to adjust
+     * <p>The function uses behavior settings like bravery, aggression, and mutual support to adjust
      * the relative importance of these factors based on the AI's configured personality.</p>
      *
      * @param path          The movement path to be evaluated
@@ -1670,7 +1670,7 @@ public class BasicPathRanker extends PathRanker {
         scores.put("braveryIndex", (double) getOwner().getBehaviorSettings().getBraveryIndex());
         scores.put("braveryMod", braveryMod);
         var isNotAirborne = !path.getEntity().isAirborneAeroOnGroundMap();
-        // The only critters not subject to aggression and herding mods are
+        // The only critters not subject to aggression and mutual support mods are
         // airborne aeros on ground maps, as they move incredibly fast.
         // The further I am from a target, the lower this path ranks
         // (weighted by Aggression slider).
@@ -1698,7 +1698,7 @@ public class BasicPathRanker extends PathRanker {
         double aggressionMod = standoff.aggressionMod();
 
         // A withdrawing unit has no business being pulled toward the enemy: kill the aggression pull (and,
-        // below, the closing incentive and herd pull) so the self-preservation term is what actually decides
+        // below, the closing incentive and mutual support pull) so the self-preservation term is what actually decides
         // its path. Includes trapped withdrawers (NoPathToDestination while wanting to fall back), whose
         // fallback retreat pull in calculateSelfPreservationMod would otherwise fight these terms.
         BehaviorType moverBehavior = getOwner().getUnitBehaviorTracker().getBehaviorType(movingUnit, getOwner());
@@ -1738,12 +1738,12 @@ public class BasicPathRanker extends PathRanker {
         scores.put("closeRangeIncentive", closeRangeIncentive);
 
         // The further I am from my teammates, the lower this path
-        // ranks (weighted by Herd Mentality).
+        // ranks (weighted by Mutual Support).
         // Standoff artillery (whether holding at range or falling back when the enemy breaches its standoff) ignores the
-        // herd pull, so it never gets dragged toward the advancing friendly line instead of keeping its distance.
-        // Withdrawing units ignore it too - the herd center is the still-engaged friendly line they are leaving.
-        double herdingMod = (isNotAirborne && !standoffArtillery && !withdrawing)
-              ? calculateHerdingMod(friendsCoords, pathCopy)
+        // mutual support pull, so it never gets dragged toward the advancing friendly line instead of keeping its distance.
+        // Withdrawing units ignore it too - the form up center is the still-engaged friendly line they are leaving.
+        double mutualSupportMod = (isNotAirborne && !standoffArtillery && !withdrawing)
+              ? calculateMutualSupportMod(friendsCoords, pathCopy)
               : 0;
 
         // Movement is good, it gives defense and extends a player power in the game.
@@ -1753,9 +1753,9 @@ public class BasicPathRanker extends PathRanker {
               (movingUnit.getPosition() != null && friendsCoords != null)
                     ? (double) friendsCoords.distance(movingUnit.getPosition())
                     : -1.0);
-        scores.put("herdingValue", getOwner().getBehaviorSettings().getHerdMentalityValue());
-        scores.put("herdingIndex", (double) getOwner().getBehaviorSettings().getHerdMentalityIndex());
-        scores.put("herdingMod", herdingMod);
+        scores.put("mutualSupportValue", getOwner().getBehaviorSettings().getMutualSupportValue());
+        scores.put("mutualSupportIndex", (double) getOwner().getBehaviorSettings().getMutualSupportIndex());
+        scores.put("mutualSupportMod", mutualSupportMod);
 
         var movementModFormula = new StringBuilder(64);
 
@@ -1818,7 +1818,7 @@ public class BasicPathRanker extends PathRanker {
         utility += braveryMod;
         utility -= aggressionMod;
         utility += closeRangeIncentive;
-        utility -= herdingMod;
+        utility -= mutualSupportMod;
         utility += movementMod;
         utility -= crowdingTolerance;
         utility -= facingMod;
@@ -1860,13 +1860,13 @@ public class BasicPathRanker extends PathRanker {
                   .append(" distToCluster=").append(LOG_DECIMAL.format(distToCluster))
                   .append(" losPriority=").append(losToPriority);
         }
-        formula.append("] - herdingMod [");
+        formula.append("] - mutualSupportMod [");
         if (friendsCoords != null) {
-            formula.append(LOG_DECIMAL.format(herdingMod))
+            formula.append(LOG_DECIMAL.format(mutualSupportMod))
                   .append(" = ")
                   .append(LOG_DECIMAL.format(friendsCoords.distance(path.getFinalCoords())))
                   .append(" * ")
-                  .append(LOG_DECIMAL.format(getOwner().getBehaviorSettings().getHerdMentalityValue()));
+                  .append(LOG_DECIMAL.format(getOwner().getBehaviorSettings().getMutualSupportValue()));
         } else {
             formula.append("0 no friends");
         }
@@ -2084,7 +2084,7 @@ public class BasicPathRanker extends PathRanker {
         }
 
         var antiCrowdingFactor = (10.0 / (11 - antiCrowding));
-        final double herdingDistance = Math.ceil(antiCrowding * 1.3);
+        final double antiCrowdingDistance = Math.ceil(antiCrowding * 1.3);
         final double closingDistance = Math.ceil(Math.max(3.0, maxRange * 0.6));
 
         var crowdingFriends = getOwner().getFriendEntities()
@@ -2094,7 +2094,7 @@ public class BasicPathRanker extends PathRanker {
               .filter(Entity::isDeployed)
               .map(Entity::getPosition)
               .filter(Objects::nonNull)
-              .filter(c -> c.distance(movePath.getFinalCoords()) <= herdingDistance)
+              .filter(c -> c.distance(movePath.getFinalCoords()) <= antiCrowdingDistance)
               .count();
 
         var crowdingEnemies = enemies.stream()

@@ -41,20 +41,20 @@ import megamek.server.commands.arguments.Arguments;
 import megamek.server.commands.arguments.IncDecSetIntegerArgument;
 
 /**
- * Command to change the herding mentality of the bot.
+ * Command to change how tightly the bot keeps its force in mutual support.
  *
  * @author Luana Coppio
  */
-public class HerdingCommand implements ChatCommand {
+public class MutualSupportCommand implements ChatCommand {
 
-    private static final String HERDING = "herding";
+    private static final String MUTUAL_SUPPORT = "mutualsupport";
 
     @Override
     public List<Argument<?>> defineArguments() {
         return List.of(
               new IncDecSetIntegerArgument(
-                    HERDING,
-                    Messages.getString("Princess.command.herding.herding"),
+                    MUTUAL_SUPPORT,
+                    Messages.getString("Princess.command.mutualSupport.mutualSupport"),
                     0,
                     10)
         );
@@ -63,16 +63,16 @@ public class HerdingCommand implements ChatCommand {
     @Override
     public void execute(Princess princess, Arguments arguments) {
 
-        IncDecSetIntegerArgument value = arguments.get(HERDING, IncDecSetIntegerArgument.class);
-        int currentIndex = princess.getBehaviorSettings().getHerdMentalityIndex();
+        IncDecSetIntegerArgument value = arguments.get(MUTUAL_SUPPORT, IncDecSetIntegerArgument.class);
+        int currentIndex = princess.getBehaviorSettings().getMutualSupportIndex();
 
         if (value.getOperation().equals(IncDecSetIntegerArgument.Operation.SET)) {
-            princess.getBehaviorSettings().setHerdMentalityIndex(value.getValue());
+            princess.getBehaviorSettings().setMutualSupportIndex(value.getValue());
         } else {
-            princess.getBehaviorSettings().setHerdMentalityIndex(
-                  princess.getBehaviorSettings().getHerdMentalityIndex() + value.getValue());
+            princess.getBehaviorSettings().setMutualSupportIndex(
+                  princess.getBehaviorSettings().getMutualSupportIndex() + value.getValue());
         }
-        princess.sendChat(Messages.getString("Princess.command.herding.herdingChanged",
-              currentIndex, princess.getBehaviorSettings().getHerdMentalityIndex()));
+        princess.sendChat(Messages.getString("Princess.command.mutualSupport.changed",
+              currentIndex, princess.getBehaviorSettings().getMutualSupportIndex()));
     }
 }

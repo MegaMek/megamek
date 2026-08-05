@@ -483,7 +483,7 @@ public class MapMenu extends JPopupMenu {
         menu.add(createCautionMenu(bot));
         menu.add(createAvoidMenu(bot));
         menu.add(createAggressionMenu(bot));
-        menu.add(createHerdingMenu(bot));
+        menu.add(createMutualSupportMenu(bot));
         menu.add(createBraveryMenu(bot));
         return menu;
     }
@@ -511,8 +511,8 @@ public class MapMenu extends JPopupMenu {
         return menu;
     }
 
-    JMenu createHerdingMenu(Player bot) {
-        return createBehaviorAdjustmentMenu(bot, "Bot.commands.herding", ChatCommands.HERDING);
+    JMenu createMutualSupportMenu(Player bot) {
+        return createBehaviorAdjustmentMenu(bot, "Bot.commands.mutualSupport", ChatCommands.MUTUAL_SUPPORT);
     }
 
     JMenu createBraveryMenu(Player bot) {

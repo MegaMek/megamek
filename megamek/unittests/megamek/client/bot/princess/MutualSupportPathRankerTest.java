@@ -53,13 +53,20 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 /**
- * Verifies the Mutual Support doctrine invariants: cohesion never taxes a closing path, its weight is capped
+ * Verifies the rules the Mutual Support doctrine must always obey: cohesion never taxes a closing path, its weight is capped
  * below the aggression weight, cover is a bonus among advances, and the closing tempo is uniform across unit
  * speeds.
  */
 class MutualSupportPathRankerTest {
 
     private static final double TOLERANCE = 0.0001;
+
+    /**
+     * The most the formation term may ever cost one path: a turn of advance, scaled by the same ceiling factor
+     * that bounds the per-hex weight. Written out from the mocked aggression of 2.5 rather than read from the
+     * class, so the test fails if the relationship changes rather than following it.
+     */
+    private static final double MAXIMUM_FORMATION_PENALTY = 15.0 * 2.5 * 0.8;
 
     private static final Coords CURRENT_POSITION = new Coords(0, 10);
     private static final Coords CLOSING_DESTINATION = new Coords(5, 10);
@@ -127,7 +134,7 @@ class MutualSupportPathRankerTest {
     }
 
     /**
-     * The invariant, in its current form: ending inside the formation costs nothing. The formation's centre travels
+     * The rule, in its current form: ending inside the formation costs nothing. The formation's centre travels
      * with the force, so a company advancing together is never charged however fast it advances.
      */
     @Test
@@ -149,18 +156,40 @@ class MutualSupportPathRankerTest {
         when(mockFriend.getPosition()).thenReturn(new Coords(0, 25)); // 17 hexes from the destination
         setEnemyDistances(20.0, 15.0, CLOSING_DESTINATION);
 
-        // 8 hexes outside the 9-hex formation, at the capped weight of aggression * 0.8 = 2.0, held at 5.0
-        assertEquals(8 * 2.0 * 5.0, testRanker.calculateMutualSupportMod(null, mockPath), TOLERANCE);
+        // 8 hexes outside the 9-hex formation would be 8 * 2.0 * 5.0 = 80 unbounded; the ceiling holds it here.
+        assertEquals(MAXIMUM_FORMATION_PENALTY, testRanker.calculateMutualSupportMod(null, mockPath), TOLERANCE);
     }
 
     @Test
     void testHoldingPathBeyondSupportIsPenalizedAtCappedWeight() {
         // Not closing, and 6 hexes outside the formation. The setting is cranked to 10x the aggression weight,
-        // but the invariant caps the cohesion weight at aggression * 0.8 = 2.0.
+        // but the ceiling holds the cohesion weight to aggression * 0.8 = 2.0.
         when(mockBehavior.getMutualSupportValue()).thenReturn(25.0);
         when(mockFriend.getPosition()).thenReturn(new Coords(0, 26)); // 15 hexes from destination
         setEnemyDistances(20.0, 20.0, HOLDING_DESTINATION);
-        assertEquals(6 * 2.0 * 5.0, testRanker.calculateMutualSupportMod(null, mockPath), TOLERANCE);
+        assertEquals(MAXIMUM_FORMATION_PENALTY, testRanker.calculateMutualSupportMod(null, mockPath), TOLERANCE);
+    }
+
+    /**
+     * However far out of position a unit is, holding formation must never be worth more to it than a turn's
+     * advance. Without this ceiling the penalty grew without limit, and at a river crossing it reached 68.7
+     * against a whole turn of advance worth 75 - enough to hold a company on the bank a round at a time.
+     */
+    @Test
+    void theFormationPenaltyNeverExceedsATurnOfAdvance() {
+        when(mockBehavior.getMutualSupportValue()).thenReturn(25.0);
+        setEnemyDistances(20.0, 20.0, HOLDING_DESTINATION);
+
+        when(mockFriend.getPosition()).thenReturn(new Coords(0, 26));
+        double moderatelyOutOfPosition = testRanker.calculateMutualSupportMod(null, mockPath);
+
+        // Far enough out that the unbounded penalty would be several times larger.
+        when(mockFriend.getPosition()).thenReturn(new Coords(0, 33));
+        double farOutOfPosition = testRanker.calculateMutualSupportMod(null, mockPath);
+
+        assertEquals(moderatelyOutOfPosition, farOutOfPosition, TOLERANCE,
+              "the penalty is bounded, so being much further out costs no more");
+        assertEquals(MAXIMUM_FORMATION_PENALTY, farOutOfPosition, TOLERANCE);
     }
 
     /**

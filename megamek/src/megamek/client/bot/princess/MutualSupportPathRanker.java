@@ -40,6 +40,7 @@ import java.util.Map;
 import megamek.common.analysis.DamageProfile;
 import megamek.client.bot.princess.UnitBehavior.BehaviorType;
 import megamek.common.annotations.Nullable;
+import megamek.common.board.Board;
 import megamek.common.board.Coords;
 import megamek.common.game.Game;
 import megamek.common.moves.MovePath;
@@ -69,12 +70,20 @@ import megamek.logging.MMLogger;
  *     own band - brawlers to knife range, fire-support to its optimum - not blindly to contact.</li>
  * </ol>
  *
- * <p><b>Invariant: mutual support never impairs closing with or fighting the enemy.</b> This is now a structural
- * guarantee rather than a weighting argument. The cohesion term charges nothing for a path that ends inside the
- * force's formation, and the formation's centre moves forward with the force, so <em>advancing with your own force
- * is always free however fast that force advances</em>. What the term costs is leaving the force behind. Cohesion
- * therefore chooses between ways of closing; it can never make closing worse than not closing. Cover remains a bonus
- * among advances, never a gate.</p>
+ * <p><b>The rule that must always hold: keeping formation never stops a unit closing with the enemy.</b> Two things
+ * enforce it. The cohesion term charges nothing for a path ending inside the force's formation, and the centre
+ * travels with the force,
+ * so advancing <em>as a body</em> is free however fast the body moves - what the term costs is leaving the force
+ * behind. And the penalty is bounded: it can never exceed what a turn's advance is worth, however far out of position
+ * a unit is (see {@code maximumFormationPenalty}). Cohesion therefore chooses between ways of closing.</p>
+ *
+ * <p><b>Where "advance as a body" stops being possible, the doctrine gives way.</b> Terrain that a force can only
+ * pass a few units at a time - a river ford, a bridge, a city gate - makes someone go first, and going first means
+ * leaving the formation. Two things keep that from stalling a crossing: the bound above, and {@link FormationSide},
+ * which stops a force split by deep water being measured against a centre sitting in the river. Measured on a river
+ * crossing before those changes, one turn charged 68.7 against crossing where a whole turn of advance is worth 75,
+ * and companies hesitated at the bank a round at a time. This does not make a crossing free - water entry piloting
+ * risk and sprint exposure still argue against it - it stops cohesion being the term that decides.</p>
  *
  * <p>An earlier version instead exempted any closing path from cohesion entirely. That sounded like the same
  * guarantee and was much weaker: during an approach nearly every path closes, so cohesion switched off for exactly
@@ -85,8 +94,8 @@ public class MutualSupportPathRanker extends BasicPathRanker {
     private final static MMLogger logger = MMLogger.create(MutualSupportPathRanker.class);
 
     /**
-     * Invariant cap: the cohesion weight never exceeds this fraction of the aggression weight, so being
-     * out of support can shade a choice between comparably aggressive paths but can never outbid closing.
+     * Ceiling on the cohesion weight, as a fraction of the aggression weight. Being out of position can tip a
+     * choice between paths that close by a similar amount, but can never make a unit refuse to close.
      */
     private static final double COHESION_WEIGHT_CAP_FACTOR = 0.8;
 
@@ -259,7 +268,7 @@ public class MutualSupportPathRanker extends BasicPathRanker {
      * (a penalty for ending outside the force's formation) are subtracted from the path utility like the stock
      * cohesion modifier; negative values are the set-friend cover bonus.
      *
-     * <p>Invariant: ending inside the formation costs nothing, and the formation travels with the force, so moving
+     * <p>The rule: ending inside the formation costs nothing, and the formation travels with the force, so moving
      * with your own force is always free - mutual support selects among advancing paths, it never vetoes the
      * advance.</p>
      *
@@ -288,9 +297,10 @@ public class MutualSupportPathRanker extends BasicPathRanker {
             int hexesOutOfFormation = formationCentre.distance(path.getFinalCoords()) - formationRadius(game);
             lastHexesOutOfFormation = Math.max(0, hexesOutOfFormation);
             if (hexesOutOfFormation > 0) {
-                double cohesionWeight = Math.min(mutualSupportSetting(),
-                      getOwner().getBehaviorSettings().getHyperAggressionValue() * COHESION_WEIGHT_CAP_FACTOR);
-                supportPenalty = hexesOutOfFormation * cohesionWeight * FORMATION_HOLD_FACTOR;
+                double aggression = getOwner().getBehaviorSettings().getHyperAggressionValue();
+                double cohesionWeight = Math.min(mutualSupportSetting(), aggression * COHESION_WEIGHT_CAP_FACTOR);
+                supportPenalty = Math.min(hexesOutOfFormation * cohesionWeight * FORMATION_HOLD_FACTOR,
+                      maximumFormationPenalty(aggression));
             }
         }
 
@@ -304,6 +314,33 @@ public class MutualSupportPathRanker extends BasicPathRanker {
     }
 
     /**
+     * The most utility the formation term may ever cost a single path.
+     *
+     * <p>The class promises that cohesion can shade a choice between comparably aggressive paths but can never
+     * outbid closing. {@link #COHESION_WEIGHT_CAP_FACTOR} alone does not deliver that: it bounds the cost
+     * <em>per hex</em>, and the hex count is unbounded, so a unit far enough out of position faced an unbounded
+     * penalty. Bounding the total is what makes the promise true by construction.</p>
+     *
+     * <p>The bound is one turn of closing, which is what {@link #calculateAggressionMod} awards for advancing a
+     * full move's worth ({@link #TEMPO_REFERENCE_MP} times aggression), scaled by the same cap factor. So holding
+     * formation can never be worth more to a unit than a turn's advance is.</p>
+     *
+     * <p>It matters at a chokepoint. Where terrain lets a force through only a few hexes at a time - a river ford,
+     * a bridge, a city gate - somebody has to go first, and going first means leaving the formation. Measured on a
+     * river crossing, one turn charged 68.7 against a crossing path, against the 75 a whole turn of advance is
+     * worth: enough to make a company hesitate at the bank for a round at a time. The cap does not make crossing
+     * free, and other terms (water entry piloting risk, sprint exposure) still argue against it; it stops
+     * cohesion being the term that decides.</p>
+     *
+     * @param aggression the bot's hyper aggression setting
+     *
+     * @return the ceiling on the formation penalty, in the same utility units as the rest of the ranking
+     */
+    private static double maximumFormationPenalty(double aggression) {
+        return TEMPO_REFERENCE_MP * aggression * COHESION_WEIGHT_CAP_FACTOR;
+    }
+
+    /**
      * The point the mover's force is currently gathered on: the centre of mass of its friends.
      *
      * <p>Measured against the centre and never against the nearest friend, for the same reason deployment is.
@@ -311,15 +348,25 @@ public class MutualSupportPathRanker extends BasicPathRanker {
      * strung across the map. The centre is also what makes this safe for the advance: it moves forward with the
      * force, so a company travelling together is never penalised however fast it goes - only a unit outrunning its
      * own force is.</p>
+     *
+     * <p><b>A force split by water forms up on its own bank.</b> Averaging across a river puts the centre in the
+     * water, which is the one place the formation cannot be, and holds every unit to it. Friends cut off by deep
+     * water are therefore left out of the mover's centre - see {@link FormationSide}. Each bank forms up with
+     * itself, and the force reassembles on the far side as units cross.</p>
      */
     private @Nullable Coords formationCentre(Entity movingUnit, List<Entity> friends) {
         return formationCentreCache.computeIfAbsent(movingUnit.getId(), moverId -> {
+            Board board = getOwner().getGame().getBoard(movingUnit.getBoardId());
+            Coords moverPosition = movingUnit.getPosition();
             List<Coords> positions = new ArrayList<>(friends.size());
             List<Double> weights = new ArrayList<>(friends.size());
             for (Entity friend : friends) {
                 // Cached for the ranking pass, but a unit can die mid-phase (falls, charges, minefields).
                 Coords friendPosition = friend.getPosition();
                 if (friendPosition == null) {
+                    continue;
+                }
+                if (!FormationSide.sameSide(board, moverPosition, friendPosition)) {
                     continue;
                 }
                 double weight = formationWeight(friend);

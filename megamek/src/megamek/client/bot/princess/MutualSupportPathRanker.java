@@ -179,6 +179,8 @@ public class MutualSupportPathRanker extends BasicPathRanker {
     private double lastCoverBonus;
     private int lastCoveringFriends;
     private double lastTurnsToBand;
+    private int lastCrowding;
+    private int lastWithdrawingCount;
     private int formationRadiusRound = -1;
     private int cachedFormationRadius = 0;
     private int perMoverCacheRound = -1;
@@ -290,6 +292,10 @@ public class MutualSupportPathRanker extends BasicPathRanker {
         lastFormationCentre = formationCentre;
         lastFormationRadius = formationRadius(game);
         lastHexesOutOfFormation = 0;
+        // Retreat-only terms: cleared here so an advancing path does not report the last withdrawal's
+        // figures, and so every row carries the same columns.
+        lastCrowding = 0;
+        lastWithdrawingCount = 0;
         if (formationCentre != null) {
             int hexesOutOfFormation = formationCentre.distance(path.getFinalCoords()) - formationRadius(game);
             lastHexesOutOfFormation = Math.max(0, hexesOutOfFormation);
@@ -361,6 +367,8 @@ public class MutualSupportPathRanker extends BasicPathRanker {
         scores.put("coverBonus", lastCoverBonus);
         scores.put("coveringFriends", (double) lastCoveringFriends);
         scores.put("turnsToOwnBand", lastTurnsToBand);
+        scores.put("crowding", (double) lastCrowding);
+        scores.put("withdrawingCount", (double) lastWithdrawingCount);
         return scores;
     }
 
@@ -391,6 +399,10 @@ public class MutualSupportPathRanker extends BasicPathRanker {
               : WithdrawalFormation.hexesOutOfGroup(path.getFinalCoords(), centre, groupRadius);
         lastCoverBonus = 0;
         lastCoveringFriends = 0;
+        // The other half of the retreat penalty. Without it the log shows only the pull toward the
+        // group, so a unit that gave up ground to keep its distance has no recorded reason for it.
+        lastCrowding = WithdrawalFormation.crowding(path.getFinalCoords(), withdrawing);
+        lastWithdrawingCount = withdrawing.size();
 
         double weight = Math.min(mutualSupportSetting(),
               getOwner().getBehaviorSettings().getHyperAggressionValue() * COHESION_WEIGHT_CAP_FACTOR)

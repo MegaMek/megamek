@@ -277,6 +277,37 @@ public class BehaviorSettings implements Serializable {
     }
 
     /**
+     * @return TRUE if I should only form up with my units.
+     *
+     * @deprecated since 0.50.08, use {@link #isExclusiveMutualSupport()}. The setting was renamed from herding to
+     *       mutual support; this delegates so code outside MegaMek keeps building.
+     */
+    @Deprecated(since = "0.50.08", forRemoval = true)
+    public boolean isExclusiveHerding() {
+        return isExclusiveMutualSupport();
+    }
+
+    /**
+     * @param exclusiveHerding Set TRUE if I should only form up with my units.
+     *
+     * @deprecated since 0.50.08, use {@link #setExclusiveMutualSupport(boolean)}.
+     */
+    @Deprecated(since = "0.50.08", forRemoval = true)
+    public void setExclusiveHerding(boolean exclusiveHerding) {
+        setExclusiveMutualSupport(exclusiveHerding);
+    }
+
+    /**
+     * @param exclusiveHerding Set TRUE if I should only form up with my units.
+     *
+     * @deprecated since 0.50.08, use {@link #setExclusiveMutualSupport(String)}.
+     */
+    @Deprecated(since = "0.50.08", forRemoval = true)
+    public void setExclusiveHerding(String exclusiveHerding) {
+        setExclusiveMutualSupport(exclusiveHerding);
+    }
+
+    /**
      * @return TRUE if I should immediately proceed to my home board edge.
      */
     public boolean shouldGoHome() {
@@ -609,6 +640,69 @@ public class BehaviorSettings implements Serializable {
         } catch (final NumberFormatException ex) {
             throw new PrincessException(ex);
         }
+    }
+
+    /**
+     * How close do I want to stick to my teammates?
+     *
+     * @return Index of the current mutual support value.
+     *
+     * @deprecated since 0.50.08, use {@link #getMutualSupportIndex()}. The setting was renamed from herding to
+     *       mutual support; this delegates so code outside MegaMek keeps building.
+     */
+    @Deprecated(since = "0.50.08", forRemoval = true)
+    public int getHerdMentalityIndex() {
+        return getMutualSupportIndex();
+    }
+
+    /**
+     * How close do I want to stick to my teammates?
+     *
+     * @return Current mutual support value.
+     *
+     * @deprecated since 0.50.08, use {@link #getMutualSupportValue()}.
+     */
+    @Deprecated(since = "0.50.08", forRemoval = true)
+    public double getHerdMentalityValue() {
+        return getMutualSupportValue();
+    }
+
+    /**
+     * How close do I want to stick to my teammates?
+     *
+     * @param index The index [0-10] of the mutual support value that should be used.
+     *
+     * @return The mutual support value at the specified index.
+     *
+     * @deprecated since 0.50.08, use {@link #getMutualSupportValue(int)}.
+     */
+    @Deprecated(since = "0.50.08", forRemoval = true)
+    public double getHerdMentalityValue(final int index) {
+        return getMutualSupportValue(index);
+    }
+
+    /**
+     * How close do I want to stick to my teammates?
+     *
+     * @param herdMentalityIndex The index [0-10] of the mutual support that should be used.
+     *
+     * @deprecated since 0.50.08, use {@link #setMutualSupportIndex(int)}.
+     */
+    @Deprecated(since = "0.50.08", forRemoval = true)
+    public void setHerdMentalityIndex(final int herdMentalityIndex) {
+        setMutualSupportIndex(herdMentalityIndex);
+    }
+
+    /**
+     * How close do I want to stick to my teammates?
+     *
+     * @param index The index ["0"-"10"] of the mutual support value that should be used.
+     *
+     * @deprecated since 0.50.08, use {@link #setMutualSupportIndex(String)}.
+     */
+    @Deprecated(since = "0.50.08", forRemoval = true)
+    public void setHerdMentalityIndex(final String index) throws PrincessException {
+        setMutualSupportIndex(index);
     }
 
     /**

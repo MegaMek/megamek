@@ -60,6 +60,38 @@ import org.xml.sax.SAXException;
  */
 class BehaviorSettingsTest {
 
+    /**
+     * The herding accessors were renamed to mutual support, which broke MekHQ's build: it calls them from
+     * BotForce, CustomizeBotForceDialog and Unit. They are kept as deprecated delegates so code outside MegaMek
+     * keeps working, and this pins that they really do delegate rather than drift into a second copy of the state.
+     */
+    @Test
+    @SuppressWarnings("removal")
+    void deprecatedHerdingAccessorsDelegateToMutualSupport() throws PrincessException {
+        BehaviorSettings behaviorSettings = new BehaviorSettings();
+
+        behaviorSettings.setHerdMentalityIndex(7);
+        assertEquals(7, behaviorSettings.getMutualSupportIndex(), "the old setter must write the new state");
+        assertEquals(7, behaviorSettings.getHerdMentalityIndex(), "and the old getter must read it back");
+
+        behaviorSettings.setMutualSupportIndex(2);
+        assertEquals(2, behaviorSettings.getHerdMentalityIndex(), "the old getter must see a new-setter write");
+
+        behaviorSettings.setHerdMentalityIndex("9");
+        assertEquals(9, behaviorSettings.getMutualSupportIndex(), "the string overload must delegate too");
+
+        assertEquals(behaviorSettings.getMutualSupportValue(), behaviorSettings.getHerdMentalityValue(),
+              "values must agree");
+        assertEquals(behaviorSettings.getMutualSupportValue(4), behaviorSettings.getHerdMentalityValue(4),
+              "indexed values must agree");
+
+        behaviorSettings.setExclusiveHerding(true);
+        assertTrue(behaviorSettings.isExclusiveMutualSupport(), "the old flag setter must write the new flag");
+        assertTrue(behaviorSettings.isExclusiveHerding(), "and the old flag getter must read it back");
+        behaviorSettings.setExclusiveHerding("false");
+        assertFalse(behaviorSettings.isExclusiveMutualSupport(), "the string overload must delegate too");
+    }
+
     @Test
     void testSetDescription() throws PrincessException {
         BehaviorSettings behaviorSettings = new BehaviorSettings();

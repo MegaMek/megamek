@@ -343,6 +343,10 @@ public class MutualSupportPathRanker extends BasicPathRanker {
      *
      * @return the ceiling on the formation penalty, in the same utility units as the rest of the ranking
      */
+    private static double maximumFormationPenalty(double aggression) {
+        return TEMPO_REFERENCE_MP * aggression * COHESION_WEIGHT_CAP_FACTOR;
+    }
+
     /**
      * Resets the recorded reasoning to "nothing applied".
      *
@@ -357,10 +361,6 @@ public class MutualSupportPathRanker extends BasicPathRanker {
         lastHexesOutOfFormation = 0;
         lastCoverBonus = 0;
         lastCoveringFriends = 0;
-    }
-
-    private static double maximumFormationPenalty(double aggression) {
-        return TEMPO_REFERENCE_MP * aggression * COHESION_WEIGHT_CAP_FACTOR;
     }
 
     /**

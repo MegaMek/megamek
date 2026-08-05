@@ -55,6 +55,7 @@ import megamek.client.ui.clientGUI.ClientGUI;
 import megamek.client.ui.clientGUI.boardview.BoardView;
 import megamek.client.ui.clientGUI.boardview.IBoardView;
 import megamek.client.ui.clientGUI.boardview.overlay.ToastLevel;
+import megamek.client.ui.dialogs.ChoiceDialog;
 import megamek.client.ui.dialogs.phaseDisplay.TargetChoiceDialog;
 import megamek.client.ui.util.KeyCommandBind;
 import megamek.client.ui.util.MegaMekController;
@@ -1274,25 +1275,22 @@ public class PhysicalDisplay extends AttackPhaseDisplay {
               Messages.getString("PhysicalDisplay.CalledBlowDialog.lineLow",
                     calledLowToHit.getValueAsString()) };
 
-        String input = (String) JOptionPane.showInputDialog(clientgui.getFrame(),
-              Messages.getString("PhysicalDisplay.CalledBlowDialog.message", club.getName()),
+        ChoiceDialog calledBlowDialog = new ChoiceDialog(clientgui.getFrame(),
               Messages.getString("PhysicalDisplay.CalledBlowDialog.title", club.getName()),
-              JOptionPane.QUESTION_MESSAGE,
-              null,
+              Messages.getString("PhysicalDisplay.CalledBlowDialog.message", club.getName()),
               choices,
-              choices[0]);
-        if (input == null) {
+              true);
+        calledBlowDialog.setVisible(true);
+        if (!calledBlowDialog.getAnswer()) {
             logger.debug("[CalledBlow] {}: player cancelled the {} attack",
                   attacker.getShortName(), club.getName());
             return CALLED_BLOW_CANCELLED;
         }
-        if (input.equals(choices[1])) {
-            return ToHitData.HIT_PUNCH;
-        }
-        if (input.equals(choices[2])) {
-            return ToHitData.HIT_KICK;
-        }
-        return ToHitData.HIT_NORMAL;
+        return switch (calledBlowDialog.getChoices()[0]) {
+            case 1 -> ToHitData.HIT_PUNCH;
+            case 2 -> ToHitData.HIT_KICK;
+            default -> ToHitData.HIT_NORMAL;
+        };
     }
 
     private MiscMounted chooseClub() {

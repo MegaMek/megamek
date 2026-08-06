@@ -1,0 +1,118 @@
+/*
+ * Copyright (C) 2026 The MegaMek Team. All Rights Reserved.
+ *
+ * This file is part of MegaMek.
+ *
+ * MegaMek is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License (GPL),
+ * version 3 or (at your option) any later version,
+ * as published by the Free Software Foundation.
+ *
+ * MegaMek is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty
+ * of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+ * See the GNU General Public License for more details.
+ *
+ * A copy of the GPL should have been included with this project;
+ * if not, see <https://www.gnu.org/licenses/>.
+ *
+ * NOTICE: The MegaMek organization is a non-profit group of volunteers
+ * creating free software for the BattleTech community.
+ *
+ * MechWarrior, BattleMech, `Mech and AeroTech are registered trademarks
+ * of The Topps Company, Inc. All Rights Reserved.
+ *
+ * Catalyst Game Labs and the Catalyst Game Labs logo are trademarks of
+ * InMediaRes Productions, LLC.
+ *
+ * MechWarrior Copyright Microsoft Corporation. MegaMek was created under
+ * Microsoft's "Game Content Usage Rules"
+ * <https://www.xbox.com/en-US/developers/rules> and it is not endorsed by or
+ * affiliated with Microsoft.
+ */
+package megamek.client.bot.princess;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+
+import java.util.List;
+
+import megamek.common.board.Coords;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+
+class PostureResolverTest {
+
+    private PostureResolver resolver;
+    private BehaviorSettings settings;
+
+    // Our lance stands around (5,5); distances are measured from its centre.
+    private final List<Coords> ownPositions = List.of(new Coords(5, 4), new Coords(5, 6));
+
+    @BeforeEach
+    void beforeEach() {
+        resolver = new PostureResolver();
+        settings = new BehaviorSettings();
+    }
+
+    private List<Coords> enemyAtDistance(int distance) {
+        return List.of(new Coords(5, 5 + distance));
+    }
+
+    @Test
+    void anExplicitPostureIsObeyedWithoutLookingAtAnything() {
+        settings.setCombatPosture(CombatPosture.DEFEND);
+        assertEquals(CombatPosture.DEFEND,
+              resolver.resolve(settings, 1, List.of(), List.of()));
+
+        settings.setCombatPosture(CombatPosture.ATTACK);
+        assertEquals(CombatPosture.ATTACK,
+              resolver.resolve(settings, 1, List.of(), List.of()));
+    }
+
+    @Test
+    void aDestinationEdgeMeansTheMissionRequiresMovementSoTheForceAttacks() {
+        settings.setDestinationEdge(CardinalEdge.NORTH);
+        // Even with the enemy charging at us round after round, a force that must reach an edge attacks.
+        assertEquals(CombatPosture.ATTACK, resolver.resolve(settings, 1, ownPositions, enemyAtDistance(20)));
+        assertEquals(CombatPosture.ATTACK, resolver.resolve(settings, 2, ownPositions, enemyAtDistance(15)));
+        assertEquals(CombatPosture.ATTACK, resolver.resolve(settings, 3, ownPositions, enemyAtDistance(10)));
+    }
+
+    @Test
+    void aClosingEnemyFlipsTheForceToTheDefensive() {
+        assertEquals(CombatPosture.ATTACK, resolver.resolve(settings, 1, ownPositions, enemyAtDistance(20)),
+              "the first reading has nothing to compare against");
+        assertEquals(CombatPosture.DEFEND, resolver.resolve(settings, 2, ownPositions, enemyAtDistance(17)),
+              "three hexes closer in a round is an advance");
+    }
+
+    @Test
+    void anEnemyHoldingItsDistanceLeavesTheForceAttacking() {
+        assertEquals(CombatPosture.ATTACK, resolver.resolve(settings, 1, ownPositions, enemyAtDistance(20)));
+        assertEquals(CombatPosture.ATTACK, resolver.resolve(settings, 2, ownPositions, enemyAtDistance(20)),
+              "an enemy that is not coming to us will not be waited for");
+        assertEquals(CombatPosture.ATTACK, resolver.resolve(settings, 3, ownPositions, enemyAtDistance(21)),
+              "a retreating enemy even less so");
+    }
+
+    @Test
+    void noVisibleEnemyMeansGoFindThem() {
+        assertEquals(CombatPosture.ATTACK, resolver.resolve(settings, 1, ownPositions, List.of()));
+    }
+
+    @Test
+    void theCallIsCachedForTheRound() {
+        resolver.resolve(settings, 1, ownPositions, enemyAtDistance(20));
+        CombatPosture secondCallSameRound = resolver.resolve(settings, 1, ownPositions, enemyAtDistance(2));
+        assertEquals(CombatPosture.ATTACK, secondCallSameRound,
+              "a second resolve in the same round returns the round's answer, whatever the positions say now");
+    }
+
+    @Test
+    void parseFallsBackToAuto() {
+        assertEquals(CombatPosture.DEFEND, CombatPosture.parse("defend"));
+        assertEquals(CombatPosture.ATTACK, CombatPosture.parse(" Attack "));
+        assertEquals(CombatPosture.AUTO, CombatPosture.parse("hold"));
+        assertEquals(CombatPosture.AUTO, CombatPosture.parse(null));
+    }
+}

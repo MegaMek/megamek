@@ -35,6 +35,7 @@ package megamek.client.bot.princess;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyInt;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.mock;
@@ -43,13 +44,17 @@ import static org.mockito.Mockito.when;
 
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 
 import megamek.client.bot.princess.UnitBehavior.BehaviorType;
+import megamek.common.Hex;
+import megamek.common.board.Board;
 import megamek.common.board.Coords;
 import megamek.common.game.Game;
 import megamek.common.moves.MovePath;
 import megamek.common.units.BipedMek;
 import megamek.common.units.Entity;
+import megamek.common.units.Terrains;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
@@ -76,6 +81,7 @@ class MutualSupportPathRankerTest {
     private Princess mockPrincess;
     private BehaviorSettings mockBehavior;
     private Game mockGame;
+    private Board mockBoard;
     private Entity mockMover;
     private Entity mockFriend;
     private UnitBehavior mockBehaviorTracker;
@@ -109,10 +115,23 @@ class MutualSupportPathRankerTest {
         mockBehaviorTracker = mock(UnitBehavior.class);
         when(mockBehaviorTracker.getBehaviorType(any(Entity.class), any(Princess.class)))
               .thenReturn(BehaviorType.Engaged);
+        when(mockBehaviorTracker.getWaypointForEntity(any(Entity.class))).thenReturn(Optional.empty());
         when(mockPrincess.getUnitBehaviorTracker()).thenReturn(mockBehaviorTracker);
         when(mockPrincess.isFallingBack(any(Entity.class))).thenReturn(false);
         when(mockPrincess.getEntitiesOwned()).thenReturn(List.of(mockMover, mockFriend));
+        when(mockPrincess.getEnemyEntities()).thenReturn(List.of());
         when(mockGame.onTheSameBoard(any(Entity.class), any(Entity.class))).thenReturn(true);
+
+        // Posture: AUTO with nobody in sight resolves to ATTACK, which charges nothing - the doctrine
+        // tests above posture see the pre-posture behavior unchanged.
+        when(mockBehavior.getCombatPosture()).thenReturn(CombatPosture.AUTO);
+
+        // A dry board by default; the posture tests put a river on it.
+        mockBoard = mock(Board.class);
+        when(mockBoard.contains(any(Coords.class))).thenReturn(true);
+        Hex dryHex = mock(Hex.class);
+        when(mockBoard.getHex(any(Coords.class))).thenReturn(dryHex);
+        when(mockGame.getBoard(anyInt())).thenReturn(mockBoard);
 
         mockPath = mock(MovePath.class);
         when(mockPath.getEntity()).thenReturn(mockMover);
@@ -274,6 +293,82 @@ class MutualSupportPathRankerTest {
         setEnemyDistances(30.0, 25.0, CLOSING_DESTINATION);
         assertEquals(0.0, testRanker.calculateMutualSupportMod(null, mockPath), TOLERANCE);
     }
+
+    // START - Combat posture at water
+
+    /** The posture charge: a full turn of advance at the mocked aggression of 2.5. */
+    private static final double DEFEND_CROSSING_PENALTY = 15.0 * 2.5;
+
+    /** One hex east of the mover, holding depth 2 water. */
+    private static final Coords RIVER_DESTINATION = new Coords(1, 10);
+
+    private void setupRiverAt(Coords riverCoords) {
+        Hex riverHex = mock(Hex.class);
+        when(riverHex.containsTerrain(Terrains.WATER)).thenReturn(true);
+        when(riverHex.terrainLevel(Terrains.WATER)).thenReturn(2);
+        when(mockBoard.getHex(eq(riverCoords))).thenReturn(riverHex);
+    }
+
+    /** A defender does not wade into the water it is defending behind. */
+    @Test
+    void aDefendingUnitIsChargedForEnteringTheRiver() {
+        when(mockBehavior.getCombatPosture()).thenReturn(CombatPosture.DEFEND);
+        setupRiverAt(RIVER_DESTINATION);
+        when(mockFriend.getPosition()).thenReturn(new Coords(0, 11)); // in formation either way
+        setEnemyDistances(20.0, 20.0, RIVER_DESTINATION);
+
+        assertEquals(DEFEND_CROSSING_PENALTY, testRanker.calculateMutualSupportMod(null, mockPath), TOLERANCE);
+    }
+
+    /** The same path costs an attacker nothing extra: to an attacker the river is a cost, not a line. */
+    @Test
+    void anAttackingUnitPaysNoPostureChargeForTheSamePath() {
+        when(mockBehavior.getCombatPosture()).thenReturn(CombatPosture.ATTACK);
+        setupRiverAt(RIVER_DESTINATION);
+        when(mockFriend.getPosition()).thenReturn(new Coords(0, 11));
+        setEnemyDistances(20.0, 20.0, RIVER_DESTINATION);
+
+        assertEquals(0.0, testRanker.calculateMutualSupportMod(null, mockPath), TOLERANCE);
+    }
+
+    /** A defender staying on its own bank pays nothing - the charge is for crossing, not for defending. */
+    @Test
+    void aDefendingUnitHoldingItsOwnBankPaysNothing() {
+        when(mockBehavior.getCombatPosture()).thenReturn(CombatPosture.DEFEND);
+        setupRiverAt(new Coords(3, 10)); // the river is there, but this path never touches it
+        when(mockFriend.getPosition()).thenReturn(new Coords(0, 11));
+        setEnemyDistances(20.0, 20.0, HOLDING_DESTINATION);
+
+        assertEquals(0.0, testRanker.calculateMutualSupportMod(null, mockPath), TOLERANCE);
+    }
+
+    /**
+     * A defender already standing in the river is not charged for its choices: the water pricing already
+     * argues for the nearest bank, and charging every dry destination would trap it mid-stream.
+     */
+    @Test
+    void aDefendingUnitAlreadyInTheRiverIsNotTrappedThere() {
+        when(mockBehavior.getCombatPosture()).thenReturn(CombatPosture.DEFEND);
+        setupRiverAt(CURRENT_POSITION);
+        when(mockFriend.getPosition()).thenReturn(new Coords(0, 11));
+        setEnemyDistances(20.0, 20.0, HOLDING_DESTINATION);
+
+        assertEquals(0.0, testRanker.calculateMutualSupportMod(null, mockPath), TOLERANCE);
+    }
+
+    /** A unit under forced withdrawal crosses whatever posture says: its route home does not move. */
+    @Test
+    void aWithdrawingUnitCrossesTheRiverWhateverPostureSays() {
+        when(mockBehavior.getCombatPosture()).thenReturn(CombatPosture.DEFEND);
+        when(mockBehaviorTracker.getBehaviorType(eq(mockMover), any(Princess.class)))
+              .thenReturn(BehaviorType.ForcedWithdrawal);
+        setupRiverAt(RIVER_DESTINATION);
+        when(mockFriend.getPosition()).thenReturn(new Coords(0, 11));
+        setEnemyDistances(20.0, 20.0, RIVER_DESTINATION);
+
+        assertEquals(0.0, testRanker.calculateMutualSupportMod(null, mockPath), TOLERANCE);
+    }
+    // END - Combat posture at water
 
     @Test
     void testClosingTempoIsUniformAcrossSpeeds() {

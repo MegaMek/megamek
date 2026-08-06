@@ -1807,6 +1807,9 @@ public class BasicPathRanker extends PathRanker {
 
         double selfPreservationMod = calculateSelfPreservationMod(movingUnit, pathCopy, game);
 
+        double positionHoldMod = calculatePositionHoldMod(pathCopy, game, damageEstimate, expectedDamageTaken,
+              successProbability);
+
         StringBuilder sprintFormula = new StringBuilder(64);
         double sprintExposurePenalty = calculateSprintExposurePenalty(pathCopy, enemies, game, scores,
               sprintFormula);
@@ -1824,6 +1827,7 @@ public class BasicPathRanker extends PathRanker {
         utility -= facingMod;
         utility -= selfPreservationMod;
         utility -= sprintExposurePenalty;
+        utility += positionHoldMod;
         utility -= utility * offBoardMod;
 
         formula.append("Calculation: {fall mod [")
@@ -1893,6 +1897,10 @@ public class BasicPathRanker extends PathRanker {
             formula.append(" - ").append(sprintFormula);
         }
 
+        if (positionHoldMod != 0.0) {
+            formula.append(" + positionHoldMod [").append(LOG_DECIMAL.format(positionHoldMod)).append("]");
+        }
+
         logger.trace("{}", formula);
 
         scores.putAll(doctrineScores());
@@ -1918,6 +1926,29 @@ public class BasicPathRanker extends PathRanker {
     protected Map<String, Double> doctrineScores() {
         // Base ranker: the modifier values already recorded tell the whole story.
         return Map.of();
+    }
+
+    /**
+     * Utility credit for keeping a position worth keeping, given what {@link #rankPath} has already computed
+     * about the exchange the path's destination offers.
+     *
+     * <p>The base ranker awards nothing: every term above already weighs the destination on its merits, and a
+     * unit with a better hex in reach should take it. A subclass with a doctrine of position persistence can
+     * override this to bias a unit toward standing its ground when the ground is good - countering the constant
+     * pull of the movement modifier and aggression gradient that otherwise makes a unit shuffle between
+     * equivalent hexes.</p>
+     *
+     * @param path                the path being ranked (a copy, safe to inspect)
+     * @param game                the current game
+     * @param damageEstimate      the damage this unit is estimated to deal from the path's destination
+     * @param expectedDamageTaken the damage it is estimated to take there, path hazards included
+     * @param successProbability  the chance the path completes without a failed piloting roll
+     *
+     * @return the utility credit, added to the path's utility; 0 by default
+     */
+    protected double calculatePositionHoldMod(MovePath path, Game game, FiringPhysicalDamage damageEstimate,
+          double expectedDamageTaken, double successProbability) {
+        return 0;
     }
 
     protected boolean isLosRange(Game game) {

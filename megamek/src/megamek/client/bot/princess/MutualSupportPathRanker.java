@@ -177,6 +177,15 @@ public class MutualSupportPathRanker extends BasicPathRanker {
      */
     private static final double TEMPO_REFERENCE_MP = 15.0;
 
+    /**
+     * How much of a turn of advance the hold credit may reach under each posture: an attacking force keeps
+     * the credit modest so a good hex never outbids the advance (the Eisenhower governor - momentum is worth
+     * more than any one position), while a defending force holds harder, the same asymmetry as the formation
+     * penalty cap. Both keep the credit strictly below one turn of advance.
+     */
+    private static final double HOLD_CREDIT_ATTACK_CAP_FACTOR = 0.4;
+    private static final double HOLD_CREDIT_DEFEND_CAP_FACTOR = 0.8;
+
     private final Map<Integer, SupportEnvelope> envelopeCache = new HashMap<>();
     private int envelopeCacheRound = -1;
 
@@ -189,6 +198,8 @@ public class MutualSupportPathRanker extends BasicPathRanker {
     private CombatPosture posture = CombatPosture.ATTACK;
     private CombatPosture announcedPosture;
     private double lastPosturePenalty;
+    private double lastPositionQuality;
+    private double lastPositionHoldMod;
 
     // Bank labels are a property of the board, recomputed per round (ice can break) and shared by
     // every path of every mover. Keyed by board id.
@@ -408,6 +419,56 @@ public class MutualSupportPathRanker extends BasicPathRanker {
     }
 
     /**
+     * Mechanism A of the terrain doctrine: position persistence. A unit already standing on ground that gives
+     * a positive exchange earns credit for keeping it, so it stops shuffling between equivalent hexes for a
+     * movement modifier it does not need - the two-step that walks a firing line out of its positions and
+     * triggers anti-missile fire on the way.
+     *
+     * <p>Quality is the exchange the stationary path itself was just evaluated at - expected damage dealt,
+     * weighted by the chance of standing to deliver it, minus expected damage taken. The exchange already
+     * appears once in the bravery term for every path equally; counting it again here, only for standing
+     * still, is the deliberate asymmetry that makes a good position sticky. Ground that gives nothing (or
+     * worse) holds nothing: the credit never anchors a unit in a losing exchange, so displacement stays a
+     * live option evaluated on the same terms as everything else.</p>
+     *
+     * <p>Dormant outside {@link #THREAT_CONTACT_RANGE}: on the approach there is no exchange to hold and the
+     * force should move loose and fast. Withdrawing units are leaving, not holding. The credit is capped
+     * strictly below one turn of advance, harder under DEFEND than ATTACK
+     * ({@link #HOLD_CREDIT_DEFEND_CAP_FACTOR}, {@link #HOLD_CREDIT_ATTACK_CAP_FACTOR}), so a position is
+     * never worth more than the advance it would delay.</p>
+     */
+    @Override
+    protected double calculatePositionHoldMod(MovePath path, Game game, FiringPhysicalDamage damageEstimate,
+          double expectedDamageTaken, double successProbability) {
+        // Reset first: these are recorded for every path, and an early exit must not leave the previous
+        // path's figures standing in the log.
+        lastPositionQuality = 0;
+        lastPositionHoldMod = 0;
+
+        Entity movingUnit = path.getEntity();
+        if ((path.getHexesMoved() > 0) || movingUnit.isAirborneAeroOnGroundMap() || isWithdrawing(movingUnit)) {
+            return 0;
+        }
+        if (distanceToClosestEnemy(movingUnit, path.getFinalCoords(), game) > THREAT_CONTACT_RANGE) {
+            return 0;
+        }
+
+        double quality = (successProbability * damageEstimate.getMaximumDamageEstimate()) - expectedDamageTaken;
+        lastPositionQuality = quality;
+        if (quality <= 0) {
+            return 0;
+        }
+
+        double aggression = getOwner().getBehaviorSettings().getHyperAggressionValue();
+        double capFactor = (CombatPosture.DEFEND == resolvePosture(game, movingUnit.getBoardId()))
+              ? HOLD_CREDIT_DEFEND_CAP_FACTOR
+              : HOLD_CREDIT_ATTACK_CAP_FACTOR;
+        double holdCredit = capFactor * Math.min(quality, TEMPO_REFERENCE_MP * aggression);
+        lastPositionHoldMod = holdCredit;
+        return holdCredit;
+    }
+
+    /**
      * The bank labels for a board, computed once per round and shared by every path of every mover.
      */
     private BankRegions bankRegions(Game game, int boardId) {
@@ -569,6 +630,10 @@ public class MutualSupportPathRanker extends BasicPathRanker {
         // at the top of calculateMutualSupportMod before anything can return early.
         scores.put("combatPosture", (double) posture.ordinal());
         scores.put("posturePenalty", lastPosturePenalty);
+        // Position persistence: the exchange quality of the hex a stationary path holds, and what holding
+        // it was credited. Both zero for any path that moved. Reset at the top of calculatePositionHoldMod.
+        scores.put("positionQuality", lastPositionQuality);
+        scores.put("positionHoldMod", lastPositionHoldMod);
         return scores;
     }
 

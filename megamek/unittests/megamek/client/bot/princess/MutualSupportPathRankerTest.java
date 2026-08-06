@@ -74,6 +74,15 @@ class MutualSupportPathRankerTest {
      */
     private static final double MAXIMUM_FORMATION_PENALTY = 15.0 * 2.5 * 0.8;
 
+    /**
+     * The hold-credit ceilings for position persistence, written out from the mocked aggression of 2.5 (a
+     * 37.5-point turn of advance) rather than read from the class, so a test fails if the cap relationship
+     * changes rather than following it. Both sit strictly below a turn of advance - a position is never
+     * worth more than the advance it would delay - and the defender's is the higher of the two.
+     */
+    private static final double ATTACK_HOLD_CREDIT_CEILING = 15.0 * 2.5 * 0.4;
+    private static final double DEFEND_HOLD_CREDIT_CEILING = 15.0 * 2.5 * 0.8;
+
     private static final Coords CURRENT_POSITION = new Coords(0, 10);
     private static final Coords CLOSING_DESTINATION = new Coords(5, 10);
     private static final Coords HOLDING_DESTINATION = new Coords(0, 11);
@@ -485,5 +494,115 @@ class MutualSupportPathRankerTest {
         when(path.getEntity()).thenReturn(mockMover);
         when(path.getFinalCoords()).thenReturn(destination);
         return path;
+    }
+
+    // BEGIN - Position persistence (Mechanism A of the terrain doctrine)
+
+    private BasicPathRanker.FiringPhysicalDamage damageDealing(double firingDamage) {
+        BasicPathRanker.FiringPhysicalDamage estimate = new BasicPathRanker.FiringPhysicalDamage();
+        estimate.firingDamage = firingDamage;
+        return estimate;
+    }
+
+    /**
+     * The doctrine in one test: a unit standing on ground with a positive exchange is credited for keeping
+     * it, and the identical exchange earns nothing the moment the path moves - the asymmetry that stops the
+     * two-step without ever rewarding a hex a unit is not actually holding.
+     */
+    @Test
+    void aPositionWorthKeepingEarnsHoldCreditOnlyWhenStandingStill() {
+        when(mockBehavior.getCombatPosture()).thenReturn(CombatPosture.ATTACK);
+        setEnemyDistances(10.0, 10.0, CURRENT_POSITION);
+
+        // quality 15 = 1.0 success * 20 dealt - 5 taken; under the cap, credited at the attack factor
+        assertEquals(0.4 * 15.0,
+              testRanker.calculatePositionHoldMod(pathEndingAt(CURRENT_POSITION), mockGame,
+                    damageDealing(20.0), 5.0, 1.0), TOLERANCE);
+
+        MovePath twoStep = pathEndingAt(CURRENT_POSITION);
+        when(twoStep.getHexesMoved()).thenReturn(2);
+        assertEquals(0.0,
+              testRanker.calculatePositionHoldMod(twoStep, mockGame, damageDealing(20.0), 5.0, 1.0),
+              TOLERANCE);
+    }
+
+    /**
+     * Ruling 1 of the command interview: quality at or below zero holds nothing. The credit must never
+     * anchor a unit in a losing exchange - displacement stays a live option ranked on its own merits.
+     */
+    @Test
+    void groundThatGivesNothingHoldsNothing() {
+        setEnemyDistances(10.0, 10.0, CURRENT_POSITION);
+        assertEquals(0.0,
+              testRanker.calculatePositionHoldMod(pathEndingAt(CURRENT_POSITION), mockGame,
+                    damageDealing(10.0), 20.0, 1.0), TOLERANCE);
+        assertEquals(-10.0, testRanker.doctrineScores().get("positionQuality"), TOLERANCE,
+              "the losing exchange is still recorded, so the log shows why nothing was credited");
+    }
+
+    /**
+     * The Eisenhower governor: however good the position, holding it is never worth a turn of advance. At
+     * the mocked settings a turn is worth 37.5; an attacker's credit tops out at 15.
+     */
+    @Test
+    void holdCreditIsCappedBelowATurnOfAdvance() {
+        when(mockBehavior.getCombatPosture()).thenReturn(CombatPosture.ATTACK);
+        setEnemyDistances(10.0, 10.0, CURRENT_POSITION);
+        assertEquals(ATTACK_HOLD_CREDIT_CEILING,
+              testRanker.calculatePositionHoldMod(pathEndingAt(CURRENT_POSITION), mockGame,
+                    damageDealing(200.0), 0.0, 1.0), TOLERANCE);
+    }
+
+    /** DEFEND scales the credit up; ATTACK keeps it modest. Same overwhelming quality, different ceilings. */
+    @Test
+    void aDefenderHoldsHarderThanAnAttacker() {
+        when(mockBehavior.getCombatPosture()).thenReturn(CombatPosture.DEFEND);
+        setEnemyDistances(10.0, 10.0, CURRENT_POSITION);
+        assertEquals(DEFEND_HOLD_CREDIT_CEILING,
+              testRanker.calculatePositionHoldMod(pathEndingAt(CURRENT_POSITION), mockGame,
+                    damageDealing(200.0), 0.0, 1.0), TOLERANCE);
+    }
+
+    /**
+     * Ruling 5: position persistence is dormant on the approach. Out of contact there is no exchange to
+     * hold, and the force should move loose and fast rather than fortify empty ground.
+     */
+    @Test
+    void theApproachEarnsNoHoldCredit() {
+        setEnemyDistances(20.0, 20.0, CURRENT_POSITION);
+        assertEquals(0.0,
+              testRanker.calculatePositionHoldMod(pathEndingAt(CURRENT_POSITION), mockGame,
+                    damageDealing(20.0), 0.0, 1.0), TOLERANCE);
+    }
+
+    /** A unit under forced withdrawal is leaving, not holding - however good the ground it stands on. */
+    @Test
+    void aWithdrawingUnitHoldsNothing() {
+        when(mockBehaviorTracker.getBehaviorType(eq(mockMover), any(Princess.class)))
+              .thenReturn(BehaviorType.ForcedWithdrawal);
+        setEnemyDistances(10.0, 10.0, CURRENT_POSITION);
+        assertEquals(0.0,
+              testRanker.calculatePositionHoldMod(pathEndingAt(CURRENT_POSITION), mockGame,
+                    damageDealing(20.0), 0.0, 1.0), TOLERANCE);
+    }
+
+    /**
+     * The recorded figures are per-mover state reused across paths; a path that earns nothing must record
+     * nothing rather than leave the previous path's quality standing in the log.
+     */
+    @Test
+    void holdFiguresDoNotOutliveTheirPath() {
+        when(mockBehavior.getCombatPosture()).thenReturn(CombatPosture.ATTACK);
+        setEnemyDistances(10.0, 10.0, CURRENT_POSITION);
+        testRanker.calculatePositionHoldMod(pathEndingAt(CURRENT_POSITION), mockGame,
+              damageDealing(20.0), 5.0, 1.0);
+        assertTrue(testRanker.doctrineScores().get("positionHoldMod") > 0.0,
+              "precondition: the stationary path must leave real figures behind");
+
+        MovePath moved = pathEndingAt(CLOSING_DESTINATION);
+        when(moved.getHexesMoved()).thenReturn(5);
+        testRanker.calculatePositionHoldMod(moved, mockGame, damageDealing(20.0), 5.0, 1.0);
+        assertEquals(0.0, testRanker.doctrineScores().get("positionQuality"), TOLERANCE);
+        assertEquals(0.0, testRanker.doctrineScores().get("positionHoldMod"), TOLERANCE);
     }
 }

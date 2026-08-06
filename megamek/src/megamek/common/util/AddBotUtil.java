@@ -221,6 +221,7 @@ public class AddBotUtil {
      */
     public @Nullable BotClient replaceGhostWithBot(final AIType aiType, final BehaviorSettings behavior,
           final String playerName, final Client client, StringBuilder message) {
+        Objects.requireNonNull(aiType);
         Objects.requireNonNull(client);
         Objects.requireNonNull(behavior);
 

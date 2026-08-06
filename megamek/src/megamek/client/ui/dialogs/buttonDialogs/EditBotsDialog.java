@@ -318,12 +318,16 @@ public class EditBotsDialog extends AbstractButtonDialog {
     }
 
     /**
-     * Updates the config button enabled states (only enabled when Princess bot is selected).
+     * Updates the config button enabled states (only enabled when a bot replacement is selected). CASPAR extends
+     * Princess and consumes the same {@link BehaviorSettings}, so the config button applies to both choices.
      */
     private void updateButtonStates() {
         for (Player ghost : ghostChoosers.keySet()) {
             JButton button = configButtons.get(ghost);
-            button.setEnabled(ghostChoosers.get(ghost).getSelectedIndex() == REPLACE_WITH_PRINCESS_INDEX);
+            int selected = ghostChoosers.get(ghost).getSelectedIndex();
+            boolean botReplacementSelected = (selected == REPLACE_WITH_PRINCESS_INDEX)
+                  || (selected == REPLACE_WITH_CASPAR_INDEX);
+            button.setEnabled(botReplacementSelected);
         }
 
         for (Player bot : localBotChoosers.keySet()) {
@@ -333,10 +337,11 @@ public class EditBotsDialog extends AbstractButtonDialog {
     }
 
     /**
-     * @return the result of the dialog with respect to ghost players to be replaced by Princess bots. The returned map
-     *       links zero, one or more BehaviorSettings (a Princess configuration) to the ghost player name they were
-     *       chosen for. The returned map only includes entries for those ghost players that had a Princess Bot
-     *       replacement selected. The result may be empty, but not null.
+     * @return the result of the dialog with respect to ghost players to be replaced by bots (Princess or CASPAR). The
+     *       returned map links zero, one or more BehaviorSettings (a bot configuration) to the ghost player name they
+     *       were chosen for. The returned map only includes entries for those ghost players that had a bot replacement
+     *       selected; {@link #getNewBotTypes()} reports which AI was chosen for each. The result may be empty, but not
+     *       null.
      */
     public Map<String, BehaviorSettings> getNewBots() {
         var result = new HashMap<String, BehaviorSettings>();

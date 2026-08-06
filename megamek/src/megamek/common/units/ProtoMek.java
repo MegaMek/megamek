@@ -1491,4 +1491,9 @@ public class ProtoMek extends Entity {
     public int getRecoveryTime() {
         return 20;
     }
+
+    @Override
+    public boolean isChassisFamiliarityEligible() {
+        return true;
+    }
 }

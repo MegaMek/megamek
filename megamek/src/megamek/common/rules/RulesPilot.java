@@ -58,72 +58,72 @@ public abstract class RulesPilot {
      */
     public Vector<Report> pilotHits(Entity e, int totalHits, int damage, int crewPos, boolean toughness) {
         Vector<Report> vDesc = new Vector<>();
+        
+        for (int hit = totalHits - damage + 1; hit <= totalHits; hit++) {
+            int rollTarget = Game.rulesManager.getRulesCharts().escalatingFailure(hit);
 
-        int hit = totalHits - damage + 1;
-
-        int rollTarget = Game.rulesManager.getRulesCharts().escalatingFailure(hit);
-
-        if (toughness) {
-            rollTarget -= e.getCrew().getToughness(crewPos);
-        }
-
-        boolean rerollWithEdge = false;
-        boolean edgeAlreadyUsed = false;
-
-        do {
-            if (rerollWithEdge) {
-                e.getCrew().decreaseEdge();
-                edgeAlreadyUsed = true;
-                rerollWithEdge = false;
-            }
-            Roll diceRoll = Compute.rollD6(2);
-            int rollValue = diceRoll.getIntValue();
-            String rollCalc = String.valueOf(rollValue);
-
-            if (e.hasAbility(OptionsConstants.MISC_PAIN_RESISTANCE)) {
-                rollValue = Math.min(12, rollValue + 1);
-                rollCalc = rollValue + " [" + diceRoll.getIntValue() + " + 1] max 12";
+            if (toughness) {
+                rollTarget -= e.getCrew().getToughness(crewPos);
             }
 
-            Report r = new Report(6030);
-            r.indent(2);
-            r.subject = e.getId();
-            r.add(e.getCrew().getCrewType().getRoleName(crewPos));
-            r.addDesc(e);
-            r.add(e.getCrew().getName(crewPos));
-            r.add(rollTarget);
-            r.addDataWithTooltip(rollCalc, diceRoll.getReport());
+            boolean rerollWithEdge = false;
+            boolean edgeAlreadyUsed = false;
 
-            if (rollValue >= rollTarget) {
-                e.getCrew().setKoThisRound(false, crewPos);
-                r.choose(true);
-            } else {
-                e.getCrew().setKoThisRound(true, crewPos);
-                r.choose(false);
-                if (!edgeAlreadyUsed && e.shouldUseEdge(OptionsConstants.EDGE_WHEN_KO) ||
-                      e.shouldUseEdge(OptionsConstants.EDGE_WHEN_AERO_KO)) {
-                    rerollWithEdge = true;
-                    vDesc.add(r);
-                    r = new Report(6520);
-                    r.subject = e.getId();
-                    r.addDesc(e);
-                    r.add(e.getCrew().getName(crewPos));
-                    r.add(e.getCrew().getOptions().intOption(OptionsConstants.EDGE));
-                } // if
-                // return true;
-            } // else
-            vDesc.add(r);
-        } while (rerollWithEdge);
-        // end of do-while
-        if (e.getCrew().isKoThisRound(crewPos)) {
-            boolean wasPilot = e.getCrew().getCurrentPilotIndex() == crewPos;
-            boolean wasGunner = e.getCrew().getCurrentGunnerIndex() == crewPos;
-            e.getCrew().setUnconscious(true, crewPos);
-            Report r = createCrewTakeoverReport(e, crewPos, wasPilot, wasGunner);
-            if (null != r) {
+            do {
+                if (rerollWithEdge) {
+                    e.getCrew().decreaseEdge();
+                    edgeAlreadyUsed = true;
+                    rerollWithEdge = false;
+                }
+                Roll diceRoll = Compute.rollD6(2);
+                int rollValue = diceRoll.getIntValue();
+                String rollCalc = String.valueOf(rollValue);
+
+                if (e.hasAbility(OptionsConstants.MISC_PAIN_RESISTANCE)) {
+                    rollValue = Math.min(12, rollValue + 1);
+                    rollCalc = rollValue + " [" + diceRoll.getIntValue() + " + 1] max 12";
+                }
+
+                Report r = new Report(6030);
+                r.indent(2);
+                r.subject = e.getId();
+                r.add(e.getCrew().getCrewType().getRoleName(crewPos));
+                r.addDesc(e);
+                r.add(e.getCrew().getName(crewPos));
+                r.add(rollTarget);
+                r.addDataWithTooltip(rollCalc, diceRoll.getReport());
+
+                if (rollValue >= rollTarget) {
+                    e.getCrew().setKoThisRound(false, crewPos);
+                    r.choose(true);
+                } else {
+                    e.getCrew().setKoThisRound(true, crewPos);
+                    r.choose(false);
+                    if (!edgeAlreadyUsed && (e.shouldUseEdge(OptionsConstants.EDGE_WHEN_KO) ||
+                          e.shouldUseEdge(OptionsConstants.EDGE_WHEN_AERO_KO))) {
+                        rerollWithEdge = true;
+                        vDesc.add(r);
+                        r = new Report(6520);
+                        r.subject = e.getId();
+                        r.addDesc(e);
+                        r.add(e.getCrew().getName(crewPos));
+                        r.add(e.getCrew().getOptions().intOption(OptionsConstants.EDGE));
+                    } // if
+                    // return true;
+                } // else
                 vDesc.add(r);
+            } while (rerollWithEdge);
+            // end of do-while
+            if (e.getCrew().isKoThisRound(crewPos)) {
+                boolean wasPilot = e.getCrew().getCurrentPilotIndex() == crewPos;
+                boolean wasGunner = e.getCrew().getCurrentGunnerIndex() == crewPos;
+                e.getCrew().setUnconscious(true, crewPos);
+                Report r = createCrewTakeoverReport(e, crewPos, wasPilot, wasGunner);
+                if (null != r) {
+                    vDesc.add(r);
+                }
+                return vDesc;
             }
-            return vDesc;
         }
 
         return vDesc;

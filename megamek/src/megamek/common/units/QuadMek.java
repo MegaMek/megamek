@@ -243,7 +243,7 @@ public class QuadMek extends Mek {
             return super.getRunMP(mpCalculationSetting);
         }
         return Game.rulesManager.getRulesMovement().getMekRunMP(countBadLegs(), getWalkMP(mpCalculationSetting),
-              super.getRunMP(mpCalculationSetting));
+              super.getRunMP(mpCalculationSetting), true);
     }
 
     @Override

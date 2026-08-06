@@ -67,11 +67,9 @@ public abstract class RulesArmor {
     /**
      * Impact Resistant Armor breach.
      *
-     * @param entity the entity with impact armor
-     * @param vDesc vector of reports describing the breach
-     * @return the breach value
+     * @return the breach value modifier
      */
-    public abstract int impactArmorBreach(Entity entity, Vector<Report> vDesc);
+    public abstract int impactArmorBreach();
 
     /**
      * Does a lance penetrate the armor.

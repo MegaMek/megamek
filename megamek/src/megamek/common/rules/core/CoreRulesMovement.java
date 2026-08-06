@@ -76,6 +76,14 @@ public class CoreRulesMovement extends RulesMovement {
         return false;
     }
 
+    /**
+     * {@inheritDoc}
+     * Even with a destroyed leg, we can run. Core p.90
+     */
+    public int getMekRunMP(int badLegs, int walkMP, int runMP, boolean isQuad) {
+        return runMP;
+    }
+    
     // Fully underwater hexes cost 2MP. Core p.51
     public int getUnderwaterMPCost() {
         return 2;

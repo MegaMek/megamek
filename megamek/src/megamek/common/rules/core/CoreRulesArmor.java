@@ -71,7 +71,7 @@ public class CoreRulesArmor extends RulesArmor {
      * {@inheritDoc}
      * Impact Resistant Armor breach. Does not apply in Core. p.201
      */
-    public int impactArmorBreach(Entity entity, Vector<Report> vDesc) {
+    public int impactArmorBreach() {
         return 0;
     }
 

@@ -73,7 +73,7 @@ public class TWRulesArmor extends RulesArmor {
      * {@inheritDoc}
      * Impact Resistant Armor breach. 
      */
-    public int impactArmorBreach(Entity entity, Vector<Report> vDesc) {
+    public int impactArmorBreach() {
         return 1;
     }
     
@@ -125,7 +125,7 @@ public class TWRulesArmor extends RulesArmor {
             return (int) Math.ceil(heatDamage / 2.0);
         } else if (armorType == EquipmentType.T_ARMOR_REFLECTIVE) {
             // reflective armor divides heat damage by 2, with a minimum of 1
-            return Math.max(1, (int) Math.ceil(heatDamage / 2.0));
+            return Math.max(1, (int) Math.floor(heatDamage / 2.0));
         }
         return heatDamage;
     }

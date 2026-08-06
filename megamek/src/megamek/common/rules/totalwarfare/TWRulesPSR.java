@@ -141,12 +141,12 @@ public class TWRulesPSR extends RulesPSR {
     }
 
     /**
-     * Hip Penalty is 1.
+     * Hip Penalty is 2.
      *
      * @return the hip penalty modifier
      */
     public int getHipPenalty() {
-        return 1;
+        return 2;
     }
 
     /**

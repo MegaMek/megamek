@@ -73,7 +73,7 @@ public class TWRulesPilot extends RulesPilot {
      */
     public int getSeatbeltLegModifier(int piloting, int legsDestroyed) {
         if (legsDestroyed == 2) {
-            return piloting + 8;
+            return piloting + 10;
         }
         if (legsDestroyed >=3) {
             return piloting + legsDestroyed * 5;

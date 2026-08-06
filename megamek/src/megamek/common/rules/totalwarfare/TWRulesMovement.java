@@ -122,16 +122,11 @@ public class TWRulesMovement extends RulesMovement {
     public boolean checkMPZeroCauseImmobile(int walkMP) {return false;}
 
     /**
-     * What is our Running MP?
-     *
-     * @param badLegs the number of damaged legs
-     * @param walkMP  the walking movement points
-     * @param runMP   the running movement points
-     *
-     * @return the effective running movement points
+     * {@inheritDoc}
+     * Lost a leg? No running
      */
-    public int getMekRunMP(int badLegs, int walkMP, int runMP) {
-        if (badLegs == 0) {
+    public int getMekRunMP(int badLegs, int walkMP, int runMP, boolean isQuad) {
+        if ((badLegs == 0 && !isQuad) || (badLegs <= 1 && isQuad)) {
             return runMP;
         } else {
             return walkMP;

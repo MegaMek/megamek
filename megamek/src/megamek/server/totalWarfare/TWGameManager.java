@@ -23912,7 +23912,7 @@ public class TWGameManager extends AbstractGameManager {
 
                 // Check for impact resistant armor
                 if ((entity.getArmorType(loc) == EquipmentType.T_ARMOR_IMPACT_RESISTANT)) {
-                    int impactChange = Game.rulesManager.getRulesArmor().impactArmorBreach(entity, vDesc);
+                    int impactChange = Game.rulesManager.getRulesArmor().impactArmorBreach();
                     target = (lowFail) ? target + impactChange: target - impactChange;
                 }
 

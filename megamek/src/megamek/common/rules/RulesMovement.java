@@ -102,9 +102,10 @@ public abstract class RulesMovement {
      * @param badLegs the number of damaged legs
      * @param walkMP the walking movement points
      * @param runMP the running movement points
+     * @param isQuad is the unit a quad             
      * @return the effective running movement points
      */
-    public abstract int getMekRunMP(int badLegs, int walkMP, int runMP);
+    public abstract int getMekRunMP(int badLegs, int walkMP, int runMP, boolean isQuad);
 
     /**
      * Can it change more than 1 level when missing a leg?

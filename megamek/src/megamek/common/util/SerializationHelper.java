@@ -49,6 +49,7 @@ import megamek.common.equipment.Mounted;
 import megamek.common.equipment.NarcPod;
 import megamek.common.equipment.Sensor;
 import megamek.common.equipment.Transporter;
+import megamek.common.game.Game;
 import megamek.common.game.GameTurn;
 import megamek.common.game.InitiativeBonusBreakdown;
 import megamek.common.interfaces.ITechnology;
@@ -117,6 +118,7 @@ public class SerializationHelper {
         // they are explicitly omitted to keep those saves loading.
         xStream.omitField(Mek.class, "sinksOn");
         xStream.omitField(Mek.class, "sinksOnNextRound");
+        xStream.aliasField("pendingCharges", Game.class, "pendingDisplacementAttacks");
 
         xStream.registerConverter(new Converter() {
             @Override

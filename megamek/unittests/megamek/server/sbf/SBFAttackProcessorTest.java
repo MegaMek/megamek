@@ -34,6 +34,7 @@ import megamek.common.enums.GamePhase;
 import megamek.common.options.SBFRuleOptions;
 import megamek.common.strategicBattleSystems.SBFFormation;
 import megamek.common.strategicBattleSystems.SBFGame;
+import megamek.common.strategicBattleSystems.SBFToHitData;
 import megamek.common.strategicBattleSystems.SBFUnit;
 import megamek.common.strategicBattleSystems.SBFVisibilityStatus;
 import org.junit.jupiter.api.BeforeEach;
@@ -102,6 +103,18 @@ class SBFAttackProcessorTest {
         formation.setSprintedThisTurn(true);
 
         assertRejected(List.of(attack(0, target, ASRange.LONG)));
+    }
+
+    @Test
+    void attacksAgainstSprintingTargetReceiveToHitBonus() {
+        SBFStandardUnitAttack submitted = attack(0, target, ASRange.LONG);
+        int normalTargetNumber = SBFToHitData.compileToHit(game, submitted).getValue();
+
+        target.setSprintedThisTurn(true);
+
+        SBFToHitData sprintedTargetToHit = SBFToHitData.compileToHit(game, submitted);
+        assertEquals(normalTargetNumber - 1, sprintedTargetToHit.getValue());
+        assertTrue(sprintedTargetToHit.getDesc().contains("target sprinted"));
     }
 
     @Test

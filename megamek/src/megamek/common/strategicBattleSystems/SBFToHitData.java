@@ -63,6 +63,7 @@ public class SBFToHitData extends TargetRoll {
             return toHit;
         }
         processTMM(toHit, game, attack);
+        processSprinting(toHit, game, attack);
         processJUMP(toHit, game, attack);
         processMorale(toHit, game, attack);
         processSecondaryTarget(toHit, game, attack);
@@ -123,6 +124,14 @@ public class SBFToHitData extends TargetRoll {
         SBFFormation target = game.getFormation(attack.getTargetId()).get();
         if (target.getTmm() > 0) {
             toHit.addModifier(target.getTmm(), "TMM");
+        }
+    }
+
+    private static void processSprinting(SBFToHitData toHit, SBFGame game, SBFStandardUnitAttack attack) {
+        //noinspection OptionalGetWithoutIsPresent
+        SBFFormation target = game.getFormation(attack.getTargetId()).get();
+        if (target.hasSprintedThisTurn()) {
+            toHit.addModifier(-1, "target sprinted");
         }
     }
 

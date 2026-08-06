@@ -126,9 +126,12 @@ class MutualSupportPathRankerTest {
         // tests above posture see the pre-posture behavior unchanged.
         when(mockBehavior.getCombatPosture()).thenReturn(CombatPosture.AUTO);
 
-        // A dry board by default; the posture tests put a river on it.
+        // A dry board by default; the posture tests put a river on it. Small enough that the bank
+        // flood fill over the mocked hexes stays quick.
         mockBoard = mock(Board.class);
         when(mockBoard.contains(any(Coords.class))).thenReturn(true);
+        when(mockBoard.getWidth()).thenReturn(8);
+        when(mockBoard.getHeight()).thenReturn(30);
         Hex dryHex = mock(Hex.class);
         when(mockBoard.getHex(any(Coords.class))).thenReturn(dryHex);
         when(mockGame.getBoard(anyInt())).thenReturn(mockBoard);
@@ -371,6 +374,39 @@ class MutualSupportPathRankerTest {
         setupWaterAt(RIVER_DESTINATION, 1);
         when(mockFriend.getPosition()).thenReturn(new Coords(0, 11));
         setEnemyDistances(20.0, 20.0, RIVER_DESTINATION);
+
+        assertEquals(DEFEND_CROSSING_PENALTY, testRanker.calculateMutualSupportMod(null, mockPath), TOLERANCE);
+    }
+
+    /**
+     * Same side means "could walk there dry", not "the straight line is dry". On a meandering river the
+     * chord between two positions on one bank clips the bends, and a line test charged the defender for
+     * repositioning along its own shore - pushing it out of its firing positions into dead ground.
+     */
+    @Test
+    void aDefendingUnitRepositioningAroundARiverBendPaysNothing() {
+        when(mockBehavior.getCombatPosture()).thenReturn(CombatPosture.DEFEND);
+        // One water hex directly on the straight line between current position and destination; dry
+        // ground connects around it.
+        setupWaterAt(new Coords(2, 10), 1);
+        Coords alongTheBank = new Coords(4, 10);
+        when(mockFriend.getPosition()).thenReturn(new Coords(0, 11));
+        setEnemyDistances(20.0, 20.0, alongTheBank);
+
+        assertEquals(0.0, testRanker.calculateMutualSupportMod(null, mockPath), TOLERANCE);
+    }
+
+    /** A dry landing on the far bank is still a crossing - jumping the river does not dodge the charge. */
+    @Test
+    void aDefendingUnitReachingADisconnectedBankIsCharged() {
+        when(mockBehavior.getCombatPosture()).thenReturn(CombatPosture.DEFEND);
+        // A river wall the full height of the board: the far side is dry but not walkable from here.
+        for (int y = 0; y < 30; y++) {
+            setupWaterAt(new Coords(2, y), 1);
+        }
+        Coords farBank = new Coords(4, 10);
+        when(mockFriend.getPosition()).thenReturn(new Coords(0, 11));
+        setEnemyDistances(20.0, 20.0, farBank);
 
         assertEquals(DEFEND_CROSSING_PENALTY, testRanker.calculateMutualSupportMod(null, mockPath), TOLERANCE);
     }

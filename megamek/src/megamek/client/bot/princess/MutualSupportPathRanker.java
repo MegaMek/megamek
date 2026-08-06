@@ -187,6 +187,11 @@ public class MutualSupportPathRanker extends BasicPathRanker {
     private CombatPosture announcedPosture;
     private double lastPosturePenalty;
 
+    // Bank labels are a property of the board, recomputed per round (ice can break) and shared by
+    // every path of every mover. Keyed by board id.
+    private final Map<Integer, BankRegions> bankRegionsByBoard = new HashMap<>();
+    private int bankRegionsRound = -1;
+
     // Per-ranking-pass caches. rankPath is called once per candidate path for a single mover, and a
     // company-scale turn evaluates thousands of paths per unit, so anything that depends only on the
     // mover (its friends list, the gap from where it currently stands) must be computed once, not per
@@ -378,12 +383,17 @@ public class MutualSupportPathRanker extends BasicPathRanker {
         // because a ford does not split a force; a defender's river is the opposite case - a fordable
         // river is one the enemy can cross anywhere, so it is even more a line to hold. Measured: on a
         // river of depth-1 fords, a depth-2 test never fired and the defending company crossed at will.
-        Board board = game.getBoard(movingUnit.getBoardId());
-        Coords currentPosition = movingUnit.getPosition();
-        if (FormationSide.isSeparatingWater(board, currentPosition, FormationSide.ANY_WATER_DEPTH)) {
+        //
+        // "Same side" is walkable connectivity (BankRegions), not a straight line: on a meandering
+        // river the chord between two positions on one bank clips the bends, and a line test charged
+        // the defender for repositioning along its own shore - worst exactly at the water's edge, so
+        // the force drifted out of its firing positions into dead ground.
+        BankRegions banks = bankRegions(game, movingUnit.getBoardId());
+        int currentBank = banks.regionOf(movingUnit.getPosition());
+        if (BankRegions.WATER == currentBank) {
             return 0;
         }
-        if (FormationSide.sameSide(board, currentPosition, path.getFinalCoords(), FormationSide.ANY_WATER_DEPTH)) {
+        if (currentBank == banks.regionOf(path.getFinalCoords())) {
             return 0;
         }
 
@@ -392,6 +402,19 @@ public class MutualSupportPathRanker extends BasicPathRanker {
         logger.trace("[Posture] DEFEND holds the bank: path to {} enters or crosses water, penalty {}",
               path.getFinalCoords(), posturePenalty);
         return posturePenalty;
+    }
+
+    /**
+     * The bank labels for a board, computed once per round and shared by every path of every mover.
+     */
+    private BankRegions bankRegions(Game game, int boardId) {
+        int round = game.getCurrentRound();
+        if (round != bankRegionsRound) {
+            bankRegionsRound = round;
+            bankRegionsByBoard.clear();
+        }
+        return bankRegionsByBoard.computeIfAbsent(boardId,
+              id -> BankRegions.of(game.getBoard(id), FormationSide.ANY_WATER_DEPTH));
     }
 
     /**

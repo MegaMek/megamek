@@ -46,6 +46,7 @@ import java.util.concurrent.CopyOnWriteArrayList;
 
 import megamek.MMConstants;
 import megamek.Version;
+import megamek.client.bot.AIType;
 import megamek.client.bot.princess.BehaviorSettings;
 import megamek.common.Hex;
 import megamek.common.HexTarget;
@@ -236,6 +237,14 @@ public final class Game extends AbstractGame implements Serializable, PlanetaryC
      * savegames and allow restoring bots to their previous settings.
      */
     private Map<String, BehaviorSettings> botSettings = new HashMap<>();
+
+    /**
+     * Which AI implementation the most recent bot connected under each name was, alongside {@link #botSettings}.
+     * Rides the savegame so a loaded game can restore each seat with the same kind of bot it held, rather than
+     * guessing. Absent ({@code null}) in games saved before this was recorded - read it through
+     * {@link #getBotTypes()}, which heals that.
+     */
+    private Map<String, AIType> botTypes = new HashMap<>();
 
     /**
      * Constructor
@@ -3927,6 +3936,22 @@ public final class Game extends AbstractGame implements Serializable, PlanetaryC
 
     public void setBotSettings(Map<String, BehaviorSettings> botSettings) {
         this.botSettings = botSettings;
+    }
+
+    /**
+     * @return which AI implementation the most recent bot connected under each player name was; never
+     *       {@code null} - games saved before the types were recorded read as an empty map
+     */
+    public Map<String, AIType> getBotTypes() {
+        if (null == botTypes) {
+            // Deserialization of a save from before this field existed leaves it null.
+            botTypes = new HashMap<>();
+        }
+        return botTypes;
+    }
+
+    public void setBotTypes(Map<String, AIType> botTypes) {
+        this.botTypes = botTypes;
     }
 
     /**

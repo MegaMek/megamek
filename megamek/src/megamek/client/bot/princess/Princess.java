@@ -3969,7 +3969,7 @@ public class Princess extends BotClient {
     }
 
     public void sendPrincessSettings() {
-        send(new Packet(PacketCommand.PRINCESS_SETTINGS, behaviorSettings));
+        send(new Packet(PacketCommand.PRINCESS_SETTINGS, behaviorSettings, getAIType()));
     }
 
     @Override

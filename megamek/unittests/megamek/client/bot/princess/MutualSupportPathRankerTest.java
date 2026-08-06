@@ -491,6 +491,43 @@ class MutualSupportPathRankerTest {
               TOLERANCE);
     }
 
+    /**
+     * A laid defense does not pay tempo. The defender at 10 hexes - outside its 6-hex weapons band, inside
+     * the 15-hex contact range - was paying the closing charge every round it held, bleeding it off its
+     * firing positions one hex at a time. Under DEFEND with the enemy in contact, the field is flat.
+     */
+    @Test
+    void aDefenderInContactPaysNoClosingCharge() {
+        when(mockBehavior.getCombatPosture()).thenReturn(CombatPosture.DEFEND);
+        when(mockMover.getRunMP()).thenReturn(5);
+        when(mockMover.getAnyTypeMaxJumpMP()).thenReturn(0);
+        setEnemyDistances(10.0, 10.0, HOLDING_DESTINATION);
+        assertEquals(0.0, testRanker.calculateAggressionMod(mockMover, pathEndingAt(HOLDING_DESTINATION), mockGame),
+              TOLERANCE);
+    }
+
+    /** Out of contact the charge stands: a defending force still closes ranks toward its line. */
+    @Test
+    void aDefenderOutOfContactStillClosesRanks() {
+        when(mockBehavior.getCombatPosture()).thenReturn(CombatPosture.DEFEND);
+        when(mockMover.getRunMP()).thenReturn(5);
+        when(mockMover.getAnyTypeMaxJumpMP()).thenReturn(0);
+        setEnemyDistances(20.0, 20.0, HOLDING_DESTINATION);
+        assertTrue(testRanker.calculateAggressionMod(mockMover, pathEndingAt(HOLDING_DESTINATION), mockGame) > 0,
+              "beyond contact range the defender is still pulled toward its line");
+    }
+
+    /** The attack keeps its tempo: between its weapons band and contact range the closing charge holds. */
+    @Test
+    void anAttackerInContactStillPaysTempo() {
+        when(mockBehavior.getCombatPosture()).thenReturn(CombatPosture.ATTACK);
+        when(mockMover.getRunMP()).thenReturn(5);
+        when(mockMover.getAnyTypeMaxJumpMP()).thenReturn(0);
+        setEnemyDistances(10.0, 10.0, HOLDING_DESTINATION);
+        assertTrue(testRanker.calculateAggressionMod(mockMover, pathEndingAt(HOLDING_DESTINATION), mockGame) > 0,
+              "an attacker holding short of contact must keep paying the closing charge");
+    }
+
     private MovePath pathEndingAt(Coords destination) {
         MovePath path = mock(MovePath.class);
         when(path.getEntity()).thenReturn(mockMover);

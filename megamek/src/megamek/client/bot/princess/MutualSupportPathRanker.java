@@ -782,6 +782,14 @@ public class MutualSupportPathRanker extends BasicPathRanker {
      * runs 9. Zero once inside the band - nothing pulls a fire-support unit past its optimum toward
      * point-blank range.
      *
+     * <p>A laid defense does not pay tempo. Once the enemy is inside contact range and the force's posture
+     * is DEFEND, the enemy is coming to us: the closing charge that keeps an attack from dithering would
+     * here bleed the defender off its firing positions one hex at a time - measured as the biggest payer
+     * in 40% of the defender's remaining two-steps after the attacker-movement fix. Out of contact the
+     * charge stands, so a defending force still closes ranks toward its line instead of scattering. The
+     * gate reads the unit's CURRENT distance, not the path's, so every candidate path of the pass sees the
+     * same flat field.</p>
+     *
      * @param movingUnit the unit being moved
      * @param path       the path being evaluated
      * @param game       the current game
@@ -794,6 +802,12 @@ public class MutualSupportPathRanker extends BasicPathRanker {
         int ownSpeed = Math.max(1, Math.max(movingUnit.getRunMP(), movingUnit.getAnyTypeMaxJumpMP()));
         double turnsToClose = remainingGap / ownSpeed;
         lastTurnsToBand = turnsToClose;
+
+        if ((CombatPosture.DEFEND == resolvePosture(game, movingUnit.getBoardId()))
+              && (distanceToClosestEnemy(movingUnit, movingUnit.getPosition(), game)
+                    <= THREAT_CONTACT_RANGE)) {
+            return 0;
+        }
 
         double aggression = getOwner().getBehaviorSettings().getHyperAggressionValue();
         double aggressionMod = turnsToClose * TEMPO_REFERENCE_MP * aggression;

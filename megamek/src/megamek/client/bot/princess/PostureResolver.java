@@ -161,7 +161,8 @@ public class PostureResolver {
     }
 
     /**
-     * The enemy's mean distance to the centre of our force, or null when either side has no known positions.
+     * The enemy's mean distance to the centre of our force, or {@code null} when either side has no known
+     * positions.
      */
     private static Double meanEnemyDistance(List<Coords> ownPositions, List<Coords> enemyPositions) {
         Coords ownCentre = FormationGeometry.centroid(ownPositions);

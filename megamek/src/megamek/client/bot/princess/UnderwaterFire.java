@@ -73,9 +73,9 @@ import megamek.common.units.UnitType;
  * a dry shooter overestimating its guns against a submerged target is what makes the rest of the force waste
  * turns shooting at that bunker.</p>
  *
- * @param blocked          why the shot is impossible, or null if it can be attempted
- * @param underwaterRanges the range table to use instead of the weapon's normal one, or null to keep the
- *                         normal table; only set when the shot passes through water and is still legal
+ * @param blocked          why the shot is impossible, or {@code null} if it can be attempted
+ * @param underwaterRanges the range table to use instead of the weapon's normal one, or {@code null} to keep
+ *                         the normal table; only set when the shot passes through water and is still legal
  */
 public record UnderwaterFire(@Nullable TargetRollModifier blocked, @Nullable int[] underwaterRanges) {
 
@@ -100,14 +100,14 @@ public record UnderwaterFire(@Nullable TargetRollModifier blocked, @Nullable int
      *
      * @param shooter      the unit firing
      * @param shooterState the position and elevation the shooter would fire from
-     * @param shooterHex   the hex at that position, or null if it is off the board
+     * @param shooterHex   the hex at that position, or {@code null} if it is off the board
      * @param target       what is being shot at
      * @param targetState  the position and elevation the target is expected at
-     * @param targetHex    the hex at that position, or null if it is off the board
+     * @param targetHex    the hex at that position, or {@code null} if it is off the board
      * @param weapon       the weapon being fired
-     * @param firingAmmo   the ammo it would fire, or null for weapons without ammo
+     * @param firingAmmo   the ammo it would fire, or {@code null} for weapons without ammo
      *
-     * @return the restriction on this shot; {@link #blocked()} is null when the shot may proceed
+     * @return the restriction on this shot; {@link #blocked()} is {@code null} when the shot may proceed
      */
     static UnderwaterFire check(Entity shooter, EntityState shooterState, @Nullable Hex shooterHex,
           Targetable target, EntityState targetState, @Nullable Hex targetHex,
@@ -190,10 +190,10 @@ public record UnderwaterFire(@Nullable TargetRollModifier blocked, @Nullable int
      *
      * @param shooter      the unit firing
      * @param shooterState the position and elevation the shooter would fire from
-     * @param shooterHex   the hex at that position, or null if it is off the board
+     * @param shooterHex   the hex at that position, or {@code null} if it is off the board
      * @param weapon       the weapon being fired
      *
-     * @return true if the weapon would be underwater at that position
+     * @return {@code true} if the weapon would be underwater at that position
      */
     static boolean isWeaponUnderwater(Entity shooter, EntityState shooterState, @Nullable Hex shooterHex,
           WeaponMounted weapon) {

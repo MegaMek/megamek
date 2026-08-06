@@ -123,9 +123,9 @@ final class BankRegions {
     /**
      * The bank a position stands on.
      *
-     * @param coords the position, or null
+     * @param coords the position, or {@code null}
      *
-     * @return its region label, or {@link #WATER} for water hexes, off-board positions and null
+     * @return its region label, or {@link #WATER} for water hexes, off-board positions and {@code null}
      */
     int regionOf(@Nullable Coords coords) {
         if ((coords == null) || (coords.getX() < 0) || (coords.getX() >= width)

@@ -286,8 +286,8 @@ public class BehaviorSettings implements Serializable {
     }
 
     /**
-     * @param combatPosture whether my force is attacking, defending, or deciding for itself; null resets to
-     *                      {@link CombatPosture#AUTO}
+     * @param combatPosture whether my force is attacking, defending, or deciding for itself; {@code null}
+     *                      resets to {@link CombatPosture#AUTO}
      */
     public void setCombatPosture(@Nullable CombatPosture combatPosture) {
         this.combatPosture = (null == combatPosture) ? CombatPosture.AUTO : combatPosture;

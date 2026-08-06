@@ -519,7 +519,7 @@ public class BotCommandsPanel extends JPanel {
         for (CombatPosture posture : CombatPosture.values()) {
             JMenuItem postureItem = new JMenuItem(posture.toString());
             postureItem.setToolTipText(Messages.getString("BotCommandPanel.Posture." + posture.name() + ".tooltip"));
-            postureItem.addActionListener(evt -> {
+            postureItem.addActionListener(event -> {
                 sendChatCommand(botPlayer, ChatCommands.POSTURE, posture.name());
                 acknowledgeOrder(botPlayer, Messages.getString("BotCommandPanel.toast.posture", posture));
             });

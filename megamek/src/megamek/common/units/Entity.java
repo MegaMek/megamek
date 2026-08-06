@@ -3377,7 +3377,8 @@ public abstract class Entity extends TurnOrdered
                   (ammoType == AmmoType.AmmoTypeEnum.PAC)) &&
                   mounted.isJammed() &&
                   !mounted.isDestroyed() &&
-                  gameOptions().booleanOption(OptionsConstants.ADVANCED_COMBAT_UNJAM_UAC)) {
+                  gameOptions().booleanOption(OptionsConstants.ADVANCED_COMBAT_UNJAM_UAC) &&
+                  game.rulesManager.getRulesWeapons().canUACsJam()) {
                 return true;
             }
         }
@@ -15567,9 +15568,11 @@ public abstract class Entity extends TurnOrdered
 
     /** @return Target number taking into account game options */
     private int getMASCorSuperchargerTarget(int nLevel) {
-        if ((game != null) && gameOptions().booleanOption(OptionsConstants.ADVANCED_ALTERNATE_MASC_ENHANCED)) {
+        if ((game != null) && gameOptions().booleanOption(OptionsConstants.ADVANCED_ALTERNATE_MASC_ENHANCED)
+        && Game.rulesManager instanceof TWRulesManager) {
             return ALTERNATE_MASC_FAILURE_ENHANCED[nLevel];
-        } else if (game != null && gameOptions().booleanOption(OptionsConstants.ADVANCED_ALTERNATE_MASC)) {
+        } else if (game != null && gameOptions().booleanOption(OptionsConstants.ADVANCED_ALTERNATE_MASC)
+              && Game.rulesManager instanceof TWRulesManager) {
             return ALTERNATE_MASC_FAILURE[nLevel];
         } else {
             return Game.rulesManager.getRulesEquipment().getMascFailure(nLevel);

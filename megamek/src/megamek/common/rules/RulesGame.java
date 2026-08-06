@@ -71,4 +71,11 @@ public abstract class RulesGame {
      * @return true if TAG increases battle value
      */
     public abstract boolean tagBVBump();
+
+    /**
+     * Allow minefields or not
+     * @param toMinefields OptionsConstants.ADVANCED_MINEFIELDS
+     * @return
+     */
+    public abstract boolean allowMinefields(boolean toMinefields);
 }

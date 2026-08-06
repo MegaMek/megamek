@@ -81,4 +81,10 @@ public class CoreRulesGame extends RulesGame {
     public boolean tagBVBump() {
         return false;
     }
+
+    /**
+     * {@inheritDoc}
+     * Core rules allows minefields
+     */
+    public boolean allowMinefields(boolean toMinefields) { return true; }
 }

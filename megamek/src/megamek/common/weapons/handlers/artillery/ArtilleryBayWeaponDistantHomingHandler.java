@@ -83,7 +83,7 @@ public class ArtilleryBayWeaponDistantHomingHandler extends ArtilleryBayWeaponDi
           throws EntityLoadingException {
         super(t, w, g, m);
         advancedPD = g.getOptions().booleanOption(OptionsConstants.ADVANCED_AERO_RULES_STRATOPS_ADV_POINT_DEFENSE);
-        advancedAMS = game.getOptions().booleanOption(OptionsConstants.ADVANCED_COMBAT_TAC_OPS_AMS);
+        advancedAMS = Game.rulesManager.getRulesEquipment().getAMSReduction(g.getOptions().booleanOption(OptionsConstants.ADVANCED_COMBAT_TAC_OPS_AMS));
         multiAMS = g.getOptions().booleanOption(OptionsConstants.ADVANCED_COMBAT_MULTI_USE_AMS);
     }
 

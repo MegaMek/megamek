@@ -85,4 +85,10 @@ public class TWRulesGame extends RulesGame {
     public boolean tagBVBump() {
         return true;
     }
+
+    /**
+     * {@inheritDoc}
+     * Allow only if TO Minefields is enabled
+     */
+    public boolean allowMinefields(boolean toMinefields) { return toMinefields; }
 }

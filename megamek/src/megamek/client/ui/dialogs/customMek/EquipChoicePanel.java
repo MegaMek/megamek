@@ -711,7 +711,7 @@ public class EquipChoicePanel extends JPanel {
                     continue;
                 }
 
-                if (!gameOpts.booleanOption(OptionsConstants.ADVANCED_MINEFIELDS) &&
+                if (!Game.rulesManager.getRulesGame().allowMinefields(gameOpts.booleanOption(OptionsConstants.ADVANCED_MINEFIELDS)) &&
                       AmmoType.canDeliverMinefield(atCheck)) {
                     continue;
                 }

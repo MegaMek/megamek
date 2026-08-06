@@ -139,4 +139,14 @@ public class CoreRulesUnits extends RulesUnits {
     public boolean hasBadLegs(Entity entity) {
         return entity.hasBadLegs();
     }
+
+    /**
+     * {@inheritDoc}
+     * Core allows Torso twisting in physical if you haven't already.
+     * Returns true.
+     */
+    @Override
+    public boolean getPhysicalTwistEnabled() {
+        return true;
+    }
 }

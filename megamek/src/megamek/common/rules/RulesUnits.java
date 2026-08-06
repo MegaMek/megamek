@@ -98,4 +98,11 @@ public abstract class RulesUnits {
      * @return true if the unit has bad legs
      */
     public abstract boolean hasBadLegs(Entity entity);
+
+    /**
+     * Are torso twists allowed in the physical phase?
+     * @return false by default
+     */
+    public boolean getPhysicalTwistEnabled() { return false;
+    }
 }

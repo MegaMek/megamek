@@ -88,7 +88,6 @@ public class MunitionChoice {
                 chHalfAmmo.removeItemListener(halfAmmoListener);
                 chHalfAmmo.setSelected(false);
                 chHalfAmmo.addItemListener(halfAmmoListener);
-                ammoMounted.setHalfLoadAmmo(false);
             }
         };
         
@@ -115,15 +114,11 @@ public class MunitionChoice {
                     currShots = (int) Math.floor(numberOfShotsPerTon / 2);
                 }
 
-                ammoMounted.setShotsLeft(currShots);
-                ammoMounted.setHalfLoadAmmo(true);
                 comboNumberOfShots.removeItemListener(numShotsListener);
                 comboNumberOfShots.setSelectedItem(String.valueOf(currShots));
                 comboNumberOfShots.addItemListener(numShotsListener);
             } else if (!chHalfAmmo.isSelected() && ammoMounted.isHalfLoadAmmo()) {
                 // Switch to a full load of ammo
-                ammoMounted.setShotsLeft(numberOfShotsPerTon);
-                ammoMounted.setHalfLoadAmmo(false);
                 comboNumberOfShots.removeItemListener(numShotsListener);
                 comboNumberOfShots.setSelectedItem(String.valueOf(numberOfShotsPerTon));
                 comboNumberOfShots.addItemListener(numShotsListener);
@@ -178,8 +173,7 @@ public class MunitionChoice {
             }
             // Changing ammo bins resets the half
             chHalfAmmo.setSelected(false);
-            ammoMounted.setHalfLoadAmmo(false);
-            
+
             for (WeaponAmmoChoice weaponAmmoChoice : weaponAmmoChoices) {
                 weaponAmmoChoice.refreshAmmoBinName(this.ammoMounted,
                       this.ammoTypes.get(comboAmmoTypes.getSelectedIndex()));
@@ -252,6 +246,12 @@ public class MunitionChoice {
 
         if (chDump.isSelected()) {
             ammoMounted.setShotsLeft(0);
+        }
+
+        if (chHalfAmmo.isSelected() && !ammoMounted.isHalfLoadAmmo()) {
+            ammoMounted.setHalfLoadAmmo(true);
+        } else if (!chHalfAmmo.isSelected() && ammoMounted.isHalfLoadAmmo()) {
+            ammoMounted.setHalfLoadAmmo(false);
         }
         
         if (gameOptions.booleanOption(OptionsConstants.ADVANCED_COMBAT_TAC_OPS_HOT_LOAD)) {

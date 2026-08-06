@@ -663,13 +663,6 @@ public class GameOptionsDialog extends AbstractButtonDialog implements ActionLis
                 comp_i.setEditable(!core);
             }
         }
-        // (Unofficial) Alternate "Better" MASC/Supercharger - Enhanced
-        comps = optionComps.get(OptionsConstants.ADVANCED_MINEFIELDS);
-        if (comps != null) {
-            for (DialogOptionComponentYPanel comp_i : comps) {
-                comp_i.setEditable(!core);
-            }
-        }
     }
 
     // Gets called when one of the option checkboxes is clicked.

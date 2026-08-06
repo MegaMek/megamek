@@ -458,8 +458,10 @@ public class PhysicalDisplay extends AttackPhaseDisplay {
         target(null);
         if (entity instanceof Mek) {
             int grapple = entity.getGrappled();
-            setTwistEnabled(entity.canChangeSecondaryFacing()
-                  && entity.getCrew().isActive());
+            if (Game.rulesManager.getRulesUnits().getPhysicalTwistEnabled()) {
+                setTwistEnabled(entity.canChangeSecondaryFacing()
+                      && entity.getCrew().isActive());
+            }
 
             if (grapple != Entity.NONE) {
                 Entity t = game.getEntity(grapple);
@@ -467,6 +469,8 @@ public class PhysicalDisplay extends AttackPhaseDisplay {
                     target(t);
                 }
             }
+        } else {
+            setTwistEnabled(false);
         }
         clientgui.onAllBoardViews(IBoardView::clearMarkedHexes);
         clientgui.getBoardView(currentEntity()).highlight(currentEntity().getPosition());
@@ -1925,22 +1929,6 @@ public class PhysicalDisplay extends AttackPhaseDisplay {
     }
 
     /**
-     * Torso twist to the left or right
-     *
-     * @param twistDir An <code>int</code> specifying whether we're twisting left or right, 0 if we're twisting to the
-     *                 left, 1 if to the right.
-     */
-
-    void torsoTwist(int twistDir) {
-        int direction = currentEntity().getSecondaryFacing();
-        if (twistDir == 0) {
-            applyTorsoTwist(currentEntity().clipSecondaryFacing((direction + 5) % 6));
-        } else if (twistDir == 1) {
-            applyTorsoTwist(currentEntity().clipSecondaryFacing((direction + 7) % 6));
-        }
-    }
-
-    /**
      * Declares a torso twist to the given secondary facing, preserving state that is declared independently of the
      * twist. {@link #clearAttacks()} drops every pending action and reselects the first weapon, so this keeps the
      * player's selected weapon selected and re-adds any pending Directional Torso Mount arc (BMM p.83) - matching the
@@ -1996,7 +1984,7 @@ public class PhysicalDisplay extends AttackPhaseDisplay {
             shiftHeld = (event.getModifiers() & InputEvent.SHIFT_DOWN_MASK) != 0;
         }
         if (event.getType() == BoardViewEvent.BOARD_HEX_DRAGGED) {
-            if (shiftHeld || twisting) {
+            if ((shiftHeld || twisting) && isMyTurn() && Game.rulesManager.getRulesUnits().getPhysicalTwistEnabled()) {
                 if ((currentEntity() != null) && !currentEntity().getAlreadyTwisted()) {
                     torsoTwist(event.getCoords());
                 }

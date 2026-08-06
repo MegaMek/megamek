@@ -251,7 +251,7 @@ public class ServerHelper {
      */
     public static boolean detectMinefields(Game game, Entity entity, Coords coords,
           Vector<Report> vPhaseReport, TWGameManager gameManager) {
-        if (!game.getOptions().booleanOption(OptionsConstants.ADVANCED_MINEFIELDS)) {
+        if (!Game.rulesManager.getRulesGame().allowMinefields(game.getOptions().booleanOption(OptionsConstants.ADVANCED_MINEFIELDS))) {
             return false;
         }
 

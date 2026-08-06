@@ -96,6 +96,7 @@ import megamek.common.containers.MunitionTree;
 import megamek.common.equipment.Briefcase;
 import megamek.common.equipment.ICarryable;
 import megamek.common.equipment.Minefield;
+import megamek.common.game.Game;
 import megamek.common.interfaces.IStartingPositions;
 import megamek.common.loaders.MapSettings;
 import megamek.common.options.GameOptions;
@@ -368,7 +369,7 @@ public class PlayerSettingsDialog extends AbstractButtonDialog {
         }
         mainPanel.add(startSection());
         mainPanel.add(initiativeSection());
-        if (client.getGame().getOptions().booleanOption(OptionsConstants.ADVANCED_MINEFIELDS)) {
+        if (Game.rulesManager.getRulesGame().allowMinefields(client.getGame().getOptions().booleanOption(OptionsConstants.ADVANCED_MINEFIELDS))) {
             mainPanel.add(mineSection());
         }
         mainPanel.add(fortificationSection());

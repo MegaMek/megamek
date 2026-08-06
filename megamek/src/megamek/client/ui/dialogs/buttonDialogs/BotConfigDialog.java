@@ -74,6 +74,7 @@ import megamek.client.bot.BotClient;
 import megamek.client.bot.princess.BehaviorSettings;
 import megamek.client.bot.princess.BehaviorSettingsFactory;
 import megamek.client.bot.princess.CardinalEdge;
+import megamek.client.bot.princess.CombatPosture;
 import megamek.client.bot.princess.PrincessException;
 import megamek.client.generator.RandomCallsignGenerator;
 import megamek.client.ui.Messages;
@@ -135,6 +136,8 @@ public class BotConfigDialog extends AbstractButtonDialog
 
     private final JLabel withdrawEdgeLabel = new JLabel(Messages.getString("BotConfigDialog.retreatEdgeLabel"));
     private final MMComboBox<CardinalEdge> withdrawEdgeCombo = new TipCombo<>("EdgeToWithdraw", CardinalEdge.values());
+    private final JLabel postureLabel = new JLabel(Messages.getString("BotConfigDialog.postureLabel"));
+    private final MMComboBox<CombatPosture> postureCombo = new TipCombo<>("CombatPosture", CombatPosture.values());
     private final MMToggleButton autoFleeCheck = new TipMMToggleButton(Messages.getString(
           "BotConfigDialog.autoFleeCheck"));
     private final JLabel fleeEdgeLabel = new JLabel(Messages.getString("BotConfigDialog.homeEdgeLabel"));
@@ -443,6 +446,13 @@ public class BotConfigDialog extends AbstractButtonDialog
             panContent.add(Box.createVerticalStrut(7));
         }
 
+        postureCombo.setToolTipText(Messages.getString("BotConfigDialog.postureTooltip"));
+        postureCombo.addActionListener(this);
+        var postureLine = new JPanel(new FlowLayout(FlowLayout.LEFT));
+        postureLine.add(postureLabel);
+        postureLine.add(postureCombo);
+        panContent.add(postureLine);
+
         exclusiveMutualSupportCheck.setToolTipText(Messages.getString("BotConfigDialog.exclusiveMutualSupportCheckToolTip"));
         exclusiveMutualSupportCheck.addActionListener(this);
         panContent.add(exclusiveMutualSupportCheck);
@@ -576,6 +586,7 @@ public class BotConfigDialog extends AbstractButtonDialog
         aggressionSlidebar.setValue(princessBehavior.getHyperAggressionIndex());
         fallShameSlidebar.setValue(princessBehavior.getFallShameIndex());
         mutualSupportSlidebar.setValue(princessBehavior.getMutualSupportIndex());
+        postureCombo.setSelectedItem(princessBehavior.getCombatPosture());
         braverySlidebar.setValue(princessBehavior.getBraveryIndex());
         antiCrowdingSlidebar.setValue(princessBehavior.getAntiCrowding());
         favorHigherTMMSlidebar.setValue(princessBehavior.getFavorHigherTMM());
@@ -639,6 +650,7 @@ public class BotConfigDialog extends AbstractButtonDialog
                     chosenPreset.getFavorHigherTMM() != favorHigherTMMSlidebar.getValue() ||
                     chosenPreset.iAmAPirate() != iAmAPirateCheck.isSelected() ||
                     chosenPreset.isExclusiveMutualSupport() != exclusiveMutualSupportCheck.isSelected() ||
+                    chosenPreset.getCombatPosture() != postureCombo.getSelectedItem() ||
                     chosenPreset.getNumberOfEnemiesToConsiderFacing()
                           != numberOfEnemiesToConsiderFacingSlidebar.getValue() ||
                     chosenPreset.getAllowFacingTolerance() != allowFacingToleranceSlidebar.getValue() ||
@@ -827,6 +839,7 @@ public class BotConfigDialog extends AbstractButtonDialog
         newBehavior.setAllowFacingTolerance(allowFacingToleranceSlidebar.getValue());
         newBehavior.setIAmAPirate(iAmAPirateCheck.isSelected());
         newBehavior.setExclusiveMutualSupport(exclusiveMutualSupportCheck.isSelected());
+        newBehavior.setCombatPosture(postureCombo.getSelectedItem());
         newBehavior.setExperimental(experimentalCheck.isSelected());
         newBehavior.setIgnoreDamageOutput(ignoreDamageOutputCheck.isSelected());
 
@@ -876,6 +889,7 @@ public class BotConfigDialog extends AbstractButtonDialog
         tempBehavior.setAllowFacingTolerance(allowFacingToleranceSlidebar.getValue());
         tempBehavior.setIAmAPirate(iAmAPirateCheck.isSelected());
         tempBehavior.setExclusiveMutualSupport(exclusiveMutualSupportCheck.isSelected());
+        tempBehavior.setCombatPosture(postureCombo.getSelectedItem());
         tempBehavior.setExperimental(experimentalCheck.isSelected());
         tempBehavior.setIgnoreDamageOutput(ignoreDamageOutputCheck.isSelected());
 

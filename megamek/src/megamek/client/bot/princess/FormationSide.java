@@ -72,11 +72,21 @@ public final class FormationSide {
      */
     static final int SEPARATING_DEPTH = 2;
 
+    /**
+     * Minimum water depth that counts as a defensive line: any water at all.
+     *
+     * <p>The formation rule above deliberately ignores fords, because a ford does not break a force in two. A
+     * defender's river is the opposite case: a fordable river is still the line the defender holds - more so,
+     * because the enemy can cross it anywhere. Measured the hard way: a defending company on a river of
+     * depth-1 fords crossed at will for a whole game, because its crossing charge only counted depth 2.</p>
+     */
+    static final int ANY_WATER_DEPTH = 1;
+
     private FormationSide() {
     }
 
     /**
-     * Whether two positions are on the same side of any water obstacle.
+     * Whether two positions are on the same side of any water obstacle deep enough to split a formation.
      *
      * @param board  the board both positions are on
      * @param from   the mover's position
@@ -86,6 +96,21 @@ public final class FormationSide {
      *       form up together
      */
     public static boolean sameSide(@Nullable Board board, @Nullable Coords from, @Nullable Coords to) {
+        return sameSide(board, from, to, SEPARATING_DEPTH);
+    }
+
+    /**
+     * Whether two positions are on the same side of any water of at least the given depth.
+     *
+     * @param board        the board both positions are on
+     * @param from         the mover's position
+     * @param to           the other position
+     * @param minimumDepth the shallowest water that counts as a divide, in levels
+     *
+     * @return {@code true} when the straight line between them crosses no such water
+     */
+    public static boolean sameSide(@Nullable Board board, @Nullable Coords from, @Nullable Coords to,
+          int minimumDepth) {
         if ((board == null) || (from == null) || (to == null)) {
             return true;
         }
@@ -93,7 +118,7 @@ public final class FormationSide {
             return true;
         }
         for (Coords step : Coords.intervening(from, to)) {
-            if (isSeparatingWater(board, step)) {
+            if (isSeparatingWater(board, step, minimumDepth)) {
                 return false;
             }
         }
@@ -109,6 +134,19 @@ public final class FormationSide {
      * @return {@code true} when the hex is on the board and holds water at {@link #SEPARATING_DEPTH} or deeper
      */
     static boolean isSeparatingWater(Board board, @Nullable Coords coords) {
+        return isSeparatingWater(board, coords, SEPARATING_DEPTH);
+    }
+
+    /**
+     * Whether a hex holds water at least the given depth.
+     *
+     * @param board        the board to read
+     * @param coords       the hex to test
+     * @param minimumDepth the shallowest water that counts, in levels
+     *
+     * @return {@code true} when the hex is on the board and holds water at that depth or deeper
+     */
+    static boolean isSeparatingWater(Board board, @Nullable Coords coords, int minimumDepth) {
         if ((coords == null) || !board.contains(coords)) {
             return false;
         }
@@ -116,7 +154,7 @@ public final class FormationSide {
         if ((hex == null) || !hex.containsTerrain(Terrains.WATER)) {
             return false;
         }
-        return hex.terrainLevel(Terrains.WATER) >= SEPARATING_DEPTH;
+        return hex.terrainLevel(Terrains.WATER) >= minimumDepth;
     }
 
     /**

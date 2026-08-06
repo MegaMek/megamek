@@ -37,6 +37,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import megamek.client.bot.Messages;
 import megamek.common.analysis.DamageProfile;
 import megamek.client.bot.princess.UnitBehavior.BehaviorType;
 import megamek.common.annotations.Nullable;
@@ -53,7 +54,7 @@ import megamek.logging.MMLogger;
  * engaging one element can itself be engaged by another - and commit their combat power together rather than
  * sequentially.
  *
- * <p>Three changes relative to {@link BasicPathRanker}:</p>
+ * <p>Four changes relative to {@link BasicPathRanker}:</p>
  * <ol>
  *     <li><b>Supporting-range cohesion</b> replaces herding: instead of a pull toward the (historical)
  *     friendly center of mass, the unit is penalized only for ending BEYOND the effective weapons envelope
@@ -68,6 +69,12 @@ import megamek.logging.MMLogger;
  *     engagement range in TURNS AT ITS OWN SPEED rather than raw hexes, so a 3/5 assault and a 6/9 medium
  *     share one commit tempo (a full move closes one turn's worth for either), and each unit closes to its
  *     own band - brawlers to knife range, fire-support to its optimum - not blindly to contact.</li>
+ *     <li><b>Combat posture at water</b>: a defending force does not cross the water it is defending behind -
+ *     any water, fords included, since a fordable river is one the enemy can cross anywhere. Whether the
+ *     force is attacking or defending is set explicitly in {@link BehaviorSettings}, or read each round from
+ *     the mission and the enemy's movement ({@link PostureResolver}); a defender's crossing paths are charged
+ *     a full turn of advance, so it holds its bank and fights the enemy in the water instead of wading into
+ *     the same trap (see {@code calculatePosturePenalty}).</li>
  * </ol>
  *
  * <p><b>The rule that must always hold: keeping formation never stops a unit closing with the enemy.</b> Two things
@@ -172,6 +179,21 @@ public class MutualSupportPathRanker extends BasicPathRanker {
 
     private final Map<Integer, SupportEnvelope> envelopeCache = new HashMap<>();
     private int envelopeCacheRound = -1;
+
+    // Posture is a force-level call, made once per round and per board: every unit on a board moves
+    // under the same answer, and enemies on another board have no say in it - a game-wide entity list
+    // would blend boards into a meaningless closing rate.
+    private final Map<Integer, PostureResolver> postureResolverByBoard = new HashMap<>();
+    private final Map<Integer, CombatPosture> postureByBoard = new HashMap<>();
+    private int postureResolvedRound = -1;
+    private CombatPosture posture = CombatPosture.ATTACK;
+    private CombatPosture announcedPosture;
+    private double lastPosturePenalty;
+
+    // Bank labels are a property of the board, recomputed per round (ice can break) and shared by
+    // every path of every mover. Keyed by board id.
+    private final Map<Integer, BankRegions> bankRegionsByBoard = new HashMap<>();
+    private int bankRegionsRound = -1;
 
     // Per-ranking-pass caches. rankPath is called once per candidate path for a single mover, and a
     // company-scale turn evaluates thousands of paths per unit, so anything that depends only on the
@@ -283,13 +305,16 @@ public class MutualSupportPathRanker extends BasicPathRanker {
         Entity movingUnit = path.getEntity();
         Game game = getOwner().getGame();
 
+        double posturePenalty = calculatePosturePenalty(movingUnit, path, game);
+
         List<Entity> friends = getSupportingFriends(movingUnit, game);
         if (friends.isEmpty()) {
             // Nothing to form up on, so the doctrine scores nothing - but they are recorded for every path
             // whether or not this ran, so they have to say "nothing" rather than repeat the last path's.
+            // Posture is a force-level call, not a formation one, so it still applies to a lone unit.
             clearDoctrineScores();
-            logger.trace("[MutualSupport] mod [0: no friends]");
-            return 0;
+            logger.trace("[MutualSupport] mod [{}: no friends]", posturePenalty);
+            return posturePenalty;
         }
 
         double supportPenalty = 0;
@@ -311,10 +336,129 @@ public class MutualSupportPathRanker extends BasicPathRanker {
         double coverBonus = calculateCoverBonus(movingUnit, path, friends, game);
         lastCoverBonus = coverBonus;
 
-        double mutualSupportMod = supportPenalty - coverBonus;
-        logger.trace("[MutualSupport] mod [{} = out-of-formation {} - cover {}]",
-              mutualSupportMod, supportPenalty, coverBonus);
+        double mutualSupportMod = supportPenalty - coverBonus + posturePenalty;
+        logger.trace("[MutualSupport] mod [{} = out-of-formation {} - cover {} + posture {}]",
+              mutualSupportMod, supportPenalty, coverBonus, posturePenalty);
         return mutualSupportMod;
+    }
+
+    /**
+     * What a defending force charges a path for taking a unit into or across the water it is defending
+     * behind - any water, fords included.
+     *
+     * <p>To a defender the river is its best weapon: the enemy arrives slowed, split into single units by
+     * the crossing, and with most of its weapons underwater, and the defender gets to fight that enemy from
+     * dry ground. Wading in itself throws all of that away, so a crossing path is charged a full turn of
+     * advance ({@link #TEMPO_REFERENCE_MP} times aggression - the same scale the tempo term pays for
+     * closing). The charge is finite, not a ban: a big enough prize on the far bank can still buy a
+     * crossing.</p>
+     *
+     * <p>Three kinds of path pay nothing. An attacking force pays nothing anywhere - posture is resolved per
+     * round by {@link PostureResolver} unless set explicitly. A unit with somewhere specific to be
+     * (forced withdrawal, a destination edge, a waypoint) pays nothing, because its route does not move to
+     * suit the terrain. And a unit already standing in the river pays nothing, because the water pricing
+     * already argues for the nearest bank and charging every dry destination would trap it mid-stream.</p>
+     *
+     * @param movingUnit the unit being moved
+     * @param path       the path being ranked
+     * @param game       the current game
+     *
+     * @return the posture penalty for this path; zero unless a defending unit is crossing water
+     */
+    private double calculatePosturePenalty(Entity movingUnit, MovePath path, Game game) {
+        lastPosturePenalty = computePosturePenalty(movingUnit, path, game);
+        return lastPosturePenalty;
+    }
+
+    private double computePosturePenalty(Entity movingUnit, MovePath path, Game game) {
+        if (CombatPosture.DEFEND != resolvePosture(game, movingUnit.getBoardId())) {
+            return 0;
+        }
+        BehaviorType behaviorType = getOwner().getUnitBehaviorTracker().getBehaviorType(movingUnit, getOwner());
+        if ((BehaviorType.ForcedWithdrawal == behaviorType) || (BehaviorType.MoveToDestination == behaviorType)) {
+            return 0;
+        }
+        if (getOwner().getUnitBehaviorTracker().getWaypointForEntity(movingUnit).isPresent()) {
+            return 0;
+        }
+
+        // Any water counts as the defender's line, fords included. The formation rules ignore depth 1
+        // because a ford does not split a force; a defender's river is the opposite case - a fordable
+        // river is one the enemy can cross anywhere, so it is even more a line to hold. Measured: on a
+        // river of depth-1 fords, a depth-2 test never fired and the defending company crossed at will.
+        //
+        // "Same side" is walkable connectivity (BankRegions), not a straight line: on a meandering
+        // river the chord between two positions on one bank clips the bends, and a line test charged
+        // the defender for repositioning along its own shore - worst exactly at the water's edge, so
+        // the force drifted out of its firing positions into dead ground.
+        BankRegions banks = bankRegions(game, movingUnit.getBoardId());
+        int currentBank = banks.regionOf(movingUnit.getPosition());
+        if (BankRegions.WATER == currentBank) {
+            return 0;
+        }
+        if (currentBank == banks.regionOf(path.getFinalCoords())) {
+            return 0;
+        }
+
+        double aggression = getOwner().getBehaviorSettings().getHyperAggressionValue();
+        double posturePenalty = TEMPO_REFERENCE_MP * aggression;
+        logger.trace("[Posture] DEFEND holds the bank: path to {} enters or crosses water, penalty {}",
+              path.getFinalCoords(), posturePenalty);
+        return posturePenalty;
+    }
+
+    /**
+     * The bank labels for a board, computed once per round and shared by every path of every mover.
+     */
+    private BankRegions bankRegions(Game game, int boardId) {
+        int round = game.getCurrentRound();
+        if (round != bankRegionsRound) {
+            bankRegionsRound = round;
+            bankRegionsByBoard.clear();
+        }
+        return bankRegionsByBoard.computeIfAbsent(boardId,
+              id -> BankRegions.of(game.getBoard(id), FormationSide.ANY_WATER_DEPTH));
+    }
+
+    /**
+     * The posture the force fights under this round on the given board, resolved once per round per board
+     * and shared by every unit there. Only units on that board have a say: entity lists are game-wide, and
+     * in a multi-board game mixing boards would make the closing rate meaningless. When the answer changes -
+     * a flip of the auto-resolution or a new explicit order taking effect - the bot says so in the chat,
+     * with its reason, so an observer can follow the force's intent without reading logs.
+     */
+    private CombatPosture resolvePosture(Game game, int boardId) {
+        int round = game.getCurrentRound();
+        if (round != postureResolvedRound) {
+            postureResolvedRound = round;
+            postureByBoard.clear();
+        }
+        posture = postureByBoard.computeIfAbsent(boardId, id -> {
+            PostureResolver resolver = postureResolverByBoard.computeIfAbsent(id,
+                  newBoard -> new PostureResolver());
+            CombatPosture resolved = resolver.resolve(getOwner().getBehaviorSettings(), round,
+                  deployedPositions(getOwner().getEntitiesOwned(), id),
+                  deployedPositions(getOwner().getEnemyEntities(), id));
+            if (resolved != announcedPosture) {
+                announcedPosture = resolved;
+                getOwner().sendChat(Messages.getString("Princess.posture.announce",
+                      resolved, resolver.resolutionReason()));
+            }
+            return resolved;
+        });
+        return posture;
+    }
+
+    /** The positions of the given units that are deployed on the given board; the rest have no say. */
+    static List<Coords> deployedPositions(List<Entity> units, int boardId) {
+        List<Coords> positions = new ArrayList<>(units.size());
+        for (Entity unit : units) {
+            Coords position = unit.getPosition();
+            if ((null != position) && unit.isDeployed() && (unit.getBoardId() == boardId)) {
+                positions.add(position);
+            }
+        }
+        return positions;
     }
 
     /**
@@ -420,6 +564,11 @@ public class MutualSupportPathRanker extends BasicPathRanker {
         scores.put("coverBonus", lastCoverBonus);
         scores.put("coveringFriends", (double) lastCoveringFriends);
         scores.put("turnsToOwnBand", lastTurnsToBand);
+        // The force-level posture this path was ranked under (CombatPosture ordinal: 0 attack, 1 defend)
+        // and what the posture charged this particular path. Fresh for every path: the penalty is computed
+        // at the top of calculateMutualSupportMod before anything can return early.
+        scores.put("combatPosture", (double) posture.ordinal());
+        scores.put("posturePenalty", lastPosturePenalty);
         return scores;
     }
 

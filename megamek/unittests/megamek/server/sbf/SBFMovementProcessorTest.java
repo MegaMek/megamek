@@ -177,10 +177,10 @@ class SBFMovementProcessorTest {
     }
 
     @Test
-    void sprintingAllowsFloorOfOneAndAHalfMovement() {
+    void sprintingRoundsOneAndAHalfMovementUp() {
         game.getOptions().getOption(SBFRuleOptions.MOVE_SPRINT).setValue(true);
 
-        assertTrue(processor.processMovement(pathWithSteps(4), formation));
+        assertTrue(processor.processMovement(pathWithSteps(5), formation));
         assertTrue(formation.isDone());
         assertTrue(formation.hasSprintedThisTurn());
     }
@@ -189,7 +189,7 @@ class SBFMovementProcessorTest {
     void movementBeyondSprintingLimitRejects() {
         game.getOptions().getOption(SBFRuleOptions.MOVE_SPRINT).setValue(true);
 
-        assertRejected(pathWithSteps(5));
+        assertRejected(pathWithSteps(6));
     }
 
     private SBFMovePath pathWithSteps(int count) {

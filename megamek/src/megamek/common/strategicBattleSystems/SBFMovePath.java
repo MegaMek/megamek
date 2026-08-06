@@ -108,7 +108,7 @@ public class SBFMovePath implements EntityAction, Serializable {
      */
     public static int maximumMovementPoints(SBFFormation formation, SBFGame game) {
         int movement = Math.max(0, formation.getMovement());
-        return game.usesSprintingMove() ? movement + (movement / 2) : movement;
+        return game.usesSprintingMove() ? movement + ((movement + 1) / 2) : movement;
     }
 
     public void addStep(SBFMoveStep step) {

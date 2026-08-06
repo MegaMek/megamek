@@ -135,7 +135,7 @@ public class SBFToHitData extends TargetRoll {
             toHit.addModifier(attacker.getJumpUsedThisTurn(), "attacker JUMP");
         }
         if (target.getJumpUsedThisTurn() > 0) {
-            toHit.addModifier(attacker.getJumpUsedThisTurn(), "target JUMP");
+            toHit.addModifier(target.getJumpUsedThisTurn(), "target JUMP");
         }
     }
 

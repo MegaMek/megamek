@@ -41,6 +41,7 @@ import java.util.Optional;
 
 import megamek.common.Player;
 import megamek.common.actions.EntityAction;
+import megamek.common.actions.sbf.SBFAttackAction;
 import megamek.common.game.IGame;
 import megamek.common.game.InGameObject;
 import megamek.common.interfaces.ReportEntry;
@@ -612,7 +613,7 @@ public final class SBFGameManager extends AbstractGameManager implements SBFRule
     private Packet createActionsPacket(Player recipient) {
         List<EntityAction> visibleActions = game.getActionsVector().stream()
               .filter(action -> game.isVisible(recipient.getId(), action.getEntityId()))
-              .filter(action -> !(action instanceof megamek.common.actions.sbf.SBFAttackAction attack)
+              .filter(action -> !(action instanceof SBFAttackAction attack)
                     || game.getFormation(attack.getTargetId()).isEmpty()
                     || game.isVisible(recipient.getId(), attack.getTargetId()))
               .toList();

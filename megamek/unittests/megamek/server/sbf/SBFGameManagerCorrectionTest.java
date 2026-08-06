@@ -42,6 +42,7 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.mockStatic;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -121,7 +122,7 @@ class SBFGameManagerCorrectionTest {
         EntityAction authoritativeAction = mock(EntityAction.class);
         game.addAction(authoritativeAction);
         EntityAction rejectedAction = mock(EntityAction.class);
-        org.mockito.Mockito.when(rejectedAction.getEntityId()).thenReturn(REQUESTER_FORMATION_ID);
+        when(rejectedAction.getEntityId()).thenReturn(REQUESTER_FORMATION_ID);
 
         List<Packet> corrections = handleAndCapture(new Packet(PacketCommand.ENTITY_ATTACK,
               REQUESTER_FORMATION_ID, new ArrayList<>(List.of(rejectedAction))), REQUESTER_ID);

@@ -34,6 +34,7 @@
 package megamek.server.sbf;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.mockStatic;
@@ -74,7 +75,7 @@ class SBFGameManagerPendingPacketTest {
 
             ArgumentCaptor<Packet> envelopeCaptor = ArgumentCaptor.forClass(Packet.class);
             verify(server, times(1)).send(eq(0), envelopeCaptor.capture());
-            verify(server, never()).send(eq(1), org.mockito.ArgumentMatchers.any(Packet.class));
+            verify(server, never()).send(eq(1), any(Packet.class));
             Packet envelope = envelopeCaptor.getValue();
             assertEquals(PacketCommand.MULTI_PACKET, envelope.command());
             assertEquals(List.of(targetedPacket), envelope.getObject(0));

@@ -39,6 +39,7 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertSame;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyInt;
+import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.spy;
 import static org.mockito.Mockito.verify;
@@ -207,7 +208,7 @@ class TWGameManagerTrailerAmmoTest {
 
         assertSame(originalAmmo, launcher.getLinkedAmmo(), "A unit not in the train must not supply ammo");
         ArgumentCaptor<Packet> correctionCaptor = ArgumentCaptor.forClass(Packet.class);
-        verify(gameManager).send(org.mockito.ArgumentMatchers.eq(OWNER_CONNECTION_ID), correctionCaptor.capture());
+        verify(gameManager).send(eq(OWNER_CONNECTION_ID), correctionCaptor.capture());
         Packet correction = correctionCaptor.getValue();
         assertEquals(PacketCommand.ENTITY_UPDATE, correction.command());
         assertEquals(TRACTOR_ID, correction.getObject(0));

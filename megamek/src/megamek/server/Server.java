@@ -282,8 +282,8 @@ public class Server implements Runnable {
             default:
                 packetQueue.offerLast(receivedPacket);
                 break;
-            }
         }
+    }
 
     private void dispatchQueuedPacket(ReceivedPacket receivedPacket) {
         switch (receivedPacket.getPacket().command()) {

@@ -34,6 +34,7 @@
 package megamek.common.strategicBattleSystems;
 
 import java.util.List;
+import java.util.Locale;
 import java.util.Optional;
 
 import megamek.common.alphaStrike.ASRange;
@@ -89,7 +90,7 @@ public class SBFToHitData extends TargetRoll {
         };
         if (modifier != 0) {
             toHit.addModifier(new TargetRollModifier(modifier,
-                  effectiveRange.get().name().toLowerCase() + " range"));
+                  effectiveRange.get().name().toLowerCase(Locale.ROOT) + " range"));
         }
         return true;
     }

@@ -4333,7 +4333,7 @@ public class TWGameManager extends AbstractGameManager {
                 LOGGER.error("error: server got invalid movement packet from connection {}, Entity: {}",
                       connId,
                       entity.getShortName());
-                                sendTurnSubmissionCorrection(connId, entity, false);
+                sendTurnSubmissionCorrection(connId, entity, false);
                 return;
             }
 
@@ -9968,7 +9968,7 @@ public class TWGameManager extends AbstractGameManager {
         List<EntityAction> actionList = packet.getEntityActionList(1);
 
         // is this the right phase?
-          if (!isAttackSubmissionPhase()) {
+                if (!isAttackSubmissionPhase()) {
             LOGGER.error("Server got attack packet in wrong phase");
                         sendTurnSubmissionCorrection(connId, entity, true);
             return;
@@ -27726,7 +27726,7 @@ public class TWGameManager extends AbstractGameManager {
         if (e == null || e.getOwner() != game.getPlayer(connIndex)) {
             return;
         }
-          if ((e instanceof Mek) && (equipId == Mek.SYSTEM_COCKPIT)
+        if ((e instanceof Mek) && (equipId == Mek.SYSTEM_COCKPIT)
               && (mode >= Mek.COCKPIT_OFF) && (mode <= Mek.COCKPIT_AIMED_SHOT)) {
             ((Mek) e).setCockpitStatus(mode);
             completeEntitySetting(connIndex, e, true);

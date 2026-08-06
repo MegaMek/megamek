@@ -446,7 +446,7 @@ public class DeploymentProcessor extends AbstractTWRuleHandler {
                 stagedLoads.add(new StagedLoad(loaded, targetBay, passengerStates));
             }
             return stagedLoads;
-        } catch (IllegalArgumentException exception) {
+        } catch (RuntimeException exception) {
             LOGGER.error("Invalid deployment load list", exception);
             for (int i = stagedLoads.size() - 1; i >= 0; i--) {
                 StagedLoad stagedLoad = stagedLoads.get(i);

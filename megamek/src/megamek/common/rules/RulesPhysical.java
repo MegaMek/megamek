@@ -225,4 +225,12 @@ public abstract class RulesPhysical {
      * @return the level of the rubble needed
      */
     public abstract int getClubFindInRubble();
+
+    /**
+     * Check if the quad can kick
+     * @param leg what leg is kicking
+     * @param entity the entity that is kicking
+     * @return true if the kick is impossible
+     */
+    public abstract boolean quadMuleKickImpossible(int leg, Entity entity);
 }

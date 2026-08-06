@@ -157,28 +157,28 @@ public class CoreRulesPSR extends RulesPSR {
                 }
         }
         
-        if (rollLL.size() > 0) {
+        if (!rollLL.isEmpty()) {
             rollRemoveHighest(rollLL);
-            if (rollLL.size() > 0) { rollsToRemove.addAll(rollLL); }
+            if (!rollLL.isEmpty()) { rollsToRemove.addAll(rollLL); }
         }
-        if (rollRL.size()>0) {
+        if (!rollRL.isEmpty()) {
             rollRemoveHighest(rollRL);
-            if (rollLL.size() > 0) { rollsToRemove.addAll(rollRL); }
+            if (!rollRL.isEmpty()) { rollsToRemove.addAll(rollRL); }
         }
-        if (rollFLL.size()>0) {
+        if (!rollFLL.isEmpty()) {
             rollRemoveHighest(rollFLL);
-            if (rollLL.size() > 0) { rollsToRemove.addAll(rollFLL); }
+            if (!rollFLL.isEmpty()) { rollsToRemove.addAll(rollFLL); }
         }
-        if (rollFRL.size()>0) {
+        if (!rollFRL.isEmpty()) {
             rollRemoveHighest(rollFRL);
-            if (rollLL.size() > 0) { rollsToRemove.addAll(rollFRL); }
+            if (!rollFRL.isEmpty()) { rollsToRemove.addAll(rollFRL); }
         }
-        if (rollCL.size()>0){
+        if (!rollCL.isEmpty()){
             rollRemoveHighest(rollCL);
-            if (rollLL.size() > 0) { rollsToRemove.addAll(rollCL); }
+            if (!rollCL.isEmpty()) { rollsToRemove.addAll(rollCL); }
         }
         
-        if (rollsToRemove.size() > 0) {
+        if (!rollsToRemove.isEmpty()) {
             game.removePSRsByArray(rollsToRemove);
         }
     }

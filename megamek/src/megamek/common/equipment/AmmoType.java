@@ -11887,7 +11887,7 @@ public class AmmoType extends EquipmentType {
         ammo.setInternalName("ISLightPlasmaRifleAmmo");
         ammo.addLookupName("ISLightPlasmaRifle Ammo");
         ammo.damagePerShot = 4;
-        ammo.rackSize = 1;
+        ammo.rackSize = 2;
         ammo.ammoType = AmmoTypeEnum.PLASMA;
         ammo.shots = 20;
         ammo.bv = 26;
@@ -11914,7 +11914,7 @@ public class AmmoType extends EquipmentType {
         ammo.setInternalName("ISHeavyPlasmaRifleAmmo");
         ammo.addLookupName("ISHeavyPlasmaRifle Ammo");
         ammo.damagePerShot = 12;
-        ammo.rackSize = 1;
+        ammo.rackSize = 3;
         ammo.ammoType = AmmoTypeEnum.PLASMA;
         ammo.shots = 8;
         ammo.bv = 26;

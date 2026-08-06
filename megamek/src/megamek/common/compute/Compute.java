@@ -1419,7 +1419,7 @@ public class Compute {
 
             // HACK on ranges: for those without underwater range,
             // long == medium; iteration in rangeBracket() allows this
-            // Energy flag to allow core rules with short range 0, but actual longer ranges
+            // Energy flag to allow core rules with short range 0, but allow longer ranges
             if (weaponRanges[RangeType.RANGE_SHORT] == 0 && !(weaponType.hasFlag(WeaponType.F_ENERGY))) {
                 return new ToHitData(TargetRoll.IMPOSSIBLE,
                       "Weapon cannot fire underwater.");

@@ -207,7 +207,11 @@ public class ComputeC3Spotter {
      */
     private static boolean attackerCanUseC3(Entity attacker, Game game) {
         if (attacker.isOffBoard() || attacker.isShutDown()
-              || !attacker.hasC3() && !attacker.hasC3i() && !attacker.hasActiveNovaCEWS() && !attacker.hasNavalC3()) {
+              || (!attacker.hasC3()
+              && !attacker.hasC3i()
+              && !attacker.hasActiveNovaCEWS()
+              && !attacker.hasNavalC3()
+              && EquipmentActivation.isC3SwitchedOff(attacker))) {
             return false;
         }
 

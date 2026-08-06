@@ -222,13 +222,7 @@ public class KickAttackAction extends PhysicalAttackAction {
             return new ToHitData(TargetRoll.IMPOSSIBLE, "Hip destroyed");
         }
         if (ae.entityIsQuad()) {
-            if ((leg == KickAttackAction.LEFT_MULE || leg == KickAttackAction.RIGHT_MULE) &&
-                  (!ae.hasWorkingSystem(Mek.ACTUATOR_HIP, Mek.LOC_LEFT_LEG)
-                  || !ae.hasWorkingSystem(Mek.ACTUATOR_HIP, Mek.LOC_RIGHT_LEG))) {
-                return new ToHitData(TargetRoll.IMPOSSIBLE, "Hip destroyed");
-            } else if ((leg == KickAttackAction.LEFT || leg == KickAttackAction.RIGHT) &&
-                        (!ae.hasWorkingSystem(Mek.ACTUATOR_HIP, Mek.LOC_LEFT_ARM)
-                              || !ae.hasWorkingSystem(Mek.ACTUATOR_HIP, Mek.LOC_RIGHT_ARM))) {
+            if (Game.rulesManager.getRulesPhysical().quadMuleKickImpossible(leg, ae)) {
                 return new ToHitData(TargetRoll.IMPOSSIBLE, "Hip destroyed");
             }
         }

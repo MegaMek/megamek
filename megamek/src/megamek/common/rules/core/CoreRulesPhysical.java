@@ -36,6 +36,7 @@ import megamek.common.CriticalSlot;
 import megamek.common.HitData;
 import megamek.common.Report;
 import megamek.common.ToHitData;
+import megamek.common.actions.KickAttackAction;
 import megamek.common.annotations.Nullable;
 import megamek.common.board.Coords;
 import megamek.common.compute.Compute;
@@ -48,6 +49,7 @@ import megamek.common.equipment.enums.MiscTypeFlag;
 import megamek.common.game.Game;
 import megamek.common.interfaces.ILocationExposureStatus;
 import megamek.common.rolls.Roll;
+import megamek.common.rolls.TargetRoll;
 import megamek.common.rules.RulesPhysical;
 import megamek.common.units.BipedMek;
 import megamek.common.units.Entity;
@@ -319,5 +321,23 @@ public class CoreRulesPhysical extends RulesPhysical {
      */
     public int getClubFindInRubble() {
         return 1;
+    }
+
+    /**
+     * {@inheritDoc}
+     * Core p.238
+     */
+    @Override
+    public boolean quadMuleKickImpossible(int leg, Entity entity) {
+        if ((leg == KickAttackAction.LEFT_MULE || leg == KickAttackAction.RIGHT_MULE) &&
+              (!entity.hasWorkingSystem(Mek.ACTUATOR_HIP, Mek.LOC_LEFT_LEG)
+                    || !entity.hasWorkingSystem(Mek.ACTUATOR_HIP, Mek.LOC_RIGHT_LEG))) {
+            return true;
+        } else if ((leg == KickAttackAction.LEFT || leg == KickAttackAction.RIGHT) &&
+              (!entity.hasWorkingSystem(Mek.ACTUATOR_HIP, Mek.LOC_LEFT_ARM)
+                    || !entity.hasWorkingSystem(Mek.ACTUATOR_HIP, Mek.LOC_RIGHT_ARM))) {
+            return true;
+        }
+        return false;
     }
 }

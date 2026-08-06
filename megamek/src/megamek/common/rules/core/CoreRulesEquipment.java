@@ -75,12 +75,6 @@ public class CoreRulesEquipment extends RulesEquipment {
 
     /**
      * {@inheritDoc}
-     * Shields are reset at end of phase, unless you are charging. Core p.195
-     */
-    public boolean phaseChangeShield() {return true;}
-
-    /**
-     * {@inheritDoc}
      * HD Gyros take 4 hits to destroy. Core p.98
      */
     public int hitsToDestroyGyro(int gyroType) {
@@ -250,22 +244,27 @@ public class CoreRulesEquipment extends RulesEquipment {
         vCriticalSlots.put(selectedLeg, new LinkedList<>());
         int numCritSlots = entity.getNumberOfCriticalSlots(selectedLeg);
 
-        int totalCritsPossible = 0;
+        ArrayList<Integer> potentialSlots = new ArrayList<>();
+
+        // Populate the List with the potential critical slot numbers
         for (int critSlot = 0; critSlot < numCritSlots; critSlot++) {
             CriticalSlot slot = entity.getCritical(selectedLeg,critSlot);
-            if (slot != null && slot.isHittable()) { totalCritsPossible += 1; }
+            if (slot != null && slot.isHittable()) {
+                potentialSlots.add(critSlot);
+            }
         }
         // Make sure we have enough crits to hit
-        if (hits > totalCritsPossible) {
-            hits = totalCritsPossible;
+        if (hits > potentialSlots.size()) {
+            hits = potentialSlots.size();
         }
         for (int hit = 0; hit < hits; hit++) {
             CriticalSlot slot;
-            do {
-                int slotIndex = Compute.randomInt(numCritSlots);
-                slot = entity.getCritical(selectedLeg, slotIndex);
-            } while ((slot == null) || !slot.isHittable());
+            int slotIndex = Compute.randomInt(potentialSlots.size()-1);
+            slot = entity.getCritical(selectedLeg,potentialSlots.get(slotIndex));
+            vCriticalSlots.put(selectedLeg, new LinkedList<>());
             vCriticalSlots.get(selectedLeg).add(slot);
+            // Make sure we don't hit the same one again
+            potentialSlots.remove(slotIndex);
         }
     }
 

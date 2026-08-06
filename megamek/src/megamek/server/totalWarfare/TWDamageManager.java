@@ -1619,7 +1619,8 @@ public class TWDamageManager implements IDamageManager {
         // adjust VTOL rotor damage
         if ((tank instanceof VTOL) &&
               (hit.getLocation() == VTOL.LOC_ROTOR) &&
-              (hit.getGeneralDamageType() != HitData.DAMAGE_PHYSICAL) &&
+              (hit.getGeneralDamageType() != HitData.DAMAGE_PHYSICAL
+                    && hit.getGeneralDamageType() != HitData.DAMAGE_PHYSICAL_NONATTACK) &&
               !game.getOptions().booleanOption(OptionsConstants.ADVANCED_COMBAT_FULL_ROTOR_HITS)) {
             damage = (damage + 9) / 10;
         }

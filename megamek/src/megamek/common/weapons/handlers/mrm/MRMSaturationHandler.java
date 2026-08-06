@@ -297,8 +297,8 @@ public class MRMSaturationHandler extends MRMHandler {
                     vPhaseReport.add(r);
                 }
                 // Accumulate AMS / APDS engagement; count any number above zero as "engaged"
-                amsEngaged &= localAMSEngaged;
-                apdsEngaged &= localAPDSEngaged;
+                amsEngaged |= localAMSEngaged;
+                apdsEngaged |= localAPDSEngaged;
                 amsMod += localAMSMod;
                 apdsMod += localAPDSMod;
             }

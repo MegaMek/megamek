@@ -181,6 +181,9 @@ public class TWRulesPSR extends RulesPSR {
     public void handleHDGyroHits(Game game, Entity en, int actualGyroHits) {
         switch (actualGyroHits) {
             case 4:
+                // gyro already destroyed. Technically this should never occur
+                // But if it can fall (which is a gate before this call), then yeah
+                // it should fall
             case 3:
                 // 3rd hit to HD gyro (gyro destroyed)
                 game.addPSR(new PilotingRollData(en.getId(),

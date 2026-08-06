@@ -8813,7 +8813,6 @@ public abstract class Entity extends TurnOrdered
             } else {
                 roll.append(new PilotingRollData(getId(), 0, "landing with damaged leg or gyro"));
             }
-            roll.append(new PilotingRollData(getId(), gyroModifier, "landing with damaged leg or gyro"));
             addPilotingModifierForTerrain(roll);
         } else {
             roll.addModifier(TargetRoll.CHECK_FALSE,
@@ -11452,18 +11451,26 @@ public abstract class Entity extends TurnOrdered
               isAssaultDropInProgress() ||
               isDropping() ||
               isBracing()) {
-            if (isCharging() && Game.rulesManager.getRulesPhysical().canChargeCancel()) {
-                   ChargeAttackAction caa = (ChargeAttackAction) getDisplacementAttack();
-                    Entity target = (Entity) caa.getTarget(game);
-                    if (target.isDestroyed() || target.isProne()) {
-                        game.removeDisplacementAttack(displacementAttack);
-                        displacementAttack = null;
-                    } else {
-                        return false;
+            if (isCharging() && Game.rulesManager.getRulesPhysical().canChargeCancel()
+                && getDisplacementAttack() instanceof ChargeAttackAction) {
+                ChargeAttackAction chargeAttack = (ChargeAttackAction) getDisplacementAttack();
+                Entity target = (Entity) chargeAttack.getTarget(game);
+                if (target.isDestroyed() || target.isProne()) {
+                    Enumeration<AttackAction> gameDisplacementAttacks = game.getDisplacementAttacks();
+                    while (gameDisplacementAttacks != null && gameDisplacementAttacks.hasMoreElements()) {
+                        AttackAction attackAction = gameDisplacementAttacks.nextElement();
+                        if (attackAction.equals(chargeAttack)) {
+                            game.removeDisplacementAttack(chargeAttack);
+                            break;
+                        }
                     }
+                    displacementAttack = null;
                 } else {
                     return false;
                 }
+            } else {
+                return false;
+            }
         }
         // if you're finding a club or unjamming a RAC, it's already declared
         if (!Game.rulesManager.getRulesGame().eligibleForPhase(this, GamePhase.PHYSICAL)) {

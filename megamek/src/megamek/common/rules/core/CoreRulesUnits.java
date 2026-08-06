@@ -59,7 +59,7 @@ public class CoreRulesUnits extends RulesUnits {
                 }
             }
         }
-        if (legsDestroyed == 2 && !(mek instanceof QuadMek)) {
+        if (legsDestroyed >= 2 && !(mek instanceof QuadMek)) {
             return true;
         } else if (legsDestroyed == 4 && (mek instanceof QuadMek)) {
             return true;

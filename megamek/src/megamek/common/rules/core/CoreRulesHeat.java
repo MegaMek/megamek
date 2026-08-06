@@ -123,7 +123,7 @@ public class CoreRulesHeat extends RulesHeat {
                 newDamage += mount2.getExplosionDamage();
             }
 
-            if (cs.isHit()) {
+            if (cs.isHit() || mounted.isHit()) {
                 // If it is already hit, do nothing
                 continue;
             }

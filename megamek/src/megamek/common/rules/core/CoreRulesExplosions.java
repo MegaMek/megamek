@@ -87,9 +87,14 @@ public class CoreRulesExplosions extends RulesExplosions {
             if (mek.getInternal(loc) > cap) { // Location survives, blow out armor
                 int armorDamage = damage - cap;
                 int armorDamageCap = 10;
-                if ((caseIId || cased) && mek.getArmor(loc, torso) > armorDamageCap) {
+                if ((caseIId || cased) &&
+                      (mek.getArmor(loc, torso) > armorDamage ||
+                            mek.getArmor(loc,torso) > armorDamageCap)) {
                     if (armorDamage > armorDamageCap) {
                         armorDamage = armorDamageCap;
+                    }
+                    if (mek.getArmor(loc, torso) < armorDamage) {
+                        armorDamage = mek.getArmor(loc, torso);
                     }
                     mek.setArmor(mek.getArmor(loc, torso) - armorDamage, loc, torso);
                 } else {

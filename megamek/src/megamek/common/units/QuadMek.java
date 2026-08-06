@@ -132,7 +132,7 @@ public class QuadMek extends Mek {
         int hipHits = 0;
         int actuatorHits = 0;
 
-        boolean bCumulativeLegDamage = false;
+        boolean bCumulativeLegDamage = true;
         if (game != null) {
             bCumulativeLegDamage = Game.rulesManager.getRulesMovement().cumulativeLegDamage(gameOptions()
                   .booleanOption(OptionsConstants.ADVANCED_GROUND_MOVEMENT_TAC_OPS_LEG_DAMAGE));

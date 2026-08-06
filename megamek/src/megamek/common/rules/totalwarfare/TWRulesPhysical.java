@@ -37,6 +37,7 @@ import megamek.common.Hex;
 import megamek.common.HitData;
 import megamek.common.Report;
 import megamek.common.ToHitData;
+import megamek.common.actions.KickAttackAction;
 import megamek.common.board.Coords;
 import megamek.common.compute.Compute;
 import megamek.common.enums.BuildingType;
@@ -45,6 +46,7 @@ import megamek.common.equipment.Mounted;
 import megamek.common.game.Game;
 import megamek.common.interfaces.ILocationExposureStatus;
 import megamek.common.rolls.Roll;
+import megamek.common.rolls.TargetRoll;
 import megamek.common.rules.RulesPhysical;
 import megamek.common.units.BipedMek;
 import megamek.common.units.Entity;
@@ -368,5 +370,16 @@ public class TWRulesPhysical extends RulesPhysical {
      */
     public int getClubFindInRubble() {
         return BuildingType.MEDIUM.getTypeValue();
+    }
+
+    @Override
+    public boolean quadMuleKickImpossible(int leg, Entity entity) {
+        if (!entity.hasWorkingSystem(Mek.ACTUATOR_HIP, Mek.LOC_LEFT_LEG)
+              || !entity.hasWorkingSystem(Mek.ACTUATOR_HIP, Mek.LOC_RIGHT_LEG)
+              || !entity.hasWorkingSystem(Mek.ACTUATOR_HIP, Mek.LOC_LEFT_ARM)
+              || !entity.hasWorkingSystem(Mek.ACTUATOR_HIP, Mek.LOC_RIGHT_ARM)) {
+            return true;
+        }
+        return false;
     }
 }

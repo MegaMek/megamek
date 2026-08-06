@@ -7048,15 +7048,6 @@ public class TWGameManager extends AbstractGameManager {
         return deliverInfernoMissiles(ae, t, missiles, called, false);
     }
     
-    public void deliverSaturationMRM(Coords coords, int OwnerId, int damageValue, int attackerEntityId) {
-        // CORE This is experimental and needs damage calls
-        Hex hex = game.getBoard().getHex(coords);
-        Report r;
-        Vector<Report> vPhaseReport = new Vector<>();
-        for (Entity e : game.getEntitiesVector(coords)) {
-        }
-    }
-    
         /**
      * deliver inferno missiles
      *
@@ -14951,6 +14942,7 @@ public class TWGameManager extends AbstractGameManager {
             r.subject = ae.getId();
             r.indent();
             addReport(r);
+            ae.setDisplacementAttack(null);
             // Randall said that if a charge fails because of target
             // destruction,
             // the attacker stays in the hex he was in at the end of the

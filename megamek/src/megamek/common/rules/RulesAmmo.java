@@ -103,4 +103,16 @@ public abstract class RulesAmmo {
      * @return number of missiles for semi-guided
      */
     public abstract int getSemiGuidedNMissiles(boolean taggedTarget, boolean indirect);
+
+    /**
+     * This exists to return the to-hit modifier for AP ammo.
+     * It does not check anything else, it just is the modifier.
+     * It calls armorPiercingAttackMod(AmmoTypeEnum, ToHit, AP)
+     * @return
+     */
+    public int armorPiercingAttackMod() {
+        ToHitData toHit = new ToHitData();
+        armorPiercingAttackMod(AmmoType.AmmoTypeEnum.AC, toHit, true);
+        return toHit.getValue();
+    }
 }

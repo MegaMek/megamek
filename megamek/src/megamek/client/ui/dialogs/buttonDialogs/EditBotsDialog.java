@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2021-2025 The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2021-2026 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -55,6 +55,7 @@ import javax.swing.border.EmptyBorder;
 
 import megamek.client.AbstractClient;
 import megamek.client.bot.AIType;
+import megamek.client.bot.BotClient;
 import megamek.client.bot.princess.BehaviorSettings;
 import megamek.client.bot.princess.Princess;
 import megamek.client.bot.princess.PrincessException;
@@ -184,8 +185,18 @@ public class EditBotsDialog extends AbstractButtonDialog {
                 var ghostChooser = new JComboBox<>(ghostOptions);
                 ghostChoosers.put(player, ghostChooser);
                 if (savedSettingsExist) {
-                    // it was presumably Princess before, so default to replace
-                    ghostChooser.setSelectedIndex(REPLACE_WITH_PRINCESS_INDEX);
+                    // A ghost with saved bot settings was a bot before the save, so default to replacing it
+                    // with the same kind of bot the save remembers holding this seat. Saves from before the
+                    // type was recorded fall back on the player's preference: CASPAR when it is switched on,
+                    // Princess otherwise. A remembered CASPAR with the option switched off falls back to
+                    // Princess, since the choice is not in the box.
+                    AIType savedType = game.getBotTypes().get(player.getName());
+                    boolean casparLeads = (null == savedType)
+                          ? casparAvailable
+                          : (casparAvailable && (AIType.CASPAR == savedType));
+                    ghostChooser.setSelectedIndex(casparLeads
+                          ? REPLACE_WITH_CASPAR_INDEX
+                          : REPLACE_WITH_PRINCESS_INDEX);
                     botConfigs.put(player, savedSettings.get(player.getName()));
                     try {
                         // Copy to protect the saved settings
@@ -291,10 +302,13 @@ public class EditBotsDialog extends AbstractButtonDialog {
     }
 
     /**
-     * Called from the config buttons. Opens a BotConfig Dialog and saves the result, if any.
+     * Called from the config buttons. Opens a BotConfig Dialog and saves the result, if any. The dialog's
+     * own AI chooser is shown locked to the type this row will actually produce - the row's dropdown (for a
+     * ghost) or the running bot's real type - because the type decision belongs to this dialog, not that one.
      */
     private void callConfig(Player botOrGhost) {
-        var bcd = new BotConfigDialog(getFrame(), botOrGhost.getName(), botConfigs.get(botOrGhost), clientGui);
+        var bcd = new BotConfigDialog(getFrame(), botOrGhost.getName(), botConfigs.get(botOrGhost), clientGui,
+              configuredTypeOf(botOrGhost));
         bcd.setVisible(true);
         if (bcd.getResult() == DialogResult.CONFIRMED) {
             botConfigs.put(botOrGhost, bcd.getBehaviorSettings());
@@ -302,6 +316,22 @@ public class EditBotsDialog extends AbstractButtonDialog {
                 localBotChoosers.get(botOrGhost).setSelectedIndex(EDIT_CONFIG_INDEX);
             }
         }
+    }
+
+    /**
+     * The AI type this dialog is set to produce for the given row: a ghost's replacement choice from its
+     * dropdown, or the actual type of an already-running local bot.
+     */
+    private AIType configuredTypeOf(Player botOrGhost) {
+        if (ghostChoosers.containsKey(botOrGhost)) {
+            return (ghostChoosers.get(botOrGhost).getSelectedIndex() == REPLACE_WITH_CASPAR_INDEX)
+                  ? AIType.CASPAR
+                  : AIType.PRINCESS;
+        }
+        if (clientGui.getLocalBots().get(botOrGhost.getName()) instanceof BotClient botClient) {
+            return botClient.getAIType();
+        }
+        return AIType.PRINCESS;
     }
 
     private void callRestoreConfig(Player botOrGhost) {

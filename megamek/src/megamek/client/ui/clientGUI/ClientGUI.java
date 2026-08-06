@@ -3908,8 +3908,20 @@ public class ClientGUI extends AbstractClientGUI
         for (String ghostName : newBotSettings.keySet()) {
             StringBuilder message = new StringBuilder();
             AIType aiType = newBotTypes.getOrDefault(ghostName, AIType.PRINCESS);
-            BotClient botClient = util.replaceGhostWithBot(aiType, newBotSettings.get(ghostName), ghostName,
-                  client, message);
+            BotClient botClient = null;
+            try {
+                botClient = util.replaceGhostWithBot(aiType, newBotSettings.get(ghostName), ghostName,
+                      client, message);
+            } catch (Exception exception) {
+                logger.error(exception, "Failed to stand up a {} bot for {}", aiType, ghostName);
+            }
+            // An experimental bot that fails to stand up must not leave the seat empty: the player asked
+            // for a bot in that slot, so Princess takes it instead.
+            if ((null == botClient) && (AIType.PRINCESS != aiType)) {
+                message.append(" Falling back to Princess. ");
+                botClient = util.replaceGhostWithBot(AIType.PRINCESS, newBotSettings.get(ghostName), ghostName,
+                      client, message);
+            }
             systemMessage(message.toString());
             // Make this bot a locally owned bot. This way it can be configured, and if on the lobby
             // it will faithfully press Done when the local player does.

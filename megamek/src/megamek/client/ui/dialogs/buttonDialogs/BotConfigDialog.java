@@ -112,6 +112,9 @@ public class BotConfigDialog extends AbstractButtonDialog
     /** Radio-button group for choosing which bot AI to use; defaults to {@link AIType#PRINCESS}. */
     private final ButtonGroup aiTypeGroup = new ButtonGroup();
 
+    /** The AI type of the running bot being configured, or {@code null} when configuring a bot to be. */
+    private final AIType runningBotType;
+
     private final JLabel nameLabel = new JLabel(Messages.getString("BotConfigDialog.nameLabel"));
     private final TipTextField nameField = new TipTextField("", 16);
 
@@ -200,11 +203,25 @@ public class BotConfigDialog extends AbstractButtonDialog
 
     public BotConfigDialog(JFrame parent, @Nullable String botName, @Nullable BehaviorSettings behavior,
           @Nullable ClientGUI cg) {
+        this(parent, botName, behavior, cg, null);
+    }
+
+    /**
+     * Opens the dialog for an already-running bot, showing its actual AI type selected and locked. The AI is
+     * chosen when a bot is added or a ghost replaced; a running bot cannot change kind mid-session, and
+     * before this the type chooser silently defaulted to Princess whatever the bot really was.
+     *
+     * @param runningBotType the AI type of the running bot being configured, or {@code null} when the dialog
+     *                       configures a bot that does not exist yet and the chooser should be usable
+     */
+    public BotConfigDialog(JFrame parent, @Nullable String botName, @Nullable BehaviorSettings behavior,
+          @Nullable ClientGUI cg, @Nullable AIType runningBotType) {
         super(parent, "BotConfigDialog", "BotConfigDialog.title");
         fixedBotPlayerName = botName;
         isNewBot = botName == null;
         clientGui = cg;
         client = cg != null ? cg.getClient() : null;
+        this.runningBotType = runningBotType;
         princessBehavior = (behavior != null) ? behavior : new BehaviorSettings();
         saveGameBehavior = behavior;
         updatePresets();
@@ -246,17 +263,29 @@ public class BotConfigDialog extends AbstractButtonDialog
         result.add(new JLabel(Messages.getString("BotConfigDialog.aiTypeLabel")));
         boolean useCaspar = CLIENT_PREFERENCES.getUseCASPAR();
         for (AIType aiType : AIType.values()) {
-            if ((aiType == AIType.CASPAR) && !useCaspar) {
+            // A running bot's actual type is always shown, even when the preference that offers it for new
+            // bots is off - the dialog reports what is, not what could be picked.
+            boolean isRunningType = (aiType == runningBotType);
+            if ((aiType == AIType.CASPAR) && !useCaspar && !isRunningType) {
                 logger.debug("[Caspar] CASPAR AI option hidden - UseCASPAR client setting is off");
                 continue;
             }
             JRadioButton radioButton = new JRadioButton(
                   Messages.getString("BotConfigDialog.aiType." + aiType.name()));
             radioButton.setActionCommand(aiType.name());
-            radioButton.setSelected(aiType == AIType.PRINCESS);
-            String tooltipKey = "BotConfigDialog.aiType." + aiType.name() + ".tooltip";
-            if (Messages.keyExists(tooltipKey)) {
-                radioButton.setToolTipText(Messages.getString(tooltipKey));
+            if (null != runningBotType) {
+                // The AI is chosen when a bot is added or a ghost replaced; a running bot cannot change
+                // kind mid-session. Locked so the dialog tells the truth about what is running instead of
+                // defaulting to Princess.
+                radioButton.setSelected(isRunningType);
+                radioButton.setEnabled(false);
+                radioButton.setToolTipText(Messages.getString("BotConfigDialog.aiTypeLocked.tooltip"));
+            } else {
+                radioButton.setSelected(aiType == AIType.PRINCESS);
+                String tooltipKey = "BotConfigDialog.aiType." + aiType.name() + ".tooltip";
+                if (Messages.keyExists(tooltipKey)) {
+                    radioButton.setToolTipText(Messages.getString(tooltipKey));
+                }
             }
             aiTypeGroup.add(radioButton);
             result.add(radioButton);

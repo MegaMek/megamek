@@ -3728,11 +3728,8 @@ public class MoveStep implements Serializable {
               (movementType == EntityMovementType.MOVE_VTOL_SPRINT);
         
         if ((movementType != EntityMovementType.MOVE_JUMP) && !isVTOLFlight) {
-            int maxDown = entity.getMaxElevationDown(srcAlt);
-            if (srcHex.containsTerrain(Terrains.ROAD) && destHex.containsTerrain(Terrains.ROAD) && Game.rulesManager instanceof CoreRulesManager) {
-                // Road to road increases ability to go up/down by 1. Core p.53
-                maxDown += 1;
-            }
+            int maxDown = Game.rulesManager.getRulesTerrain().getMaxElevationChangeAllowed(srcHex, destHex,
+                  entity.getMaxElevationDown(srcAlt));
             if (movementMode == EntityMovementMode.WIGE &&
                   (srcEl == 0 ||
                         (srcHex.containsTerrain(Terrains.BLDG_ELEV) &&

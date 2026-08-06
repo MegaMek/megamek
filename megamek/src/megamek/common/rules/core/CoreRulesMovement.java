@@ -52,12 +52,18 @@ import megamek.common.units.Terrains;
 import java.util.ArrayList;
 
 public class CoreRulesMovement extends RulesMovement {
-    // No skidding in Core Rules
-    public boolean skidEnabled() {
+    /**
+     * {@inheritDoc}
+     * No skidding in Core Rules
+     */
+     public boolean skidEnabled() {
         return false;
     }
 
-    // Can you run / flank in water? Core p.51
+    /**
+     * {@inheritDoc}
+     * Can you run / flank in water? Core p.51
+     */
     public boolean cannotRunInWater(EntityMovementMode movementMode,
           boolean amphibious) {
         if ((movementMode != EntityMovementMode.HOVER) &&
@@ -83,14 +89,20 @@ public class CoreRulesMovement extends RulesMovement {
     public int getMekRunMP(int badLegs, int walkMP, int runMP, boolean isQuad) {
         return runMP;
     }
-    
-    // Fully underwater hexes cost 2MP. Core p.51
+
+    /**
+     * {@inheritDoc}
+     * Fully underwater hexes cost 2MP. Core p.51
+     */
     public int getUnderwaterMPCost() {
         return 2;
     }
 
-    // Backwards elevation changes are enabled. Core p.46
-    public boolean enableBackwardsElevationChange(final boolean toBackwardsElevation, Entity entity) {
+    /**
+     * {@inheritDoc}
+     * Backwards elevation changes are enabled. Core p.46
+     */
+     public boolean enableBackwardsElevationChange(final boolean toBackwardsElevation, Entity entity) {
         if (entity instanceof Mek) {
             int legsDestroyed = ((Mek) entity).countBadLegs();
             if (legsDestroyed >= 1 && !(entity instanceof QuadMek)) {
@@ -106,17 +118,26 @@ public class CoreRulesMovement extends RulesMovement {
         return false;
     }
 
-    // Do we add leg damage together, yes. Core p.98
-    public boolean cumulativeLegDamage(boolean bTOLegDamage) {
+    /**
+     * {@inheritDoc}    
+     * Do we add leg damage together, yes. Core p.98
+     */
+     public boolean cumulativeLegDamage(boolean bTOLegDamage) {
         return true;
     }
 
-    // Run is still allowed with a broken leg. Core p.90
+    /**
+     * {@inheritDoc}
+     * Run is still allowed with a broken leg. Core p.90
+     */
     public int getMekRunMP(int badLegs, int walkMP, int runMP) {
         return runMP;
     }
-    
-    // meks can only change 1 elevation level when leg destroyed. Core p.90, p.238
+
+    /**
+     * {@inheritDoc}
+     * meks can only change 1 elevation level when leg destroyed. Core p.90, p.238
+     */
     public boolean reduceMaxElevation(Mek mek) {
         if (mek.atLeastOneBadLeg()) {
             if (mek instanceof QuadMek) { 
@@ -134,7 +155,10 @@ public class CoreRulesMovement extends RulesMovement {
         return false;
     }
 
-    // Moving into water only triggers danger when running and you can run in water. Core p.45
+    /**
+     * {@inheritDoc}
+     * Moving into water only triggers danger when running and you can run in water. Core p.45
+     */
     public boolean isMoveIntoWaterDangerous(EntityMovementType movementType, EntityMovementMode movementMode) {
         if ((movementType == EntityMovementType.MOVE_RUN || movementType == EntityMovementType.MOVE_SPRINT) 
               && !cannotRunInWater(movementMode,false)) {

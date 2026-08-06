@@ -140,4 +140,12 @@ public class CoreRulesWeapons extends RulesWeapons {
     public boolean canHGRTriggerPSR(int mpUsed, int weightClass) {
         return false;
     }
+
+    /**
+     * {@inheritDoc}
+     * Returns True. we have Saturation Mode
+     */
+    public boolean getApolloSaturationMode() {
+        return true;
+    }
 }

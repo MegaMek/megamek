@@ -34,6 +34,7 @@ package megamek.common.rules.core;
 
 import megamek.common.Hex;
 import megamek.common.rules.RulesTerrain;
+import megamek.common.units.Entity;
 import megamek.common.units.Terrains;
 
 public class CoreRulesTerrain extends RulesTerrain {
@@ -55,7 +56,7 @@ public class CoreRulesTerrain extends RulesTerrain {
      */
     public int getMaxElevationChangeAllowed(Hex srcHex, Hex destHex, int maxElevationChange) {
         if (srcHex.containsTerrain(Terrains.ROAD) && destHex.containsTerrain(Terrains.ROAD)) {
-            return maxElevationChange + 1;
+            return (maxElevationChange != Entity.UNLIMITED_JUMP_DOWN) ? maxElevationChange + 1 : maxElevationChange;
         }
         return maxElevationChange;
     }

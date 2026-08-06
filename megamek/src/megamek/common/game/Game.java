@@ -178,7 +178,7 @@ public final class Game extends AbstractGame implements Serializable, PlanetaryC
     private final Vector<AttackAction> pendingDisplacementAttacks = new Vector<>();
     private final Vector<AttackAction> pendingRams = new Vector<>();
     private final Vector<AttackAction> pendingTeleMissileAttacks = new Vector<>();
-    private final ArrayList<PilotingRollData> pilotRolls = new ArrayList<>();
+    private final ArrayList<PilotingRollData> pilotingRolls = new ArrayList<>();
     private final Vector<PilotingRollData> extremeGravityRolls = new Vector<>();
     private final Vector<PilotingRollData> controlRolls = new Vector<>();
     private final Vector<Team> initiativeRerollRequests = new Vector<>();
@@ -2734,14 +2734,14 @@ public final class Game extends AbstractGame implements Serializable, PlanetaryC
      * @see PilotingRollData
      */
     public void addPSR(PilotingRollData psr) {
-        pilotRolls.add(psr);
+        pilotingRolls.add(psr);
     }
 
     /**
      * Returns an Enumeration of pending PSRs.
      */
     public Enumeration<PilotingRollData> getPSRs() {
-        return Collections.enumeration(pilotRolls);
+        return Collections.enumeration(pilotingRolls);
     }
 
     /**
@@ -2759,12 +2759,12 @@ public final class Game extends AbstractGame implements Serializable, PlanetaryC
     }
 
     /**
-     * Get PSR rolls for a given entity. These are references to the pilotRolls ArrayList
+     * Get PSR rolls for a given entity. These are references to the pilotingRolls ArrayList
      */
     public ArrayList<PilotingRollData> getPSRsForEntity(Entity entity) {
         ArrayList<PilotingRollData> rollsForEntity = new ArrayList<>();
         
-        for (PilotingRollData psr : pilotRolls) {
+        for (PilotingRollData psr : pilotingRolls) {
             if (psr.getEntityId() == entity.getId()) {
                 rollsForEntity.add(psr);
             }
@@ -2773,14 +2773,14 @@ public final class Game extends AbstractGame implements Serializable, PlanetaryC
     }
         
     public void removePSRsByArray(ArrayList<PilotingRollData> psrList) {
-        pilotRolls.removeAll(psrList);
+        pilotingRolls.removeAll(psrList);
     }
     
     /**
      * Resets the PSR list for a given entity.
      */
     public void resetPSRs(Entity entity) {
-        pilotRolls.removeAll(getPSRsForEntity(entity));
+        pilotingRolls.removeAll(getPSRsForEntity(entity));
     }
 
     /**
@@ -2816,7 +2816,7 @@ public final class Game extends AbstractGame implements Serializable, PlanetaryC
      * Resets the PSR list.
      */
     public void resetPSRs() {
-        pilotRolls.clear();
+        pilotingRolls.clear();
     }
 
     /**

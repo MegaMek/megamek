@@ -189,6 +189,9 @@ public class CoreRulesPSR extends RulesPSR {
      */
     @Override
     public void rollRemoveHighest(ArrayList<PilotingRollData> rollList) {
+        if (rollList.isEmpty()) {
+            return;
+        }
         // If there is only one roll, remove it and early exit
         if (rollList.size() == 1) {
             rollList.remove(rollList.getFirst());

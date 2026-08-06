@@ -49,6 +49,7 @@ import megamek.common.game.Game;
 import megamek.common.loaders.EntityLoadingException;
 import megamek.common.units.Entity;
 import megamek.common.weapons.handlers.AttackHandler;
+import megamek.common.weapons.handlers.artillery.ArtilleryBayWeaponCloseFireHandler;
 import megamek.common.weapons.handlers.artillery.ArtilleryBayWeaponCloseHomingHandler;
 import megamek.common.weapons.handlers.artillery.ArtilleryBayWeaponDistantFireHandler;
 import megamek.common.weapons.handlers.artillery.ArtilleryBayWeaponDistantHomingHandler;
@@ -114,7 +115,7 @@ public class ArtilleryBayWeapon extends AmmoBayWeapon {
                 }
                 return new ArtilleryBayWeaponDistantHomingHandler(toHit, waa, game, manager);
             } else if (game.getPhase().isFiring()) {
-                return new megamek.common.weapons.handlers.artillery.ArtilleryBayWeaponCloseFireHandler(toHit, waa, game, manager);
+                return new ArtilleryBayWeaponCloseFireHandler(toHit, waa, game, manager);
             } else {
                 return new ArtilleryBayWeaponDistantFireHandler(toHit, waa, game, manager);
             }

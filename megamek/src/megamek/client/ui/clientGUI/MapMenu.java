@@ -1492,7 +1492,7 @@ public class MapMenu extends JPopupMenu {
                     menu.add(targetMenuItem(new HexTarget(coords, board, Targetable.TYPE_HEX_BOMB)));
                 }
                 
-                if (hasWeaponFlag(WeaponType.F_MRM) && hasMiscFlag(MiscType.F_APOLLO) && Game.rulesManager instanceof CoreRulesManager) {
+                if (hasWeaponFlag(WeaponType.F_MRM) && myEntity.hasMisc(MiscType.F_APOLLO) && Game.rulesManager.getRulesWeapons().getApolloSaturationMode()) {
                     menu.add(targetMenuItem(new HexTarget(coords, board, Targetable.TYPE_SATURATION)));
                 }
 
@@ -1610,18 +1610,6 @@ public class MapMenu extends JPopupMenu {
             }
         }
 
-        return false;
-    }
-    
-    private boolean hasMiscFlag(EquipmentFlag miscFlag) {
-        if (myEntity.getEquipment().isEmpty()) {
-            return false;
-        }
-        for (Mounted<?> equip : myEntity.getMisc()) {
-            if (equip.getType().hasFlag(miscFlag)) {
-                return true;
-            }
-        }
         return false;
     }
 

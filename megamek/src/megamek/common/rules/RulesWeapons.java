@@ -136,4 +136,12 @@ public abstract class RulesWeapons {
      * @return true if HGR can trigger a piloting skill roll
      */
     public abstract boolean canHGRTriggerPSR(int mpUsed, int weightClass);
+
+    /**
+     * Does Apollo have saturation mode?
+     * @return default of false. This is only in core and newer.
+     */
+    public boolean getApolloSaturationMode() {
+        return false;
+    }
 }

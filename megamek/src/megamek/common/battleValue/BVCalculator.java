@@ -1396,10 +1396,13 @@ public abstract class BVCalculator {
      * <a href="https://bg.battletech.com/forums/tactical-operations/tagguided-munitions-and-bv/">BT Forum</a>)
      */
     public void processTagBonus() {
+        if (!Game.rulesManager.getRulesGame().tagBVBump() || entity.getGame() == null) {
+            return;
+        }
         long tagCount = workingTAGCount(entity);
         // CORE if we need to adapt this for only SG, replace (munitionType.contains(AmmoType.Munitions.M_SEMIGUIDED))
         // (munitionType.contains(AmmoType.Munitions.M_SEMIGUIDED) && Game.rulesManager.getRulesGame().tagBVBump())
-        if ((tagCount == 0) || (entity.getGame() == null) || !Game.rulesManager.getRulesGame().tagBVBump()) {
+        if ((tagCount == 0)) {
             return;
         }
 

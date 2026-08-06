@@ -69,11 +69,12 @@ import megamek.logging.MMLogger;
  *     engagement range in TURNS AT ITS OWN SPEED rather than raw hexes, so a 3/5 assault and a 6/9 medium
  *     share one commit tempo (a full move closes one turn's worth for either), and each unit closes to its
  *     own band - brawlers to knife range, fire-support to its optimum - not blindly to contact.</li>
- *     <li><b>Combat posture at water</b>: a defending force does not cross the water it is defending behind.
- *     Whether the force is attacking or defending is set explicitly in {@link BehaviorSettings}, or read each
- *     round from the mission and the enemy's movement ({@link PostureResolver}); a defender's crossing paths
- *     are charged a full turn of advance, so it holds its bank and fights the enemy in the water instead of
- *     wading into the same trap (see {@code calculatePosturePenalty}).</li>
+ *     <li><b>Combat posture at water</b>: a defending force does not cross the water it is defending behind -
+ *     any water, fords included, since a fordable river is one the enemy can cross anywhere. Whether the
+ *     force is attacking or defending is set explicitly in {@link BehaviorSettings}, or read each round from
+ *     the mission and the enemy's movement ({@link PostureResolver}); a defender's crossing paths are charged
+ *     a full turn of advance, so it holds its bank and fights the enemy in the water instead of wading into
+ *     the same trap (see {@code calculatePosturePenalty}).</li>
  * </ol>
  *
  * <p><b>The rule that must always hold: keeping formation never stops a unit closing with the enemy.</b> Two things
@@ -334,8 +335,8 @@ public class MutualSupportPathRanker extends BasicPathRanker {
     }
 
     /**
-     * What a defending force charges a path for taking a unit into or across the deep water it is defending
-     * behind.
+     * What a defending force charges a path for taking a unit into or across the water it is defending
+     * behind - any water, fords included.
      *
      * <p>To a defender the river is its best weapon: the enemy arrives slowed, split into single units by
      * the crossing, and with most of its weapons underwater, and the defender gets to fight that enemy from
@@ -373,12 +374,16 @@ public class MutualSupportPathRanker extends BasicPathRanker {
             return 0;
         }
 
+        // Any water counts as the defender's line, fords included. The formation rules ignore depth 1
+        // because a ford does not split a force; a defender's river is the opposite case - a fordable
+        // river is one the enemy can cross anywhere, so it is even more a line to hold. Measured: on a
+        // river of depth-1 fords, a depth-2 test never fired and the defending company crossed at will.
         Board board = game.getBoard(movingUnit.getBoardId());
         Coords currentPosition = movingUnit.getPosition();
-        if (FormationSide.isSeparatingWater(board, currentPosition)) {
+        if (FormationSide.isSeparatingWater(board, currentPosition, FormationSide.ANY_WATER_DEPTH)) {
             return 0;
         }
-        if (FormationSide.sameSide(board, currentPosition, path.getFinalCoords())) {
+        if (FormationSide.sameSide(board, currentPosition, path.getFinalCoords(), FormationSide.ANY_WATER_DEPTH)) {
             return 0;
         }
 

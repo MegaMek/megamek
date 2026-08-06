@@ -303,10 +303,14 @@ class MutualSupportPathRankerTest {
     private static final Coords RIVER_DESTINATION = new Coords(1, 10);
 
     private void setupRiverAt(Coords riverCoords) {
-        Hex riverHex = mock(Hex.class);
-        when(riverHex.containsTerrain(Terrains.WATER)).thenReturn(true);
-        when(riverHex.terrainLevel(Terrains.WATER)).thenReturn(2);
-        when(mockBoard.getHex(eq(riverCoords))).thenReturn(riverHex);
+        setupWaterAt(riverCoords, 2);
+    }
+
+    private void setupWaterAt(Coords waterCoords, int depth) {
+        Hex waterHex = mock(Hex.class);
+        when(waterHex.containsTerrain(Terrains.WATER)).thenReturn(true);
+        when(waterHex.terrainLevel(Terrains.WATER)).thenReturn(depth);
+        when(mockBoard.getHex(eq(waterCoords))).thenReturn(waterHex);
     }
 
     /** A defender does not wade into the water it is defending behind. */
@@ -354,6 +358,21 @@ class MutualSupportPathRankerTest {
         setEnemyDistances(20.0, 20.0, HOLDING_DESTINATION);
 
         assertEquals(0.0, testRanker.calculateMutualSupportMod(null, mockPath), TOLERANCE);
+    }
+
+    /**
+     * A ford is still the river. The formation rules ignore depth-1 water because a ford does not split a
+     * force, but a defender's line is any water at all - measured on a river of depth-1 fords, a depth-2
+     * test never fired and the defending company crossed at will for a whole game.
+     */
+    @Test
+    void aDefendingUnitIsChargedForCrossingAFordToo() {
+        when(mockBehavior.getCombatPosture()).thenReturn(CombatPosture.DEFEND);
+        setupWaterAt(RIVER_DESTINATION, 1);
+        when(mockFriend.getPosition()).thenReturn(new Coords(0, 11));
+        setEnemyDistances(20.0, 20.0, RIVER_DESTINATION);
+
+        assertEquals(DEFEND_CROSSING_PENALTY, testRanker.calculateMutualSupportMod(null, mockPath), TOLERANCE);
     }
 
     /** A unit under forced withdrawal crosses whatever posture says: its route home does not move. */

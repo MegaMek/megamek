@@ -43,8 +43,10 @@ import megamek.client.bot.princess.UnitBehavior.BehaviorType;
 import megamek.common.annotations.Nullable;
 import megamek.common.board.Board;
 import megamek.common.board.Coords;
+import megamek.common.compute.Compute;
 import megamek.common.game.Game;
 import megamek.common.moves.MovePath;
+import megamek.common.rolls.TargetRoll;
 import megamek.common.units.Entity;
 import megamek.logging.MMLogger;
 
@@ -185,6 +187,14 @@ public class MutualSupportPathRanker extends BasicPathRanker {
      */
     private static final double HOLD_CREDIT_ATTACK_CAP_FACTOR = 0.4;
     private static final double HOLD_CREDIT_DEFEND_CAP_FACTOR = 0.8;
+
+    /**
+     * The to-hit number the attacker-movement damage discount is priced at: gunnery 4 plus a typical spread
+     * of range and target modifiers. Only the RATIO of hit chances at this number matters - walking turns
+     * 8s into 9s whoever you are - so the midpoint stands in for every shooter without pretending the
+     * estimate knows its real to-hit.
+     */
+    private static final int REPRESENTATIVE_TO_HIT = 8;
 
     private final Map<Integer, SupportEnvelope> envelopeCache = new HashMap<>();
     private int envelopeCacheRound = -1;
@@ -466,6 +476,37 @@ public class MutualSupportPathRanker extends BasicPathRanker {
         double holdCredit = capFactor * Math.min(quality, TEMPO_REFERENCE_MP * aggression);
         lastPositionHoldMod = holdCredit;
         return holdCredit;
+    }
+
+    /**
+     * The two-step's hidden cost, made visible. The base ranker's estimate against enemies that have not
+     * yet moved is a damage-at-range table with no to-hit roll, so the attacker movement modifier - the one
+     * certain cost of moving - is absent from it and a short step reads as free. This prices it back in as
+     * a hit-chance ratio at the {@link #REPRESENTATIVE_TO_HIT} midpoint: standing keeps everything, walking
+     * keeps about two-thirds, running two-fifths, a standard jump one-fifth.
+     *
+     * <p>The modifier itself comes from the same engine call the server fires with
+     * ({@link Compute#getAttackerMovementModifier}), so infantry's exemption, the dual-cockpit dedicated
+     * gunner, and the jumping-jack abilities are all priced without this class knowing their names.
+     * The anatomy of the shuffle measured on the water arms: the bravery term paid for half of all
+     * two-steps, and against unmoved enemies its gain was computed with this cost missing.</p>
+     */
+    @Override
+    protected double attackerMovementDamageDiscount(MovePath path) {
+        int attackerMovementModifier = Compute.getAttackerMovementModifier(path.getEntity().getGame(),
+              path.getEntity().getId(),
+              path.getLastStepMovementType()).getValue();
+        if (attackerMovementModifier <= 0) {
+            return 1.0;
+        }
+        if (attackerMovementModifier >= TargetRoll.AUTOMATIC_FAIL) {
+            // Sprinting: no attacks at all after this move. Unreachable from the current call site
+            // (sprint paths contribute no damage before the discount applies), but the sentinel is
+            // Integer.MAX_VALUE - 1 and must never reach the addition below.
+            return 0.0;
+        }
+        return Compute.oddsAbove(REPRESENTATIVE_TO_HIT + attackerMovementModifier)
+              / Compute.oddsAbove(REPRESENTATIVE_TO_HIT);
     }
 
     /**

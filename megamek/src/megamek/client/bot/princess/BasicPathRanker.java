@@ -267,7 +267,7 @@ public class BasicPathRanker extends PathRanker {
             returnResponse.addToMyEstimatedDamage(getMaxDamageAtRange(path.getEntity(),
                   range,
                   useExtremeRange,
-                  useLOSRange) * damageDiscount);
+                  useLOSRange) * damageDiscount * attackerMovementDamageDiscount(path));
         }
 
         // in general, if an enemy can end its position in range, it can hit me
@@ -280,6 +280,22 @@ public class BasicPathRanker extends PathRanker {
         }
 
         return returnResponse;
+    }
+
+    /**
+     * How much of its raw damage-at-range a unit keeps after its own movement makes it a worse shot.
+     *
+     * <p>The unmoved-enemy estimate above is a range-table lookup with no to-hit roll in it, so the one
+     * certain cost of moving - the attacker movement modifier, +1 walked, +2 ran, +3 jumped - does not
+     * exist in it, and a short step reads as free. The base ranker keeps that behavior; a subclass can
+     * return the fraction of the raw estimate the path's movement mode actually leaves it.</p>
+     *
+     * @param path the path being evaluated
+     *
+     * @return the fraction of the raw damage estimate to keep; 1.0 by default
+     */
+    protected double attackerMovementDamageDiscount(MovePath path) {
+        return 1.0;
     }
 
     @Override

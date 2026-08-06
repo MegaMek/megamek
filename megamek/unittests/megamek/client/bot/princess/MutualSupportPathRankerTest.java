@@ -50,10 +50,12 @@ import megamek.client.bot.princess.UnitBehavior.BehaviorType;
 import megamek.common.Hex;
 import megamek.common.board.Board;
 import megamek.common.board.Coords;
+import megamek.common.compute.Compute;
 import megamek.common.game.Game;
 import megamek.common.moves.MovePath;
 import megamek.common.units.BipedMek;
 import megamek.common.units.Entity;
+import megamek.common.units.EntityMovementType;
 import megamek.common.units.Terrains;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -584,6 +586,43 @@ class MutualSupportPathRankerTest {
         assertEquals(0.0,
               testRanker.calculatePositionHoldMod(pathEndingAt(CURRENT_POSITION), mockGame,
                     damageDealing(20.0), 0.0, 1.0), TOLERANCE);
+    }
+
+    /**
+     * The AMM ledger fix, pinned. The base ranker's estimate against unmoved enemies is a range-table
+     * lookup with no to-hit roll, so it thinks a walking shooter shoots as well as a standing one. The
+     * discount prices the attacker movement modifier back in as a hit-chance ratio at the needing-8s
+     * midpoint: standing keeps everything, walking turns 8s into 9s and keeps about two-thirds.
+     */
+    @Test
+    void walkingCostsAboutAThirdOfTheVolleyAgainstUnmovedEnemies() {
+        when(mockGame.getEntity(1)).thenReturn(mockMover);
+        when(mockMover.getGame()).thenReturn(mockGame);
+
+        MovePath standing = pathEndingAt(CURRENT_POSITION);
+        when(standing.getLastStepMovementType()).thenReturn(EntityMovementType.MOVE_NONE);
+        assertEquals(1.0, testRanker.attackerMovementDamageDiscount(standing), TOLERANCE);
+
+        MovePath walked = pathEndingAt(CLOSING_DESTINATION);
+        when(walked.getLastStepMovementType()).thenReturn(EntityMovementType.MOVE_WALK);
+        double expectedWalkedShare = Compute.oddsAbove(9) / Compute.oddsAbove(8);
+        assertEquals(expectedWalkedShare, testRanker.attackerMovementDamageDiscount(walked), TOLERANCE);
+        assertTrue(expectedWalkedShare < 0.7 && expectedWalkedShare > 0.6,
+              "walking should cost about a third of the volley");
+
+        MovePath ran = pathEndingAt(CLOSING_DESTINATION);
+        when(ran.getLastStepMovementType()).thenReturn(EntityMovementType.MOVE_RUN);
+        assertEquals(Compute.oddsAbove(10) / Compute.oddsAbove(8),
+              testRanker.attackerMovementDamageDiscount(ran), TOLERANCE);
+    }
+
+    /** Princess's estimate is untouched: the base ranker's discount is exactly 1.0 for every path. */
+    @Test
+    void theBaseRankerDoesNotDiscountMovement() {
+        BasicPathRanker princessRanker = new BasicPathRanker(mockPrincess);
+        MovePath ran = pathEndingAt(CLOSING_DESTINATION);
+        when(ran.getLastStepMovementType()).thenReturn(EntityMovementType.MOVE_RUN);
+        assertEquals(1.0, princessRanker.attackerMovementDamageDiscount(ran), TOLERANCE);
     }
 
     /**

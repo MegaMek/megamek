@@ -52,11 +52,13 @@ import megamek.common.compute.Compute;
 import megamek.common.equipment.*;
 import megamek.common.equipment.enums.BombType;
 import megamek.common.game.Game;
+import megamek.common.options.IOption;
 import megamek.common.options.OptionsConstants;
 import megamek.common.planetaryConditions.Atmosphere;
 import megamek.common.rolls.PilotingRollData;
 import megamek.common.rolls.Roll;
 import megamek.common.rolls.TargetRoll;
+import megamek.common.rules.core.CoreRulesManager;
 import megamek.common.units.*;
 import megamek.common.weapons.DamageType;
 import megamek.common.weapons.TeleMissile;
@@ -87,6 +89,12 @@ public class TWDamageManager implements IDamageManager {
     public void setGame(Game game) {
         this.game = game;
         initialized = (manager != null);
+        IOption rules_system = game.getOptions().getOption(OptionsConstants.RULES_SYSTEM);
+        String loadedOption = (game.rulesManager instanceof CoreRulesManager) ?
+              OptionsConstants.RULES_CORE : OptionsConstants.RULES_TW;
+        if (!rules_system.stringValue().equals(loadedOption)) {
+            game.initializeRulesManager(rules_system.stringValue());
+        }
     }
 
     public void setManager(TWGameManager manager) {

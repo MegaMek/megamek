@@ -1,6 +1,6 @@
 /*
  * Copyright (C) 2000-2004 Ben Mazur (bmazur@sev.org)
- * Copyright (C) 2002-2025 The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2002-2026 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -34,10 +34,7 @@
 package megamek.client.ui.panels.phaseDisplay;
 
 import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.awt.event.InputEvent;
-import java.awt.event.ItemEvent;
-import java.awt.event.ItemListener;
 import java.awt.event.MouseEvent;
 import java.io.Serial;
 import java.util.ArrayList;
@@ -57,22 +54,26 @@ import megamek.client.ui.Messages;
 import megamek.client.ui.clientGUI.ClientGUI;
 import megamek.client.ui.clientGUI.boardview.BoardView;
 import megamek.client.ui.clientGUI.boardview.IBoardView;
-import megamek.client.ui.dialogs.phaseDisplay.AimedShotDialog;
+import megamek.client.ui.clientGUI.boardview.overlay.ToastLevel;
+import megamek.client.ui.dialogs.phaseDisplay.CalledBlowDialog;
 import megamek.client.ui.dialogs.phaseDisplay.TargetChoiceDialog;
+import megamek.client.ui.enums.DialogResult;
 import megamek.client.ui.util.KeyCommandBind;
 import megamek.client.ui.util.MegaMekController;
-import megamek.client.ui.widget.IndexedRadioButton;
 import megamek.client.ui.widget.MegaMekButton;
 import megamek.client.ui.widget.MekPanelTabStrip;
+import megamek.common.Hex;
+import megamek.common.HexTarget;
 import megamek.common.ToHitData;
 import megamek.common.actions.*;
+import megamek.common.annotations.Nullable;
 import megamek.common.board.Board;
 import megamek.common.board.Coords;
 import megamek.common.compute.Compute;
 import megamek.common.compute.ComputeArc;
-import megamek.common.enums.AimingMode;
 import megamek.common.equipment.INarcPod;
 import megamek.common.equipment.MiscMounted;
+import megamek.common.equipment.MiscType;
 import megamek.common.equipment.Mounted;
 import megamek.common.equipment.enums.MiscTypeFlag;
 import megamek.common.event.GamePhaseChangeEvent;
@@ -88,6 +89,7 @@ import megamek.common.units.Infantry;
 import megamek.common.units.Mek;
 import megamek.common.units.QuadMek;
 import megamek.common.units.Targetable;
+import megamek.common.units.Terrains;
 import megamek.logging.MMLogger;
 
 public class PhysicalDisplay extends AttackPhaseDisplay {
@@ -101,6 +103,9 @@ public class PhysicalDisplay extends AttackPhaseDisplay {
     protected Entity[] visibleTargets = null;
     protected int lastTargetID = -1;
     protected boolean isStrafing = false;
+
+    /** When true, the next hex click selects the target for a woods clearing action. */
+    private boolean selectingClearWoodsHex = false;
 
     /**
      * This enumeration lists all the possible ActionCommands that can be carried out during the physical phase. Each
@@ -126,6 +131,7 @@ public class PhysicalDisplay extends AttackPhaseDisplay {
         PHYSICAL_VIBRO("vibro"),
         PHYSICAL_PHEROMONE("pheromone"),
         PHYSICAL_TOXIN("toxin"),
+        PHYSICAL_CLEAR_WOODS("clearWoods"),
         PHYSICAL_MORE("more");
 
         final String cmd;
@@ -160,29 +166,15 @@ public class PhysicalDisplay extends AttackPhaseDisplay {
         }
 
         public String getHotKeyDesc() {
-            String result = "";
-
-            switch (this) {
-                case PHYSICAL_NEXT:
-                    result = "<BR>";
-                    result += "&nbsp;&nbsp;" + "Next" + ": " + KeyCommandBind.getDesc(KeyCommandBind.NEXT_UNIT);
-                    result += "&nbsp;&nbsp;" + "Previous" + ": " + KeyCommandBind.getDesc(KeyCommandBind.PREV_UNIT);
-                    break;
-                case PHYSICAL_PUNCH:
-                    result = "<BR>";
-                    result += "&nbsp;&nbsp;" + KeyCommandBind.getDesc(KeyCommandBind.PHYS_PUNCH);
-                    break;
-                case PHYSICAL_KICK:
-                    result = "<BR>";
-                    result += "&nbsp;&nbsp;" + KeyCommandBind.getDesc(KeyCommandBind.PHYS_KICK);
-                    break;
-                case PHYSICAL_PUSH:
-                    result = "<BR>";
-                    result += "&nbsp;&nbsp;" + KeyCommandBind.getDesc(KeyCommandBind.PHYS_PUSH);
-                    break;
-            }
-
-            return result;
+            return switch (this) {
+                case PHYSICAL_NEXT ->
+                      "<BR>&nbsp;&nbsp;" + "Next" + ": " + KeyCommandBind.getDesc(KeyCommandBind.NEXT_UNIT)
+                            + "&nbsp;&nbsp;" + "Previous" + ": " + KeyCommandBind.getDesc(KeyCommandBind.PREV_UNIT);
+                case PHYSICAL_PUNCH -> "<BR>&nbsp;&nbsp;" + KeyCommandBind.getDesc(KeyCommandBind.PHYS_PUNCH);
+                case PHYSICAL_KICK -> "<BR>&nbsp;&nbsp;" + KeyCommandBind.getDesc(KeyCommandBind.PHYS_KICK);
+                case PHYSICAL_PUSH -> "<BR>&nbsp;&nbsp;" + KeyCommandBind.getDesc(KeyCommandBind.PHYS_PUSH);
+                default -> "";
+            };
         }
     }
 
@@ -191,8 +183,6 @@ public class PhysicalDisplay extends AttackPhaseDisplay {
 
     // let's keep track of what we're shooting and at what, too
     Targetable target; // target
-
-    private final AimedShotHandler ash = new AimedShotHandler();
 
     /**
      * Creates and lays out a new movement phase display for the specified clientGUI.getClient().
@@ -492,8 +482,69 @@ public class PhysicalDisplay extends AttackPhaseDisplay {
         if ((entity instanceof Mek) && !entity.isProne() && entity.hasAbility(OptionsConstants.PILOT_DODGE_MANEUVER)) {
             setDodgeEnabled(true);
         }
+        // Enable clear woods button if entity has a working saw and is near woods in arc
+        boolean hasSaw = WoodsClearingAttackAction.hasWorkingSaw(entity);
+        logger.debug("Clear woods check for {}: hasSaw={}, prone={}, immobile={}, position={}",
+              entity.getDisplayName(), hasSaw, entity.isProne(), entity.isImmobile(), entity.getPosition());
+        if (hasSaw && !entity.isProne() && !entity.isImmobile()) {
+            boolean nearWoods = false;
+            // Own hex is always in arc
+            Hex ownHex = game.getBoard(entity.getBoardId()).getHex(entity.getPosition());
+            if (ownHex != null && (ownHex.containsTerrain(Terrains.WOODS) || ownHex.containsTerrain(Terrains.JUNGLE))) {
+                nearWoods = true;
+                logger.debug("  Entity's own hex has woods/jungle");
+            }
+            // Adjacent hexes must be in the saw's arc
+            if (!nearWoods) {
+                for (int dir = 0; dir < 6; dir++) {
+                    Coords adj = entity.getPosition().translated(dir);
+                    Hex adjHex = game.getBoard(entity.getBoardId()).getHex(adj);
+                    if (adjHex != null && (adjHex.containsTerrain(Terrains.WOODS)
+                          || adjHex.containsTerrain(Terrains.JUNGLE))
+                          && WoodsClearingAttackAction.isInSawArc(entity, adj)) {
+                        nearWoods = true;
+                        logger.debug("  Found woods/jungle in arc at direction {} coords {}", dir, adj);
+                        break;
+                    }
+                }
+            }
+            logger.debug("  nearWoods={}, enabling clear woods button: {}", nearWoods, nearWoods);
+            setClearWoodsEnabled(nearWoods);
+        } else if (hasSaw) {
+            logger.debug("  Has saw but prone or immobile, not enabling clear woods");
+        }
+
+        // Laying demolition charges targets the structure in the unit's own hex, so the button does not depend
+        // on a selected target (TO:AUE p.152). The label reflects the unit's state: starting new charges or
+        // finishing the work in progress.
+        boolean isLayingExplosives = (entity instanceof Infantry infantry) && (infantry.turnsLayingExplosives >= 0);
+        buttons.get(PhysicalCommand.PHYSICAL_EXPLOSIVES).setText(Messages.getString(
+              isLayingExplosives ? "PhysicalDisplay.explosives.finish" : "PhysicalDisplay.explosives"));
+        setExplosivesEnabled(entity.canLayDemolitionCharges());
+        showLayExplosivesProgressToast(entity);
+
         updateDonePanel();
         cacheVisibleTargets();
+    }
+
+    /**
+     * Shows a progress toast for a platoon that is currently setting demolition charges: the turns spent so far and the
+     * damage of the charge if it were finished now (TO:AUE p.152).
+     *
+     * @param entity the selected unit
+     */
+    private void showLayExplosivesProgressToast(Entity entity) {
+        if ((entity instanceof Infantry infantry) && (infantry.turnsLayingExplosives > 0)) {
+            int maxTurns = LayExplosivesAttackAction.MAX_TURNS_LAYING_EXPLOSIVES;
+            int turnsSpent = Math.min(infantry.turnsLayingExplosives, maxTurns);
+            clientgui.addToast(ToastLevel.INFO,
+                  Messages.getString("PhysicalDisplay.layExplosives.toast.progress",
+                        entity.getShortName(),
+                        turnsSpent,
+                        maxTurns,
+                        LayExplosivesAttackAction.getDamageFor(entity)),
+                  entity);
+        }
     }
 
     /**
@@ -567,6 +618,8 @@ public class PhysicalDisplay extends AttackPhaseDisplay {
         setPheromoneEnabled(false);
         setToxinEnabled(false);
         setExplosivesEnabled(false);
+        setClearWoodsEnabled(false);
+        selectingClearWoodsHex = false;
         butDone.setEnabled(false);
         setNextEnabled(false);
     }
@@ -596,8 +649,6 @@ public class PhysicalDisplay extends AttackPhaseDisplay {
 
         clientgui.getClient().sendAttackData(currentEntity, attacks.toVector());
         removeAllAttacks();
-        // close aimed shot display, if any
-        ash.closeDialog();
         if (currentEntity().isWeaponOrderChanged()) {
             clientgui.getClient().sendEntityWeaponOrderUpdate(currentEntity());
         }
@@ -677,7 +728,8 @@ public class PhysicalDisplay extends AttackPhaseDisplay {
             if ((en instanceof Mek)
                   && (target instanceof Entity)
                   && (game.getOptions()
-                  .booleanOption(OptionsConstants.ADVANCED_COMBAT_TAC_OPS_RETRACTABLE_BLADES) || game.getOptions().booleanOption(OptionsConstants.PLAYTEST_3))
+                  .booleanOption(OptionsConstants.ADVANCED_COMBAT_TAC_OPS_RETRACTABLE_BLADES) || game.getOptions()
+                  .booleanOption(OptionsConstants.PLAYTEST_3))
                   && (leftArm.getValue() != TargetRoll.IMPOSSIBLE)
                   && ((Mek) currentEntity()).hasRetractedBlade(Mek.LOC_LEFT_ARM)) {
                 leftBladeExtend = clientgui.doYesNoDialog(
@@ -689,7 +741,8 @@ public class PhysicalDisplay extends AttackPhaseDisplay {
                   && (target instanceof Entity)
                   && (rightArm.getValue() != TargetRoll.IMPOSSIBLE)
                   && (game.getOptions()
-                  .booleanOption(OptionsConstants.ADVANCED_COMBAT_TAC_OPS_RETRACTABLE_BLADES) || game.getOptions().booleanOption(OptionsConstants.PLAYTEST_3))
+                  .booleanOption(OptionsConstants.ADVANCED_COMBAT_TAC_OPS_RETRACTABLE_BLADES) || game.getOptions()
+                  .booleanOption(OptionsConstants.PLAYTEST_3))
                   && ((Mek) en).hasRetractedBlade(Mek.LOC_RIGHT_ARM)) {
                 rightBladeExtend = clientgui.doYesNoDialog(
                       Messages.getString("PhysicalDisplay.ExtendBladeDialog" + ".title"),
@@ -978,7 +1031,8 @@ public class PhysicalDisplay extends AttackPhaseDisplay {
             message = Messages.getString("PhysicalDisplay.CounterGrappleDialog.message",
                   target.getDisplayName(),
                   toHit.getValueAsString(),
-                  Compute.oddsAbove(toHit.getValue(), currentEntity().hasAbility(OptionsConstants.PILOT_APTITUDE_PILOTING)),
+                  Compute.oddsAbove(toHit.getValue(),
+                        currentEntity().hasAbility(OptionsConstants.PILOT_APTITUDE_PILOTING)),
                   toHit.getDesc());
         }
 
@@ -1108,7 +1162,8 @@ public class PhysicalDisplay extends AttackPhaseDisplay {
             int d_left = JumpJetAttackAction.getDamageFor(currentEntity(), JumpJetAttackAction.LEFT);
             int d_right = JumpJetAttackAction.getDamageFor(currentEntity(), JumpJetAttackAction.RIGHT);
             if ((d_left *
-                  Compute.oddsAbove(left.getValue(), currentEntity().hasAbility(OptionsConstants.PILOT_APTITUDE_PILOTING))) >
+                  Compute.oddsAbove(left.getValue(),
+                        currentEntity().hasAbility(OptionsConstants.PILOT_APTITUDE_PILOTING))) >
                   (d_right *
                         Compute.oddsAbove(right.getValue(),
                               currentEntity().hasAbility(OptionsConstants.PILOT_APTITUDE_PILOTING)))) {
@@ -1140,16 +1195,111 @@ public class PhysicalDisplay extends AttackPhaseDisplay {
         }
     }
 
+    /** Return value of {@link #chooseCalledBlowTable} when the player cancelled the attack. */
+    private static final int CALLED_BLOW_CANCELLED = -1;
+
+    /**
+     * @param club the physical weapon being swung
+     *
+     * @return {@code true} when the weapon's blow may be aimed at the punch or kick location table as a
+     *       called blow (assuming S7 vibroswords count as swords and maces count as hatchets)
+     */
+    private boolean isAimablePhysicalWeapon(MiscMounted club) {
+        return club.getType().hasAnyFlag(MiscTypeFlag.S_SWORD,
+              MiscTypeFlag.S_HATCHET,
+              MiscTypeFlag.S_VIBRO_SMALL,
+              MiscTypeFlag.S_VIBRO_MEDIUM,
+              MiscTypeFlag.S_VIBRO_LARGE,
+              MiscTypeFlag.S_MACE,
+              MiscTypeFlag.S_LANCE,
+              MiscTypeFlag.S_CHAIN_WHIP,
+              MiscTypeFlag.S_RETRACTABLE_BLADE,
+              MiscTypeFlag.S_SHIELD_LARGE,
+              MiscTypeFlag.S_SHIELD_MEDIUM,
+              MiscTypeFlag.S_SHIELD_SMALL);
+    }
+
+    /**
+     * Asks the player whether to aim the physical weapon blow high (punch location table) or low (kick
+     * location table) as a called blow, or leave it uncalled. The question is only asked when the choice
+     * actually applies: the weapon must be aimable, the attack possible, both units Meks at the same
+     * elevation, and the {@code clubs_punch} option off (that option selects the table from the elevation
+     * difference instead, ignoring any called blow).
+     *
+     * @param attacker the attacking entity
+     * @param club     the physical weapon being swung
+     *
+     * @return the chosen hit table ({@code ToHitData.HIT_NORMAL}, {@code HIT_PUNCH} or {@code HIT_KICK}),
+     *       or {@code CALLED_BLOW_CANCELLED} when the player cancelled the attack
+     */
+    private int chooseCalledBlowTable(Entity attacker, MiscMounted club) {
+        if (!isAimablePhysicalWeapon(club)) {
+            logger.debug("[CalledBlow] {}: no called blow choice - blows from {} cannot be aimed",
+                  attacker.getShortName(), club.getName());
+            return ToHitData.HIT_NORMAL;
+        }
+        if (game.getOptions().booleanOption(OptionsConstants.ADVANCED_COMBAT_CLUBS_PUNCH)) {
+            logger.debug("[CalledBlow] {}: no called blow choice - clubs_punch option selects the table by elevation",
+                  attacker.getShortName());
+            return ToHitData.HIT_NORMAL;
+        }
+        if (!(attacker instanceof Mek) || !(target instanceof Mek)) {
+            logger.debug("[CalledBlow] {}: no called blow choice - attacker and target must both be Meks",
+                  attacker.getShortName());
+            return ToHitData.HIT_NORMAL;
+        }
+        final int attackerElevation = attacker.getElevation() + game.getHexOf(attacker).getLevel();
+        final int targetElevation = target.getElevation() + game.getHexOf(target).getLevel();
+        if (attackerElevation != targetElevation) {
+            logger.debug("[CalledBlow] {}: no called blow choice - attacker (total elevation {}) and target "
+                        + "(total elevation {}) are not at the same elevation",
+                  attacker.getShortName(), attackerElevation, targetElevation);
+            return ToHitData.HIT_NORMAL;
+        }
+        final ToHitData uncalledToHit = ClubAttackAction.toHit(game, attacker.getId(),
+              target, club, ToHitData.HIT_NORMAL, false);
+        if (uncalledToHit.getValue() == TargetRoll.IMPOSSIBLE) {
+            logger.debug("[CalledBlow] {}: no called blow choice - attack with {} is impossible: {}",
+                  attacker.getShortName(), club.getName(), uncalledToHit.getDesc());
+            return ToHitData.HIT_NORMAL;
+        }
+        final ToHitData calledHighToHit = ClubAttackAction.toHit(game, attacker.getId(),
+              target, club, ToHitData.HIT_PUNCH, false);
+        final ToHitData calledLowToHit = ClubAttackAction.toHit(game, attacker.getId(),
+              target, club, ToHitData.HIT_KICK, false);
+
+        String[] choices = {
+              Messages.getString("PhysicalDisplay.CalledBlowDialog.lineNormal",
+                    uncalledToHit.getValueAsString()),
+              Messages.getString("PhysicalDisplay.CalledBlowDialog.lineHigh",
+                    calledHighToHit.getValueAsString()),
+              Messages.getString("PhysicalDisplay.CalledBlowDialog.lineLow",
+                    calledLowToHit.getValueAsString()) };
+
+        CalledBlowDialog calledBlowDialog = new CalledBlowDialog(clientgui.getFrame(), club.getName(), choices);
+        DialogResult result = calledBlowDialog.showDialog();
+        if (!result.isConfirmed()) {
+            logger.debug("[CalledBlow] {}: player cancelled the {} attack",
+                  attacker.getShortName(), club.getName());
+            return CALLED_BLOW_CANCELLED;
+        }
+        return switch (calledBlowDialog.getSelectedIndex()) {
+            case 1 -> ToHitData.HIT_PUNCH;
+            case 2 -> ToHitData.HIT_KICK;
+            default -> ToHitData.HIT_NORMAL;
+        };
+    }
+
     private MiscMounted chooseClub() {
         java.util.List<MiscMounted> clubs = currentEntity().getClubs();
         if (clubs.size() == 1) {
-            return clubs.get(0);
+            return clubs.getFirst();
         } else if (clubs.size() > 1) {
             String[] names = new String[clubs.size()];
             for (int loop = 0; loop < names.length; loop++) {
                 MiscMounted club = clubs.get(loop);
                 final ToHitData toHit = ClubAttackAction.toHit(game, currentEntity,
-                      target, club, ash.getAimTable(), false);
+                      target, club, ToHitData.HIT_NORMAL, false);
                 final int dmg = ClubAttackAction.getDamageFor(currentEntity(), club,
                       target.isConventionalInfantry(), false);
                 // Need to do this outside getDamageFor, as it only returns int
@@ -1200,36 +1350,42 @@ public class PhysicalDisplay extends AttackPhaseDisplay {
         if (currentEntity() == null) {
             return;
         }
-        final Entity en = currentEntity();
+        final Entity attacker = currentEntity();
 
-        final boolean isAptPiloting = (en.getCrew() != null)
-              && en.hasAbility(OptionsConstants.PILOT_APTITUDE_PILOTING);
-        final boolean isMeleeMaster = (en.getCrew() != null)
-              && en.hasAbility(OptionsConstants.PILOT_MELEE_MASTER);
-        final boolean canZweihander = (en instanceof BipedMek)
-              && ((BipedMek) en).canZweihander()
-              && ComputeArc.isInArc(en.getPosition(), en.getSecondaryFacing(), target, en.getForwardArc());
+        final boolean isAptPiloting = (attacker.getCrew() != null)
+              && attacker.hasAbility(OptionsConstants.PILOT_APTITUDE_PILOTING);
+        final boolean isMeleeMaster = (attacker.getCrew() != null)
+              && attacker.hasAbility(OptionsConstants.PILOT_MELEE_MASTER);
+        final boolean canZweihander = (attacker instanceof BipedMek bipedMek)
+              && bipedMek.canZweihander()
+              && ComputeArc.isInArc(attacker.getPosition(), attacker.getSecondaryFacing(), target,
+              attacker.getForwardArc());
+
+        final int calledBlowTable = chooseCalledBlowTable(attacker, club);
+        if (calledBlowTable == CALLED_BLOW_CANCELLED) {
+            return;
+        }
 
         final ToHitData toHit = ClubAttackAction.toHit(clientgui.getClient().getGame(),
               currentEntity,
               target,
               club,
-              ash.getAimTable(),
+              calledBlowTable,
               false);
         final double clubOdds = Compute.oddsAbove(toHit.getValue(), isAptPiloting);
-        final int clubDmg = ClubAttackAction.getDamageFor(en, club, target.isConventionalInfantry(), false);
+        final int clubDamage = ClubAttackAction.getDamageFor(attacker, club, target.isConventionalInfantry(), false);
         // Need to do this outside getDamageFor, as it only returns int
-        String dmgString = String.valueOf(clubDmg);
+        String damageString = String.valueOf(clubDamage);
         if ((club.getType().hasAnyFlag(MiscTypeFlag.S_COMBINE, MiscTypeFlag.S_CHAINSAW, MiscTypeFlag.S_DUAL_SAW))
               && target.isConventionalInfantry()) {
-            dmgString = "1d6";
+            damageString = "1d6";
         }
         String title = Messages.getString("PhysicalDisplay.ClubDialog.title", target.getDisplayName());
         String message = Messages.getString("PhysicalDisplay.ClubDialog.message",
               toHit.getValueAsString(),
               clubOdds,
               toHit.getDesc(),
-              dmgString,
+              damageString,
               toHit.getTableDesc());
 
         if (isMeleeMaster) {
@@ -1240,14 +1396,14 @@ public class PhysicalDisplay extends AttackPhaseDisplay {
             boolean zweihandering = false;
             if (canZweihander) {
                 ToHitData toHitZwei = ClubAttackAction.toHit(game, currentEntity,
-                      target, club, ash.getAimTable(), true);
+                      target, club, calledBlowTable, true);
                 zweihandering = clientgui.doYesNoDialog(
                       Messages.getString("PhysicalDisplay.ZweihanderClubDialog.title"),
                       Messages.getString("PhysicalDisplay.ZweihanderClubDialog.message",
                             toHitZwei.getValueAsString(),
                             Compute.oddsAbove(toHit.getValue(), isAptPiloting),
                             toHitZwei.getDesc(),
-                            ClubAttackAction.getDamageFor(en, club, target.isConventionalInfantry(), true),
+                            ClubAttackAction.getDamageFor(attacker, club, target.isConventionalInfantry(), true),
                             toHitZwei.getTableDesc()));
             }
 
@@ -1261,7 +1417,7 @@ public class PhysicalDisplay extends AttackPhaseDisplay {
                   target.getTargetType(),
                   target.getId(),
                   club,
-                  ash.getAimTable(),
+                  calledBlowTable,
                   zweihandering));
             if (isMeleeMaster && !zweihandering) {
                 // hit 'em again!
@@ -1269,7 +1425,7 @@ public class PhysicalDisplay extends AttackPhaseDisplay {
                       target.getTargetType(),
                       target.getId(),
                       club,
-                      ash.getAimTable(),
+                      calledBlowTable,
                       zweihandering));
             }
             ready();
@@ -1300,19 +1456,137 @@ public class PhysicalDisplay extends AttackPhaseDisplay {
         }
     }
 
+    /**
+     * Enters hex selection mode for woods clearing. The player must click a wooded hex on the map to select the
+     * clearing target.
+     */
+    private void clearWoods() {
+        if (currentEntity() == null || !WoodsClearingAttackAction.hasWorkingSaw(currentEntity())) {
+            return;
+        }
+        selectingClearWoodsHex = true;
+        setStatusBarText(Messages.getString("PhysicalDisplay.SelectClearWoodsHex"));
+    }
+
+    /**
+     * Completes the woods clearing action after the player has selected a target hex.
+     *
+     * @param targetCoords the hex to clear
+     * @param boardId      the board ID of the target hex
+     */
+    private void completeClearWoods(Coords targetCoords, int boardId) {
+        Entity entity = currentEntity();
+        if (entity == null) {
+            return;
+        }
+
+        // Validate the selected hex
+        ToHitData validation = WoodsClearingAttackAction.canClearWoods(game, entity, targetCoords, entity.getBoardId());
+        if (validation != null) {
+            setStatusBarText(validation.getDesc());
+            return;
+        }
+
+        // Find the saw equipment ID
+        int sawId = -1;
+        for (MiscMounted misc : entity.getMisc()) {
+            if (misc.isReady() && misc.getType().hasFlag(MiscType.F_CLUB)
+                  && (misc.getType().hasFlag(MiscTypeFlag.S_CHAINSAW)
+                  || misc.getType().hasFlag(MiscTypeFlag.S_DUAL_SAW))) {
+                sawId = entity.getEquipmentNum(misc);
+                break;
+            }
+        }
+
+        if (sawId < 0) {
+            return;
+        }
+
+        HexTarget hexTarget = new HexTarget(targetCoords, boardId, Targetable.TYPE_HEX_CLEAR);
+
+        disableButtons();
+        addAttack(new WoodsClearingAttackAction(currentEntity, hexTarget.getTargetType(),
+              hexTarget.getId(), sawId, targetCoords, boardId));
+        ready();
+    }
+
     private void explosives() {
-        ToHitData explosives = LayExplosivesAttackAction.toHit(game, currentEntity, target);
+        // Demolition charges are always set on the structure in the unit's own hex (TO:AUE p.152), so the
+        // target is derived from the unit's position instead of requiring the player to select one manually
+        Targetable structureTarget = getOwnHexStructureTarget();
+        if (structureTarget == null) {
+            return;
+        }
         String title = Messages.getString("PhysicalDisplay.LayExplosivesAttackDialog.title",
-              target.getDisplayName());
-        String message = Messages.getString("PhysicalDisplay.LayExplosivesAttackDialog.message",
-              explosives.getValueAsString(),
-              Compute.oddsAbove(explosives.getValue()),
-              explosives.getDesc());
-        if (clientgui.doYesNoDialog(title, message)) {
+              structureTarget.getDisplayName());
+        if (clientgui.doYesNoDialog(title, buildLayExplosivesMessage())) {
             disableButtons();
-            addAttack(new LayExplosivesAttackAction(currentEntity, target.getTargetType(), target.getId()));
+            addAttack(new LayExplosivesAttackAction(currentEntity, structureTarget.getTargetType(),
+                  structureTarget.getId()));
+            showLayExplosivesToast();
             ready();
         }
+    }
+
+    /**
+     * Builds the confirmation message for the lay-explosives action: when starting, the per-turn damage and the 6-turn
+     * maximum; when finishing, the turns spent so far and the resulting charge damage (TO:AUE p.152).
+     *
+     * @return the dialog message text
+     */
+    private String buildLayExplosivesMessage() {
+        Entity attacker = currentEntity();
+        int maxTurns = LayExplosivesAttackAction.MAX_TURNS_LAYING_EXPLOSIVES;
+        boolean isFinishing = (attacker instanceof Infantry infantry) && (infantry.turnsLayingExplosives >= 0);
+        if (isFinishing) {
+            int turnsSpent = Math.min(((Infantry) attacker).turnsLayingExplosives, maxTurns);
+            return Messages.getString("PhysicalDisplay.LayExplosivesAttackDialog.finish",
+                  turnsSpent,
+                  maxTurns,
+                  LayExplosivesAttackAction.getDamageFor(attacker));
+        }
+        int damagePerTurn = LayExplosivesAttackAction.getDamagePerTurn(attacker);
+        return Messages.getString("PhysicalDisplay.LayExplosivesAttackDialog.start",
+              damagePerTurn,
+              maxTurns,
+              damagePerTurn * maxTurns);
+    }
+
+    /**
+     * Returns a {@link BuildingTarget} for the structure (building, bridge or fuel tank) in the current unit's own hex,
+     * or null when there is no structure there.
+     *
+     * @return the structure target in the unit's hex, or null if the hex contains no structure
+     */
+    private @Nullable Targetable getOwnHexStructureTarget() {
+        Entity attacker = currentEntity();
+        if ((attacker == null) || (attacker.getPosition() == null)) {
+            return null;
+        }
+        Board board = game.getBoard(attacker.getBoardId());
+        if ((board == null) || (board.getBuildingAt(attacker.getPosition()) == null)) {
+            return null;
+        }
+        return new BuildingTarget(attacker.getPosition(), board, false);
+    }
+
+    /**
+     * Shows a toast confirming the queued lay-explosives action: either starting to set charges or finishing the
+     * already running work (TO:AUE p.152).
+     */
+    private void showLayExplosivesToast() {
+        Entity attacker = currentEntity();
+        boolean isFinishing = (attacker instanceof Infantry infantry) && (infantry.turnsLayingExplosives >= 0);
+        String text = isFinishing
+              ? Messages.getString("PhysicalDisplay.layExplosives.toast.finish",
+              attacker.getShortName(), LayExplosivesAttackAction.getDamageFor(attacker))
+              : Messages.getString("PhysicalDisplay.layExplosives.toast.start", attacker.getShortName());
+        clientgui.addToast(ToastLevel.INFO, text, attacker);
+    }
+
+    public void doBrush(Targetable brushTarget) {
+        target(brushTarget);
+        brush();
     }
 
     /**
@@ -1340,8 +1614,8 @@ public class PhysicalDisplay extends AttackPhaseDisplay {
 
         // If the entity can't brush off, display an error message and abort.
         if (!canHitLeft && !canHitRight) {
-            clientgui.doAlertDialog(Messages.getString("PhysicalDisplay.AlertDialog.title"),
-                  Messages.getString("PhysicalDisplay.AlertDialog.message"));
+            clientgui.addToast(ToastLevel.WARNING,
+                  Messages.getString("PhysicalDisplay.AlertDialog.message"), currentEntity());
             return;
         }
 
@@ -1370,7 +1644,8 @@ public class PhysicalDisplay extends AttackPhaseDisplay {
             damageLeft = BrushOffAttackAction.getDamageFor(currentEntity(), BrushOffAttackAction.LEFT);
             left = Messages.getString("PhysicalDisplay.LAHit",
                   toHitLeft.getValueAsString(),
-                  Compute.oddsAbove(toHitLeft.getValue(), currentEntity().hasAbility(OptionsConstants.PILOT_APTITUDE_PILOTING)),
+                  Compute.oddsAbove(toHitLeft.getValue(),
+                        currentEntity().hasAbility(OptionsConstants.PILOT_APTITUDE_PILOTING)),
                   damageLeft);
         }
 
@@ -1380,7 +1655,8 @@ public class PhysicalDisplay extends AttackPhaseDisplay {
             damageRight = BrushOffAttackAction.getDamageFor(currentEntity(), BrushOffAttackAction.RIGHT);
             right = Messages.getString("PhysicalDisplay.RAHit",
                   toHitRight.getValueAsString(),
-                  Compute.oddsAbove(toHitRight.getValue(), currentEntity().hasAbility(OptionsConstants.PILOT_APTITUDE_PILOTING)),
+                  Compute.oddsAbove(toHitRight.getValue(),
+                        currentEntity().hasAbility(OptionsConstants.PILOT_APTITUDE_PILOTING)),
                   damageRight);
         }
 
@@ -1541,7 +1817,6 @@ public class PhysicalDisplay extends AttackPhaseDisplay {
     public void target(Targetable t) {
         target = t;
         updateTarget();
-        ash.showDialog();
     }
 
     /**
@@ -1627,32 +1902,14 @@ public class PhysicalDisplay extends AttackPhaseDisplay {
 
                 // clubbing?
                 boolean canClub = false;
-                boolean canAim = false;
                 for (Mounted<?> club : currentEntity().getClubs()) {
                     if (club != null) {
                         ToHitData clubToHit = ClubAttackAction.toHit(game,
-                              currentEntity, target, club, ash.getAimTable(), false);
+                              currentEntity, target, club, ToHitData.HIT_NORMAL, false);
                         canClub |= (clubToHit.getValue() != TargetRoll.IMPOSSIBLE);
-                        // assuming S7 vibroswords count as swords and maces
-                        // count as hatchets
-                        if (club.getType().hasAnyFlag(MiscTypeFlag.S_SWORD,
-                              MiscTypeFlag.S_HATCHET,
-                              MiscTypeFlag.S_VIBRO_SMALL,
-                              MiscTypeFlag.S_VIBRO_MEDIUM,
-                              MiscTypeFlag.S_VIBRO_LARGE,
-                              MiscTypeFlag.S_MACE,
-                              MiscTypeFlag.S_LANCE,
-                              MiscTypeFlag.S_CHAIN_WHIP,
-                              MiscTypeFlag.S_RETRACTABLE_BLADE,
-                              MiscTypeFlag.S_SHIELD_LARGE,
-                              MiscTypeFlag.S_SHIELD_MEDIUM,
-                              MiscTypeFlag.S_SHIELD_SMALL)) {
-                            canAim = true;
-                        }
                     }
                 }
                 setClubEnabled(canClub);
-                ash.setCanAim(canAim);
 
                 // Thrash at infantry?
                 ToHitData thrash = new ThrashAttackAction(currentEntity, target)
@@ -1665,10 +1922,9 @@ public class PhysicalDisplay extends AttackPhaseDisplay {
                       target);
                 setProtoEnabled(proto.getValue() != TargetRoll.IMPOSSIBLE);
 
-                ToHitData explosives = LayExplosivesAttackAction.toHit(clientgui.getClient().getGame(),
-                      currentEntity,
-                      target);
-                setExplosivesEnabled(explosives.getValue() != TargetRoll.IMPOSSIBLE);
+                // Laying demolition charges always targets the structure in the unit's own hex, independent of
+                // the selected target (TO:AUE p.152)
+                setExplosivesEnabled(currentEntity().canLayDemolitionCharges());
 
                 // vibro attack?
                 ToHitData vibro = BAVibroClawAttackAction.toHit(clientgui.getClient().getGame(), currentEntity, target);
@@ -1751,6 +2007,13 @@ public class PhysicalDisplay extends AttackPhaseDisplay {
         }
 
         if (isMyTurn() && (event.getCoords() != null) && (currentEntity() != null)) {
+            // If we're selecting a hex for woods clearing, handle that instead of normal targeting
+            if (selectingClearWoodsHex) {
+                selectingClearWoodsHex = false;
+                completeClearWoods(event.getCoords(), event.getBoardId());
+                return;
+            }
+
             Targetable target = chooseTarget(event);
             target(target);
         }
@@ -1790,17 +2053,11 @@ public class PhysicalDisplay extends AttackPhaseDisplay {
         }
 
         // Add any iNarc pods attached to the entity if the attacker is targeting its own hex
-        if (attacker.getPosition().equals(pos)) {
-            Iterator<INarcPod> pods = attacker.getINarcPodsAttached();
-            while (pods.hasNext()) {
-                Targetable choice = pods.next();
-                targets.add(choice);
-            }
-        }
+        targets.addAll(getINarcPods(attacker, pos));
 
         if (targets.size() == 1) {
             // Return the single choice
-            return targets.get(0);
+            return targets.getFirst();
 
         } else if (targets.size() > 1) {
             // If we have multiple choices, display a selection dialog.
@@ -1932,6 +2189,8 @@ public class PhysicalDisplay extends AttackPhaseDisplay {
             proto();
         } else if (ev.getActionCommand().equals(PhysicalCommand.PHYSICAL_EXPLOSIVES.getCmd())) {
             explosives();
+        } else if (ev.getActionCommand().equals(PhysicalCommand.PHYSICAL_CLEAR_WOODS.getCmd())) {
+            clearWoods();
         } else if (ev.getActionCommand().equals(PhysicalCommand.PHYSICAL_VIBRO.getCmd())) {
             vibroclawAttack();
         } else if (ev.getActionCommand().equals(PhysicalCommand.PHYSICAL_PHEROMONE.getCmd())) {
@@ -2049,6 +2308,10 @@ public class PhysicalDisplay extends AttackPhaseDisplay {
         // clientGUI.getMenuBar().setExplosivesEnabled(enabled);
     }
 
+    public void setClearWoodsEnabled(boolean enabled) {
+        buttons.get(PhysicalCommand.PHYSICAL_CLEAR_WOODS).setEnabled(enabled);
+    }
+
     public void setNextEnabled(boolean enabled) {
         buttons.get(PhysicalCommand.PHYSICAL_NEXT).setEnabled(enabled);
         clientgui.getMenuBar().setEnabled(PhysicalCommand.PHYSICAL_NEXT.getCmd(), enabled);
@@ -2059,90 +2322,24 @@ public class PhysicalDisplay extends AttackPhaseDisplay {
         clientgui.getMenuBar().setEnabled(PhysicalCommand.PHYSICAL_SEARCHLIGHT.getCmd(), enabled);
     }
 
-    private class AimedShotHandler implements ActionListener, ItemListener {
-        private int aimingAt = -1;
-
-        private AimingMode aimingMode = AimingMode.NONE;
-
-        private AimedShotDialog asd;
-
-        private boolean canAim;
-
-        public AimedShotHandler() {
-            // no action
-        }
-
-        public int getAimTable() {
-            return switch (aimingAt) {
-                case 0 -> ToHitData.HIT_PUNCH;
-                case 1 -> ToHitData.HIT_KICK;
-                default -> ToHitData.HIT_NORMAL;
-            };
-        }
-
-        public void setCanAim(boolean v) {
-            canAim = v;
-        }
-
-        public void showDialog() {
-
-            if ((currentEntity() == null) || (target == null)) {
-                return;
-            }
-
-            if (asd != null) {
-                AimingMode oldAimingMode = aimingMode;
-                closeDialog();
-                aimingMode = oldAimingMode;
-            }
-
-            if (canAim) {
-                final int attackerElevation = currentEntity().getElevation() + game.getHexOf(currentEntity()).getLevel();
-                final int targetElevation = target.getElevation() + game.getHexOf(target).getLevel();
-
-                if ((target instanceof Mek) && (currentEntity() instanceof Mek) && (attackerElevation == targetElevation)) {
-                    String[] options = { "punch", "kick" };
-                    boolean[] enabled = { true, true };
-
-                    asd = new AimedShotDialog(clientgui.getFrame(),
-                          Messages.getString("PhysicalDisplay.AimedShotDialog.title"),
-                          Messages.getString("PhysicalDisplay.AimedShotDialog.message"),
-                          options,
-                          enabled,
-                          aimingAt,
-                          clientgui,
-                          target,
-                          this,
-                          this);
-
-                    asd.setVisible(true);
-                    updateTarget();
-                }
+    /**
+     * Helper method that allows us to get the list of iNarc pods in a given attacker's Coords,
+     * used by PhysicalDisplay and the MapMenu right-click menu.
+     *
+     * @param attacker  Should be the current entity for whom we're building attack data.
+     * @param pos       Coords of the hex to check; may not be the same as attacker.getPosition()
+     * @return          List of Targetables containing co-located iNarc pods
+     */
+    public static List<Targetable> getINarcPods(Entity attacker, Coords pos) {
+        List<Targetable> targets = new ArrayList<>();
+        // Add any iNarc pods attached to the entity if the attacker is targeting its own hex
+        if (attacker.getPosition().equals(pos)) {
+            Iterator<INarcPod> pods = attacker.getINarcPodsAttached();
+            while (pods.hasNext()) {
+                Targetable choice = pods.next();
+                targets.add(choice);
             }
         }
-
-        public void closeDialog() {
-            if (asd != null) {
-                aimingAt = Entity.LOC_NONE;
-                aimingMode = AimingMode.NONE;
-                asd.dispose();
-                asd = null;
-                updateTarget();
-            }
-        }
-
-        // ActionListener, listens to the button in the dialog.
-        @Override
-        public void actionPerformed(ActionEvent ev) {
-            closeDialog();
-        }
-
-        // ItemListener, listens to the radiobuttons in the dialog.
-        @Override
-        public void itemStateChanged(ItemEvent ev) {
-            IndexedRadioButton icb = (IndexedRadioButton) ev.getSource();
-            aimingAt = icb.getIndex();
-            updateTarget();
-        }
+        return targets;
     }
 }

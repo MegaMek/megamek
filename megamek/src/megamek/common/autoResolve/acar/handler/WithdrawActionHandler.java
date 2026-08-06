@@ -83,7 +83,7 @@ public class WithdrawActionHandler extends AbstractActionHandler {
             if (formationEntity != null) {
                 formationEntity.setRemovalCondition(IEntityRemovalConditions.REMOVE_IN_RETREAT);
                 formationEntity.setDeployed(false);
-                game().applyDamageToEntityFromUnit(withdrawFormation.getUnits().get(0),
+                game().applyDamageToEntityFromUnit(withdrawFormation.getUnits().getFirst(),
                       formationEntity,
                       EntityFinalState.CREW_AND_ENTITY_MUST_SURVIVE);
                 game().addUnitToGraveyard(formationEntity);

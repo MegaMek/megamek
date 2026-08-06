@@ -52,10 +52,11 @@ public class FileNameComboBoxModel implements ComboBoxModel<String> {
     private final List<File> files;
     private File selectedFile;
 
+    @Deprecated(since = "0.51.0", forRemoval = true)
     public FileNameComboBoxModel(List<File> files) {
         this.files = files;
         if (!files.isEmpty()) {
-            selectedFile = files.get(0);
+            selectedFile = files.getFirst();
         }
     }
 
@@ -63,7 +64,7 @@ public class FileNameComboBoxModel implements ComboBoxModel<String> {
         this.files = new ArrayList<>();
         if (files != null) {
             this.files.addAll(Arrays.asList(files));
-            this.selectedFile = this.files.get(0);
+            this.selectedFile = this.files.getFirst();
         }
     }
 

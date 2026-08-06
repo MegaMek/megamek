@@ -34,9 +34,9 @@
 package megamek.common.equipment.enums;
 
 
-import megamek.common.equipment.Engine;
-
 import java.io.Serializable;
+
+import megamek.common.equipment.Engine;
 
 /**
  * {@link megamek.common.units.MobileStructure} and {@link megamek.common.units.BuildingEntity} both have some unique
@@ -155,5 +155,9 @@ public enum StructureEngine implements Serializable {
 
     public double getBuildingWeightMultiplier() {
         return buildingWeightMultiplier;
+    }
+
+    public double getBaseCost() {
+        return baseCost;
     }
 }

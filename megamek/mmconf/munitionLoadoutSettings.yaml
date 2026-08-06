@@ -5,10 +5,10 @@
 ### Prohibitions apply equally to all factions and all munition types.
 ### E.g. adding "  - Smoke" would prevent SRM, LRM, and various Artillery bins from being loaded with Smoke ammo.
 Prohibited:
-  # Prohibited ammo will never be used by any faction.  Entries are indented one level and start with a hyphen:
-  # - Tandem-Charge
-  # - AlamoMissile Ammo
-  # - Davey Crockett-M
+# Prohibited ammo will never be used by any faction.  Entries are indented one level and start with a hyphen:
+# - Tandem-Charge
+# - AlamoMissile Ammo
+# - Davey Crockett-M
 
 ### This section defines override weights, which are applied after all other calculations but before supply checks.
 ### To create an override,
@@ -505,8 +505,8 @@ Defaults:
     pirateAntiBombLoad_LAA: 30
     pirateAntiBombLoad_AAA: 10
     # Sets the minimum + (0 ~ N) range of bomber units in a force that will be equipped.
-    percentBombersToEquipMin: 40
-    percentBombersToEquipRange: 60
+    percentBombersToEquipMin: 10
+    percentBombersToEquipRange: 20
     # For each Aerospace unit, if 1d6 is equal or below threshold, equip for CAP
     fightersLoadForCAPRollTargetThreshold: 1
     bomberMinUnarmedSafeThrustValue: 2

@@ -192,6 +192,7 @@ public class BLKVTOLFile extends BLKFile implements IMekLoader {
             t.setBaseChassisSponsonPintleWeight(dataFile.getDataAsDouble("baseChassisSponsonPintleWeight")[0]);
         }
         loadQuirks(t);
+        loadSlotlessEquipment(t);
         return t;
     }
 }

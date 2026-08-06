@@ -73,22 +73,27 @@ public enum WeaponSortOrder {
         return this == DEFAULT;
     }
 
+    @Deprecated(since = "0.51.0", forRemoval = true)
     public boolean isRangeLowHigh() {
         return this == RANGE_LOW_HIGH;
     }
 
+    @Deprecated(since = "0.51.0", forRemoval = true)
     public boolean isRangeHighLow() {
         return this == RANGE_HIGH_LOW;
     }
 
+    @Deprecated(since = "0.51.0", forRemoval = true)
     public boolean isDamageLowHigh() {
         return this == DAMAGE_LOW_HIGH;
     }
 
+    @Deprecated(since = "0.51.0", forRemoval = true)
     public boolean isDamageHighLow() {
         return this == DAMAGE_HIGH_LOW;
     }
 
+    @Deprecated(since = "0.51.0", forRemoval = true)
     public boolean isWeaponArc() {
         return this == WEAPON_ARC;
     }

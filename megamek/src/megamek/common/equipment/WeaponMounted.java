@@ -58,8 +58,32 @@ public class WeaponMounted extends Mounted<WeaponType> {
     private final List<Integer> bayWeapons = new ArrayList<>();
     private final List<Integer> bayAmmo = new ArrayList<>();
 
+    /**
+     * {@code true} when this mount is a unit's one-shot Disposable Weapon (TO:AuE p.116, Corrected Sixth Printing)
+     * rather than the same weapon type fired as a normal platoon/secondary weapon. Used to route the attack to
+     * {@code InfantryDisposableWeaponHandler} and to present the once-per-scenario disposable attack option.
+     */
+    private boolean disposableWeapon = false;
+
     public WeaponMounted(Entity entity, WeaponType type) {
         super(entity, type);
+    }
+
+    /**
+     * @return {@code true} if this mount is a unit's one-shot Disposable Weapon (TO:AuE p.116, Corrected Sixth
+     *       Printing)
+     */
+    public boolean isDisposableWeapon() {
+        return disposableWeapon;
+    }
+
+    /**
+     * Marks this mount as a one-shot Disposable Weapon (TO:AuE p.116, Corrected Sixth Printing).
+     *
+     * @param disposableWeapon whether this mount is a Disposable Weapon
+     */
+    public void setDisposableWeapon(boolean disposableWeapon) {
+        this.disposableWeapon = disposableWeapon;
     }
 
     @Override
@@ -228,6 +252,7 @@ public class WeaponMounted extends Mounted<WeaponType> {
      *
      * @param weapon The weapon to remove.
      */
+    @Deprecated(since = "0.51.0", forRemoval = true)
     public void removeWeaponFromBay(WeaponMounted weapon) {
         removeWeaponFromBay(weapon.getEquipmentNum());
     }
@@ -286,6 +311,7 @@ public class WeaponMounted extends Mounted<WeaponType> {
      *
      * @see Entity#getEquipmentNum(Mounted)
      */
+    @Deprecated(since = "0.51.0", forRemoval = true)
     public void removeAmmoFromBay(int equipmentNum) {
         bayAmmo.remove(Integer.valueOf(equipmentNum));
     }
@@ -354,6 +380,7 @@ public class WeaponMounted extends Mounted<WeaponType> {
      *
      * @return Whether the bay contains the equipment.
      */
+    @Deprecated(since = "0.51.0", forRemoval = true)
     public boolean bayContains(Mounted<?> mounted) {
         return bayContains(mounted.getEquipmentNum());
     }

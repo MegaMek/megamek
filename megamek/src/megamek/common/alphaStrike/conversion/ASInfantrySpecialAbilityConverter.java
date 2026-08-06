@@ -43,6 +43,7 @@ import megamek.common.equipment.MiscType;
 import megamek.common.equipment.Mounted;
 import megamek.common.equipment.enums.MiscTypeFlag;
 import megamek.common.options.OptionsConstants;
+import megamek.common.units.ConvInfantry;
 import megamek.common.units.Entity;
 import megamek.common.units.Infantry;
 
@@ -105,32 +106,33 @@ public class ASInfantrySpecialAbilityConverter extends ASSpecialAbilityConverter
             element.getSpecialAbilities().setSUA(UMU);
         }
 
-        if (infantry.hasSpecialization(Infantry.FIRE_ENGINEERS)) {
-            assign("Fire Engineers", FF);
-        }
-        if (infantry.hasSpecialization(Infantry.MINE_ENGINEERS)) {
-            assign("Mine Engineers", MSW);
-        }
-        if (infantry.hasSpecialization(Infantry.MOUNTAIN_TROOPS)) {
-            assign("Mountain Troops", MTN);
-        }
-        if (infantry.hasSpecialization(Infantry.PARATROOPS)) {
-            assign("Paratroopers", PAR);
-        }
-        if (infantry.hasSpecialization(Infantry.SCUBA)) {
-            assign("Scuba Gear", UMU);
-        }
-        if (infantry.hasSpecialization(Infantry.TRENCH_ENGINEERS)) {
-            assign("Trench Engineers", TRN);
+        if (infantry instanceof ConvInfantry convInfantry) {
+            if (convInfantry.hasSpecialization(ConvInfantry.FIRE_ENGINEERS)) {
+                assign("Fire Engineers", FF);
+            }
+            if (convInfantry.hasSpecialization(ConvInfantry.MINE_ENGINEERS)) {
+                assign("Mine Engineers", MSW);
+            }
+            if (convInfantry.hasSpecialization(ConvInfantry.MOUNTAIN_TROOPS)) {
+                assign("Mountain Troops", MTN);
+            }
+            if (convInfantry.hasSpecialization(ConvInfantry.PARATROOPS)) {
+                assign("Paratroopers", PAR);
+            }
+            if (convInfantry.hasSpecialization(ConvInfantry.SCUBA)) {
+                assign("Scuba Gear", UMU);
+            }
+            if (convInfantry.hasSpecialization(ConvInfantry.TRENCH_ENGINEERS)) {
+                assign("Trench Engineers", TRN);
+            }
         }
 
         if (entity.hasAbility(OptionsConstants.MD_TSM_IMPLANT)) {
             assign("TSM implants", TSI);
         }
         // CHECKSTYLE IGNORE ForbiddenWords FOR 2 LINES
-        if ((entity instanceof BattleArmor) && ((BattleArmor) entity).canDoMechanizedBA()) {
+        if ((entity instanceof BattleArmor battleArmor) && battleArmor.canDoMechanizedBA()) {
             assign("BA / Mech.", MEC);
         }
-
     }
 }

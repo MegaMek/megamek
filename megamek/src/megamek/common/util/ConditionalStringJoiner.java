@@ -58,6 +58,7 @@ public class ConditionalStringJoiner {
      *
      * @param delimiter the delimiter to use when joining strings
      */
+    @Deprecated(since = "0.51.0", forRemoval = true)
     public ConditionalStringJoiner(String delimiter) {
         this(delimiter, DEFAULT_CAPACITY);
     }
@@ -67,6 +68,7 @@ public class ConditionalStringJoiner {
      *
      * @param capacity the initial capacity of the ConditionalStringJoiner
      */
+    @Deprecated(since = "0.51.0", forRemoval = true)
     public ConditionalStringJoiner(int capacity) {
         this(DEFAULT_DELIMITER, capacity);
     }

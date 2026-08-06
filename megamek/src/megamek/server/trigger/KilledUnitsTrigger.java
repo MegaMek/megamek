@@ -37,12 +37,12 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
-import megamek.common.units.Entity;
+import megamek.common.Player;
+import megamek.common.annotations.Nullable;
 import megamek.common.game.Game;
 import megamek.common.game.IGame;
 import megamek.common.game.InGameObject;
-import megamek.common.Player;
-import megamek.common.annotations.Nullable;
+import megamek.common.units.Entity;
 import megamek.logging.MMLogger;
 
 /**
@@ -97,6 +97,7 @@ public class KilledUnitsTrigger implements Trigger {
      * @param unitIds         A list of Ids to limit the checked units to; when empty, all units are considered
      * @param killedUnitCount The count of killed units to react to
      */
+    @Deprecated(since = "0.51.0", forRemoval = true)
     public KilledUnitsTrigger(List<Integer> unitIds, int killedUnitCount) {
         this(null, unitIds, killedUnitCount, killedUnitCount);
     }

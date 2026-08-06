@@ -37,6 +37,8 @@ import java.awt.datatransfer.DataFlavor;
 import java.awt.datatransfer.Transferable;
 import java.awt.datatransfer.UnsupportedFlavorException;
 
+import jakarta.annotation.Nonnull;
+
 record ImageSelection(Image image) implements Transferable {
 
     @Override
@@ -50,6 +52,7 @@ record ImageSelection(Image image) implements Transferable {
     }
 
     @Override
+    @Nonnull
     public Object getTransferData(DataFlavor flavor) throws UnsupportedFlavorException {
         if (!DataFlavor.imageFlavor.equals(flavor)) {
             throw new UnsupportedFlavorException(flavor);

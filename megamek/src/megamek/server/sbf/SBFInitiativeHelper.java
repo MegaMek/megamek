@@ -40,12 +40,11 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
-import megamek.common.game.AbstractGame;
-import megamek.common.units.Deployable;
-import megamek.common.game.InGameObject;
 import megamek.common.Player;
 import megamek.common.Team;
 import megamek.common.enums.GamePhase;
+import megamek.common.game.AbstractGame;
+import megamek.common.game.InGameObject;
 import megamek.common.planetaryConditions.PlanetaryConditions;
 import megamek.common.strategicBattleSystems.SBFFormation;
 import megamek.common.strategicBattleSystems.SBFFormationTurn;
@@ -56,6 +55,7 @@ import megamek.common.strategicBattleSystems.SBFPublicReportEntry;
 import megamek.common.strategicBattleSystems.SBFReportEntry;
 import megamek.common.strategicBattleSystems.SBFReportHeader;
 import megamek.common.strategicBattleSystems.SBFTurn;
+import megamek.common.units.Deployable;
 
 public record SBFInitiativeHelper(SBFGameManager gameManager) implements SBFGameManagerHelper {
 
@@ -219,7 +219,7 @@ public record SBFInitiativeHelper(SBFGameManager gameManager) implements SBFGame
 
             // If there is only one non-observer player, list them as the 'team', and use the team initiative
             if (team.getNonObserverSize() == 1) {
-                final Player player = team.nonObserverPlayers().get(0);
+                final Player player = team.nonObserverPlayers().getFirst();
                 addReport(new SBFPlayerNameReportEntry(player));
                 addReport(new SBFPublicReportEntry(1015).noNL());
                 addReport(new SBFInitiativeRollReportEntry(team.getInitiative()));

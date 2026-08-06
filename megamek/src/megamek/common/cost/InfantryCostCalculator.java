@@ -36,11 +36,12 @@ package megamek.common.cost;
 import megamek.client.ui.clientGUI.calculationReport.CalculationReport;
 import megamek.common.enums.MDAugmentationType;
 import megamek.common.equipment.EquipmentType;
+import megamek.common.units.ConvInfantry;
 import megamek.common.units.Infantry;
 
 public class InfantryCostCalculator {
 
-    public static double calculateCost(Infantry infantry, CalculationReport costReport, boolean ignoreAmmo) {
+    public static double calculateCost(ConvInfantry infantry, CalculationReport costReport, boolean ignoreAmmo) {
         double[] costs = new double[15];
         int idx = 0;
 
@@ -67,7 +68,7 @@ public class InfantryCostCalculator {
         double armorCost = 0;
         EquipmentType armor = infantry.getArmorKit();
         if (armor != null) {
-            armorCost = armor.getCost(infantry, false, Infantry.LOC_INFANTRY);
+            armorCost = armor.getCost(infantry, false, ConvInfantry.LOC_INFANTRY);
         } else {
             // add in infantry armor cost
             if (infantry.getCustomArmorDamageDivisor() > 1) {
@@ -145,7 +146,7 @@ public class InfantryCostCalculator {
         }
 
         // Multiply by number of troopers (costs are per-trooper)
-        int troopers = infantry.getOInternal(Infantry.LOC_INFANTRY);
+        int troopers = infantry.getOInternal(ConvInfantry.LOC_INFANTRY);
         return perTrooperCost * troopers;
     }
 }

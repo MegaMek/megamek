@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2025 The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2025-2026 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -50,7 +50,7 @@ import megamek.common.actions.ArtilleryAttackAction;
 import megamek.common.actions.WeaponAttackAction;
 import megamek.common.board.Board;
 import megamek.common.board.Coords;
-import megamek.common.compute.Compute;
+import megamek.common.compute.scatter.ScatterMethod;
 import megamek.common.enums.GamePhase;
 import megamek.common.game.Game;
 import megamek.common.loaders.EntityLoadingException;
@@ -173,9 +173,11 @@ public class CapitalLaserBayOrbitalBombardmentHandler extends BayWeaponHandler {
             while (numWeaponsHit > 0) {
                 // Scatter individual weapons (not sure where this is applicable)
                 // Scatter distance, see SO:AA, p.91; I decided to have Oblique Artilleryman (CO, p.78) not apply to
-                // Capital Laser Weapons as they are not "artillery pieces"
-                int scatterDistance = 2 * Math.abs(toHit.getMoS());
-                Coords scatteredPosition = Compute.scatterDirectArty(target.getPosition(), scatterDistance);
+                // Capital Laser Weapons as they are not "artillery pieces".
+                int standardDistance = 2 * Math.abs(toHit.getMoS());
+                Coords scatteredPosition = ScatterMethod.forGame(game)
+                      .omnidirectional(target.getPosition(), standardDistance, toHit.getMoS(), 0)
+                      .landing();
                 if (board.contains(scatteredPosition)) {
                     actualHits.add(scatteredPosition);
                     // misses and scatters to another hex

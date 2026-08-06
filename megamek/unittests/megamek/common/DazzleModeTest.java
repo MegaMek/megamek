@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2025 The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2025-2026 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -33,11 +33,14 @@
 
 package megamek.common;
 
-import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
 
 import megamek.common.equipment.EquipmentType;
-import megamek.common.equipment.WeaponType;
+import megamek.common.equipment.Mounted;
 import megamek.common.options.GameOptions;
 import megamek.common.options.OptionsConstants;
 import megamek.common.weapons.lasers.LaserWeapon;
@@ -59,14 +62,14 @@ class DazzleModeTest {
     @Test
     void testDazzleModeAddedWhenGothicOptionEnabled() {
         // Create a laser weapon
-        WeaponType weapon = new ISERLaserLarge();
+        LaserWeapon weapon = new ISERLaserLarge();
 
         // Create game options with Gothic Dazzle Mode enabled
         GameOptions options = new GameOptions();
         options.getOption(OptionsConstants.ADVANCED_COMBAT_GOTHIC_DAZZLE_MODE).setValue(true);
 
         // Apply game options to weapon
-        ((LaserWeapon) weapon).adaptToGameOptions(options);
+        weapon.adaptToGameOptions(options);
 
         // Verify Dazzle mode was added
         boolean hasDazzleMode = false;
@@ -83,14 +86,14 @@ class DazzleModeTest {
     @Test
     void testDazzleModeNotAddedWhenGothicOptionDisabled() {
         // Create a laser weapon
-        WeaponType weapon = new ISERLaserLarge();
+        LaserWeapon weapon = new ISERLaserLarge();
 
         // Create game options with Gothic Dazzle Mode disabled
         GameOptions options = new GameOptions();
         options.getOption(OptionsConstants.ADVANCED_COMBAT_GOTHIC_DAZZLE_MODE).setValue(false);
 
         // Apply game options to weapon
-        ((LaserWeapon) weapon).adaptToGameOptions(options);
+        weapon.adaptToGameOptions(options);
 
         // Verify Dazzle mode was NOT added (only Pulse modes should be present)
         boolean hasDazzleMode = false;
@@ -101,20 +104,20 @@ class DazzleModeTest {
             }
         }
 
-        assertTrue(!hasDazzleMode, "Dazzle mode should NOT be added when Gothic option is disabled");
+        assertFalse(hasDazzleMode, "Dazzle mode should NOT be added when Gothic option is disabled");
     }
 
     @Test
     void testDazzleModeNameFormat() {
         // Create a laser weapon
-        WeaponType weapon = new ISERLaserLarge();
+        LaserWeapon weapon = new ISERLaserLarge();
 
         // Create game options with Gothic Dazzle Mode enabled
         GameOptions options = new GameOptions();
         options.getOption(OptionsConstants.ADVANCED_COMBAT_GOTHIC_DAZZLE_MODE).setValue(true);
 
         // Apply game options to weapon
-        ((LaserWeapon) weapon).adaptToGameOptions(options);
+        weapon.adaptToGameOptions(options);
 
         // Find and verify the Dazzle mode name
         String dazzleModeName = null;
@@ -131,14 +134,14 @@ class DazzleModeTest {
     @Test
     void testDazzleModeOrderBeforePulse() {
         // Create a laser weapon
-        WeaponType weapon = new ISERLaserLarge();
+        LaserWeapon weapon = new ISERLaserLarge();
 
         // Create game options with Gothic Dazzle Mode enabled
         GameOptions options = new GameOptions();
         options.getOption(OptionsConstants.ADVANCED_COMBAT_GOTHIC_DAZZLE_MODE).setValue(true);
 
         // Apply game options to weapon
-        ((LaserWeapon) weapon).adaptToGameOptions(options);
+        weapon.adaptToGameOptions(options);
 
         // Verify mode order: Dazzle should come before Pulse
         int dazzleIndex = -1;
@@ -158,6 +161,40 @@ class DazzleModeTest {
         assertTrue(dazzleIndex >= 0, "Dazzle mode should exist");
         assertTrue(firstPulseIndex >= 0, "Pulse mode should exist");
         assertTrue(dazzleIndex < firstPulseIndex, "Dazzle mode should come before Pulse mode for proper filtering");
+    }
+
+    @Test
+    void testGetModesCountExcludesPulseModes() {
+        // Regression guard for LaserWeapon.getModesCount(Mounted): it must return only the non-Pulse
+        // modes. A non-pulse laser has "Pulse ..." modes appended, so the filtered count must be smaller
+        // than the full mode list. Independently re-counts via getModes() to catch off-by-one errors.
+        LaserWeapon weapon = new ISERLaserLarge();
+
+        GameOptions options = new GameOptions();
+        options.getOption(OptionsConstants.ADVANCED_COMBAT_GOTHIC_DAZZLE_MODE).setValue(true);
+        weapon.adaptToGameOptions(options);
+
+        // A Mounted with nothing linked exercises the filtered-count path (no RISC pulse module).
+        Mounted<?> mounted = mock(Mounted.class);
+        when(mounted.getLinkedBy()).thenReturn(null);
+
+        int totalModes = 0;
+        int expectedNonPulseModes = 0;
+        int pulseModes = 0;
+        for (var mode : java.util.Collections.list(weapon.getModes())) {
+            totalModes++;
+            if (mode.getName().startsWith("Pulse")) {
+                pulseModes++;
+            } else {
+                expectedNonPulseModes++;
+            }
+        }
+
+        assertTrue(pulseModes > 0, "Test setup should produce at least one Pulse mode to filter");
+        assertEquals(expectedNonPulseModes, weapon.getModesCount(mounted),
+              "getModesCount should count only non-Pulse modes");
+        assertTrue(weapon.getModesCount(mounted) < totalModes,
+              "Filtered mode count should be smaller than the full mode list");
     }
 
     @Test

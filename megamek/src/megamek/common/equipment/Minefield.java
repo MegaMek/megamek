@@ -53,6 +53,8 @@ public class Minefield implements Serializable, Cloneable {
     public static final int TYPE_ACTIVE = 3;
     public static final int TYPE_EMP = 4;
     public static final int TYPE_INFERNO = 5;
+    public static final int TYPE_TRIPWIRE = 6;
+    public static final int TYPE_PITFALL = 7;
 
     public static final int TRIGGER_NONE = 0;
 
@@ -78,7 +80,7 @@ public class Minefield implements Serializable, Cloneable {
     public static final String FILENAME_IMAGE = "minefieldsign.gif";
 
     private static final String[] names = { "Conventional", "Command-detonated", "Vibrabomb", "Active", "EMP",
-                                            "Inferno" };
+                                            "Inferno", "Tripwire", "Pitfall" };
     //"Thunder", "Thunder-Inferno", "Thunder-Active",
     //"Thunder-Vibrabomb" };
 
@@ -201,6 +203,13 @@ public class Minefield implements Serializable, Cloneable {
      *
      */
     public int getTrigger() {
+    	// Pitfall traps as defined in 1654 - Fourth Succession Wars have a simple target number of 4
+    	if (type == TYPE_PITFALL) {
+    		return 4;
+    	} else if (type == TYPE_ACTIVE) {
+    		return 9;
+    	}
+    	
         if (density < 15) {
             return 9;
         } else if (density < 25) {
@@ -210,10 +219,12 @@ public class Minefield implements Serializable, Cloneable {
         }
     }
 
+    @Deprecated(since = "0.51.0", forRemoval = true)
     public boolean isSeaBased() {
         return sea;
     }
 
+    @Deprecated(since = "0.51.0", forRemoval = true)
     public boolean isOneUse() {
         return oneUse;
     }

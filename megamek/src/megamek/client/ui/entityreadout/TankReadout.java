@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2025 The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2025-2026 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -45,7 +45,6 @@ class TankReadout extends GeneralEntityReadout {
     private final Tank tank;
 
     protected TankReadout(Tank tank, boolean showDetail, boolean useAlternateCost, boolean ignorePilotBV) {
-
         super(tank, showDetail, useAlternateCost, ignorePilotBV);
         this.tank = tank;
     }

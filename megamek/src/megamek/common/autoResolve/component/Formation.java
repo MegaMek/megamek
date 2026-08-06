@@ -72,6 +72,7 @@ public class Formation extends SBFFormation {
         return beingTargetedBy.size();
     }
 
+    @Deprecated(since = "0.51.0", forRemoval = true)
     public int getStartingSize() {
         return startingSize;
     }
@@ -116,6 +117,7 @@ public class Formation extends SBFFormation {
         return engagementControl;
     }
 
+    @Deprecated(since = "0.51.0", forRemoval = true)
     public void setEngagementControl(EngagementControl engagementControl) {
         this.engagementControl = engagementControl;
     }
@@ -124,10 +126,12 @@ public class Formation extends SBFFormation {
         return targetFormationId;
     }
 
+    @Deprecated(since = "0.51.0", forRemoval = true)
     public boolean isUnitIsCrippledLatch() {
         return unitIsCrippledLatch;
     }
 
+    @Deprecated(since = "0.51.0", forRemoval = true)
     public void setUnitIsCrippledLatch(boolean unitIsCrippledLatch) {
         this.unitIsCrippledLatch = unitIsCrippledLatch;
     }
@@ -144,10 +148,12 @@ public class Formation extends SBFFormation {
         return this.clanFormation;
     }
 
+    @Deprecated(since = "0.51.0", forRemoval = true)
     public boolean isEngagementControlFailed() {
         return engagementControlFailed;
     }
 
+    @Deprecated(since = "0.51.0", forRemoval = true)
     public void setEngagementControlFailed(boolean engagementControlFailed) {
         this.engagementControlFailed = engagementControlFailed;
     }
@@ -330,10 +336,12 @@ public class Formation extends SBFFormation {
         this.withdrawing = withdrawing;
     }
 
+    @Deprecated(since = "0.51.0", forRemoval = true)
     public InitiativeRoll getInitiativeRoll() {
         return initiativeRoll;
     }
 
+    @Deprecated(since = "0.51.0", forRemoval = true)
     public void setInitiativeRoll(InitiativeRoll initiativeRoll) {
         this.initiativeRoll = initiativeRoll;
     }

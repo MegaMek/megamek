@@ -52,6 +52,7 @@ public class ManagedVolatileImage {
     private final int transparency;
     private final GraphicsConfiguration gc;
 
+    @Deprecated(since = "0.51.0", forRemoval = true)
     public ManagedVolatileImage(Image sourceImage) {
         this(sourceImage, Transparency.TRANSLUCENT);
     }

@@ -37,6 +37,7 @@ import java.io.Serializable;
 import java.util.List;
 import java.util.StringJoiner;
 
+import jakarta.annotation.Nonnull;
 import megamek.common.Messages;
 
 /**
@@ -195,6 +196,7 @@ public record InfantryMount(String name, BeastSize size, double weight, int move
     }
 
     @Override
+    @Nonnull
     public String toString() {
         if (custom) {
             StringJoiner sj = new StringJoiner(",");

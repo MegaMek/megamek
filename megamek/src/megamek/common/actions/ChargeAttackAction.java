@@ -45,7 +45,8 @@ import megamek.common.ToHitData;
 import megamek.common.board.Coords;
 import megamek.common.compute.Compute;
 import megamek.common.enums.MoveStepType;
-import megamek.common.equipment.GunEmplacement;
+import megamek.common.equipment.MiscType;
+import megamek.common.equipment.enums.MiscTypeFlag;
 import megamek.common.game.Game;
 import megamek.common.interfaces.ILocationExposureStatus;
 import megamek.common.moves.MovePath;
@@ -218,11 +219,13 @@ public class ChargeAttackAction extends DisplacementAttackAction {
                 return new ToHitData(TargetRoll.IMPOSSIBLE, "Target is prone");
             }
         } else if (te instanceof Infantry) {
-            // Can't charge infantry.
-            return new ToHitData(TargetRoll.IMPOSSIBLE, "Target is infantry");
+            // Can't charge infantry unless vehicle has a front-mounted saw (TM pp.241-243)
+            if (!hasFrontMountedSaw(attackingEntity)) {
+                return new ToHitData(TargetRoll.IMPOSSIBLE, "Target is infantry");
+            }
         } else if (te instanceof ProtoMek) {
             // Can't charge ProtoMeks.
-            return new ToHitData(TargetRoll.IMPOSSIBLE, "Target is ProtoM<ech");
+            return new ToHitData(TargetRoll.IMPOSSIBLE, "Target is ProtoMek");
         }
 
         // target must be within 1 elevation level
@@ -345,6 +348,11 @@ public class ChargeAttackAction extends DisplacementAttackAction {
 
         Compute.modifyPhysicalBTHForAdvantages(attackingEntity, te, toHit, game);
 
+        // Front-mounted saw charge modifier (TM pp.241-243)
+        if (hasFrontMountedSaw(attackingEntity)) {
+            toHit.addModifier(1, "front-mounted saw charge");
+        }
+
         // evading bonuses (
         if (te.isEvading()) {
             toHit.addModifier(te.getEvasionBonus(), "target is evading");
@@ -355,7 +363,15 @@ public class ChargeAttackAction extends DisplacementAttackAction {
 
         // all charges resolved against full-body table, except vehicles
         // and charges against meks in water partial cover
-        if ((targHex.terrainLevel(Terrains.WATER) == te.height())
+        if (hasFrontMountedSaw(attackingEntity) && (te instanceof Mek)) {
+            // Front-mounted saw charge: Kick Location Table for standing, full table for prone
+            // (TM pp.241-243)
+            if (te.isProne()) {
+                toHit.setHitTable(ToHitData.HIT_NORMAL);
+            } else {
+                toHit.setHitTable(ToHitData.HIT_KICK);
+            }
+        } else if ((targHex.terrainLevel(Terrains.WATER) == te.height())
               && (te.getElevation() == -1) && (te.height() > 0)) {
             toHit.setHitTable(ToHitData.HIT_PUNCH);
         } else if (attackingEntity.getHeight() < target.getHeight()) {
@@ -546,14 +562,104 @@ public class ChargeAttackAction extends DisplacementAttackAction {
         // (same as buildings which have no tonnage)
         double effectiveTargetWeight = (target instanceof Dropship) ? entity.getWeight() : target.getWeight();
 
+        int damageTaken;
         if (!tacOps) {
-            return (int) Math
+            damageTaken = (int) Math
                   .ceil((effectiveTargetWeight / 10.0)
                         * (entity.getLocationStatus(1) == ILocationExposureStatus.WET ? 0.5 : 1));
+        } else {
+            damageTaken = (int) Math
+                  .floor((((effectiveTargetWeight * entity.getWeight()) * distance)
+                        / (effectiveTargetWeight + entity.getWeight())) / 10);
         }
-        return (int) Math
-              .floor((((effectiveTargetWeight * entity.getWeight()) * distance)
-                    / (effectiveTargetWeight + entity.getWeight())) / 10);
+
+        // A charging bulldozer takes half the usual damage, rounded down (TacOps). This stacks
+        // multiplicatively with the half-damage already applied above for charging through water.
+        if (entity.hasWorkingBulldozer()) {
+            damageTaken = (int) Math.floor(damageTaken * 0.5);
+        }
+
+        return damageTaken;
+    }
+
+    /**
+     * Returns the charge damage dealt to a building hex, doubled when the attacker mounts a front-mounted bulldozer.
+     *
+     * <p>Per TacOps, a vehicle with a front-mounted bulldozer doubles the standard charging damage it inflicts
+     * on a building hex. The damage to any infantry inside the building is unaffected.</p>
+     *
+     * @param attacker   the charging entity
+     * @param baseDamage the standard charge damage against the building
+     *
+     * @return the charge damage to apply to the building, doubled for a front-mounted bulldozer
+     */
+    public static int getBuildingChargeDamage(Entity attacker, int baseDamage) {
+        return attacker.hasFrontMountedBulldozer() ? (baseDamage * 2) : baseDamage;
+    }
+
+    /**
+     * Checks if the given entity is a vehicle with a front-mounted chainsaw or dual saw.
+     *
+     * <p>Per TM pp.241-243, a front-mounted saw on a vehicle can be used in a modified
+     * charge attack.</p>
+     *
+     * @param entity the entity to check
+     *
+     * @return true if the entity is a Tank with a working front-mounted chainsaw or dual saw
+     */
+    public static boolean hasFrontMountedSaw(Entity entity) {
+        return entity.hasFrontMountedSaw();
+    }
+
+    /**
+     * Returns the damage dealt by a vehicle saw charge attack.
+     *
+     * <p>Per TM p.241, a front-mounted chainsaw deals 5 damage, and per TM p.243 a front-mounted
+     * dual saw deals 7 damage. Against conventional infantry, both deal 1d6 damage applied as
+     * infantry-on-infantry.</p>
+     *
+     * <p>If the attacker has both a dual saw and chainsaw, the dual saw takes priority
+     * (higher damage).</p>
+     *
+     * @param attacker the charging vehicle
+     * @param target   the target entity
+     *
+     * @return the flat damage for the saw charge, or 0 if no front-mounted saw
+     */
+    public static int getSawChargeDamage(Entity attacker, Entity target) {
+        if (!attacker.hasFrontMountedSaw()) {
+            return 0;
+        }
+        // Check dual saw first (higher damage takes priority)
+        if (attacker.hasWorkingMisc(MiscType.F_CLUB, MiscTypeFlag.S_DUAL_SAW, Tank.LOC_FRONT)) {
+            return target.isConventionalInfantry() ? Compute.d6() : 7;
+        }
+        if (attacker.hasWorkingMisc(MiscType.F_CLUB, MiscTypeFlag.S_CHAINSAW, Tank.LOC_FRONT)) {
+            return target.isConventionalInfantry() ? Compute.d6() : 5;
+        }
+        return 0;
+    }
+
+    /**
+     * Returns the maximum (non-random) damage for a vehicle saw charge, used for damage display in the UI. Does not
+     * roll dice for infantry targets.
+     *
+     * @param attacker the charging vehicle
+     * @param target   the target entity
+     *
+     * @return the flat damage value (5 or 7), or 0 if no front-mounted saw
+     */
+    public static int getMaxSawChargeDamage(Entity attacker, Entity target) {
+        if (!attacker.hasFrontMountedSaw()) {
+            return 0;
+        }
+        if (attacker.hasWorkingMisc(MiscType.F_CLUB, MiscTypeFlag.S_DUAL_SAW, Tank.LOC_FRONT)) {
+            return target.isConventionalInfantry() ? 6 : 7;
+        }
+        if (attacker.hasWorkingMisc(MiscType.F_CLUB, MiscTypeFlag.S_CHAINSAW, Tank.LOC_FRONT)) {
+            return target.isConventionalInfantry() ? 6 : 5;
+        }
+        return 0;
     }
 
     @Override

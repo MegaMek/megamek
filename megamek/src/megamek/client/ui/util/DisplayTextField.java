@@ -47,6 +47,7 @@ public class DisplayTextField extends JTextField {
         initialize();
     }
 
+    @Deprecated(since = "0.51.0", forRemoval = true)
     public DisplayTextField(String text) {
         super(text);
         initialize();
@@ -62,6 +63,7 @@ public class DisplayTextField extends JTextField {
         initialize();
     }
 
+    @Deprecated(since = "0.51.0", forRemoval = true)
     public DisplayTextField(Document doc, String text, int columns) {
         super(doc, text, columns);
         initialize();

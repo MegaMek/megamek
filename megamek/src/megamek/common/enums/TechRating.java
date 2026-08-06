@@ -36,6 +36,8 @@ package megamek.common.enums;
 import java.util.HashMap;
 import java.util.Map;
 
+import megamek.logging.MMLogger;
+
 // --- Tech Rating Enum ---
 public enum TechRating {
     A(0, "A"),
@@ -44,6 +46,8 @@ public enum TechRating {
     D(3, "D"),
     E(4, "E"),
     F(5, "F");
+
+    private static final MMLogger logger = MMLogger.create(TechRating.class);
 
     private final int index;
     private final String name;
@@ -95,9 +99,16 @@ public enum TechRating {
         return this.index >= other.index;
     }
 
+    public static boolean isValidIndex(int idx) {
+        return INDEX_LOOKUP.containsKey(idx);
+    }
+
     public static TechRating fromIndex(int idx) {
         TechRating tr = INDEX_LOOKUP.get(idx);
-        if (tr == null) {throw new IllegalArgumentException("Invalid TechRating index: " + idx);}
+        if (tr == null) {
+            logger.warn("Invalid TechRating index: {} (valid range 0-5). Defaulting to C.", idx);
+            return C;
+        }
         return tr;
     }
 

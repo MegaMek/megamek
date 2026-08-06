@@ -46,8 +46,8 @@ import megamek.common.compute.ComputeECM;
 import megamek.common.game.Game;
 import megamek.common.options.OptionsConstants;
 import megamek.common.planetaryConditions.PlanetaryConditions;
+import megamek.common.units.ConvInfantry;
 import megamek.common.units.Entity;
-import megamek.common.units.Infantry;
 import megamek.common.units.Terrains;
 
 /**
@@ -242,9 +242,9 @@ public record Sensor(int type) implements Serializable {
             return mod;
         }
 
-        boolean hasSneak = te.isConventionalInfantry() && (((Infantry) te).hasSneakCamo()
-              || ((Infantry) te).hasSneakIR() || ((Infantry) te).hasDEST());
-        boolean hasSneakECM = te.isConventionalInfantry() && ((Infantry) te).hasSneakECM();
+        boolean hasSneak = te instanceof ConvInfantry infantry && (infantry.hasSneakCamo()
+              || infantry.hasSneakIR() || infantry.hasDEST());
+        boolean hasSneakECM = te instanceof ConvInfantry infantry && infantry.hasSneakECM();
 
         // these are cumulative, so lets just plow through the table on pg. 224 (ick)
         switch (type) {

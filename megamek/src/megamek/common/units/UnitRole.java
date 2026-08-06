@@ -160,6 +160,7 @@ public enum UnitRole {
      *
      * @return Boolean value indicating whether the unit meets the qualifications for this role.
      */
+    @Deprecated(since = "0.51.0", forRemoval = true)
     public boolean qualifiesForRole(Entity entity) {
         return qualifiesForRole(ASConverter.convert(entity), 0);
     }
@@ -177,6 +178,7 @@ public enum UnitRole {
      *
      * @return Boolean value indicating whether the unit meets the qualifications for this role.
      */
+    @Deprecated(since = "0.51.0", forRemoval = true)
     public boolean qualifiesForRole(Entity entity, double tolerance) {
         return qualifiesForRole(ASConverter.convert(entity), tolerance);
     }
@@ -191,6 +193,7 @@ public enum UnitRole {
      *
      * @return Boolean value indicating whether the unit meets the qualifications for this role.
      */
+    @Deprecated(since = "0.51.0", forRemoval = true)
     public boolean qualifiesForRole(AlphaStrikeElement unit) {
         return qualifiesForRole(unit, 0);
     }

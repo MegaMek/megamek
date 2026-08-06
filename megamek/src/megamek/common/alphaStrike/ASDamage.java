@@ -94,6 +94,7 @@ public class ASDamage implements Serializable {
      * Creates an AlphaStrike damage value that may be minimal damage, i.e. 0*. When 0 &lt; damageValue &lt; 0.5, the
      * result will be minimal damage. Otherwise, damageValue is rounded normally (a negative damageValue is set to 0).
      */
+    @Deprecated(since = "0.51.0", forRemoval = true)
     public static ASDamage createRoundedNormal(double dmg) {
         return new ASDamage(dmg);
     }

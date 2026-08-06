@@ -240,30 +240,37 @@ public class TurnVectors implements Enumeration<ITurnOrdered> {
         return normal_turns.size();
     }
 
+    @Deprecated(since = "0.51.0", forRemoval = true)
     public int getSpaceStationTurns() {
         return space_station_turns.size();
     }
 
+    @Deprecated(since = "0.51.0", forRemoval = true)
     public int getJumpshipTurns() {
         return jumpship_turns.size();
     }
 
+    @Deprecated(since = "0.51.0", forRemoval = true)
     public int getWarshipTurns() {
         return warship_turns.size();
     }
 
+    @Deprecated(since = "0.51.0", forRemoval = true)
     public int getDropshipTurns() {
         return dropship_turns.size();
     }
 
+    @Deprecated(since = "0.51.0", forRemoval = true)
     public int getSmallCraftTurns() {
         return small_craft_turns.size();
     }
 
+    @Deprecated(since = "0.51.0", forRemoval = true)
     public int getTelemissileTurns() {
         return telemissile_turns.size();
     }
 
+    @Deprecated(since = "0.51.0", forRemoval = true)
     public int getAeroTurns() {
         return aero_turns.size();
     }
@@ -504,6 +511,7 @@ public class TurnVectors implements Enumeration<ITurnOrdered> {
      *
      * @return the "telemissile" <code>TurnOrdered</code> marker.
      */
+    @Deprecated(since = "0.51.0", forRemoval = true)
     public ITurnOrdered nextTelemissileElement() {
         return this.getTurnTelemissileEnum().nextElement();
     }
@@ -513,6 +521,7 @@ public class TurnVectors implements Enumeration<ITurnOrdered> {
      *
      * @return <code>true</code> if we've read all turn markers.
      */
+    @Deprecated(since = "0.51.0", forRemoval = true)
     public boolean hasMoreTelemissileElements() {
         return this.getTurnTelemissileEnum().hasMoreElements();
     }

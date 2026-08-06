@@ -71,12 +71,12 @@ import megamek.client.ui.util.UIUtil;
 import megamek.client.ui.widget.MegaMekButton;
 import megamek.client.ui.widget.SkinSpecification;
 import megamek.client.ui.widget.SkinXMLHandler;
-import megamek.common.game.Game;
-import megamek.common.game.IGame;
 import megamek.common.KeyBindParser;
 import megamek.common.Player;
-import megamek.common.interfaces.PlayerTurn;
 import megamek.common.annotations.Nullable;
+import megamek.common.game.Game;
+import megamek.common.game.IGame;
+import megamek.common.interfaces.PlayerTurn;
 import megamek.common.preference.IPreferenceChangeListener;
 import megamek.common.preference.PreferenceChangeEvent;
 
@@ -312,7 +312,7 @@ public abstract class StatusBarPhaseDisplay extends AbstractPhaseDisplay
     protected void setupStatusBar(String statusInfo) {
         SkinSpecification pdSkinSpec = SkinXMLHandler.getSkin(SkinSpecification.UIComponents.PhaseDisplay.getComp());
         labStatus = new JLabel(statusInfo, SwingConstants.CENTER);
-        labStatus.setForeground(pdSkinSpec.fontColors.get(0));
+        labStatus.setForeground(pdSkinSpec.fontColors.getFirst());
         panStatus.add(labStatus);
     }
 

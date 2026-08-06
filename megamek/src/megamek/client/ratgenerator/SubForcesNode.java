@@ -34,6 +34,8 @@ package megamek.client.ratgenerator;
 
 import java.util.ArrayList;
 
+import megamek.codeUtilities.MathUtility;
+import megamek.logging.MMLogger;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
@@ -44,6 +46,8 @@ import org.w3c.dom.NodeList;
  * @author Neoancient
  */
 public class SubForcesNode extends RulesetNode {
+    private static final MMLogger LOGGER = MMLogger.create(SubForcesNode.class);
+
     String altFaction;
     boolean parentFaction;
     ArrayList<ValueNode> subForces;
@@ -56,6 +60,7 @@ public class SubForcesNode extends RulesetNode {
         optionSubForces = new ArrayList<>();
     }
 
+    @Deprecated(since = "0.51.0", forRemoval = true)
     public ArrayList<ForceDescriptor> generateSubForces(ForceDescriptor forceDescriptor) {
         return generateSubForces(forceDescriptor, false);
     }
@@ -75,14 +80,14 @@ public class SubForcesNode extends RulesetNode {
                         continue;
                     }
                     ForceDescriptor sub = forceDescriptor.createChild(i);
-                    sub.setEchelon(Integer.parseInt(valueNode.getContent()));
+                    sub.setEchelon(parseEchelon(valueNode.getContent()));
                     apply(sub, i);
                     valueNode.apply(sub, i);
                     subs.add(sub);
                 }
                 if (!isAttached && forceDescriptor.getSizeMod() == ForceDescriptor.REINFORCED) {
                     ForceDescriptor sub = forceDescriptor.createChild(subs.size());
-                    sub.setEchelon(Integer.parseInt(valueNode.getContent()));
+                    sub.setEchelon(parseEchelon(valueNode.getContent()));
                     apply(sub, valueNode.getNum() / 2);
                     valueNode.apply(sub, valueNode.getNum() / 2);
                     subs.add(sub);
@@ -94,47 +99,81 @@ public class SubForcesNode extends RulesetNode {
                 }
             }
         }
-        for (OptionGroupNode n : optionSubForces) {
-            if (n.matches(forceDescriptor)) {
-                ValueNode vn = n.selectOption(forceDescriptor);
-                if (vn != null) {
+        for (OptionGroupNode optionGroup : optionSubForces) {
+            if (optionGroup.matches(forceDescriptor)) {
+                ValueNode valueNode = optionGroup.selectOption(forceDescriptor);
+                if (valueNode != null) {
+                    if (isAttached) {
+                        LOGGER.debug("[ForceGen][Attached] subforceOption picked: parentEschelon={} " +
+                                    "parentUnitType={} parentName='{}' optionContent='{}' optionUnitType='{}' " +
+                                    "optionName='{}' optionNum={}",
+                              forceDescriptor.getEchelon(), forceDescriptor.getUnitType(),
+                              forceDescriptor.getName(), valueNode.getContent(),
+                              valueNode.assertions.getProperty("unitType"),
+                              valueNode.assertions.getProperty("name"), valueNode.getNum());
+                    }
                     ArrayList<ForceDescriptor> subs = new ArrayList<>();
-                    for (int i = 0; i < vn.getNum(); i++) {
+                    for (int i = 0; i < valueNode.getNum(); i++) {
                         if (forceDescriptor.getSizeMod() == ForceDescriptor.UNDERSTRENGTH
-                              && i == vn.getNum() / 2) {
+                              && i == valueNode.getNum() / 2) {
                             continue;
                         }
                         ForceDescriptor sub = forceDescriptor.createChild(i);
-                        if (vn.getContent().endsWith("+")) {
+                        if (valueNode.getContent().endsWith("+")) {
                             sub.setSizeMod(ForceDescriptor.REINFORCED);
-                            sub.setEchelon(Integer.parseInt(vn.getContent().replace("+", "")));
-                        } else if (vn.getContent().endsWith("-")) {
+                            sub.setEchelon(parseEchelon(valueNode.getContent().replace("+", "")));
+                        } else if (valueNode.getContent().endsWith("-")) {
                             sub.setSizeMod(ForceDescriptor.UNDERSTRENGTH);
-                            sub.setEchelon(Integer.parseInt(vn.getContent().replace("-", "")));
+                            sub.setEchelon(parseEchelon(valueNode.getContent().replace("-", "")));
                         } else {
-                            sub.setEchelon(Integer.parseInt(vn.getContent()));
+                            sub.setEchelon(parseEchelon(valueNode.getContent()));
                         }
                         apply(sub, i);
-                        n.apply(sub, i);
-                        vn.apply(sub, i);
+                        optionGroup.apply(sub, i);
+                        valueNode.apply(sub, i);
+                        if (isAttached) {
+                            LOGGER.debug("[ForceGen][Attached]   created child[{}]: echelon={} " +
+                                        "unitType={} name='{}' weightClass={}",
+                                  i, sub.getEchelon(), sub.getUnitType(), sub.getName(),
+                                  sub.getWeightClass());
+                        }
                         subs.add(sub);
                     }
                     if (forceDescriptor.getSizeMod() == ForceDescriptor.REINFORCED) {
                         ForceDescriptor sub = forceDescriptor.createChild(subs.size());
-                        sub.setEchelon(Integer.parseInt(vn.getContent()));
-                        apply(sub, vn.getNum() / 2);
-                        n.apply(sub, vn.getNum() / 2);
+                        sub.setEchelon(parseEchelon(valueNode.getContent()));
+                        apply(sub, valueNode.getNum() / 2);
+                        optionGroup.apply(sub, valueNode.getNum() / 2);
                         subs.add(sub);
 
                     }
                     retVal.addAll(subs);
                     if (!isAttached && null == forceDescriptor.getGenerationRule()) {
-                        forceDescriptor.setGenerationRule(findGenerateProperty(vn, n, this));
+                        forceDescriptor.setGenerationRule(findGenerateProperty(valueNode, optionGroup, this));
                     }
                 }
             }
         }
         return retVal;
+    }
+
+    /**
+     * Parses an echelon level from a subforce rule's content, tolerating malformed data instead of throwing. Echelon
+     * strings in the faction_rules XML are authored integers (any +/- size suffix is stripped by the caller), so a
+     * non-numeric value means a malformed ruleset. Rather than abort the whole force generation with a
+     * {@link NumberFormatException}, the bad value is logged and echelon 0 is used as a safe fallback.
+     *
+     * @param content the subforce content to parse (already stripped of any +/- size suffix)
+     *
+     * @return the parsed echelon, or 0 if the content is not a valid integer
+     */
+    private int parseEchelon(String content) {
+        int echelon = MathUtility.parseInt(content, -1);
+        if (echelon < 0) {
+            LOGGER.warn("[ForceGen] Malformed echelon value '{}' in a subforce rule; defaulting to 0.", content);
+            return 0;
+        }
+        return echelon;
     }
 
     /**

@@ -1,6 +1,6 @@
 /*
  * Copyright (c) 2000-2005 Ben Mazur (bmazur@sev.org)
- * Copyright (C) 2003-2025 The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2003-2026 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -37,7 +37,6 @@ import java.io.Serial;
 import java.io.Serializable;
 import java.util.*;
 
-import megamek.client.bot.princess.Princess;
 import megamek.common.Hex;
 import megamek.common.ManeuverType;
 import megamek.common.annotations.Nullable;
@@ -50,7 +49,6 @@ import megamek.common.equipment.Minefield;
 import megamek.common.game.Game;
 import megamek.common.options.OptionsConstants;
 import megamek.common.pathfinder.CachedEntityState;
-import megamek.common.pathfinder.DestructionAwareDestinationPathfinder;
 import megamek.common.pathfinder.ShortestPathFinder;
 import megamek.common.pathfinder.StopConditionTimeout;
 import megamek.common.pathfinder.comparators.MovePathGreedyComparator;
@@ -282,6 +280,7 @@ public class MovePath implements Cloneable, Serializable {
               this.contains(MoveStepType.LATERAL_RIGHT_BACKWARDS);
     }
 
+    @Deprecated(since = "0.51.0", forRemoval = true)
     public boolean containsVTOLBomb() {
         for (MoveStep step : steps) {
             if (step.isVTOLBombingStep()) {
@@ -383,7 +382,7 @@ public class MovePath implements Cloneable, Serializable {
         if (entity.usesTurnMode() && (getMpUsed() > 5)) {
             int turnMode = getMpUsed() / 5;
             int nStraight = 0;
-            MoveStep prevStep = steps.get(0);
+            MoveStep prevStep = steps.getFirst();
             for (MoveStep s : steps) {
                 if (s.isTurning() && (nStraight < turnMode)) {
                     prevStep.setDanger(true);
@@ -397,8 +396,8 @@ public class MovePath implements Cloneable, Serializable {
         // before expending
         // enough MP to require running movement.
         if (steps.size() > 1) {
-            MoveStep lastStep = steps.get(steps.size() - 1);
-            MoveStep prevStep = steps.get(0);
+            MoveStep lastStep = steps.getLast();
+            MoveStep prevStep = steps.getFirst();
             for (MoveStep s : steps) {
                 if (s.getType() == MoveStepType.CHANGE_BOARD) {
                     // these steps never require rolls
@@ -459,10 +458,47 @@ public class MovePath implements Cloneable, Serializable {
     }
 
     /**
-     * Perform all the possible "is this illegal" checks. Short-circuits to omit unnecessary checks once the move has
-     * been declared illegal
+     * Perform all the possible "is this illegal" checks.
+     * Short-circuits to omit unnecessary checks once the move has been declared illegal
      */
     private void performIllegalCheck(MoveStep step, Coords start, Coords land) {
+        // Ensure that the appropriate steps to flee from stuck or prone were taken
+        if (step.getType() == MoveStepType.FLEE) {
+            if (!(getEntity().canFleeInState())) {
+                if ((getEntity().isStuck() && getEntity().isProne())) {
+                    // A stuck and prone entity has no way to get up and flee during the move path
+                    step.setMovementType(EntityMovementType.MOVE_ILLEGAL);
+                    return;
+                }
+                else if (getEntity().isStuck()) {
+                    // A stuck entity has to jump to move during the move path
+                    if (!(contains(MoveStepType.START_JUMP))) {
+                        step.setMovementType(EntityMovementType.MOVE_ILLEGAL);
+                        return;
+                    }
+                }
+                else if (getEntity().isProne()) {
+                    // A prone entity can flee if it succeeds in getting up during the move path
+                    // The GET_UP step is cleared from the containedStepTypes when reaching this point
+                    boolean emptyStepTypes = containedStepTypes.isEmpty();
+                    if (emptyStepTypes) {
+                        regenerateStepTypes();
+                    }
+                    if (!(contains(MoveStepType.GET_UP))) {
+                        step.setMovementType(EntityMovementType.MOVE_ILLEGAL);
+                        return;
+                    }
+                    if (emptyStepTypes) {
+                        containedStepTypes.clear();
+                    }
+                }
+                else {
+                    step.setMovementType(EntityMovementType.MOVE_ILLEGAL);
+                    return;
+                }
+            }
+        }
+
         // can't do anything after loading except loading again (if MPs exist)
         if (contains(MoveStepType.LOAD) && !(getLastStep().getType() == MoveStepType.LOAD)) {
             step.setMovementType(EntityMovementType.MOVE_ILLEGAL);
@@ -507,6 +543,19 @@ public class MovePath implements Cloneable, Serializable {
                     step.setMovementType(EntityMovementType.MOVE_ILLEGAL);
                     return;
                 }
+            }
+        }
+
+        // Check if jumping infantry exceeds their maximum reachable elevation
+        if (isJumping() && (entity instanceof Infantry)) {
+            Hex destHex = game.getBoard(step.getBoardId()).getHex(step.getPosition());
+            int maxElevation = (entity.getJumpMP() +
+                  entity.getElevation() +
+                  game.getBoard(entity.getBoardId()).getHex(entity.getPosition()).getLevel()) -
+                  destHex.getLevel();
+            if (step.getElevation() > maxElevation) {
+                step.setMovementType(EntityMovementType.MOVE_ILLEGAL);
+                return;
             }
         }
 
@@ -752,7 +801,7 @@ public class MovePath implements Cloneable, Serializable {
 
             // Treat multiple convert steps as a single command
             if (step1.getType() == MoveStepType.CONVERT_MODE) {
-                while (!steps.isEmpty() && steps.get(steps.size() - 1).getType() == MoveStepType.CONVERT_MODE) {
+                while (!steps.isEmpty() && steps.getLast().getType() == MoveStepType.CONVERT_MODE) {
                     steps.removeElementAt(steps.size() - 1);
                 }
             }
@@ -832,7 +881,7 @@ public class MovePath implements Cloneable, Serializable {
 
     public ListIterator<MoveStep> getSteps() {
         // Create shallow copy for iterator thread safety.
-        return new Vector<MoveStep>(steps).listIterator();
+        return new Vector<>(steps).listIterator();
     }
 
     public @Nullable MoveStep getStep(final int index) {
@@ -1117,6 +1166,7 @@ public class MovePath implements Cloneable, Serializable {
     }
 
     /* Debug method */
+    @Deprecated(since = "0.51.0", forRemoval = true)
     public void printAllSteps() {
         LOGGER.debug("*Steps*");
         for (int i = 0; i < steps.size(); i++) {
@@ -1274,6 +1324,7 @@ public class MovePath implements Cloneable, Serializable {
     /**
      * @return true if the entity is a QuadVee or LAM changing movement mode
      */
+    @Deprecated(since = "0.51.0", forRemoval = true)
     public boolean isChangingMode() {
         return contains(MoveStepType.CONVERT_MODE);
     }
@@ -1343,8 +1394,6 @@ public class MovePath implements Cloneable, Serializable {
 
         pf.run(clone());
         MovePath finPath = pf.getComputedPath(dest);
-        // this can be used for debugging the "destruction aware pathfinder"
-        // MovePath finPath = calculateDestructionAwarePath(dest);
 
         if (timeoutCondition.timeoutEngaged || finPath == null) {
             /*
@@ -1979,30 +2028,6 @@ public class MovePath implements Cloneable, Serializable {
         }
 
         return stepCount;
-    }
-
-    /**
-     * Debugging method that calculates a destruction-aware move path to the destination coordinates
-     */
-    @SuppressWarnings("unused")
-    public MovePath calculateDestructionAwarePath(Coords dest) {
-        // code that's useful to test the destruction-aware pathfinder
-        DestructionAwareDestinationPathfinder dpf = new DestructionAwareDestinationPathfinder();
-        // the destruction aware pathfinder takes either a CardinalEdge or an explicit
-        // set of coordinates
-        Set<Coords> destinationSet = new HashSet<>();
-        destinationSet.add(dest);
-
-        // debugging code that can be used to find a path to a specific edge
-        Princess princess = new Princess("test", "test", 2020);
-        princess.startPrecognition();
-
-        long marker1 = java.lang.System.currentTimeMillis();
-        MovePath finPath = dpf.findPathToCoords(entity, destinationSet, false, princess.getClusterTracker());
-        long marker2 = java.lang.System.currentTimeMillis();
-        long marker3 = marker2 - marker1;
-
-        return finPath;
     }
 
     /**

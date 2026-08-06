@@ -36,6 +36,7 @@ import java.awt.Font;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import jakarta.annotation.Nonnull;
 import megamek.client.ui.util.FontHandler;
 import megamek.common.annotations.Nullable;
 
@@ -61,6 +62,7 @@ public record FontDisplay(Font font, String displayName) {
     }
 
     @Override
+    @Nonnull
     public String toString() {
         return displayName;
     }

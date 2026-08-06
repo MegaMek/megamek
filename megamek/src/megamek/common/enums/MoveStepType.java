@@ -62,6 +62,8 @@ public enum MoveStepType {
     CLEAR_MINEFIELD(false, "ClearMinefield"),
     UP(false, "U"),
     DOWN(false, "D"),
+    ELEVATOR_ASCEND(false, "ElevUp"),
+    ELEVATOR_DESCEND(false, "ElevDn"),
     SEARCHLIGHT(false, "SLight"),
     LAY_MINE(false, "LayMine"),
     HULL_DOWN(false, "HullDown"),
@@ -69,7 +71,14 @@ public enum MoveStepType {
     CLIMB_MODE_OFF(false, "CM-"),
     SWIM(false, "Swim"),
     DIG_IN(false, "DigIn"),
+    HIT_THE_DECK(false, "HitDeck"),
     FORTIFY(false, "Fortify"),
+    CLEAR_RUBBLE(false, "ClearRubble"),
+    BUILD_BRIDGE(false, "BuildBridge"),
+    CANCEL_BRIDGE(false, "CancelBridge"),
+    RESUME_BRIDGE(false, "ResumeBridge"),
+    PAUSE_BRIDGE(false, "PauseBridge"),
+    ABANDON_BRIDGE(false, "AbandonBridge"),
     SHAKE_OFF_SWARMERS(false, "ShakeOffSwarmers"),
     TAKEOFF(false, "Takeoff"),
     VERTICAL_TAKE_OFF(false, "Vertical Takeoff"),
@@ -154,6 +163,7 @@ public enum MoveStepType {
      *
      * @throws IllegalArgumentException if no matching type is found
      */
+    @Deprecated(since = "0.51.0", forRemoval = true)
     public static MoveStepType fromLabel(String label) {
         MoveStepType type = LABEL_TO_ENUM.get(label);
         if (type == null) {

@@ -1,6 +1,6 @@
 /*
  * Copyright (c) 2000-2004 Ben Mazur (bmazur@sev.org)
- * Copyright (C) 2002-2025 The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2002-2026 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -36,6 +36,7 @@ package megamek.common;
 
 import java.io.Serial;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
 import java.util.Vector;
@@ -51,6 +52,7 @@ import megamek.common.equipment.MiscType;
 import megamek.common.game.Game;
 import megamek.common.game.IGame;
 import megamek.common.game.InGameObject;
+import megamek.common.game.InitiativeRoll;
 import megamek.common.hexArea.BorderHexArea;
 import megamek.common.hexArea.HexArea;
 import megamek.common.icons.Camouflage;
@@ -106,11 +108,10 @@ public final class Player extends TurnOrdered {
     private int startingAnySEy = Entity.STARTING_ANY_NONE;
 
     // number of minefields
-    private int numMfConv = 0;
-    private int numMfCmd = 0;
-    private int numMfVibra = 0;
-    private int numMfActive = 0;
-    private int numMfInferno = 0;
+    private int[] minefieldCounts = new int[Minefield.TYPE_SIZE];
+
+    // number of fortified hexes the player may place during the minefield deployment phase (TO:AUE p.153)
+    private int numFortifiedHexes = 0;
 
     // hexes that are automatically hit by artillery
     private List<BoardLocation> artyAutoHitHexes = new ArrayList<>();
@@ -135,7 +136,9 @@ public final class Player extends TurnOrdered {
 
     //Voting should not be stored in save game so marked transient
     private transient boolean votedToAllowTeamChange = false;
-    private transient boolean votedToAllowGameMaster = false;
+    // Testing aid (client-set, server-only): when true the server includes enemy artillery attacks in this player's
+    // artillery packet so the Rounds in the Air view can show both sides. Transient - never serialized or saved.
+    private transient boolean artilleryRevealAll = false;
 
     private HexArea fleeArea = new BorderHexArea(true, true, true, true);
     //endregion Variable Declarations
@@ -178,52 +181,94 @@ public final class Player extends TurnOrdered {
     }
 
     public boolean hasMinefields() {
-        return (numMfCmd > 0) ||
-              (numMfConv > 0) ||
-              (numMfVibra > 0) ||
-              (numMfActive > 0) ||
-              (numMfInferno > 0) ||
+    	boolean hasMinefields = false;
+    	
+    	for (int minefieldIndex = 0; minefieldIndex < Minefield.TYPE_SIZE; minefieldIndex++) {
+    		if (minefieldCounts[minefieldIndex] > 0) {
+    			hasMinefields = true;
+    			break;
+    		}
+    	}
+    	
+        return hasMinefields ||
+              (numFortifiedHexes > 0) ||
               !getGroundObjectsToPlace().isEmpty();
+    }
+    
+    /**
+     * Given a minefield type from one of the TYPE_[MINEFIELDTYPE] constants in Minefield.java
+     * and a count (preferably more than 0), set the count of that type of mine for this player.
+     */
+    public void setMinefieldCount(int minefieldType, int count) {
+    	minefieldCounts[minefieldType] = count;
     }
 
     public void setNbrMFConventional(int nbrMF) {
-        numMfConv = nbrMF;
+        minefieldCounts[Minefield.TYPE_CONVENTIONAL] = nbrMF;
     }
 
     public void setNbrMFCommand(int nbrMF) {
-        numMfCmd = nbrMF;
+    	minefieldCounts[Minefield.TYPE_COMMAND_DETONATED] = nbrMF;
     }
 
     public void setNbrMFVibra(int nbrMF) {
-        numMfVibra = nbrMF;
+    	minefieldCounts[Minefield.TYPE_VIBRABOMB] = nbrMF;
     }
 
     public void setNbrMFActive(int nbrMF) {
-        numMfActive = nbrMF;
+    	minefieldCounts[Minefield.TYPE_ACTIVE] = nbrMF;
     }
 
     public void setNbrMFInferno(int nbrMF) {
-        numMfInferno = nbrMF;
+    	minefieldCounts[Minefield.TYPE_INFERNO] = nbrMF;
+    }
+    
+    public void setNbrMFEMP(int nbrMF) {
+    	minefieldCounts[Minefield.TYPE_EMP] = nbrMF;
+    }
+    
+    /**
+     * Given a minefield type from one of the TYPE_[MINEFIELDTYPE] constants in Minefield.java
+     * returns how many mines of that type this player has
+     */
+    public int getMinefieldCount(int minefieldType) {
+    	return minefieldCounts[minefieldType];
     }
 
     public int getNbrMFConventional() {
-        return numMfConv;
+        return minefieldCounts[Minefield.TYPE_CONVENTIONAL];
     }
 
     public int getNbrMFCommand() {
-        return numMfCmd;
+        return minefieldCounts[Minefield.TYPE_COMMAND_DETONATED];
     }
 
     public int getNbrMFVibra() {
-        return numMfVibra;
+        return minefieldCounts[Minefield.TYPE_VIBRABOMB];
     }
 
     public int getNbrMFActive() {
-        return numMfActive;
+        return minefieldCounts[Minefield.TYPE_ACTIVE];
     }
 
     public int getNbrMFInferno() {
-        return numMfInferno;
+        return minefieldCounts[Minefield.TYPE_INFERNO];
+    }
+
+    public int getNbrMFEMP() {
+        return minefieldCounts[Minefield.TYPE_EMP];
+    }
+
+    /**
+     * @return the number of fortified hexes this player may place during the minefield deployment phase
+     *       (Trench/Fieldworks Engineers, TO:AUE p.153)
+     */
+    public int getNbrFortifiedHexes() {
+        return numFortifiedHexes;
+    }
+
+    public void setNbrFortifiedHexes(int nbrFortifiedHexes) {
+        numFortifiedHexes = nbrFortifiedHexes;
     }
 
     public Camouflage getCamouflage() {
@@ -264,6 +309,14 @@ public final class Player extends TurnOrdered {
 
     public void setTeam(int team) {
         this.team = team;
+    }
+    
+    public String getTeamName() {
+        if (getTeam() <= TEAM_NONE) {
+            return "No Team";
+        }
+        
+        return "Team " + getTeam();
     }
 
     public boolean isDone() {
@@ -355,6 +408,22 @@ public final class Player extends TurnOrdered {
      */
     public boolean getSeeAll() {
         return seeAll;
+    }
+
+    /**
+     * @param artilleryRevealAll Whether the server should reveal all in-flight artillery (both teams) to this player -
+     *                           a client-set testing aid for the Rounds in the Air view
+     */
+    public void setArtilleryRevealAll(boolean artilleryRevealAll) {
+        this.artilleryRevealAll = artilleryRevealAll;
+    }
+
+    /**
+     * @return {@code true} if the server should include enemy artillery attacks in this player's artillery packet (the
+     *       Rounds in the Air testing reveal); {@code false} for normal team-only (double-blind) behavior
+     */
+    public boolean isArtilleryRevealAll() {
+        return artilleryRevealAll;
     }
 
     /**
@@ -541,14 +610,6 @@ public final class Player extends TurnOrdered {
         return votedToAllowTeamChange;
     }
 
-    public void setVotedToAllowGameMaster(boolean allowChange) {
-        votedToAllowGameMaster = allowChange;
-    }
-
-    public boolean getVotedToAllowGameMaster() {
-        return votedToAllowGameMaster;
-    }
-
     public void setArtyAutoHitHexes(List<BoardLocation> newArtyAutoHitHexes) {
         artyAutoHitHexes.clear();
         artyAutoHitHexes.addAll(newArtyAutoHitHexes);
@@ -670,7 +731,8 @@ public final class Player extends TurnOrdered {
 
         int bonus = 0;
         for (InGameObject object : game.getInGameObjects()) {
-            if (object instanceof Entity entity && entity.getOwner().equals(this)) {
+            if (object instanceof Entity entity && entity.getOwner().equals(this)
+                  && isActiveForCommandBonus(entity)) {
                 bonus = Math.max(entity.getHQIniBonus(), bonus);
             }
         }
@@ -687,7 +749,8 @@ public final class Player extends TurnOrdered {
 
         int bonus = 0;
         for (InGameObject object : game.getInGameObjects()) {
-            if (object instanceof Entity entity && entity.getOwner().equals(this)) {
+            if (object instanceof Entity entity && entity.getOwner().equals(this)
+                  && isActiveForCommandBonus(entity)) {
                 bonus = Math.max(bonus, entity.getQuirkIniBonus());
             }
         }
@@ -705,7 +768,8 @@ public final class Player extends TurnOrdered {
         int bestBonus = 0;
         String bestQuirkName = null;
         for (InGameObject object : game.getInGameObjects()) {
-            if (object instanceof Entity entity && entity.getOwner().equals(this)) {
+            if (object instanceof Entity entity && entity.getOwner().equals(this)
+                  && isActiveForCommandBonus(entity)) {
                 int entityBonus = entity.getQuirkIniBonus();
                 if (entityBonus > bestBonus) {
                     bestBonus = entityBonus;
@@ -952,15 +1016,12 @@ public final class Player extends TurnOrdered {
     }
 
     public String getColoredPlayerNameWithTeam() {
-        if (team == -1) {
-            team = 0;
-        }
         return "<B><font color='" +
               getColour().getHexString(0x00F0F0F0) +
               "'>" +
               getName() +
               " (" +
-              TEAM_NAMES[team] +
+              getTeamName() +
               ")</font></B>";
     }
 
@@ -1024,11 +1085,7 @@ public final class Player extends TurnOrdered {
         copy.startingAnySEx = startingAnySEx;
         copy.startingAnySEy = startingAnySEy;
 
-        copy.numMfConv = numMfConv;
-        copy.numMfCmd = numMfCmd;
-        copy.numMfVibra = numMfVibra;
-        copy.numMfActive = numMfActive;
-        copy.numMfInferno = numMfInferno;
+        copy.minefieldCounts = Arrays.copyOf(minefieldCounts, Minefield.TYPE_SIZE);
 
         copy.artyAutoHitHexes = new ArrayList<>(artyAutoHitHexes);
 
@@ -1045,7 +1102,7 @@ public final class Player extends TurnOrdered {
 
         copy.admitsDefeat = admitsDefeat;
 
-        copy.setInitiative(getInitiative());
+        copy.setInitiative(new InitiativeRoll(getInitiative()));
 
         return copy;
     }

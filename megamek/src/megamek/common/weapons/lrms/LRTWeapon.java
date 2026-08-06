@@ -59,13 +59,8 @@ public abstract class LRTWeapon extends MissileWeapon {
     public LRTWeapon() {
         super();
         ammoType = AmmoType.AmmoTypeEnum.LRM_TORPEDO;
-        flags = flags.or(F_ARTEMIS_COMPATIBLE);
+        flags = flags.or(F_ARTEMIS_COMPATIBLE).or(F_INDIRECT_FIRE);
 
-    }
-
-    @Override
-    public boolean hasIndirectFire() {
-        return true;
     }
 
     @Override

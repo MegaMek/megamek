@@ -59,6 +59,7 @@ public class MockGenerators {
      * object itself)
      *
      */
+    @Deprecated(since = "0.51.0", forRemoval = true)
     public static Game generateMockGame(List<Entity> entities, Board mockBoard) {
 
         final Game mockGame = mock(Game.class);
@@ -81,6 +82,7 @@ public class MockGenerators {
      * Generates a MockBoard object.
      *
      */
+    @Deprecated(since = "0.51.0", forRemoval = true)
     public static Board generateMockBoard() {
         // we'll be on a nice, empty, 20x20 board, not in space.
         final Board mockBoard = mock(Board.class);

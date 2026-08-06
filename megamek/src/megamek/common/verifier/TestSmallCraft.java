@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2017-2025 The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2017-2026 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -53,7 +53,9 @@ import megamek.common.equipment.enums.MiscTypeFlag;
 import megamek.common.interfaces.ITechManager;
 import megamek.common.options.OptionsConstants;
 import megamek.common.units.Aero;
+import megamek.common.units.Dropship;
 import megamek.common.units.Entity;
+import megamek.common.units.Jumpship;
 import megamek.common.units.SmallCraft;
 import megamek.common.util.StringUtil;
 
@@ -63,6 +65,8 @@ import megamek.common.util.StringUtil;
  * @author Neoancient
  */
 public class TestSmallCraft extends TestAero {
+
+    public static final double MINIMUM_CREW_AND_QUARTERS_THRESHOLD_TONS = 25.0;
 
     // Indices used to specify firing arcs with aliases for AeroDyne and spheroid
     public static final int ARC_NOSE = SmallCraft.LOC_NOSE;
@@ -91,10 +95,36 @@ public class TestSmallCraft extends TestAero {
               .collect(Collectors.toList());
     }
 
-    public static int maxArmorPoints(SmallCraft sc) {
-        ArmorType a = ArmorType.forEntity(sc);
-        return (int) Math.floor(a.getPointsPerTon(sc) * maxArmorWeight(sc) +
-              sc.getOSI() * (sc.isPrimitive() ? 2.64 : 4));
+    /**
+     * Returns the maximum number of total (all locations summed) armor points that the given vessel (DS/SC) can have,
+     * including free armor points it receives from its SI and modified for primitive armor, if appropriate. See TM
+     * p.191, IO:AE p.119-122.
+     *
+     * @param vessel The SC/DS to compute bonus armor for
+     *
+     * @return The total number of armor points allowed to the vessel
+     */
+    public static int maxArmorPoints(SmallCraft vessel) {
+        double pointsPerTon = ArmorType.forEntity(vessel).getPointsPerTon();
+        int baseArmor = (int) (pointsPerTon * maxArmorWeight(vessel) + getSIBonusArmorPoints(vessel));
+        if (vessel.isPrimitive()) {
+            return (int) (baseArmor * 0.66);
+        } else {
+            return baseArmor;
+        }
+    }
+
+    /**
+     * Returns the number of free additional armor points provided for SmallCraft and DropShips based on their
+     * structural integrity (for primitive craft, *without* the 0.66 primitive adjustment factor). See TM p.191, IO:AE
+     * p.119-125.
+     *
+     * @param smallCraft The SC/DS to compute free armor for
+     *
+     * @return The total number of extra armor points received for SI (disregarding primitive adjustment)
+     */
+    static int getSIBonusArmorPointsForSC(SmallCraft smallCraft) {
+        return (smallCraft.locations() - 1) * smallCraft.getOSI();
     }
 
     /**
@@ -292,6 +322,16 @@ public class TestSmallCraft extends TestAero {
         return crew;
     }
 
+    /**
+     * Emergency-scale Small Craft do not use the standard vessel crew and quarters requirements.
+     *
+     * @param smallCraft the Small Craft to check
+     * @return {@code true} when standard minimum crew and quarters requirements apply
+     */
+    public static boolean requiresMinimumCrewAndQuarters(SmallCraft smallCraft) {
+        return smallCraft.getWeight() > MINIMUM_CREW_AND_QUARTERS_THRESHOLD_TONS;
+    }
+
     public TestSmallCraft(SmallCraft sc, TestEntityOption option, String fs) {
         super(sc, option, fs);
 
@@ -480,7 +520,7 @@ public class TestSmallCraft extends TestAero {
     }
 
     /**
-     * Checks that the heatsink type is a legal value.
+     * Checks that the heat sink type is a legal value.
      *
      * @param buff A buffer that collects messages about validation failures
      *
@@ -489,7 +529,7 @@ public class TestSmallCraft extends TestAero {
     @Override
     public boolean correctHeatSinks(StringBuffer buff) {
         if ((smallCraft.getHeatType() != Aero.HEAT_SINGLE) && (smallCraft.getHeatType() != Aero.HEAT_DOUBLE)) {
-            buff.append("Invalid heatsink type!  Valid types are ")
+            buff.append("Invalid heat sink type!  Valid types are ")
                   .append(Aero.HEAT_SINGLE)
                   .append(" and ")
                   .append(Aero.HEAT_DOUBLE)
@@ -539,15 +579,28 @@ public class TestSmallCraft extends TestAero {
         return correct;
     }
 
-    @Override
-    public boolean hasIllegalEquipmentCombinations(StringBuffer buff) {
-        boolean illegal = false;
+    /**
+     * Returns true and adds error messages to the buffer when a weapon bay has no weapon or ammo for a weapon that is
+     * not in this bay, or when the minimum ammo per weapon requirement is not fulfilled (TM p.194). Returns false for
+     * units that don't use weapon bays.
+     *
+     * @param vessel The JS/WS/SS/DS to test
+     * @param buff   The error buffer to add messages to
+     *
+     * @return True when illegal
+     */
+    public static boolean hasIllegalBayAmmo(Entity vessel, StringBuffer buff) {
+        if (!(vessel instanceof Jumpship || vessel instanceof Dropship)) {
+            return false;
+        }
 
-        // For DropShips, make sure all bays have at least one weapon and that there are at least ten shots of ammo
-        // for each ammo-using weapon in the bay.
-        for (WeaponMounted bay : smallCraft.getWeaponBayList()) {
+        boolean illegal = false;
+        // Make sure all bays have at least one weapon and that there are at least
+        // ten shots of ammo for each ammo-using weapon in the bay.
+        for (WeaponMounted bay : vessel.getWeaponBayList()) {
             if (bay.getBayWeapons().isEmpty()) {
-                buff.append("Bay ").append(bay.getName()).append(" has no weapons\n");
+                buff.append("%s (%s) has no weapons\n"
+                      .formatted(bay.getName(), bay.getEntity().getLocationAbbr(bay.getLocation())));
                 illegal = true;
             }
             Map<AmmoTypeEnum, Integer> ammoWeaponCount = new HashMap<>();
@@ -558,11 +611,14 @@ public class TestSmallCraft extends TestAero {
                 }
                 ammoWeaponCount.merge(w.getType().getAmmoType(), 1, Integer::sum);
             }
-
-            for (AmmoMounted a : bay.getBayAmmo()) {
-                ammoTypeCount.merge(a.getType().getAmmoType(), a.getUsableShotsLeft(), Integer::sum);
+            for (AmmoMounted ammo : bay.getBayAmmo()) {
+                AmmoType ammoType = ammo.getType();
+                // Must use the design spec number of shots, as the in-game remaining shots must be allowed to fall
+                // below 10 without making this unit illegal; the "originalShots" value cannot be used as it is
+                // meaningless during construction and could be any starting value depending on scenario
+                int ammoBins = (int) Math.round(ammo.getSize() / ammoType.getTonnage(vessel));
+                ammoTypeCount.merge(ammoType.getAmmoType(), ammoType.getShots() * ammoBins, Integer::sum);
             }
-
             for (AmmoTypeEnum at : ammoWeaponCount.keySet()) {
                 if (at != AmmoType.AmmoTypeEnum.NA) {
                     int needed = ammoWeaponCount.get(at) * 10;
@@ -571,17 +627,19 @@ public class TestSmallCraft extends TestAero {
                     } else if ((at == AmmoType.AmmoTypeEnum.AC_ROTARY)) {
                         needed *= 6;
                     }
-
                     if (!ammoTypeCount.containsKey(at) || ammoTypeCount.get(at) < needed) {
-                        buff.append("Bay ")
-                              .append(bay.getName())
-                              .append(" does not have the minimum 10 shots of ammo for each weapon\n");
+                        buff.append(("%s (%s) %s has <b>%s</b>/%s minimum ammo required\n").formatted(
+                              bay.getName(),
+                              bay.getEntity().getLocationAbbr(bay.getLocation()),
+                              at.getName(),
+                              ammoTypeCount.getOrDefault(at, 0),
+                              needed
+                        ));
                         illegal = true;
                         break;
                     }
                 }
             }
-
             for (AmmoTypeEnum at : ammoTypeCount.keySet()) {
                 if (!ammoWeaponCount.containsKey(at)) {
                     buff.append("Bay ").append(bay.getName()).append(" has ammo for a weapon not in the bay\n");
@@ -590,6 +648,12 @@ public class TestSmallCraft extends TestAero {
                 }
             }
         }
+        return illegal;
+    }
+
+    @Override
+    public boolean hasIllegalEquipmentCombinations(StringBuffer buff) {
+        boolean illegal = hasIllegalBayAmmo(smallCraft, buff);
 
         // Count lateral weapons to make sure both sides match
         Map<EquipmentType, Integer> leftFwd = new HashMap<>();
@@ -700,6 +764,10 @@ public class TestSmallCraft extends TestAero {
      * @return true if the crew data is valid.
      */
     public boolean correctCrew(StringBuffer buffer) {
+        if (!requiresMinimumCrewAndQuarters(getSmallCraft())) {
+            return true;
+        }
+
         boolean illegal = false;
         int crewSize = getSmallCraft().getNCrew() - getSmallCraft().getBayPersonnel();
         int reqCrew = minimumBaseCrew(getSmallCraft()) + requiredGunners(getSmallCraft());
@@ -743,7 +811,7 @@ public class TestSmallCraft extends TestAero {
         buff.append("Intro year: ").append(getEntity().getYear()).append("\n");
         buff.append(printSource());
         buff.append(printShortMovement());
-        if (correctWeight(buff, true, true)) {
+        if (correctWeight(buff, false, false)) {
             buff.append("Weight: ").append(getWeight()).append(" (").append(calculateWeight()).append(")\n");
         }
         buff.append(printWeightCalculation()).append("\n");

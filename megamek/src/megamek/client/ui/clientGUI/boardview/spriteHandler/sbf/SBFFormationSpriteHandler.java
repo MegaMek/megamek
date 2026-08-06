@@ -62,7 +62,7 @@ public class SBFFormationSpriteHandler extends BoardViewSpriteHandler {
         game.getInGameObjects().stream()
               .filter(SBFFormation.class::isInstance)
               .filter(f -> ((SBFFormation) f).getPosition() != null)
-              .map(f -> new SBFFormationSprite((BoardView) clientGUI.boardViews().get(0),
+              .map(f -> new SBFFormationSprite((BoardView) clientGUI.boardViews().getFirst(),
                     (SBFFormation) f,
                     game.getPlayer(f.getOwnerId()),
                     game))
@@ -71,13 +71,13 @@ public class SBFFormationSpriteHandler extends BoardViewSpriteHandler {
         game.getInGameObjects().stream()
               .filter(SBFUnitPlaceHolder.class::isInstance)
               .filter(f -> ((SBFUnitPlaceHolder) f).getPosition() != null)
-              .map(f -> new SBFPlaceHolderSprite((BoardView) clientGUI.boardViews().get(0),
+              .map(f -> new SBFPlaceHolderSprite((BoardView) clientGUI.boardViews().getFirst(),
                     (SBFUnitPlaceHolder) f,
                     game.getPlayer(f.getOwnerId()),
                     game))
               .forEach(currentSprites::add);
 
-        clientGUI.boardViews().get(0).addSprites(currentSprites);
+        clientGUI.boardViews().getFirst().addSprites(currentSprites);
     }
 
     /**
@@ -93,7 +93,7 @@ public class SBFFormationSpriteHandler extends BoardViewSpriteHandler {
                 formationSprite.setSelected(formationSprite.getFormation().equals(formation));
             }
         }
-        clientGUI.boardViews().get(0).repaint();
+        clientGUI.boardViews().getFirst().repaint();
     }
 
     @Override

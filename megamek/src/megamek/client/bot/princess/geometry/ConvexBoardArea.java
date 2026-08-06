@@ -203,6 +203,7 @@ public class ConvexBoardArea {
         vertices = new Coords[6];
     }
 
+    @Deprecated(since = "0.51.0", forRemoval = true)
     void clearEdges() {
         setEdges(new HexLine[6]);
     }

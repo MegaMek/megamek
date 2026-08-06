@@ -85,6 +85,7 @@ public class MekWarrior extends EjectedCrew {
     /**
      * @return the <code>int</code> external id of the unit that picked up this MW
      */
+    @Deprecated(since = "0.51.0", forRemoval = true)
     public int getPickedUpByExternalId() {
         return Integer.parseInt(pickedUpByExternalId);
     }

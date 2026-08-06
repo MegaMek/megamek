@@ -45,6 +45,7 @@ import megamek.common.compute.Compute;
 import megamek.common.equipment.MiscType;
 import megamek.common.game.Game;
 import megamek.common.units.AbstractBuildingEntity;
+import megamek.common.units.ConvInfantry;
 import megamek.common.units.Entity;
 import megamek.common.units.EntityMovementMode;
 import megamek.common.units.Infantry;
@@ -246,7 +247,7 @@ public record AllowedDeploymentHelper(Entity entity, Coords coords, Board board,
 
         if ((moveMode.isNaval() || moveMode.isHydrofoil() || moveMode.isHoverOrWiGE()) && !hasIce) {
             result.add(new ElevationOption(0, WATER_SURFACE));
-        } else if ((entity instanceof Infantry infantry) && infantry.isNonMechSCUBA()) {
+        } else if ((entity instanceof ConvInfantry infantry) && infantry.isNonMechSCUBA()) {
             for (int elevation = -1; elevation >= Math.max(-depth, -2); elevation--) {
                 result.add(new ElevationOption(elevation, SUBMERGED));
             }

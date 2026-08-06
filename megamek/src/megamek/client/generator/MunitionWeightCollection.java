@@ -50,7 +50,7 @@ import megamek.common.annotations.Nullable;
 import megamek.common.containers.MunitionTree;
 
 // region MunitionWeightCollection
-class MunitionWeightCollection {
+public class MunitionWeightCollection {
     private HashMap<String, Double> lrmWeights;
     private HashMap<String, Double> srmWeights;
     private HashMap<String, Double> acWeights;
@@ -89,7 +89,7 @@ class MunitionWeightCollection {
         lrmWeights = setIncendiary(initializeWeaponWeightsYAML("LRM", factionName, clan,
               MunitionTree.LRM_MUNITION_NAMES));
         srmWeights = initializeWeaponWeightsYAML("SRM", factionName, clan, MunitionTree.SRM_MUNITION_NAMES);
-        acWeights = initializeWeaponWeightsYAML( "AC", factionName, clan, MunitionTree.AC_MUNITION_NAMES);
+        acWeights = initializeWeaponWeightsYAML("AC", factionName, clan, MunitionTree.AC_MUNITION_NAMES);
         arrowWeights = initializeWeaponWeightsYAML("Arrow IV", factionName, clan, MunitionTree.ARROW_MUNITION_NAMES);
         longtomWeights = initializeWeaponWeightsYAML("Long Tom", factionName, clan,
               MunitionTree.ARTILLERY_MUNITION_NAMES);
@@ -128,13 +128,12 @@ class MunitionWeightCollection {
     }
 
     /**
-     * We want to be able to search for valid LRM munitions types that also include 'w/ Incendiary',
-     * without having to track every IS/Clan, rack size, Mek/BA/Infantry weapon, OS/not OS, etc.
-     * combination.
+     * We want to be able to search for valid LRM munitions types that also include 'w/ Incendiary', without having to
+     * track every IS/Clan, rack size, Mek/BA/Infantry weapon, OS/not OS, etc. combination.
+     * <p>
+     * For now, MunitionTree adds a version of each ammo type string with ' w/ Incendiary' appended; here we set the
+     * weights at 0.8 x the original value (representing 20% damage loss from Incendiary).
      *
-     * For now, MunitionTree adds a version of each ammo type string with ' w/ Incendiary' appended;
-     * here we set the weights at 0.8 x the original value (representing 20% damage loss from Incendiary).
-     * @param original
      * @return original, but modified
      */
     public HashMap<String, Double> setIncendiary(HashMap<String, Double> original) {
@@ -180,6 +179,7 @@ class MunitionWeightCollection {
      * @param factionName   The Faction for which this weight collection will be generated, or "IS" or "Clan"
      * @param clan          Whether the Faction counts as a Clan faction (see YAML entries)
      * @param munitionsList The list of munitions to create weight values over
+     *
      * @return HashMap      A map of munition types to weights for this weapon
      */
     private static HashMap<String, Double> initializeWeaponWeightsYAML(String weapon,
@@ -193,7 +193,7 @@ class MunitionWeightCollection {
 
             try {
                 // Check for a faction-specific default value under the base path
-                  weight = (double) searchMap(String.format("%s.%s", basePath, factionName));
+                weight = (double) searchMap(String.format("%s.%s", basePath, factionName));
             } catch (Exception e) {
                 // Not found; use Any as a fallback
                 try {
@@ -248,6 +248,7 @@ class MunitionWeightCollection {
         increaseMunitions(TeamLoadOutGenerator.ACCURATE_MUNITIONS);
     }
 
+    @Deprecated(since = "0.51.0", forRemoval = true)
     public void decreaseAccurateMunitions() {
         decreaseMunitions(TeamLoadOutGenerator.ACCURATE_MUNITIONS);
     }
@@ -264,6 +265,7 @@ class MunitionWeightCollection {
         increaseMunitions(TeamLoadOutGenerator.ANTI_BA_MUNITIONS);
     }
 
+    @Deprecated(since = "0.51.0", forRemoval = true)
     public void decreaseAntiBAMunitions() {
         decreaseMunitions(TeamLoadOutGenerator.ANTI_BA_MUNITIONS);
     }
@@ -284,6 +286,7 @@ class MunitionWeightCollection {
         decreaseMunitions(TeamLoadOutGenerator.ILLUMINATION_MUNITIONS);
     }
 
+    @Deprecated(since = "0.51.0", forRemoval = true)
     public void increaseUtilityMunitions() {
         increaseMunitions(TeamLoadOutGenerator.UTILITY_MUNITIONS);
     }
@@ -293,7 +296,7 @@ class MunitionWeightCollection {
     }
 
     public void increaseArtilleryUtilityMunitions() {
-        for (String weaponType: List.of("Long Tom", "Sniper", "Thumper")) {
+        for (String weaponType : List.of("Long Tom", "Sniper", "Thumper")) {
             modifyMatchingWeights(mapTypeToWeights.get(weaponType),
                   TeamLoadOutGenerator.ARTILLERY_UTILITY_MUNITIONS,
                   getPropDouble("Defaults.Factors.increaseWeightFactor", 2.0),
@@ -301,8 +304,9 @@ class MunitionWeightCollection {
         }
     }
 
+    @Deprecated(since = "0.51.0", forRemoval = true)
     public void decreaseArtilleryUtilityMunitions() {
-        for (String weaponType: List.of("Long Tom", "Sniper", "Thumper")) {
+        for (String weaponType : List.of("Long Tom", "Sniper", "Thumper")) {
             modifyMatchingWeights(mapTypeToWeights.get(weaponType),
                   TeamLoadOutGenerator.ARTILLERY_UTILITY_MUNITIONS,
                   getPropDouble("Defaults.Factors.decreaseWeightFactor", 0.5),
@@ -330,6 +334,7 @@ class MunitionWeightCollection {
         decreaseMunitions(TeamLoadOutGenerator.TAG_GUIDED_MUNITIONS);
     }
 
+    @Deprecated(since = "0.51.0", forRemoval = true)
     public void decreaseNARCGuidedMunitions() {
         decreaseMunitions(TeamLoadOutGenerator.NARC_GUIDED_MUNITIONS);
     }
@@ -354,6 +359,7 @@ class MunitionWeightCollection {
         increaseMunitions(TeamLoadOutGenerator.HIGH_POWER_MUNITIONS);
     }
 
+    @Deprecated(since = "0.51.0", forRemoval = true)
     public void decreaseHighPowerMunitions() {
         decreaseMunitions(TeamLoadOutGenerator.HIGH_POWER_MUNITIONS);
     }
@@ -380,9 +386,9 @@ class MunitionWeightCollection {
               .forEach(k -> orderedTypes.add(String.valueOf(k)));
         // Make Standard the first entry if tied with other highest-weight munitions
         for (String munitionString : orderedTypes) {
-            if (munitionString.contains("Standard") && !orderedTypes.get(0).contains("Standard")) {
+            if (munitionString.contains("Standard") && !orderedTypes.getFirst().contains("Standard")) {
                 int idx = orderedTypes.indexOf(munitionString);
-                if (weightMap.get("Standard") == Double.parseDouble(orderedTypes.get(0).split("=")[1])) {
+                if (weightMap.get("Standard") == Double.parseDouble(orderedTypes.getFirst().split("=")[1])) {
                     Collections.swap(orderedTypes, idx, 0);
                     break;
                 }
@@ -393,8 +399,10 @@ class MunitionWeightCollection {
 
     /**
      * Select all munitions with weights above the cutoff value.
-     * @param cutoff    Double cutoff weight; munitions with this weight or lower are discarded
-     * @return  HashMap of lists of munitions, by weapon type, in weight order
+     *
+     * @param cutoff Double cutoff weight; munitions with this weight or lower are discarded
+     *
+     * @return HashMap of lists of munitions, by weapon type, in weight order
      */
     public HashMap<String, List<String>> getAboveCutoff(double cutoff) {
         HashMap<String, List<String>> topMunitionsMap = new HashMap<>();
@@ -412,8 +420,10 @@ class MunitionWeightCollection {
 
     /**
      * Select the top N weighted munitions of each type, where N is the count to include.
-     * @param count     Int count of top munition types to include.
-     * @return  HashMap of lists of munitions, by weapon type, in weight order
+     *
+     * @param count Int count of top munition types to include.
+     *
+     * @return HashMap of lists of munitions, by weapon type, in weight order
      */
     public HashMap<String, List<String>> getTopN(int count) {
         HashMap<String, List<String>> topMunitionsMap = new HashMap<>();
@@ -432,14 +442,17 @@ class MunitionWeightCollection {
         return srmWeights;
     }
 
+    @Deprecated(since = "0.51.0", forRemoval = true)
     public HashMap<String, Double> getAcWeights() {
         return acWeights;
     }
 
+    @Deprecated(since = "0.51.0", forRemoval = true)
     public HashMap<String, Double> getAtmWeights() {
         return atmWeights;
     }
 
+    @Deprecated(since = "0.51.0", forRemoval = true)
     public HashMap<String, Double> getArrowWeights() {
         return arrowWeights;
     }
@@ -448,10 +461,12 @@ class MunitionWeightCollection {
         return longtomWeights;
     }
 
+    @Deprecated(since = "0.51.0", forRemoval = true)
     public HashMap<String, Double> getSniperWeights() {
         return sniperWeights;
     }
 
+    @Deprecated(since = "0.51.0", forRemoval = true)
     public HashMap<String, Double> getThumperWeights() {
         return thumperWeights;
     }
@@ -460,25 +475,29 @@ class MunitionWeightCollection {
         return bombWeights;
     }
 
+    @Deprecated(since = "0.51.0", forRemoval = true)
     public HashMap<String, Double> getLongTomCannonWeights() {
         return longtomCannonWeights;
     }
 
+    @Deprecated(since = "0.51.0", forRemoval = true)
     public HashMap<String, Double> getSniperCannonWeights() {
         return sniperCannonWeights;
     }
 
+    @Deprecated(since = "0.51.0", forRemoval = true)
     public HashMap<String, Double> getThumperCannonWeights() {
         return thumperCannonWeights;
     }
 
+    @Deprecated(since = "0.51.0", forRemoval = true)
     public HashMap<String, Double> getMortarWeights() {
         return mortarWeights;
     }
 
     @Nullable
     public HashMap<String, Double> getMunitionWeights(String key) {
-        return switch(key) {
+        return switch (key) {
             case "LRM" -> lrmWeights;
             case "SRM" -> srmWeights;
             case "AC" -> acWeights;

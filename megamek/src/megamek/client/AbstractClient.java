@@ -49,6 +49,7 @@ import megamek.common.Player;
 import megamek.common.board.Board;
 import megamek.common.enums.GamePhase;
 import megamek.common.event.GameScriptedMessageEvent;
+import megamek.common.event.GameToastEvent;
 import megamek.common.event.player.GamePlayerChangeEvent;
 import megamek.common.event.player.GamePlayerChatEvent;
 import megamek.common.event.player.GamePlayerDisconnectedEvent;
@@ -270,6 +271,18 @@ public abstract class AbstractClient implements IClient {
 
     public void sendUnpause() {
         send(new Packet(PacketCommand.UNPAUSE));
+        flushConn();
+    }
+
+    /**
+     * Sends this player's "reveal all artillery rounds" testing preference to the server. When {@code true}, the server
+     * includes enemy artillery attacks in this player's artillery packet so the Rounds in the Air view can show both
+     * sides; when {@code false}, only this player's team's rounds are sent (normal double-blind behavior).
+     *
+     * @param revealAll Whether to reveal all in-flight artillery to this player
+     */
+    public void sendArtilleryRevealPreference(boolean revealAll) {
+        send(new Packet(PacketCommand.CLIENT_ARTILLERY_REVEAL, revealAll));
         flushConn();
     }
 
@@ -520,6 +533,12 @@ public abstract class AbstractClient implements IClient {
                           (String) packet.getObject(0),
                           (String) packet.getObject(1),
                           (Base64Image) packet.getObject(2)));
+                    break;
+                case SEND_TOAST:
+                    getGame().fireGameEvent(new GameToastEvent(this,
+                          (GameToastEvent.Level) packet.getObject(0),
+                          (String) packet.getObject(1),
+                          packet.getIntValue(2)));
                     break;
                 default:
                     return false;

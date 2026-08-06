@@ -114,18 +114,16 @@ public class MiniReportDisplayPanel extends JPanel implements ActionListener, Hy
         GameListener gameListener = new GameListenerAdapter() {
             @Override
             public void gamePhaseChange(GamePhaseChangeEvent e) {
-                switch (Objects.requireNonNull(e.getOldPhase())) {
-                    case VICTORY:
-                        setVisible(false);
-                        break;
-                    default:
-                        if ((!e.getNewPhase().equals((e.getOldPhase()))) && ((e.getNewPhase().isReport())
-                              || ((e.getNewPhase().isOnMap()) && (
-                              tabs.getTabCount() == 0)))) {
-                            addReportPages(e.getNewPhase());
-                            updatePlayerChoice();
-                            updateEntityChoice();
-                        }
+                if (Objects.requireNonNull(e.getOldPhase()) == GamePhase.VICTORY) {
+                    setVisible(false);
+                } else {
+                    if ((!e.getNewPhase().equals((e.getOldPhase()))) && ((e.getNewPhase().isReport())
+                          || ((e.getNewPhase().isOnMap()) && (
+                          tabs.getTabCount() == 0)))) {
+                        addReportPages(e.getNewPhase());
+                        updatePlayerChoice();
+                        updateEntityChoice();
+                    }
                 }
             }
         };
@@ -285,10 +283,7 @@ public class MiniReportDisplayPanel extends JPanel implements ActionListener, Hy
               i < htmlLines.length;
               i++) {
             String htmlLine = htmlLines[i];
-            for (int j = 0;
-                  j < keywords.length;
-                  j++) {
-                String word = keywords[j];
+            for (String word : keywords) {
                 if (htmlLine.replaceAll("<[^>]*>", "").toUpperCase().contains(word.toUpperCase())) {
                     if (i > 0 && htmlLines[i - 1].contains("<img")) {
                         filterResult.append(htmlLines[i - 1]).append("<br>"); // get image from line above
@@ -312,8 +307,10 @@ public class MiniReportDisplayPanel extends JPanel implements ActionListener, Hy
     private void filterReportOutput(String text) {
         if (tabs.getTabCount() > 0) {
             int phaseTab = tabs.getTabCount() - 1;
+            // preserve the live phase tab's label (e.g. "Targeting Report") across the filter rebuild
+            String phaseTabTitle = tabs.getTitleAt(phaseTab);
             tabs.removeTabAt(phaseTab);
-            tabs.add(Messages.getString("MiniReportDisplay.Phase"), loadHtmlScrollPane(text));
+            tabs.add(phaseTabTitle, loadHtmlScrollPane(text));
             tabs.setSelectedIndex(phaseTab);
         }
     }
@@ -425,7 +422,7 @@ public class MiniReportDisplayPanel extends JPanel implements ActionListener, Hy
     }
 
     private String addEntity(JComboBox<String> comboBox, String name) {
-        boolean found = false;
+        boolean found;
         int len = (Math.min(name.length(), MRD_MAX_NAME_LENGTH));
         String displayNane = String.format("%-12s", name).substring(0, len);
 
@@ -586,8 +583,9 @@ public class MiniReportDisplayPanel extends JPanel implements ActionListener, Hy
             tabs.add(Messages.getString("MiniReportDisplay.Round") + " " + round, loadHtmlScrollPane(text));
         }
 
-        // add the new current phase tab
-        tabs.add(Messages.getString("MiniReportDisplay.Phase"), loadHtmlScrollPane(currentClient.phaseReport));
+        // add the new current phase tab, labeled with its round and phase name (e.g. "Round 2 - Firing Report")
+        tabs.add(Messages.getString("MiniReportDisplay.livePhaseTab", String.valueOf(numRounds), phase.localizedName()),
+              loadHtmlScrollPane(currentClient.phaseReport));
 
         tabs.setSelectedIndex(tabs.getTabCount() - 1);
         tabs.setMinimumSize(new Dimension(0, 0));

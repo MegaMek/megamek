@@ -146,6 +146,7 @@ public enum ProstheticEnhancementType {
     /**
      * @return BV modifier per trooper per enhancement (multiply by count for total)
      */
+    @Deprecated(since = "0.51.0", forRemoval = true)
     public double getBvPerTrooper() {
         return bvPerTrooper;
     }
@@ -188,6 +189,7 @@ public enum ProstheticEnhancementType {
     /**
      * @return The Anti-Mek BV multiplier (1.2 for Grappler/Climbing Claws, 1.0 otherwise)
      */
+    @Deprecated(since = "0.51.0", forRemoval = true)
     public double getAntiMekBvMultiplier() {
         return hasAntiMekBonus() ? 1.2 : 1.0;
     }

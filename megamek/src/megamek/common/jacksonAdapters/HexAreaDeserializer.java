@@ -186,7 +186,7 @@ public final class HexAreaDeserializer {
             List<Coords> coords = new ArrayList<>();
             node.forEach(n -> coords.add(CoordsDeserializer.parseNode(n)));
             if (coords.size() == 2) {
-                var area = new RectangleHexArea(coords.get(0).getX(), coords.get(0).getY(),
+                var area = new RectangleHexArea(coords.getFirst().getX(), coords.getFirst().getY(),
                       coords.get(1).getX(), coords.get(1).getY());
                 area.setBoardIds(parseBoardsList(node));
                 return area;

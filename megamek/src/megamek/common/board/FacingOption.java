@@ -103,6 +103,7 @@ public class FacingOption {
      *
      * @return true if this facing allows deployment
      */
+    @Deprecated(since = "0.51.0", forRemoval = true)
     public boolean isFacingValid(int facing) {
         return validFacings.contains(facing);
     }

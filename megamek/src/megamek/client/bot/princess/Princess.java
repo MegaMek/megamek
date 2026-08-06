@@ -1,6 +1,6 @@
 /*
  * Copyright (C) 2000-2011 Ben Mazur (bmazur@sev.org)
- * Copyright (C) 2011-2025 The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2011-2026 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -42,6 +42,7 @@ import java.util.stream.Collectors;
 
 import megamek.client.bot.BotClient;
 import megamek.client.bot.ChatProcessor;
+import megamek.client.bot.Messages;
 import megamek.client.bot.PhysicalCalculator;
 import megamek.client.bot.PhysicalOption;
 import megamek.client.bot.princess.FireControl.FireControlType;
@@ -49,25 +50,13 @@ import megamek.client.bot.princess.PathRanker.PathRankerType;
 import megamek.client.bot.princess.UnitBehavior.BehaviorType;
 import megamek.client.bot.princess.coverage.Builder;
 import megamek.client.ui.SharedUtility;
+import megamek.client.ui.clientGUI.GUIPreferences;
 import megamek.client.ui.panels.phaseDisplay.TowLinkWarning;
 import megamek.codeUtilities.MathUtility;
 import megamek.codeUtilities.StringUtility;
-import megamek.common.BulldozerMovePath;
+import megamek.common.*;
 import megamek.common.BulldozerMovePath.MPCostComparator;
-import megamek.common.CalledShot;
-import megamek.common.Hex;
-import megamek.common.HexTarget;
-import megamek.common.LosEffects;
-import megamek.common.MPCalculationSetting;
-import megamek.common.Player;
-import megamek.common.Team;
-import megamek.common.ToHitData;
-import megamek.common.actions.ArtilleryAttackAction;
-import megamek.common.actions.DisengageAction;
-import megamek.common.actions.EntityAction;
-import megamek.common.actions.FindClubAction;
-import megamek.common.actions.SearchlightAttackAction;
-import megamek.common.actions.WeaponAttackAction;
+import megamek.common.actions.*;
 import megamek.common.annotations.Nullable;
 import megamek.common.battleArmor.BattleArmor;
 import megamek.common.bays.Bay;
@@ -80,7 +69,9 @@ import megamek.common.board.ElevationOption;
 import megamek.common.compute.Compute;
 import megamek.common.containers.PlayerIDAndList;
 import megamek.common.enums.AimingMode;
+import megamek.common.enums.GamePhase;
 import megamek.common.enums.MoveStepType;
+import megamek.common.equipment.AmmoMounted;
 import megamek.common.equipment.AmmoType;
 import megamek.common.equipment.EquipmentMode;
 import megamek.common.equipment.GunEmplacement;
@@ -150,6 +141,13 @@ public class Princess extends BotClient {
     private static final int CALLED_SHOT_MODIFIER = 3;
 
     /**
+     * Minimum standoff (in hexes) artillery wants to keep from the nearest enemy under shoot-and-scoot. At or inside
+     * this range indirect fire is denied (one mapsheet, the indirect artillery minimum), so a held artillery unit
+     * displaces to re-open the distance. See ComputeToHitIsImpossible (TooShortForIndirectArty).
+     */
+    private static final int ARTILLERY_MINIMUM_STANDOFF = Board.DEFAULT_BOARD_HEIGHT;
+
+    /**
      * Minimum damage to be considered as a 'big gun' for prioritizing aimed shot locations
      */
     private static final int BIG_GUN_MIN_DAMAGE = 10;
@@ -192,7 +190,6 @@ public class Princess extends BotClient {
 
     private Integer spinUpThreshold = null;
 
-    private BehaviorSettings behaviorSettings;
     private double moveEvaluationTimeEstimate = 0;
     private final Precognition precognition;
     private final Thread precognitionThread;
@@ -207,6 +204,11 @@ public class Princess extends BotClient {
     private boolean fallBack = false;
     private final ChatProcessor chatProcessor = new ChatProcessor();
     private boolean fleeBoard = false;
+    private boolean holdPosition = false;
+    private boolean shootAndScoot = false;
+    private Coords shootAndScootHex = null;
+    private final Set<Integer> unitsScootingToHex = new HashSet<>();
+    private final Set<Integer> designatedTagTargets = new HashSet<>();
     private final MoraleUtil moraleUtil = new MoraleUtil();
     private final Set<Integer> attackedWhileFleeing = Collections.newSetFromMap(new ConcurrentHashMap<>());
     private final Set<Integer> crippledUnits = new HashSet<>();
@@ -263,6 +265,9 @@ public class Princess extends BotClient {
         // and it will stay up-to date.
         precognition = new Precognition(this);
         precognitionThread = new Thread(precognition, "Princess-precognition (" + getName() + ")");
+        // Precognition is a pure look-ahead cache with no state worth preserving, so it must never be the reason a
+        // process stays alive. die() interrupts it in the normal case; this covers a bot that was dropped without one.
+        precognitionThread.setDaemon(true);
     }
 
     /**
@@ -379,7 +384,13 @@ public class Princess extends BotClient {
         return getBehaviorSettings().isForcedWithdrawal();
     }
 
-    private void setFleeBoard(final boolean fleeBoard, final String reason) {
+    /**
+     * Sets whether Princess-controlled units are allowed to flee off the board once they reach their destination edge.
+     *
+     * @param fleeBoard {@code true} if units should leave the board when they reach their destination edge.
+     * @param reason    The reason for the change, used for logging.
+     */
+    public void setFleeBoard(final boolean fleeBoard, final String reason) {
         LOGGER.debug("Setting Flee Board {} because: {}", fleeBoard, reason);
 
         this.fleeBoard = fleeBoard;
@@ -418,6 +429,406 @@ public class Princess extends BotClient {
         this.fallBack = fallBack;
     }
 
+    /**
+     * @return {@code true} if the bot has been ordered to hold position (units stay where they are).
+     */
+    public boolean getHoldPosition() {
+        return holdPosition;
+    }
+
+    /**
+     * Orders the bot to hold position: its units stay where they are during the movement phase (they still fight from
+     * their current location and may turn in place to face the enemy) until the hold is lifted. Airborne units are
+     * exempt, as they cannot legally stand still.
+     *
+     * @param holdPosition {@code true} to hold position, {@code false} to resume normal movement.
+     */
+    public void setHoldPosition(final boolean holdPosition) {
+        LOGGER.info("{}: setting hold position to {}", getName(), holdPosition);
+        this.holdPosition = holdPosition;
+    }
+
+    /**
+     * @return {@code true} if "shoot and scoot" is enabled, letting a threatened artillery unit displace to regain its
+     *       standoff instead of holding in place
+     */
+    public boolean getShootAndScoot() {
+        return shootAndScoot;
+    }
+
+    /**
+     * Enables or disables "shoot and scoot" for artillery. While the bot is holding position, an artillery unit with
+     * usable ammo that has an enemy inside its minimum effective range breaks the hold and displaces toward safety to
+     * regain standoff, instead of sitting still and being overrun. Only the threatened artillery unit moves; every
+     * other unit keeps holding.
+     *
+     * @param shootAndScoot {@code true} to let threatened artillery displace, {@code false} for a pure hold.
+     */
+    public void setShootAndScoot(final boolean shootAndScoot) {
+        LOGGER.info("{}: setting shoot and scoot to {}", getName(), shootAndScoot);
+        this.shootAndScoot = shootAndScoot;
+        if (!shootAndScoot) {
+            shootAndScootHex = null;
+            unitsScootingToHex.clear();
+        }
+    }
+
+    /**
+     * @return The hex the bot's artillery should fall back to under shoot-and-scoot, or {@code null} to auto-displace away from
+     *       the nearest enemy
+     */
+    public @Nullable Coords getShootAndScootHex() {
+        return shootAndScootHex;
+    }
+
+    /**
+     * Designates a fallback hex for shoot-and-scoot: threatened artillery heads to this hex (which may take several
+     * turns) and then holds and fires from there, instead of auto-displacing. Setting a hex also enables
+     * shoot-and-scoot. Passing {@code null} clears the hex and reverts to auto-displacement.
+     *
+     * @param shootAndScootHex The fallback hex, or {@code null} to clear it
+     */
+    public void setShootAndScootHex(final @Nullable Coords shootAndScootHex) {
+        LOGGER.info("{}: setting shoot and scoot hex to {}", getName(), shootAndScootHex);
+        this.shootAndScootHex = shootAndScootHex;
+        unitsScootingToHex.clear();
+        if (shootAndScootHex != null) {
+            shootAndScoot = true;
+        }
+    }
+
+    /**
+     * @return The set of enemy unit IDs the player has designated for the bot to TAG (for the player's own homing
+     *       artillery). The bot's TAG fire prefers these targets when they are hittable.
+     */
+    public Set<Integer> getDesignatedTagTargets() {
+        return designatedTagTargets;
+    }
+
+    /**
+     * Designates an enemy unit for the bot to put its TAG on, so a player's homing artillery has a known designation.
+     *
+     * @param targetId The enemy unit ID to TAG
+     */
+    public void addDesignatedTagTarget(final int targetId) {
+        LOGGER.info("{}: designating unit {} as a TAG target", getName(), targetId);
+        designatedTagTargets.add(targetId);
+    }
+
+    /**
+     * Clears all designated TAG targets, returning the bot's TAG to autonomous best-hit targeting.
+     */
+    public void clearDesignatedTagTargets() {
+        LOGGER.info("{}: clearing designated TAG targets", getName());
+        designatedTagTargets.clear();
+    }
+
+    /**
+     * A bot artillery heat-map marker. For a predicted enemy position the value is the round of the prediction; for a
+     * shot it is the countdown of turns until the round lands (0 = lands this turn). The heat is the number of enemies
+     * feeding the hex, which drives a predicted hex's cold-to-hot color.
+     *
+     * @param turn      The value to show on the hex: the prediction round, or a shot's turns-til-impact countdown
+     * @param heatUnits The number of enemies contributing to this hex's heat
+     */
+    public record HeatMapMarker(int turn, int heatUnits) {}
+
+    /**
+     * Optionally paints this bot's artillery heat map on the board for testing: a cold-to-hot color fill at each hex an
+     * enemy is predicted to advance to (navy blue for a single enemy converging, up to crimson red for many, so the
+     * map cools as units are destroyed), and a crosshair at each hex it is firing at. A predicted hex shows the
+     * prediction's turn; a firing hex counts down the turns until the rounds land. Only acts when the local client has
+     * the "Show Bot Artillery Heat Map" advanced testing setting on; the markers are visible to all and clear
+     * themselves each round. No-op for a headless bot (no GUI preferences).
+     *
+     * @param predictedImpacts The hexes enemies were predicted to advance to, mapped to their heat-map marker
+     * @param chosenTargets    The hexes the bot is firing at (this turn's shots plus in-flight shells), mapped to their
+     *                         heat-map marker (turn = countdown to impact)
+     * @param boardId          The board the hexes are on
+     */
+    public void showArtilleryHeatMap(final Map<Coords, HeatMapMarker> predictedImpacts,
+          final Map<Coords, HeatMapMarker> chosenTargets, final int boardId) {
+        if (!showBotArtilleryHeatMap()) {
+            return;
+        }
+        for (Map.Entry<Coords, HeatMapMarker> predicted : predictedImpacts.entrySet()) {
+            sendHeatMapMarker(predicted.getKey(), boardId, SpecialHexDisplay.HEAT_MAP_KIND_PREDICTED,
+                  predicted.getValue(), "predicted enemy position");
+        }
+        for (Map.Entry<Coords, HeatMapMarker> chosen : chosenTargets.entrySet()) {
+            sendHeatMapMarker(chosen.getKey(), boardId, SpecialHexDisplay.HEAT_MAP_KIND_FIRING,
+                  chosen.getValue(), "firing here");
+        }
+    }
+
+    /**
+     * Sends one heat-map special hex display. The info text is prefixed with {@link SpecialHexDisplay#HEAT_MAP_PREFIX}
+     * followed by the control token {@code <turn>:<heat>:<kind>}, which the board view parses to draw the turn on the
+     * hex, pick the cold-to-hot color from the enemy count (heat), and tell a predicted-position fill apart from a
+     * firing crosshair. Both marker kinds use the crosshair icon type; the board view paints predicted hexes as a
+     * color fill instead and only draws the icon for firing hexes.
+     *
+     * @param coords      The hex to mark
+     * @param boardId     The board the hex is on
+     * @param kind        The marker kind, {@link SpecialHexDisplay#HEAT_MAP_KIND_PREDICTED} or
+     *                    {@link SpecialHexDisplay#HEAT_MAP_KIND_FIRING}
+     * @param marker      The marker's turn and heat (number of enemies converging on the hex)
+     * @param description The human-readable description for the hover text
+     */
+    private void sendHeatMapMarker(Coords coords, int boardId, String kind, HeatMapMarker marker,
+          String description) {
+        String info = SpecialHexDisplay.HEAT_MAP_PREFIX + marker.turn() + ":" + marker.heatUnits() + ":" + kind
+              + " " + getName() + ": " + description + " (turn " + marker.turn() + ", " + marker.heatUnits()
+              + " units)";
+        sendSpecialHexDisplayAppend(coords, boardId,
+              new SpecialHexDisplay(SpecialHexDisplay.Type.ARTILLERY_TARGET, getGame().getRoundCount(),
+                    getLocalPlayer(), info, SpecialHexDisplay.SHD_VISIBLE_TO_ALL));
+    }
+
+    /**
+     * @return {@code true} if the local client has the artillery-heat-map testing setting on, {@code false} for a headless bot with no
+     *       GUI preferences
+     */
+    private boolean showBotArtilleryHeatMap() {
+        try {
+            return GUIPreferences.getInstance().getBoolean(GUIPreferences.ADVANCED_SHOW_BOT_ARTILLERY_HEATMAP);
+        } catch (Exception ignored) {
+            return false;
+        }
+    }
+
+    /**
+     * Builds the movement for an artillery unit under shoot-and-scoot. The unit holds and fires at standoff and never
+     * advances into the enemy; when an enemy gets within the minimum effective (indirect) range it scoots. With a
+     * designated fallback hex it heads there (over multiple turns, tracked until it arrives, then holds); otherwise it
+     * auto-displaces away from the nearest enemy.
+     *
+     * @param entity The artillery unit
+     *
+     * @return The chosen move path
+     */
+    private MovePath getShootAndScootPath(final Entity entity) {
+        boolean threatened = isEnemyWithinStandoff(entity);
+
+        if (shootAndScootHex != null) {
+            if (shootAndScootHex.equals(entity.getPosition())) {
+                // arrived at the fallback hex - hold and fire from here
+                unitsScootingToHex.remove(entity.getId());
+                LOGGER.info("{}: {} shoot-and-scoot: reached fallback hex {} - holding and firing",
+                      getName(), entity.getDisplayName(), shootAndScootHex);
+                return getHoldPositionPath(entity);
+            }
+            // once threatened, keep heading to the fallback hex until it arrives, even if the threat recedes
+            if (threatened || unitsScootingToHex.contains(entity.getId())) {
+                unitsScootingToHex.add(entity.getId());
+                LOGGER.info("{}: {} shoot-and-scoot: scooting toward fallback hex {}",
+                      getName(), entity.getDisplayName(), shootAndScootHex);
+                sendChat(Messages.getString("Princess.shootAndScoot.movingToHex",
+                      entity.getDisplayName(), shootAndScootHex.getBoardNum()), Level.WARN);
+                return getMoveTowardHexPath(entity, shootAndScootHex);
+            }
+            LOGGER.info("{}: {} shoot-and-scoot: no threat in range - holding and firing (fallback hex {} set)",
+                  getName(), entity.getDisplayName(), shootAndScootHex);
+            return getHoldPositionPath(entity);
+        }
+
+        if (threatened) {
+            LOGGER.info("{}: {} shoot-and-scoot: enemy inside minimum range - displacing to regain standoff",
+                  getName(), entity.getDisplayName());
+            sendChat(Messages.getString("Princess.shootAndScoot.displacing", entity.getDisplayName()), Level.WARN);
+            return getDisplacePath(entity);
+        }
+        LOGGER.info("{}: {} shoot-and-scoot: no threat in range - holding and firing at standoff",
+              getName(), entity.getDisplayName());
+        return getHoldPositionPath(entity);
+    }
+
+    /**
+     * @param entity The artillery unit
+     *
+     * @return {@code true} if the nearest enemy is within the minimum effective (indirect) artillery standoff
+     */
+    private boolean isEnemyWithinStandoff(final Entity entity) {
+        if (entity.getPosition() == null) {
+            return false;
+        }
+        double distanceToEnemy = getPathRanker(entity).distanceToClosestEnemy(entity, entity.getPosition(), getGame());
+        boolean enemyInsideMinimum = distanceToEnemy <= ARTILLERY_MINIMUM_STANDOFF;
+        if (!enemyInsideMinimum) {
+            LOGGER.debug("{}: {} holding - nearest enemy at {} hexes is outside minimum standoff {}",
+                  getName(), entity.getDisplayName(), distanceToEnemy, ARTILLERY_MINIMUM_STANDOFF);
+        }
+        return enemyInsideMinimum;
+    }
+
+    /**
+     * Builds a move that advances the unit as far toward the given destination hex as it can this turn (excluding any
+     * path that leaves the board), so a multi-turn fallback to a designated hex closes the distance each turn.
+     *
+     * @param entity      The unit moving
+     * @param destination The hex to head toward
+     *
+     * @return The chosen path, or a hold-in-place path if none is available
+     */
+    private MovePath getMoveTowardHexPath(final Entity entity, final Coords destination) {
+        List<MovePath> paths = getMovePathsAndSetNecessaryTargets(entity, false);
+        if ((paths == null) || paths.isEmpty()) {
+            return getHoldPositionPath(entity);
+        }
+        MovePath bestPath = null;
+        int bestDistance = Integer.MAX_VALUE;
+        for (MovePath path : paths) {
+            if (path.fliesOffBoard()) {
+                continue;
+            }
+            Coords endpoint = path.getFinalCoords();
+            if (endpoint == null) {
+                continue;
+            }
+            int distance = endpoint.distance(destination);
+            if (distance < bestDistance) {
+                bestDistance = distance;
+                bestPath = path;
+            }
+        }
+        if (bestPath == null) {
+            return getHoldPositionPath(entity);
+        }
+        return performPathPostProcessing(bestPath, 0);
+    }
+
+    /**
+     * @param entity The unit to inspect
+     *
+     * @return {@code true} if the entity carries at least one operational (undestroyed) artillery weapon with usable
+     *       ammunition
+     */
+    private boolean isArtilleryWithAmmo(final Entity entity) {
+        for (WeaponMounted weapon : entity.getWeaponList()) {
+            if (weapon.getType().hasFlag(WeaponType.F_ARTILLERY) && !weapon.isDestroyed()) {
+                for (AmmoMounted ammo : entity.getAmmo(weapon)) {
+                    if (ammo.getUsableShotsLeft() > 0) {
+                        return true;
+                    }
+                }
+            }
+        }
+        return false;
+    }
+
+    /**
+     * Builds a "withdraw toward safety" move for a threatened artillery unit: among its legal move paths (excluding any
+     * that leave the board), it picks the one whose endpoint is farthest from the nearest enemy, so the unit relocates
+     * to regain standoff rather than fleeing. Falls back to holding in place if no better move is available.
+     *
+     * @param entity The artillery unit displacing
+     *
+     * @return The chosen displacement path, or a hold-in-place path if none is better
+     */
+    private MovePath getDisplacePath(final Entity entity) {
+        List<MovePath> paths = getMovePathsAndSetNecessaryTargets(entity, false);
+        if ((paths == null) || paths.isEmpty()) {
+            return getHoldPositionPath(entity);
+        }
+        CardinalEdge homeEdge = getHomeEdge(entity);
+        MovePath bestPath = null;
+        double bestEnemyDistance = -1;
+        int bestHomeDistance = Integer.MAX_VALUE;
+        for (MovePath path : paths) {
+            if (path.fliesOffBoard()) {
+                // displace, do not flee the board
+                continue;
+            }
+            Coords endpoint = path.getFinalCoords();
+            if (endpoint == null) {
+                continue;
+            }
+            double enemyDistance = getPathRanker(entity).distanceToClosestEnemy(entity, endpoint, getGame());
+            int homeDistance = getPathRanker(entity).distanceToHomeEdge(endpoint, entity.getBoardId(), homeEdge,
+                  getGame());
+            // Primary: get as far from the nearest enemy as possible. Tie-break (within half a hex) toward the home
+            // edge, so along a map edge it slides to the rear instead of picking a random equal-distance hex.
+            boolean farther = enemyDistance > (bestEnemyDistance + 0.5);
+            boolean similarButCloserToHome = (Math.abs(enemyDistance - bestEnemyDistance) <= 0.5)
+                  && (homeDistance < bestHomeDistance);
+            if (farther || similarButCloserToHome) {
+                bestEnemyDistance = enemyDistance;
+                bestHomeDistance = homeDistance;
+                bestPath = path;
+            }
+        }
+        if (bestPath == null) {
+            return getHoldPositionPath(entity);
+        }
+        LOGGER.info("{}: {} displacing to {} ({} hexes from nearest enemy, {} from home edge)",
+              getName(), entity.getDisplayName(), bestPath.getFinalCoords(), bestEnemyDistance, bestHomeDistance);
+        return performPathPostProcessing(bestPath, 0);
+    }
+
+    /**
+     * Builds the move path for a unit under a hold position order: the unit stays in its hex but is allowed to change
+     * facing toward the closest enemy so it keeps its weapons bearing.
+     *
+     * @param entity The unit holding position
+     *
+     * @return A turn-in-place move path, or an empty path when no facing change is possible or needed
+     */
+    private MovePath getHoldPositionPath(final Entity entity) {
+        MovePath movePath = new MovePath(game, entity);
+        boolean canTurnInPlace = !entity.isProne() && !entity.isImmobile() && (entity.getWalkMP() > 0)
+              && (entity.getPosition() != null);
+        if (!canTurnInPlace) {
+            return movePath;
+        }
+        Coords closestEnemyPosition = findClosestEnemyPosition(entity);
+        if ((closestEnemyPosition == null) || closestEnemyPosition.equals(entity.getPosition())) {
+            return movePath;
+        }
+        int desiredFacing = entity.getPosition().direction(closestEnemyPosition);
+        int rightTurns = ((desiredFacing - entity.getFacing()) + 6) % 6;
+        if (rightTurns == 0) {
+            return movePath;
+        }
+        // turn the short way around
+        if (rightTurns <= 3) {
+            for (int turn = 0; turn < rightTurns; turn++) {
+                movePath.addStep(MoveStepType.TURN_RIGHT);
+            }
+        } else {
+            for (int turn = 0; turn < (6 - rightTurns); turn++) {
+                movePath.addStep(MoveStepType.TURN_LEFT);
+            }
+        }
+        // trim the path in case the unit lacks the MP for the full turn
+        movePath.clipToPossible();
+        return movePath;
+    }
+
+    /**
+     * Finds the position of the deployed enemy unit closest to the given unit.
+     *
+     * @param entity The unit looking for enemies
+     *
+     * @return The closest enemy position, or {@code null} if no deployed enemy with a position exists
+     */
+    private @Nullable Coords findClosestEnemyPosition(final Entity entity) {
+        Coords closestPosition = null;
+        int closestDistance = Integer.MAX_VALUE;
+        for (Iterator<Entity> enemies = game.getAllEnemyEntities(entity); enemies.hasNext(); ) {
+            Entity enemy = enemies.next();
+            if ((enemy.getPosition() == null) || enemy.isOffBoard() || !enemy.isDeployed()) {
+                continue;
+            }
+            int distance = entity.getPosition().distance(enemy.getPosition());
+            if (distance < closestDistance) {
+                closestDistance = distance;
+                closestPosition = enemy.getPosition();
+            }
+        }
+        return closestPosition;
+    }
+
+    @Override
     public void setBehaviorSettings(final BehaviorSettings behaviorSettings) {
         LOGGER.info("New behavior settings for {}\n{}", getName(), behaviorSettings.toLog());
         try {
@@ -494,10 +905,6 @@ public class Princess extends BotClient {
             return damageMap.get(targetId);
         }
         return 0.0; // If we have no entry, return zero
-    }
-
-    public BehaviorSettings getBehaviorSettings() {
-        return behaviorSettings;
     }
 
     public Set<Coords> getStrategicBuildingTargets() {
@@ -583,7 +990,8 @@ public class Princess extends BotClient {
 
         // if we are using forced withdrawal, and the entity being considered is crippled
         // we will opt to not re-deploy the entity
-        if (getForcedWithdrawal() && getEntity(entityNum).isCrippled()) {
+        // isCrippled(true) to match the other withdrawal predicates: crew-crippled Meks withdraw too
+        if (getForcedWithdrawal() && getEntity(entityNum).isCrippled(true)) {
             LOGGER.info("Declining to deploy crippled unit: {}. Removing unit.", getEntity(entityNum).getChassis());
             sendDeleteEntity(entityNum);
             return;
@@ -685,7 +1093,7 @@ public class Princess extends BotClient {
             final List<Coords> validCoords = calculateTurretDeploymentLocations((GunEmplacement) deployedUnit,
                   possibleDeployCoords);
             if (!validCoords.isEmpty()) {
-                return validCoords.get(0);
+                return validCoords.getFirst();
             }
 
             return null;
@@ -715,7 +1123,7 @@ public class Princess extends BotClient {
         // if we can't find any good deployment coordinates, deploy anyway to the first available one
         // and maybe eventually we'll slow down enough that we can deploy without immediately flying off
         if (!possibleDeployCoords.isEmpty()) {
-            return possibleDeployCoords.get(0);
+            return possibleDeployCoords.getFirst();
         }
 
         return null;
@@ -834,6 +1242,22 @@ public class Princess extends BotClient {
      *     </li>
      * </ol>
      */
+    /**
+     * Orders the candidate deployment hexes that {@link #rankDeploymentCoords(Entity, List)} will scan.
+     *
+     * <p>This matters more than it looks. The candidate list arrives shuffled, and the scan below stops after roughly
+     * twenty entries, so whatever sits at the front of this list is very nearly the whole choice. Princess returns it
+     * unchanged: each unit is placed on terrain merit alone, with no regard for where the rest of the force went.</p>
+     *
+     * @param deployedUnit        the unit being placed
+     * @param possibleDeployCoords legal deployment hexes
+     *
+     * @return the hexes to scan, in the order to scan them
+     */
+    protected List<Coords> prioritizeDeploymentCoords(Entity deployedUnit, List<Coords> possibleDeployCoords) {
+        return possibleDeployCoords;
+    }
+
     protected Coords rankDeploymentCoords(Entity deployedUnit, List<Coords> possibleDeployCoords) {
         StringBuilder sb = null;
         if (LOGGER.isDebugEnabled()) {
@@ -854,6 +1278,35 @@ public class Princess extends BotClient {
         }
 
 
+        // Filter to coords where AllowedDeploymentHelper confirms at least one valid deployment elevation.
+        // This catches prohibited terrain, level-uniformity rules, etc. (e.g. grounded DropShips needing
+        // 7-hex clearance) that BotClient.getFirstValidCoords() does not check.
+        Board deployBoard = game.getBoard(deployedUnit);
+        if (!deployBoard.isSpace()) {
+            boolean groundedAero = deployedUnit.isAero() && !deployedUnit.isAirborne();
+            possibleDeployCoords = possibleDeployCoords.stream()
+                  .filter(c -> {
+                      Hex h = deployBoard.getHex(c);
+                      if (h == null) {
+                          return false;
+                      }
+                      List<ElevationOption> elevations = new AllowedDeploymentHelper(deployedUnit,
+                            c,
+                            deployBoard,
+                            h,
+                            game)
+                            .findAllowedElevations();
+                      return groundedAero
+                            ? elevations.stream().anyMatch(o -> o.elevation() == 0)
+                            : !elevations.isEmpty();
+                  })
+                  .toList();
+        }
+
+        // Order the candidates before the capped scan below only looks at the first handful of them. Princess hands
+        // them back untouched, so each unit deploys on terrain alone; subclasses may reorder to keep a force together.
+        possibleDeployCoords = prioritizeDeploymentCoords(deployedUnit, possibleDeployCoords);
+
         // Sample LIMIT number of valid starting hexes, check accessibility and hazards within RADIUS
         int LIMIT = 20;
         int RADIUS = 3;
@@ -869,7 +1322,7 @@ public class Princess extends BotClient {
         HashMap<Double, ArrayList<Coords>> rankedCoords = new HashMap<>();
 
         // Units that deploy airborne don't need to worry about all this
-        if (!(deployedUnit.isAero() ||
+        if (!(deployedUnit.isAirborne() ||
               ((deployedUnit.getMovementMode().isVTOL() || deployedUnit.getMovementMode().isWiGE()) &&
                     deployedUnit.getElevation() > 0))) {
             double hazard;
@@ -975,8 +1428,9 @@ public class Princess extends BotClient {
             // If foregoing firing, unjam highest-damage weapons first, then turret
             boolean skipFiring = false;
 
-            // If my unit is forced to withdraw, don't fire unless I've been fired on.
-            if (getForcedWithdrawal() && shooter.isCrippled()) {
+            // If my unit is forced to withdraw, don't fire unless I've been fired on
+            // or I have no retreat path anyway.
+            if (getForcedWithdrawal() && shooter.isCrippled(true)) {
                 final StringBuilder msg = new StringBuilder(shooter.getDisplayName()).append(
                       " is crippled and withdrawing.");
                 try {
@@ -985,6 +1439,8 @@ public class Princess extends BotClient {
                         skipFiring = true;
                     } else if (attackedWhileFleeing.contains(shooter.getId())) {
                         msg.append("\n\tBut I was fired on, so I will return fire.");
+                    } else if (hasNoRetreatPath(shooter)) {
+                        msg.append("\n\tBut I have no path to my retreat edge, so I will fight on.");
                     } else {
                         msg.append("\n\tI will not fire so long as I'm not fired on.");
                         skipFiring = true;
@@ -1029,7 +1485,7 @@ public class Princess extends BotClient {
                     int aimLocation = Mek.LOC_NONE;
                     int calledShotDirection = CalledShot.CALLED_NONE;
 
-                    WeaponFireInfo primaryFire = plan.get(0);
+                    WeaponFireInfo primaryFire = plan.getFirst();
                     int targetID;
                     if (primaryFire != null) {
                         targetID = primaryFire.getTarget().getId();
@@ -1113,17 +1569,28 @@ public class Princess extends BotClient {
                     Vector<EntityAction> actions = new Vector<>();
 
                     // if using search light, it needs to go before the other actions so we can light up what we're shooting at
-                    SearchlightAttackAction searchLightAction = getFireControl(shooter).getSearchLightAction(shooter,
-                          plan);
-                    if (searchLightAction != null) {
-                        actions.add(searchLightAction);
+                    // Respect the "Searchlights On by Default" option - disabled means Princess won't use searchlights offensively either.
+                    if (getGame().getOptions().booleanOption(OptionsConstants.SEARCHLIGHTS_ON)) {
+                        SearchlightAttackAction searchLightAction = getFireControl(shooter).getSearchLightAction(shooter,
+                              plan);
+                        if (searchLightAction != null) {
+                            actions.add(searchLightAction);
+                        }
                     }
 
-                    actions.addAll(plan.getEntityActionVector());
-
                     EntityAction spotAction = getFireControl(shooter).getSpotAction(plan, shooter, fireControlState);
+                    // If the unit's own shot is too trivial to be worth the spotting penalty, spot instead of firing -
+                    // unless the shot is what switches Triple-Strength Myomer on this turn, in which case the heat it
+                    // builds is worth more than the trivial damage suggests.
+                    boolean spotInsteadOfTrivialFire = (spotAction != null)
+                          && (plan.getExpectedDamage() < FireControl.MIN_USEFUL_FIRING_DAMAGE)
+                          && !getFireControl(shooter).firingActivatesTsm(shooter, plan);
+                    if (!spotInsteadOfTrivialFire) {
+                        actions.addAll(plan.getEntityActionVector());
+                    }
                     if (spotAction != null) {
                         actions.add(spotAction);
+                        announceSpotting(spotAction, shooter);
                     }
 
                     sendAttackData(shooter.getId(), actions);
@@ -1167,11 +1634,16 @@ public class Princess extends BotClient {
                 EntityAction spotAction = getFireControl(shooter).getSpotAction(null, shooter, fireControlState);
                 if (spotAction != null) {
                     miscPlan.add(spotAction);
+                    announceSpotting(spotAction, shooter);
                 }
 
-                SearchlightAttackAction searchLightAction = getFireControl(shooter).getSearchLightAction(shooter, null);
-                if (searchLightAction != null) {
-                    miscPlan.add(searchLightAction);
+                // Respect the "Searchlights On by Default" option
+                if (getGame().getOptions().booleanOption(OptionsConstants.SEARCHLIGHTS_ON)) {
+                    SearchlightAttackAction searchLightAction = getFireControl(shooter).getSearchLightAction(shooter,
+                          null);
+                    if (searchLightAction != null) {
+                        miscPlan.add(searchLightAction);
+                    }
                 }
             }
 
@@ -1215,8 +1687,13 @@ public class Princess extends BotClient {
               this);
 
         if (!firingPlan.getEntityActionVector().isEmpty()) {
+            LOGGER.info("{}: targeting phase turn for {}: sending {} attack action(s)",
+                  getLocalPlayer().getName(), entityToFire.getDisplayName(),
+                  firingPlan.getEntityActionVector().size());
             sendAttackData(entityToFire.getId(), firingPlan.getEntityActionVector());
         } else {
+            LOGGER.info("{}: targeting phase turn for {}: no artillery attacks planned",
+                  getLocalPlayer().getName(), entityToFire.getDisplayName());
             if (fireControls == null) {
                 initializeFireControls();
             }
@@ -1363,15 +1840,21 @@ public class Princess extends BotClient {
             }
 
             // If all else is equal, Infantry before Battle Armor before Tanks before Meks.
-            if (entity instanceof BattleArmor) {
-                total *= PRIORITY_BA;
-                modifiers.append("\tx2.0 (is BA)");
-            } else if (entity instanceof Infantry) {
-                total *= PRIORITY_INF;
-                modifiers.append("\tx3.0 (is Inf)");
-            } else if (entity instanceof Tank) {
-                total *= PRIORITY_TANK;
-                modifiers.append("\tx1.5 (is Tank)");
+            switch (entity) {
+                case BattleArmor ignored -> {
+                    total *= PRIORITY_BA;
+                    modifiers.append("\tx2.0 (is BA)");
+                }
+                case Infantry ignored -> {
+                    total *= PRIORITY_INF;
+                    modifiers.append("\tx3.0 (is Inf)");
+                }
+                case Tank ignored -> {
+                    total *= PRIORITY_TANK;
+                    modifiers.append("\tx1.5 (is Tank)");
+                }
+                default -> {
+                }
             }
 
             // Fleeing entities should move before those not fleeing.
@@ -1408,10 +1891,12 @@ public class Princess extends BotClient {
 
     // Enhanced targeting controls
 
+    @Deprecated(since = "0.51.0", forRemoval = true)
     public boolean getEnhancedTargetingControl() {
         return enableEnhancedTargeting;
     }
 
+    @Deprecated(since = "0.51.0", forRemoval = true)
     public void setEnableEnhancedTargeting(boolean newSetting) {
         enableEnhancedTargeting = newSetting;
     }
@@ -1451,6 +1936,7 @@ public class Princess extends BotClient {
      *
      * @param newTargetTypes List of {@link UnitType} constants, may be empty or null to clear
      */
+    @Deprecated(since = "0.51.0", forRemoval = true)
     public void setEnhancedTargetingTargetTypes(List<Integer> newTargetTypes) {
         enhancedTargetingTargetTypes = Objects.requireNonNullElseGet(newTargetTypes, ArrayList::new);
         if (enhancedTargetingTargetTypes.contains(UnitType.INFANTRY)) {
@@ -1466,6 +1952,7 @@ public class Princess extends BotClient {
      *
      * @param newAttackerTypes List of {@link UnitType} constants, may be empty or null to clear
      */
+    @Deprecated(since = "0.51.0", forRemoval = true)
     public void setEnhancedTargetingAttackerTypes(List<Integer> newAttackerTypes) {
         enhancedTargetingAttackerTypes = Objects.requireNonNullElseGet(newAttackerTypes, ArrayList::new);
     }
@@ -1475,6 +1962,7 @@ public class Princess extends BotClient {
      *
      * @return list of {@link UnitType} constants, or empty list
      */
+    @Deprecated(since = "0.51.0", forRemoval = true)
     public List<Integer> seeEnhancedTargetingTargetTypes() {
         return new ArrayList<>(enhancedTargetingTargetTypes);
     }
@@ -1484,6 +1972,7 @@ public class Princess extends BotClient {
      *
      * @return list of {@link UnitType} constants, or empty list
      */
+    @Deprecated(since = "0.51.0", forRemoval = true)
     public List<Integer> seeEnhancedTargetingAttackerTypes() {
         return new ArrayList<>(enhancedTargetingAttackerTypes);
     }
@@ -1518,14 +2007,17 @@ public class Princess extends BotClient {
         }
     }
 
+    @Deprecated(since = "0.51.0", forRemoval = true)
     public boolean getAllowCalledShotsOnImmobile() {
         return useCalledShotsOnImmobileTarget;
     }
 
+    @Deprecated(since = "0.51.0", forRemoval = true)
     public void setAllowCalledShotsOnImmobile(boolean newSetting) {
         useCalledShotsOnImmobileTarget = newSetting;
     }
 
+    @Deprecated(since = "0.51.0", forRemoval = true)
     public boolean getPartialCoverEnhancedTargeting() {
         return allowCoverEnhancedTargeting;
     }
@@ -1536,6 +2028,7 @@ public class Princess extends BotClient {
      *
      * @param newSetting true, to allow aimed/called shots against targets with partial cover
      */
+    @Deprecated(since = "0.51.0", forRemoval = true)
     public void setPartialCoverEnhancedTargeting(boolean newSetting) {
         allowCoverEnhancedTargeting = newSetting;
     }
@@ -1674,7 +2167,7 @@ public class Princess extends BotClient {
             return calledShotDirection;
         }
 
-        WeaponFireInfo primaryFire = planOfAttack.get(0);
+        WeaponFireInfo primaryFire = planOfAttack.getFirst();
         if (primaryFire == null) {
             return calledShotDirection;
         }
@@ -1719,7 +2212,7 @@ public class Princess extends BotClient {
             return aimLocation;
         }
 
-        WeaponFireInfo primaryFire = aimedShots.get(0);
+        WeaponFireInfo primaryFire = aimedShots.getFirst();
         int lowestArmor = Integer.MAX_VALUE;
         List<Integer> rankedLocations = new ArrayList<>();
 
@@ -1873,11 +2366,11 @@ public class Princess extends BotClient {
     protected int calculateCalledShotDirection(Mek target, int attackSide, List<WeaponFireInfo> calledShots) {
         int calledShotDirection = CalledShot.CALLED_NONE;
 
-        if (calledShots == null || calledShots.isEmpty() || calledShots.get(0) == null) {
+        if (calledShots == null || calledShots.isEmpty() || calledShots.getFirst() == null) {
             return calledShotDirection;
         }
 
-        WeaponFireInfo primaryFire = calledShots.get(0);
+        WeaponFireInfo primaryFire = calledShots.getFirst();
 
         // If the target is being shot in a side arc, set the call direction to hit the rear arc
         if (attackSide == ToHitData.SIDE_LEFT || attackSide == ToHitData.SIDE_REAR_LEFT) {
@@ -2050,13 +2543,11 @@ public class Princess extends BotClient {
                     offset = 2;
                 }
 
-                // If the target number is considered viable, step through the options until
-                // it gets to the desired setting
+                // If the target number is considered viable, set the called shot directly
                 if ((shot.getToHit().getValue() + CALLED_SHOT_MODIFIER) <= (maximumTN + offset)) {
-                    // TODO: adjust send/receive method to transmit new called shot rather than stepping through
-                    for (int i = 0; i < calledShotDirection; i++) {
-                        sendCalledShotChange(shooter.getId(), shot.getWeaponAttackAction().getWeaponId());
-                    }
+                    sendCalledShotChange(shooter.getId(),
+                          shot.getWeaponAttackAction().getWeaponId(),
+                          calledShotDirection);
                 }
 
             }
@@ -2207,14 +2698,17 @@ public class Princess extends BotClient {
             final Entity attacker = game.getFirstEntity(getMyTurn());
 
             // If my unit is forced to withdraw, don't attack unless I've been
-            // attacked.
-            if (getForcedWithdrawal() && attacker.isCrippled()) {
+            // attacked or I have no retreat path anyway.
+            if (getForcedWithdrawal() && attacker.isCrippled(true)) {
                 final StringBuilder msg = new StringBuilder(attacker.getDisplayName()).append(
                       " is crippled and withdrawing.");
                 if (attackedWhileFleeing.contains(attacker.getId())) {
                     msg.append("\n\tBut I was fired on, so I will hit back.");
+                } else if (hasNoRetreatPath(attacker)) {
+                    msg.append("\n\tBut I have no path to my retreat edge, so I will fight on.");
                 } else {
                     msg.append("\n\tI will not attack so long as I'm not fired on.");
+                    LOGGER.info(msg.toString());
                     return null;
                 }
                 LOGGER.info(msg.toString());
@@ -2227,8 +2721,253 @@ public class Princess extends BotClient {
         }
     }
 
+    @Override
+    protected void calculatePreEndDeclarationsTurn() {
+        try {
+            initialize();
+            Entity entity = getGame().getFirstEntity(getMyTurn());
+            LOGGER.debug("[PreEnd] bot calculatePreEndDeclarationsTurn: entity={}", entity);
+
+            // No selectable entity for this turn; end it so the phase can advance.
+            if (entity == null) {
+                LOGGER.debug("[PreEnd] bot: no entity for this turn; sending done");
+                sendDone(true);
+                return;
+            }
+
+            // Only infantry can initiate combat
+            if (!(entity instanceof Infantry)) {
+                sendAttackData(entity.getId(), new Vector<>(0));
+                sendDone(true);
+                return;
+            }
+
+            // Check if already in combat
+            if (entity.getInfantryCombatTargetId() != Entity.NONE) {
+                sendAttackData(entity.getId(), new Vector<>(0));
+                sendDone(true);
+                return;
+            }
+
+            // Find potential targets (buildings/vessels in same hex or adjacent)
+            List<Entity> potentialTargets = findInfantryCombatTargets(entity);
+
+            if (potentialTargets.isEmpty()) {
+                sendAttackData(entity.getId(), new Vector<>(0));
+                sendDone(true);
+                return;
+            }
+
+            // Evaluate each target and pick best
+            Entity bestTarget = null;
+            double bestRatio = 0;
+            double initiationThreshold = InfantryCombatHelper
+                  .calculateInitiationThreshold(getBehaviorSettings().getBraveryValue());
+
+            for (Entity target : potentialTargets) {
+                if (InfantryCombatHelper.shouldInitiateCombat(
+                      entity, target, getGame(), getBehaviorSettings())) {
+                    double ratio = calculateCombatRatio(entity, target);
+                    if (ratio > bestRatio) {
+                        bestRatio = ratio;
+                        bestTarget = target;
+                    }
+                }
+            }
+
+            if (bestTarget != null) {
+                LOGGER.info("{} initiating infantry combat at {} (MPS ratio: {}, threshold: {})",
+                      entity.getDisplayName(), bestTarget.getDisplayName(),
+                      String.format("%.2f", bestRatio),
+                      String.format("%.2f", initiationThreshold));
+
+                Vector<EntityAction> actions = new Vector<>();
+                actions.add(new InitiateInfantryCombatAction(
+                      entity.getId(), bestTarget.getId()));
+                sendAttackData(entity.getId(), actions);
+            } else {
+                sendAttackData(entity.getId(), new Vector<>(0));
+            }
+
+            sendDone(true);
+
+        } catch (Exception e) {
+            LOGGER.error(e, "Error in calculatePreEndDeclarationsTurn");
+            Entity entity = getGame().getFirstEntity(getMyTurn());
+            if (entity != null) {
+                sendAttackData(entity.getId(), new Vector<>(0));
+            }
+            sendDone(true);
+        }
+    }
+
+    @Override
+    protected void calculateInfantryVsInfantryCombatTurn() {
+        try {
+            initialize();
+            Entity entity = getGame().getFirstEntity(getMyTurn());
+
+            if (!(entity instanceof Infantry)) {
+                sendAttackData(entity.getId(), new Vector<>(0));
+                sendDone(true);
+                return;
+            }
+
+            Vector<EntityAction> actions = new Vector<>();
+
+            // Check if entity is already in infantry vs infantry combat
+            int targetId = entity.getInfantryCombatTargetId();
+
+            if (targetId != Entity.NONE) {
+                // Already in combat - check if should withdraw (attackers only)
+                if (entity.isInfantryCombatAttacker()) {
+                    if (InfantryCombatHelper.shouldWithdraw(
+                          entity, targetId, getGame(), getBehaviorSettings())) {
+
+                        Entity target = getGame().getEntity(targetId);
+                        LOGGER.info("{} withdrawing from infantry combat at {}",
+                              entity.getDisplayName(),
+                              target != null ? target.getDisplayName() : "unknown");
+
+                        actions.add(new WithdrawInfantryCombatAction(
+                              entity.getId(), targetId));
+                    }
+                }
+            } else {
+                // Not in combat - check if should reinforce existing combat
+                List<Integer> activeCombatTargets = findEligibleInfantryCombatsToReinforce(entity);
+
+                for (int combatTargetId : activeCombatTargets) {
+                    if (InfantryCombatHelper.shouldReinforce(
+                          entity, combatTargetId, getGame(), getBehaviorSettings())) {
+
+                        Entity target = getGame().getEntity(combatTargetId);
+                        LOGGER.info("{} reinforcing infantry combat at {}",
+                              entity.getDisplayName(),
+                              target != null ? target.getDisplayName() : "unknown");
+
+                        actions.add(new ReinforceInfantryCombatAction(
+                              entity.getId(), combatTargetId));
+                        break; // Only reinforce one combat per turn
+                    }
+                }
+            }
+
+            if (!actions.isEmpty()) {
+                sendAttackData(entity.getId(), actions);
+            } else {
+                sendAttackData(entity.getId(), new Vector<>(0));
+            }
+
+            sendDone(true);
+
+        } catch (Exception e) {
+            LOGGER.error(e, "Error in calculateInfantryVsInfantryCombatTurn");
+            Entity entity = getGame().getFirstEntity(getMyTurn());
+            if (entity != null) {
+                sendAttackData(entity.getId(), new Vector<>(0));
+            }
+            sendDone(true);
+        }
+    }
+
+    /**
+     * Find buildings/vessels in same hex or adjacent that could be targets for infantry combat.
+     *
+     * @param infantry The infantry unit looking for targets
+     *
+     * @return List of potential target buildings/vessels
+     */
+    private List<Entity> findInfantryCombatTargets(Entity infantry) {
+        List<Entity> targets = new ArrayList<>();
+        Coords position = infantry.getPosition();
+
+        for (Entity e : getGame().getEntitiesVector(position)) {
+            if (e.isBoardable() && e.getOwner().isEnemyOf(infantry.getOwner())) {
+                targets.add(e);
+            }
+        }
+
+        return targets;
+    }
+
+    /**
+     * Get the building entity at a specific position.
+     *
+     * @param position The coordinates to check
+     *
+     * @return The building entity at this position, or null if none
+     */
+    private Entity getBuildingAtPosition(Coords position) {
+        for (Entity e : getGame().getEntitiesVector(position)) {
+            if (e instanceof AbstractBuildingEntity) {
+                return e;
+            }
+        }
+        return null;
+    }
+
+    /**
+     * Find eligible infantry combats that this entity can reinforce. Returns target IDs of buildings/vessels with
+     * active combat in the SAME building as the entity. Per TO:AR p. 172, reinforcements must be in the same multi-hex
+     * building.
+     *
+     * @param entity The entity looking to reinforce (must be in a building)
+     *
+     * @return List of combat target IDs in the same building, empty if not in a building
+     */
+    private List<Integer> findEligibleInfantryCombatsToReinforce(Entity entity) {
+        List<Integer> nearbyCombatTargets = new ArrayList<>();
+
+        // Get the building the infantry is in (if any)
+        Entity entityBuilding = getBuildingAtPosition(entity.getPosition());
+        if (entityBuilding == null) {
+            return nearbyCombatTargets; // Not in a building
+        }
+
+        // Find all unique target IDs where combat is happening IN THE SAME BUILDING
+        for (Entity e : getGame().getEntitiesVector()) {
+            int targetId = e.getInfantryCombatTargetId();
+            if (targetId != Entity.NONE && !nearbyCombatTargets.contains(targetId)) {
+                Entity target = getGame().getEntity(targetId);
+                // Check if target IS the same building the entity is in
+                if (target != null && target.getId() == entityBuilding.getId()) {
+                    nearbyCombatTargets.add(targetId);
+                }
+            }
+        }
+
+        return nearbyCombatTargets;
+    }
+
+    /**
+     * Calculate MPS ratio for combat evaluation.
+     *
+     * @param attacker The attacking entity
+     * @param target   The target building/vessel
+     *
+     * @return MPS ratio (attacker / defender)
+     */
+    private double calculateCombatRatio(Entity attacker, Entity target) {
+        int attackerMPS = InfantryCombatHelper.calculateAttackerMPS(attacker, target);
+        int defenderMPS = InfantryCombatHelper.calculateEnemyMPS(getGame(), target, attacker);
+        return InfantryCombatHelper.calculateMPSRatio(attackerMPS, defenderMPS);
+    }
+
     boolean wantsToFallBack(final Entity entity) {
-        return (entity.isCrippled() && getForcedWithdrawal()) || getFallBack();
+        return (entity.isCrippled(true) && getForcedWithdrawal()) || getFallBack();
+    }
+
+    /**
+     * Returns {@code true} when the given unit is withdrawing but has no path to its retreat edge. A trapped
+     * unit cannot trade distance for safety, so it is allowed to fight instead of holding its fire.
+     *
+     * @param entity the withdrawing unit to check
+     *
+     * @return {@code true} when no route to the retreat edge exists for this unit
+     */
+    boolean hasNoRetreatPath(final Entity entity) {
+        return getUnitBehaviorTracker().getBehaviorType(entity, this) == BehaviorType.NoPathToDestination;
     }
 
     MoraleUtil getMoraleUtil() {
@@ -2266,7 +3005,9 @@ public class Princess extends BotClient {
         } else if (0 < getPathRanker(entity).distanceToHomeEdge(entity.getPosition(), entity.getBoardId(),
               getHomeEdge(entity), getGame())) {
             return false;
-        } else {return getFleeBoard() || entity.isCrippled() && getForcedWithdrawal();}
+        } else {
+            return getFleeBoard() || (entity.isCrippled(true) && getForcedWithdrawal());
+        }
     }
 
     boolean isImmobilized(final Entity mover) {
@@ -2342,6 +3083,22 @@ public class Princess extends BotClient {
         Objects.requireNonNull(entity, "Entity is null.");
 
         try {
+            // a hold position order trumps all other movement; airborne units are exempt because they
+            // cannot legally stand still
+            // Shoot-and-scoot governs the bot's ON-BOARD artillery on its own - hold and fire at standoff, never
+            // advancing into the enemy, and displace when threatened - independent of any global hold order. Off-board
+            // artillery cannot move, so it is exempt (it simply keeps firing from off-board); airborne units are exempt
+            // because they cannot stand still.
+            if (shootAndScoot && isArtilleryWithAmmo(entity) && !entity.isOffBoard()
+                  && !entity.isAirborne() && !entity.isAirborneVTOLorWIGE()) {
+                return getShootAndScootPath(entity);
+            }
+
+            if (getHoldPosition() && !entity.isAirborne() && !entity.isAirborneVTOLorWIGE()) {
+                LOGGER.info("{}: {} is holding position", getName(), entity.getDisplayName());
+                return getHoldPositionPath(entity);
+            }
+
             // figure out who moved last, and whose move lists need to be updated
 
             // moves this entity during movement phase
@@ -2352,7 +3109,8 @@ public class Princess extends BotClient {
                 String msg = entity.getDisplayName();
                 if (getFallBack()) {
                     msg += " is falling back.";
-                } else if (entity.isCrippled()) {
+                } else if (entity.isCrippled(true)) {
+                    // isCrippled(true) matches isFallingBack above, so a crew-crippled Mek gets a message too
                     msg += " is crippled and withdrawing.";
                 }
                 LOGGER.debug(msg);
@@ -2400,17 +3158,21 @@ public class Princess extends BotClient {
                   getMaxWeaponRange(entity),
                   fallTolerance,
                   getEnemyEntities(),
-                  getBehaviorSettings().isExclusiveHerding() ? getEntitiesOwned() : getFriendEntities());
+                  getBehaviorSettings().isExclusiveMutualSupport() ? getEntitiesOwned() : getFriendEntities());
 
             final long stop_time = java.lang.System.currentTimeMillis();
 
-            // update path evaluation time estimate
-            final double updatedEstimate = ((double) (stop_time - startTime)) / ((double) paths.size());
-            if (0 == moveEvaluationTimeEstimate) {
-                moveEvaluationTimeEstimate = updatedEstimate;
-            }
+            // update path evaluation time estimate - skip empty path sets, otherwise the division by
+            // paths.size() yields +Infinity in double math and permanently poisons the running average
+            // (the reset guard below never re-fires because Infinity is never equal to 0).
+            if (!paths.isEmpty()) {
+                final double updatedEstimate = ((double) (stop_time - startTime)) / ((double) paths.size());
+                if (0 == moveEvaluationTimeEstimate) {
+                    moveEvaluationTimeEstimate = updatedEstimate;
+                }
 
-            moveEvaluationTimeEstimate = 0.5 * (updatedEstimate + moveEvaluationTimeEstimate);
+                moveEvaluationTimeEstimate = 0.5 * (updatedEstimate + moveEvaluationTimeEstimate);
+            }
 
             if (rankedPaths.isEmpty()) {
                 return performPathPostProcessing(new MovePath(game, entity), 0);
@@ -2430,9 +3192,11 @@ public class Princess extends BotClient {
         }
     }
 
-    private static String getMessage(Entity entity, double thisTimeEstimate, List<MovePath> paths) {
+    static String getMessage(Entity entity, double thisTimeEstimate, List<MovePath> paths) {
         String timeEstimate = "unknown.";
-        if (0 != thisTimeEstimate) {
+        // Guard against non-finite estimates: casting +Infinity to int saturates to Integer.MAX_VALUE
+        // (2147483647), which would otherwise surface as a nonsense "completion" time in chat.
+        if ((0 != thisTimeEstimate) && Double.isFinite(thisTimeEstimate)) {
             timeEstimate = (int) thisTimeEstimate + " seconds";
         }
         return "Moving " +
@@ -2450,8 +3214,10 @@ public class Princess extends BotClient {
 
             // ----Debugging: print out any errors made in guessing to hit
             // values-----
-            final List<Entity> entities = game.getEntitiesVector();
-            for (final Entity entity : entities) {
+            // Only runs at TRACE log level (see FireControl.checkAllGuesses). Sweep only our own
+            // units: Princess never fires with enemy units, so cross-checking their guesses costs
+            // real to-hit calculations for no diagnostic benefit.
+            for (final Entity entity : getEntitiesOwned()) {
                 final String errors = getFireControl(entity).checkAllGuesses(entity, game);
                 if (!StringUtility.isNullOrBlank(errors)) {
                     LOGGER.warn(errors);
@@ -2561,8 +3327,8 @@ public class Princess extends BotClient {
                 // if the quickest route needs some terrain adjustments, let's get working on that
                 Targetable levelingTarget = null;
 
-                if (bulldozerPaths.get(0).needsLeveling()) {
-                    levelingTarget = getAppropriateTarget(bulldozerPaths.get(0).getCoordsToLevel().get(0),
+                if (bulldozerPaths.getFirst().needsLeveling()) {
+                    levelingTarget = getAppropriateTarget(bulldozerPaths.getFirst().getCoordsToLevel().getFirst(),
                           mover.getBoardId());
                     getFireControlState().addAdditionalTarget(levelingTarget);
                     sendChat("Hex " +
@@ -2740,7 +3506,7 @@ public class Princess extends BotClient {
                             }
 
                             if (isEnemyBuildingEntity(entity, coords)) {
-                                fireControlState.getAdditionalTargets().add(bt);
+                                fireControlState.addAdditionalTarget(bt);
                                 sendChat("Building in Hex " +
                                       coords.toFriendlyString() +
                                       " designated target due to Building Entity.", Level.INFO);
@@ -2879,6 +3645,19 @@ public class Princess extends BotClient {
         UtilityPathRanker utilityPathRanker = new UtilityPathRanker(this);
         utilityPathRanker.setPathEnumerator(precognition.getPathEnumerator());
         pathRankers.put(PathRankerType.Utility, utilityPathRanker);
+    }
+
+    /**
+     * Wiring seam for subclasses (CASPAR): replaces the registered path ranker of the given type, wiring the
+     * replacement to the precognition path enumerator the same way the stock rankers are wired. Call after
+     * {@code super.initializePathRankers()}.
+     *
+     * @param rankerType the ranker slot to replace
+     * @param pathRanker the replacement ranker
+     */
+    protected void registerPathRanker(PathRankerType rankerType, BasicPathRanker pathRanker) {
+        pathRanker.setPathEnumerator(precognition.getPathEnumerator());
+        pathRankers.put(rankerType, pathRanker);
     }
 
     /**
@@ -3092,12 +3871,13 @@ public class Princess extends BotClient {
      */
     public int getSpinUpThreshold() {
         if (spinUpThreshold == null) {
-            spinUpThreshold = Math.max(4, Math.min(11, 13 - getBehaviorSettings().getSelfPreservationIndex()));
+            spinUpThreshold = Math.clamp(13 - getBehaviorSettings().getSelfPreservationIndex(), 4, 11);
         }
 
         return spinUpThreshold;
     }
 
+    @Deprecated(since = "0.51.0", forRemoval = true)
     public void resetSpinUpThreshold() {
         spinUpThreshold = null;
     }
@@ -3109,10 +3889,40 @@ public class Princess extends BotClient {
         // refreshCrippledUnits should happen after checkForDishonoredEnemies, since checkForDishonoredEnemies
         // wants to examine the units that were considered crippled at the *beginning* of the turn and were attacked.
         refreshCrippledUnits();
+        // updateReturnFirePermission wants the opposite: the freshly refreshed crippled set, so a unit
+        // crippled and attacked in the same turn may return fire next turn.
+        updateReturnFirePermission();
         setAMSModes();
         updateEnemyHeatMaps();
         updateFriendlyHeatMap();
         updateExperimentalFeatures();
+    }
+
+    /**
+     * Grants withdrawing units permission to return fire. A crippled unit under Forced Withdrawal holds its
+     * fire unless it has been attacked while fleeing. That permission used to be granted only by
+     * {@code checkForDishonoredEnemies}, which works with the crippled set as it stood at the start of the
+     * turn - so a unit crippled and attacked in the same turn gained permission only if an enemy attacked it
+     * again on a later turn. Bot opponents never do (their honor rules stop them from attacking crippled
+     * units), which left withdrawing units permanently unable to defend themselves.
+     *
+     * <p>This pass runs on the freshly refreshed crippled set instead: attacked this turn and crippled now
+     * means the unit may return fire from the next turn on. {@code checkForDishonoredEnemies} keeps its
+     * start-of-turn view, because an attacker should only be dishonored for shooting a unit that was already
+     * visibly crippled.</p>
+     */
+    private void updateReturnFirePermission() {
+        if (!getForcedWithdrawal()) {
+            return;
+        }
+        for (final Entity ownedEntity : getEntitiesOwned()) {
+            if (crippledUnits.contains(ownedEntity.getId()) && !ownedEntity.getAttackedByThisTurn().isEmpty()) {
+                if (attackedWhileFleeing.add(ownedEntity.getId())) {
+                    LOGGER.info("[ForcedWithdrawal] {} is crippled and was attacked this turn; may return fire "
+                          + "from now on.", ownedEntity.getDisplayName());
+                }
+            }
+        }
     }
 
     private void updateExperimentalFeatures() {
@@ -3159,7 +3969,12 @@ public class Princess extends BotClient {
     }
 
     public void sendPrincessSettings() {
-        send(new Packet(PacketCommand.PRINCESS_SETTINGS, behaviorSettings));
+        send(new Packet(PacketCommand.PRINCESS_SETTINGS, behaviorSettings, getAIType()));
+    }
+
+    @Override
+    protected void sendBotSettingsToServer() {
+        sendPrincessSettings();
     }
 
     @Override
@@ -3205,8 +4020,12 @@ public class Princess extends BotClient {
      */
     private MovePath performPathPostProcessing(MovePath path, double expectedDamage) {
         MovePath retVal = path;
-        evadeIfNotFiring(retVal, expectedDamage >= 0);
-        turnOnSearchLight(retVal, expectedDamage >= 0);
+        // Guard on expectedDamage > 0, not >= 0: expected damage is never negative, so >= 0 was always true. That
+        // left evadeIfNotFiring (which only evades when NOT able to inflict damage) permanently dead, and turned
+        // the searchlight on even with no firing solution, giving away position for nothing.
+        boolean canInflictDamage = expectedDamage > 0;
+        evadeIfNotFiring(retVal, canInflictDamage);
+        turnOnSearchLight(retVal, canInflictDamage);
         unloadTransportedInfantry(retVal);
         launchFighters(retVal);
         abandonShip(retVal);
@@ -3251,8 +4070,16 @@ public class Princess extends BotClient {
     private void evadeIfNotFiring(MovePath path, boolean possibleToInflictDamage) {
         Entity pathEntity = path.getEntity();
 
+        // Only aerospace units (IAero) can take an EVADE step. An ejected pilot descending by
+        // parachute is a MekWarrior that reports isAirborne() (altitude > 0) but is not an IAero;
+        // without this guard the isAirborne()-only check below would throw a ClassCastException on
+        // the cast to IAero and hang the bot's entire turn (issue #8542).
+        if (!(pathEntity instanceof IAero aero)) {
+            return;
+        }
+
         // we cannot evade if we are out of control
-        if (pathEntity.isAero() && pathEntity.isAirborne() && ((IAero) pathEntity).isOutControlTotal()) {
+        if (pathEntity.isAero() && pathEntity.isAirborne() && aero.isOutControlTotal()) {
             return;
         }
 
@@ -3262,7 +4089,7 @@ public class Princess extends BotClient {
         // then evade
         if (pathEntity.isAirborne() &&
               !possibleToInflictDamage &&
-              (path.getMpUsed() <= AeroPathUtil.calculateMaxSafeThrust((IAero) path.getEntity()) - 2)) {
+              (path.getMpUsed() <= AeroPathUtil.calculateMaxSafeThrust(aero) - 2)) {
             path.addStep(MoveStepType.EVADE);
         }
     }
@@ -3275,10 +4102,21 @@ public class Princess extends BotClient {
      */
     private void turnOnSearchLight(MovePath path, boolean possibleToInflictDamage) {
         Entity pathEntity = path.getEntity();
+        boolean option = path.getGame().getOptions().booleanOption(OptionsConstants.SEARCHLIGHTS_ON);
+        LOGGER.debug("Princess.turnOnSearchLight: entity={} SEARCHLIGHTS_ON={} damage={} hasSL={} usingSL={} isDark={}",
+              pathEntity.getDisplayName(), option, possibleToInflictDamage,
+              pathEntity.hasSearchlight(), pathEntity.isUsingSearchlight(),
+              path.getGame().getPlanetaryConditions().getLight().isDuskOrFullMoonOrMoonlessOrPitchBack());
+        // Respect the "Searchlights On by Default" game option - if disabled, Princess won't
+        // auto-enable searchlights either (they give away position under double-blind).
+        if (!option) {
+            return;
+        }
         if (possibleToInflictDamage &&
               pathEntity.hasSearchlight() &&
               !pathEntity.isUsingSearchlight() &&
               path.getGame().getPlanetaryConditions().getLight().isDuskOrFullMoonOrMoonlessOrPitchBack()) {
+            LOGGER.debug("Princess adding SEARCHLIGHT step for {}", pathEntity.getDisplayName());
             path.addStep(MoveStepType.SEARCHLIGHT);
         }
     }
@@ -3758,6 +4596,7 @@ public class Princess extends BotClient {
      *
      * @return {@code Coords} with high friendly activity; may return null
      */
+    @Deprecated(since = "0.51.0", forRemoval = true)
     public Coords getFriendlyHotSpot() {
         return friendlyHeatMap.getHotSpot();
     }
@@ -3836,6 +4675,22 @@ public class Princess extends BotClient {
     }
 
 
+    /**
+     * Sends a visible chat readback when the bot declares a spot, so a playtester can see at a glance when Princess is
+     * spotting for indirect fire. The detailed decision (and the reason on the failure path) is logged with the
+     * {@code [Spot]} tag in princess.log.
+     *
+     * @param spotAction The action the fire control returned (a no-op for anything that is not a {@link SpotAction})
+     * @param spotter    The unit doing the spotting
+     */
+    private void announceSpotting(final EntityAction spotAction, final Entity spotter) {
+        if (spotAction instanceof SpotAction spot) {
+            Entity target = getGame().getEntity(spot.getTargetId());
+            String targetName = (target != null) ? target.getShortName() : Integer.toString(spot.getTargetId());
+            sendChat(Messages.getString("Princess.spotting", spotter.getShortName(), targetName), Level.INFO);
+        }
+    }
+
     public void sendChat(final String message, final Level logLevel) {
         if (LOGGER.getLevel().isLessSpecificThan(logLevel)) {
             super.sendChat(message);
@@ -3863,6 +4718,7 @@ public class Princess extends BotClient {
         return coverageValidator;
     }
 
+    @Deprecated(since = "0.51.0", forRemoval = true)
     public SwarmCenterManager getSwarmCenterManager() {
         return swarmCenterManager;
     }
@@ -3888,6 +4744,57 @@ public class Princess extends BotClient {
         return artilleryCommandAndControl;
     }
 
+    /**
+     * Given an entity that just moved, decide if I should reveal any entities in response
+     */
+    @Override
+    protected void revealEntities(int movedEntityID) {
+    	// for each hidden entity I own
+    	// calculate a firing plan to the moved entity as if it wasn't hidden
+    	// if the firing plan has good odds to hit (based on aggression rating)
+    	// then send the reveal command for that entity
+    	if (getGame().getOptions().booleanOption(OptionsConstants.ADVANCED_HIDDEN_UNITS)) {
+    		Entity target = getGame().getEntity(movedEntityID);
+    		
+    		// if the target is not hostile/destroyed/abandoned/"broken", we don't bother considering it
+    		// also, don't bother if the target can still move after this update
+    		if (target == null || target.isDestroyed() || target.isAbandoned() 
+    				|| (target.turnWasInterrupted() && !target.isDone())
+    				|| !target.getOwner().isEnemyOf(getLocalPlayer())
+    				|| getHonorUtil().isEnemyBroken(movedEntityID, target.getOwnerId(), getForcedWithdrawal())) {
+    			return;
+    		}
+    		
+    		for (Entity shooter : getGame().getEntitiesVector()) {
+    			// if the shooter is hidden, owned by me, on the board and not already activating
+                if (shooter.isHidden() && shooter.getOwnerId() == getLocalPlayerNumber() && 
+                		(shooter.getPosition() != null) && 
+                		(shooter.getHiddenActivationPhase() == GamePhase.UNKNOWN)) {
+                	final Map<WeaponMounted, Double> ammoConservation = calcAmmoConservation(shooter);
+                	
+                	double maxDamage = FireControl.getMaxDamageAtRange(shooter, 
+                			target.getPosition().distance(shooter.getPosition()), false, false);
+                	
+                	// if we're not going to do any damage, don't reveal
+                	if (maxDamage <= 0) {
+                		continue;
+                	}
+                	
+                	FiringPlan firingPlan = getFireControl(shooter).getBestFiringPlan(shooter, target, getGame(), ammoConservation);
+                	
+                	double percentage = firingPlan.getExpectedDamage() / maxDamage;
+                	
+                	// if the expected damage (% of max possible damage at that range)
+                	// is higher than our aggression value (e.g. aggression 7 means we tolerate 30%)
+                	// then reveal
+                	if (percentage > (1.0 - (getBehaviorSettings().getHyperAggressionValue() / 10.0))) {
+                		sendActivateHidden(shooter.getId(), GamePhase.FIRING);
+                	}
+                }
+    		}
+        }
+    }
+    
     /**
      * Determines whether Princess should reroll initiative using the Tactical Genius special ability.
      *

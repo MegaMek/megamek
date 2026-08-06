@@ -210,7 +210,7 @@ public final class MMUReader {
             if (node.has(field)) {
                 foundFields.add(field);
                 if (foundFields.size() > 1) {
-                    throw new IllegalArgumentException("Fields " + foundFields.get(0) + " and " + foundFields.get(1)
+                    throw new IllegalArgumentException("Fields " + foundFields.getFirst() + " and " + foundFields.get(1)
                           + "found in " + objectType + " definition!");
                 }
             }

@@ -105,11 +105,11 @@ public class LegAttackHandler extends WeaponHandler {
         if (attackingEntity instanceof BattleArmor battleArmor) {
             damage += attackingEntity.getVibroClaws();
             if (battleArmor.hasMyomerBooster()) {
-                damage += battleArmor.getTroopers() * 2;
+                damage += battleArmor.getSquadSize() * 2;
             }
             // TSM Implant adds +1 damage per trooper for same-hex attacks
             if (attackingEntity.hasAbility(OptionsConstants.MD_TSM_IMPLANT)) {
-                tsmBonusDamage = battleArmor.getTroopers();
+                tsmBonusDamage = battleArmor.getSquadSize();
                 damage += tsmBonusDamage;
             }
         }

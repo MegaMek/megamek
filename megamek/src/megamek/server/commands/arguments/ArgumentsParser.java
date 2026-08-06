@@ -89,10 +89,18 @@ public class ArgumentsParser {
                 continue;
             }
             if (index < positionalArguments.size()) {
-                String value = positionalArguments.get(index);
+                String value;
+                if (argument instanceof MultiWordStringArgument) {
+                    // arguments are split on spaces before parsing, so a multi-word value (e.g. a behavior
+                    // name with spaces) arrives as several positional tokens - join them back together
+                    value = String.join(" ", positionalArguments.subList(index, positionalArguments.size()));
+                    index = positionalArguments.size();
+                } else {
+                    value = positionalArguments.get(index);
+                    index++;
+                }
                 argument.parse(value);
                 parsedArguments.put(argument.getName(), argument);
-                index++;
             } else {
                 // designed to throw an error if the arg doesn't have a default value
                 argument.parse(EMPTY_ARGUMENT);

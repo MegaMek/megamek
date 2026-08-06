@@ -50,6 +50,7 @@ public class BooleanArgument extends Argument<Boolean> {
         this.defaultValue = defaultValue;
     }
 
+    @Deprecated(since = "0.51.0", forRemoval = true)
     public BooleanArgument(String name, String description) {
         this(name, description, null);
     }

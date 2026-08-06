@@ -1,87 +1,140 @@
-GENERAL COMMANDS
-Toggle Chat----- ` (Backquote/Grave)
-Toggle Chat Command ----- /
-Undo----- Backspace
-Cancel----- Escape
-Done---- Ctrl-Enter
+MEGAMEK DEFAULT KEY BINDS
+=========================
 
-SCROLLING
-Scroll Map North----- W
-Scroll Map South----- S
-Scroll Map East----- D
-Scroll Map West----- A
-Center On Selected Unit----- Spacebar
+Every bind listed here can be changed in Settings (Alt+C) on the Key Binds tab.
+Names match the labels shown on that tab.
+
+Some keys appear more than once. That is intentional: binds that never apply in
+the same phase can share a key, e.g. Punch (P) and Go Prone (P). Binds that are
+marked [menu] belong to the menu bar and cannot share their key with anything.
+
+
+GENERAL
+Activate Chatbox ----- Enter
+Activate Chatbox Command ----- Slash
+Cancel ----- Escape
+Done ----- Ctrl+Enter
+Really Done ----- Ctrl+Shift+Enter
+Undo Last Step ----- Backspace
+Undo Single Step ----- Ctrl+Backspace
+Undo ----- Ctrl+Z
+Redo ----- Ctrl+Y
+Pause the Game ----- Ctrl+Shift+P
+Unpause the Game ----- Ctrl+Alt+P
+Activates Turn Timer Extension ----- Ctrl+F4
+Settings ----- Alt+C [menu]
+
+
+SCROLLING AND VIEW
+Scroll North ----- W
+Scroll South ----- S
+Scroll East ----- D
+Scroll West ----- A
+Center on Selected ----- Space
+Zoom In ----- NumPad + [menu]
+Zoom Out ----- NumPad - [menu]
+Toggle Overview Zoom ----- Z [menu]
+Increase GUI Scale ----- Ctrl+NumPad + [menu]
+Decrease GUI Scale ----- Ctrl+NumPad - [menu]
+Toggle isometric view ----- T [menu]
+
+
+DEPLOYMENT
+Turn Deployed Unit ----- Shift+T
+Deployment Zones ----- Shift+Z
+
 
 MOVEMENT
-Turn Left----- Shift-A
-Turn Right----- Shift-D
-Torso Twist Left----- Shift-A
-Torso Twist Right----- Shift-D
-Toggle Walking/Jump----- J
-Change LAM/QuadVee Mode----- M
+Step Forward ----- Shift+W
+Step Backward ----- Shift+S
+Turn Left ----- Shift+A
+Turn Right ----- Shift+D
+Walk Backwards ----- B
+Go Prone ----- P
+Get Up ----- U
+Toggle Jumping/Walking ----- J
+Convert Mode ----- M
+
 
 COMBAT AND TARGETING
-Next Target----- C
-Previous Target----- Z
-Next Valid Target ----- Shift-C
-Previous Valid Target -----Shift-Z
-Next Target (No Allies) ----- Ctrl-C
-Previous Target (No Allies) ----- Ctrl-Z
-Next Valid Target (No Allies) ----- Ctrl-Shift-C
-Previous Valid Target (No Allies) -----Ctrl-Shift-Z
-View Acting Unit----- V
-Previous Weapon Mode----- Shift-Tab
-Next Weapon Mode----- Tab
-Previous Weapon----- Q
-Next Weapon----- E
-Fire selected Weapon----- F
-Previous Unit----- Shift-Q
-Next Unit----- Shift-E
+Fire ----- F
+Next Weapon ----- Down
+Previous Weapon ----- Up
+Next Weapon Mode ----- NumPad Up
+Previous Weapon Mode ----- NumPad Down
+Twist Left ----- Shift+A
+Twist Right ----- Shift+D
+Next Target ----- Right
+Previous Target ----- Left
+Next Valid Target ----- Shift+Right
+Previous Valid Target ----- Shift+Left
+Next Target (No Allies) ----- Ctrl+Right
+Previous Target (No Allies) ----- Ctrl+Left
+Next Valid Target (No Allies) ----- Ctrl+Shift+Right
+Previous Valid Target (No Allies) ----- Ctrl+Shift+Left
+View the Acting Unit ----- V
+Punch ----- P
+Kick ----- K
+Push ----- Shift+P
 
-DIAGRAMS
-Show Movement Envelope----- R
-Field of Fire: R
-Toggle Field Of Fire----- Shift-R
-Toggle Iso Mode----- T
-Toggle Unit Labels-----Y
-Show Auto Arty Deploy Zone----- Shift-Spacebar
 
-UNIT OVERVIEW
-Unit Overview - General----- F1
-Unit Overview - Pilot----- F2
-Unit Overview - Armor----- F3
-Unit Overview - Systems----- F4
-Unit Overview - Weapons----- F5
-Unit Overview - Extras----- F6
+CALLED SHOTS
+Needs the TacOps called shots game option. Sets the called shot for the weapon
+selected in the unit display. Press the same direction again to clear it.
+High and Low apply to Meks only.
 
-GUI OPTIONS
-Increase GUI Scale: Ctrl + +
-Decrease GUI Scale: Ctrl + -
-Zoom In: +
-Zoom Out: -
+Called Shot: High ----- Alt+Up
+Called Shot: Low ----- Alt+Down
+Called Shot: Left ----- Alt+Left
+Called Shot: Right ----- Alt+Right
 
-LOAD AND SAVE OPTIONS
-Quick Load: Ctrl + Shift + L
-Quick Save: Ctrl + Shift + S
-Local Load: Ctrl + L
-Local Save: Ctrl + S
 
-ADDITIONAL COMMANDS
+UNIT SELECTION
+Next Unit ----- Tab
+Previous Unit ----- Shift+Tab
 
-Toggle Draw Labels: Ctrl + B
-Toggle Hex Coordinates: Ctrl + G
-Toggle Minimap: Ctrl + M
-View Line of Sight Setting: Ctrl + Alt + L
-Toggle Unit Display: Ctrl + D
-Toggle Unit Overview: Ctrl + U
-Toggle Keybinds: Ctrl + K
-Toggle Planetary Conditions: Ctrl + P
-Toggle Turn Details: Ctrl + T
-Client Settings: Alt + C
-Round Report: Ctrl + R
-Replace Player: Ctrl + Shift + R
-View Mod Envelope: Ctrl + W
-Sensor Range: C
-Undo Single Step: Ctrl + Backspace
-Toggle Force Display: Ctrl + F
-Extend Turn Timer: Ctrl + F4
+
+UNIT DISPLAY TABS
+Unit Display General Tab ----- F1
+Unit Display Pilot Tab ----- F2
+Unit Display Armor Tab ----- F3
+Unit Display Weapon Tab ----- F4
+Unit Display Systems Tab ----- F5
+Unit Display Extras Tab ----- F6
+
+
+OVERLAYS AND DIAGRAMS
+Toggle Unit Display ----- Ctrl+D [menu]
+Toggle Unit Overview ----- Ctrl+U [menu]
+Toggle Force Display ----- Ctrl+F [menu]
+Toggle Minimap ----- Ctrl+M [menu]
+Keybindings Display ----- Ctrl+K [menu]
+Planetary Conditions Display ----- Ctrl+P [menu]
+Turn Details Display ----- Ctrl+T [menu]
+Show Bot Commands ----- Ctrl+Shift+G [menu]
+Unit Labels ----- Ctrl+B [menu]
+Toggle Hex Coords ----- Ctrl+G [menu]
+Movement Envelope ----- Ctrl+Q [menu]
+Modifier Envelope ----- Ctrl+W [menu]
+Field of Fire ----- R [menu]
+LOS Settings ----- L [menu]
+Visual & Sensor Ranges ----- C [menu]
+Show Spotting FOV ----- O [menu]
+
+
+REPORTS
+Round Report ----- Ctrl+R [menu]
+Find Next Report Keyword ----- N
+Find Previous Report Keyword ----- Shift+N
+Select Next Report Keyword ----- Ctrl+N
+Select Previous Report Keyword ----- Ctrl+Shift+N
+Toggle Report Keyword Filter ----- Shift+F
+Select Next Report Filter Keyword ----- Ctrl+Shift+F
+
+
+LOAD AND SAVE
+Save Game ----- Ctrl+S [menu]
+Load Game ----- Ctrl+L [menu]
+Quick Save ----- Ctrl+Shift+S [menu]
+Quick Load ----- Ctrl+Shift+L [menu]
+Replace Player ----- Ctrl+Shift+R [menu]

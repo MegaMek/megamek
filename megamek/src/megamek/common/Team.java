@@ -139,7 +139,7 @@ public final class Team extends TurnOrdered {
         // If Team Initiative is not turned on, id will be 0 for all teams,
         // however the players accurately store their team id
         if (!players.isEmpty()) {
-            return players.get(0).getTeam();
+            return players.getFirst().getTeam();
         } else {
             return id;
         }
@@ -325,7 +325,7 @@ public final class Team extends TurnOrdered {
             enemy = false;
         } else if (players.isEmpty()) {
             enemy = false;
-        } else if (t.players().stream().noneMatch(p -> p.isEnemyOf(players.get(0)))) {
+        } else if (t.players().stream().noneMatch(p -> p.isEnemyOf(players.getFirst()))) {
             enemy = false;
         }
         return enemy;

@@ -37,10 +37,10 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
-import megamek.common.game.IGame;
-import megamek.common.game.InGameObject;
 import megamek.common.Player;
 import megamek.common.annotations.Nullable;
+import megamek.common.game.IGame;
+import megamek.common.game.InGameObject;
 
 /**
  * This Trigger reacts when the count of active units is equal to the given count. When the playerName is blank, units
@@ -68,10 +68,12 @@ public class ActiveUnitsTrigger implements Trigger {
         this(playerName, unitIds, fledUnitCount, fledUnitCount);
     }
 
+    @Deprecated(since = "0.51.0", forRemoval = true)
     public ActiveUnitsTrigger(@Nullable String playerName, int fledUnitCount) {
         this(playerName, new ArrayList<>(), fledUnitCount);
     }
 
+    @Deprecated(since = "0.51.0", forRemoval = true)
     public ActiveUnitsTrigger(@Nullable String playerName, int minUnitCount, int maxUnitCount) {
         this(playerName, new ArrayList<>(), minUnitCount, maxUnitCount);
     }

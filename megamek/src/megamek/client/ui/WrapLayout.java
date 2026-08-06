@@ -44,8 +44,8 @@ import javax.swing.SwingUtilities;
 
 /**
  * This class has been downloaded from a third-party source: Author: Rob Camick Website:
- * https://tips4java.wordpress.com/2008/11/06/wrap-layout/ FlowLayout subclass that fully supports wrapping of
- * components.
+ * <a href="https://tips4java.wordpress.com/2008/11/06/wrap-layout/">Wrap Layout</a>
+ * FlowLayout subclass that fully supports wrapping of components.
  */
 public class WrapLayout extends FlowLayout {
     /**

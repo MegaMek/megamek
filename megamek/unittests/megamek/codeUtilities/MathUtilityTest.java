@@ -82,45 +82,7 @@ class MathUtilityTest {
         assertEquals(4L, MathUtility.lerp(0L, 8L, 0.5));
     }
     // endregion Linear Interpolation
-
-    // region Clamp
-    @Test
-    void testClampInt() {
-        assertEquals(5, MathUtility.clamp(5, 1, 10));
-        assertEquals(5, MathUtility.clamp(5, 1, 5));
-        assertEquals(5, MathUtility.clamp(5, 5, 10));
-        assertEquals(6, MathUtility.clamp(5, 6, 10));
-        assertEquals(5, MathUtility.clamp(6, 1, 5));
-    }
-
-    @Test
-    void testClampDouble() {
-        assertEquals(5.5, MathUtility.clamp(5.5, 1.5, 10.5));
-        assertEquals(5.5, MathUtility.clamp(5.5, 1.5, 5.5));
-        assertEquals(5.5, MathUtility.clamp(5.5, 5.5, 10.5));
-        assertEquals(6.5, MathUtility.clamp(5.5, 6.5, 10.5));
-        assertEquals(5.5, MathUtility.clamp(6.5, 1.5, 5.5));
-    }
-
-    @Test
-    void testClampFloat() {
-        assertEquals(5f, MathUtility.clamp(5f, 1f, 10f));
-        assertEquals(5f, MathUtility.clamp(5f, 1f, 5f));
-        assertEquals(5f, MathUtility.clamp(5f, 5f, 10f));
-        assertEquals(6f, MathUtility.clamp(5f, 6f, 10f));
-        assertEquals(5f, MathUtility.clamp(6f, 1f, 5f));
-    }
-
-    @Test
-    void testClampLong() {
-        assertEquals(5L, MathUtility.clamp(5L, 1L, 10L));
-        assertEquals(5L, MathUtility.clamp(5L, 1L, 5L));
-        assertEquals(5L, MathUtility.clamp(5L, 5L, 10L));
-        assertEquals(6L, MathUtility.clamp(5L, 6L, 10L));
-        assertEquals(5L, MathUtility.clamp(6L, 1L, 5L));
-    }
-    // endregion Clamp
-
+    
     @Test
     void testStringToInt() {
         assertEquals(1, MathUtility.parseInt("1", 0));

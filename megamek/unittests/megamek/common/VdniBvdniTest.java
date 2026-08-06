@@ -34,6 +34,7 @@ package megamek.common;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertInstanceOf;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.mock;
@@ -125,6 +126,8 @@ public class VdniBvdniTest {
                 String arg = invocation.getArgument(0);
                 return OptionsConstants.MD_VDNI.equals(arg);
             });
+            // Mock hasActiveDNI() to return true for entities with VDNI
+            when(mockEntity.hasActiveDNI()).thenReturn(true);
 
             ToHitData toHit = new ToHitData();
             toHit = ComputeAttackerToHitMods.compileCrewToHitMods(mockGame, mockEntity, toHit, mockWeapon);
@@ -141,6 +144,8 @@ public class VdniBvdniTest {
                 String arg = invocation.getArgument(0);
                 return OptionsConstants.MD_BVDNI.equals(arg);
             });
+            // Mock hasActiveDNI() to return true for entities with BVDNI
+            when(mockEntity.hasActiveDNI()).thenReturn(true);
 
             ToHitData toHit = new ToHitData();
             toHit = ComputeAttackerToHitMods.compileCrewToHitMods(mockGame, mockEntity, toHit, mockWeapon);
@@ -157,6 +162,8 @@ public class VdniBvdniTest {
                 String arg = invocation.getArgument(0);
                 return OptionsConstants.MD_VDNI.equals(arg) || OptionsConstants.MD_BVDNI.equals(arg);
             });
+            // Mock hasActiveDNI() to return true for entities with VDNI/BVDNI
+            when(mockEntity.hasActiveDNI()).thenReturn(true);
 
             ToHitData toHit = new ToHitData();
             toHit = ComputeAttackerToHitMods.compileCrewToHitMods(mockGame, mockEntity, toHit, mockWeapon);
@@ -279,7 +286,7 @@ public class VdniBvdniTest {
         @DisplayName("Mek entity type check passes for Mek")
         void mekEntityTypeCheckPasses() {
             Mek mockMek = mock(Mek.class);
-            assertTrue(mockMek instanceof Mek, "Mek should pass instanceof Mek check");
+            assertInstanceOf(Mek.class, mockMek, "Mek should pass instanceof Mek check");
         }
 
         @Test

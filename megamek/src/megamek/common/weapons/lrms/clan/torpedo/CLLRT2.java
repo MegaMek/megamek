@@ -53,8 +53,8 @@ public class CLLRT2 extends LRTWeapon {
         super();
 
         name = "LRT 2";
-        setInternalName("CLLRTorpedo2");
         setInternalName("CLLRT2");
+        addLookupName("CLLRTorpedo2");
         heat = 0;
         rackSize = 2;
         minimumRange = WEAPON_NA;

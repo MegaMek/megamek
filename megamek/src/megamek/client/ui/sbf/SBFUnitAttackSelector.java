@@ -94,6 +94,7 @@ public class SBFUnitAttackSelector {
         return unitSelector;
     }
 
+    @Deprecated(since = "0.51.0", forRemoval = true)
     public int getSelectedUnitIndex() {
         return unitSelector.getSelectedIndex();
     }

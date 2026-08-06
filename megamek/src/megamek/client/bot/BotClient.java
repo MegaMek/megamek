@@ -1,6 +1,6 @@
 /*
  * Copyright (C) 2000-2005 Ben Mazur (bmazur@sev.org)
- * Copyright (C) 2002-2025 The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2002-2026 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -38,15 +38,8 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.InputStreamReader;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.Deque;
-import java.util.Enumeration;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Map;
-import java.util.Vector;
+import java.util.*;
+
 import javax.swing.JFrame;
 import javax.swing.JOptionPane;
 import javax.swing.JScrollPane;
@@ -55,7 +48,9 @@ import javax.swing.ScrollPaneConstants;
 
 import megamek.client.AbstractClient;
 import megamek.client.Client;
+import megamek.client.bot.princess.BehaviorSettings;
 import megamek.client.bot.princess.CardinalEdge;
+import megamek.client.bot.princess.MinefieldDeploymentPlanner;
 import megamek.client.ui.clientGUI.ClientGUI;
 import megamek.common.ECMInfo;
 import megamek.common.Hex;
@@ -63,6 +58,7 @@ import megamek.common.Player;
 import megamek.common.Report;
 import megamek.common.ToHitData;
 import megamek.common.actions.EntityAction;
+import megamek.common.actions.GhostTargetAction;
 import megamek.common.actions.WeaponAttackAction;
 import megamek.common.annotations.Nullable;
 import megamek.common.board.Board;
@@ -75,12 +71,15 @@ import megamek.common.equipment.AmmoType;
 import megamek.common.equipment.AmmoType.AmmoTypeEnum;
 import megamek.common.equipment.AmmoType.Munitions;
 import megamek.common.equipment.Minefield;
+import megamek.common.equipment.MiscMounted;
 import megamek.common.equipment.MiscType;
 import megamek.common.equipment.Mounted;
 import megamek.common.equipment.WeaponMounted;
 import megamek.common.equipment.WeaponType;
 import megamek.common.event.GameCFREvent;
 import megamek.common.event.GameListenerAdapter;
+import megamek.common.event.entity.GameEntityChangeEvent;
+import megamek.common.event.entity.GameEntityNewEvent;
 import megamek.common.event.GamePhaseChangeEvent;
 import megamek.common.event.GameReportEvent;
 import megamek.common.event.GameTurnChangeEvent;
@@ -88,6 +87,7 @@ import megamek.common.event.player.GamePlayerChatEvent;
 import megamek.common.game.Game;
 import megamek.common.game.InitiativeRoll;
 import megamek.common.moves.MovePath;
+import megamek.common.net.packets.InvalidPacketDataException;
 import megamek.common.net.packets.Packet;
 import megamek.common.options.OptionsConstants;
 import megamek.common.pathfinder.BoardClusterTracker;
@@ -99,6 +99,7 @@ import megamek.common.units.EntityListFile;
 import megamek.common.units.EntityMovementMode;
 import megamek.common.units.IBuilding;
 import megamek.common.units.Infantry;
+import megamek.common.units.Mek;
 import megamek.common.units.ProtoMek;
 import megamek.common.units.Terrains;
 import megamek.common.units.VTOL;
@@ -110,6 +111,17 @@ public abstract class BotClient extends Client {
     private final static MMLogger LOGGER = MMLogger.create(BotClient.class);
 
     public static final int BOT_TURN_RETRY_COUNT = 3;
+
+    /**
+     * Which AI implementation this bot is. Reported to the server alongside the bot's settings so a savegame
+     * remembers what kind of bot held each seat, and shown by the bot config dialog so it tells the truth
+     * about a running bot instead of assuming Princess. Subclasses that are their own AI type override this.
+     *
+     * @return this bot's {@link AIType}
+     */
+    public AIType getAIType() {
+        return AIType.PRINCESS;
+    }
 
     private List<Entity> currentTurnEnemyEntities;
     private List<Entity> currentTurnFriendlyEntities;
@@ -125,6 +137,23 @@ public abstract class BotClient extends Client {
 
     // Let bots remember whether they've rerolled an initiative roll this round
     protected boolean rerolledInitiative = false;
+
+    /**
+     * Tractors this bot has already asked the server to build a train for. Lobby updates arrive one unit at a time,
+     * so without this a batch of units would send the same build request several times over before the first reply
+     * came back. Cleared when the lobby is left.
+     */
+    /** The trailer list last requested for each tractor, so an unchanged plan is not asked for twice. */
+    private final Map<Integer, List<Integer>> requestedTrains = new HashMap<>();
+
+    /**
+     * The bot's personality/configuration state. Held on {@link BotClient} because it is generic bot-personality state
+     * (sliders, targeting, retreat edges) shared by every bot implementation, not specific to any one AI. Initialized
+     * to a default so it is never {@code null}: subclasses normally replace it via
+     * {@link #setBehaviorSettings(BehaviorSettings)} during construction, but the default preserves the non-null
+     * contract that {@link #getBehaviorSettings()} callers rely on even if a subclass does not.
+     */
+    protected BehaviorSettings behaviorSettings = new BehaviorSettings();
 
     /**
      * Store a reference to the ClientGUI for the client who created this bot. This is used to ensure keep the ClientGUI
@@ -181,9 +210,22 @@ public abstract class BotClient extends Client {
             }
 
             @Override
+            public void gameEntityNew(GameEntityNewEvent e) {
+                connectOwnTrains();
+            }
+
+            @Override
+            public void gameEntityChange(GameEntityChangeEvent e) {
+                connectOwnTrains();
+            }
+
+            @Override
             public void gamePhaseChange(GamePhaseChangeEvent e) {
                 calculatedTurnThisPhase = false;
                 rerolledInitiative = false;
+                if (!getGame().getPhase().isLounge()) {
+                    requestedTrains.clear();
+                }
                 if (e.getOldPhase().isSimultaneous(getGame())) {
                     LOGGER.info("{}: Calculated {} / {} turns for phase {}",
                           getName(),
@@ -219,7 +261,25 @@ public abstract class BotClient extends Client {
                         // Picks the WAA with the highest expected damage,
                         // essentially same as if the auto_ams option was on
                         waa = Compute.getHighestExpectedDamage(game, evt.getWAAs(), true);
-                        sendAMSAssignCFRResponse(evt.getWAAs().indexOf(waa));
+
+                        // Add second weapon attack counter for the bot when playtest 3 is active
+                        WeaponAttackAction secondWaa = null;
+                        if (game.getOptions().booleanOption(OptionsConstants.PLAYTEST_3)) {
+                            secondWaa = Compute.getSecondHighestExpectedDamage(game, evt.getWAAs(), true);
+                        }
+
+                        // Adjusting for new response.
+                        int numInts = 1;
+                        if (secondWaa != null) {
+                            numInts = 2;
+                        }
+                        int[] indexes = new int[numInts];
+                        indexes[0] = evt.getWAAs().indexOf(waa);
+                        if (numInts == 2) {
+                            indexes[1] = evt.getWAAs().indexOf(secondWaa);
+                        }
+
+                        sendAMSAssignCFRResponse(indexes);
                         break;
                     case CFR_APDS_ASSIGN:
                         // Picks the WAA with the highest expected damage,
@@ -286,6 +346,22 @@ public abstract class BotClient extends Client {
 
     protected abstract void calculateDeployment() throws Exception;
 
+    /**
+     * @return this bot's current behavior settings (personality/configuration state)
+     */
+    public BehaviorSettings getBehaviorSettings() {
+        return behaviorSettings;
+    }
+
+    /**
+     * Applies the given behavior settings to this bot. Implementations decide how the settings take effect (for
+     * example, re-initializing scorers or notifying the server) and are responsible for storing them in
+     * {@link #behaviorSettings}.
+     *
+     * @param behaviorSettings the new behavior settings to apply
+     */
+    public abstract void setBehaviorSettings(BehaviorSettings behaviorSettings);
+
     protected void initTargeting() {
     }
 
@@ -299,15 +375,87 @@ public abstract class BotClient extends Client {
     }
 
     /**
-     * Calculates the pre phase turn currently does nothing other than end turn
+     * Calculates the pre phase turn. In Standard ghost target mode during PRE_FIRING, assigns ghost targets for any
+     * qualifying equipment. Otherwise just ends the turn.
      */
     protected void calculatePrePhaseTurn() {
-        sendPrePhaseData(game.getFirstEntityNum(getMyTurn()));
+        int entityId = game.getFirstEntityNum(getMyTurn());
+        Entity entity = game.getEntity(entityId);
+
+        // Assign ghost targets in Standard mode during PRE_FIRING
+        if ((entity != null) && game.getPhase().isPreFiring()
+              && game.usesStandardGhostTargetMode()) {
+            assignBotGhostTargets(entity);
+        }
+
+        sendPrePhaseData(entityId);
         sendDone(true);
+    }
+
+    /**
+     * Simple bot heuristic for ghost target assignment in Standard mode. For each ghost-target-capable equipment: jam
+     * the nearest enemy within range, or protect self if no enemies are in range.
+     */
+    private void assignBotGhostTargets(Entity source) {
+        if (source.getPosition() == null) {
+            return;
+        }
+
+        for (MiscMounted m : source.getMisc()) {
+            if (!source.isGhostTargetCapable(m)) {
+                continue;
+            }
+
+            int equipId = source.getEquipmentNum(m);
+            assignBotGhostTargetForEquipment(source, equipId);
+        }
+
+        // Mek Cockpit Command Console (cockpit type, not misc equipment)
+        if ((source instanceof Mek mek)
+              && (mek.getCockpitType() == Mek.COCKPIT_COMMAND_CONSOLE
+              || mek.getCockpitType() == Mek.COCKPIT_SUPERHEAVY_COMMAND_CONSOLE
+              || mek.getCockpitType() == Mek.COCKPIT_SMALL_COMMAND_CONSOLE)) {
+            assignBotGhostTargetForEquipment(source, GhostTargetAction.CCC_EQUIPMENT_ID);
+        }
+    }
+
+    /**
+     * Assigns a single ghost target for the given equipment on the source entity. Jams the nearest enemy within 6
+     * hexes, or protects self if none in range.
+     */
+    private void assignBotGhostTargetForEquipment(Entity source, int equipId) {
+        Entity bestTarget = null;
+        int bestDistance = Integer.MAX_VALUE;
+
+        for (Entity enemy : game.inGameTWEntities()) {
+            if (!enemy.isEnemyOf(source) || !enemy.isDeployed() || enemy.isDestroyed()
+                  || (enemy.getPosition() == null) || enemy.isConventionalInfantry()) {
+                continue;
+            }
+            int dist = source.getPosition().distance(enemy.getPosition());
+            if ((dist <= 6) && (dist < bestDistance)) {
+                bestDistance = dist;
+                bestTarget = enemy;
+            }
+        }
+
+        sendGhostTargetAction(source.getId(), equipId, Objects.requireNonNullElse(bestTarget, source).getId());
     }
 
     @Nullable
     protected abstract PhysicalOption calculatePhysicalTurn();
+
+    /**
+     * Calculate what to do during the PRE_END_DECLARATIONS phase. This phase allows infantry to initiate
+     * building/vessel combat.
+     */
+    protected abstract void calculatePreEndDeclarationsTurn();
+
+    /**
+     * Calculate what to do during the INFANTRY_VS_INFANTRY_COMBAT phase. This phase allows infantry to reinforce or
+     * withdraw from building/vessel combat.
+     */
+    protected abstract void calculateInfantryVsInfantryCombatTurn();
 
     protected Vector<EntityAction> calculatePointBlankShot(int firingEntityID, int targetID) {
         return new Vector<>();
@@ -410,6 +558,7 @@ public abstract class BotClient extends Client {
                       !entity.isOffBoard() &&
                       (entity.getCrew() != null) &&
                       !entity.getCrew().isDead() &&
+                      !entity.isAbandoned() &&
                       !entity.isHidden()) {
                     currentTurnEnemyEntities.add(entity);
                 }
@@ -436,6 +585,64 @@ public abstract class BotClient extends Client {
         }
 
         return currentTurnFriendlyEntities;
+    }
+
+    /**
+     * Hitches up any trailers this bot owns that are not part of a train yet.
+     * <p>
+     * A bot cannot use the lobby's "Connect as Train" action, so a trailer handed to one would otherwise sit there
+     * with no engine and no tractor, unable to move for the whole game. Runs whenever the lobby tells us a unit was
+     * added or changed, so it does not matter how the units arrived: assigned one at a time, assigned as a force, or
+     * loaded from a file straight onto this bot.
+     * </p>
+     * <p>
+     * The request sent is the same one a human client sends, so the server validates it exactly as it would a
+     * player's, and a train that cannot legally be built is refused rather than half-applied.
+     * </p>
+     */
+    /**
+     * Decides whether a planned train still needs to be requested, and records it when it does.
+     * <p>
+     * The server's reply to a build request arrives as another lobby update, which asks for the plans again, so
+     * repeating an identical request would loop. The guard is the trailer list rather than the tractor id: a tractor
+     * handed more trailers after its first request produces a different list, so it is asked again with the longer
+     * plan instead of being suppressed for the rest of the lobby.
+     * </p>
+     *
+     * @param requestedTrains  the trailer list last requested for each tractor, updated in place
+     * @param tractorId        the tractor heading the planned train
+     * @param plannedTrailers  the trailers to hitch behind it, in order
+     *
+     * @return {@code true} when this plan has not been requested yet and the caller should send it
+     */
+    static boolean recordTrainRequest(Map<Integer, List<Integer>> requestedTrains, int tractorId,
+          List<Integer> plannedTrailers) {
+        if (plannedTrailers.equals(requestedTrains.get(tractorId))) {
+            return false;
+        }
+        requestedTrains.put(tractorId, List.copyOf(plannedTrailers));
+        return true;
+    }
+
+    protected void connectOwnTrains() {
+        if (!getGame().getPhase().isLounge()) {
+            return;
+        }
+
+        Map<Integer, List<Integer>> plannedTrains = BotTrainPlanner.planTrains(getGame(), localPlayerNumber);
+
+        for (Map.Entry<Integer, List<Integer>> plannedTrain : plannedTrains.entrySet()) {
+            if (!recordTrainRequest(requestedTrains, plannedTrain.getKey(), plannedTrain.getValue())) {
+                continue;
+            }
+
+            Entity tractor = getGame().getEntity(plannedTrain.getKey());
+            LOGGER.info("[Train] {} connecting {} + {} trailer(s)",
+                  getName(),
+                  (tractor == null) ? plannedTrain.getKey() : tractor.getDisplayName(),
+                  plannedTrain.getValue().size());
+            sendBuildTrain(plannedTrain.getKey(), plannedTrain.getValue());
+        }
     }
 
     // TODO: move initMovement to be called on phase end
@@ -653,6 +860,10 @@ public abstract class BotClient extends Client {
                 calculateTargetingOffBoardTurn();
             } else if (game.getPhase().isPremovement() || game.getPhase().isPreFiring()) {
                 calculatePrePhaseTurn();
+            } else if (game.getPhase().isPreEndDeclarations()) {
+                calculatePreEndDeclarationsTurn();
+            } else if (game.getPhase().isInfantryVsInfantryCombat()) {
+                calculateInfantryVsInfantryCombatTurn();
             }
 
             return true;
@@ -1166,6 +1377,19 @@ public abstract class BotClient extends Client {
                                     // before they come back on-board.
                                     new_stealth = 1;
 
+                                } else if (wantsStealthHeatForTsm(check_ent)) {
+                                    // A Mek with heat-activated Triple-Strength Myomer uses stealth armor's
+                                    // heat to reach the TSM activation threshold while it closes, and stays
+                                    // cloaked during the approach. Once it is adjacent to an enemy, though, it
+                                    // drops stealth: at melee it needs its heat sinks free to fire weapons
+                                    // (keeping its own heat up for TSM) while it makes doubled physical
+                                    // attacks, and stealth's defensive value against an adjacent foe is small.
+                                    boolean adjacentToEnemy = isAdjacentToEnemy(check_ent);
+                                    new_stealth = adjacentToEnemy ? 0 : 1;
+                                    LOGGER.debug("[HeatTSM] {}: stealth armor {} for TSM ({})",
+                                          check_ent.getShortName(), (new_stealth == 1) ? "on" : "off",
+                                          adjacentToEnemy ? "adjacent - firing/melee" : "closing");
+
                                 } else {
 
                                     // Mek is not in danger of shutting down soon;
@@ -1182,7 +1406,11 @@ public abstract class BotClient extends Client {
                                     for (Entity test_ent : game.getEntitiesVector()) {
                                         if (check_ent.isEnemyOf(test_ent)) {
                                             total_bv += test_ent.calculateBattleValue();
-                                            if (test_ent.isVisibleToEnemy()) {
+                                            // Skip enemies without a position (off-board, not yet deployed, in
+                                            // transport, etc.) - we can't measure distance to them, and including
+                                            // them in the count/BV would skew the (known_range / known_count)
+                                            // average. Mirrors the check_ent null-position guard above.
+                                            if ((test_ent.getPosition() != null) && test_ent.isVisibleToEnemy()) {
                                                 known_count++;
                                                 known_bv += test_ent.calculateBattleValue();
                                                 known_range += Compute.effectiveDistance(game, check_ent, test_ent);
@@ -1213,6 +1441,40 @@ public abstract class BotClient extends Client {
                 }
             }
         }
+    }
+
+    /**
+     * Reports whether keeping stealth armor active benefits this unit's Triple-Strength Myomer. A Mek with
+     * heat-activated standard TSM (which switches on at elevated heat) wants the extra heat stealth armor
+     * generates to reach and hold the activation threshold, so it should not shed stealth to free heat
+     * sinks. Prototype and industrial TSM are always on and do not use the heat threshold, so they gain
+     * nothing here.
+     *
+     * @param entity the unit whose stealth armor is being toggled
+     *
+     * @return {@code true} if the unit has heat-activated standard TSM, otherwise {@code false}
+     */
+    static boolean wantsStealthHeatForTsm(Entity entity) {
+        return (entity instanceof Mek mek) && mek.hasTSM(false);
+    }
+
+    /**
+     * @param entity the unit whose surroundings are being checked
+     *
+     * @return {@code true} if any enemy of {@code entity} occupies a hex adjacent to it (melee range),
+     *       otherwise {@code false}
+     */
+    private boolean isAdjacentToEnemy(Entity entity) {
+        if (entity.getPosition() == null) {
+            return false;
+        }
+        for (Entity other : game.getEntitiesVector()) {
+            if (entity.isEnemyOf(other) && (other.getPosition() != null)
+                  && (Compute.effectiveDistance(game, entity, other) <= 1)) {
+                return true;
+            }
+        }
+        return false;
     }
 
     private @Nullable String getRandomBotMessage() {
@@ -1282,20 +1544,67 @@ public abstract class BotClient extends Client {
         // Do nothing;
     }
 
-    private record MinefieldNumbers(int number, int type) {
-    }
-
     /**
      * Deploy minefields for the bot
      */
     protected void deployMinefields() {
-        MinefieldNumbers[] minefieldNumbers = getMinefieldNumbers();
-        int totalMines = Arrays.stream(minefieldNumbers).mapToInt(MinefieldNumbers::number).sum();
-        Deque<Coords> coordsSet = getMinefieldDeploymentPlanner().getRandomMinefieldPositions(totalMines);
-        Vector<Minefield> deployedMinefields = new Vector<>();
-        for (MinefieldNumbers minefieldNumber : minefieldNumbers) {
-            deployMinefields(minefieldNumber, coordsSet, deployedMinefields);
-        }
+    	MinefieldDeploymentPlanner mdp = new MinefieldDeploymentPlanner(getLocalPlayer(), getGame());
+    	Vector<Minefield> deployedMinefields = new Vector<>();
+    	
+    	// cycle through all possible mine field types
+    	for (int minefieldType = 0; minefieldType < Minefield.TYPE_SIZE; minefieldType++) {
+    		int minesToPlace = getLocalPlayer().getMinefieldCount(minefieldType);
+    		
+    		// avoid unnecessary loops and evaluations
+    		if (minesToPlace <= 0) {
+    			continue;
+    		}
+    		
+    		Map<Double, List<Coords>> potentialCoords = 
+    				mdp.getBucketedCandidateCoords(minefieldType, getBoard());    		    		
+    		
+    		// complicated loop:
+    		// while we have mines to place (minesToPlace > 0)
+    		// AND we have buckets left with coordinates in them, place mines.    		
+    		bucketloop:
+    		for (double bucket : potentialCoords.keySet()) {
+    			for (Coords coords : potentialCoords.get(bucket)) {
+    				// it's always more advantageous to put in higher density minefields
+	    			// but hardly fair when players may be bound by scenario restrictions
+	    			// while the bot is not
+	    			int density = Compute.randomIntInclusive(30) + 5;
+	    			
+	    			Minefield minefield;
+	    			
+	    			// vibrabombs require a "setting"
+	    			if (minefieldType != Minefield.TYPE_VIBRABOMB) {
+	    				minefield = Minefield.createMinefield(coords,
+	    					getLocalPlayer().getId(),
+	    					minefieldType,
+	    					density);
+	    			} else {
+	    				minefield = Minefield.createMinefield(coords,
+	    						getLocalPlayer().getId(),
+	    						minefieldType,
+	    						density,
+	    						mdp.getVibrabombSetting(),
+	    						false,
+	    						0);	    						
+	    			}
+	    			
+	    			deployedMinefields.add(minefield);
+	    			mdp.markMinePlacement(coords);
+	    			
+	    			minesToPlace--;
+	    			
+	    			// if we run out of mines to place, break out of both loops
+	    			if (minesToPlace == 0) {
+	    				break bucketloop;
+	    			}
+    			}
+    		}
+    	}
+    	
         performMinefieldDeployment(deployedMinefields);
     }
 
@@ -1313,63 +1622,10 @@ public abstract class BotClient extends Client {
      * Reset the minefield counters for the bot and push the updated player info to the server
      */
     private void resetMinefieldCounters() {
-        getLocalPlayer().setNbrMFActive(0);
-        getLocalPlayer().setNbrMFCommand(0);
-        getLocalPlayer().setNbrMFConventional(0);
-        getLocalPlayer().setNbrMFInferno(0);
-        getLocalPlayer().setNbrMFVibra(0);
+    	for (int minefieldIndex = 0; minefieldIndex < Minefield.TYPE_SIZE; minefieldIndex++) {
+    		getLocalPlayer().setMinefieldCount(minefieldIndex, 0);
+    	}
         sendPlayerInfo();
-    }
-
-    /**
-     * Deploy the specified number of minefields of the specified type
-     *
-     * @param minefieldNumber    the number of minefields to deploy and the type of minefield to deploy
-     * @param coordsSet          the set of coordinates to deploy the minefields to
-     * @param deployedMinefields the vector to add the deployed minefields to
-     */
-    private void deployMinefields(MinefieldNumbers minefieldNumber, Deque<Coords> coordsSet,
-          Vector<Minefield> deployedMinefields) {
-        int minesToDeploy = minefieldNumber.number();
-        while (!coordsSet.isEmpty() && minesToDeploy > 0) {
-            Coords coords = coordsSet.poll();
-            int density = Compute.randomIntInclusive(30) + 5;
-            Minefield minefield = Minefield.createMinefield(coords,
-                  getLocalPlayer().getId(),
-                  minefieldNumber.type(),
-                  density);
-            deployedMinefields.add(minefield);
-            minesToDeploy--;
-        }
-    }
-
-    /**
-     * Get the number of minefields of each type that the bot should deploy
-     *
-     * @return an array of MinefieldNumbers, each representing the number of a specific type of minefield to deploy
-     */
-    private MinefieldNumbers[] getMinefieldNumbers() {
-        return new MinefieldNumbers[] { new MinefieldNumbers(getLocalPlayer().getNbrMFActive(), Minefield.TYPE_ACTIVE),
-                                        new MinefieldNumbers(getLocalPlayer().getNbrMFInferno(),
-                                              Minefield.TYPE_INFERNO),
-                                        new MinefieldNumbers(getLocalPlayer().getNbrMFConventional(),
-                                              Minefield.TYPE_CONVENTIONAL),
-                                        new MinefieldNumbers(getLocalPlayer().getNbrMFVibra(),
-                                              Minefield.TYPE_VIBRABOMB),
-                                        // the following are added for completeness, but are not used by the bot
-                                        new MinefieldNumbers(0, Minefield.TYPE_COMMAND_DETONATED),
-                                        // no command detonated mines
-                                        new MinefieldNumbers(0, Minefield.TYPE_EMP), // no field for EMP mines exists
-        };
-    }
-
-    /**
-     * Get the minefield deployment planner to use for this bot
-     *
-     * @return the minefield deployment planner
-     */
-    protected MinefieldDeploymentPlanner getMinefieldDeploymentPlanner() {
-        return new RandomMinefieldDeploymentPlanner(getBoard());
     }
 
     /**
@@ -1380,7 +1636,28 @@ public abstract class BotClient extends Client {
     public String receiveReport(List<Report> reports) {
         return "";
     }
-
+    
+    /**
+     * In addition to handling the entity update normally, the bot needs to decide
+     * if it should activate its hidden units
+     */
+    @Override
+    protected void receiveEntityUpdate(Packet packet) throws InvalidPacketDataException {
+    	super.receiveEntityUpdate(packet);
+    	
+    	if (this.getGame().getPhase() == GamePhase.MOVEMENT) {
+    		int entityIndex = packet.getIntValue(0);
+    		revealEntities(entityIndex);
+    	}
+    }
+    
+    /**
+     * Given an entity that just moved, decide if I should reveal any entities in response
+     */
+    protected void revealEntities(int movedEntityID) {
+    	// default does nothing
+    }
+    
     /**
      * Let the bot decide whether to reroll initiative based on report info
      *

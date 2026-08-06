@@ -44,6 +44,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
+import megamek.client.ui.dialogs.abstractDialogs.AutoResolveChanceDialog;
 import megamek.common.CriticalSlot;
 import megamek.common.HitData;
 import megamek.common.ToHitData;
@@ -450,10 +451,7 @@ public record MekDamageApplier(Mek entity, EntityFinalState entityFinalState) im
 
 
     public static int clamp(int value, int min, int max) {
-        if (min > max) {
-            throw new IllegalArgumentException(min + " > " + max);
-        }
-        return Math.min(max, Math.max(value, min));
+        return AutoResolveChanceDialog.clamp(value, min, max);
     }
 
 }

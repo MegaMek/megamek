@@ -51,6 +51,7 @@ public class NukeDetonatedAction extends AbstractEntityAction {
         this.playerID = playerID;
     }
 
+    @Deprecated(since = "0.51.0", forRemoval = true)
     public AmmoType.Munitions typeOfNuke() {
         return nukeType;
     }

@@ -1,6 +1,6 @@
 /*
  * Copyright (C) 2002-2004 Josh Yockey
- * Copyright (C) 2002-2025 The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2002-2026 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -35,7 +35,9 @@ package megamek.common.loaders;
 
 import java.awt.Image;
 import java.io.File;
+import java.io.Serial;
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -57,13 +59,18 @@ import megamek.common.alphaStrike.ASUnitType;
 import megamek.common.alphaStrike.AlphaStrikeHelper;
 import megamek.common.alphaStrike.BattleForceSUA;
 import megamek.common.annotations.Nullable;
+import megamek.common.battlefieldSupport.BFSAssetType;
+import megamek.common.battlefieldSupport.BFSDamage;
+import megamek.common.battlefieldSupport.BFSRange;
+import megamek.common.battlefieldSupport.BFSSpecial;
+import megamek.common.battlefieldSupport.BFSSpecialType;
 import megamek.common.equipment.Mounted;
 import megamek.common.options.IOption;
 import megamek.common.options.IOptionInfo;
 import megamek.common.options.Quirks;
 import megamek.common.units.Entity;
 import megamek.common.units.EntityMovementMode;
-import megamek.common.units.EntityWeightClass;
+import megamek.common.units.ForceGeneratorAvailability;
 import megamek.common.units.UnitRole;
 import megamek.logging.MMLogger;
 
@@ -71,12 +78,28 @@ import megamek.logging.MMLogger;
  * The MekSummary of a unit offers compiled information about the unit without having to load the file.
  */
 public class MekSummary implements Serializable, ASCardDisplayable {
+    /**
+     * This class had no explicit serialVersionUID, so the JVM computed one from the field list. That meant every
+     * change to the fields silently invalidated units.cache, and this release changes them again, so one more rebuild
+     * happens on first run. {@code MekSummaryCache} catches the failure and rescans, so it heals itself.
+     * <p>
+     * Pinning it stops the next field addition from doing the same. Bump it only for a change that genuinely cannot
+     * be read back, and expect a full cache rebuild when you do.
+     * </p>
+     */
+    @Serial
+    private static final long serialVersionUID = 1L;
+
     private static final MMLogger logger = MMLogger.create(MekSummary.class);
 
     private String name;
     private String chassis;
     private String clanChassisName;
     private String model;
+    /** The unit's own unit-file UUID (from its {@code .blk}/{@code .mtf}/{@code .bfs} file), or {@code null}. */
+    private String unitFileUUID;
+    /** For a Battlefield Support Asset, the base unit's UUID it links to, or {@code null} when standalone. */
+    private String linkedUnitId;
     private int mulId;
     private String unitType;
     private String unitSubType;
@@ -89,6 +112,8 @@ public class MekSummary implements Serializable, ASCardDisplayable {
     private int tankTurrets;
     private File sourceFile;
     private String source;
+    private String published;
+    private boolean nonCanonBySource;
     private boolean invalid;
     private String techLevel;
     private int techLevelCode;
@@ -101,7 +126,49 @@ public class MekSummary implements Serializable, ASCardDisplayable {
                                          TechConstants.T_IS_EXPERIMENTAL }; // tech level constant at standard, advanced, and experimental rules
     // levels
     private double tons;
+    private int weightClass;
     private int bv;
+    private int genericBattleValue;
+
+    /**
+     * For Battlefield Support Assets: the Veteran cost expressed in Battle Value (Veteran BSP times 20), or 0 if the
+     * asset has no Veteran variant. Non-asset units leave this at 0.
+     */
+    private int bfsVeteranBv;
+
+    // === Battlefield Support Asset stats, cached for Advanced Search filtering. ===
+    // These are populated only for .bfs Assets (isBattlefieldSupportAsset()); non-assets leave them at their defaults.
+    /** The Asset's rules category, or {@code null} for a non-asset. */
+    private BFSAssetType bfsAssetType;
+    /** The Asset card title (chassis if not overridden), for the basic name filter. */
+    private String bfsCardTitle;
+    /** The Asset card subtitle (model if not overridden), for the basic name filter. */
+    private String bfsCardSubtitle;
+    /** The Asset's movement mode, or {@code null} for a non-asset. */
+    private EntityMovementMode bfsMovementMode;
+    /** The Asset's single Movement Point allowance for its declared mode. */
+    private int bfsMp;
+    /** The Asset's fixed Target Movement Modifier. */
+    private int bfsTmm;
+    /** The Asset's Short/Medium/Long range, or {@code null} for a non-asset. */
+    private BFSRange bfsRange;
+    /** The Asset's keyword-range label (for example {@code Artillery}), or {@code null} for a numeric/absent range. */
+    private String bfsRangeKeyword;
+    /** The Asset's crew Skill (to-hit base target number). */
+    private int bfsSkill;
+    /** The Asset's attack damage, or {@code null} for a non-asset. */
+    private BFSDamage bfsDamage;
+    /** The Asset's undamaged (original) Destroy Check target number. */
+    private int bfsDestroyCheck;
+    /** The Asset's damage Threshold. */
+    private int bfsThreshold;
+    /** The Asset's effective Battlefield Support Point cost. */
+    private int bfsBsp;
+    /** The recognized Specials present on the Asset, for presence filtering. */
+    private List<BFSSpecialType> bfsSpecials = new ArrayList<>();
+    /** The full Specials present on the Asset, retaining parameter values (for example {@code ECM4},
+     * {@code Artillery (LT)}), for value-based filtering. */
+    private List<BFSSpecial> bfsSpecialDetails = new ArrayList<>();
 
     /** The full cost of the unit (including ammo). */
     private long cost;
@@ -116,6 +183,7 @@ public class MekSummary implements Serializable, ASCardDisplayable {
     private String extinctRange;
     private boolean canon;
     private boolean patchwork;
+    private boolean frankenMek;
     private boolean doomedOnGround;
     private boolean doomedInAtmosphere;
     private boolean doomedInSpace;
@@ -223,6 +291,12 @@ public class MekSummary implements Serializable, ASCardDisplayable {
     private ASSpecialAbilityCollection specialAbilities = new ASSpecialAbilityCollection();
     private UnitRole role = UnitRole.UNDETERMINED;
 
+    /** Force Generator availability declared in the unit file. Empty for canon units, which use data/forcegenerator. */
+    private List<ForceGeneratorAvailability> forceGeneratorAvailability = new ArrayList<>();
+
+    /** Force Generator mission roles declared in the unit file, as raw comma-separated text. */
+    private String missionRoles = "";
+
     public MekSummary() {
         armorTypeSet = new HashSet<>();
     }
@@ -271,6 +345,10 @@ public class MekSummary implements Serializable, ASCardDisplayable {
         return patchwork;
     }
 
+    public boolean isFrankenMek() {
+        return frankenMek;
+    }
+
     public boolean isDoomedOnGround() {
         return doomedOnGround;
     }
@@ -297,6 +375,30 @@ public class MekSummary implements Serializable, ASCardDisplayable {
 
     public boolean isSupport() {
         return support;
+    }
+
+    /** @return true if this summary represents a Battlefield Support Asset (a {@code .bfs} unit). */
+    @Override
+    public boolean isBattlefieldSupportAsset() {
+        return (entityType != null) && ((entityType & Entity.ETYPE_BATTLEFIELD_SUPPORT_ASSET) != 0);
+    }
+
+    /** @return this unit's own unit-file UUID, or {@code null} if the file carries none */
+    public @Nullable String getUnitFileUUID() {
+        return unitFileUUID;
+    }
+
+    public void setUnitFileUUID(@Nullable String unitFileUUID) {
+        this.unitFileUUID = unitFileUUID;
+    }
+
+    /** @return for a Battlefield Support Asset, the base unit's UUID it links to; {@code null} when standalone/non-asset */
+    public @Nullable String getLinkedUnitId() {
+        return linkedUnitId;
+    }
+
+    public void setLinkedUnitId(@Nullable String linkedUnitId) {
+        this.linkedUnitId = linkedUnitId;
     }
 
     public String getUnitSubType() {
@@ -328,7 +430,19 @@ public class MekSummary implements Serializable, ASCardDisplayable {
     }
 
     public String getSource() {
-        return source;
+        return (source != null) ? source : "";
+    }
+
+    public String getPublished() {
+        return (published != null) ? published : "";
+    }
+
+    public boolean hasPublishedRecordSheet() {
+        return !getPublished().isBlank();
+    }
+
+    public boolean isNonCanonBySource() {
+        return nonCanonBySource;
     }
 
     public String getEntryName() {
@@ -541,6 +655,157 @@ public class MekSummary implements Serializable, ASCardDisplayable {
         return bv;
     }
 
+    /**
+     * @return for a Battlefield Support Asset, the Veteran cost in Battle Value (Veteran BSP times 20), or 0 if the
+     *       asset has no Veteran variant (or is not an asset)
+     */
+    public int getBfsVeteranBv() {
+        return bfsVeteranBv;
+    }
+
+    public void setBfsVeteranBv(int bfsVeteranBv) {
+        this.bfsVeteranBv = bfsVeteranBv;
+    }
+
+    /** @return the Asset's rules category, or {@code null} if this summary is not a Battlefield Support Asset */
+    public @Nullable BFSAssetType getBfsAssetType() {
+        return bfsAssetType;
+    }
+
+    public void setBfsAssetType(@Nullable BFSAssetType bfsAssetType) {
+        this.bfsAssetType = bfsAssetType;
+    }
+
+    /** @return the Asset card title, or {@code null} for a non-asset */
+    public @Nullable String getBfsCardTitle() {
+        return bfsCardTitle;
+    }
+
+    public void setBfsCardTitle(@Nullable String bfsCardTitle) {
+        this.bfsCardTitle = bfsCardTitle;
+    }
+
+    /** @return the Asset card subtitle, or {@code null} for a non-asset */
+    public @Nullable String getBfsCardSubtitle() {
+        return bfsCardSubtitle;
+    }
+
+    public void setBfsCardSubtitle(@Nullable String bfsCardSubtitle) {
+        this.bfsCardSubtitle = bfsCardSubtitle;
+    }
+
+    /** @return the Asset's movement mode, or {@code null} for a non-asset */
+    public @Nullable EntityMovementMode getBfsMovementMode() {
+        return bfsMovementMode;
+    }
+
+    public void setBfsMovementMode(@Nullable EntityMovementMode bfsMovementMode) {
+        this.bfsMovementMode = bfsMovementMode;
+    }
+
+    /** @return the Asset's single Movement Point allowance */
+    public int getBfsMp() {
+        return bfsMp;
+    }
+
+    public void setBfsMp(int bfsMp) {
+        this.bfsMp = bfsMp;
+    }
+
+    /** @return the Asset's fixed Target Movement Modifier */
+    public int getBfsTmm() {
+        return bfsTmm;
+    }
+
+    public void setBfsTmm(int bfsTmm) {
+        this.bfsTmm = bfsTmm;
+    }
+
+    /** @return the Asset's Short/Medium/Long range, or {@code null} for a non-asset */
+    public @Nullable BFSRange getBfsRange() {
+        return bfsRange;
+    }
+
+    public void setBfsRange(@Nullable BFSRange bfsRange) {
+        this.bfsRange = bfsRange;
+    }
+
+    /** @return the Asset's keyword-range label, or {@code null} for a numeric/absent range */
+    public @Nullable String getBfsRangeKeyword() {
+        return bfsRangeKeyword;
+    }
+
+    public void setBfsRangeKeyword(@Nullable String bfsRangeKeyword) {
+        this.bfsRangeKeyword = bfsRangeKeyword;
+    }
+
+    /** @return the Asset's crew Skill */
+    public int getBfsSkill() {
+        return bfsSkill;
+    }
+
+    public void setBfsSkill(int bfsSkill) {
+        this.bfsSkill = bfsSkill;
+    }
+
+    /** @return the Asset's attack damage, or {@code null} for a non-asset */
+    public @Nullable BFSDamage getBfsDamage() {
+        return bfsDamage;
+    }
+
+    public void setBfsDamage(@Nullable BFSDamage bfsDamage) {
+        this.bfsDamage = bfsDamage;
+    }
+
+    /** @return the Asset's undamaged Destroy Check target number */
+    public int getBfsDestroyCheck() {
+        return bfsDestroyCheck;
+    }
+
+    public void setBfsDestroyCheck(int bfsDestroyCheck) {
+        this.bfsDestroyCheck = bfsDestroyCheck;
+    }
+
+    /** @return the Asset's damage Threshold */
+    public int getBfsThreshold() {
+        return bfsThreshold;
+    }
+
+    public void setBfsThreshold(int bfsThreshold) {
+        this.bfsThreshold = bfsThreshold;
+    }
+
+    /** @return the Asset's effective Battlefield Support Point cost */
+    public int getBfsBsp() {
+        return bfsBsp;
+    }
+
+    public void setBfsBsp(int bfsBsp) {
+        this.bfsBsp = bfsBsp;
+    }
+
+    /** @return the recognized Specials present on the Asset (never {@code null}) */
+    public List<BFSSpecialType> getBfsSpecials() {
+        return (bfsSpecials != null) ? bfsSpecials : new ArrayList<>();
+    }
+
+    public void setBfsSpecials(List<BFSSpecialType> bfsSpecials) {
+        this.bfsSpecials = (bfsSpecials != null) ? bfsSpecials : new ArrayList<>();
+    }
+
+    /** @return the full Specials present on the Asset, retaining parameter values (never {@code null}) */
+    public List<BFSSpecial> getBfsSpecialDetails() {
+        return (bfsSpecialDetails != null) ? bfsSpecialDetails : new ArrayList<>();
+    }
+
+    public void setBfsSpecialDetails(List<BFSSpecial> bfsSpecialDetails) {
+        this.bfsSpecialDetails = (bfsSpecialDetails != null) ? bfsSpecialDetails : new ArrayList<>();
+    }
+
+    public int getGenericBattleValue() {
+        return genericBattleValue;
+    }
+
     public long getCost() {
         return cost;
     }
@@ -561,10 +826,12 @@ public class MekSummary implements Serializable, ASCardDisplayable {
         return level;
     }
 
+    @Deprecated(since = "0.51.0", forRemoval = true)
     public int getAdvancedTechYear() {
         return advTechYear;
     }
 
+    @Deprecated(since = "0.51.0", forRemoval = true)
     public int getStandardTechYear() {
         return stdTechYear;
     }
@@ -674,6 +941,39 @@ public class MekSummary implements Serializable, ASCardDisplayable {
     @Override
     public UnitRole getRole() {
         return (role == null) ? UnitRole.UNDETERMINED : role;
+    }
+
+    /**
+     * Returns the Force Generator availability declared in this unit's file. Empty for canon units, whose availability
+     * comes from the era files in data/forcegenerator instead.
+     *
+     * @return the availability entries, never {@code null}
+     */
+    public List<ForceGeneratorAvailability> getForceGeneratorAvailability() {
+        // Empty rather than a fresh ArrayList: the Force Generator calls this for every unit in every era, so
+        // allocating here would churn. Null only happens for a summary read from a units.cache written before this
+        // field existed. Use the setter to change the entries; the returned list is not for mutating.
+        return (forceGeneratorAvailability == null) ? List.of() : forceGeneratorAvailability;
+    }
+
+    public void setForceGeneratorAvailability(List<ForceGeneratorAvailability> forceGeneratorAvailability) {
+        this.forceGeneratorAvailability = (forceGeneratorAvailability == null)
+              ? new ArrayList<>()
+              : new ArrayList<>(forceGeneratorAvailability);
+    }
+
+    /**
+     * Returns the Force Generator mission roles declared in this unit's file, as raw comma-separated text such as
+     * "fire_support,urban".
+     *
+     * @return the mission role text, never {@code null}
+     */
+    public String getMissionRoles() {
+        return (missionRoles == null) ? "" : missionRoles;
+    }
+
+    public void setMissionRoles(String missionRoles) {
+        this.missionRoles = (missionRoles == null) ? "" : missionRoles;
     }
 
     public void setFullAccurateUnitType(String type) {
@@ -896,6 +1196,14 @@ public class MekSummary implements Serializable, ASCardDisplayable {
         this.source = sSource;
     }
 
+    public void setPublished(String published) {
+        this.published = published;
+    }
+
+    public void setNonCanonBySource(boolean nonCanonBySource) {
+        this.nonCanonBySource = nonCanonBySource;
+    }
+
     public void setEntryName(String sEntryName) {
         this.entryName = sEntryName;
     }
@@ -940,6 +1248,10 @@ public class MekSummary implements Serializable, ASCardDisplayable {
         this.bv = nBV;
     }
 
+    public void setGenericBattleValue(int genericBattleValue) {
+        this.genericBattleValue = genericBattleValue;
+    }
+
     public void setModified(long lModified) {
         this.modified = lModified;
     }
@@ -962,6 +1274,10 @@ public class MekSummary implements Serializable, ASCardDisplayable {
 
     public void setPatchwork(boolean patchwork) {
         this.patchwork = patchwork;
+    }
+
+    public void setFrankenMek(boolean frankenMek) {
+        this.frankenMek = frankenMek;
     }
 
     public void setDoomedOnGround(boolean doomedOnGround) {
@@ -996,17 +1312,12 @@ public class MekSummary implements Serializable, ASCardDisplayable {
         unitSubType = subType;
     }
 
+    public void setWeightClass(int weightClass) {
+        this.weightClass = weightClass;
+    }
+
     public int getWeightClass() {
-        double tons;
-        if (getUnitType().equals("BattleArmor")) {
-            tons = getSuitWeight();
-        } else {
-            tons = getTons();
-        }
-        if (isSupport()) {
-            return EntityWeightClass.getSupportWeightClass(this.tons, unitSubType);
-        }
-        return EntityWeightClass.getWeightClass(tons, getUnitType());
+        return weightClass;
     }
 
     public int getWalkMp() {

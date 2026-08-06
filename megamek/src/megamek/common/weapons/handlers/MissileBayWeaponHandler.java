@@ -69,6 +69,7 @@ public class MissileBayWeaponHandler extends AmmoBayWeaponHandler {
     @Serial
     private static final long serialVersionUID = -1618484541772117621L;
 
+    @Deprecated(since = "0.51.0", forRemoval = true)
     protected MissileBayWeaponHandler() {
         // deserialization only
     }

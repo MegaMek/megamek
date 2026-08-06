@@ -36,7 +36,7 @@ package megamek.common.weapons.missiles.innerSphere.thunderbolt;
 
 import java.io.Serial;
 
-import megamek.common.weapons.missiles.thuunderbolt.Thunderbolt10Weapon;
+import megamek.common.weapons.missiles.thunderbolt.Thunderbolt10Weapon;
 
 /**
  * @author Sebastian Brocks

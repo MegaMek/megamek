@@ -1,6 +1,6 @@
 /*
  * Copyright (C) 2006 Ben Mazur (bmazur@sev.org)
- * Copyright (C) 2006-2025 The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2006-2026 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -178,10 +178,6 @@ public class RandomArmyCreator {
     }
 
     public static void main(String[] args) {
-        StringBuilder sbMek = new StringBuilder();
-        StringBuilder sbVehicle = new StringBuilder();
-        StringBuilder sbBattleArmor = new StringBuilder();
-        StringBuilder sbInfantry = new StringBuilder();
         Parameters p = new Parameters();
         p.meks = 4;
         p.tanks = 4;
@@ -194,7 +190,7 @@ public class RandomArmyCreator {
         p.tech = TechConstants.T_IS_TW_NON_BOX;
         p.canon = true;
         p.padWithInfantry = true;
-        List<MekSummary> units = generateArmy(p, sbMek, sbVehicle, sbBattleArmor, sbInfantry);
+        List<MekSummary> units = generateArmy(p);
 
         int totalBV = 0;
         for (MekSummary m : units) {
@@ -209,8 +205,7 @@ public class RandomArmyCreator {
         System.out.println(totalBV);
     }
 
-    public static List<MekSummary> generateArmy(Parameters p, StringBuilder sbMek, StringBuilder sbVehicle,
-          StringBuilder sbBattleArmor, StringBuilder sbInfantry) {
+    public static List<MekSummary> generateArmy(Parameters p) {
         int allowedVariance = java.lang.Math.abs(p.maxBV - p.minBV);
         MekSummary[] all = MekSummaryCache.getInstance().getAllMeks();
         List<MekSummary> allMeks = new ArrayList<>();
@@ -283,7 +278,7 @@ public class RandomArmyCreator {
             if (!m.getUnitType().equals(UnitType.getTypeName(UnitType.INFANTRY))
                   && !m.getUnitType().equals(UnitType.getTypeName(UnitType.PROTOMEK))
                   && !m.getUnitType().equals(UnitType.getTypeName(UnitType.BATTLE_ARMOR))
-                  && !p.asPanel.matches(m)) {
+                  && (p.asPanel != null && !p.asPanel.matches(m))) {
                 continue;
             }
 
@@ -316,22 +311,22 @@ public class RandomArmyCreator {
 
         int baBV = (p.ba * averageBaBV * p.maxBV) / helpWeight;
         if ((p.ba > 0) && !allBA.isEmpty()) {
-            baBV = Math.max(baBV, p.ba * allBA.get(0).getBV());
-            baBV = Math.min(baBV, p.ba * allBA.get(allBA.size() - 1).getBV());
+            baBV = Math.max(baBV, p.ba * allBA.getFirst().getBV());
+            baBV = Math.min(baBV, p.ba * allBA.getLast().getBV());
         } else {
             baBV = 0;
         }
         int mekBV = (p.meks * averageMekBV * p.maxBV) / helpWeight;
         if ((p.meks > 0) && !allMeks.isEmpty()) {
-            mekBV = Math.max(mekBV, p.meks * allMeks.get(0).getBV());
-            mekBV = Math.min(mekBV, p.meks * allMeks.get(allMeks.size() - 1).getBV());
+            mekBV = Math.max(mekBV, p.meks * allMeks.getFirst().getBV());
+            mekBV = Math.min(mekBV, p.meks * allMeks.getLast().getBV());
         } else {
             mekBV = 0;
         }
         int tankBV = (p.tanks * averageTankBV * p.maxBV) / helpWeight;
         if ((p.tanks > 0) && !allTanks.isEmpty()) {
-            tankBV = Math.max(tankBV, p.tanks * allTanks.get(0).getBV());
-            tankBV = Math.min(tankBV, p.tanks * allTanks.get(allTanks.size() - 1).getBV());
+            tankBV = Math.max(tankBV, p.tanks * allTanks.getFirst().getBV());
+            tankBV = Math.min(tankBV, p.tanks * allTanks.getLast().getBV());
         } else {
             tankBV = 0;
         }
@@ -356,10 +351,6 @@ public class RandomArmyCreator {
                   - countBV(units), allowedVariance));
         }
 
-        sbMek.append(allMeks.size());
-        sbVehicle.append(allTanks.size());
-        sbBattleArmor.append(allBA.size());
-        sbInfantry.append(allInfantry.size());
         return units;
     }
 }

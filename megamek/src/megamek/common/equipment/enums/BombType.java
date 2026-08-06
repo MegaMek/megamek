@@ -394,7 +394,6 @@ public class BombType extends AmmoType {
 
         bomb.name = "Anti-Ship Electronic Warfare (ASEW) Ammo";
         bomb.setInternalName(BombTypeEnum.ASEW.getInternalName());
-        bomb.addLookupName("IS " + BombTypeEnum.ASEW.getInternalName());
         bomb.addLookupName("ASEWMissile Ammo");
         bomb.damagePerShot = 0;
         bomb.flags = bomb.flags.or(AmmoType.F_OTHER_BOMB);

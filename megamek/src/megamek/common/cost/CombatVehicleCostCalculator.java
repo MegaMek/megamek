@@ -183,6 +183,7 @@ public class CombatVehicleCostCalculator {
         costs[i++] = 2000 * Math.max(0, sinks - freeHeatSinks);
         costs[i++] = turretWeight * 5000;
 
+        int equipmentIndex = i;
         costs[i++] = CostCalculator.getWeaponsAndEquipmentCost(tank, ignoreAmmo) + tank.getExtraCrewSeats() * 100L;
 
         if (!tank.isSupportVehicle()) {
@@ -255,7 +256,8 @@ public class CombatVehicleCostCalculator {
                   || tank.hasWorkingMisc(MiscType.F_ENVIRONMENTAL_SEALING)) {
                 cost *= 1.25;
                 costs[i++] = -1.25;
-
+            } else {
+                costs[i++] = 0;
             }
             if (tank.hasWorkingMisc(MiscType.F_OFF_ROAD)) {
                 cost *= 1.2;
@@ -265,8 +267,10 @@ public class CombatVehicleCostCalculator {
 
         ArrayList<String> left = getLeft(tank);
         String[] systemNames = left.toArray(new String[0]);
-        CostCalculator.fillInReport(costReport, tank, ignoreAmmo, systemNames, 7, cost, costs);
-        return Math.round(cost);
+        long roundedCost = Math.round(cost);
+          CostCalculator.fillInReport(costReport, tank, ignoreAmmo, systemNames, equipmentIndex, structCostIdx,
+              roundedCost, costs);
+        return roundedCost;
     }
 
     private static ArrayList<String> getLeft(Tank tank) {
@@ -275,7 +279,13 @@ public class CombatVehicleCostCalculator {
             left.add("Chassis");
         }
         left.add("Engine");
-        left.add("Armor");
+        if (tank.hasPatchworkArmor()) {
+            for (int location = 0; location < tank.locations(); location++) {
+                left.add("Armor (" + tank.getLocationAbbr(location) + ")");
+            }
+        } else {
+            left.add("Armor");
+        }
         if (tank.isSupportVehicle()) {
             left.add("Final Structural Cost");
         } else {

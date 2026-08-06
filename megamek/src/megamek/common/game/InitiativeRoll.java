@@ -65,6 +65,22 @@ public class InitiativeRoll implements Comparable<InitiativeRoll>, Serializable 
 
     }
 
+    /**
+     * Copy constructor. Produces an independent {@link InitiativeRoll} with its own backing vectors, so mutating the
+     * copy (e.g. appending tiebreak rolls) does not affect the source. This is important because several call sites
+     * carry initiative state over between game/team/entity instances; sharing the same instance by reference lets two
+     * distinct candidates compare equal forever, which causes unbounded tie-break recursion.
+     *
+     * @param other The initiative roll to copy; must not be {@code null}
+     */
+    public InitiativeRoll(InitiativeRoll other) {
+        // Integer, Boolean and InitiativeBonusBreakdown are immutable, so copying the vectors themselves is sufficient.
+        rolls.addAll(other.rolls);
+        originalRolls.addAll(other.originalRolls);
+        wasRollReplaced.addAll(other.wasRollReplaced);
+        bonuses.addAll(other.bonuses);
+    }
+
     public void clear() {
         rolls.removeAllElements();
         originalRolls.removeAllElements();
@@ -111,7 +127,7 @@ public class InitiativeRoll implements Comparable<InitiativeRoll>, Serializable 
      * Replace the previous init roll with a new one, and make a note that it was replaced. Used for Tactical Genius
      * special pilot ability (lvl 3).
      *
-     * @param breakdown The breakdown of all bonus components
+     * @param breakdown             The breakdown of all bonus components
      * @param initiativeAptitudeSPA The initiative aptitude SPA (Combat Sense or Combat Paralysis), or empty string
      */
     public void replaceRoll(InitiativeBonusBreakdown breakdown, String initiativeAptitudeSPA) {
@@ -128,6 +144,7 @@ public class InitiativeRoll implements Comparable<InitiativeRoll>, Serializable 
      * @param bonus                 The total bonus value
      * @param initiativeAptitudeSPA The initiative aptitude SPA (Combat Sense or Combat Paralysis), or empty string
      */
+    @Deprecated(since = "0.51.0", forRemoval = true)
     public void replaceRoll(int bonus, String initiativeAptitudeSPA) {
         replaceRoll(InitiativeBonusBreakdown.fromTotal(bonus), initiativeAptitudeSPA);
     }
@@ -145,7 +162,7 @@ public class InitiativeRoll implements Comparable<InitiativeRoll>, Serializable 
                 rolls.sort(Comparator.naturalOrder());
             }
 
-            return rolls.get(0) + rolls.get(1);
+            return rolls.getFirst() + rolls.get(1);
         }
 
         return roll;

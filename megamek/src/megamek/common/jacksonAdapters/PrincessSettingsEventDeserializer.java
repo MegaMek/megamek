@@ -50,6 +50,7 @@ public class PrincessSettingsEventDeserializer extends StdDeserializer<PrincessS
     private static final String PLAYER_NAME = "player";
     private static final String TRIGGER = "trigger";
 
+    @Deprecated(since = "0.51.0", forRemoval = true)
     public PrincessSettingsEventDeserializer() {
         this(null);
     }

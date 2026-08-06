@@ -193,20 +193,18 @@ public class CachedEntityState {
      */
     public int getNumBreachedLegs() {
         if (numBreachedLegs == null) {
-            if (backingEntity instanceof QuadMek) {
-                numBreachedLegs = ((backingEntity.getArmor(QuadMek.LOC_LEFT_LEG) > 0) ? 0 : 1) +
+            switch (backingEntity) {
+                case QuadMek ignored -> numBreachedLegs = ((backingEntity.getArmor(QuadMek.LOC_LEFT_LEG) > 0) ? 0 : 1) +
                       ((backingEntity.getArmor(QuadMek.LOC_LEFT_ARM) > 0) ? 0 : 1) +
                       ((backingEntity.getArmor(QuadMek.LOC_RIGHT_LEG) > 0) ? 0 : 1) +
                       ((backingEntity.getArmor(QuadMek.LOC_RIGHT_ARM) > 0) ? 0 : 1);
-            } else if (backingEntity instanceof TripodMek) {
-                numBreachedLegs = ((backingEntity.getArmor(TripodMek.LOC_LEFT_LEG) > 0) ? 0 : 1) +
-                      ((backingEntity.getArmor(TripodMek.LOC_CENTER_LEG) > 0) ? 0 : 1) +
-                      ((backingEntity.getArmor(TripodMek.LOC_RIGHT_LEG) > 0) ? 0 : 1);
-            } else if (backingEntity instanceof Mek) {
-                numBreachedLegs = ((backingEntity.getArmor(Mek.LOC_LEFT_LEG) > 0) ? 0 : 1) +
+                case TripodMek ignored ->
+                      numBreachedLegs = ((backingEntity.getArmor(TripodMek.LOC_LEFT_LEG) > 0) ? 0 : 1) +
+                            ((backingEntity.getArmor(TripodMek.LOC_CENTER_LEG) > 0) ? 0 : 1) +
+                            ((backingEntity.getArmor(TripodMek.LOC_RIGHT_LEG) > 0) ? 0 : 1);
+                case Mek ignored -> numBreachedLegs = ((backingEntity.getArmor(Mek.LOC_LEFT_LEG) > 0) ? 0 : 1) +
                       ((backingEntity.getArmor(Mek.LOC_RIGHT_LEG) > 0) ? 0 : 1);
-            } else {
-                numBreachedLegs = 0;
+                case null, default -> numBreachedLegs = 0;
             }
         }
 

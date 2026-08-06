@@ -1,7 +1,7 @@
 /*
  * Copyright (c) 2000-2002 Ben Mazur (bmazur@sev.org)
  * Copyright (c) 2013 Nicholas Walczak (walczak@cs.umn.edu)
- * Copyright (C) 2014-2025 The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2014-2026 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -116,6 +116,12 @@ public enum KeyCommandBind {
     TOGGLE_CONVERSION_MODE("toggleConversion", VK_M),
     PREV_MODE("prevMode", VK_KP_DOWN),
     NEXT_MODE("nextMode", VK_KP_UP),
+    // Called shots (TacOps). The direction keys map onto the called locations; pressing the direction that is
+    // already selected clears the called shot back to none.
+    CALLED_SHOT_HIGH("calledShotHigh", VK_UP, ALT_DOWN_MASK),
+    CALLED_SHOT_LOW("calledShotLow", VK_DOWN, ALT_DOWN_MASK),
+    CALLED_SHOT_LEFT("calledShotLeft", VK_LEFT, ALT_DOWN_MASK),
+    CALLED_SHOT_RIGHT("calledShotRight", VK_RIGHT, ALT_DOWN_MASK),
     PAUSE("pause", VK_P, CTRL_DOWN_MASK | SHIFT_DOWN_MASK),
     UNPAUSE("unpause", VK_P, CTRL_DOWN_MASK | ALT_DOWN_MASK),
     REPORT_KEY_NEXT("reportKeyNext", VK_N),
@@ -133,7 +139,7 @@ public enum KeyCommandBind {
     DRAW_LABELS(true, "toggleDrawLabels", VK_B, CTRL_DOWN_MASK),
     HEX_COORDS(true, "toggleHexCoords", VK_G, CTRL_DOWN_MASK),
     MINIMAP(true, "toggleMinimap", VK_M, CTRL_DOWN_MASK),
-    LOS_SETTING(true, "viewLosSetting", VK_L, CTRL_DOWN_MASK | ALT_DOWN_MASK),
+    LOS_SETTING(true, "viewLosSetting", VK_L),
     UNIT_DISPLAY(true, "toggleUnitDisplay", VK_D, CTRL_DOWN_MASK),
     UNIT_OVERVIEW(true, "toggleUnitOverview", VK_U, CTRL_DOWN_MASK),
     KEY_BINDS(true, "toggleKeybinds", VK_K, CTRL_DOWN_MASK),
@@ -201,6 +207,7 @@ public enum KeyCommandBind {
         this(command, repeatable, keyCode, 0, false);
     }
 
+    @Deprecated(since = "0.51.0", forRemoval = true)
     KeyCommandBind(String command, boolean repeatable, int keyCode, int modifier) {
         this(command, repeatable, keyCode, modifier, false);
     }

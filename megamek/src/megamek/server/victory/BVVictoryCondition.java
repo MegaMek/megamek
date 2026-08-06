@@ -60,6 +60,7 @@ public interface BVVictoryCondition extends VictoryCondition, Serializable {
               .mapToInt(Player::getBV).sum();
     }
 
+    @Deprecated(since = "0.51.0", forRemoval = true)
     default int getEnemyBV(List<Player> players, Player player) {
         return players.stream()
               .filter(Player::isNotObserver)

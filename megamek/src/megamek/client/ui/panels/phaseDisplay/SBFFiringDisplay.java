@@ -321,7 +321,7 @@ public class SBFFiringDisplay extends SBFActionPhaseDisplay implements ListSelec
         }
 
         if (!game().getActiveFormationsAt(BoardLocation.of(b.getCoords(), 0)).isEmpty()) {
-            setTarget(game().getActiveFormationsAt(BoardLocation.of(b.getCoords(), 0)).get(0));
+            setTarget(game().getActiveFormationsAt(BoardLocation.of(b.getCoords(), 0)).getFirst());
         } else {
             setTarget(null);
         }

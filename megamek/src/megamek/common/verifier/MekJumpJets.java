@@ -62,6 +62,7 @@ public enum MekJumpJets {
         return internalName;
     }
 
+    @Deprecated(since = "0.51.0", forRemoval = true)
     public boolean canIndustrialUse() {
         return industrial;
     }

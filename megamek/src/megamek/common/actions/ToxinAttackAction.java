@@ -42,6 +42,7 @@ import megamek.common.compute.ComputeSideTable;
 import megamek.common.game.Game;
 import megamek.common.options.OptionsConstants;
 import megamek.common.rolls.TargetRoll;
+import megamek.common.units.ConvInfantry;
 import megamek.common.units.Entity;
 import megamek.common.units.Infantry;
 import megamek.common.units.Targetable;
@@ -87,8 +88,8 @@ public class ToxinAttackAction extends AbstractAttackAction {
 
     public static ToHitData toHit(Game game, int attackerId, Targetable target) {
         final Entity attackingEntity = game.getEntity(attackerId);
-        int targetId = Entity.NONE;
-        Entity targetEntity = null;
+        int targetId;
+        Entity targetEntity;
 
         // Arguments legal?
         if (attackingEntity == null) {
@@ -134,7 +135,7 @@ public class ToxinAttackAction extends AbstractAttackAction {
         }
 
         // Only conventional infantry can make this attack
-        if (!(attackingEntity instanceof Infantry) || !attackingEntity.isConventionalInfantry()) {
+        if (!(attackingEntity instanceof ConvInfantry)) {
             return new ToHitData(TargetRoll.IMPOSSIBLE, "Only conventional infantry can use toxin gas");
         }
 
@@ -144,12 +145,11 @@ public class ToxinAttackAction extends AbstractAttackAction {
         }
 
         // Target must be conventional infantry
-        if (!targetEntity.isConventionalInfantry()) {
+        if (!(targetEntity instanceof ConvInfantry targetInfantry)) {
             return new ToHitData(TargetRoll.IMPOSSIBLE, "Target must be conventional infantry");
         }
 
         // Target must not be protected from gas attacks
-        Infantry targetInfantry = (Infantry) targetEntity;
         if (targetInfantry.isProtectedFromGasAttacks()) {
             return new ToHitData(TargetRoll.IMPOSSIBLE, "Target is protected from gas attacks");
         }

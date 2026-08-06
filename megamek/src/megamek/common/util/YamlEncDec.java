@@ -35,6 +35,7 @@ package megamek.common.util;
 import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileWriter;
+import java.math.BigDecimal;
 import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.Map;
@@ -42,7 +43,6 @@ import java.util.Map;
 import com.fasterxml.jackson.databind.SerializationFeature;
 import com.fasterxml.jackson.dataformat.yaml.YAMLMapper;
 import megamek.common.equipment.AmmoType;
-import megamek.common.equipment.ArmorType;
 import megamek.common.equipment.EquipmentType;
 import megamek.common.equipment.MiscType;
 import megamek.common.equipment.WeaponType;
@@ -52,26 +52,15 @@ public class YamlEncDec {
     private static final MMLogger logger = MMLogger.create(YamlEncDec.class);
 
     /**
-     * Serializes an EquipmentType using the ideal serializer.
+     * Serializes an EquipmentType to a YAML-compatible map. The equipment type's getYamlData() method handles all
+     * serialization, including type-specific data, flags, and version information.
      *
      * @param equipmentType The EquipmentType to serialize.
      *
      * @return A Map containing the serialized data.
      */
     public static Map<String, Object> serialize(EquipmentType equipmentType) {
-        YamlSerializerEquipmentType serializer;
-        if (equipmentType instanceof AmmoType) {
-            serializer = new YamlSerializerAmmoType();
-        } else if (equipmentType instanceof WeaponType) {
-            serializer = new YamlSerializerWeaponType();
-        } else if (equipmentType instanceof ArmorType) {
-            serializer = new YamlSerializerArmorType();
-        } else if (equipmentType instanceof MiscType) {
-            serializer = new YamlSerializerMiscType();
-        } else {
-            serializer = new YamlSerializerEquipmentType();
-        }
-        return serializer.serialize(equipmentType);
+        return equipmentType.getYamlData();
     }
 
     private static String sanitizeFileName(String name) {
@@ -79,7 +68,7 @@ public class YamlEncDec {
             return null;
         }
         String sanitized = name;
-        sanitized = sanitized.replaceAll("[\\<>:\"/\\\\|?*\\p{Cntrl}]", "");
+        sanitized = sanitized.replaceAll("[<>:\"/\\\\|?*\\p{Cntrl}]", "");
         sanitized = sanitized.replaceAll("[. ]+$", "");
         sanitized = sanitized.replaceAll("^_|_$", "");
         if (sanitized.isEmpty()) {
@@ -94,6 +83,24 @@ public class YamlEncDec {
         }
     }
 
+    /**
+     * Formats a double value to avoid scientific notation in YAML output. Returns the appropriate Number type for clean
+     * serialization.
+     *
+     * @param value The double value to format
+     *
+     * @return Long for whole numbers, BigDecimal for decimals
+     */
+    public static Number formatDouble(double value) {
+        if (value == Math.floor(value) && !Double.isInfinite(value)) {
+            // Whole number - return as long (serializes as plain integer)
+            return (long) value;
+        }
+        // Has decimal places - BigDecimal handles small decimals correctly
+        return BigDecimal.valueOf(value);
+    }
+
+    @Deprecated(since = "0.51.0", forRemoval = true)
     public static void addPropIfNotDefault(Map<String, Object> data, String key, Object value, Object defaultValue) {
         if (data == null || key == null || key.trim().isEmpty()) {
             return;
@@ -174,15 +181,12 @@ public class YamlEncDec {
           throws Exception {
         String typeFolder;
         String seenKey = null;
-        if (equipmentType instanceof AmmoType) {
-            typeFolder = "ammo";
-        } else if (equipmentType instanceof WeaponType) {
-            typeFolder = "weapon";
-        } else if (equipmentType instanceof MiscType) {
-            typeFolder = "misc";
-        } else {
-            throw new Exception("Failed YAML export for unknown equipment type: " + equipmentType.getName());
-        }
+        typeFolder = switch (equipmentType) {
+            case AmmoType ignored -> "ammo";
+            case WeaponType ignored -> "weapon";
+            case MiscType ignored -> "misc";
+            default -> throw new Exception("Failed YAML export for unknown equipment type: " + equipmentType.getName());
+        };
 
         File parentDir = new File(targetFolder + File.separator + typeFolder);
         if (!parentDir.exists()) {
@@ -194,19 +198,25 @@ public class YamlEncDec {
         Map<String, Object> content = null;
         boolean appendMode = false;
         System.out.println("- " + equipmentType.getName());
-        if (equipmentType instanceof AmmoType ammo) {
-            if (ammo.getBaseAmmo() != null) {
-                fileName = ammo.getBaseAmmo().getShortName();
-            } else {
-                fileName = ammo.getShortName();
+        switch (equipmentType) {
+            case AmmoType ammo -> {
+                if (ammo.getBaseAmmo() != null) {
+                    fileName = ammo.getBaseAmmo().getShortName();
+                } else {
+                    fileName = ammo.getShortName();
+                }
+                content = ammo.getYamlData();
             }
-            content = ammo.getYamlData();
-        } else if (equipmentType instanceof WeaponType weapon) {
-            fileName = weapon.getShortName();
-            content = weapon.getYamlData();
-        } else if (equipmentType instanceof MiscType misc) {
-            fileName = misc.getShortName();
-            content = misc.getYamlData();
+            case WeaponType weapon -> {
+                fileName = weapon.getShortName();
+                content = weapon.getYamlData();
+            }
+            case MiscType misc -> {
+                fileName = misc.getShortName();
+                content = misc.getYamlData();
+            }
+            default -> {
+            }
         }
         //TODO: BombType, SmallWeaponAmmoType, ArmorType
         fileName = sanitizeFileName(fileName);

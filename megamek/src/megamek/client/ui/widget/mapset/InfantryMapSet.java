@@ -54,9 +54,9 @@ import megamek.client.ui.widget.picmap.PMPicArea;
 import megamek.client.ui.widget.picmap.PMUtil;
 import megamek.client.ui.widget.picmap.PMValueLabel;
 import megamek.common.Configuration;
+import megamek.common.units.ConvInfantry;
 import megamek.common.units.EjectedCrew;
 import megamek.common.units.Entity;
-import megamek.common.units.Infantry;
 import megamek.common.util.fileUtils.MegaMekFile;
 
 /**
@@ -101,10 +101,10 @@ public class InfantryMapSet implements DisplayMapSet {
 
     @Override
     public void setEntity(Entity e) {
-        Infantry inf = (Infantry) e;
+        ConvInfantry inf = (ConvInfantry) e;
         int men;
         if (inf instanceof EjectedCrew) {
-            men = Math.max(0, Math.min(inf.getInternal(0), EjectedCrew.EJ_CREW_MAX_MEN));
+            men = Math.clamp(inf.getInternal(0), 0, EjectedCrew.EJ_CREW_MAX_MEN);
             for (int i = 0; i < men; i++) {
                 areas[i].setVisible(true);
             }
@@ -112,7 +112,7 @@ public class InfantryMapSet implements DisplayMapSet {
                 areas[i].setVisible(false);
             }
         } else {
-            men = Math.max(0, Math.min(inf.getInternal(0), Infantry.INF_PLT_MAX_MEN));
+            men = Math.clamp(inf.getInternal(0), 0, ConvInfantry.INF_PLT_MAX_MEN);
             for (int i = 0; i < men; i++) {
                 areas[i].setVisible(true);
             }

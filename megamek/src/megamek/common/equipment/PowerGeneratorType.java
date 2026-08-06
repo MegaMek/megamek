@@ -35,6 +35,8 @@ package megamek.common.equipment;
 
 import megamek.common.equipment.enums.MiscTypeFlag;
 import megamek.common.equipment.enums.StructureEngine;
+import megamek.common.units.Entity;
+import megamek.common.util.RoundWeight;
 
 /**
  * TO:AR 131-132 Advanced Buildings power generators.
@@ -63,7 +65,7 @@ public class PowerGeneratorType extends MiscType {
         powerGeneratorType.tonnage = TONNAGE_VARIABLE;
         powerGeneratorType.criticalSlots = CRITICAL_SLOTS_VARIABLE;
         powerGeneratorType.cost = COST_VARIABLE;
-        powerGeneratorType.bv = BV_VARIABLE;
+        powerGeneratorType.bv = 0;
         powerGeneratorType.spreadable = true;
         powerGeneratorType.flags = powerGeneratorType.flags.or(F_POWER_GENERATOR).or(F_VARIABLE_SIZE);
         powerGeneratorType.rulesRefs = "131-133, TO:AR";
@@ -79,5 +81,20 @@ public class PowerGeneratorType extends MiscType {
 
     public StructureEngine getStructureEngine() {
         return structureEngine;
+    }
+
+    @Override
+    public double getTonnage(Entity entity, int location, double size, RoundWeight defaultRounding) {
+        return size;
+    }
+
+    @Override
+    public double getCost(Entity entity, boolean isArmored, int loc, double size) {
+        return structureEngine.getBaseCost() * size;
+    }
+
+    @Override
+    public double getBV(Entity entity) {
+        return 0;
     }
 }

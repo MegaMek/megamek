@@ -35,7 +35,6 @@ package megamek.server.sbf;
 
 import java.util.List;
 
-import megamek.codeUtilities.MathUtility;
 import megamek.common.Player;
 import megamek.common.alphaStrike.BattleForceSUA;
 import megamek.common.compute.Compute;
@@ -122,7 +121,7 @@ record SBFDetectionHelper(SBFGameManager gameManager) implements SBFGameManagerH
      * @return The visibility status from sensor scan
      */
     private SBFVisibilityStatus sensorDetectionResult(int rollWithModifiers) {
-        return switch (MathUtility.clamp(rollWithModifiers, 2, 12)) {
+        return switch (Math.clamp(rollWithModifiers, 2, 12)) {
             case 2 -> SBFVisibilityStatus.INVISIBLE;
             case 3, 4 -> SBFVisibilityStatus.SENSOR_GHOST;
             case 5, 6 -> SBFVisibilityStatus.SENSOR_PING;
@@ -132,6 +131,7 @@ record SBFDetectionHelper(SBFGameManager gameManager) implements SBFGameManagerH
         };
     }
 
+    @Deprecated(since = "0.51.0", forRemoval = true)
     private int visualRange(SBFFormation formation) {
         int srchModifier = (formation.hasSUA(BattleForceSUA.SRCH) &&
               game().getPlanetaryConditions().getLight().isDuskOrFullMoonOrMoonlessOrPitchBack()) ? 1 : 0;

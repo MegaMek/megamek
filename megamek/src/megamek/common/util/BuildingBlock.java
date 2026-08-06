@@ -278,7 +278,7 @@ public class BuildingBlock {
                 // variables but this is the most common.
                 String rawString = rawData.get(rawRecord);
                 if (rawString.indexOf(',') >= 0) {
-                    rawString = rawString.replaceAll(",", "");
+                    rawString = rawString.replace(",", "");
                 }
                 data[dataRecord] = Integer.parseInt(rawString);
                 dataRecord++;
@@ -290,6 +290,7 @@ public class BuildingBlock {
         return data; // hand back the goods...
     }
 
+    @Deprecated(since = "0.51.0", forRemoval = true)
     public float[] getDataAsFloat(String blockName) {
 
         float[] data;
@@ -482,6 +483,7 @@ public class BuildingBlock {
     /**
      * @see #writeBlockData (String, Vector)
      */
+    @Deprecated(since = "0.51.0", forRemoval = true)
     public boolean writeBlockData(String blockName, float blockData) {
         String[] temp = new String[1];
         temp[0] = "" + blockData;
@@ -500,6 +502,7 @@ public class BuildingBlock {
     /**
      * @see #writeBlockData (String, Vector)
      */
+    @Deprecated(since = "0.51.0", forRemoval = true)
     public boolean writeBlockData(String blockName, float[] blockData) {
         String[] temp = new String[blockData.length];
         for (int c = 0; c < blockData.length; c++) {
@@ -588,6 +591,7 @@ public class BuildingBlock {
     /**
      * Clears the <CODE>rawData</CODE> Vector.
      */
+    @Deprecated(since = "0.51.0", forRemoval = true)
     public void clearData() {
 
         rawData.clear();
@@ -599,6 +603,7 @@ public class BuildingBlock {
      *
      * @return Returns <CODE>rawData.size()</CODE>
      */
+    @Deprecated(since = "0.51.0", forRemoval = true)
     public int dataSize() {
 
         return rawData.size();
@@ -676,6 +681,7 @@ public class BuildingBlock {
      *
      * @see #getVector()
      */
+    @Deprecated(since = "0.51.0", forRemoval = true)
     public Vector<String> getAllDataAsVector() {
         return rawData;
 
@@ -688,6 +694,7 @@ public class BuildingBlock {
      *
      * @return Returns the number in the [0] position.
      */
+    @Deprecated(since = "0.51.0", forRemoval = true)
     public int getReturnedArraySize(String[] array) {
         try {
             return Integer.parseInt(array[0]);
@@ -704,6 +711,7 @@ public class BuildingBlock {
     /**
      * @see #getReturnedArraySize (String[])
      */
+    @Deprecated(since = "0.51.0", forRemoval = true)
     public int getReturnedArraySize(int[] array) {
         return array[0];
     }
@@ -713,6 +721,7 @@ public class BuildingBlock {
      *
      * @see #getReturnedArraySize (String[])
      */
+    @Deprecated(since = "0.51.0", forRemoval = true)
     public int getReturnedArraySize(Vector<Object> array) {
         return array.size();
     }
@@ -720,6 +729,7 @@ public class BuildingBlock {
     /**
      * @see #getReturnedArraySize (String[])
      */
+    @Deprecated(since = "0.51.0", forRemoval = true)
     public int getReturnedArraySize(float[] array) {
         try {
             return Integer.parseInt("" + array[0]);
@@ -751,6 +761,7 @@ public class BuildingBlock {
     /**
      * @see #countArray(String[])
      */
+    @Deprecated(since = "0.51.0", forRemoval = true)
     public int countArray(int[] array) {
 
         return array.length;

@@ -198,57 +198,76 @@ public enum BayData {
      * @return The enum value for the bay. Returns null if the bay is not transport by (e.g. crew quarters)
      */
     public static @Nullable BayData getBayType(Bay bay) {
-        if (bay instanceof MekBay) {
-            return MEK;
-        } else if (bay instanceof ProtoMekBay) {
-            return PROTOMEK;
-        } else if (bay instanceof HeavyVehicleBay) {
-            return VEHICLE_HEAVY;
-        } else if (bay instanceof LightVehicleBay) {
-            return VEHICLE_LIGHT;
-        } else if (bay instanceof SuperHeavyVehicleBay) {
-            return VEHICLE_SH;
-        } else if (bay instanceof InfantryBay) {
-            return switch (((InfantryBay) bay).getPlatoonType()) {
-                case JUMP -> INFANTRY_JUMP;
-                case MECHANIZED -> INFANTRY_MECHANIZED;
-                case MOTORIZED -> INFANTRY_MOTORIZED;
-                default -> INFANTRY_FOOT;
-            };
-        } else if (bay instanceof BattleArmorBay) {
-            if (bay.getWeight() / bay.getCapacity() == 12) {
-                return CS_BATTLE_ARMOR;
-            } else if (bay.getWeight() / bay.getCapacity() == 10) {
-                return CLAN_BATTLE_ARMOR;
+        switch (bay) {
+            case MekBay ignored -> {
+                return MEK;
             }
-            return IS_BATTLE_ARMOR;
-        } else if (bay instanceof ASFBay) {
-            return ((ASFBay) bay).hasARTS() ? ARTS_FIGHTER : FIGHTER;
-        } else if (bay instanceof DropShuttleBay) {
-            return DROP_SHUTTLE;
-        } else if (bay instanceof ReinforcedRepairFacility) {
-            return REPAIR_REINFORCED;
-        } else if (bay instanceof NavalRepairFacility) {
-            if (((NavalRepairFacility) bay).isPressurized()) {
-                return ((NavalRepairFacility) bay).hasARTS() ? ARTS_REPAIR_PRESSURIZED : REPAIR_PRESSURIZED;
-            } else {
-                return ((NavalRepairFacility) bay).hasARTS() ? ARTS_REPAIR_UNPRESSURIZED : REPAIR_UNPRESSURIZED;
+            case ProtoMekBay ignored -> {
+                return PROTOMEK;
             }
-        } else if (bay instanceof SmallCraftBay) {
-            return ((SmallCraftBay) bay).hasARTS() ? ARTS_SMALL_CRAFT : SMALL_CRAFT;
-        } else if (bay instanceof LiquidCargoBay) {
-            return LIQUID_CARGO;
-        } else if (bay instanceof LivestockCargoBay) {
-            return LIVESTOCK_CARGO;
-        } else if (bay instanceof RefrigeratedCargoBay) {
-            return REFRIGERATED_CARGO;
-        } else if (bay instanceof InsulatedCargoBay) {
-            return INSULATED_CARGO;
-        } else if (bay instanceof CargoBay) {
-            return CARGO;
-        } else {
-            // Crew quarters are implemented as bays and should not be mixed with transport bays
-            return null;
+            case HeavyVehicleBay ignored -> {
+                return VEHICLE_HEAVY;
+            }
+            case LightVehicleBay ignored -> {
+                return VEHICLE_LIGHT;
+            }
+            case SuperHeavyVehicleBay ignored -> {
+                return VEHICLE_SH;
+            }
+            case InfantryBay infantryBay -> {
+                return switch (infantryBay.getPlatoonType()) {
+                    case JUMP -> INFANTRY_JUMP;
+                    case MECHANIZED -> INFANTRY_MECHANIZED;
+                    case MOTORIZED -> INFANTRY_MOTORIZED;
+                    default -> INFANTRY_FOOT;
+                };
+            }
+            case BattleArmorBay ignored -> {
+                if (bay.getWeight() / bay.getCapacity() == 12) {
+                    return CS_BATTLE_ARMOR;
+                } else if (bay.getWeight() / bay.getCapacity() == 10) {
+                    return CLAN_BATTLE_ARMOR;
+                }
+                return IS_BATTLE_ARMOR;
+            }
+            case ASFBay asfBay -> {
+                return asfBay.hasARTS() ? ARTS_FIGHTER : FIGHTER;
+            }
+            case DropShuttleBay ignored -> {
+                return DROP_SHUTTLE;
+            }
+            case ReinforcedRepairFacility ignored -> {
+                return REPAIR_REINFORCED;
+            }
+            case NavalRepairFacility navalRepairFacility -> {
+                if (navalRepairFacility.isPressurized()) {
+                    return navalRepairFacility.hasARTS() ? ARTS_REPAIR_PRESSURIZED : REPAIR_PRESSURIZED;
+                } else {
+                    return navalRepairFacility.hasARTS() ? ARTS_REPAIR_UNPRESSURIZED : REPAIR_UNPRESSURIZED;
+                }
+            }
+            case SmallCraftBay smallCraftBay -> {
+                return smallCraftBay.hasARTS() ? ARTS_SMALL_CRAFT : SMALL_CRAFT;
+            }
+            case LiquidCargoBay ignored -> {
+                return LIQUID_CARGO;
+            }
+            case LivestockCargoBay ignored -> {
+                return LIVESTOCK_CARGO;
+            }
+            case RefrigeratedCargoBay ignored -> {
+                return REFRIGERATED_CARGO;
+            }
+            case InsulatedCargoBay ignored -> {
+                return INSULATED_CARGO;
+            }
+            case CargoBay ignored -> {
+                return CARGO;
+            }
+            case null, default -> {
+                // Crew quarters are implemented as bays and should not be mixed with transport bays
+                return null;
+            }
         }
     }
 

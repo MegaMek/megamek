@@ -263,6 +263,7 @@ public final class Configuration {
      *
      * @param skin_dir_path The path to the skins' directory.
      */
+    @Deprecated(since = "0.51.0", forRemoval = true)
     public static void setSkinDir(final File skin_dir_path) {
         lock.writeLock().lock();
         skinsDir = (skin_dir_path == null) ? new File(DEFAULT_DIR_NAME_CONFIG,
@@ -431,6 +432,7 @@ public final class Configuration {
      *
      * @param imgFileAtlasMapFilePath The path to the images' directory.
      */
+    @Deprecated(since = "0.51.0", forRemoval = true)
     public static void setImageFileAtlasMapFile(final File imgFileAtlasMapFilePath) {
         lock.writeLock().lock();
         imgFileAtlasMapFile = imgFileAtlasMapFilePath;
@@ -443,6 +445,7 @@ public final class Configuration {
      *
      * @return {@link File} containing the path to the images' directory.
      */
+    @Deprecated(since = "0.51.0", forRemoval = true)
     public static File boardBackgroundsDir() {
         lock.readLock().lock();
         try {
@@ -458,6 +461,7 @@ public final class Configuration {
      *
      * @param board_background_dir_path The path to the images' directory.
      */
+    @Deprecated(since = "0.51.0", forRemoval = true)
     public static void setBoardBackgroundsDir(
           final File board_background_dir_path) {
         lock.writeLock().lock();
@@ -599,6 +603,7 @@ public final class Configuration {
      *
      * @param force_generator_dir_path The path to the force generator directory.
      */
+    @Deprecated(since = "0.51.0", forRemoval = true)
     public static void setForceGeneratorDir(final File force_generator_dir_path) {
         lock.writeLock().lock();
         forceGeneratorDir = force_generator_dir_path;
@@ -611,6 +616,7 @@ public final class Configuration {
      *
      * @return {@link File} containing the path to the force generator directory.
      */
+    @Deprecated(since = "0.51.0", forRemoval = true)
     public static File fontsDir() {
         lock.readLock().lock();
         try {
@@ -625,6 +631,7 @@ public final class Configuration {
      *
      * @param fontsDir The path to the force generator directory.
      */
+    @Deprecated(since = "0.51.0", forRemoval = true)
     public static void setFontsDir(final File fontsDir) {
         lock.writeLock().lock();
         Configuration.fontsDir = fontsDir;
@@ -707,10 +714,12 @@ public final class Configuration {
     /** The configured fonts' directory. */
     private static File fontsDir = null;
 
+    @Deprecated(since = "0.51.0", forRemoval = true)
     public static File getNamesDir() {
         return namesDir;
     }
 
+    @Deprecated(since = "0.51.0", forRemoval = true)
     public static void setNamesDir(File namesDir) {
         Configuration.namesDir = namesDir;
     }

@@ -215,19 +215,15 @@ public class Memory {
     public boolean isSet(String key) {
         if (memory.containsKey(key)) {
             var memo = memory.get(key);
-            if (memo instanceof Boolean value) {
-                return value;
-            } else if (memo instanceof Number value) {
-                return value.doubleValue() != 0;
-            } else if (memo instanceof String value) {
-                return !value.isEmpty();
-            } else if (memo instanceof Collection<?> value) {
-                return !value.isEmpty();
-            } else if (memo instanceof Map<?, ?> value) {
-                return !value.isEmpty();
-            } else if (memo instanceof Object[] value) {
-                return value.length > 0;
-            } else {return memo != null;}
+            return switch (memo) {
+                case Boolean value -> value;
+                case Number value -> value.doubleValue() != 0;
+                case String value -> !value.isEmpty();
+                case Collection<?> value -> !value.isEmpty();
+                case Map<?, ?> value -> !value.isEmpty();
+                case Object[] value -> value.length > 0;
+                case null, default -> memo != null;
+            };
         }
         return false;
     }

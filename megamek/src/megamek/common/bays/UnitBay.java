@@ -55,6 +55,7 @@ public class UnitBay extends Bay {
      * @param doors     The number of bay doors
      * @param bayNumber The id number for the bay
      */
+    @Deprecated(since = "0.51.0", forRemoval = true)
     public UnitBay(double space, int doors, int bayNumber) {
         super(space, doors, bayNumber);
         minDoors = 1;

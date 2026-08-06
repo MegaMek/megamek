@@ -201,6 +201,7 @@ public class GBC extends GridBagConstraints {
      *
      * @see GridBagConstraints#gridwidth
      */
+    @Deprecated(since = "0.51.0", forRemoval = true)
     public GBC gridWidth(int width) {
         gridwidth = width;
         return this;

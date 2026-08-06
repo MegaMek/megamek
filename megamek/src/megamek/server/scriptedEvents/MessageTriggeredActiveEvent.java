@@ -56,6 +56,7 @@ public class MessageTriggeredActiveEvent implements TriggeredActiveEvent {
         this.image = new Base64Image(image);
     }
 
+    @Deprecated(since = "0.51.0", forRemoval = true)
     public MessageTriggeredActiveEvent(Trigger trigger, String header, String message) {
         this(trigger, header, message, null);
     }

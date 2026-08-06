@@ -47,6 +47,7 @@ import java.util.Locale;
 import java.util.Objects;
 
 import megamek.common.battleArmor.BattleArmor;
+import megamek.common.battlefieldSupport.BattlefieldSupportAsset;
 import megamek.common.equipment.GunEmplacement;
 import megamek.common.equipment.HandheldWeapon;
 import megamek.common.units.*;
@@ -211,6 +212,10 @@ public class MekTileset {
             entry = default_light;
         }
 
+        if (entry == null) {
+            return null;
+        }
+
         if (entry.getImage() == null) {
             entry.loadImage();
         }
@@ -240,7 +245,9 @@ public class MekTileset {
     }
 
     public MekEntry genericFor(Entity entity, int secondaryPos) {
-        if (entity instanceof BattleArmor) {
+        if (entity instanceof BattlefieldSupportAsset asset) {
+            return assetGenericFor(asset);
+        } else if (entity instanceof BattleArmor) {
             return default_ba;
         } else if (entity instanceof Infantry) {
             return default_inf;
@@ -300,45 +307,73 @@ public class MekTileset {
                     };
             }
         } else if (entity instanceof Aero) {
-            if (entity instanceof SpaceStation) {
-                return default_space_station;
-            } else if (entity instanceof Warship) {
-                return default_warship;
-            } else if (entity instanceof Jumpship) {
-                return default_jumpship;
-            } else if (entity instanceof Dropship ds) {
-                return switch (secondaryPos) {
-                    case 0 -> ds.isSpheroid() ? default_dropship_sphere_0 : default_dropship_aero_0;
-                    case 1 -> ds.isSpheroid() ? default_dropship_sphere_1 : default_dropship_aero_1;
-                    case 2 -> ds.isSpheroid() ? default_dropship_sphere_2 : default_dropship_aero_2;
-                    case 3 -> ds.isSpheroid() ? default_dropship_sphere_3 : default_dropship_aero_3;
-                    case 4 -> ds.isSpheroid() ? default_dropship_sphere_4 : default_dropship_aero_4;
-                    case 5 -> ds.isSpheroid() ? default_dropship_sphere_5 : default_dropship_aero_5;
-                    case 6 -> ds.isSpheroid() ? default_dropship_sphere_6 : default_dropship_aero_6;
-                    default -> ds.isSpheroid() ? default_dropship_sphere : default_dropship_aero;
-                };
-            } else if (entity instanceof FighterSquadron) {
-                return default_fighter_squadron;
-            } else if (entity instanceof SmallCraft sc) {
-                if (sc.isSpheroid()) {
-                    return default_small_craft_sphere;
-                } else {
-                    return default_small_craft_aero;
+            switch (entity) {
+                case SpaceStation ignored -> {
+                    return default_space_station;
                 }
-            } else if (entity instanceof TeleMissile) {
-                return default_tele_missile;
-            } else {
-                return default_aero;
+                case Warship ignored -> {
+                    return default_warship;
+                }
+                case Jumpship ignored -> {
+                    return default_jumpship;
+                }
+                case Dropship ds -> {
+                    return switch (secondaryPos) {
+                        case 0 -> ds.isSpheroid() ? default_dropship_sphere_0 : default_dropship_aero_0;
+                        case 1 -> ds.isSpheroid() ? default_dropship_sphere_1 : default_dropship_aero_1;
+                        case 2 -> ds.isSpheroid() ? default_dropship_sphere_2 : default_dropship_aero_2;
+                        case 3 -> ds.isSpheroid() ? default_dropship_sphere_3 : default_dropship_aero_3;
+                        case 4 -> ds.isSpheroid() ? default_dropship_sphere_4 : default_dropship_aero_4;
+                        case 5 -> ds.isSpheroid() ? default_dropship_sphere_5 : default_dropship_aero_5;
+                        case 6 -> ds.isSpheroid() ? default_dropship_sphere_6 : default_dropship_aero_6;
+                        default -> ds.isSpheroid() ? default_dropship_sphere : default_dropship_aero;
+                    };
+                }
+                case FighterSquadron ignored -> {
+                    return default_fighter_squadron;
+                }
+                case SmallCraft sc -> {
+                    if (sc.isSpheroid()) {
+                        return default_small_craft_sphere;
+                    } else {
+                        return default_small_craft_aero;
+                    }
+                }
+                case TeleMissile ignored -> {
+                    return default_tele_missile;
+                }
+                default -> {
+                    return default_aero;
+                }
             }
         } else if (entity instanceof HandheldWeapon) {
             return default_handheld_weapon;
         } else if (entity instanceof AbstractBuildingEntity) {
-            return switch (secondaryPos) {
-                default -> default_handheld_weapon;
-            };
+            return default_handheld_weapon;
         }
 
         return default_unknown;
+    }
+
+    /**
+     * Returns the generic sprite entry for a Battlefield Support Asset based on its asset type (and, for vehicles, its
+     * movement mode). This is the fallback used when no chassis/exact sprite is resolved for the asset's linked base
+     * unit, so an asset always yields a sensible top-down icon of the right kind (tank, hover, VTOL, infantry, battle
+     * armor, gun emplacement).
+     */
+    private MekEntry assetGenericFor(BattlefieldSupportAsset asset) {
+        return switch (asset.getAssetType()) {
+            case CONV_INFANTRY -> default_inf;
+            case BATTLE_ARMOR -> default_ba;
+            case EMPLACEMENT -> default_gun_emplacement;
+            case VEHICLE -> switch (asset.getMovementMode()) {
+                case HOVER -> default_hover;
+                case VTOL -> default_vtol;
+                case WIGE -> default_wige;
+                case WHEELED -> default_wheeled;
+                default -> default_tracked;
+            };
+        };
     }
 
     public void loadFromFile(String filename) throws IOException {
@@ -357,7 +392,7 @@ public class MekTileset {
                         } catch (IOException e) {
                             LOGGER.error("... failed: {}.", e.getMessage(), e);
                         }
-                    } else if (tokens.get(0).equals(CHASSIS_KEY)) {
+                    } else if (tokens.getFirst().equals(CHASSIS_KEY)) {
                         chassis.put(tokens.get(1).toUpperCase(Locale.ROOT), new MekEntry(tokens.get(2)));
                     } else {
                         exact.put(tokens.get(1).toUpperCase(Locale.ROOT), new MekEntry(tokens.get(2)));

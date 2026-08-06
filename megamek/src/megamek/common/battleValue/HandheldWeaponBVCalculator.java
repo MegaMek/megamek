@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2025 The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2025-2026 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -34,6 +34,7 @@ package megamek.common.battleValue;
 
 import static megamek.client.ui.clientGUI.calculationReport.CalculationReport.formatForReport;
 
+import megamek.common.equipment.Mounted;
 import megamek.common.units.Entity;
 
 public class HandheldWeaponBVCalculator extends BVCalculator {
@@ -63,5 +64,11 @@ public class HandheldWeaponBVCalculator extends BVCalculator {
         processWeapons();
         processAmmo();
         processOffensiveEquipment();
+    }
+
+    @Override
+    protected double getAmmoBV(Mounted<?> ammo) {
+        // HHW can have any number of shots of ammo
+        return ammo.getType().getBV(entity) * ammo.getTonnage();
     }
 }

@@ -1,6 +1,6 @@
 /*
   Copyright (C) 2000-2003 Ben Mazur (bmazur@sev.org)
- * Copyright (C) 2008-2025 The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2008-2026 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -70,11 +70,17 @@ import megamek.logging.MMLogger;
 /**
  * Taharqa's attempt at creating an Aerospace entity
  */
-public abstract class Aero extends Entity implements IAero, IBomber {
+public abstract class Aero extends Entity implements IAero, IBomber, ActiveHeatSinkController {
     private static final MMLogger LOGGER = MMLogger.create(Aero.class);
 
     @Serial
     private static final long serialVersionUID = 7196307097459255187L;
+
+    /** An aerospace crew can only abandon on the ground; the server's abandonEntity has no airborne path. */
+    @Override
+    public boolean canEjectCrew() {
+        return crewCanLeave() && !isAirborne();
+    }
 
     // locations
     public static final int LOC_NOSE = 0;
@@ -201,6 +207,15 @@ public abstract class Aero extends Entity implements IAero, IBomber {
     private int heatSinksOriginal;
     private int heatSinks;
     private int heatType = HEAT_SINGLE;
+
+    /**
+     * Aerospace heat sinks are a bare count with no individual equipment mounts, so heat sink activation
+     * (activation/deactivation rules) is tracked as a count of deactivated sinks rather than per-mount modes. The
+     * counts default to 0 (all operational heat sinks active) so that save games from before this field existed load
+     * with every sink active - a field absent from an old save deserializes as 0.
+     */
+    private int inactiveSinks = 0;
+    private int inactiveSinksNextRound = 0;
 
     // Track how many heat sinks are pod-mounted for OmniFighters; these are included in the total. This is provided
     // for campaign use; MM does not distribute damage between fixed and pod-mounted.
@@ -411,10 +426,10 @@ public abstract class Aero extends Entity implements IAero, IBomber {
     }
 
     @Override
-    protected void addSystemTechAdvancement(CompositeTechLevel ctl) {
-        super.addSystemTechAdvancement(ctl);
+    protected void addSystemTechAdvancement(CompositeTechLevel techLevel) {
+        super.addSystemTechAdvancement(techLevel);
         if (isFighter() && (getCockpitTechAdvancement() != null)) {
-            ctl.addComponent(getCockpitTechAdvancement());
+            techLevel.addComponent(getCockpitTechAdvancement(), getCockpitTypeString());
         }
     }
 
@@ -493,6 +508,10 @@ public abstract class Aero extends Entity implements IAero, IBomber {
         if (getPartialRepairs().booleanOption("aero_engine_crit")) {
             mp--;
         }
+
+        // Improved Magnetic Pulse (iATM IMP) missile Safe Thrust reduction (IO IMP rules). Zero for
+        // large craft, which never accumulate IMP hits, so they are unaffected as the rules require.
+        mp = Math.max(0, mp - getImpMpReduction());
 
         if (!mpCalculationSetting.ignoreGrounded() && !isAirborne()) {
             mp = isSpheroid() ? 0 : mp / 2;
@@ -679,6 +698,7 @@ public abstract class Aero extends Entity implements IAero, IBomber {
         whoFirst = Compute.randomInt(500);
     }
 
+    @Deprecated(since = "0.51.0", forRemoval = true)
     public int getWhoFirst() {
         return whoFirst;
     }
@@ -1142,6 +1162,9 @@ public abstract class Aero extends Entity implements IAero, IBomber {
         // update velocity
         setCurrentVelocity(getNextVelocity());
 
+        // apply the pending heat sink activation change (declared any time, takes effect in the End Phase)
+        inactiveSinks = inactiveSinksNextRound;
+
         // if using variable damage thresholds then auto set them
         if (gameOptions().booleanOption(OptionsConstants.ADVANCED_AERO_RULES_VARIABLE_DAMAGE_THRESH)) {
             autoSetThresh();
@@ -1458,6 +1481,7 @@ public abstract class Aero extends Entity implements IAero, IBomber {
      *
      * @return BV Type Modifier.
      */
+    @Deprecated(since = "0.51.0", forRemoval = true)
     public double getBVTypeModifier() {
         return 1.2;
     }
@@ -1538,15 +1562,19 @@ public abstract class Aero extends Entity implements IAero, IBomber {
             prd.addModifier(1, "Modular Armor");
         }
         // VDNI bonus? (BVDNI does NOT get piloting bonus due to "neuro-lag" per IO pg 71)
-        if (hasAbility(OptionsConstants.MD_VDNI) && !hasAbility(OptionsConstants.MD_BVDNI)) {
-            prd.addModifier(-1, "VDNI");
-        } else if (hasAbility(OptionsConstants.MD_BVDNI)) {
-            prd.addModifier(0, "BVDNI (no piloting bonus)");
+        // When tracking neural interface hardware, require DNI cockpit mod for benefits
+        if (hasActiveDNI()) {
+            if (hasAbility(OptionsConstants.MD_VDNI) && !hasAbility(OptionsConstants.MD_BVDNI)) {
+                prd.addModifier(-1, "VDNI");
+            } else if (hasAbility(OptionsConstants.MD_BVDNI)) {
+                prd.addModifier(0, "BVDNI (no piloting bonus)");
+            }
         }
 
         // Small/torso-mounted cockpit penalty?
+        // BVDNI negates small cockpit penalty, requires active DNI when tracking
         if (getCockpitType() == Aero.COCKPIT_SMALL) {
-            if (hasAbility(OptionsConstants.MD_BVDNI)) {
+            if (hasActiveDNI() && hasAbility(OptionsConstants.MD_BVDNI)) {
                 prd.addModifier(0, "Small Cockpit (negated by BVDNI)");
             } else if (!hasAbility(OptionsConstants.UNOFFICIAL_SMALL_PILOT)) {
                 prd.addModifier(1, "Small Cockpit");
@@ -1629,17 +1657,36 @@ public abstract class Aero extends Entity implements IAero, IBomber {
         if (isAirborne()) {
             return super.getRunMP(mpCalculationSetting);
         } else {
-            return super.getWalkMP(mpCalculationSetting);
+            // Grounded aero: no run multiplier; cap at the grounded walk MP. Use Aero.getWalkMP (not Entity's)
+            // so the spheroid-grounded -> 0 and aerodyne-grounded -> thrust/2 rule at line 497 is honored.
+            // See issue #8187: bypassing this gave grounded spheroid Dropships non-zero run MP.
+            return getWalkMP(mpCalculationSetting);
         }
     }
 
     @Override
     public int getHeatCapacity(boolean includeRadicalHeatSink) {
-        int capacity = (getHeatSinks() * (getHeatType() + 1));
+        int capacity = (getActiveSinks() * (getHeatType() + 1));
         if (includeRadicalHeatSink && hasWorkingMisc(MiscType.F_RADICAL_HEATSINK)) {
-            capacity += (int) Math.ceil(getHeatSinks() * 0.4);
+            capacity += (int) Math.ceil(getActiveSinks() * 0.4);
         }
         return capacity;
+    }
+
+    @Override
+    public int getActiveSinks() {
+        return Math.max(0, getHeatSinks() - inactiveSinks);
+    }
+
+    @Override
+    public int getActiveSinksNextRound() {
+        return Math.max(0, getHeatSinks() - inactiveSinksNextRound);
+    }
+
+    @Override
+    public void setActiveSinksNextRound(int sinks) {
+        int operationalSinks = getHeatSinks();
+        inactiveSinksNextRound = operationalSinks - Math.max(0, Math.min(sinks, operationalSinks));
     }
 
     @Override
@@ -1824,11 +1871,6 @@ public abstract class Aero extends Entity implements IAero, IBomber {
             return (int) (rating / (int) weight) + 2;
         }
         return (getEngine().getRating() / (int) weight) + 2;
-    }
-
-    @Override
-    public boolean isNuclearHardened() {
-        return true;
     }
 
     @Override
@@ -2101,8 +2143,8 @@ public abstract class Aero extends Entity implements IAero, IBomber {
         super.setArmorType(armType);
         if ((armType == EquipmentType.T_ARMOR_STEALTH_VEHICLE) && addMount) {
             try {
-                this.addEquipment(EquipmentType.get(EquipmentType.getArmorTypeName(EquipmentType.T_ARMOR_STEALTH_VEHICLE,
-                      false)), LOC_AFT);
+                this.addEquipment(EquipmentType.getArmorFromName(EquipmentType.getArmorTypeName(
+                    EquipmentType.T_ARMOR_STEALTH_VEHICLE, false)), LOC_AFT);
             } catch (LocationFullException e) {
                 // this should never happen
             }
@@ -2337,6 +2379,7 @@ public abstract class Aero extends Entity implements IAero, IBomber {
     /**
      * @return is the crew of this vessel protected from gravitational effects, see StratOps, pg. 36
      */
+    @Deprecated(since = "0.51.0", forRemoval = true)
     public boolean isCrewProtected() {
         return true;
     }
@@ -2471,11 +2514,6 @@ public abstract class Aero extends Entity implements IAero, IBomber {
         return (getCockpitType() == Aero.COCKPIT_PRIMITIVE);
     }
 
-    @Override
-    public String getLocationDamage(int loc) {
-        return "";
-    }
-
     public String getCritDamageString() {
         ConditionalStringJoiner conditionalStringJoiner = new ConditionalStringJoiner();
         conditionalStringJoiner.add(getEngineHits() > 0,
@@ -2558,10 +2596,11 @@ public abstract class Aero extends Entity implements IAero, IBomber {
 
     @Override
     public boolean isDmgHeavy() {
-        if (getArmorRemainingPercent() <= 0.33) {
+        double armorPercent = getArmorRemainingPercent();
+        if ((armorPercent <= 0.33) && (armorPercent != IArmorState.ARMOR_NA)) {
             LOGGER.debug("{} Heavily Damaged: Armour Remaining percent of {} is less than or equal to 0.33.",
                   getDisplayName(),
-                  getArmorRemainingPercent());
+                  armorPercent);
             return true;
         } else if (getInternalRemainingPercent() < 0.67) {
             LOGGER.debug("{} Heavily Damaged: Internal Structure Remaining percent of {} is less than 0.67.",
@@ -2591,10 +2630,11 @@ public abstract class Aero extends Entity implements IAero, IBomber {
 
     @Override
     public boolean isDmgModerate() {
-        if (getArmorRemainingPercent() <= 0.5) {
+        double armorPercent = getArmorRemainingPercent();
+        if ((armorPercent <= 0.5) && (armorPercent != IArmorState.ARMOR_NA)) {
             LOGGER.debug("{} Moderately Damaged: Armour Remaining percent of {} is less than or equal to 0.50.",
                   getDisplayName(),
-                  getArmorRemainingPercent());
+                  armorPercent);
             return true;
         } else if (getInternalRemainingPercent() < 0.75) {
             LOGGER.debug("{} Moderately Damaged: Internal Structure Remaining percent of {} is less than 0.75.",
@@ -2623,10 +2663,11 @@ public abstract class Aero extends Entity implements IAero, IBomber {
 
     @Override
     public boolean isDmgLight() {
-        if (getArmorRemainingPercent() <= 0.75) {
+        double armorPercent = getArmorRemainingPercent();
+        if ((armorPercent <= 0.75) && (armorPercent != IArmorState.ARMOR_NA)) {
             LOGGER.debug("{} Lightly Damaged: Armour Remaining percent of {} is less than or equal to 0.75.",
                   getDisplayName(),
-                  getArmorRemainingPercent());
+                  armorPercent);
             return true;
         } else if (getInternalRemainingPercent() < 0.9) {
             LOGGER.debug("{} Lightly Damaged: Internal Structure Remaining percent of {} is less than 0.9.",
@@ -2787,6 +2828,7 @@ public abstract class Aero extends Entity implements IAero, IBomber {
     /**
      * @return number of marines assigned to a unit Used for abandoning a unit
      */
+    @Deprecated(since = "0.51.0", forRemoval = true)
     public int getMarineCount() {
         return 0;
     }

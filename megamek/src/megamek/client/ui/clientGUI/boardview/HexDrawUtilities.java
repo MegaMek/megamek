@@ -284,6 +284,7 @@ public class HexDrawUtilities {
               getHBLU(hexFace, cutType, inset));
     }
 
+    @Deprecated(since = "0.51.0", forRemoval = true)
     public static AffineTransform getHexRotation(int facing) {
         return AffineTransform.getRotateInstance(Math.toRadians(facing * 60), HexTileset.HEX_W / 2.0f,
               HexTileset.HEX_H / 2.0f);
@@ -340,15 +341,18 @@ public class HexDrawUtilities {
               getHRU(hexFace).createTransformedShape(getHexBorderArea(cutType, thickness, inset)));
     }
 
+    @Deprecated(since = "0.51.0", forRemoval = true)
     public static Shape getHexFull() {
         return PerfectHexToHex.createTransformedShape(getHFBLU());
     }
 
+    @Deprecated(since = "0.51.0", forRemoval = true)
     public static Shape getHexFull(Point2D.Double p) {
         return AffineTransform.getTranslateInstance(p.x, p.y).createTransformedShape(
               PerfectHexToHex.createTransformedShape(getHFBLU()));
     }
 
+    @Deprecated(since = "0.51.0", forRemoval = true)
     public static Shape getHexFull(Point p) {
         return AffineTransform.getTranslateInstance(p.x, p.y).createTransformedShape(
               getHexFullBorderLine(0));

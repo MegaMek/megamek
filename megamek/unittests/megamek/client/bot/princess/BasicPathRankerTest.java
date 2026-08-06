@@ -1,6 +1,6 @@
 /*
  * Copyright (c) 2000-2011 - Ben Mazur (bmazur@sev.org)
- * Copyright (C) 2013-2025 The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2013-2026 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -34,12 +34,15 @@
 package megamek.client.bot.princess;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.junit.jupiter.api.Assertions.fail;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyBoolean;
 import static org.mockito.ArgumentMatchers.anyInt;
+import static org.mockito.ArgumentMatchers.anyList;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.ArgumentMatchers.nullable;
@@ -58,10 +61,13 @@ import megamek.client.bot.princess.UnitBehavior.BehaviorType;
 import megamek.client.bot.princess.geometry.HexLine;
 import megamek.codeUtilities.StringUtility;
 import megamek.common.Hex;
+import megamek.common.MPCalculationSetting;
 import megamek.common.battleArmor.BattleArmor;
 import megamek.common.board.Board;
 import megamek.common.board.Coords;
+import megamek.common.compute.Compute;
 import megamek.common.equipment.ArmorType;
+import megamek.common.equipment.EquipmentType;
 import megamek.common.game.Game;
 import megamek.common.moves.Key;
 import megamek.common.moves.MovePath;
@@ -71,9 +77,11 @@ import megamek.common.options.OptionsConstants;
 import megamek.common.options.PilotOptions;
 import megamek.common.planetaryConditions.PlanetaryConditions;
 import megamek.common.planetaryConditions.Weather;
+import megamek.common.rolls.PilotingRollData;
 import megamek.common.rolls.TargetRoll;
 import megamek.common.units.*;
 import megamek.utils.MockGenerators;
+import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
@@ -91,20 +99,18 @@ class BasicPathRankerTest {
     private Princess mockPrincess;
     private FireControl mockFireControl;
 
+    @BeforeAll
+    static void beforeAll() {
+        EquipmentType.initializeTypes();
+    }
+
     @BeforeEach
     void beforeEach() {
-
-        // We now need to make sure all armor types are initialized or mockito will
-        // complain.
-        if (!ArmorType.getAllTypes().hasMoreElements()) {
-            ArmorType.initializeTypes();
-        }
-
         final BehaviorSettings mockBehavior = mock(BehaviorSettings.class);
         when(mockBehavior.getFallShameValue()).thenReturn(BehaviorSettings.FALL_SHAME_VALUES[5]);
         when(mockBehavior.getBraveryValue()).thenReturn(BehaviorSettings.BRAVERY[5]);
         when(mockBehavior.getHyperAggressionValue()).thenReturn(BehaviorSettings.HYPER_AGGRESSION_VALUES[5]);
-        when(mockBehavior.getHerdMentalityValue()).thenReturn(BehaviorSettings.HERD_MENTALITY_VALUES[5]);
+        when(mockBehavior.getMutualSupportValue()).thenReturn(BehaviorSettings.MUTUAL_SUPPORT_VALUES[5]);
         when(mockBehavior.getSelfPreservationValue()).thenReturn(BehaviorSettings.SELF_PRESERVATION_VALUES[5]);
         when(mockBehavior.getFavorHigherTMM()).thenReturn(0);
         when(mockBehavior.getAntiCrowding()).thenReturn(0);
@@ -199,6 +205,218 @@ class BasicPathRankerTest {
 
         double actual = testRanker.getMovePathSuccessProbability(mockPath);
         assertEquals(0.346, actual, TOLERANCE);
+    }
+
+    @Test
+    void testShallowWaterEntryFallIsForgivenInSuccessProbability() {
+        final Entity mockMek = MockGenerators.generateMockBipedMek(0, 0);
+        final MovePath mockPath = MockGenerators.generateMockPath(0, 0, mockMek);
+        when(mockPath.hasActiveMASC()).thenReturn(false);
+
+        final TargetRoll waterRoll = mock(TargetRoll.class);
+        when(waterRoll.getValue()).thenReturn(4);
+        when(waterRoll.getDesc()).thenReturn("entering Depth 1 Water");
+        final List<TargetRoll> testRollList = List.of(waterRoll);
+
+        final BasicPathRanker testRanker = spy(new BasicPathRanker(mockPrincess));
+        doReturn(testRollList).when(testRanker).getPSRList(eq(mockPath));
+
+        // oddsAbove(4) = 33/36 = ~0.917 pass. A failed Depth 1 water entry is 95% forgiven (a shallow-ford fall
+        // is nearly harmless), so the effective success probability is 0.917 + (1 - 0.917) * 0.95 = ~0.996, not
+        // the raw 0.917 - keeping Princess willing to wade a shallow river instead of pacing at the bank
+        // (issue #7627).
+        double actual = testRanker.getMovePathSuccessProbability(mockPath);
+        assertEquals(0.996, actual, TOLERANCE);
+    }
+
+    @Test
+    void testDeepWaterEntryFallIsForgivenLessThanShallow() {
+        final Entity mockMek = MockGenerators.generateMockBipedMek(0, 0);
+        final MovePath mockPath = MockGenerators.generateMockPath(0, 0, mockMek);
+        when(mockPath.hasActiveMASC()).thenReturn(false);
+
+        final TargetRoll waterRoll = mock(TargetRoll.class);
+        when(waterRoll.getValue()).thenReturn(4);
+        when(waterRoll.getDesc()).thenReturn("entering Depth 3 Water");
+        final List<TargetRoll> testRollList = List.of(waterRoll);
+
+        final BasicPathRanker testRanker = spy(new BasicPathRanker(mockPrincess));
+        doReturn(testRollList).when(testRanker).getPSRList(eq(mockPath));
+
+        // Depth 3 forgiveness = 0.95 - 2 * 0.20 = 0.55 (a fall in deep water is worse than in a shallow ford),
+        // so 0.917 + (1 - 0.917) * 0.55 = ~0.962 - forgiven, but less than the Depth 1 case above.
+        double actual = testRanker.getMovePathSuccessProbability(mockPath);
+        assertEquals(0.962, actual, TOLERANCE);
+    }
+
+    @Test
+    void testCloseRangeIncentiveRewardsMeleeBrawlerForClosing() {
+        final BasicPathRanker testRanker = spy(new BasicPathRanker(mockPrincess));
+        final Entity mockBrawler = MockGenerators.generateMockBipedMek(0, 0); // 50 tons -> kick proxy 10
+        when(mockBrawler.getWalkMP()).thenReturn(4);
+        when(mockBrawler.isProne()).thenReturn(false);
+        // Point-blank ranged damage 6 (+ melee 10 = 16); at range 7 only 4 -> premium 12.
+        doReturn(6.0).when(testRanker).getMaxDamageAtRange(eq(mockBrawler), eq(1), anyBoolean(), anyBoolean());
+        doReturn(4.0).when(testRanker).getMaxDamageAtRange(eq(mockBrawler), eq(7), anyBoolean(), anyBoolean());
+
+        // proximity = (12 - 7) / (12 - 1) = 0.4545; incentive = 12 * 0.4545 * 1.0 = ~5.45.
+        assertEquals(5.45, testRanker.calculateCloseRangeIncentive(mockBrawler, 7), 0.01);
+    }
+
+    @Test
+    void testCloseRangeIncentiveIsZeroBeyondTheBand() {
+        final BasicPathRanker testRanker = spy(new BasicPathRanker(mockPrincess));
+        final Entity mockBrawler = MockGenerators.generateMockBipedMek(0, 0);
+        when(mockBrawler.getWalkMP()).thenReturn(4);
+
+        // At or beyond CLOSE_RANGE_BAND (12) the pull has not engaged yet - no incentive, no damage lookups.
+        assertEquals(0.0, testRanker.calculateCloseRangeIncentive(mockBrawler, 12), TOLERANCE);
+    }
+
+    @Test
+    void testCloseRangeIncentiveIsZeroWithoutAPointBlankPremium() {
+        final BasicPathRanker testRanker = spy(new BasicPathRanker(mockPrincess));
+        final Entity mockGunner = MockGenerators.generateMockBipedMek(0, 0);
+        when(mockGunner.getWalkMP()).thenReturn(4);
+        // A unit that already does more damage at range than it would up close (even counting the melee proxy)
+        // gets no closing incentive.
+        doReturn(2.0).when(testRanker).getMaxDamageAtRange(eq(mockGunner), eq(1), anyBoolean(), anyBoolean());
+        doReturn(20.0).when(testRanker).getMaxDamageAtRange(eq(mockGunner), eq(5), anyBoolean(), anyBoolean());
+
+        assertEquals(0.0, testRanker.calculateCloseRangeIncentive(mockGunner, 5), TOLERANCE);
+    }
+
+    @Test
+    void testCloseRangeIncentivePeaksAtMeleeContact() {
+        final BasicPathRanker testRanker = spy(new BasicPathRanker(mockPrincess));
+        final Entity mockBrawler = MockGenerators.generateMockBipedMek(0, 0); // 50 tons -> melee proxy 10
+        when(mockBrawler.getWalkMP()).thenReturn(4);
+        // Melee-only unit: no ranged damage at any range, so the premium is just the melee proxy (10).
+        doReturn(0.0).when(testRanker).getMaxDamageAtRange(eq(mockBrawler), anyInt(), anyBoolean(), anyBoolean());
+
+        // The incentive must be maximal at melee contact (distance 1) so closing the final hex is rewarded, not
+        // penalized (issue #7627: it previously cliffed to 0 at distance <= 1 and stalled the brawler one hex
+        // short). proximity at distance 1 = (12 - 1) / (12 - 1) = 1.0 -> full premium 10.
+        double atContact = testRanker.calculateCloseRangeIncentive(mockBrawler, 1);
+        double atRangeTwo = testRanker.calculateCloseRangeIncentive(mockBrawler, 2);
+        assertEquals(10.0, atContact, 0.01);
+        assertTrue(atContact > atRangeTwo);
+    }
+
+    @Test
+    void testCalculateMovePathPSRDamageLowGravityGroundOverspeed() {
+        final Entity mockMek = MockGenerators.generateMockBipedMek(0, 0);
+        when(mockMek.getRunningGravityLimit()).thenReturn(6);
+
+        final MovePath mockPath = MockGenerators.generateMockPath(0, 0, mockMek);
+        when(mockPath.isJumping()).thenReturn(false);
+
+        final MoveStep mockLastStep = mock(MoveStep.class);
+        when(mockLastStep.getMpUsed()).thenReturn(8); // 2 MP beyond the 1G run limit of 6
+        when(mockPath.getLastStep()).thenReturn(mockLastStep);
+
+        final TargetRoll gravityRoll = MockGenerators.mockTargetRoll(8);
+        when(gravityRoll.getLastPlainDesc()).thenReturn("used more MPs than at 1G possible");
+
+        final BasicPathRanker testRanker = spy(new BasicPathRanker(mockPrincess));
+        doReturn(List.of(gravityRoll)).when(testRanker).getPSRList(eq(mockPath));
+
+        // 2 excess MP -> 2 points of leg internal structure, weighted by the chance of failing the roll.
+        final double failureProbability = 1.0 - (Compute.oddsAbove(8, false) / 100.0);
+        final double expected = 2 * failureProbability;
+
+        assertEquals(expected, testRanker.calculateMovePathPSRDamage(mockMek, mockPath), TOLERANCE);
+    }
+
+    @Test
+    void testCalculateMovePathPSRDamageLowGravityJumpOverspeed() {
+        final Entity mockMek = MockGenerators.generateMockBipedMek(0, 0);
+        when(mockMek.getJumpMP(MPCalculationSetting.NO_GRAVITY)).thenReturn(5);
+
+        final MovePath mockPath = MockGenerators.generateMockPath(0, 0, mockMek);
+        when(mockPath.isJumping()).thenReturn(true);
+
+        final MoveStep mockLastStep = mock(MoveStep.class);
+        when(mockLastStep.getMpUsed()).thenReturn(7); // 2 MP beyond the 1G jump rating of 5
+        when(mockLastStep.isUsingMekJumpBooster()).thenReturn(false);
+        when(mockPath.getLastStep()).thenReturn(mockLastStep);
+
+        final TargetRoll gravityRoll = MockGenerators.mockTargetRoll(8);
+        when(gravityRoll.getLastPlainDesc()).thenReturn("used more MPs than at 1G possible");
+
+        final BasicPathRanker testRanker = spy(new BasicPathRanker(mockPrincess));
+        doReturn(List.of(gravityRoll)).when(testRanker).getPSRList(eq(mockPath));
+
+        final double failureProbability = 1.0 - (Compute.oddsAbove(8, false) / 100.0);
+        final double expected = 2 * failureProbability;
+
+        assertEquals(expected, testRanker.calculateMovePathPSRDamage(mockMek, mockPath), TOLERANCE);
+    }
+
+    @Test
+    void testCalculateMovePathPSRDamageLowGravityJumpOverspeedWithBooster() {
+        final Entity mockMek = MockGenerators.generateMockBipedMek(0, 0);
+        // The plain jump rating is deliberately different from the booster rating so the test fails if the
+        // wrong branch (getJumpMP instead of getMechanicalJumpBoosterMP) is taken.
+        when(mockMek.getJumpMP(MPCalculationSetting.NO_GRAVITY)).thenReturn(3);
+        when(mockMek.getMechanicalJumpBoosterMP(MPCalculationSetting.NO_GRAVITY)).thenReturn(5);
+
+        final MovePath mockPath = MockGenerators.generateMockPath(0, 0, mockMek);
+        when(mockPath.isJumping()).thenReturn(true);
+
+        final MoveStep mockLastStep = mock(MoveStep.class);
+        when(mockLastStep.getMpUsed()).thenReturn(7); // 2 MP beyond the 1G booster rating of 5
+        when(mockLastStep.isUsingMekJumpBooster()).thenReturn(true);
+        when(mockPath.getLastStep()).thenReturn(mockLastStep);
+
+        final TargetRoll gravityRoll = MockGenerators.mockTargetRoll(8);
+        when(gravityRoll.getLastPlainDesc()).thenReturn("used more MPs than at 1G possible");
+
+        final BasicPathRanker testRanker = spy(new BasicPathRanker(mockPrincess));
+        doReturn(List.of(gravityRoll)).when(testRanker).getPSRList(eq(mockPath));
+
+        // Overspeed is measured against the booster's no-gravity rating: 7 - 5 = 2 excess MP.
+        final double failureProbability = 1.0 - (Compute.oddsAbove(8, false) / 100.0);
+        final double expected = 2 * failureProbability;
+
+        assertEquals(expected, testRanker.calculateMovePathPSRDamage(mockMek, mockPath), TOLERANCE);
+    }
+
+    @Test
+    void testCalculateMovePathPSRDamageHighGravityJump() {
+        final Entity mockMek = MockGenerators.generateMockBipedMek(0, 0);
+        when(mockMek.getWalkMP(MPCalculationSetting.NO_GRAVITY)).thenReturn(6);
+        when(mockMek.getWalkMP()).thenReturn(4); // lost 2 walk MP to high gravity -> (6 - 4) / 2 = 1 point
+
+        final MovePath mockPath = MockGenerators.generateMockPath(0, 0, mockMek);
+        when(mockPath.isJumping()).thenReturn(true);
+        when(mockPath.getLastStep()).thenReturn(mock(MoveStep.class));
+
+        final TargetRoll gravityRoll = MockGenerators.mockTargetRoll(9);
+        when(gravityRoll.getLastPlainDesc()).thenReturn("jumped in high gravity");
+
+        final BasicPathRanker testRanker = spy(new BasicPathRanker(mockPrincess));
+        doReturn(List.of(gravityRoll)).when(testRanker).getPSRList(eq(mockPath));
+
+        final double failureProbability = 1.0 - (Compute.oddsAbove(9, false) / 100.0);
+        final double expected = 1 * failureProbability;
+
+        assertEquals(expected, testRanker.calculateMovePathPSRDamage(mockMek, mockPath), TOLERANCE);
+    }
+
+    @Test
+    void testCalculateMovePathPSRDamageIgnoresNonGravityRolls() {
+        // A normal (non-gravity, non-leaping) piloting roll must contribute no self-damage, so behavior on
+        // 1G worlds is unchanged.
+        final Entity mockMek = MockGenerators.generateMockBipedMek(0, 0);
+        final MovePath mockPath = MockGenerators.generateMockPath(0, 0, mockMek);
+
+        final TargetRoll unrelatedRoll = MockGenerators.mockTargetRoll(8); // getLastPlainDesc() == "mock"
+
+        final BasicPathRanker testRanker = spy(new BasicPathRanker(mockPrincess));
+        doReturn(List.of(unrelatedRoll)).when(testRanker).getPSRList(eq(mockPath));
+
+        assertEquals(0.0, testRanker.calculateMovePathPSRDamage(mockMek, mockPath), TOLERANCE);
     }
 
     @Test
@@ -357,11 +575,11 @@ class BasicPathRankerTest {
                     anyInt(),
                     any(Game.class));
         doReturn(10.0).when(testRanker)
-              .calculateKickDamagePotential(eq(mockEnemyMek), any(MovePath.class), any(Game.class));
+              .calculateEnemyPhysicalThreat(eq(mockEnemyMek), any(MovePath.class), any(Game.class));
         doReturn(14.5).when(testRanker)
               .calculateMyDamagePotential(any(MovePath.class), eq(mockEnemyMek), anyInt(), any(Game.class));
         doReturn(8.0).when(testRanker)
-              .calculateMyKickDamagePotential(any(MovePath.class), eq(mockEnemyMek), any(Game.class));
+              .calculateMyPhysicalDamagePotential(any(MovePath.class), eq(mockEnemyMek), any(Game.class));
         final Map<Integer, Double> testBestDamageByEnemies = new TreeMap<>();
         testBestDamageByEnemies.put(mockEnemyMekId, 0.0);
         doReturn(testBestDamageByEnemies).when(testRanker).getBestDamageByEnemies();
@@ -378,6 +596,241 @@ class BasicPathRankerTest {
         expected.setEstimatedEnemyDamage(15);
         actual = testRanker.evaluateMovedEnemy(mockEnemyMek, mockPath, mockGame);
         assertEntityEvaluationResponseEquals(expected, actual);
+    }
+
+    @Test
+    void testEvaluateUnmovedEnemySprintingPathDoesNoDamage() {
+        final BasicPathRanker testRanker = spy(new BasicPathRanker(mockPrincess));
+        doReturn(mockPrincess).when(testRanker).getOwner();
+
+        final Coords testCoords = new Coords(10, 10);
+        final Entity mockMyUnit = MockGenerators.generateMockBipedMek(0, 0);
+        when(mockMyUnit.canChangeSecondaryFacing()).thenReturn(true);
+
+        doReturn(10.0).when(testRanker).getMaxDamageAtRange(eq(mockMyUnit), anyInt(), anyBoolean(), anyBoolean());
+
+        // A sprinting unit may not attack, so a sprinting path contributes no damage of mine
+        // even with the enemy in my line of sight.
+        final MovePath mockPath = MockGenerators.generateMockPath(testCoords, mockMyUnit);
+        when(mockPath.getFinalFacing()).thenReturn(3);
+        when(mockPath.getLastStepMovementType()).thenReturn(EntityMovementType.MOVE_SPRINT);
+
+        Coords enemyCoords = new Coords(10, 15);
+        int enemyMekId = 1;
+        Entity mockEnemyMek = MockGenerators.generateMockBipedMek(0, 0);
+        when(mockEnemyMek.getId()).thenReturn(enemyMekId);
+        doReturn(enemyCoords).when(testRanker).getClosestCoordsTo(eq(enemyMekId), eq(testCoords));
+        doReturn(true).when(testRanker).isInMyLoS(eq(mockEnemyMek), any(HexLine.class), any(HexLine.class));
+        doReturn(8.5).when(testRanker).getMaxDamageAtRange(eq(mockEnemyMek), anyInt(), anyBoolean(), anyBoolean());
+        doReturn(false).when(testRanker)
+              .canFlankAndKick(eq(mockEnemyMek), any(Coords.class), any(Coords.class), any(Coords.class), anyInt());
+
+        EntityEvaluationResponse expected = new EntityEvaluationResponse();
+        expected.setEstimatedEnemyDamage(2.125);
+        expected.setMyEstimatedDamage(0.0);
+        expected.setMyEstimatedPhysicalDamage(0.0);
+
+        EntityEvaluationResponse actual = testRanker.evaluateUnmovedEnemy(mockEnemyMek, mockPath, false, false);
+        assertEntityEvaluationResponseEquals(expected, actual);
+    }
+
+    @Test
+    void testEvaluateMovedEnemySprintingPathDoesNoDamage() {
+        final BasicPathRanker testRanker = spy(new BasicPathRanker(mockPrincess));
+        doReturn(mockPrincess).when(testRanker).getOwner();
+
+        final MovePath mockPath = mock(MovePath.class);
+        final Entity mockMyUnit = mock(BipedMek.class);
+        final Crew mockCrew = mock(Crew.class);
+        final PilotOptions mockOptions = mock(PilotOptions.class);
+
+        when(mockPath.getEntity()).thenReturn(mockMyUnit);
+        when(mockMyUnit.getCrew()).thenReturn(mockCrew);
+        when(mockCrew.getOptions()).thenReturn(mockOptions);
+        when(mockOptions.booleanOption(any(String.class))).thenReturn(false);
+        when(mockPath.getFinalCoords()).thenReturn(new Coords(0, 0));
+        when(mockPath.getLastStepMovementType()).thenReturn(EntityMovementType.MOVE_SPRINT);
+
+        final Game mockGame = mock(Game.class);
+
+        final int mockEnemyMekId = 1;
+        final Entity mockEnemyMek = mock(BipedMek.class);
+        when(mockEnemyMek.getId()).thenReturn(mockEnemyMekId);
+        when(mockEnemyMek.getPosition()).thenReturn(new Coords(1, 0));
+        when(mockEnemyMek.getCrew()).thenReturn(mockCrew);
+
+        doReturn(15.0).when(testRanker)
+              .calculateDamagePotential(eq(mockEnemyMek),
+                    any(EntityState.class),
+                    any(MovePath.class),
+                    any(EntityState.class),
+                    anyInt(),
+                    any(Game.class));
+        doReturn(10.0).when(testRanker)
+              .calculateEnemyPhysicalThreat(eq(mockEnemyMek), any(MovePath.class), any(Game.class));
+        doReturn(14.5).when(testRanker)
+              .calculateMyDamagePotential(any(MovePath.class), eq(mockEnemyMek), anyInt(), any(Game.class));
+        doReturn(8.0).when(testRanker)
+              .calculateMyPhysicalDamagePotential(any(MovePath.class), eq(mockEnemyMek), any(Game.class));
+        final Map<Integer, Double> testBestDamageByEnemies = new TreeMap<>();
+        testBestDamageByEnemies.put(mockEnemyMekId, 0.0);
+        doReturn(testBestDamageByEnemies).when(testRanker).getBestDamageByEnemies();
+
+        // The enemy still threatens me, but my sprinting path contributes no weapon or kick damage.
+        final EntityEvaluationResponse expected = new EntityEvaluationResponse();
+        expected.setMyEstimatedDamage(0.0);
+        expected.setMyEstimatedPhysicalDamage(0.0);
+        expected.setEstimatedEnemyDamage(25.0);
+        EntityEvaluationResponse actual = testRanker.evaluateMovedEnemy(mockEnemyMek, mockPath, mockGame);
+        assertEntityEvaluationResponseEquals(expected, actual);
+    }
+
+    @Test
+    void testIsSprintingPath() {
+        final Entity mockMyUnit = MockGenerators.generateMockBipedMek(0, 0);
+        final MovePath mockPath = MockGenerators.generateMockPath(new Coords(0, 0), mockMyUnit);
+
+        when(mockPath.getLastStepMovementType()).thenReturn(EntityMovementType.MOVE_RUN);
+        assertFalse(BasicPathRanker.isSprintingPath(mockPath));
+
+        when(mockPath.getLastStepMovementType()).thenReturn(EntityMovementType.MOVE_SPRINT);
+        assertTrue(BasicPathRanker.isSprintingPath(mockPath));
+
+        when(mockPath.getLastStepMovementType()).thenReturn(EntityMovementType.MOVE_VTOL_SPRINT);
+        assertTrue(BasicPathRanker.isSprintingPath(mockPath));
+    }
+
+    @Test
+    void testFindSprintThreat() {
+        final BasicPathRanker testRanker = spy(new BasicPathRanker(mockPrincess));
+        doReturn(mockPrincess).when(testRanker).getOwner();
+
+        final Game mockGame = mock(Game.class);
+        final Entity mockMyUnit = MockGenerators.generateMockBipedMek(0, 0);
+        final MovePath mockPath = MockGenerators.generateMockPath(new Coords(10, 10), mockMyUnit);
+
+        final int enemyMekId = 1;
+        final Entity mockEnemyMek = MockGenerators.generateMockBipedMek(0, 0);
+        when(mockEnemyMek.getId()).thenReturn(enemyMekId);
+        doReturn(false).when(testRanker).isIgnorableEnemy(any(Entity.class), any(Entity.class), any(Game.class));
+
+        // An already-moved enemy 10 hexes away with 21 hex weapon range can hit me.
+        doReturn(true).when(testRanker).evaluateAsMoved(mockEnemyMek);
+        when(mockEnemyMek.getPosition()).thenReturn(new Coords(10, 20));
+        Optional<BasicPathRanker.SprintThreat> threat = testRanker.findSprintThreat(mockPath,
+              List.of(mockEnemyMek), mockGame);
+        assertTrue(threat.isPresent());
+        assertEquals(10, threat.get().distance());
+        assertEquals(21, threat.get().maxWeaponRange());
+        assertFalse(threat.get().positionPredicted());
+
+        // The same enemy 30 hexes away cannot.
+        when(mockEnemyMek.getPosition()).thenReturn(new Coords(10, 40));
+        assertTrue(testRanker.findSprintThreat(mockPath, List.of(mockEnemyMek), mockGame).isEmpty());
+
+        // An unmoved enemy currently 30 hexes away is measured from the closest position
+        // it can reach, 15 hexes away, which is back in weapon range.
+        doReturn(false).when(testRanker).evaluateAsMoved(mockEnemyMek);
+        doReturn(new Coords(10, 25)).when(testRanker).getClosestCoordsTo(eq(enemyMekId), any(Coords.class));
+        threat = testRanker.findSprintThreat(mockPath, List.of(mockEnemyMek), mockGame);
+        assertTrue(threat.isPresent());
+        assertEquals(15, threat.get().distance());
+        assertTrue(threat.get().positionPredicted());
+    }
+
+    @Test
+    void testCalculateSprintExposurePenalty() {
+        final BasicPathRanker testRanker = spy(new BasicPathRanker(mockPrincess));
+        doReturn(mockPrincess).when(testRanker).getOwner();
+
+        final Game mockGame = mock(Game.class);
+        final Entity mockMyUnit = MockGenerators.generateMockBipedMek(0, 0);
+        final MovePath mockPath = MockGenerators.generateMockPath(new Coords(10, 10), mockMyUnit);
+        final List<Entity> enemies = List.of();
+
+        final int enemyMekId = 7;
+        final Entity mockEnemyMek = MockGenerators.generateMockBipedMek(0, 0);
+        when(mockEnemyMek.getId()).thenReturn(enemyMekId);
+        when(mockEnemyMek.getDisplayName()).thenReturn("Test Enemy Mek");
+        final BasicPathRanker.SprintThreat testThreat = new BasicPathRanker.SprintThreat(mockEnemyMek,
+              new Coords(10, 15), 5, 21, false);
+        doReturn(Optional.of(testThreat)).when(testRanker)
+              .findSprintThreat(any(MovePath.class), anyList(), any(Game.class));
+
+        // A non-sprinting path is never penalized and writes no formula entry.
+        Map<String, Double> scores = new HashMap<>();
+        StringBuilder sprintFormula = new StringBuilder();
+        when(mockPath.getLastStepMovementType()).thenReturn(EntityMovementType.MOVE_RUN);
+        assertEquals(0.0,
+              testRanker.calculateSprintExposurePenalty(mockPath, enemies, mockGame, scores, sprintFormula),
+              TOLERANCE);
+        assertEquals(0.0, scores.get("isSprinting"), TOLERANCE);
+        assertTrue(sprintFormula.isEmpty());
+
+        // Sprinting into enemy weapon range is penalized, and the decision detail is traceable.
+        scores = new HashMap<>();
+        sprintFormula = new StringBuilder();
+        when(mockPath.getLastStepMovementType()).thenReturn(EntityMovementType.MOVE_SPRINT);
+        assertTrue(testRanker.calculateSprintExposurePenalty(mockPath, enemies, mockGame, scores, sprintFormula) > 0);
+        assertEquals(1.0, scores.get("isSprinting"), TOLERANCE);
+        assertEquals(enemyMekId, scores.get("sprintThreatEnemyId"), TOLERANCE);
+        assertEquals(5.0, scores.get("sprintThreatDistance"), TOLERANCE);
+        assertEquals(21.0, scores.get("sprintThreatRange"), TOLERANCE);
+        assertFalse(sprintFormula.isEmpty());
+
+        // Sprinting outside enemy weapon range is fine, but still explained.
+        scores = new HashMap<>();
+        sprintFormula = new StringBuilder();
+        doReturn(Optional.empty()).when(testRanker)
+              .findSprintThreat(any(MovePath.class), anyList(), any(Game.class));
+        assertEquals(0.0,
+              testRanker.calculateSprintExposurePenalty(mockPath, enemies, mockGame, scores, sprintFormula),
+              TOLERANCE);
+        assertEquals(-1.0, scores.get("sprintThreatEnemyId"), TOLERANCE);
+        assertFalse(sprintFormula.isEmpty());
+
+        // A withdrawing unit may sprint even inside enemy weapon range.
+        scores = new HashMap<>();
+        sprintFormula = new StringBuilder();
+        doReturn(Optional.of(testThreat)).when(testRanker)
+              .findSprintThreat(any(MovePath.class), anyList(), any(Game.class));
+        when(mockPrincess.getUnitBehaviorTracker().getBehaviorType(any(Entity.class), any(Princess.class)))
+              .thenReturn(BehaviorType.ForcedWithdrawal);
+        assertEquals(0.0,
+              testRanker.calculateSprintExposurePenalty(mockPath, enemies, mockGame, scores, sprintFormula),
+              TOLERANCE);
+        assertFalse(sprintFormula.isEmpty());
+    }
+
+    @Test
+    void testCalculateSelfPreservationModWithNoRetreatPath() {
+        Entity mockMover = mock(BipedMek.class);
+        MovePath mockPath = mock(MovePath.class);
+        when(mockPath.getFinalCoords()).thenReturn(new Coords(10, 10));
+        Game mockGame = mock(Game.class);
+
+        BasicPathRanker testRanker = spy(new BasicPathRanker(mockPrincess));
+        doReturn(12.0).when(testRanker)
+              .distanceToClosestEnemy(any(Entity.class), any(Coords.class), any(Game.class));
+
+        // A withdrawing unit with no path to its retreat edge is rewarded for opening the range
+        // (negative mod raises utility, scaled like the normal retreat pull).
+        when(mockPrincess.getUnitBehaviorTracker().getBehaviorType(any(Entity.class), any(Princess.class)))
+              .thenReturn(BehaviorType.NoPathToDestination);
+        when(mockPrincess.wantsToFallBack(any(Entity.class))).thenReturn(true);
+        double expectedPull = -12.0 * BehaviorSettings.SELF_PRESERVATION_VALUES[5];
+        assertEquals(expectedPull,
+              testRanker.calculateSelfPreservationMod(mockMover, mockPath, mockGame),
+              TOLERANCE);
+
+        // NoPathToDestination for any other reason (e.g. a blocked waypoint): no retreat pull.
+        when(mockPrincess.wantsToFallBack(any(Entity.class))).thenReturn(false);
+        assertEquals(0.0, testRanker.calculateSelfPreservationMod(mockMover, mockPath, mockGame), TOLERANCE);
+
+        // An engaged unit is unchanged: no pull either way.
+        when(mockPrincess.getUnitBehaviorTracker().getBehaviorType(any(Entity.class), any(Princess.class)))
+              .thenReturn(BehaviorType.Engaged);
+        assertEquals(0.0, testRanker.calculateSelfPreservationMod(mockMover, mockPath, mockGame), TOLERANCE);
     }
 
     private void assertEntityEvaluationResponseEquals(final EntityEvaluationResponse expected,
@@ -410,9 +863,9 @@ class BasicPathRankerTest {
         private double distanceToEnemy;
         private double hyperAggressionValue;
 
-        private double herdingModValue;
+        private double mutualSupportModValue;
         private double distanceToAllies;
-        private double herdMentalityValue;
+        private double mutualSupportValue;
 
         private int facingModValue;
         private int facingModConstant;
@@ -450,11 +903,11 @@ class BasicPathRankerTest {
             return this;
         }
 
-        public RankPathResultBuilder withHerdingMod(double herdingModValue, double distanceToAllies,
-              double herdMentalityValue) {
-            this.herdingModValue = herdingModValue;
+        public RankPathResultBuilder withMutualSupportMod(double mutualSupportModValue, double distanceToAllies,
+              double mutualSupportValue) {
+            this.mutualSupportModValue = mutualSupportModValue;
             this.distanceToAllies = distanceToAllies;
-            this.herdMentalityValue = herdMentalityValue;
+            this.mutualSupportValue = mutualSupportValue;
             return this;
         }
 
@@ -497,16 +950,22 @@ class BasicPathRankerTest {
                   .append(decimalFormat.format(distanceToEnemy))
                   .append(" * ")
                   .append(decimalFormat.format(hyperAggressionValue))
-                  .append("] - herdingMod [");
+                  .append("; standoff: none standoffDist=0 distToEnemy=")
+                  .append(decimalFormat.format(distanceToEnemy))
+                  .append(" curDist=")
+                  .append(decimalFormat.format(-1.0))
+                  .append(" deficit=")
+                  .append(decimalFormat.format(0.0))
+                  .append("] - mutualSupportMod [");
 
             if (noFriends) {
                 result.append("0 no friends");
             } else {
-                result.append(decimalFormat.format(herdingModValue))
+                result.append(decimalFormat.format(mutualSupportModValue))
                       .append(" = ")
                       .append(decimalFormat.format(distanceToAllies))
                       .append(" * ")
-                      .append(decimalFormat.format(herdMentalityValue));
+                      .append(decimalFormat.format(mutualSupportValue));
             }
 
             result.append("] - facingMod [")
@@ -628,7 +1087,7 @@ class BasicPathRankerTest {
               builder.withFallMod(0, 0, 500)
                     .withBraveryMod(-6.25, 1, 22.5, 1.5, 40)
                     .withAggressionMod(30, 12, 2.5)
-                    .withHerdingMod(15, 15, 1)
+                    .withMutualSupportMod(15, 15, 1)
                     .withFacingMod(0, 50, 0)
                     .build());
 
@@ -642,7 +1101,7 @@ class BasicPathRankerTest {
               builder.withFallMod(250, 0.5, 500)
                     .withBraveryMod(-23.12, 0.5, 22.5, 1.5, 40)
                     .withAggressionMod(30, 12, 2.5)
-                    .withHerdingMod(15, 15, 1)
+                    .withMutualSupportMod(15, 15, 1)
                     .withFacingMod(0, 50, 0)
                     .build());
         actual = testRanker.rankPath(mockPath, mockGame, 18, 0.5, testEnemies, friendsCoords);
@@ -658,7 +1117,7 @@ class BasicPathRankerTest {
               builder.withFallMod(125, 0.25, 500)
                     .withBraveryMod(-14.69, 0.75, 22.5, 1.5, 40)
                     .withAggressionMod(30, 12, 2.5)
-                    .withHerdingMod(15, 15, 1)
+                    .withMutualSupportMod(15, 15, 1)
                     .withFacingMod(0, 50, 0)
                     .build());
         actual = testRanker.rankPath(mockPath, mockGame, 18, 0.5, testEnemies, friendsCoords);
@@ -682,7 +1141,7 @@ class BasicPathRankerTest {
               builder.withFallMod(0, 0, 500)
                     .withBraveryMod(-6.25, 1, 22.5, 1.5, 40)
                     .withAggressionMod(30, 12, 2.5)
-                    .withHerdingMod(15, 15, 1)
+                    .withMutualSupportMod(15, 15, 1)
                     .withFacingMod(0, 50, 0)
                     .build());
         actual = testRanker.rankPath(mockPath, mockGame, 18, 0.5, testEnemies, friendsCoords);
@@ -703,7 +1162,7 @@ class BasicPathRankerTest {
               builder.withFallMod(0, 0, 500)
                     .withBraveryMod(-16, 1, 16, 1.5, 40)
                     .withAggressionMod(30, 12, 2.5)
-                    .withHerdingMod(15, 15, 1)
+                    .withMutualSupportMod(15, 15, 1)
                     .withFacingMod(0, 50, 0)
                     .build());
         actual = testRanker.rankPath(mockPath, mockGame, 18, 0.5, testEnemies, friendsCoords);
@@ -732,7 +1191,7 @@ class BasicPathRankerTest {
               builder.withFallMod(0, 0, 500)
                     .withBraveryMod(-16.25, 1, 22.5, 1.5, 50)
                     .withAggressionMod(30, 12, 2.5)
-                    .withHerdingMod(15, 15, 1)
+                    .withMutualSupportMod(15, 15, 1)
                     .withFacingMod(0, 50, 0)
                     .build());
         actual = testRanker.rankPath(mockPath, mockGame, 18, 0.5, testEnemies, friendsCoords);
@@ -753,7 +1212,7 @@ class BasicPathRankerTest {
               builder.withFallMod(0, 0, 500)
                     .withBraveryMod(3.75, 1, 22.5, 1.5, 30)
                     .withAggressionMod(30, 12, 2.5)
-                    .withHerdingMod(15, 15, 1)
+                    .withMutualSupportMod(15, 15, 1)
                     .withFacingMod(0, 50, 0)
                     .build());
         actual = testRanker.rankPath(mockPath, mockGame, 18, 0.5, testEnemies, friendsCoords);
@@ -777,7 +1236,7 @@ class BasicPathRankerTest {
               builder.withFallMod(0, 0, 500)
                     .withBraveryMod(-6.25, 1, 22.5, 1.5, 40)
                     .withAggressionMod(5, 2, 2.5)
-                    .withHerdingMod(15, 15, 1)
+                    .withMutualSupportMod(15, 15, 1)
                     .withFacingMod(0, 50, 0)
                     .build());
         actual = testRanker.rankPath(mockPath, mockGame, 18, 0.5, testEnemies, friendsCoords);
@@ -793,7 +1252,7 @@ class BasicPathRankerTest {
               builder.withFallMod(0, 0, 500)
                     .withBraveryMod(-6.25, 1, 22.5, 1.5, 40)
                     .withAggressionMod(55, 22, 2.5)
-                    .withHerdingMod(15, 15, 1)
+                    .withMutualSupportMod(15, 15, 1)
                     .withFacingMod(0, 50, 0)
                     .build());
         actual = testRanker.rankPath(mockPath, mockGame, 18, 0.5, testEnemies, friendsCoords);
@@ -812,7 +1271,7 @@ class BasicPathRankerTest {
               builder.withFallMod(0, 0, 500)
                     .withBraveryMod(-6.25, 1, 22.5, 1.5, 40)
                     .withAggressionMod(30, 12, 2.5)
-                    .withHerdingMod(10, 10, 1)
+                    .withMutualSupportMod(10, 10, 1)
                     .withFacingMod(0, 50, 0)
                     .build());
         actual = testRanker.rankPath(mockPath, mockGame, 18, 0.5, testEnemies, friendsCoords);
@@ -828,7 +1287,7 @@ class BasicPathRankerTest {
               builder.withFallMod(0, 0, 500)
                     .withBraveryMod(-6.25, 1, 22.5, 1.5, 40)
                     .withAggressionMod(30, 12, 2.5)
-                    .withHerdingMod(20, 20, 1)
+                    .withMutualSupportMod(20, 20, 1)
                     .withFacingMod(0, 50, 0)
                     .build());
         actual = testRanker.rankPath(mockPath, mockGame, 18, 0.5, testEnemies, friendsCoords);
@@ -838,9 +1297,6 @@ class BasicPathRankerTest {
         }
 
         // TEST CASE 12: Set friends to null (no friends) - we'll check this in test case 14
-
-        // Reset friends coordinates
-        friendsCoords = new Coords(10, 10);
 
         // TEST CASE 13: Set friends to null (no friends)
         expected = new RankedPath(-36.25,
@@ -866,7 +1322,7 @@ class BasicPathRankerTest {
               builder.withFallMod(0, 0, 500)
                     .withBraveryMod(-6.25, 1, 22.5, 1.5, 40)
                     .withAggressionMod(30, 12, 2.5)
-                    .withHerdingMod(15, 15, 1)
+                    .withMutualSupportMod(15, 15, 1)
                     .withFacingMod(0, 50, 0)
                     .build());
         actual = testRanker.rankPath(mockPath, mockGame, 18, 0.5, testEnemies, friendsCoords);
@@ -880,7 +1336,7 @@ class BasicPathRankerTest {
               builder.withFallMod(0, 0, 500)
                     .withBraveryMod(-6.25, 1, 22.5, 1.5, 40)
                     .withAggressionMod(30, 12, 2.5)
-                    .withHerdingMod(15, 15, 1)
+                    .withMutualSupportMod(15, 15, 1)
                     .withFacingMod(0, 50, 0)
                     .build());
         actual = testRanker.rankPath(mockPath, mockGame, 18, 0.5, testEnemies, friendsCoords);
@@ -897,7 +1353,7 @@ class BasicPathRankerTest {
               builder.withFallMod(0, 0, 500)
                     .withBraveryMod(-6.25, 1, 22.5, 1.5, 40)
                     .withAggressionMod(30, 12, 2.5)
-                    .withHerdingMod(15, 15, 1)
+                    .withMutualSupportMod(15, 15, 1)
                     .withFacingMod(0, 50, 0)
                     .build());
         actual = testRanker.rankPath(mockPath, mockGame, 18, 0.5, testEnemies, friendsCoords);
@@ -919,7 +1375,7 @@ class BasicPathRankerTest {
               builder.withFallMod(0, 0, 500)
                     .withBraveryMod(-6.25, 1, 22.5, 1.5, 40)
                     .withAggressionMod(30, 12, 2.5)
-                    .withHerdingMod(15, 15, 1)
+                    .withMutualSupportMod(15, 15, 1)
                     .withFacingMod(0, 50, 0)
                     .build());
         actual = testRanker.rankPath(mockPath, mockGame, 18, 0.5, testEnemies, friendsCoords);
@@ -933,7 +1389,7 @@ class BasicPathRankerTest {
               builder.withFallMod(0, 0, 500)
                     .withBraveryMod(-6.25, 1, 22.5, 1.5, 40)
                     .withAggressionMod(30, 12, 2.5)
-                    .withHerdingMod(15, 15, 1)
+                    .withMutualSupportMod(15, 15, 1)
                     .withFacingMod(50, 50, 1)
                     .build());
         actual = testRanker.rankPath(mockPath, mockGame, 18, 0.5, testEnemies, friendsCoords);
@@ -949,7 +1405,7 @@ class BasicPathRankerTest {
               builder.withFallMod(0, 0, 500)
                     .withBraveryMod(-6.25, 1, 22.5, 1.5, 40)
                     .withAggressionMod(30, 12, 2.5)
-                    .withHerdingMod(15, 15, 1)
+                    .withMutualSupportMod(15, 15, 1)
                     .withFacingMod(0, 50, 0)
                     .build());
         actual = testRanker.rankPath(mockPath, mockGame, 18, 0.5, testEnemies, friendsCoords);
@@ -966,7 +1422,7 @@ class BasicPathRankerTest {
               builder.withFallMod(0, 0, 500)
                     .withBraveryMod(-6.25, 1, 22.5, 1.5, 40)
                     .withAggressionMod(30, 12, 2.5)
-                    .withHerdingMod(15, 15, 1)
+                    .withMutualSupportMod(15, 15, 1)
                     .withFacingMod(50, 50, 1)
                     .build());
         actual = testRanker.rankPath(mockPath, mockGame, 18, 0.5, testEnemies, friendsCoords);
@@ -1029,6 +1485,68 @@ class BasicPathRankerTest {
         when(mockAero.isImmobile()).thenReturn(false);
         enemyList.add(mockAero);
         assertEquals(enemyMek, testRanker.findClosestEnemy(me, position, mockGame));
+    }
+
+    @Test
+    void testFindClosestEnemyUsesAdjustedDistanceConsistently() {
+        // A moved enemy at raw distance 20 (it cannot move again, so adjusted distance 20) versus an unmoved fast
+        // enemy at raw distance 16 that can still travel 6 hexes (adjusted distance 22). By adjusted distance the
+        // moved enemy is the nearer threat and must be chosen regardless of enemy iteration order. The old code
+        // compared the adjusted distance but stored the raw one, so the unmoved enemy could win when enumerated
+        // first (issue #8437). Positions share a column, where hex distance equals the row difference.
+        final Coords position = new Coords(0, 0);
+
+        final Entity movedEnemy = mock(BipedMek.class);
+        when(movedEnemy.getPosition()).thenReturn(new Coords(0, 20));
+        when(movedEnemy.isSelectableThisTurn()).thenReturn(false);
+        when(movedEnemy.isImmobile()).thenReturn(false);
+
+        final Entity unmovedFastEnemy = mock(BipedMek.class);
+        when(unmovedFastEnemy.getPosition()).thenReturn(new Coords(0, 16));
+        when(unmovedFastEnemy.isSelectableThisTurn()).thenReturn(true);
+        when(unmovedFastEnemy.isImmobile()).thenReturn(false);
+        when(unmovedFastEnemy.getWalkMP()).thenReturn(6);
+
+        final Entity me = mock(BipedMek.class);
+        final Game mockGame = mock(Game.class);
+        when(mockGame.onTheSameBoard(any(Targetable.class), any(Targetable.class))).thenCallRealMethod();
+        final BasicPathRanker testRanker = spy(new BasicPathRanker(mockPrincess));
+
+        doReturn(List.of(movedEnemy, unmovedFastEnemy)).when(mockPrincess).getEnemyEntities();
+        assertEquals(movedEnemy, testRanker.findClosestEnemy(me, position, mockGame, false),
+              "The nearer enemy by adjusted distance must be chosen");
+
+        doReturn(List.of(unmovedFastEnemy, movedEnemy)).when(mockPrincess).getEnemyEntities();
+        assertEquals(movedEnemy, testRanker.findClosestEnemy(me, position, mockGame, false),
+              "The result must not depend on enemy iteration order");
+    }
+
+    @Test
+    void testFindClosestEnemyMinDistanceIgnoresMovementAllowance() {
+        // A same-hex enemy that can still move (raw distance 0, adjusted distance 5) must be excluded by a
+        // minDistance of 1, because minDistance is a not-within-N-raw-hexes gate. The old code tested the adjusted
+        // distance, letting the same-hex enemy satisfy the gate through its movement allowance (issue #8437).
+        final Coords position = new Coords(0, 0);
+
+        final Entity sameHexEnemy = mock(BipedMek.class);
+        when(sameHexEnemy.getPosition()).thenReturn(position);
+        when(sameHexEnemy.isSelectableThisTurn()).thenReturn(true);
+        when(sameHexEnemy.isImmobile()).thenReturn(false);
+        when(sameHexEnemy.getWalkMP()).thenReturn(5);
+
+        final Entity nearbyEnemy = mock(BipedMek.class);
+        when(nearbyEnemy.getPosition()).thenReturn(new Coords(0, 4));
+        when(nearbyEnemy.isSelectableThisTurn()).thenReturn(false);
+        when(nearbyEnemy.isImmobile()).thenReturn(false);
+
+        final Entity me = mock(BipedMek.class);
+        final Game mockGame = mock(Game.class);
+        when(mockGame.onTheSameBoard(any(Targetable.class), any(Targetable.class))).thenCallRealMethod();
+        final BasicPathRanker testRanker = spy(new BasicPathRanker(mockPrincess));
+        doReturn(List.of(sameHexEnemy, nearbyEnemy)).when(mockPrincess).getEnemyEntities();
+
+        assertEquals(nearbyEnemy, testRanker.findClosestEnemy(me, position, mockGame, false, 1),
+              "A minDistance of 1 must exclude the same-hex enemy by its raw distance");
     }
 
     @Test
@@ -1450,6 +1968,12 @@ class BasicPathRankerTest {
         assertEquals(1.285, testRanker.checkPathForHazards(mockPath, mockUnit, mockGame), TOLERANCE);
         when(mockHexThree.getTerrainTypes()).thenReturn(new int[0]);
 
+        // The water-breach hazard looks up the water-entry piloting roll; stub it to a check-false roll so the
+        // fall-probability path does not touch real board state (the water hazard is discarded on ice hexes).
+        final PilotingRollData mockWaterRoll = mock(PilotingRollData.class);
+        when(mockWaterRoll.getValue()).thenReturn(TargetRoll.CHECK_FALSE);
+        when(mockUnit.checkWaterMove(anyInt(), any())).thenReturn(mockWaterRoll);
+
         // Test walking over 3 hexes of ice.
         when(mockPath.isJumping()).thenReturn(false);
         when(mockHexTwo.getTerrainTypes()).thenReturn(new int[] { Terrains.ICE, Terrains.WATER });
@@ -1716,6 +2240,82 @@ class BasicPathRankerTest {
             when(mockGame.getBoard().getBuildingAt(eq(testCoordsThree))).thenReturn(mockBuilding);
             when(mockBuilding.getCurrentCF(eq(testCoordsThree))).thenReturn(77);
         }
+
+        // START - Standing still in water
+        // A path with no steps never entered the hazard loop, so staying put in deep water was free while
+        // every path out paid its water hazard. These pin the stationary pricing.
+
+        private MovePath setupStationaryPath(Coords position) {
+            MovePath stationaryPath = mock(MovePath.class);
+            when(stationaryPath.getStepVector()).thenReturn(new Vector<>());
+            when(stationaryPath.getFinalCoords()).thenReturn(position);
+            when(stationaryPath.isJumping()).thenReturn(false);
+            return stationaryPath;
+        }
+
+        @Test
+        void testStandingStillSubmergedWithABreachedLocationIsNotFree() {
+            // A damaged Mek hiding on the bottom of a depth 2 lake: its unarmored right arm is an open
+            // breach, and staying down there has to cost what crossing that hex would.
+            final Hex mockHexThree = testHexes.get(2);
+            when(mockHexThree.containsTerrain(Terrains.WATER)).thenReturn(true);
+            when(mockHexThree.depth()).thenReturn(2);
+
+            when(mockUnit.locations()).thenReturn(8);
+            when(mockUnit.isMek()).thenReturn(true);
+            when(mockUnit.getArmor(anyInt())).thenReturn(10);
+            when(mockUnit.getArmor(eq(Mek.LOC_RIGHT_ARM))).thenReturn(0);
+            when(mockUnit.getElevation()).thenReturn(-2);
+
+            final MovePath stationaryPath = setupStationaryPath(testCoordsThree);
+            assertEquals(50.0, testRanker.checkPathForHazards(stationaryPath, mockUnit, mockGame), TOLERANCE);
+        }
+
+        @Test
+        void testStandingStillSubmergedFullyArmoredIsStillSafe() {
+            // An undamaged, sealed Mek is genuinely safe standing in deep water - no invented penalty.
+            final Hex mockHexThree = testHexes.get(2);
+            when(mockHexThree.containsTerrain(Terrains.WATER)).thenReturn(true);
+            when(mockHexThree.depth()).thenReturn(2);
+
+            when(mockUnit.locations()).thenReturn(8);
+            when(mockUnit.isMek()).thenReturn(true);
+            when(mockUnit.getArmor(anyInt())).thenReturn(10);
+            when(mockUnit.getElevation()).thenReturn(-2);
+
+            final MovePath stationaryPath = setupStationaryPath(testCoordsThree);
+            assertEquals(0.0, testRanker.checkPathForHazards(stationaryPath, mockUnit, mockGame), TOLERANCE);
+        }
+
+        @Test
+        void testStationaryUnitAboveTheWaterIsNotDrowning() {
+            // A stationary path reports MOVE_NONE, not a VTOL movement type, so without the elevation
+            // check a hovering VTOL over a lake would be priced as drowning.
+            final Hex mockHexThree = testHexes.get(2);
+            when(mockHexThree.containsTerrain(Terrains.WATER)).thenReturn(true);
+            when(mockHexThree.depth()).thenReturn(2);
+
+            when(mockUnit.getElevation()).thenReturn(3);
+
+            final MovePath stationaryPath = setupStationaryPath(testCoordsThree);
+            assertEquals(0.0, testRanker.checkPathForHazards(stationaryPath, mockUnit, mockGame), TOLERANCE);
+        }
+
+        @Test
+        void testTankDisplacedIntoWaterWantsOut() {
+            // A tank cannot survive in water. One that was pushed in must see the drowning hazard when it
+            // considers staying, or the free stay outweighs every path back out.
+            final Hex mockHexThree = testHexes.get(2);
+            when(mockHexThree.containsTerrain(Terrains.WATER)).thenReturn(true);
+            when(mockHexThree.depth()).thenReturn(1);
+
+            final Entity mockTank = mock(Tank.class);
+            when(mockTank.getElevation()).thenReturn(-1);
+
+            final MovePath stationaryPath = setupStationaryPath(testCoordsThree);
+            assertEquals(1000.0, testRanker.checkPathForHazards(stationaryPath, mockTank, mockGame), TOLERANCE);
+        }
+        // END - Standing still in water
 
         // START - Hazardous Liquid Pools
         @Test

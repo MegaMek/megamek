@@ -98,6 +98,7 @@ public enum OffBoardDirection {
      *
      * @return The corresponding Board.START_X value, or Board.START_ANY for NONE
      */
+    @Deprecated(since = "0.51.0", forRemoval = true)
     public int translateBoardStart() {
         return switch (this) {
             case NORTH -> Board.START_N;

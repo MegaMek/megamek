@@ -1,7 +1,7 @@
 /*
  * Copyright (C) 2000-2004 Ben Mazur (bmazur@sev.org)
  * Copyright (C) 2013 Edward Cullen (eddy@obsessedcomputers.co.uk)
- * Copyright (C) 2003 The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2003, 2026 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -34,15 +34,7 @@
  */
 package megamek.client.ui.clientGUI.boardview.overlay;
 
-import java.awt.Color;
-import java.awt.Dimension;
-import java.awt.Font;
-import java.awt.FontMetrics;
-import java.awt.Graphics;
-import java.awt.Image;
-import java.awt.Point;
-import java.awt.Rectangle;
-import java.awt.Toolkit;
+import java.awt.*;
 import java.util.ArrayList;
 import java.util.Vector;
 
@@ -57,7 +49,6 @@ import megamek.client.ui.clientGUI.boardview.IBoardView;
 import megamek.client.ui.widget.picmap.PMUtil;
 import megamek.common.Configuration;
 import megamek.common.battleArmor.BattleArmor;
-import megamek.common.equipment.GunEmplacement;
 import megamek.common.equipment.IArmorState;
 import megamek.common.game.Game;
 import megamek.common.game.GameTurn;
@@ -201,6 +192,7 @@ public class UnitOverviewOverlay implements IDisplayable, IPreferenceChangeListe
             drawHeat(graph, e, x, y);
             drawConditionStrings(graph, e, x, y);
             graph.setColor(getFrameColor(e));
+            ((Graphics2D) graph).setStroke(new BasicStroke(1f));
             graph.drawRect(x, y, ICON_WIDTH, ICON_HEIGHT);
 
             Game game = clientgui.getClient().getGame();

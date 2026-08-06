@@ -33,12 +33,30 @@
 
 package megamek.server.totalWarfare;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyInt;
+import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.Mockito.atLeastOnce;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
+
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Vector;
+import java.util.stream.Stream;
+
 import megamek.common.GameBoardTestCase;
-import megamek.common.Hex;
 import megamek.common.HitData;
+import megamek.common.IndustrialElevator;
 import megamek.common.Player;
 import megamek.common.Report;
-import megamek.common.ToHitData;
 import megamek.common.board.Board;
 import megamek.common.board.BoardLocation;
 import megamek.common.board.Coords;
@@ -55,7 +73,6 @@ import megamek.common.units.BuildingTerrain;
 import megamek.common.units.Entity;
 import megamek.common.units.IBuilding;
 import megamek.common.units.Mek;
-import megamek.common.units.Terrain;
 import megamek.common.units.Terrains;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Nested;
@@ -64,22 +81,6 @@ import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
 import org.mockito.Mockito;
-
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Vector;
-import java.util.stream.Stream;
-
-import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.anyInt;
-import static org.mockito.ArgumentMatchers.eq;
-import static org.mockito.Mockito.atLeastOnce;
-import static org.mockito.Mockito.times;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
 
 public class BuildingCollapseHandlerTest extends GameBoardTestCase {
 
@@ -217,6 +218,33 @@ public class BuildingCollapseHandlerTest extends GameBoardTestCase {
                     any(Coords.class),
                     any(PilotingRollData.class),
                     any(boolean.class));
+    }
+
+    @Test
+    void collapsingBuildingDisablesIndustrialElevatorInHex() {
+        initializeBoard("ELEVATOR_BUILDING_BOARD", """
+              size 1 1
+              hex 0101 0 "bldg_elev:4;building:3;bldg_class:2;bldg_cf:80;bldg_armor:15" ""
+              end"""
+        );
+        setupBoardForTest(getBoard("ELEVATOR_BUILDING_BOARD"));
+        Coords position = new Coords(0, 0);
+        BuildingTerrain building = new BuildingTerrain(position, board, Terrains.BUILDING, BasementType.UNKNOWN);
+        initializeBuildingCF(building, 80);
+
+        // Register a functional elevator in the building hex
+        BoardLocation elevatorLocation = BoardLocation.of(position, board.getBoardId());
+        IndustrialElevator elevator = new IndustrialElevator(elevatorLocation, 0, 4, 500);
+        game.addIndustrialElevator(elevator);
+        assertTrue(elevator.isFunctional(), "Elevator should start functional");
+
+        Map<BoardLocation, List<Entity>> positionMap = new HashMap<>();
+        positionMap.put(elevatorLocation, new ArrayList<>());
+        Vector<Report> vPhaseReport = new Vector<>();
+
+        collapseHandler.collapseBuilding(building, positionMap, position, true, vPhaseReport);
+
+        assertFalse(elevator.isFunctional(), "Elevator should stop functioning when its building hex collapses");
     }
 
     /**

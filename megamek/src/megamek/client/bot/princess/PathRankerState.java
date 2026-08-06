@@ -69,6 +69,7 @@ public class PathRankerState {
     /**
      * Convenience method that clears the current path ranker state.
      */
+    @Deprecated(since = "0.51.0", forRemoval = true)
     public void clearState() {
         pathSuccessProbabilities.clear();
         incomingFriendlyArtilleryDamage.clear();

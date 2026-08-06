@@ -646,6 +646,7 @@ public class ASSpecialAbilityConverter {
     /**
      * Writes a report line for adding the sua using the name of the given equipment.
      */
+    @Deprecated(since = "0.51.0", forRemoval = true)
     protected void addReportLine(Mounted<?> equipment, BattleForceSUA sua) {
         addReportLine(equipment, sua, "");
     }

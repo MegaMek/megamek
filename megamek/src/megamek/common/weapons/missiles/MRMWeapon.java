@@ -65,6 +65,7 @@ public abstract class MRMWeapon extends MissileWeapon {
         ammoType = AmmoType.AmmoTypeEnum.MRM;
         toHitModifier = 1;
         atClass = CLASS_MRM;
+        flags = flags.or(F_MRM);
     }
 
     @Override

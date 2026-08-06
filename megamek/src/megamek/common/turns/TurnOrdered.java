@@ -1,6 +1,6 @@
 /*
   Copyright (C) 2003, 2004 Ben Mazur (bmazur@sev.org)
- * Copyright (C) 2003-2025 The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2003-2026 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -40,14 +40,7 @@ import static megamek.common.options.OptionsConstants.ATOW_COMBAT_PARALYSIS;
 import static megamek.common.options.OptionsConstants.ATOW_COMBAT_SENSE;
 
 import java.io.Serial;
-import java.util.ArrayList;
-import java.util.Comparator;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
-import java.util.Vector;
+import java.util.*;
 
 import megamek.common.Player;
 import megamek.common.Team;
@@ -58,7 +51,6 @@ import megamek.common.interfaces.ITurnOrdered;
 import megamek.common.options.OptionsConstants;
 import megamek.common.units.Entity;
 import megamek.common.units.EntityClassTurn;
-import megamek.common.units.MekWarrior;
 
 public abstract class TurnOrdered implements ITurnOrdered {
     @Serial
@@ -364,7 +356,7 @@ public abstract class TurnOrdered implements ITurnOrdered {
     }
 
     private static ITurnOrdered getWinningElement(List<? extends ITurnOrdered> v) {
-        final ITurnOrdered comparisonElement = v.get(0);
+        final ITurnOrdered comparisonElement = v.getFirst();
         int difference = 0;
         ITurnOrdered winningElement = comparisonElement;
 
@@ -405,6 +397,24 @@ public abstract class TurnOrdered implements ITurnOrdered {
     public static void rollInitAndResolveTies(List<? extends ITurnOrdered> initiativeCandidates,
           List<? extends ITurnOrdered> rerollRequests, boolean bInitCompBonus,
           Map<Team, Integer> initiativeAptitude) {
+        rollInitAndResolveTies(initiativeCandidates, rerollRequests, bInitCompBonus, initiativeAptitude, 0);
+    }
+
+    /**
+     * Backstop that guarantees the tie-break recursion terminates. Genuine ties break within a handful of re-rolls, so
+     * this bound is never approached in practice; it only guards against a degenerate case where candidates compare
+     * equal every pass (e.g. if they were to share the same {@link InitiativeRoll} instance), which would otherwise
+     * recurse until a {@link StackOverflowError}. Kept well below the stack limit while far above any legitimate tie
+     * streak.
+     */
+    private static final int MAX_TIE_BREAK_DEPTH = 100;
+
+    private static void rollInitAndResolveTies(List<? extends ITurnOrdered> initiativeCandidates,
+          List<? extends ITurnOrdered> rerollRequests, boolean bInitCompBonus,
+          Map<Team, Integer> initiativeAptitude, int tieBreakDepth) {
+        // Cache the team-level breakdown per player.
+        Map<Player, InitiativeBonusBreakdown> playerBreakdownCache = new HashMap<>();
+
         for (ITurnOrdered initiativeCandidate : initiativeCandidates) {
             // Observers don't have initiative, set it to -1
             if (((initiativeCandidate instanceof Player) && ((Player) initiativeCandidate).isObserver()) ||
@@ -435,66 +445,44 @@ public abstract class TurnOrdered implements ITurnOrdered {
             // Individual entities are used here if we're using Individual Initiative
             if (initiativeCandidate instanceof Entity entity) {
                 if (entity.getGame() != null) {
-                    boolean useCommandInit = entity.getGame()
-                          .getOptions()
-                          .booleanOption(OptionsConstants.RPG_COMMAND_INIT);
                     final Player player = entity.getOwner();
                     if (player != null) {
-                        // Break down individual initiative bonuses by source
-                        int hqBonus = 0;
-                        int consoleBonus = 0;
-                        int crewCommandBonus = 0;
-                        int tcpBonus = 0;
-                        int quirkBonus = 0;
-                        String quirkName = null;
-                        int crewBonus = entity.getCrew().getInitBonus();
-
-                        // Check if entity is valid for command bonuses
-                        if (!entity.isDestroyed() &&
-                              entity.getCrew().isActive() &&
-                              !entity.isCaptured() &&
-                              !(entity instanceof MekWarrior) &&
-                              ((entity.isDeployed() && !entity.isOffBoard()) ||
-                                    (entity.getDeployRound() == (entity.getGame().getCurrentRound() + 1)))) {
-                            // Mobile HQ bonus (TacOps option)
-                            if (entity.getGame()
-                                  .getOptions()
-                                  .booleanOption(OptionsConstants.ADVANCED_TAC_OPS_MOBILE_HQS)) {
-                                hqBonus = entity.getHQIniBonus();
-                            }
-                            // Command console / tech officer bonus
-                            if (entity.hasCommandConsoleBonus() || entity.getCrew().hasActiveTechOfficer()) {
-                                consoleBonus = 2;
-                            }
-                            // Crew command skill bonus (RPG option)
-                            if (useCommandInit) {
-                                crewCommandBonus = entity.getCrew().getCommandBonus();
-                            }
-                            // TCP + VDNI/BVDNI initiative bonus (IO pg 81)
-                            tcpBonus = entity.getTCPInitiativeBonus();
-                            // Quirk bonuses (Battle Computer +2, Command Mek +1)
-                            quirkBonus = entity.getQuirkIniBonus();
-                            if (quirkBonus > 0) {
-                                if (entity.hasQuirk(OptionsConstants.QUIRK_POS_BATTLE_COMP)) {
-                                    quirkName = "Battle Computer";
-                                } else if (entity.hasQuirk(OptionsConstants.QUIRK_POS_COMMAND_MEK)) {
-                                    quirkName = "Command Mek";
-                                }
-                            }
-                        }
-
-                        // Note: Compensation bonus is 0 for individual initiative - streak compensation
-                        // is tracked at Player/Team level, not per-entity
+                        // In Individual Initiative, each unit rolls its own die but the command
+                        // bonuses are still based on the best qualifying unit in the whole player
+                        // force — the same bonuses as in team initiative. Player-level methods
+                        // already handle eligibility (active, deployed, not destroyed, etc.).
+                        final IGame game = entity.getGame();
+                        InitiativeBonusBreakdown base = playerBreakdownCache.computeIfAbsent(player, p -> {
+                            Team playerTeam = game.getTeamForPlayer(p);
+                            return (playerTeam != null)
+                                  ? playerTeam.getInitBonusBreakdown(bInitCompBonus)
+                                  : new InitiativeBonusBreakdown(
+                                  p.getHQInitBonus(),
+                                  p.getQuirkInitBonus(),
+                                  p.getQuirkInitBonusName(),
+                                  p.getCommandConsoleBonus(),
+                                  p.getCrewCommandBonus(),
+                                  p.getTCPInitBonus(),
+                                  p.getConstantInitBonus(),
+                                  bInitCompBonus ? p.getInitCompensationBonus() : 0,
+                                  0
+                            );
+                        });
+                        // Inject the per-entity components, the only ones that vary per unit: the crew's own
+                        // bonus and any temporary gamemaster initiative modifier, each under its own name in the
+                        // report. As a positive bonus the gamemaster modifier competes with the other bonuses
+                        // under the normal stacking rule rather than stacking on them; maluses always stack.
                         breakdown = new InitiativeBonusBreakdown(
-                              hqBonus,
-                              quirkBonus,
-                              quirkName,
-                              consoleBonus,
-                              crewCommandBonus,
-                              tcpBonus,
-                              0,  // constant (player-level bonus, not applicable to individual entities)
-                              0,  // compensation (tracked at Player/Team level for streak-breaking)
-                              crewBonus
+                              base.hq(),
+                              base.quirk(),
+                              base.quirkName(),
+                              base.console(),
+                              base.crewCommand(),
+                              base.tcp(),
+                              base.constant(),
+                              base.compensation(),
+                              entity.getCrew().getInitBonus(),
+                              entity.getCrew().getSkillModifiers().getInitiativeDelta()
                         );
 
                         if (entity.hasAbility(ATOW_COMBAT_SENSE)) {
@@ -522,24 +510,38 @@ public abstract class TurnOrdered implements ITurnOrdered {
 
         // check for ties
         Vector<ITurnOrdered> ties = new Vector<>();
+        // A tie group is resolved by the single recursive call below, so once an item has been folded into a group we
+        // must not process it again as its own group. Skipping handled items keeps this pass linear: without it, every
+        // member of an unresolvable tie would spawn its own recursion, turning a would-be stack overflow into an
+        // exponential blow-up.
+        Set<ITurnOrdered> alreadyResolved = new HashSet<>();
         for (ITurnOrdered item : initiativeCandidates) {
             // Observers don't have initiative, and were already set to -1
             if (((item instanceof Player) && ((Player) item).isObserver()) ||
                   ((item instanceof Team) && ((Team) item).isObserverTeam())) {
                 continue;
             }
+            if (alreadyResolved.contains(item)) {
+                continue;
+            }
             ties.removeAllElements();
             ties.addElement(item);
             for (ITurnOrdered other : initiativeCandidates) {
-                if ((!Objects.equals(item, other)) && item.getInitiative().equals(other.getInitiative())) {
+                // The identity check guards against two distinct candidates sharing the same InitiativeRoll instance:
+                // that would make equals() trivially true forever and the tie-break below would never resolve.
+                if ((!Objects.equals(item, other)) && (item.getInitiative() != other.getInitiative()) &&
+                      item.getInitiative().equals(other.getInitiative())) {
                     ties.addElement(other);
                 }
             }
 
             if (ties.size() > 1) {
-                // We want to ignore initiative compensation here, because it will
-                // get dealt with once we're done resolving ties
-                rollInitAndResolveTies(ties, null, false, initiativeAptitude);
+                alreadyResolved.addAll(ties);
+                if (tieBreakDepth < MAX_TIE_BREAK_DEPTH) {
+                    // Initiative compensation is retained here, as it should persist in the reroll, like all other
+                    // bonuses
+                    rollInitAndResolveTies(ties, null, bInitCompBonus, initiativeAptitude, tieBreakDepth + 1);
+                }
             }
         }
     }

@@ -134,7 +134,7 @@ class ToHitDataTest {
         Mek target2 = createMek("Target", "TGT-2", "Charlie");
 
         attacker.setOwnerId(player1.getId());
-        Coords attackerCoords = coords.get(0);
+        Coords attackerCoords = coords.getFirst();
         attacker.setPosition(attackerCoords);
         attacker.setId(1);
         attacker.setDeployed(true);

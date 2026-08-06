@@ -236,10 +236,12 @@ public enum EntityMovementMode {
     }
     // endregion Boolean Comparisons
 
+    @Deprecated(since = "0.51.0", forRemoval = true)
     public static List<EntityMovementMode> getCombatVehicleModes() {
         return Stream.of(values()).filter(EntityMovementMode::isCombatVehicle).collect(Collectors.toList());
     }
 
+    @Deprecated(since = "0.51.0", forRemoval = true)
     public static List<EntityMovementMode> getInfantryVehicleModes() {
         return Stream.of(values()).filter(EntityMovementMode::isInfantryVehicle).collect(Collectors.toList());
     }

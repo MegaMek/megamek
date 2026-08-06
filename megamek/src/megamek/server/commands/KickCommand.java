@@ -100,7 +100,7 @@ public class KickCommand extends ClientServerCommand {
                   + " attempts to kick player #" + kickedId + " ("
                   + server.getPlayer(kickedId).getName() + ")...");
 
-            server.send(kickedId, new Packet(PacketCommand.CLOSE_CONNECTION));
+            server.send(kickedId, new Packet(PacketCommand.CLOSE_CONNECTION, new Object[] {}));
 
             server.getConnection(kickedId).close();
         } catch (Exception ex) {

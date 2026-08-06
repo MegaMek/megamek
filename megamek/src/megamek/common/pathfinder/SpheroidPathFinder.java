@@ -62,6 +62,7 @@ public class SpheroidPathFinder {
 
     private final Set<Coords> visitedCoords = new HashSet<>();
 
+    @Deprecated(since = "0.51.0", forRemoval = true)
     private SpheroidPathFinder(Game game) {
         // Default to heading north
         this(game, 0);

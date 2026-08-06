@@ -85,7 +85,6 @@ public class FireControlState {
     /**
      * Add a single value to the additional targets list.
      *
-     * @param target
      */
     public void addAdditionalTarget(Targetable target) {
         additionalTargets.add(target);

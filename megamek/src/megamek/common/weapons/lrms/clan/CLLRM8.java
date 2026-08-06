@@ -62,6 +62,7 @@ public class CLLRM8 extends LRMWeapon {
         bv = 93;
         // Per Herb all ProtoMek launcher use the ProtoMek Chassis progression.
         // But LRM Tech Base and Avail Ratings.
+        cost = 80000;
         rulesRefs = "231, TM";
         flags = flags.or(F_NO_FIRES).andNot(F_AERO_WEAPON).andNot(F_BA_WEAPON)
               .andNot(F_MEK_WEAPON).andNot(F_TANK_WEAPON);

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2025 The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2025-2026 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -47,6 +47,7 @@ import megamek.common.options.OptionsConstants;
 import megamek.common.options.PilotOptions;
 import megamek.common.planetaryConditions.Atmosphere;
 import megamek.common.planetaryConditions.PlanetaryConditions;
+import megamek.common.verifier.TestInfantry;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
@@ -77,8 +78,8 @@ class InfantryPoweredFlightWingsTest {
     /**
      * Creates an Infantry unit with the specified movement mode and optional powered flight wings ability.
      */
-    private Infantry createInfantry(EntityMovementMode movementMode, boolean hasPoweredFlightWings) {
-        Infantry infantry = new Infantry();
+    private ConvInfantry createInfantry(EntityMovementMode movementMode, boolean hasPoweredFlightWings) {
+        ConvInfantry infantry = new ConvInfantry();
         infantry.setId(1);
         infantry.setMovementMode(movementMode);
         infantry.setSquadSize(7);
@@ -124,7 +125,7 @@ class InfantryPoweredFlightWingsTest {
         @Test
         @DisplayName("Powered flight wings provide 2 VTOL MP in standard atmosphere")
         void poweredFlightProvides2MPInStandardAtmosphere() {
-            Infantry infantry = createInfantry(EntityMovementMode.INF_LEG, true);
+            ConvInfantry infantry = createInfantry(EntityMovementMode.INF_LEG, true);
             infantry.setGame(createGameWithAtmosphere(Atmosphere.STANDARD));
 
             assertEquals(2, infantry.getPoweredFlightMP());
@@ -133,7 +134,7 @@ class InfantryPoweredFlightWingsTest {
         @Test
         @DisplayName("Powered flight wings provide 2 VTOL MP in thin atmosphere")
         void poweredFlightProvides2MPInThinAtmosphere() {
-            Infantry infantry = createInfantry(EntityMovementMode.INF_LEG, true);
+            ConvInfantry infantry = createInfantry(EntityMovementMode.INF_LEG, true);
             infantry.setGame(createGameWithAtmosphere(Atmosphere.THIN));
 
             assertEquals(2, infantry.getPoweredFlightMP());
@@ -142,7 +143,7 @@ class InfantryPoweredFlightWingsTest {
         @Test
         @DisplayName("Powered flight wings provide 0 MP in vacuum")
         void poweredFlightProvides0MPInVacuum() {
-            Infantry infantry = createInfantry(EntityMovementMode.INF_LEG, true);
+            ConvInfantry infantry = createInfantry(EntityMovementMode.INF_LEG, true);
             infantry.setGame(createGameWithAtmosphere(Atmosphere.VACUUM));
 
             assertEquals(0, infantry.getPoweredFlightMP());
@@ -151,7 +152,7 @@ class InfantryPoweredFlightWingsTest {
         @Test
         @DisplayName("Powered flight wings provide 0 MP in trace atmosphere")
         void poweredFlightProvides0MPInTrace() {
-            Infantry infantry = createInfantry(EntityMovementMode.INF_LEG, true);
+            ConvInfantry infantry = createInfantry(EntityMovementMode.INF_LEG, true);
             infantry.setGame(createGameWithAtmosphere(Atmosphere.TRACE));
 
             assertEquals(0, infantry.getPoweredFlightMP());
@@ -160,7 +161,7 @@ class InfantryPoweredFlightWingsTest {
         @Test
         @DisplayName("Infantry without powered flight wings gets 0 MP")
         void infantryWithoutPoweredFlightGets0MP() {
-            Infantry infantry = createInfantry(EntityMovementMode.INF_LEG, false);
+            ConvInfantry infantry = createInfantry(EntityMovementMode.INF_LEG, false);
             infantry.setGame(createGameWithAtmosphere(Atmosphere.STANDARD));
 
             assertEquals(0, infantry.getPoweredFlightMP());
@@ -169,7 +170,7 @@ class InfantryPoweredFlightWingsTest {
         @Test
         @DisplayName("Powered flight wings work when no game context (lobby/loading)")
         void poweredFlightWorksWithNoGameContext() {
-            Infantry infantry = createInfantry(EntityMovementMode.INF_LEG, true);
+            ConvInfantry infantry = createInfantry(EntityMovementMode.INF_LEG, true);
             // No game set
 
             assertEquals(2, infantry.getPoweredFlightMP());
@@ -183,7 +184,7 @@ class InfantryPoweredFlightWingsTest {
         @Test
         @DisplayName("Powered flight works in standard atmosphere")
         void poweredFlightWorksInStandardAtmosphere() {
-            Infantry infantry = createInfantry(EntityMovementMode.INF_LEG, true);
+            ConvInfantry infantry = createInfantry(EntityMovementMode.INF_LEG, true);
             infantry.setGame(createGameWithAtmosphere(Atmosphere.STANDARD));
 
             assertTrue(infantry.canUsePoweredFlightWings());
@@ -192,7 +193,7 @@ class InfantryPoweredFlightWingsTest {
         @Test
         @DisplayName("Powered flight works in thin atmosphere")
         void poweredFlightWorksInThinAtmosphere() {
-            Infantry infantry = createInfantry(EntityMovementMode.INF_LEG, true);
+            ConvInfantry infantry = createInfantry(EntityMovementMode.INF_LEG, true);
             infantry.setGame(createGameWithAtmosphere(Atmosphere.THIN));
 
             assertTrue(infantry.canUsePoweredFlightWings());
@@ -201,7 +202,7 @@ class InfantryPoweredFlightWingsTest {
         @Test
         @DisplayName("Powered flight does NOT work in trace atmosphere")
         void poweredFlightDoesNotWorkInTraceAtmosphere() {
-            Infantry infantry = createInfantry(EntityMovementMode.INF_LEG, true);
+            ConvInfantry infantry = createInfantry(EntityMovementMode.INF_LEG, true);
             infantry.setGame(createGameWithAtmosphere(Atmosphere.TRACE));
 
             assertFalse(infantry.canUsePoweredFlightWings());
@@ -210,7 +211,7 @@ class InfantryPoweredFlightWingsTest {
         @Test
         @DisplayName("Powered flight does NOT work in vacuum")
         void poweredFlightDoesNotWorkInVacuum() {
-            Infantry infantry = createInfantry(EntityMovementMode.INF_LEG, true);
+            ConvInfantry infantry = createInfantry(EntityMovementMode.INF_LEG, true);
             infantry.setGame(createGameWithAtmosphere(Atmosphere.VACUUM));
 
             assertFalse(infantry.canUsePoweredFlightWings());
@@ -224,7 +225,7 @@ class InfantryPoweredFlightWingsTest {
         @Test
         @DisplayName("Conventional infantry with powered flight in standard atmosphere is protected")
         void conventionalInfantryWithPoweredFlightProtected() {
-            Infantry infantry = createInfantry(EntityMovementMode.INF_LEG, true);
+            ConvInfantry infantry = createInfantry(EntityMovementMode.INF_LEG, true);
             infantry.setGame(createGameWithAtmosphere(Atmosphere.STANDARD));
 
             assertTrue(infantry.isProtectedFromFallDamage());
@@ -233,7 +234,7 @@ class InfantryPoweredFlightWingsTest {
         @Test
         @DisplayName("Conventional infantry without powered flight is NOT protected")
         void conventionalInfantryWithoutPoweredFlightNotProtected() {
-            Infantry infantry = createInfantry(EntityMovementMode.INF_LEG, false);
+            ConvInfantry infantry = createInfantry(EntityMovementMode.INF_LEG, false);
             infantry.setGame(createGameWithAtmosphere(Atmosphere.STANDARD));
 
             assertFalse(infantry.isProtectedFromFallDamage());
@@ -242,7 +243,7 @@ class InfantryPoweredFlightWingsTest {
         @Test
         @DisplayName("Infantry with powered flight in vacuum is NOT protected")
         void infantryWithPoweredFlightInVacuumNotProtected() {
-            Infantry infantry = createInfantry(EntityMovementMode.INF_LEG, true);
+            ConvInfantry infantry = createInfantry(EntityMovementMode.INF_LEG, true);
             infantry.setGame(createGameWithAtmosphere(Atmosphere.VACUUM));
 
             assertFalse(infantry.isProtectedFromFallDamage());
@@ -256,7 +257,7 @@ class InfantryPoweredFlightWingsTest {
         @Test
         @DisplayName("Leg infantry with powered flight in standard atmosphere can assault drop")
         void legInfantryWithPoweredFlightCanAssaultDrop() {
-            Infantry infantry = createInfantry(EntityMovementMode.INF_LEG, true);
+            ConvInfantry infantry = createInfantry(EntityMovementMode.INF_LEG, true);
             infantry.setGame(createGameWithAtmosphere(Atmosphere.STANDARD));
 
             assertTrue(infantry.canAssaultDrop());
@@ -265,7 +266,7 @@ class InfantryPoweredFlightWingsTest {
         @Test
         @DisplayName("Leg infantry without powered flight cannot assault drop")
         void legInfantryWithoutPoweredFlightCannotAssaultDrop() {
-            Infantry infantry = createInfantry(EntityMovementMode.INF_LEG, false);
+            ConvInfantry infantry = createInfantry(EntityMovementMode.INF_LEG, false);
             infantry.setGame(createGameWithAtmosphere(Atmosphere.STANDARD));
 
             assertFalse(infantry.canAssaultDrop());
@@ -274,7 +275,7 @@ class InfantryPoweredFlightWingsTest {
         @Test
         @DisplayName("Leg infantry with powered flight in vacuum cannot assault drop")
         void legInfantryWithPoweredFlightInVacuumCannotAssaultDrop() {
-            Infantry infantry = createInfantry(EntityMovementMode.INF_LEG, true);
+            ConvInfantry infantry = createInfantry(EntityMovementMode.INF_LEG, true);
             infantry.setGame(createGameWithAtmosphere(Atmosphere.VACUUM));
 
             assertFalse(infantry.canAssaultDrop());
@@ -283,7 +284,7 @@ class InfantryPoweredFlightWingsTest {
         @Test
         @DisplayName("Motorized infantry with powered flight can assault drop")
         void motorizedInfantryWithPoweredFlightCanAssaultDrop() {
-            Infantry infantry = createInfantry(EntityMovementMode.INF_MOTORIZED, true);
+            ConvInfantry infantry = createInfantry(EntityMovementMode.INF_MOTORIZED, true);
             infantry.setGame(createGameWithAtmosphere(Atmosphere.STANDARD));
 
             assertTrue(infantry.canAssaultDrop());
@@ -297,8 +298,8 @@ class InfantryPoweredFlightWingsTest {
         /**
          * Creates infantry with both wing types enabled for testing mutual exclusivity.
          */
-        private Infantry createInfantryWithBothWings() {
-            Infantry infantry = new Infantry();
+        private ConvInfantry createInfantryWithBothWings() {
+            ConvInfantry infantry = new ConvInfantry();
             infantry.setId(1);
             infantry.setMovementMode(EntityMovementMode.INF_LEG);
             infantry.setSquadSize(7);
@@ -322,23 +323,23 @@ class InfantryPoweredFlightWingsTest {
         @Test
         @DisplayName("Powered flight and glider wings are mutually exclusive")
         void poweredFlightAndGliderWingsMutuallyExclusive() {
-            Infantry infantry = createInfantryWithBothWings();
+            ConvInfantry infantry = createInfantryWithBothWings();
 
-            assertTrue(infantry.hasInvalidWingsConfiguration());
+            assertTrue(TestInfantry.hasInvalidWingsConfiguration(infantry));
         }
 
         @Test
         @DisplayName("Powered flight alone is valid configuration")
         void poweredFlightAloneIsValid() {
-            Infantry infantry = createInfantry(EntityMovementMode.INF_LEG, true);
+            ConvInfantry infantry = createInfantry(EntityMovementMode.INF_LEG, true);
 
-            assertFalse(infantry.hasInvalidWingsConfiguration());
+            assertFalse(TestInfantry.hasInvalidWingsConfiguration(infantry));
         }
 
         @Test
         @DisplayName("Without powered flight, max extraneous limb pairs is 2")
         void withoutPoweredFlightMaxPairsIsTwo() {
-            Infantry infantry = createInfantry(EntityMovementMode.INF_LEG, false);
+            ConvInfantry infantry = createInfantry(EntityMovementMode.INF_LEG, false);
 
             assertEquals(2, infantry.getMaxExtraneousLimbPairs());
         }
@@ -346,7 +347,7 @@ class InfantryPoweredFlightWingsTest {
         @Test
         @DisplayName("With powered flight, max extraneous limb pairs is 1")
         void withPoweredFlightMaxPairsIsOne() {
-            Infantry infantry = createInfantry(EntityMovementMode.INF_LEG, true);
+            ConvInfantry infantry = createInfantry(EntityMovementMode.INF_LEG, true);
 
             assertEquals(1, infantry.getMaxExtraneousLimbPairs());
         }
@@ -354,7 +355,7 @@ class InfantryPoweredFlightWingsTest {
         @Test
         @DisplayName("Powered flight with two extraneous pairs is invalid")
         void poweredFlightWithTwoExtraneousPairsInvalid() {
-            Infantry infantry = createInfantry(EntityMovementMode.INF_LEG, true);
+            ConvInfantry infantry = createInfantry(EntityMovementMode.INF_LEG, true);
             infantry.setExtraneousPair1(ProstheticEnhancementType.CLIMBING_CLAWS);
             infantry.setExtraneousPair2(ProstheticEnhancementType.GRAPPLER);
 
@@ -364,7 +365,7 @@ class InfantryPoweredFlightWingsTest {
         @Test
         @DisplayName("Powered flight with one extraneous pair is valid")
         void poweredFlightWithOneExtraneousPairValid() {
-            Infantry infantry = createInfantry(EntityMovementMode.INF_LEG, true);
+            ConvInfantry infantry = createInfantry(EntityMovementMode.INF_LEG, true);
             infantry.setExtraneousPair1(ProstheticEnhancementType.CLIMBING_CLAWS);
 
             assertFalse(infantry.hasExcessiveExtraneousLimbs());
@@ -373,7 +374,7 @@ class InfantryPoweredFlightWingsTest {
         @Test
         @DisplayName("Without powered flight, two extraneous pairs is valid")
         void withoutPoweredFlightTwoExtraneousPairsValid() {
-            Infantry infantry = createInfantry(EntityMovementMode.INF_LEG, false);
+            ConvInfantry infantry = createInfantry(EntityMovementMode.INF_LEG, false);
             infantry.setExtraneousPair1(ProstheticEnhancementType.CLIMBING_CLAWS);
             infantry.setExtraneousPair2(ProstheticEnhancementType.GRAPPLER);
 
@@ -388,7 +389,7 @@ class InfantryPoweredFlightWingsTest {
         @Test
         @DisplayName("Conventional infantry with ability returns true")
         void conventionalInfantryWithAbilityReturnsTrue() {
-            Infantry infantry = createInfantry(EntityMovementMode.INF_LEG, true);
+            ConvInfantry infantry = createInfantry(EntityMovementMode.INF_LEG, true);
 
             assertTrue(infantry.hasPoweredFlightWings());
         }
@@ -396,7 +397,7 @@ class InfantryPoweredFlightWingsTest {
         @Test
         @DisplayName("Conventional infantry without ability returns false")
         void conventionalInfantryWithoutAbilityReturnsFalse() {
-            Infantry infantry = createInfantry(EntityMovementMode.INF_LEG, false);
+            ConvInfantry infantry = createInfantry(EntityMovementMode.INF_LEG, false);
 
             assertFalse(infantry.hasPoweredFlightWings());
         }
@@ -404,7 +405,7 @@ class InfantryPoweredFlightWingsTest {
         @Test
         @DisplayName("Jump infantry with powered flight returns true")
         void jumpInfantryWithPoweredFlightReturnsTrue() {
-            Infantry infantry = createInfantry(EntityMovementMode.INF_JUMP, true);
+            ConvInfantry infantry = createInfantry(EntityMovementMode.INF_JUMP, true);
 
             assertTrue(infantry.hasPoweredFlightWings());
         }
@@ -412,7 +413,7 @@ class InfantryPoweredFlightWingsTest {
         @Test
         @DisplayName("Motorized infantry with powered flight returns true")
         void motorizedInfantryWithPoweredFlightReturnsTrue() {
-            Infantry infantry = createInfantry(EntityMovementMode.INF_MOTORIZED, true);
+            ConvInfantry infantry = createInfantry(EntityMovementMode.INF_MOTORIZED, true);
 
             assertTrue(infantry.hasPoweredFlightWings());
         }
@@ -425,7 +426,7 @@ class InfantryPoweredFlightWingsTest {
         @Test
         @DisplayName("Leg infantry with powered flight has VTOL capability")
         void legInfantryWithPoweredFlightHasVTOLCapability() {
-            Infantry infantry = createInfantry(EntityMovementMode.INF_LEG, true);
+            ConvInfantry infantry = createInfantry(EntityMovementMode.INF_LEG, true);
             infantry.setGame(createGameWithAtmosphere(Atmosphere.STANDARD));
 
             assertTrue(infantry.hasVTOLMovementCapability());
@@ -434,7 +435,7 @@ class InfantryPoweredFlightWingsTest {
         @Test
         @DisplayName("Leg infantry without powered flight has no VTOL capability")
         void legInfantryWithoutPoweredFlightNoVTOLCapability() {
-            Infantry infantry = createInfantry(EntityMovementMode.INF_LEG, false);
+            ConvInfantry infantry = createInfantry(EntityMovementMode.INF_LEG, false);
             infantry.setGame(createGameWithAtmosphere(Atmosphere.STANDARD));
 
             assertFalse(infantry.hasVTOLMovementCapability());
@@ -443,7 +444,7 @@ class InfantryPoweredFlightWingsTest {
         @Test
         @DisplayName("VTOL infantry has VTOL capability inherently")
         void vtolInfantryHasVTOLCapabilityInherently() {
-            Infantry infantry = createInfantry(EntityMovementMode.VTOL, false);
+            ConvInfantry infantry = createInfantry(EntityMovementMode.VTOL, false);
             infantry.setGame(createGameWithAtmosphere(Atmosphere.STANDARD));
 
             assertTrue(infantry.hasVTOLMovementCapability());
@@ -452,7 +453,7 @@ class InfantryPoweredFlightWingsTest {
         @Test
         @DisplayName("Powered flight in vacuum has no VTOL capability")
         void poweredFlightInVacuumNoVTOLCapability() {
-            Infantry infantry = createInfantry(EntityMovementMode.INF_LEG, true);
+            ConvInfantry infantry = createInfantry(EntityMovementMode.INF_LEG, true);
             infantry.setGame(createGameWithAtmosphere(Atmosphere.VACUUM));
 
             assertFalse(infantry.hasVTOLMovementCapability());
@@ -466,7 +467,7 @@ class InfantryPoweredFlightWingsTest {
         @Test
         @DisplayName("Powered flight infantry returns 2 VTOL MP")
         void poweredFlightReturns2VTOLMP() {
-            Infantry infantry = createInfantry(EntityMovementMode.INF_LEG, true);
+            ConvInfantry infantry = createInfantry(EntityMovementMode.INF_LEG, true);
             infantry.setGame(createGameWithAtmosphere(Atmosphere.STANDARD));
 
             assertEquals(2, infantry.getVTOLMP());
@@ -475,7 +476,7 @@ class InfantryPoweredFlightWingsTest {
         @Test
         @DisplayName("Infantry without powered flight returns 0 VTOL MP")
         void withoutPoweredFlightReturns0VTOLMP() {
-            Infantry infantry = createInfantry(EntityMovementMode.INF_LEG, false);
+            ConvInfantry infantry = createInfantry(EntityMovementMode.INF_LEG, false);
             infantry.setGame(createGameWithAtmosphere(Atmosphere.STANDARD));
 
             assertEquals(0, infantry.getVTOLMP());
@@ -484,7 +485,7 @@ class InfantryPoweredFlightWingsTest {
         @Test
         @DisplayName("Powered flight in vacuum returns 0 VTOL MP")
         void poweredFlightInVacuumReturns0VTOLMP() {
-            Infantry infantry = createInfantry(EntityMovementMode.INF_LEG, true);
+            ConvInfantry infantry = createInfantry(EntityMovementMode.INF_LEG, true);
             infantry.setGame(createGameWithAtmosphere(Atmosphere.VACUUM));
 
             assertEquals(0, infantry.getVTOLMP());

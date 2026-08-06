@@ -43,8 +43,8 @@ import megamek.common.compute.Compute;
 import megamek.common.equipment.enums.MiscTypeFlag;
 import megamek.common.internationalization.I18n;
 import megamek.common.rolls.Roll;
+import megamek.common.units.ConvInfantry;
 import megamek.common.units.Entity;
-import megamek.common.units.Infantry;
 import megamek.common.units.Mek;
 import megamek.server.totalWarfare.TWGameManager;
 
@@ -169,15 +169,14 @@ public class HazardousLiquidPoolUtil {
 
     /**
      * Infantry units take more or less damage depending on if they have XCT training and the appropriate gear
-     *
      */
     public static double getHazardousLiquidPoolDamageDivisorForInfantry(Entity entity) {
         // If infantry have XCT training and appropriate gear they take 1/3 damage
         // Otherwise they take double damage.
         // BA take damage as normal.
-        if (entity.isInfantry() && !entity.isBattleArmor() && entity instanceof Infantry inf) {
-            if (inf.hasSpecialization(Infantry.XCT) && inf.getArmorKit() != null && inf.getArmorKit()
-                  .hasFlag(MiscTypeFlag.S_TOXIC_ATMOSPHERE)) {
+        if (entity instanceof ConvInfantry inf) {
+            if (inf.hasSpecialization(ConvInfantry.XCT) && inf.getArmorKit() != null
+                  && inf.getArmorKit().hasFlag(MiscTypeFlag.S_TOXIC_ATMOSPHERE)) {
                 return 3.0;
             } else {
                 return .5;

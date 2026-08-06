@@ -34,14 +34,17 @@ package megamek.ai.dataset;
 
 import static org.apache.commons.lang3.ObjectUtils.firstNonNull;
 
-import megamek.common.units.Entity;
-import megamek.common.game.Game;
-import megamek.common.equipment.INarcPod;
-import megamek.common.units.UnitRole;
+import java.util.EnumSet;
+
 import megamek.common.actions.AbstractAttackAction;
 import megamek.common.actions.ArtilleryAttackAction;
 import megamek.common.actions.WeaponAttackAction;
 import megamek.common.enums.AimingMode;
+import megamek.common.equipment.AmmoType.Munitions;
+import megamek.common.equipment.INarcPod;
+import megamek.common.game.Game;
+import megamek.common.units.Entity;
+import megamek.common.units.UnitRole;
 
 /**
  * Flexible container for unit attack data using a map-based approach with enum keys.
@@ -79,7 +82,8 @@ public class UnitAttack extends EntityDataMap<UnitAttack.Field> {
         GTA,
         TO_HIT,
         TURNS_TO_HIT,
-        SPOTTER_ID
+        SPOTTER_ID,
+        MUNITION
     }
 
     /**
@@ -177,22 +181,25 @@ public class UnitAttack extends EntityDataMap<UnitAttack.Field> {
               .put(Field.GTA, false)
               .put(Field.TO_HIT, 0.0)
               .put(Field.TURNS_TO_HIT, 0)
-              .put(Field.SPOTTER_ID, -1);
+              .put(Field.SPOTTER_ID, -1)
+              .put(Field.MUNITION, "NONE");
 
         // Attack-specific information
         if (attackAction instanceof ArtilleryAttackAction artilleryAttackAction) {
             if (!artilleryAttackAction.getSpotterIds().isEmpty()) {
-                map.put(Field.SPOTTER_ID, artilleryAttackAction.getSpotterIds().get(0));
+                map.put(Field.SPOTTER_ID, artilleryAttackAction.getSpotterIds().getFirst());
             }
             map.put(Field.TURNS_TO_HIT, artilleryAttackAction.getTurnsTilHit())
                   .put(Field.TO_HIT, artilleryAttackAction.toHit(game).getValue())
-                  .put(Field.AMMO_ID, artilleryAttackAction.getAmmoId());
+                  .put(Field.AMMO_ID, artilleryAttackAction.getAmmoId())
+                  .put(Field.MUNITION, munitionLabel(artilleryAttackAction.getAmmoMunitionType()));
         } else if (attackAction instanceof WeaponAttackAction weaponAttackAction) {
             map.put(Field.TO_HIT, weaponAttackAction.toHit(game).getValue())
                   .put(Field.AIMING_LOCATION, weaponAttackAction.getAimedLocation())
                   .put(Field.AIMING_MODE, firstNonNull(weaponAttackAction.getAimingMode(), AimingMode.NONE))
                   .put(Field.AMMO_ID, weaponAttackAction.getAmmoId())
-                  .put(Field.WEAPON_ID, weaponAttackAction.getWeaponId());
+                  .put(Field.WEAPON_ID, weaponAttackAction.getWeaponId())
+                  .put(Field.MUNITION, munitionLabel(weaponAttackAction.getAmmoMunitionType()));
 
             boolean ata = weaponAttackAction.isAirToAir(game);
             boolean atg = weaponAttackAction.isAirToGround(game);
@@ -206,5 +213,45 @@ public class UnitAttack extends EntityDataMap<UnitAttack.Field> {
         }
 
         return map;
+    }
+
+    /**
+     * @param munitions The munition type set recorded on an attack (may be empty for non-ammo weapons)
+     *
+     * @return A short, stable label for the dominant munition (e.g. {@code HOMING}, {@code FAE}), defaulting to
+     *       {@code STANDARD}, for at-a-glance reading of the artillery dataset TSV
+     */
+    private static String munitionLabel(EnumSet<Munitions> munitions) {
+        if ((munitions == null) || munitions.isEmpty() || munitions.contains(Munitions.M_STANDARD)) {
+            return "STANDARD";
+        }
+        if (munitions.contains(Munitions.M_HOMING)) {
+            return "HOMING";
+        }
+        if (munitions.contains(Munitions.M_CLUSTER)) {
+            return "CLUSTER";
+        }
+        if (munitions.contains(Munitions.M_FAE)) {
+            return "FAE";
+        }
+        if (munitions.contains(Munitions.M_FASCAM)) {
+            return "FASCAM";
+        }
+        if (munitions.contains(Munitions.M_INFERNO_IV)) {
+            return "INFERNO";
+        }
+        if (munitions.contains(Munitions.M_VIBRABOMB_IV)) {
+            return "VIBRABOMB";
+        }
+        if (munitions.contains(Munitions.M_SMOKE)) {
+            return "SMOKE";
+        }
+        if (munitions.contains(Munitions.M_FLARE)) {
+            return "FLARE";
+        }
+        if (munitions.contains(Munitions.M_ADA)) {
+            return "ADA";
+        }
+        return munitions.iterator().next().name();
     }
 }

@@ -42,6 +42,8 @@ import java.util.Vector;
 
 import megamek.common.LosEffects;
 import megamek.common.Report;
+import megamek.common.annotations.Nullable;
+import megamek.common.board.Board;
 import megamek.common.board.Coords;
 import megamek.common.equipment.INarcPod;
 import megamek.common.equipment.Minefield;
@@ -144,6 +146,32 @@ public final class ArtilleryHandlerHelper {
         for (Minefield mf : mfRemoved) {
             gameManager.removeMinefield(mf);
         }
+    }
+
+    /**
+     * Finds the board-edge hex an artillery round crossed when it scattered off the board: the last on-board hex along
+     * the straight line from where it was aimed to the (off-board) hex it scattered to. The board view can then draw
+     * the drift arrow to that edge hex, showing the direction the round drifted off, since there is no on-board landing
+     * hex.
+     *
+     * @param board           The board the round was fired onto
+     * @param aimedHex        The on-board hex the round was aimed at (the drift line's origin)
+     * @param offBoardScatter The off-board hex the round scattered to
+     *
+     * @return The last on-board hex along the line toward {@code offBoardScatter} (the edge it crossed), or
+     *       {@code null} if {@code aimedHex} is not even on the board
+     */
+    public static @Nullable Coords nearestOnBoardHexTowardOffBoard(Board board, Coords aimedHex,
+          Coords offBoardScatter) {
+        Coords lastOnBoard = board.contains(aimedHex) ? aimedHex : null;
+        for (Coords coords : Coords.intervening(aimedHex, offBoardScatter)) {
+            if (board.contains(coords)) {
+                lastOnBoard = coords;
+            } else {
+                break;
+            }
+        }
+        return lastOnBoard;
     }
 
     private ArtilleryHandlerHelper() {}

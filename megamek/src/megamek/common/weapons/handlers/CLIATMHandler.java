@@ -1,6 +1,6 @@
 /*
  * Copyright (c) 2005 - Ben Mazur (bmazur@sev.org).
- * Copyright (C) 2013-2025 The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2013-2026 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -43,6 +43,7 @@ import megamek.common.RangeType;
 import megamek.common.Report;
 import megamek.common.ToHitData;
 import megamek.common.actions.WeaponAttackAction;
+import megamek.common.annotations.Nullable;
 import megamek.common.battleArmor.BattleArmor;
 import megamek.common.board.Coords;
 import megamek.common.compute.Compute;
@@ -59,19 +60,24 @@ import megamek.common.options.OptionsConstants;
 import megamek.common.planetaryConditions.PlanetaryConditions;
 import megamek.common.rolls.TargetRoll;
 import megamek.common.units.Aero;
+import megamek.common.units.ConvInfantry;
 import megamek.common.units.Entity;
 import megamek.common.units.IBuilding;
 import megamek.common.units.Infantry;
 import megamek.common.units.Mek;
+import megamek.common.units.ProtoMek;
 import megamek.common.units.Tank;
 import megamek.common.units.Targetable;
 import megamek.common.weapons.Weapon;
+import megamek.logging.MMLogger;
 import megamek.server.totalWarfare.TWGameManager;
 
 /**
  * @author Sebastian Brocks, modified by Greg
  */
 public class CLIATMHandler extends ATMHandler {
+    private static final MMLogger LOGGER = MMLogger.create(CLIATMHandler.class);
+
     @Serial
     private static final long serialVersionUID = 5476183194060709574L;
     boolean isAngelECMAffected;
@@ -110,6 +116,21 @@ public class CLIATMHandler extends ATMHandler {
                   ((Infantry) target).isMechanized(),
                   toHit.getThruBldg() != null, weaponEntity.getId(), calcDmgPerHitReport);
 
+            // IMP missiles deal double damage to cybernetically-enhanced infantry (IO p.61).
+            if (ammoType.getMunitionType().contains(AmmoType.Munitions.M_IATM_IMP)
+                  && (target instanceof ConvInfantry convInfantry)
+                  && convInfantry.isCyberneticallyEnhanced()) {
+                toReturn *= 2;
+                // Report the doubling so the damage progression is clear (e.g. 2 -> 4 before the
+                // infantry armor divisor reduces it again). Without this line the doubled value
+                // appears with no explanation.
+                Report doublingReport = new Report(6094);
+                doublingReport.subject = subjectId;
+                doublingReport.indent(2);
+                doublingReport.add((int) toReturn);
+                calcDmgPerHitReport.addElement(doublingReport);
+            }
+
             // some question here about "partial streak missiles"
             if (streakInactive()) {
                 toReturn = applyGlancingBlowModifier(toReturn, true);
@@ -131,9 +152,20 @@ public class CLIATMHandler extends ATMHandler {
         // compute amount of missiles hit - this is the same for all ATM ammo types.
         int hits = calcMissileHits(vPhaseReport);
 
-        // If we use IIW or IMP we are done.
-        if ((ammoType.getMunitionType().contains(AmmoType.Munitions.M_IATM_IIW))
-              || (ammoType.getMunitionType().contains(AmmoType.Munitions.M_IATM_IMP))) {
+        // IIW warheads resolve as standard Infernos (WoR p.202 -> TW p.141): every inferno missile
+        // that strikes conventional infantry eliminates three troopers. Against infantry,
+        // calcMissileHits() collapses the salvo into a single lump (correct for standard/HE damage,
+        // wrong for infernos), so deliver one inferno missile per missile in the rack instead - this
+        // matches the count already reported by calcMissileHits() and the standard SRM inferno rule.
+        if (ammoType.getMunitionType().contains(AmmoType.Munitions.M_IATM_IIW)) {
+            if (target.isConventionalInfantry()) {
+                return infernoMissilesVersusInfantry();
+            }
+            return hits;
+        }
+
+        // If we use IMP we are done (its infantry lump is handled with directBlowInfantryDamage).
+        if (ammoType.getMunitionType().contains(AmmoType.Munitions.M_IATM_IMP)) {
             return hits;
         }
 
@@ -163,11 +195,13 @@ public class CLIATMHandler extends ATMHandler {
 
         // conventional infantry gets hit in one lump
         // BAs do one lump of damage per BA suit
+        // The infantry hit line keeps the default line break (Report.newlines = 1) so the following
+        // damage or destruction reports render on their own line, matching the standard SRM/LRM
+        // inferno output.
         if (target.isConventionalInfantry()) {
             if (attackingEntity instanceof BattleArmor) {
                 bSalvo = true;
                 Report report = new Report(3325);
-                report.newlines = 0;
                 report.subject = subjectId;
                 report.add(weaponType.getRackSize() * ((BattleArmor) attackingEntity).getShootingStrength());
                 report.add(sSalvoType);
@@ -177,7 +211,6 @@ public class CLIATMHandler extends ATMHandler {
             }
             Report report = new Report(3325);
             report.subject = subjectId;
-            report.newlines = 0;
             report.add(weaponType.getRackSize());
             report.add(sSalvoType);
             report.add(toHit.getTableDesc());
@@ -325,6 +358,24 @@ public class CLIATMHandler extends ATMHandler {
         vPhaseReport.addElement(r);
         bSalvo = true;
         return missilesHit;
+    }
+
+    /**
+     * Counts the inferno missiles delivered to a conventional infantry target by an IIW salvo. Per WoR p.202 and TW
+     * p.141, every inferno missile that strikes conventional infantry eliminates three troopers, so the whole rack
+     * strikes as individual inferno missiles rather than a single lumped hit (mirroring the standard SRM inferno
+     * behaviour). BattleArmor cannot mount iATMs, but the shooting-strength multiplier is kept for parity with the
+     * count reported in {@link #calcMissileHits(Vector)}.
+     *
+     * @return the number of inferno missiles to deliver to the conventional infantry target
+     */
+    private int infernoMissilesVersusInfantry() {
+        int infernoMissiles = (attackingEntity instanceof BattleArmor battleArmor)
+              ? weaponType.getRackSize() * battleArmor.getShootingStrength()
+              : weaponType.getRackSize();
+        LOGGER.debug("[iATM IIW] {} inferno missile(s) vs conventional infantry {} (3 troopers each)",
+              infernoMissiles, target.getDisplayName());
+        return infernoMissiles;
     }
 
     // I don't think I need to change anything here for iATMs. Seems just to
@@ -840,6 +891,10 @@ public class CLIATMHandler extends ATMHandler {
                 vPhaseReport.addElement(report);
             }
 
+            // The IMP effect scales with the total warheads that hit, so capture it before the
+            // damage loop decrements the running count.
+            int impWarheads = Math.max(0, hits - Math.max(0, bldgAbsorbs));
+
             // for each cluster of hits, do a chunk of damage
             while (hits > 0) {
                 int nDamage;
@@ -870,19 +925,78 @@ public class CLIATMHandler extends ATMHandler {
                     gameManager.creditKill(entityTarget, attackingEntity);
                     hits -= nCluster;
                     firstHit = false;
-                    // do IMP stuff here!
-                    if ((entityTarget instanceof Mek)
-                          || (entityTarget instanceof Aero)
-                          || (entityTarget instanceof Tank)) {
-                        entityTarget.addIMPHits(Math.max(0,
-                              hits - Math.max(0, bldgAbsorbs)));
-                    }
                 }
             } // Handle the next cluster.
+
+            // Apply the IMP effect once, based on the total warheads that hit. Battle armor and
+            // conventional infantry have their own rules; IMP has no effect against large craft
+            // (DropShip/JumpShip/WarShip/SpaceStation).
+            if (entityTarget instanceof BattleArmor battleArmor) {
+                // Each warhead disables one trooper through the End Phase of the following turn.
+                boolean wasDisabled = battleArmor.getImprovedMagneticPulseDisabledTroopers() > 0;
+                int disabledTroopers = battleArmor.applyImprovedMagneticPulseTrooperDisable(impWarheads);
+                if (disabledTroopers > 0) {
+                    Report disableReport = new Report(3346);
+                    disableReport.subject = subjectId;
+                    disableReport.indent(2);
+                    disableReport.add(disabledTroopers);
+                    vPhaseReport.addElement(disableReport);
+                }
+                if (!wasDisabled && (battleArmor.getImprovedMagneticPulseDisabledTroopers() > 0)) {
+                    gameManager.sendMagneticPulseToast(battleArmor, true, true);
+                }
+            } else if (entityTarget instanceof ConvInfantry convInfantry) {
+                // Energy weapons are rendered inoperative (only meaningful for energy-armed platoons);
+                // the damage doubling for cybernetic platoons is applied in calcDamagePerHit. Skip when
+                // no warheads actually reached the target (e.g. fully absorbed by a building).
+                if ((impWarheads > 0) && convInfantry.isUsingEnergyWeapons()) {
+                    boolean wasDisabled = convInfantry.isEnergyWeaponsDisabled();
+                    convInfantry.applyImpEnergyWeaponDisable();
+                    Report disableReport = new Report(3347);
+                    disableReport.subject = subjectId;
+                    disableReport.indent(2);
+                    vPhaseReport.addElement(disableReport);
+                    if (!wasDisabled) {
+                        gameManager.sendMagneticPulseToast(convInfantry, true, true);
+                    }
+                }
+            } else if (appliesImprovedMagneticPulseMovementInterference(entityTarget)) {
+                int impModifierBefore = entityTarget.getImpToHitModifier();
+                entityTarget.addIMPHits(impWarheads);
+                if (impWarheads > 0) {
+                    Report interferenceReport = new Report(3349);
+                    interferenceReport.subject = subjectId;
+                    interferenceReport.indent(2);
+                    vPhaseReport.addElement(interferenceReport);
+                }
+                if ((impModifierBefore == 0) && (entityTarget.getImpToHitModifier() > 0)) {
+                    gameManager.sendMagneticPulseToast(entityTarget, true, true);
+                }
+            }
             Report.addNewline(vPhaseReport);
             return false;
         } else {
             return super.handle(phase, vPhaseReport);
         }
+    }
+
+    /**
+     * Determines whether the target is a unit type that suffers the IMP movement, to-hit, and ECM interference effects.
+     * These apply to {@link Mek}, {@link Tank}, {@link ProtoMek}, and {@link Aero} units, but never to large craft
+     * (DropShips, JumpShips, WarShips, and space stations are immune per the IO IMP rules). BattleArmor and
+     * conventional infantry are handled by their own branches, so they are not considered here.
+     *
+     * @param entityTarget the unit that was hit, may be {@code null}
+     *
+     * @return {@code true} if the IMP interference effects apply to {@code entityTarget}
+     */
+    private boolean appliesImprovedMagneticPulseMovementInterference(@Nullable Entity entityTarget) {
+        if ((entityTarget == null) || entityTarget.isLargeCraft()) {
+            return false;
+        }
+        return (entityTarget instanceof Mek)
+              || (entityTarget instanceof Tank)
+              || (entityTarget instanceof ProtoMek)
+              || (entityTarget instanceof Aero);
     }
 }

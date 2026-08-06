@@ -150,7 +150,7 @@ public class ExternalCargoTest {
             assertEquals(MOCK_CARRYABLE_WEIGHT_1, externalCargo.getCarriedTonnage());
             assertEquals(TEST_WEIGHT - MOCK_CARRYABLE_WEIGHT_1, externalCargo.getUnused());
             assertEquals(1, externalCargo.getCarryables().size());
-            assertEquals(cargo, externalCargo.getCarryables().get(0));
+            assertEquals(cargo, externalCargo.getCarryables().getFirst());
         }
 
 
@@ -238,7 +238,7 @@ public class ExternalCargoTest {
 
             // (Verify we loaded properly)
             assertEquals(1, externalCargo.getCarryables().size());
-            assertEquals(cargo, externalCargo.getCarryables().get(0));
+            assertEquals(cargo, externalCargo.getCarryables().getFirst());
 
             // Act
             boolean unloadedCargo = externalCargo.unloadCarryable(cargo);
@@ -263,7 +263,7 @@ public class ExternalCargoTest {
 
             // (Verify we loaded properly)
             assertEquals(1, externalCargo.getCarryables().size());
-            assertEquals(cargo, externalCargo.getCarryables().get(0));
+            assertEquals(cargo, externalCargo.getCarryables().getFirst());
 
             // Act
             externalCargo.resetTransporter();
@@ -303,7 +303,7 @@ public class ExternalCargoTest {
 
         @ParameterizedTest
         @MethodSource(value = "entityMovementData")
-        void lightLoadTest(int baseEntityMP, int lessThanQuarterWeightMPReduction, int heavyLoadMPReduction) {
+        void lightLoadTest(int baseEntityMP, int lessThanQuarterWeightMPReduction) {
             // Assemble
             when(mockCarrier.getDistinctCarriedObjects()).thenReturn(new ArrayList<>());
             when(mockCarrier.getOriginalWalkMP()).thenReturn(baseEntityMP);
@@ -320,13 +320,12 @@ public class ExternalCargoTest {
             // Assert
             assertEquals(lessThanQuarterWeightMPReduction, mpReduction);
             assertEquals(1, roofRack.getCarryables().size());
-            assertEquals(cargo, roofRack.getCarryables().get(0));
+            assertEquals(cargo, roofRack.getCarryables().getFirst());
         }
 
         @ParameterizedTest
         @MethodSource(value = "entityMovementData")
-        void lightLoadAndCarriedObjectTest(int baseEntityMP, int lessThanQuarterWeightMPReduction,
-              int heavyLoadMPReduction) {
+        void lightLoadAndCarriedObjectTest(int baseEntityMP, int lessThanQuarterWeightMPReduction) {
             // Assemble
             when(mockCarrier.getOriginalWalkMP()).thenReturn(baseEntityMP);
 
@@ -349,7 +348,7 @@ public class ExternalCargoTest {
             assertEquals(0, mpReductionBefore);
             assertEquals(lessThanQuarterWeightMPReduction, mpReduction);
             assertEquals(1, roofRack.getCarryables().size());
-            assertEquals(cargo, roofRack.getCarryables().get(0));
+            assertEquals(cargo, roofRack.getCarryables().getFirst());
         }
 
         @ParameterizedTest
@@ -372,7 +371,7 @@ public class ExternalCargoTest {
             // Assert
             assertEquals(heavyLoadMPReduction, mpReduction);
             assertEquals(1, roofRack.getCarryables().size());
-            assertEquals(cargo, roofRack.getCarryables().get(0));
+            assertEquals(cargo, roofRack.getCarryables().getFirst());
         }
 
         @ParameterizedTest
@@ -401,7 +400,7 @@ public class ExternalCargoTest {
             assertEquals(0, mpReductionBefore);
             assertEquals(heavyLoadMPReduction, mpReduction);
             assertEquals(1, roofRack.getCarryables().size());
-            assertEquals(cargo, roofRack.getCarryables().get(0));
+            assertEquals(cargo, roofRack.getCarryables().getFirst());
         }
 
         @Test

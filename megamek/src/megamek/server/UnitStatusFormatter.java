@@ -147,21 +147,15 @@ public abstract class UnitStatusFormatter {
     }
 
     private static String formatArmor(Entity e) {
-        if (e instanceof Mek) {
-            return formatArmorMek((Mek) e);
-        } else if (e instanceof GunEmplacement) {
-            return formatArmorGunEmplacement((GunEmplacement) e);
-        } else if (e instanceof Tank) {
-            return formatArmorTank((Tank) e);
-        } else if (e instanceof BattleArmor) {
-            return formatArmorBattleArmor((BattleArmor) e);
-        } else if (e instanceof Infantry) {
-            return formatArmorInfantry((Infantry) e);
-        } else if (e instanceof ProtoMek) {
-            return formatArmorProtoMek((ProtoMek) e);
-        } else {
-            return "";
-        }
+        return switch (e) {
+            case Mek mek -> formatArmorMek(mek);
+            case GunEmplacement gunEmplacement -> formatArmorGunEmplacement(gunEmplacement);
+            case Tank tank -> formatArmorTank(tank);
+            case BattleArmor battleArmor -> formatArmorBattleArmor(battleArmor);
+            case Infantry infantry -> formatArmorInfantry(infantry);
+            case ProtoMek protoMek -> formatArmorProtoMek(protoMek);
+            case null, default -> "";
+        };
     }
 
     private static String formatArmorTank(Tank t) {

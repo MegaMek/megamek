@@ -142,6 +142,7 @@ public class HitData {
         this.heat_weapon = heatWeapon;
     }
 
+    @Deprecated(since = "0.51.0", forRemoval = true)
     public void setFromFront(boolean dir) {
         fromFront = dir;
     }
@@ -307,6 +308,7 @@ public class HitData {
         burstFire = b;
     }
 
+    @Deprecated(since = "0.51.0", forRemoval = true)
     public boolean isBurstFire() {
         return burstFire;
     }

@@ -68,6 +68,7 @@ public class SBFReportEntry implements ReportEntry {
         Report.setupStylesheet(pane);
     }
 
+    @Deprecated(since = "0.51.0", forRemoval = true)
     public static void setupStylesheet(StyleSheet styleSheet) {
         GUIPreferences GUIP = GUIPreferences.getInstance();
         int size = UIUtil.scaleForGUI(UIUtil.FONT_SCALE1);
@@ -180,6 +181,7 @@ public class SBFReportEntry implements ReportEntry {
         return this;
     }
 
+    @Deprecated(since = "0.51.0", forRemoval = true)
     public SBFReportEntry endSpace() {
         endSpace = true;
         return this;

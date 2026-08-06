@@ -60,8 +60,8 @@ class InfantryDermalCamoArmorTest {
     /**
      * Creates an Infantry unit with the specified movement mode and optional abilities.
      */
-    private Infantry createInfantry(EntityMovementMode movementMode, boolean hasDermalCamo, boolean hasTSM) {
-        Infantry infantry = new Infantry();
+    private ConvInfantry createInfantry(EntityMovementMode movementMode, boolean hasDermalCamo, boolean hasTSM) {
+        ConvInfantry infantry = new ConvInfantry();
         infantry.setId(1);
         infantry.setMovementMode(movementMode);
         infantry.setSquadSize(7);
@@ -92,7 +92,7 @@ class InfantryDermalCamoArmorTest {
     private void addArmorKit(Infantry infantry, String armorKitName) throws LocationFullException {
         EquipmentType armorKit = EquipmentType.get(armorKitName);
         if (armorKit != null) {
-            infantry.addEquipment(armorKit, Infantry.LOC_INFANTRY);
+            infantry.addEquipment(armorKit, ConvInfantry.LOC_INFANTRY);
         }
     }
 
@@ -103,7 +103,7 @@ class InfantryDermalCamoArmorTest {
         @Test
         @DisplayName("Base infantry without augmentations has divisor 1.0")
         void baseInfantryHasDivisorOne() {
-            Infantry infantry = createInfantry(EntityMovementMode.INF_LEG, false, false);
+            ConvInfantry infantry = createInfantry(EntityMovementMode.INF_LEG, false, false);
 
             assertEquals(1.0, infantry.calcDamageDivisor(), 0.001);
         }
@@ -111,7 +111,7 @@ class InfantryDermalCamoArmorTest {
         @Test
         @DisplayName("TSM implant alone reduces divisor to 0.5")
         void tsmImplantReducesDivisor() {
-            Infantry infantry = createInfantry(EntityMovementMode.INF_LEG, false, true);
+            ConvInfantry infantry = createInfantry(EntityMovementMode.INF_LEG, false, true);
 
             assertEquals(0.5, infantry.calcDamageDivisor(), 0.001);
         }
@@ -119,7 +119,7 @@ class InfantryDermalCamoArmorTest {
         @Test
         @DisplayName("Dermal Camo alone keeps divisor at 1.0")
         void dermalCamoAloneKeepsDivisorOne() {
-            Infantry infantry = createInfantry(EntityMovementMode.INF_LEG, true, false);
+            ConvInfantry infantry = createInfantry(EntityMovementMode.INF_LEG, true, false);
 
             assertEquals(1.0, infantry.calcDamageDivisor(), 0.001);
         }
@@ -127,7 +127,7 @@ class InfantryDermalCamoArmorTest {
         @Test
         @DisplayName("Dermal Camo with TSM prevents 0.5 penalty, keeps divisor at 1.0")
         void dermalCamoWithTsmPreventsPenalty() {
-            Infantry infantry = createInfantry(EntityMovementMode.INF_LEG, true, true);
+            ConvInfantry infantry = createInfantry(EntityMovementMode.INF_LEG, true, true);
 
             assertEquals(1.0, infantry.calcDamageDivisor(), 0.001);
         }
@@ -140,7 +140,7 @@ class InfantryDermalCamoArmorTest {
         @Test
         @DisplayName("Leg infantry with Dermal Camo and no armor has stealth")
         void legInfantryWithDermalCamoHasStealth() {
-            Infantry infantry = createInfantry(EntityMovementMode.INF_LEG, true, false);
+            ConvInfantry infantry = createInfantry(EntityMovementMode.INF_LEG, true, false);
 
             assertTrue(infantry.hasDermalCamoStealth());
         }
@@ -148,7 +148,7 @@ class InfantryDermalCamoArmorTest {
         @Test
         @DisplayName("Jump infantry with Dermal Camo and no armor has stealth")
         void jumpInfantryWithDermalCamoHasStealth() {
-            Infantry infantry = createInfantry(EntityMovementMode.INF_JUMP, true, false);
+            ConvInfantry infantry = createInfantry(EntityMovementMode.INF_JUMP, true, false);
 
             assertTrue(infantry.hasDermalCamoStealth());
         }
@@ -156,7 +156,7 @@ class InfantryDermalCamoArmorTest {
         @Test
         @DisplayName("Motorized infantry with Dermal Camo does NOT have stealth")
         void motorizedInfantryWithDermalCamoNoStealth() {
-            Infantry infantry = createInfantry(EntityMovementMode.INF_MOTORIZED, true, false);
+            ConvInfantry infantry = createInfantry(EntityMovementMode.INF_MOTORIZED, true, false);
 
             assertFalse(infantry.hasDermalCamoStealth());
         }
@@ -164,7 +164,7 @@ class InfantryDermalCamoArmorTest {
         @Test
         @DisplayName("Wheeled infantry with Dermal Camo does NOT have stealth")
         void wheeledInfantryWithDermalCamoNoStealth() {
-            Infantry infantry = createInfantry(EntityMovementMode.WHEELED, true, false);
+            ConvInfantry infantry = createInfantry(EntityMovementMode.WHEELED, true, false);
 
             assertFalse(infantry.hasDermalCamoStealth());
         }
@@ -172,7 +172,7 @@ class InfantryDermalCamoArmorTest {
         @Test
         @DisplayName("Leg infantry with Dermal Camo wearing armor kit does NOT have stealth")
         void legInfantryWithArmorKitNoStealth() throws LocationFullException {
-            Infantry infantry = createInfantry(EntityMovementMode.INF_LEG, true, false);
+            ConvInfantry infantry = createInfantry(EntityMovementMode.INF_LEG, true, false);
             addArmorKit(infantry, "Generic Infantry Kit");
 
             assertFalse(infantry.hasDermalCamoStealth());
@@ -181,7 +181,7 @@ class InfantryDermalCamoArmorTest {
         @Test
         @DisplayName("Leg infantry without Dermal Camo does NOT have stealth")
         void legInfantryWithoutDermalCamoNoStealth() {
-            Infantry infantry = createInfantry(EntityMovementMode.INF_LEG, false, false);
+            ConvInfantry infantry = createInfantry(EntityMovementMode.INF_LEG, false, false);
 
             assertFalse(infantry.hasDermalCamoStealth());
         }

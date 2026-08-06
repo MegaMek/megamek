@@ -1,6 +1,6 @@
 /*
  * Copyright (c) 2000-2011 - Ben Mazur (bmazur@sev.org)
- * Copyright (C) 2013-2025 The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2013-2026 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -35,6 +35,7 @@ package megamek.client.bot.princess;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyBoolean;
@@ -43,11 +44,16 @@ import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.ArgumentMatchers.nullable;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.never;
+import static org.mockito.Mockito.spy;
+import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
+import java.util.UUID;
 
 import megamek.client.bot.princess.PathRanker.PathRankerType;
 import megamek.common.Facing;
@@ -58,6 +64,7 @@ import megamek.common.board.Board;
 import megamek.common.board.Coords;
 import megamek.common.compute.Compute;
 import megamek.common.enums.GamePhase;
+import megamek.common.enums.MoveStepType;
 import megamek.common.equipment.AmmoType;
 import megamek.common.equipment.EquipmentType;
 import megamek.common.equipment.IArmorState;
@@ -67,6 +74,7 @@ import megamek.common.equipment.WeaponType;
 import megamek.common.exceptions.LocationFullException;
 import megamek.common.game.Game;
 import megamek.common.game.GameTurn;
+import megamek.common.moves.MovePath;
 import megamek.common.moves.MoveStep;
 import megamek.common.options.GameOptions;
 import megamek.common.options.OptionsConstants;
@@ -75,6 +83,7 @@ import megamek.common.rolls.PilotingRollData;
 import megamek.common.units.*;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 
 /**
@@ -135,6 +144,27 @@ class PrincessTest {
 
         // Test a null ticks argument.
         assertEquals(0, Princess.calculateAdjustment(null));
+    }
+
+    @Test
+    void testGetMessageGuardsNonFiniteEstimate() {
+        Entity mockEntity = mock(Entity.class);
+        when(mockEntity.getChassis()).thenReturn("Flashman");
+        List<MovePath> paths = new ArrayList<>();
+
+        // A +Infinity estimate (produced when a prior zero-path turn divided elapsed time by 0) must not
+        // surface as the Integer.MAX_VALUE completion time that results from casting the double to int.
+        String infiniteMessage = Princess.getMessage(mockEntity, Double.POSITIVE_INFINITY, paths);
+        assertTrue(infiniteMessage.contains("unknown."));
+        assertFalse(infiniteMessage.contains(Integer.toString(Integer.MAX_VALUE)));
+
+        // NaN is likewise non-finite and must be reported as unknown rather than the 0 that (int) NaN yields.
+        String nanMessage = Princess.getMessage(mockEntity, Double.NaN, paths);
+        assertTrue(nanMessage.contains("unknown."));
+
+        // A normal finite estimate is still rendered as a seconds value.
+        String finiteMessage = Princess.getMessage(mockEntity, 12.0, paths);
+        assertTrue(finiteMessage.contains("12 seconds"));
     }
 
     @Test
@@ -375,7 +405,8 @@ class PrincessTest {
     @Test
     void testWantsToFallBack() {
         Entity mockMek = mock(BipedMek.class);
-        when(mockMek.isCrippled()).thenReturn(false);
+        // wantsToFallBack checks isCrippled(true), so crew-crippled Meks withdraw too
+        when(mockMek.isCrippled(true)).thenReturn(false);
 
         when(mockPrincess.wantsToFallBack(any(Entity.class))).thenCallRealMethod();
         when(mockPrincess.getForcedWithdrawal()).thenReturn(true);
@@ -398,7 +429,7 @@ class PrincessTest {
         assertFalse(mockPrincess.wantsToFallBack(mockMek));
 
         when(mockPrincess.getFleeBoard()).thenReturn(false);
-        when(mockMek.isCrippled()).thenReturn(true);
+        when(mockMek.isCrippled(true)).thenReturn(true);
         // Fall Back and Flee Board Disabled, Mek Crippled, Forced Withdrawal Enabled
         // Should Fall Back
         assertTrue(mockPrincess.wantsToFallBack(mockMek));
@@ -407,6 +438,49 @@ class PrincessTest {
         // Fall Back and Flee Board Disabled, Mek Crippled, Forced Withdrawal Disabled
         // Should Not Fall Back
         assertFalse(mockPrincess.wantsToFallBack(mockMek));
+    }
+
+    @Test
+    void testUpdateReturnFirePermissionGrantsFireAfterSameTurnAttack() {
+        Princess princess = spy(new Princess("TestPrincess", UUID.randomUUID().toString(), 1));
+        princess.getBehaviorSettings().setForcedWithdrawal(true);
+
+        // Crippled this turn AND attacked this turn: gains permission to return fire.
+        BipedMek crippledMek = mock(BipedMek.class);
+        when(crippledMek.getId()).thenReturn(10);
+        when(crippledMek.isCrippled(true)).thenReturn(true);
+        when(crippledMek.getAttackedByThisTurn()).thenReturn(Set.of(99));
+        when(crippledMek.getDisplayName()).thenReturn("Crippled Mek");
+
+        // Attacked but not crippled: no withdrawal, so no permission needed or granted.
+        BipedMek healthyMek = mock(BipedMek.class);
+        when(healthyMek.getId()).thenReturn(11);
+        when(healthyMek.isCrippled(true)).thenReturn(false);
+        when(healthyMek.getAttackedByThisTurn()).thenReturn(Set.of(99));
+
+        // Crippled but left alone: keeps holding fire.
+        BipedMek ignoredCrippledMek = mock(BipedMek.class);
+        when(ignoredCrippledMek.getId()).thenReturn(12);
+        when(ignoredCrippledMek.isCrippled(true)).thenReturn(true);
+        when(ignoredCrippledMek.getAttackedByThisTurn()).thenReturn(Set.of());
+
+        doReturn(List.of(crippledMek, healthyMek, ignoredCrippledMek)).when(princess).getEntitiesOwned();
+
+        // End-of-turn order: refresh the crippled set, then grant return-fire permission from it.
+        princess.refreshCrippledUnits();
+        try {
+            java.lang.reflect.Method method = Princess.class.getDeclaredMethod("updateReturnFirePermission");
+            method.setAccessible(true);
+            method.invoke(princess);
+        } catch (Exception exception) {
+            throw new RuntimeException("Failed to invoke updateReturnFirePermission", exception);
+        }
+
+        assertTrue(princess.canShootWhileFallingBack(crippledMek),
+              "a unit crippled and attacked in the same turn must be allowed to return fire");
+        assertFalse(princess.canShootWhileFallingBack(healthyMek));
+        assertFalse(princess.canShootWhileFallingBack(ignoredCrippledMek),
+              "a crippled unit no one attacks keeps holding its fire");
     }
 
     @Test
@@ -472,8 +546,8 @@ class PrincessTest {
         assertFalse(mockPrincess.mustFleeBoard(mockMek));
 
         // Even a crippled mek should not fall back unless fleeBoard or forcedWithdrawal
-        // is enabled
-        when(mockMek.isCrippled()).thenReturn(true);
+        // is enabled (mustFleeBoard checks isCrippled(true), so crew-crippled Meks count too)
+        when(mockMek.isCrippled(true)).thenReturn(true);
         assertFalse(mockPrincess.mustFleeBoard(mockMek));
 
         // Enabling forcedWithdrawal should cause fleeing, because mek is crippled
@@ -481,7 +555,7 @@ class PrincessTest {
         assertTrue(mockPrincess.mustFleeBoard(mockMek));
 
         // But forcedWithdrawal without a crippled mek should not flee
-        when(mockMek.isCrippled()).thenReturn(false);
+        when(mockMek.isCrippled(true)).thenReturn(false);
         assertFalse(mockPrincess.mustFleeBoard(mockMek));
 
         // If fleeBoard is true, all units falling back should flee
@@ -959,5 +1033,265 @@ class PrincessTest {
         assertFalse(aero.isShutDown());
         assertFalse(aero.isDoomed());
         assertTrue(mockPrincess.shouldAbandon(aero));
+    }
+
+    /**
+     * Tests building-based reinforcement logic and building entity retrieval.
+     */
+    @Nested
+    class InfantryCombatTests {
+        @Nested
+        class GetBuildingAtPositionTests {
+
+            @Test
+            void testReturnsBuilding_WhenBuildingAtPosition() {
+                // Arrange
+                Princess princess = spy(new Princess("TestPrincess", UUID.randomUUID().toString(), 1));
+                Game mockGame = mock(Game.class);
+                doReturn(mockGame).when(princess).getGame();
+
+                Coords position = new Coords(5, 5);
+                AbstractBuildingEntity mockBuilding = mock(AbstractBuildingEntity.class);
+                when(mockBuilding.getId()).thenReturn(100);
+
+                List<Entity> entitiesAtPosition = new ArrayList<>();
+                entitiesAtPosition.add(mockBuilding);
+                when(mockGame.getEntitiesVector(position)).thenReturn(entitiesAtPosition);
+
+                // Act
+                Entity result;
+                try {
+                    java.lang.reflect.Method method = Princess.class.getDeclaredMethod(
+                          "getBuildingAtPosition", Coords.class);
+                    method.setAccessible(true);
+                    result = (Entity) method.invoke(princess, position);
+                } catch (Exception e) {
+                    throw new RuntimeException("Failed to test getBuildingAtPosition", e);
+                }
+
+                // Assert
+                assertEquals(mockBuilding, result);
+            }
+
+            @Test
+            void testReturnsNull_WhenNoBuildingAtPosition() {
+                // Arrange
+                Princess princess = spy(new Princess("TestPrincess", UUID.randomUUID().toString(), 1));
+                Game mockGame = mock(Game.class);
+                doReturn(mockGame).when(princess).getGame();
+
+                Coords position = new Coords(5, 5);
+                Infantry mockInfantry = mock(Infantry.class);
+
+                List<Entity> entitiesAtPosition = new ArrayList<>();
+                entitiesAtPosition.add(mockInfantry);
+                when(mockGame.getEntitiesVector(position)).thenReturn(entitiesAtPosition);
+
+                // Act
+                Entity result;
+                try {
+                    java.lang.reflect.Method method = Princess.class.getDeclaredMethod(
+                          "getBuildingAtPosition", Coords.class);
+                    method.setAccessible(true);
+                    result = (Entity) method.invoke(princess, position);
+                } catch (Exception e) {
+                    throw new RuntimeException("Failed to test getBuildingAtPosition", e);
+                }
+
+                // Assert
+                assertNull(result);
+            }
+        }
+
+        @Nested
+        class FindEligibleInfantryCombatsToReinforceTests {
+
+            @Test
+            void testFindsCombat_WhenInSameBuilding() {
+                // Arrange
+                Princess princess = spy(new Princess("TestPrincess", UUID.randomUUID().toString(), 1));
+                Game mockGame = mock(Game.class);
+                doReturn(mockGame).when(princess).getGame();
+
+                AbstractBuildingEntity mockBuilding = mock(AbstractBuildingEntity.class);
+                when(mockBuilding.getId()).thenReturn(100);
+
+                Infantry searchingInfantry = mock(Infantry.class);
+                Coords infantryPos = new Coords(5, 5);
+                when(searchingInfantry.getPosition()).thenReturn(infantryPos);
+
+                List<Entity> entitiesAtInfantryPos = new ArrayList<>();
+                entitiesAtInfantryPos.add(mockBuilding);
+                when(mockGame.getEntitiesVector(infantryPos)).thenReturn(entitiesAtInfantryPos);
+
+                Infantry combatInfantry = mock(Infantry.class);
+                when(combatInfantry.getInfantryCombatTargetId()).thenReturn(100);
+
+                List<Entity> allEntities = new ArrayList<>();
+                allEntities.add(searchingInfantry);
+                allEntities.add(combatInfantry);
+                when(mockGame.getEntitiesVector()).thenReturn(allEntities);
+                when(mockGame.getEntity(100)).thenReturn(mockBuilding);
+
+                // Act
+                List<Integer> result;
+                try {
+                    java.lang.reflect.Method method = Princess.class.getDeclaredMethod(
+                          "findEligibleInfantryCombatsToReinforce", Entity.class);
+                    method.setAccessible(true);
+                    @SuppressWarnings("unchecked")
+                    List<Integer> temp = (List<Integer>) method.invoke(princess, searchingInfantry);
+                    result = temp;
+                } catch (Exception e) {
+                    throw new RuntimeException("Failed to test findEligibleInfantryCombatsToReinforce", e);
+                }
+
+                // Assert
+                assertEquals(1, result.size());
+                assertTrue(result.contains(100));
+            }
+
+            @Test
+            void testDoesNotFindCombat_WhenInDifferentBuilding() {
+                // Arrange
+                Princess princess = spy(new Princess("TestPrincess", UUID.randomUUID().toString(), 1));
+                Game mockGame = mock(Game.class);
+                doReturn(mockGame).when(princess).getGame();
+
+                AbstractBuildingEntity building1 = mock(AbstractBuildingEntity.class);
+                when(building1.getId()).thenReturn(100);
+
+                AbstractBuildingEntity building2 = mock(AbstractBuildingEntity.class);
+                when(building2.getId()).thenReturn(200);
+
+                Infantry searchingInfantry = mock(Infantry.class);
+                Coords infantryPos = new Coords(5, 5);
+                when(searchingInfantry.getPosition()).thenReturn(infantryPos);
+
+                List<Entity> entitiesAtInfantryPos = new ArrayList<>();
+                entitiesAtInfantryPos.add(building1);
+                when(mockGame.getEntitiesVector(infantryPos)).thenReturn(entitiesAtInfantryPos);
+
+                Infantry combatInfantry = mock(Infantry.class);
+                when(combatInfantry.getInfantryCombatTargetId()).thenReturn(200);
+
+                List<Entity> allEntities = new ArrayList<>();
+                allEntities.add(searchingInfantry);
+                allEntities.add(combatInfantry);
+                when(mockGame.getEntitiesVector()).thenReturn(allEntities);
+                when(mockGame.getEntity(200)).thenReturn(building2);
+
+                // Act
+                List<Integer> result;
+                try {
+                    java.lang.reflect.Method method = Princess.class.getDeclaredMethod(
+                          "findEligibleInfantryCombatsToReinforce", Entity.class);
+                    method.setAccessible(true);
+                    @SuppressWarnings("unchecked")
+                    List<Integer> temp = (List<Integer>) method.invoke(princess, searchingInfantry);
+                    result = temp;
+                } catch (Exception e) {
+                    throw new RuntimeException("Failed to test findEligibleInfantryCombatsToReinforce", e);
+                }
+
+                // Assert
+                assertEquals(0, result.size());
+            }
+
+            @Test
+            void testReturnsEmpty_WhenNotInBuilding() {
+                // Arrange
+                Princess princess = spy(new Princess("TestPrincess", UUID.randomUUID().toString(), 1));
+                Game mockGame = mock(Game.class);
+                doReturn(mockGame).when(princess).getGame();
+
+                Infantry searchingInfantry = mock(Infantry.class);
+                Coords infantryPos = new Coords(5, 5);
+                when(searchingInfantry.getPosition()).thenReturn(infantryPos);
+
+                List<Entity> entitiesAtInfantryPos = new ArrayList<>();
+                entitiesAtInfantryPos.add(searchingInfantry);
+                when(mockGame.getEntitiesVector(infantryPos)).thenReturn(entitiesAtInfantryPos);
+
+                // Act
+                List<Integer> result;
+                try {
+                    java.lang.reflect.Method method = Princess.class.getDeclaredMethod(
+                          "findEligibleInfantryCombatsToReinforce", Entity.class);
+                    method.setAccessible(true);
+                    @SuppressWarnings("unchecked")
+                    List<Integer> temp = (List<Integer>) method.invoke(princess, searchingInfantry);
+                    result = temp;
+                } catch (Exception e) {
+                    throw new RuntimeException("Failed to test findEligibleInfantryCombatsToReinforce", e);
+                }
+
+                // Assert
+                assertEquals(0, result.size());
+            }
+        }
+    }
+
+    /**
+     * Regression tests for {@link Princess#evadeIfNotFiring} (issue #8542): an airborne entity that
+     * is not an {@code IAero} (an ejected pilot descending by parachute) must not trigger the
+     * {@code IAero} cast, which threw a {@code ClassCastException} and hung the bot's whole turn.
+     */
+    @Nested
+    class EvadeIfNotFiringTests {
+
+        private void invokeEvadeIfNotFiring(Princess princess, MovePath path, boolean possibleToInflictDamage) {
+            try {
+                java.lang.reflect.Method method = Princess.class.getDeclaredMethod(
+                      "evadeIfNotFiring", MovePath.class, boolean.class);
+                method.setAccessible(true);
+                method.invoke(princess, path, possibleToInflictDamage);
+            } catch (java.lang.reflect.InvocationTargetException e) {
+                // Unwrap so the original failure (e.g. the ClassCastException this test guards
+                // against) surfaces directly instead of being hidden inside a reflection wrapper.
+                throw new RuntimeException("evadeIfNotFiring threw", e.getCause());
+            } catch (ReflectiveOperationException e) {
+                throw new RuntimeException("Failed to invoke evadeIfNotFiring", e);
+            }
+        }
+
+        @Test
+        void testDoesNotCrashAndDoesNotEvadeForAirborneEjectedPilot() {
+            // An ejected pilot (MekWarrior) is airborne (altitude > 0) but is not an IAero.
+            // Before the fix, reaching the IAero cast threw a ClassCastException here.
+            Princess princess = spy(new Princess("TestPrincess", UUID.randomUUID().toString(), 1));
+
+            MekWarrior ejectedPilot = mock(MekWarrior.class);
+            when(ejectedPilot.isAirborne()).thenReturn(true);
+
+            MovePath path = mock(MovePath.class);
+            when(path.getEntity()).thenReturn(ejectedPilot);
+
+            invokeEvadeIfNotFiring(princess, path, false);
+
+            verify(path, never()).addStep(MoveStepType.EVADE);
+        }
+
+        @Test
+        void testAddsEvadeForAirborneAeroThatCannotFire() {
+            // An airborne aerospace fighter that cannot inflict damage and can spare the thrust
+            // should still receive an EVADE step - the fix must not change this behavior.
+            Princess princess = spy(new Princess("TestPrincess", UUID.randomUUID().toString(), 1));
+
+            AeroSpaceFighter fighter = mock(AeroSpaceFighter.class);
+            when(fighter.isAirborne()).thenReturn(true);
+            when(fighter.isAero()).thenReturn(true);
+            when(fighter.isOutControlTotal()).thenReturn(false);
+            when(fighter.getCurrentThrust()).thenReturn(5);
+            when(fighter.getSI()).thenReturn(5);
+
+            MovePath path = mock(MovePath.class);
+            when(path.getEntity()).thenReturn(fighter);
+            when(path.getMpUsed()).thenReturn(0);
+
+            invokeEvadeIfNotFiring(princess, path, false);
+
+            verify(path).addStep(MoveStepType.EVADE);
+        }
     }
 }

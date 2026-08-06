@@ -34,9 +34,10 @@
 package megamek.common.actions;
 
 import megamek.common.compute.Compute;
-import megamek.common.game.Game;
 import megamek.common.equipment.WeaponType;
+import megamek.common.game.Game;
 
+@Deprecated(since = "0.51.0", forRemoval = true)
 public class OrbitToSurfaceAttackAction extends ArtilleryAttackAction {
 
     public OrbitToSurfaceAttackAction(int entityId, int targetType, int targetId, int weaponId, Game game) {

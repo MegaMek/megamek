@@ -42,7 +42,7 @@ import megamek.common.enums.TechBase;
 import megamek.common.enums.TechRating;
 import megamek.common.equipment.AmmoType;
 import megamek.common.equipment.enums.BombType.BombTypeEnum;
-import megamek.common.weapons.missiles.thuunderbolt.ThunderboltWeapon;
+import megamek.common.weapons.missiles.thunderbolt.ThunderboltWeapon;
 
 /**
  * @author Jay Lawson
@@ -59,8 +59,8 @@ public class CLAAAMissileWeapon extends ThunderboltWeapon {
     public CLAAAMissileWeapon() {
         super();
 
-        this.name = "AAA Missile";
-        this.setInternalName(BombTypeEnum.AAA.getWeaponName());
+        this.name = BombTypeEnum.AAA.getWeaponName();
+        this.setInternalName("Clan " + BombTypeEnum.AAA.getWeaponName());
         this.heat = 0;
         this.damage = 20;
         this.rackSize = 1;
@@ -87,13 +87,16 @@ public class CLAAAMissileWeapon extends ThunderboltWeapon {
         this.missileArmor = 20;
         cost = 9000;
         rulesRefs = "169, TO:AUE";
-        techAdvancement.setTechBase(TechBase.CLAN)
+        techAdvancement.setTechBase(TechBase.ALL)
               .setIntroLevel(false)
               .setUnofficial(false)
               .setTechRating(TechRating.E)
               .setAvailability(AvailabilityValue.X, AvailabilityValue.X, AvailabilityValue.F, AvailabilityValue.E)
               .setISAdvancement(3069, 3072, DATE_NONE, DATE_NONE, DATE_NONE)
               .setISApproximate(true, false, false, false, false)
-              .setPrototypeFactions(Faction.CWX);
+              .setClanAdvancement(DATE_NONE, 3072, DATE_NONE, DATE_NONE, DATE_NONE)
+              .setClanApproximate(false, false, false, false, false)
+              .setPrototypeFactions(Faction.LC, Faction.CWX)
+              .setProductionFactions(Faction.LC);
     }
 }

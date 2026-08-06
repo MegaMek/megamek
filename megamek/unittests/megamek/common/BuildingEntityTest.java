@@ -59,7 +59,7 @@ import org.mockito.Mockito;
 /**
  * Tests for {@link BuildingEntity} that aren't tested by {@link IBuildingTests}. If the method is from the
  * {@link Building} interface, the test should probably be in {@code IBuildingTests}.
- *
+ * <p>
  * Many of these tests do not have their final values - this class is not yet fully implemented.
  */
 public class BuildingEntityTest extends GameBoardTestCase {

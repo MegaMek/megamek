@@ -64,8 +64,8 @@ public class JTablePreference extends PreferenceElement implements MouseListener
         super(table.getName());
 
         if (!table.getRowSorter().getSortKeys().isEmpty()) {
-            setColumnIndex(table.getRowSorter().getSortKeys().get(0).getColumn());
-            setSortOrder(table.getRowSorter().getSortKeys().get(0).getSortOrder());
+            setColumnIndex(table.getRowSorter().getSortKeys().getFirst().getColumn());
+            setSortOrder(table.getRowSorter().getSortKeys().getFirst().getSortOrder());
         } else {
             setColumnIndex(0);
             setSortOrder(SortOrder.ASCENDING);

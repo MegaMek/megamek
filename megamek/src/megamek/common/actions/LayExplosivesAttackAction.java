@@ -52,6 +52,11 @@ public class LayExplosivesAttackAction extends AbstractAttackAction {
     @Serial
     private static final long serialVersionUID = -8799415934269686590L;
 
+    /**
+     * The maximum number of turns of setting charges that count towards the inflicted damage, TO:AUE p.152.
+     */
+    public static final int MAX_TURNS_LAYING_EXPLOSIVES = 6;
+
     public LayExplosivesAttackAction(int entityId, int targetId) {
         super(entityId, targetId);
     }
@@ -67,12 +72,27 @@ public class LayExplosivesAttackAction extends AbstractAttackAction {
         if (!(entity instanceof Infantry inf)) {
             return 0;
         }
+        // Clamp at 0: turnsLayingExplosives is -1 while the platoon is not laying charges
+        int numTurns = Math.clamp(inf.turnsLayingExplosives, 0, MAX_TURNS_LAYING_EXPLOSIVES);
+        return getDamagePerTurn(entity) * numTurns;
+    }
+
+    /**
+     * Damage that one turn of setting charges adds for the specified platoon: the damage of an SRM infantry platoon of
+     * equivalent numbers, TO:AUE p.152.
+     *
+     * @param entity the platoon setting the charges
+     *
+     * @return the demolition charge damage added per turn of work, or 0 if the entity is not infantry
+     */
+    public static int getDamagePerTurn(Entity entity) {
+        if (!(entity instanceof Infantry inf)) {
+            return 0;
+        }
         InfantryWeapon srmWeapon = (InfantryWeapon) EquipmentType
               .get("SRM Launcher (Std, Two-Shot)");
-        int dmg = (int) Math.round(srmWeapon.getInfantryDamage()
+        return (int) Math.round(srmWeapon.getInfantryDamage()
               * inf.getShootingStrength());
-        int numTurns = Math.min(6, inf.turnsLayingExplosives);
-        return dmg * numTurns;
     }
 
     public ToHitData toHit(Game game) {
@@ -92,7 +112,8 @@ public class LayExplosivesAttackAction extends AbstractAttackAction {
         final Entity ae = game.getEntity(attackerId);
         if ((target.getTargetType() != Targetable.TYPE_BUILDING)
               && (target.getTargetType() != Targetable.TYPE_FUEL_TANK)) {
-            return new ToHitData(TargetRoll.IMPOSSIBLE, "You can only target buildings");
+            return new ToHitData(TargetRoll.IMPOSSIBLE,
+                  "You can only target structures (buildings, bridges, fuel tanks)");
         } else if (ae == null) {
             return new ToHitData(TargetRoll.IMPOSSIBLE, "You can't attack from a null entity!");
         } else if (!(ae instanceof Infantry)) {

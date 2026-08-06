@@ -37,18 +37,17 @@ import static org.junit.jupiter.api.Assertions.fail;
 
 import java.util.Vector;
 
-import megamek.common.Hex;
 import megamek.common.HitData;
 import megamek.common.Player;
 import megamek.common.Report;
 import megamek.common.ToHitData;
 import megamek.common.actions.WeaponAttackAction;
 import megamek.common.board.Coords;
+import megamek.common.equipment.AmmoType;
 import megamek.common.equipment.EquipmentType;
 import megamek.common.equipment.Mounted;
 import megamek.common.equipment.WeaponMounted;
 import megamek.common.equipment.WeaponType;
-import megamek.common.equipment.AmmoType;
 import megamek.common.game.Game;
 import megamek.common.loaders.EntityLoadingException;
 import megamek.common.options.OptionsConstants;
@@ -70,7 +69,7 @@ import org.junit.jupiter.api.Test;
  * @since 2025-12-14
  */
 public class MissileWeaponsHandlerTest {
-    
+
     private Game game;
     private int nextEntityId = 1;
     private TWGameManager gameManager;
@@ -89,7 +88,7 @@ public class MissileWeaponsHandlerTest {
 
     private Player aPlayer;
     private Player dPlayer;
-    
+
 
     @BeforeAll
     static void initializeEquipment() {
@@ -98,11 +97,11 @@ public class MissileWeaponsHandlerTest {
 
     @BeforeEach
     void setUp() {
-        
+
         // create the game
         game = new Game();
-        nextEntityId=1;
-        
+        nextEntityId = 1;
+
         gameManager = new TWGameManager();
         game = gameManager.getGame();
 
@@ -114,9 +113,9 @@ public class MissileWeaponsHandlerTest {
         dPlayer = new Player(1, "Defender");
         game.addPlayer(aPlayer.getId(), aPlayer);
         game.addPlayer(dPlayer.getId(), dPlayer);
-     }
+    }
 
-     // Use to create the attacker
+    // Use to create the attacker
     private Entity createAttackerEntity() {
         Entity entity = new BipedMek();
         entity.setGame(game);
@@ -155,7 +154,7 @@ public class MissileWeaponsHandlerTest {
         entity.setOwner(game.getPlayer(1));
         entity.setWeight(50.0);
         entity.setOriginalWalkMP(5);
-        
+
         try {
             // Add AMS, ammo for the AMS, and link the two
             Mounted<?> amsMounted = entity.addEquipment(AMSWeaponType, Mek.LOC_CENTER_TORSO);
@@ -168,6 +167,7 @@ public class MissileWeaponsHandlerTest {
 
         return entity;
     }
+
     /**
      * Test for AMS with playtest three
      */
@@ -179,10 +179,10 @@ public class MissileWeaponsHandlerTest {
         target = createTargetEntity();
         game.addEntity(attacker);
         game.addEntity(target);
-        
-        Coords attackerPosition = new Coords(1,1);
-        Coords targetPosition = new Coords(1,8);
-        
+
+        Coords attackerPosition = new Coords(1, 1);
+        Coords targetPosition = new Coords(1, 8);
+
         attacker.setPosition(attackerPosition);
         target.setPosition(targetPosition);
         attacker.setFacing(0);
@@ -190,31 +190,31 @@ public class MissileWeaponsHandlerTest {
 
         hitData = new HitData(Mek.LOC_CENTER_TORSO, false);
         toHit = new ToHitData();
-        
+
         // Setup first weapon attack and AMS ready.
         weaponAttack = new WeaponAttackAction(attacker.getId(), target.getId(), attacker.getEquipmentNum(lrmOne));
         weaponAttack.addCounterEquipment(amsMount);
-        
+
         MissileWeaponHandler handler = new MissileWeaponHandler(toHit, weaponAttack, game, gameManager);
         Vector<Report> reports = new Vector<>();
-        
+
         // Call getAMSHitsMod, which is what determines if AMS can shoot or not
-        int AMSmod = 0;
+        int AMSmod;
         AMSmod = handler.getAMSHitsMod(reports);
 
         // first call should return -4
         assertEquals(-4, AMSmod, "AMS did not engage");
         // End first AMS test
-        
+
         // Setup second AMS test shot. Will pass with Playtest 3, and fail without
         weaponAttack = new WeaponAttackAction(attacker.getId(), target.getId(), attacker.getEquipmentNum(lrmTwo));
         weaponAttack.addCounterEquipment(amsMount);
-        
+
         handler = new MissileWeaponHandler(toHit, weaponAttack, game, gameManager);
         AMSmod = handler.getAMSHitsMod(reports);
 
         // second call should return -4. If 0 is returned, the playtest did not work or is not enabled.
-        assertEquals( -4, AMSmod, "AMS did not engage a 2nd time");
+        assertEquals(-4, AMSmod, "AMS did not engage a 2nd time");
 
         // Setup 3rd AMS test. This should always return 0 (no AMS) if multiAMS is not enabled.
         weaponAttack = new WeaponAttackAction(attacker.getId(), target.getId(), attacker.getEquipmentNum(lrmThree));
@@ -222,7 +222,7 @@ public class MissileWeaponsHandlerTest {
 
         handler = new MissileWeaponHandler(toHit, weaponAttack, game, gameManager);
         AMSmod = handler.getAMSHitsMod(reports);
-        
+
         // This should return 0, showing we did not engage.
         assertEquals(0, AMSmod, "AMS triggered when it shouldn't have");
 

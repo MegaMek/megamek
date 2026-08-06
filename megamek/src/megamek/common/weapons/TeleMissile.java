@@ -217,6 +217,7 @@ public class TeleMissile extends Aero {
         return roll;
     }
 
+    @Deprecated(since = "0.51.0", forRemoval = true)
     public boolean isOutContact() {
         return outContact;
     }

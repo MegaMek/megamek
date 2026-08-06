@@ -108,6 +108,7 @@ public enum CrewType {
      * @return The index of the crew member that that provides a command bonus. A value &lt; 0 indicates there is no
      *       such position.
      */
+    @Deprecated(since = "0.51.0", forRemoval = true)
     public int getCommanderPos() {
         return commanderPos;
     }

@@ -149,8 +149,9 @@ public class SkinEditorMainGUIPanel extends JPanel implements WindowListener {
     /**
      * Have the client register itself as a listener wherever it's needed.
      * <p>
-     * According to http://www-106.ibm.com/developerworks/java/library/j-jtp0618.html it is a major bad no-no to perform
-     * these registrations before the constructor finishes, so this function has to be called after the
+     * According to <a href="http://www-106.ibm.com/developerworks/java/library/j-jtp0618.html">IBM</a> it is a major
+     * bad no-no to perform these registrations before the constructor finishes, so this function has to be called after
+     * the
      * <code>Client</code> is created.
      */
     public void initialize() {

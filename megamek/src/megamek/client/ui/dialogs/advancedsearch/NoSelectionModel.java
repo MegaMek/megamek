@@ -37,6 +37,7 @@ import javax.swing.DefaultListSelectionModel;
 /**
  * This selection model is used for tri state checkboxes shown in a JList where selection is handled by the checkboxes.
  */
+@Deprecated(since = "0.51.0", forRemoval = true)
 class NoSelectionModel extends DefaultListSelectionModel {
 
     @Override

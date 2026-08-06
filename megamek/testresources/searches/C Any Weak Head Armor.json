@@ -1,0 +1,37 @@
+{
+  "content" : "ADVANCED_SEARCH_STATE",
+  "name" : "C Any Weak Head Armor",
+  "twState" : {
+    "unitTypeState" : { },
+    "transportsState" : { },
+    "quirksState" : {
+      "chassisInclude" : 1,
+      "chassisQuirks" : {
+        "items" : {
+          "Weak Head Armor (5)" : "SELECTED",
+          "Weak Head Armor (2)" : "SELECTED",
+          "Weak Head Armor (1)" : "SELECTED",
+          "Weak Head Armor (4)" : "SELECTED",
+          "Weak Head Armor (3)" : "SELECTED"
+        }
+      },
+      "weaponQuirks" : { }
+    },
+    "miscState" : {
+      "cockpitType" : { },
+      "armorType" : { },
+      "internalsType" : { },
+      "engineType" : { },
+      "gyroType" : { },
+      "techLevel" : { },
+      "techBase" : {
+        "items" : {
+          "Clan" : "SELECTED"
+        }
+      },
+      "moveMode" : { }
+    },
+    "equipmentState" : { }
+  },
+  "asState" : { }
+}

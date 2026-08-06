@@ -48,6 +48,7 @@ import megamek.logging.MMLogger;
  * Call preferences.manage(new JDoubleNumberSpinnerPreference(JSpinner)) to use this preference, on a JSpinner with a
  * double valued SpinnerNumberModel that has called setName
  */
+@Deprecated(since = "0.51.0", forRemoval = true)
 public class JDoubleNumberSpinnerPreference extends PreferenceElement implements ChangeListener {
     private final static MMLogger logger = MMLogger.create(JDoubleNumberSpinnerPreference.class);
 

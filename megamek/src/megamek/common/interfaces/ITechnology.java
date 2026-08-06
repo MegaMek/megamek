@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2017-2025 The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2017-2026 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -290,9 +290,13 @@ public interface ITechnology {
      */
     default AvailabilityValue calcEraAvailability(Era era, boolean clanUse) {
         if (clanUse) {
+            int clanIntroductionDate = getIntroductionDate(true);
             if (!isClan()
                   && era.getIndex() < Era.CLAN.getIndex()
-                  && getPrototypeDate(false) >= 2780) {
+                  && getPrototypeDate(false) >= 2780
+                  && (getTechBase() != TechBase.ALL
+                            || clanIntroductionDate == DATE_NONE
+                            || getTechEra(clanIntroductionDate).getIndex() >= Era.CLAN.getIndex())) {
                 return AvailabilityValue.X;
             } else {
                 return getBaseAvailability(era);
@@ -352,10 +356,12 @@ public interface ITechnology {
         return calcEraAvailability(era, clanUse).getName();
     }
 
+    @Deprecated(since = "0.51.0", forRemoval = true)
     default String getTechRatingName() {
         return getRatingName(getTechRating());
     }
 
+    @Deprecated(since = "0.51.0", forRemoval = true)
     default String getEraAvailabilityName(Era era) {
         return getEraAvailabilityName(era, isClan());
     }
@@ -419,14 +425,17 @@ public interface ITechnology {
         return Faction.fromMMAbbr(abbr);
     }
 
+    @Deprecated(since = "0.51.0", forRemoval = true)
     default String getExperimentalRange(boolean clan) {
         return getDateRange(getPrototypeDate(clan), getProductionDate(clan));
     }
 
+    @Deprecated(since = "0.51.0", forRemoval = true)
     default String getAdvancedRange(boolean clan) {
         return getDateRange(getProductionDate(clan), getCommonDate(clan));
     }
 
+    @Deprecated(since = "0.51.0", forRemoval = true)
     default String getStandardRange(boolean clan) {
         return getDateRange(getCommonDate(clan), DATE_NONE);
     }
@@ -435,14 +444,17 @@ public interface ITechnology {
         return getDateRange(getExtinctionDate(clan), getReintroductionDate(clan));
     }
 
+    @Deprecated(since = "0.51.0", forRemoval = true)
     default String getExperimentalRange() {
         return getDateRange(getPrototypeDate(), getProductionDate());
     }
 
+    @Deprecated(since = "0.51.0", forRemoval = true)
     default String getAdvancedRange() {
         return getDateRange(getProductionDate(), getCommonDate());
     }
 
+    @Deprecated(since = "0.51.0", forRemoval = true)
     default String getStandardRange() {
         return getDateRange(getCommonDate(), DATE_NONE);
     }

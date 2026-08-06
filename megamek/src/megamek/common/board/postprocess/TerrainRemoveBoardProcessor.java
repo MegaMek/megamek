@@ -50,6 +50,7 @@ public class TerrainRemoveBoardProcessor extends AbstractSimpleBoardProcessor {
      *
      * @see Terrains
      */
+    @Deprecated(since = "0.51.0", forRemoval = true)
     public TerrainRemoveBoardProcessor(int terrainType) {
         this(terrainType, Terrain.WILDCARD);
     }

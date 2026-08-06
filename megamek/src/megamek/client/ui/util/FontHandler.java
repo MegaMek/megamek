@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2023-2025 The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2023-2026 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -33,13 +33,23 @@
 
 package megamek.client.ui.util;
 
+import java.awt.Color;
+import java.awt.Component;
 import java.awt.Font;
+import java.awt.FontMetrics;
+import java.awt.Graphics;
+import java.awt.Graphics2D;
 import java.awt.GraphicsEnvironment;
+import java.awt.RenderingHints;
+import java.awt.font.FontRenderContext;
+import java.awt.geom.Rectangle2D;
+import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
+import javax.swing.Icon;
 
 import megamek.MMConstants;
 import megamek.client.ui.dialogs.buttonDialogs.CommonSettingsDialog;
@@ -106,8 +116,100 @@ public final class FontHandler {
     }
 
     /**
+     * Creates an {@link Icon} that paints a single Google Material Symbol glyph from {@link #symbolFont()}, sized and
+     * tinted as requested. The glyph is drawn live on each repaint so it stays crisp on HiDPI displays, and is sized to
+     * the glyph's ink box so it carries no uneven side bearing. Code points are listed at
+     * <a href="https://fonts.google.com/icons">fonts.google.com/icons</a>.
+     *
+     * @param codePoint the Material Symbols code point, for example {@code 0xE5D7} for {@code unfold_more}
+     * @param size      the glyph height in (already scaled) pixels
+     * @param color     the color to paint the glyph
+     *
+     * @return an {@link Icon} drawing the glyph, or {@code null} on invalid input (out-of-range code point, non-positive
+     *       size, or null color) or if the symbols font cannot display the code point
+     */
+    public static Icon symbolIcon(int codePoint, int size, Color color) {
+        if (!Character.isValidCodePoint(codePoint) || size <= 0 || color == null) {
+            return null;
+        }
+        Font font = symbolFont().deriveFont((float) size);
+        if (!font.canDisplay(codePoint)) {
+            return null;
+        }
+        return new MaterialSymbolIcon(font, new String(Character.toChars(codePoint)), color);
+    }
+
+    /**
+     * An {@link Icon} that paints one glyph live through the host component's graphics, sized to the glyph's ink box.
+     */
+    private static final class MaterialSymbolIcon implements Icon {
+        private final Font font;
+        private final String glyph;
+        private final Color color;
+        private final int width;
+        private final int height;
+        private final float drawX;
+        private final float drawY;
+
+        private MaterialSymbolIcon(Font font, String glyph, Color color) {
+            this.font = font;
+            this.glyph = glyph;
+            this.color = color;
+
+            // Swing needs a fixed icon size up front, so measure the glyph once and cache it. The 1x1 image only
+            // exists to obtain a real Graphics2D, and therefore accurate font metrics; nothing is ever drawn into it.
+            BufferedImage scratch = new BufferedImage(1, 1, BufferedImage.TYPE_INT_ARGB);
+            Graphics2D graphics = scratch.createGraphics();
+            FontMetrics metrics = graphics.getFontMetrics(font);
+            // Height uses the full line metrics (ascent + descent + leading) so every icon shares one vertical box;
+            // glyphs then line up on a common baseline instead of jumping around as the height varies per symbol.
+            height = Math.max(1, metrics.getHeight());
+            drawY = metrics.getAscent();
+            // Width uses the visual (ink) bounds instead, because Material Symbols bake uneven left/right side bearing
+            // into each glyph; trimming to the painted pixels lets a single icon center cleanly inside a button.
+            // Measure with fractional metrics and keep the offsets as floats, so paintIcon can position the glyph
+            // sub-pixel instead of rounding the bearing to a whole pixel (which would clip an edge or add a 1px gap).
+            FontRenderContext renderContext = new FontRenderContext(null, true, true);
+            Rectangle2D inkBounds = font.createGlyphVector(renderContext, glyph).getVisualBounds();
+            width = Math.max(1, (int) Math.ceil(inkBounds.getWidth()));
+            // getX() is the left bearing (offset from the pen origin to the first visible pixel); cancel it so the
+            // glyph paints flush at x = 0 with no leading gap.
+            drawX = (float) -inkBounds.getX();
+            graphics.dispose();
+        }
+
+        @Override
+        public void paintIcon(Component component, Graphics g, int x, int y) {
+            Graphics2D graphics = (Graphics2D) g.create();
+            try {
+                graphics.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+                graphics.setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING, RenderingHints.VALUE_TEXT_ANTIALIAS_ON);
+                // Match the fractional metrics used when the ink bounds were measured, so the glyph lands exactly
+                // where width/drawX expect; mismatched metrics could otherwise clip an edge or shift it a pixel.
+                graphics.setRenderingHint(RenderingHints.KEY_FRACTIONALMETRICS, RenderingHints.VALUE_FRACTIONALMETRICS_ON);
+                graphics.setFont(font);
+                graphics.setColor(color);
+                graphics.drawString(glyph, x + drawX, y + drawY);
+            } finally {
+                graphics.dispose();
+            }
+        }
+
+        @Override
+        public int getIconWidth() {
+            return width;
+        }
+
+        @Override
+        public int getIconHeight() {
+            return height;
+        }
+    }
+
+    /**
      * @return The Noto Symbols 2 font. This font has icons that mesh well in inline text with the Noto Sans font.
      */
+    @Deprecated(since = "0.51.0", forRemoval = true)
     public static Font notoSymbol2Font() {
         ensureInitialization();
         return new Font("Noto Sans Symbols 2", Font.PLAIN, 12);

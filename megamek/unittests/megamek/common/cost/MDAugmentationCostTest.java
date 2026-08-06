@@ -44,10 +44,10 @@ import megamek.common.enums.MDAugmentationType;
 import megamek.common.equipment.EquipmentType;
 import megamek.common.game.Game;
 import megamek.common.options.OptionsConstants;
+import megamek.common.units.ConvInfantry;
 import megamek.common.units.Crew;
 import megamek.common.units.CrewType;
 import megamek.common.units.EntityWeightClass;
-import megamek.common.units.Infantry;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -76,8 +76,8 @@ public class MDAugmentationCostTest {
     /**
      * Creates a conventional infantry unit with the specified trooper count and augmentations.
      */
-    private Infantry createInfantry(int troopers, String... augmentations) {
-        Infantry infantry = new Infantry();
+    private ConvInfantry createInfantry(int troopers, String... augmentations) {
+        ConvInfantry infantry = new ConvInfantry();
         infantry.setGame(game);
         infantry.setId(1);
         infantry.setChassis("Test Platoon");
@@ -96,7 +96,7 @@ public class MDAugmentationCostTest {
 
         // Set up infantry structure
         infantry.autoSetInternal();
-        infantry.initializeInternal(troopers, Infantry.LOC_INFANTRY);
+        infantry.initializeInternal(troopers, ConvInfantry.LOC_INFANTRY);
 
         return infantry;
     }
@@ -110,7 +110,7 @@ public class MDAugmentationCostTest {
         ba.setId(1);
         ba.setChassis("Test BA");
         ba.setModel("Augmented");
-        ba.setTroopers(troopers);
+        ba.setSquadSize(troopers);
         ba.setWeightClass(EntityWeightClass.WEIGHT_MEDIUM);
 
         // Initialize crew
@@ -176,7 +176,7 @@ public class MDAugmentationCostTest {
 
             for (String optionName : optionNames) {
                 MDAugmentationType aug = MDAugmentationType.getByOptionName(optionName);
-                assertTrue(aug != null, "Should find augmentation for " + optionName);
+                assertNotNull(aug, "Should find augmentation for " + optionName);
                 assertTrue(aug.getCost() >= 0, "Cost should be non-negative for " + optionName);
             }
         }
@@ -189,8 +189,8 @@ public class MDAugmentationCostTest {
         @Test
         @DisplayName("Infantry with no augmentations has base cost only")
         void infantryNoCostWithoutAugmentations() {
-            Infantry withAug = createInfantry(21, OptionsConstants.MD_PAIN_SHUNT);
-            Infantry withoutAug = createInfantry(21);
+            ConvInfantry withAug = createInfantry(21, OptionsConstants.MD_PAIN_SHUNT);
+            ConvInfantry withoutAug = createInfantry(21);
 
             double costWith = InfantryCostCalculator.calculateCost(withAug, new DummyCalculationReport(), true);
             double costWithout = InfantryCostCalculator.calculateCost(withoutAug, new DummyCalculationReport(), true);
@@ -203,8 +203,8 @@ public class MDAugmentationCostTest {
         @DisplayName("Infantry augmentation cost scales with trooper count")
         void infantryAugmentationCostScalesWithTroopers() {
             // Pain Shunt = 500,000 per trooper
-            Infantry infantry21 = createInfantry(21, OptionsConstants.MD_PAIN_SHUNT);
-            Infantry infantry7 = createInfantry(7, OptionsConstants.MD_PAIN_SHUNT);
+            ConvInfantry infantry21 = createInfantry(21, OptionsConstants.MD_PAIN_SHUNT);
+            ConvInfantry infantry7 = createInfantry(7, OptionsConstants.MD_PAIN_SHUNT);
 
             double cost21 = InfantryCostCalculator.calculateCost(infantry21, new DummyCalculationReport(), true);
             double cost7 = InfantryCostCalculator.calculateCost(infantry7, new DummyCalculationReport(), true);
@@ -219,8 +219,8 @@ public class MDAugmentationCostTest {
         @Test
         @DisplayName("Multiple augmentations stack costs")
         void multipleAugmentationsStackCosts() {
-            Infantry singleAug = createInfantry(10, OptionsConstants.MD_PAIN_SHUNT);
-            Infantry doubleAug = createInfantry(10, OptionsConstants.MD_PAIN_SHUNT, OptionsConstants.MD_COMM_IMPLANT);
+            ConvInfantry singleAug = createInfantry(10, OptionsConstants.MD_PAIN_SHUNT);
+            ConvInfantry doubleAug = createInfantry(10, OptionsConstants.MD_PAIN_SHUNT, OptionsConstants.MD_COMM_IMPLANT);
 
             double costSingle = InfantryCostCalculator.calculateCost(singleAug, new DummyCalculationReport(), true);
             double costDouble = InfantryCostCalculator.calculateCost(doubleAug, new DummyCalculationReport(), true);

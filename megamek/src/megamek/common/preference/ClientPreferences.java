@@ -1,6 +1,6 @@
 /*
  * Copyright (C) 2005 Ben Mazur (bmazur@sev.org)
- * Copyright (C) 2005-2025 The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2005-2026 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -69,6 +69,10 @@ public class ClientPreferences extends PreferenceStoreProxy {
     public static final String MEK_HIT_LOC_LOG = "MekHitLocLog";
     public static final String MEMORY_DUMP_ON = "MemoryDumpOn";
     public static final String DEBUG_OUTPUT_ON = "DebugOutputOn";
+    // Silent (no UI) diagnostic flag for the Force Generator: when true, ratGenerator writes the
+    // forcegen_weights.csv / forcegen_warships.csv tuning files. Off by default; set by hand in
+    // the mmconf client settings.
+    public static final String FORCE_GENERATOR_DIAGNOSTICS = "ForceGeneratorDiagnostics";
     public static final String GAME_LOG_KEEP = "KeepGameLog";
     public static final String GAME_LOG_FILENAME = "GameLogFilename";
     public static final String AUTO_RESOLVE_GAME_LOG_FILENAME = "AutoResolveGameLogFilename";
@@ -76,6 +80,7 @@ public class ClientPreferences extends PreferenceStoreProxy {
     public static final String DATA_LOGGING = "GameDatasetLogging";
     public static final String STAMP_FORMAT = "StampFormat";
     public static final String SHOW_UNIT_ID = "ShowUnitId";
+    public static final String USE_CASPAR = "UseCASPAR";
     public static final String UNIT_START_CHAR = "UnitStartChar";
     public static final String DEFAULT_AUTO_EJECT_DISABLED = "DefaultAutoejectDisabled";
     public static final String USE_AVERAGE_SKILLS = "UseAverageSkills";
@@ -90,12 +95,21 @@ public class ClientPreferences extends PreferenceStoreProxy {
     public static final String MAP_WIDTH = "MapWidth";
     public static final String MAP_HEIGHT = "MapHeight";
     public static final String REPORT_KEYWORDS = "ReportKeywords";
-    private static final String REPORT_KEYWORDS_DEFAULTS = "Needs\nRolls\nTakes\nHit\nFalls\nSkill Roll\nPilot "
-          + "Skill\nPhase\nDestroyed\nDamage";
+    private static final String REPORT_KEYWORDS_DEFAULTS = """
+          Needs
+          Rolls
+          Takes
+          Hit
+          Falls
+          Skill Roll
+          Pilot \
+          Skill
+          Phase
+          Destroyed
+          Damage""";
     public static final String REPORT_FILTER_KEYWORDS = "ReportFilterKeywords";
     private static final String REPORT_FILTER_KEYWORDS_DEFAULTS = "Fire Hit Damage\nHit Damage";
     public static final String IP_ADDRESSES_IN_CHAT = "IPAddressesInChat";
-    public static final String START_SEARCHLIGHTS_ON = "StartSearchlightsOn";
     public static final String SPRITES_ONLY = "SpritesOnly";
     public static final String ENABLE_EXPERIMENTAL_BOT_FEATURES = "EnableExperimentalBotFeatures";
     public static final String NAG_ASK_FOR_VICTORY_LIST = "AskForVictoryList";
@@ -133,6 +147,7 @@ public class ClientPreferences extends PreferenceStoreProxy {
         store.setDefault(UNIT_START_CHAR, 'A');
         store.setDefault(GUI_NAME, "swing");
         store.setDefault(USE_AVERAGE_SKILLS, true);
+        store.setDefault(FORCE_GENERATOR_DIAGNOSTICS, false);
         store.setDefault(USE_GP_IN_UNIT_SELECTION, false);
         store.setDefault(GENERATE_NAMES, true);
         store.setDefault(PRINT_ENTITY_CHANGE, false);
@@ -145,7 +160,6 @@ public class ClientPreferences extends PreferenceStoreProxy {
         store.setDefault(REPORT_KEYWORDS, REPORT_KEYWORDS_DEFAULTS);
         store.setDefault(REPORT_FILTER_KEYWORDS, REPORT_FILTER_KEYWORDS_DEFAULTS);
         store.setDefault(IP_ADDRESSES_IN_CHAT, false);
-        store.setDefault(START_SEARCHLIGHTS_ON, true);
         store.setDefault(SPRITES_ONLY, false);
         store.setDefault(ENABLE_EXPERIMENTAL_BOT_FEATURES, false);
         store.setDefault(USER_DIR, "");
@@ -154,6 +168,7 @@ public class ClientPreferences extends PreferenceStoreProxy {
         store.setDefault(DATA_LOGGING, true);
         store.setDefault(SHOW_AUTO_RESOLVE_PANEL, false);
         store.setDefault(STAMP_FILENAMES, false);
+        store.setDefault(USE_CASPAR, false);
         store.setDefault(FAVORITE_PRINCESS_BEHAVIOR_SETTING, DEFAULT_BEHAVIOR_DESCRIPTION);
         store.setDefault(LAST_SCENARIO, "");
 
@@ -215,6 +230,7 @@ public class ClientPreferences extends PreferenceStoreProxy {
         return store.getInt(MAX_PATHFINDER_TIME);
     }
 
+    @Deprecated(since = "0.51.0", forRemoval = true)
     public String getDataDirectory() {
         return store.getString(DATA_DIRECTORY);
     }
@@ -223,6 +239,7 @@ public class ClientPreferences extends PreferenceStoreProxy {
         return store.getString(LOG_DIRECTORY);
     }
 
+    @Deprecated(since = "0.51.0", forRemoval = true)
     public String getMekDirectory() {
         return store.getString(MEK_DIRECTORY);
     }
@@ -237,14 +254,17 @@ public class ClientPreferences extends PreferenceStoreProxy {
         return store.getString(METASERVER_NAME);
     }
 
+    @Deprecated(since = "0.51.0", forRemoval = true)
     public void setMetaServerName(String name) {
         store.setValue(METASERVER_NAME, name);
     }
 
+    @Deprecated(since = "0.51.0", forRemoval = true)
     public int getGoalPlayers() {
         return store.getInt(GOAL_PLAYERS);
     }
 
+    @Deprecated(since = "0.51.0", forRemoval = true)
     public void setGoalPlayers(int n) {
         store.setValue(GOAL_PLAYERS, n);
     }
@@ -273,6 +293,15 @@ public class ClientPreferences extends PreferenceStoreProxy {
         return store.getBoolean(SHOW_UNIT_ID);
     }
 
+    /**
+     * @return {@code true} if the experimental CASPAR bot is offered as a selectable AI. This is a hidden
+     *       option: it is not shown in any settings UI and defaults to {@code false}; enable it by hand-adding
+     *       {@code <UseCASPAR>true</UseCASPAR>} to clientsettings.xml.
+     */
+    public boolean getUseCASPAR() {
+        return store.getBoolean(USE_CASPAR);
+    }
+
     public char getUnitStartChar() {
         return (char) store.getInt(UNIT_START_CHAR);
     }
@@ -287,6 +316,11 @@ public class ClientPreferences extends PreferenceStoreProxy {
 
     public boolean debugOutputOn() {
         return store.getBoolean(DEBUG_OUTPUT_ON);
+    }
+
+    /** @return whether the Force Generator should write its diagnostic CSV tuning files. */
+    public boolean getForceGeneratorDiagnostics() {
+        return store.getBoolean(FORCE_GENERATOR_DIAGNOSTICS);
     }
 
     public void setDefaultAutoEjectDisabled(boolean state) {
@@ -325,6 +359,7 @@ public class ClientPreferences extends PreferenceStoreProxy {
         store.setValue(LAST_SERVER_PASS, serverPass);
     }
 
+    @Deprecated(since = "0.51.0", forRemoval = true)
     public void setLastServerPort(int port) {
         store.setValue(LAST_SERVER_PORT, port);
     }
@@ -345,6 +380,7 @@ public class ClientPreferences extends PreferenceStoreProxy {
         store.setValue(AUTO_RESOLVE_GAME_LOG_FILENAME, name);
     }
 
+    @Deprecated(since = "0.51.0", forRemoval = true)
     public void setPrintEntityChange(boolean print) {
         store.setValue(PRINT_ENTITY_CHANGE, print);
     }
@@ -369,10 +405,12 @@ public class ClientPreferences extends PreferenceStoreProxy {
         store.setValue(UNIT_START_CHAR, c);
     }
 
+    @Deprecated(since = "0.51.0", forRemoval = true)
     public String getGUIName() {
         return store.getString(GUI_NAME);
     }
 
+    @Deprecated(since = "0.51.0", forRemoval = true)
     public void setGUIName(String guiName) {
         store.setValue(GUI_NAME, guiName);
     }
@@ -399,14 +437,6 @@ public class ClientPreferences extends PreferenceStoreProxy {
 
     public void setShowIPAddressesInChat(boolean value) {
         store.setValue(IP_ADDRESSES_IN_CHAT, value);
-    }
-
-    public boolean getStartSearchlightsOn() {
-        return store.getBoolean(START_SEARCHLIGHTS_ON);
-    }
-
-    public void setStartSearchlightsOn(boolean value) {
-        store.setValue(START_SEARCHLIGHTS_ON, value);
     }
 
     public boolean getSpritesOnly() {

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2025 The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2025-2026 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -35,14 +35,13 @@ package megamek.utilities;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
-import java.util.Deque;
-import java.util.concurrent.ConcurrentLinkedDeque;
+import java.util.concurrent.BlockingQueue;
+import java.util.concurrent.LinkedBlockingQueue;
 import javax.swing.JFileChooser;
 import javax.swing.JOptionPane;
 import javax.swing.filechooser.FileNameExtensionFilter;
 
 import megamek.client.ui.Messages;
-import megamek.client.ui.clientGUI.GUIPreferences;
 import megamek.common.util.StringUtil;
 import megamek.logging.MMLogger;
 
@@ -57,10 +56,13 @@ public class GifWriterThread extends Thread {
     private record Frame(BufferedImage image, long duration) {
     }
 
+    /** Caps queued frames so a slow encoder applies backpressure instead of growing memory without bound. */
+    private static final int MAX_PENDING_FRAMES = 32;
+
     private final GifWriter gifWriter;
-    private final Deque<Frame> imageDeque = new ConcurrentLinkedDeque<>();
-    private boolean isLive = true;
-    private boolean forceInterrupt = false;
+    private final BlockingQueue<Frame> frameQueue = new LinkedBlockingQueue<>(MAX_PENDING_FRAMES);
+    private volatile boolean isLive = true;
+    private volatile boolean forceInterrupt = false;
     public static final String CG_FILE_EXTENSION_GIF = ".gif";
     public static final String CG_FILE_PATH_GIF = "gif";
 
@@ -82,9 +84,15 @@ public class GifWriterThread extends Thread {
      * @param durationMillis the frame duration in milliseconds
      */
     public void addFrame(BufferedImage image, long durationMillis) {
-        synchronized (this) {
-            imageDeque.add(new Frame(image, durationMillis));
-            notifyAll();
+        if (!isLive) {
+            return;
+        }
+        try {
+            // Blocks only if the encoder has fallen MAX_PENDING_FRAMES behind; normally returns immediately.
+            // Crucially, the producer no longer waits on a lock the encoder holds during a frame.
+            frameQueue.put(new Frame(image, durationMillis));
+        } catch (InterruptedException e) {
+            Thread.currentThread().interrupt();
         }
     }
 
@@ -92,27 +100,18 @@ public class GifWriterThread extends Thread {
     public void run() {
         try {
             while (isLive) {
-                try {
-                    synchronized (this) {
-                        while (imageDeque.isEmpty() && gifWriter.isLive() && isLive) {
-                            wait();
-                        }
-                        if (!gifWriter.isLive()) {
-                            break;
-                        }
-                        Frame frame = imageDeque.pollFirst();
-                        if (frame == null) {
-                            continue;
-                        }
-                        gifWriter.appendFrame(frame.image(), frame.duration());
-                    }
-                } catch (InterruptedException | IOException e) {
-                    break;
-                }
+                // take() blocks without holding any lock, so the encode below never stalls addFrame().
+                Frame frame = frameQueue.take();
+                gifWriter.appendFrame(frame.image(), frame.duration());
             }
+        } catch (InterruptedException e) {
+            // Stop requested while waiting for or encoding a frame.
+            Thread.currentThread().interrupt();
+        } catch (IOException e) {
+            LOGGER.error(e, "Error appending frame to GIF");
         } finally {
             gifWriter.close();
-            imageDeque.clear();
+            frameQueue.clear();
             if (!forceInterrupt) {
                 try {
                     saveGifNag();
@@ -126,15 +125,15 @@ public class GifWriterThread extends Thread {
     }
 
     private void saveGifNag() {
-        if (GUIPreferences.getInstance().getGifGameSummaryMinimap()) {
-            int response = JOptionPane.showConfirmDialog(null,
-                  Messages.getString("ClientGUI.SaveGifDialog.message"),
-                  Messages.getString("ClientGUI.SaveGifDialog.title"),
-                  JOptionPane.YES_NO_OPTION,
-                  JOptionPane.INFORMATION_MESSAGE);
-            if (response == JOptionPane.YES_OPTION) {
-                saveGif();
-            }
+        // Recording only ever runs with the player's up-front consent (see GifRecordingMode), so this dialog
+        // needs no preference gate: the player chose to record and now only decides whether to keep the result.
+        int response = JOptionPane.showConfirmDialog(null,
+              Messages.getString("ClientGUI.SaveGifDialog.message"),
+              Messages.getString("ClientGUI.SaveGifDialog.title"),
+              JOptionPane.YES_NO_OPTION,
+              JOptionPane.INFORMATION_MESSAGE);
+        if (response == JOptionPane.YES_OPTION) {
+            saveGif();
         }
         deleteGif();
     }

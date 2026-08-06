@@ -50,6 +50,7 @@ public final class InsulatedCargoBay extends Bay {
     /**
      * The default constructor is only for serialization.
      */
+    @Deprecated(since = "0.51.0", forRemoval = true)
     private InsulatedCargoBay() {
         totalSpace = 0;
         currentSpace = 0;

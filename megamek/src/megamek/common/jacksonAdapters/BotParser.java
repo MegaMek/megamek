@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2024-2025 The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2024-2026 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -37,6 +37,7 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.dataformat.yaml.YAMLFactory;
+import megamek.client.bot.AIType;
 import megamek.client.bot.princess.BehaviorSettings;
 import megamek.client.ui.dialogs.ScenarioDialog;
 
@@ -48,7 +49,7 @@ public final class BotParser {
         int type();
     }
 
-    public record PrincessRecord(BehaviorSettings behaviorSettings) implements BotInfo {
+    public record PrincessRecord(AIType aiType, BehaviorSettings behaviorSettings) implements BotInfo {
 
         @Override
         public int type() {
@@ -58,7 +59,14 @@ public final class BotParser {
 
     public static BotInfo parse(JsonNode node) throws JsonProcessingException {
         PrincessSettingsBuilder builder = YAML_MAPPER.treeToValue(node, PrincessSettingsBuilder.class);
-        return new PrincessRecord(builder.build());
+        AIType aiType = AIType.PRINCESS;
+        if (node.hasNonNull("ai")) {
+            AIType parsedAIType = AIType.fromString(node.get("ai").asText());
+            if (parsedAIType != null) {
+                aiType = parsedAIType;
+            }
+        }
+        return new PrincessRecord(aiType, builder.build());
     }
 
     private BotParser() {}

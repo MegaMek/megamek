@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2017-2025 - The MegaMek Team. All Rights Reserved.
+ * Copyright (c) 2017-2026 - The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -441,10 +441,7 @@ public class QuadVee extends QuadMek {
 
     @Override
     public int getMaxElevationChange() {
-        if (getConversionMode() == CONV_MODE_VEHICLE) {
-            return 1;
-        }
-        return 2;
+        return (getConversionMode() == CONV_MODE_VEHICLE) ? 1 : 2;
     }
 
     @Override
@@ -507,10 +504,13 @@ public class QuadVee extends QuadMek {
                 roll.addModifier(1, "thin snow");
             }
             // VDNI bonus? (BVDNI does NOT get piloting bonus due to "neuro-lag" per IO pg 71)
-            if (hasAbility(OptionsConstants.MD_VDNI) && !hasAbility(OptionsConstants.MD_BVDNI)) {
-                roll.addModifier(-1, "VDNI");
-            } else if (hasAbility(OptionsConstants.MD_BVDNI)) {
-                roll.addModifier(0, "BVDNI (no piloting bonus)");
+            // When tracking neural interface hardware, require DNI cockpit mod for benefits
+            if (hasActiveDNI()) {
+                if (hasAbility(OptionsConstants.MD_VDNI) && !hasAbility(OptionsConstants.MD_BVDNI)) {
+                    roll.addModifier(-1, "VDNI");
+                } else if (hasAbility(OptionsConstants.MD_BVDNI)) {
+                    roll.addModifier(0, "BVDNI (no piloting bonus)");
+                }
             }
             if (hasQuirk(OptionsConstants.QUIRK_NEG_CRAMPED_COCKPIT)
                   && !hasAbility(OptionsConstants.UNOFFICIAL_SMALL_PILOT)) {
@@ -545,6 +545,8 @@ public class QuadVee extends QuadMek {
     @Override
     public boolean canGoHullDown() {
         if (getConversionMode() == CONV_MODE_VEHICLE != convertingNow) {
+            // A QuadVee is never a Large Vehicle (it is capped at standard 'Mek tonnage), so the Large Vehicle
+            // hull-down exclusion that applies to Tanks does not need to be checked here.
             Hex occupiedHex = game.getHexOf(this);
             return occupiedHex.containsTerrain(Terrains.FORTIFIED)
                   && gameOptions().booleanOption(OptionsConstants.ADVANCED_GROUND_MOVEMENT_TAC_OPS_HULL_DOWN);

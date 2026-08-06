@@ -68,7 +68,6 @@ public class MobileStructure extends AbstractBuildingEntity {
     /**
      * Returns the name of the type of movement used.
      *
-     * @param movementType
      */
     @Override
     public String getMovementString(EntityMovementType movementType) {
@@ -78,7 +77,6 @@ public class MobileStructure extends AbstractBuildingEntity {
     /**
      * Returns the abbreviation of the name of the type of movement used.
      *
-     * @param movementType
      */
     @Override
     public String getMovementAbbr(EntityMovementType movementType) {

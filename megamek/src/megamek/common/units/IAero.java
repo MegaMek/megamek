@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2017-2025 The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2017-2026 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -94,6 +94,8 @@ public interface IAero {
     boolean isRolled();
 
     void setRolled(boolean roll);
+
+    int height();
 
     boolean isOutControlTotal();
 
@@ -512,9 +514,15 @@ public interface IAero {
      */
     default PilotingRollData getLandingControlRoll(int velocity, Coords landingPos, int face,
           boolean isVertical) {
-        // Base piloting skill
-        PilotingRollData roll = new PilotingRollData(((Entity) this).getId(), ((Entity) this).getCrew().getPiloting(),
+        // Base piloting skill, with any gamemaster modifier shown as a line of its own
+        Crew crew = ((Entity) this).getCrew();
+        int gamemasterModifier = crew.appliedPilotingModifier();
+        PilotingRollData roll = new PilotingRollData(((Entity) this).getId(),
+              crew.getPiloting() - gamemasterModifier,
               "Base piloting skill");
+        if (gamemasterModifier != 0) {
+            roll.addModifier(gamemasterModifier, "GM Modifier");
+        }
 
         // Apply critical hit effects, TW pg 239
         int aviationHits = getAvionicsHits();
@@ -621,13 +629,16 @@ public interface IAero {
             roll.addModifier(isVertical ? 1 : 2, "Clear terrain in landing path");
         }
         for (List<Integer> terrain : terrains) {
-            int mod = Terrains.landingModifier(terrain.get(0), terrain.get(1));
+            int mod = Terrains.landingModifier(terrain.getFirst(), terrain.get(1));
             if (isVertical) {
                 mod = mod / 2 + mod % 2;
             }
-            roll.addModifier(mod, Terrains.getDisplayName(terrain.get(0), terrain.get(1)) + " in landing path");
+            roll.addModifier(mod, Terrains.getDisplayName(terrain.getFirst(), terrain.get(1)) + " in landing path");
         }
-
+        if ((((Entity) this).hasAbility(OptionsConstants.PILOT_WIND_WALKER))
+              && PilotSPAHelper.isWindWalkerValid((Entity) this)) {
+            roll.addModifier(-1, "Wind Walker SPA");
+        }
         return roll;
     }
 
@@ -983,7 +994,8 @@ public interface IAero {
               hex.containsTerrain(Terrains.MAGMA) ||
               hex.containsTerrain(Terrains.JUNGLE) ||
               (hex.terrainLevel(Terrains.SNOW) > 1) ||
-              (hex.terrainLevel(Terrains.GEYSER) == 2);
+              (hex.terrainLevel(Terrains.GEYSER) == 2) ||
+              (hex.containsTerrain(Terrains.BUILDING) && hex.terrainLevel(Terrains.BLDG_ELEV) <= height());
     }
 
 }

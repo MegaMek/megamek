@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2025 The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2025-2026 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -37,11 +37,18 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 import java.util.List;
 
+import megamek.common.battleArmor.BattleArmor;
+import megamek.common.enums.AvailabilityValue;
+import megamek.common.enums.Faction;
+import megamek.common.enums.TechBase;
+import megamek.common.equipment.AmmoType;
 import megamek.common.equipment.EquipmentType;
 import megamek.common.eras.Eras;
+import megamek.common.interfaces.ITechnology;
 import megamek.common.loaders.MekSummaryCache;
 import megamek.common.units.AeroSpaceFighter;
 import megamek.common.units.Entity;
+import megamek.common.units.EntityWeightClass;
 import megamek.common.units.Mek;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeAll;
@@ -86,6 +93,145 @@ class EntityTechTest {
               entity.getCommonDateRange());
         Assertions.assertEquals("-",
               entity.getExtinctionRange());
+    }
+
+    @Test
+    public void mixedTechWithClanProgressionIsAvailableToClansBefore3050() {
+        TechAdvancement advancement = new TechAdvancement(TechBase.ALL)
+              .setAvailability(AvailabilityValue.X, AvailabilityValue.D, AvailabilityValue.C, AvailabilityValue.B)
+              .setISAdvancement(3050, 3050, 3051)
+              .setClanAdvancement(2865, 2868, 2870);
+
+        Assertions.assertEquals(AvailabilityValue.D, advancement.calcYearAvailability(3032, true));
+    }
+
+    @Test
+    public void mixedTechWithoutClanProgressionIsUnavailableToClansBefore3050() {
+        TechAdvancement advancement = new TechAdvancement(TechBase.ALL)
+              .setAvailability(AvailabilityValue.X, AvailabilityValue.D, AvailabilityValue.C, AvailabilityValue.B)
+              .setISAdvancement(3050, 3050, 3051);
+
+        Assertions.assertEquals(AvailabilityValue.X, advancement.calcYearAvailability(3032, true));
+    }
+
+    @Test
+    public void mixedTechWithClanEraProgressionIsUnavailableToClansBefore3050() {
+        TechAdvancement advancement = new TechAdvancement(TechBase.ALL)
+              .setAvailability(AvailabilityValue.X, AvailabilityValue.D, AvailabilityValue.C, AvailabilityValue.B)
+              .setISAdvancement(3050, 3050, 3051)
+              .setClanAdvancement(3050, 3050, 3051);
+
+        Assertions.assertEquals(AvailabilityValue.X, advancement.calcYearAvailability(3032, true));
+    }
+
+    @Test
+    public void innerSphereTechWithoutClanProgressionIsUnavailableToClansBefore3050() {
+        TechAdvancement advancement = new TechAdvancement(TechBase.IS)
+              .setAvailability(AvailabilityValue.X, AvailabilityValue.D, AvailabilityValue.C, AvailabilityValue.B)
+              .setISAdvancement(2865, 2868, 2870);
+
+        Assertions.assertEquals(AvailabilityValue.X, advancement.calcYearAvailability(3032, true));
+    }
+
+    @Test
+    public void innerSphereTechWithSharedIntroductionDateIsUnavailableToClansBefore3050() {
+        TechAdvancement advancement = new TechAdvancement(TechBase.IS) {
+            @Override
+            public int getIntroductionDate(boolean clan) {
+                return getIntroductionDate();
+            }
+        }.setAvailability(AvailabilityValue.X, AvailabilityValue.D, AvailabilityValue.C, AvailabilityValue.B)
+              .setISAdvancement(2865, 2868, 2870);
+
+        Assertions.assertEquals(AvailabilityValue.X, advancement.calcYearAvailability(3032, true));
+    }
+
+    @Test
+    public void compositeInnerSphereTechWithSharedIntroductionDateIsUnavailableToClansBefore3050() {
+        TechAdvancement advancement = new TechAdvancement(TechBase.IS)
+              .setAvailability(AvailabilityValue.X, AvailabilityValue.D, AvailabilityValue.C, AvailabilityValue.B)
+              .setISAdvancement(2865, 2868, 2870);
+        CompositeTechLevel techLevel = new CompositeTechLevel(advancement, false, true, 2865, Faction.NONE);
+
+        Assertions.assertEquals(AvailabilityValue.X, techLevel.calcYearAvailability(3032, true));
+    }
+
+    @Test
+    public void innerSphereTechIsAvailableToInnerSphereBefore3050() {
+        TechAdvancement advancement = new TechAdvancement(TechBase.IS)
+              .setAvailability(AvailabilityValue.X, AvailabilityValue.D, AvailabilityValue.C, AvailabilityValue.B)
+              .setISAdvancement(2865, 2868, 2870);
+
+        Assertions.assertEquals(AvailabilityValue.D, advancement.calcYearAvailability(3032, false));
+    }
+
+    @Test
+    public void innerSphereTechUsesBaseAvailabilityForClansAfter3050() {
+        TechAdvancement advancement = new TechAdvancement(TechBase.IS)
+              .setAvailability(AvailabilityValue.X, AvailabilityValue.D, AvailabilityValue.C, AvailabilityValue.B)
+              .setISAdvancement(2865, 2868, 2870);
+
+        Assertions.assertEquals(AvailabilityValue.C, advancement.calcYearAvailability(3050, true));
+    }
+
+    @Test
+    public void clanTechIsUnavailableToInnerSphereBefore3050() {
+        TechAdvancement advancement = new TechAdvancement(TechBase.CLAN)
+              .setAvailability(AvailabilityValue.X, AvailabilityValue.D, AvailabilityValue.C, AvailabilityValue.B)
+              .setClanAdvancement(2865, 2868, 2870);
+
+        Assertions.assertEquals(AvailabilityValue.X, advancement.calcYearAvailability(3032, false));
+    }
+
+    @Test
+    public void clanTechIsHarderForInnerSphereAfter3050() {
+        TechAdvancement advancement = new TechAdvancement(TechBase.CLAN)
+              .setAvailability(AvailabilityValue.X, AvailabilityValue.D, AvailabilityValue.C, AvailabilityValue.B)
+              .setClanAdvancement(2865, 2868, 2870);
+
+        Assertions.assertEquals(AvailabilityValue.D, advancement.calcYearAvailability(3050, false));
+    }
+
+    @Test
+    public void elementalBattleArmorComponentsAreAvailableToClansBefore3050() {
+        AmmoType baSrm2Ammo = (AmmoType) EquipmentType.get("BA-SRM2 Ammo");
+        assertNotNull(baSrm2Ammo, "BA SRM 2 ammo not found");
+
+        Assertions.assertEquals(AvailabilityValue.D,
+              BattleArmor.getConstructionTechAdvancement(EntityWeightClass.WEIGHT_MEDIUM)
+                    .calcYearAvailability(3032, true));
+        Assertions.assertEquals(AvailabilityValue.D, baSrm2Ammo.calcYearAvailability(3032, true));
+    }
+
+    @Test
+    public void elementalBattleArmorIsInProductionAtItsIntroductionYear() {
+        BattleArmor entity = (BattleArmor) getEntityForUnitTesting("Elemental Battle Armor [Laser](Sqd5)", true);
+        assertNotNull(entity, "Elemental Battle Armor [Laser](Sqd5) not found");
+        printEntity(entity);
+
+        // The chassis and every Clan component of this suit enter production in 2868, the unit's own
+        // introduction year, so the suit is in production from the start and never has a prototype phase.
+        Assertions.assertEquals(2868, entity.getIntroductionDate());
+        Assertions.assertEquals("-", entity.getPrototypeRangeDate());
+        Assertions.assertTrue(entity.getProductionDateRange().contains("2868-3053"),
+              "Expected production from 2868, but was: " + entity.getProductionDateRange());
+        Assertions.assertTrue(entity.getCommonDateRange().contains("3054+"),
+              "Expected common from 3054, but was: " + entity.getCommonDateRange());
+    }
+
+    @Test
+    public void componentEnteringProductionInTheUnitsProductionYearDoesNotCreateAPrototypePhase() {
+        // Medium Clan battle armor chassis: prototype 2840, production 2868, common 2875.
+        TechAdvancement chassis = new TechAdvancement(TechBase.CLAN).setClanAdvancement(2840, 2868, 2875);
+        // A component that is itself in production in 2868, the same year the composite already is.
+        TechAdvancement clanBattleArmorSmallLaser = new TechAdvancement(TechBase.CLAN)
+              .setClanAdvancement(2865, 2868, 2870);
+
+        CompositeTechLevel techLevel = new CompositeTechLevel(chassis, true, false, 2868, Faction.NONE);
+        techLevel.addComponent(clanBattleArmorSmallLaser);
+
+        Assertions.assertEquals(ITechnology.DATE_NONE, techLevel.getPrototypeDate());
+        Assertions.assertEquals(2868, techLevel.getProductionDate());
     }
 
     private static void printEntity(Entity entity) {

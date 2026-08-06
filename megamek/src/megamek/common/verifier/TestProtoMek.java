@@ -36,7 +36,6 @@ package megamek.common.verifier;
 import java.util.HashMap;
 import java.util.Map;
 
-import megamek.codeUtilities.MathUtility;
 import megamek.common.annotations.Nullable;
 import megamek.common.equipment.AmmoType;
 import megamek.common.equipment.ArmorType;
@@ -284,8 +283,8 @@ public class TestProtoMek extends TestEntity {
     }
 
     @Override
-    public boolean correctWeight(StringBuffer buff) {
-        boolean correct = super.correctWeight(buff);
+    public boolean correctWeight(StringBuffer buff, boolean ignoreOverweight, boolean ignoreUnderweight) {
+        boolean correct = super.correctWeight(buff, ignoreOverweight, ignoreUnderweight);
         if (proto.getWeight() > MAX_TONNAGE) {
             buff.append("Exceeds maximum weight of ").append(MAX_TONNAGE).append("\n");
             correct = false;
@@ -473,7 +472,7 @@ public class TestProtoMek extends TestEntity {
         buff.append("Intro year: ").append(proto.getYear()).append("\n");
         buff.append(printSource());
         buff.append(printShortMovement());
-        if (correctWeight(buff, true, true)) {
+        if (correctWeight(buff, false, false)) {
             buff.append("Weight: ").append(getWeight() * 1000).append(" kg (")
                   .append(calculateWeight() * 1000).append(" kg)\n");
         }
@@ -514,6 +513,7 @@ public class TestProtoMek extends TestEntity {
      *
      * @return The minimum walk MP
      */
+    @Deprecated(since = "0.51.0", forRemoval = true)
     public int getMinimumWalkMP(ProtoMek proto) {
         if (proto.isGlider()) {
             return 4;
@@ -551,7 +551,7 @@ public class TestProtoMek extends TestEntity {
         if (quadOrGlider) {
             moveFactor -= 2;
         }
-        int rating = MathUtility.clamp((int) (moveFactor * tonnage), 1, 400);
+        int rating = Math.clamp((int) (moveFactor * tonnage), 1, 400);
         if (rating > 40) {
             int modFive = rating % 5;
             if (modFive > 0) {

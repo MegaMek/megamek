@@ -50,10 +50,12 @@ public class StopConditionTimeout<E> implements StopCondition<E> {
         restart();
     }
 
+    @Deprecated(since = "0.51.0", forRemoval = true)
     public E getLastEdge() {
         return lastEdge;
     }
 
+    @Deprecated(since = "0.51.0", forRemoval = true)
     public int getTimeout() {
         return timeout;
     }

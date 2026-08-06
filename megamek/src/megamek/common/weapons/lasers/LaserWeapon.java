@@ -1,6 +1,6 @@
 /*
  * Copyright (C) 2004, 2005 Ben Mazur (bmazur@sev.org)
- * Copyright (C) 2007-2025 The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2007-2026 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -75,13 +75,16 @@ public abstract class LaserWeapon extends EnergyWeapon {
     public void adaptToGameOptions(IGameOptions gameOptions) {
         super.adaptToGameOptions(gameOptions);
 
-        // Add Dazzle mode first (before Pulse modes) for Gothic BattleTech
-        // This ensures Pulse modes remain last for proper filtering
+        // Add or remove Dazzle mode for Gothic BattleTech
+        // Dazzle must be added before Pulse modes to ensure proper filtering
         if (gameOptions.booleanOption(megamek.common.options.OptionsConstants.ADVANCED_COMBAT_GOTHIC_DAZZLE_MODE)) {
             if (!hasModes()) {
                 addMode("");
             }
             addMode("Dazzle");
+        } else {
+            removeMode("Dazzle");
+            removeMode("Pulse Dazzle");
         }
 
         // Add Pulse modes last so they can be filtered by getModesCount()
@@ -102,18 +105,26 @@ public abstract class LaserWeapon extends EnergyWeapon {
     @Override
     public int getModesCount(Mounted<?> mounted) {
         Mounted<?> linkedBy = mounted.getLinkedBy();
-        if ((linkedBy instanceof MiscMounted)
+        boolean hasRiscPulseModule = (linkedBy instanceof MiscMounted miscMounted)
               && !linkedBy.isInoperable()
-              && ((MiscMounted) linkedBy).getType().hasFlag(MiscType.F_RISC_LASER_PULSE_MODULE)) {
-            return super.getModesCount();
-        } else if (this instanceof PulseLaserWeapon) {
+              && miscMounted.getType().hasFlag(MiscType.F_RISC_LASER_PULSE_MODULE);
+        if (hasRiscPulseModule || (this instanceof PulseLaserWeapon)) {
             return super.getModesCount();
         }
 
         if (hasModes()) {
-            //Only works if laser pulse module's "Pulse" modes are added last.
+            // Counts only non-Pulse modes; relies on the pulse module's "Pulse" modes being added last.
+            // Uses an indexed loop instead of a stream: this runs in hot UI and to-hit paths where a
+            // per-call stream pipeline was a major allocation source (JFR profiling, 2026-06-21).
             synchronized (modes) {
-                return (int) modes.stream().filter(mode -> !mode.getName().startsWith("Pulse")).count();
+                int nonPulseModeCount = 0;
+                int modeCount = modes.size();
+                for (int index = 0; index < modeCount; index++) {
+                    if (!modes.get(index).getName().startsWith("Pulse")) {
+                        nonPulseModeCount++;
+                    }
+                }
+                return nonPulseModeCount;
             }
         }
         return super.getModesCount();

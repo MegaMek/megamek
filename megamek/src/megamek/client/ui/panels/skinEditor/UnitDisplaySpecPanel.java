@@ -454,6 +454,7 @@ public class UnitDisplaySpecPanel extends JPanel {
         mekOutline.setEnabled(enabled);
     }
 
+    @Deprecated(since = "0.51.0", forRemoval = true)
     public void signalValidate() {
         skinEditor.validate();
     }

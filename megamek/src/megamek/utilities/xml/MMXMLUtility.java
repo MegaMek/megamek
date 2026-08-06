@@ -430,6 +430,7 @@ public class MMXMLUtility {
      * @param values the XML text to parse containing a comma separated UUID collection
      * @param ids    the collection to load the UUIDs into
      */
+    @Deprecated(since = "0.51.0", forRemoval = true)
     public static void parseUUIDCollection(final String values, final Collection<UUID> ids) {
         for (final String value : values.split(",")) {
             ids.add(UUID.fromString(value));
@@ -479,6 +480,7 @@ public class MMXMLUtility {
      * @param values the XML text to parse containing a comma separated LocalDate collection
      * @param dates  the collection to load the LocalDates into
      */
+    @Deprecated(since = "0.51.0", forRemoval = true)
     public static void parseDateCollection(final String values, final Collection<LocalDate> dates) {
         for (final String value : values.split(",")) {
             dates.add(parseDate(value));
@@ -490,6 +492,7 @@ public class MMXMLUtility {
      *
      * @return the parsed String
      */
+    @Deprecated(since = "0.51.0", forRemoval = true)
     public static String parseString(final String value) {
         return unEscape(value);
     }
@@ -499,6 +502,7 @@ public class MMXMLUtility {
      *
      * @return the parsed String Array
      */
+    @Deprecated(since = "0.51.0", forRemoval = true)
     public static String[] parseStringArray(final String value) {
         return unEscape(value).split(",");
     }
@@ -508,6 +512,7 @@ public class MMXMLUtility {
      *
      * @return the parsed int Array
      */
+    @Deprecated(since = "0.51.0", forRemoval = true)
     public static int[] parseIntArray(final String value) {
         return Arrays.stream(value.split(",")).mapToInt(Integer::parseInt).toArray();
     }
@@ -517,6 +522,7 @@ public class MMXMLUtility {
      *
      * @return the parsed boolean Array
      */
+    @Deprecated(since = "0.51.0", forRemoval = true)
     public static boolean[] parseBooleanArray(final String value) {
         final String[] values = value.split(",");
         final boolean[] booleans = new boolean[values.length];
@@ -531,6 +537,7 @@ public class MMXMLUtility {
      *
      * @return the parsed long Array
      */
+    @Deprecated(since = "0.51.0", forRemoval = true)
     public static long[] parseLongArray(final String value) {
         return Arrays.stream(value.split(",")).mapToLong(Long::parseLong).toArray();
     }
@@ -540,6 +547,7 @@ public class MMXMLUtility {
      *
      * @return the parsed double Array
      */
+    @Deprecated(since = "0.51.0", forRemoval = true)
     public static double[] parseDoubleArray(final String value) {
         return Arrays.stream(value.split(",")).mapToDouble(Double::parseDouble).toArray();
     }

@@ -59,6 +59,7 @@ import megamek.common.enums.ProstheticEnhancementType;
 import megamek.common.options.IOption;
 import megamek.common.options.IOptionGroup;
 import megamek.common.options.OptionsConstants;
+import megamek.common.units.ConvInfantry;
 import megamek.common.units.Entity;
 import megamek.common.units.Infantry;
 import megamek.common.util.fileUtils.MegaMekFile;
@@ -310,7 +311,7 @@ public class PilotMapSet implements DisplayMapSet {
                         // Append prosthetic enhancement details for Enhanced/Improved Enhanced
                         if ((OptionsConstants.MD_PL_ENHANCED.equals(adv.getName())
                               || OptionsConstants.MD_PL_I_ENHANCED.equals(adv.getName()))
-                              && (en instanceof Infantry infantry)) {
+                              && (en instanceof ConvInfantry infantry)) {
                             String details = getProstheticEnhancementDetails(infantry);
                             if (!details.isEmpty()) {
                                 displayText += " (" + details + ")";
@@ -330,14 +331,14 @@ public class PilotMapSet implements DisplayMapSet {
      *
      * @return String like "Laser x2, Grappler x1" or empty string if none configured
      */
-    private String getProstheticEnhancementDetails(Infantry infantry) {
+    private String getProstheticEnhancementDetails(ConvInfantry infantry) {
         StringBuilder details = new StringBuilder();
         if (infantry.hasProstheticEnhancement1()) {
             ProstheticEnhancementType type1 = infantry.getProstheticEnhancement1();
             details.append(type1.getDisplayName()).append(" x").append(infantry.getProstheticEnhancement1Count());
         }
         if (infantry.hasProstheticEnhancement2()) {
-            if (details.length() > 0) {
+            if (!details.isEmpty()) {
                 details.append(", ");
             }
             ProstheticEnhancementType type2 = infantry.getProstheticEnhancement2();

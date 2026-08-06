@@ -47,6 +47,7 @@ public class SpringUtilities {
     /**
      * A debugging utility that prints to stdout the component's minimum, preferred, and maximum sizes.
      */
+    @Deprecated(since = "0.51.0", forRemoval = true)
     public static void printSizes(Component c) {
         logger.debug("minimumSize = {}", c.getMinimumSize());
         logger.debug("preferredSize = {}", c.getPreferredSize());

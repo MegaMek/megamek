@@ -582,47 +582,30 @@ public class Engine implements Serializable, ITechnology {
             }
             return slots;
         } else if (hasFlag(LARGE_ENGINE)) {
-            if (gyroType == Mek.GYRO_COMPACT) {
-                int[] slots;
-                if (hasFlag(SUPERHEAVY_ENGINE)) {
-                    slots = new int[] { 0, 1, 2, 5 };
-                } else {
-                    slots = new int[] { 0, 1, 2, 5, 6, 7, 8, 9 };
-                }
-                return slots;
-            }
-            int[] slots;
             if (hasFlag(SUPERHEAVY_ENGINE)) {
-                slots = new int[] { 0, 1, 2, 5 };
-            } else {
-                slots = new int[] { 0, 1, 2, 7, 8, 9, 10, 11 };
+                if (gyroType == Mek.GYRO_NONE) {
+                    return new int[] { 0, 1, 2, 3 };
+                }
+                return new int[] { 0, 1, 2, 5 };
             }
-            return slots;
-        } else {
             if (gyroType == Mek.GYRO_COMPACT) {
-                int[] slots;
-                if (hasFlag(SUPERHEAVY_ENGINE)) {
-                    slots = new int[] { 0, 1, 2 };
-                } else {
-                    slots = new int[] { 0, 1, 2, 5, 6, 7 };
-                }
-                return slots;
+                return new int[] { 0, 1, 2, 5, 6, 7, 8, 9 };
+            } else if (gyroType == Mek.GYRO_NONE) {
+                return new int[] { 0, 1, 2, 3, 4, 5, 6, 7 };
+            }
+            return new int[] { 0, 1, 2, 7, 8, 9, 10, 11 };
+        } else {
+            if (hasFlag(SUPERHEAVY_ENGINE)) {
+                return new int[] { 0, 1, 2 };
+            }
+            if (gyroType == Mek.GYRO_COMPACT) {
+                return new int[] { 0, 1, 2, 5, 6, 7 };
             } else if (gyroType == Mek.GYRO_XL) {
-                int[] slots;
-                if (hasFlag(SUPERHEAVY_ENGINE)) {
-                    slots = new int[] { 0, 1, 2 };
-                } else {
-                    slots = new int[] { 0, 1, 2, 9, 10, 11 };
-                }
-                return slots;
+                return new int[] { 0, 1, 2, 9, 10, 11 };
+            } else if (gyroType == Mek.GYRO_NONE) {
+                return new int[] { 0, 1, 2, 3, 4, 5 };
             } else {
-                int[] slots;
-                if (hasFlag(SUPERHEAVY_ENGINE)) {
-                    slots = new int[] { 0, 1, 2 };
-                } else {
-                    slots = new int[] { 0, 1, 2, 7, 8, 9 };
-                }
-                return slots;
+                return new int[] { 0, 1, 2, 7, 8, 9 };
             }
         }
     }

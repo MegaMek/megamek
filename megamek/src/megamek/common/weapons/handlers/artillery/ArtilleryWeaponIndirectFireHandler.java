@@ -1,6 +1,6 @@
 /*
  * Copyright (C) 2005 Ben Mazur (bmazur@sev.org)
- * Copyright (C) 2007-2025 The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2007-2026 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -53,6 +53,9 @@ import megamek.common.actions.WeaponAttackAction;
 import megamek.common.battleArmor.BattleArmor;
 import megamek.common.board.Coords;
 import megamek.common.compute.Compute;
+import megamek.common.compute.scatter.Scatter;
+import megamek.common.compute.scatter.ScatterMethod;
+import megamek.common.compute.scatter.ScatterResult;
 import megamek.common.enums.GamePhase;
 import megamek.common.equipment.AmmoType;
 import megamek.common.equipment.AmmoType.Munitions;
@@ -99,6 +102,23 @@ public class ArtilleryWeaponIndirectFireHandler extends AmmoWeaponHandler {
     }
 
     @Override
+    public boolean producesReportThisPhase(GamePhase phase) {
+        ArtilleryAttackAction artilleryAttackAction = (ArtilleryAttackAction) weaponAttackAction;
+        if (phase.isTargeting()) {
+            // Only the first targeting phase emits the "Shot, out" announcement; later targeting passes just flip the
+            // announce flag for the upcoming impact and add no report body.
+            return !handledAmmoAndReport;
+        }
+        if (phase.isOffboard()) {
+            // In the offboard phase an in-flight round only decrements its flight timer (no body); it reports only the
+            // turn it lands (turnsTilHit == 0). Without this, a multi-tube battery's not-yet-landing tubes each emit an
+            // empty "Weapons fire for X" header.
+            return artilleryAttackAction.getTurnsTilHit() == 0;
+        }
+        return true;
+    }
+
+    @Override
     public boolean handle(GamePhase phase, Vector<Report> vPhaseReport) {
         if (!cares(phase)) {
             return true;
@@ -108,8 +128,10 @@ public class ArtilleryWeaponIndirectFireHandler extends AmmoWeaponHandler {
         if (phase.isTargeting()) {
             if (!handledAmmoAndReport) {
                 addHeat();
-                // Report the firing itself
-                Report r = new Report(3121);
+                // Report the firing itself - name it counter-battery when the target is an off-board enemy battery
+                // (there is no on-board hex), so a teammate reading the report can tell it from a normal fire mission.
+                boolean counterBattery = (target != null) && target.isOffBoard();
+                Report r = new Report(counterBattery ? 3127 : 3121);
                 r.indent();
                 r.newlines = 0;
                 r.subject = subjectId;
@@ -118,6 +140,9 @@ public class ArtilleryWeaponIndirectFireHandler extends AmmoWeaponHandler {
                 vPhaseReport.addElement(r);
                 Report.addNewline(vPhaseReport);
                 handledAmmoAndReport = true;
+
+                // "Shot, over" - the battery announces the round is on the way, characterised by fire type
+                reportShot();
 
                 artyMsg = "Artillery fire Incoming, landing on round "
                       + (game.getRoundCount() + artilleryAttackAction.getTurnsTilHit())
@@ -169,6 +194,16 @@ public class ArtilleryWeaponIndirectFireHandler extends AmmoWeaponHandler {
         if (null == targetPos) {
             logger.error("Artillery Target {} is missing; off-board target fled?", weaponAttackAction.getTargetId());
             return false;
+        }
+
+        // "Splash, over" - the heads-up the rounds are about to land, called this phase right before impact. A
+        // counter-battery shot aims at an off-board battery, whose virtual board number is meaningless to read out as a
+        // grid square, so name it as an off-board target instead (matching the "Shot, out" readback).
+        String splashTarget = target.isOffBoard()
+              ? Messages.getString("Artillery.offBoardTarget")
+              : targetPos.getBoardNum();
+        if (attackingEntity != null) {
+            gameManager.sendArtilleryNetToast("splash", attackingEntity, game.getRoundCount(), splashTarget);
         }
 
         boolean isFlak = targetIsEntity && Compute.isFlakAttack(attackingEntity, (Entity) target);
@@ -502,14 +537,29 @@ public class ArtilleryWeaponIndirectFireHandler extends AmmoWeaponHandler {
     }
 
     /**
+     * Sends the team-only "Shot, over" call-for-fire toast naming the target grid. The aim point travels only in this
+     * team toast (and the team-only map marker), never in the shared phase report - which would leak it to the enemy,
+     * who otherwise sees exactly the same announcement as in {@code main} (the firing unit + "will land in N turns").
+     */
+    private void reportShot() {
+        if (attackingEntity == null) {
+            return;
+        }
+        Coords targetPos = (target != null) ? target.getPosition() : null;
+        // A counter-battery shot aims at an off-board enemy battery, whose virtual board number is meaningless to read
+        // out as a grid square, so name it as an off-board target instead.
+        boolean offBoardTarget = ((target != null) && target.isOffBoard()) || (targetPos == null);
+        String grid = offBoardTarget ? Messages.getString("Artillery.offBoardTarget") : targetPos.getBoardNum();
+        gameManager.sendArtilleryNetToast("shot", attackingEntity, game.getRoundCount(), grid);
+    }
+
+    /**
      * Worker function that handles "artillery round landed here" reports, and direct artillery scatter.
      *
      * @return Whether we should continue attack resolution afterward
      */
     private Coords handleReportsAndDirectScatter(boolean isFlak, Coords targetPos, Vector<Report> vPhaseReport,
           ArtilleryAttackAction aaa) {
-        Coords originalTargetPos = targetPos;
-
         Report r;
         // special report for off-board target
         if (target.isOffBoard()) {
@@ -551,17 +601,16 @@ public class ArtilleryWeaponIndirectFireHandler extends AmmoWeaponHandler {
                                   artyMsg));
             }
         } else {
-            // direct fire artillery only scatters by one d6
-            // we do this here to avoid duplicating handle()
-            // in the ArtilleryWeaponDirectFireHandler
-            Coords origPos = targetPos;
-            int moF = toHit.getMoS();
-            if (attackingEntity.hasAbility("oblique_artillery")) {
-                // getMoS returns a negative MoF
-                // simple math is better so lets make it positive
-                moF = Math.max(moF + 2, 0);
-            }
-            targetPos = Compute.scatterDirectArty(targetPos, moF);
+            // Standard scatter rolls 1d6 for the direction and uses the margin of failure as the
+            // distance; with the Advanced Scatter option the distance is rolled with dice instead.
+            // Resolved here so it is not duplicated in ArtilleryWeaponDirectFireHandler.
+            Coords originalPosition = targetPos;
+            // Oblique Artilleryman reduces scatter distance by two hexes, minimum 0 (CamOps p.78, 5th printing).
+            int scatterReduction = attackingEntity.hasAbility(OptionsConstants.GUNNERY_OBLIQUE_ARTILLERY)
+                  ? Scatter.SPA_SCATTER_REDUCTION : 0;
+            ScatterResult scatterResult = ScatterMethod.forGame(game)
+                  .omnidirectional(targetPos, toHit.getMoS(), scatterReduction);
+            targetPos = scatterResult.landing();
             if (game.getBoard().contains(targetPos)) {
                 // misses and scatters to another hex
                 if (!isFlak) {
@@ -571,12 +620,13 @@ public class ArtilleryWeaponIndirectFireHandler extends AmmoWeaponHandler {
                           + game.getRoundCount() + ", by "
                           + game.getPlayer(aaa.getPlayerId()).getName()
                           + ", drifted to " + targetPos.getBoardNum();
-                    game.getBoard().addSpecialHexDisplay(
-                          origPos,
-                          new SpecialHexDisplay(Type.ARTILLERY_MISS,
-                                game.getRoundCount(),
-                                game.getPlayer(aaa.getPlayerId()),
-                                artyMsg));
+                    SpecialHexDisplay missMarker = new SpecialHexDisplay(Type.ARTILLERY_MISS,
+                          game.getRoundCount(),
+                          game.getPlayer(aaa.getPlayerId()),
+                          artyMsg);
+                    // Record where the round actually drifted so the board view can draw the drift line.
+                    missMarker.setDriftHex(targetPos);
+                    game.getBoard().addSpecialHexDisplay(originalPosition, missMarker);
                 } else {
                     r = new Report(3192);
                 }
@@ -586,7 +636,7 @@ public class ArtilleryWeaponIndirectFireHandler extends AmmoWeaponHandler {
             } else if (target.isOffBoard()) {
                 // off-board targets should report scatter distance
                 r = new Report(9995);
-                r.add(originalTargetPos.distance(targetPos));
+                r.add(scatterResult.distanceHexes());
                 r.subject = subjectId;
                 r.indent();
                 vPhaseReport.addElement(r);
@@ -604,12 +654,18 @@ public class ArtilleryWeaponIndirectFireHandler extends AmmoWeaponHandler {
                       + game.getRoundCount() + ", by "
                       + game.getPlayer(aaa.getPlayerId()).getName()
                       + ", drifted off the board";
-                game.getBoard().addSpecialHexDisplay(
-                      origPos,
-                      new SpecialHexDisplay(Type.ARTILLERY_MISS,
-                            game.getRoundCount(),
-                            game.getPlayer(aaa.getPlayerId()),
-                            artyMsg));
+                SpecialHexDisplay missMarker = new SpecialHexDisplay(Type.ARTILLERY_MISS,
+                      game.getRoundCount(),
+                      game.getPlayer(aaa.getPlayerId()),
+                      artyMsg);
+                // There is no on-board landing hex, so draw the drift arrow to the board edge the round crossed,
+                // showing the direction it drifted off the map.
+                Coords edgeHex = ArtilleryHandlerHelper.nearestOnBoardHexTowardOffBoard(game.getBoard(),
+                      originalPosition, targetPos);
+                if (edgeHex != null) {
+                    missMarker.setDriftHex(edgeHex);
+                }
+                game.getBoard().addSpecialHexDisplay(originalPosition, missMarker);
                 return null;
             }
         }
@@ -642,6 +698,12 @@ public class ArtilleryWeaponIndirectFireHandler extends AmmoWeaponHandler {
                         r.add(entity.getDisplayName());
                         r.subject = subjectId;
                         vPhaseReport.add(r);
+                        // Radio-flavored call-for-fire toast to the team that just spotted the enemy battery.
+                        gameManager.sendCounterBatteryObservedToast(entity, aaa.getEntity(game), targetPos,
+                              game.getRoundCount());
+                        // The observed flag lives on the attacker's entity state; push the update so client bots (which
+                        // read their own synced game copy) actually see it and can return counter-battery fire.
+                        gameManager.entityUpdate(aaa.getEntity(game).getId());
                     }
                 }
             }
@@ -658,6 +720,8 @@ public class ArtilleryWeaponIndirectFireHandler extends AmmoWeaponHandler {
                 r.add(target.getDisplayName());
                 r.subject = subjectId;
                 vPhaseReport.add(r);
+                // Push the updated observed flag to clients so a client bot can target it for counter-battery fire.
+                gameManager.entityUpdate(attacker.getId());
             }
         }
     }

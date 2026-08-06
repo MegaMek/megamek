@@ -46,7 +46,6 @@ import javax.swing.*;
 import javax.swing.border.Border;
 
 import megamek.client.ui.util.UIUtil;
-import megamek.codeUtilities.MathUtility;
 import megamek.logging.MMLogger;
 import org.apache.pdfbox.Loader;
 import org.apache.pdfbox.pdmodel.PDDocument;
@@ -330,7 +329,7 @@ public class PDFReaderPanel extends JPanel {
      * @since 0.50.07
      */
     private void zoom(int newDpi) {
-        newDpi = MathUtility.clamp(newDpi, MIN_DPI, MAX_DPI);
+        newDpi = Math.clamp(newDpi, MIN_DPI, MAX_DPI);
 
         if (newDpi == currentDpi) { // Prevent unnecessary processing
             return;

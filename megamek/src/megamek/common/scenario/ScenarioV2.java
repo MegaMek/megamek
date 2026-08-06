@@ -219,7 +219,7 @@ public class ScenarioV2 implements Scenario {
                 List<Entity> units = network.participants.stream().map(twGame::getEntity).toList();
                 try {
                     if (network.masterId == Entity.NONE) {
-                        C3Util.joinNh(twGame, units, units.get(0).getId(), false);
+                        C3Util.joinNh(twGame, units, units.getFirst().getId(), false);
                     } else {
                         boolean connectMM = units.stream().anyMatch(Entity::hasC3M);
                         if (connectMM) {
@@ -441,7 +441,8 @@ public class ScenarioV2 implements Scenario {
                     if (groundObjectInfo.position() == null) {
                         player.getGroundObjectsToPlace().add(groundObjectInfo.groundObject());
                     } else {
-                        ((AbstractGame) game).placeGroundObject(groundObjectInfo.position(), groundObjectInfo.groundObject());
+                        ((AbstractGame) game).placeGroundObject(groundObjectInfo.position(),
+                              groundObjectInfo.groundObject());
                     }
                 }
             }

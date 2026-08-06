@@ -85,9 +85,9 @@ public class MMLForceBuilderRandomArmyDialog extends AbstractRandomArmyDialog {
         public void actionPerformed(ActionEvent e) {
             List<Entity> unitList;
             if (tabbedPane.getSelectedIndex() == TAB_FORCE_GENERATOR) {
-                unitList = m_pForceGen.getChosenUnits();
+                unitList = forceGeneratorPanel.getChosenUnits();
             } else {
-                unitList = armyModel.getAllUnits().stream().map(MekSummary::loadEntity).toList();
+                unitList = chosenUnitsModel.getAllUnits().stream().map(MekSummary::loadEntity).toList();
             }
             if (unitList != null && !unitList.isEmpty()) {
                 unitsReceiver.accept(unitList);

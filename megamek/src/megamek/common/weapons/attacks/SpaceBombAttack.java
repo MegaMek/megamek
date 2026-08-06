@@ -42,6 +42,7 @@ import megamek.common.ToHitData;
 import megamek.common.actions.WeaponAttackAction;
 import megamek.common.annotations.Nullable;
 import megamek.common.enums.AvailabilityValue;
+import megamek.common.enums.TechBase;
 import megamek.common.equipment.AmmoType;
 import megamek.common.equipment.WeaponTypeFlag;
 import megamek.common.game.Game;
@@ -76,7 +77,9 @@ public class SpaceBombAttack extends Weapon {
         cost = 0;
         flags = flags.or(F_SPACE_BOMB).or(F_SOLO_ATTACK).or(WeaponTypeFlag.INTERNAL_REPRESENTATION);
         hittable = false;
-        techAdvancement.setAvailability(AvailabilityValue.C,
+        techAdvancement.setTechBase(TechBase.ALL)
+              .setAdvancement(DATE_ES, DATE_ES, DATE_ES, DATE_NONE, DATE_NONE)
+              .setAvailability(AvailabilityValue.C,
               AvailabilityValue.C,
               AvailabilityValue.C,
               AvailabilityValue.C);

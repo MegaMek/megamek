@@ -1,7 +1,7 @@
 /*
 
  * Copyright (C) 2000-2005 Ben Mazur (bmazur@sev.org)
- * Copyright (C) 2010-2025 The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2010-2026 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -40,12 +40,14 @@ import java.util.Vector;
 
 import megamek.common.Hex;
 import megamek.common.Report;
+import megamek.common.SpecialHexDisplay;
 import megamek.common.ToHitData;
 import megamek.common.actions.NukeDetonatedAction;
 import megamek.common.actions.WeaponAttackAction;
 import megamek.common.board.Board;
 import megamek.common.board.Coords;
 import megamek.common.compute.Compute;
+import megamek.common.compute.scatter.ScatterMethod;
 import megamek.common.enums.GamePhase;
 import megamek.common.equipment.AmmoType;
 import megamek.common.equipment.Minefield;
@@ -56,6 +58,7 @@ import megamek.common.loaders.EntityLoadingException;
 import megamek.common.rolls.TargetRoll;
 import megamek.common.units.Entity;
 import megamek.common.units.Targetable;
+import megamek.common.weapons.ArtilleryHandlerHelper;
 import megamek.common.weapons.handlers.AmmoWeaponHandler;
 import megamek.common.weapons.handlers.AreaEffectHelper;
 import megamek.logging.MMLogger;
@@ -91,7 +94,7 @@ public class ArtilleryCannonWeaponHandler extends AmmoWeaponHandler {
         boolean targetIsEntity = target.getTargetType() == Targetable.TYPE_ENTITY;
         boolean isFlak = targetIsEntity && Compute.isFlakAttack(attackingEntity, (Entity) target);
         boolean asfFlak = isFlak && target.isAirborne();
-        Mounted<?> ammoUsed = attackingEntity.getEquipment(weaponAttackAction.getAmmoId());
+        Mounted<?> ammoUsed = weaponEntity.getEquipment(weaponAttackAction.getAmmoId());
         final AmmoType ammoType = (ammoUsed == null) ? null : (AmmoType) ammoUsed.getType();
 
         // Report weapon attack and its to-hit value.
@@ -163,11 +166,23 @@ public class ArtilleryCannonWeaponHandler extends AmmoWeaponHandler {
         } else {
             Board board = game.getBoard(target);
             if (!board.isSpace()) {
-                targetPos = Compute.scatter(targetPos, (Math.abs(toHit.getMoS()) + 1) / 2);
+                Coords originalPosition = targetPos;
+                // Artillery cannons use half the usual scatter distance (rounded up).
+                int standardDistance = (Math.abs(toHit.getMoS()) + 1) / 2;
+                targetPos = ScatterMethod.forGame(game)
+                      .omnidirectional(targetPos, standardDistance, toHit.getMoS(), 0)
+                      .landing();
                 if (board.contains(targetPos)) {
                     // misses and scatters to another hex
                     if (!isFlak) {
                         report = new Report(3195);
+                        // Mark the targeted hex and record the drift so the board view can draw the drift line.
+                        SpecialHexDisplay cannonMissMarker = new SpecialHexDisplay(
+                              SpecialHexDisplay.Type.ARTILLERY_MISS, game.getRoundCount(), attackingEntity.getOwner(),
+                              "Artillery cannon missed here on round " + game.getRoundCount() + ", drifted to "
+                                    + targetPos.getBoardNum());
+                        cannonMissMarker.setDriftHex(targetPos);
+                        board.addSpecialHexDisplay(originalPosition, cannonMissMarker);
                     } else {
                         report = new Report(3192);
                     }
@@ -175,7 +190,8 @@ public class ArtilleryCannonWeaponHandler extends AmmoWeaponHandler {
                     report.add(targetPos.getBoardNum());
                     vPhaseReport.addElement(report);
                 } else {
-                    // misses and scatters off-board
+                    // misses and scatters off-board: draw the drift arrow to the board edge the round crossed, since
+                    // there is no on-board landing hex.
                     if (isFlak) {
                         report = new Report(3193);
                     } else {
@@ -183,6 +199,16 @@ public class ArtilleryCannonWeaponHandler extends AmmoWeaponHandler {
                     }
                     report.subject = subjectId;
                     vPhaseReport.addElement(report);
+
+                    SpecialHexDisplay offBoardMissMarker = new SpecialHexDisplay(
+                          SpecialHexDisplay.Type.ARTILLERY_MISS, game.getRoundCount(), attackingEntity.getOwner(),
+                          "Artillery cannon missed here on round " + game.getRoundCount() + ", drifted off the board");
+                    Coords edgeHex = ArtilleryHandlerHelper.nearestOnBoardHexTowardOffBoard(board, originalPosition,
+                          targetPos);
+                    if (edgeHex != null) {
+                        offBoardMissMarker.setDriftHex(edgeHex);
+                    }
+                    board.addSpecialHexDisplay(originalPosition, offBoardMissMarker);
                     return !bMissed;
                 }
             } else {

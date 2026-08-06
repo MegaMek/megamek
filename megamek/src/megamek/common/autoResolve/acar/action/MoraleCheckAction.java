@@ -33,6 +33,7 @@
 
 package megamek.common.autoResolve.acar.action;
 
+import jakarta.annotation.Nonnull;
 import megamek.common.autoResolve.acar.SimulationContext;
 import megamek.common.autoResolve.acar.SimulationManager;
 import megamek.common.autoResolve.acar.handler.MoraleCheckActionHandler;
@@ -55,6 +56,7 @@ public record MoraleCheckAction(int formationId) implements Action {
     }
 
     @Override
+    @Nonnull
     public String toString() {
         return "[MoraleCheckAction]: ID: " + formationId;
     }

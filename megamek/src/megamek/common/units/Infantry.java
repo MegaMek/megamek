@@ -884,9 +884,4 @@ public abstract class Infantry extends Entity {
     public boolean canExitVTOLWithGliderWings() {
         return false;
     }
-
-    @Override
-    public boolean isChassisFamiliarityEligible() {
-        return true;
-    }
 }

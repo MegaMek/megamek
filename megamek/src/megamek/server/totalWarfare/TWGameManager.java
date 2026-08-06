@@ -27796,6 +27796,14 @@ public class TWGameManager extends AbstractGameManager {
                     mapSettings.setNullBoards(DEFAULT_BOARD);
                     send(createMapSettingsPacket());
                 }
+                if (option.getName().equals(OptionsConstants.RULES_SYSTEM)) {
+                    if (option.getValue().equals(OptionsConstants.RULES_CORE)) {
+                        game.initializeRulesManager(OptionsConstants.RULES_CORE);
+                    }
+                    if (option.getValue().equals(OptionsConstants.RULES_TW)) {
+                        game.initializeRulesManager(OptionsConstants.RULES_TW);
+                    }
+                }
             }
         }
 

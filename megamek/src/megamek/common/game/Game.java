@@ -310,25 +310,9 @@ public final class Game extends AbstractGame implements Serializable, PlanetaryC
     }
 
     public void initializeRulesManager(String system) {
-        // used for testing
-        if (system.contains("TW")) {
+        if (system.equals(OptionsConstants.RULES_TW)) {
             rulesManager = new TWRulesManager();
-        } else if (system.contains("Core")) {
-            rulesManager = new CoreRulesManager();
-        }
-    }
-
-    public void initializeRulesManager() {
-        boolean bTWRules = false;
-        IOption rules_system = getOptions().getOption(OptionsConstants.RULES_SYSTEM);
-        String rules_selected = (rules_system == null) ? OptionsConstants.RULES_CORE :
-              rules_system.stringValue();
-        if (OptionsConstants.RULES_TW.equals(rules_selected)) {
-            bTWRules = true;
-        }
-        if (bTWRules) {
-            rulesManager = new TWRulesManager();
-        } else {
+        } else if (system.equals(OptionsConstants.RULES_CORE)) {
             rulesManager = new CoreRulesManager();
         }
     }
@@ -501,6 +485,13 @@ public final class Game extends AbstractGame implements Serializable, PlanetaryC
                 if (entity.isProtoMek()) {
                     entity.setGameOptions();
                 }
+            }
+            // Check Rules system and reapply as needed.
+            IOption rules_system = this.options.getOption(OptionsConstants.RULES_SYSTEM);
+            String loadedOption = (rulesManager instanceof CoreRulesManager) ?
+                  OptionsConstants.RULES_CORE : OptionsConstants.RULES_TW;
+            if (!rules_system.stringValue().equals(loadedOption)) {
+                initializeRulesManager(rules_system.stringValue());
             }
             processGameEvent(new GameSettingsChangeEvent(this));
         }

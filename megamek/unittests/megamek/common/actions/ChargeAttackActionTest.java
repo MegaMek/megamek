@@ -41,6 +41,7 @@ import static org.mockito.Mockito.mockStatic;
 import megamek.common.LosEffects;
 import megamek.common.game.Game;
 import megamek.common.interfaces.ILocationExposureStatus;
+import megamek.common.options.OptionsConstants;
 import megamek.common.units.Dropship;
 import megamek.common.units.Entity;
 import megamek.common.units.Mek;
@@ -182,7 +183,7 @@ class ChargeAttackActionTest {
             Entity attacker = createMockMek(50, false);
             Entity target = createMockMek(75, false);
             Game game = new Game();
-            game.initializeRulesManager("TW");
+            game.initializeRulesManager(OptionsConstants.RULES_TW);
 
             int damage = ChargeAttackAction.getDamageTakenBy(attacker, target, true, 3);
 
@@ -201,7 +202,7 @@ class ChargeAttackActionTest {
             Entity attacker = createMockMek(50, false);
             Dropship target = createMockDropship(3500);
             Game game = new Game();
-            game.initializeRulesManager("TW");
+            game.initializeRulesManager(OptionsConstants.RULES_TW);
 
             int damage = ChargeAttackAction.getDamageTakenBy(attacker, target, true, 3);
 
@@ -220,7 +221,7 @@ class ChargeAttackActionTest {
             Entity attacker = createMockMek(50, false);
             Entity target = createMockMek(50, false);
             Game game = new Game();
-            game.initializeRulesManager("TW");
+            game.initializeRulesManager(OptionsConstants.RULES_TW);
 
             int damage = ChargeAttackAction.getDamageTakenBy(attacker, target, true, 4);
 
@@ -237,7 +238,7 @@ class ChargeAttackActionTest {
             Entity attacker = createMockMek(100, false);
             Entity target = createMockMek(100, false);
             Game game = new Game();
-            game.initializeRulesManager("TW");
+            game.initializeRulesManager(OptionsConstants.RULES_TW);
 
             int damage = ChargeAttackAction.getDamageTakenBy(attacker, target, true, 1);
 

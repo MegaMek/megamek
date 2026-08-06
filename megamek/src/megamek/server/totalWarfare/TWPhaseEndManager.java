@@ -37,6 +37,9 @@ import megamek.common.Player;
 import megamek.common.Report;
 import megamek.common.enums.GamePhase;
 import megamek.common.event.GameVictoryEvent;
+import megamek.common.options.IOption;
+import megamek.common.options.OptionsConstants;
+import megamek.common.rules.core.CoreRulesManager;
 import megamek.common.units.Entity;
 import megamek.server.ServerHelper;
 
@@ -46,8 +49,13 @@ record TWPhaseEndManager(TWGameManager gameManager) {
         switch (gameManager.getGame().getPhase()) {
             case LOUNGE:
                 gameManager.getGame().addReports(gameManager.getMainPhaseReport());
-                // RULES initialize the rules as per the current game options
-                gameManager.getGame().initializeRulesManager();
+                // Case for if the options didn't set the rules properly 
+                IOption rules_system = gameManager.getGame().getOptions().getOption(OptionsConstants.RULES_SYSTEM);
+                String loadedOption = (gameManager.getGame().rulesManager instanceof CoreRulesManager) ?
+                      OptionsConstants.RULES_CORE : OptionsConstants.RULES_TW;
+                if (!rules_system.stringValue().equals(loadedOption)) {
+                    gameManager.getGame().initializeRulesManager(rules_system.stringValue());
+                }
                 gameManager.changePhase(GamePhase.EXCHANGE);
                 break;
             case EXCHANGE:

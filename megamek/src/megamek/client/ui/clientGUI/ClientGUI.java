@@ -107,6 +107,7 @@ import megamek.client.ui.dialogs.RandomNameDialog;
 import megamek.client.ui.dialogs.RoundsInAirDialog;
 import megamek.client.ui.dialogs.UnitLoadingDialog;
 import megamek.client.ui.dialogs.buttonDialogs.CommonSettingsDialog;
+import megamek.client.bot.AIType;
 import megamek.client.ui.dialogs.buttonDialogs.EditBotsDialog;
 import megamek.client.ui.dialogs.buttonDialogs.GameOptionsDialog;
 import megamek.client.ui.dialogs.buttonDialogs.NetworkInformationDialog;
@@ -3903,9 +3904,12 @@ public class ClientGUI extends AbstractClientGUI
 
         AddBotUtil util = new AddBotUtil();
         Map<String, BehaviorSettings> newBotSettings = rpd.getNewBots();
+        Map<String, AIType> newBotTypes = rpd.getNewBotTypes();
         for (String ghostName : newBotSettings.keySet()) {
             StringBuilder message = new StringBuilder();
-            BotClient botClient = util.replaceGhostWithBot(newBotSettings.get(ghostName), ghostName, client, message);
+            AIType aiType = newBotTypes.getOrDefault(ghostName, AIType.PRINCESS);
+            BotClient botClient = util.replaceGhostWithBot(aiType, newBotSettings.get(ghostName), ghostName,
+                  client, message);
             systemMessage(message.toString());
             // Make this bot a locally owned bot. This way it can be configured, and if on the lobby
             // it will faithfully press Done when the local player does.

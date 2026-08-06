@@ -90,6 +90,10 @@ public class TWRulesHeat extends RulesHeat {
         }
         if ((torsoMountedCockpit) &&
               !bPainShunt) {
+            if (heatLimitDamage.isEmpty()) {
+                heatLimitDamage.add(1);
+                heatLimitDamage.add(0);
+            }
             heatLimitDamage.set(1, heatLimitDamage.get(1) + 1);
         }
     }

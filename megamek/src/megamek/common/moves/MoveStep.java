@@ -708,6 +708,7 @@ public class MoveStep implements Serializable {
         if (Game.rulesManager.getRulesMovement().cannotRunInWater(entity.getMovementMode(),
                                                                   cachedEntityState.hasWorkingMisc(MiscType.F_FULLY_AMPHIBIOUS))
               && !isPavementStep()
+              && (destHex.terrainLevel(Terrains.WATER) > 0)
               && !(destHex.containsTerrain(Terrains.ICE) && (elevation >= 0))
               &&
               !(destHex.terrainLevel(Terrains.BRIDGE_ELEV) == elevation)) {

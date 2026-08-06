@@ -206,7 +206,7 @@ public class CoreRulesMovement extends RulesMovement {
         // If we have a hex without something in it, randomly pick one
         if (!hexCoordsArray.isEmpty()) {
             int randomHex = Compute.randomInt(hexCoordsArray.size());
-            return hexAlternateArray.get(randomHex);
+            return hexCoordsArray.get(randomHex);
         }
         // I guess no valid hexes without units in them. Ok, pick one with something in it
         if (!hexAlternateArray.isEmpty()) {

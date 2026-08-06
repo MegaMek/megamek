@@ -65,15 +65,7 @@ import megamek.common.Report;
 import megamek.common.SpecialHexDisplay;
 import megamek.common.TagInfo;
 import megamek.common.TemporaryECMField;
-import megamek.common.actions.ArtilleryAttackAction;
-import megamek.common.actions.AttackAction;
-import megamek.common.actions.ChargeAttackAction;
-import megamek.common.actions.ClubAttackAction;
-import megamek.common.actions.DisplacementAttackAction;
-import megamek.common.actions.DodgeAction;
-import megamek.common.actions.EntityAction;
-import megamek.common.actions.FlipArmsAction;
-import megamek.common.actions.TorsoTwistAction;
+import megamek.common.actions.*;
 import megamek.common.annotations.Nullable;
 import megamek.common.board.Board;
 import megamek.common.board.BoardDimensions;
@@ -889,6 +881,16 @@ public class Client extends AbstractClient {
                             chargingUnit.setDisplacementAttack((DisplacementAttackAction) entityAction);
                         }
                         game.addDisplacementAttack((AttackAction) entityAction);
+                    }
+                    if (entityAction instanceof RamAttackAction) {
+                        Entity rammingUnit = game.getEntity(entityAction.getEntityId());
+                        if (rammingUnit != null) {
+                            rammingUnit.setRamming(true);
+                        }
+                        game.addRam((AttackAction) entityAction);
+                    }
+                    if (entityAction instanceof TeleMissileAttackAction) {
+                        game.addTeleMissileAttack((AttackAction) entityAction);
                     }
                 }
             }

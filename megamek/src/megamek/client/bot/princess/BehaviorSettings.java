@@ -38,7 +38,6 @@ import java.io.Serializable;
 import java.util.HashSet;
 import java.util.Set;
 
-import megamek.codeUtilities.MathUtility;
 import megamek.codeUtilities.StringUtility;
 import megamek.common.annotations.Nullable;
 import megamek.common.util.StringUtil;
@@ -516,7 +515,7 @@ public class BehaviorSettings implements Serializable {
     }
 
     private int validateIndex(final int index) {
-        return MathUtility.clamp(index, 0, 10);
+        return Math.clamp(index, 0, 10);
     }
 
     /**
@@ -889,7 +888,7 @@ public class BehaviorSettings implements Serializable {
     }
 
     public void setNumberOfEnemiesToConsiderFacing(int numberOfEnemiesToConsiderFacing) {
-        this.numberOfEnemiesToConsiderFacing = MathUtility.clamp(numberOfEnemiesToConsiderFacing,
+        this.numberOfEnemiesToConsiderFacing = Math.clamp(numberOfEnemiesToConsiderFacing,
               MIN_NUMBER_OF_ENEMIES_TO_CONSIDER_FACING,
               MAX_NUMBER_OF_ENEMIES_TO_CONSIDER_FACING);
     }
@@ -899,7 +898,7 @@ public class BehaviorSettings implements Serializable {
     }
 
     public void setAllowFacingTolerance(int allowFacingTolerance) {
-        this.allowFacingTolerance = MathUtility.clamp(
+        this.allowFacingTolerance = Math.clamp(
               allowFacingTolerance, MIN_ALLOW_FACING_TOLERANCE, MAX_ALLOW_FACING_TOLERANCE);
     }
 

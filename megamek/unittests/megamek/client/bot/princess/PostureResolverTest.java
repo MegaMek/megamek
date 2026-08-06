@@ -58,6 +58,11 @@ class PostureResolverTest {
         return List.of(new Coords(5, 5 + distance));
     }
 
+    /** Two enemies at different ranges, for mean distances that land between whole hexes. */
+    private List<Coords> enemiesAtDistances(int firstDistance, int secondDistance) {
+        return List.of(new Coords(5, 5 + firstDistance), new Coords(5, 5 + secondDistance));
+    }
+
     @Test
     void anExplicitPostureIsObeyedWithoutLookingAtAnything() {
         settings.setCombatPosture(CombatPosture.DEFEND);
@@ -93,6 +98,30 @@ class PostureResolverTest {
               "an enemy that is not coming to us will not be waited for");
         assertEquals(CombatPosture.ATTACK, resolver.resolve(settings, 3, ownPositions, enemyAtDistance(21)),
               "a retreating enemy even less so");
+    }
+
+    /**
+     * Entering and leaving the defensive are different decisions. Measured on a 30-game river run, a single
+     * threshold left the closing rate hovering around it during a mutual approach and the posture flipped
+     * round to round. Once standing on the defensive, the force holds it until the advance actually stops.
+     */
+    @Test
+    void aDefenseHoldsUntilTheAdvanceActuallyStops() {
+        assertEquals(CombatPosture.ATTACK, resolver.resolve(settings, 1, ownPositions, enemyAtDistance(20)));
+        assertEquals(CombatPosture.DEFEND, resolver.resolve(settings, 2, ownPositions, enemyAtDistance(17)),
+              "three hexes closer in a round stands the force on the defensive");
+        assertEquals(CombatPosture.DEFEND,
+              resolver.resolve(settings, 3, ownPositions, enemiesAtDistances(16, 17)));
+        assertEquals(CombatPosture.DEFEND,
+              resolver.resolve(settings, 4, ownPositions, enemiesAtDistances(16, 17)));
+        // Closing rate is now 0.33 hexes a round - under the entry threshold, so a single-threshold
+        // resolver would flip back to attack here mid-assault. The defense holds.
+        assertEquals(CombatPosture.DEFEND, resolver.resolve(settings, 5, ownPositions, enemyAtDistance(16)),
+              "an advance that has slackened but not stopped does not end the defense");
+        assertEquals(CombatPosture.DEFEND, resolver.resolve(settings, 6, ownPositions, enemyAtDistance(16)));
+        assertEquals(CombatPosture.DEFEND, resolver.resolve(settings, 7, ownPositions, enemyAtDistance(16)));
+        assertEquals(CombatPosture.ATTACK, resolver.resolve(settings, 8, ownPositions, enemyAtDistance(16)),
+              "three rounds at the same distance: the advance has stopped, go and get them");
     }
 
     @Test

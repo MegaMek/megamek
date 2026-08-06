@@ -51,8 +51,10 @@ import megamek.logging.MMLogger;
  * battle happen, so the force attacks.</p>
  *
  * <p>The closing test compares the enemy's mean distance to our force against where it stood a few rounds
- * ago, so one unit's jockeying does not flip the whole force's stance. Resolution is cached per round: every
- * unit the bot moves in a round moves under the same posture.</p>
+ * ago, so one unit's jockeying does not flip the whole force's stance, and leaving the defensive takes a
+ * much weaker signal than entering it ({@link #DEFEND_EXIT_THRESHOLD_HEXES_PER_ROUND}) so the stance does
+ * not flip-flop while a mutual approach hovers around the entry threshold. Resolution is cached per round:
+ * every unit the bot moves in a round moves under the same posture.</p>
  */
 public class PostureResolver {
     private final static MMLogger logger = MMLogger.create(PostureResolver.class);
@@ -63,6 +65,15 @@ public class PostureResolver {
      * waiting for them wins nobody a game.
      */
     static final double CLOSING_THRESHOLD_HEXES_PER_ROUND = 0.5;
+
+    /**
+     * Below this closing rate a force already on the defensive reads the enemy's advance as stopped and goes
+     * back over to the attack. Deliberately far below the entry threshold: measured on a 30-game river run,
+     * a single threshold left the closing rate hovering around it and the posture flip-flopped round to
+     * round, each defend round wrongly discouraging that round's movement. Entering and leaving a stance are
+     * different decisions - a defense stands until the assault is spent, not until it slackens.
+     */
+    static final double DEFEND_EXIT_THRESHOLD_HEXES_PER_ROUND = 0.1;
 
     /**
      * How many rounds back the closing test looks. Long enough to smooth out one round of jockeying, short
@@ -145,6 +156,18 @@ public class PostureResolver {
 
         double baselineDistance = meanEnemyDistanceByRound.get(baselineRound);
         double closingPerRound = (baselineDistance - meanDistance) / (round - baselineRound);
+
+        // Entering and leaving the defensive are different decisions (hysteresis): during a mutual
+        // approach the measured closing rate hovers around any single threshold and the posture would
+        // flip-flop round to round. A defense, once stood, holds until the advance actually stops.
+        if (CombatPosture.DEFEND == resolvedPosture) {
+            if (closingPerRound > DEFEND_EXIT_THRESHOLD_HEXES_PER_ROUND) {
+                return resolved(round, CombatPosture.DEFEND,
+                      String.format("the enemy advance has not stopped (%.1f hexes a round)", closingPerRound));
+            }
+            return resolved(round, CombatPosture.ATTACK,
+                  String.format("the enemy advance has stopped (%.1f hexes a round)", closingPerRound));
+        }
         if (closingPerRound >= CLOSING_THRESHOLD_HEXES_PER_ROUND) {
             return resolved(round, CombatPosture.DEFEND,
                   String.format("the enemy is closing %.1f hexes a round", closingPerRound));

@@ -78,8 +78,11 @@ public final class FluffImageHelper {
     public static final String DIR_NAME_SPACE_STATION = "Space Station";
     public static final String DIR_NAME_VEHICLE = "Vehicle";
     public static final String DIR_NAME_WARSHIP = "WarShip";
-    public static final List<String> EXTENSIONS_FLUFF_IMAGE_FORMATS = List.of(".PNG", ".png", ".JPG",
-                                                                    ".JPEG", ".jpg", ".jpeg", ".GIF", ".gif");
+    public static final String[] EXTENSIONS_FLUFF_IMAGE_FORMATS = { ".PNG", ".png", ".JPG",
+                                                                    ".JPEG", ".jpg", ".jpeg", ".GIF", ".gif" };
+
+    /** The extensions above as a set, for membership tests when scanning a chassis or model directory. */
+    private static final Set<String> EXTENSIONS_FLUFF_IMAGE_FORMAT_SET = Set.of(EXTENSIONS_FLUFF_IMAGE_FORMATS);
 
     /**
      * Returns a fluff image for the given unit/object to be shown e.g. in the unit summary.
@@ -531,7 +534,7 @@ public final class FluffImageHelper {
 
     private static boolean isNoImageFile(File file) {
         Optional<String> extension = getExtension(file.toString());
-        return extension.isEmpty() || !EXTENSIONS_FLUFF_IMAGE_FORMATS.contains(extension.get());
+        return extension.isEmpty() || !EXTENSIONS_FLUFF_IMAGE_FORMAT_SET.contains(extension.get());
     }
 
     /**

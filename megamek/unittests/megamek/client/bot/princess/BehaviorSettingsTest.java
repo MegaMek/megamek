@@ -103,6 +103,31 @@ class BehaviorSettingsTest {
     }
 
     @Test
+    void combatPostureDefaultsToAutoAndSurvivesCopyAndXml() throws Exception {
+        BehaviorSettings behaviorSettings = new BehaviorSettings();
+        assertEquals(CombatPosture.AUTO, behaviorSettings.getCombatPosture(), "the default leaves the call to the bot");
+
+        behaviorSettings.setCombatPosture(CombatPosture.DEFEND);
+        assertEquals(CombatPosture.DEFEND, behaviorSettings.getCopy().getCombatPosture(),
+              "getCopy must carry the posture");
+
+        behaviorSettings.setCombatPosture("attack");
+        assertEquals(CombatPosture.ATTACK, behaviorSettings.getCombatPosture(),
+              "the string setter must parse case-insensitively");
+
+        behaviorSettings.setCombatPosture((CombatPosture) null);
+        assertEquals(CombatPosture.AUTO, behaviorSettings.getCombatPosture(), "null resets to AUTO");
+
+        // Round-trip through XML, the path saved bot configurations take.
+        behaviorSettings.setCombatPosture(CombatPosture.DEFEND);
+        DocumentBuilder documentBuilder = MMXMLUtility.newSafeDocumentBuilder();
+        Document document = documentBuilder.newDocument();
+        Element behaviorElement = behaviorSettings.toXml(document, false);
+        BehaviorSettings reloaded = new BehaviorSettings(behaviorElement);
+        assertEquals(CombatPosture.DEFEND, reloaded.getCombatPosture(), "toXml/fromXml must round-trip the posture");
+    }
+
+    @Test
     void testSetDescription() throws PrincessException {
         BehaviorSettings behaviorSettings = new BehaviorSettings();
 

@@ -34,6 +34,7 @@ package megamek.client.bot.caspar;
 
 import java.util.List;
 
+import megamek.client.bot.AIType;
 import megamek.client.bot.princess.FormationGeometry;
 import megamek.client.bot.princess.MutualSupportDeployment;
 import megamek.client.bot.princess.MutualSupportPathRanker;
@@ -70,6 +71,11 @@ public class Caspar extends Princess {
      */
     public Caspar(final String name, final String host, final int port) {
         super(name, host, port);
+    }
+
+    @Override
+    public AIType getAIType() {
+        return AIType.CASPAR;
     }
 
     @Override

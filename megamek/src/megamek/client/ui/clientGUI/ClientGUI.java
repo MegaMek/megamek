@@ -107,6 +107,7 @@ import megamek.client.ui.dialogs.RandomNameDialog;
 import megamek.client.ui.dialogs.RoundsInAirDialog;
 import megamek.client.ui.dialogs.UnitLoadingDialog;
 import megamek.client.ui.dialogs.buttonDialogs.CommonSettingsDialog;
+import megamek.client.bot.AIType;
 import megamek.client.ui.dialogs.buttonDialogs.EditBotsDialog;
 import megamek.client.ui.dialogs.buttonDialogs.GameOptionsDialog;
 import megamek.client.ui.dialogs.buttonDialogs.NetworkInformationDialog;
@@ -3903,9 +3904,29 @@ public class ClientGUI extends AbstractClientGUI
 
         AddBotUtil util = new AddBotUtil();
         Map<String, BehaviorSettings> newBotSettings = rpd.getNewBots();
+        Map<String, AIType> newBotTypes = rpd.getNewBotTypes();
         for (String ghostName : newBotSettings.keySet()) {
             StringBuilder message = new StringBuilder();
-            BotClient botClient = util.replaceGhostWithBot(newBotSettings.get(ghostName), ghostName, client, message);
+            AIType aiType = newBotTypes.getOrDefault(ghostName, AIType.PRINCESS);
+            BotClient botClient = null;
+            try {
+                botClient = util.replaceGhostWithBot(aiType, newBotSettings.get(ghostName), ghostName,
+                      client, message);
+            } catch (Exception exception) {
+                logger.error(exception, "Failed to stand up a " + aiType + " bot for " + ghostName);
+            }
+            // An experimental bot that fails to stand up must not leave the seat empty: the player asked
+            // for a bot in that slot, so Princess takes it instead. Guarded like the first attempt, so a
+            // failure here degrades to an empty seat and a log line rather than a crash.
+            if ((null == botClient) && (AIType.PRINCESS != aiType)) {
+                message.append(" Falling back to Princess. ");
+                try {
+                    botClient = util.replaceGhostWithBot(AIType.PRINCESS, newBotSettings.get(ghostName),
+                          ghostName, client, message);
+                } catch (Exception exception) {
+                    logger.error(exception, "The Princess fallback failed for " + ghostName + " too");
+                }
+            }
             systemMessage(message.toString());
             // Make this bot a locally owned bot. This way it can be configured, and if on the lobby
             // it will faithfully press Done when the local player does.

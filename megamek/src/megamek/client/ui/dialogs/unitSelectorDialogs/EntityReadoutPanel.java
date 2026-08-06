@@ -288,7 +288,8 @@ public class EntityReadoutPanel extends JPanel {
         boolean hasMultipleImages = fluffImageList.size() > 1;
         nextImageButton.setEnabled(hasMultipleImages);
         prevImageButton.setEnabled(hasMultipleImages);
-        showNextFluffImage();
+        // Show the first image, not the next one - stepping by 1 here would open on the second image
+        changeFluffImageIndex(0);
     }
 
     public void reset() {

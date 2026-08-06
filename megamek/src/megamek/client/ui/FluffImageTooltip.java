@@ -81,7 +81,9 @@ public class FluffImageTooltip {
     private static String styles() {
         int labelSize = UIUtil.scaleForGUI(UIUtil.FONT_SCALE1);
         Color color = GUIPreferences.getInstance().getToolTipLightFGColor();
-        String styleColor = Integer.toHexString(color.getRGB() & 0xFFFFFF);
+        // Pad to six digits: a dark colour such as pure blue would otherwise give "ff", which is not a valid
+        // CSS colour and makes the renderer fall back to the default text colour
+        String styleColor = String.format("%06X", color.getRGB() & 0xFFFFFF);
         return "span { font-family:Noto Sans; font-size:" + labelSize + "; }"
                 + ".label { color:" + styleColor + "; }";
     }

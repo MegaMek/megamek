@@ -41,9 +41,9 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.LinkedHashSet;
 import java.util.List;
-import java.util.Objects;
 import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -87,6 +87,9 @@ public final class FluffImageHelper {
 
     /** The extensions above as a set, for membership tests when scanning a chassis or model directory. */
     private static final Set<String> EXTENSIONS_FLUFF_IMAGE_FORMAT_SET = Set.of(EXTENSIONS_FLUFF_IMAGE_FORMATS);
+
+    /** The model subdirectory name that units with an empty model match, e.g. fluff/Mek/Chassis/Chassis ---empty---. */
+    static final String EMPTY_MODEL_DIR_NAME = "---empty---";
 
     /**
      * Returns a fluff image for the given unit/object to be shown e.g. in the unit summary.
@@ -295,11 +298,11 @@ public final class FluffImageHelper {
      * <BR>- In a model subdirectory fluff/[unittype]/[chassis]/[model], all files match if the
      * unit's chassis and model match [chassis] and [model]. The filename doesn't matter for matching.
      */
-    private static List<File> getFluffInChassisDirs(BTObject unit, File unitTypeFluffDir) {
+    static List<File> getFluffInChassisDirs(BTObject unit, File unitTypeFluffDir) {
         List<File> result = new ArrayList<>();
         for (String nameCandidate : chassisNameCandidates(unit)) {
             var chassisDir = new File(unitTypeFluffDir, nameCandidate);
-            if (chassisDir.exists()) {
+            if (chassisDir.isDirectory()) {
                 result.addAll(getFluffInChassisDir(unit, chassisDir));
             }
         }
@@ -329,12 +332,12 @@ public final class FluffImageHelper {
     private static List<File> getFluffInChassisDir(BTObject unit, File chassisDir) {
         String sanitizedModel = sanitize(unit.specificName());
         if (sanitizedModel.isBlank()) {
-            sanitizedModel = "---empty---";
+            sanitizedModel = EMPTY_MODEL_DIR_NAME;
         }
         List<File> result = new ArrayList<>();
         for (String chassisNameCandidate : chassisNameCandidates(unit)) {
             var modelDir = new File(chassisDir, chassisNameCandidate + " " + sanitizedModel);
-            if (modelDir.exists()) {
+            if (modelDir.isDirectory()) {
                 result.addAll(getFluffInDir(modelDir));
             }
         }
@@ -346,12 +349,14 @@ public final class FluffImageHelper {
 
     private static List<File> getFluffInDir(File dir) {
         List<File> result = new ArrayList<>();
-        try (Stream<Path> entries = Files.walk(dir.toPath(), 1)) {
-            result.addAll(entries.map(Objects::toString).map(File::new).toList());
+        // Files.list is a shallow listing and, unlike Files.walk(dir, 1), does not include the directory itself
+        try (Stream<Path> entries = Files.list(dir.toPath())) {
+            result.addAll(entries.map(Path::toFile).toList());
             result.removeIf(FluffImageHelper::isNoImageFile);
         } catch (IOException exception) {
             LOGGER.warn("Error while reading files from {}", dir, exception);
         }
+        result.sort(Comparator.comparing(File::getName, String.CASE_INSENSITIVE_ORDER));
         return result;
     }
 

@@ -34,10 +34,7 @@
 package megamek.client.ui.panels.phaseDisplay;
 
 import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.awt.event.InputEvent;
-import java.awt.event.ItemEvent;
-import java.awt.event.ItemListener;
 import java.awt.event.MouseEvent;
 import java.io.Serial;
 import java.util.ArrayList;
@@ -58,11 +55,11 @@ import megamek.client.ui.clientGUI.ClientGUI;
 import megamek.client.ui.clientGUI.boardview.BoardView;
 import megamek.client.ui.clientGUI.boardview.IBoardView;
 import megamek.client.ui.clientGUI.boardview.overlay.ToastLevel;
-import megamek.client.ui.dialogs.phaseDisplay.AimedShotDialog;
+import megamek.client.ui.dialogs.phaseDisplay.CalledBlowDialog;
 import megamek.client.ui.dialogs.phaseDisplay.TargetChoiceDialog;
+import megamek.client.ui.enums.DialogResult;
 import megamek.client.ui.util.KeyCommandBind;
 import megamek.client.ui.util.MegaMekController;
-import megamek.client.ui.widget.IndexedRadioButton;
 import megamek.client.ui.widget.MegaMekButton;
 import megamek.client.ui.widget.MekPanelTabStrip;
 import megamek.common.Hex;
@@ -74,7 +71,6 @@ import megamek.common.board.Board;
 import megamek.common.board.Coords;
 import megamek.common.compute.Compute;
 import megamek.common.compute.ComputeArc;
-import megamek.common.enums.AimingMode;
 import megamek.common.equipment.INarcPod;
 import megamek.common.equipment.MiscMounted;
 import megamek.common.equipment.MiscType;
@@ -187,8 +183,6 @@ public class PhysicalDisplay extends AttackPhaseDisplay {
 
     // let's keep track of what we're shooting and at what, too
     Targetable target; // target
-
-    private final AimedShotHandler ash = new AimedShotHandler();
 
     /**
      * Creates and lays out a new movement phase display for the specified clientGUI.getClient().
@@ -655,8 +649,6 @@ public class PhysicalDisplay extends AttackPhaseDisplay {
 
         clientgui.getClient().sendAttackData(currentEntity, attacks.toVector());
         removeAllAttacks();
-        // close aimed shot display, if any
-        ash.closeDialog();
         if (currentEntity().isWeaponOrderChanged()) {
             clientgui.getClient().sendEntityWeaponOrderUpdate(currentEntity());
         }
@@ -1203,6 +1195,101 @@ public class PhysicalDisplay extends AttackPhaseDisplay {
         }
     }
 
+    /** Return value of {@link #chooseCalledBlowTable} when the player cancelled the attack. */
+    private static final int CALLED_BLOW_CANCELLED = -1;
+
+    /**
+     * @param club the physical weapon being swung
+     *
+     * @return {@code true} when the weapon's blow may be aimed at the punch or kick location table as a
+     *       called blow (assuming S7 vibroswords count as swords and maces count as hatchets)
+     */
+    private boolean isAimablePhysicalWeapon(MiscMounted club) {
+        return club.getType().hasAnyFlag(MiscTypeFlag.S_SWORD,
+              MiscTypeFlag.S_HATCHET,
+              MiscTypeFlag.S_VIBRO_SMALL,
+              MiscTypeFlag.S_VIBRO_MEDIUM,
+              MiscTypeFlag.S_VIBRO_LARGE,
+              MiscTypeFlag.S_MACE,
+              MiscTypeFlag.S_LANCE,
+              MiscTypeFlag.S_CHAIN_WHIP,
+              MiscTypeFlag.S_RETRACTABLE_BLADE,
+              MiscTypeFlag.S_SHIELD_LARGE,
+              MiscTypeFlag.S_SHIELD_MEDIUM,
+              MiscTypeFlag.S_SHIELD_SMALL);
+    }
+
+    /**
+     * Asks the player whether to aim the physical weapon blow high (punch location table) or low (kick
+     * location table) as a called blow, or leave it uncalled. The question is only asked when the choice
+     * actually applies: the weapon must be aimable, the attack possible, both units Meks at the same
+     * elevation, and the {@code clubs_punch} option off (that option selects the table from the elevation
+     * difference instead, ignoring any called blow).
+     *
+     * @param attacker the attacking entity
+     * @param club     the physical weapon being swung
+     *
+     * @return the chosen hit table ({@code ToHitData.HIT_NORMAL}, {@code HIT_PUNCH} or {@code HIT_KICK}),
+     *       or {@code CALLED_BLOW_CANCELLED} when the player cancelled the attack
+     */
+    private int chooseCalledBlowTable(Entity attacker, MiscMounted club) {
+        if (!isAimablePhysicalWeapon(club)) {
+            logger.debug("[CalledBlow] {}: no called blow choice - blows from {} cannot be aimed",
+                  attacker.getShortName(), club.getName());
+            return ToHitData.HIT_NORMAL;
+        }
+        if (game.getOptions().booleanOption(OptionsConstants.ADVANCED_COMBAT_CLUBS_PUNCH)) {
+            logger.debug("[CalledBlow] {}: no called blow choice - clubs_punch option selects the table by elevation",
+                  attacker.getShortName());
+            return ToHitData.HIT_NORMAL;
+        }
+        if (!(attacker instanceof Mek) || !(target instanceof Mek)) {
+            logger.debug("[CalledBlow] {}: no called blow choice - attacker and target must both be Meks",
+                  attacker.getShortName());
+            return ToHitData.HIT_NORMAL;
+        }
+        final int attackerElevation = attacker.getElevation() + game.getHexOf(attacker).getLevel();
+        final int targetElevation = target.getElevation() + game.getHexOf(target).getLevel();
+        if (attackerElevation != targetElevation) {
+            logger.debug("[CalledBlow] {}: no called blow choice - attacker (total elevation {}) and target "
+                        + "(total elevation {}) are not at the same elevation",
+                  attacker.getShortName(), attackerElevation, targetElevation);
+            return ToHitData.HIT_NORMAL;
+        }
+        final ToHitData uncalledToHit = ClubAttackAction.toHit(game, attacker.getId(),
+              target, club, ToHitData.HIT_NORMAL, false);
+        if (uncalledToHit.getValue() == TargetRoll.IMPOSSIBLE) {
+            logger.debug("[CalledBlow] {}: no called blow choice - attack with {} is impossible: {}",
+                  attacker.getShortName(), club.getName(), uncalledToHit.getDesc());
+            return ToHitData.HIT_NORMAL;
+        }
+        final ToHitData calledHighToHit = ClubAttackAction.toHit(game, attacker.getId(),
+              target, club, ToHitData.HIT_PUNCH, false);
+        final ToHitData calledLowToHit = ClubAttackAction.toHit(game, attacker.getId(),
+              target, club, ToHitData.HIT_KICK, false);
+
+        String[] choices = {
+              Messages.getString("PhysicalDisplay.CalledBlowDialog.lineNormal",
+                    uncalledToHit.getValueAsString()),
+              Messages.getString("PhysicalDisplay.CalledBlowDialog.lineHigh",
+                    calledHighToHit.getValueAsString()),
+              Messages.getString("PhysicalDisplay.CalledBlowDialog.lineLow",
+                    calledLowToHit.getValueAsString()) };
+
+        CalledBlowDialog calledBlowDialog = new CalledBlowDialog(clientgui.getFrame(), club.getName(), choices);
+        DialogResult result = calledBlowDialog.showDialog();
+        if (!result.isConfirmed()) {
+            logger.debug("[CalledBlow] {}: player cancelled the {} attack",
+                  attacker.getShortName(), club.getName());
+            return CALLED_BLOW_CANCELLED;
+        }
+        return switch (calledBlowDialog.getSelectedIndex()) {
+            case 1 -> ToHitData.HIT_PUNCH;
+            case 2 -> ToHitData.HIT_KICK;
+            default -> ToHitData.HIT_NORMAL;
+        };
+    }
+
     private MiscMounted chooseClub() {
         java.util.List<MiscMounted> clubs = currentEntity().getClubs();
         if (clubs.size() == 1) {
@@ -1212,7 +1299,7 @@ public class PhysicalDisplay extends AttackPhaseDisplay {
             for (int loop = 0; loop < names.length; loop++) {
                 MiscMounted club = clubs.get(loop);
                 final ToHitData toHit = ClubAttackAction.toHit(game, currentEntity,
-                      target, club, ash.getAimTable(), false);
+                      target, club, ToHitData.HIT_NORMAL, false);
                 final int dmg = ClubAttackAction.getDamageFor(currentEntity(), club,
                       target.isConventionalInfantry(), false);
                 // Need to do this outside getDamageFor, as it only returns int
@@ -1263,36 +1350,42 @@ public class PhysicalDisplay extends AttackPhaseDisplay {
         if (currentEntity() == null) {
             return;
         }
-        final Entity en = currentEntity();
+        final Entity attacker = currentEntity();
 
-        final boolean isAptPiloting = (en.getCrew() != null)
-              && en.hasAbility(OptionsConstants.PILOT_APTITUDE_PILOTING);
-        final boolean isMeleeMaster = (en.getCrew() != null)
-              && en.hasAbility(OptionsConstants.PILOT_MELEE_MASTER);
-        final boolean canZweihander = (en instanceof BipedMek)
-              && ((BipedMek) en).canZweihander()
-              && ComputeArc.isInArc(en.getPosition(), en.getSecondaryFacing(), target, en.getForwardArc());
+        final boolean isAptPiloting = (attacker.getCrew() != null)
+              && attacker.hasAbility(OptionsConstants.PILOT_APTITUDE_PILOTING);
+        final boolean isMeleeMaster = (attacker.getCrew() != null)
+              && attacker.hasAbility(OptionsConstants.PILOT_MELEE_MASTER);
+        final boolean canZweihander = (attacker instanceof BipedMek bipedMek)
+              && bipedMek.canZweihander()
+              && ComputeArc.isInArc(attacker.getPosition(), attacker.getSecondaryFacing(), target,
+              attacker.getForwardArc());
+
+        final int calledBlowTable = chooseCalledBlowTable(attacker, club);
+        if (calledBlowTable == CALLED_BLOW_CANCELLED) {
+            return;
+        }
 
         final ToHitData toHit = ClubAttackAction.toHit(clientgui.getClient().getGame(),
               currentEntity,
               target,
               club,
-              ash.getAimTable(),
+              calledBlowTable,
               false);
         final double clubOdds = Compute.oddsAbove(toHit.getValue(), isAptPiloting);
-        final int clubDmg = ClubAttackAction.getDamageFor(en, club, target.isConventionalInfantry(), false);
+        final int clubDamage = ClubAttackAction.getDamageFor(attacker, club, target.isConventionalInfantry(), false);
         // Need to do this outside getDamageFor, as it only returns int
-        String dmgString = String.valueOf(clubDmg);
+        String damageString = String.valueOf(clubDamage);
         if ((club.getType().hasAnyFlag(MiscTypeFlag.S_COMBINE, MiscTypeFlag.S_CHAINSAW, MiscTypeFlag.S_DUAL_SAW))
               && target.isConventionalInfantry()) {
-            dmgString = "1d6";
+            damageString = "1d6";
         }
         String title = Messages.getString("PhysicalDisplay.ClubDialog.title", target.getDisplayName());
         String message = Messages.getString("PhysicalDisplay.ClubDialog.message",
               toHit.getValueAsString(),
               clubOdds,
               toHit.getDesc(),
-              dmgString,
+              damageString,
               toHit.getTableDesc());
 
         if (isMeleeMaster) {
@@ -1303,14 +1396,14 @@ public class PhysicalDisplay extends AttackPhaseDisplay {
             boolean zweihandering = false;
             if (canZweihander) {
                 ToHitData toHitZwei = ClubAttackAction.toHit(game, currentEntity,
-                      target, club, ash.getAimTable(), true);
+                      target, club, calledBlowTable, true);
                 zweihandering = clientgui.doYesNoDialog(
                       Messages.getString("PhysicalDisplay.ZweihanderClubDialog.title"),
                       Messages.getString("PhysicalDisplay.ZweihanderClubDialog.message",
                             toHitZwei.getValueAsString(),
                             Compute.oddsAbove(toHit.getValue(), isAptPiloting),
                             toHitZwei.getDesc(),
-                            ClubAttackAction.getDamageFor(en, club, target.isConventionalInfantry(), true),
+                            ClubAttackAction.getDamageFor(attacker, club, target.isConventionalInfantry(), true),
                             toHitZwei.getTableDesc()));
             }
 
@@ -1324,7 +1417,7 @@ public class PhysicalDisplay extends AttackPhaseDisplay {
                   target.getTargetType(),
                   target.getId(),
                   club,
-                  ash.getAimTable(),
+                  calledBlowTable,
                   zweihandering));
             if (isMeleeMaster && !zweihandering) {
                 // hit 'em again!
@@ -1332,7 +1425,7 @@ public class PhysicalDisplay extends AttackPhaseDisplay {
                       target.getTargetType(),
                       target.getId(),
                       club,
-                      ash.getAimTable(),
+                      calledBlowTable,
                       zweihandering));
             }
             ready();
@@ -1724,7 +1817,6 @@ public class PhysicalDisplay extends AttackPhaseDisplay {
     public void target(Targetable t) {
         target = t;
         updateTarget();
-        ash.showDialog();
     }
 
     /**
@@ -1810,32 +1902,14 @@ public class PhysicalDisplay extends AttackPhaseDisplay {
 
                 // clubbing?
                 boolean canClub = false;
-                boolean canAim = false;
                 for (Mounted<?> club : currentEntity().getClubs()) {
                     if (club != null) {
                         ToHitData clubToHit = ClubAttackAction.toHit(game,
-                              currentEntity, target, club, ash.getAimTable(), false);
+                              currentEntity, target, club, ToHitData.HIT_NORMAL, false);
                         canClub |= (clubToHit.getValue() != TargetRoll.IMPOSSIBLE);
-                        // assuming S7 vibroswords count as swords and maces
-                        // count as hatchets
-                        if (club.getType().hasAnyFlag(MiscTypeFlag.S_SWORD,
-                              MiscTypeFlag.S_HATCHET,
-                              MiscTypeFlag.S_VIBRO_SMALL,
-                              MiscTypeFlag.S_VIBRO_MEDIUM,
-                              MiscTypeFlag.S_VIBRO_LARGE,
-                              MiscTypeFlag.S_MACE,
-                              MiscTypeFlag.S_LANCE,
-                              MiscTypeFlag.S_CHAIN_WHIP,
-                              MiscTypeFlag.S_RETRACTABLE_BLADE,
-                              MiscTypeFlag.S_SHIELD_LARGE,
-                              MiscTypeFlag.S_SHIELD_MEDIUM,
-                              MiscTypeFlag.S_SHIELD_SMALL)) {
-                            canAim = true;
-                        }
                     }
                 }
                 setClubEnabled(canClub);
-                ash.setCanAim(canAim);
 
                 // Thrash at infantry?
                 ToHitData thrash = new ThrashAttackAction(currentEntity, target)
@@ -2246,95 +2320,6 @@ public class PhysicalDisplay extends AttackPhaseDisplay {
     private void setSearchlightEnabled(boolean enabled) {
         buttons.get(PhysicalCommand.PHYSICAL_SEARCHLIGHT).setEnabled(enabled);
         clientgui.getMenuBar().setEnabled(PhysicalCommand.PHYSICAL_SEARCHLIGHT.getCmd(), enabled);
-    }
-
-    private class AimedShotHandler implements ActionListener, ItemListener {
-        private int aimingAt = -1;
-
-        private AimingMode aimingMode = AimingMode.NONE;
-
-        private AimedShotDialog asd;
-
-        private boolean canAim;
-
-        public AimedShotHandler() {
-            // no action
-        }
-
-        public int getAimTable() {
-            return switch (aimingAt) {
-                case 0 -> ToHitData.HIT_PUNCH;
-                case 1 -> ToHitData.HIT_KICK;
-                default -> ToHitData.HIT_NORMAL;
-            };
-        }
-
-        public void setCanAim(boolean v) {
-            canAim = v;
-        }
-
-        public void showDialog() {
-
-            if ((currentEntity() == null) || (target == null)) {
-                return;
-            }
-
-            if (asd != null) {
-                AimingMode oldAimingMode = aimingMode;
-                closeDialog();
-                aimingMode = oldAimingMode;
-            }
-
-            if (canAim) {
-                final int attackerElevation = currentEntity().getElevation() + game.getHexOf(currentEntity())
-                      .getLevel();
-                final int targetElevation = target.getElevation() + game.getHexOf(target).getLevel();
-
-                if ((target instanceof Mek) && (currentEntity() instanceof Mek) && (attackerElevation
-                      == targetElevation)) {
-                    String[] options = { "punch", "kick" };
-                    boolean[] enabled = { true, true };
-
-                    asd = new AimedShotDialog(clientgui.getFrame(),
-                          Messages.getString("PhysicalDisplay.AimedShotDialog.title"),
-                          Messages.getString("PhysicalDisplay.AimedShotDialog.message"),
-                          options,
-                          enabled,
-                          aimingAt,
-                          clientgui,
-                          target,
-                          this,
-                          this);
-
-                    asd.setVisible(true);
-                    updateTarget();
-                }
-            }
-        }
-
-        public void closeDialog() {
-            if (asd != null) {
-                aimingAt = Entity.LOC_NONE;
-                aimingMode = AimingMode.NONE;
-                asd.dispose();
-                asd = null;
-                updateTarget();
-            }
-        }
-
-        // ActionListener, listens to the button in the dialog.
-        @Override
-        public void actionPerformed(ActionEvent ev) {
-            closeDialog();
-        }
-
-        // ItemListener, listens to the radiobuttons in the dialog.
-        @Override
-        public void itemStateChanged(ItemEvent ev) {
-            IndexedRadioButton icb = (IndexedRadioButton) ev.getSource();
-            aimingAt = icb.getIndex();
-            updateTarget();
-        }
     }
 
     /**

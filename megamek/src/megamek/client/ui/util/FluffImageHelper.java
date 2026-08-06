@@ -37,33 +37,37 @@ package megamek.client.ui.util;
 
 import java.awt.Image;
 import java.io.File;
-import java.util.ArrayList;
-import java.util.List;
-import javax.swing.ImageIcon;
-
-import megamek.common.Configuration;
-import megamek.common.loaders.MekSummary;
-import megamek.common.annotations.Nullable;
-import megamek.common.battlefieldSupport.BFSAssetType;
-import megamek.common.battlefieldSupport.BattlefieldSupportAsset;
-import megamek.common.preference.PreferenceManager;
-import org.apache.logging.log4j.LogManager;
-
-import javax.imageio.ImageIO;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.LinkedHashSet;
+import java.util.List;
+import java.util.Objects;
+import java.util.Optional;
+import java.util.Set;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
+import javax.imageio.ImageIO;
+import javax.swing.ImageIcon;
+
+import megamek.common.Configuration;
+import megamek.common.annotations.Nullable;
+import megamek.common.battlefieldSupport.BFSAssetType;
+import megamek.common.battlefieldSupport.BattlefieldSupportAsset;
+import megamek.common.loaders.MekSummary;
+import megamek.common.preference.PreferenceManager;
 import megamek.common.units.BTObject;
 import megamek.common.units.Mek;
+import megamek.logging.MMLogger;
 
 /**
  * This class provides methods for retrieving fluff images, for use in MM, MML and MHQ; also for record sheets (where
  * the fallback image "hud.png" is used).
  */
 public final class FluffImageHelper {
+
+    private static final MMLogger LOGGER = MMLogger.create(FluffImageHelper.class);
 
     public static final String DIR_NAME_BA = "BattleArmor";
     public static final String DIR_NAME_ASSET = "Asset";
@@ -163,7 +167,7 @@ public final class FluffImageHelper {
     /**
      * Returns a fluff image for the given unit for the record sheet, with a fallback file named "hud.png" if that is
      * present in the right
-     * fluff directory, or null if nothing can be found. See {@link #getFluffImage(BTObject)} for
+     * fluff directory, or {@code null} if nothing can be found. See {@link #getFluffImage(BTObject)} for
      * further comments on how the fluff image is
      * searched.
      *
@@ -187,7 +191,7 @@ public final class FluffImageHelper {
     /**
      * Returns a list of available fluff images. If a fluff image is embedded in the unit file,
      * only that image is returned, even if others are available from the fluff directories. The returned
-     * list may be empty, but not null.
+     * list may be empty, but not {@code null}.
      *
      * @param unit The unit
      * @param recordSheet True if this image search is meant for a record sheet (used in MML)
@@ -208,7 +212,7 @@ public final class FluffImageHelper {
     /**
      * Returns a list of available fluff images. If a fluff image is embedded in the unit file,
      * only that image is returned, even if others are available from the fluff directories. The returned
-     * list may be empty, but not null.
+     * list may be empty, but not {@code null}.
      *
      * @param unit The unit
      * @param recordSheet True if this image search is meant for a record sheet
@@ -345,8 +349,8 @@ public final class FluffImageHelper {
         try (Stream<Path> entries = Files.walk(dir.toPath(), 1)) {
             result.addAll(entries.map(Objects::toString).map(File::new).toList());
             result.removeIf(FluffImageHelper::isNoImageFile);
-        } catch (IOException e) {
-            LogManager.getLogger().warn("Error while reading files from {}", dir, e);
+        } catch (IOException exception) {
+            LOGGER.warn("Error while reading files from {}", dir, exception);
         }
         return result;
     }
@@ -515,13 +519,32 @@ public final class FluffImageHelper {
         };
     }
 
-    public record FluffImageRecord(Image image, File file) {
+    /**
+     * A fluff image that is either already loaded (when it was embedded in the unit file) or still on disk, in which
+     * case it is only read when it is actually shown. Exactly one of the two is set.
+     *
+     * @param image The already loaded image, or {@code null} when the image must be read from {@code file}
+     * @param file  The file holding the image, or {@code null} when {@code image} is already loaded
+     */
+    public record FluffImageRecord(@Nullable Image image, @Nullable File file) {
 
+        /**
+         * @param file The image file to read when the image is shown
+         *
+         * @return A record for a fluff image that has not been loaded yet
+         */
         public static FluffImageRecord toRecord(File file) {
             return new FluffImageRecord(null, file);
         }
 
-        public Image getImage() throws IOException {
+        /**
+         * Returns the fluff image, reading it from disk if it has not been loaded yet.
+         *
+         * @return The fluff image, or {@code null} if this record has neither an image nor a file
+         *
+         * @throws IOException When the image file is present but cannot be read
+         */
+        public @Nullable Image getImage() throws IOException {
             if (image != null) {
                 return image;
             } else if (file != null) {

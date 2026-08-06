@@ -65,6 +65,7 @@ import javax.swing.text.html.HTML;
 import javax.swing.text.html.HTMLDocument;
 
 import megamek.client.ui.FluffImageTooltip;
+import megamek.client.ui.Messages;
 import megamek.client.ui.entityreadout.EntityReadout;
 import megamek.client.ui.entityreadout.ReadoutSections;
 import megamek.client.ui.util.FluffImageHelper;
@@ -72,20 +73,23 @@ import megamek.client.ui.util.UIUtil;
 import megamek.client.ui.util.ViewFormatting;
 import megamek.common.Configuration;
 import megamek.common.Report;
+import megamek.common.annotations.Nullable;
 import megamek.common.preference.PreferenceManager;
 import megamek.common.templates.TROView;
 import megamek.common.units.Entity;
 import megamek.common.util.StringUtil;
+import megamek.logging.MMLogger;
 
 /**
  * @author Jay Lawson
  * @since November 2, 2009
  */
 public class EntityReadoutPanel extends JPanel {
+    private static final MMLogger LOGGER = MMLogger.create(EntityReadoutPanel.class);
+
     private final int TOOLTIP_MAX_SIZE = 85;
 
     private final JTextPane readoutTextComponent = new JTextPane();
-    private final JLabel fluffImageComponent = new JLabel();
     private final JScrollPane scrollPane = new JScrollPane(readoutTextComponent);
 
     private final JLabel fluffImageLabel = new JLabel();
@@ -96,6 +100,9 @@ public class EntityReadoutPanel extends JPanel {
     private final JLabel imageInfoLabel = new JLabel("", JLabel.CENTER);
 
     public static final int DEFAULT_WIDTH = 360;
+
+    /** The vertical gap between the fluff image and the info line below it, before GUI scaling. */
+    private static final int IMAGE_INFO_GAP = 10;
 
     private static final String PLACEHOLDER_IMAGE_NAME =
             new File(Configuration.fluffImagesDir(), "fluff_placeholder.png").getPath();
@@ -165,31 +172,34 @@ public class EntityReadoutPanel extends JPanel {
         }
         textPanel.add(scrollPane);
 
+        prevImageButton.setToolTipText(Messages.getString("EntityReadoutPanel.previousImage.toolTipText"));
+        nextImageButton.setToolTipText(Messages.getString("EntityReadoutPanel.nextImage.toolTipText"));
+
         var imageControlsPanel = new UIUtil.FixedYPanel(new FlowLayout());
         imageControlsPanel.add(prevImageButton);
         imageControlsPanel.add(nextImageButton);
 
-        imageControlsPanel.setAlignmentX(0.5f);
-        fluffImageLabel.setAlignmentX(0.5f);
-        imageInfoLabel.setAlignmentX(0.5f);
+        imageControlsPanel.setAlignmentX(CENTER_ALIGNMENT);
+        fluffImageLabel.setAlignmentX(CENTER_ALIGNMENT);
+        imageInfoLabel.setAlignmentX(CENTER_ALIGNMENT);
 
         Box fluffPanel = Box.createVerticalBox();
-        fluffPanel.setAlignmentY(0);
+        fluffPanel.setAlignmentY(TOP_ALIGNMENT);
         fluffPanel.add(imageControlsPanel);
         fluffPanel.add(fluffImageLabel);
-        fluffPanel.add(Box.createVerticalStrut(10));
+        fluffPanel.add(Box.createVerticalStrut(UIUtil.scaleForGUI(IMAGE_INFO_GAP)));
         fluffPanel.add(imageInfoLabel);
 
-        Box p = Box.createHorizontalBox();
-        p.add(textPanel);
-        p.add(fluffPanel);
-        p.add(Box.createHorizontalGlue());
+        Box readoutAndFluffPanel = Box.createHorizontalBox();
+        readoutAndFluffPanel.add(textPanel);
+        readoutAndFluffPanel.add(fluffPanel);
+        readoutAndFluffPanel.add(Box.createHorizontalGlue());
         setLayout(new BorderLayout());
-        add(p);
+        add(readoutAndFluffPanel);
         addMouseWheelListener(wheelForwarder);
 
-        nextImageButton.addActionListener(e -> showNextFluffImage());
-        prevImageButton.addActionListener(e -> showPrevFluffImage());
+        nextImageButton.addActionListener(event -> showNextFluffImage());
+        prevImageButton.addActionListener(event -> showPrevFluffImage());
     }
 
     public void showEntity(Entity entity, EntityReadout mekView) {
@@ -243,45 +253,57 @@ public class EntityReadoutPanel extends JPanel {
         showEntity(entity, mekView, fontName, sections);
     }
 
-    private void setFluffImage(Image image) {
-        // Scale down to the default width if the image is wider than that
-        if (null != image) {
-            if (image.getWidth(this) > DEFAULT_WIDTH) {
-                image = image.getScaledInstance(DEFAULT_WIDTH, -1, Image.SCALE_SMOOTH);
-            }
-            fluffImageLabel.setIcon(new ImageIcon(image));
-        } else {
+    /**
+     * Shows the given image as the fluff image, scaled down to {@link #DEFAULT_WIDTH} if it is wider than that.
+     *
+     * @param image The image to show, or {@code null} to clear the fluff image
+     */
+    private void displayFluffImage(@Nullable Image image) {
+        if (image == null) {
             fluffImageLabel.setIcon(null);
             fluffImageLabel.setToolTipText(null);
-        }
-    }
-
-    private void setFluffImage(Entity entity) {
-        boolean isSpritesOnly = PreferenceManager.getClientPreferences().getSpritesOnly();
-        if (isSpritesOnly) {
-            setFluffImage((Image) null);
             return;
         }
-        fluffImageList.clear();
-        fluffImageList.addAll(FluffImageHelper.getFluffRecords(entity));
-        fluffImageIndex = 0;
-        nextImageButton.setEnabled(fluffImageList.size() > 1);
-        prevImageButton.setEnabled(fluffImageList.size() > 1);
-        if (entity != null) {
-            showNextFluffImage();
-        } else {
-            setFluffImage((Image) null);
+        Image displayedImage = image;
+        if (displayedImage.getWidth(this) > DEFAULT_WIDTH) {
+            displayedImage = displayedImage.getScaledInstance(DEFAULT_WIDTH, -1, Image.SCALE_SMOOTH);
         }
+        fluffImageLabel.setIcon(new ImageIcon(displayedImage));
+    }
+
+    private void setFluffImage(@Nullable Entity entity) {
+        fluffImageList.clear();
+        fluffImageIndex = 0;
+
+        boolean isSpritesOnly = PreferenceManager.getClientPreferences().getSpritesOnly();
+        if (isSpritesOnly || (entity == null)) {
+            nextImageButton.setEnabled(false);
+            prevImageButton.setEnabled(false);
+            imageInfoLabel.setText("");
+            displayFluffImage(null);
+            return;
+        }
+
+        fluffImageList.addAll(FluffImageHelper.getFluffRecords(entity));
+        boolean hasMultipleImages = fluffImageList.size() > 1;
+        nextImageButton.setEnabled(hasMultipleImages);
+        prevImageButton.setEnabled(hasMultipleImages);
+        showNextFluffImage();
     }
 
     public void reset() {
         readoutTextComponent.setText("");
-        fluffImageComponent.setIcon(null);
+        fluffImageList.clear();
+        fluffImageIndex = 0;
+        nextImageButton.setEnabled(false);
+        prevImageButton.setEnabled(false);
+        imageInfoLabel.setText("");
+        displayFluffImage(null);
     }
 
     /** Forwards a mouse wheel scroll on the fluff image or free space to the TRO entry. */
-    MouseWheelListener wheelForwarder = e -> {
-        MouseWheelEvent converted = (MouseWheelEvent) SwingUtilities.convertMouseEvent(EntityReadoutPanel.this, e,
+    MouseWheelListener wheelForwarder = event -> {
+        MouseWheelEvent converted = (MouseWheelEvent) SwingUtilities.convertMouseEvent(EntityReadoutPanel.this, event,
               scrollPane);
         for (MouseWheelListener listener : scrollPane.getMouseWheelListeners()) {
             listener.mouseWheelMoved(converted);
@@ -304,26 +326,39 @@ public class EntityReadoutPanel extends JPanel {
         if (fluffImageIndex < 0) {
             fluffImageIndex = fluffImageList.size() - 1;
         }
-        if ((fluffImageIndex >= 0) && (fluffImageIndex < fluffImageList.size())) {
-            try {
-                FluffImageHelper.FluffImageRecord record = fluffImageList.get(fluffImageIndex);
-                setFluffImage(record.getImage());
-                fluffImageLabel.setToolTipText(FluffImageTooltip.getTooltip(record));
-                imageInfoLabel.setText(FluffImageTooltip.getTooltip(record));
-            } catch (IOException ex) {
-                setFluffImage((Image) null);
-                imageInfoLabel.setText("Error loading fluff image");
-            }
-        } else {
-            setFluffImage(PLACEHOLDER_IMAGE);
+        boolean hasImageAtIndex = (fluffImageIndex >= 0) && (fluffImageIndex < fluffImageList.size());
+        if (!hasImageAtIndex) {
+            LOGGER.debug("[FluffImages] No fluff image available; showing the placeholder image.");
+            displayFluffImage(PLACEHOLDER_IMAGE);
             imageInfoLabel.setText("");
+            return;
         }
+
+        FluffImageHelper.FluffImageRecord record = fluffImageList.get(fluffImageIndex);
+        try {
+            displayFluffImage(record.getImage());
+        } catch (IOException exception) {
+            LOGGER.warn("[FluffImages] Could not load fluff image {}", record.file(), exception);
+            displayFluffImage(null);
+            imageInfoLabel.setText(Messages.getString("EntityReadoutPanel.imageLoadError"));
+            return;
+        }
+        String imageInfo = FluffImageTooltip.getTooltip(record);
+        fluffImageLabel.setToolTipText(imageInfo);
+        imageInfoLabel.setText((imageInfo != null) ? imageInfo : "");
     }
 
-    private static Image readPlaceHolderImage() {
+    private static @Nullable Image readPlaceHolderImage() {
+        File placeholderFile = new File(PLACEHOLDER_IMAGE_NAME);
+        if (!placeholderFile.exists()) {
+            LOGGER.debug("[FluffImages] No placeholder image at {}; units without fluff will show no image.",
+                  PLACEHOLDER_IMAGE_NAME);
+            return null;
+        }
         try {
-            return ImageIO.read(new File(PLACEHOLDER_IMAGE_NAME));
-        } catch (IOException e) {
+            return ImageIO.read(placeholderFile);
+        } catch (IOException exception) {
+            LOGGER.warn("[FluffImages] Could not read the placeholder image {}", PLACEHOLDER_IMAGE_NAME, exception);
             return null;
         }
     }

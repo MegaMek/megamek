@@ -3913,14 +3913,19 @@ public class ClientGUI extends AbstractClientGUI
                 botClient = util.replaceGhostWithBot(aiType, newBotSettings.get(ghostName), ghostName,
                       client, message);
             } catch (Exception exception) {
-                logger.error(exception, "Failed to stand up a {} bot for {}", aiType, ghostName);
+                logger.error(exception, "Failed to stand up a " + aiType + " bot for " + ghostName);
             }
             // An experimental bot that fails to stand up must not leave the seat empty: the player asked
-            // for a bot in that slot, so Princess takes it instead.
+            // for a bot in that slot, so Princess takes it instead. Guarded like the first attempt, so a
+            // failure here degrades to an empty seat and a log line rather than a crash.
             if ((null == botClient) && (AIType.PRINCESS != aiType)) {
                 message.append(" Falling back to Princess. ");
-                botClient = util.replaceGhostWithBot(AIType.PRINCESS, newBotSettings.get(ghostName), ghostName,
-                      client, message);
+                try {
+                    botClient = util.replaceGhostWithBot(AIType.PRINCESS, newBotSettings.get(ghostName),
+                          ghostName, client, message);
+                } catch (Exception exception) {
+                    logger.error(exception, "The Princess fallback failed for " + ghostName + " too");
+                }
             }
             systemMessage(message.toString());
             // Make this bot a locally owned bot. This way it can be configured, and if on the lobby

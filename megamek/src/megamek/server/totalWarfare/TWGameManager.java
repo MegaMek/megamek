@@ -980,7 +980,7 @@ public class TWGameManager extends AbstractGameManager {
                         // The bot also reports which AI it is, so a savegame can restore the same kind of
                         // bot to this seat instead of guessing.
                         if (packet.getObject(1) instanceof AIType aiType) {
-                            game.getBotTypes().put(player.getName(), aiType);
+                            game.recordBotType(player.getName(), aiType);
                         }
                     }
                     break;

@@ -3939,19 +3939,34 @@ public final class Game extends AbstractGame implements Serializable, PlanetaryC
     }
 
     /**
-     * @return which AI implementation the most recent bot connected under each player name was; never
-     *       {@code null} - games saved before the types were recorded read as an empty map
+     * @return which AI implementation the most recent bot connected under each player name was, as an
+     *       unmodifiable view; never {@code null} - games saved before the types were recorded read as an
+     *       empty map. Record entries through {@link #recordBotType(String, AIType)}.
      */
     public Map<String, AIType> getBotTypes() {
+        return Collections.unmodifiableMap(ensureBotTypes());
+    }
+
+    /**
+     * Records which AI implementation the bot connected under the given player name is.
+     *
+     * @param playerName the bot player's name
+     * @param aiType     the AI implementation it reported
+     */
+    public void recordBotType(String playerName, AIType aiType) {
+        ensureBotTypes().put(playerName, aiType);
+    }
+
+    public void setBotTypes(Map<String, AIType> botTypes) {
+        this.botTypes = new HashMap<>(botTypes);
+    }
+
+    private Map<String, AIType> ensureBotTypes() {
         if (null == botTypes) {
             // Deserialization of a save from before this field existed leaves it null.
             botTypes = new HashMap<>();
         }
         return botTypes;
-    }
-
-    public void setBotTypes(Map<String, AIType> botTypes) {
-        this.botTypes = botTypes;
     }
 
     /**

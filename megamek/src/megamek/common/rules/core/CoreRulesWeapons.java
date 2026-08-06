@@ -39,7 +39,6 @@ import megamek.common.equipment.Mounted;
 import megamek.common.equipment.WeaponMounted;
 import megamek.common.rules.RulesWeapons;
 import megamek.common.units.Entity;
-import megamek.common.weapons.handlers.WeaponHandler;
 
 import java.util.Vector;
 

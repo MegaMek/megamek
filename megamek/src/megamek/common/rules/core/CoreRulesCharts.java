@@ -33,7 +33,6 @@ package megamek.common.rules.core;
  * affiliated with Microsoft.
  */
 
-import megamek.common.Messages;
 import megamek.common.ToHitData;
 import megamek.common.compute.Compute;
 import megamek.common.rules.RulesCharts;

@@ -2,7 +2,6 @@ package megamek.common.rules.core;
 
 
 /*
- * Copyright (C) 2026 James Magnan (bmazur@sev.org)
  * Copyright (C) 2004-2026 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
@@ -36,7 +35,6 @@ package megamek.common.rules.core;
  */
 
 import megamek.common.CriticalSlot;
-import megamek.common.Messages;
 import megamek.common.game.Game;
 import megamek.common.rolls.PilotingRollData;
 import megamek.common.rolls.TargetRoll;

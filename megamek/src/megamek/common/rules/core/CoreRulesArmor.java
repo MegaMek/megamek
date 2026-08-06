@@ -38,7 +38,6 @@ import megamek.common.Report;
 import megamek.common.equipment.ArmorType;
 import megamek.common.equipment.EquipmentType;
 import megamek.common.rules.RulesArmor;
-import megamek.common.units.Entity;
 import megamek.server.totalWarfare.TWDamageManager;
 
 import java.util.Vector;

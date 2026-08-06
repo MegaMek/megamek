@@ -34,7 +34,6 @@ package megamek.common.rules.core;
  */
 
 
-import megamek.common.Hex;
 import megamek.common.annotations.Nullable;
 import megamek.common.board.Coords;
 import megamek.common.compute.Compute;
@@ -47,7 +46,6 @@ import megamek.common.units.EntityMovementMode;
 import megamek.common.units.EntityMovementType;
 import megamek.common.units.Mek;
 import megamek.common.units.QuadMek;
-import megamek.common.units.Terrains;
 
 import java.util.ArrayList;
 

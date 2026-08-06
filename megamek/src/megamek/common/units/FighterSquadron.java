@@ -790,14 +790,15 @@ public class FighterSquadron extends AeroSpaceFighter {
     public boolean cancelLoad(Entity unit) {
         boolean success;
         if (unit instanceof FighterSquadron squadron) {
-            success = true;
-            for (int i = squadron.fighters.size() - 1; i >= 0; i--) {
-                int index = fighters.lastIndexOf(squadron.fighters.get(i));
-                success &= index >= 0;
-                if (index >= 0) {
-                    fighters.remove(index);
+            for (Integer fighterId : squadron.fighters) {
+                if (!fighters.contains(fighterId)) {
+                    return false;
                 }
             }
+            for (int i = squadron.fighters.size() - 1; i >= 0; i--) {
+                fighters.remove(squadron.fighters.get(i));
+            }
+            success = true;
         } else {
             success = fighters.remove((Integer) unit.getId());
         }

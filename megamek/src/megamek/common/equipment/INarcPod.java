@@ -40,6 +40,7 @@ import java.io.Serializable;
 import java.util.Map;
 import java.util.Objects;
 
+import jakarta.annotation.Nonnull;
 import megamek.common.Player;
 import megamek.common.ToHitData;
 import megamek.common.board.Coords;
@@ -97,6 +98,7 @@ public record INarcPod(int team, int type, int location) implements Serializable
      * @return a <code>String</code> that represents this INarc pod.
      */
     @Override
+    @Nonnull
     public String toString() {
         StringBuilder buf = new StringBuilder();
         switch (type) {

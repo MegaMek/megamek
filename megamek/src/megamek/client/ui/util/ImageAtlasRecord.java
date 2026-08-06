@@ -53,6 +53,7 @@ public class ImageAtlasRecord {
     private String originalFilePath;
     private String atlasFilePath;
 
+    @Deprecated(since = "0.51.0", forRemoval = true)
     public ImageAtlasRecord() {
     }
 
@@ -84,6 +85,7 @@ public class ImageAtlasRecord {
      * Set the original file path.
      *
      */
+    @Deprecated(since = "0.51.0", forRemoval = true)
     public void setOriginalFilePath(String originalFilePath) {
         this.originalFilePath = originalFilePath;
     }
@@ -92,6 +94,7 @@ public class ImageAtlasRecord {
      * Set the atlas file path.
      *
      */
+    @Deprecated(since = "0.51.0", forRemoval = true)
     public void setAtlasFilePath(String atlasFilePath) {
         this.atlasFilePath = atlasFilePath;
     }

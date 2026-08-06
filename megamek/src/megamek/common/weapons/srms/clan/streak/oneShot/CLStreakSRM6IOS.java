@@ -61,7 +61,7 @@ public class CLStreakSRM6IOS extends StreakSRMWeapon {
 
         name = "Streak SRM 6 (I-OS)";
         setInternalName("CLStreakSRM6 (IOS)");
-        addLookupName("Clan Improved OS Streak SRM-6");
+        addLookupName("Clan Improved OS Streak SRM-6 (IOS)");
         addLookupName("Clan Streak SRM 6 (IOS)");
         heat = 4;
         rackSize = 6;
@@ -77,7 +77,7 @@ public class CLStreakSRM6IOS extends StreakSRMWeapon {
         shortAV = 12;
         medAV = 12;
         maxRange = RANGE_MED;
-        rulesRefs = "327, TO";
+        rulesRefs = "139, TO:AUE";
         //Tech Progression tweaked to combine IntOps with TRO Prototypes/3145 NTNU RS
         techAdvancement.setTechBase(TechBase.CLAN)
               .setIntroLevel(false)

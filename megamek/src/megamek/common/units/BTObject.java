@@ -207,6 +207,14 @@ public interface BTObject {
     }
 
     /**
+     * @return True when this object is a Battlefield Support Asset (a simplified unit governed by the Battlefield
+     *       Support rules rather than by full construction/combat rules). False for all standard units.
+     */
+    default boolean isBattlefieldSupportAsset() {
+        return false;
+    }
+
+    /**
      * Returns true when this object is a Support Vehicle using aerospace movement such as a Fixed-Wing support. Returns
      * false for any type of unit group even if it is of the right type.
      *
@@ -353,6 +361,7 @@ public interface BTObject {
      *
      * @return True when this is an objective marker.
      */
+    @Deprecated(since = "0.51.0", forRemoval = true)
     default boolean isObjectiveMarker() {
         return false;
     }
@@ -392,6 +401,7 @@ public interface BTObject {
      *
      * @return True when this is a single unit or element.
      */
+    @Deprecated(since = "0.51.0", forRemoval = true)
     default boolean isSingleUnit() {
         return !isUnitGroup();
     }

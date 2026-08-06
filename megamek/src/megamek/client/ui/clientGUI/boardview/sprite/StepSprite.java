@@ -55,10 +55,12 @@ import megamek.common.compute.Compute;
 import megamek.common.enums.MoveStepType;
 import megamek.common.equipment.MiscType;
 import megamek.common.game.Game;
+import megamek.common.moves.ClimbingHelper;
 import megamek.common.moves.MoveStep;
 import megamek.common.units.Entity;
 import megamek.common.units.EntityMovementMode;
 import megamek.common.units.EntityMovementType;
+import megamek.common.units.Mek;
 
 /**
  * Sprite for a step in a movement path. Only one sprite should exist for any hex in a path. Contains a colored number,
@@ -181,6 +183,7 @@ public class StepSprite extends Sprite {
             case HULL_DOWN:
             case DOWN:
             case DIG_IN:
+            case HIT_THE_DECK:
             case FORTIFY:
             case TAKE_COVER:
                 // draw arrow indicating dropping prone
@@ -422,18 +425,25 @@ public class StepSprite extends Sprite {
 
     private void drawMovementCost(MoveStep step, boolean isLastStep,
           Point stepPos, Graphics graph, Color col, boolean shiftFlag) {
-        StringBuilder costStringBuf = new StringBuilder();
-        costStringBuf.append(step.getMpUsed());
+        Entity stepEntity = step.getEntity();
 
-        Entity e = step.getEntity();
+        StringBuilder costStringBuf = new StringBuilder();
+        // For climbing steps, show the per-turn MP cost capped to walk MP
+        if (step.isClimbing() && (stepEntity != null)) {
+            int walkMP = stepEntity.getWalkMP();
+            costStringBuf.append(Math.min(step.getMpUsed(), walkMP));
+        } else {
+            costStringBuf.append(step.getMpUsed());
+        }
 
         // If the step is using a road bonus, mark it.
-        if (step.isOnlyPavementOrRoad() && e.isEligibleForPavementOrRoadBonus()) {
+        if (step.isOnlyPavementOrRoad()
+              && (stepEntity != null) && stepEntity.isEligibleForPavementOrRoadBonus()) {
             costStringBuf.append('+');
         }
 
         // Show WiGE descent bonus
-        costStringBuf.append("+".repeat(Math.max(0, step.getWiGEBonus())));
+        costStringBuf.repeat("+", Math.max(0, step.getWiGEBonus()));
 
         // If the step is dangerous, mark it.
         if (step.isDanger()) {
@@ -444,6 +454,31 @@ public class StepSprite extends Sprite {
         if (step.isPastDanger()) {
             costStringBuf.insert(0, '(');
             costStringBuf.append(')');
+        }
+
+        // Show climbing turn count when climb takes multiple turns (TO:AR p.20)
+        if (step.isClimbing() && (stepEntity instanceof Mek climbingMek)) {
+            int walkMP = stepEntity.getWalkMP();
+            int totalLevels = step.getClimbingTotalLevels();
+            if ((walkMP > 0) && (totalLevels > 0)) {
+                int costPerLevel = ClimbingHelper.getClimbingMPCostPerLevel(climbingMek);
+                // Use the levels actually charged THIS turn (which equals chosen levels
+                // for partial climbs, full delta otherwise) instead of the full climb
+                // height. step.getMpUsed() only includes MP for the charged levels, so
+                // subtracting (totalLevels * costPerLevel) would go negative when the
+                // player picked fewer levels than the full climb and inflate
+                // levelsPerTurn. Falling back to totalLevels keeps prior behavior for
+                // older serialized paths where the field defaults to 0.
+                int chargedLevels = step.getClimbingChargedLevels();
+                int levelsForCostCalc = (chargedLevels > 0) ? chargedLevels : totalLevels;
+                int nonClimbCost = step.getMpUsed() - (levelsForCostCalc * costPerLevel);
+                int availablePerTurn = walkMP - Math.max(0, nonClimbCost);
+                int levelsPerTurn = Math.max(1, availablePerTurn / costPerLevel);
+                int turnsToClimb = (int) Math.ceil((double) totalLevels / levelsPerTurn);
+                if (turnsToClimb > 1) {
+                    costStringBuf.append('[').append(turnsToClimb).append("T]");
+                }
+            }
         }
 
         EntityMovementType moveType = step.getMovementType(isLastStep);

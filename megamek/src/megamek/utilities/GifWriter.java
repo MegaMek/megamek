@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2025 The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2025-2026 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -91,6 +91,7 @@ public class GifWriter {
     }
 
     private OutputStream outputStream = null;
+    private int[] reusableRgbBuffer = null;
 
     /**
      * Appends a frame to the gif.
@@ -102,17 +103,13 @@ public class GifWriter {
      */
     public void appendFrame(BufferedImage image, long duration) throws IOException {
         ensureImageSize(image);
-        int[] rgbData = image.getRGB(
-              START_OFFSET,
-              START_OFFSET,
-              width,
-              height,
-              null,
-              START_OFFSET,
-              width);
-        getEncoder().addImage(rgbData, width, getImageOptions(duration));
-        LOGGER.info("Appended frame with duration {} ms, image size: {}x{}",
-              duration, width, height);
+        // Reuse the pixel buffer across frames. Frame dimensions are fixed after the first frame
+        // (ensureImageSize enforces this), so the same int[] is valid for every frame and avoids
+        // allocating a full width*height array per frame on this hot path.
+        reusableRgbBuffer = image.getRGB(START_OFFSET, START_OFFSET, width, height, reusableRgbBuffer,
+              START_OFFSET, width);
+        getEncoder().addImage(reusableRgbBuffer, width, getImageOptions(duration));
+        LOGGER.debug("Appended frame with duration {} ms, image size: {}x{}", duration, width, height);
     }
 
     private ImageOptions getImageOptions(long duration) {
@@ -197,7 +194,7 @@ public class GifWriter {
         });
 
         // grab the output image type from the first image in the sequence
-        BufferedImage firstImage = ImageIO.read(files.get(0));
+        BufferedImage firstImage = ImageIO.read(files.getFirst());
 
         OutputStream outputStream = new FileOutputStream(outputFile);
 

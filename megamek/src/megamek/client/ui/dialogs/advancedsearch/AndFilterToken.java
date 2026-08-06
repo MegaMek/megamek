@@ -42,4 +42,9 @@ class AndFilterToken extends OperatorFT {
     public String toString() {
         return "and";
     }
+
+    @Override
+    public String toJson() {
+        return "and";
+    }
 }

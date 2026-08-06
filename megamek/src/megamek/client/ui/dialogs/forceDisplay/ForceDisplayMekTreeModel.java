@@ -39,10 +39,10 @@ import javax.swing.tree.DefaultTreeModel;
 
 import megamek.client.Client;
 import megamek.client.ui.panels.phaseDisplay.lobby.sorters.MekTreeTopLevelSorter;
-import megamek.common.units.Entity;
-import megamek.common.interfaces.ForceAssignable;
 import megamek.common.force.Force;
 import megamek.common.force.Forces;
+import megamek.common.interfaces.ForceAssignable;
+import megamek.common.units.Entity;
 
 public class ForceDisplayMekTreeModel extends DefaultTreeModel {
     private final Client client;
@@ -59,6 +59,7 @@ public class ForceDisplayMekTreeModel extends DefaultTreeModel {
         nodeStructureChanged(root);
     }
 
+    @Deprecated(since = "0.51.0", forRemoval = true)
     public void refreshDisplay() {
         nodeChanged(root);
     }
@@ -127,7 +128,7 @@ public class ForceDisplayMekTreeModel extends DefaultTreeModel {
               || !((child instanceof Force) || (child instanceof Entity))) {
             return -1;
         }
-        
+
         if (child instanceof Entity) {
             return pnt.entityIndex((Entity) child);
         } else {

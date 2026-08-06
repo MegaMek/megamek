@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2020-2025 The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2020-2026 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -51,8 +51,8 @@ import megamek.client.ui.util.UIUtil;
 import megamek.common.Player;
 import megamek.common.alphaStrike.AlphaStrikeElement;
 import megamek.common.board.Board;
-import megamek.common.equipment.GunEmplacement;
 import megamek.common.force.Force;
+import megamek.common.battlefieldSupport.BattlefieldSupportAsset;
 import megamek.common.game.Game;
 import megamek.common.game.InGameObject;
 import megamek.common.interfaces.ForceAssignable;
@@ -68,6 +68,15 @@ import megamek.common.util.CrewSkillSummaryUtil;
 class LobbyMekCellFormatter {
 
     private static final GUIPreferences GUIP = GUIPreferences.getInstance();
+
+    /** Corner of the branch drawn before a carried or towed unit. Escaped to keep the source plain ASCII. */
+    private static final String BRANCH_CORNER = "\u2514";
+
+    /** One length of branch. Repeated once per level, so a deeper load reads as a longer arm. */
+    private static final String BRANCH_ARM = "\u2500";
+
+    /** Stops a malformed load loop from spinning while counting how deep a unit sits. */
+    private static final int MAX_CARRIER_DEPTH = 16;
 
     private LobbyMekCellFormatter() {
     }
@@ -97,6 +106,70 @@ class LobbyMekCellFormatter {
     }
 
     /**
+     * Returns the branch drawn in front of a unit that rides on another, indented and lengthened by how deeply it
+     * sits. A Mek inside a DropShip inside a JumpShip is drawn further in than the DropShip carrying it, so a stack
+     * reads as a tree rather than a flat run of identical marks.
+     */
+    static String carriedBranch(Entity entity) {
+        int depth = carriedDepth(entity);
+
+        if (depth <= 0) {
+            return "";
+        }
+
+        return "&nbsp;".repeat(depth) + BRANCH_CORNER + BRANCH_ARM.repeat(depth) + "&nbsp;";
+    }
+
+    /** How many carriers sit above this unit: 1 for a DropShip in a JumpShip, 2 for a Mek inside that DropShip. */
+    private static int carriedDepth(Entity entity) {
+        int depth = 0;
+        Entity current = entity;
+
+        while ((current != null) && (depth < MAX_CARRIER_DEPTH)) {
+            Entity carrier = carrierOf(current);
+
+            if ((carrier == null) || (carrier.getId() == current.getId())) {
+                break;
+            }
+            depth++;
+            current = carrier;
+        }
+
+        return depth;
+    }
+
+    /** The unit this one rides on, carried in a bay or towed behind, or {@code null} when neither. */
+    private static Entity carrierOf(Entity entity) {
+        if (entity.getGame() == null) {
+            return null;
+        }
+
+        if (entity.getTransportId() != Entity.NONE) {
+            return entity.getGame().getEntity(entity.getTransportId());
+        }
+        if (entity.getTractor() != Entity.NONE) {
+            return entity.getGame().getEntity(entity.getTractor());
+        }
+
+        return null;
+    }
+
+    /**
+     * Returns the tractor heading the train this unit is towed by, or {@code null} when it is not towed.
+     * <p>
+     * Deployment belongs to that tractor: a train goes where it goes. A trailer only gets a setting of its own once
+     * the game starts and the tractor's is copied onto it, so the lobby has to read it from the head of the train.
+     * </p>
+     */
+    private static Entity trainHeadOf(Entity entity) {
+        if ((entity == null) || (entity.getGame() == null) || (entity.getTractor() == Entity.NONE)) {
+            return null;
+        }
+
+        return entity.getGame().getEntity(entity.getTractor());
+    }
+
+    /**
      * Creates and returns the display content of the Unit column for the given entity and for the non-compact display
      * mode. When blindDrop is true, the unit details are not given.
      */
@@ -118,7 +191,7 @@ class LobbyMekCellFormatter {
                 result.append(Messages.getString("ChatLounge.0"));
             } else if (entity instanceof ProtoMek) {
                 result.append(Messages.getString("ChatLounge.1"));
-            } else if (entity instanceof GunEmplacement) {
+            } else if (entity.isBuildingEntityOrGunEmplacement()) {
                 result.append(Messages.getString("ChatLounge.2"));
             } else if (entity.isSupportVehicle()) {
                 result.append(entity.getWeightClassName());
@@ -142,6 +215,12 @@ class LobbyMekCellFormatter {
         int mapType = lobby.mapSettings.getMedium();
 
         // First line
+        // Draw a branch on anything riding on another unit, carried or towed, so a carrier and its load read as one
+        // block in the list rather than as unrelated rows that happen to sit next to each other.
+        if (isCarried || isTowed) {
+            result.append(UIUtil.fontHTML(uiGray())).append(carriedBranch(entity)).append("</FONT>");
+        }
+
         if (LobbyUtility.hasYellowWarning(entity)) {
             result.append(UIUtil.fontHTML(uiYellow()));
             result.append(WARNING_SIGN + "</FONT>");
@@ -162,7 +241,8 @@ class LobbyMekCellFormatter {
         // Unit Name
         if (hasCritical) {
             result.append(UIUtil.fontHTML(GUIP.getWarningColor()));
-        } else if (hasWarning) {
+        } else if (hasWarning || (entity instanceof BattlefieldSupportAsset)) {
+            // Battlefield Support Assets always show their name in yellow to stand out from ordinary units.
             result.append(UIUtil.fontHTML(uiYellow()));
         } else {
             result.append(fontHTML());
@@ -183,9 +263,14 @@ class LobbyMekCellFormatter {
         if (forceView) {
             result.append(MekTableModel.DOT_SPACER);
         }
-        NumberFormat formatter = NumberFormat.getNumberInstance(MegaMek.getMMOptions().getLocale());
-        result.append(formatter.format(entity.getWeight()));
-        result.append(Messages.getString("ChatLounge.Tons"));
+        if (entity instanceof BattlefieldSupportAsset) {
+            // Assets have no weight; show what they are instead of a "0 Tons" reading.
+            result.append(Messages.getString("ChatLounge.BFSAsset"));
+        } else {
+            NumberFormat formatter = NumberFormat.getNumberInstance(MegaMek.getMMOptions().getLocale());
+            result.append(formatter.format(entity.getWeight()));
+            result.append(Messages.getString("ChatLounge.Tons"));
+        }
         result.append("</FONT>");
 
         // Alpha Strike Unit Role
@@ -456,6 +541,22 @@ class LobbyMekCellFormatter {
                       .append(Messages.getString("ChatLounge.towedBy"))
                       .append(" ")
                       .append(tractor.getChassis());
+
+                // Say where in the train it sits. A convoy can carry several identical carriages, so the name alone
+                // does not say which is which, and the order decides which hex each one ends up in.
+                String trainPosition = UIUtil.trainPositionLabel(entity);
+                if (!trainPosition.isEmpty()) {
+                    result.append(" (").append(trainPosition).append(')');
+                }
+
+                // A train deploys wherever its tractor does, so show the tractor's off board setting here too. The
+                // trailer does not carry one of its own until the game starts and the tractor's is copied onto it.
+                Entity trainHead = trainHeadOf(entity);
+                if ((trainHead != null) && trainHead.isOffBoard()) {
+                    result.append(", ").append(getString("ChatLounge.deploysOffBoard"));
+                    result.append(",  ").append(trainHead.getOffBoardDirection());
+                    result.append(", ").append(trainHead.getOffBoardDistance());
+                }
             }
 
             if (PreferenceManager.getClientPreferences().getShowUnitId()) {
@@ -477,6 +578,12 @@ class LobbyMekCellFormatter {
             if (entity.isProne()) {
                 firstEntry = dotSpacer(result, firstEntry);
                 result.append(getString("ChatLounge.prone"));
+            }
+
+            if ((entity instanceof Infantry dugInInfantry)
+                  && (dugInInfantry.getDugIn() == Infantry.DUG_IN_COMPLETE)) {
+                firstEntry = dotSpacer(result, firstEntry);
+                result.append(getString("ChatLounge.dugIn"));
             }
         }
 
@@ -585,7 +692,7 @@ class LobbyMekCellFormatter {
                 uType = Messages.getString("ChatLounge.0");
             } else if (entity instanceof ProtoMek) {
                 uType = Messages.getString("ChatLounge.1");
-            } else if (entity instanceof GunEmplacement) {
+            } else if (entity.isBuildingEntityOrGunEmplacement()) {
                 uType = Messages.getString("ChatLounge.2");
             } else if (entity.isSupportVehicle()) {
                 uType = entity.getWeightClassName();
@@ -641,7 +748,12 @@ class LobbyMekCellFormatter {
             result.append(WARNING_SIGN + "</FONT>");
         }
 
-        // Loaded unit
+        // Loaded unit. Towed units get the same treatment: both are riding on another unit in the list.
+        boolean isTowed = entity.getTowedBy() != Entity.NONE;
+        if (isCarried || isTowed) {
+            result.append(UIUtil.fontHTML(uiGray())).append(carriedBranch(entity)).append("</FONT>");
+        }
+
         if (isCarried) {
             result.append(UIUtil.fontHTML(uiGreen())).append(LOADED_SIGN).append("</FONT>");
         }
@@ -650,6 +762,10 @@ class LobbyMekCellFormatter {
         // Gray out if the unit is a fighter in a squadron
         if (entity.isPartOfFighterSquadron()) {
             result.append(UIUtil.fontHTML(uiGray()));
+            result.append(entity.getShortNameRaw()).append("</FONT>");
+        } else if (entity instanceof BattlefieldSupportAsset) {
+            // Battlefield Support Assets show their name in yellow to stand out from ordinary units.
+            result.append(UIUtil.fontHTML(uiYellow()));
             result.append(entity.getShortNameRaw()).append("</FONT>");
         } else {
             result.append(entity.getShortNameRaw());
@@ -794,6 +910,12 @@ class LobbyMekCellFormatter {
                 result.append(MekTableModel.DOT_SPACER).append(UIUtil.fontHTML(uiGreen())).append("<I>");
                 result.append(Messages.getString("ChatLounge.compact.prone")).append("</I></FONT>");
             }
+
+            if ((entity instanceof Infantry dugInInfantry)
+                  && (dugInInfantry.getDugIn() == Infantry.DUG_IN_COMPLETE)) {
+                result.append(MekTableModel.DOT_SPACER).append(UIUtil.fontHTML(uiGreen())).append("<I>");
+                result.append(Messages.getString("ChatLounge.compact.dugIn")).append("</I></FONT>");
+            }
         }
 
         if (entity.countPartialRepairs() > 0) {
@@ -801,8 +923,10 @@ class LobbyMekCellFormatter {
             result.append("Partial Repairs</FONT>");
         }
 
-        // Offboard deployment
-        if (entity.isOffBoard()) {
+        // Offboard deployment. A towed unit shows its tractor's setting, since the train deploys as one and the
+        // trailer does not carry a setting of its own until the game starts.
+        Entity offBoardSource = entity.isOffBoard() ? entity : trainHeadOf(entity);
+        if ((offBoardSource != null) && offBoardSource.isOffBoard()) {
             result.append(MekTableModel.DOT_SPACER).append(UIUtil.fontHTML(uiGreen())).append("<I>");
             result.append(Messages.getString("ChatLounge.compact.deploysOffBoard")).append("</I></FONT>");
         } else if (entity.getDeployRound() > 0) {
@@ -991,7 +1115,13 @@ class LobbyMekCellFormatter {
             result.append(pilot.getDesc(0));
         }
 
-        result.append(" (").append(pilot.getSkillsAsString(rpgSkills)).append(")");
+        result.append(" (");
+        if (entity instanceof BattlefieldSupportAsset asset) {
+            result.append(asset.getCrewSkillLevel());
+        } else {
+            result.append(pilot.getSkillsAsString(rpgSkills));
+        }
+        result.append(")");
         if (pilot.countOptions() > 0) {
             result.append(MekTableModel.DOT_SPACER).append(UIUtil.fontHTML(uiQuirksColor()));
             result.append(Messages.getString("ChatLounge.abilities"));
@@ -1040,8 +1170,13 @@ class LobbyMekCellFormatter {
                 result.append("<I>").append(Messages.getString("ChatLounge.multipleCrew")).append("</I>");
                 result.append("<BR>");
             }
-            result.append(CrewSkillSummaryUtil.getSkillNames(entity)).append(": ");
-            result.append("<B>").append(crew.getSkillsAsString(rpgSkills)).append("</B><BR>");
+            if (entity instanceof BattlefieldSupportAsset asset) {
+                // Assets have only a Regular/Veteran grade, not gunnery/piloting numbers.
+                result.append("<B>").append(asset.getCrewSkillLevel()).append("</B><BR>");
+            } else {
+                result.append(CrewSkillSummaryUtil.getSkillNames(entity)).append(": ");
+                result.append("<B>").append(crew.getSkillsAsString(rpgSkills)).append("</B><BR>");
+            }
 
             // Advantages, MD, Edge
             if ((crew.countOptions(LVL3_ADVANTAGES) > 0) || (crew.countOptions(MD_ADVANTAGES) > 0)) {
@@ -1060,12 +1195,14 @@ class LobbyMekCellFormatter {
         current.append(";>");
     }
 
+    @Deprecated(since = "0.51.0", forRemoval = true)
     static void formatSpan(StringBuilder current, String hexColor) {
         current.append("<SPAN style=color:");
         current.append(hexColor);
         current.append(";>");
     }
 
+    @Deprecated(since = "0.51.0", forRemoval = true)
     static void fullIDString(StringBuilder current, int id) {
         formatSpan(current, uiGray());
         current.append(" [ID: ").append(id).append("]</SPAN>");

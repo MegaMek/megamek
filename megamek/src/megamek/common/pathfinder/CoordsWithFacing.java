@@ -36,6 +36,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
+import jakarta.annotation.Nonnull;
 import megamek.common.board.Coords;
 import megamek.common.moves.MovePath;
 
@@ -69,13 +70,14 @@ public record CoordsWithFacing(Coords coords, int facing) {
 
     @Override
     public boolean equals(Object obj) {
-        if (!(obj instanceof CoordsWithFacing t)) {
+        if (!(obj instanceof CoordsWithFacing(Coords coords1, int facing1))) {
             return false;
         }
-        return (facing == t.facing) && Objects.equals(coords, t.coords);
+        return (facing == facing1) && Objects.equals(coords, coords1);
     }
 
     @Override
+    @Nonnull
     public String toString() {
         return String.format("%s f:%d", coords, facing);
     }

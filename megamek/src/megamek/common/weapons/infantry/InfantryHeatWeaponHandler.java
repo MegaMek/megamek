@@ -1,6 +1,6 @@
 /*
  * Copyright (C) 2004,2005 Ben Mazur (bmazur@sev.org)
- * Copyright (C) 2012-2025 The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2012-2026 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -114,9 +114,7 @@ public class InfantryHeatWeaponHandler extends InfantryWeaponHandler {
                   vPhaseReport, bldg, targetStickingOutOfBuilding);
             nDamage = checkTerrain(nDamage, entityTarget, vPhaseReport);
             nDamage = checkLI(nDamage, entityTarget, vPhaseReport);
-            if ((bldg != null) && !targetStickingOutOfBuilding) {
-                nDamage = (int) Math.floor(bldg.getDamageToScale() * nDamage);
-            }
+            nDamage = getBuildingDamageAdjustment(entityTarget, bldg, targetStickingOutOfBuilding, nDamage);
 
             // If using BMM heat option, do damage as well as heat
             if (game.getOptions().booleanOption(OptionsConstants.BASE_INFANTRY_DAMAGE_HEAT)) {

@@ -1,6 +1,6 @@
 /*
  * Copyright (c) 2005 Ben Mazur (bmazur@sev.org)
- * Copyright (C) 2005-2025 The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2005-2026 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -38,12 +38,12 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
 import megamek.client.bot.princess.CardinalEdge;
-import megamek.codeUtilities.MathUtility;
 import megamek.common.Hex;
 import megamek.common.OffBoardDirection;
 import megamek.common.board.Board;
@@ -206,7 +206,40 @@ public class BoardUtilities {
         // assuming that the map setting and board types match
         result.setType(medium);
 
+        // Propagate the source sheet name(s) onto the combined board so UI elements (Ruler title,
+        // save dialogs, scenario reports) can identify the map. Without this the combined board lands
+        // with Board.BOARD_NAME_UNNAMED regardless of what the underlying .board files were called.
+        String combinedName = deriveCombinedName(boards);
+        if (!Board.BOARD_NAME_UNNAMED.equals(combinedName)) {
+            result.setMapName(combinedName);
+        }
+
         return result;
+    }
+
+    /**
+     * Returns a display name for a combined board, derived from the names of its source sheets. A single
+     * non-default sheet name is used as-is; multiple distinct sheet names are joined with " + " in iteration
+     * order. If every sheet is unnamed (random generation, etc.) returns {@link Board#BOARD_NAME_UNNAMED}.
+     */
+    private static String deriveCombinedName(Board[] sheets) {
+        LinkedHashSet<String> names = new LinkedHashSet<>();
+        for (Board sheet : sheets) {
+            if (sheet == null) {
+                continue;
+            }
+            String n = sheet.getBoardName();
+            if (n != null && !n.isBlank() && !Board.BOARD_NAME_UNNAMED.equals(n)) {
+                names.add(n);
+            }
+        }
+        if (names.isEmpty()) {
+            return Board.BOARD_NAME_UNNAMED;
+        }
+        if (names.size() == 1) {
+            return names.iterator().next();
+        }
+        return String.join(" + ", names);
     }
 
     /**
@@ -764,7 +797,9 @@ public class BoardUtilities {
     private static int pickTerrainDensity(int terrainType, int probHeavy, int probUltra) {
         int heavyThreshold = 100 - probHeavy;
         int ultraThreshold = 100;
-        int sum = 100 + probUltra;
+        // probUltra is an unvalidated client-supplied percentage; keep the roll bound positive so a wildly
+        // out-of-range value cannot make Compute.randomInt throw.
+        int sum = Math.max(1, 100 + probUltra);
 
         int roll = Compute.randomInt(sum);
 
@@ -920,8 +955,14 @@ public class BoardUtilities {
             // Locate the center of the crater.
             Point center = new Point(Compute.randomInt(width), Compute.randomInt(height));
 
-            // What is the diameter of this crater?
-            int radius = Compute.randomInt(maxRadius - minRadius + 1) + minRadius;
+            // What is the diameter of this crater? The radius bounds come straight from client-supplied map
+            // settings and are not validated anywhere, so an inverted or negative range must not reach
+            // Compute.randomInt (which rejects a bound of zero or less) or the array sizing below. Guarded the
+            // same way as the crater count above: an unusable range degrades to a fixed minimum radius.
+            int radius = Math.max(0, minRadius);
+            if (maxRadius > radius) {
+                radius += Compute.randomInt(maxRadius - radius + 1);
+            }
 
             // Terrestrial crater depth to radius ratio is typically 1:5 to 1:7.
             // Hexes are 30m across and levels are 6m high.
@@ -1464,7 +1505,7 @@ public class BoardUtilities {
         for (int w = 0; w < width; w++) {
             for (int h = 0; h < height; h++) {
                 elevationMap[w][h] = (int) Math.round(elevationMap[w][h] * scale) + inc;
-                elevationCount[MathUtility.clamp(elevationMap[w][h], 0, range)]++;
+                elevationCount[Math.clamp(elevationMap[w][h], 0, range)]++;
             }
         }
 

@@ -69,7 +69,7 @@ public class ISPrototypeTAG extends TAGWeapon {
         extremeRange = 18;
         bv = 0;
         cost = 150000;
-        rulesRefs = "73, IO";
+        rulesRefs = "67, IO:AE";
         flags = flags.or(F_PROTOTYPE);
         techAdvancement.setTechBase(TechBase.IS)
               .setIntroLevel(false)

@@ -43,6 +43,8 @@ import megamek.common.options.OptionsConstants;
  * Class to store pertinent quirk information. This class is immutable.
  *
  * @param code       The code (OptionsConstants.*) of this quirk. Not the display name.
+ * @param value      Optional value for quirks that require parameters (e.g., "2750" for obsolete quirk). Empty for
+ *                   boolean quirks.
  * @param location   The location String ("LA", "FR" etc.) of this weapon quirk. Empty for unit quirks.
  * @param slot       The slot (0 - 11) of this weapon quirk. -1 for unit quirks
  * @param weaponName The weapon internal name (e.g. CLERLargeLaser) of this weapon quirk. Empty for unit quirks. The
@@ -51,17 +53,27 @@ import megamek.common.options.OptionsConstants;
  * @author Deric "Netzilla" Page (deric dot page at usa dot net)
  * @author Simon (Juliez)
  */
-public record QuirkEntry(String code, String location, int slot, String weaponName) {
+public record QuirkEntry(String code, String value, String location, int slot, String weaponName) {
 
     /**
-     * Creates a unit quirk entry. The code should be a quirk code such as
-     * {@link OptionsConstants#QUIRK_POS_COMMAND_MEK}. The code may not be null or empty but is not otherwise checked if
-     * it is a valid value.
+     * Creates a unit quirk entry from a string that may contain a value (e.g., "obsolete:2750" or just "command_mek").
+     * The code should be a quirk code such as {@link OptionsConstants#QUIRK_POS_COMMAND_MEK}. The code may not be null
+     * or empty but is not otherwise checked if it is a valid value.
      *
-     * @param code The quirk
+     * @param quirkString The quirk string, optionally with a colon-separated value (e.g., "obsolete:2750")
      */
-    public QuirkEntry(String code) {
-        this(code, "", -1, "");
+    public QuirkEntry(String quirkString) {
+        this(validateAndParseCode(quirkString), parseValue(quirkString), "", -1, "");
+    }
+
+    /**
+     * Creates a unit quirk entry with a specific code and value.
+     *
+     * @param code  The quirk code
+     * @param value The quirk value (empty string for boolean quirks)
+     */
+    public QuirkEntry(String code, String value) {
+        this(code, value, "", -1, "");
 
         if (StringUtility.isNullOrBlank(code)) {
             throw new IllegalArgumentException("Invalid quirk code!");
@@ -76,9 +88,18 @@ public record QuirkEntry(String code, String location, int slot, String weaponNa
      * @param slot       The critical slot number (0-based) of the weapon's first critical.
      * @param weaponName The MegaMek name for the weapon (i.e. ISERLargeLaser)
      */
+    public QuirkEntry(String code, String location, int slot, String weaponName) {
+        this(code, "", location, slot, weaponName);
+    }
+
+    /**
+     * Canonical constructor for weapon quirks and full specification.
+     */
     public QuirkEntry {
         if (StringUtility.isNullOrBlank(code)) {
             throw new IllegalArgumentException("Invalid quirk code!");
+        } else if (value == null) {
+            throw new IllegalArgumentException("Invalid value (use empty string for boolean quirks)!");
         } else if (location == null) {
             throw new IllegalArgumentException("Invalid location!");
         } else if (weaponName == null) {
@@ -86,6 +107,22 @@ public record QuirkEntry(String code, String location, int slot, String weaponNa
         } else if (slot < -1) {
             throw new IllegalArgumentException("Invalid slot index!");
         }
+    }
+
+    private static String validateAndParseCode(String quirkString) {
+        if (StringUtility.isNullOrBlank(quirkString)) {
+            throw new IllegalArgumentException("Invalid quirk string!");
+        }
+        int colonIndex = quirkString.indexOf(':');
+        return colonIndex >= 0 ? quirkString.substring(0, colonIndex) : quirkString;
+    }
+
+    private static String parseValue(String quirkString) {
+        if (quirkString == null) {
+            return "";
+        }
+        int colonIndex = quirkString.indexOf(':');
+        return colonIndex >= 0 ? quirkString.substring(colonIndex + 1) : "";
     }
 
     /**
@@ -131,7 +168,15 @@ public record QuirkEntry(String code, String location, int slot, String weaponNa
         return Objects.equals(location, other.location) &&
               Objects.equals(weaponName, other.weaponName) &&
               (slot == other.slot) &&
-              Objects.equals(code, other.code);
+              Objects.equals(code, other.code) &&
+              Objects.equals(value, other.value);
+    }
+
+    /**
+     * @return true if this quirk has a value (e.g., obsolete:2750), false for boolean quirks
+     */
+    public boolean hasValue() {
+        return !StringUtility.isNullOrBlank(value);
     }
 
     public boolean isWeaponQuirk() {

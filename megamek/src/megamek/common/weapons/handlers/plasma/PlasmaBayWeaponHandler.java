@@ -59,6 +59,7 @@ import megamek.common.weapons.ppc.clan.CLPlasmaCannon;
 import megamek.common.weapons.ppc.innerSphere.ISPlasmaRifle;
 import megamek.server.totalWarfare.TWGameManager;
 
+@Deprecated(since = "0.51.0", forRemoval = true)
 public class PlasmaBayWeaponHandler extends AmmoBayWeaponHandler {
     @Serial
     private static final long serialVersionUID = -4718048077136686433L;

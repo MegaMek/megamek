@@ -179,8 +179,16 @@ public abstract class GameBoardTestCase {
             } else {
                 unit.setWeight(50.0);
             }
-            unit.setOriginalWalkMP(8);
-            unit.setOriginalJumpMP(8);
+            // Respect a walk/jump MP pre-configured by the test factory; only fall back to the
+            // default when none was supplied. This lets tests with stricter MP requirements
+            // (e.g., grounded aero whose taxi MP is thrust/2 per TW p.86) supply a thrust value
+            // large enough that the post-reduction MP still covers the test path.
+            if (unit.getOriginalWalkMP() <= 0) {
+                unit.setOriginalWalkMP(8);
+            }
+            if (unit.getOriginalJumpMP() <= 0) {
+                unit.setOriginalJumpMP(8);
+            }
             unit.setId(5);
         }
 

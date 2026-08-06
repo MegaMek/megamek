@@ -35,6 +35,9 @@ package megamek.server.commands;
 
 import static megamek.server.Server.SERVER_CONN;
 
+import megamek.client.ui.Messages;
+import megamek.common.Player;
+import megamek.common.event.GameToastEvent;
 import megamek.server.Server;
 import megamek.server.totalWarfare.TWGameManager;
 
@@ -76,4 +79,18 @@ public abstract class GamemasterServerCommand extends ClientServerCommand {
         return true;
     }
 
+    /**
+     * Announces every use of a gamemaster command to all players with a toast in the gamemaster's own color, so an
+     * intervention in the game is never mistaken for part of its normal course.
+     */
+    @Override
+    protected void postRunCommand(int connId) {
+        Player gamemaster = server.getPlayer(connId);
+        String gamemasterName = (gamemaster != null)
+              ? gamemaster.getName()
+              : Messages.getString("Gamemaster.toast.serverName");
+        gameManager.sendToast(GameToastEvent.Level.GAMEMASTER,
+              Messages.getString("Gamemaster.toast.command", gamemasterName, getLongName()),
+              null);
+    }
 }

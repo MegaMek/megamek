@@ -195,6 +195,7 @@ public class BoardEdgePathFinder {
      * edge. The reason being that a particular path may technically lead to an edge, but we cut the path generation
      * short when it reaches another path that already goes to that edge.
      */
+    @Deprecated(since = "0.51.0", forRemoval = true)
     public MovePath findCombinedPath(Entity entity) {
         MovePath currentPath = null;
         MovePath connectedPath = new MovePath(entity.getGame(), entity);
@@ -321,6 +322,7 @@ public class BoardEdgePathFinder {
      * Invalidate all paths that go through this set of coordinates (because of a building or bridge collapse), or some
      * other terrain change either directly or by connecting to a path that goes through this set of coordinates.
      */
+    @Deprecated(since = "0.51.0", forRemoval = true)
     public void invalidatePaths(Coords coords) {
         // identify if this set of coordinates has a path that leads to an edge
         // loop through all paths in the path cache destined for the edge, and
@@ -394,29 +396,30 @@ public class BoardEdgePathFinder {
         longestNonEdgePathCache.put(entity.getPosition(), startPath);
 
         while (!candidates.isEmpty()) {
-            MovePath cachedPath = this.getCachedPathForCoordinates(candidates.get(0).getFinalCoords(),
+            MovePath cachedPath = this.getCachedPathForCoordinates(candidates.getFirst().getFinalCoords(),
                   destinationRegion);
 
-            if (cachedPath != null || isOnBoardEdge(candidates.get(0), destinationRegion)) {
+            if (cachedPath != null || isOnBoardEdge(candidates.getFirst(), destinationRegion)) {
                 // if we've found a cached path and the length of the current candidate is 1
                 // (it's always at least 1 due to adding the climb mode switch explicitly),
                 // then we should return the cached path instead
-                MovePath returnPath = ((candidates.get(0).length() == 1) && (cachedPath != null)) ? cachedPath
-                      : candidates.get(0);
+                MovePath returnPath = ((candidates.getFirst().length() == 1) && (cachedPath != null)) ? cachedPath
+                      : candidates.getFirst();
 
                 cacheGoodPath(returnPath, destinationRegion);
                 return returnPath;
             }
 
-            candidates.addAll(generateChildNodes(candidates.get(0), visitedCoords));
+            candidates.addAll(generateChildNodes(candidates.getFirst(), visitedCoords));
 
             // if this path moved around more than the current 'longest path', store it,
             // just in case
-            if (candidates.get(0).getHexesMoved() > longestNonEdgePathCache.get(entity.getPosition()).getHexesMoved()) {
-                longestNonEdgePathCache.put(entity.getPosition(), candidates.get(0));
+            if (candidates.getFirst().getHexesMoved() > longestNonEdgePathCache.get(entity.getPosition())
+                  .getHexesMoved()) {
+                longestNonEdgePathCache.put(entity.getPosition(), candidates.getFirst());
             }
 
-            candidates.remove(0);
+            candidates.removeFirst();
             candidates.sort(movePathComparator);
         }
 
@@ -430,6 +433,7 @@ public class BoardEdgePathFinder {
      *
      * @return A move path or null if these coordinates haven't been evaluated.
      */
+    @Deprecated(since = "0.51.0", forRemoval = true)
     public @Nullable MovePath getLongestNonEdgePath(Coords coords) {
         return longestNonEdgePathCache.get(coords);
     }

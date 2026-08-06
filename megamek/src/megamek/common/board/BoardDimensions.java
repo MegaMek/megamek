@@ -37,6 +37,8 @@ package megamek.common.board;
 import java.io.Serial;
 import java.io.Serializable;
 
+import jakarta.annotation.Nonnull;
+
 /**
  * Type-safe, immutable, dimensions class for handling board sizes.
  *
@@ -92,6 +94,7 @@ public record BoardDimensions(int w, int h) implements Serializable, Comparable<
     }
 
     @Override
+    @Nonnull
     public String toString() {
         return w + " x " + h;
     }

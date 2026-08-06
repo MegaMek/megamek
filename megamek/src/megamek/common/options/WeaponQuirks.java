@@ -40,6 +40,7 @@ import java.io.Serial;
 import java.util.List;
 
 import megamek.common.battleArmor.BattleArmor;
+import megamek.common.equipment.AmmoType;
 import megamek.common.equipment.EquipmentType;
 import megamek.common.equipment.GunEmplacement;
 import megamek.common.equipment.MiscType;
@@ -48,7 +49,9 @@ import megamek.common.equipment.WeaponType;
 import megamek.common.units.Aero;
 import megamek.common.units.Entity;
 import megamek.common.units.Jumpship;
+import megamek.common.units.Mek;
 import megamek.common.units.ProtoMek;
+import megamek.common.units.QuadMek;
 import megamek.common.units.Tank;
 import megamek.common.weapons.AmmoWeapon;
 import megamek.common.weapons.lasers.EnergyWeapon;
@@ -84,6 +87,7 @@ public class WeaponQuirks extends AbstractOptions {
         addOption(wpnQuirk, OptionsConstants.QUIRK_WEAPON_NEG_EM_INTERFERENCE, false);
         addOption(wpnQuirk, OptionsConstants.QUIRK_WEAPON_POS_FAST_RELOAD, false);
         addOption(wpnQuirk, OptionsConstants.QUIRK_WEAPON_POS_DIRECT_TORSO_MOUNT, false);
+        addOption(wpnQuirk, OptionsConstants.QUIRK_WEAPON_POS_DIRECT_TORSO_MOUNT_QUAD, false);
         addOption(wpnQuirk, OptionsConstants.QUIRK_WEAPON_POS_MOD_WEAPONS, false);
         addOption(wpnQuirk, OptionsConstants.QUIRK_WEAPON_POS_JETTISON_CAPABLE, false);
         addOption(wpnQuirk, OptionsConstants.QUIRK_WEAPON_NEG_NON_FUNCTIONAL, false);
@@ -190,10 +194,25 @@ public class WeaponQuirks extends AbstractOptions {
             }
         }
 
-        if (qName.equals(OptionsConstants.QUIRK_WEAPON_POS_DIRECT_TORSO_MOUNT)) {
-            if ((en instanceof Aero) || (en instanceof BattleArmor) || (en instanceof Tank)) {
+        boolean isDirectionalTorsoMountQuirk =
+              qName.equals(OptionsConstants.QUIRK_WEAPON_POS_DIRECT_TORSO_MOUNT)
+                    || qName.equals(OptionsConstants.QUIRK_WEAPON_POS_DIRECT_TORSO_MOUNT_QUAD);
+        if (isDirectionalTorsoMountQuirk) {
+            // A Directional Torso Mount is a Mek-only feature (BMM p.83), so exclude every non-Mek unit type
+            // rather than listing the known offenders.
+            if (!(en instanceof Mek)) {
                 return true;
             }
+            // No weapon with location placement restrictions (such as a Heavy Gauss rifle) may be
+            // placed in a Directional Torso Mount.
+            if (hasLocationPlacementRestriction(weaponType)) {
+                return true;
+            }
+        }
+        // The 3-point full-360 turret version is available only to quad Meks (BMM p.83).
+        if (qName.equals(OptionsConstants.QUIRK_WEAPON_POS_DIRECT_TORSO_MOUNT_QUAD)
+              && !(en instanceof QuadMek)) {
+            return true;
         }
 
         if (qName.equals(OptionsConstants.QUIRK_WEAPON_POS_STABLE_WEAPON)) {
@@ -213,6 +232,24 @@ public class WeaponQuirks extends AbstractOptions {
         }
 
         return false;
+    }
+
+    /**
+     * Determines whether a weapon has location placement restrictions that forbid it from being placed in a Directional
+     * Torso Mount (BMM p.83): the Heavy Gauss and Improved Heavy Gauss rifles, which carry genuine mandatory mounting
+     * rules. Merely being large enough that construction <i>allows</i> splitting over two locations (8+ critical
+     * slots, e.g. a HAG/30) is an allowance, not a restriction, and does not exclude the weapon - the canon
+     * OmniMarauder Prime mounts its Directional Torso Mount HAG/30 whole in one torso. A weapon that actually
+     * <i>is</i> split across two locations can never ride the single-location mount; that is checked per mount in
+     * {@link Mounted#hasDirectionalTorsoMount()}.
+     *
+     * @param weaponType the weapon being checked
+     *
+     * @return {@code true} if the weapon may not be placed in a Directional Torso Mount
+     */
+    public static boolean hasLocationPlacementRestriction(WeaponType weaponType) {
+        AmmoType.AmmoTypeEnum ammoType = weaponType.getAmmoType();
+        return (ammoType == AmmoType.AmmoTypeEnum.GAUSS_HEAVY) || (ammoType == AmmoType.AmmoTypeEnum.IGAUSS_HEAVY);
     }
 
     private static class WeaponQuirksInfo extends AbstractOptionsInfo {

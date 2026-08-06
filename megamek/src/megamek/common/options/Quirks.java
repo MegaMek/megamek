@@ -1,6 +1,6 @@
 /*
  * Copyright (C) 2000-2003 Ben Mazur (bmazur@sev.org)
- * Copyright (C) 2009-2025 The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2009-2026 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -43,12 +43,15 @@ import java.util.List;
 import megamek.common.battleArmor.BattleArmor;
 import megamek.common.equipment.Engine;
 import megamek.common.equipment.GunEmplacement;
+import megamek.common.equipment.WeaponMounted;
+import megamek.common.equipment.WeaponType;
 import megamek.common.units.Aero;
 import megamek.common.units.Dropship;
 import megamek.common.units.Entity;
 import megamek.common.units.Jumpship;
 import megamek.common.units.Mek;
 import megamek.common.units.ProtoMek;
+import megamek.common.units.QuadMek;
 import megamek.common.units.Tank;
 import megamek.common.units.VTOL;
 import megamek.common.units.Warship;
@@ -80,7 +83,10 @@ public class Quirks extends AbstractOptions {
         addOption(posQuirk, QUIRK_POS_COMMAND_MEK, false);
         addOption(posQuirk, QUIRK_POS_COMPACT, false);
         addOption(posQuirk, QUIRK_POS_COWL, false);
-        addOption(posQuirk, QUIRK_POS_DIRECTIONAL_TORSO_MOUNT, false);
+        // Directional Torso Mount chassis quirks carry a torso-location set as their value (BMM p.83),
+        // so they are registered as STRING options (default empty = inactive), like the Obsolete quirk.
+        addOption(posQuirk, QUIRK_POS_DIRECTIONAL_TORSO_MOUNT, "");
+        addOption(posQuirk, QUIRK_POS_DIRECTIONAL_TORSO_MOUNT_360, "");
         addOption(posQuirk, QUIRK_POS_DISTRACTING, false);
         addOption(posQuirk, QUIRK_POS_DOCKING_ARMS, false);
         addOption(posQuirk, QUIRK_POS_EASY_MAINTAIN, false);
@@ -115,9 +121,6 @@ public class Quirks extends AbstractOptions {
         addOption(posQuirk, QUIRK_POS_UBIQUITOUS_IS, false);
         addOption(posQuirk, QUIRK_POS_UBIQUITOUS_CLAN, false);
         addOption(posQuirk, QUIRK_POS_VAR_RNG_TARG, false);
-        // Legacy Variable Range Targeting quirks - kept for backward compatibility
-        addOption(posQuirk, QUIRK_POS_VAR_RNG_TARG_L, false);
-        addOption(posQuirk, QUIRK_POS_VAR_RNG_TARG_S, false);
         addOption(posQuirk, QUIRK_POS_VESTIGIAL_HANDS_LA, false);
         addOption(posQuirk, QUIRK_POS_VESTIGIAL_HANDS_RA, false);
         addOption(posQuirk, QUIRK_POS_VTOL_ROTOR_COAXIAL, false);
@@ -152,7 +155,9 @@ public class Quirks extends AbstractOptions {
         addOption(negQuirk, QUIRK_NEG_NO_EJECT, false);
         addOption(negQuirk, QUIRK_NEG_NO_TWIST, false);
         addOption(negQuirk, QUIRK_NEG_NON_STANDARD, false);
-        addOption(negQuirk, QUIRK_NEG_OBSOLETE, false);
+        addOption(negQuirk,
+              QUIRK_NEG_OBSOLETE,
+              ""); // Comma-separated years: "obsoleteYear,reintroYear,obsoleteYear2,..."
         addOption(negQuirk, QUIRK_NEG_POOR_LIFE_SUPPORT, false);
         addOption(negQuirk, QUIRK_NEG_POOR_PERFORMANCE, false);
         addOption(negQuirk, QUIRK_NEG_POOR_SEALING, false);
@@ -193,7 +198,19 @@ public class Quirks extends AbstractOptions {
 
     /** @return A list of unit quirks that are active in this Quirks object. */
     public List<IOption> activeQuirks() {
-        return getOptionsList().stream().filter(IOption::booleanValue).collect(toList());
+        return getOptionsList().stream().filter(this::isQuirkActive).collect(toList());
+    }
+
+    /**
+     * Checks if a quirk is active. Boolean quirks are active if true, string quirks (like obsolete) are active if they
+     * have a non-empty value.
+     */
+    private boolean isQuirkActive(IOption quirk) {
+        if (quirk.getType() == IOption.STRING) {
+            String value = quirk.stringValue();
+            return value != null && !value.isEmpty();
+        }
+        return quirk.booleanValue();
     }
 
     public static boolean isQuirkDisallowed(IOption quirk, Entity en) {
@@ -204,9 +221,7 @@ public class Quirks extends AbstractOptions {
         String qName = quirk.getName();
 
         // Variable Range Targeting cannot be combined with Improved Targeting quirks (BMM pg. 86)
-        if (qName.equals(QUIRK_POS_VAR_RNG_TARG) ||
-              qName.equals(QUIRK_POS_VAR_RNG_TARG_L) ||
-              qName.equals(QUIRK_POS_VAR_RNG_TARG_S)) {
+        if (qName.equals(QUIRK_POS_VAR_RNG_TARG)) {
             if (en.hasQuirk(QUIRK_POS_IMP_TARG_S) ||
                   en.hasQuirk(QUIRK_POS_IMP_TARG_M) ||
                   en.hasQuirk(QUIRK_POS_IMP_TARG_L)) {
@@ -218,11 +233,17 @@ public class Quirks extends AbstractOptions {
         if (qName.equals(QUIRK_POS_IMP_TARG_S) ||
               qName.equals(QUIRK_POS_IMP_TARG_M) ||
               qName.equals(QUIRK_POS_IMP_TARG_L)) {
-            if (en.hasQuirk(QUIRK_POS_VAR_RNG_TARG) ||
-                  en.hasQuirk(QUIRK_POS_VAR_RNG_TARG_L) ||
-                  en.hasQuirk(QUIRK_POS_VAR_RNG_TARG_S)) {
+            if (en.hasQuirk(QUIRK_POS_VAR_RNG_TARG)) {
                 return false;
             }
+        }
+
+        // Overhead Arms cannot be combined with Low-Mounted Arms (BMM pg. 85)
+        if (qName.equals(QUIRK_POS_OVERHEAD_ARMS) && en.hasQuirk(QUIRK_NEG_LOW_ARMS)) {
+            return false;
+        }
+        if (qName.equals(QUIRK_NEG_LOW_ARMS) && en.hasQuirk(QUIRK_POS_OVERHEAD_ARMS)) {
+            return false;
         }
 
         if (qName.equals(QUIRK_NEG_GAS_HOG)) {
@@ -241,6 +262,9 @@ public class Quirks extends AbstractOptions {
                       && !en.hasSystem(Mek.ACTUATOR_HAND, Mek.LOC_LEFT_ARM);
                 case QUIRK_NEG_OVERSIZED -> en.getWeight() >= 60;
                 case QUIRK_POS_COMPACT -> en.getWeight() <= 55;
+                case QUIRK_POS_OVERHEAD_ARMS -> isOverheadArmsLegalFor(en);
+                // The 3-point (360 turret) Directional Torso Mount is available only to quads (BMM p.83).
+                case QUIRK_POS_DIRECTIONAL_TORSO_MOUNT_360 -> en instanceof QuadMek;
                 default -> quirk.isNoneOf(QUIRK_POS_ATMOSPHERE_FLYER,
                       QUIRK_NEG_ATMOSPHERE_INSTABILITY, QUIRK_POS_DOCKING_ARMS,
                       QUIRK_NEG_FRAGILE_FUEL, QUIRK_POS_INTERNAL_BOMB, QUIRK_POS_TRAILER_HITCH,
@@ -257,9 +281,9 @@ public class Quirks extends AbstractOptions {
                 return quirk.isAnyOf(
                       QUIRK_POS_ANTI_AIR, QUIRK_POS_IMP_COM, QUIRK_POS_IMPROVED_SENSORS,
                       QUIRK_POS_IMP_TARG_S, QUIRK_POS_IMP_TARG_M, QUIRK_POS_IMP_TARG_L,
-                      QUIRK_POS_LOW_PROFILE, QUIRK_NEG_POOR_SEALING, QUIRK_NEG_POOR_TARG_M,
-                      QUIRK_NEG_EM_INTERFERENCE_WHOLE, QUIRK_NEG_POOR_TARG_S, QUIRK_NEG_POOR_TARG_L,
-                      QUIRK_NEG_POOR_WORK, QUIRK_NEG_SENSOR_GHOSTS);
+                      QUIRK_POS_LOW_PROFILE, QUIRK_NEG_OBSOLETE, QUIRK_NEG_POOR_SEALING,
+                      QUIRK_NEG_POOR_TARG_S, QUIRK_NEG_POOR_TARG_M, QUIRK_NEG_POOR_TARG_L,
+                      QUIRK_NEG_EM_INTERFERENCE_WHOLE, QUIRK_NEG_POOR_WORK, QUIRK_NEG_SENSOR_GHOSTS);
             }
 
             return switch (qName) {
@@ -276,8 +300,9 @@ public class Quirks extends AbstractOptions {
                       QUIRK_POS_IMP_TARG_S, QUIRK_POS_SEARCHLIGHT,
                       QUIRK_POS_IMP_TARG_M, QUIRK_POS_IMP_TARG_L, QUIRK_POS_LOW_PROFILE,
                       QUIRK_NEG_BAD_REP_IS, QUIRK_NEG_BAD_REP_CLAN, QUIRK_NEG_DIFFICULT_MAINTAIN,
-                      QUIRK_NEG_NON_STANDARD, QUIRK_NEG_POOR_PERFORMANCE, QUIRK_NEG_POOR_SEALING,
-                      QUIRK_NEG_HARD_PILOT, QUIRK_NEG_POOR_TARG_S, QUIRK_NEG_POOR_TARG_M, QUIRK_NEG_POOR_TARG_L,
+                      QUIRK_NEG_NON_STANDARD, QUIRK_NEG_OBSOLETE, QUIRK_NEG_POOR_PERFORMANCE,
+                      QUIRK_NEG_POOR_SEALING, QUIRK_NEG_HARD_PILOT, QUIRK_NEG_POOR_TARG_S,
+                      QUIRK_NEG_POOR_TARG_M, QUIRK_NEG_POOR_TARG_L,
                       QUIRK_NEG_POOR_WORK, QUIRK_NEG_PROTOTYPE, QUIRK_NEG_SENSOR_GHOSTS,
                       QUIRK_POS_UBIQUITOUS_IS, QUIRK_POS_UBIQUITOUS_CLAN);
             };
@@ -313,23 +338,21 @@ public class Quirks extends AbstractOptions {
                 return true;
             }
 
-            if (en instanceof Warship) {
-                return quirk.is(QUIRK_NEG_POOR_PERFORMANCE);
-            } else if (en instanceof Jumpship) {
-                return quirk.is(QUIRK_POS_DOCKING_ARMS);
-            } else if (en instanceof Dropship) {
-                return quirk.isAnyOf(
+            return switch (en) {
+                case Warship ignored -> quirk.is(QUIRK_NEG_POOR_PERFORMANCE);
+                case Jumpship ignored -> quirk.is(QUIRK_POS_DOCKING_ARMS);
+                case Dropship ignored -> quirk.isAnyOf(
                       QUIRK_NEG_ATMOSPHERE_INSTABILITY, QUIRK_NEG_EM_INTERFERENCE_WHOLE,
                       QUIRK_NEG_LARGE_DROPPER, QUIRK_NEG_UNSTREAMLINED, QUIRK_NEG_WEAK_UNDERCARRIAGE,
                       QUIRK_POS_ATMOSPHERE_FLYER, QUIRK_POS_INTERNAL_BOMB, QUIRK_NEG_POOR_PERFORMANCE);
-            } else { // Fighter/SmallCraft
-                return quirk.isAnyOf(
-                      QUIRK_NEG_ATMOSPHERE_INSTABILITY, QUIRK_NEG_CRAMPED_COCKPIT, QUIRK_NEG_DIFFICULT_EJECT,
-                      QUIRK_NEG_EM_INTERFERENCE_WHOLE, QUIRK_NEG_POOR_LIFE_SUPPORT,
-                      QUIRK_NEG_POOR_PERFORMANCE, QUIRK_NEG_UNSTREAMLINED, QUIRK_NEG_WEAK_UNDERCARRIAGE,
-                      QUIRK_POS_ATMOSPHERE_FLYER, QUIRK_POS_COMBAT_COMPUTER, QUIRK_POS_FAST_RELOAD,
-                      QUIRK_POS_IMP_LIFE_SUPPORT, QUIRK_POS_INTERNAL_BOMB, QUIRK_NEG_NO_EJECT);
-            }
+                default ->  // Fighter/SmallCraft
+                      quirk.isAnyOf(
+                            QUIRK_NEG_ATMOSPHERE_INSTABILITY, QUIRK_NEG_CRAMPED_COCKPIT, QUIRK_NEG_DIFFICULT_EJECT,
+                            QUIRK_NEG_EM_INTERFERENCE_WHOLE, QUIRK_NEG_POOR_LIFE_SUPPORT,
+                            QUIRK_NEG_POOR_PERFORMANCE, QUIRK_NEG_UNSTREAMLINED, QUIRK_NEG_WEAK_UNDERCARRIAGE,
+                            QUIRK_POS_ATMOSPHERE_FLYER, QUIRK_POS_COMBAT_COMPUTER, QUIRK_POS_FAST_RELOAD,
+                            QUIRK_POS_IMP_LIFE_SUPPORT, QUIRK_POS_INTERNAL_BOMB, QUIRK_NEG_NO_EJECT);
+            };
         }
 
         if (en instanceof ProtoMek) {
@@ -344,6 +367,43 @@ public class Quirks extends AbstractOptions {
                   QUIRK_NEG_PROTOTYPE, QUIRK_NEG_SENSOR_GHOSTS);
         }
 
+        return false;
+    }
+
+    /**
+     * Determines whether a Mek is eligible for the Overhead Arms quirk (BMM pg. 85). The quirk cannot be taken by a Mek
+     * that has no arms (such as a quad), nor by one that lacks any direct-fire ranged weapon in its arms, with the
+     * exception of OmniMeks (whose arm loadout varies by configuration).
+     *
+     * @param entity the entity to test
+     *
+     * @return {@code true} if the Mek may take the Overhead Arms quirk, otherwise {@code false}
+     */
+    private static boolean isOverheadArmsLegalFor(Entity entity) {
+        if (entity.entityIsQuad()) {
+            return false;
+        }
+        if (entity.isOmni()) {
+            return true;
+        }
+        return hasArmMountedDirectFireWeapon(entity);
+    }
+
+    /**
+     * Checks whether the entity carries at least one direct-fire ranged weapon mounted in an arm location.
+     *
+     * @param entity the entity to test
+     *
+     * @return {@code true} if a direct-fire weapon is mounted in the left or right arm, otherwise {@code false}
+     */
+    private static boolean hasArmMountedDirectFireWeapon(Entity entity) {
+        for (WeaponMounted weapon : entity.getWeaponList()) {
+            int location = weapon.getLocation();
+            boolean armMounted = (location == Mek.LOC_LEFT_ARM) || (location == Mek.LOC_RIGHT_ARM);
+            if (armMounted && (weapon.getType() != null) && weapon.getType().hasFlag(WeaponType.F_DIRECT_FIRE)) {
+                return true;
+            }
+        }
         return false;
     }
 

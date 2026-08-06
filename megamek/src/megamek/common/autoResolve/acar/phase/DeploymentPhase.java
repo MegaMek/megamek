@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2025 The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2025-2026 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -65,10 +65,10 @@ public class DeploymentPhase extends PhaseHandler {
     @Override
     protected void executePhase() {
         headerLatch.set(false);
-        // Automatically deploy all formations that are set to deploy this round
+        // Automatically deploy all formations that are set to deploy this round or earlier
         getSimulationManager().getGame().getActiveFormations().stream()
               .filter(f -> !f.isDeployed())
-              .filter(f -> f.getDeployRound() == getSimulationManager().getGame().getCurrentRound())
+              .filter(f -> f.getDeployRound() <= getSimulationManager().getGame().getCurrentRound())
               .forEach(this::deployUnit);
     }
 

@@ -48,6 +48,7 @@ import java.util.List;
 import java.util.Vector;
 
 import megamek.SuiteConstants;
+import megamek.common.board.CubeCoords;
 import megamek.logging.MMLogger;
 
 /**
@@ -277,7 +278,7 @@ public class BuildingBlock {
                 // variables but this is the most common.
                 String rawString = rawData.get(rawRecord);
                 if (rawString.indexOf(',') >= 0) {
-                    rawString = rawString.replaceAll(",", "");
+                    rawString = rawString.replace(",", "");
                 }
                 data[dataRecord] = Integer.parseInt(rawString);
                 dataRecord++;
@@ -289,6 +290,7 @@ public class BuildingBlock {
         return data; // hand back the goods...
     }
 
+    @Deprecated(since = "0.51.0", forRemoval = true)
     public float[] getDataAsFloat(String blockName) {
 
         float[] data;
@@ -369,6 +371,50 @@ public class BuildingBlock {
         return data; // hand back the goods...
     }
 
+    public CubeCoords[] getDataAsCubeCoords(String blockName) {
+        CubeCoords[] data;
+        int startIndex, endIndex;
+
+        startIndex = findStartIndex(blockName);
+        endIndex = findEndIndex(blockName);
+        if ((startIndex == -1) || (endIndex == -1)) {
+            return new CubeCoords[] { CubeCoords.ZERO };
+        }
+
+        // calculate the size of our data array by subtracting the two indexes
+        int size = endIndex - startIndex;
+
+        if (size == 0) {
+            return new CubeCoords[] { CubeCoords.ZERO };
+        }
+        data = new CubeCoords[size];
+        int dataRecord = 0;
+
+        // fill up the data array with the raw data we want...
+        for (int rawRecord = startIndex; rawRecord < endIndex; rawRecord++) {
+            try {
+                String rawString = rawData.get(rawRecord);
+                String[] parts = rawString.split(",");
+                if (parts.length == 3) {
+                    double q = Double.parseDouble(parts[0].trim());
+                    double r = Double.parseDouble(parts[1].trim());
+                    double s = Double.parseDouble(parts[2].trim());
+                    data[dataRecord] = new CubeCoords(q, r, s);
+                    dataRecord++;
+                } else {
+                    data[dataRecord] = CubeCoords.ZERO;
+                    dataRecord++;
+                    logger.error("getDataAsCubeCoords(\"{}\") failed to parse line: {}", blockName, rawString);
+                }
+            } catch (NumberFormatException ex) {
+                data[dataRecord] = CubeCoords.ZERO;
+                dataRecord++;
+                logger.error(ex, "getDataAsCubeCoords(\"{}\") failed.", blockName);
+            }
+        }
+        return data; // hand back the goods...
+    }
+
     /**
      * Gets data from a block.
      *
@@ -437,6 +483,7 @@ public class BuildingBlock {
     /**
      * @see #writeBlockData (String, Vector)
      */
+    @Deprecated(since = "0.51.0", forRemoval = true)
     public boolean writeBlockData(String blockName, float blockData) {
         String[] temp = new String[1];
         temp[0] = "" + blockData;
@@ -455,10 +502,22 @@ public class BuildingBlock {
     /**
      * @see #writeBlockData (String, Vector)
      */
+    @Deprecated(since = "0.51.0", forRemoval = true)
     public boolean writeBlockData(String blockName, float[] blockData) {
         String[] temp = new String[blockData.length];
         for (int c = 0; c < blockData.length; c++) {
             temp[c] = "" + blockData[c];
+        }
+        return writeBlockData(blockName, makeVector(temp));
+    }
+
+    /**
+     * @see #writeBlockData (String, Vector)
+     */
+    public boolean writeBlockData(String blockName, CubeCoords[] blockData) {
+        String[] temp = new String[blockData.length];
+        for (int c = 0; c < blockData.length; c++) {
+            temp[c] = blockData[c].q() + "," + blockData[c].r() + "," + blockData[c].s();
         }
         return writeBlockData(blockName, makeVector(temp));
     }
@@ -532,6 +591,7 @@ public class BuildingBlock {
     /**
      * Clears the <CODE>rawData</CODE> Vector.
      */
+    @Deprecated(since = "0.51.0", forRemoval = true)
     public void clearData() {
 
         rawData.clear();
@@ -543,6 +603,7 @@ public class BuildingBlock {
      *
      * @return Returns <CODE>rawData.size()</CODE>
      */
+    @Deprecated(since = "0.51.0", forRemoval = true)
     public int dataSize() {
 
         return rawData.size();
@@ -620,6 +681,7 @@ public class BuildingBlock {
      *
      * @see #getVector()
      */
+    @Deprecated(since = "0.51.0", forRemoval = true)
     public Vector<String> getAllDataAsVector() {
         return rawData;
 
@@ -632,6 +694,7 @@ public class BuildingBlock {
      *
      * @return Returns the number in the [0] position.
      */
+    @Deprecated(since = "0.51.0", forRemoval = true)
     public int getReturnedArraySize(String[] array) {
         try {
             return Integer.parseInt(array[0]);
@@ -648,6 +711,7 @@ public class BuildingBlock {
     /**
      * @see #getReturnedArraySize (String[])
      */
+    @Deprecated(since = "0.51.0", forRemoval = true)
     public int getReturnedArraySize(int[] array) {
         return array[0];
     }
@@ -657,6 +721,7 @@ public class BuildingBlock {
      *
      * @see #getReturnedArraySize (String[])
      */
+    @Deprecated(since = "0.51.0", forRemoval = true)
     public int getReturnedArraySize(Vector<Object> array) {
         return array.size();
     }
@@ -664,6 +729,7 @@ public class BuildingBlock {
     /**
      * @see #getReturnedArraySize (String[])
      */
+    @Deprecated(since = "0.51.0", forRemoval = true)
     public int getReturnedArraySize(float[] array) {
         try {
             return Integer.parseInt("" + array[0]);
@@ -695,6 +761,7 @@ public class BuildingBlock {
     /**
      * @see #countArray(String[])
      */
+    @Deprecated(since = "0.51.0", forRemoval = true)
     public int countArray(int[] array) {
 
         return array.length;

@@ -35,6 +35,8 @@ package megamek.common.board;
 
 import java.util.Objects;
 
+import jakarta.annotation.Nonnull;
+
 /**
  * This is a data record for a possible deployment elevation together with a DeploymentElevationType that signals if the
  * elevation is, e.g., on the ground, on a bridge or submerged. Note that two such records are equal when their
@@ -68,6 +70,7 @@ public record ElevationOption(int elevation, DeploymentElevationType type) imple
     }
 
     @Override
+    @Nonnull
     public String toString() {
         return "Elevation: " + elevation + " (" + type + ")";
     }

@@ -1,6 +1,6 @@
 /*
  * Copyright (c) 2000-2011 Ben Mazur (bmazur@sev.org)
- * Copyright (C) 2021-2025 The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2021-2026 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -69,10 +69,11 @@ import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 
 import megamek.client.Client;
+import megamek.client.bot.AIType;
+import megamek.client.bot.BotClient;
 import megamek.client.bot.princess.BehaviorSettings;
 import megamek.client.bot.princess.BehaviorSettingsFactory;
 import megamek.client.bot.princess.CardinalEdge;
-import megamek.client.bot.princess.Princess;
 import megamek.client.bot.princess.PrincessException;
 import megamek.client.generator.RandomCallsignGenerator;
 import megamek.client.ui.Messages;
@@ -108,6 +109,9 @@ public class BotConfigDialog extends AbstractButtonDialog
     private final transient BehaviorSettingsFactory behaviorSettingsFactory = BehaviorSettingsFactory.getInstance();
     private BehaviorSettings princessBehavior;
 
+    /** Radio-button group for choosing which bot AI to use; defaults to {@link AIType#PRINCESS}. */
+    private final ButtonGroup aiTypeGroup = new ButtonGroup();
+
     private final JLabel nameLabel = new JLabel(Messages.getString("BotConfigDialog.nameLabel"));
     private final TipTextField nameField = new TipTextField("", 16);
 
@@ -124,8 +128,8 @@ public class BotConfigDialog extends AbstractButtonDialog
           new TipMMToggleButton(Messages.getString("BotConfigDialog.iAmAPirateCheck"));
     private final MMToggleButton ignoreDamageOutputCheck =
           new TipMMToggleButton(Messages.getString("BotConfigDialog.ignoreDamageOutput"));
-    private final MMToggleButton exclusiveHerdingCheck =
-          new TipMMToggleButton(Messages.getString("BotConfigDialog.exclusiveHerdingCheck"));
+    private final MMToggleButton exclusiveMutualSupportCheck =
+          new TipMMToggleButton(Messages.getString("BotConfigDialog.exclusiveMutualSupportCheck"));
     private final MMToggleButton experimentalCheck =
           new TipMMToggleButton(Messages.getString("BotConfigDialog.experimentalCheck"));
 
@@ -138,7 +142,7 @@ public class BotConfigDialog extends AbstractButtonDialog
 
     private final TipSlider aggressionSlidebar = new TipSlider(SwingConstants.HORIZONTAL, 0, 10, 5);
     private final TipSlider fallShameSlidebar = new TipSlider(SwingConstants.HORIZONTAL, 0, 10, 5);
-    private final TipSlider herdingSlidebar = new TipSlider(SwingConstants.HORIZONTAL, 0, 10, 5);
+    private final TipSlider mutualSupportSlidebar = new TipSlider(SwingConstants.HORIZONTAL, 0, 10, 5);
     private final TipSlider selfPreservationSlidebar = new TipSlider(SwingConstants.HORIZONTAL, 0, 10, 5);
     private final TipSlider braverySlidebar = new TipSlider(SwingConstants.HORIZONTAL, 0, 10, 5);
     private final TipSlider antiCrowdingSlidebar = new TipSlider(SwingConstants.HORIZONTAL, 0, 10, 0);
@@ -233,6 +237,43 @@ public class BotConfigDialog extends AbstractButtonDialog
     }
 
     /**
+     * The bot-AI chooser, shown as a compact line under the name field. Presents one radio button per
+     * {@link AIType}, defaulting to {@link AIType#PRINCESS}; with a single AI type available it shows a single
+     * (selected) option.
+     */
+    private JPanel aiTypePanel() {
+        JPanel result = new JPanel();
+        result.add(new JLabel(Messages.getString("BotConfigDialog.aiTypeLabel")));
+        boolean useCaspar = CLIENT_PREFERENCES.getUseCASPAR();
+        for (AIType aiType : AIType.values()) {
+            if ((aiType == AIType.CASPAR) && !useCaspar) {
+                logger.debug("[Caspar] CASPAR AI option hidden - UseCASPAR client setting is off");
+                continue;
+            }
+            JRadioButton radioButton = new JRadioButton(
+                  Messages.getString("BotConfigDialog.aiType." + aiType.name()));
+            radioButton.setActionCommand(aiType.name());
+            radioButton.setSelected(aiType == AIType.PRINCESS);
+            String tooltipKey = "BotConfigDialog.aiType." + aiType.name() + ".tooltip";
+            if (Messages.keyExists(tooltipKey)) {
+                radioButton.setToolTipText(Messages.getString(tooltipKey));
+            }
+            aiTypeGroup.add(radioButton);
+            result.add(radioButton);
+        }
+        return result;
+    }
+
+    /**
+     * @return the {@link AIType} selected in the AI chooser, or {@link AIType#PRINCESS} if nothing is selected
+     */
+    public AIType getSelectedAIType() {
+        ButtonModel selection = aiTypeGroup.getSelection();
+        AIType selected = (selection != null) ? AIType.fromString(selection.getActionCommand()) : null;
+        return (selected != null) ? selected : AIType.PRINCESS;
+    }
+
+    /**
      * The setting section contains the presets list on the left side and the princess settings on the right.
      */
     private JPanel settingSection() {
@@ -277,6 +318,7 @@ public class BotConfigDialog extends AbstractButtonDialog
         namePanel.add(nameField);
 
         panContent.add(namePanel);
+        panContent.add(aiTypePanel());
         return result;
     }
 
@@ -355,11 +397,11 @@ public class BotConfigDialog extends AbstractButtonDialog
               "BotConfigDialog.aggressionSliderTitle"));
         panContent.add(Box.createVerticalStrut(7));
 
-        panContent.add(buildSliderWithDynamicTitle(herdingSlidebar,
-              Messages.getString("BotConfigDialog.herdingSliderMin"),
-              Messages.getString("BotConfigDialog.herdingSliderMax"),
-              Messages.getString("BotConfigDialog.herdingToolTip"),
-              "BotConfigDialog.herdingSliderTitle"));
+        panContent.add(buildSliderWithDynamicTitle(mutualSupportSlidebar,
+              Messages.getString("BotConfigDialog.mutualSupportSliderMin"),
+              Messages.getString("BotConfigDialog.mutualSupportSliderMax"),
+              Messages.getString("BotConfigDialog.mutualSupportToolTip"),
+              "BotConfigDialog.mutualSupportSliderTitle"));
         panContent.add(Box.createVerticalStrut(7));
 
         panContent.add(buildSliderWithDynamicTitle(fallShameSlidebar,
@@ -401,9 +443,9 @@ public class BotConfigDialog extends AbstractButtonDialog
             panContent.add(Box.createVerticalStrut(7));
         }
 
-        exclusiveHerdingCheck.setToolTipText(Messages.getString("BotConfigDialog.exclusiveHerdingCheckToolTip"));
-        exclusiveHerdingCheck.addActionListener(this);
-        panContent.add(exclusiveHerdingCheck);
+        exclusiveMutualSupportCheck.setToolTipText(Messages.getString("BotConfigDialog.exclusiveMutualSupportCheckToolTip"));
+        exclusiveMutualSupportCheck.addActionListener(this);
+        panContent.add(exclusiveMutualSupportCheck);
 
         iAmAPirateCheck.setToolTipText(Messages.getString("BotConfigDialog.iAmAPirateCheckToolTip"));
         iAmAPirateCheck.addActionListener(this);
@@ -533,11 +575,11 @@ public class BotConfigDialog extends AbstractButtonDialog
         selfPreservationSlidebar.setValue(princessBehavior.getSelfPreservationIndex());
         aggressionSlidebar.setValue(princessBehavior.getHyperAggressionIndex());
         fallShameSlidebar.setValue(princessBehavior.getFallShameIndex());
-        herdingSlidebar.setValue(princessBehavior.getHerdMentalityIndex());
+        mutualSupportSlidebar.setValue(princessBehavior.getMutualSupportIndex());
         braverySlidebar.setValue(princessBehavior.getBraveryIndex());
         antiCrowdingSlidebar.setValue(princessBehavior.getAntiCrowding());
         favorHigherTMMSlidebar.setValue(princessBehavior.getFavorHigherTMM());
-        exclusiveHerdingCheck.setSelected(princessBehavior.isExclusiveHerding());
+        exclusiveMutualSupportCheck.setSelected(princessBehavior.isExclusiveMutualSupport());
         iAmAPirateCheck.setSelected(princessBehavior.iAmAPirate());
         experimentalCheck.setSelected(princessBehavior.isExperimental());
         numberOfEnemiesToConsiderFacingSlidebar.setValue(princessBehavior.getNumberOfEnemiesToConsiderFacing());
@@ -591,12 +633,12 @@ public class BotConfigDialog extends AbstractButtonDialog
               (chosenPreset.getSelfPreservationIndex() != selfPreservationSlidebar.getValue() ||
                     chosenPreset.getHyperAggressionIndex() != aggressionSlidebar.getValue() ||
                     chosenPreset.getFallShameIndex() != fallShameSlidebar.getValue() ||
-                    chosenPreset.getHerdMentalityIndex() != herdingSlidebar.getValue() ||
+                    chosenPreset.getMutualSupportIndex() != mutualSupportSlidebar.getValue() ||
                     chosenPreset.getBraveryIndex() != braverySlidebar.getValue() ||
                     chosenPreset.getAntiCrowding() != antiCrowdingSlidebar.getValue() ||
                     chosenPreset.getFavorHigherTMM() != favorHigherTMMSlidebar.getValue() ||
                     chosenPreset.iAmAPirate() != iAmAPirateCheck.isSelected() ||
-                    chosenPreset.isExclusiveHerding() != exclusiveHerdingCheck.isSelected() ||
+                    chosenPreset.isExclusiveMutualSupport() != exclusiveMutualSupportCheck.isSelected() ||
                     chosenPreset.getNumberOfEnemiesToConsiderFacing()
                           != numberOfEnemiesToConsiderFacingSlidebar.getValue() ||
                     chosenPreset.getAllowFacingTolerance() != allowFacingToleranceSlidebar.getValue() ||
@@ -777,14 +819,14 @@ public class BotConfigDialog extends AbstractButtonDialog
         newBehavior.setFallShameIndex(fallShameSlidebar.getValue());
         newBehavior.setHyperAggressionIndex(aggressionSlidebar.getValue());
         newBehavior.setSelfPreservationIndex(selfPreservationSlidebar.getValue());
-        newBehavior.setHerdMentalityIndex(herdingSlidebar.getValue());
+        newBehavior.setMutualSupportIndex(mutualSupportSlidebar.getValue());
         newBehavior.setBraveryIndex(braverySlidebar.getValue());
         newBehavior.setFavorHigherTMM(favorHigherTMMSlidebar.getValue());
         newBehavior.setAntiCrowding(antiCrowdingSlidebar.getValue());
         newBehavior.setNumberOfEnemiesToConsiderFacing(numberOfEnemiesToConsiderFacingSlidebar.getValue());
         newBehavior.setAllowFacingTolerance(allowFacingToleranceSlidebar.getValue());
         newBehavior.setIAmAPirate(iAmAPirateCheck.isSelected());
-        newBehavior.setExclusiveHerding(exclusiveHerdingCheck.isSelected());
+        newBehavior.setExclusiveMutualSupport(exclusiveMutualSupportCheck.isSelected());
         newBehavior.setExperimental(experimentalCheck.isSelected());
         newBehavior.setIgnoreDamageOutput(ignoreDamageOutputCheck.isSelected());
 
@@ -802,9 +844,9 @@ public class BotConfigDialog extends AbstractButtonDialog
     /** Copies the Configuration from another local bot player. */
     private void copyFromOtherBot(String botName) {
         var bc = client.getBots().get(botName);
-        if (bc instanceof Princess) {
+        if (bc instanceof BotClient botClient) {
             try {
-                princessBehavior = ((Princess) bc).getBehaviorSettings().getCopy();
+                princessBehavior = botClient.getBehaviorSettings().getCopy();
                 updateDialogFields();
             } catch (Exception e) {
                 logger.error(e, "copyFromOtherBot");
@@ -826,14 +868,14 @@ public class BotConfigDialog extends AbstractButtonDialog
         tempBehavior.setRetreatEdge(withdrawEdgeCombo.getSelectedItem());
         tempBehavior.setHyperAggressionIndex(aggressionSlidebar.getValue());
         tempBehavior.setSelfPreservationIndex(selfPreservationSlidebar.getValue());
-        tempBehavior.setHerdMentalityIndex(herdingSlidebar.getValue());
+        tempBehavior.setMutualSupportIndex(mutualSupportSlidebar.getValue());
         tempBehavior.setBraveryIndex(braverySlidebar.getValue());
         tempBehavior.setAntiCrowding(antiCrowdingSlidebar.getValue());
         tempBehavior.setFavorHigherTMM(favorHigherTMMSlidebar.getValue());
         tempBehavior.setNumberOfEnemiesToConsiderFacing(numberOfEnemiesToConsiderFacingSlidebar.getValue());
         tempBehavior.setAllowFacingTolerance(allowFacingToleranceSlidebar.getValue());
         tempBehavior.setIAmAPirate(iAmAPirateCheck.isSelected());
-        tempBehavior.setExclusiveHerding(exclusiveHerdingCheck.isSelected());
+        tempBehavior.setExclusiveMutualSupport(exclusiveMutualSupportCheck.isSelected());
         tempBehavior.setExperimental(experimentalCheck.isSelected());
         tempBehavior.setIgnoreDamageOutput(ignoreDamageOutputCheck.isSelected());
 
@@ -932,7 +974,7 @@ public class BotConfigDialog extends AbstractButtonDialog
 
         // Add the Configuration from a save game, if any to the top of the list
         if (saveGameBehavior != null) {
-            presets.add(0, Messages.getString("BotConfigDialog.previousConfig"));
+            presets.addFirst(Messages.getString("BotConfigDialog.previousConfig"));
         }
 
         // Other local bot Configurations

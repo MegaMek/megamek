@@ -1,6 +1,6 @@
 /*
  * Copyright (C) 2002-2007 Ben Mazur (bmazur@sev.org)
- * Copyright (C) 2002-2025 The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2002-2026 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -34,7 +34,11 @@
 
 package megamek.common.equipment;
 
+import java.math.BigDecimal;
+import java.math.RoundingMode;
+import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
 
 import megamek.common.RangeType;
 import megamek.common.alphaStrike.AlphaStrikeElement;
@@ -109,7 +113,6 @@ import megamek.common.weapons.bombs.BombISRLP10;
 import megamek.common.weapons.bombs.clan.CLAAAMissileWeapon;
 import megamek.common.weapons.bombs.clan.CLASEWMissileWeapon;
 import megamek.common.weapons.bombs.clan.CLASMissileWeapon;
-import megamek.common.weapons.bombs.clan.CLBombTAG;
 import megamek.common.weapons.bombs.clan.CLLAAMissileWeapon;
 import megamek.common.weapons.bombs.innerSphere.ISAAAMissileWeapon;
 import megamek.common.weapons.bombs.innerSphere.ISASEWMissileWeapon;
@@ -144,6 +147,7 @@ import megamek.common.weapons.gaussRifles.innerSphere.ISMagshotGaussRifle;
 import megamek.common.weapons.gaussRifles.innerSphere.ISSilverBulletGauss;
 import megamek.common.weapons.infantry.InfantrySniperStalkerWeapon;
 import megamek.common.weapons.infantry.InfantryTWFlamerWeapon;
+import megamek.common.weapons.infantry.InfantryWeapon;
 import megamek.common.weapons.infantry.archaic.*;
 import megamek.common.weapons.infantry.grenade.InfantryGrenadeInfernoWeapon;
 import megamek.common.weapons.infantry.grenade.InfantryGrenadeMicroWeapon;
@@ -307,6 +311,10 @@ import megamek.common.weapons.lrms.innerSphere.oneShot.ISLRM20IOS;
 import megamek.common.weapons.lrms.innerSphere.oneShot.ISLRM20OS;
 import megamek.common.weapons.lrms.innerSphere.oneShot.ISLRM5IOS;
 import megamek.common.weapons.lrms.innerSphere.oneShot.ISLRM5OS;
+import megamek.common.weapons.lrms.innerSphere.torpedo.ISEnhancedLRT10;
+import megamek.common.weapons.lrms.innerSphere.torpedo.ISEnhancedLRT15;
+import megamek.common.weapons.lrms.innerSphere.torpedo.ISEnhancedLRT20;
+import megamek.common.weapons.lrms.innerSphere.torpedo.ISEnhancedLRT5;
 import megamek.common.weapons.lrms.innerSphere.torpedo.ISLRT10;
 import megamek.common.weapons.lrms.innerSphere.torpedo.ISLRT15;
 import megamek.common.weapons.lrms.innerSphere.torpedo.ISLRT20;
@@ -380,7 +388,6 @@ import megamek.common.weapons.mortars.innerSphere.ISMekMortar4;
 import megamek.common.weapons.mortars.innerSphere.ISMekMortar8;
 import megamek.common.weapons.mortars.innerSphere.ISVehicularGrenadeLauncher;
 import megamek.common.weapons.other.clan.CLAMS;
-import megamek.common.weapons.other.clan.CLFireExtinguisher;
 import megamek.common.weapons.other.clan.CLFluidGun;
 import megamek.common.weapons.other.clan.CLFussilade;
 import megamek.common.weapons.other.clan.CLLaserAMS;
@@ -530,6 +537,7 @@ public class WeaponType extends EquipmentType {
 
     // marks any weapon affected by a targeting computer
     public static final WeaponTypeFlag F_DIRECT_FIRE = WeaponTypeFlag.F_DIRECT_FIRE;
+    public static final WeaponTypeFlag F_INDIRECT_FIRE = WeaponTypeFlag.F_INDIRECT_FIRE;
 
     public static final WeaponTypeFlag F_FLAMER = WeaponTypeFlag.F_FLAMER;
     // Glaze armor
@@ -564,6 +572,19 @@ public class WeaponType extends EquipmentType {
     public static final WeaponTypeFlag F_PLASMA = WeaponTypeFlag.F_PLASMA;
     public static final WeaponTypeFlag F_INCENDIARY_NEEDLES = WeaponTypeFlag.F_INCENDIARY_NEEDLES;
 
+    // families
+    public static final WeaponTypeFlag F_AC = WeaponTypeFlag.F_AC;
+    public static final WeaponTypeFlag F_SRM = WeaponTypeFlag.F_SRM;
+    public static final WeaponTypeFlag F_LRM = WeaponTypeFlag.F_LRM;
+    public static final WeaponTypeFlag F_HAG = WeaponTypeFlag.F_HAG;
+    public static final WeaponTypeFlag F_MML = WeaponTypeFlag.F_MML;
+    public static final WeaponTypeFlag F_MRM = WeaponTypeFlag.F_MRM;
+    public static final WeaponTypeFlag F_ATM = WeaponTypeFlag.F_ATM;
+    public static final WeaponTypeFlag F_NARC = WeaponTypeFlag.F_NARC;
+    public static final WeaponTypeFlag F_GAUSS = WeaponTypeFlag.F_GAUSS;
+    public static final WeaponTypeFlag F_HVAC = WeaponTypeFlag.F_HVAC;
+    
+
     // War of 3039 prototypes
     public static final WeaponTypeFlag F_PROTOTYPE = WeaponTypeFlag.F_PROTOTYPE;
     // Variable heat, heat is listed in dice, not points
@@ -583,6 +604,7 @@ public class WeaponType extends EquipmentType {
     // fire Extinguisher
     public static final WeaponTypeFlag F_EXTINGUISHER = WeaponTypeFlag.F_EXTINGUISHER;
     public static final WeaponTypeFlag F_PULSE = WeaponTypeFlag.F_PULSE;
+    public static final WeaponTypeFlag F_VSP = WeaponTypeFlag.F_VSP;
     // Full Damage vs. Infantry
     public static final WeaponTypeFlag F_BURST_FIRE = WeaponTypeFlag.F_BURST_FIRE;
     // Machine Gun Array
@@ -614,6 +636,7 @@ public class WeaponType extends EquipmentType {
     public static final WeaponTypeFlag F_INF_SUPPORT = WeaponTypeFlag.F_INF_SUPPORT;
     public static final WeaponTypeFlag F_INF_ENCUMBER = WeaponTypeFlag.F_INF_ENCUMBER;
     public static final WeaponTypeFlag F_INF_ARCHAIC = WeaponTypeFlag.F_INF_ARCHAIC;
+    public static final WeaponTypeFlag F_INF_DISPOSABLE = WeaponTypeFlag.F_INF_DISPOSABLE;
 
     // TODO Add game rules IO pg 84
     public static final WeaponTypeFlag F_INF_CLIMBING_CLAWS = WeaponTypeFlag.F_INF_CLIMBING_CLAWS;
@@ -651,6 +674,9 @@ public class WeaponType extends EquipmentType {
     public static final WeaponTypeFlag F_ER_FLAMER = WeaponTypeFlag.F_ER_FLAMER;
     /** Missile weapon that can be linked to an Artemis fire control system */
     public static final WeaponTypeFlag F_ARTEMIS_COMPATIBLE = WeaponTypeFlag.F_ARTEMIS_COMPATIBLE;
+    public static final WeaponTypeFlag F_PPC_CAPACITOR_COMPATIBLE = WeaponTypeFlag.F_PPC_CAPACITOR_COMPATIBLE;
+
+    public static final WeaponTypeFlag S_IMPROVED = WeaponTypeFlag.S_IMPROVED;
 
     /**
      * This flag is used by mortar-type weapons that allow indirect fire without a spotter and/or with LOS.
@@ -735,6 +761,7 @@ public class WeaponType extends EquipmentType {
 
     // protected RangeType rangeL;
     protected int heat;
+    protected int heatAdjustmentForBvCalculation = 0; // This is added/subtracted to the heat calculation for BV (used by Prototype IS Pulse Lasers)
     protected int damage;
     protected int damageShort;
     protected int damageMedium;
@@ -815,6 +842,11 @@ public class WeaponType extends EquipmentType {
     public int getHeat() {
         return heat;
     }
+
+    /**
+     * Returns the adjustement of heat used for BV calculation
+     */
+    public int getHeatAdjustmentForBvCalculation() { return  heatAdjustmentForBvCalculation; }
 
     @Override
     public boolean hasFlag(EquipmentFlag flag) {
@@ -1192,6 +1224,10 @@ public class WeaponType extends EquipmentType {
     // TODO : the calculations are superseded by the ASC table but correct most of
     // the time, ideally should be replaced
     public double getBattleForceDamage(int range) {
+        return getDefaultBattleForceDamage(range);
+    }
+
+    private double getDefaultBattleForceDamage(int range) {
         double damage = 0;
         if (range <= getLongRange()) {
             // Variable damage weapons that cannot reach into the BF long range band use LR
@@ -1270,7 +1306,7 @@ public class WeaponType extends EquipmentType {
      * Returns true if this weapon type can be used for Total War LRM-type indirect fire.
      */
     public boolean hasIndirectFire() {
-        return false;
+        return hasFlag(F_INDIRECT_FIRE);
     }
 
     /**
@@ -1546,6 +1582,10 @@ public class WeaponType extends EquipmentType {
         EquipmentType.addType(new ISLRM10Primitive());
         EquipmentType.addType(new ISLRM15Primitive());
         EquipmentType.addType(new ISLRM20Primitive());
+        EquipmentType.addType(new ISEnhancedLRT5());
+        EquipmentType.addType(new ISEnhancedLRT10());
+        EquipmentType.addType(new ISEnhancedLRT15());
+        EquipmentType.addType(new ISEnhancedLRT20());
 
         // LRTs
         EquipmentType.addType(new ISLRT5());
@@ -1850,7 +1890,6 @@ public class WeaponType extends EquipmentType {
         EquipmentType.addType(new InfantryArchaicBladeArchaicSwordWeapon());
         EquipmentType.addType(new InfantryArchaicBladeZweihanderSwordWeapon());
         EquipmentType.addType(new InfantryArchaicBladeJoustingLanceWeapon());
-        EquipmentType.addType(new InfantryArchaicWhipWeapon());
         EquipmentType.addType(new InfantryArchaicShockStaffWeapon());
 
         // Clan Archaic - Commented out can be considered Obsolete
@@ -2195,8 +2234,8 @@ public class WeaponType extends EquipmentType {
         EquipmentType.addType(new InfantryProstheticVibroBladeWeapon());
         EquipmentType.addType(new InfantryProstheticClimbingClawsWeapon());
 
+        // IS and Clan fire extinguishers are mechanically identical; merged into one TechBase.ALL weapon.
         EquipmentType.addType(new ISFireExtinguisher());
-        EquipmentType.addType(new CLFireExtinguisher());
 
         // Plasma Weapons
         EquipmentType.addType(new ISPlasmaRifle());
@@ -2400,7 +2439,6 @@ public class WeaponType extends EquipmentType {
         EquipmentType.addType(new CLLAAMissileWeapon());
         EquipmentType.addType(new BombArrowIV());
         EquipmentType.addType(new ISBombTAG());
-        EquipmentType.addType(new CLBombTAG());
         EquipmentType.addType(new BombISRL10());
         EquipmentType.addType(new BombISRLP10());
         EquipmentType.addType(new AlamoMissileWeapon());
@@ -2520,5 +2558,306 @@ public class WeaponType extends EquipmentType {
     @Override
     public String toString() {
         return "[Weapon] " + internalName;
+    }
+
+    @Override
+    protected String getYamlTypeName() {
+        return "weapon";
+    }
+
+    @Override
+    protected void addFlags(Map<String, Object> data) {
+        String[] flagStrings = getFlags().getSetFlagNamesAsArray(WeaponTypeFlag.class);
+        if (flagStrings.length > 0) {
+            data.put("flags", flagStrings);
+        }
+    }
+
+    @Override
+    public Map<String, Object> getYamlData() {
+        Map<String, Object> data = super.getYamlData();
+        Map<String, Object> weapon = new LinkedHashMap<>();
+
+
+        weapon.put("damage", formatDamage());
+        if (explosionDamage > 0) {
+            weapon.put("explosionDamage", explosionDamage);
+        }
+
+        if (rackSize > 0) {
+            weapon.put("rackSize", this.rackSize);
+        }
+        weapon.put("ammoType", ammoType.name());
+        if (heat > 0) {
+            weapon.put("heat", this.heat);
+        }
+        if (heatAdjustmentForBvCalculation != 0) {
+            weapon.put("heatAdjustmentForBvCalculation", this.heatAdjustmentForBvCalculation);
+        }
+
+        // Export ranges (trimmed of trailing zeros)
+        int[] ranges = {
+            this.getShortRange(),
+            this.getMediumRange(),
+            this.getLongRange(),
+            this.getExtremeRange()
+        };
+        int[] trimmedRanges = trimTrailingZeros(ranges);
+        if (trimmedRanges.length > 0) {
+            weapon.put("ranges", trimmedRanges);
+        }
+
+        // Export water ranges (trimmed of trailing zeros, only if different from ranges)
+        int[] wRanges = {
+            this.getWShortRange(),
+            this.getWMediumRange(),
+            this.getWLongRange(),
+            this.getWExtremeRange()
+        };
+        int[] trimmedWRanges = trimTrailingZeros(wRanges);
+        if (trimmedWRanges.length > 0 && !java.util.Arrays.equals(trimmedRanges, trimmedWRanges)) {
+            weapon.put("wRanges", trimmedWRanges);
+        }
+
+        int minRange = Math.max(this.getMinimumRange(), 0);
+        if (minRange > 0) {
+            weapon.put("minRange", minRange);
+        }
+        weapon.put("maxRangeBracket", rangeBracketToString(this.getMaxRange()));
+
+        // Export AV values (trimmed of trailing zeros)
+        double[] av = {
+            this.getShortAV(),
+            this.getMedAV(),
+            this.getLongAV(),
+            this.getExtAV()
+        };
+        double[] trimmedAV = trimTrailingZeros(av);
+        if (trimmedAV.length > 0) {
+            weapon.put("av", trimmedAV);
+        }
+
+        if (this.capital) {
+            weapon.put("capital", this.capital);
+        }
+        if (this.subCapital) {
+            weapon.put("subCapital", this.subCapital);
+        }
+        if (this.missileArmor > 0) {
+            weapon.put("missileArmor", this.missileArmor);
+        }
+        if (this.atClass != CLASS_NONE) {
+            weapon.put("atClass", atClassToString(this.atClass));
+        }
+        Map<String, Object> alphaStrike = getAlphaStrikeYamlData();
+        if (!alphaStrike.isEmpty()) {
+            weapon.put("alphaStrike", alphaStrike);
+        }
+        data.put("weapon", weapon);
+        return data;
+    }
+
+    /** Exports Alpha Strike values declared by weapon-specific conversion behavior. */
+    private Map<String, Object> getAlphaStrikeYamlData() {
+        Map<String, Object> alphaStrike = new LinkedHashMap<>();
+        if (getBattleForceClass() != BF_CLASS_STANDARD) {
+            alphaStrike.put("battleForceClass", battleForceClassToString(getBattleForceClass()));
+        }
+        if (isAlphaStrikePointDefense()) {
+            alphaStrike.put("pointDefense", true);
+        }
+        if (isAlphaStrikeIndirectFire() != hasIndirectFire()) {
+            alphaStrike.put("indirectFire", isAlphaStrikeIndirectFire());
+        }
+        if (hasAlphaStrikeDamageOverride()) {
+            alphaStrike.put("damage", getAlphaStrikeDamage());
+        }
+        if (getAlphaStrikeHeat() != getHeat()) {
+            alphaStrike.put("heat", getAlphaStrikeHeat());
+        }
+        int[] heatDamage = getAlphaStrikeHeatDamage();
+        if (!java.util.Arrays.equals(heatDamage, new int[heatDamage.length])) {
+            alphaStrike.put("heatDamage", heatDamage);
+        }
+        return alphaStrike;
+    }
+
+    private boolean hasAlphaStrikeDamageOverride() {
+        try {
+            return getClass().getMethod("getBattleForceDamage", int.class).getDeclaringClass() != WeaponType.class
+                  || getClass().getMethod("getBattleForceDamage", int.class, Mounted.class).getDeclaringClass()
+                        != WeaponType.class;
+        } catch (NoSuchMethodException exception) {
+            throw new IllegalStateException("WeaponType BattleForce damage API is unavailable", exception);
+        }
+    }
+
+    private String battleForceClassToString(int battleForceClass) {
+        return switch (battleForceClass) {
+            case BF_CLASS_LRM -> "LRM";
+            case BF_CLASS_SRM -> "SRM";
+            case BF_CLASS_MML -> "MML";
+            case BF_CLASS_TORPEDO -> "TORPEDO";
+            case BF_CLASS_AC -> "AC";
+            case BF_CLASS_FLAK -> "FLAK";
+            case BF_CLASS_IATM -> "IATM";
+            case BF_CLASS_REL -> "REL";
+            case BF_CLASS_CAPITAL -> "CAPITAL";
+            case BF_CLASS_SUBCAPITAL -> "SUBCAPITAL";
+            case BF_CLASS_CAPITAL_MISSILE -> "CAPITAL_MISSILE";
+            default -> throw new IllegalArgumentException("Unknown BattleForce class: " + battleForceClass);
+        };
+    }
+
+    private String atClassToString(int atClass) {
+        return switch (atClass) {
+            case CLASS_NONE -> "NONE";
+            case CLASS_LASER -> "LASER";
+            case CLASS_POINT_DEFENSE -> "POINT_DEFENSE";
+            case CLASS_PPC -> "PPC";
+            case CLASS_PULSE_LASER -> "PULSE_LASER";
+            case CLASS_ARTILLERY -> "ARTILLERY";
+            case CLASS_PLASMA -> "PLASMA";
+            case CLASS_AC -> "AC";
+            case CLASS_LBX_AC -> "LBX_AC";
+            case CLASS_LRM -> "LRM";
+            case CLASS_SRM -> "SRM";
+            case CLASS_MRM -> "MRM";
+            case CLASS_MML -> "MML";
+            case CLASS_ATM -> "ATM";
+            case CLASS_ROCKET_LAUNCHER -> "ROCKET_LAUNCHER";
+            case CLASS_CAPITAL_LASER -> "CAPITAL_LASER";
+            case CLASS_CAPITAL_PPC -> "CAPITAL_PPC";
+            case CLASS_CAPITAL_AC -> "CAPITAL_AC";
+            case CLASS_CAPITAL_GAUSS -> "CAPITAL_GAUSS";
+            case CLASS_CAPITAL_MISSILE -> "CAPITAL_MISSILE";
+            case CLASS_AR10 -> "AR10";
+            case CLASS_SCREEN -> "SCREEN";
+            case CLASS_SUB_CAPITAL_CANNON -> "SUB_CAPITAL_CANNON";
+            case CLASS_CAPITAL_MD -> "CAPITAL_MD";
+            case CLASS_AMS -> "AMS";
+            case CLASS_TELE_MISSILE -> "TELE_MISSILE";
+            case CLASS_GAUSS -> "GAUSS";
+            case CLASS_THUNDERBOLT -> "THUNDERBOLT";
+            case CLASS_MORTAR -> "MORTAR";
+            default -> throw new IllegalArgumentException("Unknown AT class: " + atClass);
+        };
+    }
+
+    private double[] getAlphaStrikeDamage() {
+        int[] ranges = { AlphaStrikeElement.SHORT_RANGE, AlphaStrikeElement.MEDIUM_RANGE,
+            AlphaStrikeElement.LONG_RANGE, AlphaStrikeElement.EXTREME_RANGE };
+        double[] damage = new double[ranges.length];
+        for (int index = 0; index < ranges.length; index++) {
+            damage[index] = roundAlphaStrikeDamage(getBattleForceDamage(ranges[index], null));
+        }
+        return damage;
+    }
+
+    private double roundAlphaStrikeDamage(double damage) {
+        return BigDecimal.valueOf(damage).setScale(3, RoundingMode.HALF_UP).doubleValue();
+    }
+
+    private int[] getAlphaStrikeHeatDamage() {
+        return new int[] {
+            getAlphaStrikeHeatDamage(AlphaStrikeElement.RANGE_BAND_SHORT),
+            getAlphaStrikeHeatDamage(AlphaStrikeElement.RANGE_BAND_MEDIUM),
+            getAlphaStrikeHeatDamage(AlphaStrikeElement.RANGE_BAND_LONG),
+            getAlphaStrikeHeatDamage(AlphaStrikeElement.RANGE_BAND_EXTREME)
+        };
+    }
+
+    /**
+     * Formats the damage value for YAML export.
+     * Returns:
+     * - A special damage type string ("variable", "cluster", "special", "artillery")
+     * - An array [short, medium, long] if range-specific damages are defined
+     * - A simple numeric value if damage is constant across ranges
+     */
+    private Object formatDamage() {
+        // Handle infantry weapons specially
+        if (this instanceof InfantryWeapon wi) {
+            return wi.getInfantryDamage();
+        }
+
+        // Handle special damage types first.
+        if (damage == DAMAGE_VARIABLE) {
+            // Check if we have range-specific damages.
+            boolean hasRangeDamage = damageShort > 0 || damageMedium > 0 || damageLong > 0;
+            if (hasRangeDamage) {
+                return new int[] { damageShort, damageMedium, damageLong };
+            }
+            return "variable";
+        }
+        if (damage == DAMAGE_BY_CLUSTER_TABLE) {
+            return "cluster";
+        }
+        if (damage == DAMAGE_SPECIAL) {
+            return "special";
+        }
+        if (damage == DAMAGE_ARTILLERY) {
+            return "artillery";
+        }
+
+        // Default: simple damage value
+        return damage;
+    }
+
+    private String rangeBracketToString(int rangeBracket) {
+        return switch (rangeBracket) {
+            case RANGE_SHORT -> "short";
+            case RANGE_MED -> "medium";
+            case RANGE_LONG -> "long";
+            case RANGE_EXT -> "extreme";
+            default -> "unknown";
+        };
+    }
+
+    /**
+     * Trims trailing zeros from an int array.
+     * E.g., [0, 3, 6, 9, 0] becomes [0, 3, 6, 9]
+     * E.g., [0, 0, 0, 0, 0] becomes []
+     */
+    private int[] trimTrailingZeros(int[] arr) {
+        int lastNonZero = -1;
+        for (int i = arr.length - 1; i >= 0; i--) {
+            if (arr[i] != 0) {
+                lastNonZero = i;
+                break;
+            }
+        }
+        if (lastNonZero < 0) {
+            return new int[0];
+        }
+        return java.util.Arrays.copyOf(arr, lastNonZero + 1);
+    }
+
+    /**
+     * Trims trailing zeros from a double array.
+     * E.g., [1.0, 2.0, 0.0, 0.0] becomes [1.0, 2.0]
+     * E.g., [0.0, 0.0, 0.0, 0.0] becomes []
+     */
+    private double[] trimTrailingZeros(double[] arr) {
+        int lastNonZero = -1;
+        for (int i = arr.length - 1; i >= 0; i--) {
+            if (arr[i] != 0.0) {
+                lastNonZero = i;
+                break;
+            }
+        }
+        if (lastNonZero < 0) {
+            return new double[0];
+        }
+        return java.util.Arrays.copyOf(arr, lastNonZero + 1);
+    }
+
+    @Override
+    public boolean canBeMountedOnBaDwp() {
+        return true;
+    }
+
+    @Override
+    public boolean relevantToTargetingComputer() {
+        return hasFlag(F_DIRECT_FIRE) && !hasFlag(F_TASER);
     }
 }

@@ -33,7 +33,7 @@
 
 package megamek.common.weapons.missiles.innerSphere.thunderbolt.oneShot;
 
-import megamek.common.weapons.missiles.thuunderbolt.Thunderbolt20Weapon;
+import megamek.common.weapons.missiles.thunderbolt.Thunderbolt20Weapon;
 
 /**
  * The One-Shot Thunderbolt 20

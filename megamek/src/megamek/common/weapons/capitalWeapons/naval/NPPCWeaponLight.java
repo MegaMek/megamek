@@ -70,7 +70,7 @@ public class NPPCWeaponLight extends NPPCWeapon {
         medAV = 7;
         longAV = 7;
         maxRange = RANGE_LONG;
-        rulesRefs = "333, TO";
+        rulesRefs = "146, TO:AUE";
         techAdvancement.setTechBase(TechBase.ALL)
               .setIntroLevel(false)
               .setUnofficial(false)

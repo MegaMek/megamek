@@ -33,8 +33,6 @@
 
 package megamek.common.enums;
 
-import static megamek.codeUtilities.MathUtility.clamp;
-
 import java.util.List;
 import java.util.ResourceBundle;
 import java.util.stream.Collectors;
@@ -129,6 +127,7 @@ public enum SkillLevel {
         return this == LEGENDARY;
     }
 
+    @Deprecated(since = "0.51.0", forRemoval = true)
     public boolean isUltraGreenOrGreater() {
         return isUltraGreen() || isGreenOrGreater();
     }
@@ -215,7 +214,7 @@ public enum SkillLevel {
      * @since 0.50.10
      */
     public static SkillLevel changeByDelta(final SkillLevel current, final int delta) {
-        int newExperienceLevel = clamp(current.experienceLevel + delta,
+        int newExperienceLevel = Math.clamp(current.experienceLevel + delta,
               ULTRA_GREEN.getExperienceLevel(),
               LEGENDARY.getExperienceLevel());
         return parseFromInteger(newExperienceLevel);

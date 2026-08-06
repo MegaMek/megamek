@@ -79,9 +79,21 @@ public class EquipmentBitSet {
     }
 
     public boolean contains(EquipmentBitSet other) {
-        var checker = new EquipmentBitSet(this);
-        checker.bitSet.and(other.bitSet);
-        return checker.equals(other);
+        if (other == null) {return false;}
+        BitSet oBits = other.bitSet;
+        // Iterate over the bits set in 'other'
+        for (int i = oBits.nextSetBit(0); i >= 0; i = oBits.nextSetBit(i + 1)) {
+            // If 'this' is missing a bit that 'other' has, return false
+            if (!this.bitSet.get(i)) {
+                return false;
+            }
+        }
+        return true;
+    }
+
+    public boolean intersects(EquipmentBitSet other) {
+        if (other == null) {return false;}
+        return this.bitSet.intersects(other.bitSet);
     }
 
     /**
@@ -109,17 +121,18 @@ public class EquipmentBitSet {
         bitSet.set(flag.ordinal());
     }
 
-
     /**
-     * Returns a copy of this EquipmentBitSet with the flag set.
+     * Returns a copy of this EquipmentBitSet with the specified flags set.
      *
-     * @param flag the flag to set
+     * @param flags the flags to set
      *
-     * @return a copy of this EquipmentBitSet with the flag set
+     * @return a copy of this EquipmentBitSet with the flags set
      */
-    public EquipmentBitSet or(EquipmentFlag flag) {
+    public EquipmentBitSet or(EquipmentFlag... flags) {
         var newBitSet = new EquipmentBitSet(this);
-        newBitSet.set(flag);
+        for (EquipmentFlag flag : flags) {
+            newBitSet.set(flag);
+        }
         return newBitSet;
     }
 
@@ -137,7 +150,7 @@ public class EquipmentBitSet {
     }
 
     /**
-     * Returns a new empty EquipmentBitSet and the flag set if it is set in this EquipmentBitSet.
+     * Returns a new empty EquipmentBitSet and the flags set if it is set in this EquipmentBitSet.
      * Example:
      *  EquipmentBitSet a = new EquipmentBitSet();
      *  a.set(F_HEAT_SINK);
@@ -145,14 +158,16 @@ public class EquipmentBitSet {
      *  a.and(F_HEAT_SINK) // EquipmentBitSet with only F_HEAT_SINK set if it was originally set
      *  a.has(F_HEAT_SINK); // true
      *  a.has(F_DOUBLE_HEATSINK); // false
-     * @param flag the flag to check
+     * @param flags the flags to check
      *
      * @return a new empty EquipmentBitSet and the flag set if it is set in this EquipmentBitSet
      */
-    public EquipmentBitSet and(EquipmentFlag flag) {
+    public EquipmentBitSet and(EquipmentFlag... flags) {
         var newBitSet = new EquipmentBitSet();
-        if (this.get(flag)) {
-            newBitSet.set(flag);
+        for (EquipmentFlag flag : flags) {
+            if (this.get(flag)) {
+                newBitSet.set(flag);
+            }
         }
         return newBitSet;
     }

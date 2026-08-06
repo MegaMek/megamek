@@ -8,8 +8,15 @@
 <#if includeFluff>
 	<p>
 	<b>Type: </b> ${chassis}<br/>
+        <#if manufacturerList??>
+            <b>Manufacturers:</b><br/>
+            <#list manufacturerList as entry>
+                &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;${entry.manufacturer}, ${entry.factory}<br/>
+            </#list>
+        <#else>
 	<b>Manufacturer: </b> <#if manufacturerDesc??>${manufacturerDesc}<#else>Unknown</#if><br/>
 	<b>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Primary Factory: </b> <#if factoryDesc??>${factoryDesc}<#else>Unknown</#if><br/>
+        </#if>
 	</p>
 </#if>
 
@@ -24,9 +31,9 @@
 	<b>Note:</b> Leg attacks can only be made in water of depth 1+<br/>
 	</#if>
 	</p>
-
+	<br/>
 	<table>
-		<tr><th>Equipment</th><th></th><th>Slots</th><th>Mass</th></tr>
+		<tr><th align="left">Equipment</th><th></th><th>Slots</th><th>Mass</th></tr>
 		<tr><td>Chassis:</td><td></td><td></td><td align="right">${massChassis} kg</td></tr>
 		<tr><td>Motive System:</td><td></td><td></td><td></td></tr>
 		<tr><td>&nbsp;&nbsp;&nbsp;&nbsp;Ground MP:</td><td>${groundMP}</td><td></td><td align="right">${groundMass} kg</td></tr>
@@ -46,7 +53,7 @@
 		<tr><td>Armor:</td><td>${armorType}</td><td align="center">${armorSlots}</td><td align="right">${armorMass} kg</td></tr>
 		<tr><td>&nbsp;&nbsp;&nbsp;&nbsp;Armor Value:</td><td>${armorValue} + ${internal} (Trooper)</td><td></td><td></td></tr>
 	</table>
-
+	<br/>
 	<table>
 		<tr><th>Weapons and Equipment</th><th>Location</th><th>Slots (Capacity)</th><th>Mass</th></tr>
 		<#list equipment as row>

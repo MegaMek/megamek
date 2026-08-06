@@ -74,6 +74,7 @@ public class TerrainTypeBoardProcessor extends AbstractSimpleBoardProcessor {
      * @param terrainType    the terrain type to change
      * @param newTerrainType the new terrain type to change to
      */
+    @Deprecated(since = "0.51.0", forRemoval = true)
     public TerrainTypeBoardProcessor(int terrainType, int newTerrainType) {
         this(terrainType, Terrain.WILDCARD, newTerrainType, Terrain.WILDCARD);
     }

@@ -224,7 +224,7 @@ public class Coords implements Serializable {
         int n = positions.size();
 
         if (n == 1) {
-            return positions.get(0);
+            return positions.getFirst();
         }
 
         double x0 = 0.0;
@@ -760,6 +760,7 @@ public class Coords implements Serializable {
      *
      * @return the coordinates in TSV format `x`\t`y`
      */
+    @Deprecated(since = "0.51.0", forRemoval = true)
     public String toTSV() {
         return x + "\t" + y;
     }
@@ -842,6 +843,7 @@ public class Coords implements Serializable {
         return String.format("%02d%02d", x, y);
     }
 
+    @Deprecated(since = "0.51.0", forRemoval = true)
     public static Coords fromHexCode(String hexCode) {
         if (hexCode == null || hexCode.length() < 4) {
             throw new IllegalArgumentException("Invalid hex code: " + hexCode);

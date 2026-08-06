@@ -64,6 +64,7 @@ public class StraightArrowPolygon extends Polygon {
     /**
      * Most extensive constructor with all parameters given
      */
+    @Deprecated(since = "0.51.0", forRemoval = true)
     public StraightArrowPolygon(Point startPoint, Point endPoint, int headLength, int headWidth, int arrowWidthAtHead,
           int tailWidth, int tailLength, boolean halved) {
         super();
@@ -80,6 +81,7 @@ public class StraightArrowPolygon extends Polygon {
     /**
      * Short constructor. Two points and boolean value.
      */
+    @Deprecated(since = "0.51.0", forRemoval = true)
     public StraightArrowPolygon(Point startPoint, Point endPoint, boolean halved) {
         super();
         this.startPoint = startPoint;
@@ -91,6 +93,7 @@ public class StraightArrowPolygon extends Polygon {
     /**
      * One more constructor
      */
+    @Deprecated(since = "0.51.0", forRemoval = true)
     public StraightArrowPolygon(Point startPoint, Point endPoint, int width, boolean halved) {
         super();
         this.startPoint = startPoint;

@@ -54,6 +54,7 @@ public class RollReportEntry extends PublicReportEntry {
             this.symbol = symbol;
         }
 
+        @Deprecated(since = "0.51.0", forRemoval = true)
         public int getValue() {
             return value;
         }

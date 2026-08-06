@@ -79,6 +79,7 @@ public class SBFStepSprite extends Sprite {
     /**
      * Refreshes this StepSprite's image to handle changes in the zoom level.
      */
+    @Deprecated(since = "0.51.0", forRemoval = true)
     public void refreshZoomLevel() {
         if (baseScaleImage == null) {
             return;

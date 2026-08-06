@@ -56,5 +56,5 @@ import java.lang.annotation.Target;
 @Target(value = ElementType.METHOD)
 public @interface Subscribe {
     /** Priority of the event handler, default 0 */
-    public int priority() default 0;
+    int priority() default 0;
 }

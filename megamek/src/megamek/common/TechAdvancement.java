@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2017-2025 The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2017-2026 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -190,6 +190,28 @@ public class TechAdvancement implements ITechnology {
             }
             i++;
         }
+        return this;
+    }
+
+    public TechAdvancement setISAdvancement(AdvancementPhase phase, int prog) {
+        isAdvancement.put(phase, prog);
+        return this;
+    }
+
+    public TechAdvancement setClanAdvancement(AdvancementPhase phase, int prog) {
+        clanAdvancement.put(phase, prog);
+        return this;
+    }
+
+
+    public TechAdvancement setISApproximate(AdvancementPhase phase, boolean approximate) {
+        isApproximate.put(phase, approximate);
+        return this;
+    }
+
+
+    public TechAdvancement setClanApproximate(AdvancementPhase phase, boolean approximate) {
+        clanApproximate.put(phase, approximate);
         return this;
     }
 
@@ -414,7 +436,7 @@ public class TechAdvancement implements ITechnology {
     }
 
     private TechAdvancement setFactionsAdvancement(Set<Faction> factionAdvancement, Faction... factions) {
-        factionAdvancement = EnumSet.noneOf(Faction.class);
+        factionAdvancement.clear();
         Collections.addAll(factionAdvancement, factions);
         return this;
     }

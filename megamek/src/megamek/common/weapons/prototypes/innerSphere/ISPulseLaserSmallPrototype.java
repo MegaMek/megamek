@@ -70,6 +70,7 @@ public class ISPulseLaserSmallPrototype extends PulseLaserWeapon {
         this.addLookupName("ISSmall Pulse Laser Prototype");
         shortName = "Small Pulse Laser (P)";
         this.heat = 2;
+        this.heatAdjustmentForBvCalculation = 2;
         this.damage = 3;
         this.infDamageClass = WeaponType.WEAPON_BURST_2D6;
         this.toHitModifier = -1;
@@ -89,7 +90,7 @@ public class ISPulseLaserSmallPrototype extends PulseLaserWeapon {
         this.maxRange = RANGE_SHORT;
         this.atClass = CLASS_POINT_DEFENSE;
         this.flags = flags.or(F_BURST_FIRE).or(F_PROTOTYPE);
-        rulesRefs = "71, IO";
+        rulesRefs = "67, IO:AE";
         techAdvancement.setTechBase(TechBase.IS)
               .setIntroLevel(false)
               .setUnofficial(false)

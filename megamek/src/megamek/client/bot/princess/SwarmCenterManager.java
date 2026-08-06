@@ -135,7 +135,7 @@ public class SwarmCenterManager {
         }
 
         // Get last 2 centers for direction
-        Coords current = historicalCenters.get(historicalCenters.size() - 1);
+        Coords current = historicalCenters.getLast();
         Coords previous = historicalCenters.get(historicalCenters.size() - 2);
 
         // Calculate vector between last two centers

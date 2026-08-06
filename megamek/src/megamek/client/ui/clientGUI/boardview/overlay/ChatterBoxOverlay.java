@@ -922,6 +922,7 @@ public class ChatterBoxOverlay implements KeyListener, IDisplayable, IPreference
         visibleMessage = message.substring(i);
     }
 
+    @Deprecated(since = "0.51.0", forRemoval = true)
     public void setChatterBox(ChatterBox cb) {
         this.cb = cb;
     }

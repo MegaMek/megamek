@@ -1,6 +1,6 @@
 /*
  * Copyright (C) 2003, 2004, 2005 Ben Mazur (bmazur@sev.org)
- * Copyright (C) 2003-2025 The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2003-2026 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -48,7 +48,6 @@ import megamek.common.actions.PushAttackAction;
 import megamek.common.battleArmor.BattleArmor;
 import megamek.common.board.Coords;
 import megamek.common.compute.Compute;
-import megamek.common.equipment.GunEmplacement;
 import megamek.common.equipment.INarcPod;
 import megamek.common.equipment.MiscMounted;
 import megamek.common.game.Game;
@@ -319,7 +318,7 @@ public final class PhysicalCalculator {
         Targetable target = to;
 
         // if the object of our affections is in a building, we have to target the building instead
-        if (Compute.isInBuilding(game, to) || (to instanceof GunEmplacement)) {
+        if (Compute.isInBuilding(game, to) || (to.isBuildingEntityOrGunEmplacement())) {
             target = new BuildingTarget(to.getPosition(), game.getBoard(), false);
         }
 
@@ -346,11 +345,19 @@ public final class PhysicalCalculator {
         // Find arc the attack comes in
         target_arc = getThreatHitArc(to.getPosition(), to.getFacing(), from.getPosition());
 
+        // Absolute levels: Entity#getElevation() alone is relative to the hex floor, so two Meks standing on
+        // ground both report 0 even when one is on a hill - the hex level must be added or the elevation-based
+        // hit-table selection below never fires on sloped terrain.
+        Hex attackerHex = game.getHexOf(from);
+        Hex targetHex = game.getHexOf(to);
+        int attackerLevel = from.getElevation() + ((attackerHex == null) ? 0 : attackerHex.getLevel());
+        int targetLevel = to.getElevation() + ((targetHex == null) ? 0 : targetHex.getLevel());
+
         // Check for punches If the target is a Mek, must determine if punch lands on the punch, kick, or full table
         if (to instanceof Mek) {
             if (!to.isProne()) {
                 location_table = ToHitData.HIT_PUNCH;
-                if (to.getElevation() == (from.getElevation() + 1)) {
+                if (targetLevel == (attackerLevel + 1)) {
                     location_table = ToHitData.HIT_KICK;
                 }
             } else {
@@ -400,7 +407,7 @@ public final class PhysicalCalculator {
         if (to instanceof Mek) {
             location_table = ToHitData.HIT_KICK;
             if (!to.isProne()) {
-                if (to.getElevation() == (from.getElevation() - 1)) {
+                if (targetLevel == (attackerLevel - 1)) {
                     location_table = ToHitData.HIT_PUNCH;
                 }
             } else {
@@ -426,10 +433,10 @@ public final class PhysicalCalculator {
             // punch, or kick table
             if (to instanceof Mek) {
                 location_table = ToHitData.HIT_NORMAL;
-                if ((to.getElevation() == (from.getElevation() - 1)) && !to.isProne()) {
+                if ((targetLevel == (attackerLevel - 1)) && !to.isProne()) {
                     location_table = ToHitData.HIT_PUNCH;
                 }
-                if ((to.getElevation() == (from.getElevation() + 1)) && !to.isProne()) {
+                if ((targetLevel == (attackerLevel + 1)) && !to.isProne()) {
                     location_table = ToHitData.HIT_KICK;
                 }
             } else {
@@ -567,7 +574,7 @@ public final class PhysicalCalculator {
         Targetable target = to;
 
         // if the object of our affections is in a building, we have to target the building instead
-        if (Compute.isInBuilding(game, to) || (to instanceof GunEmplacement)) {
+        if (Compute.isInBuilding(game, to) || (to.isBuildingEntityOrGunEmplacement())) {
             target = new BuildingTarget(to.getPosition(), game.getBoard(), false);
         }
 

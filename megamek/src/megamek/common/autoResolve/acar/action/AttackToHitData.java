@@ -82,6 +82,7 @@ public class AttackToHitData extends TargetRoll {
         }
     }
 
+    @Deprecated(since = "0.51.0", forRemoval = true)
     private static void processCombatUnit(AttackToHitData toHit, SBFUnit unit) {
         switch (unit.getSkill()) {
             case 7 -> toHit.addModifier(+4, I18n.getText("acar.skill_7"));

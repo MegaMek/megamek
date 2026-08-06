@@ -36,7 +36,6 @@ package megamek.common;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotEquals;
 
-import megamek.codeUtilities.MathUtility;
 import megamek.common.board.BoardDimensions;
 import org.junit.jupiter.api.Test;
 
@@ -68,8 +67,6 @@ class BoardDimensionsTests {
     @Test
     final void testEqualsObject() {
         BoardDimensions b = new BoardDimensions(10, 10);
-        assertEquals(b, b);
-
         Object x = new BoardDimensions(10, 10);
         assertEquals(b, x);
         assertEquals(x, b);
@@ -99,20 +96,20 @@ class BoardDimensionsTests {
         assertEquals(0, new BoardDimensions(Integer.MAX_VALUE, Integer.MAX_VALUE)
               .compareTo(new BoardDimensions(Integer.MAX_VALUE, Integer.MAX_VALUE)));
 
-        int result = MathUtility.clamp(new BoardDimensions(10, 10).compareTo(new BoardDimensions(
+        int result = Math.clamp(new BoardDimensions(10, 10).compareTo(new BoardDimensions(
               Integer.MAX_VALUE, Integer.MAX_VALUE)), -1, 1);
         assertEquals(-1, result);
 
-        result = MathUtility.clamp(new BoardDimensions(Integer.MAX_VALUE,
+        result = Math.clamp(new BoardDimensions(Integer.MAX_VALUE,
               Integer.MAX_VALUE).compareTo(new BoardDimensions(10, 10)), -1, 1);
         assertEquals(1, result);
 
-        result = MathUtility.clamp(
+        result = Math.clamp(
               new BoardDimensions(10, 20).compareTo(new BoardDimensions(20, 10)),
               -1, 1);
         assertEquals(-1, result);
 
-        result = MathUtility.clamp(
+        result = Math.clamp(
               new BoardDimensions(20, 10).compareTo(new BoardDimensions(10, 20)),
               -1, 1);
         assertEquals(1, result);

@@ -1,6 +1,6 @@
 /*
  * Copyright (C) 2004, 2005 Ben Mazur (bmazur@sev.org)
- * Copyright (C) 2007-2025 The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2007-2026 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -46,6 +46,7 @@ import megamek.common.enums.Faction;
 import megamek.common.enums.TechBase;
 import megamek.common.enums.TechRating;
 import megamek.common.equipment.AmmoType;
+import megamek.common.equipment.EquipmentTypeLookup;
 import megamek.common.game.Game;
 import megamek.common.loaders.EntityLoadingException;
 import megamek.common.weapons.Weapon;
@@ -64,7 +65,7 @@ public class CLBAMicroBomb extends Weapon {
     public CLBAMicroBomb() {
         super();
         name = "Bomb Rack (Micro)";
-        setInternalName("CLBAMicroBomb");
+        setInternalName(EquipmentTypeLookup.CL_BA_BOMB_RACK);
         addLookupName("CLBAMicro Bomb");
         heat = 0;
         damage = DAMAGE_VARIABLE;

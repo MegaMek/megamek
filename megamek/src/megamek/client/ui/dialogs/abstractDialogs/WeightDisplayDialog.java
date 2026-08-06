@@ -51,8 +51,8 @@ import javax.swing.text.DefaultCaret;
 
 import megamek.client.ui.clientGUI.calculationReport.FlexibleCalculationReport;
 import megamek.client.ui.util.UIUtil;
+import megamek.common.units.ConvInfantry;
 import megamek.common.units.Entity;
-import megamek.common.units.Infantry;
 import megamek.common.verifier.TestEntity;
 import megamek.common.verifier.TestInfantry;
 
@@ -88,9 +88,9 @@ public class WeightDisplayDialog extends AbstractDialog {
         var scrollPane = new JScrollPane(ScrollPaneConstants.VERTICAL_SCROLLBAR_ALWAYS,
               ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER);
         String textReport;
-        if (entity.isConventionalInfantry()) {
+        if (entity instanceof ConvInfantry convInfantry) {
             FlexibleCalculationReport weightReport = new FlexibleCalculationReport();
-            TestInfantry.getWeightExact((Infantry) entity, weightReport);
+            TestInfantry.getWeightExact(convInfantry, weightReport);
             scrollPane.setViewportView(weightReport.toJComponent());
             textReport = weightReport.getTextReport().toString();
         } else {

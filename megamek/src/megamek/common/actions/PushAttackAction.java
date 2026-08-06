@@ -42,6 +42,7 @@ import megamek.common.Hex;
 import megamek.common.ToHitData;
 import megamek.common.board.Coords;
 import megamek.common.compute.Compute;
+import megamek.common.compute.ComputeArc;
 import megamek.common.game.Game;
 import megamek.common.options.OptionsConstants;
 import megamek.common.rolls.TargetRoll;
@@ -245,6 +246,12 @@ public class PushAttackAction extends DisplacementAttackAction {
         // check facing
         if (!target.getPosition().equals(ae.getPosition().translated(ae.getFacing()))) {
             return new ToHitData(TargetRoll.IMPOSSIBLE, "Target not directly ahead of feet");
+        }
+
+        // Tripods can only push targets in front arc based on torso facing per IO:AE p.158
+        if (ae.isTripodMek() && !ComputeArc.isInArc(ae.getPosition(), ae.getSecondaryFacing(),
+              target, Compute.ARC_FORWARD)) {
+            return new ToHitData(TargetRoll.IMPOSSIBLE, "Target not in torso front arc");
         }
 
         // can't push while prone

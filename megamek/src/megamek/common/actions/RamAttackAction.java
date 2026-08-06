@@ -188,29 +188,21 @@ public class RamAttackAction extends AbstractAttackAction {
         IAero a = (IAero) ae;
 
         // target type
-        if (target instanceof SpaceStation) {
-            toHit.addModifier(-1, "target is a space station");
-        } else if (target instanceof Warship) {
-            toHit.addModifier(+1, "target is a WarShip");
-        } else if (target instanceof Jumpship) {
-            toHit.addModifier(+0, "target is a JumpShip");
-        } else if (target instanceof Dropship) {
-            toHit.addModifier(+2, "target is a DropShip");
-        } else {
-            toHit.addModifier(+4, "target is a fighter/small craft");
+        switch (target) {
+            case SpaceStation ignored -> toHit.addModifier(-1, "target is a space station");
+            case Warship ignored -> toHit.addModifier(+1, "target is a WarShip");
+            case Jumpship ignored -> toHit.addModifier(+0, "target is a JumpShip");
+            case Dropship ignored -> toHit.addModifier(+2, "target is a DropShip");
+            default -> toHit.addModifier(+4, "target is a fighter/small craft");
         }
 
         // attacker type
-        if (a instanceof SpaceStation) {
-            toHit.addModifier(+0, "attacker is a space station");
-        } else if (a instanceof Warship) {
-            toHit.addModifier(+1, "attacker is a WarShip");
-        } else if (a instanceof Jumpship) {
-            toHit.addModifier(+0, "attacker is a JumpShip");
-        } else if (a instanceof Dropship) {
-            toHit.addModifier(-1, "attacker is a DropShip");
-        } else {
-            toHit.addModifier(-2, "attacker is a fighter/small craft");
+        switch (a) {
+            case SpaceStation ignored -> toHit.addModifier(+0, "attacker is a space station");
+            case Warship ignored -> toHit.addModifier(+1, "attacker is a WarShip");
+            case Jumpship ignored -> toHit.addModifier(+0, "attacker is a JumpShip");
+            case Dropship ignored -> toHit.addModifier(-1, "attacker is a DropShip");
+            default -> toHit.addModifier(-2, "attacker is a fighter/small craft");
         }
 
         // can the target unit move

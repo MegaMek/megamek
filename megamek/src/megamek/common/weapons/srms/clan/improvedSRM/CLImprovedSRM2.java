@@ -71,7 +71,7 @@ public class CLImprovedSRM2 extends SRMWeapon {
         this.shortAV = 3;
         this.medAV = 3;
         this.maxRange = RANGE_MED;
-        rulesRefs = "96, IO";
+        rulesRefs = "90, IO:AE";
         flags = flags.andNot(F_PROTO_WEAPON);
         techAdvancement.setTechBase(TechBase.CLAN).setTechRating(TechRating.F)
               .setAvailability(AvailabilityValue.X, AvailabilityValue.D, AvailabilityValue.X, AvailabilityValue.X)

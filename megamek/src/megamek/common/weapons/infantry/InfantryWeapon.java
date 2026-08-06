@@ -1,6 +1,6 @@
 /*
  * Copyright (C) 2004, 2005 Ben Mazur (bmazur@sev.org)
- * Copyright (C) 2007-2025 The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2007-2026 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -37,6 +37,8 @@ package megamek.common.weapons.infantry;
 import static megamek.common.game.IGame.LOGGER;
 
 import java.io.Serial;
+import java.util.LinkedHashMap;
+import java.util.Map;
 
 import megamek.common.RangeType;
 import megamek.common.ToHitData;
@@ -54,8 +56,11 @@ import megamek.common.loaders.EntityLoadingException;
 import megamek.common.options.IGameOptions;
 import megamek.common.options.OptionsConstants;
 import megamek.common.units.Entity;
+import megamek.common.units.Targetable;
+import megamek.common.util.YamlEncDec;
 import megamek.common.weapons.Weapon;
 import megamek.common.weapons.handlers.AttackHandler;
+import megamek.common.weapons.handlers.FireExtinguisherHandler;
 import megamek.server.totalWarfare.TWGameManager;
 
 /**
@@ -292,8 +297,24 @@ public abstract class InfantryWeapon extends Weapon {
         try {
             Entity entity = game.getEntity(waa.getEntityId());
 
+            // Firefighting engineers extinguish a burning hex in place of a weapon attack (TO:AuE p.153).
+            // Route that to the shared fire extinguisher resolution.
+            Targetable target = waa.getTarget(game);
+            if ((entity != null) && entity.isFirefighter()
+                  && (target != null) && (target.getTargetType() == Targetable.TYPE_HEX_EXTINGUISH)) {
+                return new FireExtinguisherHandler(toHit, waa, game, manager);
+            }
+
             if (entity != null) {
                 Mounted<?> mounted = entity.getEquipment(waa.getWeaponId());
+                // A Disposable Weapon attack (TO:AuE p.116, Corrected Sixth Printing) uses the disposable damage
+                // formula instead of the weapon's normal handler, but only while the rule is enabled; otherwise the
+                // mount fires as an ordinary weapon.
+                if ((mounted instanceof WeaponMounted weaponMounted) && weaponMounted.isDisposableWeapon()
+                      && game.getOptions()
+                      .booleanOption(OptionsConstants.ADVANCED_COMBAT_DISPOSABLE_INFANTRY_WEAPONS)) {
+                    return new InfantryDisposableWeaponHandler(toHit, waa, game, manager);
+                }
                 if (((null != mounted) && ((mounted.hasModes() && mounted.curMode().isHeat())
                       || (waa.getEntity(game).isSupportVehicle()
                       && mounted.getLinked() != null
@@ -332,5 +353,39 @@ public abstract class InfantryWeapon extends Weapon {
               || hasFlag(WeaponType.F_INFERNO)
               || hasFlag(WeaponType.F_INCENDIARY_NEEDLES)
               || hasFlag(WeaponType.F_PLASMA);
+    }
+
+    @Override
+    public Map<String, Object> getYamlData() {
+        Map<String, Object> data = super.getYamlData();
+        Map<String, Object> infantry = new LinkedHashMap<>();
+        if (infantryDamage > 0) {
+            infantry.put("damage", this.infantryDamage);
+        }
+        if (infantryRange > 0) {
+            infantry.put("range", this.infantryRange);
+        }
+        if (crew > 0) {
+            infantry.put("crew", this.crew);
+        }
+        if (ammoWeight > 0) {
+            infantry.put("ammoWeight", YamlEncDec.formatDouble(this.ammoWeight));
+        }
+        if (ammoCost > 0) {
+            infantry.put("ammoCost", this.ammoCost);
+        }
+        if (shots > 0) {
+            infantry.put("shots", this.shots);
+        }
+        if (bursts > 0) {
+            infantry.put("bursts", this.bursts);
+        }
+        data.put("infantry", infantry);
+        return data;
+    }
+
+    @Override
+    public boolean canBeMountedOnBaDwp() {
+        return false;
     }
 }

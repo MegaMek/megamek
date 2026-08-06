@@ -845,7 +845,7 @@ public class FighterSquadron extends AeroSpaceFighter {
             return EntityMovementMode.NONE;
         }
 
-        EntityMovementMode moveMode = entities.get(0).getMovementMode();
+        EntityMovementMode moveMode = entities.getFirst().getMovementMode();
         for (Entity fighter : entities) {
             if (moveMode != fighter.getMovementMode()) {
                 LOGGER.error("Error: Fighter squadron movement mode doesn't agree!");
@@ -914,8 +914,4 @@ public class FighterSquadron extends AeroSpaceFighter {
         }
     }
 
-    @Override
-    public boolean isCarryableObject() {
-        return false;
-    }
 }

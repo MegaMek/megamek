@@ -47,17 +47,15 @@ import megamek.common.equipment.AmmoMounted;
 import megamek.common.equipment.EquipmentType;
 import megamek.common.game.Game;
 import megamek.common.loaders.EntityLoadingException;
+import megamek.common.units.Aero;
 import megamek.common.units.Entity;
 import megamek.common.units.IBuilding;
 import megamek.common.units.Mek;
 import megamek.common.units.Tank;
 import megamek.common.weapons.DamageType;
-import megamek.logging.MMLogger;
 import megamek.server.totalWarfare.TWGameManager;
 
 public class PopUpMineLauncherHandler extends AmmoWeaponHandler {
-    private static final MMLogger LOGGER = MMLogger.create(PopUpMineLauncherHandler.class);
-
     @Serial
     private static final long serialVersionUID = -6179453250580148965L;
 
@@ -115,50 +113,53 @@ public class PopUpMineLauncherHandler extends AmmoWeaponHandler {
     protected void handleEntityDamage(Entity entityTarget,
           Vector<Report> vPhaseReport, IBuilding bldg, int hits, int nCluster,
           int bldgAbsorbs) {
-        HitData hit = entityTarget.rollHitLocation(toHit.getHitTable(),
-              toHit.getSideTable(), weaponAttackAction.getAimedLocation(),
-              weaponAttackAction.getAimingMode(), toHit.getCover());
-        hit.setAttackerId(getAttackerId());
-        if (target instanceof Mek) {
-            hit = new HitData(Mek.LOC_CENTER_TORSO);
-        } else { // te instanceof Tank
-            hit = new HitData(Tank.LOC_FRONT);
-        }
-        hit.setGeneralDamageType(generalDamageType);
-        // Do criticalSlots.
-        Vector<Report> specialDamageReport = gameManager
-              .criticalEntity(
-                    entityTarget,
-                    hit.getLocation(), hit.isRear(),
-                    entityTarget.getArmorType(hit.getLocation()) == EquipmentType.T_ARMOR_HARDENED ? -2
-                          : 0,
-                    4);
+        // Per TW p.229: "four points of damage are assigned per mine that struck the location"
+        // "In addition to those 4 damage points, the attacker rolls 2D6 for each pop-up mine"
+        // Process each mine that hit
+        while (hits > 0) {
+            // Per TW p.229: mines automatically hit center torso (Mek), front (vehicle), or nose (grounded fighter)
+            HitData hit;
+            if (target instanceof Mek) {
+                hit = new HitData(Mek.LOC_CENTER_TORSO);
+            } else if (target instanceof Aero) {
+                hit = new HitData(Aero.LOC_NOSE);
+            } else { // Tank or other vehicle
+                hit = new HitData(Tank.LOC_FRONT);
+            }
+            hit.setAttackerId(getAttackerId());
+            hit.setGeneralDamageType(generalDamageType);
 
-        // Replace "no effect" results with 4 points of damage.
-        if ((specialDamageReport.lastElement()).messageId == 6005) {
-            int damage = 4;
-            // ASSUMPTION: buildings CAN'T absorb *this* damage.
-            // specialDamage = damageEntity(entityTarget, hit, damage);
-            specialDamageReport = gameManager
+            // Deal 4 damage per mine (may cause additional crit if it hits internal structure)
+            Vector<Report> damageReport = gameManager
                   .damageEntity(
                         entityTarget,
                         hit,
-                        damage,
+                        4,
                         false,
                         weaponEntity.getSwarmTargetId() == entityTarget.getId() ? DamageType.IGNORE_PASSENGER
                               : damageType,
                         false, false, throughFront,
                         underWater);
-        } else {
-            // add newline _before_ last report
-            try {
-                (specialDamageReport.elementAt(specialDamageReport.size() - 2)).newlines++;
-            } catch (Exception ignored) {
-                LOGGER.error("No previous report when trying to add newline");
-            }
+            vPhaseReport.addAll(damageReport);
+
+            // Roll for critical hit (2D6 on Determining Critical Hits Table, TW p.229)
+            // Always show the roll - if 8+, crits are applied by criticalEntity()
+            Report critHeader = new Report(3343);
+            critHeader.subject = entityTarget.getId();
+            critHeader.indent(2);
+            vPhaseReport.addElement(critHeader);
+
+            Vector<Report> critReport = gameManager
+                  .criticalEntity(
+                        entityTarget,
+                        hit.getLocation(), hit.isRear(),
+                        entityTarget.getArmorType(hit.getLocation()) == EquipmentType.T_ARMOR_HARDENED ? -2
+                              : 0,
+                        4);
+            vPhaseReport.addAll(critReport);
+
+            hits--;
         }
-        // Report the result
-        vPhaseReport.addAll(specialDamageReport);
     }
 
     /*

@@ -1,0 +1,27 @@
+{
+  "content" : "ADVANCED_SEARCH_STATE",
+  "name" : "Civilian Space Stations",
+  "twState" : {
+    "unitTypeState" : {
+      "spaceStation" : "SELECTED",
+      "military" : "INDETERMINATE"
+    },
+    "transportsState" : { },
+    "quirksState" : {
+      "chassisQuirks" : { },
+      "weaponQuirks" : { }
+    },
+    "miscState" : {
+      "cockpitType" : { },
+      "armorType" : { },
+      "internalsType" : { },
+      "engineType" : { },
+      "gyroType" : { },
+      "techLevel" : { },
+      "techBase" : { },
+      "moveMode" : { }
+    },
+    "equipmentState" : { }
+  },
+  "asState" : { }
+}

@@ -79,7 +79,7 @@ public class CLStreakLRM20IOS extends StreakLRMWeapon {
         medAV = 20;
         longAV = 20;
         maxRange = RANGE_LONG;
-        rulesRefs = "327, TO";
+        rulesRefs = "139, TO:AUE";
         techAdvancement.setTechBase(TechBase.CLAN).setTechRating(TechRating.B)
               .setAvailability(AvailabilityValue.X, AvailabilityValue.X, AvailabilityValue.F, AvailabilityValue.E)
               .setClanAdvancement(3058, 3081, 3088).setClanApproximate(false, true, false)

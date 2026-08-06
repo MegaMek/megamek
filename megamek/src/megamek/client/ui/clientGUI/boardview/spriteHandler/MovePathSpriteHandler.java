@@ -59,10 +59,10 @@ public class MovePathSpriteHandler extends BoardViewSpriteHandler {
         }
 
         for (SBFMoveStep step : movePath.getSteps()) {
-            currentSprites.add(new SBFStepSprite((BoardView) clientGUI.boardViews().get(0), step, movePath));
+            currentSprites.add(new SBFStepSprite((BoardView) clientGUI.boardViews().getFirst(), step, movePath));
         }
 
-        clientGUI.boardViews().get(0).addSprites(currentSprites);
+        clientGUI.boardViews().getFirst().addSprites(currentSprites);
     }
 
     @Override

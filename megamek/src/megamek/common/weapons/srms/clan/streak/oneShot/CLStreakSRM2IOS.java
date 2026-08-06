@@ -77,7 +77,7 @@ public class CLStreakSRM2IOS extends StreakSRMWeapon {
         shortAV = 4;
         medAV = 4;
         maxRange = RANGE_MED;
-        rulesRefs = "327, TO";
+        rulesRefs = "139, TO:AUE";
         //Tech Progression tweaked to combine IntOps with TRO Prototypes/3145 NTNU RS
         techAdvancement.setTechBase(TechBase.CLAN)
               .setIntroLevel(false)

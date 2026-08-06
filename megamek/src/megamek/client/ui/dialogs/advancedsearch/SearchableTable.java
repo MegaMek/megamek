@@ -52,6 +52,7 @@ class SearchableTable extends JTable {
      */
     protected int searchColumn;
 
+    @Deprecated(since = "0.51.0", forRemoval = true)
     public SearchableTable() {
         super();
         lastSearch = 0;
@@ -59,6 +60,7 @@ class SearchableTable extends JTable {
         searchBuffer = new StringBuffer();
     }
 
+    @Deprecated(since = "0.51.0", forRemoval = true)
     public SearchableTable(int numRows, int numColumns) {
         super(numRows, numColumns);
         lastSearch = 0;
@@ -66,6 +68,7 @@ class SearchableTable extends JTable {
         searchBuffer = new StringBuffer();
     }
 
+    @Deprecated(since = "0.51.0", forRemoval = true)
     public SearchableTable(Object[][] rowData, Object[] columnNames) {
         super(rowData, columnNames);
         lastSearch = 0;
@@ -73,6 +76,7 @@ class SearchableTable extends JTable {
         searchBuffer = new StringBuffer();
     }
 
+    @Deprecated(since = "0.51.0", forRemoval = true)
     public SearchableTable(TableModel dm) {
         super(dm);
         lastSearch = 0;
@@ -87,6 +91,7 @@ class SearchableTable extends JTable {
         searchBuffer = new StringBuffer();
     }
 
+    @Deprecated(since = "0.51.0", forRemoval = true)
     public SearchableTable(TableModel dm, TableColumnModel cm) {
         super(dm, cm);
         lastSearch = 0;
@@ -94,6 +99,7 @@ class SearchableTable extends JTable {
         searchBuffer = new StringBuffer();
     }
 
+    @Deprecated(since = "0.51.0", forRemoval = true)
     public SearchableTable(TableModel dm, TableColumnModel cm,
           ListSelectionModel sm) {
         super(dm, cm, sm);
@@ -102,6 +108,7 @@ class SearchableTable extends JTable {
         searchBuffer = new StringBuffer();
     }
 
+    @Deprecated(since = "0.51.0", forRemoval = true)
     public SearchableTable(Vector<Vector<String>> rowData, Vector<String> columnNames) {
         super(rowData, columnNames);
         lastSearch = 0;
@@ -109,10 +116,12 @@ class SearchableTable extends JTable {
         searchBuffer = new StringBuffer();
     }
 
+    @Deprecated(since = "0.51.0", forRemoval = true)
     public int getSearchColumn() {
         return searchColumn;
     }
 
+    @Deprecated(since = "0.51.0", forRemoval = true)
     public void setSearchColumn(int searchColumn) {
         this.searchColumn = searchColumn;
     }

@@ -71,7 +71,7 @@ public class SubCapLaserWeapon1 extends SubCapLaserWeapon {
         this.medAV = 1;
         this.longAV = 1;
         this.maxRange = RANGE_LONG;
-        rulesRefs = "343, TO";
+        rulesRefs = "155, TO:AUE";
         // Tech Progression tweaked to combine IntOps with TRO Prototypes/3145 NTNU RS
         techAdvancement.setTechBase(TechBase.ALL)
               .setIntroLevel(false)

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2025 The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2025-2026 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -40,11 +40,11 @@ import java.util.stream.Collectors;
 import megamek.ai.utility.EntityFeatureUtils;
 import megamek.client.ui.SharedUtility;
 import megamek.common.compute.Compute;
+import megamek.common.moves.MovePath;
+import megamek.common.moves.MoveStep;
 import megamek.common.units.Entity;
 import megamek.common.units.IAero;
 import megamek.common.units.UnitRole;
-import megamek.common.moves.MovePath;
-import megamek.common.moves.MoveStep;
 
 /**
  * Flexible container for unit action data using a map-based approach with enum keys.
@@ -92,7 +92,8 @@ public class UnitAction extends EntityDataMap<UnitAction.Field> {
         ARMOR_RIGHT_P,
         ARMOR_BACK_P,
         ROLE,
-        WEAPON_DMG_FACING_SHORT_MEDIUM_LONG_RANGE
+        WEAPON_DMG_FACING_SHORT_MEDIUM_LONG_RANGE,
+        MOVEMENT_TYPE
     }
 
     /**
@@ -141,6 +142,7 @@ public class UnitAction extends EntityDataMap<UnitAction.Field> {
               .put(Field.MP_USED, movePath.getMpUsed())
               .put(Field.MAX_MP, movePath.getMaxMP())
               .put(Field.MP_P, movePath.getMaxMP() > 0 ? (double) movePath.getMpUsed() / movePath.getMaxMP() : 0.0)
+              .put(Field.MOVEMENT_TYPE, movePath.getLastStepMovementType())
               .put(Field.HEAT_P,
                     entity.getHeatCapacity() > 0 ? entity.getHeat() / (double) entity.getHeatCapacity() : 0.0);
 

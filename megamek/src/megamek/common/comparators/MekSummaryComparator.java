@@ -39,6 +39,7 @@ import java.util.Comparator;
 
 import megamek.common.loaders.MekSummary;
 
+@Deprecated(since = "0.51.0", forRemoval = true)
 public record MekSummaryComparator(int m_nType) implements Comparator<MekSummary> {
     public static final int T_CHASSIS = 0;
     public static final int T_MODEL = 1;

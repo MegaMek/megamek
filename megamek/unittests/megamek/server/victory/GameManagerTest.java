@@ -46,6 +46,7 @@ import java.util.Vector;
 
 import megamek.client.ui.util.PlayerColour;
 import megamek.common.Player;
+import megamek.common.WoodsClearingTracker;
 import megamek.common.force.Forces;
 import megamek.common.game.Game;
 import megamek.common.options.GameOptions;
@@ -64,6 +65,7 @@ class GameManagerTest {
         when(testGame.getAttacksVector()).thenReturn(new Vector<>());
         when(testGame.getForces()).thenReturn(testForces);
         when(testGame.getOptions()).thenReturn(new GameOptions());
+        when(testGame.getWoodsClearingTracker()).thenReturn(new WoodsClearingTracker());
         return testGame;
     }
 

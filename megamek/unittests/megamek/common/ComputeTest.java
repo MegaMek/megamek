@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2025 The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2025-2026 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -33,8 +33,10 @@
 
 package megamek.common;
 
+import static megamek.common.compute.Compute.directBlowInfantryDamage;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.anyInt;
 import static org.mockito.ArgumentMatchers.anyString;
@@ -42,14 +44,22 @@ import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
+import java.util.Vector;
 
 import megamek.client.Client;
 import megamek.client.ui.clientGUI.ClientGUI;
 import megamek.common.board.Coords;
+import megamek.common.board.CubeCoords;
 import megamek.common.compute.Compute;
+import megamek.common.enums.BuildingType;
+import megamek.common.equipment.AmmoMounted;
 import megamek.common.equipment.AmmoType;
 import megamek.common.equipment.EquipmentType;
+import megamek.common.equipment.IArmorState;
+import megamek.common.equipment.WeaponMounted;
 import megamek.common.equipment.WeaponType;
 import megamek.common.exceptions.LocationFullException;
 import megamek.common.game.Game;
@@ -57,14 +67,14 @@ import megamek.common.options.GameOptions;
 import megamek.common.options.Option;
 import megamek.common.options.OptionsConstants;
 import megamek.common.options.PilotOptions;
-import megamek.common.units.AeroSpaceFighter;
-import megamek.common.units.BipedMek;
-import megamek.common.units.Crew;
-import megamek.common.units.Infantry;
-import megamek.common.units.Mek;
+import megamek.common.rolls.TargetRoll;
+import megamek.common.units.*;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Disabled;
+import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 
 class ComputeTest {
@@ -133,9 +143,9 @@ class ComputeTest {
         return mockMek;
     }
 
-    Infantry createInfantry(String chassis, String model, String crewName) {
+    ConvInfantry createInfantry(String chassis, String model, String crewName) {
         // Create a real Infantry unit with some mocked fields
-        Infantry mockInfantry = new Infantry();
+        ConvInfantry mockInfantry = new ConvInfantry();
         mockInfantry.setGame(game);
         mockInfantry.setChassis(chassis);
         mockInfantry.setModel(model);
@@ -165,6 +175,30 @@ class ComputeTest {
         mockAeroSpaceFighter.setCrew(mockCrew);
 
         return mockAeroSpaceFighter;
+    }
+
+    BuildingEntity createBuildingEntity(String chassis, String model, String crewName) {
+        // Create a real BuildingEntity unit with some mocked fields
+        BuildingEntity buildingEntity = new BuildingEntity(BuildingType.HARDENED, 2);
+        buildingEntity.setGame(game);
+        buildingEntity.setChassis(chassis);
+        buildingEntity.setModel(model);
+
+        buildingEntity.getInternalBuilding().setBuildingHeight(3);
+        buildingEntity.getInternalBuilding().addHex(CubeCoords.ZERO, 60, 15, null, false);
+        buildingEntity.getInternalBuilding().addHex(new CubeCoords(-1.0, 0, 1.0), 60, 15, null, false);
+        buildingEntity.getInternalBuilding().addHex(new CubeCoords(1.0, -1.0, 0), 60, 15, null, false);
+        buildingEntity.refreshLocations();
+        buildingEntity.refreshAdditionalLocations();
+
+        Crew mockCrew = mock(Crew.class);
+        PilotOptions pOpt = new PilotOptions();
+        when(mockCrew.getName(anyInt())).thenCallRealMethod();
+        when(mockCrew.getNames()).thenReturn(new String[] { crewName });
+        when(mockCrew.getOptions()).thenReturn(pOpt);
+        buildingEntity.setCrew(mockCrew);
+
+        return buildingEntity;
     }
 
     @Test
@@ -283,8 +317,8 @@ class ComputeTest {
         Coords attackerCoords = new Coords(0, 0);
         attacker.setPosition(attackerCoords);
         attacker.setHidden(true);
-        attacker.addEquipment(mockAC5AmmoType, Infantry.LOC_FIELD_GUNS);
-        attacker.addEquipment(mockAC5, Infantry.LOC_FIELD_GUNS);
+        attacker.addEquipment(mockAC5AmmoType, ConvInfantry.LOC_FIELD_GUNS);
+        attacker.addEquipment(mockAC5, ConvInfantry.LOC_FIELD_GUNS);
 
         target.setOwnerId(player2.getId());
         target.setId(2);
@@ -481,5 +515,552 @@ class ComputeTest {
         faller.setWeight(weight);
 
         assertEquals(expectedDamage, Compute.getAccidentalFallFromAboveDamageFor(faller, elevation));
+    }
+
+    // Section: Tripod Prone Firing Modifiers (TacOps rules)
+
+    TripodMek createTripodMek(String chassis, String model, int cockpitType) {
+        TripodMek tripod = new TripodMek(Mek.GYRO_STANDARD, cockpitType);
+        tripod.setGame(game);
+        tripod.setChassis(chassis);
+        tripod.setModel(model);
+        tripod.setWeight(75.0);
+
+        // Initialize armor and internal structure for all locations
+        tripod.initializeArmor(10, Mek.LOC_HEAD);
+        tripod.initializeArmor(30, Mek.LOC_CENTER_TORSO);
+        tripod.initializeArmor(20, Mek.LOC_RIGHT_TORSO);
+        tripod.initializeArmor(20, Mek.LOC_LEFT_TORSO);
+        tripod.initializeArmor(15, Mek.LOC_RIGHT_ARM);
+        tripod.initializeArmor(15, Mek.LOC_LEFT_ARM);
+        tripod.initializeArmor(20, Mek.LOC_RIGHT_LEG);
+        tripod.initializeArmor(20, Mek.LOC_LEFT_LEG);
+        tripod.initializeArmor(20, Mek.LOC_CENTER_LEG);
+
+        tripod.setArmor(10, Mek.LOC_CENTER_TORSO, true); // rear armor
+
+        tripod.initializeInternal(3, Mek.LOC_HEAD);
+        tripod.initializeInternal(25, Mek.LOC_CENTER_TORSO);
+        tripod.initializeInternal(17, Mek.LOC_RIGHT_TORSO);
+        tripod.initializeInternal(17, Mek.LOC_LEFT_TORSO);
+        tripod.initializeInternal(12, Mek.LOC_RIGHT_ARM);
+        tripod.initializeInternal(12, Mek.LOC_LEFT_ARM);
+        tripod.initializeInternal(17, Mek.LOC_RIGHT_LEG);
+        tripod.initializeInternal(17, Mek.LOC_LEFT_LEG);
+        tripod.initializeInternal(17, Mek.LOC_CENTER_LEG);
+
+        return tripod;
+    }
+
+    @Test
+    void healthyTripodProneFiringModifierPlusOne() throws LocationFullException {
+        // Healthy tripod (all 3 legs, no hip damage) receives +1 modifier per TacOps
+        TripodMek tripod = createTripodMek("Ares", "ARS-V1", Mek.COCKPIT_STANDARD);
+        tripod.setOwnerId(player1.getId());
+        tripod.setId(1);
+        tripod.setProne(true);
+
+        // Add a weapon to center torso (valid location for prone firing)
+        WeaponType mediumLaser = (WeaponType) EquipmentType.get("ISMediumLaser");
+        tripod.addEquipment(mediumLaser, Mek.LOC_CENTER_TORSO);
+        int weaponId = tripod.getEquipmentNum(tripod.getWeaponList().getFirst());
+
+        ToHitData mods = Compute.getProneMods(game, tripod, weaponId);
+
+        assertNotNull(mods, "Mods should not be null for healthy prone tripod");
+        assertEquals(1, mods.getValue(), "Healthy tripod should have +1 prone modifier");
+    }
+
+    @Test
+    void healthyTripodWithDualCockpitAndGunnerProneFiringModifierZero() throws LocationFullException {
+        // Healthy tripod with dual cockpit and dedicated gunner receives +0 modifier
+        TripodMek tripod = createTripodMek("Ares", "ARS-V1", Mek.COCKPIT_DUAL);
+        tripod.setOwnerId(player1.getId());
+        tripod.setId(1);
+        tripod.setProne(true);
+
+        // Dual cockpit sets up a crew with pilot and gunner positions
+        // Verify crew is set up correctly for dedicated gunner
+        Crew dualCrew = new Crew(CrewType.DUAL);
+        tripod.setCrew(dualCrew);
+
+        // Add a weapon to center torso (valid location for prone firing)
+        WeaponType mediumLaser = (WeaponType) EquipmentType.get("ISMediumLaser");
+        tripod.addEquipment(mediumLaser, Mek.LOC_CENTER_TORSO);
+        int weaponId = tripod.getEquipmentNum(tripod.getWeaponList().getFirst());
+
+        ToHitData mods = Compute.getProneMods(game, tripod, weaponId);
+
+        assertNotNull(mods, "Mods should not be null for prone tripod with dual cockpit");
+        assertEquals(0, mods.getValue(), "Healthy tripod with dual cockpit and gunner should have +0 prone modifier");
+    }
+
+    @Test
+    void damagedTripodWithHipCritProneFiringModifierPlusTwo() throws LocationFullException {
+        // Damaged tripod (hip crit) reverts to standard +2 modifier
+        TripodMek tripod = createTripodMek("Ares", "ARS-V1", Mek.COCKPIT_STANDARD);
+        tripod.setOwnerId(player1.getId());
+        tripod.setId(1);
+        tripod.setProne(true);
+
+        // Damage the hip actuator on center leg (slot 0 is the hip)
+        // setDestroyed is required to make the slot non-operational for getGoodCriticalSlots
+        CriticalSlot hipSlot = tripod.getCritical(Mek.LOC_CENTER_LEG, 0);
+        assertNotNull(hipSlot, "Hip slot should exist");
+        hipSlot.setDestroyed(true);
+
+        // Verify hip crit is detected
+        assertTrue(tripod.hasHipCrit(), "Tripod should have hip crit");
+
+        // Add a weapon to center torso (valid location for prone firing)
+        WeaponType mediumLaser = (WeaponType) EquipmentType.get("ISMediumLaser");
+        tripod.addEquipment(mediumLaser, Mek.LOC_CENTER_TORSO);
+        int weaponId = tripod.getEquipmentNum(tripod.getWeaponList().getFirst());
+
+        ToHitData mods = Compute.getProneMods(game, tripod, weaponId);
+
+        assertNotNull(mods, "Mods should not be null for damaged prone tripod");
+        assertEquals(2, mods.getValue(), "Damaged tripod (hip crit) should have +2 prone modifier");
+    }
+
+    @Test
+    void damagedTripodWithDestroyedLegProneFiringModifierPlusTwo() throws LocationFullException {
+        // Damaged tripod (lost leg) reverts to standard +2 modifier
+        TripodMek tripod = createTripodMek("Ares", "ARS-V1", Mek.COCKPIT_STANDARD);
+        tripod.setOwnerId(player1.getId());
+        tripod.setId(1);
+        tripod.setProne(true);
+
+        // Destroy the center leg by setting internal to ARMOR_DESTROYED
+        // (destroyLocation uses ARMOR_DOOMED which requires applyDamage to transition)
+        tripod.setInternal(IArmorState.ARMOR_DESTROYED, Mek.LOC_CENTER_LEG);
+
+        // Verify leg is destroyed
+        assertTrue(tripod.isLocationBad(Mek.LOC_CENTER_LEG), "Center leg should be destroyed");
+        assertEquals(1, tripod.countBadLegs(), "Tripod should have 1 bad leg");
+
+        // Add a weapon to center torso (valid location for prone firing)
+        WeaponType mediumLaser = (WeaponType) EquipmentType.get("ISMediumLaser");
+        tripod.addEquipment(mediumLaser, Mek.LOC_CENTER_TORSO);
+        int weaponId = tripod.getEquipmentNum(tripod.getWeaponList().getFirst());
+
+        ToHitData mods = Compute.getProneMods(game, tripod, weaponId);
+
+        assertNotNull(mods, "Mods should not be null for damaged prone tripod");
+        assertEquals(2, mods.getValue(), "Damaged tripod (lost leg) should have +2 prone modifier");
+    }
+
+    @Test
+    void tripodProneLegWeaponCannotFire() throws LocationFullException {
+        // Leg-mounted weapons cannot fire when prone
+        TripodMek tripod = createTripodMek("Ares", "ARS-V1", Mek.COCKPIT_STANDARD);
+        tripod.setOwnerId(player1.getId());
+        tripod.setId(1);
+        tripod.setProne(true);
+
+        // Add a weapon to center leg (invalid location for prone firing)
+        WeaponType mediumLaser = (WeaponType) EquipmentType.get("ISMediumLaser");
+        tripod.addEquipment(mediumLaser, Mek.LOC_CENTER_LEG);
+        int weaponId = tripod.getEquipmentNum(tripod.getWeaponList().getFirst());
+
+        ToHitData mods = Compute.getProneMods(game, tripod, weaponId);
+
+        assertNotNull(mods, "Mods should not be null for leg weapon on prone tripod");
+        assertEquals(TargetRoll.IMPOSSIBLE,
+              mods.getValue(),
+              "Leg-mounted weapon should be impossible to fire when prone");
+    }
+
+    @Test
+    void tripodProneLeftLegWeaponCannotFire() throws LocationFullException {
+        // Left leg-mounted weapons cannot fire when prone
+        TripodMek tripod = createTripodMek("Ares", "ARS-V1", Mek.COCKPIT_STANDARD);
+        tripod.setOwnerId(player1.getId());
+        tripod.setId(1);
+        tripod.setProne(true);
+
+        // Add a weapon to left leg (invalid location for prone firing)
+        WeaponType mediumLaser = (WeaponType) EquipmentType.get("ISMediumLaser");
+        tripod.addEquipment(mediumLaser, Mek.LOC_LEFT_LEG);
+        int weaponId = tripod.getEquipmentNum(tripod.getWeaponList().getFirst());
+
+        ToHitData mods = Compute.getProneMods(game, tripod, weaponId);
+
+        assertNotNull(mods, "Mods should not be null for left leg weapon on prone tripod");
+        assertEquals(TargetRoll.IMPOSSIBLE,
+              mods.getValue(),
+              "Left leg-mounted weapon should be impossible to fire when prone");
+    }
+
+    @Test
+    void tripodProneRightLegWeaponCannotFire() throws LocationFullException {
+        // Right leg-mounted weapons cannot fire when prone
+        TripodMek tripod = createTripodMek("Ares", "ARS-V1", Mek.COCKPIT_STANDARD);
+        tripod.setOwnerId(player1.getId());
+        tripod.setId(1);
+        tripod.setProne(true);
+
+        // Add a weapon to right leg (invalid location for prone firing)
+        WeaponType mediumLaser = (WeaponType) EquipmentType.get("ISMediumLaser");
+        tripod.addEquipment(mediumLaser, Mek.LOC_RIGHT_LEG);
+        int weaponId = tripod.getEquipmentNum(tripod.getWeaponList().getFirst());
+
+        ToHitData mods = Compute.getProneMods(game, tripod, weaponId);
+
+        assertNotNull(mods, "Mods should not be null for right leg weapon on prone tripod");
+        assertEquals(TargetRoll.IMPOSSIBLE,
+              mods.getValue(),
+              "Right leg-mounted weapon should be impossible to fire when prone");
+    }
+
+    @Test
+    @DisplayName("scatter stays on the straight-line path for a negative margin")
+    void scatterStaysOnStraightLineForNegativeMargin() {
+        // Regression for issues 7695 and 8227. On a miss, toHit.getMoS() is negative, and the old
+        // code passed it straight into Coords.translated(). That truncates toward zero on the four
+        // diagonal directions (e.g. -5 / 2 == -2 instead of the floored -3), so the shot landed one
+        // hex off the straight-line scatter path. scatter() now uses the magnitude, so every result
+        // must sit exactly |margin| hexes away on one of the six straight-line directions.
+        for (int startX : new int[] { 6, 7 }) { // even and odd column parity behave differently
+            Coords target = new Coords(startX, 9);
+            for (int distance : new int[] { 1, 3, 5, 6 }) {
+                Set<Coords> straightLineHexes = new HashSet<>();
+                for (int direction = 0; direction < 6; direction++) {
+                    Coords landing = target.translated(direction, distance);
+                    assertEquals(distance, target.distance(landing),
+                          "a straight-line hex must be exactly " + distance + " hexes from the target");
+                    straightLineHexes.add(landing);
+                }
+
+                for (int trial = 0; trial < 300; trial++) {
+                    Coords scattered = Compute.scatter(target, -distance);
+                    assertTrue(straightLineHexes.contains(scattered),
+                          "scatter(-" + distance + ") from " + target.getBoardNum()
+                                + " drifted off the straight line to " + scattered.getBoardNum());
+                    assertEquals(distance, target.distance(scattered),
+                          "a scattered hex must be exactly " + distance + " hexes from the target");
+                }
+            }
+        }
+    }
+
+    /**
+     * Tests for
+     * {@link Compute#getRangeMods(Game, megamek.common.units.Entity, WeaponMounted, AmmoMounted,
+     * megamek.common.units.Targetable)}
+     */
+    @Nested
+    @DisplayName(value = "getRangeMods Tests")
+    class ComputeTestGetRangeMods extends GameBoardTestCase {
+
+        private Entity attacker;
+        private Targetable target;
+        private WeaponMounted smallLaser;
+        private static WeaponType smallLaserType;
+        private static WeaponType mediumLaserType;
+
+        static {
+            initializeBoard("01_BY_05_NO_OBSTRUCTIONS", """
+                  size 1 5
+                  hex 0101 0 "" ""
+                  hex 0102 0 "" ""
+                  hex 0103 0 "" ""
+                  hex 0104 0 "" ""
+                  hex 0105 0 "" ""
+                  end"""
+            );
+
+            initializeBoard("03_BY_05_CENTER_HILLS", """
+                  size 3 5
+                  hex 0101 0 "" ""
+                  hex 0201 0 "" ""
+                  hex 0301 0 "" ""
+                  hex 0102 0 "" ""
+                  hex 0202 0 "" ""
+                  hex 0302 0 "" ""
+                  hex 0103 1 "" ""
+                  hex 0203 4 "" ""
+                  hex 0303 2 "" ""
+                  hex 0104 0 "" ""
+                  hex 0204 0 "" ""
+                  hex 0304 0 "" ""
+                  hex 0105 0 "" ""
+                  hex 0205 0 "" ""
+                  hex 0305 0 "" ""
+                  end""");
+
+            // IS Small Laser: Short 0-1, Medium 2, Long 3
+            smallLaserType = (WeaponType) EquipmentType.get("ISSmallLaser");
+
+            mediumLaserType = (WeaponType) EquipmentType.get("ISMediumLaser");
+        }
+
+        @Nested
+        class ComputeTestGetRangeMods_SimpleTestCases {
+
+            @BeforeEach
+            void beforeEach() throws LocationFullException {
+                setBoard("01_BY_05_NO_OBSTRUCTIONS");
+
+                // Create attacker with IS Small Laser (position will vary per test)
+                attacker = createMek("Attacker", "ATK-1", "Alice");
+                attacker.setOwnerId(player1.getId());
+                attacker.setId(1);
+
+                // Add IS Small Laser (no ammo needed for energy weapons)
+                smallLaser = (WeaponMounted) attacker.addEquipment(smallLaserType, Mek.LOC_RIGHT_TORSO);
+
+                // Create target at fixed position (0, 0)
+                Entity targetEntity = createMek("Target", "TGT-2", "Bob");
+                targetEntity.setOwnerId(player2.getId());
+                targetEntity.setId(2);
+                targetEntity.setPosition(new Coords(0, 0));
+
+                target = targetEntity;
+
+                game.addEntity(attacker);
+                game.addEntity(targetEntity);
+            }
+
+            @Test
+            @DisplayName(value = "should return 0 modifier at short range (1 hex)")
+            void shouldReturn0Modifier_AtShortRange() {
+                // Arrange - Small Laser short range is 0-1 hexes
+                attacker.setPosition(new Coords(0, 1)); // 1 hex away from target at (0,0)
+
+                // Act
+                ToHitData result = Compute.getRangeMods(game, attacker, smallLaser, null, target);
+
+                // Assert
+                assertEquals(0, result.getValue(), "Should have 0 range modifier at short range (1 hex)");
+            }
+
+            @Test
+            @DisplayName(value = "should return +2 modifier at medium range (2 hexes)")
+            void shouldReturn2Modifier_AtMediumRange() {
+                // Arrange - Small Laser medium range is 2 hexes
+                attacker.setPosition(new Coords(0, 2)); // 2 hexes away from target at (0,0)
+
+                // Act
+                ToHitData result = Compute.getRangeMods(game, attacker, smallLaser, null, target);
+
+                // Assert
+                assertEquals(2, result.getValue(), "Should have +2 range modifier at medium range (2 hexes)");
+            }
+
+            @Test
+            @DisplayName(value = "should return +4 modifier at long range (4 hexes)")
+            void shouldReturn4Modifier_AtLongRange() {
+                // Arrange - Small Laser long range is 3 hexes
+                attacker.setPosition(new Coords(0, 3)); // 3 hexes away from target at (0,0)
+
+                // Act
+                ToHitData result = Compute.getRangeMods(game, attacker, smallLaser, null, target);
+
+                // Assert
+                assertEquals(4, result.getValue(), "Should have +4 range modifier at long range (3 hexes)");
+            }
+        }
+
+        @Nested
+        class ComputeTestGetRangeMods_AbstractBuildingEntityTestCases {
+            Entity targetEntity;
+
+            @BeforeEach
+            void beforeEach() {
+                setBoard("03_BY_05_CENTER_HILLS");
+
+                // Create attacker with IS Medium Laser
+                attacker = createBuildingEntity("Attacker", "ATK-1", "Alice");
+                attacker.setOwnerId(player1.getId());
+                attacker.setId(1);
+                attacker.setPosition(new Coords(1, 4));
+
+                // Add IS Small Laser (no ammo needed for energy weapons)
+                //smallLaser = (WeaponMounted) attacker.addEquipment(smallLaserType, Mek.LOC_RIGHT_TORSO);
+
+                // Create target
+                targetEntity = createMek("Target", "TGT-2", "Bob");
+                targetEntity.setOwnerId(player2.getId());
+                targetEntity.setId(2);
+                targetEntity.setPosition(new Coords(1, 0));
+
+                target = targetEntity;
+
+
+                game.addEntity(attacker);
+                game.addEntity(targetEntity);
+            }
+
+            @Test
+            @Disabled
+            void getRangeModsTargetBehind2LevelHill() throws LocationFullException {
+                // Arrange
+                targetEntity.setPosition(new Coords(1, 2));
+                WeaponMounted mediumLaser = (WeaponMounted) attacker.addEquipment(mediumLaserType, 0);
+                mediumLaser.setFacing(0);
+
+                // Act
+                ToHitData result = Compute.getRangeMods(game, attacker, mediumLaser, null, target);
+
+
+                // Assert
+                assertEquals(4, result.getValue(), "Should have +4 range modifier at long range (3 hexes)");
+            }
+        }
+    }
+
+    @Test
+    void testDirectBlowInfantryStandardMod() {
+        // Damage should just be divided by 10
+        double originalDamage = 5.0;
+        int weaponType = WeaponType.WEAPON_DIRECT_FIRE;
+        Vector<Report> reports = new Vector<>();
+        int newDamage = directBlowInfantryDamage(
+              originalDamage,
+              0,
+              weaponType,
+              false,
+              false,
+              1,
+              reports,
+              0
+        );
+        assertEquals(1, newDamage, "5.0 / 10, rounded up.");
+        assertEquals(1, reports.size(), "Report size");
+    }
+
+    @Test
+    void testDirectBlowInfantryMechanizedMod() {
+        // Damage should be divided by 10, then rounded, then doubled due to non-burst damage
+        double originalDamage = 5.0;
+        int weaponType = WeaponType.WEAPON_DIRECT_FIRE;
+        Vector<Report> reports = new Vector<>();
+        int newDamage = directBlowInfantryDamage(
+              originalDamage,
+              0,
+              weaponType,
+              true,
+              false,
+              1,
+              reports,
+              0
+        );
+        assertEquals(2, newDamage, "5.0 / 10, rounded up.");
+        assertEquals(1, reports.size(), "Report size");
+    }
+
+    @Test
+    void testDirectBlowInfantryMechanizedBurstMod() {
+        // 5 BA LMGs -> 1D6 / 2, halved by Mechanized Armor vs Burst
+        double originalDamage = 5.0;
+        int weaponType = WeaponType.WEAPON_BURST_HALF_D6;
+        Vector<Report> reports = new Vector<>();
+        int newDamage = directBlowInfantryDamage(
+              originalDamage,
+              0,
+              weaponType,
+              true,
+              false,
+              1,
+              reports,
+              0
+        );
+        assertTrue(1 >= newDamage, "5 -> 1d6/2, rounded up, then halved and _not_ rounded.");
+        assertEquals(1, reports.size(), "Report size");
+    }
+
+    @Test
+    void testDirectBlowInfantryMOS3BurstInBuilding() {
+        // Burst Weapon in the building attacking infantry also in the building.
+        // 1D6 -> 4D6 -> 4D6 / 2
+        double originalDamage = 10.0;
+        int weaponType = WeaponType.WEAPON_BURST_1D6;
+        Vector<Report> reports = new Vector<>();
+        int newDamage = directBlowInfantryDamage(
+              originalDamage,
+              3,
+              weaponType,
+              false,
+              true,
+              1,
+              reports,
+              1
+        );
+        assertTrue(newDamage >= 2.0 && newDamage <= 12.0, "10 -> 4D6 / 2.0, rounded up: " + newDamage);
+        assertEquals(1, reports.size(), "Report size");
+        assertTrue(reports.getFirst().text().contains("in building"));
+    }
+
+    /**
+     * Tests for {@link Compute#isInBuilding(Game, Entity)}
+     */
+    @Nested
+    @DisplayName("isInBuilding Tests")
+    class ComputeTestIsInBuilding extends GameBoardTestCase {
+
+        static {
+            initializeBoard("01_BY_02_WITH_BUILDING", """
+                  size 1 2
+                  hex 0101 0 "" ""
+                  hex 0102 0 "bldg_elev:2;building:2:8;bldg_cf:100" ""
+                  end""");
+        }
+
+        @BeforeEach
+        void beforeEach() {
+            setBoard("01_BY_02_WITH_BUILDING");
+        }
+
+        @Test
+        @DisplayName("Mek at ground floor of a building is inside the building")
+        void mekAtGroundFloorIsInBuilding() {
+            Mek mek = createMek("Atlas", "AS7-D", "Alice");
+            mek.setPosition(new Coords(0, 1));
+            mek.setElevation(0);
+
+            assertTrue(Compute.isInBuilding(getGame(), mek));
+        }
+
+        @Test
+        @DisplayName("Mek at upper floor of a building is inside the building")
+        void mekAtUpperFloorIsInBuilding() {
+            Mek mek = createMek("Atlas", "AS7-D", "Alice");
+            mek.setPosition(new Coords(0, 1));
+            mek.setElevation(1);
+
+            assertTrue(Compute.isInBuilding(getGame(), mek));
+        }
+
+        @Test
+        @DisplayName("Mek standing on building roof is not inside the building")
+        void mekOnBuildingRoofIsNotInBuilding() {
+            Mek mek = createMek("Atlas", "AS7-D", "Alice");
+            mek.setPosition(new Coords(0, 1));
+            mek.setElevation(2);
+
+            assertFalse(Compute.isInBuilding(getGame(), mek));
+        }
+
+        @Test
+        @DisplayName("Prone Mek on building roof is not inside the building")
+        void proneMekOnBuildingRoofIsNotInBuilding() {
+            Mek mek = createMek("Atlas", "AS7-D", "Alice");
+            mek.setPosition(new Coords(0, 1));
+            mek.setElevation(2);
+            mek.setProne(true);
+
+            assertFalse(Compute.isInBuilding(getGame(), mek));
+        }
+
+        @Test
+        @DisplayName("Mek in a hex with no building is not inside a building")
+        void mekInNonBuildingHexIsNotInBuilding() {
+            Mek mek = createMek("Atlas", "AS7-D", "Alice");
+            mek.setPosition(new Coords(0, 0));
+            mek.setElevation(0);
+
+            assertFalse(Compute.isInBuilding(getGame(), mek));
+        }
     }
 }

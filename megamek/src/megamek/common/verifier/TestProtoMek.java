@@ -36,7 +36,6 @@ package megamek.common.verifier;
 import java.util.HashMap;
 import java.util.Map;
 
-import megamek.codeUtilities.MathUtility;
 import megamek.common.annotations.Nullable;
 import megamek.common.equipment.AmmoType;
 import megamek.common.equipment.ArmorType;
@@ -44,6 +43,7 @@ import megamek.common.equipment.EquipmentType;
 import megamek.common.equipment.MiscType;
 import megamek.common.equipment.Mounted;
 import megamek.common.equipment.WeaponType;
+import megamek.common.equipment.enums.MiscTypeFlag;
 import megamek.common.options.OptionsConstants;
 import megamek.common.units.Entity;
 import megamek.common.units.ProtoMek;
@@ -84,7 +84,7 @@ public class TestProtoMek extends TestEntity {
     public static int maxJumpMP(ProtoMek proto) {
         if (proto.getMisc().stream().map(Mounted::getType)
               .anyMatch(eq -> eq.hasFlag(MiscType.F_JUMP_JET)
-                    && eq.hasSubType(MiscType.S_IMPROVED))) {
+                    && eq.hasFlag(MiscTypeFlag.S_IMPROVED))) {
             return (int) Math.ceil(proto.getOriginalWalkMP() * 1.5);
         }
         return proto.getOriginalWalkMP();
@@ -283,8 +283,8 @@ public class TestProtoMek extends TestEntity {
     }
 
     @Override
-    public boolean correctWeight(StringBuffer buff) {
-        boolean correct = super.correctWeight(buff);
+    public boolean correctWeight(StringBuffer buff, boolean ignoreOverweight, boolean ignoreUnderweight) {
+        boolean correct = super.correctWeight(buff, ignoreOverweight, ignoreUnderweight);
         if (proto.getWeight() > MAX_TONNAGE) {
             buff.append("Exceeds maximum weight of ").append(MAX_TONNAGE).append("\n");
             correct = false;
@@ -332,11 +332,11 @@ public class TestProtoMek extends TestEntity {
                     buff.append("Cannot mount multiple melee weapons.\n");
                     illegal = true;
                 }
-                if (mount.getType().hasSubType(MiscType.S_PROTO_QMS) && !proto.isQuad()) {
+                if (mount.getType().hasFlag(MiscTypeFlag.S_PROTO_QMS) && !proto.isQuad()) {
                     buff.append(mount.getType().getName()).append("can only be used by quad ProtoMeks.\n");
                     illegal = true;
                 }
-                if (mount.getType().hasSubType(MiscType.S_PROTOMEK_WEAPON) && proto.isQuad()) {
+                if (mount.getType().hasFlag(MiscTypeFlag.S_PROTOMEK_WEAPON) && proto.isQuad()) {
                     buff.append(mount.getType().getName()).append("cannot be used by quad ProtoMeks.\n");
                     illegal = true;
                 }
@@ -382,7 +382,7 @@ public class TestProtoMek extends TestEntity {
     public static boolean isValidProtoMekLocation(ProtoMek protoMek, EquipmentType eq, int location,
           @Nullable StringBuffer buffer) {
         if (eq instanceof MiscType) {
-            if (eq.hasFlag(MiscType.F_PROTOMEK_MELEE) && eq.hasSubType(MiscType.S_PROTOMEK_WEAPON)
+            if (eq.hasFlag(MiscType.F_PROTOMEK_MELEE) && eq.hasFlag(MiscTypeFlag.S_PROTOMEK_WEAPON)
                   && (location != ProtoMek.LOC_LEFT_ARM) && (location != ProtoMek.LOC_RIGHT_ARM)) {
                 if (buffer != null) {
                     buffer.append(eq.getName()).append(" must be mounted in an arm.\n");
@@ -390,7 +390,7 @@ public class TestProtoMek extends TestEntity {
                 return false;
             }
             if ((eq.hasFlag(MiscType.F_MAGNETIC_CLAMP)
-                  || (eq.hasFlag(MiscType.F_PROTOMEK_MELEE) && eq.hasSubType(MiscType.S_PROTO_QMS)))
+                  || (eq.hasFlag(MiscType.F_PROTOMEK_MELEE) && eq.hasFlag(MiscTypeFlag.S_PROTO_QMS)))
                   && (location != ProtoMek.LOC_TORSO)) {
                 if (buffer != null) {
                     buffer.append(eq.getName()).append(" must be mounted in the torso.\n");
@@ -472,7 +472,7 @@ public class TestProtoMek extends TestEntity {
         buff.append("Intro year: ").append(proto.getYear()).append("\n");
         buff.append(printSource());
         buff.append(printShortMovement());
-        if (correctWeight(buff, true, true)) {
+        if (correctWeight(buff, false, false)) {
             buff.append("Weight: ").append(getWeight() * 1000).append(" kg (")
                   .append(calculateWeight() * 1000).append(" kg)\n");
         }
@@ -513,6 +513,7 @@ public class TestProtoMek extends TestEntity {
      *
      * @return The minimum walk MP
      */
+    @Deprecated(since = "0.51.0", forRemoval = true)
     public int getMinimumWalkMP(ProtoMek proto) {
         if (proto.isGlider()) {
             return 4;
@@ -550,7 +551,7 @@ public class TestProtoMek extends TestEntity {
         if (quadOrGlider) {
             moveFactor -= 2;
         }
-        int rating = MathUtility.clamp((int) (moveFactor * tonnage), 1, 400);
+        int rating = Math.clamp((int) (moveFactor * tonnage), 1, 400);
         if (rating > 40) {
             int modFive = rating % 5;
             if (modFive > 0) {
@@ -575,7 +576,8 @@ public class TestProtoMek extends TestEntity {
         if (etype instanceof MiscType) {
             return !(etype.hasFlag(MiscType.F_MASC)
                   || etype.hasFlag(MiscType.F_UMU)
-                  || etype.hasFlag(MiscType.F_JUMP_JET));
+                  || etype.hasFlag(MiscType.F_JUMP_JET)
+                  || etype.hasFlag(MiscType.F_EI_INTERFACE));
         }
         return true;
     }

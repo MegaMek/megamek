@@ -57,6 +57,7 @@ public final class InfantryBay extends Bay implements InfantryTransporter {
     /**
      * The default constructor is only for serialization.
      */
+    @Deprecated(since = "0.51.0", forRemoval = true)
     private InfantryBay() {
         totalSpace = 0;
         currentSpace = 0;

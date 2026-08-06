@@ -56,7 +56,6 @@ import javax.swing.filechooser.FileNameExtensionFilter;
 import megamek.client.ui.Messages;
 import megamek.client.ui.panels.alphaStrike.ASStatsTablePanel;
 import megamek.client.ui.util.UIUtil;
-import megamek.common.units.Entity;
 import megamek.common.alphaStrike.ASCardDisplayable;
 import megamek.common.alphaStrike.ASStatsExporter;
 import megamek.common.alphaStrike.AlphaStrikeElement;
@@ -64,6 +63,7 @@ import megamek.common.alphaStrike.AlphaStrikeHelper;
 import megamek.common.alphaStrike.cardDrawer.ASCardPrinter;
 import megamek.common.alphaStrike.conversion.ASConverter;
 import megamek.common.jacksonAdapters.MMUWriter;
+import megamek.common.units.Entity;
 
 /**
  * This non-modal dialog shows stats of one or more AlphaStrike elements in the form of a table. It also allows export
@@ -205,7 +205,7 @@ public class ASStatsDialog extends AbstractDialog {
         var fileChooser = new JFileChooser(".");
         fileChooser.setDialogTitle(Messages.getString("Save.text"));
         fileChooser.setFileFilter(new FileNameExtensionFilter("MUL files", "mmu"));
-        fileChooser.setSelectedFile(new File(elements.get(0).generalName() + ".mmu"));
+        fileChooser.setSelectedFile(new File(elements.getFirst().generalName() + ".mmu"));
         int returnVal = fileChooser.showSaveDialog(getParent());
         if ((returnVal != JFileChooser.APPROVE_OPTION) || (fileChooser.getSelectedFile() == null)) {
             return;

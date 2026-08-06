@@ -102,8 +102,9 @@ public class ArtilleryBayWeaponIndirectHomingHandler extends ArtilleryBayWeaponI
         if (phase.isTargeting()) {
             if (!handledAmmoAndReport) {
                 addHeat();
-                // Report the firing itself
-                Report report = new Report(3121);
+                // Report the firing itself - name it counter-battery when the target is an off-board enemy battery.
+                boolean counterBattery = (target != null) && target.isOffBoard();
+                Report report = new Report(counterBattery ? 3127 : 3121);
                 report.indent();
                 report.newlines = 0;
                 report.subject = subjectId;
@@ -321,7 +322,11 @@ public class ArtilleryBayWeaponIndirectHomingHandler extends ArtilleryBayWeaponI
                 vPhaseReport.addElement(report);
             }
 
-            Coords coords = target.getPosition();
+            // Use original target coordinates for splash damage, not current entity position.
+            // If target was converted from hex to entity, use saved coords; otherwise use current position.
+            Coords coords = (artilleryAttackAction.getOldTargetCoords() != null)
+                  ? artilleryAttackAction.getOldTargetCoords()
+                  : target.getPosition();
             int ratedDamage = 5; // splash damage is 5 from all launchers
 
             // If AMS shoots down a missile, it shouldn't deal any splash damage
@@ -351,7 +356,7 @@ public class ArtilleryBayWeaponIndirectHomingHandler extends ArtilleryBayWeaponI
                     hit.setAttackerId(getAttackerId());
                     // BA gets damage to all troopers
                     if (entity instanceof BattleArmor ba) {
-                        for (int loc = 1; loc <= ba.getTroopers(); loc++) {
+                        for (int loc = 1; loc <= ba.getSquadSize(); loc++) {
                             hit.setLocation(loc);
                             vPhaseReport.addAll(gameManager.damageEntity(entity, hit,
                                   ratedDamage, false, DamageType.NONE, false,
@@ -378,6 +383,10 @@ public class ArtilleryBayWeaponIndirectHomingHandler extends ArtilleryBayWeaponI
         ArtilleryAttackAction aaa = (ArtilleryAttackAction) weaponAttackAction;
 
         final Coords tc = target.getPosition();
+        // Save original target coordinates before converting to entity target.
+        // This ensures splash damage is applied at the original targeted hex,
+        // not wherever the entity moved to. (Fix for issue #7274)
+        aaa.setOldTargetCoords(tc);
         Targetable newTarget = null;
 
         Vector<TagInfo> v = game.getTagInfo();
@@ -437,7 +446,7 @@ public class ArtilleryBayWeaponIndirectHomingHandler extends ArtilleryBayWeaponI
                   "no tag in 8 hex radius of target hex");
         } else if (allowed.size() == 1) {
             // Just use target 0...
-            newTarget = allowed.get(0).target;
+            newTarget = allowed.getFirst().target;
             target = newTarget;
             aaa.setTargetId(target.getId());
             aaa.setTargetType(target.getTargetType());

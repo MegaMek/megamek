@@ -47,6 +47,7 @@ public enum ConnectionEventType {
     DISCONNECTED;
     // endregion Enum Declarations
 
+    @Deprecated(since = "0.51.0", forRemoval = true)
     public void processListener(final AbstractConnectionEvent event,
           final ConnectionListener listener) {
         switch (this) {

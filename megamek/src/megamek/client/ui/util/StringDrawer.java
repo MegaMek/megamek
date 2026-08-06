@@ -96,6 +96,7 @@ public class StringDrawer {
     private int maxWidth = Integer.MAX_VALUE;
     private float scaleX = 1;
     private boolean drawHelpLine = false;
+    private boolean asText = false;
 
     /**
      * Returns a new StringDrawer with the given text to draw. Note that the StringDrawer can be used multiple times but
@@ -228,6 +229,7 @@ public class StringDrawer {
      *
      * @return The StringDrawer itself
      */
+    @Deprecated(since = "0.51.0", forRemoval = true)
     public StringDrawer rightAlign() {
         rightAlign = true;
         centerX = false;
@@ -241,6 +243,7 @@ public class StringDrawer {
      *
      * @return The StringDrawer itself
      */
+    @Deprecated(since = "0.51.0", forRemoval = true)
     public StringDrawer leftAlign() {
         rightAlign = false;
         centerX = false;
@@ -298,6 +301,7 @@ public class StringDrawer {
      *
      * @return The StringDrawer itself
      */
+    @Deprecated(since = "0.51.0", forRemoval = true)
     public StringDrawer dualOutline(Color color, float width) {
         dualOutlineColor = color;
         dualOutlineWidth = width;
@@ -323,6 +327,7 @@ public class StringDrawer {
      *
      * @return The StringDrawer itself
      */
+    @Deprecated(since = "0.51.0", forRemoval = true)
     public StringDrawer showExtent() {
         drawHelpLine = true;
         return this;
@@ -339,6 +344,20 @@ public class StringDrawer {
      */
     public StringDrawer scaleX(float scaleX) {
         this.scaleX = scaleX;
+        return this;
+    }
+
+    /**
+     * Draws the string as a real text element (via {@link Graphics2D#drawString}) rather than by filling the glyph
+     * outlines. When drawing to a Batik {@code SVGGraphics2D} this produces an SVG {@code <text>} element (with the
+     * font referenced, not embedded) instead of vector {@code <path>} geometry, so downstream tools can read and
+     * manipulate the text. Position, sizing (including {@link #maxWidth(int)} auto-shrink), {@link #scaleX(float)} and
+     * alignment are unchanged. Outline and dual-outline effects are not applied in this mode.
+     *
+     * @return The StringDrawer itself
+     */
+    public StringDrawer asText() {
+        this.asText = true;
         return this;
     }
 
@@ -450,20 +469,25 @@ public class StringDrawer {
         // Get the real (transformed) bounds of the text for returning
         bounds = scaling.createTransformedShape(bounds).getBounds();
 
-        if (dualOutlineWidth > 0) {
-            transformedG.setColor(dualOutlineColor);
-            transformedG.setStroke(new BasicStroke(dualOutlineWidth, BasicStroke.CAP_ROUND, BasicStroke.JOIN_ROUND));
-            transformedG.draw(gv.getOutline(posX, posY));
-        }
+        if (asText) {
+            transformedG.setColor(fillColor);
+            transformedG.drawString(text, posX, posY);
+        } else {
+            if (dualOutlineWidth > 0) {
+                transformedG.setColor(dualOutlineColor);
+                transformedG.setStroke(new BasicStroke(dualOutlineWidth, BasicStroke.CAP_ROUND, BasicStroke.JOIN_ROUND));
+                transformedG.draw(gv.getOutline(posX, posY));
+            }
 
-        if (outlineWidth > 0) {
-            transformedG.setColor(outlineColor);
-            transformedG.setStroke(new BasicStroke(outlineWidth, BasicStroke.CAP_ROUND, BasicStroke.JOIN_ROUND));
-            transformedG.draw(gv.getOutline(posX, posY));
-        }
+            if (outlineWidth > 0) {
+                transformedG.setColor(outlineColor);
+                transformedG.setStroke(new BasicStroke(outlineWidth, BasicStroke.CAP_ROUND, BasicStroke.JOIN_ROUND));
+                transformedG.draw(gv.getOutline(posX, posY));
+            }
 
-        transformedG.setColor(fillColor);
-        transformedG.fill(gv.getOutline(posX, posY));
+            transformedG.setColor(fillColor);
+            transformedG.fill(gv.getOutline(posX, posY));
+        }
         transformedG.dispose();
 
         if (drawHelpLine) {

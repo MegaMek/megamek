@@ -102,6 +102,7 @@ public class UnitPositionTrigger implements Trigger {
      * @param unitIds         A list of Ids to limit the checked units to; when empty, all units are considered
      * @param killedUnitCount The count of killed units to react to
      */
+    @Deprecated(since = "0.51.0", forRemoval = true)
     public UnitPositionTrigger(HexArea area, List<Integer> unitIds, int killedUnitCount) {
         this(area, null, unitIds, killedUnitCount, killedUnitCount);
     }

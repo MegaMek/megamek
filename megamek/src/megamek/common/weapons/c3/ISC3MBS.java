@@ -41,6 +41,7 @@ import megamek.common.enums.AvailabilityValue;
 import megamek.common.enums.Faction;
 import megamek.common.enums.TechBase;
 import megamek.common.enums.TechRating;
+import megamek.common.equipment.Mounted;
 import megamek.common.weapons.tag.TAGWeapon;
 
 /**
@@ -69,13 +70,15 @@ public class ISC3MBS extends TAGWeapon {
         cost = 3000000;
         bv = 0;
         flags = flags.or(F_C3MBS).or(F_MEK_WEAPON).or(F_TANK_WEAPON).andNot(F_AERO_WEAPON);
+        setModes(Mounted.MODE_ON, Mounted.MODE_OFF);
+        setInstantModeSwitch(false);
         heat = 0;
         damage = 0;
         shortRange = 5;
         mediumRange = 9;
         longRange = 15;
         extremeRange = 18;
-        rulesRefs = "298, TO";
+        rulesRefs = "110, TO:AUE";
         // Tech Progression tweaked to combine IntOps with TRO Prototypes/3145 NTNU RS
         techAdvancement.setTechBase(TechBase.IS)
               .setIntroLevel(false)

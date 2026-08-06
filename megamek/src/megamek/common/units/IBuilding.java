@@ -42,6 +42,7 @@ import java.util.Vector;
 import megamek.common.Report;
 import megamek.common.board.Board;
 import megamek.common.board.Coords;
+import megamek.common.board.CubeCoords;
 import megamek.common.enums.BasementType;
 import megamek.common.enums.BuildingType;
 
@@ -71,7 +72,10 @@ public interface IBuilding extends Serializable {
     // public static final int CASTLE_BRIAN = 3;
 
     static int currentId(Board board, Coords coords) {
-        return board.getBoardId() * 1_000_000 + coords.getX() * 1000 + coords.getY();
+        if (board != null && coords != null) {
+            return board.getBoardId() * 1_000_000 + coords.getX() * 1000 + coords.getY();
+        }
+        return UNKNOWN;
     }
 
     /**
@@ -91,9 +95,11 @@ public interface IBuilding extends Serializable {
      *       <code>false</code> otherwise.
      */
     default boolean isIn(Coords coords) {
-        return getCoordsList().contains(coords);
+        if (coords != null) {
+            return getCoordsList().contains(coords);
+        }
+        return false;
     }
-
 
     /**
      * Determines if the coord exist in the currentCF has.
@@ -175,6 +181,15 @@ public interface IBuilding extends Serializable {
     int getArmor(Coords coords);
 
     /**
+     * Get the height (BLDG_ELEV) of the building hex at the passed coords.
+     *
+     * @param coords the <code>Coords</code> of the hex in question
+     *
+     * @return the <code>int</code> value of the building hex's height. This value will be 0 if the hex is destroyed.
+     */
+    int getHeight(Coords coords);
+
+    /**
      * Set the current construction factor of the building hex. Call this method immediately when the building sustains
      * any damage.
      *
@@ -199,6 +214,17 @@ public interface IBuilding extends Serializable {
     void setPhaseCF(int cf, Coords coords);
 
     void setArmor(int a, Coords coords);
+
+    /**
+     * Set the height of a specific building hex. Call this method when a hex is destroyed (set to 0).
+     *
+     * @param h      the <code>int</code> value of the building hex's height. This value must be greater than or equal
+     *               to zero.
+     * @param coords the <code>Coords</code> of the hex in question
+     *
+     * @throws IllegalArgumentException if the passed value is less than zero
+     */
+    void setHeight(int h, Coords coords);
 
     /**
      * Get the name of this building.
@@ -251,26 +277,26 @@ public interface IBuilding extends Serializable {
      *
      * @param onFire - a <code>boolean</code> value that indicates whether this building is on fire.
      */
-    public void setBurning(boolean onFire, Coords coords);
+    void setBurning(boolean onFire, Coords coords);
 
-    public void addDemolitionCharge(int playerId, int damage, Coords pos);
+    void addDemolitionCharge(int playerId, int damage, Coords pos);
 
-    public void removeDemolitionCharge(DemolitionCharge charge);
+    void removeDemolitionCharge(DemolitionCharge charge);
 
-    public List<DemolitionCharge> getDemolitionCharges();
+    List<DemolitionCharge> getDemolitionCharges();
 
-    public void setDemolitionCharges(List<DemolitionCharge> charges);
+    void setDemolitionCharges(List<DemolitionCharge> charges);
 
     /**
      * Remove one building hex from the building
      *
      * @param coords - the <code>Coords</code> of the hex to be removed
      */
-    public void removeHex(Coords coords);
+    void removeHex(Coords coords);
 
-    public int getOriginalHexCount();
+    int getOriginalHexCount();
 
-    public int getCollapsedHexCount();
+    int getCollapsedHexCount();
 
     /**
      * @return the damage scale multiplier for units passing through this building
@@ -328,13 +354,69 @@ public interface IBuilding extends Serializable {
         };
     }
 
-    public BasementType getBasement(Coords coords);
+    BasementType getBasement(Coords coords);
 
-    public void setBasement(Coords coords, BasementType basement);
+    void setBasement(Coords coords, BasementType basement);
 
-    public void setBasementCollapsed(Coords coords, boolean collapsed);
+    void setBasementCollapsed(Coords coords, boolean collapsed);
 
-    public int getBoardId();
+    int getBoardId();
 
-    public void setBoardId(int boardId);
+    void setBoardId(int boardId);
+
+    // ========== Coordinate Translation Support ==========
+    // Subclasses can implement these to enable board<->relative coordinate translation
+
+    /**
+     * Get the board coordinates of this building's origin (where relative 0,0 maps to). For BuildingTerrain: the static
+     * placement coords For AbstractBuildingEntity: the entity's current position
+     *
+     * @return the board coordinates of the origin, or null if not placed
+     */
+    default Coords getBoardOrigin() {
+        return null;  // Building uses relative coords directly, so no origin
+    }
+
+    /**
+     * Get the facing/rotation of this building in board space. 0 = north, 1-5 = clockwise rotation
+     *
+     * @return the facing (0-5)
+     */
+    default int getBoardFacing() {
+        return 0;  // No rotation by default
+    }
+
+    /**
+     * Get the internal Building instance that stores data in relative coordinates. Building returns itself;
+     * BuildingTerrain/BuildingEntity override to return wrapped instance.
+     *
+     * @return the internal Building instance
+     */
+    default Building getInternalBuilding() {
+        return (Building) this;  // Building returns itself
+    }
+
+    /**
+     * Convert board coordinates to relative CubeCoordinates. Default: convert board Coords to CubeCoords.
+     * BuildingTerrain/BuildingEntity override to translate using their coord maps.
+     *
+     * @param boardCoords the board coordinates
+     *
+     * @return the relative CubeCoordinates
+     */
+    default CubeCoords boardToRelative(Coords boardCoords) {
+        return boardCoords.toCube();  // Convert to CubeCoords by default
+    }
+
+    /**
+     * Convert relative CubeCoordinates to board coordinates. Default: convert CubeCoords to offset Coords.
+     * BuildingTerrain/BuildingEntity override to translate using their coord maps.
+     *
+     * @param relativeCoords the relative CubeCoordinates
+     *
+     * @return the board coordinates
+     */
+    default Coords relativeToBoard(CubeCoords relativeCoords) {
+        return relativeCoords.toOffset();  // Convert to offset Coords by default
+    }
 }

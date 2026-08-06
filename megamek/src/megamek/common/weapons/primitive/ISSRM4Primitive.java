@@ -86,7 +86,7 @@ public class ISSRM4Primitive extends SRMWeapon {
         ammoType = AmmoType.AmmoTypeEnum.SRM_PRIMITIVE;
         // IO Doesn't strictly define when these weapons stop production. Checked with Herb, and
         // they would always be around. This to cover some of the back worlds in the Periphery.
-        rulesRefs = "118, IO";
+        rulesRefs = "112, IO:AE";
         techAdvancement.setTechBase(TechBase.IS)
               .setIntroLevel(false)
               .setUnofficial(false)

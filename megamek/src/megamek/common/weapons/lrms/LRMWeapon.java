@@ -49,16 +49,7 @@ import megamek.common.options.OptionsConstants;
 import megamek.common.units.Entity;
 import megamek.common.weapons.handlers.AttackHandler;
 import megamek.common.weapons.handlers.MissileMineClearanceHandler;
-import megamek.common.weapons.handlers.lrm.LRMAntiTSMHandler;
-import megamek.common.weapons.handlers.lrm.LRMARADHandler;
-import megamek.common.weapons.handlers.lrm.LRMDeadFireHandler;
-import megamek.common.weapons.handlers.lrm.LRMFollowTheLeaderHandler;
-import megamek.common.weapons.handlers.lrm.LRMFragHandler;
-import megamek.common.weapons.handlers.lrm.LRMHandler;
-import megamek.common.weapons.handlers.lrm.LRMScatterableHandler;
-import megamek.common.weapons.handlers.lrm.LRMSmokeWarheadHandler;
-import megamek.common.weapons.handlers.lrm.LRMSwarmHandler;
-import megamek.common.weapons.handlers.lrm.LRMSwarmIHandler;
+import megamek.common.weapons.handlers.lrm.*;
 import megamek.common.weapons.missiles.MissileWeapon;
 import megamek.server.totalWarfare.TWGameManager;
 
@@ -78,7 +69,7 @@ public abstract class LRMWeapon extends MissileWeapon {
         longRange = 21;
         extremeRange = 28;
         atClass = CLASS_LRM;
-        flags = flags.or(F_PROTO_WEAPON).or(F_ARTEMIS_COMPATIBLE);
+        flags = flags.or(F_PROTO_WEAPON).or(F_ARTEMIS_COMPATIBLE).or(F_LRM).or(F_INDIRECT_FIRE);
     }
 
 
@@ -100,11 +91,6 @@ public abstract class LRMWeapon extends MissileWeapon {
     @Override
     public int getBattleForceClass() {
         return BF_CLASS_LRM;
-    }
-
-    @Override
-    public boolean hasIndirectFire() {
-        return true;
     }
 
     @Override
@@ -176,6 +162,10 @@ public abstract class LRMWeapon extends MissileWeapon {
             if (atype.getMunitionType().contains(AmmoType.Munitions.M_ARAD)) {
                 return new LRMARADHandler(toHit, waa, game, manager);
             }
+            if (atype.getMunitionType().contains(AmmoType.Munitions.M_MAGNETIC_PULSE)) {
+                return new LRMMagneticPulseHandler(toHit, waa, game, manager);
+            }
+            // Note: Incendiary mixed is handled via LRMHandler.isIncendiaryMixed()
             return new LRMHandler(toHit, waa, game, manager);
         } catch (EntityLoadingException ignored) {
             LOGGER.warn("Get LRM Handler - Attach Handler Received Null Entity.");

@@ -72,7 +72,7 @@ public class SubCapCannonWeaponLight extends SubCapCannonWeapon {
         medAV = 2;
         longAV = 2;
         maxRange = RANGE_LONG;
-        rulesRefs = "343, TO";
+        rulesRefs = "155, TO:AUE";
         // Tech Progression tweaked to combine IntOps with TRO Prototypes/3145 NTNU RS
         techAdvancement.setTechBase(TechBase.ALL)
               .setIntroLevel(false)

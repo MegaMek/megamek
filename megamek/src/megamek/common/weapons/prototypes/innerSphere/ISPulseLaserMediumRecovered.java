@@ -78,6 +78,7 @@ public class ISPulseLaserMediumRecovered extends PulseLaserWeapon {
         shortName = "Medium Pulse Laser (P)";
         flags = flags.or(F_PROTOTYPE);
         heat = 4;
+        heatAdjustmentForBvCalculation = 3;
         damage = 6;
         toHitModifier = -2;
         shortRange = 2;
@@ -92,7 +93,7 @@ public class ISPulseLaserMediumRecovered extends PulseLaserWeapon {
         criticalSlots = 1;
         bv = 48;
         cost = 240000;
-        rulesRefs = "103, IO";
+        rulesRefs = "97, IO:AE";
         techAdvancement.setTechBase(TechBase.IS)
               .setIntroLevel(false)
               .setUnofficial(false)

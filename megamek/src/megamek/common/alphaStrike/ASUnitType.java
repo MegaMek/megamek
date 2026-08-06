@@ -49,7 +49,9 @@ public enum ASUnitType {
             return ((Mek) en).isIndustrial() ? IM : BM;
         } else if (en instanceof ProtoMek) {
             return PM;
-        } else if (en instanceof Tank) {
+        } else if (en instanceof MobileStructure) {
+            return MS;
+        } else if (en instanceof Tank || en instanceof BuildingEntity) {
             return en.isSupportVehicle() ? SV : CV;
         } else if (en instanceof BattleArmor) {
             return BA;

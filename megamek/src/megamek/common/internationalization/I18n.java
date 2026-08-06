@@ -76,11 +76,14 @@ public class I18n {
               throws IOException {
             // The below is one approach; there are multiple ways to do this
             String resourceName = toResourceName(toBundleName(baseName, locale), "properties");
-            try (InputStream is = loader.getResourceAsStream(resourceName)) {
-                assert is != null;
-                try (InputStreamReader isr = new InputStreamReader(is, StandardCharsets.UTF_8)) {
-                    return new PropertyResourceBundle(isr);
-                }
+            InputStream is = loader.getResourceAsStream(resourceName);
+            if (is == null) {
+                return null; // Resource not found, let ResourceBundle try fallback
+            }
+            try (InputStreamReader isr = new InputStreamReader(is, StandardCharsets.UTF_8)) {
+                return new PropertyResourceBundle(isr);
+            } finally {
+                is.close();
             }
         }
     }

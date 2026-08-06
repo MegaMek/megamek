@@ -87,6 +87,7 @@ public class SBFMovePath implements EntityAction, Serializable {
      *
      * @return A new move path that is equal to the original
      */
+    @Deprecated(since = "0.51.0", forRemoval = true)
     public static SBFMovePath createMovePathDeep(SBFMovePath original) {
         SBFMovePath newPath = new SBFMovePath(original.formationId, original.startLocation, original.game);
         newPath.steps.addAll(original.steps.stream().map(SBFMoveStep::copy).toList());

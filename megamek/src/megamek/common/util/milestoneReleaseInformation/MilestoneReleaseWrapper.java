@@ -67,6 +67,7 @@ public class MilestoneReleaseWrapper {
      * @author Illiani
      * @since 0.50.07
      */
+    @Deprecated(since = "0.51.0", forRemoval = true)
     public void setMilestone_releases(List<MilestoneData> milestone_releases) {
         this.milestone_releases = milestone_releases;
     }

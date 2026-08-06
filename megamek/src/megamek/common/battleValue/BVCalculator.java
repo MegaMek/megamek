@@ -45,9 +45,9 @@ import java.util.function.Predicate;
 
 import megamek.client.ui.clientGUI.calculationReport.CalculationReport;
 import megamek.client.ui.clientGUI.calculationReport.DummyCalculationReport;
-import megamek.codeUtilities.MathUtility;
 import megamek.common.MPCalculationSetting;
 import megamek.common.battleArmor.BattleArmor;
+import megamek.common.battlefieldSupport.BattlefieldSupportAsset;
 import megamek.common.compute.Compute;
 import megamek.common.equipment.*;
 import megamek.common.equipment.AmmoType.AmmoTypeEnum;
@@ -100,29 +100,22 @@ public abstract class BVCalculator {
     }
 
     public static BVCalculator getBVCalculator(Entity entity) {
-        if (entity instanceof Mek) {
-            return new MekBVCalculator(entity);
-        } else if (entity instanceof ProtoMek) {
-            return new ProtoMekBVCalculator(entity);
-        } else if (entity instanceof BattleArmor) {
-            return new BattleArmorBVCalculator(entity);
-        } else if (entity instanceof Infantry) {
-            return new InfantryBVCalculator(entity);
-        } else if (entity instanceof Warship) {
-            return new WarShipBVCalculator(entity);
-        } else if (entity instanceof Jumpship) {
-            return new JumpShipBVCalculator(entity);
-        } else if (entity instanceof Dropship) {
-            return new DropShipBVCalculator(entity);
-        } else if (entity instanceof Aero) {
-            return new AeroBVCalculator(entity);
-        } else if (entity instanceof GunEmplacement) {
-            return new GunEmplacementBVCalculator(entity);
-        } else if (entity instanceof HandheldWeapon) {
-            return new HandheldWeaponBVCalculator(entity);
-        } else { // Tank
-            return new CombatVehicleBVCalculator(entity);
-        }
+        return switch (entity) {
+            case Mek ignored -> new MekBVCalculator(entity);
+            case ProtoMek ignored -> new ProtoMekBVCalculator(entity);
+            case BattleArmor ignored -> new BattleArmorBVCalculator(entity);
+            case Infantry ignored -> new InfantryBVCalculator(entity);
+            case Warship ignored -> new WarShipBVCalculator(entity);
+            case Jumpship ignored -> new JumpShipBVCalculator(entity);
+            case Dropship ignored -> new DropShipBVCalculator(entity);
+            case Aero ignored -> new AeroBVCalculator(entity);
+            case GunEmplacement ignored -> new GunEmplacementBVCalculator(entity);
+            case HandheldWeapon ignored -> new HandheldWeaponBVCalculator(entity);
+            case AbstractBuildingEntity ignored -> new AbstractBuildingEntityBVCalculator(entity);
+            case BattlefieldSupportAsset ignored -> new BattlefieldSupportAssetBVCalculator(entity);
+            case null, default ->  // Tank
+                  new CombatVehicleBVCalculator(entity);
+        };
     }
 
     /**
@@ -162,6 +155,7 @@ public abstract class BVCalculator {
      *
      * @return The newly calculated base unit battle value.
      */
+    @Deprecated(since = "0.51.0", forRemoval = true)
     public int calculateBaseBV() {
         return calculateBaseBV(new DummyCalculationReport());
     }
@@ -188,6 +182,7 @@ public abstract class BVCalculator {
      *
      * @return The stored base unit battle value.
      */
+    @Deprecated(since = "0.51.0", forRemoval = true)
     public int retrieveBaseBV() {
         return (int) Math.round(baseBV);
     }
@@ -199,6 +194,7 @@ public abstract class BVCalculator {
      *
      * @return The stored unit battle value including Tag bonus.
      */
+    @Deprecated(since = "0.51.0", forRemoval = true)
     public int retrieveBVWithTag() {
         return (int) Math.round(tagBV);
     }
@@ -431,9 +427,9 @@ public abstract class BVCalculator {
             calculation += (armorMultiplier != 1) ?
                   " x " +
                         formatForReport(armorMultiplier) +
-                        " (" +
+                  " (" +
                         ArmorType.forEntity(entity).getName() +
-                        ")" :
+                  ")" :
                   "";
             calculation += (barRating != 1) ? " x " + formatForReport(barRating) + " (BAR)" : "";
             defensiveValue += totalArmorBV * armorFactor();
@@ -1091,8 +1087,12 @@ public abstract class BVCalculator {
         // Only a couple of units even has weight relevant for its BV
     }
 
+    public double getOffensiveSpeedFactorMultiplier() {
+        return offensiveSpeedFactor(offensiveSpeedFactorMP());
+    }
+
     protected void processSpeedFactor() {
-        double speedFactor = offensiveSpeedFactor(offensiveSpeedFactorMP());
+        double speedFactor = getOffensiveSpeedFactorMultiplier();
         bvReport.addLine("Speed Factor:",
               formatForReport(offensiveValue) + " x " + speedFactor,
               "= " + formatForReport(offensiveValue * speedFactor));
@@ -1285,8 +1285,8 @@ public abstract class BVCalculator {
      */
     public static double bvMultiplier(Entity entity, List<String> pilotModifiers) {
         if (entity.isUncrewed()) {
-            if (entity.isConventionalInfantry() && !((Infantry) entity).hasAntiMekGear()) {
-                return bvSkillMultiplier(4, Infantry.ANTI_MEK_SKILL_NO_GEAR);
+            if (entity instanceof ConvInfantry convInfantry && !convInfantry.hasAntiMekGear()) {
+                return bvSkillMultiplier(4, ConvInfantry.ANTI_MEK_SKILL_NO_GEAR);
             } else {
                 return bvSkillMultiplier(4, 5);
             }
@@ -1297,10 +1297,8 @@ public abstract class BVCalculator {
         if (((entity instanceof Infantry) && (!((Infantry) entity).canMakeAntiMekAttacks())) ||
               (entity instanceof ProtoMek)) {
             piloting = 5;
-        } else if (entity.isConventionalInfantry()
-              && (entity instanceof Infantry)
-              && !((Infantry) entity).hasAntiMekGear()) {
-            piloting = Infantry.ANTI_MEK_SKILL_NO_GEAR;
+        } else if ((entity instanceof ConvInfantry convInfantry) && !convInfantry.hasAntiMekGear()) {
+            piloting = ConvInfantry.ANTI_MEK_SKILL_NO_GEAR;
         } else if (entity.getCrew() instanceof LAMPilot lamPilot) {
             gunnery = (lamPilot.getGunneryMek() + lamPilot.getGunneryAero()) / 2;
             piloting = (lamPilot.getPilotingMek() + lamPilot.getPilotingAero()) / 2;
@@ -1320,14 +1318,20 @@ public abstract class BVCalculator {
             piloting = Math.max(0, piloting - 1);
             pilotModifiers.add("Comm. Implant");
         }
-        if (entity.getCrew().getOptions().booleanOption(OptionsConstants.MD_VDNI) &&
-              entity.hasMisc(MiscType.F_BATTLEMEK_NIU)) {
+        // VDNI: -1 Gunnery, -1 Piloting for Meks, Vehicles, Fighters, BA (IO pg 71)
+        // Note: BVDNI implies VDNI, so check VDNI && !BVDNI to avoid double-counting
+        // When tracking neural interface hardware, require DNI cockpit mod for benefits
+        if (entity.hasActiveDNI()
+              && entity.getCrew().getOptions().booleanOption(OptionsConstants.MD_VDNI)
+              && !entity.getCrew().getOptions().booleanOption(OptionsConstants.MD_BVDNI)) {
             piloting = Math.max(0, piloting - 1);
             gunnery = Math.max(0, gunnery - 1);
             pilotModifiers.add("VDNI");
         }
-        if (entity.getCrew().getOptions().booleanOption(OptionsConstants.MD_BVDNI) &&
-              entity.hasMisc(MiscType.F_BATTLEMEK_NIU)) {
+        // BVDNI: -1 Gunnery only (no piloting bonus due to "neuro-lag") (IO pg 71)
+        // When tracking neural interface hardware, require DNI cockpit mod for benefits
+        if (entity.hasActiveDNI()
+              && entity.getCrew().getOptions().booleanOption(OptionsConstants.MD_BVDNI)) {
             gunnery = Math.max(0, gunnery - 1);
             pilotModifiers.add("Buf. VDNI");
         }
@@ -1346,8 +1350,10 @@ public abstract class BVCalculator {
             gunnery = Math.max(0, gunnery - 1);
             pilotModifiers.add("Sensory Implants");
         }
-        if (entity.getCrew().getOptions().booleanOption(OptionsConstants.MD_PROTO_DNI) &&
-              entity.hasMisc(MiscType.F_BATTLEMEK_NIU)) {
+        // Proto DNI: -3 Piloting, -2 Gunnery (IO pg 83)
+        // When tracking neural interface hardware, require DNI cockpit mod for benefits
+        if (entity.hasActiveDNI()
+              && entity.getCrew().getOptions().booleanOption(OptionsConstants.MD_PROTO_DNI)) {
             piloting = Math.max(0, piloting - 3);
             gunnery = Math.max(0, gunnery - 2);
             pilotModifiers.add("Proto DNI");
@@ -1359,6 +1365,14 @@ public abstract class BVCalculator {
                 piloting = Math.max(0, piloting - 1);
             }
             pilotModifiers.add("TCP");
+        }
+        // EI Implant: -1 Gunnery, -1 Piloting for BV purposes, but only if unit has EI Interface (IO p.69)
+        // A warrior with EI implants assigned to a unit lacking the interface uses non-augmented skills.
+        if (entity.getCrew().getOptions().booleanOption(OptionsConstants.MD_EI_IMPLANT) &&
+              entity.hasEiCockpit()) {
+            piloting = Math.max(0, piloting - 1);
+            gunnery = Math.max(0, gunnery - 1);
+            pilotModifiers.add("EI Implant");
         }
         return bvSkillMultiplier(gunnery, piloting);
     }
@@ -1372,13 +1386,13 @@ public abstract class BVCalculator {
      * @return a multiplier to the BV of whatever unit the pilot is piloting.
      */
     public static double bvSkillMultiplier(int gunnery, int piloting) {
-        return bvMultipliers[MathUtility.clamp(gunnery, 0, 8)][MathUtility.clamp(piloting, 0, 8)];
+        return bvMultipliers[Math.clamp(gunnery, 0, 8)][Math.clamp(piloting, 0, 8)];
     }
 
     /**
      * Processes the BV bonus that a unit with TAG, LTAG or C3M gets for friendly units that have semi-guided or Arrow
      * IV homing ammunition (TO:AUE p.198,
-     * https://bg.battletech.com/forums/tactical-operations/tagguided-munitions-and-bv/)
+     * <a href="https://bg.battletech.com/forums/tactical-operations/tagguided-munitions-and-bv/">BT Forum</a>)
      */
     public void processTagBonus() {
         long tagCount = workingTAGCount(entity);
@@ -1393,7 +1407,7 @@ public abstract class BVCalculator {
         boolean hasGuided = false;
 
         for (Entity otherEntity : entity.getGame().getEntitiesVector()) {
-            if ((otherEntity == entity) || otherEntity.getOwner().isEnemyOf(entity.getOwner())) {
+            if ((otherEntity.getOwner() == null) || otherEntity.getOwner().isEnemyOf(entity.getOwner())) {
                 continue;
             }
             for (Mounted<?> mounted : otherEntity.getAmmo()) {

@@ -53,6 +53,7 @@ public class CheckpointComboBox<E> extends JComboBox<E> {
     /**
      * Default constructor.
      */
+    @Deprecated(since = "0.51.0", forRemoval = true)
     public CheckpointComboBox() {
     }
 
@@ -83,6 +84,7 @@ public class CheckpointComboBox<E> extends JComboBox<E> {
     /**
      * @return The current checkpoint index or -1 if the {@link #checkpoint()} method has not been called.
      */
+    @Deprecated(since = "0.51.0", forRemoval = true)
     public int getCheckpointIndex() {
         return checkpointIndex;
     }
@@ -91,6 +93,7 @@ public class CheckpointComboBox<E> extends JComboBox<E> {
      * @return The {@link Object} stored at the checkpoint index or NULL if the {@link #checkpoint()} method has not
      *       been called.
      */
+    @Deprecated(since = "0.51.0", forRemoval = true)
     public Object getCheckpointItem() {
         if (checkpointIndex == -1) {
             return null;
@@ -101,6 +104,7 @@ public class CheckpointComboBox<E> extends JComboBox<E> {
     /**
      * Removes the current checkpoint by resetting the checkpoint index to -1.
      */
+    @Deprecated(since = "0.51.0", forRemoval = true)
     public void removeCheckpoint() {
         checkpointIndex = -1;
     }

@@ -75,7 +75,7 @@ public class CLChemicalLaserLarge extends CLChemicalLaserWeapon {
         shortAV = 8;
         medAV = 8;
         maxRange = RANGE_MED;
-        rulesRefs = "320, TO";
+        rulesRefs = "132, TO:AUE";
         // Tech Progression tweaked to combine IntOps with TRO Prototypes/3145 NTNU RS
         techAdvancement.setTechBase(TechBase.CLAN)
               .setTechRating(TechRating.E)

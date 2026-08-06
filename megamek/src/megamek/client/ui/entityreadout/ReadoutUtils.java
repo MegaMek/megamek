@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2025 The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2025-2026 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -115,6 +115,57 @@ final class ReadoutUtils {
         return result;
     }
 
+    /**
+     * Creates a simplified weapon list, not showing the location nor heat; usable for (non-bay) units without locations
+     * such as gun emplacements and HHW.
+     *
+     * @param entity the unit
+     *
+     * @return The weapons list for the readout
+     */
+    static List<ViewElement> getSimpleWeaponsList(Entity entity) {
+        List<ViewElement> result = new ArrayList<>();
+
+        if (entity.getWeaponList().isEmpty()) {
+            return result;
+        }
+
+        TableElement wpnTable = new TableElement(1);
+        wpnTable.setColNames("Weapons");
+        wpnTable.setJustification(JUSTIFIED_LEFT);
+        for (WeaponMounted mounted : entity.getWeaponList()) {
+            if (mounted.getType().hasFlag(WeaponTypeFlag.INTERNAL_REPRESENTATION)) {
+                continue;
+            }
+
+            String name = equipmentNameText(mounted, entity);
+            ViewElement nameElement = new PlainElement(name);
+            if (mounted.isDestroyed() && mounted.isRepairable()) {
+                nameElement = new DamagedElement(name);
+            } else if (mounted.isDestroyed()) {
+                nameElement = new DestroyedElement(name);
+            }
+            wpnTable.addRow(nameElement);
+        }
+        result.add(wpnTable);
+        return result;
+    }
+
+    /**
+     * @return The name of the given Mounted, followed by a quirk marker if it has a quirk and an IS/C tech base note if
+     *       the unit tech base and equipment tech base do not match (mixed tech)
+     */
+    static String equipmentNameText(Mounted<?> mounted, Entity entity) {
+        String name = mounted.getDesc() + GeneralEntityReadout.quirkMarker(mounted);
+        if (entity.isClan() && (mounted.getType().getTechBase() == TechBase.IS)) {
+            name += Messages.getString("MekView.IS");
+        }
+        if (!entity.isClan() && (mounted.getType().getTechBase() == TechBase.CLAN)) {
+            name += Messages.getString("MekView.Clan");
+        }
+        return name;
+    }
+
     static List<ViewElement> getWeaponsNoHeat(Entity entity, boolean showDetail) {
         List<ViewElement> result = new ArrayList<>();
 
@@ -178,13 +229,7 @@ final class ReadoutUtils {
     }
 
     private static ViewElement[] createWeaponTableRow(Mounted<?> mounted, Entity entity, boolean withHeatColumn) {
-        String name = mounted.getDesc() + GeneralEntityReadout.quirkMarker(mounted);
-        if (entity.isClan() && (mounted.getType().getTechBase() == TechBase.IS)) {
-            name += Messages.getString("MekView.IS");
-        }
-        if (!entity.isClan() && (mounted.getType().getTechBase() == TechBase.CLAN)) {
-            name += Messages.getString("MekView.Clan");
-        }
+        String name = equipmentNameText(mounted, entity);
         ViewElement nameElement = new PlainElement(name);
         if (mounted.isDestroyed() && mounted.isRepairable()) {
             nameElement = new DamagedElement(name);
@@ -203,13 +248,7 @@ final class ReadoutUtils {
           boolean withHeatColumn) {
         for (WeaponMounted m : mounted.getBayWeapons()) {
 
-            String name = "- " + m.getDesc();
-            if (entity.isClan() && (m.getType().getTechBase() == TechBase.IS)) {
-                name += Messages.getString("MekView.IS");
-            }
-            if (!entity.isClan() && (m.getType().getTechBase() == TechBase.CLAN)) {
-                name += Messages.getString("MekView.Clan");
-            }
+            String name = "- " + equipmentNameText(m, entity);
             ViewElement nameElement = new PlainElement(name);
             if (mounted.isDestroyed() && mounted.isRepairable()) {
                 nameElement = new DamagedElement(name);
@@ -248,9 +287,15 @@ final class ReadoutUtils {
 
     static boolean hideMisc(MiscMounted mounted, Entity entity) {
         String name = mounted.getName();
+        // Check if this is a cockpit modification that should always be shown (e.g., DNI, EI Interface)
+        boolean isCockpitModification = mounted.getType().hasFlag(MiscType.F_DNI_COCKPIT_MOD)
+              || mounted.getType().hasFlag(MiscType.F_EI_INTERFACE)
+              || mounted.getType().hasFlag(MiscType.F_DAMAGE_INTERRUPT_CIRCUIT);
         return (((mounted.getLocation() == Entity.LOC_NONE)
               // Meks can have zero-slot equipment in LOC_NONE that needs to be shown.
-              && (!(entity instanceof Mek) || mounted.getNumCriticalSlots() > 0)))
+              // Also show cockpit modifications for all unit types.
+              && (!(entity instanceof Mek) || mounted.getNumCriticalSlots() > 0)
+              && !isCockpitModification))
               || name.contains("Jump Jet")
               || (name.contains("CASE") && !name.contains("II") && entity.isClan())
               || (name.contains("Heat Sink") && !name.contains("Radical"))

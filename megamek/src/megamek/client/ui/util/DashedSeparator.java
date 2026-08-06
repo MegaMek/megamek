@@ -55,6 +55,7 @@ public class DashedSeparator extends JComponent {
      * Creates a dashed separator that uses the UI LaF's separator color and a line width of 1. It uses the available
      * horizontal space.
      */
+    @Deprecated(since = "0.51.0", forRemoval = true)
     public DashedSeparator() {
         this(UIManager.getColor("Separator.foreground"));
     }
@@ -72,6 +73,7 @@ public class DashedSeparator extends JComponent {
      * the line extends for all the horizontal width; 0.5 meaning only half the horizontal space is used (the line is
      * centered).
      */
+    @Deprecated(since = "0.51.0", forRemoval = true)
     public DashedSeparator(float relativeWidth, float strokeWidth) {
         this(UIManager.getColor("Separator.foreground"), relativeWidth, strokeWidth);
     }

@@ -73,6 +73,7 @@ public class LOSDialog extends AbstractButtonDialog {
      * Returns true if the unit in the first hex should be counted as having Mek height (2 levels) and false if it
      * should be counted as having Tank height (1 level).
      */
+    @Deprecated(since = "0.51.0", forRemoval = true)
     public boolean getMekInFirst() {
         return toggles1[0].isSelected();
     }
@@ -81,6 +82,7 @@ public class LOSDialog extends AbstractButtonDialog {
      * Returns true if the unit in the second hex should be counted as having Mek height (2 levels) and false if it
      * should be counted as having Tank height (1 level).
      */
+    @Deprecated(since = "0.51.0", forRemoval = true)
     public boolean getMekInSecond() {
         return toggles2[0].isSelected();
     }

@@ -45,6 +45,7 @@ import megamek.common.equipment.MekArms;
 import megamek.common.equipment.MiscMounted;
 import megamek.common.equipment.MiscType;
 import megamek.common.equipment.Mounted;
+import megamek.common.equipment.enums.MiscTypeFlag;
 import megamek.common.moves.MoveStep;
 import megamek.common.options.OptionsConstants;
 import megamek.common.rolls.PilotingRollData;
@@ -188,7 +189,7 @@ public abstract class MekWithArms extends Mek {
             if ((m.getLocation() == loc) && !m.isDestroyed() && !m.isBreached()
                   && (m.getType() instanceof MiscType)
                   && m.getType().hasFlag(MiscType.F_CLUB)
-                  && m.getType().hasSubType(MiscType.S_RETRACTABLE_BLADE)
+                  && m.getType().hasFlag(MiscTypeFlag.S_RETRACTABLE_BLADE)
                   && !m.curMode().equals("extended")) {
                 return true;
             }
@@ -255,9 +256,9 @@ public abstract class MekWithArms extends Mek {
             if ((type instanceof MiscType miscType) && miscType.isVibroblade()
                   && (mounted.curMode().equals("Active") || ignoreMode)
                   && mounted.isOperable()) {
-                if (miscType.hasSubType(MiscType.S_VIBRO_LARGE)) {
+                if (miscType.hasFlag(MiscTypeFlag.S_VIBRO_LARGE)) {
                     return 7;
-                } else if (miscType.hasSubType(MiscType.S_VIBRO_MEDIUM)) {
+                } else if (miscType.hasFlag(MiscTypeFlag.S_VIBRO_MEDIUM)) {
                     return 5;
                 } else {
                     return 3;
@@ -268,14 +269,14 @@ public abstract class MekWithArms extends Mek {
     }
 
     @Override
-    public int getNumberOfShields(long size) {
+    public int getNumberOfShields(MiscTypeFlag shieldSize) {
 
         int raShield = 0;
         int laShield = 0;
 
         for (MiscMounted misc : getMisc()) {
             MiscType type = misc.getType();
-            if (type.hasFlag(MiscType.F_CLUB) && (type.hasSubType(size))) {
+            if (type.hasFlag(MiscType.F_CLUB) && (type.hasFlag(shieldSize))) {
                 // ok so we have a shield of certain size. know which arm is it.
                 if (misc.getLocation() == Mek.LOC_RIGHT_ARM) {
                     raShield = 1;

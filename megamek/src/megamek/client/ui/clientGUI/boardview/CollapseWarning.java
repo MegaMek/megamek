@@ -40,6 +40,7 @@ import java.util.List;
 import megamek.client.ui.clientGUI.GUIPreferences;
 import megamek.client.ui.panels.phaseDisplay.DeploymentDisplay;
 import megamek.client.ui.panels.phaseDisplay.MovementDisplay;
+import megamek.common.Hex;
 import megamek.common.board.Board;
 import megamek.common.board.BoardLocation;
 import megamek.common.board.Coords;
@@ -47,6 +48,7 @@ import megamek.common.enums.GamePhase;
 import megamek.common.game.Game;
 import megamek.common.units.Entity;
 import megamek.common.units.IBuilding;
+import megamek.common.units.Terrains;
 import megamek.logging.MMLogger;
 
 /**
@@ -225,11 +227,14 @@ public final class CollapseWarning {
      * at the hex location that could cause a building to collapse.
      */
     public static double calculateTotalTonnage(Game g, Entity selected, Coords c) {
-        // Calculate total weight of entity and all entities at the location.
+        Hex hex = g.getBoard().getHex(c);
         double totalWeight = selected.getWeight();
         List<Entity> units = g.getEntitiesVector(c, true);
         for (Entity ent : units) {
-            if (CollapseWarning.isEntityPartOfWeight(selected, ent)) {
+            boolean weightCounts = (hex.hasBridge() && isEntityPartOfBridgeWeight(selected, ent,
+                  hex.terrainLevel(Terrains.BRIDGE_ELEV)))
+                  || (!hex.hasBridge() && isEntityPartOfWeight(selected, ent));
+            if (weightCounts) {
                 totalWeight += ent.getWeight();
             }
         }
@@ -238,6 +243,10 @@ public final class CollapseWarning {
 
     private static boolean isEntityPartOfWeight(Entity selected, Entity inHex) {
         return ((selected != inHex) && inHex.isGround() && !inHex.isAirborneVTOLorWIGE());
+    }
+
+    private static boolean isEntityPartOfBridgeWeight(Entity selected, Entity inHex, int bridgeElevation) {
+        return isEntityPartOfWeight(selected, inHex) && (inHex.getElevation() == bridgeElevation);
     }
 
     private CollapseWarning() {

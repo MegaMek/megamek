@@ -75,6 +75,7 @@ public class ASElementSerializer extends StdSerializer<ASCardDisplayable> {
     static final String AFT_ARC = "aft";
     static final String SIDE_ARC = "side";
 
+    @Deprecated(since = "0.51.0", forRemoval = true)
     public ASElementSerializer() {
         this(null);
     }

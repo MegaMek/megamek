@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2017-2025 The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2017-2026 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -35,24 +35,25 @@ package megamek.client.ui.dialogs.customMek;
 import static megamek.common.equipment.AmmoType.F_BATTLEARMOR;
 import static megamek.common.equipment.AmmoType.F_PROTOMEK;
 
-import java.awt.GridBagConstraints;
-import java.awt.GridBagLayout;
-import java.awt.Insets;
-import java.io.Serial;
+import java.awt.BorderLayout;
 import java.util.ArrayList;
 import java.util.EnumSet;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import javax.swing.Box;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JSpinner;
 import javax.swing.SpinnerNumberModel;
+import javax.swing.border.EmptyBorder;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 
+import megamek.client.ui.GBC2;
 import megamek.client.ui.Messages;
+import megamek.client.ui.util.UIUtil;
 import megamek.common.SimpleTechLevel;
 import megamek.common.enums.TechBase;
 import megamek.common.equipment.AmmoMounted;
@@ -63,10 +64,9 @@ import megamek.common.equipment.Mounted;
 import megamek.common.equipment.WeaponMounted;
 import megamek.common.equipment.WeaponType;
 import megamek.common.options.OptionsConstants;
+import megamek.common.units.Entity;
 
-class AmmoRowPanel extends JPanel implements ChangeListener {
-    @Serial
-    private static final long serialVersionUID = 7251618728823971065L;
+class AmmoRowPanel implements ChangeListener {
 
     private final BayMunitionsChoicePanel bayMunitionsChoicePanel;
     private final JLabel lblTonnage = new JLabel();
@@ -83,25 +83,20 @@ class AmmoRowPanel extends JPanel implements ChangeListener {
     double tonnage;
 
     AmmoRowPanel(BayMunitionsChoicePanel bayMunitionsChoicePanel, WeaponMounted bay, AmmoType.AmmoTypeEnum at,
-          int rackSize, List<AmmoMounted> ammoMounts) {
+          int rackSize, List<AmmoMounted> ammoMounts, JPanel parentPanel, GBC2 gbc) {
         this.bayMunitionsChoicePanel = bayMunitionsChoicePanel;
         this.bay = bay;
         this.at = at;
         this.rackSize = rackSize;
         this.ammoMounts = new ArrayList<>(ammoMounts);
         this.spinners = new ArrayList<>();
+        Entity entity = bayMunitionsChoicePanel.getEntity();
+        final Optional<WeaponType> weaponType = bay.getBayWeapons().stream().map(Mounted::getType).findAny();
 
-        final Optional<WeaponType> weaponType = bay.getBayWeapons().stream()
-              .map(Mounted::getType).findAny();
-
-        // set the bay's tech base to that of any weapon in the bay
-        // an assumption is made here that bays don't mix clan-only and IS-only tech
-        // base
+        // set the bay's tech base to that of any weapon in the bay; an assumption is made here that bays don't mix
+        // clan-only and IS-only tech base
         this.techBase = weaponType.map(EquipmentType::getTechBase).orElse(TechBase.ALL);
-
-        munitions = AmmoType.getMunitionsFor(at).stream()
-              .filter(this::includeMunition)
-              .toList();
+        munitions = AmmoType.getMunitionsFor(at).stream().filter(this::includeMunition).toList();
         tonnage = ammoMounts.stream().mapToDouble(Mounted::getSize).sum();
         Map<String, Integer> starting = new HashMap<>();
         ammoMounts.forEach(m -> starting.merge(m.getType().getInternalName(), m.getBaseShotsLeft(), Integer::sum));
@@ -110,42 +105,34 @@ class AmmoRowPanel extends JPanel implements ChangeListener {
                   0, null, 1));
             spn.setName(ammoType.getInternalName());
             spn.addChangeListener(this);
-            if (ammoType.getTonnage(bayMunitionsChoicePanel.getEntity()) > 1) {
-                spn.setToolTipText(String.format(Messages.getString("CustomMekDialog.formatMissileTonnage"),
-                      ammoType.getName(), ammoType.getTonnage(bayMunitionsChoicePanel.getEntity())));
+            if (ammoType.getTonnage(entity) > 1) {
+                spn.setToolTipText(Messages.getString("CustomMekDialog.formatMissileTonnage",
+                      ammoType.getName(), ammoType.getTonnage(entity)));
             } else {
-                spn.setToolTipText(String.format(Messages.getString("CustomMekDialog.formatShotsPerTon"),
+                spn.setToolTipText(Messages.getString("CustomMekDialog.formatShotsPerTon",
                       ammoType.getName(), ammoType.getShots()));
             }
             spinners.add(spn);
         }
 
-        setLayout(new GridBagLayout());
-        GridBagConstraints gbc = new GridBagConstraints();
-        gbc.gridx = 0;
-        gbc.gridy = 0;
-        gbc.anchor = GridBagConstraints.WEST;
-        gbc.insets = new Insets(0, 5, 0, 5);
-        gbc.gridwidth = 5;
-        add(new JLabel("(" + bayMunitionsChoicePanel.getEntity().getLocationAbbr(bay.getLocation()) + ") "
-              + (weaponType.isPresent() ? weaponType.get().getName() : "?")), gbc);
-        gbc.gridx = 5;
-        gbc.gridwidth = 1;
-        gbc.weightx = 1.0;
-        add(lblTonnage, gbc);
+        String weaponTypeName = weaponType.isPresent() ? weaponType.get().getName() : "?";
+        String weaponLabel = "(%s) %s".formatted(entity.getLocationAbbr(bay.getLocation()), weaponTypeName);
+        JPanel weaponTitlePanel = new JPanel(new BorderLayout());
+        JLabel weaponNameLabel = new JLabel(weaponLabel);
+        weaponNameLabel.setForeground(UIUtil.uiLightBlue());
+        lblTonnage.setForeground(UIUtil.uiLightBlue());
 
-        gbc.gridx = 0;
-        gbc.gridy = 1;
-        gbc.gridwidth = 1;
-        gbc.weightx = 0.0;
+        weaponTitlePanel.add(weaponNameLabel, BorderLayout.WEST);
+        weaponTitlePanel.add(Box.createHorizontalStrut(15), BorderLayout.CENTER);
+        weaponTitlePanel.add(lblTonnage, BorderLayout.EAST);
+        weaponTitlePanel.setBorder(new EmptyBorder(15, 0, 0, 0));
+        parentPanel.add(weaponTitlePanel, gbc.fullLineWithLabelInsets());
+
         for (int i = 0; i < munitions.size(); i++) {
-            add(new JLabel(createMunitionLabel(munitions.get(i))), gbc);
-            gbc.gridx++;
-            add(spinners.get(i), gbc);
-            gbc.gridx++;
-            if (gbc.gridx > 5) {
-                gbc.gridx = 0;
-                gbc.gridy++;
+            parentPanel.add(new JLabel(createMunitionLabel(munitions.get(i))), gbc.forLabel());
+            parentPanel.add(spinners.get(i), ((i + 1) % 3 == 0) ? gbc.eol() : gbc.oneColumn());
+            if (i == munitions.size() - 1) {
+                parentPanel.add(new JLabel(), gbc.eol());
             }
         }
         recalcMaxValues();
@@ -159,8 +146,7 @@ class AmmoRowPanel extends JPanel implements ChangeListener {
      * @return true means the munition should be included.
      */
     private boolean includeMunition(AmmoType ammoType) {
-        if (!ammoType
-              .canAeroUse(bayMunitionsChoicePanel.getGame().getOptions()
+        if (!ammoType.canAeroUse(bayMunitionsChoicePanel.getGame().getOptions()
                     .booleanOption(OptionsConstants.ADVANCED_AERO_RULES_AERO_ARTILLERY_MUNITIONS))
               || (ammoType.getAmmoType() != at)
               || (ammoType.getRackSize() != rackSize)
@@ -263,9 +249,10 @@ class AmmoRowPanel extends JPanel implements ChangeListener {
                   / munitions.get(i).getTonnage(bayMunitionsChoicePanel.getEntity()) * munitions.get(i).getShots());
             spinners.get(i).removeChangeListener(this);
             ((SpinnerNumberModel) spinners.get(i).getModel()).setMaximum(max);
+            spinners.get(i).setEnabled(max > 0);
             spinners.get(i).addChangeListener(this);
         }
-        lblTonnage.setText(String.format(Messages.getString("CustomMekDialog.formatAmmoTonnage"),
+        lblTonnage.setText(Messages.getString("CustomMekDialog.formatAmmoTonnage",
               tonnage - remaining, tonnage));
     }
 

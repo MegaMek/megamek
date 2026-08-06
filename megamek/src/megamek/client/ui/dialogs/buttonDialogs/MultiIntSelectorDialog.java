@@ -57,10 +57,12 @@ public class MultiIntSelectorDialog extends AbstractButtonDialog {
 
         description = getString(descriptionResourceID);
         ListModel<Integer> listData = new AbstractListModel<>() {
+            @Override
             public int getSize() {
                 return maxValue;
             }
 
+            @Override
             public Integer getElementAt(int index) {
                 return index;
             }

@@ -77,7 +77,7 @@ public class ISRifleMedium extends RifleWeapon {
         extAV = 6;
         maxRange = RANGE_MED;
         explosionDamage = 0;
-        rulesRefs = "338, TO";
+        rulesRefs = "150, TO:AUE";
         // Tech Progression tweaked to combine IntOps with TRO Prototypes/3145 NTNU RS
         techAdvancement.setTechBase(TechBase.IS).setTechRating(TechRating.B)
               .setAvailability(AvailabilityValue.C, AvailabilityValue.F, AvailabilityValue.X, AvailabilityValue.D)

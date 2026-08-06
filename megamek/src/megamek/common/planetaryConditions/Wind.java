@@ -77,33 +77,23 @@ public enum Wind {
     }
 
     public Wind lowerWind() {
-        switch (this) {
-            case TORNADO_F4:
-                return TORNADO_F1_TO_F3;
-            case TORNADO_F1_TO_F3:
-                return STORM;
-            case STRONG_GALE:
-                return MOD_GALE;
-            case MOD_GALE:
-                return LIGHT_GALE;
-            default:
-                return CALM;
-        }
+        return switch (this) {
+            case TORNADO_F4 -> TORNADO_F1_TO_F3;
+            case TORNADO_F1_TO_F3 -> STORM;
+            case STRONG_GALE -> MOD_GALE;
+            case MOD_GALE -> LIGHT_GALE;
+            default -> CALM;
+        };
     }
 
     public Wind raiseWind() {
-        switch (this) {
-            case CALM:
-                return LIGHT_GALE;
-            case LIGHT_GALE:
-                return MOD_GALE;
-            case MOD_GALE:
-                return STORM;
-            case STRONG_GALE:
-                return TORNADO_F1_TO_F3;
-            default:
-                return TORNADO_F4;
-        }
+        return switch (this) {
+            case CALM -> LIGHT_GALE;
+            case LIGHT_GALE -> MOD_GALE;
+            case MOD_GALE -> STORM;
+            case STRONG_GALE -> TORNADO_F1_TO_F3;
+            default -> TORNADO_F4;
+        };
     }
 
     public boolean isCalm() {

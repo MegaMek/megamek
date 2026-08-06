@@ -34,6 +34,8 @@
 
 package megamek.common.containers;
 
+import static megamek.common.equipment.AmmoType.INCENDIARY_MOD;
+
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.File;
@@ -58,27 +60,52 @@ public class MunitionTree {
     private static final MMLogger LOGGER = MMLogger.create(MunitionTree.class);
 
     // Validated munition names that will work in ADF files.
-    // TODO: validate all these strings!
-    public static final List<String> LRM_MUNITION_NAMES = new ArrayList<>(List.of("Dead-Fire",
-          "Standard",
-          "Swarm-I",
-          "Swarm",
-          "Heat-Seeking",
-          "Semi-guided",
-          "Artemis-capable",
-          "Narc-capable",
-          "Follow The Leader",
-          "Fragmentation",
-          "Thunder",
-          "Thunder-Active",
-          "Thunder-Augmented",
-          "Thunder-Vibrabomb",
-          "Thunder-Inferno",
-          "Anti-TSM",
-          "Listen-Kill",
-          "Smoke",
-          "Mine Clearance",
-          "Anti-Radiation"));
+    // All LRM munitions can be combined with Incendiary to add some fire-starting and
+    // anti-infantry/BA damage, at the cost of regular damage.  But let's create those
+    // options programmatically instead of by hand.
+    // We do, however, need a single overall "Incendiary" entry to track computed overall weight.
+    // TODO: register the standard Magnetic Pulse munition so bot loadouts can field it. Add
+    //  "Magnetic Pulse" to both LRM_MUNITION_NAMES and SRM_MUNITION_NAMES (matching the mutator name
+    //  in AmmoType.MAGNETIC_PULSE_MUNITION_MUTATOR), and add it to a category list in
+    //  TeamLoadOutGenerator (e.g. UTILITY_MUNITIONS). iATM IMP is already registered. This only makes
+    //  Princess carry the ammo; firing it sensibly is a separate task (see the TODOs in
+    //  princess/WeaponFireInfo.computeExpectedDamage and princess/FireControl.getPreferredAmmo).
+    public static final List<String> LRM_MUNITION_NAMES =
+          addIncendiary(new ArrayList<>(List.of(
+                "Dead-Fire",
+                "Standard",
+                "Swarm-I",
+                "Swarm",
+                "Heat-Seeking",
+                "Semi-Guided",
+                "Artemis-capable",
+                "Narc-capable",
+                "Follow The Leader",
+                "Fragmentation",
+                "Thunder",
+                "Thunder-Active",
+                "Thunder-Augmented",
+                "Thunder-Vibrabomb",
+                "Thunder-Inferno",
+                "Anti-TSM",
+                "Listen-Kill",
+                "Smoke",
+                "Mine Clearance",
+                "Anti-Radiation",
+                "Incendiary"
+          )));
+
+    private static List<String> addIncendiary(ArrayList<String> strings) {
+        ArrayList<String> newStrings = new ArrayList<>();
+
+        for (String s : strings) {
+            if (!s.toLowerCase().contains("incendiary")) {
+                newStrings.add(s + " " + INCENDIARY_MOD);
+            }
+        }
+        strings.addAll(newStrings);
+        return strings;
+    }
 
     public static final List<String> SRM_MUNITION_NAMES = new ArrayList<>(List.of("Dead-Fire",
           "Standard",
@@ -106,6 +133,8 @@ public class MunitionTree {
           "Precision Playtest"));
 
     public static final List<String> ATM_MUNITION_NAMES = new ArrayList<>(List.of("HE", "ER", "Standard"));
+    public static final List<String> iATM_MUNITION_NAMES = new ArrayList<>(List.of("HE", "ER", "Standard", "IIW",
+          "IMP"));
 
     public static final List<String> ARROW_MUNITION_NAMES = new ArrayList<>(List.of("Fuel-Air",
           "Standard",
@@ -132,12 +161,12 @@ public class MunitionTree {
 
     public static final List<String> ARTILLERY_CANNON_MUNITION_NAMES = new ArrayList<>(List.of("Fuel-Air", "Standard"));
 
-    public static final List<String> MEK_MORTAR_MUNITION_NAMES = new ArrayList<>(List.of("Standard",
-          "Semi-Guided",
-          "Anti-personnel",
-          "Airburst",
-          "Flare",
-          "Smoke"));
+    public static final List<String> MORTAR_MUNITION_NAMES = new ArrayList<>(List.of("SC",
+          "SG",
+          "AP",
+          "AB",
+          "FL",
+          "SM"));
 
     public static final List<String> NARC_MUNITION_NAMES = new ArrayList<>(List.of("Narc Explosive", "Standard"));
 
@@ -202,6 +231,10 @@ public class MunitionTree {
             try {
                 String[] parts = line.split("::");
                 String[] keys = parts[0].split(":");
+                if (keys.length != 3) {
+                    // Record the whole line, to avoid a bunch of messy processing
+                    throw new IllegalArgumentException("Malformed entry: \n" + line);
+                }
                 HashMap<String, String> imperatives = new HashMap<>();
                 String imperative;
 
@@ -295,6 +328,7 @@ public class MunitionTree {
         root.insert(imperatives, chassis, variant, pilot);
     }
 
+    @Deprecated(since = "0.51.0", forRemoval = true)
     public void insertMangledImperatives(String chassis, String variant, String pilot,
           HashMap<String, String> imperatives) {
         // switch imperative keys to lowercase to avoid case-based matching issues strip out extraneous characters
@@ -320,6 +354,7 @@ public class MunitionTree {
     /**
      * @return entire imperative string that would act on the provided key set
      */
+    @Deprecated(since = "0.51.0", forRemoval = true)
     public String getEffectiveImperative(String chassis, String variant, String pilot, String binType) {
         LoadNode node = root.retrieve(chassis, variant, pilot);
         if (null != node) {

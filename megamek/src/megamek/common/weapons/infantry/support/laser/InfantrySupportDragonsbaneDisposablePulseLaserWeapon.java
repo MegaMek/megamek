@@ -69,8 +69,9 @@ public class InfantrySupportDragonsbaneDisposablePulseLaserWeapon extends Infant
         ammoType = AmmoType.AmmoTypeEnum.NA;
         cost = 5000;
         bv = 5.08;
-        flags = flags.or(F_NO_FIRES).or(F_DIRECT_FIRE).or(F_ENERGY).or(F_PULSE).or(F_INF_ENCUMBER).or(F_INF_SUPPORT);
-        infantryDamage = 0.49;
+        flags = flags.or(F_NO_FIRES).or(F_DIRECT_FIRE).or(F_ENERGY).or(F_PULSE).or(F_INF_ENCUMBER).or(F_INF_SUPPORT)
+              .or(F_INF_DISPOSABLE);
+        infantryDamage = 0.16;
         infantryRange = 3;
         crew = 1;
         rulesRefs = "273, TM";

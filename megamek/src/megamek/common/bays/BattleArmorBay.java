@@ -61,6 +61,7 @@ public final class BattleArmorBay extends Bay implements InfantryTransporter {
     /**
      * The default constructor is only for serialization.
      */
+    @Deprecated(since = "0.51.0", forRemoval = true)
     private BattleArmorBay() {
         totalSpace = 0;
         currentSpace = 0;
@@ -121,7 +122,7 @@ public final class BattleArmorBay extends Bay implements InfantryTransporter {
         return "Battle Armor Bay " + numDoorsString() + " - "
               + String.format("%1$,.0f", getUnused())
               + (getUnused() > 1 ? isClan ? " Points"
-              : isComStar ? " Level I" : " Squads"
+                                   : isComStar ? " Level I" : " Squads"
               : isClan ? " Point" : isComStar ? " Level I" : " Squad");
     }
 

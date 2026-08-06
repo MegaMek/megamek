@@ -32,6 +32,7 @@
  */
 package megamek.common.board;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashSet;
@@ -40,13 +41,15 @@ import java.util.Optional;
 import java.util.Set;
 import java.util.StringJoiner;
 
+import jakarta.annotation.Nonnull;
+
 /**
  * Represents a set of cube coordinates in a hex grid. Cube Coordinate allows for more precise manipulation of
  * distances, movements, and other operations.
  *
  * @author Luana Coppio
  */
-public record CubeCoords(double q, double r, double s) {
+public record CubeCoords(double q, double r, double s) implements Serializable {
 
     public static final CubeCoords ZERO = new CubeCoords(0, 0, 0);
 
@@ -66,9 +69,11 @@ public record CubeCoords(double q, double r, double s) {
      * @return a new Coords object with the offset coordinates
      */
     public Coords toOffset() {
-        int x = (int) q;
-        int y = (int) (r + q / 2);
-        return new Coords(x, y);
+        int offset = -1;
+        int column = (int) q;
+        int parity = column & 1;
+        int row = (int) (r + (q + offset * parity) / 2.0);
+        return new Coords(column, row);
     }
 
     /**
@@ -206,6 +211,7 @@ public record CubeCoords(double q, double r, double s) {
      *
      * @return the cross product of the two coordinates
      */
+    @Deprecated(since = "0.51.0", forRemoval = true)
     public double getCrossMagnitude(CubeCoords vector) {
         double crossQ = (r * vector.s) - (s * vector.r);
         double crossR = (s * vector.q) - (q * vector.s);
@@ -253,6 +259,7 @@ public record CubeCoords(double q, double r, double s) {
     }
 
     @Override
+    @Nonnull
     public String toString() {
         return new StringJoiner(", ", CubeCoords.class.getSimpleName() + "[", "]")
               .add("q=" + q)

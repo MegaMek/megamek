@@ -37,9 +37,9 @@ import java.util.Enumeration;
 import java.util.List;
 
 import megamek.common.board.Coords;
-import megamek.common.units.Entity;
-import megamek.common.game.Game;
 import megamek.common.equipment.Minefield;
+import megamek.common.game.Game;
+import megamek.common.units.Entity;
 
 /**
  * Container for game state data using a map-based approach with enum keys.

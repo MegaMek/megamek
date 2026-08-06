@@ -102,6 +102,7 @@ public class GameReports implements FullGameReport<Report> {
         reports = v;
     }
 
+    @Override
     public void clear() {
         reports.clear();
     }

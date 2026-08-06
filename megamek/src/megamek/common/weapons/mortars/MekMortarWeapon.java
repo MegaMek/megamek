@@ -70,7 +70,7 @@ public abstract class MekMortarWeapon extends AmmoWeapon {
         ammoType = AmmoType.AmmoTypeEnum.MEK_MORTAR;
         damage = DAMAGE_BY_CLUSTER_TABLE;
         atClass = CLASS_MORTAR;
-        flags = flags.or(F_MEK_MORTAR).or(F_MORTAR_TYPE_INDIRECT).or(F_MEK_WEAPON).or(F_MISSILE).or(F_TANK_WEAPON);
+        flags = flags.or(F_MEK_MORTAR).or(F_MORTAR_TYPE_INDIRECT).or(F_MEK_WEAPON).or(F_MISSILE).or(F_TANK_WEAPON).or(F_INDIRECT_FIRE);
         infDamageClass = WEAPON_CLUSTER_MISSILE;
     }
 
@@ -88,7 +88,7 @@ public abstract class MekMortarWeapon extends AmmoWeapon {
             } else if (atype.getMunitionType().contains(AmmoType.Munitions.M_FLARE)) {
                 return new MekMortarFlareHandler(toHit, waa, game, manager);
             } else if (atype.getMunitionType().contains(AmmoType.Munitions.M_SEMIGUIDED)) {
-                // Semi-guided works like shaped-charge, but can benefit from tag
+                // Semi-Guided works like shaped-charge, but can benefit from tag
                 return new MekMortarHandler(toHit, waa, game, manager);
             } else if (atype.getMunitionType().contains(AmmoType.Munitions.M_SMOKE_WARHEAD)) {
                 return new MekMortarSmokeHandler(toHit, waa, game, manager);
@@ -112,11 +112,6 @@ public abstract class MekMortarWeapon extends AmmoWeapon {
             damage = adjustBattleForceDamageForMinRange(damage);
         }
         return damage / 10.0;
-    }
-
-    @Override
-    public boolean hasIndirectFire() {
-        return true;
     }
 
     @Override

@@ -51,6 +51,7 @@ public final class LivestockCargoBay extends Bay {
     /**
      * The default constructor is only for serialization.
      */
+    @Deprecated(since = "0.51.0", forRemoval = true)
     private LivestockCargoBay() {
         totalSpace = 0;
         currentSpace = 0;

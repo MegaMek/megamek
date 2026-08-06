@@ -1,6 +1,6 @@
 /*
  * Copyright (c) 2000-2004 Ben Mazur (bmazur@sev.org)
- * Copyright (C) 2002-2025 The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2002-2026 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -36,6 +36,7 @@ package megamek.common;
 
 import java.io.Serial;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
 import java.util.Vector;
@@ -44,10 +45,14 @@ import java.util.stream.Collectors;
 import megamek.client.ui.util.PlayerColour;
 import megamek.common.board.Board;
 import megamek.common.board.BoardLocation;
+import megamek.common.compute.ComputeECM;
 import megamek.common.equipment.ICarryable;
 import megamek.common.equipment.Minefield;
+import megamek.common.equipment.MiscType;
+import megamek.common.game.Game;
 import megamek.common.game.IGame;
 import megamek.common.game.InGameObject;
+import megamek.common.game.InitiativeRoll;
 import megamek.common.hexArea.BorderHexArea;
 import megamek.common.hexArea.HexArea;
 import megamek.common.icons.Camouflage;
@@ -56,6 +61,7 @@ import megamek.common.options.OptionsConstants;
 import megamek.common.turns.TurnOrdered;
 import megamek.common.units.Entity;
 import megamek.common.units.MekWarrior;
+import megamek.logging.MMLogger;
 
 /**
  * Represents a player in the game.
@@ -69,6 +75,7 @@ public final class Player extends TurnOrdered {
     //region Variable Declarations
     @Serial
     private static final long serialVersionUID = 6828849559007455761L;
+    private static final MMLogger LOGGER = MMLogger.create(Player.class);
 
     public static final int PLAYER_NONE = -1;
     public static final int TEAM_NONE = 0;
@@ -101,11 +108,10 @@ public final class Player extends TurnOrdered {
     private int startingAnySEy = Entity.STARTING_ANY_NONE;
 
     // number of minefields
-    private int numMfConv = 0;
-    private int numMfCmd = 0;
-    private int numMfVibra = 0;
-    private int numMfActive = 0;
-    private int numMfInferno = 0;
+    private int[] minefieldCounts = new int[Minefield.TYPE_SIZE];
+
+    // number of fortified hexes the player may place during the minefield deployment phase (TO:AUE p.153)
+    private int numFortifiedHexes = 0;
 
     // hexes that are automatically hit by artillery
     private List<BoardLocation> artyAutoHitHexes = new ArrayList<>();
@@ -130,7 +136,9 @@ public final class Player extends TurnOrdered {
 
     //Voting should not be stored in save game so marked transient
     private transient boolean votedToAllowTeamChange = false;
-    private transient boolean votedToAllowGameMaster = false;
+    // Testing aid (client-set, server-only): when true the server includes enemy artillery attacks in this player's
+    // artillery packet so the Rounds in the Air view can show both sides. Transient - never serialized or saved.
+    private transient boolean artilleryRevealAll = false;
 
     private HexArea fleeArea = new BorderHexArea(true, true, true, true);
     //endregion Variable Declarations
@@ -173,52 +181,94 @@ public final class Player extends TurnOrdered {
     }
 
     public boolean hasMinefields() {
-        return (numMfCmd > 0) ||
-              (numMfConv > 0) ||
-              (numMfVibra > 0) ||
-              (numMfActive > 0) ||
-              (numMfInferno > 0) ||
+    	boolean hasMinefields = false;
+    	
+    	for (int minefieldIndex = 0; minefieldIndex < Minefield.TYPE_SIZE; minefieldIndex++) {
+    		if (minefieldCounts[minefieldIndex] > 0) {
+    			hasMinefields = true;
+    			break;
+    		}
+    	}
+    	
+        return hasMinefields ||
+              (numFortifiedHexes > 0) ||
               !getGroundObjectsToPlace().isEmpty();
+    }
+    
+    /**
+     * Given a minefield type from one of the TYPE_[MINEFIELDTYPE] constants in Minefield.java
+     * and a count (preferably more than 0), set the count of that type of mine for this player.
+     */
+    public void setMinefieldCount(int minefieldType, int count) {
+    	minefieldCounts[minefieldType] = count;
     }
 
     public void setNbrMFConventional(int nbrMF) {
-        numMfConv = nbrMF;
+        minefieldCounts[Minefield.TYPE_CONVENTIONAL] = nbrMF;
     }
 
     public void setNbrMFCommand(int nbrMF) {
-        numMfCmd = nbrMF;
+    	minefieldCounts[Minefield.TYPE_COMMAND_DETONATED] = nbrMF;
     }
 
     public void setNbrMFVibra(int nbrMF) {
-        numMfVibra = nbrMF;
+    	minefieldCounts[Minefield.TYPE_VIBRABOMB] = nbrMF;
     }
 
     public void setNbrMFActive(int nbrMF) {
-        numMfActive = nbrMF;
+    	minefieldCounts[Minefield.TYPE_ACTIVE] = nbrMF;
     }
 
     public void setNbrMFInferno(int nbrMF) {
-        numMfInferno = nbrMF;
+    	minefieldCounts[Minefield.TYPE_INFERNO] = nbrMF;
+    }
+    
+    public void setNbrMFEMP(int nbrMF) {
+    	minefieldCounts[Minefield.TYPE_EMP] = nbrMF;
+    }
+    
+    /**
+     * Given a minefield type from one of the TYPE_[MINEFIELDTYPE] constants in Minefield.java
+     * returns how many mines of that type this player has
+     */
+    public int getMinefieldCount(int minefieldType) {
+    	return minefieldCounts[minefieldType];
     }
 
     public int getNbrMFConventional() {
-        return numMfConv;
+        return minefieldCounts[Minefield.TYPE_CONVENTIONAL];
     }
 
     public int getNbrMFCommand() {
-        return numMfCmd;
+        return minefieldCounts[Minefield.TYPE_COMMAND_DETONATED];
     }
 
     public int getNbrMFVibra() {
-        return numMfVibra;
+        return minefieldCounts[Minefield.TYPE_VIBRABOMB];
     }
 
     public int getNbrMFActive() {
-        return numMfActive;
+        return minefieldCounts[Minefield.TYPE_ACTIVE];
     }
 
     public int getNbrMFInferno() {
-        return numMfInferno;
+        return minefieldCounts[Minefield.TYPE_INFERNO];
+    }
+
+    public int getNbrMFEMP() {
+        return minefieldCounts[Minefield.TYPE_EMP];
+    }
+
+    /**
+     * @return the number of fortified hexes this player may place during the minefield deployment phase
+     *       (Trench/Fieldworks Engineers, TO:AUE p.153)
+     */
+    public int getNbrFortifiedHexes() {
+        return numFortifiedHexes;
+    }
+
+    public void setNbrFortifiedHexes(int nbrFortifiedHexes) {
+        numFortifiedHexes = nbrFortifiedHexes;
     }
 
     public Camouflage getCamouflage() {
@@ -259,6 +309,14 @@ public final class Player extends TurnOrdered {
 
     public void setTeam(int team) {
         this.team = team;
+    }
+    
+    public String getTeamName() {
+        if (getTeam() <= TEAM_NONE) {
+            return "No Team";
+        }
+        
+        return "Team " + getTeam();
     }
 
     public boolean isDone() {
@@ -350,6 +408,22 @@ public final class Player extends TurnOrdered {
      */
     public boolean getSeeAll() {
         return seeAll;
+    }
+
+    /**
+     * @param artilleryRevealAll Whether the server should reveal all in-flight artillery (both teams) to this player -
+     *                           a client-set testing aid for the Rounds in the Air view
+     */
+    public void setArtilleryRevealAll(boolean artilleryRevealAll) {
+        this.artilleryRevealAll = artilleryRevealAll;
+    }
+
+    /**
+     * @return {@code true} if the server should include enemy artillery attacks in this player's artillery packet (the
+     *       Rounds in the Air testing reveal); {@code false} for normal team-only (double-blind) behavior
+     */
+    public boolean isArtilleryRevealAll() {
+        return artilleryRevealAll;
     }
 
     /**
@@ -536,14 +610,6 @@ public final class Player extends TurnOrdered {
         return votedToAllowTeamChange;
     }
 
-    public void setVotedToAllowGameMaster(boolean allowChange) {
-        votedToAllowGameMaster = allowChange;
-    }
-
-    public boolean getVotedToAllowGameMaster() {
-        return votedToAllowGameMaster;
-    }
-
     public void setArtyAutoHitHexes(List<BoardLocation> newArtyAutoHitHexes) {
         artyAutoHitHexes.clear();
         artyAutoHitHexes.addAll(newArtyAutoHitHexes);
@@ -653,6 +719,115 @@ public final class Player extends TurnOrdered {
     }
 
     /**
+     * @return the best HQ initiative bonus from this player's units (TacOps Mobile HQs option)
+     */
+    public int getHQInitBonus() {
+        if (game == null) {
+            return 0;
+        }
+        if (!game.getOptions().booleanOption(OptionsConstants.ADVANCED_TAC_OPS_MOBILE_HQS)) {
+            return 0;
+        }
+
+        int bonus = 0;
+        for (InGameObject object : game.getInGameObjects()) {
+            if (object instanceof Entity entity && entity.getOwner().equals(this)
+                  && isActiveForCommandBonus(entity)) {
+                bonus = Math.max(entity.getHQIniBonus(), bonus);
+            }
+        }
+        return bonus;
+    }
+
+    /**
+     * @return the best quirk initiative bonus from this player's units
+     */
+    public int getQuirkInitBonus() {
+        if (game == null) {
+            return 0;
+        }
+
+        int bonus = 0;
+        for (InGameObject object : game.getInGameObjects()) {
+            if (object instanceof Entity entity && entity.getOwner().equals(this)
+                  && isActiveForCommandBonus(entity)) {
+                bonus = Math.max(bonus, entity.getQuirkIniBonus());
+            }
+        }
+        return bonus;
+    }
+
+    /**
+     * @return the name of the quirk providing the best initiative bonus, or null if none
+     */
+    public String getQuirkInitBonusName() {
+        if (game == null) {
+            return null;
+        }
+
+        int bestBonus = 0;
+        String bestQuirkName = null;
+        for (InGameObject object : game.getInGameObjects()) {
+            if (object instanceof Entity entity && entity.getOwner().equals(this)
+                  && isActiveForCommandBonus(entity)) {
+                int entityBonus = entity.getQuirkIniBonus();
+                if (entityBonus > bestBonus) {
+                    bestBonus = entityBonus;
+                    // Determine which quirk is providing the bonus
+                    if (entity.hasQuirk(OptionsConstants.QUIRK_POS_BATTLE_COMP)) {
+                        bestQuirkName = "Battle Computer";
+                    } else if (entity.hasQuirk(OptionsConstants.QUIRK_POS_COMMAND_MEK)) {
+                        bestQuirkName = "Command Mek";
+                    }
+                }
+            }
+        }
+        return bestQuirkName;
+    }
+
+    /**
+     * @return the best command console/tech officer initiative bonus from this player's units (+2)
+     */
+    public int getCommandConsoleBonus() {
+        if (game == null) {
+            return 0;
+        }
+
+        for (InGameObject object : game.getInGameObjects()) {
+            if (object instanceof Entity entity && entity.getOwner().equals(this)) {
+                if (isActiveForCommandBonus(entity)) {
+                    if (entity.hasCommandConsoleBonus() || entity.getCrew().hasActiveTechOfficer()) {
+                        return 2;
+                    }
+                }
+            }
+        }
+        return 0;
+    }
+
+    /**
+     * @return the best crew command skill initiative bonus from this player's units (RPG option)
+     */
+    public int getCrewCommandBonus() {
+        if (game == null) {
+            return 0;
+        }
+        if (!game.getOptions().booleanOption(OptionsConstants.RPG_COMMAND_INIT)) {
+            return 0;
+        }
+
+        int bonus = 0;
+        for (InGameObject object : game.getInGameObjects()) {
+            if (object instanceof Entity entity && entity.getOwner().equals(this)) {
+                if (isActiveForCommandBonus(entity)) {
+                    bonus = Math.max(bonus, entity.getCrew().getCommandBonus());
+                }
+            }
+        }
+        return bonus;
+    }
+
+    /**
      * @return the bonus to this player's initiative rolls for the highest value initiative (i.e. the 'commander')
      */
     public int getOverallCommandBonus() {
@@ -689,12 +864,7 @@ public final class Player extends TurnOrdered {
     public int getIndividualCommandBonus(Entity entity, boolean useCommandInit) {
         int bonus = 0;
         // Only consider this during normal rounds when unit is deployed on board, or about to deploy this round.
-        if (!entity.isDestroyed() &&
-              entity.getCrew().isActive() &&
-              !entity.isCaptured() &&
-              !(entity instanceof MekWarrior) &&
-              (entity.isDeployed() && !entity.isOffBoard()) ||
-              (entity.getDeployRound() == (game.getCurrentRound() + 1))) {
+        if (isActiveForCommandBonus(entity)) {
             if (useCommandInit) {
                 bonus = entity.getCrew().getCommandBonus();
             }
@@ -708,20 +878,150 @@ public final class Player extends TurnOrdered {
         return bonus;
     }
 
+    /**
+     * Calculate the Triple-Core Processor initiative bonus for this player's force. Per IO pg 81, a TCP-implanted
+     * warrior with VDNI/BVDNI provides: - +2 base initiative bonus - +1 additional if unit has CCM, C3/C3i, or >3 tons
+     * communications equipment - -1 if unit is shutdown or ECM-affected (unless unit has own ECM for counter-ECM)
+     *
+     * @return The TCP initiative bonus from the best qualifying entity
+     */
+    public int getTCPInitBonus() {
+        if (game == null) {
+            LOGGER.debug("TCP: game is null for player {}", name);
+            return 0;
+        }
+
+        LOGGER.debug("TCP: Checking for player {} in round {}", name, game.getCurrentRound());
+
+        int bestBonus = 0;
+        for (InGameObject object : game.getInGameObjects()) {
+            if (!(object instanceof Entity entity)) {
+                continue;
+            }
+            if (!entity.getOwner().equals(this)) {
+                continue;
+            }
+            // Must be deployed and on-board, OR about to deploy next round
+            // Uses same pattern as getCommandConsoleBonus() and getCrewCommandBonus()
+            if (entity.isDestroyed()) {
+                LOGGER.debug("TCP: {} skipped - destroyed", entity.getDisplayName());
+                continue;
+            }
+            boolean eligibleForBonus = (entity.isDeployed() && !entity.isOffBoard()) ||
+                  (entity.getDeployRound() == (game.getCurrentRound() + 1));
+            if (!eligibleForBonus) {
+                LOGGER.debug("TCP: {} skipped - not deployed or deploying next round", entity.getDisplayName());
+                continue;
+            }
+            // Must have TCP + VDNI/BVDNI
+            if (!entity.hasAbility(OptionsConstants.MD_TRIPLE_CORE_PROCESSOR)) {
+                LOGGER.debug("TCP: {} skipped - no TCP implant", entity.getDisplayName());
+                continue;
+            }
+            if (!entity.hasAbility(OptionsConstants.MD_VDNI)
+                  && !entity.hasAbility(OptionsConstants.MD_BVDNI)) {
+                LOGGER.debug("TCP: {} skipped - no VDNI/BVDNI", entity.getDisplayName());
+                continue;
+            }
+            // Crew must be active
+            if (entity.getCrew() == null || !entity.getCrew().isActive()) {
+                LOGGER.debug("TCP: {} skipped - crew not active", entity.getDisplayName());
+                continue;
+            }
+
+            // Base +2 bonus
+            int bonus = 2;
+
+            // +1 for Cockpit Command Module, C3/C3i, or >3 tons communications equipment
+            if (hasTCPCommandEquipment(entity)) {
+                bonus += 1;
+            }
+
+            // Per Xotl ruling: negative modifiers stack cumulatively
+            // -1 if shutdown
+            if (entity.isShutDown()) {
+                bonus -= 1;
+            }
+            // -1 if ECM-affected, unless unit has own ECM (counter-ECM per IO pg 81)
+            if (isEntityECMAffected(entity) && !entity.hasECM()) {
+                bonus -= 1;
+            }
+            // -1 if EMI conditions are active (global effect, can't be countered)
+            if (game instanceof Game twGame && twGame.getPlanetaryConditions().getEMI().isEMI()) {
+                bonus -= 1;
+            }
+
+            LOGGER.debug("TCP: {} qualifies with bonus {} (deployed={}, deployRound={})",
+                  entity.getDisplayName(), bonus, entity.isDeployed(), entity.getDeployRound());
+            bestBonus = Math.max(bestBonus, bonus);
+        }
+        LOGGER.debug("TCP: Final TCP bonus for player {}: {}", name, bestBonus);
+        return bestBonus;
+    }
+
+    /**
+     * Check if an entity has command equipment that qualifies for TCP +1 initiative bonus. This includes: Cockpit
+     * Command Module, C3/C3i systems, or >3 tons of communications equipment.
+     */
+    private boolean hasTCPCommandEquipment(Entity entity) {
+        // Cockpit Command Module
+        if (entity.hasCommandConsoleBonus()) {
+            return true;
+        }
+
+        // C3 or C3i system
+        if (entity.hasAnyC3System()) {
+            return true;
+        }
+
+        // More than 3 tons of communications equipment
+        double commsTonnage = 0;
+        for (var m : entity.getMisc()) {
+            if (m.getType().hasFlag(MiscType.F_COMMUNICATIONS)) {
+                commsTonnage += m.getTonnage();
+            }
+        }
+        return commsTonnage > 3;
+    }
+
+    /**
+     * Check if an entity is affected by hostile ECM for TCP initiative penalty purposes.
+     */
+    private boolean isEntityECMAffected(Entity entity) {
+        if (entity.getPosition() == null) {
+            return false;
+        }
+        return ComputeECM.isAffectedByECM(entity, entity.getPosition(), entity.getPosition());
+    }
+
+    /**
+     * Checks if an entity is active and available for command bonus purposes. Entity must be not destroyed, have active
+     * crew, not captured, not an ejected pilot, and either deployed on-board or deploying next round.
+     *
+     * @param entity the entity to check
+     *
+     * @return true if the entity can provide command bonuses
+     */
+    private boolean isActiveForCommandBonus(Entity entity) {
+        boolean isAlive = !entity.isDestroyed() && entity.getCrew().isActive() && !entity.isCaptured();
+        boolean isNotEjectedPilot = !(entity instanceof MekWarrior);
+        boolean isDeployedOnBoard = entity.isDeployed() && !entity.isOffBoard();
+        boolean isDeployingNextRound = entity.getDeployRound() == (game.getCurrentRound() + 1);
+
+        return isAlive && isNotEjectedPilot && (isDeployedOnBoard || isDeployingNextRound);
+    }
+
     public String getColorForPlayer() {
         return "<B><font color='" + getColour().getHexString(0x00F0F0F0) + "'>" + getName() + "</font></B>";
     }
 
     public String getColoredPlayerNameWithTeam() {
-        if (team == -1) {
-            team = 0;
-        }
         return "<B><font color='" +
               getColour().getHexString(0x00F0F0F0) +
               "'>" +
               getName() +
               " (" +
-              TEAM_NAMES[team] +
+              getTeamName() +
               ")</font></B>";
     }
 
@@ -785,11 +1085,7 @@ public final class Player extends TurnOrdered {
         copy.startingAnySEx = startingAnySEx;
         copy.startingAnySEy = startingAnySEy;
 
-        copy.numMfConv = numMfConv;
-        copy.numMfCmd = numMfCmd;
-        copy.numMfVibra = numMfVibra;
-        copy.numMfActive = numMfActive;
-        copy.numMfInferno = numMfInferno;
+        copy.minefieldCounts = Arrays.copyOf(minefieldCounts, Minefield.TYPE_SIZE);
 
         copy.artyAutoHitHexes = new ArrayList<>(artyAutoHitHexes);
 
@@ -806,7 +1102,7 @@ public final class Player extends TurnOrdered {
 
         copy.admitsDefeat = admitsDefeat;
 
-        copy.setInitiative(getInitiative());
+        copy.setInitiative(new InitiativeRoll(getInitiative()));
 
         return copy;
     }

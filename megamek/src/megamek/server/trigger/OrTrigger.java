@@ -45,6 +45,7 @@ import megamek.common.game.IGame;
  */
 public record OrTrigger(List<Trigger> triggers) implements Trigger {
 
+    @Deprecated(since = "0.51.0", forRemoval = true)
     public OrTrigger(Trigger... triggers) {
         this(Arrays.asList(triggers));
     }

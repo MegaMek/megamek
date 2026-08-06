@@ -155,7 +155,7 @@ class TeamTest {
         when(mockPlayer1.getConstantInitBonus()).thenReturn(-1);
         when(mockPlayer2.getConstantInitBonus()).thenReturn(-2);
         when(mockPlayer3.getConstantInitBonus()).thenReturn(-3);
-        when(mockPlayer2.getOverallCommandBonus()).thenReturn(2);
+        when(mockPlayer2.getCommandConsoleBonus()).thenReturn(2);
 
         int initBonus = testTeam.getTotalInitBonus(useInitCompBonus);
         assertEquals(1, initBonus);
@@ -179,8 +179,8 @@ class TeamTest {
         when(mockPlayer1.getConstantInitBonus()).thenReturn(-1);
         when(mockPlayer2.getConstantInitBonus()).thenReturn(-2);
         when(mockPlayer3.getConstantInitBonus()).thenReturn(-3);
-        when(mockPlayer1.getOverallCommandBonus()).thenReturn(1);
-        when(mockPlayer2.getOverallCommandBonus()).thenReturn(2);
+        when(mockPlayer1.getCommandConsoleBonus()).thenReturn(1);
+        when(mockPlayer2.getCommandConsoleBonus()).thenReturn(2);
 
         int initBonus = testTeam.getTotalInitBonus(useInitCompBonus);
         assertEquals(1, initBonus);
@@ -204,12 +204,12 @@ class TeamTest {
         when(mockPlayer1.getConstantInitBonus()).thenReturn(-1);
         when(mockPlayer2.getConstantInitBonus()).thenReturn(-2);
         when(mockPlayer3.getConstantInitBonus()).thenReturn(-3);
-        when(mockPlayer1.getOverallCommandBonus()).thenReturn(1);
-        when(mockPlayer2.getOverallCommandBonus()).thenReturn(2);
-        when(mockPlayer3.getOverallCommandBonus()).thenReturn(4);
+        when(mockPlayer1.getCommandConsoleBonus()).thenReturn(1);
+        when(mockPlayer2.getCommandConsoleBonus()).thenReturn(2);
+        when(mockPlayer3.getCommandConsoleBonus()).thenReturn(4);
 
         int initBonus = testTeam.getTotalInitBonus(useInitCompBonus);
-        assertEquals(3, initBonus);
+        assertEquals(3, initBonus);  // max(-1,-2,-3) + max(1,2,4) = -1 + 4 = 3
     }
 
     @Test
@@ -230,12 +230,10 @@ class TeamTest {
         when(mockPlayer1.getConstantInitBonus()).thenReturn(1);
         when(mockPlayer2.getConstantInitBonus()).thenReturn(2);
         when(mockPlayer3.getConstantInitBonus()).thenReturn(3);
-        when(mockPlayer1.getOverallCommandBonus()).thenReturn(0);
-        when(mockPlayer2.getOverallCommandBonus()).thenReturn(0);
-        when(mockPlayer3.getOverallCommandBonus()).thenReturn(0);
+        // Command bonuses default to 0 (unmocked)
 
         int initBonus = testTeam.getTotalInitBonus(useInitCompBonus);
-        assertEquals(3, initBonus);
+        assertEquals(3, initBonus);  // max(1,2,3) = 3
     }
 
     @Test
@@ -256,16 +254,17 @@ class TeamTest {
         when(mockPlayer1.getConstantInitBonus()).thenReturn(1);
         when(mockPlayer2.getConstantInitBonus()).thenReturn(2);
         when(mockPlayer3.getConstantInitBonus()).thenReturn(3);
-        when(mockPlayer1.getOverallCommandBonus()).thenReturn(1);
-        when(mockPlayer2.getOverallCommandBonus()).thenReturn(2);
-        when(mockPlayer3.getOverallCommandBonus()).thenReturn(3);
+        when(mockPlayer1.getCommandConsoleBonus()).thenReturn(1);
+        when(mockPlayer2.getCommandConsoleBonus()).thenReturn(2);
+        when(mockPlayer3.getCommandConsoleBonus()).thenReturn(3);
 
         int initBonus = testTeam.getTotalInitBonus(useInitCompBonus);
-        assertEquals(6, initBonus);
+        // Per Xotl ruling: only highest positive applies (across all types)
+        assertEquals(3, initBonus);
     }
 
     @Test
-    void testTeamWithAllPositiveInitAndAllCommandBonusAndTurnInitBonus() {
+    void testTeamWithConstantCommandAndQuirkBonuses() {
         Team testTeam = new Team(1);
         assertTrue(testTeam.isEmpty());
 
@@ -282,19 +281,20 @@ class TeamTest {
         when(mockPlayer1.getConstantInitBonus()).thenReturn(1);
         when(mockPlayer2.getConstantInitBonus()).thenReturn(2);
         when(mockPlayer3.getConstantInitBonus()).thenReturn(3);
-        when(mockPlayer1.getOverallCommandBonus()).thenReturn(1);
-        when(mockPlayer2.getOverallCommandBonus()).thenReturn(2);
-        when(mockPlayer3.getOverallCommandBonus()).thenReturn(3);
-        when(mockPlayer1.getTurnInitBonus()).thenReturn(1);
-        when(mockPlayer2.getTurnInitBonus()).thenReturn(2);
-        when(mockPlayer3.getTurnInitBonus()).thenReturn(3);
+        when(mockPlayer1.getCommandConsoleBonus()).thenReturn(1);
+        when(mockPlayer2.getCommandConsoleBonus()).thenReturn(2);
+        when(mockPlayer3.getCommandConsoleBonus()).thenReturn(3);
+        when(mockPlayer1.getQuirkInitBonus()).thenReturn(1);
+        when(mockPlayer2.getQuirkInitBonus()).thenReturn(2);
+        when(mockPlayer3.getQuirkInitBonus()).thenReturn(3);
 
         int initBonus = testTeam.getTotalInitBonus(useInitCompBonus);
-        assertEquals(6, initBonus);
+        // Per Xotl ruling: only highest positive applies (across all types)
+        assertEquals(3, initBonus);
     }
 
     @Test
-    void testTeamWithAllPositiveInitAndAllCommandBonusAndNegativeTurnInitBonus() {
+    void testTeamWithConstantAndCommandBonusesNoQuirk() {
         Team testTeam = new Team(1);
         assertTrue(testTeam.isEmpty());
 
@@ -311,19 +311,18 @@ class TeamTest {
         when(mockPlayer1.getConstantInitBonus()).thenReturn(1);
         when(mockPlayer2.getConstantInitBonus()).thenReturn(2);
         when(mockPlayer3.getConstantInitBonus()).thenReturn(3);
-        when(mockPlayer1.getOverallCommandBonus()).thenReturn(1);
-        when(mockPlayer2.getOverallCommandBonus()).thenReturn(2);
-        when(mockPlayer3.getOverallCommandBonus()).thenReturn(3);
-        when(mockPlayer1.getTurnInitBonus()).thenReturn(-1);
-        when(mockPlayer2.getTurnInitBonus()).thenReturn(-2);
-        when(mockPlayer3.getTurnInitBonus()).thenReturn(-3);
+        when(mockPlayer1.getCommandConsoleBonus()).thenReturn(1);
+        when(mockPlayer2.getCommandConsoleBonus()).thenReturn(2);
+        when(mockPlayer3.getCommandConsoleBonus()).thenReturn(3);
+        // Quirk bonus is 0 by default (not mocked)
 
         int initBonus = testTeam.getTotalInitBonus(useInitCompBonus);
-        assertEquals(6, initBonus);
+        // Per Xotl ruling: only highest positive applies (across all types)
+        assertEquals(3, initBonus);
     }
 
     @Test
-    void testTeamWithAllPositiveInitAndAllCommandBonusAndNegativeTurnInitBonusAndCompensationBonus() {
+    void testTeamWithConstantAndCommandBonusesWithCompensation() {
         Team testTeam = new Team(1);
         assertTrue(testTeam.isEmpty());
 
@@ -340,19 +339,18 @@ class TeamTest {
         when(mockPlayer1.getConstantInitBonus()).thenReturn(1);
         when(mockPlayer2.getConstantInitBonus()).thenReturn(2);
         when(mockPlayer3.getConstantInitBonus()).thenReturn(3);
-        when(mockPlayer1.getOverallCommandBonus()).thenReturn(1);
-        when(mockPlayer2.getOverallCommandBonus()).thenReturn(2);
-        when(mockPlayer3.getOverallCommandBonus()).thenReturn(3);
-        when(mockPlayer1.getTurnInitBonus()).thenReturn(-1);
-        when(mockPlayer2.getTurnInitBonus()).thenReturn(-2);
-        when(mockPlayer3.getTurnInitBonus()).thenReturn(-3);
+        when(mockPlayer1.getCommandConsoleBonus()).thenReturn(1);
+        when(mockPlayer2.getCommandConsoleBonus()).thenReturn(2);
+        when(mockPlayer3.getCommandConsoleBonus()).thenReturn(3);
+        // Quirk bonus is 0 by default (not mocked)
 
         int initBonus = testTeam.getTotalInitBonus(useInitCompBonus);
-        assertEquals(6, initBonus);
+        // Per Xotl ruling: only highest positive applies (across all types)
+        assertEquals(3, initBonus);
     }
 
     @Test
-    void testTeamWithAllPositiveInitAndAllCommandBonusAndNegativeTurnInitBonusAndNegativeCompensationBonus() {
+    void testTeamWithConstantAndCommandBonusesWithNegativeCompensation() {
         Team testTeam = new Team(1);
         assertTrue(testTeam.isEmpty());
 
@@ -369,22 +367,22 @@ class TeamTest {
         when(mockPlayer1.getConstantInitBonus()).thenReturn(1);
         when(mockPlayer2.getConstantInitBonus()).thenReturn(2);
         when(mockPlayer3.getConstantInitBonus()).thenReturn(3);
-        when(mockPlayer1.getOverallCommandBonus()).thenReturn(1);
-        when(mockPlayer2.getOverallCommandBonus()).thenReturn(2);
-        when(mockPlayer3.getOverallCommandBonus()).thenReturn(3);
-        when(mockPlayer1.getTurnInitBonus()).thenReturn(-1);
-        when(mockPlayer2.getTurnInitBonus()).thenReturn(-2);
-        when(mockPlayer3.getTurnInitBonus()).thenReturn(-3);
+        when(mockPlayer1.getCommandConsoleBonus()).thenReturn(1);
+        when(mockPlayer2.getCommandConsoleBonus()).thenReturn(2);
+        when(mockPlayer3.getCommandConsoleBonus()).thenReturn(3);
+        // Quirk bonus is 0 by default (not mocked)
         when(mockPlayer1.getInitCompensationBonus()).thenReturn(-1);
         when(mockPlayer2.getInitCompensationBonus()).thenReturn(-2);
         when(mockPlayer3.getInitCompensationBonus()).thenReturn(-3);
 
         int initBonus = testTeam.getTotalInitBonus(useInitCompBonus);
-        assertEquals(6, initBonus);
+        // Per Xotl ruling: only highest positive applies, negatives stack
+        // Highest positive is 3, negatives sum to -6, but comp bonus negative is clamped
+        assertEquals(3, initBonus);
     }
 
     @Test
-    void testTeamWithAllPositiveInitAndAllCommandBonusAndNegativeTurnInitBonusAndPositiveCompensationBonus() {
+    void testTeamWithConstantAndCommandBonusesWithPositiveCompensation() {
         Team testTeam = new Team(1);
         assertTrue(testTeam.isEmpty());
 
@@ -401,22 +399,21 @@ class TeamTest {
         when(mockPlayer1.getConstantInitBonus()).thenReturn(1);
         when(mockPlayer2.getConstantInitBonus()).thenReturn(2);
         when(mockPlayer3.getConstantInitBonus()).thenReturn(3);
-        when(mockPlayer1.getOverallCommandBonus()).thenReturn(1);
-        when(mockPlayer2.getOverallCommandBonus()).thenReturn(2);
-        when(mockPlayer3.getOverallCommandBonus()).thenReturn(3);
-        when(mockPlayer1.getTurnInitBonus()).thenReturn(-1);
-        when(mockPlayer2.getTurnInitBonus()).thenReturn(-2);
-        when(mockPlayer3.getTurnInitBonus()).thenReturn(-3);
+        when(mockPlayer1.getCommandConsoleBonus()).thenReturn(1);
+        when(mockPlayer2.getCommandConsoleBonus()).thenReturn(2);
+        when(mockPlayer3.getCommandConsoleBonus()).thenReturn(3);
+        // Quirk bonus is 0 by default (not mocked)
         when(mockPlayer1.getInitCompensationBonus()).thenReturn(1);
         when(mockPlayer2.getInitCompensationBonus()).thenReturn(2);
         when(mockPlayer3.getInitCompensationBonus()).thenReturn(3);
 
         int initBonus = testTeam.getTotalInitBonus(useInitCompBonus);
-        assertEquals(9, initBonus);
+        // Per Xotl ruling: only highest positive applies (across all types)
+        assertEquals(3, initBonus);
     }
 
     @Test
-    void testTeamWithAllPositiveInitAndAllCommandBonusAndNegativeTurnInitBonusAndPositiveCompensationBonusAndObserver() {
+    void testTeamInitBonusIgnoresObserverPlayers() {
         Team testTeam = new Team(1);
         assertTrue(testTeam.isEmpty());
 
@@ -437,21 +434,19 @@ class TeamTest {
         when(mockPlayer2.getConstantInitBonus()).thenReturn(2);
         when(mockPlayer3.getConstantInitBonus()).thenReturn(3);
         when(mockPlayer4.getConstantInitBonus()).thenReturn(0);
-        when(mockPlayer1.getOverallCommandBonus()).thenReturn(1);
-        when(mockPlayer2.getOverallCommandBonus()).thenReturn(2);
-        when(mockPlayer3.getOverallCommandBonus()).thenReturn(3);
-        when(mockPlayer4.getOverallCommandBonus()).thenReturn(0);
-        when(mockPlayer1.getTurnInitBonus()).thenReturn(-1);
-        when(mockPlayer2.getTurnInitBonus()).thenReturn(-2);
-        when(mockPlayer3.getTurnInitBonus()).thenReturn(-3);
-        when(mockPlayer4.getTurnInitBonus()).thenReturn(0);
+        when(mockPlayer1.getCommandConsoleBonus()).thenReturn(1);
+        when(mockPlayer2.getCommandConsoleBonus()).thenReturn(2);
+        when(mockPlayer3.getCommandConsoleBonus()).thenReturn(3);
+        when(mockPlayer4.getCommandConsoleBonus()).thenReturn(0);
+        // Note: quirk bonus is 0 by default (unmocked)
         when(mockPlayer1.getInitCompensationBonus()).thenReturn(1);
         when(mockPlayer2.getInitCompensationBonus()).thenReturn(2);
         when(mockPlayer3.getInitCompensationBonus()).thenReturn(3);
         when(mockPlayer4.getInitCompensationBonus()).thenReturn(0);
 
         int initBonus = testTeam.getTotalInitBonus(useInitCompBonus);
-        assertEquals(9, initBonus);
+        // Per Xotl ruling: only highest positive applies (across all types)
+        assertEquals(3, initBonus);
     }
 
     @Test

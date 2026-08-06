@@ -131,7 +131,7 @@ public class BattleArmorMapSet implements DisplayMapSet {
         BattleArmor ba = (BattleArmor) e;
         int armor;
         int internal;
-        int men = ba.getTroopers();
+        int men = ba.getSquadSize();
 
         for (int x = 0; x < men; x++) {
             armorAreas[x].setVisible(true);

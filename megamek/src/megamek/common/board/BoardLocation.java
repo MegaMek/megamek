@@ -39,6 +39,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
 
+import jakarta.annotation.Nonnull;
 import megamek.common.annotations.Nullable;
 
 /**
@@ -101,6 +102,7 @@ public record BoardLocation(Coords coords, int boardId, boolean isNoLocation) im
      *
      * @return True when this location's coords are equal to the given coords.
      */
+    @Deprecated(since = "0.51.0", forRemoval = true)
     public boolean isAt(@Nullable Coords coords) {
         return !isNoLocation && this.coords.equals(coords);
     }
@@ -166,6 +168,7 @@ public record BoardLocation(Coords coords, int boardId, boolean isNoLocation) im
     }
 
     @Override
+    @Nonnull
     public String toString() {
         return coords + "; Board Id: " + boardId;
     }

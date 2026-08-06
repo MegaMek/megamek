@@ -36,6 +36,7 @@ package megamek.common.alphaStrike;
 public enum ASRange {
     SHORT, MEDIUM, LONG, EXTREME, HORIZON;
 
+    @Deprecated(since = "0.51.0", forRemoval = true)
     public boolean insideRange(int distance) {
         return switch (this) {
             case SHORT -> distance <= 6;

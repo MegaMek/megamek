@@ -87,6 +87,7 @@ public class MapSetup implements Serializable {
         boards = mapSettings.getBoardsSelectedVector();
     }
 
+    @Deprecated(since = "0.51.0", forRemoval = true)
     public MapSetup() {
 
     }

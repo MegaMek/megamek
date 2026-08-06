@@ -33,9 +33,9 @@
 
 package megamek.server;
 
-import megamek.common.game.IGame;
 import megamek.common.Player;
 import megamek.common.enums.GamePhase;
+import megamek.common.game.IGame;
 import megamek.common.net.enums.PacketCommand;
 import megamek.common.net.packets.InvalidPacketDataException;
 import megamek.common.net.packets.Packet;
@@ -58,6 +58,7 @@ public abstract class AbstractGameManager implements IGameManager {
      *
      * @see Server#send(Packet)
      */
+    @Override
     public void send(Packet packet) {
         Server.getServerInstance().send(packet);
     }
@@ -67,6 +68,7 @@ public abstract class AbstractGameManager implements IGameManager {
      *
      * @see Server#send(int, Packet)
      */
+    @Override
     public void send(int connId, Packet p) {
         Server.getServerInstance().send(connId, p);
     }
@@ -76,8 +78,10 @@ public abstract class AbstractGameManager implements IGameManager {
         if (packet.command() == PacketCommand.PLAYER_READY) {
             try {
                 receivePlayerDone(packet, connId);
-                send(packetHelper.createPlayerDonePacket(connId));
-                checkReady();
+                if (getGame().getPlayer(connId) != null) {
+                    send(packetHelper.createPlayerDonePacket(connId));
+                    checkReady();
+                }
             } catch (InvalidPacketDataException e) {
                 logger.error("Invalid packet data:", e);
             }

@@ -32,9 +32,6 @@
  */
 package megamek.client.ui.baseComponents;
 
-import com.formdev.flatlaf.icons.FlatAbstractIcon;
-
-import javax.swing.UIManager;
 import java.awt.Component;
 import java.awt.Graphics2D;
 import java.awt.Shape;
@@ -43,10 +40,14 @@ import java.awt.geom.Area;
 import java.awt.geom.Ellipse2D;
 import java.awt.geom.Rectangle2D;
 import java.awt.geom.RoundRectangle2D;
+import javax.swing.UIManager;
+
+import com.formdev.flatlaf.icons.FlatAbstractIcon;
 
 /**
  * This is a cogwheel icon that usually indicates some sort of config menu.
  */
+@Deprecated(since = "0.51.0", forRemoval = true)
 public class CogwheelIcon extends FlatAbstractIcon {
 
     private final int size;
@@ -60,6 +61,7 @@ public class CogwheelIcon extends FlatAbstractIcon {
      * Creates a cogwheel icon at the standard size (16) suitable to place it in line with, e.g. a JTextfield and with a
      * standard FlatLaf color.
      */
+    @Deprecated(since = "0.51.0", forRemoval = true)
     public CogwheelIcon() {
         this(16);
     }

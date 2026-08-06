@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2021-2025 The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2021-2026 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -49,15 +49,7 @@ import java.io.Serial;
 import java.text.NumberFormat;
 import java.util.ArrayList;
 import java.util.List;
-import javax.swing.Box;
-import javax.swing.BoxLayout;
-import javax.swing.ImageIcon;
-import javax.swing.JLabel;
-import javax.swing.JPanel;
-import javax.swing.JScrollPane;
-import javax.swing.JTable;
-import javax.swing.ListSelectionModel;
-import javax.swing.ScrollPaneConstants;
+import javax.swing.*;
 import javax.swing.border.EmptyBorder;
 import javax.swing.table.AbstractTableModel;
 import javax.swing.table.DefaultTableCellRenderer;
@@ -73,14 +65,18 @@ import megamek.client.ui.clientGUI.TableColumnManager;
 import megamek.client.ui.util.UIUtil;
 import megamek.common.Player;
 import megamek.common.Team;
+import megamek.common.equipment.GunEmplacement;
+import megamek.common.equipment.HandheldWeapon;
 import megamek.common.game.Game;
 import megamek.common.loaders.MapSettings;
 import megamek.common.options.OptionsConstants;
+import megamek.common.units.AbstractBuildingEntity;
 import megamek.common.units.Aero;
 import megamek.common.units.Entity;
 import megamek.common.units.FighterSquadron;
 import megamek.common.units.Infantry;
 import megamek.common.units.Mek;
+import megamek.common.units.ProtoMek;
 import megamek.common.units.Tank;
 
 /**
@@ -89,9 +85,6 @@ import megamek.common.units.Tank;
  * the stored ClientGUI.
  */
 public class TeamOverviewPanel extends JPanel {
-
-    @Serial
-    private static final long serialVersionUID = -4754010220963493049L;
 
     private enum TOP_COLS {
         TEAM, MEMBERS, TONNAGE, COST, BV, HIDDEN, UNITS
@@ -247,10 +240,10 @@ public class TeamOverviewPanel extends JPanel {
                 long cost = 0;
                 double ton = 0;
                 int bv = 0;
-                int[] unitCounts = { 0, 0, 0, 0, 0 };
+                int[] unitCounts = { 0, 0, 0, 0, 0, 0, 0, 0 };
                 int hiddenBv = 0;
-                boolean[] unitCritical = { false, false, false, false, false };
-                boolean[] unitWarnings = { false, false, false, false, false };
+                boolean[] unitCritical = { false, false, false, false, false, false, false, false };
+                boolean[] unitWarnings = { false, false, false, false, false, false, false, false };
                 for (Player teamMember : team.players()) {
                     // Get the "real" player object, as the team's may be wrong
                     Player player = game.getPlayer(teamMember.getId());
@@ -295,17 +288,18 @@ public class TeamOverviewPanel extends JPanel {
         }
 
         private int classIndex(Entity entity) {
-            if (entity instanceof Mek) {
-                return 0;
-            } else if (entity instanceof Tank) {
-                return 1;
-            } else if (entity instanceof Aero) {
-                return 2;
-            } else if (entity instanceof Infantry) {
-                return 3;
-            } else { // ProtoMek
-                return 4;
-            }
+            return switch (entity) {
+                case GunEmplacement ignored -> 5;
+                case AbstractBuildingEntity ignored -> 5;
+                case Mek ignored -> 0;
+                case Tank ignored -> 1;
+                case Aero ignored -> 2;
+                case Infantry ignored -> 3;
+                case HandheldWeapon ignored -> 6;
+                case ProtoMek ignored -> 4;
+                case null, default ->  // ?
+                      7;
+            };
         }
 
         private String unitSummary(int[] counts, boolean[] criticalSlots, boolean[] warnings) {
@@ -452,11 +446,8 @@ public class TeamOverviewPanel extends JPanel {
 
     /** A specialized renderer for the mek table. */
     private class MemberListRenderer extends JPanel implements TableCellRenderer {
-        @Serial
-        private static final long serialVersionUID = 6379065972840999336L;
 
         MemberListRenderer() {
-            super();
             setLayout(new BoxLayout(this, BoxLayout.PAGE_AXIS));
         }
 
@@ -491,7 +482,11 @@ public class TeamOverviewPanel extends JPanel {
                 setBackground(table.getSelectionBackground());
             } else {
                 setForeground(table.getForeground());
-                setBackground(table.getBackground());
+                if (row % 2 == 0) {
+                    setBackground(table.getBackground());
+                } else {
+                    setBackground(UIManager.getColor("Table.alternateRowColor"));
+                }
             }
             return this;
         }

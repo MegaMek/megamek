@@ -60,7 +60,7 @@ public class CoordsDeserializer {
             List<Integer> xyList = new ArrayList<>();
             coordsNode.elements().forEachRemaining(n -> xyList.add(n.asInt()));
             if (xyList.size() == 2) {
-                return new Coords(xyList.get(0) - 1, xyList.get(1) - 1);
+                return new Coords(xyList.getFirst() - 1, xyList.get(1) - 1);
             } else {
                 throw new IllegalArgumentException(MESSAGE);
             }

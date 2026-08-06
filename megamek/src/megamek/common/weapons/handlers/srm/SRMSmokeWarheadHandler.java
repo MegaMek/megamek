@@ -37,6 +37,7 @@ package megamek.common.weapons.handlers.srm;
 import java.io.Serial;
 import java.util.Vector;
 
+import megamek.common.RangeType;
 import megamek.common.Report;
 import megamek.common.ToHitData;
 import megamek.common.actions.WeaponAttackAction;
@@ -45,6 +46,7 @@ import megamek.common.compute.Compute;
 import megamek.common.equipment.AmmoType;
 import megamek.common.game.Game;
 import megamek.common.loaders.EntityLoadingException;
+import megamek.common.options.OptionsConstants;
 import megamek.common.units.Entity;
 import megamek.server.SmokeCloud;
 import megamek.server.totalWarfare.TWGameManager;
@@ -64,7 +66,6 @@ public class SRMSmokeWarheadHandler extends SRMHandler {
     @Override
     protected boolean specialResolution(Vector<Report> vPhaseReport, Entity entityTarget) {
         Coords coords = target.getPosition();
-        Coords center = coords;
 
         AmmoType ammoType = ammo.getType();
 
@@ -76,8 +77,13 @@ public class SRMSmokeWarheadHandler extends SRMHandler {
             vPhaseReport.addElement(r);
         } else {
             // scatterable SRMs scatter like dive bombs
+            int range = RangeType.rangeBracket(coords.distance(attackingEntity.getPosition()),
+                  weaponType.getRanges(weapon, weapon.getLinkedAmmo()),
+                  game.getOptions().booleanOption(OptionsConstants.ADVANCED_COMBAT_TAC_OPS_RANGE),
+                  game.getOptions().booleanOption(OptionsConstants.ADVANCED_COMBAT_TAC_OPS_LOS_RANGE));
             coords = Compute.scatter(coords, 1);
-            if (game.getBoard().contains(coords)) {
+            
+            if (game.getBoard().contains(coords) && (range != RangeType.RANGE_OUT)) {
                 // misses and scatters to another hex
                 Report r = new Report(3195);
                 r.subject = subjectId;
@@ -100,9 +106,9 @@ public class SRMSmokeWarheadHandler extends SRMHandler {
                 smokeType = SmokeCloud.SMOKE_HEAVY;
             }
 
-            gameManager.deliverMissileSmoke(center, smokeType, vPhaseReport);
+            gameManager.deliverMissileSmoke(coords, smokeType, vPhaseReport);
         } else if (ammoType.getMunitionType().contains(AmmoType.Munitions.M_ANTI_TSM)) {
-            gameManager.deliverMissileSmoke(center, SmokeCloud.SMOKE_GREEN, vPhaseReport);
+            gameManager.deliverMissileSmoke(coords, SmokeCloud.SMOKE_GREEN, vPhaseReport);
         }
         return true;
     }

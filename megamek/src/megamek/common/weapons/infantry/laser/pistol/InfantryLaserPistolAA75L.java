@@ -71,7 +71,7 @@ public class InfantryLaserPistolAA75L extends InfantryWeapon {
         techAdvancement
               .setTechBase(TechBase.IS)
               .setISAdvancement(DATE_NONE, DATE_NONE, DATE_ES, DATE_NONE, DATE_NONE)
-              .setTechRating(TechRating.C)
+              .setTechRating(TechRating.D)
               .setAvailability(AvailabilityValue.C, AvailabilityValue.C, AvailabilityValue.C, AvailabilityValue.C)
               .setISApproximate(false, false, true, false, false)
               .setProductionFactions(Faction.LC);

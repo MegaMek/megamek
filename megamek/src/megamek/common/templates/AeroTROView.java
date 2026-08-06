@@ -43,6 +43,7 @@ import java.util.stream.Collectors;
 import megamek.common.Messages;
 import megamek.common.equipment.AmmoMounted;
 import megamek.common.equipment.AmmoType;
+import megamek.common.equipment.EquipmentType;
 import megamek.common.equipment.MiscType;
 import megamek.common.equipment.Mounted;
 import megamek.common.equipment.WeaponMounted;
@@ -294,7 +295,7 @@ public class AeroTROView extends TROView {
         final List<Map<String, Object>> ammo = new ArrayList<>();
         for (final List<AmmoMounted> aList : ammoByType.values()) {
             final Map<String, Object> ammoEntry = new HashMap<>();
-            ammoEntry.put("name", aList.get(0).getName().replaceAll("\\s+Ammo", ""));
+            ammoEntry.put("name", aList.getFirst().getName().replaceAll("\\s+Ammo", ""));
             ammoEntry.put("shots", aList.stream().mapToInt(Mounted::getUsableShotsLeft).sum());
             ammoEntry.put("tonnage", aList.stream().mapToDouble(Mounted::getSize).sum());
             ammo.add(ammoEntry);
@@ -325,6 +326,17 @@ public class AeroTROView extends TROView {
         } else {
             crew.add(String.format(Messages.getString("TROView." + stringKey), count));
         }
+    }
+
+    @Override
+    protected boolean skipMount(Mounted<?> mount, boolean includeAmmo) {
+        if (mount.getLocation() == Entity.LOC_NONE) {
+            // Skip armor, structure, and CASE. Show cockpit modifications like DNI.
+            return mount.getType().hasFlag(MiscType.F_CASE)
+                  || EquipmentType.isArmorType(mount.getType())
+                  || EquipmentType.isStructureType(mount.getType());
+        }
+        return super.skipMount(mount, includeAmmo);
     }
 
 }

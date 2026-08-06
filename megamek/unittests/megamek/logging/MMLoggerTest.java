@@ -105,6 +105,13 @@ public class MMLoggerTest {
         verifyLog(Level.DEBUG, "Debug message: test", e);
     }
 
+    @Test
+    public void testErrorLoggingWithExceptionAndParameterizedMessage() {
+        Exception e = new Exception("Test exception");
+        testMMLogger.error(e, "Error message w/ Exception: {}", "test");
+        verifyLog(Level.ERROR, "Error message w/ Exception: test", e);
+    }
+
     @EnabledIfEnvironmentVariable(named = "GUITests", matches = "true")
     @Test
     public void testErrorLogging() {
@@ -321,4 +328,3 @@ public class MMLoggerTest {
         }
     }
 }
-

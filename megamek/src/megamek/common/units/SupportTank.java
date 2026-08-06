@@ -227,6 +227,10 @@ public class SupportTank extends Tank {
             }
         }
 
+        // A bulldozer (or, under the unofficial rule, a backhoe) lets a vehicle enter a rubble hex its motive type
+        // would normally bar, so it can clear it (TacOps). Only the rubble prohibition is lifted; other prohibiting
+        // terrain still applies.
+        boolean rubblePassable = hasWorkingBulldozer() || BulldozerRules.canBackhoeClearRubble(this, game);
         return switch (movementMode) {
             case TRACKED -> (hex.terrainLevel(Terrains.WOODS) > 1)
                   || ((hex.terrainLevel(Terrains.WATER) > 0)
@@ -235,14 +239,14 @@ public class SupportTank extends Tank {
                   || hex.containsTerrain(Terrains.JUNGLE)
                   || (hex.terrainLevel(Terrains.MAGMA) > 1)
                   || (hex.terrainLevel(Terrains.ROUGH) > 1)
-                  || (hex.terrainLevel(Terrains.RUBBLE) > 5);
+                  || ((hex.terrainLevel(Terrains.RUBBLE) > 5) && !rubblePassable);
             case WHEELED -> (hex.terrainLevel(Terrains.WOODS) > 1)
                   || ((hex.terrainLevel(Terrains.WOODS) == 1) && !isMonoCycleOrBicycle())
                   || hex.containsTerrain(Terrains.ROUGH)
                   || ((hex.terrainLevel(Terrains.WATER) > 0)
                   && !hex.containsTerrain(Terrains.ICE)
                   && !hasEnvironmentalSealing())
-                  || hex.containsTerrain(Terrains.RUBBLE)
+                  || (hex.containsTerrain(Terrains.RUBBLE) && !rubblePassable)
                   || hex.containsTerrain(Terrains.MAGMA)
                   || hex.containsTerrain(Terrains.JUNGLE)
                   || (hex.terrainLevel(Terrains.SNOW) > 1)

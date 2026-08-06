@@ -63,7 +63,6 @@ public class ISVariableSpeedPulseLaserLarge extends VariableSpeedPulseLaserWeapo
         sortingName = "Laser VSP D";
         heat = 10;
         damage = WeaponType.DAMAGE_VARIABLE;
-        toHitModifier = -4;
         shortRange = 4;
         mediumRange = 8;
         longRange = 15;
@@ -82,7 +81,7 @@ public class ISVariableSpeedPulseLaserLarge extends VariableSpeedPulseLaserWeapo
         shortAV = 10;
         medAV = 7;
         maxRange = RANGE_MED;
-        rulesRefs = "321, TO";
+        rulesRefs = "133, TO:AUE";
         //Nov 22 - CGL requested we move to Standard for Simple Tech Level
         techAdvancement.setTechBase(TechBase.IS).setTechRating(TechRating.E)
               .setAvailability(AvailabilityValue.X, AvailabilityValue.X, AvailabilityValue.E, AvailabilityValue.D)

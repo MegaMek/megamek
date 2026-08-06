@@ -51,6 +51,7 @@ public class BotConfiguration {
         }
     }
 
+    @Deprecated(since = "0.51.0", forRemoval = true)
     public int getIgnoreLevel() {
         int difficulty = 3;
         try {

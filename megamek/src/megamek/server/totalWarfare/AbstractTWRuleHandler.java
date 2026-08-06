@@ -59,6 +59,7 @@ abstract class AbstractTWRuleHandler {
         gameManager.addReport(reports);
     }
 
+    @Deprecated(since = "0.51.0", forRemoval = true)
     void addReport(Vector<Report> reports, int indent) {
         gameManager.addReport(reports, indent);
     }

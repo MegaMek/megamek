@@ -93,6 +93,7 @@ public enum WeaponTypeFlag implements EquipmentFlag {
     F_PLASMA_MFUK, // Plasma Rifle
     F_PPC,
     F_PULSE,
+    F_VSP, // Variable Speed Pulse
     F_TASER,
     F_TSEMP, // Used for TSEMP Weapons.
     F_VGL,
@@ -129,6 +130,7 @@ public enum WeaponTypeFlag implements EquipmentFlag {
     F_INF_ARCHAIC,
     F_INF_BURST,
     F_INF_CLIMBING_CLAWS, // TODO Add game rules IO pg 84
+    F_INF_DISPOSABLE, // One-shot Disposable Weapon ("(1-D)" ammo listing), TO:AuE p.116, Corrected Sixth Printing
     F_INF_ENCUMBER,
     F_INF_NONPENETRATING,
     F_INF_POINT_BLANK,
@@ -143,5 +145,22 @@ public enum WeaponTypeFlag implements EquipmentFlag {
     /**
      * Denotes Clan Heavy Lasers (S, M, L)
      */
-    HEAVY_LASER
+    HEAVY_LASER,
+
+    // families
+    F_AC,
+    F_LRM,
+    F_SRM,
+    F_HAG,
+    F_MML,
+    F_MRM,
+    F_ATM,
+    F_NARC,
+    F_GAUSS,
+    F_HVAC,
+
+    F_INDIRECT_FIRE,
+
+    F_PPC_CAPACITOR_COMPATIBLE,
+    S_IMPROVED,
 }

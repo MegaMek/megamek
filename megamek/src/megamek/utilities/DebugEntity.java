@@ -41,9 +41,9 @@ import java.util.List;
 import megamek.common.CriticalSlot;
 import megamek.common.equipment.Transporter;
 import megamek.common.equipment.WeaponMounted;
+import megamek.common.units.ConvInfantry;
 import megamek.common.units.Entity;
 import megamek.common.units.FighterSquadron;
-import megamek.common.units.Infantry;
 import megamek.common.units.Mek;
 import megamek.common.units.ProtoMek;
 
@@ -93,14 +93,13 @@ public final class DebugEntity {
             }
             result.append("\n");
 
-            if (entity.isConventionalInfantry()) {
+            if (entity instanceof ConvInfantry infantry) {
                 result.append("Weapons:\n");
                 for (WeaponMounted weapon : entity.getTotalWeaponList()) {
                     result.append(weapon).append("\n");
                 }
                 result.append("\n");
 
-                Infantry infantry = (Infantry) entity;
                 result.append("Infantry weapons:\n");
                 if (infantry.getPrimaryWeapon() != null) {
                     result.append("Primary: ").append(infantry.getPrimaryWeapon()).append("\n");

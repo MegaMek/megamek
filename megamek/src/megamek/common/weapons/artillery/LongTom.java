@@ -72,7 +72,7 @@ public class LongTom extends ArtilleryWeapon {
         svSlots = 15;
         bv = 368;
         cost = 450000;
-        rulesRefs = "284, TO";
+        rulesRefs = "96, TO:AUE";
         techAdvancement.setTechBase(TechBase.ALL).setTechRating(TechRating.B)
               .setAvailability(AvailabilityValue.C, AvailabilityValue.C, AvailabilityValue.C, AvailabilityValue.C)
               .setAdvancement(2445, 2500, DATE_NONE, DATE_NONE, DATE_NONE)

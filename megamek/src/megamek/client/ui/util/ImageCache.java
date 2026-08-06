@@ -64,6 +64,7 @@ public class ImageCache<K, V> {
     }
 
 
+    @Deprecated(since = "0.51.0", forRemoval = true)
     public ImageCache(int max) {
         cache = new Hashtable<>(max * 5 / 4, .75f);
     }
@@ -85,7 +86,10 @@ public class ImageCache<K, V> {
         return cache.getOrDefault(key, null);
     }
 
-    public void remove(K key) {
+    public synchronized void remove(K key) {
+        if (key == null) {
+            return;
+        }
         cache.remove(key);
     }
 

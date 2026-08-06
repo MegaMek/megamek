@@ -1,6 +1,6 @@
 /*
  * Copyright (C) 2003 Ben Mazur (bmazur@sev.org)
- * Copyright (C) 2003-2025 The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2003-2026 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -219,5 +219,52 @@ public class StringUtil {
         int iEnd = StringUtil.toInt(sEnd, Integer.MAX_VALUE);
 
         return (!(value < iStart)) && (!(value > iEnd));
+    }
+
+    /**
+     * Wrap an input string, inserting newlines such that line length will not exceed the given length.
+     * Used primarily for formatting tooltips with wrapping, because apparently Swing doesn't have a nice
+     * provision to automatically wordwrap tooltips.
+     *
+     * @param in Input string
+     * @param length The maximum line length in characters
+     * @return The string, with lines wrapped to at most length
+     */
+    public static String wrapLines(String in, int length) {
+        StringBuilder sb = new StringBuilder();
+
+        while (length < in.length()) {
+            // Skip over any lines shorter than the line length and append them verbatim
+            int nextLineBreak = in.indexOf('\n');
+            while ((nextLineBreak != -1) && (nextLineBreak < length)) {
+                // Append this whole line, including the newline.
+                sb.append(in, 0, nextLineBreak + 1);
+                // Skip over the newline while we continue
+                in = in.substring(nextLineBreak + 1);
+                nextLineBreak = in.indexOf('\n');
+            }
+            if (in.length() < length) {
+                // What's left after skipping lines that are too short isn't long enough to wrap.
+                break;
+            }
+
+            // find the last space in the range of [0-length]
+            int lastBreak = in.lastIndexOf(' ', length);
+            if (lastBreak == -1) {
+                // We're in the middle of a word longer than the line length.
+                // Break it at the line length. Could put in a hyphen, too...
+                sb.append(in, 0, length);
+                in = in.substring(length);
+            } else {
+                // Break at the space
+                sb.append(in, 0, lastBreak);
+                // Skip over the space as we continue
+                in = in.substring(lastBreak + 1);
+            }
+            sb.append('\n');
+        }
+        sb.append(in);
+
+        return sb.toString();
     }
 }

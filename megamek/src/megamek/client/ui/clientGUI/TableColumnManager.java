@@ -64,7 +64,7 @@ import javax.swing.table.TableColumnModel;
  * of the table. The TableColumnModel is still used to control the view for the table. The manager will invoke the
  * appropriate methods of the TableColumnModel to hide/show columns as required.
  * <p>
- * Taken from: https://tips4java.wordpress.com/2011/05/08/table-column-manager/
+ * Taken from: <a href="https://tips4java.wordpress.com/2011/05/08/table-column-manager/">Table Column Manager</a>
  */
 public class TableColumnManager implements MouseListener, ActionListener, TableColumnModelListener,
                                            PropertyChangeListener {
@@ -360,7 +360,7 @@ public class TableColumnManager implements MouseListener, ActionListener, TableC
         allColumns.remove(column);
 
         if (index == 0) {
-            allColumns.add(0, column);
+            allColumns.addFirst(column);
         } else {
             index--;
             TableColumn visibleColumn = tcm.getColumn(index);

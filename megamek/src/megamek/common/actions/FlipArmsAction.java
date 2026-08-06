@@ -54,6 +54,7 @@ public class FlipArmsAction extends AbstractEntityAction {
         return isFlipped;
     }
 
+    @Deprecated(since = "0.51.0", forRemoval = true)
     public void setIsFlipped(boolean isFlipped) {
         this.isFlipped = isFlipped;
     }

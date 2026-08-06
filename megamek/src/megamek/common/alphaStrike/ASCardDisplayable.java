@@ -172,6 +172,7 @@ public interface ASCardDisplayable extends BattleForceSUAFormatter, BTObject, Co
     }
 
     /** @return True if this AS element is a fighter (AF, CF) or an Aero SV (Fixed Wing Support). */
+    @Override
     default boolean isFighter() {
         return getASUnitType().isAnyOf(AF, CF) || isFixedWingSupport();
     }

@@ -33,7 +33,6 @@
 
 package megamek.server.trigger;
 
-import megamek.common.equipment.GunEmplacement;
 import megamek.common.game.Game;
 import megamek.common.game.IGame;
 import megamek.common.units.EjectedCrew;
@@ -55,7 +54,7 @@ public class BattlefieldControlTrigger implements Trigger {
                   .filter(e -> e.getPosition() != null)
                   .filter(e -> !(e instanceof EjectedCrew))
                   .filter(e -> !(e instanceof TeleMissile))
-                  .filter(e -> !(e instanceof GunEmplacement))
+                  .filter(e -> !(e.isBuildingEntityOrGunEmplacement()))
                   .map(unit -> game.getPlayer(unit.getOwnerId()).getTeam())
                   .distinct()
                   .count() == 1;

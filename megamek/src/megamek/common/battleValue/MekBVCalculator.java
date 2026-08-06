@@ -51,6 +51,7 @@ import megamek.common.equipment.EquipmentType;
 import megamek.common.equipment.MiscType;
 import megamek.common.equipment.Mounted;
 import megamek.common.equipment.WeaponType;
+import megamek.common.equipment.enums.MiscTypeFlag;
 import megamek.common.units.BipedMek;
 import megamek.common.units.Entity;
 import megamek.common.units.LandAirMek;
@@ -210,21 +211,21 @@ public class MekBVCalculator extends HeatTrackingBVCalculator {
             int toSubtract = 15;
 
             // Logic for Weapons with Reduced Penalty
-            if ((etype instanceof GaussWeapon) ||
-                  (etype instanceof HVACWeapon) ||
-                  (etype instanceof CLImprovedHeavyLaserLarge) ||
-                  (etype instanceof CLImprovedHeavyLaserMedium) ||
-                  (etype instanceof CLImprovedHeavyLaserSmall) ||
-                  (etype instanceof ISRISCHyperLaser) ||
-                  (etype instanceof TSEMPWeapon) ||
-                  (etype instanceof ISMekTaser) ||
-                  (etype instanceof WeaponType &&
-                        (etype.hasFlag(WeaponType.F_B_POD) || etype.hasFlag(WeaponType.F_M_POD)))) {
+            if (etype instanceof WeaponType weaponType
+                && (weaponType.hasFlag(WeaponType.F_GAUSS)
+                || weaponType.hasFlag(WeaponType.F_HVAC)
+                || weaponType.hasFlag(WeaponType.F_HYPER)
+                || weaponType.hasFlag(WeaponType.F_TSEMP)
+                || weaponType.hasFlag(WeaponType.F_TASER)
+                || weaponType.hasFlag(WeaponType.F_B_POD)
+                || weaponType.hasFlag(WeaponType.F_M_POD)
+                || (weaponType.hasFlag(WeaponType.F_LASER) && weaponType.hasFlag(WeaponType.S_IMPROVED)))) {
                 toSubtract = 1;
             }
 
             // PPC Weapons with Capacitors
-            if (etype instanceof PPCWeapon) {
+            if (etype instanceof WeaponType weaponType
+                && weaponType.hasFlag(WeaponType.F_PPC)) {
                 toSubtract = 1;
             }
 
@@ -257,7 +258,7 @@ public class MekBVCalculator extends HeatTrackingBVCalculator {
                     }
                     criticalSlots += criticalSlotsCopy.size();
                 }
-            } else if (mounted.getType() instanceof HVACWeapon) {
+            } else if (mounted.getType() instanceof WeaponType weaponType && weaponType.hasFlag(WeaponType.F_HVAC)) {
                 criticalSlots = 1; // HVAC weapons are -1 total regardless of slot count
             } else {
                 criticalSlots = mounted.getNumCriticalSlots();
@@ -305,7 +306,7 @@ public class MekBVCalculator extends HeatTrackingBVCalculator {
 
     @Override
     protected void setUmuMP() {
-        if (entity.hasShield() && (entity.getNumberOfShields(MiscType.S_SHIELD_LARGE) > 0)) {
+        if (entity.hasShield() && (entity.getNumberOfShields(MiscTypeFlag.S_SHIELD_LARGE) > 0)) {
             return;
         }
         umuMP = 0;
@@ -473,6 +474,11 @@ public class MekBVCalculator extends HeatTrackingBVCalculator {
             modifier = " (Drone Op. Sys.)";
         } else if (mek.getCockpitType() == Mek.COCKPIT_INTERFACE) {
             cockpitMod = 1.3;
+            modifier = " (" + mek.getCockpitTypeString() + ")";
+        } else if (mek.getCockpitType() == Mek.COCKPIT_VRRP) {
+            // Virtual Reality Piloting Pod multiplies the unit's BV by 1.4 to reflect the MekWarrior's improved
+            // Piloting and Gunnery skills due to the system interface (IO:AE p.183).
+            cockpitMod = 1.4;
             modifier = " (" + mek.getCockpitTypeString() + ")";
         }
 

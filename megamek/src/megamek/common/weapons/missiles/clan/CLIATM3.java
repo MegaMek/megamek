@@ -70,7 +70,7 @@ public class CLIATM3 extends CLIATMWeapon {
         this.shortAV = this.getBaseAeroDamage(); // This is a streak weapon so we use the rack size for the AV
         this.medAV = this.shortAV;
         this.maxRange = RANGE_MED;
-        rulesRefs = "65, IO";
+        rulesRefs = "59, IO:AE";
         techAdvancement.setTechBase(TechBase.CLAN)
               .setIntroLevel(false)
               .setUnofficial(false)

@@ -62,7 +62,7 @@ public class InfantryProstheticDartGunWeapon extends InfantryWeapon {
         flags = flags.or(F_NO_FIRES).or(F_INF_NONPENETRATING).or(F_DIRECT_FIRE).or(F_BALLISTIC);
         infantryDamage = 0.0;
         infantryRange = 0;
-        rulesRefs = "84, IO";
+        rulesRefs = "78, IO:AE";
         techAdvancement.setTechBase(TechBase.ALL)
               .setIntroLevel(false)
               .setUnofficial(false)

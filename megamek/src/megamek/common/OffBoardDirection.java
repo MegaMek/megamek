@@ -94,6 +94,33 @@ public enum OffBoardDirection {
     }
 
     /**
+     * Converts this OffBoardDirection to a Board.START_X constant.
+     *
+     * @return The corresponding Board.START_X value, or Board.START_ANY for NONE
+     */
+    @Deprecated(since = "0.51.0", forRemoval = true)
+    public int translateBoardStart() {
+        return switch (this) {
+            case NORTH -> Board.START_N;
+            case SOUTH -> Board.START_S;
+            case EAST -> Board.START_E;
+            case WEST -> Board.START_W;
+            default -> Board.START_ANY;
+        };
+    }
+
+    /**
+     * Creates an OffBoardDirection from a Board.START_X constant. This is the inverse of translateBoardStart().
+     *
+     * @param boardStart A Board.START_X constant
+     *
+     * @return The corresponding OffBoardDirection, or NONE if not recognized
+     */
+    public static OffBoardDirection fromBoardStart(int boardStart) {
+        return translateBoardStart(boardStart);
+    }
+
+    /**
      * Returns the OffBoardDirection associated with given the on-board deployment position as defined in
      * IStartingPositions.
      */

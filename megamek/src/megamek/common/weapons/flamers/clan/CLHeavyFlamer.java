@@ -79,7 +79,7 @@ public class CLHeavyFlamer extends VehicleFlamerWeapon {
         maxRange = RANGE_SHORT;
         atClass = CLASS_POINT_DEFENSE;
         cost = 11250;
-        rulesRefs = "312, TO";
+        rulesRefs = "124, TO:AUE";
         // Tech Progression tweaked to combine IntOps with TRO Prototypes/3145 NTNU RS
         techAdvancement.setTechBase(TechBase.CLAN)
               .setIntroLevel(false)

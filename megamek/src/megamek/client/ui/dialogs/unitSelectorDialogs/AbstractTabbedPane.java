@@ -63,6 +63,7 @@ public abstract class AbstractTabbedPane extends JTabbedPane {
      * This creates an AbstractTabbedPane using the default resource bundle. This is the normal constructor to use for
      * an AbstractTabbedPane.
      */
+    @Deprecated(since = "0.51.0", forRemoval = true)
     protected AbstractTabbedPane(final JFrame frame, final String name) {
         this(frame, ResourceBundle.getBundle("megamek.client.messages",
               MegaMek.getMMOptions().getLocale()), name);

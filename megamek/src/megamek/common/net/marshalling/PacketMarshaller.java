@@ -61,6 +61,7 @@ public abstract class PacketMarshaller {
      *
      * @return marshalled representation of the given <code>Packet</code>
      */
+    @Deprecated(since = "0.51.0", forRemoval = true)
     public @Nullable byte[] marshall(Packet packet) {
         ByteArrayOutputStream bo = new ByteArrayOutputStream();
         try {
@@ -91,6 +92,7 @@ public abstract class PacketMarshaller {
      * @return the new <code>Packet</code>unmarshalled from the given
      *       <code>byte[]</code> array
      */
+    @Deprecated(since = "0.51.0", forRemoval = true)
     public @Nullable Packet unmarshall(byte... data) {
         try {
             return unmarshall(new ByteArrayInputStream(data));

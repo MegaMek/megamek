@@ -75,7 +75,7 @@ public class ISXPulseLaserMedium extends PulseLaserWeapon {
         criticalSlots = 1;
         bv = 71;
         cost = 110000;
-        rulesRefs = "321, TO";
+        rulesRefs = "133, TO:AUE";
         flags = flags.andNot(F_PROTO_WEAPON);
         //Tech Progression tweaked to combine IntOps with TRO Prototypes/3145 NTNU RS
         techAdvancement.setTechBase(TechBase.IS)

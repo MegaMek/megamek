@@ -385,14 +385,14 @@ class ExtraPanel extends PicMap implements ActionListener, ItemListener {
                 if (en.isNarcedBy(team) && !player.isObserver()) {
                     buff = new StringBuilder(Messages.getString("MekDisplay.NARCedBy"));
                     buff.append(player.getName())
-                          .append(" [").append(Player.TEAM_NAMES[team]).append(']');
+                          .append(" [").append(player.getTeamName()).append(']');
                     ((DefaultListModel<String>) narcList.getModel()).addElement(buff.toString());
                 }
 
                 if (en.isINarcedBy(team) && !player.isObserver()) {
                     buff = new StringBuilder(Messages.getString("MekDisplay.INarcHoming"));
                     buff.append(player.getName()).append(" [")
-                          .append(Player.TEAM_NAMES[team]).append("] ")
+                          .append(player.getTeamName()).append("] ")
                           .append(Messages.getString("MekDisplay.attached"))
                           .append('.');
                     ((DefaultListModel<String>) narcList.getModel()).addElement(buff.toString());
@@ -473,6 +473,20 @@ class ExtraPanel extends PicMap implements ActionListener, ItemListener {
             if (en.getTsempEffect() == MMConstants.TSEMP_EFFECT_INTERFERENCE) {
                 ((DefaultListModel<String>) narcList.getModel())
                       .addElement(Messages.getString("MekDisplay.TSEMPInterference"));
+            }
+
+            // suffering from EMP Mine Interference?
+            if (en.getEMPInterferenceRounds() > 0) {
+                ((DefaultListModel<String>) narcList.getModel())
+                      .addElement(Messages.getString("MekDisplay.EMPInterference",
+                            en.getEMPInterferenceRounds()));
+            }
+
+            // suffering from EMP Mine Shutdown?
+            if (en.getEMPShutdownRounds() > 0) {
+                ((DefaultListModel<String>) narcList.getModel())
+                      .addElement(Messages.getString("MekDisplay.EMPShutdown",
+                            en.getEMPShutdownRounds()));
             }
 
             if (en.hasDamagedRHS()) {

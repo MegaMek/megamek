@@ -38,17 +38,19 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
+import java.util.Optional;
 import java.util.Vector;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-import megamek.common.compute.Compute;
-import megamek.common.board.Coords;
-import megamek.common.units.Entity;
-import megamek.common.game.Game;
-import megamek.common.units.Targetable;
 import megamek.common.ToHitData;
 import megamek.common.actions.WeaponAttackAction;
+import megamek.common.board.Coords;
+import megamek.common.compute.Compute;
+import megamek.common.game.Game;
+import megamek.common.units.Entity;
+import megamek.common.units.Targetable;
+import org.jspecify.annotations.NonNull;
 
 /**
  * Tracks enemy units and calculates threat scores based on their positions and capabilities.
@@ -98,6 +100,7 @@ public class EnemyTracker {
      *
      * @return A list of enemy entities with 25% or higher chance of hitting the attack in that target.
      */
+    @Deprecated(since = "0.51.0", forRemoval = true)
     public List<Entity> getPriorityTargets(Targetable targetable) {
         if (enemyProfiles.isEmpty()) {
             updateThreatAssessment(targetable.getPosition());
@@ -124,8 +127,8 @@ public class EnemyTracker {
      * @return The hit chance of the attack.
      */
     public static double hitChance(Game game, Entity entity, Targetable target) {
-        ToHitData toHit = WeaponAttackAction.toHit(
-              game, entity.getId(), target);
+        ToHitData toHit = WeaponAttackAction.toHit(game, entity.getId(), Optional.empty(), Optional.empty(),
+              Optional.empty(), target);
         if (toHit.getValue() <= 12) {
             return 1 - (1 - toHit.getValue() / 36.0);
         } else {
@@ -140,6 +143,7 @@ public class EnemyTracker {
      *
      * @return The threat score against the cluster.
      */
+    @Deprecated(since = "0.51.0", forRemoval = true)
     public double getClusterThreatScore(Coords clusterCenter) {
         return getPriorityTargets(clusterCenter, 5).stream()
               .mapToDouble(e -> {
@@ -213,10 +217,12 @@ public class EnemyTracker {
             return entityId;
         }
 
+        @Deprecated(since = "0.51.0", forRemoval = true)
         public Coords getLastPosition() {
             return lastPosition;
         }
 
+        @Deprecated(since = "0.51.0", forRemoval = true)
         public double getDamagePotential() {
             return damagePotential;
         }
@@ -225,6 +231,7 @@ public class EnemyTracker {
             return lastSeenTurn;
         }
 
+        @Deprecated(since = "0.51.0", forRemoval = true)
         public double getThreatScore() {
             return threatScore;
         }
@@ -236,7 +243,7 @@ public class EnemyTracker {
         public void update(Coords newPosition, double newDamage, int currentTurn) {
             movementHistory.add(newPosition);
             if (movementHistory.size() > 5) {
-                movementHistory.remove(0);
+                movementHistory.removeFirst();
             }
 
             lastPosition = newPosition;
@@ -263,11 +270,11 @@ public class EnemyTracker {
             }
 
             // Calculate movement direction consistency
-            Coords oldest = movementHistory.get(0);
-            Coords newest = movementHistory.get(movementHistory.size() - 1);
+            Coords oldest = movementHistory.getFirst();
+            Coords newest = movementHistory.getLast();
             double directDistance = oldest.distance(newest);
             double actualDistance = movementHistory.stream()
-                  .mapToDouble(c -> c.distance(movementHistory.get(0)))
+                  .mapToDouble(c -> c.distance(movementHistory.getFirst()))
                   .sum();
 
             // Higher score for direct approaches
@@ -275,7 +282,7 @@ public class EnemyTracker {
         }
 
         @Override
-        public int compareTo(Double aDouble) {
+        public int compareTo(@NonNull Double aDouble) {
             return Double.compare(threatScore, aDouble);
         }
     }

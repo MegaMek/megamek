@@ -64,7 +64,7 @@ public class InfantryProstheticSonicStunnerWeapon extends InfantryWeapon {
         infantryRange = 0;
         // Rating and Dates not available below is compiled from Specific
         // Weapons in IO blended with the rating for the limb itself
-        rulesRefs = "84, IO";
+        rulesRefs = "78, IO:AE";
         techAdvancement.setTechBase(TechBase.ALL)
               .setIntroLevel(false)
               .setUnofficial(false)

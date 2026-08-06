@@ -2,7 +2,7 @@
   Copyright (C) 2000-2004 Ben Mazur (bmazur@sev.org)
  * Copyright © 2013 Edward Cullen (eddy@obsessedcomputers.co.uk)
  * Copyright © 2013 Nicholas Walczak (walczak@cs.umn.edu)
- * Copyright (C) 2013-2025 The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2013-2026 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -36,14 +36,25 @@
 
 package megamek.utilities;
 
+import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.io.InputStreamReader;
 import java.io.PrintWriter;
+import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.time.Instant;
+import java.time.LocalDate;
+import java.time.ZoneId;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.regex.Pattern;
 import java.util.stream.Stream;
+import java.util.zip.ZipEntry;
+import java.util.zip.ZipFile;
 
 import megamek.codeUtilities.StringUtility;
 import megamek.common.TechConstants;
@@ -76,13 +87,16 @@ public final class MekCacheCSVTool {
     private static boolean includeGunEmplacement = false; // Variable to control inclusion of Gun Emplacement units
 
     private static final String NOT_APPLICABLE = "Not Applicable";
+    private static final Pattern ERA_TEXT_PATTERN = Pattern.compile("\\s*\\([^)]+\\)");
 
-    private static final List<String> HEADERS = List.of("Chassis", "Model", "MUL ID", "Combined", "Clan",
-          "Source", "File Location", "Weight", "Intro Date", "Experimental year", "Advanced year",
-          "Standard year", "Extinct Year", "Unit Type", "Role", "BV", "Cost", "Rules", "Engine Name",
+    private static final List<String> HEADERS = List.of("MUL ID", "Chassis", "Model", "Source", "Combined",
+          "Tech Base", "Unit Type", "Movement Type", "Weight", "Intro Date",
+          "Prototype", "Production", "Common", "Extinct",
+          "Omni", "Role", "BV", "Cost", "Rules", "Engine Name",
           "Internal Structure", "Myomer", "Cockpit Type", "Gyro Type", "Armor Types", "Equipment", "Tech Rating",
           "Unit Quirks", "Weapon Quirks", "Manufacturer", "Factory", "Targeting", "Comms", "Armor", "JJ", "Engine",
-          "Chassis", "Capabilities", "Overview", "History", "Deployment", "Notes");
+          "Chassis_1", "Fluff Date", "Capabilities", "Overview", "History", "Deployment", "Notes",
+          "File Location", "File Modified");
 
     public static void main(String... args) {
         if (args.length > 0) {
@@ -104,38 +118,33 @@ public final class MekCacheCSVTool {
                 }
 
                 csvLine = new StringBuilder();
+                csvLine.append(unit.getMulId()).append(DELIM);
                 csvLine.append(unit.getFullChassis()).append(DELIM);
                 csvLine.append(unit.getModel()).append(DELIM);
-                csvLine.append(unit.getMulId()).append(DELIM);
-                csvLine.append(unit.getFullChassis()).append(" ").append(unit.getModel()).append(DELIM);
-                csvLine.append(unit.isClan()).append(DELIM);
                 csvLine.append(unit.getSource()).append(DELIM);
-                csvLine.append(unit.getSourceFile()).append(DELIM);
+                csvLine.append(unit.getFullChassis()).append(" ").append(unit.getModel()).append(DELIM);
+                csvLine.append(unit.getTechBase()).append(DELIM);
+                csvLine.append(unit.getFullAccurateUnitType()).append(DELIM);
+                // Movement Type
+                csvLine.append(unit.getMoveMode()).append(DELIM);
                 csvLine.append(unit.getTons()).append(DELIM);
                 csvLine.append(unit.getYear()).append(DELIM);
 
-                // Experimental Tech Year
-                if (unit.getAdvancedTechYear() > unit.getYear()) {
-                    csvLine.append(unit.getYear());
-                }
-                csvLine.append(DELIM);
+                // Load entity early so availability data can be populated
+                Entity entity = loadEntity(unit.getSourceFile(), unit.getEntryName());
 
-                // Advanced Tech Year
-                if (unit.getAdvancedTechYear() > 0) {
-                    csvLine.append(unit.getAdvancedTechYear());
+                // Prototype, Production, Common, Extinct (year ranges only, era text stripped)
+                if (entity != null) {
+                    csvLine.append(stripEraText(entity.getPrototypeRangeDate())).append(DELIM);
+                    csvLine.append(stripEraText(entity.getProductionDateRange())).append(DELIM);
+                    csvLine.append(stripEraText(entity.getCommonDateRange())).append(DELIM);
+                    csvLine.append(stripEraText(entity.getExtinctionRange())).append(DELIM);
+                } else {
+                    csvLine.append(DELIM).append(DELIM).append(DELIM).append(DELIM);
                 }
-                csvLine.append(DELIM);
 
-                // Standard Tech Year
-                if (unit.getStandardTechYear() > 0) {
-                    csvLine.append(unit.getStandardTechYear());
-                }
-                csvLine.append(DELIM);
-
-                // Extinct Tech Year
-                csvLine.append(unit.getExtinctRange()).append(DELIM);
-                // Unit Type.
-                csvLine.append(unit.getFullAccurateUnitType()).append(DELIM);
+                // Omni
+                csvLine.append(unit.getOmni()).append(DELIM);
                 // Unit Role
                 csvLine.append(unit.getRole()).append(DELIM);
                 // Unit BV
@@ -180,11 +189,8 @@ public final class MekCacheCSVTool {
                 // Armor type - prints different armor types on the unit
                 ArrayList<Integer> armorType = new ArrayList<>();
                 ArrayList<Integer> armorTech = new ArrayList<>();
-                int[] at;
-                int[] att;
-
-                at = unit.getArmorTypes();
-                att = unit.getArmorTechTypes();
+                int[] at = unit.getArmorTypes();
+                int[] att = unit.getArmorTechTypes();
                 for (int i = 0; i < at.length; i++) {
                     boolean contains = false;
                     for (int j = 0; j < armorType.size(); j++) {
@@ -227,9 +233,10 @@ public final class MekCacheCSVTool {
                 }
                 csvLine.append(String.join(",", equipmentNames)).append(DELIM);
 
-                Entity entity = loadEntity(unit.getSourceFile(), unit.getEntryName());
                 if (entity != null) {
                     csvLine.append(entity.getFullRatingName()).append(DELIM);
+                } else {
+                    csvLine.append(DELIM);
                 }
 
                 csvLine.append(unit.getQuirkNames()).append(DELIM);
@@ -263,10 +270,13 @@ public final class MekCacheCSVTool {
                     csvLine.append(TROView.formatSystemFluff(System.CHASSIS, entity.getFluff(),
                           () -> "--")).append(DELIM);
 
+                    // Fluff Date
+                    csvLine.append(getFluffDate(unit.getSourceFile(), unit.getEntryName())).append(DELIM);
+
                     csvLine.append(entity.getFluff().getCapabilities().isBlank() ? "no" : "yes").append(DELIM);
                     csvLine.append(entity.getFluff().getOverview().isBlank() ? "no" : "yes").append(DELIM);
-                    csvLine.append(entity.getFluff().getDeployment().isBlank() ? "no" : "yes").append(DELIM);
                     csvLine.append(entity.getFluff().getHistory().isBlank() ? "no" : "yes").append(DELIM);
+                    csvLine.append(entity.getFluff().getDeployment().isBlank() ? "no" : "yes").append(DELIM);
 
                     String notes = entity.getFluff().getNotes();
                     if (!StringUtility.isNullOrBlank(notes)) {
@@ -275,6 +285,12 @@ public final class MekCacheCSVTool {
                         csvLine.append("--");
                     }
                 }
+
+                csvLine.append(DELIM);
+                // File Location
+                csvLine.append(unit.getSourceFile()).append(DELIM);
+                // File Modified
+                csvLine.append(getFileModifiedDate(unit.getSourceFile(), unit.getEntryName()));
 
                 csvLine.append("\n");
                 bw.write(csvLine.toString());
@@ -286,12 +302,127 @@ public final class MekCacheCSVTool {
         }
     }
 
+    /**
+     * Strips parenthesized era text from availability range strings, leaving only the year ranges. For example,
+     * "2752-2839 (Star League to Early Succession Wars), 3041-3044 (Late Succession Wars)" becomes "2752-2839,
+     * 3041-3044".
+     *
+     * @param rangeWithEra the formatted range string that may contain era text in parentheses
+     *
+     * @return the range string with era text removed
+     */
+    private static String stripEraText(String rangeWithEra) {
+        if (rangeWithEra == null || rangeWithEra.isBlank()) {
+            return "-";
+        }
+        return ERA_TEXT_PATTERN.matcher(rangeWithEra).replaceAll("").trim();
+    }
+
     public static @Nullable Entity loadEntity(File f, String entityName) {
         try {
             return new MekFileParser(f, entityName).getEntity();
         } catch (megamek.common.loaders.EntityLoadingException e) {
             return null;
         }
+    }
+
+    /**
+     * Returns the last modified date for a unit file. For files inside zip archives, attempts to resolve the standalone
+     * file in the mm-data repository (a sibling of the megamek project directory) to get the accurate filesystem
+     * modification date, since zip entry timestamps are often unreliable.
+     *
+     * @param sourceFile the source file (may be a zip archive)
+     * @param entryName  the entry name within a zip, or {@code null} for standalone files
+     *
+     * @return the last modified date as a {@link LocalDate} in YYYY-MM-DD format, or "--" if it cannot be determined
+     */
+    private static String getFileModifiedDate(File sourceFile, @Nullable String entryName) {
+        File fileToCheck = sourceFile;
+
+        if (entryName != null && sourceFile.getName().toLowerCase().endsWith(".zip")) {
+            // The zip lives under <project>/megamek/data/mekfiles/. The mm-data repo
+            // is a sibling of the megamek project and mirrors the same data/mekfiles/ structure.
+            // Use absolute path to ensure getParent() calls don't return null on relative paths.
+            Path zipParent = sourceFile.toPath().toAbsolutePath().getParent();
+            if (zipParent != null) {
+                // Walk up from data/mekfiles/ to the project root (megamek/megamek/data/mekfiles -> megamek)
+                Path projectRoot = zipParent.getParent().getParent().getParent();
+                Path mmDataDir = projectRoot.resolveSibling("mm-data")
+                      .resolve("data").resolve("mekfiles");
+                Path mmDataFile = mmDataDir.resolve(entryName).normalize();
+
+                // Guard against path traversal (Zip Slip) in entry names
+                if (mmDataFile.startsWith(mmDataDir)) {
+                    File standaloneFile = mmDataFile.toFile();
+                    if (standaloneFile.exists()) {
+                        fileToCheck = standaloneFile;
+                    }
+                }
+            }
+        }
+
+        long lastModified = fileToCheck.lastModified();
+        if (lastModified > 0) {
+            return LocalDate.ofInstant(
+                  Instant.ofEpochMilli(lastModified),
+                  ZoneId.systemDefault()).toString();
+        }
+
+        return "--";
+    }
+
+    private static final String FLUFF_DATE_PREFIX = "# Fluff Date: ";
+
+    /**
+     * Scans a unit file for a {@code # Fluff Date:} comment line and returns the date value if found. Handles both
+     * standalone files and entries inside zip archives.
+     *
+     * @param sourceFile the source file (may be a zip archive)
+     * @param entryName  the entry name within a zip, or {@code null} for standalone files
+     *
+     * @return the fluff date string, or "--" if the line is not present
+     */
+    private static String getFluffDate(File sourceFile, @Nullable String entryName) {
+        try {
+            if (entryName != null && sourceFile.getName().toLowerCase().endsWith(".zip")) {
+                try (ZipFile zipFile = new ZipFile(sourceFile)) {
+                    ZipEntry entry = zipFile.getEntry(entryName);
+                    if (entry != null) {
+                        try (BufferedReader reader = new BufferedReader(
+                              new InputStreamReader(zipFile.getInputStream(entry), StandardCharsets.UTF_8))) {
+                            return scanForFluffDate(reader);
+                        }
+                    }
+                }
+            } else {
+                try (BufferedReader reader = Files.newBufferedReader(sourceFile.toPath(), StandardCharsets.UTF_8)) {
+                    return scanForFluffDate(reader);
+                }
+            }
+        } catch (IOException e) {
+            logger.debug("Could not read fluff date from {}: {}", sourceFile, e.getMessage());
+        }
+
+        return "--";
+    }
+
+    /**
+     * Reads lines from the given reader, looking for a {@code # Fluff Date:} prefix.
+     *
+     * @param reader the reader to scan
+     *
+     * @return the date string after the prefix, or "--" if not found
+     *
+     * @throws IOException if an I/O error occurs
+     */
+    private static String scanForFluffDate(BufferedReader reader) throws IOException {
+        String line;
+        while ((line = reader.readLine()) != null) {
+            if (line.startsWith(FLUFF_DATE_PREFIX)) {
+                return line.substring(FLUFF_DATE_PREFIX.length()).trim();
+            }
+        }
+        return "--";
     }
 
     private MekCacheCSVTool() {

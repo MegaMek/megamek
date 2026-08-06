@@ -34,9 +34,9 @@
 package megamek.common.strategicBattleSystems;
 
 import megamek.client.commands.ClientCommand;
-import megamek.common.board.BoardLocation;
 import megamek.common.Hex;
 import megamek.common.Player;
+import megamek.common.board.BoardLocation;
 import megamek.common.units.Terrains;
 
 /**
@@ -58,6 +58,7 @@ public class SurfaceSBFMoveStep extends SBFMoveStep {
         return step;
     }
 
+    @Deprecated(since = "0.51.0", forRemoval = true)
     public static SBFMoveStep createSurfaceMoveStep(SBFGame game, int formationId,
           BoardLocation startingPoint, int direction) {
         return createSurfaceMoveStep(game, formationId, startingPoint, startingPoint.translated(direction));

@@ -1,0 +1,325 @@
+# MegaMek Data (C) 2026 by The MegaMek Team is licensed under CC BY-NC-SA 4.0.
+# To view a copy of this license, visit https://creativecommons.org/licenses/by-nc-sa/4.0/
+#
+# NOTICE: The MegaMek organization is a non-profit group of volunteers
+# creating free software for the BattleTech community.
+#
+# MechWarrior, BattleMech, `Mech and AeroTech are registered trademarks
+# of The Topps Company, Inc. All Rights Reserved.
+#
+# Catalyst Game Labs and the Catalyst Game Labs logo are trademarks of
+# InMediaRes Productions, LLC.
+#
+# MechWarrior Copyright Microsoft Corporation. MegaMek Data was created under
+# Microsoft's "Game Content Usage Rules"
+# <https://www.xbox.com/en-US/developers/rules> and it is not endorsed by or
+# affiliated with Microsoft.
+
+#Saved from version 0.51.01 on 2026-07-12
+<UUID>
+019f583e-aaba-7006-bca6-eb6b4b6a1c30
+</UUID>
+
+<UnitType>
+Dropship
+</UnitType>
+
+<Name>
+Lion
+</Name>
+
+<Model>
+(3005) (WD)
+</Model>
+
+<mul id:>
+4526
+</mul id:>
+
+<year>
+3005
+</year>
+
+<type>
+Mixed (Clan Chassis) Advanced
+</type>
+
+<role>
+None
+</role>
+
+<motion_type>
+Spheroid
+</motion_type>
+
+<transporters>
+mekbay:10.0:2:-1::-1:0
+heavyvehiclebay:10.0:2:2::-1:0
+2ndclassquarters:0.0:0:-1::-1:0
+1stclassquarters:80.0:0:-1::-1:0
+crewquarters:294.0:0:-1::-1:0
+cargobay:1679.5:1:6::-1:0
+</transporters>
+
+<SafeThrust>
+4
+</SafeThrust>
+
+<heatsinks>
+110
+</heatsinks>
+
+<sink_type>
+0
+</sink_type>
+
+<fuel>
+6300
+</fuel>
+
+<engine_type>
+1
+</engine_type>
+
+<clan_engine>
+false
+</clan_engine>
+
+<armor_type>
+41
+</armor_type>
+
+<armor_tech_rating>
+0
+</armor_tech_rating>
+
+<armor_tech_level>
+2
+</armor_tech_level>
+
+<armor>
+300
+200
+200
+246
+</armor>
+
+<Nose Equipment>
+(B) ISERLargeLaser
+ISERLargeLaser
+ISERMediumLaser
+ISERMediumLaser
+(B) LRM 20
+LRM 20
+IS Ammo LRM-20 Artemis-capable:48
+ISArtemisIV
+ISArtemisIV
+(B) ISLargePulseLaser
+ISLargePulseLaser
+ISMediumPulseLaser
+ISMediumPulseLaser
+(B) ISAntiMissileSystem
+ISAntiMissileSystem
+ISAMS Ammo:96
+</Nose Equipment>
+
+<Left Side Equipment>
+(B) ISERLargeLaser
+ISERLargeLaser
+ISERMediumLaser
+ISERMediumLaser
+(B) LRM 20
+LRM 20
+IS Ammo LRM-20 Artemis-capable:48
+ISArtemisIV
+ISArtemisIV
+(B) ISLargePulseLaser
+ISLargePulseLaser
+ISMediumPulseLaser
+ISMediumPulseLaser
+(B) ISAntiMissileSystem
+ISAntiMissileSystem
+ISAMS Ammo:96
+(R) (B) LRM 15
+(R) LRM 15
+(R) IS Ammo LRM-20 Artemis-capable:64
+(R) ISArtemisIV
+(R) ISArtemisIV
+(R) (B) ISLargePulseLaser
+(R) ISLargePulseLaser
+(R) ISMediumPulseLaser
+(R) ISMediumPulseLaser
+(R) (B) ISStreakSRM2
+(R) ISStreakSRM2
+(R) ISStreakSRM2
+(R) IS Streak SRM 2 Ammo:50
+(R) (B) ISAntiMissileSystem
+(R) ISAntiMissileSystem
+(R) ISAMS Ammo:96
+</Left Side Equipment>
+
+<Right Side Equipment>
+(B) ISERLargeLaser
+ISERLargeLaser
+ISERMediumLaser
+ISERMediumLaser
+(B) LRM 20
+LRM 20
+IS Ammo LRM-20 Artemis-capable:48
+ISArtemisIV
+ISArtemisIV
+(B) ISLargePulseLaser
+ISLargePulseLaser
+ISMediumPulseLaser
+ISMediumPulseLaser
+(B) ISAntiMissileSystem
+ISAntiMissileSystem
+ISAMS Ammo:96
+(R) (B) LRM 15
+(R) LRM 15
+(R) IS Ammo LRM-20 Artemis-capable:64
+(R) ISArtemisIV
+(R) ISArtemisIV
+(R) (B) ISLargePulseLaser
+(R) ISLargePulseLaser
+(R) ISMediumPulseLaser
+(R) ISMediumPulseLaser
+(R) (B) ISStreakSRM2
+(R) ISStreakSRM2
+(R) ISStreakSRM2
+(R) IS Streak SRM 2 Ammo:50
+(R) (B) ISAntiMissileSystem
+(R) ISAntiMissileSystem
+(R) ISAMS Ammo:96
+</Right Side Equipment>
+
+<Aft Equipment>
+(B) LRM 15
+LRM 15
+IS Ammo LRM-15 Artemis-capable:64
+ISArtemisIV
+ISArtemisIV
+(B) ISERLargeLaser
+ISERLargeLaser
+ISERMediumLaser
+ISERMediumLaser
+(B) ISStreakSRM2
+ISStreakSRM2
+ISStreakSRM2
+IS Streak SRM 2 Ammo:50
+(B) ISAntiMissileSystem
+ISAntiMissileSystem
+ISAMS Ammo:96
+</Aft Equipment>
+
+<Hull Equipment>
+</Hull Equipment>
+
+<structural_integrity>
+14
+</structural_integrity>
+
+<capabilities>
+<p>The Wolf's Dragoons variant uses Inner Sphere technology replacements for the Clan systems stripped before the unit's arrival in the Inner Sphere. The Mech bay retains the Clan-standard two-Star capacity of ten BattleMechs, but the infantry bay is replaced with space for ten heavy vehicles. ER large lasers, large pulse lasers, medium pulse lasers, Artemis IV-enhanced LRM-20s and LRM-15s, Streak SRM-2 launchers, and anti-missile systems provide firepower across all arcs using Inner Sphere equivalents. Armor remains at 946 points, and cargo capacity is reduced to approximately 1,680 tons to accommodate the heavier vehicle bays. The crew numbers 168.</p>
+</capabilities>
+
+<overview>
+<p>The Lion class DropShip is one of the oldest designs still in active service, originally introduced in 2595 as a Star League combined-arms transport. This 7,300-ton Spheroid was designed from the outset to carry BattleMechs, vehicles, and cargo in a single hull, making it a true multi-role transport capable of deploying balanced ground forces.</p><p>Unlike the Clan Union and Overlord vessels, which are essentially new craft sharing a name with Inner Sphere designs, all surviving Lion class vessels are refitted originals constructed during the twenty-seventh century. No new Lions have ever been built, making each surviving example an irreplaceable relic of the Star League era.</p>
+</overview>
+
+<deployment>
+<p>This downgraded variant was used exclusively by Wolf's Dragoons from their arrival in the Inner Sphere in 3005 through the Fourth Succession War. The Dragoons deliberately restricted their Lions to carrying only eight BattleMechs during this period to avoid drawing attention to the vessels' true capabilities and unusual origin.</p>
+</deployment>
+
+<history>
+<p>The Lion entered service in 2595 as a combined-arms transport for the Star League Defense Force. The design served throughout the Inner Sphere until the Amaris Civil War, when many were destroyed or damaged. The surviving Lions were divided between those that accompanied the Exodus Fleet and the handful that remained in the Inner Sphere, where centuries of Succession War fighting reduced their numbers to a mere fraction of the original production run.</p><p>The Clans extensively refitted their Lions to match their revised military organization, expanding the Mech bays from two lances to two Stars and replacing all weapons with advanced Clan technology. An attempt to convert the vehicle bay for battle armor proved unfeasible, and the space was instead configured for an infantry Binary. This compromise relegated the Lion to service with freeborn and dezgra units, who continued to use it in its intended combined-arms role.</p><p>When Wolf's Dragoons returned to the Inner Sphere in 3005, they brought several Lion class vessels, which they expected would be inconspicuous. They did not realize that only a handful of Lions remained in Successor State fleets, and their presence immediately aroused suspicion. The Dragoons stripped most advanced technology from their Lions before arriving and restricted them to carrying eight BattleMechs to avoid further scrutiny. After the Fourth Succession War, the Dragoons adopted the five-unit Clan organization openly, and following the Battle of Luthien in 3052, most of their Lions are believed to have been returned to full Clan specifications.</p>
+</history>
+
+<manufacturer>
+Field Refit
+</manufacturer>
+
+<primaryFactory>
+Various
+</primaryFactory>
+
+<systemManufacturers>
+CHASSIS:Unknown
+ENGINE:Unknown
+ARMOR:Unknown
+COMMUNICATIONS:Unknown
+TARGETING:Unknown
+</systemManufacturers>
+
+<systemModels>
+CHASSIS:Unknown
+ENGINE:Unknown
+ARMOR:Unknown
+COMMUNICATIONS:Unknown
+TARGETING:Unknown
+</systemModels>
+
+<use>
+Troop Carrier
+</use>
+
+<length>
+92 meters
+</length>
+
+<width>
+92 meters
+</width>
+
+<height>
+95 meters
+</height>
+
+<source>
+TR:3057r
+</source>
+
+<tonnage>
+7300.0
+</tonnage>
+
+<designtype>
+1
+</designtype>
+
+<crew>
+150
+</crew>
+
+<officers>
+8
+</officers>
+
+<gunners>
+10
+</gunners>
+
+<passengers>
+0
+</passengers>
+
+<marines>
+0
+</marines>
+
+<battlearmor>
+0
+</battlearmor>
+
+<otherpassenger>
+0
+</otherpassenger>
+
+<life_boat>
+0
+</life_boat>
+
+<escape_pod>
+10
+</escape_pod>
+

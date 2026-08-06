@@ -70,7 +70,7 @@ public class InfantrySupportSRMHeavyWeapon extends InfantryWeapon {
         ammoType = AmmoType.AmmoTypeEnum.INFANTRY;
         cost = 3000;
         bv = 2.91;
-        flags = flags.or(F_NO_FIRES).or(F_DIRECT_FIRE).or(F_MISSILE).or(F_INF_ENCUMBER).or(F_INF_SUPPORT);
+        flags = flags.or(F_NO_FIRES).or(F_DIRECT_FIRE).or(F_MISSILE).or(F_INF_ENCUMBER).or(F_INF_SUPPORT).or(F_SRM);
         infantryDamage = 0.57;
         infantryRange = 2;
         ammoWeight = 0.018;

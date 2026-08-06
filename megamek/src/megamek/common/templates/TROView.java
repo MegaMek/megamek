@@ -59,6 +59,7 @@ import megamek.common.CriticalSlot;
 import megamek.common.Messages;
 import megamek.common.annotations.Nullable;
 import megamek.common.battleArmor.BattleArmor;
+import megamek.common.battlefieldSupport.BattlefieldSupportAsset;
 import megamek.common.bays.Bay;
 import megamek.common.equipment.AmmoType;
 import megamek.common.equipment.EquipmentType;
@@ -95,7 +96,9 @@ public class TROView {
 
     public static TROView createView(Entity entity, ViewFormatting formatting) {
         TROView view;
-        if (entity.hasETypeFlag(Entity.ETYPE_MEK)) {
+        if (entity instanceof BattlefieldSupportAsset asset) {
+            view = new BattlefieldSupportAssetTROView(asset);
+        } else if (entity.hasETypeFlag(Entity.ETYPE_MEK)) {
             view = new MekTROView((Mek) entity);
         } else if (entity.hasETypeFlag(Entity.ETYPE_PROTOMEK)) {
             view = new ProtoMekTROView((ProtoMek) entity);
@@ -113,7 +116,7 @@ public class TROView {
         } else if (entity.hasETypeFlag(Entity.ETYPE_BATTLEARMOR)) {
             view = new BattleArmorTROView((BattleArmor) entity);
         } else if (entity.hasETypeFlag(Entity.ETYPE_INFANTRY)) {
-            view = new InfantryTROView((Infantry) entity);
+            view = new InfantryTROView((ConvInfantry) entity);
         } else {
             view = new TROView();
         }
@@ -219,12 +222,33 @@ public class TROView {
             model.put("fluffHistory", entity.getFluff().getHistory());
         }
 
-        if (!entity.getFluff().getManufacturer().isBlank()) {
-            model.put("manufacturerDesc", entity.getFluff().getManufacturer());
+        String manufacturerRaw = entity.getFluff().getManufacturer();
+        String factoryRaw = entity.getFluff().getPrimaryFactory();
+
+        if (!manufacturerRaw.isBlank()) {
+            String[] manufacturers = manufacturerRaw.split("\\|");
+            String[] factories = factoryRaw.isBlank() ? new String[0] : factoryRaw.split("\\|");
+
+            if ((manufacturers.length > 1) || (factories.length > 1)) {
+                List<Map<String, String>> manufacturerList = new ArrayList<>();
+                int maxEntries = Math.max(manufacturers.length, factories.length);
+                for (int i = 0; i < maxEntries; i++) {
+                    Map<String, String> entry = new HashMap<>();
+                    entry.put("manufacturer", (i < manufacturers.length) ? manufacturers[i].trim() : "Unknown");
+                    entry.put("factory", (i < factories.length) ? factories[i].trim() : "Unknown");
+                    manufacturerList.add(entry);
+                }
+                model.put("manufacturerList", manufacturerList);
+            } else {
+                model.put("manufacturerDesc", manufacturerRaw.trim());
+                if (!factoryRaw.isBlank()) {
+                    model.put("factoryDesc", factoryRaw.trim());
+                }
+            }
         }
 
-        if (!entity.getFluff().getPrimaryFactory().isBlank()) {
-            model.put("factoryDesc", entity.getFluff().getPrimaryFactory());
+        if (manufacturerRaw.isBlank() && !factoryRaw.isBlank()) {
+            model.put("factoryDesc", factoryRaw.trim());
         }
     }
 

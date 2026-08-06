@@ -1,6 +1,6 @@
 /*
  * Copyright (C) 2005 Ben Mazur (bmazur@sev.org)
- * Copyright (C) 2016-2025 The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2016-2026 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -78,6 +78,7 @@ public class FactionRecord {
     private boolean periphery;
     private String name;
     private final TreeMap<Integer, String> altNames;
+    private final TreeMap<Integer, String> aliases;
     private final ArrayList<DateRange> yearsActive;
     private final ArrayList<String> ratingLevels;
     private final HashMap<Integer, Integer> pctSalvage;
@@ -111,6 +112,8 @@ public class FactionRecord {
     public static final String IS_GENERAL_KEY = "IS";
     public static final String CL_GENERAL_KEY = "CLAN";
     public static final String PER_GENERAL_KEY = "PERIPHERY";
+    /** The catch-all availability key, used when a unit is equally available to everyone. */
+    public static final String GENERAL_KEY = "General";
 
     public FactionRecord() {
         this("Periphery", "Periphery");
@@ -126,6 +129,7 @@ public class FactionRecord {
         minor = clan = periphery = false;
         ratingLevels = new ArrayList<>();
         altNames = new TreeMap<>();
+        aliases = new TreeMap<>();
         yearsActive = new ArrayList<>();
         pctSalvage = new HashMap<>();
         pctTech = new HashMap<>();
@@ -159,6 +163,7 @@ public class FactionRecord {
                 setName(entry.getKey(), entry.getValue());
             }
         }
+        faction2.getAliases().forEach(this::addAlias);
     }
 
     @Override
@@ -204,6 +209,53 @@ public class FactionRecord {
         return altNames;
     }
 
+    public TreeMap<Integer, String> getAliases() {
+        return new TreeMap<>(aliases);
+    }
+
+    /**
+     * Adds a historical faction-code alias effective from the given year. See {@link #getAliases()}.
+     *
+     * @param year      the year the alias code became active
+     * @param aliasCode the retired faction code that resolves to this faction
+     */
+    public void addAlias(int year, String aliasCode) {
+        aliases.put(year, aliasCode);
+    }
+
+    /**
+     * Returns the faction codes under which this faction's unit availability may be recorded, for the given year,
+     * ordered so the era-active code (per the {@link #getAliases() alias} date map) is tried first, then this
+     * faction's own key, then any remaining historical alias codes.
+     *
+     * <p>For a faction with no aliases this is simply a single-element list of {@link #getKey() the key}, so
+     * availability resolution is unchanged. For a consolidated rename lineage (for example Clan Goliath Scorpion,
+     * aliased to {@code CEI} from 3080 and {@code SE} from 3141) generating in 3100 this yields
+     * {@code [CEI, CGS, SE]} - so the era-appropriate {@code CEI} availability is preferred while units still listed
+     * only under the legacy {@code CGS} code remain reachable.</p>
+     *
+     * @param year the game year the availability is being resolved for
+     *
+     * @return the ordered, de-duplicated lineage codes to try. Never {@code null} or empty.
+     */
+    public List<String> getLineageCodesForYear(int year) {
+        if (aliases.isEmpty()) {
+            return List.of(key);
+        }
+        List<String> lineageCodes = new ArrayList<>();
+        Map.Entry<Integer, String> activeAlias = aliases.floorEntry(year);
+        lineageCodes.add((activeAlias != null) ? activeAlias.getValue() : key);
+        if (!lineageCodes.contains(key)) {
+            lineageCodes.add(key);
+        }
+        for (String aliasCode : aliases.values()) {
+            if (!lineageCodes.contains(aliasCode)) {
+                lineageCodes.add(aliasCode);
+            }
+        }
+        return lineageCodes;
+    }
+
     /**
      * Get the tech levels appropriate for this faction
      */
@@ -226,7 +278,7 @@ public class FactionRecord {
                 if (fr != null) {
                     ArrayList<String> retVal = fr.getRatingLevelSystem();
                     if (retVal.size() > 1 &&
-                          (ratingLevels.isEmpty() || retVal.contains(ratingLevels.get(0)))) {
+                          (ratingLevels.isEmpty() || retVal.contains(ratingLevels.getFirst()))) {
                         return retVal;
                     }
                 }
@@ -281,6 +333,24 @@ public class FactionRecord {
     public boolean isActiveInYear(int year) {
         for (DateRange dr : yearsActive) {
             if (dr.isInRange(year)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    /**
+     * Whether the faction is active in the given year or becomes active in some later year. Used to offer a unit
+     * factions that do not exist yet at its introduction date but will field it later, such as the Republic of the
+     * Sphere for a unit built before 3081.
+     *
+     * @param year the earliest year of interest
+     *
+     * @return {@code true} if the faction is active at or after that year
+     */
+    public boolean isActiveInOrAfterYear(int year) {
+        for (DateRange dateRange : yearsActive) {
+            if ((dateRange.end == null) || (dateRange.end >= year)) {
                 return true;
             }
         }
@@ -359,13 +429,53 @@ public class FactionRecord {
         salvage.get(era).remove(faction);
     }
 
-    public Integer getPctTech(TechCategory category, int era, int rating) {
-        if (!pctTech.containsKey(category) || !pctTech.get(category).containsKey(era)
-              || pctTech.get(category).get(era).isEmpty()
-              || pctTech.get(category).get(era).size() <= rating) {
+    /**
+     * Get the C/SL/O percentage this faction declares for the given rating, without consulting parent factions.
+     *
+     * @param category the category (Clan, SL/advanced IS, Omni) and unit type to look up
+     * @param era      the year for which the percentage was recorded
+     * @param rating   equipment rating expressed in this faction's rating level system, typically F (0) to A (4)
+     *
+     * @return the declared percentage, or {@code null} if this faction records none for that category and era
+     */
+    public @Nullable Integer getPctTech(TechCategory category, int era, int rating) {
+        Map<Integer, ArrayList<Integer>> percentagesByEra = pctTech.get(category);
+        if (percentagesByEra == null) {
             return null;
         }
-        return pctTech.get(category).get(era).get(rating);
+        List<Integer> percentagesByRating = percentagesByEra.get(era);
+        if ((percentagesByRating == null) || percentagesByRating.isEmpty()) {
+            return null;
+        }
+        int percentageIndex = pctTechIndex(rating);
+        if ((percentageIndex < 0) || (percentageIndex >= percentagesByRating.size())) {
+            return null;
+        }
+        return percentagesByRating.get(percentageIndex);
+    }
+
+    /**
+     * Translates an equipment rating into a position within this faction's C/SL/O percentage lists.
+     *
+     * <p>Those lists hold one value per rating level the faction itself declares, so the position is normally the
+     * rating itself. A faction that declares exactly one rating level is the documented special case: it is a
+     * subcommand locked to that one rating within its parent's system, and the caller's rating is a position in the
+     * <em>parent's</em> larger system rather than in this faction's single-entry lists. Indexing the lists with it
+     * would miss every time and silently hand the lookup off to the parent faction, discarding the subcommand's own
+     * declared percentages.</p>
+     *
+     * <p>That one declared value is the faction's percentage whatever rating is asked about, so the single-level case
+     * deliberately also covers the {@code -1} a caller passes to mean "this faction applies no rating adjustments".
+     * Returning nothing for {@code -1} instead would send the lookup to the parent faction, which is the very
+     * substitution this translation exists to prevent. A faction with a full rating system has no single value to
+     * fall back on, so {@code -1} stays out of range for it and reads as absent.</p>
+     *
+     * @param rating equipment rating as supplied by the caller
+     *
+     * @return the index to read from this faction's percentage lists
+     */
+    private int pctTechIndex(int rating) {
+        return (ratingLevels.size() == 1) ? 0 : rating;
     }
 
     /**

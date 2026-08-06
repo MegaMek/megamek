@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2025 The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2025-2026 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -70,10 +70,11 @@ import megamek.common.annotations.Nullable;
  * avoid repetition.
  */
 @SuppressWarnings("unused") // Class fields are assigned when factions are loaded from YAML files
-@JsonPropertyOrder({ "key", "name", "nameChanges", "capital", "capitalChanges", "yearsActive", "successor", "tags",
-                     "color", "logo", "background", "camos", "camosChanges", "nameGenerator", "eraMods", "ratingLevels",
-                     "fallBackFactions", "preInvasionHonorRating", "postInvasionHonorRating", "formationBaseSize",
-                     "formationGrouping", "rankSystem", "factionLeaders" })
+@JsonPropertyOrder({ "key", "name", "sucsCodes", "nameChanges", "aliases", "capital", "capitalChanges", "yearsActive", "successor",
+                     "tags", "color", "logo", "logoChanges", "background", "backgroundChanges", "camos", "camosChanges", "nameGenerator", "eraMods",
+                     "ratingLevels", "fallBackFactions", "preInvasionHonorRating", "postInvasionHonorRating",
+                     "formationBaseSize", "formationGrouping", "rankSystem", "factionLeaders", "usesMercenaries",
+                     "aresConventionsSignatory" })
 public class Faction2 {
     private static final int UNKNOWN = -1;
     private static final String DEFAULT_RANK_SYSTEM_INNER_SPHERE = "SLDF";
@@ -81,7 +82,9 @@ public class Faction2 {
 
     private String key;
     private String name;
+    private final Set<String> sucsCodes = new LinkedHashSet<>();
     private final NavigableMap<Integer, String> nameChanges = new TreeMap<>();
+    private final NavigableMap<Integer, String> aliases = new TreeMap<>();
     private String capital;
     private final NavigableMap<Integer, String> capitalChanges = new TreeMap<>();
     private final ArrayList<FactionRecord.DateRange> yearsActive = new ArrayList<>();
@@ -89,7 +92,9 @@ public class Faction2 {
     private final Set<FactionTag> tags = new HashSet<>();
     private final Color color = Color.LIGHT_GRAY;
     private String logo;
+    private final NavigableMap<Integer, String> logoChanges = new TreeMap<>();
     private String background;
+    private final NavigableMap<Integer, String> backgroundChanges = new TreeMap<>();
 
     @JsonProperty("camos")
     private String camosFolder;
@@ -98,7 +103,7 @@ public class Faction2 {
     private String nameGenerator;
     private int[] eraMods;
     private final List<String> ratingLevels = new ArrayList<>();
-    private final Set<String> fallBackFactions = new HashSet<>();
+    private final Set<String> fallBackFactions = new LinkedHashSet<>();
     private final HonorRating preInvasionHonorRating = HonorRating.NONE;
     private final HonorRating postInvasionHonorRating = HonorRating.NONE;
     // Do not final the variables
@@ -106,6 +111,8 @@ public class Faction2 {
     private int formationGrouping = UNKNOWN;
     private String rankSystem = null;
     private List<FactionLeaderData> factionLeaders = new ArrayList<>();
+    private final NavigableMap<Integer, Boolean> usesMercenaries = new TreeMap<>();
+    private final NavigableMap<Integer, Boolean> aresConventionsSignatory = new TreeMap<>();
 
     public List<String> getRatingLevels() {
         return ratingLevels;
@@ -124,6 +131,21 @@ public class Faction2 {
         return (nameByYear == null) ? name : nameByYear.getValue();
     }
 
+    /**
+     * Returns the SUCS (Sarna Unified Cartography Kit) faction codes that map to this MegaMek faction. A single MegaMek
+     * faction may correspond to multiple SUCS codes when SUCS uses different identifiers across historical eras of the
+     * same political entity (e.g. {@code LC} for the Lyran Commonwealth and {@code LA} for its successor the Lyran
+     * Alliance, both of which map to MegaMek's {@code LA}).
+     *
+     * <p>Used by SUCS data import tooling to translate SUCS faction codes into MegaMek codes. An empty set means no
+     * SUCS equivalent has been identified.</p>
+     *
+     * @return The SUCS codes that map to this faction, in insertion order. Never {@code null}.
+     */
+    public Set<String> getSucsCodes() {
+        return sucsCodes;
+    }
+
     public Set<FactionTag> getTags() {
         return tags;
     }
@@ -136,8 +158,45 @@ public class Faction2 {
         return background;
     }
 
+    /**
+     * Returns the faction's background image path for the given year, honoring any era-based
+     * {@link #getBackgroundChanges() background changes}. Falls back to the base {@link #getBackground() background}
+     * when no change applies for the year.
+     *
+     * @param year the game year to resolve the background for
+     *
+     * @return the era-appropriate background image path, or the base background when none applies
+     */
+    public String getBackground(int year) {
+        final Map.Entry<Integer, String> backgroundByYear = backgroundChanges.floorEntry(year);
+        return (backgroundByYear == null) ? background : backgroundByYear.getValue();
+    }
+
+    public NavigableMap<Integer, String> getBackgroundChanges() {
+        return backgroundChanges;
+    }
+
     public String getLogo() {
         return logo;
+    }
+
+    /**
+     * Returns the faction's logo image path for the given year, honoring any era-based
+     * {@link #getLogoChanges() logo changes}. Falls back to the base {@link #getLogo() logo} when no change applies
+     * for the year. Used to keep a consolidated rename lineage (for example Clan Goliath Scorpion becoming the
+     * Escorpion Imperio in 3080) visually era-correct after its faction files are merged into one.
+     *
+     * @param year the game year to resolve the logo for
+     *
+     * @return the era-appropriate logo image path, or the base logo when none applies
+     */
+    public String getLogo(int year) {
+        final Map.Entry<Integer, String> logoByYear = logoChanges.floorEntry(year);
+        return (logoByYear == null) ? logo : logoByYear.getValue();
+    }
+
+    public NavigableMap<Integer, String> getLogoChanges() {
+        return logoChanges;
     }
 
     public int[] getEraMods() {
@@ -247,8 +306,34 @@ public class Faction2 {
         return nameChanges;
     }
 
+    /**
+     * Returns the historical faction-code aliases for this faction, keyed by the year each alias became active.
+     * When a faction is the consolidation of an earlier faction that was renamed (for example Clan Goliath Scorpion
+     * becoming the Escorpion Imperio in 3080), the retired faction code is kept here as an alias of the surviving
+     * key, so that saved games, planetary ownership and RAT availability tables that still reference the old code
+     * continue to resolve to this faction.
+     *
+     * <p>Aliases are for <em>rename lineages</em> only - a single entity renamed over time, with disjoint date
+     * ranges. They must not be used for a merger of two distinct factions (for example Clan Snow Raven and the
+     * Outworlds Alliance both becoming the Raven Alliance); those relationships belong in
+     * {@link #getFallBackFactions()} instead.</p>
+     *
+     * @return The alias codes keyed by the year each became active, in ascending year order. Never {@code null}.
+     */
+    public NavigableMap<Integer, String> getAliases() {
+        return aliases;
+    }
+
     public NavigableMap<Integer, String> getCapitalChanges() {
         return capitalChanges;
+    }
+
+    public NavigableMap<Integer, Boolean> getUsesMercenaries() {
+        return usesMercenaries;
+    }
+
+    public NavigableMap<Integer, Boolean> getAresConventionsSignatory() {
+        return aresConventionsSignatory;
     }
 
     public Set<String> getFallBackFactions() {
@@ -421,7 +506,7 @@ public class Faction2 {
         SimpleModule module = new SimpleModule();
         module.addSerializer(Color.class, new ColorSerializer());
         yamlMapper.registerModule(module);
-        yamlMapper.setSerializationInclusion(JsonInclude.Include.NON_EMPTY);
+        yamlMapper.setDefaultPropertyInclusion(JsonInclude.Include.NON_EMPTY);
         yamlMapper.writeValue(file, this);
     }
 
@@ -532,6 +617,24 @@ public class Faction2 {
      */
     public boolean isAggregate() {
         return tags.contains(FactionTag.AGGREGATE);
+    }
+
+    public Boolean isUsesMercenaries(int year) {
+        final Map.Entry<Integer, Boolean> isUseMercenaries = usesMercenaries.floorEntry(year);
+        return isUseMercenaries == null || isUseMercenaries.getValue();
+    }
+
+    /**
+     * Whether this faction was a signatory of the Ares Conventions - and thus observed their restrictions on targeting
+     * population centers - in the given year. Defaults to {@code false} for years with no recorded signatory status.
+     *
+     * @param year the year to check
+     *
+     * @return {@code true} if the faction observed the Ares Conventions in that year
+     */
+    public boolean isAresConventionsSignatory(int year) {
+        final Map.Entry<Integer, Boolean> signatory = aresConventionsSignatory.floorEntry(year);
+        return (signatory != null) && signatory.getValue();
     }
 
     @Override

@@ -49,7 +49,7 @@ public class SendPacket implements INetworkPacket {
     private final PacketCommand command;
     private final AbstractConnection connection;
 
-    public SendPacket(Packet packet, AbstractConnection connection) throws java.io.NotSerializableException {
+    public SendPacket(Packet packet, AbstractConnection connection) {
         command = packet.command();
         this.connection = connection;
         ByteArrayOutputStream bos = new ByteArrayOutputStream();

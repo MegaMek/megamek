@@ -1,6 +1,6 @@
 /*
  * Copyright (c) 2003-2004 Ben Mazur (bmazur@sev.org)
- * Copyright (C) 2003-2025 The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2003-2026 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -75,6 +75,7 @@ public final class InfantryCompartment implements Transporter, InfantryTransport
     /**
      * The default constructor is only for serialization.
      */
+    @Deprecated(since = "0.51.0", forRemoval = true)
     private InfantryCompartment() {
         totalSpace = 0;
         currentSpace = 0;
@@ -91,32 +92,9 @@ public final class InfantryCompartment implements Transporter, InfantryTransport
         currentSpace = space;
     }
 
-    /**
-     * Determines if this object can accept the given unit. The unit may not be of the appropriate type or there may be
-     * no room for the unit.
-     *
-     * @param unit the <code>Entity</code> to be loaded.
-     *
-     * @return <code>true</code> if the unit can be loaded, <code>false</code> otherwise.
-     */
     @Override
     public boolean canLoad(Entity unit) {
-        // Assume that we can carry the unit.
-        boolean result = true;
-
-        // Only Infantry and BattleArmor can be carried in TroopSpace.
-        if (!(unit instanceof Infantry)) {
-            result = false;
-        }
-
-        // We must have enough space for the new troops.
-        // POSSIBLE BUG: we may have to take the Math.ceil() of the weight.
-        else if (currentSpace < unit.getWeight()) {
-            result = false;
-        }
-
-        // Return our result.
-        return result;
+        return InfantryTransporter.super.canLoad(unit);
     }
 
     /**

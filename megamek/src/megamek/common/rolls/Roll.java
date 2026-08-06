@@ -148,6 +148,7 @@ public abstract class Roll implements Serializable {
      *
      * @return the <code>bool</code> value of the roll, true if success.
      */
+    @Deprecated(since = "0.51.0", forRemoval = true)
     public boolean isTargetRollSuccess2isFailure(int target) {
         return (2 < getIntValue()) && (getIntValue() >= target);
     }
@@ -158,6 +159,7 @@ public abstract class Roll implements Serializable {
      *
      * @return the <code>bool</code> value of the roll, true if success.
      */
+    @Deprecated(since = "0.51.0", forRemoval = true)
     public boolean isTargetRollSuccess2isFailure(TargetRoll target) {
         return (2 < getIntValue()) && (getIntValue() >= target.getValue());
     }
@@ -186,6 +188,7 @@ public abstract class Roll implements Serializable {
      *
      * @return true if the roll is a simple failure, false otherwise
      */
+    @Deprecated(since = "0.51.0", forRemoval = true)
     public boolean isSimpleFailure() {
         return getIntValue() == 2;
     }

@@ -48,6 +48,7 @@ public class StandardUnitAttack extends AbstractAttackAction {
     private final int unitNumber;
     private final ASRange range;
 
+    @Deprecated(since = "0.51.0", forRemoval = true)
     public enum ManeuverResult {
         SUCCESS,
         FAILURE,

@@ -56,10 +56,9 @@ import megamek.common.units.Entity;
 import megamek.logging.MMLogger;
 
 /**
- * Dialog for managing Nova CEWS networks during End Phase.
- * Per IO: Alternate Eras p.60: "A unit wishing to link with another unit must declare the
- * connection in the End Phase. Beginning in the next turn, the two units
- * are linked and operate per the rules for C3i."
+ * Dialog for managing Nova CEWS networks during End Phase. Per IO: Alternate Eras p.60: "A unit wishing to link with
+ * another unit must declare the connection in the End Phase. Beginning in the next turn, the two units are linked and
+ * operate per the rules for C3i."
  *
  * @author MegaMek Team (with Claude Code assistance)
  */
@@ -115,7 +114,7 @@ public class NovaNetworkDialog extends JDialog implements ActionListener {
         });
 
         logger.debug("Nova CEWS Dialog initialized: {} player units, {} allied units",
-            playerNovaUnits.size(), alliedNovaUnits.size());
+              playerNovaUnits.size(), alliedNovaUnits.size());
     }
 
     /**
@@ -126,7 +125,9 @@ public class NovaNetworkDialog extends JDialog implements ActionListener {
         alliedNovaUnits = new ArrayList<>();
 
         for (Entity entity : game.getEntitiesVector()) {
-            if (!entity.hasNovaCEWS()) {
+            // A Nova switched to "Off" cannot be reconfigured, so it is not offered for selection (it keeps its
+            // network membership and rejoins when switched back on)
+            if (!entity.hasActiveNovaCEWS()) {
                 continue;
             }
 
@@ -287,7 +288,7 @@ public class NovaNetworkDialog extends JDialog implements ActionListener {
         String pendingNetwork = entity.getNewRoundNovaNetworkString();
 
         logger.debug("Entity {}: currentNetwork={}, originalNetwork={}, pendingNetwork={}, isNetworked={}",
-            entity.getId(), currentNetwork, originalNetwork, pendingNetwork, isEntityNetworked(entity));
+              entity.getId(), currentNetwork, originalNetwork, pendingNetwork, isEntityNetworked(entity));
 
         if (isEntityNetworked(entity)) {
             int networkSize = getNetworkSize(currentNetwork);
@@ -324,9 +325,8 @@ public class NovaNetworkDialog extends JDialog implements ActionListener {
     }
 
     /**
-     * Checks if an entity is currently networked with other units.
-     * An entity is considered networked if at least one other Nova CEWS unit
-     * shares its network ID.
+     * Checks if an entity is currently networked with other units. An entity is considered networked if at least one
+     * other Nova CEWS unit shares its network ID.
      */
     private boolean isEntityNetworked(Entity entity) {
         String networkId = entity.getC3NetId();
@@ -336,9 +336,9 @@ public class NovaNetworkDialog extends JDialog implements ActionListener {
 
         // Entity is networked if at least one other unit shares this network ID
         return game.getEntitiesVector().stream()
-                .filter(e -> e.hasActiveNovaCEWS())
-                .filter(e -> e.getId() != entity.getId())
-                .anyMatch(e -> networkId.equals(e.getC3NetId()));
+              .filter(Entity::hasActiveNovaCEWS)
+              .filter(e -> e.getId() != entity.getId())
+              .anyMatch(e -> networkId.equals(e.getC3NetId()));
     }
 
     /**
@@ -346,14 +346,14 @@ public class NovaNetworkDialog extends JDialog implements ActionListener {
      */
     private int getNetworkSize(String networkId) {
         return (int) game.getEntitiesVector().stream()
-                .filter(e -> e.hasActiveNovaCEWS())
-                .filter(e -> networkId.equals(e.getC3NetId()))
-                .count();
+              .filter(Entity::hasActiveNovaCEWS)
+              .filter(e -> networkId.equals(e.getC3NetId()))
+              .count();
     }
 
     /**
-     * Gets a human-readable display of network members (excluding the current entity).
-     * Returns a comma-separated list of IDs like "ID2, ID3" or "No other members".
+     * Gets a human-readable display of network members (excluding the current entity). Returns a comma-separated list
+     * of IDs like "ID2, ID3" or "No other members".
      */
     private String getNetworkMembersDisplay(Entity currentEntity, String networkId) {
         if (networkId == null) {
@@ -415,6 +415,7 @@ public class NovaNetworkDialog extends JDialog implements ActionListener {
      * Gets a user-friendly display name for a network ID.
      *
      * @param networkId The network ID (e.g., "C3Nova.5")
+     *
      * @return User-friendly display name
      */
     private String getNetworkDisplayName(String networkId) {
@@ -449,10 +450,10 @@ public class NovaNetworkDialog extends JDialog implements ActionListener {
         } else if (actionEvent.getSource() == btnCancel) {
             if (!pendingChanges.isEmpty()) {
                 int result = JOptionPane.showConfirmDialog(this,
-                    Messages.getString("NovaNetworkDialog.discardChanges"),
-                    Messages.getString("NovaNetworkDialog.title"),
-                    JOptionPane.YES_NO_OPTION,
-                    JOptionPane.WARNING_MESSAGE);
+                      Messages.getString("NovaNetworkDialog.discardChanges"),
+                      Messages.getString("NovaNetworkDialog.title"),
+                      JOptionPane.YES_NO_OPTION,
+                      JOptionPane.WARNING_MESSAGE);
 
                 if (result != JOptionPane.YES_OPTION) {
                     return;  // Don't close if user cancels
@@ -493,28 +494,28 @@ public class NovaNetworkDialog extends JDialog implements ActionListener {
 
         String targetNetworkId;
         List<String> existingNetworks = selectedEntities.stream()
-            .filter(this::isEntityNetworked)
-            .map(Entity::getC3NetId)
-            .distinct()
-            .collect(Collectors.toList());
+              .filter(this::isEntityNetworked)
+              .map(Entity::getC3NetId)
+              .distinct()
+              .collect(Collectors.toList());
 
         long networkedCount = selectedEntities.stream()
-            .filter(this::isEntityNetworked)
-            .count();
+              .filter(this::isEntityNetworked)
+              .count();
 
         logger.debug("Selected units breakdown: {} networked, {} unlinked",
-            networkedCount, selectedEntities.size() - networkedCount);
+              networkedCount, selectedEntities.size() - networkedCount);
         logger.debug("Unique networks in selection: {}", existingNetworks);
 
         // Check if ALL selected units are networked AND in the same network
         if ((networkedCount == selectedEntities.size()) && (existingNetworks.size() == 1)) {
             // All selected units are in the same network - preserve it
-            targetNetworkId = existingNetworks.get(0);
+            targetNetworkId = existingNetworks.getFirst();
             logger.debug("Decision: Preserving existing network (all units from same network): {}", targetNetworkId);
 
             // Check if this is a no-op (all units already in target network)
             boolean anyChanges = selectedEntities.stream()
-                .anyMatch(e -> !targetNetworkId.equals(e.getC3NetId()));
+                  .anyMatch(e -> !targetNetworkId.equals(e.getC3NetId()));
 
             if (!anyChanges) {
                 logger.debug("No action needed: All selected units already in network {}", targetNetworkId);
@@ -525,19 +526,19 @@ public class NovaNetworkDialog extends JDialog implements ActionListener {
             // Mixed selection or different networks - create new network
             // Find a network ID from selected units that won't include unintended units
             targetNetworkId = selectedEntities.stream()
-                .map(Entity::getOriginalNovaC3NetId)
-                .filter(netId -> {
-                    // Count how many units (not in selection) currently use this network
-                    long othersUsingNetwork = game.getEntitiesVector().stream()
-                        .filter(entity -> entity.hasActiveNovaCEWS())
-                        .filter(entity -> netId.equals(entity.getC3NetId()))
-                        .filter(entity -> selectedEntities.stream()
-                            .noneMatch(sel -> sel.getId() == entity.getId()))
-                        .count();
-                    return othersUsingNetwork == 0; // No other units using it
-                })
-                .findFirst()
-                .orElse(selectedEntities.get(0).getOriginalNovaC3NetId()); // Fallback
+                  .map(Entity::getOriginalNovaC3NetId)
+                  .filter(netId -> {
+                      // Count how many units (not in selection) currently use this network
+                      long othersUsingNetwork = game.getEntitiesVector().stream()
+                            .filter(Entity::hasActiveNovaCEWS)
+                            .filter(entity -> netId.equals(entity.getC3NetId()))
+                            .filter(entity -> selectedEntities.stream()
+                                  .noneMatch(sel -> sel.getId() == entity.getId()))
+                            .count();
+                      return othersUsingNetwork == 0; // No other units using it
+                  })
+                  .findFirst()
+                  .orElse(selectedEntities.getFirst().getOriginalNovaC3NetId()); // Fallback
 
             logger.debug("Decision: Creating new network from available ID (mixed selection): {}", targetNetworkId);
             logger.debug("Selected network ID {} to avoid including unintended units", targetNetworkId);
@@ -546,16 +547,16 @@ public class NovaNetworkDialog extends JDialog implements ActionListener {
         // Calculate resulting network size
         // Start with units already in the target network (excluding selected units that will be moved)
         long existingUnitsInNetwork = game.getEntitiesVector().stream()
-            .filter(e -> e.hasActiveNovaCEWS())
-            .filter(e -> targetNetworkId.equals(e.getC3NetId()))
-            .filter(e -> selectedEntities.stream().noneMatch(sel -> sel.getId() == e.getId()))
-            .count();
+              .filter(Entity::hasActiveNovaCEWS)
+              .filter(e -> targetNetworkId.equals(e.getC3NetId()))
+              .filter(e -> selectedEntities.stream().noneMatch(sel -> sel.getId() == e.getId()))
+              .count();
 
         // Add the selected units
         int resultingNetworkSize = (int) existingUnitsInNetwork + selectedEntities.size();
 
         logger.debug("Existing units in network: {}, Selected units: {}, Resulting size: {}",
-            existingUnitsInNetwork, selectedEntities.size(), resultingNetworkSize);
+              existingUnitsInNetwork, selectedEntities.size(), resultingNetworkSize);
 
         // IO: Alternate Eras p.60: "link up to two other units" = max 3 total
         if (resultingNetworkSize > 3) {
@@ -567,7 +568,7 @@ public class NovaNetworkDialog extends JDialog implements ActionListener {
         // Queue link actions for all selected units
         for (Entity entity : selectedEntities) {
             logger.debug("Queuing link for entity {} ({}) to network {}",
-                entity.getId(), entity.getShortName(), targetNetworkId);
+                  entity.getId(), entity.getShortName(), targetNetworkId);
             pendingChanges.put(entity.getId(), targetNetworkId);
         }
 
@@ -606,7 +607,7 @@ public class NovaNetworkDialog extends JDialog implements ActionListener {
             String targetNetworkId = entity.getOriginalNovaC3NetId();
 
             logger.debug("Queuing unlink for entity {} ({}) from network {} to original network {}",
-                entity.getId(), entity.getShortName(), currentNetworkId, targetNetworkId);
+                  entity.getId(), entity.getShortName(), currentNetworkId, targetNetworkId);
 
             pendingChanges.put(entity.getId(), targetNetworkId);
         }
@@ -618,15 +619,25 @@ public class NovaNetworkDialog extends JDialog implements ActionListener {
         logger.debug("Unlink action completed successfully");
     }
 
+    /** {@code true} once Apply sent at least one network change, so the caller can confirm a declaration was made. */
+    private boolean applied;
+
+    /**
+     * @return {@code true} if Apply sent at least one Nova network change this time the dialog was shown
+     */
+    public boolean wasApplied() {
+        return applied;
+    }
+
     /**
      * Applies all pending network changes by sending them to the server.
      */
     private void applyPendingChanges() {
         if (pendingChanges.isEmpty()) {
             JOptionPane.showMessageDialog(this,
-                Messages.getString("NovaNetworkDialog.noPendingChanges"),
-                Messages.getString("NovaNetworkDialog.title"),
-                JOptionPane.INFORMATION_MESSAGE);
+                  Messages.getString("NovaNetworkDialog.noPendingChanges"),
+                  Messages.getString("NovaNetworkDialog.title"),
+                  JOptionPane.INFORMATION_MESSAGE);
             return;
         }
 
@@ -638,11 +649,12 @@ public class NovaNetworkDialog extends JDialog implements ActionListener {
 
             if (entity != null) {
                 logger.info("Applying network change for entity {} ({}): {} -> {}",
-                    entityId, entity.getShortName(),
-                    entity.getC3NetId(), targetNetwork);
+                      entityId, entity.getShortName(),
+                      entity.getC3NetId(), targetNetwork);
 
                 entity.setNewRoundNovaNetworkString(targetNetwork);
                 clientGUI.getClient().sendNovaChange(entityId, targetNetwork);
+                applied = true;
             }
         }
 
@@ -679,8 +691,8 @@ public class NovaNetworkDialog extends JDialog implements ActionListener {
     }
 
     /**
-     * Updates the board view to highlight the currently selected entities.
-     * Highlights both the entity name tags and hex borders.
+     * Updates the board view to highlight the currently selected entities. Highlights both the entity name tags and hex
+     * borders.
      */
     private void updateEntityHighlighting() {
         List<Entity> selectedEntities = getSelectedEntities();
@@ -691,16 +703,16 @@ public class NovaNetworkDialog extends JDialog implements ActionListener {
 
         // Highlight hex borders
         List<Coords> hexesToHighlight = selectedEntities.stream()
-                .map(Entity::getPosition)
-                .collect(Collectors.toList());
+              .map(Entity::getPosition)
+              .collect(Collectors.toList());
         boardView.setHighlightedEntityHexes(hexesToHighlight);
 
         boardView.repaint();
     }
 
     /**
-     * Clears all entity highlighting on the board view.
-     * Clears both entity name tag highlights and hex border highlights.
+     * Clears all entity highlighting on the board view. Clears both entity name tag highlights and hex border
+     * highlights.
      */
     private void clearHighlighting() {
         BoardView boardView = clientGUI.getBoardView();
@@ -719,8 +731,8 @@ public class NovaNetworkDialog extends JDialog implements ActionListener {
      */
     private void showError(String message) {
         JOptionPane.showMessageDialog(this, message,
-                Messages.getString("NovaNetworkDialog.error.title"),
-                JOptionPane.ERROR_MESSAGE);
+              Messages.getString("NovaNetworkDialog.error.title"),
+              JOptionPane.ERROR_MESSAGE);
     }
 
     /**
@@ -728,7 +740,7 @@ public class NovaNetworkDialog extends JDialog implements ActionListener {
      */
     private void showInfo(String message) {
         JOptionPane.showMessageDialog(this, message,
-                Messages.getString("NovaNetworkDialog.info.title"),
-                JOptionPane.INFORMATION_MESSAGE);
+              Messages.getString("NovaNetworkDialog.info.title"),
+              JOptionPane.INFORMATION_MESSAGE);
     }
 }

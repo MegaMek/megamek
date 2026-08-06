@@ -35,7 +35,7 @@ package megamek.common.weapons.missiles.innerSphere.thunderbolt.oneShot;
 
 import megamek.common.enums.Faction;
 import megamek.common.enums.TechRating;
-import megamek.common.weapons.missiles.thuunderbolt.Thunderbolt15Weapon;
+import megamek.common.weapons.missiles.thunderbolt.Thunderbolt15Weapon;
 
 /**
  * The Improved One-Shot Thunderbolt 15

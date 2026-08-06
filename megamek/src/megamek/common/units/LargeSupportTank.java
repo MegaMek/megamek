@@ -1,6 +1,6 @@
 /*
  * Copyright (c) 2000-2003 - Ben Mazur (bmazur@sev.org)
- * Copyright (C) 2008-2025 The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2008-2026 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -67,26 +67,34 @@ public class LargeSupportTank extends SupportTank {
     public static final int LOC_REAR_LEFT = 5;
     public static final int LOC_REAR = 6;
     public static final int LOC_TURRET = 7;
+    // for dual turrets, turret 2 is the front turret
     public static final int LOC_TURRET_2 = 8;
 
     private double fuelTonnage = 0;
 
     private static final String[] LOCATION_ABBREVIATIONS = { "BD", "FR", "FRRS", "FRLS",
-                                                             "RRRS", "RRLS", "RR", "TU", "TU2" };
+                                                             "RRRS", "RRLS", "RR", "TU", "FT" };
+
+    // On a dual-turret tank the turret locations are the rear turret (RT) and the front turret (FT), so the
+    // abbreviations say which is which (a bare "TU" next to "FT" does not).
+    private static final String[] LOCATION_ABBREVIATIONS_DUAL_TURRET = { "BD", "FR", "FRRS", "FRLS",
+                                                                         "RRRS", "RRLS", "RR", "RT", "FT" };
 
     private static final String[] LOCATION_NAMES = { "Body", "Front", "Front Right",
                                                      "Front Left", "Rear Right", "Rear Left", "Rear", "Turret" };
 
     private static final String[] LOCATION_NAMES_DUAL_TURRET = { "Body", "Front", "Front Right",
                                                                  "Front Left", "Rear Right", "Rear Left", "Rear",
-                                                                 "Rear Turret",
-                                                                 "Front Turret" };
+                                                                 "Rear Turret", "Front Turret" };
 
     // tanks have no critical slot limitations
-    private static final int[] NUM_OF_SLOTS = { 25, 25, 25, 25, 25, 25, 25, 25 };
+    private static final int[] NUM_OF_SLOTS = { 25, 25, 25, 25, 25, 25, 25, 25, 25 };
 
     @Override
     public String[] getLocationAbbreviations() {
+        if (!hasNoDualTurret()) {
+            return LOCATION_ABBREVIATIONS_DUAL_TURRET;
+        }
         return LOCATION_ABBREVIATIONS;
     }
 

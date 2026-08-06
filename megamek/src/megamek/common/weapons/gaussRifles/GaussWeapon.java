@@ -37,7 +37,6 @@ package megamek.common.weapons.gaussRifles;
 import java.io.Serial;
 
 import megamek.common.options.IGameOptions;
-import megamek.common.options.OptionsConstants;
 import megamek.common.weapons.AmmoWeapon;
 
 /**
@@ -54,6 +53,7 @@ public abstract class GaussWeapon extends AmmoWeapon {
               .or(F_AERO_WEAPON)
               .or(F_PROTO_WEAPON)
               .or(F_BALLISTIC)
+              .or(F_GAUSS)
               .or(F_DIRECT_FIRE)
               .or(F_NO_FIRES);
         explosive = true;
@@ -64,15 +64,13 @@ public abstract class GaussWeapon extends AmmoWeapon {
     public void adaptToGameOptions(IGameOptions gameOptions) {
         super.adaptToGameOptions(gameOptions);
 
-        // Add modes for powering down Gauss weapons PPC field inhibitors according to TacOps, p.102
-        if (gameOptions.booleanOption(OptionsConstants.ADVANCED_COMBAT_TAC_OPS_GAUSS_WEAPONS)) {
-            addMode("Powered Up");
-            addMode("Powered Down");
-            setInstantModeSwitch(false);
-        } else {
-            removeMode("Powered Up");
-            removeMode("Powered Down");
-        }
+        // Gauss rifles can always be powered down and back up per the activation/deactivation rules
+        // (formerly gated behind the TacOps gauss weapons option, TacOps p.102). A powered-down gauss
+        // rifle cannot fire and does not explode on a critical hit; the switch takes effect in the
+        // End Phase.
+        addMode(MODE_GAUSS_POWERED_UP);
+        addMode(MODE_GAUSS_POWERED_DOWN);
+        setInstantModeSwitch(false);
     }
 
 }

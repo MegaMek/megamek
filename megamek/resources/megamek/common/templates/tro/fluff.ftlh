@@ -18,8 +18,15 @@
     <#list armamentList as armament>
   		&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;${armament}<br/>
 	</#list>
+    <#if manufacturerList??>
+        <b>Manufacturers:</b><br/>
+        <#list manufacturerList as entry>
+            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;${entry.manufacturer}, ${entry.factory}<br/>
+        </#list>
+    <#else>
 <#if manufacturerDesc??><b>Manufacturer:</b> ${manufacturerDesc}<br/></#if>
 <#if factoryDesc??><b>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Primary Factory: </b>${factoryDesc}<br/></#if>
+    </#if>
 <#if communicationDesc??><b>Communication System: </b>${communicationDesc}<br/></#if>
 <#if targetingDesc??><b>Targeting & Tracking System: </b>${targetingDesc}<br/></#if>
 <b>Introduction Year:</b> ${year}<br/>

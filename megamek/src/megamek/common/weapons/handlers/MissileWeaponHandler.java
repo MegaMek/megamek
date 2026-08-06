@@ -34,6 +34,8 @@
 
 package megamek.common.weapons.handlers;
 
+import static megamek.common.equipment.AmmoType.INCENDIARY_MOD;
+
 import java.io.Serial;
 import java.util.Enumeration;
 import java.util.List;
@@ -51,6 +53,8 @@ import megamek.common.compute.ComputeECM;
 import megamek.common.enums.GamePhase;
 import megamek.common.equipment.AmmoMounted;
 import megamek.common.equipment.AmmoType;
+import megamek.common.equipment.AmmoType.AmmoTypeEnum;
+import megamek.common.equipment.AmmoType.Munitions;
 import megamek.common.equipment.MiscType;
 import megamek.common.equipment.Mounted;
 import megamek.common.equipment.WeaponMounted;
@@ -689,13 +693,18 @@ public class MissileWeaponHandler extends AmmoWeaponHandler {
         r.indent();
         r.newlines = 0;
         r.subject = subjectId;
-        r.add(weaponType.getName() + number);
+        String mod =
+              (ammoType != null && ammoType.getMunitionType().contains(Munitions.M_INCENDIARY_LRM) &&
+                    ammoType.getMunitionType().contains(Munitions.M_STANDARD))
+                    ? " " + INCENDIARY_MOD
+                    : "";
+        r.add(weaponType.getName() + number + mod);
         if (entityTarget != null) {
-            if (weaponType.getAmmoType() != AmmoType.AmmoTypeEnum.NA) {
+            if (weaponType.getAmmoType() != AmmoTypeEnum.NA) {
                 AmmoType ammoType = ammo.getType();
-                if (!ammoType.getMunitionType().contains(AmmoType.Munitions.M_STANDARD)
-                      || ammoType.getAmmoType() == AmmoType.AmmoTypeEnum.MML
-                      || ammoType.getAmmoType() == AmmoType.AmmoTypeEnum.ATM) {
+                if (!ammoType.getMunitionType().contains(Munitions.M_STANDARD)
+                      || ammoType.getAmmoType() == AmmoTypeEnum.MML
+                      || ammoType.getAmmoType() == AmmoTypeEnum.ATM) {
                     r.messageId = 3116;
                     r.add(ammoType.getSubMunitionName());
                 }
@@ -968,7 +977,7 @@ public class MissileWeaponHandler extends AmmoWeaponHandler {
         if (bMissed && (id != vPhaseReport.size())) {
             vPhaseReport.get(id - 1).newlines--;
             vPhaseReport.get(id).indent(2);
-            vPhaseReport.get(vPhaseReport.size() - 1).newlines++;
+            vPhaseReport.getLast().newlines++;
         }
 
         if (!bMissed) {

@@ -63,13 +63,14 @@ public class GroundObjectSpriteHandler extends BoardViewSpriteHandler {
         if (currentGroundObjectList != null) {
             for (Coords coords : currentGroundObjectList.keySet()) {
                 for (ICarryable groundObject : currentGroundObjectList.get(coords)) {
-                    GroundObjectSprite gos = new GroundObjectSprite((BoardView) clientGUI.boardViews().get(0), coords);
+                    GroundObjectSprite gos = new GroundObjectSprite((BoardView) clientGUI.boardViews().getFirst(),
+                          coords);
                     currentSprites.add(gos);
                 }
             }
         }
 
-        clientGUI.boardViews().get(0).addSprites(currentSprites);
+        clientGUI.boardViews().getFirst().addSprites(currentSprites);
     }
 
     @Override

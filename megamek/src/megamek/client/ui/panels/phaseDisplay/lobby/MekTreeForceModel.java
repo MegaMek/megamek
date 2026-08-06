@@ -39,13 +39,13 @@ import javax.swing.tree.DefaultMutableTreeNode;
 import javax.swing.tree.DefaultTreeModel;
 
 import megamek.client.ui.panels.phaseDisplay.lobby.sorters.MekTreeTopLevelSorter;
-import megamek.common.units.Entity;
-import megamek.common.interfaces.ForceAssignable;
-import megamek.common.game.Game;
 import megamek.common.Player;
 import megamek.common.force.Force;
 import megamek.common.force.Forces;
+import megamek.common.game.Game;
+import megamek.common.interfaces.ForceAssignable;
 import megamek.common.options.OptionsConstants;
+import megamek.common.units.Entity;
 
 public class MekTreeForceModel extends DefaultTreeModel {
 
@@ -66,6 +66,7 @@ public class MekTreeForceModel extends DefaultTreeModel {
         nodeStructureChanged(root);
     }
 
+    @Deprecated(since = "0.51.0", forRemoval = true)
     public void refreshDisplay() {
         nodeChanged(root);
     }

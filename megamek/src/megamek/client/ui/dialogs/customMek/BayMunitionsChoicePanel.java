@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2017-2025 The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2017-2026 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -34,7 +34,6 @@ package megamek.client.ui.dialogs.customMek;
 
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
-import java.awt.Insets;
 import java.io.Serial;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -43,13 +42,14 @@ import java.util.Map;
 import java.util.Map.Entry;
 import javax.swing.JPanel;
 
-import megamek.common.equipment.AmmoType.AmmoTypeEnum;
-import megamek.common.units.Entity;
-import megamek.common.game.Game;
-import megamek.common.exceptions.LocationFullException;
-import megamek.common.equipment.Mounted;
+import megamek.client.ui.GBC2;
 import megamek.common.equipment.AmmoMounted;
+import megamek.common.equipment.AmmoType.AmmoTypeEnum;
+import megamek.common.equipment.Mounted;
 import megamek.common.equipment.WeaponMounted;
+import megamek.common.exceptions.LocationFullException;
+import megamek.common.game.Game;
+import megamek.common.units.Entity;
 import megamek.logging.MMLogger;
 
 /**
@@ -72,9 +72,8 @@ public class BayMunitionsChoicePanel extends JPanel {
         this.game = game;
 
         setLayout(new GridBagLayout());
-        GridBagConstraints gbc = new GridBagConstraints();
+        GBC2 gbc = new GBC2().insets(10, 0, 10, 0);
         gbc.anchor = GridBagConstraints.WEST;
-        gbc.insets = new Insets(10, 0, 10, 0);
 
         for (WeaponMounted bay : entity.getWeaponBayList()) {
             Map<AmmoKey, List<AmmoMounted>> ammoByType = new HashMap<>();
@@ -85,12 +84,34 @@ public class BayMunitionsChoicePanel extends JPanel {
             for (Entry<AmmoKey, List<AmmoMounted>> entry : ammoByType.entrySet()) {
                 AmmoKey key = entry.getKey();
                 List<AmmoMounted> ammoMounts = entry.getValue();
-                AmmoRowPanel row = new AmmoRowPanel(this, bay, key.ammoType(), key.rackSize(), ammoMounts);
-                gbc.gridy++;
-                add(row, gbc);
+                var row = new AmmoRowPanel(this, bay, key.ammoType(), key.rackSize(), ammoMounts, this, gbc);
                 rows.add(row);
             }
         }
+    }
+
+    public BayMunitionsChoicePanel(Entity entity, Game game, JPanel parentPanel, GBC2 gbc) {
+        this.entity = entity;
+        this.game = game;
+
+        for (WeaponMounted bay : entity.getWeaponBayList()) {
+            Map<AmmoKey, List<AmmoMounted>> ammoByType = new HashMap<>();
+            for (AmmoMounted ammo : bay.getBayAmmo()) {
+                AmmoKey key = new AmmoKey(ammo.getType().getAmmoType(), ammo.getType().getRackSize());
+                ammoByType.computeIfAbsent(key, k -> new ArrayList<>()).add(ammo);
+            }
+            for (Entry<AmmoKey, List<AmmoMounted>> entry : ammoByType.entrySet()) {
+                AmmoKey key = entry.getKey();
+                List<AmmoMounted> ammoMounts = entry.getValue();
+                var row = new AmmoRowPanel(this, bay, key.ammoType(), key.rackSize(), ammoMounts,
+                      parentPanel, gbc);
+                rows.add(row);
+            }
+        }
+    }
+
+    boolean isEmpty() {
+        return rows.isEmpty();
     }
 
     /**
@@ -139,7 +160,7 @@ public class BayMunitionsChoicePanel extends JPanel {
             // to first mount
             // and adjust original shots.
             if (remainingWeight > 0) {
-                AmmoMounted m = row.ammoMounts.get(0);
+                AmmoMounted m = row.ammoMounts.getFirst();
                 m.setSize(m.getSize() + remainingWeight);
                 m.setOriginalShots((int) Math.floor(m.getSize() / (m.getType().getShots() * m.getTonnage())));
             }

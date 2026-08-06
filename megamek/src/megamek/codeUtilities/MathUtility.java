@@ -157,7 +157,7 @@ public class MathUtility {
     /**
      * Calculates a Gaussian-weighted average from a list of integer values.
      *
-     * <p>This method computes a “soft” average that down-weights statistical outliers using a Gaussian
+     * <p>This method computes a "soft" average that down-weights statistical outliers using a Gaussian
      * (normal-distribution) weighting function. This is useful when a handful of extreme values should not influence
      * the final result as strongly as values clustered near the center of the distribution.</p>
      *
@@ -323,9 +323,12 @@ public class MathUtility {
      *           <li>clamp(7, 6, 8) returns 7</li>
      *           <li>clamp(12, 3, 5) returns 5</li>
      *       </ul>
+     *
+     * @deprecated Use the builtin Math.clamp() method instead.
      */
+    @Deprecated(since = "0.51.0", forRemoval = true)
     public static int clamp(final int value, final int min, final int max) {
-        return Math.min(Math.max(value, min), max);
+        return Math.clamp(value, min, max);
     }
 
     /**
@@ -340,9 +343,11 @@ public class MathUtility {
      *         <li>clamp(7, 6, 8) returns 7</li>
      *         <li>clamp(12, 3, 5) returns 5</li>
      *       </ul>
+     *
+     * @deprecated Use the builtin Math.clamp() method instead.
      */
     public static double clamp(final double value, final double min, final double max) {
-        return Math.min(Math.max(value, min), max);
+        return Math.clamp(value, min, max);
     }
 
     /**
@@ -357,9 +362,11 @@ public class MathUtility {
      *         <li>clamp(7, 6, 8) returns 7</li>
      *         <li>clamp(12, 3, 5) returns 5</li>
      *       </ul>
+     *
+     * @deprecated Use the builtin Math.clamp() method instead.
      */
     public static float clamp(final float value, final float min, final float max) {
-        return Math.min(Math.max(value, min), max);
+        return Math.clamp(value, min, max);
     }
 
     /**
@@ -374,9 +381,11 @@ public class MathUtility {
      *         <li>clamp(7, 6, 8) returns 7</li>
      *         <li>clamp(12, 3, 5) returns 5</li>
      *       </ul>
+     *
+     * @deprecated Use the builtin Math.clamp() method instead.
      */
     public static long clamp(final long value, final long min, final long max) {
-        return Math.min(Math.max(value, min), max);
+        return Math.clamp(value, min, max);
     }
 
     /**
@@ -391,7 +400,7 @@ public class MathUtility {
      *       </ul>
      */
     public static double clamp01(double value) {
-        return Math.min(1.0, Math.max(0.0, value));
+        return Math.clamp(value, 0.0, 1.0);
     }
 
     /**
@@ -409,7 +418,7 @@ public class MathUtility {
      *       </ul>
      */
     public static double clampUlp1(double value) {
-        return Math.min(1.0, Math.max(Math.ulp(1.0), value));
+        return Math.clamp(value, Math.ulp(1.0), 1.0);
     }
     // endregion Clamp
 
@@ -482,7 +491,7 @@ public class MathUtility {
      *
      * @return The <code>double</code> value or defaultValue.
      */
-    public static double parseDouble(final String value, double defaultValue) {
+    public static Double parseDouble(final String value, Double defaultValue) {
         if (value == null || value.isEmpty()) {
             return defaultValue;
         }
@@ -497,7 +506,7 @@ public class MathUtility {
 
     /**
      * Parses the provided string into a double. If parsing fails, a default value of 0.0 is returned. This method
-     * delegates to {@link #parseDouble(String, double)} with a default value.
+     * delegates to {@link #parseDouble(String, Double)} with a default value.
      *
      * @param value the string to parse. Can be a numeric string or {@code null}.
      *
@@ -552,5 +561,19 @@ public class MathUtility {
             LOGGER.warn("Can't parse String `{}` into an Boolean due to {}", value, e.getMessage());
             return defaultValue;
         }
+    }
+
+    /**
+     * Parses a string into a boolean, returning {@code false} when the input is {@code null} or empty.
+     *
+     * <p>Note: {@link Boolean#parseBoolean(String)} returns {@code true} only for (case-insensitive)
+     * {@code "true"}.</p>
+     *
+     * @param value String value to parse.
+     *
+     * @return The {@code boolean} value, or {@code false} if {@code value} is {@code null} or empty.
+     */
+    public static boolean parseBoolean(final String value) {
+        return parseBoolean(value, false);
     }
 }

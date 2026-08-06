@@ -72,6 +72,7 @@ public record MilestoneData(String label, Version version, boolean useFallbackHy
      * @author Illiani
      * @since 0.50.07
      */
+    @Deprecated(since = "0.51.0", forRemoval = true)
     public String getMegaMekUrl() {
         return useFallbackHyperlink
               ? DEFAULT_MEGAMEK_URL
@@ -89,6 +90,7 @@ public record MilestoneData(String label, Version version, boolean useFallbackHy
      * @author Illiani
      * @since 0.50.07
      */
+    @Deprecated(since = "0.51.0", forRemoval = true)
     public String getMegaMekLabUrl() {
         return useFallbackHyperlink
               ? DEFAULT_MEGAMEKLAB_URL

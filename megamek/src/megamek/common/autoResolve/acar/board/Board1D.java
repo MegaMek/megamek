@@ -36,14 +36,17 @@ package megamek.common.autoResolve.acar.board;
 
 import megamek.common.board.Board;
 
+@Deprecated(since = "0.51.0", forRemoval = true)
 public class Board1D {
 
+    @Deprecated(since = "0.51.0", forRemoval = true)
     private enum Type {
         GROUND,
         ATMOSPHERE,
         SPACE
     }
 
+    @Deprecated(since = "0.51.0", forRemoval = true)
     private enum TerrainType {
         URBAN,
         LIGHT_WOOD,
@@ -73,10 +76,12 @@ public class Board1D {
         return size;
     }
 
+    @Deprecated(since = "0.51.0", forRemoval = true)
     public int getNorthMostPosition() {
         return size - 1;
     }
 
+    @Deprecated(since = "0.51.0", forRemoval = true)
     public int getSouthMostPosition() {
         return 0;
     }

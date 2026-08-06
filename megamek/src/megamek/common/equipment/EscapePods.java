@@ -107,7 +107,7 @@ public class EscapePods extends SmallCraft {
         setCrew(new Crew(CrewType.CREW));
         setChassis(POD_EJECT_NAME);
         //this constructor is just so that the MUL parser can read these units in so
-        // assign some arbitrarily large number here for the internal so that locations will get 
+        // assign some arbitrarily large number here for the internal so that locations will get
         //the actual current number of pods correct.
         setOSI(Integer.MAX_VALUE);
         for (int i = 0; i < locations(); i++) {
@@ -132,10 +132,12 @@ public class EscapePods extends SmallCraft {
     /**
      * @return the <code>int</code> external id of this unit's original ride
      */
+    @Deprecated(since = "0.51.0", forRemoval = true)
     public int getOriginalRideExternalId() {
         return Integer.parseInt(originalRideExternalId);
     }
 
+    @Deprecated(since = "0.51.0", forRemoval = true)
     public String getOriginalRideExternalIdAsString() {
         return originalRideExternalId;
     }
@@ -147,6 +149,7 @@ public class EscapePods extends SmallCraft {
         this.originalRideExternalId = originalRideExternalId;
     }
 
+    @Deprecated(since = "0.51.0", forRemoval = true)
     public void setOriginalRideExternalId(int originalRideExternalId) {
         this.originalRideExternalId = Integer.toString(originalRideExternalId);
     }

@@ -69,7 +69,7 @@ public class InfantryLaserPistolAWAWilibyMk4LaserPistol extends InfantryWeapon {
         rulesRefs = "Shrapnel #9";
         techAdvancement.setTechBase(TechBase.IS);
         techAdvancement.setISAdvancement(DATE_NONE, DATE_NONE, DATE_ES, DATE_NONE, DATE_NONE);
-        techAdvancement.setTechRating(TechRating.C);
+        techAdvancement.setTechRating(TechRating.D);
         techAdvancement.setAvailability(AvailabilityValue.C,
               AvailabilityValue.C,
               AvailabilityValue.C,

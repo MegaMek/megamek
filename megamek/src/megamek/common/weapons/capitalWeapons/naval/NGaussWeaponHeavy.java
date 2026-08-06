@@ -74,7 +74,7 @@ public class NGaussWeaponHeavy extends NGaussWeapon {
         longAV = 30;
         extAV = 30;
         maxRange = RANGE_EXT;
-        rulesRefs = "333, TO";
+        rulesRefs = "145, TO:AUE";
         techAdvancement.setTechBase(TechBase.ALL)
               .setIntroLevel(false)
               .setUnofficial(false)

@@ -115,12 +115,12 @@ class TestAdvancedAerospaceTest {
     }
 
     @Test
-    void correctBaysFailsWhenShipHasMultipleRepair() {
+    void correctBaysPassesWhenShipHasMultipleRepair() {
         Jumpship js = createJumpship();
         TestAdvancedAerospace test = new TestAdvancedAerospace(js, verifier.aeroOption, "test");
         bays.add(new NavalRepairFacility(500.0, 1, 1, Jumpship.LOC_NOSE, false));
         bays.add(new NavalRepairFacility(500.0, 1, 1, Jumpship.LOC_AFT, false));
-        assertFalse(test.correctBays(new StringBuffer()));
+        assertTrue(test.correctBays(new StringBuffer()));
     }
 
     @Test

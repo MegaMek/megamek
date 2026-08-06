@@ -53,38 +53,47 @@ public enum EraFlag {
     ILCLAN;
 
     //region Boolean Comparison Methods
+    @Deprecated(since = "0.51.0", forRemoval = true)
     public boolean isPreSpaceflight() {
         return this == PRE_SPACEFLIGHT;
     }
 
+    @Deprecated(since = "0.51.0", forRemoval = true)
     public boolean isEarlySpaceflight() {
         return this == EARLY_SPACEFLIGHT;
     }
 
+    @Deprecated(since = "0.51.0", forRemoval = true)
     public boolean isAgeOfWar() {
         return this == AGE_OF_WAR;
     }
 
+    @Deprecated(since = "0.51.0", forRemoval = true)
     public boolean isStarLeague() {
         return this == STAR_LEAGUE;
     }
 
+    @Deprecated(since = "0.51.0", forRemoval = true)
     public boolean isEarlySuccessionWars() {
         return this == EARLY_SUCCESSION_WARS;
     }
 
+    @Deprecated(since = "0.51.0", forRemoval = true)
     public boolean isLateSuccessionWarsLosTech() {
         return this == LATE_SUCCESSION_WARS_LOSTECH;
     }
 
+    @Deprecated(since = "0.51.0", forRemoval = true)
     public boolean isLateSuccessionWarsRenaissance() {
         return this == LATE_SUCCESSION_WARS_RENAISSANCE;
     }
 
+    @Deprecated(since = "0.51.0", forRemoval = true)
     public boolean isClanInvasion() {
         return this == CLAN_INVASION;
     }
 
+    @Deprecated(since = "0.51.0", forRemoval = true)
     public boolean isCivilWar() {
         return this == CIVIL_WAR;
     }
@@ -93,14 +102,17 @@ public enum EraFlag {
         return this == JIHAD;
     }
 
+    @Deprecated(since = "0.51.0", forRemoval = true)
     public boolean isEarlyRepublic() {
         return this == EARLY_REPUBLIC;
     }
 
+    @Deprecated(since = "0.51.0", forRemoval = true)
     public boolean isLateRepublic() {
         return this == LATE_REPUBLIC;
     }
 
+    @Deprecated(since = "0.51.0", forRemoval = true)
     public boolean isDarkAges() {
         return this == DARK_AGES;
     }

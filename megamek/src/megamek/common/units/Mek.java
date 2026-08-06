@@ -1,6 +1,6 @@
 /*
  * Copyright (C) 2000-2005 Ben Mazur (bmazur@sev.org)
- * Copyright (C) 2002-2025 The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2002-2026 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -34,23 +34,20 @@
 
 package megamek.common.units;
 
+import static megamek.common.bays.Bay.UNSET_BAY;
+
 import java.io.PrintWriter;
 import java.io.Serial;
+import java.io.Serializable;
 import java.time.LocalDate;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
-import java.util.Set;
-import java.util.Vector;
+import java.util.*;
 import java.util.stream.Collectors;
 
 import megamek.SuiteConstants;
+import megamek.client.ui.Messages;
 import megamek.client.ui.clientGUI.calculationReport.CalculationReport;
 import megamek.common.*;
+import megamek.common.annotations.Nullable;
 import megamek.common.battleArmor.BattleArmorHandles;
 import megamek.common.battleArmor.ProtoMekClampMount;
 import megamek.common.board.Coords;
@@ -64,33 +61,79 @@ import megamek.common.enums.TechBase;
 import megamek.common.enums.TechRating;
 import megamek.common.equipment.*;
 import megamek.common.equipment.enums.BombType;
+import megamek.common.equipment.enums.MiscTypeFlag;
 import megamek.common.exceptions.LocationFullException;
 import megamek.common.interfaces.ILocationExposureStatus;
 import megamek.common.interfaces.ITechnology;
 import megamek.common.loaders.MtfFile;
-import megamek.common.options.IBasicOption;
 import megamek.common.options.IOption;
 import megamek.common.options.OptionsConstants;
 import megamek.common.preference.PreferenceManager;
 import megamek.common.rolls.PilotingRollData;
 import megamek.common.rolls.Roll;
 import megamek.common.rolls.TargetRoll;
-import megamek.common.weapons.autoCannons.ACWeapon;
-import megamek.common.weapons.autoCannons.LBXACWeapon;
-import megamek.common.weapons.autoCannons.UACWeapon;
-import megamek.common.weapons.gaussRifles.GaussWeapon;
 import megamek.common.weapons.ppc.PPCWeapon;
 import megamek.logging.MMLogger;
-
-import static megamek.common.bays.Bay.UNSET_BAY;
 
 /**
  * You know what Meks are, silly.
  */
-public abstract class Mek extends Entity {
+public abstract class Mek extends Entity implements Fortifiable, RubbleClearer, ActiveHeatSinkController {
     @Serial
     private static final long serialVersionUID = -1929593228891136561L;
     private static final MMLogger LOGGER = MMLogger.create(Mek.class);
+
+    /** A MekWarrior can always eject while alive and aboard. */
+    @Override
+    public boolean canEjectCrew() {
+        return crewCanLeave();
+    }
+
+    private static final class FrankenMekLocationSourceSnapshot implements Serializable {
+        @Serial
+        private static final long serialVersionUID = 2955102329477149771L;
+
+        private String displayName;
+        private String type;
+        private int structureTonnage;
+        private int structureType = EquipmentType.T_STRUCTURE_UNKNOWN;
+        private int structureTechLevel = TechConstants.T_TECH_UNKNOWN;
+
+        private String getDisplayName() {
+            return Objects.toString(displayName, "");
+        }
+
+        private String getType() {
+            return Objects.toString(type, "");
+        }
+
+        private boolean isLinked() {
+            return (displayName != null) && !displayName.isBlank();
+        }
+
+        private void capture(String newDisplayName, String newType, int newStructureTonnage,
+              int newStructureType, int newStructureTechLevel) {
+            displayName = newDisplayName;
+            type = newType;
+            structureTonnage = newStructureTonnage;
+            structureType = newStructureType;
+            structureTechLevel = newStructureTechLevel;
+        }
+
+        private boolean matches(int currentStructureTonnage, int currentStructureType, int currentStructureTechLevel) {
+            return (structureTonnage == currentStructureTonnage)
+                  && (structureType == currentStructureType)
+                  && (structureTechLevel == currentStructureTechLevel);
+        }
+
+        private void clear() {
+            displayName = null;
+            type = null;
+            structureTonnage = 0;
+            structureType = EquipmentType.T_STRUCTURE_UNKNOWN;
+            structureTechLevel = TechConstants.T_TECH_UNKNOWN;
+        }
+    }
 
     // system designators for critical hits
     public static final int SYSTEM_LIFE_SUPPORT = 0;
@@ -164,6 +207,8 @@ public abstract class Mek extends Entity {
     public static final int COCKPIT_TRIPOD_INDUSTRIAL = 17;
     public static final int COCKPIT_SUPERHEAVY_TRIPOD_INDUSTRIAL = 18;
 
+    private static final String ADV_FCS_MTF = " (Adv. FCS)";
+
     public static final String[] COCKPIT_STRING = { "Standard Cockpit", "Small Cockpit", "Command Console",
                                                     "Torso-Mounted Cockpit", "Dual Cockpit", "Industrial Cockpit",
                                                     "Primitive Cockpit", "Primitive Industrial Cockpit",
@@ -229,10 +274,6 @@ public abstract class Mek extends Entity {
     // for Harjel II/III
     private final boolean[] armorDamagedThisTurn;
 
-    private int sinksOn = -1;
-
-    private int sinksOnNextRound = -1;
-
     private boolean autoEject = true;
 
     private boolean condEjectAmmo = true;
@@ -283,7 +324,38 @@ public abstract class Mek extends Entity {
 
     private boolean fullHeadEject = false;
 
+    public static final String FRANKEN_MEK_STRUCTURE_HYBRID = "Hybrid";
+
+    private static final TechAdvancement TA_FRANKENMEK = new TechAdvancement(TechBase.ALL)
+          .setAdvancement(ITechnology.DATE_PS)
+          .setStaticTechLevel(SimpleTechLevel.EXPERIMENTAL);
+
+    private boolean frankenMek = false;
+
+    private int[] frankenMekStructureTonnage = null;
+
+    private int[] frankenMekStructureType = null;
+
+    private int[] frankenMekStructureTechLevel = null;
+
+    private FrankenMekLocationSourceSnapshot[] frankenMekLocationSources = null;
+
+    private boolean frankenMekStructureInitialized = false;
+
     private boolean riscHeatSinkKit = false;
+
+    /**
+     * Tracks locations where the user has explicitly opted out of automatic Clan CASE. Only relevant for Clan and Clan
+     * Mixed units. When a Clan unit's user removes Clan CASE from a location, that location is recorded here so it
+     * won't be auto-added back.
+     */
+    private final Set<Integer> clanCaseOptOutLocations = new HashSet<>();
+
+    /**
+     * Tracks whether the Damage Interrupt Circuit is disabled. DIC is disabled by Life Support critical hit or any hit
+     * rolling "2" on hit location table.
+     */
+    private boolean dicDisabled = false;
 
     protected static int[] EMERGENCY_COOLANT_SYSTEM_FAILURE = { 3, 5, 7, 10, 13, 13, 13 };
 
@@ -480,6 +552,586 @@ public abstract class Mek extends Entity {
         }
     }
 
+    @Override
+    public void setTechLevel(int techLevel) {
+        super.setTechLevel(techLevel);
+        if (!isFrankenMekTechLevel()) {
+            setFrankenMek(false);
+        }
+    }
+
+    public boolean isFrankenMek() {
+        return frankenMek && isFrankenMekTechLevel();
+    }
+
+    public void setFrankenMek(boolean frankenMek) {
+        boolean newValue = frankenMek && isFrankenMekTechLevel();
+        if (this.frankenMek == newValue) {
+            return;
+        }
+        this.frankenMek = newValue;
+        if (this.frankenMek) {
+            initializeFrankenMekStructure();
+            updateFrankenMekUniformStructureType();
+            applyFrankenMekInternalStructure();
+        } else {
+            clearAllFrankenMekLocationSources();
+            autoSetInternal();
+        }
+        recalculateTechAdvancement();
+    }
+
+    private boolean isFrankenMekTechLevel() {
+        SimpleTechLevel simpleTechLevel = SimpleTechLevel.convertCompoundToSimple(getTechLevel());
+        return simpleTechLevel == SimpleTechLevel.EXPERIMENTAL || simpleTechLevel == SimpleTechLevel.UNOFFICIAL;
+    }
+
+    public void initializeFrankenMekStructure() {
+        int locations = locations();
+        boolean needsNewTonnage = (frankenMekStructureTonnage == null)
+              || (frankenMekStructureTonnage.length != locations);
+        boolean needsNewStructureType = (frankenMekStructureType == null)
+              || (frankenMekStructureType.length != locations);
+        boolean needsNewStructureTechLevel = (frankenMekStructureTechLevel == null)
+              || (frankenMekStructureTechLevel.length != locations);
+        boolean needsNewSourceSnapshots = (frankenMekLocationSources == null)
+              || (frankenMekLocationSources.length != locations);
+        if (frankenMekStructureInitialized && !needsNewTonnage && !needsNewStructureType
+              && !needsNewStructureTechLevel && !needsNewSourceSnapshots) {
+            return;
+        }
+
+        int[] newTonnage = needsNewTonnage ? new int[locations] : frankenMekStructureTonnage;
+        int[] newStructureType = needsNewStructureType ? new int[locations] : frankenMekStructureType;
+        int[] newStructureTechLevel = needsNewStructureTechLevel ? new int[locations] : frankenMekStructureTechLevel;
+        FrankenMekLocationSourceSnapshot[] newLocationSources = needsNewSourceSnapshots
+              ? new FrankenMekLocationSourceSnapshot[locations]
+              : frankenMekLocationSources;
+        int defaultStructureType = getStructureType() == EquipmentType.T_STRUCTURE_UNKNOWN
+              ? EquipmentType.T_STRUCTURE_STANDARD : getStructureType();
+        int defaultStructureTechLevel = getStructureTechLevel() == TechConstants.T_TECH_UNKNOWN
+              ? getTechLevel() : getStructureTechLevel();
+
+        if (needsNewTonnage && (frankenMekStructureTonnage != null)) {
+            int copyLength = Math.min(frankenMekStructureTonnage.length, locations);
+            java.lang.System.arraycopy(frankenMekStructureTonnage, 0, newTonnage, 0, copyLength);
+        }
+        if (needsNewStructureType && (frankenMekStructureType != null)) {
+            int copyLength = Math.min(frankenMekStructureType.length, locations);
+            java.lang.System.arraycopy(frankenMekStructureType, 0, newStructureType, 0, copyLength);
+        }
+        if (needsNewStructureTechLevel && (frankenMekStructureTechLevel != null)) {
+            int copyLength = Math.min(frankenMekStructureTechLevel.length, locations);
+            java.lang.System.arraycopy(frankenMekStructureTechLevel, 0, newStructureTechLevel, 0, copyLength);
+        }
+        if (needsNewSourceSnapshots && (frankenMekLocationSources != null)) {
+            int copyLength = Math.min(frankenMekLocationSources.length, locations);
+            java.lang.System.arraycopy(frankenMekLocationSources, 0, newLocationSources, 0, copyLength);
+        }
+
+        for (int loc = 0; loc < locations; loc++) {
+            if (needsNewTonnage || (newTonnage[loc] <= 0)) {
+                newTonnage[loc] = getDefaultFrankenMekStructureTonnage();
+            }
+            if (needsNewStructureType || (newStructureType[loc] == EquipmentType.T_STRUCTURE_UNKNOWN)) {
+                newStructureType[loc] = defaultStructureType;
+            }
+            if (needsNewStructureTechLevel || (newStructureTechLevel[loc] == TechConstants.T_TECH_UNKNOWN)) {
+                newStructureTechLevel[loc] = defaultStructureTechLevel;
+            }
+            if (needsNewSourceSnapshots || (newLocationSources[loc] == null)) {
+                newLocationSources[loc] = new FrankenMekLocationSourceSnapshot();
+            }
+        }
+        frankenMekStructureTonnage = newTonnage;
+        frankenMekStructureType = newStructureType;
+        frankenMekStructureTechLevel = newStructureTechLevel;
+        frankenMekLocationSources = newLocationSources;
+        frankenMekStructureInitialized = true;
+    }
+
+    private int getDefaultFrankenMekStructureTonnage() {
+        return Math.max(10, (int) Math.ceil(getWeight()));
+    }
+
+    private boolean hasFrankenMekStructureLocation(int location) {
+        return (location >= 0) && (location < locations());
+    }
+
+    public int getFrankenMekStructureTonnage(int location) {
+        if (!hasFrankenMekStructureLocation(location)) {
+            return getDefaultFrankenMekStructureTonnage();
+        }
+        initializeFrankenMekStructure();
+        return frankenMekStructureTonnage[location];
+    }
+
+    public void setFrankenMekStructureTonnage(int location, int tonnage) {
+        if (!hasFrankenMekStructureLocation(location)) {
+            return;
+        }
+        initializeFrankenMekStructure();
+        int sanitizedTonnage = Math.max(10, tonnage);
+        frankenMekStructureTonnage[location] = sanitizedTonnage;
+        if (isFrankenMek()) {
+            applyFrankenMekInternalStructure();
+        }
+        unlinkFrankenMekLocationSourceIfChanged(location);
+    }
+
+    public void setFrankenMekStructureTonnageForConstruction(int location, int tonnage) {
+        if (!hasFrankenMekStructureLocation(location)) {
+            return;
+        }
+        initializeFrankenMekStructure();
+        int sanitizedTonnage = Math.max(10, tonnage);
+        int centerTorsoTonnage = location == Mek.LOC_CENTER_TORSO
+              ? sanitizedTonnage
+              : getFrankenMekStructureTonnage(Mek.LOC_CENTER_TORSO);
+        if (location != Mek.LOC_CENTER_TORSO) {
+            sanitizedTonnage = Math.min(sanitizedTonnage,
+                  getMaximumFrankenMekNonCenterTorsoStructureTonnage(centerTorsoTonnage));
+        }
+        frankenMekStructureTonnage[location] = locationIsLeg(location)
+              ? Math.max(sanitizedTonnage, centerTorsoTonnage)
+              : sanitizedTonnage;
+        if (location == Mek.LOC_CENTER_TORSO) {
+            updateFrankenMekCenterTorsoStructureTonnage(centerTorsoTonnage);
+        } else {
+            applyFrankenMekInternalStructureIfNeeded();
+            unlinkFrankenMekLocationSourceIfChanged(location);
+        }
+    }
+
+    public void syncFrankenMekStructureTonnageToChassis() {
+        syncMatchingFrankenMekStructureTonnageToChassis(getFrankenMekStructureTonnage(Mek.LOC_CENTER_TORSO));
+    }
+
+    public void syncMatchingFrankenMekStructureTonnageToChassis(int matchingTonnage) {
+        if (!hasFrankenMekStructureLocation(Mek.LOC_CENTER_TORSO)) {
+            return;
+        }
+        initializeFrankenMekStructure();
+        int centerTorsoTonnage = getDefaultFrankenMekStructureTonnage();
+        for (int location = 0; location < frankenMekStructureTonnage.length; location++) {
+            if (frankenMekStructureTonnage[location] == matchingTonnage) {
+                frankenMekStructureTonnage[location] = centerTorsoTonnage;
+            }
+        }
+        updateFrankenMekCenterTorsoStructureTonnage(centerTorsoTonnage);
+    }
+
+    public void syncFrankenMekCenterTorsoTonnageToChassis() {
+        if (!hasFrankenMekStructureLocation(Mek.LOC_CENTER_TORSO)) {
+            return;
+        }
+        initializeFrankenMekStructure();
+        updateFrankenMekCenterTorsoStructureTonnage(getDefaultFrankenMekStructureTonnage());
+    }
+
+    public int getMaximumFrankenMekStructureTonnageForConstruction(int location) {
+        if (!hasFrankenMekStructureLocation(location) || (location == Mek.LOC_CENTER_TORSO)) {
+            return 200;
+        }
+        return getMaximumFrankenMekNonCenterTorsoStructureTonnage(
+              getFrankenMekStructureTonnage(Mek.LOC_CENTER_TORSO));
+    }
+
+    private void updateFrankenMekCenterTorsoStructureTonnage(int centerTorsoTonnage) {
+        frankenMekStructureTonnage[Mek.LOC_CENTER_TORSO] = centerTorsoTonnage;
+        clampFrankenMekNonCenterTorsoStructureTonnage(centerTorsoTonnage);
+        clampFrankenMekLegStructureTonnage(centerTorsoTonnage);
+        applyFrankenMekInternalStructureIfNeeded();
+        unlinkChangedFrankenMekLocationSources();
+    }
+
+    private void applyFrankenMekInternalStructureIfNeeded() {
+        if (isFrankenMek()) {
+            applyFrankenMekInternalStructure();
+        }
+    }
+
+    private int getMaximumFrankenMekNonCenterTorsoStructureTonnage(int centerTorsoTonnage) {
+        return centerTorsoTonnage <= 100 ? 100 : 200;
+    }
+
+    private void clampFrankenMekNonCenterTorsoStructureTonnage(int centerTorsoTonnage) {
+        int maximumTonnage = getMaximumFrankenMekNonCenterTorsoStructureTonnage(centerTorsoTonnage);
+        for (int location = 0; location < frankenMekStructureTonnage.length; location++) {
+            if ((location != Mek.LOC_CENTER_TORSO) && (frankenMekStructureTonnage[location] > maximumTonnage)) {
+                frankenMekStructureTonnage[location] = maximumTonnage;
+            }
+        }
+    }
+
+    private void clampFrankenMekLegStructureTonnage(int centerTorsoTonnage) {
+        for (int location = 0; location < frankenMekStructureTonnage.length; location++) {
+            if (locationIsLeg(location) && (frankenMekStructureTonnage[location] < centerTorsoTonnage)) {
+                frankenMekStructureTonnage[location] = centerTorsoTonnage;
+            }
+        }
+    }
+
+    public int getFrankenMekStructureType(int location) {
+        if (!hasFrankenMekStructureLocation(location)) {
+            return getStructureType();
+        }
+        initializeFrankenMekStructure();
+        return frankenMekStructureType[location];
+    }
+
+    public int getFrankenMekStructureTechLevel(int location) {
+        if (!hasFrankenMekStructureLocation(location)) {
+            return getStructureTechLevel();
+        }
+        initializeFrankenMekStructure();
+        return frankenMekStructureTechLevel[location];
+    }
+
+    public EquipmentType getFrankenMekStructureEquipment(int location) {
+        String structureName = EquipmentType.getStructureTypeName(getFrankenMekStructureType(location),
+              TechConstants.isClan(getFrankenMekStructureTechLevel(location)));
+        return EquipmentType.getStructureFromName(structureName);
+    }
+
+    /**
+     * Returns the CO:p212 fallback structure crit count. Existing donor crit distributions take precedence.
+     */
+    public int getFrankenMekStructureCriticalSlots(int location) {
+        if (!hasFrankenMekStructureLocation(location)) {
+            return 0;
+        }
+        return switch (getFrankenMekStructureType(location)) {
+            case EquipmentType.T_STRUCTURE_ENDO_STEEL -> TechConstants.isClan(getFrankenMekStructureTechLevel(location))
+                  ? getCompactFrankenMekStructureCriticalSlots(location)
+                  : getInnerSphereEndoFrankenMekStructureCriticalSlots(location);
+            case EquipmentType.T_STRUCTURE_ENDO_COMPOSITE -> getCompactFrankenMekStructureCriticalSlots(location);
+            default -> 0;
+        };
+    }
+
+    private int getInnerSphereEndoFrankenMekStructureCriticalSlots(int location) {
+        if (location == LOC_HEAD) {
+            return 1;
+        } else if (location == LOC_CENTER_TORSO) {
+            return 1;
+        } else if ((location == LOC_RIGHT_TORSO) || (location == LOC_LEFT_TORSO)) {
+            return 3;
+        } else if (locationIsLeg(location)) {
+            return 1;
+        } else if ((location == LOC_RIGHT_ARM) || (location == LOC_LEFT_ARM)) {
+            return 2;
+        }
+        return 0;
+    }
+
+    private int getCompactFrankenMekStructureCriticalSlots(int location) {
+        if (location == LOC_HEAD) {
+            return 0;
+        } else if ((location == LOC_CENTER_TORSO) || (location == LOC_RIGHT_TORSO) || (location == LOC_LEFT_TORSO)
+              || locationIsLeg(location) || (location == LOC_RIGHT_ARM) || (location == LOC_LEFT_ARM)) {
+            return 1;
+        }
+        return 0;
+    }
+
+    public void setFrankenMekStructureType(int location, int structureType, int structureTechLevel) {
+        if (!hasFrankenMekStructureLocation(location)) {
+            return;
+        }
+        initializeFrankenMekStructure();
+        frankenMekStructureType[location] = structureType;
+        frankenMekStructureTechLevel[location] = structureTechLevel;
+        updateFrankenMekUniformStructureType();
+        unlinkFrankenMekLocationSourceIfChanged(location);
+    }
+
+    public String getFrankenMekLocationSourceDisplayName(int location) {
+        if (!hasFrankenMekStructureLocation(location)) {
+            return "";
+        }
+        return getFrankenMekLocationSourceSnapshot(location).getDisplayName();
+    }
+
+    public String getFrankenMekLocationSourceType(int location) {
+        if (!hasFrankenMekStructureLocation(location)) {
+            return "";
+        }
+        return getFrankenMekLocationSourceSnapshot(location).getType();
+    }
+
+    public void linkFrankenMekLocationToSource(int location, String sourceDisplayName) {
+        linkFrankenMekLocationToSource(location, sourceDisplayName, "");
+    }
+
+    public void linkFrankenMekLocationToSource(int location, String sourceDisplayName, String sourceType) {
+        if (!hasFrankenMekStructureLocation(location)) {
+            return;
+        }
+        if ((sourceDisplayName == null) || sourceDisplayName.isBlank()) {
+            clearFrankenMekLocationSource(location);
+            return;
+        }
+        captureFrankenMekLocationSourceSnapshot(location, sourceDisplayName, sourceType);
+    }
+
+    public void clearFrankenMekLocationSource(int location) {
+        if (!hasFrankenMekStructureLocation(location) || (frankenMekLocationSources == null)) {
+            return;
+        }
+        FrankenMekLocationSourceSnapshot snapshot = frankenMekLocationSources[location];
+        if (snapshot != null) {
+            snapshot.clear();
+        }
+    }
+
+    public void unlinkFrankenMekLocationSourceIfChanged(int location) {
+        if (!hasFrankenMekStructureLocation(location)) {
+            return;
+        }
+        FrankenMekLocationSourceSnapshot snapshot = getFrankenMekLocationSourceSnapshot(location);
+        if (!snapshot.isLinked()) {
+            return;
+        }
+        if (!snapshot.matches(getFrankenMekStructureTonnage(location), getFrankenMekStructureType(location),
+              getFrankenMekStructureTechLevel(location))) {
+            clearFrankenMekLocationSource(location);
+        }
+    }
+
+    public void applyFrankenMekDonorLocationArmor(int location, Mek donor) {
+        if (!hasFrankenMekStructureLocation(location) || (donor == null) || (location >= donor.locations())) {
+            return;
+        }
+
+        initializeArmor(donor.getOArmor(location), location);
+        if (hasRearArmor(location)) {
+            initializeRearArmor(donor.hasRearArmor(location) ? donor.getOArmor(location, true) : 0, location);
+        }
+
+        int donorArmorType = donor.getArmorType(location);
+        int donorArmorTechLevel = donor.getArmorTechLevel(location);
+        if ((getArmorType(location) != donorArmorType) || (getArmorTechLevel(location) != donorArmorTechLevel)) {
+            setArmorType(donorArmorType, location);
+            setArmorTechLevel(donorArmorTechLevel, location);
+        }
+    }
+
+    private void captureFrankenMekLocationSourceSnapshot(int location, String sourceDisplayName,
+          String sourceType) {
+        getFrankenMekLocationSourceSnapshot(location).capture(sourceDisplayName, Objects.toString(sourceType, ""),
+              getFrankenMekStructureTonnage(location), getFrankenMekStructureType(location),
+              getFrankenMekStructureTechLevel(location));
+    }
+
+    private void clearAllFrankenMekLocationSources() {
+        if (frankenMekLocationSources == null) {
+            return;
+        }
+        for (int location = 0; location < frankenMekLocationSources.length; location++) {
+            clearFrankenMekLocationSource(location);
+        }
+    }
+
+    private void unlinkChangedFrankenMekLocationSources() {
+        if (frankenMekLocationSources == null) {
+            return;
+        }
+        for (int location = 0; location < frankenMekLocationSources.length; location++) {
+            unlinkFrankenMekLocationSourceIfChanged(location);
+        }
+    }
+
+    private FrankenMekLocationSourceSnapshot getFrankenMekLocationSourceSnapshot(int location) {
+        initializeFrankenMekStructure();
+        FrankenMekLocationSourceSnapshot snapshot = frankenMekLocationSources[location];
+        if (snapshot == null) {
+            snapshot = new FrankenMekLocationSourceSnapshot();
+            frankenMekLocationSources[location] = snapshot;
+        }
+        return snapshot;
+    }
+
+    public void setFrankenMekStructureType(int location, EquipmentType structure) {
+        if (structure == null) {
+            return;
+        }
+        int structureType = EquipmentType.getStructureType(structure);
+        if (structureType == EquipmentType.T_STRUCTURE_UNKNOWN) {
+            return;
+        }
+        setFrankenMekStructureType(location, structureType,
+              structure.getStaticTechLevel().getCompoundTechLevel(structure.isClan()));
+    }
+
+    private void updateFrankenMekUniformStructureType() {
+        if (!hasHybridFrankenMekStructure()) {
+            super.setStructureType(getFrankenMekStructureType(Mek.LOC_CENTER_TORSO));
+            setStructureTechLevel(getFrankenMekStructureTechLevel(Mek.LOC_CENTER_TORSO));
+        }
+    }
+
+    public boolean hasHybridFrankenMekStructure() {
+        if (!isFrankenMek()) {
+            return false;
+        }
+        initializeFrankenMekStructure();
+        String structureName = getFrankenMekStructureName(Mek.LOC_CENTER_TORSO);
+        for (int loc = 0; loc < locations(); loc++) {
+            if (!getFrankenMekStructureName(loc).equals(structureName)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    public String getFrankenMekStructureDisplayName() {
+        if (!isFrankenMek()) {
+            return EquipmentType.getStructureTypeName(getStructureType(),
+                  TechConstants.isClan(getStructureTechLevel()));
+        }
+        if (hasHybridFrankenMekStructure()) {
+            return FRANKEN_MEK_STRUCTURE_HYBRID;
+        }
+        return getFrankenMekStructureName(Mek.LOC_CENTER_TORSO);
+    }
+
+    public String getFrankenMekStructureName(int location) {
+        int structureType = getFrankenMekStructureType(location);
+        if (structureType == EquipmentType.T_STRUCTURE_STANDARD) {
+            return EquipmentType.getStructureTypeName(structureType);
+        }
+        return EquipmentType.getStructureTypeName(structureType,
+              TechConstants.isClan(getFrankenMekStructureTechLevel(location)));
+    }
+
+    public boolean hasMismatchedFrankenMekLegs() {
+        if (!isFrankenMek()) {
+            return false;
+        }
+        initializeFrankenMekStructure();
+        int firstLeg = LOC_NONE;
+        for (int location = 0; location < locations(); location++) {
+            if (!locationIsLeg(location)) {
+                continue;
+            }
+            if (firstLeg == LOC_NONE) {
+                firstLeg = location;
+            } else if (!frankenMekLegsMatch(firstLeg, location)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    private boolean frankenMekLegsMatch(int firstLeg, int otherLeg) {
+        FrankenMekLocationSourceSnapshot firstLegSource = frankenMekLocationSources[firstLeg];
+        FrankenMekLocationSourceSnapshot otherLegSource = frankenMekLocationSources[otherLeg];
+        return (frankenMekStructureTonnage[firstLeg] == frankenMekStructureTonnage[otherLeg])
+              && (frankenMekStructureType[firstLeg] == frankenMekStructureType[otherLeg])
+              && (frankenMekStructureTechLevel[firstLeg] == frankenMekStructureTechLevel[otherLeg])
+              && sanitizeFrankenMekSourceValue(firstLegSource.getDisplayName()).equals(
+              sanitizeFrankenMekSourceValue(otherLegSource.getDisplayName()))
+              && sanitizeFrankenMekSourceValue(firstLegSource.getType()).equals(
+              sanitizeFrankenMekSourceValue(otherLegSource.getType()));
+    }
+
+    private static String sanitizeFrankenMekSourceValue(String value) {
+        return Objects.toString(value, "").trim();
+    }
+
+    public boolean hasMismatchedTonnageFrankenMekLegs() {
+        if (!isFrankenMek()) {
+            return false;
+        }
+        return (getFrankenMekStructureTonnage(Mek.LOC_RIGHT_LEG) != getFrankenMekStructureTonnage(Mek.LOC_LEFT_LEG));
+    }
+
+    public double getFrankenMekStructureWeightFraction(int location) {
+        return switch (location) {
+            case LOC_HEAD -> 0.05;
+            case LOC_CENTER_TORSO -> 0.25;
+            case LOC_RIGHT_TORSO, LOC_LEFT_TORSO -> 0.15;
+            case LOC_RIGHT_ARM, LOC_LEFT_ARM, LOC_RIGHT_LEG, LOC_LEFT_LEG -> 0.10;
+            default -> 0.0;
+        };
+    }
+
+    public int getFrankenMekInternalForLocation(int location) {
+        return getInternalForTonnage(getFrankenMekStructureTonnage(location), location);
+    }
+
+    private int getInternalForTonnage(int tonnage, int location) {
+        int[] values = switch (tonnage) {
+            case 10 -> new int[] { 3, 4, 3, 1, 2 };
+            case 15 -> new int[] { 3, 5, 4, 2, 3 };
+            case 20 -> new int[] { 3, 6, 5, 3, 4 };
+            case 25 -> new int[] { 3, 8, 6, 4, 6 };
+            case 30 -> new int[] { 3, 10, 7, 5, 7 };
+            case 35 -> new int[] { 3, 11, 8, 6, 8 };
+            case 40 -> new int[] { 3, 12, 10, 6, 10 };
+            case 45 -> new int[] { 3, 14, 11, 7, 11 };
+            case 50 -> new int[] { 3, 16, 12, 8, 12 };
+            case 55 -> new int[] { 3, 18, 13, 9, 13 };
+            case 60 -> new int[] { 3, 20, 14, 10, 14 };
+            case 65 -> new int[] { 3, 21, 15, 10, 15 };
+            case 70 -> new int[] { 3, 22, 15, 11, 15 };
+            case 75 -> new int[] { 3, 23, 16, 12, 16 };
+            case 80 -> new int[] { 3, 25, 17, 13, 17 };
+            case 85 -> new int[] { 3, 27, 18, 14, 18 };
+            case 90 -> new int[] { 3, 29, 19, 15, 19 };
+            case 95 -> new int[] { 3, 30, 20, 16, 20 };
+            case 100 -> new int[] { 3, 31, 21, 17, 21 };
+            case 105 -> new int[] { 4, 32, 22, 17, 22 };
+            case 110 -> new int[] { 4, 33, 23, 18, 23 };
+            case 115 -> new int[] { 4, 35, 24, 19, 24 };
+            case 120 -> new int[] { 4, 36, 25, 20, 25 };
+            case 125 -> new int[] { 4, 38, 26, 21, 26 };
+            case 130 -> new int[] { 4, 39, 27, 21, 27 };
+            case 135 -> new int[] { 4, 41, 28, 22, 28 };
+            case 140 -> new int[] { 4, 42, 29, 23, 29 };
+            case 145 -> new int[] { 4, 44, 31, 24, 31 };
+            case 150 -> new int[] { 4, 45, 32, 25, 32 };
+            case 155 -> new int[] { 4, 47, 33, 26, 33 };
+            case 160 -> new int[] { 4, 48, 34, 26, 34 };
+            case 165 -> new int[] { 4, 50, 35, 27, 35 };
+            case 170 -> new int[] { 4, 51, 36, 28, 36 };
+            case 175 -> new int[] { 4, 53, 37, 29, 37 };
+            case 180 -> new int[] { 4, 54, 38, 30, 38 };
+            case 185 -> new int[] { 4, 56, 39, 31, 39 };
+            case 190 -> new int[] { 4, 57, 40, 31, 40 };
+            case 195 -> new int[] { 4, 59, 41, 32, 41 };
+            case 200 -> new int[] { 4, 60, 42, 33, 42 };
+            default -> getInternalTableForNearestTonnage(tonnage);
+        };
+        if (location == LOC_HEAD) {
+            return values[0];
+        } else if (location == LOC_CENTER_TORSO) {
+            return values[1];
+        } else if ((location == LOC_RIGHT_TORSO) || (location == LOC_LEFT_TORSO)) {
+            return values[2];
+        } else if (locationIsLeg(location)) {
+            return values[4];
+        }
+        return values[3];
+    }
+
+    private int[] getInternalTableForNearestTonnage(int tonnage) {
+        int nearestTonnage = Math.max(10, Math.min(200, ((tonnage + 4) / 5) * 5));
+        return new int[] { getInternalForTonnage(nearestTonnage, LOC_HEAD),
+                           getInternalForTonnage(nearestTonnage, LOC_CENTER_TORSO),
+                           getInternalForTonnage(nearestTonnage, LOC_RIGHT_TORSO),
+                           getInternalForTonnage(nearestTonnage, LOC_RIGHT_ARM),
+                           getInternalForTonnage(nearestTonnage, LOC_RIGHT_LEG) };
+    }
+
+    public void applyFrankenMekInternalStructure() {
+        initializeFrankenMekStructure();
+        for (int loc = 0; loc < locations(); loc++) {
+            initializeInternal(getFrankenMekInternalForLocation(loc), loc);
+        }
+    }
+
     // Set whether a non-omni should have BA Grab Bars.
     public void setBAGrabBars() {
         if (isOmni()) {
@@ -603,9 +1255,6 @@ public abstract class Mek extends Entity {
 
         setSecondaryFacing(getFacing());
 
-        // set heat sinks
-        sinksOn = sinksOnNextRound;
-
         // update cockpit status
         cockpitStatus = cockpitStatusNextRound;
 
@@ -618,11 +1267,99 @@ public abstract class Mek extends Entity {
 
         grappledThisRound = false;
 
+        // Continue any fieldwork in progress (a Mek with a backhoe/equivalent may fortify like a vehicle,
+        // Vehicles and Fieldworks, TO:AUE p.153, Corrected Sixth Printing). The stage machine lives in Fortifiable.
+        advanceFortifyRound();
+
         // clear HarJel "took damage this turn" flags
         for (int loc = 0; loc < locations(); ++loc) {
             setArmorDamagedThisTurn(loc, false);
         }
     } // End public void newRound()
+
+    // --- Fieldworks / fortify: a Mek with a backhoe (or equivalent) may build a fortified hex like a vehicle
+    // (Vehicles and Fieldworks, TO:AUE p.153, Corrected Sixth Printing). The multi-turn stage machine lives in
+    // Fortifiable.
+
+    private int dugIn = DUG_IN_NONE;
+
+    /**
+     * Tracks damage taken between turns while fortifying, so an interrupting attack extends the effort by one turn
+     * (TO:AUE p.153, Corrected Sixth Printing). Server-side runtime state; dug-in progress itself is not persisted.
+     */
+    private transient FortifyState fortifyState = new FortifyState();
+
+    @Override
+    public int getDugIn() {
+        return dugIn;
+    }
+
+    @Override
+    public void setDugIn(int stage) {
+        dugIn = stage;
+    }
+
+    @Override
+    public FortifyState getFortifyState() {
+        // Runtime-only state (transient, not persisted): recreate it lazily so it is never null on a
+        // deserialized entity (the field initializer does not run during deserialization).
+        if (fortifyState == null) {
+            fortifyState = new FortifyState();
+        }
+        return fortifyState;
+    }
+
+    // --- Rubble clearing: a Mek with a backhoe may clear rubble like a vehicle (TacOps; backhoe clearing is the
+    // unofficial rule). The multi-turn state machine lives in RubbleClearer.
+
+    private Coords rubbleClearTarget = null;
+    private int rubbleClearTurnsCompleted = 0;
+    private int rubbleClearTurnsRequired = 0;
+
+    /**
+     * @return {@code true} if this Mek has a working backhoe ({@code F_CLUB} / {@code S_BACKHOE}), used for fieldworks
+     *       and the unofficial backhoe rubble-clearing rule
+     */
+    @Override
+    public boolean hasWorkingBackhoe() {
+        return hasWorkingMisc(MiscType.F_CLUB, MiscTypeFlag.S_BACKHOE);
+    }
+
+    @Override
+    @Nullable
+    public Coords getRubbleClearTarget() {
+        return rubbleClearTarget;
+    }
+
+    @Override
+    public void setRubbleClearTarget(@Nullable Coords target) {
+        rubbleClearTarget = target;
+    }
+
+    @Override
+    public int getRubbleClearTurnsCompleted() {
+        return rubbleClearTurnsCompleted;
+    }
+
+    @Override
+    public void setRubbleClearTurnsCompleted(int turns) {
+        rubbleClearTurnsCompleted = turns;
+    }
+
+    @Override
+    public int getRubbleClearTurnsRequired() {
+        return rubbleClearTurnsRequired;
+    }
+
+    @Override
+    public void setRubbleClearTurnsRequired(int turns) {
+        rubbleClearTurnsRequired = turns;
+    }
+
+    @Override
+    public int currentFortifyHealthSignature() {
+        return getTotalArmor() + getTotalInternal();
+    }
 
     /**
      * Returns true if the location in question is a torso location
@@ -700,6 +1437,7 @@ public abstract class Mek extends Entity {
      *
      * @return false if the system is damaged.
      */
+    @Deprecated(since = "0.51.0", forRemoval = true)
     public boolean isSystemIntact(int system) {
         for (int loc = 0; loc < locations(); loc++) {
             int numCrits = getNumberOfCriticalSlots(loc);
@@ -748,22 +1486,37 @@ public abstract class Mek extends Entity {
     }
 
     /**
-     * does this Mek have composite internal structure?
+     * Returns the internal structure type used in this location.
      */
-    public boolean hasCompositeStructure() {
-        return (getStructureType() == EquipmentType.T_STRUCTURE_COMPOSITE);
+    public int getStructureType(int location) {
+        if (isFrankenMek() && hasFrankenMekStructureLocation(location)) {
+            return getFrankenMekStructureType(location);
+        }
+        return getStructureType();
     }
 
     /**
-     * does this Mek have reinforced internal structure?
+     * does this Mek have composite internal structure in this location?
      */
-    public boolean hasReinforcedStructure() {
-        return (getStructureType() == EquipmentType.T_STRUCTURE_REINFORCED);
+    public boolean hasCompositeStructure(int location) {
+        return hasStructureType(location, EquipmentType.T_STRUCTURE_COMPOSITE);
+    }
+
+    /**
+     * does this Mek have reinforced internal structure in this location?
+     */
+    public boolean hasReinforcedStructure(int location) {
+        return hasStructureType(location, EquipmentType.T_STRUCTURE_REINFORCED);
+    }
+
+    private boolean hasStructureType(int location, int structureType) {
+        return getStructureType(location) == structureType;
     }
 
     /**
      * does this Mek have working jump boosters?
      */
+    @Deprecated(since = "0.51.0", forRemoval = true)
     public boolean hasJumpBoosters() {
         boolean jumpBoosters = false;
         for (Mounted<?> mEquip : getMisc()) {
@@ -788,8 +1541,8 @@ public abstract class Mek extends Entity {
     public boolean hasExtendedRetractableBlade() {
         for (Mounted<?> m : getEquipment()) {
             if (!m.isInoperable() && (m.getType() instanceof MiscType)
-                  && m.getType().hasFlag(MiscType.F_CLUB)
-                  && m.getType().hasSubType(MiscType.S_RETRACTABLE_BLADE)
+                  && m.getType().hasFlag(MiscTypeFlag.F_CLUB)
+                  && m.getType().hasFlag(MiscTypeFlag.S_RETRACTABLE_BLADE)
                   && m.curMode().equals("extended")) {
                 return true;
             }
@@ -1018,9 +1771,11 @@ public abstract class Mek extends Entity {
                 MPBoosters armed = getArmedMPBoosters();
 
                 str += (mpBoosters.hasMASC() ? " MASC:" + getMASCTurns()
-                      + (armed.hasMASC() ? "(" + getMASCTarget() + "+)" : "(NA)") : "")
+                                               + (armed.hasMASC() ? "(" + getMASCTarget() + "+)" : "(NA)") : "")
                       + (mpBoosters.hasSupercharger() ? " Supercharger:" + getSuperchargerTurns()
-                      + (armed.hasSupercharger() ? "(" + getSuperchargerTarget() + "+)" : "(NA)") : "");
+                                                        + (armed.hasSupercharger() ?
+                                                           "(" + getSuperchargerTarget() + "+)" :
+                                                           "(NA)") : "");
             }
             return str;
         }
@@ -1079,14 +1834,11 @@ public abstract class Mek extends Entity {
 
     @Override
     public int getJumpMP(MPCalculationSetting mpCalculationSetting) {
-        if (hasShield() && (getNumberOfShields(MiscType.S_SHIELD_LARGE) > 0)) {
+        if (hasShield() && (getNumberOfShields(MiscTypeFlag.S_SHIELD_LARGE) > 0)) {
             return 0;
         }
 
-        int mp = (int) getMisc().stream()
-              .filter(m -> m.getType().hasFlag(MiscType.F_JUMP_JET))
-              .filter(Mounted::isOperable)
-              .count();
+        int mp = getJumpJetMovementPoints(false);
 
         if (!mpCalculationSetting.ignoreSubmergedJumpJets() && hasOccupiedHex() && getElevation() < 0) {
             int waterLevel = game.getHexOf(this).terrainLevel(Terrains.WATER);
@@ -1108,17 +1860,18 @@ public abstract class Mek extends Entity {
         }
 
         // Medium shield reduces jump mp by 1/shield
-        mp -= getNumberOfShields(MiscType.S_SHIELD_MEDIUM);
+        mp -= getNumberOfShields(MiscTypeFlag.S_SHIELD_MEDIUM);
 
         if (!mpCalculationSetting.ignoreModularArmor() && hasModularArmor()) {
             mp--;
         }
 
         if (!mpCalculationSetting.ignoreGravity()) {
-            return Math.max(applyGravityEffectsOnMP(mp), 0);
+            mp = applyGravityEffectsOnMP(mp);
         }
 
-        return Math.max(mp, 0);
+        // Improved Magnetic Pulse (iATM IMP) missile movement reduction (IO IMP rules)
+        return Math.max(0, mp - getImpMpReduction());
     }
 
     /**
@@ -1133,7 +1886,7 @@ public abstract class Mek extends Entity {
 
     @Override
     public int getMechanicalJumpBoosterMP(MPCalculationSetting mpCalculationSetting) {
-        if (hasShield() && (getNumberOfShields(MiscType.S_SHIELD_LARGE) > 0)) {
+        if (hasShield() && (getNumberOfShields(MiscTypeFlag.S_SHIELD_LARGE) > 0)) {
             return 0;
         }
 
@@ -1158,7 +1911,7 @@ public abstract class Mek extends Entity {
         }
 
         // Medium shield reduces jump mp by 1/shield
-        mp -= getNumberOfShields(MiscType.S_SHIELD_MEDIUM);
+        mp -= getNumberOfShields(MiscTypeFlag.S_SHIELD_MEDIUM);
 
         if (!mpCalculationSetting.ignoreModularArmor() && hasModularArmor()) {
             mp--;
@@ -1261,12 +2014,12 @@ public abstract class Mek extends Entity {
         jumpType = JUMP_NONE;
         for (MiscMounted m : miscList) {
             if (m.getType().hasFlag(MiscType.F_JUMP_JET)) {
-                if (m.getType().hasSubType(MiscType.S_IMPROVED)
-                      && m.getType().hasSubType(MiscType.S_PROTOTYPE)) {
+                if (m.getType().hasFlag(MiscTypeFlag.S_IMPROVED)
+                      && m.getType().hasFlag(MiscTypeFlag.S_PROTOTYPE)) {
                     jumpType = JUMP_PROTOTYPE_IMPROVED;
-                } else if (m.getType().hasSubType(MiscType.S_IMPROVED)) {
+                } else if (m.getType().hasFlag(MiscTypeFlag.S_IMPROVED)) {
                     jumpType = JUMP_IMPROVED;
-                } else if (m.getType().hasSubType(MiscType.S_PROTOTYPE)) {
+                } else if (m.getType().hasFlag(MiscTypeFlag.S_PROTOTYPE)) {
                     jumpType = JUMP_PROTOTYPE;
                 } else {
                     jumpType = JUMP_STANDARD;
@@ -1306,15 +2059,7 @@ public abstract class Mek extends Entity {
      * Returns the number of (working) jump jets mounted in the torsos.
      */
     public int torsoJumpJets() {
-        int jump = 0;
-
-        for (Mounted<?> mounted : getMisc()) {
-            if (mounted.getType().hasFlag(MiscType.F_JUMP_JET)
-                  && !mounted.isDestroyed() && !mounted.isBreached()
-                  && locationIsTorso(mounted.getLocation())) {
-                jump++;
-            }
-        }
+        int jump = getJumpJetMovementPoints(true);
 
         // apply Partial Wing bonus if we have the ability to jump
         if (jump > 0) {
@@ -1327,6 +2072,57 @@ public abstract class Mek extends Entity {
         }
 
         return jump;
+    }
+
+    private int getJumpJetMovementPoints(boolean torsoOnly) {
+        if (!isFrankenMek()) {
+            return (int) getMisc().stream()
+                  .filter(m -> m.getType().hasFlag(MiscType.F_JUMP_JET))
+                  .filter(Mounted::isOperable)
+                  .filter(m -> !torsoOnly || locationIsTorso(m.getLocation()))
+                  .count();
+        }
+
+        /*
+         CO:213
+         Jump jet performance depends on the weight class of the FrankenMech. 
+         Smaller jump jets can be retained on larger ’Mechs, but their performance is reduced and fractional
+         Jumping MPs are dropped, meaning two half-ton jump jets are required to give the same performance 
+         as a 1-ton jump jet while four half-ton jump jets would be required to match a 2-ton jump jet.
+        */
+        int centerTorsoTonnage = getFrankenMekStructureTonnage(Mek.LOC_CENTER_TORSO);
+        if (centerTorsoTonnage <= 0) {
+            return 0;
+        }
+
+        double movement = 0.0;
+        for (Mounted<?> mounted : getMisc()) {
+            if (!mounted.getType().hasFlag(MiscType.F_JUMP_JET)
+                  || !mounted.isOperable()
+                  || (torsoOnly && !locationIsTorso(mounted.getLocation()))) {
+                continue;
+            }
+
+            MiscType jumpJetType = (MiscType) mounted.getType();
+            double centerTorsoJumpJetTonnage = jumpJetType.getTonnage(this, Mek.LOC_CENTER_TORSO, mounted.getSize());
+            if (centerTorsoJumpJetTonnage <= 0) {
+                continue;
+            }
+
+            double locationJumpJetTonnage = jumpJetType.getTonnage(this, mounted.getLocation(), mounted.getSize());
+            movement += locationJumpJetTonnage / centerTorsoJumpJetTonnage;
+        }
+
+        // A FrankenMek might have more jump jets than the standard limitation 
+        // (TM:51, Max Jump = Maximum Walking MP for Standard Jump Jets; Max Jump = Maximum Running MP for Improved Jump Jets) 
+        // so, we clamp it to that limitation. 
+        return Math.min((int) Math.floor(movement), getJumpJetMovementCap());
+    }
+
+    private int getJumpJetMovementCap() {
+        return ((getJumpType() == JUMP_IMPROVED) || (getJumpType() == JUMP_PROTOTYPE_IMPROVED))
+              ? getOriginalRunMP()
+              : getOriginalWalkMP();
     }
 
     @Override
@@ -1560,28 +2356,22 @@ public abstract class Mek extends Entity {
 
     public int getHeatCapacity(boolean includePartialWing, boolean includeRadicalHeatSink) {
         int capacity = 0;
-        int activeCount = getActiveSinks();
         boolean isDoubleHeatSink = false;
 
-        for (Mounted<?> mounted : getMisc()) {
-            if (mounted.isDestroyed() || mounted.isBreached()) {
+        for (MiscMounted mounted : getMisc()) {
+            MiscType miscType = mounted.getType();
+            // A heat sink the player has switched off dissipates nothing until it is switched back on
+            if ((miscType == null) || mounted.isDestroyed() || mounted.isBreached() || mounted.isModeTurnedOff()) {
                 continue;
             }
-            if ((activeCount > 0)
-                  && mounted.getType().hasFlag(MiscType.F_HEAT_SINK)) {
+            if (miscType.hasFlag(MiscType.F_HEAT_SINK)) {
                 capacity++;
-                activeCount--;
-            } else if ((activeCount > 0)
-                  && mounted.getType().hasFlag(MiscType.F_DOUBLE_HEAT_SINK)) {
-                activeCount--;
-                capacity += 2;
-                isDoubleHeatSink = true;
-            } else if (mounted.getType().hasFlag(
-                  MiscType.F_IS_DOUBLE_HEAT_SINK_PROTOTYPE)) {
+            } else if (miscType.hasFlag(MiscType.F_DOUBLE_HEAT_SINK)
+                  || miscType.hasFlag(MiscType.F_IS_DOUBLE_HEAT_SINK_PROTOTYPE)) {
                 capacity += 2;
                 isDoubleHeatSink = true;
             } else if (includePartialWing
-                  && mounted.getType().hasFlag(MiscType.F_PARTIAL_WING)
+                  && miscType.hasFlag(MiscType.F_PARTIAL_WING)
                   && // unless all crits are destroyed, we get the bonus
                   ((getGoodCriticalSlots(CriticalSlot.TYPE_EQUIPMENT,
                         getEquipmentNum(mounted), Mek.LOC_RIGHT_TORSO) > 0)
@@ -1638,16 +2428,17 @@ public abstract class Mek extends Entity {
 
         // okay, count leg sinks
         int sinksUnderwater = 0;
-        for (Mounted<?> mounted : getMisc()) {
-            if (mounted.isDestroyed() || mounted.isBreached()
+        for (MiscMounted mounted : getMisc()) {
+            MiscType miscType = mounted.getType();
+            if ((miscType == null) || mounted.isDestroyed() || mounted.isBreached() || mounted.isModeTurnedOff()
                   || !locationIsLeg(mounted.getLocation())) {
                 continue;
             }
-            if (mounted.getType().hasFlag(MiscType.F_HEAT_SINK)) {
+            if (miscType.hasFlag(MiscType.F_HEAT_SINK)) {
                 sinksUnderwater++;
-            } else if (mounted.getType().hasFlag(MiscType.F_DOUBLE_HEAT_SINK)
-                  || mounted.getType().hasFlag(MiscType.F_IS_DOUBLE_HEAT_SINK_PROTOTYPE)
-                  || mounted.getType().hasFlag(MiscType.F_LASER_HEAT_SINK)) {
+            } else if (miscType.hasFlag(MiscType.F_DOUBLE_HEAT_SINK)
+                  || miscType.hasFlag(MiscType.F_IS_DOUBLE_HEAT_SINK_PROTOTYPE)
+                  || miscType.hasFlag(MiscType.F_LASER_HEAT_SINK)) {
                 sinksUnderwater += 2;
             }
         }
@@ -1855,6 +2646,11 @@ public abstract class Mek extends Entity {
         if (mounted.getType().hasFlag(WeaponType.F_VGL)) {
             return Compute.firingArcFromVGLFacing(mounted.getFacing());
         }
+        // Directional Torso Mount (BMM p.83): front/rear (2-point) or full 360 (quad 3-point)
+        OptionalInt directionalTorsoMountArc = getDirectionalTorsoMountArc(mounted);
+        if (directionalTorsoMountArc.isPresent()) {
+            return directionalTorsoMountArc.getAsInt();
+        }
         // rear mounted?
         if (mounted.isRearMounted()) {
             return Compute.ARC_REAR;
@@ -1867,6 +2663,27 @@ public abstract class Mek extends Entity {
             case LOC_LEFT_ARM -> getArmsFlipped() ? Compute.ARC_REAR : Compute.ARC_LEFT_ARM;
             default -> Compute.ARC_360;
         };
+    }
+
+    /**
+     * Computes the firing arc for a weapon in a Directional Torso Mount (BMM p.83).
+     * <p>
+     * The mount behaves like a turret: it always fires into a forward arc, but that arc is measured against the unit's
+     * (secondary) facing plus the mount's facing offset (see {@code ComputeArc.getFacing} and
+     * {@link Mounted#getDirectionalMountFacing()}). The 2-point version restricts the offset to forward or rear; the
+     * 3-point quad turret may rotate to any of the six facings. The mount therefore returns {@code ARC_FORWARD} and the
+     * direction is conveyed entirely by the offset, exactly as Mek turret-mounted weapons work.
+     *
+     * @param mounted the weapon being checked
+     *
+     * @return {@code ARC_FORWARD} if this weapon is in a Directional Torso Mount, otherwise an empty
+     *       {@link OptionalInt}
+     */
+    protected OptionalInt getDirectionalTorsoMountArc(Mounted<?> mounted) {
+        if (mounted.hasDirectionalTorsoMount()) {
+            return OptionalInt.of(Compute.ARC_FORWARD);
+        }
+        return OptionalInt.empty();
     }
 
     /**
@@ -1905,12 +2722,6 @@ public abstract class Mek extends Entity {
     /**
      * Wrapper that handles applying Edge (if allowed).
      *
-     * @param table
-     * @param side
-     * @param aimedLocation
-     * @param aimingMode
-     * @param cover
-     *
      * @return HitData, possibly re-rolled once (once!) with Edge.
      */
     @Override
@@ -1925,7 +2736,6 @@ public abstract class Mek extends Entity {
      *
      * @param originalHit the hit to consider using Edge on.
      *
-     * @return
      */
     public HitData applyEdgeToHitLocation(HitData originalHit, int table, int side, int aimedLocation,
           AimingMode aimingMode,
@@ -1953,16 +2763,15 @@ public abstract class Mek extends Entity {
 
         }
 
-        switch (originalHit.getLocation()) {
-            case LOC_HEAD:
-                if (shouldUseEdge(OptionsConstants.EDGE_WHEN_HEAD_HIT)) {
-                    getCrew().decreaseEdge();
-                    HitData result = innerRollHitLocation(table, side,
-                          aimedLocation, aimingMode, cover);
-                    result.setUndoneLocation(new HitData(Mek.LOC_HEAD));
-                    result.setUsedEdge();
-                    return result;
-                }
+        if (originalHit.getLocation() == LOC_HEAD) {
+            if (shouldUseEdge(OptionsConstants.EDGE_WHEN_HEAD_HIT)) {
+                getCrew().decreaseEdge();
+                HitData result = innerRollHitLocation(table, side,
+                      aimedLocation, aimingMode, cover);
+                result.setUndoneLocation(new HitData(Mek.LOC_HEAD));
+                result.setUsedEdge();
+                return result;
+            }
         }
 
         return originalHit;
@@ -1986,6 +2795,9 @@ public abstract class Mek extends Entity {
         }
 
         boolean playtestLocations = gameOptions().booleanOption(OptionsConstants.PLAYTEST_1);
+        boolean toAdvHitLoc =
+              gameOptions().booleanOption(OptionsConstants.ADVANCED_COMBAT_TAC_OPS_ADVANCED_MEK_HIT_LOCATIONS);
+
 
         if ((table == ToHitData.HIT_NORMAL) || (table == ToHitData.HIT_PARTIAL_COVER)) {
             roll = Compute.d6(2);
@@ -2002,7 +2814,7 @@ public abstract class Mek extends Entity {
                 LOGGER.error("", t);
             }
 
-            if (playtestLocations
+            if (playtestLocations && !toAdvHitLoc
                   && (side == ToHitData.SIDE_LEFT || side == ToHitData.SIDE_RIGHT)
                   && roll != 2 // clarified on forum, TACs don't go to the CT in this case
                 // https://battletech.com/playtest-battletech/feedback-discussion/topic/through-armor-critical-hits-on-side-arc/
@@ -2047,14 +2859,12 @@ public abstract class Mek extends Entity {
                     case 7:
                         return new HitData(Mek.LOC_LEFT_TORSO);
                     case 8:
-                        if (gameOptions().booleanOption(
-                              OptionsConstants.ADVANCED_COMBAT_TAC_OPS_ADVANCED_MEK_HIT_LOCATIONS)) {
+                        if (toAdvHitLoc) {
                             return new HitData(Mek.LOC_CENTER_TORSO, true);
                         }
                         return new HitData(Mek.LOC_CENTER_TORSO);
                     case 9:
-                        if (gameOptions().booleanOption(
-                              OptionsConstants.ADVANCED_COMBAT_TAC_OPS_ADVANCED_MEK_HIT_LOCATIONS)) {
+                        if (toAdvHitLoc) {
                             return new HitData(Mek.LOC_RIGHT_TORSO, true);
                         }
                         return new HitData(Mek.LOC_RIGHT_TORSO);
@@ -2078,14 +2888,12 @@ public abstract class Mek extends Entity {
                     case 7:
                         return new HitData(Mek.LOC_RIGHT_TORSO);
                     case 8:
-                        if (gameOptions().booleanOption(
-                              OptionsConstants.ADVANCED_COMBAT_TAC_OPS_ADVANCED_MEK_HIT_LOCATIONS)) {
+                        if (toAdvHitLoc) {
                             return new HitData(Mek.LOC_CENTER_TORSO, true);
                         }
                         return new HitData(Mek.LOC_CENTER_TORSO);
                     case 9:
-                        if (gameOptions().booleanOption(
-                              OptionsConstants.ADVANCED_COMBAT_TAC_OPS_ADVANCED_MEK_HIT_LOCATIONS)) {
+                        if (toAdvHitLoc) {
                             return new HitData(Mek.LOC_LEFT_TORSO, true);
                         }
                         return new HitData(Mek.LOC_LEFT_TORSO);
@@ -2098,8 +2906,7 @@ public abstract class Mek extends Entity {
                 }
             } else if (side == ToHitData.SIDE_REAR) {
                 // normal rear hits
-                if (gameOptions().booleanOption(
-                      OptionsConstants.ADVANCED_COMBAT_TAC_OPS_ADVANCED_MEK_HIT_LOCATIONS)
+                if (toAdvHitLoc
                       && isProne()) {
                     switch (roll) {
                         case 2:
@@ -2473,6 +3280,10 @@ public abstract class Mek extends Entity {
      */
     @Override
     public void autoSetInternal() {
+        if (isFrankenMek()) {
+            applyFrankenMekInternalStructure();
+            return;
+        }
         // stupid irregular table... grr.
         switch ((int) weight) {
             // H, CT, TSO, ARM, LEG
@@ -2596,9 +3407,59 @@ public abstract class Mek extends Entity {
         }
     }
 
+    /**
+     * Returns true if this Mek has any Clan CASE equipment mounted.
+     */
+    public boolean hasClanCaseEquipped() {
+        return getMisc().stream()
+              .anyMatch(m -> m.getType().is(EquipmentTypeLookup.CLAN_CASE));
+    }
+
+    /**
+     * Returns true if the given location has been opted out of automatic Clan CASE.
+     */
+    public boolean isClanCaseOptedOut(int location) {
+        return clanCaseOptOutLocations.contains(location);
+    }
+
+    /**
+     * Opts out of automatic Clan CASE for the given location.
+     */
+    public void addClanCaseOptOut(int location) {
+        clanCaseOptOutLocations.add(location);
+    }
+
+    /**
+     * Removes the Clan CASE opt-out for the given location.
+     */
+    public void removeClanCaseOptOut(int location) {
+        clanCaseOptOutLocations.remove(location);
+    }
+
+    /**
+     * Clears all Clan CASE opt-out locations.
+     */
+    public void clearClanCaseOptOut() {
+        clanCaseOptOutLocations.clear();
+    }
+
+    /**
+     * Returns true if any location is opted out of automatic Clan CASE.
+     */
+    public boolean hasAnyClanCaseOptOut() {
+        return !clanCaseOptOutLocations.isEmpty();
+    }
+
+    /**
+     * Returns an unmodifiable view of the set of locations opted out of automatic Clan CASE.
+     */
+    public Set<Integer> getClanCaseOptOutLocations() {
+        return Collections.unmodifiableSet(clanCaseOptOutLocations);
+    }
+
     @Override
     public void addClanCase() {
-        if (!isClan()) {
+        if (!isClan() && !hasClanCaseEquipped()) {
             return;
         }
         boolean explosiveFound;
@@ -2606,6 +3467,10 @@ public abstract class Mek extends Entity {
         for (int i = 0; i < locations(); i++) {
             // Skip location if it already contains CASE
             if (locationHasCase(i) || hasCASEII(i)) {
+                continue;
+            }
+            // Skip location if user has opted out of auto Clan CASE
+            if (isClanCaseOptedOut(i)) {
                 continue;
             }
 
@@ -2695,16 +3560,9 @@ public abstract class Mek extends Entity {
         if (isSuperHeavy()) {
             reqSlots = (int) Math.ceil(((double) reqSlots / 2.0f));
         }
-        // gauss and AC weapons on omni arms means no arm actuators, so we
-        // remove them
-        if (isOmni()
-              && (this instanceof BipedMek)
-              && ((loc == LOC_LEFT_ARM) || (loc == LOC_RIGHT_ARM))
-              && ((mounted.getType() instanceof GaussWeapon)
-              || (mounted.getType() instanceof ACWeapon)
-              || (mounted.getType() instanceof UACWeapon)
-              || (mounted.getType() instanceof LBXACWeapon) || (mounted
-              .getType() instanceof PPCWeapon))) {
+
+        // various weapons on omni arms forbid lower arm+hand actuators, so remove them, TM p.57
+        if (isOmni() && isArm(loc) && MekConstructionUtil.removesHandAndLowerArmSlotsOnOmni(mounted.getType())) {
             if (hasSystem(Mek.ACTUATOR_LOWER_ARM, loc)) {
                 setCritical(loc, 2, null);
             }
@@ -3173,26 +4031,33 @@ public abstract class Mek extends Entity {
     }
 
     @Override
-    protected void addSystemTechAdvancement(CompositeTechLevel ctl) {
-        super.addSystemTechAdvancement(ctl);
+    protected void addSystemTechAdvancement(CompositeTechLevel techLevel) {
+        super.addSystemTechAdvancement(techLevel);
         // Meks with non-fusion engines are experimental
         if (hasEngine() && !isIndustrial() && !getEngine().isFusion()) {
-            ctl.addComponent(new TechAdvancement().setStaticTechLevel(SimpleTechLevel.EXPERIMENTAL));
+            techLevel.addComponent(new TechAdvancement().setStaticTechLevel(SimpleTechLevel.EXPERIMENTAL),
+                  Messages.getString("CompositeTechLevel.component.nonFusionEngineBattleMek"));
+        }
+        if (isFrankenMek()) {
+            techLevel.addComponent(TA_FRANKENMEK, Messages.getString("CompositeTechLevel.component.frankenMek"));
         }
         if (getGyroTechAdvancement() != null) {
-            ctl.addComponent(getGyroTechAdvancement());
+            techLevel.addComponent(getGyroTechAdvancement(), getGyroTypeString());
         }
         if (getCockpitTechAdvancement() != null) {
-            ctl.addComponent(getCockpitTechAdvancement());
+            techLevel.addComponent(getCockpitTechAdvancement(), getCockpitTypeString());
         }
         if (isIndustrial() && hasAdvancedFireControl()) {
-            ctl.addComponent(getIndustrialAdvFireConTA());
+            techLevel.addComponent(getIndustrialAdvFireConTA(),
+                  Messages.getString("CompositeTechLevel.component.advancedFireControl"));
         }
         if (hasFullHeadEject()) {
-            ctl.addComponent(getFullHeadEjectAdvancement());
+            techLevel.addComponent(getFullHeadEjectAdvancement(),
+                  Messages.getString("CompositeTechLevel.component.fullHeadEjection"));
         }
         if (hasRiscHeatSinkOverrideKit()) {
-            ctl.addComponent(getRiscHeatSinkOverrideKitAdvancement());
+            techLevel.addComponent(getRiscHeatSinkOverrideKitAdvancement(),
+                  Messages.getString("CompositeTechLevel.component.riscHeatSinkOverrideKit"));
         }
     }
 
@@ -3247,7 +4112,7 @@ public abstract class Mek extends Entity {
 
     @Override
     public int implicitClanCASE() {
-        if (!isClan()) {
+        if (!isClan() && !hasClanCaseEquipped()) {
             return 0;
         }
         int explicit = 0;
@@ -3256,9 +4121,13 @@ public abstract class Mek extends Entity {
             if ((m.getType() instanceof MiscType) && (m.getType().hasFlag(MiscType.F_CASE))) {
                 explicit++;
             } else if (m.getType().isExplosive(m)) {
-                caseLocations.add(m.getLocation());
-                if (m.getSecondLocation() >= 0) {
-                    caseLocations.add(m.getSecondLocation());
+                int loc = m.getLocation();
+                if (loc >= 0 && !isClanCaseOptedOut(loc)) {
+                    caseLocations.add(loc);
+                }
+                int secLoc = m.getSecondLocation();
+                if (secLoc >= 0 && !isClanCaseOptedOut(secLoc)) {
+                    caseLocations.add(secLoc);
                 }
             }
         }
@@ -3321,6 +4190,14 @@ public abstract class Mek extends Entity {
      */
     @Override
     public PilotingRollData addEntityBonuses(PilotingRollData roll) {
+        if (this.isFrankenMek()) {
+            if (this.hasMismatchedTonnageFrankenMekLegs()) {
+                roll.addModifier(2, "Mismatched Legs with different tonnages");
+            } else if (this.hasMismatchedFrankenMekLegs()) {
+                roll.addModifier(1, "Mismatched Legs from different Meks");
+            }
+        }
+
         // gyro hit?
         if (getBadCriticalSlots(CriticalSlot.TYPE_SYSTEM, Mek.SYSTEM_GYRO,
               Mek.LOC_CENTER_TORSO) > 0) {
@@ -3359,17 +4236,30 @@ public abstract class Mek extends Entity {
             roll.addModifier(-1, "Enhanced Imaging");
         }
 
-        // VDNI bonus?
-        if (hasAbility(OptionsConstants.MD_VDNI)
-              && !hasAbility(OptionsConstants.MD_BVDNI)) {
-            roll.addModifier(-1, "VDNI");
+        // Prototype DNI gives -3 piloting (IO pg 83)
+        // VDNI gives -1 piloting (IO pg 71) - BVDNI does NOT get piloting bonus due to "neuro-lag"
+        // Check Proto DNI first as it's more powerful
+        // When tracking neural interface hardware, require DNI cockpit mod for benefits
+        if (hasActiveDNI()) {
+            if (hasAbility(OptionsConstants.MD_PROTO_DNI)) {
+                roll.addModifier(-3, Messages.getString("PilotingRoll.ProtoDni"));
+            } else if (hasAbility(OptionsConstants.MD_VDNI)
+                  && !hasAbility(OptionsConstants.MD_BVDNI)) {
+                roll.addModifier(-1, "VDNI");
+            } else if (hasAbility(OptionsConstants.MD_BVDNI)) {
+                roll.addModifier(0, "BVDNI (no piloting bonus)");
+            }
         }
 
         // Small/torso-mounted cockpit penalty?
-        if (((getCockpitType() == Mek.COCKPIT_SMALL) || (getCockpitType() == Mek.COCKPIT_SMALL_COMMAND_CONSOLE))
-              && (!hasAbility(OptionsConstants.MD_BVDNI)
-              && !hasAbility(OptionsConstants.UNOFFICIAL_SMALL_PILOT))) {
-            roll.addModifier(1, "Small Cockpit");
+        // BVDNI negates small cockpit penalty, but Proto DNI does not
+        // Requires active DNI when tracking neural interface hardware
+        if ((getCockpitType() == Mek.COCKPIT_SMALL) || (getCockpitType() == Mek.COCKPIT_SMALL_COMMAND_CONSOLE)) {
+            if (hasActiveDNI() && hasAbility(OptionsConstants.MD_BVDNI)) {
+                roll.addModifier(0, "Small Cockpit (negated by BVDNI)");
+            } else if (!hasAbility(OptionsConstants.UNOFFICIAL_SMALL_PILOT)) {
+                roll.addModifier(1, "Small Cockpit");
+            }
         } else if (getCockpitType() == Mek.COCKPIT_TORSO_MOUNTED) {
             roll.addModifier(1, "Torso-Mounted Cockpit");
             int sensorHits = getHitCriticalSlots(CriticalSlot.TYPE_SYSTEM,
@@ -3409,16 +4299,17 @@ public abstract class Mek extends Entity {
             roll.addModifier(1, "Industrial TSM");
         }
 
+        // Damage Interrupt Circuit (IO p.39) adds +1 to all PSR when disabled
+        if ((hasDamageInterruptCircuit()) && (isDICDisabled())) {
+            roll.addModifier(1, "Damage Interrupt Circuit disabled");
+        }
+
         return roll;
     }
 
     @Override
     public int getMaxElevationChange() {
-        if (movementMode == EntityMovementMode.TRACKED
-              || movementMode == EntityMovementMode.WIGE) {
-            return 1;
-        }
-        return 2;
+        return (movementMode.isTracked() || movementMode.isWiGE()) ? 1 : 2;
     }
 
     @Override
@@ -3779,27 +4670,87 @@ public abstract class Mek extends Entity {
         return hasLaserHeatSinks == HAS_TRUE;
     }
 
+    /**
+     * Bulk control for heat sink activation: switches individual heat sink mounts On or Off so that the given number
+     * of sinks remains active. Like all activation/deactivation, the change is declared now and takes effect in the
+     * End Phase (the mounts' pending modes apply at the round rollover). Prototype double heat sinks and Freezers are
+     * not part of this counter (matching {@link #getNumberOfSinks()}); they can be switched individually via their
+     * equipment mode. The value arrives from a client packet, so out-of-range requests are clamped (mirroring
+     * {@link Aero#setActiveSinksNextRound(int)}): a negative count deactivates every sink, a count above the number
+     * of operable sinks activates every sink.
+     *
+     * @param sinks the number of heat sinks that should be active next round
+     */
     public void setActiveSinksNextRound(int sinks) {
-        sinksOnNextRound = sinks;
+        int remainingActive = Math.max(0, sinks);
+        for (MiscMounted mounted : getMisc()) {
+            if (!isCountedHeatSink(mounted) || mounted.isDestroyed() || mounted.isBreached()) {
+                continue;
+            }
+            if (remainingActive > 0) {
+                mounted.setMode(Mounted.MODE_ON);
+                remainingActive--;
+            } else {
+                mounted.setMode(Mounted.MODE_OFF);
+            }
+        }
     }
 
+    /**
+     * @return the number of operable heat sinks that are currently switched on (prototype double heat sinks and
+     *       Freezers excluded, matching {@link #getNumberOfSinks()})
+     */
     public int getActiveSinks() {
-        if (sinksOn < 0) {
-            sinksOn = getNumberOfSinks();
-            sinksOnNextRound = sinksOn;
+        int activeSinks = 0;
+        for (MiscMounted mounted : getMisc()) {
+            if (isCountedHeatSink(mounted) && !mounted.isDestroyed() && !mounted.isBreached()
+                  && !mounted.isModeTurnedOff()) {
+                activeSinks++;
+            }
         }
-        return sinksOn;
+        return activeSinks;
     }
 
+    /** Switches every heat sink mount (including prototype double heat sinks and Freezers) back on. */
     public void resetSinks() {
-        sinksOn = getNumberOfSinks();
+        for (MiscMounted mounted : getMisc()) {
+            MiscType miscType = mounted.getType();
+            if (miscType == null) {
+                continue;
+            }
+            boolean isPrototypeSink = miscType.hasFlag(MiscType.F_IS_DOUBLE_HEAT_SINK_PROTOTYPE);
+            if (isCountedHeatSink(mounted) || isPrototypeSink) {
+                mounted.setMode(Mounted.MODE_ON);
+            }
+        }
     }
 
+    /**
+     * @return the number of operable heat sinks that will be switched on next round, taking pending mode changes
+     *       into account (prototype double heat sinks and Freezers excluded)
+     */
     public int getActiveSinksNextRound() {
-        if (sinksOnNextRound < 0) {
-            return getActiveSinks();
+        int activeSinks = 0;
+        for (MiscMounted mounted : getMisc()) {
+            if (isCountedHeatSink(mounted) && !mounted.isDestroyed() && !mounted.isBreached()
+                  && !mounted.isModeTurnedOffNextRound()) {
+                activeSinks++;
+            }
         }
-        return sinksOnNextRound;
+        return activeSinks;
+    }
+
+    /**
+     * @param mounted the equipment to check
+     *
+     * @return {@code true} if the mount is a heat sink counted by the classic active-sinks counter (single, double,
+     *       compact or laser heat sinks; prototype double heat sinks and Freezers are excluded, matching
+     *       {@link #getNumberOfSinks()})
+     */
+    private static boolean isCountedHeatSink(MiscMounted mounted) {
+        MiscType miscType = mounted.getType();
+        return (miscType != null)
+              && (miscType.hasFlag(MiscType.F_HEAT_SINK) || miscType.hasFlag(MiscType.F_DOUBLE_HEAT_SINK));
     }
 
     /**
@@ -3941,11 +4892,6 @@ public abstract class Mek extends Entity {
     }
 
     @Override
-    public boolean hasEiCockpit() {
-        return isClan() || super.hasEiCockpit();
-    }
-
-    @Override
     public boolean hasActiveEiCockpit() {
         if (cockpitStatus == COCKPIT_OFF) {
             return false;
@@ -3957,10 +4903,12 @@ public abstract class Mek extends Entity {
         return super.hasActiveEiCockpit();
     }
 
+    @Deprecated(since = "0.51.0", forRemoval = true)
     public int getCockpitStatus() {
         return cockpitStatus;
     }
 
+    @Deprecated(since = "0.51.0", forRemoval = true)
     public int getCockpitStatusNextRound() {
         return cockpitStatusNextRound;
     }
@@ -3998,15 +4946,15 @@ public abstract class Mek extends Entity {
         if (industrial) {
             switch (cockpitType) {
                 case COCKPIT_STANDARD:
-                    return Mek.getCockpitTypeString(COCKPIT_INDUSTRIAL) + " (Adv. FCS)";
+                    return Mek.getCockpitTypeString(COCKPIT_INDUSTRIAL) + ADV_FCS_MTF;
                 case COCKPIT_PRIMITIVE:
-                    return Mek.getCockpitTypeString(COCKPIT_PRIMITIVE_INDUSTRIAL) + " (Adv. FCS)";
+                    return Mek.getCockpitTypeString(COCKPIT_PRIMITIVE_INDUSTRIAL) + ADV_FCS_MTF;
                 case COCKPIT_SUPERHEAVY:
-                    return Mek.getCockpitTypeString(COCKPIT_SUPERHEAVY_INDUSTRIAL) + " (Adv. FCS)";
+                    return Mek.getCockpitTypeString(COCKPIT_SUPERHEAVY_INDUSTRIAL) + ADV_FCS_MTF;
                 case COCKPIT_TRIPOD:
-                    return Mek.getCockpitTypeString(COCKPIT_TRIPOD_INDUSTRIAL) + " (Adv. FCS)";
+                    return Mek.getCockpitTypeString(COCKPIT_TRIPOD_INDUSTRIAL) + ADV_FCS_MTF;
                 case COCKPIT_SUPERHEAVY_TRIPOD:
-                    return Mek.getCockpitTypeString(COCKPIT_SUPERHEAVY_TRIPOD_INDUSTRIAL) + " (Adv. FCS)";
+                    return Mek.getCockpitTypeString(COCKPIT_SUPERHEAVY_TRIPOD_INDUSTRIAL) + ADV_FCS_MTF;
             }
         }
         return Mek.getCockpitTypeString(cockpitType);
@@ -4055,8 +5003,13 @@ public abstract class Mek extends Entity {
             return COCKPIT_UNKNOWN;
         }
         for (int x = 0; x < COCKPIT_STRING.length; x++) {
-            if ((inType.equals(COCKPIT_STRING[x]))
-                  || (inType.equals(COCKPIT_SHORT_STRING[x]))) {
+            if ((inType.equals(COCKPIT_STRING[x])) || (inType.equals(COCKPIT_SHORT_STRING[x]))) {
+                return x;
+            }
+        }
+        for (int x = 0; x < COCKPIT_STRING.length; x++) {
+            // "(Adv. FCS)" may be appended for industrial meks
+            if ((inType.startsWith(COCKPIT_STRING[x])) || (inType.startsWith(COCKPIT_SHORT_STRING[x]))) {
                 return x;
             }
         }
@@ -4245,6 +5198,7 @@ public abstract class Mek extends Entity {
         StringBuilder sb = new StringBuilder();
         String newLine = "\n";
 
+        sb.append(MtfFile.UUID).append(getUnitFileUUID()).append(newLine);
         sb.append(MtfFile.GENERATOR).append(SuiteConstants.PROJECT_NAME)
               .append(" ").append(SuiteConstants.VERSION).append(" on ").append(LocalDate.now()).append(newLine);
 
@@ -4261,20 +5215,22 @@ public abstract class Mek extends Entity {
         sb.append(newLine);
 
         sb.append("Config:");
-        if (this instanceof LandAirMek) {
-            sb.append("LAM");
-        } else if (this instanceof BipedMek) {
-            sb.append("Biped");
-        } else if (this instanceof QuadVee) {
-            sb.append("QuadVee");
-        } else if (this instanceof QuadMek) {
-            sb.append("Quad");
-        } else if (this instanceof TripodMek) {
-            sb.append("Tripod");
+        switch (this) {
+            case LandAirMek ignored -> sb.append("LAM");
+            case BipedMek ignored -> sb.append("Biped");
+            case QuadVee ignored -> sb.append("QuadVee");
+            case QuadMek ignored -> sb.append("Quad");
+            case TripodMek ignored -> sb.append("Tripod");
+            default -> {
+            }
         }
 
         if (isOmni()) {
             sb.append(" OmniMek");
+        }
+
+        if (isFrankenMek()) {
+            sb.append(" FrankenMek");
         }
 
         sb.append(newLine);
@@ -4290,8 +5246,14 @@ public abstract class Mek extends Entity {
         }
         sb.append(newLine);
         sb.append(MtfFile.ERA).append(year).append(newLine);
+        if (hasOriginalBuildYear()) {
+            sb.append(MtfFile.ORIGINAL_ERA).append(getOriginalBuildYear()).append(newLine);
+        }
         if ((source != null) && !source.isBlank()) {
             sb.append(MtfFile.SOURCE).append(source).append(newLine);
+        }
+        if ((published != null) && !published.isBlank()) {
+            sb.append(MtfFile.PUBLISHED).append(published).append(newLine);
         }
         sb.append(MtfFile.RULES_LEVEL).append(
               TechConstants.T_SIMPLE_LEVEL[techLevel]);
@@ -4300,12 +5262,35 @@ public abstract class Mek extends Entity {
             sb.append(MtfFile.ROLE).append(getRole().toString());
             sb.append(newLine);
         }
+        for (ForceGeneratorAvailability availability : getForceGeneratorAvailability()) {
+            sb.append(MtfFile.AVAILABILITY).append(availability.toFileFormat());
+            sb.append(newLine);
+        }
+        if (!getMissionRoles().isBlank()) {
+            sb.append(MtfFile.MISSION_ROLES).append(getMissionRoles());
+            sb.append(newLine);
+        }
+        if (techFaction != null && techFaction != Faction.NONE) {
+            sb.append(MtfFile.FACTION).append(techFaction.getCode());
+            sb.append(newLine);
+        }
         sb.append(newLine);
 
-        getQuirks().getOptionsList().stream()
-              .filter(IOption::booleanValue)
-              .map(IBasicOption::getName)
-              .forEach(quirk -> sb.append(MtfFile.QUIRK).append(quirk).append(newLine));
+        for (IOption quirk : getQuirks().getOptionsList()) {
+            if (quirk.getType() == IOption.INTEGER) {
+                int value = quirk.intValue();
+                if (value != 0) {
+                    sb.append(MtfFile.QUIRK).append(quirk.getName()).append(":").append(value).append(newLine);
+                }
+            } else if (quirk.getType() == IOption.STRING) {
+                String value = quirk.stringValue();
+                if (value != null && !value.isEmpty()) {
+                    sb.append(MtfFile.QUIRK).append(quirk.getName()).append(":").append(value).append(newLine);
+                }
+            } else if (quirk.booleanValue()) {
+                sb.append(MtfFile.QUIRK).append(quirk.getName()).append(newLine);
+            }
+        }
 
         for (Mounted<?> equipment : getEquipment()) {
             for (IOption weaponQuirk : equipment.getQuirks().activeQuirks()) {
@@ -4329,9 +5314,29 @@ public abstract class Mek extends Entity {
         }
         sb.append(newLine);
         sb.append(MtfFile.STRUCTURE);
-        sb.append(EquipmentType.getStructureTypeName(getStructureType(),
-              TechConstants.isClan(structureTechLevel)));
+        if (isFrankenMek() && hasHybridFrankenMekStructure()) {
+            sb.append(FRANKEN_MEK_STRUCTURE_HYBRID);
+        } else if (isFrankenMek()) {
+            sb.append(getFrankenMekStructureName(Mek.LOC_CENTER_TORSO));
+        } else {
+            sb.append(EquipmentType.getStructureTypeName(getStructureType(),
+                  TechConstants.isClan(structureTechLevel)));
+        }
         sb.append(newLine);
+
+        if (isFrankenMek()) {
+            boolean hybridStructure = hasHybridFrankenMekStructure();
+            for (int location : MtfFile.locationOrder) {
+                if ((location == Mek.LOC_CENTER_LEG) && !(this instanceof TripodMek)) {
+                    continue;
+                }
+                sb.append(getLocationAbbr(location)).append(" structure:");
+                if (hybridStructure) {
+                    sb.append(getFrankenMekStructureName(location)).append(":");
+                }
+                sb.append(getFrankenMekStructureTonnage(location)).append(newLine);
+            }
+        }
 
         sb.append(MtfFile.MYOMER);
         if (hasTSM(false)) {
@@ -4376,6 +5381,14 @@ public abstract class Mek extends Entity {
             sb.append(Mek.RISC_HEAT_SINK_OVERRIDE_KIT);
             sb.append(newLine);
         }
+        if (hasAnyClanCaseOptOut()) {
+            sb.append(MtfFile.CLAN_CASE_OPT_OUT);
+            sb.append(clanCaseOptOutLocations.stream()
+                  .sorted()
+                  .map(this::getLocationAbbr)
+                  .collect(Collectors.joining(",")));
+            sb.append(newLine);
+        }
         sb.append(newLine);
 
         sb.append(MtfFile.HEAT_SINKS).append(heatSinks()).append(" ");
@@ -4409,7 +5422,7 @@ public abstract class Mek extends Entity {
         }
         for (Mounted<?> mounted : getMisc()) {
             if ((mounted.getNumCriticalSlots() == 0)
-                  && !mounted.getType().hasFlag(MiscType.F_CASE)
+                  && !(isClan() && mounted.getType().hasFlag(MiscType.F_CASE))
                   && !EquipmentType.isArmorType(mounted.getType())
                   && !EquipmentType.isStructureType(mounted.getType())) {
                 sb.append(MtfFile.NO_CRIT).append(mounted.getType().getInternalName())
@@ -4470,6 +5483,14 @@ public abstract class Mek extends Entity {
                     sb.append(MtfFile.EMPTY).append(newLine);
                 }
             }
+            if (isFrankenMek() && !getFrankenMekLocationSourceDisplayName(l).isBlank()) {
+                sb.append(MtfFile.LOCATION_DONOR).append(" ")
+                      .append(getFrankenMekLocationSourceDisplayName(l)).append(newLine);
+                if (!getFrankenMekLocationSourceType(l).isBlank()) {
+                    sb.append(MtfFile.LOCATION_DONOR_TYPE).append(" ")
+                          .append(getFrankenMekLocationSourceType(l)).append(newLine);
+                }
+            }
             sb.append(newLine);
         }
 
@@ -4477,11 +5498,13 @@ public abstract class Mek extends Entity {
             sb.append(MtfFile.OVERVIEW);
             sb.append(getFluff().getOverview());
             sb.append(newLine);
+            sb.append(newLine);
         }
 
         if (!getFluff().getCapabilities().isBlank()) {
             sb.append(MtfFile.CAPABILITIES);
             sb.append(getFluff().getCapabilities());
+            sb.append(newLine);
             sb.append(newLine);
         }
 
@@ -4489,11 +5512,13 @@ public abstract class Mek extends Entity {
             sb.append(MtfFile.DEPLOYMENT);
             sb.append(getFluff().getDeployment());
             sb.append(newLine);
+            sb.append(newLine);
         }
 
         if (!getFluff().getHistory().isBlank()) {
             sb.append(MtfFile.HISTORY);
             sb.append(getFluff().getHistory());
+            sb.append(newLine);
             sb.append(newLine);
         }
 
@@ -4501,17 +5526,27 @@ public abstract class Mek extends Entity {
             sb.append(MtfFile.MANUFACTURER);
             sb.append(getFluff().getManufacturer());
             sb.append(newLine);
+            sb.append(newLine);
         }
 
         if (!getFluff().getPrimaryFactory().isBlank()) {
             sb.append(MtfFile.PRIMARY_FACTORY);
             sb.append(getFluff().getPrimaryFactory());
             sb.append(newLine);
+            sb.append(newLine);
         }
 
         if (!getFluff().getNotes().isBlank()) {
             sb.append(MtfFile.NOTES);
             sb.append(getFluff().getNotes());
+            sb.append(newLine);
+            sb.append(newLine);
+        }
+
+        if (!getFluff().getFluffDate().isBlank()) {
+            sb.append(MtfFile.FLUFF_DATE);
+            sb.append(getFluff().getFluffDate());
+            sb.append(newLine);
             sb.append(newLine);
         }
 
@@ -4842,8 +5877,17 @@ public abstract class Mek extends Entity {
         if ((getEmptyCriticalSlots(LOC_LEFT_TORSO) < 1) || (getEmptyCriticalSlots(LOC_RIGHT_TORSO) < 1) || !success) {
             success = false;
         } else {
-            addCritical(LOC_LEFT_TORSO, 0, new CriticalSlot(CriticalSlot.TYPE_SYSTEM, SYSTEM_LIFE_SUPPORT));
-            addCritical(LOC_RIGHT_TORSO, 0, new CriticalSlot(CriticalSlot.TYPE_SYSTEM, SYSTEM_LIFE_SUPPORT));
+            // Life Support must be at slot 0 in each side torso. If engine crits
+            // were placed first (e.g. XL engine at slots 0-2), shift them down by 1
+            // to make room. Using addCritical would silently skip the occupied slot.
+            for (int loc : new int[] { LOC_LEFT_TORSO, LOC_RIGHT_TORSO }) {
+                if (getCritical(loc, 0) != null) {
+                    for (int i = getNumberOfCriticalSlots(loc) - 2; i >= 0; i--) {
+                        setCritical(loc, i + 1, getCritical(loc, i));
+                    }
+                }
+                setCritical(loc, 0, new CriticalSlot(CriticalSlot.TYPE_SYSTEM, SYSTEM_LIFE_SUPPORT));
+            }
         }
 
         if (success) {
@@ -4923,6 +5967,20 @@ public abstract class Mek extends Entity {
               && getCrew().hasActiveCommandConsole()
               && getWeightClass() >= EntityWeightClass.WEIGHT_HEAVY
               && (!isIndustrial() || hasWorkingMisc(MiscType.F_ADVANCED_FIRE_CONTROL));
+    }
+
+    @Override
+    public boolean hasGhostTargetEquipment() {
+        // Mek Cockpit Command Console (cockpit type, not misc equipment).
+        // Simpler check than hasCommandConsoleBonus() which is designed for initiative
+        // and has phase-dependent conditions that don't apply to ghost targets.
+        boolean isCCC = (getCockpitType() == COCKPIT_COMMAND_CONSOLE)
+              || (getCockpitType() == COCKPIT_SUPERHEAVY_COMMAND_CONSOLE)
+              || (getCockpitType() == COCKPIT_SMALL_COMMAND_CONSOLE);
+        if (isCCC && !getCrew().isDead() && !getCrew().isUnconscious()) {
+            return true;
+        }
+        return super.hasGhostTargetEquipment();
     }
 
     /**
@@ -5255,11 +6313,6 @@ public abstract class Mek extends Entity {
     }
 
     @Override
-    public boolean isNuclearHardened() {
-        return true;
-    }
-
-    @Override
     public void destroyLocation(int loc) {
         destroyLocation(loc, false);
     }
@@ -5538,7 +6591,7 @@ public abstract class Mek extends Entity {
     }
 
     /**
-     * Is the passed in location an arm?
+     * @return True if the given location is an arm; always returns false for QuadMeks
      */
     public boolean isArm(int loc) {
         return (loc == Mek.LOC_LEFT_ARM) || (loc == Mek.LOC_RIGHT_ARM);
@@ -5610,6 +6663,43 @@ public abstract class Mek extends Entity {
 
     public boolean hasRiscHeatSinkOverrideKit() {
         return riscHeatSinkKit;
+    }
+
+    /**
+     * Returns true if this Mek has the Damage Interrupt Circuit cockpit modification installed.
+     *
+     * @return true if DIC is installed
+     */
+    public boolean hasDamageInterruptCircuit() {
+        return hasWorkingMisc(MiscType.F_DAMAGE_INTERRUPT_CIRCUIT);
+    }
+
+    /**
+     * Returns true if the Damage Interrupt Circuit is currently disabled. DIC is disabled by Life Support critical hit
+     * or any hit rolling "2" on hit location table.
+     *
+     * @return true if DIC is disabled
+     */
+    public boolean isDICDisabled() {
+        return dicDisabled;
+    }
+
+    /**
+     * Sets the disabled state of the Damage Interrupt Circuit.
+     *
+     * @param disabled true to disable the DIC
+     */
+    public void setDICDisabled(boolean disabled) {
+        this.dicDisabled = disabled;
+    }
+
+    /**
+     * Returns true if this Mek has a working (installed and not disabled) Damage Interrupt Circuit.
+     *
+     * @return true if DIC is installed and functional
+     */
+    public boolean hasWorkingDIC() {
+        return hasDamageInterruptCircuit() && !isDICDisabled();
     }
 
     public abstract boolean hasMPReducingHardenedArmor();
@@ -5841,7 +6931,7 @@ public abstract class Mek extends Entity {
 
         }
 
-        if ((getEngineHits() == 1) && (getGyroHits() == 1)) {
+        if ((getEngineHits() >= 1) && (getGyroHits() >= 1)) {
             LOGGER.debug("{} CRIPPLED: Engine + Gyro hit.", getDisplayName());
             return true;
         }
@@ -6160,8 +7250,8 @@ public abstract class Mek extends Entity {
             Mounted<?> m = cs.getMount();
             EquipmentType type = m.getType();
             if ((type instanceof MiscType)
-                  && type.hasFlag(MiscType.F_HAND_WEAPON)
-                  && type.hasSubType(MiscType.S_CLAW)) {
+                  && type.hasFlag(MiscTypeFlag.F_HAND_WEAPON)
+                  && type.hasFlag(MiscTypeFlag.S_CLAW)) {
                 return !(m.isDestroyed() || m.isMissing() || m.isBreached());
             }
         }
@@ -6202,6 +7292,8 @@ public abstract class Mek extends Entity {
             bUsedCoolantSystem = true;
             vDesc.addElement(Report.subjectReport(2365, getId()).addDesc(this).add(coolantSystem.getName()));
             int requiredRoll = EMERGENCY_COOLANT_SYSTEM_FAILURE[nCoolantSystemLevel];
+            // Edge may reroll a failed RISC coolant system check once (part of the shared RISC Edge trigger).
+            diceRoll = rerollRiscCoolantWithEdge(this, requiredRoll, diceRoll, vDesc);
             Report r = Report.subjectReport(2370, getId()).indent().add(requiredRoll).add(diceRoll);
 
             if (diceRoll.getIntValue() < requiredRoll) {
@@ -6249,6 +7341,37 @@ public abstract class Mek extends Entity {
             return bFailure;
         }
         return false;
+    }
+
+    /**
+     * Applies Edge to a RISC Emergency Coolant System failure check: if the initial roll failed and the crew has the
+     * RISC Edge trigger enabled with Edge remaining, spends one Edge point and rerolls the check once. This rolls the
+     * coolant system into the same Edge trigger as the RISC laser malfunctions.
+     *
+     * @param entity       the Mek making the check
+     * @param requiredRoll the target number the roll must meet to succeed
+     * @param initialRoll  the roll that was made
+     * @param reportVector the report vector to append the Edge-use report to
+     *
+     * @return the roll to use - the reroll if Edge was spent, otherwise the original roll
+     */
+    // package-private static for testing
+    static Roll rerollRiscCoolantWithEdge(Entity entity, int requiredRoll, Roll initialRoll,
+          Vector<Report> reportVector) {
+        boolean isFailedCheck = initialRoll.getIntValue() < requiredRoll;
+        boolean shouldUseEdge = entity.shouldUseEdge(OptionsConstants.EDGE_WHEN_RISC_FAIL);
+
+        if (isFailedCheck && shouldUseEdge) {
+            entity.getCrew().decreaseEdge();
+
+            reportVector.addElement(Report.subjectReport(3168, entity.getId())
+                  .indent()
+                  .add(entity.getCrew().getOptions().intOption(OptionsConstants.EDGE)));
+
+            return Compute.rollD6(2);
+        }
+
+        return initialRoll;
     }
 
     public boolean hasDamagedCoolantSystem() {
@@ -6355,5 +7478,50 @@ public abstract class Mek extends Entity {
     @Override
     public int getRecoveryTime() {
         return 60;
+    }
+
+    /**
+     * Determines if this Mek can announce abandonment per TacOps:AR p.165. Requirements: must be prone, must be
+     * shutdown, must have crew that hasn't ejected, game option must be enabled, and abandonment must not already be
+     * pending.
+     *
+     * @return true if this Mek can announce abandonment
+     */
+    public boolean canAbandon() {
+        if (!isProne()) {
+            return false;
+        }
+        if (!isShutDown()) {
+            return false;
+        }
+        if (getCrew() == null || getCrew().isEjected() || getCrew().isDead()) {
+            return false;
+        }
+        if (isPendingAbandon()) {
+            return false;
+        }
+        if (game == null) {
+            return false;
+        }
+        return game.getOptions().booleanOption(OptionsConstants.ADVANCED_GROUND_MOVEMENT_VEHICLES_CAN_EJECT);
+    }
+
+    @Override
+    public boolean canAnnounceAbandon() {
+        return canAbandon();
+    }
+
+    /**
+     * Returns true if this Mek has been abandoned - the crew has exited but the Mek itself is not destroyed. This is
+     * different from ejection which destroys the cockpit.
+     *
+     * @return true if this Mek is crewless but intact
+     */
+    @Override
+    public boolean isAbandoned() {
+        if (getCrew() == null) {
+            return false;
+        }
+        return getCrew().isEjected() && !isDestroyed();
     }
 }

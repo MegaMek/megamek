@@ -1,7 +1,7 @@
 /*
  * Copyright (c) 2000-2005 Ben Mazur (bmazur@sev.org)
  * Copyright (c) 2013 Edward Cullen (eddy@obsessedcomputers.co.uk)
- * Copyright (C) 2002-2025 The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2002-2026 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -45,22 +45,13 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.HashSet;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-import java.util.TreeSet;
-import java.util.Vector;
+import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 import java.util.zip.GZIPInputStream;
 
 import megamek.MMConstants;
-import megamek.client.bot.princess.Princess;
 import megamek.client.generator.skillGenerators.AbstractSkillGenerator;
 import megamek.client.generator.skillGenerators.ModifiedTotalWarfareSkillGenerator;
 import megamek.client.ui.clientGUI.GUIPreferences;
@@ -68,10 +59,12 @@ import megamek.client.ui.clientGUI.tooltip.PilotToolTip;
 import megamek.client.ui.tileset.TilesetManager;
 import megamek.client.ui.util.UIUtil;
 import megamek.common.Hex;
+import megamek.common.IndustrialElevator;
 import megamek.common.Player;
 import megamek.common.Report;
 import megamek.common.SpecialHexDisplay;
 import megamek.common.TagInfo;
+import megamek.common.TemporaryECMField;
 import megamek.common.actions.ArtilleryAttackAction;
 import megamek.common.actions.AttackAction;
 import megamek.common.actions.ClubAttackAction;
@@ -91,6 +84,7 @@ import megamek.common.equipment.ICarryable;
 import megamek.common.equipment.Minefield;
 import megamek.common.equipment.Mounted;
 import megamek.common.event.GameCFREvent;
+import megamek.common.event.GamePollEvent;
 import megamek.common.event.GameReportEvent;
 import megamek.common.event.GameSettingsChangeEvent;
 import megamek.common.event.GameVictoryEvent;
@@ -114,6 +108,7 @@ import megamek.common.planetaryConditions.PlanetaryConditions;
 import megamek.common.preference.PreferenceManager;
 import megamek.common.turns.UnloadStrandedTurn;
 import megamek.common.units.Crew;
+import megamek.common.units.DamageEditSpec;
 import megamek.common.units.DemolitionCharge;
 import megamek.common.units.Entity;
 import megamek.common.units.EntitySelector;
@@ -124,6 +119,7 @@ import megamek.common.util.C3Util;
 import megamek.common.util.ImageUtil;
 import megamek.common.util.SerializationHelper;
 import megamek.common.util.StringUtil;
+import megamek.common.voting.Poll;
 import megamek.logging.MMLogger;
 import megamek.server.SmokeCloud;
 
@@ -145,17 +141,41 @@ public class Client extends AbstractClient {
 
     // FIXME: Should ideally be located elsewhere; the client should handle data, not gfx or UI-related stuff:
     private TilesetManager tilesetManager;
+    /** Set once the tile set has failed to build, so it is not attempted again on every call. */
+    private boolean tilesetLoadFailed;
 
     public Client(String name, String host, int port) {
         super(name, host, port);
         setSkillGenerator(new ModifiedTotalWarfareSkillGenerator());
-        try {
-            tilesetManager = new TilesetManager(game);
-        } catch (IOException e) {
-            LOGGER.error(e, "Unknown Exception");
-        }
     }
 
+    /**
+     * The tile set, built on first use rather than with the client.
+     *
+     * <p>Building one parses the whole hex tile set into thousands of template hexes and their terrain, which a
+     * client that never draws anything has no use for. Every client used to pay that at construction: headless
+     * runners, and every bot, since {@code BotClient} is a {@code Client} too. A batch playing many games in one
+     * process paid it once per client per game and kept the result alive, which is tens of megabytes a game
+     * retained for images nobody would ever ask for.</p>
+     *
+     * @return the tile set manager, or {@code null} if it cannot be built
+     */
+    private @Nullable TilesetManager tilesetManager() {
+        if ((tilesetManager == null) && !tilesetLoadFailed) {
+            try {
+                tilesetManager = new TilesetManager(game);
+            } catch (IOException exception) {
+                // Remember the failure. Building this used to be attempted once, in the constructor; retrying on
+                // every call would repeat expensive work and flood the log wherever the tile set is missing or
+                // corrupt, which is exactly where the client is least able to afford it.
+                tilesetLoadFailed = true;
+                LOGGER.error(exception, "Could not load the tile set; continuing without unit images");
+            }
+        }
+        return tilesetManager;
+    }
+
+    @Override
     public Game getGame() {
         return game;
     }
@@ -247,7 +267,9 @@ public class Client extends AbstractClient {
         super.changePhase(phase);
         switch (phase) {
             case LOUNGE:
-                tilesetManager.reset();
+                if (tilesetManager != null) {
+                    tilesetManager.reset();
+                }
             case DEPLOYMENT:
             case TARGETING:
             case MOVEMENT:
@@ -353,6 +375,19 @@ public class Client extends AbstractClient {
     }
 
     /**
+     * Send a ghost target action to the server (Standard mode, TO:AR rules). The server performs the Piloting+3 roll
+     * and derives friendliness from entity ownership.
+     *
+     * @param sourceEntityId the entity generating the ghost target
+     * @param equipmentId    the equipment number on the source entity
+     * @param targetEntityId the entity being targeted
+     */
+    public void sendGhostTargetAction(int sourceEntityId, int equipmentId, int targetEntityId) {
+        send(new Packet(PacketCommand.ENTITY_GHOST_TARGET,
+              sourceEntityId, equipmentId, targetEntityId));
+    }
+
+    /**
      * Send the game options to the server
      */
     public void sendGameOptions(String password, Vector<IBasicOption> options) {
@@ -378,6 +413,14 @@ public class Client extends AbstractClient {
      */
     public void sendPlanetaryConditions(PlanetaryConditions conditions) {
         send(new Packet(PacketCommand.SENDING_PLANETARY_CONDITIONS, conditions));
+    }
+
+    /**
+     * Asks the server to build the game board from the current map settings and broadcast it to all clients while
+     * still in the lobby, so that all players can see the battlefield that will actually be played.
+     */
+    public void sendLobbyBoardGenerationRequest() {
+        send(new Packet(PacketCommand.LOBBY_GENERATE_BOARD));
     }
 
     /**
@@ -441,6 +484,13 @@ public class Client extends AbstractClient {
     }
 
     /**
+     * Sends a "deploy fortifications" packet carrying the hex locations the player is fortifying.
+     */
+    public void sendDeployFortifications(Vector<BoardLocation> fortifiedHexes) {
+        send(new Packet(PacketCommand.DEPLOY_FORTIFICATIONS, fortifiedHexes));
+    }
+
+    /**
      * Sends an updated state of ground objects (i.e. cargo etc.)
      */
     public void sendDeployGroundObjects(Map<Coords, List<ICarryable>> groundObjects) {
@@ -458,6 +508,11 @@ public class Client extends AbstractClient {
      * Sends an "update entity" packet
      */
     public void sendUpdateEntity(Entity entity) {
+        LOGGER.debug("Sending update for {} (id {}): heat {}, destroyed {}",
+              entity.getDisplayName(),
+              entity.getId(),
+              entity.heat,
+              entity.isDestroyed());
         send(new Packet(PacketCommand.ENTITY_UPDATE, entity));
     }
 
@@ -469,9 +524,19 @@ public class Client extends AbstractClient {
     }
 
     /**
+     * Sends a gamemaster's damage editor edits for the server to apply to its own copy of the unit. Unlike
+     * {@link #sendUpdateEntity(Entity)} this carries only the edited values, so the server's unit keeps every piece of
+     * state the editor does not touch.
+     */
+    public void sendDamageEdit(DamageEditSpec spec) {
+        LOGGER.debug("Sending damage edits for unit id {}", spec.entityId);
+        send(new Packet(PacketCommand.ENTITY_DAMAGE_EDIT, spec));
+    }
+
+    /**
      * Sends a packet containing multiple entity updates. Should only be used in the lobby phase.
      */
-    public void sendChangeOwner(Collection<Entity> entities, int newOwnerId) throws InvalidPacketDataException {
+    public void sendChangeOwner(Collection<Entity> entities, int newOwnerId) {
         send(new Packet(PacketCommand.ENTITY_ASSIGN, entities, newOwnerId));
     }
 
@@ -511,6 +576,17 @@ public class Client extends AbstractClient {
         send(new Packet(PacketCommand.ENTITY_TOW, id, tractorId));
     }
 
+    /**
+     * Sends a "build train" packet, connecting a tractor and several trailers in one operation. The server validates
+     * the whole chain and applies it in full or not at all, so a rejected request leaves every unit unattached.
+     *
+     * @param tractorId  the powered tractor that will head the train
+     * @param trailerIds the trailers to hitch behind it, ordered front to back
+     */
+    public void sendBuildTrain(int tractorId, List<Integer> trailerIds) {
+        send(new Packet(PacketCommand.ENTITY_BUILD_TRAIN, tractorId, new ArrayList<>(trailerIds)));
+    }
+
     public void sendExplodeBuilding(DemolitionCharge charge) {
         send(new Packet(PacketCommand.BLDG_EXPLODE, charge));
     }
@@ -547,7 +623,7 @@ public class Client extends AbstractClient {
                         sb.append(entity.getNC3NextUUIDAsString(i)).append(", ");
                     }
                     LOGGER.debug("[CLIENT] receiveEntities: Entity {} ({}), c3NetIdString: {}, NC3UUIDs: [{}]",
-                        entity.getId(), entity.getShortName(), entity.getC3NetId(), sb.toString());
+                          entity.getId(), entity.getShortName(), entity.getC3NetId(), sb.toString());
                 }
             }
         }
@@ -656,20 +732,47 @@ public class Client extends AbstractClient {
         Entity entity = game.getEntity(packet.getIntValue(0));
 
         if (entity != null) { // we may not have this entity due to double-blind
+            // Capture the observable state; the isVisibleToEnemy/isDetectedByEnemy getters are not plain field
+            // reads (without double-blind they always report true), so compare them before and after applying
+            // the packet rather than against the raw packet values
+            boolean oldEverSeenByEnemy = entity.isEverSeenByEnemy();
+            boolean oldVisibleToEnemy = entity.isVisibleToEnemy();
+            boolean oldDetectedByEnemy = entity.isDetectedByEnemy();
+            Vector<Player> oldWhoCanSee = entity.getWhoCanSee();
+            Vector<Player> oldWhoCanDetect = entity.getWhoCanDetect();
+
             entity.setEverSeenByEnemy(packet.getBooleanValue(1));
             entity.setVisibleToEnemy(packet.getBooleanValue(2));
             entity.setDetectedByEnemy(packet.getBooleanValue(3));
             entity.setWhoCanSee(packet.getPlayerVector(4));
             entity.setWhoCanDetect(packet.getPlayerVector(5));
 
-            // this next call is only needed sometimes, but we'll just call it everytime
-            game.processGameEvent(new GameEntityChangeEvent(this, entity));
+            // The server also sends indicators that carry no change; only notify listeners when the visibility
+            // state in fact changed, as each change event makes the UI redo entity sprites and images
+            boolean changed = (entity.isEverSeenByEnemy() != oldEverSeenByEnemy)
+                  || (entity.isVisibleToEnemy() != oldVisibleToEnemy)
+                  || (entity.isDetectedByEnemy() != oldDetectedByEnemy)
+                  || !Objects.equals(entity.getWhoCanSee(), oldWhoCanSee)
+                  || !Objects.equals(entity.getWhoCanDetect(), oldWhoCanDetect);
+
+            if (changed) {
+                game.processGameEvent(new GameEntityChangeEvent(this, entity));
+            }
         }
     }
 
     protected void receiveUpdateGroundObjects(Packet packet) throws InvalidPacketDataException {
         game.setGroundObjects(packet.getCoordsWithGroundObjectListMap(0));
         game.processGameEvent(new GameBoardChangeEvent(this));
+    }
+
+    @SuppressWarnings("unchecked")
+    protected void receiveUpdateIndustrialElevators(Packet packet) {
+        Object data = packet.getObject(0);
+        if (data instanceof Collection) {
+            Collection<IndustrialElevator> elevators = (Collection<IndustrialElevator>) data;
+            game.setIndustrialElevators(elevators);
+        }
     }
 
     protected void receiveDeployMinefields(Packet packet) throws InvalidPacketDataException {
@@ -682,6 +785,11 @@ public class Client extends AbstractClient {
 
     protected void receiveIlluminatedHexes(Packet packet) throws InvalidPacketDataException {
         game.setIlluminatedPositions(packet.getCoordsHashSet(0));
+    }
+
+    protected void receiveUpdateCutHexes(Packet packet) throws InvalidPacketDataException {
+        game.setHexesBeingCut(packet.getBoardLocationIntegerMap(0));
+        game.processGameEvent(new GameBoardChangeEvent(this));
     }
 
     protected void receiveRevealMinefield(Packet packet) throws InvalidPacketDataException {
@@ -714,9 +822,21 @@ public class Client extends AbstractClient {
         }
     }
 
+    protected void receiveBuildingAdd(Packet packet) throws InvalidPacketDataException {
+        for (IBuilding building : packet.getBuildingList(0)) {
+            game.getBoard(building.getBoardId()).addBuildingToBoard(building);
+        }
+    }
+
     protected void receiveBuildingUpdate(Packet packet) throws InvalidPacketDataException {
         for (IBuilding building : packet.getBuildingList(0)) {
             game.getBoard(building.getBoardId()).updateBuilding(building);
+        }
+    }
+
+    protected void receiveBuildingRemove(Packet packet) throws InvalidPacketDataException {
+        for (IBuilding building : packet.getBuildingList(0)) {
+            game.getBoard(building.getBoardId()).removeBuilding(building);
         }
     }
 
@@ -889,12 +1009,13 @@ public class Client extends AbstractClient {
      * Gets the current mek image
      */
     private Image getTargetImage(Entity e) {
-        if (tilesetManager == null) {
+        TilesetManager tileset = tilesetManager();
+        if (tileset == null) {
             return null;
         } else if (e.isDestroyed()) {
-            return tilesetManager.wreckMarkerFor(e, -1);
+            return tileset.wreckMarkerFor(e, -1);
         } else {
-            return tilesetManager.imageFor(e);
+            return tileset.imageFor(e);
         }
     }
 
@@ -939,6 +1060,17 @@ public class Client extends AbstractClient {
         send(new Packet(PacketCommand.ENTITY_VARIABLE_RANGE_MODE_CHANGE, entityId, mode));
     }
 
+    /**
+     * Sends a unit abandonment announcement to the server. For Meks (TacOps:AR p.165): Must be prone and shutdown. For
+     * Vehicles (TacOps): Can be abandoned anytime. The abandonment will execute during the End Phase of the following
+     * turn.
+     *
+     * @param entityId the ID of the unit announcing abandonment
+     */
+    public void sendUnitAbandonmentAnnouncement(int entityId) {
+        send(new Packet(PacketCommand.ENTITY_ABANDON_ANNOUNCE, entityId));
+    }
+
     public void sendSpecialHexDisplayAppend(Coords c, int boardId, SpecialHexDisplay shd) {
         send(new Packet(PacketCommand.SPECIAL_HEX_DISPLAY_APPEND, c, boardId, shd));
     }
@@ -947,14 +1079,20 @@ public class Client extends AbstractClient {
         send(new Packet(PacketCommand.SPECIAL_HEX_DISPLAY_DELETE, c, boardId, shd));
     }
 
+    /**
+     * Hook invoked when the server greets this client, allowing a bot client to push its behavior settings to the
+     * server. Non-bot clients have no settings to send, so this default implementation does nothing; bot clients
+     * override it.
+     */
+    protected void sendBotSettingsToServer() {
+    }
+
     @Override
     protected boolean handleGameSpecificPacket(Packet packet) {
         try {
             switch (packet.command()) {
                 case SERVER_GREETING:
-                    if (this instanceof Princess) {
-                        ((Princess) this).sendPrincessSettings();
-                    }
+                    sendBotSettingsToServer();
                     break;
                 case PRINCESS_SETTINGS:
                     game.setBotSettings(packet.getStringWIthBehaviorSettingsMap(0));
@@ -998,8 +1136,14 @@ public class Client extends AbstractClient {
                 case REMOVE_MINEFIELD:
                     receiveRemoveMinefield(packet);
                     break;
+                case UPDATE_CUT_HEXES:
+                    receiveUpdateCutHexes(packet);
+                    break;
                 case UPDATE_GROUND_OBJECTS:
                     receiveUpdateGroundObjects(packet);
+                    break;
+                case UPDATE_INDUSTRIAL_ELEVATORS:
+                    receiveUpdateIndustrialElevators(packet);
                     break;
                 case ADD_SMOKE_CLOUD:
                     SmokeCloud cloud = packet.getSmokeCloud(0);
@@ -1007,6 +1151,24 @@ public class Client extends AbstractClient {
                     if (cloud != null) {
                         game.addSmokeCloud(cloud);
                     }
+
+                    break;
+                case ADD_TEMPORARY_ECM_FIELD:
+                    TemporaryECMField ecmField = packet.getTemporaryECMField(0);
+
+                    if (ecmField != null) {
+                        game.addTemporaryECMField(ecmField);
+                        // Trigger ECM list update in BoardView
+                        game.processGameEvent(new GameBoardChangeEvent(this));
+                    }
+
+                    break;
+                case SYNC_TEMPORARY_ECM_FIELDS:
+                    @SuppressWarnings("unchecked")
+                    List<TemporaryECMField> ecmFields = (List<TemporaryECMField>) packet.getObject(0);
+                    game.setTemporaryECMFields(ecmFields);
+                    // Trigger ECM list update in BoardView
+                    game.processGameEvent(new GameBoardChangeEvent(this));
 
                     break;
                 case CHANGE_HEX:
@@ -1022,6 +1184,12 @@ public class Client extends AbstractClient {
                 case CHANGE_HEXES:
                     var changedHexes = packet.getBoardLocationHexMap(0);
                     game.getBoards().values().forEach(board -> board.setHexes(changedHexes));
+                    break;
+                case BLDG_ADD:
+                    receiveBuildingAdd(packet);
+                    break;
+                case BLDG_REMOVE:
+                    receiveBuildingRemove(packet);
                     break;
                 case BLDG_UPDATE:
                     receiveBuildingUpdate(packet);
@@ -1087,6 +1255,11 @@ public class Client extends AbstractClient {
                     }
 
                     break;
+                case GAME_MASTER_POLL:
+                    if (packet.getObject(0) instanceof Poll poll) {
+                        game.processGameEvent(new GamePollEvent(this, poll));
+                    }
+                    break;
                 case SENDING_MAP_SETTINGS:
                     MapSettings mapSettings = packet.getMapSettings(0);
 
@@ -1123,6 +1296,13 @@ public class Client extends AbstractClient {
                 case SENDING_ARTILLERY_ATTACKS:
                     Vector<ArtilleryAttackAction> artilleryAttackActions = packet.getArtilleryAttackAction(0);
                     game.setArtilleryVector(artilleryAttackActions);
+                    // Redacted enemy rounds (landing time only; target/munition withheld by the server) for the
+                    // Rounds-in-Air window; this list never feeds the board, so it cannot leak the enemy aim point.
+                    game.setEnemyArtilleryInbound(packet.getEnemyArtilleryInbound(1));
+                    // Fire a board-change event so views tracking in-flight artillery (e.g. the Rounds in the Air
+                    // window) refresh now. This packet arrives AFTER the phase-change event, so a phase-change-only
+                    // refresh would always be one phase stale - notably for off-board counter-battery rounds.
+                    game.processGameEvent(new GameBoardChangeEvent(this));
                     break;
                 case SENDING_FLARES:
                     Vector<Flare> flareVector = packet.getFlareVector(0);
@@ -1252,7 +1432,7 @@ public class Client extends AbstractClient {
         send(new Packet(PacketCommand.CLIENT_FEEDBACK_REQUEST, PacketCommand.CFR_DOMINO_EFFECT, mp));
     }
 
-    public void sendAMSAssignCFRResponse(Integer waaIndex) {
+    public void sendAMSAssignCFRResponse(int[] waaIndex) {
         send(new Packet(PacketCommand.CLIENT_FEEDBACK_REQUEST, PacketCommand.CFR_AMS_ASSIGN, waaIndex));
     }
 
@@ -1362,6 +1542,7 @@ public class Client extends AbstractClient {
     /**
      * Sends an "update custom initiative" packet
      */
+    @Deprecated(since = "0.51.0", forRemoval = true)
     public void sendCustomInit(Player player) {
         send(new Packet(PacketCommand.CUSTOM_INITIATIVE, player));
     }
@@ -1396,6 +1577,18 @@ public class Client extends AbstractClient {
     }
 
     /**
+     * Declares that the given unit is deploying one of its Bridge-Layer (AVLB) bridges (TM p.242 / TW). The server
+     * validates eligibility and computes the target hex (directly in front, along the unit's facing); the bridge is
+     * placed at the end of the following turn if the unit stays stationary.
+     *
+     * @param entityId the unit declaring the deployment
+     * @param equipNum the equipment index of the specific bridgelayer to deploy (a unit may carry more than one)
+     */
+    public void sendDeployBridge(int entityId, int equipNum) {
+        send(new Packet(PacketCommand.ENTITY_DEPLOY_BRIDGE, entityId, equipNum));
+    }
+
+    /**
      * Send mount-facing-change data to the server
      */
     public void sendMountFacingChange(int nEntity, int nEquip, int nFacing) {
@@ -1403,24 +1596,36 @@ public class Client extends AbstractClient {
     }
 
     /**
-     * Send called shot change data to the server
+     * Send called shot change data to the server.
+     *
+     * @param entityId     the id of the entity whose weapon is changing
+     * @param equipmentNum the equipment number of the weapon
+     * @param calledShot   the new called shot, one of the {@link megamek.common.CalledShot} CALLED_ constants
      */
-    public void sendCalledShotChange(int nEntity, int nEquip) {
-        send(new Packet(PacketCommand.ENTITY_CALLED_SHOT_CHANGE, nEntity, nEquip));
+    public void sendCalledShotChange(int entityId, int equipmentNum, int calledShot) {
+        send(new Packet(PacketCommand.ENTITY_CALLED_SHOT_CHANGE, entityId, equipmentNum, calledShot));
     }
 
     /**
      * Send system mode-change data to the server
      */
+    @Deprecated(since = "0.51.0", forRemoval = true)
     public void sendSystemModeChange(int nEntity, int nSystem, int nMode) {
         send(new Packet(PacketCommand.ENTITY_SYSTEM_MODE_CHANGE, nEntity, nSystem, nMode));
     }
 
     /**
-     * Send mode-change data to the server
+     * Send ammo-change data to the server.
+     *
+     * @param entityId      the unit that owns the weapon being reloaded
+     * @param weaponId      the equipment number of the weapon on that unit
+     * @param ammoId        the equipment number of the ammo bin on the carrying unit
+     * @param ammoCarrierId the unit that owns the ammo bin. This is the same as entityId unless the bin belongs to a
+     *                      directly connected trailer sharing ammo with this unit.
+     * @param reason        the report message id explaining the change, or 0 for no report
      */
-    public void sendAmmoChange(int nEntity, int nWeapon, int nAmmo, int reason) {
-        send(new Packet(PacketCommand.ENTITY_AMMO_CHANGE, nEntity, nWeapon, nAmmo, reason));
+    public void sendAmmoChange(int entityId, int weaponId, int ammoId, int ammoCarrierId, int reason) {
+        send(new Packet(PacketCommand.ENTITY_AMMO_CHANGE, entityId, weaponId, ammoId, ammoCarrierId, reason));
     }
 
     /**

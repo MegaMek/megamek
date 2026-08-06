@@ -79,7 +79,7 @@ public class CLERPulseLaserSmall extends PulseLaserWeapon {
         bv = 36;
         cost = 30000;
         flags = flags.or(F_BURST_FIRE);
-        rulesRefs = "320, TO";
+        rulesRefs = "132, TO:AUE";
         // Tech Progression tweaked to combine IntOps with TRO Prototypes/3145 NTNU RS
         techAdvancement.setTechBase(TechBase.CLAN)
               .setTechRating(TechRating.F)

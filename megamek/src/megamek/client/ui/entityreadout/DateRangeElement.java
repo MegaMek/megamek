@@ -32,7 +32,14 @@
  */
 package megamek.client.ui.entityreadout;
 
-record DateRangeElement(String text) implements ViewElement {
+record DateRangeElement(String text, boolean italic) implements ViewElement {
+
+    /**
+     * Creates a DateRangeElement with normal styling.
+     */
+    DateRangeElement(String text) {
+        this(text, false);
+    }
 
     @Override
     public String toPlainText() {
@@ -41,11 +48,18 @@ record DateRangeElement(String text) implements ViewElement {
 
     @Override
     public String toHTML() {
-        return text.replace(", ", "<br>");
+        String formatted = text.replace(", ", "<br>");
+        if (italic) {
+            return "<i>" + formatted + "</i>";
+        }
+        return formatted;
     }
 
     @Override
     public String toDiscord() {
+        if (italic) {
+            return "*" + text + "*";
+        }
         return text;
     }
 }

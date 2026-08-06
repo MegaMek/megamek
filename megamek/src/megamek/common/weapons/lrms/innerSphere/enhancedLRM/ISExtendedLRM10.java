@@ -70,7 +70,7 @@ public class ISExtendedLRM10 extends ExtendedLRMWeapon {
         medAV = 6;
         longAV = 6;
         extAV = 6;
-        rulesRefs = "327, TO";
+        rulesRefs = "139, TO:AUE";
         // Tech Progression tweaked to combine IntOps with TRO Prototypes/3145 NTNU RS
         techAdvancement
               .setTechBase(TechBase.IS)

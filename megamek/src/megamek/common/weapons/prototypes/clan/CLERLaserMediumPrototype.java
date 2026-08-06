@@ -75,7 +75,7 @@ public class CLERLaserMediumPrototype extends LaserWeapon {
         medAV = 5;
         maxRange = RANGE_MED;
         flags = flags.or(F_PROTOTYPE).andNot(F_PROTO_WEAPON);
-        rulesRefs = "97, IO";
+        rulesRefs = "91, IO:AE";
         techAdvancement.setTechBase(TechBase.CLAN)
               .setIntroLevel(false)
               .setUnofficial(false)

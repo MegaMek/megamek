@@ -120,6 +120,7 @@ public class GameTurn extends AbstractPlayerTurn {
         return isValid(playerId, game) && isValidEntity(entity, game);
     }
 
+    @Override
     public boolean isMultiTurn() {
         return isMultiTurn;
     }

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2024-2025 The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2024-2026 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -31,7 +31,6 @@
  * affiliated with Microsoft.
  */
 
-
 package megamek.common.equipment;
 
 import java.util.ArrayList;
@@ -39,6 +38,7 @@ import java.util.Collections;
 import java.util.EnumMap;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 import java.util.stream.Collectors;
 
@@ -78,6 +78,14 @@ public class ArmorType extends MiscType {
         }
 
         return armor;
+    }
+
+    @Override
+    public void addLookupName(String s, boolean includeInNames) {
+        super.addLookupName(s, includeInNames);
+        if (!s.toLowerCase(Locale.ROOT).endsWith(" armor")) {
+            super.addLookupName(s + " armor", includeInNames);
+        }
     }
 
     public static ArmorType svArmor(int bar) {
@@ -221,7 +229,7 @@ public class ArmorType extends MiscType {
     private final EnumMap<TechRating, Double> weightPerPointSV = new EnumMap<>(TechRating.class);
     private int bar = 10;
 
-    private ArmorType() {
+    public ArmorType() {
         hittable = false;
         omniFixedOnly = true;
         spreadable = true;
@@ -273,7 +281,7 @@ public class ArmorType extends MiscType {
     @Override
     public int getSupportVeeSlots(Entity entity) {
         // Support vehicle armor takes slots like CV ferro-fibrous at BAR 10/TL E/F
-        if (getArmorType() == T_ARMOR_SV_BAR_10) {
+        if ((entity != null) && (getArmorType() == T_ARMOR_SV_BAR_10)) {
             if (entity.getArmorTechRating() == TechRating.E) {
                 return ArmorType.of(T_ARMOR_FERRO_FIBROUS, false).svSlots;
             } else if (entity.getArmorTechRating() == TechRating.F) {
@@ -348,11 +356,9 @@ public class ArmorType extends MiscType {
 
         armor.name = "Standard";
         armor.setInternalName("Standard Armor");
-        armor.addLookupName("IS Standard");
-        armor.addLookupName("Clan Standard");
-        armor.addLookupName("Regular");
         armor.addLookupName("IS Standard Armor");
         armor.addLookupName("Clan Standard Armor");
+        armor.addLookupName("Regular Armor");
         armor.flags = armor.flags.or(F_MEK_EQUIPMENT)
               .or(F_TANK_EQUIPMENT)
               .or(F_SUPPORT_TANK_EQUIPMENT)
@@ -395,8 +401,8 @@ public class ArmorType extends MiscType {
               .setAvailability(AvailabilityValue.D, AvailabilityValue.F, AvailabilityValue.D, AvailabilityValue.C)
               .setISAdvancement(2557, 2571, 3055, 2810, 3040)
               .setISApproximate(false, false, false, true, false)
-//              .setClanAdvancement(DATE_NONE, DATE_NONE, 2820, DATE_NONE, DATE_NONE)
-//              .setClanApproximate(false, false, true, false, false)
+              .setClanAdvancement(2557, 2571, 2820, DATE_NONE, DATE_NONE)
+              .setClanApproximate(false, false, true, false, false)
               .setPrototypeFactions(Faction.TH)
               .setProductionFactions(Faction.TH)
               .setReintroductionFactions(Faction.DC);
@@ -502,7 +508,7 @@ public class ArmorType extends MiscType {
         armor.patchworkSlotsCVFtr = 1;
         armor.flags = armor.flags.or(F_FERRO_FIBROUS_PROTO).or(F_MEK_EQUIPMENT).or(F_TANK_EQUIPMENT)
               .or(F_VTOL_EQUIPMENT);
-        armor.rulesRefs = "72, IO";
+        armor.rulesRefs = "66, IO:AE";
         armor.techAdvancement.setTechBase(TechBase.IS).setTechRating(TechRating.E)
               .setAvailability(AvailabilityValue.F, AvailabilityValue.F, AvailabilityValue.X, AvailabilityValue.X)
               .setISAdvancement(2557, DATE_NONE, DATE_NONE, 2571, 3034)
@@ -625,7 +631,7 @@ public class ArmorType extends MiscType {
         armor.patchworkSlotsCVFtr = 1;
         armor.flags = armor.flags.or(F_FERRO_FIBROUS_PROTO).or(F_FIGHTER_EQUIPMENT)
               .or(F_SC_EQUIPMENT).or(F_DS_EQUIPMENT);
-        armor.rulesRefs = "72, IO";
+        armor.rulesRefs = "66, IO:AE";
         armor.techAdvancement.setTechBase(TechBase.IS).setTechRating(TechRating.E)
               .setAvailability(AvailabilityValue.F, AvailabilityValue.F, AvailabilityValue.X, AvailabilityValue.X)
               .setISAdvancement(2557, DATE_NONE, DATE_NONE, 2571, 3034)
@@ -667,10 +673,14 @@ public class ArmorType extends MiscType {
     private static ArmorType createIndustrialArmor() {
         ArmorType armor = new ArmorType();
 
-        armor.name = "Industrial "; // extra space at the end on purpose
-        armor.setInternalName(armor.name);
-        armor.addLookupName("IS Industrial");
-        armor.addLookupName("Clan Industrial");
+        armor.name = "Industrial";
+        armor.setInternalName("Industrial Armor");
+        armor.addLookupName("Industrial  Armor"); // double space is on purpose
+        armor.addLookupName("IS Industrial Armor");
+        armor.addLookupName("IS Industrial  Armor"); // double space is on purpose
+        armor.addLookupName("Clan Industrial Armor");
+        armor.addLookupName("Clan Industrial  Armor"); // double space is on purpose
+        armor.addLookupName("IS Industrial Armor");
         armor.addLookupName("Clan Industrial Armor");
         armor.cost = 5000.0;
         armor.industrial = true;
@@ -718,13 +728,12 @@ public class ArmorType extends MiscType {
         armor.cost = 5000.0;
         armor.industrial = true;
         armor.flags = armor.flags.or(F_PRIMITIVE_ARMOR).or(F_MEK_EQUIPMENT);
-        armor.rulesRefs = "125, IO";
+        armor.rulesRefs = "118, IO:AE";
         armor.techAdvancement.setTechBase(TechBase.IS).setTechRating(TechRating.C)
               .setAvailability(AvailabilityValue.B, AvailabilityValue.C, AvailabilityValue.B, AvailabilityValue.B)
               .setISAdvancement(DATE_ES, 2290, 2315, DATE_NONE, DATE_NONE)
               .setISApproximate(false, true, true, false, false)
-              .setClanAdvancement(DATE_ES, 2290, 2315, DATE_NONE, DATE_NONE)
-              .setClanApproximate(false, true, true, false, false).setPrototypeFactions(Faction.TH)
+              .setPrototypeFactions(Faction.TH)
               .setProductionFactions(Faction.TH);
 
         armor.armorType = T_ARMOR_PRIMITIVE;
@@ -743,7 +752,7 @@ public class ArmorType extends MiscType {
         armor.industrial = true;
         armor.flags = armor.flags.or(F_PRIMITIVE_ARMOR).or(F_FIGHTER_EQUIPMENT);
         armor.omniFixedOnly = true;
-        armor.rulesRefs = "125, IO";
+        armor.rulesRefs = "119, IO:AE";
         armor.techAdvancement.setTechBase(TechBase.IS).setTechRating(TechRating.C)
               .setAvailability(AvailabilityValue.B, AvailabilityValue.C, AvailabilityValue.B, AvailabilityValue.B)
               .setISAdvancement(DATE_ES, 2300, 2315).setISApproximate(false, true, true)
@@ -773,7 +782,7 @@ public class ArmorType extends MiscType {
         armor.flags = armor.flags.or(F_REACTIVE).or(F_MEK_EQUIPMENT).or(F_TANK_EQUIPMENT).or(F_VTOL_EQUIPMENT)
               .or(F_SUPPORT_TANK_EQUIPMENT);
         armor.bv = 0;
-        armor.rulesRefs = "94, TO: AU&E";
+        armor.rulesRefs = "94, TO:AUE";
         // Tech Progression tweaked to combine IntOps with TRO Prototypes/3145 NTNU RS
         armor.techAdvancement.setTechBase(TechBase.IS).setTechRating(TechRating.E)
               .setAvailability(AvailabilityValue.X, AvailabilityValue.X, AvailabilityValue.F, AvailabilityValue.E)
@@ -802,7 +811,7 @@ public class ArmorType extends MiscType {
         armor.patchworkSlotsCVFtr = 1;
         armor.flags = armor.flags.or(F_REACTIVE).or(F_MEK_EQUIPMENT).or(F_TANK_EQUIPMENT).or(F_VTOL_EQUIPMENT)
               .or(F_SUPPORT_TANK_EQUIPMENT);
-        armor.rulesRefs = "94, TO: AU&E";
+        armor.rulesRefs = "94, TO:AUE";
         // Tech Progression tweaked to combine IntOps with TRO Prototypes/3145 NTNU RS
         armor.techAdvancement.setTechBase(TechBase.CLAN).setTechRating(TechRating.F)
               .setAvailability(AvailabilityValue.X, AvailabilityValue.X, AvailabilityValue.F, AvailabilityValue.E)
@@ -831,7 +840,7 @@ public class ArmorType extends MiscType {
         armor.patchworkSlotsCVFtr = 1;
         armor.flags = armor.flags.or(F_REFLECTIVE).or(F_MEK_EQUIPMENT).or(F_TANK_EQUIPMENT).or(F_VTOL_EQUIPMENT)
               .or(F_SUPPORT_TANK_EQUIPMENT).or(F_FIGHTER_EQUIPMENT);
-        armor.rulesRefs = "93, TO: AU&E";
+        armor.rulesRefs = "93, TO:AUE";
         // Tech Progression tweaked to combine IntOps with TRO Prototypes/3145 NTNU RS
         armor.techAdvancement.setTechBase(TechBase.IS).setTechRating(TechRating.E)
               .setAvailability(AvailabilityValue.X, AvailabilityValue.X, AvailabilityValue.F, AvailabilityValue.E)
@@ -860,7 +869,7 @@ public class ArmorType extends MiscType {
         armor.patchworkSlotsCVFtr = 1;
         armor.flags = armor.flags.or(F_REFLECTIVE).or(F_MEK_EQUIPMENT).or(F_TANK_EQUIPMENT).or(F_VTOL_EQUIPMENT)
               .or(F_SUPPORT_TANK_EQUIPMENT).or(F_FIGHTER_EQUIPMENT);
-        armor.rulesRefs = "93, TO: AU&E";
+        armor.rulesRefs = "93, TO:AUE";
         // Tech Progression tweaked to combine IntOps with TRO Prototypes/3145 NTNU RS
         armor.techAdvancement.setTechBase(TechBase.CLAN).setTechRating(TechRating.F)
               .setAvailability(AvailabilityValue.X, AvailabilityValue.X, AvailabilityValue.F, AvailabilityValue.E)
@@ -883,7 +892,7 @@ public class ArmorType extends MiscType {
         armor.criticalSlots = 0;
         armor.tankSlots = 1;
         armor.flags = armor.flags.or(F_HARDENED_ARMOR).or(F_MEK_EQUIPMENT).or(F_TANK_EQUIPMENT);
-        armor.rulesRefs = "93, TO: AU&E";
+        armor.rulesRefs = "93, TO:AUE";
         // Tech Progression tweaked to combine IntOps with TRO Prototypes/3145 NTNU RS
         armor.techAdvancement.setTechBase(TechBase.ALL)
               .setTechRating(TechRating.D)
@@ -947,7 +956,7 @@ public class ArmorType extends MiscType {
         String[] saModes = { "Off", "On" };
         armor.setModes(saModes);
         armor.setInstantModeSwitch(false);
-        armor.rulesRefs = "94, TO: AU&E";
+        armor.rulesRefs = "94, TO:AUE";
         // Tech Progression tweaked to combine IntOps with TRO Prototypes/3145 NTNU RS
         armor.techAdvancement.setTechBase(TechBase.IS).setTechRating(TechRating.E)
               .setAvailability(AvailabilityValue.X, AvailabilityValue.X, AvailabilityValue.F, AvailabilityValue.E)
@@ -973,7 +982,7 @@ public class ArmorType extends MiscType {
         armor.patchworkSlotsMekSV = 2;
         armor.patchworkSlotsCVFtr = 1;
         armor.flags = armor.flags.or(F_FERRO_LAMELLOR).or(F_MEK_EQUIPMENT).or(F_TANK_EQUIPMENT).or(F_FIGHTER_EQUIPMENT);
-        armor.rulesRefs = "92, TO: AU&E";
+        armor.rulesRefs = "92, TO:AUE";
         // Tech Progression tweaked to combine IntOps with TRO Prototypes/3145 NTNU RS
         armor.techAdvancement.setTechBase(TechBase.CLAN).setTechRating(TechRating.F)
               .setAvailability(AvailabilityValue.X, AvailabilityValue.X, AvailabilityValue.F, AvailabilityValue.E)
@@ -997,7 +1006,7 @@ public class ArmorType extends MiscType {
         armor.criticalSlots = CRITICAL_SLOTS_VARIABLE;
         armor.patchworkSlotsMekSV = 1;
         armor.flags = armor.flags.or(F_HEAT_DISSIPATING).or(F_MEK_EQUIPMENT);
-        armor.rulesRefs = "87, IO";
+        armor.rulesRefs = "81, IO:AE";
         // Tech Progression tweaked to combine IntOps with TRO Prototypes/3145 NTNU RS
         armor.techAdvancement.setTechBase(TechBase.ALL).setTechRating(TechRating.E)
               .setAvailability(AvailabilityValue.X, AvailabilityValue.X, AvailabilityValue.X, AvailabilityValue.E)
@@ -1023,7 +1032,7 @@ public class ArmorType extends MiscType {
         armor.criticalSlots = CRITICAL_SLOTS_VARIABLE;
         armor.patchworkSlotsMekSV = 2;
         armor.flags = armor.flags.or(F_IMPACT_RESISTANT).or(F_MEK_EQUIPMENT);
-        armor.rulesRefs = "87, IO";
+        armor.rulesRefs = "81, IO:AE";
         // Tech Progression tweaked to combine IntOps with TRO Prototypes/3145 NTNU RS
         armor.techAdvancement.setTechBase(TechBase.IS).setTechRating(TechRating.E)
               .setAvailability(AvailabilityValue.X, AvailabilityValue.X, AvailabilityValue.X, AvailabilityValue.E)
@@ -1051,7 +1060,7 @@ public class ArmorType extends MiscType {
         armor.patchworkSlotsCVFtr = 1;
         armor.flags = armor.flags.or(F_ANTI_PENETRATIVE_ABLATIVE).or(F_MEK_EQUIPMENT).or(F_TANK_EQUIPMENT)
               .or(F_VTOL_EQUIPMENT).or(F_FIGHTER_EQUIPMENT).or(F_SUPPORT_TANK_EQUIPMENT);
-        armor.rulesRefs = "86, IO";
+        armor.rulesRefs = "80, IO:AE";
         // Tech Progression tweaked to combine IntOps with TRO Prototypes/3145 NTNU RS
         armor.techAdvancement.setTechBase(TechBase.IS).setTechRating(TechRating.E)
               .setAvailability(AvailabilityValue.X, AvailabilityValue.X, AvailabilityValue.X, AvailabilityValue.E)
@@ -1080,7 +1089,7 @@ public class ArmorType extends MiscType {
         armor.patchworkSlotsCVFtr = 1;
         armor.flags = armor.flags.or(F_BALLISTIC_REINFORCED).or(F_MEK_EQUIPMENT).or(F_FIGHTER_EQUIPMENT)
               .or(F_TANK_EQUIPMENT).or(F_VTOL_EQUIPMENT).or(F_SUPPORT_TANK_EQUIPMENT);
-        armor.rulesRefs = "87, IO";
+        armor.rulesRefs = "81, IO:AE";
         // Tech Progression tweaked to combine IntOps with TRO Prototypes/3145 NTNU RS
         armor.techAdvancement.setTechBase(TechBase.IS).setTechRating(TechRating.E)
               .setAvailability(AvailabilityValue.X, AvailabilityValue.X, AvailabilityValue.X, AvailabilityValue.E)
@@ -1242,12 +1251,12 @@ public class ArmorType extends MiscType {
         armor.flags = armor.flags.or(F_CAPITAL_ARMOR).or(F_JS_EQUIPMENT).or(F_WS_EQUIPMENT).or(F_SS_EQUIPMENT);
         armor.cost = 100000.0;
         armor.rulesRefs = "152, SO";
-        armor.techAdvancement.setTechBase(TechBase.IS).setTechRating(TechRating.E)
+        armor.techAdvancement.setTechBase(TechBase.ALL).setTechRating(TechRating.E)
               .setAvailability(AvailabilityValue.E, AvailabilityValue.F, AvailabilityValue.E, AvailabilityValue.D)
               .setISAdvancement(2600, 2615, DATE_NONE, 2950, 3055).setISApproximate(true, false, false, false, false)
               .setClanAdvancement(2600, 2615, DATE_NONE, DATE_NONE, DATE_NONE)
               .setClanApproximate(true, false, false, false, false).setPrototypeFactions(Faction.TH)
-              .setProductionFactions(Faction.TH).setReintroductionFactions(Faction.FS, Faction.FW, Faction.LC)
+              .setProductionFactions(Faction.TH).setReintroductionFactions(Faction.FS, Faction.FW, Faction.CC)
               .setStaticTechLevel(SimpleTechLevel.ADVANCED);
 
         armor.armorType = T_ARMOR_LC_LAMELLOR_FERRO_CARBIDE;
@@ -1287,15 +1296,18 @@ public class ArmorType extends MiscType {
         armor.industrial = true;
         armor.flags = armor.flags.or(F_PRIMITIVE_ARMOR).or(F_SC_EQUIPMENT).or(F_DS_EQUIPMENT)
               .or(F_JS_EQUIPMENT).or(F_WS_EQUIPMENT).or(F_SS_EQUIPMENT);
-        armor.rulesRefs = "125, IO";
+        armor.rulesRefs = "120, IO:AE";
         armor.techAdvancement.setTechBase(TechBase.IS).setTechRating(TechRating.C)
               .setAvailability(AvailabilityValue.B, AvailabilityValue.C, AvailabilityValue.B, AvailabilityValue.B)
               .setISAdvancement(DATE_ES, 2300, 2315).setISApproximate(false, true, true)
               .setProductionFactions(Faction.TH).setStaticTechLevel(SimpleTechLevel.STANDARD);
 
         armor.armorType = T_ARMOR_PRIMITIVE_AERO;
-        armor.pptDropship = new double[] { 10.56, 9.24, 7.92, 6.6, 5.28, 3.96 };
-        armor.pptCapital = new double[] { 0.528, 0.396, 0.264 };
+        // the primitive factor 0.66 cannot be multiplied into the ppt values as the total armor is calculated by
+        // taking the armor tonnage times the points per ton, rounding down, then adding the SI free armor and THEN,
+        // multiplying by 0.66; see the example on IO:AE p.125 (3rd printing) which gives the precise process
+        armor.pptDropship = new double[] { 16.0, 14.0, 12.0, 10.0, 8.0, 6.0 };
+        armor.pptCapital = new double[] { 0.8, 0.6, 0.4 };
 
         return armor;
     }
@@ -1332,7 +1344,7 @@ public class ArmorType extends MiscType {
         armor.bv = 32;
         String[] modes = { "not charging", "charging" };
         armor.setModes(modes);
-        armor.rulesRefs = "64, IO";
+        armor.rulesRefs = "59, IO:AE";
         armor.techAdvancement.setTechBase(TechBase.CLAN).setTechRating(TechRating.F)
               .setAvailability(AvailabilityValue.X, AvailabilityValue.X, AvailabilityValue.F, AvailabilityValue.X)
               .setClanAdvancement(3071, DATE_NONE, DATE_NONE, 3085, DATE_NONE)
@@ -1358,7 +1370,10 @@ public class ArmorType extends MiscType {
         armor.techAdvancement.setTechBase(TechBase.ALL)
               .setISAdvancement(2680, DATE_NONE, 3054, DATE_NONE, 3050)
               .setISApproximate(true, false, true, false, false)
+              .setClanAdvancement(2680, 2868, 3054, DATE_NONE, DATE_NONE)
+              .setClanApproximate(true, false, false, false, false)
               .setPrototypeFactions(Faction.TH)
+              .setProductionFactions(Faction.CWF)
               .setReintroductionFactions(Faction.FS, Faction.LC, Faction.DC)
               .setTechRating(TechRating.E)
               .setAvailability(AvailabilityValue.F, AvailabilityValue.F, AvailabilityValue.E, AvailabilityValue.D)
@@ -1639,7 +1654,7 @@ public class ArmorType extends MiscType {
         armor.cost = 37000.0;
         armor.criticalSlots = 7;
         armor.flags = armor.flags.or(F_BA_EQUIPMENT).or(F_REACTIVE);
-        armor.rulesRefs = "93, TO: AU&E";
+        armor.rulesRefs = "93, TO:AUE";
         // Tech Progression tweaked to combine IntOps with TRO Prototypes/3145 NTNU RS
         armor.techAdvancement.setTechBase(TechBase.IS)
               .setISAdvancement(3075, 3110, DATE_NONE, DATE_NONE, DATE_NONE)
@@ -1664,7 +1679,7 @@ public class ArmorType extends MiscType {
         armor.cost = 37000.0;
         armor.criticalSlots = 7;
         armor.flags = armor.flags.or(F_BA_EQUIPMENT).or(F_REACTIVE);
-        armor.rulesRefs = "94, TO: AU&E";
+        armor.rulesRefs = "94, TO:AUE";
         // Tech Progression tweaked to combine IntOps with TRO Prototypes/3145 NTNU RS
         armor.techAdvancement.setTechBase(TechBase.CLAN)
               .setClanAdvancement(3075, 3110, DATE_NONE, DATE_NONE, DATE_NONE)
@@ -1690,7 +1705,7 @@ public class ArmorType extends MiscType {
         armor.cost = 37000.0;
         armor.criticalSlots = 7;
         armor.flags = armor.flags.or(F_BA_EQUIPMENT).or(F_REFLECTIVE);
-        armor.rulesRefs = "93, TO: AU&E";
+        armor.rulesRefs = "93, TO:AUE";
         // Tech Progression tweaked to combine IntOps with TRO Prototypes/3145 NTNU RS
         armor.techAdvancement.setTechBase(TechBase.IS)
               .setISAdvancement(3074, 3110, DATE_NONE, DATE_NONE, DATE_NONE)
@@ -1715,7 +1730,7 @@ public class ArmorType extends MiscType {
         armor.cost = 37000.0;
         armor.criticalSlots = 7;
         armor.flags = armor.flags.or(F_BA_EQUIPMENT).or(F_REFLECTIVE);
-        armor.rulesRefs = "93, TO: AU&E";
+        armor.rulesRefs = "93, TO:AUE";
         // Tech Progression tweaked to combine IntOps with TRO Prototypes/3145 NTNU RS
         armor.techAdvancement.setTechBase(TechBase.CLAN)
               .setClanAdvancement(3074, 3110, DATE_NONE, DATE_NONE, DATE_NONE)
@@ -2001,5 +2016,114 @@ public class ArmorType extends MiscType {
     @Override
     public String toString() {
         return "[Armor] " + internalName;
+    }
+
+    @Override
+    protected String getYamlTypeName() {
+        return "armor";
+    }
+
+    // ArmorType uses MiscType's addFlags() which uses MiscTypeFlag
+
+    @Override
+    public Map<String, Object> getYamlData() {
+        Map<String, Object> data = super.getYamlData();
+        Map<String, Object> armorDetails = new java.util.LinkedHashMap<>();
+
+        armorDetails.put("type", getArmorTypeIdName(armorType));
+
+        if (fighterSlots != 0) {
+            armorDetails.put("fighterSlots", fighterSlots);
+        }
+        if (patchworkSlotsMekSV != 0) {
+            armorDetails.put("patchworkSlotsMekSV", patchworkSlotsMekSV);
+        }
+        if (patchworkSlotsCVFtr != 0) {
+            armorDetails.put("patchworkSlotsCVFtr", patchworkSlotsCVFtr);
+        }
+        if (bar != 10) {
+            armorDetails.put("bar", bar);
+        }
+        if (pptMultiplier != 1.0) {
+            armorDetails.put("pptMultiplier", pptMultiplier);
+        }
+        if (weightPerPoint != 0.0) {
+            armorDetails.put("weightPerPoint", weightPerPoint);
+        }
+        if (pptDropship != null && pptDropship.length > 0) {
+            armorDetails.put("pptDropship", pptDropship);
+        }
+        if (pptCapital != null && pptCapital.length > 0) {
+            armorDetails.put("pptCapital", pptCapital);
+        }
+        if (!weightPerPointSV.isEmpty()) {
+            // Convert EnumMap to a simpler Map<String, Double> for YAML
+            Map<String, Double> svWeights = new java.util.LinkedHashMap<>();
+            for (Map.Entry<TechRating, Double> entry : weightPerPointSV.entrySet()) {
+                svWeights.put(entry.getKey().name(), entry.getValue());
+            }
+            armorDetails.put("weightPerPointSV", svWeights);
+        }
+
+        data.put("armor", armorDetails);
+        return data;
+    }
+
+    private static String getArmorTypeIdName(int armorId) {
+        return switch (armorId) {
+            case T_ARMOR_STANDARD -> "STANDARD";
+            case T_ARMOR_FERRO_FIBROUS -> "FERRO_FIBROUS";
+            case T_ARMOR_REACTIVE -> "REACTIVE";
+            case T_ARMOR_REFLECTIVE -> "REFLECTIVE";
+            case T_ARMOR_HARDENED -> "HARDENED";
+            case T_ARMOR_LIGHT_FERRO -> "LIGHT_FERRO";
+            case T_ARMOR_HEAVY_FERRO -> "HEAVY_FERRO";
+            case T_ARMOR_PATCHWORK -> "PATCHWORK";
+            case T_ARMOR_STEALTH -> "STEALTH";
+            case T_ARMOR_FERRO_FIBROUS_PROTO -> "FERRO_FIBROUS_PROTO";
+            case T_ARMOR_COMMERCIAL -> "COMMERCIAL";
+            case T_ARMOR_LC_FERRO_CARBIDE -> "LC_FERRO_CARBIDE";
+            case T_ARMOR_LC_LAMELLOR_FERRO_CARBIDE -> "LC_LAMELLOR_FERRO_CARBIDE";
+            case T_ARMOR_LC_FERRO_IMP -> "LC_FERRO_IMP";
+            case T_ARMOR_INDUSTRIAL -> "INDUSTRIAL";
+            case T_ARMOR_HEAVY_INDUSTRIAL -> "HEAVY_INDUSTRIAL";
+            case T_ARMOR_FERRO_LAMELLOR -> "FERRO_LAMELLOR";
+            case T_ARMOR_PRIMITIVE -> "PRIMITIVE";
+            case T_ARMOR_EDP -> "EDP";
+            case T_ARMOR_ALUM -> "ALUM";
+            case T_ARMOR_HEAVY_ALUM -> "HEAVY_ALUM";
+            case T_ARMOR_LIGHT_ALUM -> "LIGHT_ALUM";
+            case T_ARMOR_STEALTH_VEHICLE -> "STEALTH_VEHICLE";
+            case T_ARMOR_ANTI_PENETRATIVE_ABLATION -> "ANTI_PENETRATIVE_ABLATION";
+            case T_ARMOR_HEAT_DISSIPATING -> "HEAT_DISSIPATING";
+            case T_ARMOR_IMPACT_RESISTANT -> "IMPACT_RESISTANT";
+            case T_ARMOR_BALLISTIC_REINFORCED -> "BALLISTIC_REINFORCED";
+            case T_ARMOR_FERRO_ALUM_PROTO -> "FERRO_ALUM_PROTO";
+            case T_ARMOR_BA_STANDARD -> "BA_STANDARD";
+            case T_ARMOR_BA_STANDARD_PROTOTYPE -> "BA_STANDARD_PROTOTYPE";
+            case T_ARMOR_BA_STANDARD_ADVANCED -> "BA_STANDARD_ADVANCED";
+            case T_ARMOR_BA_STEALTH_BASIC -> "BA_STEALTH_BASIC";
+            case T_ARMOR_BA_STEALTH -> "BA_STEALTH";
+            case T_ARMOR_BA_STEALTH_IMP -> "BA_STEALTH_IMP";
+            case T_ARMOR_BA_STEALTH_PROTOTYPE -> "BA_STEALTH_PROTOTYPE";
+            case T_ARMOR_BA_FIRE_RESIST -> "BA_FIRE_RESIST";
+            case T_ARMOR_BA_MIMETIC -> "BA_MIMETIC";
+            case T_ARMOR_BA_REFLECTIVE -> "BA_REFLECTIVE";
+            case T_ARMOR_BA_REACTIVE -> "BA_REACTIVE";
+            case T_ARMOR_PRIMITIVE_FIGHTER -> "PRIMITIVE_FIGHTER";
+            case T_ARMOR_PRIMITIVE_AERO -> "PRIMITIVE_AERO";
+            case T_ARMOR_AEROSPACE -> "AEROSPACE";
+            case T_ARMOR_STANDARD_PROTOMEK -> "STANDARD_PROTOMEK";
+            case T_ARMOR_SV_BAR_2 -> "SV_BAR_2";
+            case T_ARMOR_SV_BAR_3 -> "SV_BAR_3";
+            case T_ARMOR_SV_BAR_4 -> "SV_BAR_4";
+            case T_ARMOR_SV_BAR_5 -> "SV_BAR_5";
+            case T_ARMOR_SV_BAR_6 -> "SV_BAR_6";
+            case T_ARMOR_SV_BAR_7 -> "SV_BAR_7";
+            case T_ARMOR_SV_BAR_8 -> "SV_BAR_8";
+            case T_ARMOR_SV_BAR_9 -> "SV_BAR_9";
+            case T_ARMOR_SV_BAR_10 -> "SV_BAR_10";
+            default -> "UNKNOWN";
+        };
     }
 }

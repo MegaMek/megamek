@@ -69,7 +69,7 @@ public class CLMekMortar4 extends MekMortarWeapon {
         criticalSlots = 2;
         tonnage = 3.5;
         cost = 32000;
-        rulesRefs = "324, TO";
+        rulesRefs = "136, TO:AUE";
         techAdvancement.setTechBase(TechBase.CLAN)
               .setIntroLevel(false)
               .setUnofficial(false)

@@ -283,6 +283,7 @@ public final class Version implements Comparable<Version>, Serializable {
 
     // Added to complete the Java specification for the contract between compareTo
     // and equals
+    @Override
     public boolean equals(Object obj) {
         if (obj instanceof Version other) {
             return (getMajor() == other.getMajor() &&
@@ -295,6 +296,7 @@ public final class Version implements Comparable<Version>, Serializable {
     }
 
     // Added to complete the contract between equals() and hashCode()
+    @Override
     public int hashCode() {
         return toString().hashCode();
     }

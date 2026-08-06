@@ -42,8 +42,8 @@ import javax.swing.*;
 
 import megamek.client.ui.clientGUI.ClientGUI;
 import megamek.client.ui.util.FlatLafStyleBuilder;
-import megamek.common.board.Coords;
 import megamek.common.annotations.Nullable;
+import megamek.common.board.Coords;
 import megamek.server.commands.ClientServerCommand;
 import megamek.server.commands.arguments.*;
 
@@ -399,7 +399,7 @@ public class ClientCommandDialog extends JDialog {
             } else if (component instanceof JTextField) {
                 args[i] = argument.getName() + "=" + ((JTextField) component).getText();
             } else if (component instanceof JCheckBox) {
-                args[i] = argument.getName() + "=" + (((JCheckBox) component).isSelected() ? "true" : "false");
+                args[i] = argument.getName() + "=" + (((JCheckBox) component).isSelected());
             } else if (component instanceof JComboBox) {
                 if (argument instanceof OptionalEnumArgument<?>) {
                     String selectedItem = (String) ((JComboBox<?>) component).getSelectedItem();

@@ -87,7 +87,7 @@ public class ISLaserAMSTHB extends LaserWeapon {
         setInstantModeSwitch(false);
         cost = 300000;
         // Since this are the Tactical Handbook Weapons I'm using the TM Stats.
-        rulesRefs = "322, TO";
+        rulesRefs = "156, TO:AUE";
         techAdvancement.setTechBase(TechBase.IS)
               .setUnofficial(true)
               .setTechRating(TechRating.E)

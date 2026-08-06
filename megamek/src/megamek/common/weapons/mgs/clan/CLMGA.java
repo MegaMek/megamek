@@ -64,8 +64,8 @@ public class CLMGA extends AmmoWeapon {
     public CLMGA() {
         super();
         name = "Machine Gun Array";
-        addLookupName("Clan Machine Gun Array");
         setInternalName("CLMGA");
+        addLookupName("Clan Machine Gun Array");
         sortingName = "MGA C";
         heat = 0;
         damage = 2;

@@ -39,7 +39,6 @@ import java.io.Serial;
 import megamek.common.Hex;
 import megamek.common.ToHitData;
 import megamek.common.compute.ComputeSideTable;
-import megamek.common.equipment.GunEmplacement;
 import megamek.common.equipment.MiscType;
 import megamek.common.equipment.Mounted;
 import megamek.common.game.Game;
@@ -258,7 +257,7 @@ public class JumpJetAttackAction extends PhysicalAttackAction {
         // Attacks against adjacent buildings automatically hit.
         if (target.getTargetType() == Targetable.TYPE_BUILDING
               || target.getTargetType() == Targetable.TYPE_FUEL_TANK
-              || target instanceof GunEmplacement) {
+              || target.isBuildingEntityOrGunEmplacement()) {
             return new ToHitData(TargetRoll.AUTOMATIC_SUCCESS,
                   "Targeting adjacent building.");
         }

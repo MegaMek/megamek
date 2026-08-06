@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2024-2025 The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2024-2026 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -32,29 +32,58 @@
  */
 package megamek.server.totalWarfare;
 
+import static megamek.common.CargoBayTest.createInfantry;
+import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.mockStatic;
+import static org.mockito.Mockito.when;
 
+import java.io.IOException;
 import java.util.Collections;
 import java.util.List;
 import java.util.Vector;
 
 import megamek.common.CriticalSlot;
+import megamek.common.GameBoardTestCase;
+import megamek.common.compute.Compute;
+import megamek.common.Hex;
 import megamek.common.Player;
+import megamek.common.Report;
+import megamek.common.actions.ActivateBloodStalkerAction;
+import megamek.common.bays.CargoBay;
+import megamek.common.board.Board;
+import megamek.common.board.Coords;
+import megamek.common.enums.BasementType;
+import megamek.common.enums.GamePhase;
+import megamek.common.enums.MoveStepType;
+import megamek.common.equipment.ArmorType;
 import megamek.common.equipment.EquipmentType;
+import megamek.common.equipment.Mounted;
+import megamek.common.exceptions.LocationFullException;
 import megamek.common.game.Game;
+import megamek.common.moves.MovePath;
+import megamek.common.options.OptionsConstants;
 import megamek.common.rolls.PilotingRollData;
-import megamek.common.units.AeroSpaceFighter;
-import megamek.common.units.BipedMek;
-import megamek.common.units.LandAirMek;
-import megamek.common.units.Mek;
+import megamek.common.rolls.Roll;
+import megamek.common.units.*;
+import megamek.common.weapons.DamageType;
+import megamek.server.Server;
+import megamek.utils.ServerFactory;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.EnumSource;
+import org.mockito.MockedStatic;
 
 class TWGameManagerTest {
     private TWGameManager gameManager;
     private Game game;
+    private Server server;
 
     @BeforeAll
     static void before() {
@@ -62,10 +91,11 @@ class TWGameManagerTest {
     }
 
     @BeforeEach
-    void setUp() {
+    void setUp() throws IOException {
         Player player = new Player(0, "Test");
         gameManager = new TWGameManager();
         game = gameManager.getGame();
+        server = ServerFactory.createServer(gameManager);
         game.addPlayer(0, player);
     }
 
@@ -135,8 +165,8 @@ class TWGameManagerTest {
     }
 
     /**
-     * Test that standard gyro first hit triggers PSR with +3 modifier.
-     * Per TotalWarfare rules (BMM pg 48), first gyro hit on standard gyro requires PSR at +3.
+     * Test that standard gyro first hit triggers PSR with +3 modifier. Per TotalWarfare rules (BMM pg 48), first gyro
+     * hit on standard gyro requires PSR at +3.
      */
     @Test
     void testStandardGyroFirstHitTriggersPSR() {
@@ -156,14 +186,13 @@ class TWGameManagerTest {
         // Verify PSR was added by game logic
         List<PilotingRollData> psrs = Collections.list(game.getPSRs());
         assertEquals(1, psrs.size(), "Standard gyro first hit should trigger PSR");
-        assertEquals(3, psrs.get(0).getValue(), "PSR modifier should be +3");
-        assertTrue(psrs.get(0).getDesc().contains("gyro hit"), "PSR description should mention gyro");
+        assertEquals(3, psrs.getFirst().getValue(), "PSR modifier should be +3");
+        assertTrue(psrs.getFirst().getDesc().contains("gyro hit"), "PSR description should mention gyro");
     }
 
     /**
-     * Test that heavy-duty gyro first hit does NOT trigger PSR.
-     * Per errata: First hit to HD gyro does not require PSR, but applies +1 modifier to all future PSRs.
-     * This tests the fix for Issue #3651.
+     * Test that heavy-duty gyro first hit does NOT trigger PSR. Per errata: First hit to HD gyro does not require PSR,
+     * but applies +1 modifier to all future PSRs. This tests the fix for Issue #3651.
      */
     @Test
     void testHeavyDutyGyroFirstHitNoPSR() {
@@ -189,8 +218,8 @@ class TWGameManagerTest {
     }
 
     /**
-     * Test that heavy-duty gyro second hit triggers PSR with +3 modifier.
-     * Per errata: Second hit to HD gyro has same effect as first hit to standard gyro.
+     * Test that heavy-duty gyro second hit triggers PSR with +3 modifier. Per errata: Second hit to HD gyro has same
+     * effect as first hit to standard gyro.
      */
     @Test
     void testHeavyDutyGyroSecondHitTriggersPSR() {
@@ -216,12 +245,12 @@ class TWGameManagerTest {
         // Verify PSR was added by game logic for second hit
         List<PilotingRollData> psrs = Collections.list(game.getPSRs());
         assertEquals(1, psrs.size(), "HD gyro second hit should trigger PSR");
-        assertEquals(3, psrs.get(0).getValue(), "PSR modifier should be +3");
+        assertEquals(3, psrs.getFirst().getValue(), "PSR modifier should be +3");
     }
 
     /**
-     * Test that heavy-duty gyro third hit causes automatic fall (gyro destroyed).
-     * Per errata: Third hit to HD gyro destroys it with all usual effects.
+     * Test that heavy-duty gyro third hit causes automatic fall (gyro destroyed). Per errata: Third hit to HD gyro
+     * destroys it with all usual effects.
      */
     @Test
     void testHeavyDutyGyroThirdHitAutoFail() {
@@ -253,7 +282,821 @@ class TWGameManagerTest {
         // Verify automatic fail PSR was added by game logic
         List<PilotingRollData> psrs = Collections.list(game.getPSRs());
         assertEquals(1, psrs.size(), "HD gyro third hit should trigger auto-fail PSR");
-        assertEquals(PilotingRollData.AUTOMATIC_FAIL, psrs.get(0).getValue(), "PSR should be automatic fail");
-        assertTrue(psrs.get(0).getDesc().contains("gyro destroyed"), "PSR description should mention gyro destroyed");
+        assertEquals(PilotingRollData.AUTOMATIC_FAIL, psrs.getFirst().getValue(), "PSR should be automatic fail");
+        assertTrue(psrs.getFirst().getDesc().contains("gyro destroyed"),
+              "PSR description should mention gyro destroyed");
+    }
+
+    void initializeBoard(Board board) {
+        for (int x = 0; x < board.getWidth(); x++) {
+            for (int y = 0; y < board.getHeight(); y++) {
+                board.setHex(x, y, new Hex());
+            }
+        }
+    }
+
+    /**
+     * Tests for unloading in specific states We want to make positively sure that these _specific_ unloading ops work.
+     * However, other unloading ops are only disallowed via the UI, because we call the same code for both "unloading",
+     * e.g., infantry dismounting mid-air, and for "dropping", that is, combat drops from DropShips and SmallCraft.
+     */
+    @ParameterizedTest()
+    @EnumSource(names = { "INF_JUMP", "VTOL" })
+    void testLargeSVVTOLCargoBayCanUnLoadValidInfantry(EntityMovementMode mode) {
+        // Only Jump and VTOL infantry should be allowed to unload (not drop, that's for SC and DropShips)
+        Player player = new Player(1, "Griffin Mill");
+        VTOL carrier = new VTOL();
+        carrier.setMovementMode(EntityMovementMode.VTOL);
+        Coords position = new Coords(1, 1);
+        carrier.setPosition(position);
+        carrier.setElevation(5);
+        carrier.setOwner(player);
+        carrier.setId(1);
+        game.addEntity(carrier);
+
+        Infantry unit = createInfantry(mode.name(), "", "John Q. Test", game);
+        unit.setOwner(player);
+        unit.setMovementMode(mode);
+        unit.setId(2);
+        game.addEntity(unit);
+
+        CargoBay bay = new CargoBay(100.0, 1, 0);
+        carrier.addTransporter(bay);
+        gameManager.loadUnit(carrier, unit, 0);
+
+        // Create map for elevation and stacking checks.
+        Board board = new Board(3, 3);
+        initializeBoard(board);
+        game.setBoard(board);
+
+        // Create MovePath
+        MovePath movePath = new MovePath(game, carrier);
+        movePath.addStep(MoveStepType.UNLOAD, unit, position);
+        MovePathHandler handler = new MovePathHandler(gameManager, carrier, movePath, null);
+        handler.processMovement();
+
+        assertTrue(unit.isDeployed());
+        assertEquals(unit.getPosition(), position);
+    }
+
+    @Nested
+    class TestDamageInfantryIn extends GameBoardTestCase {
+
+        private TWGameManager gameManager;
+        private Player player;
+        private Coords buildingHex;
+        private Coords emptyHex;
+
+        @BeforeEach
+        void beforeEach() {
+            gameManager = new TWGameManager();
+            gameManager.setGame(getGame());
+            player = new Player(0, "Test Player");
+            getGame().addPlayer(0, player);
+
+            // Initialize a board with a building (3 levels high, CF 50)
+            // Need to do this each time because we'll be smashing it up
+            initializeBoard("BUILDING_BOARD", """
+                  size 2 2
+                  hex 0101 0 "" ""
+                  hex 0201 0 "" ""
+                    hex 0102 0 "" ""
+                  hex 0202 0 "bldg_elev:3;building:1;bldg_cf:50" ""
+                  end
+                  """);
+
+            setBoard("BUILDING_BOARD");
+            getGame().setBoard(getBoard("BUILDING_BOARD"));
+            buildingHex = new Coords(1, 1); // hex 0202
+            emptyHex = new Coords(0, 0); // hex 0101
+
+            // Create BuildingTerrain manually for the building hex
+            BuildingTerrain terrain = new BuildingTerrain(buildingHex, getGame().getBoard(), Terrains.BUILDING,
+                  BasementType.UNKNOWN);
+            getGame().getBoard().addBuildingToBoard(terrain);
+        }
+
+        @Test
+        void testNullBuilding_ReturnsEmptyVector() {
+            // Arrange
+            // (no building to arrange)
+
+            // Act
+            Vector<Report> reports = gameManager.damageInfantryIn(null, 10, buildingHex);
+
+            // Assert
+            assertEquals(0, reports.size(), "Null building should return empty report vector");
+        }
+
+        @Test
+        void testNoInfantryInHex_ReturnsEmptyVector() {
+            // Arrange
+            IBuilding building = getGame().getBoard().getBuildingAt(buildingHex);
+
+            // Act
+            Vector<Report> reports = gameManager.damageInfantryIn(building, 10, buildingHex);
+
+            // Assert
+            assertEquals(0, reports.size(), "No infantry in hex should return empty report vector");
+        }
+
+        @Test
+        void testInfantryOnTopOfBuilding_NotDamaged() {
+            // Arrange
+            IBuilding building = getGame().getBoard().getBuildingAt(buildingHex);
+            int buildingHeight = getGame().getBoard().getHex(buildingHex).terrainLevel(Terrains.BLDG_ELEV);
+
+            ConvInfantry infantry = new ConvInfantry();
+            infantry.setOwner(player);
+            infantry.setId(1);
+            infantry.setPosition(buildingHex);
+            infantry.setElevation(buildingHeight); // On top, not inside
+            getGame().addEntity(infantry);
+
+            // Act
+            Vector<Report> reports = gameManager.damageInfantryIn(building, 10, buildingHex);
+
+            // Assert
+            assertEquals(0, reports.size(), "Infantry on top of building should not be damaged");
+        }
+
+        @Test
+        void testInfantryInsideBuilding_ReceivesZeroDamage() {
+            // Arrange
+            IBuilding building = getGame().getBoard().getBuildingAt(buildingHex);
+
+            ConvInfantry infantry = new ConvInfantry();
+            infantry.setOwner(player);
+            infantry.setId(1);
+            infantry.setPosition(buildingHex);
+            infantry.setElevation(0); // Inside building
+            getGame().addEntity(infantry);
+
+            // Act
+            Vector<Report> reports = gameManager.damageInfantryIn(building, 0, buildingHex);
+
+            // Assert
+            assertFalse(reports.isEmpty(), "Should have report for zero damage");
+            assertEquals(6445, reports.getFirst().messageId, "Should report no damage received");
+        }
+
+        @Test
+        void testConventionalInfantryInsideBuilding_ReceivesDamage() {
+            // Arrange
+            IBuilding building = getGame().getBoard().getBuildingAt(buildingHex);
+
+            ConvInfantry infantry = new ConvInfantry();
+            infantry.setOwner(player);
+            infantry.setId(1);
+            infantry.setPosition(buildingHex);
+            infantry.setElevation(0); // Inside building
+            infantry.setInternal(10, ConvInfantry.LOC_INFANTRY); // Set some troopers so it can take damage
+            getGame().addEntity(infantry);
+
+            // Act
+            Vector<Report> reports = gameManager.damageInfantryIn(building, 20, buildingHex);
+
+            // Assert
+            assertFalse(reports.isEmpty(), "Should have damage reports");
+            boolean hasDamageReport = reports.stream()
+                  .anyMatch(r -> r.messageId == 6450);
+            assertTrue(hasDamageReport, "Should report damage to infantry");
+        }
+
+        @Test
+        void testBattleArmorInsideBuilding_ReceivesDamage() {
+            // Arrange
+            IBuilding building = getGame().getBoard().getBuildingAt(buildingHex);
+
+            megamek.common.battleArmor.BattleArmor ba = new megamek.common.battleArmor.BattleArmor();
+            ba.setOwner(player);
+            ba.setId(1);
+            ba.setPosition(buildingHex);
+            ba.setElevation(0); // Inside building
+            ba.setInternal(5); // Set some armor
+            getGame().addEntity(ba);
+
+            // Act
+            Vector<Report> reports = gameManager.damageInfantryIn(building, 20, buildingHex);
+
+            // Assert
+            assertFalse(reports.isEmpty(), "Should have damage reports for Battle Armor");
+            boolean hasDamageReport = reports.stream()
+                  .anyMatch(r -> r.messageId == 6450);
+            assertTrue(hasDamageReport, "Should report damage to Battle Armor");
+        }
+
+        @Test
+        void testMultipleInfantryInSameBuilding_AllReceiveDamage() {
+            // Arrange
+            IBuilding building = getGame().getBoard().getBuildingAt(buildingHex);
+
+            ConvInfantry infantry1 = new ConvInfantry();
+            infantry1.setOwner(player);
+            infantry1.setId(1);
+            infantry1.setPosition(buildingHex);
+            infantry1.setElevation(0); // Inside building
+            infantry1.setInternal(10, ConvInfantry.LOC_INFANTRY);
+            getGame().addEntity(infantry1);
+
+            Infantry infantry2 = new ConvInfantry();
+            infantry2.setOwner(player);
+            infantry2.setId(2);
+            infantry2.setPosition(buildingHex);
+            infantry2.setElevation(1); // Inside building, different floor
+            infantry2.setInternal(10, ConvInfantry.LOC_INFANTRY);
+            getGame().addEntity(infantry2);
+
+            // Act
+            Vector<Report> reports = gameManager.damageInfantryIn(building, 20, buildingHex);
+
+            // Assert
+            long damageReportCount = reports.stream()
+                  .filter(r -> r.messageId == 6450)
+                  .count();
+            assertEquals(2, damageReportCount, "Both infantry units should receive damage");
+        }
+
+        @Test
+        void testInfantryInDifferentHex_NotDamaged() {
+            // Arrange
+            IBuilding building = getGame().getBoard().getBuildingAt(buildingHex);
+
+            Infantry infantry = new ConvInfantry();
+            infantry.setOwner(player);
+            infantry.setId(1);
+            infantry.setPosition(emptyHex); // Different hex
+            infantry.setElevation(0);
+            infantry.setInternal(10, ConvInfantry.LOC_INFANTRY);
+            getGame().addEntity(infantry);
+
+            // Act
+            Vector<Report> reports = gameManager.damageInfantryIn(building, 20, buildingHex);
+
+            // Assert
+            assertEquals(0, reports.size(), "Infantry in different hex should not be damaged");
+        }
+    }
+
+    @Nested
+    class TestResolvePhysicalAttacks extends GameBoardTestCase {
+
+        private TWGameManager gameManager;
+        private Player player1;
+        private Player player2;
+        private BipedMek attacker;
+        private BipedMek target;
+
+        @BeforeEach
+        void beforeEach() {
+            gameManager = new TWGameManager();
+            gameManager.setGame(getGame());
+
+            player1 = new Player(0, "Attacker Player");
+            player2 = new Player(1, "Target Player");
+            getGame().addPlayer(0, player1);
+            getGame().addPlayer(1, player2);
+
+            // Initialize a simple board
+            initializeBoard("COMBAT_BOARD", """
+                  size 3 3
+                  hex 0101 0 "" ""
+                    hex 0201 0 "" ""
+                    hex 0301 0 "" ""
+                  hex 0102 0 "" ""
+                  hex 0202 0 "" ""
+                  hex 0302 0 "" ""
+                    hex 0103 0 "" ""
+                    hex 0203 0 "" ""
+                  hex 0303 0 "" ""
+                  end
+                  """);
+
+            setBoard("COMBAT_BOARD");
+            getGame().setBoard(getBoard("COMBAT_BOARD"));
+
+            // Create attacker mek
+            attacker = new BipedMek();
+            attacker.setOwner(player1);
+            attacker.setId(1);
+            attacker.setPosition(new Coords(1, 1));
+            attacker.setFacing(0);
+            attacker.setDeployed(true);
+            attacker.setWeight(50.0); // 50-ton mek for 10 damage kicks
+            attacker.setInternal(10, Mek.LOC_HEAD);
+            attacker.setInternal(10, Mek.LOC_CENTER_TORSO);
+            attacker.setInternal(10, Mek.LOC_LEFT_ARM);
+            attacker.setInternal(10, Mek.LOC_RIGHT_ARM);
+            attacker.setInternal(10, Mek.LOC_LEFT_LEG);
+            attacker.setInternal(10, Mek.LOC_RIGHT_LEG);
+            // Add hip actuators so mek can kick
+            attacker.setCritical(Mek.LOC_LEFT_LEG, 0, new CriticalSlot(CriticalSlot.TYPE_SYSTEM, Mek.ACTUATOR_HIP));
+            attacker.setCritical(Mek.LOC_RIGHT_LEG, 0, new CriticalSlot(CriticalSlot.TYPE_SYSTEM, Mek.ACTUATOR_HIP));
+            // Set crew to be active
+            attacker.getCrew().setHits(0, 0);
+            getGame().addEntity(attacker);
+
+            // Create target mek
+            target = new BipedMek();
+            target.setOwner(player2);
+            target.setId(2);
+            target.setPosition(new Coords(1, 2)); // Adjacent to attacker
+            target.setFacing(3); // Facing back towards attacker
+            target.setDeployed(true);
+            target.setInternal(10, Mek.LOC_HEAD);
+            target.setInternal(10, Mek.LOC_CENTER_TORSO);
+            target.setInternal(10, Mek.LOC_LEFT_ARM);
+            target.setInternal(10, Mek.LOC_RIGHT_ARM);
+            target.setInternal(10, Mek.LOC_LEFT_LEG);
+            target.setInternal(10, Mek.LOC_RIGHT_LEG);
+            // Set crew to be active
+            target.getCrew().setHits(0, 0);
+            getGame().addEntity(target);
+        }
+
+        @Test
+        void testNoPhysicalAttacks_GeneratesOnlyHeader() {
+            // Arrange
+            // (no attacks added)
+
+            // Act
+            gameManager.resolvePhysicalAttacks();
+
+            // Assert
+            Vector<Report> reports = gameManager.getMainPhaseReport();
+            assertFalse(reports.isEmpty(), "Should have at least the header report");
+            assertEquals(4000, reports.getFirst().messageId, "First report should be physical phase header");
+        }
+
+        @Test
+        void testSinglePunchAttack_ProcessedSuccessfully() {
+            // Arrange
+            megamek.common.actions.PunchAttackAction paa = new megamek.common.actions.PunchAttackAction(
+                  attacker.getId(),
+                  target.getTargetType(),
+                  target.getId(),
+                  megamek.common.actions.PunchAttackAction.BOTH
+            );
+            getGame().addAction(paa);
+
+            // Act
+            gameManager.resolvePhysicalAttacks();
+
+            // Assert
+            Vector<Report> reports = gameManager.getMainPhaseReport();
+            assertTrue(reports.size() > 1, "Should have reports beyond just the header");
+
+            // Verify attacker is mentioned in reports
+            boolean attackerMentioned = reports.stream()
+                  .anyMatch(r -> r.subject == attacker.getId());
+            assertTrue(attackerMentioned, "Reports should mention the attacking entity");
+        }
+
+        @Test
+        void testDuplicateAttacks_OnlyFirstProcessed() {
+            // Arrange
+            megamek.common.actions.PunchAttackAction paa1 = new megamek.common.actions.PunchAttackAction(
+                  attacker.getId(),
+                  target.getTargetType(),
+                  target.getId(),
+                  megamek.common.actions.PunchAttackAction.BOTH
+            );
+            megamek.common.actions.KickAttackAction kaa = new megamek.common.actions.KickAttackAction(
+                  attacker.getId(),
+                  target.getTargetType(),
+                  target.getId(),
+                  megamek.common.actions.KickAttackAction.BOTH
+            );
+
+            getGame().addAction(paa1);
+            getGame().addAction(kaa); // Duplicate attack from same entity
+
+            // Act
+            gameManager.resolvePhysicalAttacks();
+
+            // Assert
+            // After cleanup, only one attack should be processed
+            // This is verified by checking that duplicate cleanup ran
+            Vector<Report> reports = gameManager.getMainPhaseReport();
+            assertFalse(reports.isEmpty(), "Should have processed attacks");
+        }
+
+        @Test
+        void testDestroyedEntity_AttackNotProcessed() {
+            // Arrange
+            attacker.setDestroyed(true);
+
+            megamek.common.actions.PunchAttackAction paa = new megamek.common.actions.PunchAttackAction(
+                  attacker.getId(),
+                  target.getTargetType(),
+                  target.getId(),
+                  megamek.common.actions.PunchAttackAction.BOTH
+            );
+            getGame().addAction(paa);
+
+            // Act
+            gameManager.resolvePhysicalAttacks();
+
+            // Assert
+            Vector<Report> reports = gameManager.getMainPhaseReport();
+            // Should only have header report, no attack resolution
+            boolean attackProcessed = reports.stream()
+                  .anyMatch(r -> r.subject == attacker.getId() && r.messageId != 4000);
+            assertFalse(attackProcessed, "Destroyed entity's attack should not be processed");
+        }
+
+        @Test
+        void testChargeAttack_AddedAndProcessed() {
+            // Arrange
+            megamek.common.actions.ChargeAttackAction caa = new megamek.common.actions.ChargeAttackAction(
+                  attacker.getId(),
+                  target.getTargetType(),
+                  target.getId(),
+                  target.getPosition()
+            );
+            getGame().addCharge(caa);
+
+            // Act
+            gameManager.resolvePhysicalAttacks();
+
+            // Assert
+            Vector<Report> reports = gameManager.getMainPhaseReport();
+            assertTrue(reports.size() > 1, "Should have reports for charge attack");
+
+            boolean attackerMentioned = reports.stream()
+                  .anyMatch(r -> r.subject == attacker.getId());
+            assertTrue(attackerMentioned, "Charge attack should be processed");
+        }
+
+        @Test
+        void testSearchlightAttack_ResolvedImmediately() {
+            // Arrange
+            megamek.common.actions.SearchlightAttackAction saa = new megamek.common.actions.SearchlightAttackAction(
+                  attacker.getId(),
+                  target.getId()
+            );
+            getGame().addAction(saa);
+
+            // Act
+            gameManager.resolvePhysicalAttacks();
+
+            // Assert
+            Vector<Report> reports = gameManager.getMainPhaseReport();
+            assertFalse(reports.isEmpty(), "Should have processed searchlight action");
+        }
+
+        @Test
+        void testMultipleEntities_EachProcessedCorrectly() {
+            // Arrange
+            // Create a third entity
+            BipedMek attacker2 = new BipedMek();
+            attacker2.setOwner(player1);
+            attacker2.setId(3);
+            attacker2.setPosition(new Coords(2, 2));
+            attacker2.setFacing(0);
+            attacker2.setDeployed(true);
+            attacker2.setInternal(10, Mek.LOC_HEAD);
+            attacker2.setInternal(10, Mek.LOC_CENTER_TORSO);
+            attacker2.setInternal(10, Mek.LOC_LEFT_ARM);
+            attacker2.setInternal(10, Mek.LOC_RIGHT_ARM);
+            attacker2.setInternal(10, Mek.LOC_LEFT_LEG);
+            attacker2.setInternal(10, Mek.LOC_RIGHT_LEG);
+            // Set crew to be active
+            attacker2.getCrew().setHits(0, 0);
+            getGame().addEntity(attacker2);
+
+            // Add attacks from both entities
+            megamek.common.actions.PunchAttackAction paa1 = new megamek.common.actions.PunchAttackAction(
+                  attacker.getId(),
+                  target.getTargetType(),
+                  target.getId(),
+                  megamek.common.actions.PunchAttackAction.BOTH
+            );
+            megamek.common.actions.PunchAttackAction paa2 = new megamek.common.actions.PunchAttackAction(
+                  attacker2.getId(),
+                  target.getTargetType(),
+                  target.getId(),
+                  megamek.common.actions.PunchAttackAction.BOTH
+            );
+
+            getGame().addAction(paa1);
+            getGame().addAction(paa2);
+
+            // Act
+            gameManager.resolvePhysicalAttacks();
+
+            // Assert
+            Vector<Report> reports = gameManager.getMainPhaseReport();
+
+            boolean attacker1Mentioned = reports.stream()
+                  .anyMatch(r -> r.subject == attacker.getId());
+            boolean attacker2Mentioned = reports.stream()
+                  .anyMatch(r -> r.subject == attacker2.getId());
+
+            assertTrue(attacker1Mentioned, "First attacker should be in reports");
+            assertTrue(attacker2Mentioned, "Second attacker should be in reports");
+        }
+
+        @Test
+        void testPhysicalAttackAgainstBuildingWithInfantryInside_DamagesBoth() {
+            // Arrange
+            // Create a new board with a building
+            initializeBoard("BUILDING_COMBAT_BOARD", """
+                  size 3 3
+                  hex 0101 0 "" ""
+                    hex 0201 0 "" ""
+                    hex 0301 0 "" ""
+                  hex 0102 0 "" ""
+                    hex 0202 0 "bldg_elev:2;building:1;bldg_cf:40" ""
+                    hex 0302 0 "" ""
+                  hex 0103 0 "" ""
+                  hex 0203 0 "" ""
+                  hex 0303 0 "" ""
+                  end
+                  """);
+
+            setBoard("BUILDING_COMBAT_BOARD");
+            getGame().setBoard(getBoard("BUILDING_COMBAT_BOARD"));
+
+            // Create building
+            Coords buildingHex = new Coords(1, 1); // hex 0202
+            BuildingTerrain building = new BuildingTerrain(buildingHex, getGame().getBoard(),
+                  Terrains.BUILDING, BasementType.UNKNOWN);
+            getGame().getBoard().addBuildingToBoard(building);
+
+            // Reposition attacker adjacent to building
+            attacker.setPosition(new Coords(1, 0)); // hex 0201, adjacent to building
+            attacker.setFacing(3); // Face south toward the building
+
+            // Create infantry inside the building
+            Infantry infantryInBuilding = new ConvInfantry();
+            infantryInBuilding.setOwner(player2);
+            infantryInBuilding.setId(10);
+            infantryInBuilding.setPosition(buildingHex);
+            infantryInBuilding.setElevation(0); // Inside building
+            infantryInBuilding.setDeployed(true);
+            infantryInBuilding.setInternal(10, ConvInfantry.LOC_INFANTRY);
+            infantryInBuilding.getCrew().setHits(0, 0);
+            getGame().addEntity(infantryInBuilding);
+
+            // Create kick attack against the BUILDING (not the infantry directly)
+            // Use BuildingTarget to properly wrap the building for targeting
+            BuildingTarget buildingTarget = new BuildingTarget(buildingHex, getGame().getBoard(), false);
+            megamek.common.actions.KickAttackAction kaa = new megamek.common.actions.KickAttackAction(
+                  attacker.getId(),
+                  buildingTarget.getTargetType(),
+                  buildingTarget.getId(),
+                  megamek.common.actions.KickAttackAction.LEFT
+            );
+            getGame().addAction(kaa);
+
+            // Act
+            gameManager.resolvePhysicalAttacks();
+
+            // Assert
+            Vector<Report> reports = gameManager.getMainPhaseReport();
+            assertTrue(reports.size() > 1, "Should have reports beyond just the header");
+
+            // Verify attacker is mentioned
+            boolean attackerMentioned = reports.stream()
+                  .anyMatch(r -> r.subject == attacker.getId());
+            assertTrue(attackerMentioned, "Attacker should be in reports");
+
+            // Building damage should be reported
+            boolean buildingDamageReported = reports.stream()
+                  .anyMatch(r -> r.messageId == 3434 || r.messageId == 6436); // Building damage reports
+            assertTrue(buildingDamageReported, "Building damage should be reported");
+
+            // Infantry damage should also be reported (from damageInfantryIn)
+            boolean infantryDamageReported = reports.stream()
+                  .anyMatch(r -> r.subject == infantryInBuilding.getId());
+            assertTrue(infantryDamageReported, "Infantry inside building should also take damage");
+        }
+    }
+
+    @Test
+    void testCriticalEntityAllReactiveSlots() throws LocationFullException {
+        // Verify that reactive armor crit handling in cases with full crit slots is safe.
+        BipedMek mek = new BipedMek();
+
+        // Configure Reactive armor
+        mek.setArmorType(EquipmentType.T_ARMOR_REACTIVE);
+        mek.setArmor(10, Mek.LOC_LEFT_TORSO);
+
+        ArmorType reactiveType = ArmorType.of(ArmorType.T_ARMOR_REACTIVE, false);
+
+        // Initialize armor critical slots (normally done by unit loader)
+        for (int i=1; i<=12; i++) {
+            Mounted reactiveMounted = Mounted.createMounted(mek, reactiveType);
+            mek.addEquipment(reactiveMounted, Mek.LOC_LEFT_TORSO, false);
+        }
+
+        game.addEntity(mek);
+
+        // Apply single armor crit
+        assertDoesNotThrow(() ->
+            gameManager.criticalEntity(
+                  mek,
+                  Mek.LOC_LEFT_TORSO,
+                  false,
+                  0,
+                  false,
+                  false,
+                  1,
+                  DamageType.NONE
+            )
+        );
+    }
+
+    @Test
+    void testCriticalEntityAllButOneReactiveSlots() throws LocationFullException {
+        // Verify that reactive armor crit handling in cases with one empty slot.
+        BipedMek mek = new BipedMek();
+
+        // Configure Reactive armor
+        mek.setArmorType(EquipmentType.T_ARMOR_REACTIVE);
+        mek.setArmor(10, Mek.LOC_LEFT_TORSO);
+
+        ArmorType reactiveType = ArmorType.of(ArmorType.T_ARMOR_REACTIVE, false);
+
+        // Initialize armor critical slots (normally done by unit loader)
+        // Note that we leave one slot empty in this case
+        for (int i=1; i<=11; i++) {
+            Mounted reactiveMounted = Mounted.createMounted(mek, reactiveType);
+            mek.addEquipment(reactiveMounted, Mek.LOC_LEFT_TORSO, false);
+        }
+
+        game.addEntity(mek);
+
+        // Apply single armor crit
+        assertDoesNotThrow(() ->
+              gameManager.criticalEntity(
+                    mek,
+                    Mek.LOC_LEFT_TORSO,
+                    false,
+                    0,
+                    false,
+                    false,
+                    1,
+                    DamageType.NONE
+              )
+        );
+    }
+
+    /**
+     * Issue #8125: activating Blood Stalker must set the stalker flag on the acting unit (the owner of the SPA), not on
+     * the designated enemy. The old code set it on the enemy, so the enemy ended up stalking itself and took the +2
+     * non-target penalty on its own shots, while the owner gained no benefit at all. Per TacOps:AR, the modifiers apply
+     * only to the warrior with the ability (-1 against the designated target, +2 against everyone else); the target's
+     * own shooting is unaffected.
+     */
+    @Test
+    void testActivateBloodStalkerSetsTargetOnOwnerNotEnemy() {
+        BipedMek owner = new BipedMek();
+        owner.setId(1);
+        owner.getCrew().getOptions().getOption(OptionsConstants.GUNNERY_BLOOD_STALKER).setValue(true);
+        game.addEntity(owner);
+
+        BipedMek prey = new BipedMek();
+        prey.setId(2);
+        game.addEntity(prey);
+
+        game.addAction(new ActivateBloodStalkerAction(owner.getId(), prey.getId()));
+        gameManager.resolveAllButWeaponAttacks();
+
+        assertEquals(prey.getId(), owner.getBloodStalkerTarget(),
+              "Blood Stalker owner should track the designated enemy");
+        assertEquals(Entity.NONE, prey.getBloodStalkerTarget(),
+              "Designated enemy must not receive a Blood Stalker target of its own");
+    }
+
+    /**
+     * Issue #8125: activating Blood Stalker against a target that is no longer on the board (already destroyed/removed)
+     * must leave the owner without a stalker flag and must not throw.
+     */
+    @Test
+    void testActivateBloodStalkerWithMissingTargetDoesNothing() {
+        BipedMek owner = new BipedMek();
+        owner.setId(1);
+        owner.getCrew().getOptions().getOption(OptionsConstants.GUNNERY_BLOOD_STALKER).setValue(true);
+        game.addEntity(owner);
+
+        int missingTargetId = 999;
+        game.addAction(new ActivateBloodStalkerAction(owner.getId(), missingTargetId));
+
+        assertDoesNotThrow(() -> gameManager.resolveAllButWeaponAttacks());
+        assertEquals(Entity.NONE, owner.getBloodStalkerTarget(),
+              "Owner should have no Blood Stalker target when the designated enemy is gone");
+    }
+
+    /**
+     * Issue #8489: a VTOL that shuts down while airborne makes a forced landing, but the landing must not permanently
+     * immobilize it. Per TW p.197, permanent VTOL immobility comes only from an engine crit or from MP reduced to 0 by
+     * damage; a shutdown is neither. The forced-landing roll is mocked to succeed so no crash damage muddies the
+     * assertion.
+     */
+    @Test
+    void testShutdownVtolLandsWithoutPermanentImmobilization() {
+        Board board = new Board(3, 3);
+        initializeBoard(board);
+        game.setBoard(board);
+
+        VTOL vtol = new VTOL();
+        vtol.setOwner(game.getPlayer(0));
+        vtol.setMovementMode(EntityMovementMode.VTOL);
+        vtol.setPosition(new Coords(1, 1));
+        vtol.setElevation(2);
+        vtol.setShutDown(true);
+        game.addEntity(vtol);
+
+        Roll successfulRoll = mock(Roll.class);
+        when(successfulRoll.getIntValue()).thenReturn(12);
+        try (MockedStatic<Compute> mockedCompute = mockStatic(Compute.class)) {
+            mockedCompute.when(() -> Compute.rollD6(2)).thenReturn(successfulRoll);
+            gameManager.resolveShutdownCrashes();
+        }
+
+        assertEquals(0, vtol.getElevation(), "Shut-down VTOL should be forced to land");
+        assertFalse(vtol.isMovementHitPending(), "Forced landing must not mark the VTOL for immobilization");
+
+        vtol.applyDamage();
+        vtol.setShutDown(false);
+        assertFalse(vtol.isImmobile(), "VTOL should be mobile again after starting back up");
+    }
+
+    /**
+     * Issue #8489 follow-up: a LAM in AirMek mode uses WiGE movement, so it can be shut down while airborne without
+     * being a Tank. The shutdown landing must skip it instead of throwing a ClassCastException.
+     */
+    @Test
+    void testShutdownAirborneLamDoesNotThrow() {
+        Board board = new Board(3, 3);
+        initializeBoard(board);
+        game.setBoard(board);
+
+        LandAirMek lam = new LandAirMek(LandAirMek.GYRO_STANDARD, LandAirMek.COCKPIT_STANDARD,
+              LandAirMek.LAM_STANDARD);
+        lam.setOwner(game.getPlayer(0));
+        lam.setConversionMode(LandAirMek.CONV_MODE_AIR_MEK);
+        lam.setPosition(new Coords(1, 1));
+        lam.setElevation(2);
+        lam.setShutDown(true);
+        game.addEntity(lam);
+
+        assertDoesNotThrow(() -> gameManager.resolveShutdownCrashes());
+    }
+
+    @Test
+    void testSinkImmobilizedHover() {
+        Board board = new Board(3,3);
+        Hex waterHex = new Hex(0,
+              new Terrain[] {new Terrain(Terrains.WATER, 1)}, null);
+        initializeBoard(board);
+        board.setHex(1, 1, waterHex);
+        game.setBoard(board);
+        //game.setPhase(GamePhase.FIRING);
+
+        Tank waterEngine = new Tank();
+        Tank waterMotive = new Tank();
+        Tank landEngine = new Tank();
+        Tank landMotive = new Tank();
+
+        waterEngine.setMovementMode(EntityMovementMode.HOVER);
+        waterMotive.setMovementMode(EntityMovementMode.HOVER);
+        landEngine.setMovementMode(EntityMovementMode.HOVER);
+        landMotive.setMovementMode(EntityMovementMode.HOVER);
+
+        waterEngine.setPosition(new Coords(1, 1));
+        waterMotive.setPosition(new Coords(1, 1));
+        landEngine.setPosition(new Coords(2, 2));
+        landMotive.setPosition(new Coords(2, 2));
+
+        game.addEntity(waterEngine);
+        game.addEntity(waterMotive);
+        game.addEntity(landEngine);
+        game.addEntity(landMotive);
+
+        gameManager.applyCriticalHit(waterEngine, Entity.NONE,
+              new CriticalSlot(0, Tank.CRIT_ENGINE), false, 1, false);
+
+        gameManager.applyCriticalHit(landEngine, Entity.NONE,
+              new CriticalSlot(0, Tank.CRIT_ENGINE), false, 1, false);
+
+        gameManager.vehicleMotiveDamage(waterMotive, 12);
+        gameManager.vehicleMotiveDamage(landMotive, 12);
+
+        gameManager.resetEntityPhase(GamePhase.END);
+
+        // Hover vehicle engine crit over water should be destroyed
+        assertTrue(waterEngine.isDestroyed());
+
+        // Hover vehicles immobilized over water should be destroyed
+        assertTrue(waterMotive.isDestroyed());
+
+        // Hover vehicles engine crit over land should not be destroyed
+        assertFalse(landEngine.isDoomed());
+
+        // Hover vehicles immobilized over land should not be destroyed
+        assertFalse(landMotive.isDoomed());
     }
 }

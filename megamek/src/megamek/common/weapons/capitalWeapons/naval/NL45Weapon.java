@@ -70,7 +70,7 @@ public class NL45Weapon extends NLWeapon {
         this.longAV = 4.5;
         this.extAV = 4.5;
         this.maxRange = RANGE_EXT;
-        rulesRefs = "333, TO";
+        rulesRefs = "145, TO:AUE";
         techAdvancement.setTechBase(TechBase.ALL)
               .setIntroLevel(false)
               .setUnofficial(false)

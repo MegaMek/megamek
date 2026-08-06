@@ -73,7 +73,7 @@ public class ISReengineeredLaserSmall extends ReengineeredLaserWeapon {
         shortAV = 4;
         maxRange = RANGE_SHORT;
         atClass = CLASS_POINT_DEFENSE;
-        rulesRefs = "89, IO";
+        rulesRefs = "83, IO:AE";
         // Tech Progression tweaked to combine IntOps with TRO Prototypes/3145 NTNU RS
         techAdvancement.setTechBase(TechBase.IS)
               .setIntroLevel(false)

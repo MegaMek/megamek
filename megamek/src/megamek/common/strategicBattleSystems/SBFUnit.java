@@ -333,6 +333,7 @@ public class SBFUnit implements ASSpecialAbilityCollector, BattleForceSUAFormatt
         damageCrits++;
     }
 
+    @Deprecated(since = "0.51.0", forRemoval = true)
     public void addMovementCrit() {
         mpCrits++;
     }
@@ -352,6 +353,7 @@ public class SBFUnit implements ASSpecialAbilityCollector, BattleForceSUAFormatt
     /**
      * @return The base roll value for firing on targets. Equals the skill, modified by targeting crits.
      */
+    @Deprecated(since = "0.51.0", forRemoval = true)
     public int getBaseGunnery() {
         return skill + targetingCrits;
     }

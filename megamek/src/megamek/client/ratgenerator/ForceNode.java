@@ -33,6 +33,8 @@
 package megamek.client.ratgenerator;
 
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 import megamek.common.units.EntityMovementMode;
@@ -52,6 +54,7 @@ public class ForceNode extends RulesetNode {
     protected Integer echelon;
     protected String echelonName;
     protected ArrayList<ValueNode> nameNodes;
+    protected ArrayList<ValueNode> weightTargetNodes;
     protected ArrayList<CommanderNode> coNodes;
     protected ArrayList<CommanderNode> xoNodes;
     protected ArrayList<ArrayList<OptionGroupNode>> ruleGroups;
@@ -65,6 +68,7 @@ public class ForceNode extends RulesetNode {
         echelon = null;
         echelonName = null;
         nameNodes = new ArrayList<>();
+        weightTargetNodes = new ArrayList<>();
         coNodes = new ArrayList<>();
         xoNodes = new ArrayList<>();
         ruleGroups = new ArrayList<>();
@@ -88,10 +92,19 @@ public class ForceNode extends RulesetNode {
                     case "weightClass":
                         if (fd.getWeightClass() == null
                               || rule.predicates.containsKey("ifWeightClass")) {
+                            String priorWeightCode = fd.getWeightClassCode();
                             valueNode = rule.selectOption(fd, true);
                             if (valueNode != null) {
                                 fd.setWeightClass(ForceDescriptor.decodeWeightClass(valueNode.getContent()));
+                                logger.debug("[ForceGen][Weight] {} (faction={}): random <weightClass> block applied" +
+                                            " '{}' -> {} (prior={})",
+                                      echelonName, fd.getFaction(), valueNode.getContent(),
+                                      fd.getWeightClassCode(), priorWeightCode.isEmpty() ? "unset" : priorWeightCode);
                             }
+                        } else {
+                            logger.debug("[ForceGen][Weight] {} (faction={}): kept caller-supplied weightClass={}" +
+                                        " (random <weightClass> block skipped)",
+                                  echelonName, fd.getFaction(), fd.getWeightClassCode());
                         }
                         break;
                     case "unitType":
@@ -239,6 +252,16 @@ public class ForceNode extends RulesetNode {
             fd.setNameNodes(nameNodes);
         }
 
+        // Resolve <weightTarget> blocks now that the cluster's own weight class is rolled, so
+        // ifWeightClass-gated targets match correctly. WeightBudgetAllocator consumes these after
+        // the whole tree is built.
+        if (!weightTargetNodes.isEmpty()) {
+            Map<Integer, WeightTarget> targets = resolveWeightTargets(fd);
+            if (!targets.isEmpty()) {
+                fd.setWeightTargets(targets);
+            }
+        }
+
         String generate = assertions.getProperty("generate");
         if (subForces.isEmpty()) {
             generate = "model";
@@ -301,6 +324,28 @@ public class ForceNode extends RulesetNode {
         }
     }
 
+    /**
+     * Resolves the {@code <weightTarget>} blocks that match this descriptor into a per-unit-type budget map. First
+     * match per unit type wins, mirroring the {@code <name>} cascade.
+     *
+     * @param fd the descriptor being built (its weight class and flags drive predicate matching)
+     *
+     * @return a map of unit type to its resolved {@link WeightTarget}, possibly empty
+     */
+    private Map<Integer, WeightTarget> resolveWeightTargets(ForceDescriptor fd) {
+        Map<Integer, WeightTarget> out = new HashMap<>();
+        for (ValueNode node : weightTargetNodes) {
+            if (!node.matches(fd)) {
+                continue;
+            }
+            WeightTarget target = WeightTarget.fromNode(node);
+            if (target != null) {
+                out.putIfAbsent(target.unitType(), target);
+            }
+        }
+        return out;
+    }
+
     public Integer getEchelon() {
         return echelon;
     }
@@ -322,6 +367,7 @@ public class ForceNode extends RulesetNode {
         return xoNodes;
     }
 
+    @Deprecated(since = "0.51.0", forRemoval = true)
     public Integer getCoRank(ForceDescriptor fd) {
         for (CommanderNode n : coNodes) {
             if (n.matches(fd)) {
@@ -331,6 +377,7 @@ public class ForceNode extends RulesetNode {
         return null;
     }
 
+    @Deprecated(since = "0.51.0", forRemoval = true)
     public void setEchelon(Integer echelon) {
         this.echelon = echelon;
     }
@@ -369,6 +416,9 @@ public class ForceNode extends RulesetNode {
                 case "name":
                     nameNodes.add(ValueNode.createFromXml(wn));
                     break;
+                case "weightTarget":
+                    weightTargetNodes.add(ValueNode.createFromXml(wn));
+                    break;
                 case "co":
                     coNodes.add(CommanderNode.createFromXml(wn));
                     break;
@@ -388,7 +438,7 @@ public class ForceNode extends RulesetNode {
                         currentRuleGroup = new ArrayList<>();
                         ruleGroups.add(currentRuleGroup);
                     }
-                    ruleGroups.get(0).add(OptionGroupNode.createFromXml(wn));
+                    ruleGroups.getFirst().add(OptionGroupNode.createFromXml(wn));
                     break;
                 case "ruleGroup":
                     currentRuleGroup = new ArrayList<>();

@@ -45,8 +45,9 @@ import javax.swing.JTree;
 import javax.swing.TransferHandler;
 import javax.swing.tree.TreePath;
 
-import megamek.common.units.Entity;
+import jakarta.annotation.Nonnull;
 import megamek.common.force.Force;
+import megamek.common.units.Entity;
 import megamek.logging.MMLogger;
 
 /**
@@ -188,7 +189,7 @@ public class MekForceTreeTransferHandler extends TransferHandler {
             // Attach a force to a new parent
             if (dest != null && dest.getLastPathComponent() instanceof Force && forceIdList.size() == 1) {
                 int newParentId = ((Force) dest.getLastPathComponent()).getId();
-                lobby.lobbyActions.forceAttach(forceIdList.get(0), newParentId);
+                lobby.lobbyActions.forceAttach(forceIdList.getFirst(), newParentId);
             }
 
         } catch (Exception e) {
@@ -241,6 +242,7 @@ public class MekForceTreeTransferHandler extends TransferHandler {
         }
 
         @Override
+        @Nonnull
         public Object getTransferData(DataFlavor flavor) throws UnsupportedFlavorException {
             if (!isDataFlavorSupported(flavor)) {
                 throw new UnsupportedFlavorException(flavor);

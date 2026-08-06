@@ -182,25 +182,60 @@ public class LandAirMek extends BipedMek implements IAero, IBomber {
     // track leaving the ground map
     private OffBoardDirection flyingOff = OffBoardDirection.NONE;
 
+    // track altitude when climbing out (leaving map vertically at altitude 10)
+    private int exitAltitude = 0;
+
     public LandAirMek(int inGyroType, int inCockpitType, int inLAMType) {
         super(inGyroType, inCockpitType);
         lamType = inLAMType;
 
         setTechLevel(TechConstants.T_IS_ADVANCED);
+        // Head avionics never conflicts with engine/gyro, safe to place here.
         setCritical(Mek.LOC_HEAD, 3, new CriticalSlot(CriticalSlot.TYPE_SYSTEM, LAM_AVIONICS));
-        setCritical(Mek.LOC_LEFT_TORSO, 1, new CriticalSlot(CriticalSlot.TYPE_SYSTEM, LAM_AVIONICS));
-        setCritical(Mek.LOC_RIGHT_TORSO, 1, new CriticalSlot(CriticalSlot.TYPE_SYSTEM, LAM_AVIONICS));
-        setCritical(Mek.LOC_LEFT_TORSO, 0, new CriticalSlot(CriticalSlot.TYPE_SYSTEM, LAM_LANDING_GEAR));
-        setCritical(Mek.LOC_RIGHT_TORSO, 0, new CriticalSlot(CriticalSlot.TYPE_SYSTEM, LAM_LANDING_GEAR));
-        for (int i = 0; i < getNumberOfCriticalSlots(Mek.LOC_CENTER_TORSO); i++) {
-            if (null == getCritical(Mek.LOC_CENTER_TORSO, i)) {
-                setCritical(Mek.LOC_CENTER_TORSO, i, new CriticalSlot(CriticalSlot.TYPE_SYSTEM, LAM_LANDING_GEAR));
-                break;
-            }
-        }
+        // LT/RT/CT landing gear and avionics are placed by addEngineCrits() after
+        // engine crits exist, so their positions adapt to the engine type.
 
         previousMovementMode = movementMode;
         setCrew(new LAMPilot(this));
+    }
+
+    @Override
+    public void clearEngineCrits() {
+        // Clear LAM crits whose positions depend on the engine layout
+        for (int loc : new int[] { LOC_LEFT_TORSO, LOC_RIGHT_TORSO, LOC_CENTER_TORSO }) {
+            removeCriticalSlots(loc, new CriticalSlot(CriticalSlot.TYPE_SYSTEM, LAM_LANDING_GEAR));
+            removeCriticalSlots(loc, new CriticalSlot(CriticalSlot.TYPE_SYSTEM, LAM_AVIONICS));
+        }
+        super.clearEngineCrits();
+    }
+
+    @Override
+    public void addEngineCrits() {
+        super.addEngineCrits();
+        // Place LAM crits after engine crits so they don't conflict
+        for (int loc : new int[] { LOC_LEFT_TORSO, LOC_RIGHT_TORSO }) {
+            boolean lgPlaced = false;
+            boolean avPlaced = false;
+            for (int i = 0; i < getNumberOfCriticalSlots(loc); i++) {
+                if (getCritical(loc, i) == null) {
+                    if (!lgPlaced) {
+                        setCritical(loc, i, new CriticalSlot(CriticalSlot.TYPE_SYSTEM, LAM_LANDING_GEAR));
+                        lgPlaced = true;
+                    } else if (!avPlaced) {
+                        setCritical(loc, i, new CriticalSlot(CriticalSlot.TYPE_SYSTEM, LAM_AVIONICS));
+                        avPlaced = true;
+                        break;
+                    }
+                }
+            }
+        }
+        // CT: Landing Gear in first available slot (after engine/gyro)
+        for (int i = 0; i < getNumberOfCriticalSlots(LOC_CENTER_TORSO); i++) {
+            if (getCritical(LOC_CENTER_TORSO, i) == null) {
+                setCritical(LOC_CENTER_TORSO, i, new CriticalSlot(CriticalSlot.TYPE_SYSTEM, LAM_LANDING_GEAR));
+                break;
+            }
+        }
     }
 
     @Override
@@ -733,16 +768,24 @@ public class LandAirMek extends BipedMek implements IAero, IBomber {
             roll.addModifier(-1, "Enhanced Imaging");
         }
 
-        // VDNI bonus?
-        if (hasAbility(OptionsConstants.MD_VDNI) && !hasAbility(OptionsConstants.MD_BVDNI)) {
-            roll.addModifier(-1, "VDNI");
+        // VDNI bonus? (BVDNI does NOT get piloting bonus due to "neuro-lag" per IO pg 71)
+        // When tracking neural interface hardware, require DNI cockpit mod for benefits
+        if (hasActiveDNI()) {
+            if (hasAbility(OptionsConstants.MD_VDNI) && !hasAbility(OptionsConstants.MD_BVDNI)) {
+                roll.addModifier(-1, "VDNI");
+            } else if (hasAbility(OptionsConstants.MD_BVDNI)) {
+                roll.addModifier(0, "BVDNI (no piloting bonus)");
+            }
         }
 
         // Small/torso-mounted cockpit penalty?
-        if ((getCockpitType() == Mek.COCKPIT_SMALL) &&
-              !hasAbility(OptionsConstants.MD_BVDNI) &&
-              !hasAbility(OptionsConstants.UNOFFICIAL_SMALL_PILOT)) {
-            roll.addModifier(1, "Small Cockpit");
+        // BVDNI negates small cockpit penalty, requires active DNI when tracking
+        if (getCockpitType() == Mek.COCKPIT_SMALL) {
+            if (hasActiveDNI() && hasAbility(OptionsConstants.MD_BVDNI)) {
+                roll.addModifier(0, "Small Cockpit (negated by BVDNI)");
+            } else if (!hasAbility(OptionsConstants.UNOFFICIAL_SMALL_PILOT)) {
+                roll.addModifier(1, "Small Cockpit");
+            }
         }
 
         if (hasQuirk(OptionsConstants.QUIRK_NEG_CRAMPED_COCKPIT)
@@ -792,8 +835,18 @@ public class LandAirMek extends BipedMek implements IAero, IBomber {
      * @return The control roll that must be passed to land safely.
      */
     public PilotingRollData checkAirMekLanding() {
-        // Base piloting skill
-        PilotingRollData roll = new PilotingRollData(getId(), getCrew().getPiloting(), "Base piloting skill");
+        // Base piloting skill, with any gamemaster modifier shown as a line of its own
+        int gamemasterModifier = getCrew().appliedPilotingModifier();
+        PilotingRollData roll = new PilotingRollData(getId(),
+              getCrew().getPiloting() - gamemasterModifier,
+              "Base piloting skill");
+        if (gamemasterModifier != 0) {
+            roll.addModifier(gamemasterModifier, "GM Modifier");
+        }
+
+        if ((hasAbility(OptionsConstants.PILOT_WIND_WALKER)) && PilotSPAHelper.isWindWalkerValid(this)) {
+            roll.addModifier(-1, "Wind Walker SPA");
+        }
 
         addEntityBonuses(roll);
 
@@ -912,7 +965,8 @@ public class LandAirMek extends BipedMek implements IAero, IBomber {
             resetAltLossThisRound();
         }
 
-        // Reset flying off dir
+        // Reset flying off direction (exitAltitude is preserved for returning units
+        // and cleared in DeploymentProcessor when deployed)
         flyingOff = OffBoardDirection.NONE;
     }
 
@@ -1115,6 +1169,7 @@ public class LandAirMek extends BipedMek implements IAero, IBomber {
         whoFirst = Compute.randomInt(500);
     }
 
+    @Override
     public int getMaxBombPoints() {
         return getMaxExtBombPoints() + getMaxIntBombPoints();
     }
@@ -2205,5 +2260,15 @@ public class LandAirMek extends BipedMek implements IAero, IBomber {
     @Override
     public OffBoardDirection getFlyingOffDirection() {
         return this.flyingOff;
+    }
+
+    @Override
+    public int getExitAltitude() {
+        return exitAltitude;
+    }
+
+    @Override
+    public void setExitAltitude(int altitude) {
+        this.exitAltitude = altitude;
     }
 }

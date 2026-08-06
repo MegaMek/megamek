@@ -1,6 +1,6 @@
 /*
  * Copyright (C) 2000-2003 Ben Mazur (bmazur@sev.org)
- * Copyright (C) 2005-2025 The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2005-2026 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -47,6 +47,7 @@ public class PilotOptions extends AbstractOptions {
     private static final long serialVersionUID = 6628080570425023949L;
     public static final String LVL3_ADVANTAGES = "lvl3Advantages";
     public static final String EDGE_ADVANTAGES = "edgeAdvantages";
+    public static final String EI_ADVANTAGES = "eiAdvantages";
     public static final String MD_ADVANTAGES = "MDAdvantages";
 
     public PilotOptions() {
@@ -77,6 +78,8 @@ public class PilotOptions extends AbstractOptions {
         addOption(adv, OptionsConstants.PILOT_ZWEIHANDER, false);
         addOption(adv, OptionsConstants.PILOT_ATOW_G_TOLERANCE, false);
 
+        // Airborne Only Skills
+        addOption(adv, OptionsConstants.PILOT_WIND_WALKER, false);
         // Gunnery Abilities
         addOption(adv, OptionsConstants.GUNNERY_BLOOD_STALKER, false);
         addOption(adv, OptionsConstants.GUNNERY_CLUSTER_HITTER, false);
@@ -108,10 +111,6 @@ public class PilotOptions extends AbstractOptions {
         addOption(adv, OptionsConstants.INFANTRY_URBAN_GUERRILLA, false);
 
         // Unofficial
-        addOption(adv, OptionsConstants.UNOFFICIAL_EI_IMPLANT, false);
-        addOption(adv, OptionsConstants.UNOFFICIAL_GUNNERY_LASER, false);
-        addOption(adv, OptionsConstants.UNOFFICIAL_GUNNERY_MISSILE, false);
-        addOption(adv, OptionsConstants.UNOFFICIAL_GUNNERY_BALLISTIC, false);
         addOption(adv, OptionsConstants.UNOFFICIAL_CLAN_PILOT_TRAINING, false);
         addOption(adv, OptionsConstants.UNOFFICIAL_SOME_LIKE_IT_HOT, false);
         addOption(adv, OptionsConstants.UNOFFICIAL_WEATHERED, false);
@@ -152,6 +151,23 @@ public class PilotOptions extends AbstractOptions {
         addOption(edge, OptionsConstants.EDGE_WHEN_AERO_LUCKY_CRIT, true);
         addOption(edge, OptionsConstants.EDGE_WHEN_AERO_NUKE_CRIT, true);
         addOption(edge, OptionsConstants.EDGE_WHEN_AERO_UNIT_CARGO_LOST, true);
+        addOption(edge, OptionsConstants.EDGE_WHEN_AERO_CATASTROPHIC, true);
+        // Vehicle Triggers
+        addOption(edge, OptionsConstants.EDGE_WHEN_TANK_MOTIVE_CRIT, true);
+        addOption(edge, OptionsConstants.EDGE_WHEN_TANK_DESTROYED, true);
+        addOption(edge, OptionsConstants.EDGE_WHEN_TANK_TURRET_BLOWN_OFF, true);
+        // Infantry Triggers
+        addOption(edge, OptionsConstants.EDGE_WHEN_ZIPLINE, true);
+        // General Triggers
+        addOption(edge, OptionsConstants.EDGE_WHEN_EJECT_FAILS, true);
+        addOption(edge, OptionsConstants.EDGE_WHEN_BREACH, true);
+        addOption(edge, OptionsConstants.EDGE_WHEN_AC_JAMS_OR_MALFUNCTIONS, true);
+        addOption(edge, OptionsConstants.EDGE_WHEN_RISC_FAIL, true);
+        addOption(edge, OptionsConstants.EDGE_WHEN_FIRE, true);
+
+        // Enhanced Imaging (Clan technology, IO p.69)
+        IBasicOptionGroup ei = addGroup("ei", EI_ADVANTAGES);
+        addOption(ei, OptionsConstants.MD_EI_IMPLANT, false);
 
         // manei domini
         IBasicOptionGroup md = addGroup("md", MD_ADVANTAGES);
@@ -183,8 +199,6 @@ public class PilotOptions extends AbstractOptions {
         addOption(md, OptionsConstants.MD_PL_GLIDER, false);
         addOption(md, OptionsConstants.MD_PL_FLIGHT, false);
         addOption(md, OptionsConstants.MD_SUICIDE_IMPLANTS, false);
-
-        //TODO - Prototype DNI IO pg 83
     }
 
     /*

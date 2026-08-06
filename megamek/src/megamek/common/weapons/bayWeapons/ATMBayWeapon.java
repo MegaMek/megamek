@@ -82,6 +82,7 @@ public class ATMBayWeapon extends AmmoBayWeapon {
         techAdvancement.setTechBase(TechBase.CLAN)
               .setTechRating(TechRating.F)
               .setAvailability(AvailabilityValue.X, AvailabilityValue.X, AvailabilityValue.D, AvailabilityValue.D)
+              .setISAdvancement(DATE_NONE, DATE_NONE, DATE_NONE, DATE_NONE, DATE_NONE)
               .setClanAdvancement(3052, 3053, 3054)
               .setClanApproximate(true, true, true)
               .setPrototypeFactions(Faction.CCY)

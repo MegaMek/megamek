@@ -51,6 +51,9 @@ import java.util.Comparator;
  * "Atlas 0", "Atlas 1", "Atlas 15", "Atlas 2", "Atlas 5" }
  */
 public class NaturalOrderComparator implements Comparator<String>, Serializable {
+
+    public static final NaturalOrderComparator INSTANCE = new NaturalOrderComparator();
+
     @Serial
     private static final long serialVersionUID = -5116813198443091269L;
     private final Collator collator;

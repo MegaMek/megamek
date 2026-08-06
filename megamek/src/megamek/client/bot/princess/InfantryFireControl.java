@@ -44,6 +44,7 @@ import megamek.common.equipment.WeaponMounted;
 import megamek.common.equipment.WeaponType;
 import megamek.common.game.Game;
 import megamek.common.moves.MovePath;
+import megamek.common.units.ConvInfantry;
 import megamek.common.units.Entity;
 import megamek.common.units.Infantry;
 import megamek.common.units.Targetable;
@@ -133,7 +134,7 @@ public class InfantryFireControl extends FireControl {
                 int infantryCount = 1;
 
                 if (shooter.isConventionalInfantry()) {
-                    infantryCount = shooter.getInternal(Infantry.LOC_INFANTRY);
+                    infantryCount = shooter.getInternal(ConvInfantry.LOC_INFANTRY);
                 } else if (shooter instanceof BattleArmor) {
                     infantryCount = ((BattleArmor) shooter).getNumberActiveTroopers();
                 }
@@ -304,7 +305,7 @@ public class InfantryFireControl extends FireControl {
     private boolean weaponIsAppropriate(WeaponMounted weapon, InfantryFiringPlanType firingPlanType) {
         boolean weaponIsSwarm = (weapon.getType()).getInternalName().equals(Infantry.SWARM_MEK);
         boolean weaponIsLegAttack = (weapon.getType()).getInternalName().equals(Infantry.LEG_ATTACK);
-        boolean weaponIsFieldGuns = weapon.getLocation() == Infantry.LOC_FIELD_GUNS;
+        boolean weaponIsFieldGuns = weapon.getLocation() == ConvInfantry.LOC_FIELD_GUNS;
 
         return switch (firingPlanType) {
             case FieldGuns -> weaponIsFieldGuns;

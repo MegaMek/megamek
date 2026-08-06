@@ -90,7 +90,7 @@ class ASAeroDamageConverter extends ASDamageConverter {
             report.addLine("Adjusted Damage: ",
                   formatForReport(eDamage) + " x (see L)",
                   "= " + formatForReport(eDamage * heatAdjustFactorLE));
-            eDamage = eDamage * heatAdjustFactor;
+            eDamage = eDamage * heatAdjustFactorLE;
         }
 
         finalEDamage = ASDamage.createDualRoundedUp(eDamage);
@@ -130,7 +130,7 @@ class ASAeroDamageConverter extends ASDamageConverter {
 
     @Override
     protected int getHeatGeneration(boolean onlyRear, boolean onlyLongRange) {
-        int totalHeat = entity.hasWorkingMisc(MiscType.F_STEALTH, -1) ? 10 : 0;
+        int totalHeat = entity.hasWorkingMisc(MiscType.F_STEALTH) ? 10 : 0;
         for (Mounted<?> mount : weaponsList) {
             totalHeat += weaponHeat(mount, onlyRear, onlyLongRange);
         }

@@ -127,6 +127,7 @@ public enum RoundWeight {
      *
      * @return The weight in tons, rounded to the closest half ton.
      */
+    @Deprecated(since = "0.51.0", forRemoval = true)
     public static double nearestHalfTon(double weight) {
         return NEAREST_HALF_TON.round(weight, null);
     }

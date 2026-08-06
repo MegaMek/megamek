@@ -65,6 +65,7 @@ public final class ASCardPanel extends JComponent {
      *
      * @param element The AlphaStrike element to display
      */
+    @Deprecated(since = "0.51.0", forRemoval = true)
     public ASCardPanel(@Nullable ASCardDisplayable element) {
         setASElement(element);
     }

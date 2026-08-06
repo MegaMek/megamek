@@ -32,12 +32,15 @@
  */
 package megamek.client.bot.princess;
 
+import java.util.Arrays;
 import java.util.Collection;
+import java.util.EnumSet;
 import java.util.HashSet;
 import java.util.Set;
 import java.util.Vector;
 
 import megamek.common.board.Coords;
+import megamek.common.equipment.AmmoType;
 import megamek.common.units.Entity;
 
 /**
@@ -54,19 +57,82 @@ public class ArtilleryCommandAndControl {
         BARRAGE,
         VOLLEY,
         SINGLE,
+        COUNTER_BATTERY,
     }
 
+    /**
+     * The ammo type a fire mission should use, mapped to the artillery munitions it covers. STANDARD is a plain
+     * high-explosive round; the {@code utility} flag marks zero-damage munitions (smoke, flare, mines and variants)
+     * that the bot only fires when explicitly ordered at a hex.
+     */
     public enum SpecialAmmo {
-        NONE,
-        SMOKE,
-        FLARE,
-        MINE
+        STANDARD(false),
+        SMOKE(true, AmmoType.SMOKE_MUNITIONS),
+        FLARE(true, AmmoType.FLARE_MUNITIONS),
+        MINE(true, AmmoType.MINE_MUNITIONS),
+        LASER_INHIBITING(true, AmmoType.Munitions.M_LASER_INHIB),
+        VIBRABOMB(true, AmmoType.Munitions.M_VIBRABOMB_IV),
+        FAE(false, AmmoType.Munitions.M_FAE),
+        CLUSTER(false, AmmoType.Munitions.M_CLUSTER),
+        INFERNO(false, AmmoType.Munitions.M_INFERNO_IV),
+        FLECHETTE(false, AmmoType.Munitions.M_FLECHETTE),
+        ADA(false, AmmoType.Munitions.M_ADA),
+        DAVY_CROCKETT(false, AmmoType.Munitions.M_DAVY_CROCKETT_M),
+        HOMING(false, AmmoType.Munitions.M_HOMING);
+
+        private final boolean utility;
+        private final Set<AmmoType.Munitions> munitions;
+
+        SpecialAmmo(boolean utility, AmmoType.Munitions... munitions) {
+            this.utility = utility;
+            this.munitions = (munitions.length == 0)
+                  ? EnumSet.noneOf(AmmoType.Munitions.class)
+                  : EnumSet.copyOf(Arrays.asList(munitions));
+        }
+
+        SpecialAmmo(boolean utility, Set<AmmoType.Munitions> munitions) {
+            this.utility = utility;
+            this.munitions = EnumSet.copyOf(munitions);
+        }
+
+        /**
+         * @return {@code true} for zero-damage utility munitions (smoke, flare, mines and their variants), which the bot only
+         *       fires when the player explicitly orders them at a hex
+         */
+        public boolean isUtility() {
+            return utility;
+        }
+
+        /**
+         * @return The munition types this category covers (empty for STANDARD)
+         */
+        public Set<AmmoType.Munitions> getMunitions() {
+            return munitions;
+        }
+
+        /**
+         * Classifies a loaded ammo bin's munition set into a fire-mission ammo category, or STANDARD when it is a plain
+         * high-explosive round not matched by any special category.
+         *
+         * @param ammoMunitions The bin's munition types
+         *
+         * @return The matching category
+         */
+        public static SpecialAmmo forMunitions(Set<AmmoType.Munitions> ammoMunitions) {
+            for (SpecialAmmo candidate : values()) {
+                if ((candidate != STANDARD) && !candidate.munitions.isEmpty()
+                      && candidate.munitions.containsAll(ammoMunitions)) {
+                    return candidate;
+                }
+            }
+            return STANDARD;
+        }
     }
 
     private ArtilleryOrder artilleryOrder = ArtilleryOrder.AUTO;
     private final Vector<Coords> artilleryTargets = new Vector<>();
     private final Set<Integer> shooterUnits = new HashSet<>();
-    private SpecialAmmo ammo = SpecialAmmo.NONE;
+    private SpecialAmmo ammo = SpecialAmmo.STANDARD;
 
     public void addArtilleryTargets(Collection<Coords> targets) {
         artilleryTargets.addAll(targets);
@@ -76,6 +142,7 @@ public class ArtilleryCommandAndControl {
         return artilleryTargets.contains(position);
     }
 
+    @Deprecated(since = "0.51.0", forRemoval = true)
     public void removeArtilleryTarget(Coords coords) {
         artilleryTargets.remove(coords);
     }
@@ -92,6 +159,7 @@ public class ArtilleryCommandAndControl {
         return artilleryOrder == ArtilleryOrder.HALT;
     }
 
+    @Deprecated(since = "0.51.0", forRemoval = true)
     public boolean isArtilleryAuto() {
         return artilleryOrder == ArtilleryOrder.AUTO;
     }
@@ -108,8 +176,16 @@ public class ArtilleryCommandAndControl {
         return artilleryOrder == ArtilleryOrder.SINGLE;
     }
 
+    /**
+     * @return {@code true} if the bot is in forced counter-battery mode: its artillery prioritizes firing the selected
+     *       ammo back at any observed off-board enemy battery.
+     */
+    public boolean isCounterBattery() {
+        return artilleryOrder == ArtilleryOrder.COUNTER_BATTERY;
+    }
+
     public void setArtilleryOrder(ArtilleryOrder order) {
-        setArtilleryOrder(order, SpecialAmmo.NONE);
+        setArtilleryOrder(order, SpecialAmmo.STANDARD);
     }
 
     public void setArtilleryOrder(ArtilleryOrder order, SpecialAmmo ammo) {
@@ -118,20 +194,20 @@ public class ArtilleryCommandAndControl {
         shooterUnits.clear();
     }
 
-    public boolean isSmokeAmmo() {
-        return ammo == SpecialAmmo.SMOKE;
+    /**
+     * @return The special-ammo type the current fire mission should use
+     */
+    public SpecialAmmo getAmmo() {
+        return ammo;
     }
 
-    public boolean isFlareAmmo() {
-        return ammo == SpecialAmmo.FLARE;
+    public boolean isHomingAmmo() {
+        return ammo == SpecialAmmo.HOMING;
     }
 
-    public boolean isMineAmmo() {
-        return ammo == SpecialAmmo.MINE;
-    }
-
+    @Deprecated(since = "0.51.0", forRemoval = true)
     public boolean isSpecialAmmo() {
-        return ammo != SpecialAmmo.NONE;
+        return ammo != SpecialAmmo.STANDARD;
     }
 
     /**
@@ -146,10 +222,21 @@ public class ArtilleryCommandAndControl {
         return shooterUnits.add(shooter.getId());
     }
 
+    /**
+     * Checks whether the given unit has already taken its shot during the current volley fire mission.
+     *
+     * @param shooter the shooter unit
+     *
+     * @return {@code true} if the shooter has already fired during this volley
+     */
+    public boolean hasAlreadyFired(Entity shooter) {
+        return shooterUnits.contains(shooter.getId());
+    }
+
     public void reset() {
         shooterUnits.clear();
         artilleryTargets.clear();
-        ammo = SpecialAmmo.NONE;
+        ammo = SpecialAmmo.STANDARD;
         artilleryOrder = ArtilleryOrder.AUTO;
     }
 }

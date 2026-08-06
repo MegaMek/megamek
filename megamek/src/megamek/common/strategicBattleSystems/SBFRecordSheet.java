@@ -137,6 +137,7 @@ public class SBFRecordSheet implements Printable {
     }
 
     /** Sets the color of the underlining undervalues to the given lineColor. */
+    @Deprecated(since = "0.51.0", forRemoval = true)
     public void setLineColor(Color lineColor) {
         underlineColor = new Color(lineColor.getRGB());
     }

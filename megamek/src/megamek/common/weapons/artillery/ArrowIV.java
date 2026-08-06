@@ -69,10 +69,8 @@ public abstract class ArrowIV extends ArtilleryWeapon {
         super();
 
         name = "Arrow IV";
-        setInternalName("ArrowIV");
-        addLookupName("ArrowIVSystem");
-        addLookupName("Arrow IV System");
-        addLookupName("Arrow IV Missile System");
+        // This class should not set the internal name! 
+        // The exposed Arrow IV is in CLArrowIV and ISArrowIV
         heat = 10;
         rackSize = 20;
         ammoType = AmmoType.AmmoTypeEnum.ARROW_IV;
@@ -80,7 +78,7 @@ public abstract class ArrowIV extends ArtilleryWeapon {
         cost = 450000;
         this.flags = flags.or(F_MISSILE);
         this.missileArmor = 20;
-        rulesRefs = "284, TO";
+        rulesRefs = "96, TO:AUE";
     }
 
     @Override

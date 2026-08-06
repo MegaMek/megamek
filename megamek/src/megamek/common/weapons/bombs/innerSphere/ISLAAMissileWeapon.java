@@ -42,7 +42,7 @@ import megamek.common.enums.TechBase;
 import megamek.common.enums.TechRating;
 import megamek.common.equipment.AmmoType;
 import megamek.common.equipment.enums.BombType.BombTypeEnum;
-import megamek.common.weapons.missiles.thuunderbolt.ThunderboltWeapon;
+import megamek.common.weapons.missiles.thunderbolt.ThunderboltWeapon;
 
 /**
  * @author Jay Lawson
@@ -59,7 +59,7 @@ public class ISLAAMissileWeapon extends ThunderboltWeapon {
         super();
 
         this.name = "Light Air-to-Air (LAA) Missiles";
-        this.setInternalName(BombTypeEnum.LAA.getWeaponName());
+        this.setInternalName("IS " + BombTypeEnum.LAA.getWeaponName());
         this.heat = 0;
         this.damage = 6;
         this.rackSize = 1;
@@ -84,7 +84,7 @@ public class ISLAAMissileWeapon extends ThunderboltWeapon {
         this.ammoType = AmmoType.AmmoTypeEnum.LAA_MISSILE;
         this.capital = false;
         this.missileArmor = 6;
-        rulesRefs = "359, TO";
+        rulesRefs = "171, TO:AUE";
         techAdvancement.setTechBase(TechBase.IS)
               .setIntroLevel(false)
               .setUnofficial(false)

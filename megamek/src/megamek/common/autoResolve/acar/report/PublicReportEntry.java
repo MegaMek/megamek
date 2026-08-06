@@ -150,11 +150,13 @@ public class PublicReportEntry implements ReportEntry {
         return this;
     }
 
+    @Deprecated(since = "0.51.0", forRemoval = true)
     public PublicReportEntry endSpace() {
         endSpace = true;
         return this;
     }
 
+    @Deprecated(since = "0.51.0", forRemoval = true)
     public PublicReportEntry addNL() {
         endLine = true;
         return this;

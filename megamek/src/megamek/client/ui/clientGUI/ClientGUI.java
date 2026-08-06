@@ -1,7 +1,7 @@
 /*
  * Copyright (C) 2000-2004 Ben Mazur (bmazur@sev.org)
  * Copyright (C) 2013 Edward Cullen (eddy@obsessedcomputers.co.uk)
- * Copyright (C) 2004-2025 The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2004-2026 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -56,6 +56,7 @@ import java.io.OutputStream;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.*;
+import java.util.concurrent.ConcurrentLinkedQueue;
 import java.util.function.Consumer;
 import java.util.jar.JarFile;
 import javax.imageio.ImageIO;
@@ -69,7 +70,6 @@ import megamek.client.Client;
 import megamek.client.TimerSingleton;
 import megamek.client.bot.BotClient;
 import megamek.client.bot.princess.BehaviorSettings;
-import megamek.client.bot.princess.Princess;
 import megamek.client.commands.*;
 import megamek.client.event.BoardViewEvent;
 import megamek.client.event.BoardViewListener;
@@ -82,10 +82,13 @@ import megamek.client.ui.clientGUI.audio.SoundType;
 import megamek.client.ui.clientGUI.boardview.BoardView;
 import megamek.client.ui.clientGUI.boardview.CollapseWarning;
 import megamek.client.ui.clientGUI.boardview.IBoardView;
+import megamek.client.ui.clientGUI.boardview.RulerDialog;
+import megamek.client.ui.clientGUI.boardview.overlay.BoardToastOverlay;
 import megamek.client.ui.clientGUI.boardview.overlay.ChatterBoxOverlay;
 import megamek.client.ui.clientGUI.boardview.overlay.KeyBindingsOverlay;
 import megamek.client.ui.clientGUI.boardview.overlay.OffBoardTargetOverlay;
 import megamek.client.ui.clientGUI.boardview.overlay.PlanetaryConditionsOverlay;
+import megamek.client.ui.clientGUI.boardview.overlay.ToastLevel;
 import megamek.client.ui.clientGUI.boardview.overlay.TurnDetailsOverlay;
 import megamek.client.ui.clientGUI.boardview.overlay.UnitOverviewOverlay;
 import megamek.client.ui.clientGUI.boardview.spriteHandler.*;
@@ -94,17 +97,20 @@ import megamek.client.ui.dialogs.AccessibilityDialog;
 import megamek.client.ui.dialogs.BotCommands.BotCommandsDialog;
 import megamek.client.ui.dialogs.BotCommands.BotCommandsPanel;
 import megamek.client.ui.dialogs.ChoiceDialog;
-import megamek.client.ui.dialogs.CommonAboutDialog;
 import megamek.client.ui.dialogs.ConfirmDialog;
 import megamek.client.ui.dialogs.InformDialog;
+import megamek.client.ui.dialogs.MMAboutDialog;
+import megamek.client.ui.dialogs.GameMasterAppointedDialog;
+import megamek.client.ui.dialogs.GameMasterVoteDialog;
 import megamek.client.ui.dialogs.PlayerListDialog;
 import megamek.client.ui.dialogs.RandomNameDialog;
-import megamek.client.ui.dialogs.RulerDialog;
+import megamek.client.ui.dialogs.RoundsInAirDialog;
 import megamek.client.ui.dialogs.UnitLoadingDialog;
 import megamek.client.ui.dialogs.buttonDialogs.CommonSettingsDialog;
+import megamek.client.bot.AIType;
 import megamek.client.ui.dialogs.buttonDialogs.EditBotsDialog;
 import megamek.client.ui.dialogs.buttonDialogs.GameOptionsDialog;
-import megamek.client.ui.dialogs.buttonDialogs.LOSDialog;
+import megamek.client.ui.dialogs.buttonDialogs.NetworkInformationDialog;
 import megamek.client.ui.dialogs.forceDisplay.ForceDisplayDialog;
 import megamek.client.ui.dialogs.forceDisplay.ForceDisplayPanel;
 import megamek.client.ui.dialogs.helpDialogs.AbstractHelpDialog;
@@ -114,12 +120,12 @@ import megamek.client.ui.dialogs.miniReport.MiniReportDisplayDialog;
 import megamek.client.ui.dialogs.miniReport.MiniReportDisplayPanel;
 import megamek.client.ui.dialogs.minimap.MinimapDialog;
 import megamek.client.ui.dialogs.minimap.MinimapPanel;
+import megamek.client.ui.dialogs.phaseDisplay.NovaNetworkViewDialog;
 import megamek.client.ui.dialogs.randomArmy.RandomArmyDialog;
 import megamek.client.ui.dialogs.unitDisplay.IHasUnitDisplay;
 import megamek.client.ui.dialogs.unitDisplay.UnitDisplayDialog;
 import megamek.client.ui.dialogs.unitDisplay.UnitDisplayPanel;
 import megamek.client.ui.dialogs.unitSelectorDialogs.MegaMekUnitSelectorDialog;
-import megamek.client.ui.dialogs.phaseDisplay.NovaNetworkViewDialog;
 import megamek.client.ui.enums.DialogResult;
 import megamek.client.ui.panels.ReceivingGameDataPanel;
 import megamek.client.ui.panels.StartingScenarioPanel;
@@ -131,6 +137,7 @@ import megamek.client.ui.tileset.EntityImage;
 import megamek.client.ui.tileset.MMStaticDirectoryManager;
 import megamek.client.ui.tileset.TilesetManager;
 import megamek.client.ui.util.BASE64ToolKit;
+import megamek.client.ui.util.KeyCommandBind;
 import megamek.client.ui.util.MegaMekController;
 import megamek.client.ui.util.UIUtil;
 import megamek.common.Hex;
@@ -149,15 +156,8 @@ import megamek.common.equipment.HandheldWeapon;
 import megamek.common.equipment.ICarryable;
 import megamek.common.equipment.Mounted;
 import megamek.common.equipment.WeaponMounted;
-import megamek.common.event.GameCFREvent;
-import megamek.common.event.GameEndEvent;
-import megamek.common.event.GameListener;
-import megamek.common.event.GameListenerAdapter;
-import megamek.common.event.GamePhaseChangeEvent;
-import megamek.common.event.GameReportEvent;
-import megamek.common.event.GameScriptedEvent;
-import megamek.common.event.GameScriptedMessageEvent;
-import megamek.common.event.GameSettingsChangeEvent;
+import megamek.common.event.*;
+import megamek.common.event.board.GameBoardChangeEvent;
 import megamek.common.event.board.GameBoardNewEvent;
 import megamek.common.event.entity.GameEntityChangeEvent;
 import megamek.common.event.entity.GameEntityNewEvent;
@@ -172,9 +172,11 @@ import megamek.common.loaders.MULParser;
 import megamek.common.loaders.MekSummaryCache;
 import megamek.common.moves.MovePath;
 import megamek.common.options.GameOptions;
+import megamek.common.options.OptionsConstants;
 import megamek.common.preference.IPreferenceChangeListener;
 import megamek.common.preference.PreferenceChangeEvent;
 import megamek.common.preference.PreferenceManager;
+import megamek.common.units.ConvInfantry;
 import megamek.common.units.Entity;
 import megamek.common.units.EntityListFile;
 import megamek.common.units.IBomber;
@@ -182,6 +184,8 @@ import megamek.common.units.Targetable;
 import megamek.common.util.AddBotUtil;
 import megamek.common.util.Distractable;
 import megamek.common.util.StringUtil;
+import megamek.common.voting.Poll;
+import megamek.common.voting.PollStatus;
 import megamek.common.weapons.handlers.WeaponOrderHandler;
 import megamek.logging.MMLogger;
 
@@ -218,6 +222,7 @@ public class ClientGUI extends AbstractClientGUI
     public static final String BOARD_SAVE_AS = "fileBoardSaveAs";
     public static final String BOARD_SAVE_AS_IMAGE = "fileBoardSaveAsImage";
     public static final String BOARD_SAVE_AS_IMAGE_UNITS = "fileBoardSaveAsImageUnits";
+    public static final String BOARD_RUN_BOARD_TAGGER = "boardRunBoardTagger";
     public static final String BOARD_RESIZE = "boardResize";
     public static final String BOARD_VALIDATE = "boardValidate";
     public static final String BOARD_SOURCE_FILE = "boardSourcefile";
@@ -236,6 +241,7 @@ public class ClientGUI extends AbstractClientGUI
     public static final String FILE_UNITS_REINFORCE = "fileUnitsReinforce";
     public static final String FILE_UNITS_REINFORCE_RAT = "fileUnitsReinforceRAT";
     public static final String FILE_REFRESH_CACHE = "fileRefreshCache";
+    public static final String FILE_REBUILD_CACHE = "fileRebuildCache";
     public static final String FILE_UNITS_BROWSE = "fileUnitsBrowse";
     public static final String FILE_UNITS_OPEN = "fileUnitsOpen";
     public static final String FILE_UNITS_SAVE = "fileUnitsSave";
@@ -266,6 +272,7 @@ public class ClientGUI extends AbstractClientGUI
     public static final String VIEW_TOGGLE_SENSOR_RANGE = "viewToggleSensorRange";
     public static final String VIEW_TOGGLE_FOV_DARKEN = "viewToggleFovDarken";
     public static final String VIEW_TOGGLE_FOV_HIGHLIGHT = "viewToggleFovHighlight";
+    public static final String VIEW_TOGGLE_FOV_SPOTTING = "viewToggleFovSpotting";
     public static final String VIEW_TOGGLE_FIRING_SOLUTIONS = "viewToggleFiringSolutions";
     public static final String VIEW_TOGGLE_CF_WARNING = "viewToggleCFWarnings";
     public static final String VIEW_MOVE_ENV = "viewMovementEnvelope";
@@ -274,13 +281,29 @@ public class ClientGUI extends AbstractClientGUI
     public static final String VIEW_CHANGE_THEME = "viewChangeTheme";
     public static final String VIEW_ROUND_REPORT = "viewRoundReport";
     public static final String VIEW_GAME_OPTIONS = "viewGameOptions";
+    public static final String GAME_GIVE_UP_GAME_MASTER = "gameGiveUpGameMaster";
+    public static final String GAME_REQUEST_GAME_MASTER = "gameRequestGameMaster";
+    public static final String GAME_ALL_MG_BURST_ON = "gameAllMgBurstOn";
+    public static final String GAME_ALL_MG_BURST_OFF = "gameAllMgBurstOff";
+    public static final String GAME_ALL_HOT_LOAD_ON = "gameAllHotLoadOn";
+    public static final String GAME_ALL_HOT_LOAD_OFF = "gameAllHotLoadOff";
+    public static final String VIEW_NETWORK_INFORMATION = "viewNetworkInformation";
     public static final String VIEW_CLIENT_SETTINGS = "viewClientSettings";
     public static final String VIEW_LOS_SETTING = "viewLOSSetting";
     public static final String VIEW_PLAYER_SETTINGS = "viewPlayerSettings";
     public static final String VIEW_PLAYER_LIST = "viewPlayerList";
+    public static final String VIEW_ROUNDS_IN_AIR = "viewRoundsInAir";
     public static final String VIEW_RESET_WINDOW_POSITIONS = "viewResetWindowPos";
     public static final String VIEW_BOT_COMMANDS = "viewBotCommands";
+    public static final String VIEW_BOT_COMMANDS_OFF = "viewBotCommandsOff";
+    public static final String VIEW_BOT_COMMANDS_FLOAT = "viewBotCommandsFloat";
+    public static final String VIEW_BOT_COMMANDS_DOCK = "viewBotCommandsDock";
     // endregion view menu
+
+    /** Bot commands panel location: shown in a floating dialog. */
+    public static final int BOT_COMMANDS_LOCATION_FLOATING = 0;
+    /** Bot commands panel location: docked into the top of the board area. */
+    public static final int BOT_COMMANDS_LOCATION_DOCKED = 1;
 
     // region fire menu
     public static final String FIRE_SAVE_WEAPON_ORDER = "saveWeaponOrder";
@@ -309,6 +332,8 @@ public class ClientGUI extends AbstractClientGUI
     public static final String CG_FIRING_DISPLAY = "FiringDisplay";
     public static final String CG_POINTBLANK_SHOT_DISPLAY = "PointblankShotDisplay";
     public static final String CG_PHYSICAL_DISPLAY = "PhysicalDisplay";
+    public static final String CG_PREEND_DECLARATIONS_DISPLAY = "PreEndDeclarationsDisplay";
+    public static final String CG_INFANTRY_COMBAT_DISPLAY = "InfantryVsInfantryCombatDisplay";
     public static final String CG_REPORT_DISPLAY = "ReportDisplay";
     public static final String CG_DEFAULT = "JLabel-Default";
 
@@ -344,6 +369,7 @@ public class ClientGUI extends AbstractClientGUI
     private FleeZoneSpriteHandler fleeZoneSpriteHandler;
     private SensorRangeSpriteHandler sensorRangeSpriteHandler;
     private CollapseWarningSpriteHandler collapseWarningSpriteHandler;
+    private SawClearingSpriteHandler sawClearingSpriteHandler;
     private GroundObjectSpriteHandler groundObjectSpriteHandler;
     private FiringSolutionSpriteHandler firingSolutionSpriteHandler;
     private FiringArcSpriteHandler firingArcSpriteHandler;
@@ -357,6 +383,7 @@ public class ClientGUI extends AbstractClientGUI
     private UnitDisplayDialog unitDisplayDialog;
 
     private BotCommandsDialog botCommandsDialog;
+    private BotCommandsPanel botCommandsPanel;
 
     public ForceDisplayPanel forceDisplayPanel;
     private ForceDisplayDialog forceDisplayDialog;
@@ -365,12 +392,23 @@ public class ClientGUI extends AbstractClientGUI
     protected JComponent curPanel;
     public ChatLounge chatlounge;
     private OffBoardTargetOverlay offBoardOverlay;
+    private BoardToastOverlay toastOverlay;
+
+    private final ConcurrentLinkedQueue<Runnable> toastDripQueue = new ConcurrentLinkedQueue<>();
+    private javax.swing.Timer toastDripTimer;
+    /** Normalized report entries already shown as toasts this phase; see {@link ReportToastFormatter#formatReport}. */
+    private final Set<String> toastedReportEntries = new HashSet<>();
+
 
     // some dialogs...
     private GameOptionsDialog gameOptionsDialog;
+    private NetworkInformationDialog networkInformationDialog;
     private MegaMekUnitSelectorDialog mekSelectorDialog;
     private PlayerListDialog playerListDialog;
+    private RoundsInAirDialog roundsInAirDialog;
     private RandomArmyDialog randomArmyDialog;
+    /** The poll a running Game Master vote is taken in; open only while a vote runs. */
+    private GameMasterVoteDialog gameMasterVoteDialog;
     /**
      * Save and Open dialogs for MegaMek Unit List (mul) files.
      */
@@ -527,6 +565,170 @@ public class ClientGUI extends AbstractClientGUI
         return (BoardView) boardViews.get(0);
     }
 
+    @Deprecated(since = "0.51.0", forRemoval = true)
+    public BoardToastOverlay getToastOverlay() {
+        return toastOverlay;
+    }
+
+    /**
+     * Shows a toast notification on the board view. Safe to call even when the toast overlay has not been initialized
+     * yet (e.g., during the lobby phase).
+     *
+     * @param level the severity level determining color and default duration
+     * @param text  the message text to display
+     */
+    public void addToast(ToastLevel level, String text) {
+        addToast(level, text, null);
+    }
+
+    /**
+     * Shows a toast notification with the given entity's sprite icon on the board view.
+     *
+     * <p>This is the single entry point for every toast in the client, server-raised ones included, so the player's
+     * {@link GUIPreferences#TOAST_ENABLED} setting is enforced here and nowhere else.</p>
+     *
+     * @param level  the severity level determining color and default duration
+     * @param text   the message text to display
+     * @param entity the entity whose icon to show, or {@code null} for text-only
+     */
+    public void addToast(ToastLevel level, String text, @Nullable Entity entity) {
+        String entityLabel = (entity != null) ?
+              entity.getShortName() + " [" + entity.getId() + "]" :
+              "no entity";
+        // Gate before normalizing: normalizeToastText is regex-heavy and only the shown path needs the
+        // cleaned text. On the suppressed paths log the raw text so switching toasts off does not pay the
+        // normalization cost for every would-be toast.
+        if (toastOverlay == null) {
+            logger.debug("[Toast] suppressed [{}] ({}) - overlay not initialized yet: {}",
+                  level, entityLabel, text);
+            return;
+        }
+        if (!GUIP.getToastEnabled()) {
+            logger.debug("[Toast] suppressed [{}] ({}) - toasts switched off in client settings: {}",
+                  level, entityLabel, text);
+            return;
+        }
+        String normalizedText = ReportToastFormatter.normalizeToastText(text);
+        logger.debug("[Toast] shown [{}] ({}): {}", level, entityLabel, normalizedText);
+        toastOverlay.show(level, normalizedText, entity);
+    }
+
+    /**
+     * Maps the layer-neutral severity carried by a {@link GameToastEvent} to the board view's toast styling.
+     *
+     * @param level the severity from the server-sent toast event
+     *
+     * @return the matching {@link ToastLevel} used to color and time the toast
+     */
+    private static ToastLevel toastLevelFor(GameToastEvent.Level level) {
+        return switch (level) {
+            case SUCCESS -> ToastLevel.SUCCESS;
+            case WARNING -> ToastLevel.WARNING;
+            case ERROR -> ToastLevel.ERROR;
+            case INFO -> ToastLevel.INFO;
+            case GAMEMASTER -> ToastLevel.GAMEMASTER;
+        };
+    }
+
+    /**
+     * Shows a progress toast for each of the local player's platoons that is busy raising or dismantling a bridge
+     * (TO:AUE). Called once per round at the start of the movement phase: a busy platoon is eligible only in the
+     * movement phase (movement-only, so it can continue/cancel/pause/resume) and takes no other action, so this is
+     * its main per-turn feedback besides the hex indicator and the END phase report.
+     */
+    private void showBridgeBuildProgressToasts() {
+        for (Entity entity : getClient().getGame().getEntitiesVector()) {
+            if (!(entity instanceof ConvInfantry convInfantry) || !convInfantry.isBusyWithBridge()
+                  || (convInfantry.getBridgeTargetCoords() == null)
+                  || (entity.getOwnerId() != getClient().getLocalPlayer().getId())) {
+                continue;
+            }
+            if (convInfantry.isDismantlingBridge()) {
+                // Count the standing structure back down on the build's scale (e.g. 4/6, 3/6, ...)
+                addToast(ToastLevel.INFO, Messages.getString("ClientGUI.bridgeDismantleProgress.toast",
+                      entity.getShortName(), convInfantry.getBridgeDismantleRemaining(),
+                      convInfantry.getBridgeBuildRequiredTurns(),
+                      convInfantry.getBridgeTargetCoords().getBoardNum()), entity);
+            } else {
+                int turnsWorked = Math.min(convInfantry.getBridgeBuildTurns(),
+                      convInfantry.getBridgeBuildRequiredTurns());
+                String progressKey = convInfantry.isBridgeBuildRepair() ? "ClientGUI.bridgeRepairProgress.toast"
+                      : "ClientGUI.bridgeBuildProgress.toast";
+                addToast(ToastLevel.INFO, Messages.getString(progressKey,
+                      entity.getShortName(), turnsWorked, convInfantry.getBridgeBuildRequiredTurns(),
+                      convInfantry.getBridgeTargetCoords().getBoardNum()), entity);
+            }
+        }
+    }
+
+    /**
+     * Splits a server-side report HTML stream into per-event toasts via {@link ReportToastFormatter} and drip-feeds
+     * them to the overlay on the {@link GUIPreferences#TOAST_DRIP_SECONDS} cadence so each one has time to scroll past
+     * before the next appears.
+     *
+     * <p>Entries already toasted earlier in the same phase are skipped, because a mid-phase report packet can carry
+     * events that an earlier packet already delivered. Does nothing at all when the player has switched
+     * {@link GUIPreferences#TOAST_REPORT_EVENTS} off; toasts that carry information the report log does not hold are
+     * unaffected by that setting.</p>
+     *
+     * <p>Every reason to skip is checked before the report is formatted, because formatting is what records entries
+     * as already toasted. Recording an entry that was never shown would suppress it later, when the player turns
+     * toasts back on part way through the same phase.</p>
+     */
+    private void showReportAsToasts(String defaultPrefix, String report) {
+        if (toastOverlay == null) {
+            logger.debug("[Toast] report burst suppressed - overlay not initialized yet");
+            return;
+        }
+        if (!GUIP.getToastEnabled()) {
+            logger.debug("[Toast] report burst suppressed - toasts are switched off in client settings");
+            return;
+        }
+        if (!GUIP.getToastReportEvents()) {
+            logger.debug("[Toast] report burst suppressed - round report events are switched off in client settings");
+            return;
+        }
+        List<String> bodies = ReportToastFormatter.formatReport(defaultPrefix, report, toastedReportEntries);
+        logger.debug("[Toast] report burst queued {} new event(s); {} entries seen this phase",
+              bodies.size(), toastedReportEntries.size());
+        for (String body : bodies) {
+            toastDripQueue.offer(() -> addToast(ToastLevel.INFO, body));
+        }
+        startToastDripIfIdle();
+    }
+
+    /**
+     * Releases queued report toasts one at a time on the {@link GUIPreferences#TOAST_DRIP_SECONDS} cadence so the
+     * player can read each one before the next arrives. The first toast of a fresh burst fires immediately; subsequent
+     * toasts wait their turn. If a new burst arrives while the timer is already running, its entries are appended to
+     * the existing queue and picked up by the running timer (the cadence in effect when the timer was created continues
+     * to apply for the duration of that timer; preference changes take effect on the next fresh burst).
+     */
+    private void startToastDripIfIdle() {
+        if (toastDripTimer != null && toastDripTimer.isRunning()) {
+            return;
+        }
+        Runnable first = toastDripQueue.poll();
+        if (first != null) {
+            first.run();
+        }
+        if (toastDripQueue.isEmpty()) {
+            return;
+        }
+        int dripMs = Math.max(1, GUIPreferences.getInstance().getToastDripSeconds()) * 1000;
+        toastDripTimer = new javax.swing.Timer(dripMs, evt -> {
+            Runnable next = toastDripQueue.poll();
+            if (next != null) {
+                next.run();
+            }
+            if (toastDripQueue.isEmpty()) {
+                ((javax.swing.Timer) evt.getSource()).stop();
+                toastDripTimer = null;
+            }
+        });
+        toastDripTimer.start();
+    }
+
     @Override
     public UnitDisplayPanel getUnitDisplay() {
         return unitDisplayPanel;
@@ -570,6 +772,10 @@ public class ClientGUI extends AbstractClientGUI
         this.botCommandsDialog = botCommandsDialog;
     }
 
+    public BotCommandsPanel getBotCommandsPanel() {
+        return botCommandsPanel;
+    }
+
     public MiniReportDisplayPanel getMiniReportDisplay() {
         return miniReportDisplayPanel;
     }
@@ -594,6 +800,15 @@ public class ClientGUI extends AbstractClientGUI
     public void setPlayerListDialog(final PlayerListDialog playerListDialog) {
         this.playerListDialog = playerListDialog;
         this.playerListDialog.setFocusableWindowState(false);
+    }
+
+    public RoundsInAirDialog getRoundsInAirDialog() {
+        return roundsInAirDialog;
+    }
+
+    public void setRoundsInAirDialog(final RoundsInAirDialog roundsInAirDialog) {
+        this.roundsInAirDialog = roundsInAirDialog;
+        this.roundsInAirDialog.setFocusableWindowState(false);
     }
 
     @Override
@@ -625,10 +840,119 @@ public class ClientGUI extends AbstractClientGUI
      * Lays out the frame by setting this Client object to take up the full frame display area.
      */
     private void layoutFrame() {
-        frame.setTitle(client.getName() + Messages.getString("ClientGUI.clientTitleSuffix"));
+        updateFrameTitle();
         frame.getContentPane().setLayout(new BorderLayout());
         frame.getContentPane().add(clientGuiPanel, BorderLayout.CENTER);
         frame.validate();
+    }
+
+    /**
+     * Opens, follows and closes the Game Master vote dialog as the server shares the vote's state: the dialog opens
+     * when a vote is called, follows the ballots as they come in, and closes when the vote resolves. The outcome
+     * itself is announced in the chat.
+     */
+    private void updateGameMasterVoteDialog(Poll poll) {
+        if (poll.getStatus().isResolved()) {
+            if (gameMasterVoteDialog != null) {
+                gameMasterVoteDialog.dispose();
+                gameMasterVoteDialog = null;
+            }
+            if (poll.getStatus() == PollStatus.PASSED) {
+                announceNewGameMaster(poll.getRequesterId());
+            }
+            return;
+        }
+        if (gameMasterVoteDialog == null) {
+            gameMasterVoteDialog = new GameMasterVoteDialog(frame, client);
+        }
+        gameMasterVoteDialog.update(poll);
+        gameMasterVoteDialog.setVisible(true);
+    }
+
+    /**
+     * Keeps the Game menu's Game Master entries in step with who holds the role and whether the game allows one:
+     * Give Up while the local player holds it, Become while the role is free, neither while another player has it.
+     */
+    private void updateGameMasterMenuItems() {
+        Player localPlayer = client.getLocalPlayer();
+        if (localPlayer == null) {
+            return;
+        }
+        boolean gameAllowsGameMaster = client.getGame().getOptions()
+              .booleanOption(OptionsConstants.GAME_MASTER_ALLOW);
+        boolean anyoneHoldsRole = false;
+        for (Player player : client.getGame().getPlayersList()) {
+            if (player.isGameMaster()) {
+                anyoneHoldsRole = true;
+                break;
+            }
+        }
+        menuBar.setGameMasterState(localPlayer.isGameMaster(), gameAllowsGameMaster && !anyoneHoldsRole);
+    }
+
+    /** Keeps the lobby's all-units equipment shortcuts in step with the game options that allow them. */
+    private void updateLobbyEquipmentMenuItems() {
+        menuBar.setLobbyEquipmentOptions(
+              client.getGame().getOptions().booleanOption(OptionsConstants.ADVANCED_COMBAT_TAC_OPS_BURST),
+              client.getGame().getOptions().booleanOption(OptionsConstants.ADVANCED_COMBAT_TAC_OPS_HOT_LOAD));
+    }
+
+    /**
+     * Asks first, then gives up the Game Master role through the same /gm command that takes it, so the rules stay
+     * with the server. The menu entry that leads here is only shown while the local player holds the role.
+     */
+    private void giveUpGameMaster() {
+        int choice = JOptionPane.showConfirmDialog(frame,
+              Messages.getString("ClientGUI.giveUpGameMaster.message"),
+              Messages.getString("ClientGUI.giveUpGameMaster.title"),
+              JOptionPane.YES_NO_OPTION,
+              JOptionPane.QUESTION_MESSAGE);
+        if (choice == JOptionPane.YES_OPTION) {
+            client.sendChat("/gm");
+        }
+    }
+
+    /**
+     * Tells every player who won a passed Game Master vote and how the role is taken away again: the Game Master
+     * gives it up (the lobby's GM Mode button or the Game menu's Give Up Game Master entry), or the host turns off
+     * Allow Game Master in the game options. Shown after the vote dialog closes, so the outcome is not just a line
+     * of chat that scrolls away. Queued on the event thread so it does not block the game event that brought the
+     * result.
+     *
+     * @param gameMasterId the id of the player the vote made Game Master
+     */
+    private void announceNewGameMaster(int gameMasterId) {
+        Player gameMaster = client.getGame().getPlayer(gameMasterId);
+        String gameMasterName = (gameMaster != null)
+              ? gameMaster.getName()
+              : Messages.getString("GameMasterVoteDialog.unknownPlayer");
+        SwingUtilities.invokeLater(() -> new GameMasterAppointedDialog(frame,
+              Messages.getString("GameMasterVoteDialog.passed.message", gameMasterName)).setVisible(true));
+    }
+
+    /**
+     * Updates the frame title to show the current round and phase information. The title format is: "PlayerName - Round
+     * X - Phase phase - MegaMek" For phases before the game starts (lobby, selection, etc.), only shows: "PlayerName -
+     * MegaMek"
+     */
+    private void updateFrameTitle() {
+        StringBuilder title = new StringBuilder(client.getName());
+
+        // mark the local player as the Game Master right after their name, so it is clear who holds the role
+        if ((client.getLocalPlayer() != null) && client.getLocalPlayer().isGameMaster()) {
+            title.append(Messages.getString("ClientGUI.titleGameMaster"));
+        }
+
+        GamePhase phase = client.getGame().getPhase();
+        int round = client.getGame().getCurrentRound();
+
+        // Only show round/phase info for in-game phases (after round 0)
+        if ((round > 0) && phase.isOnMap()) {
+            title.append(Messages.getString("ClientGUI.titleRoundPhase", round, phase.localizedName()));
+        }
+
+        title.append(Messages.getString("ClientGUI.clientTitleSuffix"));
+        frame.setTitle(title.toString());
     }
 
     private void initializeSpriteHandlers() {
@@ -637,20 +961,35 @@ public class ClientGUI extends AbstractClientGUI
         FlareSpritesHandler flareSpritesHandler = new FlareSpritesHandler(this, client.getGame());
         sensorRangeSpriteHandler = new SensorRangeSpriteHandler(this, client.getGame());
         collapseWarningSpriteHandler = new CollapseWarningSpriteHandler(this);
+        sawClearingSpriteHandler = new SawClearingSpriteHandler(this, client.getGame());
+        BridgeBuildSpriteHandler bridgeBuildSpriteHandler = new BridgeBuildSpriteHandler(this, client.getGame());
+        BridgeRepairedSpriteHandler bridgeRepairedSpriteHandler = new BridgeRepairedSpriteHandler(this,
+              client.getGame());
+        BridgeDeploySpriteHandler bridgeDeploySpriteHandler = new BridgeDeploySpriteHandler(this, client.getGame());
         groundObjectSpriteHandler = new GroundObjectSpriteHandler(this, client.getGame());
         firingSolutionSpriteHandler = new FiringSolutionSpriteHandler(this, client);
         firingArcSpriteHandler = new FiringArcSpriteHandler(this);
         fleeZoneSpriteHandler = new FleeZoneSpriteHandler(this);
+        FortifyBuildSpriteHandler fortifyBuildSpriteHandler = new FortifyBuildSpriteHandler(this, client.getGame());
+        DugInSpriteHandler dugInSpriteHandler = new DugInSpriteHandler(this, client.getGame());
+        RubbleClearSpriteHandler rubbleClearSpriteHandler = new RubbleClearSpriteHandler(this, client.getGame());
 
         spriteHandlers.addAll(List.of(movementEnvelopeHandler,
               movementModifierSpriteHandler,
               sensorRangeSpriteHandler,
               flareSpritesHandler,
               collapseWarningSpriteHandler,
+              sawClearingSpriteHandler,
+              bridgeBuildSpriteHandler,
+              bridgeRepairedSpriteHandler,
+              bridgeDeploySpriteHandler,
               groundObjectSpriteHandler,
               firingSolutionSpriteHandler,
               firingArcSpriteHandler,
-              fleeZoneSpriteHandler));
+              fleeZoneSpriteHandler,
+              fortifyBuildSpriteHandler,
+              dugInSpriteHandler,
+              rubbleClearSpriteHandler));
         spriteHandlers.forEach(BoardViewSpriteHandler::initialize);
     }
 
@@ -692,6 +1031,10 @@ public class ClientGUI extends AbstractClientGUI
 
         layoutFrame();
         menuBar.addActionListener(this);
+        // the Game Master role may already be settled, taken in the lobby before this window opened, and the
+        // options behind the lobby's all-units equipment shortcuts are set before it opens too
+        updateGameMasterMenuItems();
+        updateLobbyEquipmentMenuItems();
 
         aw = new AccessibilityDialog(this);
         aw.setLocation(0, 0);
@@ -712,20 +1055,28 @@ public class ClientGUI extends AbstractClientGUI
         setMiniReportVisible(GUIP.getMiniReportEnabled());
 
         setPlayerListDialog(new PlayerListDialog(frame, client, false));
+        setRoundsInAirDialog(new RoundsInAirDialog(frame, client));
 
         RulerDialog.color1 = GUIP.getRulerColor1();
         RulerDialog.color2 = GUIP.getRulerColor2();
 
         setBotCommandsDialog(new BotCommandsDialog(frame, this));
-        getBotCommandsDialog().add(new BotCommandsPanel(getClient(), audioService, null));
+        botCommandsPanel = new BotCommandsPanel(getClient(), audioService, null, this);
+        // Place the panel in its configured location (floating dialog or docked strip) before first use.
+        setBotCommandsLocation(GUIP.getBotCommandsEnabled());
+        // The Bot Commands submenu can no longer carry a working menu accelerator, so wire the show/hide hotkey here.
+        if (controller != null) {
+            controller.registerCommandAction(KeyCommandBind.BOT_COMMANDS.cmd, GUIP::toggleBotCommandsEnabled);
+        }
 
         client.changePhase(GamePhase.UNKNOWN);
-        UnitLoadingDialog unitLoadingDialog = new UnitLoadingDialog(frame);
-        if (!MekSummaryCache.getInstance().isInitialized()) {
+        MekSummaryCache mekSummaryCache = MekSummaryCache.getInstance();
+        UnitLoadingDialog unitLoadingDialog = new UnitLoadingDialog(frame, mekSummaryCache);
+        if (!mekSummaryCache.isInitialized()) {
             unitLoadingDialog.setVisible(true);
         }
         mekSelectorDialog = new MegaMekUnitSelectorDialog(this, unitLoadingDialog);
-        randomArmyDialog = new RandomArmyDialog(this);
+        randomArmyDialog = new RandomArmyDialog(frame, this);
         new Thread(mekSelectorDialog, Messages.getString("ClientGUI.mekSelectorDialog")).start();
         frame.setVisible(true);
         GUIP.addPreferenceChangeListener(this);
@@ -740,7 +1091,79 @@ public class ClientGUI extends AbstractClientGUI
      * Called when the user selects the "Help->About" menu item.
      */
     private void showAbout() {
-        new CommonAboutDialog(frame).setVisible(true);
+        new MMAboutDialog(frame).show();
+    }
+
+    private void refreshUnitCache() {
+        MekSummaryCache mekSummaryCache = MekSummaryCache.getInstance();
+        UnitLoadingDialog unitLoadingDialog = new UnitLoadingDialog(frame, mekSummaryCache,
+              Messages.getString("CommonMenuBar.fileUnitsRefreshUnitCache"), !mekSummaryCache.isLoading());
+        MekSummaryCache.refreshUnitData(false);
+        unitLoadingDialog.setVisible(true);
+    }
+
+    private void rebuildUnitCache() {
+        MekSummaryCache mekSummaryCache = MekSummaryCache.getInstance();
+        UnitLoadingDialog unitLoadingDialog = new UnitLoadingDialog(frame, mekSummaryCache,
+              Messages.getString("CommonMenuBar.fileUnitsRebuildUnitCache"), !mekSummaryCache.isLoading());
+        MekSummaryCache.rebuildUnitData(false);
+        unitLoadingDialog.setVisible(true);
+    }
+
+    /**
+     * Shows a confirmation dialog when attempting to load a game from the lobby.
+     *
+     * @return true if the user confirms, false otherwise
+     */
+    private boolean confirmLoadFromLobby() {
+        int result = JOptionPane.showConfirmDialog(
+              frame,
+              Messages.getString("ClientGUI.LoadFromLobby.message"),
+              Messages.getString("ClientGUI.LoadFromLobby.title"),
+              JOptionPane.YES_NO_OPTION,
+              JOptionPane.WARNING_MESSAGE
+        );
+        return result == JOptionPane.YES_OPTION;
+    }
+
+    /**
+     * Handles loading a game from the lobby. Shows file chooser first, then confirms disconnect, then loads directly.
+     */
+    private void loadGameFromLobby() {
+        // Show file chooser first (before closing lobby)
+        JFileChooser fileChooser = new JFileChooser(MMConstants.SAVEGAME_DIR);
+        fileChooser.setDialogTitle(Messages.getString("MegaMek.SaveGameDialog.title"));
+        fileChooser.setFileFilter(new FileFilter() {
+            @Override
+            public boolean accept(File f) {
+                return f.getName().endsWith(MMConstants.SAVE_FILE_EXT)
+                      || f.getName().endsWith(MMConstants.SAVE_FILE_GZ_EXT)
+                      || f.isDirectory();
+            }
+
+            @Override
+            public String getDescription() {
+                return "Savegames";
+            }
+        });
+
+        int returnVal = fileChooser.showOpenDialog(frame);
+        if (returnVal != JFileChooser.APPROVE_OPTION || fileChooser.getSelectedFile() == null) {
+            return;
+        }
+
+        File selectedFile = fileChooser.getSelectedFile();
+
+        // Now confirm disconnect
+        if (!confirmLoadFromLobby()) {
+            return;
+        }
+
+        // Close lobby and load the selected file directly (skip HostDialog)
+        controller.setPostUnlaunchAction(() ->
+              controller.megaMekGUI.loadGameFile(selectedFile));
+        setDisconnectQuietly(true);
+        die();
     }
 
     /**
@@ -801,6 +1224,14 @@ public class ClientGUI extends AbstractClientGUI
         getGameOptionsDialog().update(client.getGame().getOptions());
         getGameOptionsDialog().setVisible(true);
     }
+
+    private void showNetworkInformation() {
+        // Display the network information screen
+        getNetworkInformationDialog().refresh();
+        getNetworkInformationDialog().pack();
+        getNetworkInformationDialog().setVisible(true);
+    }
+
 
     public void customizePlayer() {
         PlayerSettingsDialog psd = new PlayerSettingsDialog(this, client, (BoardView) boardViews.get(0));
@@ -879,6 +1310,12 @@ public class ClientGUI extends AbstractClientGUI
         if (gameOptionsDialog != null) {
             gameOptionsDialog.setBounds(0, 0, gameOptionsDialog.getWidth(), gameOptionsDialog.getHeight());
         }
+        if (networkInformationDialog != null) {
+            networkInformationDialog.setBounds(0,
+                  0,
+                  networkInformationDialog.getWidth(),
+                  networkInformationDialog.getHeight());
+        }
         if (commonSettingsDialog != null) {
             commonSettingsDialog.setBounds(0, 0, commonSettingsDialog.getWidth(), commonSettingsDialog.getHeight());
         }
@@ -918,6 +1355,16 @@ public class ClientGUI extends AbstractClientGUI
                     client.sendChat(CG_CHAT_COMMAND_SAVE + " " + filename);
                 }
                 ignoreHotKeys = false;
+                break;
+            case FILE_GAME_LOAD:
+                loadGameFromLobby();
+                break;
+            case FILE_GAME_QUICK_LOAD:
+                if (confirmLoadFromLobby()) {
+                    controller.setPostUnlaunchAction(() -> controller.megaMekGUI.quickLoadGame());
+                    setDisconnectQuietly(true);
+                    die();
+                }
                 break;
             case HELP_ABOUT:
                 showAbout();
@@ -962,16 +1409,19 @@ public class ClientGUI extends AbstractClientGUI
             case FILE_UNITS_REINFORCE_RAT:
                 ignoreHotKeys = true;
                 if (client.getLocalPlayer().getTeam() == Player.TEAM_UNASSIGNED) {
-                    doAlertDialog(Messages.getString("ClientGUI.openUnitListFileDialog.noReinforceMessage"),
-                          Messages.getString("ClientGUI.openUnitListFileDialog.noReinforceTitle"),
-                          JOptionPane.ERROR_MESSAGE);
+                    addToast(ToastLevel.ERROR,
+                          Messages.getString("ClientGUI.openUnitListFileDialog.noReinforceMessage"));
                     return;
                 }
                 getRandomArmyDialog().setVisible(true);
                 ignoreHotKeys = false;
                 break;
             case FILE_REFRESH_CACHE:
-                MekSummaryCache.refreshUnitData(false);
+                refreshUnitCache();
+                new Thread(mekSelectorDialog, Messages.getString("ClientGUI.mekSelectorDialog")).start();
+                break;
+            case FILE_REBUILD_CACHE:
+                rebuildUnitCache();
                 new Thread(mekSelectorDialog, Messages.getString("ClientGUI.mekSelectorDialog")).start();
                 break;
             case VIEW_CLIENT_SETTINGS:
@@ -980,11 +1430,37 @@ public class ClientGUI extends AbstractClientGUI
             case VIEW_GAME_OPTIONS:
                 showOptions();
                 break;
+            case GAME_GIVE_UP_GAME_MASTER:
+                giveUpGameMaster();
+                break;
+            case GAME_REQUEST_GAME_MASTER:
+                // the same /gm command the lobby button uses: it puts the role to a vote, and the vote dialog is
+                // where the request is followed and can be withdrawn, so there is nothing to confirm here first
+                client.sendChat("/gm");
+                break;
+            case GAME_ALL_MG_BURST_ON:
+            case GAME_ALL_MG_BURST_OFF:
+                if (curPanel instanceof ChatLounge lounge) {
+                    lounge.setAllBurstMg(event.getActionCommand().equals(GAME_ALL_MG_BURST_ON));
+                }
+                break;
+            case GAME_ALL_HOT_LOAD_ON:
+            case GAME_ALL_HOT_LOAD_OFF:
+                if (curPanel instanceof ChatLounge lounge) {
+                    lounge.setAllHotLoad(event.getActionCommand().equals(GAME_ALL_HOT_LOAD_ON));
+                }
+                break;
+            case VIEW_NETWORK_INFORMATION:
+                showNetworkInformation();
+                break;
             case VIEW_PLAYER_SETTINGS:
                 customizePlayer();
                 break;
             case VIEW_PLAYER_LIST:
                 GUIP.togglePlayerListEnabled();
+                break;
+            case VIEW_ROUNDS_IN_AIR:
+                GUIP.toggleRoundsInAirEnabled();
                 break;
             case VIEW_ROUND_REPORT:
                 GUIP.toggleRoundReportEnabled();
@@ -1001,8 +1477,16 @@ public class ClientGUI extends AbstractClientGUI
             case VIEW_MINI_MAP:
                 GUIP.toggleMinimapEnabled();
                 break;
-            case VIEW_BOT_COMMANDS:
-                GUIP.toggleBotCommandsEnabled();
+            case VIEW_BOT_COMMANDS_OFF:
+                GUIP.setBotCommandsEnabled(false);
+                break;
+            case VIEW_BOT_COMMANDS_FLOAT:
+                GUIP.setBotCommandsLocation(BOT_COMMANDS_LOCATION_FLOATING);
+                GUIP.setBotCommandsEnabled(true);
+                break;
+            case VIEW_BOT_COMMANDS_DOCK:
+                GUIP.setBotCommandsLocation(BOT_COMMANDS_LOCATION_DOCKED);
+                GUIP.setBotCommandsEnabled(true);
                 break;
             case VIEW_TOGGLE_HEX_COORDS:
                 GUIP.toggleCoords();
@@ -1071,6 +1555,11 @@ public class ClientGUI extends AbstractClientGUI
                 if (client.getGame().getPhase().isMovement()) {
                     ((BoardView) boardViews.get(0)).clearHexImageCache();
                 }
+                break;
+            case VIEW_TOGGLE_FOV_SPOTTING:
+                GUIP.setFovSpottingMode(!GUIP.getFovSpottingMode());
+                boardViews.get(0).refreshDisplayables();
+                ((BoardView) boardViews.get(0)).clearHexImageCache();
                 break;
             case VIEW_TOGGLE_FIRING_SOLUTIONS:
                 GUIP.setShowFiringSolutions(!GUIP.getShowFiringSolutions());
@@ -1158,6 +1647,7 @@ public class ClientGUI extends AbstractClientGUI
     /**
      * Saves the current settings to the cfg file.
      */
+    @Override
     void saveSettings() {
         super.saveSettings();
 
@@ -1253,6 +1743,13 @@ public class ClientGUI extends AbstractClientGUI
             gameOptionsDialog = new GameOptionsDialog(this);
         }
         return gameOptionsDialog;
+    }
+
+    public NetworkInformationDialog getNetworkInformationDialog() {
+        if (networkInformationDialog == null) {
+            networkInformationDialog = new NetworkInformationDialog(this);
+        }
+        return networkInformationDialog;
     }
 
     public MegaMekUnitSelectorDialog getMekSelectorDialog() {
@@ -1508,6 +2005,28 @@ public class ClientGUI extends AbstractClientGUI
                 currPhaseDisplay = (StatusBarPhaseDisplay) component;
                 panSecondary.add(component, secondary);
                 break;
+            case PREEND_DECLARATIONS:
+                component = new PreEndDeclarationsDisplay(this);
+                main = CG_BOARD_VIEW;
+                secondary = CG_PREEND_DECLARATIONS_DISPLAY;
+                component.setName(secondary);
+                if (!mainNames.containsValue(main)) {
+                    panMain.add(panTop, main);
+                }
+                currPhaseDisplay = (StatusBarPhaseDisplay) component;
+                panSecondary.add(component, secondary);
+                break;
+            case INFANTRY_VS_INFANTRY_COMBAT:
+                component = new InfantryVsInfantryCombatDisplay(this);
+                main = CG_BOARD_VIEW;
+                secondary = CG_INFANTRY_COMBAT_DISPLAY;
+                component.setName(secondary);
+                if (!mainNames.containsValue(main)) {
+                    panMain.add(panTop, main);
+                }
+                currPhaseDisplay = (StatusBarPhaseDisplay) component;
+                panSecondary.add(component, secondary);
+                break;
             case INITIATIVE_REPORT:
             case TARGETING_REPORT:
             case MOVEMENT_REPORT:
@@ -1593,23 +2112,18 @@ public class ClientGUI extends AbstractClientGUI
 
     private void maybeShowBotCommands() {
         GamePhase phase = getClient().getGame().getPhase();
+        boolean phaseAllowsPanel;
         if (phase.isReport()) {
-            int action = GUIP.getBotCommandsAutoDisplayReportPhase();
-            if (action == GUIPreferences.SHOW) {
-                GUIP.setBotCommandsEnabled(true);
-            } else if (action == GUIPreferences.HIDE) {
-                GUIP.setBotCommandsEnabled(false);
-            }
+            phaseAllowsPanel = GUIP.getBotCommandsAutoDisplayReportPhase() != GUIPreferences.HIDE;
         } else if (phase.isOnMap()) {
-            int action = GUIP.getBotCommandsAutoDisplayNonReportPhase();
-            if (action == GUIPreferences.SHOW) {
-                GUIP.setBotCommandsEnabled(true);
-            } else if (action == GUIPreferences.HIDE) {
-                GUIP.setBotCommandsEnabled(false);
-            }
+            phaseAllowsPanel = GUIP.getBotCommandsAutoDisplayNonReportPhase() != GUIPreferences.HIDE;
         } else {
-            GUIP.setBotCommandsEnabled(false);
+            // Lounge and other non-board phases never show the panel, but the player's on/off choice is kept.
+            phaseAllowsPanel = false;
         }
+        // BOT_COMMANDS_ENABLED is the persistent user choice (Off/Float/Dock); honor it here, never overwrite it,
+        // so the chosen mode is remembered across phases and across sessions.
+        setBotCommandsLocation(GUIP.getBotCommandsEnabled() && phaseAllowsPanel);
     }
 
     /** Shows or hides the minimap based on the current menu setting. */
@@ -1708,6 +2222,22 @@ public class ClientGUI extends AbstractClientGUI
         }
     }
 
+    void setRoundsInAirVisible(boolean visible) {
+        if (getRoundsInAirDialog() != null) {
+            if (visible) {
+                // Push the current "reveal all artillery" preference to the server on open. The preference change
+                // listener only fires the push when the toggle CHANGES, so a value already set to true at game start
+                // would otherwise never reach the server and enemy rounds would stay hidden. The server's reply
+                // refreshes the list.
+                getClient().sendArtilleryRevealPreference(
+                      GUIP.getBoolean(GUIPreferences.REVEAL_ALL_ARTILLERY_ROUNDS));
+                getRoundsInAirDialog().refresh();
+            }
+            getRoundsInAirDialog().setVisible(visible);
+            conditionalRequestFocus(visible);
+        }
+    }
+
     /** Shows or hides the Unit Display based on the current menu setting. */
     public void maybeShowUnitDisplay() {
         GamePhase phase = getClient().getGame().getPhase();
@@ -1766,7 +2296,7 @@ public class ClientGUI extends AbstractClientGUI
               != null)) {
             List<Entity> es = getClient().getGame().getEntitiesVector();
             if (!es.isEmpty()) {
-                getUnitDisplay().displayEntity(es.get(0));
+                getUnitDisplay().displayEntity(es.getFirst());
             }
         }
 
@@ -1775,11 +2305,35 @@ public class ClientGUI extends AbstractClientGUI
         }
     }
 
-    void setBotCommandsDialogVisible(boolean visible) {
-        if (getBotCommandsDialog() != null) {
-            getBotCommandsDialog().setVisible(visible);
-            conditionalRequestFocus(visible);
+    /**
+     * Places the bot commands panel in its configured location and sets its visibility. Mirrors
+     * {@link #setUnitDisplayLocation(boolean)}: the single panel instance is reparented between the floating dialog and
+     * the docked strip at the top of the board area, so no command functionality is lost when switching. Floating mode
+     * keeps the panel's original size and two-row layout; docked mode uses a single-row strip.
+     *
+     * @param visible whether the bot commands panel should be shown
+     */
+    void setBotCommandsLocation(boolean visible) {
+        if ((botCommandsPanel == null) || (getBotCommandsDialog() == null) || (panTop == null)) {
+            return;
         }
+        boolean docked = GUIP.getBotCommandsLocation() == BOT_COMMANDS_LOCATION_DOCKED;
+        botCommandsPanel.setDockedLayout(docked);
+        if (docked) {
+            getBotCommandsDialog().setVisible(false);
+            panTop.add(botCommandsPanel, BorderLayout.NORTH);
+            botCommandsPanel.setVisible(visible);
+            logger.debug("[BotPanel] docked at top of board, visible={}", visible);
+        } else {
+            panTop.remove(botCommandsPanel);
+            getBotCommandsDialog().add(botCommandsPanel);
+            botCommandsPanel.setVisible(true);
+            getBotCommandsDialog().setVisible(visible);
+            logger.debug("[BotPanel] floating dialog, visible={}", visible);
+        }
+        panTop.revalidate();
+        panTop.repaint();
+        conditionalRequestFocus(visible);
     }
 
     private void saveSplitPaneLocations() {
@@ -2079,6 +2633,7 @@ public class ClientGUI extends AbstractClientGUI
      *       to the player, and is only being returned so the calling function can see the answer to the question and
      *       the state of the "Show again?" question.
      */
+    @Deprecated(since = "0.51.0", forRemoval = true)
     public ConfirmDialog doWarnNoBotherDialog(String title, String question) {
         ConfirmDialog confirm = new ConfirmDialog(frame, title, question, true);
         confirm.setVisible(true);
@@ -2119,9 +2674,8 @@ public class ClientGUI extends AbstractClientGUI
             boolean addedUnits = false;
 
             if (reinforce && (player.getTeam() == Player.TEAM_UNASSIGNED)) {
-                doAlertDialog(Messages.getString("ClientGUI.openUnitListFileDialog.noReinforceMessage"),
-                      Messages.getString("ClientGUI.openUnitListFileDialog.noReinforceTitle"),
-                      JOptionPane.ERROR_MESSAGE);
+                addToast(ToastLevel.ERROR,
+                      Messages.getString("ClientGUI.openUnitListFileDialog.noReinforceMessage"));
                 return;
             }
             // Build the "load unit" dialog, if necessary.
@@ -2467,16 +3021,14 @@ public class ClientGUI extends AbstractClientGUI
     }
 
     /**
-     * Shows a dialog where the player can select the entity types used in the LOS tool.
+     * Shows the Ruler/LOS dialog. This consolidates the old LOSDialog functionality into the RulerDialog which provides
+     * distance, to-hit modifiers, and an elevation cross-section diagram.
      */
     private void showLOSSettingDialog() {
-        LOSDialog ld = new LOSDialog(frame, GUIP.getMekInFirst(), GUIP.getMekInSecond());
-        ignoreHotKeys = true;
-        if (ld.showDialog().isConfirmed()) {
-            GUIP.setMekInFirst(ld.getMekInFirst());
-            GUIP.setMekInSecond(ld.getMekInSecond());
+        if (ruler != null) {
+            ruler.setVisible(true);
+            ruler.toFront();
         }
-        ignoreHotKeys = false;
     }
 
     /**
@@ -2532,6 +3084,21 @@ public class ClientGUI extends AbstractClientGUI
     private final GameListener gameListener = new GameListenerAdapter() {
 
         @Override
+        public void gamePollChange(GamePollEvent evt) {
+            updateGameMasterVoteDialog(evt.getPoll());
+        }
+
+        @Override
+        public void gameBoardChanged(GameBoardChangeEvent e) {
+            // Keep the Rounds in the Air window current the moment in-flight artillery changes. The artillery packet
+            // arrives after the phase-change event, so a phase-change-only refresh would lag a phase (and miss
+            // off-board counter-battery rounds entirely until the next phase).
+            if (roundsInAirDialog != null) {
+                roundsInAirDialog.refresh();
+            }
+        }
+
+        @Override
         public void gameBoardNew(GameBoardNewEvent e) {
             Board newBoard = e.getNewBoard();
             final int boardId = e.getBoardId();
@@ -2554,7 +3121,10 @@ public class ClientGUI extends AbstractClientGUI
                           ClientGUI.this,
                           null,
                           boardId));
-                    newMinimap.setVisible(true);
+                    // A board arriving during the lounge (lobby-built battlefield) must not pop up the minimap;
+                    // the boards are re-sent at game start (EXCHANGE), which shows it as usual.
+                    boolean isInLounge = client.getGame().getPhase().isLounge();
+                    newMinimap.setVisible(!isInLounge);
                     miniMaps.put(boardId, newMinimap);
                     boardViews.put(boardId, boardView);
                     boardView.getPanel().setPreferredSize(clientGuiPanel.getSize());
@@ -2568,12 +3138,11 @@ public class ClientGUI extends AbstractClientGUI
                     boardView.addOverlay(new KeyBindingsOverlay(boardView));
                     boardView.addOverlay(new PlanetaryConditionsOverlay(boardView));
                     boardView.addOverlay(new TurnDetailsOverlay(boardView));
+                    toastOverlay = new BoardToastOverlay(boardView, ClientGUI.this);
+                    boardView.addOverlay(toastOverlay);
                     boardView.setTooltipProvider(new TWBoardViewTooltip(client.getGame(), ClientGUI.this, boardView));
                     boardViewsContainer.updateMapTabs();
-                    ruler = new RulerDialog(frame, client, boardView, client.getGame());
-                    ruler.setLocation(GUIP.getRulerPosX(), GUIP.getRulerPosY());
-                    ruler.setSize(GUIP.getRulerSizeHeight(), GUIP.getRulerSizeWidth());
-                    UIUtil.updateWindowBounds(ruler);
+                    ruler = new RulerDialog(frame, boardView, client.getGame());
                     boardView.addBoardViewListener(ClientGUI.this);
                 } catch (IOException ex) {
                     // this is likely fatal anyway
@@ -2591,6 +3160,10 @@ public class ClientGUI extends AbstractClientGUI
                     currPhaseDisplay.setStatusBarWithNotDonePlayers();
                 }
             }
+            // the Game Master role may have changed hands, so keep the title's marker and the Game menu's
+            // Game Master entries in step
+            updateFrameTitle();
+            updateGameMasterMenuItems();
         }
 
         @Override
@@ -2631,11 +3204,35 @@ public class ClientGUI extends AbstractClientGUI
             GamePhase phase = getClient().getGame().getPhase();
             switchPanel(phase);
 
+            // Keep the Rounds in the Air list current as rounds are declared, fly, and land each phase.
+            if (roundsInAirDialog != null) {
+                roundsInAirDialog.refresh();
+            }
+
+            // Special-report packets replay the whole phase report each time they are sent, so the "already toasted"
+            // history only has to span a single phase. Clearing it here also lets a line that genuinely recurs in a
+            // later phase toast again.
+            toastedReportEntries.clear();
+
+            // Once per round, remind the player of own platoons busy raising bridges (TO:AUE); building
+            // platoons are ineligible for all phases, so no phase display ever selects them
+            if (phase.isMovement()) {
+                showBridgeBuildProgressToasts();
+            }
+
+            // Reset spotting FOV mode at game start to prevent player confusion
+            if (phase.isLounge()) {
+                GUIP.setFovSpottingMode(false);
+            }
+
             if (phase.isDeployment()) {
                 setWeaponOrderPrefs(false);
             }
 
             menuBar.setPhase(phase);
+
+            // Update the frame title to show current round and phase
+            updateFrameTitle();
 
             // Update Nova Networks menu based on whether Nova CEWS units exist
             updateNovaNetworksMenu();
@@ -2682,12 +3279,13 @@ public class ClientGUI extends AbstractClientGUI
                 reportDisplayResetRerollInitiative();
 
                 if (!(getClient() instanceof BotClient)) {
-                    doAlertDialog(Messages.getString("ClientGUI.dialogTacticalGeniusReport"), e.getReport());
+                    showReportAsToasts(Messages.getString("ClientGUI.dialogTacticalGeniusReport"),
+                          e.getReport());
                 }
             } else {
                 // Continued movement after getting up
                 if (!(getClient() instanceof BotClient)) {
-                    doAlertDialog(Messages.getString("ClientGUI.dialogMovementReport"), e.getReport());
+                    showReportAsToasts(Messages.getString("ClientGUI.dialogMovementReport"), e.getReport());
                 }
             }
         }
@@ -2760,6 +3358,11 @@ public class ClientGUI extends AbstractClientGUI
             if (curPanel instanceof ChatLounge cl) {
                 cl.updateMapSettings(getClient().getMapSettings());
             }
+
+            // the host may have turned Allow Game Master on or off, which offers or takes away the Become entry,
+            // or the burst fire and hot-loading options behind the lobby's all-units equipment shortcuts
+            updateGameMasterMenuItems();
+            updateLobbyEquipmentMenuItems();
         }
 
         @Override
@@ -2767,6 +3370,12 @@ public class ClientGUI extends AbstractClientGUI
             if (event instanceof GameScriptedMessageEvent) {
                 showScriptedMessage((GameScriptedMessageEvent) event);
             }
+        }
+
+        @Override
+        public void gameToast(GameToastEvent event) {
+            Entity entity = client.getGame().getEntity(event.entityId());
+            addToast(toastLevelFor(event.level()), event.message(), entity);
         }
 
         @Override
@@ -2858,19 +3467,36 @@ public class ClientGUI extends AbstractClientGUI
                         amsOptions.add(waaMsg);
                     }
 
-                    result = JOptionPane.showInputDialog(frame,
-                          Messages.getString("CFRAMSAssign.Message", entity.getDisplayName()),
-                          Messages.getString("CFRAMSAssign.Title", entity.getDisplayName()),
-                          JOptionPane.QUESTION_MESSAGE,
-                          null,
-                          amsOptions.toArray(),
-                          null);
-                    // If they closed it, assume no action
-                    if ((result == null) || result.equals(Messages.getString("NONE"))) {
-                        client.sendAMSAssignCFRResponse(null);
+                    // Updated AMS selection code for dealing with Multi_AMS, Playtest3 and standard selection
+                    JList amsList = new JList(amsOptions.toArray());
+                    JScrollPane amsScrollPane = new JScrollPane(amsList);
+                    if (entity.getGame().getOptions().booleanOption(OptionsConstants.ADVANCED_COMBAT_MULTI_USE_AMS)) {
+                        amsList.setSelectionModel(new AmsAssignGUI(amsList, amsOptions.size()));
+                    } else if (entity.getGame().getOptions().booleanOption(OptionsConstants.PLAYTEST_3)) {
+                        amsList.setSelectionModel(new AmsAssignGUI(amsList, 2));
                     } else {
-                        client.sendAMSAssignCFRResponse(amsOptions.indexOf(result) - 1);
+                        amsList.setSelectionModel(new AmsAssignGUI(amsList, 1));
                     }
+
+                    int amsResult = JOptionPane.showConfirmDialog(frame,
+                          amsScrollPane,
+                          Messages.getString("CFRAMSAssign.Message", entity.getDisplayName()),
+                          JOptionPane.OK_CANCEL_OPTION, JOptionPane.QUESTION_MESSAGE
+                    );
+
+                    int[] selectedItems = amsList.getSelectedIndices();
+                    if (amsResult == JOptionPane.OK_OPTION && !(selectedItems.length == 1
+                          && amsList.getSelectedValue() == "NONE")) {
+                        // Due to the "None" option, reduce all selected index values by 1.
+                        // This makes "None" a -1 value.
+                        for (int i = 0; i < selectedItems.length; i++) {
+                            selectedItems[i] = selectedItems[i] - 1;
+                        }
+                        client.sendAMSAssignCFRResponse(selectedItems);
+                    } else {
+                        client.sendAMSAssignCFRResponse(null);
+                    }
+
                     break;
                 case CFR_APDS_ASSIGN:
                     if (entity == null) {
@@ -2994,7 +3620,7 @@ public class ClientGUI extends AbstractClientGUI
                           JOptionPane.QUESTION_MESSAGE,
                           null,
                           targetDescriptions.toArray(),
-                          targetDescriptions.get(0));
+                          targetDescriptions.getFirst());
                     if (input != null) {
                         for (int i = 0; i < targetDescriptions.size(); i++) {
                             if (input.equals(targetDescriptions.get(i))) {
@@ -3032,7 +3658,7 @@ public class ClientGUI extends AbstractClientGUI
                           JOptionPane.QUESTION_MESSAGE,
                           null,
                           TAGTargetDescriptions.toArray(),
-                          TAGTargetDescriptions.get(0));
+                          TAGTargetDescriptions.getFirst());
                     if (input != null) {
                         for (int i = 0; i < TAGTargetDescriptions.size(); i++) {
                             if (input.equals(TAGTargetDescriptions.get(i))) {
@@ -3055,6 +3681,7 @@ public class ClientGUI extends AbstractClientGUI
         }
     };
 
+    @Override
     public Client getClient() {
         return client;
     }
@@ -3277,14 +3904,17 @@ public class ClientGUI extends AbstractClientGUI
 
         AddBotUtil util = new AddBotUtil();
         Map<String, BehaviorSettings> newBotSettings = rpd.getNewBots();
+        Map<String, AIType> newBotTypes = rpd.getNewBotTypes();
         for (String ghostName : newBotSettings.keySet()) {
             StringBuilder message = new StringBuilder();
-            Princess princess = util.replaceGhostWithBot(newBotSettings.get(ghostName), ghostName, client, message);
+            AIType aiType = newBotTypes.getOrDefault(ghostName, AIType.PRINCESS);
+            BotClient botClient = util.replaceGhostWithBot(aiType, newBotSettings.get(ghostName), ghostName,
+                  client, message);
             systemMessage(message.toString());
-            // Make this princess a locally owned bot. This way it can be configured, and if on the lobby
+            // Make this bot a locally owned bot. This way it can be configured, and if on the lobby
             // it will faithfully press Done when the local player does.
-            if (princess != null) {
-                getLocalBots().put(ghostName, princess);
+            if (botClient != null) {
+                getLocalBots().put(ghostName, botClient);
             }
         }
 
@@ -3325,6 +3955,13 @@ public class ClientGUI extends AbstractClientGUI
         switch (e.getName()) {
             case GUIPreferences.MINI_MAP_ENABLED -> setMapVisible(GUIP.getMinimapEnabled());
             case GUIPreferences.PLAYER_LIST_ENABLED -> setPlayerListVisible(GUIP.getPlayerListEnabled());
+            case GUIPreferences.ROUNDS_IN_AIR_ENABLED -> setRoundsInAirVisible(GUIP.getRoundsInAirEnabled());
+            case GUIPreferences.REVEAL_ALL_ARTILLERY_ROUNDS -> {
+                getClient().sendArtilleryRevealPreference(GUIP.getBoolean(GUIPreferences.REVEAL_ALL_ARTILLERY_ROUNDS));
+                if (roundsInAirDialog != null) {
+                    roundsInAirDialog.refresh();
+                }
+            }
             case GUIPreferences.UNIT_DISPLAY_ENABLED, GUIPreferences.UNIT_DISPLAY_LOCATION ->
                   setUnitDisplayVisible(GUIP.getUnitDisplayEnabled());
             case GUIPreferences.FORCE_DISPLAY_ENABLED -> setForceDisplayVisible(GUIP.getForceDisplayEnabled());
@@ -3342,7 +3979,10 @@ public class ClientGUI extends AbstractClientGUI
                  GUIPreferences.SOUND_BING_FILENAME_MY_TURN,
                  GUIPreferences.SOUND_BING_FILENAME_OTHERS_TURN -> audioService.loadSoundFiles();
             case GUIPreferences.MASTER_VOLUME -> audioService.setVolume();
-            case GUIPreferences.BOT_COMMANDS_ENABLED -> setBotCommandsDialogVisible(GUIP.getBotCommandsEnabled());
+            case GUIPreferences.BOT_COMMANDS_ENABLED, GUIPreferences.BOT_COMMANDS_LOCATION ->
+                  // Route through maybeShowBotCommands() so the phase rules (non-board phases never show the panel)
+                  // are enforced consistently, whether the change came from the menu, the hotkey, or a phase change.
+                  maybeShowBotCommands();
         }
     }
 
@@ -3422,6 +4062,16 @@ public class ClientGUI extends AbstractClientGUI
     }
 
     /**
+     * Shows saw clearing indicators on the given hexes in the BoardView.
+     *
+     * @param cutHexes a map of board locations to turns remaining for saw clearing
+     */
+    @Deprecated(since = "0.51.0", forRemoval = true)
+    public void showSawClearingHexes(Map<BoardLocation, Integer> cutHexes) {
+        sawClearingSpriteHandler.setSawClearingSprites(cutHexes);
+    }
+
+    /**
      * Shows ground object icons in the given list of Coords in the BoardView
      *
      * @param groundObjectList The list of coordinates to show
@@ -3436,7 +4086,7 @@ public class ClientGUI extends AbstractClientGUI
      * @param entity The attacking entity
      */
     public void showFiringSolutions(Entity entity) {
-        firingSolutionSpriteHandler.showFiringSolutions(entity);
+        firingSolutionSpriteHandler.showFiringSolutions(entity, getDisplayedWeapon(), getDisplayedAmmo());
     }
 
     public JPanel getMainPanel() {
@@ -3532,13 +4182,13 @@ public class ClientGUI extends AbstractClientGUI
     }
 
     /**
-     * Updates the Nova Networks menu enablement based on whether the local player
-     * has any Nova CEWS units in their force.
+     * Updates the Nova Networks menu enablement based on whether the local player has any Nova CEWS units in their
+     * force.
      */
     private void updateNovaNetworksMenu() {
         boolean hasNovaUnits = client.getGame().getEntitiesVector().stream()
-            .filter(entity -> entity.getOwner().equals(client.getLocalPlayer()))
-            .anyMatch(Entity::hasNovaCEWS);
+              .filter(entity -> entity.getOwner().equals(client.getLocalPlayer()))
+              .anyMatch(Entity::hasNovaCEWS);
         menuBar.setEnabled(VIEW_NOVA_NETWORKS, hasNovaUnits);
     }
 

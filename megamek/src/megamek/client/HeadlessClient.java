@@ -41,6 +41,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Enumeration;
 
+import megamek.common.Player;
 import megamek.common.units.Entity;
 import megamek.common.units.EntityListFile;
 import megamek.common.enums.GamePhase;
@@ -57,10 +58,25 @@ import megamek.logging.MMLogger;
  * @author Luana Coppio
  */
 public class HeadlessClient extends Client {
-    private final static MMLogger logger = MMLogger.create(HeadlessClient.class);
+    private final static MMLogger LOGGER = MMLogger.create(HeadlessClient.class);
     protected static final ClientPreferences PREFERENCES = PreferenceManager.getClientPreferences();
 
     private boolean sendDoneOnVictoryAutomatically = true;
+
+    /**
+     * A client with no GUI has nothing to show an entity's picture in, so it does not cache one.
+     *
+     * <p>Building that cache is what pulls in the hex tile set, which parses thousands of template hexes and their
+     * terrain. {@code BotClient} already declines it for the same reason; a headless client wants it no more than a
+     * bot does, and anywhere clients are created repeatedly - a benchmark playing many games in one process - the
+     * cost is paid and retained once per game.</p>
+     *
+     * @param entity ignored
+     */
+    @Override
+    protected void cacheImgTag(Entity entity) {
+        // Deliberately empty: see the javadoc.
+    }
 
     public HeadlessClient(String name, String host, int port) {
         super(name, host, port);
@@ -101,7 +117,7 @@ public class HeadlessClient extends Client {
                             // noinspection ResultOfMethodCallIgnored
                             logDir.mkdir();
                         } catch (SecurityException ex) {
-                            logger.error(ex, "Failed to create log directory");
+                            LOGGER.error(ex, "Failed to create log directory");
                             return;
                         }
                     }
@@ -114,9 +130,10 @@ public class HeadlessClient extends Client {
                         // Save the destroyed entities to the file.
                         EntityListFile.saveTo(unitFile, destroyed);
                     } catch (IOException ex) {
-                        logger.error(ex, "Failed to save entity list file");
+                        LOGGER.error(ex, "Failed to save entity list file");
                     }
                 }
+                saveVictoryList();
             }
         };
 
@@ -137,4 +154,34 @@ public class HeadlessClient extends Client {
         super.changePhase(phase);
     }
 
+
+    private void saveVictoryList() {
+        String filename = getLocalPlayer().getName();
+
+        // Did we select a file?
+        File unitFile = new File(filename + CG_FILE_EXTENSION_MUL);
+        if (!(unitFile.getName().toLowerCase().endsWith(CG_FILE_EXTENSION_MUL))) {
+            try {
+                unitFile = new File(unitFile.getCanonicalPath() + CG_FILE_EXTENSION_MUL);
+            } catch (Exception ignored) {
+                LOGGER.error("Could not set proper extension for file path.");
+                return;
+            }
+        }
+
+
+            // What bot was this player? We need it to get the propper salvage MUL, just in case
+            Player botPlayer =
+                  getGame().getPlayersList().stream().filter(p -> p.isBot() && p.getName().equals(getLocalPlayer().getName() +
+                        "@AI")).findFirst().orElse(null);
+
+            if (botPlayer != null) {
+                try {
+                    // Save the player's entities to the file.
+                    EntityListFile.saveTo(unitFile, this, botPlayer);
+                } catch (Exception ex) {
+                    LOGGER.error(ex, "saveVictoryList");
+                }
+            }
+        }
 }

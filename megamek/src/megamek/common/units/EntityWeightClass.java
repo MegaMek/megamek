@@ -413,47 +413,55 @@ public class EntityWeightClass {
     public static double getClassLimit(int wClass, Entity en) {
         // Order of IF statements is important!! Any subclasses must come before their
         // parent class!
-        if (en instanceof Mek) {
-            if ((wClass >= 0) && (wClass < SIZE)) {
-                return mekWeightLimits[wClass];
+        switch (en) {
+            case Jumpship ignored -> {
+                if ((wClass >= 0) && (wClass < SIZE)) {
+                    return jumpshipWeightLimits[wClass];
+                }
             }
-        } else if (en instanceof Jumpship) {
-            if ((wClass >= 0) && (wClass < SIZE)) {
-                return jumpshipWeightLimits[wClass];
+            case Dropship ignored -> {
+                if ((wClass >= 0) && (wClass < SIZE)) {
+                    return dropshipWeightLimits[wClass];
+                }
             }
-        } else if (en instanceof Dropship) {
-            if ((wClass >= 0) && (wClass < SIZE)) {
-                return dropshipWeightLimits[wClass];
+            case ConvFighter ignored -> {
+                return 50;
             }
-        } else if (en instanceof ConvFighter) {
-            return 50;
-        } else if (en instanceof SmallCraft) {
-            return 200;
-        } else if (en instanceof Aero) {
-            if ((wClass >= 0) && (wClass < SIZE)) {
-                return ASFWeightLimits[wClass];
+            case SmallCraft ignored -> {
+                return 200;
             }
-        } else if (en instanceof BattleArmor) {
-            if ((wClass >= 0) && (wClass < SIZE)) {
-                return BAWeightLimits[wClass];
+            case Aero ignored -> {
+                if ((wClass >= 0) && (wClass < SIZE)) {
+                    return ASFWeightLimits[wClass];
+                }
             }
-        } else if (en instanceof Infantry) {
-            return 500; // Not a clue for infantry, since I can't find anything for them.
-        } else if (en instanceof GunEmplacement) {
-            if ((wClass >= 0) && (wClass < SIZE)) {
-                return GEWeightLimits[wClass];
+            case BattleArmor ignored -> {
+                if ((wClass >= 0) && (wClass < SIZE)) {
+                    return BAWeightLimits[wClass];
+                }
             }
-        } else if (en instanceof Tank) {
-            if ((wClass >= 0) && (wClass < SIZE)) {
-                return vehicleWeightLimits[wClass];
+            case Infantry ignored -> {
+                return 500; // Not a clue for infantry, since I can't find anything for them.
             }
-        } else if (en instanceof ProtoMek) {
-            if ((wClass >= 0) && (wClass < SIZE)) {
-                return protoWeightLimits[wClass];
+            case GunEmplacement ignored -> {
+                if ((wClass >= 0) && (wClass < SIZE)) {
+                    return GEWeightLimits[wClass];
+                }
             }
-        } else { // And... we'll default to meks
-            if ((wClass >= 0) && (wClass < SIZE)) {
-                return mekWeightLimits[wClass];
+            case Tank ignored -> {
+                if ((wClass >= 0) && (wClass < SIZE)) {
+                    return vehicleWeightLimits[wClass];
+                }
+            }
+            case ProtoMek ignored -> {
+                if ((wClass >= 0) && (wClass < SIZE)) {
+                    return protoWeightLimits[wClass];
+                }
+            }
+            case null, default -> {
+                if ((wClass >= 0) && (wClass < SIZE)) {
+                    return mekWeightLimits[wClass];
+                }
             }
         }
         throw new IllegalArgumentException("Unknown Weight Class");

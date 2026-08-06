@@ -48,6 +48,8 @@ public class AbstractOptionsInfo implements IOptionsInfo {
     protected static final String OPTION_SUFFIX = ".option.";
     protected static final String DISPLAYABLE_NAME_SUFFIX = ".displayableName";
     protected static final String DESCRIPTION_SUFFIX = ".description";
+    protected static final String TEXT_FIELD_LENGTH_SUFFIX = ".textFieldLength";
+    protected static final String LABEL_BEFORE_TEXTFIELD_SUFFIX = ".labelBeforeTextField";
 
     /**
      * The OptionsInfo name that must be unique. Every instance of the AbstractOptionsInfo must have unique name, it's
@@ -197,6 +199,30 @@ public class AbstractOptionsInfo implements IOptionsInfo {
         return Messages.getString(name + OPTION_SUFFIX + optionName + DESCRIPTION_SUFFIX);
     }
 
+    private int getOptionTextFieldLength(String optionName, int defaultValue) {
+        String key = name + OPTION_SUFFIX + optionName + TEXT_FIELD_LENGTH_SUFFIX;
+        String value = Messages.getString(key);
+        // Messages.getString returns the key itself if not found
+        if (value.equals(key)) {
+            return defaultValue;
+        }
+        try {
+            return Integer.parseInt(value.trim());
+        } catch (NumberFormatException e) {
+            return defaultValue;
+        }
+    }
+
+    private boolean getOptionLabelBeforeTextField(String optionName, boolean defaultValue) {
+        String key = name + OPTION_SUFFIX + optionName + LABEL_BEFORE_TEXTFIELD_SUFFIX;
+        String value = Messages.getString(key);
+        // Messages.getString returns the key itself if not found
+        if (value.equals(key)) {
+            return defaultValue;
+        }
+        return Boolean.parseBoolean(value.trim());
+    }
+
     /**
      * Private model class to store the option info
      *
@@ -227,12 +253,12 @@ public class AbstractOptionsInfo implements IOptionsInfo {
 
         @Override
         public int getTextFieldLength() {
-            return 3; // Default value of 3
+            return getOptionTextFieldLength(name, 3);
         }
 
         @Override
         public boolean isLabelBeforeTextField() {
-            return false; // Default value of false
+            return getOptionLabelBeforeTextField(name, false);
         }
     }
 }

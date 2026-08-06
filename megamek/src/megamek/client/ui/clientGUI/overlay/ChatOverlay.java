@@ -52,12 +52,12 @@ public class ChatOverlay implements OverlayPanel {
 
     public void addChatMessage(Player player, String message) {
         if (messages.size() > limit) {
-            messages.remove(messages.size() - 1);
+            messages.removeLast();
         }
         if (player == null) {
-            messages.add(0, ">> " + message);
+            messages.addFirst(">> " + message);
         } else {
-            messages.add(0, player.getName() + "> " + message);
+            messages.addFirst(player.getName() + "> " + message);
         }
     }
 

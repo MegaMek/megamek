@@ -59,6 +59,7 @@ public interface SBFRuleOptionsUser {
     /**
      * @return True when this game uses Advanced Initiative, IO:BF p.194.
      */
+    @Deprecated(since = "0.51.0", forRemoval = true)
     default boolean usesAdvancedInitiative() {
         return getOptions().booleanOption(SBFRuleOptions.INIT_MODIFIERS);
     }
@@ -66,6 +67,7 @@ public interface SBFRuleOptionsUser {
     /**
      * @return True when this game uses Battlefield Intelligence, IO:BF p.206.
      */
+    @Deprecated(since = "0.51.0", forRemoval = true)
     default boolean usesBattlefieldInt() {
         return getOptions().booleanOption(SBFRuleOptions.INIT_BATTLEFIELD_INT);
     }
@@ -73,6 +75,7 @@ public interface SBFRuleOptionsUser {
     /**
      * @return True when this game allows adjusting formations, IO:BF p.198.
      */
+    @Deprecated(since = "0.51.0", forRemoval = true)
     default boolean usesAdjustingFormations() {
         return getOptions().booleanOption(SBFRuleOptions.BASE_ADJUST_FORMATIONS);
     }

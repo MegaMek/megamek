@@ -88,7 +88,7 @@ public class ISLB10XACPrototype extends LBXACWeapon {
         extAV = shortAV;
         bv = 148;
         cost = 2000000; // Cost in the AoW is 160000 but not making another version for one field.
-        rulesRefs = "71, IO";
+        rulesRefs = "66, IO:AE";
         techAdvancement.setTechBase(TechBase.IS)
               .setIntroLevel(false)
               .setUnofficial(false)

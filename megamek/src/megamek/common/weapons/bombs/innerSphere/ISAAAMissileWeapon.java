@@ -42,7 +42,7 @@ import megamek.common.enums.TechBase;
 import megamek.common.enums.TechRating;
 import megamek.common.equipment.AmmoType;
 import megamek.common.equipment.enums.BombType.BombTypeEnum;
-import megamek.common.weapons.missiles.thuunderbolt.ThunderboltWeapon;
+import megamek.common.weapons.missiles.thunderbolt.ThunderboltWeapon;
 
 /**
  * @author Jay Lawson
@@ -58,8 +58,8 @@ public class ISAAAMissileWeapon extends ThunderboltWeapon {
     public ISAAAMissileWeapon() {
         super();
 
-        this.name = "AAA Missile";
-        this.setInternalName(BombTypeEnum.AAA.getWeaponName());
+        this.name = BombTypeEnum.AAA.getWeaponName();
+        this.setInternalName("IS " + BombTypeEnum.AAA.getWeaponName());
         this.heat = 0;
         this.damage = 20;
         this.rackSize = 1;
@@ -85,7 +85,7 @@ public class ISAAAMissileWeapon extends ThunderboltWeapon {
         this.capital = false;
         this.missileArmor = 20;
         cost = 9000;
-        this.rulesRefs = "357, TO";
+        this.rulesRefs = "169, TO:AUE";
         techAdvancement.setTechBase(TechBase.IS)
               .setIntroLevel(false)
               .setUnofficial(false)

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2002-2025 The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2002-2026 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -43,7 +43,6 @@ import javax.swing.table.DefaultTableCellRenderer;
 class EquipmentDataRenderer extends DefaultTableCellRenderer {
 
     EquipmentDataRenderer() {
-        super();
         setHorizontalAlignment(SwingConstants.CENTER);
     }
 

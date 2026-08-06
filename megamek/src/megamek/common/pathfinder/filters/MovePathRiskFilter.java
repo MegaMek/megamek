@@ -41,6 +41,7 @@ import megamek.common.moves.MoveStep;
  * FIXME : Current implementation uses MoveStep.isDanger(). This implementation is broken :(
  * FIXME : It does not work properly for movement paths that use running mp.
  */
+@Deprecated(since = "0.51.0", forRemoval = true)
 public class MovePathRiskFilter extends Filter<MovePath> {
     @Override
     public boolean shouldStay(MovePath mp) {

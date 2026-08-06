@@ -309,9 +309,9 @@ public class MovementPhase extends PhaseHandler {
         if (previousTarget.isPresent()) {
             return previousTarget;
         } else if (!preferred.isEmpty()) {
-            return Optional.of(preferred.get(0));
+            return Optional.of(preferred.getFirst());
         } else if (!normal.isEmpty()) {
-            return Optional.of(normal.get(0));
+            return Optional.of(normal.getFirst());
         }
 
         return Optional.empty();

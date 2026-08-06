@@ -51,7 +51,7 @@ import megamek.common.game.Game;
 import megamek.common.loaders.EntityLoadingException;
 import megamek.common.weapons.handlers.ASEWMissileWeaponHandler;
 import megamek.common.weapons.handlers.AttackHandler;
-import megamek.common.weapons.missiles.thuunderbolt.ThunderboltWeapon;
+import megamek.common.weapons.missiles.thunderbolt.ThunderboltWeapon;
 import megamek.server.totalWarfare.TWGameManager;
 
 /**
@@ -69,7 +69,7 @@ public class ISASEWMissileWeapon extends ThunderboltWeapon {
         super();
 
         this.name = "Anti-Ship Electronic Warfare (ASEW) Missiles";
-        this.setInternalName(BombTypeEnum.ASEW.getWeaponName());
+        this.setInternalName("IS " + BombTypeEnum.ASEW.getWeaponName());
         this.heat = 0;
         this.damage = 0;
         this.rackSize = 1;
@@ -95,7 +95,7 @@ public class ISASEWMissileWeapon extends ThunderboltWeapon {
         this.ammoType = AmmoType.AmmoTypeEnum.ASEW_MISSILE;
         this.capital = false;
         this.missileArmor = 30;
-        rulesRefs = "358, TO";
+        rulesRefs = "170, TO:AUE";
         techAdvancement.setTechBase(TechBase.IS)
               .setIntroLevel(false)
               .setUnofficial(false)

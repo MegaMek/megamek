@@ -66,8 +66,8 @@ public class ASLocationMapper {
             return 2;
         } else if (en instanceof BattleArmor) {
             return 1;
-        } else if (en instanceof Infantry) {
-            return ((Infantry) en).hasFieldWeapon() ? 2 : 1;
+        } else if (en instanceof ConvInfantry infantry) {
+            return infantry.hasFieldWeapon() ? 2 : 1;
         } else {
             return 1;
         }
@@ -97,10 +97,10 @@ public class ASLocationMapper {
             // count only the first (loc = 1)
             // Don't count squad support weapons, these are handled separately
             return ((mount.getLocation() <= 1) && !mount.isSquadSupportWeapon()) ? 1 : 0;
-        } else if (en instanceof Infantry) {
+        } else if (en instanceof ConvInfantry infantry) {
             // CI only ever have loc == 0 (no TUR, REAR, arcs); do not count standard
             // weapons when it has field guns
-            return (!((Infantry) en).hasFieldWeapon() || (mount.getLocation() == Infantry.LOC_FIELD_GUNS)) ? 1 : 0;
+            return (!infantry.hasFieldWeapon() || (mount.getLocation() == ConvInfantry.LOC_FIELD_GUNS)) ? 1 : 0;
         } else if (en instanceof TripodMek) {
             return getTripodMekLocationMultiplier(loc, mount.getLocation(), mount.isRearMounted());
         } else if (en instanceof QuadVee) {

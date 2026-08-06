@@ -39,7 +39,7 @@ import java.util.List;
 import java.util.function.Function;
 
 import com.fasterxml.jackson.annotation.JsonValue;
-import megamek.codeUtilities.MathUtility;
+import jakarta.annotation.Nonnull;
 import megamek.common.annotations.Nullable;
 
 /**
@@ -83,6 +83,7 @@ public record ASDamageVector(ASDamage S, ASDamage M, ASDamage L, ASDamage E, int
      * ranges happen to contain damage values of more than null, only if this ASDamageVector was constructed to include
      * the given range.
      */
+    @Deprecated(since = "0.51.0", forRemoval = true)
     public boolean usesDamage(ASRange range) {
         return switch (range) {
             case EXTREME -> rangeBands == 4;
@@ -117,6 +118,7 @@ public record ASDamageVector(ASDamage S, ASDamage M, ASDamage L, ASDamage E, int
      * up to the nearest tenth, then normally to the nearest integer and values between 0 and 0.5 excl. end up as
      * minimal damage.
      */
+    @Deprecated(since = "0.51.0", forRemoval = true)
     public static ASDamageVector createNormRndDmg(double s) {
         return create(s, 0, 0, 0, ASDamage::createDualRoundedNormal, 1, false);
     }
@@ -126,6 +128,7 @@ public record ASDamageVector(ASDamage S, ASDamage M, ASDamage L, ASDamage E, int
      * nearest tenth, then normally to the nearest integer and values between 0 and 0.5 excl. end up as minimal damage.
      * 0 values are printed as - (dash)
      */
+    @Deprecated(since = "0.51.0", forRemoval = true)
     public static ASDamageVector createNormRndDmg(double s, double m) {
         return create(s, m, 0, 0, ASDamage::createDualRoundedNormal, 2, false);
     }
@@ -144,6 +147,7 @@ public record ASDamageVector(ASDamage S, ASDamage M, ASDamage L, ASDamage E, int
      * rounded first up to the nearest tenth, then normally to the nearest integer and values between 0 and 0.5 excl.
      * end up as minimal damage. 0 values are printed as - (dash)
      */
+    @Deprecated(since = "0.51.0", forRemoval = true)
     public static ASDamageVector createNormRndDmg(double s, double m, double l, double e) {
         return create(s, m, l, e, ASDamage::createDualRoundedNormal, 4, false);
     }
@@ -153,6 +157,7 @@ public record ASDamageVector(ASDamage S, ASDamage M, ASDamage L, ASDamage E, int
      * nearest tenth, then normally to the nearest integer. Minimal damage is not used. 0 values are printed as -
      * (dash)
      */
+    @Deprecated(since = "0.51.0", forRemoval = true)
     public static ASDamageVector createNormRndDmgNoMin(double s) {
         return create(s, 0, 0, 0, ASDamage::createDualRoundedNormalNoMinimal, 1, false);
     }
@@ -162,6 +167,7 @@ public record ASDamageVector(ASDamage S, ASDamage M, ASDamage L, ASDamage E, int
      * nearest tenth, then normally to the nearest integer. Minimal damage is not used. 0 values are printed as -
      * (dash)
      */
+    @Deprecated(since = "0.51.0", forRemoval = true)
     public static ASDamageVector createNormRndDmgNoMin(double s, double m) {
         return create(s, m, 0, 0, ASDamage::createDualRoundedNormalNoMinimal, 2, false);
     }
@@ -180,6 +186,7 @@ public record ASDamageVector(ASDamage S, ASDamage M, ASDamage L, ASDamage E, int
      * nearest tenth, then normally to the nearest integer. Minimal damage is not used. 0 values are printed as -
      * (dash)
      */
+    @Deprecated(since = "0.51.0", forRemoval = true)
     public static ASDamageVector createNormRndDmgNoMin(double s, double m, double l, double e) {
         return create(s, m, l, e, ASDamage::createDualRoundedNormalNoMinimal, 4, false);
     }
@@ -197,7 +204,7 @@ public record ASDamageVector(ASDamage S, ASDamage M, ASDamage L, ASDamage E, int
         while (copy.size() < 4) {
             copy.add(0.0);
         }
-        return create(copy.get(0), copy.get(1), copy.get(2), copy.get(3),
+        return create(copy.getFirst(), copy.get(1), copy.get(2), copy.get(3),
               ASDamage::createDualRoundedNormal, ranges, false);
     }
 
@@ -214,7 +221,7 @@ public record ASDamageVector(ASDamage S, ASDamage M, ASDamage L, ASDamage E, int
         while (copy.size() < 4) {
             copy.add(0.0);
         }
-        return create(copy.get(0), copy.get(1), copy.get(2), copy.get(3),
+        return create(copy.getFirst(), copy.get(1), copy.get(2), copy.get(3),
               ASDamage::createDualRoundedNormalNoMinimal, ranges, false);
     }
 
@@ -224,6 +231,7 @@ public record ASDamageVector(ASDamage S, ASDamage M, ASDamage L, ASDamage E, int
      * between 0 and 0.5 excl. end up as minimal damage. When printed, the ASDamageVector will use 0 (not a dash) for
      * zero values.
      */
+    @Deprecated(since = "0.51.0", forRemoval = true)
     public static ASDamageVector createUpRndDmg(@Nullable List<Double> values, int ranges) {
         if (values == null) {
             return ZERO;
@@ -232,7 +240,7 @@ public record ASDamageVector(ASDamage S, ASDamage M, ASDamage L, ASDamage E, int
         while (copy.size() < 4) {
             copy.add(0.0);
         }
-        return create(copy.get(0), copy.get(1), copy.get(2), copy.get(3),
+        return create(copy.getFirst(), copy.get(1), copy.get(2), copy.get(3),
               ASDamage::createDualRoundedUp, ranges, true);
     }
 
@@ -249,7 +257,7 @@ public record ASDamageVector(ASDamage S, ASDamage M, ASDamage L, ASDamage E, int
         while (copy.size() < 4) {
             copy.add(0.0);
         }
-        return create(copy.get(0), copy.get(1), copy.get(2), copy.get(3),
+        return create(copy.getFirst(), copy.get(1), copy.get(2), copy.get(3),
               ASDamage::createDualRoundedUp, ranges, false);
     }
 
@@ -282,7 +290,7 @@ public record ASDamageVector(ASDamage S, ASDamage M, ASDamage L, ASDamage E, int
      * a standard damage type vector that uses "0" for zero damage, otherwise prints "-" for zero damage.
      */
     public ASDamageVector(ASDamage S, ASDamage M, ASDamage L, ASDamage E, int rangeBands, boolean isStandard) {
-        this.rangeBands = MathUtility.clamp(rangeBands, 1, 4);
+        this.rangeBands = Math.clamp(rangeBands, 1, 4);
         this.S = (S == null) ? new ASDamage(0) : S;
         this.M = (this.rangeBands < 2) || (M == null) ? new ASDamage(0) : M;
         this.L = (this.rangeBands < 3) || (L == null) ? new ASDamage(0) : L;
@@ -291,6 +299,7 @@ public record ASDamageVector(ASDamage S, ASDamage M, ASDamage L, ASDamage E, int
     }
 
     @Override
+    @Nonnull
     public String toString() {
         StringBuilder result = new StringBuilder();
         if (isStandard) {

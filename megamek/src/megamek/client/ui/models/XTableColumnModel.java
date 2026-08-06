@@ -241,6 +241,7 @@ public class XTableColumnModel extends DefaultTableColumnModel {
      *
      * @return an <code>Enumeration</code> of the columns in the model
      */
+    @Deprecated(since = "0.51.0", forRemoval = true)
     public Enumeration<?> getColumns(boolean onlyVisible) {
         Vector<?> columns = (onlyVisible ? tableColumns : allTableColumns);
         return columns.elements();
@@ -264,6 +265,7 @@ public class XTableColumnModel extends DefaultTableColumnModel {
      *                                  <code>identifier</code>
      * @see #getColumn
      */
+    @Deprecated(since = "0.51.0", forRemoval = true)
     public int getColumnIndex(Object identifier, boolean onlyVisible) {
         if (identifier == null) {
             throw new IllegalArgumentException("Identifier is null");

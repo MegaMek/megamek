@@ -100,6 +100,7 @@ public class PlanetaryConditionsDeserializer extends StdDeserializer<PlanetaryCo
         WEATHER_VALUES.put("heavy hail", Weather.HEAVY_HAIL);
     }
 
+    @Deprecated(since = "0.51.0", forRemoval = true)
     public PlanetaryConditionsDeserializer() {
         this(null);
     }

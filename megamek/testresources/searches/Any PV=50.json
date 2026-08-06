@@ -1,0 +1,28 @@
+{
+  "content" : "ADVANCED_SEARCH_STATE",
+  "name" : "Any PV=50",
+  "twState" : {
+    "unitTypeState" : { },
+    "transportsState" : { },
+    "quirksState" : {
+      "chassisQuirks" : { },
+      "weaponQuirks" : { }
+    },
+    "miscState" : {
+      "cockpitType" : { },
+      "armorType" : { },
+      "internalsType" : { },
+      "engineType" : { },
+      "gyroType" : { },
+      "techLevel" : { },
+      "techBase" : { },
+      "moveMode" : { }
+    },
+    "equipmentState" : { }
+  },
+  "asState" : {
+    "pvUse" : true,
+    "pvFromText" : "50",
+    "pvToText" : "50"
+  }
+}

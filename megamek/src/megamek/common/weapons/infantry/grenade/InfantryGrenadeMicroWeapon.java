@@ -68,7 +68,7 @@ public class InfantryGrenadeMicroWeapon extends InfantryWeapon {
         cost = 2;
         bv = 0.15;
         tonnage = .0002;
-        flags = flags.or(F_NO_FIRES).or(F_BALLISTIC).or(F_INF_SUPPORT);
+        flags = flags.or(F_NO_FIRES).or(F_BALLISTIC).or(F_INF_SUPPORT).or(F_INF_DISPOSABLE);
         infantryDamage = 0.16;
         infantryRange = 0;
         rulesRefs = "272, TM";

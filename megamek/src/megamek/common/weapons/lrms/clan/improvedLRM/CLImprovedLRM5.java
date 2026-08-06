@@ -71,7 +71,7 @@ public class CLImprovedLRM5 extends LRMWeapon {
         longAV = 3;
         maxRange = RANGE_LONG;
         ammoType = AmmoType.AmmoTypeEnum.LRM_IMP;
-        rulesRefs = "96, IO";
+        rulesRefs = "90, IO:AE";
         flags = flags.andNot(F_PROTO_WEAPON);
         techAdvancement.setTechBase(TechBase.CLAN).setTechRating(TechRating.F)
               .setAvailability(AvailabilityValue.X, AvailabilityValue.D, AvailabilityValue.X, AvailabilityValue.X)

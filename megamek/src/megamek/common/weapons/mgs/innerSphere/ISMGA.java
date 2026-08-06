@@ -66,8 +66,8 @@ public class ISMGA extends AmmoWeapon {
         super();
 
         name = "Machine Gun Array";
-        addLookupName("IS Machine Gun Array");
         setInternalName("ISMGA");
+        addLookupName("IS Machine Gun Array");
         sortingName = "MGA C";
         heat = 0;
         damage = 2;

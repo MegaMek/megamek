@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2025 The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2025-2026 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -49,6 +49,222 @@ import org.junit.jupiter.api.Test;
  * @author Luana Coppio
  */
 public class BattleArmorTest extends GameBoardTestCase {
+
+    /**
+     * Tests for {@link BattleArmor} jumping into each floor of a 4-story building.
+     * <p>
+     * Setup: the BA is two hexes away from the building (one empty hex between them) and has a jump MP of 3. DOWN and
+     * UP steps after the horizontal movement select the target floor.
+     *
+     * @see MovePath#isMoveLegal()
+     */
+    @Nested
+    class JumpingIntoBuildingFloors {
+        static {
+            initializeBoard("BA_JUMP_4_STORY_BUILDING", """
+                  size 1 3
+                  hex 0101 0 "" ""
+                  hex 0102 0 "" ""
+                  hex 0103 0 "bldg_elev:4;building:2:8;bldg_cf:100" ""
+                  end""");
+        }
+
+        private BattleArmor ba() {
+            BattleArmor ba = new BattleArmor();
+            ba.setOriginalJumpMP(3);
+            return ba;
+        }
+
+        @Test
+        void jumpToElevation4() {
+            // arrange
+            setBoard("BA_JUMP_4_STORY_BUILDING");
+            // act
+            MovePath movePath = getMovePathFor(ba(),
+                  EntityMovementMode.INF_LEG,
+                  MoveStepType.START_JUMP,
+                  MoveStepType.FORWARDS,
+                  MoveStepType.FORWARDS,
+                  MoveStepType.UP
+            );
+            // assert
+            assertFalse(movePath.isMoveLegal());
+        }
+
+        @Test
+        void jumpToElevation3() {
+            // arrange
+            setBoard("BA_JUMP_4_STORY_BUILDING");
+            // act
+            MovePath movePath = getMovePathFor(ba(),
+                  EntityMovementMode.INF_LEG,
+                  MoveStepType.START_JUMP,
+                  MoveStepType.FORWARDS,
+                  MoveStepType.FORWARDS
+            );
+            // assert
+            assertTrue(movePath.isMoveLegal());
+        }
+
+        @Test
+        void jumpToElevation2() {
+            // arrange
+            setBoard("BA_JUMP_4_STORY_BUILDING");
+            // act
+            MovePath movePath = getMovePathFor(ba(),
+                  EntityMovementMode.INF_LEG,
+                  MoveStepType.START_JUMP,
+                  MoveStepType.FORWARDS,
+                  MoveStepType.FORWARDS,
+                  MoveStepType.DOWN
+            );
+            // assert
+            assertTrue(movePath.isMoveLegal());
+        }
+
+        @Test
+        void jumpToElevation1() {
+            // arrange
+            setBoard("BA_JUMP_4_STORY_BUILDING");
+            // act
+            MovePath movePath = getMovePathFor(ba(),
+                  EntityMovementMode.INF_LEG,
+                  MoveStepType.START_JUMP,
+                  MoveStepType.FORWARDS,
+                  MoveStepType.FORWARDS,
+                  MoveStepType.DOWN,
+                  MoveStepType.DOWN
+            );
+            // assert
+            assertTrue(movePath.isMoveLegal());
+        }
+
+        @Test
+        void jumpToElevation0() {
+            // arrange
+            setBoard("BA_JUMP_4_STORY_BUILDING");
+            // act
+            MovePath movePath = getMovePathFor(ba(),
+                  EntityMovementMode.INF_LEG,
+                  MoveStepType.START_JUMP,
+                  MoveStepType.FORWARDS,
+                  MoveStepType.FORWARDS,
+                  MoveStepType.DOWN,
+                  MoveStepType.DOWN,
+                  MoveStepType.DOWN
+            );
+            // assert
+            assertFalse(movePath.isMoveLegal());
+        }
+    }
+
+    /**
+     * Tests for {@link BattleArmor} jumping into each floor of a 4-story building on terrain at level 1.
+     * <p>
+     * Identical setup to {@link JumpingIntoBuildingFloors} except all hex terrain levels are 1.
+     *
+     * @see MovePath#isMoveLegal()
+     */
+    @Nested
+    class JumpingIntoBuildingFloorsOnElevatedTerrain {
+        static {
+            initializeBoard("BA_JUMP_4_STORY_BUILDING_L1", """
+                  size 1 3
+                  hex 0101 1 "" ""
+                  hex 0102 1 "" ""
+                  hex 0103 1 "bldg_elev:4;building:2:8;bldg_cf:100" ""
+                  end""");
+        }
+
+        private BattleArmor ba() {
+            BattleArmor ba = new BattleArmor();
+            ba.setOriginalJumpMP(3);
+            return ba;
+        }
+
+        @Test
+        void jumpToElevation4() {
+            // arrange
+            setBoard("BA_JUMP_4_STORY_BUILDING_L1");
+            // act
+            MovePath movePath = getMovePathFor(ba(),
+                  EntityMovementMode.INF_LEG,
+                  MoveStepType.START_JUMP,
+                  MoveStepType.FORWARDS,
+                  MoveStepType.FORWARDS,
+                  MoveStepType.UP
+            );
+            // assert
+            assertFalse(movePath.isMoveLegal());
+        }
+
+        @Test
+        void jumpToElevation3() {
+            // arrange
+            setBoard("BA_JUMP_4_STORY_BUILDING_L1");
+            // act
+            MovePath movePath = getMovePathFor(ba(),
+                  EntityMovementMode.INF_LEG,
+                  MoveStepType.START_JUMP,
+                  MoveStepType.FORWARDS,
+                  MoveStepType.FORWARDS
+            );
+            // assert
+            assertTrue(movePath.isMoveLegal());
+        }
+
+        @Test
+        void jumpToElevation2() {
+            // arrange
+            setBoard("BA_JUMP_4_STORY_BUILDING_L1");
+            // act
+            MovePath movePath = getMovePathFor(ba(),
+                  EntityMovementMode.INF_LEG,
+                  MoveStepType.START_JUMP,
+                  MoveStepType.FORWARDS,
+                  MoveStepType.FORWARDS,
+                  MoveStepType.DOWN
+            );
+            // assert
+            assertTrue(movePath.isMoveLegal());
+        }
+
+        @Test
+        void jumpToElevation1() {
+            // arrange
+            setBoard("BA_JUMP_4_STORY_BUILDING_L1");
+            // act
+            MovePath movePath = getMovePathFor(ba(),
+                  EntityMovementMode.INF_LEG,
+                  MoveStepType.START_JUMP,
+                  MoveStepType.FORWARDS,
+                  MoveStepType.FORWARDS,
+                  MoveStepType.DOWN,
+                  MoveStepType.DOWN
+            );
+            // assert
+            assertTrue(movePath.isMoveLegal());
+        }
+
+
+        @Test
+        void jumpToElevation0() {
+            // arrange
+            setBoard("BA_JUMP_4_STORY_BUILDING_L1");
+            // act
+            MovePath movePath = getMovePathFor(ba(),
+                  EntityMovementMode.INF_LEG,
+                  MoveStepType.START_JUMP,
+                  MoveStepType.FORWARDS,
+                  MoveStepType.FORWARDS,
+                  MoveStepType.DOWN,
+                  MoveStepType.DOWN,
+                  MoveStepType.DOWN
+            );
+            // assert
+            assertFalse(movePath.isMoveLegal());
+        }
+    }
 
     @Nested
     class AntiMekSkillRollNag {

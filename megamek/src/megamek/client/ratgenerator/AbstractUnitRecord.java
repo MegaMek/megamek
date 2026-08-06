@@ -177,6 +177,8 @@ public class AbstractUnitRecord {
             case "Warship" -> UnitType.WARSHIP;
             case "Space Station" -> UnitType.SPACE_STATION;
             case "Handheld Weapon" -> UnitType.HANDHELD_WEAPON;
+            case "Mobile Structure" -> UnitType.MOBILE_STRUCTURE;
+            case "Advanced Building" -> UnitType.ADVANCED_BUILDING;
             default -> -1;
         };
     }

@@ -74,8 +74,6 @@ public class RoofRack extends ExternalCargo {
     }
 
     /**
-     * @param carrier
-     *
      * @return the MP reduction due to cargo carried by this transporter
      */
     @Override

@@ -54,6 +54,7 @@ import megamek.server.totalWarfare.TWGameManager;
 /**
  * @author Jay Lawson
  */
+@Deprecated(since = "0.51.0", forRemoval = true)
 public class AR10Handler extends AmmoWeaponHandler {
 
     /**
@@ -102,10 +103,10 @@ public class AR10Handler extends AmmoWeaponHandler {
             if (entityTarget != null) {
                 if ((weaponType.getAmmoType() != AmmoType.AmmoTypeEnum.NA)
                       && (weapon.getLinked() != null)
-                      && (weapon.getLinked().getType() instanceof AmmoType ammoType)) {
-                    if (!ammoType.getMunitionType().contains(AmmoType.Munitions.M_STANDARD)) {
+                      && (weapon.getLinked().getType() instanceof AmmoType linkedAmmoType)) {
+                    if (!linkedAmmoType.getMunitionType().contains(AmmoType.Munitions.M_STANDARD)) {
                         r.messageId = 3116;
-                        r.add(ammoType.getSubMunitionName());
+                        r.add(linkedAmmoType.getSubMunitionName());
                     }
                 }
                 r.addDesc(entityTarget);
@@ -258,7 +259,7 @@ public class AR10Handler extends AmmoWeaponHandler {
             if (bMissed && id != vPhaseReport.size()) {
                 vPhaseReport.get(id - 1).newlines--;
                 vPhaseReport.get(id).indent(2);
-                vPhaseReport.get(vPhaseReport.size() - 1).newlines++;
+                vPhaseReport.getLast().newlines++;
             }
 
             // Make sure the player knows when his attack causes no damage.

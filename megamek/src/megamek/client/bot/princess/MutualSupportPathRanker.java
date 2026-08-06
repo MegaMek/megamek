@@ -180,8 +180,11 @@ public class MutualSupportPathRanker extends BasicPathRanker {
     private final Map<Integer, SupportEnvelope> envelopeCache = new HashMap<>();
     private int envelopeCacheRound = -1;
 
-    // Posture is a force-level call, made once per round: every unit moves under the same answer.
-    private final PostureResolver postureResolver = new PostureResolver();
+    // Posture is a force-level call, made once per round and per board: every unit on a board moves
+    // under the same answer, and enemies on another board have no say in it - a game-wide entity list
+    // would blend boards into a meaningless closing rate.
+    private final Map<Integer, PostureResolver> postureResolverByBoard = new HashMap<>();
+    private final Map<Integer, CombatPosture> postureByBoard = new HashMap<>();
     private int postureResolvedRound = -1;
     private CombatPosture posture = CombatPosture.ATTACK;
     private CombatPosture announcedPosture;
@@ -368,7 +371,7 @@ public class MutualSupportPathRanker extends BasicPathRanker {
     }
 
     private double computePosturePenalty(Entity movingUnit, MovePath path, Game game) {
-        if (CombatPosture.DEFEND != resolvePosture(game)) {
+        if (CombatPosture.DEFEND != resolvePosture(game, movingUnit.getBoardId())) {
             return 0;
         }
         BehaviorType behaviorType = getOwner().getUnitBehaviorTracker().getBehaviorType(movingUnit, getOwner());
@@ -418,31 +421,40 @@ public class MutualSupportPathRanker extends BasicPathRanker {
     }
 
     /**
-     * The posture the force fights under this round, resolved once per round and shared by every unit. When
-     * the answer changes - a flip of the auto-resolution or a new explicit order taking effect - the bot says
-     * so in the chat, with its reason, so an observer can follow the force's intent without reading logs.
+     * The posture the force fights under this round on the given board, resolved once per round per board
+     * and shared by every unit there. Only units on that board have a say: entity lists are game-wide, and
+     * in a multi-board game mixing boards would make the closing rate meaningless. When the answer changes -
+     * a flip of the auto-resolution or a new explicit order taking effect - the bot says so in the chat,
+     * with its reason, so an observer can follow the force's intent without reading logs.
      */
-    private CombatPosture resolvePosture(Game game) {
+    private CombatPosture resolvePosture(Game game, int boardId) {
         int round = game.getCurrentRound();
         if (round != postureResolvedRound) {
             postureResolvedRound = round;
-            posture = postureResolver.resolve(getOwner().getBehaviorSettings(), round,
-                  deployedPositions(getOwner().getEntitiesOwned()),
-                  deployedPositions(getOwner().getEnemyEntities()));
-            if (posture != announcedPosture) {
-                announcedPosture = posture;
-                getOwner().sendChat(Messages.getString("Princess.posture.announce",
-                      posture, postureResolver.resolutionReason()));
-            }
+            postureByBoard.clear();
         }
+        posture = postureByBoard.computeIfAbsent(boardId, id -> {
+            PostureResolver resolver = postureResolverByBoard.computeIfAbsent(id,
+                  newBoard -> new PostureResolver());
+            CombatPosture resolved = resolver.resolve(getOwner().getBehaviorSettings(), round,
+                  deployedPositions(getOwner().getEntitiesOwned(), id),
+                  deployedPositions(getOwner().getEnemyEntities(), id));
+            if (resolved != announcedPosture) {
+                announcedPosture = resolved;
+                getOwner().sendChat(Messages.getString("Princess.posture.announce",
+                      resolved, resolver.resolutionReason()));
+            }
+            return resolved;
+        });
         return posture;
     }
 
-    private static List<Coords> deployedPositions(List<Entity> units) {
+    /** The positions of the given units that are deployed on the given board; the rest have no say. */
+    static List<Coords> deployedPositions(List<Entity> units, int boardId) {
         List<Coords> positions = new ArrayList<>(units.size());
         for (Entity unit : units) {
             Coords position = unit.getPosition();
-            if ((null != position) && unit.isDeployed()) {
+            if ((null != position) && unit.isDeployed() && (unit.getBoardId() == boardId)) {
                 positions.add(position);
             }
         }

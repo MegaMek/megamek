@@ -423,6 +423,24 @@ class MutualSupportPathRankerTest {
 
         assertEquals(0.0, testRanker.calculateMutualSupportMod(null, mockPath), TOLERANCE);
     }
+    /**
+     * Entity lists are game-wide. In a multi-board game an enemy on another board must have no say in this
+     * board's posture, or the closing rate blends boards into a meaningless number.
+     */
+    @Test
+    void unitsOnAnotherBoardHaveNoSayInPosture() {
+        Entity unitHere = mock(BipedMek.class);
+        when(unitHere.getPosition()).thenReturn(new Coords(3, 3));
+        when(unitHere.isDeployed()).thenReturn(true);
+
+        Entity unitElsewhere = mock(BipedMek.class);
+        when(unitElsewhere.getPosition()).thenReturn(new Coords(9, 9));
+        when(unitElsewhere.isDeployed()).thenReturn(true);
+        when(unitElsewhere.getBoardId()).thenReturn(1);
+
+        assertEquals(List.of(new Coords(3, 3)),
+              MutualSupportPathRanker.deployedPositions(List.of(unitHere, unitElsewhere), 0));
+    }
     // END - Combat posture at water
 
     @Test

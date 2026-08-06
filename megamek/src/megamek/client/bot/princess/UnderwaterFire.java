@@ -211,8 +211,24 @@ public record UnderwaterFire(@Nullable TargetRollModifier blocked, @Nullable int
         }
 
         // Fully in the water: every location is wet unless the unit's top still clears the surface.
-        int topElevation = shooterState.getElevation() + (shooterState.isProne() ? 0 : shooter.height());
+        int topElevation = shooterState.getElevation() + hypotheticalHeight(shooter, shooterState);
         return topElevation < 0;
+    }
+
+    /**
+     * The unit's height in the pose being evaluated. {@code Entity.height()} reads the entity's CURRENT
+     * prone state, which may differ from the pose of the path being ranked - a fallen Mek evaluating its
+     * stand-up paths is the common case - so a Mek's standing height is computed from what it is, not from
+     * how it currently lies.
+     */
+    private static int hypotheticalHeight(Entity shooter, EntityState shooterState) {
+        if (shooterState.isProne()) {
+            return 0;
+        }
+        if (shooter instanceof Mek) {
+            return shooter.isSuperHeavy() ? 2 : 1;
+        }
+        return shooter.height();
     }
 
     /** The locations a standing Mek has underwater in partial-depth water: legs, and for quads the arms too. */

@@ -2789,6 +2789,28 @@ class FireControlTest {
                     mockGame));
     }
 
+    /**
+     * A fallen Mek ranking its stand-up paths: {@code Entity.height()} reads the CURRENT prone state (0
+     * for this mock, as for a prone Mek), but the pose being evaluated is standing. On raised footing in
+     * deep water - elevation -1, standing height 1 - the standing Mek's top reaches the surface and its
+     * arm weapon is dry. Reading the entity's current height instead classified it underwater.
+     */
+    @Test
+    void testWeaponWetnessUsesTheHypotheticalPoseNotTheCurrentOne() {
+        final Hex deepHex = mock(Hex.class);
+        when(deepHex.containsTerrain(Terrains.WATER)).thenReturn(true);
+        when(deepHex.terrainLevel(Terrains.WATER)).thenReturn(3);
+
+        final EntityState standingState = mock(EntityState.class);
+        when(standingState.getElevation()).thenReturn(-1);
+
+        final WeaponMounted armWeapon = mock(WeaponMounted.class);
+        when(armWeapon.getLocation()).thenReturn(Mek.LOC_RIGHT_ARM);
+
+        assertFalse(UnderwaterFire.isWeaponUnderwater(mockShooter, standingState, deepHex, armWeapon),
+              "a standing pose uses standing height, whatever the entity currently does");
+    }
+
     @Test
     void testGuessToHitEvadingTarget() {
         // Mirror the vanilla helper case, then mark the target as evading.

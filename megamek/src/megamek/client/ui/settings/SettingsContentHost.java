@@ -47,6 +47,7 @@ import java.util.Locale;
 import java.util.regex.Pattern;
 import javax.swing.JButton;
 import javax.swing.JComponent;
+import javax.swing.JLayer;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JViewport;
@@ -69,6 +70,8 @@ public class SettingsContentHost extends JPanel {
 
     private final JPanel contentPanel = new SettingsContentPanel();
     private final JScrollPane contentScrollPane;
+    private final SettingsSearchHighlightLayerUI searchHighlightLayerUI = new SettingsSearchHighlightLayerUI();
+    private final JLayer<JScrollPane> searchHighlightLayer;
     private final SettingsHelpPanel helpPanel;
     private final List<HelpBinding> activeHelpBindings = new ArrayList<>();
     private Component currentContent;
@@ -81,8 +84,11 @@ public class SettingsContentHost extends JPanel {
               ScrollPaneConstants.VERTICAL_SCROLLBAR_AS_NEEDED,
               ScrollPaneConstants.HORIZONTAL_SCROLLBAR_AS_NEEDED);
         contentScrollPane.setName("settingsContentScrollPane");
+        contentScrollPane.getViewport().setScrollMode(JViewport.SIMPLE_SCROLL_MODE);
+        searchHighlightLayer = new JLayer<>(contentScrollPane, searchHighlightLayerUI);
+        searchHighlightLayer.setName("settingsSearchHighlightLayer");
         helpPanel = new SettingsHelpPanel(helpTitle);
-        add(contentScrollPane, BorderLayout.CENTER);
+        add(searchHighlightLayer, BorderLayout.CENTER);
         add(helpPanel, BorderLayout.SOUTH);
         setContent(content, showHelpPanel);
     }
@@ -115,6 +121,16 @@ public class SettingsContentHost extends JPanel {
 
     public void resetScrollPosition() {
         contentScrollPane.getVerticalScrollBar().setValue(0);
+    }
+
+    /** Updates the non-mutating text highlights painted over the current settings content. */
+    public void setSearchFilter(String normalizedFilter) {
+        searchHighlightLayerUI.setFilter(normalizedFilter, searchHighlightLayer);
+    }
+
+    /** Exposes painted bounds for headless overlay tests. */
+    List<Rectangle> getSearchHighlightBounds() {
+        return searchHighlightLayerUI.highlightBounds(searchHighlightLayer);
     }
 
     /**

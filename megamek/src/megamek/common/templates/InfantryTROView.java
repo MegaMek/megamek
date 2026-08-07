@@ -255,9 +255,6 @@ public class InfantryTROView extends TROView {
     }
 
     private void addArmorNotes(List<String> notes) {
-        if (inf.hasSpaceSuit()) {
-            notes.add(Messages.getString("TROView.InfantryNote.Spacesuit"));
-        }
         if (inf.hasDEST()) {
             notes.add(Messages.getString("TROView.InfantryNote.DESTArmorOne") +
                   "\n" +

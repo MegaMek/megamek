@@ -256,9 +256,7 @@ public class InfantryTROView extends TROView {
 
     private void addArmorNotes(List<String> notes) {
         if (inf.hasDEST()) {
-            notes.add(Messages.getString("TROView.InfantryNote.DESTArmorOne") +
-                  "\n" +
-                  Messages.getString("TROView.InfantryNote.DESTArmorTwo"));
+            notes.add(Messages.getString("TROView.InfantryNote.DESTArmor"));
         } else {
             if (inf.hasSneakCamo()) {
                 notes.add(Messages.getString("TROView.InfantryNote.CamoArmor"));

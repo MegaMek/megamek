@@ -37,6 +37,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
 import java.util.Objects;
+import java.util.stream.Collectors;
 
 /**
  * Describes one destination in a searchable settings navigation tree. A route owns its stable identifier, resolved
@@ -100,7 +101,10 @@ public final class SettingsRoute {
         if (this.pathIds.stream().anyMatch(String::isBlank)) {
             throw new IllegalArgumentException("A settings route path cannot contain blank IDs");
         }
-        searchableText = normalizeSearchText(String.join(" ", this.path) + ' ' + this.id + ' '
+        String renderedPath = this.path.stream()
+              .map(SettingsSearchText::renderedText)
+              .collect(Collectors.joining(" "));
+        searchableText = normalizeSearchText(renderedPath + ' '
               + String.join(" ", this.searchAliases));
     }
 
@@ -134,7 +138,7 @@ public final class SettingsRoute {
      * @param text the raw section text, or {@code null} to clear it
      */
     public void setSectionSearchText(String text) {
-        sectionSearchText = text == null ? "" : normalizeSearchText(text);
+        sectionSearchText = text == null ? "" : normalizeSearchText(SettingsSearchText.renderedText(text));
     }
 
     /**
@@ -164,7 +168,7 @@ public final class SettingsRoute {
      * @return {@code true} when every token occurs in either the route or this section
      */
     public boolean sectionMatches(String rawSectionText, String normalizedFilter) {
-        String normalizedSectionText = normalizeSearchText(rawSectionText);
+        String normalizedSectionText = normalizeSearchText(SettingsSearchText.renderedText(rawSectionText));
         for (String token : normalizedFilter.split("\\s+")) {
             if (!token.isBlank() && !searchableText.contains(token) && !normalizedSectionText.contains(token)) {
                 return false;

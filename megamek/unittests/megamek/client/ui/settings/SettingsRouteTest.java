@@ -54,10 +54,27 @@ class SettingsRouteTest {
     }
 
     @Test
+    void internalRouteIdIsNotImplicitlySearchable() {
+        SettingsRoute route = new SettingsRoute("internal.machine.key", List.of("Visible Page"));
+
+        assertFalse(route.matches(SettingsRoute.normalizeSearchText("machine")));
+        assertTrue(route.matches(SettingsRoute.normalizeSearchText("visible")));
+    }
+
+    @Test
+    void routeIndexesRenderedPathTextWithoutHtmlTokens() {
+        SettingsRoute route = new SettingsRoute("display", List.of("<html><b>Display &amp; UI</b></html>"));
+
+        assertTrue(route.matches(SettingsRoute.normalizeSearchText("display ui")));
+        assertFalse(route.matches(SettingsRoute.normalizeSearchText("html")));
+        assertFalse(route.matches(SettingsRoute.normalizeSearchText("amp")));
+    }
+
+    @Test
     void routeRequiresEveryFilterToken() {
         SettingsRoute route = new SettingsRoute("markets.contracts", List.of("Markets", "Contract Market"));
 
-        assertTrue(route.matches(SettingsRoute.normalizeSearchText("market contracts")));
+        assertTrue(route.matches(SettingsRoute.normalizeSearchText("market contract")));
         assertFalse(route.matches(SettingsRoute.normalizeSearchText("market personnel")));
     }
 

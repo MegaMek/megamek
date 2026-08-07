@@ -98,6 +98,29 @@ class DamageProfileTest {
         assertEquals(0.0, profile.maxDamage(20), TOLERANCE, "Nothing reaches past 19");
     }
 
+    /**
+     * The heat-capacity overload drives the sustained curve: limitless dissipation makes every weapon
+     * sustainable, zero dissipation leaves only heat-free weapons (the Atlas has none), and the stock
+     * capacity sits between. This is the what-if the bot's heat-sink hex valuation asks - the same
+     * curves at the capacity water would give.
+     */
+    @Test
+    void sustainedCurveFollowsTheHeatCapacityParameter() throws EntityLoadingException {
+        Entity atlas = loadUnit("Atlas AS7-D.mtf");
+        DamageProfile unlimited = DamageProfile.of(atlas, false, 4, 100);
+        DamageProfile noDissipation = DamageProfile.of(atlas, false, 4, 0);
+        DamageProfile stock = DamageProfile.of(atlas, false);
+
+        for (int range = 1; range <= stock.maxRange(); range++) {
+            assertEquals(unlimited.expectedDamage(range), unlimited.sustainedDamage(range), TOLERANCE,
+                  "with limitless dissipation every weapon is sustainable at range " + range);
+            assertEquals(0.0, noDissipation.sustainedDamage(range), TOLERANCE,
+                  "with no dissipation nothing heat-generating is sustainable at range " + range);
+            assertTrue(stock.sustainedDamage(range) <= unlimited.sustainedDamage(range) + TOLERANCE,
+                  "stock capacity can never sustain more than limitless capacity at range " + range);
+        }
+    }
+
     @Test
     void testBarghestExpectedDamageIsHitWeighted() throws EntityLoadingException {
         Entity barghest = loadUnit("Barghest BGS-1T.mtf");

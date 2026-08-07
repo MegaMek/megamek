@@ -267,12 +267,12 @@ public class BasicPathRanker extends PathRanker {
             returnResponse.addToMyEstimatedDamage(getMaxDamageAtRange(path.getEntity(),
                   range,
                   useExtremeRange,
-                  useLOSRange) * damageDiscount);
+                  useLOSRange) * damageDiscount * attackerMovementDamageDiscount(path));
         }
 
         // in general, if an enemy can end its position in range, it can hit me
         returnResponse.addToEstimatedEnemyDamage(getMaxDamageAtRange(enemy, range, useExtremeRange, useLOSRange) *
-              damageDiscount);
+              damageDiscount * incomingFireTerrainDiscount(path));
 
         // It is especially embarrassing if the enemy can move behind or flank me and then kick me
         if (canFlankAndKick(enemy, behind, leftFlank, rightFlank, myFacing)) {
@@ -280,6 +280,39 @@ public class BasicPathRanker extends PathRanker {
         }
 
         return returnResponse;
+    }
+
+    /**
+     * How much of its raw damage-at-range a unit keeps after its own movement makes it a worse shot.
+     *
+     * <p>The unmoved-enemy estimate above is a range-table lookup with no to-hit roll in it, so the one
+     * certain cost of moving - the attacker movement modifier, +1 walked, +2 ran, +3 jumped - does not
+     * exist in it, and a short step reads as free. The base ranker keeps that behavior; a subclass can
+     * return the fraction of the raw estimate the path's movement mode actually leaves it.</p>
+     *
+     * @param path the path being evaluated
+     *
+     * @return the fraction of the raw damage estimate to keep; 1.0 by default
+     */
+    protected double attackerMovementDamageDiscount(MovePath path) {
+        return 1.0;
+    }
+
+    /**
+     * How much of an unmoved enemy's raw damage the terrain at this path's destination lets through.
+     *
+     * <p>The twin of {@link #attackerMovementDamageDiscount}: the raw damage-at-range estimate above has no
+     * to-hit roll, so the cover the destination hex gives - the woods and partial-cover modifiers the full
+     * fire-control guess prices against already-moved enemies - does not exist in it, and a covered hex and
+     * an open one read the same. The base ranker keeps that behavior; a subclass can return the fraction of
+     * the raw estimate the destination's cover actually lets through.</p>
+     *
+     * @param path the path being evaluated
+     *
+     * @return the fraction of the raw enemy damage estimate to keep; 1.0 by default
+     */
+    protected double incomingFireTerrainDiscount(MovePath path) {
+        return 1.0;
     }
 
     @Override
@@ -1807,6 +1840,9 @@ public class BasicPathRanker extends PathRanker {
 
         double selfPreservationMod = calculateSelfPreservationMod(movingUnit, pathCopy, game);
 
+        double positionHoldMod = calculatePositionHoldMod(pathCopy, game, damageEstimate, expectedDamageTaken,
+              successProbability);
+
         StringBuilder sprintFormula = new StringBuilder(64);
         double sprintExposurePenalty = calculateSprintExposurePenalty(pathCopy, enemies, game, scores,
               sprintFormula);
@@ -1824,6 +1860,7 @@ public class BasicPathRanker extends PathRanker {
         utility -= facingMod;
         utility -= selfPreservationMod;
         utility -= sprintExposurePenalty;
+        utility += positionHoldMod;
         utility -= utility * offBoardMod;
 
         formula.append("Calculation: {fall mod [")
@@ -1893,6 +1930,10 @@ public class BasicPathRanker extends PathRanker {
             formula.append(" - ").append(sprintFormula);
         }
 
+        if (positionHoldMod != 0.0) {
+            formula.append(" + positionHoldMod [").append(LOG_DECIMAL.format(positionHoldMod)).append("]");
+        }
+
         logger.trace("{}", formula);
 
         scores.putAll(doctrineScores());
@@ -1918,6 +1959,29 @@ public class BasicPathRanker extends PathRanker {
     protected Map<String, Double> doctrineScores() {
         // Base ranker: the modifier values already recorded tell the whole story.
         return Map.of();
+    }
+
+    /**
+     * Utility credit for keeping a position worth keeping, given what {@link #rankPath} has already computed
+     * about the exchange the path's destination offers.
+     *
+     * <p>The base ranker awards nothing: every term above already weighs the destination on its merits, and a
+     * unit with a better hex in reach should take it. A subclass with a doctrine of position persistence can
+     * override this to bias a unit toward standing its ground when the ground is good - countering the constant
+     * pull of the movement modifier and aggression gradient that otherwise makes a unit shuffle between
+     * equivalent hexes.</p>
+     *
+     * @param path                the path being ranked (a copy, safe to inspect)
+     * @param game                the current game
+     * @param damageEstimate      the damage this unit is estimated to deal from the path's destination
+     * @param expectedDamageTaken the damage it is estimated to take there, path hazards included
+     * @param successProbability  the chance the path completes without a failed piloting roll
+     *
+     * @return the utility credit, added to the path's utility; 0 by default
+     */
+    protected double calculatePositionHoldMod(MovePath path, Game game, FiringPhysicalDamage damageEstimate,
+          double expectedDamageTaken, double successProbability) {
+        return 0;
     }
 
     protected boolean isLosRange(Game game) {

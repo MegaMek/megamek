@@ -43,8 +43,10 @@ import megamek.client.bot.princess.UnitBehavior.BehaviorType;
 import megamek.common.annotations.Nullable;
 import megamek.common.board.Board;
 import megamek.common.board.Coords;
+import megamek.common.compute.Compute;
 import megamek.common.game.Game;
 import megamek.common.moves.MovePath;
+import megamek.common.rolls.TargetRoll;
 import megamek.common.units.Entity;
 import megamek.logging.MMLogger;
 
@@ -177,6 +179,23 @@ public class MutualSupportPathRanker extends BasicPathRanker {
      */
     private static final double TEMPO_REFERENCE_MP = 15.0;
 
+    /**
+     * How much of a turn of advance the hold credit may reach under each posture: an attacking force keeps
+     * the credit modest so a good hex never outbids the advance (the Eisenhower governor - momentum is worth
+     * more than any one position), while a defending force holds harder, the same asymmetry as the formation
+     * penalty cap. Both keep the credit strictly below one turn of advance.
+     */
+    private static final double HOLD_CREDIT_ATTACK_CAP_FACTOR = 0.4;
+    private static final double HOLD_CREDIT_DEFEND_CAP_FACTOR = 0.8;
+
+    /**
+     * The to-hit number the attacker-movement damage discount is priced at: gunnery 4 plus a typical spread
+     * of range and target modifiers. Only the RATIO of hit chances at this number matters - walking turns
+     * 8s into 9s whoever you are - so the midpoint stands in for every shooter without pretending the
+     * estimate knows its real to-hit.
+     */
+    private static final int REPRESENTATIVE_TO_HIT = 8;
+
     private final Map<Integer, SupportEnvelope> envelopeCache = new HashMap<>();
     private int envelopeCacheRound = -1;
 
@@ -189,11 +208,24 @@ public class MutualSupportPathRanker extends BasicPathRanker {
     private CombatPosture posture = CombatPosture.ATTACK;
     private CombatPosture announcedPosture;
     private double lastPosturePenalty;
+    private double lastPositionQuality;
+    private double lastPositionHoldMod;
 
     // Bank labels are a property of the board, recomputed per round (ice can break) and shared by
     // every path of every mover. Keyed by board id.
     private final Map<Integer, BankRegions> bankRegionsByBoard = new HashMap<>();
     private int bankRegionsRound = -1;
+
+    // Per-hex terrain labels, same lifecycle: built once per board per round (fires burn woods away,
+    // buildings fall), then every path evaluation is one array lookup.
+    private final Map<Integer, HexPropertiesMap> hexPropertiesByBoard = new HashMap<>();
+    private int hexPropertiesRound = -1;
+
+    // Sustainable-output curves per unit, dry and standing in water, rebuilt per round (weapons and
+    // sinks get shot away). Keyed by unit id. Mechanism C1.
+    private final Map<Integer, DamageProfile> dryProfileByUnit = new HashMap<>();
+    private final Map<Integer, DamageProfile> waterProfileByUnit = new HashMap<>();
+    private int profileCacheRound = -1;
 
     // Per-ranking-pass caches. rankPath is called once per candidate path for a single mover, and a
     // company-scale turn evaluates thousands of paths per unit, so anything that depends only on the
@@ -408,6 +440,89 @@ public class MutualSupportPathRanker extends BasicPathRanker {
     }
 
     /**
+     * Mechanism A of the terrain doctrine: position persistence. A unit already standing on ground that gives
+     * a positive exchange earns credit for keeping it, so it stops shuffling between equivalent hexes for a
+     * movement modifier it does not need - the two-step that walks a firing line out of its positions and
+     * triggers anti-missile fire on the way.
+     *
+     * <p>Quality is the exchange the stationary path itself was just evaluated at - expected damage dealt,
+     * weighted by the chance of standing to deliver it, minus expected damage taken. The exchange already
+     * appears once in the bravery term for every path equally; counting it again here, only for standing
+     * still, is the deliberate asymmetry that makes a good position sticky. Ground that gives nothing (or
+     * worse) holds nothing: the credit never anchors a unit in a losing exchange, so displacement stays a
+     * live option evaluated on the same terms as everything else.</p>
+     *
+     * <p>Dormant outside {@link #THREAT_CONTACT_RANGE}: on the approach there is no exchange to hold and the
+     * force should move loose and fast. Withdrawing units are leaving, not holding. The credit is capped
+     * strictly below one turn of advance, harder under DEFEND than ATTACK
+     * ({@link #HOLD_CREDIT_DEFEND_CAP_FACTOR}, {@link #HOLD_CREDIT_ATTACK_CAP_FACTOR}), so a position is
+     * never worth more than the advance it would delay.</p>
+     */
+    @Override
+    protected double calculatePositionHoldMod(MovePath path, Game game, FiringPhysicalDamage damageEstimate,
+          double expectedDamageTaken, double successProbability) {
+        // Reset first: these are recorded for every path, and an early exit must not leave the previous
+        // path's figures standing in the log.
+        lastPositionQuality = 0;
+        lastPositionHoldMod = 0;
+
+        Entity movingUnit = path.getEntity();
+        if ((path.getHexesMoved() > 0) || movingUnit.isAirborneAeroOnGroundMap() || isWithdrawing(movingUnit)) {
+            return 0;
+        }
+        if (distanceToClosestEnemy(movingUnit, path.getFinalCoords(), game) > THREAT_CONTACT_RANGE) {
+            return 0;
+        }
+
+        double quality = (successProbability * damageEstimate.getMaximumDamageEstimate()
+              * heatSinkSustainBoost(movingUnit, game, path))
+              - expectedDamageTaken;
+        lastPositionQuality = quality;
+        if (quality <= 0) {
+            return 0;
+        }
+
+        double aggression = getOwner().getBehaviorSettings().getHyperAggressionValue();
+        double capFactor = (CombatPosture.DEFEND == resolvePosture(game, movingUnit.getBoardId()))
+              ? HOLD_CREDIT_DEFEND_CAP_FACTOR
+              : HOLD_CREDIT_ATTACK_CAP_FACTOR;
+        double holdCredit = capFactor * Math.min(quality, TEMPO_REFERENCE_MP * aggression);
+        lastPositionHoldMod = holdCredit;
+        return holdCredit;
+    }
+
+    /**
+     * The two-step's hidden cost, made visible. The base ranker's estimate against enemies that have not
+     * yet moved is a damage-at-range table with no to-hit roll, so the attacker movement modifier - the one
+     * certain cost of moving - is absent from it and a short step reads as free. This prices it back in as
+     * a hit-chance ratio at the {@link #REPRESENTATIVE_TO_HIT} midpoint: standing keeps everything, walking
+     * keeps about two-thirds, running two-fifths, a standard jump one-fifth.
+     *
+     * <p>The modifier itself comes from the same engine call the server fires with
+     * ({@link Compute#getAttackerMovementModifier}), so infantry's exemption, the dual-cockpit dedicated
+     * gunner, and the jumping-jack abilities are all priced without this class knowing their names.
+     * The anatomy of the shuffle measured on the water arms: the bravery term paid for half of all
+     * two-steps, and against unmoved enemies its gain was computed with this cost missing.</p>
+     */
+    @Override
+    protected double attackerMovementDamageDiscount(MovePath path) {
+        int attackerMovementModifier = Compute.getAttackerMovementModifier(path.getEntity().getGame(),
+              path.getEntity().getId(),
+              path.getLastStepMovementType()).getValue();
+        if (attackerMovementModifier <= 0) {
+            return 1.0;
+        }
+        if (attackerMovementModifier >= TargetRoll.AUTOMATIC_FAIL) {
+            // Sprinting: no attacks at all after this move. Unreachable from the current call site
+            // (sprint paths contribute no damage before the discount applies), but the sentinel is
+            // Integer.MAX_VALUE - 1 and must never reach the addition below.
+            return 0.0;
+        }
+        return Compute.oddsAbove(REPRESENTATIVE_TO_HIT + attackerMovementModifier)
+              / Compute.oddsAbove(REPRESENTATIVE_TO_HIT);
+    }
+
+    /**
      * The bank labels for a board, computed once per round and shared by every path of every mover.
      */
     private BankRegions bankRegions(Game game, int boardId) {
@@ -418,6 +533,94 @@ public class MutualSupportPathRanker extends BasicPathRanker {
         }
         return bankRegionsByBoard.computeIfAbsent(boardId,
               id -> BankRegions.of(game.getBoard(id), FormationSide.ANY_WATER_DEPTH));
+    }
+
+    /**
+     * The per-hex terrain labels for a board, computed once per round and shared by every path of every
+     * mover on it.
+     */
+    private HexPropertiesMap hexProperties(Game game, int boardId) {
+        int round = game.getCurrentRound();
+        if (round != hexPropertiesRound) {
+            hexPropertiesRound = round;
+            hexPropertiesByBoard.clear();
+        }
+        return hexPropertiesByBoard.computeIfAbsent(boardId,
+              id -> HexPropertiesMap.of(game, game.getBoard(id), id));
+    }
+
+    /**
+     * Mechanism B of the terrain doctrine, first term: cover is priced into the incoming-fire estimate
+     * where it was missing. Against already-moved enemies the fire-control guess prices the destination's
+     * woods and cover honestly; against unmoved enemies the estimate is a raw range table, so a covered
+     * hex and an open one read the same and terrain never influenced the choice. This discounts that raw
+     * estimate by the hit-chance ratio the destination's cover implies, the same representative-8s pricing
+     * as the movement discount.
+     *
+     * <p>Only cover a unit can FIGHT from is credited: a woodline-edge hex (fire out, hard to hit) and
+     * partial cover count; deep woods - concealing but blind - deliberately do not, so the discount can
+     * never coax a unit into ground it cannot shoot from (the dead-ground rule from the water PR, and
+     * rulings 3 and 9 of the command interview). A covered firing position takes less estimated damage,
+     * which raises its exchange, which the hold credit then makes sticky - the terrain preference emerges
+     * through the ledger rather than through a bonus term.</p>
+     */
+    @Override
+    protected double incomingFireTerrainDiscount(MovePath path) {
+        HexProperties properties = hexProperties(path.getEntity().getGame(), path.getFinalBoardId())
+              .at(path.getFinalCoords());
+        return incomingFireTerrainDiscount(properties);
+    }
+
+    /** The pure pricing: what fraction of incoming fire the cover modifiers let through. */
+    static double incomingFireTerrainDiscount(HexProperties properties) {
+        int coverModifiers = (properties.concealmentEdge() ? properties.concealment() : 0)
+              + (properties.partialCover() ? 1 : 0);
+        if (coverModifiers <= 0) {
+            return 1.0;
+        }
+        return Compute.oddsAbove(REPRESENTATIVE_TO_HIT + coverModifiers)
+              / Compute.oddsAbove(REPRESENTATIVE_TO_HIT);
+    }
+
+    /**
+     * Mechanism C1: how much a heat-sink hex raises this unit's sustainable output where it stands. The
+     * ratio of the sustained-damage curves at the fight's current range - standing in water versus dry -
+     * from the same {@link DamageProfile} data the analysis display shows. For a cool-running unit the
+     * curves are identical and the boost is 1; for a Mek whose guns outrun its dry sinks (the triple-PPC
+     * case) the water closes the gap between what it can fire once and what it can fire every round, and
+     * the position quality - and so the hold credit - rises by exactly that measured amount. Holding the
+     * sink only; moving to reach one is a DEFEND-gated question (interview ruling 4) left for the
+     * follow-on.
+     */
+    private double heatSinkSustainBoost(Entity movingUnit, Game game, MovePath path) {
+        if (!movingUnit.tracksHeat()) {
+            return 1.0;
+        }
+        HexProperties standingOn = hexProperties(game, path.getFinalBoardId()).at(path.getFinalCoords());
+        if (!standingOn.heatSink()) {
+            return 1.0;
+        }
+        int round = game.getCurrentRound();
+        if (round != profileCacheRound) {
+            profileCacheRound = round;
+            dryProfileByUnit.clear();
+            waterProfileByUnit.clear();
+        }
+        boolean extremeRange = isExtremeRange(game);
+        DamageProfile dryProfile = dryProfileByUnit.computeIfAbsent(movingUnit.getId(),
+              id -> DamageProfile.of(movingUnit, extremeRange));
+        DamageProfile waterProfile = waterProfileByUnit.computeIfAbsent(movingUnit.getId(),
+              id -> DamageProfile.of(movingUnit, extremeRange,
+                    (movingUnit.getCrew() != null) ? movingUnit.getCrew().getGunnery() : 4,
+                    movingUnit.getHeatCapacityWithWater()));
+        int range = Math.max(1, (int) Math.ceil(
+              distanceToClosestEnemy(movingUnit, path.getFinalCoords(), game)));
+        double drySustained = dryProfile.sustainedDamage(range);
+        double waterSustained = waterProfile.sustainedDamage(range);
+        if ((drySustained <= 0) || (waterSustained <= drySustained)) {
+            return 1.0;
+        }
+        return waterSustained / drySustained;
     }
 
     /**
@@ -569,6 +772,10 @@ public class MutualSupportPathRanker extends BasicPathRanker {
         // at the top of calculateMutualSupportMod before anything can return early.
         scores.put("combatPosture", (double) posture.ordinal());
         scores.put("posturePenalty", lastPosturePenalty);
+        // Position persistence: the exchange quality of the hex a stationary path holds, and what holding
+        // it was credited. Both zero for any path that moved. Reset at the top of calculatePositionHoldMod.
+        scores.put("positionQuality", lastPositionQuality);
+        scores.put("positionHoldMod", lastPositionHoldMod);
         return scores;
     }
 
@@ -676,6 +883,14 @@ public class MutualSupportPathRanker extends BasicPathRanker {
      * runs 9. Zero once inside the band - nothing pulls a fire-support unit past its optimum toward
      * point-blank range.
      *
+     * <p>A laid defense does not pay tempo. Once the enemy is inside contact range and the force's posture
+     * is DEFEND, the enemy is coming to us: the closing charge that keeps an attack from dithering would
+     * here bleed the defender off its firing positions one hex at a time - measured as the biggest payer
+     * in 40% of the defender's remaining two-steps after the attacker-movement fix. Out of contact the
+     * charge stands, so a defending force still closes ranks toward its line instead of scattering. The
+     * gate reads the unit's CURRENT distance, not the path's, so every candidate path of the pass sees the
+     * same flat field.</p>
+     *
      * @param movingUnit the unit being moved
      * @param path       the path being evaluated
      * @param game       the current game
@@ -688,6 +903,12 @@ public class MutualSupportPathRanker extends BasicPathRanker {
         int ownSpeed = Math.max(1, Math.max(movingUnit.getRunMP(), movingUnit.getAnyTypeMaxJumpMP()));
         double turnsToClose = remainingGap / ownSpeed;
         lastTurnsToBand = turnsToClose;
+
+        if ((CombatPosture.DEFEND == resolvePosture(game, movingUnit.getBoardId()))
+              && (distanceToClosestEnemy(movingUnit, movingUnit.getPosition(), game)
+                    <= THREAT_CONTACT_RANGE)) {
+            return 0;
+        }
 
         double aggression = getOwner().getBehaviorSettings().getHyperAggressionValue();
         double aggressionMod = turnsToClose * TEMPO_REFERENCE_MP * aggression;

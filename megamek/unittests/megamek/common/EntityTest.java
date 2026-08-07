@@ -487,7 +487,7 @@ class EntityTest {
             game.addPlayer(player1.getId(), player1);
             game.addPlayer(player2.getId(), player2);
             
-            game.initializeRulesManager();
+            game.initializeRulesManager(OptionsConstants.RULES_CORE);
             // Set up initial C3 link
             setUpC3Link(game, player1, mek, new Coords(1, 1), tank, new Coords(3, 3), true);
 
@@ -542,7 +542,7 @@ class EntityTest {
             game.addPlayer(player1.getId(), player1);
             game.addPlayer(player2.getId(), player2);
 
-            game.initializeRulesManager();
+            game.initializeRulesManager(OptionsConstants.RULES_CORE);
             // Set up initial C3 link
             setUpC3Link(game, player1, mek, new Coords(1, 1), tank, new Coords(3, 3), true);
 
@@ -597,7 +597,7 @@ class EntityTest {
             game.addPlayer(player1.getId(), player1);
             game.addPlayer(player2.getId(), player2);
 
-            game.initializeRulesManager();
+            game.initializeRulesManager(OptionsConstants.RULES_CORE);
             // Set up initial C3 link
             setUpC3Link(game, player1, mek, new Coords(1, 1), tank, new Coords(3, 3), true);
 
@@ -633,7 +633,7 @@ class EntityTest {
             Player player = new Player(1, "C3 side");
             game.addPlayer(player.getId(), player);
             
-            game.initializeRulesManager();
+            game.initializeRulesManager(OptionsConstants.RULES_CORE);
             // Standard (non-boosted) C3 link, master at (1,1), slave at (3,3).
             setUpC3Link(game, player, mek, new Coords(1, 1), tank, new Coords(3, 3), false);
 

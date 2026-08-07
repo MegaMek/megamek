@@ -105,7 +105,7 @@ public class MissileWeaponsHandlerTest {
         gameManager = new TWGameManager();
         game = gameManager.getGame();
 
-        game.initializeRulesManager();
+        game.initializeRulesManager(OptionsConstants.RULES_CORE);
         
         // Instantiate the players
         aPlayer = new Player(0, "Attacker");

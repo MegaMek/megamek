@@ -11456,7 +11456,7 @@ public abstract class Entity extends TurnOrdered
                 && getDisplacementAttack() instanceof ChargeAttackAction) {
                 ChargeAttackAction chargeAttack = (ChargeAttackAction) getDisplacementAttack();
                 Entity target = (Entity) chargeAttack.getTarget(game);
-                if (target.isDestroyed() || target.isProne()) {
+                if (target != null && (target.isDestroyed() || target.isProne())) {
                     Enumeration<AttackAction> gameDisplacementAttacks = game.getDisplacementAttacks();
                     while (gameDisplacementAttacks != null && gameDisplacementAttacks.hasMoreElements()) {
                         AttackAction attackAction = gameDisplacementAttacks.nextElement();

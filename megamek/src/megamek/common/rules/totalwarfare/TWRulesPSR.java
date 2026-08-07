@@ -286,7 +286,6 @@ public class TWRulesPSR extends RulesPSR {
      */
     @Override
     public FallDamageInWater reduceFallDamageIntoWater(int damage, int waterDepth, int fallHeight, double weight) {
-        ArrayList<Integer> damageValues = new ArrayList<>();
         damage /= 2;
         int waterDamage = ((int) Math.round(weight / 10.0) * (waterDepth + 1)) / 2;
 
@@ -294,9 +293,6 @@ public class TWRulesPSR extends RulesPSR {
             damage = 0;
             waterDamage = ((int) Math.round(weight / 10.0) * (fallHeight + 1)) / 2;
         }
-
-        damageValues.add(damage);
-        damageValues.add(waterDamage);
         return new FallDamageInWater(damage, waterDamage);
     }
 }

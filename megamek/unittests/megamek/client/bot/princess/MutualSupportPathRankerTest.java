@@ -653,13 +653,19 @@ class MutualSupportPathRankerTest {
               testRanker.attackerMovementDamageDiscount(ran), TOLERANCE);
     }
 
-    /** Princess's estimate is untouched: the base ranker's discount is exactly 1.0 for every path. */
+    /**
+     * The promotion: the pricing lives in the base ranker now, so Princess prices her own movement the
+     * same way CASPAR does - running keeps two-fifths of the raw estimate for both.
+     */
     @Test
-    void theBaseRankerDoesNotDiscountMovement() {
+    void princessPricesHerOwnMovementTheSameWay() {
+        when(mockGame.getEntity(1)).thenReturn(mockMover);
+        when(mockMover.getGame()).thenReturn(mockGame);
         BasicPathRanker princessRanker = new BasicPathRanker(mockPrincess);
         MovePath ran = pathEndingAt(CLOSING_DESTINATION);
         when(ran.getLastStepMovementType()).thenReturn(EntityMovementType.MOVE_RUN);
-        assertEquals(1.0, princessRanker.attackerMovementDamageDiscount(ran), TOLERANCE);
+        assertEquals(Compute.oddsAbove(10) / Compute.oddsAbove(8),
+              princessRanker.attackerMovementDamageDiscount(ran), TOLERANCE);
     }
 
     /**
@@ -692,11 +698,44 @@ class MutualSupportPathRankerTest {
         assertEquals(1.0, MutualSupportPathRanker.incomingFireTerrainDiscount(deepWoods), TOLERANCE);
     }
 
-    /** Princess's incoming-fire estimate is untouched: the base ranker's discount is exactly 1.0. */
+    /**
+     * The promotion: cover pricing lives in the base ranker, so Princess values a woodline edge exactly
+     * as CASPAR does, and a stationary Princess on a positive exchange earns the same capped hold credit.
+     */
     @Test
-    void theBaseRankerDoesNotDiscountIncomingFire() {
-        BasicPathRanker princessRanker = new BasicPathRanker(mockPrincess);
-        assertEquals(1.0, princessRanker.incomingFireTerrainDiscount(pathEndingAt(CLOSING_DESTINATION)),
+    void princessEarnsHoldCreditAndPricesCoverToo() {
+        HexProperties woodlineEdge = new HexProperties(0, false, 1, true, 0, false, false);
+        assertEquals(Compute.oddsAbove(9) / Compute.oddsAbove(8),
+              BasicPathRanker.incomingFireTerrainDiscount(woodlineEdge), TOLERANCE);
+
+        when(mockBehavior.getCombatPosture()).thenReturn(CombatPosture.ATTACK);
+        BasicPathRanker princessRanker = spy(new BasicPathRanker(mockPrincess));
+        doReturn(mockPrincess).when(princessRanker).getOwner();
+        doReturn(10.0).when(princessRanker)
+              .distanceToClosestEnemy(any(Entity.class), eq(CURRENT_POSITION), any(Game.class));
+        // quality 15 = 1.0 success * 20 dealt - 5 taken; credited at the attack factor, same as CASPAR
+        assertEquals(0.4 * 15.0,
+              princessRanker.calculatePositionHoldMod(pathEndingAt(CURRENT_POSITION), mockGame,
+                    damageDealing(20.0), 5.0, 1.0), TOLERANCE);
+    }
+
+    /** The defender-tempo port: a Princess defender in contact pays no closing charge either. */
+    @Test
+    void princessDefenderInContactPaysNoClosingCharge() {
+        when(mockBehavior.getCombatPosture()).thenReturn(CombatPosture.DEFEND);
+        BasicPathRanker princessRanker = spy(new BasicPathRanker(mockPrincess));
+        doReturn(mockPrincess).when(princessRanker).getOwner();
+        doReturn(10.0).when(princessRanker)
+              .distanceToClosestEnemy(any(Entity.class), any(Coords.class), any(Game.class));
+        assertEquals(0.0,
+              princessRanker.calculateAggressionMod(mockMover, pathEndingAt(HOLDING_DESTINATION), mockGame),
+              TOLERANCE);
+
+        // Out of contact the pull stands: the stock gradient at distance 20 and aggression 2.5.
+        doReturn(20.0).when(princessRanker)
+              .distanceToClosestEnemy(any(Entity.class), any(Coords.class), any(Game.class));
+        assertEquals(20.0 * 2.5,
+              princessRanker.calculateAggressionMod(mockMover, pathEndingAt(HOLDING_DESTINATION), mockGame),
               TOLERANCE);
     }
 

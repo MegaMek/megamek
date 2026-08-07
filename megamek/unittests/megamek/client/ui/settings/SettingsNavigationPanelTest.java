@@ -41,6 +41,7 @@ import java.awt.Component;
 import java.awt.Container;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicInteger;
+import java.util.concurrent.atomic.AtomicReference;
 import javax.swing.JLabel;
 import javax.swing.JTree;
 
@@ -76,6 +77,18 @@ class SettingsNavigationPanelTest {
 
         assertEquals(1, calls.get());
         assertEquals("display", panel.getActiveFilter());
+    }
+
+    @Test
+    void filterPublishesNormalizedSearchText() {
+        AtomicReference<String> filter = new AtomicReference<>();
+        SettingsNavigationPanel panel = new SettingsNavigationPanel(
+              List.of(new SettingsRoute("display", List.of("Display"))), route -> { }, TEXT);
+        panel.setFilterChangeListener(filter::set);
+
+        panel.setFilterText("Über Display");
+
+        assertEquals("uber display", filter.get());
     }
 
     @Test

@@ -60,6 +60,7 @@ public class TWRulesTarget extends RulesTarget {
      * @param markedLarge true if the target is marked as large
      * @return the large target modifier
      */
+    @Override
     public int largeTargetModifier(int weightclass, boolean markedLarge) {
         if (weightclass == EntityWeightClass.WEIGHT_SUPER_HEAVY || weightclass == EntityWeightClass.WEIGHT_LARGE_SUPPORT) {
             return -1;
@@ -73,6 +74,7 @@ public class TWRulesTarget extends RulesTarget {
      *
      * @return true if the aimed location is hit
      */
+    @Override
     public boolean checkAimedLocation() {
         int roll = Compute.d6(2);
 
@@ -87,6 +89,7 @@ public class TWRulesTarget extends RulesTarget {
      *
      * @return the secondary arc modifier
      */
+    @Override
     public int getSecondaryArcModifier(){
         return 2;
     }
@@ -98,6 +101,7 @@ public class TWRulesTarget extends RulesTarget {
      * @param toProneFire true if checking prone fire capability
      * @return true if you can shoot with one arm while prone
      */
+    @Override
     public boolean proneFireWithOneArm(final boolean toProneFire) {
         return toProneFire;
     }
@@ -110,6 +114,7 @@ public class TWRulesTarget extends RulesTarget {
      * @param location the arm location being used
      * @return the arm actuator hit modifier
      */
+    @Override
     public int getArmActuatorHitMod(Entity attacker, int location) {
         int actuatorHits = 0;
         if (attacker.getBadCriticalSlots(CriticalSlot.TYPE_SYSTEM, Mek.ACTUATOR_UPPER_ARM, location) > 0) {
@@ -127,6 +132,7 @@ public class TWRulesTarget extends RulesTarget {
      * @param los the line of sight effects
      * @return the BAP smoke reduction amount. Always is 0
      */
+    @Override
     public int getBAPSmokeReduction(LosEffects los) {
         return 0;
     }
@@ -146,6 +152,7 @@ public class TWRulesTarget extends RulesTarget {
      *
      * Note: modifies the passed-in ToHitData toHit.
      */
+    @Override
     public void addImmobileMod(Targetable target, ToHitData toHit, int aimingAt, WeaponType weaponType,
           WeaponMounted weapon, AmmoType ammoType, EnumSet<AmmoType.Munitions> munition, Entity entityTarget,
           AimingMode aimingMode) {

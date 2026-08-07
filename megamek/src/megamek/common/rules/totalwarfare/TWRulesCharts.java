@@ -47,6 +47,7 @@ public class TWRulesCharts extends RulesCharts {
      *
      * @return the facing direction for a fall
      */
+    @Override
     public int getFacingForFall() {
         return Compute.d6(1) - 1;
     }
@@ -60,6 +61,7 @@ public class TWRulesCharts extends RulesCharts {
      * @param quad whether the unit is quadrupedal
      * @return the hit location
      */
+    @Override
     public int getPunchHitLocation(int roll, int side, boolean quad) {
         // front punch hits
         boolean rear = (side == ToHitData.SIDE_REAR);

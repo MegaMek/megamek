@@ -51,6 +51,7 @@ public class TWRulesArmor extends RulesArmor {
      * @param heat_weapon true if the weapon is a heat weapon
      * @return true if heat weapons are allowed
      */
+    @Override
     public boolean allowHeatWeapon(boolean heat_weapon) {
         return false;
     }
@@ -62,6 +63,7 @@ public class TWRulesArmor extends RulesArmor {
      * @param mods the modifications info
      * @return true if armor piercing is allowed
      */
+    @Override
     public boolean allowArmorPiercing(TWDamageManager.ModsInfo mods) {
         if (mods.hardenedArmor || mods.ferroLamellorArmor || mods.reactiveArmor) {
             return false;
@@ -73,6 +75,7 @@ public class TWRulesArmor extends RulesArmor {
      * {@inheritDoc}
      * Impact Resistant Armor breach. 
      */
+    @Override
     public int impactArmorBreach() {
         return 1;
     }
@@ -83,6 +86,7 @@ public class TWRulesArmor extends RulesArmor {
      *
      * @return the impact armor modifier
      */
+    @Override
     public int impactArmorMod() {return 1;}
     
     /**
@@ -92,6 +96,7 @@ public class TWRulesArmor extends RulesArmor {
      * @param armorType the type of armor
      * @return true if a lance penetrates the armor
      */
+    @Override
     public boolean checkLancePenetration(int armorType) {
         return (armorType == EquipmentType.T_ARMOR_HARDENED || armorType == EquipmentType.T_ARMOR_FERRO_LAMELLOR) ?
               false : true;
@@ -104,6 +109,7 @@ public class TWRulesArmor extends RulesArmor {
      * @param heatDamage the amount of heat damage
      * @return the reduced heat damage amount
      */
+    @Override
     public int reduceHeatDamageByArmor(int armorType, int heatDamage) {
         if (armorType == EquipmentType.T_ARMOR_HEAT_DISSIPATING) {
             return (int) Math.floor(heatDamage / 2.0);
@@ -121,6 +127,7 @@ public class TWRulesArmor extends RulesArmor {
      * @param reflectiveArmor true if the armor is reflective
      * @return true if reflective armor affects AP modifiers
      */
+    @Override
     public boolean reflectiveAP(boolean reflectiveArmor) {
         return reflectiveArmor;
     }
@@ -131,6 +138,7 @@ public class TWRulesArmor extends RulesArmor {
      * @param armorType the type of armor
      * @return true if TAC is blocked
      */
+    @Override
     public boolean blockTAC(int armorType) {
         return false;
     }
@@ -145,6 +153,7 @@ public class TWRulesArmor extends RulesArmor {
      * @param damageType the type of damage
      * @return the reduced damage amount
      */
+    @Override
     public int reduceImpactDamage(int entityId,HitData hit, int damage, Vector<Report> reportVec, int damageType) {
         // As long as there is even 1 point of armor in this location, reduce _all_ damage
         // to 2 points for every whole 3 points applied (IntOps pg 88).

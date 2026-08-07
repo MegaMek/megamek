@@ -49,7 +49,12 @@ import megamek.common.units.Mek;
 import java.util.Vector;
 
 public class TWRulesExplosions extends RulesExplosions {
-    // Damage reduction for CASE, CASE II, explosions
+
+    /**
+     * {@inheritDoc}
+     * No special handling
+     */
+    @Override
     public int explosionDamageReduction(Mek mek, HitData hit, int damage, boolean ammoExplosion,
           Vector<Report> reportVec) {
         return applyCASEIIDamageReduction(mek, hit, damage, ammoExplosion, reportVec);
@@ -66,6 +71,7 @@ public class TWRulesExplosions extends RulesExplosions {
      *
      * @return int          total of damage remaining after reduction by CASE II
      */
+    @Override
     public int applyCASEIIDamageReduction(Entity entity, HitData hit, int damage, boolean ammoExplosion,
           Vector<Report> reportVec) {
         // Check for CASE II right away. If so, reduce damage to 1 and let it hit the IS. Also, remove as much of the
@@ -139,6 +145,7 @@ public class TWRulesExplosions extends RulesExplosions {
      * @param ammoExplosion true if this is an ammo explosion
      * @return the critical hit modifier
      */
+    @Override
     public int explosionCASEIImod(boolean hasCaseII, boolean ammoExplosion) {
         return 0;
     }
@@ -151,6 +158,7 @@ public class TWRulesExplosions extends RulesExplosions {
      * @param weaponType the weapon type
      * @return the damage amount
      */
+    @Override
     public int equipmentDamage(Mounted<?> mounted, WeaponType weaponType) {
         if (weaponType.hasFlag(WeaponType.F_PPC) && (mounted.hasChargedCapacitor() != 0)) {
             if (mounted.isFired()) {
@@ -177,6 +185,7 @@ public class TWRulesExplosions extends RulesExplosions {
      * @param mounted the mounted weapon
      * @return false if it has already shot, otherwise true
      */
+    @Override
     public boolean arePodsExplosive(Mounted<?> mounted) {
         if (mounted.getLinked() == null || mounted.getLinked().getUsableShotsLeft() == 0) {
             return false;

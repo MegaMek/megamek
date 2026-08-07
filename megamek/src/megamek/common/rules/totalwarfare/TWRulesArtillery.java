@@ -45,6 +45,7 @@ public class TWRulesArtillery extends RulesArtillery {
      * @param flak      direct fire against airborne ground or ASF target if true
      * @return base Artillery attack mod
      */
+    @Override
     public int computeArtilleryBaseMod(int distance, boolean direct, boolean flak) {
 
         return (flak) ? 3 : ((direct) ? 4 : ((distance > 17) ? 7 : 4));

@@ -59,6 +59,7 @@ public class TWRulesEquipment extends RulesEquipment {
      *
      * @return true if AMS allows multiple shots
      */
+    @Override
     public boolean getAMSMultiShot() { return false;}
 
     /**
@@ -68,6 +69,7 @@ public class TWRulesEquipment extends RulesEquipment {
      * @param toAdvancedAMS true if using advanced AMS
      * @return true if AMS can reduce to 0
      */
+    @Override
     public boolean getAMSReduction(boolean toAdvancedAMS) {
         if (toAdvancedAMS) { return true; }
         return false;
@@ -80,6 +82,7 @@ public class TWRulesEquipment extends RulesEquipment {
      * @param roll the dice roll
      * @return true if AMS shoots down a single missile
      */
+    @Override
     public boolean checkAMSSingleMissile(int roll) {
         return roll <= 3 ? true : false;
     }
@@ -90,6 +93,7 @@ public class TWRulesEquipment extends RulesEquipment {
      * @param gyroType the type of gyro
      * @return the number of hits needed to destroy the gyro
      */
+    @Override
     public int hitsToDestroyGyro(int gyroType) {
         if (gyroType == Mek.GYRO_HEAVY_DUTY) {
             return 3;
@@ -103,6 +107,7 @@ public class TWRulesEquipment extends RulesEquipment {
      * @param nLevel the MASC level
      * @return the failure target number
      */
+    @Override
     public int getMascFailure(int nLevel) {
         int[] MASC_FAILURE = { 3, 5, 7, 11, 13, 13, 13 };
         return MASC_FAILURE[nLevel];
@@ -115,6 +120,7 @@ public class TWRulesEquipment extends RulesEquipment {
      * @param blueShieldRounds the number of blue shield rounds
      * @return the target number
      */
+    @Override
     public int getBlueShieldTarget(int blueShieldRounds) {
         return (3 + blueShieldRounds - 6);
     }
@@ -128,6 +134,7 @@ public class TWRulesEquipment extends RulesEquipment {
      * @param consecutiveRounds the number of consecutive rounds
      * @return the target number for success
      */
+    @Override
     public int radicalHeatSinkSuccessTarget(int consecutiveRounds) {
         return switch (consecutiveRounds) {
             case 1 -> 3;
@@ -147,6 +154,7 @@ public class TWRulesEquipment extends RulesEquipment {
      * @param b the second coordinate
      * @return list of coordinates affected by ECM
      */
+    @Override
     public ArrayList<Coords> getECMCoordsAffected(Coords a, Coords b) {
         return Coords.intervening(a, b);
     }
@@ -158,6 +166,7 @@ public class TWRulesEquipment extends RulesEquipment {
      * @param type the miscellaneous equipment type
      * @return the ECM range
      */
+    @Override
     public int getECMRanges(MiscType type) {
         if (type.hasFlag(MiscType.F_SINGLE_HEX_ECM)) {
             return 0;
@@ -176,6 +185,7 @@ public class TWRulesEquipment extends RulesEquipment {
      * @param type the probe type
      * @return the sensor range
      */
+    @Override
     public int getSensorRanges(int type) {
         return switch (type) {
             case Sensor.TYPE_BAP, Sensor.TYPE_BAPP -> 12;
@@ -211,6 +221,7 @@ public class TWRulesEquipment extends RulesEquipment {
      * @param position the position to check
      * @return true if BAP is active
      */
+    @Override
     public boolean isBAPActive(boolean checkECM,
           final MiscType type,
           final Entity entity,
@@ -230,6 +241,7 @@ public class TWRulesEquipment extends RulesEquipment {
      *
      * @return the initiative bonus
      */
+    @Override
     public int getCommandConsoleBonus() {
         return 2;
     }
@@ -243,6 +255,7 @@ public class TWRulesEquipment extends RulesEquipment {
      * @param isSupercharger true if this is a supercharger failure
      * @return the number of hits
      */
+    @Override
     public int getMascSuperChargerFailureHits(int entityId, Vector<Report> vDesc, boolean isSupercharger) {
         int hits = 0;
         int reportId = 6310;
@@ -282,6 +295,7 @@ public class TWRulesEquipment extends RulesEquipment {
      * @param vCriticalSlots map of critical slots being damaged
      * @param hits the number of hits
      */
+    @Override
     public void doMascFailureCrits(Entity entity, HashMap<Integer, List<CriticalSlot>> vCriticalSlots, int hits) {
         // do the damage. random critical slot on each leg, but MASC is not destroyed
         for (int loc = 0; loc < entity.locations(); loc++) {
@@ -302,5 +316,6 @@ public class TWRulesEquipment extends RulesEquipment {
      * @param activeBlueShield Is the blue shield system active
      * @return false;
      */
+    @Override
     public boolean blueShieldStealth(boolean activeBlueShield) { return false; }
 }

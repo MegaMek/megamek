@@ -45,6 +45,7 @@ public class TWRulesTerrain extends RulesTerrain {
      * @param deltaElevation the change in elevation
      * @return the road elevation cost difference
      */
+    @Override
     public int getRoadElevationCostDifference(Hex srcHex, Hex destHex, int deltaElevation) { return 0; }
 
     /**
@@ -55,6 +56,7 @@ public class TWRulesTerrain extends RulesTerrain {
      * @param maxElevationChange the maximum elevation change normally allowed
      * @return the adjusted maximum elevation change allowed
      */
+    @Override
     public int getMaxElevationChangeAllowed(Hex srcHex, Hex destHex, int maxElevationChange) {
         return maxElevationChange;
     }

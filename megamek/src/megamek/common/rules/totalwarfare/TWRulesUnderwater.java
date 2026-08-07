@@ -41,6 +41,7 @@ public class TWRulesUnderwater extends RulesUnderwater {
      *
      * @return the breach target number is 10
      */
+    @Override
     public int getBreachTarget() {
         return 10;
     }
@@ -50,6 +51,7 @@ public class TWRulesUnderwater extends RulesUnderwater {
      *
      * @return true if water blocks line of sight
      */
+    @Override
     public boolean waterBlocksLOS() {
         return true;
     }
@@ -59,6 +61,7 @@ public class TWRulesUnderwater extends RulesUnderwater {
      * @param weaponType
      * @return short range
      */
+    @Override
     public int getShortRange(WeaponType weaponType) {
         return weaponType.getWShortRange();
     }
@@ -68,6 +71,7 @@ public class TWRulesUnderwater extends RulesUnderwater {
      * @param weaponType
      * @return medium range
      */
+    @Override
     public int getMediumRange(WeaponType weaponType) {
         return weaponType.getWMediumRange();
     }
@@ -77,6 +81,7 @@ public class TWRulesUnderwater extends RulesUnderwater {
      * @param weaponType
      * @return long range
      */
+    @Override
     public int getLongRange(WeaponType weaponType) {
         return weaponType.getWLongRange();
     }
@@ -86,6 +91,7 @@ public class TWRulesUnderwater extends RulesUnderwater {
      * @param weaponType
      * @return extreme range
      */
+    @Override
     public int getExtremeRange(WeaponType weaponType) {
         return weaponType.getWExtremeRange();
     }

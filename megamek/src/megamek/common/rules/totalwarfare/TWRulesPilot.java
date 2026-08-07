@@ -49,6 +49,7 @@ public class TWRulesPilot extends RulesPilot {
      *
      * @return the number of pilot hits caused by an explosion
      */
+    @Override
     public int getExplosionPilotHits() {
         return 2;
     }
@@ -59,6 +60,7 @@ public class TWRulesPilot extends RulesPilot {
      * @param piloting the piloting skill
      * @return the seatbelt gyro modifier
      */
+    @Override
     public int getSeatbeltGyroModifier(int piloting) {
         return piloting + 6;
     }
@@ -71,6 +73,7 @@ public class TWRulesPilot extends RulesPilot {
      * @param legsDestroyed the number of legs destroyed
      * @return the seatbelt leg modifier
      */
+    @Override
     public int getSeatbeltLegModifier(int piloting, int legsDestroyed) {
         if (legsDestroyed == 2) {
             return piloting + 10;
@@ -88,6 +91,7 @@ public class TWRulesPilot extends RulesPilot {
      * @param piloting the piloting skill
      * @return the seatbelt shutdown target number
      */
+    @Override
     public int getSeatbeltShutdown(int piloting) {
         return piloting + 3;
     }
@@ -96,5 +100,6 @@ public class TWRulesPilot extends RulesPilot {
      * {@inheritDoc}
      * In TW this is fall height - 1
      * */
+    @Override
     public int getSeatbeltHeightModifier(int fallHeight) { return fallHeight - 1; }
 }

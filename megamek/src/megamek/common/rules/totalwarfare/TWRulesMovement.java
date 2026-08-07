@@ -53,6 +53,7 @@ public class TWRulesMovement extends RulesMovement {
      *
      * @return true if skidding is enabled
      */
+    @Override
     public boolean skidEnabled() {
         return true;
     }
@@ -65,6 +66,7 @@ public class TWRulesMovement extends RulesMovement {
      *
      * @return true if the unit cannot run in water
      */
+    @Override
     public boolean cannotRunInWater(EntityMovementMode movementMode,
           boolean amphibious) {
         if ((movementMode != EntityMovementMode.HOVER) &&
@@ -85,6 +87,7 @@ public class TWRulesMovement extends RulesMovement {
      *
      * @return the MP cost for underwater movement
      */
+    @Override
     public int getUnderwaterMPCost() {
         return 3;
     }
@@ -97,6 +100,7 @@ public class TWRulesMovement extends RulesMovement {
      *
      * @return true if backwards elevation change is allowed
      */
+    @Override
     public boolean enableBackwardsElevationChange(final boolean toBackwardsElevation, Entity entity) {
         return toBackwardsElevation;
     }
@@ -108,6 +112,7 @@ public class TWRulesMovement extends RulesMovement {
      *
      * @return true if leg damage is cumulative
      */
+    @Override
     public boolean cumulativeLegDamage(boolean bTOLegDamage) {
         return bTOLegDamage;
     }
@@ -119,12 +124,14 @@ public class TWRulesMovement extends RulesMovement {
      *
      * @return true if 0 MP causes immobile status
      */
+    @Override
     public boolean checkMPZeroCauseImmobile(int walkMP) {return false;}
 
     /**
      * {@inheritDoc}
      * Lost a leg? No running
      */
+    @Override
     public int getMekRunMP(int badLegs, int walkMP, int runMP, boolean isQuad) {
         if ((badLegs == 0 && !isQuad) || (badLegs <= 1 && isQuad)) {
             return runMP;
@@ -141,6 +148,7 @@ public class TWRulesMovement extends RulesMovement {
      *
      * @return true if moving into water is dangerous
      */
+    @Override
     public boolean isMoveIntoWaterDangerous(EntityMovementType movementType, EntityMovementMode movementMode) {
         return true;
     }
@@ -152,6 +160,7 @@ public class TWRulesMovement extends RulesMovement {
      *
      * @return true if maximum elevation can be reduced
      */
+    @Override
     public boolean reduceMaxElevation(Mek mek) {
         return false;
     }
@@ -167,6 +176,7 @@ public class TWRulesMovement extends RulesMovement {
      *
      * @return True if it can possibly step out of the way
      */
+    @Override
     public boolean dominoEffectMovementCriteria(final int direction, final Entity entity, final MovePath stepForward,
           final MovePath stepBackwards,
           final Entity violation) {
@@ -186,7 +196,14 @@ public class TWRulesMovement extends RulesMovement {
      *
      * @return false if there is no cost, true if there is
      */
+    @Override
     public boolean getDominoDisplacementCostsMP() {return true;}
+
+    /**
+     * {@inheritDoc}
+     * Dominos
+     */
+    @Override
     public boolean isDominoMoveLegal(final int direction, final Entity entity, final MovePath movePath,
           boolean forwards) {
         if (movePath.isMoveLegal()) {
@@ -203,6 +220,7 @@ public class TWRulesMovement extends RulesMovement {
      *
      * @return the modified height for damage
      */
+    @Override
     public int getAccidentalFallElevation(final int fallElevation, final int hitHeight) {return fallElevation;}
 
 
@@ -219,6 +237,7 @@ public class TWRulesMovement extends RulesMovement {
      * @return the destination Coords
      */
     @Nullable
+    @Override
     public Coords getAccidentalFallDisplacement(Game game, int entityId, Coords src, int direction,
           int range) {
         int[] offsets = { 0, 1, 5, 2, 4, 3 };
@@ -248,6 +267,7 @@ public class TWRulesMovement extends RulesMovement {
      *
      * @return int, the elevation above the underlying terrain the attacker should be at
      */
+    @Override
     public int getDFAElevation(Game game, int attackerId, int targetId, MoveStep step) {
         return step.getElevation();
     }

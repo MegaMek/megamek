@@ -58,6 +58,7 @@ public class TWRulesPSR extends RulesPSR {
      * @param overallMoveType the type of overall movement
      * @param distance the distance traveled
      */
+    @Override
     public void checkRunningWithDamage(Entity entity, PilotingRollData roll, int gyroDamage,
           EntityMovementType overallMoveType, int distance) {
         if (entity.getGyroType() == Mek.GYRO_HEAVY_DUTY) {
@@ -78,6 +79,7 @@ public class TWRulesPSR extends RulesPSR {
      *
      * @param roll the piloting roll data 
      */
+    @Override
     public void standing(PilotingRollData roll) {}
 
     /**
@@ -86,6 +88,7 @@ public class TWRulesPSR extends RulesPSR {
      * @param entity the entity that fell
      * @param facing the new facing direction
      */
+    @Override
     public void facingChangeAfterFall(Entity entity, int facing) {
         entity.setFacing((entity.getFacing() + (facing)) % 6);
         entity.setSecondaryFacing(entity.getFacing());
@@ -98,6 +101,7 @@ public class TWRulesPSR extends RulesPSR {
      * @param roll the piloting roll data to modify
      * @param toLegDamage true if applying leg damage
      */
+    @Override
     public void legDamageModifiers(MekWithArms unit, final PilotingRollData roll, final boolean toLegDamage) {
         for (int loc : List.of(Mek.LOC_RIGHT_LEG, Mek.LOC_LEFT_LEG)) {
             if (unit.isLocationBad(loc)) {
@@ -129,6 +133,7 @@ public class TWRulesPSR extends RulesPSR {
      * @param game the game instance
      * @param entity the entity to check
      */
+    @Override
     public void checkLegActuatorPsrRolls(Game game, Entity entity) {}
 
     /**
@@ -136,6 +141,7 @@ public class TWRulesPSR extends RulesPSR {
      *
      * @return true if foot actuator damage causes PSR
      */
+    @Override
     public boolean getFootActuatorPsr() {
         return true;
     }
@@ -145,6 +151,7 @@ public class TWRulesPSR extends RulesPSR {
      *
      * @return the hip penalty modifier
      */
+    @Override
     public int getHipPenalty() {
         return 2;
     }
@@ -157,6 +164,7 @@ public class TWRulesPSR extends RulesPSR {
      * @param gyroType the type of gyro
      * @return the gyro modifier
      */
+    @Override
     public int getGyroModifier(int gyroHits, int gyroType) {
         if (gyroType == Mek.GYRO_HEAVY_DUTY && gyroHits == 1) {
             return gyroHits;
@@ -169,6 +177,7 @@ public class TWRulesPSR extends RulesPSR {
      *
      * @return the leg destroyed modifier
      */
+    @Override
     public int getLegDestroyedModifier() {return 5;}
 
     /**
@@ -178,6 +187,7 @@ public class TWRulesPSR extends RulesPSR {
      * @param en the entity with HD gyro
      * @param actualGyroHits the actual number of gyro hits
      */
+    @Override
     public void handleHDGyroHits(Game game, Entity en, int actualGyroHits) {
         switch (actualGyroHits) {
             case 4:
@@ -211,6 +221,7 @@ public class TWRulesPSR extends RulesPSR {
      * @param overallMoveType the type of overall movement
      * @return always is true
      */
+    @Override
     public boolean psrForWaterEntry(EntityMovementType overallMoveType) {
         return true;
     }
@@ -221,6 +232,7 @@ public class TWRulesPSR extends RulesPSR {
      *
      * @return the modifier for successful Death from Above
      */
+    @Override
     public int getSuccessfulDFAModifier() {
         return 4;
     }
@@ -231,6 +243,7 @@ public class TWRulesPSR extends RulesPSR {
      * @param game the game instance
      * @param entity the entity being impacted by a club
      */
+    @Override
     public void clubImpact(Game game, Entity entity) {}
 
     /**
@@ -240,6 +253,7 @@ public class TWRulesPSR extends RulesPSR {
      * @param gyroType the type of gyro
      * @return the gyro jump modifier
      */
+    @Override
     public int getGyroJumpModifier(final int gyroHits, final int gyroType) {
         return 0;
     }
@@ -252,6 +266,7 @@ public class TWRulesPSR extends RulesPSR {
      * @param hexesMoved the number of hexes moved
      * @return the piloting roll data for the PSR, or null if no PSR required
      */
+    @Override
     public PilotingRollData checkWalkWithLegDestroyed(Entity entity, EntityMovementType overallMoveType,
           int hexesMoved) {
         PilotingRollData roll = entity.getBasePilotingRoll(overallMoveType);
@@ -269,6 +284,7 @@ public class TWRulesPSR extends RulesPSR {
      * @param weight how much does the unit weigh
      * @return the modified damage
      */
+    @Override
     public FallDamageInWater reduceFallDamageIntoWater(int damage, int waterDepth, int fallHeight, double weight) {
         ArrayList<Integer> damageValues = new ArrayList<>();
         damage /= 2;

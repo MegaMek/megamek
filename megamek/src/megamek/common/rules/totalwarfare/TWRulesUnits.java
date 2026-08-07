@@ -44,6 +44,7 @@ public class TWRulesUnits extends RulesUnits {
      *
      * @return the mule kick modifier
      */
+    @Override
     public int getMuleKickModifier() { return 1; }
     
     /**
@@ -52,6 +53,7 @@ public class TWRulesUnits extends RulesUnits {
      * @param mek the MEK to check
      * @return always returns false
      */
+    @Override
     public boolean getDoesLegDestructionCauseImmobile(Mek mek) {
         return false;
     }
@@ -66,6 +68,7 @@ public class TWRulesUnits extends RulesUnits {
      * @param bTOLegDamage true if using tactical operations leg damage rules
      * @return the reduced movement points
      */
+    @Override
     public int reduceQuadWalkMP(int mp, int legsDestroyed, int hipHits, int actuatorHits,
           boolean bTOLegDamage) {
         if (legsDestroyed > 0) {
@@ -101,6 +104,7 @@ public class TWRulesUnits extends RulesUnits {
      * @param destroyedLegs the number of destroyed legs
      * @param roll the piloting roll data to modify
      */
+    @Override
     public void quadPilotModForLegsDestroyed(int destroyedLegs, PilotingRollData roll) {
         if (destroyedLegs == 2) {
             roll.addModifier(Game.rulesManager.getRulesPSR().getLegDestroyedModifier(), "2 legs destroyed");
@@ -115,6 +119,7 @@ public class TWRulesUnits extends RulesUnits {
      * @param mp the base movement points
      * @return the reduced movement points
      */
+    @Override
     public int getMekMPReduction(int hipHits, boolean bTOLegDamage, int mp) {
         if (bTOLegDamage) {
             mp = mp - 2 * hipHits;
@@ -130,6 +135,7 @@ public class TWRulesUnits extends RulesUnits {
      * @param mp the movement points
      * @return returns the input parameter with no change
      */
+    @Override
     public int getMinimumMP(int mp) {
         return mp;
     }
@@ -140,6 +146,7 @@ public class TWRulesUnits extends RulesUnits {
      * @param entity the entity to check
      * @return always returns false
      */
+    @Override
     public boolean hasBadLegs(Entity entity) {
         return false;
     }

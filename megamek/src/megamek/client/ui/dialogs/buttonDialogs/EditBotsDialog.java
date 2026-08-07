@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2021-2025 The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2021-2026 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -54,6 +54,8 @@ import javax.swing.JSeparator;
 import javax.swing.border.EmptyBorder;
 
 import megamek.client.AbstractClient;
+import megamek.client.bot.AIType;
+import megamek.client.bot.BotClient;
 import megamek.client.bot.princess.BehaviorSettings;
 import megamek.client.bot.princess.Princess;
 import megamek.client.bot.princess.PrincessException;
@@ -61,6 +63,7 @@ import megamek.client.ui.Messages;
 import megamek.client.ui.clientGUI.ClientGUI;
 import megamek.client.ui.enums.DialogResult;
 import megamek.common.game.Game;
+import megamek.common.preference.PreferenceManager;
 import megamek.common.Player;
 import megamek.logging.MMLogger;
 
@@ -70,9 +73,20 @@ public class EditBotsDialog extends AbstractButtonDialog {
     // replace ghost combo box choices
     private static final int REPLACE_WITH_PRINCESS_INDEX = 1;
 
+    /**
+     * Index of the CASPAR replacement choice, present only when the experimental bot is enabled.
+     *
+     * <p>CASPAR is a hidden option: {@code UseCASPAR} defaults to off and is in no settings UI, so the choice is
+     * added to the combo box only when it is switched on. When it is off the box is exactly as it was.</p>
+     */
+    private static final int REPLACE_WITH_CASPAR_INDEX = 2;
+
     // edit existing local bot combo box choices
     private static final int KICK_INDEX = 1;
     private static final int EDIT_CONFIG_INDEX = 2;
+
+    /** Whether the experimental CASPAR bot is offered as a replacement, from the {@code UseCASPAR} client setting. */
+    private final boolean casparAvailable = PreferenceManager.getClientPreferences().getUseCASPAR();
 
     /** A ClientGUI given to the dialog. */
     private final ClientGUI clientGui;
@@ -130,6 +144,9 @@ public class EditBotsDialog extends AbstractButtonDialog {
         Vector<String> ghostOptions = new Vector<>();
         ghostOptions.add(Messages.getString("EditBotsDialog.optionDoNotReplace"));
         ghostOptions.add(Messages.getString("EditBotsDialog.optionReplace"));
+        if (casparAvailable) {
+            ghostOptions.add(Messages.getString("EditBotsDialog.optionReplaceCaspar"));
+        }
 
         Vector<String> localBotOptions = new Vector<>();
         localBotOptions.add(Messages.getString("EditBotsDialog.optionNone"));
@@ -168,8 +185,18 @@ public class EditBotsDialog extends AbstractButtonDialog {
                 var ghostChooser = new JComboBox<>(ghostOptions);
                 ghostChoosers.put(player, ghostChooser);
                 if (savedSettingsExist) {
-                    // it was presumably Princess before, so default to replace
-                    ghostChooser.setSelectedIndex(REPLACE_WITH_PRINCESS_INDEX);
+                    // A ghost with saved bot settings was a bot before the save, so default to replacing it
+                    // with the same kind of bot the save remembers holding this seat. Saves from before the
+                    // type was recorded fall back on the player's preference: CASPAR when it is switched on,
+                    // Princess otherwise. A remembered CASPAR with the option switched off falls back to
+                    // Princess, since the choice is not in the box.
+                    AIType savedType = game.getBotTypes().get(player.getName());
+                    boolean casparLeads = (null == savedType)
+                          ? casparAvailable
+                          : (casparAvailable && (AIType.CASPAR == savedType));
+                    ghostChooser.setSelectedIndex(casparLeads
+                          ? REPLACE_WITH_CASPAR_INDEX
+                          : REPLACE_WITH_PRINCESS_INDEX);
                     botConfigs.put(player, savedSettings.get(player.getName()));
                     try {
                         // Copy to protect the saved settings
@@ -275,10 +302,13 @@ public class EditBotsDialog extends AbstractButtonDialog {
     }
 
     /**
-     * Called from the config buttons. Opens a BotConfig Dialog and saves the result, if any.
+     * Called from the config buttons. Opens a BotConfig Dialog and saves the result, if any. The dialog's
+     * own AI chooser is shown locked to the type this row will actually produce - the row's dropdown (for a
+     * ghost) or the running bot's real type - because the type decision belongs to this dialog, not that one.
      */
     private void callConfig(Player botOrGhost) {
-        var bcd = new BotConfigDialog(getFrame(), botOrGhost.getName(), botConfigs.get(botOrGhost), clientGui);
+        var bcd = new BotConfigDialog(getFrame(), botOrGhost.getName(), botConfigs.get(botOrGhost), clientGui,
+              configuredTypeOf(botOrGhost));
         bcd.setVisible(true);
         if (bcd.getResult() == DialogResult.CONFIRMED) {
             botConfigs.put(botOrGhost, bcd.getBehaviorSettings());
@@ -286,6 +316,22 @@ public class EditBotsDialog extends AbstractButtonDialog {
                 localBotChoosers.get(botOrGhost).setSelectedIndex(EDIT_CONFIG_INDEX);
             }
         }
+    }
+
+    /**
+     * The AI type this dialog is set to produce for the given row: a ghost's replacement choice from its
+     * dropdown, or the actual type of an already-running local bot.
+     */
+    private AIType configuredTypeOf(Player botOrGhost) {
+        if (ghostChoosers.containsKey(botOrGhost)) {
+            return (ghostChoosers.get(botOrGhost).getSelectedIndex() == REPLACE_WITH_CASPAR_INDEX)
+                  ? AIType.CASPAR
+                  : AIType.PRINCESS;
+        }
+        if (clientGui.getLocalBots().get(botOrGhost.getName()) instanceof BotClient botClient) {
+            return botClient.getAIType();
+        }
+        return AIType.PRINCESS;
     }
 
     private void callRestoreConfig(Player botOrGhost) {
@@ -302,12 +348,16 @@ public class EditBotsDialog extends AbstractButtonDialog {
     }
 
     /**
-     * Updates the config button enabled states (only enabled when Princess bot is selected).
+     * Updates the config button enabled states (only enabled when a bot replacement is selected). CASPAR extends
+     * Princess and consumes the same {@link BehaviorSettings}, so the config button applies to both choices.
      */
     private void updateButtonStates() {
         for (Player ghost : ghostChoosers.keySet()) {
             JButton button = configButtons.get(ghost);
-            button.setEnabled(ghostChoosers.get(ghost).getSelectedIndex() == REPLACE_WITH_PRINCESS_INDEX);
+            int selected = ghostChoosers.get(ghost).getSelectedIndex();
+            boolean botReplacementSelected = (selected == REPLACE_WITH_PRINCESS_INDEX)
+                  || (selected == REPLACE_WITH_CASPAR_INDEX);
+            button.setEnabled(botReplacementSelected);
         }
 
         for (Player bot : localBotChoosers.keySet()) {
@@ -317,17 +367,37 @@ public class EditBotsDialog extends AbstractButtonDialog {
     }
 
     /**
-     * @return the result of the dialog with respect to ghost players to be replaced by Princess bots. The returned map
-     *       links zero, one or more BehaviorSettings (a Princess configuration) to the ghost player name they were
-     *       chosen for. The returned map only includes entries for those ghost players that had a Princess Bot
-     *       replacement selected. The result may be empty, but not null.
+     * @return the result of the dialog with respect to ghost players to be replaced by bots (Princess or CASPAR). The
+     *       returned map links zero, one or more BehaviorSettings (a bot configuration) to the ghost player name they
+     *       were chosen for. The returned map only includes entries for those ghost players that had a bot replacement
+     *       selected; {@link #getNewBotTypes()} reports which AI was chosen for each. The result may be empty, but not
+     *       null.
      */
     public Map<String, BehaviorSettings> getNewBots() {
         var result = new HashMap<String, BehaviorSettings>();
         for (Player ghost : ghostChoosers.keySet()) {
             JComboBox<String> chooser = ghostChoosers.get(ghost);
-            if (chooser.getSelectedIndex() == REPLACE_WITH_PRINCESS_INDEX) {
+            int selected = chooser.getSelectedIndex();
+            if ((selected == REPLACE_WITH_PRINCESS_INDEX) || (selected == REPLACE_WITH_CASPAR_INDEX)) {
                 result.put(ghost.getName(), botConfigs.get(ghost));
+            }
+        }
+        return result;
+    }
+
+    /**
+     * Which AI each replaced ghost was assigned, for the same players {@link #getNewBots()} returns.
+     *
+     * @return a map of ghost player name to the chosen {@link AIType}; never null, possibly empty
+     */
+    public Map<String, AIType> getNewBotTypes() {
+        var result = new HashMap<String, AIType>();
+        for (Player ghost : ghostChoosers.keySet()) {
+            int selected = ghostChoosers.get(ghost).getSelectedIndex();
+            if (selected == REPLACE_WITH_PRINCESS_INDEX) {
+                result.put(ghost.getName(), AIType.PRINCESS);
+            } else if (selected == REPLACE_WITH_CASPAR_INDEX) {
+                result.put(ghost.getName(), AIType.CASPAR);
             }
         }
         return result;

@@ -52,6 +52,7 @@ import java.util.stream.Collectors;
 import java.util.zip.GZIPInputStream;
 
 import megamek.MMConstants;
+import megamek.client.bot.AIType;
 import megamek.client.generator.skillGenerators.AbstractSkillGenerator;
 import megamek.client.generator.skillGenerators.ModifiedTotalWarfareSkillGenerator;
 import megamek.client.ui.clientGUI.GUIPreferences;
@@ -1096,6 +1097,17 @@ public class Client extends AbstractClient {
                     break;
                 case PRINCESS_SETTINGS:
                     game.setBotSettings(packet.getStringWIthBehaviorSettingsMap(0));
+                    // Which AI each bot was rides along, so a loaded game restores the same kind of bot.
+                    if (packet.getObject(1) instanceof Map<?, ?> typesByName) {
+                        Map<String, AIType> botTypes = new HashMap<>();
+                        for (Map.Entry<?, ?> entry : typesByName.entrySet()) {
+                            if ((entry.getKey() instanceof String botName)
+                                  && (entry.getValue() instanceof AIType aiType)) {
+                                botTypes.put(botName, aiType);
+                            }
+                        }
+                        game.setBotTypes(botTypes);
+                    }
                     break;
                 case ENTITY_UPDATE:
                     receiveEntityUpdate(packet);

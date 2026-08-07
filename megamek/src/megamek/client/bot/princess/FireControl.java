@@ -66,7 +66,6 @@ import megamek.common.equipment.*;
 import megamek.common.equipment.enums.BombType;
 import megamek.common.equipment.enums.BombType.BombTypeEnum;
 import megamek.common.game.Game;
-import megamek.common.interfaces.ILocationExposureStatus;
 import megamek.common.moves.MovePath;
 import megamek.common.moves.MoveStep;
 import megamek.common.options.OptionsConstants;
@@ -919,8 +918,23 @@ public class FireControl {
                 distance += 2 * target.getAltitude();
             }
         }
+        // Water restricts fire in both directions, and a weapon that can fire underwater does so with a
+        // shortened range table (TW p.107-109). The server enforces this from the shooter's real location
+        // status; the estimate has to predict it from the hypothetical position, or every submerged hex
+        // looks like a full-strength firing position.
+        final Hex shooterHex = game.getBoard(shooter).getHex(shooterState.getPosition());
+        final Hex targetHex = game.getBoard(target).getHex(targetState.getPosition());
+        final UnderwaterFire waterFire = UnderwaterFire.check(shooter, shooterState, shooterHex,
+              target, targetState, targetHex, weapon, firingAmmo);
+        if (null != waterFire.blocked()) {
+            return new ToHitData(waterFire.blocked());
+        }
+        final int[] weaponRanges = (null != waterFire.underwaterRanges())
+              ? waterFire.underwaterRanges()
+              : weaponType.getRanges(weapon, ammo);
+
         // BayWeapons do range differently
-        int range = RangeType.rangeBracket(distance, weaponType.getRanges(weapon, ammo),
+        int range = RangeType.rangeBracket(distance, weaponRanges,
               game.getOptions().booleanOption(OptionsConstants.ADVANCED_COMBAT_TAC_OPS_RANGE),
               game.getOptions().booleanOption(OptionsConstants.ADVANCED_COMBAT_TAC_OPS_LOS_RANGE));
         if (RangeType.RANGE_OUT == range) {
@@ -966,7 +980,6 @@ public class FireControl {
               targetState.getPosition(), false);
 
         // water is a separate los effect
-        final Hex targetHex = game.getBoard(target).getHex(targetState.getPosition());
         Entity targetEntity = null;
         if (target instanceof Entity) {
             targetEntity = (Entity) target;
@@ -1021,7 +1034,7 @@ public class FireControl {
             toHit.append(getInfantryRangeMods(distance, (InfantryWeapon) weapon.getType(),
                   shooter instanceof ConvInfantry infantry ? infantry.getSecondaryWeapon() : null,
                   shooter instanceof ConvInfantry infantry ? infantry.getDisposableWeapon() : null,
-                  ILocationExposureStatus.WET == shooter.getLocationStatus(weapon.getLocation())));
+                  UnderwaterFire.isWeaponUnderwater(shooter, shooterState, shooterHex, weapon)));
         }
 
         // let us not forget about heat

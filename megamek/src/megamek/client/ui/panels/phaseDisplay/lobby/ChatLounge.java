@@ -2501,7 +2501,8 @@ public class ChatLounge extends AbstractPhaseDisplay
         var bcd = new BotConfigDialog(clientgui.getFrame(),
               bot.getLocalPlayer().getName(),
               bot.getBehaviorSettings(),
-              clientgui);
+              clientgui,
+              bot.getAIType());
         bcd.setVisible(true);
         if (bcd.getResult() == DialogResult.CONFIRMED) {
             bot.setBehaviorSettings(bcd.getBehaviorSettings());

@@ -36,10 +36,13 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyInt;
+import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.spy;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 import java.util.List;
@@ -653,13 +656,19 @@ class MutualSupportPathRankerTest {
               testRanker.attackerMovementDamageDiscount(ran), TOLERANCE);
     }
 
-    /** Princess's estimate is untouched: the base ranker's discount is exactly 1.0 for every path. */
+    /**
+     * The promotion: the pricing lives in the base ranker now, so Princess prices her own movement the
+     * same way CASPAR does - running keeps two-fifths of the raw estimate for both.
+     */
     @Test
-    void theBaseRankerDoesNotDiscountMovement() {
+    void princessPricesHerOwnMovementTheSameWay() {
+        when(mockGame.getEntity(1)).thenReturn(mockMover);
+        when(mockMover.getGame()).thenReturn(mockGame);
         BasicPathRanker princessRanker = new BasicPathRanker(mockPrincess);
         MovePath ran = pathEndingAt(CLOSING_DESTINATION);
         when(ran.getLastStepMovementType()).thenReturn(EntityMovementType.MOVE_RUN);
-        assertEquals(1.0, princessRanker.attackerMovementDamageDiscount(ran), TOLERANCE);
+        assertEquals(Compute.oddsAbove(10) / Compute.oddsAbove(8),
+              princessRanker.attackerMovementDamageDiscount(ran), TOLERANCE);
     }
 
     /**
@@ -692,11 +701,88 @@ class MutualSupportPathRankerTest {
         assertEquals(1.0, MutualSupportPathRanker.incomingFireTerrainDiscount(deepWoods), TOLERANCE);
     }
 
-    /** Princess's incoming-fire estimate is untouched: the base ranker's discount is exactly 1.0. */
+    /**
+     * The promotion: cover pricing lives in the base ranker, so Princess values a woodline edge exactly
+     * as CASPAR does, and a stationary Princess on a positive exchange earns the same capped hold credit.
+     */
     @Test
-    void theBaseRankerDoesNotDiscountIncomingFire() {
-        BasicPathRanker princessRanker = new BasicPathRanker(mockPrincess);
-        assertEquals(1.0, princessRanker.incomingFireTerrainDiscount(pathEndingAt(CLOSING_DESTINATION)),
+    void princessEarnsHoldCreditAndPricesCoverToo() {
+        HexProperties woodlineEdge = new HexProperties(0, false, 1, true, 0, false, false);
+        assertEquals(Compute.oddsAbove(9) / Compute.oddsAbove(8),
+              BasicPathRanker.incomingFireTerrainDiscount(woodlineEdge), TOLERANCE);
+
+        when(mockBehavior.getCombatPosture()).thenReturn(CombatPosture.ATTACK);
+        BasicPathRanker princessRanker = spy(new BasicPathRanker(mockPrincess));
+        doReturn(mockPrincess).when(princessRanker).getOwner();
+        doReturn(10.0).when(princessRanker)
+              .distanceToClosestEnemy(any(Entity.class), eq(CURRENT_POSITION), any(Game.class));
+        // quality 15 = 1.0 success * 20 dealt - 5 taken; credited at the attack factor, same as CASPAR
+        assertEquals(0.4 * 15.0,
+              princessRanker.calculatePositionHoldMod(pathEndingAt(CURRENT_POSITION), mockGame,
+                    damageDealing(20.0), 5.0, 1.0), TOLERANCE);
+    }
+
+    /**
+     * A server reset keeps bot clients connected and initialize() runs only once per client, so the same
+     * ranker sees the round counter go backwards when a new game starts. The posture machinery must not
+     * carry the previous game into the new one: the resolvers' closing-rate history is cleared, and the
+     * first posture of the new game is announced even when it matches the old game's last announcement.
+     */
+    @Test
+    void aNewGameOnAReusedClientForgetsThePreviousGamesPosture() {
+        when(mockBehavior.getCombatPosture()).thenReturn(CombatPosture.AUTO);
+        when(mockMover.isDeployed()).thenReturn(true);
+        BasicPathRanker princessRanker = spy(new BasicPathRanker(mockPrincess));
+        doReturn(mockPrincess).when(princessRanker).getOwner();
+
+        Entity distantEnemy = enemyMekAt(new Coords(0, 30));
+        Entity closingEnemy = enemyMekAt(new Coords(0, 26));
+
+        // Game one, rounds 1-2: the enemy closes hard, the force stands on the defensive.
+        when(mockGame.getCurrentRound()).thenReturn(1);
+        when(mockPrincess.getEnemyEntities()).thenReturn(List.of(distantEnemy));
+        princessRanker.resolvePosture(mockGame, 0);
+        when(mockGame.getCurrentRound()).thenReturn(2);
+        when(mockPrincess.getEnemyEntities()).thenReturn(List.of(closingEnemy));
+        assertEquals(CombatPosture.DEFEND, princessRanker.resolvePosture(mockGame, 0),
+              "precondition: game one must end standing on the defensive");
+
+        // Server reset, new game: round 1 again, the enemy back at distance. A leaked resolver would
+        // still be holding game one's closing history and defensive stance.
+        when(mockGame.getCurrentRound()).thenReturn(1);
+        when(mockPrincess.getEnemyEntities()).thenReturn(List.of(distantEnemy));
+        assertEquals(CombatPosture.ATTACK, princessRanker.resolvePosture(mockGame, 0),
+              "the new game reads the battle fresh");
+
+        // Both games' postures were announced - including the new game's, which a leaked
+        // announcedPosture would have suppressed had the values matched across the reset.
+        verify(mockPrincess, times(3)).sendChat(anyString());
+    }
+
+    private Entity enemyMekAt(Coords position) {
+        Entity enemy = mock(BipedMek.class);
+        when(enemy.getPosition()).thenReturn(position);
+        when(enemy.isDeployed()).thenReturn(true);
+        return enemy;
+    }
+
+    /** The defender-tempo port: a Princess defender in contact pays no closing charge either. */
+    @Test
+    void princessDefenderInContactPaysNoClosingCharge() {
+        when(mockBehavior.getCombatPosture()).thenReturn(CombatPosture.DEFEND);
+        BasicPathRanker princessRanker = spy(new BasicPathRanker(mockPrincess));
+        doReturn(mockPrincess).when(princessRanker).getOwner();
+        doReturn(10.0).when(princessRanker)
+              .distanceToClosestEnemy(any(Entity.class), any(Coords.class), any(Game.class));
+        assertEquals(0.0,
+              princessRanker.calculateAggressionMod(mockMover, pathEndingAt(HOLDING_DESTINATION), mockGame),
+              TOLERANCE);
+
+        // Out of contact the pull stands: the stock gradient at distance 20 and aggression 2.5.
+        doReturn(20.0).when(princessRanker)
+              .distanceToClosestEnemy(any(Entity.class), any(Coords.class), any(Game.class));
+        assertEquals(20.0 * 2.5,
+              princessRanker.calculateAggressionMod(mockMover, pathEndingAt(HOLDING_DESTINATION), mockGame),
               TOLERANCE);
     }
 

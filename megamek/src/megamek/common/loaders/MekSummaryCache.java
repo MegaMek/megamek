@@ -888,6 +888,7 @@ public class MekSummaryCache {
         ms.setJumpMp(e.getAnyTypeMaxJumpMP());
         ms.setMoveMode(e.getMovementMode());
         ms.setClan(e.isClan());
+        ms.setMixedTech(e.isMixedTech());
         if (e.isSupportVehicle()) {
             ms.setSupport(true);
         }

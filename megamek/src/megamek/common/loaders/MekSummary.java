@@ -196,6 +196,7 @@ public class MekSummary implements Serializable, ASCardDisplayable {
     private boolean doomedInExtremeTemp;
     private boolean doomedInVacuum;
     private boolean clan;
+    private boolean mixedTech;
     private boolean support;
     private int walkMp;
     private int runMp;
@@ -1340,6 +1341,14 @@ public class MekSummary implements Serializable, ASCardDisplayable {
 
     public void setClan(boolean clan) {
         this.clan = clan;
+    }
+
+    public boolean isMixedTech() {
+        return mixedTech;
+    }
+
+    public void setMixedTech(boolean mixedTech) {
+        this.mixedTech = mixedTech;
     }
 
     public void setSupport(boolean support) {

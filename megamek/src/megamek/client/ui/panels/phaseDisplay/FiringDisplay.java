@@ -330,7 +330,7 @@ public class FiringDisplay extends AttackPhaseDisplay implements ListSelectionLi
     }
 
     private boolean shouldPerformFireKeyCommand() {
-        return shouldReceiveKeyCommands() && buttons.get(FiringCommand.FIRE_FIRE).isEnabled();
+        return shouldReceiveKeyCommands() && isFireAllowed();
     }
 
     /**
@@ -2407,6 +2407,22 @@ public class FiringDisplay extends AttackPhaseDisplay implements ListSelectionLi
     protected void setFireEnabled(boolean enabled) {
         buttons.get(FiringCommand.FIRE_FIRE).setEnabled(enabled);
         clientgui.getMenuBar().setEnabled(FiringCommand.FIRE_FIRE.getCmd(), enabled);
+    }
+
+    /**
+     * Returns whether an attack may currently be declared with the selected weapon against the current target. This is
+     * the gate the Fire button itself uses; {@link #updateTarget()} recomputes it whenever the target, the selected
+     * weapon or the attacker's state changes, and the reason for a refusal is shown as the to-hit text in the unit
+     * display.
+     * <p>
+     * Every other way of firing - the hotkey and the board's right-click menu - must respect this gate. Bypassing it
+     * declares attacks the rules forbid, such as a conventional infantry platoon adding a Swarm or Leg Attack after it
+     * has already fired its primary weapons, which makes the server reject both attacks.
+     *
+     * @return {@code true} if firing the selected weapon is currently allowed
+     */
+    public boolean isFireAllowed() {
+        return buttons.get(FiringCommand.FIRE_FIRE).isEnabled();
     }
 
     protected void setTwistEnabled(boolean enabled) {

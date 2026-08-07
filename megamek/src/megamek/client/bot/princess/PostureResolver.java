@@ -128,8 +128,12 @@ public class PostureResolver {
 
     private CombatPosture resolveAuto(BehaviorSettings settings, int round,
           List<Coords> ownPositions, List<Coords> enemyPositions) {
-        // A destination edge is a movement mission: the force is going somewhere whatever the enemy does.
-        if (settings.shouldGoHome() || settings.shouldAutoFlee()) {
+        // A flee order with a destination edge is a movement mission: the force is going somewhere
+        // whatever the enemy does. Both halves are required, matching the engine's own MoveToDestination
+        // condition in UnitBehavior: the config dialog stores the flee-edge dropdown even when fleeing is
+        // off, so an edge alone is a leftover setting, not a mission - reading it as one locked every such
+        // force out of ever defending.
+        if (settings.shouldAutoFlee() && settings.shouldGoHome()) {
             return resolved(round, CombatPosture.ATTACK, "the mission requires movement");
         }
 

@@ -65,7 +65,7 @@ public class ISLightPlasmaRifle extends AmmoWeapon {
         setInternalName("ISLightPlasmaRifle");
         heat = 4;
         damage = 4;
-        rackSize = 1;
+        rackSize = 2;
         ammoType = AmmoType.AmmoTypeEnum.PLASMA;
         minimumRange = WEAPON_NA;
         shortRange = 6;

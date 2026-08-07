@@ -124,7 +124,7 @@ public class SerializationHelper {
         xStream.aliasField("pendingCharges", Game.class, "pendingDisplacementAttacks");
         xStream.aliasField("pilotRolls", Game.class, "pilotingRolls");
         
-        xStream.registerLocalConverter(Game.class, "pilotRolls", new CollectionConverter(xStream.getMapper(),
+        xStream.registerLocalConverter(Game.class, "pilotingRolls", new CollectionConverter(xStream.getMapper(),
               ArrayList.class));
 
         xStream.registerConverter(new Converter() {

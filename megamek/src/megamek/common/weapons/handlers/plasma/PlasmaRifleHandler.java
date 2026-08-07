@@ -47,6 +47,7 @@ import megamek.common.board.Coords;
 import megamek.common.compute.Compute;
 import megamek.common.equipment.ArmorType;
 import megamek.common.equipment.EquipmentType;
+import megamek.common.equipment.WeaponType;
 import megamek.common.game.Game;
 import megamek.common.loaders.EntityLoadingException;
 import megamek.common.options.OptionsConstants;
@@ -132,7 +133,7 @@ public class PlasmaRifleHandler extends AmmoWeaponHandler {
     @Override
     protected int calcDamagePerHit() {
         if (target.tracksHeat()) {
-            int toReturn = 10;
+            int toReturn = weapon.getType().getDamage();
             toReturn = applyGlancingBlowModifier(toReturn, false);
             if (game.getOptions().booleanOption(OptionsConstants.ADVANCED_COMBAT_TAC_OPS_RANGE) &&
                   (nRange > weaponType.getRanges(weapon)[RangeType.RANGE_LONG])) {
@@ -157,7 +158,14 @@ public class PlasmaRifleHandler extends AmmoWeaponHandler {
         int toReturn = 5;
 
         if (target.isConventionalInfantry()) {
-            toReturn = Compute.d6(2);
+            if (weapon.getType() instanceof ISLightPlasmaRifle) {
+                toReturn = Compute.d6();
+            }
+            if (weapon.getType() instanceof ISHeavyPlasmaRifle) {
+                toReturn = Compute.d6(4);
+            } else {
+                toReturn = Compute.d6(2);
+            }
         }
 
         bSalvo = true;
@@ -172,17 +180,25 @@ public class PlasmaRifleHandler extends AmmoWeaponHandler {
     @Override
     protected int calcHits(Vector<Report> vPhaseReport) {
         int toReturn;
-
         // against meks, 1 hit with 10 damage, plus heat
         if (target.tracksHeat()) {
             toReturn = 1;
             // otherwise, 10+2d6 damage but fire-resistant BA armor gets no damage from heat, and half the normal
             // one, so only 5 damage
         } else {
+            WeaponType plasmaWeapon = weapon.getType();
             if ((target instanceof BattleArmor) && ((BattleArmor) target).isFireResistant()) {
-                toReturn = 5;
+                toReturn = plasmaWeapon.getDamage() / 2;
             } else {
-                toReturn = 10 + Compute.d6(2);
+                int damage = plasmaWeapon.getDamage();
+                if (plasmaWeapon instanceof ISLightPlasmaRifle) {
+                    damage += Compute.d6();
+                } else if (plasmaWeapon instanceof ISHeavyPlasmaRifle) {
+                    damage += Compute.d6(4);
+                } else {
+                    damage += Compute.d6(2);
+                }
+                toReturn = damage;
             }
             toReturn = applyGlancingBlowModifier(toReturn, false);
         }

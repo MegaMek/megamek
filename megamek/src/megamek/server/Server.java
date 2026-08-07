@@ -948,6 +948,7 @@ public class Server implements Runnable {
 
             XStream xStream = SerializationHelper.getLoadSaveGameXStream();
             newGame = (Game) xStream.fromXML(gzi);
+            newGame.initializeAfterLoad();
         } catch (Exception e) {
             message = String.format("Unable to load file: %s", f);
             LOGGER.error(e, message);

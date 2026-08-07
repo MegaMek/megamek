@@ -65,7 +65,7 @@ public class ISHeavyPlasmaRifle extends AmmoWeapon {
         setInternalName("ISHeavyPlasmaRifle");
         heat = 12;
         damage = 12;
-        rackSize = 1;
+        rackSize = 3;
         ammoType = AmmoType.AmmoTypeEnum.PLASMA;
         minimumRange = WEAPON_NA;
         shortRange = 4;

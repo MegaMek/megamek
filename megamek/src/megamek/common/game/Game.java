@@ -60,6 +60,8 @@ import megamek.common.actions.ArtilleryAttackAction;
 import megamek.common.actions.AttackAction;
 import megamek.common.actions.EnemyArtilleryInbound;
 import megamek.common.actions.EntityAction;
+import megamek.common.actions.RamAttackAction;
+import megamek.common.actions.TeleMissileAttackAction;
 import megamek.common.annotations.Nullable;
 import megamek.common.board.Board;
 import megamek.common.board.BoardLocation;
@@ -175,9 +177,9 @@ public final class Game extends AbstractGame implements Serializable, PlanetaryC
     private GamePhase lastPhase = GamePhase.UNKNOWN;
 
     // phase state
-    private final Vector<AttackAction> pendingDisplacementAttacks = new Vector<>();
-    private final Vector<AttackAction> pendingRams = new Vector<>();
-    private final Vector<AttackAction> pendingTeleMissileAttacks = new Vector<>();
+    private Vector<AttackAction> pendingDisplacementAttacks = new Vector<>();
+    private Vector<AttackAction> pendingRams = new Vector<>();
+    private Vector<AttackAction> pendingTeleMissileAttacks = new Vector<>();
     private final ArrayList<PilotingRollData> pilotingRolls = new ArrayList<>();
     private final Vector<PilotingRollData> extremeGravityRolls = new Vector<>();
     private final Vector<PilotingRollData> controlRolls = new Vector<>();
@@ -2695,6 +2697,32 @@ public final class Game extends AbstractGame implements Serializable, PlanetaryC
         return Collections.unmodifiableList(pendingRams);
     }
 
+    public void initializeAfterLoad() {
+        if (pendingRams == null) {
+            pendingRams = new Vector<>();
+        }
+        if (pendingTeleMissileAttacks == null) {
+            pendingTeleMissileAttacks = new Vector<>();
+        }
+        if (pendingDisplacementAttacks == null) {
+            pendingDisplacementAttacks = new Vector<>();
+        } 
+        if (!pendingDisplacementAttacks.isEmpty()){
+            // Reverse traverse the pendingDisplacementAttacks, otherwise when we remove things, it causes problems
+            for (int attack = (pendingDisplacementAttacks.size()-1); attack >= 0; attack--) {
+                AttackAction pendingAttack = pendingDisplacementAttacks.get(attack);
+                if (pendingAttack == null) { continue; }
+                if (pendingAttack instanceof RamAttackAction) {
+                    addRam(pendingAttack);
+                    pendingDisplacementAttacks.remove(attack);
+                } else if (pendingAttack instanceof TeleMissileAttackAction) {
+                    addTeleMissileAttack(pendingAttack);
+                    pendingDisplacementAttacks.remove(attack);
+                }
+            }
+        }
+    }
+    
     /**
      * Adds a pending ramming attack to the list for this phase.
      *

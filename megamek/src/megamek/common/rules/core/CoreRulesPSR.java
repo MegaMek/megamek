@@ -331,7 +331,7 @@ public class CoreRulesPSR extends RulesPSR {
      * */
     @Override
     public FallDamageInWater reduceFallDamageIntoWater(int damage, int waterDepth, int fallHeight, double weight) {
-        int waterDamage = (int) (((int) Math.round(weight / 10.0) * (fallHeight + 1)) / 2.0);
+        int waterDamage = (int) (((int) Math.round(weight / 10.0) * (fallHeight + waterDepth + 1)) / 2.0);
         int newDamage = 0;        
         return new FallDamageInWater(newDamage, waterDamage);
     }

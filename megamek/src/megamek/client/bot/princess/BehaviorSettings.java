@@ -38,7 +38,6 @@ import java.io.Serializable;
 import java.util.HashSet;
 import java.util.Set;
 
-import megamek.codeUtilities.MathUtility;
 import megamek.codeUtilities.StringUtility;
 import megamek.common.annotations.Nullable;
 import megamek.common.util.StringUtil;
@@ -161,6 +160,7 @@ public class BehaviorSettings implements Serializable {
     private int numberOfEnemiesToConsiderFacing = DEFAULT_NUMBER_OF_ENEMIES_TO_CONSIDER_FACING; // How many enemies do I want to consider when calculating facing?
     private int allowFacingTolerance = DEFAULT_ALLOW_FACING_TOLERANCE; // How much tolerance do I want to allow for facing?
     private boolean exclusiveMutualSupport = false; // should I only form up with my units or consider also friends?
+    private CombatPosture combatPosture = CombatPosture.AUTO; // Am I attacking or defending?
     private boolean iAmAPirate = false; // Am I a pirate?
     private boolean ignoreDamageOutput = false;
     private boolean experimental = false; // running experimental features?
@@ -192,6 +192,7 @@ public class BehaviorSettings implements Serializable {
         copy.setNumberOfEnemiesToConsiderFacing(getNumberOfEnemiesToConsiderFacing());
         copy.setAllowFacingTolerance(getAllowFacingTolerance());
         copy.setExclusiveMutualSupport(isExclusiveMutualSupport());
+        copy.setCombatPosture(getCombatPosture());
         copy.setIAmAPirate(iAmAPirate());
         copy.setIgnoreDamageOutput(isIgnoreDamageOutput());
         copy.setExperimental(isExperimental());
@@ -274,6 +275,25 @@ public class BehaviorSettings implements Serializable {
 
     public void setExclusiveMutualSupport(String exclusiveMutualSupport) {
         setExclusiveMutualSupport(Boolean.parseBoolean(exclusiveMutualSupport));
+    }
+
+    /**
+     * @return whether my force is attacking, defending, or deciding for itself. See {@link CombatPosture}.
+     */
+    public CombatPosture getCombatPosture() {
+        return combatPosture;
+    }
+
+    /**
+     * @param combatPosture whether my force is attacking, defending, or deciding for itself; {@code null}
+     *                      resets to {@link CombatPosture#AUTO}
+     */
+    public void setCombatPosture(@Nullable CombatPosture combatPosture) {
+        this.combatPosture = (null == combatPosture) ? CombatPosture.AUTO : combatPosture;
+    }
+
+    public void setCombatPosture(String combatPosture) {
+        setCombatPosture(CombatPosture.parse(combatPosture));
     }
 
     /**
@@ -495,7 +515,7 @@ public class BehaviorSettings implements Serializable {
     }
 
     private int validateIndex(final int index) {
-        return MathUtility.clamp(index, 0, 10);
+        return Math.clamp(index, 0, 10);
     }
 
     /**
@@ -868,7 +888,7 @@ public class BehaviorSettings implements Serializable {
     }
 
     public void setNumberOfEnemiesToConsiderFacing(int numberOfEnemiesToConsiderFacing) {
-        this.numberOfEnemiesToConsiderFacing = MathUtility.clamp(numberOfEnemiesToConsiderFacing,
+        this.numberOfEnemiesToConsiderFacing = Math.clamp(numberOfEnemiesToConsiderFacing,
               MIN_NUMBER_OF_ENEMIES_TO_CONSIDER_FACING,
               MAX_NUMBER_OF_ENEMIES_TO_CONSIDER_FACING);
     }
@@ -878,7 +898,7 @@ public class BehaviorSettings implements Serializable {
     }
 
     public void setAllowFacingTolerance(int allowFacingTolerance) {
-        this.allowFacingTolerance = MathUtility.clamp(
+        this.allowFacingTolerance = Math.clamp(
               allowFacingTolerance, MIN_ALLOW_FACING_TOLERANCE, MAX_ALLOW_FACING_TOLERANCE);
     }
 
@@ -1014,6 +1034,8 @@ public class BehaviorSettings implements Serializable {
             } else if ("exclusiveMutualSupport".equalsIgnoreCase(child.getNodeName())
                   || LEGACY_EXCLUSIVE_HERDING_ELEMENT.equalsIgnoreCase(child.getNodeName())) {
                 setExclusiveMutualSupport(child.getTextContent());
+            } else if ("combatPosture".equalsIgnoreCase(child.getNodeName())) {
+                setCombatPosture(child.getTextContent());
             } else if ("iAmAPirate".equalsIgnoreCase(child.getNodeName())) {
                 setIAmAPirate(child.getTextContent());
             } else if ("ignoreDamageOutput".equalsIgnoreCase(child.getNodeName())) {
@@ -1123,6 +1145,10 @@ public class BehaviorSettings implements Serializable {
             exclusiveMutualSupportNode.setTextContent("" + isExclusiveMutualSupport());
             behavior.appendChild(exclusiveMutualSupportNode);
 
+            final Element combatPostureNode = doc.createElement("combatPosture");
+            combatPostureNode.setTextContent(getCombatPosture().name());
+            behavior.appendChild(combatPostureNode);
+
             final Element experimentalNode = doc.createElement("experimental");
             experimentalNode.setTextContent("" + isExperimental());
             behavior.appendChild(experimentalNode);
@@ -1182,6 +1208,7 @@ public class BehaviorSettings implements Serializable {
         out.append("\n\t Mutual Support: ").append(getMutualSupportIndex()).append(":")
               .append(getMutualSupportValue(getMutualSupportIndex()));
         out.append("\n\t Exclusive Mutual Support: ").append(isExclusiveMutualSupport());
+        out.append("\n\t Combat Posture: ").append(getCombatPosture());
         out.append("\n\t I am a Pirate: ").append(iAmAPirate());
         out.append("\n\t I Ignore Damage Output: ").append(isIgnoreDamageOutput());
         out.append("\n\t Experimental: ").append(isExperimental());
@@ -1246,6 +1273,8 @@ public class BehaviorSettings implements Serializable {
             return false;
         } else if (exclusiveMutualSupport != that.exclusiveMutualSupport) {
             return false;
+        } else if (combatPosture != that.combatPosture) {
+            return false;
         } else if (iAmAPirate != that.iAmAPirate) {
             return false;
         } else if (ignoreDamageOutput != that.ignoreDamageOutput) {
@@ -1274,6 +1303,7 @@ public class BehaviorSettings implements Serializable {
         result = 31 * result + mutualSupportIndex;
         result = 31 * result + braveryIndex;
         result = 31 * result + (exclusiveMutualSupport ? 1 : 0);
+        result = 31 * result + combatPosture.hashCode();
         result = 31 * result + (iAmAPirate ? 1 : 0);
         result = 31 * result + (experimental ? 1 : 0);
         result = 31 * result + (ignoreDamageOutput ? 1 : 0);

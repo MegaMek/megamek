@@ -91,8 +91,7 @@ class TeamLoadOutGeneratorTest {
     static ClientGUI cg = mock(ClientGUI.class);
     static Client client = mock(Client.class);
     static Game game = new Game();
-    IOption mockIOps = mock(IOption.class);
-
+    
     static Team team = new Team(0);
     static Player player = new Player(0, "Test");
     static AmmoType mockLRM15AmmoType = (AmmoType) EquipmentType.get("IS LRM 15 Ammo");
@@ -115,8 +114,7 @@ class TeamLoadOutGeneratorTest {
     void setUp() {
         when(cg.getClient()).thenReturn(client);
         when(cg.getClient().getGame()).thenReturn(game);
-        game.setOptions(mockGameOptions);
-
+        
         when(mockGameOptions.booleanOption(eq(OptionsConstants.ALLOWED_NO_CLAN_PHYSICAL))).thenReturn(false);
         when(mockGameOptions.stringOption(OptionsConstants.ALLOWED_TECH_LEVEL)).thenReturn("Experimental");
         when(mockGameOptions.booleanOption(OptionsConstants.ALLOWED_ERA_BASED)).thenReturn(true);
@@ -125,9 +123,13 @@ class TeamLoadOutGeneratorTest {
         Option mockFalseBoolOpt = mock(Option.class);
         when(mockTrueBoolOpt.booleanValue()).thenReturn(true);
         when(mockFalseBoolOpt.booleanValue()).thenReturn(false);
-        when(mockIOps.stringValue().equals(anyString())).thenReturn(true);
         when(mockGameOptions.getOption(anyString())).thenReturn(mockTrueBoolOpt);
+        IOption mockRulesSystemOption = mock (IOption.class);
+        when(mockRulesSystemOption.stringValue()).thenReturn(OptionsConstants.RULES_CORE);
+        when(mockGameOptions.getOption(OptionsConstants.RULES_SYSTEM)).thenReturn(mockRulesSystemOption);
         when(mockGameOptions.intOption(OptionsConstants.ALLOWED_YEAR)).thenReturn(3151);
+
+        game.setOptions(mockGameOptions);
 
         team.addPlayer(player);
         game.addPlayer(0, player);

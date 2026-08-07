@@ -271,11 +271,11 @@ public class CoreRulesEquipment extends RulesEquipment {
         if (hits > potentialSlots.size()) {
             hits = potentialSlots.size();
         }
+        vCriticalSlots.put(selectedLeg, new LinkedList<>());
         for (int hit = 0; hit < hits; hit++) {
             CriticalSlot slot;
-            int slotIndex = Compute.randomInt(potentialSlots.size()-1);
+            int slotIndex = Compute.randomInt(potentialSlots.size());
             slot = entity.getCritical(selectedLeg,potentialSlots.get(slotIndex));
-            vCriticalSlots.put(selectedLeg, new LinkedList<>());
             vCriticalSlots.get(selectedLeg).add(slot);
             // Make sure we don't hit the same one again
             potentialSlots.remove(slotIndex);

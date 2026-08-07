@@ -53,7 +53,9 @@ record TWPhaseEndManager(TWGameManager gameManager) {
                 IOption rules_system = gameManager.getGame().getOptions().getOption(OptionsConstants.RULES_SYSTEM);
                 String loadedOption = (gameManager.getGame().rulesManager instanceof CoreRulesManager) ?
                       OptionsConstants.RULES_CORE : OptionsConstants.RULES_TW;
-                if (!rules_system.stringValue().equals(loadedOption)) {
+                if (rules_system == null) {
+                    gameManager.getGame().initializeRulesManager(OptionsConstants.RULES_CORE);
+                } else if (!rules_system.stringValue().equals(loadedOption)) {
                     gameManager.getGame().initializeRulesManager(rules_system.stringValue());
                 }
                 gameManager.changePhase(GamePhase.EXCHANGE);

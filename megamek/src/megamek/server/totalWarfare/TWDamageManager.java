@@ -92,7 +92,9 @@ public class TWDamageManager implements IDamageManager {
         IOption rules_system = game.getOptions().getOption(OptionsConstants.RULES_SYSTEM);
         String loadedOption = (game.rulesManager instanceof CoreRulesManager) ?
               OptionsConstants.RULES_CORE : OptionsConstants.RULES_TW;
-        if (!rules_system.stringValue().equals(loadedOption)) {
+        if (rules_system == null) {
+            game.initializeRulesManager(OptionsConstants.RULES_CORE);
+        } else if (!rules_system.stringValue().equals(loadedOption)) {
             game.initializeRulesManager(rules_system.stringValue());
         }
     }

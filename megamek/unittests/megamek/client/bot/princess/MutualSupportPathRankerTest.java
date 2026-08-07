@@ -86,6 +86,13 @@ class MutualSupportPathRankerTest {
      * worth more than the advance it would delay - and the defender's is the higher of the two.
      */
     private static final double ATTACK_HOLD_CREDIT_CEILING = 15.0 * 2.5 * 0.4;
+
+    /**
+     * The indifference band: the measured median round-over-round wobble of a stationary unit's own
+     * estimate, added to every earned hold credit so noise-sized gains cannot displace a set unit.
+     * Written out as a literal so a change to the measured constant fails a test instead of following it.
+     */
+    private static final double ESTIMATE_NOISE_MARGIN = 5.0;
     private static final double DEFEND_HOLD_CREDIT_CEILING = 15.0 * 2.5 * 0.8;
 
     private static final Coords CURRENT_POSITION = new Coords(0, 10);
@@ -557,7 +564,7 @@ class MutualSupportPathRankerTest {
         setEnemyDistances(10.0, 10.0, CURRENT_POSITION);
 
         // quality 15 = 1.0 success * 20 dealt - 5 taken; under the cap, credited at the attack factor
-        assertEquals(0.4 * 15.0,
+        assertEquals((0.4 * 15.0) + ESTIMATE_NOISE_MARGIN,
               testRanker.calculatePositionHoldMod(pathEndingAt(CURRENT_POSITION), mockGame,
                     damageDealing(20.0), 5.0, 1.0), TOLERANCE);
 
@@ -590,7 +597,7 @@ class MutualSupportPathRankerTest {
     void holdCreditIsCappedBelowATurnOfAdvance() {
         when(mockBehavior.getCombatPosture()).thenReturn(CombatPosture.ATTACK);
         setEnemyDistances(10.0, 10.0, CURRENT_POSITION);
-        assertEquals(ATTACK_HOLD_CREDIT_CEILING,
+        assertEquals(ATTACK_HOLD_CREDIT_CEILING + ESTIMATE_NOISE_MARGIN,
               testRanker.calculatePositionHoldMod(pathEndingAt(CURRENT_POSITION), mockGame,
                     damageDealing(200.0), 0.0, 1.0), TOLERANCE);
     }
@@ -600,7 +607,7 @@ class MutualSupportPathRankerTest {
     void aDefenderHoldsHarderThanAnAttacker() {
         when(mockBehavior.getCombatPosture()).thenReturn(CombatPosture.DEFEND);
         setEnemyDistances(10.0, 10.0, CURRENT_POSITION);
-        assertEquals(DEFEND_HOLD_CREDIT_CEILING,
+        assertEquals(DEFEND_HOLD_CREDIT_CEILING + ESTIMATE_NOISE_MARGIN,
               testRanker.calculatePositionHoldMod(pathEndingAt(CURRENT_POSITION), mockGame,
                     damageDealing(200.0), 0.0, 1.0), TOLERANCE);
     }
@@ -717,7 +724,7 @@ class MutualSupportPathRankerTest {
         doReturn(10.0).when(princessRanker)
               .distanceToClosestEnemy(any(Entity.class), eq(CURRENT_POSITION), any(Game.class));
         // quality 15 = 1.0 success * 20 dealt - 5 taken; credited at the attack factor, same as CASPAR
-        assertEquals(0.4 * 15.0,
+        assertEquals((0.4 * 15.0) + ESTIMATE_NOISE_MARGIN,
               princessRanker.calculatePositionHoldMod(pathEndingAt(CURRENT_POSITION), mockGame,
                     damageDealing(20.0), 5.0, 1.0), TOLERANCE);
     }

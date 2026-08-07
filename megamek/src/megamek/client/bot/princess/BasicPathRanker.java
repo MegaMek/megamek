@@ -171,6 +171,19 @@ public class BasicPathRanker extends PathRanker {
     protected static final int REPRESENTATIVE_TO_HIT = 8;
 
     /**
+     * The indifference band: how much better a destination must score before leaving a held firing
+     * position is worth it. The ranker re-estimates every hex every round, and the estimate of the SAME
+     * hex moves round to round as enemies shift - measured on 30-game mirror runs, a unit standing still
+     * sees its own hex's score change by a median of about five points per round. A destination that beats
+     * the current hex by less than that is indistinguishable from the noise, and chasing it pays the
+     * attacker movement modifier for nothing. The margin is the measured median (estimate_wobble.py,
+     * re-measured whenever the estimators change), added to the stationary path's hold credit: real
+     * improvements - fresh cover against a new threat, a range advantage - typically score well past it
+     * and still win.
+     */
+    protected static final double ESTIMATE_NOISE_MARGIN = 5.0;
+
+    /**
      * How much of a turn of advance the hold credit may reach under each posture: an attacking force
      * keeps the credit modest so a good hex never outbids the advance, while a defending force holds
      * harder. Both keep the credit strictly below one turn of advance.
@@ -2187,7 +2200,11 @@ public class BasicPathRanker extends PathRanker {
         double capFactor = (CombatPosture.DEFEND == resolvePosture(game, movingUnit.getBoardId()))
               ? HOLD_CREDIT_DEFEND_CAP_FACTOR
               : HOLD_CREDIT_ATTACK_CAP_FACTOR;
-        double holdCredit = capFactor * Math.min(quality, TEMPO_REFERENCE_MP * aggression);
+        // The noise margin sits outside the cap: it is estimator distrust, not position value. Even so
+        // the combined ceiling (cap + margin, 35 for a defender at defaults) stays below a turn of
+        // advance, so the Eisenhower governor holds: no position outbids the advance.
+        double holdCredit = capFactor * Math.min(quality, TEMPO_REFERENCE_MP * aggression)
+              + ESTIMATE_NOISE_MARGIN;
         lastPositionHoldMod = holdCredit;
         return holdCredit;
     }

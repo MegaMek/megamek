@@ -47,6 +47,7 @@ import java.util.function.Predicate;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
+import megamek.client.bot.AIType;
 import megamek.client.bot.princess.BehaviorSettings;
 import megamek.client.ui.Messages;
 import megamek.client.ui.clientGUI.tooltip.UnitToolTip;
@@ -938,7 +939,11 @@ public class TWGameManager extends AbstractGameManager {
             for (int boardId : game.getBoardIds()) {
                 send(connId, createSpecialHexDisplayPacket(connId, boardId));
             }
-            send(connId, new Packet(PacketCommand.PRINCESS_SETTINGS, getGame().getBotSettings()));
+            // Copy to a plain HashMap: getBotTypes() returns a Collections.unmodifiableMap view, and
+            // SanityInputFilter rejects Collections$UnmodifiableMap on the receiving side - the packet
+            // would kill every connecting client, which is exactly a bot taking over a loaded seat.
+            send(connId, new Packet(PacketCommand.PRINCESS_SETTINGS, getGame().getBotSettings(),
+                  new HashMap<>(getGame().getBotTypes())));
             send(connId, new Packet(PacketCommand.UPDATE_GROUND_OBJECTS, getGame().getGroundObjects()));
         }
     }
@@ -975,6 +980,11 @@ public class TWGameManager extends AbstractGameManager {
                         }
 
                         game.getBotSettings().put(player.getName(), (BehaviorSettings) packet.getObject(0));
+                        // The bot also reports which AI it is, so a savegame can restore the same kind of
+                        // bot to this seat instead of guessing.
+                        if (packet.getObject(1) instanceof AIType aiType) {
+                            game.recordBotType(player.getName(), aiType);
+                        }
                     }
                     break;
                 case REROLL_INITIATIVE:

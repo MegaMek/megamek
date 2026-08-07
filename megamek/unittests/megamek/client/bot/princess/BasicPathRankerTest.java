@@ -2241,6 +2241,82 @@ class BasicPathRankerTest {
             when(mockBuilding.getCurrentCF(eq(testCoordsThree))).thenReturn(77);
         }
 
+        // START - Standing still in water
+        // A path with no steps never entered the hazard loop, so staying put in deep water was free while
+        // every path out paid its water hazard. These pin the stationary pricing.
+
+        private MovePath setupStationaryPath(Coords position) {
+            MovePath stationaryPath = mock(MovePath.class);
+            when(stationaryPath.getStepVector()).thenReturn(new Vector<>());
+            when(stationaryPath.getFinalCoords()).thenReturn(position);
+            when(stationaryPath.isJumping()).thenReturn(false);
+            return stationaryPath;
+        }
+
+        @Test
+        void testStandingStillSubmergedWithABreachedLocationIsNotFree() {
+            // A damaged Mek hiding on the bottom of a depth 2 lake: its unarmored right arm is an open
+            // breach, and staying down there has to cost what crossing that hex would.
+            final Hex mockHexThree = testHexes.get(2);
+            when(mockHexThree.containsTerrain(Terrains.WATER)).thenReturn(true);
+            when(mockHexThree.depth()).thenReturn(2);
+
+            when(mockUnit.locations()).thenReturn(8);
+            when(mockUnit.isMek()).thenReturn(true);
+            when(mockUnit.getArmor(anyInt())).thenReturn(10);
+            when(mockUnit.getArmor(eq(Mek.LOC_RIGHT_ARM))).thenReturn(0);
+            when(mockUnit.getElevation()).thenReturn(-2);
+
+            final MovePath stationaryPath = setupStationaryPath(testCoordsThree);
+            assertEquals(50.0, testRanker.checkPathForHazards(stationaryPath, mockUnit, mockGame), TOLERANCE);
+        }
+
+        @Test
+        void testStandingStillSubmergedFullyArmoredIsStillSafe() {
+            // An undamaged, sealed Mek is genuinely safe standing in deep water - no invented penalty.
+            final Hex mockHexThree = testHexes.get(2);
+            when(mockHexThree.containsTerrain(Terrains.WATER)).thenReturn(true);
+            when(mockHexThree.depth()).thenReturn(2);
+
+            when(mockUnit.locations()).thenReturn(8);
+            when(mockUnit.isMek()).thenReturn(true);
+            when(mockUnit.getArmor(anyInt())).thenReturn(10);
+            when(mockUnit.getElevation()).thenReturn(-2);
+
+            final MovePath stationaryPath = setupStationaryPath(testCoordsThree);
+            assertEquals(0.0, testRanker.checkPathForHazards(stationaryPath, mockUnit, mockGame), TOLERANCE);
+        }
+
+        @Test
+        void testStationaryUnitAboveTheWaterIsNotDrowning() {
+            // A stationary path reports MOVE_NONE, not a VTOL movement type, so without the elevation
+            // check a hovering VTOL over a lake would be priced as drowning.
+            final Hex mockHexThree = testHexes.get(2);
+            when(mockHexThree.containsTerrain(Terrains.WATER)).thenReturn(true);
+            when(mockHexThree.depth()).thenReturn(2);
+
+            when(mockUnit.getElevation()).thenReturn(3);
+
+            final MovePath stationaryPath = setupStationaryPath(testCoordsThree);
+            assertEquals(0.0, testRanker.checkPathForHazards(stationaryPath, mockUnit, mockGame), TOLERANCE);
+        }
+
+        @Test
+        void testTankDisplacedIntoWaterWantsOut() {
+            // A tank cannot survive in water. One that was pushed in must see the drowning hazard when it
+            // considers staying, or the free stay outweighs every path back out.
+            final Hex mockHexThree = testHexes.get(2);
+            when(mockHexThree.containsTerrain(Terrains.WATER)).thenReturn(true);
+            when(mockHexThree.depth()).thenReturn(1);
+
+            final Entity mockTank = mock(Tank.class);
+            when(mockTank.getElevation()).thenReturn(-1);
+
+            final MovePath stationaryPath = setupStationaryPath(testCoordsThree);
+            assertEquals(1000.0, testRanker.checkPathForHazards(stationaryPath, mockTank, mockGame), TOLERANCE);
+        }
+        // END - Standing still in water
+
         // START - Hazardous Liquid Pools
         @Test
         void testThreeHexShallowHazardousLiquid() {

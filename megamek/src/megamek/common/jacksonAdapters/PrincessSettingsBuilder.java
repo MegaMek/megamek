@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2024-2025 The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2024-2026 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -42,6 +42,7 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonSetter;
 import megamek.client.bot.princess.BehaviorSettings;
 import megamek.client.bot.princess.CardinalEdge;
+import megamek.client.bot.princess.CombatPosture;
 import megamek.client.bot.princess.PrincessException;
 import megamek.common.annotations.Nullable;
 import megamek.logging.MMLogger;
@@ -71,6 +72,7 @@ public class PrincessSettingsBuilder {
     private static final String LEGACY_PRINCESS_HERDING = "herdmentality";
     private static final String PRINCESS_DESTINATION = "fleeto";
     private static final String PRINCESS_RETREAT = "withdrawto";
+    private static final String PRINCESS_POSTURE = "posture";
     private static final String PRINCESS_FLEE = "flee";
     private static final String PRINCESS_FORCED_WITHDRAW = "forcedwithdraw";
 
@@ -103,6 +105,8 @@ public class PrincessSettingsBuilder {
 
     @JsonAlias(PRINCESS_RETREAT)
     private CardinalEdge withdrawEdge;
+
+    private CombatPosture combatPosture;
 
     private String description = null;
 
@@ -161,6 +165,12 @@ public class PrincessSettingsBuilder {
         return this;
     }
 
+    @JsonSetter(PRINCESS_POSTURE)
+    public PrincessSettingsBuilder posture(String posture) {
+        combatPosture = CombatPosture.parse(posture);
+        return this;
+    }
+
     public PrincessSettingsBuilder description(String description) {
         if ((description == null) || description.isBlank()) {
             throw new IllegalArgumentException("Description cannot be null or empty");
@@ -213,6 +223,9 @@ public class PrincessSettingsBuilder {
         }
         if (withdrawEdge != null) {
             settings.setRetreatEdge(withdrawEdge);
+        }
+        if (combatPosture != null) {
+            settings.setCombatPosture(combatPosture);
         }
 
         if ((description == null) || description.isBlank()) {

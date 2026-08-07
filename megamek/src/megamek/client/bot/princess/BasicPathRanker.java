@@ -2271,6 +2271,21 @@ public class BasicPathRanker extends PathRanker {
                   game.getBoard(step.getBoardId()));
             previousCoords = coords;
         }
+
+        // A path with no steps stays in its starting hex, and the loop above priced nothing for it:
+        // loitering in deep water was free while every path out paid its water hazard, so a submerged
+        // unit's ledger said stay, turn after turn. Price the water for the hex the unit stays in. The
+        // elevation check keeps this to units actually in the water - a stationary path reports MOVE_NONE,
+        // so a hovering VTOL would otherwise read as drowning.
+        if (null == previousCoords) {
+            Coords finalCoords = path.getFinalCoords();
+            Hex finalHex = (null == finalCoords) ? null : game.getBoard(path.getFinalBoardId()).getHex(finalCoords);
+            if ((null != finalHex) && finalHex.containsTerrain(Terrains.WATER)
+                  && !finalHex.containsTerrain(Terrains.ICE) && (movingUnit.getElevation() < 0)) {
+                totalHazard += waterHazard(movingUnit, finalHex, movingUnit.getElevation(),
+                      movingUnit.isProne(), true, null);
+            }
+        }
         logger.trace("Total Hazard = {}", totalHazard);
         return totalHazard;
     }
@@ -2448,6 +2463,26 @@ public class BasicPathRanker extends PathRanker {
     }
 
     private double calcWaterHazard(Entity movingUnit, Hex hex, MoveStep step, MovePath movePath) {
+        return waterHazard(movingUnit, hex, step.getElevation(), step.isProne(),
+              step.equals(movePath.getLastStep()), movePath);
+    }
+
+    /**
+     * Water hazard for a unit in the given pose in this hex.
+     *
+     * @param movingUnit the unit in the water
+     * @param hex        the water hex
+     * @param elevation  the unit's elevation in the hex
+     * @param prone      whether the unit is prone
+     * @param endsInHex  whether the unit ends its turn in this hex
+     * @param movePath   the path entering the hex, or {@code null} for a unit that is standing still. A unit
+     *                   that does not move makes no water-entry roll, so it runs no fall-contingent breach
+     *                   risk.
+     *
+     * @return the hazard value for being in this water hex in that pose
+     */
+    private double waterHazard(Entity movingUnit, Hex hex, int elevation, boolean prone, boolean endsInHex,
+          @Nullable MovePath movePath) {
         logger.trace("Checking Water ({}) for hazards.", hex.getCoords());
         // Puddles don't count.
         if (hex.depth() == 0) {
@@ -2481,7 +2516,7 @@ public class BasicPathRanker extends PathRanker {
         // 2. If unit elevation is equal to bridge elevation, skip.
         if (hex.containsTerrain(Terrains.BRIDGE_ELEV)) {
             int bridgeElevation = hex.terrainLevel(Terrains.BRIDGE_ELEV);
-            if (bridgeElevation == step.getElevation()) {
+            if (bridgeElevation == elevation) {
                 logger.trace("Bridge elevation matches unit elevation (0).");
                 return 0;
             }
@@ -2497,14 +2532,13 @@ public class BasicPathRanker extends PathRanker {
             return UNIT_DESTRUCTION_FACTOR;
         }
 
-        MoveStep lastStep = movePath.getLastStep();
         // Unsealed unit will drown.
         if (movingUnit instanceof Mek &&
               ((Mek) movingUnit).isIndustrial() &&
               !movingUnit.hasEnvironmentalSealing() &&
               (movingUnit.getEngine().getEngineType() == Engine.COMBUSTION_ENGINE) &&
               hex.depth() >= 1 &&
-              step.equals(lastStep)) {
+              endsInHex) {
             double destructionFactor = hex.depth() >= 2 ? UNIT_DESTRUCTION_FACTOR : UNIT_DESTRUCTION_FACTOR * 0.5d;
             logger.trace("Industrial Meks drown too ({}).", destructionFactor);
             return destructionFactor;
@@ -2518,7 +2552,7 @@ public class BasicPathRanker extends PathRanker {
         // Locations that submerge only when the unit is prone - notably the head and center torso in Depth 1
         // water - drown it only if it falls, so that catastrophic risk is weighted by the chance of failing
         // the water-entry piloting roll.
-        Set<Integer> submergedInCurrentPose = submergedLocations(movingUnit, hex, step.isProne());
+        Set<Integer> submergedInCurrentPose = submergedLocations(movingUnit, hex, prone);
         Set<Integer> submergedWhileProne = submergedLocations(movingUnit, hex, true);
 
         double hazardValue = 0;
@@ -2536,17 +2570,20 @@ public class BasicPathRanker extends PathRanker {
         }
 
         // Fall-contingent breaches: unarmored locations that submerge only if the unit falls prone. Compute
-        // the fall probability lazily so a fully-armored unit never triggers it.
-        double fallProbability = -1;
-        for (int location : submergedWhileProne) {
-            if (submergedInCurrentPose.contains(location) || (movingUnit.getArmor(location) > 0)) {
-                continue;
+        // the fall probability lazily so a fully-armored unit never triggers it. A unit standing still makes
+        // no water-entry roll, so there is nothing to fall from.
+        if (null != movePath) {
+            double fallProbability = -1;
+            for (int location : submergedWhileProne) {
+                if (submergedInCurrentPose.contains(location) || (movingUnit.getArmor(location) > 0)) {
+                    continue;
+                }
+                double breachWeight = breachConsequence(movingUnit, location);
+                if (fallProbability < 0) {
+                    fallProbability = waterEntryFallProbability(movingUnit, hex, movePath);
+                }
+                hazardValue += fallProbability * breachWeight;
             }
-            double breachWeight = breachConsequence(movingUnit, location);
-            if (fallProbability < 0) {
-                fallProbability = waterEntryFallProbability(movingUnit, hex, movePath);
-            }
-            hazardValue += fallProbability * breachWeight;
         }
 
         logger.trace("Water breach hazard {}.", hazardValue);

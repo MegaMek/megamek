@@ -36,10 +36,13 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyInt;
+import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.spy;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 import java.util.List;
@@ -717,6 +720,50 @@ class MutualSupportPathRankerTest {
         assertEquals(0.4 * 15.0,
               princessRanker.calculatePositionHoldMod(pathEndingAt(CURRENT_POSITION), mockGame,
                     damageDealing(20.0), 5.0, 1.0), TOLERANCE);
+    }
+
+    /**
+     * A server reset keeps bot clients connected and initialize() runs only once per client, so the same
+     * ranker sees the round counter go backwards when a new game starts. The posture machinery must not
+     * carry the previous game into the new one: the resolvers' closing-rate history is cleared, and the
+     * first posture of the new game is announced even when it matches the old game's last announcement.
+     */
+    @Test
+    void aNewGameOnAReusedClientForgetsThePreviousGamesPosture() {
+        when(mockBehavior.getCombatPosture()).thenReturn(CombatPosture.AUTO);
+        when(mockMover.isDeployed()).thenReturn(true);
+        BasicPathRanker princessRanker = spy(new BasicPathRanker(mockPrincess));
+        doReturn(mockPrincess).when(princessRanker).getOwner();
+
+        Entity distantEnemy = enemyMekAt(new Coords(0, 30));
+        Entity closingEnemy = enemyMekAt(new Coords(0, 26));
+
+        // Game one, rounds 1-2: the enemy closes hard, the force stands on the defensive.
+        when(mockGame.getCurrentRound()).thenReturn(1);
+        when(mockPrincess.getEnemyEntities()).thenReturn(List.of(distantEnemy));
+        princessRanker.resolvePosture(mockGame, 0);
+        when(mockGame.getCurrentRound()).thenReturn(2);
+        when(mockPrincess.getEnemyEntities()).thenReturn(List.of(closingEnemy));
+        assertEquals(CombatPosture.DEFEND, princessRanker.resolvePosture(mockGame, 0),
+              "precondition: game one must end standing on the defensive");
+
+        // Server reset, new game: round 1 again, the enemy back at distance. A leaked resolver would
+        // still be holding game one's closing history and defensive stance.
+        when(mockGame.getCurrentRound()).thenReturn(1);
+        when(mockPrincess.getEnemyEntities()).thenReturn(List.of(distantEnemy));
+        assertEquals(CombatPosture.ATTACK, princessRanker.resolvePosture(mockGame, 0),
+              "the new game reads the battle fresh");
+
+        // Both games' postures were announced - including the new game's, which a leaked
+        // announcedPosture would have suppressed had the values matched across the reset.
+        verify(mockPrincess, times(3)).sendChat(anyString());
+    }
+
+    private Entity enemyMekAt(Coords position) {
+        Entity enemy = mock(BipedMek.class);
+        when(enemy.getPosition()).thenReturn(position);
+        when(enemy.isDeployed()).thenReturn(true);
+        return enemy;
     }
 
     /** The defender-tempo port: a Princess defender in contact pays no closing charge either. */

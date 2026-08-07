@@ -425,6 +425,13 @@ public class BasicPathRanker extends PathRanker {
     protected CombatPosture resolvePosture(Game game, int boardId) {
         int round = game.getCurrentRound();
         if (round != postureResolvedRound) {
+            if (round < postureResolvedRound) {
+                // The round going backwards means a new game on a reused bot client (a server reset
+                // keeps bots connected, and initialize() only runs once per client). The resolvers'
+                // closing-rate history and the announcement memory belong to the previous game.
+                postureResolverByBoard.clear();
+                announcedPosture = null;
+            }
             postureResolvedRound = round;
             postureByBoard.clear();
         }

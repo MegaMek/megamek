@@ -279,6 +279,7 @@ public class InfantryTROView extends TROView {
             }
         }
         if (!options.isEmpty()) {
+            notes.add(Messages.getString("TROView.InfantryNote.Augmented"));
             options.forEach(o -> notes.add(o.getDisplayableName().replaceAll(
                   Messages.getString("TROView.InfantryNote.notImplementedRegex"), "") +
                   ": " +

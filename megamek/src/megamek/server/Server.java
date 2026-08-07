@@ -1400,7 +1400,11 @@ public class Server implements Runnable {
                 case LOAD_GAME:
                     try {
                         sendServerChat(getPlayer(connId).getName() + " loaded a new game.");
-                        setGame((Game) packet.getObject(0));
+                        Game receivedGame = (Game) packet.getObject(0);
+                        if (receivedGame != null) {
+                            receivedGame.initializeAfterLoad();
+                        }
+                        setGame(receivedGame);
                         for (AbstractConnection conn : connections) {
                             sendCurrentInfo(conn.getId());
                         }

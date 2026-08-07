@@ -11887,7 +11887,7 @@ public class AmmoType extends EquipmentType {
         ammo.setInternalName("ISLightPlasmaRifleAmmo");
         ammo.addLookupName("ISLightPlasmaRifle Ammo");
         ammo.damagePerShot = 4;
-        ammo.rackSize = 2;
+        ammo.rackSize = 4;
         ammo.ammoType = AmmoTypeEnum.PLASMA;
         ammo.shots = 20;
         ammo.bv = 26;

@@ -160,8 +160,7 @@ public class PlasmaRifleHandler extends AmmoWeaponHandler {
         if (target.isConventionalInfantry()) {
             if (weapon.getType() instanceof ISLightPlasmaRifle) {
                 toReturn = Compute.d6();
-            }
-            if (weapon.getType() instanceof ISHeavyPlasmaRifle) {
+            } else if (weapon.getType() instanceof ISHeavyPlasmaRifle) {
                 toReturn = Compute.d6(4);
             } else {
                 toReturn = Compute.d6(2);

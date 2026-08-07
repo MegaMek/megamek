@@ -15840,6 +15840,7 @@ public class TWGameManager extends AbstractGameManager {
                     if (hasLance) {
                         Roll diceRoll2 = Compute.rollD6(2);
                         firstCluster = false;
+                        // Core p.194 details the 2nd lance impact and needing a 5+
                         if (diceRoll2.getIntValue() >= 5) {
                             addReport(damageEntity(te, hit, 1, false, DamageType.NONE, true, false, throughFront));
                         } else {

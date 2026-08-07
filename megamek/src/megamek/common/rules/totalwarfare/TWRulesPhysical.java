@@ -52,6 +52,7 @@ import megamek.common.units.BipedMek;
 import megamek.common.units.Entity;
 import megamek.common.units.Mek;
 import megamek.common.units.QuadMek;
+import megamek.common.units.TripodMek;
 
 public class TWRulesPhysical extends RulesPhysical {
 
@@ -198,7 +199,7 @@ public class TWRulesPhysical extends RulesPhysical {
      */
     @Override
     public boolean hasTalons(Entity entity) {
-        if (entity instanceof BipedMek) {
+        if (entity instanceof BipedMek || entity instanceof TripodMek) {
             return (entity.hasWorkingMisc(MiscType.F_TALON, null, Mek.LOC_RIGHT_LEG) &&
                   entity.hasWorkingSystem(Mek.ACTUATOR_FOOT, Mek.LOC_RIGHT_LEG)) ||
                   (entity.hasWorkingMisc(MiscType.F_TALON, null, Mek.LOC_LEFT_LEG) &&

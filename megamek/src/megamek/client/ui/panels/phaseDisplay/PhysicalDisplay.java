@@ -1928,8 +1928,7 @@ public class PhysicalDisplay extends AttackPhaseDisplay {
                     }
                 }
                 setClubEnabled(canClub);
-                ash.setCanAim(canAim);
-
+                
                 // Thrash at infantry?
                 ToHitData thrash = new ThrashAttackAction(currentEntity, target)
                       .toHit(game);

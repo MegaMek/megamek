@@ -939,8 +939,11 @@ public class TWGameManager extends AbstractGameManager {
             for (int boardId : game.getBoardIds()) {
                 send(connId, createSpecialHexDisplayPacket(connId, boardId));
             }
+            // Copy to a plain HashMap: getBotTypes() returns a Collections.unmodifiableMap view, and
+            // SanityInputFilter rejects Collections$UnmodifiableMap on the receiving side - the packet
+            // would kill every connecting client, which is exactly a bot taking over a loaded seat.
             send(connId, new Packet(PacketCommand.PRINCESS_SETTINGS, getGame().getBotSettings(),
-                  getGame().getBotTypes()));
+                  new HashMap<>(getGame().getBotTypes())));
             send(connId, new Packet(PacketCommand.UPDATE_GROUND_OBJECTS, getGame().getGroundObjects()));
         }
     }

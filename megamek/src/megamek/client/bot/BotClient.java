@@ -112,6 +112,17 @@ public abstract class BotClient extends Client {
 
     public static final int BOT_TURN_RETRY_COUNT = 3;
 
+    /**
+     * Which AI implementation this bot is. Reported to the server alongside the bot's settings so a savegame
+     * remembers what kind of bot held each seat, and shown by the bot config dialog so it tells the truth
+     * about a running bot instead of assuming Princess. Subclasses that are their own AI type override this.
+     *
+     * @return this bot's {@link AIType}
+     */
+    public AIType getAIType() {
+        return AIType.PRINCESS;
+    }
+
     private List<Entity> currentTurnEnemyEntities;
     private List<Entity> currentTurnFriendlyEntities;
 

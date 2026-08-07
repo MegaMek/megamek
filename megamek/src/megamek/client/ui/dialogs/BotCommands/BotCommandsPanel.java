@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2025 The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2025-2026 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -60,6 +60,7 @@ import megamek.client.bot.princess.ArtilleryCommandAndControl.SpecialAmmo;
 import megamek.client.bot.princess.BehaviorSettingsFactory;
 import megamek.client.bot.princess.CardinalEdge;
 import megamek.client.bot.princess.ChatCommands;
+import megamek.client.bot.princess.CombatPosture;
 import megamek.client.ui.Messages;
 import megamek.client.ui.clientGUI.ClientGUI;
 import megamek.client.ui.clientGUI.audio.AudioService;
@@ -486,6 +487,8 @@ public class BotCommandsPanel extends JPanel {
 
     private JPopupMenu createManeuverPopup() {
         return createBotFirstPopup((botMenu, botPlayer) -> {
+            botMenu.add(createPostureMenu(botPlayer));
+            botMenu.addSeparator();
             addBotAction(botMenu, botPlayer, "AlphaStrike", this::alphaStrikeManeuver);
             addBotAction(botMenu, botPlayer, "NoPrisoners", this::noPrisonersManeuver);
             addBotAction(botMenu, botPlayer, "StayAtRange", this::stayAtRangeManeuver);
@@ -501,6 +504,28 @@ public class BotCommandsPanel extends JPanel {
             botMenu.addSeparator();
             botMenu.add(createFineTuneMenu(botPlayer));
         });
+    }
+
+    /**
+     * Creates the combat posture menu for one bot: Attack, Defend, or Auto.
+     *
+     * @param botPlayer The bot the posture will be applied to
+     *
+     * @return The created menu
+     */
+    private JMenu createPostureMenu(Player botPlayer) {
+        JMenu menu = new JMenu(Messages.getString("BotCommandPanel.Posture.title"));
+        menu.setToolTipText(Messages.getString("BotCommandPanel.Posture.tooltip"));
+        for (CombatPosture posture : CombatPosture.values()) {
+            JMenuItem postureItem = new JMenuItem(posture.toString());
+            postureItem.setToolTipText(Messages.getString("BotCommandPanel.Posture." + posture.name() + ".tooltip"));
+            postureItem.addActionListener(event -> {
+                sendChatCommand(botPlayer, ChatCommands.POSTURE, posture.name());
+                acknowledgeOrder(botPlayer, Messages.getString("BotCommandPanel.toast.posture", posture));
+            });
+            menu.add(postureItem);
+        }
+        return menu;
     }
 
     /**

@@ -74,6 +74,7 @@ import megamek.client.bot.BotClient;
 import megamek.client.bot.princess.BehaviorSettings;
 import megamek.client.bot.princess.BehaviorSettingsFactory;
 import megamek.client.bot.princess.CardinalEdge;
+import megamek.client.bot.princess.CombatPosture;
 import megamek.client.bot.princess.PrincessException;
 import megamek.client.generator.RandomCallsignGenerator;
 import megamek.client.ui.Messages;
@@ -112,6 +113,13 @@ public class BotConfigDialog extends AbstractButtonDialog
     /** Radio-button group for choosing which bot AI to use; defaults to {@link AIType#PRINCESS}. */
     private final ButtonGroup aiTypeGroup = new ButtonGroup();
 
+    /**
+     * The AI type this configuration is locked to, or {@code null} to leave the chooser usable. Non-null
+     * means the type decision was made elsewhere - a running bot's actual type, or the choice another
+     * dialog's dropdown already holds for a ghost - and this dialog only reports it.
+     */
+    private final AIType lockedAIType;
+
     private final JLabel nameLabel = new JLabel(Messages.getString("BotConfigDialog.nameLabel"));
     private final TipTextField nameField = new TipTextField("", 16);
 
@@ -135,6 +143,8 @@ public class BotConfigDialog extends AbstractButtonDialog
 
     private final JLabel withdrawEdgeLabel = new JLabel(Messages.getString("BotConfigDialog.retreatEdgeLabel"));
     private final MMComboBox<CardinalEdge> withdrawEdgeCombo = new TipCombo<>("EdgeToWithdraw", CardinalEdge.values());
+    private final JLabel postureLabel = new JLabel(Messages.getString("BotConfigDialog.postureLabel"));
+    private final MMComboBox<CombatPosture> postureCombo = new TipCombo<>("CombatPosture", CombatPosture.values());
     private final MMToggleButton autoFleeCheck = new TipMMToggleButton(Messages.getString(
           "BotConfigDialog.autoFleeCheck"));
     private final JLabel fleeEdgeLabel = new JLabel(Messages.getString("BotConfigDialog.homeEdgeLabel"));
@@ -200,11 +210,25 @@ public class BotConfigDialog extends AbstractButtonDialog
 
     public BotConfigDialog(JFrame parent, @Nullable String botName, @Nullable BehaviorSettings behavior,
           @Nullable ClientGUI cg) {
+        this(parent, botName, behavior, cg, null);
+    }
+
+    /**
+     * Opens the dialog with the AI chooser locked to the given type: a running bot's actual type, or the
+     * choice another dialog's dropdown already holds for a ghost. The AI is chosen when a bot is added or a
+     * ghost replaced; before this the chooser silently defaulted to Princess whatever the seat really was.
+     *
+     * @param lockedAIType the AI type to show selected and locked, or {@code null} when the dialog
+     *                     configures a bot that does not exist yet and the chooser should be usable
+     */
+    public BotConfigDialog(JFrame parent, @Nullable String botName, @Nullable BehaviorSettings behavior,
+          @Nullable ClientGUI cg, @Nullable AIType lockedAIType) {
         super(parent, "BotConfigDialog", "BotConfigDialog.title");
         fixedBotPlayerName = botName;
         isNewBot = botName == null;
         clientGui = cg;
         client = cg != null ? cg.getClient() : null;
+        this.lockedAIType = lockedAIType;
         princessBehavior = (behavior != null) ? behavior : new BehaviorSettings();
         saveGameBehavior = behavior;
         updatePresets();
@@ -246,17 +270,29 @@ public class BotConfigDialog extends AbstractButtonDialog
         result.add(new JLabel(Messages.getString("BotConfigDialog.aiTypeLabel")));
         boolean useCaspar = CLIENT_PREFERENCES.getUseCASPAR();
         for (AIType aiType : AIType.values()) {
-            if ((aiType == AIType.CASPAR) && !useCaspar) {
+            // A locked type is always shown, even when the preference that offers it for new bots is off -
+            // the dialog reports what the seat is, not what could be picked.
+            boolean isLockedType = (aiType == lockedAIType);
+            if ((aiType == AIType.CASPAR) && !useCaspar && !isLockedType) {
                 logger.debug("[Caspar] CASPAR AI option hidden - UseCASPAR client setting is off");
                 continue;
             }
             JRadioButton radioButton = new JRadioButton(
                   Messages.getString("BotConfigDialog.aiType." + aiType.name()));
             radioButton.setActionCommand(aiType.name());
-            radioButton.setSelected(aiType == AIType.PRINCESS);
-            String tooltipKey = "BotConfigDialog.aiType." + aiType.name() + ".tooltip";
-            if (Messages.keyExists(tooltipKey)) {
-                radioButton.setToolTipText(Messages.getString(tooltipKey));
+            if (null != lockedAIType) {
+                // The AI is chosen when a bot is added or a ghost replaced; a running bot cannot change
+                // kind mid-session. Locked so the dialog tells the truth about the seat instead of
+                // defaulting to Princess.
+                radioButton.setSelected(isLockedType);
+                radioButton.setEnabled(false);
+                radioButton.setToolTipText(Messages.getString("BotConfigDialog.aiTypeLocked.tooltip"));
+            } else {
+                radioButton.setSelected(aiType == AIType.PRINCESS);
+                String tooltipKey = "BotConfigDialog.aiType." + aiType.name() + ".tooltip";
+                if (Messages.keyExists(tooltipKey)) {
+                    radioButton.setToolTipText(Messages.getString(tooltipKey));
+                }
             }
             aiTypeGroup.add(radioButton);
             result.add(radioButton);
@@ -443,6 +479,13 @@ public class BotConfigDialog extends AbstractButtonDialog
             panContent.add(Box.createVerticalStrut(7));
         }
 
+        postureCombo.setToolTipText(Messages.getString("BotConfigDialog.postureTooltip"));
+        postureCombo.addActionListener(this);
+        var postureLine = new JPanel(new FlowLayout(FlowLayout.LEFT));
+        postureLine.add(postureLabel);
+        postureLine.add(postureCombo);
+        panContent.add(postureLine);
+
         exclusiveMutualSupportCheck.setToolTipText(Messages.getString("BotConfigDialog.exclusiveMutualSupportCheckToolTip"));
         exclusiveMutualSupportCheck.addActionListener(this);
         panContent.add(exclusiveMutualSupportCheck);
@@ -576,6 +619,7 @@ public class BotConfigDialog extends AbstractButtonDialog
         aggressionSlidebar.setValue(princessBehavior.getHyperAggressionIndex());
         fallShameSlidebar.setValue(princessBehavior.getFallShameIndex());
         mutualSupportSlidebar.setValue(princessBehavior.getMutualSupportIndex());
+        postureCombo.setSelectedItem(princessBehavior.getCombatPosture());
         braverySlidebar.setValue(princessBehavior.getBraveryIndex());
         antiCrowdingSlidebar.setValue(princessBehavior.getAntiCrowding());
         favorHigherTMMSlidebar.setValue(princessBehavior.getFavorHigherTMM());
@@ -639,6 +683,7 @@ public class BotConfigDialog extends AbstractButtonDialog
                     chosenPreset.getFavorHigherTMM() != favorHigherTMMSlidebar.getValue() ||
                     chosenPreset.iAmAPirate() != iAmAPirateCheck.isSelected() ||
                     chosenPreset.isExclusiveMutualSupport() != exclusiveMutualSupportCheck.isSelected() ||
+                    chosenPreset.getCombatPosture() != postureCombo.getSelectedItem() ||
                     chosenPreset.getNumberOfEnemiesToConsiderFacing()
                           != numberOfEnemiesToConsiderFacingSlidebar.getValue() ||
                     chosenPreset.getAllowFacingTolerance() != allowFacingToleranceSlidebar.getValue() ||
@@ -827,6 +872,7 @@ public class BotConfigDialog extends AbstractButtonDialog
         newBehavior.setAllowFacingTolerance(allowFacingToleranceSlidebar.getValue());
         newBehavior.setIAmAPirate(iAmAPirateCheck.isSelected());
         newBehavior.setExclusiveMutualSupport(exclusiveMutualSupportCheck.isSelected());
+        newBehavior.setCombatPosture(postureCombo.getSelectedItem());
         newBehavior.setExperimental(experimentalCheck.isSelected());
         newBehavior.setIgnoreDamageOutput(ignoreDamageOutputCheck.isSelected());
 
@@ -876,6 +922,7 @@ public class BotConfigDialog extends AbstractButtonDialog
         tempBehavior.setAllowFacingTolerance(allowFacingToleranceSlidebar.getValue());
         tempBehavior.setIAmAPirate(iAmAPirateCheck.isSelected());
         tempBehavior.setExclusiveMutualSupport(exclusiveMutualSupportCheck.isSelected());
+        tempBehavior.setCombatPosture(postureCombo.getSelectedItem());
         tempBehavior.setExperimental(experimentalCheck.isSelected());
         tempBehavior.setIgnoreDamageOutput(ignoreDamageOutputCheck.isSelected());
 

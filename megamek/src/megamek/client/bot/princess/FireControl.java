@@ -208,10 +208,6 @@ public class FireControl {
     static final TargetRollModifier TH_WEAPON_FLAK_HAG = new TargetRollModifier(-3,
           "HAG Flak vs airborne target");
     static final TargetRollModifier TH_APOLLO = new TargetRollModifier(-1, "Apollo FCS");
-    static final TargetRollModifier TH_AP_AMMO =
-          new TargetRollModifier(Game.rulesManager.getRulesAmmo().armorPiercingAttackMod(), "armor"
-          + "-piercing "
-          + "ammo");
     static final TargetRollModifier TH_WEAPON_NO_ARC = new TargetRollModifier(TargetRoll.IMPOSSIBLE, "not in arc");
     static final TargetRollModifier TH_INF_ZERO_RNG = new TargetRollModifier(TargetRoll.AUTOMATIC_FAIL,
           "non-infantry shooting with zero range");
@@ -1088,7 +1084,8 @@ public class FireControl {
                   munitionTypes.contains(AmmoType.Munitions.M_ARMOR_PIERCING);
             boolean isArmorPiercingPenaltyInEffect = (Game.rulesManager instanceof TWRulesManager);
             if (isAutocannonAmmo && isArmorPiercingMunition && isArmorPiercingPenaltyInEffect) {
-                toHit.addModifier(TH_AP_AMMO);
+                TargetRollModifier thAPAmmo = new TargetRollModifier(Game.rulesManager.getRulesAmmo().armorPiercingAttackMod(),"armor-piercing ammo");
+                toHit.addModifier(thAPAmmo);
             }
             // Air-defense Arrow IV handling; can only fire at airborne targets
             if (munitionTypes.contains(AmmoType.Munitions.M_ADA)) {

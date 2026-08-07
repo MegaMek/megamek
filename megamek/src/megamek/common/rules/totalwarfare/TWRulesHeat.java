@@ -63,10 +63,8 @@ public class TWRulesHeat extends RulesHeat {
     public LifeSupportHeat checkLifeSupportHeat(int damageHeat,
           boolean torsoMountedCockpit,
           boolean mtHeat, boolean bPainShunt) {
-        if (bPainShunt) {
-            return null;
-        }
-        int warriorDamage = (torsoMountedCockpit) ? 1 : 0;
+        
+        int warriorDamage = (torsoMountedCockpit && !bPainShunt) ? 1 : 0;
         if ((damageHeat >= 47) && mtHeat) {
             // mekwarrior takes 5 damage
             warriorDamage += 5;

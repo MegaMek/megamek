@@ -210,8 +210,8 @@ public class ComputeC3Spotter {
               || (!attacker.hasC3()
               && !attacker.hasC3i()
               && !attacker.hasActiveNovaCEWS()
-              && !attacker.hasNavalC3()
-              && EquipmentActivation.isC3SwitchedOff(attacker))) {
+              && !attacker.hasNavalC3())
+              || EquipmentActivation.isC3SwitchedOff(attacker)) {
             return false;
         }
 

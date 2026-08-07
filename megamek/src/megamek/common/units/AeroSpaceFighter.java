@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2023-2025 - The MegaMek Team. All Rights Reserved.
+ * Copyright (c) 2023-2026 - The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *

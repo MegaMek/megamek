@@ -2744,7 +2744,8 @@ class FireControlTest {
         ToHitData expected = new ToHitData(mockShooter.getCrew().getGunnery(), FireControl.TH_GUNNERY);
         expected.addModifier(FireControl.TH_MEDIUM_RANGE);
         if (Game.rulesManager instanceof TWRulesManager) {
-            expected.addModifier(FireControl.TH_AP_AMMO);
+            TargetRollModifier thAPAmmo = new TargetRollModifier(1,"armor-piercing ammo");
+            expected.addModifier(thAPAmmo);
         }
         assertToHitDataEquals(expected,
               testFireControl.guessToHitModifierForWeapon(mockShooter,
@@ -2822,10 +2823,10 @@ class FireControlTest {
         when(mockAmmoType.getMunitionType()).thenReturn(EnumSet.of(AmmoType.Munitions.M_STANDARD));
 
         // An operational Apollo FCS linked to the MRM launcher gives -1 to-hit.
-        final MiscType mockApolloType = mock(MiscType.class);
+        Mounted<?> mockApollo = mock(Mounted.class);
+        MiscType mockApolloType = mock(MiscType.class);
         when(mockApolloType.hasFlag(MiscType.F_APOLLO)).thenReturn(true);
-        final Mounted<?> mockApollo = mock(Mounted.class);
-        when(mockApollo.getType()).thenReturn(mockApolloType);
+        doReturn(mockApolloType).when(mockApollo).getType();
         when(mockApollo.isDestroyed()).thenReturn(false);
         when(mockApollo.isMissing()).thenReturn(false);
         when(mockApollo.isBreached()).thenReturn(false);

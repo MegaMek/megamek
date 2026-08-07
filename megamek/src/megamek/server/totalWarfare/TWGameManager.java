@@ -23918,7 +23918,6 @@ public class TWGameManager extends AbstractGameManager {
                     int impactChange = Game.rulesManager.getRulesArmor().impactArmorBreach();
                     target = (lowFail) ? target + impactChange: target - impactChange;
                     if (impactChange != 0) {
-                        Report r;
                         r = new Report(6344);
                         r.subject = entity.getId();
                         r.indent(3);

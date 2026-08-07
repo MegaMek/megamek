@@ -285,7 +285,9 @@ public class ComputeToHitTest extends GameBoardTestCase {
 
         IOption mockOption = mock(IOption.class);
         when(mockOption.booleanValue()).thenReturn(false);
+        when(mockOption.stringValue()).thenReturn(OptionsConstants.RULES_CORE);
         when(mockGameOptions.getOption(anyString())).thenReturn(mockOption);
+        when(mockGameOptions.getOption(OptionsConstants.RULES_SYSTEM)).thenReturn(mockOption);
 
         game.addPlayer(0, player1);
         game.addPlayer(1, player2);

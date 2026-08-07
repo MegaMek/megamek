@@ -216,6 +216,17 @@ public class MutualSupportPathRanker extends BasicPathRanker {
     private final Map<Integer, BankRegions> bankRegionsByBoard = new HashMap<>();
     private int bankRegionsRound = -1;
 
+    // Per-hex terrain labels, same lifecycle: built once per board per round (fires burn woods away,
+    // buildings fall), then every path evaluation is one array lookup.
+    private final Map<Integer, HexPropertiesMap> hexPropertiesByBoard = new HashMap<>();
+    private int hexPropertiesRound = -1;
+
+    // Sustainable-output curves per unit, dry and standing in water, rebuilt per round (weapons and
+    // sinks get shot away). Keyed by unit id. Mechanism C1.
+    private final Map<Integer, DamageProfile> dryProfileByUnit = new HashMap<>();
+    private final Map<Integer, DamageProfile> waterProfileByUnit = new HashMap<>();
+    private int profileCacheRound = -1;
+
     // Per-ranking-pass caches. rankPath is called once per candidate path for a single mover, and a
     // company-scale turn evaluates thousands of paths per unit, so anything that depends only on the
     // mover (its friends list, the gap from where it currently stands) must be computed once, not per
@@ -463,7 +474,9 @@ public class MutualSupportPathRanker extends BasicPathRanker {
             return 0;
         }
 
-        double quality = (successProbability * damageEstimate.getMaximumDamageEstimate()) - expectedDamageTaken;
+        double quality = (successProbability * damageEstimate.getMaximumDamageEstimate()
+              * heatSinkSustainBoost(movingUnit, game, path))
+              - expectedDamageTaken;
         lastPositionQuality = quality;
         if (quality <= 0) {
             return 0;
@@ -520,6 +533,94 @@ public class MutualSupportPathRanker extends BasicPathRanker {
         }
         return bankRegionsByBoard.computeIfAbsent(boardId,
               id -> BankRegions.of(game.getBoard(id), FormationSide.ANY_WATER_DEPTH));
+    }
+
+    /**
+     * The per-hex terrain labels for a board, computed once per round and shared by every path of every
+     * mover on it.
+     */
+    private HexPropertiesMap hexProperties(Game game, int boardId) {
+        int round = game.getCurrentRound();
+        if (round != hexPropertiesRound) {
+            hexPropertiesRound = round;
+            hexPropertiesByBoard.clear();
+        }
+        return hexPropertiesByBoard.computeIfAbsent(boardId,
+              id -> HexPropertiesMap.of(game, game.getBoard(id), id));
+    }
+
+    /**
+     * Mechanism B of the terrain doctrine, first term: cover is priced into the incoming-fire estimate
+     * where it was missing. Against already-moved enemies the fire-control guess prices the destination's
+     * woods and cover honestly; against unmoved enemies the estimate is a raw range table, so a covered
+     * hex and an open one read the same and terrain never influenced the choice. This discounts that raw
+     * estimate by the hit-chance ratio the destination's cover implies, the same representative-8s pricing
+     * as the movement discount.
+     *
+     * <p>Only cover a unit can FIGHT from is credited: a woodline-edge hex (fire out, hard to hit) and
+     * partial cover count; deep woods - concealing but blind - deliberately do not, so the discount can
+     * never coax a unit into ground it cannot shoot from (the dead-ground rule from the water PR, and
+     * rulings 3 and 9 of the command interview). A covered firing position takes less estimated damage,
+     * which raises its exchange, which the hold credit then makes sticky - the terrain preference emerges
+     * through the ledger rather than through a bonus term.</p>
+     */
+    @Override
+    protected double incomingFireTerrainDiscount(MovePath path) {
+        HexProperties properties = hexProperties(path.getEntity().getGame(), path.getFinalBoardId())
+              .at(path.getFinalCoords());
+        return incomingFireTerrainDiscount(properties);
+    }
+
+    /** The pure pricing: what fraction of incoming fire the cover modifiers let through. */
+    static double incomingFireTerrainDiscount(HexProperties properties) {
+        int coverModifiers = (properties.concealmentEdge() ? properties.concealment() : 0)
+              + (properties.partialCover() ? 1 : 0);
+        if (coverModifiers <= 0) {
+            return 1.0;
+        }
+        return Compute.oddsAbove(REPRESENTATIVE_TO_HIT + coverModifiers)
+              / Compute.oddsAbove(REPRESENTATIVE_TO_HIT);
+    }
+
+    /**
+     * Mechanism C1: how much a heat-sink hex raises this unit's sustainable output where it stands. The
+     * ratio of the sustained-damage curves at the fight's current range - standing in water versus dry -
+     * from the same {@link DamageProfile} data the analysis display shows. For a cool-running unit the
+     * curves are identical and the boost is 1; for a Mek whose guns outrun its dry sinks (the triple-PPC
+     * case) the water closes the gap between what it can fire once and what it can fire every round, and
+     * the position quality - and so the hold credit - rises by exactly that measured amount. Holding the
+     * sink only; moving to reach one is a DEFEND-gated question (interview ruling 4) left for the
+     * follow-on.
+     */
+    private double heatSinkSustainBoost(Entity movingUnit, Game game, MovePath path) {
+        if (!movingUnit.tracksHeat()) {
+            return 1.0;
+        }
+        HexProperties standingOn = hexProperties(game, path.getFinalBoardId()).at(path.getFinalCoords());
+        if (!standingOn.heatSink()) {
+            return 1.0;
+        }
+        int round = game.getCurrentRound();
+        if (round != profileCacheRound) {
+            profileCacheRound = round;
+            dryProfileByUnit.clear();
+            waterProfileByUnit.clear();
+        }
+        boolean extremeRange = isExtremeRange(game);
+        DamageProfile dryProfile = dryProfileByUnit.computeIfAbsent(movingUnit.getId(),
+              id -> DamageProfile.of(movingUnit, extremeRange));
+        DamageProfile waterProfile = waterProfileByUnit.computeIfAbsent(movingUnit.getId(),
+              id -> DamageProfile.of(movingUnit, extremeRange,
+                    (movingUnit.getCrew() != null) ? movingUnit.getCrew().getGunnery() : 4,
+                    movingUnit.getHeatCapacityWithWater()));
+        int range = Math.max(1, (int) Math.ceil(
+              distanceToClosestEnemy(movingUnit, path.getFinalCoords(), game)));
+        double drySustained = dryProfile.sustainedDamage(range);
+        double waterSustained = waterProfile.sustainedDamage(range);
+        if ((drySustained <= 0) || (waterSustained <= drySustained)) {
+            return 1.0;
+        }
+        return waterSustained / drySustained;
     }
 
     /**

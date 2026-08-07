@@ -272,7 +272,7 @@ public class BasicPathRanker extends PathRanker {
 
         // in general, if an enemy can end its position in range, it can hit me
         returnResponse.addToEstimatedEnemyDamage(getMaxDamageAtRange(enemy, range, useExtremeRange, useLOSRange) *
-              damageDiscount);
+              damageDiscount * incomingFireTerrainDiscount(path));
 
         // It is especially embarrassing if the enemy can move behind or flank me and then kick me
         if (canFlankAndKick(enemy, behind, leftFlank, rightFlank, myFacing)) {
@@ -295,6 +295,23 @@ public class BasicPathRanker extends PathRanker {
      * @return the fraction of the raw damage estimate to keep; 1.0 by default
      */
     protected double attackerMovementDamageDiscount(MovePath path) {
+        return 1.0;
+    }
+
+    /**
+     * How much of an unmoved enemy's raw damage the terrain at this path's destination lets through.
+     *
+     * <p>The twin of {@link #attackerMovementDamageDiscount}: the raw damage-at-range estimate above has no
+     * to-hit roll, so the cover the destination hex gives - the woods and partial-cover modifiers the full
+     * fire-control guess prices against already-moved enemies - does not exist in it, and a covered hex and
+     * an open one read the same. The base ranker keeps that behavior; a subclass can return the fraction of
+     * the raw estimate the destination's cover actually lets through.</p>
+     *
+     * @param path the path being evaluated
+     *
+     * @return the fraction of the raw enemy damage estimate to keep; 1.0 by default
+     */
+    protected double incomingFireTerrainDiscount(MovePath path) {
         return 1.0;
     }
 

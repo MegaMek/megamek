@@ -663,6 +663,44 @@ class MutualSupportPathRankerTest {
     }
 
     /**
+     * Mechanism B, first term: cover a unit can fight from is priced as the hit-chance ratio its
+     * modifiers imply - a light-woods edge or a depth-1 ford lets about two-thirds of raw incoming fire
+     * through; open ground lets everything through.
+     */
+    @Test
+    void fightingCoverIsPricedAsAHitChanceRatio() {
+        HexProperties woodlineEdge = new HexProperties(0, false, 1, true, 0, false, false);
+        assertEquals(Compute.oddsAbove(9) / Compute.oddsAbove(8),
+              MutualSupportPathRanker.incomingFireTerrainDiscount(woodlineEdge), TOLERANCE);
+
+        HexProperties ford = new HexProperties(BankRegions.WATER, true, 0, false, 0, false, true);
+        assertEquals(Compute.oddsAbove(9) / Compute.oddsAbove(8),
+              MutualSupportPathRanker.incomingFireTerrainDiscount(ford), TOLERANCE);
+
+        HexProperties openGround = new HexProperties(0, false, 0, false, 0, false, false);
+        assertEquals(1.0, MutualSupportPathRanker.incomingFireTerrainDiscount(openGround), TOLERANCE);
+    }
+
+    /**
+     * The dead-ground rule (interview rulings 3 and 9): deep woods conceal but are blind - a concealing
+     * hex with no open neighbor earns no cover credit, so the discount can never coax a unit into ground
+     * it cannot shoot from.
+     */
+    @Test
+    void deepWoodsEarnNoCoverCredit() {
+        HexProperties deepWoods = new HexProperties(0, false, 2, false, 0, false, false);
+        assertEquals(1.0, MutualSupportPathRanker.incomingFireTerrainDiscount(deepWoods), TOLERANCE);
+    }
+
+    /** Princess's incoming-fire estimate is untouched: the base ranker's discount is exactly 1.0. */
+    @Test
+    void theBaseRankerDoesNotDiscountIncomingFire() {
+        BasicPathRanker princessRanker = new BasicPathRanker(mockPrincess);
+        assertEquals(1.0, princessRanker.incomingFireTerrainDiscount(pathEndingAt(CLOSING_DESTINATION)),
+              TOLERANCE);
+    }
+
+    /**
      * The recorded figures are per-mover state reused across paths; a path that earns nothing must record
      * nothing rather than leave the previous path's quality standing in the log.
      */

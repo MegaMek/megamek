@@ -84,24 +84,7 @@ public class TWRulesArmor extends RulesArmor {
      * @return the impact armor modifier
      */
     public int impactArmorMod() {return 1;}
-
-    /**
-     * Impact Resistant Armor breach.
-     * Impact Resistant Armor breach.
-     *
-     * @param entity the entity with impact armor
-     * @param vDesc vector of reports describing the breach
-     * @return the breach value
-     */
-    public int impactArmorBreach(Entity entity, Vector<Report> vDesc, int damageType) {
-        Report r;
-        r = new Report(6344);
-        r.subject = entity.getId();
-        r.indent(3);
-        vDesc.addElement(r);
-        return 1;
-    }
-
+    
     /**
      * Does a lance penetrate the armor.
      * Hardened and ferro lam prevent penetration.
@@ -123,7 +106,7 @@ public class TWRulesArmor extends RulesArmor {
      */
     public int reduceHeatDamageByArmor(int armorType, int heatDamage) {
         if (armorType == EquipmentType.T_ARMOR_HEAT_DISSIPATING) {
-            return (int) Math.ceil(heatDamage / 2.0);
+            return (int) Math.floor(heatDamage / 2.0);
         } else if (armorType == EquipmentType.T_ARMOR_REFLECTIVE) {
             // reflective armor divides heat damage by 2, with a minimum of 1
             return Math.max(1, (int) Math.floor(heatDamage / 2.0));

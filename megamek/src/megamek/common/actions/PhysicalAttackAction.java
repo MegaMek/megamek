@@ -54,6 +54,7 @@ import megamek.common.rules.RulesTarget;
 import megamek.common.rules.RulesUnits;
 import megamek.common.rules.RulesManager;
 
+import megamek.common.rules.totalwarfare.TWRulesManager;
 import megamek.common.units.*;
 
 public class PhysicalAttackAction extends AbstractAttackAction {
@@ -218,7 +219,7 @@ public class PhysicalAttackAction extends AbstractAttackAction {
         int largeTarget = (game.getEntity(target.getId()) == null) ? 0 :
               Game.rulesManager.getRulesTarget().largeTargetModifier(game.getEntity(target.getId()).getWeightClass());
         // RULESFUTURE Call this with the 2nd parameter when objectives that are large are added
-        if (largeTarget != 0) {
+        if (largeTarget != 0 && !(game.rulesManager instanceof TWRulesManager)) {
             toHit.addModifier(largeTarget, "large target");
         }
 

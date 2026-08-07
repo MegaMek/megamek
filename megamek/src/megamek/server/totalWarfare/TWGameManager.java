@@ -15817,7 +15817,8 @@ public class TWGameManager extends AbstractGameManager {
                     boolean hasLance = false;
                     boolean secondLance = false;
                     for (MiscMounted getClub : ae.getClubs()) {
-                        if (getClub.getType().hasFlag(MiscTypeFlag.S_LANCE) &&
+                        if (getClub.getType().hasFlag(MiscTypeFlag.S_LANCE) && 
+                              !getClub.isInoperable() &&
                               (te.getArmor(hit) > 0) &&
                               (te.getArmorType(hit.getLocation()) != EquipmentType.T_ARMOR_ANTI_PENETRATIVE_ABLATION)) {
                             if (hasLance) {
@@ -15831,12 +15832,20 @@ public class TWGameManager extends AbstractGameManager {
                         firstCluster = false;
                         if (diceRoll2.getIntValue() >= 5) {
                             addReport(damageEntity(te, hit, 1, false, DamageType.NONE, true, false, throughFront));
-                        }
-                        if (secondLance) {
-                            Roll diceRoll3 = Compute.rollD6(2);
-                            if (diceRoll3.getIntValue() >= 5) {
-                                hit.setEffect(HitData.EFFECT_CRITICAL);
-                                addReport(damageEntity(te, hit, 0, false, DamageType.NONE, true, false, throughFront));
+                        } else {
+                            if (secondLance) {
+                                Roll diceRoll3 = Compute.rollD6(2);
+                                if (diceRoll3.getIntValue() >= 5) {
+                                    hit.setEffect(HitData.EFFECT_CRITICAL);
+                                    addReport(damageEntity(te,
+                                          hit,
+                                          1,
+                                          false,
+                                          DamageType.NONE,
+                                          true,
+                                          false,
+                                          throughFront));
+                                }
                             }
                         }
                     }
@@ -23908,6 +23917,13 @@ public class TWGameManager extends AbstractGameManager {
                 if ((entity.getArmorType(loc) == EquipmentType.T_ARMOR_IMPACT_RESISTANT)) {
                     int impactChange = Game.rulesManager.getRulesArmor().impactArmorBreach();
                     target = (lowFail) ? target + impactChange: target - impactChange;
+                    if (impactChange != 0) {
+                        Report r;
+                        r = new Report(6344);
+                        r.subject = entity.getId();
+                        r.indent(3);
+                        vDesc.addElement(r);
+                    }
                 }
 
                 Roll diceRoll = Compute.rollD6(2);

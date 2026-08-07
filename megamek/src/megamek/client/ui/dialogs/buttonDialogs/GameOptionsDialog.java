@@ -587,6 +587,9 @@ public class GameOptionsDialog extends AbstractButtonDialog implements ActionLis
     private void rulesSystemPrevention(boolean core) {
         // Change the following
         // Flamers per BattleMech Manual
+        if (!editable) {
+            return;
+        }
         List<DialogOptionComponentYPanel> comps = optionComps.get(OptionsConstants.BASE_FLAMER_HEAT);
         if (comps != null) {
             for (DialogOptionComponentYPanel comp_i : comps) {

@@ -105,7 +105,7 @@ public class TWRulesPSR extends RulesPSR {
             } else {
                 if (unit.getBadCriticalSlots(CriticalSlot.TYPE_SYSTEM, Mek.ACTUATOR_HIP, loc) > 0) {
                     roll.addModifier(2, unit.getLocationName(loc) + " Hip Actuator destroyed");
-                    if (toLegDamage) {
+                    if (!toLegDamage) {
                         continue;
                     }
                 }

@@ -490,9 +490,11 @@ public final class Game extends AbstractGame implements Serializable, PlanetaryC
             IOption rules_system = this.options.getOption(OptionsConstants.RULES_SYSTEM);
             String loadedOption = (rulesManager instanceof CoreRulesManager) ?
                   OptionsConstants.RULES_CORE : OptionsConstants.RULES_TW;
-            if (!rules_system.stringValue().equals(loadedOption)) {
+            if (rules_system == null) {
+                initializeRulesManager(OptionsConstants.RULES_CORE);
+            } else if (!rules_system.stringValue().equals(loadedOption)) {
                 initializeRulesManager(rules_system.stringValue());
-            }
+            } 
             processGameEvent(new GameSettingsChangeEvent(this));
         }
     }

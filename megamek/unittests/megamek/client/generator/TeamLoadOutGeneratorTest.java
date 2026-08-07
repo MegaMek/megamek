@@ -69,6 +69,7 @@ import megamek.common.equipment.enums.BombType.BombTypeEnum;
 import megamek.common.exceptions.LocationFullException;
 import megamek.common.game.Game;
 import megamek.common.options.GameOptions;
+import megamek.common.options.IOption;
 import megamek.common.options.Option;
 import megamek.common.options.OptionsConstants;
 import megamek.common.options.PilotOptions;
@@ -90,6 +91,7 @@ class TeamLoadOutGeneratorTest {
     static ClientGUI cg = mock(ClientGUI.class);
     static Client client = mock(Client.class);
     static Game game = new Game();
+    IOption mockIOps = mock(IOption.class);
 
     static Team team = new Team(0);
     static Player player = new Player(0, "Test");
@@ -123,6 +125,7 @@ class TeamLoadOutGeneratorTest {
         Option mockFalseBoolOpt = mock(Option.class);
         when(mockTrueBoolOpt.booleanValue()).thenReturn(true);
         when(mockFalseBoolOpt.booleanValue()).thenReturn(false);
+        when(mockIOps.stringValue().equals(anyString())).thenReturn(true);
         when(mockGameOptions.getOption(anyString())).thenReturn(mockTrueBoolOpt);
         when(mockGameOptions.intOption(OptionsConstants.ALLOWED_YEAR)).thenReturn(3151);
 

@@ -37,9 +37,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import megamek.client.bot.Messages;
-import megamek.common.analysis.DamageProfile;
 import megamek.client.bot.princess.UnitBehavior.BehaviorType;
+import megamek.common.analysis.DamageProfile;
 import megamek.common.annotations.Nullable;
 import megamek.common.board.Board;
 import megamek.common.board.Coords;
@@ -157,37 +156,9 @@ public class MutualSupportPathRanker extends BasicPathRanker {
     /** At most this many covering friends earn the bonus; a whole company stacking adds nothing. */
     private static final int COVER_BONUS_MAX_FRIENDS = 2;
 
-    /**
-     * Cover shaping only applies once the destination is within this range of an enemy; out of contact the
-     * force moves loose and fast (traveling, not bounding overwatch).
-     */
-    private static final int THREAT_CONTACT_RANGE = 15;
-
-    /**
-     * Reference movement rate used to scale the turns-to-close tempo term: a full move's advance is worth
-     * {@code TEMPO_REFERENCE_MP * hyperAggressionValue} to every unit regardless of its speed, which is what
-     * puts a 3/5 assault and a 6/9 medium on one commit tempo.
-     *
-     * <p>Sized against the noise floor rather than for slider parity. The mechanism study measured the
-     * competing rank terms at roughly 50 for one risky piloting roll, up to 100 for facing and 250 for
-     * sprint exposure, while stock aggression gave a slow assault a whole-turn commit signal of about 7.5 -
-     * which is why heavy companies dithered instead of committing. The first benchmark used 6.0 (15 points
-     * per move at default aggression), still under that floor, and arrival stagger only improved 12%.
-     * Fifteen gives 37.5 per move, above the single-roll term and below the sprint penalty.</p>
-     */
-    private static final double TEMPO_REFERENCE_MP = 15.0;
-
     private final Map<Integer, SupportEnvelope> envelopeCache = new HashMap<>();
     private int envelopeCacheRound = -1;
 
-    // Posture is a force-level call, made once per round and per board: every unit on a board moves
-    // under the same answer, and enemies on another board have no say in it - a game-wide entity list
-    // would blend boards into a meaningless closing rate.
-    private final Map<Integer, PostureResolver> postureResolverByBoard = new HashMap<>();
-    private final Map<Integer, CombatPosture> postureByBoard = new HashMap<>();
-    private int postureResolvedRound = -1;
-    private CombatPosture posture = CombatPosture.ATTACK;
-    private CombatPosture announcedPosture;
     private double lastPosturePenalty;
 
     // Bank labels are a property of the board, recomputed per round (ice can break) and shared by
@@ -421,47 +392,6 @@ public class MutualSupportPathRanker extends BasicPathRanker {
     }
 
     /**
-     * The posture the force fights under this round on the given board, resolved once per round per board
-     * and shared by every unit there. Only units on that board have a say: entity lists are game-wide, and
-     * in a multi-board game mixing boards would make the closing rate meaningless. When the answer changes -
-     * a flip of the auto-resolution or a new explicit order taking effect - the bot says so in the chat,
-     * with its reason, so an observer can follow the force's intent without reading logs.
-     */
-    private CombatPosture resolvePosture(Game game, int boardId) {
-        int round = game.getCurrentRound();
-        if (round != postureResolvedRound) {
-            postureResolvedRound = round;
-            postureByBoard.clear();
-        }
-        posture = postureByBoard.computeIfAbsent(boardId, id -> {
-            PostureResolver resolver = postureResolverByBoard.computeIfAbsent(id,
-                  newBoard -> new PostureResolver());
-            CombatPosture resolved = resolver.resolve(getOwner().getBehaviorSettings(), round,
-                  deployedPositions(getOwner().getEntitiesOwned(), id),
-                  deployedPositions(getOwner().getEnemyEntities(), id));
-            if (resolved != announcedPosture) {
-                announcedPosture = resolved;
-                getOwner().sendChat(Messages.getString("Princess.posture.announce",
-                      resolved, resolver.resolutionReason()));
-            }
-            return resolved;
-        });
-        return posture;
-    }
-
-    /** The positions of the given units that are deployed on the given board; the rest have no say. */
-    static List<Coords> deployedPositions(List<Entity> units, int boardId) {
-        List<Coords> positions = new ArrayList<>(units.size());
-        for (Entity unit : units) {
-            Coords position = unit.getPosition();
-            if ((null != position) && unit.isDeployed() && (unit.getBoardId() == boardId)) {
-                positions.add(position);
-            }
-        }
-        return positions;
-    }
-
-    /**
      * The most utility the formation term may ever cost a single path.
      *
      * <p>The class promises that cohesion can shade a choice between comparably aggressive paths but can never
@@ -556,7 +486,8 @@ public class MutualSupportPathRanker extends BasicPathRanker {
      */
     @Override
     protected Map<String, Double> doctrineScores() {
-        Map<String, Double> scores = new HashMap<>();
+        // The base ranker records the position-discipline columns (posture, quality, hold credit).
+        Map<String, Double> scores = new HashMap<>(super.doctrineScores());
         scores.put("formationCentre_x", lastFormationCentre == null ? -1.0 : lastFormationCentre.getX());
         scores.put("formationCentre_y", lastFormationCentre == null ? -1.0 : lastFormationCentre.getY());
         scores.put("formationRadius", (double) lastFormationRadius);
@@ -564,16 +495,11 @@ public class MutualSupportPathRanker extends BasicPathRanker {
         scores.put("coverBonus", lastCoverBonus);
         scores.put("coveringFriends", (double) lastCoveringFriends);
         scores.put("turnsToOwnBand", lastTurnsToBand);
-        // The force-level posture this path was ranked under (CombatPosture ordinal: 0 attack, 1 defend)
-        // and what the posture charged this particular path. Fresh for every path: the penalty is computed
+        // What the posture charged this particular path. Fresh for every path: the penalty is computed
         // at the top of calculateMutualSupportMod before anything can return early.
-        scores.put("combatPosture", (double) posture.ordinal());
         scores.put("posturePenalty", lastPosturePenalty);
         return scores;
     }
-
-
-
 
     /**
      * Whether a unit is part of the formation, and so gets a say in where its centre is.
@@ -600,13 +526,6 @@ public class MutualSupportPathRanker extends BasicPathRanker {
             return WITHDRAWING_CENTRE_WEIGHT;
         }
         return 1.0;
-    }
-
-    /** Whether a unit has left the fighting line to pull back. */
-    private boolean isWithdrawing(Entity unit) {
-        return getOwner().isFallingBack(unit)
-              || getOwner().getUnitBehaviorTracker()
-                    .getBehaviorType(unit, getOwner()).equals(BehaviorType.ForcedWithdrawal);
     }
 
     /**
@@ -676,6 +595,14 @@ public class MutualSupportPathRanker extends BasicPathRanker {
      * runs 9. Zero once inside the band - nothing pulls a fire-support unit past its optimum toward
      * point-blank range.
      *
+     * <p>A laid defense does not pay tempo. Once the enemy is inside contact range and the force's posture
+     * is DEFEND, the enemy is coming to us: the closing charge that keeps an attack from dithering would
+     * here bleed the defender off its firing positions one hex at a time - measured as the biggest payer
+     * in 40% of the defender's remaining two-steps after the attacker-movement fix. Out of contact the
+     * charge stands, so a defending force still closes ranks toward its line instead of scattering. The
+     * gate reads the unit's CURRENT distance, not the path's, so every candidate path of the pass sees the
+     * same flat field.</p>
+     *
      * @param movingUnit the unit being moved
      * @param path       the path being evaluated
      * @param game       the current game
@@ -688,6 +615,12 @@ public class MutualSupportPathRanker extends BasicPathRanker {
         int ownSpeed = Math.max(1, Math.max(movingUnit.getRunMP(), movingUnit.getAnyTypeMaxJumpMP()));
         double turnsToClose = remainingGap / ownSpeed;
         lastTurnsToBand = turnsToClose;
+
+        if ((CombatPosture.DEFEND == resolvePosture(game, movingUnit.getBoardId()))
+              && (distanceToClosestEnemy(movingUnit, movingUnit.getPosition(), game)
+                    <= THREAT_CONTACT_RANGE)) {
+            return 0;
+        }
 
         double aggression = getOwner().getBehaviorSettings().getHyperAggressionValue();
         double aggressionMod = turnsToClose * TEMPO_REFERENCE_MP * aggression;

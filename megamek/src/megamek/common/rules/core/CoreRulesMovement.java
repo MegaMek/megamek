@@ -62,6 +62,7 @@ public class CoreRulesMovement extends RulesMovement {
      * {@inheritDoc}
      * Can you run / flank in water? Core p.51
      */
+    @Override
     public boolean cannotRunInWater(EntityMovementMode movementMode,
           boolean amphibious) {
         if ((movementMode != EntityMovementMode.HOVER) &&
@@ -84,6 +85,7 @@ public class CoreRulesMovement extends RulesMovement {
      * {@inheritDoc}
      * Even with a destroyed leg, we can run. Core p.90
      */
+    @Override
     public int getMekRunMP(int badLegs, int walkMP, int runMP, boolean isQuad) {
         return runMP;
     }
@@ -92,6 +94,7 @@ public class CoreRulesMovement extends RulesMovement {
      * {@inheritDoc}
      * Fully underwater hexes cost 2MP. Core p.51
      */
+    @Override
     public int getUnderwaterMPCost() {
         return 2;
     }
@@ -100,7 +103,8 @@ public class CoreRulesMovement extends RulesMovement {
      * {@inheritDoc}
      * Backwards elevation changes are enabled. Core p.46
      */
-     public boolean enableBackwardsElevationChange(final boolean toBackwardsElevation, Entity entity) {
+    @Override
+    public boolean enableBackwardsElevationChange(final boolean toBackwardsElevation, Entity entity) {
         if (entity instanceof Mek) {
             int legsDestroyed = ((Mek) entity).countBadLegs();
             if (legsDestroyed >= 1 && !(entity instanceof QuadMek)) {
@@ -120,22 +124,16 @@ public class CoreRulesMovement extends RulesMovement {
      * {@inheritDoc}    
      * Do we add leg damage together, yes. Core p.98
      */
-     public boolean cumulativeLegDamage(boolean bTOLegDamage) {
+    @Override
+    public boolean cumulativeLegDamage(boolean bTOLegDamage) {
         return true;
-    }
-
-    /**
-     * {@inheritDoc}
-     * Run is still allowed with a broken leg. Core p.90
-     */
-    public int getMekRunMP(int badLegs, int walkMP, int runMP) {
-        return runMP;
     }
 
     /**
      * {@inheritDoc}
      * meks can only change 1 elevation level when leg destroyed. Core p.90, p.238
      */
+    @Override
     public boolean reduceMaxElevation(Mek mek) {
         if (mek.atLeastOneBadLeg()) {
             if (mek instanceof QuadMek) { 
@@ -157,6 +155,7 @@ public class CoreRulesMovement extends RulesMovement {
      * {@inheritDoc}
      * Moving into water only triggers danger when running and you can run in water. Core p.45
      */
+    @Override
     public boolean isMoveIntoWaterDangerous(EntityMovementType movementType, EntityMovementMode movementMode) {
         if ((movementType == EntityMovementType.MOVE_RUN || movementType == EntityMovementType.MOVE_SPRINT) 
               && !cannotRunInWater(movementMode,false)) {
@@ -169,6 +168,7 @@ public class CoreRulesMovement extends RulesMovement {
      * {@inheritDoc}
      * Core rules p.114
      */
+    @Override
     public boolean dominoEffectMovementCriteria(final int direction, final Entity entity, final MovePath stepForward, final MovePath stepBackwards,
           final Entity violation) {
         if (isDominoMoveLegal(direction, violation, stepForward, true) || isDominoMoveLegal(direction, violation,
@@ -183,6 +183,7 @@ public class CoreRulesMovement extends RulesMovement {
      * 
      * Core rules p.114
      */
+    @Override
     public boolean isDominoMoveLegal(final int direction, final Entity entity, final MovePath step,
           boolean forwards) {
         if (forwards) {
@@ -201,12 +202,14 @@ public class CoreRulesMovement extends RulesMovement {
      * {@inheritDoc}
      * No MP cost for domino displacement. Core p.114
      */
+    @Override
     public boolean getDominoDisplacementCostsMP() { return false; }
 
     /**
      * {@inheritDoc}
      * Height is minus the height of the unit landed on, Core rules p.116
      */
+    @Override
     public int getAccidentalFallElevation(final int fallElevation, final int hitHeight) { return fallElevation - hitHeight; }
 
     /**
@@ -215,6 +218,7 @@ public class CoreRulesMovement extends RulesMovement {
      * Clear hexes first, then randomly choose. Core p.116, 114
      */
     @Nullable
+    @Override
     public Coords getAccidentalFallDisplacement(Game game, int entityId, Coords src, int direction,
           int range) {
         ArrayList<Coords> hexCoordsArray = new ArrayList<>();
@@ -253,6 +257,7 @@ public class CoreRulesMovement extends RulesMovement {
      * Returns the higher of the current hex the attacker is in, or the defender hex
      * Core p.79
      */
+    @Override
     public int getDFAElevation(Game game, int attackerId, int targetId, MoveStep step) {
         int elevation;
 

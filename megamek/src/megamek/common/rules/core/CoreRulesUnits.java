@@ -44,12 +44,14 @@ public class CoreRulesUnits extends RulesUnits {
      * {@inheritDoc}
      * Mule kicks have no additional modifier Core p.238
      */
+    @Override
     public int getMuleKickModifier() { return 0; }
 
     /**
      * {@inheritDoc}
      * Is it immobile due to leg destruction? Core p.237 (tripod), p.239 (quad), p.90
      */
+    @Override
     public boolean getDoesLegDestructionCauseImmobile(Mek mek) {
         int legsDestroyed = 0;
         for (int i = 0; i < mek.locations(); i++) {
@@ -71,6 +73,7 @@ public class CoreRulesUnits extends RulesUnits {
      * {@inheritDoc}
      * reduce a quad's walk MP for legs destroyed, hip hits, and actuator hits. Core p.90, 238
      */
+    @Override
     public int reduceQuadWalkMP(int mp, int legsDestroyed, int hipHits, int actuatorHits,
           boolean bTOLegDamage) {
         if (legsDestroyed > 0) {
@@ -100,6 +103,7 @@ public class CoreRulesUnits extends RulesUnits {
      * {@inheritDoc}
      * Quads modify PSR rolls for legs as per Core p.238
      */
+    @Override
     public void quadPilotModForLegsDestroyed(int destroyedLegs, PilotingRollData roll) {
         switch (destroyedLegs) {
             case 1:
@@ -118,6 +122,7 @@ public class CoreRulesUnits extends RulesUnits {
      * {@inheritDoc}
      * Reduce MP for a mek with hip hits. Core p.99
      */
+    @Override
     public int getMekMPReduction(int hipHits, boolean bTOLegDamage, int mp) {
         mp -= hipHits;
         return mp;
@@ -127,6 +132,7 @@ public class CoreRulesUnits extends RulesUnits {
      * {@inheritDoc}
      * MP cannot be reduced below 1 by actuator damage. only by leg destruction Core p.99
      */
+    @Override
     public int getMinimumMP(int mp) {
         return 1;
     }
@@ -136,6 +142,7 @@ public class CoreRulesUnits extends RulesUnits {
      * Does it have what counts as bad legs? 1 for bipeds/tripods, 3 for quads
      * Gets the value from the entity
      */
+    @Override
     public boolean hasBadLegs(Entity entity) {
         return entity.hasBadLegs();
     }

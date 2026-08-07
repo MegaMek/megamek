@@ -40,6 +40,7 @@ public class CoreRulesUnderwater extends RulesUnderwater {
      * {@inheritDoc}
      * Underwater target number is 5+ to avoid
      */
+    @Override
     public int getBreachTarget() {
         return 4;
     }
@@ -48,6 +49,7 @@ public class CoreRulesUnderwater extends RulesUnderwater {
      * {@inheritDoc}
      * Underwater does not break LOS. Core p.58, 62
      */
+    @Override
     public boolean waterBlocksLOS() {
         return false;
     }
@@ -57,6 +59,7 @@ public class CoreRulesUnderwater extends RulesUnderwater {
      * @param weaponType
      * @return short range
      */
+    @Override
     public int getShortRange(WeaponType weaponType) {
         if (weaponType.hasFlag(WeaponType.F_ENERGY)) {
             return 0;
@@ -70,6 +73,7 @@ public class CoreRulesUnderwater extends RulesUnderwater {
      * @param weaponType
      * @return medium range
      */
+    @Override
     public int getMediumRange(WeaponType weaponType) {
         if (weaponType.hasFlag(WeaponType.F_ENERGY)) {
             return weaponType.getShortRange();
@@ -83,6 +87,7 @@ public class CoreRulesUnderwater extends RulesUnderwater {
      * @param weaponType
      * @return long range
      */
+    @Override
     public int getLongRange(WeaponType weaponType) {
         if (weaponType.hasFlag(WeaponType.F_ENERGY)) {
             return weaponType.getMediumRange();
@@ -96,6 +101,7 @@ public class CoreRulesUnderwater extends RulesUnderwater {
      * @param weaponType
      * @return extreme range
      */
+    @Override
     public int getExtremeRange(WeaponType weaponType) {
         if (weaponType.hasFlag(WeaponType.F_ENERGY)) {
             return weaponType.getLongRange();

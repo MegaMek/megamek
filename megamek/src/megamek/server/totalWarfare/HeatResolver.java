@@ -55,6 +55,7 @@ import megamek.common.options.OptionsConstants;
 import megamek.common.rolls.PilotingRollData;
 import megamek.common.rolls.Roll;
 import megamek.common.rolls.TargetRoll;
+import megamek.common.rules.RulesHeat;
 import megamek.common.units.*;
 import megamek.logging.MMLogger;
 import megamek.server.ServerHelper;
@@ -906,13 +907,13 @@ class HeatResolver extends AbstractTWRuleHandler {
                   !entity.getCrew().isEjected()) {
                 int heatLimitDesc = 1;
                 int damageToCrew = 0;
-                // Holds the heat limit desc in the first element, damage to crew in the second
-                ArrayList<Integer> heatLimitDamage = new ArrayList<>();
-                Game.rulesManager.getRulesHeat().checkLifeSupportHeat(heatLimitDamage, damageHeat,
+                
+                RulesHeat.LifeSupportHeat lifeSupportHeat = 
+                      Game.rulesManager.getRulesHeat().checkLifeSupportHeat(damageHeat,
                       torsoMountedCockpit, mtHeat, entity.hasAbility(OptionsConstants.MD_PAIN_SHUNT));
-                if (heatLimitDamage.size() > 0) {
-                    heatLimitDesc = heatLimitDamage.get(0);
-                    damageToCrew = heatLimitDamage.get(1);
+                if (lifeSupportHeat != null) {
+                    heatLimitDesc = lifeSupportHeat.heatLevel();
+                    damageToCrew = lifeSupportHeat.damageAmount();
                     report = new Report(5070);
                     report.subject = entity.getId();
                     report.addDesc(entity);

@@ -2967,7 +2967,8 @@ public abstract class Mek extends Entity implements Fortifiable, RubbleClearer, 
                 return new HitData(Game.rulesManager.getRulesCharts().getPunchHitLocation(roll, side));
             }
             if (side == ToHitData.SIDE_REAR) {
-                return new HitData(Game.rulesManager.getRulesCharts().getPunchHitLocation(roll, ToHitData.SIDE_FRONT), true);
+                return new HitData(Game.rulesManager.getRulesCharts().getPunchHitLocation(roll, ToHitData.SIDE_REAR),
+                      true);
             }
         }
         if (table == ToHitData.HIT_KICK) {

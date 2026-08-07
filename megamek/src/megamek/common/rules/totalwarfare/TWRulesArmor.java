@@ -110,7 +110,8 @@ public class TWRulesArmor extends RulesArmor {
      * @return true if a lance penetrates the armor
      */
     public boolean checkLancePenetration(int armorType) {
-        return false;
+        return (armorType == EquipmentType.T_ARMOR_HARDENED || armorType == EquipmentType.T_ARMOR_FERRO_LAMELLOR) ?
+              false : true;
     }
 
     /**

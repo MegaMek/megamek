@@ -269,7 +269,7 @@ public class TWRulesPSR extends RulesPSR {
      * @param weight how much does the unit weigh
      * @return the modified damage
      */
-    public ArrayList<Integer> reduceFallDamageIntoWater(int damage, int waterDepth, int fallHeight, double weight) {
+    public FallDamageInWater reduceFallDamageIntoWater(int damage, int waterDepth, int fallHeight, double weight) {
         ArrayList<Integer> damageValues = new ArrayList<>();
         damage /= 2;
         int waterDamage = ((int) Math.round(weight / 10.0) * (waterDepth + 1)) / 2;
@@ -281,6 +281,6 @@ public class TWRulesPSR extends RulesPSR {
 
         damageValues.add(damage);
         damageValues.add(waterDamage);
-        return damageValues;
+        return new FallDamageInWater(damage, waterDamage);
     }
 }

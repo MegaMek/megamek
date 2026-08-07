@@ -217,7 +217,7 @@ public class PhysicalAttackAction extends AbstractAttackAction {
         // RULES large targets check
         int largeTarget = (game.getEntity(target.getId()) == null) ? 0 :
               Game.rulesManager.getRulesTarget().largeTargetModifier(game.getEntity(target.getId()).getWeightClass());
-        // RULESFUTURE Call this with the the 2nd parameter when objectives that are large are added
+        // RULESFUTURE Call this with the 2nd parameter when objectives that are large are added
         if (largeTarget != 0) {
             toHit.addModifier(largeTarget, "large target");
         }

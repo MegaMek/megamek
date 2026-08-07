@@ -62,10 +62,11 @@ public class TWRulesCharts extends RulesCharts {
      */
     public int getPunchHitLocation(int roll, int side, boolean quad) {
         // front punch hits
-        if (side == ToHitData.SIDE_FRONT) {
+        boolean rear = (side == ToHitData.SIDE_REAR);
+        if (side == ToHitData.SIDE_FRONT || side == ToHitData.SIDE_REAR) {
             switch (roll) {
                 case 1:
-                    return Mek.LOC_LEFT_ARM;
+                    return (quad && rear) ? Mek.LOC_LEFT_LEG : Mek.LOC_LEFT_ARM;
                 case 2:
                     return Mek.LOC_LEFT_TORSO;
                 case 3:
@@ -73,7 +74,7 @@ public class TWRulesCharts extends RulesCharts {
                 case 4:
                     return Mek.LOC_RIGHT_TORSO;
                 case 5:
-                    return Mek.LOC_RIGHT_ARM;
+                    return (quad && rear) ? Mek.LOC_RIGHT_LEG : Mek.LOC_RIGHT_ARM;
                 case 6:
                     return Mek.LOC_HEAD;
             }

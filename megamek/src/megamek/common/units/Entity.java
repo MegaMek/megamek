@@ -15744,7 +15744,7 @@ public abstract class Entity extends TurnOrdered
                         }
                     }
 
-                } else {
+                } else if (!isSupercharger) {
                     Game.rulesManager.getRulesEquipment().doMascFailureCrits(this, vCriticalSlots, hits);
                 }
                 // failed a PSR, check for stalling

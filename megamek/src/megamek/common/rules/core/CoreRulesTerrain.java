@@ -43,6 +43,7 @@ public class CoreRulesTerrain extends RulesTerrain {
      * {@inheritDoc}
      * Road to road elevation change is -1 MP
      */
+    @Override
     public int getRoadElevationCostDifference(Hex srcHex, Hex destHex, int deltaElevation) {
         if (srcHex.containsTerrain(Terrains.ROAD) && destHex.containsTerrain(Terrains.ROAD) && deltaElevation > 0) {
             return -1;
@@ -54,6 +55,7 @@ public class CoreRulesTerrain extends RulesTerrain {
      * {@inheritDoc}
      * Using roads can increase the max elevation change by 1. Core p.53
      */
+    @Override
     public int getMaxElevationChangeAllowed(Hex srcHex, Hex destHex, int maxElevationChange) {
         if (srcHex.containsTerrain(Terrains.ROAD) && destHex.containsTerrain(Terrains.ROAD)) {
             return (maxElevationChange != Entity.UNLIMITED_JUMP_DOWN) ? maxElevationChange + 1 : maxElevationChange;

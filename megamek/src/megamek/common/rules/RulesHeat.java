@@ -50,14 +50,13 @@ public abstract class RulesHeat {
     /**
      * How does heat affect when life support is hit.
      *
-     * @param heatLimitDamage the heat limit damage list
      * @param damageHeat the damage heat value
      * @param torsoMountedCockpit true if the cockpit is torso-mounted
      * @param mtHeat true if using MT heat rules
      * @param bPainShunt true if the pilot has a pain shunt
+     * @return LifeSupportHeat This stores the heat level and damage amount
      */
-    public abstract void checkLifeSupportHeat(ArrayList<Integer> heatLimitDamage,
-                                        int damageHeat,
+    public abstract LifeSupportHeat checkLifeSupportHeat(int damageHeat,
                                         boolean torsoMountedCockpit,
                                         boolean mtHeat, boolean bPainShunt);
 
@@ -69,4 +68,6 @@ public abstract class RulesHeat {
      */
     @Nullable
     public abstract CriticalSlot explodeAmmo(ArrayList<CriticalSlot> ammoCriticals);
+    
+    public record LifeSupportHeat(int heatLevel, int damageAmount) {}
 }

@@ -101,6 +101,7 @@ import megamek.common.net.packets.Packet;
 import megamek.common.options.IBasicOption;
 import megamek.common.options.IOption;
 import megamek.common.options.OptionsConstants;
+import megamek.common.rules.RulesPSR;
 import megamek.common.rules.totalwarfare.TWRulesUnderwater;
 import megamek.common.voting.Poll;
 import megamek.common.voting.VoteThreshold;
@@ -25140,12 +25141,12 @@ public class TWGameManager extends AbstractGameManager {
         // into water
         // if we fell onto the water surface, that damage is halved.
         int waterDamage = 0;
-        ArrayList<Integer> damageList = new ArrayList<>();
+        
         if (waterDepth > 0) {
-            damageList = Game.rulesManager.getRulesPSR().reduceFallDamageIntoWater(damage, waterDepth, fallHeight,
+            RulesPSR.FallDamageInWater fallDamage = Game.rulesManager.getRulesPSR().reduceFallDamageIntoWater(damage, waterDepth, fallHeight,
                   entity.getWeight());
-            damage = damageList.get(0);
-            waterDamage = damageList.get(1);
+            damage = fallDamage.damage();
+            waterDamage = fallDamage.waterDamage();
         }
 
         // adjust damage for gravity

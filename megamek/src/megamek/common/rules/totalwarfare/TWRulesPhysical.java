@@ -61,6 +61,7 @@ public class TWRulesPhysical extends RulesPhysical {
      * @param armLoc the arm location with the shield
      * @return the damage boost from the shield
      */
+    @Override
     public int getShieldDamageBoost(Entity entity, int armLoc) { return 0; }
 
     /**
@@ -71,6 +72,7 @@ public class TWRulesPhysical extends RulesPhysical {
      * @param attacker the attacking entity
      * @param weapon the mounted weapon being used
      */
+    @Override
     public void getShieldToHitModifier(ToHitData toHit, Entity attacker, Mounted<?> weapon) {
         // time to check passive defense and no defense
         if (attacker.hasLoweredShield(weapon.getLocation(), weapon.isRearMounted())) {
@@ -85,6 +87,7 @@ public class TWRulesPhysical extends RulesPhysical {
      *
      * @return the claw to-hit modifier
      */
+    @Override
     public int getClawToHitModifier() { return 1; }
     
     /**
@@ -92,6 +95,7 @@ public class TWRulesPhysical extends RulesPhysical {
      *
      * @return true if the shield resets with phase change
      */
+    @Override
     public boolean phaseChangeShield() { return false; }
 
     /**
@@ -101,6 +105,7 @@ public class TWRulesPhysical extends RulesPhysical {
      * @param toRetractableBlade true if checking for retractable blade use
      * @return true if retractable blades can be used
      */
+    @Override
     public boolean retractableBladeArmCheck(boolean toRetractableBlade) {
         if (toRetractableBlade) { return true; }
         return false;
@@ -108,10 +113,11 @@ public class TWRulesPhysical extends RulesPhysical {
 
     /**
      * Does a retractable blade break when used during the punch attack.
-     * Retractable blades in punch break on a 2d6 roll of 9+
+     * Retractable blades in punch break on a 2d6 roll of 10+
      *
      * @return true if the retractable blade breaks
      */
+    @Override
     public boolean checkRetractableBladeBroke() {
         return (Compute.d6(2) > 9);
     }
@@ -121,6 +127,7 @@ public class TWRulesPhysical extends RulesPhysical {
      *
      * @return true if a missed mace causes a piloting skill roll
      */
+    @Override
     public boolean getMaceMissedPSR() { return true; }
 
     /**
@@ -128,6 +135,7 @@ public class TWRulesPhysical extends RulesPhysical {
      *
      * @return the target number
      */
+    @Override
     public int getLanceTarget() { return 10; }
 
     /**
@@ -135,6 +143,7 @@ public class TWRulesPhysical extends RulesPhysical {
      *
      * @return true if the lance has special charge effects
      */
+    @Override
     public boolean isLanceCharging() { return false; }
 
     /**
@@ -143,6 +152,7 @@ public class TWRulesPhysical extends RulesPhysical {
      * @param attackingEntity the entity performing the charge
      * @return the hit data from shield charge damage, or null if no shield damage
      */
+    @Override
     public HitData shieldChargeDamage(Entity attackingEntity) {
         return null;
     }
@@ -155,6 +165,7 @@ public class TWRulesPhysical extends RulesPhysical {
      * @param loc the location being checked
      * @return a report of whether spikes broke
      */
+    @Override
     public Report checkBreakSpikes(Entity entity, int loc) {
         Report r;
         Roll diceRoll = Compute.rollD6(2);
@@ -184,6 +195,7 @@ public class TWRulesPhysical extends RulesPhysical {
      * @param entity the entity to check
      * @return true if the entity has talons
      */
+    @Override
     public boolean hasTalons(Entity entity) {
         if (entity instanceof BipedMek) {
             return (entity.hasWorkingMisc(MiscType.F_TALON, null, Mek.LOC_RIGHT_LEG) &&
@@ -207,6 +219,7 @@ public class TWRulesPhysical extends RulesPhysical {
      *
      * @return the kick modifier
      */
+    @Override
     public int getKickModifier() { return -2; }
 
     /**
@@ -215,6 +228,7 @@ public class TWRulesPhysical extends RulesPhysical {
      *
      * @return the punch modifier
      */
+    @Override
     public int getPunchModifier() { return 0;}
 
     /**
@@ -227,6 +241,7 @@ public class TWRulesPhysical extends RulesPhysical {
      * @param hexesMoved the number of hexes moved in the charge
      * @return the charge damage
      */
+    @Override
     public int getChargeDamage(Entity entity, Entity target, boolean tacOps, int mos, int hexesMoved) {
         if (!tacOps) {
             if (hexesMoved == 0) {
@@ -256,6 +271,7 @@ public class TWRulesPhysical extends RulesPhysical {
      * @param distance the distance traveled in the charge
      * @return the damage taken by the attacker
      */
+    @Override
     public int getChargeDamageTakenBy(Entity entity, double effectiveTargetWeight, boolean tacOps, int distance) {
         if (!tacOps) {
             return (int) Math
@@ -277,6 +293,7 @@ public class TWRulesPhysical extends RulesPhysical {
      * @param direction the direction of the charge
      * @return the final coordinates after a missed charge
      */
+    @Override
     public Coords getMissedChargeDisplacement(Game game, int entityId, Coords src, int direction) {
         Coords first = src.translated((direction + 1) % 6);
         Coords second = src.translated((direction + 5) % 6);
@@ -326,6 +343,7 @@ public class TWRulesPhysical extends RulesPhysical {
      * @param attackerElevation the elevation of the attacker
      * @return true if the target cannot be clubbed while prone
      */
+    @Override
     public boolean cannotClubProne(int targetElevation, int attackerElevation) {
         if (targetElevation - 1 == attackerElevation) {
             return false;
@@ -341,6 +359,7 @@ public class TWRulesPhysical extends RulesPhysical {
      * @param immobile true if one of the entities is immobile
      * @return the pilot difference modifier
      */
+    @Override
     public int getPilotDiffModifier(int attackerPiloting, int targetPiloting, boolean immobile) {
         return attackerPiloting - targetPiloting;
     }
@@ -350,6 +369,7 @@ public class TWRulesPhysical extends RulesPhysical {
      *
      * @return always returns false
      */
+    @Override
     public boolean canChargeCancel() { return false; }
 
     /**
@@ -359,6 +379,7 @@ public class TWRulesPhysical extends RulesPhysical {
      * @param affaTarget the entity that is the target of a fall from above
      * @return the hit data for fall from above
      */
+    @Override
     public HitData getFallFromAboveTable(Entity affaTarget) {
         return affaTarget.rollHitLocation(ToHitData.HIT_PUNCH,
               ToHitData.SIDE_FRONT);
@@ -368,6 +389,7 @@ public class TWRulesPhysical extends RulesPhysical {
      * We can only find clubs in the rubble of medium buildings or higher
      * @return building medium type value
      */
+    @Override
     public int getClubFindInRubble() {
         return BuildingType.MEDIUM.getTypeValue();
     }

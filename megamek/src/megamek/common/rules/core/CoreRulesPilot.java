@@ -48,6 +48,7 @@ public class CoreRulesPilot extends RulesPilot {
      * {@inheritDoc}
      * Handle pilot hits. Core p.117. Only the highest roll is performed.
      */
+    @Override
     public Vector<Report> pilotHits(Entity e, int totalHits, int damage, int crewPos, boolean toughness) {
         Vector<Report> vDesc = new Vector<>();
 
@@ -124,6 +125,7 @@ public class CoreRulesPilot extends RulesPilot {
      * {@inheritDoc}
      * How many pilot hits for an explosion Core p.117
      */
+    @Override
     public int getExplosionPilotHits() {
         return 1;
     }
@@ -132,6 +134,7 @@ public class CoreRulesPilot extends RulesPilot {
      * {@inheritDoc}
      * Seatbelt check for gyro has no modifier Core p.117
      */
+    @Override
     public int getSeatbeltGyroModifier(int piloting) {
         return piloting;
     }
@@ -140,6 +143,7 @@ public class CoreRulesPilot extends RulesPilot {
      * {@inheritDoc}
      * Seatbelt check for legs destroyed has no modifier Core p.117
      */
+    @Override
     public int getSeatbeltLegModifier(int piloting, int legsDestroyed) {
         return piloting;
     }
@@ -148,6 +152,7 @@ public class CoreRulesPilot extends RulesPilot {
      * {@inheritDoc}
      * Seatbelt check for shutdown has no modifier Core p.117
      */
+    @Override
     public int getSeatbeltShutdown(int piloting) {
         return piloting;
     }

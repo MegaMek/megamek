@@ -549,7 +549,7 @@ public class QuadMek extends Mek {
                 return new HitData(Game.rulesManager.getRulesCharts().getPunchHitLocation(roll, side, true));
             }
             if (side == ToHitData.SIDE_REAR) {
-                return new HitData(Game.rulesManager.getRulesCharts().getPunchHitLocation(roll, ToHitData.SIDE_FRONT,
+                return new HitData(Game.rulesManager.getRulesCharts().getPunchHitLocation(roll, ToHitData.SIDE_REAR,
                       true), true);
             }
         } else if (table == ToHitData.HIT_KICK) {

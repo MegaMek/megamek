@@ -42,6 +42,7 @@ public class CoreRulesAmmo extends RulesAmmo {
      * {@inheritDoc} 
      * Different modifiers. Core Rules p.191
      */
+    @Override
     public int armorPiercingMod(AmmoType inType) {
         switch (inType.getRackSize()) {
             case 2:
@@ -63,6 +64,7 @@ public class CoreRulesAmmo extends RulesAmmo {
      * {@inheritDoc} 
      * There is no modifier in Core. p.190
      */
+    @Override
     public void armorPiercingAttackMod(AmmoType.AmmoTypeEnum ammoType, ToHitData toHit, boolean AP) {
         // Do nothing. there is no attack modifier
     }
@@ -71,6 +73,7 @@ public class CoreRulesAmmo extends RulesAmmo {
      * {@inheritDoc} 
      * Reduce to-hit if the target has a narc pod and not under ECM. Core p.193
      */
+    @Override
     public void narcHomingTarget(ToHitData toHit) {
         toHit.addModifier(-1, "target has a narc pod");
     }
@@ -79,6 +82,7 @@ public class CoreRulesAmmo extends RulesAmmo {
      * {@inheritDoc} 
      * Acid (AX) missiles are -1 on the cluster roll. Core p.192
      */
+    @Override
     public int getAXMissileModifier() {
         return -1;
     }
@@ -87,6 +91,7 @@ public class CoreRulesAmmo extends RulesAmmo {
      * {@inheritDoc} 
      * Acid (AX) missiles do more damage to some kinds of armor. Core p.192
      */
+    @Override
     public int getAXMissileDamage(int armor, TWDamageManager.ModsInfo mods, int damage) {
         if ((mods.ferroLamellorArmor || mods.ballisticArmor || mods.reactiveArmor || mods.reflectiveArmor)
               && armor > 2) {
@@ -100,6 +105,7 @@ public class CoreRulesAmmo extends RulesAmmo {
      * {@inheritDoc} 
      * Semi-guided can reduce terrain modifiers. Core p.193
      */
+    @Override
     public int getSemiGuidedAdjustment(int modifierValue, boolean movementMod, boolean terrainMod) {
         // Semi guided reduces terrain modifiers by up to 2 (minimum 0)
         if (terrainMod) {
@@ -116,6 +122,7 @@ public class CoreRulesAmmo extends RulesAmmo {
      * {@inheritDoc} 
      * Semi-guided when tag is present ignores partial cover except from water or buildings. Core p.193
      */
+    @Override
     public boolean semiGuidedIgnoresCover() {
         return true;
     }
@@ -124,6 +131,7 @@ public class CoreRulesAmmo extends RulesAmmo {
      * {@inheritDoc} 
      * Semi-guided changes number of missiles depending on tag and direct/indirect. Core p.193
      */
+    @Override
     public int getSemiGuidedNMissiles(boolean taggedTarget, boolean indirect) {
         if (!taggedTarget) {
             return -1;

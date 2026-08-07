@@ -57,18 +57,21 @@ public class CoreRulesEquipment extends RulesEquipment {
      * {@inheritDoc}
      * AMS can shoot twice. Core P.206
      */
+    @Override
     public boolean getAMSMultiShot() {return true;}
 
     /**
      * {@inheritDoc}
      * AMS can reduce to 0. Core P.206
      */
+    @Override
     public boolean getAMSReduction(boolean toAdvancedAMS) { return true; }
 
     /**
      * {@inheritDoc}
      * AMS destroys a single missile on 4+. Core p.206
      */
+    @Override
     public boolean checkAMSSingleMissile(int roll) {
         return roll >= 4 ? true : false;
     }
@@ -77,6 +80,7 @@ public class CoreRulesEquipment extends RulesEquipment {
      * {@inheritDoc}
      * HD Gyros take 4 hits to destroy. Core p.98
      */
+    @Override
     public int hitsToDestroyGyro(int gyroType) {
         if (gyroType == Mek.GYRO_HEAVY_DUTY) {
             return 4;
@@ -88,6 +92,7 @@ public class CoreRulesEquipment extends RulesEquipment {
      * {@inheritDoc}
      * Get the masc failure roll from the escalating chart
      */
+    @Override
     public int getMascFailure(int nLevel) {
         return Game.rulesManager.getRulesCharts().escalatingFailure(nLevel);
     }
@@ -96,6 +101,7 @@ public class CoreRulesEquipment extends RulesEquipment {
      * {@inheritDoc}
      * Blue Shield uses escalating failure for rounds after 6. Core p.207
      */
+    @Override
     public int getBlueShieldTarget(int blueShieldRounds) {
         return Game.rulesManager.getRulesCharts().escalatingFailure(blueShieldRounds - 6);
     }
@@ -104,6 +110,7 @@ public class CoreRulesEquipment extends RulesEquipment {
      * {@inheritDoc}
      * Get the radical heat sink
      */
+    @Override
     public int radicalHeatSinkSuccessTarget(int consecutiveRounds) {
         return Game.rulesManager.getRulesCharts().escalatingFailure(consecutiveRounds);
     }
@@ -112,6 +119,7 @@ public class CoreRulesEquipment extends RulesEquipment {
      * {@inheritDoc}
      * ECM only affects if the target or source is under the bubble. Not intervening. Core p.200
      */
+    @Override
     public ArrayList<Coords> getECMCoordsAffected(Coords a, Coords b) {
         ArrayList<Coords> coords = new ArrayList<>();
         coords.add(a);
@@ -124,6 +132,7 @@ public class CoreRulesEquipment extends RulesEquipment {
      * {@inheritDoc}
      * ECM ranges. Watchdog is the same as clan ECM. Core p.197, 200, 201
      */
+    @Override
     public int getECMRanges(MiscType type) {
         if (type.hasFlag(MiscType.F_SINGLE_HEX_ECM)) {
             return 0;
@@ -138,6 +147,7 @@ public class CoreRulesEquipment extends RulesEquipment {
      * {@inheritDoc}
      * Sensor ranges for probes. Core p.197 and 201 provide guidance due to how Watchdog is changed
      */
+    @Override
     public int getSensorRanges(int type) {
         return switch (type) {
             case Sensor.TYPE_BAP, Sensor.TYPE_BAPP -> 12;
@@ -166,6 +176,7 @@ public class CoreRulesEquipment extends RulesEquipment {
      * {@inheritDoc}
      * Active probes are affected by ECM other than bloodhound. Core p.200
      */
+    @Override
     public boolean isBAPActive(boolean checkECM,
           final MiscType type,
           final Entity entity,
@@ -183,6 +194,7 @@ public class CoreRulesEquipment extends RulesEquipment {
      * {@inheritDoc}
      * No init bonus for command console or tech officer Core p.203, 236
      */
+    @Override
     public int getCommandConsoleBonus() {
         return 0;
     }
@@ -191,6 +203,7 @@ public class CoreRulesEquipment extends RulesEquipment {
      * {@inheritDoc}
      * What is the masc or supercharger failure hits. Core p.204
      */
+    @Override
     public int getMascSuperChargerFailureHits(int entityId, Vector<Report> vDesc, boolean isSupercharger) {
         int hits = 0;
         int reportId = 6310;
@@ -226,6 +239,7 @@ public class CoreRulesEquipment extends RulesEquipment {
      * {@inheritDoc}
      * Masc failure critical. Core p.204
      */
+    @Override
     public void doMascFailureCrits(Entity entity, HashMap<Integer, List<CriticalSlot>> vCriticalSlots, int hits) {
         // No hits, early return
         if (hits == 0) {
@@ -272,5 +286,6 @@ public class CoreRulesEquipment extends RulesEquipment {
      * {@inheritDoc}
      * Blue shield blocks stealth. Core p.207
      */
+    @Override
     public boolean blueShieldStealth(boolean activeBlueShield) { return activeBlueShield; }
 }

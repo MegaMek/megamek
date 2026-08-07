@@ -2747,7 +2747,7 @@ public class MovementDisplay extends ActionPhaseDisplay {
                         if (currentlySelectedEntity.hasShield()) {
                             boolean hasLance = false;
                             for (MiscMounted getClub : currentlySelectedEntity.getClubs()) {
-                                if (getClub.getType().hasFlag(MiscTypeFlag.S_LANCE) && !getClub.isDestroyed() && !getClub.isBreached()) {
+                                if (getClub.getType().hasFlag(MiscTypeFlag.S_LANCE) && !getClub.isDestroyed() && !getClub.isBreached() && !getClub.isMissing()) {
                                     hasLance = true;
                                 }
                             }

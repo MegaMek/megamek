@@ -147,7 +147,7 @@ public abstract class RulesCharts {
                 case 4:
                     if (quad) {return Mek.LOC_LEFT_ARM;}
                 case 5:
-                    if (quad) {return Mek.LOC_LEFT_TORSO;}
+                    if (quad) {return Mek.LOC_LEFT_LEG;}
                     return Mek.LOC_LEFT_ARM;
                 case 6:
                     return Mek.LOC_HEAD;
@@ -164,7 +164,7 @@ public abstract class RulesCharts {
                 case 4:
                     if (quad) {return Mek.LOC_RIGHT_ARM;}
                 case 5:
-                    if (quad) {return Mek.LOC_RIGHT_TORSO;}
+                    if (quad) {return Mek.LOC_RIGHT_LEG;}
                     return Mek.LOC_RIGHT_ARM;
                 case 6:
                     return Mek.LOC_HEAD;

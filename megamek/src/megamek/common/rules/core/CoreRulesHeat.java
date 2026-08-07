@@ -47,6 +47,7 @@ public class CoreRulesHeat extends RulesHeat {
      * {@inheritDoc}
      * Attempts to stand do not generate heat Core p.100
      */
+    @Override
     public int standingHeat() {
         return 0;
     }
@@ -54,42 +55,36 @@ public class CoreRulesHeat extends RulesHeat {
     /**
      * {@inheritDoc}
      * Life support crit hits affect heat and pilot damage. Core p.98
-     * heatLimitDamage holds the description heat in the first element, and the pilot hits in the 2nd
      */
-    public void checkLifeSupportHeat(ArrayList<Integer> heatLimitDamage,
-          int damageHeat,
+    @Nullable
+    @Override
+    public LifeSupportHeat checkLifeSupportHeat(int damageHeat,
           boolean torsoMountedCockpit,
           boolean mtHeat, boolean bPainShunt) {
+        if (bPainShunt) {
+            return null;
+        }
         if ((damageHeat >= 47) && mtHeat) {
             // mekwarrior takes 5 damage
-            heatLimitDamage.add(47);
-            heatLimitDamage.add(5);
+            return new LifeSupportHeat(47, 5);
         } else if ((damageHeat >= 39) && mtHeat) {
             // mekwarrior takes 4 damage
-            heatLimitDamage.add(39);
-            heatLimitDamage.add(4);
+            return new LifeSupportHeat(39, 4);
         } else if ((damageHeat >= 32) && mtHeat) {
             // mekwarrior takes 3 damage
-            heatLimitDamage.add(32);
-            heatLimitDamage.add(3);
+            return new LifeSupportHeat(32, 3);
         } else if (damageHeat >= 20) {
             // mekwarrior takes 2 damage
-            heatLimitDamage.add(20);
-            heatLimitDamage.add(2);
+            return new LifeSupportHeat(20, 2);
         } else if (damageHeat >= 15 && torsoMountedCockpit) {
-            heatLimitDamage.add(15);
-            heatLimitDamage.add(2);
+            return new LifeSupportHeat(15, 2);
         } else if (damageHeat >=1 && torsoMountedCockpit) {
-            heatLimitDamage.add(1);
-            heatLimitDamage.add(1);
+            return new LifeSupportHeat(1, 1);
         } else if (damageHeat >= 10) {
             // mekwarrior takes 1 damage
-            heatLimitDamage.add(10);
-            heatLimitDamage.add(1);
+            return new LifeSupportHeat(10, 1);
         }
-        if (bPainShunt) {
-            heatLimitDamage.clear();
-        }
+        return null;
     }
 
     /**
@@ -97,6 +92,7 @@ public class CoreRulesHeat extends RulesHeat {
      * Ammo explosions from heat Core p.107
      */
     @Nullable
+    @Override
     public CriticalSlot explodeAmmo(ArrayList<CriticalSlot> ammoCriticals) {
         CriticalSlot returnSlot = null;
         int damage = 0;

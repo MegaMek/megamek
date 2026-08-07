@@ -43,6 +43,7 @@ public class CoreRulesArtillery extends RulesArtillery {
      * Core p. 63, 68-69, etc.
      * 
      */
+    @Override
     public int computeArtilleryBaseMod(int distance, boolean direct, boolean flak) {
         return 4;
     }

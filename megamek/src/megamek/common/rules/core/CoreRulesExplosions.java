@@ -53,6 +53,7 @@ public class CoreRulesExplosions extends RulesExplosions {
      * {@inheritDoc}
      * Damage reduction for CASE, CASE II, explosions
      */
+    @Override
     public int explosionDamageReduction(Mek mek, HitData hit, int damage, boolean ammoExplosion,
           Vector<Report> reportVec) {
             if (!ammoExplosion) {
@@ -114,6 +115,7 @@ public class CoreRulesExplosions extends RulesExplosions {
      * {@inheritDoc}
      * Determine how much damage will be reduced by CASE II equipment
      */
+    @Override
     public int applyCASEIIDamageReduction(Entity entity, HitData hit, int damage, boolean ammoExplosion,
           Vector<Report> reportVec) {
         // Check for CASE II right away. If so, reduce damage to 1 and let it hit the IS. Also, remove as much of the
@@ -186,6 +188,7 @@ public class CoreRulesExplosions extends RulesExplosions {
      * {@inheritDoc}
      * CASE II reduces the crit chance for ammo explosions
      */
+    @Override
     public int explosionCASEIImod(boolean hasCaseII, boolean ammoExplosion) {
         if (hasCaseII && ammoExplosion) {
             return -1;
@@ -197,6 +200,7 @@ public class CoreRulesExplosions extends RulesExplosions {
      * {@inheritDoc}
      * How much damage to equipment explosions do
      */
+    @Override
     public int equipmentDamage(Mounted<?> mounted, WeaponType weaponType) {
         // Charged PPC capacitors when hit can cause an explosion.
         if (weaponType.hasFlag(WeaponType.F_PPC) && (mounted.hasChargedCapacitor() != 0)) {
@@ -238,6 +242,7 @@ public class CoreRulesExplosions extends RulesExplosions {
      * {@inheritDoc}
      * These are not explosive in core. return false.
      */
+    @Override
     public boolean arePodsExplosive(Mounted<?> mounted) {
         return false;
     }

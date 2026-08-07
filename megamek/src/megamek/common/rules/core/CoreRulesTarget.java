@@ -58,6 +58,7 @@ public class CoreRulesTarget extends RulesTarget {
      * {@inheritDoc}
      * Large targets get a -1 modifier to hit them. Superheavy meks are large targets Core rules page 64, 240
      */
+    @Override
     public int largeTargetModifier(int weightclass, boolean markedLarge) {
         if (weightclass == EntityWeightClass.WEIGHT_SUPER_HEAVY
               || weightclass == EntityWeightClass.WEIGHT_LARGE_SUPPORT
@@ -71,6 +72,7 @@ public class CoreRulesTarget extends RulesTarget {
      * {@inheritDoc}
      * Aimed shots hit on d6 4+. Core p.70
      */
+    @Override
     public boolean checkAimedLocation() {
         int roll = Compute.d6(1);
         if (roll >= 4) {
@@ -83,6 +85,7 @@ public class CoreRulesTarget extends RulesTarget {
      * {@inheritDoc}
      * Secondary arcs are +1. Core p.64
      */
+    @Override
     public int getSecondaryArcModifier() {
         return 1;
     }
@@ -91,6 +94,7 @@ public class CoreRulesTarget extends RulesTarget {
      * {@inheritDoc}
      * Can shoot with one arm while prone. Core p.67
      */
+    @Override
     public boolean proneFireWithOneArm(final boolean toProneFire) {
         return true;
     }
@@ -99,6 +103,7 @@ public class CoreRulesTarget extends RulesTarget {
      * {@inheritDoc}
      * Only upper arm actuators increase the to hit for shooting. Core p.97
      */
+    @Override
     public int getArmActuatorHitMod(Entity attacker, int location) {
         if (attacker.getBadCriticalSlots(CriticalSlot.TYPE_SYSTEM, Mek.ACTUATOR_UPPER_ARM, location) > 0) {
             return 1;
@@ -110,6 +115,7 @@ public class CoreRulesTarget extends RulesTarget {
      * {@inheritDoc}
      * BAP reduces smoke within its range. It is blocked by ECM (Handled prior to this call) Core p.197, 124
      */
+    @Override
     public int getBAPSmokeReduction(LosEffects los) {
         return los.getBAPReduceSmoke();
     }
@@ -122,6 +128,7 @@ public class CoreRulesTarget extends RulesTarget {
      *
      * Note: modifies the passed-in ToHitData toHit.
      */
+    @Override
     public void addImmobileMod(Targetable target, ToHitData toHit, int aimingAt, WeaponType weaponType,
           WeaponMounted weapon, AmmoType ammoType, EnumSet<AmmoType.Munitions> munition, Entity entityTarget,
           AimingMode aimingMode) {

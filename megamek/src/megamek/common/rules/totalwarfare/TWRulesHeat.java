@@ -55,47 +55,43 @@ public class TWRulesHeat extends RulesHeat {
     }
 
     /**
+     * {@inheritDoc}
      * How does heat affect when life support is hit.
-     *
-     * @param heatLimitDamage the heat limit damage list
-     * @param damageHeat the damage heat value
-     * @param torsoMountedCockpit true if the cockpit is torso-mounted
-     * @param mtHeat true if using MT heat rules
-     * @param bPainShunt true if the pilot has a pain shunt
      */
-    public void checkLifeSupportHeat(ArrayList<Integer> heatLimitDamage,
-          int damageHeat,
+    @Nullable
+    @Override
+    public LifeSupportHeat checkLifeSupportHeat(int damageHeat,
           boolean torsoMountedCockpit,
           boolean mtHeat, boolean bPainShunt) {
+        if (bPainShunt) {
+            return null;
+        }
+        int warriorDamage = (torsoMountedCockpit) ? 1 : 0;
         if ((damageHeat >= 47) && mtHeat) {
             // mekwarrior takes 5 damage
-            heatLimitDamage.add(47);
-            heatLimitDamage.add(5);
+            warriorDamage += 5;
+            return new LifeSupportHeat(47, warriorDamage);
         } else if ((damageHeat >= 39) && mtHeat) {
             // mekwarrior takes 4 damage
-            heatLimitDamage.add(39);
-            heatLimitDamage.add(4);
+            warriorDamage += 4;
+            return new LifeSupportHeat(39, warriorDamage);
         } else if ((damageHeat >= 32) && mtHeat) {
             // mekwarrior takes 3 damage
-            heatLimitDamage.add(32);
-            heatLimitDamage.add(3);
+            warriorDamage += 3;
+            return new LifeSupportHeat(32, warriorDamage);
         } else if (damageHeat >= 25) {
             // mekwarrior takes 2 damage
-            heatLimitDamage.add(25);
-            heatLimitDamage.add(2);
+            warriorDamage += 2;
+            return new LifeSupportHeat(25, warriorDamage);
         } else if (damageHeat >= 15) {
             // mekwarrior takes 1 damage
-            heatLimitDamage.add(15);
-            heatLimitDamage.add(1);
+            warriorDamage += 1;
+            return new LifeSupportHeat(15, warriorDamage);
         }
-        if ((torsoMountedCockpit) &&
-              !bPainShunt) {
-            if (heatLimitDamage.isEmpty()) {
-                heatLimitDamage.add(1);
-                heatLimitDamage.add(0);
-            }
-            heatLimitDamage.set(1, heatLimitDamage.get(1) + 1);
+        if (torsoMountedCockpit && damageHeat >= 1) {
+             return new LifeSupportHeat(1, warriorDamage);
         }
+        return null;
     }
 
     /**

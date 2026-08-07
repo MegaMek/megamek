@@ -48,6 +48,7 @@ public class CoreRulesArmor extends RulesArmor {
      * Core rules heat armor halves heat weapon damage. This allows for weapons to be marked for heat.
      * Core rules p.202
      */
+    @Override
     public boolean allowHeatWeapon(boolean heat_weapon) {
         return heat_weapon;
     }
@@ -56,6 +57,7 @@ public class CoreRulesArmor extends RulesArmor {
      * {@inheritDoc}
      * Hardened and ABA armor prevent AP. Core p.201
      */
+    @Override
     public boolean allowArmorPiercing(TWDamageManager.ModsInfo mods) {
         return (mods.hardenedArmor || mods.abaArmor) ? false : true;
     }
@@ -64,12 +66,14 @@ public class CoreRulesArmor extends RulesArmor {
      * {@inheritDoc}
      * Impact armor does not reduce anything. Core p.201
      */
+    @Override
     public int impactArmorMod() {return 0;}
 
     /**
      * {@inheritDoc}
      * Impact Resistant Armor breach. Does not apply in Core. p.201
      */
+    @Override
     public int impactArmorBreach() {
         return 0;
     }
@@ -78,14 +82,16 @@ public class CoreRulesArmor extends RulesArmor {
      * {@inheritDoc}
      * Does a lance penetrate on hit? Not if it is ABA, but all others yes. Core p.201
      */
+    @Override
     public boolean checkLancePenetration(int armorType) {
-        return (armorType == EquipmentType.T_ARMOR_ANTI_PENETRATIVE_ABLATION);
+        return (armorType == EquipmentType.T_ARMOR_ANTI_PENETRATIVE_ABLATION) ? false : true;
     }
 
     /**
      * {@inheritDoc}
      * Does armor reduce heat? Core p.202
      */
+    @Override
     public int reduceHeatDamageByArmor(int armorType, int heatDamage) {
         return (armorType == EquipmentType.T_ARMOR_HEAT_DISSIPATING) ? 0 : heatDamage;
     }
@@ -94,12 +100,14 @@ public class CoreRulesArmor extends RulesArmor {
      * {@inheritDoc}
      * Reflective armor does not have a modifier on AP rounds
      */
+    @Override
     public boolean reflectiveAP(boolean reflectiveArmor) {return false;}
 
     /**
      * {@inheritDoc}
      * ABA armor stops TACs from generating a crit. Core p.201
      */
+    @Override
     public boolean blockTAC(int armorType) {
         return (armorType == ArmorType.T_ARMOR_ANTI_PENETRATIVE_ABLATION);
     }
@@ -108,6 +116,7 @@ public class CoreRulesArmor extends RulesArmor {
      * {@inheritDoc}
      * Impact armor reduces damage from falls, collisions, and buildings by half. 1/3 for physical
      */
+    @Override
     public int reduceImpactDamage(int entityId, HitData hit, int damage, Vector<Report> reportVec, int damageType) {
         Report report;
         if (hit.isFallDamage() || damageType == HitData.DAMAGE_PHYSICAL_NONATTACK) {

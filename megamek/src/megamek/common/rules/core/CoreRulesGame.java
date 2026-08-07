@@ -44,6 +44,7 @@ public class CoreRulesGame extends RulesGame {
      * {@inheritDoc}
      * Ammo dumping is not in Core
      */
+    @Override
     public boolean ammoDumping() {
         return false;
     }
@@ -54,6 +55,7 @@ public class CoreRulesGame extends RulesGame {
      * RAC Unjamming does not prevent usage (only limits movement) Core p.183
      * Finding a club can use in physical phase Core p.79
      */
+    @Override
     public boolean eligibleForPhase(Entity entity, @Nullable GamePhase phase) {
         if (phase != null) {
             if (entity.isImmobile() && phase.isMovement()) {
@@ -70,6 +72,7 @@ public class CoreRulesGame extends RulesGame {
      * {@inheritDoc}
      * Front loaded initiative Core p.41
      */
+    @Override
     public int getInitiativeOrder(int[] num_turns, int index, int min, boolean frontLoadOption) {
         return ((int) Math.ceil(((double) num_turns[index]) / (double) min));
     }
@@ -78,6 +81,7 @@ public class CoreRulesGame extends RulesGame {
      * {@inheritDoc}
      * No BV boost for semi-guided or Arrow IV homing (Not present in core)
      */
+    @Override
     public boolean tagBVBump() {
         return false;
     }
@@ -86,5 +90,6 @@ public class CoreRulesGame extends RulesGame {
      * {@inheritDoc}
      * Core rules allows minefields
      */
+    @Override
     public boolean allowMinefields(boolean toMinefields) { return true; }
 }

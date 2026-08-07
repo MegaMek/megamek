@@ -44,6 +44,7 @@ public class CoreRulesCharts extends RulesCharts {
      * {@inheritDoc}
      * Falls are always forwards unless you land on your back. Core p.115
      */
+    @Override
     public int getFacingForFall() {
         if (Compute.d6(1) == 1) {
             return 3;
@@ -55,12 +56,14 @@ public class CoreRulesCharts extends RulesCharts {
      * {@inheritDoc}
      * Core p.81
      */
-    public int getPunchHitLocation(int roll, int side, boolean quad) {
+     @Override
+     public int getPunchHitLocation(int roll, int side, boolean quad) {
         // front punch hits
-        if (side == ToHitData.SIDE_FRONT) {
+        boolean rear = (side == ToHitData.SIDE_REAR);
+        if (side == ToHitData.SIDE_FRONT || side == ToHitData.SIDE_REAR) {
             switch (roll) {
                 case 1:
-                    return Mek.LOC_RIGHT_ARM;
+                    return (quad && rear) ? Mek.LOC_RIGHT_LEG : Mek.LOC_RIGHT_ARM;
                 case 2:
                     return Mek.LOC_RIGHT_TORSO;
                 case 3:
@@ -68,37 +71,7 @@ public class CoreRulesCharts extends RulesCharts {
                 case 4:
                     return Mek.LOC_LEFT_TORSO;
                 case 5:
-                    return Mek.LOC_LEFT_ARM;
-                case 6:
-                    return Mek.LOC_HEAD;
-            }
-        }
-        if (side == ToHitData.SIDE_LEFT) {
-            // left side punch hits
-            switch (roll) {
-                case 1:
-                case 2:
-                    return Mek.LOC_LEFT_TORSO;
-                case 3:
-                    return Mek.LOC_CENTER_TORSO;
-                case 4:
-                case 5:
-                    return Mek.LOC_LEFT_ARM;
-                case 6:
-                    return Mek.LOC_HEAD;
-            }
-        }
-        if (side == ToHitData.SIDE_RIGHT) {
-            // right side punch hits
-            switch (roll) {
-                case 1:
-                case 2:
-                    return Mek.LOC_RIGHT_TORSO;
-                case 3:
-                    return Mek.LOC_CENTER_TORSO;
-                case 4:
-                case 5:
-                    return Mek.LOC_RIGHT_ARM;
+                    return (quad && rear) ? Mek.LOC_LEFT_LEG : Mek.LOC_LEFT_ARM;
                 case 6:
                     return Mek.LOC_HEAD;
             }

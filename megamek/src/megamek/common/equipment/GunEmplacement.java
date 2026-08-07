@@ -445,4 +445,9 @@ public class GunEmplacement extends Tank {
     public boolean isBuildingEntityOrGunEmplacement() {
         return true;
     }
+
+    @Override
+    public boolean isChassisFamiliarityEligible() {
+        return false;
+    }
 }

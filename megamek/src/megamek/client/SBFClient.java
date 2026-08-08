@@ -133,11 +133,13 @@ public class SBFClient extends AbstractClient {
                     break;
                 case UNIT_INVISIBLE:
                     getGame().forget(packet.getIntValue(0));
+                    break;
                 case ACTIONS:
                     getGame().clearActions();
                     for (EntityAction action : packet.getEntityActionList(0)) {
                         getGame().addAction(action);
                     }
+                    break;
                 default:
                     return false;
             }

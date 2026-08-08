@@ -292,6 +292,15 @@ public class Bay implements Transporter, ITechnology {
         return wasCarried;
     }
 
+    @Override
+    public boolean cancelLoad(Entity unit) {
+        boolean wasCarried = troops.removeElement(unit.getId());
+        if (wasCarried) {
+            currentSpace += spaceForUnit(unit);
+        }
+        return wasCarried;
+    }
+
     /**
      * Return a string that identifies the unused capacity of this transporter.
      *

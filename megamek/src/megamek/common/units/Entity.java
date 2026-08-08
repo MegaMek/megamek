@@ -10112,6 +10112,23 @@ public abstract class Entity extends TurnOrdered
         return false;
     }
 
+    /**
+     * Cancels a staged load without applying unload effects.
+     *
+     * @param unit the unit whose staged load should be cancelled
+     *
+     * @return {@code true} when a transporter removed the unit
+     */
+    @Override
+    public boolean cancelLoad(Entity unit) {
+        for (Transporter transporter : transports) {
+            if (transporter.cancelLoad(unit)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
     @Override
     public void resetTransporter() {
         transports.forEach(Transporter::resetTransporter);

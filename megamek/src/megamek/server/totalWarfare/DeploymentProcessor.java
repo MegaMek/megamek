@@ -34,7 +34,9 @@
 package megamek.server.totalWarfare;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 import java.util.Vector;
 
 import megamek.common.Hex;
@@ -52,6 +54,7 @@ import megamek.common.turns.SpecificEntityTurn;
 import megamek.common.units.AbstractBuildingEntity;
 import megamek.common.units.Entity;
 import megamek.common.units.EntityMovementMode;
+import megamek.common.units.FighterSquadron;
 import megamek.common.units.IAero;
 import megamek.common.units.IBuilding;
 import megamek.common.units.Infantry;
@@ -80,6 +83,7 @@ public class DeploymentProcessor extends AbstractTWRuleHandler {
 
         if (entity == null) {
             LOGGER.error("Entity received was invalid");
+            gameManager.sendTurnSubmissionCorrection(connId, null, false);
             return;
         }
 
@@ -88,17 +92,36 @@ public class DeploymentProcessor extends AbstractTWRuleHandler {
         int nFacing = packet.getIntValue(3);
         int elevation = packet.getIntValue(4);
 
+        if ((nFacing < 0) || (nFacing > 5)) {
+            LOGGER.error("Invalid deployment facing {}", nFacing);
+            gameManager.sendTurnSubmissionCorrection(connId, entity, false);
+            return;
+        }
+
         // Handle units that deploy loaded with other units.
         int loadedCount = packet.getIntValue(5);
+        if ((loadedCount < 0) || (packet.data().length != 7 + loadedCount)) {
+            LOGGER.error("Malformed deployment load list");
+            gameManager.sendTurnSubmissionCorrection(connId, entity, false);
+            return;
+        }
         Vector<Entity> loadVector = new Vector<>();
+        Set<Integer> loadedIds = new HashSet<>();
         for (int i = 0; i < loadedCount; i++) {
             int loadedId = packet.getIntValue(7 + i);
-            loadVector.addElement(getGame().getEntity(loadedId));
+            Entity loaded = getGame().getEntity(loadedId);
+            if ((loaded == null) || (loaded == entity) || !loadedIds.add(loadedId)) {
+                LOGGER.error("Invalid entity in deployment load list");
+                gameManager.sendTurnSubmissionCorrection(connId, entity, false);
+                return;
+            }
+            loadVector.addElement(loaded);
         }
 
         // is this the right phase?
         if (!getGame().getPhase().isDeployment()) {
             LOGGER.error("Server got deployment packet in wrong phase");
+            gameManager.sendTurnSubmissionCorrection(connId, entity, true);
             return;
         }
 
@@ -124,16 +147,15 @@ public class DeploymentProcessor extends AbstractTWRuleHandler {
             String msg = "server got invalid deployment packet from connection " + connId;
             msg += ", Entity: " + entity.getShortName();
             LOGGER.error(msg);
-            gameManager.send(connId, gameManager.getPacketHelper().createTurnListPacket());
-
-            if (turn != null) {
-                gameManager.send(connId, gameManager.getPacketHelper().createTurnIndexPacket(turn.playerId()));
-            }
+            gameManager.sendTurnSubmissionCorrection(connId, entity, false);
             return;
         }
 
         // looks like mostly everything's okay
-        processDeployment(entity, coords, boardId, nFacing, elevation, loadVector, assaultDrop);
+        if (!processDeployment(entity, coords, boardId, nFacing, elevation, loadVector, assaultDrop)) {
+            gameManager.sendTurnSubmissionCorrection(connId, entity, false);
+            return;
+        }
 
         // Update Aero sensors for a space or atmospheric game
         if (entity instanceof IAero aero) {
@@ -160,11 +182,13 @@ public class DeploymentProcessor extends AbstractTWRuleHandler {
 
         if (loader == null) {
             LOGGER.error("Received bad entity for loader unload");
+            gameManager.sendTurnSubmissionCorrection(connId, null, false);
             return;
         }
 
         if (loaded == null) {
             LOGGER.error("Received bad entity for loaded unload.");
+            gameManager.sendTurnSubmissionCorrection(connId, loader, false);
             return;
         }
 
@@ -174,6 +198,7 @@ public class DeploymentProcessor extends AbstractTWRuleHandler {
                   connId;
             msg += ", Entity: " + loader.getShortName();
             LOGGER.error(msg);
+            gameManager.sendTurnSubmissionCorrection(connId, loader, true);
             return;
         }
 
@@ -187,13 +212,27 @@ public class DeploymentProcessor extends AbstractTWRuleHandler {
             String msg = "server got invalid deployment unload packet from connection " + connId;
             msg += ", Entity: " + loader.getShortName();
             LOGGER.error(msg);
-            gameManager.send(connId, gameManager.getPacketHelper().createTurnListPacket());
-            gameManager.send(connId, gameManager.getPacketHelper().createTurnIndexPacket(connId));
+            gameManager.sendTurnSubmissionCorrection(connId, loader, false);
             return;
         }
 
-        // Unload and call entityUpdate
-        gameManager.unloadUnit(loader, loaded, null, 0, 0, false, true);
+        if ((loader == loaded) || loader.isEnemyOf(loaded)
+              || !loader.getLoadedKeepers().contains(loaded.getId())
+              || !loader.getLoadedUnits().contains(loaded)) {
+            LOGGER.error("Entity is not a lounge-loaded passenger of the submitted loader");
+            gameManager.sendTurnSubmissionCorrection(connId, loader, false);
+            return;
+        }
+
+        if (!gameManager.unloadUnit(loader, loaded, null, 0, 0, false, true)) {
+            LOGGER.error("Unable to unload lounge-loaded passenger during deployment");
+            gameManager.sendTurnSubmissionCorrection(connId, loader, false);
+            return;
+        }
+
+        Vector<Integer> loadedKeepers = loader.getLoadedKeepers();
+        loadedKeepers.remove((Integer) loaded.getId());
+        loader.setLoadedKeepers(loadedKeepers);
 
         // Need to update the loader
         gameManager.entityUpdate(loader.getId());
@@ -210,21 +249,12 @@ public class DeploymentProcessor extends AbstractTWRuleHandler {
      * Process a deployment packet by... deploying the entity! We load any other specified entities inside of it too.
      * Also, check that the deployment is valid.
      */
-    private void processDeployment(Entity entity, Coords coords, int boardId, int nFacing, int elevation,
+    private boolean processDeployment(Entity entity, Coords coords, int boardId, int nFacing, int elevation,
           Vector<Entity> loadVector,
           boolean assaultDrop) {
-        for (Entity loaded : loadVector) {
-            if (loaded.getTransportId() != Entity.NONE) {
-                // we probably already loaded this unit in the chat lounge
-                continue;
-            }
-            if (loaded.getPosition() != null) {
-                // Something is fishy in Denmark.
-                LOGGER.error("{} can not load entity #{}", entity, loaded);
-                break;
-            }
-            // Have the deployed unit load the indicated unit.
-            gameManager.loadUnit(entity, loaded, loaded.getTargetBay());
+        List<StagedLoad> stagedLoads = stageLoads(entity, loadVector);
+        if (stagedLoads == null) {
+            return false;
         }
 
         /*
@@ -382,12 +412,79 @@ public class DeploymentProcessor extends AbstractTWRuleHandler {
                   entity.getDisplayName());
         }
 
+        gameManager.completeDeploymentLoads(entity, stagedLoads.stream().map(StagedLoad::unit).toList());
         entity.setDone(true);
         entity.setDeployed(true);
         gameManager.entityUpdate(entity.getId());
         addReport(gameManager.doSetLocationsExposure(entity, hex, false, entity.getElevation()));
 
         deployTowedTrailers(entity);
+        return true;
+    }
+
+    private List<StagedLoad> stageLoads(Entity loader, List<Entity> submittedLoads) {
+        List<Entity> alreadyLoaded = loader.getLoadedUnits();
+        List<StagedLoad> stagedLoads = new ArrayList<>();
+        try {
+            for (Entity loaded : submittedLoads) {
+                if (alreadyLoaded.contains(loaded)) {
+                    if (loaded.getPosition() != null) {
+                        throw new IllegalArgumentException("Loaded entity has an authoritative position");
+                    }
+                    continue;
+                }
+                if ((loaded.getTransportId() != Entity.NONE) || (loaded.getPosition() != null)
+                      || loaded.isDeployed() || loaded.isEnemyOf(loader)) {
+                    throw new IllegalArgumentException("Entity is not eligible for deployment loading");
+                }
+
+                int targetBay = loaded.getTargetBay();
+                List<PassengerState> passengerStates = affectedPassengers(loaded).stream()
+                      .map(PassengerState::capture)
+                      .toList();
+                loader.load(loaded, false, targetBay);
+                stagedLoads.add(new StagedLoad(loaded, targetBay, passengerStates));
+            }
+            return stagedLoads;
+        } catch (RuntimeException exception) {
+            LOGGER.error("Invalid deployment load list", exception);
+            for (int i = stagedLoads.size() - 1; i >= 0; i--) {
+                StagedLoad stagedLoad = stagedLoads.get(i);
+                if (!loader.cancelLoad(stagedLoad.unit())) {
+                    LOGGER.error("Unable to cancel staged deployment load for entity {}", stagedLoad.unit().getId());
+                }
+                stagedLoad.passengerStates().forEach(PassengerState::restore);
+                stagedLoad.unit().setTargetBay(stagedLoad.targetBay());
+            }
+            return null;
+        }
+    }
+
+    private List<Entity> affectedPassengers(Entity unit) {
+        if (unit instanceof FighterSquadron squadron) {
+            List<Entity> passengers = new ArrayList<>();
+            passengers.add(squadron);
+            passengers.addAll(squadron.getSubEntities());
+            return passengers;
+        }
+        return List.of(unit);
+    }
+
+    private record PassengerState(Entity unit, int transportId, boolean done, boolean loaded, boolean unloaded) {
+        static PassengerState capture(Entity unit) {
+            return new PassengerState(unit, unit.getTransportId(), unit.isDone(), unit.wasLoadedThisTurn(),
+                  unit.isUnloadedThisTurn());
+        }
+
+        void restore() {
+            unit.setTransportId(transportId);
+            unit.setDone(done);
+            unit.setLoadedThisTurn(loaded);
+            unit.setUnloaded(unloaded);
+        }
+    }
+
+    private record StagedLoad(Entity unit, int targetBay, List<PassengerState> passengerStates) {
     }
 
     /**

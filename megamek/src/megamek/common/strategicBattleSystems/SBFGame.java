@@ -553,7 +553,10 @@ public final class SBFGame extends AbstractGame implements PlanetaryConditionsUs
     }
 
     public void forget(int unitId) {
-        inGameObjects.remove(unitId);
+        InGameObject oldUnit = inGameObjects.remove(unitId);
+        if (oldUnit != null) {
+            fireGameEvent(new UnitChangedGameEvent(this, oldUnit, null));
+        }
     }
 
     public void addActionHandler(SBFActionHandler handler) {

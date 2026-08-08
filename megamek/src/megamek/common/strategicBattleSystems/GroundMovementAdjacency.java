@@ -55,7 +55,7 @@ public record GroundMovementAdjacency(SBFGame game) implements AdjacencyMap<SBFM
     public Collection<SBFMovePath> getAdjacent(SBFMovePath mp) {
         List<SBFMovePath> result = new ArrayList<>();
         BoardLocation currentDestination = mp.getLastPosition();
-        List<BoardLocation> possibleDestinations = currentDestination.allAdjacent();
+        List<BoardLocation> possibleDestinations = new ArrayList<>(currentDestination.allAdjacent());
         possibleDestinations.removeIf(bl -> !game.hasBoardLocation(bl));
         for (BoardLocation newDestination : possibleDestinations) {
             SBFMovePath newPath = SBFMovePath.createMovePathShallow(mp);

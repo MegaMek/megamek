@@ -576,19 +576,19 @@ public record Packet(PacketCommand command, Object... data) implements Serializa
     public List<EntityAction> getEntityActionList(int index) throws InvalidPacketDataException {
         Object object = getObject(index);
 
-        ArrayList<EntityAction> result = new ArrayList<>();
-
-        // Found users are List<> and Vector<> so this works.
-        if (object instanceof List<?> list) {
-            for (Object entityAction : list) {
-                if (entityAction instanceof EntityAction verifiedEntityAction) {
-                    result.add(verifiedEntityAction);
-                }
-            }
-            return result;
+        if (!(object instanceof List<?> list)) {
+            throw new InvalidPacketDataException("List<?> of EntityAction", object, index);
         }
 
-        throw new InvalidPacketDataException("List<?>", object, index);
+        ArrayList<EntityAction> result = new ArrayList<>(list.size());
+        for (int elementIndex = 0; elementIndex < list.size(); elementIndex++) {
+            Object value = list.get(elementIndex);
+            if (!(value instanceof EntityAction action)) {
+                throw new InvalidPacketDataException("EntityAction at list offset " + elementIndex, value, index);
+            }
+            result.add(action);
+        }
+        return result;
     }
 
     /**

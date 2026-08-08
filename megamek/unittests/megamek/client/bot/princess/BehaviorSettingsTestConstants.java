@@ -45,7 +45,7 @@ class BehaviorSettingsTestConstants {
     static final int GOOD_FALL_SHAME_INDEX = 5;
     static final int GOOD_HYPER_AGGRESSION_INDEX = 5;
     static final int GOOD_SELF_PRESERVATION_INDEX = 5;
-    static final int GOOD_HERD_MENTALITY_INDEX = 5;
+    static final int GOOD_MUTUAL_SUPPORT_INDEX = 5;
     static final int GOOD_BRAVERY_INDEX = 5;
     static final String STRATEGIC_TARGET_1 = "1234";
     static final String STRATEGIC_TARGET_2 = "9876";
@@ -61,7 +61,7 @@ class BehaviorSettingsTestConstants {
           "    <fallShameIndex>" + GOOD_FALL_SHAME_INDEX + "</fallShameIndex>\n" +
           "    <hyperAggressionIndex>" + GOOD_HYPER_AGGRESSION_INDEX + "</hyperAggressionIndex>\n" +
           "    <selfPreservationIndex>" + GOOD_SELF_PRESERVATION_INDEX + "</selfPreservationIndex>\n" +
-          "    <herdMentalityIndex>" + GOOD_HERD_MENTALITY_INDEX + "</herdMentalityIndex>\n" +
+          "    <mutualSupportIndex>" + GOOD_MUTUAL_SUPPORT_INDEX + "</mutualSupportIndex>\n" +
           "    <braveryIndex>" + GOOD_BRAVERY_INDEX + "</braveryIndex>\n" +
           "    <strategicTargets>\n" +
           "        <target>" + STRATEGIC_TARGET_1 + "</target>\n" +
@@ -78,7 +78,7 @@ class BehaviorSettingsTestConstants {
           "    <fallShameIndex>" + GOOD_FALL_SHAME_INDEX + "</fallShameIndex>\n" +
           "    <hyperAggressionIndex>" + GOOD_HYPER_AGGRESSION_INDEX + "</hyperAggressionIndex>\n" +
           "    <selfPreservationIndex>" + GOOD_SELF_PRESERVATION_INDEX + "</selfPreservationIndex>\n" +
-          "    <herdMentalityIndex>" + GOOD_HERD_MENTALITY_INDEX + "</herdMentalityIndex>\n" +
+          "    <mutualSupportIndex>" + GOOD_MUTUAL_SUPPORT_INDEX + "</mutualSupportIndex>\n" +
           "    <braveryIndex>" + GOOD_BRAVERY_INDEX + "</braveryIndex>\n" +
           "    <strategicTargets>\n" +
           "        <target>" + STRATEGIC_TARGET_1 + "</target>\n" +
@@ -95,7 +95,7 @@ class BehaviorSettingsTestConstants {
           "    <fallShameIndex>" + GOOD_FALL_SHAME_INDEX + "</fallShameIndex>\n" +
           "    <hyperAggressionIndex>" + GOOD_HYPER_AGGRESSION_INDEX + "</hyperAggressionIndex>\n" +
           "    <selfPreservationIndex>" + GOOD_SELF_PRESERVATION_INDEX + "</selfPreservationIndex>\n" +
-          "    <herdMentalityIndex>" + GOOD_HERD_MENTALITY_INDEX + "</herdMentalityIndex>\n" +
+          "    <mutualSupportIndex>" + GOOD_MUTUAL_SUPPORT_INDEX + "</mutualSupportIndex>\n" +
           "    <braveryIndex>" + GOOD_BRAVERY_INDEX + "</braveryIndex>\n" +
           "    <strategicTargets>\n" +
           "        <target>" + STRATEGIC_TARGET_1 + "</target>\n" +
@@ -112,7 +112,7 @@ class BehaviorSettingsTestConstants {
           "    <fallShameIndex>" + GOOD_FALL_SHAME_INDEX + "</fallShameIndex>\n" +
           "    <hyperAggressionIndex>" + GOOD_HYPER_AGGRESSION_INDEX + "</hyperAggressionIndex>\n" +
           "    <selfPreservationIndex>" + GOOD_SELF_PRESERVATION_INDEX + "</selfPreservationIndex>\n" +
-          "    <herdMentalityIndex>" + GOOD_HERD_MENTALITY_INDEX + "</herdMentalityIndex>\n" +
+          "    <mutualSupportIndex>" + GOOD_MUTUAL_SUPPORT_INDEX + "</mutualSupportIndex>\n" +
           "    <braveryIndex>" + GOOD_BRAVERY_INDEX + "</braveryIndex>\n" +
           "    <strategicTargets>\n" +
           "        <target>" + STRATEGIC_TARGET_1 + "</target>\n" +
@@ -129,7 +129,7 @@ class BehaviorSettingsTestConstants {
           "    <fallShameIndex>" + GOOD_FALL_SHAME_INDEX + "</fallShameIndex>\n" +
           "    <hyperAggressionIndex>" + GOOD_HYPER_AGGRESSION_INDEX + "</hyperAggressionIndex>\n" +
           "    <selfPreservationIndex>" + GOOD_SELF_PRESERVATION_INDEX + "</selfPreservationIndex>\n" +
-          "    <herdMentalityIndex>" + GOOD_HERD_MENTALITY_INDEX + "</herdMentalityIndex>\n" +
+          "    <mutualSupportIndex>" + GOOD_MUTUAL_SUPPORT_INDEX + "</mutualSupportIndex>\n" +
           "    <braveryIndex>" + GOOD_BRAVERY_INDEX + "</braveryIndex>\n" +
           "    <strategicTargets>\n" +
           "        <target>" + STRATEGIC_TARGET_1 + "</target>\n" +
@@ -146,7 +146,7 @@ class BehaviorSettingsTestConstants {
           "    <fallShameIndex>" + GOOD_FALL_SHAME_INDEX + "</fallShameIndex>\n" +
           "    <hyperAggressionIndex>" + GOOD_HYPER_AGGRESSION_INDEX + "</hyperAggressionIndex>\n" +
           "    <selfPreservationIndex>" + GOOD_SELF_PRESERVATION_INDEX + "</selfPreservationIndex>\n" +
-          "    <herdMentalityIndex>" + GOOD_HERD_MENTALITY_INDEX + "</herdMentalityIndex>\n" +
+          "    <mutualSupportIndex>" + GOOD_MUTUAL_SUPPORT_INDEX + "</mutualSupportIndex>\n" +
           "    <braveryIndex>" + GOOD_BRAVERY_INDEX + "</braveryIndex>\n" +
           "    <strategicTargets>\n" +
           "        <target>" + STRATEGIC_TARGET_1 + "</target>\n" +
@@ -163,7 +163,7 @@ class BehaviorSettingsTestConstants {
           "    <fallShameIndex>" + BAD_INDEX_BIG + "</fallShameIndex>\n" +
           "    <hyperAggressionIndex>" + GOOD_HYPER_AGGRESSION_INDEX + "</hyperAggressionIndex>\n" +
           "    <selfPreservationIndex>" + GOOD_SELF_PRESERVATION_INDEX + "</selfPreservationIndex>\n" +
-          "    <herdMentalityIndex>" + GOOD_HERD_MENTALITY_INDEX + "</herdMentalityIndex>\n" +
+          "    <mutualSupportIndex>" + GOOD_MUTUAL_SUPPORT_INDEX + "</mutualSupportIndex>\n" +
           "    <braveryIndex>" + GOOD_BRAVERY_INDEX + "</braveryIndex>\n" +
           "    <strategicTargets>\n" +
           "        <target>" + STRATEGIC_TARGET_1 + "</target>\n" +
@@ -180,7 +180,7 @@ class BehaviorSettingsTestConstants {
           "    <fallShameIndex>" + BAD_INDEX_SMALL + "</fallShameIndex>\n" +
           "    <hyperAggressionIndex>" + GOOD_HYPER_AGGRESSION_INDEX + "</hyperAggressionIndex>\n" +
           "    <selfPreservationIndex>" + GOOD_SELF_PRESERVATION_INDEX + "</selfPreservationIndex>\n" +
-          "    <herdMentalityIndex>" + GOOD_HERD_MENTALITY_INDEX + "</herdMentalityIndex>\n" +
+          "    <mutualSupportIndex>" + GOOD_MUTUAL_SUPPORT_INDEX + "</mutualSupportIndex>\n" +
           "    <braveryIndex>" + GOOD_BRAVERY_INDEX + "</braveryIndex>\n" +
           "    <strategicTargets>\n" +
           "        <target>" + STRATEGIC_TARGET_1 + "</target>\n" +
@@ -197,7 +197,7 @@ class BehaviorSettingsTestConstants {
           "    <fallShameIndex>" + GOOD_FALL_SHAME_INDEX + "</fallShameIndex>\n" +
           "    <hyperAggressionIndex>" + GOOD_HYPER_AGGRESSION_INDEX + "</hyperAggressionIndex>\n" +
           "    <selfPreservationIndex>" + GOOD_SELF_PRESERVATION_INDEX + "</selfPreservationIndex>\n" +
-          "    <herdMentalityIndex>" + GOOD_HERD_MENTALITY_INDEX + "</herdMentalityIndex>\n" +
+          "    <mutualSupportIndex>" + GOOD_MUTUAL_SUPPORT_INDEX + "</mutualSupportIndex>\n" +
           "    <braveryIndex>" + GOOD_BRAVERY_INDEX + "</braveryIndex>\n" +
           "    <strategicTargets>\n" +
           "        <target>" + null + "</target>\n" +
@@ -212,7 +212,7 @@ class BehaviorSettingsTestConstants {
           "    <fallShameIndex>" + GOOD_FALL_SHAME_INDEX + "</fallShameIndex>\n" +
           "    <hyperAggressionIndex>" + GOOD_HYPER_AGGRESSION_INDEX + "</hyperAggressionIndex>\n" +
           "    <selfPreservationIndex>" + GOOD_SELF_PRESERVATION_INDEX + "</selfPreservationIndex>\n" +
-          "    <herdMentalityIndex>" + GOOD_HERD_MENTALITY_INDEX + "</herdMentalityIndex>\n" +
+          "    <mutualSupportIndex>" + GOOD_MUTUAL_SUPPORT_INDEX + "</mutualSupportIndex>\n" +
           "    <braveryIndex>" + GOOD_BRAVERY_INDEX + "</braveryIndex>\n" +
           "    <strategicTargets>\n" +
           "        <target></target>\n" +
@@ -227,7 +227,7 @@ class BehaviorSettingsTestConstants {
           "    <fallShameIndex>" + GOOD_FALL_SHAME_INDEX + "</fallShameIndex>\n" +
           "    <hyperAggressionIndex>" + GOOD_HYPER_AGGRESSION_INDEX + "</hyperAggressionIndex>\n" +
           "    <selfPreservationIndex>" + GOOD_SELF_PRESERVATION_INDEX + "</selfPreservationIndex>\n" +
-          "    <herdMentalityIndex>" + GOOD_HERD_MENTALITY_INDEX + "</herdMentalityIndex>\n" +
+          "    <mutualSupportIndex>" + GOOD_MUTUAL_SUPPORT_INDEX + "</mutualSupportIndex>\n" +
           "    <braveryIndex>" + GOOD_BRAVERY_INDEX + "</braveryIndex>\n" +
           "    <strategicTargets>\n" +
           "    </strategicTargets>\n" +

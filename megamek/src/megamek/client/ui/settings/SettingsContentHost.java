@@ -43,8 +43,11 @@ import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
+import java.util.regex.Pattern;
 import javax.swing.JButton;
 import javax.swing.JComponent;
+import javax.swing.JLayer;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JViewport;
@@ -52,6 +55,7 @@ import javax.swing.Scrollable;
 import javax.swing.ScrollPaneConstants;
 import javax.swing.SwingConstants;
 import javax.swing.SwingUtilities;
+import javax.swing.text.html.HTML;
 
 import org.apache.commons.text.StringEscapeUtils;
 
@@ -62,9 +66,12 @@ import megamek.common.ui.FastJScrollPane;
 /** Owns the central scrollable settings content and an optional sticky help panel. */
 public class SettingsContentHost extends JPanel {
     private static final int SCROLL_SPEED = 16;
+    private static final Pattern HTML_TAG_PATTERN = Pattern.compile("</?([A-Za-z][A-Za-z0-9]*)\\b[^<>]*>");
 
     private final JPanel contentPanel = new SettingsContentPanel();
     private final JScrollPane contentScrollPane;
+    private final SettingsSearchHighlightLayerUI searchHighlightLayerUI = new SettingsSearchHighlightLayerUI();
+    private final JLayer<JScrollPane> searchHighlightLayer;
     private final SettingsHelpPanel helpPanel;
     private final List<HelpBinding> activeHelpBindings = new ArrayList<>();
     private Component currentContent;
@@ -77,8 +84,11 @@ public class SettingsContentHost extends JPanel {
               ScrollPaneConstants.VERTICAL_SCROLLBAR_AS_NEEDED,
               ScrollPaneConstants.HORIZONTAL_SCROLLBAR_AS_NEEDED);
         contentScrollPane.setName("settingsContentScrollPane");
+        contentScrollPane.getViewport().setScrollMode(JViewport.SIMPLE_SCROLL_MODE);
+        searchHighlightLayer = new JLayer<>(contentScrollPane, searchHighlightLayerUI);
+        searchHighlightLayer.setName("settingsSearchHighlightLayer");
         helpPanel = new SettingsHelpPanel(helpTitle);
-        add(contentScrollPane, BorderLayout.CENTER);
+        add(searchHighlightLayer, BorderLayout.CENTER);
         add(helpPanel, BorderLayout.SOUTH);
         setContent(content, showHelpPanel);
     }
@@ -113,6 +123,16 @@ public class SettingsContentHost extends JPanel {
         contentScrollPane.getVerticalScrollBar().setValue(0);
     }
 
+    /** Updates the non-mutating text highlights painted over the current settings content. */
+    public void setSearchFilter(String normalizedFilter) {
+        searchHighlightLayerUI.setFilter(normalizedFilter, searchHighlightLayer);
+    }
+
+    /** Exposes painted bounds for headless overlay tests. */
+    List<Rectangle> getSearchHighlightBounds() {
+        return searchHighlightLayerUI.highlightBounds(searchHighlightLayer);
+    }
+
     /**
      * Updates this host's sticky help surface. Plain text is wrapped as HTML so it soft-wraps to the panel width;
      * caller-supplied HTML is preserved.
@@ -121,9 +141,25 @@ public class SettingsContentHost extends JPanel {
         if (helpText == null || helpText.isBlank()) {
             return;
         }
-        helpPanel.setHelpText(helpText.regionMatches(true, 0, "<html>", 0, "<html>".length())
+        boolean isHtmlDocument = helpText.regionMatches(true, 0, "<html>", 0, "<html>".length());
+        if (isHtmlDocument) {
+            helpPanel.setHelpText(helpText);
+            return;
+        }
+        String body = containsHtmlTag(helpText)
               ? helpText
-              : "<html>" + StringEscapeUtils.escapeHtml4(helpText) + "</html>");
+              : StringEscapeUtils.escapeHtml4(helpText);
+        helpPanel.setHelpText("<html>" + body + "</html>");
+    }
+
+    private static boolean containsHtmlTag(String text) {
+        var matcher = HTML_TAG_PATTERN.matcher(text);
+        while (matcher.find()) {
+            if (HTML.getTag(matcher.group(1).toLowerCase(Locale.ROOT)) != null) {
+                return true;
+            }
+        }
+        return false;
     }
 
     /** Finds the nearest settings content host containing {@code component}. */

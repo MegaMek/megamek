@@ -119,6 +119,7 @@ public final class AIMatchRunner {
                     if (runner != null) {
                         runner.shutdown();
                     }
+                    logHeapUsage(gameNumber, repetitions);
                 }
             }
         } catch (IOException ioException) {
@@ -128,6 +129,29 @@ public final class AIMatchRunner {
         logger.info(formatSummary(repetitions, teamWins, teamAITypes, draws, unfinished));
         logger.info("Per-game results written to {}", resultsFile.getAbsolutePath());
         System.exit(0);
+    }
+
+    /**
+     * Reports heap use after each game, because that is how a leak across games announces itself.
+     *
+     * <p>Every client a game connects keeps its own copy of the game state, so anything left connected accumulates.
+     * The failure is quiet: memory climbs game by game until the JVM spends its time collecting garbage rather than
+     * playing, and a later game slows to a halt while still technically running - it looks like a hang, but the
+     * process is busy, not blocked.</p>
+     *
+     * <p>Read it as a trend, not a value. Healthy batches plateau and fall back; a leak climbs game after game and
+     * never recovers.</p>
+     */
+    private static void logHeapUsage(int gameNumber, int repetitions) {
+        // Suggest a collection first, so the figure reports what is still *reachable* rather than what has merely
+        // not been collected yet. Without this the number wanders with collector timing and a real leak is
+        // indistinguishable from ordinary garbage - which is exactly how this bug stayed hidden.
+        System.gc();
+        Runtime runtime = Runtime.getRuntime();
+        long retainedMegabytes = (runtime.totalMemory() - runtime.freeMemory()) / (1024 * 1024);
+        long maxMegabytes = runtime.maxMemory() / (1024 * 1024);
+        logger.info("Game {}/{} finished; heap retained {} MB of {} MB", gameNumber, repetitions, retainedMegabytes,
+              maxMegabytes);
     }
 
     /**

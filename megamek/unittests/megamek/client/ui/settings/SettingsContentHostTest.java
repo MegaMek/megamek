@@ -51,8 +51,10 @@ import java.util.ListResourceBundle;
 import javax.swing.JEditorPane;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
+import javax.swing.JScrollPane;
 import javax.swing.JSpinner;
 import javax.swing.JTextField;
+import javax.swing.JViewport;
 import javax.swing.Scrollable;
 
 import megamek.client.ui.util.UIUtil;
@@ -104,10 +106,21 @@ class SettingsContentHostTest {
     void plainHelpTextIsEscapedBeforeRenderingAsHtml() {
         SettingsContentHost host = new SettingsContentHost(new JLabel("Source"), "Details", true);
 
-        host.setHelpText("Use A < B & C > D");
+        host.setHelpText("Use A < B & C > D or <value>");
 
         JEditorPane helpPane = findComponent(host, "settingsHelpText", JEditorPane.class);
-        assertTrue(helpPane.getText().contains("A &lt; B &amp; C &gt; D"), helpPane.getText());
+        assertTrue(helpPane.getText().contains("A &lt; B &amp; C &gt; D or &lt;value&gt;"), helpPane.getText());
+    }
+
+    @Test
+    void htmlFragmentHelpTextIsPreservedAsMarkup() {
+        SettingsContentHost host = new SettingsContentHost(new JLabel("Source"), "Details", true);
+
+        host.setHelpText("First line.<br><br><b>Warning:</b> Second line.");
+
+        JEditorPane helpPane = findComponent(host, "settingsHelpText", JEditorPane.class);
+        assertTrue(helpPane.getText().contains("<b>Warning:</b>"), helpPane.getText());
+        assertFalse(helpPane.getText().contains("&lt;br&gt;"), helpPane.getText());
     }
 
     @Test
@@ -137,6 +150,28 @@ class SettingsContentHostTest {
         assertTrue(contentPanel.getPreferredSize().width > page.getPreferredSize().width);
         assertEquals(page.getPreferredSize().width,
               scrollableContent.getPreferredScrollableViewportSize().width);
+    }
+
+    @Test
+    void searchFilterHighlightsContentWithoutChangingLabelText() {
+        JLabel label = new JLabel("Search Needle");
+        SettingsContentHost host = new SettingsContentHost(label, "Details", false);
+        host.setSize(320, 160);
+        layoutTree(host);
+        String originalText = label.getText();
+
+        host.setSearchFilter(SettingsRoute.normalizeSearchText("needle"));
+
+        assertFalse(host.getSearchHighlightBounds().isEmpty());
+        assertEquals(originalText, label.getText());
+    }
+
+    @Test
+    void contentViewportUsesSimpleScrollModeForOverlayRepainting() {
+        SettingsContentHost host = new SettingsContentHost(new JLabel("Source"), "Details", false);
+        JScrollPane scrollPane = findComponent(host, "settingsContentScrollPane", JScrollPane.class);
+
+        assertEquals(JViewport.SIMPLE_SCROLL_MODE, scrollPane.getViewport().getScrollMode());
     }
 
     @Test
@@ -228,6 +263,15 @@ class SettingsContentHostTest {
         FocusEvent event = new FocusEvent(component, FocusEvent.FOCUS_GAINED);
         for (FocusListener listener : component.getFocusListeners()) {
             listener.focusGained(event);
+        }
+    }
+
+    private static void layoutTree(Container root) {
+        root.doLayout();
+        for (Component child : root.getComponents()) {
+            if (child instanceof Container container) {
+                layoutTree(container);
+            }
         }
     }
 

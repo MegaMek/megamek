@@ -327,14 +327,6 @@ public class GameOptionsPane extends JPanel {
             if (route != null) {
                 route.setSectionSearchText(searchableText.toString());
             }
-            if (normalizedFilter.isBlank()) {
-                pagePanel.collapseAllSections();
-            } else {
-                boolean matched = pagePanel.expandSectionsMatching(text -> sectionMatches(text, normalizedFilter));
-                if (!matched) {
-                    pagePanel.expandAllSections();
-                }
-            }
             revalidate();
             repaint();
         }

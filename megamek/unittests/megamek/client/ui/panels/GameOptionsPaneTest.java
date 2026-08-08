@@ -433,6 +433,12 @@ class GameOptionsPaneTest {
             assertFalse(sections.get(1).isExpanded());
             assertTrue(deployment.isVisible());
             assertFalse(lobby.isVisible());
+
+            pane.setFilterText("");
+            assertFalse(sections.get(0).isExpanded());
+            assertFalse(sections.get(1).isExpanded());
+            assertTrue(deployment.isVisible());
+            assertTrue(lobby.isVisible());
         });
     }
 

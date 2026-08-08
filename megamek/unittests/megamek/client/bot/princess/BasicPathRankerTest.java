@@ -41,6 +41,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.junit.jupiter.api.Assertions.fail;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyBoolean;
+import static org.mockito.ArgumentMatchers.anyDouble;
 import static org.mockito.ArgumentMatchers.anyInt;
 import static org.mockito.ArgumentMatchers.anyList;
 import static org.mockito.ArgumentMatchers.anyString;
@@ -107,10 +108,13 @@ class BasicPathRankerTest {
     @BeforeEach
     void beforeEach() {
         final BehaviorSettings mockBehavior = mock(BehaviorSettings.class);
+        // The promoted position discipline resolves posture during ranking; a real settings object
+        // always carries one (the field defaults to AUTO), so the mock must too.
+        when(mockBehavior.getCombatPosture()).thenReturn(CombatPosture.ATTACK);
         when(mockBehavior.getFallShameValue()).thenReturn(BehaviorSettings.FALL_SHAME_VALUES[5]);
         when(mockBehavior.getBraveryValue()).thenReturn(BehaviorSettings.BRAVERY[5]);
         when(mockBehavior.getHyperAggressionValue()).thenReturn(BehaviorSettings.HYPER_AGGRESSION_VALUES[5]);
-        when(mockBehavior.getHerdMentalityValue()).thenReturn(BehaviorSettings.HERD_MENTALITY_VALUES[5]);
+        when(mockBehavior.getMutualSupportValue()).thenReturn(BehaviorSettings.MUTUAL_SUPPORT_VALUES[5]);
         when(mockBehavior.getSelfPreservationValue()).thenReturn(BehaviorSettings.SELF_PRESERVATION_VALUES[5]);
         when(mockBehavior.getFavorHigherTMM()).thenReturn(0);
         when(mockBehavior.getAntiCrowding()).thenReturn(0);
@@ -472,6 +476,11 @@ class BasicPathRankerTest {
         expected.setMyEstimatedDamage(2.5);
         expected.setMyEstimatedPhysicalDamage(0.0);
 
+        // The pricing discounts have their own dedicated tests; hold them neutral here so this test
+        // keeps pinning the LOS/kick mechanics at their legacy figures.
+        doReturn(1.0).when(testRanker).attackerMovementDamageDiscount(any(MovePath.class));
+        doReturn(1.0).when(testRanker).incomingFireTerrainDiscount(any(MovePath.class));
+
         EntityEvaluationResponse actual = testRanker.evaluateUnmovedEnemy(mockEnemyMek, mockPath, false, false);
         assertEntityEvaluationResponseEquals(expected, actual);
     }
@@ -504,6 +513,11 @@ class BasicPathRankerTest {
         expected.setEstimatedEnemyDamage(2.125);
         expected.setMyEstimatedDamage(0.0);
         expected.setMyEstimatedPhysicalDamage(0.0);
+        // The pricing discounts have their own dedicated tests; hold them neutral here so this test
+        // keeps pinning the LOS/kick mechanics at their legacy figures.
+        doReturn(1.0).when(testRanker).attackerMovementDamageDiscount(any(MovePath.class));
+        doReturn(1.0).when(testRanker).incomingFireTerrainDiscount(any(MovePath.class));
+
         EntityEvaluationResponse actual = testRanker.evaluateUnmovedEnemy(mockEnemyMek, mockPath, false, false);
         assertEntityEvaluationResponseEquals(expected, actual);
     }
@@ -537,6 +551,11 @@ class BasicPathRankerTest {
         expected.setEstimatedEnemyDamage(4.625);
         expected.setMyEstimatedDamage(0.0);
         expected.setMyEstimatedPhysicalDamage(0.0);
+
+        // The pricing discounts have their own dedicated tests; hold them neutral here so this test
+        // keeps pinning the LOS/kick mechanics at their legacy figures.
+        doReturn(1.0).when(testRanker).attackerMovementDamageDiscount(any(MovePath.class));
+        doReturn(1.0).when(testRanker).incomingFireTerrainDiscount(any(MovePath.class));
 
         EntityEvaluationResponse actual = testRanker.evaluateUnmovedEnemy(mockEnemyMek, mockPath, false, false);
         assertEntityEvaluationResponseEquals(expected, actual);
@@ -629,6 +648,11 @@ class BasicPathRankerTest {
         expected.setEstimatedEnemyDamage(2.125);
         expected.setMyEstimatedDamage(0.0);
         expected.setMyEstimatedPhysicalDamage(0.0);
+
+        // The pricing discounts have their own dedicated tests; hold them neutral here so this test
+        // keeps pinning the LOS/kick mechanics at their legacy figures.
+        doReturn(1.0).when(testRanker).attackerMovementDamageDiscount(any(MovePath.class));
+        doReturn(1.0).when(testRanker).incomingFireTerrainDiscount(any(MovePath.class));
 
         EntityEvaluationResponse actual = testRanker.evaluateUnmovedEnemy(mockEnemyMek, mockPath, false, false);
         assertEntityEvaluationResponseEquals(expected, actual);
@@ -863,9 +887,9 @@ class BasicPathRankerTest {
         private double distanceToEnemy;
         private double hyperAggressionValue;
 
-        private double herdingModValue;
+        private double mutualSupportModValue;
         private double distanceToAllies;
-        private double herdMentalityValue;
+        private double mutualSupportValue;
 
         private int facingModValue;
         private int facingModConstant;
@@ -903,11 +927,11 @@ class BasicPathRankerTest {
             return this;
         }
 
-        public RankPathResultBuilder withHerdingMod(double herdingModValue, double distanceToAllies,
-              double herdMentalityValue) {
-            this.herdingModValue = herdingModValue;
+        public RankPathResultBuilder withMutualSupportMod(double mutualSupportModValue, double distanceToAllies,
+              double mutualSupportValue) {
+            this.mutualSupportModValue = mutualSupportModValue;
             this.distanceToAllies = distanceToAllies;
-            this.herdMentalityValue = herdMentalityValue;
+            this.mutualSupportValue = mutualSupportValue;
             return this;
         }
 
@@ -956,16 +980,16 @@ class BasicPathRankerTest {
                   .append(decimalFormat.format(-1.0))
                   .append(" deficit=")
                   .append(decimalFormat.format(0.0))
-                  .append("] - herdingMod [");
+                  .append("] - mutualSupportMod [");
 
             if (noFriends) {
                 result.append("0 no friends");
             } else {
-                result.append(decimalFormat.format(herdingModValue))
+                result.append(decimalFormat.format(mutualSupportModValue))
                       .append(" = ")
                       .append(decimalFormat.format(distanceToAllies))
                       .append(" * ")
-                      .append(decimalFormat.format(herdMentalityValue));
+                      .append(decimalFormat.format(mutualSupportValue));
             }
 
             result.append("] - facingMod [")
@@ -989,6 +1013,10 @@ class BasicPathRankerTest {
               any(Game.class));
         doReturn(12.0).when(testRanker).distanceToClosestEnemy(any(Entity.class), any(Coords.class), any(Game.class));
         doReturn(0.0).when(testRanker).checkPathForHazards(any(MovePath.class), any(Entity.class), any(Game.class));
+        // Position persistence has its own dedicated tests; hold it neutral so this test keeps pinning
+        // the legacy utility arithmetic.
+        doReturn(0.0).when(testRanker).calculatePositionHoldMod(any(MovePath.class), any(Game.class),
+              any(BasicPathRanker.FiringPhysicalDamage.class), anyDouble(), anyDouble());
 
         final Entity mockMover = mock(BipedMek.class);
         when(mockMover.isClan()).thenReturn(false);
@@ -1087,7 +1115,7 @@ class BasicPathRankerTest {
               builder.withFallMod(0, 0, 500)
                     .withBraveryMod(-6.25, 1, 22.5, 1.5, 40)
                     .withAggressionMod(30, 12, 2.5)
-                    .withHerdingMod(15, 15, 1)
+                    .withMutualSupportMod(15, 15, 1)
                     .withFacingMod(0, 50, 0)
                     .build());
 
@@ -1101,7 +1129,7 @@ class BasicPathRankerTest {
               builder.withFallMod(250, 0.5, 500)
                     .withBraveryMod(-23.12, 0.5, 22.5, 1.5, 40)
                     .withAggressionMod(30, 12, 2.5)
-                    .withHerdingMod(15, 15, 1)
+                    .withMutualSupportMod(15, 15, 1)
                     .withFacingMod(0, 50, 0)
                     .build());
         actual = testRanker.rankPath(mockPath, mockGame, 18, 0.5, testEnemies, friendsCoords);
@@ -1117,7 +1145,7 @@ class BasicPathRankerTest {
               builder.withFallMod(125, 0.25, 500)
                     .withBraveryMod(-14.69, 0.75, 22.5, 1.5, 40)
                     .withAggressionMod(30, 12, 2.5)
-                    .withHerdingMod(15, 15, 1)
+                    .withMutualSupportMod(15, 15, 1)
                     .withFacingMod(0, 50, 0)
                     .build());
         actual = testRanker.rankPath(mockPath, mockGame, 18, 0.5, testEnemies, friendsCoords);
@@ -1141,7 +1169,7 @@ class BasicPathRankerTest {
               builder.withFallMod(0, 0, 500)
                     .withBraveryMod(-6.25, 1, 22.5, 1.5, 40)
                     .withAggressionMod(30, 12, 2.5)
-                    .withHerdingMod(15, 15, 1)
+                    .withMutualSupportMod(15, 15, 1)
                     .withFacingMod(0, 50, 0)
                     .build());
         actual = testRanker.rankPath(mockPath, mockGame, 18, 0.5, testEnemies, friendsCoords);
@@ -1162,7 +1190,7 @@ class BasicPathRankerTest {
               builder.withFallMod(0, 0, 500)
                     .withBraveryMod(-16, 1, 16, 1.5, 40)
                     .withAggressionMod(30, 12, 2.5)
-                    .withHerdingMod(15, 15, 1)
+                    .withMutualSupportMod(15, 15, 1)
                     .withFacingMod(0, 50, 0)
                     .build());
         actual = testRanker.rankPath(mockPath, mockGame, 18, 0.5, testEnemies, friendsCoords);
@@ -1191,7 +1219,7 @@ class BasicPathRankerTest {
               builder.withFallMod(0, 0, 500)
                     .withBraveryMod(-16.25, 1, 22.5, 1.5, 50)
                     .withAggressionMod(30, 12, 2.5)
-                    .withHerdingMod(15, 15, 1)
+                    .withMutualSupportMod(15, 15, 1)
                     .withFacingMod(0, 50, 0)
                     .build());
         actual = testRanker.rankPath(mockPath, mockGame, 18, 0.5, testEnemies, friendsCoords);
@@ -1212,7 +1240,7 @@ class BasicPathRankerTest {
               builder.withFallMod(0, 0, 500)
                     .withBraveryMod(3.75, 1, 22.5, 1.5, 30)
                     .withAggressionMod(30, 12, 2.5)
-                    .withHerdingMod(15, 15, 1)
+                    .withMutualSupportMod(15, 15, 1)
                     .withFacingMod(0, 50, 0)
                     .build());
         actual = testRanker.rankPath(mockPath, mockGame, 18, 0.5, testEnemies, friendsCoords);
@@ -1236,7 +1264,7 @@ class BasicPathRankerTest {
               builder.withFallMod(0, 0, 500)
                     .withBraveryMod(-6.25, 1, 22.5, 1.5, 40)
                     .withAggressionMod(5, 2, 2.5)
-                    .withHerdingMod(15, 15, 1)
+                    .withMutualSupportMod(15, 15, 1)
                     .withFacingMod(0, 50, 0)
                     .build());
         actual = testRanker.rankPath(mockPath, mockGame, 18, 0.5, testEnemies, friendsCoords);
@@ -1252,7 +1280,7 @@ class BasicPathRankerTest {
               builder.withFallMod(0, 0, 500)
                     .withBraveryMod(-6.25, 1, 22.5, 1.5, 40)
                     .withAggressionMod(55, 22, 2.5)
-                    .withHerdingMod(15, 15, 1)
+                    .withMutualSupportMod(15, 15, 1)
                     .withFacingMod(0, 50, 0)
                     .build());
         actual = testRanker.rankPath(mockPath, mockGame, 18, 0.5, testEnemies, friendsCoords);
@@ -1271,7 +1299,7 @@ class BasicPathRankerTest {
               builder.withFallMod(0, 0, 500)
                     .withBraveryMod(-6.25, 1, 22.5, 1.5, 40)
                     .withAggressionMod(30, 12, 2.5)
-                    .withHerdingMod(10, 10, 1)
+                    .withMutualSupportMod(10, 10, 1)
                     .withFacingMod(0, 50, 0)
                     .build());
         actual = testRanker.rankPath(mockPath, mockGame, 18, 0.5, testEnemies, friendsCoords);
@@ -1287,7 +1315,7 @@ class BasicPathRankerTest {
               builder.withFallMod(0, 0, 500)
                     .withBraveryMod(-6.25, 1, 22.5, 1.5, 40)
                     .withAggressionMod(30, 12, 2.5)
-                    .withHerdingMod(20, 20, 1)
+                    .withMutualSupportMod(20, 20, 1)
                     .withFacingMod(0, 50, 0)
                     .build());
         actual = testRanker.rankPath(mockPath, mockGame, 18, 0.5, testEnemies, friendsCoords);
@@ -1322,7 +1350,7 @@ class BasicPathRankerTest {
               builder.withFallMod(0, 0, 500)
                     .withBraveryMod(-6.25, 1, 22.5, 1.5, 40)
                     .withAggressionMod(30, 12, 2.5)
-                    .withHerdingMod(15, 15, 1)
+                    .withMutualSupportMod(15, 15, 1)
                     .withFacingMod(0, 50, 0)
                     .build());
         actual = testRanker.rankPath(mockPath, mockGame, 18, 0.5, testEnemies, friendsCoords);
@@ -1336,7 +1364,7 @@ class BasicPathRankerTest {
               builder.withFallMod(0, 0, 500)
                     .withBraveryMod(-6.25, 1, 22.5, 1.5, 40)
                     .withAggressionMod(30, 12, 2.5)
-                    .withHerdingMod(15, 15, 1)
+                    .withMutualSupportMod(15, 15, 1)
                     .withFacingMod(0, 50, 0)
                     .build());
         actual = testRanker.rankPath(mockPath, mockGame, 18, 0.5, testEnemies, friendsCoords);
@@ -1353,7 +1381,7 @@ class BasicPathRankerTest {
               builder.withFallMod(0, 0, 500)
                     .withBraveryMod(-6.25, 1, 22.5, 1.5, 40)
                     .withAggressionMod(30, 12, 2.5)
-                    .withHerdingMod(15, 15, 1)
+                    .withMutualSupportMod(15, 15, 1)
                     .withFacingMod(0, 50, 0)
                     .build());
         actual = testRanker.rankPath(mockPath, mockGame, 18, 0.5, testEnemies, friendsCoords);
@@ -1375,7 +1403,7 @@ class BasicPathRankerTest {
               builder.withFallMod(0, 0, 500)
                     .withBraveryMod(-6.25, 1, 22.5, 1.5, 40)
                     .withAggressionMod(30, 12, 2.5)
-                    .withHerdingMod(15, 15, 1)
+                    .withMutualSupportMod(15, 15, 1)
                     .withFacingMod(0, 50, 0)
                     .build());
         actual = testRanker.rankPath(mockPath, mockGame, 18, 0.5, testEnemies, friendsCoords);
@@ -1389,7 +1417,7 @@ class BasicPathRankerTest {
               builder.withFallMod(0, 0, 500)
                     .withBraveryMod(-6.25, 1, 22.5, 1.5, 40)
                     .withAggressionMod(30, 12, 2.5)
-                    .withHerdingMod(15, 15, 1)
+                    .withMutualSupportMod(15, 15, 1)
                     .withFacingMod(50, 50, 1)
                     .build());
         actual = testRanker.rankPath(mockPath, mockGame, 18, 0.5, testEnemies, friendsCoords);
@@ -1405,7 +1433,7 @@ class BasicPathRankerTest {
               builder.withFallMod(0, 0, 500)
                     .withBraveryMod(-6.25, 1, 22.5, 1.5, 40)
                     .withAggressionMod(30, 12, 2.5)
-                    .withHerdingMod(15, 15, 1)
+                    .withMutualSupportMod(15, 15, 1)
                     .withFacingMod(0, 50, 0)
                     .build());
         actual = testRanker.rankPath(mockPath, mockGame, 18, 0.5, testEnemies, friendsCoords);
@@ -1422,7 +1450,7 @@ class BasicPathRankerTest {
               builder.withFallMod(0, 0, 500)
                     .withBraveryMod(-6.25, 1, 22.5, 1.5, 40)
                     .withAggressionMod(30, 12, 2.5)
-                    .withHerdingMod(15, 15, 1)
+                    .withMutualSupportMod(15, 15, 1)
                     .withFacingMod(50, 50, 1)
                     .build());
         actual = testRanker.rankPath(mockPath, mockGame, 18, 0.5, testEnemies, friendsCoords);
@@ -2240,6 +2268,82 @@ class BasicPathRankerTest {
             when(mockGame.getBoard().getBuildingAt(eq(testCoordsThree))).thenReturn(mockBuilding);
             when(mockBuilding.getCurrentCF(eq(testCoordsThree))).thenReturn(77);
         }
+
+        // START - Standing still in water
+        // A path with no steps never entered the hazard loop, so staying put in deep water was free while
+        // every path out paid its water hazard. These pin the stationary pricing.
+
+        private MovePath setupStationaryPath(Coords position) {
+            MovePath stationaryPath = mock(MovePath.class);
+            when(stationaryPath.getStepVector()).thenReturn(new Vector<>());
+            when(stationaryPath.getFinalCoords()).thenReturn(position);
+            when(stationaryPath.isJumping()).thenReturn(false);
+            return stationaryPath;
+        }
+
+        @Test
+        void testStandingStillSubmergedWithABreachedLocationIsNotFree() {
+            // A damaged Mek hiding on the bottom of a depth 2 lake: its unarmored right arm is an open
+            // breach, and staying down there has to cost what crossing that hex would.
+            final Hex mockHexThree = testHexes.get(2);
+            when(mockHexThree.containsTerrain(Terrains.WATER)).thenReturn(true);
+            when(mockHexThree.depth()).thenReturn(2);
+
+            when(mockUnit.locations()).thenReturn(8);
+            when(mockUnit.isMek()).thenReturn(true);
+            when(mockUnit.getArmor(anyInt())).thenReturn(10);
+            when(mockUnit.getArmor(eq(Mek.LOC_RIGHT_ARM))).thenReturn(0);
+            when(mockUnit.getElevation()).thenReturn(-2);
+
+            final MovePath stationaryPath = setupStationaryPath(testCoordsThree);
+            assertEquals(50.0, testRanker.checkPathForHazards(stationaryPath, mockUnit, mockGame), TOLERANCE);
+        }
+
+        @Test
+        void testStandingStillSubmergedFullyArmoredIsStillSafe() {
+            // An undamaged, sealed Mek is genuinely safe standing in deep water - no invented penalty.
+            final Hex mockHexThree = testHexes.get(2);
+            when(mockHexThree.containsTerrain(Terrains.WATER)).thenReturn(true);
+            when(mockHexThree.depth()).thenReturn(2);
+
+            when(mockUnit.locations()).thenReturn(8);
+            when(mockUnit.isMek()).thenReturn(true);
+            when(mockUnit.getArmor(anyInt())).thenReturn(10);
+            when(mockUnit.getElevation()).thenReturn(-2);
+
+            final MovePath stationaryPath = setupStationaryPath(testCoordsThree);
+            assertEquals(0.0, testRanker.checkPathForHazards(stationaryPath, mockUnit, mockGame), TOLERANCE);
+        }
+
+        @Test
+        void testStationaryUnitAboveTheWaterIsNotDrowning() {
+            // A stationary path reports MOVE_NONE, not a VTOL movement type, so without the elevation
+            // check a hovering VTOL over a lake would be priced as drowning.
+            final Hex mockHexThree = testHexes.get(2);
+            when(mockHexThree.containsTerrain(Terrains.WATER)).thenReturn(true);
+            when(mockHexThree.depth()).thenReturn(2);
+
+            when(mockUnit.getElevation()).thenReturn(3);
+
+            final MovePath stationaryPath = setupStationaryPath(testCoordsThree);
+            assertEquals(0.0, testRanker.checkPathForHazards(stationaryPath, mockUnit, mockGame), TOLERANCE);
+        }
+
+        @Test
+        void testTankDisplacedIntoWaterWantsOut() {
+            // A tank cannot survive in water. One that was pushed in must see the drowning hazard when it
+            // considers staying, or the free stay outweighs every path back out.
+            final Hex mockHexThree = testHexes.get(2);
+            when(mockHexThree.containsTerrain(Terrains.WATER)).thenReturn(true);
+            when(mockHexThree.depth()).thenReturn(1);
+
+            final Entity mockTank = mock(Tank.class);
+            when(mockTank.getElevation()).thenReturn(-1);
+
+            final MovePath stationaryPath = setupStationaryPath(testCoordsThree);
+            assertEquals(1000.0, testRanker.checkPathForHazards(stationaryPath, mockTank, mockGame), TOLERANCE);
+        }
+        // END - Standing still in water
 
         // START - Hazardous Liquid Pools
         @Test

@@ -466,7 +466,9 @@ public class BasicPathRanker extends PathRanker {
     /**
      * Whether a unit has left the fighting line - pulling back under forced withdrawal, or ordered
      * somewhere else entirely (a destination edge or a player waypoint). Such a unit earns no hold
-     * credit (it has somewhere to be, however good its current hex) and does not anchor a formation.
+     * credit (it has somewhere to be, however good its current hex), and its say in where the
+     * formation's centre lies is sharply reduced - not removed, so the centre moves continuously as
+     * units leave the line (see {@code MutualSupportPathRanker}'s withdrawing centre weight).
      */
     protected boolean isWithdrawing(Entity unit) {
         BehaviorType behaviorType = getOwner().getUnitBehaviorTracker().getBehaviorType(unit, getOwner());

@@ -629,6 +629,22 @@ class MutualSupportPathRankerTest {
     }
 
     /**
+     * A unit ORDERED somewhere - a flee edge or a player waypoint - has somewhere to be, however good
+     * its current hex. Without this exemption an ordered retreat past a superior enemy loitered: the
+     * hold credit and closing pulls vetoed every step of the route while the order sat registered
+     * (community game 2026-08-07 - a star told to withdraw north crept in place all game).
+     */
+    @Test
+    void aDestinationOrderedUnitHoldsNothing() {
+        when(mockBehaviorTracker.getBehaviorType(eq(mockMover), any(Princess.class)))
+              .thenReturn(BehaviorType.MoveToDestination);
+        setEnemyDistances(10.0, 10.0, CURRENT_POSITION);
+        assertEquals(0.0,
+              testRanker.calculatePositionHoldMod(pathEndingAt(CURRENT_POSITION), mockGame,
+                    damageDealing(20.0), 0.0, 1.0), TOLERANCE);
+    }
+
+    /**
      * The AMM ledger fix, pinned. The base ranker's estimate against unmoved enemies is a range-table
      * lookup with no to-hit roll, so it thinks a walking shooter shoots as well as a standing one. The
      * discount prices the attacker movement modifier back in as a hit-chance ratio at the needing-8s

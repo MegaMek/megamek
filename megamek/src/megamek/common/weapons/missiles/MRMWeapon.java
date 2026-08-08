@@ -1,6 +1,6 @@
 /*
  * Copyright (c) 2005 - Ben Mazur (bmazur@sev.org)
- * Copyright (C) 2007-2025 The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2007-2026 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -47,9 +47,10 @@ import megamek.common.equipment.MiscType;
 import megamek.common.equipment.Mounted;
 import megamek.common.game.Game;
 import megamek.common.loaders.EntityLoadingException;
-import megamek.common.options.OptionsConstants;
+import megamek.common.units.Targetable;
 import megamek.common.weapons.handlers.AttackHandler;
-import megamek.common.weapons.handlers.MRMHandler;
+import megamek.common.weapons.handlers.mrm.MRMHandler;
+import megamek.common.weapons.handlers.mrm.MRMSaturationHandler;
 import megamek.server.totalWarfare.TWGameManager;
 
 /**
@@ -63,25 +64,28 @@ public abstract class MRMWeapon extends MissileWeapon {
     public MRMWeapon() {
         super();
         ammoType = AmmoType.AmmoTypeEnum.MRM;
-        toHitModifier = 1;
+        toHitModifier = 0;
         atClass = CLASS_MRM;
         flags = flags.or(F_MRM);
     }
 
     @Override
-    // PLAYTEST3 MRMS no longer have a +1 to hit.
     public int getToHitModifier(@Nullable Mounted<?> mounted) {
-        if (mounted != null && mounted.getEntity() != null && mounted.getEntity().getGame() != null && mounted.getEntity().getGame().getOptions().booleanOption(OptionsConstants.PLAYTEST_3)) {
-            return 0;
-        } else {
-            return toHitModifier;
-        }
+        return Game.rulesManager.getRulesWeapons().getMRMModifier(toHitModifier);
     }
     
     @Override
     @Nullable
     public AttackHandler getCorrectHandler(ToHitData toHit, WeaponAttackAction waa, Game game, TWGameManager manager) {
         try {
+            Mounted<?> mLinker = game.getEntity(waa.getEntityId()).getEquipment(waa.getWeaponId()).getLinkedBy();
+            if ((mLinker != null)
+                  && (mLinker.getType() instanceof MiscType)
+                  && !mLinker.isDestroyed() && !mLinker.isMissing()
+                  && !mLinker.isBreached() && mLinker.getType().hasFlag(MiscType.F_APOLLO)
+                && (waa.getTarget(game).getTargetType() == Targetable.TYPE_SATURATION)) {
+                return new MRMSaturationHandler(toHit, waa, game, manager);
+            }
             return new MRMHandler(toHit, waa, game, manager);
         } catch (EntityLoadingException ignored) {
             LOGGER.warn("Get Correct Handler - Attach Handler Received Null Entity.");

@@ -797,7 +797,7 @@ public final class Player extends TurnOrdered {
             if (object instanceof Entity entity && entity.getOwner().equals(this)) {
                 if (isActiveForCommandBonus(entity)) {
                     if (entity.hasCommandConsoleBonus() || entity.getCrew().hasActiveTechOfficer()) {
-                        return 2;
+                        return Game.rulesManager.getRulesEquipment().getCommandConsoleBonus();
                     }
                 }
             }

@@ -1090,7 +1090,20 @@ class MovePathHandler extends AbstractTWRuleHandler {
         }
 
         // if we ran with destroyed hip or gyro, we need a psr
-        rollTarget = entity.checkRunningWithDamage(overallMoveType);
+        MoveStep lastStep = md.getLastStep();
+        if (lastStep != null) {
+            rollTarget = entity.checkRunningWithDamage(overallMoveType, lastStep.getDistance());
+            if (rollTarget.getValue() != TargetRoll.CHECK_FALSE && entity.canFall()) {
+                gameManager.doSkillCheckInPlace(entity, rollTarget);
+            }
+        } else {
+            logger.error("Unexpected null last step! Entity: {}; MoveType: {}; md: {}", entity.getId(),
+                  overallMoveType, md);
+        }
+        
+        // if we moved a hex with a destroyed leg, but it was not a run
+        rollTarget = Game.rulesManager.getRulesPSR().checkWalkWithLegDestroyed(entity,
+              overallMoveType, md.getHexesMoved());
         if (rollTarget.getValue() != TargetRoll.CHECK_FALSE && entity.canFall()) {
             gameManager.doSkillCheckInPlace(entity, rollTarget);
         }
@@ -2701,11 +2714,11 @@ class MovePathHandler extends AbstractTWRuleHandler {
 
             if (rollTarget.getValue() != TargetRoll.CHECK_FALSE) {
                 // Unless we're an ICE- or fuel cell-powered IndustrialMek,
-                // standing up builds heat.
+                // standing up may build heat.
                 if ((entity instanceof Mek) && entity.hasEngine() && !(((Mek) entity).isIndustrial()
                       && ((entity.getEngine().getEngineType() == Engine.COMBUSTION_ENGINE)
                       || (entity.getEngine().getEngineType() == Engine.FUEL_CELL)))) {
-                    entity.heatBuildup += 1;
+                    entity.heatBuildup += Game.rulesManager.getRulesHeat().standingHeat();
                 }
                 entity.setProne(false);
                 // entity.setHullDown(false);
@@ -2800,7 +2813,7 @@ class MovePathHandler extends AbstractTWRuleHandler {
                               entity.getId(), target.getTargetType(),
                               target.getId(), target.getPosition());
                         entity.setDisplacementAttack(caa);
-                        getGame().addCharge(caa);
+                        getGame().addDisplacementAttack(caa);
                         charge = caa;
                     } else {
                         String message = "Illegal charge!! " + entity.getDisplayName() +
@@ -2819,7 +2832,7 @@ class MovePathHandler extends AbstractTWRuleHandler {
                               target.getId(), target.getPosition());
                         entity.setDisplacementAttack(raa);
                         entity.setRamming(true);
-                        getGame().addCharge(raa);
+                        getGame().addDisplacementAttack(raa);
                         charge = raa;
                     } else {
                         String message = "Illegal charge!! " + entity.getDisplayName()
@@ -2875,8 +2888,9 @@ class MovePathHandler extends AbstractTWRuleHandler {
                           targetType, targetID,
                           step.getPosition());
                     entity.setDisplacementAttack(daa);
-                    entity.setElevation(step.getElevation());
-                    getGame().addCharge(daa);
+                    entity.setElevation(Game.rulesManager.getRulesMovement().getDFAElevation(entity.getGame(),
+                                entity.getId(), targetID, step));
+                    getGame().addDisplacementAttack(daa);
                     charge = daa;
 
                 } else {

@@ -46,7 +46,6 @@ import megamek.common.compute.ComputeSideTable;
 import megamek.common.equipment.AmmoType;
 import megamek.common.game.Game;
 import megamek.common.loaders.EntityLoadingException;
-import megamek.common.options.OptionsConstants;
 import megamek.common.units.Entity;
 import megamek.common.units.IBuilding;
 import megamek.common.weapons.DamageType;
@@ -140,12 +139,9 @@ public class ACAPHandler extends ACWeaponHandler {
             if (bDirect) {
                 critModifier += toHit.getMoS() / 3;
             }
-            // PLAYTEST3 new AP values
-            if (!game.getOptions().booleanOption(OptionsConstants.PLAYTEST_3)) {
-                hit.makeArmorPiercing(ammoType, critModifier);
-            } else {
-                hit.makeArmorPiercingPlaytest(ammoType, critModifier);
-            }
+
+            hit.makeArmorPiercing(ammoType, critModifier);
+
             vPhaseReport.addAll(gameManager.damageEntity(entityTarget, hit, nDamage, false,
                   attackingEntity.getSwarmTargetId() == entityTarget.getId() ? DamageType.IGNORE_PASSENGER : damageType,
                   false, false, throughFront, underWater));

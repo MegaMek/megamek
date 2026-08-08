@@ -51,6 +51,7 @@ import megamek.common.battleArmor.BattleArmor;
 import megamek.common.enums.GamePhase;
 import megamek.common.equipment.enums.BombType;
 import megamek.common.equipment.enums.MiscTypeFlag;
+import megamek.common.game.Game;
 import megamek.common.interfaces.PhaseUpdated;
 import megamek.common.interfaces.RoundUpdated;
 import megamek.common.options.IGameOptions;
@@ -93,7 +94,6 @@ public class Mounted<T extends EquipmentType> implements Serializable, RoundUpda
     private boolean hotLoaded = false; // Hot loading for ammoType
     private boolean repairable = true; // can the equipment mounted here be
     // repaired
-    // PLAYTEST3 entries
     private boolean autocannonHit = false;
     private boolean AMSused = false;
     private boolean mekTurretMounted = false; // is this mounted in a mek turret
@@ -486,7 +486,6 @@ public class Mounted<T extends EquipmentType> implements Serializable, RoundUpda
     public void newRound(int roundNumber) {
         setUsedThisRound(false);
 
-        // PLAYTEST3 reset AMS usage value
         setAMSused(false);
 
         // A Directional Torso Mount may change facing once per turn (BMM p.83); the chosen facing itself
@@ -504,10 +503,11 @@ public class Mounted<T extends EquipmentType> implements Serializable, RoundUpda
     public void newPhase(GamePhase phase) {
 
         jammed = jammedThisPhase;
-
-        // PLAYTEST3 reset shield mode at the beginning of the phase
-        if (entity.getGame().getOptions().booleanOption(OptionsConstants.PLAYTEST_3)) {
-            if ((type instanceof MiscType) && ((MiscType) type).isShield()) {
+        
+        if ((type instanceof MiscType) && ((MiscType) type).isShield() && Game.rulesManager.getRulesPhysical().phaseChangeShield() &&
+        !this.curMode().equals(MiscType.S_NO_SHIELD)) {
+            if (!this.getEntity().isCharging() || phase.isEnd())
+            {
                 this.setMode(MiscType.S_NO_SHIELD);
             }
         }
@@ -951,7 +951,11 @@ public class Mounted<T extends EquipmentType> implements Serializable, RoundUpda
     }
 
     public void setPendingDump(boolean b) {
-        m_bPendingDump = b;
+        if (Game.rulesManager.getRulesGame().ammoDumping()) {
+            m_bPendingDump = b;
+        } else  {
+            m_bPendingDump = false;
+        }
     }
 
     public boolean isDumping() {
@@ -959,7 +963,11 @@ public class Mounted<T extends EquipmentType> implements Serializable, RoundUpda
     }
 
     public void setDumping(boolean b) {
-        m_bDumping = b;
+        if (Game.rulesManager.getRulesGame().ammoDumping()) {
+            m_bDumping = b;
+        } else  {
+            m_bDumping = false;
+        }
     }
 
     /**
@@ -1575,7 +1583,6 @@ public class Mounted<T extends EquipmentType> implements Serializable, RoundUpda
         return repairable;
     }
 
-    // PLAYTEST3 set and get autocannon hit
     public void setAutocannonHit(boolean acHit) {
         this.autocannonHit = acHit;
     }

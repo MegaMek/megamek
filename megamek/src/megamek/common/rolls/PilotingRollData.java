@@ -1,6 +1,6 @@
 /*
  * Copyright (C) 2000-2002 Ben Mazur (bmazur@sev.org)
- * Copyright (C) 2002-2025 The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2002-2026 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -41,6 +41,7 @@ public class PilotingRollData extends TargetRoll {
     @Serial
     private static final long serialVersionUID = -8965684775619336323L;
     private final int entityId;
+    private int location = 0;
 
     public PilotingRollData(int entityId) {
         this.entityId = entityId;
@@ -49,6 +50,12 @@ public class PilotingRollData extends TargetRoll {
     public PilotingRollData(int entityId, int value, String desc) {
         super(value, desc);
         this.entityId = entityId;
+    }
+    
+    public PilotingRollData(int entityId, int value, String desc, int location) {
+        super(value, desc);
+        this.entityId = entityId;
+        this.location = location;
     }
 
     public PilotingRollData(int entityId, int value, String desc, boolean cumulative) {
@@ -69,5 +76,8 @@ public class PilotingRollData extends TargetRoll {
     public int getEntityId() {
         return entityId;
     }
+    
+    // Return the location
+    public int getLocation() { return location; }
 
 }

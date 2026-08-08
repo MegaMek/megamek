@@ -1,6 +1,6 @@
 /*
  * Copyright (c) 2005 - Ben Mazur (bmazur@sev.org)
- * Copyright (C) 2007-2025 The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2007-2026 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -225,27 +225,10 @@ public class PPCHandler extends EnergyWeaponHandler {
         }
         // resolve roll for charged capacitor
         if (chargedCapacitor != 0) {
-            if (roll.getIntValue() == 2) {
-                Report r = new Report(3178);
-                r.subject = attackingEntity.getId();
-                r.indent();
+            Report r = Game.rulesManager.getRulesWeapons().checkPPCCapacitor(roll.getIntValue(), attackingEntity,
+                  weapon);
+            if (r != null) {
                 vPhaseReport.add(r);
-                // Oops, we ruined our day...
-                int wLocation = weapon.getLocation();
-                weapon.setHit(true);
-                for (int i = 0; i < attackingEntity.getNumberOfCriticalSlots(wLocation); i++) {
-                    CriticalSlot slot = attackingEntity.getCritical(wLocation, i);
-                    if ((slot == null)
-                          || (slot.getType() == CriticalSlot.TYPE_SYSTEM)) {
-                        continue;
-                    }
-                    // Only one Crit needs to be damaged.
-                    Mounted<?> mounted = slot.getMount();
-                    if (mounted.equals(weapon)) {
-                        slot.setDestroyed(true);
-                        break;
-                    }
-                }
             }
         }
         return false;

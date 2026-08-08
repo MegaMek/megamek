@@ -1,6 +1,6 @@
 /*
  * Copyright (C) 2005 Ben Mazur (bmazur@sev.org)
- * Copyright (C) 2012-2025 The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2012-2026 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -56,6 +56,8 @@ import megamek.common.units.IBuilding;
 import megamek.common.units.Mek;
 import megamek.common.weapons.handlers.AmmoBayWeaponHandler;
 import megamek.common.weapons.ppc.clan.CLPlasmaCannon;
+import megamek.common.weapons.ppc.innerSphere.ISHeavyPlasmaRifle;
+import megamek.common.weapons.ppc.innerSphere.ISLightPlasmaRifle;
 import megamek.common.weapons.ppc.innerSphere.ISPlasmaRifle;
 import megamek.server.totalWarfare.TWGameManager;
 
@@ -95,6 +97,10 @@ public class PlasmaBayWeaponHandler extends AmmoBayWeaponHandler {
                     if (bayWType instanceof ISPlasmaRifle) {
                         extraHeat += Compute.d6();
                     } else if (bayWType instanceof CLPlasmaCannon) {
+                        extraHeat += Compute.d6(2);
+                    } else if (bayWType instanceof ISLightPlasmaRifle) {
+                        extraHeat += (int) Math.ceil(Compute.d6(1) / 2.0);
+                    } else if (bayWType instanceof ISHeavyPlasmaRifle) {
                         extraHeat += Compute.d6(2);
                     }
                 }

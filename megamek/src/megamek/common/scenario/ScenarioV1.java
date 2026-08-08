@@ -397,7 +397,7 @@ public class ScenarioV1 extends HashMap<String, Collection<String>> implements S
         }
 
         if (AmmoType.canDeliverMinefield(newAmmoType) &&
-              !game.getOptions().booleanOption(OptionsConstants.ADVANCED_MINEFIELDS)) {
+              !Game.rulesManager.getRulesGame().allowMinefields(game.getOptions().booleanOption(OptionsConstants.ADVANCED_MINEFIELDS))) {
             LOGGER.warn("Minefield-creating ammo type {} forbidden by game rules", newAmmoType.getName());
             return null;
         }

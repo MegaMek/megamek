@@ -1,6 +1,5 @@
 /*
- * Copyright (C) 2005 Ben Mazur (bmazur@sev.org)
- * Copyright (C) 2012-2025 The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2026 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -31,41 +30,31 @@
  * <https://www.xbox.com/en-US/developers/rules> and it is not endorsed by or
  * affiliated with Microsoft.
  */
+package megamek.common.rules.totalwarfare;
 
-package megamek.common.weapons.handlers.artillery;
+import megamek.common.rules.RulesArtillery;
+import megamek.common.rules.core.CoreRulesArtillery;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.CsvSource;
 
-import java.io.Serial;
+import static org.junit.jupiter.api.Assertions.*;
 
-import megamek.common.ToHitData;
-import megamek.common.actions.WeaponAttackAction;
-import megamek.common.enums.GamePhase;
-import megamek.common.game.Game;
-import megamek.common.loaders.EntityLoadingException;
-import megamek.server.totalWarfare.TWGameManager;
+class TWRulesArtilleryTest {
 
-/**
- * @author Sebastian Brocks
- * @since Sep 24, 2004
- */
-public class ArtilleryBayWeaponDirectFireHandler extends ArtilleryBayWeaponIndirectFireHandler {
-    @Serial
-    private static final long serialVersionUID = 7116191142234200717L;
+    RulesArtillery rules = new TWRulesArtillery();
 
-    /**
-     *
-     */
-    public ArtilleryBayWeaponDirectFireHandler(ToHitData t, WeaponAttackAction w, Game g, TWGameManager m)
-          throws EntityLoadingException {
-        super(t, w, g, m);
+    @BeforeEach
+    void setUp() {
     }
 
-    /*
-     * (non-Javadoc)
-     *
-     * @see megamek.common.weapons.handlers.AttackHandler#cares(int)
-     */
-    @Override
-    public boolean cares(GamePhase phase) {
-        return phase.isFiring();
+    @ParameterizedTest
+    @CsvSource({ "1, true, false, 4", "17, true, false, 4", "18, true, false, 4",   // Direct fire
+                 "17, false, false, 4", "18, false, false, 7",                      // Indirect fire
+                 "10, true, true, 3"                                                // Flak
+    })
+    void computeArtilleryBaseMod(int distance, boolean direct, boolean flak, int expected) {
+        assertEquals(expected, rules.computeArtilleryBaseMod(distance, direct, flak));
     }
 }

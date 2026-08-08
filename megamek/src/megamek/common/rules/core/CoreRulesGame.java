@@ -33,7 +33,63 @@ package megamek.common.rules.core;
  */
 
 
+import megamek.common.annotations.Nullable;
+import megamek.common.enums.GamePhase;
 import megamek.common.rules.RulesGame;
+import megamek.common.units.Entity;
 
 public class CoreRulesGame extends RulesGame {
+
+    /**
+     * {@inheritDoc}
+     * Ammo dumping is not in Core
+     */
+    @Override
+    public boolean ammoDumping() {
+        return false;
+    }
+
+    /**
+     * {@inheritDoc}
+     * Immobile not eligible in movement Core p.49
+     * RAC Unjamming does not prevent usage (only limits movement) Core p.183
+     * Finding a club can use in physical phase Core p.79
+     */
+    @Override
+    public boolean eligibleForPhase(Entity entity, @Nullable GamePhase phase) {
+        if (phase != null) {
+            if (entity.isImmobile() && phase.isMovement()) {
+                return false;
+            }
+            if (phase.isPhysical() && (entity.isCharging() || entity.isMakingDfa())) {
+                return false;
+            }
+        }
+        return true;
+    }
+
+    /**
+     * {@inheritDoc}
+     * Front loaded initiative Core p.41
+     */
+    @Override
+    public int getInitiativeOrder(int[] num_turns, int index, int min, boolean frontLoadOption) {
+        return ((int) Math.ceil(((double) num_turns[index]) / (double) min));
+    }
+    
+    /**
+     * {@inheritDoc}
+     * No BV boost for semi-guided or Arrow IV homing (Not present in core)
+     */
+    @Override
+    public boolean tagBVBump() {
+        return false;
+    }
+
+    /**
+     * {@inheritDoc}
+     * Core rules allows minefields
+     */
+    @Override
+    public boolean allowMinefields(boolean toMinefields) { return true; }
 }

@@ -100,16 +100,13 @@ public class VehicleFlamerHandler extends AmmoWeaponHandler {
               && currentWeaponMode.equals(Weapon.MODE_FLAMER_HEAT);
         boolean flamerDoesOnlyDamage = currentWeaponMode != null && currentWeaponMode.equals(Weapon.MODE_FLAMER_DAMAGE);
 
-        if (bmmFlamerDamage || flamerDoesOnlyDamage || (flamerDoesHeatOnlyDamage && !entityTarget.tracksHeat())) {
-            // PLAYTEST3 Heat-dissipating armor reduces damage
-            if (game.getOptions().booleanOption(OptionsConstants.PLAYTEST_3)) {
-                if (hit != null) {
-                    hit.setHeatWeapon(true);
-                }
+        if (Game.rulesManager.getRulesWeapons().flamerHeatAndDamage(bmmFlamerDamage) || flamerDoesOnlyDamage || (flamerDoesHeatOnlyDamage && !entityTarget.tracksHeat())) {
+            if (hit != null) {
+                hit.setHeatWeapon(true);
             }
             super.handleEntityDamage(entityTarget, vPhaseReport, bldg, hits, nCluster, bldgAbsorbs);
 
-            if (bmmFlamerDamage && entityTarget.tracksHeat()) {
+            if (Game.rulesManager.getRulesWeapons().flamerHeatAndDamage(bmmFlamerDamage) && entityTarget.tracksHeat()) {
                 FlamerHandlerHelper.doHeatDamage(entityTarget, vPhaseReport, weaponType, subjectId, hit);
             }
         } else if (flamerDoesHeatOnlyDamage) {

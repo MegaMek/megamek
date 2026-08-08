@@ -1,6 +1,6 @@
 package megamek.common.rules.totalwarfare;
 /*
- * Copyright (C) 2026 The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2004-2026 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -33,8 +33,66 @@ package megamek.common.rules.totalwarfare;
  */
 
 
-import megamek.common.rules.core.CoreRulesGame;
+import megamek.common.annotations.Nullable;
+import megamek.common.enums.GamePhase;
+import megamek.common.rules.RulesGame;
+import megamek.common.units.Entity;
 
-public class TWRulesGame extends CoreRulesGame {
+public class TWRulesGame extends RulesGame {
 
+    /**
+     * Ammo dumping is allowed
+     *
+     * @return true if ammo dumping is allowed
+     */
+    @Override
+    public boolean ammoDumping() { return true; }
+
+
+    /**
+     * Is an entity eligible for a phase
+     * @param entity the unit being considered
+     * @param phase what phase it is in
+     * @return is it eligible
+     */
+    @Override
+    public boolean eligibleForPhase(Entity entity, @Nullable GamePhase phase) {
+        if (entity.isUnjammingRAC() || entity.isFindingClub()) {
+            return false;
+        }
+        return true;
+    }
+
+    /**
+     * Return the number of units to move.
+     * Only do front-loaded init if the option is selected
+     *
+     * @param num_turns array of normal turns
+     * @param index the current index
+     * @param min the minimum value
+     * @param frontLoadOption true if front load option is enabled
+     * @return the initiative order
+     */
+    @Override
+    public int getInitiativeOrder(int[] num_turns, int index, int min, boolean frontLoadOption) {
+        return frontLoadOption ? ((int) Math.ceil(((double) num_turns[index]) / (double) min)) :
+              (num_turns[index] / min);
+    }
+
+    /**
+     * TAG can increase BV when Semi-guided or homing arrow IV is present
+     *
+     * @return true if TAG increases battle value
+     */
+    @Override
+    public boolean tagBVBump() {
+        return true;
+    }
+
+    /**
+     * {@inheritDoc}
+     * Allow only if TO Minefields is enabled
+     */
+    @Override
+    public boolean allowMinefields(boolean toMinefields) { return toMinefields; }
 }

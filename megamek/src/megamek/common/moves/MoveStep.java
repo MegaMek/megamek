@@ -69,6 +69,7 @@ import megamek.common.options.OptionsConstants;
 import megamek.common.pathfinder.CachedEntityState;
 import megamek.common.planetaryConditions.Atmosphere;
 import megamek.common.planetaryConditions.PlanetaryConditions;
+import megamek.common.rules.core.CoreRulesManager;
 import megamek.common.units.*;
 import megamek.logging.MMLogger;
 
@@ -704,40 +705,14 @@ public class MoveStep implements Serializable {
             calcMovementCostFor(game, prev, cachedEntityState);
         }
         // check for water
-        // PLAYTEST2 water changes
-        if (game.getOptions().booleanOption(OptionsConstants.PLAYTEST_2)) {
-            if (!isPavementStep() &&
-                  (destHex.terrainLevel(Terrains.WATER) > 0) &&
-                  !(destHex.containsTerrain(Terrains.ICE) && (elevation >= 0)) &&
-                  !(destHex.terrainLevel(Terrains.BRIDGE_ELEV) == elevation) &&
-                  (entity.getMovementMode() != EntityMovementMode.HOVER) &&
-                  (entity.getMovementMode() != EntityMovementMode.NAVAL) &&
-                  (entity.getMovementMode() != EntityMovementMode.HYDROFOIL) &&
-                  (entity.getMovementMode() != EntityMovementMode.INF_UMU) &&
-                  (entity.getMovementMode() != EntityMovementMode.SUBMARINE) &&
-                  (entity.getMovementMode() != EntityMovementMode.VTOL) &&
-                  (entity.getMovementMode() != EntityMovementMode.WIGE) &&
-                  (entity.getMovementMode() != EntityMovementMode.BIPED) &&
-                  (entity.getMovementMode() != EntityMovementMode.QUAD) &&
-                  (entity.getMovementMode() != EntityMovementMode.TRIPOD) &&
-                  !cachedEntityState.hasWorkingMisc(MiscType.F_FULLY_AMPHIBIOUS)) {
-                setRunProhibited(true);
-            }
-        } else {
-            if (!isPavementStep() &&
-                  (destHex.terrainLevel(Terrains.WATER) > 0) &&
-                  !(destHex.containsTerrain(Terrains.ICE) && (elevation >= 0)) &&
-                  !(destHex.terrainLevel(Terrains.BRIDGE_ELEV) == elevation) &&
-                  (entity.getMovementMode() != EntityMovementMode.HOVER) &&
-                  (entity.getMovementMode() != EntityMovementMode.NAVAL) &&
-                  (entity.getMovementMode() != EntityMovementMode.HYDROFOIL) &&
-                  (entity.getMovementMode() != EntityMovementMode.INF_UMU) &&
-                  (entity.getMovementMode() != EntityMovementMode.SUBMARINE) &&
-                  (entity.getMovementMode() != EntityMovementMode.VTOL) &&
-                  (entity.getMovementMode() != EntityMovementMode.WIGE) &&
-                  !cachedEntityState.hasWorkingMisc(MiscType.F_FULLY_AMPHIBIOUS)) {
-                setRunProhibited(true);
-            }
+        if (Game.rulesManager.getRulesMovement().cannotRunInWater(entity.getMovementMode(),
+                                                                  cachedEntityState.hasWorkingMisc(MiscType.F_FULLY_AMPHIBIOUS))
+              && !isPavementStep()
+              && (destHex.terrainLevel(Terrains.WATER) > 0)
+              && !(destHex.containsTerrain(Terrains.ICE) && (elevation >= 0))
+              &&
+              !(destHex.terrainLevel(Terrains.BRIDGE_ELEV) == elevation)) {
+            setRunProhibited(true);
         }
 
         if (entity.getMovedBackwards() && !entity.hasQuirk(OptionsConstants.QUIRK_POS_POWER_REVERSE)) {
@@ -876,8 +851,8 @@ public class MoveStep implements Serializable {
 
         if (isClimbing) {
             LOGGER.debug("[CLIMB-TRACE] compile FINAL: type={}, movementType={}, mp={}, mpUsed={}, " +
-                  "elevation={}, position={}, isClimbing={}, isStackingViolation={}, terrainInvalid={}, " +
-                  "isLegalEndPos={}",
+                        "elevation={}, position={}, isClimbing={}, isStackingViolation={}, terrainInvalid={}, " +
+                        "isLegalEndPos={}",
                   type, movementType, mp, mpUsed, elevation, position,
                   isClimbing, isStackingViolation, terrainInvalid, isLegalEndPos());
         }
@@ -1099,13 +1074,7 @@ public class MoveStep implements Serializable {
                   (nMove != EntityMovementMode.HYDROFOIL) &&
                   (nMove != EntityMovementMode.SUBMARINE) &&
                   (nMove != EntityMovementMode.INF_UMU)) {
-                // PLAYTEST2 Water changes
-                if (game.getOptions().booleanOption(OptionsConstants.PLAYTEST_2)) {
-                    if (nMove != EntityMovementMode.BIPED && nMove != EntityMovementMode.QUAD && nMove !=
-                          EntityMovementMode.TRIPOD) {
-                        isRunProhibited = true;
-                    }
-                } else {
+                if (Game.rulesManager.getRulesMovement().cannotRunInWater(nMove, false)) {
                     isRunProhibited = true;
                 }
             }
@@ -1286,7 +1255,7 @@ public class MoveStep implements Serializable {
             if (isClimbing) {
                 LOGGER.debug("[CLIMB-TRACE] getMovementType: isLastStep={}, isLegalEndPos=false, " +
                             "overriding {} to MOVE_ILLEGAL, isStackingViolation={}, terrainInvalid={}, " +
-                      "isJumping={}, distance={}, hasEverUnloaded={}, position={}, elevation={}",
+                            "isJumping={}, distance={}, hasEverUnloaded={}, position={}, elevation={}",
                       isLastStep, movementType, isStackingViolation, terrainInvalid,
                       isJumping(), distance, hasEverUnloaded, position, elevation);
             }
@@ -2448,7 +2417,7 @@ public class MoveStep implements Serializable {
                 // but within run and running is legal
                 if (isClimbing) {
                     LOGGER.info("compileIllegal: climbing step classified as RUN! " +
-                          "mpUsed={}, walkMP={}, runMPMax={}, isRunProhibited={}, isRunAllowed={}",
+                                "mpUsed={}, walkMP={}, runMPMax={}, isRunProhibited={}, isRunAllowed={}",
                           getMpUsed(), tmpWalkMP, runMPMax, isRunProhibited, isRunAllowed());
                 }
 
@@ -2640,7 +2609,7 @@ public class MoveStep implements Serializable {
         if ((stepType == MoveStepType.GET_UP) || (stepType == MoveStepType.CAREFUL_STAND)) {
             LOGGER.debug("[STAND-TRACE] {} after checks: movementType={}, isProne={}, " +
                         "isClimbing={}, entity.isClimbing={}, climbMode={}, elevation={}, " +
-                  "entity.elevation={}, entity.position={}, entity.mpUsed={}",
+                        "entity.elevation={}, entity.position={}, entity.mpUsed={}",
                   stepType, movementType, isProne(), isClimbing, entity.isClimbing(),
                   climbMode, elevation, entity.getElevation(), entity.getPosition(), entity.mpUsed);
         }
@@ -3010,7 +2979,7 @@ public class MoveStep implements Serializable {
         ) {
             if (isClimbing) {
                 LOGGER.info("compileIllegal: climbing step overridden to MOVE_ILLEGAL! " +
-                      "movementPossible={}, movementType was={}, prevEl={}",
+                            "movementPossible={}, movementType was={}, prevEl={}",
                       movementPossible, movementType, prev.getElevation());
             }
             if ((stepType == MoveStepType.GET_UP) || (stepType == MoveStepType.CAREFUL_STAND)) {
@@ -3340,12 +3309,7 @@ public class MoveStep implements Serializable {
                               ((entity instanceof Mek) || (entity instanceof ProtoMek))) {
                             mp += 2;
                         } else {
-                            // PLAYTEST2 Water changes - MP values
-                            if (game.getOptions().booleanOption(OptionsConstants.PLAYTEST_2)) {
-                                mp += 2;
-                            } else {
-                                mp += 3;
-                            }
+                            mp += Game.rulesManager.getRulesMovement().getUnderwaterMPCost();
                         }
                     }
                 }
@@ -3360,7 +3324,8 @@ public class MoveStep implements Serializable {
         // non-WIGEs pay for elevation differences
         if ((nSrcEl != nDestEl) && (moveMode != EntityMovementMode.WIGE)) {
             int deltaElevation = Math.abs(nSrcEl - nDestEl);
-            if (isMek && (deltaElevation > 2)) {
+            if (isMek && (deltaElevation > Game.rulesManager.getRulesTerrain().getMaxElevationChangeAllowed(srcHex,
+                  destHex, getEntity().getMaxElevationChange()))) {
                 LOGGER.debug("calcMovementCostFor elevation: prevEl={}, elevation={}, " +
                             "srcHex.level={}, destHex.level={}, nSrcEl={}, nDestEl={}, deltaElevation={}",
                       prevEl, elevation, srcHex.getLevel(), destHex.getLevel(),
@@ -3368,7 +3333,8 @@ public class MoveStep implements Serializable {
             }
             if (game.getOptions().booleanOption(OptionsConstants.ADVANCED_GROUND_MOVEMENT_TAC_OPS_LEAPING) &&
                   isMek &&
-                  (deltaElevation > 2) &&
+                  (deltaElevation > Game.rulesManager.getRulesTerrain().getMaxElevationChangeAllowed(srcHex,
+                        destHex, getEntity().getMaxElevationChange())) &&
                   (nDestEl < nSrcEl)) {
                 // leaping (moving down more than 2 hexes) always costs 4 mp
                 // regardless of anything else
@@ -3429,10 +3395,12 @@ public class MoveStep implements Serializable {
                 // non-flying Infantry and ground vehicles are charged double.
                 deltaElevation *= 2;
             }
+            int elevationCost = Game.rulesManager.getRulesTerrain().getRoadElevationCostDifference(srcHex, destHex,
+                  deltaElevation);
             if (entity.hasAbility(OptionsConstants.PILOT_TM_MOUNTAINEER)) {
-                mp += deltaElevation - 1;
+                mp += Math.max(0, deltaElevation - 1 - elevationCost);
             } else {
-                mp += deltaElevation;
+                mp += Math.max(0, deltaElevation - elevationCost);
             }
         }
 
@@ -3641,18 +3609,19 @@ public class MoveStep implements Serializable {
             }
         }
 
-        // Can't back up across an elevation change.
-        // PLAYTEST2 Enabling backwards up elevation changes
+        // Can we backup up hills?
+        boolean bBackwardsElevationChange =
+              Game.rulesManager.getRulesMovement()
+                    .enableBackwardsElevationChange(game.getOptions()
+                          .booleanOption(OptionsConstants.ADVANCED_GROUND_MOVEMENT_TAC_OPS_WALK_BACKWARDS), entity);
         if (!(entity instanceof VTOL) &&
               isThisStepBackwards() &&
               !(isJumping() && isUsingMekJumpBooster) &&
               (((destAlt != srcAlt)
                     &&
-                    !game.getOptions().booleanOption(OptionsConstants.ADVANCED_GROUND_MOVEMENT_TAC_OPS_WALK_BACKWARDS)
-                    && !game.getOptions().booleanOption(OptionsConstants.PLAYTEST_2))
+                    !bBackwardsElevationChange)
                     ||
-                    ((game.getOptions().booleanOption(OptionsConstants.ADVANCED_GROUND_MOVEMENT_TAC_OPS_WALK_BACKWARDS)
-                          || game.getOptions().booleanOption(OptionsConstants.PLAYTEST_2))
+                    (bBackwardsElevationChange
                           &&
                           (Math.abs(destAlt - srcAlt) > 1)))) {
             return false;
@@ -3757,9 +3726,10 @@ public class MoveStep implements Serializable {
               (movementType == EntityMovementType.MOVE_VTOL_WALK) ||
               (movementType == EntityMovementType.MOVE_VTOL_RUN) ||
               (movementType == EntityMovementType.MOVE_VTOL_SPRINT);
-
+        
         if ((movementType != EntityMovementType.MOVE_JUMP) && !isVTOLFlight) {
-            int maxDown = entity.getMaxElevationDown(srcAlt);
+            int maxDown = Game.rulesManager.getRulesTerrain().getMaxElevationChangeAllowed(srcHex, destHex,
+                  entity.getMaxElevationDown(srcAlt));
             if (movementMode == EntityMovementMode.WIGE &&
                   (srcEl == 0 ||
                         (srcHex.containsTerrain(Terrains.BLDG_ELEV) &&
@@ -3819,7 +3789,7 @@ public class MoveStep implements Serializable {
         boolean isDownCliff = !src.equals(dest) &&
               srcHex.hasCliffTopTowards(destHex) &&
               (stepHeight == -1 || stepHeight == -2);
-
+        
         // For vehicles exc. VTOL, WIGE, upward Sheer Cliffs is forbidden
         // QuadVees in vehicle mode drive as vehicles, IO p.133
         if ((vehicleAffectedByCliff || quadVeeVehicleMode) && isUpCliff && !isPavementStep) {
@@ -3852,9 +3822,9 @@ public class MoveStep implements Serializable {
               !(entity instanceof VTOL) &&
               !(isJumping() && isUsingMekJumpBooster)) {
             // Generally forbidden without TacOps Expanded Backward Movement p.22
-            // PLAYTEST2 allow backwards up elevation changes
-            if (!game.getOptions().booleanOption(OptionsConstants.ADVANCED_GROUND_MOVEMENT_TAC_OPS_WALK_BACKWARDS)
-                  && !game.getOptions().booleanOption(OptionsConstants.PLAYTEST_2)) {
+            if (!Game.rulesManager.getRulesMovement()
+                  .enableBackwardsElevationChange(game.getOptions()
+                        .booleanOption(OptionsConstants.ADVANCED_GROUND_MOVEMENT_TAC_OPS_WALK_BACKWARDS), entity)) {
                 return false;
             }
             // Even with Expanded Backward Movement, ...
@@ -3872,7 +3842,6 @@ public class MoveStep implements Serializable {
                   (!src.equals(dest))) {
                 return false;
             }
-            // May not move across more than 1 level
             if (Math.abs(destAlt - srcAlt) > 1) {
                 return false;
             }
@@ -3884,51 +3853,19 @@ public class MoveStep implements Serializable {
         }
 
         // Can't run into water unless hovering, naval, first step, using a
-        // bridge, or fly.
-        // PLAYTEST2 water changes
-        if (game.getOptions().booleanOption(OptionsConstants.PLAYTEST_2)) {
-            if (((movementType == EntityMovementType.MOVE_RUN) ||
-                  (movementType == EntityMovementType.MOVE_SPRINT) ||
-                  (movementType == EntityMovementType.MOVE_VTOL_RUN) ||
-                  (movementType == EntityMovementType.MOVE_VTOL_SPRINT)) &&
-                  (nMove != EntityMovementMode.HOVER) &&
-                  (nMove != EntityMovementMode.NAVAL) &&
-                  (nMove != EntityMovementMode.HYDROFOIL) &&
-                  (nMove != EntityMovementMode.SUBMARINE) &&
-                  (nMove != EntityMovementMode.INF_UMU) &&
-                  (nMove != EntityMovementMode.VTOL) &&
-                  (nMove != EntityMovementMode.WIGE) &&
-                  (nMove != EntityMovementMode.BIPED) &&
-                  (nMove != EntityMovementMode.QUAD) &&
-                  (nMove != EntityMovementMode.TRIPOD) &&
-                  !cachedEntityState.hasWorkingMisc(MiscType.F_FULLY_AMPHIBIOUS) &&
-                  (destHex.terrainLevel(Terrains.WATER) > 0) &&
-                  !(destHex.containsTerrain(Terrains.ICE) && (elevation >= 0)) &&
-                  !dest.equals(entity.getPosition()) &&
-                  !isFirstStep() &&
-                  !isPavementStep()) {
-                return false;
-            }
-        } else {
-            if (((movementType == EntityMovementType.MOVE_RUN) ||
-                  (movementType == EntityMovementType.MOVE_SPRINT) ||
-                  (movementType == EntityMovementType.MOVE_VTOL_RUN) ||
-                  (movementType == EntityMovementType.MOVE_VTOL_SPRINT)) &&
-                  (nMove != EntityMovementMode.HOVER) &&
-                  (nMove != EntityMovementMode.NAVAL) &&
-                  (nMove != EntityMovementMode.HYDROFOIL) &&
-                  (nMove != EntityMovementMode.SUBMARINE) &&
-                  (nMove != EntityMovementMode.INF_UMU) &&
-                  (nMove != EntityMovementMode.VTOL) &&
-                  (nMove != EntityMovementMode.WIGE) &&
-                  !cachedEntityState.hasWorkingMisc(MiscType.F_FULLY_AMPHIBIOUS) &&
-                  (destHex.terrainLevel(Terrains.WATER) > 0) &&
-                  !(destHex.containsTerrain(Terrains.ICE) && (elevation >= 0)) &&
-                  !dest.equals(entity.getPosition()) &&
-                  !isFirstStep() &&
-                  !isPavementStep()) {
-                return false;
-            }
+        // bridge, fly, or if the rules say meks can.
+        if (((movementType == EntityMovementType.MOVE_RUN) ||
+              (movementType == EntityMovementType.MOVE_SPRINT) ||
+              (movementType == EntityMovementType.MOVE_VTOL_RUN) ||
+              (movementType == EntityMovementType.MOVE_VTOL_SPRINT)) &&
+              Game.rulesManager.getRulesMovement().cannotRunInWater(nMove,
+                                                                    cachedEntityState.hasWorkingMisc(MiscType.F_FULLY_AMPHIBIOUS)) &&
+              (destHex.terrainLevel(Terrains.WATER) > 0) &&
+              !(destHex.containsTerrain(Terrains.ICE) && (elevation >= 0)) &&
+              !dest.equals(entity.getPosition()) &&
+              !isFirstStep() &&
+              !isPavementStep()) {
+            return false;
         }
 
         // ugh, stacking checks. well, maybe we're immune! Also, note that these stacking checks are for moving
@@ -4173,7 +4110,7 @@ public class MoveStep implements Serializable {
         if ((type != MoveStepType.DFA) && !entity.isElevationValid(elevation, destHex)) {
             LOGGER.debug("[CLIMB-TRACE] isMovementPossible: elevation NOT valid! elevation={}, " +
                         "destHex={}, destHex.level={}, destHex.ceiling={}, destHex.floor={}, " +
-                  "isClimbing={}, entity={}",
+                        "isClimbing={}, entity={}",
                   elevation, dest, destHex.getLevel(), destHex.ceiling(), destHex.floor(),
                   isClimbing, entity.getDisplayName());
             if (isJumping()) {
@@ -4247,9 +4184,9 @@ public class MoveStep implements Serializable {
      * the surface.
      *
      * <p>Defensive against a deserialized MoveStep whose transient entity reference exists but whose
-     * {@code Entity.getGame()} hasn't been re-bound on the server. Hit by GameDatasetLogger →
-     * SharedUtility.getPSRList while logging a freshly-received path. Falls back to raw elevation
-     * when game/hex aren't reachable; the dataset metric is best-effort, not authoritative.</p>
+     * {@code Entity.getGame()} hasn't been re-bound on the server. Hit by GameDatasetLogger → SharedUtility.getPSRList
+     * while logging a freshly-received path. Falls back to raw elevation when game/hex aren't reachable; the dataset
+     * metric is best-effort, not authoritative.</p>
      */
     public int getClearance() {
         Game game = (entity != null) ? entity.getGame() : null;

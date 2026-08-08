@@ -150,6 +150,10 @@ class ComputeToHitIsImpossible {
             return null;
         }
 
+        if (los.isShotBlockedByWater()) {
+            return Messages.getString("WeaponAttackAction.WaterBlocksShot");
+        }
+
         // got ammo?
         if (usesAmmo && ((ammo == null) || (ammo.getUsableShotsLeft() == 0))) {
             return Messages.getString("WeaponAttackAction.OutOfAmmo");
@@ -212,9 +216,22 @@ class ComputeToHitIsImpossible {
                   && !AmmoType.canDeliverMinefield(ammoType)) {
                 return Messages.getString("WeaponAttackAction.NoMinefields");
             }
+            if (target.getTargetType() == Targetable.TYPE_SATURATION 
+            && !(
+                  weaponType.hasFlag(WeaponType.F_MRM)
+                        && weapon.getLinkedBy() != null
+                        && weapon.getLinkedBy().getType().hasFlag(MiscType.F_APOLLO)
+                        && !(
+                              weapon.getLinkedBy().isDestroyed() || weapon.getLinkedBy().isMissing()
+                                    || weapon.getLinkedBy().isBreached()
+                            )
+                )
+            ) {
+                return Messages.getString("WeaponAttackAction.NoSaturation");
+            }
 
             // These ammo types can only target hexes for minefield delivery
-            if (ammoType.getAmmoType().isAnyOf(LRM, LRM_IMP, MML, MEK_MORTAR) &&
+            if (ammoType.getAmmoType().isAnyOf(LRM, LRM_IMP, MML, MEK_MORTAR, TBOLT_10, TBOLT_15, TBOLT_20) &&
                   ((ammoType.getMunitionType().contains(AmmoType.Munitions.M_THUNDER)) ||
                         (ammoType.getMunitionType().contains(AmmoType.Munitions.M_THUNDER_ACTIVE)) ||
                         (ammoType.getMunitionType().contains(AmmoType.Munitions.M_THUNDER_INFERNO)) ||
@@ -230,7 +247,7 @@ class ComputeToHitIsImpossible {
         // If the attacker is actively using a shield, weapons in the same location are blocked
         if (weapon != null
               && attacker.hasShield()
-              && attacker.hasActiveShield(weapon.getLocation(), weapon.isRearMounted())) {
+              && attacker.hasRaisedShield(weapon.getLocation(), weapon.isRearMounted())) {
             return Messages.getString("WeaponAttackAction.ActiveShieldBlocking");
         }
 

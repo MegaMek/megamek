@@ -70,7 +70,7 @@ public class SettingsPane extends JPanel {
     private int searchIndexGeneration;
 
     public SettingsPane(List<SettingsRoute> routes, Map<String, Supplier<Component>> pageFactories,
-          SettingsNavigationText navigationText, String helpTitle) {
+            SettingsNavigationText navigationText) {
         super(new BorderLayout());
         setName("settingsPane");
         this.routes = List.copyOf(routes);
@@ -80,7 +80,7 @@ public class SettingsPane extends JPanel {
         SettingsRoute initialRoute = firstPageRoute();
         currentRoute = initialRoute;
         Component initialContent = getPage(initialRoute);
-        contentHost = new SettingsContentHost(initialContent, helpTitle, initialRoute.shouldShowDetailsPanel());
+        contentHost = new SettingsContentHost(initialContent, initialRoute.shouldShowDetailsPanel());
         navigationPanel = new SettingsNavigationPanel(this.routes, this::selectedNavigationTarget, navigationText);
         navigationPanel.setSearchIndexInitializer(this::ensureSearchIndexBuilt);
         navigationPanel.setFilterChangeListener(this::activeFilterChanged);
@@ -93,6 +93,13 @@ public class SettingsPane extends JPanel {
         splitPane.setDividerLocation(UIUtil.scaleForGUI(SettingsNavigationPanel.DEFAULT_NAVIGATION_WIDTH));
         add(splitPane, BorderLayout.CENTER);
         navigationPanel.selectRoute(initialRoute);
+    }
+
+    /** @deprecated settings help surfaces always use the shared localized title */
+    @Deprecated(forRemoval = true)
+    public SettingsPane(List<SettingsRoute> routes, Map<String, Supplier<Component>> pageFactories,
+          SettingsNavigationText navigationText, String ignoredHelpTitle) {
+        this(routes, pageFactories, navigationText);
     }
 
     /** Selects and displays a route programmatically. Parent routes without pages fall back to their first page. */

@@ -34,6 +34,8 @@ package megamek.client.ui.panels;
 
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertSame;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
@@ -41,6 +43,7 @@ import java.awt.Component;
 import java.awt.Container;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
+import java.awt.event.MouseEvent;
 import java.io.File;
 import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
@@ -55,20 +58,26 @@ import java.util.Set;
 import java.util.concurrent.atomic.AtomicBoolean;
 import javax.swing.JCheckBox;
 import javax.swing.JComboBox;
+import javax.swing.JComponent;
+import javax.swing.JEditorPane;
 import javax.swing.JLabel;
+import javax.swing.JSpinner;
 import javax.swing.JTree;
 import javax.swing.JTextField;
+import javax.swing.SpinnerNumberModel;
 import javax.swing.SwingUtilities;
+import javax.swing.border.TitledBorder;
 import javax.swing.tree.TreePath;
 
 import megamek.client.ui.Messages;
 import megamek.client.ui.clientGUI.DialogOptionListener;
 import megamek.client.ui.settings.CollapsibleSectionPanel;
-import megamek.client.ui.settings.SettingsFormPanel;
+import megamek.client.ui.settings.SettingsHelpPanel;
 import megamek.client.ui.settings.SettingsNavigationPanel;
 import megamek.client.ui.settings.SettingsPagePanel;
 import megamek.client.ui.util.UIUtil;
 import megamek.common.Configuration;
+import megamek.common.MMRandom;
 import megamek.common.options.GameOptions;
 import megamek.common.options.IOption;
 import megamek.common.options.IOptionGroup;
@@ -93,6 +102,8 @@ class GameOptionsPaneTest {
 
             assertTrue(searchlights.isVisible());
             assertFalse(pushOffBoard.isVisible());
+            assertTrue(searchlights.settingsCheckBox().isVisible());
+            assertFalse(pushOffBoard.settingsCheckBox().isVisible());
         });
     }
 
@@ -122,6 +133,42 @@ class GameOptionsPaneTest {
             pane.refreshVisibility();
 
             assertFalse(searchlights.isVisible());
+            assertFalse(searchlights.settingsCheckBox().isVisible());
+        });
+    }
+
+    @Test
+    void directLabeledRowPreservesOwnerBehaviorAndHelp() throws Exception {
+        runOnEdt(() -> {
+            GameOptions options = new GameOptions();
+            DialogOptionComponentYPanel movementTimer = component(
+                  options.getOption(OptionsConstants.BASE_TURN_TIMER_MOVEMENT));
+            GameOptionsPane pane = pane(List.of(movementTimer), option -> true);
+            JLabel label = movementTimer.settingsLabel();
+            JComponent control = movementTimer.settingsControl();
+
+            movementTimer.setValue(12);
+            assertEquals(12, movementTimer.getValue());
+            movementTimer.setEditable(false);
+            assertFalse(control.isEnabled());
+            movementTimer.setEditable(true);
+            assertTrue(control.isEnabled());
+
+            MouseEvent enter = new MouseEvent(label, MouseEvent.MOUSE_ENTERED,
+                  System.currentTimeMillis(), 0, 0, 0, 0, false);
+            for (var listener : label.getMouseListeners()) {
+                listener.mouseEntered(enter);
+            }
+            JEditorPane helpText = findComponent(pane, JEditorPane.class);
+            assertTrue(helpText.getText().contains("seconds"), helpText.getText());
+            assertFalse(helpText.getText().contains("width=\"500\""), helpText.getText());
+            assertFalse(helpText.getText().contains("<br>"), helpText.getText());
+            SettingsHelpPanel helpPanel = findComponent(pane, SettingsHelpPanel.class);
+            assertEquals("Option Details", ((TitledBorder) helpPanel.getBorder()).getTitle());
+
+            pane.setFilterText("no matching option text");
+            assertFalse(label.isVisible());
+            assertFalse(control.isVisible());
         });
     }
 
@@ -148,7 +195,7 @@ class GameOptionsPaneTest {
     }
 
     @Test
-        void matchSetupSectionsShareTwoColumnAlignment() throws Exception {
+    void matchSetupSectionsShareTwoColumnAlignment() throws Exception {
         runOnEdt(() -> {
             GameOptions options = new GameOptions();
             DialogOptionComponentYPanel wideCoreOption = component(
@@ -167,13 +214,120 @@ class GameOptionsPaneTest {
             pane(List.of(wideCoreOption, coreFirst, testingFirst, testingSecond, displayFirst, displaySecond),
                   option -> true);
 
-            assertSectionAlignment(wideCoreOption, coreFirst, testingFirst, testingSecond, displayFirst, displaySecond);
-            GridBagConstraints wideLayout = ((GridBagLayout) wideCoreOption.getParent().getLayout())
-                  .getConstraints(wideCoreOption);
+            JCheckBox wideCoreCheckBox = wideCoreOption.settingsCheckBox();
+            JCheckBox coreFirstCheckBox = coreFirst.settingsCheckBox();
+            JCheckBox testingFirstCheckBox = testingFirst.settingsCheckBox();
+            JCheckBox testingSecondCheckBox = testingSecond.settingsCheckBox();
+            JCheckBox displayFirstCheckBox = displayFirst.settingsCheckBox();
+            JCheckBox displaySecondCheckBox = displaySecond.settingsCheckBox();
+            assertSectionAlignment(wideCoreCheckBox, coreFirstCheckBox,
+                testingFirstCheckBox, testingSecondCheckBox, displayFirstCheckBox, displaySecondCheckBox);
+            GridBagConstraints wideLayout = ((GridBagLayout) wideCoreCheckBox.getParent().getLayout())
+                .getConstraints(wideCoreCheckBox);
             assertEquals(1, wideLayout.gridwidth);
-            assertEquals(GridBagConstraints.HORIZONTAL, wideLayout.fill);
-            assertEquals(UIUtil.scaleForGUI(DialogOptionComponentYPanel.SETTINGS_GRID_CELL_WIDTH),
-                wideCoreOption.getPreferredSize().width);
+            assertEquals(GridBagConstraints.NONE, wideLayout.fill);
+        });
+    }
+
+    @Test
+    void ammoDumpingRoundUsesFullWidthLabeledSpinner() throws Exception {
+        runOnEdt(() -> {
+            GameOptions options = new GameOptions();
+            DialogOptionComponentYPanel lobbyAmmo = component(
+                  options.getOption(OptionsConstants.BASE_LOBBY_AMMO_DUMP));
+            DialogOptionComponentYPanel dumpingRound = component(
+                  options.getOption(OptionsConstants.BASE_DUMPING_FROM_ROUND));
+            DialogOptionComponentYPanel bayDetail = component(
+                  options.getOption(OptionsConstants.BASE_SHOW_BAY_DETAIL));
+            DialogOptionComponentYPanel reportTooltips = component(
+                options.getOption(OptionsConstants.BASE_SUPPRESS_UNIT_TOOLTIP_IN_REPORT_LOG));
+
+            pane(List.of(lobbyAmmo, dumpingRound, bayDetail, reportTooltips), option -> true);
+
+            JCheckBox lobbyCheckBox = lobbyAmmo.settingsCheckBox();
+            JLabel label = dumpingRound.settingsLabel();
+            JSpinner spinner = (JSpinner) dumpingRound.settingsControl();
+            JCheckBox bayDetailCheckBox = bayDetail.settingsCheckBox();
+            JCheckBox reportTooltipsCheckBox = reportTooltips.settingsCheckBox();
+            Container content = label.getParent();
+            GridBagLayout sectionLayout = (GridBagLayout) content.getLayout();
+            assertCell(sectionLayout, lobbyCheckBox, 0, 0, 2);
+            assertCell(sectionLayout, label, 0, 1, 1);
+            assertCell(sectionLayout, spinner, 1, 1, GridBagConstraints.REMAINDER);
+            assertCell(sectionLayout, bayDetailCheckBox, 0, 2, 1);
+            assertCell(sectionLayout, reportTooltipsCheckBox, 1, 2, 1);
+            assertTrue(content.getPreferredSize().width < UIUtil.scaleForGUI(
+                SettingsPagePanel.DEFAULT_SECTION_STACK_WIDTH));
+            CollapsibleSectionPanel section = (CollapsibleSectionPanel) SwingUtilities.getAncestorOfClass(
+                CollapsibleSectionPanel.class, label);
+            assertNotNull(section);
+            assertSame(spinner, label.getLabelFor());
+            assertEquals(1, ((SpinnerNumberModel) spinner.getModel()).getMinimum());
+            JSpinner.DefaultEditor editor = (JSpinner.DefaultEditor) spinner.getEditor();
+            assertEquals(JTextField.LEFT, editor.getTextField().getHorizontalAlignment());
+            assertEquals(1, dumpingRound.getValue());
+        });
+    }
+
+    @Test
+    void matchFlowUsesNumericSpinnersAndNamedRngDropdown() throws Exception {
+        runOnEdt(() -> {
+            GameOptions options = new GameOptions();
+            List<DialogOptionComponentYPanel> timers = List.of(
+                  component(options.getOption(OptionsConstants.BASE_TURN_TIMER_TARGETING)),
+                  component(options.getOption(OptionsConstants.BASE_TURN_TIMER_MOVEMENT)),
+                  component(options.getOption(OptionsConstants.BASE_TURN_TIMER_FIRING)),
+                  component(options.getOption(OptionsConstants.BASE_TURN_TIMER_PHYSICAL)));
+            DialogOptionComponentYPanel rotatingSaves = component(
+                  options.getOption(OptionsConstants.BASE_MAX_NUMBER_ROUND_SAVES));
+            DialogOptionComponentYPanel rngType = component(options.getOption(OptionsConstants.BASE_RNG_TYPE));
+            List<DialogOptionComponentYPanel> components = new ArrayList<>(timers);
+            components.add(rotatingSaves);
+            components.add(rngType);
+
+            pane(components, option -> true);
+
+            for (DialogOptionComponentYPanel timer : timers) {
+                JSpinner spinner = (JSpinner) timer.settingsControl();
+                assertEquals(0, ((SpinnerNumberModel) spinner.getModel()).getMinimum());
+                assertEquals(0, timer.getValue());
+            }
+            JSpinner savesSpinner = (JSpinner) rotatingSaves.settingsControl();
+            assertEquals(1, ((SpinnerNumberModel) savesSpinner.getModel()).getMinimum());
+            assertEquals(3, rotatingSaves.getValue());
+
+            JComboBox<?> rngTypes = (JComboBox<?>) rngType.settingsControl();
+            assertEquals(3, rngTypes.getItemCount());
+            assertEquals("SunRandom", rngTypes.getItemAt(0));
+            assertEquals("Java CryptoRandom", rngTypes.getItemAt(1));
+            assertEquals("Pool36Random (Unofficial)", rngTypes.getItemAt(2));
+            assertEquals(MMRandom.R_DEFAULT, rngType.getValue());
+            rngType.setValue(MMRandom.R_POOL36);
+            assertEquals(MMRandom.R_POOL36, rngType.getValue());
+            assertEquals(2, rngTypes.getSelectedIndex());
+        });
+    }
+
+    @Test
+    void hiddenUnofficialBackingOptionDoesNotLeaveAnEmptyGridCell() throws Exception {
+        runOnEdt(() -> {
+            GameOptions options = new GameOptions();
+            DialogOptionComponentYPanel reportTooltips = component(
+                  options.getOption(OptionsConstants.BASE_SUPPRESS_UNIT_TOOLTIP_IN_REPORT_LOG));
+            DialogOptionComponentYPanel hideUnofficial = component(
+                  options.getOption(OptionsConstants.BASE_HIDE_UNOFFICIAL));
+            DialogOptionComponentYPanel hideLegacy = component(
+                  options.getOption(OptionsConstants.BASE_HIDE_LEGACY));
+
+            pane(List.of(reportTooltips, hideUnofficial, hideLegacy), option -> true);
+
+            JCheckBox reportTooltipsCheckBox = reportTooltips.settingsCheckBox();
+            JCheckBox hideLegacyCheckBox = hideLegacy.settingsCheckBox();
+            assertSame(reportTooltipsCheckBox.getParent(), hideLegacyCheckBox.getParent());
+            GridBagLayout layout = (GridBagLayout) reportTooltipsCheckBox.getParent().getLayout();
+            assertCell(layout, reportTooltipsCheckBox, 0, 0, 1);
+            assertCell(layout, hideLegacyCheckBox, 1, 0, 1);
+            assertNull(hideUnofficial.getParent());
         });
     }
 
@@ -188,30 +342,16 @@ class GameOptionsPaneTest {
 
             pane("gameMaster", List.of(allowGameMaster, voteThreshold), option -> true);
 
-            assertSame(allowGameMaster.getParent(), voteThreshold.getParent());
-            GridBagLayout sectionLayout = (GridBagLayout) allowGameMaster.getParent().getLayout();
-            assertCell(sectionLayout, allowGameMaster, 0, 0, 2);
-            assertCell(sectionLayout, voteThreshold, 0, 1, 2);
-
-            SettingsFormPanel choiceRow = findComponent(voteThreshold, SettingsFormPanel.class);
-            JLabel label = findComponent(choiceRow, JLabel.class);
-            JComboBox<?> choice = findComponent(choiceRow, JComboBox.class);
-            GridBagLayout choiceLayout = (GridBagLayout) choiceRow.getLayout();
-            assertEquals(0, choiceLayout.getConstraints(label).gridx);
-            assertEquals(1, choiceLayout.getConstraints(choice).gridx);
+            JCheckBox checkBox = allowGameMaster.settingsCheckBox();
+            JLabel label = voteThreshold.settingsLabel();
+            JComboBox<?> choice = (JComboBox<?>) voteThreshold.settingsControl();
+            assertSame(checkBox.getParent(), label.getParent());
+            assertSame(label.getParent(), choice.getParent());
+            GridBagLayout sectionLayout = (GridBagLayout) checkBox.getParent().getLayout();
+            assertCell(sectionLayout, checkBox, 0, 0, 2);
+            assertCell(sectionLayout, label, 0, 1, 1);
+            assertCell(sectionLayout, choice, 1, 1, GridBagConstraints.REMAINDER);
             assertSame(choice, label.getLabelFor());
-
-            Container section = allowGameMaster.getParent();
-            section.setSize(UIUtil.scaleForGUI(900), section.getPreferredSize().height);
-            section.doLayout();
-            allowGameMaster.doLayout();
-            voteThreshold.doLayout();
-            choiceRow.setSize(voteThreshold.getSize());
-            choiceRow.doLayout();
-            JCheckBox checkBox = findComponent(allowGameMaster, JCheckBox.class);
-            int checkBoxX = SwingUtilities.convertPoint(checkBox.getParent(), checkBox.getX(), 0, section).x;
-            int labelX = SwingUtilities.convertPoint(label.getParent(), label.getX(), 0, section).x;
-            assertEquals(labelX, checkBoxX);
         });
     }
 
@@ -263,14 +403,15 @@ class GameOptionsPaneTest {
             DialogOptionComponentYPanel choiceOption = component(
                   options.getOption(OptionsConstants.ALLOWED_TECH_LEVEL));
 
-            GameOptionsPane pane = new GameOptionsPane(List.of(
+            new GameOptionsPane(List.of(
                                     new GameOptionsPane.OptionGroup("basic", "basic", List.of(booleanOption, numericOption)),
                                     new GameOptionsPane.OptionGroup("allowedUnits", "allowedUnits", List.of(choiceOption))),
                 option -> true);
 
-            assertFirstComponentStartsAtCellEdge(booleanOption, JCheckBox.class);
-            int numericControlX = assertLabelControlCell(numericOption, JTextField.class);
-            int choiceControlX = assertLabelControlCell(choiceOption, JComboBox.class);
+            JCheckBox checkBox = booleanOption.settingsCheckBox();
+            assertEquals(0, ((GridBagLayout) checkBox.getParent().getLayout()).getConstraints(checkBox).gridx);
+            int numericControlX = assertLabelControlRow(numericOption);
+            int choiceControlX = assertLabelControlRow(choiceOption);
             assertEquals(numericControlX, choiceControlX,
                 "numeric control x=" + numericControlX + ", choice control x=" + choiceControlX);
         });
@@ -293,13 +434,13 @@ class GameOptionsPaneTest {
             List<DialogOptionComponentYPanel> components = List.of(neuralInterface, ghostTarget);
             Map<DialogOptionComponentYPanel, Integer> populatedWidths = new LinkedHashMap<>();
             for (DialogOptionComponentYPanel component : components) {
-                populatedWidths.put(component, findDirectComponent(component, JComboBox.class).getPreferredSize().width);
+                populatedWidths.put(component, component.settingsControl().getPreferredSize().width);
             }
 
             pane("advancedRules", components, option -> true);
 
             for (DialogOptionComponentYPanel component : components) {
-                int controlWidth = findDirectComponent(component, JComboBox.class).getPreferredSize().width;
+                int controlWidth = component.settingsControl().getPreferredSize().width;
                 assertTrue(controlWidth >= populatedWidths.get(component),
                       component.getOption().getName() + ": populated width=" + populatedWidths.get(component)
                             + ", settings width=" + controlWidth);
@@ -320,8 +461,7 @@ class GameOptionsPaneTest {
                     IOption option = groupOptions.nextElement();
                     DialogOptionComponentYPanel component = component(option);
                     components.add(component);
-                    if (option.getType() != IOption.BOOLEAN
-                          && !option.getName().equals(OptionsConstants.GAME_MASTER_VOTE_THRESHOLD)) {
+                                        if (option.getType() != IOption.BOOLEAN) {
                         nonBooleanComponents.add(component);
                     }
                 }
@@ -331,17 +471,8 @@ class GameOptionsPaneTest {
 
             new GameOptionsPane(groups, option -> true);
 
-            Integer sharedControlX = null;
             for (DialogOptionComponentYPanel component : nonBooleanComponents) {
-                Class<? extends Component> controlType = component.getOption().getType() == IOption.CHOICE
-                      ? JComboBox.class
-                      : JTextField.class;
-                int controlX = assertLabelControlCell(component, controlType);
-                if (sharedControlX == null) {
-                    sharedControlX = controlX;
-                } else {
-                    assertEquals(sharedControlX, controlX, component.getOption().getName());
-                }
+                assertLabelControlRow(component);
             }
             assertTrue(nonBooleanComponents.size() > 20);
         });
@@ -379,8 +510,8 @@ class GameOptionsPaneTest {
                 DialogOptionComponentYPanel optionComponent = conciseComponents.get(optionName);
                 assertOptionPresentation(optionComponent, label, true,
                       optionName.equals(OptionsConstants.BASE_INFANTRY_DAMAGE_HEAT));
-                assertFalse(optionLabel(optionComponent).getText().contains("<div width="),
-                      optionLabel(optionComponent).getText());
+                    assertFalse(optionPresentationText(optionComponent).contains("<div width="),
+                        optionPresentationText(optionComponent));
             });
             assertOptionPresentation(searchlights, searchlights.getOption().getDisplayableName(), false, false);
 
@@ -521,7 +652,7 @@ class GameOptionsPaneTest {
     }
 
     @Test
-    void victorySectionsUseEqualTwoColumnGrids() throws Exception {
+    void victorySectionsUseCheckboxGridsAndLabeledRows() throws Exception {
         runOnEdt(() -> {
             GameOptions options = new GameOptions();
             DialogOptionComponentYPanel checkVictory = component(
@@ -542,10 +673,40 @@ class GameOptionsPaneTest {
             pane("victory", List.of(checkVictory, skipForcedVictory, achieveConditions, useBvDestroyed,
                   bvDestroyedPercent, useBvRatio, bvRatioPercent), option -> true);
 
-            assertTwoColumnGrid(checkVictory, skipForcedVictory, achieveConditions);
-            assertTwoColumnGrid(useBvDestroyed, bvDestroyedPercent, useBvRatio, bvRatioPercent);
+            assertTwoColumnCheckBoxGrid(checkVictory, skipForcedVictory);
+            assertLabelControlRow(achieveConditions);
+            assertStandaloneCheckBox(useBvDestroyed);
+            assertLabelControlRow(bvDestroyedPercent);
+            assertStandaloneCheckBox(useBvRatio);
+            assertLabelControlRow(bvRatioPercent);
         });
     }
+
+        @Test
+        void victoryNumericOptionsUseBoundedSpinnersAndKeepDefaults() throws Exception {
+          runOnEdt(() -> {
+            GameOptions options = new GameOptions();
+            DialogOptionComponentYPanel conditions = component(
+                options.getOption(OptionsConstants.VICTORY_ACHIEVE_CONDITIONS));
+            DialogOptionComponentYPanel destroyedPercent = component(
+                options.getOption(OptionsConstants.VICTORY_BV_DESTROYED_PERCENT));
+            DialogOptionComponentYPanel ratioPercent = component(
+                options.getOption(OptionsConstants.VICTORY_BV_RATIO_PERCENT));
+            DialogOptionComponentYPanel turnLimit = component(
+                options.getOption(OptionsConstants.VICTORY_GAME_TURN_LIMIT));
+            DialogOptionComponentYPanel killCount = component(
+                options.getOption(OptionsConstants.VICTORY_GAME_KILL_COUNT));
+
+            pane("victory", List.of(conditions, destroyedPercent, ratioPercent, turnLimit, killCount),
+                option -> true);
+
+            assertIntegerSpinner(conditions, 1, 100, 1);
+            assertIntegerSpinner(destroyedPercent, 1, 100, 100);
+            assertIntegerSpinner(ratioPercent, 1, 10_000, 300);
+            assertIntegerSpinner(turnLimit, 1, 10_000, 10);
+            assertIntegerSpinner(killCount, 1, 10_000, 4);
+          });
+        }
 
     @Test
     void factionLogoMappingsResolveToSharedAssets() {
@@ -568,10 +729,10 @@ class GameOptionsPaneTest {
                   options.getOption(OptionsConstants.UNOFFICIAL_BRIDGE_REPAIR_ENGINEERS));
             GameOptionsPane advancedPane = pane("advancedRules", List.of(unofficialOption), option -> true);
 
-            String normalOptionText = optionLabel(normalOption).getText();
+            String normalOptionText = optionPresentationText(normalOption);
             assertFalse(normalOptionText.contains(IMPORTANT_SYMBOL));
             assertFalse(normalOptionText.contains(UNOFFICIAL_SYMBOL));
-            String unofficialOptionText = optionLabel(unofficialOption).getText();
+            String unofficialOptionText = optionPresentationText(unofficialOption);
             assertFalse(unofficialOptionText.contains(IMPORTANT_SYMBOL));
             assertTrue(unofficialOptionText.contains(UNOFFICIAL_SYMBOL));
 
@@ -659,22 +820,26 @@ class GameOptionsPaneTest {
         assertEquals(width, constraints.gridwidth);
     }
 
-    private static void assertTwoColumnGrid(DialogOptionComponentYPanel... components) {
-        Container parent = components[0].getParent();
-        GridBagLayout layout = (GridBagLayout) parent.getLayout();
-        int expectedWidth = components[0].getPreferredSize().width;
-        parent.setSize(parent.getPreferredSize());
-        parent.doLayout();
-        assertTrue(expectedWidth >= UIUtil.scaleForGUI(SettingsFormPanel.DEFAULT_LABEL_WIDTH));
+    private static void assertTwoColumnCheckBoxGrid(DialogOptionComponentYPanel... components) {
+        JCheckBox[] checkBoxes = new JCheckBox[components.length];
         for (int index = 0; index < components.length; index++) {
-            assertSame(parent, components[index].getParent());
-            assertCell(layout, components[index], index % 2, index / 2, 1);
-            assertEquals(expectedWidth, components[index].getPreferredSize().width);
-            assertEquals(expectedWidth, components[index].getWidth());
+            checkBoxes[index] = components[index].settingsCheckBox();
+        }
+        Container parent = checkBoxes[0].getParent();
+        GridBagLayout layout = (GridBagLayout) parent.getLayout();
+        for (int index = 0; index < checkBoxes.length; index++) {
+            assertSame(parent, checkBoxes[index].getParent());
+            assertCell(layout, checkBoxes[index], index % 2, index / 2, 1);
         }
     }
 
-    private static void assertSectionAlignment(DialogOptionComponentYPanel... components) {
+    private static void assertStandaloneCheckBox(DialogOptionComponentYPanel component) {
+        JCheckBox checkBox = component.settingsCheckBox();
+        assertCell((GridBagLayout) checkBox.getParent().getLayout(), checkBox, 0,
+              ((GridBagLayout) checkBox.getParent().getLayout()).getConstraints(checkBox).gridy, 2);
+    }
+
+    private static void assertSectionAlignment(Component... components) {
         List<Container> sections = List.of(components[0].getParent(), components[2].getParent(),
               components[4].getParent());
         int sharedWidth = UIUtil.scaleForGUI(900);
@@ -686,19 +851,14 @@ class GameOptionsPaneTest {
         assertSame(sections.get(0), components[1].getParent());
         assertSame(sections.get(1), components[3].getParent());
         assertSame(sections.get(2), components[5].getParent());
-        assertEquals(sections.get(0).getPreferredSize().width, sections.get(1).getPreferredSize().width);
-        assertEquals(sections.get(0).getPreferredSize().width, sections.get(2).getPreferredSize().width);
         assertEquals(components[1].getX(), components[3].getX());
         assertEquals(components[1].getX(), components[5].getX());
     }
 
-    private static JLabel optionLabel(DialogOptionComponentYPanel component) {
-        for (Component child : component.getComponents()) {
-            if (child instanceof JLabel label) {
-                return label;
-            }
-        }
-        throw new AssertionError("Option has no label: " + component.getOption().getName());
+    private static String optionPresentationText(DialogOptionComponentYPanel component) {
+        return component.getOption().getType() == IOption.BOOLEAN
+              ? component.settingsCheckBox().getText()
+              : component.settingsLabel().getText();
     }
 
     private static <T extends Component> T findComponent(Container root, Class<T> type) {
@@ -731,43 +891,33 @@ class GameOptionsPaneTest {
         return null;
     }
 
-    private static void assertFirstComponentStartsAtCellEdge(DialogOptionComponentYPanel option,
-          Class<? extends Component> expectedType) {
-        option.setSize(option.getPreferredSize());
-        option.doLayout();
-        Component firstComponent = option.getComponent(0);
-        assertTrue(expectedType.isInstance(firstComponent), firstComponent.getClass().getSimpleName());
-        assertEquals(0, firstComponent.getX());
-    }
-
-    private static int assertLabelControlCell(DialogOptionComponentYPanel option,
-          Class<? extends Component> controlType) {
-        option.setSize(option.getPreferredSize());
-        option.doLayout();
-        Component label = option.getComponent(0);
-        Component control = findDirectComponent(option, controlType);
-        assertTrue(label instanceof JLabel, label.getClass().getSimpleName());
-        assertTrue(controlType.isInstance(control), control.getClass().getSimpleName());
-        assertEquals(0, label.getX());
-        assertTrue(control.getX() > label.getX());
-        assertSame(control, ((JLabel) label).getLabelFor());
+    private static int assertLabelControlRow(DialogOptionComponentYPanel option) {
+        JLabel label = option.settingsLabel();
+        JComponent control = option.settingsControl();
+        assertSame(label.getParent(), control.getParent());
+        GridBagLayout layout = (GridBagLayout) label.getParent().getLayout();
+        assertEquals(0, layout.getConstraints(label).gridx);
+        assertEquals(1, layout.getConstraints(control).gridx);
+        assertSame(control, label.getLabelFor());
+        label.getParent().setSize(label.getParent().getPreferredSize());
+        label.getParent().doLayout();
         return control.getX();
     }
 
-    private static Component findDirectComponent(Container root, Class<? extends Component> type) {
-        for (Component component : root.getComponents()) {
-            if (type.isInstance(component)) {
-                return component;
-            }
-        }
-        throw new AssertionError("No direct " + type.getSimpleName() + " found");
+    private static void assertIntegerSpinner(DialogOptionComponentYPanel option, int minimum, int maximum,
+          int expectedValue) {
+        JSpinner spinner = (JSpinner) option.settingsControl();
+        SpinnerNumberModel model = (SpinnerNumberModel) spinner.getModel();
+        assertEquals(minimum, model.getMinimum());
+        assertEquals(maximum, model.getMaximum());
+        assertEquals(expectedValue, option.getValue());
     }
 
     private static void assertOptionPresentation(DialogOptionComponentYPanel component, String label,
             boolean important, boolean unofficial) {
-        String text = optionLabel(component).getText();
+        String text = optionPresentationText(component);
         assertTrue(text.contains(label), text);
-                assertEquals(important, text.contains(IMPORTANT_SYMBOL), text);
+        assertEquals(important, text.contains(IMPORTANT_SYMBOL), text);
         assertEquals(unofficial, text.contains(UNOFFICIAL_SYMBOL), text);
     }
 

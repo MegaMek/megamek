@@ -76,7 +76,7 @@ public class SettingsContentHost extends JPanel {
     private final List<HelpBinding> activeHelpBindings = new ArrayList<>();
     private Component currentContent;
 
-    public SettingsContentHost(Component content, String helpTitle, boolean showHelpPanel) {
+    public SettingsContentHost(Component content, boolean showHelpPanel) {
         super(new BorderLayout());
         setName("settingsContentHost");
         contentPanel.setName("settingsContentPanel");
@@ -87,10 +87,16 @@ public class SettingsContentHost extends JPanel {
         contentScrollPane.getViewport().setScrollMode(JViewport.SIMPLE_SCROLL_MODE);
         searchHighlightLayer = new JLayer<>(contentScrollPane, searchHighlightLayerUI);
         searchHighlightLayer.setName("settingsSearchHighlightLayer");
-        helpPanel = new SettingsHelpPanel(helpTitle);
+        helpPanel = new SettingsHelpPanel();
         add(searchHighlightLayer, BorderLayout.CENTER);
         add(helpPanel, BorderLayout.SOUTH);
         setContent(content, showHelpPanel);
+    }
+
+    /** @deprecated settings help surfaces always use the shared localized title */
+    @Deprecated(forRemoval = true)
+    public SettingsContentHost(Component content, String ignoredHelpTitle, boolean showHelpPanel) {
+        this(content, showHelpPanel);
     }
 
     public void setContent(Component content) {

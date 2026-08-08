@@ -34,9 +34,7 @@
 
 package megamek.client.ui.panels;
 
-import java.awt.BorderLayout;
 import java.awt.Component;
-import java.awt.Dimension;
 import java.awt.FlowLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -47,27 +45,31 @@ import java.awt.event.ItemListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.io.Serial;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.LinkedHashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.StringTokenizer;
 import javax.swing.Box;
-import javax.swing.BoxLayout;
 import javax.swing.JCheckBox;
 import javax.swing.JComboBox;
 import javax.swing.JComponent;
 import javax.swing.JLabel;
+import javax.swing.JPanel;
+import javax.swing.JSpinner;
 import javax.swing.JTextField;
+import javax.swing.SpinnerNumberModel;
 
 import org.apache.commons.text.StringEscapeUtils;
 
 import megamek.client.ui.Messages;
 import megamek.client.ui.clientGUI.DialogOptionListener;
 import megamek.client.ui.settings.SettingsBadge;
-import megamek.client.ui.settings.SettingsFormPanel;
 import megamek.client.ui.settings.SettingsHelpProvider;
+import megamek.client.ui.settings.SettingsSpinner;
 import megamek.client.ui.util.UIUtil;
 import megamek.client.ui.util.UIUtil.FixedYPanel;
 import megamek.codeUtilities.MathUtility;
@@ -84,23 +86,21 @@ public class DialogOptionComponentYPanel extends FixedYPanel
 
     @Serial
     private static final long serialVersionUID = -4190538980884459746L;
-    private static final int SETTINGS_COMPONENT_GAP = 5;
-    private static final int SETTINGS_LABEL_CONTROL_GAP = 12;
-    private static final int SETTINGS_LABEL_WIDTH = 220;
-    private static final int SETTINGS_CONTROL_WIDTH = 148;
-    static final int SETTINGS_GRID_CELL_WIDTH = SETTINGS_LABEL_WIDTH + SETTINGS_LABEL_CONTROL_GAP
-          + SETTINGS_CONTROL_WIDTH;
-
     IOption option;
 
     private JCheckBox checkbox;
     private JComboBox<String> choice;
+    private JComboBox<String> integerChoice;
+    private List<Integer> integerChoiceValues = List.of();
+    private JSpinner integerSpinner;
     private JTextField textField;
     /** The label showing the option's displayable name and any presentation-specific markers. */
     private JLabel optionLabel;
     private String optionDisplayName;
     private String settingsBadgeHtml = "";
     private int optionLabelWrapWidth;
+    private boolean settingsCheckBoxPresentation;
+    private boolean settingsComponentsDetached;
     /** Short marker appended to the displayable name (e.g. " (P)" for partially implemented SPAs). */
     private String nameSuffix = "";
     private final DialogOptionListener dialogOptionListener;
@@ -110,6 +110,7 @@ public class DialogOptionComponentYPanel extends FixedYPanel
 
     /** True when this component renders the Directional Torso Mount torso multi-select (BMM p.83). */
     private boolean torsoMultiSelect = false;
+    private JPanel torsoControlPanel;
     /** Torso location abbreviation -&gt; its checkbox, for the Directional Torso Mount multi-select. */
     private final Map<String, JCheckBox> torsoCheckboxes = new LinkedHashMap<>();
     /**
@@ -160,6 +161,7 @@ public class DialogOptionComponentYPanel extends FixedYPanel
                 optionLabel = new JLabel(option.getDisplayableName());
                 optionLabel.setLabelFor(choice);
                 optionLabel.setToolTipText(convertToHtml(option.getDescription()));
+                choice.setToolTipText(convertToHtml(option.getDescription()));
                 choice.setEnabled(editable);
                 choice.addActionListener(this);
                 if (choiceLabelFirst) {
@@ -177,12 +179,16 @@ public class DialogOptionComponentYPanel extends FixedYPanel
                 optionLabel = new JLabel(option.getDisplayableName());
                 optionLabel.setToolTipText(convertToHtml(option.getDescription()));
                 optionLabel.setLabelFor(textField);
+                textField.setToolTipText(convertToHtml(option.getDescription()));
                 optionLabel.addMouseListener(new MouseAdapter() {
                     @Override
                     public void mouseClicked(MouseEvent evt) {
-                        if (textField.isEnabled()) {
-                            textField.requestFocus();
-                            textField.selectAll();
+                        JComponent control = valueControl();
+                        if (control.isEnabled()) {
+                            control.requestFocus();
+                            if (control instanceof JTextField field) {
+                                field.selectAll();
+                            }
                         }
                     }
                 });
@@ -213,92 +219,111 @@ public class DialogOptionComponentYPanel extends FixedYPanel
         updateOptionLabelText();
     }
 
-    /**
-     * Wraps this option's label when its complete panel cannot fit within {@code width}.
-     *
-     * @param width maximum preferred width for the complete option panel
-     */
-    void fitToWidth(int width) {
-        Dimension preferredSize = getPreferredSize();
-        if (preferredSize.width <= width) {
-            return;
-        }
-        int nonLabelWidth = preferredSize.width - optionLabel.getPreferredSize().width;
-        optionLabelWrapWidth = Math.max(1, width - nonLabelWidth);
-        updateOptionLabelText();
-    }
-
-    /** Presents a choice option as a standard full-width {@code label | control} form row. */
-    void useLabeledControlRowLayout() {
-        if (choice == null) {
-            throw new IllegalStateException("Labeled control rows require a choice option");
-        }
-        removeAll();
-        setLayout(new BorderLayout());
-        SettingsFormPanel row = new SettingsFormPanel("GameOption" + option.getName(),
-              SettingsFormPanel.DEFAULT_LABEL_WIDTH, SettingsFormPanel.DEFAULT_CONTROL_WIDTH);
-        row.addRow(optionLabel, choice);
-        add(row, BorderLayout.CENTER);
-    }
-
-    /** Presents a boolean option without the legacy leading inset used by compact option grids. */
-    void useStandaloneCheckBoxRowLayout() {
+    JCheckBox settingsCheckBox() {
         if (checkbox == null) {
-            throw new IllegalStateException("Standalone checkbox rows require a boolean option");
+            throw new IllegalStateException("Settings checkboxes require a boolean option");
         }
-        removeAll();
-        setLayout(new FlowLayout(FlowLayout.LEFT, 0, 2));
-        addInlineComponents(checkbox, optionLabel);
+        settingsCheckBoxPresentation = true;
+        settingsComponentsDetached = true;
+        checkbox.setText(optionLabel.getText());
+        checkbox.setToolTipText(option.getDescription());
+        return checkbox;
     }
 
-    /** Removes legacy outer insets and presents non-boolean settings as {@code label | control}. */
-    void useSettingsGridCellLayout() {
+    JLabel settingsLabel() {
+        if (checkbox != null) {
+            throw new IllegalStateException("Boolean settings use their checkbox text as the label");
+        }
+        settingsComponentsDetached = true;
+        optionLabel.setToolTipText(option.getDescription());
+        return optionLabel;
+    }
+
+    JComponent settingsControl() {
+        JComponent control = valueControl();
+        if (control == null) {
+            throw new IllegalStateException("Boolean settings do not have a separate control");
+        }
+        settingsComponentsDetached = true;
+        control.setToolTipText(option.getDescription());
+        return control;
+    }
+
+    /** Replaces this integer option's text field with a spinner constrained to the given minimum. */
+    void useIntegerSpinner(int minimum) {
+        useIntegerSpinner(minimum, null);
+    }
+
+    /** Replaces this integer option's text field with a spinner constrained to the given range. */
+    void useIntegerSpinner(int minimum, int maximum) {
+        if (maximum < minimum) {
+            throw new IllegalArgumentException("Integer spinner maximum cannot be below its minimum");
+        }
+        useIntegerSpinner(minimum, Integer.valueOf(maximum));
+    }
+
+    private void useIntegerSpinner(int minimum, @Nullable Integer maximum) {
+        if (option.getType() != IOption.INTEGER) {
+            throw new IllegalStateException("Integer spinners require an integer option");
+        }
+        if (integerSpinner != null) {
+            return;
+        }
+        int componentIndex = getComponentZOrder(textField);
+        boolean editable = textField.isEnabled();
+        remove(textField);
+          int currentValue = option.intValue();
+          int effectiveMinimum = Math.min(minimum, currentValue);
+          Integer effectiveMaximum = maximum == null ? null : Math.max(maximum, currentValue);
+        integerSpinner = new JSpinner(new SpinnerNumberModel(
+              (Number) currentValue, effectiveMinimum, effectiveMaximum, 1));
+          SettingsSpinner.configureEditor(integerSpinner);
+        integerSpinner.setEnabled(editable);
+        integerSpinner.setToolTipText(convertToHtml(option.getDescription()));
+        integerSpinner.addChangeListener(event -> dialogOptionListener.optionClicked(this, option, true));
+        optionLabel.setLabelFor(integerSpinner);
+        add(integerSpinner, componentIndex);
+    }
+
+    /** Replaces this integer option's text field with a dropdown backed by explicit integer values. */
+    void useIntegerChoice(Map<Integer, String> choices) {
+        if (option.getType() != IOption.INTEGER) {
+            throw new IllegalStateException("Integer dropdowns require an integer option");
+        }
+        if (integerChoice != null) {
+            return;
+        }
+        int componentIndex = getComponentZOrder(textField);
+        boolean editable = textField.isEnabled();
+        remove(textField);
+        List<Integer> values = new ArrayList<>(choices.keySet());
+        integerChoice = new JComboBox<>(choices.values().toArray(String[]::new));
+        int selectedIndex = values.indexOf(option.intValue());
+        if (selectedIndex < 0) {
+            values.add(option.intValue());
+            integerChoice.addItem(Integer.toString(option.intValue()));
+            selectedIndex = values.size() - 1;
+        }
+        integerChoiceValues = List.copyOf(values);
+        integerChoice.setSelectedIndex(selectedIndex);
+        integerChoice.setEnabled(editable);
+        integerChoice.setToolTipText(convertToHtml(option.getDescription()));
+        integerChoice.addActionListener(event -> dialogOptionListener.optionClicked(this, option, true));
+        optionLabel.setLabelFor(integerChoice);
+        add(integerChoice, componentIndex);
+    }
+
+    private JComponent valueControl() {
         if (torsoMultiSelect) {
-            return;
+            return torsoControlPanel;
         }
-        removeAll();
-        if (option.getType() == IOption.BOOLEAN) {
-            setLayout(new FlowLayout(FlowLayout.LEFT, 0, 2));
-            addInlineComponents(checkbox, optionLabel);
-            return;
+        if (option.getType() == IOption.CHOICE) {
+            return choice;
         }
-
-        setLayout(new BoxLayout(this, BoxLayout.LINE_AXIS));
-        JComponent control = option.getType() == IOption.CHOICE ? choice : textField;
-        setSettingsLabelWidth();
-        setSettingsControlWidth(control);
-        optionLabel.setAlignmentY(Component.CENTER_ALIGNMENT);
-        control.setAlignmentY(Component.CENTER_ALIGNMENT);
-        add(optionLabel);
-        add(Box.createHorizontalStrut(UIUtil.scaleForGUI(SETTINGS_LABEL_CONTROL_GAP)));
-        add(control);
-    }
-
-    private void addInlineComponents(Component first, Component second) {
-        add(first);
-        add(Box.createHorizontalStrut(UIUtil.scaleForGUI(SETTINGS_COMPONENT_GAP)));
-        add(second);
-    }
-
-    private void setSettingsControlWidth(JComponent control) {
-        Dimension preferredSize = control.getPreferredSize();
-        Dimension size = new Dimension(UIUtil.scaleForGUI(SETTINGS_CONTROL_WIDTH), preferredSize.height);
-        control.setPreferredSize(size);
-        control.setMinimumSize(size);
-        control.setMaximumSize(size);
-    }
-
-    private void setSettingsLabelWidth() {
-        int width = UIUtil.scaleForGUI(SETTINGS_LABEL_WIDTH);
-        if (optionLabel.getPreferredSize().width > width) {
-            optionLabelWrapWidth = width;
-            updateOptionLabelText();
+        if (integerChoice != null) {
+            return integerChoice;
         }
-        Dimension preferredSize = optionLabel.getPreferredSize();
-        Dimension size = new Dimension(width, preferredSize.height);
-        optionLabel.setPreferredSize(size);
-        optionLabel.setMinimumSize(size);
-        optionLabel.setMaximumSize(size);
+        return integerSpinner == null ? textField : integerSpinner;
     }
 
     private void updateOptionLabelText() {
@@ -311,6 +336,9 @@ public class DialogOptionComponentYPanel extends FixedYPanel
             optionLabel.setText("<html><nobr>" + displayName + settingsBadgeHtml + "</nobr></html>");
         } else {
             optionLabel.setText(plainName);
+        }
+        if (settingsCheckBoxPresentation) {
+            checkbox.setText(optionLabel.getText());
         }
     }
 
@@ -342,6 +370,9 @@ public class DialogOptionComponentYPanel extends FixedYPanel
         torsoMultiSelect = true;
         optionLabel = new JLabel(option.getDisplayableName());
         optionLabel.setToolTipText(convertToHtml(option.getDescription()));
+        torsoControlPanel = new JPanel(new FlowLayout(FlowLayout.LEFT, UIUtil.scaleForGUI(5), 0));
+        torsoControlPanel.setOpaque(false);
+        torsoControlPanel.setToolTipText(convertToHtml(option.getDescription()));
         add(Box.createHorizontalStrut(UIUtil.scaleForGUI(10)));
         add(optionLabel);
         Set<String> selected = parseTorsoValue(option.stringValue());
@@ -351,7 +382,27 @@ public class DialogOptionComponentYPanel extends FixedYPanel
             box.setEnabled(editable);
             box.addItemListener(this);
             torsoCheckboxes.put(locationCode, box);
-            add(box);
+            torsoControlPanel.add(box);
+        }
+        add(torsoControlPanel);
+    }
+
+    @Override
+    public void setVisible(boolean visible) {
+        super.setVisible(visible);
+        if (!settingsComponentsDetached) {
+            return;
+        }
+        if (settingsCheckBoxPresentation && checkbox != null) {
+            checkbox.setVisible(visible);
+            return;
+        }
+        if (optionLabel != null) {
+            optionLabel.setVisible(visible);
+        }
+        JComponent control = valueControl();
+        if (control != null) {
+            control.setVisible(visible);
         }
     }
 
@@ -460,7 +511,11 @@ public class DialogOptionComponentYPanel extends FixedYPanel
         }
         return switch (option.getType()) {
             case IOption.BOOLEAN -> checkbox.isSelected();
-            case IOption.INTEGER -> textField.getText().isBlank() ? 0 : MathUtility.parseInt(textField.getText(), 0);
+            case IOption.INTEGER -> integerChoice != null
+                ? integerChoiceValues.get(integerChoice.getSelectedIndex())
+                : integerSpinner == null
+                    ? textField.getText().isBlank() ? 0 : MathUtility.parseInt(textField.getText(), 0)
+                    : integerSpinner.getValue();
             case IOption.FLOAT -> textField.getText().isBlank() ? 0 : MathUtility.parseFloat(textField.getText(), 0);
             case IOption.STRING -> textField.getText();
             case IOption.CHOICE -> choice.getSelectedItem();
@@ -479,6 +534,27 @@ public class DialogOptionComponentYPanel extends FixedYPanel
                 checkbox.setSelected((Boolean) v);
                 break;
             case IOption.INTEGER:
+                if (integerChoice != null) {
+                    int selectedIndex = integerChoiceValues.indexOf(((Number) v).intValue());
+                    if (selectedIndex >= 0) {
+                        integerChoice.setSelectedIndex(selectedIndex);
+                    }
+                    break;
+                }
+                if (integerSpinner != null) {
+                    SpinnerNumberModel model = (SpinnerNumberModel) integerSpinner.getModel();
+                    int value = ((Number) v).intValue();
+                    if (value < ((Number) model.getMinimum()).intValue()) {
+                        model.setMinimum(value);
+                    }
+                    if (model.getMaximum() != null && value > ((Number) model.getMaximum()).intValue()) {
+                        model.setMaximum(value);
+                    }
+                    integerSpinner.setValue(value);
+                    break;
+                }
+                textField.setText(v + "");
+                break;
             case IOption.FLOAT:
                 textField.setText(v + "");
                 break;
@@ -514,6 +590,9 @@ public class DialogOptionComponentYPanel extends FixedYPanel
             case IOption.CHOICE:
                 choice.setEnabled(editable);
                 break;
+            case IOption.INTEGER:
+                valueControl().setEnabled(editable);
+                break;
             default:
                 textField.setEnabled(editable);
                 break;
@@ -527,6 +606,7 @@ public class DialogOptionComponentYPanel extends FixedYPanel
         return switch (option.getType()) {
             case IOption.BOOLEAN -> checkbox.isEnabled();
             case IOption.CHOICE -> choice.isEnabled();
+            case IOption.INTEGER -> valueControl().isEnabled();
             default -> textField.isEnabled();
         };
     }
@@ -555,6 +635,7 @@ public class DialogOptionComponentYPanel extends FixedYPanel
             case IOption.CHOICE ->
                 // Assume first choice is always default
                   choice.getSelectedIndex() == 0;
+                        case IOption.INTEGER -> getValue().equals(option.getDefault());
             default -> textField.getText().equals(String.valueOf(option.getDefault()));
         };
     }
@@ -570,6 +651,9 @@ public class DialogOptionComponentYPanel extends FixedYPanel
                 break;
             case IOption.CHOICE:
                 choice.setSelectedIndex(0); // Assume first choice is always default
+                break;
+            case IOption.INTEGER:
+                setValue(option.getDefault());
                 break;
             default:
                 textField.setText(String.valueOf(option.getDefault()));

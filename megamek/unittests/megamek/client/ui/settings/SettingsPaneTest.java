@@ -78,7 +78,7 @@ class SettingsPaneTest {
                 secondBuilds.incrementAndGet();
                 return page("Second section", "second summary");
             });
-            SettingsPane pane = new SettingsPane(List.of(first, second), factories, NAVIGATION_TEXT, "Details");
+            SettingsPane pane = new SettingsPane(List.of(first, second), factories, NAVIGATION_TEXT);
 
             pane.selectRoute(second);
             pane.selectRoute(second);
@@ -98,7 +98,7 @@ class SettingsPaneTest {
                 .literalSection("Beta", "beta summary", new JLabel())
                 .build();
             SettingsPane pane = new SettingsPane(List.of(route), Map.of("page", () -> page),
-                NAVIGATION_TEXT, "Details");
+                NAVIGATION_TEXT);
 
             pane.setFilterText("beta");
             pane.selectRoute(route);
@@ -121,7 +121,7 @@ class SettingsPaneTest {
                   .literalSection("Beta", null, new JLabel("Needle option"))
                   .build();
             SettingsPane pane = new SettingsPane(List.of(route), Map.of("page", () -> page),
-                  NAVIGATION_TEXT, "Details");
+                NAVIGATION_TEXT);
 
             pane.setFilterText("needle");
 
@@ -143,7 +143,7 @@ class SettingsPaneTest {
                   .build();
             SettingsPane pane = new SettingsPane(List.of(first, second), Map.of(
                   "first", () -> firstPage,
-                  "second", () -> page("Needle section", null)), NAVIGATION_TEXT, "Details");
+                "second", () -> page("Needle section", null)), NAVIGATION_TEXT);
 
             pane.setFilterText("needle");
 
@@ -164,7 +164,7 @@ class SettingsPaneTest {
                   .literalSection("Beta", null, new JLabel("Needle option"))
                   .build();
             SettingsPane pane = new SettingsPane(List.of(route), Map.of("page", () -> page),
-                  NAVIGATION_TEXT, "Details");
+                NAVIGATION_TEXT);
 
             pane.setFilterText("needle");
             List<CollapsibleSectionPanel> sections = findSections(page);
@@ -184,7 +184,7 @@ class SettingsPaneTest {
             SettingsRoute second = new SettingsRoute("second", List.of("Second"));
             SettingsPane pane = new SettingsPane(List.of(first, second), Map.of(
                   "first", () -> componentPage("Search Needle"),
-                  "second", () -> componentPage("Another Needle")), NAVIGATION_TEXT, "Details");
+                "second", () -> componentPage("Another Needle")), NAVIGATION_TEXT);
             pane.setSize(800, 500);
             layoutTree(pane);
 
@@ -213,7 +213,7 @@ class SettingsPaneTest {
                 return page("Child", null);
             });
             SettingsPane pane = new SettingsPane(List.of(initial, parent, child), factories,
-                  NAVIGATION_TEXT, "Details");
+                NAVIGATION_TEXT);
 
             assertTrue(pane.selectRoute(parent));
             assertEquals(1, childBuilds.get());
@@ -232,7 +232,7 @@ class SettingsPaneTest {
                   "second", () -> {
                       secondBuilds.incrementAndGet();
                       return page("Needle section", null);
-                  }), NAVIGATION_TEXT, "Details"));
+                  }), NAVIGATION_TEXT));
             pane.get().setFilterText("needle");
         });
         finishSearchIndexing();
@@ -251,7 +251,7 @@ class SettingsPaneTest {
             route.setSectionSearchText("Stale Search Token");
 
             new SettingsPane(List.of(route), Map.of("page", () -> SettingsPagePanel.builder(
-                  "Test", PAGE_TEXT, "header", null).build()), NAVIGATION_TEXT, "Details");
+                "Test", PAGE_TEXT, "header", null).build()), NAVIGATION_TEXT);
 
             assertFalse(route.matches(SettingsRoute.normalizeSearchText("stale")));
             assertTrue(route.matches(SettingsRoute.normalizeSearchText("header")));
@@ -271,7 +271,7 @@ class SettingsPaneTest {
                   "second", () -> {
                       secondBuilds.incrementAndGet();
                       return page("Needle section", null);
-                  }), NAVIGATION_TEXT, "Details"));
+                  }), NAVIGATION_TEXT));
             pane.get().setFilterText("needle");
             pane.get().setFilterText("");
         });
@@ -297,7 +297,7 @@ class SettingsPaneTest {
                           throw new IllegalStateException("First indexing attempt fails");
                       }
                       return page("Needle section", null);
-                  }), NAVIGATION_TEXT, "Details"));
+                  }), NAVIGATION_TEXT));
             pane.get().setFilterText("needle");
         });
         flushEventQueue();

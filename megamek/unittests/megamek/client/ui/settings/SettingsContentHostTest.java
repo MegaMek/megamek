@@ -56,6 +56,7 @@ import javax.swing.JSpinner;
 import javax.swing.JTextField;
 import javax.swing.JViewport;
 import javax.swing.Scrollable;
+import javax.swing.border.TitledBorder;
 
 import megamek.client.ui.util.UIUtil;
 import org.junit.jupiter.api.Test;
@@ -75,7 +76,7 @@ class SettingsContentHostTest {
     void hostRoutesRawHelpTextAndRestoresTooltipWhenContentChanges() {
         SettingsLabel label = new SettingsLabel(TEXT, "field");
         String originalTooltip = label.getToolTipText();
-        SettingsContentHost host = new SettingsContentHost(label, "Details", true);
+        SettingsContentHost host = new SettingsContentHost(label, true);
 
         assertNull(label.getToolTipText());
         fireMouseEntered(label);
@@ -92,7 +93,7 @@ class SettingsContentHostTest {
     @Test
     void explicitHelpUpdateTargetsNearestHost() {
         JLabel source = new JLabel("Source");
-        SettingsContentHost host = new SettingsContentHost(source, "Details", true);
+        SettingsContentHost host = new SettingsContentHost(source, true);
 
         SettingsContentHost nearestHost = SettingsContentHost.findHost(source);
         assertSame(host, nearestHost);
@@ -104,7 +105,7 @@ class SettingsContentHostTest {
 
     @Test
     void plainHelpTextIsEscapedBeforeRenderingAsHtml() {
-        SettingsContentHost host = new SettingsContentHost(new JLabel("Source"), "Details", true);
+        SettingsContentHost host = new SettingsContentHost(new JLabel("Source"), true);
 
         host.setHelpText("Use A < B & C > D or <value>");
 
@@ -114,7 +115,7 @@ class SettingsContentHostTest {
 
     @Test
     void htmlFragmentHelpTextIsPreservedAsMarkup() {
-        SettingsContentHost host = new SettingsContentHost(new JLabel("Source"), "Details", true);
+        SettingsContentHost host = new SettingsContentHost(new JLabel("Source"), true);
 
         host.setHelpText("First line.<br><br><b>Warning:</b> Second line.");
 
@@ -125,7 +126,7 @@ class SettingsContentHostTest {
 
     @Test
     void uppercaseHtmlHelpTextIsPreservedAsMarkup() {
-        SettingsContentHost host = new SettingsContentHost(new JLabel("Source"), "Details", true);
+        SettingsContentHost host = new SettingsContentHost(new JLabel("Source"), true);
 
         host.setHelpText("<HTML><B>Important</B></HTML>");
 
@@ -142,7 +143,7 @@ class SettingsContentHostTest {
               .maximumPageWidth(100)
               .literalSection("Wide Section", null, wideContent)
               .build();
-        SettingsContentHost host = new SettingsContentHost(page, "Details", false);
+        SettingsContentHost host = new SettingsContentHost(page, false);
 
         JPanel contentPanel = findComponent(host, "settingsContentPanel", JPanel.class);
         Scrollable scrollableContent = (Scrollable) contentPanel;
@@ -155,7 +156,7 @@ class SettingsContentHostTest {
     @Test
     void searchFilterHighlightsContentWithoutChangingLabelText() {
         JLabel label = new JLabel("Search Needle");
-        SettingsContentHost host = new SettingsContentHost(label, "Details", false);
+        SettingsContentHost host = new SettingsContentHost(label, false);
         host.setSize(320, 160);
         layoutTree(host);
         String originalText = label.getText();
@@ -168,7 +169,7 @@ class SettingsContentHostTest {
 
     @Test
     void contentViewportUsesSimpleScrollModeForOverlayRepainting() {
-        SettingsContentHost host = new SettingsContentHost(new JLabel("Source"), "Details", false);
+        SettingsContentHost host = new SettingsContentHost(new JLabel("Source"), false);
         JScrollPane scrollPane = findComponent(host, "settingsContentScrollPane", JScrollPane.class);
 
         assertEquals(JViewport.SIMPLE_SCROLL_MODE, scrollPane.getViewport().getScrollMode());
@@ -177,7 +178,7 @@ class SettingsContentHostTest {
     @Test
     void hostRebindsHelpAfterNotifyLifecycle() {
         SettingsLabel label = new SettingsLabel(TEXT, "field");
-        SettingsContentHost host = new SettingsContentHost(label, "Details", true);
+        SettingsContentHost host = new SettingsContentHost(label, true);
 
         host.removeNotify();
         assertNotNull(label.getToolTipText());
@@ -191,17 +192,21 @@ class SettingsContentHostTest {
         SettingsPagePanel page = SettingsPagePanel.builder("Test", TEXT, "field.text", null)
               .showDetailsPanel(false)
               .build();
-        SettingsContentHost host = new SettingsContentHost(page, "Details", true);
+        SettingsContentHost host = new SettingsContentHost(page, true);
 
         SettingsHelpPanel helpPanel = findComponent(host, "settingsHelpPanel", SettingsHelpPanel.class);
         assertFalse(helpPanel.isVisible());
     }
 
     @Test
+    @SuppressWarnings("removal")
     void helpPanelUsesScaledHeightAndTextPadding() {
-        SettingsHelpPanel helpPanel = new SettingsHelpPanel("Details");
+        SettingsHelpPanel helpPanel = new SettingsHelpPanel();
         JEditorPane helpPane = findComponent(helpPanel, "settingsHelpText", JEditorPane.class);
 
+        assertEquals("Option Details", ((TitledBorder) helpPanel.getBorder()).getTitle());
+        assertEquals("Option Details",
+              ((TitledBorder) new SettingsHelpPanel("Different title").getBorder()).getTitle());
         assertEquals(UIUtil.scaleForGUI(120), helpPanel.getPreferredSize().height);
         assertEquals(UIUtil.scaleForGUI(120), helpPanel.getMinimumSize().height);
         Insets insets = helpPane.getBorder().getBorderInsets(helpPane);
@@ -214,7 +219,7 @@ class SettingsContentHostTest {
     @Test
     void compositeEditorFocusUsesParentHelpText() {
         SettingsSpinner spinner = new SettingsSpinner(TEXT, "field", 1, 0, 10, 1);
-        SettingsContentHost host = new SettingsContentHost(spinner, "Details", true);
+        SettingsContentHost host = new SettingsContentHost(spinner, true);
         JTextField editor = ((JSpinner.DefaultEditor) spinner.getEditor()).getTextField();
 
         fireFocusGained(editor);
@@ -226,7 +231,7 @@ class SettingsContentHostTest {
     @Test
     void compositeEditorMouseEntryUsesParentHelpText() {
         SettingsSpinner spinner = new SettingsSpinner(TEXT, "field", 1, 0, 10, 1);
-        SettingsContentHost host = new SettingsContentHost(spinner, "Details", true);
+        SettingsContentHost host = new SettingsContentHost(spinner, true);
         JTextField editor = ((JSpinner.DefaultEditor) spinner.getEditor()).getTextField();
 
         fireMouseEntered(editor);
@@ -243,7 +248,7 @@ class SettingsContentHostTest {
         child.setToolTipText("<html><div width=500>" + rawHelp + "</div></html>");
         content.add(child);
 
-        SettingsContentHost host = new SettingsContentHost(content, "Details", true);
+        SettingsContentHost host = new SettingsContentHost(content, true);
         fireMouseEntered(child);
         JEditorPane helpPane = findComponent(host, "settingsHelpText", JEditorPane.class);
 

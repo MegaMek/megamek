@@ -51,6 +51,7 @@ import java.util.function.Predicate;
 import java.util.function.Supplier;
 import javax.swing.Icon;
 import javax.swing.ImageIcon;
+import javax.swing.JCheckBox;
 import javax.swing.JPanel;
 
 import megamek.client.ui.settings.SettingsBadge;
@@ -65,6 +66,7 @@ import megamek.client.ui.settings.SettingsRoute;
 import megamek.client.ui.settings.SettingsTextProvider;
 import megamek.client.ui.util.UIUtil;
 import megamek.common.Configuration;
+import megamek.common.MMRandom;
 import megamek.common.options.IOption;
 import megamek.common.options.OptionsConstants;
 
@@ -72,6 +74,11 @@ import megamek.common.options.OptionsConstants;
 public class GameOptionsPane extends JPanel {
     private static final int START_HEIGHT = 800;
     private static final int HEADER_IMAGE_SIZE = 80;
+    private static final int MAX_VICTORY_CONDITIONS = 100;
+    private static final int MAX_VICTORY_PERCENT = 100;
+    private static final int MAX_VICTORY_RATIO_PERCENT = 10_000;
+    private static final int MAX_VICTORY_ROUNDS = 10_000;
+    private static final int MAX_VICTORY_KILLS = 10_000;
     private static final int IMPORTANT_ICON = 0xE002;
     private static final int ADVANCED_ICON = 0xE8B8;
     private static final int UNOFFICIAL_ICON = 0xEA4B;
@@ -106,6 +113,9 @@ public class GameOptionsPane extends JPanel {
         Map<GameOptionsPresentation.PageDefinition, PageSeed> pageSeeds = new LinkedHashMap<>();
         for (OptionGroup group : groups) {
             for (DialogOptionComponentYPanel component : group.components()) {
+                if (component.getOption().getName().equals(OptionsConstants.BASE_HIDE_UNOFFICIAL)) {
+                    continue;
+                }
                 GameOptionsPresentation.Location location = GameOptionsPresentation.location(
                       group.id(), component.getOption().getName());
                 pageSeeds.computeIfAbsent(location.page(), PageSeed::new).add(group, component, location);
@@ -135,8 +145,7 @@ public class GameOptionsPane extends JPanel {
               getString("GameOptionsDialog.SearchMatches"),
               getString("SettingsPagePanel.expandAll.text"),
               getString("SettingsPagePanel.collapseAll.text"));
-        settingsPane = new SettingsPane(routes, pageFactories, navigationText,
-              getString("GameOptionsDialog.optionDescriptionHint"));
+          settingsPane = new SettingsPane(routes, pageFactories, navigationText);
         add(settingsPane, BorderLayout.CENTER);
     }
 
@@ -268,8 +277,8 @@ public class GameOptionsPane extends JPanel {
             List<Map.Entry<String, SectionRows>> orderedSections = new ArrayList<>(sectionRows.entrySet());
             orderedSections.sort(Comparator.comparingInt(entry -> entry.getValue().order));
             for (Map.Entry<String, SectionRows> entry : orderedSections) {
-                SettingsFormPanel content = createSectionContent(entry.getKey(),
-                    pageSeed.definition().id() + entry.getKey(), entry.getValue().rows);
+                SettingsFormPanel content = createSectionContent(
+                      pageSeed.definition().id() + entry.getKey(), entry.getValue().rows);
                 List<String> aliases = new ArrayList<>();
                 aliases.addAll(pageSeed.searchAliases());
                 entry.getValue().rows.forEach(row -> aliases.add(row.searchableText()));
@@ -280,34 +289,66 @@ public class GameOptionsPane extends JPanel {
             add(pagePanel, BorderLayout.CENTER);
         }
 
-        private static SettingsFormPanel createSectionContent(String sectionId, String name, List<OptionRow> rows) {
+        private static SettingsFormPanel createSectionContent(String name, List<OptionRow> rows) {
             SettingsFormPanel content = new SettingsFormPanel(name,
-                  DialogOptionComponentYPanel.SETTINGS_GRID_CELL_WIDTH);
-            if (sectionId.equals("gameMaster.control")) {
-                for (OptionRow row : rows) {
-                    if (row.option().getName().equals(OptionsConstants.GAME_MASTER_ALLOW)) {
-                        row.component().useStandaloneCheckBoxRowLayout();
-                    } else if (row.option().getName().equals(OptionsConstants.GAME_MASTER_VOTE_THRESHOLD)) {
-                        row.component().useLabeledControlRowLayout();
-                    }
-                    content.addFullWidthComponent(row.component());
+                  SettingsFormPanel.DEFAULT_LABEL_WIDTH, SettingsFormPanel.DEFAULT_CONTROL_WIDTH);
+            List<JCheckBox> checkBoxes = new ArrayList<>();
+            for (OptionRow row : rows) {
+                DialogOptionComponentYPanel component = row.component();
+                if (row.option().getType() == IOption.BOOLEAN) {
+                    checkBoxes.add(component.settingsCheckBox());
+                    continue;
                 }
-                return content;
+                addCheckBoxes(content, checkBoxes);
+                configureSettingsControl(component);
+                content.addRow(component.settingsLabel(), component.settingsControl());
             }
-
-            int cellWidth = UIUtil.scaleForGUI(DialogOptionComponentYPanel.SETTINGS_GRID_CELL_WIDTH);
-            DialogOptionComponentYPanel[] components = rows.stream()
-                  .map(OptionRow::component)
-                  .toArray(DialogOptionComponentYPanel[]::new);
-            for (DialogOptionComponentYPanel component : components) {
-                component.useSettingsGridCellLayout();
-                int contentWidth = component.getOption().getType() == IOption.BOOLEAN
-                      ? UIUtil.scaleForGUI(SettingsFormPanel.DEFAULT_LABEL_WIDTH)
-                      : cellWidth;
-                component.fitToWidth(contentWidth);
-            }
-            content.addEqualWidthComponentGrid(2, components);
+            addCheckBoxes(content, checkBoxes);
             return content;
+        }
+
+        private static void configureSettingsControl(DialogOptionComponentYPanel component) {
+            switch (component.getOption().getName()) {
+                case OptionsConstants.BASE_TURN_TIMER_TARGETING,
+                     OptionsConstants.BASE_TURN_TIMER_MOVEMENT,
+                     OptionsConstants.BASE_TURN_TIMER_FIRING,
+                     OptionsConstants.BASE_TURN_TIMER_PHYSICAL -> component.useIntegerSpinner(0);
+                case OptionsConstants.BASE_DUMPING_FROM_ROUND,
+                     OptionsConstants.BASE_MAX_NUMBER_ROUND_SAVES -> component.useIntegerSpinner(1);
+                case OptionsConstants.BASE_RNG_TYPE -> component.useIntegerChoice(rngTypeChoices());
+                case OptionsConstants.VICTORY_ACHIEVE_CONDITIONS ->
+                    component.useIntegerSpinner(1, MAX_VICTORY_CONDITIONS);
+                case OptionsConstants.VICTORY_BV_DESTROYED_PERCENT ->
+                    component.useIntegerSpinner(1, MAX_VICTORY_PERCENT);
+                case OptionsConstants.VICTORY_BV_RATIO_PERCENT ->
+                    component.useIntegerSpinner(1, MAX_VICTORY_RATIO_PERCENT);
+                case OptionsConstants.VICTORY_GAME_TURN_LIMIT ->
+                    component.useIntegerSpinner(1, MAX_VICTORY_ROUNDS);
+                case OptionsConstants.VICTORY_GAME_KILL_COUNT ->
+                    component.useIntegerSpinner(1, MAX_VICTORY_KILLS);
+                default -> {
+                }
+            }
+        }
+
+        private static Map<Integer, String> rngTypeChoices() {
+            Map<Integer, String> choices = new LinkedHashMap<>();
+            choices.put(MMRandom.R_SUN, getString("GameOptionsDialog.rngType.sunRandom"));
+            choices.put(MMRandom.R_CRYPTO, getString("GameOptionsDialog.rngType.cryptoRandom"));
+            choices.put(MMRandom.R_POOL36, getString("GameOptionsDialog.rngType.pool36Random"));
+            return choices;
+        }
+
+        private static void addCheckBoxes(SettingsFormPanel content, List<JCheckBox> checkBoxes) {
+            if (checkBoxes.isEmpty()) {
+                return;
+            }
+            if (checkBoxes.size() == 1) {
+                content.addCheckBox(checkBoxes.getFirst());
+            } else {
+                content.addCheckBoxGrid(2, checkBoxes.toArray(JCheckBox[]::new));
+            }
+            checkBoxes.clear();
         }
 
         private void setRoute(SettingsRoute route) {
@@ -374,16 +415,6 @@ public class GameOptionsPane extends JPanel {
 
     private static String sectionSummary(String sectionId) {
         return getString("GameOptionsDialog.section." + sectionId + ".summary");
-    }
-
-    private static boolean sectionMatches(String text, String normalizedFilter) {
-        String normalizedText = SettingsRoute.normalizeSearchText(text);
-        for (String token : normalizedFilter.split("\\s+")) {
-            if (!normalizedText.contains(token)) {
-                return false;
-            }
-        }
-        return true;
     }
 
     static String sectionId(String groupId, String optionName) {

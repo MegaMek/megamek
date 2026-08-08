@@ -124,9 +124,10 @@ public class GameCommandsMenu {
 
     /**
      * Adds the Game Master section. The section only exists while the host allows a Game Master at all (the Allow
-     * Game Master game option). What it offers depends on who holds the role: the player holding it can give the role
-     * up and, while an active participant, gets the tools; a player who does not hold it is told who does, and when
-     * nobody holds it the role can be requested. Players who may not hold the role at all (bots) get no section.
+     * Game Master game option). What it offers depends on who holds the role: the player holding it - who may be an
+     * observer refereeing a game they take no side in - gets the tools and can give the role up; a player who does
+     * not hold it is told who does, and when nobody holds it the role can be requested. Players who may not hold the
+     * role at all (bots) get no section.
      *
      * @param popup       The popup menu to add the section to
      * @param localPlayer The player this client belongs to
@@ -148,12 +149,7 @@ public class GameCommandsMenu {
 
         if (localPlayerIsGameMaster) {
             popup.add(createCommandItem("GiveUpGameMaster", COMMAND_GAME_MASTER));
-            if (isActivePlayer(localPlayer)) {
-                popup.add(GameMasterCommandMenu.createSpecialCommandsMenu(clientGUI, null));
-            } else {
-                LOGGER.debug("[GameCommands] {}: Game Master tools hidden - the player is not an active participant",
-                      localPlayer.getName());
-            }
+            popup.add(GameMasterCommandMenu.createSpecialCommandsMenu(clientGUI, null));
         } else if (gameMaster != null) {
             LOGGER.debug("[GameCommands] {}: Game Master tools hidden - {} holds the role",
                   localPlayer.getName(), gameMaster.getName());
@@ -193,8 +189,10 @@ public class GameCommandsMenu {
 
     /**
      * Whether the player is offered the disruptive commands: skipping a turn, resetting the game and kicking a
-     * player. While a player holds the Game Master role, they are the only one offered them; without a Game Master,
-     * every player is.
+     * player. While a player holds the Game Master role, they are the only one offered them - this includes a Game
+     * Master who is an observer, the referee running a game they take no side in. Without a Game Master - nobody
+     * holds the role, or the holder has disconnected and become a ghost - every player is offered them, because
+     * there is no authority left to undermine and any player may need to unstick the game.
      *
      * @param localPlayer The player this client belongs to
      * @param gameMaster  The player holding the Game Master role, or {@code null} when nobody holds it
@@ -202,20 +200,10 @@ public class GameCommandsMenu {
      * @return True when the disruptive commands are offered to this player
      */
     static boolean showsDisruptiveCommands(Player localPlayer, @Nullable Player gameMaster) {
-        return (gameMaster == null) || (localPlayer.equals(gameMaster) && isActivePlayer(localPlayer));
-    }
-
-    /**
-     * Whether the player is an active participant of the game: a human who is neither an observer nor a ghost
-     * (a disconnected player). Only an active participant holding the Game Master role is offered the Game Master
-     * tools.
-     *
-     * @param player The player to check
-     *
-     * @return True when the player is an active human participant
-     */
-    private static boolean isActivePlayer(Player player) {
-        return player.isGameMasterPermitted() && !player.isObserver() && !player.isGhost();
+        if ((gameMaster == null) || gameMaster.isGhost()) {
+            return true;
+        }
+        return localPlayer.equals(gameMaster);
     }
 
     /**

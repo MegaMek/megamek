@@ -104,12 +104,27 @@ class GameCommandsMenuTest {
     }
 
     @Test
-    void anObserverGameMasterGetsNoDisruptiveCommands() {
-        // The disruptive commands need an active participant, the same standard as the Game Master tools
+    void anObserverGameMasterKeepsTheDisruptiveCommands() {
+        // An observer can legitimately hold the role: the referee running a game they take no side in.
+        // They keep the disruptive commands; the seated players still do not get them.
         Player observerGameMaster = createPlayer(1, "Kerensky");
         observerGameMaster.setGameMaster(true);
         observerGameMaster.setObserver(true);
+        Player otherPlayer = createPlayer(2, "Liao");
 
-        assertFalse(GameCommandsMenu.showsDisruptiveCommands(observerGameMaster, observerGameMaster));
+        assertTrue(GameCommandsMenu.showsDisruptiveCommands(observerGameMaster, observerGameMaster));
+        assertFalse(GameCommandsMenu.showsDisruptiveCommands(otherPlayer, observerGameMaster));
+    }
+
+    @Test
+    void aGhostGameMasterDoesNotLockOutDisruptiveCommands() {
+        // A disconnected Game Master cannot act, so the game must not be stuck without skip/reset/kick until
+        // they return - the role is treated as absent and every player gets the commands
+        Player ghostGameMaster = createPlayer(1, "Kerensky");
+        ghostGameMaster.setGameMaster(true);
+        ghostGameMaster.setGhost(true);
+        Player otherPlayer = createPlayer(2, "Liao");
+
+        assertTrue(GameCommandsMenu.showsDisruptiveCommands(otherPlayer, ghostGameMaster));
     }
 }

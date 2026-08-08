@@ -33,13 +33,16 @@ package megamek.common.rules.core;
  */
 
 import megamek.common.Report;
+import megamek.common.TargetRollModifier;
 import megamek.common.compute.Compute;
 import megamek.common.game.Game;
 import megamek.common.options.OptionsConstants;
+import megamek.common.rolls.PilotingRollData;
 import megamek.common.rolls.Roll;
 import megamek.common.rules.RulesPilot;
 import megamek.common.units.Entity;
 
+import java.util.List;
 import java.util.Vector;
 
 public class CoreRulesPilot extends RulesPilot {
@@ -155,5 +158,23 @@ public class CoreRulesPilot extends RulesPilot {
     @Override
     public int getSeatbeltShutdown(int piloting) {
         return piloting;
+    }
+
+    /**
+     * {@inheritDoc}
+     * Always create a new roll with just piloting and height of fall
+     */
+    @Override
+    public PilotingRollData getSeatbeltRoll(int entityId,
+          int fallHeight,
+          int piloting,
+          List<TargetRollModifier> modifiers,
+          PilotingRollData roll) {
+        PilotingRollData prd = new PilotingRollData(entityId, piloting, "Base piloting skill");
+        if (fallHeight >= 1) {
+            prd.addModifier(Game.rulesManager.getRulesPilot().getSeatbeltHeightModifier(fallHeight), "height of "
+                  + "fall");
+        }
+        return prd;
     }
 }

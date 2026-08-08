@@ -25369,7 +25369,7 @@ public class TWGameManager extends AbstractGameManager {
         // an automatic fall, only unconsciousness should cause auto-damage
         roll.removeAutos();
 
-        if (fallHeight > 1) {
+        if (fallHeight >= 1) {
             roll.addModifier(Game.rulesManager.getRulesPilot().getSeatbeltHeightModifier(fallHeight), "height of "
                   + "fall");
         }
@@ -25392,14 +25392,19 @@ public class TWGameManager extends AbstractGameManager {
                 } else if (entity.getCrew().isUnconscious(pos)) {
                     prd = new PilotingRollData(entity.getId(), TargetRoll.AUTOMATIC_FAIL, "Crew member unconscious");
                 } else {
-                    prd = new PilotingRollData(entity.getId(),
-                          entity.getCrew().getPiloting(pos),
-                          "Base piloting skill");
-                    modifiers.forEach(prd::addModifier);
+                    prd = Game.rulesManager.getRulesPilot().getSeatbeltRoll(entity.getId(), fallHeight,
+                          entity.getCrew().getPiloting(pos), modifiers, roll);
                 }
                 reports.addAll(resolvePilotDamageFromFall(entity, prd, pos));
             }
         } else {
+            PilotingRollData pilotingRoll;
+            if (entity.getCrew().isUnconscious()) {
+                pilotingRoll = new PilotingRollData(entity.getId(), TargetRoll.AUTOMATIC_FAIL, "Pilot unconscious");
+            } else {
+                pilotingRoll = Game.rulesManager.getRulesPilot().getSeatbeltRoll(entity.getId(), fallHeight,
+                      entity.getCrew().getPiloting(), null, roll);
+            }
             reports.addAll(resolvePilotDamageFromFall(entity, roll, 0));
         }
         return reports;

@@ -34,14 +34,17 @@ package megamek.common.rules;
 
 import megamek.common.CriticalSlot;
 import megamek.common.Report;
+import megamek.common.TargetRollModifier;
 import megamek.common.compute.Compute;
 import megamek.common.game.Game;
 import megamek.common.options.OptionsConstants;
+import megamek.common.rolls.PilotingRollData;
 import megamek.common.rolls.Roll;
 import megamek.common.rolls.TargetRoll;
 import megamek.common.units.Entity;
 import megamek.common.units.Mek;
 
+import java.util.List;
 import java.util.Vector;
 
 public abstract class RulesPilot {
@@ -237,4 +240,16 @@ public abstract class RulesPilot {
      * @return return the fall height, unmodified
      */
     public int getSeatbeltHeightModifier(int fallHeight) { return fallHeight; }
+
+    /**
+     * Seatbelt checks for potentially multiple crew
+     * @param entityId ID of the entity
+     * @param fallHeight how big was the fall
+     * @param piloting piloting skill
+     * @param modifiers list of modifiers
+     * @param roll the current Piloting Roll
+     * @return the new Piloting roll
+     */
+    public abstract PilotingRollData getSeatbeltRoll(int entityId, int fallHeight, int piloting,
+          List<TargetRollModifier> modifiers, PilotingRollData roll);
 }

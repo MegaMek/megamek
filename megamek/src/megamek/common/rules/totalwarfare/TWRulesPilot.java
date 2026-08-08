@@ -33,13 +33,16 @@ package megamek.common.rules.totalwarfare;
  */
 
 import megamek.common.Report;
+import megamek.common.TargetRollModifier;
 import megamek.common.compute.Compute;
 import megamek.common.game.Game;
 import megamek.common.options.OptionsConstants;
+import megamek.common.rolls.PilotingRollData;
 import megamek.common.rolls.Roll;
 import megamek.common.rules.RulesPilot;
 import megamek.common.units.Entity;
 
+import java.util.List;
 import java.util.Vector;
 
 public class TWRulesPilot extends RulesPilot {
@@ -102,4 +105,25 @@ public class TWRulesPilot extends RulesPilot {
      * */
     @Override
     public int getSeatbeltHeightModifier(int fallHeight) { return fallHeight - 1; }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public PilotingRollData getSeatbeltRoll(int entityId,
+           int fallHeight,
+          int piloting,
+          List<TargetRollModifier> modifiers,
+          PilotingRollData roll) {
+        if (modifiers == null) {
+            return roll;
+        }
+        PilotingRollData prd = new PilotingRollData(entityId,
+              piloting,
+              "Base piloting skill");
+        if (!modifiers.isEmpty()) {
+            modifiers.forEach(prd::addModifier);
+        }
+        return prd;        
+    }
 }

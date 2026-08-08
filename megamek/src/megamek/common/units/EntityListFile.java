@@ -56,6 +56,8 @@ import megamek.codeUtilities.StringUtility;
 import megamek.common.CriticalSlot;
 import megamek.common.Player;
 import megamek.common.battleArmor.BattleArmor;
+import megamek.common.battlefieldSupport.BattlefieldSupportAsset;
+import megamek.common.battlefieldSupport.BattlefieldSupportAssetYaml;
 import megamek.common.bays.Bay;
 import megamek.common.equipment.*;
 import megamek.common.equipment.AmmoType.Munitions;
@@ -1002,6 +1004,14 @@ public class EntityListFile {
                 output.write("\" " + MULParser.ATTR_CAMO_SCALE + "=\"");
                 output.write(Integer.toString(entity.getCamouflage().getScale()));
             }
+            if (!entity.getCamouflage().hasDefaultOverlay()) {
+                output.write("\" " + MULParser.ATTR_CAMO_OVERLAY_STYLE + "=\"");
+                output.write(entity.getCamouflage().getOverlayStyle().name());
+                output.write("\" " + MULParser.ATTR_CAMO_OVERLAY_DIRECTION + "=\"");
+                output.write(entity.getCamouflage().getOverlayDirection().name());
+                output.write("\" " + MULParser.ATTR_CAMO_OVERLAY_COLOR + "=\"");
+                output.write(String.format("%06X", entity.getCamouflage().getOverlayColor().getRGB() & 0xFFFFFF));
+            }
 
             if ((entity instanceof MekWarrior) &&
                   !((MekWarrior) entity).getPickedUpByExternalIdAsString().equals("-1")) {
@@ -1050,6 +1060,24 @@ public class EntityListFile {
                         output.write("\" " + MULParser.ATTR_DISPOSABLE_WEAPON_FIRED + "=\"1");
                     }
                 }
+            }
+            // Write the unit-file UUID for every unit that has one: it is the primary lookup on load, with the
+            // chassis/model name kept for backwards-compatibility and human-readability. For a Battlefield Support
+            // Asset this is essential (an asset shares its name with its base unit); for other units it pins the exact
+            // saved unit file.
+            if (!StringUtility.isNullOrBlank(entity.getUnitFileUUID())) {
+                output.write("\" " + MULParser.ATTR_UNIT_FILE_UUID + "=\"");
+                output.write(entity.getUnitFileUUID());
+            }
+            if (entity instanceof BattlefieldSupportAsset) {
+                output.write("\" " + MULParser.ATTR_ENTITY_FORM + "=\"");
+                output.write(MULParser.VALUE_BATTLEFIELD_SUPPORT_ASSET);
+            }
+            // A Battlefield Support Asset also persists its current Destroy Check when damage has lowered it.
+            if ((entity instanceof BattlefieldSupportAsset asset)
+                  && (asset.getDestroyCheck() != asset.getODestroyCheck())) {
+                output.write("\" " + MULParser.ATTR_DESTROY_CHECK + "=\"");
+                output.write(String.valueOf(asset.getDestroyCheck()));
             }
             output.write("\">\n");
 
@@ -1351,6 +1379,24 @@ public class EntityListFile {
                 output.write(indentStr(indentLvl + 1) + "</" + MULParser.ELE_NC3 + ">\n");
             }
 
+            // Record the trailers this entity tows, front to back. Only the tractor records the train: order fixes
+            // the hitch chain and therefore where each trailer sits, and each trailer's own tractor and hitch are
+            // rebuilt from this list when the units are added to a game.
+            if (!entity.getAllTowedUnits().isEmpty()) {
+                output.write(indentStr(indentLvl + 1) + '<' + MULParser.ELE_TOWED_UNITS + ">\n");
+                for (int towedId : entity.getAllTowedUnits()) {
+                    output.write(indentStr(indentLvl + 2) +
+                          '<' +
+                          MULParser.ELE_TOWED_UNIT +
+                          ' ' +
+                          MULParser.ATTR_ID +
+                          "=\"" +
+                          towedId +
+                          "\"/>\n");
+                }
+                output.write(indentStr(indentLvl + 1) + "</" + MULParser.ELE_TOWED_UNITS + ">\n");
+            }
+
             // Record if this entity is transported by another
             if (entity.getTransportId() != Entity.NONE) {
                 output.write(indentStr(indentLvl + 1) +
@@ -1504,17 +1550,22 @@ public class EntityListFile {
                 output.write("\"/>\n");
             }
 
-            // Write out the mtf/blk file for the unit
+            // Write out the mtf/blk/bfs file for the unit
             String data = null;
             if (embedUnits && !entity.isCanon()) {
                 if (entity instanceof Mek mek) {
                     data = mek.getMtf();
+                } else if (entity instanceof BattlefieldSupportAsset asset) {
+                    try {
+                        data = BattlefieldSupportAssetYaml.toYaml(asset.toAssetData());
+                    } catch (IOException e) {
+                        logger.error(e, "Error writing asset: {}", entity);
+                    }
                 } else {
                     try {
                         data = String.join("\n", BLKFile.getBlock(entity).getAllDataAsString());
                     } catch (EntitySavingException e) {
-                        logger.error("Error writing unit: {}", entity);
-                        logger.error(e);
+                        logger.error(e, "Error writing unit: {}", entity);
                     }
                 }
             }
@@ -1522,7 +1573,9 @@ public class EntityListFile {
             if (data != null) {
                 String fileName = (entity.getChassis() + ' ' + entity.getModel()).trim();
                 fileName = fileName.replaceAll("[/\\\\<>:\"|?*]", "_");
-                fileName = fileName + ((entity instanceof Mek) ? ".mtf" : ".blk");
+                fileName = fileName + (
+                      (entity instanceof Mek) ? ".mtf"
+                            : (entity instanceof BattlefieldSupportAsset) ? ".bfs" : ".blk");
 
 
                 output.write(indentStr(indentLvl + 1) +

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2025 The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2025-2026 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -109,6 +109,9 @@ public final class Factions2 {
 
     private final Map<String, Faction2> factions = new HashMap<>();
 
+    /** Maps a retired/aliased faction code to the surviving canonical faction key. See {@link Faction2#getAliases()}. */
+    private final Map<String, String> aliasToCanonical = new HashMap<>();
+
     private Factions2() {
         loadFactionsFromFile();
     }
@@ -138,6 +141,7 @@ public final class Factions2 {
     public Factions2(String factionsDataPath) {
         ObjectMapper mapper = getLoadMapper();
         loadFactionsFromDirectory(factionsDataPath, mapper);
+        registerAliases();
     }
 
     /**
@@ -154,7 +158,17 @@ public final class Factions2 {
      * @return The faction for the given faction code, if any.
      */
     public Optional<Faction2> getFaction(@Nullable String factionCode) {
-        return Optional.ofNullable(factionCode == null ? null : factions.get(factionCode));
+        if (factionCode == null) {
+            return Optional.empty();
+        }
+        Faction2 faction = factions.get(factionCode);
+        if (faction == null) {
+            String canonicalKey = aliasToCanonical.get(factionCode);
+            if (canonicalKey != null) {
+                faction = factions.get(canonicalKey);
+            }
+        }
+        return Optional.ofNullable(faction);
     }
 
     /**
@@ -171,6 +185,7 @@ public final class Factions2 {
             loadFactionsFromDirectory(new File(userDir, MMConstants.FACTIONS_DIR).toString(), mapper);
             loadFactionsFromDirectory(new File(userDir, MMConstants.COMMANDS_DIR).toString(), mapper);
         }
+        registerAliases();
         LOGGER.info("Loaded a total of {} factions and commands", factions.size());
     }
 
@@ -232,5 +247,33 @@ public final class Factions2 {
     private void loadFaction(InputStream source, ObjectMapper mapper) throws IOException {
         Faction2 faction = mapper.readValue(source, Faction2.class);
         factions.put(faction.getKey(), faction);
+    }
+
+    /**
+     * Registers each faction's historical code aliases (see {@link Faction2#getAliases()}) so that a lookup by a
+     * retired faction code resolves to the surviving faction. Runs once after all faction files are loaded, so that a
+     * real faction file always wins over an alias claiming the same code - this guards against a merger of two
+     * distinct factions being mis-declared as a rename alias.
+     */
+    private void registerAliases() {
+        for (Faction2 faction : factions.values()) {
+            for (String aliasCode : faction.getAliases().values()) {
+                if (factions.containsKey(aliasCode)) {
+                    if (factions.get(aliasCode) != faction) {
+                        LOGGER.warn("[FactionAlias] Alias {} for faction {} collides with an existing faction; " +
+                                    "keeping the existing faction. Remove the {}.yml faction file to complete the merge.",
+                              aliasCode, faction.getKey(), aliasCode);
+                    }
+                    continue;
+                }
+                String previousKey = aliasToCanonical.putIfAbsent(aliasCode, faction.getKey());
+                if (previousKey != null && !previousKey.equals(faction.getKey())) {
+                    LOGGER.warn("[FactionAlias] Alias {} is claimed by both {} and {}; keeping {}.",
+                          aliasCode, previousKey, faction.getKey(), previousKey);
+                } else if (previousKey == null) {
+                    LOGGER.debug("[FactionAlias] Registered alias {} -> {}", aliasCode, faction.getKey());
+                }
+            }
+        }
     }
 }

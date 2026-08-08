@@ -44,6 +44,7 @@ import megamek.common.enums.TechBase;
 import megamek.common.equipment.AmmoType;
 import megamek.common.equipment.EquipmentType;
 import megamek.common.eras.Eras;
+import megamek.common.interfaces.ITechnology;
 import megamek.common.loaders.MekSummaryCache;
 import megamek.common.units.AeroSpaceFighter;
 import megamek.common.units.Entity;
@@ -200,6 +201,37 @@ class EntityTechTest {
               BattleArmor.getConstructionTechAdvancement(EntityWeightClass.WEIGHT_MEDIUM)
                     .calcYearAvailability(3032, true));
         Assertions.assertEquals(AvailabilityValue.D, baSrm2Ammo.calcYearAvailability(3032, true));
+    }
+
+    @Test
+    public void elementalBattleArmorIsInProductionAtItsIntroductionYear() {
+        BattleArmor entity = (BattleArmor) getEntityForUnitTesting("Elemental Battle Armor [Laser](Sqd5)", true);
+        assertNotNull(entity, "Elemental Battle Armor [Laser](Sqd5) not found");
+        printEntity(entity);
+
+        // The chassis and every Clan component of this suit enter production in 2868, the unit's own
+        // introduction year, so the suit is in production from the start and never has a prototype phase.
+        Assertions.assertEquals(2868, entity.getIntroductionDate());
+        Assertions.assertEquals("-", entity.getPrototypeRangeDate());
+        Assertions.assertTrue(entity.getProductionDateRange().contains("2868-3053"),
+              "Expected production from 2868, but was: " + entity.getProductionDateRange());
+        Assertions.assertTrue(entity.getCommonDateRange().contains("3054+"),
+              "Expected common from 3054, but was: " + entity.getCommonDateRange());
+    }
+
+    @Test
+    public void componentEnteringProductionInTheUnitsProductionYearDoesNotCreateAPrototypePhase() {
+        // Medium Clan battle armor chassis: prototype 2840, production 2868, common 2875.
+        TechAdvancement chassis = new TechAdvancement(TechBase.CLAN).setClanAdvancement(2840, 2868, 2875);
+        // A component that is itself in production in 2868, the same year the composite already is.
+        TechAdvancement clanBattleArmorSmallLaser = new TechAdvancement(TechBase.CLAN)
+              .setClanAdvancement(2865, 2868, 2870);
+
+        CompositeTechLevel techLevel = new CompositeTechLevel(chassis, true, false, 2868, Faction.NONE);
+        techLevel.addComponent(clanBattleArmorSmallLaser);
+
+        Assertions.assertEquals(ITechnology.DATE_NONE, techLevel.getPrototypeDate());
+        Assertions.assertEquals(2868, techLevel.getProductionDate());
     }
 
     private static void printEntity(Entity entity) {

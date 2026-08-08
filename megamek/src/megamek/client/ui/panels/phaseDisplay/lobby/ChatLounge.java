@@ -148,6 +148,8 @@ import megamek.common.equipment.BombLoadout;
 import megamek.common.event.GameCFREvent;
 import megamek.common.event.GamePhaseChangeEvent;
 import megamek.common.event.GameSettingsChangeEvent;
+import megamek.common.event.board.GameBoardNewEvent;
+import megamek.common.event.entity.GameEntityChangeEvent;
 import megamek.common.event.entity.GameEntityNewEvent;
 import megamek.common.event.player.GamePlayerChangeEvent;
 import megamek.common.force.Force;
@@ -228,6 +230,8 @@ public class ChatLounge extends AbstractPhaseDisplay
     public JScrollPane scrMekTable;
     private final MMToggleButton butCompact = new MMToggleButton(Messages.getString("ChatLounge.butCompact"));
     private final MMToggleButton butShowUnitID = new MMToggleButton(Messages.getString("ChatLounge.butShowUnitID"));
+    /** Takes and gives up the gamemaster role, and shows who holds it. */
+    private final MMToggleButton butGameMaster = new MMToggleButton(Messages.getString("ChatLounge.butGameMaster"));
     private final JToggleButton butListView = new JToggleButton(Messages.getString("ChatLounge.butSortableView"));
     private final JToggleButton butForceView = new JToggleButton(Messages.getString("ChatLounge.butForceView"));
     private final JButton butCollapse = new JButton(Messages.getString("ChatLounge.butCollapse"));
@@ -299,6 +303,7 @@ public class ChatLounge extends AbstractPhaseDisplay
 
     private JComboBox<Comparable<?>> comMapSizes;
     private final JButton butBoardPreview = new JButton(Messages.getString("BoardSelectionDialog.ViewGameBoard"));
+    private final JButton butGenerateBattlefield = new JButton(Messages.getString("ChatLounge.GenerateBattlefield"));
     private final JPanel panMapButtons = new JPanel();
     private final JLabel lblBoardsAvailable = new JLabel();
     private JList<String> lisBoardsAvailable;
@@ -361,6 +366,9 @@ public class ChatLounge extends AbstractPhaseDisplay
     private static final String CL_ACTION_COMMAND_AUTO_RESOLVE = "AUTORESOLVE";
     private static final String CL_ACTION_COMMAND_CAMO = "camo";
 
+    /** The chat command that takes or gives up the gamemaster role. */
+    private static final String GAME_MASTER_COMMAND = "/gm";
+
     private static final GUIPreferences GUIP = GUIPreferences.getInstance();
     private static final ClientPreferences CLIENT_PREFERENCES = PreferenceManager.getClientPreferences();
     private transient ClientGUI clientgui;
@@ -394,6 +402,7 @@ public class ChatLounge extends AbstractPhaseDisplay
         setupUnitsPanel();
         setupMapPanel();
         refreshLabels();
+        refreshGameMasterButton();
         setupListeners();
     }
 
@@ -409,6 +418,12 @@ public class ChatLounge extends AbstractPhaseDisplay
         GUIP.addPreferenceChangeListener(this);
         PreferenceManager.getClientPreferences().addPreferenceChangeListener(this);
         MekSummaryCache.getInstance().addListener(mekSummaryCacheListener);
+        // The cache may have finished loading between setupUnitConfig() reading its state and the listener
+        // being registered just above. Without this check that notification is missed and the buttons that
+        // need the cache stay disabled for the rest of the lobby.
+        if (MekSummaryCache.getInstance().isInitialized()) {
+            enableUnitAddButtons();
+        }
         clientgui.getClient().getGame().addGameListener(this);
         clientgui.boardViews().forEach(bv -> bv.addBoardViewListener(this));
 
@@ -435,6 +450,7 @@ public class ChatLounge extends AbstractPhaseDisplay
         butAddBot.addActionListener(lobbyListener);
         butArmy.addActionListener(lobbyListener);
         butBoardPreview.addActionListener(lobbyListener);
+        butGenerateBattlefield.addActionListener(lobbyListener);
         butBotSettings.addActionListener(lobbyListener);
         butCompact.addActionListener(lobbyListener);
         butConditions.addActionListener(lobbyListener);
@@ -448,6 +464,7 @@ public class ChatLounge extends AbstractPhaseDisplay
         butSaveList.addActionListener(lobbyListener);
         butPrintList.addActionListener(lobbyListener);
         butShowUnitID.addActionListener(lobbyListener);
+        butGameMaster.addActionListener(lobbyListener);
         butSkills.addActionListener(lobbyListener);
         butSpaceSize.addActionListener(lobbyListener);
         butCamo.addActionListener(camoListener);
@@ -515,9 +532,7 @@ public class ChatLounge extends AbstractPhaseDisplay
         CamoChooserDialog ccd = new CamoChooserDialog(clientgui.getFrame(), player.getCamouflage());
         try {
             java.util.List<Entity> playerEntities = game().getPlayerEntities(player, false);
-            if (!playerEntities.isEmpty()) {
-                ccd.setDisplayedEntity(CollectionUtil.anyOneElement(playerEntities));
-            }
+            ccd.setDisplayedEntities(playerEntities);
             // If the dialog was canceled or nothing selected, do nothing
             if (!ccd.showDialog().isConfirmed()) {
                 return;
@@ -589,11 +604,26 @@ public class ChatLounge extends AbstractPhaseDisplay
     }
 
     /** Enables buttons to allow adding units when the MSC has finished loading. */
-    private final transient MekSummaryCache.Listener mekSummaryCacheListener = () -> {
+    private final transient MekSummaryCache.Listener mekSummaryCacheListener = this::enableUnitAddButtons;
+
+    /**
+     * Enables the buttons that need a loaded unit cache to work.
+     * <p>
+     * Both callers can run off the event dispatch thread: the unit cache notifies its listeners from its loader
+     * thread, and the lobby is constructed from the phase change, which is dispatched on the client's connection
+     * thread. The button updates are therefore moved onto the event dispatch thread here, so that every caller is
+     * covered.
+     * </p>
+     */
+    private void enableUnitAddButtons() {
+        if (!SwingUtilities.isEventDispatchThread()) {
+            SwingUtilities.invokeLater(this::enableUnitAddButtons);
+            return;
+        }
         butAdd.setEnabled(true);
         butArmy.setEnabled(true);
         butLoadList.setEnabled(true);
-    };
+    }
 
     /** Sets up the Mek Table and Mek Tree. */
     private void setupEntities() {
@@ -788,6 +818,8 @@ public class ChatLounge extends AbstractPhaseDisplay
         topRight.add(Box.createHorizontalStrut(30));
         topRight.add(butCollapse);
         topRight.add(butExpand);
+        topRight.add(Box.createHorizontalStrut(30));
+        topRight.add(butGameMaster);
 
         JPanel rightSide = new JPanel();
         rightSide.setLayout(new BoxLayout(rightSide, BoxLayout.PAGE_AXIS));
@@ -882,11 +914,13 @@ public class ChatLounge extends AbstractPhaseDisplay
 
         FixedYPanel bottomPanel = new FixedYPanel();
         bottomPanel.setBorder(new EmptyBorder(10, 0, 0, 0));
+        bottomPanel.add(butGenerateBattlefield);
         bottomPanel.add(butBoardPreview);
         bottomPanel.add(butSaveMapSetup);
         bottomPanel.add(butLoadMapSetup);
 
         butBoardPreview.setToolTipText(Messages.getString("BoardSelectionDialog.ViewGameBoardTooltip"));
+        butGenerateBattlefield.setToolTipText(Messages.getString("ChatLounge.GenerateBattlefieldTooltip"));
 
         // The left side panel including the game map preview
         JPanel panMapPreview = new JPanel();
@@ -1143,6 +1177,7 @@ public class ChatLounge extends AbstractPhaseDisplay
         butLoadMapSetup.setEnabled(!inSpace);
         butMapShrinkW.setEnabled(mapSettings.getMapWidth() > 1);
         butMapShrinkH.setEnabled(mapSettings.getMapHeight() > 1);
+        refreshGenerateBattlefieldButton();
         butAdvancedSearchMap.setEnabled(!inSpace &&
               (mapSettings.getMapWidth() == 1) &&
               (mapSettings.getMapHeight() == 1));
@@ -1377,8 +1412,48 @@ public class ChatLounge extends AbstractPhaseDisplay
         g.dispose();
     }
 
+    /**
+     * Enables the Generate Battlefield button only while it can actually be used, mirroring the server's checks:
+     * building the board with a Surprise board selected would reveal the surprise, and an incomplete board
+     * selection (unset slots right after a map size change) cannot be built. In both cases the server refuses
+     * the request, so the button is disabled with an explanatory tooltip instead of allowing a silent no-op.
+     */
+    private void refreshGenerateBattlefieldButton() {
+        // Board slots may be null right after a map size change, before the server fills them in
+        boolean hasSurpriseBoard = mapSettings.getBoardsSelectedVector().stream()
+              .anyMatch(boardName -> (boardName != null) && boardName.startsWith(MapSettings.BOARD_SURPRISE));
+        boolean hasUnsetBoard = mapSettings.getBoardsSelectedVector().stream().anyMatch(Objects::isNull);
+        butGenerateBattlefield.setEnabled(!hasSurpriseBoard && !hasUnsetBoard);
+
+        String tooltipKey;
+        if (hasSurpriseBoard) {
+            tooltipKey = "ChatLounge.GenerateBattlefieldTooltipSurprise";
+        } else if (hasUnsetBoard) {
+            tooltipKey = "ChatLounge.GenerateBattlefieldTooltipIncomplete";
+        } else {
+            tooltipKey = "ChatLounge.GenerateBattlefieldTooltip";
+        }
+        butGenerateBattlefield.setToolTipText(Messages.getString(tooltipKey));
+    }
+
+    /**
+     * @return the battlefield built by the server in the lobby, or {@code null} if none was built (or it was
+     *       discarded after a settings change), in which case the preview falls back to a local roll
+     */
+    private @Nullable Board serverGeneratedBoard() {
+        Board board = client().getGame().getBoard();
+        boolean hasServerBoard = (board != null) && (board.getWidth() > 0) && (board.getHeight() > 0);
+        return hasServerBoard ? board : null;
+    }
+
     public void previewGameBoard() {
-        Board newBoard = ServerBoardHelper.getPossibleGameBoard(mapSettings, false);
+        Board serverBoard = serverGeneratedBoard();
+        if (serverBoard == null) {
+            LOGGER.debug("[LobbyBoard] no server-built battlefield - preview uses a local roll of the map settings");
+        }
+        Board newBoard = (serverBoard != null)
+              ? serverBoard
+              : ServerBoardHelper.getPossibleGameBoard(mapSettings, false);
         boardPreviewGame.setBoard(newBoard);
         previewBV.setLocalPlayer(client().getLocalPlayer());
         final var gOpts = game().getOptions();
@@ -1422,7 +1497,9 @@ public class ChatLounge extends AbstractPhaseDisplay
         java.util.List<Integer> enIds = getSelectedEntities().stream().map(Entity::getId).toList();
         mekModel.clearData();
         ArrayList<Entity> allEntities = new ArrayList<>(clientgui.getClient().getEntitiesVector());
-        allEntities.sort(activeSorter);
+        // Whatever the player is sorting by, a train stays together: the choice is applied to the tractor and its
+        // trailers follow it. Sorting by tonnage would otherwise strand a 10 ton carriage far from its tractor.
+        allEntities.sort(MekTableSorter.keepingCarriedUnitsTogether(activeSorter));
 
         boolean localUnits = false;
         var opts = clientgui.getClient().getGame().getOptions();
@@ -1621,7 +1698,9 @@ public class ChatLounge extends AbstractPhaseDisplay
         if (trailer.getTowedBy() == Entity.NONE) {
             return;
         }
-        Entity tractor = game().getEntity(trailer.getTowedBy());
+        // Detaching mid-train affects the whole train, so work from the tractor heading it rather than from the
+        // trailer immediately in front, which would leave the rest of the train out of the update.
+        Entity tractor = game().getEntity(trailer.getTractor());
         disconnectTrain(tractor, trailer, updateCandidates);
     }
 
@@ -1649,7 +1728,15 @@ public class ChatLounge extends AbstractPhaseDisplay
 
     private void disconnectTrain(Entity tractor, Entity trailer, Collection<Entity> updateCandidates) {
         if (tractor != null && trailer != null) {
-            List<Integer> otherTowedUnitIds = tractor.getAllTowedUnits();
+            // An off board train stays hooked up. There is no board position to drop a trailer at, and the train is
+            // the only thing holding the trailer's place off the map edge.
+            if (tractor.isOffBoard() || trailer.isOffBoard()) {
+                LobbyErrors.showNoDetachOffBoard(clientgui.getFrame());
+                return;
+            }
+            // Copy the ids: disconnectUnit drops the detached trailers from this list as it works, and walking
+            // the live view afterwards fails with a ConcurrentModificationException.
+            List<Integer> otherTowedUnitIds = new ArrayList<>(tractor.getAllTowedUnits());
             tractor.disconnectUnit(trailer.getId());
             updateCandidates.add(trailer);
             updateCandidates.add(tractor);
@@ -1817,9 +1904,37 @@ public class ChatLounge extends AbstractPhaseDisplay
         clientgui.getClient().sendServerChat(Player.PLAYER_NONE, msg);
     }
 
+    /**
+     * Assigns the double-clicked entry of the available-boards list to the first board slot, as if it had been
+     * dragged onto the map preview button. The map preview then shows the board through the usual refresh.
+     *
+     * @param listIndex the index of the double-clicked entry in the available-boards list
+     */
+    private void selectBoardFromList(int listIndex) {
+        String boardName = lisBoardsAvailable.getModel().getElementAt(listIndex);
+        LOGGER.debug("[LobbyBoard] double-click assigns {} to the first board slot", boardName);
+        changeMapDnD(boardName, mapButtons.getFirst());
+    }
+
     //
     // GameListener
     //
+    @Override
+    public void gameBoardNew(GameBoardNewEvent e) {
+        if (isIgnoringEvents()) {
+            return;
+        }
+        // The server built (or discarded) the lobby battlefield - update an open preview to match.
+        // This event arrives on the network thread; the preview is Swing, so hop onto the EDT.
+        LOGGER.debug("[LobbyBoard] board {} received from the server ({}x{})", e.getBoardId(),
+              e.getNewBoard().getWidth(), e.getNewBoard().getHeight());
+        SwingUtilities.invokeLater(() -> {
+            if ((boardPreviewW != null) && boardPreviewW.isVisible()) {
+                previewGameBoard();
+            }
+        });
+    }
+
     @Override
     public void gamePlayerChange(GamePlayerChangeEvent e) {
         if (isIgnoringEvents()) {
@@ -1830,6 +1945,7 @@ public class ChatLounge extends AbstractPhaseDisplay
         refreshPlayerTable();
         refreshPlayerConfig();
         refreshCamoButton();
+        refreshGameMasterButton();
         refreshEntities();
         panTeamOverview.refreshData();
     }
@@ -1867,12 +1983,24 @@ public class ChatLounge extends AbstractPhaseDisplay
     }
 
     @Override
+    public void gameEntityChange(GameEntityChangeEvent e) {
+        if (isIgnoringEvents()) {
+            return;
+        }
+        // A unit's shown state may have changed - its damage, and so its damage decal, most of all. Without this
+        // the lobby table and tree kept drawing the unit as it was, since nothing else redrew them on a change.
+        refreshEntities();
+    }
+
+    @Override
     public void gameSettingsChange(GameSettingsChangeEvent e) {
         // Are we ignoring events?
         if (isIgnoringEvents()) {
             return;
         }
         refreshGameSettings();
+        // the Allow Game Master option lives in the game settings, so the button that offers the role tracks it here
+        refreshGameMasterButton();
         // The table sorting may no longer be allowed (e.g. when blind drop was
         // activated)
         if (!activeSorter.isAllowed(clientgui.getClient().getGame().getOptions())) {
@@ -1938,6 +2066,8 @@ public class ChatLounge extends AbstractPhaseDisplay
                 clientgui.getGameOptionsDialog().setEditable(true);
                 clientgui.getGameOptionsDialog().update(clientgui.getClient().getGame().getOptions());
                 clientgui.getGameOptionsDialog().setVisible(true);
+            } else if (ev.getSource().equals(butGameMaster)) {
+                toggleGameMaster();
             } else if (ev.getSource().equals(butCompact)) {
                 toggleCompact();
             } else if (ev.getSource().equals(butLoadList)) {
@@ -1996,6 +2126,10 @@ public class ChatLounge extends AbstractPhaseDisplay
 
             } else if (ev.getSource().equals(butBoardPreview)) {
                 previewGameBoard();
+
+            } else if (ev.getSource().equals(butGenerateBattlefield)) {
+                LOGGER.debug("[LobbyBoard] requesting battlefield generation from the server");
+                client().sendLobbyBoardGenerationRequest();
 
             } else if (ev.getSource().equals(comMapSizes)) {
                 if (Messages.getString("ChatLounge.CustomMapSize").equals(comMapSizes.getSelectedItem())) {
@@ -2367,7 +2501,8 @@ public class ChatLounge extends AbstractPhaseDisplay
         var bcd = new BotConfigDialog(clientgui.getFrame(),
               bot.getLocalPlayer().getName(),
               bot.getBehaviorSettings(),
-              clientgui);
+              clientgui,
+              bot.getAIType());
         bcd.setVisible(true);
         if (bcd.getResult() == DialogResult.CONFIRMED) {
             bot.setBehaviorSettings(bcd.getBehaviorSettings());
@@ -2614,6 +2749,7 @@ public class ChatLounge extends AbstractPhaseDisplay
         butAddBot.removeActionListener(lobbyListener);
         butArmy.removeActionListener(lobbyListener);
         butBoardPreview.removeActionListener(lobbyListener);
+        butGenerateBattlefield.removeActionListener(lobbyListener);
         butBotSettings.removeActionListener(lobbyListener);
         butCompact.removeActionListener(lobbyListener);
         butConditions.removeActionListener(lobbyListener);
@@ -2626,6 +2762,7 @@ public class ChatLounge extends AbstractPhaseDisplay
         butSaveList.removeActionListener(lobbyListener);
         butPrintList.removeActionListener(lobbyListener);
         butShowUnitID.removeActionListener(lobbyListener);
+        butGameMaster.removeActionListener(lobbyListener);
         butSkills.removeActionListener(lobbyListener);
         butSpaceSize.removeActionListener(lobbyListener);
         butCamo.removeActionListener(camoListener);
@@ -3074,17 +3211,43 @@ public class ChatLounge extends AbstractPhaseDisplay
         }
 
         @Override
+        public void mousePressed(MouseEvent e) {
+            maybeShowPopup(e);
+        }
+
+        @Override
         public void mouseReleased(MouseEvent e) {
-            if (lisBoardsAvailable.isEnabled()) {
-                // If a mouse button is pressed over a map,
-                // show the board selection popup
-                int index = lisBoardsAvailable.locationToIndex(e.getPoint());
-                if (index != -1 && lisBoardsAvailable.getCellBounds(index, index).contains(e.getPoint())) {
-                    if (!lisBoardsAvailable.isSelectedIndex(index)) {
-                        lisBoardsAvailable.setSelectedIndex(index);
-                    }
-                    showPopup(e);
+            maybeShowPopup(e);
+        }
+
+        /**
+         * Shows the board selection popup on a right-click (checked on both press and release, as the popup
+         * trigger is platform-dependent). Left clicks are left alone so that they select boards and can form
+         * a double-click, which opens the board preview instead.
+         */
+        private void maybeShowPopup(MouseEvent e) {
+            if (!e.isPopupTrigger() || !lisBoardsAvailable.isEnabled()) {
+                return;
+            }
+            int index = lisBoardsAvailable.locationToIndex(e.getPoint());
+            if ((index != -1) && lisBoardsAvailable.getCellBounds(index, index).contains(e.getPoint())) {
+                if (!lisBoardsAvailable.isSelectedIndex(index)) {
+                    lisBoardsAvailable.setSelectedIndex(index);
                 }
+                showPopup(e);
+            }
+        }
+
+        @Override
+        public void mouseClicked(MouseEvent e) {
+            boolean isDoubleClick = SwingUtilities.isLeftMouseButton(e) && (e.getClickCount() == 2);
+            if (!lisBoardsAvailable.isEnabled() || !isDoubleClick) {
+                return;
+            }
+            int index = lisBoardsAvailable.locationToIndex(e.getPoint());
+            if ((index != -1) && lisBoardsAvailable.getCellBounds(index, index).contains(e.getPoint())) {
+                closePopup();
+                selectBoardFromList(index);
             }
         }
 
@@ -3370,6 +3533,86 @@ public class ChatLounge extends AbstractPhaseDisplay
         butShowUnitID.removeActionListener(lobbyListener);
         butShowUnitID.setSelected(PreferenceManager.getClientPreferences().getShowUnitId());
         butShowUnitID.addActionListener(lobbyListener);
+    }
+
+    /**
+     * Sets burst MG fire on or off on every unit the local player may configure at once: their own units and
+     * their local bots'. The menu bar's shortcut for the per-unit action in the unit right-click menu.
+     */
+    public void setAllBurstMg(boolean burstOn) {
+        lobbyActions.toggleBurstMg(configurableEntities(), burstOn);
+    }
+
+    /**
+     * Sets LRM hot-loading on or off on every unit the local player may configure at once: their own units and
+     * their local bots'. The menu bar's shortcut for the per-unit action in the unit right-click menu.
+     */
+    public void setAllHotLoad(boolean hotLoadOn) {
+        lobbyActions.toggleHotLoad(configurableEntities(), hotLoadOn);
+    }
+
+    /** The units the local player may configure: their own and their local bots'. */
+    private List<Entity> configurableEntities() {
+        List<Entity> configurable = new ArrayList<>();
+        for (Entity entity : clientgui.getClient().getGame().getEntitiesVector()) {
+            if (lobbyActions.isEditable(entity)) {
+                configurable.add(entity);
+            }
+        }
+        return configurable;
+    }
+
+    /**
+     * Asks the server for the gamemaster role, or gives it up when this player already holds it. The request goes
+     * through the same command the chat uses, so the rules for taking the role live in one place: it is put to a
+     * vote of the human players (a lone player's own yes passes at once), and it is refused while another player
+     * holds the role.
+     */
+    private void toggleGameMaster() {
+        client().sendChat(GAME_MASTER_COMMAND);
+        // the button follows the server's answer, not the click, so it is put back until that answer arrives
+        refreshGameMasterButton();
+    }
+
+    /**
+     * Shows who holds the gamemaster role, from what the server last said. Every player sees the same thing,
+     * because the server sends a player update to everyone when the role changes.
+     */
+    private void refreshGameMasterButton() {
+        // The listener is registered once, in setupListeners. Setting a toggle button's state does not fire an
+        // action event, so it does not have to be taken off and put back here.
+        Player gameMaster = null;
+        for (Player player : game().getPlayersList()) {
+            if (player.isGameMaster()) {
+                gameMaster = player;
+                break;
+            }
+        }
+        boolean localPlayerIsGameMaster = (gameMaster != null) && gameMaster.equals(localPlayer());
+
+        // the host decides whether the game has a gamemaster at all, through the Allow Game Master game option
+        boolean gameAllowsGameMaster = game().getOptions()
+              .booleanOption(OptionsConstants.GAME_MASTER_ALLOW);
+
+        // MMToggleButton shows its own green check when selected and red cross when not, so the button needs no
+        // separate check icon of its own; adding one would show a second, redundant check.
+        butGameMaster.setSelected(localPlayerIsGameMaster);
+        if (!gameAllowsGameMaster) {
+            butGameMaster.setText(Messages.getString("ChatLounge.butGameMaster"));
+            butGameMaster.setEnabled(false);
+            butGameMaster.setToolTipText(Messages.getString("ChatLounge.butGameMaster.tooltip.notAllowed"));
+        } else if (gameMaster == null) {
+            butGameMaster.setText(Messages.getString("ChatLounge.butGameMaster"));
+            butGameMaster.setEnabled(true);
+            butGameMaster.setToolTipText(Messages.getString("ChatLounge.butGameMaster.tooltip"));
+        } else {
+            butGameMaster.setText(Messages.getString("ChatLounge.butGameMaster.held", gameMaster.getName()));
+            // only the player holding the role can give it up, and only one player may hold it at a time
+            butGameMaster.setEnabled(localPlayerIsGameMaster);
+            butGameMaster.setToolTipText(Messages.getString(localPlayerIsGameMaster
+                  ? "ChatLounge.butGameMaster.tooltip.held"
+                  : "ChatLounge.butGameMaster.tooltip.heldByOther", gameMaster.getName()));
+        }
     }
 
     /**

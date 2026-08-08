@@ -212,7 +212,7 @@ public class BLKProtoMekFile extends BLKFile implements IMekLoader {
                 // Strip the shots out of the ammo name.
                 equipName = equipName.substring(0, ammoIndex);
             }
-            EquipmentType etype = EquipmentType.get(equipName);
+            EquipmentType etype = getEquipmentType(t, equipName);
 
             if (etype == null) {
                 // try w/ prefix

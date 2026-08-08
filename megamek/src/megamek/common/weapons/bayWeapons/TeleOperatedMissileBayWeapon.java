@@ -65,6 +65,7 @@ public class TeleOperatedMissileBayWeapon extends CapitalMissileBayWeapon {
 
     public TeleOperatedMissileBayWeapon() {
         super();
+        clearLookupNames(); // required to remove the pre-assigned names from CapitalMissileBayWeapon
         // tech levels are a little tricky
         this.name = "Tele-Operated Capital Missile Bay";
         this.setInternalName(EquipmentTypeLookup.TELE_CAPITAL_MISSILE_BAY);

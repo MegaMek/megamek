@@ -243,6 +243,57 @@
               <AppenderRef ref="MegaMekLog" />
           </Logger>
         -->
+        <!--
+          Keybind and called shot diagnostics. Both are dedicated feature loggers (not host classes), so
+          enabling them surfaces only the relevant decisions instead of flooding the log with UI debug noise.
+
+          megamek.feature.KeyBinds emits [KeyBind]-tagged lines for every key press: which bind the keystroke
+          matched (or "no bind"), whether a bind had no registered action, and which receiver declined it. Use
+          this to answer "why did my keypress do nothing?" - the answer is always one of those three lines.
+
+          megamek.feature.CalledShot emits [CalledShot]-tagged lines for the called shot gate (is the display
+          receiving key commands, is the Called button enabled) and each change (weapon, previous call, new
+          call). Use it together with the KeyBinds logger to follow a called shot keypress end to end.
+
+          Both land in logs/megamek.log. Grep for [KeyBind] or [CalledShot].
+
+          <Logger name="megamek.feature.KeyBinds" level="debug" additivity="false">
+              <AppenderRef ref="${env:mm.profile:-null}" />
+              <AppenderRef ref="UnifiedLog" />
+              <AppenderRef ref="MegaMekLog" />
+          </Logger>
+          <Logger name="megamek.feature.CalledShot" level="debug" additivity="false">
+              <AppenderRef ref="${env:mm.profile:-null}" />
+              <AppenderRef ref="UnifiedLog" />
+              <AppenderRef ref="MegaMekLog" />
+          </Logger>
+        -->
+        <!--
+          Hidden-unit probe detection diagnostics, silent by default (parent "megamek" logger at info). All
+          messages are tagged [HiddenUnits]; grep logs/megamek.log for that tag. Logs each full-board probe
+          sweep (phase/round), probes that are present but not functioning (switched off, shut down, EMI),
+          hidden enemies found in probe range, and reveals blocked by line of sight. Uncomment to diagnose
+          "why didn't my probe reveal that unit"; leave commented for normal play.
+
+          <Logger name="megamek.feature.HiddenUnits" level="debug" additivity="false">
+              <AppenderRef ref="${env:mm.profile:-null}" />
+              <AppenderRef ref="UnifiedLog" />
+              <AppenderRef ref="MegaMekLog" />
+          </Logger>
+        -->
+        <!--
+          Equipment activation/deactivation diagnostics, silent by default (parent "megamek" logger at info).
+          All messages are tagged [EquipOff]; grep logs/megamek.log for that tag. Logs every equipment mode
+          change the server receives (with the resulting current and pending mode) and rejected deactivations
+          (e.g. switching an ECM off while stealth armor is engaged). Uncomment to diagnose "why didn't my
+          mode switch take effect"; leave commented for normal play.
+
+          <Logger name="megamek.feature.EquipOff" level="debug" additivity="false">
+              <AppenderRef ref="${env:mm.profile:-null}" />
+              <AppenderRef ref="UnifiedLog" />
+              <AppenderRef ref="MegaMekLog" />
+          </Logger>
+        -->
         <Logger name="megamek" level="info" additivity="false">
             <AppenderRef ref="${env:mm.profile:-null}" />
             <AppenderRef ref="UnifiedLog" />

@@ -78,10 +78,16 @@ import megamek.logging.MMLogger;
 /**
  * You know what Meks are, silly.
  */
-public abstract class Mek extends Entity implements Fortifiable, RubbleClearer {
+public abstract class Mek extends Entity implements Fortifiable, RubbleClearer, ActiveHeatSinkController {
     @Serial
     private static final long serialVersionUID = -1929593228891136561L;
     private static final MMLogger LOGGER = MMLogger.create(Mek.class);
+
+    /** A MekWarrior can always eject while alive and aboard. */
+    @Override
+    public boolean canEjectCrew() {
+        return crewCanLeave();
+    }
 
     private static final class FrankenMekLocationSourceSnapshot implements Serializable {
         @Serial
@@ -268,10 +274,6 @@ public abstract class Mek extends Entity implements Fortifiable, RubbleClearer {
     // for Harjel II/III
     private final boolean[] armorDamagedThisTurn;
 
-    private int sinksOn = -1;
-
-    private int sinksOnNextRound = -1;
-
     private boolean autoEject = true;
 
     private boolean condEjectAmmo = true;
@@ -325,8 +327,8 @@ public abstract class Mek extends Entity implements Fortifiable, RubbleClearer {
     public static final String FRANKEN_MEK_STRUCTURE_HYBRID = "Hybrid";
 
     private static final TechAdvancement TA_FRANKENMEK = new TechAdvancement(TechBase.ALL)
-        .setAdvancement(ITechnology.DATE_PS)
-        .setStaticTechLevel(SimpleTechLevel.EXPERIMENTAL);
+          .setAdvancement(ITechnology.DATE_PS)
+          .setStaticTechLevel(SimpleTechLevel.EXPERIMENTAL);
 
     private boolean frankenMek = false;
 
@@ -595,7 +597,7 @@ public abstract class Mek extends Entity implements Fortifiable, RubbleClearer {
         boolean needsNewSourceSnapshots = (frankenMekLocationSources == null)
               || (frankenMekLocationSources.length != locations);
         if (frankenMekStructureInitialized && !needsNewTonnage && !needsNewStructureType
-            && !needsNewStructureTechLevel && !needsNewSourceSnapshots) {
+              && !needsNewStructureTechLevel && !needsNewSourceSnapshots) {
             return;
         }
 
@@ -789,7 +791,7 @@ public abstract class Mek extends Entity implements Fortifiable, RubbleClearer {
     public EquipmentType getFrankenMekStructureEquipment(int location) {
         String structureName = EquipmentType.getStructureTypeName(getFrankenMekStructureType(location),
               TechConstants.isClan(getFrankenMekStructureTechLevel(location)));
-        return EquipmentType.get(structureName);
+        return EquipmentType.getStructureFromName(structureName);
     }
 
     /**
@@ -985,7 +987,8 @@ public abstract class Mek extends Entity implements Fortifiable, RubbleClearer {
 
     public String getFrankenMekStructureDisplayName() {
         if (!isFrankenMek()) {
-            return EquipmentType.getStructureTypeName(getStructureType(), TechConstants.isClan(getStructureTechLevel()));
+            return EquipmentType.getStructureTypeName(getStructureType(),
+                  TechConstants.isClan(getStructureTechLevel()));
         }
         if (hasHybridFrankenMekStructure()) {
             return FRANKEN_MEK_STRUCTURE_HYBRID;
@@ -1028,9 +1031,9 @@ public abstract class Mek extends Entity implements Fortifiable, RubbleClearer {
               && (frankenMekStructureType[firstLeg] == frankenMekStructureType[otherLeg])
               && (frankenMekStructureTechLevel[firstLeg] == frankenMekStructureTechLevel[otherLeg])
               && sanitizeFrankenMekSourceValue(firstLegSource.getDisplayName()).equals(
-                    sanitizeFrankenMekSourceValue(otherLegSource.getDisplayName()))
+              sanitizeFrankenMekSourceValue(otherLegSource.getDisplayName()))
               && sanitizeFrankenMekSourceValue(firstLegSource.getType()).equals(
-                    sanitizeFrankenMekSourceValue(otherLegSource.getType()));
+              sanitizeFrankenMekSourceValue(otherLegSource.getType()));
     }
 
     private static String sanitizeFrankenMekSourceValue(String value) {
@@ -1251,9 +1254,6 @@ public abstract class Mek extends Entity implements Fortifiable, RubbleClearer {
         bUsedCoolantSystem = false;
 
         setSecondaryFacing(getFacing());
-
-        // set heat sinks
-        sinksOn = sinksOnNextRound;
 
         // update cockpit status
         cockpitStatus = cockpitStatusNextRound;
@@ -2356,28 +2356,22 @@ public abstract class Mek extends Entity implements Fortifiable, RubbleClearer {
 
     public int getHeatCapacity(boolean includePartialWing, boolean includeRadicalHeatSink) {
         int capacity = 0;
-        int activeCount = getActiveSinks();
         boolean isDoubleHeatSink = false;
 
-        for (Mounted<?> mounted : getMisc()) {
-            if (mounted.isDestroyed() || mounted.isBreached()) {
+        for (MiscMounted mounted : getMisc()) {
+            MiscType miscType = mounted.getType();
+            // A heat sink the player has switched off dissipates nothing until it is switched back on
+            if ((miscType == null) || mounted.isDestroyed() || mounted.isBreached() || mounted.isModeTurnedOff()) {
                 continue;
             }
-            if ((activeCount > 0)
-                  && mounted.getType().hasFlag(MiscType.F_HEAT_SINK)) {
+            if (miscType.hasFlag(MiscType.F_HEAT_SINK)) {
                 capacity++;
-                activeCount--;
-            } else if ((activeCount > 0)
-                  && mounted.getType().hasFlag(MiscType.F_DOUBLE_HEAT_SINK)) {
-                activeCount--;
-                capacity += 2;
-                isDoubleHeatSink = true;
-            } else if (mounted.getType().hasFlag(
-                  MiscType.F_IS_DOUBLE_HEAT_SINK_PROTOTYPE)) {
+            } else if (miscType.hasFlag(MiscType.F_DOUBLE_HEAT_SINK)
+                  || miscType.hasFlag(MiscType.F_IS_DOUBLE_HEAT_SINK_PROTOTYPE)) {
                 capacity += 2;
                 isDoubleHeatSink = true;
             } else if (includePartialWing
-                  && mounted.getType().hasFlag(MiscType.F_PARTIAL_WING)
+                  && miscType.hasFlag(MiscType.F_PARTIAL_WING)
                   && // unless all crits are destroyed, we get the bonus
                   ((getGoodCriticalSlots(CriticalSlot.TYPE_EQUIPMENT,
                         getEquipmentNum(mounted), Mek.LOC_RIGHT_TORSO) > 0)
@@ -2434,16 +2428,17 @@ public abstract class Mek extends Entity implements Fortifiable, RubbleClearer {
 
         // okay, count leg sinks
         int sinksUnderwater = 0;
-        for (Mounted<?> mounted : getMisc()) {
-            if (mounted.isDestroyed() || mounted.isBreached()
+        for (MiscMounted mounted : getMisc()) {
+            MiscType miscType = mounted.getType();
+            if ((miscType == null) || mounted.isDestroyed() || mounted.isBreached() || mounted.isModeTurnedOff()
                   || !locationIsLeg(mounted.getLocation())) {
                 continue;
             }
-            if (mounted.getType().hasFlag(MiscType.F_HEAT_SINK)) {
+            if (miscType.hasFlag(MiscType.F_HEAT_SINK)) {
                 sinksUnderwater++;
-            } else if (mounted.getType().hasFlag(MiscType.F_DOUBLE_HEAT_SINK)
-                  || mounted.getType().hasFlag(MiscType.F_IS_DOUBLE_HEAT_SINK_PROTOTYPE)
-                  || mounted.getType().hasFlag(MiscType.F_LASER_HEAT_SINK)) {
+            } else if (miscType.hasFlag(MiscType.F_DOUBLE_HEAT_SINK)
+                  || miscType.hasFlag(MiscType.F_IS_DOUBLE_HEAT_SINK_PROTOTYPE)
+                  || miscType.hasFlag(MiscType.F_LASER_HEAT_SINK)) {
                 sinksUnderwater += 2;
             }
         }
@@ -2681,7 +2676,8 @@ public abstract class Mek extends Entity implements Fortifiable, RubbleClearer {
      *
      * @param mounted the weapon being checked
      *
-     * @return {@code ARC_FORWARD} if this weapon is in a Directional Torso Mount, otherwise an empty {@link OptionalInt}
+     * @return {@code ARC_FORWARD} if this weapon is in a Directional Torso Mount, otherwise an empty
+     *       {@link OptionalInt}
      */
     protected OptionalInt getDirectionalTorsoMountArc(Mounted<?> mounted) {
         if (mounted.hasDirectionalTorsoMount()) {
@@ -4035,29 +4031,33 @@ public abstract class Mek extends Entity implements Fortifiable, RubbleClearer {
     }
 
     @Override
-    protected void addSystemTechAdvancement(CompositeTechLevel ctl) {
-        super.addSystemTechAdvancement(ctl);
+    protected void addSystemTechAdvancement(CompositeTechLevel techLevel) {
+        super.addSystemTechAdvancement(techLevel);
         // Meks with non-fusion engines are experimental
         if (hasEngine() && !isIndustrial() && !getEngine().isFusion()) {
-            ctl.addComponent(new TechAdvancement().setStaticTechLevel(SimpleTechLevel.EXPERIMENTAL));
+            techLevel.addComponent(new TechAdvancement().setStaticTechLevel(SimpleTechLevel.EXPERIMENTAL),
+                  Messages.getString("CompositeTechLevel.component.nonFusionEngineBattleMek"));
         }
         if (isFrankenMek()) {
-            ctl.addComponent(TA_FRANKENMEK);
+            techLevel.addComponent(TA_FRANKENMEK, Messages.getString("CompositeTechLevel.component.frankenMek"));
         }
         if (getGyroTechAdvancement() != null) {
-            ctl.addComponent(getGyroTechAdvancement());
+            techLevel.addComponent(getGyroTechAdvancement(), getGyroTypeString());
         }
         if (getCockpitTechAdvancement() != null) {
-            ctl.addComponent(getCockpitTechAdvancement());
+            techLevel.addComponent(getCockpitTechAdvancement(), getCockpitTypeString());
         }
         if (isIndustrial() && hasAdvancedFireControl()) {
-            ctl.addComponent(getIndustrialAdvFireConTA());
+            techLevel.addComponent(getIndustrialAdvFireConTA(),
+                  Messages.getString("CompositeTechLevel.component.advancedFireControl"));
         }
         if (hasFullHeadEject()) {
-            ctl.addComponent(getFullHeadEjectAdvancement());
+            techLevel.addComponent(getFullHeadEjectAdvancement(),
+                  Messages.getString("CompositeTechLevel.component.fullHeadEjection"));
         }
         if (hasRiscHeatSinkOverrideKit()) {
-            ctl.addComponent(getRiscHeatSinkOverrideKitAdvancement());
+            techLevel.addComponent(getRiscHeatSinkOverrideKitAdvancement(),
+                  Messages.getString("CompositeTechLevel.component.riscHeatSinkOverrideKit"));
         }
     }
 
@@ -4193,8 +4193,7 @@ public abstract class Mek extends Entity implements Fortifiable, RubbleClearer {
         if (this.isFrankenMek()) {
             if (this.hasMismatchedTonnageFrankenMekLegs()) {
                 roll.addModifier(2, "Mismatched Legs with different tonnages");
-            } else
-            if (this.hasMismatchedFrankenMekLegs()) {
+            } else if (this.hasMismatchedFrankenMekLegs()) {
                 roll.addModifier(1, "Mismatched Legs from different Meks");
             }
         }
@@ -4671,27 +4670,87 @@ public abstract class Mek extends Entity implements Fortifiable, RubbleClearer {
         return hasLaserHeatSinks == HAS_TRUE;
     }
 
+    /**
+     * Bulk control for heat sink activation: switches individual heat sink mounts On or Off so that the given number
+     * of sinks remains active. Like all activation/deactivation, the change is declared now and takes effect in the
+     * End Phase (the mounts' pending modes apply at the round rollover). Prototype double heat sinks and Freezers are
+     * not part of this counter (matching {@link #getNumberOfSinks()}); they can be switched individually via their
+     * equipment mode. The value arrives from a client packet, so out-of-range requests are clamped (mirroring
+     * {@link Aero#setActiveSinksNextRound(int)}): a negative count deactivates every sink, a count above the number
+     * of operable sinks activates every sink.
+     *
+     * @param sinks the number of heat sinks that should be active next round
+     */
     public void setActiveSinksNextRound(int sinks) {
-        sinksOnNextRound = sinks;
+        int remainingActive = Math.max(0, sinks);
+        for (MiscMounted mounted : getMisc()) {
+            if (!isCountedHeatSink(mounted) || mounted.isDestroyed() || mounted.isBreached()) {
+                continue;
+            }
+            if (remainingActive > 0) {
+                mounted.setMode(Mounted.MODE_ON);
+                remainingActive--;
+            } else {
+                mounted.setMode(Mounted.MODE_OFF);
+            }
+        }
     }
 
+    /**
+     * @return the number of operable heat sinks that are currently switched on (prototype double heat sinks and
+     *       Freezers excluded, matching {@link #getNumberOfSinks()})
+     */
     public int getActiveSinks() {
-        if (sinksOn < 0) {
-            sinksOn = getNumberOfSinks();
-            sinksOnNextRound = sinksOn;
+        int activeSinks = 0;
+        for (MiscMounted mounted : getMisc()) {
+            if (isCountedHeatSink(mounted) && !mounted.isDestroyed() && !mounted.isBreached()
+                  && !mounted.isModeTurnedOff()) {
+                activeSinks++;
+            }
         }
-        return sinksOn;
+        return activeSinks;
     }
 
+    /** Switches every heat sink mount (including prototype double heat sinks and Freezers) back on. */
     public void resetSinks() {
-        sinksOn = getNumberOfSinks();
+        for (MiscMounted mounted : getMisc()) {
+            MiscType miscType = mounted.getType();
+            if (miscType == null) {
+                continue;
+            }
+            boolean isPrototypeSink = miscType.hasFlag(MiscType.F_IS_DOUBLE_HEAT_SINK_PROTOTYPE);
+            if (isCountedHeatSink(mounted) || isPrototypeSink) {
+                mounted.setMode(Mounted.MODE_ON);
+            }
+        }
     }
 
+    /**
+     * @return the number of operable heat sinks that will be switched on next round, taking pending mode changes
+     *       into account (prototype double heat sinks and Freezers excluded)
+     */
     public int getActiveSinksNextRound() {
-        if (sinksOnNextRound < 0) {
-            return getActiveSinks();
+        int activeSinks = 0;
+        for (MiscMounted mounted : getMisc()) {
+            if (isCountedHeatSink(mounted) && !mounted.isDestroyed() && !mounted.isBreached()
+                  && !mounted.isModeTurnedOffNextRound()) {
+                activeSinks++;
+            }
         }
-        return sinksOnNextRound;
+        return activeSinks;
+    }
+
+    /**
+     * @param mounted the equipment to check
+     *
+     * @return {@code true} if the mount is a heat sink counted by the classic active-sinks counter (single, double,
+     *       compact or laser heat sinks; prototype double heat sinks and Freezers are excluded, matching
+     *       {@link #getNumberOfSinks()})
+     */
+    private static boolean isCountedHeatSink(MiscMounted mounted) {
+        MiscType miscType = mounted.getType();
+        return (miscType != null)
+              && (miscType.hasFlag(MiscType.F_HEAT_SINK) || miscType.hasFlag(MiscType.F_DOUBLE_HEAT_SINK));
     }
 
     /**
@@ -5201,6 +5260,14 @@ public abstract class Mek extends Entity implements Fortifiable, RubbleClearer {
         sb.append(newLine);
         if (hasRole()) {
             sb.append(MtfFile.ROLE).append(getRole().toString());
+            sb.append(newLine);
+        }
+        for (ForceGeneratorAvailability availability : getForceGeneratorAvailability()) {
+            sb.append(MtfFile.AVAILABILITY).append(availability.toFileFormat());
+            sb.append(newLine);
+        }
+        if (!getMissionRoles().isBlank()) {
+            sb.append(MtfFile.MISSION_ROLES).append(getMissionRoles());
             sb.append(newLine);
         }
         if (techFaction != null && techFaction != Faction.NONE) {
@@ -7225,6 +7292,8 @@ public abstract class Mek extends Entity implements Fortifiable, RubbleClearer {
             bUsedCoolantSystem = true;
             vDesc.addElement(Report.subjectReport(2365, getId()).addDesc(this).add(coolantSystem.getName()));
             int requiredRoll = EMERGENCY_COOLANT_SYSTEM_FAILURE[nCoolantSystemLevel];
+            // Edge may reroll a failed RISC coolant system check once (part of the shared RISC Edge trigger).
+            diceRoll = rerollRiscCoolantWithEdge(this, requiredRoll, diceRoll, vDesc);
             Report r = Report.subjectReport(2370, getId()).indent().add(requiredRoll).add(diceRoll);
 
             if (diceRoll.getIntValue() < requiredRoll) {
@@ -7272,6 +7341,37 @@ public abstract class Mek extends Entity implements Fortifiable, RubbleClearer {
             return bFailure;
         }
         return false;
+    }
+
+    /**
+     * Applies Edge to a RISC Emergency Coolant System failure check: if the initial roll failed and the crew has the
+     * RISC Edge trigger enabled with Edge remaining, spends one Edge point and rerolls the check once. This rolls the
+     * coolant system into the same Edge trigger as the RISC laser malfunctions.
+     *
+     * @param entity       the Mek making the check
+     * @param requiredRoll the target number the roll must meet to succeed
+     * @param initialRoll  the roll that was made
+     * @param reportVector the report vector to append the Edge-use report to
+     *
+     * @return the roll to use - the reroll if Edge was spent, otherwise the original roll
+     */
+    // package-private static for testing
+    static Roll rerollRiscCoolantWithEdge(Entity entity, int requiredRoll, Roll initialRoll,
+          Vector<Report> reportVector) {
+        boolean isFailedCheck = initialRoll.getIntValue() < requiredRoll;
+        boolean shouldUseEdge = entity.shouldUseEdge(OptionsConstants.EDGE_WHEN_RISC_FAIL);
+
+        if (isFailedCheck && shouldUseEdge) {
+            entity.getCrew().decreaseEdge();
+
+            reportVector.addElement(Report.subjectReport(3168, entity.getId())
+                  .indent()
+                  .add(entity.getCrew().getOptions().intOption(OptionsConstants.EDGE)));
+
+            return Compute.rollD6(2);
+        }
+
+        return initialRoll;
     }
 
     public boolean hasDamagedCoolantSystem() {

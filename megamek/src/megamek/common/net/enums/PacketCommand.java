@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2022-2025 The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2022-2026 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -82,6 +82,12 @@ public enum PacketCommand {
 
     /** A packet informing the receiver of an unspecified change to a unit. */
     ENTITY_UPDATE,
+
+    /**
+     * A packet carrying a gamemaster's damage editor edits as a {@link megamek.common.units.DamageEditSpec}, for
+     * the server to apply to its own copy of the unit.
+     */
+    ENTITY_DAMAGE_EDIT,
 
     /** A packet instructing the Client to forget the unit of the given id as it is / has become invisible (SBF). */
     UNIT_INVISIBLE,
@@ -230,7 +236,33 @@ public enum PacketCommand {
      * set, the server includes enemy artillery attacks in that player's artillery packet so the Rounds in the Air view
      * can show both sides. Bots never send it, so their filtered view - and their decisions - are unchanged.
      */
-    CLIENT_ARTILLERY_REVEAL;
+    CLIENT_ARTILLERY_REVEAL,
+
+    /**
+     * A Server to Client packet carrying the running vote among the players - a gamemaster request - as a
+     * {@link megamek.common.voting.Poll}, sent whenever the vote is called, receives a ballot, or resolves.
+     */
+    GAME_MASTER_POLL,
+
+    /**
+     * A Server to Client packet carrying the current state of all player-controlled industrial elevators
+     * (platform levels, call queues) so clients can render platforms and validate elevator moves.
+     */
+    UPDATE_INDUSTRIAL_ELEVATORS,
+
+    /**
+     * A Client to Server packet requesting that the server build the game board from the current map settings
+     * during the lobby and broadcast it to all clients, so that everyone sees the battlefield that will actually
+     * be played before the game starts.
+     */
+    LOBBY_GENERATE_BOARD,
+
+    /**
+     * A Client to Server packet connecting a tractor and an ordered list of trailers into a train in one operation.
+     * Carries the tractor id and the trailer ids, ordered front to back. The server validates the whole chain and
+     * applies it in full or not at all, so a rejected request leaves every unit unattached.
+     */
+    ENTITY_BUILD_TRAIN;
     //endregion Enum Declarations
 
     //region Boolean Comparison Methods

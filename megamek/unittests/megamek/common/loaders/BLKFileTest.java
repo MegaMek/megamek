@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2018-2025 The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2018-2026 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -43,6 +43,7 @@ import static org.junit.jupiter.api.Assertions.fail;
 
 import java.io.File;
 import java.util.HashSet;
+import java.util.List;
 
 import megamek.common.TechConstants;
 import megamek.common.battleArmor.BattleArmor;
@@ -57,8 +58,10 @@ import megamek.common.equipment.EquipmentType;
 import megamek.common.equipment.Mounted;
 import megamek.common.loaders.BLKFile.ParsedBayInfo;
 import megamek.common.units.DropShuttleBay;
+import megamek.common.units.Dropship;
 import megamek.common.units.Entity;
 import megamek.common.units.EntityMovementMode;
+import megamek.common.units.ForceGeneratorAvailability;
 import megamek.common.units.Jumpship;
 import megamek.common.units.NavalRepairFacility;
 import megamek.common.units.PlatoonType;
@@ -132,6 +135,52 @@ class BLKFileTest {
         loader.setBasicEntityData(tank);
 
         assertEquals(generatedBeforeLoad, tank.getUnitFileUUID());
+    }
+
+    @Test
+    void allTechbaseArmorUsesStrictUnitTechbase() {
+        BuildingBlock blk = new BuildingBlock();
+        blk.writeBlockData("armor_tech_level", TechConstants.T_IS_ADVANCED);
+        BLKFile loader = new BLKFile();
+        loader.dataFile = blk;
+        Tank tank = new Tank();
+        tank.setTechLevel(TechConstants.T_CLAN_ADVANCED);
+        tank.setArmorType(EquipmentType.T_ARMOR_STANDARD);
+
+        loader.setArmorTechLevelFromDataFile(tank);
+
+        assertEquals(TechConstants.T_CLAN_ADVANCED, tank.getArmorTechLevel(tank.firstArmorIndex()));
+    }
+
+    @Test
+    void allTechbaseArmorPreservesCompatibleStrictTechLevel() {
+        BuildingBlock blk = new BuildingBlock();
+        blk.writeBlockData("armor_tech_level", TechConstants.T_IS_TW_ALL);
+        BLKFile loader = new BLKFile();
+        loader.dataFile = blk;
+        Tank tank = new Tank();
+        tank.setTechLevel(TechConstants.T_IS_TW_NON_BOX);
+        tank.setArmorType(EquipmentType.T_ARMOR_STANDARD);
+
+        loader.setArmorTechLevelFromDataFile(tank);
+
+        assertEquals(TechConstants.T_IS_TW_ALL, tank.getArmorTechLevel(tank.firstArmorIndex()));
+    }
+
+    @Test
+    void allTechbaseArmorPreservesExplicitTechbaseForMixedUnit() {
+        BuildingBlock blk = new BuildingBlock();
+        blk.writeBlockData("armor_tech_level", TechConstants.T_IS_ADVANCED);
+        BLKFile loader = new BLKFile();
+        loader.dataFile = blk;
+        Tank tank = new Tank();
+        tank.setTechLevel(TechConstants.T_CLAN_ADVANCED);
+        tank.setMixedTech(true);
+        tank.setArmorType(EquipmentType.T_ARMOR_STANDARD);
+
+        loader.setArmorTechLevelFromDataFile(tank);
+
+        assertEquals(TechConstants.T_IS_ADVANCED, tank.getArmorTechLevel(tank.firstArmorIndex()));
     }
 
     @Test
@@ -449,6 +498,39 @@ class BLKFileTest {
     }
 
     @Test
+    void forceGeneratorAvailabilityRoundtripsThroughBLK() throws Exception {
+        Tank tank = createMinimalTank();
+        tank.setForceGeneratorAvailability(List.of(
+              ForceGeneratorAvailability.parse("FS:5,LA:3"),
+              ForceGeneratorAvailability.parse("3067-3085 FS:7")));
+        tank.setMissionRoles("fire_support,urban");
+
+        BuildingBlock blk = BLKFile.getBlock(tank);
+        Tank loaded = (Tank) new BLKTankFile(blk).getEntity();
+
+        assertEquals(2, loaded.getForceGeneratorAvailability().size(),
+              "Both availability lines should survive a BLK roundtrip");
+        assertEquals("FS:5,LA:3", loaded.getForceGeneratorAvailability().get(0).availabilityCodes());
+        assertEquals(3067, loaded.getForceGeneratorAvailability().get(1).startYear());
+        assertEquals(3085, loaded.getForceGeneratorAvailability().get(1).endYear());
+        assertEquals("fire_support,urban", loaded.getMissionRoles());
+    }
+
+    @Test
+    void noAvailabilityIsNotWrittenToBLK() throws Exception {
+        Tank tank = createMinimalTank();
+
+        BuildingBlock blk = BLKFile.getBlock(tank);
+        assertFalse(blk.exists("availability"));
+        assertFalse(blk.exists("missionroles"));
+
+        Tank loaded = (Tank) new BLKTankFile(blk).getEntity();
+
+        assertTrue(loaded.getForceGeneratorAvailability().isEmpty());
+        assertTrue(loaded.getMissionRoles().isBlank());
+    }
+
+    @Test
     void noneFactionIsNotWrittenToBLK() throws Exception {
         Tank tank = createMinimalTank();
         // Faction.NONE is the default; make sure it is not written
@@ -508,6 +590,40 @@ class BLKFileTest {
         assertNotNull(entity, "Failed to load entity from " + filename);
         assertInstanceOf(BattleArmor.class, entity, "Entity should be BattleArmor");
         return (BattleArmor) entity;
+    }
+
+    @Test
+    void mixedTechBlkPreservesCanonicalInnerSphereWeaponNames() throws Exception {
+        File file = new File("testresources/megamek/common/units/Lion (3005) (WD).blk");
+        Dropship loaded = assertInstanceOf(Dropship.class, new MekFileParser(file).getEntity());
+
+          assertTrue(loaded.getEquipment().stream()
+              .anyMatch(mounted -> mounted.getType().getInternalName().equals("LRM 20")));
+          assertFalse(loaded.getEquipment().stream()
+              .anyMatch(mounted -> mounted.getType().getInternalName().equals("CLLRM20")));
+
+        String resaved = String.join("\n", BLKFile.getBlock(loaded).getAllDataAsString());
+        assertTrue(resaved.contains("LRM 20"));
+        assertFalse(resaved.contains("CLLRM20"));
+    }
+
+    @Test
+    void battleArmorRoundTripPreservesCompatibleArmorTechLevel() throws Exception {
+        BattleArmor original = loadBattleArmor("Afreet Med BA (HH) (Sqd4).blk");
+        String[] blockData = BLKFile.getBlock(original).getAllDataAsString();
+        for (int index = 0; index < blockData.length - 1; index++) {
+            if (blockData[index].equalsIgnoreCase("<type>")) {
+                blockData[index + 1] = "IS Level 2";
+            } else if (blockData[index].equalsIgnoreCase("<armor_tech>")) {
+                blockData[index + 1] = Integer.toString(TechConstants.T_IS_TW_ALL);
+            }
+        }
+
+        BattleArmor loaded = (BattleArmor) new BLKBattleArmorFile(new BuildingBlock(blockData)).getEntity();
+        BuildingBlock resaved = BLKFile.getBlock(loaded);
+
+        assertEquals(TechConstants.T_IS_TW_ALL, loaded.getArmorTechLevel(BattleArmor.LOC_SQUAD));
+        assertEquals(TechConstants.T_IS_TW_ALL, resaved.getDataAsInt("armor_tech")[0]);
     }
 
     /**

@@ -47,6 +47,8 @@ public final class LobbyErrors {
     private static final String SINGLE_UNIT = "Cannot {0} for more than one unit at a time.";
     private static final String SINGLE_UNIT_OR_FORCE = "Please select a single unit or a single force.";
     private static final String TEN_UNITS = "Please select fewer than 10 units.";
+    private static final String NO_DETACH_OFF_BOARD = "An off board train cannot be uncoupled. "
+          + "There is no board position to leave a trailer at.";
     private static final String HEAT_TRACKING = "Cannot apply a heat setting to units that do not track heat.";
     private static final String ONLY_MEKS = "This setting can only be applied to Meks.";
     private static final String ONLY_C3M = "Only units with a C3M can be set to be Company Masters.";
@@ -68,8 +70,12 @@ public final class LobbyErrors {
           "A converted force must conform to the rules given in Interstellar Operations. Conversion " +
           "will typically work with companies created in the Force Generator.";
     private static final String NO_DUAL_TOW = "Both units must have an open appropriate tow hitch.";
-    private static final String EDIT_DAMAGE = "When a Game Master is present, only the Game Master may edit damage. "
-          + "Without a Game Master, you may edit damage only on your own units.";
+    private static final String ONLY_TRAIN_MEMBERS = "Select one tractor and the trailers to hitch behind it. "
+          + "Units that are already part of a train must be detached first.";
+    private static final String SINGLE_TRACTOR_REQUIRED = "Select exactly one tractor to head the train. "
+          + "Every other selected unit must be a trailer.";
+    private static final String EDIT_DAMAGE = "The Game Master edits the damage of every unit. "
+          + "When there is no Game Master, you may edit the damage of your own units.";
 
     public static void showOnlyOwnBot(JFrame owner) {
         JOptionPane.showMessageDialog(owner, ONLY_OWN_BOT);
@@ -87,6 +93,10 @@ public final class LobbyErrors {
         JOptionPane.showMessageDialog(owner, FORCE_ATTACH_TO_SUB_FORCE);
     }
 
+    public static void showNoDetachOffBoard(JFrame owner) {
+        JOptionPane.showMessageDialog(owner, NO_DETACH_OFF_BOARD);
+    }
+
     public static void showOnlyTeam(JFrame owner) {
         JOptionPane.showMessageDialog(owner, ONLY_TEAM);
     }
@@ -101,6 +111,14 @@ public final class LobbyErrors {
 
     public static void showNoDualTow(JFrame owner) {
         JOptionPane.showMessageDialog(owner, NO_DUAL_TOW);
+    }
+
+    public static void showOnlyTrainMembers(JFrame owner) {
+        JOptionPane.showMessageDialog(owner, ONLY_TRAIN_MEMBERS);
+    }
+
+    public static void showSingleTractorRequired(JFrame owner) {
+        JOptionPane.showMessageDialog(owner, SINGLE_TRACTOR_REQUIRED);
     }
 
     public static void showNoSuchBay(JFrame owner) {

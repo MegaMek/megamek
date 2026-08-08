@@ -468,7 +468,10 @@ public abstract class TurnOrdered implements ITurnOrdered {
                                   0
                             );
                         });
-                        // Inject the per-entity crew bonus (the only component that varies per unit).
+                        // Inject the per-entity components, the only ones that vary per unit: the crew's own
+                        // bonus and any temporary gamemaster initiative modifier, each under its own name in the
+                        // report. As a positive bonus the gamemaster modifier competes with the other bonuses
+                        // under the normal stacking rule rather than stacking on them; maluses always stack.
                         breakdown = new InitiativeBonusBreakdown(
                               base.hq(),
                               base.quirk(),
@@ -478,7 +481,8 @@ public abstract class TurnOrdered implements ITurnOrdered {
                               base.tcp(),
                               base.constant(),
                               base.compensation(),
-                              entity.getCrew().getInitBonus()
+                              entity.getCrew().getInitBonus(),
+                              entity.getCrew().getSkillModifiers().getInitiativeDelta()
                         );
 
                         if (entity.hasAbility(ATOW_COMBAT_SENSE)) {

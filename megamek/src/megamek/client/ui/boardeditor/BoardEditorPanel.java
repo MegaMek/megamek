@@ -1,6 +1,6 @@
 /*
  * Copyright (c) 2000-2003 Ben Mazur (bmazur@sev.org)
- * Copyright (C) 2002-2025 The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2002-2026 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -80,6 +80,7 @@ import megamek.client.ui.clientGUI.boardview.overlay.TraceOverlay;
 import megamek.client.ui.clientGUI.boardview.toolTip.BoardEditorTooltip;
 import megamek.client.ui.dialogs.ConfirmDialog;
 import megamek.client.ui.dialogs.ExitsDialog;
+import megamek.client.ui.dialogs.IndustrialElevatorDialog;
 import megamek.client.ui.dialogs.MMAboutDialog;
 import megamek.client.ui.dialogs.MMDialogs.MMConfirmDialog;
 import megamek.client.ui.dialogs.buttonDialogs.CommonSettingsDialog;
@@ -108,6 +109,7 @@ import megamek.common.util.BoardUtilities;
 import megamek.common.util.ImageUtil;
 import megamek.common.util.fileUtils.MegaMekFile;
 import megamek.logging.MMLogger;
+import megamek.utilities.BoardClassifier;
 import megamek.utilities.BoardsTagger;
 
 // TODO: center map
@@ -127,6 +129,7 @@ public class BoardEditorPanel extends JPanel
     private static final int BASE_TERRAINBUTTON_ICON_WIDTH = 70;
     private static final int BASE_ARROWBUTTON_ICON_WIDTH = 25;
     private static final String CMD_EDIT_DEPLOYMENT_ZONES = "CMD_EDIT_DEPLOYMENT_ZONES";
+    private static final String CMD_EDIT_INDUSTRIAL_ELEVATOR = "CMD_EDIT_INDUSTRIAL_ELEVATOR";
 
     // Components
     private final JFrame frame = new JFrame();
@@ -183,6 +186,7 @@ public class BoardEditorPanel extends JPanel
     private EditorTextField texTerrExits;
     private ScalingIconButton butTerrExits;
     private JCheckBox cheRoadsAutoExit;
+    private JCheckBox cheArena;
     private final JButton copyButton = new JButton(Messages.getString("BoardEditor.copyButton"));
     private final JButton pasteButton = new JButton(Messages.getString("BoardEditor.pasteButton"));
     private ScalingIconButton butExitUp, butExitDown;
@@ -885,14 +889,31 @@ public class BoardEditorPanel extends JPanel
                 // if we've selected DEPLOYMENT ZONE, disable the "exits" buttons and make the "exits" popup point to
                 // a multi-select list that lets the user choose which deployment zones will be flagged here
                 // otherwise, re-enable all the buttons and reset the "exits" popup to its normal behavior
-                if (((TerrainHelper) Objects.requireNonNull(choTerrainType.getSelectedItem())).terrainType() ==
-                      Terrains.DEPLOYMENT_ZONE) {
+                int selectedTerrainType = ((TerrainHelper) Objects.requireNonNull(
+                      choTerrainType.getSelectedItem())).terrainType();
+                if (selectedTerrainType == Terrains.DEPLOYMENT_ZONE) {
                     butExitUp.setEnabled(false);
                     butExitDown.setEnabled(false);
                     texTerrExits.setEnabled(false);
                     cheTerrExitSpecified.setEnabled(false);
                     cheTerrExitSpecified.setText("Zones");// Messages.getString("BoardEditor.deploymentZoneIDs"));
                     butTerrExits.setActionCommand(CMD_EDIT_DEPLOYMENT_ZONES);
+                } else if (selectedTerrainType == Terrains.INDUSTRIAL_ELEVATOR) {
+                    // Industrial elevator uses exits to encode shaft top and capacity
+                    // Auto-enable since elevator always needs configuration
+                    butExitUp.setEnabled(false);
+                    butExitDown.setEnabled(false);
+                    texTerrExits.setEnabled(false);
+                    cheTerrExitSpecified.setEnabled(false); // Disable - always on for elevators
+                    cheTerrExitSpecified.setSelected(true); // Auto-select
+                    cheTerrExitSpecified.setText(Messages.getString("BoardEditor.elevatorProperties"));
+                    butTerrExits.setActionCommand(CMD_EDIT_INDUSTRIAL_ELEVATOR);
+                    // Allow negative terrain levels for basement elevator shafts
+                    texTerrainLevel.setMinValue(-100);
+                    // Set default exits value if not already set (shaft top 0, capacity 100 tons)
+                    if (texTerrExits.getNumber() == 0) {
+                        texTerrExits.setNumber(10); // (0 << 8) | 10 = capacity 100 tons
+                    }
                 } else {
                     butExitUp.setEnabled(true);
                     butExitDown.setEnabled(true);
@@ -900,6 +921,8 @@ public class BoardEditorPanel extends JPanel
                     cheTerrExitSpecified.setEnabled(true);
                     cheTerrExitSpecified.setText(Messages.getString("BoardEditor.cheTerrExitSpecified"));
                     butTerrExits.setActionCommand("");
+                    // Reset terrain level minimum to default for other terrain types
+                    texTerrainLevel.setMinValue(0);
                 }
             }
         });
@@ -946,6 +969,12 @@ public class BoardEditorPanel extends JPanel
         cheRoadsAutoExit.addItemListener(this);
         cheRoadsAutoExit.setSelected(true);
 
+        // Arena tag (marks a Solaris-style arena board)
+        cheArena = new JCheckBox(Messages.getString("BoardEditor.cheArena"));
+        cheArena.setToolTipText(Messages.getString("BoardEditor.cheArena.tooltip"));
+        cheArena.addItemListener(this);
+        cheArena.setSelected(false);
+
         // Theme
         JPanel panTheme = new JPanel(new FlowLayout(FlowLayout.LEFT, 4, 4));
         choTheme = new JComboBox<>();
@@ -979,6 +1008,7 @@ public class BoardEditorPanel extends JPanel
         // The board settings panel (Auto exit roads to pavement)
         panelBoardSettings.setBorder(new TitledBorder("Board Settings"));
         panelBoardSettings.add(cheRoadsAutoExit);
+        panelBoardSettings.add(cheArena);
 
         // Board Buttons (Save, Load...)
         JButton butBoardNew = new JButton(Messages.getString("BoardEditor.butBoardNew"));
@@ -1545,6 +1575,7 @@ public class BoardEditorPanel extends JPanel
                 board.addTag(tag);
             }
             cheRoadsAutoExit.setSelected(board.getRoadsAutoExit());
+            cheArena.setSelected(board.getTags().contains(BoardClassifier.ARENA_TAG));
             mapSettings.setBoardSize(board.getWidth(), board.getHeight());
             curBoardFile = file;
             RecentBoardList.addBoard(curBoardFile);
@@ -1726,6 +1757,18 @@ public class BoardEditorPanel extends JPanel
             board.setRoadsAutoExit(cheRoadsAutoExit.isSelected());
             bv.updateBoard();
             repaintWorkingHex();
+        } else if (ie.getSource().equals(cheArena)) {
+            // Add or remove the Arena tag. Guard against no-op events fired during board load.
+            boolean isArena = board.getTags().contains(BoardClassifier.ARENA_TAG);
+            if (cheArena.isSelected() != isArena) {
+                if (cheArena.isSelected()) {
+                    board.addTag(BoardClassifier.ARENA_TAG);
+                } else {
+                    board.removeTag(BoardClassifier.ARENA_TAG);
+                }
+                hasChanges = true;
+                setFrameTitle();
+            }
         }
     }
 
@@ -1804,6 +1847,8 @@ public class BoardEditorPanel extends JPanel
         savedUndoStackSize = 0;
         canReturnToSaved = true;
         resetUndo();
+        // Sync the Arena checkbox to the (possibly fresh) board's tags
+        cheArena.setSelected(board.getTags().contains(BoardClassifier.ARENA_TAG));
         hasChanges = false;
         // When a board was loaded, we have a file, otherwise not
         butSourceFile.setEnabled(curBoardFile != null);
@@ -1952,6 +1997,14 @@ public class BoardEditorPanel extends JPanel
                 dlg.setVisible(true);
                 exitsVal = Board.IntListAsExits(dlg.getSelectedItems());
                 texTerrExits.setNumber(exitsVal);
+            } else if (ae.getActionCommand().equals(CMD_EDIT_INDUSTRIAL_ELEVATOR)) {
+                IndustrialElevatorDialog elevatorDialog = new IndustrialElevatorDialog(frame);
+                exitsVal = texTerrExits.getNumber();
+                elevatorDialog.setExits(exitsVal);
+                if (elevatorDialog.showDialog()) {
+                    exitsVal = elevatorDialog.getExits();
+                    texTerrExits.setNumber(exitsVal);
+                }
             } else {
                 ExitsDialog ed = new ExitsDialog(frame);
                 exitsVal = texTerrExits.getNumber();

@@ -78,6 +78,8 @@ import megamek.common.equipment.WeaponMounted;
 import megamek.common.equipment.WeaponType;
 import megamek.common.event.GameCFREvent;
 import megamek.common.event.GameListenerAdapter;
+import megamek.common.event.entity.GameEntityChangeEvent;
+import megamek.common.event.entity.GameEntityNewEvent;
 import megamek.common.event.GamePhaseChangeEvent;
 import megamek.common.event.GameReportEvent;
 import megamek.common.event.GameTurnChangeEvent;
@@ -85,6 +87,7 @@ import megamek.common.event.player.GamePlayerChatEvent;
 import megamek.common.game.Game;
 import megamek.common.game.InitiativeRoll;
 import megamek.common.moves.MovePath;
+import megamek.common.net.packets.InvalidPacketDataException;
 import megamek.common.net.packets.Packet;
 import megamek.common.options.OptionsConstants;
 import megamek.common.pathfinder.BoardClusterTracker;
@@ -109,6 +112,17 @@ public abstract class BotClient extends Client {
 
     public static final int BOT_TURN_RETRY_COUNT = 3;
 
+    /**
+     * Which AI implementation this bot is. Reported to the server alongside the bot's settings so a savegame
+     * remembers what kind of bot held each seat, and shown by the bot config dialog so it tells the truth
+     * about a running bot instead of assuming Princess. Subclasses that are their own AI type override this.
+     *
+     * @return this bot's {@link AIType}
+     */
+    public AIType getAIType() {
+        return AIType.PRINCESS;
+    }
+
     private List<Entity> currentTurnEnemyEntities;
     private List<Entity> currentTurnFriendlyEntities;
 
@@ -123,6 +137,14 @@ public abstract class BotClient extends Client {
 
     // Let bots remember whether they've rerolled an initiative roll this round
     protected boolean rerolledInitiative = false;
+
+    /**
+     * Tractors this bot has already asked the server to build a train for. Lobby updates arrive one unit at a time,
+     * so without this a batch of units would send the same build request several times over before the first reply
+     * came back. Cleared when the lobby is left.
+     */
+    /** The trailer list last requested for each tractor, so an unchanged plan is not asked for twice. */
+    private final Map<Integer, List<Integer>> requestedTrains = new HashMap<>();
 
     /**
      * The bot's personality/configuration state. Held on {@link BotClient} because it is generic bot-personality state
@@ -188,9 +210,22 @@ public abstract class BotClient extends Client {
             }
 
             @Override
+            public void gameEntityNew(GameEntityNewEvent e) {
+                connectOwnTrains();
+            }
+
+            @Override
+            public void gameEntityChange(GameEntityChangeEvent e) {
+                connectOwnTrains();
+            }
+
+            @Override
             public void gamePhaseChange(GamePhaseChangeEvent e) {
                 calculatedTurnThisPhase = false;
                 rerolledInitiative = false;
+                if (!getGame().getPhase().isLounge()) {
+                    requestedTrains.clear();
+                }
                 if (e.getOldPhase().isSimultaneous(getGame())) {
                     LOGGER.info("{}: Calculated {} / {} turns for phase {}",
                           getName(),
@@ -550,6 +585,64 @@ public abstract class BotClient extends Client {
         }
 
         return currentTurnFriendlyEntities;
+    }
+
+    /**
+     * Hitches up any trailers this bot owns that are not part of a train yet.
+     * <p>
+     * A bot cannot use the lobby's "Connect as Train" action, so a trailer handed to one would otherwise sit there
+     * with no engine and no tractor, unable to move for the whole game. Runs whenever the lobby tells us a unit was
+     * added or changed, so it does not matter how the units arrived: assigned one at a time, assigned as a force, or
+     * loaded from a file straight onto this bot.
+     * </p>
+     * <p>
+     * The request sent is the same one a human client sends, so the server validates it exactly as it would a
+     * player's, and a train that cannot legally be built is refused rather than half-applied.
+     * </p>
+     */
+    /**
+     * Decides whether a planned train still needs to be requested, and records it when it does.
+     * <p>
+     * The server's reply to a build request arrives as another lobby update, which asks for the plans again, so
+     * repeating an identical request would loop. The guard is the trailer list rather than the tractor id: a tractor
+     * handed more trailers after its first request produces a different list, so it is asked again with the longer
+     * plan instead of being suppressed for the rest of the lobby.
+     * </p>
+     *
+     * @param requestedTrains  the trailer list last requested for each tractor, updated in place
+     * @param tractorId        the tractor heading the planned train
+     * @param plannedTrailers  the trailers to hitch behind it, in order
+     *
+     * @return {@code true} when this plan has not been requested yet and the caller should send it
+     */
+    static boolean recordTrainRequest(Map<Integer, List<Integer>> requestedTrains, int tractorId,
+          List<Integer> plannedTrailers) {
+        if (plannedTrailers.equals(requestedTrains.get(tractorId))) {
+            return false;
+        }
+        requestedTrains.put(tractorId, List.copyOf(plannedTrailers));
+        return true;
+    }
+
+    protected void connectOwnTrains() {
+        if (!getGame().getPhase().isLounge()) {
+            return;
+        }
+
+        Map<Integer, List<Integer>> plannedTrains = BotTrainPlanner.planTrains(getGame(), localPlayerNumber);
+
+        for (Map.Entry<Integer, List<Integer>> plannedTrain : plannedTrains.entrySet()) {
+            if (!recordTrainRequest(requestedTrains, plannedTrain.getKey(), plannedTrain.getValue())) {
+                continue;
+            }
+
+            Entity tractor = getGame().getEntity(plannedTrain.getKey());
+            LOGGER.info("[Train] {} connecting {} + {} trailer(s)",
+                  getName(),
+                  (tractor == null) ? plannedTrain.getKey() : tractor.getDisplayName(),
+                  plannedTrain.getValue().size());
+            sendBuildTrain(plannedTrain.getKey(), plannedTrain.getValue());
+        }
     }
 
     // TODO: move initMovement to be called on phase end
@@ -1284,6 +1377,19 @@ public abstract class BotClient extends Client {
                                     // before they come back on-board.
                                     new_stealth = 1;
 
+                                } else if (wantsStealthHeatForTsm(check_ent)) {
+                                    // A Mek with heat-activated Triple-Strength Myomer uses stealth armor's
+                                    // heat to reach the TSM activation threshold while it closes, and stays
+                                    // cloaked during the approach. Once it is adjacent to an enemy, though, it
+                                    // drops stealth: at melee it needs its heat sinks free to fire weapons
+                                    // (keeping its own heat up for TSM) while it makes doubled physical
+                                    // attacks, and stealth's defensive value against an adjacent foe is small.
+                                    boolean adjacentToEnemy = isAdjacentToEnemy(check_ent);
+                                    new_stealth = adjacentToEnemy ? 0 : 1;
+                                    LOGGER.debug("[HeatTSM] {}: stealth armor {} for TSM ({})",
+                                          check_ent.getShortName(), (new_stealth == 1) ? "on" : "off",
+                                          adjacentToEnemy ? "adjacent - firing/melee" : "closing");
+
                                 } else {
 
                                     // Mek is not in danger of shutting down soon;
@@ -1335,6 +1441,40 @@ public abstract class BotClient extends Client {
                 }
             }
         }
+    }
+
+    /**
+     * Reports whether keeping stealth armor active benefits this unit's Triple-Strength Myomer. A Mek with
+     * heat-activated standard TSM (which switches on at elevated heat) wants the extra heat stealth armor
+     * generates to reach and hold the activation threshold, so it should not shed stealth to free heat
+     * sinks. Prototype and industrial TSM are always on and do not use the heat threshold, so they gain
+     * nothing here.
+     *
+     * @param entity the unit whose stealth armor is being toggled
+     *
+     * @return {@code true} if the unit has heat-activated standard TSM, otherwise {@code false}
+     */
+    static boolean wantsStealthHeatForTsm(Entity entity) {
+        return (entity instanceof Mek mek) && mek.hasTSM(false);
+    }
+
+    /**
+     * @param entity the unit whose surroundings are being checked
+     *
+     * @return {@code true} if any enemy of {@code entity} occupies a hex adjacent to it (melee range),
+     *       otherwise {@code false}
+     */
+    private boolean isAdjacentToEnemy(Entity entity) {
+        if (entity.getPosition() == null) {
+            return false;
+        }
+        for (Entity other : game.getEntitiesVector()) {
+            if (entity.isEnemyOf(other) && (other.getPosition() != null)
+                  && (Compute.effectiveDistance(game, entity, other) <= 1)) {
+                return true;
+            }
+        }
+        return false;
     }
 
     private @Nullable String getRandomBotMessage() {
@@ -1418,23 +1558,16 @@ public abstract class BotClient extends Client {
     		// avoid unnecessary loops and evaluations
     		if (minesToPlace <= 0) {
     			continue;
-    		}    		
+    		}
     		
     		Map<Double, List<Coords>> potentialCoords = 
-    				mdp.getBucketedCandidateCoords(minefieldType, getBoard());
-    		
-    		// this operation takes the buckets and sorts them in descending order
-    		List<Double> sortedBuckets = new ArrayList<>();
-    		sortedBuckets.addAll(potentialCoords.keySet());
-    		Collections.sort(sortedBuckets);
-    		sortedBuckets = sortedBuckets.reversed();
-    		    		
+    				mdp.getBucketedCandidateCoords(minefieldType, getBoard());    		    		
     		
     		// complicated loop:
     		// while we have mines to place (minesToPlace > 0)
     		// AND we have buckets left with coordinates in them, place mines.    		
     		bucketloop:
-    		for (double bucket : sortedBuckets) {
+    		for (double bucket : potentialCoords.keySet()) {
     			for (Coords coords : potentialCoords.get(bucket)) {
     				// it's always more advantageous to put in higher density minefields
 	    			// but hardly fair when players may be bound by scenario restrictions
@@ -1460,6 +1593,7 @@ public abstract class BotClient extends Client {
 	    			}
 	    			
 	    			deployedMinefields.add(minefield);
+	    			mdp.markMinePlacement(coords);
 	    			
 	    			minesToPlace--;
 	    			
@@ -1502,7 +1636,28 @@ public abstract class BotClient extends Client {
     public String receiveReport(List<Report> reports) {
         return "";
     }
-
+    
+    /**
+     * In addition to handling the entity update normally, the bot needs to decide
+     * if it should activate its hidden units
+     */
+    @Override
+    protected void receiveEntityUpdate(Packet packet) throws InvalidPacketDataException {
+    	super.receiveEntityUpdate(packet);
+    	
+    	if (this.getGame().getPhase() == GamePhase.MOVEMENT) {
+    		int entityIndex = packet.getIntValue(0);
+    		revealEntities(entityIndex);
+    	}
+    }
+    
+    /**
+     * Given an entity that just moved, decide if I should reveal any entities in response
+     */
+    protected void revealEntities(int movedEntityID) {
+    	// default does nothing
+    }
+    
     /**
      * Let the bot decide whether to reroll initiative based on report info
      *

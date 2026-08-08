@@ -1,6 +1,6 @@
 /*
  * Copyright (C) 2000-2011 Ben Mazur (bmazur@sev.org)
- * Copyright (C) 2011-2025 The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2011-2026 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -46,6 +46,7 @@ import megamek.common.Player;
 import megamek.common.RangeType;
 import megamek.common.TargetRollModifier;
 import megamek.common.ToHitData;
+import megamek.common.actions.ClubAttackAction;
 import megamek.common.actions.EntityAction;
 import megamek.common.actions.FindClubAction;
 import megamek.common.actions.RepairWeaponMalfunctionAction;
@@ -53,6 +54,7 @@ import megamek.common.actions.SearchlightAttackAction;
 import megamek.common.actions.SpotAction;
 import megamek.common.actions.UnjamTurretAction;
 import megamek.common.actions.WeaponAttackAction;
+import megamek.common.actions.compute.ComputeEnvironmentalToHitMods;
 import megamek.common.annotations.Nullable;
 import megamek.common.annotations.StaticWrapper;
 import megamek.common.battleArmor.BattleArmor;
@@ -64,16 +66,17 @@ import megamek.common.equipment.*;
 import megamek.common.equipment.enums.BombType;
 import megamek.common.equipment.enums.BombType.BombTypeEnum;
 import megamek.common.game.Game;
-import megamek.common.interfaces.ILocationExposureStatus;
 import megamek.common.moves.MovePath;
 import megamek.common.moves.MoveStep;
 import megamek.common.options.OptionsConstants;
 import megamek.common.pathfinder.AeroGroundPathFinder;
 import megamek.common.planetaryConditions.IlluminationLevel;
+import megamek.common.planetaryConditions.PlanetaryConditions;
 import megamek.common.rolls.TargetRoll;
 import megamek.common.units.*;
 import megamek.common.weapons.Weapon;
 import megamek.common.weapons.attacks.StopSwarmAttack;
+import megamek.common.weapons.capitalWeapons.CapitalMissileWeapon;
 import megamek.common.weapons.infantry.InfantryWeapon;
 import megamek.common.weapons.missiles.MMLWeapon;
 import megamek.logging.MMLogger;
@@ -96,6 +99,16 @@ public class FireControl {
     protected static final double KILL_UTILITY = 50.0;
     protected static final double OVERHEAT_DISUTILITY = 5.0;
     protected static final double OVERHEAT_DISUTILITY_AERO = 50.0; // Aero's *really* don't want to overheat.
+
+    // Heat level at which standard Triple-Strength Myomer activates (+2 walk MP, double physical damage).
+    protected static final int TSM_DESIRED_HEAT = 9;
+    // Highest end-of-turn heat a heat-activated TSM Mek is allowed to fire toward without the overheat
+    // penalty. Chosen to keep TSM active (heat >= TSM_DESIRED_HEAT) while staying below the 14-heat
+    // shutdown roll, so the Mek can reach and hold the activation band without being pulled back. Tunable.
+    protected static final int TSM_HEAT_CEILING = 13;
+    // Utility a TSM Mek gains for a firing plan that switches TSM on. Tunable; sized to outweigh a few
+    // points of overheat disutility so the Mek will run up to TSM_DESIRED_HEAT to activate it.
+    protected static final double TSM_ACTIVATION_UTILITY = 20.0;
     protected static final double EJECTED_PILOT_DISUTILITY = 1000.0;
     protected static final double CIVILIAN_TARGET_DISUTILITY = 250.0;
     protected static final double TARGET_HP_FRACTION_DEALT_UTILITY = -30.0;
@@ -115,6 +128,7 @@ public class FireControl {
     static final String TH_HEAT = "heat";
     static final String TH_WEAPON_MOD = "weapon to-hit";
     static final String TH_AMMO_MOD = "ammunition to-hit modifier";
+    static final String TH_TAR_EVADING = "target evading";
     static final TargetRollModifier TH_ATT_PRONE = new TargetRollModifier(2, "attacker prone");
     static final TargetRollModifier TH_TAR_IMMOBILE = new TargetRollModifier(-4, "target immobile");
     static final TargetRollModifier TH_TAR_SKID = new TargetRollModifier(2, "target skidded");
@@ -149,6 +163,8 @@ public class FireControl {
           "target elevation not in range");
     static final TargetRollModifier TH_PHY_P_TAR_PRONE = new TargetRollModifier(TargetRoll.IMPOSSIBLE,
           "can't punch while prone");
+    static final TargetRollModifier TH_PHY_NO_CLUB = new TargetRollModifier(TargetRoll.IMPOSSIBLE,
+          "no physical weapon given");
     static final TargetRollModifier TH_PHY_P_TAR_INF = new TargetRollModifier(TargetRoll.IMPOSSIBLE,
           "can't punch infantry");
     static final TargetRollModifier TH_PHY_P_NO_ARM = new TargetRollModifier(TargetRoll.IMPOSSIBLE, "Your arm's off!");
@@ -185,7 +201,11 @@ public class FireControl {
           "prone leg weapon");
     static final TargetRollModifier TH_WEAPON_ADA = new TargetRollModifier(-2,
           "Air-Defense Arrow IV vs airborne target");
-    static final TargetRollModifier TH_WEAPON_FLAK = new TargetRollModifier(-1, "Flak vs airborne target");
+    static final TargetRollModifier TH_WEAPON_FLAK = new TargetRollModifier(-2, "Flak vs airborne target");
+    static final TargetRollModifier TH_WEAPON_FLAK_HAG = new TargetRollModifier(-3,
+          "HAG Flak vs airborne target");
+    static final TargetRollModifier TH_APOLLO = new TargetRollModifier(-1, "Apollo FCS");
+    static final TargetRollModifier TH_AP_AMMO = new TargetRollModifier(1, "armor-piercing ammo");
     static final TargetRollModifier TH_WEAPON_NO_ARC = new TargetRollModifier(TargetRoll.IMPOSSIBLE, "not in arc");
     static final TargetRollModifier TH_INF_ZERO_RNG = new TargetRollModifier(TargetRoll.AUTOMATIC_FAIL,
           "non-infantry shooting with zero range");
@@ -460,6 +480,12 @@ public class FireControl {
             toHitData.addModifier(TH_TAR_GROUND_DS);
         }
 
+        // Evading targets are harder to hit (TW p.111). Evasion is a property of the target, so it
+        // is independent of where the shooter moves.
+        if ((target instanceof Entity targetEntity) && targetEntity.isEvading()) {
+            toHitData.addModifier(targetEntity.getEvasionBonus(), TH_TAR_EVADING);
+        }
+
         return toHitData;
     }
 
@@ -481,8 +507,33 @@ public class FireControl {
           @Nullable EntityState targetState,
           final PhysicalAttackType attackType,
           final Game game) {
+        return guessToHitModifierPhysical(shooter, shooterState, target, targetState, attackType, null, game);
+    }
 
-        // todo weapons, frenzy (pg 144) & vehicle charges.
+    /**
+     * Makes a rather poor guess as to what the to hit modifier will be with a physical attack. This overload
+     * also covers physical-weapon (club/hatchet/sword) attacks, for which the mounted weapon must be given.
+     *
+     * @param shooter      The unit doing the attacking.
+     * @param shooterState The state of the unit doing the attacking.
+     * @param target       Who is being attacked.
+     * @param targetState  The state of the target.
+     * @param attackType   The type of physical attack being made.
+     * @param club         The physical weapon being swung; required for {@link PhysicalAttackType#WEAPON},
+     *                     ignored otherwise.
+     * @param game         The current {@link Game}
+     *
+     * @return The estimated to hit modifiers.
+     */
+    ToHitData guessToHitModifierPhysical(final Entity shooter,
+          @Nullable EntityState shooterState,
+          final Targetable target,
+          @Nullable EntityState targetState,
+          final PhysicalAttackType attackType,
+          @Nullable final MiscMounted club,
+          final Game game) {
+
+        // todo frenzy (pg 144) & vehicle charges.
         // todo heat mods to piloting?
 
         if (!(shooter instanceof Mek shooterMek)) {
@@ -523,13 +574,18 @@ public class FireControl {
             return new ToHitData(TH_PHY_NOT_IN_ARC);
         }
 
-        // Check elevation difference.
+        // Check elevation difference. Use the (possibly hypothetical) state elevations and stances, not the
+        // entities' current ones: a path can end on a different level, or in a different stance, than the
+        // unit is in now.
         final Hex attackerHex = game.getBoard(target).getHex(shooterState.getPosition());
         final Hex targetHex = game.getBoard(target).getHex(targetState.getPosition());
-        final int attackerElevation = shooter.getElevation() + attackerHex.getLevel();
-        final int attackerHeight = shooter.relHeight() + attackerHex.getLevel();
-        final int targetElevation = target.getElevation() + targetHex.getLevel();
-        final int targetHeight = targetElevation + target.getHeight();
+        final int attackerElevation = shooterState.getElevation() + attackerHex.getLevel();
+        final int attackerHeight = attackerElevation
+              + PhysicalHitTable.projectedHeight(shooterMek, shooterState.isProne());
+        final int targetElevation = targetState.getElevation() + targetHex.getLevel();
+        final int targetHeight = targetElevation + ((target instanceof Entity targetEntity)
+              ? PhysicalHitTable.projectedHeight(targetEntity, targetState.isProne())
+              : target.getHeight());
         if (attackType.isPunch()) {
             if (shooter.hasQuirk(OptionsConstants.QUIRK_NEG_NO_ARMS)) {
                 return new ToHitData(TH_PHY_P_NO_ARMS_QUIRK);
@@ -563,6 +619,30 @@ public class FireControl {
             }
             if (!shooter.hasWorkingSystem(Mek.ACTUATOR_HAND, armLocation)) {
                 toHitData.addModifier(TH_PHY_P_HAND);
+            }
+        } else if (PhysicalAttackType.WEAPON == attackType) {
+            if (club == null) {
+                return new ToHitData(TH_PHY_NO_CLUB);
+            }
+            // Reach approximated like a punch: the weapon is swung by the arms.
+            if ((attackerHeight < targetElevation) || (attackerHeight > targetHeight)) {
+                return new ToHitData(TH_PHY_TOO_MUCH_ELEVATION);
+            }
+            if (shooterState.isProne()) {
+                return new ToHitData(TH_PHY_P_TAR_PRONE);
+            }
+
+            toHitData.addModifier(shooter.getCrew().getPiloting(), TH_PHY_BASE);
+            toHitData.addModifier(ClubAttackAction.getHitModFor(club.getType()), club.getName());
+            // Damaged arm actuators penalize the swing when the weapon is arm-mounted.
+            int clubLocation = club.getLocation();
+            if ((Mek.LOC_LEFT_ARM == clubLocation) || (Mek.LOC_RIGHT_ARM == clubLocation)) {
+                if (!shooter.hasWorkingSystem(Mek.ACTUATOR_UPPER_ARM, clubLocation)) {
+                    toHitData.addModifier(TH_PHY_P_UPPER_ARM);
+                }
+                if (!shooter.hasWorkingSystem(Mek.ACTUATOR_LOWER_ARM, clubLocation)) {
+                    toHitData.addModifier(TH_PHY_P_LOWER_ARM);
+                }
             }
         } else { // assuming kick
 
@@ -838,8 +918,23 @@ public class FireControl {
                 distance += 2 * target.getAltitude();
             }
         }
+        // Water restricts fire in both directions, and a weapon that can fire underwater does so with a
+        // shortened range table (TW p.107-109). The server enforces this from the shooter's real location
+        // status; the estimate has to predict it from the hypothetical position, or every submerged hex
+        // looks like a full-strength firing position.
+        final Hex shooterHex = game.getBoard(shooter).getHex(shooterState.getPosition());
+        final Hex targetHex = game.getBoard(target).getHex(targetState.getPosition());
+        final UnderwaterFire waterFire = UnderwaterFire.check(shooter, shooterState, shooterHex,
+              target, targetState, targetHex, weapon, firingAmmo);
+        if (null != waterFire.blocked()) {
+            return new ToHitData(waterFire.blocked());
+        }
+        final int[] weaponRanges = (null != waterFire.underwaterRanges())
+              ? waterFire.underwaterRanges()
+              : weaponType.getRanges(weapon, ammo);
+
         // BayWeapons do range differently
-        int range = RangeType.rangeBracket(distance, weaponType.getRanges(weapon, ammo),
+        int range = RangeType.rangeBracket(distance, weaponRanges,
               game.getOptions().booleanOption(OptionsConstants.ADVANCED_COMBAT_TAC_OPS_RANGE),
               game.getOptions().booleanOption(OptionsConstants.ADVANCED_COMBAT_TAC_OPS_LOS_RANGE));
         if (RangeType.RANGE_OUT == range) {
@@ -885,7 +980,6 @@ public class FireControl {
               targetState.getPosition(), false);
 
         // water is a separate los effect
-        final Hex targetHex = game.getBoard(target).getHex(targetState.getPosition());
         Entity targetEntity = null;
         if (target instanceof Entity) {
             targetEntity = (Entity) target;
@@ -940,7 +1034,7 @@ public class FireControl {
             toHit.append(getInfantryRangeMods(distance, (InfantryWeapon) weapon.getType(),
                   shooter instanceof ConvInfantry infantry ? infantry.getSecondaryWeapon() : null,
                   shooter instanceof ConvInfantry infantry ? infantry.getDisposableWeapon() : null,
-                  ILocationExposureStatus.WET == shooter.getLocationStatus(weapon.getLocation())));
+                  UnderwaterFire.isWeaponUnderwater(shooter, shooterState, shooterHex, weapon)));
         }
 
         // let us not forget about heat
@@ -974,11 +1068,40 @@ public class FireControl {
                   AmmoType.Munitions.M_FAE);
             EnumSet<AmmoType.Munitions> homingMunitions = EnumSet.of(
                   AmmoType.Munitions.M_HOMING);
+            // getMunitionType() returns a fresh EnumSet copy on every call; cache it once and reuse
+            // it for the membership checks below to avoid repeated allocations on this hot path.
+            EnumSet<AmmoType.Munitions> munitionTypes = ammoType.getMunitionType();
             if (0 != ammoType.getToHitModifier()) {
                 toHit.addModifier(ammoType.getToHitModifier(), TH_AMMO_MOD);
             }
+            // Apollo FCS gives MRMs -1 to-hit (TO:AR). Apollo is not negated by ECM.
+            Mounted<?> ammoLinker = weapon.getLinkedBy();
+            boolean isApolloFcs = (ammoLinker != null)
+                  && (ammoLinker.getType() instanceof MiscType)
+                  && ammoLinker.getType().hasFlag(MiscType.F_APOLLO);
+            boolean isApolloFcsOperational = isApolloFcs
+                  && !ammoLinker.isDestroyed()
+                  && !ammoLinker.isMissing()
+                  && !ammoLinker.isBreached();
+            boolean isMrmAmmo = (ammoType.getAmmoType() == AmmoType.AmmoTypeEnum.MRM);
+            if (isApolloFcsOperational && isMrmAmmo) {
+                toHit.addModifier(TH_APOLLO);
+            }
+            // Armor-piercing autocannon ammo is a flat +1 to-hit (removed under PLAYTEST 3 rules).
+            boolean isAutocannonAmmo = switch (ammoType.getAmmoType()) {
+                case AC, LAC, AC_IMP, PAC -> true;
+                case null, default -> false;
+            };
+            boolean isArmorPiercingMunition =
+                  munitionTypes.contains(AmmoType.Munitions.M_ARMOR_PIERCING)
+                        || munitionTypes.contains(AmmoType.Munitions.M_ARMOR_PIERCING_PLAYTEST);
+            boolean isArmorPiercingPenaltyInEffect =
+                  !game.getOptions().booleanOption(OptionsConstants.PLAYTEST_3);
+            if (isAutocannonAmmo && isArmorPiercingMunition && isArmorPiercingPenaltyInEffect) {
+                toHit.addModifier(TH_AP_AMMO);
+            }
             // Air-defense Arrow IV handling; can only fire at airborne targets
-            if (ammoType.getMunitionType().contains(AmmoType.Munitions.M_ADA)) {
+            if (munitionTypes.contains(AmmoType.Munitions.M_ADA)) {
                 if (target.isAirborne() || target.isAirborneVTOLorWIGE()) {
                     toHit.addModifier(TH_WEAPON_ADA);
                 } else {
@@ -987,15 +1110,19 @@ public class FireControl {
             }
             // Handle cluster, flak, AAA vs Airborne, Arty-only vs Airborne
             if (target.isAirborne() || target.isAirborneVTOLorWIGE()) {
-                if (ammoType.getMunitionType().stream().anyMatch(aaMunitions::contains)
+                if (munitionTypes.stream().anyMatch(aaMunitions::contains)
                       || ammoType.countsAsFlak()) {
-                    toHit.addModifier(TH_WEAPON_FLAK);
-                } else if (ammoType.getMunitionType().stream().anyMatch(ArtyOnlyMunitions::contains)) {
+                    if (ammoType.getAmmoType() == AmmoType.AmmoTypeEnum.HAG) {
+                        toHit.addModifier(TH_WEAPON_FLAK_HAG);
+                    } else {
+                        toHit.addModifier(TH_WEAPON_FLAK);
+                    }
+                } else if (munitionTypes.stream().anyMatch(ArtyOnlyMunitions::contains)) {
                     toHit.addModifier(TH_WEAPON_CANNOT_FIRE);
                 }
             }
             // Handle homing munitions
-            if (ammoType.getMunitionType().stream().anyMatch(homingMunitions::contains)) {
+            if (munitionTypes.stream().anyMatch(homingMunitions::contains)) {
                 if (game.getPhase().isOffboard()) {
                     final StringBuilder msg = new StringBuilder("Estimating to-hit for Homing artillery fire by ")
                           .append(shooter.getDisplayName());
@@ -1020,7 +1147,7 @@ public class FireControl {
             }
 
             // Guesstimate Heat-Seeking Ammo mods
-            if (ammoType.getMunitionType().contains(AmmoType.Munitions.M_HEAT_SEEKING)) {
+            if (munitionTypes.contains(AmmoType.Munitions.M_HEAT_SEEKING)) {
                 if (targetState.getHeat() > 0) {
                     // Hot target good
                     toHit.addModifier(-targetState.getHeat() / 5, TH_AMMO_MOD);
@@ -1107,6 +1234,28 @@ public class FireControl {
               && (EntityMovementType.MOVE_RUN == shooter.moved)) {
             toHit.addModifier(TH_STABLE_WEAPON);
         }
+
+        // Board-global environmental effects: weather, wind, gravity, fog, blowing sand, and
+        // night/illumination. These apply equally at every candidate position, but folding them in
+        // keeps the guessed to-hit honest so Princess does not over-value shots taken in poor
+        // conditions. The committed firing plan already accounts for these via the real engine
+        // calculation; this brings the movement-ranking estimate in line with it.
+        final AmmoType environmentalAmmoType =
+              (firingAmmo != null && firingAmmo.getType() instanceof AmmoType firedAmmoType) ? firedAmmoType : null;
+        // Indirect artillery (Targeting/Offboard phases) intentionally skips the night modifiers in
+        // the real engine calculation, so mirror the engine's own isArtilleryIndirect determination
+        // here rather than hardcoding false; otherwise the guessed to-hit for planned indirect
+        // artillery fire would diverge from the real to-hit under night/illumination rules.
+        boolean isGroundToGroundCapitalMissile =
+              (weaponType instanceof CapitalMissileWeapon) && Compute.isGroundToGround(shooter, target);
+        boolean isArtilleryWeapon = weaponType.hasFlag(WeaponType.F_ARTILLERY) || isGroundToGroundCapitalMissile;
+        boolean isArtilleryIndirect = isArtilleryWeapon
+              && (game.getPhase().isTargeting() || game.getPhase().isOffboard());
+        // Pass the running toHit as the accumulator so the environmental mods are appended in place,
+        // avoiding a throwaway ToHitData allocation on this movement-ranking hot path. The method
+        // mutates and returns the same instance when the accumulator is non-null.
+        ComputeEnvironmentalToHitMods.compileEnvironmentalToHitMods(
+              game, shooter, target, weaponType, environmentalAmmoType, toHit, isArtilleryIndirect);
 
         return toHit;
     }
@@ -2201,6 +2350,30 @@ public class FireControl {
 
     protected int calcHeatTolerance(final Entity entity,
           @Nullable Boolean isAero) {
+        return calcHeatTolerance(entity, isAero, 0);
+    }
+
+    /**
+     * Calculates how much weapon heat this unit is willing to generate before overheating becomes a
+     * disutility. The tolerance is lowered by every source of heat the engine will add this turn on top
+     * of the unit's current, already-resolved heat: heat already committed this turn (movement heat sits
+     * in {@link Entity#heatBuildup} once the unit has moved), the projected heat of a move still being
+     * evaluated ({@code predictedMovementHeat}), and predicted environmental heat from planetary
+     * temperature (see {@link #predictEnvironmentalHeat(Entity)}). Extreme cold raises the tolerance,
+     * modelling the free cooling the engine grants below -30 C.
+     *
+     * @param entity                the unit that would be firing
+     * @param isAero                {@code true} if the shooter is an Aero (stiffer overheat penalty), or
+     *                              {@code null} to derive it from {@code entity}
+     * @param predictedMovementHeat heat the unit would gain from a move currently being evaluated but not
+     *                              yet committed (0 during the firing phase, where committed movement heat
+     *                              is already in {@link Entity#heatBuildup})
+     *
+     * @return the overheat tolerance, or {@link Entity#DOES_NOT_TRACK_HEAT} for units that ignore heat
+     */
+    protected int calcHeatTolerance(final Entity entity,
+          @Nullable Boolean isAero,
+          final int predictedMovementHeat) {
 
         // If the unit doesn't track heat, we won't worry about it.
         if (Entity.DOES_NOT_TRACK_HEAT == entity.getHeatCapacity()) {
@@ -2210,7 +2383,15 @@ public class FireControl {
         // Lower the actual heat target by the amount generated by active stealth armor
         int stealthLoad = entity.isStealthOn() ? ArmorType.STEALTH_ARMOR_HEAT : 0;
 
-        int baseTolerance = entity.getHeatCapacity() - (entity.getHeat() + stealthLoad);
+        // Heat the engine will add this turn on top of the current resolved heat: movement heat already
+        // committed this turn (heatBuildup, set once the unit has moved), the projected heat of a move
+        // still being evaluated, and environmental heat from planetary temperature. Cold is negative.
+        int committedMovementHeat = entity.heatBuildup;
+        int environmentalHeat = predictEnvironmentalHeat(entity);
+        int projectedHeat = entity.getHeat() + stealthLoad + committedMovementHeat
+              + environmentalHeat + predictedMovementHeat;
+
+        int baseTolerance = entity.getHeatCapacity() - projectedHeat;
 
         // if we've got a combat computer, we get an automatic
         if (entity.hasQuirk(OptionsConstants.QUIRK_POS_COMBAT_COMPUTER)) {
@@ -2221,12 +2402,89 @@ public class FireControl {
             isAero = entity.isAero();
         }
 
-        // Aero's *really* don't want to overheat.
-        if (isAero) {
-            return baseTolerance;
+        // Aero's *really* don't want to overheat, so they don't get the extra slack non-Aeros do.
+        int tolerance = isAero ? baseTolerance : baseTolerance + 5; // todo add Heat Tolerance to Behavior Settings.
+
+        // A heat-activated standard TSM Mek wants to run up to its activation band, so the overheat penalty
+        // must not fight the climb. Raise its tolerance to permit end-of-turn heat up to TSM_HEAT_CEILING
+        // (kept below the shutdown roll): a plan whose weapon heat lands the Mek at or under that ceiling is
+        // not treated as overheating. This lets it both reach and hold the threshold, while heat that would
+        // push past the ceiling is still penalised. Applies whether or not TSM is active yet.
+        if ((entity instanceof Mek mek) && mek.hasTSM(false)) {
+            int tsmTolerance = (entity.getHeatCapacity() - projectedHeat) + TSM_HEAT_CEILING;
+            tolerance = Math.max(tolerance, tsmTolerance);
         }
 
-        return baseTolerance + 5; // todo add Heat Tolerance to Behavior Settings.
+        // Log only the low-frequency firing-phase calls (predictedMovementHeat == 0). The path-ranker
+        // calls this once per candidate path (a loop), so logging those would flood the log. MMLogger
+        // checks the DEBUG level itself, so no explicit level guard is needed here.
+        if (predictedMovementHeat == 0) {
+            LOGGER.debug("[HeatEnv] {}: tolerance={} (capacity={}, heat={}, committedMove={}, "
+                        + "environmental={}, stealth={})",
+                  entity.getShortName(), tolerance, entity.getHeatCapacity(), entity.getHeat(),
+                  committedMovementHeat, environmentalHeat, stealthLoad);
+        }
+
+        return tolerance;
+    }
+
+    /**
+     * Predicts the heat the engine will add to (or remove from) this unit during the upcoming heat phase
+     * because of planetary temperature. Mirrors {@code HeatResolver.adjustHeatExtremeTemp}: above 50 C
+     * heat is added (halved for Meks with intact heat-dissipating armor); below -30 C the same number of
+     * points is removed, which is a bonus the bot should exploit by firing more. Spaceborne units are
+     * exempt, and temperatures in the -30 C to 50 C band produce no change.
+     *
+     * @param shooter the unit whose environmental heat is being predicted
+     *
+     * @return the signed heat change: positive when hot, negative (free cooling) when cold, {@code 0}
+     *       otherwise
+     */
+    int predictEnvironmentalHeat(final Entity shooter) {
+        if (shooter.isSpaceborne() || (shooter.getGame() == null)) {
+            return 0;
+        }
+
+        PlanetaryConditions conditions = shooter.getGame().getPlanetaryConditions();
+        int temperatureDifference = conditions.getTemperatureDifference(50, -30);
+        if (temperatureDifference == 0) {
+            return 0;
+        }
+
+        if (conditions.getTemperature() > 50) {
+            int heatToAdd = temperatureDifference;
+            if ((shooter instanceof Mek mek) && mek.hasIntactHeatDissipatingArmor()) {
+                heatToAdd /= 2;
+            }
+            return heatToAdd;
+        }
+
+        // Extreme cold: the engine removes heat, so treat it as extra tolerance.
+        return -temperatureDifference;
+    }
+
+    /**
+     * Estimates the heat this unit will carry after the upcoming heat phase if it executes a firing plan
+     * of the given weapon heat: its current heat plus everything the engine will add this turn (committed
+     * movement heat, predicted environmental heat, active-stealth-armor heat, and the plan's weapon heat)
+     * minus its heat-sink dissipation ({@link Entity#getHeatCapacity()}), floored at zero. Unlike a raw
+     * sum of heat sources this accounts for heat sinks shedding heat every turn, so a well-cooled unit may
+     * never reach a target heat level no matter what it fires.
+     *
+     * @param shooter    the unit whose end-of-turn heat is being estimated
+     * @param weaponHeat the weapon heat of the firing plan under consideration
+     *
+     * @return the estimated post-heat-phase heat, never negative
+     */
+    int projectedEndOfTurnHeat(final Entity shooter, final int weaponHeat) {
+        if (Entity.DOES_NOT_TRACK_HEAT == shooter.getHeatCapacity()) {
+            return 0;
+        }
+
+        int stealthLoad = shooter.isStealthOn() ? ArmorType.STEALTH_ARMOR_HEAT : 0;
+        int gains = shooter.getHeat() + shooter.heatBuildup + predictEnvironmentalHeat(shooter)
+              + stealthLoad + weaponHeat;
+        return Math.max(0, gains - shooter.getHeatCapacity());
     }
 
     /**
@@ -2476,8 +2734,10 @@ public class FireControl {
         final boolean isAero = shooter.isAero();
         final int heatTolerance = calcHeatTolerance(shooter, isAero);
         calculateUtility(bestPlan, heatTolerance, isAero);
+        applyTsmHeatIncentive(shooter, bestPlan);
         for (final FiringPlan firingPlan : allPlans) {
             calculateUtility(firingPlan, heatTolerance, isAero);
+            applyTsmHeatIncentive(shooter, firingPlan);
             if ((bestPlan.getUtility() < firingPlan.getUtility())) {
                 bestPlan = firingPlan;
             }
@@ -2486,12 +2746,80 @@ public class FireControl {
     }
 
     /**
-     * Figures out the best firing plan
+     * Adds a utility bonus for a Mek carrying heat-activated standard Triple-Strength Myomer when a
+     * firing plan would bring its projected end-of-turn heat up to the {@link #TSM_DESIRED_HEAT}
+     * activation threshold. TSM grants +2 walk MP and double physical damage, so a TSM Mek wants to run
+     * hot; this nudges it to fire enough to switch TSM on. The reward peaks at the threshold and tapers to
+     * zero at {@link #TSM_HEAT_CEILING}, so the Mek stays as close to the threshold as it can rather than
+     * riding up into shutdown territory; heat past the ceiling gets no reward and the overheat disutility
+     * pulls it back. A plan that adds no weapon heat earns nothing, so a Mek already hot from passive
+     * sources is not nudged toward not firing. No effect on non-TSM Meks or on prototype/industrial TSM,
+     * which do not use the heat threshold.
      *
-     * @param params - the appropriate firing plan calculation parameters
-     *
-     * @return the 'best' firing plan - uses heat as disutility and includes the possibility of twisting
+     * @param shooter    the unit doing the shooting
+     * @param firingPlan the plan whose utility is adjusted in place
      */
+    protected void applyTsmHeatIncentive(final Entity shooter, final FiringPlan firingPlan) {
+        if (!(shooter instanceof Mek mek) || !mek.hasTSM(false)) {
+            return;
+        }
+
+        // Only reward plans that actually build heat toward the threshold. A plan that adds no weapon heat
+        // (the empty placeholder plan, or one made entirely of heatless weapons) contributes nothing to TSM
+        // activation, so it must not earn the incentive - otherwise a Mek already hot from passive sources
+        // (current heat, stealth armor, planetary temperature) could be nudged toward not firing.
+        if (firingPlan.getHeat() <= 0) {
+            return;
+        }
+
+        int projectedHeat = projectedEndOfTurnHeat(shooter, firingPlan.getHeat());
+        if (projectedHeat <= 0) {
+            return;
+        }
+
+        // Reward rises with heat up to the activation threshold, then tapers back to zero at the ceiling,
+        // so among plans that keep TSM on the Mek prefers the one closest to the threshold and does not
+        // ride the heat scale up toward shutdown.
+        double bonus;
+        if (projectedHeat < TSM_DESIRED_HEAT) {
+            bonus = TSM_ACTIVATION_UTILITY * ((double) projectedHeat / TSM_DESIRED_HEAT);
+        } else {
+            int band = Math.max(1, TSM_HEAT_CEILING - TSM_DESIRED_HEAT);
+            double overshoot = projectedHeat - TSM_DESIRED_HEAT;
+            bonus = TSM_ACTIVATION_UTILITY * Math.max(0.0, 1.0 - (overshoot / band));
+        }
+        if (bonus <= 0.0) {
+            return;
+        }
+        firingPlan.setUtility(firingPlan.getUtility() + bonus);
+
+        LOGGER.debug("[HeatTSM] {}: projected end-of-turn heat {} toward target {} -> TSM utility bonus {}",
+              mek.getShortName(), projectedHeat, TSM_DESIRED_HEAT, bonus);
+    }
+
+    /**
+     * Reports whether firing this plan is what switches a heat-activated standard Triple-Strength Myomer
+     * on this turn: the shooter's projected end-of-turn heat reaches {@link #TSM_DESIRED_HEAT} with the
+     * plan's heat but would fall short of it without. This lets callers keep an otherwise trivial
+     * heat-building shot instead of discarding it (for example, in favour of spotting for indirect fire).
+     * Returns {@code false} for non-TSM Meks, prototype/industrial TSM, and Meks already at or above the
+     * activation threshold on their own (which do not need the shot to stay active).
+     *
+     * @param shooter    the unit doing the shooting
+     * @param firingPlan the firing plan under consideration
+     *
+     * @return {@code true} if firing the plan activates standard TSM this turn, otherwise {@code false}
+     */
+    protected boolean firingActivatesTsm(final Entity shooter, final FiringPlan firingPlan) {
+        if (!(shooter instanceof Mek mek) || !mek.hasTSM(false)) {
+            return false;
+        }
+
+        int heatWithoutPlan = projectedEndOfTurnHeat(shooter, 0);
+        int heatWithPlan = projectedEndOfTurnHeat(shooter, firingPlan.getHeat());
+        return (heatWithPlan >= TSM_DESIRED_HEAT) && (heatWithoutPlan < TSM_DESIRED_HEAT);
+    }
+
     /**
      * @param shooter the unit to check
      *
@@ -2581,6 +2909,13 @@ public class FireControl {
         return flips;
     }
 
+    /**
+     * Figures out the best firing plan
+     *
+     * @param params - the appropriate firing plan calculation parameters
+     *
+     * @return the 'best' firing plan - uses heat as disutility and includes the possibility of twisting
+     */
     FiringPlan determineBestFiringPlan(final FiringPlanCalculationParameters params) {
         // unpack parameters for easier reference
         final Entity shooter = params.getShooter();
@@ -2959,6 +3294,10 @@ public class FireControl {
             // still better than just discounting them completely.
             if (weaponDamage == WeaponType.DAMAGE_BY_CLUSTER_TABLE || weaponType.hasFlag(WeaponType.F_ARTILLERY)) {
                 weaponDamage = weaponType.getRackSize();
+            } else if (weaponDamage == WeaponType.DAMAGE_VARIABLE && shooter.isConventionalInfantry()) {
+            	ConvInfantry infantryShooter = (ConvInfantry) shooter;
+            	
+            	weaponDamage = (int) Math.round(infantryShooter.getDamagePerTrooper() * infantryShooter.getShootingStrength());
             }
 
             if ((RangeType.RANGE_OUT != bestBracket) && (0 < weaponDamage)) {
@@ -3021,7 +3360,7 @@ public class FireControl {
 
             // If the selected ammo would cause the shot to miss, skip loading it.
             final WeaponAttackAction cloneWAA = new WeaponAttackAction(info.getAction());
-            cloneWAA.setAmmoId(shooter.getEquipmentNum(mountedAmmo));
+            cloneWAA.setAmmoId(mountedAmmo.getEntity().getEquipmentNum(mountedAmmo));
             cloneWAA.setAmmoMunitionType(mountedAmmo.getType().getMunitionType());
             cloneWAA.setAmmoCarrier(mountedAmmo.getEntity().getId());
             if (cloneWAA.toHit(owner.getGame(), owner.getPrecognition().getECMInfo()).getValue() > 12) {
@@ -3058,8 +3397,10 @@ public class FireControl {
             info.getAction().setAmmoMunitionType(cloneWAA.getAmmoMunitionType());
             info.getAction().setAmmoCarrier(cloneWAA.getAmmoCarrier());
 
+            Entity ammoCarrier = mountedAmmo.getEntity();
             owner.sendAmmoChange(info.getShooter().getId(), shooter.getEquipmentNum(currentWeapon),
-                  shooter.getEquipmentNum(mountedAmmo), mountedAmmo.getSwitchedReason());
+                  ammoCarrier.getEquipmentNum(mountedAmmo), ammoCarrier.getId(),
+                  mountedAmmo.getSwitchedReason());
         }
     }
 

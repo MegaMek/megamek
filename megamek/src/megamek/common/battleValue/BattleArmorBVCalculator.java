@@ -263,7 +263,7 @@ public class BattleArmorBVCalculator extends BVCalculator {
             armorBV = 3.5;
             final String armorName = EquipmentType.getArmorTypeName(battleArmor.getArmorType(BattleArmor.LOC_TROOPER_1),
                   TechConstants.isClan(battleArmor.getArmorTechLevel(BattleArmor.LOC_TROOPER_1)));
-            final EquipmentType armor = EquipmentType.get(armorName);
+            final EquipmentType armor = EquipmentType.getArmorFromName(armorName);
             modifier = " (" + armor.getName().replaceAll("^BA\\s+", "") + ")";
         }
         int currentArmor = Math.max(0, battleArmor.getArmor(currentTrooper));

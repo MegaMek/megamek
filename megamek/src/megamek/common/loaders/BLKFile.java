@@ -56,6 +56,7 @@ import megamek.common.battleArmor.BattleArmor;
 import megamek.common.bays.*;
 import megamek.common.board.CubeCoords;
 import megamek.common.enums.Faction;
+import megamek.common.enums.TechBase;
 import megamek.common.equipment.*;
 import megamek.common.exceptions.LocationFullException;
 import megamek.common.options.IOption;
@@ -91,6 +92,12 @@ public class BLKFile {
     public static final int EXTERNAL = 13;
 
     private static final String COMSTAR_BAY = "c*";
+
+    /** Force Generator availability block, e.g. a line of "FS:5,LA:3". One entry per line. */
+    private static final String BLOCK_AVAILABILITY = "availability";
+    /** Force Generator mission roles block, e.g. "fire_support,urban". */
+    private static final String BLOCK_MISSION_ROLES = "missionroles";
+
     private static final int TRANSPORTER_FIELDS = 6;
 
     /**
@@ -147,6 +154,15 @@ public class BLKFile {
 
         if (dataFile.exists("role")) {
             entity.setUnitRole(UnitRole.parseRole(dataFile.getDataAsString("role")[0]));
+        }
+
+        if (dataFile.exists(BLOCK_AVAILABILITY)) {
+            entity.setForceGeneratorAvailability(ForceGeneratorAvailability.parseAll(
+                  List.of(dataFile.getDataAsString(BLOCK_AVAILABILITY)), entity.getShortNameRaw()));
+        }
+
+        if (dataFile.exists(BLOCK_MISSION_ROLES)) {
+            entity.setMissionRoles(dataFile.getDataAsString(BLOCK_MISSION_ROLES)[0]);
         }
 
         if (dataFile.exists("source")) {
@@ -225,6 +241,10 @@ public class BLKFile {
         };
     }
 
+    protected EquipmentType getEquipmentType(Entity entity, String equipmentName) {
+        return EquipmentType.get(equipmentName, entity.isMixedTech() ? null : entity.getTechBase());
+    }
+
     protected void loadEquipment(Entity t, String sName, int nLoc) throws EntityLoadingException {
         String[] saEquip = dataFile.getDataAsString(sName + " Equipment");
         if (saEquip == null || saEquip.length == 0 || saEquip[0].isEmpty()) {
@@ -301,7 +321,7 @@ public class BLKFile {
                     equipName = equipName.substring(0, equipName.length() - 4).trim();
                 }
 
-                EquipmentType etype = EquipmentType.get(equipName);
+                EquipmentType etype = getEquipmentType(t, equipName);
 
                 if (etype == null) {
                     // try w/ prefix
@@ -426,7 +446,7 @@ public class BLKFile {
             equipName = equipName.replace(":Body", "").replace(":LA", "")
                   .replace(":RA", "").replace(":TU", "").replace(":OMNI", "");
 
-            EquipmentType etype = EquipmentType.get(equipName);
+            EquipmentType etype = getEquipmentType(t, equipName);
             if (etype == null) {
                 etype = EquipmentType.get(prefix + equipName);
             }
@@ -503,6 +523,7 @@ public class BLKFile {
             if (dataFile.exists("armor_tech_rating")) {
                 sv.setArmorTechRating(dataFile.getDataAsInt("armor_tech_rating")[0]);
             }
+            normalizeAllTechBaseArmor(sv);
         }
     }
 
@@ -779,6 +800,19 @@ public class BLKFile {
 
         if (t.hasRole()) {
             blk.writeBlockData("role", t.getRole().toString());
+        }
+
+        List<ForceGeneratorAvailability> availabilityList = t.getForceGeneratorAvailability();
+        if (!availabilityList.isEmpty()) {
+            List<String> availabilityLines = new ArrayList<>();
+            for (ForceGeneratorAvailability availability : availabilityList) {
+                availabilityLines.add(availability.toFileFormat());
+            }
+            blk.writeBlockData(BLOCK_AVAILABILITY, availabilityLines);
+        }
+
+        if (!t.getMissionRoles().isBlank()) {
+            blk.writeBlockData(BLOCK_MISSION_ROLES, t.getMissionRoles());
         }
 
         List<String> quirkList = t.getQuirks()
@@ -1896,6 +1930,43 @@ public class BLKFile {
             entity.setArmorTechLevel(dataFile.getDataAsInt("armor_tech")[0]);
         } else {
             entity.setArmorTechLevel(entity.getStaticTechLevel().getCompoundTechLevel(entity.isClan()));
+        }
+        normalizeAllTechBaseArmor(entity);
+    }
+
+    /**
+     * Normalizes ALL-tech-base armor tech levels when the file specifies an IS/Clan tech base that
+     * doesn't match the unit, while preserving the underlying rules level (e.g., IS Advanced -> Clan Advanced).
+     */
+    private void normalizeAllTechBaseArmor(Entity entity) {
+        ArmorType armor = ArmorType.forEntity(entity);
+        if (!entity.isMixedTech() && !entity.hasPatchworkArmor() && (armor != null)
+              && (armor.getTechAdvancement().getTechBase() == TechBase.ALL)) {
+            int armorTechLevel = entity.getArmorTechLevel(entity.firstArmorIndex());
+            int normalizedTechLevel = switch (armorTechLevel) {
+                case TechConstants.T_INTRO_BOX_SET, TechConstants.T_IS_TW_NON_BOX, TechConstants.T_IS_TW_ALL ->
+                    entity.isClan() ? TechConstants.T_CLAN_TW : armorTechLevel;
+                case TechConstants.T_IS_ADVANCED ->
+                    entity.isClan() ? TechConstants.T_CLAN_ADVANCED : armorTechLevel;
+                case TechConstants.T_IS_EXPERIMENTAL ->
+                    entity.isClan() ? TechConstants.T_CLAN_EXPERIMENTAL : armorTechLevel;
+                case TechConstants.T_IS_UNOFFICIAL ->
+                    entity.isClan() ? TechConstants.T_CLAN_UNOFFICIAL : armorTechLevel;
+                case TechConstants.T_ALL_IS -> entity.isClan() ? TechConstants.T_ALL_CLAN : armorTechLevel;
+                case TechConstants.T_CLAN_TW ->
+                    entity.isClan() ? armorTechLevel : TechConstants.T_IS_TW_NON_BOX;
+                case TechConstants.T_CLAN_ADVANCED ->
+                    entity.isClan() ? armorTechLevel : TechConstants.T_IS_ADVANCED;
+                case TechConstants.T_CLAN_EXPERIMENTAL ->
+                    entity.isClan() ? armorTechLevel : TechConstants.T_IS_EXPERIMENTAL;
+                case TechConstants.T_CLAN_UNOFFICIAL ->
+                    entity.isClan() ? armorTechLevel : TechConstants.T_IS_UNOFFICIAL;
+                case TechConstants.T_ALL_CLAN -> entity.isClan() ? armorTechLevel : TechConstants.T_ALL_IS;
+                default -> armorTechLevel;
+            };
+            if (normalizedTechLevel != armorTechLevel) {
+                entity.setArmorTechLevel(normalizedTechLevel);
+            }
         }
     }
 

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2018-2025 The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2026 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -113,7 +113,7 @@ public class BattleArmorTROView extends TROView {
         setModelData("manipulators", manipulators);
         final String armorName = EquipmentType.getArmorTypeName(ba.getArmorType(BattleArmor.LOC_TROOPER_1),
               TechConstants.isClan(ba.getArmorTechLevel(BattleArmor.LOC_TROOPER_1)));
-        final EquipmentType armor = EquipmentType.get(armorName);
+        final EquipmentType armor = EquipmentType.getArmorFromName(armorName);
         setModelData("armorType", armor == null ? "Unknown" : armor.getName().replaceAll("^BA\\s+", ""));
         setModelData("armorSlots", armor == null ? 0 : armor.getNumCriticalSlots(ba));
         setModelData("armorMass", testBA.getWeightArmor() * 1000);

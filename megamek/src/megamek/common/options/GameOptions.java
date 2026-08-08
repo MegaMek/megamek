@@ -95,6 +95,11 @@ public class GameOptions extends BasicGameOptions {
         addOption(base, OptionsConstants.BASE_RANDOM_BASEMENTS, true);
         addOption(base, OptionsConstants.BASE_BREEZE, false);
 
+        IBasicOptionGroup gameMaster = addGroup("gameMaster");
+        addOption(gameMaster, OptionsConstants.GAME_MASTER_ALLOW, true);
+        addOption(gameMaster, OptionsConstants.GAME_MASTER_VOTE_THRESHOLD, IOption.CHOICE,
+              OptionsConstants.GAME_MASTER_VOTE_UNANIMOUS);
+
         IBasicOptionGroup victory = addGroup("victory");
         addOption(victory, OptionsConstants.VICTORY_SKIP_FORCED_VICTORY, false);
         addOption(victory, OptionsConstants.VICTORY_ACHIEVE_CONDITIONS, 1);

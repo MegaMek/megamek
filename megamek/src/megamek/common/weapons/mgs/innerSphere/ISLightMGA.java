@@ -65,8 +65,8 @@ public class ISLightMGA extends AmmoWeapon {
     public ISLightMGA() {
         super();
         name = "Light Machine Gun Array";
-        addLookupName("IS Light Machine Gun Array");
         setInternalName("ISLMGA");
+        addLookupName("IS Light Machine Gun Array");
         sortingName = "MGA B";
         heat = 0;
         damage = 1;

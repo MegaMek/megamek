@@ -34,16 +34,19 @@
 package megamek.client.ui.dialogs.customMek;
 
 import java.awt.Container;
+import java.awt.Dimension;
 import java.awt.FlowLayout;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
-import java.awt.Insets;
+import java.awt.LayoutManager;
+import java.awt.Rectangle;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.InputEvent;
 import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
 import java.awt.event.KeyEvent;
+import java.io.Serial;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Enumeration;
@@ -116,8 +119,7 @@ public class CustomMekDialog extends AbstractButtonDialog
     private QuirksPanel panQuirks;
     private JPanel panPartReps;
 
-    private JPanel panOptions;
-    // private JScrollPane scrOptions;
+    private PilotOptionsPanel panOptions;
 
     private final FlatTabbedPane tabAll = new FlatTabbedPane();
 
@@ -211,7 +213,6 @@ public class CustomMekDialog extends AbstractButtonDialog
     private PilotOptions options;
     private PartialRepairs partReps;
     private final HashMap<Integer, WeaponQuirks> h_wpnQuirks = new HashMap<>();
-    private ArrayList<DialogOptionComponentYPanel> optionComps = new ArrayList<>();
     private ArrayList<DialogOptionComponentYPanel> partRepsComps = new ArrayList<>();
 
     private final boolean editable;
@@ -344,7 +345,7 @@ public class CustomMekDialog extends AbstractButtonDialog
     private void setOptions() {
         Entity entity = entities.getFirst();
         IOption option;
-        for (final DialogOptionComponentYPanel newVar : optionComps) {
+        for (final DialogOptionComponentYPanel newVar : panOptions.getOptionComponents()) {
             option = newVar.getOption();
             if ((newVar.getValue() == Messages.getString("CustomMekDialog.None"))) {
                 entity.getCrew().getOptions().getOption(option.getName()).setValue("None");
@@ -355,88 +356,7 @@ public class CustomMekDialog extends AbstractButtonDialog
     }
 
     public void refreshOptions() {
-        panOptions.removeAll();
-        optionComps = new ArrayList<>();
-
-        GridBagLayout gridBagLayout = new GridBagLayout();
-        GridBagConstraints c = new GridBagConstraints();
-        panOptions.setLayout(gridBagLayout);
-
-        c.gridwidth = GridBagConstraints.REMAINDER;
-        c.fill = GridBagConstraints.HORIZONTAL;
-        c.insets = new Insets(0, 0, 0, 0);
-        c.ipadx = 0;
-        c.ipady = 0;
-
-        for (Enumeration<IOptionGroup> i = options.getGroups(); i.hasMoreElements(); ) {
-            IOptionGroup group = i.nextElement();
-
-            if (group.getKey().equalsIgnoreCase(PilotOptions.LVL3_ADVANTAGES) &&
-                  !gameOptions().booleanOption(OptionsConstants.RPG_PILOT_ADVANTAGES)) {
-                continue;
-            }
-
-            if (group.getKey().equalsIgnoreCase(PilotOptions.EDGE_ADVANTAGES) &&
-                  !gameOptions().booleanOption(OptionsConstants.EDGE)) {
-                continue;
-            }
-
-            if (group.getKey().equalsIgnoreCase(PilotOptions.MD_ADVANTAGES) &&
-                  !gameOptions().booleanOption(OptionsConstants.RPG_MANEI_DOMINI)) {
-                continue;
-            }
-
-            // Hide EI Implant group when neural interface rules are Off
-            if (group.getKey().equalsIgnoreCase(PilotOptions.EI_ADVANTAGES)) {
-                IOption aniOption = gameOptions().getOption(OptionsConstants.ADVANCED_NEURAL_INTERFACE_MODE);
-                String aniMode = (aniOption == null) ? OptionsConstants.NEURAL_INTERFACE_MODE_OFF : aniOption.stringValue();
-                if (OptionsConstants.NEURAL_INTERFACE_MODE_OFF.equals(aniMode)) {
-                    continue;
-                }
-            }
-
-            addGroup(group, gridBagLayout, c);
-
-            Entity entity = entities.getFirst();
-            for (Enumeration<IOption> j = group.getOptions(); j.hasMoreElements(); ) {
-                IOption option = j.nextElement();
-
-                if (entity.isBuildingEntityOrGunEmplacement()) {
-                    continue;
-                }
-
-                // a bunch of stuff should get disabled for conv infantry
-                if (entity.isConventionalInfantry() &&
-                      (option.getName().equals(OptionsConstants.MD_VDNI) ||
-                            option.getName().equals(OptionsConstants.MD_BVDNI))) {
-                    continue;
-                }
-
-                // a bunch of stuff should get disabled for all but conventional infantry
-                // Prosthetic enhancements (Enhanced/Improved Enhanced) are infantry-only (IO p.84)
-                // Sensory implants (audio, visual, laser, tele) are infantry-only
-                // Gas Effuser (Pheromone/Toxin) is infantry-only (IO pg 79)
-                String optionName = option.getName();
-                boolean isInfantryOnlyOption = switch (optionName) {
-                    case OptionsConstants.MD_PL_ENHANCED,
-                         OptionsConstants.MD_PL_I_ENHANCED,
-                         OptionsConstants.MD_PL_MASC,
-                         OptionsConstants.MD_CYBER_IMP_AUDIO,
-                         OptionsConstants.MD_CYBER_IMP_VISUAL,
-                         OptionsConstants.MD_CYBER_IMP_LASER,
-                         OptionsConstants.MD_CYBER_IMP_TELE,
-                         OptionsConstants.MD_GAS_EFFUSER_PHEROMONE,
-                         OptionsConstants.MD_GAS_EFFUSER_TOXIN -> true;
-                    default -> false;
-                };
-                if (!entity.isConventionalInfantry() && isInfantryOnlyOption) {
-                    continue;
-                }
-
-                addOption(option, gridBagLayout, c, editable);
-            }
-        }
-
+        panOptions.refreshOptions(options);
         validate();
     }
 
@@ -482,16 +402,12 @@ public class CustomMekDialog extends AbstractButtonDialog
         panQuirks.refreshQuirks();
     }
 
-    private void addGroup(IOptionGroup group, GridBagLayout gridBagLayout, GridBagConstraints gridBagConstraints) {
-        JLabel groupLabel = new JLabel(group.getDisplayableName());
-        gridBagLayout.setConstraints(groupLabel, gridBagConstraints);
-        panOptions.add(groupLabel);
-    }
-
-    private void addOption(IOption option, GridBagLayout gridBagLayout, GridBagConstraints gridBagConstraints,
-          boolean editable) {
+    /**
+     * Finishes one pilot option row built by {@link PilotOptionsPanel}: populates choice values and attaches the
+     * inline prosthetic controls. Passed to the panel as its {@link PilotOptionsPanel.OptionRowConfigurator}.
+     */
+    private void configureOptionRow(IOption option, DialogOptionComponentYPanel optionComp) {
         Entity entity = entities.getFirst();
-        DialogOptionComponentYPanel optionComp = new DialogOptionComponentYPanel(this, option, editable);
 
         if ((OptionsConstants.GUNNERY_WEAPON_SPECIALIST).equals(option.getName())) {
             optionComp.addValue(Messages.getString("CustomMekDialog.None"));
@@ -553,10 +469,6 @@ public class CustomMekDialog extends AbstractButtonDialog
         if (OptionsConstants.MD_PL_EXTRA_LIMBS.equals(option.getName()) && entity.isConventionalInfantry()) {
             addInlineExtraneousControls(optionComp, entity);
         }
-
-        gridBagLayout.setConstraints(optionComp, gridBagConstraints);
-        panOptions.add(optionComp);
-        optionComps.add(optionComp);
     }
 
     private void addPartRep(IOption option, boolean editable) {
@@ -1149,7 +1061,7 @@ public class CustomMekDialog extends AbstractButtonDialog
      */
     private int countSelectedSensoryImplants(DialogOptionComponentYPanel excludeComp) {
         int count = 0;
-        for (DialogOptionComponentYPanel optComp : optionComps) {
+        for (DialogOptionComponentYPanel optComp : panOptions.getOptionComponents()) {
             if (optComp == excludeComp) {
                 continue;
             }
@@ -1165,7 +1077,7 @@ public class CustomMekDialog extends AbstractButtonDialog
      * Checks if another gas effuser of the specified type is already selected.
      */
     private boolean hasOtherGasEffuserSelected(DialogOptionComponentYPanel excludeComp, String otherEffuserName) {
-        for (DialogOptionComponentYPanel optComp : optionComps) {
+        for (DialogOptionComponentYPanel optComp : panOptions.getOptionComponents()) {
             if (optComp == excludeComp) {
                 continue;
             }
@@ -1181,7 +1093,7 @@ public class CustomMekDialog extends AbstractButtonDialog
      * Deselects the option with the given name.
      */
     private void deselectOption(String optionName) {
-        for (DialogOptionComponentYPanel optComp : optionComps) {
+        for (DialogOptionComponentYPanel optComp : panOptions.getOptionComponents()) {
             if (optComp.getOption().getName().equals(optionName)) {
                 optComp.setSelected(false);
                 break;
@@ -1193,7 +1105,7 @@ public class CustomMekDialog extends AbstractButtonDialog
      * Checks if a boolean option is currently selected.
      */
     private boolean isOptionSelected(String optionName) {
-        for (DialogOptionComponentYPanel optComp : optionComps) {
+        for (DialogOptionComponentYPanel optComp : panOptions.getOptionComponents()) {
             if (optComp.getOption().getName().equals(optionName)) {
                 Object value = optComp.getValue();
                 return (value instanceof Boolean) && (Boolean) value;
@@ -1249,7 +1161,7 @@ public class CustomMekDialog extends AbstractButtonDialog
      * Deselects other DNI options when one is selected (they are mutually exclusive).
      */
     private void deselectOtherDniOptions(DialogOptionComponentYPanel selectedComp) {
-        for (DialogOptionComponentYPanel optComp : optionComps) {
+        for (DialogOptionComponentYPanel optComp : panOptions.getOptionComponents()) {
             if (optComp == selectedComp) {
                 continue;
             }
@@ -1258,6 +1170,43 @@ public class CustomMekDialog extends AbstractButtonDialog
                 optComp.setSelected(false);
             }
         }
+    }
+
+    /**
+     * Returns true when this unit, or anything it tows, carries a weapon that can be fired from off board.
+     * <p>
+     * A train acts as one unit for firing (TM, Trailers), so a tractor with no artillery of its own still belongs off
+     * board when it is pulling a gun trailer. Without this a Prime Mover towing a Gun Trailer could never put that
+     * gun off board, because the tractor alone would not qualify.
+     * </p>
+     */
+    private boolean trainCarriesArtillery(Entity entity) {
+        if (carriesOffBoardWeapon(entity)) {
+            return true;
+        }
+
+        for (int towedId : entity.getAllTowedUnits()) {
+            Entity trailer = (entity.getGame() == null) ? null : entity.getGame().getEntity(towedId);
+
+            if ((trailer != null) && carriesOffBoardWeapon(trailer)) {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    /** Returns true when the unit mounts artillery or a capital missile bay, the weapons that can fire off board. */
+    private boolean carriesOffBoardWeapon(Entity entity) {
+        for (WeaponMounted weapon : entity.getWeaponList()) {
+            WeaponType weaponType = weapon.getType();
+
+            if (weaponType.hasFlag(WeaponType.F_ARTILLERY) || (weaponType instanceof CapitalMissileBayWeapon)) {
+                return true;
+            }
+        }
+
+        return false;
     }
 
     /**
@@ -1624,7 +1573,6 @@ public class CustomMekDialog extends AbstractButtonDialog
             for (int i = 0; i < entities.getFirst().getCrew().getSlotCount(); i++) {
                 String name = panCrewMember[i].getPilotName();
                 String nick = panCrewMember[i].getNickname();
-                String hits = panCrewMember[i].getHits();
                 Gender gender = panCrewMember[i].getGender();
                 if (gender == Gender.RANDOMIZE) {
                     gender = entities.getFirst().getCrew().getGender(i);
@@ -1738,7 +1686,7 @@ public class CustomMekDialog extends AbstractButtonDialog
                 entity.getCrew().setCrewFatigue(fatigue, i);
                 entity.getCrew().setName(name, i);
                 entity.getCrew().setNickname(nick, i);
-                entity.getCrew().setHits(MathUtility.parseInt(hits, 0), i);
+                // crew hits are damage, so they are edited in the damage editor rather than here
                 entity.getCrew().setGender(gender, i);
                 entity.getCrew().setClanPilot(panCrewMember[i].isClanPilot(), i);
                 if (clientGUI != null) {
@@ -2139,14 +2087,15 @@ public class CustomMekDialog extends AbstractButtonDialog
             //  lob offboard missiles and we could use it in space for extreme range bearings-only fights, plus
             //  Ortillery. Further, this should be revisited with a rules query when it comes to handling offboard
             //  gun emplacements, especially if they are allowed
+            // A hitched train deploys wherever its tractor does, so the setting belongs to the tractor and a trailer
+            // must not offer one of its own. Unhitched, a trailer is free to deploy off board on its own terms.
+            final boolean deploysWithItsTractor = e.getTractor() != Entity.NONE;
+
             final boolean entityEligibleForOffBoard = !space &&
                   (e.getAltitude() == 0) &&
                   !(e.isBuildingEntityOrGunEmplacement()) &&
-                  e.getWeaponList()
-                        .stream()
-                        .map(Mounted::getType)
-                        .anyMatch(weaponType -> weaponType.hasFlag(WeaponType.F_ARTILLERY) ||
-                              (weaponType instanceof CapitalMissileBayWeapon));
+                  !deploysWithItsTractor &&
+                  trainCarriesArtillery(e);
             eligibleForOffBoard &= entityEligibleForOffBoard;
         }
         // set up the panels
@@ -2157,7 +2106,7 @@ public class CustomMekDialog extends AbstractButtonDialog
         tabAll.setTabAlignment(FlatTabbedPane.TabAlignment.leading);
         tabAll.setMinimumTabWidth(new JLabel("X".repeat(15)).getPreferredSize().width);
 
-        JPanel panCrew = new JPanel(new GridBagLayout());
+        JPanel panCrew = new WidthTrackingPanel(new GridBagLayout());
         panCrewMember = new CustomPilotViewPanel[entity.getCrew().getSlotCount()];
         for (int i = 0; i < panCrewMember.length; i++) {
             panCrewMember[i] = new CustomPilotViewPanel(this, entity, i, editable);
@@ -2190,7 +2139,7 @@ public class CustomMekDialog extends AbstractButtonDialog
                 crewScrollPane.getVerticalScrollBar().setUnitIncrement(16);
                 tabAll.addTab(Messages.getString("CustomMekDialog.tabCrew"), crewScrollPane);
             } else {
-                panCrew.add(panCrewMember[0], GBC.eop());
+                panCrew.add(panCrewMember[0], GBC.eop().anchor(GridBagConstraints.NORTHWEST));
                 JScrollPane memberScrollPane = new JScrollPane(panCrew);
                 memberScrollPane.getVerticalScrollBar().setUnitIncrement(16);
                 tabAll.addTab(Messages.getString("CustomMekDialog.tabPilot"), memberScrollPane);
@@ -2233,25 +2182,48 @@ public class CustomMekDialog extends AbstractButtonDialog
         }
 
         // **CREW TAB**//
-        if (gameOptions().booleanOption(OptionsConstants.RPG_INDIVIDUAL_INITIATIVE)) {
-            panCrew.add(new JLabel(Messages.getString("CustomMekDialog.labInit"), SwingConstants.RIGHT), GBC.std());
-            panCrew.add(fldInit, GBC.eop());
-        }
         fldInit.setText(Integer.toString(entity.getCrew().getInitBonus()));
-
-        if (gameOptions().booleanOption(OptionsConstants.RPG_COMMAND_INIT)) {
-            panCrew.add(new JLabel(Messages.getString("CustomMekDialog.labCommandInit"), SwingConstants.RIGHT),
-                  GBC.std());
-            panCrew.add(fldCommandInit, GBC.eop());
-        }
         fldCommandInit.setText(Integer.toString(entity.getCrew().getCommandBonus()));
-
         // Set up commanders for commander killed victory condition & SPA
-        panCrew.add(new JLabel(Messages.getString("CustomMekDialog.labCommander"), SwingConstants.RIGHT), GBC.std());
-        panCrew.add(chCommander, GBC.eol());
         chCommander.setSelected(entity.isCommander());
-        panOptions = new JPanel(new GridBagLayout());
-        panCrew.add(panOptions, GBC.eop());
+
+        boolean individualInitiative = gameOptions().booleanOption(OptionsConstants.RPG_INDIVIDUAL_INITIATIVE);
+        boolean commandInitiative = gameOptions().booleanOption(OptionsConstants.RPG_COMMAND_INIT);
+        if (!multipleEntities && (panCrewMember.length == 1)) {
+            // Single pilot: fold the crew-level controls into the pilot's Advanced section. Clan Pilot goes
+            // after Commander Initiative (the two swapped places by request).
+            if (individualInitiative) {
+                panCrewMember[0].addAdvancedRow(Messages.getString("CustomMekDialog.labInit"), fldInit);
+            }
+            if (commandInitiative) {
+                panCrewMember[0].addAdvancedRow(Messages.getString("CustomMekDialog.labCommandInit"),
+                      fldCommandInit);
+            }
+            panCrewMember[0].addClanPilotAdvancedRow();
+            panCrewMember[0].addAdvancedRow(Messages.getString("CustomMekDialog.labCommander"), chCommander);
+        } else {
+            // Multi-crew: the shared Crew tab gets its own Command section
+            JPanel commandSection = new JPanel(new GridBagLayout());
+            commandSection.setBorder(CustomPilotViewPanel.sectionBorder("CustomMekDialog.sectionCommand"));
+            if (individualInitiative) {
+                commandSection.add(new JLabel(Messages.getString("CustomMekDialog.labInit"),
+                      SwingConstants.RIGHT), GBC.std());
+                commandSection.add(fldInit, GBC.eop());
+            }
+            if (commandInitiative) {
+                commandSection.add(new JLabel(Messages.getString("CustomMekDialog.labCommandInit"),
+                      SwingConstants.RIGHT), GBC.std());
+                commandSection.add(fldCommandInit, GBC.eop());
+            }
+            commandSection.add(new JLabel(Messages.getString("CustomMekDialog.labCommander"),
+                  SwingConstants.RIGHT), GBC.std());
+            commandSection.add(chCommander, GBC.eol());
+            panCrew.add(commandSection, GBC.eop().anchor(GridBagConstraints.NORTHWEST).insets(0, 0, 0, 10));
+        }
+
+        panOptions = new PilotOptionsPanel(entities.getFirst(), editable, gameOptions(), this,
+              this::configureOptionRow);
+        panCrew.add(panOptions, GBC.eop().fill(GridBagConstraints.HORIZONTAL).weightX(1.0));
 
         // **DEPLOYMENT TAB**//
 
@@ -2466,5 +2438,46 @@ public class CustomMekDialog extends AbstractButtonDialog
             return client.getGame().getOptions();
         }
         return clientGUI.getClient().getGame().getOptions();
+    }
+
+    /**
+     * A scroll pane view that reflows to the viewport width instead of forcing horizontal scrolling - the wide
+     * option groups then squeeze their columns rather than pushing the whole tab sideways. Height stays free so
+     * vertical scrolling works as usual.
+     */
+    private static class WidthTrackingPanel extends JPanel implements Scrollable {
+        @Serial
+        private static final long serialVersionUID = 3364552402022733440L;
+
+        private static final int SCROLL_UNIT_INCREMENT = 16;
+
+        WidthTrackingPanel(LayoutManager layoutManager) {
+            super(layoutManager);
+        }
+
+        @Override
+        public Dimension getPreferredScrollableViewportSize() {
+            return getPreferredSize();
+        }
+
+        @Override
+        public int getScrollableUnitIncrement(Rectangle visibleRect, int orientation, int direction) {
+            return SCROLL_UNIT_INCREMENT;
+        }
+
+        @Override
+        public int getScrollableBlockIncrement(Rectangle visibleRect, int orientation, int direction) {
+            return (orientation == SwingConstants.VERTICAL) ? visibleRect.height : visibleRect.width;
+        }
+
+        @Override
+        public boolean getScrollableTracksViewportWidth() {
+            return true;
+        }
+
+        @Override
+        public boolean getScrollableTracksViewportHeight() {
+            return false;
+        }
     }
 }

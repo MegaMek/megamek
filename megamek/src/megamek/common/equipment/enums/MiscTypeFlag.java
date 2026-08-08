@@ -429,4 +429,7 @@ public enum MiscTypeFlag implements EquipmentFlag {
     S_MARITIME_ESCAPE_POD,
     S_ATMOSPHERIC_LIFEBOAT,
 
+    // Flag for LAM fuel tanks
+    F_LAM_FUEL_TANK,
+
 }

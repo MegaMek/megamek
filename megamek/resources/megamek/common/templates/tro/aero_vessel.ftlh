@@ -9,13 +9,12 @@
 <#if typeDesc??>
   	<b>Type: </b>${typeDesc}<br/>
 </#if>
-  	<b>Mass: </b>${massDesc} tons<br/>
 <#if use??>
   	<b>Use:</b> ${use}<br/>
 </#if>
 	<b>Technology Base:</b> ${techBase}<br/>
   	<b>Introduced:</b> ${year}<br/>
-	<b>Mass:</b> ${tonnage}<br/>
+	<b>Mass: </b>${massDesc}<br/>
 	<b>Battle Value:</b> ${battleValue}<br/>
   	<b>Tech Rating/Availability:</b> ${techRating}<br/>
   	<b>Cost:</b> ${cost} C-bills<br/>
@@ -98,7 +97,7 @@
 	<b>Notes: </b><#if armorMass gt 0>Mounts ${armorMass} tons of ${armorType} armor.</#if><br/>
 </#if>
 	</p>
-
+	<br/>
 <#if usesWeaponBays>
 	<table>
 		<tr><th align="left">Weapons:</th><th></th><th colspan="4">Capital Attack Values (Standard)</th><th></th></tr>

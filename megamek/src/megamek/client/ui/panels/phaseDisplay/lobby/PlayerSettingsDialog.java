@@ -996,7 +996,8 @@ public class PlayerSettingsDialog extends AbstractButtonDialog {
                 var bcd = new BotConfigDialog(clientgui.getFrame(),
                       client.getLocalPlayer().getName(),
                       behavior,
-                      clientgui);
+                      clientgui,
+                      botClient.getAIType());
                 bcd.setVisible(true);
                 if (bcd.getResult() == DialogResult.CONFIRMED) {
                     botClient.setBehaviorSettings(bcd.getBehaviorSettings());

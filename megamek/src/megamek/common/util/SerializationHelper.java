@@ -61,6 +61,7 @@ import megamek.common.units.EntityMovementMode;
 import megamek.common.units.HeatBreakdown;
 import megamek.common.units.IBuilding;
 import megamek.common.units.InfantryMount;
+import megamek.common.units.Mek;
 import megamek.common.weapons.handlers.AttackHandler;
 import megamek.server.victory.VictoryCondition;
 
@@ -109,6 +110,13 @@ public class SerializationHelper {
      */
     public static XStream getLoadSaveGameXStream() {
         XStream xStream = getSaveGameXStream();
+
+        // Mek heat sink activation used to be a pair of counter fields; it is now tracked per mount via
+        // equipment modes (activation/deactivation rules), and the fields no longer exist. Save games written
+        // before that change still contain the elements, and this XStream setup rejects unknown elements, so
+        // they are explicitly omitted to keep those saves loading.
+        xStream.omitField(Mek.class, "sinksOn");
+        xStream.omitField(Mek.class, "sinksOnNextRound");
 
         xStream.registerConverter(new Converter() {
             @Override
@@ -371,6 +379,7 @@ public class SerializationHelper {
                 int constant = 0;
                 int compensation = 0;
                 int crew = 0;
+                int gamemaster = 0;
 
                 while (reader.hasMoreChildren()) {
                     reader.moveDown();
@@ -385,6 +394,7 @@ public class SerializationHelper {
                             case "constant" -> constant = Integer.parseInt(reader.getValue());
                             case "compensation" -> compensation = Integer.parseInt(reader.getValue());
                             case "crew" -> crew = Integer.parseInt(reader.getValue());
+                            case "gamemaster" -> gamemaster = Integer.parseInt(reader.getValue());
                         }
                         reader.moveUp();
                     } catch (NumberFormatException e) {
@@ -393,7 +403,7 @@ public class SerializationHelper {
                     }
                 }
                 return new InitiativeBonusBreakdown(hq, quirk, quirkName, console, crewCommand,
-                      tcp, constant, compensation, crew);
+                      tcp, constant, compensation, crew, gamemaster);
             }
 
             @Override

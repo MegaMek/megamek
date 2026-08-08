@@ -70,7 +70,7 @@ public class SRMBayWeapon extends AmmoBayWeapon {
         this.tonnage = 0.0;
         this.bv = 0;
         this.cost = 0;
-        this.flags = flags.or(F_MISSILE);
+        this.flags = flags.or(F_MISSILE).or(F_SRM);
         this.atClass = CLASS_SRM;
     }
 

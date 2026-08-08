@@ -136,7 +136,6 @@ public final class Player extends TurnOrdered {
 
     //Voting should not be stored in save game so marked transient
     private transient boolean votedToAllowTeamChange = false;
-    private transient boolean votedToAllowGameMaster = false;
     // Testing aid (client-set, server-only): when true the server includes enemy artillery attacks in this player's
     // artillery packet so the Rounds in the Air view can show both sides. Transient - never serialized or saved.
     private transient boolean artilleryRevealAll = false;
@@ -310,6 +309,14 @@ public final class Player extends TurnOrdered {
 
     public void setTeam(int team) {
         this.team = team;
+    }
+    
+    public String getTeamName() {
+        if (getTeam() <= TEAM_NONE) {
+            return "No Team";
+        }
+        
+        return "Team " + getTeam();
     }
 
     public boolean isDone() {
@@ -601,14 +608,6 @@ public final class Player extends TurnOrdered {
 
     public boolean getVotedToAllowTeamChange() {
         return votedToAllowTeamChange;
-    }
-
-    public void setVotedToAllowGameMaster(boolean allowChange) {
-        votedToAllowGameMaster = allowChange;
-    }
-
-    public boolean getVotedToAllowGameMaster() {
-        return votedToAllowGameMaster;
     }
 
     public void setArtyAutoHitHexes(List<BoardLocation> newArtyAutoHitHexes) {
@@ -1017,15 +1016,12 @@ public final class Player extends TurnOrdered {
     }
 
     public String getColoredPlayerNameWithTeam() {
-        if (team == -1) {
-            team = 0;
-        }
         return "<B><font color='" +
               getColour().getHexString(0x00F0F0F0) +
               "'>" +
               getName() +
               " (" +
-              TEAM_NAMES[team] +
+              getTeamName() +
               ")</font></B>";
     }
 

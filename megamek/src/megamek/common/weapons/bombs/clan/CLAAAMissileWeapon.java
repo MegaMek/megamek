@@ -59,8 +59,8 @@ public class CLAAAMissileWeapon extends ThunderboltWeapon {
     public CLAAAMissileWeapon() {
         super();
 
-        this.name = "AAA Missile";
-        this.setInternalName(BombTypeEnum.AAA.getWeaponName());
+        this.name = BombTypeEnum.AAA.getWeaponName();
+        this.setInternalName("Clan " + BombTypeEnum.AAA.getWeaponName());
         this.heat = 0;
         this.damage = 20;
         this.rackSize = 1;

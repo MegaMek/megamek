@@ -41,13 +41,16 @@ import static megamek.common.options.OptionsConstants.ATOW_COMBAT_SENSE;
 import java.io.Serial;
 import java.io.Serializable;
 import java.util.*;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.CopyOnWriteArrayList;
 
 import megamek.MMConstants;
 import megamek.Version;
+import megamek.client.bot.AIType;
 import megamek.client.bot.princess.BehaviorSettings;
 import megamek.common.Hex;
 import megamek.common.HexTarget;
+import megamek.common.IndustrialElevator;
 import megamek.common.Player;
 import megamek.common.Report;
 import megamek.common.TagInfo;
@@ -222,6 +225,9 @@ public final class Game extends AbstractGame implements Serializable, PlanetaryC
     // smoke clouds
     private final List<SmokeCloud> smokeCloudList = new CopyOnWriteArrayList<>();
 
+    // industrial elevators (player-controlled)
+    private final Map<BoardLocation, IndustrialElevator> industrialElevators = new ConcurrentHashMap<>();
+
     // temporary ECM fields (from EMP mines, etc.)
     private final List<TemporaryECMField> temporaryECMFields = new CopyOnWriteArrayList<>();
 
@@ -231,6 +237,14 @@ public final class Game extends AbstractGame implements Serializable, PlanetaryC
      * savegames and allow restoring bots to their previous settings.
      */
     private Map<String, BehaviorSettings> botSettings = new HashMap<>();
+
+    /**
+     * Which AI implementation the most recent bot connected under each name was, alongside {@link #botSettings}.
+     * Rides the savegame so a loaded game can restore each seat with the same kind of bot it held, rather than
+     * guessing. Absent ({@code null}) in games saved before this was recorded - read it through
+     * {@link #getBotTypes()}, which heals that.
+     */
+    private Map<String, AIType> botTypes = new HashMap<>();
 
     /**
      * Constructor
@@ -1591,6 +1605,9 @@ public final class Game extends AbstractGame implements Serializable, PlanetaryC
         clearAllReports();
         smokeCloudList.clear();
         temporaryECMFields.clear();
+        // Without this, a reset game re-uses the previous game's elevators: initialization deliberately
+        // skips boards whose elevators already exist, so stale platform positions would carry over.
+        clearIndustrialElevators();
 
         forceVictory = false;
         victoryPlayerId = Player.PLAYER_NONE;
@@ -3631,6 +3648,90 @@ public final class Game extends AbstractGame implements Serializable, PlanetaryC
         smokeCloudList.removeIf(SmokeCloud::isCompletelyDissipated);
     }
 
+    // --- Industrial Elevator Methods ---
+
+    /**
+     * Adds an industrial elevator to the game.
+     *
+     * @param elevator The industrial elevator to add
+     */
+    public void addIndustrialElevator(IndustrialElevator elevator) {
+        industrialElevators.put(elevator.getLocation(), elevator);
+    }
+
+    /**
+     * Gets an industrial elevator at the specified location.
+     *
+     * @param location The board location to check
+     *
+     * @return The elevator at this location, or {@code null} if none exists
+     */
+    public @Nullable IndustrialElevator getIndustrialElevator(BoardLocation location) {
+        return industrialElevators.get(location);
+    }
+
+    /**
+     * Gets an industrial elevator at the specified coordinates and board.
+     *
+     * @param coords  The coordinates to check
+     * @param boardId The board ID
+     *
+     * @return The elevator at this location, or {@code null} if none exists
+     */
+    public @Nullable IndustrialElevator getIndustrialElevator(Coords coords, int boardId) {
+        return getIndustrialElevator(BoardLocation.of(coords, boardId));
+    }
+
+    /**
+     * Returns all industrial elevators in the game.
+     *
+     * @return An unmodifiable collection of all industrial elevators
+     */
+    public Collection<IndustrialElevator> getIndustrialElevators() {
+        return Collections.unmodifiableCollection(industrialElevators.values());
+    }
+
+    /**
+     * Checks if there is an industrial elevator at the specified location.
+     *
+     * @param location The board location to check
+     *
+     * @return {@code true} if an elevator exists at this location
+     */
+    public boolean hasIndustrialElevator(BoardLocation location) {
+        return industrialElevators.containsKey(location);
+    }
+
+    /**
+     * Removes an industrial elevator from the game.
+     *
+     * @param location The location of the elevator to remove
+     *
+     * @return The removed elevator, or {@code null} if none was found
+     */
+    public @Nullable IndustrialElevator removeIndustrialElevator(BoardLocation location) {
+        return industrialElevators.remove(location);
+    }
+
+    /**
+     * Clears all industrial elevators from the game.
+     */
+    public void clearIndustrialElevators() {
+        industrialElevators.clear();
+    }
+
+    /**
+     * Sets the industrial elevators from the provided collection, replacing any existing ones.
+     *
+     * @param elevators Collection of industrial elevators to set
+     */
+    public void setIndustrialElevators(Collection<IndustrialElevator> elevators) {
+        industrialElevators.clear();
+        for (IndustrialElevator elevator : elevators) {
+            industrialElevators.put(elevator.getLocation(), elevator);
+        }
+    }
+
     /**
      * Adds a temporary ECM field to the game (e.g., from EMP mine detonation).
      *
@@ -3835,6 +3936,37 @@ public final class Game extends AbstractGame implements Serializable, PlanetaryC
 
     public void setBotSettings(Map<String, BehaviorSettings> botSettings) {
         this.botSettings = botSettings;
+    }
+
+    /**
+     * @return which AI implementation the most recent bot connected under each player name was, as an
+     *       unmodifiable view; never {@code null} - games saved before the types were recorded read as an
+     *       empty map. Record entries through {@link #recordBotType(String, AIType)}.
+     */
+    public Map<String, AIType> getBotTypes() {
+        return Collections.unmodifiableMap(ensureBotTypes());
+    }
+
+    /**
+     * Records which AI implementation the bot connected under the given player name is.
+     *
+     * @param playerName the bot player's name
+     * @param aiType     the AI implementation it reported
+     */
+    public void recordBotType(String playerName, AIType aiType) {
+        ensureBotTypes().put(playerName, aiType);
+    }
+
+    public void setBotTypes(Map<String, AIType> botTypes) {
+        this.botTypes = new HashMap<>(botTypes);
+    }
+
+    private Map<String, AIType> ensureBotTypes() {
+        if (null == botTypes) {
+            // Deserialization of a save from before this field existed leaves it null.
+            botTypes = new HashMap<>();
+        }
+        return botTypes;
     }
 
     /**

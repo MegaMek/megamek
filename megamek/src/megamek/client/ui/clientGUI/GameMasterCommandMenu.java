@@ -41,19 +41,16 @@ import megamek.client.ui.Messages;
 import megamek.client.ui.dialogs.ClientCommandDialog;
 import megamek.common.annotations.Nullable;
 import megamek.common.board.Coords;
-import megamek.server.commands.ChangeOwnershipCommand;
 import megamek.server.commands.ChangeWeatherCommand;
 import megamek.server.commands.ClientServerCommand;
 import megamek.server.commands.DisasterCommand;
-import megamek.server.commands.EndGameCommand;
 import megamek.server.commands.FirefightCommand;
 import megamek.server.commands.FirestarterCommand;
 import megamek.server.commands.FirestormCommand;
-import megamek.server.commands.KillCommand;
 import megamek.server.commands.NoFiresCommand;
 import megamek.server.commands.OrbitalBombardmentCommand;
 import megamek.server.commands.RemoveSmokeCommand;
-import megamek.server.commands.RescueCommand;
+import megamek.server.commands.SkillModifierCommand;
 
 /**
  * Builds the Game Master special commands menu: one entry per server command that only a Game Master may run, each
@@ -96,17 +93,16 @@ public final class GameMasterCommandMenu {
      * @return The Game Master commands, in menu order
      */
     private static List<ClientServerCommand> gameMasterCommands() {
-        return List.of(new ChangeOwnershipCommand(null, null),
-              new ChangeWeatherCommand(null, null),
+        // Change Unit Ownership, Destroy Unit and Rescue Unit live in the Edit Damage dialog now, not here. What is
+        // left is the hex and board tools, which act on the map rather than a single unit, plus the skill modifier.
+        return List.of(new ChangeWeatherCommand(null, null),
               new DisasterCommand(null, null),
-              new EndGameCommand(null, null),
-              new KillCommand(null, null),
               new FirefightCommand(null, null),
               new FirestarterCommand(null, null),
               new FirestormCommand(null, null),
               new NoFiresCommand(null, null),
               new OrbitalBombardmentCommand(null, null),
               new RemoveSmokeCommand(null, null),
-              new RescueCommand(null, null));
+              new SkillModifierCommand(null, null));
     }
 }

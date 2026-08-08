@@ -44,9 +44,9 @@ import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
 
+import jakarta.annotation.Nullable;
 import megamek.common.CalledShot;
 import megamek.common.CriticalSlot;
-import megamek.common.annotations.Nullable;
 import megamek.common.battleArmor.BattleArmor;
 import megamek.common.enums.GamePhase;
 import megamek.common.equipment.enums.BombType;
@@ -184,6 +184,30 @@ public class Mounted<T extends EquipmentType> implements Serializable, RoundUpda
     public static final int MINE_EMP = 4;
     public static final int MINE_COMMAND_DETONATED = 5;
 
+    /**
+     * Internal (non-localized) name of the generic "switched on" equipment mode used by equipment that can be
+     * activated and deactivated (activation/deactivation rules): active probes, C3 computers, heat sinks, improved
+     * heavy lasers and similar. Mode comparisons ({@link EquipmentMode#equals(String)}) always test this internal
+     * name; the localized text shown in the GUI comes from {@link EquipmentMode#getDisplayableName()}.
+     */
+    public static final String MODE_ON = "On";
+
+    /**
+     * Internal (non-localized) name of the "switched off" equipment mode. Equipment in this mode provides none of
+     * its game effects until reactivated.
+     *
+     * @see #MODE_ON
+     */
+    public static final String MODE_OFF = "Off";
+
+    /**
+     * Internal name of the sentinel mode reported when equipment has no current or pending mode set.
+     *
+     * @see #curMode()
+     * @see #pendingMode()
+     */
+    public static final String MODE_NONE = "None";
+
     // New stuff for shields
     protected int baseDamageAbsorptionRate = 0;
     protected int baseDamageCapacity = 0;
@@ -252,7 +276,7 @@ public class Mounted<T extends EquipmentType> implements Serializable, RoundUpda
         if (typeName == null) {
             typeName = type.getInternalName();
         }
-        type = (T) EquipmentType.getWithFallbackToDisplayName(typeName);
+        type = (T) EquipmentType.get(typeName);
 
         if (type == null) {
             String message = String.format("Could not restore equipment type \"%s\"", typeName);
@@ -262,8 +286,12 @@ public class Mounted<T extends EquipmentType> implements Serializable, RoundUpda
         }
     }
 
+    /**
+     * @return the equipment type of this mount, or {@code null} if it cannot be resolved - the mount was restored
+     *       (from a save or over the network) with an equipment name unknown to this version of MegaMek
+     */
     @SuppressWarnings("unchecked")
-    public T getType() {
+    public @Nullable T getType() {
         return (null != type) ? type : (type = (T) EquipmentType.get(typeName));
     }
 
@@ -301,7 +329,45 @@ public class Mounted<T extends EquipmentType> implements Serializable, RoundUpda
         if ((mode >= 0) && (mode < getModesCount())) {
             return getMode(mode);
         }
-        return EquipmentMode.getMode("None");
+        return EquipmentMode.getMode(MODE_NONE);
+    }
+
+    /**
+     * Dedicated logger name for equipment activation/deactivation diagnostics ([EquipOff] tag): mode-change
+     * reception and application, and rejected deactivations. A feature logger rather than a host-class logger so it
+     * can be enabled in log4j2.xml without the host classes' debug noise.
+     */
+    public static final String EQUIP_OFF_DIAGNOSTIC_LOGGER = "megamek.feature.EquipOff";
+
+    /**
+     * Returns whether the player has deactivated this equipment. Equipment that can be switched off (active probes,
+     * ECM suites, C3 computers, heat sinks, and similar items with an {@link #MODE_OFF} mode per the
+     * activation/deactivation rules) provides none of its game effects while deactivated, but is otherwise undamaged
+     * and can be reactivated.
+     *
+     * @return {@code true} if this equipment has modes and its current mode is {@link #MODE_OFF}
+     */
+    public boolean isModeTurnedOff() {
+        return hasModes() && curMode().equals(MODE_OFF);
+    }
+
+    /**
+     * @return the mode this equipment will be in next round: the pending mode if a switch is queued, otherwise the
+     *       current mode
+     */
+    public EquipmentMode modeNextRound() {
+        return pendingMode().equals(MODE_NONE) ? curMode() : pendingMode();
+    }
+
+    /**
+     * Returns whether this equipment will be deactivated next round - either a pending switch to {@link #MODE_OFF},
+     * or already {@link #MODE_OFF} with no pending switch away from it. Used to validate declarations that depend on
+     * other equipment operating next round (e.g. engaging stealth armor requires an ECM suite that will be running).
+     *
+     * @return {@code true} if this equipment has modes and its next-round mode is {@link #MODE_OFF}
+     */
+    public boolean isModeTurnedOffNextRound() {
+        return hasModes() && modeNextRound().equals(MODE_OFF);
     }
 
     /**
@@ -309,7 +375,7 @@ public class Mounted<T extends EquipmentType> implements Serializable, RoundUpda
      */
     public EquipmentMode pendingMode() {
         if ((pendingMode < 0) || (pendingMode >= getModesCount())) {
-            return EquipmentMode.getMode("None");
+            return EquipmentMode.getMode(MODE_NONE);
         }
         return type.getMode(pendingMode);
     }
@@ -1116,15 +1182,15 @@ public class Mounted<T extends EquipmentType> implements Serializable, RoundUpda
         return locations;
     }
 
-    public Mounted<?> getLinked() {
+    public @Nullable Mounted<?> getLinked() {
         return linked;
     }
 
-    public Mounted<?> getLinkedBy() {
+    public @Nullable Mounted<?> getLinkedBy() {
         return linkedBy;
     }
 
-    public Mounted<?> getCrossLinkedBy() {
+    public @Nullable Mounted<?> getCrossLinkedBy() {
         return crossLinkedBy;
     }
 
@@ -1138,9 +1204,25 @@ public class Mounted<T extends EquipmentType> implements Serializable, RoundUpda
      * @see #setLinkedBy(Mounted)
      */
     public void setLinked(@Nullable Mounted<?> linked) {
+        if (linked == null && this.linked != null) {
+            this.linked.setLinkedBy(null);
+        }
+
         this.linked = linked;
+
         if (linked != null) {
             linked.setLinkedBy(this);
+        }
+    }
+
+    /**
+     * Sets the linkedBy equipment. Meaningless in case of a many-to-one relationship (ammo, etc.).
+     *
+     * @param linkedBy The inverse of linked
+     */
+    private void setLinkedBy(@Nullable Mounted<?> linkedBy) {
+        if (linkedBy == null || linkedBy.getLinked() == this) {
+            this.linkedBy = linkedBy;
         }
     }
 
@@ -1149,23 +1231,11 @@ public class Mounted<T extends EquipmentType> implements Serializable, RoundUpda
         linked.setCrossLinkedBy(this);
     }
 
-    // should only be called by setLinked(), or when dumping a DWP
-    // in the case of a many-to-one relationship (like ammo) this is meaningless
-    public void setLinkedBy(Mounted<?> linker) {
-        if ((linker != null) && (linker.getLinked() != this)) {
-            // liar
-            return;
-        }
-        linkedBy = linker;
-    }
-
     // called by setCrossLinked() when using cross-linked capacitors.
-    public void setCrossLinkedBy(Mounted<?> linker) {
-        if ((linker != null) && (linker.getLinked() != this)) {
-            // liar
-            return;
+    private void setCrossLinkedBy(Mounted<?> crossLinkedBy) {
+        if (crossLinkedBy == null || crossLinkedBy.getLinked() == this) {
+            this.crossLinkedBy = crossLinkedBy;
         }
-        crossLinkedBy = linker;
     }
 
     public int getFoundCrits() {

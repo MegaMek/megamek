@@ -141,6 +141,7 @@ class LobbyMekPopup {
     static final String LMP_UNLOAD = "UNLOAD";
     static final String LMP_DETACH_FROM_TRACTOR = "DETACHFROMTRACTOR";
     static final String LMP_DETACH_TRAILER = "DETACHTRAILER";
+    static final String LMP_CONNECT_TRAIN = "CONNECTTRAIN";
     static final String LMP_MOVE_DOWN = "MOVE_DOWN";
     static final String LMP_INDI_CAMO = "INDI_CAMO";
     static final String LMP_DAMAGE = "DAMAGE";
@@ -236,7 +237,16 @@ class LobbyMekPopup {
         }
         boolean canEditDamage = hasJoinedEntities && joinedEntities.stream()
               .allMatch(entity -> LobbyActions.canEditDamage(clientGui.getClient(), entity));
-        popup.add(menuItem("Edit Damage...", LMP_DAMAGE + NO_INFO + seIds, canEditDamage, listener, KeyEvent.VK_E));
+        JMenuItem damageItem = menuItem("Edit Damage...",
+              LMP_DAMAGE + NO_INFO + seIds,
+              canEditDamage,
+              listener,
+              KeyEvent.VK_E);
+        if (!canEditDamage) {
+            // a greyed out item with no reason is a puzzle, so say who may edit the damage of a unit
+            damageItem.setToolTipText(Messages.getString("ChatLounge.editDamage.notAllowed.tooltip"));
+        }
+        popup.add(damageItem);
         popup.add(menuItem("Set individual camo...", LMP_INDI_CAMO + NO_INFO + seIds, hasJoinedEntities, listener,
               KeyEvent.VK_I));
 
@@ -267,6 +277,18 @@ class LobbyMekPopup {
         popup.add(loadMenu(clientGui, true, listener, joinedEntities));
         if (entities.size() == 1) {
             popup.add(towMenu(clientGui, true, listener, entities.getFirst()));
+        }
+
+        // Connecting several units at once. Offered whenever the selection could plausibly form a train; the exact
+        // ordering is chosen in the dialog and the server has the final say on legality.
+        boolean anyFreeTrailerSelected = joinedEntities.stream()
+              .anyMatch(entity -> entity.isTrailer() && (entity.getTractor() == Entity.NONE));
+        boolean anyFreeTractorSelected = joinedEntities.stream()
+              .anyMatch(entity -> entity.isTractor() && (entity.getTractor() == Entity.NONE)
+                    && (entity.getTowing() == Entity.NONE));
+        if ((joinedEntities.size() > 1) && anyFreeTrailerSelected && anyFreeTractorSelected) {
+            popup.add(menuItem(Messages.getString("ChatLounge.ConnectAsTrain"),
+                  LMP_CONNECT_TRAIN + NO_INFO + seIds, true, listener));
         }
 
         if (accessibleCarriers) {

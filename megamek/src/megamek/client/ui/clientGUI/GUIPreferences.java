@@ -155,6 +155,9 @@ public class GUIPreferences extends PreferenceStoreProxy {
     public static final String TRACE_OVERLAY_ORIGIN_Y = "TraceOverlayOriginY";
     public static final String TRACE_OVERLAY_IMAGE_FILE = "TraceOverlayImageFile";
 
+    public static final String TOAST_ENABLED = "ToastEnabled";
+    public static final String TOAST_DURATION_SECONDS = "ToastDurationSeconds";
+    public static final String TOAST_REPORT_EVENTS = "ToastReportEvents";
     public static final String TOAST_DRIP_SECONDS = "ToastDripSeconds";
 
     public static final String PLAYERS_REMAINING_TO_SHOW = "PlayersRemainingToShow";
@@ -184,6 +187,8 @@ public class GUIPreferences extends PreferenceStoreProxy {
 
     public static final String CUSTOM_UNIT_HEIGHT = "CustomUnitDialogSizeHeight";
     public static final String CUSTOM_UNIT_WIDTH = "CustomUnitDialogSizeWidth";
+    public static final String SHOW_UNIMPLEMENTED_SPAS = "ShowUnimplementedSpas";
+    public static final String SHOW_UNIMPLEMENTED_QUIRKS = "ShowUnimplementedQuirks";
 
     public static final String FORCE_DISPLAY_POS_X = "ForceDisplayPosX";
     public static final String FORCE_DISPLAY_POS_Y = "ForceDisplayPosY";
@@ -574,6 +579,9 @@ public class GUIPreferences extends PreferenceStoreProxy {
         setDefault(TRACE_OVERLAY_ORIGIN_Y, 0);
         setDefault(TRACE_OVERLAY_IMAGE_FILE, "");
 
+        setDefault(TOAST_ENABLED, true);
+        setDefault(TOAST_DURATION_SECONDS, 3);
+        setDefault(TOAST_REPORT_EVENTS, true);
         setDefault(TOAST_DRIP_SECONDS, 2);
 
         setDefault(WARNING_COLOR, DEFAULT_RED);
@@ -684,6 +692,8 @@ public class GUIPreferences extends PreferenceStoreProxy {
         store.setDefault(AUTO_DECLARE_SEARCHLIGHT, true);
         store.setDefault(CUSTOM_UNIT_HEIGHT, 400);
         store.setDefault(CUSTOM_UNIT_WIDTH, 600);
+        store.setDefault(SHOW_UNIMPLEMENTED_SPAS, false);
+        store.setDefault(SHOW_UNIMPLEMENTED_QUIRKS, false);
 
         store.setDefault(FORCE_DISPLAY_AUTO_DISPLAY_REPORT_PHASE, 2);
         store.setDefault(FORCE_DISPLAY_AUTO_DISPLAY_NON_REPORT_PHASE, 2);
@@ -724,7 +734,7 @@ public class GUIPreferences extends PreferenceStoreProxy {
         store.setDefault(UNIT_DISPLAY_AUTO_DISPLAY_NON_REPORT_PHASE, 1);
         store.setDefault(UNIT_DISPLAY_ENABLED, true);
         store.setDefault(UNIT_DISPLAY_LOCATION, 0);
-        store.setDefault(BOT_COMMANDS_LOCATION, 0);
+        store.setDefault(BOT_COMMANDS_LOCATION, ClientGUI.BOT_COMMANDS_LOCATION_DOCKED);
         // -1 is the "no saved position yet" sentinel so the floating dialog centers on first use; a real saved
         // position (including a legitimate top-left 0,0) is restored instead.
         store.setDefault(BOT_COMMANDS_POS_X, -1);
@@ -1028,6 +1038,16 @@ public class GUIPreferences extends PreferenceStoreProxy {
 
     public int getCustomUnitWidth() {
         return store.getInt(CUSTOM_UNIT_WIDTH);
+    }
+
+    /** @return whether the pilot options list also shows the CamOps SPAs MegaMek does not implement */
+    public boolean getShowUnimplementedSpas() {
+        return store.getBoolean(SHOW_UNIMPLEMENTED_SPAS);
+    }
+
+    /** @return whether the quirks list also shows the quirks MegaMek will not act on */
+    public boolean getShowUnimplementedQuirks() {
+        return store.getBoolean(SHOW_UNIMPLEMENTED_QUIRKS);
     }
 
     public int getForceDisplayPosX() {
@@ -1929,6 +1949,14 @@ public class GUIPreferences extends PreferenceStoreProxy {
 
     public void setCustomUnitWidth(int state) {
         store.setValue(CUSTOM_UNIT_WIDTH, state);
+    }
+
+    public void setShowUnimplementedSpas(boolean state) {
+        store.setValue(SHOW_UNIMPLEMENTED_SPAS, state);
+    }
+
+    public void setShowUnimplementedQuirks(boolean state) {
+        store.setValue(SHOW_UNIMPLEMENTED_QUIRKS, state);
     }
 
     public void setForceDisplayPosX(int i) {
@@ -3439,6 +3467,43 @@ public class GUIPreferences extends PreferenceStoreProxy {
 
     public void setTraceOverlayScale(int i) {
         store.setValue(TRACE_OVERLAY_SCALE, i);
+    }
+
+    /**
+     * @return {@code true} if board toast notifications are shown at all. When {@code false}, every toast is
+     *       suppressed, including those whose content never reaches the report or chat log (Game Master actions,
+     *       artillery fire missions, effects wearing off, and the reasons an action was refused).
+     */
+    public boolean getToastEnabled() {
+        return getBoolean(TOAST_ENABLED);
+    }
+
+    public void setToastEnabled(boolean state) {
+        store.setValue(TOAST_ENABLED, state);
+    }
+
+    /**
+     * @return the base display time in seconds for a board toast. Each {@code ToastLevel} adds its own offset on top
+     *       of this, so more urgent levels always linger longer than the base.
+     */
+    public int getToastDurationSeconds() {
+        return getInt(TOAST_DURATION_SECONDS);
+    }
+
+    public void setToastDurationSeconds(int seconds) {
+        store.setValue(TOAST_DURATION_SECONDS, seconds);
+    }
+
+    /**
+     * @return {@code true} if round-report events are echoed as toasts. When {@code false}, only toasts that carry
+     *       information the report log does not already hold are shown.
+     */
+    public boolean getToastReportEvents() {
+        return getBoolean(TOAST_REPORT_EVENTS);
+    }
+
+    public void setToastReportEvents(boolean state) {
+        store.setValue(TOAST_REPORT_EVENTS, state);
     }
 
     public int getToastDripSeconds() {

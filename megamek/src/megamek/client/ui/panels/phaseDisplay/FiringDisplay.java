@@ -53,12 +53,15 @@ import megamek.client.ui.dialogs.phaseDisplay.TargetChoiceDialog;
 import megamek.client.ui.dialogs.phaseDisplay.TriggerAPPodDialog;
 import megamek.client.ui.dialogs.phaseDisplay.TriggerBPodDialog;
 import megamek.client.ui.dialogs.phaseDisplay.VibrabombSettingDialog;
+import megamek.client.ui.util.KeyBindReceiver;
 import megamek.client.ui.util.KeyCommandBind;
 import megamek.client.ui.util.MegaMekController;
 import megamek.client.ui.widget.MegaMekButton;
 import megamek.client.ui.widget.MekPanelTabStrip;
+import megamek.common.CalledShot;
 import megamek.common.Hex;
 import megamek.common.HexTarget;
+import megamek.common.IdealHex;
 import megamek.common.LosEffects;
 import megamek.common.Player;
 import megamek.common.ToHitData;
@@ -95,6 +98,12 @@ import megamek.logging.MMLogger;
 
 public class FiringDisplay extends AttackPhaseDisplay implements ListSelectionListener {
     private final static MMLogger logger = MMLogger.create(FiringDisplay.class);
+
+    /**
+     * Dedicated diagnostic logger for called shots, silent unless enabled in log4j2.xml. Shared with the pointblank
+     * shot display, which inherits the called shot handling.
+     */
+    protected final static MMLogger CALLED_SHOT_LOGGER = MMLogger.create("megamek.feature.CalledShot");
 
     @Serial
     private static final long serialVersionUID = -5586388490027013723L;
@@ -216,6 +225,9 @@ public class FiringDisplay extends AttackPhaseDisplay implements ListSelectionLi
                     result += "&nbsp;&nbsp;" + msg_next + ": " + KeyCommandBind.getDesc(KeyCommandBind.NEXT_MODE);
                     result += "&nbsp;&nbsp;" + msg_previous + ": " + KeyCommandBind.getDesc(KeyCommandBind.PREV_MODE);
                     break;
+                case FIRE_CALLED:
+                    result = calledShotHotKeyDesc();
+                    break;
                 case FIRE_CANCEL:
                     result = "<BR>";
                     result += "&nbsp;&nbsp;" + KeyCommandBind.getDesc(KeyCommandBind.CANCEL);
@@ -226,6 +238,24 @@ public class FiringDisplay extends AttackPhaseDisplay implements ListSelectionLi
 
             return result;
         }
+    }
+
+    /**
+     * Returns the tooltip fragment listing the four called shot direction binds. Shared with the pointblank shot
+     * display, which has its own copy of the firing commands.
+     */
+    static String calledShotHotKeyDesc() {
+        String result = "<BR>";
+        result += "&nbsp;&nbsp;" + Messages.getString("FiringDisplay.calledShotHigh") + ": "
+              + KeyCommandBind.getDesc(KeyCommandBind.CALLED_SHOT_HIGH);
+        result += "&nbsp;&nbsp;" + Messages.getString("FiringDisplay.calledShotLow") + ": "
+              + KeyCommandBind.getDesc(KeyCommandBind.CALLED_SHOT_LOW);
+        result += "<BR>";
+        result += "&nbsp;&nbsp;" + Messages.getString("FiringDisplay.calledShotLeft") + ": "
+              + KeyCommandBind.getDesc(KeyCommandBind.CALLED_SHOT_LEFT);
+        result += "&nbsp;&nbsp;" + Messages.getString("FiringDisplay.calledShotRight") + ": "
+              + KeyCommandBind.getDesc(KeyCommandBind.CALLED_SHOT_RIGHT);
+        return result;
     }
 
     // buttons
@@ -300,7 +330,19 @@ public class FiringDisplay extends AttackPhaseDisplay implements ListSelectionLi
     }
 
     private boolean shouldPerformFireKeyCommand() {
-        return shouldReceiveKeyCommands() && buttons.get(FiringCommand.FIRE_FIRE).isEnabled();
+        return shouldReceiveKeyCommands() && isFireAllowed();
+    }
+
+    /**
+     * The called shot binds must respect the same gate as the Called button, otherwise a keypress would change called
+     * shots in games where the TacOps called shots option is switched off.
+     */
+    protected boolean shouldPerformCalledShotKeyCommand() {
+        boolean receiving = shouldReceiveKeyCommands();
+        boolean calledEnabled = buttons.get(FiringCommand.FIRE_CALLED).isEnabled();
+        CALLED_SHOT_LOGGER.debug("[CalledShot] {} gate: receivingKeyCommands={} calledButtonEnabled={}",
+              getClass().getSimpleName(), receiving, calledEnabled);
+        return receiving && calledEnabled;
     }
 
     protected void twistLeft() {
@@ -371,7 +413,25 @@ public class FiringDisplay extends AttackPhaseDisplay implements ListSelectionLi
         controller.registerCommandAction(KeyCommandBind.VIEW_ACTING_UNIT, this, this::viewActingUnit);
         controller.registerCommandAction(KeyCommandBind.NEXT_MODE, this, () -> changeMode(true));
         controller.registerCommandAction(KeyCommandBind.PREV_MODE, this, () -> changeMode(false));
+
+        registerCalledShotKeyCommands(controller, this::shouldPerformCalledShotKeyCommand);
+
         controller.registerCommandAction(KeyCommandBind.CANCEL, this::shouldPerformClearKeyCommand, this::clear);
+    }
+
+    /**
+     * Registers the four called shot direction binds. Shared with the pointblank shot display, which gates them on its
+     * own turn check.
+     */
+    protected void registerCalledShotKeyCommands(MegaMekController controller, KeyBindReceiver shouldPerform) {
+        controller.registerCommandAction(KeyCommandBind.CALLED_SHOT_HIGH, shouldPerform,
+              () -> setCalledShot(CalledShot.CALLED_HIGH));
+        controller.registerCommandAction(KeyCommandBind.CALLED_SHOT_LOW, shouldPerform,
+              () -> setCalledShot(CalledShot.CALLED_LOW));
+        controller.registerCommandAction(KeyCommandBind.CALLED_SHOT_LEFT, shouldPerform,
+              () -> setCalledShot(CalledShot.CALLED_LEFT));
+        controller.registerCommandAction(KeyCommandBind.CALLED_SHOT_RIGHT, shouldPerform,
+              () -> setCalledShot(CalledShot.CALLED_RIGHT));
     }
 
     @Override
@@ -688,25 +748,63 @@ public class FiringDisplay extends AttackPhaseDisplay implements ListSelectionLi
      * Called Shots - changes the current called shots selection
      */
     protected void changeCalled() {
-        int wn = clientgui.getUnitDisplay().wPan.getSelectedWeaponNum();
-
-        // Do nothing we have no unit selected.
-        if (currentEntity() == null) {
+        int weaponNum = clientgui.getUnitDisplay().wPan.getSelectedWeaponNum();
+        Mounted<?> mounted = selectedEquipment(weaponNum);
+        if (mounted == null) {
             return;
         }
 
-        Mounted<?> m = currentEntity().getEquipment(wn);
-        if (m == null) {
+        applyCalledShot(weaponNum, mounted.getCalledShot().switchCalledShot());
+    }
+
+    /**
+     * Called Shots - sets the called shot of the selected weapon to the given location instead of cycling to it.
+     * Pressing the keybind for the location that is already selected clears the called shot, so all five states are
+     * reachable from the four direction binds.
+     *
+     * @param calledShot one of the {@link CalledShot} CALLED_ constants, e.g. {@link CalledShot#CALLED_HIGH}
+     */
+    protected void setCalledShot(int calledShot) {
+        int weaponNum = clientgui.getUnitDisplay().wPan.getSelectedWeaponNum();
+        Mounted<?> mounted = selectedEquipment(weaponNum);
+        if (mounted == null) {
+            CALLED_SHOT_LOGGER.debug("[CalledShot] no weapon to change: currentEntity={} selectedWeaponNum={}",
+                  (currentEntity() == null) ? "none" : currentEntity().getShortName(), weaponNum);
             return;
         }
 
-        // send change to the server
-        m.getCalledShot().switchCalledShot();
-        clientgui.getClient().sendCalledShotChange(currentEntity, wn);
+        CalledShot currentCall = mounted.getCalledShot();
+        int previousCall = currentCall.getCall();
+        int newCall = (previousCall == calledShot) ? CalledShot.CALLED_NONE : calledShot;
+        currentCall.setCall(newCall);
+        CALLED_SHOT_LOGGER.debug("[CalledShot] {} weapon {} ({}): requested={} previous={} new={}",
+              currentEntity().getShortName(), weaponNum, mounted.getName(), calledShot,
+              previousCall, newCall);
+
+        applyCalledShot(weaponNum, newCall);
+    }
+
+    /**
+     * Returns the equipment with the given number on the current unit.
+     *
+     * @param weaponNum the equipment number selected in the unit display weapon list
+     *
+     * @return the equipment, or {@code null} when there is no current unit or it has no such equipment
+     */
+    private @Nullable Mounted<?> selectedEquipment(int weaponNum) {
+        return (currentEntity() == null) ? null : currentEntity().getEquipment(weaponNum);
+    }
+
+    /**
+     * Sends the already-applied called shot to the server and refreshes the weapon display so the new call and its
+     * to-hit are shown.
+     */
+    private void applyCalledShot(int weaponNum, int newCall) {
+        clientgui.getClient().sendCalledShotChange(currentEntity, weaponNum, newCall);
 
         updateTarget();
         clientgui.getUnitDisplay().wPan.displayMek(currentEntity());
-        clientgui.getUnitDisplay().wPan.selectWeapon(wn);
+        clientgui.getUnitDisplay().wPan.selectWeapon(weaponNum);
     }
 
     /**
@@ -1898,10 +1996,13 @@ public class FiringDisplay extends AttackPhaseDisplay implements ListSelectionLi
             updateExtinguish();
             if (isStrafing) {
                 if (currentEntity().getPassedThroughBoardId() == event.getBoardId()) {
-                    strafingCoords.clear();
-                    strafingCoords.addAll(getStrafingCoords(coords));
-                    event.getBoardView().setStrafingCoords(strafingCoords);
-                    updateStrafingTargets();
+                    if (isValidStrafingHex(coords)) {
+                        strafingCoords.add(coords);
+                        // Re-sync the board view from the authoritative list; setStrafingCoords repaints the
+                        // strafing overlay, whereas addStrafingCoords would only append without a repaint.
+                        event.getBoardView().setStrafingCoords(strafingCoords);
+                        updateStrafingTargets();
+                    }
                 }
             } else if (!coords.equals(currentEntity().getPosition())) {
                 // HACK : sometimes we don't show the target choice window
@@ -2308,6 +2409,22 @@ public class FiringDisplay extends AttackPhaseDisplay implements ListSelectionLi
         clientgui.getMenuBar().setEnabled(FiringCommand.FIRE_FIRE.getCmd(), enabled);
     }
 
+    /**
+     * Returns whether an attack may currently be declared with the selected weapon against the current target. This is
+     * the gate the Fire button itself uses; {@link #updateTarget()} recomputes it whenever the target, the selected
+     * weapon or the attacker's state changes, and the reason for a refusal is shown as the to-hit text in the unit
+     * display.
+     * <p>
+     * Every other way of firing - the hotkey and the board's right-click menu - must respect this gate. Bypassing it
+     * declares attacks the rules forbid, such as a conventional infantry platoon adding a Swarm or Leg Attack after it
+     * has already fired its primary weapons, which makes the server reject both attacks.
+     *
+     * @return {@code true} if firing the selected weapon is currently allowed
+     */
+    public boolean isFireAllowed() {
+        return buttons.get(FiringCommand.FIRE_FIRE).isEnabled();
+    }
+
     protected void setTwistEnabled(boolean enabled) {
         buttons.get(FiringCommand.FIRE_TWIST).setEnabled(enabled);
         clientgui.getMenuBar().setEnabled(FiringCommand.FIRE_TWIST.getCmd(), enabled);
@@ -2623,70 +2740,93 @@ public class FiringDisplay extends AttackPhaseDisplay implements ListSelectionLi
     }
 
     /**
-     * Determines the five (or fewer in case the flight path is shorter than 5 hexes) hexes on the flight path of the
-     * current entity centered around the given coord, if possible. In case of a flight path that crosses itself, the
-     * player may select which of the hexes to use.
+     * Determines whether the given hex may be added to the current strafing selection. Per the strafing rules
+     * (Total Warfare / Tactical Operations), a strafing run covers one to five consecutive hexes that were flown
+     * over and that lie in a single straight line. Hexes are selected one at a time, so the player may stop at any
+     * count from one to five. The reason for any rejection is logged so playtests can diagnose it from the log.
      *
-     * @param center The middle hex of the strafing path
+     * @param newCoords The hex the player clicked to add to the strafing run
      *
-     * @return The up to five coords that make up a strafing path
+     * @return {@code true} if the hex extends a legal 1-to-5 hex straight strafing line, otherwise {@code false}
      */
-    private List<Coords> getStrafingCoords(Coords center) {
+    private boolean isValidStrafingHex(Coords newCoords) {
         Entity strafingAero = currentEntity();
 
         if ((strafingAero == null) || !strafingAero.isAero()) {
-            return Collections.emptyList();
+            logger.debug("[Strafe] Rejecting hex {}: current unit is not an aero", newCoords);
+            return false;
         }
 
         // Can't update strafe hexes after weapons are fired, otherwise we'd
         // have to have a way to update the attacks vector
         if (!attacks.isEmpty()) {
-            return Collections.emptyList();
+            logger.debug("[Strafe] Rejecting hex {}: weapons already fired this strafing run", newCoords);
+            return false;
         }
 
         // Can only strafe hexes that were flown over
-        if (!strafingAero.passedThrough(center)) {
-            return Collections.emptyList();
+        if (!strafingAero.passedThrough(newCoords)) {
+            logger.debug("[Strafe] Rejecting hex {}: not on the flight path", newCoords);
+            return false;
         }
 
-        // Path could hit the same hex multiple times with aero on ground maps, find all such hexes
-        List<Integer> centerCandidates = new ArrayList<>();
-        List<Coords> flightPath = strafingAero.getPassedThrough();
-        for (int index = 0; index < flightPath.size(); index++) {
-            if (center.equals(flightPath.get(index))) {
-                centerCandidates.add(index);
+        // No further limitations for the first hex of the run
+        if (strafingCoords.isEmpty()) {
+            return true;
+        }
+
+        // A strafing run covers at most five hexes
+        if (strafingCoords.size() >= 5) {
+            logger.debug("[Strafe] Rejecting hex {}: already at the five-hex maximum", newCoords);
+            return false;
+        }
+
+        // The same hex cannot be strafed twice in one run
+        if (strafingCoords.contains(newCoords)) {
+            logger.debug("[Strafe] Rejecting hex {}: hex already selected", newCoords);
+            return false;
+        }
+
+        // The new hex must be adjacent to an already-selected hex (consecutive)
+        boolean isConsecutive = false;
+        for (Coords selected : strafingCoords) {
+            isConsecutive |= (selected.distance(newCoords) == 1);
+        }
+        if (!isConsecutive) {
+            logger.debug("[Strafe] Rejecting hex {}: not adjacent to the current selection", newCoords);
+            return false;
+        }
+
+        // All selected hexes plus the new one must lie in a single straight line
+        if (!isInStraightLine(newCoords)) {
+            logger.debug("[Strafe] Rejecting hex {}: would break the straight line", newCoords);
+            return false;
+        }
+
+        return true;
+    }
+
+    /**
+     * Checks that every already-selected strafing hex lies on the straight line formed by the first selected hex
+     * and the candidate hex. With fewer than two hexes already selected any single addition is trivially linear.
+     *
+     * @param newCoords The candidate hex being added to the strafing run
+     *
+     * @return {@code true} if the resulting set of hexes stays in one straight line, otherwise {@code false}
+     */
+    private boolean isInStraightLine(Coords newCoords) {
+        if (strafingCoords.size() < 2) {
+            return true;
+        }
+        IdealHex newHex = IdealHex.get(newCoords);
+        IdealHex start = IdealHex.get(strafingCoords.getFirst());
+        for (int index = 1; index < strafingCoords.size(); index++) {
+            IdealHex selectedHex = IdealHex.get(strafingCoords.get(index));
+            if (!selectedHex.isIntersectedBy(start.cx, start.cy, newHex.cx, newHex.cy)) {
+                return false;
             }
         }
-
-        int centerIndex;
-        if (centerCandidates.isEmpty()) {
-            // shouldn't happen here, but be safe
-            return Collections.emptyList();
-
-        } else if (centerCandidates.size() == 1) {
-            centerIndex = centerCandidates.getFirst();
-
-        } else {
-            // incomplete: choose one of the candidates
-            centerIndex = (int) JOptionPane.showInputDialog(clientgui.getFrame(),
-                  "Choose the hex to center the strafing path on",
-                  "Strafing - Choose Hex", JOptionPane.QUESTION_MESSAGE, null,
-                  centerCandidates.toArray(), centerCandidates.getFirst());
-        }
-
-        // When the flight path is shorter than 5 hexes, only that many can be strafed (may happen for aeros that are
-        // not on the ground board)
-        int maxStrafingHexes = Math.min(flightPath.size(), 5);
-        int startIndex = Math.max(centerIndex - 2, 0);
-        startIndex = Math.min(flightPath.size() - 5, startIndex);
-        startIndex = Math.max(startIndex, 0);
-        List<Coords> strafingPath = new ArrayList<>();
-        for (int index = startIndex; index < startIndex + maxStrafingHexes; index++) {
-            if (flightPath.size() > index) {
-                strafingPath.add(flightPath.get(index));
-            }
-        }
-        return strafingPath;
+        return true;
     }
 
     private void incrementInternalBombs(WeaponAttackAction waa) {

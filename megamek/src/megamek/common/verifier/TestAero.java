@@ -842,6 +842,25 @@ public class TestAero extends TestEntity {
     }
 
     /**
+     * Check if the unit has combinations of equipment which are not allowed in the construction rules.
+     *
+     * @param buff diagnostics are appended to this
+     *
+     * @return true if the entity is illegal
+     */
+    @Override
+    public boolean hasIllegalEquipmentCombinations(StringBuffer buff) {
+        boolean illegal = super.hasIllegalEquipmentCombinations(buff);
+
+        if (aero.countWorkingMisc(MiscType.F_FLOTATION_HULL) > 1) {
+            illegal = true;
+            buff.append("Max of 1 flotation hull chassis mod\n");
+        }
+
+        return illegal;
+    }
+
+    /**
      * Checks that the weapon loads in the wings match each other.
      *
      * @param buff The buffer that contains the collected error messages.
@@ -1332,9 +1351,9 @@ public class TestAero extends TestEntity {
     }
 
     /**
-     * One gunner is required for each capital weapon and each six standard scale weapons, rounding up
-     *
-     * @return The vessel's minimum gunner requirements.
+     * Returns the number of required gunners of the entity.
+     * @param aero The entity
+     * @return The number of required gunners
      */
     public static int requiredGunners(Aero aero) {
         return Compute.getTotalGunnerNeeds(aero);

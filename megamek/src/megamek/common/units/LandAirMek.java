@@ -835,8 +835,14 @@ public class LandAirMek extends BipedMek implements IAero, IBomber {
      * @return The control roll that must be passed to land safely.
      */
     public PilotingRollData checkAirMekLanding() {
-        // Base piloting skill
-        PilotingRollData roll = new PilotingRollData(getId(), getCrew().getPiloting(), "Base piloting skill");
+        // Base piloting skill, with any gamemaster modifier shown as a line of its own
+        int gamemasterModifier = getCrew().appliedPilotingModifier();
+        PilotingRollData roll = new PilotingRollData(getId(),
+              getCrew().getPiloting() - gamemasterModifier,
+              "Base piloting skill");
+        if (gamemasterModifier != 0) {
+            roll.addModifier(gamemasterModifier, "GM Modifier");
+        }
 
         if ((hasAbility(OptionsConstants.PILOT_WIND_WALKER)) && PilotSPAHelper.isWindWalkerValid(this)) {
             roll.addModifier(-1, "Wind Walker SPA");

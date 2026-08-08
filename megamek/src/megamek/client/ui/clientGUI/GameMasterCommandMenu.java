@@ -78,7 +78,7 @@ public final class GameMasterCommandMenu {
         JMenu menu = new JMenu(Messages.getString("Gamemaster.SpecialCommands"));
         for (ClientServerCommand command : gameMasterCommands()) {
             JMenuItem commandItem = new JMenuItem(command.getLongName());
-            commandItem.addActionListener(evt ->
+            commandItem.addActionListener(event ->
                   new ClientCommandDialog(clientGUI.getFrame(), clientGUI, command, coords).setVisible(true));
             menu.add(commandItem);
         }

@@ -79,7 +79,7 @@ public class CommandBarPanel extends JPanel {
               SkinSpecification.UIComponents.PhaseDisplayButton.getComp());
         commandsButton.setToolTipText(Messages.getString("GameCommands.tooltip"));
         commandsButton.setPreferredSize(UIUtil.scaleForGUI(COMMANDS_BUTTON_WIDTH, BAR_HEIGHT));
-        commandsButton.addActionListener(evt -> showCommandsPopup());
+        commandsButton.addActionListener(event -> showCommandsPopup());
         add(commandsButton, BorderLayout.EAST);
     }
 

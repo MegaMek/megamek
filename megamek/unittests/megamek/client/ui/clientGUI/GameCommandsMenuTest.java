@@ -34,7 +34,9 @@
 package megamek.client.ui.clientGUI;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.util.List;
 
@@ -42,7 +44,8 @@ import megamek.common.Player;
 import org.junit.jupiter.api.Test;
 
 /**
- * Tests the Game Master lookup that decides which Game Master entries the game commands menu offers.
+ * Tests the Game Master lookup and the disruptive-commands rule that decide which entries the game commands menu
+ * offers.
  */
 class GameCommandsMenuTest {
 
@@ -80,5 +83,33 @@ class GameCommandsMenuTest {
     @Test
     void noGameMasterInAnEmptyGame() {
         assertNull(GameCommandsMenu.findGameMaster(List.of()));
+    }
+
+    @Test
+    void everyPlayerGetsDisruptiveCommandsWithoutAGameMaster() {
+        // No Game Master: any player may need to unstick a turn or reset an abandoned game
+        Player player = createPlayer(1, "Liao");
+
+        assertTrue(GameCommandsMenu.showsDisruptiveCommands(player, null));
+    }
+
+    @Test
+    void onlyTheGameMasterGetsDisruptiveCommandsWhileTheRoleIsHeld() {
+        Player gameMaster = createPlayer(1, "Kerensky");
+        gameMaster.setGameMaster(true);
+        Player otherPlayer = createPlayer(2, "Liao");
+
+        assertTrue(GameCommandsMenu.showsDisruptiveCommands(gameMaster, gameMaster));
+        assertFalse(GameCommandsMenu.showsDisruptiveCommands(otherPlayer, gameMaster));
+    }
+
+    @Test
+    void anObserverGameMasterGetsNoDisruptiveCommands() {
+        // The disruptive commands need an active participant, the same standard as the Game Master tools
+        Player observerGameMaster = createPlayer(1, "Kerensky");
+        observerGameMaster.setGameMaster(true);
+        observerGameMaster.setObserver(true);
+
+        assertFalse(GameCommandsMenu.showsDisruptiveCommands(observerGameMaster, observerGameMaster));
     }
 }

@@ -39,14 +39,17 @@ import javax.swing.JPopupMenu;
 
 import megamek.client.Client;
 import megamek.client.ui.Messages;
+import megamek.client.ui.dialogs.ClientCommandDialog;
 import megamek.common.Player;
 import megamek.common.annotations.Nullable;
+import megamek.common.options.OptionsConstants;
 import megamek.logging.MMLogger;
+import megamek.server.commands.KickCommand;
 
 /**
- * Builds the popup menu of the Commands button in the game commands strip: the game-level commands every player may
- * issue (declaring victory, conceding, skipping a stuck turn, rolling dice, checking remaining battle value) and,
- * below them, the Game Master role and its tools.
+ * Builds the popup menu of the Commands button in the game commands strip: the game-level commands (declaring
+ * victory, conceding, skipping a stuck turn, resetting the server to the lobby, kicking a player, checking remaining
+ * battle value) and, below them, the Game Master role and its tools.
  *
  * <p>Every entry is a server chat command, the same one a player could type into the chat box, so the server keeps
  * deciding what is allowed. The menu is rebuilt on every click, because who holds the Game Master role can change from
@@ -58,11 +61,13 @@ public class GameCommandsMenu {
     private static final String COMMAND_VICTORY = "/victory";
     private static final String COMMAND_DEFEAT = "/defeat";
     private static final String COMMAND_SKIP = "/skip";
-    private static final String COMMAND_ROLL = "/roll 2d6";
+    private static final String COMMAND_RESET = "/reset";
     private static final String COMMAND_CHECK_BV = "/checkbv";
     private static final String COMMAND_CHECK_BV_TEAM = "/checkbvTeam";
     private static final String COMMAND_GAME_MASTER = "/gm";
     private static final String COMMAND_ALLOW_GAME_MASTER = "/allowGM";
+    private static final String COMMAND_DENY_GAME_MASTER = "/denyGM";
+    private static final String COMMAND_CANCEL_GAME_MASTER = "/cancelGM";
 
     private final ClientGUI clientGUI;
 
@@ -82,36 +87,56 @@ public class GameCommandsMenu {
      */
     public JPopupMenu createPopup() {
         JPopupMenu popup = new JPopupMenu();
-        addGameCommands(popup);
-        addGameMasterCommands(popup);
+        Player localPlayer = getClient().getLocalPlayer();
+        Player gameMaster = findGameMaster(getClient().getGame().getPlayersList());
+        addGameCommands(popup, localPlayer, gameMaster);
+        addGameMasterCommands(popup, localPlayer, gameMaster);
         return popup;
     }
 
     /**
-     * Adds the commands that every player in the game may issue.
+     * Adds the game-level commands. Declaring victory, conceding and the battle value checks are offered to every
+     * player. The disruptive commands - skipping a turn, resetting the game and kicking a player - follow the Game
+     * Master: while a player holds the role, only that player is offered them, so an ordinary player cannot undermine
+     * the Game Master's control of the game. When nobody holds the role, every player is offered them, because in a
+     * game without a Game Master (a solo game against bots, a casual game) any player may need to unstick a turn,
+     * reset an abandoned game or drop a hung connection.
      *
-     * @param popup The popup menu to add the commands to
+     * @param popup       The popup menu to add the commands to
+     * @param localPlayer The player this client belongs to
+     * @param gameMaster  The player holding the Game Master role, or {@code null} when nobody holds it
      */
-    private void addGameCommands(JPopupMenu popup) {
+    private void addGameCommands(JPopupMenu popup, Player localPlayer, @Nullable Player gameMaster) {
         popup.add(createConfirmedCommandItem("RequestVictory", COMMAND_VICTORY));
         popup.add(createConfirmedCommandItem("AdmitDefeat", COMMAND_DEFEAT));
-        popup.add(createConfirmedCommandItem("SkipTurn", COMMAND_SKIP));
-        popup.add(createCommandItem("RollDice", COMMAND_ROLL));
+        if (showsDisruptiveCommands(localPlayer, gameMaster)) {
+            popup.add(createConfirmedCommandItem("SkipTurn", COMMAND_SKIP));
+            popup.add(createConfirmedCommandItem("ResetGame", COMMAND_RESET));
+            popup.add(createKickItem());
+        } else {
+            LOGGER.debug("[GameCommands] {}: skip, reset and kick hidden - {} holds the Game Master role",
+                  localPlayer.getName(), gameMaster.getName());
+        }
         popup.addSeparator();
         popup.add(createCommandItem("CheckBvPlayers", COMMAND_CHECK_BV));
         popup.add(createCommandItem("CheckBvTeams", COMMAND_CHECK_BV_TEAM));
     }
 
     /**
-     * Adds the Game Master section. What it offers depends on who holds the role: the player holding it gets the tools
-     * and can give the role up, a player who does not hold it is told who does, and when nobody holds it the role can
-     * be requested. Players who may not hold the role at all (bots and observers) get no section.
+     * Adds the Game Master section. The section only exists while the host allows a Game Master at all (the Allow
+     * Game Master game option). What it offers depends on who holds the role: the player holding it can give the role
+     * up and, while an active participant, gets the tools; a player who does not hold it is told who does, and when
+     * nobody holds it the role can be requested. Players who may not hold the role at all (bots) get no section.
      *
-     * @param popup The popup menu to add the section to
+     * @param popup       The popup menu to add the section to
+     * @param localPlayer The player this client belongs to
+     * @param gameMaster  The player holding the Game Master role, or {@code null} when nobody holds it
      */
-    private void addGameMasterCommands(JPopupMenu popup) {
-        Player localPlayer = getClient().getLocalPlayer();
-        Player gameMaster = findGameMaster(getClient().getGame().getPlayersList());
+    private void addGameMasterCommands(JPopupMenu popup, Player localPlayer, @Nullable Player gameMaster) {
+        if (!getClient().getGame().getOptions().booleanOption(OptionsConstants.GAME_MASTER_ALLOW)) {
+            LOGGER.debug("[GameCommands] no Game Master section - the Allow Game Master game option is off");
+            return;
+        }
         boolean localPlayerIsGameMaster = localPlayer.equals(gameMaster);
 
         if (!localPlayerIsGameMaster && !localPlayer.isGameMasterPermitted()) {
@@ -123,7 +148,12 @@ public class GameCommandsMenu {
 
         if (localPlayerIsGameMaster) {
             popup.add(createCommandItem("GiveUpGameMaster", COMMAND_GAME_MASTER));
-            popup.add(GameMasterCommandMenu.createSpecialCommandsMenu(clientGUI, null));
+            if (isActivePlayer(localPlayer)) {
+                popup.add(GameMasterCommandMenu.createSpecialCommandsMenu(clientGUI, null));
+            } else {
+                LOGGER.debug("[GameCommands] {}: Game Master tools hidden - the player is not an active participant",
+                      localPlayer.getName());
+            }
         } else if (gameMaster != null) {
             LOGGER.debug("[GameCommands] {}: Game Master tools hidden - {} holds the role",
                   localPlayer.getName(), gameMaster.getName());
@@ -133,9 +163,59 @@ public class GameCommandsMenu {
             heldByItem.setEnabled(false);
             popup.add(heldByItem);
         } else {
+            // Nobody holds the role: it can be requested, and a pending request can be voted on or taken back.
+            // Whether a vote is actually running is only known to the server, so all the vote commands are offered
+            // and the server answers in chat when one is used at the wrong time.
             popup.add(createCommandItem("RequestGameMaster", COMMAND_GAME_MASTER));
             popup.add(createCommandItem("AllowGameMaster", COMMAND_ALLOW_GAME_MASTER));
+            popup.add(createCommandItem("DenyGameMaster", COMMAND_DENY_GAME_MASTER));
+            popup.add(createCommandItem("CancelGameMasterRequest", COMMAND_CANCEL_GAME_MASTER));
         }
+    }
+
+    /**
+     * Creates the Kick Player item. Instead of sending a fixed chat command, it opens the {@link ClientCommandDialog}
+     * input form built from {@link KickCommand}'s own argument definitions: the player to kick and, on a passworded
+     * server, the server password. The command is built without a server or game manager, because only its name, help
+     * text and argument definitions are read here; the kick itself is run by the server after the dialog sends it as
+     * a chat command.
+     *
+     * @return The created menu item
+     */
+    private JMenuItem createKickItem() {
+        JMenuItem kickItem = new JMenuItem(Messages.getString("GameCommands.KickPlayer.title"));
+        kickItem.setToolTipText(Messages.getString("GameCommands.KickPlayer.tooltip"));
+        kickItem.addActionListener(event ->
+              new ClientCommandDialog(clientGUI.getFrame(), clientGUI, new KickCommand(null, null), null)
+                    .setVisible(true));
+        return kickItem;
+    }
+
+    /**
+     * Whether the player is offered the disruptive commands: skipping a turn, resetting the game and kicking a
+     * player. While a player holds the Game Master role, they are the only one offered them; without a Game Master,
+     * every player is.
+     *
+     * @param localPlayer The player this client belongs to
+     * @param gameMaster  The player holding the Game Master role, or {@code null} when nobody holds it
+     *
+     * @return True when the disruptive commands are offered to this player
+     */
+    static boolean showsDisruptiveCommands(Player localPlayer, @Nullable Player gameMaster) {
+        return (gameMaster == null) || (localPlayer.equals(gameMaster) && isActivePlayer(localPlayer));
+    }
+
+    /**
+     * Whether the player is an active participant of the game: a human who is neither an observer nor a ghost
+     * (a disconnected player). Only an active participant holding the Game Master role is offered the Game Master
+     * tools.
+     *
+     * @param player The player to check
+     *
+     * @return True when the player is an active human participant
+     */
+    private static boolean isActivePlayer(Player player) {
+        return player.isGameMasterPermitted() && !player.isObserver() && !player.isGhost();
     }
 
     /**
@@ -165,7 +245,7 @@ public class GameCommandsMenu {
     private JMenuItem createCommandItem(String messageKey, String chatCommand) {
         JMenuItem commandItem = new JMenuItem(Messages.getString("GameCommands." + messageKey + ".title"));
         commandItem.setToolTipText(Messages.getString("GameCommands." + messageKey + ".tooltip"));
-        commandItem.addActionListener(evt -> sendChatCommand(messageKey, chatCommand));
+        commandItem.addActionListener(event -> sendChatCommand(messageKey, chatCommand));
         return commandItem;
     }
 
@@ -181,7 +261,7 @@ public class GameCommandsMenu {
     private JMenuItem createConfirmedCommandItem(String messageKey, String chatCommand) {
         JMenuItem commandItem = new JMenuItem(Messages.getString("GameCommands." + messageKey + ".title"));
         commandItem.setToolTipText(Messages.getString("GameCommands." + messageKey + ".tooltip"));
-        commandItem.addActionListener(evt -> {
+        commandItem.addActionListener(event -> {
             boolean confirmed = clientGUI.doYesNoDialog(
                   Messages.getString("GameCommands." + messageKey + ".confirm.title"),
                   Messages.getString("GameCommands." + messageKey + ".confirm.message"));

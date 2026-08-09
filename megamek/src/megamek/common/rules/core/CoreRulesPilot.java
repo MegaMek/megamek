@@ -60,6 +60,9 @@ public class CoreRulesPilot extends RulesPilot {
      */
     private Vector<Report> rollPilotHits(Entity entity, int totalHits, int crewPos, boolean toughness) {
         Vector<Report> vDesc = new Vector<>();
+        if (totalHits == 0 || entity.getCrew().isDead(crewPos)) {
+            return vDesc;
+        }
         int rollTarget = Game.rulesManager.getRulesCharts().escalatingFailure(totalHits);
 
         if (toughness) {
@@ -165,10 +168,10 @@ public class CoreRulesPilot extends RulesPilot {
         entity.getCrew().setPendingConRolls(false);
         if (!entity.getCrew().isDead() && !entity.getCrew().isEjected() && !entity.getCrew().isDoomed()) {
             for (int pos = 0; pos < entity.getCrew().getSlotCount(); pos++) {
-                vDesc = (rollPilotHits(entity, entity.getCrew().getHits(pos), pos, toughness));
+                vDesc.addAll(rollPilotHits(entity, entity.getCrew().getHits(pos), pos, toughness));
             }
         }
-        if (vDesc.size() > 0) {
+        if (!vDesc.isEmpty()) {
             return vDesc;
         }
         return null;

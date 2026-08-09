@@ -25426,7 +25426,7 @@ public class TWGameManager extends AbstractGameManager {
                 pilotingRoll = Game.rulesManager.getRulesPilot().getSeatbeltRoll(entity, fallHeight,
                       entity.getCrew().getPiloting(), null, roll);
             }
-            reports.addAll(resolvePilotDamageFromFall(entity, roll, 0));
+            reports.addAll(resolvePilotDamageFromFall(entity, pilotingRoll, 0));
         }
         return reports;
     }
@@ -25434,7 +25434,7 @@ public class TWGameManager extends AbstractGameManager {
     private Vector<Report> resolvePilotDamageFromFall(Entity entity, PilotingRollData roll, int crewPos) {
         Vector<Report> reports = new Vector<>();
         Report r;
-        if (roll.getValue() == TargetRoll.IMPOSSIBLE) {
+        if (roll.getValue() == TargetRoll.IMPOSSIBLE || roll.getValue() == TargetRoll.AUTOMATIC_FAIL) {
             r = new Report(2320);
             r.subject = entity.getId();
             r.add(entity.getCrew().getCrewType().getRoleName(crewPos));

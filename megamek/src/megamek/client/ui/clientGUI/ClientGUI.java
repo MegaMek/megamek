@@ -384,6 +384,7 @@ public class ClientGUI extends AbstractClientGUI
 
     private BotCommandsDialog botCommandsDialog;
     private BotCommandsPanel botCommandsPanel;
+    private CommandBarPanel commandBarPanel;
 
     public ForceDisplayPanel forceDisplayPanel;
     private ForceDisplayDialog forceDisplayDialog;
@@ -1062,6 +1063,11 @@ public class ClientGUI extends AbstractClientGUI
 
         setBotCommandsDialog(new BotCommandsDialog(frame, this));
         botCommandsPanel = new BotCommandsPanel(getClient(), audioService, null, this);
+        // The command bar holds the Commands button and is the strip the bot commands panel docks into, so it is put
+        // in place first; it stays even when the bot commands panel is off or floating.
+        commandBarPanel = new CommandBarPanel(this);
+        panTop.add(commandBarPanel, BorderLayout.NORTH);
+        maybeShowCommandBar();
         // Place the panel in its configured location (floating dialog or docked strip) before first use.
         setBotCommandsLocation(GUIP.getBotCommandsEnabled());
         // The Bot Commands submenu can no longer carry a working menu accelerator, so wire the show/hide hotkey here.
@@ -1810,6 +1816,7 @@ public class ClientGUI extends AbstractClientGUI
         }
 
         maybeShowMinimap();
+        maybeShowCommandBar();
         maybeShowBotCommands();
         maybeShowUnitDisplay();
         maybeShowForceDisplay();
@@ -2110,6 +2117,23 @@ public class ClientGUI extends AbstractClientGUI
         }
     }
 
+    /**
+     * Shows the command bar during the phases that are played on the board and hides it everywhere else. Unlike the bot
+     * commands panel it has no on/off setting: the Commands button it carries is the only way to reach the game
+     * commands, so it is present whenever there is a game to issue them in.
+     */
+    private void maybeShowCommandBar() {
+        if (commandBarPanel == null) {
+            return;
+        }
+        GamePhase phase = getClient().getGame().getPhase();
+        boolean phaseAllowsCommandBar = phase.isOnMap() || phase.isReport();
+        commandBarPanel.setVisible(phaseAllowsCommandBar);
+        panTop.revalidate();
+        panTop.repaint();
+        logger.debug("[GameCommands] command bar visible={} in phase {}", phaseAllowsCommandBar, phase);
+    }
+
     private void maybeShowBotCommands() {
         GamePhase phase = getClient().getGame().getPhase();
         boolean phaseAllowsPanel;
@@ -2123,7 +2147,21 @@ public class ClientGUI extends AbstractClientGUI
         }
         // BOT_COMMANDS_ENABLED is the persistent user choice (Off/Float/Dock); honor it here, never overwrite it,
         // so the chosen mode is remembered across phases and across sessions.
-        setBotCommandsLocation(GUIP.getBotCommandsEnabled() && phaseAllowsPanel);
+        setBotCommandsLocation(GUIP.getBotCommandsEnabled() && phaseAllowsPanel && gameHasBots());
+    }
+
+    /**
+     * @return {@code true} if any player in the game is a bot. Without one there is nobody the bot commands panel
+     *       could give orders to, so it stays hidden - leaving the command bar with only the Commands button - until
+     *       a bot joins (e.g. when a player is replaced by one).
+     */
+    private boolean gameHasBots() {
+        for (Player player : getClient().getGame().getPlayersList()) {
+            if (player.isBot()) {
+                return true;
+            }
+        }
+        return false;
     }
 
     /** Shows or hides the minimap based on the current menu setting. */
@@ -2308,24 +2346,25 @@ public class ClientGUI extends AbstractClientGUI
     /**
      * Places the bot commands panel in its configured location and sets its visibility. Mirrors
      * {@link #setUnitDisplayLocation(boolean)}: the single panel instance is reparented between the floating dialog and
-     * the docked strip at the top of the board area, so no command functionality is lost when switching. Floating mode
-     * keeps the panel's original size and two-row layout; docked mode uses a single-row strip.
+     * the command bar at the top of the board area, so no command functionality is lost when switching. Floating mode
+     * keeps the panel's original size and two-row layout; docked mode uses a single-row strip that shares the command
+     * bar with the Commands button.
      *
      * @param visible whether the bot commands panel should be shown
      */
     void setBotCommandsLocation(boolean visible) {
-        if ((botCommandsPanel == null) || (getBotCommandsDialog() == null) || (panTop == null)) {
+        if ((botCommandsPanel == null) || (getBotCommandsDialog() == null) || (commandBarPanel == null)) {
             return;
         }
         boolean docked = GUIP.getBotCommandsLocation() == BOT_COMMANDS_LOCATION_DOCKED;
         botCommandsPanel.setDockedLayout(docked);
         if (docked) {
             getBotCommandsDialog().setVisible(false);
-            panTop.add(botCommandsPanel, BorderLayout.NORTH);
+            commandBarPanel.dockBotCommandsPanel(botCommandsPanel);
             botCommandsPanel.setVisible(visible);
-            logger.debug("[BotPanel] docked at top of board, visible={}", visible);
+            logger.debug("[BotPanel] docked in the command bar, visible={}", visible);
         } else {
-            panTop.remove(botCommandsPanel);
+            commandBarPanel.undockBotCommandsPanel();
             getBotCommandsDialog().add(botCommandsPanel);
             botCommandsPanel.setVisible(true);
             getBotCommandsDialog().setVisible(visible);
@@ -3160,6 +3199,9 @@ public class ClientGUI extends AbstractClientGUI
                     currPhaseDisplay.setStatusBarWithNotDonePlayers();
                 }
             }
+            // The bot commands panel is hidden while the game has no bots; a player change can be a bot joining
+            // (e.g. replacing a dropped player) or the last bot leaving, so re-evaluate the panel.
+            maybeShowBotCommands();
             // the Game Master role may have changed hands, so keep the title's marker and the Game menu's
             // Game Master entries in step
             updateFrameTitle();

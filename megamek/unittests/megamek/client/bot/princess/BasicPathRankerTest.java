@@ -41,6 +41,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.junit.jupiter.api.Assertions.fail;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyBoolean;
+import static org.mockito.ArgumentMatchers.anyDouble;
 import static org.mockito.ArgumentMatchers.anyInt;
 import static org.mockito.ArgumentMatchers.anyList;
 import static org.mockito.ArgumentMatchers.anyString;
@@ -107,6 +108,9 @@ class BasicPathRankerTest {
     @BeforeEach
     void beforeEach() {
         final BehaviorSettings mockBehavior = mock(BehaviorSettings.class);
+        // The promoted position discipline resolves posture during ranking; a real settings object
+        // always carries one (the field defaults to AUTO), so the mock must too.
+        when(mockBehavior.getCombatPosture()).thenReturn(CombatPosture.ATTACK);
         when(mockBehavior.getFallShameValue()).thenReturn(BehaviorSettings.FALL_SHAME_VALUES[5]);
         when(mockBehavior.getBraveryValue()).thenReturn(BehaviorSettings.BRAVERY[5]);
         when(mockBehavior.getHyperAggressionValue()).thenReturn(BehaviorSettings.HYPER_AGGRESSION_VALUES[5]);
@@ -472,6 +476,11 @@ class BasicPathRankerTest {
         expected.setMyEstimatedDamage(2.5);
         expected.setMyEstimatedPhysicalDamage(0.0);
 
+        // The pricing discounts have their own dedicated tests; hold them neutral here so this test
+        // keeps pinning the LOS/kick mechanics at their legacy figures.
+        doReturn(1.0).when(testRanker).attackerMovementDamageDiscount(any(MovePath.class));
+        doReturn(1.0).when(testRanker).incomingFireTerrainDiscount(any(MovePath.class));
+
         EntityEvaluationResponse actual = testRanker.evaluateUnmovedEnemy(mockEnemyMek, mockPath, false, false);
         assertEntityEvaluationResponseEquals(expected, actual);
     }
@@ -504,6 +513,11 @@ class BasicPathRankerTest {
         expected.setEstimatedEnemyDamage(2.125);
         expected.setMyEstimatedDamage(0.0);
         expected.setMyEstimatedPhysicalDamage(0.0);
+        // The pricing discounts have their own dedicated tests; hold them neutral here so this test
+        // keeps pinning the LOS/kick mechanics at their legacy figures.
+        doReturn(1.0).when(testRanker).attackerMovementDamageDiscount(any(MovePath.class));
+        doReturn(1.0).when(testRanker).incomingFireTerrainDiscount(any(MovePath.class));
+
         EntityEvaluationResponse actual = testRanker.evaluateUnmovedEnemy(mockEnemyMek, mockPath, false, false);
         assertEntityEvaluationResponseEquals(expected, actual);
     }
@@ -537,6 +551,11 @@ class BasicPathRankerTest {
         expected.setEstimatedEnemyDamage(4.625);
         expected.setMyEstimatedDamage(0.0);
         expected.setMyEstimatedPhysicalDamage(0.0);
+
+        // The pricing discounts have their own dedicated tests; hold them neutral here so this test
+        // keeps pinning the LOS/kick mechanics at their legacy figures.
+        doReturn(1.0).when(testRanker).attackerMovementDamageDiscount(any(MovePath.class));
+        doReturn(1.0).when(testRanker).incomingFireTerrainDiscount(any(MovePath.class));
 
         EntityEvaluationResponse actual = testRanker.evaluateUnmovedEnemy(mockEnemyMek, mockPath, false, false);
         assertEntityEvaluationResponseEquals(expected, actual);
@@ -629,6 +648,11 @@ class BasicPathRankerTest {
         expected.setEstimatedEnemyDamage(2.125);
         expected.setMyEstimatedDamage(0.0);
         expected.setMyEstimatedPhysicalDamage(0.0);
+
+        // The pricing discounts have their own dedicated tests; hold them neutral here so this test
+        // keeps pinning the LOS/kick mechanics at their legacy figures.
+        doReturn(1.0).when(testRanker).attackerMovementDamageDiscount(any(MovePath.class));
+        doReturn(1.0).when(testRanker).incomingFireTerrainDiscount(any(MovePath.class));
 
         EntityEvaluationResponse actual = testRanker.evaluateUnmovedEnemy(mockEnemyMek, mockPath, false, false);
         assertEntityEvaluationResponseEquals(expected, actual);
@@ -989,6 +1013,10 @@ class BasicPathRankerTest {
               any(Game.class));
         doReturn(12.0).when(testRanker).distanceToClosestEnemy(any(Entity.class), any(Coords.class), any(Game.class));
         doReturn(0.0).when(testRanker).checkPathForHazards(any(MovePath.class), any(Entity.class), any(Game.class));
+        // Position persistence has its own dedicated tests; hold it neutral so this test keeps pinning
+        // the legacy utility arithmetic.
+        doReturn(0.0).when(testRanker).calculatePositionHoldMod(any(MovePath.class), any(Game.class),
+              any(BasicPathRanker.FiringPhysicalDamage.class), anyDouble(), anyDouble());
 
         final Entity mockMover = mock(BipedMek.class);
         when(mockMover.isClan()).thenReturn(false);

@@ -75,12 +75,28 @@ class PostureResolverTest {
     }
 
     @Test
-    void aDestinationEdgeMeansTheMissionRequiresMovementSoTheForceAttacks() {
+    void aFleeOrderWithADestinationEdgeMeansTheMissionRequiresMovementSoTheForceAttacks() {
+        settings.setAutoFlee(true);
         settings.setDestinationEdge(CardinalEdge.NORTH);
         // Even with the enemy charging at us round after round, a force that must reach an edge attacks.
         assertEquals(CombatPosture.ATTACK, resolver.resolve(settings, 1, ownPositions, enemyAtDistance(20)));
         assertEquals(CombatPosture.ATTACK, resolver.resolve(settings, 2, ownPositions, enemyAtDistance(15)));
         assertEquals(CombatPosture.ATTACK, resolver.resolve(settings, 3, ownPositions, enemyAtDistance(10)));
+    }
+
+    /**
+     * The config dialog stores the flee-edge dropdown even when fleeing is off, so an edge alone is a
+     * leftover setting, not a mission - the engine's own MoveToDestination condition requires both. A
+     * force carrying such a leftover must still read the battle and stand on the defensive. Found in a
+     * live game: a defending company on AUTO could never resolve to DEFEND because its saved config
+     * carried a flee edge with fleeing off.
+     */
+    @Test
+    void aDestinationEdgeWithoutAFleeOrderIsALeftoverSettingNotAMission() {
+        settings.setDestinationEdge(CardinalEdge.NORTH);
+        assertEquals(CombatPosture.ATTACK, resolver.resolve(settings, 1, ownPositions, enemyAtDistance(20)));
+        assertEquals(CombatPosture.DEFEND, resolver.resolve(settings, 2, ownPositions, enemyAtDistance(17)),
+              "the closing enemy flips the force to the defensive despite the stale edge setting");
     }
 
     @Test

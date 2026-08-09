@@ -36,10 +36,13 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyInt;
+import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.spy;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 import java.util.List;
@@ -50,10 +53,12 @@ import megamek.client.bot.princess.UnitBehavior.BehaviorType;
 import megamek.common.Hex;
 import megamek.common.board.Board;
 import megamek.common.board.Coords;
+import megamek.common.compute.Compute;
 import megamek.common.game.Game;
 import megamek.common.moves.MovePath;
 import megamek.common.units.BipedMek;
 import megamek.common.units.Entity;
+import megamek.common.units.EntityMovementType;
 import megamek.common.units.Terrains;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -73,6 +78,15 @@ class MutualSupportPathRankerTest {
      * class, so the test fails if the relationship changes rather than following it.
      */
     private static final double MAXIMUM_FORMATION_PENALTY = 15.0 * 2.5 * 0.8;
+
+    /**
+     * The hold-credit ceilings for position persistence, written out from the mocked aggression of 2.5 (a
+     * 37.5-point turn of advance) rather than read from the class, so a test fails if the cap relationship
+     * changes rather than following it. Both sit strictly below a turn of advance - a position is never
+     * worth more than the advance it would delay - and the defender's is the higher of the two.
+     */
+    private static final double ATTACK_HOLD_CREDIT_CEILING = 15.0 * 2.5 * 0.4;
+    private static final double DEFEND_HOLD_CREDIT_CEILING = 15.0 * 2.5 * 0.8;
 
     private static final Coords CURRENT_POSITION = new Coords(0, 10);
     private static final Coords CLOSING_DESTINATION = new Coords(5, 10);
@@ -480,10 +494,331 @@ class MutualSupportPathRankerTest {
               TOLERANCE);
     }
 
+    /**
+     * A laid defense does not pay tempo. The defender at 10 hexes - outside its 6-hex weapons band, inside
+     * the 15-hex contact range - was paying the closing charge every round it held, bleeding it off its
+     * firing positions one hex at a time. Under DEFEND with the enemy in contact, the field is flat.
+     */
+    @Test
+    void aDefenderInContactPaysNoClosingCharge() {
+        when(mockBehavior.getCombatPosture()).thenReturn(CombatPosture.DEFEND);
+        when(mockMover.getRunMP()).thenReturn(5);
+        when(mockMover.getAnyTypeMaxJumpMP()).thenReturn(0);
+        setEnemyDistances(10.0, 10.0, HOLDING_DESTINATION);
+        assertEquals(0.0, testRanker.calculateAggressionMod(mockMover, pathEndingAt(HOLDING_DESTINATION), mockGame),
+              TOLERANCE);
+    }
+
+    /** Out of contact the charge stands: a defending force still closes ranks toward its line. */
+    @Test
+    void aDefenderOutOfContactStillClosesRanks() {
+        when(mockBehavior.getCombatPosture()).thenReturn(CombatPosture.DEFEND);
+        when(mockMover.getRunMP()).thenReturn(5);
+        when(mockMover.getAnyTypeMaxJumpMP()).thenReturn(0);
+        setEnemyDistances(20.0, 20.0, HOLDING_DESTINATION);
+        assertTrue(testRanker.calculateAggressionMod(mockMover, pathEndingAt(HOLDING_DESTINATION), mockGame) > 0,
+              "beyond contact range the defender is still pulled toward its line");
+    }
+
+    /** The attack keeps its tempo: between its weapons band and contact range the closing charge holds. */
+    @Test
+    void anAttackerInContactStillPaysTempo() {
+        when(mockBehavior.getCombatPosture()).thenReturn(CombatPosture.ATTACK);
+        when(mockMover.getRunMP()).thenReturn(5);
+        when(mockMover.getAnyTypeMaxJumpMP()).thenReturn(0);
+        setEnemyDistances(10.0, 10.0, HOLDING_DESTINATION);
+        assertTrue(testRanker.calculateAggressionMod(mockMover, pathEndingAt(HOLDING_DESTINATION), mockGame) > 0,
+              "an attacker holding short of contact must keep paying the closing charge");
+    }
+
     private MovePath pathEndingAt(Coords destination) {
         MovePath path = mock(MovePath.class);
         when(path.getEntity()).thenReturn(mockMover);
         when(path.getFinalCoords()).thenReturn(destination);
         return path;
+    }
+
+    // BEGIN - Position persistence (Mechanism A of the terrain doctrine)
+
+    private BasicPathRanker.FiringPhysicalDamage damageDealing(double firingDamage) {
+        BasicPathRanker.FiringPhysicalDamage estimate = new BasicPathRanker.FiringPhysicalDamage();
+        estimate.firingDamage = firingDamage;
+        return estimate;
+    }
+
+    /**
+     * The doctrine in one test: a unit standing on ground with a positive exchange is credited for keeping
+     * it, and the identical exchange earns nothing the moment the path moves - the asymmetry that stops the
+     * two-step without ever rewarding a hex a unit is not actually holding.
+     */
+    @Test
+    void aPositionWorthKeepingEarnsHoldCreditOnlyWhenStandingStill() {
+        when(mockBehavior.getCombatPosture()).thenReturn(CombatPosture.ATTACK);
+        setEnemyDistances(10.0, 10.0, CURRENT_POSITION);
+
+        // quality 15 = 1.0 success * 20 dealt - 5 taken; under the cap, credited at the attack factor
+        assertEquals(0.4 * 15.0,
+              testRanker.calculatePositionHoldMod(pathEndingAt(CURRENT_POSITION), mockGame,
+                    damageDealing(20.0), 5.0, 1.0), TOLERANCE);
+
+        MovePath twoStep = pathEndingAt(CURRENT_POSITION);
+        when(twoStep.getHexesMoved()).thenReturn(2);
+        assertEquals(0.0,
+              testRanker.calculatePositionHoldMod(twoStep, mockGame, damageDealing(20.0), 5.0, 1.0),
+              TOLERANCE);
+    }
+
+    /**
+     * Ruling 1 of the command interview: quality at or below zero holds nothing. The credit must never
+     * anchor a unit in a losing exchange - displacement stays a live option ranked on its own merits.
+     */
+    @Test
+    void groundThatGivesNothingHoldsNothing() {
+        setEnemyDistances(10.0, 10.0, CURRENT_POSITION);
+        assertEquals(0.0,
+              testRanker.calculatePositionHoldMod(pathEndingAt(CURRENT_POSITION), mockGame,
+                    damageDealing(10.0), 20.0, 1.0), TOLERANCE);
+        assertEquals(-10.0, testRanker.doctrineScores().get("positionQuality"), TOLERANCE,
+              "the losing exchange is still recorded, so the log shows why nothing was credited");
+    }
+
+    /**
+     * The Eisenhower governor: however good the position, holding it is never worth a turn of advance. At
+     * the mocked settings a turn is worth 37.5; an attacker's credit tops out at 15.
+     */
+    @Test
+    void holdCreditIsCappedBelowATurnOfAdvance() {
+        when(mockBehavior.getCombatPosture()).thenReturn(CombatPosture.ATTACK);
+        setEnemyDistances(10.0, 10.0, CURRENT_POSITION);
+        assertEquals(ATTACK_HOLD_CREDIT_CEILING,
+              testRanker.calculatePositionHoldMod(pathEndingAt(CURRENT_POSITION), mockGame,
+                    damageDealing(200.0), 0.0, 1.0), TOLERANCE);
+    }
+
+    /** DEFEND scales the credit up; ATTACK keeps it modest. Same overwhelming quality, different ceilings. */
+    @Test
+    void aDefenderHoldsHarderThanAnAttacker() {
+        when(mockBehavior.getCombatPosture()).thenReturn(CombatPosture.DEFEND);
+        setEnemyDistances(10.0, 10.0, CURRENT_POSITION);
+        assertEquals(DEFEND_HOLD_CREDIT_CEILING,
+              testRanker.calculatePositionHoldMod(pathEndingAt(CURRENT_POSITION), mockGame,
+                    damageDealing(200.0), 0.0, 1.0), TOLERANCE);
+    }
+
+    /**
+     * Ruling 5: position persistence is dormant on the approach. Out of contact there is no exchange to
+     * hold, and the force should move loose and fast rather than fortify empty ground.
+     */
+    @Test
+    void theApproachEarnsNoHoldCredit() {
+        setEnemyDistances(20.0, 20.0, CURRENT_POSITION);
+        assertEquals(0.0,
+              testRanker.calculatePositionHoldMod(pathEndingAt(CURRENT_POSITION), mockGame,
+                    damageDealing(20.0), 0.0, 1.0), TOLERANCE);
+    }
+
+    /** A unit under forced withdrawal is leaving, not holding - however good the ground it stands on. */
+    @Test
+    void aWithdrawingUnitHoldsNothing() {
+        when(mockBehaviorTracker.getBehaviorType(eq(mockMover), any(Princess.class)))
+              .thenReturn(BehaviorType.ForcedWithdrawal);
+        setEnemyDistances(10.0, 10.0, CURRENT_POSITION);
+        assertEquals(0.0,
+              testRanker.calculatePositionHoldMod(pathEndingAt(CURRENT_POSITION), mockGame,
+                    damageDealing(20.0), 0.0, 1.0), TOLERANCE);
+    }
+
+    /**
+     * A unit ORDERED somewhere - a flee edge or a player waypoint - has somewhere to be, however good
+     * its current hex. Without this exemption an ordered retreat past a superior enemy loitered: the
+     * hold credit and closing pulls vetoed every step of the route while the order sat registered
+     * (community game 2026-08-07 - a star told to withdraw north crept in place all game).
+     */
+    @Test
+    void aDestinationOrderedUnitHoldsNothing() {
+        when(mockBehaviorTracker.getBehaviorType(eq(mockMover), any(Princess.class)))
+              .thenReturn(BehaviorType.MoveToDestination);
+        setEnemyDistances(10.0, 10.0, CURRENT_POSITION);
+        assertEquals(0.0,
+              testRanker.calculatePositionHoldMod(pathEndingAt(CURRENT_POSITION), mockGame,
+                    damageDealing(20.0), 0.0, 1.0), TOLERANCE);
+    }
+
+    /**
+     * The AMM ledger fix, pinned. The base ranker's estimate against unmoved enemies is a range-table
+     * lookup with no to-hit roll, so it thinks a walking shooter shoots as well as a standing one. The
+     * discount prices the attacker movement modifier back in as a hit-chance ratio at the needing-8s
+     * midpoint: standing keeps everything, walking turns 8s into 9s and keeps about two-thirds.
+     */
+    @Test
+    void walkingCostsAboutAThirdOfTheVolleyAgainstUnmovedEnemies() {
+        when(mockGame.getEntity(1)).thenReturn(mockMover);
+        when(mockMover.getGame()).thenReturn(mockGame);
+
+        MovePath standing = pathEndingAt(CURRENT_POSITION);
+        when(standing.getLastStepMovementType()).thenReturn(EntityMovementType.MOVE_NONE);
+        assertEquals(1.0, testRanker.attackerMovementDamageDiscount(standing), TOLERANCE);
+
+        MovePath walked = pathEndingAt(CLOSING_DESTINATION);
+        when(walked.getLastStepMovementType()).thenReturn(EntityMovementType.MOVE_WALK);
+        double expectedWalkedShare = Compute.oddsAbove(9) / Compute.oddsAbove(8);
+        assertEquals(expectedWalkedShare, testRanker.attackerMovementDamageDiscount(walked), TOLERANCE);
+        assertTrue(expectedWalkedShare < 0.7 && expectedWalkedShare > 0.6,
+              "walking should cost about a third of the volley");
+
+        MovePath ran = pathEndingAt(CLOSING_DESTINATION);
+        when(ran.getLastStepMovementType()).thenReturn(EntityMovementType.MOVE_RUN);
+        assertEquals(Compute.oddsAbove(10) / Compute.oddsAbove(8),
+              testRanker.attackerMovementDamageDiscount(ran), TOLERANCE);
+    }
+
+    /**
+     * The promotion: the pricing lives in the base ranker now, so Princess prices her own movement the
+     * same way CASPAR does - running keeps two-fifths of the raw estimate for both.
+     */
+    @Test
+    void princessPricesHerOwnMovementTheSameWay() {
+        when(mockGame.getEntity(1)).thenReturn(mockMover);
+        when(mockMover.getGame()).thenReturn(mockGame);
+        BasicPathRanker princessRanker = new BasicPathRanker(mockPrincess);
+        MovePath ran = pathEndingAt(CLOSING_DESTINATION);
+        when(ran.getLastStepMovementType()).thenReturn(EntityMovementType.MOVE_RUN);
+        assertEquals(Compute.oddsAbove(10) / Compute.oddsAbove(8),
+              princessRanker.attackerMovementDamageDiscount(ran), TOLERANCE);
+    }
+
+    /**
+     * Mechanism B, first term: cover a unit can fight from is priced as the hit-chance ratio its
+     * modifiers imply - a light-woods edge or a depth-1 ford lets about two-thirds of raw incoming fire
+     * through; open ground lets everything through.
+     */
+    @Test
+    void fightingCoverIsPricedAsAHitChanceRatio() {
+        HexProperties woodlineEdge = new HexProperties(0, false, 1, true, 0, false, false);
+        assertEquals(Compute.oddsAbove(9) / Compute.oddsAbove(8),
+              MutualSupportPathRanker.incomingFireTerrainDiscount(woodlineEdge), TOLERANCE);
+
+        HexProperties ford = new HexProperties(BankRegions.WATER, true, 0, false, 0, false, true);
+        assertEquals(Compute.oddsAbove(9) / Compute.oddsAbove(8),
+              MutualSupportPathRanker.incomingFireTerrainDiscount(ford), TOLERANCE);
+
+        HexProperties openGround = new HexProperties(0, false, 0, false, 0, false, false);
+        assertEquals(1.0, MutualSupportPathRanker.incomingFireTerrainDiscount(openGround), TOLERANCE);
+    }
+
+    /**
+     * The dead-ground rule (interview rulings 3 and 9): deep woods conceal but are blind - a concealing
+     * hex with no open neighbor earns no cover credit, so the discount can never coax a unit into ground
+     * it cannot shoot from.
+     */
+    @Test
+    void deepWoodsEarnNoCoverCredit() {
+        HexProperties deepWoods = new HexProperties(0, false, 2, false, 0, false, false);
+        assertEquals(1.0, MutualSupportPathRanker.incomingFireTerrainDiscount(deepWoods), TOLERANCE);
+    }
+
+    /**
+     * The promotion: cover pricing lives in the base ranker, so Princess values a woodline edge exactly
+     * as CASPAR does, and a stationary Princess on a positive exchange earns the same capped hold credit.
+     */
+    @Test
+    void princessEarnsHoldCreditAndPricesCoverToo() {
+        HexProperties woodlineEdge = new HexProperties(0, false, 1, true, 0, false, false);
+        assertEquals(Compute.oddsAbove(9) / Compute.oddsAbove(8),
+              BasicPathRanker.incomingFireTerrainDiscount(woodlineEdge), TOLERANCE);
+
+        when(mockBehavior.getCombatPosture()).thenReturn(CombatPosture.ATTACK);
+        BasicPathRanker princessRanker = spy(new BasicPathRanker(mockPrincess));
+        doReturn(mockPrincess).when(princessRanker).getOwner();
+        doReturn(10.0).when(princessRanker)
+              .distanceToClosestEnemy(any(Entity.class), eq(CURRENT_POSITION), any(Game.class));
+        // quality 15 = 1.0 success * 20 dealt - 5 taken; credited at the attack factor, same as CASPAR
+        assertEquals(0.4 * 15.0,
+              princessRanker.calculatePositionHoldMod(pathEndingAt(CURRENT_POSITION), mockGame,
+                    damageDealing(20.0), 5.0, 1.0), TOLERANCE);
+    }
+
+    /**
+     * A server reset keeps bot clients connected and initialize() runs only once per client, so the same
+     * ranker sees the round counter go backwards when a new game starts. The posture machinery must not
+     * carry the previous game into the new one: the resolvers' closing-rate history is cleared, and the
+     * first posture of the new game is announced even when it matches the old game's last announcement.
+     */
+    @Test
+    void aNewGameOnAReusedClientForgetsThePreviousGamesPosture() {
+        when(mockBehavior.getCombatPosture()).thenReturn(CombatPosture.AUTO);
+        when(mockMover.isDeployed()).thenReturn(true);
+        BasicPathRanker princessRanker = spy(new BasicPathRanker(mockPrincess));
+        doReturn(mockPrincess).when(princessRanker).getOwner();
+
+        Entity distantEnemy = enemyMekAt(new Coords(0, 30));
+        Entity closingEnemy = enemyMekAt(new Coords(0, 26));
+
+        // Game one, rounds 1-2: the enemy closes hard, the force stands on the defensive.
+        when(mockGame.getCurrentRound()).thenReturn(1);
+        when(mockPrincess.getEnemyEntities()).thenReturn(List.of(distantEnemy));
+        princessRanker.resolvePosture(mockGame, 0);
+        when(mockGame.getCurrentRound()).thenReturn(2);
+        when(mockPrincess.getEnemyEntities()).thenReturn(List.of(closingEnemy));
+        assertEquals(CombatPosture.DEFEND, princessRanker.resolvePosture(mockGame, 0),
+              "precondition: game one must end standing on the defensive");
+
+        // Server reset, new game: round 1 again, the enemy back at distance. A leaked resolver would
+        // still be holding game one's closing history and defensive stance.
+        when(mockGame.getCurrentRound()).thenReturn(1);
+        when(mockPrincess.getEnemyEntities()).thenReturn(List.of(distantEnemy));
+        assertEquals(CombatPosture.ATTACK, princessRanker.resolvePosture(mockGame, 0),
+              "the new game reads the battle fresh");
+
+        // Both games' postures were announced - including the new game's, which a leaked
+        // announcedPosture would have suppressed had the values matched across the reset.
+        verify(mockPrincess, times(3)).sendChat(anyString());
+    }
+
+    private Entity enemyMekAt(Coords position) {
+        Entity enemy = mock(BipedMek.class);
+        when(enemy.getPosition()).thenReturn(position);
+        when(enemy.isDeployed()).thenReturn(true);
+        return enemy;
+    }
+
+    /** The defender-tempo port: a Princess defender in contact pays no closing charge either. */
+    @Test
+    void princessDefenderInContactPaysNoClosingCharge() {
+        when(mockBehavior.getCombatPosture()).thenReturn(CombatPosture.DEFEND);
+        BasicPathRanker princessRanker = spy(new BasicPathRanker(mockPrincess));
+        doReturn(mockPrincess).when(princessRanker).getOwner();
+        doReturn(10.0).when(princessRanker)
+              .distanceToClosestEnemy(any(Entity.class), any(Coords.class), any(Game.class));
+        assertEquals(0.0,
+              princessRanker.calculateAggressionMod(mockMover, pathEndingAt(HOLDING_DESTINATION), mockGame),
+              TOLERANCE);
+
+        // Out of contact the pull stands: the stock gradient at distance 20 and aggression 2.5.
+        doReturn(20.0).when(princessRanker)
+              .distanceToClosestEnemy(any(Entity.class), any(Coords.class), any(Game.class));
+        assertEquals(20.0 * 2.5,
+              princessRanker.calculateAggressionMod(mockMover, pathEndingAt(HOLDING_DESTINATION), mockGame),
+              TOLERANCE);
+    }
+
+    /**
+     * The recorded figures are per-mover state reused across paths; a path that earns nothing must record
+     * nothing rather than leave the previous path's quality standing in the log.
+     */
+    @Test
+    void holdFiguresDoNotOutliveTheirPath() {
+        when(mockBehavior.getCombatPosture()).thenReturn(CombatPosture.ATTACK);
+        setEnemyDistances(10.0, 10.0, CURRENT_POSITION);
+        testRanker.calculatePositionHoldMod(pathEndingAt(CURRENT_POSITION), mockGame,
+              damageDealing(20.0), 5.0, 1.0);
+        assertTrue(testRanker.doctrineScores().get("positionHoldMod") > 0.0,
+              "precondition: the stationary path must leave real figures behind");
+
+        MovePath moved = pathEndingAt(CLOSING_DESTINATION);
+        when(moved.getHexesMoved()).thenReturn(5);
+        testRanker.calculatePositionHoldMod(moved, mockGame, damageDealing(20.0), 5.0, 1.0);
+        assertEquals(0.0, testRanker.doctrineScores().get("positionQuality"), TOLERANCE);
+        assertEquals(0.0, testRanker.doctrineScores().get("positionHoldMod"), TOLERANCE);
     }
 }

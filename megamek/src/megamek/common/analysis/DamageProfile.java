@@ -184,6 +184,22 @@ public final class DamageProfile {
      * @return the unit's damage profile; never {@code null}, possibly empty (see {@link #hasWeapons()})
      */
     public static DamageProfile of(Entity entity, boolean useExtremeRange, int gunnery) {
+        return of(entity, useExtremeRange, gunnery, entity.getHeatCapacity());
+    }
+
+    /**
+     * Builds the damage profile at an explicit heat capacity instead of the unit's current one, for
+     * what-if questions about heat dissipation - e.g. the sustained curve a Mek would have standing in
+     * water ({@link Entity#getHeatCapacityWithWater()}). Only the sustained curve depends on it.
+     *
+     * @param entity          the unit to profile
+     * @param useExtremeRange whether the TacOps extreme-range rules are in effect
+     * @param gunnery         the gunnery skill for the expected and sustained curves
+     * @param heatCapacity    the heat dissipation budget for the sustained curve
+     *
+     * @return the unit's damage profile; never {@code null}, possibly empty (see {@link #hasWeapons()})
+     */
+    public static DamageProfile of(Entity entity, boolean useExtremeRange, int gunnery, int heatCapacity) {
 
         List<WeaponContribution> weapons = new ArrayList<>();
         int maxRange = 0;
@@ -224,7 +240,6 @@ public final class DamageProfile {
         int[] directionalReach = new int[DIRECTIONS];
 
         boolean tracksHeat = entity.tracksHeat();
-        int heatCapacity = entity.getHeatCapacity();
 
         for (int range = 1; range <= maxRange; range++) {
             double maxAtRange = 0;

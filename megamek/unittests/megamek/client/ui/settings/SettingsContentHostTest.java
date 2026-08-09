@@ -51,8 +51,10 @@ import java.util.ListResourceBundle;
 import javax.swing.JEditorPane;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
+import javax.swing.JScrollPane;
 import javax.swing.JSpinner;
 import javax.swing.JTextField;
+import javax.swing.JViewport;
 import javax.swing.Scrollable;
 
 import megamek.client.ui.util.UIUtil;
@@ -151,6 +153,28 @@ class SettingsContentHostTest {
     }
 
     @Test
+    void searchFilterHighlightsContentWithoutChangingLabelText() {
+        JLabel label = new JLabel("Search Needle");
+        SettingsContentHost host = new SettingsContentHost(label, "Details", false);
+        host.setSize(320, 160);
+        layoutTree(host);
+        String originalText = label.getText();
+
+        host.setSearchFilter(SettingsRoute.normalizeSearchText("needle"));
+
+        assertFalse(host.getSearchHighlightBounds().isEmpty());
+        assertEquals(originalText, label.getText());
+    }
+
+    @Test
+    void contentViewportUsesSimpleScrollModeForOverlayRepainting() {
+        SettingsContentHost host = new SettingsContentHost(new JLabel("Source"), "Details", false);
+        JScrollPane scrollPane = findComponent(host, "settingsContentScrollPane", JScrollPane.class);
+
+        assertEquals(JViewport.SIMPLE_SCROLL_MODE, scrollPane.getViewport().getScrollMode());
+    }
+
+    @Test
     void hostRebindsHelpAfterNotifyLifecycle() {
         SettingsLabel label = new SettingsLabel(TEXT, "field");
         SettingsContentHost host = new SettingsContentHost(label, "Details", true);
@@ -222,6 +246,15 @@ class SettingsContentHostTest {
         FocusEvent event = new FocusEvent(component, FocusEvent.FOCUS_GAINED);
         for (FocusListener listener : component.getFocusListeners()) {
             listener.focusGained(event);
+        }
+    }
+
+    private static void layoutTree(Container root) {
+        root.doLayout();
+        for (Component child : root.getComponents()) {
+            if (child instanceof Container container) {
+                layoutTree(container);
+            }
         }
     }
 

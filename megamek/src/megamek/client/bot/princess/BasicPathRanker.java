@@ -186,7 +186,9 @@ public class BasicPathRanker extends PathRanker {
     /**
      * How much of a turn of advance the hold credit may reach under each posture: an attacking force
      * keeps the credit modest so a good hex never outbids the advance, while a defending force holds
-     * harder. Both keep the credit strictly below one turn of advance.
+     * harder. Both keep the credit below one turn of advance at default aggression; a final clamp in
+     * {@link #calculatePositionHoldMod} holds that bound across the whole aggression slider, where the
+     * fixed {@link #ESTIMATE_NOISE_MARGIN} would otherwise overtake the shrinking yardstick.
      */
     protected static final double HOLD_CREDIT_ATTACK_CAP_FACTOR = 0.4;
     protected static final double HOLD_CREDIT_DEFEND_CAP_FACTOR = 0.8;
@@ -2174,7 +2176,7 @@ public class BasicPathRanker extends PathRanker {
      *
      * <p>Dormant outside {@link #THREAT_CONTACT_RANGE}: on the approach there is no exchange to hold and
      * the force should move loose and fast. Withdrawing units are leaving, not holding. The credit is
-     * capped strictly below one turn of advance, harder under DEFEND than ATTACK
+     * capped so it never exceeds one turn of advance, harder under DEFEND than ATTACK
      * ({@link #HOLD_CREDIT_DEFEND_CAP_FACTOR}, {@link #HOLD_CREDIT_ATTACK_CAP_FACTOR}).</p>
      *
      * @param path                the path being ranked (a copy, safe to inspect)
@@ -2212,11 +2214,15 @@ public class BasicPathRanker extends PathRanker {
         double capFactor = (CombatPosture.DEFEND == resolvePosture(game, movingUnit.getBoardId()))
               ? HOLD_CREDIT_DEFEND_CAP_FACTOR
               : HOLD_CREDIT_ATTACK_CAP_FACTOR;
-        // The noise margin sits outside the cap: it is estimator distrust, not position value. Even so
-        // the combined ceiling (cap + margin, 35 for a defender at defaults) stays below a turn of
-        // advance, so the Eisenhower governor holds: no position outbids the advance.
-        double holdCredit = capFactor * Math.min(quality, TEMPO_REFERENCE_MP * aggression)
-              + ESTIMATE_NOISE_MARGIN;
+        // The noise margin sits outside the cap: it is estimator distrust, not position value. At default
+        // aggression the combined ceiling (cap + margin, 35 for a defender) sits below the 37.5-point
+        // turn of advance; at the low end of the slider the fixed margin would overtake the shrinking
+        // yardstick, so the final clamp keeps the Eisenhower governor true across the whole range: no
+        // position ever outbids the advance.
+        double turnOfAdvance = TEMPO_REFERENCE_MP * aggression;
+        double holdCredit = Math.min(
+              capFactor * Math.min(quality, turnOfAdvance) + ESTIMATE_NOISE_MARGIN,
+              turnOfAdvance);
         lastPositionHoldMod = holdCredit;
         return holdCredit;
     }

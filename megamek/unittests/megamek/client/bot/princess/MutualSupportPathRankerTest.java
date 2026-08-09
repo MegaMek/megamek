@@ -591,13 +591,29 @@ class MutualSupportPathRankerTest {
 
     /**
      * The Eisenhower governor: however good the position, holding it is never worth a turn of advance. At
-     * the mocked settings a turn is worth 37.5; an attacker's credit tops out at 15.
+     * the mocked settings a turn is worth 37.5; an attacker's credit tops out at 20 - the 15-point capped
+     * credit plus the 5-point noise margin.
      */
     @Test
     void holdCreditIsCappedBelowATurnOfAdvance() {
         when(mockBehavior.getCombatPosture()).thenReturn(CombatPosture.ATTACK);
         setEnemyDistances(10.0, 10.0, CURRENT_POSITION);
         assertEquals(ATTACK_HOLD_CREDIT_CEILING + ESTIMATE_NOISE_MARGIN,
+              testRanker.calculatePositionHoldMod(pathEndingAt(CURRENT_POSITION), mockGame,
+                    damageDealing(200.0), 0.0, 1.0), TOLERANCE);
+    }
+
+    /**
+     * The governor holds at the timid end of the slider too: at hyperAggression 0.25 a turn of advance is
+     * worth only 3.75, less than the noise margin alone, so the credit clamps to the turn of advance
+     * instead of the margin lifting it past the yardstick (0.8 * 3.75 + 5 = 8 would outbid the advance).
+     */
+    @Test
+    void theNoiseMarginNeverLiftsTheCreditPastATurnOfAdvance() {
+        when(mockBehavior.getCombatPosture()).thenReturn(CombatPosture.DEFEND);
+        when(mockBehavior.getHyperAggressionValue()).thenReturn(0.25);
+        setEnemyDistances(10.0, 10.0, CURRENT_POSITION);
+        assertEquals(15.0 * 0.25,
               testRanker.calculatePositionHoldMod(pathEndingAt(CURRENT_POSITION), mockGame,
                     damageDealing(200.0), 0.0, 1.0), TOLERANCE);
     }

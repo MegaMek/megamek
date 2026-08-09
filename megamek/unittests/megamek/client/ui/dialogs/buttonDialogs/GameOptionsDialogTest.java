@@ -37,12 +37,23 @@ import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.awt.Dimension;
+import java.io.File;
+import java.nio.file.Path;
+import java.util.Set;
+import java.util.Vector;
 import javax.swing.JPanel;
 
 import megamek.client.ui.panels.GameOptionsPane;
+import megamek.common.options.GameOptions;
+import megamek.common.options.IBasicOption;
+import megamek.common.options.OptionsConstants;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.io.TempDir;
 
 class GameOptionsDialogTest {
+    @TempDir
+    private Path tempDirectory;
+
     @Test
     void ruleToggleLabelsUseBadgeIconsAndOnOffText() {
         String unofficialOn = GameOptionsDialog.ruleToggleText(
@@ -80,6 +91,28 @@ class GameOptionsDialogTest {
         assertEquals((footer.getWidth() - actionButtons.getWidth()) / 2, actionButtons.getX());
         assertTrue(ruleControls.getX() + ruleControls.getWidth() <= footer.getWidth());
         assertTrue(actionButtons.getX() + actionButtons.getWidth() <= footer.getWidth());
+    }
+
+    @Test
+    void loadingOptionsPreservesCallerExcludedValues() {
+        GameOptions loadedOptions = new GameOptions();
+        loadedOptions.getOption(OptionsConstants.ALLOWED_YEAR).setValue(3150);
+        loadedOptions.getOption(OptionsConstants.SEARCHLIGHTS_ON).setValue(true);
+        Vector<IBasicOption> fileOptions = new Vector<>();
+        fileOptions.add(loadedOptions.getOption(OptionsConstants.ALLOWED_YEAR));
+        fileOptions.add(loadedOptions.getOption(OptionsConstants.SEARCHLIGHTS_ON));
+        File file = tempDirectory.resolve("excluded-options.xml").toFile();
+        GameOptions.saveOptions(fileOptions, file.getAbsolutePath());
+
+        GameOptions targetOptions = new GameOptions();
+        targetOptions.getOption(OptionsConstants.ALLOWED_YEAR).setValue(3025);
+        targetOptions.getOption(OptionsConstants.SEARCHLIGHTS_ON).setValue(false);
+
+        GameOptionsDialog.loadOptionsPreservingExcluded(targetOptions, file,
+              Set.of(OptionsConstants.ALLOWED_YEAR));
+
+        assertEquals(3025, targetOptions.intOption(OptionsConstants.ALLOWED_YEAR));
+        assertTrue(targetOptions.booleanOption(OptionsConstants.SEARCHLIGHTS_ON));
     }
 
     private static JPanel fixedSizePanel(int width, int height) {

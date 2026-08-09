@@ -926,7 +926,7 @@ public class GameOptionsDialog extends AbstractButtonDialog implements ActionLis
         } else if (e.getSource() == butLoad) {
             File gameOptsFile = selectGameOptionsFile(false);
             if (gameOptsFile != null) {
-                options.loadOptions(gameOptsFile, false);
+                loadOptionsPreservingExcluded(options, gameOptsFile, excludedOptionNames);
                 ArrayList<IOption> changed = new ArrayList<>();
                 for (List<DialogOptionComponentYPanel> comps : optionComps.values()) {
                     // Each option in the list should have the same value, so picking the first is fine
@@ -956,6 +956,18 @@ public class GameOptionsDialog extends AbstractButtonDialog implements ActionLis
                   GameOptionsPane.legacyBadge(), "GameOptionsDialog.Legacy");
 
         }
+    }
+
+    static void loadOptionsPreservingExcluded(GameOptions options, File file, Set<String> excludedOptionNames) {
+        Map<String, Object> excludedValues = new HashMap<>();
+        for (String optionName : excludedOptionNames) {
+            IOption option = options.getOption(optionName);
+            if (option != null) {
+                excludedValues.put(optionName, option.getValue());
+            }
+        }
+        options.loadOptions(file, false);
+        excludedValues.forEach((optionName, value) -> options.getOption(optionName).setValue(value));
     }
 
     private void ruleToggleChanged(JToggleButton button, String backingOptionName, SettingsBadge badge,

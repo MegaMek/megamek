@@ -246,4 +246,13 @@ public class CoreRulesExplosions extends RulesExplosions {
     public boolean arePodsExplosive(Mounted<?> mounted) {
         return false;
     }
+    
+    /*
+    * {@inheritDoc}
+    * Explosions are reduced under Core rules.
+    */
+    @Override
+    public boolean explosionsAreReduced() {
+        return true;
+    }
 }

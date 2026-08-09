@@ -792,19 +792,42 @@ public class TWDamageManager implements IDamageManager {
                     }
                 }
             }
-
-            // Report this either way
-            report = new Report(6065);
-            report.subject = entityId;
-            report.indent(2);
-            report.addDesc(mek);
-            report.add(damage);
-            if (damageIS) {
-                report.messageId = 6070;
+            
+            if (ammoExplosion && Game.rulesManager.getRulesExplosions().explosionsAreReduced()) {
+                boolean cased = mek.locationHasCase(hit.getLocation());
+                boolean caseIId = mek.hasCASEII(hit.getLocation());
+                int reducedDamage = damage;
+                if (cased && damage > 10) {
+                    reducedDamage = 10;
+                } else if (caseIId) {
+                    reducedDamage = 1;
+                } else if (damage > 20) {
+                    reducedDamage = 20;
+                }
+                
+                // Report this either way
+                report = new Report(6129);
+                report.subject = entityId;
+                report.indent(2);
+                report.addDesc(mek);
+                report.add(damage);
+                report.add(mek.getLocationAbbr(hit));
+                report.add(reducedDamage);
+                reportVec.addElement(report);
+            } else {
+                // Report this either way
+                report = new Report(6065);
+                report.subject = entityId;
+                report.indent(2);
+                report.addDesc(mek);
+                report.add(damage);
+                if (damageIS) {
+                    report.messageId = 6070;
+                }
+                report.add(mek.getLocationAbbr(hit));
+                reportVec.addElement(report);
             }
-            report.add(mek.getLocationAbbr(hit));
-            reportVec.addElement(report);
-
+            
             if (ammoExplosion) {
                 if (mek instanceof LandAirMek lam) {
                     // LAMs eject if the CT-destroyed switch is on

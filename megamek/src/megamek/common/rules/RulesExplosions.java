@@ -94,4 +94,12 @@ public abstract class RulesExplosions {
      * @return true if they are
      */
     public abstract boolean arePodsExplosive(Mounted<?> mounted);
+
+    /**
+     * Should explosions be reduced? 
+     * @return false by default
+     */
+    public boolean explosionsAreReduced() {
+        return false;
+    }
 }

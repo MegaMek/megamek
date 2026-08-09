@@ -283,6 +283,32 @@ class SubunitRegistrarTest {
               "A faction with its own file must not be replaced by a subunit claiming the same key");
     }
 
+    @Test
+    void aSubunitDoesNotOverwriteAFactionFileThatLoadedAfterAnEarlierSubunit() {
+        Map<String, Faction2> factions = new HashMap<>();
+        SubunitRegistrar registrar = new SubunitRegistrar(factions);
+
+        // A command declares OVR.1st as a subunit.
+        Faction2 earlierParent = buildParentWithSubunit(new Faction2());
+        factions.put(earlierParent.getKey(), earlierParent);
+        registrar.registerSubunits(earlierParent);
+
+        // A faction with a file of its own then claims the same key. Factions2.loadFaction puts
+        // top-level factions in unconditionally, so this genuinely happens on the wrong file order.
+        Faction2 standaloneFaction = new Faction2();
+        standaloneFaction.setKey("OVR.1st");
+        factions.put("OVR.1st", standaloneFaction);
+
+        // A second command declaring the same subunit key must not displace that faction.
+        Faction2 laterParent = buildParentWithSubunit(new Faction2());
+        factions.put(laterParent.getKey(), laterParent);
+        registrar.registerSubunits(laterParent);
+
+        assertSame(standaloneFaction, factions.get("OVR.1st"),
+              "A faction with its own file must survive a later subunit claiming its key, "
+                    + "whatever order the files loaded in");
+    }
+
     /**
      * Builds a parent keyed {@code OVR} declaring the given faction as its {@code 1st} subunit, which the registrar
      * will therefore register under {@code OVR.1st}.

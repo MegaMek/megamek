@@ -32,9 +32,7 @@
  */
 package megamek.common.universe;
 
-import java.util.HashSet;
 import java.util.Map;
-import java.util.Set;
 
 import megamek.logging.MMLogger;
 
@@ -80,13 +78,6 @@ public class SubunitRegistrar {
     private final Map<String, Faction2> factions;
 
     /**
-     * The keys this registrar has already filled from a subunit declaration. Faction files loaded later override
-     * earlier ones - that is how a user directory customises the shipped data - so a subunit must be able to replace
-     * an earlier subunit registration while still refusing to overwrite a faction that has a file of its own.
-     */
-    private final Set<String> registeredSubunitKeys = new HashSet<>();
-
-    /**
      * @param factions The flat faction map to register subunits into; typically the map owned by {@link Factions2}
      */
     public SubunitRegistrar(Map<String, Faction2> factions) {
@@ -115,13 +106,18 @@ public class SubunitRegistrar {
             subunit.setParentCommand(parent.getKey());
             inheritFromParent(parent, subunit);
 
-            if (factions.containsKey(subunitKey) && !registeredSubunitKeys.contains(subunitKey)) {
+            // Whether the key may be taken over is decided from the occupant itself: a faction
+            // with a file of its own is never displaced, while an earlier subunit registration
+            // is, which is how a user directory overrides shipped data. Asking the occupant
+            // rather than tracking keys separately keeps the answer correct no matter what order
+            // the files happened to load in.
+            Faction2 existingFaction = factions.get(subunitKey);
+            if ((existingFaction != null) && !existingFaction.isSubunit()) {
                 LOGGER.warn("[Subunit] Subunit key {} of {} collides with a faction that has its own file; " +
                             "keeping that faction.", subunitKey, parent.getKey());
                 continue;
             }
             factions.put(subunitKey, subunit);
-            registeredSubunitKeys.add(subunitKey);
             LOGGER.debug("[Subunit] {} registered as a subunit of {}", subunitKey, parent.getKey());
 
             registerSubunits(subunit);

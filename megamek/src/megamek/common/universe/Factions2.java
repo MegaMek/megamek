@@ -112,11 +112,7 @@ public final class Factions2 {
     /** Maps a retired/aliased faction code to the surviving canonical faction key. See {@link Faction2#getAliases()}. */
     private final Map<String, String> aliasToCanonical = new HashMap<>();
 
-    /**
-     * Flattens subunits declared inside a faction file into {@link #factions}. Held for the lifetime of this instance
-     * rather than created per file, so that it remembers which keys came from a subunit declaration across all the
-     * directories that are loaded.
-     */
+    /** Flattens subunits declared inside a faction file into {@link #factions}. */
     private final SubunitRegistrar subunitRegistrar = new SubunitRegistrar(factions);
 
     private Factions2() {

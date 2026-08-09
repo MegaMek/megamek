@@ -34,16 +34,19 @@
 package megamek.server.totalWarfare;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.lenient;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.mockStatic;
 import static org.mockito.Mockito.when;
 
 import megamek.common.compute.Compute;
+import megamek.common.enums.GamePhase;
 import megamek.common.game.Game;
 import megamek.common.options.GameOptions;
 import megamek.common.options.OptionsConstants;
 import megamek.common.rolls.Roll;
+import megamek.common.rules.totalwarfare.TWRulesManager;
 import megamek.common.units.Crew;
 import megamek.common.units.CrewType;
 import megamek.common.units.Mek;
@@ -91,9 +94,11 @@ class CrewBlackoutEdgeTest {
         // Tie the Edge decision to the real (depleting) crew Edge state.
         lenient().when(mek.shouldUseEdge(OptionsConstants.EDGE_WHEN_KO)).thenAnswer(inv -> crew.hasEdgeRemaining());
         lenient().when(mek.shouldUseEdge(OptionsConstants.EDGE_WHEN_AERO_KO)).thenReturn(false);
-
-        Game game = new Game();
         
+        Game game = new Game();
+
+        gameManager.getGame().setPhase(GamePhase.MOVEMENT);
+                      
         Roll failedRoll = rollOf(2);
 
         try (MockedStatic<Compute> mockedCompute = mockStatic(Compute.class)) {

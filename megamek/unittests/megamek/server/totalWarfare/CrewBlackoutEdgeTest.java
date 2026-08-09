@@ -34,7 +34,6 @@
 package megamek.server.totalWarfare;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.lenient;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.mockStatic;
@@ -46,7 +45,6 @@ import megamek.common.game.Game;
 import megamek.common.options.GameOptions;
 import megamek.common.options.OptionsConstants;
 import megamek.common.rolls.Roll;
-import megamek.common.rules.totalwarfare.TWRulesManager;
 import megamek.common.units.Crew;
 import megamek.common.units.CrewType;
 import megamek.common.units.Mek;

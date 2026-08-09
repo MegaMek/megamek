@@ -247,14 +247,14 @@ public abstract class RulesPilot {
 
     /**
      * Seatbelt checks for potentially multiple crew
-     * @param entityId ID of the entity
+     * @param entity the entity falling
      * @param fallHeight how big was the fall
      * @param piloting piloting skill
      * @param modifiers list of modifiers
      * @param roll the current Piloting Roll
      * @return the new Piloting roll
      */
-    public abstract PilotingRollData getSeatbeltRoll(int entityId, int fallHeight, int piloting,
+    public abstract PilotingRollData getSeatbeltRoll(Entity entity, int fallHeight, int piloting,
           List<TargetRollModifier> modifiers, PilotingRollData roll);
 
     /**

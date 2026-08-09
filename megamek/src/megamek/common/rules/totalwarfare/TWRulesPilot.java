@@ -110,7 +110,7 @@ public class TWRulesPilot extends RulesPilot {
      * {@inheritDoc}
      */
     @Override
-    public PilotingRollData getSeatbeltRoll(int entityId,
+    public PilotingRollData getSeatbeltRoll(Entity entity,
            int fallHeight,
           int piloting,
           List<TargetRollModifier> modifiers,
@@ -118,7 +118,7 @@ public class TWRulesPilot extends RulesPilot {
         if (modifiers == null) {
             return roll;
         }
-        PilotingRollData prd = new PilotingRollData(entityId,
+        PilotingRollData prd = new PilotingRollData(entity.getId(),
               piloting,
               "Base piloting skill");
         if (!modifiers.isEmpty()) {

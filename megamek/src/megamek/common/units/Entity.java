@@ -11455,19 +11455,19 @@ public abstract class Entity extends TurnOrdered
             if (isCharging() && Game.rulesManager.getRulesPhysical().canChargeCancel()
                 && getDisplacementAttack() instanceof ChargeAttackAction) {
                 ChargeAttackAction chargeAttack = (ChargeAttackAction) getDisplacementAttack();
-                Entity target = (Entity) chargeAttack.getTarget(game);
-                if (target != null) {
-                    if (target.isDestroyed() || target.isProne()) {
-                        Enumeration<AttackAction> gameDisplacementAttacks = game.getDisplacementAttacks();
-                        while (gameDisplacementAttacks != null && gameDisplacementAttacks.hasMoreElements()) {
-                            AttackAction attackAction = gameDisplacementAttacks.nextElement();
-                            if (attackAction.equals(chargeAttack)) {
-                                game.removeDisplacementAttack(chargeAttack);
-                                break;
-                            }
+                if (!(chargeAttack.getTarget(game) instanceof Entity target)) {
+                    return false;
+                }
+                if (target.isDestroyed() || target.isProne()) {
+                    Enumeration<AttackAction> gameDisplacementAttacks = game.getDisplacementAttacks();
+                    while (gameDisplacementAttacks != null && gameDisplacementAttacks.hasMoreElements()) {
+                        AttackAction attackAction = gameDisplacementAttacks.nextElement();
+                        if (attackAction.equals(chargeAttack)) {
+                            game.removeDisplacementAttack(chargeAttack);
+                            break;
                         }
-                        displacementAttack = null;
                     }
+                    displacementAttack = null;
                 } else {
                     return false;
                 }

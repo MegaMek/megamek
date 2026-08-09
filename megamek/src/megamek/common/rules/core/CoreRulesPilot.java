@@ -41,6 +41,7 @@ import megamek.common.game.Game;
 import megamek.common.options.OptionsConstants;
 import megamek.common.rolls.PilotingRollData;
 import megamek.common.rolls.Roll;
+import megamek.common.rolls.TargetRoll;
 import megamek.common.rules.RulesPilot;
 import megamek.common.units.Entity;
 
@@ -49,6 +50,82 @@ import java.util.Vector;
 
 public class CoreRulesPilot extends RulesPilot {
 
+    /**
+     * Helper tool to roll the pilot con checks
+     * @param entity Unit in question
+     * @param totalHits how many hits has that crewmember taken
+     * @param crewPos crew position number
+     * @param toughness is toughness on
+     * @return return the report
+     */
+    private Vector<Report> rollPilotHits(Entity entity, int totalHits, int crewPos, boolean toughness) {
+        Vector<Report> vDesc = new Vector<>();
+        int rollTarget = Game.rulesManager.getRulesCharts().escalatingFailure(totalHits);
+
+        if (toughness) {
+            rollTarget -= entity.getCrew().getToughness(crewPos);
+        }
+
+        boolean rerollWithEdge = false;
+        boolean edgeAlreadyUsed = false;
+        do {
+            if (rerollWithEdge) {
+                entity.getCrew().decreaseEdge();
+                edgeAlreadyUsed = true;
+                rerollWithEdge = false;
+            }
+            Roll diceRoll = Compute.rollD6(2);
+            int rollValue = diceRoll.getIntValue();
+            String rollCalc = String.valueOf(rollValue);
+
+            if (entity.hasAbility(OptionsConstants.MISC_PAIN_RESISTANCE)) {
+                rollValue = Math.min(12, rollValue + 1);
+                rollCalc = rollValue + " [" + diceRoll.getIntValue() + " + 1] max 12";
+            }
+
+            Report r = new Report(6030);
+            r.indent(2);
+            r.subject = entity.getId();
+            r.add(entity.getCrew().getCrewType().getRoleName(crewPos));
+            r.addDesc(entity);
+            r.add(entity.getCrew().getName(crewPos));
+            r.add(rollTarget);
+            r.addDataWithTooltip(rollCalc, diceRoll.getReport());
+
+            if (rollValue >= rollTarget) {
+                entity.getCrew().setKoThisRound(false, crewPos);
+                r.choose(true);
+            } else {
+                entity.getCrew().setKoThisRound(true, crewPos);
+                r.choose(false);
+                if (!edgeAlreadyUsed && (entity.shouldUseEdge(OptionsConstants.EDGE_WHEN_KO) ||
+                      entity.shouldUseEdge(OptionsConstants.EDGE_WHEN_AERO_KO))) {
+                    rerollWithEdge = true;
+                    vDesc.add(r);
+                    r = new Report(6520);
+                    r.subject = entity.getId();
+                    r.addDesc(entity);
+                    r.add(entity.getCrew().getName(crewPos));
+                    r.add(entity.getCrew().getOptions().intOption(OptionsConstants.EDGE));
+                } // if
+                // return true;
+            } // else
+            vDesc.add(r);
+        } while (rerollWithEdge);
+        // end of do-while
+        if (entity.getCrew().isKoThisRound(crewPos)) {
+            boolean wasPilot = entity.getCrew().getCurrentPilotIndex() == crewPos;
+            boolean wasGunner = entity.getCrew().getCurrentGunnerIndex() == crewPos;
+            entity.getCrew().setUnconscious(true, crewPos);
+            Report r = createCrewTakeoverReport(entity, crewPos, wasPilot, wasGunner);
+            if (null != r) {
+                vDesc.add(r);
+            }
+            return vDesc;
+        }
+        return vDesc;
+    }
+    
     /**
      * {@inheritDoc}
      * Handle pilot hits. Core p.117. Only the highest roll is performed.
@@ -60,7 +137,7 @@ public class CoreRulesPilot extends RulesPilot {
         Vector<Report> vDesc = new Vector<>();
 
         if (!phase.isMovement()) {
-            Report r = new Report(6030);
+            Report r = new Report(3902);
             r.indent(2);
             r.subject = e.getId();
             r.add(e.getCrew().getCrewType().getRoleName(crewPos));
@@ -74,75 +151,12 @@ public class CoreRulesPilot extends RulesPilot {
         
         e.getCrew().setPendingConRolls(false);
         
-        int rollTarget = Game.rulesManager.getRulesCharts().escalatingFailure(totalHits);
-
-        if (toughness) {
-            rollTarget -= e.getCrew().getToughness(crewPos);
-        }
-
-        boolean rerollWithEdge = false;
-        boolean edgeAlreadyUsed = false;
-        do {
-            if (rerollWithEdge) {
-                e.getCrew().decreaseEdge();
-                edgeAlreadyUsed = true;
-                rerollWithEdge = false;
-            }
-            Roll diceRoll = Compute.rollD6(2);
-            int rollValue = diceRoll.getIntValue();
-            String rollCalc = String.valueOf(rollValue);
-
-            if (e.hasAbility(OptionsConstants.MISC_PAIN_RESISTANCE)) {
-                rollValue = Math.min(12, rollValue + 1);
-                rollCalc = rollValue + " [" + diceRoll.getIntValue() + " + 1] max 12";
-            }
-
-            Report r = new Report(6030);
-            r.indent(2);
-            r.subject = e.getId();
-            r.add(e.getCrew().getCrewType().getRoleName(crewPos));
-            r.addDesc(e);
-            r.add(e.getCrew().getName(crewPos));
-            r.add(rollTarget);
-            r.addDataWithTooltip(rollCalc, diceRoll.getReport());
-
-            if (rollValue >= rollTarget) {
-                e.getCrew().setKoThisRound(false, crewPos);
-                r.choose(true);
-            } else {
-                e.getCrew().setKoThisRound(true, crewPos);
-                r.choose(false);
-                if (!edgeAlreadyUsed && (e.shouldUseEdge(OptionsConstants.EDGE_WHEN_KO) ||
-                      e.shouldUseEdge(OptionsConstants.EDGE_WHEN_AERO_KO))) {
-                    rerollWithEdge = true;
-                    vDesc.add(r);
-                    r = new Report(6520);
-                    r.subject = e.getId();
-                    r.addDesc(e);
-                    r.add(e.getCrew().getName(crewPos));
-                    r.add(e.getCrew().getOptions().intOption(OptionsConstants.EDGE));
-                } // if
-                // return true;
-            } // else
-            vDesc.add(r);
-        } while (rerollWithEdge);
-        // end of do-while
-        if (e.getCrew().isKoThisRound(crewPos)) {
-            boolean wasPilot = e.getCrew().getCurrentPilotIndex() == crewPos;
-            boolean wasGunner = e.getCrew().getCurrentGunnerIndex() == crewPos;
-            e.getCrew().setUnconscious(true, crewPos);
-            Report r = createCrewTakeoverReport(e, crewPos, wasPilot, wasGunner);
-            if (null != r) {
-                vDesc.add(r);
-            }
-            return vDesc;
-        }
-
-
+        vDesc = (rollPilotHits(e, totalHits, crewPos, toughness));
+        
         return vDesc;
     }
 
-    /*
+    /**
     * {@inheritDoc}
      */
     @Override
@@ -151,72 +165,11 @@ public class CoreRulesPilot extends RulesPilot {
         entity.getCrew().setPendingConRolls(false);
         if (!entity.getCrew().isDead() && !entity.getCrew().isEjected() && !entity.getCrew().isDoomed()) {
             for (int pos = 0; pos < entity.getCrew().getSlotCount(); pos++) {
-                int totalHits = entity.getCrew().getHits(pos);
-                int rollTarget = Game.rulesManager.getRulesCharts().escalatingFailure(totalHits);
-
-                if (toughness) {
-                    rollTarget -= entity.getCrew().getToughness(pos);
-                }
-
-                boolean rerollWithEdge = false;
-                boolean edgeAlreadyUsed = false;
-                do {
-                    if (rerollWithEdge) {
-                        entity.getCrew().decreaseEdge();
-                        edgeAlreadyUsed = true;
-                        rerollWithEdge = false;
-                    }
-                    Roll diceRoll = Compute.rollD6(2);
-                    int rollValue = diceRoll.getIntValue();
-                    String rollCalc = String.valueOf(rollValue);
-
-                    if (entity.hasAbility(OptionsConstants.MISC_PAIN_RESISTANCE)) {
-                        rollValue = Math.min(12, rollValue + 1);
-                        rollCalc = rollValue + " [" + diceRoll.getIntValue() + " + 1] max 12";
-                    }
-
-                    Report r = new Report(6030);
-                    r.indent(2);
-                    r.subject = entity.getId();
-                    r.add(entity.getCrew().getCrewType().getRoleName(pos));
-                    r.addDesc(entity);
-                    r.add(entity.getCrew().getName(pos));
-                    r.add(rollTarget);
-                    r.addDataWithTooltip(rollCalc, diceRoll.getReport());
-
-                    if (rollValue >= rollTarget) {
-                        entity.getCrew().setKoThisRound(false, pos);
-                        r.choose(true);
-                    } else {
-                        entity.getCrew().setKoThisRound(true, pos);
-                        r.choose(false);
-                        if (!edgeAlreadyUsed && (entity.shouldUseEdge(OptionsConstants.EDGE_WHEN_KO) ||
-                              entity.shouldUseEdge(OptionsConstants.EDGE_WHEN_AERO_KO))) {
-                            rerollWithEdge = true;
-                            vDesc.add(r);
-                            r = new Report(6520);
-                            r.subject = entity.getId();
-                            r.addDesc(entity);
-                            r.add(entity.getCrew().getName(pos));
-                            r.add(entity.getCrew().getOptions().intOption(OptionsConstants.EDGE));
-                        } // if
-                        // return true;
-                    } // else
-                    vDesc.add(r);
-                } while (rerollWithEdge);
-                // end of do-while
-                if (entity.getCrew().isKoThisRound(pos)) {
-                    boolean wasPilot = entity.getCrew().getCurrentPilotIndex() == pos;
-                    boolean wasGunner = entity.getCrew().getCurrentGunnerIndex() == pos;
-                    entity.getCrew().setUnconscious(true, pos);
-                    Report r = createCrewTakeoverReport(entity, pos, wasPilot, wasGunner);
-                    if (null != r) {
-                        vDesc.add(r);
-                    }
-                    return vDesc;
-                }
-                return vDesc;
+                vDesc = (rollPilotHits(entity, entity.getCrew().getHits(pos), pos, toughness));
             }
+        }
+        if (vDesc.size() > 0) {
+            return vDesc;
         }
         return null;
     }
@@ -262,15 +215,23 @@ public class CoreRulesPilot extends RulesPilot {
      * Always create a new roll with just piloting and height of fall
      */
     @Override
-    public PilotingRollData getSeatbeltRoll(int entityId,
+    public PilotingRollData getSeatbeltRoll(Entity entity,
           int fallHeight,
           int piloting,
           List<TargetRollModifier> modifiers,
           PilotingRollData roll) {
-        PilotingRollData prd = new PilotingRollData(entityId, piloting, "Base piloting skill");
-        if (fallHeight >= 1) {
-            prd.addModifier(Game.rulesManager.getRulesPilot().getSeatbeltHeightModifier(fallHeight), "height of "
-                  + "fall");
+        if (roll.getValue() == TargetRoll.IMPOSSIBLE) {
+            return roll;
+        }
+        PilotingRollData prd;
+        if (entity.isImmobile()) {
+            prd = new PilotingRollData(entity.getId(), TargetRoll.AUTOMATIC_FAIL, "unit is immobile");
+        } else {
+            prd = new PilotingRollData(entity.getId(), piloting, "Base piloting skill");
+            if (fallHeight >= 1) {
+                prd.addModifier(getSeatbeltHeightModifier(fallHeight), "height of "
+                      + "fall");
+            }
         }
         return prd;
     }

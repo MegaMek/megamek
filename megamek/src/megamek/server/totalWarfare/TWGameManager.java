@@ -231,7 +231,7 @@ public class TWGameManager extends AbstractGameManager {
         boolean toughness = game.getOptions().booleanOption(OptionsConstants.RPG_TOUGHNESS);
 
         for (Entity entity : game.inGameTWEntities()) {
-            if (entity.getCrew().getPendingConRolls()) {
+            if (entity.getCrew().hasPendingConRolls()) {
                 Vector<Report> tempReport = Game.rulesManager.getRulesPilot().rollConRolls(entity, toughness);
                 if (tempReport != null) {
                     vPhaseReport.addAll(tempReport);
@@ -25413,7 +25413,7 @@ public class TWGameManager extends AbstractGameManager {
                 } else if (entity.getCrew().isUnconscious(pos)) {
                     prd = new PilotingRollData(entity.getId(), TargetRoll.AUTOMATIC_FAIL, "Crew member unconscious");
                 } else {
-                    prd = Game.rulesManager.getRulesPilot().getSeatbeltRoll(entity.getId(), fallHeight,
+                    prd = Game.rulesManager.getRulesPilot().getSeatbeltRoll(entity, fallHeight,
                           entity.getCrew().getPiloting(pos), modifiers, roll);
                 }
                 reports.addAll(resolvePilotDamageFromFall(entity, prd, pos));
@@ -25423,7 +25423,7 @@ public class TWGameManager extends AbstractGameManager {
             if (entity.getCrew().isUnconscious()) {
                 pilotingRoll = new PilotingRollData(entity.getId(), TargetRoll.AUTOMATIC_FAIL, "Pilot unconscious");
             } else {
-                pilotingRoll = Game.rulesManager.getRulesPilot().getSeatbeltRoll(entity.getId(), fallHeight,
+                pilotingRoll = Game.rulesManager.getRulesPilot().getSeatbeltRoll(entity, fallHeight,
                       entity.getCrew().getPiloting(), null, roll);
             }
             reports.addAll(resolvePilotDamageFromFall(entity, roll, 0));

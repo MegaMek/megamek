@@ -36,7 +36,6 @@ package megamek.common.units;
 
 import java.io.Serial;
 import java.io.Serializable;
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Enumeration;
 import java.util.HashMap;
@@ -352,7 +351,7 @@ public class Crew implements Serializable {
         return (pos < getGenders().length) ? getGenders()[pos] : Gender.RANDOMIZE;
     }
 
-    public boolean getPendingConRolls() { return pendingConRolls; }
+    public boolean hasPendingConRolls() { return pendingConRolls; }
     
     public void setPendingConRolls(final boolean pendingConRolls) {
         this.pendingConRolls = pendingConRolls;

@@ -247,7 +247,7 @@ public class CoreRulesExplosions extends RulesExplosions {
         return false;
     }
     
-    /*
+    /**
     * {@inheritDoc}
     * Explosions are reduced under Core rules.
     */

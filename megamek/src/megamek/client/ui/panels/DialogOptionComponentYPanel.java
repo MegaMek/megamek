@@ -98,9 +98,12 @@ public class DialogOptionComponentYPanel extends FixedYPanel
     private JLabel optionLabel;
     private String optionDisplayName;
     private String settingsBadgeHtml = "";
+    private String settingsHelpText;
     private int optionLabelWrapWidth;
     private boolean settingsCheckBoxPresentation;
     private boolean settingsComponentsDetached;
+    private boolean requestedEditable;
+    private boolean dependencyEditable = true;
     /** Short marker appended to the displayable name (e.g. " (P)" for partially implemented SPAs). */
     private String nameSuffix = "";
     private final DialogOptionListener dialogOptionListener;
@@ -128,6 +131,7 @@ public class DialogOptionComponentYPanel extends FixedYPanel
           boolean choiceLabelFirst) {
         dialogOptionListener = parent;
         this.option = option;
+        requestedEditable = editable;
         optionDisplayName = option.getDisplayableName();
 
         setLayout(new FlowLayout(FlowLayout.LEFT, 5, 2));
@@ -219,6 +223,66 @@ public class DialogOptionComponentYPanel extends FixedYPanel
         updateOptionLabelText();
     }
 
+    void setSettingsHelpText(String helpText) {
+        settingsHelpText = helpText;
+    }
+
+    void setEditableWhenSelected(DialogOptionComponentYPanel controllingComponent) {
+        bindEditableToSelection(controllingComponent, false);
+    }
+
+    void setEditableWhenAnySelected(DialogOptionComponentYPanel... controllingComponents) {
+        if (controllingComponents.length == 0) {
+            throw new IllegalArgumentException("Editability dependencies require at least one controlling option");
+        }
+        for (DialogOptionComponentYPanel controllingComponent : controllingComponents) {
+            if (controllingComponent.option.getType() != IOption.BOOLEAN) {
+                throw new IllegalArgumentException("Editability dependencies require boolean options");
+            }
+            controllingComponent.checkbox.addItemListener(event -> {
+                dependencyEditable = anySelected(controllingComponents);
+                applyEditable();
+            });
+        }
+        dependencyEditable = anySelected(controllingComponents);
+        applyEditable();
+    }
+
+    private static boolean anySelected(DialogOptionComponentYPanel... components) {
+        for (DialogOptionComponentYPanel component : components) {
+            if (component.checkbox.isSelected()) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    void setSelectableWhenSelected(DialogOptionComponentYPanel controllingComponent) {
+        if (option.getType() != IOption.BOOLEAN) {
+            throw new IllegalStateException("Selection dependencies require a boolean option");
+        }
+        bindEditableToSelection(controllingComponent, true);
+    }
+
+    private void bindEditableToSelection(DialogOptionComponentYPanel controllingComponent,
+          boolean clearWhenDisabled) {
+        if (controllingComponent.option.getType() != IOption.BOOLEAN) {
+            throw new IllegalArgumentException("Editability dependencies require a boolean option");
+        }
+        dependencyEditable = controllingComponent.checkbox.isSelected();
+        if (clearWhenDisabled && !dependencyEditable) {
+            checkbox.setSelected(false);
+        }
+        controllingComponent.checkbox.addItemListener(event -> {
+            dependencyEditable = controllingComponent.checkbox.isSelected();
+            if (clearWhenDisabled && !dependencyEditable) {
+                checkbox.setSelected(false);
+            }
+            applyEditable();
+        });
+        applyEditable();
+    }
+
     JCheckBox settingsCheckBox() {
         if (checkbox == null) {
             throw new IllegalStateException("Settings checkboxes require a boolean option");
@@ -226,7 +290,7 @@ public class DialogOptionComponentYPanel extends FixedYPanel
         settingsCheckBoxPresentation = true;
         settingsComponentsDetached = true;
         checkbox.setText(optionLabel.getText());
-        checkbox.setToolTipText(option.getDescription());
+        checkbox.setToolTipText(getSettingsHelpText());
         return checkbox;
     }
 
@@ -235,7 +299,7 @@ public class DialogOptionComponentYPanel extends FixedYPanel
             throw new IllegalStateException("Boolean settings use their checkbox text as the label");
         }
         settingsComponentsDetached = true;
-        optionLabel.setToolTipText(option.getDescription());
+        optionLabel.setToolTipText(getSettingsHelpText());
         return optionLabel;
     }
 
@@ -245,7 +309,7 @@ public class DialogOptionComponentYPanel extends FixedYPanel
             throw new IllegalStateException("Boolean settings do not have a separate control");
         }
         settingsComponentsDetached = true;
-        control.setToolTipText(option.getDescription());
+        control.setToolTipText(getSettingsHelpText());
         return control;
     }
 
@@ -344,7 +408,7 @@ public class DialogOptionComponentYPanel extends FixedYPanel
 
     @Override
     public String getSettingsHelpText() {
-        return option.getDescription();
+        return settingsHelpText == null ? option.getDescription() : settingsHelpText;
     }
 
     /**
@@ -578,6 +642,12 @@ public class DialogOptionComponentYPanel extends FixedYPanel
      *                 view-only.
      */
     public void setEditable(boolean editable) {
+        requestedEditable = editable;
+        applyEditable();
+    }
+
+    private void applyEditable() {
+        boolean editable = requestedEditable && dependencyEditable;
         if (torsoMultiSelect) {
             torsoCheckboxes.values().forEach(box -> box.setEnabled(editable));
             return;

@@ -39,6 +39,7 @@ import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertSame;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
+import java.awt.Color;
 import java.awt.Component;
 import java.awt.Container;
 import java.awt.GridBagConstraints;
@@ -88,9 +89,10 @@ class GameOptionsPaneTest {
     private static final String IMPORTANT_SYMBOL = Character.toString(0xE002);
     private static final String ADVANCED_SYMBOL = Character.toString(0xE8B8);
     private static final String UNOFFICIAL_SYMBOL = Character.toString(0xEA4B);
+    private static final String LEGACY_SYMBOL = Character.toString(0xE889);
 
     @Test
-    void searchFiltersRowsByOptionNameAndDescription() throws Exception {
+    void searchFiltersRowsByOptionName() throws Exception {
         runOnEdt(() -> {
             GameOptions options = new GameOptions();
             DialogOptionComponentYPanel searchlights = component(options.getOption(OptionsConstants.SEARCHLIGHTS_ON));
@@ -104,6 +106,23 @@ class GameOptionsPaneTest {
             assertFalse(pushOffBoard.isVisible());
             assertTrue(searchlights.settingsCheckBox().isVisible());
             assertFalse(pushOffBoard.settingsCheckBox().isVisible());
+        });
+    }
+
+    @Test
+    void searchDoesNotMatchOptionDetailsText() throws Exception {
+        runOnEdt(() -> {
+            GameOptions options = new GameOptions();
+            DialogOptionComponentYPanel disableLocalSave = component(
+                  options.getOption(OptionsConstants.BASE_DISABLE_LOCAL_SAVE));
+            GameOptionsPane pane = pane(List.of(disableLocalSave), option -> true);
+
+            assertTrue(disableLocalSave.getOption().getDescription().contains("cheat"));
+
+            pane.setFilterText("heat");
+
+            assertFalse(disableLocalSave.isVisible());
+            assertFalse(disableLocalSave.settingsCheckBox().isVisible());
         });
     }
 
@@ -185,9 +204,12 @@ class GameOptionsPaneTest {
             assertEquals(2, sections.size());
             assertFalse(sections.get(0).isExpanded());
             assertFalse(sections.get(1).isExpanded());
-            assertEquals(3, GameOptionsPane.legendEntries().size());
+            assertEquals(4, GameOptionsPane.legendEntries().size());
             assertEquals("Tooltip contains important information.",
                   GameOptionsPane.legendEntries().getFirst().description());
+            assertEquals(new Color(0xE6, 0x9F, 0x00), GameOptionsPane.legendEntries().get(2).color());
+            assertEquals("This option is retained for compatibility with superseded rules.",
+                GameOptionsPane.legendEntries().getLast().description());
             assertTrue(pane.getPreferredSize().width >= UIUtil.scaleForGUI(
                   SettingsNavigationPanel.DEFAULT_NAVIGATION_WIDTH + SettingsPagePanel.DEFAULT_MAXIMUM_PAGE_WIDTH));
             assertTrue(pane.getPreferredSize().height >= UIUtil.scaleForGUI(800));
@@ -309,7 +331,7 @@ class GameOptionsPaneTest {
     }
 
     @Test
-    void hiddenUnofficialBackingOptionDoesNotLeaveAnEmptyGridCell() throws Exception {
+    void hiddenRuleBackingOptionsDoNotLeaveEmptyGridCells() throws Exception {
         runOnEdt(() -> {
             GameOptions options = new GameOptions();
             DialogOptionComponentYPanel reportTooltips = component(
@@ -321,13 +343,9 @@ class GameOptionsPaneTest {
 
             pane(List.of(reportTooltips, hideUnofficial, hideLegacy), option -> true);
 
-            JCheckBox reportTooltipsCheckBox = reportTooltips.settingsCheckBox();
-            JCheckBox hideLegacyCheckBox = hideLegacy.settingsCheckBox();
-            assertSame(reportTooltipsCheckBox.getParent(), hideLegacyCheckBox.getParent());
-            GridBagLayout layout = (GridBagLayout) reportTooltipsCheckBox.getParent().getLayout();
-            assertCell(layout, reportTooltipsCheckBox, 0, 0, 1);
-            assertCell(layout, hideLegacyCheckBox, 1, 0, 1);
+            assertStandaloneCheckBox(reportTooltips);
             assertNull(hideUnofficial.getParent());
+            assertNull(hideLegacy.getParent());
         });
     }
 
@@ -651,6 +669,46 @@ class GameOptionsPaneTest {
         });
     }
 
+        @Test
+        void excludedOptionsDoNotCreateBlankSectionsOrRemoveRemainingPage() throws Exception {
+          runOnEdt(() -> {
+            GameOptions options = new GameOptions();
+            DialogOptionComponentYPanel canonOnly = component(
+                options.getOption(OptionsConstants.ALLOWED_CANON_ONLY));
+            DialogOptionComponentYPanel year = component(options.getOption(OptionsConstants.ALLOWED_YEAR));
+            DialogOptionComponentYPanel techLevel = component(
+                options.getOption(OptionsConstants.ALLOWED_TECH_LEVEL));
+            DialogOptionComponentYPanel variableTechLevel = component(
+                options.getOption(OptionsConstants.ALLOWED_ERA_BASED));
+            DialogOptionComponentYPanel showExtinct = component(
+                options.getOption(OptionsConstants.ALLOWED_SHOW_EXTINCT));
+            DialogOptionComponentYPanel allowInvalid = component(
+                options.getOption(OptionsConstants.ALLOWED_ALLOW_ILLEGAL_UNITS));
+            Set<String> excluded = Set.of(
+                OptionsConstants.ALLOWED_CANON_ONLY,
+                OptionsConstants.ALLOWED_YEAR,
+                OptionsConstants.ALLOWED_TECH_LEVEL,
+                OptionsConstants.ALLOWED_ERA_BASED,
+                OptionsConstants.ALLOWED_SHOW_EXTINCT);
+
+            GameOptionsPane pane = new GameOptionsPane(List.of(new GameOptionsPane.OptionGroup(
+                "allowedUnits", "Allowed Units and Equipment",
+                List.of(canonOnly, year, techLevel, variableTechLevel, showExtinct, allowInvalid))),
+                option -> true, excluded);
+
+            assertNull(SwingUtilities.getAncestorOfClass(GameOptionsPane.class, canonOnly.settingsCheckBox()));
+            assertNull(SwingUtilities.getAncestorOfClass(GameOptionsPane.class, year.settingsLabel()));
+            assertNull(SwingUtilities.getAncestorOfClass(GameOptionsPane.class, techLevel.settingsLabel()));
+            assertNull(SwingUtilities.getAncestorOfClass(GameOptionsPane.class, variableTechLevel.settingsCheckBox()));
+            assertNull(SwingUtilities.getAncestorOfClass(GameOptionsPane.class, showExtinct.settingsCheckBox()));
+            assertSame(pane,
+                SwingUtilities.getAncestorOfClass(GameOptionsPane.class, allowInvalid.settingsCheckBox()));
+            assertEquals(1, findSections(pane).size());
+            assertTrue(sectionTitle(pane, "Special Restrictions").contains("Special Restrictions"));
+            assertTreePathExists(findComponent(pane, JTree.class), "General", "Units and Technology");
+          });
+        }
+
     @Test
     void victorySectionsUseCheckboxGridsAndLabeledRows() throws Exception {
         runOnEdt(() -> {
@@ -735,6 +793,7 @@ class GameOptionsPaneTest {
             String unofficialOptionText = optionPresentationText(unofficialOption);
             assertFalse(unofficialOptionText.contains(IMPORTANT_SYMBOL));
             assertTrue(unofficialOptionText.contains(UNOFFICIAL_SYMBOL));
+            assertTrue(unofficialOptionText.contains("color=\"#e69f00\""), unofficialOptionText);
 
             String basicTitle = sectionTitle(basicPane, "Battlefield Rules");
             assertFalse(basicTitle.contains(IMPORTANT_SYMBOL));
@@ -745,6 +804,385 @@ class GameOptionsPaneTest {
             assertFalse(advancedTitle.contains(IMPORTANT_SYMBOL));
             assertTrue(advancedTitle.contains(ADVANCED_SYMBOL));
             assertFalse(advancedTitle.contains(UNOFFICIAL_SYMBOL));
+        });
+    }
+
+    @Test
+    void sensorsRemoveUnofficialTextAndUseBadges() throws Exception {
+        runOnEdt(() -> {
+            GameOptions options = new GameOptions();
+            List<DialogOptionComponentYPanel> unofficialOptions = List.of(
+                  component(options.getOption(OptionsConstants.ADVANCED_SINGLE_BLIND_BOTS)),
+                  component(options.getOption(OptionsConstants.ADVANCED_PILOTS_VISUAL_RANGE_ONE)),
+                  component(options.getOption(OptionsConstants.ADVANCED_PILOTS_CANNOT_SPOT)),
+                  component(options.getOption(OptionsConstants.ADVANCED_INCLUSIVE_SENSOR_RANGE)),
+                  component(options.getOption(OptionsConstants.ADVANCED_SENSORS_DETECT_ALL)),
+                  component(options.getOption(OptionsConstants.ADVANCED_MAG_SCAN_NO_HILLS)),
+                  component(options.getOption(OptionsConstants.ADVANCED_METAL_CONTENT)));
+
+            pane("advancedRules", unofficialOptions, option -> true);
+
+            for (DialogOptionComponentYPanel option : unofficialOptions) {
+                String text = optionPresentationText(option);
+                assertFalse(text.contains("(Unofficial)"), text);
+                assertFalse(text.startsWith("Unofficial:"), text);
+                assertTrue(text.contains(UNOFFICIAL_SYMBOL), text);
+                assertTrue(text.contains("color=\"#e69f00\""), text);
+            }
+        });
+    }
+
+    @Test
+    void legacyOptionsUseBadgeInsteadOfLabelText() throws Exception {
+        runOnEdt(() -> {
+            GameOptions options = new GameOptions();
+            DialogOptionComponentYPanel ghostTargetMode = component(
+                options.getOption(OptionsConstants.ADVANCED_GHOST_TARGET_MODE));
+            ghostTargetMode.addValue(OptionsConstants.GHOST_TARGET_MODE_LEGACY);
+            ghostTargetMode.addValue(OptionsConstants.GHOST_TARGET_MODE_STANDARD);
+            List<DialogOptionComponentYPanel> advancedRules = List.of(
+                ghostTargetMode,
+                  component(options.getOption(OptionsConstants.ADVANCED_GHOST_TARGET_MAX)),
+                  component(options.getOption(OptionsConstants.ADVANCED_ASSAULT_DROP)),
+                  component(options.getOption(OptionsConstants.ADVANCED_PARATROOPERS)),
+                  component(options.getOption(OptionsConstants.ADVANCED_MAX_TECH_MOVEMENT_MODS)));
+            DialogOptionComponentYPanel autoAbandon = component(
+                  options.getOption(OptionsConstants.ADVANCED_GROUND_MOVEMENT_AUTO_ABANDON_UNIT));
+            DialogOptionComponentYPanel rpgGunnery = component(
+                  options.getOption(OptionsConstants.RPG_RPG_GUNNERY));
+            List<DialogOptionComponentYPanel> registeredAdvancedRules = new ArrayList<>(advancedRules);
+            registeredAdvancedRules.add(autoAbandon);
+
+            GameOptionsPane pane = new GameOptionsPane(List.of(
+                new GameOptionsPane.OptionGroup("advancedRules", "Advanced Rules", registeredAdvancedRules),
+                  new GameOptionsPane.OptionGroup("rpg", "RPG", List.of(rpgGunnery))), option -> true);
+
+            List<DialogOptionComponentYPanel> legacyOptions = new ArrayList<>(advancedRules);
+            legacyOptions.add(autoAbandon);
+            legacyOptions.add(rpgGunnery);
+            for (DialogOptionComponentYPanel option : legacyOptions) {
+                String text = optionPresentationText(option);
+                assertFalse(text.toLowerCase(Locale.ROOT).contains("legacy"), text);
+                assertTrue(text.contains(LEGACY_SYMBOL), text);
+            }
+            assertIntegerSpinner(advancedRules.get(1), 0, 10, 5);
+
+            JLabel ghostTargetModeLabel = ghostTargetMode.settingsLabel();
+            MouseEvent enter = new MouseEvent(ghostTargetModeLabel, MouseEvent.MOUSE_ENTERED,
+                  System.currentTimeMillis(), 0, 0, 0, 0, false);
+            for (var listener : ghostTargetModeLabel.getMouseListeners()) {
+                listener.mouseEntered(enter);
+            }
+            String detailsText = findComponent(pane, JEditorPane.class).getText();
+            assertTrue(detailsText.contains("Area Effect uses the original MegaMek ECM bubble behavior"), detailsText);
+            assertFalse(detailsText.contains("Legacy:"), detailsText);
+        });
+    }
+
+    @Test
+    void bridgeCfUsesBoundedSpinnerAndKeepsBoardDefaultValue() throws Exception {
+        runOnEdt(() -> {
+            GameOptions options = new GameOptions();
+            DialogOptionComponentYPanel bridgeCf = component(
+                  options.getOption(OptionsConstants.BASE_BRIDGE_CF));
+
+            pane(List.of(bridgeCf), option -> true);
+
+            assertIntegerSpinner(bridgeCf, 0, 1_000, 0);
+        });
+    }
+
+    @Test
+    void woodsBurnDownAmountUsesDependentBoundedSpinner() throws Exception {
+        runOnEdt(() -> {
+            GameOptions options = new GameOptions();
+            DialogOptionComponentYPanel woodsBurnDown = component(
+                  options.getOption(OptionsConstants.ADVANCED_WOODS_BURN_DOWN));
+            DialogOptionComponentYPanel woodsBurnDownAmount = component(
+                  options.getOption(OptionsConstants.ADVANCED_WOODS_BURN_DOWN_AMOUNT));
+
+            pane("advancedRules", List.of(woodsBurnDown, woodsBurnDownAmount), option -> true);
+
+            assertIntegerSpinner(woodsBurnDownAmount, 1, 100, 5);
+            assertEquals("Woods CF burned per turn", woodsBurnDownAmount.settingsLabel().getText());
+            assertFalse(woodsBurnDownAmount.settingsControl().isEnabled());
+            woodsBurnDown.setSelected(true);
+            assertTrue(woodsBurnDownAmount.settingsControl().isEnabled());
+
+            woodsBurnDownAmount.setEditable(false);
+            woodsBurnDown.setSelected(false);
+            woodsBurnDown.setSelected(true);
+            assertFalse(woodsBurnDownAmount.settingsControl().isEnabled());
+        });
+    }
+
+    @Test
+    void terrainSectionsAlignRightColumnsAndFitUnofficialBadge() throws Exception {
+        runOnEdt(() -> {
+            GameOptions options = new GameOptions();
+            DialogOptionComponentYPanel minefields = component(
+                  options.getOption(OptionsConstants.ADVANCED_MINEFIELDS));
+            DialogOptionComponentYPanel blackIce = component(
+                  options.getOption(OptionsConstants.ADVANCED_BLACK_ICE));
+            DialogOptionComponentYPanel woodsBurnDown = component(
+                  options.getOption(OptionsConstants.ADVANCED_WOODS_BURN_DOWN));
+            DialogOptionComponentYPanel woodsBurnDownAmount = component(
+                  options.getOption(OptionsConstants.ADVANCED_WOODS_BURN_DOWN_AMOUNT));
+            DialogOptionComponentYPanel battleWreck = component(
+                  options.getOption(OptionsConstants.ADVANCED_TAC_OPS_BATTLE_WRECK));
+            DialogOptionComponentYPanel bridgeBuilding = component(
+                  options.getOption(OptionsConstants.ADVANCED_BRIDGE_BUILDING_ENGINEERS));
+            DialogOptionComponentYPanel bridgeRepair = component(
+                  options.getOption(OptionsConstants.UNOFFICIAL_BRIDGE_REPAIR_ENGINEERS));
+
+            pane("advancedRules", List.of(minefields, blackIce, woodsBurnDown, woodsBurnDownAmount,
+                  battleWreck, bridgeBuilding, bridgeRepair), option -> true);
+
+            JCheckBox minefieldsCheckBox = minefields.settingsCheckBox();
+            JCheckBox blackIceCheckBox = blackIce.settingsCheckBox();
+            JLabel woodsAmountLabel = woodsBurnDownAmount.settingsLabel();
+            JComponent woodsAmountControl = woodsBurnDownAmount.settingsControl();
+            JCheckBox battleWreckCheckBox = battleWreck.settingsCheckBox();
+            JCheckBox bridgeBuildingCheckBox = bridgeBuilding.settingsCheckBox();
+            JCheckBox bridgeRepairCheckBox = bridgeRepair.settingsCheckBox();
+            int bridgeRepairPreferredWidth = bridgeRepairCheckBox.getPreferredSize().width;
+            JCheckBox bridgeRepairWithoutBadgePadding = new JCheckBox(
+                  bridgeRepairCheckBox.getText().replace("&nbsp;", ""));
+
+            assertSectionAlignment(minefieldsCheckBox, blackIceCheckBox,
+                  woodsAmountLabel, woodsAmountControl, battleWreckCheckBox, bridgeBuildingCheckBox);
+            assertTrue(bridgeRepairPreferredWidth > bridgeRepairWithoutBadgePadding.getPreferredSize().width);
+            bridgeRepairCheckBox.getParent().doLayout();
+            assertTrue(bridgeRepairCheckBox.getWidth() >= bridgeRepairPreferredWidth);
+        });
+    }
+
+    @Test
+    void targetingArtilleryUsesBoundedSpinnersAndPageWideColumnAlignment() throws Exception {
+        runOnEdt(() -> {
+            GameOptions options = new GameOptions();
+            DialogOptionComponentYPanel extremeRange = component(
+                  options.getOption(OptionsConstants.ADVANCED_COMBAT_TAC_OPS_RANGE));
+            DialogOptionComponentYPanel losRange = component(
+                  options.getOption(OptionsConstants.ADVANCED_COMBAT_TAC_OPS_LOS_RANGE));
+            DialogOptionComponentYPanel calledShots = component(
+                  options.getOption(OptionsConstants.ADVANCED_COMBAT_TAC_OPS_CALLED_SHOTS));
+            DialogOptionComponentYPanel glancingBlows = component(
+                  options.getOption(OptionsConstants.ADVANCED_COMBAT_TAC_OPS_GLANCING_BLOWS));
+            DialogOptionComponentYPanel autohitHexes = component(
+                  options.getOption(OptionsConstants.ADVANCED_COMBAT_NUM_HEXES_PREDESIGNATE));
+            DialogOptionComponentYPanel mapAreaHexes = component(
+                  options.getOption(OptionsConstants.ADVANCED_COMBAT_MAP_AREA_PREDESIGNATE));
+
+            pane("advancedCombat", List.of(extremeRange, losRange, calledShots, glancingBlows,
+                  autohitHexes, mapAreaHexes), option -> true);
+
+            assertIntegerSpinner(autohitHexes, 0, 100, 5);
+            assertIntegerSpinner(mapAreaHexes, 1, 100_000, 1_088);
+            assertTrue(autohitHexes.settingsLabel().getText().contains("Autohit hexes per map area"));
+            assertTrue(mapAreaHexes.settingsLabel().getText().contains("Map area size in hexes"));
+            assertFalse(autohitHexes.settingsLabel().getText().contains("Specify"));
+            assertFalse(mapAreaHexes.settingsLabel().getText().contains("Specify"));
+            assertSectionAlignment(extremeRange.settingsCheckBox(), losRange.settingsCheckBox(),
+                  calledShots.settingsCheckBox(), glancingBlows.settingsCheckBox(),
+                  autohitHexes.settingsLabel(), autohitHexes.settingsControl());
+            assertEquals(autohitHexes.settingsControl().getX(), mapAreaHexes.settingsControl().getX());
+        });
+    }
+
+    @Test
+    void heatAndFireGroupsFireOptionsBeforeHeatOptions() throws Exception {
+        runOnEdt(() -> {
+            GameOptions options = new GameOptions();
+            DialogOptionComponentYPanel startFire = component(
+                  options.getOption(OptionsConstants.ADVANCED_COMBAT_TAC_OPS_START_FIRE));
+            DialogOptionComponentYPanel expandedHeat = component(
+                  options.getOption(OptionsConstants.ADVANCED_COMBAT_TAC_OPS_HEAT));
+            DialogOptionComponentYPanel coolantFailure = component(
+                  options.getOption(OptionsConstants.ADVANCED_COMBAT_TAC_OPS_COOLANT_FAILURE));
+            DialogOptionComponentYPanel maximumExternalHeat = component(
+                  options.getOption(OptionsConstants.ADVANCED_COMBAT_MAX_EXTERNAL_HEAT));
+            DialogOptionComponentYPanel forestFiresNoSmoke = component(
+                  options.getOption(OptionsConstants.ADVANCED_COMBAT_FOREST_FIRES_NO_SMOKE));
+
+            pane("advancedCombat", List.of(startFire, expandedHeat, coolantFailure, maximumExternalHeat,
+                  forestFiresNoSmoke), option -> true);
+
+            assertTwoColumnCheckBoxGrid(startFire, forestFiresNoSmoke, expandedHeat, coolantFailure);
+            assertLabelControlRow(maximumExternalHeat);
+            assertIntegerSpinner(maximumExternalHeat, 0, 100, 15);
+        });
+    }
+
+    @Test
+    void mekLanceMovementUsesBoundedSpinnerAndKeepsDefault() throws Exception {
+        runOnEdt(() -> {
+            GameOptions options = new GameOptions();
+            DialogOptionComponentYPanel mekLanceMovement = component(
+                  options.getOption(OptionsConstants.ADVANCED_GROUND_MOVEMENT_MEK_LANCE_MOVEMENT));
+            DialogOptionComponentYPanel mekLanceSize = component(
+                  options.getOption(OptionsConstants.ADVANCED_GROUND_MOVEMENT_MEK_LANCE_MOVEMENT_NUMBER));
+
+            pane("advancedGroundMovement", List.of(mekLanceMovement, mekLanceSize), option -> true);
+
+            assertIntegerSpinner(mekLanceSize, 1, 100, 4);
+            assertLabelControlRow(mekLanceSize);
+            assertFalse(mekLanceSize.settingsControl().isEnabled());
+            mekLanceMovement.setSelected(true);
+            assertTrue(mekLanceSize.settingsControl().isEnabled());
+        });
+    }
+
+    @Test
+    void vehicleLanceMovementUsesDependentBoundedSpinner() throws Exception {
+        runOnEdt(() -> {
+            GameOptions options = new GameOptions();
+            DialogOptionComponentYPanel vehicleLanceMovement = component(
+                  options.getOption(OptionsConstants.ADVANCED_GROUND_MOVEMENT_VEHICLE_LANCE_MOVEMENT));
+            DialogOptionComponentYPanel vehicleLanceSize = component(
+                  options.getOption(OptionsConstants.ADVANCED_GROUND_MOVEMENT_VEHICLE_LANCE_MOVEMENT_NUMBER));
+
+            pane("advancedGroundMovement", List.of(vehicleLanceMovement, vehicleLanceSize), option -> true);
+
+            assertIntegerSpinner(vehicleLanceSize, 1, 100, 4);
+            assertFalse(vehicleLanceSize.settingsControl().isEnabled());
+            vehicleLanceMovement.setSelected(true);
+            assertTrue(vehicleLanceSize.settingsControl().isEnabled());
+        });
+    }
+
+    @Test
+    void paratroopersRequireAssaultDrop() throws Exception {
+        runOnEdt(() -> {
+            GameOptions options = new GameOptions();
+            DialogOptionComponentYPanel assaultDrop = component(
+                  options.getOption(OptionsConstants.ADVANCED_ASSAULT_DROP));
+            DialogOptionComponentYPanel paratroopers = component(
+                  options.getOption(OptionsConstants.ADVANCED_PARATROOPERS));
+
+            pane("advancedRules", List.of(assaultDrop, paratroopers), option -> true);
+
+            assertFalse(paratroopers.settingsCheckBox().isEnabled());
+            assaultDrop.setSelected(true);
+            assertTrue(paratroopers.settingsCheckBox().isEnabled());
+            paratroopers.setSelected(true);
+            assaultDrop.setSelected(false);
+            assertFalse(paratroopers.settingsCheckBox().isEnabled());
+            assertFalse(paratroopers.settingsCheckBox().isSelected());
+        });
+    }
+
+    @Test
+    void vibrabombProtectionAppearsInMekMovementWithShorterLabel() {
+        GameOptionsPresentation.Location location = GameOptionsPresentation.location(
+              "advancedGroundMovement", OptionsConstants.ADVANCED_GROUND_MOVEMENT_NO_PRE_MOVE_VIBRA);
+        GameOptions options = new GameOptions();
+
+        assertEquals("movement.meks", location.page().id());
+        assertEquals("movement.meks.formations", location.sectionId());
+        assertEquals("(Unofficial) Vibrabombs do not damage unmoved Meks",
+              options.getOption(OptionsConstants.ADVANCED_GROUND_MOVEMENT_NO_PRE_MOVE_VIBRA).getDisplayableName());
+    }
+
+    @Test
+    void aerospaceLaunchVelocityUsesRulesBoundedSpinner() throws Exception {
+        runOnEdt(() -> {
+            GameOptions options = new GameOptions();
+            DialogOptionComponentYPanel launchVelocity = component(options.getOption(
+                  OptionsConstants.ADVANCED_AERO_RULES_STRATOPS_BEARINGS_ONLY_VELOCITY));
+
+            pane("advancedAeroRules", List.of(launchVelocity), option -> true);
+
+            assertIntegerSpinner(launchVelocity, 1, 500, 50);
+        });
+    }
+
+    @Test
+    void infantryAndProtoMekGroupSizeUsesBoundedSpinner() throws Exception {
+        runOnEdt(() -> {
+            GameOptions options = new GameOptions();
+            DialogOptionComponentYPanel moveMultipleInfantry = component(
+                options.getOption(OptionsConstants.INIT_INF_MOVE_MULTI));
+            DialogOptionComponentYPanel moveMultipleProtoMeks = component(
+                options.getOption(OptionsConstants.INIT_PROTOMEKS_MOVE_MULTI));
+            DialogOptionComponentYPanel groupSize = component(
+                  options.getOption(OptionsConstants.INIT_INF_PROTO_MOVE_MULTI));
+
+            pane("initiative", List.of(moveMultipleInfantry, moveMultipleProtoMeks, groupSize), option -> true);
+
+            assertIntegerSpinner(groupSize, 1, 100, 3);
+            assertFalse(groupSize.settingsControl().isEnabled());
+            moveMultipleInfantry.setSelected(true);
+            assertTrue(groupSize.settingsControl().isEnabled());
+            moveMultipleInfantry.setSelected(false);
+            assertFalse(groupSize.settingsControl().isEnabled());
+            moveMultipleProtoMeks.setSelected(true);
+            assertTrue(groupSize.settingsControl().isEnabled());
+            moveMultipleInfantry.setSelected(true);
+            moveMultipleProtoMeks.setSelected(false);
+            assertTrue(groupSize.settingsControl().isEnabled());
+            moveMultipleInfantry.setSelected(false);
+            assertFalse(groupSize.settingsControl().isEnabled());
+        });
+    }
+
+    @Test
+    void multiMovementControlsUseInfantryMovementPage() throws Exception {
+        runOnEdt(() -> {
+            GameOptions options = new GameOptions();
+            DialogOptionComponentYPanel moveMultipleInfantry = component(
+                  options.getOption(OptionsConstants.INIT_INF_MOVE_MULTI));
+            DialogOptionComponentYPanel moveMultipleProtoMeks = component(
+                  options.getOption(OptionsConstants.INIT_PROTOMEKS_MOVE_MULTI));
+            DialogOptionComponentYPanel groupSize = component(
+                  options.getOption(OptionsConstants.INIT_INF_PROTO_MOVE_MULTI));
+
+            pane("initiative", List.of(moveMultipleInfantry, moveMultipleProtoMeks, groupSize), option -> true);
+
+            assertTwoColumnCheckBoxGrid(moveMultipleInfantry, moveMultipleProtoMeks);
+            assertLabelControlRow(groupSize);
+            assertEquals("movement.infantry", GameOptionsPresentation.location(
+                  "initiative", OptionsConstants.INIT_INF_MOVE_MULTI).page().id());
+            assertEquals("movement.infantry", GameOptionsPresentation.location(
+                  "initiative", OptionsConstants.INIT_PROTOMEKS_MOVE_MULTI).page().id());
+            assertEquals("movement.infantry", GameOptionsPresentation.location(
+                  "initiative", OptionsConstants.INIT_INF_PROTO_MOVE_MULTI).page().id());
+        });
+    }
+
+    @Test
+    void protoMekMultiMovementDetailsReferenceSharedInfantryCount() {
+        GameOptions options = new GameOptions();
+        String description = options.getOption(OptionsConstants.INIT_PROTOMEKS_MOVE_MULTI).getDescription();
+
+        assertTrue(description.contains("Number of Infantry/ProtoMeks to move per Mek"), description);
+        assertTrue(description.contains("Infantry Movement"), description);
+    }
+
+    @Test
+    void rpgGunneryMovesSkillListToImportantDetails() throws Exception {
+        runOnEdt(() -> {
+            GameOptions options = new GameOptions();
+            DialogOptionComponentYPanel rpgGunnery = component(
+                  options.getOption(OptionsConstants.RPG_RPG_GUNNERY));
+            GameOptionsPane pane = pane("rpg", List.of(rpgGunnery), option -> true);
+            JCheckBox checkBox = rpgGunnery.settingsCheckBox();
+
+            assertTrue(checkBox.getText().contains("RPG Gunnery Skills"));
+            assertFalse(checkBox.getText().contains("Gunnery Laser/"));
+            assertTrue(checkBox.getText().contains(IMPORTANT_SYMBOL));
+            assertTrue(checkBox.getText().contains(LEGACY_SYMBOL));
+
+            MouseEvent enter = new MouseEvent(checkBox, MouseEvent.MOUSE_ENTERED,
+                  System.currentTimeMillis(), 0, 0, 0, 0, false);
+            for (var listener : checkBox.getMouseListeners()) {
+                listener.mouseEntered(enter);
+            }
+            String detailsText = findComponent(pane, JEditorPane.class).getText();
+            assertTrue(detailsText.contains("Gunnery Laser"), detailsText);
+            assertTrue(detailsText.contains("Gunnery Missile"), detailsText);
+            assertTrue(detailsText.contains("Gunnery Ballistic"), detailsText);
+            assertTrue(detailsText.contains("Piloting"), detailsText);
         });
     }
 

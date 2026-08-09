@@ -34,7 +34,6 @@ package megamek.client.ui.panels;
 
 import static megamek.client.ui.Messages.getString;
 
-import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -342,12 +341,12 @@ final class GameOptionsPresentation {
               OptionsConstants.ADVANCED_COMBAT_TAC_OPS_CLUSTER_HIT_PEN,
               OptionsConstants.ADVANCED_COMBAT_TAC_OPS_ADVANCED_MEK_HIT_LOCATIONS,
               OptionsConstants.ADVANCED_COMBAT_CASE_PILOT_DAMAGE);
-        register(ADVANCED_COMBAT, COMBAT_DAMAGE, "combat.damage.heatAndFire",
+        registerOrdered(ADVANCED_COMBAT, COMBAT_DAMAGE, "combat.damage.heatAndFire",
               OptionsConstants.ADVANCED_COMBAT_TAC_OPS_START_FIRE,
+              OptionsConstants.ADVANCED_COMBAT_FOREST_FIRES_NO_SMOKE,
               OptionsConstants.ADVANCED_COMBAT_TAC_OPS_HEAT,
               OptionsConstants.ADVANCED_COMBAT_TAC_OPS_COOLANT_FAILURE,
-              OptionsConstants.ADVANCED_COMBAT_MAX_EXTERNAL_HEAT,
-              OptionsConstants.ADVANCED_COMBAT_FOREST_FIRES_NO_SMOKE);
+              OptionsConstants.ADVANCED_COMBAT_MAX_EXTERNAL_HEAT);
 
         register(ADVANCED_COMBAT, COMBAT_PHYSICAL, "combat.physical.attacks",
               OptionsConstants.ADVANCED_COMBAT_TAC_OPS_CHARGE_DAMAGE,
@@ -392,11 +391,13 @@ final class GameOptionsPresentation {
               OptionsConstants.ADVANCED_GROUND_MOVEMENT_TAC_OPS_FALLING_EXPANDED,
               OptionsConstants.ADVANCED_GROUND_MOVEMENT_FALLS_END_MOVEMENT,
               OptionsConstants.ADVANCED_GROUND_MOVEMENT_PSR_JUMP_HEAVY_WOODS);
-        register(GROUND_MOVEMENT, MOVEMENT_MEKS, "movement.meks.formations",
+        registerOrdered(GROUND_MOVEMENT, MOVEMENT_MEKS, "movement.meks.formations", 0,
               OptionsConstants.ADVANCED_GROUND_MOVEMENT_TAC_OPS_ATTEMPTING_STAND,
               OptionsConstants.ADVANCED_GROUND_MOVEMENT_TAC_OPS_CAREFUL_STAND,
-              OptionsConstants.ADVANCED_GROUND_MOVEMENT_MEK_LANCE_MOVEMENT,
-              OptionsConstants.ADVANCED_GROUND_MOVEMENT_MEK_LANCE_MOVEMENT_NUMBER);
+              OptionsConstants.ADVANCED_GROUND_MOVEMENT_MEK_LANCE_MOVEMENT);
+        registerOrdered(GROUND_MOVEMENT, MOVEMENT_MEKS, "movement.meks.formations", 4,
+              OptionsConstants.ADVANCED_GROUND_MOVEMENT_MEK_LANCE_MOVEMENT_NUMBER,
+              OptionsConstants.ADVANCED_GROUND_MOVEMENT_NO_PRE_MOVE_VIBRA);
 
         register(GROUND_MOVEMENT, MOVEMENT_VEHICLES, "movement.vehicles.maneuvers",
               OptionsConstants.ADVANCED_GROUND_MOVEMENT_VEHICLE_ACCELERATION,
@@ -408,14 +409,17 @@ final class GameOptionsPresentation {
         register(GROUND_MOVEMENT, MOVEMENT_VEHICLES, "movement.vehicles.formations",
               OptionsConstants.ADVANCED_GROUND_MOVEMENT_VEHICLE_LANCE_MOVEMENT,
               OptionsConstants.ADVANCED_GROUND_MOVEMENT_VEHICLE_LANCE_MOVEMENT_NUMBER,
-              OptionsConstants.ADVANCED_GROUND_MOVEMENT_UNOFF_NO_IMMOBILE_VEHICLES,
-              OptionsConstants.ADVANCED_GROUND_MOVEMENT_NO_PRE_MOVE_VIBRA);
+              OptionsConstants.ADVANCED_GROUND_MOVEMENT_UNOFF_NO_IMMOBILE_VEHICLES);
 
         register(GROUND_MOVEMENT, MOVEMENT_INFANTRY, "movement.infantry.movement",
               OptionsConstants.ADVANCED_GROUND_MOVEMENT_TAC_OPS_FAST_INFANTRY_MOVE,
               OptionsConstants.ADVANCED_TAC_OPS_INF_PAVE_BONUS,
               OptionsConstants.ADVANCED_GROUND_MOVEMENT_TAC_OPS_ZIPLINES,
               OptionsConstants.ADVANCED_GROUND_MOVEMENT_NO_NIGHT_MOVE_PEN);
+        register(INITIATIVE, MOVEMENT_INFANTRY, "movement.infantry.movement",
+              OptionsConstants.INIT_INF_MOVE_MULTI,
+              OptionsConstants.INIT_PROTOMEKS_MOVE_MULTI,
+              OptionsConstants.INIT_INF_PROTO_MOVE_MULTI);
     }
 
     private static void registerAerospaceOptions() {
@@ -469,13 +473,10 @@ final class GameOptionsPresentation {
       register(INITIATIVE, INITIATIVE_AND_PILOTS_PHASES, "initiative.infantry",
               OptionsConstants.INIT_INF_MOVE_EVEN,
               OptionsConstants.INIT_INF_DEPLOY_EVEN,
-              OptionsConstants.INIT_INF_MOVE_LATER,
-              OptionsConstants.INIT_INF_MOVE_MULTI,
-              OptionsConstants.INIT_INF_PROTO_MOVE_MULTI);
+                  OptionsConstants.INIT_INF_MOVE_LATER);
                         register(INITIATIVE, INITIATIVE_AND_PILOTS_PHASES, "initiative.protomeks",
               OptionsConstants.INIT_PROTOMEKS_MOVE_EVEN,
-              OptionsConstants.INIT_PROTOMEKS_MOVE_LATER,
-              OptionsConstants.INIT_PROTOMEKS_MOVE_MULTI);
+                  OptionsConstants.INIT_PROTOMEKS_MOVE_LATER);
                         register(INITIATIVE, INITIATIVE_AND_PILOTS_PHASES, "initiative.simultaneous",
               OptionsConstants.INIT_SIMULTANEOUS_DEPLOYMENT,
               OptionsConstants.INIT_SIMULTANEOUS_TARGETING,
@@ -500,12 +501,36 @@ final class GameOptionsPresentation {
 
     private static void register(String sourceGroupId, PageDefinition page, String sectionId,
           String... optionNames) {
+        register(sourceGroupId, page, sectionId, false, optionNames);
+    }
+
+    private static void registerOrdered(String sourceGroupId, PageDefinition page, String sectionId,
+          String... optionNames) {
+        register(sourceGroupId, page, sectionId, true, optionNames);
+    }
+
+            private static void registerOrdered(String sourceGroupId, PageDefinition page, String sectionId,
+                              int firstOptionOrder, String... optionNames) {
+                        register(sourceGroupId, page, sectionId, firstOptionOrder, optionNames);
+            }
+
+    private static void register(String sourceGroupId, PageDefinition page, String sectionId,
+          boolean ordered, String... optionNames) {
+        register(sourceGroupId, page, sectionId, ordered ? 0 : Integer.MAX_VALUE, optionNames);
+    }
+
+    private static void register(String sourceGroupId, PageDefinition page, String sectionId,
+          int firstOptionOrder, String... optionNames) {
         Map<String, Integer> pageSectionOrders = SECTION_ORDERS.computeIfAbsent(page,
               ignored -> new LinkedHashMap<>());
         int sectionOrder = pageSectionOrders.computeIfAbsent(sectionId, ignored -> pageSectionOrders.size());
-        for (String optionName : optionNames) {
+        for (int optionOrder = 0; optionOrder < optionNames.length; optionOrder++) {
+            String optionName = optionNames[optionOrder];
             Location existing = LOCATIONS.putIfAbsent(optionName,
-                  new Location(sourceGroupId, page, sectionId, sectionOrder));
+                  new Location(sourceGroupId, page, sectionId, sectionOrder,
+                        firstOptionOrder == Integer.MAX_VALUE
+                              ? Integer.MAX_VALUE
+                              : firstOptionOrder + optionOrder));
             if (existing != null) {
                 throw new IllegalStateException("Duplicate Game Options presentation location for " + optionName);
             }
@@ -522,7 +547,7 @@ final class GameOptionsPresentation {
             return new PageDefinition(id, categoryId, iconGroupId, fallbackSourceGroupId, advanced, order);
     }
 
-      record Location(String sourceGroupId, PageDefinition page, String sectionId, int sectionOrder) {
+      record Location(String sourceGroupId, PageDefinition page, String sectionId, int sectionOrder, int optionOrder) {
       }
 
       record PageDefinition(String id, String categoryId, String iconGroupId, String fallbackSourceGroupId,

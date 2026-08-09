@@ -10,8 +10,8 @@
  *
  * MegaMek is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty
- * of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
- * See the GNU General Public License for more details.
+ * of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ * GNU General Public License for more details.
  *
  * A copy of the GPL should have been included with this project;
  * if not, see <https://www.gnu.org/licenses/>.
@@ -30,36 +30,28 @@
  * <https://www.xbox.com/en-US/developers/rules> and it is not endorsed by or
  * affiliated with Microsoft.
  */
-package megamek.client.ui.settings;
+package megamek.client.ui.dialogs.buttonDialogs;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
-import java.awt.Color;
-import java.util.List;
-
+import megamek.client.ui.panels.GameOptionsPane;
 import org.junit.jupiter.api.Test;
 
-class SettingsBadgeTest {
+class GameOptionsDialogTest {
     @Test
-    void formatHtmlPreservesOrderAndOptionalColor() {
-        SettingsBadge inheritedColor = new SettingsBadge(0xE002, null, "Important");
-        SettingsBadge colored = new SettingsBadge(0xE838, new Color(0x12, 0x34, 0x56), "Recent");
+    void ruleToggleLabelsUseBadgeIconsAndOnOffText() {
+        String unofficialOn = GameOptionsDialog.ruleToggleText(
+              GameOptionsPane.unofficialBadge(), "Unofficial Rules", "On");
+        String legacyOff = GameOptionsDialog.ruleToggleText(
+              GameOptionsPane.legacyBadge(), "Legacy Rules", "Off");
 
-        assertEquals(
-              " <font face=\"Material Symbols Rounded\">\uE002</font>"
-                  + " <font face=\"Material Symbols Rounded\" color=\"#123456\">\uE838</font>&nbsp;",
-              SettingsBadge.formatHtml(List.of(inheritedColor, colored)));
-    }
-
-    @Test
-    void formatHtmlHandlesMissingBadges() {
-        assertEquals("", SettingsBadge.formatHtml(null));
-        assertEquals("", SettingsBadge.formatHtml(List.of()));
-    }
-
-    @Test
-    void badgeRejectsInvalidCodePoint() {
-        assertThrows(IllegalArgumentException.class, () -> new SettingsBadge(-1, null, "Invalid"));
+        assertTrue(unofficialOn.contains(Character.toString(0xEA4B)), unofficialOn);
+        assertTrue(unofficialOn.contains("color=\"#e69f00\""), unofficialOn);
+        assertTrue(unofficialOn.contains("Unofficial Rules: <b>On</b>"), unofficialOn);
+        assertTrue(legacyOff.contains(Character.toString(0xE889)), legacyOff);
+        assertTrue(legacyOff.contains("Legacy Rules: <b>Off</b>"), legacyOff);
+        assertFalse(unofficialOn.contains("\u2713"), unofficialOn);
+        assertFalse(legacyOff.contains("\u2717"), legacyOff);
     }
 }

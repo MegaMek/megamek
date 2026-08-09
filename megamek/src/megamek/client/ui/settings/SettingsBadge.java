@@ -76,6 +76,6 @@ public record SettingsBadge(int codePoint, @Nullable Color color, String descrip
         for (SettingsBadge badge : badges) {
             html.append(Objects.requireNonNull(badge).toHtml());
         }
-        return html.toString();
+        return html.append("&nbsp;").toString();
     }
 }

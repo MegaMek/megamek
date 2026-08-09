@@ -48,19 +48,22 @@ import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.Vector;
 import javax.swing.*;
 import javax.swing.filechooser.FileFilter;
 import javax.xml.parsers.DocumentBuilder;
 
+import org.apache.commons.text.StringEscapeUtils;
+
 import megamek.client.ui.Messages;
-import megamek.client.ui.buttons.MMToggleButton;
 import megamek.client.ui.clientGUI.ClientGUI;
 import megamek.client.ui.clientGUI.DialogOptionListener;
 import megamek.client.ui.dialogs.MMDialogs.MMConfirmDialog;
 import megamek.client.ui.panels.DialogOptionComponentYPanel;
 import megamek.client.ui.panels.GameOptionsPane;
 import megamek.client.ui.panels.phaseDisplay.lobby.VictoryConditionsDialog;
+import megamek.client.ui.settings.SettingsBadge;
 import megamek.client.ui.settings.SettingsIconLegend;
 import megamek.client.ui.util.UIUtil;
 import megamek.common.TechConstants;
@@ -85,6 +88,7 @@ public class GameOptionsDialog extends AbstractButtonDialog implements ActionLis
     private JFrame frame;
     private GameOptions options;
     private boolean editable = true;
+    private Set<String> excludedOptionNames = Set.of();
 
     /**
      * A map that maps an option to a collection of DialogOptionComponents that can effect the value of this option.
@@ -102,15 +106,14 @@ public class GameOptionsDialog extends AbstractButtonDialog implements ActionLis
     private final JButton butDefaults = new JButton(Messages.getString("GameOptionsDialog.Defaults"));
     private final JButton butOkay = new JButton(Messages.getString("Okay"));
     private final JButton butCancel = new JButton(Messages.getString("Cancel"));
-    private final MMToggleButton butUnofficial = new MMToggleButton(Messages.getString("GameOptionsDialog.Unofficial"));
+    private final JToggleButton butUnofficial = new JToggleButton();
+    private final JToggleButton butLegacy = new JToggleButton();
 
     /**
      * When the OK button is pressed, the options can be saved to a file; this behavior happens by default but there are
      * some situations where the options should not be saved, such as when loading a scenario.
      */
     private boolean performSave = true;
-
-    private final static String UNOFFICIAL = "Unofficial";
 
     /**
      * Creates a new GameOptionsDialog with the given ClientGUI as parent. The ClientGUI supplies the game options. Used
@@ -127,8 +130,21 @@ public class GameOptionsDialog extends AbstractButtonDialog implements ActionLis
      * a scenario.
      */
     public GameOptionsDialog(JFrame frame, GameOptions options, boolean shouldSave) {
+        this(frame, options, shouldSave, Set.of());
+    }
+
+    /**
+     * Creates a scenario-style Game Options dialog while omitting options owned by the calling application.
+     *
+     * @param frame               parent frame
+     * @param options             options edited by the dialog
+     * @param shouldSave          whether confirming should save options to disk
+     * @param excludedOptionNames option names that must not appear in this presentation
+     */
+    public GameOptionsDialog(JFrame frame, GameOptions options, boolean shouldSave, Set<String> excludedOptionNames) {
         super(frame, "GameOptionsDialog", "GameOptionsDialog.title");
         performSave = shouldSave;
+        this.excludedOptionNames = Set.copyOf(excludedOptionNames);
         init(frame, options);
     }
 
@@ -159,59 +175,97 @@ public class GameOptionsDialog extends AbstractButtonDialog implements ActionLis
         butSave.setName("saveButton");
         butLoad.setName("loadButton");
         butUnofficial.setName("unofficialToggle");
+        butLegacy.setName("legacyToggle");
         butOkay.addActionListener(this::okButtonActionPerformed);
         butCancel.addActionListener(this::cancelActionPerformed);
         butDefaults.addActionListener(this::resetToDefaults);
         butSave.addActionListener(this);
         butLoad.addActionListener(this);
         butUnofficial.addActionListener(this);
+        butLegacy.addActionListener(this);
 
-          butOkay.putClientProperty("FlatLaf.style",
+        configureRuleToggle(butUnofficial, GameOptionsPane.unofficialBadge(),
+              "GameOptionsDialog.Unofficial", "GameOptionsDialog.Unofficial.tooltip");
+        configureRuleToggle(butLegacy, GameOptionsPane.legacyBadge(),
+              "GameOptionsDialog.Legacy", "GameOptionsDialog.Legacy.tooltip");
+
+        butOkay.putClientProperty("FlatLaf.style",
               "background: $Button.default.background; foreground: $Button.default.foreground");
-          setUniformButtonSize(butOkay, butCancel, butDefaults, butSave, butLoad);
-          int gap = UIUtil.scaleForGUI(BUTTON_GAP);
+        setUniformButtonSize(butOkay, butCancel, butDefaults, butSave, butLoad);
+        int gap = UIUtil.scaleForGUI(BUTTON_GAP);
 
-          JPanel actionButtons = new JPanel(new FlowLayout(FlowLayout.CENTER, gap, gap));
-          actionButtons.add(butOkay);
-          actionButtons.add(butCancel);
-          actionButtons.add(butDefaults);
-          actionButtons.add(butSave);
-          actionButtons.add(butLoad);
+        JPanel actionButtons = new JPanel(new FlowLayout(FlowLayout.CENTER, gap, gap));
+        actionButtons.add(butOkay);
+        actionButtons.add(butCancel);
+        actionButtons.add(butDefaults);
+        actionButtons.add(butSave);
+        actionButtons.add(butLoad);
 
-          JButton legendButton = SettingsIconLegend.createLegendButton(
+        JButton legendButton = SettingsIconLegend.createLegendButton(
               Messages.getString("GameOptionsDialog.legend.button"),
               Messages.getString("GameOptionsDialog.legend.tooltip"),
               GameOptionsPane.legendEntries());
-          JPanel legendPanel = new JPanel(new FlowLayout(FlowLayout.LEFT, gap, gap));
-          legendPanel.add(legendButton);
-          legendPanel.add(butUnofficial);
+        JPanel legendPanel = new JPanel(new FlowLayout(FlowLayout.LEFT, gap, gap));
+        legendPanel.add(legendButton);
+        legendPanel.add(butUnofficial);
+        legendPanel.add(butLegacy);
 
-          JPanel rightSpacer = new JPanel();
-          rightSpacer.setOpaque(false);
-          rightSpacer.setPreferredSize(new Dimension(legendPanel.getPreferredSize().width, 0));
+        JPanel rightSpacer = new JPanel();
+        rightSpacer.setOpaque(false);
+        rightSpacer.setPreferredSize(new Dimension(legendPanel.getPreferredSize().width, 0));
 
-          JPanel footer = new JPanel(new BorderLayout());
-          footer.add(legendPanel, BorderLayout.WEST);
-          footer.add(actionButtons, BorderLayout.CENTER);
-          footer.add(rightSpacer, BorderLayout.EAST);
-          return footer;
+        JPanel footer = new JPanel(new BorderLayout());
+        footer.add(legendPanel, BorderLayout.WEST);
+        footer.add(actionButtons, BorderLayout.CENTER);
+        footer.add(rightSpacer, BorderLayout.EAST);
+        return footer;
     }
 
-        private static void setUniformButtonSize(JButton... buttons) {
-          int width = java.util.Arrays.stream(buttons)
+    private static void configureRuleToggle(JToggleButton button, SettingsBadge badge, String labelKey,
+          String tooltipKey) {
+        boolean selected = button.isSelected();
+        String label = getString(labelKey);
+        button.setText(ruleToggleText(badge, label, getString("GameOptionsDialog.ruleToggle.on")));
+        Dimension onSize = button.getPreferredSize();
+        button.setText(ruleToggleText(badge, label, getString("GameOptionsDialog.ruleToggle.off")));
+        Dimension offSize = button.getPreferredSize();
+        Dimension size = new Dimension(Math.max(onSize.width, offSize.width), Math.max(onSize.height, offSize.height));
+        button.setPreferredSize(size);
+        button.setMinimumSize(size);
+        button.setToolTipText(getString(tooltipKey));
+        button.setSelected(selected);
+        updateRuleToggleText(button, badge, label);
+    }
+
+    static String ruleToggleText(SettingsBadge badge, String label, String state) {
+        return "<html><nobr>" + badge.toHtml() + "&nbsp;" + StringEscapeUtils.escapeHtml4(label)
+              + ": <b>" + StringEscapeUtils.escapeHtml4(state) + "</b></nobr></html>";
+    }
+
+    private static void updateRuleToggleText(JToggleButton button, SettingsBadge badge, String label) {
+        String stateKey = button.isSelected()
+              ? "GameOptionsDialog.ruleToggle.on"
+              : "GameOptionsDialog.ruleToggle.off";
+        String state = getString(stateKey);
+        button.setText(ruleToggleText(badge, label, state));
+        button.getAccessibleContext().setAccessibleName(label + ": " + state);
+    }
+
+    private static void setUniformButtonSize(JButton... buttons) {
+        int width = java.util.Arrays.stream(buttons)
               .mapToInt(button -> button.getPreferredSize().width)
               .max()
               .orElse(0);
-          int height = java.util.Arrays.stream(buttons)
+        int height = java.util.Arrays.stream(buttons)
               .mapToInt(button -> button.getPreferredSize().height)
               .max()
               .orElse(0);
-          Dimension size = new Dimension(width, height);
-          for (JButton button : buttons) {
+        Dimension size = new Dimension(width, height);
+        for (JButton button : buttons) {
             button.setPreferredSize(size);
             button.setMinimumSize(size);
-          }
         }
+    }
 
     /** Updates the dialog ui with the given options. */
     public void update(GameOptions options) {
@@ -264,6 +318,8 @@ public class GameOptionsDialog extends AbstractButtonDialog implements ActionLis
                 }
             }
         }
+        synchronizeRuleToggles();
+        toggleOptions();
     }
 
     public void refreshOptions() {
@@ -280,6 +336,9 @@ public class GameOptionsDialog extends AbstractButtonDialog implements ActionLis
             List<DialogOptionComponentYPanel> groupComponents = new ArrayList<>();
             for (Enumeration<IOption> j = group.getOptions(); j.hasMoreElements(); ) {
                 IOption option = j.nextElement();
+                if (excludedOptionNames.contains(option.getName())) {
+                    continue;
+                }
                 DialogOptionComponentYPanel component = createOptionComponent(option);
                 if (component != null) {
                     groupComponents.add(component);
@@ -287,14 +346,27 @@ public class GameOptionsDialog extends AbstractButtonDialog implements ActionLis
             }
             groups.add(new GameOptionsPane.OptionGroup(group.getName(), group.getDisplayableName(), groupComponents));
         }
-        gameOptionsPane = new GameOptionsPane(groups, this::shouldShow);
+        gameOptionsPane = new GameOptionsPane(groups, this::shouldShow, excludedOptionNames);
         panOptions.add(gameOptionsPane, BorderLayout.CENTER);
-        butUnofficial.setSelected(!(Boolean) options.getOption(OptionsConstants.BASE_HIDE_UNOFFICIAL).getValue());
+        synchronizeRuleToggles();
         toggleOptions();
         gameOptionsPane.setFilterText(activeFilter);
         panOptions.revalidate();
         panOptions.repaint();
         validate();
+    }
+
+    private void synchronizeRuleToggles() {
+        butUnofficial.setSelected(!backingOptionSelected(OptionsConstants.BASE_HIDE_UNOFFICIAL));
+        butLegacy.setSelected(!backingOptionSelected(OptionsConstants.BASE_HIDE_LEGACY));
+                updateRuleToggleText(butUnofficial, GameOptionsPane.unofficialBadge(),
+              getString("GameOptionsDialog.Unofficial"));
+                updateRuleToggleText(butLegacy, GameOptionsPane.legacyBadge(), getString("GameOptionsDialog.Legacy"));
+    }
+
+    private boolean backingOptionSelected(String optionName) {
+        List<DialogOptionComponentYPanel> components = optionComps.get(optionName);
+        return components != null && !components.isEmpty() && (Boolean) components.getFirst().getValue();
     }
 
     /**
@@ -311,19 +383,21 @@ public class GameOptionsDialog extends AbstractButtonDialog implements ActionLis
 
     /**
      * When show is true, options that contain the given String str are shown. When show is false, these options are
-     * hidden and deselected. Used to show/hide unofficial options.
+    * hidden and deactivated. Used to show or hide unofficial and legacy options.
      */
     private void toggleOptions() {
         for (List<DialogOptionComponentYPanel> comps : optionComps.values()) {
             // Each option in the list should have the same value, so picking the first is fine
             if (!comps.isEmpty()) {
                 DialogOptionComponentYPanel comp = comps.getFirst();
-                if (isUnofficialOption(comp.getOption())) {
-                    if (!shouldShow(comp.getOption())) {
-                        // Disable hidden unofficial options
-                        if (comp.getOption().getType() == IOption.BOOLEAN) {
-                            comp.setSelected(false);
-                        }
+                if (isHiddenOption(comp.getOption())) {
+                    continue;
+                }
+                if (!shouldShow(comp.getOption())) {
+                    if (comp.getOption().getType() == IOption.BOOLEAN) {
+                        comp.setSelected(false);
+                    } else if (comp.getOption().getName().equals(OptionsConstants.ADVANCED_GHOST_TARGET_MODE)) {
+                        comp.setValue(OptionsConstants.GHOST_TARGET_MODE_STANDARD);
                     }
                 }
             }
@@ -346,17 +420,15 @@ public class GameOptionsDialog extends AbstractButtonDialog implements ActionLis
 
     /** Returns true when the given Option should never show in the dialog. */
     private boolean isHiddenOption(IOption option) {
-        return option.getName().equals(OptionsConstants.BASE_HIDE_UNOFFICIAL);
-    }
-
-    private boolean isUnofficialOption(IOption option) {
-        return option.getDisplayableName().contains(UNOFFICIAL);
+        return option.getName().equals(OptionsConstants.BASE_HIDE_UNOFFICIAL)
+              || option.getName().equals(OptionsConstants.BASE_HIDE_LEGACY);
     }
 
     /** Returns true when the given Option should be visible in the dialog. */
     private boolean shouldShow(IOption option) {
-        boolean isHiddenUnofficial = !butUnofficial.isSelected() && isUnofficialOption(option);
-        return !(isHiddenUnofficial || isHiddenOption(option));
+        boolean isHiddenUnofficial = !butUnofficial.isSelected() && GameOptionsPane.isUnofficialOption(option);
+        boolean isHiddenLegacy = !butLegacy.isSelected() && GameOptionsPane.isLegacyOption(option);
+        return !(isHiddenUnofficial || isHiddenLegacy || isHiddenOption(option));
     }
 
     private DialogOptionComponentYPanel createOptionComponent(IOption option) {
@@ -793,19 +865,26 @@ public class GameOptionsDialog extends AbstractButtonDialog implements ActionLis
             }
 
         } else if (e.getSource().equals(butUnofficial)) {
-            if (!butUnofficial.isSelected()) {
-                boolean okay = MMConfirmDialog.confirm(frame, "Warning", getString("GameOptionsDialog.HideWarning"));
-                if (!okay) {
-                    butUnofficial.removeActionListener(this);
-                    butUnofficial.setSelected(true);
-                    butUnofficial.addActionListener(this);
-                    return;
-                }
-            }
-            optionComps.get(OptionsConstants.BASE_HIDE_UNOFFICIAL).getFirst().setSelected(!butUnofficial.isSelected());
-            toggleOptions();
+            ruleToggleChanged(butUnofficial, OptionsConstants.BASE_HIDE_UNOFFICIAL,
+                  GameOptionsPane.unofficialBadge(), "GameOptionsDialog.Unofficial");
+        } else if (e.getSource().equals(butLegacy)) {
+            ruleToggleChanged(butLegacy, OptionsConstants.BASE_HIDE_LEGACY,
+                  GameOptionsPane.legacyBadge(), "GameOptionsDialog.Legacy");
 
         }
+    }
+
+    private void ruleToggleChanged(JToggleButton button, String backingOptionName, SettingsBadge badge,
+          String labelKey) {
+        if (!button.isSelected()
+              && !MMConfirmDialog.confirm(frame, "Warning", getString("GameOptionsDialog.HideWarning"))) {
+            button.setSelected(true);
+            updateRuleToggleText(button, badge, getString(labelKey));
+            return;
+        }
+        optionComps.get(backingOptionName).getFirst().setSelected(!button.isSelected());
+        updateRuleToggleText(button, badge, getString(labelKey));
+        toggleOptions();
     }
 
     private File selectGameOptionsFile(boolean saveDialog) {
@@ -866,6 +945,7 @@ public class GameOptionsDialog extends AbstractButtonDialog implements ActionLis
         butOkay.setEnabled(editable);
         butDefaults.setEnabled(editable);
         butUnofficial.setEnabled(editable);
+        butLegacy.setEnabled(editable);
 
         // Update our data element.
         this.editable = editable;

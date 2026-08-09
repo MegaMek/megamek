@@ -36,6 +36,7 @@ package megamek.common.units;
 
 import java.io.Serial;
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Enumeration;
 import java.util.HashMap;
@@ -113,6 +114,7 @@ public class Crew implements Serializable {
 
     // Separate artillery skill
     private final int[] artillery;
+    private boolean pendingConRolls = false;
 
     // init bonuses
     // bonus for individual initiative
@@ -194,7 +196,7 @@ public class Crew implements Serializable {
     // endregion Variable Declarations
 
     // region Constructors
-
+    
     /**
      * Creates a nameless P5/G4 crew of the given size.
      *
@@ -350,6 +352,12 @@ public class Crew implements Serializable {
         return (pos < getGenders().length) ? getGenders()[pos] : Gender.RANDOMIZE;
     }
 
+    public boolean getPendingConRolls() { return pendingConRolls; }
+    
+    public void setPendingConRolls(final boolean pendingConRolls) {
+        this.pendingConRolls = pendingConRolls;
+    }
+    
     public void setGender(final Gender gender, final int pos) {
         getGenders()[pos] = gender;
     }
@@ -1256,6 +1264,7 @@ public class Crew implements Serializable {
         fatigueTurnCount = 0;
         doomed = false;
         ejected = false;
+        pendingConRolls = false;
         for (int i = 0; i < crewType.getCrewSlots(); i++) {
             unconscious[i] = false;
             dead[i] = false;

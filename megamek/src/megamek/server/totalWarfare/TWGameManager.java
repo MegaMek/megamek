@@ -226,6 +226,25 @@ public class TWGameManager extends AbstractGameManager {
      */
     private final Set<TeamChangeRequest> playersChangingTeam = new HashSet<>();
 
+    public Vector<Report> resolveCrewConsciousness() {
+        Vector<Report> vPhaseReport = new Vector<>();
+        boolean toughness = game.getOptions().booleanOption(OptionsConstants.RPG_TOUGHNESS);
+
+        for (Entity entity : game.inGameTWEntities()) {
+            if (entity.getCrew().getPendingConRolls()) {
+                Vector<Report> tempReport = Game.rulesManager.getRulesPilot().rollConRolls(entity, toughness);
+                if (tempReport != null) {
+                    vPhaseReport.addAll(tempReport);
+                }
+            }
+        }
+        
+        if (!vPhaseReport.isEmpty()) {
+            vPhaseReport.insertElementAt(new Report(3901, Report.PUBLIC), 0);
+        }
+        return vPhaseReport;
+    }
+
     /**
      * The immutable request for team change
      *
@@ -18139,6 +18158,8 @@ public class TWGameManager extends AbstractGameManager {
         if (!vPhaseReport.isEmpty()) {
             vPhaseReport.insertElementAt(new Report(3900, Report.PUBLIC), 0);
         }
+        
+        
 
         return vPhaseReport;
     }
@@ -19085,7 +19106,7 @@ public class TWGameManager extends AbstractGameManager {
                     totalHits,
                     damage,
                     crewPos,
-                    game.getOptions().booleanOption(OptionsConstants.RPG_TOUGHNESS));
+                    game.getOptions().booleanOption(OptionsConstants.RPG_TOUGHNESS), getGame().getPhase());
     }
 
     /**

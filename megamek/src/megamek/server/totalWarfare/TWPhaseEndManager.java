@@ -174,6 +174,7 @@ record TWPhaseEndManager(TWGameManager gameManager) {
                 gameManager.checkForPSRFromDamage();
                 gameManager.cleanupDestroyedNarcPods();
                 gameManager.addReport(gameManager.resolvePilotingRolls());
+                gameManager.addReport(gameManager.resolveCrewConsciousness());
                 gameManager.checkForFlawedCooling();
                 // check phase report
                 if (gameManager.getMainPhaseReport().size() > 1) {
@@ -203,6 +204,7 @@ record TWPhaseEndManager(TWGameManager gameManager) {
                 gameManager.applyBuildingDamage();
                 gameManager.checkForPSRFromDamage();
                 gameManager.addReport(gameManager.resolvePilotingRolls());
+                gameManager.addReport(gameManager.resolveCrewConsciousness());
                 gameManager.resolveSinkVees();
                 gameManager.cleanupDestroyedNarcPods();
                 gameManager.checkForFlawedCooling();
@@ -266,6 +268,7 @@ record TWPhaseEndManager(TWGameManager gameManager) {
                 gameManager.applyBuildingDamage();
                 gameManager.checkForPSRFromDamage();
                 gameManager.addReport(gameManager.resolvePilotingRolls());
+                gameManager.addReport(gameManager.resolveCrewConsciousness());
 
                 gameManager.cleanupDestroyedNarcPods();
                 gameManager.checkForFlawedCooling();

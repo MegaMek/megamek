@@ -35,7 +35,9 @@ package megamek.common.rules;
 import megamek.common.CriticalSlot;
 import megamek.common.Report;
 import megamek.common.TargetRollModifier;
+import megamek.common.annotations.Nullable;
 import megamek.common.compute.Compute;
+import megamek.common.enums.GamePhase;
 import megamek.common.game.Game;
 import megamek.common.options.OptionsConstants;
 import megamek.common.rolls.PilotingRollData;
@@ -44,6 +46,7 @@ import megamek.common.rolls.TargetRoll;
 import megamek.common.units.Entity;
 import megamek.common.units.Mek;
 
+import java.util.Collection;
 import java.util.List;
 import java.util.Vector;
 
@@ -59,7 +62,8 @@ public abstract class RulesPilot {
      * @param toughness true if the pilot has toughness
      * @return vector of reports describing the pilot hits
      */
-    public Vector<Report> pilotHits(Entity e, int totalHits, int damage, int crewPos, boolean toughness) {
+    public Vector<Report> pilotHits(Entity e, int totalHits, int damage, int crewPos, boolean toughness,
+          GamePhase phase) {
         Vector<Report> vDesc = new Vector<>();
         
         for (int hit = totalHits - damage + 1; hit <= totalHits; hit++) {
@@ -252,4 +256,14 @@ public abstract class RulesPilot {
      */
     public abstract PilotingRollData getSeatbeltRoll(int entityId, int fallHeight, int piloting,
           List<TargetRollModifier> modifiers, PilotingRollData roll);
+
+    /**
+     * Rolls any pending con checks
+     * @param entity The entity to roll
+     * @return The reports
+     */
+    @Nullable
+    public Vector<Report> rollConRolls(Entity entity, boolean toughness) { 
+        return null;
+    }
 }

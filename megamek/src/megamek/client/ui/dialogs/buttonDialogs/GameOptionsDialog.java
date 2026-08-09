@@ -37,9 +37,11 @@ import static megamek.client.ui.Messages.getString;
 import static megamek.client.ui.util.UIUtil.WrappingButtonPanel;
 
 import java.awt.BorderLayout;
+import java.awt.Component;
 import java.awt.Container;
 import java.awt.Dimension;
 import java.awt.FlowLayout;
+import java.awt.LayoutManager;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.File;
@@ -194,7 +196,7 @@ public class GameOptionsDialog extends AbstractButtonDialog implements ActionLis
         setUniformButtonSize(butOkay, butCancel, butDefaults, butSave, butLoad);
         int gap = UIUtil.scaleForGUI(BUTTON_GAP);
 
-        JPanel actionButtons = new JPanel(new FlowLayout(FlowLayout.CENTER, gap, gap));
+        JPanel actionButtons = new JPanel(new FlowLayout(FlowLayout.CENTER, gap, 0));
         actionButtons.add(butOkay);
         actionButtons.add(butCancel);
         actionButtons.add(butDefaults);
@@ -205,20 +207,102 @@ public class GameOptionsDialog extends AbstractButtonDialog implements ActionLis
               Messages.getString("GameOptionsDialog.legend.button"),
               Messages.getString("GameOptionsDialog.legend.tooltip"),
               GameOptionsPane.legendEntries());
-        JPanel legendPanel = new JPanel(new FlowLayout(FlowLayout.LEFT, gap, gap));
+        JPanel legendPanel = new JPanel(new FlowLayout(FlowLayout.LEFT, gap, 0));
         legendPanel.add(legendButton);
         legendPanel.add(butUnofficial);
         legendPanel.add(butLegacy);
 
-        JPanel rightSpacer = new JPanel();
-        rightSpacer.setOpaque(false);
-        rightSpacer.setPreferredSize(new Dimension(legendPanel.getPreferredSize().width, 0));
+        return responsiveFooter(legendPanel, actionButtons, gap);
+    }
 
-        JPanel footer = new JPanel(new BorderLayout());
-        footer.add(legendPanel, BorderLayout.WEST);
-        footer.add(actionButtons, BorderLayout.CENTER);
-        footer.add(rightSpacer, BorderLayout.EAST);
+    static JPanel responsiveFooter(JPanel ruleControls, JPanel actionButtons, int gap) {
+        JPanel footer = new JPanel(new ResponsiveFooterLayout(gap));
+        footer.add(ruleControls);
+        footer.add(actionButtons);
         return footer;
+    }
+
+    private static final class ResponsiveFooterLayout implements LayoutManager {
+        private final int gap;
+
+        private ResponsiveFooterLayout(int gap) {
+            this.gap = gap;
+        }
+
+        @Override
+        public void addLayoutComponent(String name, Component component) {
+        }
+
+        @Override
+        public void removeLayoutComponent(Component component) {
+        }
+
+        @Override
+        public Dimension preferredLayoutSize(Container parent) {
+            return layoutSize(parent, true);
+        }
+
+        @Override
+        public Dimension minimumLayoutSize(Container parent) {
+            return layoutSize(parent, false);
+        }
+
+        private Dimension layoutSize(Container parent, boolean preferred) {
+            if (parent.getComponentCount() < 2) {
+                return new Dimension();
+            }
+            Dimension controlsSize = componentSize(parent.getComponent(0), preferred);
+            Dimension actionsSize = componentSize(parent.getComponent(1), preferred);
+            var insets = parent.getInsets();
+            int requiredWidth = controlsSize.width + actionsSize.width + (gap * 3)
+                  + insets.left + insets.right;
+            int availableWidth = parent.getWidth();
+            boolean wraps = availableWidth > 0 && requiredWidth > availableWidth;
+            int width = wraps
+                  ? Math.max(controlsSize.width, actionsSize.width) + (gap * 2) + insets.left + insets.right
+                  : requiredWidth;
+            int height = wraps
+                  ? controlsSize.height + actionsSize.height + (gap * 3)
+                  : Math.max(controlsSize.height, actionsSize.height) + (gap * 2);
+            return new Dimension(width, height + insets.top + insets.bottom);
+        }
+
+        private static Dimension componentSize(Component component, boolean preferred) {
+            return preferred ? component.getPreferredSize() : component.getMinimumSize();
+        }
+
+        @Override
+        public void layoutContainer(Container parent) {
+            if (parent.getComponentCount() < 2) {
+                return;
+            }
+            Component controls = parent.getComponent(0);
+            Component actions = parent.getComponent(1);
+            Dimension controlsSize = controls.getPreferredSize();
+            Dimension actionsSize = actions.getPreferredSize();
+            var insets = parent.getInsets();
+            int availableWidth = parent.getWidth() - insets.left - insets.right;
+            int requiredWidth = controlsSize.width + actionsSize.width + (gap * 3);
+            if (requiredWidth <= availableWidth) {
+                int controlsX = insets.left + gap;
+                int maximumActionsX = parent.getWidth() - insets.right - gap - actionsSize.width;
+                int actionsX = Math.min(maximumActionsX,
+                      Math.max((parent.getWidth() - actionsSize.width) / 2,
+                            controlsX + controlsSize.width + gap));
+                int contentHeight = parent.getHeight() - insets.top - insets.bottom;
+                controls.setBounds(controlsX, insets.top + (contentHeight - controlsSize.height) / 2,
+                      controlsSize.width, controlsSize.height);
+                actions.setBounds(actionsX, insets.top + (contentHeight - actionsSize.height) / 2,
+                      actionsSize.width, actionsSize.height);
+            } else {
+                int controlsX = insets.left + gap;
+                int actionsX = Math.max(insets.left + gap, (parent.getWidth() - actionsSize.width) / 2);
+                int controlsY = insets.top + gap;
+                controls.setBounds(controlsX, controlsY, controlsSize.width, controlsSize.height);
+                actions.setBounds(actionsX, controlsY + controlsSize.height + gap,
+                      actionsSize.width, actionsSize.height);
+            }
+        }
     }
 
     private static void configureRuleToggle(JToggleButton button, SettingsBadge badge, String labelKey,

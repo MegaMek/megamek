@@ -32,8 +32,12 @@
  */
 package megamek.client.ui.dialogs.buttonDialogs;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
+
+import java.awt.Dimension;
+import javax.swing.JPanel;
 
 import megamek.client.ui.panels.GameOptionsPane;
 import org.junit.jupiter.api.Test;
@@ -53,5 +57,34 @@ class GameOptionsDialogTest {
         assertTrue(legacyOff.contains("Legacy Rules: <b>Off</b>"), legacyOff);
         assertFalse(unofficialOn.contains("\u2713"), unofficialOn);
         assertFalse(legacyOff.contains("\u2717"), legacyOff);
+    }
+
+    @Test
+    void responsiveFooterKeepsGroupsIntactAndWrapsWhenNeeded() {
+        JPanel ruleControls = fixedSizePanel(760, 40);
+        JPanel actionButtons = fixedSizePanel(720, 40);
+        JPanel footer = GameOptionsDialog.responsiveFooter(ruleControls, actionButtons, 8);
+
+        footer.setSize(1_600, 100);
+        footer.doLayout();
+
+        assertEquals(8, ruleControls.getX());
+        assertEquals(ruleControls.getY(), actionButtons.getY());
+        assertTrue(actionButtons.getX() + actionButtons.getWidth() <= footer.getWidth());
+
+        footer.setSize(1_200, footer.getPreferredSize().height);
+        footer.doLayout();
+
+        assertEquals(8, ruleControls.getX());
+        assertTrue(actionButtons.getY() > ruleControls.getY());
+        assertEquals((footer.getWidth() - actionButtons.getWidth()) / 2, actionButtons.getX());
+        assertTrue(ruleControls.getX() + ruleControls.getWidth() <= footer.getWidth());
+        assertTrue(actionButtons.getX() + actionButtons.getWidth() <= footer.getWidth());
+    }
+
+    private static JPanel fixedSizePanel(int width, int height) {
+        JPanel panel = new JPanel();
+        panel.setPreferredSize(new Dimension(width, height));
+        return panel;
     }
 }

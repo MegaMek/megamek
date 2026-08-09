@@ -476,11 +476,18 @@ public class BasicPathRanker extends PathRanker {
         return positions;
     }
 
-    /** Whether a unit has left the fighting line to pull back. */
+    /**
+     * Whether a unit has left the fighting line - pulling back under forced withdrawal, or ordered
+     * somewhere else entirely (a destination edge or a player waypoint). Such a unit earns no hold
+     * credit (it has somewhere to be, however good its current hex), and its say in where the
+     * formation's centre lies is sharply reduced - not removed, so the centre moves continuously as
+     * units leave the line (see {@code MutualSupportPathRanker}'s withdrawing centre weight).
+     */
     protected boolean isWithdrawing(Entity unit) {
+        BehaviorType behaviorType = getOwner().getUnitBehaviorTracker().getBehaviorType(unit, getOwner());
         return getOwner().isFallingBack(unit)
-              || getOwner().getUnitBehaviorTracker()
-                    .getBehaviorType(unit, getOwner()).equals(BehaviorType.ForcedWithdrawal);
+              || behaviorType.equals(BehaviorType.ForcedWithdrawal)
+              || behaviorType.equals(BehaviorType.MoveToDestination);
     }
 
     @Override
@@ -1910,12 +1917,17 @@ public class BasicPathRanker extends PathRanker {
               standoffDistance, distToEnemy, distToCluster, braveryMod);
         double aggressionMod = standoff.aggressionMod();
 
-        // A withdrawing unit has no business being pulled toward the enemy: kill the aggression pull (and,
-        // below, the closing incentive and mutual support pull) so the self-preservation term is what actually decides
-        // its path. Includes trapped withdrawers (NoPathToDestination while wanting to fall back), whose
-        // fallback retreat pull in calculateSelfPreservationMod would otherwise fight these terms.
+        // A unit with a movement mission has no business being pulled toward the enemy: kill the aggression
+        // pull (and, below, the closing incentive and mutual support pull) so the destination and
+        // self-preservation terms are what actually decide its path. Covers forced withdrawal, trapped
+        // withdrawers (NoPathToDestination while wanting to fall back), and units ORDERED somewhere -
+        // MoveToDestination, whether a flee edge or a player waypoint. Without the last one, an ordered
+        // retreat past a superior enemy loitered: the order registered but the closing pull and the
+        // exchange-priced terms vetoed every step of the route, and the unit crept in place all game
+        // (community game 2026-08-07, 395 MoveToDestination rows with near-zero net displacement).
         BehaviorType moverBehavior = getOwner().getUnitBehaviorTracker().getBehaviorType(movingUnit, getOwner());
         boolean withdrawing = (moverBehavior == BehaviorType.ForcedWithdrawal)
+              || (moverBehavior == BehaviorType.MoveToDestination)
               || ((moverBehavior == BehaviorType.NoPathToDestination) && getOwner().wantsToFallBack(movingUnit));
         if (withdrawing) {
             aggressionMod = 0;

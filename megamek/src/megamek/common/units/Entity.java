@@ -11456,16 +11456,18 @@ public abstract class Entity extends TurnOrdered
                 && getDisplacementAttack() instanceof ChargeAttackAction) {
                 ChargeAttackAction chargeAttack = (ChargeAttackAction) getDisplacementAttack();
                 Entity target = (Entity) chargeAttack.getTarget(game);
-                if (target != null && (target.isDestroyed() || target.isProne())) {
-                    Enumeration<AttackAction> gameDisplacementAttacks = game.getDisplacementAttacks();
-                    while (gameDisplacementAttacks != null && gameDisplacementAttacks.hasMoreElements()) {
-                        AttackAction attackAction = gameDisplacementAttacks.nextElement();
-                        if (attackAction.equals(chargeAttack)) {
-                            game.removeDisplacementAttack(chargeAttack);
-                            break;
+                if (target != null) {
+                    if (target.isDestroyed() || target.isProne()) {
+                        Enumeration<AttackAction> gameDisplacementAttacks = game.getDisplacementAttacks();
+                        while (gameDisplacementAttacks != null && gameDisplacementAttacks.hasMoreElements()) {
+                            AttackAction attackAction = gameDisplacementAttacks.nextElement();
+                            if (attackAction.equals(chargeAttack)) {
+                                game.removeDisplacementAttack(chargeAttack);
+                                break;
+                            }
                         }
+                        displacementAttack = null;
                     }
-                    displacementAttack = null;
                 } else {
                     return false;
                 }

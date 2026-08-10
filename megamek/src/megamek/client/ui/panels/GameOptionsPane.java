@@ -103,6 +103,84 @@ public class GameOptionsPane extends JPanel {
           getString("GameOptionsDialog.legend.unofficial"));
     private static final SettingsBadge LEGACY_BADGE = new SettingsBadge(LEGACY_ICON, null,
           getString("GameOptionsDialog.legend.legacy"));
+    private static final Set<String> UNOFFICIAL_OPTIONS = Set.of(
+          OptionsConstants.BASE_INFANTRY_DAMAGE_HEAT,
+          OptionsConstants.ADVANCED_COMBAT_FULL_ROTOR_HITS,
+          OptionsConstants.ADVANCED_SINGLE_BLIND_BOTS,
+          OptionsConstants.UNOFFICIAL_BRIDGE_REPAIR_ENGINEERS,
+          OptionsConstants.ADVANCED_INCLUSIVE_SENSOR_RANGE,
+          OptionsConstants.ADVANCED_SENSORS_DETECT_ALL,
+          OptionsConstants.ADVANCED_MAG_SCAN_NO_HILLS,
+          OptionsConstants.ADVANCED_WOODS_BURN_DOWN,
+          OptionsConstants.ADVANCED_NO_IGNITE_CLEAR,
+          OptionsConstants.ADVANCED_EXTREME_TEMPERATURE_SURVIVAL,
+          OptionsConstants.ADVANCED_ARMED_MEKWARRIORS,
+          OptionsConstants.ADVANCED_PILOTS_VISUAL_RANGE_ONE,
+          OptionsConstants.ADVANCED_PILOTS_CANNOT_SPOT,
+          OptionsConstants.ADVANCED_METAL_CONTENT,
+          OptionsConstants.ADVANCED_BA_GRAB_BARS,
+          OptionsConstants.ADVANCED_ALTERNATE_MASC,
+          OptionsConstants.ADVANCED_ALTERNATE_MASC_ENHANCED,
+          OptionsConstants.UNOFFICIAL_BACKHOE_CLEARS_RUBBLE,
+          OptionsConstants.ADVANCED_COMBAT_HOT_LOAD_IN_GAME,
+          OptionsConstants.ADVANCED_COMBAT_KIND_RAPID_AC,
+          OptionsConstants.ADVANCED_COMBAT_MULTI_USE_AMS,
+          OptionsConstants.ADVANCED_COMBAT_NO_TAC,
+          OptionsConstants.ADVANCED_COMBAT_VTOL_STRAFING,
+          OptionsConstants.ADVANCED_COMBAT_VEHICLES_SAFE_FROM_INFERNOS,
+          OptionsConstants.ADVANCED_COMBAT_PROTOMEKS_SAFE_FROM_INFERNOS,
+          OptionsConstants.ADVANCED_COMBAT_INDIRECT_ALWAYS_POSSIBLE,
+          OptionsConstants.ADVANCED_COMBAT_INCREASED_AC_DMG,
+          OptionsConstants.ADVANCED_COMBAT_UNJAM_UAC,
+          OptionsConstants.ADVANCED_COMBAT_TAC_OPS_UAC_TWO_ROLLS,
+          OptionsConstants.ADVANCED_COMBAT_CLUBS_PUNCH,
+          OptionsConstants.ADVANCED_COMBAT_ON_MAP_PREDESIGNATE,
+          OptionsConstants.ADVANCED_COMBAT_MAP_AREA_PREDESIGNATE,
+          OptionsConstants.ADVANCED_COMBAT_NUM_HEXES_PREDESIGNATE,
+          OptionsConstants.ADVANCED_COMBAT_FOREST_FIRES_NO_SMOKE,
+          OptionsConstants.ADVANCED_GROUND_MOVEMENT_MEK_LANCE_MOVEMENT,
+          OptionsConstants.ADVANCED_GROUND_MOVEMENT_UNOFF_NO_IMMOBILE_VEHICLES,
+          OptionsConstants.ADVANCED_GROUND_MOVEMENT_EJECTED_PILOTS_FLEE,
+          OptionsConstants.ADVANCED_GROUND_MOVEMENT_AUTO_ABANDON_UNIT,
+          OptionsConstants.ADVANCED_GROUND_MOVEMENT_NO_HOVER_CHARGE,
+          OptionsConstants.ADVANCED_GROUND_MOVEMENT_NO_PRE_MOVE_VIBRA,
+          OptionsConstants.ADVANCED_GROUND_MOVEMENT_FALLS_END_MOVEMENT,
+          OptionsConstants.ADVANCED_GROUND_MOVEMENT_PSR_JUMP_HEAVY_WOODS,
+          OptionsConstants.ADVANCED_GROUND_MOVEMENT_NO_NIGHT_MOVE_PEN,
+          OptionsConstants.ADVANCED_AERO_RULES_STRATOPS_AA_FIRE,
+          OptionsConstants.ADVANCED_AERO_RULES_STRATOPS_BEARINGS_ONLY_VELOCITY,
+          OptionsConstants.ADVANCED_AERO_RULES_RETURN_FLYOVER,
+          OptionsConstants.ADVANCED_AERO_RULES_CLIMB_OUT,
+          OptionsConstants.ADVANCED_AERO_RULES_AA_MOVE_MOD,
+          OptionsConstants.ADVANCED_AERO_RULES_SINGLE_NO_CAP,
+          OptionsConstants.ADVANCED_AERO_RULES_ALLOW_LARGE_SQUADRONS,
+          OptionsConstants.ADVANCED_AERO_RULES_AERO_SANITY,
+          OptionsConstants.ADVANCED_AERO_RULES_AERO_ARTILLERY_MUNITIONS,
+          OptionsConstants.ADVANCED_AERO_RULES_CRASHED_DROPSHIPS_SURVIVE,
+          OptionsConstants.ADVANCED_AERO_RULES_EXPANDED_KF_DRIVE_DAMAGE,
+          OptionsConstants.UNOFFICIAL_ADV_ATMOSPHERIC_CONTROL,
+          OptionsConstants.INIT_INF_MOVE_EVEN,
+          OptionsConstants.INIT_INF_DEPLOY_EVEN,
+          OptionsConstants.INIT_INF_MOVE_LATER,
+          OptionsConstants.INIT_INF_MOVE_MULTI,
+          OptionsConstants.INIT_PROTOMEKS_MOVE_EVEN,
+          OptionsConstants.INIT_PROTOMEKS_MOVE_LATER,
+          OptionsConstants.INIT_PROTOMEKS_MOVE_MULTI,
+          OptionsConstants.INIT_INF_PROTO_MOVE_MULTI,
+          OptionsConstants.INIT_SIMULTANEOUS_DEPLOYMENT,
+          OptionsConstants.INIT_SIMULTANEOUS_TARGETING,
+          OptionsConstants.INIT_SIMULTANEOUS_FIRING,
+          OptionsConstants.INIT_SIMULTANEOUS_PHYSICAL,
+          OptionsConstants.INIT_FRONT_LOAD_INITIATIVE,
+          OptionsConstants.INIT_INITIATIVE_STREAK_COMPENSATION,
+          OptionsConstants.RPG_INDIVIDUAL_INITIATIVE,
+          OptionsConstants.RPG_COMMAND_INIT,
+          OptionsConstants.RPG_TOUGHNESS,
+          OptionsConstants.RPG_CONDITIONAL_EJECTION,
+          OptionsConstants.RPG_BEGIN_SHUTDOWN,
+          OptionsConstants.ADVANCED_COMBAT_MAX_EXTERNAL_HEAT,
+          OptionsConstants.ADVANCED_COMBAT_CASE_PILOT_DAMAGE,
+          OptionsConstants.ADVANCED_COMBAT_NO_FORCED_PRIMARY_TARGETS);
     private static final Set<String> LEGACY_OPTIONS = Set.of(
           OptionsConstants.ADVANCED_GHOST_TARGET_MODE,
           OptionsConstants.ADVANCED_GHOST_TARGET_MAX,
@@ -560,13 +638,18 @@ public class GameOptionsPane extends JPanel {
 
     private static String optionDisplayName(IOption option) {
         String displayName = hasShortLabel(option) ? TEXT.getText(shortLabelKey(option)) : option.getDisplayableName();
-        return displayName.replaceFirst("(?i)^\\(Unofficial\\)\\s*", "")
-              .replaceFirst("(?i)^Unofficial:\\s*", "")
-              .replaceFirst("(?i)\\s*\\(Unofficial\\)\\s*", " ")
-              .replaceFirst("(?i)^\\(Legacy(?:\\s+MaxTech)?\\)\\s*", "")
+        if (isUnofficialOption(option)) {
+            displayName = stripUnofficialMarker(displayName);
+        }
+        return displayName.replaceFirst("(?i)^\\(Legacy(?:\\s+MaxTech)?\\)\\s*", "")
               .replaceFirst("(?i)\\s*\\(Legacy(?:\\s+only)?\\)\\s*", " ")
               .replaceFirst("(?i)\\s*\\[Legacy]\\s*", " ")
               .trim();
+    }
+
+    static String stripUnofficialMarker(String displayName) {
+        return displayName.replaceFirst("^\\([^)]*\\)\\s*", "")
+              .replaceFirst("(?i)^Unofficial:\\s*", "");
     }
 
     private static String shortLabelKey(IOption option) {
@@ -582,7 +665,11 @@ public class GameOptionsPane extends JPanel {
     }
 
     public static boolean isUnofficialOption(IOption option) {
-        return option.getName().startsWith("unoff") || option.getDisplayableName().contains("Unofficial");
+        return UNOFFICIAL_OPTIONS.contains(option.getName());
+    }
+
+    static Set<String> unofficialOptionNames() {
+        return UNOFFICIAL_OPTIONS;
     }
 
     public static boolean isLegacyOption(IOption option) {

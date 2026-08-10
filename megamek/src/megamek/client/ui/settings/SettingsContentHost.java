@@ -125,6 +125,15 @@ public class SettingsContentHost extends JPanel {
         SwingUtilities.invokeLater(this::resetScrollPosition);
     }
 
+    /** Rebuilds contextual-help listeners after the current content's component hierarchy changes. */
+    public void refreshHelpBindings() {
+        unbindHelp();
+        helpPanel.clearHelpText();
+        if (helpPanel.isVisible() && currentContent != null) {
+            bindHelp(currentContent, null);
+        }
+    }
+
     public void resetScrollPosition() {
         contentScrollPane.getVerticalScrollBar().setValue(0);
     }

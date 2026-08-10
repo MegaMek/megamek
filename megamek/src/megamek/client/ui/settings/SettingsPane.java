@@ -123,6 +123,7 @@ public class SettingsPane extends JPanel {
     /** Reapplies the current navigation filter after a page's searchable content changes. */
     public void refreshFilter() {
         navigationPanel.refreshFilter();
+        contentHost.refreshHelpBindings();
     }
 
     private void selectedNavigationTarget(SettingsRoute route) {

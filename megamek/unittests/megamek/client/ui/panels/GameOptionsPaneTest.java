@@ -39,6 +39,8 @@ import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertSame;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
 
 import java.awt.Color;
 import java.awt.Component;
@@ -233,6 +235,29 @@ class GameOptionsPaneTest {
             pane.setFilterText("");
             assertNull(doubleBlindCheckBox.getToolTipText());
             assertNull(teamVisionCheckBox.getToolTipText());
+        });
+    }
+
+    @Test
+    void refreshingVisibilityBindsHelpToRevealedOption() throws Exception {
+        runOnEdt(() -> {
+            GameOptions options = new GameOptions();
+            DialogOptionComponentYPanel bridgeBuilding = component(
+                  options.getOption(OptionsConstants.ADVANCED_BRIDGE_BUILDING_ENGINEERS));
+            DialogOptionComponentYPanel bridgeRepair = component(
+                  options.getOption(OptionsConstants.UNOFFICIAL_BRIDGE_REPAIR_ENGINEERS));
+            AtomicBoolean showBridgeRepair = new AtomicBoolean(false);
+            GameOptionsPane pane = pane("advancedRules", List.of(bridgeBuilding, bridgeRepair),
+                  option -> !option.getName().equals(OptionsConstants.UNOFFICIAL_BRIDGE_REPAIR_ENGINEERS)
+                        || showBridgeRepair.get());
+            JCheckBox bridgeRepairCheckBox = bridgeRepair.settingsCheckBox();
+
+            assertNotNull(bridgeRepairCheckBox.getToolTipText());
+            showBridgeRepair.set(true);
+            pane.refreshVisibility();
+
+            assertTrue(bridgeRepairCheckBox.isVisible());
+            assertNull(bridgeRepairCheckBox.getToolTipText());
         });
     }
 
@@ -957,6 +982,54 @@ class GameOptionsPaneTest {
             assertTrue(advancedTitle.contains(ADVANCED_SYMBOL));
             assertFalse(advancedTitle.contains(UNOFFICIAL_SYMBOL));
         });
+    }
+
+    @Test
+    void unofficialClassificationDoesNotDependOnLocalizedDisplayText() {
+        IOption option = mock(IOption.class);
+        when(option.getName()).thenReturn(OptionsConstants.ADVANCED_ALTERNATE_MASC);
+        String spanishDisplayName = "(No oficial) Alternativo MASC/Supercharger";
+        when(option.getDisplayableName()).thenReturn(spanishDisplayName);
+
+        assertTrue(GameOptionsPane.isUnofficialOption(option));
+        assertEquals("Alternativo MASC/Supercharger", GameOptionsPane.stripUnofficialMarker(spanishDisplayName));
+    }
+
+    @Test
+    void unofficialMetadataMatchesRegisteredEnglishOptionMarkers() {
+        ResourceBundle englishOptions = ResourceBundle.getBundle("megamek.common.options.messages", Locale.ROOT);
+        GameOptions options = new GameOptions();
+        Set<String> unofficialOptions = new LinkedHashSet<>();
+
+        for (Enumeration<IOptionGroup> groups = options.getGroups(); groups.hasMoreElements(); ) {
+            IOptionGroup group = groups.nextElement();
+            for (Enumeration<IOption> groupOptions = group.getOptions(); groupOptions.hasMoreElements(); ) {
+                IOption option = groupOptions.nextElement();
+                String displayName = englishOptions.getString(
+                      "GameOptionsInfo.option." + option.getName() + ".displayableName");
+                boolean hasUnofficialMarker = displayName.startsWith("(Unofficial)")
+                      || displayName.startsWith("Unofficial:");
+                assertEquals(hasUnofficialMarker, GameOptionsPane.isUnofficialOption(option), option.getName());
+                if (hasUnofficialMarker) {
+                    unofficialOptions.add(option.getName());
+                }
+            }
+        }
+
+        assertEquals(unofficialOptions, GameOptionsPane.unofficialOptionNames());
+    }
+
+    @Test
+    void rngDescriptionUsesDropdownHelpInAllSupportedLocales() {
+        String key = "GameOptionsInfo.option.rng_type.description";
+        String englishDescription = ResourceBundle.getBundle(
+              "megamek.common.options.messages", Locale.ROOT).getString(key);
+
+        for (Locale locale : List.of(Locale.GERMAN, Locale.forLanguageTag("es"), Locale.forLanguageTag("ru"))) {
+            assertEquals(englishDescription,
+                  ResourceBundle.getBundle("megamek.common.options.messages", locale).getString(key),
+                  locale.toLanguageTag());
+        }
     }
 
     @Test

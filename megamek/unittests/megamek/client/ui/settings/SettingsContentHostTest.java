@@ -131,13 +131,27 @@ class SettingsContentHostTest {
     }
 
     @Test
+    void plainHelpTextPreservesLineBreaksWithoutFixedWidthMarkup() {
+        SettingsContentHost host = new SettingsContentHost(new JLabel("Source"), true);
+
+        host.setHelpText("First line\nSecond line");
+
+        JEditorPane helpPane = findComponent(host, "settingsHelpText", JEditorPane.class);
+        assertTrue(helpPane.getText().contains("First line<br>"), helpPane.getText());
+        assertTrue(helpPane.getText().contains("Second line"), helpPane.getText());
+        assertFalse(helpPane.getText().contains("width="), helpPane.getText());
+    }
+
+    @Test
     void htmlFragmentHelpTextIsPreservedAsMarkup() {
         SettingsContentHost host = new SettingsContentHost(new JLabel("Source"), true);
 
-        host.setHelpText("First line.<br><br><b>Warning:</b> Second line.");
+        host.setHelpText("First line.<br><br><b>Warning:</b> Second line.\nThird line.");
 
         JEditorPane helpPane = findComponent(host, "settingsHelpText", JEditorPane.class);
         assertTrue(helpPane.getText().contains("<b>Warning:</b>"), helpPane.getText());
+        assertTrue(helpPane.getText().contains("Second line.<br>"), helpPane.getText());
+        assertTrue(helpPane.getText().contains("Third line."), helpPane.getText());
         assertFalse(helpPane.getText().contains("&lt;br&gt;"), helpPane.getText());
     }
 
@@ -260,19 +274,20 @@ class SettingsContentHostTest {
     }
 
     @Test
-    void inheritedRawHelpOverridesWrappedDescendantTooltip() {
-        String rawHelp = "The details panel should wrap this text to its available width.";
-        HelpContainer content = new HelpContainer(rawHelp);
+    void descendantTooltipOverridesInheritedRawHelp() {
+        String parentHelp = "Parent help";
+        String childHelp = "Child-specific wrapped help";
+        HelpContainer content = new HelpContainer(parentHelp);
         JLabel child = new JLabel("Option");
-        child.setToolTipText("<html><div width=500>" + rawHelp + "</div></html>");
+        child.setToolTipText("<html><div width=500>" + childHelp + "</div></html>");
         content.add(child);
 
         SettingsContentHost host = new SettingsContentHost(content, true);
         fireMouseEntered(child);
         JEditorPane helpPane = findComponent(host, "settingsHelpText", JEditorPane.class);
 
-        assertTrue(helpPane.getText().contains(rawHelp), helpPane.getText());
-        assertFalse(helpPane.getText().contains("width=500"), helpPane.getText());
+        assertTrue(helpPane.getText().contains(childHelp), helpPane.getText());
+        assertFalse(helpPane.getText().contains(parentHelp), helpPane.getText());
         assertNull(child.getToolTipText());
     }
 

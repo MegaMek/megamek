@@ -161,9 +161,12 @@ public class SettingsContentHost extends JPanel {
             helpPanel.setHelpText(helpText);
             return;
         }
-        String body = containsHtmlTag(helpText)
+          String body = (containsHtmlTag(helpText)
               ? helpText
-              : StringEscapeUtils.escapeHtml4(helpText);
+              : StringEscapeUtils.escapeHtml4(helpText))
+              .replace("\r\n", "\n")
+              .replace('\r', '\n')
+              .replace("\n", "<br>");
         helpPanel.setHelpText("<html>" + body + "</html>");
     }
 

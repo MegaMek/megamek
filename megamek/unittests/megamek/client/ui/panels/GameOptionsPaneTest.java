@@ -161,6 +161,33 @@ class GameOptionsPaneTest {
     }
 
     @Test
+    void visibilityRefreshKeepsSectionSearchAndReplacesVisibleOptionIndex() throws Exception {
+        runOnEdt(() -> {
+            GameOptions options = new GameOptions();
+            DialogOptionComponentYPanel bridgeBuilding = component(
+                  options.getOption(OptionsConstants.ADVANCED_BRIDGE_BUILDING_ENGINEERS));
+            DialogOptionComponentYPanel bridgeRepair = component(
+                  options.getOption(OptionsConstants.UNOFFICIAL_BRIDGE_REPAIR_ENGINEERS));
+            AtomicBoolean showBridgeRepair = new AtomicBoolean(false);
+            GameOptionsPane pane = pane("advancedRules", List.of(bridgeBuilding, bridgeRepair),
+                  option -> !option.getName().equals(OptionsConstants.UNOFFICIAL_BRIDGE_REPAIR_ENGINEERS)
+                        || showBridgeRepair.get());
+            JTree tree = findComponent(pane, JTree.class);
+
+            pane.setFilterText(OptionsConstants.UNOFFICIAL_BRIDGE_REPAIR_ENGINEERS);
+            assertTreePathDoesNotExist(tree, "Rules", "Terrain and Environment");
+
+            pane.setFilterText("Battlefield Engineering");
+            assertTreePathExists(tree, "Rules", "Terrain and Environment");
+
+            showBridgeRepair.set(true);
+            pane.refreshVisibility();
+            pane.setFilterText(OptionsConstants.UNOFFICIAL_BRIDGE_REPAIR_ENGINEERS);
+            assertTreePathExists(tree, "Rules", "Terrain and Environment");
+        });
+    }
+
+    @Test
     void pageTitleSearchKeepsPageRowsVisible() throws Exception {
         runOnEdt(() -> {
             GameOptions options = new GameOptions();
@@ -528,8 +555,12 @@ class GameOptionsPaneTest {
                   new GameOptionsPane.OptionGroup("victory", "Victory Conditions", List.of(checkVictory))),
                   option -> true);
 
-            assertSame(SwingUtilities.getAncestorOfClass(SettingsPagePanel.class, allowGameMaster),
-                  SwingUtilities.getAncestorOfClass(SettingsPagePanel.class, checkVictory));
+            SettingsPagePanel gameMasterPage = (SettingsPagePanel) SwingUtilities.getAncestorOfClass(
+                SettingsPagePanel.class, allowGameMaster.settingsCheckBox());
+            SettingsPagePanel victoryPage = (SettingsPagePanel) SwingUtilities.getAncestorOfClass(
+                SettingsPagePanel.class, checkVictory.settingsCheckBox());
+            assertNotNull(gameMasterPage);
+            assertSame(gameMasterPage, victoryPage);
         });
     }
 
@@ -1172,12 +1203,10 @@ class GameOptionsPaneTest {
             JCheckBox bridgeBuildingCheckBox = bridgeBuilding.settingsCheckBox();
             JCheckBox bridgeRepairCheckBox = bridgeRepair.settingsCheckBox();
             int bridgeRepairPreferredWidth = bridgeRepairCheckBox.getPreferredSize().width;
-            JCheckBox bridgeRepairWithoutBadgePadding = new JCheckBox(
-                  bridgeRepairCheckBox.getText().replace("&nbsp;", ""));
 
             assertSectionAlignment(minefieldsCheckBox, blackIceCheckBox,
                   woodsAmountLabel, woodsAmountControl, battleWreckCheckBox, bridgeBuildingCheckBox);
-            assertTrue(bridgeRepairPreferredWidth > bridgeRepairWithoutBadgePadding.getPreferredSize().width);
+            assertTrue(bridgeRepairCheckBox.getText().contains("&nbsp;"), bridgeRepairCheckBox.getText());
             bridgeRepairCheckBox.getParent().doLayout();
             assertTrue(bridgeRepairCheckBox.getWidth() >= bridgeRepairPreferredWidth);
         });

@@ -52,6 +52,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.Vector;
+import java.util.function.Predicate;
 import javax.swing.*;
 import javax.swing.filechooser.FileFilter;
 import javax.xml.parsers.DocumentBuilder;
@@ -473,27 +474,8 @@ public class GameOptionsDialog extends AbstractButtonDialog implements ActionLis
         return isInLobby && VictoryConditionsDialog.VICTORY_OPTIONS_GROUP_NAME.equals(group.getName());
     }
 
-    /**
-     * When show is true, options that contain the given String str are shown. When show is false, these options are
-    * hidden and deactivated. Used to show or hide unofficial and legacy options.
-     */
+    /** Refreshes unofficial/legacy visibility and dependent control state without changing hidden rule values. */
     private void toggleOptions() {
-        for (List<DialogOptionComponentYPanel> comps : optionComps.values()) {
-            // Each option in the list should have the same value, so picking the first is fine
-            if (!comps.isEmpty()) {
-                DialogOptionComponentYPanel comp = comps.getFirst();
-                if (isHiddenOption(comp.getOption())) {
-                    continue;
-                }
-                if (!shouldShow(comp.getOption())) {
-                    if (comp.getOption().getType() == IOption.BOOLEAN) {
-                        comp.setSelected(false);
-                    } else if (comp.getOption().getName().equals(OptionsConstants.ADVANCED_GHOST_TARGET_MODE)) {
-                        comp.setValue(OptionsConstants.GHOST_TARGET_MODE_STANDARD);
-                    }
-                }
-            }
-        }
         gameOptionsPane.refreshVisibility();
 
         // Initialize dependent options: Climb Out requires Return Flyover
@@ -505,6 +487,24 @@ public class GameOptionsDialog extends AbstractButtonDialog implements ActionLis
                 comp.setEditable(returnFlyoverEnabled);
                 if (!returnFlyoverEnabled) {
                     comp.setSelected(false);
+                }
+            }
+        }
+    }
+
+    static void deactivateOptions(Map<String, List<DialogOptionComponentYPanel>> optionComponents,
+          Predicate<IOption> category) {
+        for (List<DialogOptionComponentYPanel> comps : optionComponents.values()) {
+            // Each option in the list should have the same value, so picking the first is fine
+            if (!comps.isEmpty()) {
+                DialogOptionComponentYPanel comp = comps.getFirst();
+                if (!category.test(comp.getOption())) {
+                    continue;
+                }
+                if (comp.getOption().getType() == IOption.BOOLEAN) {
+                    comp.setSelected(false);
+                } else if (comp.getOption().getName().equals(OptionsConstants.ADVANCED_GHOST_TARGET_MODE)) {
+                    comp.setValue(OptionsConstants.GHOST_TARGET_MODE_STANDARD);
                 }
             }
         }
@@ -959,10 +959,11 @@ public class GameOptionsDialog extends AbstractButtonDialog implements ActionLis
 
         } else if (e.getSource().equals(butUnofficial)) {
             ruleToggleChanged(butUnofficial, OptionsConstants.BASE_HIDE_UNOFFICIAL,
-                  GameOptionsPane.unofficialBadge(), "GameOptionsDialog.Unofficial");
+                  GameOptionsPane.unofficialBadge(), "GameOptionsDialog.Unofficial",
+                  GameOptionsPane::isUnofficialOption);
         } else if (e.getSource().equals(butLegacy)) {
             ruleToggleChanged(butLegacy, OptionsConstants.BASE_HIDE_LEGACY,
-                  GameOptionsPane.legacyBadge(), "GameOptionsDialog.Legacy");
+                  GameOptionsPane.legacyBadge(), "GameOptionsDialog.Legacy", GameOptionsPane::isLegacyOption);
 
         }
     }
@@ -980,7 +981,7 @@ public class GameOptionsDialog extends AbstractButtonDialog implements ActionLis
     }
 
     private void ruleToggleChanged(JToggleButton button, String backingOptionName, SettingsBadge badge,
-          String labelKey) {
+          String labelKey, Predicate<IOption> category) {
         if (!hasBackingOption(backingOptionName)) {
             return;
         }
@@ -991,6 +992,9 @@ public class GameOptionsDialog extends AbstractButtonDialog implements ActionLis
             return;
         }
         optionComps.get(backingOptionName).getFirst().setSelected(!button.isSelected());
+        if (!button.isSelected()) {
+            deactivateOptions(optionComps, category);
+        }
         updateRuleToggleText(button, badge, getString(labelKey));
         toggleOptions();
     }

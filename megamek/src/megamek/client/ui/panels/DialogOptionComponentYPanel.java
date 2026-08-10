@@ -223,6 +223,9 @@ public class DialogOptionComponentYPanel extends FixedYPanel
     void setSettingsPresentation(String displayName, Collection<SettingsBadge> badges) {
         optionDisplayName = displayName;
         settingsBadgeHtml = SettingsBadge.formatHtml(badges);
+        if (!settingsBadgeHtml.isBlank()) {
+            settingsBadgeHtml += "&nbsp;";
+        }
         updateOptionLabelText();
     }
 

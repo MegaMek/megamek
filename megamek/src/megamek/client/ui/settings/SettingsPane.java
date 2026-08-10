@@ -225,8 +225,10 @@ public class SettingsPane extends JPanel {
             pageCache.put(route.getId(), page);
             SettingsPagePanel pagePanel = SettingsContentHost.findPagePanel(page);
             if (pagePanel != null) {
-                // Page indexes assume display text is static after construction; highlights still read live text.
-                route.setSectionSearchText(pagePanel.getPageSearchText());
+                String searchText = page instanceof SettingsFilterable
+                      ? pagePanel.getStructuralSearchText()
+                      : pagePanel.getPageSearchText();
+                route.setSectionSearchText(searchText);
             }
         }
         return page;

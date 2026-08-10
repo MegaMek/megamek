@@ -77,6 +77,7 @@ public class SettingsPagePanel extends JPanel {
     private final boolean showDetailsPanel;
     private final String bodySearchText;
     private final String pageSearchText;
+    private final String structuralSearchText;
     private final List<SearchableSection> searchableSections;
     private final Map<Component, CollapsibleSectionPanel> sectionsByContent = new IdentityHashMap<>();
     private final int maximumPageWidth;
@@ -95,6 +96,7 @@ public class SettingsPagePanel extends JPanel {
         List<CollapsibleSectionPanel> sections = new ArrayList<>();
         List<SearchableSection> searchable = new ArrayList<>();
         StringBuilder allBodyText = new StringBuilder();
+        StringBuilder allStructuralBodyText = new StringBuilder();
         for (Object bodyItem : builder.bodyItems) {
             if (bodyItem instanceof Section definition) {
                 CollapsibleSectionPanel section = createSection(builder, definition);
@@ -106,6 +108,7 @@ public class SettingsPagePanel extends JPanel {
                 if (!text.isBlank()) {
                     allBodyText.append(' ').append(text);
                 }
+                appendSearchText(allStructuralBodyText, sectionMetadataSearchText(builder.textProvider, definition));
             } else if (bodyItem instanceof JComponent component) {
                 renderItems.add(component);
                 String text = SettingsSearchText.collect(component);
@@ -122,6 +125,12 @@ public class SettingsPagePanel extends JPanel {
         appendSearchText(allPageText, bodySearchText);
         appendSearchText(allPageText, quoteSearchText(builder));
         pageSearchText = allPageText.toString();
+        StringBuilder allStructuralText = new StringBuilder();
+        appendSearchText(allStructuralText, headerSearchText(builder));
+        appendSearchText(allStructuralText, introSearchText(builder));
+        appendSearchText(allStructuralText, allStructuralBodyText.toString());
+        appendSearchText(allStructuralText, quoteSearchText(builder));
+        structuralSearchText = allStructuralText.toString();
 
         JPanel sectionControls = createSectionControls(sections);
         int minimumSectionStackWidth = sections.isEmpty() && !builder.standardContentWidth
@@ -158,6 +167,13 @@ public class SettingsPagePanel extends JPanel {
 
     public String getPageSearchText() {
         return pageSearchText;
+    }
+
+    /**
+     * @return page chrome plus section titles, summaries, and aliases, excluding mutable section content
+     */
+    public String getStructuralSearchText() {
+        return structuralSearchText;
     }
 
     /** Expands matching sections and collapses the others, leaving the page unchanged when nothing matches. */
@@ -357,11 +373,16 @@ public class SettingsPagePanel extends JPanel {
     }
 
     private static String sectionSearchText(SettingsTextProvider textProvider, Section definition) {
+        String metadata = sectionMetadataSearchText(textProvider, definition);
+        String contentText = SettingsSearchText.collect(definition.content);
+        return (metadata + ' ' + contentText).trim();
+    }
+
+    private static String sectionMetadataSearchText(SettingsTextProvider textProvider, Section definition) {
         String title = SettingsSearchText.renderedText(
               definition.literal ? definition.title : textProvider.getText(definition.title));
         String summary = SettingsSearchText.renderedText(sectionSummary(textProvider, definition));
-        String contentText = SettingsSearchText.collect(definition.content);
-        return (title + ' ' + summary + ' ' + contentText + ' '
+        return (title + ' ' + summary + ' '
               + String.join(" ", definition.searchAliases)).trim();
     }
 

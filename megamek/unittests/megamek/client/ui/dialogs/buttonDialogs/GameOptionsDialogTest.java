@@ -39,13 +39,18 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 import java.awt.Dimension;
 import java.io.File;
 import java.nio.file.Path;
+import java.util.List;
+import java.util.Map;
 import java.util.Set;
 import java.util.Vector;
 import javax.swing.JPanel;
 
+import megamek.client.ui.clientGUI.DialogOptionListener;
+import megamek.client.ui.panels.DialogOptionComponentYPanel;
 import megamek.client.ui.panels.GameOptionsPane;
 import megamek.common.options.GameOptions;
 import megamek.common.options.IBasicOption;
+import megamek.common.options.IOption;
 import megamek.common.options.OptionsConstants;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.io.TempDir;
@@ -113,6 +118,43 @@ class GameOptionsDialogTest {
 
         assertEquals(3025, targetOptions.intOption(OptionsConstants.ALLOWED_YEAR));
         assertTrue(targetOptions.booleanOption(OptionsConstants.SEARCHLIGHTS_ON));
+    }
+
+    @Test
+    void deactivatingCategoryChangesOnlyMatchingOptions() {
+        GameOptions options = new GameOptions();
+        DialogOptionComponentYPanel assaultDrop = component(
+              options.getOption(OptionsConstants.ADVANCED_ASSAULT_DROP));
+        DialogOptionComponentYPanel ghostTargetMode = component(
+              options.getOption(OptionsConstants.ADVANCED_GHOST_TARGET_MODE));
+        DialogOptionComponentYPanel searchlights = component(options.getOption(OptionsConstants.SEARCHLIGHTS_ON));
+        assaultDrop.setSelected(true);
+        ghostTargetMode.addValue(OptionsConstants.GHOST_TARGET_MODE_LEGACY);
+        ghostTargetMode.addValue(OptionsConstants.GHOST_TARGET_MODE_STANDARD);
+        ghostTargetMode.setValue(OptionsConstants.GHOST_TARGET_MODE_LEGACY);
+        searchlights.setSelected(true);
+
+        GameOptionsDialog.deactivateOptions(Map.of(
+              OptionsConstants.ADVANCED_ASSAULT_DROP, List.of(assaultDrop),
+              OptionsConstants.ADVANCED_GHOST_TARGET_MODE, List.of(ghostTargetMode),
+              OptionsConstants.SEARCHLIGHTS_ON, List.of(searchlights)),
+              GameOptionsPane::isLegacyOption);
+
+        assertFalse((Boolean) assaultDrop.getValue());
+        assertEquals(OptionsConstants.GHOST_TARGET_MODE_STANDARD, ghostTargetMode.getValue());
+        assertTrue((Boolean) searchlights.getValue());
+    }
+
+    private static DialogOptionComponentYPanel component(IOption option) {
+        return new DialogOptionComponentYPanel(new DialogOptionListener() {
+            @Override
+            public void optionClicked(DialogOptionComponentYPanel component, IOption changedOption, boolean state) {
+            }
+
+            @Override
+            public void optionSwitched(DialogOptionComponentYPanel component, IOption changedOption, int index) {
+            }
+        }, option, true, true);
     }
 
     private static JPanel fixedSizePanel(int width, int height) {

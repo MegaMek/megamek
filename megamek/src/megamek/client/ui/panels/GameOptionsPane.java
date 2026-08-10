@@ -453,11 +453,8 @@ public class GameOptionsPane extends JPanel {
                       pageSeed.definition().id() + entry.getKey(), entry.getValue().rows, labelWidth);
                 sectionContentRows.put(content, entry.getValue().rows);
                 displayedSectionRows.put(content, List.copyOf(entry.getValue().rows));
-                List<String> aliases = new ArrayList<>();
-                aliases.addAll(pageSeed.searchAliases());
-                entry.getValue().rows.forEach(row -> aliases.add(row.searchableText()));
                 builder.literalSection(sectionTitle(entry.getKey()), sectionSummary(entry.getKey()), content,
-                      sectionBadges(pageSeed.definition().advanced()), aliases);
+                      sectionBadges(pageSeed.definition().advanced()), pageSeed.searchAliases());
             }
             pagePanel = builder.build();
             add(pagePanel, BorderLayout.CENTER);
@@ -590,7 +587,7 @@ public class GameOptionsPane extends JPanel {
                 pagePanel.setSectionVisible(content, !visibleRows.isEmpty());
             });
             if (route != null) {
-                route.setSectionSearchText(searchableText.toString());
+                route.setDynamicSearchText(searchableText.toString());
             }
             revalidate();
             repaint();

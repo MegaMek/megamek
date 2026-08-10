@@ -614,6 +614,7 @@ public class GameOptionsDialog extends AbstractButtonDialog implements ActionLis
                 //Set to the maximum velocity if over
                 option.setValue(CapitalMissileBayWeapon.CAPITAL_MISSILE_MAX_VELOCITY);
             }
+            optionComp.setEditable(editable);
         } else if (option.getName().equals(OptionsConstants.ADVANCED_ALTERNATE_MASC_ENHANCED)) {
             if ((options.getOption(OptionsConstants.ADVANCED_ALTERNATE_MASC)).booleanValue()) {
                 optionComp.setEditable(editable);
@@ -1050,9 +1051,13 @@ public class GameOptionsDialog extends AbstractButtonDialog implements ActionLis
         // If the panel is editable, the player can commit or reset.
         texPass.setEnabled(editable);
         butOkay.setEnabled(editable);
-        butDefaults.setEnabled(editable);
         butUnofficial.setEnabled(editable);
         butLegacy.setEnabled(editable);
+        // Resetting and loading only change values that a view-only dialog can never commit.
+        butDefaults.setVisible(editable);
+        butLoad.setVisible(editable);
+        revalidate();
+        repaint();
 
         // Update our data element.
         this.editable = editable;

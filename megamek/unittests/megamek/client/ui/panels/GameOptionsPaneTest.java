@@ -644,8 +644,8 @@ class GameOptionsPaneTest {
                 DialogOptionComponentYPanel optionComponent = conciseComponents.get(optionName);
                 assertOptionPresentation(optionComponent, label, true,
                       optionName.equals(OptionsConstants.BASE_INFANTRY_DAMAGE_HEAT));
-                    assertFalse(optionPresentationText(optionComponent).contains("<div width="),
-                        optionPresentationText(optionComponent));
+                assertFalse(optionPresentationText(optionComponent).contains("<div width="),
+                      optionPresentationText(optionComponent));
             });
             assertOptionPresentation(searchlights, searchlights.getOption().getDisplayableName(), false, false);
 
@@ -820,32 +820,32 @@ class GameOptionsPaneTest {
         });
     }
 
-        @Test
-        void excludedOptionsDoNotCreateBlankSectionsOrRemoveRemainingPage() throws Exception {
-          runOnEdt(() -> {
+    @Test
+    void excludedOptionsDoNotCreateBlankSectionsOrRemoveRemainingPage() throws Exception {
+        runOnEdt(() -> {
             GameOptions options = new GameOptions();
             DialogOptionComponentYPanel canonOnly = component(
-                options.getOption(OptionsConstants.ALLOWED_CANON_ONLY));
+                  options.getOption(OptionsConstants.ALLOWED_CANON_ONLY));
             DialogOptionComponentYPanel year = component(options.getOption(OptionsConstants.ALLOWED_YEAR));
             DialogOptionComponentYPanel techLevel = component(
-                options.getOption(OptionsConstants.ALLOWED_TECH_LEVEL));
+                  options.getOption(OptionsConstants.ALLOWED_TECH_LEVEL));
             DialogOptionComponentYPanel variableTechLevel = component(
-                options.getOption(OptionsConstants.ALLOWED_ERA_BASED));
+                  options.getOption(OptionsConstants.ALLOWED_ERA_BASED));
             DialogOptionComponentYPanel showExtinct = component(
-                options.getOption(OptionsConstants.ALLOWED_SHOW_EXTINCT));
+                  options.getOption(OptionsConstants.ALLOWED_SHOW_EXTINCT));
             DialogOptionComponentYPanel allowInvalid = component(
-                options.getOption(OptionsConstants.ALLOWED_ALLOW_ILLEGAL_UNITS));
+                  options.getOption(OptionsConstants.ALLOWED_ALLOW_ILLEGAL_UNITS));
             Set<String> excluded = Set.of(
-                OptionsConstants.ALLOWED_CANON_ONLY,
-                OptionsConstants.ALLOWED_YEAR,
-                OptionsConstants.ALLOWED_TECH_LEVEL,
-                OptionsConstants.ALLOWED_ERA_BASED,
-                OptionsConstants.ALLOWED_SHOW_EXTINCT);
+                  OptionsConstants.ALLOWED_CANON_ONLY,
+                  OptionsConstants.ALLOWED_YEAR,
+                  OptionsConstants.ALLOWED_TECH_LEVEL,
+                  OptionsConstants.ALLOWED_ERA_BASED,
+                  OptionsConstants.ALLOWED_SHOW_EXTINCT);
 
             GameOptionsPane pane = new GameOptionsPane(List.of(new GameOptionsPane.OptionGroup(
-                "allowedUnits", "Allowed Units and Equipment",
-                List.of(canonOnly, year, techLevel, variableTechLevel, showExtinct, allowInvalid))),
-                option -> true, excluded);
+                  "allowedUnits", "Allowed Units and Equipment",
+                  List.of(canonOnly, year, techLevel, variableTechLevel, showExtinct, allowInvalid))),
+                  option -> true, excluded);
 
             assertNull(SwingUtilities.getAncestorOfClass(GameOptionsPane.class, canonOnly.settingsCheckBox()));
             assertNull(SwingUtilities.getAncestorOfClass(GameOptionsPane.class, year.settingsLabel()));
@@ -853,12 +853,12 @@ class GameOptionsPaneTest {
             assertNull(SwingUtilities.getAncestorOfClass(GameOptionsPane.class, variableTechLevel.settingsCheckBox()));
             assertNull(SwingUtilities.getAncestorOfClass(GameOptionsPane.class, showExtinct.settingsCheckBox()));
             assertSame(pane,
-                SwingUtilities.getAncestorOfClass(GameOptionsPane.class, allowInvalid.settingsCheckBox()));
+                  SwingUtilities.getAncestorOfClass(GameOptionsPane.class, allowInvalid.settingsCheckBox()));
             assertEquals(1, findSections(pane).size());
             assertTrue(sectionTitle(pane, "Special Restrictions").contains("Special Restrictions"));
             assertTreePathExists(findComponent(pane, JTree.class), "General", "Units and Technology");
-          });
-        }
+        });
+    }
 
     @Test
     void victorySectionsUseCheckboxGridsAndLabeledRows() throws Exception {
@@ -891,31 +891,31 @@ class GameOptionsPaneTest {
         });
     }
 
-        @Test
-        void victoryNumericOptionsUseBoundedSpinnersAndKeepDefaults() throws Exception {
-          runOnEdt(() -> {
+    @Test
+    void victoryNumericOptionsUseBoundedSpinnersAndKeepDefaults() throws Exception {
+        runOnEdt(() -> {
             GameOptions options = new GameOptions();
             DialogOptionComponentYPanel conditions = component(
-                options.getOption(OptionsConstants.VICTORY_ACHIEVE_CONDITIONS));
+                  options.getOption(OptionsConstants.VICTORY_ACHIEVE_CONDITIONS));
             DialogOptionComponentYPanel destroyedPercent = component(
-                options.getOption(OptionsConstants.VICTORY_BV_DESTROYED_PERCENT));
+                  options.getOption(OptionsConstants.VICTORY_BV_DESTROYED_PERCENT));
             DialogOptionComponentYPanel ratioPercent = component(
-                options.getOption(OptionsConstants.VICTORY_BV_RATIO_PERCENT));
+                  options.getOption(OptionsConstants.VICTORY_BV_RATIO_PERCENT));
             DialogOptionComponentYPanel turnLimit = component(
-                options.getOption(OptionsConstants.VICTORY_GAME_TURN_LIMIT));
+                  options.getOption(OptionsConstants.VICTORY_GAME_TURN_LIMIT));
             DialogOptionComponentYPanel killCount = component(
-                options.getOption(OptionsConstants.VICTORY_GAME_KILL_COUNT));
+                  options.getOption(OptionsConstants.VICTORY_GAME_KILL_COUNT));
 
             pane("victory", List.of(conditions, destroyedPercent, ratioPercent, turnLimit, killCount),
-                option -> true);
+                  option -> true);
 
             assertIntegerSpinner(conditions, 1, 100, 1);
             assertIntegerSpinner(destroyedPercent, 1, 100, 100);
             assertIntegerSpinner(ratioPercent, 1, 10_000, 300);
             assertIntegerSpinner(turnLimit, 1, 10_000, 10);
             assertIntegerSpinner(killCount, 1, 10_000, 4);
-          });
-        }
+        });
+    }
 
     @Test
     void factionLogoMappingsResolveToSharedAssets() {

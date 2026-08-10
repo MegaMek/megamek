@@ -324,7 +324,7 @@ public class DialogOptionComponentYPanel extends FixedYPanel
 
     /** Replaces this integer option's text field with a spinner constrained to the given minimum. */
     void useIntegerSpinner(int minimum) {
-        useIntegerSpinner(minimum, null);
+        configureIntegerSpinner(minimum, null);
     }
 
     /** Replaces this integer option's text field with a spinner constrained to the given range. */
@@ -332,10 +332,10 @@ public class DialogOptionComponentYPanel extends FixedYPanel
         if (maximum < minimum) {
             throw new IllegalArgumentException("Integer spinner maximum cannot be below its minimum");
         }
-        useIntegerSpinner(minimum, Integer.valueOf(maximum));
+        configureIntegerSpinner(minimum, maximum);
     }
 
-    private void useIntegerSpinner(int minimum, @Nullable Integer maximum) {
+    private void configureIntegerSpinner(int minimum, @Nullable Integer maximum) {
         if (option.getType() != IOption.INTEGER) {
             throw new IllegalStateException("Integer spinners require an integer option");
         }

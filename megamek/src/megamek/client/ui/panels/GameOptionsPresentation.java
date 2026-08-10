@@ -100,6 +100,7 @@ final class GameOptionsPresentation {
 
     private static final Map<String, Location> LOCATIONS = new LinkedHashMap<>();
     private static final Map<PageDefinition, Map<String, Integer>> SECTION_ORDERS = new LinkedHashMap<>();
+    private static final Map<PageDefinition, Map<String, Integer>> NEXT_OPTION_ORDERS = new LinkedHashMap<>();
 
     static {
         registerBasicOptions();
@@ -359,7 +360,7 @@ final class GameOptionsPresentation {
               OptionsConstants.ADVANCED_COMBAT_TAC_OPS_CLUSTER_HIT_PEN,
               OptionsConstants.ADVANCED_COMBAT_TAC_OPS_ADVANCED_MEK_HIT_LOCATIONS,
               OptionsConstants.ADVANCED_COMBAT_CASE_PILOT_DAMAGE);
-        registerOrdered(ADVANCED_COMBAT, COMBAT_DAMAGE, "combat.damage.heatAndFire",
+        register(ADVANCED_COMBAT, COMBAT_DAMAGE, "combat.damage.heatAndFire",
               OptionsConstants.ADVANCED_COMBAT_TAC_OPS_START_FIRE,
               OptionsConstants.ADVANCED_COMBAT_FOREST_FIRES_NO_SMOKE,
               OptionsConstants.ADVANCED_COMBAT_TAC_OPS_HEAT,
@@ -409,7 +410,7 @@ final class GameOptionsPresentation {
               OptionsConstants.ADVANCED_GROUND_MOVEMENT_TAC_OPS_FALLING_EXPANDED,
               OptionsConstants.ADVANCED_GROUND_MOVEMENT_FALLS_END_MOVEMENT,
               OptionsConstants.ADVANCED_GROUND_MOVEMENT_PSR_JUMP_HEAVY_WOODS);
-        registerOrdered(GROUND_MOVEMENT, MOVEMENT_MEKS, "movement.meks.formations",
+        register(GROUND_MOVEMENT, MOVEMENT_MEKS, "movement.meks.formations",
               OptionsConstants.ADVANCED_GROUND_MOVEMENT_TAC_OPS_ATTEMPTING_STAND,
               OptionsConstants.ADVANCED_GROUND_MOVEMENT_TAC_OPS_CAREFUL_STAND,
               OptionsConstants.ADVANCED_GROUND_MOVEMENT_MEK_LANCE_MOVEMENT,
@@ -519,35 +520,22 @@ final class GameOptionsPresentation {
 
     private static void register(String sourceGroupId, PageDefinition page, String sectionId,
           String... optionNames) {
-        register(sourceGroupId, page, sectionId, false, optionNames);
-    }
-
-    private static void registerOrdered(String sourceGroupId, PageDefinition page, String sectionId,
-          String... optionNames) {
-        register(sourceGroupId, page, sectionId, true, optionNames);
-    }
-
-    private static void register(String sourceGroupId, PageDefinition page, String sectionId,
-          boolean ordered, String... optionNames) {
-        register(sourceGroupId, page, sectionId, ordered ? 0 : Integer.MAX_VALUE, optionNames);
-    }
-
-    private static void register(String sourceGroupId, PageDefinition page, String sectionId,
-          int firstOptionOrder, String... optionNames) {
         Map<String, Integer> pageSectionOrders = SECTION_ORDERS.computeIfAbsent(page,
               ignored -> new LinkedHashMap<>());
         int sectionOrder = pageSectionOrders.computeIfAbsent(sectionId, ignored -> pageSectionOrders.size());
+        Map<String, Integer> pageOptionOrders = NEXT_OPTION_ORDERS.computeIfAbsent(page,
+              ignored -> new LinkedHashMap<>());
+        int firstOptionOrder = pageOptionOrders.getOrDefault(sectionId, 0);
         for (int optionOrder = 0; optionOrder < optionNames.length; optionOrder++) {
             String optionName = optionNames[optionOrder];
             Location existing = LOCATIONS.putIfAbsent(optionName,
                   new Location(sourceGroupId, page, sectionId, sectionOrder,
-                        firstOptionOrder == Integer.MAX_VALUE
-                              ? Integer.MAX_VALUE
-                              : firstOptionOrder + optionOrder));
+                        firstOptionOrder + optionOrder));
             if (existing != null) {
                 throw new IllegalStateException("Duplicate Game Options presentation location for " + optionName);
             }
         }
+        pageOptionOrders.put(sectionId, firstOptionOrder + optionNames.length);
     }
 
     private static PageDefinition nestedPage(String id, String categoryId, String iconGroupId, boolean advanced,
@@ -560,9 +548,24 @@ final class GameOptionsPresentation {
         return new PageDefinition(id, categoryId, iconGroupId, fallbackSourceGroupId, advanced, order);
     }
 
+    /**
+     * @param sourceGroupId source option-group identifier
+     * @param page          destination page
+     * @param sectionId     destination section identifier
+     * @param sectionOrder  section position within the page
+     * @param optionOrder   option position within the section; {@link Integer#MAX_VALUE} appends fallback entries
+     */
     record Location(String sourceGroupId, PageDefinition page, String sectionId, int sectionOrder, int optionOrder) {
     }
 
+    /**
+     * @param id                    page identifier
+     * @param categoryId            parent navigation category identifier
+     * @param iconGroupId           source group supplying the page icon
+     * @param fallbackSourceGroupId source group supplying title/icon when it is the page's only source
+     * @param advanced              whether the page uses the advanced-rules marker
+     * @param order                 page position in navigation
+     */
     record PageDefinition(String id, String categoryId, String iconGroupId, String fallbackSourceGroupId,
           boolean advanced, int order) {
         String title(Map<String, String> sourceGroups) {
@@ -587,9 +590,9 @@ final class GameOptionsPresentation {
             return "gameOptions." + id;
         }
 
-            private boolean usesSingleSourceFallback(Map<String, String> sourceGroups) {
-                  return !fallbackSourceGroupId.isBlank() && sourceGroups.size() == 1
-                          && sourceGroups.containsKey(fallbackSourceGroupId);
-            }
+        private boolean usesSingleSourceFallback(Map<String, String> sourceGroups) {
+            return !fallbackSourceGroupId.isBlank() && sourceGroups.size() == 1
+                  && sourceGroups.containsKey(fallbackSourceGroupId);
+        }
     }
 }

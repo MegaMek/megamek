@@ -48,6 +48,7 @@ import javax.swing.JSplitPane;
 import javax.swing.SwingUtilities;
 
 import megamek.client.ui.util.UIUtil;
+import megamek.common.annotations.Nullable;
 import megamek.logging.MMLogger;
 
 /**
@@ -96,7 +97,7 @@ public class SettingsPane extends JPanel {
     }
 
     /** @deprecated settings help surfaces always use the shared localized title */
-    @Deprecated(forRemoval = true)
+    @Deprecated(since = "0.51.01", forRemoval = true)
     public SettingsPane(List<SettingsRoute> routes, Map<String, Supplier<Component>> pageFactories,
           SettingsNavigationText navigationText, String ignoredHelpTitle) {
         this(routes, pageFactories, navigationText);
@@ -112,12 +113,19 @@ public class SettingsPane extends JPanel {
         navigationPanel.focusSearchField();
     }
 
-    public void setFilterText(String filterText) {
+    /** Sets the search field's display text; matching uses its normalized form. */
+    public void setFilterText(@Nullable String filterText) {
         navigationPanel.setFilterText(filterText);
     }
 
+    /** @return the normalized active search filter */
     public String getActiveFilter() {
         return navigationPanel.getActiveFilter();
+    }
+
+    /** @return the search field's unmodified display text */
+    public String getFilterText() {
+        return navigationPanel.getFilterText();
     }
 
     /** Reapplies the current navigation filter after a page's searchable content changes. */

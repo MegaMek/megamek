@@ -121,6 +121,23 @@ class GameOptionsDialogTest {
     }
 
     @Test
+    void savingOptionsIncludesCallerExcludedValues() {
+        GameOptions options = new GameOptions();
+        options.getOption(OptionsConstants.ALLOWED_YEAR).setValue(3025);
+        Vector<IBasicOption> output = new Vector<>();
+        output.add(options.getOption(OptionsConstants.SEARCHLIGHTS_ON));
+
+        GameOptionsDialog.appendUnrepresentedOptions(output, options, Set.of(OptionsConstants.SEARCHLIGHTS_ON));
+        File file = tempDirectory.resolve("saved-excluded-options.xml").toFile();
+        GameOptions.saveOptions(output, file.getAbsolutePath());
+        GameOptions loaded = new GameOptions();
+        loaded.getOption(OptionsConstants.ALLOWED_YEAR).setValue(3150);
+        loaded.loadOptions(file, false);
+
+        assertEquals(3025, loaded.intOption(OptionsConstants.ALLOWED_YEAR));
+    }
+
+    @Test
     void deactivatingCategoryChangesOnlyMatchingOptions() {
         GameOptions options = new GameOptions();
         DialogOptionComponentYPanel assaultDrop = component(

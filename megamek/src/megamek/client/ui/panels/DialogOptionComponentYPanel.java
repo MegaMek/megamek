@@ -587,16 +587,22 @@ public class DialogOptionComponentYPanel extends FixedYPanel
         }
         return switch (option.getType()) {
             case IOption.BOOLEAN -> checkbox.isSelected();
-            case IOption.INTEGER -> integerChoice != null
-                ? integerChoiceValues.get(integerChoice.getSelectedIndex())
-                : integerSpinner == null
-                    ? textField.getText().isBlank() ? 0 : MathUtility.parseInt(textField.getText(), 0)
-                    : integerSpinner.getValue();
+            case IOption.INTEGER -> integerValue();
             case IOption.FLOAT -> textField.getText().isBlank() ? 0 : MathUtility.parseFloat(textField.getText(), 0);
             case IOption.STRING -> textField.getText();
             case IOption.CHOICE -> choice.getSelectedItem();
             default -> null;
         };
+    }
+
+    private int integerValue() {
+        if (integerChoice != null) {
+            return integerChoiceValues.get(integerChoice.getSelectedIndex());
+        }
+        if (integerSpinner != null) {
+            return ((Number) integerSpinner.getValue()).intValue();
+        }
+        return textField.getText().isBlank() ? 0 : MathUtility.parseInt(textField.getText(), 0);
     }
 
     public void setValue(Object v) {

@@ -1,6 +1,6 @@
 /*
  * Copyright (C) 2000-2005 Ben Mazur (bmazur@sev.org)
- * Copyright (C) 2002-2025 The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2002-2026 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -41,11 +41,13 @@ import java.awt.Component;
 import java.awt.Container;
 import java.awt.Dimension;
 import java.awt.FlowLayout;
+import java.awt.Insets;
 import java.awt.LayoutManager;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.File;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.List;
@@ -70,6 +72,7 @@ import megamek.client.ui.settings.SettingsBadge;
 import megamek.client.ui.settings.SettingsIconLegend;
 import megamek.client.ui.util.UIUtil;
 import megamek.common.TechConstants;
+import megamek.common.annotations.Nullable;
 import megamek.common.options.GameOptions;
 import megamek.common.options.IBasicOption;
 import megamek.common.options.IOption;
@@ -254,7 +257,7 @@ public class GameOptionsDialog extends AbstractButtonDialog implements ActionLis
             }
             Dimension controlsSize = componentSize(parent.getComponent(0), preferred);
             Dimension actionsSize = componentSize(parent.getComponent(1), preferred);
-            var insets = parent.getInsets();
+            Insets insets = parent.getInsets();
             int requiredWidth = controlsSize.width + actionsSize.width + (gap * 3)
                   + insets.left + insets.right;
             int availableWidth = parent.getWidth();
@@ -281,7 +284,7 @@ public class GameOptionsDialog extends AbstractButtonDialog implements ActionLis
             Component actions = parent.getComponent(1);
             Dimension controlsSize = controls.getPreferredSize();
             Dimension actionsSize = actions.getPreferredSize();
-            var insets = parent.getInsets();
+            Insets insets = parent.getInsets();
             int availableWidth = parent.getWidth() - insets.left - insets.right;
             int requiredWidth = controlsSize.width + actionsSize.width + (gap * 3);
             if (requiredWidth <= availableWidth) {
@@ -337,11 +340,11 @@ public class GameOptionsDialog extends AbstractButtonDialog implements ActionLis
     }
 
     private static void setUniformButtonSize(JButton... buttons) {
-        int width = java.util.Arrays.stream(buttons)
+        int width = Arrays.stream(buttons)
               .mapToInt(button -> button.getPreferredSize().width)
               .max()
               .orElse(0);
-        int height = java.util.Arrays.stream(buttons)
+        int height = Arrays.stream(buttons)
               .mapToInt(button -> button.getPreferredSize().height)
               .max()
               .orElse(0);
@@ -392,7 +395,21 @@ public class GameOptionsDialog extends AbstractButtonDialog implements ActionLis
                 output.addElement(option);
             }
         }
+        appendUnrepresentedOptions(output, options, optionComps.keySet());
         return output;
+    }
+
+    static void appendUnrepresentedOptions(Vector<IBasicOption> output, GameOptions options,
+          Set<String> representedOptionNames) {
+        for (Enumeration<IOptionGroup> groups = options.getGroups(); groups.hasMoreElements(); ) {
+            IOptionGroup group = groups.nextElement();
+            for (Enumeration<IOption> groupOptions = group.getOptions(); groupOptions.hasMoreElements(); ) {
+                IOption option = groupOptions.nextElement();
+                if (!representedOptionNames.contains(option.getName())) {
+                    output.addElement(option);
+                }
+            }
+        }
     }
 
     private void resetToDefaults(final ActionEvent ev) {
@@ -408,7 +425,7 @@ public class GameOptionsDialog extends AbstractButtonDialog implements ActionLis
     }
 
     public void refreshOptions() {
-        String activeFilter = gameOptionsPane == null ? "" : gameOptionsPane.getActiveFilter();
+        String activeFilter = gameOptionsPane == null ? "" : gameOptionsPane.getFilterText();
         panOptions.removeAll();
         optionComps = new HashMap<>();
         List<GameOptionsPane.OptionGroup> groups = new ArrayList<>();
@@ -523,7 +540,7 @@ public class GameOptionsDialog extends AbstractButtonDialog implements ActionLis
         return !(isHiddenUnofficial || isHiddenLegacy || isHiddenOption(option));
     }
 
-    private DialogOptionComponentYPanel createOptionComponent(IOption option) {
+    private @Nullable DialogOptionComponentYPanel createOptionComponent(@Nullable IOption option) {
         if (option == null) {
             return null;
         }

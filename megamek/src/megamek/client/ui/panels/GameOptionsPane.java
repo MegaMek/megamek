@@ -69,6 +69,7 @@ import megamek.client.ui.settings.SettingsTextProvider;
 import megamek.client.ui.util.UIUtil;
 import megamek.common.Configuration;
 import megamek.common.MMRandom;
+import megamek.common.annotations.Nullable;
 import megamek.common.options.IOption;
 import megamek.common.options.OptionsConstants;
 import megamek.common.weapons.bayWeapons.capital.CapitalMissileBayWeapon;
@@ -205,10 +206,19 @@ public class GameOptionsPane extends JPanel {
     private final List<GroupPage> pages = new ArrayList<>();
     private final SettingsPane settingsPane;
 
+    /**
+     * @param groups           option groups to present
+     * @param optionVisibility current category visibility policy
+     */
     public GameOptionsPane(List<OptionGroup> groups, Predicate<IOption> optionVisibility) {
         this(groups, optionVisibility, Set.of());
     }
 
+    /**
+     * @param groups              option groups to present
+     * @param optionVisibility    current category visibility policy
+     * @param excludedOptionNames options owned by the caller and omitted from this presentation
+     */
     public GameOptionsPane(List<OptionGroup> groups, Predicate<IOption> optionVisibility,
           Set<String> excludedOptionNames) {
         super(new BorderLayout());
@@ -260,11 +270,18 @@ public class GameOptionsPane extends JPanel {
         add(settingsPane, BorderLayout.CENTER);
     }
 
+    /** @return the normalized active search filter */
     public String getActiveFilter() {
         return settingsPane.getActiveFilter();
     }
 
-    public void setFilterText(String filterText) {
+    /** @return the search field's unmodified display text */
+    public String getFilterText() {
+        return settingsPane.getFilterText();
+    }
+
+    /** Sets the displayed search text and reapplies its normalized form to all staged pages. */
+    public void setFilterText(@Nullable String filterText) {
         settingsPane.setFilterText(filterText);
         String normalizedFilter = SettingsRoute.normalizeSearchText(Objects.requireNonNullElse(filterText, ""));
         // Game Options stages every page up front, and callers inspect option visibility independently of navigation.
@@ -322,18 +339,22 @@ public class GameOptionsPane extends JPanel {
         }
     }
 
+    /** @return the ordered badges explained by the Game Options legend */
     public static List<SettingsBadge> legendEntries() {
         return List.of(IMPORTANT_BADGE, ADVANCED_BADGE, UNOFFICIAL_BADGE, LEGACY_BADGE);
     }
 
+    /** @return the marker used for unofficial game options */
     public static SettingsBadge unofficialBadge() {
         return UNOFFICIAL_BADGE;
     }
 
+    /** @return the marker used for legacy game options */
     public static SettingsBadge legacyBadge() {
         return LEGACY_BADGE;
     }
 
+    /** {@inheritDoc} */
     @Override
     public Dimension getPreferredSize() {
         Dimension preferred = super.getPreferredSize();
@@ -343,7 +364,13 @@ public class GameOptionsPane extends JPanel {
         return new Dimension(Math.max(preferred.width, floorWidth), Math.max(preferred.height, floorHeight));
     }
 
-    /** One game-options navigation route and its staged editor components. */
+    /**
+     * One source option group and its staged editor components.
+     *
+     * @param id          stable source-group identifier
+     * @param displayName localized source-group name used as a search alias or fallback page title
+     * @param components  option editors belonging to the group
+     */
     public record OptionGroup(String id, String displayName, List<DialogOptionComponentYPanel> components) {
         public OptionGroup {
             Objects.requireNonNull(id);
@@ -661,6 +688,7 @@ public class GameOptionsPane extends JPanel {
         return "GameOptionsDialog.option." + option.getName() + ".details";
     }
 
+    /** @return whether the option is classified as an unofficial rule by stable option name */
     public static boolean isUnofficialOption(IOption option) {
         return UNOFFICIAL_OPTIONS.contains(option.getName());
     }
@@ -669,6 +697,7 @@ public class GameOptionsPane extends JPanel {
         return UNOFFICIAL_OPTIONS;
     }
 
+    /** @return whether the option is classified as a legacy rule by stable option name */
     public static boolean isLegacyOption(IOption option) {
         return LEGACY_OPTIONS.contains(option.getName());
     }

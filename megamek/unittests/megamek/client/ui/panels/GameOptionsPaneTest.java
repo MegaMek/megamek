@@ -114,6 +114,21 @@ class GameOptionsPaneTest {
     }
 
     @Test
+    void filterPreservesRawDisplayTextWhileMatchingNormalizedText() throws Exception {
+        runOnEdt(() -> {
+            GameOptions options = new GameOptions();
+            DialogOptionComponentYPanel searchlights = component(options.getOption(OptionsConstants.SEARCHLIGHTS_ON));
+            GameOptionsPane pane = pane(List.of(searchlights), option -> true);
+
+            pane.setFilterText("  SEARCHLIGHTS!!!  ");
+
+            assertEquals("  SEARCHLIGHTS!!!  ", pane.getFilterText());
+            assertEquals("searchlights", pane.getActiveFilter());
+            assertTrue(searchlights.isVisible());
+        });
+    }
+
+    @Test
     void searchDoesNotMatchOptionDetailsText() throws Exception {
         runOnEdt(() -> {
             GameOptions options = new GameOptions();
@@ -410,7 +425,7 @@ class GameOptionsPaneTest {
             JCheckBox testingSecondCheckBox = testingSecond.settingsCheckBox();
             JCheckBox displayFirstCheckBox = displayFirst.settingsCheckBox();
             JCheckBox displaySecondCheckBox = displaySecond.settingsCheckBox();
-            assertSectionAlignment(wideCoreCheckBox, coreFirstCheckBox,
+            assertSectionAlignment(coreFirstCheckBox, wideCoreCheckBox,
                 testingFirstCheckBox, testingSecondCheckBox, displayFirstCheckBox, displaySecondCheckBox);
             GridBagConstraints wideLayout = ((GridBagLayout) wideCoreCheckBox.getParent().getLayout())
                 .getConstraints(wideCoreCheckBox);
@@ -814,12 +829,27 @@ class GameOptionsPaneTest {
               () -> GameOptionsPresentation.location("newGroup", "new_option"));
     }
 
+        @Test
+        void battlefieldOptionsFollowCatalogOrder() {
+          List<String> optionNames = List.of(
+              OptionsConstants.SEARCHLIGHTS_ON,
+              OptionsConstants.BASE_PUSH_OFF_BOARD,
+              OptionsConstants.BASE_BRIDGE_CF,
+              OptionsConstants.BASE_RANDOM_BASEMENTS,
+              OptionsConstants.BASE_BREEZE);
+
+          assertEquals(List.of(0, 1, 2, 3, 4), optionNames.stream()
+              .map(optionName -> GameOptionsPresentation.location("basic", optionName).optionOrder())
+              .toList());
+        }
+
     @Test
     void everyRegisteredGameOptionHasExactlyOneExplicitPresentationLocation() {
         GameOptions options = new GameOptions();
         Set<String> registeredOptionNames = new LinkedHashSet<>();
         Map<String, Integer> sectionSizes = new LinkedHashMap<>();
         Map<String, Set<String>> pageSections = new LinkedHashMap<>();
+        Map<String, Set<Integer>> sectionOptionOrders = new LinkedHashMap<>();
 
         for (Enumeration<IOptionGroup> groups = options.getGroups(); groups.hasMoreElements(); ) {
             IOptionGroup group = groups.nextElement();
@@ -841,6 +871,9 @@ class GameOptionsPaneTest {
                 sectionSizes.merge(sectionKey, 1, Integer::sum);
                 pageSections.computeIfAbsent(location.page().id(), ignored -> new LinkedHashSet<>())
                       .add(location.sectionId());
+                    assertTrue(location.optionOrder() < Integer.MAX_VALUE, option.getName());
+                    assertTrue(sectionOptionOrders.computeIfAbsent(sectionKey, ignored -> new LinkedHashSet<>())
+                        .add(location.optionOrder()), "Duplicate option order for " + sectionKey);
             }
         }
 

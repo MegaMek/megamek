@@ -90,7 +90,7 @@ public class SettingsHelpPanel extends JPanel {
     }
 
     /** @deprecated settings help surfaces always use the shared localized title */
-    @Deprecated(forRemoval = true)
+    @Deprecated(since = "0.51.01", forRemoval = true)
     public SettingsHelpPanel(String ignoredTitle) {
         this();
     }

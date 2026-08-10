@@ -276,6 +276,9 @@ public class DialogOptionComponentYPanel extends FixedYPanel
             throw new IllegalArgumentException("Editability dependencies require a boolean option");
         }
         dependencyEditable = controllingComponent.checkbox.isSelected();
+        if (clearWhenDisabled && !dependencyEditable) {
+            checkbox.setSelected(false);
+        }
         controllingComponent.checkbox.addItemListener(event -> {
             dependencyEditable = controllingComponent.checkbox.isSelected();
             if (clearWhenDisabled && !dependencyEditable) {

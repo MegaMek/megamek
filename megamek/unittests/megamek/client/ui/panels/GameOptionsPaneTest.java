@@ -1352,7 +1352,7 @@ class GameOptionsPaneTest {
             pane("advancedRules", List.of(assaultDrop, paratroopers), option -> true);
 
             assertFalse(paratroopers.settingsCheckBox().isEnabled());
-            assertTrue(paratroopers.settingsCheckBox().isSelected());
+            assertFalse(paratroopers.settingsCheckBox().isSelected());
             assaultDrop.setSelected(true);
             assertTrue(paratroopers.settingsCheckBox().isEnabled());
             assaultDrop.setSelected(false);

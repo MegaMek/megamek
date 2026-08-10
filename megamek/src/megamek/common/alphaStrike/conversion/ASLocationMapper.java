@@ -125,7 +125,12 @@ public class ASLocationMapper {
      * @return The value multiplier, 1 meaning "counts for this location", 0 meaning "doesn't count"
      */
     public static double damageLocationMultiplierForSpecials(Entity en, int loc, Mounted<?> mount) {
-        if (en.isFighter() || en.isProtoMek() || en.isMek()) {
+        if (en.isBattleArmor()) {
+            // Squad support weapons are excluded from the normal BA damage multiplier because their damage is added
+            // separately, but they still grant equipment-based special abilities. Individually mounted equipment is
+            // repeated for each trooper, so only the first trooper's mount is representative.
+            return (mount.getLocation() <= BattleArmor.LOC_TROOPER_1) ? 1 : 0;
+        } else if (en.isFighter() || en.isProtoMek() || en.isMek()) {
             if ((loc == 0) && (mount.isRearMounted() || (en.isFighter() && mount.getLocation() == Aero.LOC_AFT))) {
                 // Special abilities like MHQ or ART must count for loc 0 (standard specials)
                 // even if in rear locations

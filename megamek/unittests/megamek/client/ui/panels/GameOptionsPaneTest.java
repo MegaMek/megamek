@@ -919,8 +919,9 @@ class GameOptionsPaneTest {
 
     @Test
     void factionLogoMappingsResolveToSharedAssets() {
-        File factionsDir = new File(Configuration.universeImagesDir(), "factions");
+        File factionsDir = factionLogoDirectory();
 
+        assertTrue(factionsDir.isDirectory(), "Shared faction logo directory does not exist: " + factionsDir);
         assertEquals(10, GameOptionsPane.factionLogos().size());
         GameOptionsPane.factionLogos().forEach((page, logo) ->
               assertTrue(new File(factionsDir, logo).isFile(), page + " logo does not exist: " + logo));
@@ -1450,6 +1451,20 @@ class GameOptionsPaneTest {
         return component.getOption().getType() == IOption.BOOLEAN
               ? component.settingsCheckBox().getText()
               : component.settingsLabel().getText();
+    }
+
+    private static File factionLogoDirectory() {
+        File configuredDirectory = new File(Configuration.universeImagesDir(), "factions");
+        File directory = Configuration.dataDir().getAbsoluteFile();
+        for (int level = 0; (level < 6) && (directory != null); level++) {
+            File candidate = new File(directory, "mm-data" + File.separator + "data" + File.separator + "images"
+                  + File.separator + "universe" + File.separator + "factions");
+            if (candidate.isDirectory()) {
+                return candidate;
+            }
+            directory = directory.getParentFile();
+        }
+        return configuredDirectory;
     }
 
     private static <T extends Component> T findComponent(Container root, Class<T> type) {

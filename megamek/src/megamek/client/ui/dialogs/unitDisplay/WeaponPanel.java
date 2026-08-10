@@ -1766,6 +1766,12 @@ public class WeaponPanel extends PicMap implements ListSelectionListener, Action
         } else {
             wDamR.setText(Integer.toString(weaponType.getDamage()));
         }
+        
+        if (mounted.getType().hasFlag(WeaponType.F_BOMBAST_LASER)) {
+            int damage = (mounted.curMode().equals("Damage 16")) ? 16 : (mounted.curMode().equals("Damage 12")) ? 12 :
+                                                                         8;
+            wDamR.setText(Integer.toString(damage));
+        }
 
         // update range
         int shortR = weaponType.getShortRange();

@@ -45,6 +45,7 @@ import megamek.common.compute.Compute;
 import megamek.common.compute.ComputeECM;
 import megamek.common.compute.ComputeSideTable;
 import megamek.common.enums.AimingMode;
+import megamek.common.enums.ChargeLevel;
 import megamek.common.equipment.AmmoMounted;
 import megamek.common.equipment.AmmoType;
 import megamek.common.equipment.HandheldWeapon;
@@ -1598,16 +1599,6 @@ public class ComputeToHit {
               te != null &&
               te.isLargeCraft()) {
             toHit.addModifier(+1, Messages.getString("WeaponAttackAction.AAALaserAtShip"));
-        }
-
-        // Bombast Lasers
-        if (weaponType instanceof ISBombastLaser) {
-            double damage = Compute.dialDownDamage(weapon, weaponType);
-            damage = Math.ceil((damage - 7) / 2);
-
-            if (damage > 0) {
-                toHit.addModifier((int) damage, Messages.getString("WeaponAttackAction.WeaponMod"));
-            }
         }
 
         // Bracketing modes

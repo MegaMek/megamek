@@ -69,6 +69,7 @@ import megamek.common.compute.ComputeSideTable;
 import megamek.common.containers.PlayerIDAndList;
 import megamek.common.enums.BasementType;
 import megamek.common.enums.BuildingType;
+import megamek.common.enums.ChargeLevel;
 import megamek.common.enums.GamePhase;
 import megamek.common.enums.MoveStepType;
 import megamek.common.enums.VariableRangeTargetingMode;
@@ -1103,6 +1104,9 @@ public class TWGameManager extends AbstractGameManager {
                     break;
                 case ENTITY_MODE_CHANGE:
                     receiveEntityModeChange(packet, connId);
+                    break;
+                case ENTITY_CHARGE_CHANGE:
+                    receiveEntityChargeChange(packet, connId);
                     break;
                 case ENTITY_SENSOR_CHANGE:
                     receiveEntitySensorChange(packet, connId);
@@ -27287,6 +27291,47 @@ public class TWGameManager extends AbstractGameManager {
         }
     }
 
+    /**
+     * receive and process an entity charge change packet
+     *
+     * @param packet the packet to be processed
+     * @param connIndex the id for connection that received the packet.
+     */
+    private void receiveEntityChargeChange(Packet packet, int connIndex) throws InvalidPacketDataException {
+        int entityId = packet.getIntValue(0);
+        int equipId = packet.getIntValue(1);
+        int chargeInt = packet.getIntValue(2);
+        Entity entity = game.getEntity(entityId);
+
+        if (entity == null || entity.getOwner() != game.getPlayer(connIndex)) {
+            return;
+        }
+
+        Mounted<?> mounted = entity.getEquipment(equipId);
+
+        if (mounted == null) {
+            return;
+        }
+
+        EquipmentType equipmentType = mounted.getType();
+        if (equipmentType == null) {
+            EQUIP_OFF_LOGGER.debug("[EquipOff] {}: ignored charge change for equipment {} - its type cannot be " 
+                        + "resolved",
+                  entity.getShortName(), equipId);
+            return;
+        }
+
+        if (!equipmentType.hasFlag(WeaponType.F_BOMBAST_LASER)) {
+            return;
+        }
+
+        if (chargeInt == 1) {
+            mounted.setChargeState(ChargeLevel.CHARGING);
+        } else if (chargeInt == 0) {
+            mounted.setChargeState(ChargeLevel.CHARGE_NONE);
+        }
+    }
+    
     /**
      * Receive and process an Entity Sensor Change Packet
      *

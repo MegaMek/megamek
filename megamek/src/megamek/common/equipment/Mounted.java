@@ -381,6 +381,7 @@ public class Mounted<T extends EquipmentType> implements Serializable, RoundUpda
         }
         return type.getMode(pendingMode);
     }
+    
     /**
      * Switches the equipment mode to the next or previous available.
      *
@@ -412,6 +413,20 @@ public class Mounted<T extends EquipmentType> implements Serializable, RoundUpda
             }
             setMode(nMode);
             return nMode;
+        }
+        return -1;
+    }
+
+    public int switchChargeLevel() {
+        if (getType().hasFlag(WeaponType.F_BOMBAST_LASER)) {
+            if (chargeState.equals(ChargeLevel.CHARGE_NONE)) {
+                setChargeState(ChargeLevel.CHARGING);
+                return 1;
+            } else if (chargeState.equals(ChargeLevel.CHARGING)) {
+                setChargeState(ChargeLevel.CHARGE_NONE);
+                return 0;
+            }
+            return -1;
         }
         return -1;
     }
@@ -496,6 +511,10 @@ public class Mounted<T extends EquipmentType> implements Serializable, RoundUpda
         if ((type != null) && (type.hasModes() && (pendingMode != -1))) {
             mode = pendingMode;
             pendingMode = -1;
+        }
+        
+        if ((type != null) && type.hasFlag(WeaponType.F_BOMBAST_LASER) && chargeState.equals(ChargeLevel.CHARGING)) {
+            setChargeState(ChargeLevel.CHARGED);
         }
         called.reset();
     }

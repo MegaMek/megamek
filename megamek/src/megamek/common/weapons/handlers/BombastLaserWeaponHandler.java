@@ -50,11 +50,16 @@ public class BombastLaserWeaponHandler extends EnergyWeaponHandler {
     private static final long serialVersionUID = 2452514543790235562L;
 
     /**
-     *
+     * Bombast Laser handler
+     * @param toHit tohit calc
+     * @param waa weapon attack action
+     * @param game game
+     * @param gameManager TWGameManager
+     * @throws EntityLoadingException
      */
-    public BombastLaserWeaponHandler(ToHitData toHit, WeaponAttackAction waa, Game g, TWGameManager m)
+    public BombastLaserWeaponHandler(ToHitData toHit, WeaponAttackAction waa, Game game, TWGameManager gameManager)
           throws EntityLoadingException {
-        super(toHit, waa, g, m);
+        super(toHit, waa, game, gameManager);
         generalDamageType = HitData.DAMAGE_ENERGY;
     }
 
@@ -65,18 +70,6 @@ public class BombastLaserWeaponHandler extends EnergyWeaponHandler {
             return damageValue = Integer.parseInt(damage.substring(damage.indexOf("damage") + 6).trim());
         }
         return damageValue;
-    }
-
-    public int getToHitModifier(ChargeLevel chargeState, int damageValue) {
-        if (chargeState == ChargeLevel.CHARGE_NONE) {
-            switch (damageValue) {
-                case 16: return 2;
-                case 12: return 1;
-            }
-        } else if (chargeState == ChargeLevel.CHARGING) {
-            return ToHitData.IMPOSSIBLE;
-        }
-        return 0;
     }
 
     public static int getHeat(Mounted<?> mounted) {

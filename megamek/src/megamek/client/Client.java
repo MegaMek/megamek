@@ -1601,6 +1601,13 @@ public class Client extends AbstractClient {
     }
 
     /**
+     * Send charge-change data to the server
+     */
+    public void sendChargeLevelChange(int nEntity, int nEquip, int nChargeLevel) {
+        send(new Packet(PacketCommand.ENTITY_CHARGE_CHANGE, nEntity, nEquip, nChargeLevel));
+    }
+
+    /**
      * Declares that the given unit is deploying one of its Bridge-Layer (AVLB) bridges (TM p.242 / TW). The server
      * validates eligibility and computes the target hex (directly in front, along the unit's facing); the bridge is
      * placed at the end of the following turn if the unit stays stationary.

@@ -44,10 +44,12 @@ import megamek.common.actions.WeaponAttackAction;
 import megamek.common.alphaStrike.AlphaStrikeElement;
 import megamek.common.annotations.Nullable;
 import megamek.common.enums.AvailabilityValue;
+import megamek.common.enums.ChargeLevel;
 import megamek.common.enums.Faction;
 import megamek.common.enums.TechBase;
 import megamek.common.enums.TechRating;
 import megamek.common.equipment.Mounted;
+import megamek.common.equipment.WeaponType;
 import megamek.common.game.Game;
 import megamek.common.loaders.EntityLoadingException;
 import megamek.common.weapons.handlers.AttackHandler;
@@ -117,11 +119,35 @@ public class ISBombastLaser extends LaserWeapon {
             LOGGER.warn("Get Correct Handler - Attach Handler Received Null Entity.");
         }
         return null;
-
     }
 
     @Override
+    public int getToHitModifier(Mounted<?> mounted) {
+        int modifier = super.getToHitModifier(mounted);
+        if (mounted.getChargeState().equals(ChargeLevel.CHARGING)) {
+            return ToHitData.IMPOSSIBLE;
+        } else if (!mounted.getChargeState().equals(ChargeLevel.CHARGED)) {
+            switch (mounted.curMode().toString()) {
+                case "Damage 16": return modifier+2;
+                case "Damage 12": return modifier+1;
+            }
+        } 
+        return modifier;
+    }
+    
+    @Override
     public double getBattleForceDamage(int range, Mounted<?> fcs) {
         return (range <= AlphaStrikeElement.MEDIUM_RANGE) ? 1.02 : 0;
+    }
+    
+    @Override
+    public boolean isExplosive(Mounted<?> mounted, boolean ignoreCharge) {
+        if (mounted.getType().hasFlag(WeaponType.F_BOMBAST_LASER) &&
+              mounted.getChargeState().equals(ChargeLevel.CHARGED) &&
+              !mounted.isUsedThisRound()) {
+            // Bombast laser is only explosive when charged.
+            return true;
+        }
+        return false;
     }
 }

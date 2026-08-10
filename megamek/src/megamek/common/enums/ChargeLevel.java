@@ -34,7 +34,14 @@
 package megamek.common.enums;
 
 public enum ChargeLevel {
-    CHARGE_NONE,
-    CHARGING,
-    CHARGED
+    CHARGE_NONE("No charge"),
+    CHARGING("Charging"),
+    CHARGED("Charged");
+    
+    private String description;
+    private ChargeLevel(String description) {
+        this.description = description;
+    }
+    
+    public String getDescription() { return description; }
 }

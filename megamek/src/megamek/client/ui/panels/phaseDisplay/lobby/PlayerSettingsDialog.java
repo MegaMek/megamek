@@ -66,6 +66,7 @@ import megamek.MMConstants;
 import megamek.client.Client;
 import megamek.client.bot.BotClient;
 import megamek.client.bot.princess.BehaviorSettings;
+import megamek.client.formation.Organization;
 import megamek.client.generator.ReconfigurationParameters;
 import megamek.client.generator.TeamLoadOutGenerator;
 import megamek.client.ratgenerator.FactionRecord;
@@ -100,6 +101,7 @@ import megamek.common.interfaces.IStartingPositions;
 import megamek.common.loaders.MapSettings;
 import megamek.common.options.GameOptions;
 import megamek.common.options.OptionsConstants;
+import megamek.common.preference.PreferenceManager;
 import megamek.common.units.Entity;
 import megamek.server.ServerBoardHelper;
 
@@ -349,6 +351,11 @@ public class PlayerSettingsDialog extends AbstractButtonDialog {
     private final JButton butSaveADF = new JButton(Messages.getString("PlayerSettingsDialog.saveADF"));
     private final JButton butLoadADF = new JButton(Messages.getString("PlayerSettingsDialog.loadADF"));
     private final JButton butRestoreMT = new JButton(Messages.getString("PlayerSettingsDialog.restore"));
+
+    // Organization doctrine for the lobby's Assemble Force feature
+    private final JLabel labelOrganization = new JLabel(
+          Messages.getString("PlayerSettingsDialog.organization"), SwingConstants.LEFT);
+    private final JComboBox<Organization> cmbOrganization = new JComboBox<>(Organization.values());
     private transient TeamLoadOutGenerator tlg;
     private transient MunitionTree munitionTree = null;
     private transient MunitionTree originalMT = null;
@@ -363,6 +370,9 @@ public class PlayerSettingsDialog extends AbstractButtonDialog {
         mainPanel.setLayout(new BoxLayout(mainPanel, BoxLayout.Y_AXIS));
         mainPanel.add(headerSection());
         mainPanel.add(autoConfigSection());
+        if (!(client instanceof BotClient)) {
+            mainPanel.add(organizationSection());
+        }
         if (client instanceof BotClient) {
             mainPanel.add(botSection());
         }
@@ -432,6 +442,33 @@ public class PlayerSettingsDialog extends AbstractButtonDialog {
         butRestoreMT.setToolTipText(Messages.getString("CustomMekDialog.acfRestoreMunitionTree"));
         butRestoreMT.addActionListener(listener);
         butRestoreMT.setEnabled(false);
+        return result;
+    }
+
+    /**
+     * The organization doctrine for the lobby's Assemble Force feature: element size and naming follow
+     * it, AUTO detects Clan versus Inner Sphere from the force's majority tech base. Remembered as a
+     * client preference - detection proposes, the player disposes.
+     */
+    private JPanel organizationSection() {
+        JPanel result = new OptionPanel("PlayerSettingsDialog.header.organization");
+        Content panContent = new Content(new GridLayout(1, 2, 10, 5));
+        result.add(panContent);
+        panContent.add(labelOrganization);
+        panContent.add(cmbOrganization);
+        labelOrganization.setToolTipText(Messages.getString("PlayerSettingsDialog.organizationTT"));
+        cmbOrganization.setToolTipText(Messages.getString("PlayerSettingsDialog.organizationTT"));
+        cmbOrganization.setRenderer(new DefaultListCellRenderer() {
+            @Override
+            public Component getListCellRendererComponent(JList<?> list, Object value, int index,
+                  boolean isSelected, boolean cellHasFocus) {
+                super.getListCellRendererComponent(list, value, index, isSelected, cellHasFocus);
+                if (value instanceof Organization organization) {
+                    setText(Messages.getString("Organization." + organization.name()));
+                }
+                return this;
+            }
+        });
         return result;
     }
 
@@ -645,6 +682,9 @@ public class PlayerSettingsDialog extends AbstractButtonDialog {
         player.setNbrFortifiedHexes(getFortifiedHexes());
         getSkillGenerationOptionsPanel().updateClient();
         player.setEmail(getEmail());
+        if (cmbOrganization.getSelectedItem() instanceof Organization organization) {
+            PreferenceManager.getClientPreferences().setForceOrganization(organization.name());
+        }
 
         final GameOptions gOpts = clientgui.getClient().getGame().getOptions();
 
@@ -773,6 +813,12 @@ public class PlayerSettingsDialog extends AbstractButtonDialog {
         originalMT.loadEntityList(client.getGame().getPlayerEntities(player, false));
 
         fldInit.setText(Integer.toString(player.getConstantInitBonus()));
+        try {
+            cmbOrganization.setSelectedItem(Organization.valueOf(
+                  PreferenceManager.getClientPreferences().getForceOrganization()));
+        } catch (IllegalArgumentException ignored) {
+            cmbOrganization.setSelectedItem(Organization.AUTO);
+        }
         fldConventional.setText(Integer.toString(player.getMinefieldCount(Minefield.TYPE_CONVENTIONAL)));
         fldVibrabomb.setText(Integer.toString(player.getMinefieldCount(Minefield.TYPE_VIBRABOMB)));
         fldActive.setText(Integer.toString(player.getMinefieldCount(Minefield.TYPE_ACTIVE)));

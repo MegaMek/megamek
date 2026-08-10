@@ -1491,7 +1491,11 @@ public class FormationType {
                         }
                     }
                 }
-                int groupSize = Math.min(groupingCriteria.getGroupSize(), groupedUnits.size());
+                // A group size of zero means "one group of everything" (the Order Lance: every unit
+                // the same model); resolving it to the unit count keeps the arithmetic below sound.
+                int groupSize = (groupingCriteria.getGroupSize() <= 0)
+                      ? groupedUnits.size()
+                      : Math.min(groupingCriteria.getGroupSize(), groupedUnits.size());
                 int numGroups = Math.min(groupingCriteria.getNumGroups(), groupedUnits.size() / groupSize);
                 /* Allow for the possibility that two or more groups may be identical */
                 int groupCount = 0;
@@ -1655,7 +1659,11 @@ public class FormationType {
                         }
                     }
                 }
-                int groupSize = Math.min(groupingCriteria.getGroupSize(), groupedUnits.size());
+                // A group size of zero means "one group of everything" (the Order Lance: every unit
+                // the same model); resolving it to the unit count keeps the arithmetic below sound.
+                int groupSize = (groupingCriteria.getGroupSize() <= 0)
+                      ? groupedUnits.size()
+                      : Math.min(groupingCriteria.getGroupSize(), groupedUnits.size());
                 int numGroups = Math.min(groupingCriteria.getNumGroups(), groupedUnits.size() / groupSize);
                 /* Allow for the possibility that two or more groups may be identical */
                 int groupCount = 0;

@@ -50,6 +50,10 @@ import megamek.client.AbstractClient;
 import megamek.client.Client;
 import megamek.client.bot.BotClient;
 import megamek.client.bot.princess.BehaviorSettings;
+import megamek.client.formation.AssembledFormation;
+import megamek.client.formation.AssemblyUnit;
+import megamek.client.formation.FormationAssembler;
+import megamek.client.formation.Organization;
 import megamek.client.generator.RandomCallsignGenerator;
 import megamek.client.generator.RandomGenderGenerator;
 import megamek.client.generator.RandomNameGenerator;
@@ -78,6 +82,7 @@ import megamek.common.icons.Camouflage;
 import megamek.common.interfaces.ForceAssignable;
 import megamek.common.net.packets.InvalidPacketDataException;
 import megamek.common.options.OptionsConstants;
+import megamek.common.preference.PreferenceManager;
 import megamek.common.strategicBattleSystems.SBFFormationConverter;
 import megamek.common.units.Crew;
 import megamek.common.battlefieldSupport.BattlefieldSupportAsset;
@@ -624,6 +629,83 @@ public class LobbyActions {
         }
         client().sendAddForce(Force.createToplevelForce(name, CollectionUtil.anyOneElement(entities).getOwner()),
               entities);
+    }
+
+    /**
+     * Assembles the still-loose units of the local player and of every local bot into Campaign
+     * Operations formations - the lobby's Assemble Force feature. Hand-built forces are never touched:
+     * only units outside any force are assembled, so the action is repeatable. Each proposed formation
+     * becomes one top-level force holding its units, sent by the owning client in a single packet, and
+     * the result is announced with a lobby chat line per player.
+     *
+     * <p>The local player assembles under the organization doctrine chosen in the player settings;
+     * bots always auto-detect theirs from their units' majority tech base (a Clan OpFor gets stars
+     * without anyone configuring it).</p>
+     */
+    void assembleForces() {
+        if (localPlayer().isDone()) {
+            return;
+        }
+        List<Player> owners = new ArrayList<>();
+        owners.add(localPlayer());
+        for (AbstractClient bot : client().getBots().values()) {
+            if (bot.getLocalPlayer() != null) {
+                owners.add(bot.getLocalPlayer());
+            }
+        }
+
+        Set<String> namesInUse = new HashSet<>();
+        for (Force force : game().getForces().getAllForces()) {
+            namesInUse.add(force.getName());
+        }
+
+        for (Player owner : owners) {
+            List<AssemblyUnit> looseUnits = new ArrayList<>();
+            for (ForceAssignable forceless : game().getForces().forcelessEntities()) {
+                if ((forceless instanceof Entity entity) && (entity.getOwnerId() == owner.getId())) {
+                    looseUnits.add(AssemblyUnit.of(entity));
+                }
+            }
+            if (looseUnits.isEmpty()) {
+                continue;
+            }
+
+            Organization organization = Organization.AUTO;
+            if (owner.equals(localPlayer())) {
+                try {
+                    organization = Organization.valueOf(
+                          PreferenceManager.getClientPreferences().getForceOrganization());
+                } catch (IllegalArgumentException ignored) {
+                    // An unknown stored name falls back to auto-detection.
+                }
+            }
+
+            Client sender = owner.equals(localPlayer())
+                  ? client()
+                  : (Client) client().getBots().get(owner.getName());
+            if (sender == null) {
+                continue;
+            }
+
+            List<String> announced = new ArrayList<>();
+            for (AssembledFormation formation
+                  : FormationAssembler.assemble(looseUnits, organization, namesInUse)) {
+                List<Entity> members = new ArrayList<>();
+                for (AssemblyUnit unit : formation.units()) {
+                    Entity member = game().getEntity(unit.entityId());
+                    if (member != null) {
+                        members.add(member);
+                    }
+                }
+                sender.sendAddForce(Force.createToplevelForce(formation.name(), owner), members);
+                namesInUse.add(formation.name());
+                announced.add(formation.describe());
+            }
+            if (!announced.isEmpty()) {
+                client().sendChat(Messages.getString("ChatLounge.assembleForce.chat",
+                      owner.getName(), String.join(", ", announced)));
+            }
+        }
     }
 
     /**

@@ -148,11 +148,11 @@ public class CoreRulesPilot extends RulesPilot {
             r.add(e.getCrew().getName(crewPos));
             vDesc.add(r);
             
-            e.getCrew().setPendingConRolls(true);
+            e.getCrew().setPendingConRolls(true, crewPos);
             return vDesc;
         }
         
-        e.getCrew().setPendingConRolls(false);
+        e.getCrew().setPendingConRolls(false, crewPos);
         
         vDesc = (rollPilotHits(e, totalHits, crewPos, toughness));
         
@@ -165,10 +165,13 @@ public class CoreRulesPilot extends RulesPilot {
     @Override
     public Vector<Report> rollConRolls(Entity entity, boolean toughness) {
         Vector<Report> vDesc = new Vector<>();
-        entity.getCrew().setPendingConRolls(false);
         if (!entity.getCrew().isDead() && !entity.getCrew().isEjected() && !entity.getCrew().isDoomed()) {
             for (int pos = 0; pos < entity.getCrew().getSlotCount(); pos++) {
-                vDesc.addAll(rollPilotHits(entity, entity.getCrew().getHits(pos), pos, toughness));
+                if (entity.getCrew().hasPendingConRoll(pos)) {
+                    vDesc.addAll(rollPilotHits(entity, entity.getCrew().getHits(pos), pos, toughness));
+                    entity.getCrew().setPendingConRolls(false, pos);
+                }
+                
             }
         }
         if (!vDesc.isEmpty()) {

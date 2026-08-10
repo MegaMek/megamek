@@ -513,8 +513,10 @@ public class Mounted<T extends EquipmentType> implements Serializable, RoundUpda
             pendingMode = -1;
         }
         
-        if ((type != null) && type.hasFlag(WeaponType.F_BOMBAST_LASER) && chargeState.equals(ChargeLevel.CHARGING)) {
-            setChargeState(ChargeLevel.CHARGED);
+        if ((type != null) && (type instanceof WeaponType)) {
+            if ((type.hasFlag(WeaponType.F_BOMBAST_LASER) && chargeState.equals(ChargeLevel.CHARGING))) {
+                setChargeState(ChargeLevel.CHARGED);
+            }
         }
         called.reset();
     }

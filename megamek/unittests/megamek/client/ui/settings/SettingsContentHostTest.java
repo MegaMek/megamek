@@ -32,6 +32,7 @@
  */
 package megamek.client.ui.settings;
 
+import static megamek.client.ui.util.UIUtil.scaleForGUI;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
@@ -146,7 +147,9 @@ class SettingsContentHostTest {
 
         JPanel contentPanel = findComponent(host, "settingsContentPanel", JPanel.class);
         Scrollable scrollableContent = (Scrollable) contentPanel;
-        assertEquals(100, page.getPreferredSize().width);
+        // Since this test uses actual GUI config values, local user settings can cause the scale to mismatch.
+        // Use the same scale factor to make sure we expect the correct value.
+        assertEquals(scaleForGUI(100), page.getPreferredSize().width);
         assertTrue(contentPanel.getPreferredSize().width > page.getPreferredSize().width);
         assertEquals(page.getPreferredSize().width,
               scrollableContent.getPreferredScrollableViewportSize().width);
@@ -202,13 +205,13 @@ class SettingsContentHostTest {
         SettingsHelpPanel helpPanel = new SettingsHelpPanel("Details");
         JEditorPane helpPane = findComponent(helpPanel, "settingsHelpText", JEditorPane.class);
 
-        assertEquals(UIUtil.scaleForGUI(120), helpPanel.getPreferredSize().height);
-        assertEquals(UIUtil.scaleForGUI(120), helpPanel.getMinimumSize().height);
+        assertEquals(scaleForGUI(120), helpPanel.getPreferredSize().height);
+        assertEquals(scaleForGUI(120), helpPanel.getMinimumSize().height);
         Insets insets = helpPane.getBorder().getBorderInsets(helpPane);
-        assertEquals(UIUtil.scaleForGUI(4), insets.top);
-        assertEquals(UIUtil.scaleForGUI(8), insets.left);
-        assertEquals(UIUtil.scaleForGUI(4), insets.bottom);
-        assertEquals(UIUtil.scaleForGUI(8), insets.right);
+        assertEquals(scaleForGUI(4), insets.top);
+        assertEquals(scaleForGUI(8), insets.left);
+        assertEquals(scaleForGUI(4), insets.bottom);
+        assertEquals(scaleForGUI(8), insets.right);
     }
 
     @Test

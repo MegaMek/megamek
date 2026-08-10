@@ -37,6 +37,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertSame;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.awt.Color;
@@ -55,6 +56,7 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Optional;
+import java.util.ResourceBundle;
 import java.util.Set;
 import java.util.concurrent.atomic.AtomicBoolean;
 import javax.swing.JCheckBox;
@@ -140,6 +142,101 @@ class GameOptionsPaneTest {
     }
 
     @Test
+    void sectionTitleSearchKeepsRowsInMatchingSectionVisible() throws Exception {
+        runOnEdt(() -> {
+            GameOptions options = new GameOptions();
+            DialogOptionComponentYPanel minefields = component(
+                  options.getOption(OptionsConstants.ADVANCED_MINEFIELDS));
+            DialogOptionComponentYPanel bridgeBuilding = component(
+                  options.getOption(OptionsConstants.ADVANCED_BRIDGE_BUILDING_ENGINEERS));
+            GameOptionsPane pane = pane("advancedRules", List.of(minefields, bridgeBuilding), option -> true);
+
+            pane.setFilterText("Battlefield Engineering");
+
+            assertFalse(minefields.isVisible());
+            assertTrue(bridgeBuilding.isVisible());
+        });
+    }
+
+    @Test
+    void pageTitleSearchKeepsPageRowsVisible() throws Exception {
+        runOnEdt(() -> {
+            GameOptions options = new GameOptions();
+            DialogOptionComponentYPanel extremeRange = component(
+                  options.getOption(OptionsConstants.ADVANCED_COMBAT_TAC_OPS_RANGE));
+            DialogOptionComponentYPanel calledShots = component(
+                  options.getOption(OptionsConstants.ADVANCED_COMBAT_TAC_OPS_CALLED_SHOTS));
+            GameOptionsPane pane = pane("advancedCombat", List.of(extremeRange, calledShots), option -> true);
+
+            pane.setFilterText("Targeting LOS Artillery");
+
+            assertTrue(extremeRange.isVisible());
+            assertTrue(calledShots.isVisible());
+        });
+    }
+
+    @Test
+    void unchangedVisibilityRefreshDoesNotRebuildSectionForm() throws Exception {
+        runOnEdt(() -> {
+            GameOptions options = new GameOptions();
+            DialogOptionComponentYPanel extremeRange = component(
+                  options.getOption(OptionsConstants.ADVANCED_COMBAT_TAC_OPS_RANGE));
+            DialogOptionComponentYPanel losRange = component(
+                  options.getOption(OptionsConstants.ADVANCED_COMBAT_TAC_OPS_LOS_RANGE));
+            GameOptionsPane pane = pane("advancedCombat", List.of(extremeRange, losRange), option -> true);
+            Container sectionForm = extremeRange.settingsCheckBox().getParent();
+            Component[] originalChildren = sectionForm.getComponents();
+
+            pane.refreshVisibility();
+
+            assertEquals(List.of(originalChildren), List.of(sectionForm.getComponents()));
+        });
+    }
+
+    @Test
+    void filteringReflowsSurvivingRightColumnCheckbox() throws Exception {
+        runOnEdt(() -> {
+            GameOptions options = new GameOptions();
+            DialogOptionComponentYPanel extremeRange = component(
+                  options.getOption(OptionsConstants.ADVANCED_COMBAT_TAC_OPS_RANGE));
+            DialogOptionComponentYPanel diagrammingLos = component(
+                options.getOption(OptionsConstants.ADVANCED_COMBAT_TAC_OPS_LOS1));
+            GameOptionsPane pane = pane("advancedCombat", List.of(extremeRange, diagrammingLos), option -> true);
+
+            pane.setFilterText("Diagramming");
+
+            JCheckBox checkBox = diagrammingLos.settingsCheckBox();
+            assertTrue(checkBox.isVisible());
+            assertCell((GridBagLayout) checkBox.getParent().getLayout(), checkBox, 0, 0, 2);
+        });
+    }
+
+    @Test
+    void filteringDoesNotRestoreTooltipsSuppressedByDetailsPanel() throws Exception {
+        runOnEdt(() -> {
+            GameOptions options = new GameOptions();
+            DialogOptionComponentYPanel doubleBlind = component(
+                  options.getOption(OptionsConstants.ADVANCED_DOUBLE_BLIND));
+            DialogOptionComponentYPanel teamVision = component(
+                  options.getOption(OptionsConstants.ADVANCED_TEAM_VISION));
+            GameOptionsPane pane = pane("advancedRules", List.of(doubleBlind, teamVision), option -> true);
+            JCheckBox doubleBlindCheckBox = doubleBlind.settingsCheckBox();
+            JCheckBox teamVisionCheckBox = teamVision.settingsCheckBox();
+
+            assertNull(doubleBlindCheckBox.getToolTipText());
+            assertNull(teamVisionCheckBox.getToolTipText());
+
+            pane.setFilterText("vision");
+            assertNull(doubleBlindCheckBox.getToolTipText());
+            assertNull(teamVisionCheckBox.getToolTipText());
+
+            pane.setFilterText("");
+            assertNull(doubleBlindCheckBox.getToolTipText());
+            assertNull(teamVisionCheckBox.getToolTipText());
+        });
+    }
+
+    @Test
     void refreshingVisibilityHidesExcludedOption() throws Exception {
         runOnEdt(() -> {
             GameOptions options = new GameOptions();
@@ -153,6 +250,25 @@ class GameOptionsPaneTest {
 
             assertFalse(searchlights.isVisible());
             assertFalse(searchlights.settingsCheckBox().isVisible());
+        });
+    }
+
+    @Test
+    void refreshingVisibilityHidesSectionWithNoVisibleRows() throws Exception {
+        runOnEdt(() -> {
+            GameOptions options = new GameOptions();
+            DialogOptionComponentYPanel bridgeRepair = component(
+                  options.getOption(OptionsConstants.UNOFFICIAL_BRIDGE_REPAIR_ENGINEERS));
+            AtomicBoolean showOption = new AtomicBoolean(true);
+            GameOptionsPane pane = pane("advancedRules", List.of(bridgeRepair), option -> showOption.get());
+            CollapsibleSectionPanel section = (CollapsibleSectionPanel) SwingUtilities.getAncestorOfClass(
+                  CollapsibleSectionPanel.class, bridgeRepair.settingsCheckBox());
+            assertNotNull(section);
+
+            showOption.set(false);
+            pane.refreshVisibility();
+
+            assertFalse(section.isVisible());
         });
     }
 
@@ -609,6 +725,40 @@ class GameOptionsPaneTest {
     }
 
     @Test
+    void everyLocalizedSectionBelongsToThePresentationCatalog() {
+        Set<String> catalogKeys = new LinkedHashSet<>();
+        GameOptions options = new GameOptions();
+        for (Enumeration<IOptionGroup> groups = options.getGroups(); groups.hasMoreElements(); ) {
+            IOptionGroup group = groups.nextElement();
+            for (Enumeration<IOption> groupOptions = group.getOptions(); groupOptions.hasMoreElements(); ) {
+                String sectionId = GameOptionsPane.sectionId(group.getName(), groupOptions.nextElement().getName());
+                catalogKeys.add("GameOptionsDialog.section." + sectionId + ".title");
+                catalogKeys.add("GameOptionsDialog.section." + sectionId + ".summary");
+            }
+        }
+        catalogKeys.add("GameOptionsDialog.section.allowedUnits.uncategorized.title");
+        catalogKeys.add("GameOptionsDialog.section.allowedUnits.uncategorized.summary");
+
+        ResourceBundle bundle = ResourceBundle.getBundle("megamek.client.messages", Locale.ROOT);
+        Set<String> localizedKeys = bundle.keySet().stream()
+              .filter(key -> key.startsWith("GameOptionsDialog.section."))
+              .collect(java.util.stream.Collectors.toCollection(LinkedHashSet::new));
+
+        assertEquals(catalogKeys, localizedKeys);
+    }
+
+    @Test
+    void missingPresentationLocationUsesFallbackWithoutWeakeningStrictLookup() {
+        GameOptionsPresentation.Location fallback = GameOptionsPresentation.locationOrFallback(
+              "newGroup", "new_option");
+
+        assertEquals("general.unitsAndTechnology", fallback.page().id());
+        assertEquals("allowedUnits.uncategorized", fallback.sectionId());
+        assertThrows(IllegalArgumentException.class,
+              () -> GameOptionsPresentation.location("newGroup", "new_option"));
+    }
+
+    @Test
     void everyRegisteredGameOptionHasExactlyOneExplicitPresentationLocation() {
         GameOptions options = new GameOptions();
         Set<String> registeredOptionNames = new LinkedHashSet<>();
@@ -619,27 +769,28 @@ class GameOptionsPaneTest {
             IOptionGroup group = groups.nextElement();
             for (Enumeration<IOption> groupOptions = group.getOptions(); groupOptions.hasMoreElements(); ) {
                 IOption option = groupOptions.nextElement();
-                assertTrue(registeredOptionNames.add(option.getName()), "Duplicate registered option " + option.getName());
+                assertTrue(registeredOptionNames.add(option.getName()),
+                      "Duplicate registered option " + option.getName());
                 GameOptionsPresentation.Location location = GameOptionsPresentation.location(
                       group.getName(), option.getName());
-                    assertTrue(Messages.keyExists(
-                        "GameOptionsDialog.category." + location.page().categoryId()), location.page().categoryId());
-                    assertTrue(Messages.keyExists(
-                        "GameOptionsDialog.page." + location.page().id() + ".title"), location.page().id());
-                    assertTrue(Messages.keyExists(
-                        "GameOptionsDialog.section." + location.sectionId() + ".title"), location.sectionId());
-                    assertTrue(Messages.keyExists(
-                        "GameOptionsDialog.section." + location.sectionId() + ".summary"), location.sectionId());
+                assertTrue(Messages.keyExists(
+                      "GameOptionsDialog.category." + location.page().categoryId()), location.page().categoryId());
+                assertTrue(Messages.keyExists(
+                      "GameOptionsDialog.page." + location.page().id() + ".title"), location.page().id());
+                assertTrue(Messages.keyExists(
+                      "GameOptionsDialog.section." + location.sectionId() + ".title"), location.sectionId());
+                assertTrue(Messages.keyExists(
+                      "GameOptionsDialog.section." + location.sectionId() + ".summary"), location.sectionId());
                 String sectionKey = location.page().id() + ':' + location.sectionId();
                 sectionSizes.merge(sectionKey, 1, Integer::sum);
-                    pageSections.computeIfAbsent(location.page().id(), ignored -> new LinkedHashSet<>())
-                        .add(location.sectionId());
+                pageSections.computeIfAbsent(location.page().id(), ignored -> new LinkedHashSet<>())
+                      .add(location.sectionId());
             }
         }
 
         assertEquals(registeredOptionNames, GameOptionsPresentation.mappedOptionNames());
         sectionSizes.forEach((section, count) -> assertTrue(count <= 12, section + " contains " + count + " options"));
-                pageSections.forEach((page, sections) -> assertTrue(sections.size() >= 2 && sections.size() <= 4,
+        pageSections.forEach((page, sections) -> assertTrue(sections.size() >= 2 && sections.size() <= 4,
               page + " contains " + sections.size() + " sections"));
     }
 
@@ -868,6 +1019,7 @@ class GameOptionsPaneTest {
             assertIntegerSpinner(advancedRules.get(1), 0, 10, 5);
 
             JLabel ghostTargetModeLabel = ghostTargetMode.settingsLabel();
+            assertTrue(ghostTargetModeLabel.getText().contains(IMPORTANT_SYMBOL), ghostTargetModeLabel.getText());
             MouseEvent enter = new MouseEvent(ghostTargetModeLabel, MouseEvent.MOUSE_ENTERED,
                   System.currentTimeMillis(), 0, 0, 0, 0, false);
             for (var listener : ghostTargetModeLabel.getMouseListeners()) {
@@ -1055,6 +1207,7 @@ class GameOptionsPaneTest {
     void paratroopersRequireAssaultDrop() throws Exception {
         runOnEdt(() -> {
             GameOptions options = new GameOptions();
+            options.getOption(OptionsConstants.ADVANCED_PARATROOPERS).setValue(true);
             DialogOptionComponentYPanel assaultDrop = component(
                   options.getOption(OptionsConstants.ADVANCED_ASSAULT_DROP));
             DialogOptionComponentYPanel paratroopers = component(
@@ -1063,9 +1216,9 @@ class GameOptionsPaneTest {
             pane("advancedRules", List.of(assaultDrop, paratroopers), option -> true);
 
             assertFalse(paratroopers.settingsCheckBox().isEnabled());
+            assertTrue(paratroopers.settingsCheckBox().isSelected());
             assaultDrop.setSelected(true);
             assertTrue(paratroopers.settingsCheckBox().isEnabled());
-            paratroopers.setSelected(true);
             assaultDrop.setSelected(false);
             assertFalse(paratroopers.settingsCheckBox().isEnabled());
             assertFalse(paratroopers.settingsCheckBox().isSelected());

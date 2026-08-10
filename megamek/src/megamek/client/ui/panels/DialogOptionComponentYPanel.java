@@ -102,6 +102,9 @@ public class DialogOptionComponentYPanel extends FixedYPanel
     private int optionLabelWrapWidth;
     private boolean settingsCheckBoxPresentation;
     private boolean settingsComponentsDetached;
+    private boolean settingsCheckBoxInitialized;
+    private boolean settingsLabelInitialized;
+    private boolean settingsControlInitialized;
     private boolean requestedEditable;
     private boolean dependencyEditable = true;
     /** Short marker appended to the displayable name (e.g. " (P)" for partially implemented SPAs). */
@@ -270,9 +273,6 @@ public class DialogOptionComponentYPanel extends FixedYPanel
             throw new IllegalArgumentException("Editability dependencies require a boolean option");
         }
         dependencyEditable = controllingComponent.checkbox.isSelected();
-        if (clearWhenDisabled && !dependencyEditable) {
-            checkbox.setSelected(false);
-        }
         controllingComponent.checkbox.addItemListener(event -> {
             dependencyEditable = controllingComponent.checkbox.isSelected();
             if (clearWhenDisabled && !dependencyEditable) {
@@ -290,7 +290,10 @@ public class DialogOptionComponentYPanel extends FixedYPanel
         settingsCheckBoxPresentation = true;
         settingsComponentsDetached = true;
         checkbox.setText(optionLabel.getText());
-        checkbox.setToolTipText(getSettingsHelpText());
+        if (!settingsCheckBoxInitialized) {
+            checkbox.setToolTipText(getSettingsHelpText());
+            settingsCheckBoxInitialized = true;
+        }
         return checkbox;
     }
 
@@ -299,7 +302,10 @@ public class DialogOptionComponentYPanel extends FixedYPanel
             throw new IllegalStateException("Boolean settings use their checkbox text as the label");
         }
         settingsComponentsDetached = true;
-        optionLabel.setToolTipText(getSettingsHelpText());
+        if (!settingsLabelInitialized) {
+            optionLabel.setToolTipText(getSettingsHelpText());
+            settingsLabelInitialized = true;
+        }
         return optionLabel;
     }
 
@@ -309,7 +315,10 @@ public class DialogOptionComponentYPanel extends FixedYPanel
             throw new IllegalStateException("Boolean settings do not have a separate control");
         }
         settingsComponentsDetached = true;
-        control.setToolTipText(getSettingsHelpText());
+        if (!settingsControlInitialized) {
+            control.setToolTipText(getSettingsHelpText());
+            settingsControlInitialized = true;
+        }
         return control;
     }
 
@@ -336,12 +345,12 @@ public class DialogOptionComponentYPanel extends FixedYPanel
         int componentIndex = getComponentZOrder(textField);
         boolean editable = textField.isEnabled();
         remove(textField);
-          int currentValue = option.intValue();
-          int effectiveMinimum = Math.min(minimum, currentValue);
-          Integer effectiveMaximum = maximum == null ? null : Math.max(maximum, currentValue);
+        int currentValue = option.intValue();
+        int effectiveMinimum = Math.min(minimum, currentValue);
+        Integer effectiveMaximum = maximum == null ? null : Math.max(maximum, currentValue);
         integerSpinner = new JSpinner(new SpinnerNumberModel(
               (Number) currentValue, effectiveMinimum, effectiveMaximum, 1));
-          SettingsSpinner.configureEditor(integerSpinner);
+        SettingsSpinner.configureEditor(integerSpinner);
         integerSpinner.setEnabled(editable);
         integerSpinner.setToolTipText(convertToHtml(option.getDescription()));
         integerSpinner.addChangeListener(event -> dialogOptionListener.optionClicked(this, option, true));
@@ -545,8 +554,8 @@ public class DialogOptionComponentYPanel extends FixedYPanel
         // text and let the row clip at its right edge, which stays usable.
         boolean fits = (availableRowWidth <= 0) || (availableLabelWidth <= 0)
               || (optionLabel.getFontMetrics(optionLabel.getFont()).stringWidth(plainName) <= availableLabelWidth);
-          optionLabelWrapWidth = fits ? 0 : availableLabelWidth;
-          updateOptionLabelText();
+        optionLabelWrapWidth = fits ? 0 : availableLabelWidth;
+        updateOptionLabelText();
     }
 
     public static String convertToHtml(String source) {
@@ -704,8 +713,8 @@ public class DialogOptionComponentYPanel extends FixedYPanel
             case IOption.BOOLEAN -> checkbox.isSelected() == (boolean) option.getDefault();
             case IOption.CHOICE ->
                 // Assume first choice is always default
-                  choice.getSelectedIndex() == 0;
-                        case IOption.INTEGER -> getValue().equals(option.getDefault());
+                choice.getSelectedIndex() == 0;
+            case IOption.INTEGER -> getValue().equals(option.getDefault());
             default -> textField.getText().equals(String.valueOf(option.getDefault()));
         };
     }

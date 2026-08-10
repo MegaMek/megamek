@@ -441,16 +441,24 @@ public class GameOptionsDialog extends AbstractButtonDialog implements ActionLis
     }
 
     private void synchronizeRuleToggles() {
+        // Without a backing hide option, the caller has chosen an always-visible category with no user toggle.
+        butUnofficial.setVisible(hasBackingOption(OptionsConstants.BASE_HIDE_UNOFFICIAL));
+        butLegacy.setVisible(hasBackingOption(OptionsConstants.BASE_HIDE_LEGACY));
         butUnofficial.setSelected(!backingOptionSelected(OptionsConstants.BASE_HIDE_UNOFFICIAL));
         butLegacy.setSelected(!backingOptionSelected(OptionsConstants.BASE_HIDE_LEGACY));
-                updateRuleToggleText(butUnofficial, GameOptionsPane.unofficialBadge(),
+        updateRuleToggleText(butUnofficial, GameOptionsPane.unofficialBadge(),
               getString("GameOptionsDialog.Unofficial"));
-                updateRuleToggleText(butLegacy, GameOptionsPane.legacyBadge(), getString("GameOptionsDialog.Legacy"));
+        updateRuleToggleText(butLegacy, GameOptionsPane.legacyBadge(), getString("GameOptionsDialog.Legacy"));
     }
 
     private boolean backingOptionSelected(String optionName) {
         List<DialogOptionComponentYPanel> components = optionComps.get(optionName);
         return components != null && !components.isEmpty() && (Boolean) components.getFirst().getValue();
+    }
+
+    private boolean hasBackingOption(String optionName) {
+        List<DialogOptionComponentYPanel> components = optionComps.get(optionName);
+        return components != null && !components.isEmpty();
     }
 
     /**
@@ -972,6 +980,9 @@ public class GameOptionsDialog extends AbstractButtonDialog implements ActionLis
 
     private void ruleToggleChanged(JToggleButton button, String backingOptionName, SettingsBadge badge,
           String labelKey) {
+        if (!hasBackingOption(backingOptionName)) {
+            return;
+        }
         if (!button.isSelected()
               && !MMConfirmDialog.confirm(frame, "Warning", getString("GameOptionsDialog.HideWarning"))) {
             button.setSelected(true);

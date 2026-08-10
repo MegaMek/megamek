@@ -36,13 +36,16 @@ import static megamek.client.ui.util.FlatLafStyleBuilder.setFontScaling;
 import static megamek.client.ui.util.FontHandler.symbolIcon;
 
 import java.awt.BorderLayout;
+import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.FlowLayout;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.IdentityHashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Objects;
 import java.util.function.Predicate;
 import javax.swing.BorderFactory;
@@ -75,6 +78,7 @@ public class SettingsPagePanel extends JPanel {
     private final String bodySearchText;
     private final String pageSearchText;
     private final List<SearchableSection> searchableSections;
+    private final Map<Component, CollapsibleSectionPanel> sectionsByContent = new IdentityHashMap<>();
     private final int maximumPageWidth;
 
     private SettingsPagePanel(Builder builder) {
@@ -95,6 +99,7 @@ public class SettingsPagePanel extends JPanel {
             if (bodyItem instanceof Section definition) {
                 CollapsibleSectionPanel section = createSection(builder, definition);
                 sections.add(section);
+                sectionsByContent.put(definition.content, section);
                 renderItems.add(section);
                 String text = sectionSearchText(builder.textProvider, definition);
                 searchable.add(new SearchableSection(section, text));
@@ -178,6 +183,14 @@ public class SettingsPagePanel extends JPanel {
 
     public void collapseAllSections() {
         setExpanded(false, sectionPanels());
+    }
+
+    /** Sets the visibility of the section containing the given content component. */
+    public void setSectionVisible(Component content, boolean visible) {
+        CollapsibleSectionPanel section = sectionsByContent.get(content);
+        if (section != null) {
+            section.setVisible(visible);
+        }
     }
 
     private List<CollapsibleSectionPanel> sectionPanels() {

@@ -102,6 +102,12 @@ public class SettingsFormPanel extends JPanel {
         setLayout(new GridBagLayout());
     }
 
+    /** Removes all form content and resets row placement for rebuilding the form. */
+    public void clear() {
+        removeAll();
+        row = 0;
+    }
+
     /**
      * Adds one left-aligned checkbox on its own row, spanning the form's two base columns.
      *

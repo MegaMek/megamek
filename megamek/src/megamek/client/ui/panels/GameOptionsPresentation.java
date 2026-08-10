@@ -40,9 +40,11 @@ import java.util.Map;
 import java.util.Set;
 
 import megamek.common.options.OptionsConstants;
+import megamek.logging.MMLogger;
 
 /** Explicit presentation-only placement for every registered game option. */
 final class GameOptionsPresentation {
+    private static final MMLogger LOGGER = MMLogger.create(GameOptionsPresentation.class);
     private static final String BASIC = "basic";
     private static final String GAME_MASTER = "gameMaster";
     private static final String VICTORY = "victory";
@@ -102,7 +104,7 @@ final class GameOptionsPresentation {
     static {
         registerBasicOptions();
         registerGameManagementOptions();
-            registerGroundMovementOptions();
+        registerGroundMovementOptions();
         registerAdvancedRulesOptions();
         registerAdvancedCombatOptions();
         registerAerospaceOptions();
@@ -122,6 +124,22 @@ final class GameOptionsPresentation {
                   + " but its presentation location expects " + location.sourceGroupId());
         }
         return location;
+    }
+
+    static Location locationOrFallback(String sourceGroupId, String optionName) {
+        Location location = LOCATIONS.get(optionName);
+        if (location != null && location.sourceGroupId().equals(sourceGroupId)) {
+            return location;
+        }
+        if (location == null) {
+            LOGGER.warn("No Game Options presentation location for {}; using Uncategorized", optionName);
+        } else {
+            LOGGER.warn("Game option {} is registered in {} but its presentation location expects {}; "
+                        + "using Uncategorized",
+                  optionName, sourceGroupId, location.sourceGroupId());
+        }
+        return new Location(sourceGroupId, GENERAL_UNITS_AND_TECHNOLOGY,
+              "allowedUnits.uncategorized", Integer.MAX_VALUE, Integer.MAX_VALUE);
     }
 
     static Set<String> mappedOptionNames() {
@@ -391,11 +409,10 @@ final class GameOptionsPresentation {
               OptionsConstants.ADVANCED_GROUND_MOVEMENT_TAC_OPS_FALLING_EXPANDED,
               OptionsConstants.ADVANCED_GROUND_MOVEMENT_FALLS_END_MOVEMENT,
               OptionsConstants.ADVANCED_GROUND_MOVEMENT_PSR_JUMP_HEAVY_WOODS);
-        registerOrdered(GROUND_MOVEMENT, MOVEMENT_MEKS, "movement.meks.formations", 0,
+        registerOrdered(GROUND_MOVEMENT, MOVEMENT_MEKS, "movement.meks.formations",
               OptionsConstants.ADVANCED_GROUND_MOVEMENT_TAC_OPS_ATTEMPTING_STAND,
               OptionsConstants.ADVANCED_GROUND_MOVEMENT_TAC_OPS_CAREFUL_STAND,
-              OptionsConstants.ADVANCED_GROUND_MOVEMENT_MEK_LANCE_MOVEMENT);
-        registerOrdered(GROUND_MOVEMENT, MOVEMENT_MEKS, "movement.meks.formations", 4,
+              OptionsConstants.ADVANCED_GROUND_MOVEMENT_MEK_LANCE_MOVEMENT,
               OptionsConstants.ADVANCED_GROUND_MOVEMENT_MEK_LANCE_MOVEMENT_NUMBER,
               OptionsConstants.ADVANCED_GROUND_MOVEMENT_NO_PRE_MOVE_VIBRA);
 
@@ -470,14 +487,14 @@ final class GameOptionsPresentation {
     }
 
     private static void registerInitiativeAndRpgOptions() {
-      register(INITIATIVE, INITIATIVE_AND_PILOTS_PHASES, "initiative.infantry",
+        register(INITIATIVE, INITIATIVE_AND_PILOTS_PHASES, "initiative.infantry",
               OptionsConstants.INIT_INF_MOVE_EVEN,
               OptionsConstants.INIT_INF_DEPLOY_EVEN,
-                  OptionsConstants.INIT_INF_MOVE_LATER);
-                        register(INITIATIVE, INITIATIVE_AND_PILOTS_PHASES, "initiative.protomeks",
+              OptionsConstants.INIT_INF_MOVE_LATER);
+        register(INITIATIVE, INITIATIVE_AND_PILOTS_PHASES, "initiative.protomeks",
               OptionsConstants.INIT_PROTOMEKS_MOVE_EVEN,
-                  OptionsConstants.INIT_PROTOMEKS_MOVE_LATER);
-                        register(INITIATIVE, INITIATIVE_AND_PILOTS_PHASES, "initiative.simultaneous",
+              OptionsConstants.INIT_PROTOMEKS_MOVE_LATER);
+        register(INITIATIVE, INITIATIVE_AND_PILOTS_PHASES, "initiative.simultaneous",
               OptionsConstants.INIT_SIMULTANEOUS_DEPLOYMENT,
               OptionsConstants.INIT_SIMULTANEOUS_TARGETING,
               OptionsConstants.INIT_SIMULTANEOUS_FIRING,
@@ -485,18 +502,19 @@ final class GameOptionsPresentation {
               OptionsConstants.INIT_FRONT_LOAD_INITIATIVE,
               OptionsConstants.INIT_INITIATIVE_STREAK_COMPENSATION);
 
-                        register(RPG, INITIATIVE_AND_PILOTS_ABILITIES, "rpg.core",
+        register(RPG, INITIATIVE_AND_PILOTS_ABILITIES, "rpg.core",
               OptionsConstants.RPG_PILOT_ADVANTAGES,
               OptionsConstants.EDGE,
               OptionsConstants.RPG_MANEI_DOMINI);
-                        register(RPG, INITIATIVE_AND_PILOTS_ABILITIES, "rpg.initiative",
+        register(RPG, INITIATIVE_AND_PILOTS_ABILITIES, "rpg.initiative",
               OptionsConstants.RPG_INDIVIDUAL_INITIATIVE,
               OptionsConstants.RPG_COMMAND_INIT);
-                        register(RPG, INITIATIVE_AND_PILOTS_ABILITIES, "rpg.skills",
+        register(RPG, INITIATIVE_AND_PILOTS_ABILITIES, "rpg.skills",
               OptionsConstants.RPG_RPG_GUNNERY,
               OptionsConstants.RPG_ARTILLERY_SKILL,
               OptionsConstants.RPG_TOUGHNESS);
-                        register(RPG, INITIATIVE_AND_PILOTS_ABILITIES, "rpg.conditions", OptionsConstants.RPG_BEGIN_SHUTDOWN);
+        register(RPG, INITIATIVE_AND_PILOTS_ABILITIES, "rpg.conditions",
+              OptionsConstants.RPG_BEGIN_SHUTDOWN);
     }
 
     private static void register(String sourceGroupId, PageDefinition page, String sectionId,
@@ -508,11 +526,6 @@ final class GameOptionsPresentation {
           String... optionNames) {
         register(sourceGroupId, page, sectionId, true, optionNames);
     }
-
-            private static void registerOrdered(String sourceGroupId, PageDefinition page, String sectionId,
-                              int firstOptionOrder, String... optionNames) {
-                        register(sourceGroupId, page, sectionId, firstOptionOrder, optionNames);
-            }
 
     private static void register(String sourceGroupId, PageDefinition page, String sectionId,
           boolean ordered, String... optionNames) {
@@ -539,35 +552,35 @@ final class GameOptionsPresentation {
 
     private static PageDefinition nestedPage(String id, String categoryId, String iconGroupId, boolean advanced,
           int order) {
-            return new PageDefinition(id, categoryId, iconGroupId, "", advanced, order);
+        return new PageDefinition(id, categoryId, iconGroupId, "", advanced, order);
     }
 
-      private static PageDefinition nestedPageWithSingleSourceFallback(String id, String categoryId, String iconGroupId,
-              String fallbackSourceGroupId, boolean advanced, int order) {
-            return new PageDefinition(id, categoryId, iconGroupId, fallbackSourceGroupId, advanced, order);
+    private static PageDefinition nestedPageWithSingleSourceFallback(String id, String categoryId, String iconGroupId,
+          String fallbackSourceGroupId, boolean advanced, int order) {
+        return new PageDefinition(id, categoryId, iconGroupId, fallbackSourceGroupId, advanced, order);
     }
 
-      record Location(String sourceGroupId, PageDefinition page, String sectionId, int sectionOrder, int optionOrder) {
-      }
+    record Location(String sourceGroupId, PageDefinition page, String sectionId, int sectionOrder, int optionOrder) {
+    }
 
-      record PageDefinition(String id, String categoryId, String iconGroupId, String fallbackSourceGroupId,
-              boolean advanced, int order) {
-            String title(Map<String, String> sourceGroups) {
-                  return usesSingleSourceFallback(sourceGroups)
-                          ? sourceGroups.get(fallbackSourceGroupId)
-                          : getString("GameOptionsDialog.page." + id + ".title");
+    record PageDefinition(String id, String categoryId, String iconGroupId, String fallbackSourceGroupId,
+          boolean advanced, int order) {
+        String title(Map<String, String> sourceGroups) {
+            return usesSingleSourceFallback(sourceGroups)
+                  ? sourceGroups.get(fallbackSourceGroupId)
+                  : getString("GameOptionsDialog.page." + id + ".title");
         }
 
-            List<String> path(Map<String, String> sourceGroups) {
-                  return List.of(getString("GameOptionsDialog.category." + categoryId), title(sourceGroups));
+        List<String> path(Map<String, String> sourceGroups) {
+            return List.of(getString("GameOptionsDialog.category." + categoryId), title(sourceGroups));
         }
 
         List<String> pathIds() {
-                  return List.of("gameOptions." + categoryId, routeId());
-            }
+            return List.of("gameOptions." + categoryId, routeId());
+        }
 
-            String effectiveIconGroupId(Map<String, String> sourceGroups) {
-                  return usesSingleSourceFallback(sourceGroups) ? fallbackSourceGroupId : iconGroupId;
+        String effectiveIconGroupId(Map<String, String> sourceGroups) {
+            return usesSingleSourceFallback(sourceGroups) ? fallbackSourceGroupId : iconGroupId;
         }
 
         String routeId() {

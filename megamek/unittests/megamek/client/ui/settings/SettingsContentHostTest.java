@@ -91,6 +91,23 @@ class SettingsContentHostTest {
     }
 
     @Test
+    void nestedControlUsesItsOwnTooltipInsteadOfAncestorHelp() {
+        JPanel parent = new JPanel();
+        parent.setToolTipText("Parent help");
+        JTextField child = new JTextField();
+        child.setToolTipText("Child-specific help");
+        parent.add(child);
+        SettingsContentHost host = new SettingsContentHost(parent, true);
+
+        fireFocusGained(child);
+
+        JEditorPane helpPane = findComponent(host, "settingsHelpText", JEditorPane.class);
+        assertTrue(helpPane.getText().contains("Child-specific help"), helpPane.getText());
+        assertFalse(helpPane.getText().contains("Parent help"), helpPane.getText());
+        assertNull(child.getToolTipText());
+    }
+
+    @Test
     void explicitHelpUpdateTargetsNearestHost() {
         JLabel source = new JLabel("Source");
         SettingsContentHost host = new SettingsContentHost(source, true);

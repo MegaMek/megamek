@@ -201,7 +201,7 @@ public class SettingsContentHost extends JPanel {
         if (component instanceof JComponent swingComponent && !(component instanceof JButton)) {
             String ownHelpText = component instanceof SettingsHelpProvider provider
                   ? provider.getSettingsHelpText()
-                  : inheritedHelpText == null ? swingComponent.getToolTipText() : null;
+                  : swingComponent.getToolTipText();
             if (ownHelpText != null && !ownHelpText.isBlank()) {
                 descendantHelpText = ownHelpText;
             }

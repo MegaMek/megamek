@@ -101,16 +101,16 @@ public class GameOptionsPane extends JPanel {
           getString("GameOptionsDialog.legend.advanced"));
     private static final SettingsBadge UNOFFICIAL_BADGE = new SettingsBadge(UNOFFICIAL_ICON, UNOFFICIAL_COLOR,
           getString("GameOptionsDialog.legend.unofficial"));
-        private static final SettingsBadge LEGACY_BADGE = new SettingsBadge(LEGACY_ICON, null,
-            getString("GameOptionsDialog.legend.legacy"));
-        private static final Set<String> LEGACY_OPTIONS = Set.of(
-            OptionsConstants.ADVANCED_GHOST_TARGET_MODE,
-            OptionsConstants.ADVANCED_GHOST_TARGET_MAX,
-            OptionsConstants.ADVANCED_ASSAULT_DROP,
-            OptionsConstants.ADVANCED_PARATROOPERS,
-            OptionsConstants.ADVANCED_MAX_TECH_MOVEMENT_MODS,
-            OptionsConstants.ADVANCED_GROUND_MOVEMENT_AUTO_ABANDON_UNIT,
-            OptionsConstants.RPG_RPG_GUNNERY);
+    private static final SettingsBadge LEGACY_BADGE = new SettingsBadge(LEGACY_ICON, null,
+          getString("GameOptionsDialog.legend.legacy"));
+    private static final Set<String> LEGACY_OPTIONS = Set.of(
+          OptionsConstants.ADVANCED_GHOST_TARGET_MODE,
+          OptionsConstants.ADVANCED_GHOST_TARGET_MAX,
+          OptionsConstants.ADVANCED_ASSAULT_DROP,
+          OptionsConstants.ADVANCED_PARATROOPERS,
+          OptionsConstants.ADVANCED_MAX_TECH_MOVEMENT_MODS,
+          OptionsConstants.ADVANCED_GROUND_MOVEMENT_AUTO_ABANDON_UNIT,
+          OptionsConstants.RPG_RPG_GUNNERY);
     private static final Map<String, String> PAGE_FACTION_LOGOS = Map.ofEntries(
           Map.entry("basic", "logo_federated_suns.png"),
           Map.entry("gameMaster", "logo_star_league.png"),
@@ -142,13 +142,13 @@ public class GameOptionsPane extends JPanel {
         Map<String, DialogOptionComponentYPanel> componentsByName = new LinkedHashMap<>();
         for (OptionGroup group : groups) {
             for (DialogOptionComponentYPanel component : group.components()) {
-                    if ((component.getOption().getName().equals(OptionsConstants.BASE_HIDE_UNOFFICIAL)
-                        || component.getOption().getName().equals(OptionsConstants.BASE_HIDE_LEGACY))
+                if ((component.getOption().getName().equals(OptionsConstants.BASE_HIDE_UNOFFICIAL)
+                      || component.getOption().getName().equals(OptionsConstants.BASE_HIDE_LEGACY))
                       || excludedNames.contains(component.getOption().getName())) {
                     continue;
                 }
                 componentsByName.put(component.getOption().getName(), component);
-                GameOptionsPresentation.Location location = GameOptionsPresentation.location(
+                GameOptionsPresentation.Location location = GameOptionsPresentation.locationOrFallback(
                       group.id(), component.getOption().getName());
                 pageSeeds.computeIfAbsent(location.page(), PageSeed::new).add(group, component, location);
             }
@@ -160,10 +160,10 @@ public class GameOptionsPane extends JPanel {
         List<SettingsRoute> routes = new ArrayList<>();
         Map<String, Supplier<Component>> pageFactories = new LinkedHashMap<>();
         for (PageSeed pageSeed : orderedPageSeeds) {
-                        String pageTitle = pageSeed.title();
+            String pageTitle = pageSeed.title();
             GroupPage page = new GroupPage(pageSeed, pageTitle, optionVisibility);
             SettingsRoute route = new SettingsRoute(pageSeed.definition().routeId(),
-                                    pageSeed.path(),
+                pageSeed.path(),
                   pageSeed.definition().pathIds(), pageSeed.searchAliases(), true);
             page.setRoute(route);
             pages.add(page);
@@ -178,7 +178,7 @@ public class GameOptionsPane extends JPanel {
               getString("GameOptionsDialog.SearchMatches"),
               getString("SettingsPagePanel.expandAll.text"),
               getString("SettingsPagePanel.collapseAll.text"));
-          settingsPane = new SettingsPane(routes, pageFactories, navigationText);
+        settingsPane = new SettingsPane(routes, pageFactories, navigationText);
         add(settingsPane, BorderLayout.CENTER);
     }
 
@@ -189,6 +189,7 @@ public class GameOptionsPane extends JPanel {
     public void setFilterText(String filterText) {
         settingsPane.setFilterText(filterText);
         String normalizedFilter = SettingsRoute.normalizeSearchText(Objects.requireNonNullElse(filterText, ""));
+        // Game Options stages every page up front, and callers inspect option visibility independently of navigation.
         for (GroupPage page : pages) {
             page.refreshVisibility(normalizedFilter);
         }
@@ -203,45 +204,45 @@ public class GameOptionsPane extends JPanel {
         settingsPane.refreshFilter();
     }
 
-        private static void configureSettingsDependencies(
-            Map<String, DialogOptionComponentYPanel> componentsByName) {
-          configureEditableDependency(componentsByName, OptionsConstants.ADVANCED_WOODS_BURN_DOWN_AMOUNT,
+    private static void configureSettingsDependencies(
+          Map<String, DialogOptionComponentYPanel> componentsByName) {
+        configureEditableDependency(componentsByName, OptionsConstants.ADVANCED_WOODS_BURN_DOWN_AMOUNT,
               OptionsConstants.ADVANCED_WOODS_BURN_DOWN);
-          configureEditableDependency(componentsByName,
+        configureEditableDependency(componentsByName,
               OptionsConstants.ADVANCED_GROUND_MOVEMENT_MEK_LANCE_MOVEMENT_NUMBER,
               OptionsConstants.ADVANCED_GROUND_MOVEMENT_MEK_LANCE_MOVEMENT);
-          configureEditableDependency(componentsByName,
+        configureEditableDependency(componentsByName,
               OptionsConstants.ADVANCED_GROUND_MOVEMENT_VEHICLE_LANCE_MOVEMENT_NUMBER,
               OptionsConstants.ADVANCED_GROUND_MOVEMENT_VEHICLE_LANCE_MOVEMENT);
 
-          DialogOptionComponentYPanel infantryAndProtoMekGroupSize = componentsByName.get(
+        DialogOptionComponentYPanel infantryAndProtoMekGroupSize = componentsByName.get(
               OptionsConstants.INIT_INF_PROTO_MOVE_MULTI);
-          DialogOptionComponentYPanel moveMultipleInfantry = componentsByName.get(
+        DialogOptionComponentYPanel moveMultipleInfantry = componentsByName.get(
               OptionsConstants.INIT_INF_MOVE_MULTI);
-          DialogOptionComponentYPanel moveMultipleProtoMeks = componentsByName.get(
+        DialogOptionComponentYPanel moveMultipleProtoMeks = componentsByName.get(
               OptionsConstants.INIT_PROTOMEKS_MOVE_MULTI);
-          if (infantryAndProtoMekGroupSize != null && moveMultipleInfantry != null
+        if (infantryAndProtoMekGroupSize != null && moveMultipleInfantry != null
               && moveMultipleProtoMeks != null) {
             infantryAndProtoMekGroupSize.setEditableWhenAnySelected(
-                moveMultipleInfantry, moveMultipleProtoMeks);
-          }
+                  moveMultipleInfantry, moveMultipleProtoMeks);
+        }
 
-          DialogOptionComponentYPanel assaultDrop = componentsByName.get(OptionsConstants.ADVANCED_ASSAULT_DROP);
-          DialogOptionComponentYPanel paratroopers = componentsByName.get(OptionsConstants.ADVANCED_PARATROOPERS);
-          if (assaultDrop != null && paratroopers != null) {
+        DialogOptionComponentYPanel assaultDrop = componentsByName.get(OptionsConstants.ADVANCED_ASSAULT_DROP);
+        DialogOptionComponentYPanel paratroopers = componentsByName.get(OptionsConstants.ADVANCED_PARATROOPERS);
+        if (assaultDrop != null && paratroopers != null) {
             paratroopers.setSelectableWhenSelected(assaultDrop);
-          }
         }
+    }
 
-        private static void configureEditableDependency(
-            Map<String, DialogOptionComponentYPanel> componentsByName,
-            String dependentOptionName, String controllingOptionName) {
-          DialogOptionComponentYPanel dependent = componentsByName.get(dependentOptionName);
-          DialogOptionComponentYPanel controlling = componentsByName.get(controllingOptionName);
-          if (dependent != null && controlling != null) {
+    private static void configureEditableDependency(
+          Map<String, DialogOptionComponentYPanel> componentsByName,
+          String dependentOptionName, String controllingOptionName) {
+        DialogOptionComponentYPanel dependent = componentsByName.get(dependentOptionName);
+        DialogOptionComponentYPanel controlling = componentsByName.get(controllingOptionName);
+        if (dependent != null && controlling != null) {
             dependent.setEditableWhenSelected(controlling);
-          }
         }
+    }
 
     public static List<SettingsBadge> legendEntries() {
         return List.of(IMPORTANT_BADGE, ADVANCED_BADGE, UNOFFICIAL_BADGE, LEGACY_BADGE);
@@ -315,8 +316,8 @@ public class GameOptionsPane extends JPanel {
         }
     }
 
-        private record OptionPlacement(DialogOptionComponentYPanel component, String sectionId, int sectionOrder,
-                    int optionOrder) {
+    private record OptionPlacement(DialogOptionComponentYPanel component, String sectionId, int sectionOrder,
+          int optionOrder) {
     }
 
     private static final class SectionRows {
@@ -332,17 +333,22 @@ public class GameOptionsPane extends JPanel {
         private final List<OptionRow> rows;
         private final Predicate<IOption> optionVisibility;
         private final String groupSearchableText;
+        private final String pageSearchableText;
         private final SettingsPagePanel pagePanel;
+        private final Map<SettingsFormPanel, List<OptionRow>> sectionContentRows = new LinkedHashMap<>();
+        private final Map<SettingsFormPanel, List<OptionRow>> displayedSectionRows = new LinkedHashMap<>();
         private SettingsRoute route;
 
         private GroupPage(PageSeed pageSeed, String pageTitle, Predicate<IOption> optionVisibility) {
             super(new BorderLayout());
             this.optionVisibility = optionVisibility;
             groupSearchableText = SettingsRoute.normalizeSearchText(String.join(" ", pageSeed.searchAliases()));
+            pageSearchableText = SettingsRoute.normalizeSearchText(String.join(" ", pageSeed.path()));
             setName("gameOptions" + pageSeed.definition().id() + "Page");
 
             rows = pageSeed.placements.stream()
-                  .map(placement -> OptionRow.create(placement.component(), placement.optionOrder()))
+                  .map(placement -> OptionRow.create(placement.component(), placement.optionOrder(),
+                        pageSearchableText, sectionSearchableText(placement.sectionId())))
                   .toList();
             Map<String, SectionRows> sectionRows = new LinkedHashMap<>();
             for (int index = 0; index < rows.size(); index++) {
@@ -356,8 +362,8 @@ public class GameOptionsPane extends JPanel {
 
             Icon icon = pageIcon(pageSeed.effectiveIconGroupId());
             SettingsPagePanel.Builder builder = SettingsPagePanel.builder(pageSeed.definition().id(), TEXT,
-                        "GameOptionsDialog.title", icon)
-                .header(new SettingsHeaderPanel(pageSeed.definition().id(), pageTitle, icon))
+                  "GameOptionsDialog.title", icon)
+                  .header(new SettingsHeaderPanel(pageSeed.definition().id(), pageTitle, icon))
                   .showDetailsPanel(true)
                   .sectionsExpandedByDefault(sectionRows.size() == 1)
                   .standardContentWidth();
@@ -367,11 +373,13 @@ public class GameOptionsPane extends JPanel {
             for (Map.Entry<String, SectionRows> entry : orderedSections) {
                 SettingsFormPanel content = createSectionContent(
                       pageSeed.definition().id() + entry.getKey(), entry.getValue().rows, labelWidth);
+                sectionContentRows.put(content, entry.getValue().rows);
+                displayedSectionRows.put(content, List.copyOf(entry.getValue().rows));
                 List<String> aliases = new ArrayList<>();
                 aliases.addAll(pageSeed.searchAliases());
                 entry.getValue().rows.forEach(row -> aliases.add(row.searchableText()));
                 builder.literalSection(sectionTitle(entry.getKey()), sectionSummary(entry.getKey()), content,
-                    sectionBadges(pageSeed.definition().advanced()), aliases);
+                      sectionBadges(pageSeed.definition().advanced()), aliases);
             }
             pagePanel = builder.build();
             add(pagePanel, BorderLayout.CENTER);
@@ -388,9 +396,19 @@ public class GameOptionsPane extends JPanel {
             return (int) Math.ceil(width / GUIPreferences.getInstance().getGUIScale());
         }
 
+        private static String sectionSearchableText(String sectionId) {
+            return SettingsRoute.normalizeSearchText(sectionTitle(sectionId) + ' ' + sectionSummary(sectionId));
+        }
+
         private static SettingsFormPanel createSectionContent(String name, List<OptionRow> rows, int labelWidth) {
             SettingsFormPanel content = new SettingsFormPanel(name,
                   labelWidth, SettingsFormPanel.DEFAULT_CONTROL_WIDTH);
+            populateSectionContent(content, rows);
+            return content;
+        }
+
+        private static void populateSectionContent(SettingsFormPanel content, List<OptionRow> rows) {
+            content.clear();
             List<JCheckBox> checkBoxes = new ArrayList<>();
             for (OptionRow row : rows) {
                 DialogOptionComponentYPanel component = row.component();
@@ -403,7 +421,6 @@ public class GameOptionsPane extends JPanel {
                 content.addRow(component.settingsLabel(), component.settingsControl());
             }
             addCheckBoxes(content, checkBoxes);
-            return content;
         }
 
         private static void configureSettingsControl(DialogOptionComponentYPanel component) {
@@ -484,6 +501,16 @@ public class GameOptionsPane extends JPanel {
                     searchableText.append(' ').append(row.searchableText());
                 }
             }
+            sectionContentRows.forEach((content, sectionRows) -> {
+                List<OptionRow> visibleRows = sectionRows.stream()
+                      .filter(row -> row.component().isVisible())
+                      .toList();
+                if (!sameRowsByIdentity(visibleRows, displayedSectionRows.get(content))) {
+                    populateSectionContent(content, visibleRows);
+                    displayedSectionRows.put(content, visibleRows);
+                }
+                pagePanel.setSectionVisible(content, !visibleRows.isEmpty());
+            });
             if (route != null) {
                 route.setSectionSearchText(searchableText.toString());
             }
@@ -495,6 +522,18 @@ public class GameOptionsPane extends JPanel {
         public void applySettingsFilter(String normalizedFilter) {
             refreshVisibility(normalizedFilter);
         }
+
+        private static boolean sameRowsByIdentity(List<OptionRow> first, List<OptionRow> second) {
+            if (second == null || first.size() != second.size()) {
+                return false;
+            }
+            for (int index = 0; index < first.size(); index++) {
+                if (first.get(index) != second.get(index)) {
+                    return false;
+                }
+            }
+            return true;
+        }
     }
 
     private static List<SettingsBadge> sectionBadges(boolean advanced) {
@@ -503,7 +542,7 @@ public class GameOptionsPane extends JPanel {
 
     private static List<SettingsBadge> optionBadges(IOption option) {
         List<SettingsBadge> badges = new ArrayList<>();
-        if (hasShortLabel(option)) {
+        if (hasShortLabel(option) || hasDetails(option)) {
             badges.add(IMPORTANT_BADGE);
         }
         if (isUnofficialOption(option)) {
@@ -532,6 +571,14 @@ public class GameOptionsPane extends JPanel {
 
     private static String shortLabelKey(IOption option) {
         return "GameOptionsDialog.option." + option.getName() + ".shortName";
+    }
+
+    private static boolean hasDetails(IOption option) {
+        return TEXT.containsKey(detailsKey(option));
+    }
+
+    private static String detailsKey(IOption option) {
+        return "GameOptionsDialog.option." + option.getName() + ".details";
     }
 
     public static boolean isUnofficialOption(IOption option) {
@@ -568,24 +615,26 @@ public class GameOptionsPane extends JPanel {
     }
 
     private record OptionRow(DialogOptionComponentYPanel component, IOption option, String searchableText,
-          int optionOrder) {
-        private static OptionRow create(DialogOptionComponentYPanel component, int optionOrder) {
+          String pageSearchableText, String sectionSearchableText, int optionOrder) {
+        private static OptionRow create(DialogOptionComponentYPanel component, int optionOrder,
+              String pageSearchableText, String sectionSearchableText) {
             IOption option = component.getOption();
             String displayName = optionDisplayName(option);
             component.setSettingsPresentation(displayName, optionBadges(option));
-            String detailsKey = "GameOptionsDialog.option." + option.getName() + ".details";
-            if (TEXT.containsKey(detailsKey)) {
-                component.setSettingsHelpText(TEXT.getText(detailsKey));
+            if (hasDetails(option)) {
+                component.setSettingsHelpText(TEXT.getText(detailsKey(option)));
             }
             return new OptionRow(component, option, SettingsRoute.normalizeSearchText(
-                option.getName() + ' ' + option.getDisplayableName() + ' ' + displayName), optionOrder);
+                  option.getName() + ' ' + option.getDisplayableName() + ' ' + displayName),
+                  pageSearchableText, sectionSearchableText, optionOrder);
         }
 
         private boolean matches(String normalizedFilter, String groupSearchableText) {
             if (normalizedFilter.isBlank()) {
                 return true;
             }
-            String combinedSearchableText = groupSearchableText + ' ' + searchableText;
+            String combinedSearchableText = groupSearchableText + ' ' + pageSearchableText + ' '
+                  + sectionSearchableText + ' ' + searchableText;
             for (String token : normalizedFilter.split("\\s+")) {
                 if (!combinedSearchableText.contains(token)) {
                     return false;

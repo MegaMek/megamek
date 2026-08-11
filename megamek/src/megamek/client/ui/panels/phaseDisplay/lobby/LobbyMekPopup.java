@@ -134,6 +134,7 @@ class LobbyMekPopup {
     static final String LMP_F_CREATE_SUB = "FCREATESUB";
     static final String LMP_F_CREATE_TOP = "FCREATETOP";
     static final String LMP_F_CREATE_FROM = "FCREATEFROM";
+    static final String LMP_F_EXPLAIN = "FEXPLAIN";
     static final String LMP_FC_DELETE_EMPTY = "FCDELETEEMPTY";
     static final String LMP_SBF_FORMATION = "SBFFORMATION";
     static final String LMP_DELETE = "DELETE";
@@ -226,6 +227,11 @@ class LobbyMekPopup {
         popup.add(menuItem("View BV Calculation...", LMP_BV + NO_INFO + seIds, hasJoinedEntities, listener,
               KeyEvent.VK_B));
         popup.add(menuItem("View Cost Calculation...", LMP_COST + NO_INFO + seIds, hasJoinedEntities, listener));
+        // Only meaningful for a single force: the report explains one grouping against its siblings.
+        if ((forces.size() == 1) && !forces.getFirst().getEntities().isEmpty()) {
+            popup.add(menuItem("View Formation Rationale...",
+                  LMP_F_EXPLAIN + "|" + forces.getFirst().getId() + NO_INFO, true, listener));
+        }
         popup.add(ScalingPopup.spacer());
 
         if (joinedOneEntitySelected) {

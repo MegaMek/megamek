@@ -35,11 +35,14 @@ package megamek.client.formation;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -61,6 +64,8 @@ import org.junit.jupiter.api.Test;
  * together - not the catalog itself.</p>
  */
 class FormationAssemblerTest {
+
+    private static final double TOLERANCE = 0.0001;
 
     private int nextId = 1;
 
@@ -346,6 +351,105 @@ class FormationAssemblerTest {
         assertEquals(1, formations.size());
         assertEquals(4, formations.getFirst().units().size(), "a cache miss never drops a unit");
         assertNotNull(formations.getFirst().name());
+    }
+
+    // ======================== Rationale (the "why this formation?" view) ========================
+
+    /** Assembles a roster, then explains one formation against the others, the way the lobby does. */
+    private FormationRationale explainOneOf(List<AssemblyUnit> roster, String memberName) {
+        List<AssembledFormation> formations =
+              FormationAssembler.assemble(roster, Organization.AUTO, Set.of());
+        AssembledFormation target = formationContaining(formations, memberName);
+        Map<String, List<AssemblyUnit>> siblings = new LinkedHashMap<>();
+        for (AssembledFormation formation : formations) {
+            if (!formation.name().equals(target.name())) {
+                siblings.put(formation.name(), formation.units());
+            }
+        }
+        return FormationAssembler.explain(target.name(), target.units(), siblings);
+    }
+
+    @Test
+    void theRationaleReportsTheLedgerBehindAFormation() {
+        FormationRationale rationale = explainOneOf(clanRoster(), "Loki Prime");
+
+        assertEquals(UnitRole.STRIKER, rationale.modalRole());
+        assertEquals(5, rationale.modalRoleCount(), "the striker star is unanimous");
+        assertEquals(1.0, rationale.rolePurity(), TOLERANCE);
+        assertEquals(6, rationale.slowestWalkMp());
+        assertEquals(8, rationale.fastestWalkMp());
+        assertEquals(2, rationale.speedSpread());
+        assertEquals(Organization.CLAN, rationale.organization(),
+              "majority Clan tech resolves the doctrine for the report too");
+        long expectedBattleValue = rationale.units().stream()
+              .mapToLong(AssemblyUnit::battleValue).sum();
+        assertEquals(expectedBattleValue, rationale.battleValue());
+    }
+
+    @Test
+    void theRationaleNamesWhatCouldNotBeSeparated() {
+        FormationRationale rationale = explainOneOf(innerSphereRoster(), "Shadow Hawk SHD-9D");
+
+        assertEquals(1, rationale.bindings().size(), "the C3 pair is the one thing that cannot be split");
+        String binding = rationale.bindings().getFirst();
+        assertTrue(binding.contains("Shadow Hawk SHD-9D") && binding.contains("Firestarter FS9-S"),
+              "the binding must name both units: " + binding);
+        assertTrue(binding.contains("C3"), "and say what binds them: " + binding);
+
+        // A unit that was never free to move is never offered as a trade.
+        for (FormationRationale.AlternativeSwap swap : rationale.closestAlternatives()) {
+            assertFalse(swap.unitName().equals("Shadow Hawk SHD-9D")
+                        || swap.unitName().equals("Firestarter FS9-S"),
+                  "bound units cannot be traded away: " + swap.unitName());
+        }
+    }
+
+    @Test
+    void theClosestAlternativesAreRealTradesThatCostSomething() {
+        FormationRationale rationale = explainOneOf(innerSphereRoster(), "Dervish DV-6M");
+
+        assertFalse(rationale.closestAlternatives().isEmpty(),
+              "with two sibling lances there are trades to report");
+        assertTrue(rationale.closestAlternatives().size() <= 3, "only the closest calls are shown");
+
+        List<Double> costs = rationale.closestAlternatives().stream()
+              .map(FormationRationale.AlternativeSwap::cost).toList();
+        assertEquals(costs.stream().sorted().toList(), costs, "cheapest (closest) call first");
+        for (FormationRationale.AlternativeSwap swap : rationale.closestAlternatives()) {
+            assertTrue(swap.cost() >= 0,
+                  "the chosen partition was the best one, so no trade may improve it: " + swap);
+            assertFalse(swap.otherFormation().isBlank(), "a trade must name where the unit comes from");
+        }
+    }
+
+    @Test
+    void aFormationWithNoSiblingsStillExplainsItself() {
+        List<AssemblyUnit> four = new ArrayList<>();
+        for (int i = 0; i < 4; i++) {
+            four.add(mek("Hunchback HBK-4G " + i, UnitRole.BRAWLER, EntityWeightClass.WEIGHT_MEDIUM, 4, 1041));
+        }
+        FormationRationale rationale = FormationAssembler.explain("Battle Lance Alpha", four, Map.of());
+
+        assertTrue(rationale.closestAlternatives().isEmpty(), "nowhere to trade with, so nothing to report");
+        assertTrue(rationale.bindings().isEmpty());
+        assertEquals(0, rationale.speedSpread());
+        assertEquals(UnitRole.BRAWLER, rationale.modalRole());
+    }
+
+    @Test
+    void aUnitMissingFromTheCatalogIsNamedAsTheReasonNoTypeMatched() {
+        List<AssemblyUnit> force = new ArrayList<>();
+        for (int i = 0; i < 3; i++) {
+            force.add(mek("Marauder MAD-3R " + i, UnitRole.SNIPER, EntityWeightClass.WEIGHT_HEAVY, 4, 1363));
+        }
+        force.add(new AssemblyUnit(nextId++, "Custom Frankenmek", UnitRole.UNDETERMINED,
+              EntityWeightClass.WEIGHT_HEAVY, 4, 1200, false, false, null, Entity.NONE, Entity.NONE,
+              Family.MEK, null));
+
+        FormationRationale rationale = FormationAssembler.explain("Battle Lance Alpha", force, Map.of());
+        assertEquals(List.of("Custom Frankenmek"), rationale.unknownToCatalog());
+        assertNull(rationale.type(), "one unknown unit blocks every formation type");
+        assertNull(rationale.qualificationDetail(), "and there is no criteria table to show");
     }
 
     @Test

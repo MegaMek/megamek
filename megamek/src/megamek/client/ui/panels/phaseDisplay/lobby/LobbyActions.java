@@ -63,6 +63,7 @@ import megamek.client.ui.dialogs.MMDialogs.MMConfirmDialog;
 import megamek.client.ui.dialogs.SBFStats.SBFStatsDialog;
 import megamek.client.ui.dialogs.UnitEditorDialog;
 import megamek.client.ui.dialogs.abstractDialogs.ASStatsDialog;
+import megamek.client.ui.dialogs.abstractDialogs.FormationRationaleDialog;
 import megamek.client.ui.dialogs.customMek.BattlefieldSupportAssetConfigDialog;
 import megamek.client.ui.dialogs.customMek.BattlefieldSupportAssetDamageDialog;
 import megamek.client.ui.dialogs.customMek.CustomMekDialog;
@@ -706,6 +707,49 @@ public class LobbyActions {
                       owner.getName(), String.join(", ", announced)));
             }
         }
+    }
+
+    /**
+     * Shows why the given force holds the units it holds - the doctrine name it earned, the ledger
+     * behind it, what could not be split, and the closest grouping that was passed over. Works on any
+     * force, assembled or hand-built: the answer is recomputed from the force as it stands now.
+     */
+    void explainFormation(int forceId) {
+        Forces forces = game().getForces();
+        Force force = forces.getForce(forceId);
+        if (force == null) {
+            return;
+        }
+        List<AssemblyUnit> members = assemblyUnitsOf(forces, force);
+        if (members.isEmpty()) {
+            return;
+        }
+
+        // Siblings are the owner's other forces: the alternatives pass asks what it would have cost
+        // to trade a unit with one of them.
+        Map<String, List<AssemblyUnit>> siblings = new LinkedHashMap<>();
+        for (Force other : forces.getAllForces()) {
+            if ((other.getId() == forceId) || (forces.getOwnerId(other) != forces.getOwnerId(force))) {
+                continue;
+            }
+            List<AssemblyUnit> otherMembers = assemblyUnitsOf(forces, other);
+            if (!otherMembers.isEmpty()) {
+                siblings.put(other.getName(), otherMembers);
+            }
+        }
+
+        new FormationRationaleDialog(frame(),
+              FormationAssembler.explain(force.getName(), members, siblings)).setVisible(true);
+    }
+
+    private static List<AssemblyUnit> assemblyUnitsOf(Forces forces, Force force) {
+        List<AssemblyUnit> units = new ArrayList<>();
+        for (ForceAssignable member : forces.getFullEntities(force)) {
+            if (member instanceof Entity entity) {
+                units.add(AssemblyUnit.of(entity));
+            }
+        }
+        return units;
     }
 
     /**

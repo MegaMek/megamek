@@ -419,31 +419,13 @@ public final class FormationAssembler {
         }
 
         private void scoreComplete(int[] partMasks) {
-            double elementScores = 0;
-            double bvSum = 0;
-            double bvSquaredSum = 0;
-            int elementCount = 0;
-            int elementsWithEcm = 0;
+            List<ElementEval> evals = new ArrayList<>(partMasks.length);
             for (int mask : partMasks) {
-                if (mask == 0) {
-                    continue;
-                }
-                ElementEval eval = evalOf(mask);
-                elementScores += eval.score();
-                bvSum += eval.battleValue();
-                bvSquaredSum += (double) eval.battleValue() * eval.battleValue();
-                elementCount++;
-                if (eval.hasEcm()) {
-                    elementsWithEcm++;
+                if (mask != 0) {
+                    evals.add(evalOf(mask));
                 }
             }
-            double stdev = 0;
-            if (elementCount > 1) {
-                double mean = bvSum / elementCount;
-                stdev = Math.sqrt(Math.max(0, (bvSquaredSum / elementCount) - (mean * mean)));
-            }
-            double score = elementScores - (BV_IMBALANCE_WEIGHT * stdev)
-                  + (ECM_SPREAD_BONUS * elementsWithEcm);
+            double score = aggregateScore(evals);
             if (score > bestScore) {
                 bestScore = score;
                 bestMasks = partMasks.clone();
@@ -548,38 +530,41 @@ public final class FormationAssembler {
     // ======================== Scoring ========================
 
     private double partitionScore(List<List<List<AssemblyUnit>>> parts) {
-        double score = 0;
-        List<Long> battleValues = new ArrayList<>();
-        int elementsWithEcm = 0;
+        List<ElementEval> evals = new ArrayList<>(parts.size());
         for (List<List<AssemblyUnit>> part : parts) {
-            if (part.isEmpty()) {
-                continue;
+            if (!part.isEmpty()) {
+                evals.add(elementEval(flatten(part)));
             }
-            ElementEval eval = elementEval(flatten(part));
+        }
+        return aggregateScore(evals);
+    }
+
+    /**
+     * The whole-partition score: the sum of its elements' own scores, charged for uneven battle value
+     * between them and credited for spreading ECM carriers. The single definition of the aggregate,
+     * shared by the greedy path, the exhaustive path and {@link #explain}, so no two searches can
+     * drift apart on what "better" means.
+     */
+    private static double aggregateScore(List<ElementEval> evals) {
+        double score = 0;
+        double battleValueSum = 0;
+        double battleValueSquaredSum = 0;
+        int elementsWithEcm = 0;
+        for (ElementEval eval : evals) {
             score += eval.score();
-            battleValues.add(eval.battleValue());
+            battleValueSum += eval.battleValue();
+            battleValueSquaredSum += (double) eval.battleValue() * eval.battleValue();
             if (eval.hasEcm()) {
                 elementsWithEcm++;
             }
         }
-        return score - (BV_IMBALANCE_WEIGHT * standardDeviation(battleValues))
-              + (ECM_SPREAD_BONUS * elementsWithEcm);
-    }
-
-    private static double standardDeviation(List<Long> values) {
-        if (values.size() < 2) {
-            return 0;
+        double standardDeviation = 0;
+        if (evals.size() > 1) {
+            double mean = battleValueSum / evals.size();
+            standardDeviation = Math.sqrt(
+                  Math.max(0, (battleValueSquaredSum / evals.size()) - (mean * mean)));
         }
-        double mean = 0;
-        for (long value : values) {
-            mean += value;
-        }
-        mean /= values.size();
-        double variance = 0;
-        for (long value : values) {
-            variance += (value - mean) * (value - mean);
-        }
-        return Math.sqrt(variance / values.size());
+        return score - (BV_IMBALANCE_WEIGHT * standardDeviation) + (ECM_SPREAD_BONUS * elementsWithEcm);
     }
 
     private ElementEval elementEval(List<AssemblyUnit> element) {
@@ -668,6 +653,164 @@ public final class FormationAssembler {
             }
         }
         return modal;
+    }
+
+    // ======================== Explanation ========================
+
+    /**
+     * Explains one finished formation: the doctrine name it earned, the ledger behind it, what could
+     * not be split, and the swaps that came closest to being chosen instead. Recomputed from the
+     * formation's current members rather than remembered from assembly time, so it stays honest after
+     * a player edits the force by hand - the answer is always about the group as it stands now.
+     *
+     * @param formationName the formation's name, for the report
+     * @param units         its current members
+     * @param siblings      the owner's other formations, keyed by name, for the alternatives pass;
+     *                      may be empty, in which case no alternatives are reported
+     *
+     * @return the rationale, ready to render
+     */
+    public static FormationRationale explain(String formationName, List<AssemblyUnit> units,
+          Map<String, List<AssemblyUnit>> siblings) {
+        List<AssemblyUnit> members = new ArrayList<>(units);
+        members.sort(Comparator.comparingInt(AssemblyUnit::entityId));
+
+        List<AssemblyUnit> wholeForce = new ArrayList<>(members);
+        siblings.values().forEach(wholeForce::addAll);
+        Organization organization = Organization.AUTO.resolve(wholeForce);
+
+        ElementEval eval = evaluateElement(members);
+        UnitRole modalRole = modalRole(members);
+        int modalRoleCount = 0;
+        int slowest = Integer.MAX_VALUE;
+        int fastest = Integer.MIN_VALUE;
+        int ecmCarriers = 0;
+        List<String> unknownToCatalog = new ArrayList<>();
+        for (AssemblyUnit unit : members) {
+            if (unit.role() == modalRole) {
+                modalRoleCount++;
+            }
+            slowest = Math.min(slowest, unit.walkMp());
+            fastest = Math.max(fastest, unit.walkMp());
+            if (unit.carriesEcm()) {
+                ecmCarriers++;
+            }
+            if (unit.summary() == null) {
+                unknownToCatalog.add(unit.displayName());
+            }
+        }
+
+        List<String> bindings = new ArrayList<>();
+        List<List<AssemblyUnit>> atoms = buildAtoms(members);
+        for (List<AssemblyUnit> atom : atoms) {
+            if (atom.size() > 1) {
+                bindings.add(describeBinding(atom));
+            }
+        }
+
+        List<MekSummary> summaries = new ArrayList<>();
+        for (AssemblyUnit unit : members) {
+            if (unit.summary() != null) {
+                summaries.add(unit.summary());
+            }
+        }
+        String qualificationDetail = ((eval.type() != null) && (summaries.size() == members.size()))
+              ? eval.type().qualificationReport(summaries)
+              : null;
+
+        return new FormationRationale(formationName, eval.type(), organization, members, modalRole,
+              modalRoleCount, (slowest == Integer.MAX_VALUE) ? 0 : slowest,
+              (fastest == Integer.MIN_VALUE) ? 0 : fastest, eval.battleValue(), ecmCarriers, bindings,
+              closestAlternatives(members, siblings, atoms), unknownToCatalog, qualificationDetail);
+    }
+
+    /** Names what fused an atom, so the report can say why those units cannot be parted. */
+    private static String describeBinding(List<AssemblyUnit> atom) {
+        List<String> names = new ArrayList<>();
+        for (AssemblyUnit unit : atom) {
+            names.add(unit.displayName());
+        }
+        String joined = String.join(", ", names);
+        for (AssemblyUnit unit : atom) {
+            if (unit.c3NetworkId() != null) {
+                return joined + " share a C3 network";
+            }
+        }
+        return joined + " are carried or towed together";
+    }
+
+    /**
+     * The trades the search passed over: for every member that is free to move, the cost of swapping
+     * it for a unit in another formation, cheapest (closest call) first. A swap rather than a move
+     * because element sizes are fixed - the real question is always "why this unit and not that one".
+     * Units fused into an atom are skipped: they were never free to move in the first place.
+     */
+    private static List<FormationRationale.AlternativeSwap> closestAlternatives(
+          List<AssemblyUnit> members, Map<String, List<AssemblyUnit>> siblings,
+          List<List<AssemblyUnit>> atoms) {
+        // Bound on BOTH sides: a unit fused to a team-mate cannot be traded away, and cannot be taken
+        // from the formation it is fused inside either - such a trade was never in the search space.
+        Set<Integer> boundIds = boundUnitIds(atoms);
+        for (List<AssemblyUnit> sibling : siblings.values()) {
+            boundIds.addAll(boundUnitIds(buildAtoms(sibling)));
+        }
+
+        List<ElementEval> baseline = new ArrayList<>();
+        baseline.add(evaluateElement(members));
+        for (List<AssemblyUnit> sibling : siblings.values()) {
+            baseline.add(evaluateElement(sibling));
+        }
+        double baselineScore = aggregateScore(baseline);
+
+        List<FormationRationale.AlternativeSwap> alternatives = new ArrayList<>();
+        for (AssemblyUnit member : members) {
+            if (boundIds.contains(member.entityId())) {
+                continue;
+            }
+            for (Map.Entry<String, List<AssemblyUnit>> sibling : siblings.entrySet()) {
+                for (AssemblyUnit candidate : sibling.getValue()) {
+                    if ((candidate.family() != member.family())
+                          || boundIds.contains(candidate.entityId())) {
+                        continue;
+                    }
+                    List<ElementEval> swapped = new ArrayList<>();
+                    swapped.add(evaluateElement(replace(members, member, candidate)));
+                    for (Map.Entry<String, List<AssemblyUnit>> other : siblings.entrySet()) {
+                        swapped.add(other.getKey().equals(sibling.getKey())
+                              ? evaluateElement(replace(other.getValue(), candidate, member))
+                              : evaluateElement(other.getValue()));
+                    }
+                    alternatives.add(new FormationRationale.AlternativeSwap(member.displayName(),
+                          candidate.displayName(), sibling.getKey(),
+                          baselineScore - aggregateScore(swapped)));
+                }
+            }
+        }
+        alternatives.sort(Comparator.comparingDouble(FormationRationale.AlternativeSwap::cost));
+        return alternatives.subList(0, Math.min(3, alternatives.size()));
+    }
+
+    /** @return the ids of every unit fused to at least one other, which are never free to move alone */
+    private static Set<Integer> boundUnitIds(List<List<AssemblyUnit>> atoms) {
+        Set<Integer> bound = new HashSet<>();
+        for (List<AssemblyUnit> atom : atoms) {
+            if (atom.size() > 1) {
+                for (AssemblyUnit unit : atom) {
+                    bound.add(unit.entityId());
+                }
+            }
+        }
+        return bound;
+    }
+
+    private static List<AssemblyUnit> replace(List<AssemblyUnit> units, AssemblyUnit removed,
+          AssemblyUnit added) {
+        List<AssemblyUnit> result = new ArrayList<>();
+        for (AssemblyUnit unit : units) {
+            result.add((unit.entityId() == removed.entityId()) ? added : unit);
+        }
+        result.sort(Comparator.comparingInt(AssemblyUnit::entityId));
+        return result;
     }
 
     // ======================== Naming ========================

@@ -636,6 +636,15 @@ public class PhysicalDisplay extends AttackPhaseDisplay {
             }
         }
 
+        if (needNagForDishonor() && HonorNagHelper.wouldBeDishonored(game, attacks)) {
+            // confirm this action
+            String title = Messages.getString("HonorNag.title");
+            String body = Messages.getString("HonorNag.message");
+            if (checkNagForDishonor(title, body)) {
+                return true;
+            }
+        }
+
         return currentEntity() == null;
     }
 

@@ -1109,6 +1109,11 @@ public class Client extends AbstractClient {
                         game.setBotTypes(botTypes);
                     }
                     break;
+                case PRINCESS_DISHONORED:
+                    // A bot reported (via the server) which players it now considers dishonored; remember it so the
+                    // dishonor warning can be suppressed once a bot already holds a grudge.
+                    game.setDishonoredPlayers(packet.getIntValue(0), packet.getIntList(1));
+                    break;
                 case ENTITY_UPDATE:
                     receiveEntityUpdate(packet);
                     break;

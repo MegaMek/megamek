@@ -987,6 +987,13 @@ public class TWGameManager extends AbstractGameManager {
                         }
                     }
                     break;
+                case PRINCESS_DISHONORED:
+                    if (player != null) {
+                        // Relay this bot's dishonored-players list to all clients, tagged with the bot's player ID, so
+                        // clients can warn a human before an action that would newly dishonor them.
+                        send(new Packet(PacketCommand.PRINCESS_DISHONORED, player.getId(), packet.getObject(0)));
+                    }
+                    break;
                 case REROLL_INITIATIVE:
                     receiveInitiativeRerollRequest(packet, connId);
                     break;

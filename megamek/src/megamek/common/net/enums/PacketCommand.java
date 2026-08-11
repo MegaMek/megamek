@@ -56,6 +56,13 @@ public enum PacketCommand {
     /** A Server to Client packet instructing a Princess Client to replace its settings. */
     CHANGE_PRINCESS_SETTINGS,
 
+    /**
+     * A Princess Client reporting to the Server which players it currently considers dishonored (C -> S), or the Server
+     * relaying one bot's dishonored-players list to all Clients (S -> C). Lets Clients warn a human before an action
+     * that would newly dishonor them, without guessing at a remote bot's honor state.
+     */
+    PRINCESS_DISHONORED,
+
     /** A packet setting a Client's ready status (S -> C) or updating the Server on the Client's status (C -> S). */
     PLAYER_READY,
 

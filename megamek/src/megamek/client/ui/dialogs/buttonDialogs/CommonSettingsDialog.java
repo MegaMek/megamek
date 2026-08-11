@@ -206,6 +206,7 @@ public class CommonSettingsDialog extends AbstractButtonDialog
     private final JCheckBox nagForNoAction = new JCheckBox(Messages.getString("CommonSettingsDialog.nagForNoAction"));
     private final JCheckBox nagForNoUnJamRAC = new JCheckBox(Messages.getString("CommonSettingsDialog.nagForUnJamRAC"));
     private final JCheckBox nagForOverheat = new JCheckBox(Messages.getString("CommonSettingsDialog.nagForOverheat"));
+    private final JCheckBox nagForDishonor = new JCheckBox(Messages.getString("CommonSettingsDialog.nagForDishonor"));
     private final JCheckBox nagForMechanicalJumpFallDamage = new JCheckBox(Messages.getString(
           "CommonSettingsDialog.nagForMechanicalJumpFallDamage"));
     private final JCheckBox nagForCrushingBuildings = new JCheckBox(Messages.getString(
@@ -773,6 +774,7 @@ public class CommonSettingsDialog extends AbstractButtonDialog
         comps.add(checkboxEntry(nagForNoUnJamRAC, null));
         comps.add(checkboxEntry(nagForLaunchDoors, null));
         comps.add(checkboxEntry(nagForOverheat, null));
+        comps.add(checkboxEntry(nagForDishonor, null));
         comps.add(checkboxEntry(nagForOddSizedBoard, null));
 
         addLineSpacer(comps);
@@ -2377,6 +2379,7 @@ public class CommonSettingsDialog extends AbstractButtonDialog
             nagForNoAction.setSelected(GUIP.getNagForNoAction());
             nagForNoUnJamRAC.setSelected(GUIP.getNagForNoUnJamRAC());
             nagForOverheat.setSelected(GUIP.getNagForOverheat());
+            nagForDishonor.setSelected(GUIP.getNagForDishonor());
             nagForMechanicalJumpFallDamage.setSelected(GUIP.getNagForMechanicalJumpFallDamage());
             nagForCrushingBuildings.setSelected(GUIP.getNagForCrushingBuildings());
             nagForLaunchDoors.setSelected(GUIP.getNagForLaunchDoors());
@@ -2815,6 +2818,7 @@ public class CommonSettingsDialog extends AbstractButtonDialog
         GUIP.setNagForNoAction(nagForNoAction.isSelected());
         GUIP.setNagForNoUnJamRAC(nagForNoUnJamRAC.isSelected());
         GUIP.setNagForOverheat(nagForOverheat.isSelected());
+        GUIP.setNagForDishonor(nagForDishonor.isSelected());
         GUIP.setNagForMechanicalJumpFallDamage(nagForMechanicalJumpFallDamage.isSelected());
         GUIP.setNagForCrushingBuildings(nagForCrushingBuildings.isSelected());
         GUIP.setNagForLaunchDoors(nagForLaunchDoors.isSelected());

@@ -3781,8 +3781,8 @@ public class ClientGUI extends AbstractClientGUI
     /**
      * @param playerId the player to look up
      *
-     * @return what that player's units were generated for, or null when they never used a generator
-     *       that knows
+     * @return what that player's units were generated for, or {@code null} when they never used a
+     *       generator that knows
      */
     public @Nullable GenerationContext getGenerationContext(int playerId) {
         return generationContexts.get(playerId);

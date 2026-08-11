@@ -48,7 +48,7 @@ import megamek.common.annotations.Nullable;
  *
  * @param faction the {@link FactionRecord} key, dotted for a sub-command; never blank
  * @param year    the year the units were rolled for
- * @param rating  the equipment rating ("A" to "F", "Keshik", "SL"), or null when none was chosen
+ * @param rating  the equipment rating ("A" to "F", "Keshik", "SL"), or {@code null} when none chosen
  * @param source  which generator produced the units, so a report can say where this came from
  */
 public record GenerationContext(String faction, int year, @Nullable String rating, Source source) {
@@ -81,12 +81,12 @@ public record GenerationContext(String faction, int year, @Nullable String ratin
      * Builds a context from what a generator tab holds, falling back to the Inner Sphere when the tab
      * has no faction selected.
      *
-     * @param factionRecord the chosen faction, may be null
+     * @param factionRecord the chosen faction, may be {@code null}
      * @param year          the chosen year
-     * @param rating        the chosen equipment rating, may be null or blank
+     * @param rating        the chosen equipment rating, may be {@code null} or blank
      * @param source        which generator this is
      *
-     * @return the context, never null
+     * @return the context, never {@code null}
      */
     public static GenerationContext of(@Nullable FactionRecord factionRecord, int year,
           @Nullable String rating, Source source) {
@@ -98,7 +98,7 @@ public record GenerationContext(String faction, int year, @Nullable String ratin
               ((rating == null) || rating.isBlank()) ? null : rating, source);
     }
 
-    /** @return true when the faction key names a specific command rather than a faction at large */
+    /** @return {@code true} when the faction key names a command rather than a faction at large */
     public boolean hasSubCommand() {
         return faction.contains(".");
     }

@@ -197,7 +197,7 @@ public abstract class AbstractRandomArmyDialog extends JDialog {
      * <p>The tab that produced the units decides this. Reading it from a fixed panel would attribute
      * one tab's faction to another tab's units.</p>
      *
-     * @return the context, never null
+     * @return the context, never {@code null}
      */
     protected GenerationContext getGenerationContext() {
         int selectedTab = tabbedPane.getSelectedIndex();

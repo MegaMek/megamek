@@ -129,7 +129,7 @@ public class RandomArmyRatGenTab extends JPanel implements RandomArmyTab {
         add(new JScrollPane(ratTable), gbc);
     }
 
-    /** @return the faction, or sub-command, the table was built for; null when none is selected */
+    /** @return the faction, or command, the table was built for; {@code null} when none is selected */
     public FactionRecord getFaction() {
         return forceOptionsPanel.getFaction();
     }

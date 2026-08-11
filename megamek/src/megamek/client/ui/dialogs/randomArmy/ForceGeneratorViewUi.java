@@ -374,8 +374,8 @@ public class ForceGeneratorViewUi implements ActionListener {
     }
 
     /**
-     * @return what the generated force was rolled for - faction, command, year and rating - or null
-     *       when nothing has been generated yet
+     * @return what the generated force was rolled for - faction, command, year and rating - or
+     *       {@code null} when nothing has been generated yet
      */
     public @Nullable GenerationContext getGenerationContext() {
         if (!(forceTree.getModel().getRoot() instanceof ForceDescriptor root)) {

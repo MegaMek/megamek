@@ -3980,13 +3980,21 @@ public class Princess extends BotClient {
      * already accounts for pirates having no honor to give - so a receiving client only needs a membership test.
      */
     public void sendDishonoredData() {
+        send(new Packet(PacketCommand.PRINCESS_DISHONORED, resolveDishonoredPlayerIds()));
+    }
+
+    /**
+     * @return the player IDs this bot currently considers dishonored, fully resolved so that pirates (which have no
+     *       honor to give) report every player. Package-visible for testing.
+     */
+    List<Integer> resolveDishonoredPlayerIds() {
         List<Integer> dishonoredPlayerIds = new ArrayList<>();
-        for (Player player : game.getPlayersList()) {
+        for (Player player : getGame().getPlayersList()) {
             if (getHonorUtil().isEnemyDishonored(player.getId())) {
                 dishonoredPlayerIds.add(player.getId());
             }
         }
-        send(new Packet(PacketCommand.PRINCESS_DISHONORED, dishonoredPlayerIds));
+        return dishonoredPlayerIds;
     }
 
     @Override

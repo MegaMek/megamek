@@ -34,7 +34,10 @@ package megamek.client.ui.panels.phaseDisplay;
 
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.mockito.ArgumentMatchers.anyInt;
 import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.never;
+import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 import java.util.List;
@@ -137,6 +140,32 @@ class HonorNagHelperTest {
         // The bot already holds a grudge, so committing this attack changes nothing.
         when(game.isPlayerDishonoredBy(BOT_OWNER_ID, ATTACKER_OWNER_ID)).thenReturn(true);
         assertFalse(HonorNagHelper.wouldBeDishonored(game, attacker, target));
+    }
+
+    @Test
+    void recordDishonorMarksTargetBotAsHoldingGrudge() {
+        when(attacker.isCrippled()).thenReturn(true);
+        HonorNagHelper.recordDishonor(game, attacker, target);
+        // Optimistically flag the player so this turn's later attacks are not re-warned.
+        verify(game).addDishonoredPlayer(BOT_OWNER_ID, ATTACKER_OWNER_ID);
+    }
+
+    @Test
+    void recordDishonorDoesNothingForLegitimateAttack() {
+        // Healthy military attacker versus a healthy enemy: nothing to record.
+        HonorNagHelper.recordDishonor(game, attacker, target);
+        verify(game, never()).addDishonoredPlayer(anyInt(), anyInt());
+    }
+
+    @Test
+    void recordDishonorFromListMarksTargetBot() {
+        when(attacker.isCrippled()).thenReturn(true);
+        WeaponAttackAction weaponAttack = mock(WeaponAttackAction.class);
+        when(weaponAttack.getEntity(game)).thenReturn(attacker);
+        when(weaponAttack.getTarget(game)).thenReturn(target);
+
+        HonorNagHelper.recordDishonor(game, List.of((EntityAction) weaponAttack));
+        verify(game).addDishonoredPlayer(BOT_OWNER_ID, ATTACKER_OWNER_ID);
     }
 
     @Test

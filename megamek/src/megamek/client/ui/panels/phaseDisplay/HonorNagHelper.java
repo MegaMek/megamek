@@ -83,6 +83,31 @@ final class HonorNagHelper {
     }
 
     /**
+     * Optimistically records, on the client's game, that every enemy bot targeted by a dishonoring attack in the list
+     * now considers the player dishonored. Call this once the player confirms the warning and commits the attacks, so
+     * the rest of the turn is not re-warned before that bot's authoritative {@code PRINCESS_DISHONORED} report arrives
+     * (that report replaces the optimistic guess next round).
+     */
+    static void recordDishonor(Game game, Iterable<EntityAction> attacks) {
+        for (EntityAction action : attacks) {
+            if ((action instanceof AbstractAttackAction attackAction) && isOffensiveAttack(attackAction)) {
+                recordDishonor(game, attackAction.getEntity(game), attackAction.getTarget(game));
+            }
+        }
+    }
+
+    /**
+     * Optimistically records that the enemy bot owning the target now considers the attacker's owner dishonored, if the
+     * given attack dishonors them. See {@link #recordDishonor(Game, Iterable)}.
+     */
+    static void recordDishonor(Game game, @Nullable Entity attacker, @Nullable Targetable target) {
+        if (wouldBeDishonored(game, attacker, target)) {
+            // wouldBeDishonored guarantees a non-null attacker and an enemy bot-owned Entity target.
+            game.addDishonoredPlayer(((Entity) target).getOwner().getId(), attacker.getOwner().getId());
+        }
+    }
+
+    /**
      * @return true if the action is an attack that deals damage to its target - i.e. the kind of attack a bot reacts to
      *       (everything the server routes through {@code resolvePhysicalAttack}/{@code WeaponHandler} records via
      *       {@code Entity.addAttackedByThisTurn}, which is what {@code Princess.checkForDishonoredEnemies} reads).

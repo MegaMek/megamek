@@ -3961,6 +3961,24 @@ public final class Game extends AbstractGame implements Serializable, PlanetaryC
     }
 
     /**
+     * Adds a single player to the set the given bot player considers dishonored. Used to optimistically record a
+     * dishonoring action the moment the local player commits it, so the same turn's later actions are not re-warned
+     * before the bot's authoritative {@link megamek.common.net.enums.PacketCommand#PRINCESS_DISHONORED} report arrives
+     * (that report then replaces this set wholesale). Replaces the inner set rather than mutating it in place, keeping
+     * the wholesale-replacement invariant that lets {@link #isPlayerDishonoredBy} read without locking.
+     *
+     * @param botPlayerId the bot player that now holds a grudge
+     * @param playerId    the player it now considers dishonored
+     */
+    public void addDishonoredPlayer(int botPlayerId, int playerId) {
+        Map<Integer, Set<Integer>> byBot = ensureDishonoredPlayers();
+        Set<Integer> current = byBot.get(botPlayerId);
+        Set<Integer> updated = (current == null) ? new HashSet<>() : new HashSet<>(current);
+        updated.add(playerId);
+        byBot.put(botPlayerId, updated);
+    }
+
+    /**
      * @param botPlayerId the bot player whose honor opinion is being queried
      * @param playerId    the player who may be dishonored
      *

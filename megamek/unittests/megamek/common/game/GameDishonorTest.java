@@ -99,4 +99,26 @@ class GameDishonorTest {
         reported.clear();
         assertTrue(game.isPlayerDishonoredBy(BOT_ID, PLAYER_ID));
     }
+
+    @Test
+    void addDishonoredPlayerMarksPlayerWithoutPriorReport() {
+        game.addDishonoredPlayer(BOT_ID, PLAYER_ID);
+        assertTrue(game.isPlayerDishonoredBy(BOT_ID, PLAYER_ID));
+    }
+
+    @Test
+    void addDishonoredPlayerKeepsExistingGrudges() {
+        game.setDishonoredPlayers(BOT_ID, List.of(PLAYER_ID));
+        game.addDishonoredPlayer(BOT_ID, PLAYER_ID + 1);
+        assertTrue(game.isPlayerDishonoredBy(BOT_ID, PLAYER_ID));
+        assertTrue(game.isPlayerDishonoredBy(BOT_ID, PLAYER_ID + 1));
+    }
+
+    @Test
+    void authoritativeReportReplacesOptimisticGuess() {
+        // Optimistically flag the player, then let the bot's real report (which does not list them) overwrite it.
+        game.addDishonoredPlayer(BOT_ID, PLAYER_ID);
+        game.setDishonoredPlayers(BOT_ID, List.of());
+        assertFalse(game.isPlayerDishonoredBy(BOT_ID, PLAYER_ID));
+    }
 }

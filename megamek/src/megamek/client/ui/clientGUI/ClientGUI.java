@@ -3770,6 +3770,8 @@ public class ClientGUI extends AbstractClientGUI
 
     /**
      * Records what a player's newly generated units were rolled for, replacing any earlier record.
+     * Callers record only what a generator actually asked the player, never a default, so that a
+     * later roll on a generator that knows nothing cannot erase a real choice.
      *
      * @param playerId the owner of the generated units
      * @param context  what they were generated for
@@ -3781,8 +3783,9 @@ public class ClientGUI extends AbstractClientGUI
     /**
      * @param playerId the player to look up
      *
-     * @return what that player's units were generated for, or {@code null} when they never used a
-     *       generator that knows
+     * @return what that player's units were generated for, or {@code null} when nothing has been
+     *       recorded for them - they have generated nothing, or only from a generator that asks for
+     *       no faction, command or rating
      */
     public @Nullable GenerationContext getGenerationContext(int playerId) {
         return generationContexts.get(playerId);

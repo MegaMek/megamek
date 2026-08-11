@@ -179,9 +179,12 @@ public class RandomArmyDialog extends AbstractRandomArmyDialog {
     private void recordGenerationContext(Client selectedClient) {
         GenerationContext context = getGenerationContext();
         Player owner = selectedClient.getLocalPlayer();
-        clientGui.setGenerationContext(owner.getId(), context);
 
+        // Only a generator that asked the player anything gets recorded. A tab that knows nothing
+        // has nothing to say, and recording its default would erase a real choice made on an earlier
+        // roll - topping a ComStar force up from the plain RAT tab would file it as Inner Sphere.
         if (context.source() != GenerationContext.Source.UNSPECIFIED) {
+            clientGui.setGenerationContext(owner.getId(), context);
             clientGui.getClient().getGame().getTeamForPlayer(owner).setFaction(context.faction());
             // The year goes in as text: message formatting would group the digits into "3,067".
             String year = String.valueOf(context.year());

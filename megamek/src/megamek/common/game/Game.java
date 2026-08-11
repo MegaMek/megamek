@@ -251,8 +251,11 @@ public final class Game extends AbstractGame implements Serializable, PlanetaryC
      * by Princess bots through {@link megamek.common.net.enums.PacketCommand#PRINCESS_DISHONORED} and relayed to all
      * clients, so a human client can warn before an action that would newly dishonor them without guessing at a remote
      * bot's honor state. Transient, ephemeral battle state; not part of savegames.
+     *
+     * <p>Concurrent because it is written on the packet-handling thread and read on the EDT during turn commit. The
+     * inner sets are always replaced wholesale (never mutated in place), so a reader safely sees a consistent set.</p>
      */
-    private transient Map<Integer, Set<Integer>> dishonoredPlayersByBot = new HashMap<>();
+    private transient Map<Integer, Set<Integer>> dishonoredPlayersByBot = new ConcurrentHashMap<>();
 
     /**
      * Constructor
@@ -3973,7 +3976,7 @@ public final class Game extends AbstractGame implements Serializable, PlanetaryC
     private Map<Integer, Set<Integer>> ensureDishonoredPlayers() {
         if (dishonoredPlayersByBot == null) {
             // Transient field is null after deserialization of a savegame.
-            dishonoredPlayersByBot = new HashMap<>();
+            dishonoredPlayersByBot = new ConcurrentHashMap<>();
         }
         return dishonoredPlayersByBot;
     }

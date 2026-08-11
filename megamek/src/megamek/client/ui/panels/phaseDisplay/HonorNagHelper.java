@@ -35,8 +35,7 @@ package megamek.client.ui.panels.phaseDisplay;
 import megamek.common.Player;
 import megamek.common.actions.AbstractAttackAction;
 import megamek.common.actions.EntityAction;
-import megamek.common.actions.PhysicalAttackAction;
-import megamek.common.actions.WeaponAttackAction;
+import megamek.common.actions.SearchlightAttackAction;
 import megamek.common.annotations.Nullable;
 import megamek.common.game.Game;
 import megamek.common.units.Entity;
@@ -74,14 +73,32 @@ final class HonorNagHelper {
      */
     static boolean wouldBeDishonored(Game game, Iterable<EntityAction> attacks) {
         for (EntityAction action : attacks) {
-            if ((action instanceof WeaponAttackAction || action instanceof PhysicalAttackAction)) {
-                AbstractAttackAction attackAction = (AbstractAttackAction) action;
-                if (wouldBeDishonored(game, attackAction.getEntity(game), attackAction.getTarget(game))) {
-                    return true;
-                }
+            if ((action instanceof AbstractAttackAction attackAction)
+                  && isOffensiveAttack(attackAction)
+                  && wouldBeDishonored(game, attackAction.getEntity(game), attackAction.getTarget(game))) {
+                return true;
             }
         }
         return false;
+    }
+
+    /**
+     * @return true if the action is an attack that deals damage to its target - i.e. the kind of attack a bot reacts to
+     *       (everything the server routes through {@code resolvePhysicalAttack}/{@code WeaponHandler} records via
+     *       {@code Entity.addAttackedByThisTurn}, which is what {@code Princess.checkForDishonoredEnemies} reads).
+     *
+     *       <p>Every {@link AbstractAttackAction} a player can declare against an enemy unit is a damaging attack,
+     *       with one exception: the searchlight, which only illuminates its target. So this excludes the searchlight
+     *       rather than enumerating every offensive type - which also means a newly added damaging attack is covered
+     *       automatically instead of being silently missed. The other non-damaging actions that share these attack
+     *       lists are already filtered upstream: spotting, find-club, torso-twist, arm-flip and pod triggers are
+     *       {@code AbstractEntityAction}s (not {@link AbstractAttackAction}), and woods-clearing / lay-explosives
+     *       target a hex or building, so the {@code target instanceof Entity} check in {@link #wouldBeDishonored} drops
+     *       them. Charge, death-from-above and ram are declared in the movement phase and handled there through the
+     *       {@code (attacker, target)} overload, so they never reach this list.</p>
+     */
+    private static boolean isOffensiveAttack(AbstractAttackAction action) {
+        return !(action instanceof SearchlightAttackAction);
     }
 
     /**

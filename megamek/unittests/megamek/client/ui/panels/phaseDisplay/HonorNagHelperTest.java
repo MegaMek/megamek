@@ -40,15 +40,14 @@ import static org.mockito.Mockito.when;
 import java.util.List;
 
 import megamek.common.Player;
-import megamek.common.actions.EntityAction;
-import megamek.common.actions.PhysicalAttackAction;
-import megamek.common.actions.TorsoTwistAction;
-import megamek.common.actions.WeaponAttackAction;
+import megamek.common.actions.*;
 import megamek.common.game.Game;
 import megamek.common.units.Entity;
 import megamek.common.units.Targetable;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.ValueSource;
 
 /**
  * Tests for {@link HonorNagHelper}, which mirrors, on the human client, the honor rules a Princess bot applies in
@@ -170,6 +169,32 @@ class HonorNagHelperTest {
         when(physicalAttack.getTarget(game)).thenReturn(target);
 
         assertTrue(HonorNagHelper.wouldBeDishonored(game, List.of((EntityAction) physicalAttack)));
+    }
+
+    @ParameterizedTest
+    @ValueSource(classes = { PushAttackAction.class, ThrashAttackAction.class, ProtoMekPhysicalAttackAction.class,
+                             BAVibroClawAttackAction.class })
+    void offensivePhysicalAttacksExtendingAbstractAttackActionAreEvaluated(
+          Class<? extends AbstractAttackAction> attackType) {
+        // These offensive physical attacks extend AbstractAttackAction directly, not PhysicalAttackAction, and must
+        // still be nagged - Thrash / ProtoMek-physical / BA vibroclaw are exactly the light-unit attacks the feature
+        // targets.
+        when(attacker.isCrippled()).thenReturn(true);
+        AbstractAttackAction attack = mock(attackType);
+        when(attack.getEntity(game)).thenReturn(attacker);
+        when(attack.getTarget(game)).thenReturn(target);
+
+        assertTrue(HonorNagHelper.wouldBeDishonored(game, List.of((EntityAction) attack)));
+    }
+
+    @Test
+    void nonDamagingSearchlightIsIgnored() {
+        // Searchlight targets an entity but deals no damage; the bot never treats it as an attack, so it must not nag
+        // even while the attacker is crippled.
+        when(attacker.isCrippled()).thenReturn(true);
+        SearchlightAttackAction searchlight = mock(SearchlightAttackAction.class);
+
+        assertFalse(HonorNagHelper.wouldBeDishonored(game, List.of((EntityAction) searchlight)));
     }
 
     @Test

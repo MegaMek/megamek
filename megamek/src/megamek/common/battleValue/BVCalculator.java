@@ -1396,7 +1396,7 @@ public abstract class BVCalculator {
      * <a href="https://bg.battletech.com/forums/tactical-operations/tagguided-munitions-and-bv/">BT Forum</a>)
      */
     public void processTagBonus() {
-        if (!Game.rulesManager.getRulesGame().tagBVBump() || entity.getGame() == null) {
+        if (entity.getGame() == null) {
             return;
         }
         long tagCount = workingTAGCount(entity);
@@ -1411,50 +1411,13 @@ public abstract class BVCalculator {
         // In the lobby, bombs are represented as a bombChoices array, only later is it
         // real Mounted.
         boolean hasGuided = false;
-
-        for (Entity otherEntity : entity.getGame().getEntitiesVector()) {
-            if ((otherEntity.getOwner() == null) || otherEntity.getOwner().isEnemyOf(entity.getOwner())) {
-                continue;
-            }
-            for (Mounted<?> mounted : otherEntity.getAmmo()) {
-                AmmoType ammoType = (AmmoType) mounted.getType();
-                EnumSet<AmmoType.Munitions> munitionType = ammoType.getMunitionType();
-                if ((mounted.getUsableShotsLeft() > 0) &&
-                      ((munitionType.contains(AmmoType.Munitions.M_SEMIGUIDED)) ||
-                            (munitionType.contains(AmmoType.Munitions.M_HOMING)))) {
-                    adjustedBV += mounted.getType().getBV(entity) * tagCount;
-                    bvReport.addLine("- " + equipmentDescriptor(mounted),
-                          "+ " +
-                                tagCount +
-                                " x " +
-                                formatForReport(mounted.getType().getBV(entity)) +
-                                " (" +
-                                otherEntity.getShortName() +
-                                ")",
-                          "= " + formatForReport(adjustedBV));
-                    hasGuided = true;
-                }
-            }
-            if (otherEntity instanceof IBomber asBomber) {
-                BombType bomb = BombType.createBombByType(BombTypeEnum.HOMING);
-                if (bomb != null) {
-                    int homingCount = asBomber.getBombChoices().getCount(BombTypeEnum.HOMING);
-                    if (homingCount > 0) {
-                        adjustedBV += bomb.getBV(otherEntity) * homingCount * tagCount;
-                        bvReport.addLine("- " + bomb.getName(),
-                              "+ " +
-                                    tagCount +
-                                    " x " +
-                                    formatForReport(bomb.getBV(otherEntity)) +
-                                    " (" +
-                                    otherEntity.getShortName() +
-                                    ")",
-                              "= " + formatForReport(adjustedBV));
-                        hasGuided = true;
-                    }
-                }
-            }
-        }
+        double modifiedBV = Game.rulesManager.getRulesGame().tagBVBump(entity, bvReport, adjustedBV, tagCount,
+              hasGuided);
+        if (modifiedBV != adjustedBV) {
+            hasGuided = true;
+            adjustedBV = modifiedBV;
+        } 
+        
         bvReport.finalizeTentativeSection(hasGuided);
     }
 

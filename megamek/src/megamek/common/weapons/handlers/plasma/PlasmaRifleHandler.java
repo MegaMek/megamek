@@ -161,7 +161,7 @@ public class PlasmaRifleHandler extends AmmoWeaponHandler {
             if (weapon.getType() instanceof ISLightPlasmaRifle) {
                 toReturn = Compute.d6();
             } else if (weapon.getType() instanceof ISHeavyPlasmaRifle) {
-                toReturn = Compute.d6(4);
+                toReturn = Compute.d6(3);
             } else {
                 toReturn = Compute.d6(2);
             }
@@ -193,7 +193,7 @@ public class PlasmaRifleHandler extends AmmoWeaponHandler {
                 if (plasmaWeapon instanceof ISLightPlasmaRifle) {
                     damage += Compute.d6();
                 } else if (plasmaWeapon instanceof ISHeavyPlasmaRifle) {
-                    damage += Compute.d6(4);
+                    damage += Compute.d6(3);
                 } else {
                     damage += Compute.d6(2);
                 }

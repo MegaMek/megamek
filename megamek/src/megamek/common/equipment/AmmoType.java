@@ -11890,7 +11890,7 @@ public class AmmoType extends EquipmentType {
         ammo.rackSize = 4;
         ammo.ammoType = AmmoTypeEnum.PLASMA;
         ammo.shots = 20;
-        ammo.bv = 26;
+        ammo.bv = 12;
         ammo.cost = 30000;
         ammo.explosive = false;
         ammo.rulesRefs = "189, 248, Core";
@@ -11917,7 +11917,7 @@ public class AmmoType extends EquipmentType {
         ammo.rackSize = 3;
         ammo.ammoType = AmmoTypeEnum.PLASMA;
         ammo.shots = 8;
-        ammo.bv = 26;
+        ammo.bv = 35;
         ammo.cost = 30000;
         ammo.explosive = false;
         ammo.rulesRefs = "189, 248, Core";

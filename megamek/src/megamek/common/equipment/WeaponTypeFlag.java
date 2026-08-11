@@ -98,6 +98,7 @@ public enum WeaponTypeFlag implements EquipmentFlag {
     F_TASER,
     F_TSEMP, // Used for TSEMP Weapons.
     F_VGL,
+    F_ARROW_IV,
 
     // Bomb types
     F_ALT_BOMB,

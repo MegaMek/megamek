@@ -570,7 +570,9 @@ public class WeaponType extends EquipmentType {
     public static final WeaponTypeFlag F_ENERGY = WeaponTypeFlag.F_ENERGY;
     // for Gunnery/Missile
     public static final WeaponTypeFlag F_MISSILE = WeaponTypeFlag.F_MISSILE;
-
+    // for Arrow IV
+    public static final WeaponTypeFlag F_ARROW_IV = WeaponTypeFlag.F_ARROW_IV;
+    
     // fires
     public static final WeaponTypeFlag F_PLASMA = WeaponTypeFlag.F_PLASMA;
     public static final WeaponTypeFlag F_INCENDIARY_NEEDLES = WeaponTypeFlag.F_INCENDIARY_NEEDLES;

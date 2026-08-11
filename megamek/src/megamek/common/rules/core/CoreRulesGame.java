@@ -33,10 +33,20 @@ package megamek.common.rules.core;
  */
 
 
+import megamek.client.ui.clientGUI.calculationReport.CalculationReport;
 import megamek.common.annotations.Nullable;
 import megamek.common.enums.GamePhase;
+import megamek.common.equipment.AmmoType;
+import megamek.common.equipment.Mounted;
+import megamek.common.equipment.WeaponTypeFlag;
+import megamek.common.equipment.enums.BombType;
 import megamek.common.rules.RulesGame;
 import megamek.common.units.Entity;
+import megamek.common.units.IBomber;
+
+import java.util.EnumSet;
+
+import static megamek.client.ui.clientGUI.calculationReport.CalculationReport.formatForReport;
 
 public class CoreRulesGame extends RulesGame {
 
@@ -76,14 +86,74 @@ public class CoreRulesGame extends RulesGame {
     public int getInitiativeOrder(int[] num_turns, int index, int min, boolean frontLoadOption) {
         return ((int) Math.ceil(((double) num_turns[index]) / (double) min));
     }
-    
+
     /**
+     * TAG can increase BV when homing arrow IV is present
      * {@inheritDoc}
-     * No BV boost for semi-guided or Arrow IV homing (Not present in core)
+     * 
+     * Core rules errata v0.1
+     * https://www.battletech.com/forums/index.php/topic,91365.0.html
      */
     @Override
-    public boolean tagBVBump() {
-        return false;
+    public double tagBVBump(Entity entity, CalculationReport bvReport, double adjustedBV,
+          long tagCount, boolean hasGuided) {
+        for (Entity otherEntity : entity.getGame().getEntitiesVector()) {
+            if ((otherEntity.getOwner() == null) || otherEntity.getOwner().isEnemyOf(entity.getOwner())) {
+                continue;
+            }
+            for (Mounted<?> mounted : otherEntity.getWeaponList()) {
+                boolean foundHoming = false;
+                if (mounted.getType().hasFlag(WeaponTypeFlag.F_ARROW_IV)) {
+                    for (Mounted<?> mountedAmmo : otherEntity.getAmmo()) {
+                        AmmoType ammoType = (AmmoType) mountedAmmo.getType();
+                        if (ammoType.equals(AmmoType.AmmoTypeEnum.ARROW_IV)) {
+                            EnumSet<AmmoType.Munitions> munitionType = ammoType.getMunitionType();
+                            if ((mountedAmmo.getUsableShotsLeft() > 0) &&
+                                  (munitionType.contains(AmmoType.Munitions.M_HOMING))) {
+                                // Once we know it has homing ammo on this unit, we can break out
+                                foundHoming = true;
+                                break;
+                            }
+                        }
+                    }
+                    if (foundHoming) {
+                        // Each Arrow IV launcher with homing ammo adds 50 BV per TAG in the force
+                        adjustedBV += 50 * tagCount;
+                        bvReport.addLine("- " + equipmentDescriptor(mounted, entity),
+                              "+ " +
+                                    tagCount +
+                                    " x " +
+                                    formatForReport(50) +
+                                    " (" +
+                                    otherEntity.getShortName() +
+                                    ")",
+                              "= " + formatForReport(adjustedBV));
+                        hasGuided = true;
+                    }
+                }
+            }
+            
+            if (otherEntity instanceof IBomber asBomber) {
+                BombType bomb = BombType.createBombByType(BombType.BombTypeEnum.HOMING);
+                if (bomb != null) {
+                    int homingCount = asBomber.getBombChoices().getCount(BombType.BombTypeEnum.HOMING);
+                    if (homingCount > 0) {
+                        adjustedBV += bomb.getBV(otherEntity) * homingCount * tagCount;
+                        bvReport.addLine("- " + bomb.getName(),
+                              "+ " +
+                                    tagCount +
+                                    " x " +
+                                    formatForReport(bomb.getBV(otherEntity)) +
+                                    " (" +
+                                    otherEntity.getShortName() +
+                                    ")",
+                              "= " + formatForReport(adjustedBV));
+                        hasGuided = true;
+                    }
+                }
+            }
+        }
+        return adjustedBV;
     }
 
     /**

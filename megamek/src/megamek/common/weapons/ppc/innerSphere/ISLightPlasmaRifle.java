@@ -76,7 +76,7 @@ public class ISLightPlasmaRifle extends AmmoWeapon {
         criticalSlots = 2;
         flags = flags.or(F_MEK_WEAPON).or(F_TANK_WEAPON).or(F_AERO_WEAPON)
               .or(F_PLASMA).or(F_DIRECT_FIRE).or(F_ENERGY);
-        bv = 100;
+        bv = 96;
         cost = 260000;
         shortAV = 4;
         medAV = 4;

@@ -33,10 +33,20 @@ package megamek.common.rules.totalwarfare;
  */
 
 
+import megamek.client.ui.clientGUI.calculationReport.CalculationReport;
 import megamek.common.annotations.Nullable;
+import megamek.common.battleValue.BVCalculator;
 import megamek.common.enums.GamePhase;
+import megamek.common.equipment.AmmoType;
+import megamek.common.equipment.Mounted;
+import megamek.common.equipment.enums.BombType;
 import megamek.common.rules.RulesGame;
 import megamek.common.units.Entity;
+import megamek.common.units.IBomber;
+
+import java.util.EnumSet;
+
+import static megamek.client.ui.clientGUI.calculationReport.CalculationReport.formatForReport;
 
 public class TWRulesGame extends RulesGame {
 
@@ -81,12 +91,56 @@ public class TWRulesGame extends RulesGame {
 
     /**
      * TAG can increase BV when Semi-guided or homing arrow IV is present
-     *
-     * @return true if TAG increases battle value
+     * {@inheritDoc}
      */
     @Override
-    public boolean tagBVBump() {
-        return true;
+    public double tagBVBump(Entity entity, CalculationReport bvReport, double adjustedBV,
+          long tagCount, boolean hasGuided) {
+
+        for (Entity otherEntity : entity.getGame().getEntitiesVector()) {
+            if ((otherEntity.getOwner() == null) || otherEntity.getOwner().isEnemyOf(entity.getOwner())) {
+                continue;
+            }
+            for (Mounted<?> mounted : otherEntity.getAmmo()) {
+                AmmoType ammoType = (AmmoType) mounted.getType();
+                EnumSet<AmmoType.Munitions> munitionType = ammoType.getMunitionType();
+                if ((mounted.getUsableShotsLeft() > 0) &&
+                      ((munitionType.contains(AmmoType.Munitions.M_SEMIGUIDED)) ||
+                            (munitionType.contains(AmmoType.Munitions.M_HOMING)))) {
+                    adjustedBV += mounted.getType().getBV(entity) * tagCount;
+                    bvReport.addLine("- " + equipmentDescriptor(mounted, entity),
+                          "+ " +
+                                tagCount +
+                                " x " +
+                                formatForReport(mounted.getType().getBV(entity)) +
+                                " (" +
+                                otherEntity.getShortName() +
+                                ")",
+                          "= " + formatForReport(adjustedBV));
+                    hasGuided = true;
+                }
+            }
+            if (otherEntity instanceof IBomber asBomber) {
+                BombType bomb = BombType.createBombByType(BombType.BombTypeEnum.HOMING);
+                if (bomb != null) {
+                    int homingCount = asBomber.getBombChoices().getCount(BombType.BombTypeEnum.HOMING);
+                    if (homingCount > 0) {
+                        adjustedBV += bomb.getBV(otherEntity) * homingCount * tagCount;
+                        bvReport.addLine("- " + bomb.getName(),
+                              "+ " +
+                                    tagCount +
+                                    " x " +
+                                    formatForReport(bomb.getBV(otherEntity)) +
+                                    " (" +
+                                    otherEntity.getShortName() +
+                                    ")",
+                              "= " + formatForReport(adjustedBV));
+                        hasGuided = true;
+                    }
+                }
+            }
+        }
+        return adjustedBV;
     }
 
     /**

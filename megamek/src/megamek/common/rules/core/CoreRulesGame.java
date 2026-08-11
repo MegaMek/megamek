@@ -103,21 +103,19 @@ public class CoreRulesGame extends RulesGame {
             }
             for (Mounted<?> mounted : otherEntity.getWeaponList()) {
                 boolean foundHoming = false;
-                if (mounted.getType().hasFlag(WeaponTypeFlag.F_ARROW_IV)) {
+                if (mounted.getType().hasFlag(WeaponTypeFlag.F_ARROW_IV) || mounted.getType().hasFlag(WeaponTypeFlag.F_ARTILLERY)) {
                     for (Mounted<?> mountedAmmo : otherEntity.getAmmo()) {
                         AmmoType ammoType = (AmmoType) mountedAmmo.getType();
-                        if (ammoType.equals(AmmoType.AmmoTypeEnum.ARROW_IV)) {
-                            EnumSet<AmmoType.Munitions> munitionType = ammoType.getMunitionType();
-                            if ((mountedAmmo.getUsableShotsLeft() > 0) &&
-                                  (munitionType.contains(AmmoType.Munitions.M_HOMING))) {
-                                // Once we know it has homing ammo on this unit, we can break out
-                                foundHoming = true;
-                                break;
-                            }
+                        EnumSet<AmmoType.Munitions> munitionType = ammoType.getMunitionType();
+                        if ((mountedAmmo.getUsableShotsLeft() > 0) &&
+                              (munitionType.contains(AmmoType.Munitions.M_HOMING))) {
+                            // Once we know it has homing ammo on this unit, we can break out
+                            foundHoming = true;
+                            break;
                         }
                     }
                     if (foundHoming) {
-                        // Each Arrow IV launcher with homing ammo adds 50 BV per TAG in the force
+                        // Each Arrow IV or artillery launcher with homing ammo adds 50 BV per TAG in the force
                         adjustedBV += 50 * tagCount;
                         bvReport.addLine("- " + equipmentDescriptor(mounted, entity),
                               "+ " +

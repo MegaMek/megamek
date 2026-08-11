@@ -156,10 +156,10 @@ public class Client extends AbstractClient {
      * The tile set, built on first use rather than with the client.
      *
      * <p>Building one parses the whole hex tile set into thousands of template hexes and their terrain, which a
-     * client that never draws anything has no use for. Every client used to pay that at construction: headless
-     * runners, and every bot, since {@code BotClient} is a {@code Client} too. A batch playing many games in one
-     * process paid it once per client per game and kept the result alive, which is tens of megabytes a game
-     * retained for images nobody would ever ask for.</p>
+     * client that never draws anything has no use for. Every client used to pay that at construction: headless runners,
+     * and every bot, since {@code BotClient} is a {@code Client} too. A batch playing many games in one process paid it
+     * once per client per game and kept the result alive, which is tens of megabytes a game retained for images nobody
+     * would ever ask for.</p>
      *
      * @return the tile set manager, or {@code null} if it cannot be built
      */
@@ -419,8 +419,8 @@ public class Client extends AbstractClient {
     }
 
     /**
-     * Asks the server to build the game board from the current map settings and broadcast it to all clients while
-     * still in the lobby, so that all players can see the battlefield that will actually be played.
+     * Asks the server to build the game board from the current map settings and broadcast it to all clients while still
+     * in the lobby, so that all players can see the battlefield that will actually be played.
      */
     public void sendLobbyBoardGenerationRequest() {
         send(new Packet(PacketCommand.LOBBY_GENERATE_BOARD));
@@ -1458,7 +1458,7 @@ public class Client extends AbstractClient {
               && game.isPlayerDishonoredBy(botPlayerId, localPlayerId)) {
             Player bot = game.getPlayer(botPlayerId);
             String botName = (bot != null) ? bot.getName() : "";
-            game.fireGameEvent(new GameToastEvent(this, GameToastEvent.Level.WARNING,
+            game.fireGameEvent(new GameToastEvent(this, GameToastEvent.Level.GAMEMASTER,
                   Messages.getString("HonorNag.dishonoredToast", botName), Entity.NONE));
         }
     }

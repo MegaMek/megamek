@@ -1,6 +1,6 @@
 /*
  * Copyright (C) 2004, 2005 Ben Mazur (bmazur@sev.org)
- * Copyright (C) 2008-2025 The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2008-2026 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -49,10 +49,10 @@ import megamek.common.game.Game;
 import megamek.common.loaders.EntityLoadingException;
 import megamek.common.units.Entity;
 import megamek.common.weapons.handlers.AttackHandler;
-import megamek.common.weapons.handlers.artillery.ArtilleryBayWeaponDirectFireHandler;
-import megamek.common.weapons.handlers.artillery.ArtilleryBayWeaponDirectHomingHandler;
-import megamek.common.weapons.handlers.artillery.ArtilleryBayWeaponIndirectFireHandler;
-import megamek.common.weapons.handlers.artillery.ArtilleryBayWeaponIndirectHomingHandler;
+import megamek.common.weapons.handlers.artillery.ArtilleryBayWeaponCloseFireHandler;
+import megamek.common.weapons.handlers.artillery.ArtilleryBayWeaponCloseHomingHandler;
+import megamek.common.weapons.handlers.artillery.ArtilleryBayWeaponDistantFireHandler;
+import megamek.common.weapons.handlers.artillery.ArtilleryBayWeaponDistantHomingHandler;
 import megamek.server.totalWarfare.TWGameManager;
 
 /**
@@ -111,13 +111,13 @@ public class ArtilleryBayWeapon extends AmmoBayWeapon {
             }
             if (useHoming) {
                 if (game.getPhase().isFiring()) {
-                    return new ArtilleryBayWeaponDirectHomingHandler(toHit, waa, game, manager);
+                    return new ArtilleryBayWeaponCloseHomingHandler(toHit, waa, game, manager);
                 }
-                return new ArtilleryBayWeaponIndirectHomingHandler(toHit, waa, game, manager);
+                return new ArtilleryBayWeaponDistantHomingHandler(toHit, waa, game, manager);
             } else if (game.getPhase().isFiring()) {
-                return new ArtilleryBayWeaponDirectFireHandler(toHit, waa, game, manager);
+                return new ArtilleryBayWeaponCloseFireHandler(toHit, waa, game, manager);
             } else {
-                return new ArtilleryBayWeaponIndirectFireHandler(toHit, waa, game, manager);
+                return new ArtilleryBayWeaponDistantFireHandler(toHit, waa, game, manager);
             }
         } catch (EntityLoadingException ignored) {
             LOGGER.warn("Get Correct Handler - Attach Handler Received Null Entity.");

@@ -96,6 +96,7 @@ import megamek.common.equipment.WeaponType;
 import megamek.common.game.Game;
 import megamek.common.options.OptionsConstants;
 import megamek.common.rolls.TargetRoll;
+import megamek.common.rules.core.CoreRulesManager;
 import megamek.common.units.*;
 import megamek.logging.MMLogger;
 
@@ -1462,7 +1463,10 @@ public class MapMenu extends JPopupMenu {
             } else {
                 if ((hasAmmoType(AmmoType.AmmoTypeEnum.LRM)
                       || hasAmmoType(AmmoType.AmmoTypeEnum.LRM_IMP)
-                      || hasAmmoType(AmmoType.AmmoTypeEnum.MML))
+                      || hasAmmoType(AmmoType.AmmoTypeEnum.MML)
+                      || hasAmmoType(AmmoType.AmmoTypeEnum.TBOLT_10)
+                      || hasAmmoType(AmmoType.AmmoTypeEnum.TBOLT_15)
+                      || hasAmmoType(AmmoType.AmmoTypeEnum.TBOLT_20))
                       && (hasMunitionType(AmmoType.Munitions.M_FASCAM)
                       || hasMunitionType(AmmoType.Munitions.M_THUNDER)
                       || hasMunitionType(AmmoType.Munitions.M_THUNDER_ACTIVE)
@@ -1478,6 +1482,10 @@ public class MapMenu extends JPopupMenu {
 
                 if (hasAmmoType(AmmoType.AmmoTypeEnum.BA_MICRO_BOMB)) {
                     menu.add(targetMenuItem(new HexTarget(coords, board, Targetable.TYPE_HEX_BOMB)));
+                }
+                
+                if (hasWeaponFlag(WeaponType.F_MRM) && myEntity.hasMisc(MiscType.F_APOLLO) && Game.rulesManager.getRulesWeapons().getApolloSaturationMode()) {
+                    menu.add(targetMenuItem(new HexTarget(coords, board, Targetable.TYPE_SATURATION)));
                 }
 
                 if (hasWeaponFlag(WeaponType.F_DIVE_BOMB)

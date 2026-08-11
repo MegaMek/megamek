@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2025 The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2025-2026 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -511,7 +511,7 @@ public class BuildingCollapseHandler extends AbstractTWRuleHandler {
                         table = ToHitData.HIT_PUNCH;
                     }
                     HitData hit = entity.rollHitLocation(table, ToHitData.SIDE_FRONT);
-                    hit.setGeneralDamageType(HitData.DAMAGE_PHYSICAL);
+                    hit.setGeneralDamageType(HitData.DAMAGE_PHYSICAL_NONATTACK);
                     vPhaseReport.addAll(gameManager.damageEntity(entity, hit, next));
                     remaining -= next;
                 }

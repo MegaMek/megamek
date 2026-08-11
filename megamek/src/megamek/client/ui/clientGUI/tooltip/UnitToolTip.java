@@ -1700,7 +1700,7 @@ public final class UnitToolTip {
                 String sUnJamming = " ";
                 String msgUnjammingRAC = Messages.getString("BoardView1.Tooltip.UnjammingRAC");
                 sUnJamming += msgUnjammingRAC;
-                if (entity.getGame().getOptions().booleanOption(OptionsConstants.ADVANCED_COMBAT_UNJAM_UAC)) {
+                if (entity.getGame().getOptions().booleanOption(OptionsConstants.ADVANCED_COMBAT_UNJAM_UAC) && game.rulesManager.getRulesWeapons().canUACsJam()) {
                     String msgAndAC = Messages.getString("BoardView1.Tooltip.AndAC");
                     sUnJamming += msgAndAC;
                 }

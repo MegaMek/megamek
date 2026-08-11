@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2024-2025 The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2024-2026 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -44,6 +44,7 @@ import megamek.common.actions.WeaponAttackAction;
 import megamek.common.battleArmor.BattleArmor;
 import megamek.common.compute.Compute;
 import megamek.common.compute.ComputeArc;
+import megamek.common.game.Game;
 import megamek.common.options.OptionsConstants;
 import megamek.common.units.Entity;
 import megamek.common.weapons.gaussRifles.GaussWeapon;
@@ -107,24 +108,7 @@ public class WeaponMounted extends Mounted<WeaponType> {
             return getType().getRackSize() * damagePerShot;
         }
 
-        if (getType().hasFlag(WeaponType.F_PPC) && (hasChargedCapacitor() != 0)) {
-            if (isFired()) {
-                if (hasChargedCapacitor() == 2) {
-                    return 15;
-                }
-                return 0;
-            }
-            if (hasChargedCapacitor() == 2) {
-                return 30;
-            }
-            return 15;
-        }
-
-        if ((getType().getAmmoType() == AmmoType.AmmoTypeEnum.MPOD) && isFired()) {
-            return 0;
-        }
-
-        return getType().getExplosionDamage();
+        return Game.rulesManager.getRulesExplosions().equipmentDamage(this, getType());
     }
 
     @Override

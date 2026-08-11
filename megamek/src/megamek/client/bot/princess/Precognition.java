@@ -47,14 +47,7 @@ import megamek.common.Player;
 import megamek.common.Report;
 import megamek.common.SpecialHexDisplay;
 import megamek.common.TagInfo;
-import megamek.common.actions.ArtilleryAttackAction;
-import megamek.common.actions.AttackAction;
-import megamek.common.actions.ClubAttackAction;
-import megamek.common.actions.DodgeAction;
-import megamek.common.actions.EntityAction;
-import megamek.common.actions.FlipArmsAction;
-import megamek.common.actions.TorsoTwistAction;
-import megamek.common.actions.WeaponAttackAction;
+import megamek.common.actions.*;
 import megamek.common.annotations.Nullable;
 import megamek.common.board.Board;
 import megamek.common.board.BoardLocation;
@@ -923,8 +916,23 @@ public class Precognition implements Runnable {
                 if (!isCharge) {
                     game.addAction(ea);
                 } else {
-                    if (ea instanceof AttackAction attackAction) {
-                        game.addCharge(attackAction);
+                    // This should work for Charge, DFA, and RAM attacks.
+                    if (ea instanceof DisplacementAttackAction) {
+                        Entity chargingUnit = game.getEntity(ea.getEntityId());
+                        if (chargingUnit != null) {
+                            chargingUnit.setDisplacementAttack((DisplacementAttackAction) ea);
+                        }
+                        game.addDisplacementAttack((AttackAction) ea);
+                    }
+                    if (ea instanceof RamAttackAction) {
+                        Entity rammingUnit = game.getEntity(ea.getEntityId());
+                        if (rammingUnit != null) {
+                            rammingUnit.setRamming(true);
+                        }
+                        game.addRam((AttackAction) ea);
+                    }
+                    if (ea instanceof TeleMissileAttackAction) {
+                        game.addTeleMissileAttack((AttackAction) ea);
                     }
                 }
             }

@@ -165,6 +165,13 @@ public class ComputeTerrainMods {
               && ammoType.getMunitionType().contains(AmmoType.Munitions.M_SEMIGUIDED)
               && Compute.isTargetTagged(target, game);
 
+        boolean semiGuidedDirectVsTaggedTarget = (!isIndirect
+              && (ammoType != null)
+              && ammoType.getMunitionType().contains(AmmoType.Munitions.M_SEMIGUIDED)
+              && Compute.isTargetTagged(target, game) &&
+              Game.rulesManager.getRulesAmmo().semiGuidedIgnoresCover());
+
+
         // TW p.111
         boolean indirectMortarWithoutSpotter = (weaponType != null)
               && weaponType.hasFlag(WeaponType.F_MORTAR_TYPE_INDIRECT)
@@ -173,11 +180,25 @@ public class ComputeTerrainMods {
 
         // Base terrain calculations, not applicable when delivering minefields or bombs
         // also not applicable in pointblank shots from hidden units
-        if ((targetType != Targetable.TYPE_MINEFIELD_DELIVER)
+        ToHitData terrainModifier = Compute.getTargetTerrainModifier(game, target, eiPilotStatus, inSameBuilding,
+              underWater);
+
+        if (targetType != Targetable.TYPE_MINEFIELD_DELIVER
+              && targetType != Targetable.TYPE_SATURATION
               && !isPointBlankShot
               && !semiGuidedIndirectVsTaggedTarget
               && !indirectMortarWithoutSpotter) {
-            toHit.append(Compute.getTargetTerrainModifier(game, target, eiPilotStatus, inSameBuilding, underWater));
+            toHit.append(terrainModifier);
+        }
+
+        // Does Semi-guided direct reduce the terrain modifier
+        if (semiGuidedDirectVsTaggedTarget) {
+            int terrainMod = terrainModifier.getValue() + losMods.getValue();
+            int semiGuidedTerrain =
+                  Game.rulesManager.getRulesAmmo().getSemiGuidedAdjustment(terrainMod, false, true);
+            if (semiGuidedTerrain > 0) {
+                toHit.append(new ToHitData(-semiGuidedTerrain, Messages.getString("WeaponAttackAction.SemiGuidedTag")));
+            }
         }
 
         // Target's hex
@@ -231,7 +252,7 @@ public class ComputeTerrainMods {
         }
 
         // Change hit table for partial cover, accommodate for partial underwater (legs)
-        if (los.getTargetCover() != LosEffects.COVER_NONE) {
+        if (los.getTargetCover() != LosEffects.COVER_NONE && !(semiGuidedDirectVsTaggedTarget && !underWater)) {
             if (underWater && (targetInWater && (targEl == 0) && (entityTarget != null && entityTarget.height() > 0))) {
                 // weapon underwater, target in partial water
                 toHit.setHitTable(HIT_PARTIAL_COVER);
@@ -286,7 +307,7 @@ public class ComputeTerrainMods {
                 }
             }
         }
-
+        
         // Special Equipment
 
         // BAP Targeting rule enabled - TO:AR 6th p.97
@@ -313,7 +334,14 @@ public class ComputeTerrainMods {
                 }
             }
         }
-
+        // Reduces smoke modifiers for Active Probes if the rules support it.
+        if (attacker.hasBAP(true) && (los.getLightSmoke() + los.getHeavySmoke() > 0) && los.canSee()) {
+            int smokeReduction = Game.rulesManager.getRulesTarget().getBAPSmokeReduction(los);
+            if (smokeReduction > 0) {
+                toHit.addModifier(-smokeReduction, Messages.getString("WeaponAttackAction.BAPSmokeReduction"));
+            }
+        }
+        
         // To-hit table changes with no to-hit modifiers
 
         // Aero's in air-to-air combat can hit above and below

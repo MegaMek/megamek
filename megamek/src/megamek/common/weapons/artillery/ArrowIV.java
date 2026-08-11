@@ -76,7 +76,7 @@ public abstract class ArrowIV extends ArtilleryWeapon {
         ammoType = AmmoType.AmmoTypeEnum.ARROW_IV;
         bv = 240;
         cost = 450000;
-        this.flags = flags.or(F_MISSILE);
+        this.flags = flags.or(F_MISSILE).or(F_ARROW_IV);
         this.missileArmor = 20;
         rulesRefs = "96, TO:AUE";
     }

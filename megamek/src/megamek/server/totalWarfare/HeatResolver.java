@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2025 The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2025-2026 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -34,6 +34,7 @@
 package megamek.server.totalWarfare;
 
 import java.awt.Color;
+import java.util.ArrayList;
 import java.util.Vector;
 
 import megamek.MMConstants;
@@ -49,10 +50,12 @@ import megamek.common.equipment.ArmorType;
 import megamek.common.equipment.EquipmentMode;
 import megamek.common.equipment.MiscType;
 import megamek.common.equipment.Mounted;
+import megamek.common.game.Game;
 import megamek.common.options.OptionsConstants;
 import megamek.common.rolls.PilotingRollData;
 import megamek.common.rolls.Roll;
 import megamek.common.rolls.TargetRoll;
+import megamek.common.rules.RulesHeat;
 import megamek.common.units.*;
 import megamek.logging.MMLogger;
 import megamek.server.ServerHelper;
@@ -183,7 +186,8 @@ class HeatResolver extends AbstractTWRuleHandler {
                 // Increment consecutive RHS uses for this activation attempt (success or failure),
                 // then look up the target number based on the updated count.
                 entity.setConsecutiveRHSUses(entity.getConsecutiveRHSUses() + 1);
-                int targetNumber = ServerHelper.radicalHeatSinkSuccessTarget(entity.getConsecutiveRHSUses());
+                int targetNumber =
+                      Game.rulesManager.getRulesEquipment().radicalHeatSinkSuccessTarget(entity.getConsecutiveRHSUses());
                 boolean rhsFailure = diceRoll.getIntValue() < targetNumber;
 
                 report = new Report(5541);
@@ -196,8 +200,8 @@ class HeatResolver extends AbstractTWRuleHandler {
 
                 // Show RHS stress level and next activation TN (only if RHS didn't fail)
                 if (!rhsFailure) {
-                    int nextTargetNumber = ServerHelper.radicalHeatSinkSuccessTarget(entity.getConsecutiveRHSUses()
-                          + 1);
+                    int nextTargetNumber =
+                          Game.rulesManager.getRulesEquipment().radicalHeatSinkSuccessTarget(entity.getConsecutiveRHSUses() + 1);
                     report = new Report(5547);
                     report.indent(2);
                     report.subject = entity.getId();
@@ -236,7 +240,8 @@ class HeatResolver extends AbstractTWRuleHandler {
                 int decrement = entity.hasRHSWentUp() ? 2 : 1;
                 int reducedStress = Math.max(0, currentStress - decrement);
                 // If activated next turn, stress will increment from reduced level
-                int nextActivationTN = ServerHelper.radicalHeatSinkSuccessTarget(reducedStress + 1);
+                int nextActivationTN =
+                      Game.rulesManager.getRulesEquipment().radicalHeatSinkSuccessTarget(reducedStress + 1);
                 report = new Report(5548);
                 report.indent();
                 report.subject = entity.getId();
@@ -897,44 +902,26 @@ class HeatResolver extends AbstractTWRuleHandler {
                 damageHeat += 5;
             }
             if ((lifeSupportCritCount > 0) &&
-                  ((damageHeat >= 15) || (torsoMountedCockpit && (damageHeat > 0))) &&
                   !entity.getCrew().isDead() &&
                   !entity.getCrew().isDoomed() &&
                   !entity.getCrew().isEjected()) {
                 int heatLimitDesc = 1;
                 int damageToCrew = 0;
-                if ((damageHeat >= 47) && mtHeat) {
-                    // mekwarrior takes 5 damage
-                    heatLimitDesc = 47;
-                    damageToCrew = 5;
-                } else if ((damageHeat >= 39) && mtHeat) {
-                    // mekwarrior takes 4 damage
-                    heatLimitDesc = 39;
-                    damageToCrew = 4;
-                } else if ((damageHeat >= 32) && mtHeat) {
-                    // mekwarrior takes 3 damage
-                    heatLimitDesc = 32;
-                    damageToCrew = 3;
-                } else if (damageHeat >= 25) {
-                    // mekwarrior takes 2 damage
-                    heatLimitDesc = 25;
-                    damageToCrew = 2;
-                } else if (damageHeat >= 15) {
-                    // mekwarrior takes 1 damage
-                    heatLimitDesc = 15;
-                    damageToCrew = 1;
+                
+                RulesHeat.LifeSupportHeat lifeSupportHeat = 
+                      Game.rulesManager.getRulesHeat().checkLifeSupportHeat(damageHeat,
+                      torsoMountedCockpit, mtHeat, entity.hasAbility(OptionsConstants.MD_PAIN_SHUNT));
+                if (lifeSupportHeat != null) {
+                    heatLimitDesc = lifeSupportHeat.heatLevel();
+                    damageToCrew = lifeSupportHeat.damageAmount();
+                    report = new Report(5070);
+                    report.subject = entity.getId();
+                    report.addDesc(entity);
+                    report.add(heatLimitDesc);
+                    report.add(damageToCrew);
+                    addReport(report);
+                    addReport(gameManager.damageCrew(entity, damageToCrew));
                 }
-                if ((mek.getCockpitType() == Mek.COCKPIT_TORSO_MOUNTED) &&
-                      !entity.hasAbility(OptionsConstants.MD_PAIN_SHUNT)) {
-                    damageToCrew += 1;
-                }
-                report = new Report(5070);
-                report.subject = entity.getId();
-                report.addDesc(entity);
-                report.add(heatLimitDesc);
-                report.add(damageToCrew);
-                addReport(report);
-                addReport(gameManager.damageCrew(entity, damageToCrew));
             } else if (mtHeat &&
                   (entity.heat >= 32) &&
                   !entity.getCrew().isDead() &&

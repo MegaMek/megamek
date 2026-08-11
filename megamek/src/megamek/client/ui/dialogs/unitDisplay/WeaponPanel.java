@@ -1766,6 +1766,12 @@ public class WeaponPanel extends PicMap implements ListSelectionListener, Action
         } else {
             wDamR.setText(Integer.toString(weaponType.getDamage()));
         }
+        
+        if (mounted.getType().hasFlag(WeaponType.F_BOMBAST_LASER)) {
+            int damage = (mounted.curMode().equals("Damage 16")) ? 16 : (mounted.curMode().equals("Damage 12")) ? 12 :
+                                                                         8;
+            wDamR.setText(Integer.toString(damage));
+        }
 
         // update range
         int shortR = weaponType.getShortRange();
@@ -1779,10 +1785,10 @@ public class WeaponPanel extends PicMap implements ListSelectionListener, Action
         // (torpedoes)
         if ((entity.getLocationStatus(mounted.getLocation()) == ILocationExposureStatus.WET)
               || ((longR == 0) && weaponType.getWLongRange() > 0)) {
-            shortR = weaponType.getWShortRange();
-            mediumR = weaponType.getWMediumRange();
-            longR = weaponType.getWLongRange();
-            extremeR = weaponType.getWExtremeRange();
+            shortR = Game.rulesManager.getRulesUnderwater().getShortRange(weaponType);
+            mediumR = Game.rulesManager.getRulesUnderwater().getMediumRange(weaponType);
+            longR = Game.rulesManager.getRulesUnderwater().getLongRange(weaponType);
+            extremeR = Game.rulesManager.getRulesUnderwater().getExtremeRange(weaponType);
         } else if (weaponType.hasFlag(WeaponType.F_PD_BAY)) {
             // Point Defense bays have a variable range, depending on the mode they're in
             if (mounted.hasModes() && mounted.curMode().equals("Point Defense")) {

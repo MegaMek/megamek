@@ -1,6 +1,5 @@
 /*
- * Copyright (C) 2005 Ben Mazur (bmazur@sev.org)
- * Copyright (C) 2007-2025 The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2026 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -32,41 +31,17 @@
  * affiliated with Microsoft.
  */
 
-package megamek.common.weapons.handlers.artillery;
+package megamek.common.enums;
 
-import java.io.Serial;
-
-import megamek.common.ToHitData;
-import megamek.common.actions.WeaponAttackAction;
-import megamek.common.enums.GamePhase;
-import megamek.common.game.Game;
-import megamek.common.loaders.EntityLoadingException;
-import megamek.server.totalWarfare.TWGameManager;
-
-/**
- * @author Sebastian Brocks
- * @since Sep 24, 2004
- */
-public class ArtilleryWeaponDirectFireHandler extends ArtilleryWeaponIndirectFireHandler {
-    @Serial
-    private static final long serialVersionUID = 7116191142234200717L;
-
-    /**
-     *
-     */
-    public ArtilleryWeaponDirectFireHandler(ToHitData t, WeaponAttackAction w, Game g, TWGameManager m)
-          throws EntityLoadingException {
-        super(t, w, g, m);
-
+public enum ChargeLevel {
+    CHARGE_NONE("No charge"),
+    CHARGING("Charging"),
+    CHARGED("Charged");
+    
+    private String description;
+    private ChargeLevel(String description) {
+        this.description = description;
     }
-
-    /*
-     * (non-Javadoc)
-     *
-     * @see megamek.common.weapons.handlers.AttackHandler#cares(int)
-     */
-    @Override
-    public boolean cares(GamePhase phase) {
-        return phase.isFiring();
-    }
+    
+    public String getDescription() { return description; }
 }

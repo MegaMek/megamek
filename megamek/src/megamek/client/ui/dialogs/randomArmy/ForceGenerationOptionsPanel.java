@@ -57,6 +57,7 @@ import megamek.client.ratgenerator.Parameters;
 import megamek.client.ratgenerator.RATGenerator;
 import megamek.client.ratgenerator.UnitTable;
 import megamek.client.ui.Messages;
+import megamek.client.ui.clientGUI.GUIPreferences;
 import megamek.client.ui.dialogs.AnalyzeFormationDialog;
 import megamek.codeUtilities.MathUtility;
 import megamek.common.loaders.MekSummary;
@@ -77,6 +78,8 @@ public class ForceGenerationOptionsPanel extends JPanel implements ActionListene
     private static final long serialVersionUID = -3462304612643343012L;
 
     private static final MMLogger LOGGER = MMLogger.create(ForceGenerationOptionsPanel.class);
+
+    private static final GUIPreferences GUIP = GUIPreferences.getInstance();
 
     public enum Use {
         RAT_GENERATOR, FORMATION_BUILDER // , FORCE_GENERATOR
@@ -290,6 +293,8 @@ public class ForceGenerationOptionsPanel extends JPanel implements ActionListene
         c.weighty = 0.5;
         add(panUnitTypeOptions, c);
 
+        restoreRememberedSelections();
+
         if (!RATGenerator.getInstance().isInitialized()) {
             RATGenerator.getInstance().registerListener(this);
         }
@@ -299,6 +304,22 @@ public class ForceGenerationOptionsPanel extends JPanel implements ActionListene
 
         if (panUnitTypeOptions != null) {
             panUnitTypeOptions.optionsChanged();
+        }
+    }
+
+    /**
+     * Restores the choices that do not depend on the generator data being loaded. Faction, command and
+     * rating are restored as their lists are built, since those lists depend on the year and on the
+     * generator finishing its load.
+     */
+    private void restoreRememberedSelections() {
+        String unitCount = GUIP.getRandomArmySetting(GUIPreferences.RND_ARMY_LAST_UNIT_COUNT);
+        if (!unitCount.isBlank()) {
+            txtNumUnits.setText(unitCount);
+        }
+        String unitType = GUIP.getRandomArmySetting(GUIPreferences.RND_ARMY_LAST_UNIT_TYPE);
+        if (!unitType.isBlank()) {
+            cbUnitType.setSelectedItem(unitType);
         }
     }
     // endregion Constructors
@@ -369,6 +390,10 @@ public class ForceGenerationOptionsPanel extends JPanel implements ActionListene
             cbFaction.addItem(fRec);
         }
         cbFaction.setSelectedItem(old);
+        if (old == null) {
+            // First population of this dialog: pick up where the player left off last time.
+            selectRememberedFaction(cbFaction, GUIPreferences.RND_ARMY_LAST_FACTION);
+        }
         if (cbFaction.getSelectedItem() == null) {
             cbFaction.setSelectedItem(RATGenerator.getInstance().getFaction("IS"));
         }
@@ -395,6 +420,9 @@ public class ForceGenerationOptionsPanel extends JPanel implements ActionListene
             }
         }
         cbSubFaction.setSelectedItem(old);
+        if (old == null) {
+            selectRememberedFaction(cbSubFaction, GUIPreferences.RND_ARMY_LAST_SUB_FACTION);
+        }
         updateRatingChoice();
         cbSubFaction.addActionListener(this);
     }
@@ -425,7 +453,11 @@ public class ForceGenerationOptionsPanel extends JPanel implements ActionListene
             }
         }
         if (current < 0 && cbRating.getItemCount() > 0) {
+            String remembered = GUIP.getRandomArmySetting(GUIPreferences.RND_ARMY_LAST_RATING);
             cbRating.setSelectedIndex(0);
+            if (!remembered.isBlank()) {
+                cbRating.setSelectedItem(remembered);
+            }
         } else {
             cbRating.setSelectedIndex(Math.min(current, cbRating.getItemCount() - 1));
         }
@@ -447,6 +479,46 @@ public class ForceGenerationOptionsPanel extends JPanel implements ActionListene
             updateFactionChoice();
             RATGenerator.getInstance().removeListener(this);
             RATGenerator.getInstance().loadYear(ratGenYear);
+        }
+        rememberSelections();
+    }
+
+    /**
+     * Saves the current choices so the dialog reopens on them. Retyping a faction, command, unit type
+     * and rating on every visit is the single most repeated action in this dialog.
+     */
+    public void rememberSelections() {
+        FactionRecord faction = (FactionRecord) cbFaction.getSelectedItem();
+        FactionRecord subFaction = (FactionRecord) cbSubFaction.getSelectedItem();
+        GUIP.setRandomArmySetting(GUIPreferences.RND_ARMY_LAST_FACTION,
+              (faction == null) ? "" : faction.getKey());
+        GUIP.setRandomArmySetting(GUIPreferences.RND_ARMY_LAST_SUB_FACTION,
+              (subFaction == null) ? "" : subFaction.getKey());
+        String unitType = (String) cbUnitType.getSelectedItem();
+        GUIP.setRandomArmySetting(GUIPreferences.RND_ARMY_LAST_UNIT_TYPE,
+              (unitType == null) ? "" : unitType);
+        String rating = (String) cbRating.getSelectedItem();
+        GUIP.setRandomArmySetting(GUIPreferences.RND_ARMY_LAST_RATING, (rating == null) ? "" : rating);
+        GUIP.setRandomArmySetting(GUIPreferences.RND_ARMY_LAST_UNIT_COUNT, txtNumUnits.getText());
+    }
+
+    /**
+     * Restores a remembered combo choice when the list is first populated and nothing is selected yet.
+     *
+     * @param comboBox        the list to select in
+     * @param rememberedKey   the preference holding the remembered faction key
+     */
+    private static void selectRememberedFaction(JComboBox<FactionRecord> comboBox, String rememberedKey) {
+        String remembered = GUIP.getRandomArmySetting(rememberedKey);
+        if (remembered.isBlank()) {
+            return;
+        }
+        for (int index = 0; index < comboBox.getItemCount(); index++) {
+            FactionRecord candidate = comboBox.getItemAt(index);
+            if ((candidate != null) && candidate.getKey().equals(remembered)) {
+                comboBox.setSelectedIndex(index);
+                return;
+            }
         }
     }
 

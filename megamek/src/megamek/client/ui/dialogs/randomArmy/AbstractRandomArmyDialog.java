@@ -34,6 +34,7 @@
 
 package megamek.client.ui.dialogs.randomArmy;
 
+import megamek.codeUtilities.MathUtility;
 import megamek.client.ratgenerator.GenerationContext;
 import megamek.client.ui.Messages;
 import megamek.client.ui.clientGUI.CloseAction;
@@ -316,6 +317,20 @@ public abstract class AbstractRandomArmyDialog extends JDialog {
                 buttonPanel = createButtonsPanel();
                 add(buttonPanel, BorderLayout.SOUTH);
             }
+            String lastTab = GUIP.getRandomArmySetting(GUIPreferences.RND_ARMY_LAST_TAB);
+            if (!lastTab.isBlank()) {
+                int tabIndex = MathUtility.parseInt(lastTab, 0);
+                if ((tabIndex >= 0) && (tabIndex < tabbedPane.getTabCount())) {
+                    tabbedPane.setSelectedIndex(tabIndex);
+                }
+            }
+        } else {
+            // Closing: catch the typed fields, which have no change event worth listening to, and the
+            // tab the player was working on.
+            GUIP.setRandomArmySetting(GUIPreferences.RND_ARMY_LAST_TAB,
+                  String.valueOf(tabbedPane.getSelectedIndex()));
+            formationPanel.rememberSelections();
+            ratGenTab.rememberSelections();
         }
         super.setVisible(show);
     }

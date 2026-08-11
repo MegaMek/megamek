@@ -144,6 +144,11 @@ public class RandomArmyRatGenTab extends JPanel implements RandomArmyTab {
         return forceOptionsPanel.getRating();
     }
 
+    /** Saves this tab's choices so the dialog reopens on them. */
+    public void rememberSelections() {
+        forceOptionsPanel.rememberSelections();
+    }
+
     @Override
     public List<MekSummary> generateMekSummaries() {
         List<MekSummary> result = new ArrayList<>();

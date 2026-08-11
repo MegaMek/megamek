@@ -1021,6 +1021,10 @@ public class EntityListFile {
 
             // Save some values for conventional infantry
             if (entity instanceof ConvInfantry infantry) {
+                if (infantry.getCustomArmorName() != null) {
+                    output.write("\" " + MULParser.ATTR_ARMOR_NAME + "=\"");
+                    output.write(MMXMLUtility.escape(infantry.getCustomArmorName()));
+                }
                 if (infantry.getCustomArmorDamageDivisor() != 1) {
                     output.write("\" " + MULParser.ATTR_ARMOR_DIVISOR + "=\"");
                     output.write(infantry.getCustomArmorDamageDivisor() + "");

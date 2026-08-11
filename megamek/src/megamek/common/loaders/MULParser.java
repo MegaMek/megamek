@@ -273,6 +273,7 @@ public class MULParser {
     public static final String ATTR_KILLER = "killer";
     public static final String ATTR_DAMAGE_TAKEN = "damageTaken";
     private static final String EXTRA_DATA = "extraData";
+    public static final String ATTR_ARMOR_NAME = "armorName";
     public static final String ATTR_ARMOR_DIVISOR = "armorDivisor";
     public static final String ATTR_ARMOR_ENC = "armorEncumbering";
     public static final String ATTR_DEST_ARMOR = "destArmor";
@@ -1053,6 +1054,9 @@ public class MULParser {
 
         // Load some values for conventional infantry
         if (entity instanceof ConvInfantry inf) {
+            String armorName = entityTag.getAttribute(ATTR_ARMOR_NAME);
+            inf.setCustomArmorName(armorName);
+
             String armorDiv = entityTag.getAttribute(ATTR_ARMOR_DIVISOR);
             if (!armorDiv.isBlank()) {
                 inf.setCustomArmorDamageDivisor(Double.parseDouble(armorDiv));

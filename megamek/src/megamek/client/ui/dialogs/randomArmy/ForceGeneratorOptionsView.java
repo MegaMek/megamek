@@ -857,15 +857,18 @@ public class ForceGeneratorOptionsView extends JPanel implements FocusListener, 
         cbSubFaction.removeAllItems();
         String currentFaction = ((FactionRecord) Objects.requireNonNull(cbFaction.getSelectedItem())).getKey();
         if (currentFaction != null) {
+            // Subunits are deliberately left out: this list offers whole commands, so including every regiment of
+            // every command would swell one faction's list by hundreds of entries.
             List<FactionRecord> sorted = RATGenerator.getInstance()
                   .getFactionList()
                   .stream()
-                  .filter(fr -> fr.getKey().startsWith(currentFaction + ".") &&
-                        fr.isActiveInYear(currentYear))
-                  .sorted(Comparator.comparing(fr -> fr.getName(currentYear)))
+                  .filter(factionRecord -> factionRecord.getKey().startsWith(currentFaction + ".") &&
+                        !factionRecord.isSubunit() &&
+                        factionRecord.isActiveInYear(currentYear))
+                  .sorted(Comparator.comparing(factionRecord -> factionRecord.getName(currentYear)))
                   .toList();
             cbSubFaction.addItem(null);
-            sorted.forEach(fr -> cbSubFaction.addItem(fr));
+            sorted.forEach(factionRecord -> cbSubFaction.addItem(factionRecord));
         }
         cbSubFaction.setSelectedItem(oldFaction);
         if (cbSubFaction.getSelectedItem() == null) {

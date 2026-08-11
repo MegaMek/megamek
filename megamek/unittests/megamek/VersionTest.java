@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2021-2025 The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2021-2026 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -35,6 +35,7 @@ package megamek;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import org.junit.jupiter.api.AfterEach;
@@ -126,5 +127,126 @@ class VersionTest {
     @Test
     void testToString() {
         assertEquals("1.50.05-test", version.toString());
+    }
+
+    @Test
+    void ordinaryVersionHasNoRevision() {
+        Version ordinaryVersion = versionWithoutExtra("0.51.0");
+        assertFalse(ordinaryVersion.hasRevision());
+        assertEquals(Version.NO_REVISION, ordinaryVersion.getRevision());
+    }
+
+    @Test
+    void ordinaryVersionRendersWithoutRevision() {
+        assertEquals("0.51.00", versionWithoutExtra("0.51.0").toString());
+    }
+
+    @Test
+    void pointReleaseParsesRevision() {
+        Version pointRelease = versionWithoutExtra("0.51.0.1");
+        assertTrue(pointRelease.hasRevision());
+        assertEquals(0, pointRelease.getMajor());
+        assertEquals(51, pointRelease.getMinor());
+        assertEquals(0, pointRelease.getPatch());
+        assertEquals(1, pointRelease.getRevision());
+    }
+
+    @Test
+    void pointReleaseRendersRevision() {
+        assertEquals("0.51.00.1", versionWithoutExtra("0.51.0.1").toString());
+    }
+
+    @Test
+    void pointReleaseKeepsRevisionAlongsideExtra() {
+        Version nightlyPointRelease = new Version("0.51.0.1-nightly");
+        assertEquals(1, nightlyPointRelease.getRevision());
+        assertEquals("nightly", nightlyPointRelease.getExtra());
+        assertEquals("0.51.00.1-nightly", nightlyPointRelease.toString());
+    }
+
+    @Test
+    void pointReleaseIsHigherThanTheReleaseItBuildsOn() {
+        assertTrue(new Version("0.51.0.1").isHigherThan(new Version("0.51.0")));
+        assertTrue(new Version("0.51.0").isLowerThan(new Version("0.51.0.1")));
+    }
+
+    @Test
+    void laterRevisionIsHigherThanEarlierRevision() {
+        assertTrue(new Version("0.51.0.2").isHigherThan(new Version("0.51.0.1")));
+    }
+
+    @Test
+    void revisionDoesNotOutrankTheNextPatchRelease() {
+        assertTrue(new Version("0.51.1").isHigherThan(new Version("0.51.0.9")));
+    }
+
+    @Test
+    void pointReleaseIsNotTheSameVersionAsTheReleaseItBuildsOn() {
+        assertFalse(versionWithoutExtra("0.51.0.1").is(versionWithoutExtra("0.51.0")));
+    }
+
+    @Test
+    void zeroRevisionIsTreatedAsNoRevision() {
+        // A save game or network packet written before the revision component existed restores the field as zero,
+        // so zero has to mean "no revision" for those to keep reading as the versions they were written by.
+        Version explicitZeroRevision = versionWithoutExtra("0.51.0.0");
+        assertFalse(explicitZeroRevision.hasRevision());
+        assertEquals("0.51.00", explicitZeroRevision.toString());
+        assertTrue(explicitZeroRevision.is(versionWithoutExtra("0.51.0")));
+    }
+
+    @Test
+    void revisionIsReadBackFromTheSavedComponents() {
+        Version savedPointRelease = new Version("0", "51", "0", "1", "");
+        assertEquals(1, savedPointRelease.getRevision());
+        assertEquals("0.51.00.1", savedPointRelease.toString());
+    }
+
+    @Test
+    void absentSavedRevisionYieldsNoRevision() {
+        Version savedOrdinaryRelease = new Version("0", "51", "0", null, "");
+        assertFalse(savedOrdinaryRelease.hasRevision());
+        assertEquals("0.51.00", savedOrdinaryRelease.toString());
+    }
+
+    @Test
+    void pointReleaseIsNotEqualToTheReleaseItBuildsOn() {
+        assertNotEquals(versionWithoutExtra("0.51.0.1"), versionWithoutExtra("0.51.0"));
+    }
+
+    @Test
+    void negativeRevisionFromMalformedTextIsNormalisedToNoRevision() {
+        // Without normalising, such a version would render as "0.51.00" while still sorting below, and being
+        // unequal to, the 0.51.0 it renders as.
+        Version malformedRevision = versionWithoutExtra("0.51.0.-1");
+        assertFalse(malformedRevision.hasRevision());
+        assertEquals(Version.NO_REVISION, malformedRevision.getRevision());
+        assertEquals("0.51.00", malformedRevision.toString());
+        assertEquals(versionWithoutExtra("0.51.0"), malformedRevision);
+    }
+
+    @Test
+    void negativeRevisionSetDirectlyIsNormalisedToNoRevision() {
+        Version ordinaryVersion = versionWithoutExtra("0.51.0");
+        ordinaryVersion.setRevision(-1);
+        assertFalse(ordinaryVersion.hasRevision());
+        assertEquals(Version.NO_REVISION, ordinaryVersion.getRevision());
+    }
+
+    /**
+     * Builds a version from its text form with the extra component explicitly cleared.
+     *
+     * <p>{@link Version#getExtra()} falls back to the running build's branch and git hash whenever the component
+     * is {@code null}, and continuous integration builds do populate that. Clearing it keeps the assertions above
+     * about the version number alone, whatever the build they run in.</p>
+     *
+     * @param text the version text to parse
+     *
+     * @return the parsed version, with no extra component
+     */
+    private static Version versionWithoutExtra(final String text) {
+        Version parsedVersion = new Version(text);
+        parsedVersion.setExtra("");
+        return parsedVersion;
     }
 }

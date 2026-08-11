@@ -33,6 +33,8 @@ package megamek.common.rules.core;
  * affiliated with Microsoft.
  */
 
+import megamek.common.rules.RulesManager;
+import megamek.common.rules.RulesTarget;
 import megamek.common.rules.*;
 
 public class CoreRulesManager implements RulesManager {
@@ -56,65 +58,118 @@ public class CoreRulesManager implements RulesManager {
     private CoreRulesUnits coreRulesUnits = new CoreRulesUnits();
     private CoreRulesWeapons coreRulesWeapons = new CoreRulesWeapons();
 
-    public RulesTarget getRulesTarget() {return coreRulesTarget;}
+    /**
+     * {@inheritDoc}
+     * Returns the Core Rules implementation for targeting.
+     */
+    public RulesTarget getRulesTarget() { return coreRulesTarget; }
 
-    public RulesAmmo getRulesAmmo() {return coreRulesAmmo;}
+    /**
+     * {@inheritDoc}
+     * Returns the Core Rules implementation for ammunition handling.
+     */
+    public RulesAmmo getRulesAmmo() { return coreRulesAmmo; }
 
-    public RulesC3 getRulesC3() {return coreRulesC3;}
+    /**
+     * {@inheritDoc}
+     * Returns the Core Rules implementation for C3 systems.
+     */
+    public RulesC3 getRulesC3() { return coreRulesC3; }
 
-    public RulesArtillery getRulesArtillery() {
-        return coreRulesArtillery;
-    }
+    /**
+     * {@inheritDoc}
+     * Returns the Core Rules implementation for artillery.
+     */
+    public RulesArtillery getRulesArtillery() { return coreRulesArtillery; }
 
-    public RulesArmor getRulesArmor() {
-        return coreRulesArmor;
-    }
+    /**
+     * {@inheritDoc}
+     * Returns the Core Rules implementation for armor interactions.
+     */
+    public RulesArmor getRulesArmor() { return coreRulesArmor; }
 
-    public RulesCharts getRulesCharts() {
-        return coreRulesCharts;
-    }
+    /**
+     * {@inheritDoc}
+     * Returns the Core Rules implementation for charts and lookup tables.
+     */
+    public RulesCharts getRulesCharts() { return coreRulesCharts; }
 
-    public RulesEnvironment getRulesEnvironment() {return coreRulesEnvironment;}
+    /**
+     * {@inheritDoc}
+     * Returns the Core Rules implementation for environmental effects.
+     */
+    public RulesEnvironment getRulesEnvironment() { return coreRulesEnvironment; }
 
-    public RulesEquipment getRulesEquipment() {return coreRulesEquipment;}
+    /**
+     * {@inheritDoc}
+     * Returns the Core Rules implementation for equipment behavior.
+     */
+    public RulesEquipment getRulesEquipment() { return coreRulesEquipment; }
 
-    public RulesExplosions getRulesExplosions() {
-        return coreRulesExplosions;
-    }
+    /**
+     * {@inheritDoc}
+     * Returns the Core Rules implementation for explosions and blast effects.
+     */
+    public RulesExplosions getRulesExplosions() { return coreRulesExplosions; }
 
-    public RulesGame getRulesGame() {
-        return coreRulesGame;
-    }
+    /**
+     * {@inheritDoc}
+     * Returns the Core Rules implementation for core game mechanics.
+     */
+    public RulesGame getRulesGame() { return coreRulesGame; }
 
-    public RulesHeat getRulesHeat() {
-        return coreRulesHeat;
-    }
+    /**
+     * {@inheritDoc}
+     * Returns the Core Rules implementation for heat management.
+     */
+    public RulesHeat getRulesHeat() { return coreRulesHeat; }
 
-    public RulesMovement getRulesMovement() {
-        return coreRulesMovement;
-    }
+    /**
+     * {@inheritDoc}
+     * Returns the Core Rules implementation for movement.
+     */
+    public RulesMovement getRulesMovement() { return coreRulesMovement; }
 
-    public RulesPhysical getRulesPhysical() {
-        return coreRulesPhysical;
-    }
+    /**
+     * {@inheritDoc}
+     * Returns the Core Rules implementation for physical attacks.
+     */
+    public RulesPhysical getRulesPhysical() { return coreRulesPhysical; }
 
-    public RulesPilot getRulesPilot() {
-        return coreRulesPilot;
-    }
+    /**
+     * {@inheritDoc}
+     * Returns the Core Rules implementation for pilot‑related mechanics.
+     */
+    public RulesPilot getRulesPilot() { return coreRulesPilot; }
 
-    public RulesPSR getRulesPsr() {
-        return coreRulesPSR;
-    }
+    /**
+     * {@inheritDoc}
+     * Returns the Core Rules implementation for Piloting Skill Rolls (PSRs).
+     */
+    public RulesPSR getRulesPSR() { return coreRulesPSR; }
 
-    public RulesTerrain getRulesTerrain() {
-        return coreRulesTerrain;
-    }
+    /**
+     * {@inheritDoc}
+     * Returns the Core Rules implementation for terrain interactions.
+     */
+    public RulesTerrain getRulesTerrain() { return coreRulesTerrain; }
 
-    public RulesUnderwater getRulesUnderwater() {
-        return coreRulesUnderwater;
-    }
+    /**
+     * {@inheritDoc}
+     * Returns the Core Rules implementation for underwater rules.
+     */
+    public RulesUnderwater getRulesUnderwater() { return coreRulesUnderwater; }
 
-    public RulesUnits getRulesUnits() {return coreRulesUnits;}
+    /**
+     * {@inheritDoc}
+     * Returns the Core Rules implementation for unit‑specific rules.
+     */
+    public RulesUnits getRulesUnits() { return coreRulesUnits; }
 
-    public RulesWeapons getRulesWeapons() {return coreRulesWeapons;}
+    /**
+     * {@inheritDoc}
+     * Returns the Core Rules implementation for weapons.
+     */
+    public RulesWeapons getRulesWeapons() { return coreRulesWeapons; }
+
 }

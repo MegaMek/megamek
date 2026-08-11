@@ -1,6 +1,6 @@
 /*
  * Copyright (C) 2000-2004 Ben Mazur (bmazur@sev.org)
- * Copyright (C) 2002-2025 The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2002-2026 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -304,7 +304,8 @@ public class ChargeAttackAction extends DisplacementAttackAction {
         }
         // piloting skill differential
         if (attackingEntity.getCrew().getPiloting() != te.getCrew().getPiloting()) {
-            toHit.addModifier(attackingEntity.getCrew().getPiloting() - te.getCrew().getPiloting(),
+            toHit.addModifier(Game.rulesManager.getRulesPhysical().getPilotDiffModifier(attackingEntity.getCrew().getPiloting(),
+                  te.getCrew().getPiloting(), te.isImmobile()),
                   "piloting skill differential");
         }
 
@@ -521,23 +522,7 @@ public class ChargeAttackAction extends DisplacementAttackAction {
     }
 
     public static int getDamageFor(Entity entity, Entity target, boolean tacOps, int mos, int hexesMoved) {
-        if (!tacOps) {
-            if (hexesMoved == 0) {
-                hexesMoved = 1;
-            }
-            return (int) Math
-                  .ceil((entity.getWeight() / 10.0)
-                        * (hexesMoved - 1)
-                        * (entity.getLocationStatus(1) == ILocationExposureStatus.WET ? 0.5
-                        : 1));
-        }
-        return (int) Math
-              .floor(((((target.getWeight() * entity.getWeight()) * hexesMoved) / (target
-                    .getWeight()
-                    + entity
-                    .getWeight()))
-                    / 10) +
-                    mos);
+        return Game.rulesManager.getRulesPhysical().getChargeDamage(entity, target, tacOps, mos, hexesMoved);
     }
 
     /**
@@ -562,16 +547,8 @@ public class ChargeAttackAction extends DisplacementAttackAction {
         // (same as buildings which have no tonnage)
         double effectiveTargetWeight = (target instanceof Dropship) ? entity.getWeight() : target.getWeight();
 
-        int damageTaken;
-        if (!tacOps) {
-            damageTaken = (int) Math
-                  .ceil((effectiveTargetWeight / 10.0)
-                        * (entity.getLocationStatus(1) == ILocationExposureStatus.WET ? 0.5 : 1));
-        } else {
-            damageTaken = (int) Math
-                  .floor((((effectiveTargetWeight * entity.getWeight()) * distance)
-                        / (effectiveTargetWeight + entity.getWeight())) / 10);
-        }
+        int damageTaken = Game.rulesManager.getRulesPhysical().getChargeDamageTakenBy(entity, effectiveTargetWeight,
+              tacOps, distance);
 
         // A charging bulldozer takes half the usual damage, rounded down (TacOps). This stacks
         // multiplicatively with the half-damage already applied above for charging through water.

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2025 The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2025-2026 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -50,7 +50,6 @@ import megamek.common.equipment.WeaponType;
 import megamek.common.game.Game;
 import megamek.common.options.OptionsConstants;
 import megamek.common.units.*;
-import megamek.common.weapons.artillery.ArtilleryCannonWeapon;
 
 public class ComputeTargetToHitMods {
 
@@ -81,12 +80,13 @@ public class ComputeTargetToHitMods {
      * @param isPointBlankShot    flag that indicates whether this is a PBS by a hidden unit
      * @param usesAmmo            flag that indicates whether the WeaponType being used is ammo-fed
      */
+
     public static ToHitData compileTargetToHitMods(Game game, Entity attacker, Targetable target,
           ToHitData toHit, int aimingAt, AimingMode aimingMode, int distance, WeaponType weaponType,
           WeaponMounted weapon, AmmoType ammoType, EnumSet<AmmoType.Munitions> munition, boolean isArtilleryDirect,
           boolean isArtilleryIndirect, boolean isAttackerInfantry, boolean exchangeSwarmTarget, boolean isIndirect,
           boolean isPointBlankShot, boolean usesAmmo) {
-
+    
         if (attacker == null || target == null) {
             // Can't handle these attacks without a valid attacker and target
             return toHit;
@@ -233,6 +233,11 @@ public class ComputeTargetToHitMods {
             }
         }
 
+        boolean bSemiGuided = ((ammoType != null)
+              && ammoType.getAmmoType().isAnyOf(LRM, LRM_IMP, MML, NLRM, MEK_MORTAR, TBOLT_5, TBOLT_10, TBOLT_15,
+              TBOLT_20)
+              && munition.contains(AmmoType.Munitions.M_SEMIGUIDED));
+
         // Movement and Position modifiers
 
         // target movement - ignore for pointblank shots from hidden units
@@ -240,22 +245,19 @@ public class ComputeTargetToHitMods {
             ToHitData thTemp = Compute.getTargetMovementModifier(game, target.getId());
             toHit.append(thTemp);
 
-            // semi-guided ammo negates this modifier, if TAG succeeded
-            if ((ammoType != null)
-                  && ammoType.getAmmoType().isAnyOf(LRM, LRM_IMP, MML, NLRM, MEK_MORTAR)
-                  && munition.contains(AmmoType.Munitions.M_SEMIGUIDED)
+            // semi-guided ammo may negate this modifier, if TAG succeeded
+            if (bSemiGuided
                   && (entityTarget.getTaggedBy() != WeaponAttackAction.UNASSIGNED)) {
-                int nAdjust = thTemp.getValue();
+                int nAdjust = Game.rulesManager.getRulesAmmo().getSemiGuidedAdjustment(thTemp.getValue(), true, false);
                 if (nAdjust > 0) {
                     toHit.append(new ToHitData(-nAdjust, Messages.getString("WeaponAttackAction.SemiGuidedTag")));
                 }
             }
 
             // precision ammo reduces this modifier
-            // PLAYTEST3 for playtest ammo
             else if ((ammoType != null)
                   && ammoType.getAmmoType().isAnyOf(AC, LAC, AC_IMP, PAC)
-                  && (munition.contains(AmmoType.Munitions.M_PRECISION) || munition.contains(AmmoType.Munitions.M_PRECISION_PLAYTEST))) {
+                  && (munition.contains(AmmoType.Munitions.M_PRECISION))) {
                 int nAdjust = Math.min(2, thTemp.getValue());
                 if (nAdjust > 0) {
                     toHit.append(new ToHitData(-nAdjust, Messages.getString("WeaponAttackAction.Precision")));
@@ -285,42 +287,18 @@ public class ComputeTargetToHitMods {
             toHit.addModifier(vMod, Messages.getString("WeaponAttackAction.TeVelocity"));
         }
 
-        // target immobile
-        boolean mekMortarMunitionsIgnoreImmobile = (weaponType != null)
-              && weaponType.hasFlag(WeaponType.F_MEK_MORTAR)
-              && (ammoType != null)
-              && munition.contains(AmmoType.Munitions.M_AIRBURST);
-        if (weaponType != null && !(weaponType instanceof ArtilleryCannonWeapon) && !mekMortarMunitionsIgnoreImmobile) {
-            ToHitData immobileMod;
-            // grounded dropships are treated as immobile as well for purpose of the mods
-            if (entityTarget instanceof Dropship && !entityTarget.isAirborne() && !entityTarget.isSpaceborne()) {
-                immobileMod = new ToHitData(-4, Messages.getString("WeaponAttackAction.ImmobileDs"));
-            } else {
-                if (Compute.allowAimedShotWith(weapon, aimingMode)) {
-                    immobileMod = Compute.getImmobileMod(target, aimingAt, aimingMode);
-                } else {
-                    immobileMod = Compute.getImmobileMod(target, aimingAt, AimingMode.NONE);
-                }
-            }
-
-            if (immobileMod != null) {
-                toHit.append(immobileMod);
-            }
-        }
+        // Add target immobile mod, if applicable
+        Game.rulesManager.getRulesTarget().addImmobileMod(target, toHit, aimingAt, weaponType,
+              weapon, ammoType, munition, entityTarget, aimingMode);
 
         // Unit-specific modifiers
 
-        // -1 to hit a SuperHeavy mek
-        if ((entityTarget instanceof Mek) && entityTarget.isSuperHeavy()) {
-            toHit.addModifier(-1, Messages.getString("WeaponAttackAction.TeSuperheavyMek"));
-        }
-
-        // large support tanks get a -1 per TW
-        if ((entityTarget != null)
-              && (entityTarget.getWeightClass() == EntityWeightClass.WEIGHT_LARGE_SUPPORT)
-              && !entityTarget.isAirborne()
-              && !entityTarget.isSpaceborne()) {
-            toHit.addModifier(-1, Messages.getString("WeaponAttackAction.TeLargeSupportUnit"));
+        // RULES Large Target / Superheavy
+        if (entityTarget != null && !entityTarget.isAirborne() && !entityTarget.isSpaceborne()) {
+            int largeTarget = Game.rulesManager.getRulesTarget().largeTargetModifier(entityTarget.getWeightClass());
+            if (largeTarget != 0) {
+                toHit.addModifier(largeTarget, Messages.getString("WeaponAttackAction.TeLargeUnit"));
+            }
         }
 
         // "grounded small craft" get a -1 per TW
@@ -409,7 +387,7 @@ public class ComputeTargetToHitMods {
 
         return toHit;
     }
-
+    
     private static boolean createsSensorShadow(Entity target, Entity other) {
         return !other.isEnemyOf(target)
               && other.isLargeCraft()

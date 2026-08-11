@@ -1,6 +1,6 @@
 /*
  * Copyright (C) 2005 Ben Mazur (bmazur@sev.org)
- * Copyright (C) 2007-2025 The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2007-2026 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -80,16 +80,15 @@ public class MissileWeaponHandler extends AmmoWeaponHandler {
     @Serial
     private static final long serialVersionUID = -4801130911083653548L;
     boolean advancedAMS;
-    boolean multiAMS;
+    // Protected so child handlers can do their own checks
+    protected boolean multiAMS;
 
     public MissileWeaponHandler(ToHitData t, WeaponAttackAction w, Game g, TWGameManager m)
           throws EntityLoadingException {
         super(t, w, g, m);
         generalDamageType = HitData.DAMAGE_MISSILE;
-        // PLAYTEST3 also enabled advanced AMS
         advancedAMS =
-              g.getOptions().booleanOption(OptionsConstants.ADVANCED_COMBAT_TAC_OPS_AMS) || g.getOptions()
-                    .booleanOption(OptionsConstants.PLAYTEST_3);
+              Game.rulesManager.getRulesEquipment().getAMSReduction(g.getOptions().booleanOption(OptionsConstants.ADVANCED_COMBAT_TAC_OPS_AMS));
         advancedPD = g.getOptions().booleanOption(OptionsConstants.ADVANCED_AERO_RULES_STRATOPS_ADV_POINT_DEFENSE);
         multiAMS = g.getOptions().booleanOption(OptionsConstants.ADVANCED_COMBAT_MULTI_USE_AMS);
         sSalvoType = " missile(s) ";
@@ -207,16 +206,9 @@ public class MissileWeaponHandler extends AmmoWeaponHandler {
               && !mLinker.isDestroyed() && !mLinker.isMissing()
               && !mLinker.isBreached() && mLinker.getType().hasFlag(MiscType.F_APOLLO))
               && (ammoType.getAmmoType() == AmmoType.AmmoTypeEnum.MRM)) {
-            // PLAYTEST3 MRM + apollo
-            if (game.getOptions().booleanOption(OptionsConstants.PLAYTEST_3)) {
-                nMissilesModifier -= 2;
-            } else {
-                nMissilesModifier -= 1;
-            }
-        } else if (ammoType.getAmmoType() == AmmoType.AmmoTypeEnum.MRM && game.getOptions()
-              .booleanOption(OptionsConstants.PLAYTEST_3)) {
-            // PLAYTEST3 MRMs
-            nMissilesModifier -= 1;
+            nMissilesModifier += Game.rulesManager.getRulesWeapons().getMRMClusterModifier(true);
+        } else if (ammoType.getAmmoType() == AmmoType.AmmoTypeEnum.MRM) {
+            nMissilesModifier += Game.rulesManager.getRulesWeapons().getMRMClusterModifier(false);
         } else if (ammoType.getAmmoType() == AmmoType.AmmoTypeEnum.ATM) {
             if (bECMAffected) {
                 // ECM prevents bonus
@@ -548,7 +540,7 @@ public class MissileWeaponHandler extends AmmoWeaponHandler {
                 if (counter.getType() == null
                       || !counter.isReady() || counter.isMissing()
                       // no AMS when a shield in the AMS location
-                      || (pdEnt.hasShield() && pdEnt.hasActiveShield(counter.getLocation(), false))
+                      || (pdEnt.hasShield() && pdEnt.hasRaisedShield(counter.getLocation(), false))
                       // shutdown means no AMS
                       || pdEnt.isShutDown()) {
                     continue;
@@ -600,15 +592,13 @@ public class MissileWeaponHandler extends AmmoWeaponHandler {
                         mAmmo.setShotsLeft(Math.max(0, mAmmo.getBaseShotsLeft() - 1));
                     }
 
-                    // Optional rule to allow multiple AMS shots per round
-                    // PLAYTEST3 make sure we don't do this when using playtest 3
-                    if (!multiAMS && !game.getOptions().booleanOption(OptionsConstants.PLAYTEST_3)) {
+                    // Can we fire the AMS multiple times?
+                    if (!multiAMS && !Game.rulesManager.getRulesEquipment().getAMSMultiShot()) {
                         // set the ams as having fired
                         counter.setUsedThisRound(true);
                     }
 
-                    // PLAYTEST3 AMS can engage twice now.
-                    if (game.getOptions().booleanOption(OptionsConstants.PLAYTEST_3)) {
+                    if (Game.rulesManager.getRulesEquipment().getAMSMultiShot()) {
                         if (!multiAMS && !isAMS) {
                             counter.setUsedThisRound(true);
                         }

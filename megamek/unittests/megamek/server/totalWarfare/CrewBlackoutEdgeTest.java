@@ -40,6 +40,8 @@ import static org.mockito.Mockito.mockStatic;
 import static org.mockito.Mockito.when;
 
 import megamek.common.compute.Compute;
+import megamek.common.enums.GamePhase;
+import megamek.common.game.Game;
 import megamek.common.options.GameOptions;
 import megamek.common.options.OptionsConstants;
 import megamek.common.rolls.Roll;
@@ -90,15 +92,17 @@ class CrewBlackoutEdgeTest {
         // Tie the Edge decision to the real (depleting) crew Edge state.
         lenient().when(mek.shouldUseEdge(OptionsConstants.EDGE_WHEN_KO)).thenAnswer(inv -> crew.hasEdgeRemaining());
         lenient().when(mek.shouldUseEdge(OptionsConstants.EDGE_WHEN_AERO_KO)).thenReturn(false);
+        
+        Game game = new Game();
 
+        gameManager.getGame().setPhase(GamePhase.MOVEMENT);
+                      
         Roll failedRoll = rollOf(2);
 
         try (MockedStatic<Compute> mockedCompute = mockStatic(Compute.class)) {
             // Every consciousness roll fails (2 vs. a target of 3 for a single hit)...
             mockedCompute.when(() -> Compute.rollD6(2)).thenReturn(failedRoll);
-            // ...but keep the real consciousness-number lookup.
-            mockedCompute.when(() -> Compute.getConsciousnessNumber(1)).thenCallRealMethod();
-
+            
             gameManager.resolveCrewDamage(mek, 1, 0);
         }
 

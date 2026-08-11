@@ -49,6 +49,7 @@ import megamek.client.AbstractClient;
 import megamek.client.Client;
 import megamek.client.generator.RandomGenderGenerator;
 import megamek.client.generator.RandomNameGenerator;
+import megamek.client.ratgenerator.GenerationContext;
 import megamek.client.ui.Messages;
 import megamek.client.ui.clientGUI.ClientGUI;
 import megamek.client.ui.dialogs.buttonDialogs.SkillGenerationDialog;
@@ -121,24 +122,15 @@ public class RandomArmyDialog extends AbstractRandomArmyDialog {
 
     private void okAction() {
         if (tabbedPane.getSelectedIndex() == TAB_FORCE_GENERATOR) {
+            Client selectedClient = selectedClient();
             forceGeneratorPanel.addChosenUnits((String) playerChooser.getSelectedItem(), clientGui);
+            // The Force Generator knows more about what it rolled than any other tab, so it records
+            // the same context as the rest rather than being the one source that reports nothing.
+            recordGenerationContext(selectedClient);
         } else {
             ArrayList<Entity> entities = new ArrayList<>(chosenUnitsModel.getAllUnits().size());
-            Client selectedClient = null;
-            if (playerChooser.getSelectedIndex() > 0) {
-                String name = (String) playerChooser.getSelectedItem();
-                selectedClient = (Client) clientGui.getLocalBots().get(name);
-            }
-            if (selectedClient == null) {
-                selectedClient = this.client;
-            }
-            if (formationPanel.getFaction() != null) {
-                // Set faction based on generated RAT faction
-                String faction = formationPanel.getFaction().getKey();
-                clientGui.getClient().getGame().getTeamForPlayer(selectedClient.getLocalPlayer()).setFaction(faction);
-                String msg = clientGui.getClient().getLocalPlayer() + " set team Faction to: " + faction;
-                clientGui.getClient().sendServerChat(Player.PLAYER_NONE, msg);
-            }
+            Client selectedClient = selectedClient();
+            recordGenerationContext(selectedClient);
             for (MekSummary ms : chosenUnitsModel.getAllUnits()) {
                 try {
                     Entity entity = new MekFileParser(ms.getSourceFile(), ms.getEntryName()).getEntity();
@@ -166,6 +158,47 @@ public class RandomArmyDialog extends AbstractRandomArmyDialog {
         }
 
         setVisible(false);
+    }
+
+    /** @return the client the generated units belong to: a chosen local bot, or this player */
+    private Client selectedClient() {
+        if (playerChooser.getSelectedIndex() > 0) {
+            Client botClient = (Client) clientGui.getLocalBots().get((String) playerChooser.getSelectedItem());
+            if (botClient != null) {
+                return botClient;
+            }
+        }
+        return client;
+    }
+
+    /**
+     * Remembers what the units were rolled for, so later work can organize them the way that faction
+     * organizes its own. The team faction is set from the same context, which is what the munition
+     * autoconfigurator and the name generator read.
+     */
+    private void recordGenerationContext(Client selectedClient) {
+        GenerationContext context = getGenerationContext();
+        Player owner = selectedClient.getLocalPlayer();
+
+        // Only a generator that asked the player anything gets recorded. A tab that knows nothing
+        // has nothing to say, and recording its default would erase a real choice made on an earlier
+        // roll - topping a ComStar force up from the plain RAT tab would file it as Inner Sphere.
+        if (context.source() != GenerationContext.Source.UNSPECIFIED) {
+            clientGui.setGenerationContext(owner.getId(), context);
+            clientGui.getClient().getGame().getTeamForPlayer(owner).setFaction(context.faction());
+            // The year goes in as text: message formatting would group the digits into "3,067".
+            String year = String.valueOf(context.year());
+            String message = (context.rating() == null)
+                  ? Messages.getString("RandomArmyDialog.generatedFor",
+                        clientGui.getClient().getLocalPlayer().getName(), owner.getName(),
+                        context.factionDisplayName(), year)
+                  : Messages.getString("RandomArmyDialog.generatedForRated",
+                        clientGui.getClient().getLocalPlayer().getName(), owner.getName(),
+                        context.factionDisplayName(), year, context.rating());
+            clientGui.getClient().sendServerChat(Player.PLAYER_NONE, message);
+        }
+        LOGGER.debug("[ForceGen][Context] {} for player {}: {}", context.source(), owner.getName(),
+              context.describe());
     }
 
     private void updatePlayerChoice(String selectionName) {

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2021-2025 The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2021-2026 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -46,6 +46,14 @@ import megamek.utilities.xml.MMXMLUtility;
 
 /**
  * This is used for versioning, and to track the current Version the suite is running at.
+ *
+ * <p>Versions are written as {@code major.minor.patch[.revision][-extra]}. The revision is an optional fourth
+ * component reserved for special point releases that ship on top of an existing patch release, such as
+ * {@code 0.49.19.1}. Ordinary releases have no revision at all, and both {@link #toString()} and the comparison
+ * methods behave exactly as they did before the component existed.</p>
+ *
+ * <p>Note that {@link #toString()} pads the minor and patch components to two digits, so the release labelled
+ * {@code v0.51.0.1} on GitHub renders here as {@code 0.51.00.1}.</p>
  */
 public final class Version implements Comparable<Version>, Serializable {
     // region Variable Declarations
@@ -56,9 +64,25 @@ public final class Version implements Comparable<Version>, Serializable {
     private static final ResourceBundle VERSION_BUNDLE = ResourceBundle.getBundle("Version");
     private static ResourceBundle EXTRA_VERSION_INFORMATION_BUNDLE = null;
 
+    /**
+     * The value {@link #getRevision()} reports when a version carries no fourth component, which is the case for
+     * every ordinary release.
+     *
+     * <p>Zero is deliberately used as the "absent" marker rather than a negative sentinel: a {@code Version}
+     * restored from an older save game or from an older client's network packet has no stored revision, and Java
+     * deserialization leaves such a field at zero. Treating zero as absent therefore keeps those versions reading
+     * exactly as they were written. It also means a hand-written {@code 0.51.0.0} is understood as plain
+     * {@code 0.51.0}, which is the same thing.</p>
+     */
+    public static final int NO_REVISION = 0;
+
+    /** Key of the optional revision entry in {@code Version.properties}. Absent for ordinary releases. */
+    private static final String REVISION_BUNDLE_KEY = "revision";
+
     private int major;
     private int minor;
     private int patch;
+    private int revision;
     private String extra;
     // endregion Variable Declarations
 
@@ -71,6 +95,7 @@ public final class Version implements Comparable<Version>, Serializable {
         setMajor(MathUtility.parseInt(VERSION_BUNDLE.getString("major")));
         setMinor(MathUtility.parseInt(VERSION_BUNDLE.getString("minor")));
         setPatch(MathUtility.parseInt(VERSION_BUNDLE.getString("patch")));
+        setRevision(readOptionalRevisionFromBundle());
 
         try {
             EXTRA_VERSION_INFORMATION_BUNDLE = ResourceBundle.getBundle("extraVersion");
@@ -95,7 +120,11 @@ public final class Version implements Comparable<Version>, Serializable {
         final String[] extraSplit = text.split("-", 2);
         final String[] versionSplit = extraSplit[0].split("\\.");
 
-        if ((extraSplit.length > 2) || (versionSplit.length < 3)) {
+        // Three components is the ordinary case; a fourth is the optional revision of a point release. Anything
+        // else is rejected rather than truncated, so a malformed version cannot silently become a valid one.
+        final boolean hasTooFewComponents = versionSplit.length < 3;
+        final boolean hasTooManyComponents = versionSplit.length > 4;
+        if (hasTooFewComponents || hasTooManyComponents) {
             final String message = String.format(MMLoggingConstants.VERSION_ILLEGAL_VERSION_FORMAT, text);
             LOGGER.fatalDialog(message, MMLoggingConstants.VERSION_PARSE_FAILURE);
             return;
@@ -104,11 +133,12 @@ public final class Version implements Comparable<Version>, Serializable {
         setMajor(MathUtility.parseInt(versionSplit[0]));
         setMinor(MathUtility.parseInt(versionSplit[1]));
         setPatch(MathUtility.parseInt(versionSplit[2]));
+        setRevision((versionSplit.length == 4) ? MathUtility.parseInt(versionSplit[3], NO_REVISION) : NO_REVISION);
         setExtra(extraSplit.length == 2 ? extraSplit[1] : null);
     }
 
     /**
-     * Sets the version.
+     * Sets the version. The resulting version has no revision component.
      *
      * @param major Major Version
      * @param minor Minor Version
@@ -119,10 +149,14 @@ public final class Version implements Comparable<Version>, Serializable {
         setMajor(major);
         setMinor(minor);
         setPatch(patch);
+        // The no-argument constructor above seeds the revision from Version.properties, which describes the
+        // running build rather than the version being constructed here. Clear it so that, on a point release,
+        // an explicitly built version is not silently promoted to that release's revision.
+        setRevision(NO_REVISION);
     }
 
     /**
-     * Sets the version.
+     * Sets the version. The resulting version has no revision component.
      *
      * @param major Major Version
      * @param minor Minor Version
@@ -133,10 +167,12 @@ public final class Version implements Comparable<Version>, Serializable {
         setMajor(MathUtility.parseInt(major, 0));
         setMinor(MathUtility.parseInt(minor, 50));
         setPatch(MathUtility.parseInt(patch, 5));
+        // See the note in the (int, int, int) constructor above.
+        setRevision(NO_REVISION);
     }
 
     /**
-     * Sets the version with Extra data.
+     * Sets the version with Extra data. The resulting version has no revision component.
      *
      * @param major Major Version
      * @param minor Minor Version
@@ -147,7 +183,57 @@ public final class Version implements Comparable<Version>, Serializable {
         this(major, minor, patch);
         setExtra(extra);
     }
+
+    /**
+     * Sets the version with an optional revision and Extra data.
+     *
+     * <p>This is the form used when rebuilding a version that was written to a file, where the revision is simply
+     * absent for anything produced by an ordinary release.</p>
+     *
+     * @param major    Major Version
+     * @param minor    Minor Version
+     * @param patch    Patch Version
+     * @param revision Optional fourth component of a point release, or {@code null} when there is none
+     * @param extra    Extra would be PR or nightly with git hash.
+     */
+    public Version(final String major, final String minor, final String patch, @Nullable final String revision,
+          @Nullable final String extra) {
+        this(major, minor, patch, extra);
+        setRevision((revision == null) ? NO_REVISION : MathUtility.parseInt(revision, NO_REVISION));
+    }
     // endregion Constructors
+
+    /**
+     * Reads the optional {@code revision} entry from {@code Version.properties}.
+     *
+     * <p>The key is absent for ordinary releases and is only added for a special point release such as
+     * {@code 0.49.19.1}, so a missing key is the expected case and is not reported as a problem.</p>
+     *
+     * @return the configured revision, or {@link #NO_REVISION} when the key is absent, blank or not a number
+     */
+    private static int readOptionalRevisionFromBundle() {
+        if (!VERSION_BUNDLE.containsKey(REVISION_BUNDLE_KEY)) {
+            return NO_REVISION;
+        }
+
+        final String configuredRevision = VERSION_BUNDLE.getString(REVISION_BUNDLE_KEY).trim();
+        if (configuredRevision.isEmpty()) {
+            return NO_REVISION;
+        }
+
+        final int parsedRevision = MathUtility.parseInt(configuredRevision, NO_REVISION);
+        if (parsedRevision <= NO_REVISION) {
+            LOGGER.warn(
+                  "[Version] Version.properties sets revision to '{}', which is not a positive number. "
+                        + "The build will be versioned without a fourth component. Remove the entry for an "
+                        + "ordinary release, or set it to a positive number for a point release.",
+                  configuredRevision);
+            return NO_REVISION;
+        }
+
+        LOGGER.debug("[Version] Optional revision component {} loaded from Version.properties", parsedRevision);
+        return parsedRevision;
+    }
 
     // region Getters
     public int getMajor() {
@@ -172,6 +258,35 @@ public final class Version implements Comparable<Version>, Serializable {
 
     public void setPatch(final int patch) {
         this.patch = patch;
+    }
+
+    /**
+     * @return the optional fourth version component, or {@link #NO_REVISION} when this version has none, which is
+     *       the case for every ordinary release
+     */
+    public int getRevision() {
+        return revision;
+    }
+
+    /**
+     * Sets the optional fourth version component.
+     *
+     * <p>A value at or below {@link #NO_REVISION} is stored as {@link #NO_REVISION}. Without that, a version
+     * built from malformed text such as {@code 0.51.0.-1} would render as though it had no revision while still
+     * comparing as lower than, and unequal to, the release it claims to be.</p>
+     *
+     * @param revision the optional fourth version component, or {@link #NO_REVISION} for no revision
+     */
+    public void setRevision(final int revision) {
+        this.revision = Math.max(revision, NO_REVISION);
+    }
+
+    /**
+     * @return {@code true} if this version carries a fourth component, as a point release such as
+     *       {@code 0.49.19.1} does, otherwise {@code false}
+     */
+    public boolean hasRevision() {
+        return revision > NO_REVISION;
     }
 
     public String getExtra() {
@@ -256,24 +371,32 @@ public final class Version implements Comparable<Version>, Serializable {
 
     @Override
     public int compareTo(final Version other) {
-        // Check Release version
+        // Check the major version
         if (getMajor() > other.getMajor()) {
             return 1;
         } else if (getMajor() < other.getMajor()) {
             return -1;
         }
 
-        // Release version is equal, try with Major
+        // Major version is equal, try the minor version
         if (getMinor() > other.getMinor()) {
             return 1;
         } else if (getMinor() < other.getMinor()) {
             return -1;
         }
 
-        // Major version is also equal, try Minor
+        // Minor version is also equal, try the patch version
         if (getPatch() > other.getPatch()) {
             return 1;
         } else if (getPatch() < other.getPatch()) {
+            return -1;
+        }
+
+        // Patch version is also equal, try the optional revision. A version without one sorts below the point
+        // releases built on top of it, so 0.51.0 is lower than 0.51.0.1.
+        if (getRevision() > other.getRevision()) {
+            return 1;
+        } else if (getRevision() < other.getRevision()) {
             return -1;
         }
 
@@ -289,6 +412,7 @@ public final class Version implements Comparable<Version>, Serializable {
             return (getMajor() == other.getMajor() &&
                   getMinor() == other.getMinor() &&
                   getPatch() == other.getPatch() &&
+                  getRevision() == other.getRevision() &&
                   getExtra().equals(other.getExtra()));
         }
 
@@ -308,10 +432,11 @@ public final class Version implements Comparable<Version>, Serializable {
 
     @Override
     public String toString() {
-        return String.format("%d.%02d.%02d%s",
+        return String.format("%d.%02d.%02d%s%s",
               getMajor(),
               getMinor(),
               getPatch(),
+              (hasRevision() ? "." + getRevision() : ""),
               (!getExtra().isEmpty() ? "-" + getExtra() : ""));
     }
 }

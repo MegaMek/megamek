@@ -183,10 +183,19 @@ public class RandomArmyDialog extends AbstractRandomArmyDialog {
 
         if (context.source() != GenerationContext.Source.UNSPECIFIED) {
             clientGui.getClient().getGame().getTeamForPlayer(owner).setFaction(context.faction());
-            String message = "%s generated units for %s: %s"
-                  .formatted(clientGui.getClient().getLocalPlayer(), owner.getName(), context.describe());
+            // The year goes in as text: message formatting would group the digits into "3,067".
+            String year = String.valueOf(context.year());
+            String message = (context.rating() == null)
+                  ? Messages.getString("RandomArmyDialog.generatedFor",
+                        clientGui.getClient().getLocalPlayer().getName(), owner.getName(),
+                        context.factionDisplayName(), year)
+                  : Messages.getString("RandomArmyDialog.generatedForRated",
+                        clientGui.getClient().getLocalPlayer().getName(), owner.getName(),
+                        context.factionDisplayName(), year, context.rating());
             clientGui.getClient().sendServerChat(Player.PLAYER_NONE, message);
         }
+        LOGGER.debug("[ForceGen][Context] {} for player {}: {}", context.source(), owner.getName(),
+              context.describe());
     }
 
     private void updatePlayerChoice(String selectionName) {

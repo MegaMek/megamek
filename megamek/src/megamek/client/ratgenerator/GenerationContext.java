@@ -117,7 +117,13 @@ public record GenerationContext(String faction, int year, @Nullable String ratin
         return (factionRecord == null) ? faction : factionRecord.getName(year);
     }
 
-    /** @return a one-line summary for chat and tooltips, e.g. {@code "Ceti Hussars, 3067, rating A"} */
+    /**
+     * A one-line summary for logs and diagnostics, e.g. {@code "Ceti Hussars, 3067, rating A"}. Not
+     * for display: anything a player reads is built from the parts through {@code Messages} so it can
+     * be translated.
+     *
+     * @return the summary
+     */
     public String describe() {
         StringBuilder description = new StringBuilder(factionDisplayName());
         description.append(", ").append(year);

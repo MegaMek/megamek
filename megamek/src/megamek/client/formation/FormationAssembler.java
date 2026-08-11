@@ -612,10 +612,23 @@ public final class FormationAssembler {
     }
 
     /**
-     * The best CamOps type this element qualifies as, for its name and (in Phase B) its behavior preset:
-     * among all qualifying types, one whose ideal role matches the element's most common role wins, then
-     * alphabetical order keeps the pick deterministic. Null when the catalog cannot judge the element -
-     * any unit without a catalog entry, or nothing qualifies.
+     * The best CamOps type this element qualifies as, for its name and (in Phase B) its behavior preset.
+     *
+     * <p>Among the types that qualify, the pick goes to the one that says the most about the units.
+     * First preference is a type whose ideal role every unit shares, because the rulebook treats that
+     * as what a formation IS. Otherwise the most demanding type wins: some entries in the catalog ask
+     * almost nothing - a Ranger Lance imposes no criteria beyond ground units of heavy weight or less -
+     * and a type that everything qualifies for tells a player nothing. Alphabetical order settles the
+     * rest so the pick stays deterministic.</p>
+     *
+     * <p>Faction-exclusive types are never offered: the Hammer and Anvil Lances are Free Worlds League
+     * doctrine, the Rifle Lance House Davion, the Order Lance House Kurita, and nothing here knows
+     * whose force this is. {@link FormationType#qualifies(List)} does not test that, so it is tested
+     * here. When the force generation context lands, these become available to the factions entitled
+     * to them.</p>
+     *
+     * @return the chosen type, or null when the catalog cannot judge the element - any unit without a
+     *       catalog entry, or nothing qualifies
      */
     private static @Nullable FormationType bestType(List<AssemblyUnit> element) {
         List<MekSummary> summaries = new ArrayList<>();
@@ -626,24 +639,50 @@ public final class FormationAssembler {
             summaries.add(unit.summary());
         }
         boolean air = element.getFirst().family() == Family.AERO;
-        UnitRole modalRole = modalRole(element);
 
         List<FormationType> candidates = new ArrayList<>(FormationType.getAllFormations());
         candidates.sort(Comparator.comparing(FormationType::getName));
         FormationType best = null;
-        boolean bestMatchesRole = false;
+        boolean bestSharesIdealRole = false;
+        int bestDemands = -1;
         for (FormationType candidate : candidates) {
-            if ((candidate.isGround() == air) || !candidate.qualifies(summaries)) {
+            if ((candidate.isGround() == air) || (candidate.getExclusiveFaction() != null)
+                  || !candidate.qualifies(summaries)) {
                 continue;
             }
-            boolean matchesRole = (candidate.getIdealRole() != UnitRole.UNDETERMINED)
-                  && (candidate.getIdealRole() == modalRole);
-            if ((best == null) || (matchesRole && !bestMatchesRole)) {
+            boolean sharesIdealRole = (candidate.getIdealRole() != UnitRole.UNDETERMINED)
+                  && element.stream().allMatch(unit -> unit.role() == candidate.getIdealRole());
+            int demands = demandCount(candidate);
+            if ((best == null)
+                  || (sharesIdealRole && !bestSharesIdealRole)
+                  || ((sharesIdealRole == bestSharesIdealRole) && (demands > bestDemands))) {
                 best = candidate;
-                bestMatchesRole = matchesRole;
+                bestSharesIdealRole = sharesIdealRole;
+                bestDemands = demands;
             }
         }
         return best;
+    }
+
+    /** @return how many separate things a formation type asks of its units, the measure of how much it says */
+    private static int demandCount(FormationType type) {
+        int demands = 0;
+        if (type.getMainDescription() != null) {
+            demands++;
+        }
+        Iterator<FormationType.Constraint> others = type.getOtherCriteria();
+        while (others.hasNext()) {
+            others.next();
+            demands++;
+        }
+        if (type.getGroupingCriteria() != null) {
+            demands++;
+        }
+        if ((type.getMinWeightClass() > EntityWeightClass.WEIGHT_LIGHT)
+              || (type.getMaxWeightClass() < EntityWeightClass.WEIGHT_ASSAULT)) {
+            demands++;
+        }
+        return demands;
     }
 
     private static UnitRole modalRole(List<AssemblyUnit> element) {

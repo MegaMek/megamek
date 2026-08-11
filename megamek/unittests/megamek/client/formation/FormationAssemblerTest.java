@@ -512,6 +512,48 @@ class FormationAssemblerTest {
         assertTrue(heavyRequirement.waivable());
     }
 
+    /**
+     * A formation restricted to one faction must never be handed out blind. Hammer and Anvil are Free
+     * Worlds League doctrine, Rifle is House Davion, Order is House Kurita, and assembly does not know
+     * whose force it is looking at - qualifies() does not test that, so the picker must.
+     */
+    @Test
+    void factionExclusiveFormationTypesAreNeverChosen() {
+        List<AssemblyUnit> fastStrikers = new ArrayList<>();
+        for (int i = 0; i < 4; i++) {
+            fastStrikers.add(mek("Phoenix Hawk PXH-1 " + i, UnitRole.STRIKER,
+                  EntityWeightClass.WEIGHT_MEDIUM, 6, 1123));
+        }
+        FormationRationale rationale =
+              FormationAssembler.explain("Striker Lance Alpha", fastStrikers, Map.of());
+
+        assertNotNull(rationale.type());
+        assertNull(rationale.type().getExclusiveFaction(),
+              "picked a faction-only formation: " + rationale.type().getNameWithFaction());
+    }
+
+    /**
+     * Some catalog entries ask almost nothing - a Ranger Lance imposes no criteria beyond ground units
+     * of heavy weight or less - so everything qualifies for them. A type that fits any group tells a
+     * player nothing, and must lose to one the units genuinely satisfy.
+     */
+    @Test
+    void aTypeThatDemandsNothingLosesToOneTheUnitsActuallyMeet() {
+        List<AssemblyUnit> mediumSnipers = new ArrayList<>();
+        for (int i = 0; i < 4; i++) {
+            mediumSnipers.add(mek("Trebuchet TBT-5N " + i, UnitRole.SNIPER,
+                  EntityWeightClass.WEIGHT_MEDIUM, 5, 1191));
+        }
+        FormationRationale rationale =
+              FormationAssembler.explain("Battle Lance Alpha", mediumSnipers, Map.of());
+
+        assertNotNull(rationale.type());
+        assertFalse(rationale.requirements().stream()
+                    .filter(requirement -> requirement.kind() != FormationRationale.Kind.UNIT_TYPE)
+                    .allMatch(requirement -> requirement.required() == 0),
+              "the chosen type must ask something of these units, got: " + rationale.type().getName());
+    }
+
     /** The unit types a formation admits are part of what it IS, and are never waived by a role. */
     @Test
     void theUnitTypeRequirementIsMarkedAsNeverWaived() {

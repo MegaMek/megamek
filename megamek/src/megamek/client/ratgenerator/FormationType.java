@@ -256,6 +256,18 @@ public class FormationType {
     }
 
     /**
+     * Some formations belong to one faction only - the Hammer and Anvil Lances are Free Worlds League
+     * doctrine, the Rifle Lance is House Davion, the Order Lance House Kurita. Note that
+     * {@link #qualifies(List)} does NOT test this: it answers whether the units fit the formation's
+     * shape, and leaves who is allowed to field it to the caller.
+     *
+     * @return the faction key this formation is exclusive to, or null when any faction may field it
+     */
+    public @Nullable String getExclusiveFaction() {
+        return exclusiveFaction;
+    }
+
+    /**
      * Returns a stable resource-bundle key for this formation's tooltip text, suitable for lookup in
      * {@code megamek.client.messages}. The key has the form {@code FormationType.<sanitizedName>.tooltip}, where spaces
      * and forward slashes in the formation name are replaced with underscores so the key is a valid properties

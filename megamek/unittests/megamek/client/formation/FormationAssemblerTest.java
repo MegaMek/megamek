@@ -67,6 +67,9 @@ class FormationAssemblerTest {
 
     private static final double TOLERANCE = 0.0001;
 
+    /** Mirrors FormationAssembler.MINIMUM_ELEMENT: never leave a lone pair standing as a formation. */
+    private static final int MINIMUM_ELEMENT_SIZE = 3;
+
     private int nextId = 1;
 
     // ======================== Fixture building ========================
@@ -236,6 +239,32 @@ class FormationAssemblerTest {
               FormationAssembler.assemble(seven, Organization.INNER_SPHERE, Set.of());
         List<Integer> sizes = formations.stream().map(f -> f.units().size()).sorted().toList();
         assertEquals(List.of(3, 4), sizes, "7 units under lance doctrine split 4+3, never 5+2 or 6+1");
+    }
+
+    /**
+     * An element may be understrength - Campaign Operations allows it - but never oversize. Twelve
+     * units under star doctrine are three stars of four, not two stars of six. Found in a live lobby
+     * test: rounding the element count to nearest produced six-unit stars.
+     */
+    @Test
+    void anElementIsNeverLargerThanItsDoctrineAllows() {
+        for (int total = 3; total <= 15; total++) {
+            nextId = 1;
+            List<AssemblyUnit> force = new ArrayList<>();
+            for (int i = 0; i < total; i++) {
+                force.add(clanMek("Mad Cat III " + i, UnitRole.SKIRMISHER,
+                      EntityWeightClass.WEIGHT_MEDIUM, 5, 1958));
+            }
+            List<AssembledFormation> formations =
+                  FormationAssembler.assemble(force, Organization.CLAN, Set.of());
+            for (AssembledFormation formation : formations) {
+                assertTrue(formation.units().size() <= Organization.CLAN.getElementSize(),
+                      total + " units produced an oversize star of " + formation.units().size());
+                assertTrue(formation.units().size() >= MINIMUM_ELEMENT_SIZE || formations.size() == 1,
+                      total + " units produced an orphan element of " + formation.units().size());
+            }
+            assertEquals(total, formations.stream().mapToInt(f -> f.units().size()).sum());
+        }
     }
 
     @Test
@@ -474,7 +503,7 @@ class FormationAssemblerTest {
         assertTrue(rationale.idealRoleWaived(), "all four are Brawlers, so the waiver applies");
 
         FormationRationale.Requirement heavyRequirement = rationale.requirements().stream()
-              .filter(requirement -> requirement.detail().contains("Heavy+"))
+              .filter(requirement -> requirement.description().contains("Heavy+"))
               .findFirst().orElseThrow(() -> new AssertionError("the Heavy+ rule must be listed"));
         assertEquals(0, heavyRequirement.met(), "no medium counts as heavy or larger");
         assertEquals(2, heavyRequirement.required(), "half of four");
@@ -488,7 +517,10 @@ class FormationAssemblerTest {
     void theUnitTypeRequirementIsMarkedAsNeverWaived() {
         FormationRationale rationale = explainOneOf(clanRoster(), "Loki Prime");
         FormationRationale.Requirement unitType = rationale.requirements().getFirst();
-        assertEquals("Unit type", unitType.label());
+        assertEquals(FormationRationale.Kind.UNIT_TYPE, unitType.kind());
+        assertTrue(unitType.description().contains("Mek"),
+              "the admitted types are named in plain words, not left as a bit mask: "
+                    + unitType.description());
         assertFalse(unitType.waivable(), "the ideal-role loophole does not extend to unit types");
         assertTrue(unitType.satisfied());
     }

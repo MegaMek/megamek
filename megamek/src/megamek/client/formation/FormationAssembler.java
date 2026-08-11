@@ -51,6 +51,7 @@ import megamek.common.loaders.MekSummary;
 import megamek.common.units.Entity;
 import megamek.common.units.EntityWeightClass;
 import megamek.common.units.UnitRole;
+import megamek.common.units.UnitType;
 
 /**
  * Partitions a player's loose lobby units into Campaign Operations formations - lances, stars or Level
@@ -310,7 +311,9 @@ public final class FormationAssembler {
             return elements;
         }
 
-        int elementCount = Math.toIntExact(Math.round(unitTotal / (double) elementSize));
+        // Round UP, never down: an element may be understrength (Campaign Operations allows it) but
+        // never oversize, so twelve units under star doctrine are three stars of four, not two of six.
+        int elementCount = Math.toIntExact((long) Math.ceil(unitTotal / (double) elementSize));
         elementCount = Math.max(1, elementCount);
         while ((elementCount > 1) && (unitTotal < MINIMUM_ELEMENT * elementCount)) {
             elementCount--;
@@ -746,8 +749,8 @@ public final class FormationAssembler {
         }
         int size = members.size();
 
-        requirements.add(new FormationRationale.Requirement("Unit type",
-              "Every unit of a type this formation admits", size,
+        requirements.add(new FormationRationale.Requirement(FormationRationale.Kind.UNIT_TYPE,
+              allowedTypeNames(type), size,
               scoreEach(summaries, summary ->
                     type.isAllowedUnitType(ModelRecord.parseUnitType(summary.getUnitType()))),
               false));
@@ -756,37 +759,47 @@ public final class FormationAssembler {
               Math.max(type.getMinWeightClass(), EntityWeightClass.WEIGHT_LIGHT))
               + " to " + EntityWeightClass.getClassName(
               Math.min(type.getMaxWeightClass(), EntityWeightClass.WEIGHT_ASSAULT));
-        requirements.add(new FormationRationale.Requirement("Weight " + weightRange,
-              "Every unit between " + weightRange, size,
+        requirements.add(new FormationRationale.Requirement(FormationRationale.Kind.WEIGHT_CLASS,
+              weightRange, size,
               scoreEach(summaries, summary -> (summary.getWeightClass() >= type.getMinWeightClass())
                     && (summary.getWeightClass() <= type.getMaxWeightClass())), true));
 
         if (type.getMainDescription() != null) {
-            requirements.add(new FormationRationale.Requirement(type.getMainDescription(),
-                  "Every unit: " + type.getMainDescription(), size,
+            requirements.add(new FormationRationale.Requirement(FormationRationale.Kind.EVERY_UNIT,
+                  type.getMainDescription(), size,
                   scoreEach(summaries, summary -> type.getMainCriteria().test(summary)), true));
         }
 
         Iterator<FormationType.Constraint> others = type.getOtherCriteria();
         while (others.hasNext()) {
             FormationType.Constraint constraint = others.next();
-            int required = constraint.getMinimum(size);
-            String detail = "At least " + required + " of " + size + ": " + constraint.getDescription();
-            if (constraint.isPairedWithPrevious()) {
-                detail = "Or instead - " + detail;
-            }
-            requirements.add(new FormationRationale.Requirement(constraint.getDescription(), detail,
-                  required, scoreEach(summaries, constraint::matches), true));
+            requirements.add(new FormationRationale.Requirement(
+                  constraint.isPairedWithPrevious()
+                        ? FormationRationale.Kind.AT_LEAST_ALTERNATIVE
+                        : FormationRationale.Kind.AT_LEAST,
+                  constraint.getDescription(), constraint.getMinimum(size),
+                  scoreEach(summaries, constraint::matches), true));
         }
 
         if (type.getGroupingCriteria() != null) {
             FormationType.GroupingConstraint grouping = type.getGroupingCriteria();
-            requirements.add(new FormationRationale.Requirement(grouping.getDescription(),
-                  "Groups of " + grouping.getGroupSize() + ": " + grouping.getDescription(),
+            requirements.add(new FormationRationale.Requirement(FormationRationale.Kind.GROUPING,
+                  grouping.getDescription(),
                   Math.max(0, grouping.getNumGroups() * grouping.getGroupSize()),
                   scoreEach(summaries, grouping::matches), true));
         }
         return requirements;
+    }
+
+    /** @return the unit types this formation admits, in plain words: "Meks, Vehicles" */
+    private static String allowedTypeNames(FormationType type) {
+        List<String> names = new ArrayList<>();
+        for (int unitType = 0; unitType <= UnitType.AEROSPACE_FIGHTER; unitType++) {
+            if (type.isAllowedUnitType(unitType)) {
+                names.add(UnitType.getTypeDisplayableName(unitType));
+            }
+        }
+        return names.isEmpty() ? "-" : String.join(", ", names);
     }
 
     private static List<Boolean> scoreEach(List<MekSummary> summaries, Predicate<MekSummary> test) {

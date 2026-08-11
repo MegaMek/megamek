@@ -81,18 +81,35 @@ public record FormationRationale(String formationName, @Nullable FormationType t
           double cost) {
     }
 
+    /** What kind of requirement this is, which decides how the report words it. */
+    public enum Kind {
+        /** The unit types the formation admits. Never waived. */
+        UNIT_TYPE,
+        /** The weight-class range every unit must fall in. */
+        WEIGHT_CLASS,
+        /** A property every unit must have. */
+        EVERY_UNIT,
+        /** A property a minimum number of units must have. */
+        AT_LEAST,
+        /** An alternative to the requirement above it: either one satisfies the formation. */
+        AT_LEAST_ALTERNATIVE,
+        /** Matched sub-groups, such as pairs of the same model. */
+        GROUPING
+    }
+
     /**
      * One requirement of a formation type, scored against the units in hand: how many units must
-     * satisfy it, which ones do, and whether that is enough.
+     * satisfy it, which ones do, and whether that is enough. Carries the facts only - the report
+     * turns these into sentences, so the wording stays in one place and can be translated.
      *
-     * @param label    short name for the table column, e.g. "Heavy+"
-     * @param detail   the full requirement in words, e.g. "At least 2 of 4 units heavy or larger"
-     * @param required how many units must satisfy it
-     * @param perUnit  one entry per unit, in the same order as {@link FormationRationale#units()}
-     * @param waivable false for requirements the ideal-role rule does NOT waive (the unit types a
-     *                 formation admits are part of what the formation IS, not a requirement on it)
+     * @param kind        which sort of requirement this is
+     * @param description the requirement itself, from the formation data, e.g. "Heavy+"
+     * @param required    how many units must satisfy it
+     * @param perUnit     one entry per unit, in the same order as {@link FormationRationale#units()}
+     * @param waivable    false for requirements the ideal-role rule does NOT waive (the unit types a
+     *                    formation admits are part of what the formation IS, not a rule about it)
      */
-    public record Requirement(String label, String detail, int required, List<Boolean> perUnit,
+    public record Requirement(Kind kind, String description, int required, List<Boolean> perUnit,
           boolean waivable) {
 
         /** @return how many units satisfy this requirement */

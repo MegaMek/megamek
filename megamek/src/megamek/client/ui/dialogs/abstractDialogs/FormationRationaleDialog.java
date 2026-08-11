@@ -121,13 +121,12 @@ public class FormationRationaleDialog extends AbstractDialog {
         report.append("<p><b>");
         if (rationale.type() != null) {
             report.append(Messages.getString("FormationRationale.summary.typed", unitCount,
-                  rationale.type().getName()));
+                  rationale.type().getName() + " " + rationale.organization().getElementWord()));
         } else {
             report.append(Messages.getString("FormationRationale.summary.untyped", unitCount));
         }
         report.append("</b><br>").append(Messages.getString("FormationRationale.organization",
-              Messages.getString("Organization." + rationale.organization().name()),
-              rationale.organization().getElementSize())).append("</p>");
+              Messages.getString("Organization." + rationale.organization().name()))).append("</p>");
 
         appendMembers(report);
         appendRequirements(report);
@@ -166,14 +165,16 @@ public class FormationRationaleDialog extends AbstractDialog {
 
         report.append("<table cellpadding='3'><tr><th align='left'>")
               .append(Messages.getString("FormationRationale.col.requirement")).append("</th>");
-        for (AssemblyUnit unit : rationale.units()) {
-            report.append("<th align='center'>").append(shortName(unit.displayName())).append("</th>");
+        // Columns are the unit numbers from the members table above: model designations repeat
+        // within a formation ("Stalking Spider II" twice) and would label two columns the same.
+        for (int number = 1; number <= rationale.units().size(); number++) {
+            report.append("<th align='center'>").append(number).append("</th>");
         }
         report.append("<th align='center'>")
               .append(Messages.getString("FormationRationale.col.metNeeded")).append("</th></tr>");
 
         for (FormationRationale.Requirement requirement : rationale.requirements()) {
-            report.append("<tr><td>").append(requirement.detail());
+            report.append("<tr><td>").append(describe(requirement));
             if (!requirement.waivable()) {
                 report.append(" <i>(")
                       .append(Messages.getString("FormationRationale.neverWaived")).append(")</i>");
@@ -196,23 +197,38 @@ public class FormationRationaleDialog extends AbstractDialog {
         return matched ? "<b>Yes</b>" : "-";
     }
 
-    /** Column headers use the model designation only, so a wide lance still fits the dialog. */
-    private static String shortName(String displayName) {
-        int lastSpace = displayName.lastIndexOf(' ');
-        return (lastSpace > 0) ? displayName.substring(lastSpace + 1) : displayName;
+    /** Turns a requirement's facts into a sentence, so the wording lives in one place. */
+    private String describe(FormationRationale.Requirement requirement) {
+        int size = rationale.units().size();
+        return switch (requirement.kind()) {
+            case UNIT_TYPE -> Messages.getString("FormationRationale.req.unitType",
+                  requirement.description());
+            case WEIGHT_CLASS -> Messages.getString("FormationRationale.req.weight",
+                  requirement.description());
+            case EVERY_UNIT -> Messages.getString("FormationRationale.req.everyUnit",
+                  requirement.description());
+            case AT_LEAST -> Messages.getString("FormationRationale.req.atLeast",
+                  requirement.required(), size, requirement.description());
+            case AT_LEAST_ALTERNATIVE -> Messages.getString("FormationRationale.req.atLeastAlternative",
+                  requirement.required(), size, requirement.description());
+            case GROUPING -> Messages.getString("FormationRationale.req.grouping",
+                  requirement.description());
+        };
     }
 
     private void appendMembers(StringBuilder report) {
         report.append("<h3>").append(Messages.getString("FormationRationale.members")).append("</h3>");
-        report.append("<table cellpadding='3'><tr>")
+        report.append("<table cellpadding='3'><tr><th align='left'>#</th>")
               .append(headerCell("FormationRationale.col.unit"))
               .append(headerCell("FormationRationale.col.role"))
               .append(headerCell("FormationRationale.col.weight"))
               .append(headerCell("FormationRationale.col.walk"))
               .append(headerCell("FormationRationale.col.bv"))
               .append("</tr>");
+        int number = 1;
         for (AssemblyUnit unit : rationale.units()) {
-            report.append("<tr><td>").append(unit.displayName()).append("</td><td>")
+            report.append("<tr><td>").append(number++).append("</td><td>")
+                  .append(unit.displayName()).append("</td><td>")
                   .append(roleName(unit.role())).append("</td><td>")
                   .append(EntityWeightClass.getClassName(unit.weightClass())).append("</td><td>")
                   .append(unit.walkMp()).append("</td><td>")

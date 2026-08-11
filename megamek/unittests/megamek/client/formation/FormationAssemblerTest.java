@@ -449,7 +449,48 @@ class FormationAssemblerTest {
         FormationRationale rationale = FormationAssembler.explain("Battle Lance Alpha", force, Map.of());
         assertEquals(List.of("Custom Frankenmek"), rationale.unknownToCatalog());
         assertNull(rationale.type(), "one unknown unit blocks every formation type");
-        assertNull(rationale.qualificationDetail(), "and there is no criteria table to show");
+        assertTrue(rationale.requirements().isEmpty(), "and there is no criteria table to show");
+    }
+
+    /**
+     * The Campaign Operations ideal-role rule, in the rulebook's own example: a Battle Lance normally
+     * needs half its units heavy or larger, but four Brawlers qualify anyway because Brawler is the
+     * Battle Lance ideal role. The report must show BOTH - that the weight requirement failed, and
+     * that the ideal role waived it - or a player cannot tell a waiver from a bug.
+     */
+    @Test
+    void fourMediumBrawlersQualifyAsABattleLanceOnTheIdealRoleAlone() {
+        List<AssemblyUnit> mediumBrawlers = new ArrayList<>();
+        for (int i = 0; i < 4; i++) {
+            mediumBrawlers.add(mek("Griffin GRF-1N " + i, UnitRole.BRAWLER,
+                  EntityWeightClass.WEIGHT_MEDIUM, 5, 1272));
+        }
+        FormationRationale rationale =
+              FormationAssembler.explain("Battle Lance Alpha", mediumBrawlers, Map.of());
+
+        assertNotNull(rationale.type(), "the ideal role must carry an otherwise-failing group");
+        assertEquals("Battle", rationale.type().getName());
+        assertEquals(UnitRole.BRAWLER, rationale.idealRole());
+        assertTrue(rationale.idealRoleWaived(), "all four are Brawlers, so the waiver applies");
+
+        FormationRationale.Requirement heavyRequirement = rationale.requirements().stream()
+              .filter(requirement -> requirement.detail().contains("Heavy+"))
+              .findFirst().orElseThrow(() -> new AssertionError("the Heavy+ rule must be listed"));
+        assertEquals(0, heavyRequirement.met(), "no medium counts as heavy or larger");
+        assertEquals(2, heavyRequirement.required(), "half of four");
+        assertFalse(heavyRequirement.satisfied(),
+              "the requirement genuinely fails - it is waived, not passed");
+        assertTrue(heavyRequirement.waivable());
+    }
+
+    /** The unit types a formation admits are part of what it IS, and are never waived by a role. */
+    @Test
+    void theUnitTypeRequirementIsMarkedAsNeverWaived() {
+        FormationRationale rationale = explainOneOf(clanRoster(), "Loki Prime");
+        FormationRationale.Requirement unitType = rationale.requirements().getFirst();
+        assertEquals("Unit type", unitType.label());
+        assertFalse(unitType.waivable(), "the ideal-role loophole does not extend to unit types");
+        assertTrue(unitType.satisfied());
     }
 
     @Test

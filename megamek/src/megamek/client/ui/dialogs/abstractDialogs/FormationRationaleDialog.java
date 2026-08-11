@@ -130,12 +130,76 @@ public class FormationRationaleDialog extends AbstractDialog {
               rationale.organization().getElementSize())).append("</p>");
 
         appendMembers(report);
+        appendRequirements(report);
         appendReasons(report);
         appendBindings(report);
         appendAlternatives(report);
-        appendQualificationDetail(report);
 
         return report.append("</body></html>").toString();
+    }
+
+    /**
+     * The rulebook against the roster: the ideal role and its waiver first, then a row per
+     * requirement and a column per unit, so a player can see exactly which unit carries which
+     * requirement and where a formation falls short.
+     */
+    private void appendRequirements(StringBuilder report) {
+        if (rationale.type() == null) {
+            return;
+        }
+        report.append("<h3>").append(Messages.getString("FormationRationale.requirements"))
+              .append("</h3>");
+
+        if (rationale.idealRole() != UnitRole.UNDETERMINED) {
+            report.append("<p><b>")
+                  .append(Messages.getString("FormationRationale.idealRole", rationale.idealRole()))
+                  .append("</b><br>");
+            report.append(Messages.getString(rationale.idealRoleWaived()
+                  ? "FormationRationale.idealRole.waived"
+                  : "FormationRationale.idealRole.notWaived", rationale.units().size()));
+            report.append("</p>");
+        }
+
+        if (rationale.requirements().isEmpty()) {
+            return;
+        }
+
+        report.append("<table cellpadding='3'><tr><th align='left'>")
+              .append(Messages.getString("FormationRationale.col.requirement")).append("</th>");
+        for (AssemblyUnit unit : rationale.units()) {
+            report.append("<th align='center'>").append(shortName(unit.displayName())).append("</th>");
+        }
+        report.append("<th align='center'>")
+              .append(Messages.getString("FormationRationale.col.metNeeded")).append("</th></tr>");
+
+        for (FormationRationale.Requirement requirement : rationale.requirements()) {
+            report.append("<tr><td>").append(requirement.detail());
+            if (!requirement.waivable()) {
+                report.append(" <i>(")
+                      .append(Messages.getString("FormationRationale.neverWaived")).append(")</i>");
+            }
+            report.append("</td>");
+            for (Boolean matched : requirement.perUnit()) {
+                report.append("<td align='center'>").append(mark(matched)).append("</td>");
+            }
+            boolean carried = requirement.satisfied() || (rationale.idealRoleWaived()
+                  && requirement.waivable());
+            report.append("<td align='center'>").append(carried ? "<b>" : "")
+                  .append(requirement.met()).append(" / ").append(requirement.required())
+                  .append(carried ? "</b>" : "").append("</td></tr>");
+        }
+        report.append("</table>");
+    }
+
+    /** Yes/no as text: the report must stay plain ASCII, so no tick marks. */
+    private static String mark(boolean matched) {
+        return matched ? "<b>Yes</b>" : "-";
+    }
+
+    /** Column headers use the model designation only, so a wide lance still fits the dialog. */
+    private static String shortName(String displayName) {
+        int lastSpace = displayName.lastIndexOf(' ');
+        return (lastSpace > 0) ? displayName.substring(lastSpace + 1) : displayName;
     }
 
     private void appendMembers(StringBuilder report) {
@@ -167,8 +231,9 @@ public class FormationRationaleDialog extends AbstractDialog {
         report.append("<h3>").append(Messages.getString("FormationRationale.why")).append("</h3><ul>");
 
         if (rationale.type() != null) {
-            report.append("<li>").append(Messages.getString("FormationRationale.why.type",
-                  rationale.type().getName())).append("</li>");
+            report.append("<li>").append(Messages.getString(rationale.idealRoleWaived()
+                  ? "FormationRationale.why.typeByIdealRole"
+                  : "FormationRationale.why.type", rationale.type().getName())).append("</li>");
         } else if (!rationale.unknownToCatalog().isEmpty()) {
             report.append("<li>").append(Messages.getString("FormationRationale.why.noTypeUnknown",
                   String.join(", ", rationale.unknownToCatalog()))).append("</li>");
@@ -232,17 +297,6 @@ public class FormationRationaleDialog extends AbstractDialog {
                   swap.otherFormation(), Math.round(Math.abs(swap.cost())))).append("</li>");
         }
         report.append("</ul>");
-    }
-
-    private void appendQualificationDetail(StringBuilder report) {
-        if (rationale.qualificationDetail() == null) {
-            return;
-        }
-        report.append("<h3>").append(Messages.getString("FormationRationale.detail")).append("</h3>");
-        // The report arrives as its own HTML document; unwrap it so it nests cleanly here.
-        String detail = rationale.qualificationDetail()
-              .replace("<html>", "").replace("</html>", "");
-        report.append("<p>").append(detail).append("</p>");
     }
 
     private static String roleName(UnitRole role) {

@@ -37,15 +37,19 @@ import java.util.Comparator;
 import java.util.EnumMap;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.function.Predicate;
 
 import megamek.client.formation.AssemblyUnit.Family;
 import megamek.client.ratgenerator.FormationType;
+import megamek.client.ratgenerator.ModelRecord;
 import megamek.common.annotations.Nullable;
 import megamek.common.loaders.MekSummary;
 import megamek.common.units.Entity;
+import megamek.common.units.EntityWeightClass;
 import megamek.common.units.UnitRole;
 
 /**
@@ -708,20 +712,89 @@ public final class FormationAssembler {
             }
         }
 
-        List<MekSummary> summaries = new ArrayList<>();
-        for (AssemblyUnit unit : members) {
-            if (unit.summary() != null) {
-                summaries.add(unit.summary());
-            }
-        }
-        String qualificationDetail = ((eval.type() != null) && (summaries.size() == members.size()))
-              ? eval.type().qualificationReport(summaries)
-              : null;
+        UnitRole idealRole = (eval.type() != null) ? eval.type().getIdealRole() : UnitRole.UNDETERMINED;
+        boolean idealRoleWaived = (idealRole != UnitRole.UNDETERMINED)
+              && members.stream().allMatch(unit -> unit.role() == idealRole);
 
         return new FormationRationale(formationName, eval.type(), organization, members, modalRole,
               modalRoleCount, (slowest == Integer.MAX_VALUE) ? 0 : slowest,
               (fastest == Integer.MIN_VALUE) ? 0 : fastest, eval.battleValue(), ecmCarriers, bindings,
-              closestAlternatives(members, siblings, atoms), unknownToCatalog, qualificationDetail);
+              closestAlternatives(members, siblings, atoms), unknownToCatalog, idealRole,
+              idealRoleWaived, requirementsOf(eval.type(), members));
+    }
+
+    /**
+     * Scores each of a formation type's requirements against the units in hand, so the report can put
+     * the rulebook and the roster side by side. Mirrors the order
+     * {@link FormationType#qualifies(List)} tests them in: unit type first (never waived), then
+     * weight class and the main criterion, then the counted secondary criteria.
+     *
+     * @return one entry per requirement, or an empty list when there is no type to measure against
+     */
+    private static List<FormationRationale.Requirement> requirementsOf(@Nullable FormationType type,
+          List<AssemblyUnit> members) {
+        List<FormationRationale.Requirement> requirements = new ArrayList<>();
+        if (type == null) {
+            return requirements;
+        }
+        List<MekSummary> summaries = new ArrayList<>();
+        for (AssemblyUnit unit : members) {
+            if (unit.summary() == null) {
+                return requirements;
+            }
+            summaries.add(unit.summary());
+        }
+        int size = members.size();
+
+        requirements.add(new FormationRationale.Requirement("Unit type",
+              "Every unit of a type this formation admits", size,
+              scoreEach(summaries, summary ->
+                    type.isAllowedUnitType(ModelRecord.parseUnitType(summary.getUnitType()))),
+              false));
+
+        String weightRange = EntityWeightClass.getClassName(
+              Math.max(type.getMinWeightClass(), EntityWeightClass.WEIGHT_LIGHT))
+              + " to " + EntityWeightClass.getClassName(
+              Math.min(type.getMaxWeightClass(), EntityWeightClass.WEIGHT_ASSAULT));
+        requirements.add(new FormationRationale.Requirement("Weight " + weightRange,
+              "Every unit between " + weightRange, size,
+              scoreEach(summaries, summary -> (summary.getWeightClass() >= type.getMinWeightClass())
+                    && (summary.getWeightClass() <= type.getMaxWeightClass())), true));
+
+        if (type.getMainDescription() != null) {
+            requirements.add(new FormationRationale.Requirement(type.getMainDescription(),
+                  "Every unit: " + type.getMainDescription(), size,
+                  scoreEach(summaries, summary -> type.getMainCriteria().test(summary)), true));
+        }
+
+        Iterator<FormationType.Constraint> others = type.getOtherCriteria();
+        while (others.hasNext()) {
+            FormationType.Constraint constraint = others.next();
+            int required = constraint.getMinimum(size);
+            String detail = "At least " + required + " of " + size + ": " + constraint.getDescription();
+            if (constraint.isPairedWithPrevious()) {
+                detail = "Or instead - " + detail;
+            }
+            requirements.add(new FormationRationale.Requirement(constraint.getDescription(), detail,
+                  required, scoreEach(summaries, constraint::matches), true));
+        }
+
+        if (type.getGroupingCriteria() != null) {
+            FormationType.GroupingConstraint grouping = type.getGroupingCriteria();
+            requirements.add(new FormationRationale.Requirement(grouping.getDescription(),
+                  "Groups of " + grouping.getGroupSize() + ": " + grouping.getDescription(),
+                  Math.max(0, grouping.getNumGroups() * grouping.getGroupSize()),
+                  scoreEach(summaries, grouping::matches), true));
+        }
+        return requirements;
+    }
+
+    private static List<Boolean> scoreEach(List<MekSummary> summaries, Predicate<MekSummary> test) {
+        List<Boolean> results = new ArrayList<>(summaries.size());
+        for (MekSummary summary : summaries) {
+            results.add(test.test(summary));
+        }
+        return results;
     }
 
     /** Names what fused an atom, so the report can say why those units cannot be parted. */

@@ -56,13 +56,16 @@ import megamek.common.units.UnitRole;
  * @param bindings            groups that could not be split, in plain words (C3 nets, carried units)
  * @param closestAlternatives the swaps that came nearest to being chosen instead, cheapest first
  * @param unknownToCatalog    members with no unit-cache entry, which block any type from qualifying
- * @param qualificationDetail the {@link FormationType#qualificationReport} HTML, null without a type
+ * @param idealRole           the type's ideal role, {@link UnitRole#UNDETERMINED} when it has none
+ * @param idealRoleWaived     true when every unit holds the ideal role, so the requirements below
+ *                            are waived under the Campaign Operations ideal-role rule
+ * @param requirements        the type's requirements, each scored against these units
  */
 public record FormationRationale(String formationName, @Nullable FormationType type,
       Organization organization, List<AssemblyUnit> units, UnitRole modalRole, int modalRoleCount,
       int slowestWalkMp, int fastestWalkMp, long battleValue, int ecmCarriers, List<String> bindings,
       List<FormationRationale.AlternativeSwap> closestAlternatives, List<String> unknownToCatalog,
-      @Nullable String qualificationDetail) {
+      UnitRole idealRole, boolean idealRoleWaived, List<FormationRationale.Requirement> requirements) {
 
     /**
      * A trade the assembler considered and rejected: exchanging one of this formation's units for one
@@ -76,6 +79,31 @@ public record FormationRationale(String formationName, @Nullable FormationType t
      */
     public record AlternativeSwap(String unitName, String otherUnitName, String otherFormation,
           double cost) {
+    }
+
+    /**
+     * One requirement of a formation type, scored against the units in hand: how many units must
+     * satisfy it, which ones do, and whether that is enough.
+     *
+     * @param label    short name for the table column, e.g. "Heavy+"
+     * @param detail   the full requirement in words, e.g. "At least 2 of 4 units heavy or larger"
+     * @param required how many units must satisfy it
+     * @param perUnit  one entry per unit, in the same order as {@link FormationRationale#units()}
+     * @param waivable false for requirements the ideal-role rule does NOT waive (the unit types a
+     *                 formation admits are part of what the formation IS, not a requirement on it)
+     */
+    public record Requirement(String label, String detail, int required, List<Boolean> perUnit,
+          boolean waivable) {
+
+        /** @return how many units satisfy this requirement */
+        public int met() {
+            return (int) perUnit.stream().filter(Boolean::booleanValue).count();
+        }
+
+        /** @return whether enough units satisfy it, before any ideal-role waiver */
+        public boolean satisfied() {
+            return met() >= required;
+        }
     }
 
     /** @return the walking-speed spread across the formation, in MP */

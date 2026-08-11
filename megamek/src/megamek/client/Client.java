@@ -55,6 +55,7 @@ import megamek.MMConstants;
 import megamek.client.bot.AIType;
 import megamek.client.generator.skillGenerators.AbstractSkillGenerator;
 import megamek.client.generator.skillGenerators.ModifiedTotalWarfareSkillGenerator;
+import megamek.client.ui.Messages;
 import megamek.client.ui.clientGUI.GUIPreferences;
 import megamek.client.ui.clientGUI.tooltip.PilotToolTip;
 import megamek.client.ui.tileset.TilesetManager;
@@ -88,6 +89,7 @@ import megamek.common.event.GameCFREvent;
 import megamek.common.event.GamePollEvent;
 import megamek.common.event.GameReportEvent;
 import megamek.common.event.GameSettingsChangeEvent;
+import megamek.common.event.GameToastEvent;
 import megamek.common.event.GameVictoryEvent;
 import megamek.common.event.board.GameBoardChangeEvent;
 import megamek.common.event.entity.GameEntityChangeEvent;
@@ -1112,7 +1114,7 @@ public class Client extends AbstractClient {
                 case PRINCESS_DISHONORED:
                     // A bot reported (via the server) which players it now considers dishonored; remember it so the
                     // dishonor warning can be suppressed once a bot already holds a grudge.
-                    game.setDishonoredPlayers(packet.getIntValue(0), packet.getIntList(1));
+                    receivePrincessDishonored(packet);
                     break;
                 case ENTITY_UPDATE:
                     receiveEntityUpdate(packet);
@@ -1424,6 +1426,40 @@ public class Client extends AbstractClient {
         } catch (InvalidPacketDataException e) {
             LOGGER.error("Invalid packet data:", e);
             return false;
+        }
+    }
+
+    /**
+     * Receives a bot's dishonored-players report, records it, and - the first time an enemy bot marks the local player
+     * dishonored - shows the player a toast so they know the bot's units will no longer show theirs mercy.
+     *
+     * <p>The notice is skipped when the player had already been flagged for this bot, so a player who confirmed the
+     * pre-attack nag (which optimistically records the dishonor) does not get a redundant second notice. A player who
+     * disabled that nag, or who was dishonored by a bot command such as blood-feud, is still told here.</p>
+     *
+     * @param packet the received {@link megamek.common.net.enums.PacketCommand#PRINCESS_DISHONORED} packet
+     */
+    protected void receivePrincessDishonored(Packet packet) throws InvalidPacketDataException {
+        int botPlayerId = packet.getIntValue(0);
+        List<Integer> dishonoredPlayerIds = packet.getIntList(1);
+        Player localPlayer = getLocalPlayer();
+
+        if (localPlayer == null) {
+            game.setDishonoredPlayers(botPlayerId, dishonoredPlayerIds);
+            return;
+        }
+
+        int localPlayerId = localPlayer.getId();
+        boolean wasDishonored = game.isPlayerDishonoredBy(botPlayerId, localPlayerId);
+        game.setDishonoredPlayers(botPlayerId, dishonoredPlayerIds);
+
+        if (!wasDishonored
+              && (botPlayerId != localPlayerId)
+              && game.isPlayerDishonoredBy(botPlayerId, localPlayerId)) {
+            Player bot = game.getPlayer(botPlayerId);
+            String botName = (bot != null) ? bot.getName() : "";
+            game.fireGameEvent(new GameToastEvent(this, GameToastEvent.Level.WARNING,
+                  Messages.getString("HonorNag.dishonoredToast", botName), Entity.NONE));
         }
     }
 

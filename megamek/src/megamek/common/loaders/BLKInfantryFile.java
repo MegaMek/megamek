@@ -1,6 +1,6 @@
 /*
  * Copyright (C) 2000-2002 Ben Mazur (bmazur@sev.org)
- * Copyright (C) 2002-2025 The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2002-2026 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -181,8 +181,16 @@ public class BLKInfantryFile extends BLKFile implements IMekLoader {
             infantry.setArmorKit(kit);
         }
 
-        if (dataFile.exists("dest")) {
-            infantry.setDEST(true);
+        if (dataFile.exists("armor_name")) {
+            infantry.setCustomArmorName(dataFile.getDataAsString("armor_name")[0]);
+        }
+
+        if (dataFile.exists("armordivisor")) {
+            try {
+                infantry.setCustomArmorDamageDivisor(Double.parseDouble(dataFile.getDataAsString("armordivisor")[0]));
+            } catch (NumberFormatException ex) {
+                throw new EntityLoadingException("Could not read armor divisor");
+            }
         }
 
         if (dataFile.exists("encumberingarmor")) {
@@ -191,6 +199,10 @@ public class BLKInfantryFile extends BLKFile implements IMekLoader {
 
         if (dataFile.exists("spacesuit")) {
             infantry.setSpaceSuit(true);
+        }
+
+        if (dataFile.exists("dest")) {
+            infantry.setDEST(true);
         }
 
         if (dataFile.exists("sneakcamo")) {
@@ -203,14 +215,6 @@ public class BLKInfantryFile extends BLKFile implements IMekLoader {
 
         if (dataFile.exists("sneakecm")) {
             infantry.setSneakECM(true);
-        }
-
-        if (dataFile.exists("armordivisor")) {
-            try {
-                infantry.setCustomArmorDamageDivisor(Double.parseDouble(dataFile.getDataAsString("armordivisor")[0]));
-            } catch (NumberFormatException ex) {
-                throw new EntityLoadingException("Could not read armor divisor");
-            }
         }
 
         loadEquipment(infantry, "Field Guns", ConvInfantry.LOC_FIELD_GUNS);

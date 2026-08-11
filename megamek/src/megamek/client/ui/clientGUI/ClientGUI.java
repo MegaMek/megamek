@@ -73,6 +73,7 @@ import megamek.client.bot.princess.BehaviorSettings;
 import megamek.client.commands.*;
 import megamek.client.event.BoardViewEvent;
 import megamek.client.event.BoardViewListener;
+import megamek.client.ratgenerator.GenerationContext;
 import megamek.client.event.MekDisplayEvent;
 import megamek.client.event.MekDisplayListener;
 import megamek.client.ui.Messages;
@@ -3755,6 +3756,39 @@ public class ClientGUI extends AbstractClientGUI
     @Override
     public Map<String, AbstractClient> getLocalBots() {
         return client.getBots();
+    }
+
+    /**
+     * What each player's units were generated for - faction, command, year and rating - keyed by
+     * player id. Recorded when an army generator adds units, and used by force organization to build
+     * a structure the way that faction would.
+     *
+     * <p>Client-local and deliberately not transmitted: it describes a choice this client's user made
+     * in a dialog, and only this client generates on their behalf. It is not game state.</p>
+     */
+    private final Map<Integer, GenerationContext> generationContexts = new HashMap<>();
+
+    /**
+     * Records what a player's newly generated units were rolled for, replacing any earlier record.
+     * Callers record only what a generator actually asked the player, never a default, so that a
+     * later roll on a generator that knows nothing cannot erase a real choice.
+     *
+     * @param playerId the owner of the generated units
+     * @param context  what they were generated for
+     */
+    public void setGenerationContext(int playerId, GenerationContext context) {
+        generationContexts.put(playerId, context);
+    }
+
+    /**
+     * @param playerId the player to look up
+     *
+     * @return what that player's units were generated for, or {@code null} when nothing has been
+     *       recorded for them - they have generated nothing, or only from a generator that asks for
+     *       no faction, command or rating
+     */
+    public @Nullable GenerationContext getGenerationContext(int playerId) {
+        return generationContexts.get(playerId);
     }
 
     /**

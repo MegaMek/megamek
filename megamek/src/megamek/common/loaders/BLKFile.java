@@ -1172,7 +1172,9 @@ public class BLKFile {
                 if (null != infantry.getDisposableWeapon()) {
                     blk.writeBlockData("disposableWeapon", infantry.getDisposableWeapon().getInternalName());
                 }
-
+                if (infantry.getCustomArmorName() != null) {
+                    blk.writeBlockData("armor_name", infantry.getCustomArmorName());
+                }
                 if (infantry.getCustomArmorDamageDivisor() != 1) {
                     blk.writeBlockData("armordivisor", Double.toString(infantry.getCustomArmorDamageDivisor()));
                 }

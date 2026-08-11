@@ -34,6 +34,8 @@
 
 package megamek.client.ui.dialogs.randomArmy;
 
+import megamek.codeUtilities.MathUtility;
+import megamek.client.ratgenerator.GenerationContext;
 import megamek.client.ui.Messages;
 import megamek.client.ui.clientGUI.CloseAction;
 import megamek.client.ui.clientGUI.GUIPreferences;
@@ -93,6 +95,10 @@ public abstract class AbstractRandomArmyDialog extends JDialog {
     private final JLabel rolledBvTotalLabel = new JLabel();
 
     private JComponent buttonPanel;
+
+    /** Tab indexes whose panels know what the units were rolled for; see {@link #getGenerationContext()}. */
+    private static final int TAB_RAT_GENERATOR = 3;
+    private static final int TAB_FORMATION = 4;
 
     private static final GUIPreferences GUIP = GUIPreferences.getInstance();
 
@@ -182,6 +188,37 @@ public abstract class AbstractRandomArmyDialog extends JDialog {
      * @return A button panel for the dialog
      */
     protected abstract JComponent createButtonsPanel();
+
+    /**
+     * What the units on the current tab were rolled for. Only three tabs ask the player for a faction,
+     * a command and a year; the rest roll off a table that knows none of it, and report the Inner
+     * Sphere at large for the game year rather than claiming a choice the player never made.
+     *
+     * <p>The tab that produced the units decides this. Reading it from a fixed panel would attribute
+     * one tab's faction to another tab's units.</p>
+     *
+     * @return the context, never {@code null}
+     */
+    protected GenerationContext getGenerationContext() {
+        int selectedTab = tabbedPane.getSelectedIndex();
+        if (selectedTab == TAB_FORCE_GENERATOR) {
+            GenerationContext context = forceGeneratorPanel.getGenerationContext();
+            return (context == null) ? GenerationContext.defaultFor(gameYear()) : context;
+        }
+        if (selectedTab == TAB_FORMATION) {
+            return GenerationContext.of(formationPanel.getFaction(), formationPanel.getYear(),
+                  formationPanel.getRating(), GenerationContext.Source.FORMATION_BUILDER);
+        }
+        if (selectedTab == TAB_RAT_GENERATOR) {
+            return GenerationContext.of(ratGenTab.getFaction(), ratGenTab.getYear(),
+                  ratGenTab.getRating(), GenerationContext.Source.RAT_GENERATOR);
+        }
+        return GenerationContext.defaultFor(gameYear());
+    }
+
+    private int gameYear() {
+        return gameOptions.intOption("year");
+    }
 
     private void createFormationPanel() {
         formationPanel = new ForceGenerationOptionsPanel(ForceGenerationOptionsPanel.Use.FORMATION_BUILDER);
@@ -280,6 +317,20 @@ public abstract class AbstractRandomArmyDialog extends JDialog {
                 buttonPanel = createButtonsPanel();
                 add(buttonPanel, BorderLayout.SOUTH);
             }
+            String lastTab = GUIP.getRandomArmySetting(GUIPreferences.RND_ARMY_LAST_TAB);
+            if (!lastTab.isBlank()) {
+                int tabIndex = MathUtility.parseInt(lastTab, 0);
+                if ((tabIndex >= 0) && (tabIndex < tabbedPane.getTabCount())) {
+                    tabbedPane.setSelectedIndex(tabIndex);
+                }
+            }
+        } else {
+            // Closing: catch the typed fields, which have no change event worth listening to, and the
+            // tab the player was working on.
+            GUIP.setRandomArmySetting(GUIPreferences.RND_ARMY_LAST_TAB,
+                  String.valueOf(tabbedPane.getSelectedIndex()));
+            formationPanel.rememberSelections();
+            ratGenTab.rememberSelections();
         }
         super.setVisible(show);
     }

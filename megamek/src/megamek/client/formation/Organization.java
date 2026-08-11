@@ -34,6 +34,10 @@ package megamek.client.formation;
 
 import java.util.List;
 
+import megamek.client.ratgenerator.FactionRecord;
+import megamek.client.ratgenerator.RATGenerator;
+import megamek.common.annotations.Nullable;
+
 /**
  * The organizational doctrine a player's force is assembled under: it sets the element size the
  * {@link FormationAssembler} aims for and the element word its formation names carry (Campaign Operations
@@ -80,6 +84,10 @@ public enum Organization {
         return (this != COMSTAR) && (this != WORD_OF_BLAKE);
     }
 
+    /** The generator faction keys for the two powers that organize into Level IIs. */
+    private static final String COMSTAR_FACTION = "CS";
+    private static final String WORD_OF_BLAKE_FACTION = "WOB";
+
     /**
      * Resolves {@link #AUTO} against the actual force: majority Clan tech means Clan stars, anything
      * else means Inner Sphere lances. An explicit organization returns itself unchanged.
@@ -89,8 +97,48 @@ public enum Organization {
      * @return the concrete organization to assemble under, never {@link #AUTO}
      */
     public Organization resolve(List<AssemblyUnit> units) {
+        return resolve(units, null);
+    }
+
+    /**
+     * Resolves {@link #AUTO} for a force whose faction is known. The faction is the better answer
+     * where there is one: ComStar and Word of Blake organize into Level IIs and field Inner Sphere
+     * equipment, so nothing about their units could ever reveal it, and a Clan faction fielding
+     * salvage still fights in stars. Tech base is only the fallback for a player who never said.
+     *
+     * @param units      the units about to be assembled
+     * @param factionKey the force's generator faction key, dotted for a sub-command; may be null
+     *
+     * @return the concrete organization to assemble under, never {@link #AUTO}
+     */
+    public Organization resolve(List<AssemblyUnit> units, @Nullable String factionKey) {
         if (this != AUTO) {
             return this;
+        }
+        if ((factionKey != null) && !factionKey.isBlank()) {
+            // A sub-command organizes like its parent, so compare the parent key. Compare it whole:
+            // CSA, CSJ, CSR and CSV are Clan Star Adder, Smoke Jaguar, Snow Raven and Star Viper, and
+            // a prefix test would file four Clans under ComStar.
+            String parentKey = factionKey.contains(".")
+                  ? factionKey.substring(0, factionKey.indexOf('.'))
+                  : factionKey;
+            if (COMSTAR_FACTION.equals(parentKey)) {
+                return COMSTAR;
+            }
+            if (WORD_OF_BLAKE_FACTION.equals(parentKey)) {
+                return WORD_OF_BLAKE;
+            }
+            if (FactionRecord.CL_GENERAL_KEY.equals(parentKey)) {
+                return CLAN;
+            }
+            // The generator data knows which factions are Clans; it is only consulted once it has
+            // finished loading, since asking early answers null for every faction.
+            if (RATGenerator.getInstance().isInitialized()) {
+                FactionRecord factionRecord = RATGenerator.getInstance().getFaction(parentKey);
+                if (factionRecord != null) {
+                    return factionRecord.isClan() ? CLAN : INNER_SPHERE;
+                }
+            }
         }
         int clanCount = 0;
         for (AssemblyUnit unit : units) {

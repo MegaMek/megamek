@@ -70,6 +70,8 @@ import megamek.client.ui.dialogs.customMek.CustomMekDialog;
 import megamek.client.ui.dialogs.lobby.TrainOrderDialog;
 import megamek.client.ui.dialogs.iconChooser.CamoChooserDialog;
 import megamek.common.Player;
+import megamek.common.Team;
+import megamek.common.annotations.Nullable;
 import megamek.common.bays.Bay;
 import megamek.common.enums.Gender;
 import megamek.common.enums.VariableRangeTargetingMode;
@@ -690,7 +692,7 @@ public class LobbyActions {
 
             List<String> announced = new ArrayList<>();
             for (AssembledFormation formation
-                  : FormationAssembler.assemble(looseUnits, organization, namesInUse)) {
+                  : FormationAssembler.assemble(looseUnits, organization, namesInUse, factionOf(owner))) {
                 List<Entity> members = new ArrayList<>();
                 for (AssemblyUnit unit : formation.units()) {
                     Entity member = game().getEntity(unit.entityId());
@@ -738,8 +740,25 @@ public class LobbyActions {
             }
         }
 
-        new FormationRationaleDialog(frame(),
-              FormationAssembler.explain(force.getName(), members, siblings)).setVisible(true);
+        new FormationRationaleDialog(frame(), FormationAssembler.explain(force.getName(), members,
+              siblings, factionOf(forces.getOwner(force)))).setVisible(true);
+    }
+
+    /**
+     * The faction a player is fighting as, as the army generators and the player settings record it.
+     * This is what tells auto-detection that a ComStar or Word of Blake force organizes into Level
+     * IIs - they field Inner Sphere equipment, so their units can never reveal it.
+     *
+     * @param player the player to look up, may be null
+     *
+     * @return the generator faction key, or null when the player has no team
+     */
+    private @Nullable String factionOf(@Nullable Player player) {
+        if (player == null) {
+            return null;
+        }
+        Team team = game().getTeamForPlayer(player);
+        return (team == null) ? null : team.getFaction();
     }
 
     private static List<AssemblyUnit> assemblyUnitsOf(Forces forces, Force force) {

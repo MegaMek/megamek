@@ -126,17 +126,33 @@ public final class FormationAssembler {
      */
     public static List<AssembledFormation> assemble(List<AssemblyUnit> looseUnits,
           Organization organization, Set<String> namesInUse) {
+        return assemble(looseUnits, organization, namesInUse, null);
+    }
+
+    /**
+     * Partitions the given loose units into named formations, using the force's faction to resolve
+     * {@link Organization#AUTO}.
+     *
+     * @param looseUnits   the units to assemble; an empty list yields an empty result
+     * @param organization the doctrine to assemble under
+     * @param namesInUse   force names already present in the lobby, so generated names never collide
+     * @param factionKey   the force's generator faction key, or null when the player never chose one
+     *
+     * @return the proposed formations, every input unit in exactly one of them
+     */
+    public static List<AssembledFormation> assemble(List<AssemblyUnit> looseUnits,
+          Organization organization, Set<String> namesInUse, @Nullable String factionKey) {
         if (looseUnits.isEmpty()) {
             return List.of();
         }
-        return new FormationAssembler().run(looseUnits, organization, namesInUse);
+        return new FormationAssembler().run(looseUnits, organization, namesInUse, factionKey);
     }
 
     private List<AssembledFormation> run(List<AssemblyUnit> looseUnits, Organization organization,
-          Set<String> namesInUse) {
+          Set<String> namesInUse, @Nullable String factionKey) {
         List<AssemblyUnit> units = new ArrayList<>(looseUnits);
         units.sort(Comparator.comparingInt(AssemblyUnit::entityId));
-        Organization resolved = organization.resolve(units);
+        Organization resolved = organization.resolve(units, factionKey);
 
         List<List<AssemblyUnit>> atoms = buildAtoms(units);
         Map<Family, List<List<AssemblyUnit>>> pools = poolByFamily(atoms);
@@ -718,12 +734,28 @@ public final class FormationAssembler {
      */
     public static FormationRationale explain(String formationName, List<AssemblyUnit> units,
           Map<String, List<AssemblyUnit>> siblings) {
+        return explain(formationName, units, siblings, null);
+    }
+
+    /**
+     * Explains one finished formation, using the force's faction to name the doctrine it was built
+     * under.
+     *
+     * @param formationName the formation's name, for the report
+     * @param units         its current members
+     * @param siblings      the owner's other formations, keyed by name, for the alternatives pass
+     * @param factionKey    the force's generator faction key, or null when the player never chose one
+     *
+     * @return the rationale, ready to render
+     */
+    public static FormationRationale explain(String formationName, List<AssemblyUnit> units,
+          Map<String, List<AssemblyUnit>> siblings, @Nullable String factionKey) {
         List<AssemblyUnit> members = new ArrayList<>(units);
         members.sort(Comparator.comparingInt(AssemblyUnit::entityId));
 
         List<AssemblyUnit> wholeForce = new ArrayList<>(members);
         siblings.values().forEach(wholeForce::addAll);
-        Organization organization = Organization.AUTO.resolve(wholeForce);
+        Organization organization = Organization.AUTO.resolve(wholeForce, factionKey);
 
         ElementEval eval = evaluateElement(members);
         UnitRole modalRole = modalRole(members);

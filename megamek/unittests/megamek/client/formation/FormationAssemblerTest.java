@@ -351,6 +351,67 @@ class FormationAssemblerTest {
         assertEquals(2, second.stream().map(AssembledFormation::name).distinct().count());
     }
 
+    /**
+     * ComStar and Word of Blake field Inner Sphere equipment, so nothing about their units could ever
+     * reveal that they organize into Level IIs of six. Only the faction says it, and without asking,
+     * a ComStar player silently got lances of four.
+     */
+    @Test
+    void comStarAndWordOfBlakeAreDetectedFromTheFactionBecauseTheirUnitsCannotShowIt() {
+        List<AssemblyUnit> twelve = new ArrayList<>();
+        for (int i = 0; i < 12; i++) {
+            twelve.add(mek("Crockett CRK-5003-1 " + i, UnitRole.JUGGERNAUT,
+                  EntityWeightClass.WEIGHT_ASSAULT, 4, 1725));
+        }
+
+        assertEquals(Organization.COMSTAR, Organization.AUTO.resolve(twelve, "CS"));
+        assertEquals(Organization.WORD_OF_BLAKE, Organization.AUTO.resolve(twelve, "WOB"));
+        assertEquals(Organization.COMSTAR, Organization.AUTO.resolve(twelve, "CS.SL"),
+              "a sub-command organizes like its parent");
+
+        List<AssembledFormation> formations =
+              FormationAssembler.assemble(twelve, Organization.AUTO, Set.of(), "CS");
+        assertEquals(2, formations.size(), "twelve units are two Level IIs of six, not three lances");
+        for (AssembledFormation formation : formations) {
+            assertEquals(6, formation.units().size());
+            assertTrue(formation.name().startsWith("Level II"), formation.name());
+        }
+    }
+
+    /**
+     * The faction keys beginning CS are mostly Clans - Star Adder, Smoke Jaguar, Snow Raven, Star
+     * Viper - so ComStar must be matched whole. A prefix test would file four Clans as ComStar and
+     * give them Level IIs.
+     */
+    @Test
+    void clanFactionKeysThatBeginWithCsAreNotComStar() {
+        List<AssemblyUnit> clanUnits = new ArrayList<>();
+        for (int i = 0; i < 10; i++) {
+            clanUnits.add(clanMek("Mad Cat " + i, UnitRole.BRAWLER, EntityWeightClass.WEIGHT_HEAVY,
+                  5, 2737));
+        }
+        for (String clanKey : List.of("CSA", "CSJ", "CSR", "CSV")) {
+            assertEquals(Organization.CLAN, Organization.AUTO.resolve(clanUnits, clanKey),
+                  clanKey + " is a Clan, not a ComStar command");
+        }
+    }
+
+    /** With no faction recorded, tech base is still the fallback it always was. */
+    @Test
+    void withoutAFactionTheTechBaseStillDecides() {
+        List<AssemblyUnit> clanUnits = new ArrayList<>(clanRoster());
+        assertEquals(Organization.CLAN, Organization.AUTO.resolve(clanUnits, null));
+        assertEquals(Organization.CLAN, Organization.AUTO.resolve(clanUnits, ""));
+        assertEquals(Organization.INNER_SPHERE, Organization.AUTO.resolve(innerSphereRoster(), null));
+    }
+
+    /** An explicit choice is final: detection proposes, the player disposes. */
+    @Test
+    void anExplicitOrganizationIgnoresTheFaction() {
+        assertEquals(Organization.INNER_SPHERE,
+              Organization.INNER_SPHERE.resolve(clanRoster(), "CS"));
+    }
+
     @Test
     void comStarDoctrineNamesLevelTwosWithoutTypePrefix() {
         List<AssemblyUnit> six = new ArrayList<>();

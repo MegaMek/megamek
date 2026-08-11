@@ -214,6 +214,25 @@ class VersionTest {
         assertNotEquals(versionWithoutExtra("0.51.0.1"), versionWithoutExtra("0.51.0"));
     }
 
+    @Test
+    void negativeRevisionFromMalformedTextIsNormalisedToNoRevision() {
+        // Without normalising, such a version would render as "0.51.00" while still sorting below, and being
+        // unequal to, the 0.51.0 it renders as.
+        Version malformedRevision = versionWithoutExtra("0.51.0.-1");
+        assertFalse(malformedRevision.hasRevision());
+        assertEquals(Version.NO_REVISION, malformedRevision.getRevision());
+        assertEquals("0.51.00", malformedRevision.toString());
+        assertEquals(versionWithoutExtra("0.51.0"), malformedRevision);
+    }
+
+    @Test
+    void negativeRevisionSetDirectlyIsNormalisedToNoRevision() {
+        Version ordinaryVersion = versionWithoutExtra("0.51.0");
+        ordinaryVersion.setRevision(-1);
+        assertFalse(ordinaryVersion.hasRevision());
+        assertEquals(Version.NO_REVISION, ordinaryVersion.getRevision());
+    }
+
     /**
      * Builds a version from its text form with the extra component explicitly cleared.
      *

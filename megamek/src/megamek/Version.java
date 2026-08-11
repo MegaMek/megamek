@@ -269,10 +269,16 @@ public final class Version implements Comparable<Version>, Serializable {
     }
 
     /**
+     * Sets the optional fourth version component.
+     *
+     * <p>A value at or below {@link #NO_REVISION} is stored as {@link #NO_REVISION}. Without that, a version
+     * built from malformed text such as {@code 0.51.0.-1} would render as though it had no revision while still
+     * comparing as lower than, and unequal to, the release it claims to be.</p>
+     *
      * @param revision the optional fourth version component, or {@link #NO_REVISION} for no revision
      */
     public void setRevision(final int revision) {
-        this.revision = revision;
+        this.revision = Math.max(revision, NO_REVISION);
     }
 
     /**

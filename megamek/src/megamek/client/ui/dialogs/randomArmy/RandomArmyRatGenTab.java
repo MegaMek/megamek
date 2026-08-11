@@ -129,6 +129,21 @@ public class RandomArmyRatGenTab extends JPanel implements RandomArmyTab {
         add(new JScrollPane(ratTable), gbc);
     }
 
+    /** @return the faction, or sub-command, the table was built for; null when none is selected */
+    public FactionRecord getFaction() {
+        return forceOptionsPanel.getFaction();
+    }
+
+    /** @return the year the table was built for */
+    public int getYear() {
+        return forceOptionsPanel.getYear();
+    }
+
+    /** @return the equipment rating the table was built for */
+    public String getRating() {
+        return forceOptionsPanel.getRating();
+    }
+
     @Override
     public List<MekSummary> generateMekSummaries() {
         List<MekSummary> result = new ArrayList<>();

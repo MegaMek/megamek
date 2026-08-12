@@ -78,6 +78,7 @@ import megamek.common.weapons.bayWeapons.capital.CapitalMissileBayWeapon;
 public class GameOptionsPane extends JPanel {
     private static final int START_HEIGHT = 800;
     private static final int HEADER_IMAGE_SIZE = 80;
+    private static final int LANDING_HEADER_IMAGE_SIZE = 200;
     private static final int MAX_VICTORY_CONDITIONS = 100;
     private static final int MAX_VICTORY_PERCENT = 100;
     private static final int MAX_VICTORY_RATIO_PERCENT = 10_000;
@@ -139,7 +140,6 @@ public class GameOptionsPane extends JPanel {
           OptionsConstants.ADVANCED_COMBAT_MAP_AREA_PREDESIGNATE,
           OptionsConstants.ADVANCED_COMBAT_NUM_HEXES_PREDESIGNATE,
           OptionsConstants.ADVANCED_COMBAT_FOREST_FIRES_NO_SMOKE,
-          OptionsConstants.ADVANCED_GROUND_MOVEMENT_MEK_LANCE_MOVEMENT,
           OptionsConstants.ADVANCED_GROUND_MOVEMENT_UNOFF_NO_IMMOBILE_VEHICLES,
           OptionsConstants.ADVANCED_GROUND_MOVEMENT_EJECTED_PILOTS_FLEE,
           OptionsConstants.ADVANCED_GROUND_MOVEMENT_AUTO_ABANDON_UNIT,
@@ -172,8 +172,6 @@ public class GameOptionsPane extends JPanel {
           OptionsConstants.INIT_SIMULTANEOUS_TARGETING,
           OptionsConstants.INIT_SIMULTANEOUS_FIRING,
           OptionsConstants.INIT_SIMULTANEOUS_PHYSICAL,
-          OptionsConstants.INIT_FRONT_LOAD_INITIATIVE,
-          OptionsConstants.INIT_INITIATIVE_STREAK_COMPENSATION,
           OptionsConstants.RPG_INDIVIDUAL_INITIATIVE,
           OptionsConstants.RPG_COMMAND_INIT,
           OptionsConstants.RPG_TOUGHNESS,
@@ -465,13 +463,18 @@ public class GameOptionsPane extends JPanel {
             sectionRows.values().forEach(section ->
                   section.rows.sort(Comparator.comparingInt(row -> row.optionOrder())));
 
-            Icon icon = pageIcon(pageSeed.effectiveIconGroupId());
+            boolean directPage = pageSeed.definition().isDirect();
+            Icon icon = directPage ? landingIcon() : pageIcon(pageSeed.effectiveIconGroupId());
             SettingsPagePanel.Builder builder = SettingsPagePanel.builder(pageSeed.definition().id(), TEXT,
                   "GameOptionsDialog.title", icon)
                   .header(new SettingsHeaderPanel(pageSeed.definition().id(), pageTitle, icon))
-                  .showDetailsPanel(true)
+                                    .showDetailsPanel(!directPage)
                   .sectionsExpandedByDefault(sectionRows.size() == 1)
                   .standardContentWidth();
+            if (directPage) {
+                builder.intro("GameOptionsDialog.page.landing.intro")
+                                            .quote("GameOptionsDialog.page.landing.quote");
+            }
             List<Map.Entry<String, SectionRows>> orderedSections = new ArrayList<>(sectionRows.entrySet());
             orderedSections.sort(Comparator.comparingInt(entry -> entry.getValue().order));
             int labelWidth = sharedLabelWidth(rows);
@@ -480,8 +483,12 @@ public class GameOptionsPane extends JPanel {
                       pageSeed.definition().id() + entry.getKey(), entry.getValue().rows, labelWidth);
                 sectionContentRows.put(content, entry.getValue().rows);
                 displayedSectionRows.put(content, List.copyOf(entry.getValue().rows));
-                builder.literalSection(sectionTitle(entry.getKey()), sectionSummary(entry.getKey()), content,
-                      sectionBadges(pageSeed.definition().advanced()), pageSeed.searchAliases());
+                if (directPage) {
+                    builder.component(content);
+                } else {
+                    builder.literalSection(sectionTitle(entry.getKey()), sectionSummary(entry.getKey()), content,
+                          sectionBadges(pageSeed.definition().advanced()), pageSeed.searchAliases());
+                }
             }
             pagePanel = builder.build();
             add(pagePanel, BorderLayout.CENTER);
@@ -712,6 +719,13 @@ public class GameOptionsPane extends JPanel {
 
     static String sectionId(String groupId, String optionName) {
         return GameOptionsPresentation.location(groupId, optionName).sectionId();
+    }
+
+    private static Icon landingIcon() {
+        return PAGE_HEADER_ICONS.computeIfAbsent("landing", ignored -> {
+            File logo = new File(Configuration.miscImagesDir(), "mm-logo.png");
+            return scaleImageIcon(new ImageIcon(logo.getAbsolutePath()), LANDING_HEADER_IMAGE_SIZE, true);
+        });
     }
 
     private static Icon pageIcon(String groupId) {

@@ -66,13 +66,7 @@ import megamek.common.Report;
 import megamek.common.SpecialHexDisplay;
 import megamek.common.TagInfo;
 import megamek.common.TemporaryECMField;
-import megamek.common.actions.ArtilleryAttackAction;
-import megamek.common.actions.AttackAction;
-import megamek.common.actions.ClubAttackAction;
-import megamek.common.actions.DodgeAction;
-import megamek.common.actions.EntityAction;
-import megamek.common.actions.FlipArmsAction;
-import megamek.common.actions.TorsoTwistAction;
+import megamek.common.actions.*;
 import megamek.common.annotations.Nullable;
 import megamek.common.board.Board;
 import megamek.common.board.BoardDimensions;
@@ -881,7 +875,24 @@ public class Client extends AbstractClient {
                 if (!isCharge) {
                     game.addAction(entityAction);
                 } else {
-                    game.addCharge((AttackAction) entityAction);
+                    // This should work for Charge, DFA, and RAM attacks.
+                    if (entityAction instanceof DisplacementAttackAction) {
+                        Entity chargingUnit = game.getEntity(entityAction.getEntityId());
+                        if (chargingUnit != null) {
+                            chargingUnit.setDisplacementAttack((DisplacementAttackAction) entityAction);
+                        }
+                        game.addDisplacementAttack((AttackAction) entityAction);
+                    }
+                    if (entityAction instanceof RamAttackAction) {
+                        Entity rammingUnit = game.getEntity(entityAction.getEntityId());
+                        if (rammingUnit != null) {
+                            rammingUnit.setRamming(true);
+                        }
+                        game.addRam((AttackAction) entityAction);
+                    }
+                    if (entityAction instanceof TeleMissileAttackAction) {
+                        game.addTeleMissileAttack((AttackAction) entityAction);
+                    }
                 }
             }
         }
@@ -1378,6 +1389,7 @@ public class Client extends AbstractClient {
                         switch (cfrType) {
                             case CFR_DOMINO_EFFECT:
                                 cfrEvt.setEntityId(packet.getIntValue(1));
+                                cfrEvt.setDirection(packet.getIntValue(2));
                                 break;
                             case CFR_AMS_ASSIGN:
                                 cfrEvt.setEntityId(packet.getIntValue(1));
@@ -1586,6 +1598,13 @@ public class Client extends AbstractClient {
      */
     public void sendModeChange(int nEntity, int nEquip, int nMode) {
         send(new Packet(PacketCommand.ENTITY_MODE_CHANGE, nEntity, nEquip, nMode));
+    }
+
+    /**
+     * Send charge-change data to the server
+     */
+    public void sendChargeLevelChange(int nEntity, int nEquip, int nChargeLevel) {
+        send(new Packet(PacketCommand.ENTITY_CHARGE_CHANGE, nEntity, nEquip, nChargeLevel));
     }
 
     /**

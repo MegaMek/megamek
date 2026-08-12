@@ -37,13 +37,18 @@ import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.awt.Dimension;
+import java.lang.reflect.InvocationTargetException;
 import java.io.File;
 import java.nio.file.Path;
+import java.util.Enumeration;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.Vector;
+import java.util.concurrent.atomic.AtomicReference;
 import javax.swing.JPanel;
+import javax.swing.SwingUtilities;
 
 import megamek.client.ui.clientGUI.DialogOptionListener;
 import megamek.client.ui.panels.DialogOptionComponentYPanel;
@@ -162,6 +167,64 @@ class GameOptionsDialogTest {
         assertTrue((Boolean) searchlights.getValue());
     }
 
+    @Test
+    void coreRulesHideExactlyTheTotalWarfareOnlyOptions() {
+        Set<String> expectedHiddenOptions = Set.of(
+              OptionsConstants.BASE_FLAMER_HEAT,
+              OptionsConstants.ADVANCED_COMBAT_TAC_OPS_AMS,
+              OptionsConstants.ADVANCED_COMBAT_TAC_OPS_CHARGE_DAMAGE,
+              OptionsConstants.ADVANCED_GROUND_MOVEMENT_TAC_OPS_WALK_BACKWARDS,
+              OptionsConstants.ADVANCED_COMBAT_CASE_PILOT_DAMAGE,
+              OptionsConstants.ADVANCED_COMBAT_TAC_OPS_RETRACTABLE_BLADES,
+              OptionsConstants.ADVANCED_COMBAT_UNJAM_UAC,
+              OptionsConstants.INIT_FRONT_LOAD_INITIATIVE,
+              OptionsConstants.ADVANCED_MINEFIELDS,
+              OptionsConstants.ADVANCED_ALTERNATE_MASC,
+              OptionsConstants.ADVANCED_ALTERNATE_MASC_ENHANCED);
+        Set<String> hiddenOptions = new LinkedHashSet<>();
+        GameOptions options = new GameOptions();
+
+        for (Enumeration<IOption> gameOptions = options.getOptions(); gameOptions.hasMoreElements(); ) {
+            IOption option = gameOptions.nextElement();
+            if (!GameOptionsDialog.isAvailableForRulesSystem(option, OptionsConstants.RULES_CORE)) {
+                hiddenOptions.add(option.getName());
+            }
+            assertTrue(GameOptionsDialog.isAvailableForRulesSystem(option, OptionsConstants.RULES_TW),
+                  option.getName());
+        }
+
+        assertEquals(expectedHiddenOptions, hiddenOptions);
+    }
+
+    @Test
+    void refreshingRulesSystemVisibilityPreservesHiddenStagedValues() throws Exception {
+        runOnEdt(() -> {
+            GameOptions options = new GameOptions();
+            DialogOptionComponentYPanel flamerHeat = component(
+                  options.getOption(OptionsConstants.BASE_FLAMER_HEAT));
+            flamerHeat.setSelected(true);
+            AtomicReference<String> rulesSystem = new AtomicReference<>(OptionsConstants.RULES_CORE);
+            GameOptionsPane pane = new GameOptionsPane(List.of(new GameOptionsPane.OptionGroup(
+                  "basic", "Basic", List.of(flamerHeat))),
+                  option -> GameOptionsDialog.isAvailableForRulesSystem(option, rulesSystem.get()));
+
+            assertFalse(flamerHeat.isVisible());
+            assertTrue((Boolean) flamerHeat.getValue());
+
+            rulesSystem.set(OptionsConstants.RULES_TW);
+            pane.refreshVisibility();
+
+            assertTrue(flamerHeat.isVisible());
+            assertTrue((Boolean) flamerHeat.getValue());
+
+            rulesSystem.set(OptionsConstants.RULES_CORE);
+            pane.refreshVisibility();
+
+            assertFalse(flamerHeat.isVisible());
+            assertTrue((Boolean) flamerHeat.getValue());
+        });
+    }
+
     private static DialogOptionComponentYPanel component(IOption option) {
         return new DialogOptionComponentYPanel(new DialogOptionListener() {
             @Override
@@ -178,5 +241,19 @@ class GameOptionsDialogTest {
         JPanel panel = new JPanel();
         panel.setPreferredSize(new Dimension(width, height));
         return panel;
+    }
+
+    private static void runOnEdt(Runnable test) throws Exception {
+        try {
+            SwingUtilities.invokeAndWait(test);
+        } catch (InvocationTargetException exception) {
+            if (exception.getCause() instanceof Error error) {
+                throw error;
+            }
+            if (exception.getCause() instanceof Exception cause) {
+                throw cause;
+            }
+            throw exception;
+        }
     }
 }

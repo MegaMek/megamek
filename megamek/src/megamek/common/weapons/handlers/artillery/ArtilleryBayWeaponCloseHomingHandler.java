@@ -1,6 +1,6 @@
 /*
  * Copyright (C) 2005 Ben Mazur (bmazur@sev.org)
- * Copyright (C) 2007-2025 The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2012-2026 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -47,15 +47,15 @@ import megamek.server.totalWarfare.TWGameManager;
  * @author Sebastian Brocks
  * @since Sep 24, 2004
  */
-public class ArtilleryWeaponDirectHomingHandler extends ArtilleryWeaponIndirectHomingHandler {
+public class ArtilleryBayWeaponCloseHomingHandler extends ArtilleryBayWeaponDistantHomingHandler {
     @Serial
     private static final long serialVersionUID = 7543333005465757983L;
 
     /**
      *
      */
-    public ArtilleryWeaponDirectHomingHandler(ToHitData t, WeaponAttackAction w, Game g, TWGameManager m)
-          throws EntityLoadingException {
+    public ArtilleryBayWeaponCloseHomingHandler(ToHitData t,
+                                                WeaponAttackAction w, Game g, TWGameManager m) throws EntityLoadingException {
         super(t, w, g, m);
 
     }

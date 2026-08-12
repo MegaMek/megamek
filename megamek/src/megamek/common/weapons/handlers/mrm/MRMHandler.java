@@ -1,6 +1,6 @@
 /*
  * Copyright (C) 2005 Ben Mazur (bmazur@sev.org)
- * Copyright (C) 2007-2025 The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2007-2026 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -32,7 +32,7 @@
  * affiliated with Microsoft.
  */
 
-package megamek.common.weapons.handlers;
+package megamek.common.weapons.handlers.mrm;
 
 import java.io.Serial;
 import java.util.ArrayList;
@@ -53,7 +53,7 @@ import megamek.server.totalWarfare.TWGameManager;
 /**
  * @author Sebastian Brocks
  */
-public class MRMHandler extends MissileWeaponHandler {
+public class MRMHandler extends megamek.common.weapons.handlers.MissileWeaponHandler {
 
     /**
      *

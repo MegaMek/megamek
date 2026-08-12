@@ -61,6 +61,7 @@ import megamek.client.ui.Messages;
 import megamek.client.ui.clientGUI.GUIPreferences;
 import megamek.client.ui.util.UIUtil;
 import megamek.common.board.Board;
+import megamek.common.game.Game;
 import megamek.common.interfaces.IStartingPositions;
 import megamek.common.Player;
 import megamek.common.options.OptionsConstants;
@@ -128,7 +129,7 @@ class PlayerTable extends JTable {
             String msgNoInitiativeModifier = Messages.getString("ChatLounge.NoInitiativeModifier");
             result.append(msgNoInitiativeModifier);
         }
-        if (lobby.game().getOptions().booleanOption(OptionsConstants.ADVANCED_MINEFIELDS)) {
+        if (Game.rulesManager.getRulesGame().allowMinefields(lobby.game().getOptions().booleanOption(OptionsConstants.ADVANCED_MINEFIELDS))) {
             int mines = player.getNbrMFConventional() + player.getNbrMFActive()
                   + player.getNbrMFInferno() + player.getNbrMFVibra();
             String msgTotalMinefields = Messages.getString("ChatLounge.TotalMinefields");

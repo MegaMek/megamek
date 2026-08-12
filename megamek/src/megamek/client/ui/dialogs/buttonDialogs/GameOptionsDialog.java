@@ -89,6 +89,18 @@ import org.w3c.dom.NodeList;
 /** Responsible for displaying the current game options and allowing the user to change them. */
 public class GameOptionsDialog extends AbstractButtonDialog implements ActionListener, DialogOptionListener {
     private static final int BUTTON_GAP = 8;
+    private static final Set<String> TOTAL_WARFARE_ONLY_OPTIONS = Set.of(
+          OptionsConstants.BASE_FLAMER_HEAT,
+          OptionsConstants.ADVANCED_COMBAT_TAC_OPS_AMS,
+          OptionsConstants.ADVANCED_COMBAT_TAC_OPS_CHARGE_DAMAGE,
+          OptionsConstants.ADVANCED_GROUND_MOVEMENT_TAC_OPS_WALK_BACKWARDS,
+          OptionsConstants.ADVANCED_COMBAT_CASE_PILOT_DAMAGE,
+          OptionsConstants.ADVANCED_COMBAT_TAC_OPS_RETRACTABLE_BLADES,
+          OptionsConstants.ADVANCED_COMBAT_UNJAM_UAC,
+          OptionsConstants.INIT_FRONT_LOAD_INITIATIVE,
+          OptionsConstants.ADVANCED_MINEFIELDS,
+          OptionsConstants.ADVANCED_ALTERNATE_MASC,
+          OptionsConstants.ADVANCED_ALTERNATE_MASC_ENHANCED);
 
     private ClientGUI clientGui;
     private JFrame frame;
@@ -429,7 +441,6 @@ public class GameOptionsDialog extends AbstractButtonDialog implements ActionLis
         panOptions.removeAll();
         optionComps = new HashMap<>();
         List<GameOptionsPane.OptionGroup> groups = new ArrayList<>();
-
         for (Enumeration<IOptionGroup> i = options.getGroups(); i.hasMoreElements(); ) {
             IOptionGroup group = i.nextElement();
             if (isVictoryGroupHiddenForLobby(group)) {
@@ -537,7 +548,23 @@ public class GameOptionsDialog extends AbstractButtonDialog implements ActionLis
     private boolean shouldShow(IOption option) {
         boolean isHiddenUnofficial = !butUnofficial.isSelected() && GameOptionsPane.isUnofficialOption(option);
         boolean isHiddenLegacy = !butLegacy.isSelected() && GameOptionsPane.isLegacyOption(option);
-        return !(isHiddenUnofficial || isHiddenLegacy || isHiddenOption(option));
+        boolean isHiddenByRulesSystem = !isAvailableForRulesSystem(option,
+              isCoreRulesSelected() ? OptionsConstants.RULES_CORE : OptionsConstants.RULES_TW);
+        return !(isHiddenUnofficial || isHiddenLegacy || isHiddenByRulesSystem || isHiddenOption(option));
+    }
+
+    static boolean isAvailableForRulesSystem(IOption option, String rulesSystem) {
+        return !OptionsConstants.RULES_CORE.equals(rulesSystem)
+              || !TOTAL_WARFARE_ONLY_OPTIONS.contains(option.getName());
+    }
+
+    private boolean isCoreRulesSelected() {
+        List<DialogOptionComponentYPanel> components = optionComps.get(OptionsConstants.RULES_SYSTEM);
+        if (components != null && !components.isEmpty()) {
+            return OptionsConstants.RULES_CORE.equals(components.getFirst().getValue());
+        }
+        IOption rulesSystem = options.getOption(OptionsConstants.RULES_SYSTEM);
+        return rulesSystem != null && OptionsConstants.RULES_CORE.equals(rulesSystem.stringValue());
     }
 
     private @Nullable DialogOptionComponentYPanel createOptionComponent(@Nullable IOption option) {
@@ -653,6 +680,11 @@ public class GameOptionsDialog extends AbstractButtonDialog implements ActionLis
         } else if (option.getName().equals(OptionsConstants.GAME_MASTER_VOTE_THRESHOLD)) {
             optionComp.addValue(OptionsConstants.GAME_MASTER_VOTE_UNANIMOUS);
             optionComp.addValue(OptionsConstants.GAME_MASTER_VOTE_MAJORITY);
+            optionComp.setSelected(option.stringValue());
+            optionComp.setEditable(editable);
+        } else if (option.getName().equals(OptionsConstants.RULES_SYSTEM)) {
+            optionComp.addValue(OptionsConstants.RULES_CORE);
+            optionComp.addValue(OptionsConstants.RULES_TW);
             optionComp.setSelected(option.stringValue());
             optionComp.setEditable(editable);
         } else if (option.getName().equals(OptionsConstants.ADVANCED_GHOST_TARGET_MODE)) {
@@ -928,6 +960,9 @@ public class GameOptionsDialog extends AbstractButtonDialog implements ActionLis
                     maxComp.setEditable(editable && isLegacyMode);
                 }
             }
+        }
+        if (option.getName().equals(OptionsConstants.RULES_SYSTEM)) {
+            gameOptionsPane.refreshVisibility();
         }
     }
 

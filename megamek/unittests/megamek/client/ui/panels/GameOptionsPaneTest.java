@@ -738,8 +738,7 @@ class GameOptionsPaneTest {
             }
             for (Enumeration<IOption> groupOptions = group.getOptions(); groupOptions.hasMoreElements(); ) {
                 IOption option = groupOptions.nextElement();
-                if (Set.of(OptionsConstants.TWRULES, OptionsConstants.PLAYTEST_1, OptionsConstants.PLAYTEST_2,
-                      OptionsConstants.PLAYTEST_3, OptionsConstants.BASE_LOBBY_AMMO_DUMP,
+                    if (Set.of(OptionsConstants.RULES_SYSTEM, OptionsConstants.BASE_LOBBY_AMMO_DUMP,
                       OptionsConstants.BASE_SHOW_BAY_DETAIL).contains(option.getName())) {
                     continue;
                 }
@@ -859,8 +858,11 @@ class GameOptionsPaneTest {
                       "Duplicate registered option " + option.getName());
                 GameOptionsPresentation.Location location = GameOptionsPresentation.location(
                       group.getName(), option.getName());
-                assertTrue(Messages.keyExists(
-                      "GameOptionsDialog.category." + location.page().categoryId()), location.page().categoryId());
+                    if (!location.page().isDirect()) {
+                      assertTrue(Messages.keyExists(
+                          "GameOptionsDialog.category." + location.page().categoryId()),
+                          location.page().categoryId());
+                    }
                 assertTrue(Messages.keyExists(
                       "GameOptionsDialog.page." + location.page().id() + ".title"), location.page().id());
                 assertTrue(Messages.keyExists(
@@ -879,8 +881,11 @@ class GameOptionsPaneTest {
 
         assertEquals(registeredOptionNames, GameOptionsPresentation.mappedOptionNames());
         sectionSizes.forEach((section, count) -> assertTrue(count <= 12, section + " contains " + count + " options"));
-        pageSections.forEach((page, sections) -> assertTrue(sections.size() >= 2 && sections.size() <= 4,
-              page + " contains " + sections.size() + " sections"));
+          pageSections.forEach((page, sections) -> {
+            int minimumSections = page.equals("landing") ? 1 : 2;
+            assertTrue(sections.size() >= minimumSections && sections.size() <= 4,
+                page + " contains " + sections.size() + " sections");
+          });
     }
 
     @Test
@@ -890,11 +895,12 @@ class GameOptionsPaneTest {
             GameOptionsPane pane = new GameOptionsPane(allOptionGroups(options), option -> true);
             JTree tree = findComponent(pane, JTree.class);
 
+            assertTreePathExists(tree, "Game Options");
             assertTreePathExists(tree, "General", "Match Setup");
             assertTreePathExists(tree, "General", "Match Flow, Timers, and Saves");
             assertTreePathExists(tree, "General", "Victory and Game Master");
             assertTreePathExists(tree, "General", "Units and Technology");
-            assertTreePathExists(tree, "Rules", "Core Rules");
+            assertTreePathExists(tree, "Rules", "General Rules");
             assertTreePathExists(tree, "Rules", "Sensors and Visibility");
             assertTreePathExists(tree, "Combat", "Targeting, LOS, and Artillery");
             assertTreePathExists(tree, "Movement", "Vehicle Movement");
@@ -906,6 +912,49 @@ class GameOptionsPaneTest {
             assertTreePathDoesNotExist(tree, "Allowed Units and Equipment");
             assertTreePathDoesNotExist(tree, "Initiative Rules");
             assertTreePathDoesNotExist(tree, "RPG Related");
+        });
+    }
+
+    @Test
+    void gameOptionsLandingPageOwnsRulesSystemAndIsSelectedFirst() throws Exception {
+        runOnEdt(() -> {
+            GameOptions options = new GameOptions();
+            List<GameOptionsPane.OptionGroup> groups = allOptionGroups(options);
+            DialogOptionComponentYPanel rulesSystem = groups.stream()
+                  .flatMap(group -> group.components().stream())
+                  .filter(component -> component.getOption().getName().equals(OptionsConstants.RULES_SYSTEM))
+                  .findFirst()
+                  .orElseThrow();
+            rulesSystem.addValue(OptionsConstants.RULES_CORE);
+            rulesSystem.addValue(OptionsConstants.RULES_TW);
+            rulesSystem.setSelected(options.getOption(OptionsConstants.RULES_SYSTEM).stringValue());
+
+            GameOptionsPane pane = new GameOptionsPane(groups, option -> true);
+            JTree tree = findComponent(pane, JTree.class);
+            TreePath selectedPath = tree.getSelectionPath();
+            SettingsPagePanel landingPage = findComponent(pane, SettingsPagePanel.class);
+            JComboBox<?> rulesSystemControl = (JComboBox<?>) rulesSystem.settingsControl();
+            JLabel logo = findIconLabel(landingPage);
+            GameOptionsPresentation.Location location = GameOptionsPresentation.location(
+                  "basic", OptionsConstants.RULES_SYSTEM);
+
+            assertNotNull(selectedPath);
+            assertEquals("Game Options", selectedPath.getLastPathComponent().toString());
+            assertEquals("landing", location.page().id());
+            assertTrue(location.page().isDirect());
+            assertEquals("landing.rulesSystem", location.sectionId());
+            assertFalse(landingPage.shouldShowDetailsPanel());
+            assertTrue(findSections(landingPage).isEmpty());
+            assertNotNull(rulesSystem.settingsLabel().getParent());
+            assertNotNull(rulesSystemControl.getParent());
+            assertEquals(2, rulesSystemControl.getItemCount());
+            assertEquals(OptionsConstants.RULES_CORE, rulesSystemControl.getItemAt(0));
+            assertEquals(OptionsConstants.RULES_TW, rulesSystemControl.getItemAt(1));
+            assertEquals(OptionsConstants.RULES_CORE, rulesSystemControl.getSelectedItem());
+            assertEquals(UIUtil.scaleForGUI(200), logo.getIcon().getIconWidth());
+            assertTrue(logo.getIcon().getIconHeight() > 0);
+            assertTrue(landingPage.getPageSearchText().contains("Choose the rules system"));
+            assertTrue(landingPage.getPageSearchText().contains("Total Warfare"));
         });
     }
 
@@ -1630,6 +1679,36 @@ class GameOptionsPaneTest {
             }
         }
         return null;
+    }
+
+    private static JLabel findIconLabel(Container root) {
+        for (Component child : root.getComponents()) {
+            if (child instanceof JLabel label && label.getIcon() != null) {
+                return label;
+            }
+            if (child instanceof Container container) {
+                Optional<JLabel> result = findIconLabelOptional(container);
+                if (result.isPresent()) {
+                    return result.get();
+                }
+            }
+        }
+        throw new AssertionError("No icon label found");
+    }
+
+    private static Optional<JLabel> findIconLabelOptional(Container root) {
+        for (Component child : root.getComponents()) {
+            if (child instanceof JLabel label && label.getIcon() != null) {
+                return Optional.of(label);
+            }
+            if (child instanceof Container container) {
+                Optional<JLabel> result = findIconLabelOptional(container);
+                if (result.isPresent()) {
+                    return result;
+                }
+            }
+        }
+        return Optional.empty();
     }
 
     private static int assertLabelControlRow(DialogOptionComponentYPanel option) {

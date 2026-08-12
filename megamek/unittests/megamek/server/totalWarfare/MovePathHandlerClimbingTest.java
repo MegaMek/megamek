@@ -701,8 +701,7 @@ public class MovePathHandlerClimbingTest extends GameBoardTestCase {
                     + "a climb step.");
         // Cost breakdown: 1 (base entry) + 4 (climb 2 levels × 2 MP/arm) = 5.
         // No water-entry MP because the Mek ends on the bridge surface (elev +2), above the
-        // water column. Pre-fix the water cost was added (1 + 2 + 4 = 7 with PLAYTEST2,
-        // 1 + 3 + 4 = 8 without).
+        // water column. Pre-fix the water cost was added
         assertEquals(5, climbStep.getMp(),
               "FORWARDS onto bridge surface must cost 5 MP (1 base + 4 climb), not 7 — the "
                     + "Mek isn't wading through the water on this step.");

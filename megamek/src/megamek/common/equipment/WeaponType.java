@@ -44,6 +44,7 @@ import megamek.common.RangeType;
 import megamek.common.alphaStrike.AlphaStrikeElement;
 import megamek.common.compute.Compute;
 import megamek.common.equipment.AmmoType.AmmoTypeEnum;
+import megamek.common.game.Game;
 import megamek.common.rolls.TargetRoll;
 import megamek.common.units.Entity;
 import megamek.common.weapons.AlamoMissileWeapon;
@@ -401,8 +402,10 @@ import megamek.common.weapons.ppc.clan.CLImprovedPPC;
 import megamek.common.weapons.ppc.clan.CLPlasmaCannon;
 import megamek.common.weapons.ppc.innerSphere.ISERPPC;
 import megamek.common.weapons.ppc.innerSphere.ISHeavyPPC;
+import megamek.common.weapons.ppc.innerSphere.ISHeavyPlasmaRifle;
 import megamek.common.weapons.ppc.innerSphere.ISKinsSlaughterPPC;
 import megamek.common.weapons.ppc.innerSphere.ISLightPPC;
+import megamek.common.weapons.ppc.innerSphere.ISLightPlasmaRifle;
 import megamek.common.weapons.ppc.innerSphere.ISPPC;
 import megamek.common.weapons.ppc.innerSphere.ISPlasmaRifle;
 import megamek.common.weapons.ppc.innerSphere.ISSnubNosePPC;
@@ -567,7 +570,9 @@ public class WeaponType extends EquipmentType {
     public static final WeaponTypeFlag F_ENERGY = WeaponTypeFlag.F_ENERGY;
     // for Gunnery/Missile
     public static final WeaponTypeFlag F_MISSILE = WeaponTypeFlag.F_MISSILE;
-
+    // for Arrow IV
+    public static final WeaponTypeFlag F_ARROW_IV = WeaponTypeFlag.F_ARROW_IV;
+    
     // fires
     public static final WeaponTypeFlag F_PLASMA = WeaponTypeFlag.F_PLASMA;
     public static final WeaponTypeFlag F_INCENDIARY_NEEDLES = WeaponTypeFlag.F_INCENDIARY_NEEDLES;
@@ -589,6 +594,8 @@ public class WeaponType extends EquipmentType {
     public static final WeaponTypeFlag F_PROTOTYPE = WeaponTypeFlag.F_PROTOTYPE;
     // Variable heat, heat is listed in dice, not points
     public static final WeaponTypeFlag F_HEAT_AS_DICE = WeaponTypeFlag.F_HEAT_AS_DICE;
+    // Variable heat, weapon mode determines heat
+    public static final WeaponTypeFlag F_HEAT_VARIABLE = WeaponTypeFlag.F_HEAT_VARIABLE;
     // AMS
     public static final WeaponTypeFlag F_AMS = WeaponTypeFlag.F_AMS;
 
@@ -1037,10 +1044,10 @@ public class WeaponType extends EquipmentType {
     public int[] getWRanges() {
         return new int[] {
               minimumRange,
-              waterShortRange,
-              waterMediumRange,
-              waterLongRange,
-              waterExtremeRange
+              Game.rulesManager.getRulesUnderwater().getShortRange(this),
+              Game.rulesManager.getRulesUnderwater().getMediumRange(this),
+              Game.rulesManager.getRulesUnderwater().getLongRange(this),
+              Game.rulesManager.getRulesUnderwater().getExtremeRange(this),
         };
     }
 
@@ -2239,6 +2246,8 @@ public class WeaponType extends EquipmentType {
 
         // Plasma Weapons
         EquipmentType.addType(new ISPlasmaRifle());
+        EquipmentType.addType(new ISLightPlasmaRifle());
+        EquipmentType.addType(new ISHeavyPlasmaRifle());
         EquipmentType.addType(new CLPlasmaCannon());
 
         // MekMortarWeapons

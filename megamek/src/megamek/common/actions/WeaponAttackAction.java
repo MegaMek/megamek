@@ -1,6 +1,6 @@
 /*
  * Copyright (C) 2000-2004 Ben Mazur (bmazur@sev.org)
- * Copyright (C) 2002-2025 The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2002-2026 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -190,7 +190,6 @@ public class WeaponAttackAction extends AbstractAttackAction {
         bombPayloads.put("internal", new BombLoadout(other.bombPayloads.get("internal")));
         bombPayloads.put("external", new BombLoadout(other.bombPayloads.get("external")));
     }
-
     public int getWeaponId() {
         return weaponId;
     }
@@ -519,7 +518,7 @@ public class WeaponAttackAction extends AbstractAttackAction {
                 eiStatus = 1;
             }
         }
-
+        
         ToHitData losMods = los.losModifiers(game, eiStatus, attackingEntity.isUnderwater());
         ToHitData toHit = new ToHitData(0, Messages.getString("WeaponAttackAction.BaseToHit"));
 

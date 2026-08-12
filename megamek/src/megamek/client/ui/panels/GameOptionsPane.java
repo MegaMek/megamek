@@ -307,6 +307,9 @@ public class GameOptionsPane extends JPanel {
         configureEditableDependency(componentsByName,
               OptionsConstants.ADVANCED_GROUND_MOVEMENT_VEHICLE_LANCE_MOVEMENT_NUMBER,
               OptionsConstants.ADVANCED_GROUND_MOVEMENT_VEHICLE_LANCE_MOVEMENT);
+        configureEditableDependency(componentsByName,
+              OptionsConstants.ADVANCED_ALTERNATE_MASC_ENHANCED,
+              OptionsConstants.ADVANCED_ALTERNATE_MASC);
 
         DialogOptionComponentYPanel infantryAndProtoMekGroupSize = componentsByName.get(
               OptionsConstants.INIT_INF_PROTO_MOVE_MULTI);
@@ -468,12 +471,12 @@ public class GameOptionsPane extends JPanel {
             SettingsPagePanel.Builder builder = SettingsPagePanel.builder(pageSeed.definition().id(), TEXT,
                   "GameOptionsDialog.title", icon)
                   .header(new SettingsHeaderPanel(pageSeed.definition().id(), pageTitle, icon))
-                                    .showDetailsPanel(!directPage)
+                  .showDetailsPanel(!directPage)
                   .sectionsExpandedByDefault(sectionRows.size() == 1)
                   .standardContentWidth();
             if (directPage) {
                 builder.intro("GameOptionsDialog.page.landing.intro")
-                                            .quote("GameOptionsDialog.page.landing.quote");
+                      .quote("GameOptionsDialog.page.landing.quote");
             }
             List<Map.Entry<String, SectionRows>> orderedSections = new ArrayList<>(sectionRows.entrySet());
             orderedSections.sort(Comparator.comparingInt(entry -> entry.getValue().order));
@@ -483,12 +486,8 @@ public class GameOptionsPane extends JPanel {
                       pageSeed.definition().id() + entry.getKey(), entry.getValue().rows, labelWidth);
                 sectionContentRows.put(content, entry.getValue().rows);
                 displayedSectionRows.put(content, List.copyOf(entry.getValue().rows));
-                if (directPage) {
-                    builder.component(content);
-                } else {
                     builder.literalSection(sectionTitle(entry.getKey()), sectionSummary(entry.getKey()), content,
-                          sectionBadges(pageSeed.definition().advanced()), pageSeed.searchAliases());
-                }
+                        sectionBadges(pageSeed.definition().advanced()), pageSeed.searchAliases());
             }
             pagePanel = builder.build();
             add(pagePanel, BorderLayout.CENTER);
@@ -723,7 +722,7 @@ public class GameOptionsPane extends JPanel {
 
     private static Icon landingIcon() {
         return PAGE_HEADER_ICONS.computeIfAbsent("landing", ignored -> {
-            File logo = new File(Configuration.miscImagesDir(), "mm-logo.png");
+            File logo = new File(Configuration.miscImagesDir(), "MegaMek.png");
             return scaleImageIcon(new ImageIcon(logo.getAbsolutePath()), LANDING_HEADER_IMAGE_SIZE, true);
         });
     }

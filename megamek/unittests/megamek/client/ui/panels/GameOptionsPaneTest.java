@@ -944,7 +944,9 @@ class GameOptionsPaneTest {
             assertTrue(location.page().isDirect());
             assertEquals("landing.rulesSystem", location.sectionId());
             assertFalse(landingPage.shouldShowDetailsPanel());
-            assertTrue(findSections(landingPage).isEmpty());
+            List<CollapsibleSectionPanel> sections = findSections(landingPage);
+            assertEquals(1, sections.size());
+            assertTrue(sections.getFirst().isExpanded());
             assertNotNull(rulesSystem.settingsLabel().getParent());
             assertNotNull(rulesSystemControl.getParent());
             assertEquals(2, rulesSystemControl.getItemCount());
@@ -952,9 +954,9 @@ class GameOptionsPaneTest {
             assertEquals(OptionsConstants.RULES_TW, rulesSystemControl.getItemAt(1));
             assertEquals(OptionsConstants.RULES_CORE, rulesSystemControl.getSelectedItem());
             assertEquals(UIUtil.scaleForGUI(200), logo.getIcon().getIconWidth());
-            assertTrue(logo.getIcon().getIconHeight() > 0);
-            assertTrue(landingPage.getPageSearchText().contains("Choose the rules system"));
-            assertTrue(landingPage.getPageSearchText().contains("Total Warfare"));
+            assertEquals(UIUtil.scaleForGUI(200), logo.getIcon().getIconHeight());
+            assertTrue(landingPage.getPageSearchText().contains("Across the Inner Sphere"));
+            assertTrue(landingPage.getPageSearchText().contains("clarity at the planning table"));
         });
     }
 

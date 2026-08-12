@@ -89,12 +89,11 @@ import org.w3c.dom.NodeList;
 /** Responsible for displaying the current game options and allowing the user to change them. */
 public class GameOptionsDialog extends AbstractButtonDialog implements ActionListener, DialogOptionListener {
     private static final int BUTTON_GAP = 8;
-    private static final Set<String> TOTAL_WARFARE_ONLY_OPTIONS = Set.of(
+    private static final Set<String> CORE_RULES_DISABLED_OPTIONS = Set.of(
           OptionsConstants.BASE_FLAMER_HEAT,
           OptionsConstants.ADVANCED_COMBAT_TAC_OPS_AMS,
           OptionsConstants.ADVANCED_COMBAT_TAC_OPS_CHARGE_DAMAGE,
           OptionsConstants.ADVANCED_GROUND_MOVEMENT_TAC_OPS_WALK_BACKWARDS,
-          OptionsConstants.ADVANCED_COMBAT_CASE_PILOT_DAMAGE,
           OptionsConstants.ADVANCED_COMBAT_TAC_OPS_RETRACTABLE_BLADES,
           OptionsConstants.ADVANCED_COMBAT_UNJAM_UAC,
           OptionsConstants.INIT_FRONT_LOAD_INITIATIVE,
@@ -505,6 +504,7 @@ public class GameOptionsDialog extends AbstractButtonDialog implements ActionLis
     /** Refreshes unofficial/legacy visibility and dependent control state without changing hidden rule values. */
     private void toggleOptions() {
         gameOptionsPane.refreshVisibility();
+        applyRulesSystemEditability();
 
         // Initialize dependent options: Climb Out requires Return Flyover
         boolean returnFlyoverEnabled = options.getOption(OptionsConstants.ADVANCED_AERO_RULES_RETURN_FLYOVER)
@@ -548,23 +548,31 @@ public class GameOptionsDialog extends AbstractButtonDialog implements ActionLis
     private boolean shouldShow(IOption option) {
         boolean isHiddenUnofficial = !butUnofficial.isSelected() && GameOptionsPane.isUnofficialOption(option);
         boolean isHiddenLegacy = !butLegacy.isSelected() && GameOptionsPane.isLegacyOption(option);
-        boolean isHiddenByRulesSystem = !isAvailableForRulesSystem(option,
-              isCoreRulesSelected() ? OptionsConstants.RULES_CORE : OptionsConstants.RULES_TW);
-        return !(isHiddenUnofficial || isHiddenLegacy || isHiddenByRulesSystem || isHiddenOption(option));
+        return !(isHiddenUnofficial || isHiddenLegacy || isHiddenOption(option));
     }
 
-    static boolean isAvailableForRulesSystem(IOption option, String rulesSystem) {
-        return !OptionsConstants.RULES_CORE.equals(rulesSystem)
-              || !TOTAL_WARFARE_ONLY_OPTIONS.contains(option.getName());
+    private void applyRulesSystemEditability() {
+        applyRulesSystemEditability(optionComps, editable, selectedRulesSystem());
     }
 
-    private boolean isCoreRulesSelected() {
+    static void applyRulesSystemEditability(Map<String, List<DialogOptionComponentYPanel>> optionComponents,
+          boolean dialogEditable, String rulesSystem) {
+        boolean rulesOptionsEditable = dialogEditable && !OptionsConstants.RULES_CORE.equals(rulesSystem);
+        for (String optionName : CORE_RULES_DISABLED_OPTIONS) {
+            List<DialogOptionComponentYPanel> components = optionComponents.get(optionName);
+            if (components != null) {
+                components.forEach(component -> component.setEditable(rulesOptionsEditable));
+            }
+        }
+    }
+
+    private String selectedRulesSystem() {
         List<DialogOptionComponentYPanel> components = optionComps.get(OptionsConstants.RULES_SYSTEM);
         if (components != null && !components.isEmpty()) {
-            return OptionsConstants.RULES_CORE.equals(components.getFirst().getValue());
+            return (String) components.getFirst().getValue();
         }
         IOption rulesSystem = options.getOption(OptionsConstants.RULES_SYSTEM);
-        return rulesSystem != null && OptionsConstants.RULES_CORE.equals(rulesSystem.stringValue());
+        return rulesSystem == null ? OptionsConstants.RULES_CORE : rulesSystem.stringValue();
     }
 
     private @Nullable DialogOptionComponentYPanel createOptionComponent(@Nullable IOption option) {
@@ -962,7 +970,7 @@ public class GameOptionsDialog extends AbstractButtonDialog implements ActionLis
             }
         }
         if (option.getName().equals(OptionsConstants.RULES_SYSTEM)) {
-            gameOptionsPane.refreshVisibility();
+            applyRulesSystemEditability();
         }
     }
 
@@ -1104,6 +1112,9 @@ public class GameOptionsDialog extends AbstractButtonDialog implements ActionLis
             }
         }
 
+        this.editable = editable;
+        applyRulesSystemEditability();
+
         // If the panel is editable, the player can commit or reset.
         texPass.setEnabled(editable);
         butOkay.setEnabled(editable);
@@ -1115,8 +1126,6 @@ public class GameOptionsDialog extends AbstractButtonDialog implements ActionLis
         revalidate();
         repaint();
 
-        // Update our data element.
-        this.editable = editable;
     }
 
     /**

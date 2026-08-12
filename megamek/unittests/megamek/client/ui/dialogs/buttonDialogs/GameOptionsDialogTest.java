@@ -41,12 +41,12 @@ import java.lang.reflect.InvocationTargetException;
 import java.io.File;
 import java.nio.file.Path;
 import java.util.Enumeration;
+import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.Vector;
-import java.util.concurrent.atomic.AtomicReference;
 import javax.swing.JPanel;
 import javax.swing.SwingUtilities;
 
@@ -168,60 +168,106 @@ class GameOptionsDialogTest {
     }
 
     @Test
-    void coreRulesHideExactlyTheTotalWarfareOnlyOptions() {
-        Set<String> expectedHiddenOptions = Set.of(
+    void coreRulesDisableExactlyTheBlogListedOptions() {
+        Set<String> expectedDisabledOptions = Set.of(
               OptionsConstants.BASE_FLAMER_HEAT,
               OptionsConstants.ADVANCED_COMBAT_TAC_OPS_AMS,
               OptionsConstants.ADVANCED_COMBAT_TAC_OPS_CHARGE_DAMAGE,
               OptionsConstants.ADVANCED_GROUND_MOVEMENT_TAC_OPS_WALK_BACKWARDS,
-              OptionsConstants.ADVANCED_COMBAT_CASE_PILOT_DAMAGE,
               OptionsConstants.ADVANCED_COMBAT_TAC_OPS_RETRACTABLE_BLADES,
               OptionsConstants.ADVANCED_COMBAT_UNJAM_UAC,
               OptionsConstants.INIT_FRONT_LOAD_INITIATIVE,
               OptionsConstants.ADVANCED_MINEFIELDS,
               OptionsConstants.ADVANCED_ALTERNATE_MASC,
               OptionsConstants.ADVANCED_ALTERNATE_MASC_ENHANCED);
-        Set<String> hiddenOptions = new LinkedHashSet<>();
         GameOptions options = new GameOptions();
+        Map<String, List<DialogOptionComponentYPanel>> optionComponents = new LinkedHashMap<>();
 
         for (Enumeration<IOption> gameOptions = options.getOptions(); gameOptions.hasMoreElements(); ) {
             IOption option = gameOptions.nextElement();
-            if (!GameOptionsDialog.isAvailableForRulesSystem(option, OptionsConstants.RULES_CORE)) {
-                hiddenOptions.add(option.getName());
-            }
-            assertTrue(GameOptionsDialog.isAvailableForRulesSystem(option, OptionsConstants.RULES_TW),
-                  option.getName());
+            optionComponents.put(option.getName(), List.of(component(option)));
         }
 
-        assertEquals(expectedHiddenOptions, hiddenOptions);
+        GameOptionsDialog.applyRulesSystemEditability(optionComponents, true, OptionsConstants.RULES_CORE);
+
+        Set<String> disabledOptions = new LinkedHashSet<>();
+        optionComponents.forEach((optionName, components) -> {
+            if (!components.getFirst().getEditable()) {
+                disabledOptions.add(optionName);
+            }
+        });
+        assertEquals(expectedDisabledOptions, disabledOptions);
+        assertTrue(optionComponents.get(OptionsConstants.ADVANCED_COMBAT_CASE_PILOT_DAMAGE)
+              .getFirst().getEditable());
+
+        GameOptionsDialog.applyRulesSystemEditability(optionComponents, true, OptionsConstants.RULES_TW);
+        expectedDisabledOptions.forEach(optionName ->
+              assertTrue(optionComponents.get(optionName).getFirst().getEditable(), optionName));
+
+        GameOptionsDialog.applyRulesSystemEditability(optionComponents, false, OptionsConstants.RULES_TW);
+        expectedDisabledOptions.forEach(optionName ->
+              assertFalse(optionComponents.get(optionName).getFirst().getEditable(), optionName));
     }
 
     @Test
-    void refreshingRulesSystemVisibilityPreservesHiddenStagedValues() throws Exception {
+    void switchingRulesSystemsPreservesVisibleStagedValues() throws Exception {
         runOnEdt(() -> {
             GameOptions options = new GameOptions();
             DialogOptionComponentYPanel flamerHeat = component(
                   options.getOption(OptionsConstants.BASE_FLAMER_HEAT));
             flamerHeat.setSelected(true);
-            AtomicReference<String> rulesSystem = new AtomicReference<>(OptionsConstants.RULES_CORE);
-            GameOptionsPane pane = new GameOptionsPane(List.of(new GameOptionsPane.OptionGroup(
-                  "basic", "Basic", List.of(flamerHeat))),
-                  option -> GameOptionsDialog.isAvailableForRulesSystem(option, rulesSystem.get()));
+            Map<String, List<DialogOptionComponentYPanel>> optionComponents = Map.of(
+                  OptionsConstants.BASE_FLAMER_HEAT, List.of(flamerHeat));
 
-            assertFalse(flamerHeat.isVisible());
-            assertTrue((Boolean) flamerHeat.getValue());
-
-            rulesSystem.set(OptionsConstants.RULES_TW);
-            pane.refreshVisibility();
+            GameOptionsDialog.applyRulesSystemEditability(
+                  optionComponents, true, OptionsConstants.RULES_CORE);
 
             assertTrue(flamerHeat.isVisible());
+            assertFalse(flamerHeat.getEditable());
             assertTrue((Boolean) flamerHeat.getValue());
 
-            rulesSystem.set(OptionsConstants.RULES_CORE);
-            pane.refreshVisibility();
+            GameOptionsDialog.applyRulesSystemEditability(
+                  optionComponents, true, OptionsConstants.RULES_TW);
 
-            assertFalse(flamerHeat.isVisible());
+            assertTrue(flamerHeat.isVisible());
+            assertTrue(flamerHeat.getEditable());
             assertTrue((Boolean) flamerHeat.getValue());
+
+            GameOptionsDialog.applyRulesSystemEditability(
+                  optionComponents, true, OptionsConstants.RULES_CORE);
+
+            assertTrue(flamerHeat.isVisible());
+            assertFalse(flamerHeat.getEditable());
+            assertTrue((Boolean) flamerHeat.getValue());
+        });
+    }
+
+    @Test
+    void totalWarfareRestoresEnhancedMascDependency() throws Exception {
+        runOnEdt(() -> {
+            GameOptions options = new GameOptions();
+            DialogOptionComponentYPanel alternateMasc = component(
+                  options.getOption(OptionsConstants.ADVANCED_ALTERNATE_MASC));
+            DialogOptionComponentYPanel enhancedMasc = component(
+                  options.getOption(OptionsConstants.ADVANCED_ALTERNATE_MASC_ENHANCED));
+            new GameOptionsPane(List.of(new GameOptionsPane.OptionGroup(
+                  "advancedRules", "Advanced Rules", List.of(alternateMasc, enhancedMasc))), option -> true);
+            Map<String, List<DialogOptionComponentYPanel>> optionComponents = Map.of(
+                  OptionsConstants.ADVANCED_ALTERNATE_MASC, List.of(alternateMasc),
+                  OptionsConstants.ADVANCED_ALTERNATE_MASC_ENHANCED, List.of(enhancedMasc));
+
+            GameOptionsDialog.applyRulesSystemEditability(
+                  optionComponents, true, OptionsConstants.RULES_CORE);
+            assertFalse(alternateMasc.getEditable());
+            assertFalse(enhancedMasc.getEditable());
+
+            GameOptionsDialog.applyRulesSystemEditability(
+                  optionComponents, true, OptionsConstants.RULES_TW);
+            assertTrue(alternateMasc.getEditable());
+            assertFalse(enhancedMasc.getEditable());
+
+            alternateMasc.setSelected(true);
+            assertTrue(enhancedMasc.getEditable());
         });
     }
 

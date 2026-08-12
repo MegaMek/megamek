@@ -51,7 +51,7 @@ import megamek.common.units.UnitRole;
  * @param battleValue    the unit's current battle value, the balance input
  * @param carriesEcm     whether ECM equipment is installed (installed, not active - lobby-safe)
  * @param clan           whether the unit is Clan tech, the organization-detection input
- * @param c3NetworkId    the C3 network the unit belongs to, null when it has none
+ * @param c3NetworkId    the C3 network the unit belongs to, {@code null} when it has none
  * @param transportId    the entity id of the unit carrying this one, {@link Entity#NONE} when unloaded
  * @param towedById      the entity id of the unit towing this one, {@link Entity#NONE} when untowed
  * @param family         the combined-arms family the unit partitions under

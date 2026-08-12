@@ -44,7 +44,7 @@ import megamek.common.annotations.Nullable;
  *
  * @param name  the formation name, e.g. "Battle Lance Alpha" - already unique against the names the
  *              caller reported in use
- * @param type  the best-matching CamOps formation type, or null when no type qualified (the group is
+ * @param type  the best-matching CamOps formation type, or {@code null} when no type qualified (the group is
  *              still a legal formation, it just has no doctrine name or preset)
  * @param units the units assigned to this formation
  */

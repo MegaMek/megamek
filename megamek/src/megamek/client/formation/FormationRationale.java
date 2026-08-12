@@ -44,7 +44,7 @@ import megamek.common.units.UnitRole;
  * {@link FormationAssembler#explain} and rendered by the lobby's formation rationale view.
  *
  * @param formationName       the formation's name in the force tree
- * @param type                the CamOps formation type it qualifies as, null when none does
+ * @param type                the CamOps formation type it qualifies as, {@code null} when none does
  * @param organization        the doctrine it was assembled under (element size and naming)
  * @param units               its members
  * @param modalRole           the most common battlefield role among the members
@@ -57,7 +57,7 @@ import megamek.common.units.UnitRole;
  * @param closestAlternatives the swaps that came nearest to being chosen instead, cheapest first
  * @param unknownToCatalog    members with no unit-cache entry, which block any type from qualifying
  * @param idealRole           the type's ideal role, {@link UnitRole#UNDETERMINED} when it has none
- * @param idealRoleWaived     true when every unit holds the ideal role, so the requirements below
+ * @param idealRoleWaived     {@code true} when every unit holds the ideal role, so the requirements below
  *                            are waived under the Campaign Operations ideal-role rule
  * @param requirements        the type's requirements, each scored against these units
  */
@@ -106,7 +106,7 @@ public record FormationRationale(String formationName, @Nullable FormationType t
      * @param description the requirement itself, from the formation data, e.g. "Heavy+"
      * @param required    how many units must satisfy it
      * @param perUnit     one entry per unit, in the same order as {@link FormationRationale#units()}
-     * @param waivable    false for requirements the ideal-role rule does NOT waive (the unit types a
+     * @param waivable    {@code false} for requirements the ideal-role rule does NOT waive (the unit types a
      *                    formation admits are part of what the formation IS, not a rule about it)
      */
     public record Requirement(Kind kind, String description, int required, List<Boolean> perUnit,

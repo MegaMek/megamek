@@ -136,7 +136,7 @@ public final class FormationAssembler {
      * @param looseUnits   the units to assemble; an empty list yields an empty result
      * @param organization the doctrine to assemble under
      * @param namesInUse   force names already present in the lobby, so generated names never collide
-     * @param factionKey   the force's generator faction key, or null when the player never chose one
+     * @param factionKey   the force's generator faction key, or {@code null} when the player never chose one
      *
      * @return the proposed formations, every input unit in exactly one of them
      */
@@ -394,7 +394,7 @@ public final class FormationAssembler {
             }
         }
 
-        /** @return the best partition as unit lists, or null when the atom sizes cannot fill the targets */
+        /** @return the best partition as unit lists, or {@code null} when the atom sizes cannot fill the targets */
         private @Nullable List<List<AssemblyUnit>> solve(int[] targets) {
             place(0, new int[targets.length], targets.clone(), targets);
             if (bestMasks == null) {
@@ -643,7 +643,7 @@ public final class FormationAssembler {
      * here. When the force generation context lands, these become available to the factions entitled
      * to them.</p>
      *
-     * @return the chosen type, or null when the catalog cannot judge the element - any unit without a
+     * @return the chosen type, or {@code null} when the catalog cannot judge the element - any unit without a
      *       catalog entry, or nothing qualifies
      */
     private static @Nullable FormationType bestType(List<AssemblyUnit> element) {
@@ -744,7 +744,7 @@ public final class FormationAssembler {
      * @param formationName the formation's name, for the report
      * @param units         its current members
      * @param siblings      the owner's other formations, keyed by name, for the alternatives pass
-     * @param factionKey    the force's generator faction key, or null when the player never chose one
+     * @param factionKey    the force's generator faction key, or {@code null} when the player never chose one
      *
      * @return the rationale, ready to render
      */

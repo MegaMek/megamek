@@ -78,7 +78,7 @@ public enum Organization {
      * ComStar and Word of Blake name their elements "Level II Alpha" with no formation-type prefix;
      * the others lead with the type ("Battle Lance Alpha").
      *
-     * @return true when formation names carry the qualified formation type as a prefix
+     * @return {@code true} when formation names carry the qualified formation type as a prefix
      */
     public boolean usesTypePrefix() {
         return (this != COMSTAR) && (this != WORD_OF_BLAKE);
@@ -107,7 +107,7 @@ public enum Organization {
      * salvage still fights in stars. Tech base is only the fallback for a player who never said.
      *
      * @param units      the units about to be assembled
-     * @param factionKey the force's generator faction key, dotted for a sub-command; may be null
+     * @param factionKey the force's generator faction key, dotted for a sub-command; may be {@code null}
      *
      * @return the concrete organization to assemble under, never {@link #AUTO}
      */

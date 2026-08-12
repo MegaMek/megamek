@@ -229,7 +229,7 @@ class LobbyMekPopup {
         popup.add(menuItem("View Cost Calculation...", LMP_COST + NO_INFO + seIds, hasJoinedEntities, listener));
         // Only meaningful for a single force: the report explains one grouping against its siblings.
         if ((forces.size() == 1) && !forces.getFirst().getEntities().isEmpty()) {
-            popup.add(menuItem("View Formation Rationale...",
+            popup.add(menuItem(Messages.getString("ChatLounge.viewFormationRationale"),
                   LMP_F_EXPLAIN + "|" + forces.getFirst().getId() + NO_INFO, true, listener));
         }
         popup.add(ScalingPopup.spacer());

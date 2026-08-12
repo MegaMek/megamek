@@ -749,9 +749,9 @@ public class LobbyActions {
      * This is what tells auto-detection that a ComStar or Word of Blake force organizes into Level
      * IIs - they field Inner Sphere equipment, so their units can never reveal it.
      *
-     * @param player the player to look up, may be null
+     * @param player the player to look up, may be {@code null}
      *
-     * @return the generator faction key, or null when the player has no team
+     * @return the generator faction key, or {@code null} when the player has no team
      */
     private @Nullable String factionOf(@Nullable Player player) {
         if (player == null) {

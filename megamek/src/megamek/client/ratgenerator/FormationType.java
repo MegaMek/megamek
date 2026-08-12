@@ -261,7 +261,8 @@ public class FormationType {
      * {@link #qualifies(List)} does NOT test this: it answers whether the units fit the formation's
      * shape, and leaves who is allowed to field it to the caller.
      *
-     * @return the faction key this formation is exclusive to, or null when any faction may field it
+     * @return the faction key this formation is exclusive to, or {@code null} when any faction may
+     *       field it
      */
     public @Nullable String getExclusiveFaction() {
         return exclusiveFaction;

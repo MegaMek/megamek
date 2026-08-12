@@ -192,9 +192,11 @@ public class FormationRationaleDialog extends AbstractDialog {
         report.append("</table>");
     }
 
-    /** Yes/no as text: the report must stay plain ASCII, so no tick marks. */
+    /** Met or not, as text: the report must stay plain ASCII, so no tick marks. */
     private static String mark(boolean matched) {
-        return matched ? "<b>Yes</b>" : "-";
+        return matched
+              ? "<b>" + Messages.getString("FormationRationale.met") + "</b>"
+              : Messages.getString("FormationRationale.notMet");
     }
 
     /** Turns a requirement's facts into a sentence, so the wording lives in one place. */
